@@ -12,8 +12,6 @@
  * details.
  */
 
-import {languageSub} from '../utils/language.util';
-
 const required = (value) => {
 	if (!value) {
 		return Liferay.Language.get('this-field-is-required');
@@ -22,9 +20,9 @@ const required = (value) => {
 
 const maxLength = (value, max) => {
 	if (value.length > max) {
-		return languageSub(
+		return Liferay.Util.sub(
 			Liferay.Language.get('this-field-exceeded-x-characters'),
-			[max]
+			max
 		);
 	}
 };

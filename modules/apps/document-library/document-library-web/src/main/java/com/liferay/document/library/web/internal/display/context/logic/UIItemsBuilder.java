@@ -254,15 +254,15 @@ public class UIItemsBuilder {
 			getSubmitFormJavaScript(Constants.CHECKOUT, null));
 	}
 
-	public void addCollectESignatureMenuItem(List<MenuItem> menuItems) {
+	public void addCollectDigitalSignatureMenuItem(List<MenuItem> menuItems) {
 		PortletURL portletURL = _getControlPanelRenderURL(
-			"/document_library/collect_esignature");
+			"/document_library/collect_digital_signature");
 
 		portletURL.setParameter("backURL", _getCurrentURL());
 
 		_addURLUIItem(
 			new URLMenuItem(), menuItems, DLUIItemKeys.COLLECT_E_SIGNATURE,
-			LanguageUtil.get(_resourceBundle, "collect-esignature"),
+			LanguageUtil.get(_resourceBundle, "collect-e-signature"),
 			portletURL.toString());
 	}
 
