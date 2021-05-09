@@ -486,7 +486,8 @@ public class DefaultDLViewFileVersionDisplayContext
 		DefaultDLViewFileVersionDisplayContext.class);
 
 	private List<DDMStructure> _ddmStructures;
-	private DLDigitalSignatureConfigurationUtil _dlDigitalSignatureConfigurationUtil;
+	private DLDigitalSignatureConfigurationUtil
+		_dlDigitalSignatureConfigurationUtil;
 	private final DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;
 	private final DLPortletInstanceSettingsHelper
 		_dlPortletInstanceSettingsHelper;
