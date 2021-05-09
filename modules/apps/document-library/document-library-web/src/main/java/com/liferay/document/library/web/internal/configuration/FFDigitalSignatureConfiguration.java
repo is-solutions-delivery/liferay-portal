@@ -12,21 +12,22 @@
  * details.
  */
 
-export const languageSub = (langKey, args, join = true) => {
-	const SPLIT_REGEX = /({\d+})/g;
+package com.liferay.document.library.web.internal.configuration;
 
-	const keyArray = langKey
-		.split(SPLIT_REGEX)
-		.filter((val) => val.length !== 0);
-	for (let i = 0; i < args.length; i++) {
-		const arg = args[i];
-		const indexKey = `{${i}}`;
-		let argIndex = keyArray.indexOf(indexKey);
-		while (argIndex >= 0) {
-			keyArray.splice(argIndex, 1, arg);
-			argIndex = keyArray.indexOf(indexKey);
-		}
-	}
+import aQute.bnd.annotation.metatype.Meta;
 
-	return join ? keyArray.join('') : keyArray;
-};
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
+
+/**
+ * @author Keven Leone
+ */
+@ExtendedObjectClassDefinition(generateUI = false)
+@Meta.OCD(
+	id = "com.liferay.document.library.web.internal.configuration.FFDigitalSignatureConfiguration"
+)
+public interface FFDigitalSignatureConfiguration {
+
+	@Meta.AD(deflt = "false", required = false)
+	public boolean showCollectDigitalSignatureMenuItem();
+
+}

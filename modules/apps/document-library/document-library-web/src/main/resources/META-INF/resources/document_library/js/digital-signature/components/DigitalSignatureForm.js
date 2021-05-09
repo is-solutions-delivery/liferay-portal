@@ -17,8 +17,7 @@ import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
 
-import {languageSub} from '../utils/language.util';
-import {Input} from './Form';
+import {Input} from './FormBase';
 
 const MAX_LENGTH = {
 	EMAIL_MESSAGE: 10000,
@@ -132,9 +131,9 @@ const DigitalSignatureForm = ({
 
 			<Input
 				error={errors.emailMessage}
-				feedbackMessage={languageSub(
+				feedbackMessage={Liferay.Util.sub(
 					Liferay.Language.get('characters-remaining-x'),
-					[MAX_LENGTH.EMAIL_MESSAGE - values.emailMessage.length]
+					MAX_LENGTH.EMAIL_MESSAGE - values.emailMessage.length
 				)}
 				label={Liferay.Language.get('email-message')}
 				maxLength={MAX_LENGTH.EMAIL_MESSAGE + 1}

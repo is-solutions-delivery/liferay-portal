@@ -14,7 +14,7 @@
 
 package com.liferay.document.library.web.internal.util;
 
-import com.liferay.document.library.web.internal.configuration.DLDigitalSignatureConfiguration;
+import com.liferay.document.library.web.internal.configuration.FFDigitalSignatureConfiguration;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 
 import java.util.Map;
@@ -27,23 +27,24 @@ import org.osgi.service.component.annotations.Modified;
  * @author Keven Leone
  */
 @Component(
-	configurationPid = "com.liferay.document.library.web.internal.configuration.DLDigitalSignatureConfiguration",
-	immediate = true, service = DLDigitalSignatureConfigurationUtil.class
+	configurationPid = "com.liferay.document.library.web.internal.configuration.FFDigitalSignatureConfiguration",
+	immediate = true, service = FFDigitalSignatureConfigurationUtil.class
 )
-public class DLDigitalSignatureConfigurationUtil {
+public class FFDigitalSignatureConfigurationUtil {
 
-	public static boolean showCollectESignatureMenuItem() {
-		return _dlDigitalSignatureConfiguration.showCollectESignatureMenuItem();
+	public static boolean showCollectDigitalSignatureMenuItem() {
+		return _ffDigitalSignatureConfiguration.
+			showCollectDigitalSignatureMenuItem();
 	}
 
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
-		_dlDigitalSignatureConfiguration = ConfigurableUtil.createConfigurable(
-			DLDigitalSignatureConfiguration.class, properties);
+		_ffDigitalSignatureConfiguration = ConfigurableUtil.createConfigurable(
+			FFDigitalSignatureConfiguration.class, properties);
 	}
 
-	private static volatile DLDigitalSignatureConfiguration
-		_dlDigitalSignatureConfiguration;
+	private static volatile FFDigitalSignatureConfiguration
+		_ffDigitalSignatureConfiguration;
 
 }

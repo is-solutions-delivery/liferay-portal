@@ -42,11 +42,11 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.name=" + DLPortletKeys.DOCUMENT_LIBRARY,
 		"javax.portlet.name=" + DLPortletKeys.DOCUMENT_LIBRARY_ADMIN,
 		"javax.portlet.name=" + DLPortletKeys.MEDIA_GALLERY_DISPLAY,
-		"mvc.command.name=/document_library/collect_esignature"
+		"mvc.command.name=/document_library/collect_digital_signature"
 	},
 	service = MVCRenderCommand.class
 )
-public class CollectESignatureMVCRenderCommand
+public class CollectDigitalSignatureMVCRenderCommand
 	extends GetFileEntryMVCRenderCommand {
 
 	@Override
@@ -88,7 +88,7 @@ public class CollectESignatureMVCRenderCommand
 
 	@Override
 	protected String getPath() {
-		return "/document_library/collect_esignature.jsp";
+		return "/document_library/collect_digital_signature.jsp";
 	}
 
 	@Reference
