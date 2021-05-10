@@ -395,7 +395,7 @@ public class DefaultDLViewFileVersionDisplayContext
 
 			_uiItemsBuilder.addCheckinMenuItem(menuItems);
 
-			if (_dlDigitalSignatureConfigurationUtil.
+			if (DLDigitalSignatureConfigurationUtil.
 					showCollectESignatureMenuItem()) {
 
 				_uiItemsBuilder.addCollectESignatureMenuItem(menuItems);
@@ -486,7 +486,6 @@ public class DefaultDLViewFileVersionDisplayContext
 		DefaultDLViewFileVersionDisplayContext.class);
 
 	private List<DDMStructure> _ddmStructures;
-	private DLDigitalSignatureConfigurationUtil _dlDigitalSignatureConfigurationUtil;
 	private final DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;
 	private final DLPortletInstanceSettingsHelper
 		_dlPortletInstanceSettingsHelper;
