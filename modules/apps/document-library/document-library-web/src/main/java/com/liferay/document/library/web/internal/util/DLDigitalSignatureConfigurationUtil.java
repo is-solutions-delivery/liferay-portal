@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 
 /**
  * @author Keven Leone
@@ -36,6 +37,7 @@ public class DLDigitalSignatureConfigurationUtil {
 	}
 
 	@Activate
+	@Modified
 	protected void activate(Map<String, Object> properties) {
 		_dlDigitalSignatureConfiguration = ConfigurableUtil.createConfigurable(
 			DLDigitalSignatureConfiguration.class, properties);
