@@ -39,6 +39,7 @@ public interface DSEnvelopeManager {
 		long groupId, String... dsEnvelopeIds);
 
 	public JSONObject getDSEnvelopesJSONObject(
-		long groupId, String fromDateString, long count, long startPosition);
+		long groupId, String fromDateString, int pageSize, int page,
+		String order);
 
 }
