@@ -18,7 +18,7 @@ import {useEffect, useState} from 'react';
 import {request} from '../utils/client.es';
 import {isEqualObjects} from '../utils/utils.es';
 
-export default ({endpoint, method, params}) => {
+export default ({customFetch, endpoint, method, params}) => {
 	const [state, setState] = useState({
 		error: null,
 		isLoading: true,
@@ -32,7 +32,10 @@ export default ({endpoint, method, params}) => {
 			isLoading: true,
 		}));
 
-		request(options)
+		const requestFn =
+			typeof customFetch === 'function' ? customFetch : request;
+
+		requestFn(options)
 			.then((response) => {
 				setState({
 					error: null,

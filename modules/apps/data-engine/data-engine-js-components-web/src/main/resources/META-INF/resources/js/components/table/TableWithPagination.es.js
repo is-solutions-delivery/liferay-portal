@@ -35,7 +35,7 @@ const TableWithPagination = ({
 	const deltas = deltaValues.map((label) => ({label}));
 
 	return (
-		<ClayLayout.ContainerFluid>
+		<ClayLayout.ContainerFluid className="list-view__table-with-pagination">
 			<Table
 				actions={actions}
 				columns={columns}

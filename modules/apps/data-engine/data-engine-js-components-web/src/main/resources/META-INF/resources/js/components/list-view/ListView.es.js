@@ -29,6 +29,7 @@ const ListView = ({
 	addButton,
 	children,
 	columns,
+	customFetch,
 	defaultDelta = 20,
 	editMode,
 	emptyState,
@@ -64,6 +65,7 @@ const ListView = ({
 	delete params.filters;
 
 	const {error, isLoading, refetch, response} = useResource({
+		customFetch,
 		endpoint,
 		params,
 	});
@@ -116,34 +118,36 @@ const ListView = ({
 	const isFiltered = selectedFilters.length > 0;
 
 	return (
-		<SearchContext.Provider value={[query, dispatch]}>
-			<ManagementToolbar
-				addButton={addButton}
-				columns={columns}
-				disabled={!isFiltered && !query.keywords && isEmpty}
-				filters={filters}
-			/>
+		<div className="list-view">
+			<SearchContext.Provider value={[query, dispatch]}>
+				<ManagementToolbar
+					addButton={addButton}
+					columns={columns}
+					disabled={!isFiltered && !query.keywords && isEmpty}
+					filters={filters}
+				/>
 
-			<ManagementToolbarResultsBar
-				filters={filters}
-				isLoading={isLoading}
-				totalCount={totalCount}
-			/>
+				<ManagementToolbarResultsBar
+					filters={filters}
+					isLoading={isLoading}
+					totalCount={totalCount}
+				/>
 
-			<TableWithPagination
-				actions={refetchOnActions}
-				columns={columns}
-				editMode={editMode}
-				emptyState={emptyState}
-				isEmpty={isEmpty}
-				isFiltered={isFiltered}
-				isLoading={isLoading}
-				items={items.map((item, index) => children(item, index))}
-				keywords={query.keywords}
-				noActionsMessage={noActionsMessage}
-				totalCount={totalCount}
-			/>
-		</SearchContext.Provider>
+				<TableWithPagination
+					actions={refetchOnActions}
+					columns={columns}
+					editMode={editMode}
+					emptyState={emptyState}
+					isEmpty={isEmpty}
+					isFiltered={isFiltered}
+					isLoading={isLoading}
+					items={items.map((item, index) => children(item, index))}
+					keywords={query.keywords}
+					noActionsMessage={noActionsMessage}
+					totalCount={totalCount}
+				/>
+			</SearchContext.Provider>
+		</div>
 	);
 };
 
