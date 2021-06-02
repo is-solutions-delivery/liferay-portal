@@ -23,7 +23,6 @@ import {AppContext} from '../../AppContext';
 import ListView from '../../components/list-view/ListView';
 import {DOCUSIGN_STATUS} from '../../utils/contants';
 import {getDateFromNow} from '../../utils/moment';
-
 const COLUMNS = [
 	{
 		key: 'name',
@@ -51,10 +50,8 @@ const COLUMNS = [
 		value: Liferay.Language.get('create-date'),
 	},
 ];
-
 const getEnvelopeStatus = (status) =>
 	DOCUSIGN_STATUS[status] || {color: 'secondary', label: status};
-
 const EnvelopeList = ({history}) => {
 	const {baseResourceURL} = useContext(AppContext);
 
@@ -63,6 +60,16 @@ const EnvelopeList = ({history}) => {
 			<ListView
 				actions={[
 					{
+						action: async ({envelopeId}) => {
+							window.open(
+								createResourceURL(baseResourceURL, {
+									envelopeId,
+									p_p_resource_id:
+										'/digital_signature/get_ds_documents_as_bytes',
+								}),
+								'_blank'
+							);
+						},
 						name: Liferay.Language.get('download-files'),
 					},
 					{
@@ -93,7 +100,7 @@ const EnvelopeList = ({history}) => {
 				{({
 					envelopeId,
 					emailSubject,
-					name,
+					name = Liferay.Language.get('untitled-envelope'),
 					createdLocalDateTime,
 					senderEmailAddress,
 					status,
@@ -101,6 +108,7 @@ const EnvelopeList = ({history}) => {
 				}) => ({
 					createdAt: getDateFromNow(createdLocalDateTime),
 					emailSubject,
+					envelopeId,
 					name: <Link to={`/envelope/${envelopeId}`}>{name}</Link>,
 					recipients: (
 						<span className="d-flex">
@@ -127,5 +135,4 @@ const EnvelopeList = ({history}) => {
 		</div>
 	);
 };
-
 export default EnvelopeList;
