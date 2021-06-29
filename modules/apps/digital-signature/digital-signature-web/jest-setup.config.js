@@ -23,4 +23,12 @@ window.Liferay = {
 	ThemeDisplay: {
 		...(window.Liferay.ThemeDisplay || {}),
 	},
+	Util: {
+		...window.Liferay.Util,
+		PortletURL: {
+			...window.Liferay.Util.PortletURL,
+			createResourceURL: () => 'http://0.0.0.0/liferay/o',
+		},
+	},
+	component: Promise.resolve(),
 };
