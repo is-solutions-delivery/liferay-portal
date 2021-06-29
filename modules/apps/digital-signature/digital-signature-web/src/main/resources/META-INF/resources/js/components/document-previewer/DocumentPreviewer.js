@@ -16,6 +16,7 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
+import classNames from 'classnames';
 import {debounce} from 'frontend-js-web';
 import imagePromise from 'image-promise';
 import React, {useEffect, useRef, useState} from 'react';
@@ -201,9 +202,12 @@ const DocumentPreviewer = ({baseImageURL, initialPage, totalPages}) => {
 	return (
 		<div className="preview-file">
 			<div
-				className={`preview-file-container preview-file-max-height ${
-					expanded && 'image-container-expanded'
-				}`}
+				className={classNames(
+					'preview-file-container preview-file-max-height',
+					{
+						'image-container-expanded': expanded,
+					}
+				)}
 				ref={imageContainer}
 			>
 				{currentPageLoading ? (
@@ -228,8 +232,11 @@ const DocumentPreviewer = ({baseImageURL, initialPage, totalPages}) => {
 							}}
 							ref={showPageInputButton}
 							title={
-								totalPages > 1 &&
-								Liferay.Language.get('click-to-jump-to-a-page')
+								totalPages > 1
+									? Liferay.Language.get(
+											'click-to-jump-to-a-page'
+									  )
+									: undefined
 							}
 						>
 							{`${Liferay.Language.get(
