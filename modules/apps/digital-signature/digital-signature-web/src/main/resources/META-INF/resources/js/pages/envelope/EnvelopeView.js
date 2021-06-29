@@ -16,12 +16,7 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import {
-	createActionURL,
-	createResourceURL,
-	fetch,
-	openToast,
-} from 'frontend-js-web';
+import {createActionURL, fetch, openToast} from 'frontend-js-web';
 import React, {useContext, useEffect, useState} from 'react';
 
 import {AppContext} from '../../AppContext';
@@ -92,11 +87,14 @@ const EnvelopeHeader = ({docusignStatus, emailSubject, envelopeId}) => {
 			<ClayButton
 				onClick={() =>
 					window.open(
-						createResourceURL(baseResourceURL, {
-							dsEnvelopeId: envelopeId,
-							p_p_resource_id:
-								'/digital_signature/get_ds_documents_as_bytes',
-						}),
+						Liferay.Util.PortletURL.createResourceURL(
+							baseResourceURL,
+							{
+								dsEnvelopeId: envelopeId,
+								p_p_resource_id:
+									'/digital_signature/get_ds_documents_as_bytes',
+							}
+						),
 						'_blank'
 					)
 				}
@@ -128,7 +126,7 @@ function EnvelopeView({
 	const getEnvelope = async () => {
 		try {
 			const response = await fetch(
-				createResourceURL(baseResourceURL, {
+				Liferay.Util.PortletURL.createResourceURL(baseResourceURL, {
 					dsEnvelopeId: envelopeId,
 					p_p_resource_id: '/digital_signature/get_ds_envelope',
 				})
