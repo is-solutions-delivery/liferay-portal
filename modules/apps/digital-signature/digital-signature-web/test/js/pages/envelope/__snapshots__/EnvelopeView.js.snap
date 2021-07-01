@@ -89,7 +89,7 @@ exports[`EnvelopeView renders 1`] = `
         </div>
         <div>
           <b>
-            1/1/2021 9:30 AM
+            1/1/2021 12:30 PM
           </b>
           <span
             class="ml-1"
@@ -124,7 +124,7 @@ exports[`EnvelopeView renders 1`] = `
     </div>
     <input
       type="hidden"
-      value="http://localhost:8080/group/guest/~/control_panel/manage?p_p_id=com_liferay_digital_signature_web_internal_portlet_DigitalSignaturePortlet&_com_liferay_digital_signature_web_internal_portlet_DigitalSignaturePortlet_dsEnvelopeId=1&_com_liferay_digital_signature_web_internal_portlet_DigitalSignaturePortlet_javax.portlet.action=%2Fdigital_signature%2Fdelete_ds_envelope&p_auth=default-mocked-auth-token&p_p_lifecycle=1"
+      value="http://localhost:8080/?p_p_id=unitTest&_unitTest_dsEnvelopeId=1&_unitTest_javax.portlet.action=%2Fdigital_signature%2Fdelete_ds_envelope&p_auth=default-mocked-auth-token&p_p_lifecycle=1"
     />
   </div>
 </DocumentFragment>

@@ -52,10 +52,7 @@ const Context = createContext();
 
 const EnvelopeViewWithProvider = (props) => (
 	<AppContext.Provider
-		value={{
-			baseResourceURL:
-				'http://localhost:8080/group/guest/~/control_panel/manage?p_p_id=com_liferay_digital_signature_web_internal_portlet_DigitalSignaturePortlet',
-		}}
+		value={{baseResourceURL: 'http://localhost:8080?p_p_id=unitTest'}}
 	>
 		<EnvelopeView {...props} />
 	</AppContext.Provider>
