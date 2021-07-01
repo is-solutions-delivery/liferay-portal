@@ -22,7 +22,7 @@ describe('DocumentPreviewerWrapper', () => {
 		cleanup();
 	});
 
-	it('render with empty state', () => {
+	it('renders with empty state', () => {
 		const {asFragment, container} = render(<DocumentPreviewerWrapper />);
 
 		const emptyResultMessage = container.querySelector(
@@ -34,7 +34,7 @@ describe('DocumentPreviewerWrapper', () => {
 		expect(asFragment()).toMatchSnapshot();
 	});
 
-	it('render with an image', () => {
+	it('renders with an image', () => {
 		const fileEntries = [
 			{
 				imageURL: 'http://localhost:8080/image/example.png',
@@ -53,7 +53,7 @@ describe('DocumentPreviewerWrapper', () => {
 		expect(asFragment()).toMatchSnapshot();
 	});
 
-	it('render with a document', () => {
+	it('renders with a document', () => {
 		const fileEntries = [
 			{
 				initialPage: 1,
@@ -76,7 +76,7 @@ describe('DocumentPreviewerWrapper', () => {
 		expect(asFragment()).toMatchSnapshot();
 	});
 
-	it('render with document without preview', () => {
+	it('renders with a document without preview', () => {
 		const fileEntries = [
 			{
 				initialPage: 1,
