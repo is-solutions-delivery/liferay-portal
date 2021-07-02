@@ -68,7 +68,7 @@ const DigitalSignatureFormBase = ({
 	};
 
 	return (
-		<ClayForm>
+		<>
 			<Input
 				error={errors.envelopeName}
 				label={Liferay.Language.get('envelope-name')}
@@ -174,7 +174,7 @@ const DigitalSignatureFormBase = ({
 				type="textarea"
 				value={values.emailMessage}
 			/>
-		</ClayForm>
+		</>
 	);
 };
 
