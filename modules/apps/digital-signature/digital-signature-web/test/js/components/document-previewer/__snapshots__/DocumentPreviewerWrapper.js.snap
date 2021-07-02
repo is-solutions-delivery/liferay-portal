@@ -162,24 +162,66 @@ exports[`DocumentPreviewerWrapper renders with a document 1`] = `
 exports[`DocumentPreviewerWrapper renders with a document without preview 1`] = `
 <DocumentFragment>
   <div
-    class="taglib-empty-result-message"
+    class="preview-file"
   >
     <div
-      class="text-center"
+      class="preview-file-container unavailable-preview"
     >
       <div
-        class="taglib-empty-state mb-2 mt-4"
-      />
-      <h1
-        class="taglib-empty-result-message-title"
+        class="taglib-empty-result-message"
       >
-        no-preview-available
-      </h1>
-      <p
-        class="empty-message-color taglib-empty-result-message-description"
+        <div
+          class="text-center"
+        >
+          <div
+            class="taglib-empty-state mb-2 mt-4"
+          />
+          <h1
+            class="taglib-empty-result-message-title"
+          >
+            no-preview-available
+          </h1>
+          <p
+            class="empty-message-color taglib-empty-result-message-description"
+          >
+            the-envelope-does-not-have-a-document-to-preview
+          </p>
+        </div>
+      </div>
+      <div
+        class="lfr-tooltip-scope"
       >
-        the-envelope-does-not-have-a-document-to-preview
-      </p>
+        <div
+          class="preview-image-mark"
+        >
+          <span
+            class="label label-secondary"
+          >
+            <span
+              class="label-item label-item-expand"
+            >
+              original-document
+            </span>
+          </span>
+        </div>
+      </div>
+      <div
+        class="lfr-tooltip-scope"
+      >
+        <div
+          class="preview-image-mark"
+        >
+          <span
+            class="label label-secondary"
+          >
+            <span
+              class="label-item label-item-expand"
+            >
+              original-document
+            </span>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
   <div
@@ -390,24 +432,49 @@ exports[`DocumentPreviewerWrapper renders with an image 1`] = `
 exports[`DocumentPreviewerWrapper renders with empty state 1`] = `
 <DocumentFragment>
   <div
-    class="taglib-empty-result-message"
+    class="preview-file"
   >
     <div
-      class="text-center"
+      class="preview-file-container unavailable-preview"
     >
       <div
-        class="taglib-empty-state mb-2 mt-4"
-      />
-      <h1
-        class="taglib-empty-result-message-title"
+        class="taglib-empty-result-message"
       >
-        no-preview-available
-      </h1>
-      <p
-        class="empty-message-color taglib-empty-result-message-description"
+        <div
+          class="text-center"
+        >
+          <div
+            class="taglib-empty-state mb-2 mt-4"
+          />
+          <h1
+            class="taglib-empty-result-message-title"
+          >
+            no-preview-available
+          </h1>
+          <p
+            class="empty-message-color taglib-empty-result-message-description"
+          >
+            the-envelope-does-not-have-a-document-to-preview
+          </p>
+        </div>
+      </div>
+      <div
+        class="lfr-tooltip-scope"
       >
-        the-envelope-does-not-have-a-document-to-preview
-      </p>
+        <div
+          class="preview-image-mark"
+        >
+          <span
+            class="label label-secondary"
+          >
+            <span
+              class="label-item label-item-expand"
+            >
+              original-document
+            </span>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </DocumentFragment>
