@@ -30,5 +30,5 @@ window.Liferay = {
 			createResourceURL: () => 'http://0.0.0.0/liferay/o',
 		},
 	},
-	component: Promise.resolve(),
+	component: () => {},
 };
