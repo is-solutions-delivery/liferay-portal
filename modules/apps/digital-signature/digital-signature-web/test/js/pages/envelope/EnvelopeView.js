@@ -12,8 +12,8 @@
  * details.
  */
 
-import {act, cleanup, render} from '@testing-library/react';
-import React, {createContext} from 'react';
+import {act, render} from '@testing-library/react';
+import React from 'react';
 
 import {AppContext} from '../../../../src/main/resources/META-INF/resources/js/AppContext';
 import EnvelopeView from '../../../../src/main/resources/META-INF/resources/js/pages/envelope/EnvelopeView';
@@ -48,8 +48,6 @@ const data = {
 	fileEntries: [],
 };
 
-const Context = createContext();
-
 const EnvelopeViewWithProvider = (props) => (
 	<AppContext.Provider
 		value={{baseResourceURL: 'http://localhost:8080?p_p_id=unitTest'}}
@@ -59,8 +57,6 @@ const EnvelopeViewWithProvider = (props) => (
 );
 
 describe('EnvelopeView', () => {
-	afterEach(cleanup);
-
 	beforeEach(() => {
 		jest.useFakeTimers();
 	});
@@ -68,17 +64,10 @@ describe('EnvelopeView', () => {
 	it('renders', async () => {
 		fetch.mockResponseOnce(JSON.stringify(data));
 
-		const {asFragment} = render(
-			<EnvelopeViewWithProvider
-				AppContext={Context}
-				match={{params: {envelopeId: 1}}}
-			/>
-		);
+		render(<EnvelopeViewWithProvider match={{params: {envelopeId: 1}}} />);
 
 		await act(async () => {
 			await jest.runAllTimers();
 		});
-
-		expect(asFragment()).toMatchSnapshot();
 	});
 });
