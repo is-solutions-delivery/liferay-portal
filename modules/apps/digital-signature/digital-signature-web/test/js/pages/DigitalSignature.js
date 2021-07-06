@@ -12,23 +12,27 @@
  * details.
  */
 
-window.themeDisplay = {
-	...window.themeDisplay,
-	getDefaultLanguageId: () => 'en_US',
-	getLanguageId: () => 'en_US',
+import {act, render} from '@testing-library/react';
+import React from 'react';
+
+import DigitalSignature from '../../../src/main/resources/META-INF/resources/js/pages/DigitalSignature';
+
+const initialState = {
+	allowedFileExtensions: '',
 };
 
-window.Liferay = {
-	...(window.Liferay || {}),
-	ThemeDisplay: {
-		...(window.Liferay.ThemeDisplay || {}),
-	},
-	Util: {
-		...window.Liferay.Util,
-		PortletURL: {
-			...window.Liferay.Util.PortletURL,
-			createResourceURL: () => 'http://0.0.0.0/liferay/o',
-		},
-	},
-	component: () => {},
-};
+describe('DigitalSignature', () => {
+	beforeEach(() => {
+		jest.useFakeTimers();
+	});
+
+	it('renders', async () => {
+		const {asFragment} = render(<DigitalSignature {...initialState} />);
+
+		await act(async () => {
+			await jest.runAllTimers();
+		});
+
+		expect(asFragment()).toMatchSnapshot();
+	});
+});

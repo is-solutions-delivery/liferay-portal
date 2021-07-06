@@ -1,0 +1,312 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DigitalSignatureForm Validates required fields 1`] = `
+<DocumentFragment>
+  <div
+    class="collect-digital-signature container"
+  >
+    <div
+      class="card card-type-asset"
+    >
+      <div
+        class="header"
+      >
+        <h1>
+          new-digital-signature-envelope
+        </h1>
+      </div>
+      <hr />
+      <div
+        class="card-body m-2"
+      >
+        <form>
+          <div
+            class="form-group w-100 has-error"
+          >
+            <label
+              class=""
+              for="envelopeName"
+            >
+              envelope-name
+              <span
+                class="inline-item-after reference-mark text-warning"
+              >
+                <svg
+                  class="lexicon-icon lexicon-icon-asterisk"
+                  role="presentation"
+                >
+                  <use
+                    xlink:href="#asterisk"
+                  />
+                </svg>
+              </span>
+              <span
+                class="hide-accessible"
+              >
+                required
+              </span>
+            </label>
+            <input
+              class="form-control form-control"
+              id="envelopeName"
+              name="envelopeName"
+              placeholder="my-envelope-name"
+              type="text"
+            />
+            <div
+              class="form-feedback-group"
+            >
+              <div
+                class="form-feedback-item"
+              >
+                <span>
+                  this-field-is-required
+                </span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="document-library-form mb-4"
+          >
+            <button
+              class="select-button btn btn-secondary"
+              type="button"
+            >
+              <span
+                class="lfr-btn-label"
+              >
+                add-document
+              </span>
+            </button>
+          </div>
+          <div
+            class="form-group recipient"
+          >
+            <div
+              class="input-group"
+            >
+              <div
+                class="input-group-item"
+              >
+                <div
+                  class="form-group mb-0 w-100 has-error"
+                >
+                  <label
+                    class=""
+                    for="recipients[0].fullName"
+                  >
+                    recipient-full-name
+                    <span
+                      class="inline-item-after reference-mark text-warning"
+                    >
+                      <svg
+                        class="lexicon-icon lexicon-icon-asterisk"
+                        role="presentation"
+                      >
+                        <use
+                          xlink:href="#asterisk"
+                        />
+                      </svg>
+                    </span>
+                    <span
+                      class="hide-accessible"
+                    >
+                      required
+                    </span>
+                  </label>
+                  <input
+                    class="form-control form-control"
+                    id="recipients[0].fullName"
+                    name="recipients[0].fullName"
+                    placeholder="recipient-full-name"
+                    type="text"
+                    value=""
+                  />
+                  <div
+                    class="form-feedback-group"
+                  >
+                    <div
+                      class="form-feedback-item"
+                    >
+                      <span>
+                        this-field-is-required
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="input-group-item"
+              >
+                <div
+                  class="form-group mb-0 w-100 has-error"
+                >
+                  <label
+                    class=""
+                    for="recipients[0].email"
+                  >
+                    recipient-email
+                    <span
+                      class="inline-item-after reference-mark text-warning"
+                    >
+                      <svg
+                        class="lexicon-icon lexicon-icon-asterisk"
+                        role="presentation"
+                      >
+                        <use
+                          xlink:href="#asterisk"
+                        />
+                      </svg>
+                    </span>
+                    <span
+                      class="hide-accessible"
+                    >
+                      required
+                    </span>
+                  </label>
+                  <input
+                    class="form-control form-control"
+                    id="recipients[0].email"
+                    name="recipients[0].email"
+                    placeholder="recipient-email"
+                    type="text"
+                    value=""
+                  />
+                  <div
+                    class="form-feedback-group"
+                  >
+                    <div
+                      class="form-feedback-item"
+                    >
+                      <span>
+                        this-field-is-required
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="input-group-item input-group-item-shrink"
+              >
+                <button
+                  class="recipient-icon-button btn btn-monospaced btn-secondary"
+                  disabled=""
+                  type="button"
+                >
+                  <svg
+                    class="lexicon-icon lexicon-icon-trash"
+                    role="presentation"
+                  >
+                    <use
+                      xlink:href="#trash"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button
+            class="mb-4 btn btn-unstyled"
+            type="button"
+          >
+            <span
+              class="inline-item inline-item-before"
+            >
+              <svg
+                class="lexicon-icon lexicon-icon-plus"
+                role="presentation"
+              >
+                <use
+                  xlink:href="#plus"
+                />
+              </svg>
+            </span>
+            <span>
+              add-recipient
+            </span>
+          </button>
+          <div
+            class="form-group w-100 has-error"
+          >
+            <label
+              class=""
+              for="emailSubject"
+            >
+              email-subject
+              <span
+                class="inline-item-after reference-mark text-warning"
+              >
+                <svg
+                  class="lexicon-icon lexicon-icon-asterisk"
+                  role="presentation"
+                >
+                  <use
+                    xlink:href="#asterisk"
+                  />
+                </svg>
+              </span>
+              <span
+                class="hide-accessible"
+              >
+                required
+              </span>
+            </label>
+            <input
+              class="form-control form-control"
+              id="emailSubject"
+              name="emailSubject"
+              placeholder="please-sign-this-document"
+              type="text"
+              value=""
+            />
+            <div
+              class="form-feedback-group"
+            >
+              <div
+                class="form-feedback-item"
+              >
+                <span>
+                  this-field-is-required
+                </span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="form-group w-100"
+          >
+            <label
+              class=""
+              for="emailMessage"
+            >
+              email-message
+            </label>
+            <textarea
+              class="form-control form-control"
+              id="emailMessage"
+              maxlength="10001"
+              name="emailMessage"
+              placeholder="email-message"
+              type="textarea"
+            >
+              Email Message
+            </textarea>
+          </div>
+          <button
+            class="btn btn-primary"
+            disabled=""
+            type="submit"
+          >
+            send
+          </button>
+          <button
+            class="ml-2 btn btn-secondary"
+            type="button"
+          >
+            cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

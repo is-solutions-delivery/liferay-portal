@@ -1,0 +1,481 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocumentPreviewerWrapper renders with a document 1`] = `
+<DocumentFragment>
+  <div
+    class="preview-file"
+  >
+    <div
+      class="preview-file-container preview-file-max-height"
+    >
+      <img
+        class="preview-file-document preview-file-document-fit"
+        draggable="false"
+        src="http://localhost:8080/image/example.png1"
+      />
+      <div
+        class="lfr-tooltip-scope"
+      >
+        <div
+          class="preview-image-mark"
+        >
+          <span
+            class="label label-secondary"
+          >
+            <span
+              class="label-item label-item-expand"
+            >
+              original-document
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="preview-toolbar-container"
+    >
+      <div
+        class="floating-bar btn-group"
+        role="group"
+      >
+        <div
+          class="btn-group"
+          role="group"
+        >
+          <button
+            class="btn-floating-bar btn-floating-bar-text btn btn-primary"
+            type="button"
+          >
+            page 1 / 1
+          </button>
+        </div>
+        <button
+          class="btn-floating-bar btn btn-monospaced btn-primary"
+          disabled=""
+          title="page-above"
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-caret-top"
+            role="presentation"
+          >
+            <use
+              xlink:href="#caret-top"
+            />
+          </svg>
+        </button>
+        <button
+          class="btn-floating-bar btn btn-monospaced btn-primary"
+          disabled=""
+          title="page-below"
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-caret-bottom"
+            role="presentation"
+          >
+            <use
+              xlink:href="#caret-bottom"
+            />
+          </svg>
+        </button>
+        <div
+          class="separator-floating-bar"
+        />
+        <button
+          class="btn-floating-bar btn btn-monospaced btn-primary"
+          title="expand"
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-full-size"
+            role="presentation"
+          >
+            <use
+              xlink:href="#full-size"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="align-items-center d-flex flex-column justify-content-center"
+  >
+    <ul
+      class="pagination pagination-root"
+    >
+      <li
+        class="page-item disabled"
+      >
+        <button
+          aria-label="Previous"
+          class="page-link"
+          disabled=""
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-angle-left"
+            role="presentation"
+          >
+            <use
+              xlink:href="#angle-left"
+            />
+          </svg>
+        </button>
+      </li>
+      <li
+        class="page-item active"
+      >
+        <button
+          class="page-link"
+          type="button"
+        >
+          1
+        </button>
+      </li>
+      <li
+        class="page-item disabled"
+      >
+        <button
+          aria-label="Next"
+          class="page-link"
+          disabled=""
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-angle-right"
+            role="presentation"
+          >
+            <use
+              xlink:href="#angle-right"
+            />
+          </svg>
+        </button>
+      </li>
+    </ul>
+    <span />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DocumentPreviewerWrapper renders with a document without preview 1`] = `
+<DocumentFragment>
+  <div
+    class="preview-file"
+  >
+    <div
+      class="preview-file-container unavailable-preview"
+    >
+      <div
+        class="taglib-empty-result-message"
+      >
+        <div
+          class="text-center"
+        >
+          <div
+            class="taglib-empty-state mb-2 mt-4"
+          />
+          <h1
+            class="taglib-empty-result-message-title"
+          >
+            no-preview-available
+          </h1>
+          <p
+            class="empty-message-color taglib-empty-result-message-description"
+          >
+            the-envelope-does-not-have-a-document-to-preview
+          </p>
+        </div>
+      </div>
+      <div
+        class="lfr-tooltip-scope"
+      >
+        <div
+          class="preview-image-mark"
+        >
+          <span
+            class="label label-secondary"
+          >
+            <span
+              class="label-item label-item-expand"
+            >
+              original-document
+            </span>
+          </span>
+        </div>
+      </div>
+      <div
+        class="lfr-tooltip-scope"
+      >
+        <div
+          class="preview-image-mark"
+        >
+          <span
+            class="label label-secondary"
+          >
+            <span
+              class="label-item label-item-expand"
+            >
+              original-document
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="align-items-center d-flex flex-column justify-content-center"
+  >
+    <ul
+      class="pagination pagination-root"
+    >
+      <li
+        class="page-item disabled"
+      >
+        <button
+          aria-label="Previous"
+          class="page-link"
+          disabled=""
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-angle-left"
+            role="presentation"
+          >
+            <use
+              xlink:href="#angle-left"
+            />
+          </svg>
+        </button>
+      </li>
+      <li
+        class="page-item active"
+      >
+        <button
+          class="page-link"
+          type="button"
+        >
+          1
+        </button>
+      </li>
+      <li
+        class="page-item disabled"
+      >
+        <button
+          aria-label="Next"
+          class="page-link"
+          disabled=""
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-angle-right"
+            role="presentation"
+          >
+            <use
+              xlink:href="#angle-right"
+            />
+          </svg>
+        </button>
+      </li>
+    </ul>
+    <span />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DocumentPreviewerWrapper renders with an image 1`] = `
+<DocumentFragment>
+  <div
+    class="preview-file"
+  >
+    <div
+      class="d-flex preview-file-container preview-file-max-height"
+    >
+      <div
+        class="image-container"
+      >
+        <img
+          alt="document"
+          class="preview-file-image"
+          src="http://localhost:8080/image/example.png"
+          style="margin: auto auto;"
+        />
+        <div
+          class="lfr-tooltip-scope"
+        >
+          <div
+            class="preview-image-mark"
+          >
+            <span
+              class="label label-secondary"
+            >
+              <span
+                class="label-item label-item-expand"
+              >
+                original-document
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="preview-toolbar-container"
+    >
+      <div
+        class="floating-bar btn-group"
+        role="group"
+      >
+        <button
+          class="btn-floating-bar btn btn-monospaced"
+          title="zoom-out"
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-hr"
+            role="presentation"
+          >
+            <use
+              xlink:href="#hr"
+            />
+          </svg>
+        </button>
+        <button
+          class="btn-floating-bar btn-floating-bar-text btn"
+          title="real-size"
+          type="button"
+        >
+          <span
+            class="preview-toolbar-label-percent"
+          >
+            0%
+          </span>
+        </button>
+        <button
+          class="btn-floating-bar btn btn-monospaced"
+          title="zoom-in"
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-plus"
+            role="presentation"
+          >
+            <use
+              xlink:href="#plus"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="align-items-center d-flex flex-column justify-content-center"
+  >
+    <ul
+      class="pagination pagination-root"
+    >
+      <li
+        class="page-item disabled"
+      >
+        <button
+          aria-label="Previous"
+          class="page-link"
+          disabled=""
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-angle-left"
+            role="presentation"
+          >
+            <use
+              xlink:href="#angle-left"
+            />
+          </svg>
+        </button>
+      </li>
+      <li
+        class="page-item active"
+      >
+        <button
+          class="page-link"
+          type="button"
+        >
+          1
+        </button>
+      </li>
+      <li
+        class="page-item disabled"
+      >
+        <button
+          aria-label="Next"
+          class="page-link"
+          disabled=""
+          type="button"
+        >
+          <svg
+            class="lexicon-icon lexicon-icon-angle-right"
+            role="presentation"
+          >
+            <use
+              xlink:href="#angle-right"
+            />
+          </svg>
+        </button>
+      </li>
+    </ul>
+    <span />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DocumentPreviewerWrapper renders with empty state 1`] = `
+<DocumentFragment>
+  <div
+    class="preview-file"
+  >
+    <div
+      class="preview-file-container unavailable-preview"
+    >
+      <div
+        class="taglib-empty-result-message"
+      >
+        <div
+          class="text-center"
+        >
+          <div
+            class="taglib-empty-state mb-2 mt-4"
+          />
+          <h1
+            class="taglib-empty-result-message-title"
+          >
+            no-preview-available
+          </h1>
+          <p
+            class="empty-message-color taglib-empty-result-message-description"
+          >
+            the-envelope-does-not-have-a-document-to-preview
+          </p>
+        </div>
+      </div>
+      <div
+        class="lfr-tooltip-scope"
+      >
+        <div
+          class="preview-image-mark"
+        >
+          <span
+            class="label label-secondary"
+          >
+            <span
+              class="label-item label-item-expand"
+            >
+              original-document
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
