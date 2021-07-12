@@ -85,6 +85,12 @@
 				<defaultValue>false</defaultValue>
 				<required>false</required>
 			</attribute>
+			<attribute>
+				<name>submitButtonId</name>
+				<inputType>java.lang.String</inputType>
+				<outputType>java.lang.String</outputType>
+				<required>false</required>
+			</attribute>
 		</attributes>
 	</component>
 	<component bodyContent="false" name="DataLayoutRenderer" writeJSP="true">
