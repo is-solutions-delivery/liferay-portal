@@ -32,6 +32,7 @@ javax.servlet.ServletContext moduleServletContext = (javax.servlet.ServletContex
 java.lang.String namespace = GetterUtil.getString((java.lang.String)request.getAttribute("liferay-data-engine:data-layout-builder:namespace"));
 java.lang.Object scopes = (java.lang.Object)request.getAttribute("liferay-data-engine:data-layout-builder:scopes");
 boolean searchableFieldsDisabled = GetterUtil.getBoolean(String.valueOf(request.getAttribute("liferay-data-engine:data-layout-builder:searchableFieldsDisabled")));
+java.lang.String submitButtonId = GetterUtil.getString((java.lang.String)request.getAttribute("liferay-data-engine:data-layout-builder:submitButtonId"));
 Map<String, Object> dynamicAttributes = (Map<String, Object>)request.getAttribute("liferay-data-engine:data-layout-builder:dynamicAttributes");
 %>
 

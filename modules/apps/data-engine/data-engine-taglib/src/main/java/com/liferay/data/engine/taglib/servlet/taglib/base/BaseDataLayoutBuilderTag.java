@@ -86,6 +86,10 @@ public abstract class BaseDataLayoutBuilderTag extends com.liferay.taglib.util.I
 		return _searchableFieldsDisabled;
 	}
 
+	public java.lang.String getSubmitButtonId() {
+		return _submitButtonId;
+	}
+
 	public void setAdditionalPanels(java.util.List<java.util.Map<java.lang.String, java.lang.Object>> additionalPanels) {
 		_additionalPanels = additionalPanels;
 	}
@@ -138,6 +142,10 @@ public abstract class BaseDataLayoutBuilderTag extends com.liferay.taglib.util.I
 		_searchableFieldsDisabled = searchableFieldsDisabled;
 	}
 
+	public void setSubmitButtonId(java.lang.String submitButtonId) {
+		_submitButtonId = submitButtonId;
+	}
+
 	@Override
 	public void setPageContext(PageContext pageContext) {
 		super.setPageContext(pageContext);
@@ -162,6 +170,7 @@ public abstract class BaseDataLayoutBuilderTag extends com.liferay.taglib.util.I
 		_namespace = null;
 		_scopes = null;
 		_searchableFieldsDisabled = false;
+		_submitButtonId = null;
 	}
 
 	@Override
@@ -189,6 +198,7 @@ public abstract class BaseDataLayoutBuilderTag extends com.liferay.taglib.util.I
 		setNamespacedAttribute(request, "namespace", _namespace);
 		setNamespacedAttribute(request, "scopes", _scopes);
 		setNamespacedAttribute(request, "searchableFieldsDisabled", _searchableFieldsDisabled);
+		setNamespacedAttribute(request, "submitButtonId", _submitButtonId);
 	}
 
 	protected static final String _ATTRIBUTE_NAMESPACE = "liferay-data-engine:data-layout-builder:";
@@ -212,5 +222,6 @@ public abstract class BaseDataLayoutBuilderTag extends com.liferay.taglib.util.I
 	private java.lang.String _namespace = null;
 	private java.util.Set _scopes = null;
 	private boolean _searchableFieldsDisabled = false;
+	private java.lang.String _submitButtonId = null;
 
 }
