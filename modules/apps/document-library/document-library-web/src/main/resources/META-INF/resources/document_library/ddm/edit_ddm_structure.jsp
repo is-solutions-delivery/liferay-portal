@@ -69,7 +69,7 @@ renderResponse.setTitle(title);
 						<div class="metadata-type-button-row tbar-section text-right">
 							<aui:button cssClass="btn-sm mr-3" href="<%= redirect %>" type="cancel" />
 
-							<aui:button cssClass="btn-sm mr-3" primary="<%= true %>" type="submit" value='<%= LanguageUtil.get(request, "save") %>' />
+							<aui:button cssClass="btn-sm mr-3" id="submitButton" primary="<%= true %>" type="submit" value='<%= LanguageUtil.get(request, "save") %>' />
 						</div>
 					</li>
 				</ul>
@@ -102,6 +102,7 @@ renderResponse.setTitle(title);
 					localizable="<%= true %>"
 					namespace="<%= liferayPortletResponse.getNamespace() %>"
 					scopes='<%= SetUtil.fromCollection(Arrays.asList("document-library")) %>'
+					submitButtonId='<%= liferayPortletResponse.getNamespace() + "submitButton" %>'
 				/>
 			</clay:container-fluid>
 		</div>
