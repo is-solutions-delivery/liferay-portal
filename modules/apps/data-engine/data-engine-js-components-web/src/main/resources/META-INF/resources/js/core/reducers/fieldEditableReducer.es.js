@@ -24,6 +24,7 @@ import {PagesVisitor} from '../../utils/visitors.es';
 import {EVENT_TYPES} from '../actions/eventTypes.es';
 import {updateRulesReferences} from '../utils/rules';
 import sectionAdded from '../utils/sectionAddedHandler';
+import {enableSubmitButton} from '../utils/submitButtonController.es';
 
 export const deleteField = ({
 	clean = false,
@@ -474,6 +475,7 @@ export default (state, action, config) => {
 			const {
 				generateFieldNameUsingFieldLabel,
 				getFieldNameGenerator,
+				submitButtonId,
 			} = config;
 
 			const fieldName = FieldSupport.getField(
@@ -532,6 +534,8 @@ export default (state, action, config) => {
 				true,
 				true
 			);
+
+			enableSubmitButton(submitButtonId);
 
 			return {
 				focusedField: newFocusedField,

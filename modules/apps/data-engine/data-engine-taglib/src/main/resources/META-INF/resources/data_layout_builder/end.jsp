@@ -102,6 +102,8 @@
 				"sidebarPanels", sidebarPanels
 			).put(
 				"spritemap", themeDisplay.getPathThemeImages() + "/clay/icons.svg"
+			).put(
+				"submitButtonId", submitButtonId
 			).build()
 		%>'
 		servletContext="<%= moduleServletContext %>"

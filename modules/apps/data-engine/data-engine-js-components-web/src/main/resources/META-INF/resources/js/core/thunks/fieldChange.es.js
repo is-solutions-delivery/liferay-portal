@@ -15,6 +15,7 @@
 import {evaluate, mergePages} from '../../utils/evaluation.es';
 import {PagesVisitor} from '../../utils/visitors.es';
 import {EVENT_TYPES} from '../actions/eventTypes.es';
+import {disableSubmitButton} from '../utils/submitButtonController.es';
 
 let REVALIDATE_UPDATES = [];
 
@@ -67,6 +68,7 @@ export default function fieldChange({
 	portletNamespace,
 	properties,
 	rules,
+	submitButtonId,
 	viewMode,
 }) {
 	return async (dispatch) => {
@@ -90,6 +92,8 @@ export default function fieldChange({
 
 		if (evaluable) {
 			try {
+				disableSubmitButton(submitButtonId);
+
 				let evaluatedPages = await evaluate(fieldName, {
 					defaultLanguageId,
 					editingLanguageId,

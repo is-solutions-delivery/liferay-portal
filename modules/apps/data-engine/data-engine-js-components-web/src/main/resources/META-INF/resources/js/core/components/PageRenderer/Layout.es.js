@@ -29,7 +29,7 @@ import {VariantsContext} from './VariantsContext.es';
 export const Layout = ({components, editable, rows, viewMode}) => {
 	const {containerElement, pageIndex} = usePage();
 	const {activePage, defaultLanguageId} = useFormState();
-	const {allowNestedFields} = useConfig();
+	const {allowNestedFields, submitButtonId} = useConfig();
 
 	const createFieldChange = useEvaluate(fieldChange);
 	const dispatch = useForm();
@@ -89,6 +89,7 @@ export const Layout = ({components, editable, rows, viewMode}) => {
 										dispatch(
 											createFieldChange({
 												properties,
+												submitButtonId,
 											})
 										)
 									}
