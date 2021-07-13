@@ -223,6 +223,7 @@ export const Actions = forwardRef(
 							}),
 						...otherProps,
 					}))}
+					menuElementAttrs={{className: 'ddm-field-dropdown'}}
 					trigger={
 						<ClayButtonWithIcon
 							aria-label={Liferay.Language.get('actions')}
