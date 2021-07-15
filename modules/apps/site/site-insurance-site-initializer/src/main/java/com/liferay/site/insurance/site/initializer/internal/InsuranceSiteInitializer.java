@@ -51,7 +51,6 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
-import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
@@ -770,20 +769,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return resourcesMap;
 	}
 
-	private String _getThemeId(long companyId, String themeName) {
-		List<Theme> themes = ListUtil.filter(
-			_themeLocalService.getThemes(companyId),
-			theme -> Objects.equals(theme.getName(), themeName));
-
-		if (ListUtil.isNotEmpty(themes)) {
-			Theme theme = themes.get(0);
-
-			return theme.getThemeId();
-		}
-
-		return null;
-	}
-
 	private void _importPageDefinition(
 			Layout draftLayout, JSONObject pageDefinitionJSONObject)
 		throws Exception {
@@ -919,7 +904,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		_layoutSetLocalService.updateLookAndFeel(
 			_serviceContext.getScopeGroupId(), privateLayoutSet,
-			layoutSet.getThemeId(), layoutSet.getColorSchemeId(),
+			_SOLUTION_THEME_ID, layoutSet.getColorSchemeId(),
 			_read("/layout-set/" + type + "/css.css"));
 
 		URL logoURL = _bundle.getEntry(
@@ -966,14 +951,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			layout.setTypeSettingsProperties(unicodeProperties);
 		}
 
-		String themeId = layout.getThemeId();
-
-		String themeName = settingsJSONObject.getString("themeName");
-
-		if (Validator.isNotNull(themeName)) {
-			themeId = _getThemeId(layout.getCompanyId(), themeName);
-		}
-
 		String colorSchemeName = settingsJSONObject.getString(
 			"colorSchemeName", layout.getColorSchemeId());
 
@@ -981,7 +958,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		layout = _layoutLocalService.updateLookAndFeel(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			themeId, colorSchemeName, css);
+			_SOLUTION_THEME_ID, colorSchemeName, css);
 
 		JSONObject masterPageJSONObject = settingsJSONObject.getJSONObject(
 			"masterPage");
@@ -1010,6 +987,9 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	private static final String[] _REPLACEABLE_TOKEN_FILE_EXTENSION = {
 		".ftl", ".json", ".xml"
 	};
+
+	private static final String _SOLUTION_THEME_ID =
+		"solution_WAR_solutiontheme";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		InsuranceSiteInitializer.class);
