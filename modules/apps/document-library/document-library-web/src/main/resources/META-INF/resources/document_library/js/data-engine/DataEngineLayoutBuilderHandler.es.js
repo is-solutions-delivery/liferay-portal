@@ -42,6 +42,7 @@ export default function DataEngineLayoutBuilderHandler({namespace}) {
 			const dataLayoutBuilder = await getDataLayoutBuilder();
 
 			dataLayoutBuilder.current.dispatch({
+				submitButtonId: `${namespace}submitButton`,
 				type: 'sidebar_field_blur',
 			});
 		}

@@ -12,14 +12,19 @@
  * details.
  */
 
+import {enableSubmitButton} from 'data-engine-js-components-web';
+
 import {EVENT_TYPES} from '../eventTypes';
 
-export default (state, action) => {
+export default (state, action, config) => {
 	switch (action.type) {
-		case EVENT_TYPES.SIDEBAR.FIELD.BLUR:
+		case EVENT_TYPES.SIDEBAR.FIELD.BLUR: {
+			enableSubmitButton(config.submitButtonId);
+
 			return {
 				focusedField: {},
 			};
+		}
 		default:
 			return state;
 	}

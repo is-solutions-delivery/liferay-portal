@@ -48,6 +48,7 @@ export {PageProvider, usePage} from './core/hooks/usePage.es';
 export {useFieldTypesResource} from './core/hooks/useResource.es';
 export {elementSetAdded} from './core/thunks/elementSetAdded.es';
 export {default as sectionAdded} from './core/utils/sectionAddedHandler';
+export {enableSubmitButton} from './core/utils/submitButtonController.es';
 
 // Custom Form
 
