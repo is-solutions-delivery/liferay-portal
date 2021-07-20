@@ -594,6 +594,19 @@
 							"type": "String"
 						},
 						{
+							"defaultValue": "#F69D37",
+							"editorType": "ColorPicker",
+							"label": "tertiary",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tertiary"
+								}
+							],
+							"name": "tertiaryColor",
+							"type": "String"
+						},
+						{
 							"defaultValue": "#287d3c",
 							"editorType": "ColorPicker",
 							"label": "success",
@@ -1889,6 +1902,176 @@
 					"label": "button-outline-secondary",
 					"name": "btnOutlineSecondary"
 				},
+
+
+
+
+
+
+
+				{
+					"frontendTokens": [
+						{
+							"defaultValue": "#fff",
+							"editorType": "ColorPicker",
+							"label": "background-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-tertiary-background-color"
+								}
+							],
+							"name": "btnTertiaryBackgroundColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#cdced9",
+							"editorType": "ColorPicker",
+							"label": "border-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-tertiary-border-color"
+								}
+							],
+							"name": "btnTertiaryBorderColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#6b6c7e",
+							"editorType": "ColorPicker",
+							"label": "color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-tertiary-color"
+								}
+							],
+							"name": "btnTertiaryColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#f7f8f9",
+							"editorType": "ColorPicker",
+							"label": "hover-background-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-tertiary-hover-background-color"
+								}
+							],
+							"name": "btnTertiaryHoverBackgroundColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#cdced9",
+							"editorType": "ColorPicker",
+							"label": "hover-border-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-tertiary-hover-border-color"
+								}
+							],
+							"name": "btnTertiaryHoverBorderColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#272833",
+							"editorType": "ColorPicker",
+							"label": "hover-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-tertiary-hover-color"
+								}
+							],
+							"name": "btnTertiaryHoverColor",
+							"type": "String"
+						}
+					],
+					"label": "button-tertiary",
+					"name": "btnTertiary"
+				},
+
+				{
+					"frontendTokens": [
+						{
+							"defaultValue": "#cdced9",
+							"editorType": "ColorPicker",
+							"label": "border-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-outline-tertiary-border-color"
+								}
+							],
+							"name": "btnOutlinetertiaryBorderColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#6b6c7e",
+							"editorType": "ColorPicker",
+							"label": "color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-outline-tertiary-color"
+								}
+							],
+							"name": "btnOutlinetertiaryColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "rgba(39, 40, 51, 0.03)",
+							"editorType": "ColorPicker",
+							"label": "hover-background-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-outline-tertiary-hover-background-color"
+								}
+							],
+							"name": "btnOutlinetertiaryHoverBackgroundColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "transparent",
+							"editorType": "ColorPicker",
+							"label": "hover-border-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-outline-tertiary-hover-border-color"
+								}
+							],
+							"name": "btnOutlinetertiaryHoverBorderColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#272833",
+							"editorType": "ColorPicker",
+							"label": "hover-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "btn-outline-tertiary-hover-color"
+								}
+							],
+							"name": "btnOutlinetertiaryHoverColor",
+							"type": "String"
+						}
+					],
+					"label": "button-outline-tertiary",
+					"name": "btnOutlinetertiary"
+				},
+
+
+
+
+
+
+
 				{
 					"frontendTokens": [
 						{
