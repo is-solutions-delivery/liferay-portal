@@ -286,6 +286,11 @@
 			<message key="name.invalidConstantPattern" value="{0} constant ''{1}'' must match pattern ''{2}''" />
 			<message key="name.invalidConstantTypePattern" value="{0} constant ''{1}'' of type ''{2}'' must match pattern ''{3}''" />
 		</module>
+		<module name="com.liferay.source.formatter.checkstyle.checks.ConstructorGlobalVariableDeclarationCheck">
+			<property name="category" value="Performance" />
+			<property name="description" value="Checks that initial values of global variables are not set in the constructor." />
+			<message key="global.variable.value.declare" value="Set the value of ''{0}'' when declaring the variable on line ''{1}''" />
+		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.ConstructorMissingEmptyLineCheck">
 			<property name="category" value="Styling" />
 			<property name="description" value="Checks for line breaks when assiging variables in constructor." />
