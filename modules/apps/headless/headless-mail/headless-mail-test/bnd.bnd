@@ -1,0 +1,4 @@
+Bundle-Name: headless-mail-test
+Bundle-SymbolicName: headless.mail.test
+Bundle-Version: 1.0.0
+-includeresource: headless.mail.client.jar=../headless-mail-client/build/libs/headless.mail.client-1.0.0.jar;lib:=true

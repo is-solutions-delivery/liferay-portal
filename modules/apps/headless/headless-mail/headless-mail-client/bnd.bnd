@@ -1,0 +1,3 @@
+Bundle-Name: headless-mail-client
+Bundle-SymbolicName: headless.mail.client
+Bundle-Version: 1.0.0

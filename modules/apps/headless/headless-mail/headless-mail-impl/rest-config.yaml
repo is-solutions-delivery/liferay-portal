@@ -1,0 +1,9 @@
+apiDir: "../headless-mail-api/src/main/java"
+apiPackagePath: "headless.mail"
+application:
+    baseURI: "/headless-mail"
+    className: "HeadlessMailApplication"
+    name: "HeadlessMail"
+author: "José Abelenda"
+clientDir: "../headless-mail-client/src/main/java"
+testDir: "../headless-mail-test/src/testIntegration/java"

@@ -1,0 +1,6 @@
+Bundle-Name: headless-mail-api
+Bundle-SymbolicName: headless.mail.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	headless.mail.dto.v1_0,\
+	headless.mail.resource.v1_0

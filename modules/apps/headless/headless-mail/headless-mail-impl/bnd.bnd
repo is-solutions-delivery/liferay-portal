@@ -1,0 +1,3 @@
+Bundle-Name: headless-mail-impl
+Bundle-SymbolicName: headless.mail.impl
+Bundle-Version: 1.0.0
