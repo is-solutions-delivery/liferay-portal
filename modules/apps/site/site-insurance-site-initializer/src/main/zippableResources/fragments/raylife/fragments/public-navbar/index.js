@@ -1,11 +1,18 @@
-const dropdownButton = fragmentElement.querySelector('.dropdown-toggle');
-const dropdownMenu = fragmentElement.querySelector('.dropdown-menu');
+const checkbox = fragmentElement.querySelector('#togBtn'); 
+const sliderBefore = fragmentElement.querySelector('.public-site-navbar .switch .slider'); 
+const sliderOn = fragmentElement.querySelector('.public-site-navbar .switch .slider .on'); 
+const sliderOff = fragmentElement.querySelector('.public-site-navbar .switch .slider .off'); 
 
-dropdownButton.addEventListener('click', function () {
-	dropdownMenu.classList.toggle('show');
+function changeBeforeText(checked) {
+	if(checked) {
+		sliderBefore.setAttribute('data-content', sliderOn.firstChild.nodeValue);
+	} else {
+		sliderBefore.setAttribute('data-content', sliderOff.firstChild.nodeValue);
+	}
+}
 
-	dropdownButton.setAttribute(
-		'aria-expanded',
-		dropdownMenu.classList.contains('show').toString()
-	);
+changeBeforeText(checkbox.checked);
+
+checkbox.addEventListener('click', function (event) {
+	changeBeforeText(event.target.checked);
 });
