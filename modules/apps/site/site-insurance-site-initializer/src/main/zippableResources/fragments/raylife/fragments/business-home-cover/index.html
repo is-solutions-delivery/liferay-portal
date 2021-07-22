@@ -14,10 +14,12 @@
 					>We partner with your business.</span
 				>
 			</div>
+
 			<form class="d-flex">
-				<div id="new-quote" class="d-none">
+				<div class="d-none" id="new-quote">
 					<div class="business-email-delivered d-none">
 						<h2>Welcome Back, {name}!</h2>
+
 						<p>
 							We just sent a link to <strong>{email}</strong> to
 							continue your quote.
@@ -32,29 +34,32 @@
 								>Email Address</label
 							>
 							<input
+								class="rounded px-3 border"
 								id="email"
 								name="email"
 								type="text"
-								class="rounded px-3 border"
 							/>
 						</div>
 
 						<button
-							id="continue-quote"
 							class="btn btn-sm btn-primary border border-0"
+							id="continue-quote"
 							type="button"
 						>
 							Continue Quote
 						</button>
 					</div>
+
 					<p class="mt-4">
 						<span
 							class="business-home-cover-link"
 							data-lfr-editable-id="business-home-cover-link01"
 							data-lfr-editable-type="text"
 							>First time here?
-						</span>
-						<a id="new-quote-button" href="#">
+						</span
+						>
+
+						<a href="#" id="new-quote-button">
 							<span
 								data-lfr-editable-id="business-home-cover-link11"
 								data-lfr-editable-type="text"
@@ -64,7 +69,7 @@
 					</p>
 				</div>
 
-				<div id="retrieve-quote" class="position-relative">
+				<div class="position-relative" id="retrieve-quote">
 					<div class="d-flex">
 						<div class="d-flex">
 							<label
@@ -73,12 +78,12 @@
 								>Zip</label
 							>
 							<input
+								class="rounded px-3 border"
 								id="zip"
+								maxlength="5"
 								name="zip"
 								placeholder="Zip"
 								type="text"
-								class="rounded px-3 border"
-								maxlength="5"
 							/>
 						</div>
 
@@ -97,21 +102,25 @@
 									xlink:href="http://localhost:8080/o/admin-theme/images/clay/icons.svg#caret-bottom"
 								/>
 							</svg>
+
 							<select
+								class="rounded px-3 border bg-white"
 								id="product"
 								name="product"
-								class="rounded px-3 border bg-white"
 							>
 								<option value="volvo">
 									Business Owners Policy
 								</option>
+
 								<option value="saab">Option Example 1</option>
 								<option value="mercedes">
 									Option Example 2
 								</option>
+
 								<option value="audi">Option Example 3</option>
 							</select>
 						</div>
+
 						<a
 							class="btn btn-sm btn-primary border border-0"
 							data-lfr-editable-id="action-button"
@@ -120,9 +129,9 @@
 							role="button"
 						>
 							<span
+								class="action-button-text font-weight-bold d-flex align-items-center"
 								data-lfr-editable-id="business-home-cover-button-text"
 								data-lfr-editable-type="text"
-								class="action-button-text font-weight-bold d-flex align-items-center"
 							>
 								GET A QUOTE
 								<svg
@@ -144,8 +153,10 @@
 							data-lfr-editable-id="business-home-cover-link"
 							data-lfr-editable-type="text"
 							>Already started?
-						</span>
-						<a id="retrieve-quote-button" href="#">
+						</span
+						>
+
+						<a href="#" id="retrieve-quote-button">
 							<span
 								data-lfr-editable-id="business-home-cover-link2"
 								data-lfr-editable-type="text"
@@ -156,6 +167,7 @@
 				</div>
 			</form>
 		</div>
+
 		<div>
 			<img
 				alt=""
