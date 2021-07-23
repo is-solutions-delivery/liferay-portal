@@ -1,0 +1,17 @@
+.template {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  gap: 3rem;
+  padding: 2rem;
+
+  .title-area {
+    margin-left: calc(200px + 2rem);
+  }
+
+  .form-area {
+    display: grid;
+    grid-template-columns: 200px minmax(auto, 700px) auto;
+    gap: 2rem;
+  }
+}
