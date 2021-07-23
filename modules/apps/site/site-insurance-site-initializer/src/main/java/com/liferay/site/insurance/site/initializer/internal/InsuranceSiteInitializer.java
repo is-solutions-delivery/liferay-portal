@@ -43,6 +43,11 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
+import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -68,6 +73,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -97,10 +103,12 @@ import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 
 import java.io.File;
+import java.io.Serializable;
 
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -265,6 +273,8 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 			_updateLayoutSetLookAndFeel("private");
 			_updateLayoutSetLookAndFeel("public");
+
+			_addSampleObjectDefinition();
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);
@@ -696,6 +706,81 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 	}
 
+	private void _addSampleObjectDefinition() throws Exception {
+		List<Company> companies = _companyLocalService.getCompanies();
+
+		if (companies.size() != 1) {
+			return;
+		}
+
+		Company company = companies.get(0);
+
+		User user = _userLocalService.fetchUserByEmailAddress(
+			company.getCompanyId(), "test@liferay.com");
+
+		if (user == null) {
+			return;
+		}
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				company.getCompanyId(), "C_RaylifeApplication");
+
+		if (objectDefinition != null) {
+			return;
+		}
+
+		objectDefinition =
+			_objectDefinitionLocalService.addCustomObjectDefinition(
+				user.getUserId(), "RaylifeApplication",
+				Arrays.asList(
+					_createObjectField("address", "String"),
+					_createObjectField("addressApt", "String"),
+					_createObjectField("city", "String"),
+					_createObjectField("email", "String"),
+					_createObjectField("firstName", "String"),
+					_createObjectField("lastName", "String"),
+					_createObjectField("phone", "String"),
+					_createObjectField("state", "String"),
+					_createObjectField("website", "String"),
+					_createObjectField("zip", "String")));
+
+		ObjectDefinition objectDefinitionPublished =
+			_objectDefinitionLocalService.publishCustomObjectDefinition(
+				user.getUserId(), objectDefinition.getObjectDefinitionId());
+
+		TransactionCommitCallbackUtil.registerCallback(
+			() -> {
+				_objectEntryLocalService.addObjectEntry(
+					user.getUserId(), 0,
+					objectDefinitionPublished.getObjectDefinitionId(),
+					HashMapBuilder.<String, Serializable>put(
+						"address", "1400 Montefino Ave"
+					).put(
+						"addressApt", "123"
+					).put(
+						"city", "Diamond Bar"
+					).put(
+						"email", "test@liferay.com"
+					).put(
+						"firstName", "John"
+					).put(
+						"lastName", "Simon"
+					).put(
+						"phone", "+1 222-333-444"
+					).put(
+						"state", "CA"
+					).put(
+						"website", "mysite.com"
+					).put(
+						"zip", "91765"
+					).build(),
+					new ServiceContext());
+
+				return null;
+			});
+	}
+
 	private void _addSiteNavigationMenus() throws Exception {
 		_layoutsSiteNavigationMenuMap = new HashMap<>();
 		_siteNavigationMenuMap = new HashMap<>();
@@ -774,6 +859,25 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 				StringUtil.removeSubstring(url.getPath(), _PATH),
 				url.openStream());
 		}
+	}
+
+	private ObjectField _createObjectField(
+		boolean indexed, boolean indexedAsKeyword, String indexedLanguageId,
+		String name, String type) {
+
+		ObjectField objectField = _objectFieldLocalService.createObjectField(0);
+
+		objectField.setIndexed(indexed);
+		objectField.setIndexedAsKeyword(indexedAsKeyword);
+		objectField.setIndexedLanguageId(indexedLanguageId);
+		objectField.setName(name);
+		objectField.setType(type);
+
+		return objectField;
+	}
+
+	private ObjectField _createObjectField(String name, String type) {
+		return _createObjectField(true, false, null, name, type);
 	}
 
 	private void _createServiceContext(long groupId) throws Exception {
@@ -1216,6 +1320,15 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	private LayoutSetLocalService _layoutSetLocalService;
 
 	private Map<String, List<SiteNavigationMenu>> _layoutsSiteNavigationMenuMap;
+
+	@Reference
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference
+	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Reference
+	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
 	private Portal _portal;
