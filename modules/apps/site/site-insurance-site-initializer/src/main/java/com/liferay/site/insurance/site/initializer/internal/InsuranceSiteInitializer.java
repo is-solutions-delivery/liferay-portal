@@ -159,91 +159,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return _servletContext.getContextPath() + "/images/thumbnail.png";
 	}
 
-	public void importAssetCategories() throws Exception {
-		Group group = _serviceContext.getScopeGroup();
-
-		String assetVocabularyName = group.getName(_serviceContext.getLocale());
-
-		Company company = _companyLocalService.getCompany(
-			_serviceContext.getCompanyId());
-
-		long scopeGroupId = company.getGroupId();
-
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
-			_read("/asset-categories/asset-categories.json"));
-
-		User user = _userLocalService.getUser(_serviceContext.getUserId());
-
-		ServiceContext serviceContext = new ServiceContext();
-
-		serviceContext.setAddGuestPermissions(false);
-		serviceContext.setCompanyId(user.getCompanyId());
-		serviceContext.setScopeGroupId(scopeGroupId);
-		serviceContext.setUserId(user.getUserId());
-
-		AssetVocabulary assetVocabulary = _addAssetVocabulary(
-			assetVocabularyName, serviceContext);
-
-		for (int i = 0; i < jsonArray.length(); i++) {
-			String titleCategory = null;
-			JSONArray subcategoriesJSONArray = null;
-
-			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
-
-			if (categoryJSONObject != null) {
-				titleCategory = categoryJSONObject.getString("title");
-
-				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
-					"subcategories");
-			}
-			else {
-				titleCategory = jsonArray.getString(i);
-			}
-
-			AssetCategory assetCategory = _addAssetCategory(
-				assetVocabulary.getVocabularyId(), new String[0], null,
-				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
-				serviceContext, titleCategory);
-
-			if (subcategoriesJSONArray != null) {
-				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
-					JSONObject subcategoryJSONObject =
-						subcategoriesJSONArray.getJSONObject(y);
-
-					String descriptionSubcategory =
-						subcategoryJSONObject.getString("description");
-
-					String titleSubcategory = subcategoryJSONObject.getString(
-						"title");
-
-					JSONArray propertiesJSONArray =
-						subcategoryJSONObject.getJSONArray("properties");
-
-					String[] properties =
-						new String[propertiesJSONArray.length()];
-
-					for (int x = 0; x < propertiesJSONArray.length(); x++) {
-						JSONObject propertyJSONObject =
-							propertiesJSONArray.getJSONObject(x);
-
-						String key = propertyJSONObject.getString("key");
-						String value = propertyJSONObject.getString("value");
-
-						properties[x] = StringBundler.concat(
-							key,
-							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
-							value);
-					}
-
-					_addAssetCategory(
-						assetVocabulary.getVocabularyId(), properties,
-						descriptionSubcategory, assetCategory.getCategoryId(),
-						serviceContext, titleSubcategory);
-				}
-			}
-		}
-	}
-
 	@Override
 	public void initialize(long groupId) throws InitializationException {
 		try {
@@ -255,7 +170,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 			_addDDMTemplates();
 
-			importAssetCategories();
+			_importAssetCategories();
 
 			_addJournalArticles(_addJournalFolders());
 
@@ -1025,6 +940,91 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 
 		return resourcesMap;
+	}
+
+	private void _importAssetCategories() throws Exception {
+		Group group = _serviceContext.getScopeGroup();
+
+		String assetVocabularyName = group.getName(_serviceContext.getLocale());
+
+		Company company = _companyLocalService.getCompany(
+			_serviceContext.getCompanyId());
+
+		long scopeGroupId = company.getGroupId();
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+			_read("/asset-categories/asset-categories.json"));
+
+		User user = _userLocalService.getUser(_serviceContext.getUserId());
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAddGuestPermissions(false);
+		serviceContext.setCompanyId(user.getCompanyId());
+		serviceContext.setScopeGroupId(scopeGroupId);
+		serviceContext.setUserId(user.getUserId());
+
+		AssetVocabulary assetVocabulary = _addAssetVocabulary(
+			assetVocabularyName, serviceContext);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			String titleCategory = null;
+			JSONArray subcategoriesJSONArray = null;
+
+			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
+
+			if (categoryJSONObject != null) {
+				titleCategory = categoryJSONObject.getString("title");
+
+				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
+					"subcategories");
+			}
+			else {
+				titleCategory = jsonArray.getString(i);
+			}
+
+			AssetCategory assetCategory = _addAssetCategory(
+				assetVocabulary.getVocabularyId(), new String[0], null,
+				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
+				serviceContext, titleCategory);
+
+			if (subcategoriesJSONArray != null) {
+				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
+					JSONObject subcategoryJSONObject =
+						subcategoriesJSONArray.getJSONObject(y);
+
+					String descriptionSubcategory =
+						subcategoryJSONObject.getString("description");
+
+					String titleSubcategory = subcategoryJSONObject.getString(
+						"title");
+
+					JSONArray propertiesJSONArray =
+						subcategoryJSONObject.getJSONArray("properties");
+
+					String[] properties =
+						new String[propertiesJSONArray.length()];
+
+					for (int x = 0; x < propertiesJSONArray.length(); x++) {
+						JSONObject propertyJSONObject =
+							propertiesJSONArray.getJSONObject(x);
+
+						String key = propertyJSONObject.getString("key");
+						String value = propertyJSONObject.getString("value");
+
+						properties[x] = StringBundler.concat(
+							key,
+							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
+							value);
+					}
+
+					_addAssetCategory(
+						assetVocabulary.getVocabularyId(), properties,
+						descriptionSubcategory, assetCategory.getCategoryId(),
+						serviceContext, titleSubcategory);
+				}
+			}
+		}
 	}
 
 	private void _importPageDefinition(
