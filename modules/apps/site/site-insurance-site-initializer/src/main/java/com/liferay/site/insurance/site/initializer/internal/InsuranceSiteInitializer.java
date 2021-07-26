@@ -22,12 +22,29 @@ import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
+import com.liferay.commerce.account.constants.CommerceAccountConstants;
+import com.liferay.commerce.account.util.CommerceAccountRoleHelper;
+import com.liferay.commerce.currency.model.CommerceCurrency;
+import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
+import com.liferay.commerce.initializer.util.CPDefinitionsImporter;
+import com.liferay.commerce.initializer.util.CommerceInventoryWarehousesImporter;
+import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
+import com.liferay.commerce.product.constants.CommerceChannelConstants;
+import com.liferay.commerce.product.importer.CPFileImporter;
+import com.liferay.commerce.product.model.CPDefinition;
+import com.liferay.commerce.product.model.CommerceCatalog;
+import com.liferay.commerce.product.model.CommerceChannel;
+import com.liferay.commerce.product.service.CPDefinitionLinkLocalService;
+import com.liferay.commerce.product.service.CPMeasurementUnitLocalService;
+import com.liferay.commerce.product.service.CommerceCatalogLocalService;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
+import com.liferay.external.reference.service.ERAssetCategoryLocalService;
 import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
@@ -52,6 +69,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -59,9 +77,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
@@ -69,9 +90,17 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.permission.ModelPermissions;
+import com.liferay.portal.kernel.service.permission.ModelPermissionsFactory;
+import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
+import com.liferay.portal.kernel.settings.ModifiableSettings;
+import com.liferay.portal.kernel.settings.Settings;
+import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -159,6 +188,114 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return _servletContext.getContextPath() + "/images/thumbnail.png";
 	}
 
+	public List<AssetCategory> _importAssetCategories() throws Exception {
+		Group group = _serviceContext.getScopeGroup();
+
+		String assetVocabularyName = group.getName(_serviceContext.getLocale());
+
+		Company company = _companyLocalService.getCompany(
+			_serviceContext.getCompanyId());
+
+		long scopeGroupId = company.getGroupId();
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+			_read("/asset-categories/asset-categories.json"));
+
+		User user = _userLocalService.getUser(_serviceContext.getUserId());
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAddGuestPermissions(false);
+		serviceContext.setCompanyId(user.getCompanyId());
+		serviceContext.setScopeGroupId(scopeGroupId);
+		serviceContext.setUserId(user.getUserId());
+
+		AssetVocabulary assetVocabulary = _addAssetVocabulary(
+			assetVocabularyName, serviceContext);
+
+		List<AssetCategory> assetCategories = new ArrayList<>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			String titleCategory = null;
+			String externalReferenceCodeCategory = null;
+			JSONArray subcategoriesJSONArray = null;
+
+			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
+
+			if (categoryJSONObject != null) {
+				titleCategory = categoryJSONObject.getString("title");
+
+				externalReferenceCodeCategory = categoryJSONObject.getString(
+					"externalReferenceCode");
+
+				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
+					"subcategories");
+			}
+			else {
+				titleCategory = jsonArray.getString(i);
+			}
+
+			AssetCategory assetCategory1 = _addAssetCategory(
+				assetVocabulary.getVocabularyId(), new String[0], null,
+				externalReferenceCodeCategory,
+				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
+				serviceContext, titleCategory);
+
+			assetCategories.add(assetCategory1);
+
+			if (subcategoriesJSONArray != null) {
+				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
+					JSONObject subcategoryJSONObject =
+						subcategoriesJSONArray.getJSONObject(y);
+
+					String descriptionSubcategory =
+						subcategoryJSONObject.getString("description");
+
+					String titleSubcategory = subcategoryJSONObject.getString(
+						"title");
+
+					String externalReferenceCodeSubcategory =
+						subcategoryJSONObject.getString(
+							"externalReferenceCode");
+
+					JSONArray propertiesJSONArray =
+						subcategoryJSONObject.getJSONArray("properties");
+
+					String[] properties =
+						new String[propertiesJSONArray.length()];
+
+					for (int x = 0; x < propertiesJSONArray.length(); x++) {
+						JSONObject propertyJSONObject =
+							propertiesJSONArray.getJSONObject(x);
+
+						String key = propertyJSONObject.getString("key");
+						String value = propertyJSONObject.getString("value");
+
+						properties[x] = StringBundler.concat(
+							key,
+							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
+							value);
+					}
+
+					AssetCategory assetCategory2 = _addAssetCategory(
+						assetVocabulary.getVocabularyId(), properties,
+						descriptionSubcategory,
+						externalReferenceCodeSubcategory,
+						assetCategory1.getCategoryId(), serviceContext,
+						titleSubcategory);
+
+					assetCategories.add(assetCategory2);
+				}
+			}
+		}
+
+		return assetCategories;
+	}
+
+	public void init() {
+		_cpDefinitions = new HashMap<>();
+	}
+
 	@Override
 	public void initialize(long groupId) throws InitializationException {
 		try {
@@ -171,6 +308,8 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_addDDMTemplates();
 
 			_importAssetCategories();
+
+			List<AssetCategory> assetCategories = _importAssetCategories();
 
 			_addJournalArticles(_addJournalFolders());
 
@@ -190,6 +329,26 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_updateLayoutSetLookAndFeel("public");
 
 			_addSampleObjectDefinition();
+
+			CommerceCatalog commerceCatalog = _createCatalog(_serviceContext);
+
+			long catalogGroupId = commerceCatalog.getGroupId();
+
+			CommerceChannel commerceChannel = _createChannel(
+				commerceCatalog, _serviceContext);
+
+			_createRoles(
+				_serviceContext, commerceChannel.getCommerceChannelId());
+
+			_configureB2BSite(commerceChannel.getGroupId(), _serviceContext);
+
+			List<CommerceInventoryWarehouse> commerceInventoryWarehouses =
+				_importCommerceInventoryWarehouses(_serviceContext);
+
+			_importCPDefinitions(
+				assetCategories, catalogGroupId,
+				commerceChannel.getCommerceChannelId(),
+				commerceInventoryWarehouses, _serviceContext);
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);
@@ -205,13 +364,14 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		init();
 		_bundle = bundleContext.getBundle();
 	}
 
 	private AssetCategory _addAssetCategory(
 			long assetVocabularyId, String[] categoryProperties,
-			String description, long parentCategoryId,
-			ServiceContext serviceContext, String title)
+			String description, String externalReferenceCode,
+			long parentCategoryId, ServiceContext serviceContext, String title)
 		throws Exception {
 
 		AssetCategory assetCategory = _assetCategoryLocalService.fetchCategory(
@@ -229,10 +389,11 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 					LocaleUtil.getSiteDefault(), description);
 			}
 
-			assetCategory = _assetCategoryLocalService.addCategory(
-				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-				parentCategoryId, titleMap, descriptionMap, assetVocabularyId,
-				categoryProperties, serviceContext);
+			assetCategory = _erAssetCategoryLocalService.addOrUpdateCategory(
+				externalReferenceCode, serviceContext.getUserId(),
+				serviceContext.getScopeGroupId(), parentCategoryId, titleMap,
+				descriptionMap, assetVocabularyId, categoryProperties,
+				serviceContext);
 		}
 
 		return assetCategory;
@@ -793,6 +954,74 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	private ObjectField _createObjectField(String name, String type) {
 		return _createObjectField(true, false, null, name, type);
+	private void _configureB2BSite(long groupId, ServiceContext serviceContext)
+		throws Exception {
+
+		Group group = _groupLocalService.getGroup(groupId);
+
+		group.setType(GroupConstants.TYPE_SITE_PRIVATE);
+		group.setManualMembership(true);
+		group.setMembershipRestriction(
+			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION);
+
+		_groupLocalService.updateGroup(group);
+
+		_commerceCurrencyLocalService.importDefaultValues(serviceContext);
+		_cpMeasurementUnitLocalService.importDefaultValues(serviceContext);
+
+		_commerceAccountRoleHelper.checkCommerceAccountRoles(serviceContext);
+
+		Settings settings = _settingsFactory.getSettings(
+			new GroupServiceSettingsLocator(
+				groupId, CommerceAccountConstants.SERVICE_NAME));
+
+		ModifiableSettings modifiableSettings =
+			settings.getModifiableSettings();
+
+		modifiableSettings.setValue(
+			"commerceSiteType",
+			String.valueOf(CommerceAccountConstants.SITE_TYPE_B2B));
+
+		modifiableSettings.store();
+	}
+
+	private CommerceCatalog _createCatalog(ServiceContext serviceContext)
+		throws Exception {
+
+		Group group = serviceContext.getScopeGroup();
+
+		CommerceCurrency commerceCurrency =
+			_commerceCurrencyLocalService.fetchPrimaryCommerceCurrency(
+				serviceContext.getCompanyId());
+
+		return _commerceCatalogLocalService.addCommerceCatalog(
+			StringPool.BLANK, group.getName(serviceContext.getLanguageId()),
+			commerceCurrency.getCode(), serviceContext.getLanguageId(),
+			serviceContext);
+	}
+
+	private CommerceChannel _createChannel(
+			CommerceCatalog commerceCatalog, ServiceContext serviceContext)
+		throws Exception {
+
+		Group group = serviceContext.getScopeGroup();
+
+		return _commerceChannelLocalService.addCommerceChannel(
+			StringPool.BLANK, group.getGroupId(),
+			group.getName(serviceContext.getLanguageId()) + " Portal",
+			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
+			commerceCatalog.getCommerceCurrencyCode(), serviceContext);
+	}
+
+	private void _createRoles(
+			ServiceContext serviceContext, long commerceChannelId)
+		throws Exception {
+
+		_cpFileImporter.createRoles(
+			_getJSONArray("/roles.json"), serviceContext);
+
+		_updateUserRole(serviceContext);
+		_updateOperationManagerRole(serviceContext, commerceChannelId);
 	}
 
 	private void _createServiceContext(long groupId) throws Exception {
@@ -909,6 +1138,10 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return fileEntriesMap;
 	}
 
+	private JSONArray _getJSONArray(String name) throws Exception {
+		return _jsonFactory.createJSONArray(_read(name));
+	}
+
 	private String _getPrivateFriendlyURL(String layoutName) throws Exception {
 		Group scopeGroup = _serviceContext.getScopeGroup();
 
@@ -942,89 +1175,46 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return resourcesMap;
 	}
 
-	private void _importAssetCategories() throws Exception {
-		Group group = _serviceContext.getScopeGroup();
+	private List<CommerceInventoryWarehouse> _importCommerceInventoryWarehouses(
+			ServiceContext serviceContext)
+		throws Exception {
 
-		String assetVocabularyName = group.getName(_serviceContext.getLocale());
+		return _commerceInventoryWarehousesImporter.
+			importCommerceInventoryWarehouses(
+				_getJSONArray("/warehouses.json"),
+				serviceContext.getScopeGroupId(), serviceContext.getUserId());
+	}
 
-		Company company = _companyLocalService.getCompany(
-			_serviceContext.getCompanyId());
+	private List<CPDefinition> _importCPDefinitions(
+			List<AssetCategory> assetCategories, long catalogGroupId,
+			long commerceChannelId,
+			List<CommerceInventoryWarehouse> commerceInventoryWarehouses,
+			ServiceContext serviceContext)
+		throws Exception {
 
-		long scopeGroupId = company.getGroupId();
-
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
-			_read("/asset-categories/asset-categories.json"));
-
-		User user = _userLocalService.getUser(_serviceContext.getUserId());
-
-		ServiceContext serviceContext = new ServiceContext();
-
-		serviceContext.setAddGuestPermissions(false);
-		serviceContext.setCompanyId(user.getCompanyId());
-		serviceContext.setScopeGroupId(scopeGroupId);
-		serviceContext.setUserId(user.getUserId());
-
-		AssetVocabulary assetVocabulary = _addAssetVocabulary(
-			assetVocabularyName, serviceContext);
+		JSONArray jsonArray = _getJSONArray("/products.json");
 
 		for (int i = 0; i < jsonArray.length(); i++) {
-			String titleCategory = null;
-			JSONArray subcategoriesJSONArray = null;
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
+			String externalReferenceCode = jsonObject.getString(
+				"ExternalReferenceCode");
 
-			if (categoryJSONObject != null) {
-				titleCategory = categoryJSONObject.getString("title");
+			String newExternalReferenceCode = externalReferenceCode + KEY;
 
-				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
-					"subcategories");
-			}
-			else {
-				titleCategory = jsonArray.getString(i);
-			}
-
-			AssetCategory assetCategory = _addAssetCategory(
-				assetVocabulary.getVocabularyId(), new String[0], null,
-				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
-				serviceContext, titleCategory);
-
-			if (subcategoriesJSONArray != null) {
-				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
-					JSONObject subcategoryJSONObject =
-						subcategoriesJSONArray.getJSONObject(y);
-
-					String descriptionSubcategory =
-						subcategoryJSONObject.getString("description");
-
-					String titleSubcategory = subcategoryJSONObject.getString(
-						"title");
-
-					JSONArray propertiesJSONArray =
-						subcategoryJSONObject.getJSONArray("properties");
-
-					String[] properties =
-						new String[propertiesJSONArray.length()];
-
-					for (int x = 0; x < propertiesJSONArray.length(); x++) {
-						JSONObject propertyJSONObject =
-							propertiesJSONArray.getJSONObject(x);
-
-						String key = propertyJSONObject.getString("key");
-						String value = propertyJSONObject.getString("value");
-
-						properties[x] = StringBundler.concat(
-							key,
-							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
-							value);
-					}
-
-					_addAssetCategory(
-						assetVocabulary.getVocabularyId(), properties,
-						descriptionSubcategory, assetCategory.getCategoryId(),
-						serviceContext, titleSubcategory);
-				}
-			}
+			jsonObject.put("ExternalReferenceCode", newExternalReferenceCode);
 		}
+
+		long[] commerceInventoryWarehouseIds = ListUtil.toLongArray(
+			commerceInventoryWarehouses,
+			CommerceInventoryWarehouse.
+				COMMERCE_INVENTORY_WAREHOUSE_ID_ACCESSOR);
+
+		return _cpDefinitionsImporter.importCPDefinitions(
+			jsonArray, assetCategories, catalogGroupId, commerceChannelId,
+			commerceInventoryWarehouseIds,
+			InsuranceSiteInitializer.class.getClassLoader(), _PATH + "/images/",
+			serviceContext.getScopeGroupId(), serviceContext.getUserId());
 	}
 
 	private void _importPageDefinition(
@@ -1239,6 +1429,35 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return layout;
 	}
 
+	private void _updateOperationManagerRole(
+			ServiceContext serviceContext, long commerceChannelId)
+		throws Exception {
+
+		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
+			HashMapBuilder.put(
+				"Operations Manager", new String[] {"VIEW"}
+			).build(),
+			null);
+
+		_resourcePermissionLocalService.addModelResourcePermissions(
+			serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),
+			serviceContext.getUserId(), CommerceChannel.class.getName(),
+			String.valueOf(commerceChannelId), modelPermissions);
+	}
+
+	private void _updateUserRole(ServiceContext serviceContext)
+		throws Exception {
+
+		Role role = _roleLocalService.fetchRole(
+			serviceContext.getCompanyId(), "User");
+
+		_resourcePermissionLocalService.addResourcePermission(
+			serviceContext.getCompanyId(), "com.liferay.commerce.product",
+			ResourceConstants.SCOPE_GROUP_TEMPLATE,
+			String.valueOf(GroupConstants.DEFAULT_PARENT_GROUP_ID),
+			role.getRoleId(), "VIEW_PRICE");
+	}
+
 	private static final String _PATH =
 		"com/liferay/site/insurance/site/initializer/internal/dependencies";
 
@@ -1268,7 +1487,37 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	private Bundle _bundle;
 
 	@Reference
+	private CommerceAccountRoleHelper _commerceAccountRoleHelper;
+
+	@Reference
+	private CommerceCatalogLocalService _commerceCatalogLocalService;
+
+	@Reference
+	private CommerceChannelLocalService _commerceChannelLocalService;
+
+	@Reference
+	private CommerceCurrencyLocalService _commerceCurrencyLocalService;
+
+	@Reference
+	private CommerceInventoryWarehousesImporter
+		_commerceInventoryWarehousesImporter;
+
+	@Reference
 	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private CPDefinitionLinkLocalService _cpDefinitionLinkLocalService;
+
+	private Map<String, CPDefinition> _cpDefinitions;
+
+	@Reference
+	private CPDefinitionsImporter _cpDefinitionsImporter;
+
+	@Reference
+	private CPFileImporter _cpFileImporter;
+
+	@Reference
+	private CPMeasurementUnitLocalService _cpMeasurementUnitLocalService;
 
 	@Reference
 	private DDMStructureLocalService _ddmStructureLocalService;
@@ -1281,6 +1530,9 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	@Reference
 	private DLURLHelper _dlURLHelper;
+
+	@Reference
+	private ERAssetCategoryLocalService _erAssetCategoryLocalService;
 
 	private List<FileEntry> _fileEntries;
 
@@ -1295,6 +1547,9 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	@Reference
 	private JournalFolderLocalService _journalFolderLocalService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private LayoutCopyHelper _layoutCopyHelper;
@@ -1333,12 +1588,21 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	@Reference
 	private Portal _portal;
 
+	@Reference
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
+
 	private ServiceContext _serviceContext;
 
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.site.insurance.site.initializer)"
 	)
 	private ServletContext _servletContext;
+
+	@Reference
+	private SettingsFactory _settingsFactory;
 
 	@Reference
 	private SiteNavigationMenuItemLocalService
