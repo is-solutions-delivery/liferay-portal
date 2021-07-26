@@ -77,15 +77,20 @@ public class AddLayoutPrototypeMVCActionCommand extends BaseMVCActionCommand {
 
 		String name = ParamUtil.getString(actionRequest, "name");
 
-		Map<Locale, String> nameMap = HashMapBuilder.put(
-			themeDisplay.getSiteDefaultLocale(), name
-		).build();
-
 		Locale defaultLocale = LocaleUtil.getDefault();
 
-		if (themeDisplay.getSiteDefaultLocale() != defaultLocale) {
-			nameMap.put(defaultLocale, name);
-		}
+		Map<Locale, String> nameMap = HashMapBuilder.put(
+			themeDisplay.getSiteDefaultLocale(), name
+		).put(
+			defaultLocale,
+			() -> {
+				if (themeDisplay.getSiteDefaultLocale() != defaultLocale) {
+					return name;
+				}
+
+				return null;
+			}
+		).build();
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			LayoutPrototype.class.getName(), actionRequest);

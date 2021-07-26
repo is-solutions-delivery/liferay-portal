@@ -63,52 +63,59 @@ public class MBMailUtil {
 			"[$FROM_ADDRESS$]", HtmlUtil.escape(emailFromAddress)
 		).put(
 			"[$FROM_NAME$]", HtmlUtil.escape(emailFromName)
-		).build();
+		).put(
+			"[$MAILING_LIST_ADDRESS$]",
+			() -> {
+				if (PropsValues.POP_SERVER_NOTIFICATIONS_ENABLED) {
+					return LanguageUtil.get(
+						themeDisplay.getLocale(),
+						"the-email-address-of-the-mailing-list");
+				}
 
-		if (PropsValues.POP_SERVER_NOTIFICATIONS_ENABLED) {
-			definitionTerms.put(
-				"[$MAILING_LIST_ADDRESS$]",
-				LanguageUtil.get(
-					themeDisplay.getLocale(),
-					"the-email-address-of-the-mailing-list"));
-		}
-
-		definitionTerms.put(
+				return null;
+			}
+		).put(
 			"[$MESSAGE_BODY$]",
-			LanguageUtil.get(themeDisplay.getLocale(), "the-message-body"));
-		definitionTerms.put(
+			LanguageUtil.get(themeDisplay.getLocale(), "the-message-body")
+		).put(
 			"[$MESSAGE_ID$]",
-			LanguageUtil.get(themeDisplay.getLocale(), "the-message-id"));
-		definitionTerms.put(
+			LanguageUtil.get(themeDisplay.getLocale(), "the-message-id")
+		).put(
 			"[$MESSAGE_SUBJECT$]",
-			LanguageUtil.get(themeDisplay.getLocale(), "the-message-subject"));
-		definitionTerms.put(
+			LanguageUtil.get(themeDisplay.getLocale(), "the-message-subject")
+		).put(
 			"[$MESSAGE_URL$]",
-			LanguageUtil.get(themeDisplay.getLocale(), "the-message-url"));
-		definitionTerms.put(
+			LanguageUtil.get(themeDisplay.getLocale(), "the-message-url")
+		).put(
 			"[$MESSAGE_USER_ADDRESS$]",
 			LanguageUtil.get(
 				themeDisplay.getLocale(),
-				"the-email-address-of-the-user-who-added-the-message"));
-		definitionTerms.put(
+				"the-email-address-of-the-user-who-added-the-message")
+		).put(
 			"[$MESSAGE_USER_NAME$]",
 			LanguageUtil.get(
-				themeDisplay.getLocale(), "the-user-who-added-the-message"));
+				themeDisplay.getLocale(), "the-user-who-added-the-message")
+		).put(
+			"[$PORTAL_URL$]",
+			() -> {
+				Company company = themeDisplay.getCompany();
 
-		Company company = themeDisplay.getCompany();
+				return company.getVirtualHostname();
+			}
+		).put(
+			"[$PORTLET_NAME$]",
+			() -> {
+				PortletDisplay portletDisplay =
+					themeDisplay.getPortletDisplay();
 
-		definitionTerms.put("[$PORTAL_URL$]", company.getVirtualHostname());
-
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		definitionTerms.put(
-			"[$PORTLET_NAME$]", HtmlUtil.escape(portletDisplay.getTitle()));
-
-		definitionTerms.put(
+				return HtmlUtil.escape(portletDisplay.getTitle());
+			}
+		).put(
 			"[$SITE_NAME$]",
 			LanguageUtil.get(
 				themeDisplay.getLocale(),
-				"the-site-name-associated-with-the-message-board"));
+				"the-site-name-associated-with-the-message-board")
+		).build();
 
 		if (!PropsValues.MESSAGE_BOARDS_EMAIL_BULK) {
 			definitionTerms.put(
@@ -132,7 +139,7 @@ public class MBMailUtil {
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		Map<String, String> definitionTerms = LinkedHashMapBuilder.put(
+		return LinkedHashMapBuilder.put(
 			"[$COMPANY_ID$]",
 			LanguageUtil.get(
 				themeDisplay.getLocale(),
@@ -147,38 +154,40 @@ public class MBMailUtil {
 			LanguageUtil.get(
 				themeDisplay.getLocale(),
 				"the-company-name-associated-with-the-message-board")
-		).build();
+		).put(
+			"[$MAILING_LIST_ADDRESS$]",
+			() -> {
+				if (PropsValues.POP_SERVER_NOTIFICATIONS_ENABLED) {
+					return LanguageUtil.get(
+						themeDisplay.getLocale(),
+						"the-email-address-of-the-mailing-list");
+				}
 
-		if (PropsValues.POP_SERVER_NOTIFICATIONS_ENABLED) {
-			definitionTerms.put(
-				"[$MAILING_LIST_ADDRESS$]",
-				LanguageUtil.get(
-					themeDisplay.getLocale(),
-					"the-email-address-of-the-mailing-list"));
-		}
-
-		definitionTerms.put(
+				return null;
+			}
+		).put(
 			"[$MESSAGE_USER_ADDRESS$]",
 			LanguageUtil.get(
 				themeDisplay.getLocale(),
-				"the-email-address-of-the-user-who-added-the-message"));
-		definitionTerms.put(
+				"the-email-address-of-the-user-who-added-the-message")
+		).put(
 			"[$MESSAGE_USER_NAME$]",
 			LanguageUtil.get(
-				themeDisplay.getLocale(), "the-user-who-added-the-message"));
+				themeDisplay.getLocale(), "the-user-who-added-the-message")
+		).put(
+			"[$PORTLET_NAME$]",
+			() -> {
+				PortletDisplay portletDisplay =
+					themeDisplay.getPortletDisplay();
 
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		definitionTerms.put(
-			"[$PORTLET_NAME$]", HtmlUtil.escape(portletDisplay.getTitle()));
-
-		definitionTerms.put(
+				return HtmlUtil.escape(portletDisplay.getTitle());
+			}
+		).put(
 			"[$SITE_NAME$]",
 			LanguageUtil.get(
 				themeDisplay.getLocale(),
-				"the-site-name-associated-with-the-message-board"));
-
-		return definitionTerms;
+				"the-site-name-associated-with-the-message-board")
+		).build();
 	}
 
 }

@@ -188,20 +188,25 @@ public abstract class BaseSettingsLocatorTestCase {
 			Serializable propertyValue)
 		throws Exception {
 
+		String value = RandomTestUtil.randomString();
+
 		Dictionary<String, Object> properties =
 			HashMapDictionaryBuilder.<String, Object>put(
 				scope.getPropertyKey(), scopePK
+			).put(
+				propertyKey,
+				() -> {
+					if (Validator.isNotNull(propertyKey) &&
+						Validator.isNotNull(propertyValue)) {
+
+						return propertyValue;
+					}
+
+					return null;
+				}
+			).put(
+				SettingsLocatorTestConstants.TEST_KEY, value
 			).build();
-
-		if (Validator.isNotNull(propertyKey) &&
-			Validator.isNotNull(propertyValue)) {
-
-			properties.put(propertyKey, propertyValue);
-		}
-
-		String value = RandomTestUtil.randomString();
-
-		properties.put(SettingsLocatorTestConstants.TEST_KEY, value);
 
 		String pid = ConfigurationTestUtil.createFactoryConfiguration(
 			factoryPid + ".scoped", properties);

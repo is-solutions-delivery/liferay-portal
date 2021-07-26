@@ -234,17 +234,21 @@ public class UserGroupsDisplayContext {
 			LinkedHashMapBuilder.<String, Object>put(
 				UserGroupFinderConstants.PARAM_KEY_USER_GROUPS_GROUPS,
 				Long.valueOf(getGroupId())
-			).build();
-
-		Role role = getRole();
-
-		if (role != null) {
-			userGroupParams.put(
+			).put(
 				UserGroupFinderConstants.PARAM_KEY_USER_GROUP_GROUP_ROLE,
-				new Long[] {
-					Long.valueOf(role.getRoleId()), Long.valueOf(getGroupId())
-				});
-		}
+				() -> {
+					Role role = getRole();
+
+					if (role != null) {
+						return new Long[] {
+							Long.valueOf(role.getRoleId()),
+							Long.valueOf(getGroupId())
+						};
+					}
+
+					return null;
+				}
+			).build();
 
 		int userGroupsCount = UserGroupServiceUtil.searchCount(
 			themeDisplay.getCompanyId(), searchTerms.getKeywords(),

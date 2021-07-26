@@ -82,13 +82,19 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 
 		Map<Locale, String> nameMap = HashMapBuilder.put(
 			themeDisplay.getLocale(), name
+		).put(
+			LocaleUtil.getSiteDefault(),
+			() -> {
+				if (!Objects.equals(
+						themeDisplay.getLocale(),
+						LocaleUtil.getSiteDefault())) {
+
+					return name;
+				}
+
+				return null;
+			}
 		).build();
-
-		if (!Objects.equals(
-				themeDisplay.getLocale(), LocaleUtil.getSiteDefault())) {
-
-			nameMap.put(LocaleUtil.getSiteDefault(), name);
-		}
 
 		UnicodeProperties typeSettingsUnicodeProperties =
 			PropertiesParamUtil.getProperties(

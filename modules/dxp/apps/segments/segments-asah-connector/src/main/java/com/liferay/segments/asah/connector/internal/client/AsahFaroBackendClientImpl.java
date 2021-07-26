@@ -273,13 +273,9 @@ public class AsahFaroBackendClientImpl implements AsahFaroBackendClient {
 		Map<String, String> headers = HashMapBuilder.put(
 			"OSB-Asah-Faro-Backend-Security-Signature",
 			AsahUtil.getAsahFaroBackendSecuritySignature(companyId)
+		).put(
+			"OSB-Asah-Project-ID", () -> AsahUtil.getAsahProjectId(companyId)
 		).build();
-
-		String projectId = AsahUtil.getAsahProjectId(companyId);
-
-		if (projectId != null) {
-			headers.put("OSB-Asah-Project-ID", projectId);
-		}
 
 		return headers;
 	}

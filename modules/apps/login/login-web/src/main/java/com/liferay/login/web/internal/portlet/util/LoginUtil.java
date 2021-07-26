@@ -65,49 +65,50 @@ public class LoginUtil {
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		Map<String, String> definitionTerms = LinkedHashMapBuilder.put(
+		return LinkedHashMapBuilder.put(
 			"[$FROM_ADDRESS$]", HtmlUtil.escape(emailFromAddress)
 		).put(
 			"[$FROM_NAME$]", HtmlUtil.escape(emailFromName)
-		).build();
+		).put(
+			"[$PASSWORD_RESET_URL$]",
+			() -> {
+				if (showPasswordTerms) {
+					return LanguageUtil.get(
+						themeDisplay.getLocale(), "the-password-reset-url");
+				}
 
-		if (showPasswordTerms) {
-			definitionTerms.put(
-				"[$PASSWORD_RESET_URL$]",
-				LanguageUtil.get(
-					themeDisplay.getLocale(), "the-password-reset-url"));
-		}
+				return null;
+			}
+		).put(
+			"[$PORTAL_URL$]",
+			() -> {
+				Company company = themeDisplay.getCompany();
 
-		Company company = themeDisplay.getCompany();
-
-		definitionTerms.put("[$PORTAL_URL$]", company.getVirtualHostname());
-
-		definitionTerms.put(
+				return company.getVirtualHostname();
+			}
+		).put(
 			"[$REMOTE_ADDRESS$]",
 			LanguageUtil.get(
-				themeDisplay.getLocale(), "the-browser's-remote-address"));
-		definitionTerms.put(
+				themeDisplay.getLocale(), "the-browser's-remote-address")
+		).put(
 			"[$REMOTE_HOST$]",
 			LanguageUtil.get(
-				themeDisplay.getLocale(), "the-browser's-remote-host"));
-		definitionTerms.put(
+				themeDisplay.getLocale(), "the-browser's-remote-host")
+		).put(
 			"[$TO_ADDRESS$]",
 			LanguageUtil.get(
-				themeDisplay.getLocale(),
-				"the-address-of-the-email-recipient"));
-		definitionTerms.put(
+				themeDisplay.getLocale(), "the-address-of-the-email-recipient")
+		).put(
 			"[$TO_NAME$]",
 			LanguageUtil.get(
-				themeDisplay.getLocale(), "the-name-of-the-email-recipient"));
-		definitionTerms.put(
+				themeDisplay.getLocale(), "the-name-of-the-email-recipient")
+		).put(
 			"[$USER_ID$]",
-			LanguageUtil.get(themeDisplay.getLocale(), "the-user-id"));
-
-		definitionTerms.put(
+			LanguageUtil.get(themeDisplay.getLocale(), "the-user-id")
+		).put(
 			"[$USER_SCREENNAME$]",
-			LanguageUtil.get(themeDisplay.getLocale(), "the-user-screen-name"));
-
-		return definitionTerms;
+			LanguageUtil.get(themeDisplay.getLocale(), "the-user-screen-name")
+		).build();
 	}
 
 	public static String getEmailFromAddress(

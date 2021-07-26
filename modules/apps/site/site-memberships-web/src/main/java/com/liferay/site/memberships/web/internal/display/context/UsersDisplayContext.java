@@ -266,17 +266,21 @@ public class UsersDisplayContext {
 				"inherit", Boolean.TRUE
 			).put(
 				"usersGroups", Long.valueOf(getGroupId())
-			).build();
-
-		Role role = getRole();
-
-		if (role != null) {
-			userParams.put(
+			).put(
 				"userGroupRole",
-				new Long[] {
-					Long.valueOf(getGroupId()), Long.valueOf(role.getRoleId())
-				});
-		}
+				() -> {
+					Role role = getRole();
+
+					if (role != null) {
+						return new Long[] {
+							Long.valueOf(getGroupId()),
+							Long.valueOf(role.getRoleId())
+						};
+					}
+
+					return null;
+				}
+			).build();
 
 		int usersCount = 0;
 		List<User> users = Collections.emptyList();
