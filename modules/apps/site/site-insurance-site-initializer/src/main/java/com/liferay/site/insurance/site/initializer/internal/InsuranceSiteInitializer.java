@@ -15,6 +15,11 @@
 package com.liferay.site.insurance.site.initializer.internal;
 
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalService;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetCategoryConstants;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.document.library.util.DLURLHelper;
@@ -38,6 +43,11 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
+import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -47,20 +57,23 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
-import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -90,10 +103,12 @@ import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 
 import java.io.File;
+import java.io.Serializable;
 
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -144,6 +159,91 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return _servletContext.getContextPath() + "/images/thumbnail.png";
 	}
 
+	public void importAssetCategories() throws Exception {
+		Group group = _serviceContext.getScopeGroup();
+
+		String assetVocabularyName = group.getName(_serviceContext.getLocale());
+
+		Company company = _companyLocalService.getCompany(
+			_serviceContext.getCompanyId());
+
+		long scopeGroupId = company.getGroupId();
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+			_read("/asset-categories/asset-categories.json"));
+
+		User user = _userLocalService.getUser(_serviceContext.getUserId());
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAddGuestPermissions(false);
+		serviceContext.setCompanyId(user.getCompanyId());
+		serviceContext.setScopeGroupId(scopeGroupId);
+		serviceContext.setUserId(user.getUserId());
+
+		AssetVocabulary assetVocabulary = _addAssetVocabulary(
+			assetVocabularyName, serviceContext);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			String titleCategory = null;
+			JSONArray subcategoriesJSONArray = null;
+
+			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
+
+			if (categoryJSONObject != null) {
+				titleCategory = categoryJSONObject.getString("title");
+
+				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
+					"subcategories");
+			}
+			else {
+				titleCategory = jsonArray.getString(i);
+			}
+
+			AssetCategory assetCategory = _addAssetCategory(
+				assetVocabulary.getVocabularyId(), new String[0], null,
+				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
+				serviceContext, titleCategory);
+
+			if (subcategoriesJSONArray != null) {
+				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
+					JSONObject subcategoryJSONObject =
+						subcategoriesJSONArray.getJSONObject(y);
+
+					String descriptionSubcategory =
+						subcategoryJSONObject.getString("description");
+
+					String titleSubcategory = subcategoryJSONObject.getString(
+						"title");
+
+					JSONArray propertiesJSONArray =
+						subcategoryJSONObject.getJSONArray("properties");
+
+					String[] properties =
+						new String[propertiesJSONArray.length()];
+
+					for (int x = 0; x < propertiesJSONArray.length(); x++) {
+						JSONObject propertyJSONObject =
+							propertiesJSONArray.getJSONObject(x);
+
+						String key = propertyJSONObject.getString("key");
+						String value = propertyJSONObject.getString("value");
+
+						properties[x] = StringBundler.concat(
+							key,
+							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
+							value);
+					}
+
+					_addAssetCategory(
+						assetVocabulary.getVocabularyId(), properties,
+						descriptionSubcategory, assetCategory.getCategoryId(),
+						serviceContext, titleSubcategory);
+				}
+			}
+		}
+	}
+
 	@Override
 	public void initialize(long groupId) throws InitializationException {
 		try {
@@ -154,6 +254,8 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_addDDMStructures();
 
 			_addDDMTemplates();
+
+			importAssetCategories();
 
 			_addJournalArticles(_addJournalFolders());
 
@@ -171,6 +273,8 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 			_updateLayoutSetLookAndFeel("private");
 			_updateLayoutSetLookAndFeel("public");
+
+			_addSampleObjectDefinition();
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);
@@ -187,6 +291,36 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_bundle = bundleContext.getBundle();
+	}
+
+	private AssetCategory _addAssetCategory(
+			long assetVocabularyId, String[] categoryProperties,
+			String description, long parentCategoryId,
+			ServiceContext serviceContext, String title)
+		throws Exception {
+
+		AssetCategory assetCategory = _assetCategoryLocalService.fetchCategory(
+			serviceContext.getScopeGroupId(), parentCategoryId, title,
+			assetVocabularyId);
+
+		if (assetCategory == null) {
+			Map<Locale, String> titleMap = Collections.singletonMap(
+				LocaleUtil.getSiteDefault(), title);
+
+			Map<Locale, String> descriptionMap = null;
+
+			if (Validator.isNotNull(description)) {
+				descriptionMap = Collections.singletonMap(
+					LocaleUtil.getSiteDefault(), description);
+			}
+
+			assetCategory = _assetCategoryLocalService.addCategory(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				parentCategoryId, titleMap, descriptionMap, assetVocabularyId,
+				categoryProperties, serviceContext);
+		}
+
+		return assetCategory;
 	}
 
 	private void _addAssetListEntries() throws Exception {
@@ -206,6 +340,31 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			"Open Claims",
 			_getDynamicCollectionTypeSettings("CLAIM", new String[] {"open"}),
 			_serviceContext);
+	}
+
+	private AssetVocabulary _addAssetVocabulary(
+			String name, ServiceContext serviceContext)
+		throws Exception {
+
+		String vocabularyName = name;
+
+		if (name != null) {
+			vocabularyName = name.trim();
+
+			vocabularyName = StringUtil.toLowerCase(vocabularyName);
+		}
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.fetchGroupVocabulary(
+				serviceContext.getScopeGroupId(), vocabularyName);
+
+		if (assetVocabulary == null) {
+			assetVocabulary = _assetVocabularyLocalService.addVocabulary(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				name, serviceContext);
+		}
+
+		return assetVocabulary;
 	}
 
 	private Layout _addContentLayout(
@@ -547,6 +706,81 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 	}
 
+	private void _addSampleObjectDefinition() throws Exception {
+		List<Company> companies = _companyLocalService.getCompanies();
+
+		if (companies.size() != 1) {
+			return;
+		}
+
+		Company company = companies.get(0);
+
+		User user = _userLocalService.fetchUserByEmailAddress(
+			company.getCompanyId(), "test@liferay.com");
+
+		if (user == null) {
+			return;
+		}
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				company.getCompanyId(), "C_RaylifeApplication");
+
+		if (objectDefinition != null) {
+			return;
+		}
+
+		objectDefinition =
+			_objectDefinitionLocalService.addCustomObjectDefinition(
+				user.getUserId(), "RaylifeApplication",
+				Arrays.asList(
+					_createObjectField("address", "String"),
+					_createObjectField("addressApt", "String"),
+					_createObjectField("city", "String"),
+					_createObjectField("email", "String"),
+					_createObjectField("firstName", "String"),
+					_createObjectField("lastName", "String"),
+					_createObjectField("phone", "String"),
+					_createObjectField("state", "String"),
+					_createObjectField("website", "String"),
+					_createObjectField("zip", "String")));
+
+		ObjectDefinition objectDefinitionPublished =
+			_objectDefinitionLocalService.publishCustomObjectDefinition(
+				user.getUserId(), objectDefinition.getObjectDefinitionId());
+
+		TransactionCommitCallbackUtil.registerCallback(
+			() -> {
+				_objectEntryLocalService.addObjectEntry(
+					user.getUserId(), 0,
+					objectDefinitionPublished.getObjectDefinitionId(),
+					HashMapBuilder.<String, Serializable>put(
+						"address", "1400 Montefino Ave"
+					).put(
+						"addressApt", "123"
+					).put(
+						"city", "Diamond Bar"
+					).put(
+						"email", "test@liferay.com"
+					).put(
+						"firstName", "John"
+					).put(
+						"lastName", "Simon"
+					).put(
+						"phone", "+1 222-333-444"
+					).put(
+						"state", "CA"
+					).put(
+						"website", "mysite.com"
+					).put(
+						"zip", "91765"
+					).build(),
+					new ServiceContext());
+
+				return null;
+			});
+	}
+
 	private void _addSiteNavigationMenus() throws Exception {
 		_layoutsSiteNavigationMenuMap = new HashMap<>();
 		_siteNavigationMenuMap = new HashMap<>();
@@ -627,6 +861,25 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 	}
 
+	private ObjectField _createObjectField(
+		boolean indexed, boolean indexedAsKeyword, String indexedLanguageId,
+		String name, String type) {
+
+		ObjectField objectField = _objectFieldLocalService.createObjectField(0);
+
+		objectField.setIndexed(indexed);
+		objectField.setIndexedAsKeyword(indexedAsKeyword);
+		objectField.setIndexedLanguageId(indexedLanguageId);
+		objectField.setName(name);
+		objectField.setType(type);
+
+		return objectField;
+	}
+
+	private ObjectField _createObjectField(String name, String type) {
+		return _createObjectField(true, false, null, name, type);
+	}
+
 	private void _createServiceContext(long groupId) throws Exception {
 		ServiceContext serviceContext = new ServiceContext();
 
@@ -638,6 +891,10 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		serviceContext.setLanguageId(LanguageUtil.getLanguageId(locale));
 
 		serviceContext.setScopeGroupId(groupId);
+
+		Group group = _groupLocalService.getGroup(groupId);
+
+		serviceContext.setCompanyId(group.getCompanyId());
 
 		User user = _userLocalService.getUser(PrincipalThreadLocal.getUserId());
 
@@ -771,20 +1028,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 
 		return resourcesMap;
-	}
-
-	private String _getThemeId(long companyId, String themeName) {
-		List<Theme> themes = ListUtil.filter(
-			_themeLocalService.getThemes(companyId),
-			theme -> Objects.equals(theme.getName(), themeName));
-
-		if (ListUtil.isNotEmpty(themes)) {
-			Theme theme = themes.get(0);
-
-			return theme.getThemeId();
-		}
-
-		return null;
 	}
 
 	private void _importPageDefinition(
@@ -922,7 +1165,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		_layoutSetLocalService.updateLookAndFeel(
 			_serviceContext.getScopeGroupId(), privateLayoutSet,
-			layoutSet.getThemeId(), layoutSet.getColorSchemeId(),
+			_SOLUTION_THEME_ID, layoutSet.getColorSchemeId(),
 			_read("/layout-set/" + type + "/css.css"));
 
 		URL logoURL = _bundle.getEntry(
@@ -969,14 +1212,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			layout.setTypeSettingsProperties(unicodeProperties);
 		}
 
-		String themeId = layout.getThemeId();
-
-		String themeName = settingsJSONObject.getString("themeName");
-
-		if (Validator.isNotNull(themeName)) {
-			themeId = _getThemeId(layout.getCompanyId(), themeName);
-		}
-
 		String colorSchemeName = settingsJSONObject.getString(
 			"colorSchemeName", layout.getColorSchemeId());
 
@@ -984,7 +1219,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		layout = _layoutLocalService.updateLookAndFeel(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			themeId, colorSchemeName, css);
+			_SOLUTION_THEME_ID, colorSchemeName, css);
 
 		JSONObject masterPageJSONObject = settingsJSONObject.getJSONObject(
 			"masterPage");
@@ -1014,8 +1249,14 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		".ftl", ".json", ".xml"
 	};
 
+	private static final String _SOLUTION_THEME_ID =
+		"solution_WAR_solutiontheme";
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		InsuranceSiteInitializer.class);
+
+	@Reference
+	private AssetCategoryLocalService _assetCategoryLocalService;
 
 	@Reference
 	private AssetDisplayPageEntryLocalService
@@ -1024,7 +1265,13 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	@Reference
 	private AssetListEntryLocalService _assetListEntryLocalService;
 
+	@Reference
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
+
 	private Bundle _bundle;
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private DDMStructureLocalService _ddmStructureLocalService;
@@ -1042,6 +1289,9 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	@Reference
 	private FragmentsImporter _fragmentsImporter;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private JournalArticleLocalService _journalArticleLocalService;
@@ -1073,6 +1323,15 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	private LayoutSetLocalService _layoutSetLocalService;
 
 	private Map<String, List<SiteNavigationMenu>> _layoutsSiteNavigationMenuMap;
+
+	@Reference
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference
+	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Reference
+	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
 	private Portal _portal;

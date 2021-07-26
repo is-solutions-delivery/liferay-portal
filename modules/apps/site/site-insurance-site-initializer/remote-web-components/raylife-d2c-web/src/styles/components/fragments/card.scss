@@ -1,0 +1,43 @@
+.card {
+  box-shadow: 0px 10px 30px rgba(77, 133, 255, 0.09);
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 3rem;
+
+  & > .card-actions,
+  & > .card-actions > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    div {
+      justify-content: flex-end;
+    }
+  }
+
+  & > .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .content-row {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      gap: 1rem;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .content-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+  }
+}
