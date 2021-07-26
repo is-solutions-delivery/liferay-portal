@@ -270,14 +270,12 @@ public class AsahFaroBackendClientImpl implements AsahFaroBackendClient {
 	}
 
 	private Map<String, String> _getHeaders(long companyId) {
-		Map<String, String> headers = HashMapBuilder.put(
+		return HashMapBuilder.put(
 			"OSB-Asah-Faro-Backend-Security-Signature",
 			AsahUtil.getAsahFaroBackendSecuritySignature(companyId)
 		).put(
 			"OSB-Asah-Project-ID", () -> AsahUtil.getAsahProjectId(companyId)
 		).build();
-
-		return headers;
 	}
 
 	private MultivaluedMap<String, Object> _getParameters(

@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -190,7 +189,8 @@ public abstract class BaseSettingsLocatorTestCase {
 
 		String value = RandomTestUtil.randomString();
 
-		Dictionary<String, Object> properties =
+		String pid = ConfigurationTestUtil.createFactoryConfiguration(
+			factoryPid + ".scoped",
 			HashMapDictionaryBuilder.<String, Object>put(
 				scope.getPropertyKey(), scopePK
 			).put(
@@ -206,10 +206,7 @@ public abstract class BaseSettingsLocatorTestCase {
 				}
 			).put(
 				SettingsLocatorTestConstants.TEST_KEY, value
-			).build();
-
-		String pid = ConfigurationTestUtil.createFactoryConfiguration(
-			factoryPid + ".scoped", properties);
+			).build());
 
 		_factoryConfigurationPids.add(pid);
 
