@@ -122,54 +122,54 @@ public class BrowserModulesResolution {
 	}
 
 	public String toJSON() {
-		Map<String, Object> map = HashMapBuilder.<String, Object>put(
-			"configMap", _mappedModuleNamesMap
-		).put(
-			"errors",
-			() -> {
-				if (_errors.size() > 0) {
-					List<String> sortedErrors = new ArrayList<>(_errors);
+		return _jsonFactory.looseSerializeDeep(
+			HashMapBuilder.<String, Object>put(
+				"configMap", _mappedModuleNamesMap
+			).put(
+				"errors",
+				() -> {
+					if (_errors.size() > 0) {
+						List<String> sortedErrors = new ArrayList<>(_errors);
 
-					Collections.sort(sortedErrors);
+						Collections.sort(sortedErrors);
 
-					return sortedErrors;
+						return sortedErrors;
+					}
+
+					return null;
 				}
+			).put(
+				"explanation",
+				() -> {
+					if (_explanation != null) {
+						return _resolvedModuleNames;
+					}
 
-				return null;
-			}
-		).put(
-			"explanation",
-			() -> {
-				if (_explanation != null) {
-					return _resolvedModuleNames;
+					return null;
 				}
+			).put(
+				"moduleFlags", _flagsJSONObjects
+			).put(
+				"moduleMap", _dependenciesMap
+			).put(
+				"pathMap", _pathsMap
+			).put(
+				"resolvedModules", _resolvedModuleNames
+			).put(
+				"warnings",
+				() -> {
+					if (_warnings.size() > 0) {
+						List<String> sortedWarnings = new ArrayList<>(
+							_warnings);
 
-				return null;
-			}
-		).put(
-			"moduleFlags", _flagsJSONObjects
-		).put(
-			"moduleMap", _dependenciesMap
-		).put(
-			"pathMap", _pathsMap
-		).put(
-			"resolvedModules", _resolvedModuleNames
-		).put(
-			"warnings",
-			() -> {
-				if (_warnings.size() > 0) {
-					List<String> sortedWarnings = new ArrayList<>(_warnings);
+						Collections.sort(sortedWarnings);
 
-					Collections.sort(sortedWarnings);
+						return sortedWarnings;
+					}
 
-					return sortedWarnings;
+					return null;
 				}
-
-				return null;
-			}
-		).build();
-
-		return _jsonFactory.looseSerializeDeep(map);
+			).build());
 	}
 
 	private final Map<String, Map<String, String>> _dependenciesMap =
