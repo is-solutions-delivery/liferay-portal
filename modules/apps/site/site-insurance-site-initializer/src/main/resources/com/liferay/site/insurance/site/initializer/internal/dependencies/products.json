@@ -1,0 +1,26 @@
+[
+	{
+		"availabilityEstimate": "3-5 days",
+		"backOrders": true,
+		"categories": [
+			"RAYCAT0007"
+		],
+		"description": "Insurance to Pet Shops",
+		"displayAvailability": true,
+		"displayStockQuantity": true,
+		"externalReferenceCode": "RAY001",
+		"height": 2,
+		"images": [
+		],
+		"length": 7,
+		"minStockQuantity": 5,
+		"name": "Pet Shop insurance",
+		"price": 50.0,
+		"promoPrice": 0,
+		"sku": "RAY001",
+		"specificationOptions": [
+		],
+		"taxCategory": "Normal Product",
+		"warehouse1": 60
+	}
+]
