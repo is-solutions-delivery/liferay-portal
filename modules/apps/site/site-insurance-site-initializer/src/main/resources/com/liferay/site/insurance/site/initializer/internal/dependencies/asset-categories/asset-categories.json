@@ -1,8 +1,10 @@
 [
 	{
+		"externalReferenceCode": "RAYCAT0001",
 		"subcategories": [
 			{
 				"description": "Provide accounting services",
+				"externalReferenceCode": "RAYCAT0016",
 				"properties": [
 					{
 						"key": "BCC",
@@ -17,6 +19,7 @@
 			},
 			{
 				"description": "Own an apartment that has between 13 to 30 residential units",
+				"externalReferenceCode": "RAYCAT0015",
 				"properties": [
 					{
 						"key": "BCC",
@@ -31,6 +34,7 @@
 			},
 			{
 				"description": "Own an apartment that has over 32 residential units",
+				"externalReferenceCode": "RAYCAT0014",
 				"properties": [
 					{
 						"key": "BCC",
@@ -45,6 +49,7 @@
 			},
 			{
 				"description": "Own an apartment that has up to 12 residential units",
+				"externalReferenceCode": "RAYCAT0013",
 				"properties": [
 					{
 						"key": "BCC",
@@ -59,6 +64,7 @@
 			},
 			{
 				"description": "Manufacture and distribute coffee and/or tea",
+				"externalReferenceCode": "RAYCAT0012",
 				"properties": [
 					{
 						"key": "BCC",
@@ -73,6 +79,7 @@
 			},
 			{
 				"description": "Own an establishment that primarily serves coffee and/or tea",
+				"externalReferenceCode": "RAYCAT0011",
 				"properties": [
 					{
 						"key": "BCC",
@@ -87,6 +94,7 @@
 			},
 			{
 				"description": "Primarily sell flowers, plants, and gardening supplies",
+				"externalReferenceCode": "RAYCAT0010",
 				"properties": [
 					{
 						"key": "BCC",
@@ -101,6 +109,7 @@
 			},
 			{
 				"description": "Primarily sell a general range of food and household products",
+				"externalReferenceCode": "RAYCAT0009",
 				"properties": [
 					{
 						"key": "BCC",
@@ -115,6 +124,7 @@
 			},
 			{
 				"description": "Provide dental services",
+				"externalReferenceCode": "RAYCAT0008",
 				"properties": [
 					{
 						"key": "BCC",
@@ -129,6 +139,7 @@
 			},
 			{
 				"description": "Primarily sell animals and a general range of animal supplies and pet acessories",
+				"externalReferenceCode": "RAYCAT0007",
 				"properties": [
 					{
 						"key": "BCC",
@@ -143,6 +154,7 @@
 			},
 			{
 				"description": "Provide photography services",
+				"externalReferenceCode": "RAYCAT0006",
 				"properties": [
 					{
 						"key": "BCC",
@@ -157,6 +169,7 @@
 			},
 			{
 				"description": "Sell commercial and residential properties",
+				"externalReferenceCode": "RAYCAT0005",
 				"properties": [
 					{
 						"key": "BCC",
@@ -171,6 +184,7 @@
 			},
 			{
 				"description": "Own an establishment with a liquor license to cook and serve meals on the premises",
+				"externalReferenceCode": "RAYCAT0004",
 				"properties": [
 					{
 						"key": "BCC",
@@ -185,6 +199,7 @@
 			},
 			{
 				"description": "Own an establishment without a liquor license to cook and serve meals on the premises",
+				"externalReferenceCode": "RAYCAT0003",
 				"properties": [
 					{
 						"key": "BCC",
@@ -199,6 +214,7 @@
 			},
 			{
 				"description": "Provide hospital services to animals",
+				"externalReferenceCode": "RAYCAT0002",
 				"properties": [
 					{
 						"key": "BCC",
