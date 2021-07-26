@@ -720,17 +720,24 @@ public class DLAdminManagementToolbarDisplayContext
 	}
 
 	private List<DropdownItem> _getOrderByDropdownItems() {
-		final Map<String, String> orderColumns = HashMapBuilder.put(
+		Map<String, String> orderColumns = HashMapBuilder.put(
 			"creationDate", "create-date"
+		).put(
+			"downloads",
+			() -> {
+				if (_getFileEntryTypeId() == -1) {
+					return "downloads";
+				}
+
+				return null;
+			}
+		).put(
+			"modifiedDate", "modified-date"
+		).put(
+			"size", "size"
+		).put(
+			"title", "name"
 		).build();
-
-		if (_getFileEntryTypeId() == -1) {
-			orderColumns.put("downloads", "downloads");
-		}
-
-		orderColumns.put("modifiedDate", "modified-date");
-		orderColumns.put("size", "size");
-		orderColumns.put("title", "name");
 
 		return new DropdownItemList() {
 			{

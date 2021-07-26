@@ -124,32 +124,50 @@ public class BrowserModulesResolution {
 	public String toJSON() {
 		Map<String, Object> map = HashMapBuilder.<String, Object>put(
 			"configMap", _mappedModuleNamesMap
+		).put(
+			"errors",
+			() -> {
+				if (_errors.size() > 0) {
+					List<String> sortedErrors = new ArrayList<>(_errors);
+
+					Collections.sort(sortedErrors);
+
+					return sortedErrors;
+				}
+
+				return null;
+			}
+		).put(
+			"explanation",
+			() -> {
+				if (_explanation != null) {
+					return _resolvedModuleNames;
+				}
+
+				return null;
+			}
+		).put(
+			"moduleFlags", _flagsJSONObjects
+		).put(
+			"moduleMap", _dependenciesMap
+		).put(
+			"pathMap", _pathsMap
+		).put(
+			"resolvedModules", _resolvedModuleNames
+		).put(
+			"warnings",
+			() -> {
+				if (_warnings.size() > 0) {
+					List<String> sortedWarnings = new ArrayList<>(_warnings);
+
+					Collections.sort(sortedWarnings);
+
+					return sortedWarnings;
+				}
+
+				return null;
+			}
 		).build();
-
-		if (_errors.size() > 0) {
-			List<String> sortedErrors = new ArrayList<>(_errors);
-
-			Collections.sort(sortedErrors);
-
-			map.put("errors", sortedErrors);
-		}
-
-		if (_explanation != null) {
-			map.put("explanation", _resolvedModuleNames);
-		}
-
-		map.put("moduleFlags", _flagsJSONObjects);
-		map.put("moduleMap", _dependenciesMap);
-		map.put("pathMap", _pathsMap);
-		map.put("resolvedModules", _resolvedModuleNames);
-
-		if (_warnings.size() > 0) {
-			List<String> sortedWarnings = new ArrayList<>(_warnings);
-
-			Collections.sort(sortedWarnings);
-
-			map.put("warnings", sortedWarnings);
-		}
 
 		return _jsonFactory.looseSerializeDeep(map);
 	}

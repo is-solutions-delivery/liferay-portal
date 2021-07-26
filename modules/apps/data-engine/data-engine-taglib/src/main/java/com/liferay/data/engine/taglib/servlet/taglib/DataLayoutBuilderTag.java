@@ -199,27 +199,31 @@ public class DataLayoutBuilderTag extends BaseDataLayoutBuilderTag {
 				).put(
 					"sidebarPanelId", "fields"
 				).build()
-			).build();
-
-		JSONObject dataLayoutConfigJSONObject =
-			DataLayoutTaglibUtil.getDataLayoutConfigJSONObject(
-				getContentType(), httpServletRequest.getLocale());
-
-		if (dataLayoutConfigJSONObject.getBoolean("allowRules")) {
-			sidebarPanels.put(
+			).put(
 				"rules",
-				HashMapBuilder.<String, Object>put(
-					"icon", "rules"
-				).put(
-					"isLink", false
-				).put(
-					"label", LanguageUtil.get(resourceBundle, "rules")
-				).put(
-					"pluginEntryPoint", _getPluginEntryPoint("rules-sidebar")
-				).put(
-					"sidebarPanelId", "rules"
-				).build());
-		}
+				() -> {
+					JSONObject dataLayoutConfigJSONObject =
+						DataLayoutTaglibUtil.getDataLayoutConfigJSONObject(
+							getContentType(), httpServletRequest.getLocale());
+
+					if (dataLayoutConfigJSONObject.getBoolean("allowRules")) {
+						return HashMapBuilder.<String, Object>put(
+							"icon", "rules"
+						).put(
+							"isLink", false
+						).put(
+							"label", LanguageUtil.get(resourceBundle, "rules")
+						).put(
+							"pluginEntryPoint",
+							_getPluginEntryPoint("rules-sidebar")
+						).put(
+							"sidebarPanelId", "rules"
+						).build();
+					}
+
+					return null;
+				}
+			).build();
 
 		List<Map<String, Object>> additionalPanels = getAdditionalPanels();
 

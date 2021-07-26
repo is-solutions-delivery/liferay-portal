@@ -113,7 +113,7 @@ public class LARImporter extends BaseImporter {
 	}
 
 	protected Map<String, String[]> getParameterMap() {
-		Map<String, String[]> parameters = HashMapBuilder.put(
+		return HashMapBuilder.put(
 			PortletDataHandlerKeys.DELETE_MISSING_LAYOUTS,
 			new String[] {Boolean.TRUE.toString()}
 		).put(
@@ -135,46 +135,48 @@ public class LARImporter extends BaseImporter {
 			}
 		).put(
 			PortletDataHandlerKeys.LOGO, new String[] {Boolean.TRUE.toString()}
-		).build();
+		).put(
+			PortletDataHandlerKeys.PERMISSIONS,
+			() -> {
+				if (!targetClassName.equals(
+						LayoutSetPrototype.class.getName())) {
 
-		if (!targetClassName.equals(LayoutSetPrototype.class.getName())) {
-			parameters.put(
-				PortletDataHandlerKeys.PERMISSIONS,
-				new String[] {Boolean.TRUE.toString()});
-		}
+					return new String[] {Boolean.TRUE.toString()};
+				}
 
-		parameters.put(
+				return null;
+			}
+		).put(
 			PortletDataHandlerKeys.PORTLET_ARCHIVED_SETUPS,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.PORTLET_CONFIGURATION,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.PORTLET_CONFIGURATION_ALL,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.PORTLET_DATA,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.PORTLET_DATA_ALL,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.PORTLET_SETUP_ALL,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.PORTLET_USER_PREFERENCES,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.PORTLETS_MERGE_MODE,
-			new String[] {PortletDataHandlerKeys.PORTLETS_MERGE_MODE_REPLACE});
-		parameters.put(
+			new String[] {PortletDataHandlerKeys.PORTLETS_MERGE_MODE_REPLACE}
+		).put(
 			PortletDataHandlerKeys.THEME_REFERENCE,
-			new String[] {Boolean.TRUE.toString()});
-		parameters.put(
+			new String[] {Boolean.TRUE.toString()}
+		).put(
 			PortletDataHandlerKeys.USER_ID_STRATEGY,
-			new String[] {UserIdStrategy.CURRENT_USER_ID});
-
-		return parameters;
+			new String[] {UserIdStrategy.CURRENT_USER_ID}
+		).build();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(LARImporter.class);

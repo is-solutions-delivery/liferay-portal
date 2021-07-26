@@ -183,7 +183,7 @@ public class FlagsTag extends IncludeTag {
 					(ThemeDisplay)httpServletRequest.getAttribute(
 						WebKeys.THEME_DISPLAY);
 
-				Map<String, Object> props = HashMapBuilder.<String, Object>put(
+				return HashMapBuilder.<String, Object>put(
 					"baseData", _getDataJSONObject(themeDisplay)
 				).put(
 					"captchaURI", FlagsTagUtil.getCaptchaURI(httpServletRequest)
@@ -198,24 +198,29 @@ public class FlagsTag extends IncludeTag {
 					"disabled", !_enabled
 				).put(
 					"forceLogin", !FlagsTagUtil.isFlagsEnabled(themeDisplay)
-				).build();
+				).put(
+					"message",
+					() -> {
+						if (Validator.isNotNull(message)) {
+							return message;
+						}
 
-				if (Validator.isNotNull(message)) {
-					props.put("message", message);
-				}
-
-				props.put("onlyIcon", !_label);
-				props.put(
+						return null;
+					}
+				).put(
+					"onlyIcon", !_label
+				).put(
 					"pathTermsOfUse",
-					PortalUtil.getPathMain() + "/portal/terms_of_use");
-				props.put(
+					PortalUtil.getPathMain() + "/portal/terms_of_use"
+				).put(
 					"reasons",
 					FlagsTagUtil.getReasons(
-						themeDisplay.getCompanyId(), httpServletRequest));
-				props.put("signedIn", themeDisplay.isSignedIn());
-				props.put("uri", FlagsTagUtil.getURI(httpServletRequest));
-
-				return props;
+						themeDisplay.getCompanyId(), httpServletRequest)
+				).put(
+					"signedIn", themeDisplay.isSignedIn()
+				).put(
+					"uri", FlagsTagUtil.getURI(httpServletRequest)
+				).build();
 			}
 		).build();
 	}
