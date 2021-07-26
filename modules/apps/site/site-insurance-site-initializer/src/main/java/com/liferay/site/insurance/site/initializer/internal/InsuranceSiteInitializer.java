@@ -954,6 +954,8 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	private ObjectField _createObjectField(String name, String type) {
 		return _createObjectField(true, false, null, name, type);
+	}
+
 	private void _configureB2BSite(long groupId, ServiceContext serviceContext)
 		throws Exception {
 
