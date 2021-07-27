@@ -1,3 +1,15 @@
+components:
+    schemas:
+        Mail:
+            properties:
+                subject:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                body:
+                    type: string
+            type: object
 info:
     description: "HeadlessMail REST API"
     license:
@@ -6,3 +18,25 @@ info:
     title: "HeadlessMail"
     version: v1.0
 openapi: 3.0.1
+paths:
+    "/send-mail":
+        post:
+            operationId: sendMail
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Mail"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Mail"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Mail"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Mail"
+            tags: ["Mail"]
