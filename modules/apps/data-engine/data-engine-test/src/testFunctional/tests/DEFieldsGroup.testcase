@@ -26,6 +26,24 @@ definition {
 		}
 	}
 
+	@description = "This is a stubbed description"
+	@ignore = "true"
+	@priority = "3"
+	test CallAllFieldsBeRemoved {
+
+		// TODO pending implementation
+
+	}
+
+	@description = "This is a stubbed description"
+	@ignore = "true"
+	@priority = "5"
+	test CanBeCreated {
+
+		// TODO pending implementation
+
+	}
+
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to create Fields Group by dragging a field already on the builder into another field on the builder."
 	@priority = "5"
 	test CanBeCreatedWithFieldsOnBuilder {
@@ -53,6 +71,42 @@ definition {
 			fieldGroupDepth = "1",
 			fieldGroupLabel = "Fields Group",
 			fieldsLabelList = "Text,Numeric");
+	}
+
+	@description = "This is a stubbed description"
+	@ignore = "true"
+	@priority = "5"
+	test CanBeDeleted {
+
+		// TODO pending implementation
+
+	}
+
+	@description = "This is a stubbed description"
+	@ignore = "true"
+	@priority = "4"
+	test CanBeDuplicated {
+
+		// TODO pending implementation
+
+	}
+
+	@description = "This is a stubbed description"
+	@ignore = "true"
+	@priority = "4"
+	test CanBeEdited {
+
+		// TODO pending implementation
+
+	}
+
+	@description = "This is a stubbed description"
+	@ignore = "true"
+	@priority = "5"
+	test CanBeFieldDeleted {
+
+		// TODO pending implementation
+
 	}
 
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to duplicate the inner Fields Group that is inside another Fields Group."
@@ -187,6 +241,15 @@ definition {
 		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
 
 		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Copy of Date");
+	}
+
+	@description = "This is a stubbed description"
+	@ignore = "true"
+	@priority = "3"
+	test CanEditLabelNestedFieldsGroup {
+
+		// TODO pending implementation
+
 	}
 
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit Label, Placeholder and Help text of fields that are inside the Fields Group."
