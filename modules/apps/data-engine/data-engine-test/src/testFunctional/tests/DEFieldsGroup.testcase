@@ -136,9 +136,39 @@ definition {
 	@ignore = "true"
 	@priority = "4"
 	test CanBeDuplicated {
+		NavItem.gotoStructures();
 
-		// TODO pending implementation
+		WebContentStructures.addCP(structureName = "WC Structure Title");
 
+		DataEngine.addField(
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		DataEngine.addFieldNested(
+			fieldFieldLabel = "Numeric",
+			fieldName = "Numeric",
+			targetFieldLabel = "Text");
+
+		DataEngine.addFieldToFieldsGroup(
+			fieldFieldLabel = "Date",
+			fieldName = "Date",
+			fieldsGroupLabel = "Fields Group");
+
+		DataEngine.duplicate(fieldsGroupLabel = "Fields Group");
+
+		WebContentStructures.saveCP();
+
+		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
+
+		DEBuilder.assertFieldsGroup(
+			fieldGroupDepth = "1",
+			fieldGroupLabel = "Fields Group",
+			fieldsLabelList = "Text,Numeric,Date");
+
+		DEBuilder.assertFieldsGroup(
+			fieldGroupDepth = "1",
+			fieldGroupLabel = "Copy of Fields Group",
+			fieldsLabelList = "Copy of Text,Copy of Numeric,Copy of Date");
 	}
 
 	@description = "This is a stubbed description"
