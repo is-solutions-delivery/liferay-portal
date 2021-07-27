@@ -26,6 +26,7 @@ const retrieveQuoteButton = fragmentElement.querySelector(
 );
 const newQuoteButton = fragmentElement.querySelector('#new-quote-button');
 const continueQuoteButton = fragmentElement.querySelector('#continue-quote');
+const getQuoteForm = fragmentElement.querySelector('#get-quote-form');
 
 retrieveQuoteButton.onclick = function () {
 	retrieveQuoteContainer.classList.add('d-none', 'invisible');
@@ -62,6 +63,28 @@ continueQuoteButton.onclick = function () {
 			newQuoteFormContainer.classList.remove('d-flex', 'invisible');
 			newQuoteFormContainer.classList.add('d-none', 'invisible');
 		});
+};
+
+getQuoteForm.onsubmit = function (e) {
+	e.preventDefault();
+	const formData = new FormData(e.target);
+	const formProps = Object.fromEntries(formData);
+
+	if (!formProps.zip) {
+		Liferay.Util.openToast({
+			message: 'Please enter a valid zip code.',
+			type: 'danger',
+		});
+	} else if (!formProps.product) {
+		Liferay.Util.openToast({
+			message: 'Please select a product.',
+			type: 'danger',
+		});
+	} else {
+		document.cookie = 'raylife-zip=' + formProps.zip;
+		document.cookie = 'raylife-product=' + formProps.product;
+		window.location.href = '/web/raylife/get-a-quote';
+	}
 };
 
 fragmentElement.querySelector('#zip').onkeypress = (event) => {

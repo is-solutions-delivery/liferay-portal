@@ -15,7 +15,7 @@
 				>
 			</div>
 
-			<form class="d-flex">
+			<div class="d-flex">
 				<div class="d-none" id="new-quote">
 					<div class="business-email-delivered d-none">
 						<h2>Welcome Back, {name}!</h2>
@@ -70,7 +70,7 @@
 				</div>
 
 				<div class="position-relative" id="retrieve-quote">
-					<div class="d-flex">
+					<form class="d-flex" id="get-quote-form">
 						<div class="d-flex">
 							<label
 								for="zip"
@@ -135,13 +135,7 @@
 							</select>
 						</div>
 
-						<a
-							class="btn btn-sm btn-primary border border-0"
-							data-lfr-editable-id="action-button"
-							data-lfr-editable-type="link"
-							href="#"
-							role="button"
-						>
+						<button button class="btn btn-sm btn-primary" type="submit">
 							<span
 								class="action-button-text font-weight-bold d-flex align-items-center"
 								data-lfr-editable-id="business-home-cover-button-text"
@@ -158,8 +152,8 @@
 									/>
 								</svg>
 							</span>
-						</a>
-					</div>
+						</button>
+					</form>
 
 					<p class="mt-4">
 						<span
@@ -179,7 +173,7 @@
 						</a>
 					</p>
 				</div>
-			</form>
+			</div>
 		</div>
 
 		<div>
