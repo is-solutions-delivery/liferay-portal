@@ -26,7 +26,7 @@ definition {
 		}
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-68747. This test verifies that if all fields from a Fields Group are removed the Fields Group is removed"
 	@priority = "3"
 	test CallAllFieldsBeRemoved {
 		NavItem.gotoStructures();
@@ -63,7 +63,7 @@ definition {
 		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Numeric");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-68747. This test verifies that is possible to create Fields Group by adding a field from the sidebar into a field that is on the builder"
 	@priority = "5"
 	test CanBeCreated {
 		NavItem.gotoStructures();
@@ -123,7 +123,7 @@ definition {
 			fieldsLabelList = "Text,Numeric");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-68747. This test verifies that is possible to delete the entire Fields Group"
 	@priority = "5"
 	test CanBeDeleted {
 		NavItem.gotoStructures();
@@ -156,8 +156,7 @@ definition {
 		DataEngine.assertFieldNotPresent(fieldsGroupLabel = "Fields Group");
 	}
 
-	@description = "This is a stubbed description"
-	@ignore = "true"
+	@description = "This is a test for LRQA-68747. This test verifies that is possible to duplicate the entire Fields Group"
 	@priority = "4"
 	test CanBeDuplicated {
 		NavItem.gotoStructures();
@@ -195,7 +194,7 @@ definition {
 			fieldsLabelList = "Copy of Text,Copy of Numeric,Copy of Date");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit Fields Group label"
 	@priority = "4"
 	test CanBeEdited {
 		NavItem.gotoStructures();
@@ -225,7 +224,7 @@ definition {
 			fieldsLabelList = "Text,Numeric");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-68747. This test verifies that is possible to delete a field inside a Fields Group"
 	@priority = "5"
 	test CanBeFieldDeleted {
 		NavItem.gotoStructures();
@@ -389,7 +388,7 @@ definition {
 		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Copy of Date");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit the label of a Fields Group that is inside another Fields Group"
 	@priority = "3"
 	test CanEditLabelNestedFieldsGroup {
 		NavItem.gotoStructures();
