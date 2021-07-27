@@ -72,6 +72,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -188,110 +189,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return _servletContext.getContextPath() + "/images/thumbnail.png";
 	}
 
-	public List<AssetCategory> _importAssetCategories() throws Exception {
-		Group group = _serviceContext.getScopeGroup();
-
-		String assetVocabularyName = group.getName(_serviceContext.getLocale());
-
-		Company company = _companyLocalService.getCompany(
-			_serviceContext.getCompanyId());
-
-		long scopeGroupId = company.getGroupId();
-
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
-			_read("/asset-categories/asset-categories.json"));
-
-		User user = _userLocalService.getUser(_serviceContext.getUserId());
-
-		ServiceContext serviceContext = new ServiceContext();
-
-		serviceContext.setAddGuestPermissions(false);
-		serviceContext.setCompanyId(user.getCompanyId());
-		serviceContext.setScopeGroupId(scopeGroupId);
-		serviceContext.setUserId(user.getUserId());
-
-		AssetVocabulary assetVocabulary = _addAssetVocabulary(
-			assetVocabularyName, serviceContext);
-
-		List<AssetCategory> assetCategories = new ArrayList<>();
-
-		for (int i = 0; i < jsonArray.length(); i++) {
-			String titleCategory = null;
-			String externalReferenceCodeCategory = null;
-			JSONArray subcategoriesJSONArray = null;
-
-			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
-
-			if (categoryJSONObject != null) {
-				titleCategory = categoryJSONObject.getString("title");
-
-				externalReferenceCodeCategory = categoryJSONObject.getString(
-					"externalReferenceCode");
-
-				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
-					"subcategories");
-			}
-			else {
-				titleCategory = jsonArray.getString(i);
-			}
-
-			AssetCategory assetCategory1 = _addAssetCategory(
-				assetVocabulary.getVocabularyId(), new String[0], null,
-				externalReferenceCodeCategory,
-				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
-				serviceContext, titleCategory);
-
-			assetCategories.add(assetCategory1);
-
-			if (subcategoriesJSONArray != null) {
-				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
-					JSONObject subcategoryJSONObject =
-						subcategoriesJSONArray.getJSONObject(y);
-
-					String descriptionSubcategory =
-						subcategoryJSONObject.getString("description");
-
-					String titleSubcategory = subcategoryJSONObject.getString(
-						"title");
-
-					String externalReferenceCodeSubcategory =
-						subcategoryJSONObject.getString(
-							"externalReferenceCode");
-
-					JSONArray propertiesJSONArray =
-						subcategoryJSONObject.getJSONArray("properties");
-
-					String[] properties =
-						new String[propertiesJSONArray.length()];
-
-					for (int x = 0; x < propertiesJSONArray.length(); x++) {
-						JSONObject propertyJSONObject =
-							propertiesJSONArray.getJSONObject(x);
-
-						String key = propertyJSONObject.getString("key");
-						String value = propertyJSONObject.getString("value");
-
-						properties[x] = StringBundler.concat(
-							key,
-							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
-							value);
-					}
-
-					AssetCategory assetCategory2 = _addAssetCategory(
-						assetVocabulary.getVocabularyId(), properties,
-						descriptionSubcategory,
-						externalReferenceCodeSubcategory,
-						assetCategory1.getCategoryId(), serviceContext,
-						titleSubcategory);
-
-					assetCategories.add(assetCategory2);
-				}
-			}
-		}
-
-		return assetCategories;
-	}
-
 	public void init() {
 		_cpDefinitions = new HashMap<>();
 	}
@@ -306,8 +203,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_addDDMStructures();
 
 			_addDDMTemplates();
-
-			_importAssetCategories();
 
 			List<AssetCategory> assetCategories = _importAssetCategories();
 
@@ -937,25 +832,6 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private ObjectField _createObjectField(
-		boolean indexed, boolean indexedAsKeyword, String indexedLanguageId,
-		String name, String type) {
-
-		ObjectField objectField = _objectFieldLocalService.createObjectField(0);
-
-		objectField.setIndexed(indexed);
-		objectField.setIndexedAsKeyword(indexedAsKeyword);
-		objectField.setIndexedLanguageId(indexedLanguageId);
-		objectField.setName(name);
-		objectField.setType(type);
-
-		return objectField;
-	}
-
-	private ObjectField _createObjectField(String name, String type) {
-		return _createObjectField(true, false, null, name, type);
-	}
-
 	private void _configureB2BSite(long groupId, ServiceContext serviceContext)
 		throws Exception {
 
@@ -1013,6 +889,25 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			group.getName(serviceContext.getLanguageId()) + " Portal",
 			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
 			commerceCatalog.getCommerceCurrencyCode(), serviceContext);
+	}
+
+	private ObjectField _createObjectField(
+		boolean indexed, boolean indexedAsKeyword, String indexedLanguageId,
+		String name, String type) {
+
+		ObjectField objectField = _objectFieldLocalService.createObjectField(0);
+
+		objectField.setIndexed(indexed);
+		objectField.setIndexedAsKeyword(indexedAsKeyword);
+		objectField.setIndexedLanguageId(indexedLanguageId);
+		objectField.setName(name);
+		objectField.setType(type);
+
+		return objectField;
+	}
+
+	private ObjectField _createObjectField(String name, String type) {
+		return _createObjectField(true, false, null, name, type);
 	}
 
 	private void _createRoles(
@@ -1177,6 +1072,146 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return resourcesMap;
 	}
 
+	private List<AssetCategory> _importAssetCategories() throws Exception {
+		Group group = _serviceContext.getScopeGroup();
+
+		String assetVocabularyName = group.getName(_serviceContext.getLocale());
+
+		Company company = _companyLocalService.getCompany(
+			_serviceContext.getCompanyId());
+
+		long scopeGroupId = company.getGroupId();
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+			_read("/asset-categories/asset-categories.json"));
+
+		User user = _userLocalService.getUser(_serviceContext.getUserId());
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAddGuestPermissions(false);
+		serviceContext.setCompanyId(user.getCompanyId());
+		serviceContext.setScopeGroupId(scopeGroupId);
+		serviceContext.setUserId(user.getUserId());
+
+		AssetVocabulary assetVocabulary = _addAssetVocabulary(
+			assetVocabularyName, serviceContext);
+
+		_updateAssetVocabularyPermissions(assetVocabulary);
+
+		List<AssetCategory> assetCategories = new ArrayList<>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			String titleCategory = null;
+			String externalReferenceCodeCategory = null;
+			JSONArray subcategoriesJSONArray = null;
+
+			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
+
+			if (categoryJSONObject != null) {
+				titleCategory = categoryJSONObject.getString("title");
+
+				externalReferenceCodeCategory = categoryJSONObject.getString(
+					"externalReferenceCode");
+
+				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
+					"subcategories");
+			}
+			else {
+				titleCategory = jsonArray.getString(i);
+			}
+
+			AssetCategory assetCategory = _addAssetCategory(
+				assetVocabulary.getVocabularyId(), new String[0], null,
+				externalReferenceCodeCategory,
+				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
+				serviceContext, titleCategory);
+
+			assetCategories.add(assetCategory);
+
+			// Permissions
+
+			if (categoryJSONObject == null) {
+				continue;
+			}
+
+			JSONArray permissionsJSONArray = categoryJSONObject.getJSONArray(
+				"permissions");
+
+			if ((permissionsJSONArray != null) &&
+				(permissionsJSONArray.length() > 0)) {
+
+				_updatePermissions(
+					assetCategory.getCompanyId(),
+					assetCategory.getModelClassName(),
+					String.valueOf(assetCategory.getCategoryId()),
+					permissionsJSONArray);
+			}
+
+			if (subcategoriesJSONArray != null) {
+				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
+					JSONObject subcategoryJSONObject =
+						subcategoriesJSONArray.getJSONObject(y);
+
+					String descriptionSubcategory =
+						subcategoryJSONObject.getString("description");
+
+					String titleSubcategory = subcategoryJSONObject.getString(
+						"title");
+
+					String externalReferenceCodeSubcategory =
+						subcategoryJSONObject.getString(
+							"externalReferenceCode");
+
+					JSONArray propertiesJSONArray =
+						subcategoryJSONObject.getJSONArray("properties");
+
+					String[] properties =
+						new String[propertiesJSONArray.length()];
+
+					for (int x = 0; x < propertiesJSONArray.length(); x++) {
+						JSONObject propertyJSONObject =
+							propertiesJSONArray.getJSONObject(x);
+
+						String key = propertyJSONObject.getString("key");
+						String value = propertyJSONObject.getString("value");
+
+						properties[x] = StringBundler.concat(
+							key,
+							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
+							value);
+					}
+
+					AssetCategory subassetcategory = _addAssetCategory(
+						assetVocabulary.getVocabularyId(), properties,
+						descriptionSubcategory,
+						externalReferenceCodeSubcategory,
+						assetCategory.getCategoryId(), serviceContext,
+						titleSubcategory);
+
+					assetCategories.add(subassetcategory);
+
+					// Permissions
+
+					JSONArray subcategorypermissionsJSONArray =
+						subcategoryJSONObject.getJSONArray("permissions");
+
+					if ((subcategorypermissionsJSONArray != null) &&
+						(subcategorypermissionsJSONArray.length() > 0)) {
+
+						_updatePermissions(
+							subassetcategory.getCompanyId(),
+							subassetcategory.getModelClassName(),
+							String.valueOf(subassetcategory.getCategoryId()),
+							subcategorypermissionsJSONArray);
+					}
+				}
+			}
+		}
+
+		return assetCategories;
+	}
+
 	private List<CommerceInventoryWarehouse> _importCommerceInventoryWarehouses(
 			ServiceContext serviceContext)
 		throws Exception {
@@ -1327,6 +1362,24 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			styleBookEntry.getStyleBookEntryId(), true);
 	}
 
+	private void _updateAssetVocabularyPermissions(
+			AssetVocabulary assetVocabulary)
+		throws Exception {
+
+		JSONArray jsonArray = JSONUtil.put(
+			JSONUtil.put(
+				"actionIds", JSONUtil.put("VIEW")
+			).put(
+				"roleName", "User"
+			).put(
+				"scope", 4
+			));
+
+		_updatePermissions(
+			assetVocabulary.getCompanyId(), assetVocabulary.getModelClassName(),
+			String.valueOf(assetVocabulary.getVocabularyId()), jsonArray);
+	}
+
 	private void _updateLayoutSetLookAndFeel(String type) throws Exception {
 		boolean privateLayoutSet = false;
 
@@ -1445,6 +1498,35 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),
 			serviceContext.getUserId(), CommerceChannel.class.getName(),
 			String.valueOf(commerceChannelId), modelPermissions);
+	}
+
+	private void _updatePermissions(
+			long companyId, String name, String primKey, JSONArray jsonArray)
+		throws Exception {
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+			int scope = jsonObject.getInt("scope");
+
+			String roleName = jsonObject.getString("roleName");
+
+			Role role = _roleLocalService.getRole(companyId, roleName);
+
+			String[] actionIds = new String[0];
+
+			JSONArray actionIdsJSONArray = jsonObject.getJSONArray("actionIds");
+
+			if (actionIdsJSONArray != null) {
+				for (int j = 0; j < actionIdsJSONArray.length(); j++) {
+					actionIds = ArrayUtil.append(
+						actionIds, actionIdsJSONArray.getString(j));
+				}
+			}
+
+			_resourcePermissionLocalService.setResourcePermissions(
+				companyId, name, scope, primKey, role.getRoleId(), actionIds);
+		}
 	}
 
 	private void _updateUserRole(ServiceContext serviceContext)
