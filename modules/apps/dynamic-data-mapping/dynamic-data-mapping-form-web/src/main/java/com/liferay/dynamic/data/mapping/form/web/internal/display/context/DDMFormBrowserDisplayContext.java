@@ -219,6 +219,16 @@ public class DDMFormBrowserDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/browser/view.jsp"
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"displayStyle", getDisplayStyle()
 		).setParameter(
@@ -246,17 +256,6 @@ public class DDMFormBrowserDisplayContext {
 
 				if (Validator.isNotNull(displayStyle)) {
 					return getDisplayStyle();
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;

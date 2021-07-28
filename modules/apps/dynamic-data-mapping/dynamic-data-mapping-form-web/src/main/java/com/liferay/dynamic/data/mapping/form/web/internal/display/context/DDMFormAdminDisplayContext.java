@@ -937,6 +937,16 @@ public class DDMFormAdminDisplayContext {
 			renderResponse
 		).setMVCPath(
 			"/admin/view.jsp"
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"currentTab", "forms"
 		).setParameter(
@@ -960,17 +970,6 @@ public class DDMFormAdminDisplayContext {
 
 				if (Validator.isNotNull(displayStyle)) {
 					return getDisplayStyle();
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;
