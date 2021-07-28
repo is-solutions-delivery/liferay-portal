@@ -123,7 +123,7 @@ public class DDLRecordAssetRendererFactory
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse, long classTypeId) {
 
-		PortletURL portletURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				liferayPortletRequest, getGroup(liferayPortletRequest),
 				DDLPortletKeys.DYNAMIC_DATA_LISTS, 0, 0,
@@ -140,8 +140,6 @@ public class DDLRecordAssetRendererFactory
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	@Override

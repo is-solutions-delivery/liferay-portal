@@ -274,7 +274,7 @@ public class DDLViewRecordsDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			PortletURLUtil.getCurrent(
 				_liferayPortletRequest, _liferayPortletResponse)
 		).setMVCPath(
@@ -339,8 +339,6 @@ public class DDLViewRecordsDisplayContext {
 		).setParameter(
 			"recordSetId", _ddlRecordSet.getRecordSetId()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public SearchContainer<?> getSearch() throws PortalException {
