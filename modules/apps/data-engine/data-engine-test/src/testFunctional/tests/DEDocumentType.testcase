@@ -66,6 +66,46 @@ definition {
 			fieldName = "Date");
 	}
 
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label and Help text of Image Field on the Document Type builder."
+	@priority = "4"
+	test CanEditLabelPlaceholderAndHelpTextInImageField {
+		DMNavigator.gotoDocumentType();
+
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Image",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Image",
+			fieldHelp = "Help Text");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Image",
+			fieldHelp = "Help Text",
+			fieldName = "Image");
+
+		DataEngine.editFieldLabel(
+			fieldFieldLabel = "Image",
+			fieldFieldLabelEdit = "Image Edited");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Image Edited",
+			fieldHelp = "Help Text Edited");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Image Edited",
+			fieldHelp = "Help Text Edited",
+			fieldName = "Image");
+	}
+
 	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label, Placeholder and Help text of Numeric Field on the Document Type builder."
 	@priority = "5"
 	test CanEditLabelPlaceholderAndHelpTextInNumericField {
