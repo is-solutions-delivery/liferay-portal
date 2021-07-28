@@ -319,15 +319,13 @@ definition {
 
 		DataEngine.gotoEditFieldset(fieldsetName = "New Fieldset");
 
-		DataEngine.addFields(fieldNameList = "Date");
+		DEBuilder.addField(
+			fieldLabel = "Date",
+			fieldName = "Date");
 
-		Click(locator1 = "Modal#SAVE_BUTTON");
+		FormViewBuilder.saveButtonFieldset();
 
-		Click(
-			key_text = "Propagate",
-			locator1 = "Button#ANY");
-
-		Alert.viewSuccessMessage();
+		FormViewBuilder.propagateChange();
 
 		WebContentStructures.saveCP();
 
@@ -367,11 +365,8 @@ definition {
 
 		WebContent.addWithStructureCP(
 			webContentDate = "02/22/2021",
-			webContentDateFieldLabel = "Date",
 			webContentNumeric = "1",
-			webContentNumericFieldLabel = "Numeric",
 			webContentText = "Text",
-			webContentTextFieldLabel = "Text",
 			webContentTitle = "Web Content Title");
 
 		PortletEntry.changeLocale(locale = "pt-BR");
@@ -389,16 +384,12 @@ definition {
 
 		WebContent.viewWithStructureCP(
 			webContentDate = "02/22/2021",
-			webContentDateFieldLabel = "Date",
 			webContentNumeric = "1",
-			webContentNumericFieldLabel = "Numeric",
 			webContentText = "Text",
-			webContentTextFieldLabel = "Text",
 			webContentTitle = "Web Content Title");
 
-		PortletEntry.publish();
-
 		WebContent.viewWithStructureCP(
+			skipGotoEditCP = "true",
 			webContentDate = "23/02/2021",
 			webContentDateFieldLabel = "Date pt-BR",
 			webContentLocaleFieldLabel = "pt-BR",
@@ -406,10 +397,9 @@ definition {
 			webContentNumericFieldLabel = "Numeric pt-BR",
 			webContentText = "Text - pt-BR",
 			webContentTextFieldLabel = "Text pt-BR",
-			webContentTitle = "Web Content Title",
-			webContentTitleTranslated = "Web Content Title pt-BR");
+			webContentTitle = "Web Content Title pt-BR");
 
-		PortletEntry.publish();
+		Navigator.gotoBack();
 
 		NavItem.gotoStructures();
 
