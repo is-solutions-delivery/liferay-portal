@@ -55,13 +55,13 @@ public class WidgetTemplatesTemplateDisplayContext
 			return _classNameIds;
 		}
 
-		List<TemplateHandler> templateHandlersList =
+		List<TemplateHandler> templateHandlers =
 			_portletDisplayTemplate.getPortletDisplayTemplateHandlers();
 
-		Stream<TemplateHandler> templateHandlerStream =
-			templateHandlersList.stream();
+		Stream<TemplateHandler> templateHandlersStream =
+			templateHandlers.stream();
 
-		_classNameIds = templateHandlerStream.mapToLong(
+		_classNameIds = templateHandlersStream.mapToLong(
 			templateHandler -> PortalUtil.getClassNameId(
 				templateHandler.getClassName())
 		).toArray();
