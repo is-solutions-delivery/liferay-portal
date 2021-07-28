@@ -299,7 +299,7 @@ definition {
 	@description = "This test ensures add fields, translate, edit fieldset, check propagation, translate from different language."
 	@priority = "5"
 	test CreateEditAndDeleteLocalizedFieldset {
-		property portal.acceptance = "quarantine";
+		property portal.acceptance = "true";
 
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
