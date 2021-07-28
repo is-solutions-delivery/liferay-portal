@@ -150,6 +150,46 @@ definition {
 			fieldPlaceholder = "Placeholder Text Edited");
 	}
 
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label and Help text of Rich Text Field on the Document Type builder."
+	@priority = "4"
+	test CanEditLabelPlaceholderAndHelpTextInRichTextField {
+		DMNavigator.gotoDocumentType();
+
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Rich Text",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Rich Text",
+			fieldHelp = "Help Text");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Rich Text",
+			fieldHelp = "Help Text",
+			fieldName = "Rich Text");
+
+		DataEngine.editFieldLabel(
+			fieldFieldLabel = "Rich Text",
+			fieldFieldLabelEdit = "Rich Text Edited");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Rich Text Edited",
+			fieldHelp = "Help Text Edited");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Rich Text Edited",
+			fieldHelp = "Help Text Edited",
+			fieldName = "Rich Text");
+	}
+
 	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label, Placeholder and Help text of Text Field on the Document Type builder."
 	@priority = "5"
 	test CanEditLabelPlaceholderAndHelpTextInTextField {
