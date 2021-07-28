@@ -65,12 +65,13 @@ continueQuoteButton.onclick = function () {
 		});
 };
 
-getQuoteForm.onsubmit = function (e) {
-	e.preventDefault();
-	const formData = new FormData(e.target);
+getQuoteForm.onsubmit = function (event) {
+	event.preventDefault();
+	const formData = new FormData(event.target);
 	const formProps = Object.fromEntries(formData);
+	const maxCharactersZIP = 5;
 
-	if (!formProps.zip) {
+	if (!formProps.zip || formProps.zip.length !== maxCharactersZIP) {
 		Liferay.Util.openToast({
 			message: 'Please enter a valid zip code.',
 			type: 'danger',
@@ -92,3 +93,25 @@ fragmentElement.querySelector('#zip').onkeypress = (event) => {
 
 	return !(charCode > 31 && (charCode < 48 || charCode > 57));
 };
+
+Liferay.Service(
+	'/assetcategory/search-categories-display',
+	{
+		'+sort': 'com.liferay.portal.kernel.search.Sort',
+		'sort.fieldName': 'name',
+		'sort.type': 6,
+		end: 50,
+		groupIds: 0,
+		parentCategoryIds: 0,
+		start: 0,
+		title: '',
+		vocabularyIds: null,
+	},
+	(response) => {
+		const product = fragmentElement.querySelector('#product');
+
+		response.categories.forEach((category) => {
+			product.add(new Option(category.name, category.categoryId));
+		});
+	}
+);
