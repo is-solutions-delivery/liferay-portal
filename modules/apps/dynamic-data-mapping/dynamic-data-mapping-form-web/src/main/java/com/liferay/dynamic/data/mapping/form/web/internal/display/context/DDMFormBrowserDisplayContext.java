@@ -230,14 +230,6 @@ public class DDMFormBrowserDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"displayStyle", getDisplayStyle()
-		).setParameter(
-			"eventName", getEventName()
-		).setParameter(
-			"orderByCol", getOrderByCol()
-		).setParameter(
-			"orderByType", getOrderByType()
-		).setParameter(
 			"delta",
 			() -> {
 				String delta = ParamUtil.getString(_renderRequest, "delta");
@@ -248,6 +240,8 @@ public class DDMFormBrowserDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"displayStyle", getDisplayStyle()
 		).setParameter(
 			"displayStyle",
 			() -> {
@@ -261,6 +255,10 @@ public class DDMFormBrowserDisplayContext {
 				return null;
 			}
 		).setParameter(
+			"eventName", getEventName()
+		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
 			"orderByCol",
 			() -> {
 				String orderByCol = getOrderByCol();
@@ -271,6 +269,8 @@ public class DDMFormBrowserDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"orderByType", getOrderByType()
 		).setParameter(
 			"orderByType",
 			() -> {

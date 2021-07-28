@@ -950,8 +950,6 @@ public class DDMFormAdminDisplayContext {
 		).setParameter(
 			"currentTab", "forms"
 		).setParameter(
-			"groupId", getScopeGroupId()
-		).setParameter(
 			"delta",
 			() -> {
 				String delta = ParamUtil.getString(renderRequest, "delta");
@@ -974,6 +972,8 @@ public class DDMFormAdminDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"groupId", getScopeGroupId()
 		).setParameter(
 			"orderByCol",
 			() -> {

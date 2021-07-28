@@ -379,8 +379,6 @@ public class DDMDataProviderDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"groupId", _ddmDataProviderRequestHelper.getScopeGroupId()
-		).setParameter(
 			"delta",
 			() -> {
 				String delta = ParamUtil.getString(_renderRequest, "delta");
@@ -402,6 +400,8 @@ public class DDMDataProviderDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"groupId", _ddmDataProviderRequestHelper.getScopeGroupId()
 		).setParameter(
 			"orderByCol",
 			() -> {
