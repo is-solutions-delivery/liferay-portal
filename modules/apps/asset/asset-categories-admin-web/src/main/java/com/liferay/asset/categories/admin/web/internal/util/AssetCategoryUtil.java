@@ -60,14 +60,19 @@ public class AssetCategoryUtil {
 			renderResponse
 		).setMVCPath(
 			"/view.jsp"
+		).setParameter(
+			"navigation",
+			() -> {
+				String navigation = ParamUtil.getString(
+					httpServletRequest, "navigation");
+
+				if (Validator.isNotNull(navigation)) {
+					return navigation;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String navigation = ParamUtil.getString(
-			httpServletRequest, "navigation");
-
-		if (Validator.isNotNull(navigation)) {
-			portletURL.setParameter("navigation", navigation);
-		}
 
 		vocabularyBreadcrumbEntry.setTitle(
 			vocabulary.getTitle(themeDisplay.getLocale()));

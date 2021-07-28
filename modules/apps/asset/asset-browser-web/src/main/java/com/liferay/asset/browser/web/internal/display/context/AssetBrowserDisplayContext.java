@@ -253,47 +253,69 @@ public class AssetBrowserDisplayContext {
 				PortalUtil.getLiferayPortletResponse(_renderResponse))
 		).setParameter(
 			"groupId", getGroupId()
+		).setParameter(
+			"selectedGroupId",
+			() -> {
+				long selectedGroupId = ParamUtil.getLong(
+					_httpServletRequest, "selectedGroupId");
+
+				if (selectedGroupId > 0) {
+					return selectedGroupId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"selectedGroupIds",
+			() -> {
+				long[] selectedGroupIds = getSelectedGroupIds();
+
+				if (selectedGroupIds.length > 0) {
+					return StringUtil.merge(selectedGroupIds);
+				}
+
+				return null;
+			}
+		).setParameter(
+			"refererAssetEntryId", getRefererAssetEntryId()
+		).setParameter(
+			"typeSelection", getTypeSelection()
+		).setParameter(
+			"subtypeSelectionId", getSubtypeSelectionId()
+		).setParameter(
+			"listable",
+			() -> {
+				if (_getListable() != null) {
+					return _getListable();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"multipleSelection",
+			() -> {
+				if (isMultipleSelection()) {
+					return Boolean.TRUE.toString();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"showAddButton",
+			() -> {
+				if (isShowAddButton()) {
+					return Boolean.TRUE.toString();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"showNonindexable", _isShowNonindexable()
+		).setParameter(
+			"showScheduled", _isShowScheduled()
+		).setParameter(
+			"eventName", getEventName()
 		).buildPortletURL();
-
-		long selectedGroupId = ParamUtil.getLong(
-			_httpServletRequest, "selectedGroupId");
-
-		if (selectedGroupId > 0) {
-			portletURL.setParameter(
-				"selectedGroupId", String.valueOf(selectedGroupId));
-		}
-
-		long[] selectedGroupIds = getSelectedGroupIds();
-
-		if (selectedGroupIds.length > 0) {
-			portletURL.setParameter(
-				"selectedGroupIds", StringUtil.merge(selectedGroupIds));
-		}
-
-		portletURL.setParameter(
-			"refererAssetEntryId", String.valueOf(getRefererAssetEntryId()));
-		portletURL.setParameter("typeSelection", getTypeSelection());
-		portletURL.setParameter(
-			"subtypeSelectionId", String.valueOf(getSubtypeSelectionId()));
-
-		if (_getListable() != null) {
-			portletURL.setParameter("listable", String.valueOf(_getListable()));
-		}
-
-		if (isMultipleSelection()) {
-			portletURL.setParameter(
-				"multipleSelection", Boolean.TRUE.toString());
-		}
-
-		if (isShowAddButton()) {
-			portletURL.setParameter("showAddButton", Boolean.TRUE.toString());
-		}
-
-		portletURL.setParameter(
-			"showNonindexable", String.valueOf(_isShowNonindexable()));
-		portletURL.setParameter(
-			"showScheduled", String.valueOf(_isShowScheduled()));
-		portletURL.setParameter("eventName", getEventName());
 
 		return portletURL;
 	}

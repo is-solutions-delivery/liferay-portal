@@ -561,15 +561,20 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 			liferayPortletResponse
 		).setParameter(
 			"cur", ParamUtil.getInteger(liferayPortletRequest, "cur")
+		).setParameter(
+			"delta",
+			() -> {
+				if (delta > 0) {
+					return delta;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"resetCur", resetCur
+		).setParameter(
+			"assetEntryId", assetEntry.getEntryId()
 		).buildPortletURL();
-
-		if (delta > 0) {
-			redirectURL.setParameter("delta", String.valueOf(delta));
-		}
-
-		redirectURL.setParameter("resetCur", String.valueOf(resetCur));
-		redirectURL.setParameter(
-			"assetEntryId", String.valueOf(assetEntry.getEntryId()));
 
 		PortletURL viewFullContentURL = PortletURLBuilder.create(
 			getBaseAssetViewURL(

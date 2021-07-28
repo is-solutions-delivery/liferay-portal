@@ -167,19 +167,22 @@ public class AssetCategoriesManagementToolbarDisplayContext
 					liferayPortletResponse
 				).setMVCPath(
 					"/edit_category.jsp"
-				).buildPortletURL();
+				).setParameter(
+					"parentCategoryId",
+					() -> {
+						if (_assetCategoriesDisplayContext.getCategoryId() >
+								0) {
 
-				if (_assetCategoriesDisplayContext.getCategoryId() > 0) {
-					addCategoryURL.setParameter(
-						"parentCategoryId",
-						String.valueOf(
-							_assetCategoriesDisplayContext.getCategoryId()));
-				}
+							return _assetCategoriesDisplayContext.
+								getCategoryId();
+						}
 
-				addCategoryURL.setParameter(
+						return null;
+					}
+				).setParameter(
 					"vocabularyId",
-					String.valueOf(
-						_assetCategoriesDisplayContext.getVocabularyId()));
+					_assetCategoriesDisplayContext.getVocabularyId()
+				).buildPortletURL();
 
 				dropdownItem.setHref(addCategoryURL);
 

@@ -123,17 +123,20 @@ public class AddAssetListEntryMVCActionCommand extends BaseMVCActionCommand {
 			_portal.getLiferayPortletResponse(actionResponse)
 		).setMVCPath(
 			"/edit_asset_list_entry.jsp"
+		).setParameter(
+			"backURL",
+			() -> {
+				String backURL = ParamUtil.getString(actionRequest, "backURL");
+
+				if (backURL != null) {
+					return backURL;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"assetListEntryId", assetListEntry.getAssetListEntryId()
 		).buildPortletURL();
-
-		String backURL = ParamUtil.getString(actionRequest, "backURL");
-
-		if (backURL != null) {
-			portletURL.setParameter("backURL", backURL);
-		}
-
-		portletURL.setParameter(
-			"assetListEntryId",
-			String.valueOf(assetListEntry.getAssetListEntryId()));
 
 		return portletURL.toString();
 	}

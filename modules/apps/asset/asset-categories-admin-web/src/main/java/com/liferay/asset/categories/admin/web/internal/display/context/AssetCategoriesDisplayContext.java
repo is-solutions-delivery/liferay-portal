@@ -115,29 +115,41 @@ public class AssetCategoriesDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/edit_category.jsp"
+		).setParameter(
+			"parentCategoryId",
+			() -> {
+				long parentCategoryId = BeanParamUtil.getLong(
+					getCategory(), _httpServletRequest, "parentCategoryId");
+
+				if (parentCategoryId > 0) {
+					return parentCategoryId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"vocabularyId",
+			() -> {
+				long vocabularyId = getVocabularyId();
+
+				if (vocabularyId > 0) {
+					return vocabularyId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"itemSelectorEventName",
+			() -> {
+				String itemSelectorEventName = getItemSelectorEventName();
+
+				if (Validator.isNotNull(itemSelectorEventName)) {
+					return itemSelectorEventName;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		long parentCategoryId = BeanParamUtil.getLong(
-			getCategory(), _httpServletRequest, "parentCategoryId");
-
-		if (parentCategoryId > 0) {
-			addCategoryURL.setParameter(
-				"parentCategoryId", String.valueOf(parentCategoryId));
-		}
-
-		long vocabularyId = getVocabularyId();
-
-		if (vocabularyId > 0) {
-			addCategoryURL.setParameter(
-				"vocabularyId", String.valueOf(vocabularyId));
-		}
-
-		String itemSelectorEventName = getItemSelectorEventName();
-
-		if (Validator.isNotNull(itemSelectorEventName)) {
-			addCategoryURL.setParameter(
-				"itemSelectorEventName", itemSelectorEventName);
-		}
 
 		return addCategoryURL.toString();
 	}
@@ -432,17 +444,25 @@ public class AssetCategoriesDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
+		).setParameter(
+			"categoryId",
+			() -> {
+				if (parentCategoryId > 0) {
+					return parentCategoryId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"vocabularyId",
+			() -> {
+				if (getVocabularyId() > 0) {
+					return getVocabularyId();
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		if (parentCategoryId > 0) {
-			backURL.setParameter(
-				"categoryId", String.valueOf(parentCategoryId));
-		}
-
-		if (getVocabularyId() > 0) {
-			backURL.setParameter(
-				"vocabularyId", String.valueOf(getVocabularyId()));
-		}
 
 		return backURL.toString();
 	}
@@ -883,17 +903,22 @@ public class AssetCategoriesDisplayContext {
 			currentURL
 		).setNavigation(
 			getNavigation()
+		).setParameter(
+			"categoryId",
+			() -> {
+				if (!isFlattenedNavigationAllowed()) {
+					return getCategoryId();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"vocabularyId", getVocabularyId()
+		).setParameter(
+			"displayStyle", getDisplayStyle()
+		).setParameter(
+			"keywords", _getKeywords()
 		).buildPortletURL();
-
-		if (!isFlattenedNavigationAllowed()) {
-			iteratorURL.setParameter(
-				"categoryId", String.valueOf(getCategoryId()));
-		}
-
-		iteratorURL.setParameter(
-			"vocabularyId", String.valueOf(getVocabularyId()));
-		iteratorURL.setParameter("displayStyle", getDisplayStyle());
-		iteratorURL.setParameter("keywords", _getKeywords());
 
 		return iteratorURL;
 	}
