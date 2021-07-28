@@ -183,30 +183,19 @@ public class LayoutReportsDataMVCResourceCommand
 		}
 	}
 
-	private String _getConfigurationAdminPortletId(ThemeDisplay themeDisplay) {
-		if (_isSiteAdmin(themeDisplay.getScopeGroupId())) {
-			return ConfigurationAdminPortletKeys.SITE_SETTINGS;
-		}
-
-		return null;
-	}
-
 	private String _getConfigureGooglePageSpeedURL(
 		PortletRequest portletRequest) {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String configurationAdminPortletId = _getConfigurationAdminPortletId(
-			themeDisplay);
-
-		if (Validator.isNull(configurationAdminPortletId)) {
+		if (!_isSiteAdmin(themeDisplay.getScopeGroupId())) {
 			return null;
 		}
 
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
-				portletRequest, configurationAdminPortletId,
+				portletRequest, ConfigurationAdminPortletKeys.SITE_SETTINGS,
 				PortletRequest.RENDER_PHASE)
 		).setMVCRenderCommandName(
 			"/configuration_admin/edit_configuration"
