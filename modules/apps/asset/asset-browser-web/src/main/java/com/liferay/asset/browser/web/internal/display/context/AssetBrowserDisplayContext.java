@@ -247,7 +247,7 @@ public class AssetBrowserDisplayContext {
 	}
 
 	public PortletURL getPortletURL() throws PortletException {
-		PortletURL portletURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			PortletURLUtil.clone(
 				_portletURL,
 				PortalUtil.getLiferayPortletResponse(_renderResponse))
@@ -316,8 +316,6 @@ public class AssetBrowserDisplayContext {
 		).setParameter(
 			"typeSelection", getTypeSelection()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public long getRefererAssetEntryId() {

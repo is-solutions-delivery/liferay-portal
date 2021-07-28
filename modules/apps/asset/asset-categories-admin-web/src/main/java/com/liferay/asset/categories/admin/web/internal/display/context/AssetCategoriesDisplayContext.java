@@ -891,7 +891,7 @@ public class AssetCategoriesDisplayContext {
 		PortletURL currentURL = PortletURLUtil.getCurrent(
 			_renderRequest, _renderResponse);
 
-		PortletURL iteratorURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
@@ -915,8 +915,6 @@ public class AssetCategoriesDisplayContext {
 		).setParameter(
 			"vocabularyId", getVocabularyId()
 		).buildPortletURL();
-
-		return iteratorURL;
 	}
 
 	private String _getKeywords() {
