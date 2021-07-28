@@ -553,10 +553,6 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 		AssetRenderer<?> assetRenderer, AssetEntry assetEntry,
 		boolean viewInContext) {
 
-		int delta = ParamUtil.getInteger(liferayPortletRequest, "delta");
-		boolean resetCur = ParamUtil.getBoolean(
-			liferayPortletRequest, "resetCur");
-
 		PortletURL redirectURL = PortletURLBuilder.createRenderURL(
 			liferayPortletResponse
 		).setParameter(
@@ -564,6 +560,9 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 		).setParameter(
 			"delta",
 			() -> {
+				int delta = ParamUtil.getInteger(
+					liferayPortletRequest, "delta");
+
 				if (delta > 0) {
 					return delta;
 				}
@@ -571,7 +570,7 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 				return null;
 			}
 		).setParameter(
-			"resetCur", resetCur
+			"resetCur", ParamUtil.getBoolean(liferayPortletRequest, "resetCur")
 		).setParameter(
 			"assetEntryId", assetEntry.getEntryId()
 		).buildPortletURL();

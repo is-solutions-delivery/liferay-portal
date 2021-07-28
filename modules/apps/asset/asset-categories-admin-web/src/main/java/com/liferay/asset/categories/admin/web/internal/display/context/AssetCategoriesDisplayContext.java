@@ -435,9 +435,6 @@ public class AssetCategoriesDisplayContext {
 	}
 
 	public String getEditCategoryRedirect() throws PortalException {
-		long parentCategoryId = BeanParamUtil.getLong(
-			getCategory(), _httpServletRequest, "parentCategoryId");
-
 		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
@@ -445,6 +442,9 @@ public class AssetCategoriesDisplayContext {
 		).setParameter(
 			"categoryId",
 			() -> {
+				long parentCategoryId = BeanParamUtil.getLong(
+					getCategory(), _httpServletRequest, "parentCategoryId");
+
 				if (parentCategoryId > 0) {
 					return parentCategoryId;
 				}
