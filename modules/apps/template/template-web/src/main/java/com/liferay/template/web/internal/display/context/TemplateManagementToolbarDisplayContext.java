@@ -129,15 +129,14 @@ public class TemplateManagementToolbarDisplayContext
 			"type", DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY
 		).buildPortletURL();
 
-		String resourceClassNameIdString = String.valueOf(
-			_templateDisplayContext.getResourceClassNameId());
-
 		for (long addAllowedClassNameId : addAllowedClassNameIds) {
 			addDDMTemplateURL.setParameter(
 				"classNameId", String.valueOf(addAllowedClassNameId));
 			addDDMTemplateURL.setParameter("classPK", "0");
 			addDDMTemplateURL.setParameter(
-				"resourceClassNameId", resourceClassNameIdString);
+				"resourceClassNameId",
+				String.valueOf(
+					_templateDisplayContext.getResourceClassNameId()));
 
 			creationMenu.addPrimaryDropdownItem(
 				dropdownItem -> {
