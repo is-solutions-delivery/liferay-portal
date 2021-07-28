@@ -292,8 +292,6 @@ public class DDLViewRecordsDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"recordSetId", _ddlRecordSet.getRecordSetId()
-		).setParameter(
 			"delta",
 			() -> {
 				String delta = ParamUtil.getString(
@@ -338,6 +336,8 @@ public class DDLViewRecordsDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"recordSetId", _ddlRecordSet.getRecordSetId()
 		).buildPortletURL();
 
 		return portletURL;
