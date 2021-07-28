@@ -26,43 +26,6 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LRQA-68747. This test verifies that if all fields from a Fields Group are removed the Fields Group is removed"
-	@priority = "3"
-	test CallAllFieldsBeRemoved {
-		NavItem.gotoStructures();
-
-		WebContentStructures.addCP(structureName = "WC Structure Title");
-
-		DEBuilder.addField(
-			fieldLabel = "Text",
-			fieldName = "Text");
-
-		DataEngine.addFieldNested(
-			fieldFieldLabel = "Numeric",
-			fieldName = "Numeric",
-			targetFieldLabel = "Text");
-
-		WebContentStructures.saveCP();
-
-		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
-
-		DataEngine.delete(fieldFieldLabel = "Text");
-
-		DataEngine.delete(fieldFieldLabel = "Numeric");
-
-		DEBuilder.addField(
-			fieldLabel = "Date",
-			fieldName = "Date");
-
-		WebContentStructures.saveCP();
-
-		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
-
-		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Text");
-
-		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Numeric");
-	}
-
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to create Fields Group by adding a field from the sidebar into a field that is on the builder"
 	@priority = "5"
 	test CanBeCreated {
@@ -609,6 +572,45 @@ definition {
 			fieldGroupDepth = "1",
 			fieldGroupLabel = "Fields Group",
 			fieldsLabelList = "Numeric");
+	}
+
+	@description = "This is a test for LRQA-68747. This test verifies that if all fields from a Fields Group are removed the Fields Group is removed"
+	@priority = "3"
+	test CanRemoveFieldsGroupWhenAllFieldsAreRemoved {
+		NavItem.gotoStructures();
+
+		WebContentStructures.addCP(structureName = "WC Structure Title");
+
+		DEBuilder.addField(
+			fieldLabel = "Text",
+			fieldName = "Text");
+
+		DataEngine.addFieldNested(
+			fieldFieldLabel = "Numeric",
+			fieldName = "Numeric",
+			targetFieldLabel = "Text");
+
+		DEBuilder.addField(
+			fieldLabel = "Date",
+			fieldName = "Date");
+
+		WebContentStructures.saveCP();
+
+		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
+
+		DataEngine.delete(fieldFieldLabel = "Text");
+
+		DataEngine.delete(fieldFieldLabel = "Numeric");
+
+		WebContentStructures.saveCP();
+
+		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
+
+		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Text");
+
+		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Numeric");
+
+		DataEngine.assertFieldNotPresent(fieldsGroupLabel = "Fields Group");
 	}
 
 }
