@@ -26,6 +26,46 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to add multiple options for Grid field on the Document Type builder."
+	@priority = "4"
+	test CanAddMultipleOptionsInGridField {
+		DMNavigator.gotoDocumentType();
+
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Grid",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		for (var index : list "1,2,3") {
+			DataEngine.addFieldOption(
+				fieldFieldLabel = "Grid",
+				index = "${index}",
+				optionFieldLabel = "Rows",
+				optionValue = "Option ${index}");
+		}
+
+		for (var index : list "1,2,3") {
+			DataEngine.addFieldOption(
+				fieldFieldLabel = "Grid",
+				index = "${index}",
+				optionFieldLabel = "Columns",
+				optionValue = "Option ${index}");
+		}
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DEBuilder.assertFieldOptionLabels(
+			fieldFieldLabel = "Grid",
+			optionFieldLabel = "Rows",
+			optionLabelList = "Option 1,Option 2,Option 3");
+
+		DEBuilder.assertFieldOptionLabels(
+			fieldFieldLabel = "Grid",
+			optionFieldLabel = "Columns",
+			optionLabelList = "Option 1,Option 2,Option 3");
+	}
+
 	@description = "This is a test for LRQA-69030. This test verifies that is possible to add multiple options for Multiple Selection field on the Document Type builder."
 	@priority = "4"
 	test CanAddMultipleOptionsInMultipleSelectionField {
