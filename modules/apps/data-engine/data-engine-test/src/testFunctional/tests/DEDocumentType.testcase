@@ -66,6 +66,50 @@ definition {
 			fieldName = "Date");
 	}
 
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label, Placeholder and Help text of Numeric Field on the Document Type builder."
+	@priority = "5"
+	test CanEditLabelPlaceholderAndHelpTextInNumericField {
+		DMNavigator.gotoDocumentType();
+
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Numeric",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Numeric",
+			fieldHelp = "Help Text",
+			fieldPlaceholder = "Placeholder Text");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Numeric",
+			fieldHelp = "Help Text",
+			fieldName = "Numeric",
+			fieldPlaceholder = "Placeholder Text");
+
+		DataEngine.editFieldLabel(
+			fieldFieldLabel = "Numeric",
+			fieldFieldLabelEdit = "Numeric Edited");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Numeric Edited",
+			fieldHelp = "Help Text Edited",
+			fieldPlaceholder = "Placeholder Text Edited");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Numeric Edited",
+			fieldHelp = "Help Text Edited",
+			fieldName = "Numeric",
+			fieldPlaceholder = "Placeholder Text Edited");
+	}
+
 	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label, Placeholder and Help text of Text Field on the Document Type builder."
 	@priority = "5"
 	test CanEditLabelPlaceholderAndHelpTextInTextField {
