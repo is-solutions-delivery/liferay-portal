@@ -60,8 +60,7 @@ public class AssetCategoryUtil {
 			renderResponse
 		).setMVCPath(
 			"/view.jsp"
-		).setParameter(
-			"navigation",
+		).setNavigation(
 			() -> {
 				String navigation = ParamUtil.getString(
 					httpServletRequest, "navigation");

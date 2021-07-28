@@ -897,6 +897,8 @@ public class AssetCategoriesDisplayContext {
 			"/view.jsp"
 		).setRedirect(
 			currentURL
+		).setKeywords(
+			_getKeywords()
 		).setNavigation(
 			getNavigation()
 		).setParameter(
@@ -912,8 +914,6 @@ public class AssetCategoriesDisplayContext {
 			"vocabularyId", getVocabularyId()
 		).setParameter(
 			"displayStyle", getDisplayStyle()
-		).setParameter(
-			"keywords", _getKeywords()
 		).buildPortletURL();
 
 		return iteratorURL;
