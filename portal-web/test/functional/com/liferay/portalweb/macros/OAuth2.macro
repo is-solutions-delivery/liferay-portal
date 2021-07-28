@@ -88,6 +88,19 @@ definition {
 		PortletEntry.save();
 	}
 
+	macro assertApplicationHasNoAuthorization {
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Edit",
+			rowEntry = "${applicationName}");
+
+		AssertClick(
+			key_navItem = "Authorizations",
+			locator1 = "NavBar#NAV_ITEM_LINK",
+			value1 = "Authorizations");
+
+		AssertElementNotPresent(locator1 = "ContentRow#ENTRY_CONTENT_ROW_1");
+	}
+
 	macro authorizeMyApplication {
 		if ("${newTab}" == "true") {
 			Open.openInTheNewTab(locator1 = "http://martamedio.com/oauth2-tester/");
@@ -443,6 +456,22 @@ definition {
 		Navigator.openWithAppendToBaseURL(
 			baseURL = "${baseURL}",
 			urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_oauth2_provider_web_internal_portlet_OAuth2AdminPortlet");
+	}
+
+	macro revokeApplicationAuthorization {
+		LexiconEntry.viewEntryMenuItem(
+			menuItem = "Revoke Authorizations",
+			rowEntry = "${applicationName}");
+
+		MenuItem.clickNoError(menuItem = "Revoke Authorizations");
+
+		AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to revoke all authorizations? This actions revokes 1 authorization and associated tokens.");
+
+		AssertTextEquals(
+			key_columnName = "lfr-authorizations",
+			key_tableEntry = "${applicationName}",
+			locator1 = "LexiconTable#TABLE_ENTRY_INFO",
+			value1 = "0");
 	}
 
 	macro revokeGrantedAuthViaAdmin {
