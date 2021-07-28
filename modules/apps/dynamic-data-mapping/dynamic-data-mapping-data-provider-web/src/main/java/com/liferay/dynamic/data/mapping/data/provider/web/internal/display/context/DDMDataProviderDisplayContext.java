@@ -364,7 +364,7 @@ public class DDMDataProviderDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
@@ -427,8 +427,6 @@ public class DDMDataProviderDisplayContext {
 		).setParameter(
 			"refererPortletName", getRefererPortletName()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public SearchContainer<?> getSearch() {

@@ -215,7 +215,7 @@ public class DDMFormBrowserDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/browser/view.jsp"
@@ -283,8 +283,6 @@ public class DDMFormBrowserDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getSearchActionURL() {
