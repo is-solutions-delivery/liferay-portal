@@ -51,6 +51,31 @@ definition {
 			optionLabelList = "Option 1,Option 2,Option 3");
 	}
 
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to add multiple options for Single Selection field on the Document Type builder."
+	@priority = "4"
+	test CanAddMultipleOptionsInSingleSelectionField {
+		DMNavigator.gotoDocumentType();
+
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Single Selection",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		for (var index : list "1,2,3") {
+			DataEngine.addFieldOption(
+				fieldFieldLabel = "Single Selection",
+				index = "${index}",
+				optionValue = "Option ${index}");
+		}
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DEBuilder.assertFieldOptionLabels(
+			fieldFieldLabel = "Single Selection",
+			optionLabelList = "Option 1,Option 2,Option 3");
+	}
+
 	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label and Help text of Color Field on the Document Type builder."
 	@priority = "4"
 	test CanEditLabelPlaceholderAndHelpTextInColorField {
