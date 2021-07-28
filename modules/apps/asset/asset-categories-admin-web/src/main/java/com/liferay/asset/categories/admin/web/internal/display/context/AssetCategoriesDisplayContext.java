@@ -116,6 +116,17 @@ public class AssetCategoriesDisplayContext {
 		).setMVCPath(
 			"/edit_category.jsp"
 		).setParameter(
+			"itemSelectorEventName",
+			() -> {
+				String itemSelectorEventName = getItemSelectorEventName();
+
+				if (Validator.isNotNull(itemSelectorEventName)) {
+					return itemSelectorEventName;
+				}
+
+				return null;
+			}
+		).setParameter(
 			"parentCategoryId",
 			() -> {
 				long parentCategoryId = BeanParamUtil.getLong(
@@ -134,17 +145,6 @@ public class AssetCategoriesDisplayContext {
 
 				if (vocabularyId > 0) {
 					return vocabularyId;
-				}
-
-				return null;
-			}
-		).setParameter(
-			"itemSelectorEventName",
-			() -> {
-				String itemSelectorEventName = getItemSelectorEventName();
-
-				if (Validator.isNotNull(itemSelectorEventName)) {
-					return itemSelectorEventName;
 				}
 
 				return null;
@@ -911,9 +911,9 @@ public class AssetCategoriesDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"vocabularyId", getVocabularyId()
-		).setParameter(
 			"displayStyle", getDisplayStyle()
+		).setParameter(
+			"vocabularyId", getVocabularyId()
 		).buildPortletURL();
 
 		return iteratorURL;

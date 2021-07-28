@@ -556,6 +556,8 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 		PortletURL redirectURL = PortletURLBuilder.createRenderURL(
 			liferayPortletResponse
 		).setParameter(
+			"assetEntryId", assetEntry.getEntryId()
+		).setParameter(
 			"cur", ParamUtil.getInteger(liferayPortletRequest, "cur")
 		).setParameter(
 			"delta",
@@ -571,8 +573,6 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 			}
 		).setParameter(
 			"resetCur", ParamUtil.getBoolean(liferayPortletRequest, "resetCur")
-		).setParameter(
-			"assetEntryId", assetEntry.getEntryId()
 		).buildPortletURL();
 
 		PortletURL viewFullContentURL = PortletURLBuilder.create(

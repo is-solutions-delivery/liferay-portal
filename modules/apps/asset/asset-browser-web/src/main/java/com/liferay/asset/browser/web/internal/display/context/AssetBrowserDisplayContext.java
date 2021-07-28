@@ -252,7 +252,29 @@ public class AssetBrowserDisplayContext {
 				_portletURL,
 				PortalUtil.getLiferayPortletResponse(_renderResponse))
 		).setParameter(
+			"eventName", getEventName()
+		).setParameter(
 			"groupId", getGroupId()
+		).setParameter(
+			"listable",
+			() -> {
+				if (_getListable() != null) {
+					return _getListable();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"multipleSelection",
+			() -> {
+				if (isMultipleSelection()) {
+					return Boolean.TRUE.toString();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"refererAssetEntryId", getRefererAssetEntryId()
 		).setParameter(
 			"selectedGroupId",
 			() -> {
@@ -277,30 +299,6 @@ public class AssetBrowserDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"refererAssetEntryId", getRefererAssetEntryId()
-		).setParameter(
-			"typeSelection", getTypeSelection()
-		).setParameter(
-			"subtypeSelectionId", getSubtypeSelectionId()
-		).setParameter(
-			"listable",
-			() -> {
-				if (_getListable() != null) {
-					return _getListable();
-				}
-
-				return null;
-			}
-		).setParameter(
-			"multipleSelection",
-			() -> {
-				if (isMultipleSelection()) {
-					return Boolean.TRUE.toString();
-				}
-
-				return null;
-			}
-		).setParameter(
 			"showAddButton",
 			() -> {
 				if (isShowAddButton()) {
@@ -314,7 +312,9 @@ public class AssetBrowserDisplayContext {
 		).setParameter(
 			"showScheduled", _isShowScheduled()
 		).setParameter(
-			"eventName", getEventName()
+			"subtypeSelectionId", getSubtypeSelectionId()
+		).setParameter(
+			"typeSelection", getTypeSelection()
 		).buildPortletURL();
 
 		return portletURL;
