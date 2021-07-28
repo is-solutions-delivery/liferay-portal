@@ -351,7 +351,7 @@ definition {
 
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit the label of a Fields Group that is inside another Fields Group"
 	@priority = "3"
-	test CanEditLabelNestedFieldsGroup {
+	test CanEditLabelOfNestedFieldsGroup {
 		NavItem.gotoStructures();
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
@@ -378,14 +378,13 @@ definition {
 			fieldsGroupLabel = "Fields Group",
 			fieldsGroupLabelEdit = "Fields Group 2");
 
-		DataEngine.addFieldNested(
-			fieldFieldLabel = "Color",
-			fieldName = "Color",
-			targetFieldLabel = "Date");
+		WebContentStructures.saveCP();
+
+		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
 
 		DataEngine.editFieldsGroupLabel(
-			fieldsGroupLabel = "Fields Group",
-			fieldsGroupLabelEdit = "Fields Group 3");
+			fieldsGroupLabel = "Fields Group 2",
+			fieldsGroupLabelEdit = "Fields Group 2 Edited");
 
 		WebContentStructures.saveCP();
 
@@ -394,17 +393,12 @@ definition {
 		DEBuilder.assertFieldsGroup(
 			fieldGroupDepth = "1",
 			fieldGroupLabel = "Fields Group 1",
-			fieldsLabelList = "Text,Fields Group 2");
+			fieldsLabelList = "Text");
 
 		DEBuilder.assertFieldsGroup(
 			fieldGroupDepth = "2",
-			fieldGroupLabel = "Fields Group 2",
-			fieldsLabelList = "Numeric,Fields Group 3");
-
-		DEBuilder.assertFieldsGroup(
-			fieldGroupDepth = "3",
-			fieldGroupLabel = "Fields Group 3",
-			fieldsLabelList = "Date,Color");
+			fieldGroupLabel = "Fields Group 2 Edited",
+			fieldsLabelList = "Numeric,Date");
 	}
 
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit Label, Placeholder and Help text of fields that are inside the Fields Group."
