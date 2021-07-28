@@ -38,7 +38,7 @@
 	appearance: none;
 	border-color: #7d7e85 !important;
 	flex: 1;
-	font-size: 16px;
+	font-size: var(--font-size-base);
 	font-weight: var(--font-weight-bolder);
 	margin-right: 21px;
 	padding-right: 46px !important;
@@ -47,7 +47,7 @@
 
 .business-home-cover .business-home-cover-box #zip {
 	border-color: #7d7e85 !important;
-	font-size: 16px;
+	font-size: var(--font-size-base);
 	font-weight: var(--font-weight-bolder);
 	margin-right: 21px;
 	width: 119px;
@@ -95,7 +95,7 @@
 
 .business-home-cover .business-email-delivered p {
 	color: #606167;
-	font-size: 16px;
+	font-size: var(--font-size-base);
 }
 
 .business-home-cover .business-home-cover-link {
