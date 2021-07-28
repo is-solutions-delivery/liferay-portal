@@ -281,6 +281,16 @@ public class DDLViewRecordsDisplayContext {
 			getMVCPath()
 		).setRedirect(
 			ParamUtil.getString(_liferayPortletRequest, "redirect")
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"recordSetId", _ddlRecordSet.getRecordSetId()
 		).setParameter(
@@ -302,17 +312,6 @@ public class DDLViewRecordsDisplayContext {
 
 				if (Validator.isNotNull(displayStyle)) {
 					return displayStyle;
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;

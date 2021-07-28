@@ -346,6 +346,16 @@ public class DDLDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"delta",
 			() -> {
@@ -365,17 +375,6 @@ public class DDLDisplayContext {
 
 				if (Validator.isNotNull(displayStyle)) {
 					return getDisplayStyle();
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;
