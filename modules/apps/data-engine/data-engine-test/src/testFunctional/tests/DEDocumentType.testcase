@@ -165,6 +165,37 @@ definition {
 			fieldsLabelList = "Text,Numeric");
 	}
 
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to delete a Fields Group on the Document Type builder."
+	@priority = "4"
+	test CanDeleteFieldsGroup {
+		DMNavigator.gotoDocumentType();
+
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Text",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.addFieldNested(
+			fieldFieldLabel = "Numeric",
+			fieldName = "Numeric",
+			targetFieldLabel = "Text");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.delete(fieldsGroupLabel = "Fields Group");
+
+		DEBuilder.addField(
+			fieldLabel = "Date",
+			fieldName = "Date");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.assertFieldNotPresent(fieldsGroupLabel = "Fields Group");
+	}
+
 	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label and Help text of Color Field on the Document Type builder."
 	@priority = "4"
 	test CanEditLabelPlaceholderAndHelpTextInColorField {
