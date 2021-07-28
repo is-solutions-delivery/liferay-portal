@@ -189,7 +189,7 @@ public class LayoutReportsDataMVCResourceCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		if (!_isSiteAdmin(themeDisplay.getScopeGroupId())) {
+		if (!_isGroupAdmin(themeDisplay.getScopeGroupId())) {
 			return null;
 		}
 
@@ -353,7 +353,7 @@ public class LayoutReportsDataMVCResourceCommand
 		return StringPool.BLANK;
 	}
 
-	private boolean _isSiteAdmin(long groupId) {
+	private boolean _isGroupAdmin(long groupId) {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
