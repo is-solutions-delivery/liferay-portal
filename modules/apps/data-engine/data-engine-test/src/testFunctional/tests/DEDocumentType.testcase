@@ -26,13 +26,48 @@ definition {
 		}
 	}
 
-	@description = "This is a stubbed description"
-	@ignore = "true"
-	@priority = "3"
-	test CanEditLabelPlaceholderAndHelpText {
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label, Placeholder and Help text of Text Field on the Document Type builder."
+	@priority = "5"
+	test CanEditLabelPlaceholderAndHelpTextInTextField {
+		DMNavigator.gotoDocumentType();
 
-		// TODO pending implementation
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Text",
+			dmDocumentTypeName = "DM Document Type Name");
 
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Text",
+			fieldHelp = "Help Text",
+			fieldPlaceholder = "Placeholder Text");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Text",
+			fieldHelp = "Help Text",
+			fieldName = "Text",
+			fieldPlaceholder = "Placeholder Text");
+
+		DataEngine.editFieldLabel(
+			fieldFieldLabel = "Text",
+			fieldFieldLabelEdit = "Text Edited");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Text Edited",
+			fieldHelp = "Help Text Edited",
+			fieldPlaceholder = "Placeholder Text Edited");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Text Edited",
+			fieldHelp = "Help Text Edited",
+			fieldName = "Text",
+			fieldPlaceholder = "Placeholder Text Edited");
 	}
 
 }
