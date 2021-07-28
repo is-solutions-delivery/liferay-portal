@@ -221,7 +221,7 @@ definition {
 
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to delete a field inside a Fields Group"
 	@priority = "5"
-	test CanBeFieldDeleted {
+	test CanDeleteField {
 		NavItem.gotoStructures();
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
@@ -234,6 +234,10 @@ definition {
 			fieldFieldLabel = "Numeric",
 			fieldName = "Numeric",
 			targetFieldLabel = "Text");
+
+		WebContentStructures.saveCP();
+
+		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
 
 		DataEngine.delete(fieldFieldLabel = "Numeric");
 
