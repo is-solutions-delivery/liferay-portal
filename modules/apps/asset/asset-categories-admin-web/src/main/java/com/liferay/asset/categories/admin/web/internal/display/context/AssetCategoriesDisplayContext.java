@@ -111,7 +111,7 @@ public class AssetCategoriesDisplayContext {
 	}
 
 	public String getAddCategoryRedirect() throws PortalException {
-		PortletURL addCategoryURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/edit_category.jsp"
@@ -149,9 +149,7 @@ public class AssetCategoriesDisplayContext {
 
 				return null;
 			}
-		).buildPortletURL();
-
-		return addCategoryURL.toString();
+		).buildString();
 	}
 
 	public String getAssetType(AssetVocabulary vocabulary)
@@ -440,7 +438,7 @@ public class AssetCategoriesDisplayContext {
 		long parentCategoryId = BeanParamUtil.getLong(
 			getCategory(), _httpServletRequest, "parentCategoryId");
 
-		PortletURL backURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
@@ -462,9 +460,7 @@ public class AssetCategoriesDisplayContext {
 
 				return null;
 			}
-		).buildPortletURL();
-
-		return backURL.toString();
+		).buildString();
 	}
 
 	public PortletURL getEditVocabularyURL() {
