@@ -1096,7 +1096,7 @@ public class DDMFormAdminDisplayContext {
 			return StringPool.BLANK;
 		}
 
-		PortletURL shareFormInstanceURL = PortletURLBuilder.createActionURL(
+		return PortletURLBuilder.createActionURL(
 			renderResponse
 		).setActionName(
 			"/admin/share_form_instance"
@@ -1109,9 +1109,7 @@ public class DDMFormAdminDisplayContext {
 
 				return null;
 			}
-		).buildPortletURL();
-
-		return shareFormInstanceURL.toString();
+		).buildString();
 	}
 
 	public String getSortingURL() throws Exception {
