@@ -97,15 +97,15 @@ definition {
 			fieldName = "Numeric",
 			targetFieldLabel = "Text");
 
+		DEBuilder.addField(
+			fieldLabel = "Date",
+			fieldName = "Date");
+
 		WebContentStructures.saveCP();
 
 		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
 
 		DataEngine.delete(fieldsGroupLabel = "Fields Group");
-
-		DEBuilder.addField(
-			fieldLabel = "Date",
-			fieldName = "Date");
 
 		WebContentStructures.saveCP();
 
