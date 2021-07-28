@@ -33,8 +33,8 @@ definition {
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Text",
+		DEBuilder.addField(
+			fieldLabel = "Text",
 			fieldName = "Text");
 
 		DataEngine.addFieldNested(
@@ -50,8 +50,8 @@ definition {
 
 		DataEngine.delete(fieldFieldLabel = "Numeric");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Date",
+		DEBuilder.addField(
+			fieldLabel = "Date",
 			fieldName = "Date");
 
 		WebContentStructures.saveCP();
@@ -70,8 +70,8 @@ definition {
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Text",
+		DEBuilder.addField(
+			fieldLabel = "Text",
 			fieldName = "Text");
 
 		DataEngine.addFieldNested(
@@ -130,8 +130,8 @@ definition {
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Text",
+		DEBuilder.addField(
+			fieldLabel = "Text",
 			fieldName = "Text");
 
 		DataEngine.addFieldNested(
@@ -145,8 +145,8 @@ definition {
 
 		DataEngine.delete(fieldsGroupLabel = "Fields Group");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Date",
+		DEBuilder.addField(
+			fieldLabel = "Date",
 			fieldName = "Date");
 
 		WebContentStructures.saveCP();
@@ -163,8 +163,8 @@ definition {
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Text",
+		DEBuilder.addField(
+			fieldLabel = "Text",
 			fieldName = "Text");
 
 		DataEngine.addFieldNested(
@@ -201,8 +201,8 @@ definition {
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Text",
+		DEBuilder.addField(
+			fieldLabel = "Text",
 			fieldName = "Text");
 
 		DataEngine.addFieldNested(
@@ -231,8 +231,8 @@ definition {
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Text",
+		DEBuilder.addField(
+			fieldLabel = "Text",
 			fieldName = "Text");
 
 		DataEngine.addFieldNested(
@@ -395,8 +395,8 @@ definition {
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
 
-		DataEngine.addField(
-			fieldFieldLabel = "Text",
+		DEBuilder.addField(
+			fieldLabel = "Text",
 			fieldName = "Text");
 
 		DataEngine.addFieldNested(
