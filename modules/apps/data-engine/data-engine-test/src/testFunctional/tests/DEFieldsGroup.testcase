@@ -152,36 +152,6 @@ definition {
 			fieldsLabelList = "Copy of Text,Copy of Numeric,Copy of Date");
 	}
 
-	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit Fields Group label"
-	@priority = "4"
-	test CanBeEdited {
-		NavItem.gotoStructures();
-
-		WebContentStructures.addCP(structureName = "WC Structure Title");
-
-		DEBuilder.addField(
-			fieldLabel = "Text",
-			fieldName = "Text");
-
-		DataEngine.addFieldNested(
-			fieldFieldLabel = "Numeric",
-			fieldName = "Numeric",
-			targetFieldLabel = "Text");
-
-		DataEngine.editFieldsGroupLabel(
-			fieldsGroupLabel = "Fields Group",
-			fieldsGroupLabelEdit = "Fields Group Edit");
-
-		WebContentStructures.saveCP();
-
-		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
-
-		DEBuilder.assertFieldsGroup(
-			fieldGroupDepth = "1",
-			fieldGroupLabel = "Fields Group Edit",
-			fieldsLabelList = "Text,Numeric");
-	}
-
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to delete a field inside a Fields Group"
 	@priority = "5"
 	test CanDeleteField {
@@ -348,6 +318,40 @@ definition {
 		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
 
 		DataEngine.assertFieldNotPresent(fieldFieldLabel = "Copy of Date");
+	}
+
+	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit Fields Group label"
+	@priority = "4"
+	test CanEditLabel {
+		NavItem.gotoStructures();
+
+		WebContentStructures.addCP(structureName = "WC Structure Title");
+
+		DEBuilder.addField(
+			fieldLabel = "Text",
+			fieldName = "Text");
+
+		DataEngine.addFieldNested(
+			fieldFieldLabel = "Numeric",
+			fieldName = "Numeric",
+			targetFieldLabel = "Text");
+
+		WebContentStructures.saveCP();
+
+		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
+
+		DataEngine.editFieldsGroupLabel(
+			fieldsGroupLabel = "Fields Group",
+			fieldsGroupLabelEdit = "Fields Group Edited");
+
+		WebContentStructures.saveCP();
+
+		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
+
+		DEBuilder.assertFieldsGroup(
+			fieldGroupDepth = "1",
+			fieldGroupLabel = "Fields Group Edited",
+			fieldsLabelList = "Text,Numeric");
 	}
 
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to edit the label of a Fields Group that is inside another Fields Group"
