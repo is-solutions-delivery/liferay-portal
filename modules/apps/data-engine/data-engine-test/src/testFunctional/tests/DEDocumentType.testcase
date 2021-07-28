@@ -106,6 +106,46 @@ definition {
 			fieldName = "Date");
 	}
 
+	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label and Help text of Geolocation Field on the Document Type builder."
+	@priority = "4"
+	test CanEditLabelPlaceholderAndHelpTextInGeolocationField {
+		DMNavigator.gotoDocumentType();
+
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Geolocation",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Geolocation",
+			fieldHelp = "Help Text");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Geolocation",
+			fieldHelp = "Help Text",
+			fieldName = "Geolocation");
+
+		DataEngine.editFieldLabel(
+			fieldFieldLabel = "Geolocation",
+			fieldFieldLabelEdit = "Geolocation Edited");
+
+		DataEngine.editFieldTip(
+			fieldFieldLabel = "Geolocation Edited",
+			fieldHelp = "Help Text Edited");
+
+		WebContentStructures.saveCP();
+
+		DMNavigator.gotoEditDocumentType(dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.viewField(
+			fieldFieldLabel = "Geolocation Edited",
+			fieldHelp = "Help Text Edited",
+			fieldName = "Geolocation");
+	}
+
 	@description = "This is a test for LRQA-69030. This test verifies that is possible to edit Label and Help text of Image Field on the Document Type builder."
 	@priority = "4"
 	test CanEditLabelPlaceholderAndHelpTextInImageField {
