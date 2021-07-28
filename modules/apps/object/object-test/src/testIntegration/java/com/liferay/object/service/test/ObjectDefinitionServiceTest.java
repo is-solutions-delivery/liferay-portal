@@ -145,12 +145,18 @@ public class ObjectDefinitionServiceTest {
 	private ObjectDefinition _addCustomObjectDefinition(User user)
 		throws Exception {
 
-		ObjectDefinition objectDefinition =
+		// Do not publish the custom object definition to ensure we test that
+		// permission resources are added before publishing
+
+		/*ObjectDefinition objectDefinition =
 			ObjectDefinitionLocalServiceUtil.addCustomObjectDefinition(
 				user.getUserId(), "Test", null);
 
 		return ObjectDefinitionLocalServiceUtil.publishCustomObjectDefinition(
-			user.getUserId(), objectDefinition.getObjectDefinitionId());
+			user.getUserId(), objectDefinition.getObjectDefinitionId());*/
+
+		return ObjectDefinitionLocalServiceUtil.addCustomObjectDefinition(
+			user.getUserId(), "Test", null);
 	}
 
 	private void _setUser(User user) {
