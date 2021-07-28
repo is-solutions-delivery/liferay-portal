@@ -130,11 +130,16 @@ public class DDLRecordAssetRendererFactory
 				PortletRequest.RENDER_PHASE)
 		).setMVCPath(
 			"/edit_record.jsp"
-		).buildPortletURL();
+		).setParameter(
+			"recordSetId",
+			() -> {
+				if (classTypeId > 0) {
+					return classTypeId;
+				}
 
-		if (classTypeId > 0) {
-			portletURL.setParameter("recordSetId", String.valueOf(classTypeId));
-		}
+				return null;
+			}
+		).buildPortletURL();
 
 		return portletURL;
 	}
