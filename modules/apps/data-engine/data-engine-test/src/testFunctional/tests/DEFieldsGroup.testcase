@@ -130,11 +130,6 @@ definition {
 			fieldName = "Numeric",
 			targetFieldLabel = "Text");
 
-		DataEngine.addFieldToFieldsGroup(
-			fieldFieldLabel = "Date",
-			fieldName = "Date",
-			fieldsGroupLabel = "Fields Group");
-
 		DataEngine.duplicate(fieldsGroupLabel = "Fields Group");
 
 		WebContentStructures.saveCP();
@@ -144,12 +139,12 @@ definition {
 		DEBuilder.assertFieldsGroup(
 			fieldGroupDepth = "1",
 			fieldGroupLabel = "Fields Group",
-			fieldsLabelList = "Text,Numeric,Date");
+			fieldsLabelList = "Text,Numeric");
 
 		DEBuilder.assertFieldsGroup(
 			fieldGroupDepth = "1",
 			fieldGroupLabel = "Copy of Fields Group",
-			fieldsLabelList = "Copy of Text,Copy of Numeric,Copy of Date");
+			fieldsLabelList = "Copy of Text,Copy of Numeric");
 	}
 
 	@description = "This is a test for LRQA-68747. This test verifies that is possible to delete a field inside a Fields Group"
