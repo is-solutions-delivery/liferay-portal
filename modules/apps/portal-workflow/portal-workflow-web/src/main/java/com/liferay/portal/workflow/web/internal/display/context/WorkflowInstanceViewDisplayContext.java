@@ -328,6 +328,17 @@ public class WorkflowInstanceViewDisplayContext
 
 		return PortletURLBuilder.createRenderURL(
 			workflowInstanceRequestHelper.getLiferayPortletResponse()
+		).setNavigation(
+			() -> {
+				String instanceNavigation = ParamUtil.getString(
+					httpServletRequest, "navigation");
+
+				if (Validator.isNotNull(instanceNavigation)) {
+					return instanceNavigation;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"orderByType",
 			() -> {
@@ -339,18 +350,6 @@ public class WorkflowInstanceViewDisplayContext
 				}
 
 				return "asc";
-			}
-		).setParameter(
-			"navigation",
-			() -> {
-				String instanceNavigation = ParamUtil.getString(
-					httpServletRequest, "navigation");
-
-				if (Validator.isNotNull(instanceNavigation)) {
-					return instanceNavigation;
-				}
-
-				return null;
 			}
 		).setParameter(
 			"orderByCol",

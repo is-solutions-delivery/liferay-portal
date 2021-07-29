@@ -251,6 +251,17 @@ public class WorkflowDefinitionLinkDisplayContext {
 			_liferayPortletResponse
 		).setMVCPath(
 			"/view.jsp"
+		).setKeywords(
+			() -> {
+				String keywords = ParamUtil.getString(
+					_httpServletRequest, "keywords");
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setTabs1(
 			"default-configuration"
 		).setParameter(
@@ -263,18 +274,6 @@ public class WorkflowDefinitionLinkDisplayContext {
 
 				if (Validator.isNotNull(delta)) {
 					return delta;
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = ParamUtil.getString(
-					_httpServletRequest, "keywords");
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;
