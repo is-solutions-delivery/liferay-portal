@@ -392,7 +392,7 @@ public class SegmentsDisplayContext {
 	}
 
 	private PortletURL _getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
@@ -413,8 +413,6 @@ public class SegmentsDisplayContext {
 		).setParameter(
 			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private Sort _getSort() {

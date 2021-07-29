@@ -314,7 +314,7 @@ public class SelectSegmentsEntryDisplayContext {
 	}
 
 	private PortletURL _getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCRenderCommandName(
 			"/segments/select_segments_entry"
@@ -342,8 +342,6 @@ public class SelectSegmentsEntryDisplayContext {
 		).setParameter(
 			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private Sort _getSort() {

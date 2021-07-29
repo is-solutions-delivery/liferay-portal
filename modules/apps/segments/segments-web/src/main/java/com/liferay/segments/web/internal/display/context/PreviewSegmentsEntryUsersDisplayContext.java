@@ -154,7 +154,7 @@ public class PreviewSegmentsEntryUsersDisplayContext {
 	}
 
 	protected PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCRenderCommandName(
 			"/segments/preview_segments_entry_users"
@@ -170,8 +170,6 @@ public class PreviewSegmentsEntryUsersDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	protected SegmentsEntry getSegmentsEntry() {
