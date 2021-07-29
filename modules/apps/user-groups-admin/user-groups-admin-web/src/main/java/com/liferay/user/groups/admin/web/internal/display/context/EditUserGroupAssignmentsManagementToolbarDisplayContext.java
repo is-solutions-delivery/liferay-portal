@@ -194,12 +194,7 @@ public class EditUserGroupAssignmentsManagementToolbarDisplayContext {
 			_mvcPath
 		).setRedirect(
 			ParamUtil.getString(_httpServletRequest, "redirect")
-		).setParameter(
-			"displayStyle", _displayStyle
-		).setParameter(
-			"userGroupId", _userGroup.getUserGroupId()
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				if (Validator.isNotNull(getKeywords())) {
 					return getKeywords();
@@ -207,6 +202,10 @@ public class EditUserGroupAssignmentsManagementToolbarDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"displayStyle", _displayStyle
+		).setParameter(
+			"userGroupId", _userGroup.getUserGroupId()
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(

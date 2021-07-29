@@ -123,10 +123,7 @@ public class ViewPasswordPoliciesManagementToolbarDisplayContext {
 	public PortletURL getPortletURL() {
 		PortletURL portletURL = PortletURLBuilder.createRenderURL(
 			_renderResponse
-		).setParameter(
-			"displayStyle", _displayStyle
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				if (Validator.isNotNull(getKeywords())) {
 					return getKeywords();
@@ -134,6 +131,8 @@ public class ViewPasswordPoliciesManagementToolbarDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"displayStyle", _displayStyle
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(

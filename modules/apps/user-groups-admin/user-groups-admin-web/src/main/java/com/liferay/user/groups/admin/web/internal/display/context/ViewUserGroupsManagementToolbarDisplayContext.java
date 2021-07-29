@@ -145,6 +145,14 @@ public class ViewUserGroupsManagementToolbarDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
+		).setKeywords(
+			() -> {
+				if (Validator.isNotNull(getKeywords())) {
+					return getKeywords();
+				}
+
+				return null;
+			}
 		).setParameter(
 			"viewUserGroupsRedirect",
 			() -> {
@@ -159,15 +167,6 @@ public class ViewUserGroupsManagementToolbarDisplayContext {
 			}
 		).setParameter(
 			"displayStyle", _displayStyle
-		).setParameter(
-			"keywords",
-			() -> {
-				if (Validator.isNotNull(getKeywords())) {
-					return getKeywords();
-				}
-
-				return null;
-			}
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(

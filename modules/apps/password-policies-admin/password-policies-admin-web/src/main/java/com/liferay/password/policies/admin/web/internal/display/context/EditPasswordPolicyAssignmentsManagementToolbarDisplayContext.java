@@ -216,6 +216,14 @@ public class EditPasswordPolicyAssignmentsManagementToolbarDisplayContext {
 			_mvcPath
 		).setRedirect(
 			ParamUtil.getString(_httpServletRequest, "redirect")
+		).setKeywords(
+			() -> {
+				if (Validator.isNotNull(getKeywords())) {
+					return getKeywords();
+				}
+
+				return null;
+			}
 		).setTabs1(
 			"assignees"
 		).setTabs2(
@@ -224,15 +232,6 @@ public class EditPasswordPolicyAssignmentsManagementToolbarDisplayContext {
 			"displayStyle", _displayStyle
 		).setParameter(
 			"passwordPolicyId", _passwordPolicy.getPasswordPolicyId()
-		).setParameter(
-			"keywords",
-			() -> {
-				if (Validator.isNotNull(getKeywords())) {
-					return getKeywords();
-				}
-
-				return null;
-			}
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(

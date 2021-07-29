@@ -71,8 +71,7 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 					PortletProvider.Action.VIEW)
 			).setMVCPath(
 				"/edit_configuration_templates.jsp"
-			).setParameter(
-				"redirect",
+			).setRedirect(
 				() -> {
 					String redirect = ParamUtil.getString(
 						portletRequest, "redirect");
@@ -82,6 +81,17 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 					}
 
 					return null;
+				}
+			).setPortletResource(
+				() -> {
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)portletRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
+
+					PortletDisplay portletDisplay =
+						themeDisplay.getPortletDisplay();
+
+					return portletDisplay.getId();
 				}
 			).setParameter(
 				"returnToFullPageURL",
@@ -97,18 +107,6 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 				}
 			).setParameter(
 				"portletConfiguration", true
-			).setParameter(
-				"portletResource",
-				() -> {
-					ThemeDisplay themeDisplay =
-						(ThemeDisplay)portletRequest.getAttribute(
-							WebKeys.THEME_DISPLAY);
-
-					PortletDisplay portletDisplay =
-						themeDisplay.getPortletDisplay();
-
-					return portletDisplay.getId();
-				}
 			).setWindowState(
 				LiferayWindowState.POP_UP
 			).buildString();

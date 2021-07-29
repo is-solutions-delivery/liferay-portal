@@ -116,12 +116,7 @@ public class SelectOrganizationUsersManagementToolbarDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/select_organization_users.jsp"
-		).setParameter(
-			"displayStyle", _displayStyle
-		).setParameter(
-			"organizationId", _organization.getOrganizationId()
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String[] keywords = ParamUtil.getStringValues(
 					_httpServletRequest, "keywords");
@@ -132,6 +127,10 @@ public class SelectOrganizationUsersManagementToolbarDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"displayStyle", _displayStyle
+		).setParameter(
+			"organizationId", _organization.getOrganizationId()
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(

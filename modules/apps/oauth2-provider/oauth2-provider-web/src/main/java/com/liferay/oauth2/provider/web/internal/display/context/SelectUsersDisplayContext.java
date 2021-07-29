@@ -141,6 +141,16 @@ public class SelectUsersDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/admin/select_users.jsp"
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"groupId", getGroupId()
 		).setParameter(
@@ -156,17 +166,6 @@ public class SelectUsersDisplayContext {
 			}
 		).setParameter(
 			"eventName", getEventName()
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
-				}
-
-				return null;
-			}
 		).setParameter(
 			"orderByCol",
 			() -> {

@@ -129,6 +129,17 @@ public class SelectOrganizationManagementToolbarDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/select_organization.jsp"
+		).setKeywords(
+			() -> {
+				String[] keywords = ParamUtil.getStringValues(
+					_httpServletRequest, "keywords");
+
+				if (ArrayUtil.isNotEmpty(keywords)) {
+					return keywords[keywords.length - 1];
+				}
+
+				return null;
+			}
 		).setParameter(
 			"p_u_i_d",
 			() -> {
@@ -145,18 +156,6 @@ public class SelectOrganizationManagementToolbarDisplayContext {
 			ParamUtil.getString(
 				_httpServletRequest, "eventName",
 				_renderResponse.getNamespace() + "selectOrganization")
-		).setParameter(
-			"keywords",
-			() -> {
-				String[] keywords = ParamUtil.getStringValues(
-					_httpServletRequest, "keywords");
-
-				if (ArrayUtil.isNotEmpty(keywords)) {
-					return keywords[keywords.length - 1];
-				}
-
-				return null;
-			}
 		).setParameter(
 			"cur", getCur()
 		).setParameter(

@@ -347,6 +347,19 @@ public class ViewTreeManagementToolbarDisplayContext {
 			_renderResponse
 		).setMVCRenderCommandName(
 			"/users_admin/view"
+		).setKeywords(
+			() -> {
+				String[] keywords = ParamUtil.getStringValues(
+					_httpServletRequest, "keywords");
+
+				if (ArrayUtil.isNotEmpty(keywords)) {
+					return keywords[keywords.length - 1];
+				}
+
+				return null;
+			}
+		).setNavigation(
+			getNavigation()
 		).setParameter(
 			"displayStyle", _displayStyle
 		).setParameter(
@@ -359,20 +372,6 @@ public class ViewTreeManagementToolbarDisplayContext {
 			"usersListView",
 			GetterUtil.getString(
 				_httpServletRequest.getAttribute("view.jsp-usersListView"))
-		).setParameter(
-			"keywords",
-			() -> {
-				String[] keywords = ParamUtil.getStringValues(
-					_httpServletRequest, "keywords");
-
-				if (ArrayUtil.isNotEmpty(keywords)) {
-					return keywords[keywords.length - 1];
-				}
-
-				return null;
-			}
-		).setParameter(
-			"navigation", getNavigation()
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(

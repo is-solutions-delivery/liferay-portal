@@ -364,10 +364,7 @@ public class CalendarDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
-		).setTabs1(
-			"resources"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String keywords = getKeywords();
 
@@ -377,6 +374,8 @@ public class CalendarDisplayContext {
 
 				return null;
 			}
+		).setTabs1(
+			"resources"
 		).setParameter(
 			"active", ParamUtil.getString(_renderRequest, "active")
 		).setParameter(

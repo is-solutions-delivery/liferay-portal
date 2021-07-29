@@ -71,6 +71,17 @@ public class SelectUserGroupManagementToolbarDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/select_user_group.jsp"
+		).setKeywords(
+			() -> {
+				String[] keywords = ParamUtil.getStringValues(
+					_httpServletRequest, "keywords");
+
+				if (ArrayUtil.isNotEmpty(keywords)) {
+					return keywords[keywords.length - 1];
+				}
+
+				return null;
+			}
 		).setParameter(
 			"p_u_i_d",
 			() -> {
@@ -87,18 +98,6 @@ public class SelectUserGroupManagementToolbarDisplayContext {
 			ParamUtil.getString(
 				_httpServletRequest, "eventName",
 				_renderResponse.getNamespace() + "selectUserGroup")
-		).setParameter(
-			"keywords",
-			() -> {
-				String[] keywords = ParamUtil.getStringValues(
-					_httpServletRequest, "keywords");
-
-				if (ArrayUtil.isNotEmpty(keywords)) {
-					return keywords[keywords.length - 1];
-				}
-
-				return null;
-			}
 		).buildPortletURL();
 
 		return portletURL;

@@ -154,12 +154,7 @@ public class ViewRolesManagementToolbarDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
-		).setParameter(
-			"displayStyle", _displayStyle
-		).setParameter(
-			"roleType", _currentRoleTypeContributor.getType()
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				if (Validator.isNotNull(getKeywords())) {
 					return getKeywords();
@@ -167,6 +162,10 @@ public class ViewRolesManagementToolbarDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"displayStyle", _displayStyle
+		).setParameter(
+			"roleType", _currentRoleTypeContributor.getType()
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(
