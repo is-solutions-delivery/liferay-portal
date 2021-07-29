@@ -214,6 +214,9 @@ public class CommerceOrganizationUserClayTableDataSetDisplayView
 		).setMVCRenderCommandName(
 			"viewCommerceOrganizationUser"
 		).setParameter(
+			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
+			_portal.getCurrentURL(httpServletRequest)
+		).setParameter(
 			"organizationId",
 			() -> {
 				long organizationId = ParamUtil.getLong(
@@ -227,9 +230,6 @@ public class CommerceOrganizationUserClayTableDataSetDisplayView
 			}
 		).setParameter(
 			"userId", userId
-		).setParameter(
-			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
-			_portal.getCurrentURL(httpServletRequest)
 		).buildString();
 	}
 

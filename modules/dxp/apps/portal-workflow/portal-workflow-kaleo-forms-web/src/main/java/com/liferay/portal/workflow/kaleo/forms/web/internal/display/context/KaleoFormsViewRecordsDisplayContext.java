@@ -296,8 +296,6 @@ public class KaleoFormsViewRecordsDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"kaleoProcessId", _kaleoProcess.getKaleoProcessId()
-		).setParameter(
 			"delta",
 			() -> {
 				String delta = ParamUtil.getString(_renderRequest, "delta");
@@ -319,6 +317,8 @@ public class KaleoFormsViewRecordsDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"kaleoProcessId", _kaleoProcess.getKaleoProcessId()
 		).setParameter(
 			"orderByCol",
 			() -> {
