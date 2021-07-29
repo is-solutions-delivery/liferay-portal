@@ -35,7 +35,6 @@ import java.io.IOException;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 import javax.portlet.WindowState;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +67,7 @@ public class OAuthAuthorizeStrutsAction implements StrutsAction {
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		PortletURL portletURL = PortletURLBuilder.create(
+		String redirect = PortletURLBuilder.create(
 			PortletURLFactoryUtil.create(
 				httpServletRequest, OAuthPortletKeys.OAUTH_AUTHORIZE,
 				themeDisplay.getPlid(), PortletRequest.RENDER_PHASE)
@@ -93,9 +92,7 @@ public class OAuthAuthorizeStrutsAction implements StrutsAction {
 			PortletMode.VIEW
 		).setWindowState(
 			getWindowState(httpServletRequest)
-		).buildPortletURL();
-
-		String redirect = portletURL.toString();
+		).buildString();
 
 		httpServletResponse.sendRedirect(redirect);
 

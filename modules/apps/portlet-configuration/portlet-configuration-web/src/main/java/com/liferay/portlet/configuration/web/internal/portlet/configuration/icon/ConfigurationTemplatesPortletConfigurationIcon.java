@@ -38,7 +38,6 @@ import com.liferay.portlet.configuration.kernel.util.PortletConfigurationApplica
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 import javax.portlet.WindowState;
 
 import org.osgi.service.component.annotations.Component;
@@ -64,7 +63,7 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
 		try {
-			PortletURL portletURL = PortletURLBuilder.create(
+			return PortletURLBuilder.create(
 				PortletProviderUtil.getPortletURL(
 					portletRequest,
 					PortletConfigurationApplicationType.PortletConfiguration.
@@ -112,9 +111,7 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 				}
 			).setWindowState(
 				LiferayWindowState.POP_UP
-			).buildPortletURL();
-
-			return portletURL.toString();
+			).buildString();
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
