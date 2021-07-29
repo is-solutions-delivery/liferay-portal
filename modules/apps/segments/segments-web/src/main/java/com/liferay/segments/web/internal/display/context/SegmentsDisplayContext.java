@@ -396,8 +396,7 @@ public class SegmentsDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String keywords = _getKeywords();
 

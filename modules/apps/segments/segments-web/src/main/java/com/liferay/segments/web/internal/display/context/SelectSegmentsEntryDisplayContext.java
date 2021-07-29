@@ -318,8 +318,7 @@ public class SelectSegmentsEntryDisplayContext {
 			_renderResponse
 		).setMVCRenderCommandName(
 			"/segments/select_segments_entry"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String keywords = _getKeywords();
 
