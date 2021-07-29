@@ -214,7 +214,7 @@ public class ReportsEngineDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setNavigation(
 			() -> {
@@ -230,8 +230,6 @@ public class ReportsEngineDisplayContext {
 		).setTabs1(
 			_getTabs1()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public SearchContainer<?> getSearchContainer() throws PortalException {

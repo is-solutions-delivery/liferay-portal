@@ -306,7 +306,7 @@ public class RankingPortletDisplayBuilder {
 
 	@SuppressWarnings("deprecation")
 	private PortletURL _getPortletURL(String keywords) {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
@@ -325,8 +325,6 @@ public class RankingPortletDisplayBuilder {
 		).setParameter(
 			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private boolean _hasResults(

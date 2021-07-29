@@ -279,7 +279,7 @@ public class KaleoFormsViewRecordsDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			PortletURLUtil.getCurrent(_renderRequest, _renderResponse)
 		).setMVCPath(
 			"/admin/view_kaleo_process.jsp"
@@ -342,8 +342,6 @@ public class KaleoFormsViewRecordsDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public SearchContainer<?> getSearch() throws Exception {
