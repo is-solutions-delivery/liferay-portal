@@ -17,9 +17,9 @@
 <%@ include file="/init.jsp" %>
 
 <%
-ObjectDefinition objectDefinition = (ObjectDefinition)request.getAttribute(ObjectWebKeys.OBJECT_DEFINITION);
-
 String backURL = ParamUtil.getString(request, "backURL", String.valueOf(renderResponse.createRenderURL()));
+
+ObjectDefinition objectDefinition = (ObjectDefinition)request.getAttribute(ObjectWebKeys.OBJECT_DEFINITION);
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(backURL);
