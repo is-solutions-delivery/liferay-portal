@@ -340,22 +340,32 @@ public class WorkflowInstanceViewDisplayContext
 
 				return "asc";
 			}
+		).setParameter(
+			"navigation",
+			() -> {
+				String instanceNavigation = ParamUtil.getString(
+					httpServletRequest, "navigation");
+
+				if (Validator.isNotNull(instanceNavigation)) {
+					return instanceNavigation;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByCol",
+			() -> {
+				String orderByCol = getOrderByCol();
+
+				if (Validator.isNotNull(orderByCol)) {
+					return orderByCol;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"tab", WorkflowWebKeys.WORKFLOW_TAB_INSTANCE
 		).buildPortletURL();
-
-		String instanceNavigation = ParamUtil.getString(
-			httpServletRequest, "navigation");
-
-		if (Validator.isNotNull(instanceNavigation)) {
-			portletURL.setParameter("navigation", instanceNavigation);
-		}
-
-		String orderByCol = getOrderByCol();
-
-		if (Validator.isNotNull(orderByCol)) {
-			portletURL.setParameter("orderByCol", orderByCol);
-		}
-
-		portletURL.setParameter("tab", WorkflowWebKeys.WORKFLOW_TAB_INSTANCE);
 
 		return portletURL.toString();
 	}

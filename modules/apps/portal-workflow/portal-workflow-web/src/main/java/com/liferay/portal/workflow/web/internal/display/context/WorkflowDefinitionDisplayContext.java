@@ -432,15 +432,19 @@ public class WorkflowDefinitionDisplayContext {
 
 				return "asc";
 			}
+		).setParameter(
+			"definitionsNavigation",
+			() -> {
+				String definitionsNavigation = ParamUtil.getString(
+					httpServletRequest, "definitionsNavigation");
+
+				if (Validator.isNotNull(definitionsNavigation)) {
+					return definitionsNavigation;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String definitionsNavigation = ParamUtil.getString(
-			httpServletRequest, "definitionsNavigation");
-
-		if (Validator.isNotNull(definitionsNavigation)) {
-			portletURL.setParameter(
-				"definitionsNavigation", definitionsNavigation);
-		}
 
 		return portletURL.toString();
 	}

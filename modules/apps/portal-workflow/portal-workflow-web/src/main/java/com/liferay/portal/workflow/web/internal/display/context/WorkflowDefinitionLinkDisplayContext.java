@@ -255,19 +255,31 @@ public class WorkflowDefinitionLinkDisplayContext {
 			"default-configuration"
 		).setParameter(
 			"tab", WorkflowWebKeys.WORKFLOW_TAB_DEFINITION_LINK
+		).setParameter(
+			"delta",
+			() -> {
+				String delta = ParamUtil.getString(
+					_httpServletRequest, "delta");
+
+				if (Validator.isNotNull(delta)) {
+					return delta;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"keywords",
+			() -> {
+				String keywords = ParamUtil.getString(
+					_httpServletRequest, "keywords");
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String delta = ParamUtil.getString(_httpServletRequest, "delta");
-
-		if (Validator.isNotNull(delta)) {
-			portletURL.setParameter("delta", delta);
-		}
-
-		String keywords = ParamUtil.getString(_httpServletRequest, "keywords");
-
-		if (Validator.isNotNull(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
 
 		String orderByType = ParamUtil.getString(
 			_httpServletRequest, "orderByType", "asc");
