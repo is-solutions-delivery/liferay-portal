@@ -870,7 +870,7 @@ public class WorkflowTaskDisplayContext {
 	}
 
 	private PortletURL _getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setNavigation(
 			() -> {
@@ -886,8 +886,6 @@ public class WorkflowTaskDisplayContext {
 		).setTabs1(
 			_getTabs1()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private Role _getRole(long roleId) {
