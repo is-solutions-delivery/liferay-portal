@@ -80,7 +80,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -448,7 +447,7 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 			String redirect)
 		throws Exception {
 
-		PortletURL portletURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			PortletURLFactoryUtil.create(
 				actionRequest, JournalPortletKeys.JOURNAL,
 				PortletRequest.RENDER_PHASE)
@@ -485,9 +484,7 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 			}
 		).setWindowState(
 			actionRequest.getWindowState()
-		).buildPortletURL();
-
-		return portletURL.toString();
+		).buildString();
 	}
 
 	protected void sendEditArticleRedirect(
