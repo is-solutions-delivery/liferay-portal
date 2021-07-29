@@ -29,7 +29,7 @@ ViewObjectDefinitionsDisplayContext viewObjectDefinitionsDisplayContext = (ViewO
 	clayDataSetActionDropdownItems="<%= viewObjectDefinitionsDisplayContext.getClayDataSetActionDropdownItems() %>"
 	creationMenu="<%= viewObjectDefinitionsDisplayContext.getCreationMenu() %>"
 	formId="fm"
-	id="<%= ObjectDefinitionsDataSetConstants.OBJECT_DEFINITIONS %>"
+	id="<%= ObjectDefinitionsClayDataSetDisplayNames.OBJECT_DEFINITIONS %>"
 	itemsPerPage="<%= 20 %>"
 	namespace="<%= liferayPortletResponse.getNamespace() %>"
 	pageNumber="<%= 1 %>"

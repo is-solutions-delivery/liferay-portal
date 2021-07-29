@@ -24,7 +24,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.object.model.ObjectDefinition" %><%@
 page import="com.liferay.object.web.internal.constants.ObjectWebKeys" %><%@
-page import="com.liferay.object.web.internal.object.definitions.constants.ObjectDefinitionsDataSetConstants" %><%@
+page import="com.liferay.object.web.internal.object.definitions.constants.ObjectDefinitionsClayDataSetDisplayNames" %><%@
 page import="com.liferay.object.web.internal.object.definitions.constants.ObjectDefinitionsScreenNavigationEntryConstants" %><%@
 page import="com.liferay.object.web.internal.object.definitions.display.context.ViewObjectDefinitionsDisplayContext" %><%@
 page import="com.liferay.object.web.internal.object.definitions.display.context.ViewObjectFieldsDisplayContext" %><%@

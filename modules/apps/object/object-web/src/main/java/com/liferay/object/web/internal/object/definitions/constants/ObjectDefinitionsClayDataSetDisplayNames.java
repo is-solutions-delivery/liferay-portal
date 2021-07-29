@@ -17,7 +17,7 @@ package com.liferay.object.web.internal.object.definitions.constants;
 /**
  * @author Gabriel Albuquerque
  */
-public class ObjectDefinitionsDataSetConstants {
+public class ObjectDefinitionsClayDataSetDisplayNames {
 
 	public static final String OBJECT_DEFINITIONS =
 		"objectDefinitions";
