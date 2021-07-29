@@ -162,7 +162,7 @@ public class DisplayPageDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view_display_pages.jsp"
@@ -203,8 +203,6 @@ public class DisplayPageDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public boolean isSearch() {

@@ -823,7 +823,7 @@ public class LayoutsAdminDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setTabs1(
 			getTabs1()
@@ -841,8 +841,6 @@ public class LayoutsAdminDisplayContext {
 		).setParameter(
 			"privateLayout", isPrivateLayout()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getRedirect() {

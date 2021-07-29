@@ -98,7 +98,7 @@ public class SelectThemeDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setMVCPath(
 			"/select_theme.jsp"
@@ -142,8 +142,6 @@ public class SelectThemeDisplayContext {
 		).setParameter(
 			"themeId", getThemeId()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getRedirect() {

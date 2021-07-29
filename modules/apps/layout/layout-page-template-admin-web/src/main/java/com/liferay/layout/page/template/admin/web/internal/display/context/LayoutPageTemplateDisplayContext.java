@@ -275,7 +275,7 @@ public class LayoutPageTemplateDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setRedirect(
 			_themeDisplay.getURLCurrent()
@@ -326,8 +326,6 @@ public class LayoutPageTemplateDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public boolean isSearch() {

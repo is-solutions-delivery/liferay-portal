@@ -177,7 +177,7 @@ public class MasterLayoutDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view_master_layouts.jsp"
@@ -218,8 +218,6 @@ public class MasterLayoutDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public boolean isSearch() {
