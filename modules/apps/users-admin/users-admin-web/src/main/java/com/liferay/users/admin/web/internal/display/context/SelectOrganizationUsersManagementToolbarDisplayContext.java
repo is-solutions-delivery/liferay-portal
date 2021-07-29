@@ -112,7 +112,7 @@ public class SelectOrganizationUsersManagementToolbarDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/select_organization_users.jsp"
@@ -136,8 +136,6 @@ public class SelectOrganizationUsersManagementToolbarDisplayContext {
 		).setParameter(
 			"organizationId", _organization.getOrganizationId()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getSearchActionURL() {

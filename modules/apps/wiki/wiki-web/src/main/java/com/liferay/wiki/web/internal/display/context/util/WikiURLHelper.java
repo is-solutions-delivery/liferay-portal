@@ -149,7 +149,7 @@ public class WikiURLHelper {
 	}
 
 	protected PortletURL getWikiNodeBaseURL(WikiNode node) {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setParameter(
 			"categoryId",
@@ -165,8 +165,6 @@ public class WikiURLHelper {
 		).setParameter(
 			"nodeName", node.getName()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private final LiferayPortletResponse _liferayPortletResponse;

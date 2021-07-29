@@ -343,7 +343,7 @@ public class ViewTreeManagementToolbarDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCRenderCommandName(
 			"/users_admin/view"
@@ -377,8 +377,6 @@ public class ViewTreeManagementToolbarDisplayContext {
 			GetterUtil.getString(
 				_httpServletRequest.getAttribute("view.jsp-usersListView"))
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getSearchActionURL() {

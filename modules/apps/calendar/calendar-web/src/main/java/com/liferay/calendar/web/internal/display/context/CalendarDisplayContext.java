@@ -360,7 +360,7 @@ public class CalendarDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
@@ -381,8 +381,6 @@ public class CalendarDisplayContext {
 		).setParameter(
 			"scope", ParamUtil.getString(_renderRequest, "scope")
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public SearchContainer<?> getSearch() {

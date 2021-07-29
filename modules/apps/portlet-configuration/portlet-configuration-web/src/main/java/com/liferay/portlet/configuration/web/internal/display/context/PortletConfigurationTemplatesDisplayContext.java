@@ -190,7 +190,7 @@ public class PortletConfigurationTemplatesDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/edit_configuration_templates.jsp"
@@ -234,8 +234,6 @@ public class PortletConfigurationTemplatesDisplayContext {
 		).setParameter(
 			"returnToFullPageURL", getReturnToFullPageURL()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getRedirect() {

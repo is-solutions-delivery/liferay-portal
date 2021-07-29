@@ -138,7 +138,7 @@ public class ItemSelectorRepositoryEntryManagementToolbarDisplayContext {
 	}
 
 	public PortletURL getCurrentSortingURL() throws PortletException {
-		PortletURL currentSortingURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			PortletURLUtil.clone(_getPortletURL(), _liferayPortletResponse)
 		).setParameter(
 			"orderByCol", _getOrderByCol()
@@ -156,8 +156,6 @@ public class ItemSelectorRepositoryEntryManagementToolbarDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return currentSortingURL;
 	}
 
 	public List<DropdownItem> getFilterDropdownItems() {

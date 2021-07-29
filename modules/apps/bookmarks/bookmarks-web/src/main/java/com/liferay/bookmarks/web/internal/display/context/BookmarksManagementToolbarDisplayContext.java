@@ -346,7 +346,7 @@ public class BookmarksManagementToolbarDisplayContext {
 	}
 
 	private PortletURL _getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setParameter(
 			"categoryId", StringPool.BLANK
@@ -367,8 +367,6 @@ public class BookmarksManagementToolbarDisplayContext {
 		).setParameter(
 			"tag", StringPool.BLANK
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private String _removeNavigartionParameter(PortletURL portletURL)

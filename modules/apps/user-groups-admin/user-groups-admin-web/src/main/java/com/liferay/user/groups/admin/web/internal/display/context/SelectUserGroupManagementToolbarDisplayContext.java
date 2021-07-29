@@ -67,7 +67,7 @@ public class SelectUserGroupManagementToolbarDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/select_user_group.jsp"
@@ -99,8 +99,6 @@ public class SelectUserGroupManagementToolbarDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getSearchActionURL() {
