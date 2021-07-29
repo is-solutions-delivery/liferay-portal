@@ -42,7 +42,6 @@ import java.util.Map;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -122,7 +121,7 @@ public class EditCommercePaymentMethodGroupRelMVCActionCommand
 		ActionRequest actionRequest, long commercePaymentMethodGroupRelId,
 		String mvcRenderCommandName) {
 
-		PortletURL portletURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				actionRequest, CPPortletKeys.COMMERCE_CHANNELS,
 				PortletRequest.RENDER_PHASE)
@@ -154,9 +153,7 @@ public class EditCommercePaymentMethodGroupRelMVCActionCommand
 
 				return null;
 			}
-		).buildPortletURL();
-
-		return portletURL.toString();
+		).buildString();
 	}
 
 	protected CommercePaymentMethodGroupRel updateCommercePaymentMethodGroupRel(
