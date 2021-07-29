@@ -131,6 +131,18 @@ public class EditCommerceShipmentItemMVCActionCommand
 		).setMVCRenderCommandName(
 			"/commerce_shipment/edit_commerce_shipment_item"
 		).setParameter(
+			"commerceOrderItemId",
+			() -> {
+				long commerceOrderItemId = ParamUtil.getLong(
+					actionRequest, "commerceOrderItemId");
+
+				if (commerceOrderItemId > 0) {
+					return commerceOrderItemId;
+				}
+
+				return null;
+			}
+		).setParameter(
 			"commerceShipmentId",
 			() -> {
 				long commerceShipmentId = ParamUtil.getLong(
@@ -150,18 +162,6 @@ public class EditCommerceShipmentItemMVCActionCommand
 
 				if (commerceShipmentItemId > 0) {
 					return commerceShipmentItemId;
-				}
-
-				return null;
-			}
-		).setParameter(
-			"commerceOrderItemId",
-			() -> {
-				long commerceOrderItemId = ParamUtil.getLong(
-					actionRequest, "commerceOrderItemId");
-
-				if (commerceOrderItemId > 0) {
-					return commerceOrderItemId;
 				}
 
 				return null;

@@ -183,15 +183,24 @@ public class BaseCommerceTaxFixedRateDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"screenNavigationCategoryKey",
-			getSelectedScreenNavigationCategoryKey()
-		).setParameter(
 			"commerceTaxMethodId",
 			() -> {
 				CommerceTaxMethod commerceTaxMethod = getCommerceTaxMethod();
 
 				if (commerceTaxMethod != null) {
 					return commerceTaxMethod.getCommerceTaxMethodId();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"delta",
+			() -> {
+				String delta = ParamUtil.getString(
+					commerceTaxFixedRateRequestHelper.getRequest(), "delta");
+
+				if (Validator.isNotNull(delta)) {
+					return delta;
 				}
 
 				return null;
@@ -210,17 +219,8 @@ public class BaseCommerceTaxFixedRateDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"delta",
-			() -> {
-				String delta = ParamUtil.getString(
-					commerceTaxFixedRateRequestHelper.getRequest(), "delta");
-
-				if (Validator.isNotNull(delta)) {
-					return delta;
-				}
-
-				return null;
-			}
+			"screenNavigationCategoryKey",
+			getSelectedScreenNavigationCategoryKey()
 		).buildPortletURL();
 
 		return portletURL;

@@ -107,9 +107,6 @@ public class BaseCommerceShippingFixedOptionDisplayContext {
 		).setMVCRenderCommandName(
 			"/commerce_shipping_methods/edit_commerce_shipping_method"
 		).setParameter(
-			"screenNavigationCategoryKey",
-			getSelectedScreenNavigationCategoryKey()
-		).setParameter(
 			"commerceShippingMethodId",
 			() -> {
 				CommerceShippingMethod commerceShippingMethod =
@@ -117,6 +114,17 @@ public class BaseCommerceShippingFixedOptionDisplayContext {
 
 				if (commerceShippingMethod != null) {
 					return commerceShippingMethod.getCommerceShippingMethodId();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"delta",
+			() -> {
+				String delta = ParamUtil.getString(renderRequest, "delta");
+
+				if (Validator.isNotNull(delta)) {
+					return delta;
 				}
 
 				return null;
@@ -134,16 +142,8 @@ public class BaseCommerceShippingFixedOptionDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"delta",
-			() -> {
-				String delta = ParamUtil.getString(renderRequest, "delta");
-
-				if (Validator.isNotNull(delta)) {
-					return delta;
-				}
-
-				return null;
-			}
+			"screenNavigationCategoryKey",
+			getSelectedScreenNavigationCategoryKey()
 		).buildPortletURL();
 
 		return portletURL;

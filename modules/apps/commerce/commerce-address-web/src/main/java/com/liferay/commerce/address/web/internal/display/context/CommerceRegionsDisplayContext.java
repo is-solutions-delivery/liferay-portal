@@ -58,8 +58,6 @@ public class CommerceRegionsDisplayContext
 		).setMVCRenderCommandName(
 			"/commerce_country/edit_commerce_country"
 		).setParameter(
-			"screenNavigationCategoryKey", getScreenNavigationCategoryKey()
-		).setParameter(
 			"countryId",
 			() -> {
 				long countryId = getCountryId();
@@ -70,6 +68,8 @@ public class CommerceRegionsDisplayContext
 
 				return null;
 			}
+		).setParameter(
+			"screenNavigationCategoryKey", getScreenNavigationCategoryKey()
 		).buildPortletURL();
 
 		return portletURL;
