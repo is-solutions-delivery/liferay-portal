@@ -150,7 +150,7 @@ public class JournalFeedReferencesExportImportContentProcessor
 				String groupIdString = pathArray[0];
 
 				if (groupIdString.equals("@group_id@")) {
-					return groupId;
+					return String.valueOf(groupId);
 				}
 
 				return groupIdString;
