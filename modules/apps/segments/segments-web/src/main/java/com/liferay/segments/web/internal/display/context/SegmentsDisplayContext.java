@@ -396,17 +396,24 @@ public class SegmentsDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
+		).setParameter(
+			"keywords",
+			() -> {
+				String keywords = _getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"displayStyle", getDisplayStyle()
+		).setParameter(
+			"orderByCol", _getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		String keywords = _getKeywords();
-
-		if (Validator.isNotNull(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
-
-		portletURL.setParameter("displayStyle", getDisplayStyle());
-		portletURL.setParameter("orderByCol", _getOrderByCol());
-		portletURL.setParameter("orderByType", getOrderByType());
 
 		return portletURL;
 	}

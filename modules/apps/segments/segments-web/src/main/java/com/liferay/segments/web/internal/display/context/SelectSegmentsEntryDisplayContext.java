@@ -318,23 +318,31 @@ public class SelectSegmentsEntryDisplayContext {
 			_renderResponse
 		).setMVCRenderCommandName(
 			"/segments/select_segments_entry"
-		).buildPortletURL();
+		).setParameter(
+			"keywords",
+			() -> {
+				String keywords = _getKeywords();
 
-		String keywords = _getKeywords();
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
 
-		if (Validator.isNotNull(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
-
-		portletURL.setParameter("displayStyle", getDisplayStyle());
-		portletURL.setParameter("eventName", getEventName());
-		portletURL.setParameter(
+				return null;
+			}
+		).setParameter(
+			"displayStyle", getDisplayStyle()
+		).setParameter(
+			"eventName", getEventName()
+		).setParameter(
 			"excludedSegmentsEntryIds",
-			StringUtil.merge(_getExcludedSegmentsEntryIds()));
-		portletURL.setParameter(
-			"excludedSources", StringUtil.merge(_getExcludedSources()));
-		portletURL.setParameter("orderByCol", _getOrderByCol());
-		portletURL.setParameter("orderByType", getOrderByType());
+			StringUtil.merge(_getExcludedSegmentsEntryIds())
+		).setParameter(
+			"excludedSources", StringUtil.merge(_getExcludedSources())
+		).setParameter(
+			"orderByCol", _getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
+		).buildPortletURL();
 
 		return portletURL;
 	}

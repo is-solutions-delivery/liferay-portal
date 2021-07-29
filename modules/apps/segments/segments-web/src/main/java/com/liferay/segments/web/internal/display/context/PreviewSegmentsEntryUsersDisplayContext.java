@@ -158,15 +158,18 @@ public class PreviewSegmentsEntryUsersDisplayContext {
 			_renderResponse
 		).setMVCRenderCommandName(
 			"/segments/preview_segments_entry_users"
+		).setParameter(
+			"segmentsEntryId",
+			() -> {
+				SegmentsEntry segmentsEntry = getSegmentsEntry();
+
+				if (segmentsEntry != null) {
+					return segmentsEntry.getSegmentsEntryId();
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		SegmentsEntry segmentsEntry = getSegmentsEntry();
-
-		if (segmentsEntry != null) {
-			portletURL.setParameter(
-				"segmentsEntryId",
-				String.valueOf(segmentsEntry.getSegmentsEntryId()));
-		}
 
 		return portletURL;
 	}
