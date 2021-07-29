@@ -99,8 +99,6 @@ public class UADHierarchyDisplay {
 			RenderResponse renderResponse, Locale locale)
 		throws Exception {
 
-		String scope = ParamUtil.getString(httpServletRequest, "scope");
-
 		PortletURL baseURL = PortletURLBuilder.createRenderURL(
 			renderResponse
 		).setParameter(
@@ -108,11 +106,18 @@ public class UADHierarchyDisplay {
 			ParamUtil.getString(httpServletRequest, "applicationKey")
 		).setParameter(
 			"p_u_i_d", ParamUtil.getString(httpServletRequest, "p_u_i_d")
-		).buildPortletURL();
+		).setParameter(
+			"scope",
+			() -> {
+				String scope = ParamUtil.getString(httpServletRequest, "scope");
 
-		if (Validator.isNotNull(scope)) {
-			baseURL.setParameter("scope", scope);
-		}
+				if (Validator.isNotNull(scope)) {
+					return scope;
+				}
+
+				return null;
+			}
+		).buildPortletURL();
 
 		String className = ParamUtil.getString(
 			httpServletRequest, "parentContainerClass");
@@ -298,10 +303,6 @@ public class UADHierarchyDisplay {
 			return null;
 		}
 
-		String primaryKey = ParamUtil.getString(
-			actionRequest, "parentContainerId");
-		String scope = ParamUtil.getString(actionRequest, "scope");
-
 		PortletURL portletURL = PortletURLBuilder.createRenderURL(
 			liferayPortletResponse
 		).setParameter(
@@ -309,14 +310,24 @@ public class UADHierarchyDisplay {
 			ParamUtil.getString(actionRequest, "applicationKey")
 		).setParameter(
 			"p_u_i_d", ParamUtil.getString(actionRequest, "p_u_i_d")
-		).buildPortletURL();
+		).setParameter(
+			"scope",
+			() -> {
+				String scope = ParamUtil.getString(actionRequest, "scope");
 
-		if (Validator.isNotNull(scope)) {
-			portletURL.setParameter("scope", scope);
-		}
+				if (Validator.isNotNull(scope)) {
+					return scope;
+				}
+
+				return null;
+			}
+		).buildPortletURL();
 
 		UADDisplay<Object> uadDisplay =
 			(UADDisplay<Object>)_getUADDisplayByTypeClassName(className);
+
+		String primaryKey = ParamUtil.getString(
+			actionRequest, "parentContainerId");
 
 		Object container = uadDisplay.get(primaryKey);
 

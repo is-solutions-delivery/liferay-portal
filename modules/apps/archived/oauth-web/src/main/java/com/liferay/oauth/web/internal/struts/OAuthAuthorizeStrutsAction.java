@@ -74,20 +74,26 @@ public class OAuthAuthorizeStrutsAction implements StrutsAction {
 				themeDisplay.getPlid(), PortletRequest.RENDER_PHASE)
 		).setParameter(
 			"saveLastPath", "0"
-		).buildPortletURL();
+		).setParameter(
+			OAuth.OAUTH_CALLBACK,
+			() -> {
+				String oauthCallback = httpServletRequest.getParameter(
+					OAuth.OAUTH_CALLBACK);
 
-		String oauthCallback = httpServletRequest.getParameter(
-			OAuth.OAUTH_CALLBACK);
+				if (Validator.isNotNull(oauthCallback)) {
+					return oauthCallback;
+				}
 
-		if (Validator.isNotNull(oauthCallback)) {
-			portletURL.setParameter(OAuth.OAUTH_CALLBACK, oauthCallback);
-		}
-
-		portletURL.setParameter(
+				return null;
+			}
+		).setParameter(
 			OAuth.OAUTH_TOKEN,
-			httpServletRequest.getParameter(OAuth.OAUTH_TOKEN));
-		portletURL.setPortletMode(PortletMode.VIEW);
-		portletURL.setWindowState(getWindowState(httpServletRequest));
+			httpServletRequest.getParameter(OAuth.OAUTH_TOKEN)
+		).setPortletMode(
+			PortletMode.VIEW
+		).setWindowState(
+			getWindowState(httpServletRequest)
+		).buildPortletURL();
 
 		String redirect = portletURL.toString();
 

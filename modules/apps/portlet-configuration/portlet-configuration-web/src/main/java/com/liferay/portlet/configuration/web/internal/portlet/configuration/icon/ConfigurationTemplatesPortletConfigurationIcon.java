@@ -64,10 +64,6 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
 		try {
-			String redirect = ParamUtil.getString(portletRequest, "redirect");
-			String returnToFullPageURL = ParamUtil.getString(
-				portletRequest, "returnToFullPageURL");
-
 			PortletURL portletURL = PortletURLBuilder.create(
 				PortletProviderUtil.getPortletURL(
 					portletRequest,
@@ -76,29 +72,47 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 					PortletProvider.Action.VIEW)
 			).setMVCPath(
 				"/edit_configuration_templates.jsp"
+			).setParameter(
+				"redirect",
+				() -> {
+					String redirect = ParamUtil.getString(
+						portletRequest, "redirect");
+
+					if (Validator.isNotNull(redirect)) {
+						return redirect;
+					}
+
+					return null;
+				}
+			).setParameter(
+				"returnToFullPageURL",
+				() -> {
+					String returnToFullPageURL = ParamUtil.getString(
+						portletRequest, "returnToFullPageURL");
+
+					if (Validator.isNotNull(returnToFullPageURL)) {
+						return returnToFullPageURL;
+					}
+
+					return null;
+				}
+			).setParameter(
+				"portletConfiguration", true
+			).setParameter(
+				"portletResource",
+				() -> {
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)portletRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
+
+					PortletDisplay portletDisplay =
+						themeDisplay.getPortletDisplay();
+
+					return portletDisplay.getId();
+				}
+			).setWindowState(
+				LiferayWindowState.POP_UP
 			).buildPortletURL();
-
-			if (Validator.isNotNull(redirect)) {
-				portletURL.setParameter("redirect", redirect);
-			}
-
-			if (Validator.isNotNull(returnToFullPageURL)) {
-				portletURL.setParameter(
-					"returnToFullPageURL", returnToFullPageURL);
-			}
-
-			portletURL.setParameter(
-				"portletConfiguration", Boolean.TRUE.toString());
-
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)portletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
-
-			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-			portletURL.setParameter("portletResource", portletDisplay.getId());
-
-			portletURL.setWindowState(LiferayWindowState.POP_UP);
 
 			return portletURL.toString();
 		}

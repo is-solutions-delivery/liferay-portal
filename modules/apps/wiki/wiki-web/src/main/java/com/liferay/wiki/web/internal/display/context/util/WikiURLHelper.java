@@ -153,13 +153,18 @@ public class WikiURLHelper {
 			_liferayPortletResponse
 		).setParameter(
 			"nodeName", node.getName()
+		).setParameter(
+			"categoryId",
+			() -> {
+				long categoryId = _wikiRequestHelper.getCategoryId();
+
+				if (categoryId > 0) {
+					return "0";
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		long categoryId = _wikiRequestHelper.getCategoryId();
-
-		if (categoryId > 0) {
-			portletURL.setParameter("categoryId", "0");
-		}
 
 		return portletURL;
 	}

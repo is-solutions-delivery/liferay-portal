@@ -198,14 +198,20 @@ public class EditUserGroupAssignmentsManagementToolbarDisplayContext {
 			"displayStyle", _displayStyle
 		).setParameter(
 			"userGroupId", _userGroup.getUserGroupId()
+		).setParameter(
+			"keywords",
+			() -> {
+				if (Validator.isNotNull(getKeywords())) {
+					return getKeywords();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		if (Validator.isNotNull(getKeywords())) {
-			portletURL.setParameter("keywords", getKeywords());
-		}
-
-		portletURL.setParameter("orderByCol", getOrderByCol());
-		portletURL.setParameter("orderByType", getOrderByType());
 
 		if (_userSearch != null) {
 			portletURL.setParameter(

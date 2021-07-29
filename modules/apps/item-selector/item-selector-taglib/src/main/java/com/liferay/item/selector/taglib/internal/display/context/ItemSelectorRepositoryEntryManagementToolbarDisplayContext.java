@@ -144,11 +144,18 @@ public class ItemSelectorRepositoryEntryManagementToolbarDisplayContext {
 			"orderByCol", _getOrderByCol()
 		).setParameter(
 			"orderByType", getOrderByType()
-		).buildPortletURL();
+		).setParameter(
+			"scope",
+			() -> {
+				if (_repositoryEntryBrowserDisplayContext.
+						isSearchEverywhere()) {
 
-		if (_repositoryEntryBrowserDisplayContext.isSearchEverywhere()) {
-			currentSortingURL.setParameter("scope", "everywhere");
-		}
+					return "everywhere";
+				}
+
+				return null;
+			}
+		).buildPortletURL();
 
 		return currentSortingURL;
 	}

@@ -224,14 +224,20 @@ public class EditPasswordPolicyAssignmentsManagementToolbarDisplayContext {
 			"displayStyle", _displayStyle
 		).setParameter(
 			"passwordPolicyId", _passwordPolicy.getPasswordPolicyId()
+		).setParameter(
+			"keywords",
+			() -> {
+				if (Validator.isNotNull(getKeywords())) {
+					return getKeywords();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		if (Validator.isNotNull(getKeywords())) {
-			portletURL.setParameter("keywords", getKeywords());
-		}
-
-		portletURL.setParameter("orderByCol", getOrderByCol());
-		portletURL.setParameter("orderByType", getOrderByType());
 
 		if (_searchContainer != null) {
 			portletURL.setParameter(

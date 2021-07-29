@@ -62,11 +62,16 @@ public class AppManagerSearchResultsManagementToolbarDisplayContext
 			"orderByType", getOrderByType()
 		).setParameter(
 			"state", getState()
-		).buildPortletURL();
+		).setParameter(
+			"keywords",
+			() -> {
+				if (Validator.isNotNull(getKeywords())) {
+					return getKeywords();
+				}
 
-		if (Validator.isNotNull(getKeywords())) {
-			portletURL.setParameter("keywords", getKeywords());
-		}
+				return null;
+			}
+		).buildPortletURL();
 
 		String redirect = ParamUtil.getString(
 			httpServletRequest, "redirect",

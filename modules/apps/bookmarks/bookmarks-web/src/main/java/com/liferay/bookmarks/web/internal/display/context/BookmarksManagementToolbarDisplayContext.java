@@ -350,17 +350,23 @@ public class BookmarksManagementToolbarDisplayContext {
 			_liferayPortletResponse
 		).setParameter(
 			"categoryId", StringPool.BLANK
+		).setParameter(
+			"deltaEntry",
+			() -> {
+				int deltaEntry = ParamUtil.getInteger(
+					_httpServletRequest, "deltaEntry");
+
+				if (deltaEntry > 0) {
+					return deltaEntry;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"folderId", _folderId
+		).setParameter(
+			"tag", StringPool.BLANK
 		).buildPortletURL();
-
-		int deltaEntry = ParamUtil.getInteger(
-			_httpServletRequest, "deltaEntry");
-
-		if (deltaEntry > 0) {
-			portletURL.setParameter("deltaEntry", String.valueOf(deltaEntry));
-		}
-
-		portletURL.setParameter("folderId", String.valueOf(_folderId));
-		portletURL.setParameter("tag", StringPool.BLANK);
 
 		return portletURL;
 	}

@@ -129,38 +129,55 @@ public class SelectOrganizationManagementToolbarDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/select_organization.jsp"
+		).setParameter(
+			"p_u_i_d",
+			() -> {
+				User selUser = _getSelectedUser();
+
+				if (selUser != null) {
+					return selUser.getUserId();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"eventName",
+			ParamUtil.getString(
+				_httpServletRequest, "eventName",
+				_renderResponse.getNamespace() + "selectOrganization")
+		).setParameter(
+			"keywords",
+			() -> {
+				String[] keywords = ParamUtil.getStringValues(
+					_httpServletRequest, "keywords");
+
+				if (ArrayUtil.isNotEmpty(keywords)) {
+					return keywords[keywords.length - 1];
+				}
+
+				return null;
+			}
+		).setParameter(
+			"cur", getCur()
+		).setParameter(
+			"delta", getDelta()
+		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
+		).setParameter(
+			"target",
+			() -> {
+				String target = ParamUtil.getString(
+					_httpServletRequest, "target");
+
+				if (Validator.isNotNull(target)) {
+					return target;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		User selUser = _getSelectedUser();
-
-		if (selUser != null) {
-			portletURL.setParameter(
-				"p_u_i_d", String.valueOf(selUser.getUserId()));
-		}
-
-		String eventName = ParamUtil.getString(
-			_httpServletRequest, "eventName",
-			_renderResponse.getNamespace() + "selectOrganization");
-
-		portletURL.setParameter("eventName", eventName);
-
-		String[] keywords = ParamUtil.getStringValues(
-			_httpServletRequest, "keywords");
-
-		if (ArrayUtil.isNotEmpty(keywords)) {
-			portletURL.setParameter("keywords", keywords[keywords.length - 1]);
-		}
-
-		portletURL.setParameter("cur", String.valueOf(getCur()));
-		portletURL.setParameter("delta", String.valueOf(getDelta()));
-		portletURL.setParameter("orderByCol", getOrderByCol());
-		portletURL.setParameter("orderByType", getOrderByType());
-
-		String target = ParamUtil.getString(_httpServletRequest, "target");
-
-		if (Validator.isNotNull(target)) {
-			portletURL.setParameter("target", target);
-		}
 
 		return portletURL;
 	}
