@@ -115,7 +115,7 @@ definition {
 
 		DMDocument.deleteCP(dmDocumentTitle = "Document_2");
 	}
-	
+
 	@description = "This is a test for LPS-134093. Verify if warning message appear after try insert more than 10 documents to collect the digital signature"
 	@priority = "5"
 	test CanViewWarningMessageForMoreThan10Documents {
