@@ -189,7 +189,7 @@ public class CommerceOrderEditDisplayContext {
 	}
 
 	public PortletURL getCommerceNotificationQueueEntriesPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
@@ -211,8 +211,6 @@ public class CommerceOrderEditDisplayContext {
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_EMAILS
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public CommerceNotificationQueueEntry getCommerceNotificationQueueEntry()
@@ -268,7 +266,7 @@ public class CommerceOrderEditDisplayContext {
 	}
 
 	public PortletURL getCommerceOrderItemsPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
@@ -290,8 +288,6 @@ public class CommerceOrderEditDisplayContext {
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_GENERAL
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public List<CommerceOrderNote> getCommerceOrderNotes()
@@ -338,7 +334,7 @@ public class CommerceOrderEditDisplayContext {
 	}
 
 	public PortletURL getCommerceOrderPaymentsPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
@@ -360,8 +356,6 @@ public class CommerceOrderEditDisplayContext {
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_PAYMENTS
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public CommercePaymentMethodGroupRel getCommercePaymentMethodGroupRel()
@@ -390,7 +384,7 @@ public class CommerceOrderEditDisplayContext {
 	}
 
 	public PortletURL getCommerceShipmentsPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
@@ -412,8 +406,6 @@ public class CommerceOrderEditDisplayContext {
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_SHIPMENTS
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getDescriptiveCommerceAddress(CommerceAddress commerceAddress)

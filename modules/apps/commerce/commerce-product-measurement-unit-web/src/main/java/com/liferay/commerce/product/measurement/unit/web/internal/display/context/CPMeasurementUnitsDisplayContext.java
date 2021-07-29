@@ -125,7 +125,7 @@ public class CPMeasurementUnitsDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setParameter(
 			"orderByCol", getOrderByCol()
@@ -146,8 +146,6 @@ public class CPMeasurementUnitsDisplayContext {
 		).setParameter(
 			"type", getType()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public CPMeasurementUnit getPrimaryCPMeasurementUnit()

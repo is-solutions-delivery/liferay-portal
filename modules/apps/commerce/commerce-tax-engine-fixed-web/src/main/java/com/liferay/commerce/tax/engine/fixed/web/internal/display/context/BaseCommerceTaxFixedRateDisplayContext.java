@@ -167,7 +167,7 @@ public class BaseCommerceTaxFixedRateDisplayContext {
 	}
 
 	public PortletURL getPortletURL() throws PortalException {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			commerceTaxFixedRateRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_tax_methods/edit_commerce_tax_method"
@@ -222,8 +222,6 @@ public class BaseCommerceTaxFixedRateDisplayContext {
 			"screenNavigationCategoryKey",
 			getSelectedScreenNavigationCategoryKey()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getScreenNavigationCategoryKey() {

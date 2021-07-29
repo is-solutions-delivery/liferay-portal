@@ -53,7 +53,7 @@ public class CommerceRegionsDisplayContext
 
 	@Override
 	public PortletURL getPortletURL() throws PortalException {
-		PortletURL portletURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			super.getPortletURL()
 		).setMVCRenderCommandName(
 			"/commerce_country/edit_commerce_country"
@@ -71,8 +71,6 @@ public class CommerceRegionsDisplayContext
 		).setParameter(
 			"screenNavigationCategoryKey", getScreenNavigationCategoryKey()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public Region getRegion() throws PortalException {

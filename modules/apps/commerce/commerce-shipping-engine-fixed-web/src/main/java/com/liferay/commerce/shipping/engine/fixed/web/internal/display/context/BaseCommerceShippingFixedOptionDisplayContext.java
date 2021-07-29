@@ -102,7 +102,7 @@ public class BaseCommerceShippingFixedOptionDisplayContext {
 	}
 
 	public PortletURL getPortletURL() throws PortalException {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			renderResponse
 		).setMVCRenderCommandName(
 			"/commerce_shipping_methods/edit_commerce_shipping_method"
@@ -145,8 +145,6 @@ public class BaseCommerceShippingFixedOptionDisplayContext {
 			"screenNavigationCategoryKey",
 			getSelectedScreenNavigationCategoryKey()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public String getScreenNavigationCategoryKey() {

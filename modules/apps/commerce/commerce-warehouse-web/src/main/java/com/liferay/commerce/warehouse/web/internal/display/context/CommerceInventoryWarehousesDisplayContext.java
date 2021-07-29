@@ -170,7 +170,7 @@ public class CommerceInventoryWarehousesDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_cpRequestHelper.getRenderResponse()
 		).setKeywords(
 			getKeywords()
@@ -195,8 +195,6 @@ public class CommerceInventoryWarehousesDisplayContext {
 		).setParameter(
 			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	public SearchContainer<CommerceInventoryWarehouse> getSearchContainer()
