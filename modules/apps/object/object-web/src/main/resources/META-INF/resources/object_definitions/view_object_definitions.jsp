@@ -98,10 +98,10 @@ ViewObjectDefinitionsDisplayContext viewObjectDefinitionsDisplayContext = (ViewO
 	}
 
 	function handleDestroyPortlet() {
-		Liferay.detach('destroyPortlet', handleDestroyPortlet);
 		Liferay.detach('addObjectDefinition', handleCreateObjectDefinitionClick);
+		Liferay.detach('destroyPortlet', handleDestroyPortlet);
 	}
 
-	Liferay.on('destroyPortlet', handleDestroyPortlet);
 	Liferay.on('addObjectDefinition', handleCreateObjectDefinitionClick);
+	Liferay.on('destroyPortlet', handleDestroyPortlet);
 </script>
