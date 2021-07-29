@@ -55,8 +55,6 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.portlet.PortletURL;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
@@ -209,7 +207,7 @@ public class CommerceOrganizationUserClayTableDataSetDisplayView
 			long userId, HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		PortletURL viewURL = PortletURLBuilder.create(
+		return PortletURLBuilder.create(
 			PortletProviderUtil.getPortletURL(
 				httpServletRequest, Organization.class.getName(),
 				PortletProvider.Action.MANAGE)
@@ -232,9 +230,7 @@ public class CommerceOrganizationUserClayTableDataSetDisplayView
 		).setParameter(
 			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
 			_portal.getCurrentURL(httpServletRequest)
-		).buildPortletURL();
-
-		return viewURL.toString();
+		).buildString();
 	}
 
 	@Reference
