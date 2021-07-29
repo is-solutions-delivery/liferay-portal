@@ -757,8 +757,6 @@ public class LayoutsAdminDisplayContext {
 			).setTabs1(
 				getTabs1()
 			).setParameter(
-				"selPlid", LayoutConstants.DEFAULT_PLID
-			).setParameter(
 				"displayStyle",
 				() -> {
 					String displayStyle = getDisplayStyle();
@@ -771,6 +769,8 @@ public class LayoutsAdminDisplayContext {
 				}
 			).setParameter(
 				"firstColumn", true
+			).setParameter(
+				"selPlid", LayoutConstants.DEFAULT_PLID
 			).buildString());
 
 		breadcrumbEntries.add(breadcrumbEntry);
@@ -828,8 +828,6 @@ public class LayoutsAdminDisplayContext {
 		).setTabs1(
 			getTabs1()
 		).setParameter(
-			"privateLayout", isPrivateLayout()
-		).setParameter(
 			"displayStyle",
 			() -> {
 				String displayStyle = getDisplayStyle();
@@ -840,6 +838,8 @@ public class LayoutsAdminDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"privateLayout", isPrivateLayout()
 		).buildPortletURL();
 
 		return portletURL;
@@ -951,8 +951,6 @@ public class LayoutsAdminDisplayContext {
 		).setParameter(
 			"privateLayout", privateLayout
 		).setParameter(
-			"selPlid", selPlid
-		).setParameter(
 			"selectedTab",
 			() -> {
 				if (Validator.isNotNull(selectedTab)) {
@@ -961,6 +959,8 @@ public class LayoutsAdminDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"selPlid", selPlid
 		).buildString();
 	}
 

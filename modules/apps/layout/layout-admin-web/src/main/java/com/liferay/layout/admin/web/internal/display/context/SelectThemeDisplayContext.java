@@ -105,10 +105,6 @@ public class SelectThemeDisplayContext {
 		).setRedirect(
 			getRedirect()
 		).setParameter(
-			"eventName", getEventName()
-		).setParameter(
-			"themeId", getThemeId()
-		).setParameter(
 			"displayStyle",
 			() -> {
 				String displayStyle = getDisplayStyle();
@@ -119,6 +115,8 @@ public class SelectThemeDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"eventName", getEventName()
 		).setParameter(
 			"orderByCol",
 			() -> {
@@ -141,6 +139,8 @@ public class SelectThemeDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"themeId", getThemeId()
 		).buildPortletURL();
 
 		return portletURL;
