@@ -141,6 +141,19 @@ public class SelectOrganizationManagementToolbarDisplayContext {
 				return null;
 			}
 		).setParameter(
+			"cur", getCur()
+		).setParameter(
+			"delta", getDelta()
+		).setParameter(
+			"eventName",
+			ParamUtil.getString(
+				_httpServletRequest, "eventName",
+				_renderResponse.getNamespace() + "selectOrganization")
+		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
+		).setParameter(
 			"p_u_i_d",
 			() -> {
 				User selUser = _getSelectedUser();
@@ -151,19 +164,6 @@ public class SelectOrganizationManagementToolbarDisplayContext {
 
 				return null;
 			}
-		).setParameter(
-			"eventName",
-			ParamUtil.getString(
-				_httpServletRequest, "eventName",
-				_renderResponse.getNamespace() + "selectOrganization")
-		).setParameter(
-			"cur", getCur()
-		).setParameter(
-			"delta", getDelta()
-		).setParameter(
-			"orderByCol", getOrderByCol()
-		).setParameter(
-			"orderByType", getOrderByType()
 		).setParameter(
 			"target",
 			() -> {

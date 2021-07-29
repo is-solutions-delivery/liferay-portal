@@ -152,8 +152,6 @@ public class WikiURLHelper {
 		PortletURL portletURL = PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setParameter(
-			"nodeName", node.getName()
-		).setParameter(
 			"categoryId",
 			() -> {
 				long categoryId = _wikiRequestHelper.getCategoryId();
@@ -164,6 +162,8 @@ public class WikiURLHelper {
 
 				return null;
 			}
+		).setParameter(
+			"nodeName", node.getName()
 		).buildPortletURL();
 
 		return portletURL;

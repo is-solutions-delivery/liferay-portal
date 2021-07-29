@@ -231,11 +231,11 @@ public class EditPasswordPolicyAssignmentsManagementToolbarDisplayContext {
 		).setParameter(
 			"displayStyle", _displayStyle
 		).setParameter(
-			"passwordPolicyId", _passwordPolicy.getPasswordPolicyId()
-		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(
 			"orderByType", getOrderByType()
+		).setParameter(
+			"passwordPolicyId", _passwordPolicy.getPasswordPolicyId()
 		).buildPortletURL();
 
 		if (_searchContainer != null) {

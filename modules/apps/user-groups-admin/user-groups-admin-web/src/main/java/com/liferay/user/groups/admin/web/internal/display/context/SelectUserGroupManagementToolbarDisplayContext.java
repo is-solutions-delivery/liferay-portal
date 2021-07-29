@@ -83,6 +83,11 @@ public class SelectUserGroupManagementToolbarDisplayContext {
 				return null;
 			}
 		).setParameter(
+			"eventName",
+			ParamUtil.getString(
+				_httpServletRequest, "eventName",
+				_renderResponse.getNamespace() + "selectUserGroup")
+		).setParameter(
 			"p_u_i_d",
 			() -> {
 				User selUser = _getSelectedUser();
@@ -93,11 +98,6 @@ public class SelectUserGroupManagementToolbarDisplayContext {
 
 				return null;
 			}
-		).setParameter(
-			"eventName",
-			ParamUtil.getString(
-				_httpServletRequest, "eventName",
-				_renderResponse.getNamespace() + "selectUserGroup")
 		).buildPortletURL();
 
 		return portletURL;

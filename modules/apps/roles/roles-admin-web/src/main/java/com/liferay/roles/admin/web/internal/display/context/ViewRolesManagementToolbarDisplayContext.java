@@ -165,11 +165,11 @@ public class ViewRolesManagementToolbarDisplayContext {
 		).setParameter(
 			"displayStyle", _displayStyle
 		).setParameter(
-			"roleType", _currentRoleTypeContributor.getType()
-		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(
 			"orderByType", getOrderByType()
+		).setParameter(
+			"roleType", _currentRoleTypeContributor.getType()
 		).buildPortletURL();
 
 		if (_roleSearch != null) {

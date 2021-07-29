@@ -94,6 +94,8 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 					return portletDisplay.getId();
 				}
 			).setParameter(
+				"portletConfiguration", true
+			).setParameter(
 				"returnToFullPageURL",
 				() -> {
 					String returnToFullPageURL = ParamUtil.getString(
@@ -105,8 +107,6 @@ public class ConfigurationTemplatesPortletConfigurationIcon
 
 					return null;
 				}
-			).setParameter(
-				"portletConfiguration", true
 			).setWindowState(
 				LiferayWindowState.POP_UP
 			).buildString();

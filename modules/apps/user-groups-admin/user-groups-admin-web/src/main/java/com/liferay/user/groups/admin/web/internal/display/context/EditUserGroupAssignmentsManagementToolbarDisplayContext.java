@@ -205,11 +205,11 @@ public class EditUserGroupAssignmentsManagementToolbarDisplayContext {
 		).setParameter(
 			"displayStyle", _displayStyle
 		).setParameter(
-			"userGroupId", _userGroup.getUserGroupId()
-		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(
 			"orderByType", getOrderByType()
+		).setParameter(
+			"userGroupId", _userGroup.getUserGroupId()
 		).buildPortletURL();
 
 		if (_userSearch != null) {

@@ -154,6 +154,12 @@ public class ViewUserGroupsManagementToolbarDisplayContext {
 				return null;
 			}
 		).setParameter(
+			"displayStyle", _displayStyle
+		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
+		).setParameter(
 			"viewUserGroupsRedirect",
 			() -> {
 				String viewUserGroupsRedirect = ParamUtil.getString(
@@ -165,12 +171,6 @@ public class ViewUserGroupsManagementToolbarDisplayContext {
 
 				return null;
 			}
-		).setParameter(
-			"displayStyle", _displayStyle
-		).setParameter(
-			"orderByCol", getOrderByCol()
-		).setParameter(
-			"orderByType", getOrderByType()
 		).buildPortletURL();
 
 		if (_userGroupSearch != null) {

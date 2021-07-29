@@ -72,8 +72,6 @@ public class OAuthAuthorizeStrutsAction implements StrutsAction {
 				httpServletRequest, OAuthPortletKeys.OAUTH_AUTHORIZE,
 				themeDisplay.getPlid(), PortletRequest.RENDER_PHASE)
 		).setParameter(
-			"saveLastPath", "0"
-		).setParameter(
 			OAuth.OAUTH_CALLBACK,
 			() -> {
 				String oauthCallback = httpServletRequest.getParameter(
@@ -88,6 +86,8 @@ public class OAuthAuthorizeStrutsAction implements StrutsAction {
 		).setParameter(
 			OAuth.OAUTH_TOKEN,
 			httpServletRequest.getParameter(OAuth.OAUTH_TOKEN)
+		).setParameter(
+			"saveLastPath", "0"
 		).setPortletMode(
 			PortletMode.VIEW
 		).setWindowState(

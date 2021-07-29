@@ -199,8 +199,6 @@ public class PortletConfigurationTemplatesDisplayContext {
 		).setPortletResource(
 			getPortletResource()
 		).setParameter(
-			"returnToFullPageURL", getReturnToFullPageURL()
-		).setParameter(
 			"displayStyle",
 			() -> {
 				String displayStyle = getDisplayStyle();
@@ -233,6 +231,8 @@ public class PortletConfigurationTemplatesDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"returnToFullPageURL", getReturnToFullPageURL()
 		).buildPortletURL();
 
 		return portletURL;

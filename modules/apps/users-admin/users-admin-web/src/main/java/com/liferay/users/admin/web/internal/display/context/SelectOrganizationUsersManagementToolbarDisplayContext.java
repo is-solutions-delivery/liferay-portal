@@ -130,11 +130,11 @@ public class SelectOrganizationUsersManagementToolbarDisplayContext {
 		).setParameter(
 			"displayStyle", _displayStyle
 		).setParameter(
-			"organizationId", _organization.getOrganizationId()
-		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(
 			"orderByType", getOrderByType()
+		).setParameter(
+			"organizationId", _organization.getOrganizationId()
 		).buildPortletURL();
 
 		return portletURL;

@@ -363,6 +363,10 @@ public class ViewTreeManagementToolbarDisplayContext {
 		).setParameter(
 			"displayStyle", _displayStyle
 		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
+		).setParameter(
 			"organizationId", _organization.getOrganizationId()
 		).setParameter(
 			"toolbarItem",
@@ -372,10 +376,6 @@ public class ViewTreeManagementToolbarDisplayContext {
 			"usersListView",
 			GetterUtil.getString(
 				_httpServletRequest.getAttribute("view.jsp-usersListView"))
-		).setParameter(
-			"orderByCol", getOrderByCol()
-		).setParameter(
-			"orderByType", getOrderByType()
 		).buildPortletURL();
 
 		return portletURL;
