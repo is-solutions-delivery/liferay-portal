@@ -190,8 +190,6 @@ definition {
 		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
 
 		RecycleBin.emptyCP();
-
-		DigitalSignature.deleteEnvelope(envelopeName = "Poshi Test Envelope Name");
 	}
 
 	@description = "This is a test for LPS-131425. Verify if Success Message appear"

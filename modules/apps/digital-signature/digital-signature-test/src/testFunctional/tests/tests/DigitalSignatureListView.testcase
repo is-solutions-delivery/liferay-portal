@@ -103,6 +103,8 @@ definition {
 
 		Alert.viewSuccessMessageText(successMessage = "Your envelope was created successfully.");
 
+		WaitForElementPresent(locator1 = "DigitalSignatureListView#DIGITAL_SIGNATURE_RECENT_CREATE_DATE");
+
 		AssertElementPresent(locator1 = "DigitalSignatureListView#DIGITAL_SIGNATURE_RECENT_CREATE_DATE");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
