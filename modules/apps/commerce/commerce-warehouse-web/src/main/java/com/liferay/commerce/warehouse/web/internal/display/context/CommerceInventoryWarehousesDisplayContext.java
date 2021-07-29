@@ -172,6 +172,10 @@ public class CommerceInventoryWarehousesDisplayContext {
 	public PortletURL getPortletURL() {
 		PortletURL portletURL = PortletURLBuilder.createRenderURL(
 			_cpRequestHelper.getRenderResponse()
+		).setKeywords(
+			getKeywords()
+		).setNavigation(
+			getNavigation()
 		).setParameter(
 			"countryTwoLettersISOCode", getCountryTwoLettersIsoCode()
 		).setParameter(
@@ -186,10 +190,6 @@ public class CommerceInventoryWarehousesDisplayContext {
 
 				return null;
 			}
-		).setParameter(
-			"keywords", getKeywords()
-		).setParameter(
-			"navigation", getNavigation()
 		).setParameter(
 			"orderByCol", getOrderByCol()
 		).setParameter(

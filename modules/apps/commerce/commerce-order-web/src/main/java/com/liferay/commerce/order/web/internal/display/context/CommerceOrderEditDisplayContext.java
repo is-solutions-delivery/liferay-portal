@@ -193,14 +193,7 @@ public class CommerceOrderEditDisplayContext {
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
-		).setParameter(
-			"commerceOrderId", getCommerceOrderId()
-		).setParameter(
-			"screenNavigationCategoryKey",
-			CommerceOrderScreenNavigationConstants.
-				CATEGORY_KEY_COMMERCE_ORDER_EMAILS
-		).setParameter(
-			"redirect",
+		).setRedirect(
 			() -> {
 				String redirect = ParamUtil.getString(
 					_commerceOrderRequestHelper.getRequest(), "redirect");
@@ -211,6 +204,12 @@ public class CommerceOrderEditDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"commerceOrderId", getCommerceOrderId()
+		).setParameter(
+			"screenNavigationCategoryKey",
+			CommerceOrderScreenNavigationConstants.
+				CATEGORY_KEY_COMMERCE_ORDER_EMAILS
 		).buildPortletURL();
 
 		return portletURL;
@@ -273,14 +272,7 @@ public class CommerceOrderEditDisplayContext {
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
-		).setParameter(
-			"commerceOrderId", getCommerceOrderId()
-		).setParameter(
-			"screenNavigationCategoryKey",
-			CommerceOrderScreenNavigationConstants.
-				CATEGORY_KEY_COMMERCE_ORDER_GENERAL
-		).setParameter(
-			"redirect",
+		).setRedirect(
 			() -> {
 				String redirect = ParamUtil.getString(
 					_commerceOrderRequestHelper.getRequest(), "redirect");
@@ -291,6 +283,12 @@ public class CommerceOrderEditDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"commerceOrderId", getCommerceOrderId()
+		).setParameter(
+			"screenNavigationCategoryKey",
+			CommerceOrderScreenNavigationConstants.
+				CATEGORY_KEY_COMMERCE_ORDER_GENERAL
 		).buildPortletURL();
 
 		return portletURL;
@@ -344,14 +342,7 @@ public class CommerceOrderEditDisplayContext {
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
-		).setParameter(
-			"commerceOrderId", getCommerceOrderId()
-		).setParameter(
-			"screenNavigationCategoryKey",
-			CommerceOrderScreenNavigationConstants.
-				CATEGORY_KEY_COMMERCE_ORDER_PAYMENTS
-		).setParameter(
-			"redirect",
+		).setRedirect(
 			() -> {
 				String redirect = ParamUtil.getString(
 					_commerceOrderRequestHelper.getRequest(), "redirect");
@@ -362,6 +353,12 @@ public class CommerceOrderEditDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"commerceOrderId", getCommerceOrderId()
+		).setParameter(
+			"screenNavigationCategoryKey",
+			CommerceOrderScreenNavigationConstants.
+				CATEGORY_KEY_COMMERCE_ORDER_PAYMENTS
 		).buildPortletURL();
 
 		return portletURL;
@@ -397,14 +394,7 @@ public class CommerceOrderEditDisplayContext {
 			_commerceOrderRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_order/edit_commerce_order"
-		).setParameter(
-			"commerceOrderId", getCommerceOrderId()
-		).setParameter(
-			"screenNavigationCategoryKey",
-			CommerceOrderScreenNavigationConstants.
-				CATEGORY_KEY_COMMERCE_ORDER_SHIPMENTS
-		).setParameter(
-			"redirect",
+		).setRedirect(
 			() -> {
 				String redirect = ParamUtil.getString(
 					_commerceOrderRequestHelper.getRequest(), "redirect");
@@ -415,6 +405,12 @@ public class CommerceOrderEditDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"commerceOrderId", getCommerceOrderId()
+		).setParameter(
+			"screenNavigationCategoryKey",
+			CommerceOrderScreenNavigationConstants.
+				CATEGORY_KEY_COMMERCE_ORDER_SHIPMENTS
 		).buildPortletURL();
 
 		return portletURL;

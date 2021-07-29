@@ -171,11 +171,7 @@ public class BaseCommerceTaxFixedRateDisplayContext {
 			commerceTaxFixedRateRequestHelper.getLiferayPortletResponse()
 		).setMVCRenderCommandName(
 			"/commerce_tax_methods/edit_commerce_tax_method"
-		).setParameter(
-			"screenNavigationCategoryKey",
-			getSelectedScreenNavigationCategoryKey()
-		).setParameter(
-			"redirect",
+		).setRedirect(
 			() -> {
 				String redirect = ParamUtil.getString(
 					commerceTaxFixedRateRequestHelper.getRequest(), "redirect");
@@ -186,6 +182,9 @@ public class BaseCommerceTaxFixedRateDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"screenNavigationCategoryKey",
+			getSelectedScreenNavigationCategoryKey()
 		).setParameter(
 			"commerceTaxMethodId",
 			() -> {

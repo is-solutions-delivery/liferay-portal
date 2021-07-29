@@ -127,10 +127,7 @@ public class EditCommercePaymentMethodGroupRelMVCActionCommand
 				PortletRequest.RENDER_PHASE)
 		).setMVCRenderCommandName(
 			mvcRenderCommandName
-		).setParameter(
-			"commercePaymentMethodGroupRelId", commercePaymentMethodGroupRelId
-		).setParameter(
-			"redirect",
+		).setRedirect(
 			() -> {
 				String redirect = ParamUtil.getString(
 					actionRequest, "redirect");
@@ -141,6 +138,8 @@ public class EditCommercePaymentMethodGroupRelMVCActionCommand
 
 				return null;
 			}
+		).setParameter(
+			"commercePaymentMethodGroupRelId", commercePaymentMethodGroupRelId
 		).setParameter(
 			"engineKey",
 			() -> {
