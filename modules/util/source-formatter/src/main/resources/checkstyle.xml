@@ -324,6 +324,7 @@
 		<module name="com.liferay.source.formatter.checkstyle.checks.EmptyConstructorCheck">
 			<property name="category" value="Bug Prevention" />
 			<property name="description" value="Finds unnecessary empty constructors." />
+			<property name="enabled" value="false" />
 			<message key="empty.constructor.unneeded" value="Empty constructor is not needed" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.EnumConstantDividerCheck">
