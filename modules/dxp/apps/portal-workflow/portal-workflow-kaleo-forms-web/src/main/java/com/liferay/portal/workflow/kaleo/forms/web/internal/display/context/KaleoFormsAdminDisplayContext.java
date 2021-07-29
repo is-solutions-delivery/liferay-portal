@@ -282,6 +282,16 @@ public class KaleoFormsAdminDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/admin/view.jsp"
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"delta",
 			() -> {
@@ -301,17 +311,6 @@ public class KaleoFormsAdminDisplayContext {
 
 				if (Validator.isNotNull(displayStyle)) {
 					return getDisplayStyle();
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;

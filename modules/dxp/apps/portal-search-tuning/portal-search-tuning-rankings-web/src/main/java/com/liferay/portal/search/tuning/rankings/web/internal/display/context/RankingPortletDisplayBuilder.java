@@ -310,8 +310,7 @@ public class RankingPortletDisplayBuilder {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				if (!Validator.isBlank(keywords)) {
 					return keywords;

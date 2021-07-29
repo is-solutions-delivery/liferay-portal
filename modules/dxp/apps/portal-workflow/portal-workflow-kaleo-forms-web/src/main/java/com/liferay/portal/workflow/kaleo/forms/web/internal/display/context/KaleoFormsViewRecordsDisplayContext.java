@@ -285,6 +285,16 @@ public class KaleoFormsViewRecordsDisplayContext {
 			"/admin/view_kaleo_process.jsp"
 		).setRedirect(
 			ParamUtil.getString(_renderRequest, "redirect")
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"kaleoProcessId", _kaleoProcess.getKaleoProcessId()
 		).setParameter(
@@ -305,17 +315,6 @@ public class KaleoFormsViewRecordsDisplayContext {
 
 				if (Validator.isNotNull(displayStyle)) {
 					return displayStyle;
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;

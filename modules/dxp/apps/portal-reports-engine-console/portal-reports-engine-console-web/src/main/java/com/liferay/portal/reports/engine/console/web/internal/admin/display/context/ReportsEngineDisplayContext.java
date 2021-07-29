@@ -216,10 +216,7 @@ public class ReportsEngineDisplayContext {
 	public PortletURL getPortletURL() {
 		PortletURL portletURL = PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
-		).setTabs1(
-			_getTabs1()
-		).setParameter(
-			"navigation",
+		).setNavigation(
 			() -> {
 				String navigation = ParamUtil.getString(
 					_httpServletRequest, "navigation");
@@ -230,6 +227,8 @@ public class ReportsEngineDisplayContext {
 
 				return null;
 			}
+		).setTabs1(
+			_getTabs1()
 		).buildPortletURL();
 
 		return portletURL;
