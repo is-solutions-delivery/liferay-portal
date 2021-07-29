@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Gabriel Albuquerque
  */
 @Component(
-	property = "clay.data.set.display.name=" + ObjectDefinitionsDataSetConstants.OBJECT_FIELDS_DATA_SET_KEY,
+	property = "clay.data.set.display.name=" + ObjectDefinitionsDataSetConstants.OBJECT_FIELDS,
 	service = ClayDataSetDisplayView.class
 )
 public class ObjectFieldsTableClayDataSetDisplayView

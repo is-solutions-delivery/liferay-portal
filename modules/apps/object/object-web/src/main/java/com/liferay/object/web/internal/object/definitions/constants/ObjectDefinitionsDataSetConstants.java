@@ -19,9 +19,9 @@ package com.liferay.object.web.internal.object.definitions.constants;
  */
 public class ObjectDefinitionsDataSetConstants {
 
-	public static final String OBJECT_DEFINITIONS_DATA_SET_KEY =
+	public static final String OBJECT_DEFINITIONS =
 		"objectDefinitions";
 
-	public static final String OBJECT_FIELDS_DATA_SET_KEY = "objectFields";
+	public static final String OBJECT_FIELDS = "objectFields";
 
 }
