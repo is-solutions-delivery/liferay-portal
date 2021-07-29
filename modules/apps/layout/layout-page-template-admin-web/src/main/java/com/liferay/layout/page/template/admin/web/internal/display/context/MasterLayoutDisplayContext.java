@@ -183,10 +183,7 @@ public class MasterLayoutDisplayContext {
 			"/view_master_layouts.jsp"
 		).setRedirect(
 			_themeDisplay.getURLCurrent()
-		).setTabs1(
-			"master-layouts"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String keywords = getKeywords();
 
@@ -196,6 +193,8 @@ public class MasterLayoutDisplayContext {
 
 				return null;
 			}
+		).setTabs1(
+			"master-layouts"
 		).setParameter(
 			"orderByCol",
 			() -> {

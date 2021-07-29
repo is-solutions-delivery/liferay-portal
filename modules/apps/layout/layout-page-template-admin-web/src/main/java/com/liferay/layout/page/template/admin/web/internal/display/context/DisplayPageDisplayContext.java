@@ -168,10 +168,7 @@ public class DisplayPageDisplayContext {
 			"/view_display_pages.jsp"
 		).setRedirect(
 			_themeDisplay.getURLCurrent()
-		).setTabs1(
-			"display-page-templates"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String keywords = getKeywords();
 
@@ -181,6 +178,8 @@ public class DisplayPageDisplayContext {
 
 				return null;
 			}
+		).setTabs1(
+			"display-page-templates"
 		).setParameter(
 			"orderByCol",
 			() -> {

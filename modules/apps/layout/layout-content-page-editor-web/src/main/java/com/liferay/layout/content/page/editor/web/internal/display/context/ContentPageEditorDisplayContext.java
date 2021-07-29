@@ -712,8 +712,7 @@ public class ContentPageEditorDisplayContext {
 				_renderResponse
 			).setActionName(
 				action
-			).setParameter(
-				Constants.CMD,
+			).setCMD(
 				() -> {
 					if (Validator.isNotNull(command)) {
 						return command;

@@ -279,6 +279,16 @@ public class LayoutPageTemplateDisplayContext {
 			_renderResponse
 		).setRedirect(
 			_themeDisplay.getURLCurrent()
+		).setKeywords(
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setTabs1(
 			"page-templates"
 		).setParameter(
@@ -289,17 +299,6 @@ public class LayoutPageTemplateDisplayContext {
 
 				if (layoutPageTemplateCollectionId > 0) {
 					return layoutPageTemplateCollectionId;
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;
