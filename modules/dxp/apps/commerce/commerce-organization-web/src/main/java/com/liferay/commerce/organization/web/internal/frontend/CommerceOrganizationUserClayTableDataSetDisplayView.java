@@ -215,21 +215,24 @@ public class CommerceOrganizationUserClayTableDataSetDisplayView
 				PortletProvider.Action.MANAGE)
 		).setMVCRenderCommandName(
 			"viewCommerceOrganizationUser"
-		).buildPortletURL();
+		).setParameter(
+			"organizationId",
+			() -> {
+				long organizationId = ParamUtil.getLong(
+					httpServletRequest, "organizationId");
 
-		long organizationId = ParamUtil.getLong(
-			httpServletRequest, "organizationId");
+				if (organizationId > 0) {
+					return organizationId;
+				}
 
-		if (organizationId > 0) {
-			viewURL.setParameter(
-				"organizationId", String.valueOf(organizationId));
-		}
-
-		viewURL.setParameter("userId", String.valueOf(userId));
-
-		viewURL.setParameter(
+				return null;
+			}
+		).setParameter(
+			"userId", userId
+		).setParameter(
 			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
-			_portal.getCurrentURL(httpServletRequest));
+			_portal.getCurrentURL(httpServletRequest)
+		).buildPortletURL();
 
 		return viewURL.toString();
 	}

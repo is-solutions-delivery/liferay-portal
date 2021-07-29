@@ -218,14 +218,19 @@ public class ReportsEngineDisplayContext {
 			_liferayPortletResponse
 		).setTabs1(
 			_getTabs1()
+		).setParameter(
+			"navigation",
+			() -> {
+				String navigation = ParamUtil.getString(
+					_httpServletRequest, "navigation");
+
+				if (Validator.isNotNull(navigation)) {
+					return _getNavigation();
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String navigation = ParamUtil.getString(
-			_httpServletRequest, "navigation");
-
-		if (Validator.isNotNull(navigation)) {
-			portletURL.setParameter("navigation", _getNavigation());
-		}
 
 		return portletURL;
 	}

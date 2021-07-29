@@ -310,15 +310,22 @@ public class RankingPortletDisplayBuilder {
 			_renderResponse
 		).setMVCPath(
 			"/view.jsp"
+		).setParameter(
+			"keywords",
+			() -> {
+				if (!Validator.isBlank(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"displayStyle", getDisplayStyle()
+		).setParameter(
+			"orderByCol", _getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		if (!Validator.isBlank(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
-
-		portletURL.setParameter("displayStyle", getDisplayStyle());
-		portletURL.setParameter("orderByCol", _getOrderByCol());
-		portletURL.setParameter("orderByType", getOrderByType());
 
 		return portletURL;
 	}
