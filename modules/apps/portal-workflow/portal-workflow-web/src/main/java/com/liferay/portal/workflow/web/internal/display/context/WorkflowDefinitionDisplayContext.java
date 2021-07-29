@@ -421,18 +421,6 @@ public class WorkflowDefinitionDisplayContext {
 		return PortletURLBuilder.createRenderURL(
 			_workflowDefinitionRequestHelper.getLiferayPortletResponse()
 		).setParameter(
-			"orderByType",
-			() -> {
-				String orderByType = ParamUtil.getString(
-					httpServletRequest, "orderByType", "asc");
-
-				if (Objects.equals(orderByType, "asc")) {
-					return "desc";
-				}
-
-				return "asc";
-			}
-		).setParameter(
 			"definitionsNavigation",
 			() -> {
 				String definitionsNavigation = ParamUtil.getString(
@@ -443,6 +431,18 @@ public class WorkflowDefinitionDisplayContext {
 				}
 
 				return null;
+			}
+		).setParameter(
+			"orderByType",
+			() -> {
+				String orderByType = ParamUtil.getString(
+					httpServletRequest, "orderByType", "asc");
+
+				if (Objects.equals(orderByType, "asc")) {
+					return "desc";
+				}
+
+				return "asc";
 			}
 		).buildString();
 	}

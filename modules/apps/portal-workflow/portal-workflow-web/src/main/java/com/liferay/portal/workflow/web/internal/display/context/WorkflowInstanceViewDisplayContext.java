@@ -340,6 +340,17 @@ public class WorkflowInstanceViewDisplayContext
 				return null;
 			}
 		).setParameter(
+			"orderByCol",
+			() -> {
+				String orderByCol = getOrderByCol();
+
+				if (Validator.isNotNull(orderByCol)) {
+					return orderByCol;
+				}
+
+				return null;
+			}
+		).setParameter(
 			"orderByType",
 			() -> {
 				String orderByType = ParamUtil.getString(
@@ -350,17 +361,6 @@ public class WorkflowInstanceViewDisplayContext
 				}
 
 				return "asc";
-			}
-		).setParameter(
-			"orderByCol",
-			() -> {
-				String orderByCol = getOrderByCol();
-
-				if (Validator.isNotNull(orderByCol)) {
-					return orderByCol;
-				}
-
-				return null;
 			}
 		).setParameter(
 			"tab", WorkflowWebKeys.WORKFLOW_TAB_INSTANCE

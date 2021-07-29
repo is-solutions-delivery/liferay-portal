@@ -265,8 +265,6 @@ public class WorkflowDefinitionLinkDisplayContext {
 		).setTabs1(
 			"default-configuration"
 		).setParameter(
-			"tab", WorkflowWebKeys.WORKFLOW_TAB_DEFINITION_LINK
-		).setParameter(
 			"delta",
 			() -> {
 				String delta = ParamUtil.getString(
@@ -278,6 +276,8 @@ public class WorkflowDefinitionLinkDisplayContext {
 
 				return null;
 			}
+		).setParameter(
+			"tab", WorkflowWebKeys.WORKFLOW_TAB_DEFINITION_LINK
 		).buildPortletURL();
 
 		String orderByType = ParamUtil.getString(
