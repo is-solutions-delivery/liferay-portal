@@ -1,15 +1,15 @@
 [
 	{
-		"path": "home"
-	},
-	{
-		"path": "product"
-	},
-	{
-		"path": "news"
+		"path": "claims"
 	},
 	{
 		"path": "contact"
+	},
+	{
+		"path": "dashboard"
+	},
+	{
+		"path": "documents"
 	},
 	{
 		"path": "get-a-quote"
@@ -18,24 +18,24 @@
 		"path": "get-in-touch"
 	},
 	{
-		"path": "quote"
+		"path": "home"
 	},
 	{
-		"path": "dashboard"
-	},
-	{
-		"path": "sign-in"
+		"path": "news"
 	},
 	{
 		"path": "policies"
 	},
 	{
-		"path": "claims"
+		"path": "product"
 	},
 	{
-		"path": "documents"
+		"path": "quote"
 	},
 	{
 		"path": "search"
+	},
+	{
+		"path": "sign-in"
 	}
 ]
