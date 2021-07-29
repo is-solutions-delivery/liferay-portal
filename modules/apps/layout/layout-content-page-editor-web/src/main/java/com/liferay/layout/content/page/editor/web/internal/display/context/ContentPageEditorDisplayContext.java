@@ -707,23 +707,22 @@ public class ContentPageEditorDisplayContext {
 	}
 
 	protected String getFragmentEntryActionURL(String action, String command) {
-		PortletURL actionURL = PortletURLBuilder.createActionURL(
-			_renderResponse
-		).setActionName(
-			action
-		).setParameter(
-			Constants.CMD,
-			() -> {
-				if (Validator.isNotNull(command)) {
-					return command;
-				}
-
-				return null;
-			}
-		).buildPortletURL();
-
 		return HttpUtil.addParameter(
-			actionURL.toString(), "p_l_mode", Constants.EDIT);
+			PortletURLBuilder.createActionURL(
+				_renderResponse
+			).setActionName(
+				action
+			).setParameter(
+				Constants.CMD,
+				() -> {
+					if (Validator.isNotNull(command)) {
+						return command;
+					}
+
+					return null;
+				}
+			).buildString(),
+			"p_l_mode", Constants.EDIT);
 	}
 
 	protected long getGroupId() {

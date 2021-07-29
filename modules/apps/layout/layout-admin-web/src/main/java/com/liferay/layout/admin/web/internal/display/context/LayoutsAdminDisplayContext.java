@@ -751,28 +751,27 @@ public class LayoutsAdminDisplayContext {
 
 		breadcrumbEntry.setTitle(LanguageUtil.get(httpServletRequest, "pages"));
 
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
-			_liferayPortletResponse
-		).setTabs1(
-			getTabs1()
-		).setParameter(
-			"selPlid", LayoutConstants.DEFAULT_PLID
-		).setParameter(
-			"displayStyle",
-			() -> {
-				String displayStyle = getDisplayStyle();
+		breadcrumbEntry.setURL(
+			PortletURLBuilder.createRenderURL(
+				_liferayPortletResponse
+			).setTabs1(
+				getTabs1()
+			).setParameter(
+				"selPlid", LayoutConstants.DEFAULT_PLID
+			).setParameter(
+				"displayStyle",
+				() -> {
+					String displayStyle = getDisplayStyle();
 
-				if (Validator.isNotNull(displayStyle)) {
-					return displayStyle;
+					if (Validator.isNotNull(displayStyle)) {
+						return displayStyle;
+					}
+
+					return null;
 				}
-
-				return null;
-			}
-		).setParameter(
-			"firstColumn", true
-		).buildPortletURL();
-
-		breadcrumbEntry.setURL(portletURL.toString());
+			).setParameter(
+				"firstColumn", true
+			).buildString());
 
 		breadcrumbEntries.add(breadcrumbEntry);
 
@@ -939,33 +938,30 @@ public class LayoutsAdminDisplayContext {
 	public String getSelectLayoutCollectionURL(
 		long selPlid, String selectedTab, boolean privateLayout) {
 
-		PortletURL selectLayoutCollectionsURL =
-			PortletURLBuilder.createRenderURL(
-				_liferayPortletResponse
-			).setMVCPath(
-				"/select_layout_collections.jsp"
-			).setRedirect(
-				getRedirect()
-			).setBackURL(
-				_getBackURL()
-			).setParameter(
-				"groupId", getSelGroupId()
-			).setParameter(
-				"privateLayout", privateLayout
-			).setParameter(
-				"selPlid", selPlid
-			).setParameter(
-				"selectedTab",
-				() -> {
-					if (Validator.isNotNull(selectedTab)) {
-						return selectedTab;
-					}
-
-					return null;
+		return PortletURLBuilder.createRenderURL(
+			_liferayPortletResponse
+		).setMVCPath(
+			"/select_layout_collections.jsp"
+		).setRedirect(
+			getRedirect()
+		).setBackURL(
+			_getBackURL()
+		).setParameter(
+			"groupId", getSelGroupId()
+		).setParameter(
+			"privateLayout", privateLayout
+		).setParameter(
+			"selPlid", selPlid
+		).setParameter(
+			"selectedTab",
+			() -> {
+				if (Validator.isNotNull(selectedTab)) {
+					return selectedTab;
 				}
-			).buildPortletURL();
 
-		return selectLayoutCollectionsURL.toString();
+				return null;
+			}
+		).buildString();
 	}
 
 	public String getSelectLayoutPageTemplateEntryURL(boolean privateLayout)
