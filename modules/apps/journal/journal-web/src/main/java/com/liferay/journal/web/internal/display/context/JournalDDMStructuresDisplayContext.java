@@ -174,8 +174,7 @@ public class JournalDDMStructuresDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view_ddm_structures.jsp"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String keywords = _getKeywords();
 

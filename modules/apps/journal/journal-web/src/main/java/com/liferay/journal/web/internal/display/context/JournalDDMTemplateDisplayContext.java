@@ -271,8 +271,7 @@ public class JournalDDMTemplateDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/view_ddm_templates.jsp"
-		).setParameter(
-			"keywords",
+		).setKeywords(
 			() -> {
 				String keywords = _getKeywords();
 

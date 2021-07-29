@@ -209,6 +209,16 @@ public class JournalSelectDDMStructureDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/select_ddm_structure.jsp"
+		).setKeywords(
+			() -> {
+				String keywords = _getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
 		).setParameter(
 			"classPK",
 			() -> {
@@ -216,17 +226,6 @@ public class JournalSelectDDMStructureDisplayContext {
 
 				if (classPK != 0) {
 					return classPK;
-				}
-
-				return null;
-			}
-		).setParameter(
-			"keywords",
-			() -> {
-				String keywords = _getKeywords();
-
-				if (Validator.isNotNull(keywords)) {
-					return keywords;
 				}
 
 				return null;
