@@ -67,34 +67,33 @@ public class OAuthAuthorizeStrutsAction implements StrutsAction {
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		String redirect = PortletURLBuilder.create(
-			PortletURLFactoryUtil.create(
-				httpServletRequest, OAuthPortletKeys.OAUTH_AUTHORIZE,
-				themeDisplay.getPlid(), PortletRequest.RENDER_PHASE)
-		).setParameter(
-			OAuth.OAUTH_CALLBACK,
-			() -> {
-				String oauthCallback = httpServletRequest.getParameter(
-					OAuth.OAUTH_CALLBACK);
+		httpServletResponse.sendRedirect(
+			PortletURLBuilder.create(
+				PortletURLFactoryUtil.create(
+					httpServletRequest, OAuthPortletKeys.OAUTH_AUTHORIZE,
+					themeDisplay.getPlid(), PortletRequest.RENDER_PHASE)
+			).setParameter(
+				OAuth.OAUTH_CALLBACK,
+				() -> {
+					String oauthCallback = httpServletRequest.getParameter(
+						OAuth.OAUTH_CALLBACK);
 
-				if (Validator.isNotNull(oauthCallback)) {
-					return oauthCallback;
+					if (Validator.isNotNull(oauthCallback)) {
+						return oauthCallback;
+					}
+
+					return null;
 				}
-
-				return null;
-			}
-		).setParameter(
-			OAuth.OAUTH_TOKEN,
-			httpServletRequest.getParameter(OAuth.OAUTH_TOKEN)
-		).setParameter(
-			"saveLastPath", "0"
-		).setPortletMode(
-			PortletMode.VIEW
-		).setWindowState(
-			getWindowState(httpServletRequest)
-		).buildString();
-
-		httpServletResponse.sendRedirect(redirect);
+			).setParameter(
+				OAuth.OAUTH_TOKEN,
+				httpServletRequest.getParameter(OAuth.OAUTH_TOKEN)
+			).setParameter(
+				"saveLastPath", "0"
+			).setPortletMode(
+				PortletMode.VIEW
+			).setWindowState(
+				getWindowState(httpServletRequest)
+			).buildString());
 
 		return null;
 	}
