@@ -209,31 +209,51 @@ public class JournalSelectDDMStructureDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/select_ddm_structure.jsp"
+		).setParameter(
+			"classPK",
+			() -> {
+				long classPK = getClassPK();
+
+				if (classPK != 0) {
+					return classPK;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"keywords",
+			() -> {
+				String keywords = _getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByCol",
+			() -> {
+				String orderByCol = getOrderByCol();
+
+				if (Validator.isNotNull(orderByCol)) {
+					return orderByCol;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByType",
+			() -> {
+				String orderByType = getOrderByType();
+
+				if (Validator.isNotNull(orderByType)) {
+					return orderByType;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		long classPK = getClassPK();
-
-		if (classPK != 0) {
-			portletURL.setParameter("classPK", String.valueOf(classPK));
-		}
-
-		String keywords = _getKeywords();
-
-		if (Validator.isNotNull(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
-
-		String orderByCol = getOrderByCol();
-
-		if (Validator.isNotNull(orderByCol)) {
-			portletURL.setParameter("orderByCol", orderByCol);
-		}
-
-		String orderByType = getOrderByType();
-
-		if (Validator.isNotNull(orderByType)) {
-			portletURL.setParameter("orderByType", orderByType);
-		}
 
 		return portletURL;
 	}

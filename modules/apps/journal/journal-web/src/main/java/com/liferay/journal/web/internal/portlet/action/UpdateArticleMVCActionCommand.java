@@ -448,8 +448,6 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 			String redirect)
 		throws Exception {
 
-		String languageId = ParamUtil.getString(actionRequest, "languageId");
-
 		PortletURL portletURL = PortletURLBuilder.create(
 			PortletURLFactoryUtil.create(
 				actionRequest, JournalPortletKeys.JOURNAL,
@@ -473,13 +471,21 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 			"resourcePrimKey", article.getResourcePrimKey()
 		).setParameter(
 			"version", article.getVersion()
+		).setParameter(
+			"languageId",
+			() -> {
+				String languageId = ParamUtil.getString(
+					actionRequest, "languageId");
+
+				if (Validator.isNotNull(languageId)) {
+					return languageId;
+				}
+
+				return null;
+			}
+		).setWindowState(
+			actionRequest.getWindowState()
 		).buildPortletURL();
-
-		if (Validator.isNotNull(languageId)) {
-			portletURL.setParameter("languageId", languageId);
-		}
-
-		portletURL.setWindowState(actionRequest.getWindowState());
 
 		return portletURL.toString();
 	}

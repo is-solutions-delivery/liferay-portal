@@ -203,39 +203,62 @@ public class JournalSelectDDMTemplateDisplayContext {
 			_renderResponse
 		).setMVCPath(
 			"/select_ddm_template.jsp"
+		).setParameter(
+			"ddmTemplateId",
+			() -> {
+				long ddmTemplateId = getDDMTemplateId();
+
+				if (ddmTemplateId != 0) {
+					return ddmTemplateId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"ddmStructureId",
+			() -> {
+				long ddmStructureId = getDDMStructureId();
+
+				if (ddmStructureId != 0) {
+					return ddmStructureId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"keywords",
+			() -> {
+				String keywords = _getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByCol",
+			() -> {
+				String orderByCol = getOrderByCol();
+
+				if (Validator.isNotNull(orderByCol)) {
+					return orderByCol;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByType",
+			() -> {
+				String orderByType = getOrderByType();
+
+				if (Validator.isNotNull(orderByType)) {
+					return orderByType;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		long ddmTemplateId = getDDMTemplateId();
-
-		if (ddmTemplateId != 0) {
-			portletURL.setParameter(
-				"ddmTemplateId", String.valueOf(ddmTemplateId));
-		}
-
-		long ddmStructureId = getDDMStructureId();
-
-		if (ddmStructureId != 0) {
-			portletURL.setParameter(
-				"ddmStructureId", String.valueOf(ddmStructureId));
-		}
-
-		String keywords = _getKeywords();
-
-		if (Validator.isNotNull(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
-
-		String orderByCol = getOrderByCol();
-
-		if (Validator.isNotNull(orderByCol)) {
-			portletURL.setParameter("orderByCol", orderByCol);
-		}
-
-		String orderByType = getOrderByType();
-
-		if (Validator.isNotNull(orderByType)) {
-			portletURL.setParameter("orderByType", orderByType);
-		}
 
 		return portletURL;
 	}

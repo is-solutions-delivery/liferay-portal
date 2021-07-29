@@ -331,12 +331,16 @@ public class JournalFolderActionDropdownItems {
 			"/journal/publish_folder"
 		).setBackURL(
 			_getRedirect()
-		).buildPortletURL();
+		).setParameter(
+			"folderId",
+			() -> {
+				if (_folder != null) {
+					return _folder.getFolderId();
+				}
 
-		if (_folder != null) {
-			publishFolderURL.setParameter(
-				"folderId", String.valueOf(_folder.getFolderId()));
-		}
+				return null;
+			}
+		).buildPortletURL();
 
 		return dropdownItem -> {
 			dropdownItem.putData("action", "publishFolderToLive");
