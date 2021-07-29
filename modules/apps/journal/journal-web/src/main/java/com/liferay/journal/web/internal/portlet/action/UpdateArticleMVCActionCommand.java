@@ -464,13 +464,6 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 		).setParameter(
 			"groupId", article.getGroupId()
 		).setParameter(
-			"referringPortletResource",
-			ParamUtil.getString(actionRequest, "referringPortletResource")
-		).setParameter(
-			"resourcePrimKey", article.getResourcePrimKey()
-		).setParameter(
-			"version", article.getVersion()
-		).setParameter(
 			"languageId",
 			() -> {
 				String languageId = ParamUtil.getString(
@@ -482,6 +475,13 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 
 				return null;
 			}
+		).setParameter(
+			"referringPortletResource",
+			ParamUtil.getString(actionRequest, "referringPortletResource")
+		).setParameter(
+			"resourcePrimKey", article.getResourcePrimKey()
+		).setParameter(
+			"version", article.getVersion()
 		).setWindowState(
 			actionRequest.getWindowState()
 		).buildString();

@@ -214,23 +214,23 @@ public class JournalSelectDDMTemplateDisplayContext {
 				return null;
 			}
 		).setParameter(
-			"ddmTemplateId",
-			() -> {
-				long ddmTemplateId = getDDMTemplateId();
-
-				if (ddmTemplateId != 0) {
-					return ddmTemplateId;
-				}
-
-				return null;
-			}
-		).setParameter(
 			"ddmStructureId",
 			() -> {
 				long ddmStructureId = getDDMStructureId();
 
 				if (ddmStructureId != 0) {
 					return ddmStructureId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"ddmTemplateId",
+			() -> {
+				long ddmTemplateId = getDDMTemplateId();
+
+				if (ddmTemplateId != 0) {
+					return ddmTemplateId;
 				}
 
 				return null;
