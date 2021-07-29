@@ -174,19 +174,27 @@ public class CommerceInventoryWarehousesDisplayContext {
 			_cpRequestHelper.getRenderResponse()
 		).setParameter(
 			"countryTwoLettersISOCode", getCountryTwoLettersIsoCode()
+		).setParameter(
+			"delta",
+			() -> {
+				String delta = ParamUtil.getString(
+					_cpRequestHelper.getRenderRequest(), "delta");
+
+				if (Validator.isNotNull(delta)) {
+					return delta;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"keywords", getKeywords()
+		).setParameter(
+			"navigation", getNavigation()
+		).setParameter(
+			"orderByCol", getOrderByCol()
+		).setParameter(
+			"orderByType", getOrderByType()
 		).buildPortletURL();
-
-		String delta = ParamUtil.getString(
-			_cpRequestHelper.getRenderRequest(), "delta");
-
-		if (Validator.isNotNull(delta)) {
-			portletURL.setParameter("delta", delta);
-		}
-
-		portletURL.setParameter("keywords", getKeywords());
-		portletURL.setParameter("navigation", getNavigation());
-		portletURL.setParameter("orderByCol", getOrderByCol());
-		portletURL.setParameter("orderByType", getOrderByType());
 
 		return portletURL;
 	}

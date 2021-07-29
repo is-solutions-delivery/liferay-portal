@@ -155,29 +155,40 @@ public class EditCommerceTierPriceEntryMVCActionCommand
 				PortletRequest.RENDER_PHASE)
 		).setMVCRenderCommandName(
 			"/commerce_price_list/edit_commerce_tier_price_entry"
+		).setParameter(
+			"commercePriceEntryId",
+			() -> {
+				long commercePriceEntryId = ParamUtil.getLong(
+					actionRequest, "commercePriceEntryId");
+
+				if (commercePriceEntryId > 0) {
+					return commercePriceEntryId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"commercePriceListId",
+			() -> {
+				long commercePriceListId = ParamUtil.getLong(
+					actionRequest, "commercePriceListId");
+
+				if (commercePriceListId > 0) {
+					return commercePriceListId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"commerceTierPriceEntryId",
+			() -> {
+				if (commerceTierPriceEntryId > 0) {
+					return commerceTierPriceEntryId;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		long commercePriceEntryId = ParamUtil.getLong(
-			actionRequest, "commercePriceEntryId");
-
-		if (commercePriceEntryId > 0) {
-			portletURL.setParameter(
-				"commercePriceEntryId", String.valueOf(commercePriceEntryId));
-		}
-
-		long commercePriceListId = ParamUtil.getLong(
-			actionRequest, "commercePriceListId");
-
-		if (commercePriceListId > 0) {
-			portletURL.setParameter(
-				"commercePriceListId", String.valueOf(commercePriceListId));
-		}
-
-		if (commerceTierPriceEntryId > 0) {
-			portletURL.setParameter(
-				"commerceTierPriceEntryId",
-				String.valueOf(commerceTierPriceEntryId));
-		}
 
 		try {
 			portletURL.setWindowState(LiferayWindowState.POP_UP);

@@ -174,36 +174,55 @@ public class BaseCommerceTaxFixedRateDisplayContext {
 		).setParameter(
 			"screenNavigationCategoryKey",
 			getSelectedScreenNavigationCategoryKey()
+		).setParameter(
+			"redirect",
+			() -> {
+				String redirect = ParamUtil.getString(
+					commerceTaxFixedRateRequestHelper.getRequest(), "redirect");
+
+				if (Validator.isNotNull(redirect)) {
+					return redirect;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"commerceTaxMethodId",
+			() -> {
+				CommerceTaxMethod commerceTaxMethod = getCommerceTaxMethod();
+
+				if (commerceTaxMethod != null) {
+					return commerceTaxMethod.getCommerceTaxMethodId();
+				}
+
+				return null;
+			}
+		).setParameter(
+			"engineKey",
+			() -> {
+				String engineKey = ParamUtil.getString(
+					commerceTaxFixedRateRequestHelper.getRequest(),
+					"engineKey");
+
+				if (Validator.isNotNull(engineKey)) {
+					return engineKey;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"delta",
+			() -> {
+				String delta = ParamUtil.getString(
+					commerceTaxFixedRateRequestHelper.getRequest(), "delta");
+
+				if (Validator.isNotNull(delta)) {
+					return delta;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String redirect = ParamUtil.getString(
-			commerceTaxFixedRateRequestHelper.getRequest(), "redirect");
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-		}
-
-		CommerceTaxMethod commerceTaxMethod = getCommerceTaxMethod();
-
-		if (commerceTaxMethod != null) {
-			portletURL.setParameter(
-				"commerceTaxMethodId",
-				String.valueOf(commerceTaxMethod.getCommerceTaxMethodId()));
-		}
-
-		String engineKey = ParamUtil.getString(
-			commerceTaxFixedRateRequestHelper.getRequest(), "engineKey");
-
-		if (Validator.isNotNull(engineKey)) {
-			portletURL.setParameter("engineKey", engineKey);
-		}
-
-		String delta = ParamUtil.getString(
-			commerceTaxFixedRateRequestHelper.getRequest(), "delta");
-
-		if (Validator.isNotNull(delta)) {
-			portletURL.setParameter("delta", delta);
-		}
 
 		return portletURL;
 	}

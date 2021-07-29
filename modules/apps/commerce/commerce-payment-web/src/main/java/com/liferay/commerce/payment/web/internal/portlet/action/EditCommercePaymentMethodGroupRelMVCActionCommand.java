@@ -130,19 +130,31 @@ public class EditCommercePaymentMethodGroupRelMVCActionCommand
 			mvcRenderCommandName
 		).setParameter(
 			"commercePaymentMethodGroupRelId", commercePaymentMethodGroupRelId
+		).setParameter(
+			"redirect",
+			() -> {
+				String redirect = ParamUtil.getString(
+					actionRequest, "redirect");
+
+				if (Validator.isNotNull(redirect)) {
+					return redirect;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"engineKey",
+			() -> {
+				String engineKey = ParamUtil.getString(
+					actionRequest, "engineKey");
+
+				if (Validator.isNotNull(engineKey)) {
+					return engineKey;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String redirect = ParamUtil.getString(actionRequest, "redirect");
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-		}
-
-		String engineKey = ParamUtil.getString(actionRequest, "engineKey");
-
-		if (Validator.isNotNull(engineKey)) {
-			portletURL.setParameter("engineKey", engineKey);
-		}
 
 		return portletURL.toString();
 	}

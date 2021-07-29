@@ -199,14 +199,19 @@ public class CommerceOrderEditDisplayContext {
 			"screenNavigationCategoryKey",
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_EMAILS
+		).setParameter(
+			"redirect",
+			() -> {
+				String redirect = ParamUtil.getString(
+					_commerceOrderRequestHelper.getRequest(), "redirect");
+
+				if (Validator.isNotNull(redirect)) {
+					return redirect;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String redirect = ParamUtil.getString(
-			_commerceOrderRequestHelper.getRequest(), "redirect");
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-		}
 
 		return portletURL;
 	}
@@ -274,14 +279,19 @@ public class CommerceOrderEditDisplayContext {
 			"screenNavigationCategoryKey",
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_GENERAL
+		).setParameter(
+			"redirect",
+			() -> {
+				String redirect = ParamUtil.getString(
+					_commerceOrderRequestHelper.getRequest(), "redirect");
+
+				if (Validator.isNotNull(redirect)) {
+					return redirect;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String redirect = ParamUtil.getString(
-			_commerceOrderRequestHelper.getRequest(), "redirect");
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-		}
 
 		return portletURL;
 	}
@@ -340,14 +350,19 @@ public class CommerceOrderEditDisplayContext {
 			"screenNavigationCategoryKey",
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_PAYMENTS
+		).setParameter(
+			"redirect",
+			() -> {
+				String redirect = ParamUtil.getString(
+					_commerceOrderRequestHelper.getRequest(), "redirect");
+
+				if (Validator.isNotNull(redirect)) {
+					return redirect;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String redirect = ParamUtil.getString(
-			_commerceOrderRequestHelper.getRequest(), "redirect");
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-		}
 
 		return portletURL;
 	}
@@ -388,14 +403,19 @@ public class CommerceOrderEditDisplayContext {
 			"screenNavigationCategoryKey",
 			CommerceOrderScreenNavigationConstants.
 				CATEGORY_KEY_COMMERCE_ORDER_SHIPMENTS
+		).setParameter(
+			"redirect",
+			() -> {
+				String redirect = ParamUtil.getString(
+					_commerceOrderRequestHelper.getRequest(), "redirect");
+
+				if (Validator.isNotNull(redirect)) {
+					return redirect;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String redirect = ParamUtil.getString(
-			_commerceOrderRequestHelper.getRequest(), "redirect");
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-		}
 
 		return portletURL;
 	}
