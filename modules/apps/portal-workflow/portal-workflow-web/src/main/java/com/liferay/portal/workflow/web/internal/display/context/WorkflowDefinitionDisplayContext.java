@@ -418,7 +418,7 @@ public class WorkflowDefinitionDisplayContext {
 	public String getSortingURL(HttpServletRequest httpServletRequest)
 		throws PortletException {
 
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_workflowDefinitionRequestHelper.getLiferayPortletResponse()
 		).setParameter(
 			"orderByType",
@@ -444,9 +444,7 @@ public class WorkflowDefinitionDisplayContext {
 
 				return null;
 			}
-		).buildPortletURL();
-
-		return portletURL.toString();
+		).buildString();
 	}
 
 	public String getTitle(WorkflowDefinition workflowDefinition) {

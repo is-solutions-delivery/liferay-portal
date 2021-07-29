@@ -326,7 +326,7 @@ public class WorkflowInstanceViewDisplayContext
 	public String getSortingURL(HttpServletRequest httpServletRequest)
 		throws PortletException {
 
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			workflowInstanceRequestHelper.getLiferayPortletResponse()
 		).setParameter(
 			"orderByType",
@@ -365,9 +365,7 @@ public class WorkflowInstanceViewDisplayContext
 			}
 		).setParameter(
 			"tab", WorkflowWebKeys.WORKFLOW_TAB_INSTANCE
-		).buildPortletURL();
-
-		return portletURL.toString();
+		).buildString();
 	}
 
 	public String getStatus(WorkflowInstance workflowInstance) {
