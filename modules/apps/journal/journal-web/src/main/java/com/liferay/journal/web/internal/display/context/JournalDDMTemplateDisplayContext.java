@@ -267,7 +267,7 @@ public class JournalDDMTemplateDisplayContext {
 	}
 
 	private PortletURL _getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/view_ddm_templates.jsp"
@@ -304,8 +304,6 @@ public class JournalDDMTemplateDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private static final String[] _DISPLAY_VIEWS = {"icon", "list"};

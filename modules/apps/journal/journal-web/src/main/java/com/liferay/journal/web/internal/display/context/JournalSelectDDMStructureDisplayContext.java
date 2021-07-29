@@ -205,7 +205,7 @@ public class JournalSelectDDMStructureDisplayContext {
 	}
 
 	private PortletURL _getPortletURL() {
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
+		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCPath(
 			"/select_ddm_structure.jsp"
@@ -253,8 +253,6 @@ public class JournalSelectDDMStructureDisplayContext {
 				return null;
 			}
 		).buildPortletURL();
-
-		return portletURL;
 	}
 
 	private long _getSearchRestrictionClassNameId() {
