@@ -281,34 +281,52 @@ public class LayoutPageTemplateDisplayContext {
 			_themeDisplay.getURLCurrent()
 		).setTabs1(
 			"page-templates"
+		).setParameter(
+			"layoutPageTemplateCollectionId",
+			() -> {
+				long layoutPageTemplateCollectionId =
+					getLayoutPageTemplateCollectionId();
+
+				if (layoutPageTemplateCollectionId > 0) {
+					return layoutPageTemplateCollectionId;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"keywords",
+			() -> {
+				String keywords = getKeywords();
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByCol",
+			() -> {
+				String orderByCol = getOrderByCol();
+
+				if (Validator.isNotNull(orderByCol)) {
+					return orderByCol;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"orderByType",
+			() -> {
+				String orderByType = getOrderByType();
+
+				if (Validator.isNotNull(orderByType)) {
+					return orderByType;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		long layoutPageTemplateCollectionId =
-			getLayoutPageTemplateCollectionId();
-
-		if (layoutPageTemplateCollectionId > 0) {
-			portletURL.setParameter(
-				"layoutPageTemplateCollectionId",
-				String.valueOf(layoutPageTemplateCollectionId));
-		}
-
-		String keywords = getKeywords();
-
-		if (Validator.isNotNull(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
-
-		String orderByCol = getOrderByCol();
-
-		if (Validator.isNotNull(orderByCol)) {
-			portletURL.setParameter("orderByCol", orderByCol);
-		}
-
-		String orderByType = getOrderByType();
-
-		if (Validator.isNotNull(orderByType)) {
-			portletURL.setParameter("orderByType", orderByType);
-		}
 
 		return portletURL;
 	}

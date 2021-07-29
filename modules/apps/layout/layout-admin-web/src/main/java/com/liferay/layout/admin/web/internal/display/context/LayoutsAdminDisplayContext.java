@@ -757,15 +757,20 @@ public class LayoutsAdminDisplayContext {
 			getTabs1()
 		).setParameter(
 			"selPlid", LayoutConstants.DEFAULT_PLID
+		).setParameter(
+			"displayStyle",
+			() -> {
+				String displayStyle = getDisplayStyle();
+
+				if (Validator.isNotNull(displayStyle)) {
+					return displayStyle;
+				}
+
+				return null;
+			}
+		).setParameter(
+			"firstColumn", true
 		).buildPortletURL();
-
-		String displayStyle = getDisplayStyle();
-
-		if (Validator.isNotNull(displayStyle)) {
-			portletURL.setParameter("displayStyle", displayStyle);
-		}
-
-		portletURL.setParameter("firstColumn", Boolean.TRUE.toString());
 
 		breadcrumbEntry.setURL(portletURL.toString());
 
@@ -825,13 +830,18 @@ public class LayoutsAdminDisplayContext {
 			getTabs1()
 		).setParameter(
 			"privateLayout", isPrivateLayout()
+		).setParameter(
+			"displayStyle",
+			() -> {
+				String displayStyle = getDisplayStyle();
+
+				if (Validator.isNotNull(displayStyle)) {
+					return displayStyle;
+				}
+
+				return null;
+			}
 		).buildPortletURL();
-
-		String displayStyle = getDisplayStyle();
-
-		if (Validator.isNotNull(displayStyle)) {
-			portletURL.setParameter("displayStyle", displayStyle);
-		}
 
 		return portletURL;
 	}
@@ -944,11 +954,16 @@ public class LayoutsAdminDisplayContext {
 				"privateLayout", privateLayout
 			).setParameter(
 				"selPlid", selPlid
-			).buildPortletURL();
+			).setParameter(
+				"selectedTab",
+				() -> {
+					if (Validator.isNotNull(selectedTab)) {
+						return selectedTab;
+					}
 
-		if (Validator.isNotNull(selectedTab)) {
-			selectLayoutCollectionsURL.setParameter("selectedTab", selectedTab);
-		}
+					return null;
+				}
+			).buildPortletURL();
 
 		return selectLayoutCollectionsURL.toString();
 	}

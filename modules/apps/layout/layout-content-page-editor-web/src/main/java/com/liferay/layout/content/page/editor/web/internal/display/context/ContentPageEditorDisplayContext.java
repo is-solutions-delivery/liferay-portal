@@ -711,11 +711,16 @@ public class ContentPageEditorDisplayContext {
 			_renderResponse
 		).setActionName(
 			action
-		).buildPortletURL();
+		).setParameter(
+			Constants.CMD,
+			() -> {
+				if (Validator.isNotNull(command)) {
+					return command;
+				}
 
-		if (Validator.isNotNull(command)) {
-			actionURL.setParameter(Constants.CMD, command);
-		}
+				return null;
+			}
+		).buildPortletURL();
 
 		return HttpUtil.addParameter(
 			actionURL.toString(), "p_l_mode", Constants.EDIT);
