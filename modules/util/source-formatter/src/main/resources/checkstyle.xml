@@ -289,6 +289,7 @@
 		<module name="com.liferay.source.formatter.checkstyle.checks.ConstructorGlobalVariableDeclarationCheck">
 			<property name="category" value="Performance" />
 			<property name="description" value="Checks that initial values of global variables are not set in the constructor." />
+			<property name="enabled" value="false" />
 			<message key="global.variable.value.declare" value="Set the value of ''{0}'' when declaring the variable on line ''{1}''" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.checks.ConstructorMissingEmptyLineCheck">
