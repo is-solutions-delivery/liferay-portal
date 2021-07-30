@@ -27,6 +27,8 @@ const retrieveQuoteButton = fragmentElement.querySelector(
 const newQuoteButton = fragmentElement.querySelector('#new-quote-button');
 const continueQuoteButton = fragmentElement.querySelector('#continue-quote');
 const getQuoteForm = fragmentElement.querySelector('#get-quote-form');
+const zipContainer = fragmentElement.querySelector('#zip-container');
+const productContainer = fragmentElement.querySelector('#product-container');
 
 retrieveQuoteButton.onclick = function () {
 	retrieveQuoteContainer.classList.add('d-none', 'invisible');
@@ -71,16 +73,20 @@ getQuoteForm.onsubmit = function (event) {
 	const formProps = Object.fromEntries(formData);
 	const maxCharactersZIP = 5;
 
-	if (!formProps.zip || formProps.zip.length !== maxCharactersZIP) {
-		Liferay.Util.openToast({
-			message: 'Please enter a valid zip code.',
-			type: 'danger',
-		});
-	} else if (!formProps.product) {
-		Liferay.Util.openToast({
-			message: 'Please select a product.',
-			type: 'danger',
-		});
+	zipContainer.classList.remove('has-error');
+	productContainer.classList.remove('has-error');
+
+	if (
+		!formProps.zip ||
+		formProps.zip.length !== maxCharactersZIP ||
+		!formProps.product
+	) {
+		if (!formProps.zip || formProps.zip.length !== maxCharactersZIP) {
+			zipContainer.classList.add('has-error');
+		}
+		if (!formProps.product) {
+			productContainer.classList.add('has-error');
+		}
 	} else {
 		document.cookie = 'raylife-zip=' + formProps.zip;
 		document.cookie = 'raylife-product=' + formProps.product;
