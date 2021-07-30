@@ -34,19 +34,31 @@
 								>Email Address</label
 							>
 							<input
-								class="rounded px-3 border"
+								class="rounded px-3"
 								id="email"
 								name="email"
 								type="text"
 							/>
 						</div>
 
-						<button
-							class="btn btn-sm btn-primary border border-0"
-							id="continue-quote"
-							type="button"
-						>
-							Continue Quote
+						<button button class="btn btn-sm btn-primary ml-4" type="submit">
+							<span
+								class="action-button-text font-weight-bold d-flex align-items-center"
+								data-lfr-editable-id="business-home-cover-continue-quote-button"
+								data-lfr-editable-type="text"
+								id="continue-quote"
+							>
+								CONTINUE QUOTE
+								<svg
+									class="lexicon-icon lexicon-icon-angle-right ml-2 arrow-icon"
+									focusable="false"
+									role="presentation"
+								>
+									<use
+										xlink:href="http://localhost:8080/o/admin-theme/images/clay/icons.svg#angle-right"
+									/>
+								</svg>
+							</span>
 						</button>
 					</div>
 
@@ -56,7 +68,8 @@
 							data-lfr-editable-id="business-home-cover-link01"
 							data-lfr-editable-type="text"
 							>First time here?
-						</span>
+						</span
+						>
 
 						<a href="#" id="new-quote-button">
 							<span
@@ -69,30 +82,35 @@
 				</div>
 
 				<div class="position-relative" id="retrieve-quote">
-					<form class="d-flex" id="get-quote-form">
-						<div class="d-flex">
+					<form class="d-flex align-items-start" id="get-quote-form">
+						<div id="zip-container">
 							<label
 								for="zip"
 								class="position-absolute bg-white px-1"
 								>Zip</label
 							>
 							<input
-								class="rounded px-3 border"
+								class="rounded px-3 w-100"
 								id="zip"
 								maxlength="5"
 								name="zip"
+								placeholder="Zip"
 								type="text"
 							/>
+
+							<div class="error-feedback">
+								<span>Enter a valid 5 digit Zip</span>
+							</div>
 						</div>
 
-						<div class="d-flex flex-grow-1 position-relative">
+						<div class="flex-grow-1 position-relative" id="product-container">
 							<label
 								for="product"
 								class="position-absolute bg-white px-1"
 								>Product</label
 							>
 							<svg
-								class="lexicon-icon lexicon-icon-caret-bottom position-absolute select-icon h-100"
+								class="lexicon-icon lexicon-icon-caret-bottom position-absolute select-icon"
 								focusable="false"
 								role="presentation"
 							>
@@ -102,20 +120,20 @@
 							</svg>
 
 							<select
-								class="rounded px-3 border bg-white"
+								class="rounded px-3 bg-white"
 								id="product"
 								name="product"
 							></select>
+
+							<div class="error-feedback">
+								<span>Please select a product</span>
+							</div>
 						</div>
 
-						<button
-							button
-							class="btn btn-sm btn-primary"
-							type="submit"
-						>
+						<button button class="btn btn-sm btn-primary ml-4" type="submit">
 							<span
 								class="action-button-text font-weight-bold d-flex align-items-center"
-								data-lfr-editable-id="business-home-cover-button-text"
+								data-lfr-editable-id="business-home-cover-get-a-quote-button"
 								data-lfr-editable-type="text"
 							>
 								GET A QUOTE
@@ -138,7 +156,8 @@
 							data-lfr-editable-id="business-home-cover-link"
 							data-lfr-editable-type="text"
 							>Already started?
-						</span>
+						</span
+						>
 
 						<a href="#" id="retrieve-quote-button">
 							<span
