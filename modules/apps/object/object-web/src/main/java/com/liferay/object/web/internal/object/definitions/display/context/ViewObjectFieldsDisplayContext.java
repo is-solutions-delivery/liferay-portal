@@ -42,7 +42,7 @@ public class ViewObjectFieldsDisplayContext {
 	public CreationMenu getCreationMenu() throws Exception {
 		CreationMenu creationMenu = new CreationMenu();
 
-		//TODO Check permissions
+		// TODO Check permissions
 
 		creationMenu.addDropdownItem(
 			dropdownItem -> {
