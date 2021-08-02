@@ -55,6 +55,7 @@ import com.liferay.commerce.service.CPDAvailabilityEstimateLocalService;
 import com.liferay.commerce.service.CPDefinitionInventoryLocalService;
 import com.liferay.commerce.service.CommerceAvailabilityEstimateLocalService;
 import com.liferay.commerce.util.comparator.CommerceAvailabilityEstimatePriorityComparator;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONArrayImpl;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -66,6 +67,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -372,9 +374,21 @@ public class CPDefinitionsImporter {
 
 		JSONArray categoriesJSONArray = jsonObject.getJSONArray("categories");
 
+		Group group = serviceContext.getScopeGroup();
+
+		String groupName = group.getName(serviceContext.getLocale());
+
 		if (categoriesJSONArray != null) {
+			String externalReferenceCodePrefix = StringUtil.removeChar(
+				groupName, CharPool.SPACE);
+
+			externalReferenceCodePrefix = StringUtil.toUpperCase(
+				externalReferenceCodePrefix);
+
 			for (int i = 0; i < categoriesJSONArray.length(); i++) {
-				String externalReferenceCode = categoriesJSONArray.getString(i);
+				String externalReferenceCode =
+					externalReferenceCodePrefix +
+						categoriesJSONArray.getString(i);
 
 				for (AssetCategory assetCategory : assetCategories) {
 					if (StringUtil.equals(
