@@ -1,9 +1,11 @@
 [
 	{
-		"externalReferenceCode": "RAYCAT0001",
+		"externalReferenceCode": "0001",
 		"permissions": [
 			{
-				"actionIds": ["VIEW"],
+				"actionIds": [
+					"VIEW"
+				],
 				"roleName": "Guest",
 				"scope": 4
 			}
@@ -11,10 +13,12 @@
 		"subcategories": [
 			{
 				"description": "Provide accounting services",
-				"externalReferenceCode": "RAYCAT0016",
+				"externalReferenceCode": "0016",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -33,10 +37,12 @@
 			},
 			{
 				"description": "Own an apartment that has between 13 to 30 residential units",
-				"externalReferenceCode": "RAYCAT0015",
+				"externalReferenceCode": "0015",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -55,10 +61,12 @@
 			},
 			{
 				"description": "Own an apartment that has over 32 residential units",
-				"externalReferenceCode": "RAYCAT0014",
+				"externalReferenceCode": "0014",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -77,10 +85,12 @@
 			},
 			{
 				"description": "Own an apartment that has up to 12 residential units",
-				"externalReferenceCode": "RAYCAT0013",
+				"externalReferenceCode": "0013",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -99,10 +109,12 @@
 			},
 			{
 				"description": "Manufacture and distribute coffee and/or tea",
-				"externalReferenceCode": "RAYCAT0012",
+				"externalReferenceCode": "0012",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -121,10 +133,12 @@
 			},
 			{
 				"description": "Own an establishment that primarily serves coffee and/or tea",
-				"externalReferenceCode": "RAYCAT0011",
+				"externalReferenceCode": "0011",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -143,10 +157,12 @@
 			},
 			{
 				"description": "Primarily sell flowers, plants, and gardening supplies",
-				"externalReferenceCode": "RAYCAT0010",
+				"externalReferenceCode": "0010",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -165,10 +181,12 @@
 			},
 			{
 				"description": "Primarily sell a general range of food and household products",
-				"externalReferenceCode": "RAYCAT0009",
+				"externalReferenceCode": "0009",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -187,10 +205,12 @@
 			},
 			{
 				"description": "Provide dental services",
-				"externalReferenceCode": "RAYCAT0008",
+				"externalReferenceCode": "0008",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -209,10 +229,12 @@
 			},
 			{
 				"description": "Primarily sell animals and a general range of animal supplies and pet acessories",
-				"externalReferenceCode": "RAYCAT0007",
+				"externalReferenceCode": "0007",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -231,10 +253,12 @@
 			},
 			{
 				"description": "Provide photography services",
-				"externalReferenceCode": "RAYCAT0006",
+				"externalReferenceCode": "0006",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -253,10 +277,12 @@
 			},
 			{
 				"description": "Sell commercial and residential properties",
-				"externalReferenceCode": "RAYCAT0005",
+				"externalReferenceCode": "0005",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -275,10 +301,12 @@
 			},
 			{
 				"description": "Own an establishment with a liquor license to cook and serve meals on the premises",
-				"externalReferenceCode": "RAYCAT0004",
+				"externalReferenceCode": "0004",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -297,10 +325,12 @@
 			},
 			{
 				"description": "Own an establishment without a liquor license to cook and serve meals on the premises",
-				"externalReferenceCode": "RAYCAT0003",
+				"externalReferenceCode": "0003",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -319,10 +349,12 @@
 			},
 			{
 				"description": "Provide hospital services to animals",
-				"externalReferenceCode": "RAYCAT0002",
+				"externalReferenceCode": "0002",
 				"permissions": [
 					{
-						"actionIds": ["VIEW"],
+						"actionIds": [
+							"VIEW"
+						],
 						"roleName": "Guest",
 						"scope": 4
 					}
@@ -343,63 +375,78 @@
 		"title": "Business Owners Policy"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0017",
+		"externalReferenceCode": "0017",
 		"permissions": [
 			{
-				"actionIds": ["VIEW"],
+				"actionIds": [
+					"VIEW"
+				],
 				"roleName": "Guest",
 				"scope": 4
 			}
 		],
-		"subcategories": [],
+		"subcategories": [
+		],
 		"title": "Commercial Auto"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0018",
+		"externalReferenceCode": "0018",
 		"permissions": [
 			{
-				"actionIds": ["VIEW"],
+				"actionIds": [
+					"VIEW"
+				],
 				"roleName": "Guest",
 				"scope": 4
 			}
 		],
-		"subcategories": [],
+		"subcategories": [
+		],
 		"title": "Cyber Insurance"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0019",
+		"externalReferenceCode": "0019",
 		"permissions": [
 			{
-				"actionIds": ["VIEW"],
+				"actionIds": [
+					"VIEW"
+				],
 				"roleName": "Guest",
 				"scope": 4
 			}
 		],
-		"subcategories": [],
+		"subcategories": [
+		],
 		"title": "General Liability"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0020",
+		"externalReferenceCode": "0020",
 		"permissions": [
 			{
-				"actionIds": ["VIEW"],
+				"actionIds": [
+					"VIEW"
+				],
 				"roleName": "Guest",
 				"scope": 4
 			}
 		],
-		"subcategories": [],
+		"subcategories": [
+		],
 		"title": "Professional Liability"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0021",
+		"externalReferenceCode": "0021",
 		"permissions": [
 			{
-				"actionIds": ["VIEW"],
+				"actionIds": [
+					"VIEW"
+				],
 				"roleName": "Guest",
 				"scope": 4
 			}
 		],
-		"subcategories": [],
+		"subcategories": [
+		],
 		"title": "Workers Compensation"
 	}
 ]
