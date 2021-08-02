@@ -65,6 +65,7 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -1104,6 +1105,12 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		List<AssetCategory> assetCategories = new ArrayList<>();
 
+		String externalReferenceCodePrefix = StringUtil.removeChar(
+			assetVocabularyName, CharPool.SPACE);
+
+		externalReferenceCodePrefix = StringUtil.toUpperCase(
+			externalReferenceCodePrefix);
+
 		for (int i = 0; i < jsonArray.length(); i++) {
 			String titleCategory = null;
 			String externalReferenceCodeCategory = null;
@@ -1114,8 +1121,11 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			if (categoryJSONObject != null) {
 				titleCategory = categoryJSONObject.getString("title");
 
-				externalReferenceCodeCategory = categoryJSONObject.getString(
+				String externalReferenceCode = categoryJSONObject.getString(
 					"externalReferenceCode");
+
+				externalReferenceCodeCategory =
+					externalReferenceCodePrefix + externalReferenceCode;
 
 				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
 					"subcategories");
@@ -1162,9 +1172,12 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 					String titleSubcategory = subcategoryJSONObject.getString(
 						"title");
 
-					String externalReferenceCodeSubcategory =
+					String externalReferenceCode =
 						subcategoryJSONObject.getString(
 							"externalReferenceCode");
+
+					String externalReferenceCodeSubcategory =
+						externalReferenceCodePrefix + externalReferenceCode;
 
 					JSONArray propertiesJSONArray =
 						subcategoryJSONObject.getJSONArray("properties");
