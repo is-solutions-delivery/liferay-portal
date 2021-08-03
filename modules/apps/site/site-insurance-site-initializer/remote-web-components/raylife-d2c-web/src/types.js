@@ -70,3 +70,12 @@
  * }
  * }} BasicsForm
  */
+
+/**
+ * @typedef {{
+ * id: string
+ * title: string
+ * period: string
+ * description: string
+ * }} ProductQuote
+ */

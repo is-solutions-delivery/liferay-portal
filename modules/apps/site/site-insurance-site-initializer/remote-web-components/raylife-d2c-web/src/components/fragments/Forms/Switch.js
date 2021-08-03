@@ -1,24 +1,28 @@
 import React from "react";
 
+import { Label } from "./Label";
+import { InputAreaWithError } from "./InputArea/WithError";
+
 export const Switch = React.forwardRef(
   (
     {
       name,
       label,
       renderActions,
+      error,
       value = "true",
+      required = false,
       onChange = () => {},
       ...props
     },
     ref
   ) => {
     return (
-      <div className="input-area">
+      <InputAreaWithError error={error}>
         {label && (
-          <label htmlFor={name}>
-            {label}
+          <Label name={name} label={label} required={required}>
             {renderActions}
-          </label>
+          </Label>
         )}
         <div className="switch-wrapper">
           <button
@@ -44,7 +48,7 @@ export const Switch = React.forwardRef(
           onChange={onChange}
           className="hidden"
         />
-      </div>
+      </InputAreaWithError>
     );
   }
 );
