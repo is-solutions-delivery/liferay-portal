@@ -5,19 +5,18 @@ import { Radio } from "../../../fragments/Forms/Radio";
 import { AVAILABLE_STEPS } from "../../../../utils/constants";
 import { useStepWizard } from "../../../../hooks/useStepWizard";
 import { useProductQuotes } from "../../../../hooks/useProductQuotes";
-import { useLiferayState } from "../../../../hooks/useLiferayState";
-
-const QUOTE_ATOM = "product-quote-id";
+import { MoreInfoButton } from "../../../fragments/Buttons/MoreInfo";
+import { PRODUCT_QUOTE_INFO_EVENT } from "../../../../events";
+import { CardFormActions } from "../../../fragments/Card/FormActions";
 
 export const FormBasicProductQuote = () => {
-  const form = useWatch();
-  const { writeAtom } = useLiferayState();
-  const { setSection } = useStepWizard();
-  const { productQuotes } = useProductQuotes();
   const {
     control,
     formState: { isValid },
   } = useFormContext();
+  const form = useWatch();
+  const { setSection } = useStepWizard();
+  const { productQuotes } = useProductQuotes();
 
   const goToNextForm = () => setSection(AVAILABLE_STEPS.BUSINESS);
 
@@ -46,13 +45,10 @@ export const FormBasicProductQuote = () => {
                     value={quote.id}
                     selected={quote.id === form.basics.productQuote}
                     renderActions={
-                      <button
-                        type="button"
-                        className="btn badge"
-                        onClick={() => writeAtom(QUOTE_ATOM, quote.id)}
-                      >
-                        More Info
-                      </button>
+                      <MoreInfoButton
+                        event={PRODUCT_QUOTE_INFO_EVENT}
+                        value={quote.id}
+                      />
                     }
                   />
                 ))
@@ -61,23 +57,11 @@ export const FormBasicProductQuote = () => {
           </fieldset>
         </div>
       </div>
-      <div className="card-actions" style={{ justifyContent: "center" }}>
-        <button
-          type="button"
-          className="btn btn-flat"
-          onClick={goToPreviousForm}
-        >
-          Previous
-        </button>
-        <button
-          type="submit"
-          className="btn btn-secondary"
-          onClick={goToNextForm}
-          disabled={!isValid}
-        >
-          Continue
-        </button>
-      </div>
+      <CardFormActions
+        onPrevious={goToPreviousForm}
+        onNext={goToNextForm}
+        isValid={isValid}
+      />
     </div>
   );
 };

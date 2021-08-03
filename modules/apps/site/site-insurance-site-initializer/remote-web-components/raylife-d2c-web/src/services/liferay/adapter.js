@@ -27,7 +27,33 @@ const adaptToBasicsFormApplicationRequest = ({ businessInformation }) => ({
   website: businessInformation.business.website,
 });
 
+/**
+ * @param {{
+ *    name: {
+ *      en_US: string
+ *    }
+ *    shortDescription: {
+ *      en_US: string
+ *    }
+ *    skus: {
+ *      price: number
+ *      promoPrice: number
+ *    }[]
+ * }[]}  data Array of products
+ * @returns {ProductQuote[]} Array of business types
+ */
+const adaptToProductQuote = (data = []) =>
+  data.map(({ productId, name, shortDescription, skus }) => ({
+    id: productId,
+    title: name.en_US,
+    description: shortDescription.en_US,
+    period: `($${skus[0].promoPrice.toFixed(2).toString()}-${skus[0].price
+      .toFixed(2)
+      .toString()}/mo)`,
+  }));
+
 export const LiferayAdapt = {
   adaptToBusinessType,
   adaptToBasicsFormApplicationRequest,
+  adaptToProductQuote,
 };

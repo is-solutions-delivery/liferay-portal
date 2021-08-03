@@ -1,137 +1,83 @@
 import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
-import { Input } from "../../fragments/Forms/Input";
-import { Switch } from "../../fragments/Forms/Switch";
 import { AVAILABLE_STEPS } from "../../../utils/constants";
 import { useStepWizard } from "../../../hooks/useStepWizard";
-import { InputWithMask } from "../../fragments/Forms/Input/WithMask";
-import { useLiferayState } from "../../../hooks/useLiferayState";
-
-const MORE_INFO_ATOM = "more-info-input-label";
+import { INPUT_INFO_EVENT } from "../../../events";
+import { CardFormActionsWithSave } from "../../fragments/Card/FormActionsWithSave";
+import { ControlledSwitch } from "../../connectors/Controlled/Switch";
+import { NumberControlledInput } from "../../connectors/Controlled/Input/Number";
+import { PercentageControlledInput } from "../../connectors/Controlled/Input/WithMask/Percentage";
 
 const setFormPath = (value) => `business.${value}`;
 
 export const FormBusiness = () => {
   const {
-    register,
     control,
     formState: { isValid },
   } = useFormContext();
   const { setSection } = useStepWizard();
-  const { writeAtom } = useLiferayState();
 
   const goToPreviousForm = () =>
     setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE);
 
   const goToNextForm = () => setSection(AVAILABLE_STEPS.EMPLOYEES);
 
-  const handleMoreInfo = (label) => {
-    writeAtom(MORE_INFO_ATOM, label);
-  };
-
   return (
     <div className="card">
       <div className="card-content">
-        <Input
-          name="yearsOfExperience"
+        <NumberControlledInput
+          name={setFormPath("yearsOfExperience")}
           label="Years of industry experience?"
-          renderActions={
-            <button
-              type="button"
-              onClick={() => handleMoreInfo("yearsOfExperience")}
-              className="btn badge"
-            >
-              More Info
-            </button>
-          }
-          type="number"
-          min={0}
-          {...register(setFormPath("yearsOfExperience"), {
-            required: true,
-          })}
+          rules={{
+            required: "This field is required",
+            min: {
+              value: 0,
+              message: "Must be equal or grater than 0.",
+            },
+          }}
+          moreInfoProps={{
+            event: INPUT_INFO_EVENT,
+            value: "yearsOfExperience",
+          }}
+          control={control}
         />
-        <Controller
+        <ControlledSwitch
           name={setFormPath("hasStoredCustomerInformation")}
-          defaultValue="false"
-          control={control}
+          label="Do you store personally identifiable information about your customers?"
           rules={{ required: true }}
-          render={({ field }) => (
-            <Switch
-              {...field}
-              label="Do you store personally identifiable information about your customers?"
-            />
-          )}
+          control={control}
         />
-        <Controller
+        <ControlledSwitch
           name={setFormPath("hasAutoPolicy")}
-          defaultValue="false"
-          control={control}
+          label="Do you have a Raylife Auto policy?"
           rules={{ required: true }}
-          render={({ field }) => (
-            <Switch {...field} label="Do you have a Raylife Auto policy?" />
-          )}
+          control={control}
         />
-        <Controller
+        <PercentageControlledInput
           name={setFormPath("salesMerchandise")}
+          label="Percent of sales from used merchandise?"
+          rules={{
+            required: "Percent of sales is required.",
+          }}
+          moreInfoProps={{
+            event: INPUT_INFO_EVENT,
+            value: "salesMerchandise",
+          }}
           control={control}
-          defaultValue=""
-          rules={{ required: true }}
-          render={({ field }) => (
-            <InputWithMask
-              {...field}
-              renderActions={
-                <button
-                  type="button"
-                  onClick={() => handleMoreInfo("salesMerchandise")}
-                  className="btn badge"
-                >
-                  More Info
-                </button>
-              }
-              label="Percent of sales from used merchandise?"
-              suffix="%"
-              mask="_"
-              decimalScale={2}
-            />
-          )}
         />
-
-        <Controller
+        <ControlledSwitch
           name={setFormPath("hasSellProductsUnderOwnBrand")}
-          defaultValue="false"
-          control={control}
+          label="Do you sell products under your own brand or label?"
           rules={{ required: true }}
-          render={({ field }) => (
-            <Switch
-              {...field}
-              label="Do you sell products under your own brand or label?"
-            />
-          )}
+          control={control}
         />
       </div>
-      <div className="card-actions">
-        <button
-          type="button"
-          className="btn btn-flat"
-          onClick={goToPreviousForm}
-        >
-          Previous
-        </button>
-        <div>
-          <button type="button" className="btn btn-outline">
-            Save & Exit
-          </button>
-          <button
-            className="btn btn-secondary"
-            type="submit"
-            onClick={goToNextForm}
-            disabled={!isValid}
-          >
-            Continue
-          </button>
-        </div>
-      </div>
+      <CardFormActionsWithSave
+        onPrevious={goToPreviousForm}
+        onNext={goToNextForm}
+        isValid={isValid}
+      />
     </div>
   );
 };
