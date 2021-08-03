@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { LiferayService } from "../services/liferay";
 
@@ -11,12 +12,19 @@ export const useBusinessTypes = () => {
 
   const loadBusinessTypes = async (search = "") => {
     try {
+      if (!search.length) return reset();
+
       const response = await LiferayService.getBusinessTypes(search);
-      setData(response);
+      return setData(response);
     } catch (error) {
       console.warn(error);
-      setError(error);
+      return setError(error);
     }
+  };
+
+  const reset = () => {
+    setData(undefined);
+    setError(undefined);
   };
 
   return {

@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { MockService } from "../services/mock";
+import { useWatch } from "react-hook-form";
+import { LiferayService } from "../services/liferay";
 
 export const useProductQuotes = () => {
+  const form = useWatch();
   const [data, setData] = useState();
   const [error, setError] = useState();
 
@@ -11,7 +14,8 @@ export const useProductQuotes = () => {
 
   const _loadProductQuotes = async () => {
     try {
-      const response = await MockService.getProductQuotes();
+      const categoryId = form.basics.businessCategoryId;
+      const response = await LiferayService.getProductQuotes(categoryId);
       setData(response);
     } catch (error) {
       setError(error);

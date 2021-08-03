@@ -1,12 +1,15 @@
 import React from "react";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { BusinessInformationAddress } from "./Address";
-import { Input } from "../../../../fragments/Forms/Input";
 import { AVAILABLE_STEPS } from "../../../../../utils/constants";
-import { useStepWizard } from "../../../../../hooks/useStepWizard";
-import { InputWithMask } from "../../../../fragments/Forms/Input/WithMask";
 import { LiferayService } from "../../../../../services/liferay";
+import { useStepWizard } from "../../../../../hooks/useStepWizard";
+import { CardFormActionsWithSave } from "../../../../fragments/Card/FormActionsWithSave";
+import { EmailControlledInput } from "../../../../connectors/Controlled/Input/Email";
+import { WebsiteControlledInput } from "../../../../connectors/Controlled/Input/Website";
+import { PhoneControlledInput } from "../../../../connectors/Controlled/Input/WithMask/Phone";
+import { ControlledInput } from "../../../../connectors/Controlled/Input";
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;
 
@@ -14,7 +17,6 @@ export const FormBasicBusinessInformation = () => {
   const form = useWatch();
   const { setSection } = useStepWizard();
   const {
-    register,
     control,
     formState: { isValid },
   } = useFormContext();
@@ -39,68 +41,52 @@ export const FormBasicBusinessInformation = () => {
     <div className="card">
       <div className="card-content">
         <div className="content-row">
-          <Input
-            {...register(setFormPath("firstName"), {
-              required: true,
-            })}
+          <ControlledInput
+            name={setFormPath("firstName")}
             label="First Name"
+            control={control}
+            rules={{
+              required: "First name is required.",
+            }}
           />
-          <Input
-            {...register(setFormPath("lastName"), {
-              required: true,
-            })}
-            label="Last Name"
+          <ControlledInput
+            name={setFormPath("lastName")}
+            label="Last name"
+            control={control}
+            rules={{
+              required: "Last name is required.",
+            }}
           />
         </div>
-        <Input
-          {...register(setFormPath("business.email"), {
-            required: true,
-          })}
+        <EmailControlledInput
+          name={setFormPath("business.email")}
           label="Business Email"
-          type="email"
-        />
-        <Controller
-          name={setFormPath("business.phone")}
           control={control}
-          defaultValue=""
-          rules={{ required: true }}
-          render={({ field }) => (
-            <InputWithMask
-              {...field}
-              label="Phone"
-              format="(###) ###-####"
-              mask="_"
-            />
-          )}
+          rules={{
+            required: "Email is required.",
+          }}
         />
-        <Input
-          {...register(setFormPath("business.website"))}
+        <PhoneControlledInput
+          name={setFormPath("business.phone")}
+          label="Phone"
+          control={control}
+          rules={{
+            required: "Phone number is required.",
+          }}
+        />
+        <WebsiteControlledInput
+          name={setFormPath("business.website")}
           label="Business Website (optional)"
+          control={control}
         />
         <BusinessInformationAddress />
       </div>
-      <div className="card-actions">
-        <button
-          type="button"
-          className="btn btn-flat"
-          onClick={goToPreviousForm}
-        >
-          Previous
-        </button>
-        <div>
-          <button type="button" className="btn btn-outline">
-            Save & Exit
-          </button>
-          <button
-            className="btn btn-secondary"
-            type="submit"
-            onClick={goToNextForm}
-            disabled={!isValid}
-          >
-            Continue
-          </button>
-        </div>
-      </div>
+      <CardFormActionsWithSave
+        onPrevious={goToPreviousForm}
+        onNext={goToNextForm}
+        onSave={onSave}
+        isValid={isValid}
+      />
     </div>
   );
 };
