@@ -27,7 +27,7 @@ const getBusinessTypes = async (filter = "") => {
 
   const normalizedFilter = filter.toLowerCase().replace(/\\/g, "");
 
-  const parentId = Cookies.get("CATEGORY_PARENT_ID");
+  const parentId = Cookies.get("raylife-product");
 
   const assetCategories = await _getAssetCategoriesByParentId(parentId);
 
@@ -40,6 +40,17 @@ const getBusinessTypes = async (filter = "") => {
   );
 
   return filteredBusinessTypes;
+};
+
+/**
+ * @param {string} categoryId - Asset Category Id
+ * @returns {Promise<ProductQuote[]>)} Array of Product Quote
+ */
+const getProductQuotes = async (categoryId) => {
+  const products = await _getProductsByCategoryId(categoryId);
+  const productQuotes = LiferayAdapt.adaptToProductQuote(products.items);
+
+  return productQuotes;
 };
 
 /**
@@ -82,6 +93,14 @@ const getLiferayAuthenticationToken = () => {
   }
 };
 
+const _getProductsByCategoryId = async (id) => {
+  const URL = `/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog&filter=(categoryIds/any(x:(x eq '${id}')))&page=1&pageSize=50`;
+
+  const { data } = await LiferayAPI.get(URL);
+
+  return data;
+};
+
 /**
  * @param {string} id - Parent category Id of asset categories
  * @returns {Promise<AssetCategoryResponse[]>}  Array of matched categories
@@ -93,7 +112,7 @@ const _getAssetCategoriesByParentId = async (id) => {
     "/api/jsonws/assetcategory/search-categories-display",
     {
       params: {
-        groupIds: getLiferayGroupId(),
+        groupIds: 0,
         parentCategoryIds: id,
         title: "",
         vocabularyIds: "",
@@ -147,6 +166,7 @@ export const LiferayService = {
   LiferayAPI,
   createBasicsApplication,
   getBusinessTypes,
+  getProductQuotes,
   getLiferayAuthenticationToken,
   getLiferayGroupId,
   getBusinessClassCode,

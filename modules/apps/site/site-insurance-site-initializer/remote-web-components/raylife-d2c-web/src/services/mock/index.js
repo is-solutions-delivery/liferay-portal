@@ -1,21 +1,4 @@
-import { PRODUCT_QUOTES, US_STATES } from "./data";
-
-const MOCK_TIMEOUT = 200;
-
-/**
- * @returns {Promise<{
- * id: string
- * title: string
- * period: string
- * description: string
- * }[]>} Array of product quotes
- */
-const getProductQuotes = () =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(PRODUCT_QUOTES);
-    }, MOCK_TIMEOUT);
-  });
+import { US_STATES } from "./data";
 
 /**
  * @returns {Promise<{
@@ -25,12 +8,9 @@ const getProductQuotes = () =>
  */
 const getUSStates = () =>
   new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(US_STATES);
-    }, MOCK_TIMEOUT);
+    resolve(US_STATES);
   });
 
 export const MockService = {
-  getProductQuotes,
   getUSStates,
 };
