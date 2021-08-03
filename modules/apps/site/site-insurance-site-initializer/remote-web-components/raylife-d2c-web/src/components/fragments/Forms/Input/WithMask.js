@@ -1,15 +1,27 @@
 import React from "react";
 import ReactInputMask from "react-number-format";
+import { InputAreaWithError } from "../InputArea/WithError";
+import { Label } from "../Label";
 
 export const InputWithMask = React.forwardRef(
-  ({ name, label, renderActions, allowNegative = false, ...props }, ref) => {
+  (
+    {
+      name,
+      label,
+      renderActions,
+      error,
+      allowNegative = false,
+      required = false,
+      ...props
+    },
+    ref
+  ) => {
     return (
-      <div className="input-area">
+      <InputAreaWithError error={error}>
         {label && (
-          <label htmlFor={name}>
-            {label}
+          <Label name={name} label={label} required={required}>
             {renderActions}
-          </label>
+          </Label>
         )}
         <ReactInputMask
           {...props}
@@ -17,8 +29,9 @@ export const InputWithMask = React.forwardRef(
           ref={ref}
           name={name}
           className="input"
+          required={required}
         />
-      </div>
+      </InputAreaWithError>
     );
   }
 );

@@ -56,6 +56,9 @@
   border: none;
   appearance: none;
   background: inherit;
+  flex: 0 1;
+  width: fit-content;
+  width: -moz-fit-content;
 
   &::before {
     position: relative;

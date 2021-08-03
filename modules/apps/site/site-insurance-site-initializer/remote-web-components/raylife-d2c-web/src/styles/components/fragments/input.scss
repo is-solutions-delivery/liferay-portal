@@ -1,8 +1,17 @@
 .input-area {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
   width: 100%;
+
+  & > label {
+    margin-bottom: 0.7rem;
+  }
+
+  &.invalid {
+    input {
+      border-color: $error-default;
+    }
+  }
 }
 
 label {
@@ -12,6 +21,11 @@ label {
   font-size: 1.125rem;
   font-weight: bold;
   gap: 0.5rem;
+
+  & .required::after {
+    content: "*";
+    color: $error-default;
+  }
 }
 
 input,
@@ -21,17 +35,18 @@ input,
   border-radius: 0.25rem;
   color: $neutral-black;
   display: flex;
+  flex: 1;
   font-family: $font-family;
   font-size: 1rem;
   font-weight: 500;
+  min-height: 3rem;
   padding: 0 1rem;
   transition: all ease-out 200ms;
-  height: 3rem;
   width: auto;
 
   &:focus,
   &:hover {
-    background: $foreground;
+    border-color: $primary-default;
   }
 
   &:disabled {
