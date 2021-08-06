@@ -96,6 +96,17 @@
 								"widthType": "Fixed"
 							}
 						},
+						"pageElements": [
+							{
+								"definition" : {
+									"widgetInstance" : {
+										"widgetConfig" : { },
+										"widgetName" : "rwc_d2cweb"
+									}
+								},
+								"type" : "Widget"
+							}
+						],
 						"type": "Section"
 					}
 				],
