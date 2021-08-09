@@ -54,18 +54,6 @@ const getProductQuotes = async (categoryId) => {
 };
 
 /**
- * @param {string} categoryId - Asset Category Id
- * @returns {Promise<number>} Business Class Code
- */
-const getBusinessClassCode = async (categoryId) => {
-  const categoryProperties = await _getCategoryProperties(categoryId);
-
-  const businessClassCode = categoryProperties.find(({ key }) => key === "BCC");
-
-  return businessClassCode.value;
-};
-
-/**
  * @returns {string} Liferay Group Id
  */
 const getLiferayGroupId = () => {
@@ -129,7 +117,7 @@ const _getAssetCategoriesByParentId = async (id) => {
  * @param {string} id - Parent category Id of asset categories
  * @returns {Promise<CategoryPropertyResponse[]>}  Array of matched categories
  */
-const _getCategoryProperties = async (id) => {
+const getCategoryProperties = async (id) => {
   const { data } = await LiferayAPI.get(
     "/api/jsonws/assetcategoryproperty/get-category-properties",
     {
@@ -169,5 +157,5 @@ export const LiferayService = {
   getProductQuotes,
   getLiferayAuthenticationToken,
   getLiferayGroupId,
-  getBusinessClassCode,
+  getCategoryProperties,
 };
