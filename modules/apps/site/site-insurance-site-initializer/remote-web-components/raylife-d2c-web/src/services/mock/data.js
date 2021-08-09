@@ -240,34 +240,26 @@ export const US_STATES = [
 export const LEGAL_ENTITIES = [
   {
     name: "Association",
-    abbreviation: ""
   },
   {
     name: "Corporation",
-    abbreviation: ""
   },
   {
     name: "Individual/Sole Proprietor",
-    abbreviation: ""
   },
   {
     name: "Joint Venture",
-    abbreviation: ""
   },
   {
-    name: "Limited Liability Company",
-    abbreviation: "LLC"
+    name: "Limited Liability Company (LLC)",
   },
   {
-    name: "Limited Liability Partnership",
-    abbreviation: "LLP"
+    name: "Limited Liability Partnership (LLP)",
   },
   {
     name: "Partnership",
-    abbreviation: ""
   },
   {
-    name: "Professional Corporation",
-    abbreviation: "PC"
+    name: "Professional Corporation (PC)",
   }
 ];
