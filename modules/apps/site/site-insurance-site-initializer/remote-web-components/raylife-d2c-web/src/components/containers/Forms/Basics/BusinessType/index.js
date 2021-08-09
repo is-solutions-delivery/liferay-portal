@@ -24,7 +24,7 @@ export const FormBasicBusinessType = () => {
       </div>
       <CardFormActions
         onNext={goToNextForm}
-        isValid={isValid && form?.basics?.businessClassCode}
+        isValid={isValid && form?.basics?.properties?.businessClassCode}
       />
     </div>
   );
