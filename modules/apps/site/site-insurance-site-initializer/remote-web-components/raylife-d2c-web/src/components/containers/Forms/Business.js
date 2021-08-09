@@ -48,6 +48,7 @@ export const FormBusiness = () => {
           label="Do you store personally identifiable information about your customers?"
           rules={{ required: true }}
           control={control}
+          defaultValue="true"
         />
         <ControlledSwitch
           name={setFormPath("hasAutoPolicy")}
@@ -80,6 +81,7 @@ export const FormBusiness = () => {
           label="Do you sell products under your own brand or label?"
           rules={{ required: true }}
           control={control}
+          defaultValue={false}
         />
         <PercentageControlledInput
           name={setFormPath("overallSales")}
