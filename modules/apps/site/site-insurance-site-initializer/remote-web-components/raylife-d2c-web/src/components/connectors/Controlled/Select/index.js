@@ -12,6 +12,7 @@ export const ControlledSelect = ({
   children,
   moreInfoProps = undefined,
   inputProps = {},
+  defaultValue = "",
   ...props
 }) => {
   return (
@@ -19,7 +20,7 @@ export const ControlledSelect = ({
       name={name}
       control={control}
       rules={rules}
-      defaultValue=""
+      defaultValue={defaultValue}
       render={({ field, fieldState }) => (
         <Select
           {...field}
