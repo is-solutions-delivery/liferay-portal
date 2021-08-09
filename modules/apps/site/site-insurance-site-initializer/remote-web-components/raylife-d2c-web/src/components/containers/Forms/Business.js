@@ -9,6 +9,7 @@ import { ControlledSwitch } from "../../connectors/Controlled/Switch";
 import { NumberControlledInput } from "../../connectors/Controlled/Input/Number";
 import { PercentageControlledInput } from "../../connectors/Controlled/Input/WithMask/Percentage";
 import { LegalEntityControlledSelect } from "../../connectors/Controlled/Select/LegalEntity";
+import { PERCENTAGE_REGEX_MAX_100 } from "../../../utils/patterns";
 
 const setFormPath = (value) => `business.${value}`;
 
@@ -75,6 +76,10 @@ export const FormBusiness = () => {
             value: "salesMerchandise",
           }}
           control={control}
+          pattern={{
+            value: PERCENTAGE_REGEX_MAX_100,
+            message: "Value must not be greater than 100%.",
+          }}
         />
         <ControlledSwitch
           name={setFormPath("hasSellProductsUnderOwnBrand")}
@@ -94,6 +99,10 @@ export const FormBusiness = () => {
             value: "overallSales",
           }}
           control={control}
+          pattern={{
+            value: PERCENTAGE_REGEX_MAX_100,
+            message: "Value must not be greater than 100%.",
+          }}
         />
       </div>
       <CardFormActionsWithSave
