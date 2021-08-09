@@ -5,6 +5,7 @@ import { useWatch } from "react-hook-form";
 import { setSelectedStep } from "../context/actions";
 import { AppContext } from "../context/AppContext";
 import { calculatePercentage, countCompletedFields } from "../utils";
+import { businessTotalFields } from "../utils/businessFields";
 import { AVAILABLE_STEPS, TOTAL_OF_FIELD } from "../utils/constants";
 
 export const useStepWizard = () => {
@@ -14,18 +15,6 @@ export const useStepWizard = () => {
   useEffect(() => {
     _updateStepPercentage();
   }, [form]);
-
-  const businessTotalFields = (properties) => {
-    let fieldCount = 4;
-    const bccAllowedToField = ["750", "1349"];
-    const bccAllowedToOtherField = bccAllowedToField.concat("1280");
-
-    if (bccAllowedToField.includes(properties.businessClassCode)) fieldCount++;
-    if (bccAllowedToOtherField.includes(properties.businessClassCode)) fieldCount++;
-    if (properties.segment === "Retail") fieldCount++;
-
-    return fieldCount;
-  }
 
   const _updateStepPercentage = () => {
     switch (state.selectedStep.section) {
