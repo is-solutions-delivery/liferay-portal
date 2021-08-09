@@ -14,6 +14,18 @@ export const useStepWizard = () => {
   useEffect(() => {
     _updateStepPercentage();
   }, [form]);
+  
+  const businessTotalFields = (properties) => {
+    let fieldCount = 4;
+    const bccAllowedToField = ["750", "1349"];
+    const bccAllowedToOtherField = bccAllowedToField.concat("1280");
+
+    if (bccAllowedToField.includes(properties.businessClassCode)) fieldCount++;
+    if (bccAllowedToOtherField.includes(properties.businessClassCode)) fieldCount++;
+    if (properties.segment === "Retail") fieldCount++;
+
+    return fieldCount;
+  }
 
   const _updateStepPercentage = () => {
     switch (state.selectedStep.section) {
@@ -29,7 +41,7 @@ export const useStepWizard = () => {
         return setPercentage(
           calculatePercentage(
             countCompletedFields(form?.business || {}),
-            TOTAL_OF_FIELD.BUSINESS
+            businessTotalFields(form?.basics?.properties)
           )
         );
 
