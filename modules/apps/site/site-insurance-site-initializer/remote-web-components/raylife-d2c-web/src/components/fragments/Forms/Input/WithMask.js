@@ -12,6 +12,7 @@ export const InputWithMask = React.forwardRef(
       error,
       allowNegative = false,
       required = false,
+      placeholder = "",
       ...props
     },
     ref
@@ -30,6 +31,7 @@ export const InputWithMask = React.forwardRef(
           name={name}
           className="input"
           required={required}
+          placeholder={placeholder}
         />
       </InputAreaWithError>
     );
