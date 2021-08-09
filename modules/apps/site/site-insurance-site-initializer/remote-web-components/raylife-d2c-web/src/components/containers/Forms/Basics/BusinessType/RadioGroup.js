@@ -12,18 +12,19 @@ export const BusinessTypeRadioGroup = ({ businessTypes = [] }) => {
   const form = useWatch();
 
   useEffect(() => {
-    if (form?.basics?.businessCategoryId) setBusinessClassCode();
+    if (form?.basics?.businessCategoryId) setCategoryProperties();
   }, [form?.basics?.businessCategoryId]);
 
-  const setBusinessClassCode = async () => {
+  const setCategoryProperties = async () => {
     try {
       const categoryId = form.basics.businessCategoryId;
 
-      const businessClassCode = await LiferayService.getBusinessClassCode(
+      const categoryProperties = await LiferayService.getCategoryProperties(
         categoryId
       );
 
-      setValue("basics.businessClassCode", businessClassCode);
+      setValue("basics.properties.businessClassCode", categoryProperties.find(({ key }) => key === "BCC").value);
+      setValue("basics.properties.segment", categoryProperties.find(({ key }) => key === "Segment").value);
     } catch (error) {
       console.warn(error);
     }
