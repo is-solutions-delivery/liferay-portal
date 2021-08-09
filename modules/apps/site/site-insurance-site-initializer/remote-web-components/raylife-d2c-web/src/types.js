@@ -51,7 +51,10 @@
  * @typedef {{
  * businessSearch: string
  * businessCategoryId: string
- * businessClassCode: string
+ * properties: {
+ *  businessClassCode: string
+ *  segment: string
+ * }
  * businessInformation: {
  *  firstName: string
  *  lastName: string
