@@ -14,7 +14,7 @@ export const useStepWizard = () => {
   useEffect(() => {
     _updateStepPercentage();
   }, [form]);
-  
+
   const businessTotalFields = (properties) => {
     let fieldCount = 4;
     const bccAllowedToField = ["750", "1349"];

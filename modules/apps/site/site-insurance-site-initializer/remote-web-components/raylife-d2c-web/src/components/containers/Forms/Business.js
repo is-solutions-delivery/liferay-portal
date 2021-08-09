@@ -72,48 +72,48 @@ export const FormBusiness = () => {
         />
         {
           (validateBCC("750") || validateBCC("1349")) && <PercentageControlledInput
-          name={setFormPath("salesMerchandise")}
-          label="Percent of sales from used merchandise?"
-          rules={{
-            required: "Percent of sales is required.",
-          }}
-          moreInfoProps={{
-            event: INPUT_INFO_EVENT,
-            value: "salesMerchandise",
-          }}
-          control={control}
-          pattern={{
-            value: PERCENTAGE_REGEX_MAX_100,
-            message: "Value must not be greater than 100%.",
-          }}
-        />
+            name={setFormPath("salesMerchandise")}
+            label="Percent of sales from used merchandise?"
+            rules={{
+              required: "Percent of sales is required.",
+            }}
+            moreInfoProps={{
+              event: INPUT_INFO_EVENT,
+              value: "salesMerchandise",
+            }}
+            control={control}
+            pattern={{
+              value: PERCENTAGE_REGEX_MAX_100,
+              message: "Value must not be greater than 100%.",
+            }}
+          />
         }
         {
           (validateBCC("750") || validateBCC("1280") || validateBCC("1349")) && <ControlledSwitch
-          name={setFormPath("hasSellProductsUnderOwnBrand")}
-          label="Do you sell products under your own brand or label?"
-          rules={{ required: true }}
-          control={control}
-          defaultValue={false}
-        />
+            name={setFormPath("hasSellProductsUnderOwnBrand")}
+            label="Do you sell products under your own brand or label?"
+            rules={{ required: true }}
+            control={control}
+            defaultValue={false}
+          />
         }
         {
           validateSegment("Retail") && <PercentageControlledInput
-          name={setFormPath("overallSales")}
-          label="What percentage of overall sales involve delivery?"
-          rules={{
-            required: "Percent of overall sales is required.",
-          }}
-          moreInfoProps={{
-            event: INPUT_INFO_EVENT,
-            value: "overallSales",
-          }}
-          control={control}
-          pattern={{
-            value: PERCENTAGE_REGEX_MAX_100,
-            message: "Value must not be greater than 100%.",
-          }}
-        />
+            name={setFormPath("overallSales")}
+            label="What percentage of overall sales involve delivery?"
+            rules={{
+              required: "Percent of overall sales is required.",
+            }}
+            moreInfoProps={{
+              event: INPUT_INFO_EVENT,
+              value: "overallSales",
+            }}
+            control={control}
+            pattern={{
+              value: PERCENTAGE_REGEX_MAX_100,
+              message: "Value must not be greater than 100%.",
+            }}
+          />
         }
       </div>
       <CardFormActionsWithSave
