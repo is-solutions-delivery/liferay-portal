@@ -22,6 +22,7 @@ export const PercentageControlledInput = ({
         suffix: "%",
         mask: "_",
         decimalScale: 2,
+        placeholder: "%",
         ...inputProps,
       }}
     />
