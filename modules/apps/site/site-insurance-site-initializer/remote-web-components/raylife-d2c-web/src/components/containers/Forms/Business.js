@@ -1,5 +1,5 @@
 import React from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { AVAILABLE_STEPS } from "../../../utils/constants";
 import { useStepWizard } from "../../../hooks/useStepWizard";
@@ -16,14 +16,19 @@ const setFormPath = (value) => `business.${value}`;
 export const FormBusiness = () => {
   const {
     control,
-    formState: { isValid },
+    formState: { isValid }
   } = useFormContext();
+  const form = useWatch();
   const { setSection } = useStepWizard();
 
   const goToPreviousForm = () =>
     setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE);
 
   const goToNextForm = () => setSection(AVAILABLE_STEPS.EMPLOYEES);
+
+  const validateBCC = (value) => form?.basics?.properties?.businessClassCode === value;
+
+  const validateSegment = (value) => form?.basics?.properties?.segment === value;
 
   return (
     <div className="card">
@@ -65,7 +70,8 @@ export const FormBusiness = () => {
           }}
           control={control}
         />
-        <PercentageControlledInput
+        {
+          (validateBCC("750") || validateBCC("1349")) && <PercentageControlledInput
           name={setFormPath("salesMerchandise")}
           label="Percent of sales from used merchandise?"
           rules={{
@@ -81,14 +87,18 @@ export const FormBusiness = () => {
             message: "Value must not be greater than 100%.",
           }}
         />
-        <ControlledSwitch
+        }
+        {
+          (validateBCC("750") || validateBCC("1280") || validateBCC("1349")) && <ControlledSwitch
           name={setFormPath("hasSellProductsUnderOwnBrand")}
           label="Do you sell products under your own brand or label?"
           rules={{ required: true }}
           control={control}
           defaultValue={false}
         />
-        <PercentageControlledInput
+        }
+        {
+          validateSegment("Retail") && <PercentageControlledInput
           name={setFormPath("overallSales")}
           label="What percentage of overall sales involve delivery?"
           rules={{
@@ -104,6 +114,7 @@ export const FormBusiness = () => {
             message: "Value must not be greater than 100%.",
           }}
         />
+        }
       </div>
       <CardFormActionsWithSave
         onPrevious={goToPreviousForm}
