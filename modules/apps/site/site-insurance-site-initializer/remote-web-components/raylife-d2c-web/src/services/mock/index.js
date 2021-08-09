@@ -1,4 +1,4 @@
-import { US_STATES } from "./data";
+import { US_STATES, LEGAL_ENTITIES } from "./data";
 
 /**
  * @returns {Promise<{
@@ -9,8 +9,14 @@ import { US_STATES } from "./data";
 const getUSStates = () =>
   new Promise((resolve) => {
     resolve(US_STATES);
-  });
+});
+
+const getLegalEntities = () =>
+  new Promise((resolve) => {
+    resolve(LEGAL_ENTITIES);
+});
 
 export const MockService = {
   getUSStates,
+  getLegalEntities
 };
