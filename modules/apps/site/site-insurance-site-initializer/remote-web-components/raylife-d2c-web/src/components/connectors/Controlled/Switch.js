@@ -11,6 +11,7 @@ export const ControlledSwitch = ({
   rules,
   moreInfoProps = undefined,
   inputProps = {},
+  defaultValue = "false",
   ...props
 }) => {
   return (
@@ -18,7 +19,7 @@ export const ControlledSwitch = ({
       name={name}
       control={control}
       rules={rules}
-      defaultValue="false"
+      defaultValue={defaultValue}
       render={({ field, fieldState }) => (
         <Switch
           {...field}
