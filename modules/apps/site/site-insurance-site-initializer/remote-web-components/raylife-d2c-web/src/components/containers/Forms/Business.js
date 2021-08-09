@@ -8,6 +8,7 @@ import { CardFormActionsWithSave } from "../../fragments/Card/FormActionsWithSav
 import { ControlledSwitch } from "../../connectors/Controlled/Switch";
 import { NumberControlledInput } from "../../connectors/Controlled/Input/Number";
 import { PercentageControlledInput } from "../../connectors/Controlled/Input/WithMask/Percentage";
+import { LegalEntityControlledSelect } from "../../connectors/Controlled/Select/LegalEntity";
 
 const setFormPath = (value) => `business.${value}`;
 
@@ -54,6 +55,14 @@ export const FormBusiness = () => {
           rules={{ required: true }}
           control={control}
         />
+        <LegalEntityControlledSelect
+          name={setFormPath("legalEntity")}
+          label="Legal Entity"
+          rules={{
+            required: "This field is required.",
+          }}
+          control={control}
+        />
         <PercentageControlledInput
           name={setFormPath("salesMerchandise")}
           label="Percent of sales from used merchandise?"
@@ -70,6 +79,18 @@ export const FormBusiness = () => {
           name={setFormPath("hasSellProductsUnderOwnBrand")}
           label="Do you sell products under your own brand or label?"
           rules={{ required: true }}
+          control={control}
+        />
+        <PercentageControlledInput
+          name={setFormPath("overallSales")}
+          label="What percentage of overall sales involve delivery?"
+          rules={{
+            required: "Percent of overall sales is required.",
+          }}
+          moreInfoProps={{
+            event: INPUT_INFO_EVENT,
+            value: "overallSales",
+          }}
           control={control}
         />
       </div>
