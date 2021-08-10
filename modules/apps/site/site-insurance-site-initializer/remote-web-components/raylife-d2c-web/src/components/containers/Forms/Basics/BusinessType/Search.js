@@ -35,7 +35,7 @@ export const BusinessTypeSearch = () => {
     if (!businessTypes.length)
       return (
         <WarningBadge>
-          There are no results for “{form?.basics?.businessSearch}”. Please try
+          There are no results for "{form?.basics?.businessSearch}". Please try
           a different search.
         </WarningBadge>
       );
