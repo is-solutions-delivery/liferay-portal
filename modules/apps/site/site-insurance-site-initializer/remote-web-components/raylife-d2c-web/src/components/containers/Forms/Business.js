@@ -72,6 +72,10 @@ export const FormBusiness = () => {
             name={setFormPath("salesMerchandise")}
             label="Percent of sales from used merchandise?"
             rules={{
+              pattern: {
+                value: PERCENTAGE_REGEX_MAX_100,
+                message: "Value must not be greater than 100%.",
+              },
               required: "Percent of sales is required.",
             }}
             moreInfoProps={{
@@ -79,10 +83,6 @@ export const FormBusiness = () => {
               value: "salesMerchandise",
             }}
             control={control}
-            pattern={{
-              value: PERCENTAGE_REGEX_MAX_100,
-              message: "Value must not be greater than 100%.",
-            }}
           />
         }
         {
@@ -91,7 +91,6 @@ export const FormBusiness = () => {
             label="Do you sell products under your own brand or label?"
             rules={{ required: true }}
             control={control}
-            defaultValue={false}
           />
         }
         {
@@ -99,6 +98,10 @@ export const FormBusiness = () => {
             name={setFormPath("overallSales")}
             label="What percentage of overall sales involve delivery?"
             rules={{
+              pattern: {
+                value: PERCENTAGE_REGEX_MAX_100,
+                message: "Value must not be greater than 100%.",
+              },
               required: "Percent of overall sales is required.",
             }}
             moreInfoProps={{
@@ -106,10 +109,6 @@ export const FormBusiness = () => {
               value: "overallSales",
             }}
             control={control}
-            pattern={{
-              value: PERCENTAGE_REGEX_MAX_100,
-              message: "Value must not be greater than 100%.",
-            }}
           />
         }
       </div>
