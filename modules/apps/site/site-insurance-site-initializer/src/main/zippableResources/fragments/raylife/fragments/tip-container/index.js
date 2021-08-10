@@ -85,7 +85,7 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 			fetchWebContent(
 				getStructuredContentIdByName(data.templateName),
 				templateId,
-				data.customData
+				data.templateData
 			);
 		} else {
 			console.warn(`Structure ${data.templateName} not found`);
