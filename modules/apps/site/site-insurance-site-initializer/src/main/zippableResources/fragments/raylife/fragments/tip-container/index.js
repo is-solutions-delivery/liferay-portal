@@ -104,7 +104,7 @@ async function workflow() {
 
 	const {id: raylifeFolderId} =
 		structuredContentFolders.items.find(
-			({name}) => name === 'Raylife TIP Web Content'
+			({name}) => name === 'Tip'
 		) || {};
 
 	if (!raylifeFolderId) {
@@ -131,7 +131,7 @@ async function workflow() {
 	 */
 
 	const contentTemplate = contentTemplates.items.find(
-		(template) => template.name === 'Raylife TIP Template'
+		(template) => template.name === 'Tip Card'
 	);
 
 	raylifeFragmentInteractiveListener(
