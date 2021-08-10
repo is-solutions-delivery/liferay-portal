@@ -49,12 +49,14 @@
 .btn.btn-flat {
   background: $background;
   color: $neutral-default;
+  padding: 0;
 }
 
 .btn.btn-outline {
   background: $background;
   color: $neutral-default;
   border: 1px solid $neutral-default;
+  padding: 1rem 1.125rem;
 }
 
 .btn.badge {
