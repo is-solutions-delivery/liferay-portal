@@ -10,6 +10,7 @@ export function LegalEntityControlledSelect({ ...props }) {
     <ControlledSelect
       {...props}
     >
+      <option hidden>Select</option>
       {entities.map(({ name }) => (
         <option key={name} value={name}>
           {name}
