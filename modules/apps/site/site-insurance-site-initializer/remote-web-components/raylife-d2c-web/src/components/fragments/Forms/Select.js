@@ -21,7 +21,6 @@ export const Select = React.forwardRef(
           className="input"
           required={required}
         >
-          <option hidden>Select</option>
           {children}
         </select>
       </InputAreaWithError>
