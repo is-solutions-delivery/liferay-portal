@@ -4,7 +4,7 @@
   width: 100%;
 
   & > label {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.5rem;
   }
 
   &.invalid {
@@ -20,11 +20,14 @@ label {
   font-family: $font-family;
   font-size: 1.125rem;
   font-weight: bold;
-  gap: 0.5rem;
+  gap: 0.75rem;
 
   & .required::after {
     content: "*";
     color: $error-default;
+    font-size: 0.813rem;
+    position: relative;
+    top: -5px;
   }
 }
 
