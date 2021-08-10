@@ -708,16 +708,16 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 					LocaleUtil.getSiteDefault(), "Raylife Application"),
 				"RaylifeApplication",
 				Arrays.asList(
-					_createObjectField("address", "String"),
-					_createObjectField("addressApt", "String"),
-					_createObjectField("city", "String"),
-					_createObjectField("email", "String"),
-					_createObjectField("firstName", "String"),
-					_createObjectField("lastName", "String"),
-					_createObjectField("phone", "String"),
-					_createObjectField("state", "String"),
-					_createObjectField("website", "String"),
-					_createObjectField("zip", "String")));
+					_createObjectField("Address", "address", "String"),
+					_createObjectField("Address Apt","addressApt", "String"),
+					_createObjectField("City","city", "String"),
+					_createObjectField("Email","email", "String"),
+					_createObjectField("First Name","firstName", "String"),
+					_createObjectField("LastName","lastName", "String"),
+					_createObjectField("Phone","phone", "String"),
+					_createObjectField("State","state", "String"),
+					_createObjectField("Website","website", "String"),
+					_createObjectField("Zip","zip", "String")));
 
 		ObjectDefinition objectDefinitionPublished =
 			_objectDefinitionLocalService.publishCustomObjectDefinition(
@@ -896,21 +896,24 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	private ObjectField _createObjectField(
 		boolean indexed, boolean indexedAsKeyword, String indexedLanguageId,
-		String name, String type) {
+		String label, String name, String type) {
 
 		ObjectField objectField = _objectFieldLocalService.createObjectField(0);
 
 		objectField.setIndexed(indexed);
 		objectField.setIndexedAsKeyword(indexedAsKeyword);
 		objectField.setIndexedLanguageId(indexedLanguageId);
+		objectField.setLabelMap(Collections.singletonMap(
+			LocaleUtil.getSiteDefault(), label
+		));
 		objectField.setName(name);
 		objectField.setType(type);
 
 		return objectField;
 	}
 
-	private ObjectField _createObjectField(String name, String type) {
-		return _createObjectField(true, false, null, name, type);
+	private ObjectField _createObjectField(String label, String name, String type) {
+		return _createObjectField(true, false, null, label, name, type);
 	}
 
 	private void _createRoles(
