@@ -1,12 +1,12 @@
-import "../../types";
-import Axios from "axios";
-import Cookies from "js-cookie";
-import { LiferayAdapt } from "./adapter";
+import '../../types';
+import Axios from 'axios';
+import Cookies from 'js-cookie';
+import {LiferayAdapt} from './adapter';
 
 const {
-  REACT_APP_LIFERAY_API = "",
-  REACT_APP_LIFERAY_AUTH_USERNAME = "",
-  REACT_APP_LIFERAY_AUTH_PASSWORD = "",
+	REACT_APP_LIFERAY_API = '',
+	REACT_APP_LIFERAY_AUTH_USERNAME = '',
+	REACT_APP_LIFERAY_AUTH_PASSWORD = '',
 } = process.env;
 
 /**
@@ -14,32 +14,32 @@ const {
  * @returns {Promise<number>}  Status code
  */
 const createBasicsApplication = async (data) => {
-  const payload = LiferayAdapt.adaptToBasicsFormApplicationRequest(data);
-  return await _postBasicsFormApplication(payload);
+	const payload = LiferayAdapt.adaptToBasicsFormApplicationRequest(data);
+	return await _postBasicsFormApplication(payload);
 };
 
 /**
  * @param {string} filter - Search string used to filter the results
  * @returns {Promise<BusinessType[]>} Filtered Array of business types
  */
-const getBusinessTypes = async (filter = "") => {
-  if (!filter.length) return [];
+const getBusinessTypes = async (filter = '') => {
+	if (!filter.length) return [];
 
-  const normalizedFilter = filter.toLowerCase().replace(/\\/g, "");
+	const normalizedFilter = filter.toLowerCase().replace(/\\/g, '');
 
-  const parentId = Cookies.get("raylife-product");
+	const parentId = Cookies.get('raylife-product');
 
-  const assetCategories = await _getAssetCategoriesByParentId(parentId);
+	const assetCategories = await _getAssetCategoriesByParentId(parentId);
 
-  const filteredBusinessTypes = LiferayAdapt.adaptToBusinessType(
-    assetCategories
-  ).filter(
-    ({ title, description }) =>
-      title.toLowerCase().match(normalizedFilter) ||
-      description.toLowerCase().match(normalizedFilter)
-  );
+	const filteredBusinessTypes = LiferayAdapt.adaptToBusinessType(
+		assetCategories
+	).filter(
+		({title, description}) =>
+			title.toLowerCase().match(normalizedFilter) ||
+			description.toLowerCase().match(normalizedFilter)
+	);
 
-  return filteredBusinessTypes;
+	return filteredBusinessTypes;
 };
 
 /**
@@ -47,46 +47,46 @@ const getBusinessTypes = async (filter = "") => {
  * @returns {Promise<ProductQuote[]>)} Array of Product Quote
  */
 const getProductQuotes = async (categoryId) => {
-  const products = await _getProductsByCategoryId(categoryId);
-  const productQuotes = LiferayAdapt.adaptToProductQuote(products.items);
+	const products = await _getProductsByCategoryId(categoryId);
+	const productQuotes = LiferayAdapt.adaptToProductQuote(products.items);
 
-  return productQuotes;
+	return productQuotes;
 };
 
 /**
  * @returns {string} Liferay Group Id
  */
 const getLiferayGroupId = () => {
-  try {
-    // eslint-disable-next-line no-undef
-    const groupId = Liferay.ThemeDisplay.getSiteGroupId();
-    return groupId;
-  } catch (error) {
-    console.warn("Not able to find Liferay Group Id\n", error);
-    return "";
-  }
+	try {
+		// eslint-disable-next-line no-undef
+		const groupId = Liferay.ThemeDisplay.getSiteGroupId();
+		return groupId;
+	} catch (error) {
+		console.warn('Not able to find Liferay Group Id\n', error);
+		return '';
+	}
 };
 
 /**
  * @returns {string} Liferay Authentication Token
  */
 const getLiferayAuthenticationToken = () => {
-  try {
-    // eslint-disable-next-line no-undef
-    const token = Liferay.authToken;
-    return token;
-  } catch (error) {
-    console.warn("Not able to find Liferay auth token\n", error);
-    return "";
-  }
+	try {
+		// eslint-disable-next-line no-undef
+		const token = Liferay.authToken;
+		return token;
+	} catch (error) {
+		console.warn('Not able to find Liferay auth token\n', error);
+		return '';
+	}
 };
 
 const _getProductsByCategoryId = async (id) => {
-  const URL = `/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog&filter=(categoryIds/any(x:(x eq '${id}')))&page=1&pageSize=50`;
+	const URL = `/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog&filter=(categoryIds/any(x:(x eq '${id}')))&page=1&pageSize=50`;
 
-  const { data } = await LiferayAPI.get(URL);
+	const {data} = await LiferayAPI.get(URL);
 
-  return data;
+	return data;
 };
 
 /**
@@ -94,23 +94,26 @@ const _getProductsByCategoryId = async (id) => {
  * @returns {Promise<AssetCategoryResponse[]>}  Array of matched categories
  */
 const _getAssetCategoriesByParentId = async (id) => {
-  const {
-    data: { categories },
-  } = await LiferayAPI.get(
-    "/api/jsonws/assetcategory/search-categories-display",
-    {
-      params: {
-        groupIds: 0,
-        parentCategoryIds: id,
-        title: "",
-        vocabularyIds: "",
-        start: 0,
-        end: 50,
-      },
-    }
-  );
+	const {
+		data: {categories},
+	} = await LiferayAPI.get(
+		'/api/jsonws/assetcategory/search-categories-display',
+		{
+			params: {
+				groupIds: 0,
+				parentCategoryIds: id,
+				title: '',
+				vocabularyIds: '',
+				start: 0,
+				end: 50,
+				'+sort': 'com.liferay.portal.kernel.search.Sort',
+				'sort.fieldName': 'name',
+				'sort.type': 6,
+			},
+		}
+	);
 
-  return categories;
+	return categories;
 };
 
 /**
@@ -135,19 +138,19 @@ const getCategoryProperties = async (id) => {
  * @returns {Promise<number>}  Status code
  */
 const _postBasicsFormApplication = async (payload) => {
-  const { status } = await LiferayAPI.post("/o/raylifeapplications", payload);
-  return status;
+	const {status} = await LiferayAPI.post('/o/raylifeapplications', payload);
+	return status;
 };
 
 const LiferayAPI = Axios.create({
-  baseURL: REACT_APP_LIFERAY_API,
-  auth: {
-    username: REACT_APP_LIFERAY_AUTH_USERNAME,
-    password: REACT_APP_LIFERAY_AUTH_PASSWORD,
-  },
-  headers: {
-    "x-csrf-token": getLiferayAuthenticationToken(),
-  },
+	baseURL: REACT_APP_LIFERAY_API,
+	auth: {
+		username: REACT_APP_LIFERAY_AUTH_USERNAME,
+		password: REACT_APP_LIFERAY_AUTH_PASSWORD,
+	},
+	headers: {
+		'x-csrf-token': getLiferayAuthenticationToken(),
+	},
 });
 
 export const LiferayService = {
