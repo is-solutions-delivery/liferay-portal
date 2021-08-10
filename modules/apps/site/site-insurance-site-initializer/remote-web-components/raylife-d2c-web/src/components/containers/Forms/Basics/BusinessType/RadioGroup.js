@@ -5,10 +5,11 @@ import {useFormContext, useWatch, Controller} from 'react-hook-form';
 import {TIP_EVENT} from '../../../../../events';
 import {Radio} from '../../../../fragments/Forms/Radio';
 import {LiferayService} from '../../../../../services/liferay';
-import {MoreInfoButton} from '../../../../fragments/Buttons/MoreInfo';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
+import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
 
 export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
+	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 	const {control, setValue} = useFormContext();
 	const {selectedStep} = useStepWizard();
 	const form = useWatch();
@@ -57,18 +58,6 @@ export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
 								businessType.id ===
 								form?.basics?.businessCategoryId
 							}
-							renderActions={
-								<MoreInfoButton
-									event={TIP_EVENT}
-									value={{
-										templateName:
-											'business-category-template',
-										step: selectedStep,
-										inputName: field.name,
-										value: businessType.id,
-									}}
-								/>
-							}
 						/>
 					))
 				}
@@ -77,8 +66,14 @@ export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
 				type="button"
 				className="btn badge"
 				style={{width: 'fit-content'}}
+				onClick={() =>
+					dispatchEvent({
+						templateName: 'i-am-unable-to-find-my-industry',
+						step: selectedStep,
+					})
+				}
 			>
-				None of these describe my business
+				I am unable to find my industry
 			</button>
 		</fieldset>
 	);
