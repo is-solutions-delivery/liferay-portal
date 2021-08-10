@@ -703,7 +703,10 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				user.getUserId(), "RaylifeApplication",
+				user.getUserId(),
+				Collections.singletonMap(
+					LocaleUtil.getSiteDefault(), "Raylife Application"),
+				"RaylifeApplication",
 				Arrays.asList(
 					_createObjectField("address", "String"),
 					_createObjectField("addressApt", "String"),
