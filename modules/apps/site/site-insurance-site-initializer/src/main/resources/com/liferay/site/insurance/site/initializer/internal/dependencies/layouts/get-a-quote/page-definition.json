@@ -98,13 +98,14 @@
 						},
 						"pageElements": [
 							{
-								"definition" : {
-									"widgetInstance" : {
-										"widgetConfig" : { },
-										"widgetName" : "rwc_d2cweb"
+								"definition": {
+									"widgetInstance": {
+										"widgetConfig": {
+										},
+										"widgetName": "rwc_d2cweb"
 									}
 								},
-								"type" : "Widget"
+								"type": "Widget"
 							}
 						],
 						"type": "Section"
