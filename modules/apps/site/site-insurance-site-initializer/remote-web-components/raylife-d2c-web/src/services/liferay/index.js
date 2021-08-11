@@ -29,17 +29,9 @@ const getBusinessTypes = async (filter = '') => {
 
 	const parentId = Cookies.get('raylife-product');
 
-	const assetCategories = await _getAssetCategoriesByParentId(parentId);
+	const assetCategories = await _getAssetCategoriesByParentId(parentId, normalizedFilter);
 
-	const filteredBusinessTypes = LiferayAdapt.adaptToBusinessType(
-		assetCategories
-	).filter(
-		({title, description}) =>
-			title.toLowerCase().match(normalizedFilter) ||
-			description.toLowerCase().match(normalizedFilter)
-	);
-
-	return filteredBusinessTypes;
+	return LiferayAdapt.adaptToBusinessType(assetCategories);
 };
 
 /**
@@ -93,7 +85,7 @@ const _getProductsByCategoryId = async (id) => {
  * @param {string} id - Parent category Id of asset categories
  * @returns {Promise<AssetCategoryResponse[]>}  Array of matched categories
  */
-const _getAssetCategoriesByParentId = async (id) => {
+const _getAssetCategoriesByParentId = async (id, normalizedFilter) => {
 	const {
 		data: {categories},
 	} = await LiferayAPI.get(
@@ -102,7 +94,7 @@ const _getAssetCategoriesByParentId = async (id) => {
 			params: {
 				groupIds: 0,
 				parentCategoryIds: id,
-				title: '',
+				title: normalizedFilter,
 				vocabularyIds: '',
 				start: 0,
 				end: 50,
