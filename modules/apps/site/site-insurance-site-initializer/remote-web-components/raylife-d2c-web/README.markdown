@@ -12,6 +12,11 @@ npm install
 yarn install
 ```
 
+### Requirement
+
+React >= **17.0.2**
+React-DOM >= **17.0.2**
+
 ### Development
 
 Start the react application with:
