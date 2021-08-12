@@ -1,48 +1,63 @@
 <style>
 	.tip_container {
+		background-color: #F9F9F9;
 		padding: 24px;
 		width: auto;
+	}
 	
-		background-color: #F9F9F9;
-	}
-	.tip_container .title {
-		font-size: 24px;
-	}
-	.tip_container .title::before {
-		content: url([resources:action-help.svg]);
-	}
 	.tip_container li {
-		 list-style-image: url([resources:check_gray.svg]);
+		<#if listIcon.getData() ?? && listIcon.getData() != "">
+			list-style-image: url(${listIcon.getData()});
+		</#if>
 		 color: #606167;
 		 font-size: 16px;
 		 font-weight: bold;
 	}
+	
 	.tip_container .dismiss_container {
 		display: flex;
 		margin-top: calc(540px - 500px)
 	}
+	
 	.tip_container .dismiss {
 		color: #7D7E85;
 		cursor: pointer;
 		text-decoration-line: underline;
 	}
+
+	.tip_container .title {
+		font-size: 24px;
+	}
+	
+	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
+	.tip_container .title::before {
+		content: url(${titleIcon.getData()});
+		color: #606167;
+		margin-right: 5px;
+	}
+	</#if>
 </style>
+
 <div class="tip_container">
 	<#if (title.getData())??>
 		<h1 class="title">${title.getData()}</h1>
 	</#if>
 	
-	<p class="subtitle">
-		<#if (subtitle.getData())??>
+	<#if (subtitle.getData())??>
+		<p class="subtitle">
 			${subtitle.getData()}
-		</#if>
-	</p>
+		</p>
+	</#if>
 	
-	<p class="description">
-		<#if (description.getData())??>
+	<#if (actionList.getData())??>
+		${actionList.getData()}
+	</#if>
+
+	<#if (description.getData())??>
+		<p class="description">
 			${description.getData()}
-		</#if>
-	</p>
+		</p>
+	</#if>
 	
 	<div class="dismiss_container d-flex justify-content-center">
 		<span class="dismiss">Dismiss</span>

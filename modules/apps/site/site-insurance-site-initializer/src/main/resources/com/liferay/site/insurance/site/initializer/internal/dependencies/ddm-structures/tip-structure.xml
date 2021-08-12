@@ -25,7 +25,7 @@
 							},
 							"readOnly": false,
 							"repeatable": false,
-							"required": false,
+							"required": true,
 							"showLabel": true,
 							"tip": {
 								"en_US": ""
@@ -57,6 +57,27 @@
 							"fieldNamespace": "ddm",
 							"indexType": "text",
 							"label": {
+								"en_US": "Action List"
+							},
+							"localizable": true,
+							"name": "actionList",
+							"predefinedValue": {
+								"en_US": ""
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "ddm-text-html"
+						},
+						{
+							"dataType": "html",
+							"fieldNamespace": "ddm",
+							"indexType": "text",
+							"label": {
 								"en_US": "Description"
 							},
 							"localizable": true,
@@ -72,7 +93,49 @@
 								"en_US": ""
 							},
 							"type": "ddm-text-html"
-						}
+						},
+						{
+							"dataType": "image",
+							"fieldNamespace": "ddm",
+							"indexType": "text",
+							"label": {
+								"en_US": "Title Icon"
+							},
+							"localizable": true,
+							"name": "titleIcon",
+							"predefinedValue": {
+								"en_US": ""
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "ddm-image"
+						},
+						{
+							"dataType": "image",
+							"fieldNamespace": "ddm",
+							"indexType": "text",
+							"label": {
+								"en_US": "List Icon"
+							},
+							"localizable": true,
+							"name": "listIcon",
+							"predefinedValue": {
+								"en_US": ""
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "ddm-image"
+						},
 					],
 					"successPage": {
 						"body": {
@@ -115,7 +178,37 @@
 									"columns": [
 										{
 											"fieldNames": [
+												"actionList"
+											],
+											"size": 12
+										}
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
 												"description"
+											],
+											"size": 12
+										}
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
+												"titleIcon"
+											],
+											"size": 12
+										}
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
+												"listIcon"
 											],
 											"size": 12
 										}
