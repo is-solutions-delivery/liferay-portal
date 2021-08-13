@@ -47,7 +47,7 @@ export const FormBusiness = () => {
 					moreInfoProps={{
 						event: TIP_EVENT,
 						value: {
-							templateName: 'more-info-template',
+							templateName: 'years-of-industry-experience',
 							step: selectedStep,
 							inputName: setFormPath('yearsOfExperience'),
 							value: form?.business?.yearsOfExperience,
@@ -92,7 +92,7 @@ export const FormBusiness = () => {
 						moreInfoProps={{
 							event: TIP_EVENT,
 							value: {
-								templateName: 'more-info-template',
+								templateName: 'percent-of-sales-from-used-merchandise',
 								step: selectedStep,
 								inputName: setFormPath('salesMerchandise'),
 								value: form?.business?.salesMerchandise,
@@ -121,15 +121,6 @@ export const FormBusiness = () => {
 								message: 'Value must not be greater than 100%.',
 							},
 							required: 'Percent of overall sales is required.',
-						}}
-						moreInfoProps={{
-							event: TIP_EVENT,
-							value: {
-								templateName: 'more-info-template',
-								step: selectedStep,
-								inputName: setFormPath('overallSales'),
-								value: form?.business?.overallSales,
-							},
 						}}
 						control={control}
 					/>
