@@ -1,11 +1,17 @@
 <style>
-	.tip_container {
+	#tip {
 		background-color: #F9F9F9;
 		padding: 24px;
 		width: auto;
 	}
+
+	#tip.hide {
+		opacity: 0;
+		transition: opacity .5s linear;
+    	pointer-events: none;
+	}
 	
-	.tip_container li {
+	#tip li {
 		<#if listIcon.getData() ?? && listIcon.getData() != "">
 			list-style-image: url(${listIcon.getData()});
 		</#if>
@@ -14,23 +20,26 @@
 		 font-weight: bold;
 	}
 	
-	.tip_container .dismiss_container {
+	#tip .dismiss_container {
 		display: flex;
 		margin-top: calc(540px - 500px)
 	}
 	
-	.tip_container .dismiss {
+	#tip #dismiss {
 		color: #7D7E85;
 		cursor: pointer;
+		background: none;
+		border: none;
+		padding: 0;
 		text-decoration-line: underline;
 	}
 
-	.tip_container .title {
+	#tip .title {
 		font-size: 24px;
 	}
 	
 	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
-	.tip_container .title::before {
+	#tip .title::before {
 		content: url(${titleIcon.getData()});
 		margin-right: 5px;
 	}
@@ -44,7 +53,7 @@
 	</#if>
 </style>
 
-<div class="tip_container">
+<div id="tip">
 	<#if (title.getData())??>
 		<h1 class="title">${title.getData()}</h1>
 	</#if>
@@ -72,6 +81,6 @@
 	</#if>
 	
 	<div class="dismiss_container d-flex justify-content-center">
-		<span class="dismiss">Dismiss</span>
+		<button type="button" id="dismiss" onclick="event.preventDefault(); document.getElementById('tip').classList.add('hide');">Dismiss</button>
 	</div>
 </div>
