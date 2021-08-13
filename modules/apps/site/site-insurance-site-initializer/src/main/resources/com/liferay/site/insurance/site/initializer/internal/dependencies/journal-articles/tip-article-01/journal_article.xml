@@ -19,4 +19,10 @@
 	<dynamic-element index-type="text" instance-id="tjcafeqv" name="listIcon" type="image">
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 	</dynamic-element>
+	<dynamic-element index-type="text" instance-id="iefpjpqx" name="externalLink" type="text_area">
+		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+	</dynamic-element>
+	<dynamic-element index-type="text" instance-id="tjcafpqv" name="externalLinkIcon" type="image">
+		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+	</dynamic-element>
 </root>
