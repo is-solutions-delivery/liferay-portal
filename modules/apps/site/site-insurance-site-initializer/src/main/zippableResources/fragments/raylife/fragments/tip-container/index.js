@@ -81,7 +81,9 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 			)?.id;
 		}
 
-		if (typeof data === 'object' && getStructuredContentIdByName(data.templateName)) {
+		if (data.hide) {
+			document.getElementById('dynamic-web-content').innerHTML = "";
+		} else if (typeof data === 'object' && getStructuredContentIdByName(data.templateName)) {
 			fetchWebContent(
 				getStructuredContentIdByName(data.templateName),
 				templateId,
