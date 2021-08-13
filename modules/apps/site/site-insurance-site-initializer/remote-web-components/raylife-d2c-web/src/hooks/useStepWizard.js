@@ -4,17 +4,26 @@ import { useWatch } from "react-hook-form";
 
 import { setSelectedStep } from "../context/actions";
 import { AppContext } from "../context/AppContext";
+import { TIP_EVENT } from "../events";
 import { calculatePercentage, countCompletedFields } from "../utils";
 import { businessTotalFields } from "../utils/businessFields";
 import { AVAILABLE_STEPS, TOTAL_OF_FIELD } from "../utils/constants";
+import { useCustomEvent } from "./useCustomEvent";
 
 export const useStepWizard = () => {
   const form = useWatch();
+  const [dispatchEvent] = useCustomEvent(TIP_EVENT);
   const { state, dispatch } = useContext(AppContext);
 
   useEffect(() => {
     _updateStepPercentage();
   }, [form]);
+
+  useEffect(() => {
+    dispatchEvent({
+			hide: true,
+		});
+  }, [state.selectedStep.section]);
 
   const _updateStepPercentage = () => {
     switch (state.selectedStep.section) {
