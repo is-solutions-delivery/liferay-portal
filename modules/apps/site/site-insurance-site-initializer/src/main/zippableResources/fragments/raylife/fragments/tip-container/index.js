@@ -81,7 +81,7 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 			)?.id;
 		}
 
-		if (typeof data === 'object' && data.templateName) {
+		if (typeof data === 'object' && getStructuredContentIdByName(data.templateName)) {
 			fetchWebContent(
 				getStructuredContentIdByName(data.templateName),
 				templateId,
