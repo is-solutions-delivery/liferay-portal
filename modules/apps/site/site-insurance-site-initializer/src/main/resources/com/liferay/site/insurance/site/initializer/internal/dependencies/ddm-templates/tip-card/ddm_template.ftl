@@ -32,8 +32,14 @@
 	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
 	.tip_container .title::before {
 		content: url(${titleIcon.getData()});
-		color: #606167;
 		margin-right: 5px;
+	}
+	</#if>
+
+	<#if externalLinkIcon.getData() ?? && externalLinkIcon.getData() != "">
+	.tip_container .external_link a::after {
+		content: url(${externalLinkIcon.getData()});
+		margin-left: 5px;
 	}
 	</#if>
 </style>
@@ -57,6 +63,12 @@
 		<p class="description">
 			${description.getData()}
 		</p>
+	</#if>
+
+	<#if (externalLink.getData())??>
+		<div class="external_link">
+			${externalLink.getData()}
+		</div>
 	</#if>
 	
 	<div class="dismiss_container d-flex justify-content-center">
