@@ -383,14 +383,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private String _read(String resourcePath) throws Exception {
-		InputStream inputStream = _servletContext.getResourceAsStream(
-			resourcePath);
-
-		if (inputStream == null) {
-			return null;
+		InputStream inputStream = _servletContext.getResourceAsStream(resourcePath);
+		if(inputStream != null){
+			return StringUtil.read(inputStream);
 		}
-
-		return StringUtil.read(inputStream);
+		return null;
 	}
 
 	private String _read(String fileName, URL url) throws Exception {
