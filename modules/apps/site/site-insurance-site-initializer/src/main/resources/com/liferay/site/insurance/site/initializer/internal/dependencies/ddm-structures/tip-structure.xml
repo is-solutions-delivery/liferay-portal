@@ -78,6 +78,27 @@
 							"fieldNamespace": "ddm",
 							"indexType": "text",
 							"label": {
+								"en_US": "External Link"
+							},
+							"localizable": true,
+							"name": "externalLink",
+							"predefinedValue": {
+								"en_US": ""
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "ddm-text-html"
+						},
+						{
+							"dataType": "html",
+							"fieldNamespace": "ddm",
+							"indexType": "text",
+							"label": {
 								"en_US": "Description"
 							},
 							"localizable": true,
@@ -124,6 +145,27 @@
 							},
 							"localizable": true,
 							"name": "listIcon",
+							"predefinedValue": {
+								"en_US": ""
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "ddm-image"
+						},
+						{
+							"dataType": "image",
+							"fieldNamespace": "ddm",
+							"indexType": "text",
+							"label": {
+								"en_US": "External Link Icon"
+							},
+							"localizable": true,
+							"name": "externalLinkIcon",
 							"predefinedValue": {
 								"en_US": ""
 							},
@@ -188,6 +230,16 @@
 									"columns": [
 										{
 											"fieldNames": [
+												"externalLink"
+											],
+											"size": 12
+										}
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
 												"description"
 											],
 											"size": 12
@@ -209,6 +261,16 @@
 										{
 											"fieldNames": [
 												"listIcon"
+											],
+											"size": 12
+										}
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
+												"externalLinkIcon"
 											],
 											"size": 12
 										}
