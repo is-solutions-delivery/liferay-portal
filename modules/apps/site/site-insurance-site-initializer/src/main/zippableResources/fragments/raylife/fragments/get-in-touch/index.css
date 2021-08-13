@@ -1,0 +1,67 @@
+h1, h3 {
+	font-weight: var(--display1-weight);
+}
+
+p {
+	color: var(--gray-700);
+}
+
+ul {
+    list-style-type: none;
+	padding: 0px;
+}
+
+.btn-back { 
+	background-color: white;
+	border: solid 1px;
+	border-color: #7D7E85;
+	border-radius: 5px;
+	color: #7D7E85;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 700;
+	margin-bottom: 20px;
+	padding: 7px 35px;
+	text-align: center;
+}
+
+.btn-call { 
+	background-color: white;
+	border: solid 1px;
+	border-color: #4C85FF;
+	border-radius: 5px;
+	color: #4C85FF;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 700;
+	padding: 7px 35px;
+	text-align: center;
+}
+
+.content-agent-text-adictional {
+	color: #606167;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.content-agent-text-chat {
+	color: #4C85FF;
+	cursor: pointer;
+	font-size: 13px;
+	margin-bottom: 0px;
+}
+
+.content-agent-text-your-application {
+	border-radius: 4px;
+	background-color: #C2EADD;
+	color: #08AA72;
+	font-size: 24px;
+	font-weight: 700;
+	padding: 8px;
+	text-align: center;
+}
+
+.content-agent-margin {
+   margin-bottom: 27vh;
+   margin-top: 7vh;
+}
