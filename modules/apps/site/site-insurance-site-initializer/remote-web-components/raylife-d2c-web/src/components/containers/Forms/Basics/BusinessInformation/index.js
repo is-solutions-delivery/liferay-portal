@@ -24,6 +24,7 @@ export const FormBasicBusinessInformation = () => {
 	const {
 		control,
 		formState: {isValid},
+		setValue,
 	} = useFormContext();
 
 	useEffect(() => {
@@ -38,14 +39,23 @@ export const FormBasicBusinessInformation = () => {
 
 	const onSave = async () => {
 		try {
-			await LiferayService.createBasicsApplication(form.basics);
+			const response = await LiferayService.createOrUpdateBasicsApplication(
+				form.basics
+			);
+
+			setValue('basics.applicationId', response.data.id);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	const goToPreviousForm = () =>
+	const goToPreviousForm = () => {
+		if (form.basics?.businessInformation?.business?.email) {
+			onSave();
+		}
+
 		setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE);
+	};
 
 	const goToNextForm = () => {
 		onSave();

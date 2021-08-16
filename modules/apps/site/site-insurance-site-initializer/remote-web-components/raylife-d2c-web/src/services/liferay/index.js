@@ -11,11 +11,16 @@ const {
 
 /**
  * @param {BasicsForm}  data Basics form object
- * @returns {Promise<number>}  Status code
+ * @returns {Promise<any>}  Status code
  */
-const createBasicsApplication = async (data) => {
+const createOrUpdateBasicsApplication = async (data) => {
 	const payload = LiferayAdapt.adaptToBasicsFormApplicationRequest(data);
-	return await _postBasicsFormApplication(payload);
+
+	if (data.applicationId) {
+		return _patchBasicsFormApplication(payload, data.applicationId);
+	}
+
+	return _postBasicsFormApplication(payload);
 };
 
 /**
@@ -29,7 +34,10 @@ const getBusinessTypes = async (filter = '') => {
 
 	const parentId = Cookies.get('raylife-product');
 
-	const assetCategories = await _getAssetCategoriesByParentId(parentId, normalizedFilter);
+	const assetCategories = await _getAssetCategoriesByParentId(
+		parentId,
+		normalizedFilter
+	);
 
 	return LiferayAdapt.adaptToBusinessType(assetCategories);
 };
@@ -113,25 +121,32 @@ const _getAssetCategoriesByParentId = async (id, normalizedFilter) => {
  * @returns {Promise<CategoryPropertyResponse[]>}  Array of matched categories
  */
 const getCategoryProperties = async (id) => {
-  const { data } = await LiferayAPI.get(
-    "/api/jsonws/assetcategoryproperty/get-category-properties",
-    {
-      params: {
-        entryId: id,
-      },
-    }
-  );
+	const {data} = await LiferayAPI.get(
+		'/api/jsonws/assetcategoryproperty/get-category-properties',
+		{
+			params: {
+				entryId: id,
+			},
+		}
+	);
 
-  return data;
+	return data;
 };
 
 /**
  * @param {BasicsFormApplicationRequest} payload - Payload used to create the application
- * @returns {Promise<number>}  Status code
+ * @returns {Promise<any>}  Axios Response
  */
 const _postBasicsFormApplication = async (payload) => {
-	const {status} = await LiferayAPI.post('/o/raylifeapplications', payload);
-	return status;
+	return LiferayAPI.post('/o/raylifeapplications', payload);
+};
+
+/**
+ * @param {BasicsFormApplicationRequest} payload - Payload used to update existing application
+ * @returns {Promise<any>}  Axios Response
+ */
+const _patchBasicsFormApplication = async (payload, id) => {
+	return LiferayAPI.patch(`/o/raylifeapplications/${id}`, payload);
 };
 
 const LiferayAPI = Axios.create({
@@ -146,11 +161,11 @@ const LiferayAPI = Axios.create({
 });
 
 export const LiferayService = {
-  LiferayAPI,
-  createBasicsApplication,
-  getBusinessTypes,
-  getProductQuotes,
-  getLiferayAuthenticationToken,
-  getLiferayGroupId,
-  getCategoryProperties,
+	LiferayAPI,
+	createOrUpdateBasicsApplication,
+	getBusinessTypes,
+	getProductQuotes,
+	getLiferayAuthenticationToken,
+	getLiferayGroupId,
+	getCategoryProperties,
 };

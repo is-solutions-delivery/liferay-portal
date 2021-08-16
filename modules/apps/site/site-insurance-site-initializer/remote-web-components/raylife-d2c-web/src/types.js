@@ -49,6 +49,7 @@
 
 /**
  * @typedef {{
+ * applicationId: number
  * businessSearch: string
  * businessCategoryId: string
  * properties: {
