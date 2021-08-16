@@ -26,10 +26,10 @@ export const FormBasicBusinessInformation = () => {
 
 	useEffect(() => {
 		dispatchEvent({
-			templateName: 'business-information-template',
+			templateName: 'hi-template',
 			step: selectedStep,
 			templateData: {
-				firstName: '👋',
+				firstName: '! 👋',
 			},
 		});
 	}, []);
@@ -64,15 +64,14 @@ export const FormBasicBusinessInformation = () => {
 						inputProps={{
 							onBlur: () =>
 								dispatchEvent({
-									templateName:
-										'business-information-template',
+									templateName: 'hi-template',
 									step: selectedStep,
 									inputName: setFormPath('firstName'),
 									value:
 										form?.basics?.businessInformation
 											?.firstName,
 									templateData: {
-										firstName: `${form?.basics?.businessInformation?.firstName} 👋`,
+										firstName: ` ${form?.basics?.businessInformation?.firstName?.trim()}! 👋`,
 									},
 								}),
 						}}
