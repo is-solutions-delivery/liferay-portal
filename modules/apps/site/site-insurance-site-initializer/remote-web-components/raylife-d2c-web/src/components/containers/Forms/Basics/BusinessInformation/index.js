@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, {useEffect} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 
