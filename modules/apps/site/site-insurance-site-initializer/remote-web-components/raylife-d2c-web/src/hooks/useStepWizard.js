@@ -21,8 +21,8 @@ export const useStepWizard = () => {
 
   useEffect(() => {
     dispatchEvent({
-			hide: true,
-		});
+      hide: true,
+    });
   }, [state.selectedStep.section]);
 
   const _updateStepPercentage = () => {
