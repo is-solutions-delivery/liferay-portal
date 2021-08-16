@@ -77,13 +77,18 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 
 		function getStructuredContentIdByName(templateName) {
 			return structuredContents.find(
-				({friendlyUrlPath}) => friendlyUrlPath === templateName
+				({friendlyUrlPath, key}) =>
+					friendlyUrlPath === templateName ||
+					key === templateName.toUpperCase()
 			)?.id;
 		}
 
 		if (data.hide) {
-			document.getElementById('dynamic-web-content').innerHTML = "";
-		} else if (typeof data === 'object' && getStructuredContentIdByName(data.templateName)) {
+			document.getElementById('dynamic-web-content').innerHTML = '';
+		} else if (
+			typeof data === 'object' &&
+			getStructuredContentIdByName(data.templateName)
+		) {
 			fetchWebContent(
 				getStructuredContentIdByName(data.templateName),
 				templateId,
@@ -105,9 +110,7 @@ async function workflow() {
 	);
 
 	const {id: raylifeFolderId} =
-		structuredContentFolders.items.find(
-			({name}) => name === 'Tip'
-		) || {};
+		structuredContentFolders.items.find(({name}) => name === 'Tip') || {};
 
 	if (!raylifeFolderId) {
 		return console.warn('Raylife TIP Folder not found');
