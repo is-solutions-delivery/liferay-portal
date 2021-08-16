@@ -77,7 +77,7 @@ export const FormBusiness = () => {
 					control={control}
 				/>
 				{validatePercentSales(
-					form?.basics?.properties?.businessClassCode
+					form?.basics?.properties?.naics
 				) && (
 					<PercentageControlledInput
 						name={setFormPath('salesMerchandise')}
@@ -102,7 +102,7 @@ export const FormBusiness = () => {
 					/>
 				)}
 				{validateOwnBrandLabel(
-					form?.basics?.properties?.businessClassCode
+					form?.basics?.properties?.naics
 				) && (
 					<ControlledSwitch
 						name={setFormPath('hasSellProductsUnderOwnBrand')}
