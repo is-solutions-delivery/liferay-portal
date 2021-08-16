@@ -28,15 +28,15 @@ export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
 
 			setValue(
 				'basics.properties.businessClassCode',
-				categoryProperties.find(({key}) => key === 'BCC').value
+				categoryProperties.find(({key}) => key === 'BCC')?.value
 			);
 			setValue(
 				'basics.properties.naics',
-				categoryProperties.find(({key}) => key === 'NAICS').value
+				categoryProperties.find(({key}) => key === 'NAICS')?.value
 			);
 			setValue(
 				'basics.properties.segment',
-				categoryProperties.find(({key}) => key === 'Segment').value
+				categoryProperties.find(({key}) => key === 'Segment')?.value
 			);
 		} catch (error) {
 			console.warn(error);
