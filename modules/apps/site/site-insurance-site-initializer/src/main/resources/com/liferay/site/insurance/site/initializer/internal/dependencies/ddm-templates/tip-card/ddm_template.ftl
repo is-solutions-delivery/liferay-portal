@@ -8,16 +8,16 @@
 	#tip.hide {
 		opacity: 0;
 		transition: opacity .5s linear;
-    	pointer-events: none;
+		pointer-events: none;
 	}
 	
 	#tip li {
 		<#if listIcon.getData() ?? && listIcon.getData() != "">
 			list-style-image: url(${listIcon.getData()});
 		</#if>
-		 color: #606167;
-		 font-size: 16px;
-		 font-weight: bold;
+		color: #606167;
+		font-size: 16px;
+		font-weight: bold;
 	}
 	
 	#tip .dismiss_container {
@@ -39,17 +39,17 @@
 	}
 	
 	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
-	#tip .title::before {
-		content: url(${titleIcon.getData()});
-		margin-right: 5px;
-	}
+		#tip .title::before {
+			content: url(${titleIcon.getData()});
+			margin-right: 5px;
+		}
 	</#if>
 
 	<#if externalLinkIcon.getData() ?? && externalLinkIcon.getData() != "">
-	.tip_container .external_link a::after {
-		content: url(${externalLinkIcon.getData()});
-		margin-left: 5px;
-	}
+		.tip_container .external_link a::after {
+			content: url(${externalLinkIcon.getData()});
+			margin-left: 5px;
+		}
 	</#if>
 </style>
 
