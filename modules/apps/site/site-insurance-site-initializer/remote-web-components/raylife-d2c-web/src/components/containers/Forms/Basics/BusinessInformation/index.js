@@ -28,11 +28,11 @@ export const FormBasicBusinessInformation = () => {
 
 	useEffect(() => {
 		dispatchEvent({
-			templateName: 'hi-template',
 			step: selectedStep,
 			templateData: {
 				firstName: '! 👋',
 			},
+			templateName: 'hi-template',
 		});
 	}, []);
 
@@ -57,13 +57,10 @@ export const FormBasicBusinessInformation = () => {
 			<div className="card-content">
 				<div className="content-row">
 					<ControlledInput
-						name={setFormPath('firstName')}
-						label="First Name"
 						control={control}
-						rules={{
-							required: 'First name is required.',
-						}}
+						label="First Name"
 						inputProps={{
+							maxLength: 256,
 							onBlur: () =>
 								dispatchEvent({
 									templateName: 'hi-template',
@@ -77,44 +74,51 @@ export const FormBasicBusinessInformation = () => {
 									},
 								}),
 						}}
+						name={setFormPath('firstName')}
+						rules={{
+							required: 'First name is required.',
+						}}
 					/>
 					<ControlledInput
-						name={setFormPath('lastName')}
-						label="Last name"
 						control={control}
+						label="Last Name"
+						inputProps={{
+							maxLength: 256,
+						}}
+						name={setFormPath('lastName')}
 						rules={{
 							required: 'Last name is required.',
 						}}
 					/>
 				</div>
 				<EmailControlledInput
-					name={setFormPath('business.email')}
-					label="Business Email"
 					control={control}
+					label="Business Email"
+					name={setFormPath('business.email')}
 					rules={{
 						required: 'Email is required.',
 					}}
 				/>
 				<PhoneControlledInput
-					name={setFormPath('business.phone')}
-					label="Phone"
 					control={control}
+					label="Phone"
+					name={setFormPath('business.phone')}
 					rules={{
 						required: 'Phone number is required.',
 					}}
 				/>
 				<WebsiteControlledInput
-					name={setFormPath('business.website')}
-					label="Business Website (optional)"
 					control={control}
+					label="Business Website (optional)"
+					name={setFormPath('business.website')}
 				/>
 				<BusinessInformationAddress />
 			</div>
 			<CardFormActionsWithSave
-				onPrevious={goToPreviousForm}
-				onNext={goToNextForm}
-				onSave={onSave}
 				isValid={isValid}
+				onNext={goToNextForm}
+				onPrevious={goToPreviousForm}
+				onSave={onSave}
 			/>
 		</div>
 	);
