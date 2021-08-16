@@ -29,7 +29,7 @@ export const FormBasicBusinessType = () => {
 			<CardFormActions
 				onNext={goToNextForm}
 				onPrevious={goToPreviousPage}
-				isValid={isValid && form?.basics?.properties?.businessClassCode}
+				isValid={isValid && (form?.basics?.properties?.naics || form?.basics?.properties?.businessClassCode)}
 			/>
 		</div>
 	);
