@@ -53,6 +53,7 @@
  * businessCategoryId: string
  * properties: {
  *  businessClassCode: string
+ *  naics: string
  *  segment: string
  * }
  * businessInformation: {
