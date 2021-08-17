@@ -11,9 +11,13 @@ export const App = () => {
 	const {handleSubmit} = useFormContext();
 	const {selectedStep} = useStepWizard();
 
+	/**
+	 * @state disabled for now
+	 * @param {*} data
+	 */
 	const onSubmit = (data) => {
-		console.log(data);
-		window.location.href = '/web/raylife/hang-tight';
+		// console.log(data);
+		// window.location.href = '/web/raylife/hang-tight';
 	};
 
 	const _renderTitle = () => {
