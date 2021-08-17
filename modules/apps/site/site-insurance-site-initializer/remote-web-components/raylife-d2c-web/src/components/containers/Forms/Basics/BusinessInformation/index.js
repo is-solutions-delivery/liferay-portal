@@ -60,6 +60,7 @@ export const FormBasicBusinessInformation = () => {
 			setApplicationId(response.data.id);
 		} catch (error) {
 			setError('Unable to save your information. Please try again.');
+
 			throw error;
 		}
 	};
@@ -71,8 +72,9 @@ export const FormBasicBusinessInformation = () => {
 			}
 		} catch (error) {
 			console.warn(error);
+		} finally {
+			setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE);
 		}
-		setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE);
 	};
 
 	const goToNextForm = async () => {
@@ -149,11 +151,7 @@ export const FormBasicBusinessInformation = () => {
 			{error && <WarningBadge>{error}</WarningBadge>}
 			<CardFormActionsWithSave
 				isValid={isValid}
-				onNext={() =>
-					goToNextForm().then(() =>
-						setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE)
-					)
-				}
+				onNext={goToNextForm}
 				onPrevious={goToPreviousForm}
 				onSave={onSave}
 			/>

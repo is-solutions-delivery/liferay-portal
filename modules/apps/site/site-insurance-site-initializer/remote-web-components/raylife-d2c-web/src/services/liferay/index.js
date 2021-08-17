@@ -137,7 +137,7 @@ const getCategoryProperties = async (id) => {
  * @param {BasicsFormApplicationRequest} payload - Payload used to create the application
  * @returns {Promise<any>}  Axios Response
  */
-const _postBasicsFormApplication = async (payload) => {
+const _postBasicsFormApplication = (payload) => {
 	return LiferayAPI.post('/o/raylifeapplications', payload);
 };
 
@@ -145,7 +145,7 @@ const _postBasicsFormApplication = async (payload) => {
  * @param {BasicsFormApplicationRequest} payload - Payload used to update existing application
  * @returns {Promise<any>}  Axios Response
  */
-const _patchBasicsFormApplication = async (payload, id) => {
+const _patchBasicsFormApplication = (payload, id) => {
 	return LiferayAPI.patch(`/o/raylifeapplications/${id}`, payload);
 };
 
