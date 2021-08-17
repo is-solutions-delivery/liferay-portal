@@ -32,7 +32,7 @@ const adaptToBasicsFormApplicationRequest = ({ businessInformation }) => ({
  *    name: {
  *      en_US: string
  *    }
- *    shortDescription: {
+ *    description: {
  *      en_US: string
  *    }
  *    skus: {
@@ -43,10 +43,10 @@ const adaptToBasicsFormApplicationRequest = ({ businessInformation }) => ({
  * @returns {ProductQuote[]} Array of business types
  */
 const adaptToProductQuote = (data = []) =>
-  data.map(({ productId, name, shortDescription, skus }) => ({
+  data.map(({ productId, name, description, skus }) => ({
     id: productId,
     title: name.en_US,
-    description: shortDescription.en_US,
+    description: description.en_US,
     period: `($${skus[0].promoPrice.toFixed(2).toString()}-${skus[0].price
       .toFixed(2)
       .toString()}/mo)`,
