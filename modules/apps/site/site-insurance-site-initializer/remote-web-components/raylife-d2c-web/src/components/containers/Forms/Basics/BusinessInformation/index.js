@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 
 import {BusinessInformationAddress} from './Address';
@@ -14,11 +12,14 @@ import {PhoneControlledInput} from '../../../../connectors/Controlled/Input/With
 import {ControlledInput} from '../../../../connectors/Controlled/Input';
 import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
 import {TIP_EVENT} from '../../../../../events';
+import {WarningBadge} from '../../../../fragments/Badges/Warning';
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;
 
 export const FormBasicBusinessInformation = () => {
 	const form = useWatch();
+	const [applicationId, setApplicationId] = useState('');
+	const [error, setError] = useState('');
 	const {selectedStep, setSection} = useStepWizard();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 	const {
@@ -37,28 +38,46 @@ export const FormBasicBusinessInformation = () => {
 		});
 	}, []);
 
+	/**
+	 * @description When the application is created, we set the value to Form Context
+	 * We tried to use setValue directly on goToPrevious and goToNextForm
+	 * and for reasons unknowns, the section is not called.
+	 */
+
+	useEffect(() => {
+		if (applicationId) {
+			setValue('basics.applicationId', applicationId);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [applicationId]);
+
 	const onSave = async () => {
 		try {
 			const response = await LiferayService.createOrUpdateBasicsApplication(
 				form.basics
 			);
 
-			setValue('basics.applicationId', response.data.id);
+			setApplicationId(response.data.id);
 		} catch (error) {
-			console.error(error);
+			setError('Unable to save your information. Please try again.');
+			throw error;
 		}
 	};
 
-	const goToPreviousForm = () => {
-		if (form.basics?.businessInformation?.business?.email) {
-			onSave();
+	const goToPreviousForm = async () => {
+		try {
+			if (form.basics?.businessInformation?.business?.email) {
+				await onSave();
+			}
+		} catch (error) {
+			console.warn(error);
 		}
-
 		setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE);
 	};
 
-	const goToNextForm = () => {
-		onSave();
+	const goToNextForm = async () => {
+		await onSave();
+
 		setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE);
 	};
 
@@ -80,7 +99,10 @@ export const FormBasicBusinessInformation = () => {
 										form?.basics?.businessInformation
 											?.firstName,
 									templateData: {
-										firstName: ` ${form?.basics?.businessInformation?.firstName?.trim()}! 👋`,
+										firstName: ` ${
+											form?.basics?.businessInformation?.firstName?.trim() ||
+											''
+										}! 👋`,
 									},
 								}),
 						}}
@@ -124,9 +146,14 @@ export const FormBasicBusinessInformation = () => {
 				/>
 				<BusinessInformationAddress />
 			</div>
+			{error && <WarningBadge>{error}</WarningBadge>}
 			<CardFormActionsWithSave
 				isValid={isValid}
-				onNext={goToNextForm}
+				onNext={() =>
+					goToNextForm().then(() =>
+						setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE)
+					)
+				}
 				onPrevious={goToPreviousForm}
 				onSave={onSave}
 			/>
