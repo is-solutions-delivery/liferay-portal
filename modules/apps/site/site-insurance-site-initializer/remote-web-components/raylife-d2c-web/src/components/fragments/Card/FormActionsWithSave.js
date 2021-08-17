@@ -1,4 +1,5 @@
 import React from 'react';
+import ClayIcon from '@clayui/icon';
 
 export const CardFormActionsWithSave = ({
 	onPrevious = () => {},
@@ -26,6 +27,7 @@ export const CardFormActionsWithSave = ({
 					disabled={!isValid}
 				>
 					Continue
+					<ClayIcon symbol="angle-right" />
 				</button>
 			</div>
 		</div>

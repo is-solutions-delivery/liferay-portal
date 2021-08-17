@@ -1,17 +1,20 @@
-import React from "react";
-import { useCustomEvent } from "../../../hooks/useCustomEvent";
+import ClayIcon from '@clayui/icon';
+import React from 'react';
 
-export const MoreInfoButton = ({ value, event }) => {
-  // eslint-disable-next-line no-unused-vars
-  const [dispatchEvent] = useCustomEvent(event);
+import {useCustomEvent} from '../../../hooks/useCustomEvent';
 
-  return (
-    <button
-      type="button"
-      className="btn badge"
-      onClick={() => dispatchEvent(value)}
-    >
-      More Info
-    </button>
-  );
+export const MoreInfoButton = ({value, event}) => {
+	// eslint-disable-next-line no-unused-vars
+	const [dispatchEvent] = useCustomEvent(event);
+
+	return (
+		<button
+			type="button"
+			className="btn badge"
+			onClick={() => dispatchEvent(value)}
+		>
+			More Info
+			<ClayIcon symbol="question-circle" />
+		</button>
+	);
 };
