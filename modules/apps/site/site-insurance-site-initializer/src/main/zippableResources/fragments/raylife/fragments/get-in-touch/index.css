@@ -7,11 +7,11 @@
 }
 
 .get-in-touch ul {
-    list-style-type: none;
+	list-style-type: none;
 	padding: 0px;
 }
 
-.get-in-touch .content-agent-btn { 
+.get-in-touch .btn-content-agent { 
 	background-color: white;
 	border: solid 1px ;
 	border-radius: 5px;
@@ -23,14 +23,14 @@
 	text-align: center;
 }
 
-.get-in-touch .btn-call-color {
-	border-color: #4C85FF;
-	color: #4C85FF;
-}
-
 .get-in-touch .btn-back-color {
 	border-color: #7D7E85;
 	color: #7D7E85;
+}
+
+.get-in-touch .btn-call-color {
+	border-color: #4C85FF;
+	color: #4C85FF;
 }
 
 .get-in-touch .content-agent-text-adictional {
@@ -57,6 +57,6 @@
 }
 
 .get-in-touch .content-agent-margin {
-   margin-bottom: 200px;
-   margin-top: 45px;
+	margin-bottom: 200px;
+	margin-top: 45px;
 }
