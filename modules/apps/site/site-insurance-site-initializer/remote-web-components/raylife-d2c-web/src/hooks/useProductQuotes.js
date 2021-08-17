@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useWatch } from "react-hook-form";
 import { LiferayService } from "../services/liferay";
+import Cookies from 'js-cookie';
 
 export const useProductQuotes = () => {
-  const form = useWatch();
   const [data, setData] = useState();
   const [error, setError] = useState();
 
@@ -14,7 +13,7 @@ export const useProductQuotes = () => {
 
   const _loadProductQuotes = async () => {
     try {
-      const categoryId = form.basics.businessCategoryId;
+      const categoryId = Cookies.get('raylife-product');;
       const response = await LiferayService.getProductQuotes(categoryId);
       setData(response);
     } catch (error) {
