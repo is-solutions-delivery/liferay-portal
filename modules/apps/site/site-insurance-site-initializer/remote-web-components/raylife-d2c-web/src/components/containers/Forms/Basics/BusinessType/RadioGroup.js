@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
 import {useFormContext, useWatch, Controller} from 'react-hook-form';
+import ClayIcon from '@clayui/icon';
 
 import {TIP_EVENT} from '../../../../../events';
 import {Radio} from '../../../../fragments/Forms/Radio';
@@ -78,6 +79,7 @@ export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
 				}
 			>
 				I am unable to find my industry
+				<ClayIcon symbol="question-circle" />
 			</button>
 		</fieldset>
 	);
