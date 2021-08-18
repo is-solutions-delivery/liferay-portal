@@ -1,4 +1,6 @@
 import "../../types";
+import { toSlug } from "../../utils";
+import { allowedProductQuote } from "../../utils/webContents";
 /**
  * @param {AssetCategoryResponse[]}  data Array of matched categories
  * @returns {BusinessType[]} Array of business types
@@ -50,6 +52,10 @@ const adaptToProductQuote = (data = []) =>
     period: `($${skus[0].promoPrice.toFixed(2).toString()}-${skus[0].price
       .toFixed(2)
       .toString()}/mo)`,
+    template: {
+      name: toSlug(name.en_US),
+      allowed: allowedProductQuote(name.en_US),
+		}
   }));
 
 export const LiferayAdapt = {

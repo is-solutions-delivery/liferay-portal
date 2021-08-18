@@ -48,11 +48,10 @@ export const FormBasicProductQuote = () => {
 											form.basics.productQuote
 										}
 										renderActions={
-											<MoreInfoButton
+											quote.template.allowed && <MoreInfoButton
 												event={TIP_EVENT}
 												value={{
-													templateName:
-														'business-category-template',
+													templateName: quote.template.name,
 													step: selectedStep,
 													inputName: field.name,
 													value: quote.id,
