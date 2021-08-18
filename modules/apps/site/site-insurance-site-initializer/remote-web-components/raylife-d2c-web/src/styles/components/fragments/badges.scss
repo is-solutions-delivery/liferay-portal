@@ -16,6 +16,17 @@
   padding-right: 1rem;
 }
 
+button.btn.badge {
+  background: #E1EBFF;
+  font-weight: 500;
+
+  &.open {
+    background: $primary-default;
+    color: #fff;
+    fill: #fff;
+  }
+}
+
 .badge-primary {
   background: $primary-light;
   color: $primary-default;

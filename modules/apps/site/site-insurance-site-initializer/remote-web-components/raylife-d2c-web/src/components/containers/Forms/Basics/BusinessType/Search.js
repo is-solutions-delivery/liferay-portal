@@ -1,21 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback, useEffect} from 'react';
-import {useFormContext, useWatch} from 'react-hook-form';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import useDebounce from 'lodash.debounce';
 
-import {WarningBadge} from '../../../../fragments/Badges/Warning';
-import {SearchInput} from '../../../../fragments/Forms/Input/Search';
-import {useBusinessTypes} from '../../../../../hooks/useBusinessTypes';
-import {BusinessTypeRadioGroup} from './RadioGroup';
+import { TIP_EVENT } from '../../../../../events';
+import { WarningBadge } from '../../../../fragments/Badges/Warning';
+import { SearchInput } from '../../../../fragments/Forms/Input/Search';
+import { useStepWizard } from '../../../../../hooks/useStepWizard';
+import { useBusinessTypes } from '../../../../../hooks/useBusinessTypes';
+import { useCustomEvent } from '../../../../../hooks/useCustomEvent';
+import { BusinessTypeRadioGroup } from './RadioGroup';
+
+import classNames from 'classnames';
 
 export const BusinessTypeSearch = () => {
 	const {
 		register,
 		setValue,
-		formState: {errors},
+		formState: { errors },
 	} = useFormContext();
+	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
+	const [helpTextClick, setHelpTextClick] = useState(false);
+	const { selectedStep } = useStepWizard();
 	const form = useWatch();
-	const {businessTypes, isError, isLoading, reload} = useBusinessTypes();
+	const { businessTypes, isError, isLoading, reload } = useBusinessTypes();
 
 	useEffect(() => {
 		onSearch(form?.basics?.businessSearch);
@@ -29,6 +37,28 @@ export const BusinessTypeSearch = () => {
 		[]
 	);
 
+	const showInfoPanel = () => {
+		setHelpTextClick(!helpTextClick);
+		dispatchEvent({
+			templateName: "i-am-unable-to-find-my-industry",
+			step: selectedStep,
+			hide: helpTextClick
+		})
+	}
+
+	const infoPanelButton = () => (
+		<button
+			type="button"
+			className={classNames("btn badge", {
+				"open": helpTextClick
+			})}
+			style={{ width: 'fit-content', marginTop: "-24px" }}
+			onClick={showInfoPanel}
+		>
+			I am unable to find my industry
+		</button>
+	);
+
 	const renderResults = () => {
 		if (isLoading || !form?.basics?.businessSearch) return;
 
@@ -36,13 +66,21 @@ export const BusinessTypeSearch = () => {
 
 		if (!businessTypes.length)
 			return (
-				<WarningBadge>
-					There are no results for “{form?.basics?.businessSearch}”.
-					Please try a different search.
-				</WarningBadge>
+				<>
+					<WarningBadge>
+						There are no results for “{form?.basics?.businessSearch}”.
+						Please try a different search.
+					</WarningBadge>
+					{infoPanelButton()}
+				</>
 			);
 
-		return <BusinessTypeRadioGroup businessTypes={businessTypes} />;
+		return (
+			<>
+				<BusinessTypeRadioGroup businessTypes={businessTypes} />
+				{infoPanelButton()}
+			</>
+		);
 	};
 
 	return (
@@ -61,7 +99,7 @@ export const BusinessTypeSearch = () => {
 					<button
 						type="button"
 						className="btn btn-primary"
-						style={{height: '3rem'}}
+						style={{ height: '3rem' }}
 						onClick={() => onSearch(form?.basics?.businessSearch)}
 					>
 						Search
