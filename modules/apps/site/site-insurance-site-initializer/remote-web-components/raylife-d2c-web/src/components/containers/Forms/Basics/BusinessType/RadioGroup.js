@@ -3,16 +3,11 @@ import React, {useEffect} from 'react';
 import {useFormContext, useWatch, Controller} from 'react-hook-form';
 import ClayIcon from '@clayui/icon';
 
-import {TIP_EVENT} from '../../../../../events';
 import {Radio} from '../../../../fragments/Forms/Radio';
 import {LiferayService} from '../../../../../services/liferay';
-import {useStepWizard} from '../../../../../hooks/useStepWizard';
-import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
 
 export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
-	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 	const {control, setValue} = useFormContext();
-	const {selectedStep} = useStepWizard();
 	const form = useWatch();
 
 	useEffect(() => {
@@ -67,20 +62,6 @@ export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
 					))
 				}
 			/>
-			<button
-				type="button"
-				className="btn badge"
-				style={{width: 'fit-content'}}
-				onClick={() =>
-					dispatchEvent({
-						templateName: 'i-am-unable-to-find-my-industry',
-						step: selectedStep,
-					})
-				}
-			>
-				I am unable to find my industry
-				<ClayIcon symbol="question-circle" />
-			</button>
 		</fieldset>
 	);
 };
