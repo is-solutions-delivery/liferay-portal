@@ -40,8 +40,15 @@
 	
 	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
 		#tip .title::before {
-			content: url(${titleIcon.getData()});
+			background-color: #98999B;
+			content: "";
+			display: inline-block;
+			height: 20px;
 			margin-right: 5px;
+			mask: url(${titleIcon.getData()}) no-repeat 50% 50%;
+			width: 20px;
+			-webkit-mask: url(${titleIcon.getData()}) no-repeat 50% 50%;
+			-webkit-mask-size: cover;
 		}
 	</#if>
 
