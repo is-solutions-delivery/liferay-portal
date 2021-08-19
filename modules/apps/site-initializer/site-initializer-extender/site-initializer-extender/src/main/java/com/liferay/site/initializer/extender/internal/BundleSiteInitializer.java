@@ -237,9 +237,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith("/")) {
-				long documentInternalFolderId = _addDocumentFolder(documentFolderId, groupId, resourcePath, user);
+				long documentInternalFolderId = _addDocumentFolder(documentFolderId, resourcePath, serviceContext);
 
-				_addDocuments(documentInternalFolderId, groupId, resourcePath, user);
+				_addDocuments(documentInternalFolderId, resourcePath, serviceContext);
 
 				continue;
 			}
@@ -290,12 +290,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private Long _addDocumentFolder(Long documentFolderId, long groupId, String resourcePath, User user) throws Exception {
+	private Long _addDocumentFolder(Long documentFolderId, String resourcePath, ServiceContext serviceContext) throws Exception {
 		DocumentFolderResource.Builder documentFolderResourceBuilder =
 			_documentFolderResourceFactory.create();
 
 		DocumentFolderResource documentFolderResource = documentFolderResourceBuilder.user(
-			user
+			serviceContext.fetchUser()
 		).build();
 
 		resourcePath = StringUtil.replaceLast(resourcePath, StringPool.FORWARD_SLASH, StringPool.BLANK);
@@ -317,7 +317,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		if (documentFolderId != null) {
 			documentFolder = documentFolderResource.postDocumentFolderDocumentFolder(documentFolderId, documentFolder);
 		} else {
-			documentFolder = documentFolderResource.postSiteDocumentFolder(groupId, documentFolder);
+			documentFolder = documentFolderResource.postSiteDocumentFolder(serviceContext.getScopeGroupId(), documentFolder);
 		}
 
 		return documentFolder.getId();
