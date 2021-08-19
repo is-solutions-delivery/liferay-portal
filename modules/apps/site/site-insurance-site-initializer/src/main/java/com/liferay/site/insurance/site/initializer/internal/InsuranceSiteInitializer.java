@@ -707,7 +707,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				user.getUserId(),
 				LocalizedMapUtil.getLocalizedMap("Raylife Application"),
-				"Raylife Application",
+				"RaylifeApplication",
 				LocalizedMapUtil.getLocalizedMap("Raylife Applications"),
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
