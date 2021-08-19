@@ -65,6 +65,8 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.util.LocalizedMapUtil;
+import com.liferay.object.util.ObjectFieldUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -704,20 +706,32 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				user.getUserId(),
-				Collections.singletonMap(
-					LocaleUtil.getSiteDefault(), "Raylife Application"),
-				"RaylifeApplication",
+				LocalizedMapUtil.getLocalizedMap("Raylife Application"),
+				"Raylife Application",
+				LocalizedMapUtil.getLocalizedMap("Raylife Applications"),
 				Arrays.asList(
-					_createObjectField("Address", "address", "String"),
-					_createObjectField("Address Apt","addressApt", "String"),
-					_createObjectField("City","city", "String"),
-					_createObjectField("Email","email", "String"),
-					_createObjectField("First Name","firstName", "String"),
-					_createObjectField("LastName","lastName", "String"),
-					_createObjectField("Phone","phone", "String"),
-					_createObjectField("State","state", "String"),
-					_createObjectField("Website","website", "String"),
-					_createObjectField("Zip","zip", "String")));
+					ObjectFieldUtil.createObjectField(
+						true, false, "Address", "address", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Address Apt", "addressApt", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "City", "city", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Email", "email", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "First Name", "firstName", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Last Name", "lastName", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Phone", "phone", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "State", "state", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Website", "website", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Zip", "zip", false, "String")));
 
 		ObjectDefinition objectDefinitionPublished =
 			_objectDefinitionLocalService.publishCustomObjectDefinition(
@@ -903,16 +917,17 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		objectField.setIndexed(indexed);
 		objectField.setIndexedAsKeyword(indexedAsKeyword);
 		objectField.setIndexedLanguageId(indexedLanguageId);
-		objectField.setLabelMap(Collections.singletonMap(
-			LocaleUtil.getSiteDefault(), label
-		));
+		objectField.setLabelMap(
+			Collections.singletonMap(LocaleUtil.getSiteDefault(), label));
 		objectField.setName(name);
 		objectField.setType(type);
 
 		return objectField;
 	}
 
-	private ObjectField _createObjectField(String label, String name, String type) {
+	private ObjectField _createObjectField(
+		String label, String name, String type) {
+
 		return _createObjectField(true, false, null, label, name, type);
 	}
 
