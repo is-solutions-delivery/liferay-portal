@@ -18,7 +18,6 @@
 	cursor: pointer;
 	font-size: 14px;
 	font-weight: 700;
-	margin-bottom: 20px;
 	padding: 7px 35px;
 	text-align: center;
 }
@@ -26,6 +25,7 @@
 .get-in-touch .btn-back-color {
 	border-color: #7D7E85;
 	color: #7D7E85;
+	margin-bottom: 20px;
 }
 
 .get-in-touch .btn-call-color {
