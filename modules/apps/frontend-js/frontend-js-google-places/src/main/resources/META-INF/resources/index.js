@@ -12,8 +12,8 @@
  * details.
  */
 
-import {loadScript} from './GooglePlaces';
-
 export default (googlePlacesAPIKey) => {
-	loadScript(googlePlacesAPIKey);
+	Liferay.Google = Liferay.Google || {};
+
+	Liferay.Google.PlacesAPIKey = googlePlacesAPIKey;
 };
