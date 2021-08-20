@@ -1,9 +1,10 @@
 $primary-dark: var(--btn-link-color, #295ccc);
-$primary-default: var(--primary, #4c85ff);
+$primary-default: var(--primary-raylife, #295CCC);
+$primary-default-light: var(--primary-light-raylife, #4C85FF);
 $primary-light: var(--gray-300, #e1ebff);
 
-$secondary-dark: var(--btn-secondary-color, #f4870b);
-$secondary-default: var(--secondary, #f69d37);
+$secondary-dark: var(--btn-secondary-raylife-color, #f4870b);
+$secondary-default: var(--secondary-raylife, #f69d37);
 
 $neutral-black: var(--black, #09101d);
 $neutral-darker: var(--dark, #2f313d);
