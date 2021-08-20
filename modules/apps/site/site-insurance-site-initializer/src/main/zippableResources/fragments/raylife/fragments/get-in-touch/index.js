@@ -1,27 +1,46 @@
-let   applicationId = "";
-let   auxCookie     = "";
-const decodedCookie = decodeURIComponent(document.cookie);
-const infoCookie 	= decodedCookie.split(';');
-const nameCookie 	= "raylife-application-id=";
-const btnBack       = fragmentElement.querySelector("#contact-agent-btn-back");
-const btnCall       = fragmentElement.querySelector("#contact-agent-btn-call");
-const valueCall     = fragmentElement.querySelector("#value-number-call").textContent;
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 
-btnBack.onclick = function(){
+const nameCookie = 'raylife-application-id';
+const btnBack = fragmentElement.querySelector('#contact-agent-btn-back');
+const btnCall = fragmentElement.querySelector('#contact-agent-btn-call');
+const valueCall = fragmentElement.querySelector('#value-number-call')
+	.textContent;
+
+btnBack.onclick = function () {
 	window.history.back();
-}
+};
 
-btnCall.onclick = function(){
+btnCall.onclick = function () {
 	window.location.href = 'tel:' + valueCall;
+};
+
+function getCookie(name) {
+	name = name + '=';
+	const decodedCookie = decodeURIComponent(document.cookie);
+	const cookies = decodedCookie.split(';');
+	for (let i = 0; i < cookies.length; i++) {
+		const cookie = cookies[i].trim();
+		if (cookie.indexOf(name) == 0) {
+			return cookie.substring(name.length, cookie.length);
+		}
+	}
 }
 
-for(let i = 0; i < infoCookie.length; i++) {
-	auxCookie = infoCookie[i];
-	while (auxCookie.charAt(0) == ' ') {
-		auxCookie = auxCookie.substring(1);
-	}
-	if (auxCookie.indexOf(nameCookie) == 0) {
-		applicationId = auxCookie.substring(nameCookie.length, auxCookie.length);
-		document.getElementById("content-agent-text-your-application").textContent = "Your Application #"+applicationId;
-	}
+const applicationIdCookie = getCookie(nameCookie);
+
+if (applicationIdCookie) {
+	document.getElementById('content-agent-text-your-application').textContent =
+		'Your Application #' + applicationIdCookie;
 }
