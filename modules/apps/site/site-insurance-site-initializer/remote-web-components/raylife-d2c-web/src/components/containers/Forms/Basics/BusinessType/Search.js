@@ -11,6 +11,8 @@ import { useBusinessTypes } from '../../../../../hooks/useBusinessTypes';
 import { useCustomEvent } from '../../../../../hooks/useCustomEvent';
 import { BusinessTypeRadioGroup } from './RadioGroup';
 
+import ClayIcon from '@clayui/icon';
+
 import classNames from 'classnames';
 
 export const BusinessTypeSearch = () => {
@@ -56,6 +58,7 @@ export const BusinessTypeSearch = () => {
 			onClick={showInfoPanel}
 		>
 			I am unable to find my industry
+			<ClayIcon symbol="question-circle" />
 		</button>
 	);
 
@@ -95,11 +98,11 @@ export const BusinessTypeSearch = () => {
 						required:
 							'Please, search for a business type in order to proceed.',
 					})}
+					className="search"
 				>
 					<button
 						type="button"
-						className="btn btn-primary"
-						style={{ height: '3rem' }}
+						className="btn btn-primary search"
 						onClick={() => onSearch(form?.basics?.businessSearch)}
 					>
 						Search

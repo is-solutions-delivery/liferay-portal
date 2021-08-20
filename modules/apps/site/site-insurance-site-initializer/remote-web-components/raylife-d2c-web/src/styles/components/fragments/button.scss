@@ -48,6 +48,10 @@
 	}
 }
 
+.btn.continue {
+	padding: 1rem 3rem;
+}
+
 .btn.btn-flat {
 	background: $background;
 	color: $neutral-default;
@@ -70,14 +74,18 @@
 	min-width: 4.4rem;
 	gap: 0.5rem;
 
-	font-size: 0.75rem;
+	font-size: 0.813rem;
 	text-transform: none;
 
 	background: $primary-light;
-	color: $primary-default;
-	fill: $primary-default;
+	color: $primary-default-light;
+	fill: $primary-default-light;
 
 	&:hover {
 		opacity: 0.8;
 	}
+}
+
+.btn.search {
+	padding: 1rem 1.125rem;
 }
