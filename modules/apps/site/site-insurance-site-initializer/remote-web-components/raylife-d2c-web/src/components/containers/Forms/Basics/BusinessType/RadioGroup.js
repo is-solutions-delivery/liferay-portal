@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
 import {useFormContext, useWatch, Controller} from 'react-hook-form';
-import ClayIcon from '@clayui/icon';
 
 import {Radio} from '../../../../fragments/Forms/Radio';
 import {LiferayService} from '../../../../../services/liferay';
