@@ -8,6 +8,7 @@
 		"@clayui/core": "^3.32.0",
 		"@clayui/css": "^3.33.1",
 		"@clayui/icon": "^3.32.0",
+		"@googlemaps/js-api-loader": "^1.12.2",
 		"@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
 		"@testing-library/jest-dom": "^5.11.4",
 		"@testing-library/react": "^11.1.0",
@@ -79,11 +80,11 @@
 		"workbox-webpack-plugin": "5.1.4"
 	},
 	"scripts": {
-	  "start": "node scripts/start.js",
-	  "build": "node scripts/build.js",
-	  "build:liferay": "yarn build && ./setup-liferay.sh",
-	  "serve:liferay": "yarn build:liferay && npx serve ./build",
-	  "mock": "json-server -p 3333 -d 200 ./mock/db.json --routes ./mock/routes.json"
+		"start": "node scripts/start.js",
+		"build": "node scripts/build.js",
+		"build:liferay": "yarn build && ./setup-liferay.sh",
+		"serve:liferay": "yarn build:liferay && npx serve ./build",
+		"mock": "json-server -p 3333 -d 200 ./mock/db.json --routes ./mock/routes.json"
 	},
 	"eslintConfig": {
 		"extends": [
