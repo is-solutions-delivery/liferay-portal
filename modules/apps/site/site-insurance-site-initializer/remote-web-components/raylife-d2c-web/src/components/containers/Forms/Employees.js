@@ -43,6 +43,16 @@ export const FormEmployees = () => {
 						rules={{
 							required: 'FEIN is required.',
 						}}
+						moreInfoProps={{
+							event: TIP_EVENT,
+							value: {
+								templateName:
+									'federal-employer-identification-number',
+								step: selectedStep,
+								inputName: setFormPath('fein'),
+								value: form?.employees?.fein,
+							},
+						}}
 						control={control}
 					/>
 				)}
@@ -71,7 +81,7 @@ export const FormEmployees = () => {
 					moreInfoProps={{
 						event: TIP_EVENT,
 						value: {
-							templateName: 'more-info-template',
+							templateName: 'full-or-part-time-employees',
 							step: selectedStep,
 							inputName: setFormPath('partTimeEmployees'),
 							value: form?.employees?.partTimeEmployees,
