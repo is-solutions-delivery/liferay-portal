@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import {App} from './App';
 import {Providers} from './Providers';
+import {GoogleMapsService} from './services/google-maps';
 import StylesProvider from './styles/provider.scss';
 
 const TAG_NAME = 'd2c-web';
@@ -10,6 +11,9 @@ const TAG_NAME = 'd2c-web';
 class WebComponent extends HTMLElement {
 	constructor() {
 		super();
+
+		GoogleMapsService.setup();
+
 		this.styleSass = document.createElement('style');
 		this.mountPoint = document.createElement('div');
 
