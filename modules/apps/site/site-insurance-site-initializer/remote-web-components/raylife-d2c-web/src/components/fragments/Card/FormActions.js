@@ -14,7 +14,7 @@ export const CardFormActions = ({
 			<div>
 				<button
 					type="submit"
-					className="btn btn-secondary"
+					className="btn btn-secondary continue"
 					onClick={onNext}
 					disabled={!isValid}
 				>
