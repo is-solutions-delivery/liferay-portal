@@ -4,7 +4,8 @@
   display: flex;
   flex-direction: column;
   gap: 3rem;
-  padding: 3rem;
+  padding: $card-padding;
+  width: 688px;
 
   & > .card-actions,
   & > .card-actions > div {
@@ -36,7 +37,7 @@
     .content-column {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 1rem;
       flex: 1;
     }
   }
