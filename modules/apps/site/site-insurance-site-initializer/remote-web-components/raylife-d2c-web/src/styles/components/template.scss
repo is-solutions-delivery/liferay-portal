@@ -1,17 +1,14 @@
 .template {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1;
-  gap: 3rem;
-  padding: 2rem;
+  padding: 2rem 0 2rem 2rem;
 
   .title-area {
-    margin-left: calc(200px + 5rem);
+    margin-left: $card-padding;
+    margin-bottom: 3rem;
   }
 
   .form-area {
-    display: grid;
-    grid-template-columns: 200px minmax(auto, 700px) auto;
-    gap: 2rem;
+    display: flex;
+    justify-content: space-between;
+    margin-right: 3rem;
   }
 }
