@@ -39,13 +39,12 @@ export const App = () => {
 
 	return (
 		<>
-			<h2 className="title title-area">{_renderTitle()}</h2>
 			<div className="form-area">
 				<Steps />
 				<form onSubmit={handleSubmit(onSubmit)}>
+					<h2 className="title title-area">{_renderTitle()}</h2>
 					<Forms />
 				</form>
-				<div className="info-area"></div>
 			</div>
 		</>
 	);
