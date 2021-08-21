@@ -51,14 +51,13 @@ export const BusinessTypeSearch = () => {
 	const infoPanelButton = () => (
 		<button
 			type="button"
-			className={classNames("btn badge", {
+			className={classNames("btn badge bottom-list", {
 				"open": helpTextClick
 			})}
-			style={{ width: 'fit-content', marginTop: "-24px" }}
 			onClick={showInfoPanel}
 		>
 			I am unable to find my industry
-			<ClayIcon symbol="question-circle" />
+			{ helpTextClick ? <ClayIcon symbol="question-circle-full" /> : <ClayIcon symbol="question-circle" /> }
 		</button>
 	);
 
@@ -88,7 +87,7 @@ export const BusinessTypeSearch = () => {
 
 	return (
 		<>
-			<div className="content-column">
+			<div>
 				<SearchInput
 					label="Search for your primary industry and then select it from the list."
 					defaultValue=""
