@@ -1,8 +1,10 @@
 <style>
 	#tip {
 		background-color: #F9F9F9;
+		border-radius: 8px;
+		margin-top: 134px;
 		padding: 24px;
-		width: auto;
+		width: 368px;
 	}
 
 	#tip.hide {
@@ -19,12 +21,7 @@
 		font-size: 16px;
 		font-weight: bold;
 	}
-	
-	#tip .dismiss_container {
-		display: flex;
-		margin-top: calc(540px - 500px)
-	}
-	
+
 	#tip #dismiss {
 		color: #7D7E85;
 		cursor: pointer;
@@ -87,7 +84,7 @@
 		</div>
 	</#if>
 	
-	<div class="dismiss_container d-flex justify-content-center">
+	<div class="d-flex justify-content-center">
 		<button type="button" id="dismiss" onclick="event.preventDefault(); document.getElementById('tip').classList.add('hide');">Dismiss</button>
 	</div>
 </div>
