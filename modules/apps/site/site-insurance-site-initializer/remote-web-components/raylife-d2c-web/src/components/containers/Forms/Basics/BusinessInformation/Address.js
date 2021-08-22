@@ -36,7 +36,7 @@ export const BusinessInformationAddress = () => {
         className="content-row"
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 35%",
+          gridTemplateColumns: "1fr 29.7%",
         }}
       >
         <ControlledInput
@@ -54,37 +54,41 @@ export const BusinessInformationAddress = () => {
           label="&nbsp;"
           placeholder="Apt/Suite (optional)"
         />
-      </div>
-      <div
-        className="content-row"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 15% 25%",
-        }}
-      >
-        <ControlledInput
-          name={setFormPath("city")}
-          label="City"
-          rules={{ required: "City is required." }}
-          control={control}
-        />
+        <div
+          className="content-row"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 25.2%",
+          }}
+        >
+          <ControlledInput
+            name={setFormPath("city")}
+            label="City"
+            rules={{ required: "City is required." }}
+            control={control}
+          />
 
-        <StatesControlledSelect
-          name={setFormPath("state")}
-          label="State"
-          control={control}
-          rules={{
-            required: "This field is required.",
-          }}
-        />
-        <ZIPControlledInput
-          name={setFormPath("zip")}
-          label="ZIP"
-          control={control}
-          rules={{
-            required: "ZIP is required.",
-          }}
-        />
+          <StatesControlledSelect
+            name={setFormPath("state")}
+            label="State"
+            control={control}
+            rules={{
+              required: "This field is required.",
+            }}
+          />
+        </div>
+        <div
+          className="content-row"
+        >
+          <ZIPControlledInput
+            name={setFormPath("zip")}
+            label="ZIP"
+            control={control}
+            rules={{
+              required: "ZIP is required.",
+            }}
+          />
+        </div>
       </div>
     </>
   );
