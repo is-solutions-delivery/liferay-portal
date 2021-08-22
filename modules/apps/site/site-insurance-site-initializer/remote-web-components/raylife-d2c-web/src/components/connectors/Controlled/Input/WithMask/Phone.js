@@ -18,7 +18,7 @@ export const PhoneControlledInput = ({
         },
         ...rules,
       }}
-      inputProps={{ format: "(###) ###-####", mask: "_", ...inputProps }}
+      inputProps={{ format: "(###) ###-####", mask: "_", ...inputProps, placeholder: "(___) ___-____", }}
     />
   );
 };
