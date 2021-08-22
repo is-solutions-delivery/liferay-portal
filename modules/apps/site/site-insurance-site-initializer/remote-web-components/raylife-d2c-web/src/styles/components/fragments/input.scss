@@ -1,6 +1,7 @@
 .input-area {
   display: flex;
   flex-direction: column;
+  position: relative;
   width: 100%;
 
   & > label {
@@ -71,4 +72,18 @@ input.search {
   font-size: 1.313rem;
   font-weight: 700;
   min-height: 3.5rem;
+}
+
+select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.select-icon {
+  position: absolute;
+  pointer-events: none;
+  bottom: 16px;
+  right: 16px;
+  fill: $neutral-default;
 }
