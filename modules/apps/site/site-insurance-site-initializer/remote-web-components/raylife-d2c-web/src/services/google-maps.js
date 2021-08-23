@@ -2,19 +2,19 @@
 import '../types';
 import {Loader} from '@googlemaps/js-api-loader';
 
+const {REACT_APP_GOOGLE_API = ''} = process.env;
+
 /**
  * @description Load google global variable asynchronously
  * @returns {void} Google Maps Autocomplete Instance
  */
 const setup = () => {
 	try {
-		if (!Liferay.Google.PlacesAPIKey)
-			throw new Error(
-				"Google api key is not defined inside Liferay's google places configuration"
-			);
+		if (!REACT_APP_GOOGLE_API)
+			throw new Error('Google api key is not defined inside .env');
 
 		const googleMapsLoader = new Loader({
-			apiKey: Liferay.Google.PlacesAPIKey,
+			apiKey: REACT_APP_GOOGLE_API,
 			libraries: ['places'],
 		});
 
