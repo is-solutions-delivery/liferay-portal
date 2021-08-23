@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 
 import {AVAILABLE_STEPS} from '../../../utils/constants';
@@ -21,6 +21,16 @@ export const FormProperty = () => {
 	} = useFormContext();
 
 	const goToPreviousForm = () => setSection(AVAILABLE_STEPS.EMPLOYEES);
+
+	const [selectedKey, setSelectedKey] = useState("");
+
+	const changeMoreInfoSelected = (inputName) => {
+		if (inputName === selectedKey) {
+			setSelectedKey("");
+		} else {
+			setSelectedKey(inputName);
+		}
+	}
 
 	return (
 		<div className="card">
@@ -60,6 +70,8 @@ export const FormProperty = () => {
 							),
 							value: form?.property?.buildingSquareFeetOccupied,
 						},
+						selected: setFormPath('buildingSquareFeetOccupied') === selectedKey,
+						callback: () => changeMoreInfoSelected(setFormPath('buildingSquareFeetOccupied'))
 					}}
 				/>
 				<SquareFeatControlledInput
@@ -91,6 +103,8 @@ export const FormProperty = () => {
 							inputName: setFormPath('isPrimaryBusinessLocation'),
 							value: form?.property?.isPrimaryBusinessLocation,
 						},
+						selected: setFormPath('isPrimaryBusinessLocation') === selectedKey,
+						callback: () => changeMoreInfoSelected(setFormPath('isPrimaryBusinessLocation'))
 					}}
 				/>
 			</div>

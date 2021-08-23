@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useFormContext, useWatch, Controller} from 'react-hook-form';
 
 import {Radio} from '../../../fragments/Forms/Radio';
@@ -22,6 +22,16 @@ export const FormBasicProductQuote = () => {
 
 	const goToPreviousForm = () =>
 		setSection(AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION);
+
+	const [selectedKey, setSelectedKey] = useState("");
+
+	const changeMoreInfoSelected = (inputName) => {
+		if (inputName === selectedKey) {
+			setSelectedKey("");
+		} else {
+			setSelectedKey(inputName);
+		}
+	}
 
 	return (
 		<div className="card">
@@ -56,6 +66,8 @@ export const FormBasicProductQuote = () => {
 													inputName: field.name,
 													value: quote.id,
 												}}
+												selected={quote.id === selectedKey}
+												callback={() => changeMoreInfoSelected(quote.id)}
 											/>
 										}
 									/>
