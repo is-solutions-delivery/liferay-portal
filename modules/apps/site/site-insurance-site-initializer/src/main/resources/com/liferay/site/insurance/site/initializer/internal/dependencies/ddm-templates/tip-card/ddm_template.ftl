@@ -50,9 +50,16 @@
 	</#if>
 
 	<#if externalLinkIcon.getData() ?? && externalLinkIcon.getData() != "">
-		.tip_container .external_link a::after {
-			content: url(${externalLinkIcon.getData()});
+		#tip .external_link a::after {
+			background-color: #4C85FF;
+			content: "";
+			display: inline-block;
+			height: 15px;
 			margin-left: 5px;
+			mask: url(${externalLinkIcon.getData()}) no-repeat 50% 50%;
+			width: 20px;
+			-webkit-mask: url(${externalLinkIcon.getData()}) no-repeat 50% 50%;
+			-webkit-mask-size: cover;
 		}
 	</#if>
 </style>
