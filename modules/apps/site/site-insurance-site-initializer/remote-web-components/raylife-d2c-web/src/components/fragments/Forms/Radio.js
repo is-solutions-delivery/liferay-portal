@@ -32,6 +32,13 @@ export const Radio = React.forwardRef(
           value={value}
           type="radio"
           className="radio"
+          onChange={() =>
+            props.onChange({
+              target: {
+                value,
+              },
+            })
+          }
         />
         <div className="content">
           <div className="content-header">
