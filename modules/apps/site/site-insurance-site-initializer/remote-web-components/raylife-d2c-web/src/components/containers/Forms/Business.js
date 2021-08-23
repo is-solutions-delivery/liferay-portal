@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 
 import {AVAILABLE_STEPS} from '../../../utils/constants';
@@ -31,6 +31,16 @@ export const FormBusiness = () => {
 
 	const goToNextForm = () => setSection(AVAILABLE_STEPS.EMPLOYEES);
 
+	const [selectedKey, setSelectedKey] = useState("");
+
+	const changeMoreInfoSelected = (inputName) => {
+		if (inputName === selectedKey) {
+			setSelectedKey("");
+		} else {
+			setSelectedKey(inputName);
+		}
+	}
+
 	return (
 		<div className="card">
 			<div className="card-content">
@@ -52,6 +62,8 @@ export const FormBusiness = () => {
 							inputName: setFormPath('yearsOfExperience'),
 							value: form?.business?.yearsOfExperience,
 						},
+						selected: setFormPath('yearsOfExperience') === selectedKey,
+						callback: () => changeMoreInfoSelected(setFormPath('yearsOfExperience'))
 					}}
 					control={control}
 				/>
@@ -97,6 +109,8 @@ export const FormBusiness = () => {
 								inputName: setFormPath('salesMerchandise'),
 								value: form?.business?.salesMerchandise,
 							},
+							selected: setFormPath('salesMerchandise') === selectedKey,
+							callback: () => changeMoreInfoSelected(setFormPath('salesMerchandise'))
 						}}
 						control={control}
 					/>
