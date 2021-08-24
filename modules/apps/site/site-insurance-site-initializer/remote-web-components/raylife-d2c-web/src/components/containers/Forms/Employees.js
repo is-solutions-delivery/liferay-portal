@@ -23,7 +23,9 @@ export const FormEmployees = () => {
 		formState: {isValid},
 	} = useFormContext();
 
-	const goToPreviousForm = () => setSection(AVAILABLE_STEPS.BUSINESS);
+	const goToPreviousForm = () => {
+		setSection(AVAILABLE_STEPS.BUSINESS);
+	};
 
 	const goToNextForm = () => setSection(AVAILABLE_STEPS.PROPERTY);
 
