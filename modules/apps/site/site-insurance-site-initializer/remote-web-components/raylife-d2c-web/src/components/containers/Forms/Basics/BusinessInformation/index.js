@@ -14,6 +14,7 @@ import {ControlledInput} from '../../../../connectors/Controlled/Input';
 import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
 import {TIP_EVENT} from '../../../../../events';
 import {WarningBadge} from '../../../../fragments/Badges/Warning';
+import Cookies from 'js-cookie';
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;
 
@@ -55,10 +56,12 @@ export const FormBasicBusinessInformation = () => {
 	const onSave = async () => {
 		try {
 			const response = await LiferayService.createOrUpdateBasicsApplication(
-				form.basics
+				form
 			);
 
 			setApplicationId(response.data.id);
+
+			Cookies.set('raylife-application-id', response.data.id);
 		} catch (error) {
 			setError('Unable to save your information. Please try again.');
 
