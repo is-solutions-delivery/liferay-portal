@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 
 import {AVAILABLE_STEPS} from '../../../utils/constants';
@@ -15,6 +15,7 @@ import {
 	validateOwnBrandLabel,
 	validatePercentSales,
 } from '../../../utils/businessFields';
+import useFormActions from '../../../hooks/useFormActions';
 
 const setFormPath = (value) => `business.${value}`;
 
@@ -23,23 +24,22 @@ export const FormBusiness = () => {
 		control,
 		formState: {isValid},
 	} = useFormContext();
-	const {selectedStep, setSection} = useStepWizard();
+	const {selectedStep} = useStepWizard();
+	const {onNext, onPrevious, onSave} = useFormActions(
+		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
+		AVAILABLE_STEPS.EMPLOYEES
+	);
 	const form = useWatch();
 
-	const goToPreviousForm = () =>
-		setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE);
-
-	const goToNextForm = () => setSection(AVAILABLE_STEPS.EMPLOYEES);
-
-	const [selectedKey, setSelectedKey] = useState("");
+	const [selectedKey, setSelectedKey] = useState('');
 
 	const changeMoreInfoSelected = (inputName) => {
 		if (inputName === selectedKey) {
-			setSelectedKey("");
+			setSelectedKey('');
 		} else {
 			setSelectedKey(inputName);
 		}
-	}
+	};
 
 	return (
 		<div className="card">
@@ -62,8 +62,12 @@ export const FormBusiness = () => {
 							inputName: setFormPath('yearsOfExperience'),
 							value: form?.business?.yearsOfExperience,
 						},
-						selected: setFormPath('yearsOfExperience') === selectedKey,
-						callback: () => changeMoreInfoSelected(setFormPath('yearsOfExperience'))
+						selected:
+							setFormPath('yearsOfExperience') === selectedKey,
+						callback: () =>
+							changeMoreInfoSelected(
+								setFormPath('yearsOfExperience')
+							),
 					}}
 					control={control}
 				/>
@@ -88,9 +92,7 @@ export const FormBusiness = () => {
 					}}
 					control={control}
 				/>
-				{validatePercentSales(
-					form?.basics?.properties?.naics
-				) && (
+				{validatePercentSales(form?.basics?.properties?.naics) && (
 					<PercentageControlledInput
 						name={setFormPath('salesMerchandise')}
 						label="Percent of sales from used merchandise?"
@@ -104,20 +106,23 @@ export const FormBusiness = () => {
 						moreInfoProps={{
 							event: TIP_EVENT,
 							value: {
-								templateName: 'percent-of-sales-from-used-merchandise',
+								templateName:
+									'percent-of-sales-from-used-merchandise',
 								step: selectedStep,
 								inputName: setFormPath('salesMerchandise'),
 								value: form?.business?.salesMerchandise,
 							},
-							selected: setFormPath('salesMerchandise') === selectedKey,
-							callback: () => changeMoreInfoSelected(setFormPath('salesMerchandise'))
+							selected:
+								setFormPath('salesMerchandise') === selectedKey,
+							callback: () =>
+								changeMoreInfoSelected(
+									setFormPath('salesMerchandise')
+								),
 						}}
 						control={control}
 					/>
 				)}
-				{validateOwnBrandLabel(
-					form?.basics?.properties?.naics
-				) && (
+				{validateOwnBrandLabel(form?.basics?.properties?.naics) && (
 					<ControlledSwitch
 						name={setFormPath('hasSellProductsUnderOwnBrand')}
 						label="Do you sell products under your own brand or label?"
@@ -141,9 +146,10 @@ export const FormBusiness = () => {
 				)}
 			</div>
 			<CardFormActionsWithSave
-				onPrevious={goToPreviousForm}
-				onNext={goToNextForm}
 				isValid={isValid}
+				onPrevious={onPrevious}
+				onSave={onSave}
+				onNext={onNext}
 			/>
 		</div>
 	);

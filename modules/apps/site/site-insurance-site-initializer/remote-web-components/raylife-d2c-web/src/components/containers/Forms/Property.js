@@ -11,64 +11,21 @@ import {useFormContext, useWatch} from 'react-hook-form';
 import {useStepWizard} from '../../../hooks/useStepWizard';
 import {YearControlledInput} from '../../connectors/Controlled/Input/WithMask/Year';
 
-import {LiferayService} from '../../../services/liferay';
+import useFormActions from '../../../hooks/useFormActions';
 
 const setFormPath = (value) => `property.${value}`;
 
 export const FormProperty = () => {
 	const form = useWatch();
-	const {selectedStep, setSection} = useStepWizard();
+	const {selectedStep} = useStepWizard();
 	const {
 		control,
 		formState: {isValid},
-		setError,
 	} = useFormContext();
 
-	const goToPreviousForm = () => {
-		console.log(form);
-
-		LiferayService.createOrUpdateRaylifeApplication(form)
-			.then(() => {
-				setSection(AVAILABLE_STEPS.EMPLOYEES);
-			})
-			.catch((erro) => {
-				setError('continueButton', {
-					type: 'manual',
-					message: `There was an error processing your request. Please try again.`,
-				});
-			});
-	};
-
-	const onSave = () => {
-		LiferayService.createOrUpdateRaylifeApplication(form)
-			.then(() => {
-				window.location.href = '/web/raylife';
-			})
-			.catch((erro) => {
-				setError('continueButton', {
-					type: 'manual',
-					message: `There was an error processing your request. Please try again.`,
-				});
-			});
-	};
-
-	/**
-	 * @state disabled for now
-	 * @param {*} data
-	 */
-	const onNext = () => {
-		console.log(form);
-		LiferayService.createOrUpdateRaylifeApplication(form)
-			.then(() => {
-				window.location.href = '/web/raylife/hang-tight';
-			})
-			.catch((erro) => {
-				setError('continueButton', {
-					type: 'manual',
-					message: `There was an error processing your request. Please try again.`,
-				});
-			});
-	};
+	const {onNext, onPrevious, onSave} = useFormActions(
+		AVAILABLE_STEPS.EMPLOYEES
+	);
 
 	const [selectedKey, setSelectedKey] = useState('');
 
@@ -203,7 +160,7 @@ export const FormProperty = () => {
 				)}
 			</div>
 			<CardFormActionsWithSave
-				onPrevious={goToPreviousForm}
+				onPrevious={onPrevious}
 				isValid={isValid}
 				onNext={onNext}
 				onSave={onSave}
