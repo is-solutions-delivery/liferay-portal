@@ -4,7 +4,6 @@ import {useWatch} from 'react-hook-form';
 import {Forms} from './components/containers/Forms';
 import {Steps} from './components/containers/Steps';
 import {useStepWizard} from './hooks/useStepWizard';
-import {useWatch} from 'react-hook-form';
 import React from 'react';
 
 export const App = () => {
@@ -29,11 +28,15 @@ export const App = () => {
 	};
 
 	return (
-		<div className="form-area">
-			<Steps />
-			<h2 className="title title-area">{_renderTitle()}</h2>
-			<Forms />
-			<div className="info-area"></div>
-		</div>
+		<>
+			<div className="form-area">
+				<Steps />
+				<div>
+					<h2 className="title title-area">{_renderTitle()}</h2>
+					<Forms />
+				</div>
+				<div className="info-area"></div>
+			</div>
+		</>
 	);
 };
