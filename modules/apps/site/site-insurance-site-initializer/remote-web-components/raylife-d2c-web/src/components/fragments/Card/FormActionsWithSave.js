@@ -23,16 +23,7 @@ export const CardFormActionsWithSave = ({
 					className="btn btn-flat"
 					onClick={onPrevious}
 				>
-					Save & Exit
-				</button>
-				<button
-					type="submit"
-					className="btn btn-secondary continue"
-					onClick={onNext}
-					disabled={!isValid}
-				>
-					Continue
-					<ClayIcon symbol="angle-right" />
+					Previous
 				</button>
 				<div>
 					<button
@@ -43,8 +34,8 @@ export const CardFormActionsWithSave = ({
 						Save & Exit
 					</button>
 					<button
-						type="button"
-						className="btn btn-secondary"
+						type="submit"
+						className="btn btn-secondary continue"
 						onClick={onNext}
 						disabled={!isValid}
 					>
