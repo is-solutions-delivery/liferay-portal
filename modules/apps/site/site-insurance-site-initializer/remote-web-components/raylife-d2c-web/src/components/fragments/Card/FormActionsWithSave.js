@@ -34,24 +34,6 @@ export const CardFormActionsWithSave = ({
 					Continue
 					<ClayIcon symbol="angle-right" />
 				</button>
-				<div>
-					<button
-						type="button"
-						className="btn btn-outline"
-						onClick={onSave}
-					>
-						Save & Exit
-					</button>
-					<button
-						type="button"
-						className="btn btn-secondary"
-						onClick={onNext}
-						disabled={!isValid}
-					>
-						Continue
-						<ClayIcon symbol="angle-right" />
-					</button>
-				</div>
 			</div>
 		</>
 	);
