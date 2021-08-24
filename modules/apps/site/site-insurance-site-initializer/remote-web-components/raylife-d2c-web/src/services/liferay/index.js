@@ -10,14 +10,17 @@ const {
 } = process.env;
 
 /**
- * @param {BasicsForm}  data Basics form object
+ * @param {DataForm}  data Basics form object
  * @returns {Promise<any>}  Status code
  */
 const createOrUpdateBasicsApplication = async (data) => {
-	const payload = LiferayAdapt.adaptToBasicsFormApplicationRequest(data);
+	const payload = LiferayAdapt.adaptToFormApplicationRequest(data);
 
-	if (data.applicationId) {
-		return _patchBasicsFormApplication(payload, data.applicationId);
+	if (data?.basics?.applicationId) {
+		return _patchBasicsFormApplication(
+			payload,
+			data?.basics?.applicationId
+		);
 	}
 
 	return _postBasicsFormApplication(payload);
@@ -48,6 +51,7 @@ const getBusinessTypes = async (filter = '') => {
  */
 const getProductQuotes = async (categoryId) => {
 	const products = await _getProductsByCategoryId(categoryId);
+
 	const productQuotes = LiferayAdapt.adaptToProductQuote(products.items);
 
 	return productQuotes;
