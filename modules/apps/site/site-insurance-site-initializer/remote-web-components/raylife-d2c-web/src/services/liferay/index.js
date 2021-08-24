@@ -13,7 +13,7 @@ const {
  * @param {DataForm}  data Basics form object
  * @returns {Promise<any>}  Status code
  */
-const createOrUpdateBasicsApplication = async (data) => {
+const createOrUpdateRaylifeApplication = async (data) => {
 	const payload = LiferayAdapt.adaptToFormApplicationRequest(data);
 
 	if (data?.basics?.applicationId) {
@@ -166,7 +166,7 @@ const LiferayAPI = Axios.create({
 
 export const LiferayService = {
 	LiferayAPI,
-	createOrUpdateBasicsApplication,
+	createOrUpdateRaylifeApplication,
 	getBusinessTypes,
 	getProductQuotes,
 	getLiferayAuthenticationToken,
