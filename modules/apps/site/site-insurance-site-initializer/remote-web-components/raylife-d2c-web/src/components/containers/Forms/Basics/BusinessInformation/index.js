@@ -12,9 +12,8 @@ import {WebsiteControlledInput} from '../../../../connectors/Controlled/Input/We
 import {PhoneControlledInput} from '../../../../connectors/Controlled/Input/WithMask/Phone';
 import {ControlledInput} from '../../../../connectors/Controlled/Input';
 import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
+import useFormButtons from '../../../../../hooks/useFormButtons';
 import {TIP_EVENT} from '../../../../../events';
-import {WarningBadge} from '../../../../fragments/Badges/Warning';
-import Cookies from 'js-cookie';
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;
 
@@ -24,6 +23,12 @@ export const FormBasicBusinessInformation = () => {
 	const [error, setError] = useState('');
 	const {selectedStep, setSection} = useStepWizard();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
+	const {onPrevious, onSave, onNext} = useFormButtons(
+		AVAILABLE_STEPS.BASICS_BUSINESS_TYPE,
+		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
+		'Unable to save your information. Please try again.'
+	);
+
 	const {
 		control,
 		formState: {isValid},
@@ -39,53 +44,6 @@ export const FormBasicBusinessInformation = () => {
 			templateName: 'hi-template',
 		});
 	}, []);
-
-	/**
-	 * @description When the application is created, we set the value to Form Context
-	 * We tried to use setValue directly on goToPrevious and goToNextForm
-	 * and for reasons unknowns, the section is not called.
-	 */
-
-	useEffect(() => {
-		if (applicationId) {
-			setValue('basics.applicationId', applicationId);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [applicationId]);
-
-	const onSave = async () => {
-		try {
-			const response = await LiferayService.createOrUpdateBasicsApplication(
-				form
-			);
-
-			setApplicationId(response.data.id);
-
-			Cookies.set('raylife-application-id', response.data.id);
-		} catch (error) {
-			setError('Unable to save your information. Please try again.');
-
-			throw error;
-		}
-	};
-
-	const goToPreviousForm = async () => {
-		try {
-			if (form.basics?.businessInformation?.business?.email) {
-				await onSave();
-			}
-		} catch (error) {
-			console.warn(error);
-		} finally {
-			setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE);
-		}
-	};
-
-	const goToNextForm = async () => {
-		await onSave();
-
-		setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE);
-	};
 
 	return (
 		<div className="card">
@@ -152,11 +110,10 @@ export const FormBasicBusinessInformation = () => {
 				/>
 				<BusinessInformationAddress />
 			</div>
-			{error && <WarningBadge>{error}</WarningBadge>}
 			<CardFormActionsWithSave
 				isValid={isValid}
-				onNext={goToNextForm}
-				onPrevious={goToPreviousForm}
+				onNext={onNext}
+				onPrevious={onPrevious}
 				onSave={onSave}
 			/>
 		</div>

@@ -1,4 +1,6 @@
 import {AVAILABLE_STEPS} from './utils/constants';
+import {useWatch} from 'react-hook-form';
+
 import {Forms} from './components/containers/Forms';
 import {Steps} from './components/containers/Steps';
 import {useStepWizard} from './hooks/useStepWizard';

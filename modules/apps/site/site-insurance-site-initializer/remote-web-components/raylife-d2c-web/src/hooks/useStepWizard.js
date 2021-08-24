@@ -7,6 +7,7 @@ import { AppContext } from "../context/AppContext";
 import { TIP_EVENT } from "../events";
 import { calculatePercentage, countCompletedFields } from "../utils";
 import { businessTotalFields } from "../utils/businessFields";
+import { propertyTotalFields } from "../utils/propertyFields";
 import { AVAILABLE_STEPS, TOTAL_OF_FIELD } from "../utils/constants";
 import { useCustomEvent } from "./useCustomEvent";
 
@@ -55,7 +56,7 @@ export const useStepWizard = () => {
         return setPercentage(
           calculatePercentage(
             countCompletedFields(form?.property || {}),
-            TOTAL_OF_FIELD.PROPERTY
+            propertyTotalFields(form)
           )
         );
 
