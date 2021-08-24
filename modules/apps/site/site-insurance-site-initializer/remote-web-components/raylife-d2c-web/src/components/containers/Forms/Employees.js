@@ -10,6 +10,7 @@ import {NumberControlledInput} from '../../connectors/Controlled/Input/Number';
 import {FEINControlledInput} from '../../connectors/Controlled/Input/WithMask/FEIN';
 import {YearControlledInput} from '../../connectors/Controlled/Input/WithMask/Year';
 import {CurrencyControlledInput} from '../../connectors/Controlled/Input/WithMask/Currency';
+import useFormActions from '../../../hooks/useFormActions';
 
 const setFormPath = (value) => `employees.${value}`;
 
@@ -17,17 +18,16 @@ const hasFein = (value) => value === 'true';
 
 export const FormEmployees = () => {
 	const form = useWatch();
-	const {selectedStep, setSection} = useStepWizard();
+	const {selectedStep} = useStepWizard();
 	const {
 		control,
 		formState: {isValid},
 	} = useFormContext();
 
-	const goToPreviousForm = () => {
-		setSection(AVAILABLE_STEPS.BUSINESS);
-	};
-
-	const goToNextForm = () => setSection(AVAILABLE_STEPS.PROPERTY);
+	const {onNext, onPrevious, onSave} = useFormActions(
+		AVAILABLE_STEPS.BUSINESS,
+		AVAILABLE_STEPS.PROPERTY
+	);
 
 	const [selectedKey, setSelectedKey] = useState("");
 
@@ -125,9 +125,10 @@ export const FormEmployees = () => {
 				/>
 			</div>
 			<CardFormActionsWithSave
-				onPrevious={goToPreviousForm}
-				onNext={goToNextForm}
 				isValid={isValid}
+				onPrevious={onPrevious}
+				onNext={onNext}
+				onSave={onSave}
 			/>
 		</div>
 	);

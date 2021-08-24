@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {useFormContext, useWatch, Controller} from 'react-hook-form';
 
 import {Radio} from '../../../fragments/Forms/Radio';
@@ -8,6 +8,7 @@ import {useProductQuotes} from '../../../../hooks/useProductQuotes';
 import {MoreInfoButton} from '../../../fragments/Buttons/MoreInfo';
 import {TIP_EVENT} from '../../../../events';
 import {CardFormActions} from '../../../fragments/Card/FormActions';
+import useFormActions from '../../../../hooks/useFormActions';
 
 export const FormBasicProductQuote = () => {
 	const {
@@ -15,23 +16,22 @@ export const FormBasicProductQuote = () => {
 		formState: {isValid},
 	} = useFormContext();
 	const form = useWatch();
-	const {selectedStep, setSection} = useStepWizard();
+	const {selectedStep} = useStepWizard();
 	const {productQuotes} = useProductQuotes();
+	const {onPrevious, onNext, onSave} = useFormActions(
+		AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION,
+		AVAILABLE_STEPS.BUSINESS
+	);
 
-	const goToNextForm = () => setSection(AVAILABLE_STEPS.BUSINESS);
-
-	const goToPreviousForm = () =>
-		setSection(AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION);
-
-	const [selectedKey, setSelectedKey] = useState("");
+	const [selectedKey, setSelectedKey] = useState('');
 
 	const changeMoreInfoSelected = (inputName) => {
 		if (inputName === selectedKey) {
-			setSelectedKey("");
+			setSelectedKey('');
 		} else {
 			setSelectedKey(inputName);
 		}
-	}
+	};
 
 	return (
 		<div className="card">
@@ -58,17 +58,26 @@ export const FormBasicProductQuote = () => {
 											form.basics.productQuote
 										}
 										renderActions={
-											quote.template.allowed && <MoreInfoButton
-												event={TIP_EVENT}
-												value={{
-													templateName: quote.template.name,
-													step: selectedStep,
-													inputName: field.name,
-													value: quote.id,
-												}}
-												selected={quote.id === selectedKey}
-												callback={() => changeMoreInfoSelected(quote.id)}
-											/>
+											quote.template.allowed && (
+												<MoreInfoButton
+													event={TIP_EVENT}
+													value={{
+														templateName:
+															quote.template.name,
+														step: selectedStep,
+														inputName: field.name,
+														value: quote.id,
+													}}
+													selected={
+														quote.id === selectedKey
+													}
+													callback={() =>
+														changeMoreInfoSelected(
+															quote.id
+														)
+													}
+												/>
+											)
 										}
 									/>
 								))
@@ -78,9 +87,10 @@ export const FormBasicProductQuote = () => {
 				</div>
 			</div>
 			<CardFormActions
-				onPrevious={goToPreviousForm}
-				onNext={goToNextForm}
 				isValid={isValid}
+				onPrevious={onPrevious}
+				onNext={onNext}
+				onSave={onSave}
 			/>
 		</div>
 	);

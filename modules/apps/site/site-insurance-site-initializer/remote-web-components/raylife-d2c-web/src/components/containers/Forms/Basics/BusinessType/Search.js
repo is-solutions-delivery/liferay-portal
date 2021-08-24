@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useFormContext, useWatch} from 'react-hook-form';
 import useDebounce from 'lodash.debounce';
 
-import { TIP_EVENT } from '../../../../../events';
-import { WarningBadge } from '../../../../fragments/Badges/Warning';
-import { SearchInput } from '../../../../fragments/Forms/Input/Search';
-import { useStepWizard } from '../../../../../hooks/useStepWizard';
-import { useBusinessTypes } from '../../../../../hooks/useBusinessTypes';
-import { useCustomEvent } from '../../../../../hooks/useCustomEvent';
-import { BusinessTypeRadioGroup } from './RadioGroup';
+import {TIP_EVENT} from '../../../../../events';
+import {WarningBadge} from '../../../../fragments/Badges/Warning';
+import {SearchInput} from '../../../../fragments/Forms/Input/Search';
+import {useStepWizard} from '../../../../../hooks/useStepWizard';
+import {useBusinessTypes} from '../../../../../hooks/useBusinessTypes';
+import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
+import {BusinessTypeRadioGroup} from './RadioGroup';
 
 import ClayIcon from '@clayui/icon';
 
@@ -19,13 +19,13 @@ export const BusinessTypeSearch = () => {
 	const {
 		register,
 		setValue,
-		formState: { errors },
+		formState: {errors},
 	} = useFormContext();
+	const form = useWatch();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 	const [helpTextClick, setHelpTextClick] = useState(false);
-	const { selectedStep } = useStepWizard();
-	const form = useWatch();
-	const { businessTypes, isError, isLoading, reload } = useBusinessTypes();
+	const {selectedStep} = useStepWizard();
+	const {businessTypes, isError, isLoading, reload} = useBusinessTypes();
 
 	useEffect(() => {
 		onSearch(form?.basics?.businessSearch);
@@ -42,22 +42,26 @@ export const BusinessTypeSearch = () => {
 	const showInfoPanel = () => {
 		setHelpTextClick(!helpTextClick);
 		dispatchEvent({
-			templateName: "i-am-unable-to-find-my-industry",
+			templateName: 'i-am-unable-to-find-my-industry',
 			step: selectedStep,
-			hide: helpTextClick
-		})
-	}
+			hide: helpTextClick,
+		});
+	};
 
 	const infoPanelButton = () => (
 		<button
 			type="button"
-			className={classNames("btn badge bottom-list", {
-				"open": helpTextClick
+			className={classNames('btn badge bottom-list', {
+				open: helpTextClick,
 			})}
 			onClick={showInfoPanel}
 		>
 			I am unable to find my industry
-			{ helpTextClick ? <ClayIcon symbol="question-circle-full" /> : <ClayIcon symbol="question-circle" /> }
+			{helpTextClick ? (
+				<ClayIcon symbol="question-circle-full" />
+			) : (
+				<ClayIcon symbol="question-circle" />
+			)}
 		</button>
 	);
 
@@ -70,8 +74,8 @@ export const BusinessTypeSearch = () => {
 			return (
 				<>
 					<WarningBadge>
-						There are no results for “{form?.basics?.businessSearch}”.
-						Please try a different search.
+						There are no results for “{form?.basics?.businessSearch}
+						”. Please try a different search.
 					</WarningBadge>
 					{infoPanelButton()}
 				</>

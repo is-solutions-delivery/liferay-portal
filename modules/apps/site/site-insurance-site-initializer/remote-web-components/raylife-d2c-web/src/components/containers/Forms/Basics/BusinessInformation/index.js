@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
 
 import {BusinessInformationAddress} from './Address';
 import {AVAILABLE_STEPS} from '../../../../../utils/constants';
-import {LiferayService} from '../../../../../services/liferay';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {CardFormActionsWithSave} from '../../../../fragments/Card/FormActionsWithSave';
 import {EmailControlledInput} from '../../../../connectors/Controlled/Input/Email';
@@ -12,18 +11,16 @@ import {WebsiteControlledInput} from '../../../../connectors/Controlled/Input/We
 import {PhoneControlledInput} from '../../../../connectors/Controlled/Input/WithMask/Phone';
 import {ControlledInput} from '../../../../connectors/Controlled/Input';
 import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
-import useFormButtons from '../../../../../hooks/useFormButtons';
+import useFormActions from '../../../../../hooks/useFormActions';
 import {TIP_EVENT} from '../../../../../events';
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;
 
 export const FormBasicBusinessInformation = () => {
 	const form = useWatch();
-	const [applicationId, setApplicationId] = useState('');
-	const [error, setError] = useState('');
-	const {selectedStep, setSection} = useStepWizard();
+	const {selectedStep} = useStepWizard();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
-	const {onPrevious, onSave, onNext} = useFormButtons(
+	const {onPrevious, onSave, onNext} = useFormActions(
 		AVAILABLE_STEPS.BASICS_BUSINESS_TYPE,
 		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
 		'Unable to save your information. Please try again.'
@@ -32,10 +29,27 @@ export const FormBasicBusinessInformation = () => {
 	const {
 		control,
 		formState: {isValid},
-		setValue,
 	} = useFormContext();
 
+	const onFirstNameSettled = () => {
+		dispatchEvent({
+			templateName: 'hi-template',
+			step: selectedStep,
+			inputName: setFormPath('firstName'),
+			value: form?.basics?.businessInformation?.firstName,
+			templateData: {
+				firstName: ` ${
+					form?.basics?.businessInformation?.firstName?.trim() || ''
+				}! 👋`,
+			},
+		});
+	};
+
 	useEffect(() => {
+		if (form?.basics?.businessInformation?.firstName) {
+			return onFirstNameSettled();
+		}
+
 		dispatchEvent({
 			step: selectedStep,
 			templateData: {
@@ -54,21 +68,7 @@ export const FormBasicBusinessInformation = () => {
 						label="First Name"
 						inputProps={{
 							maxLength: 256,
-							onBlur: () =>
-								dispatchEvent({
-									templateName: 'hi-template',
-									step: selectedStep,
-									inputName: setFormPath('firstName'),
-									value:
-										form?.basics?.businessInformation
-											?.firstName,
-									templateData: {
-										firstName: ` ${
-											form?.basics?.businessInformation?.firstName?.trim() ||
-											''
-										}! 👋`,
-									},
-								}),
+							onBlur: onFirstNameSettled,
 						}}
 						name={setFormPath('firstName')}
 						rules={{
