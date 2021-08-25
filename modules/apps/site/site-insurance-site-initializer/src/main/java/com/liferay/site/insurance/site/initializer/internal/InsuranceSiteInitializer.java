@@ -1432,7 +1432,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		_layoutSetLocalService.updateLookAndFeel(
 			_serviceContext.getScopeGroupId(), privateLayoutSet,
-			_SOLUTION_THEME_ID, layoutSet.getColorSchemeId(),
+			_DIALECT_THEME_ID, layoutSet.getColorSchemeId(),
 			_read("/layout-set/" + type + "/css.css"));
 
 		URL logoURL = _bundle.getEntry(
@@ -1486,7 +1486,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		layout = _layoutLocalService.updateLookAndFeel(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			_SOLUTION_THEME_ID, colorSchemeName, css);
+			_DIALECT_THEME_ID, colorSchemeName, css);
 
 		JSONObject masterPageJSONObject = settingsJSONObject.getJSONObject(
 			"masterPage");
@@ -1567,15 +1567,14 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			role.getRoleId(), "VIEW_PRICE");
 	}
 
+	private static final String _DIALECT_THEME_ID = "dialect_WAR_dialecttheme";
+
 	private static final String _PATH =
 		"com/liferay/site/insurance/site/initializer/internal/dependencies";
 
 	private static final String[] _REPLACEABLE_TOKEN_FILE_EXTENSION = {
 		".ftl", ".json", ".xml"
 	};
-
-	private static final String _SOLUTION_THEME_ID =
-		"solution_WAR_solutiontheme";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		InsuranceSiteInitializer.class);
