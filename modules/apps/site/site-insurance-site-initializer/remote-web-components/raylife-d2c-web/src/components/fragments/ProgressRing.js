@@ -3,10 +3,10 @@ import {calculateCircumference, calculateOffset} from '../../utils';
 
 export const ProgressRing = ({
 	className,
-	strokeColor = '#4C85FF',
-	strokeWidth = 2,
 	diameter = 24,
 	percent = 0,
+	strokeColor = '#4C85FF',
+	strokeWidth = 2,
 }) => {
 	const radius = diameter / 2;
 	const normalizedRadius = radius - strokeWidth * 2;
@@ -16,13 +16,13 @@ export const ProgressRing = ({
 		<svg className={className} width={diameter} height={diameter}>
 			<circle
 				className="progress"
+				cx={center}
+				cy={center}
 				fill="transparent"
+				r={normalizedRadius}
 				stroke={strokeColor}
 				strokeWidth={strokeWidth}
 				strokeLinecap="round"
-				r={normalizedRadius}
-				cx={center}
-				cy={center}
 				style={{
 					strokeDasharray: `${calculateCircumference(
 						normalizedRadius
