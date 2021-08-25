@@ -14,6 +14,7 @@
 
 package com.liferay.site.insurance.site.initializer.internal;
 
+import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalService;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetCategoryConstants;
@@ -60,6 +61,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -707,8 +709,10 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				user.getUserId(),
 				LocalizedMapUtil.getLocalizedMap("Raylife Application"),
-				"RaylifeApplication",
+				"RaylifeApplication", "100",
+				PanelCategoryKeys.CONTROL_PANEL_SITES,
 				LocalizedMapUtil.getLocalizedMap("Raylife Applications"),
+				ObjectDefinitionConstants.SCOPE_COMPANY,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						true, false, "Address", "address", false, "String"),
