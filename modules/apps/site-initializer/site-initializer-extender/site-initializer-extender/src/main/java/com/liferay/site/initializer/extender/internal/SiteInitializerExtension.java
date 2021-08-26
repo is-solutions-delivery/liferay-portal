@@ -14,10 +14,13 @@
 
 package com.liferay.site.initializer.extender.internal;
 
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.util.DLURLHelper;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
+import com.liferay.external.reference.service.ERAssetCategoryLocalService;
 import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
@@ -27,6 +30,8 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
@@ -46,19 +51,24 @@ import org.osgi.framework.BundleContext;
 public class SiteInitializerExtension {
 
 	public SiteInitializerExtension(
-		Bundle bundle, BundleContext bundleContext,
+		AssetCategoryLocalService assetCategoryLocalService,
+		AssetVocabularyLocalService assetVocabularyLocalService, Bundle bundle,
+		BundleContext bundleContext,
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
 		DLURLHelper dlURLHelper,
 		DocumentFolderResource.Factory documentFolderResourceFactory,
 		DocumentResource.Factory documentResourceFactory,
+		ERAssetCategoryLocalService erAssetCategoryLocalService,
 		FragmentsImporter fragmentsImporter,
 		GroupLocalService groupLocalService,
 		JournalArticleLocalService journalArticleLocalService,
 		JSONFactory jsonFactory,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		Portal portal,
+		ResourcePermissionLocalService resourcePermissionLocalService,
+		RoleLocalService roleLocalService,
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
@@ -71,12 +81,16 @@ public class SiteInitializerExtension {
 
 		_component.setImplementation(
 			new SiteInitializerRegistrar(
-				bundle, bundleContext, ddmStructureLocalService,
-				ddmTemplateLocalService, defaultDDMStructureHelper, dlURLHelper,
-				documentFolderResourceFactory, documentResourceFactory,
-				fragmentsImporter, journalArticleLocalService,
-				groupLocalService, jsonFactory, objectDefinitionResourceFactory,
-				portal, structuredContentFolderResourceFactory,
+				assetCategoryLocalService, assetVocabularyLocalService, bundle,
+				bundleContext, ddmStructureLocalService,
+				ddmTemplateLocalService, defaultDDMStructureHelper,
+				dlURLHelper,
+				documentFolderResourceFactory,
+				documentResourceFactory, erAssetCategoryLocalService,
+				fragmentsImporter, groupLocalService, 
+				journalArticleLocalService, jsonFactory,
+				objectDefinitionResourceFactory, portal,
+				resourcePermissionLocalService, roleLocalService,
 				styleBookEntryZipProcessor, taxonomyVocabularyResourceFactory,
 				userLocalService));
 

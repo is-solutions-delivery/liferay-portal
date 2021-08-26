@@ -16,13 +16,19 @@ package com.liferay.site.initializer.extender.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetCategoryConstants;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.util.DLURLHelper;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
+import com.liferay.external.reference.service.ERAssetCategoryLocalService;
 import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyVocabulary;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
@@ -38,7 +44,9 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -46,13 +54,17 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -62,6 +74,7 @@ import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.site.exception.InitializationException;
@@ -93,24 +106,31 @@ import org.osgi.framework.wiring.BundleWiring;
 public class BundleSiteInitializer implements SiteInitializer {
 
 	public BundleSiteInitializer(
-		Bundle bundle, DDMStructureLocalService ddmStructureLocalService,
+		AssetCategoryLocalService assetCategoryLocalService,
+		AssetVocabularyLocalService assetVocabularyLocalService, Bundle bundle,
+		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
 		DLURLHelper dlURLHelper,
 		DocumentFolderResource.Factory documentFolderResourceFactory,
 		DocumentResource.Factory documentResourceFactory,
+		ERAssetCategoryLocalService erAssetCategoryLocalService,
 		FragmentsImporter fragmentsImporter,
 		GroupLocalService groupLocalService,
 		JournalArticleLocalService journalArticleLocalService,
 		JSONFactory jsonFactory,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
-		Portal portal, ServletContext servletContext,
+		Portal portal,
+		ResourcePermissionLocalService resourcePermissionLocalService,
+		RoleLocalService roleLocalService, ServletContext servletContext,
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
 		TaxonomyVocabularyResource.Factory taxonomyVocabularyResourceFactory,
 		UserLocalService userLocalService) {
 
+		_assetCategoryLocalService = assetCategoryLocalService;
+		_assetVocabularyLocalService = assetVocabularyLocalService;
 		_bundle = bundle;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
@@ -118,12 +138,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_dlURLHelper = dlURLHelper;
 		_documentFolderResourceFactory = documentFolderResourceFactory;
 		_documentResourceFactory = documentResourceFactory;
+		_erAssetCategoryLocalService = erAssetCategoryLocalService;
 		_fragmentsImporter = fragmentsImporter;
 		_groupLocalService = groupLocalService;
 		_journalArticleLocalService = journalArticleLocalService;
 		_jsonFactory = jsonFactory;
 		_objectDefinitionResourceFactory = objectDefinitionResourceFactory;
 		_portal = portal;
+		_resourcePermissionLocalService = resourcePermissionLocalService;
+		_roleLocalService = roleLocalService;
 		_servletContext = servletContext;
 		_structuredContentFolderResourceFactory =
 			structuredContentFolderResourceFactory;
@@ -196,6 +219,154 @@ public class BundleSiteInitializer implements SiteInitializer {
 	@Override
 	public boolean isActive(long companyId) {
 		return true;
+	}
+
+	private void _addAssetCategories(
+			long groupId, long vocabularyId, String parentResourcePath,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+			_read(parentResourcePath + "asset-categories.json"));
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			String titleCategory = null;
+			String externalReferenceCodeCategory = null;
+			JSONArray subcategoriesJSONArray = null;
+
+			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
+
+			if (categoryJSONObject != null) {
+				titleCategory = categoryJSONObject.getString("title");
+
+				externalReferenceCodeCategory = categoryJSONObject.getString(
+					"externalReferenceCode");
+
+				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
+					"subcategories");
+			}
+			else {
+				titleCategory = jsonArray.getString(i);
+			}
+
+			AssetCategory assetCategory = _addAssetCategory(
+				vocabularyId, new String[0], null,
+				externalReferenceCodeCategory, groupId,
+				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
+				serviceContext, titleCategory);
+
+			if (categoryJSONObject == null) {
+				continue;
+			}
+
+			JSONArray permissionsJSONArray = categoryJSONObject.getJSONArray(
+				"permissions");
+
+			if ((permissionsJSONArray != null) &&
+				(permissionsJSONArray.length() > 0)) {
+
+				_updatePermissions(
+					assetCategory.getCompanyId(),
+					assetCategory.getModelClassName(),
+					String.valueOf(assetCategory.getCategoryId()),
+					permissionsJSONArray);
+			}
+
+			if (subcategoriesJSONArray != null) {
+				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
+					JSONObject subcategoryJSONObject =
+						subcategoriesJSONArray.getJSONObject(y);
+
+					String descriptionSubcategory =
+						subcategoryJSONObject.getString("description");
+
+					String titleSubcategory = subcategoryJSONObject.getString(
+						"title");
+
+					String externalReferenceCodeSubcategory =
+						subcategoryJSONObject.getString(
+							"externalReferenceCode");
+
+					JSONArray propertiesJSONArray =
+						subcategoryJSONObject.getJSONArray("properties");
+
+					String[] properties =
+						new String[propertiesJSONArray.length()];
+
+					for (int x = 0; x < propertiesJSONArray.length(); x++) {
+						JSONObject propertyJSONObject =
+							propertiesJSONArray.getJSONObject(x);
+
+						String key = propertyJSONObject.getString("key");
+						String value = propertyJSONObject.getString("value");
+
+						properties[x] = StringBundler.concat(
+							key,
+							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
+							value);
+					}
+
+					AssetCategory subassetcategory = _addAssetCategory(
+						vocabularyId, properties, descriptionSubcategory,
+						externalReferenceCodeSubcategory, groupId,
+						assetCategory.getCategoryId(), serviceContext,
+						titleSubcategory);
+
+					JSONArray subcategorypermissionsJSONArray =
+						subcategoryJSONObject.getJSONArray("permissions");
+
+					if ((subcategorypermissionsJSONArray != null) &&
+						(subcategorypermissionsJSONArray.length() > 0)) {
+
+						_updatePermissions(
+							subassetcategory.getCompanyId(),
+							subassetcategory.getModelClassName(),
+							String.valueOf(subassetcategory.getCategoryId()),
+							subcategorypermissionsJSONArray);
+					}
+				}
+			}
+		}
+	}
+
+	private AssetCategory _addAssetCategory(
+			long assetVocabularyId, String[] categoryProperties,
+			String description, String externalReferenceCode, long groupId,
+			long parentCategoryId, ServiceContext serviceContext, String title)
+		throws Exception {
+
+		Map<Locale, String> titleMap = Collections.singletonMap(
+			LocaleUtil.getSiteDefault(), title);
+
+		Map<Locale, String> descriptionMap = null;
+
+		if (Validator.isNotNull(description)) {
+			descriptionMap = Collections.singletonMap(
+				LocaleUtil.getSiteDefault(), description);
+		}
+
+		AssetCategory assetCategory = _assetCategoryLocalService.fetchCategory(
+			groupId, parentCategoryId, title, assetVocabularyId);
+
+		if (assetCategory == null) {
+			assetCategory = _assetCategoryLocalService.addCategory(
+				serviceContext.getUserId(), groupId, parentCategoryId, titleMap,
+				descriptionMap, assetVocabularyId, categoryProperties,
+				serviceContext);
+
+			assetCategory.setExternalReferenceCode(externalReferenceCode);
+
+			assetCategory = _assetCategoryLocalService.updateAssetCategory(
+				assetCategory);
+		}
+		else {
+			assetCategory = _assetCategoryLocalService.updateCategory(
+				serviceContext.getUserId(), assetCategory.getCategoryId(),
+				parentCategoryId, titleMap, descriptionMap, assetVocabularyId,
+				categoryProperties, serviceContext);
+		}
+
+		return assetCategory;
 	}
 
 	private void _addDDMStructures(ServiceContext serviceContext)
@@ -618,21 +789,47 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).build();
 
 		for (String resourcePath : resourcePaths) {
-			String json = _read(resourcePath);
+			String jsonVocabulary = _read(
+				resourcePath + "taxonomy-vocabulary.json");
 
 			TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.toDTO(
-				json);
+				jsonVocabulary);
 
 			if (taxonomyVocabulary == null) {
 				_log.error(
 					"Unable to transform taxonomy vocabulary from JSON: " +
-						json);
+						jsonVocabulary);
 
 				continue;
 			}
 
-			taxonomyVocabularyResource.postSiteTaxonomyVocabulary(
-				groupId, taxonomyVocabulary);
+			String vocabularyName = taxonomyVocabulary.getName();
+
+			if (vocabularyName != null) {
+				vocabularyName = vocabularyName.trim();
+
+				vocabularyName = StringUtil.toLowerCase(vocabularyName);
+			}
+
+			AssetVocabulary existingVocabulary =
+				_assetVocabularyLocalService.fetchGroupVocabulary(
+					groupId, vocabularyName);
+
+			if (existingVocabulary != null) {
+				taxonomyVocabulary =
+					taxonomyVocabularyResource.patchTaxonomyVocabulary(
+						existingVocabulary.getVocabularyId(),
+						taxonomyVocabulary);
+			}
+			else {
+				taxonomyVocabulary =
+					taxonomyVocabularyResource.postSiteTaxonomyVocabulary(
+						groupId, taxonomyVocabulary);
+			}
+
+			_addAssetCategories(
+				groupId, taxonomyVocabulary.getId(), resourcePath,
+				serviceContext);
 		}
 	}
 
@@ -671,11 +868,42 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return StringUtil.read(entryURL.openStream());
 	}
 
+	private void _updatePermissions(
+			long companyId, String name, String primKey, JSONArray jsonArray)
+		throws Exception {
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+			int scope = jsonObject.getInt("scope");
+
+			String roleName = jsonObject.getString("roleName");
+
+			Role role = _roleLocalService.getRole(companyId, roleName);
+
+			String[] actionIds = new String[0];
+
+			JSONArray actionIdsJSONArray = jsonObject.getJSONArray("actionIds");
+
+			if (actionIdsJSONArray != null) {
+				for (int j = 0; j < actionIdsJSONArray.length(); j++) {
+					actionIds = ArrayUtil.append(
+						actionIds, actionIdsJSONArray.getString(j));
+				}
+			}
+
+			_resourcePermissionLocalService.setResourcePermissions(
+				companyId, name, scope, primKey, role.getRoleId(), actionIds);
+		}
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		BundleSiteInitializer.class);
 
 	private static final ObjectMapper _objectMapper = new ObjectMapper();
 
+	private final AssetCategoryLocalService _assetCategoryLocalService;
+	private final AssetVocabularyLocalService _assetVocabularyLocalService;
 	private final Bundle _bundle;
 	private final ClassLoader _classLoader;
 	private final DDMStructureLocalService _ddmStructureLocalService;
@@ -684,6 +912,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final DLURLHelper _dlURLHelper;
 	private final DocumentFolderResource.Factory _documentFolderResourceFactory;
 	private final DocumentResource.Factory _documentResourceFactory;
+	private final ERAssetCategoryLocalService _erAssetCategoryLocalService;
 	private final FragmentsImporter _fragmentsImporter;
 	private final GroupLocalService _groupLocalService;
 	private final JournalArticleLocalService _journalArticleLocalService;
@@ -691,6 +920,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final ObjectDefinitionResource.Factory
 		_objectDefinitionResourceFactory;
 	private final Portal _portal;
+	private final ResourcePermissionLocalService
+		_resourcePermissionLocalService;
+	private final RoleLocalService _roleLocalService;
 	private final ServletContext _servletContext;
 	private final StructuredContentFolderResource.Factory
 		_structuredContentFolderResourceFactory;
