@@ -33,7 +33,7 @@ export const App = () => {
 				<Steps />
 				<div>
 					<h2 className="title title-area">{_renderTitle()}</h2>
-					<Forms />
+					<Forms form={form} />
 				</div>
 				<div className="info-area"></div>
 			</div>

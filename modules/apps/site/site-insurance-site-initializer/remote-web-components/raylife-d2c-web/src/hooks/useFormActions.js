@@ -1,22 +1,22 @@
 import {useState, useEffect, useCallback} from 'react';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useFormContext} from 'react-hook-form';
 import {LiferayService} from '../services/liferay';
 import {useStepWizard} from './useStepWizard';
 import Cookies from 'js-cookie';
 
 /**
  *
+ * @param {String} form <useWatch>
  * @param {String?} previousSection
  * @param {String?} nextSection
  * @param {String?} errorMessage
  * @returns
  */
 
-const useFormActions = (previousSection, nextSection, errorMessage) => {
+const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	const [applicationId, setApplicationId] = useState();
 	const {setError, setValue} = useFormContext();
 	const {setSection} = useStepWizard();
-	const form = useWatch();
 
 	/**
 	 * @description When the application is created, we set the value to Form Context

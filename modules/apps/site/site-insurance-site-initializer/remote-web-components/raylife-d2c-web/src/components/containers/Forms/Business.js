@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useFormContext} from 'react-hook-form';
 
 import {AVAILABLE_STEPS} from '../../../utils/constants';
 import {useStepWizard} from '../../../hooks/useStepWizard';
@@ -19,17 +19,17 @@ import useFormActions from '../../../hooks/useFormActions';
 
 const setFormPath = (value) => `business.${value}`;
 
-export const FormBusiness = () => {
+export const FormBusiness = ({form}) => {
 	const {
 		control,
 		formState: {isValid},
 	} = useFormContext();
 	const {selectedStep} = useStepWizard();
 	const {onNext, onPrevious, onSave} = useFormActions(
+		form,
 		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
 		AVAILABLE_STEPS.EMPLOYEES
 	);
-	const form = useWatch();
 
 	const [selectedKey, setSelectedKey] = useState('');
 

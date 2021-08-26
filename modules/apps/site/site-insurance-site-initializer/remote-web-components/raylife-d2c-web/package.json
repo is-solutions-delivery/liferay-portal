@@ -83,7 +83,8 @@
 		"start": "node scripts/start.js",
 		"build": "node scripts/build.js",
 		"build:liferay": "yarn build && ./setup-liferay.sh",
-		"serve:liferay": "yarn build:liferay && npx serve ./build",
+		"serve:liferay": "npx serve ./build",
+		"run:liferay": "yarn build:liferay && npx serve ./build",
 		"mock": "json-server -p 3333 -d 200 ./mock/db.json --routes ./mock/routes.json"
 	},
 	"eslintConfig": {
