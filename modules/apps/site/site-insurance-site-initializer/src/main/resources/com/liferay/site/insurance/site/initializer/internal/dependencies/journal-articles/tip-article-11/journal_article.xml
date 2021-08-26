@@ -25,6 +25,6 @@
 		<dynamic-content language-id="en_US"><![CDATA[<p><a href="https://www.liferay.com/pt/home" target="_blank">Learn More</a></p>]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="tjcafpqv" name="externalLinkIcon" type="image">
-		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[[$JSON_launch_rounded.svg$]]]></dynamic-content>
 	</dynamic-element>
 </root>
