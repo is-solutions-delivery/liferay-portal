@@ -18,7 +18,7 @@ export const YearControlledInput = ({
         },
         max: {
           value: new Date().getFullYear(),
-          message: "Must be a valid year.",
+          message: "You cannot enter a future year.",
         },
         ...rules,
       }}
