@@ -33,7 +33,6 @@ function getCookie(name) {
 	const cookies = decodedCookie.split(';');
 	for (let i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
-		console.log(cookie);
 		if (cookie.indexOf(name) == 0) {
 			return cookie.substring(name.length, cookie.length);
 		}
