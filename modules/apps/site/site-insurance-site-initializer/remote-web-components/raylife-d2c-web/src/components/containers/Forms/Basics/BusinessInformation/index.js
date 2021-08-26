@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useFormContext} from 'react-hook-form';
 
 import {BusinessInformationAddress} from './Address';
 import {AVAILABLE_STEPS} from '../../../../../utils/constants';
@@ -16,11 +16,11 @@ import {TIP_EVENT} from '../../../../../events';
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;
 
-export const FormBasicBusinessInformation = () => {
-	const form = useWatch();
+export const FormBasicBusinessInformation = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 	const {onPrevious, onSave, onNext} = useFormActions(
+		form,
 		AVAILABLE_STEPS.BASICS_BUSINESS_TYPE,
 		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
 		'Unable to save your information. Please try again.'

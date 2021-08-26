@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useCallback, useEffect, useState} from 'react';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useFormContext} from 'react-hook-form';
 import useDebounce from 'lodash.debounce';
 
 import {TIP_EVENT} from '../../../../../events';
@@ -15,13 +15,12 @@ import ClayIcon from '@clayui/icon';
 
 import classNames from 'classnames';
 
-export const BusinessTypeSearch = () => {
+export const BusinessTypeSearch = ({form}) => {
 	const {
 		register,
 		setValue,
 		formState: {errors},
 	} = useFormContext();
-	const form = useWatch();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 	const [helpTextClick, setHelpTextClick] = useState(false);
 	const {selectedStep} = useStepWizard();
@@ -83,7 +82,10 @@ export const BusinessTypeSearch = () => {
 
 		return (
 			<>
-				<BusinessTypeRadioGroup businessTypes={businessTypes} />
+				<BusinessTypeRadioGroup
+					businessTypes={businessTypes}
+					form={form}
+				/>
 				{infoPanelButton()}
 			</>
 		);

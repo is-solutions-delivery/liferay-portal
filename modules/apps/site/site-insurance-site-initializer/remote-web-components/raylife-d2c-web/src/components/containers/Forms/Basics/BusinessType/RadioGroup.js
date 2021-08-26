@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {useFormContext, useWatch, Controller} from 'react-hook-form';
+import {useFormContext, Controller} from 'react-hook-form';
 
 import {Radio} from '../../../../fragments/Forms/Radio';
 import {LiferayService} from '../../../../../services/liferay';
 
-export const BusinessTypeRadioGroup = ({businessTypes = []}) => {
+export const BusinessTypeRadioGroup = ({businessTypes = [], form}) => {
 	const {control, setValue} = useFormContext();
-	const form = useWatch();
 
 	useEffect(() => {
 		if (form?.basics?.businessCategoryId) setCategoryProperties();
