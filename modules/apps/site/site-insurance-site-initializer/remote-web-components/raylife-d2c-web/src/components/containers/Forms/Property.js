@@ -99,6 +99,24 @@ export const FormProperty = () => {
 					rules={{
 						required: 'This field is required',
 					}}
+					moreInfoProps={{
+						event: TIP_EVENT,
+						value: {
+							templateName: 'more-info-template',
+							step: selectedStep,
+							inputName: setFormPath(
+								'yearBuilding'
+							),
+							value: form?.property?.yearBuilding,
+						},
+						selected:
+							setFormPath('yearBuilding') ===
+							selectedKey,
+						callback: () =>
+							changeMoreInfoSelected(
+								setFormPath('yearBuilding')
+							),
+					}}
 				/>
 				<ControlledSwitch
 					name={setFormPath('isPrimaryBusinessLocation')}
@@ -130,15 +148,6 @@ export const FormProperty = () => {
 						label="Are there swimming pool(s) on the premises?"
 						control={control}
 						rules={{required: true}}
-						moreInfoProps={{
-							event: TIP_EVENT,
-							value: {
-								templateName: 'more-info-template',
-								step: selectedStep,
-								inputName: setFormPath('isThereSwimming'),
-								value: form?.property?.isThereSwimming,
-							},
-						}}
 					/>
 				)}
 				{isThereSwimming(form?.property?.isThereSwimming) && (
@@ -147,15 +156,6 @@ export const FormProperty = () => {
 						label="Are there diving boards or slides?"
 						control={control}
 						rules={{required: true}}
-						moreInfoProps={{
-							event: TIP_EVENT,
-							value: {
-								templateName: 'more-info-template',
-								step: selectedStep,
-								inputName: setFormPath('isThereDivingBoards'),
-								value: form?.property?.isThereDivingBoards,
-							},
-						}}
 					/>
 				)}
 			</div>
