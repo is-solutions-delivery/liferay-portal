@@ -88,8 +88,8 @@ export const FormEmployees = () => {
 					rules={{
 						required: 'This field is required',
 						min: {
-							value: 0,
-							message: 'Must be equal or grater than 0.',
+							value: 1,
+							message: 'You must have at least one employee.',
 						},
 					}}
 					moreInfoProps={{

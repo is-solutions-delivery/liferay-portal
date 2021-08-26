@@ -14,7 +14,7 @@ export const FEINControlledInput = ({
       rules={{
         pattern: {
           value: FEIN_REGEX,
-          message: "Must be a valid FEIN.",
+          message: "Please enter a valid FEIN.",
         },
         ...rules,
       }}
