@@ -6,6 +6,10 @@
 
   & > label {
     margin-bottom: 0.5rem;
+
+    & > button.btn.badge {
+      margin-right: -31px;
+    }
   }
 
   &.invalid {
@@ -22,6 +26,7 @@ label {
   font-size: 1.125rem;
   font-weight: bold;
   gap: 0.75rem;
+  margin-right: -5px;
 
   & .required::after {
     content: "*";
