@@ -4,7 +4,7 @@ import {useFormContext, useWatch} from 'react-hook-form';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {AVAILABLE_STEPS} from '../../../../../utils/constants';
 import {BusinessTypeSearch} from './Search';
-import {CardFormActions} from '../../../../fragments/Card/FormActions';
+import {CardFormActionsWithSave} from '../../../../fragments/Card/FormActionsWithSave';
 
 export const FormBasicBusinessType = () => {
 	const {
@@ -26,7 +26,7 @@ export const FormBasicBusinessType = () => {
 			<div className="card-content">
 				<BusinessTypeSearch />
 			</div>
-			<CardFormActions
+			<CardFormActionsWithSave
 				onNext={goToNextForm}
 				onPrevious={goToPreviousPage}
 				isValid={
