@@ -46,11 +46,10 @@ const getBusinessTypes = async (filter = '') => {
 };
 
 /**
- * @param {string} categoryId - Asset Category Id
  * @returns {Promise<ProductQuote[]>)} Array of Product Quote
  */
-const getProductQuotes = async (categoryId) => {
-	const products = await _getProductsByCategoryId(categoryId);
+const getProductQuotes = async () => {
+	const products = await _getProductsByCategoryId();
 
 	const productQuotes = LiferayAdapt.adaptToProductQuote(products.items);
 
@@ -85,8 +84,8 @@ const getLiferayAuthenticationToken = () => {
 	}
 };
 
-const _getProductsByCategoryId = async (id) => {
-	const URL = `/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog&filter=(categoryIds/any(x:(x eq '${id}')))&page=1&pageSize=50`;
+const _getProductsByCategoryId = async () => {
+	const URL = `/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog&page=1&pageSize=50`;
 
 	const {data} = await LiferayAPI.get(URL);
 
