@@ -7,7 +7,7 @@ import {useStepWizard} from '../../../../hooks/useStepWizard';
 import {useProductQuotes} from '../../../../hooks/useProductQuotes';
 import {MoreInfoButton} from '../../../fragments/Buttons/MoreInfo';
 import {TIP_EVENT} from '../../../../events';
-import {CardFormActions} from '../../../fragments/Card/FormActions';
+import {CardFormActionsWithSave} from '../../../fragments/Card/FormActionsWithSave';
 import useFormActions from '../../../../hooks/useFormActions';
 
 export const FormBasicProductQuote = () => {
@@ -86,7 +86,7 @@ export const FormBasicProductQuote = () => {
 					</fieldset>
 				</div>
 			</div>
-			<CardFormActions
+			<CardFormActionsWithSave
 				isValid={isValid}
 				onPrevious={onPrevious}
 				onNext={onNext}
