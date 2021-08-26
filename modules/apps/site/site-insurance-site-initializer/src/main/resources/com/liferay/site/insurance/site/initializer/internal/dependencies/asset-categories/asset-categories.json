@@ -32,26 +32,8 @@
 				"title": "Accounting Services"
 			},
 			{
-				"description": "Own an apartment that has between 13 to 30 residential units",
-				"externalReferenceCode": "RAYCAT0003",
-				"permissions": [
-					{
-						"actionIds": ["VIEW"],
-						"roleName": "Guest",
-						"scope": 4
-					}
-				],
-				"properties": [
-					{
-						"key": "Segment",
-						"value": "Habitational"
-					}
-				],
-				"title": "Apartments - Residential - 13 to 30 Units"
-			},
-			{
 				"description": "Manage residential buildings, such as apartments and condominiums",
-				"externalReferenceCode": "RAYCAT0004",
+				"externalReferenceCode": "RAYCAT0003",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -72,26 +54,8 @@
 				"title": "Residential Property Manager"
 			},
 			{
-				"description": "Own an apartment that has over 32 residential units",
-				"externalReferenceCode": "RAYCAT0005",
-				"permissions": [
-					{
-						"actionIds": ["VIEW"],
-						"roleName": "Guest",
-						"scope": 4
-					}
-				],
-				"properties": [
-					{
-						"key": "Segment",
-						"value": "Habitational"
-					}
-				],
-				"title": "Apartments - Residential - 31+ Units"
-			},
-			{
 				"description": "Manage nonresidential real estate for others, such as commercial buildings",
-				"externalReferenceCode": "RAYCAT0006",
+				"externalReferenceCode": "RAYCAT0004",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -112,26 +76,8 @@
 				"title": "Nonresidential Property Manager"
 			},
 			{
-				"description": "Own an apartment that has up to 12 residential units",
-				"externalReferenceCode": "RAYCAT0007",
-				"permissions": [
-					{
-						"actionIds": ["VIEW"],
-						"roleName": "Guest",
-						"scope": 4
-					}
-				],
-				"properties": [
-					{
-						"key": "Segment",
-						"value": "Habitational"
-					}
-				],
-				"title": "Apartments - Residential - Up to 12 Units"
-			},
-			{
 				"description": "Lessors of residential buildings and dwellings, such as homes, apartmetns, town homes",
-				"externalReferenceCode": "RAYCAT0008",
+				"externalReferenceCode": "RAYCAT0005",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -153,7 +99,7 @@
 			},
 			{
 				"description": "Manufacture and distribute coffee and/or tea",
-				"externalReferenceCode": "RAYCAT0009",
+				"externalReferenceCode": "RAYCAT0006",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -175,7 +121,7 @@
 			},
 			{
 				"description": "Own an establishment that primarily serves coffee and/or tea",
-				"externalReferenceCode": "RAYCAT0010",
+				"externalReferenceCode": "RAYCAT0007",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -197,7 +143,7 @@
 			},
 			{
 				"description": "Primarily sell flowers, plants, and gardening supplies",
-				"externalReferenceCode": "RAYCAT0011",
+				"externalReferenceCode": "RAYCAT0008",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -219,7 +165,7 @@
 			},
 			{
 				"description": "Primarily sell a general range of food and household products",
-				"externalReferenceCode": "RAYCAT0012",
+				"externalReferenceCode": "RAYCAT0009",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -241,7 +187,7 @@
 			},
 			{
 				"description": "Provide dental services",
-				"externalReferenceCode": "RAYCAT0013",
+				"externalReferenceCode": "RAYCAT0010",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -263,7 +209,7 @@
 			},
 			{
 				"description": "Primarily sell animals and a general range of animal supplies and pet acessories",
-				"externalReferenceCode": "RAYCAT0014",
+				"externalReferenceCode": "RAYCAT0011",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -285,7 +231,7 @@
 			},
 			{
 				"description": "Provide photography services",
-				"externalReferenceCode": "RAYCAT0015",
+				"externalReferenceCode": "RAYCAT0012",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -307,7 +253,7 @@
 			},
 			{
 				"description": "Sell commercial and residential properties",
-				"externalReferenceCode": "RAYCAT0016",
+				"externalReferenceCode": "RAYCAT0013",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -329,7 +275,7 @@
 			},
 			{
 				"description": "Own an establishment with a liquor license to cook and serve meals on the premises",
-				"externalReferenceCode": "RAYCAT0017",
+				"externalReferenceCode": "RAYCAT0014",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -351,7 +297,7 @@
 			},
 			{
 				"description": "Own an establishment without a liquor license to cook and serve meals on the premises",
-				"externalReferenceCode": "RAYCAT0018",
+				"externalReferenceCode": "RAYCAT0015",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -373,7 +319,7 @@
 			},
 			{
 				"description": "Provide hospital services to animals",
-				"externalReferenceCode": "RAYCAT0019",
+				"externalReferenceCode": "RAYCAT0016",
 				"permissions": [
 					{
 						"actionIds": ["VIEW"],
@@ -397,7 +343,7 @@
 		"title": "Business Owners Policy"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0020",
+		"externalReferenceCode": "RAYCAT0017",
 		"permissions": [
 			{
 				"actionIds": ["VIEW"],
@@ -409,7 +355,7 @@
 		"title": "Commercial Auto"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0021",
+		"externalReferenceCode": "RAYCAT0018",
 		"permissions": [
 			{
 				"actionIds": ["VIEW"],
@@ -421,7 +367,7 @@
 		"title": "Cyber Insurance"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0022",
+		"externalReferenceCode": "RAYCAT0019",
 		"permissions": [
 			{
 				"actionIds": ["VIEW"],
@@ -433,7 +379,7 @@
 		"title": "General Liability"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0023",
+		"externalReferenceCode": "RAYCAT0020",
 		"permissions": [
 			{
 				"actionIds": ["VIEW"],
@@ -445,7 +391,7 @@
 		"title": "Professional Liability"
 	},
 	{
-		"externalReferenceCode": "RAYCAT0024",
+		"externalReferenceCode": "RAYCAT0021",
 		"permissions": [
 			{
 				"actionIds": ["VIEW"],
