@@ -21,10 +21,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "1160"
-					},
-					{
 						"key": "NAICS",
 						"value": "541211"
 					},
@@ -46,10 +42,6 @@
 					}
 				],
 				"properties": [
-					{
-						"key": "BCC",
-						"value": "1395"
-					},
 					{
 						"key": "Segment",
 						"value": "Habitational"
@@ -91,10 +83,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "1396"
-					},
-					{
 						"key": "Segment",
 						"value": "Habitational"
 					}
@@ -134,10 +122,6 @@
 					}
 				],
 				"properties": [
-					{
-						"key": "BCC",
-						"value": "1394"
-					},
 					{
 						"key": "Segment",
 						"value": "Habitational"
@@ -179,10 +163,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "1345"
-					},
-					{
 						"key": "NAICS",
 						"value": "311920"
 					},
@@ -204,10 +184,6 @@
 					}
 				],
 				"properties": [
-					{
-						"key": "BCC",
-						"value": "1280"
-					},
 					{
 						"key": "NAICS",
 						"value": "722513"
@@ -231,10 +207,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "1349"
-					},
-					{
 						"key": "NAICS",
 						"value": "424930"
 					},
@@ -256,10 +228,6 @@
 					}
 				],
 				"properties": [
-					{
-						"key": "BCC",
-						"value": "1283"
-					},
 					{
 						"key": "NAICS",
 						"value": "445110"
@@ -283,10 +251,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "1246"
-					},
-					{
 						"key": "NAICS",
 						"value": "621210"
 					},
@@ -308,10 +272,6 @@
 					}
 				],
 				"properties": [
-					{
-						"key": "BCC",
-						"value": "750"
-					},
 					{
 						"key": "NAICS",
 						"value": "453910"
@@ -335,10 +295,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "753"
-					},
-					{
 						"key": "NAICS",
 						"value": "541922"
 					},
@@ -360,10 +316,6 @@
 					}
 				],
 				"properties": [
-					{
-						"key": "BCC",
-						"value": "815"
-					},
 					{
 						"key": "NAICS",
 						"value": "531210"
@@ -387,10 +339,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "1391"
-					},
-					{
 						"key": "NAICS",
 						"value": "722511"
 					},
@@ -413,10 +361,6 @@
 				],
 				"properties": [
 					{
-						"key": "BCC",
-						"value": "1389"
-					},
-					{
 						"key": "NAICS",
 						"value": "722513"
 					},
@@ -438,10 +382,6 @@
 					}
 				],
 				"properties": [
-					{
-						"key": "BCC",
-						"value": "1040"
-					},
 					{
 						"key": "NAICS",
 						"value": "541940"
