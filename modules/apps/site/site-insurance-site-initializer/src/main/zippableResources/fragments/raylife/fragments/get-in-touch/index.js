@@ -12,9 +12,10 @@
  * details.
  */
 
-const nameCookie = 'raylife-application-id';
 const btnBack = fragmentElement.querySelector('#contact-agent-btn-back');
 const btnCall = fragmentElement.querySelector('#contact-agent-btn-call');
+const nameCookieContextualMessage = 'raylife-contextual-message';
+const nameCookieId = 'raylife-application-id';
 const valueCall = fragmentElement.querySelector('#value-number-call')
 	.textContent;
 
@@ -32,15 +33,23 @@ function getCookie(name) {
 	const cookies = decodedCookie.split(';');
 	for (let i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
+		console.log(cookie);
 		if (cookie.indexOf(name) == 0) {
 			return cookie.substring(name.length, cookie.length);
 		}
 	}
 }
 
-const applicationIdCookie = getCookie(nameCookie);
+const applicationIdCookie = getCookie(nameCookieId);
 
 if (applicationIdCookie) {
 	document.getElementById('content-agent-text-your-application').textContent =
 		'Your Application #' + applicationIdCookie;
+}
+
+const contextualMessageCookie = getCookie(nameCookieContextualMessage);
+
+if (contextualMessageCookie) {
+	document.getElementById('contact-agent-contextual-message').textContent =
+		contextualMessageCookie;
 }
