@@ -68,7 +68,7 @@ export const FormProperty = () => {
 					moreInfoProps={{
 						event: TIP_EVENT,
 						value: {
-							templateName: 'more-info-template',
+							templateName: 'building-square-footage',
 							step: selectedStep,
 							inputName: setFormPath(
 								'buildingSquareFeetOccupied'
@@ -102,7 +102,7 @@ export const FormProperty = () => {
 					moreInfoProps={{
 						event: TIP_EVENT,
 						value: {
-							templateName: 'more-info-template',
+							templateName: 'year-constructed',
 							step: selectedStep,
 							inputName: setFormPath(
 								'yearBuilding'
@@ -126,7 +126,7 @@ export const FormProperty = () => {
 					moreInfoProps={{
 						event: TIP_EVENT,
 						value: {
-							templateName: 'more-info-template',
+							templateName: 'primary-location',
 							step: selectedStep,
 							inputName: setFormPath('isPrimaryBusinessLocation'),
 							value: form?.property?.isPrimaryBusinessLocation,
