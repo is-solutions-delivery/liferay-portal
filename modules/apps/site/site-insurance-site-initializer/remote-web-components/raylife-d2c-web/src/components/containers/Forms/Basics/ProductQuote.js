@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useFormContext, useWatch, Controller} from 'react-hook-form';
+import {useFormContext, Controller} from 'react-hook-form';
 
 import {Radio} from '../../../fragments/Forms/Radio';
 import {AVAILABLE_STEPS} from '../../../../utils/constants';
@@ -10,15 +10,15 @@ import {TIP_EVENT} from '../../../../events';
 import {CardFormActionsWithSave} from '../../../fragments/Card/FormActionsWithSave';
 import useFormActions from '../../../../hooks/useFormActions';
 
-export const FormBasicProductQuote = () => {
+export const FormBasicProductQuote = ({form}) => {
 	const {
 		control,
 		formState: {isValid},
 	} = useFormContext();
-	const form = useWatch();
 	const {selectedStep} = useStepWizard();
 	const {productQuotes} = useProductQuotes();
 	const {onPrevious, onNext, onSave} = useFormActions(
+		form,
 		AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION,
 		AVAILABLE_STEPS.BUSINESS
 	);

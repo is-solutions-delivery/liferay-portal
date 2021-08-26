@@ -7,7 +7,7 @@ import {isHabitational, isThereSwimming} from '../../../utils/propertyFields';
 import {NumberControlledInput} from '../../connectors/Controlled/Input/Number';
 import {SquareFeatControlledInput} from '../../connectors/Controlled/Input/WithMask/SquareFeet';
 import {TIP_EVENT} from '../../../events';
-import {useFormContext, useWatch} from 'react-hook-form';
+import {useFormContext} from 'react-hook-form';
 import {useStepWizard} from '../../../hooks/useStepWizard';
 import {YearControlledInput} from '../../connectors/Controlled/Input/WithMask/Year';
 
@@ -15,8 +15,7 @@ import useFormActions from '../../../hooks/useFormActions';
 
 const setFormPath = (value) => `property.${value}`;
 
-export const FormProperty = () => {
-	const form = useWatch();
+export const FormProperty = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const {
 		control,
@@ -24,6 +23,7 @@ export const FormProperty = () => {
 	} = useFormContext();
 
 	const {onNext, onPrevious, onSave} = useFormActions(
+		form,
 		AVAILABLE_STEPS.EMPLOYEES
 	);
 
@@ -104,18 +104,12 @@ export const FormProperty = () => {
 						value: {
 							templateName: 'year-constructed',
 							step: selectedStep,
-							inputName: setFormPath(
-								'yearBuilding'
-							),
+							inputName: setFormPath('yearBuilding'),
 							value: form?.property?.yearBuilding,
 						},
-						selected:
-							setFormPath('yearBuilding') ===
-							selectedKey,
+						selected: setFormPath('yearBuilding') === selectedKey,
 						callback: () =>
-							changeMoreInfoSelected(
-								setFormPath('yearBuilding')
-							),
+							changeMoreInfoSelected(setFormPath('yearBuilding')),
 					}}
 				/>
 				<ControlledSwitch

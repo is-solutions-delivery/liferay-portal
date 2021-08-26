@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {useFormContext, useWatch} from 'react-hook-form';
+import React, {useState} from 'react';
+import {useFormContext} from 'react-hook-form';
 
 import {AVAILABLE_STEPS} from '../../../utils/constants';
 import {useStepWizard} from '../../../hooks/useStepWizard';
@@ -16,8 +16,7 @@ const setFormPath = (value) => `employees.${value}`;
 
 const hasFein = (value) => value === 'true';
 
-export const FormEmployees = () => {
-	const form = useWatch();
+export const FormEmployees = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const {
 		control,
@@ -25,19 +24,20 @@ export const FormEmployees = () => {
 	} = useFormContext();
 
 	const {onNext, onPrevious, onSave} = useFormActions(
+		form,
 		AVAILABLE_STEPS.BUSINESS,
 		AVAILABLE_STEPS.PROPERTY
 	);
 
-	const [selectedKey, setSelectedKey] = useState("");
+	const [selectedKey, setSelectedKey] = useState('');
 
 	const changeMoreInfoSelected = (inputName) => {
 		if (inputName === selectedKey) {
-			setSelectedKey("");
+			setSelectedKey('');
 		} else {
 			setSelectedKey(inputName);
 		}
-	}
+	};
 
 	return (
 		<div className="card">
@@ -65,7 +65,8 @@ export const FormEmployees = () => {
 								value: form?.employees?.fein,
 							},
 							selected: setFormPath('fein') === selectedKey,
-							callback: () => changeMoreInfoSelected(setFormPath('fein'))
+							callback: () =>
+								changeMoreInfoSelected(setFormPath('fein')),
 						}}
 						control={control}
 					/>
@@ -100,8 +101,12 @@ export const FormEmployees = () => {
 							inputName: setFormPath('partTimeEmployees'),
 							value: form?.employees?.partTimeEmployees,
 						},
-						selected: setFormPath('partTimeEmployees') === selectedKey,
-						callback: () => changeMoreInfoSelected(setFormPath('partTimeEmployees'))
+						selected:
+							setFormPath('partTimeEmployees') === selectedKey,
+						callback: () =>
+							changeMoreInfoSelected(
+								setFormPath('partTimeEmployees')
+							),
 					}}
 					control={control}
 				/>
