@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
 import useDebounce from 'lodash.debounce';
 
@@ -14,6 +14,7 @@ import {BusinessTypeRadioGroup} from './RadioGroup';
 import ClayIcon from '@clayui/icon';
 
 import classNames from 'classnames';
+import { useTriggerContext } from '../../../../../hooks/useTriggerContext';
 
 export const BusinessTypeSearch = ({form}) => {
 	const {
@@ -22,9 +23,13 @@ export const BusinessTypeSearch = ({form}) => {
 		formState: {errors},
 	} = useFormContext();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
-	const [helpTextClick, setHelpTextClick] = useState(false);
+
 	const {selectedStep} = useStepWizard();
 	const {businessTypes, isError, isLoading, reload} = useBusinessTypes();
+	const { isSelected, updateState } = useTriggerContext();
+
+	const templateName = 'i-am-unable-to-find-my-industry';
+	const selectedTrigger = isSelected(templateName);
 
 	useEffect(() => {
 		onSearch(form?.basics?.businessSearch);
@@ -39,11 +44,11 @@ export const BusinessTypeSearch = ({form}) => {
 	);
 
 	const showInfoPanel = () => {
-		setHelpTextClick(!helpTextClick);
+		updateState(templateName);
 		dispatchEvent({
-			templateName: 'i-am-unable-to-find-my-industry',
+			templateName,
 			step: selectedStep,
-			hide: helpTextClick,
+			hide: selectedTrigger,
 		});
 	};
 
@@ -51,12 +56,12 @@ export const BusinessTypeSearch = ({form}) => {
 		<button
 			type="button"
 			className={classNames('btn badge bottom-list', {
-				open: helpTextClick,
+				open: selectedTrigger,
 			})}
 			onClick={showInfoPanel}
 		>
 			I am unable to find my industry
-			{helpTextClick ? (
+			{selectedTrigger ? (
 				<ClayIcon symbol="question-circle-full" />
 			) : (
 				<ClayIcon symbol="question-circle" />
