@@ -2,6 +2,4 @@ import { toSlug } from ".";
 
 const PRODUCT_QUOTE = ['general-liability', 'professional-liability', 'workers-compensation', 'business-owners-policy'];
 
-export const allowedProductQuote = (title) => {
-    return PRODUCT_QUOTE.includes(toSlug(title));
-}
+export const allowedProductQuote = (title) => PRODUCT_QUOTE.includes(toSlug(title));
