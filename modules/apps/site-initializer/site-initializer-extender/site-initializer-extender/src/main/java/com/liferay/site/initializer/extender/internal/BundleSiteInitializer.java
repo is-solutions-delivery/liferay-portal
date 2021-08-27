@@ -28,7 +28,6 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
-import com.liferay.external.reference.service.ERAssetCategoryLocalService;
 import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyVocabulary;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
@@ -114,7 +113,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		DLURLHelper dlURLHelper,
 		DocumentFolderResource.Factory documentFolderResourceFactory,
 		DocumentResource.Factory documentResourceFactory,
-		ERAssetCategoryLocalService erAssetCategoryLocalService,
 		FragmentsImporter fragmentsImporter,
 		GroupLocalService groupLocalService,
 		JournalArticleLocalService journalArticleLocalService,
@@ -138,7 +136,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_dlURLHelper = dlURLHelper;
 		_documentFolderResourceFactory = documentFolderResourceFactory;
 		_documentResourceFactory = documentResourceFactory;
-		_erAssetCategoryLocalService = erAssetCategoryLocalService;
 		_fragmentsImporter = fragmentsImporter;
 		_groupLocalService = groupLocalService;
 		_journalArticleLocalService = journalArticleLocalService;
@@ -803,17 +800,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
-			String vocabularyName = taxonomyVocabulary.getName();
-
-			if (vocabularyName != null) {
-				vocabularyName = vocabularyName.trim();
-
-				vocabularyName = StringUtil.toLowerCase(vocabularyName);
-			}
-
 			AssetVocabulary existingVocabulary =
 				_assetVocabularyLocalService.fetchGroupVocabulary(
-					groupId, vocabularyName);
+					groupId, taxonomyVocabulary.getName());
 
 			if (existingVocabulary != null) {
 				taxonomyVocabulary =
@@ -912,7 +901,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final DLURLHelper _dlURLHelper;
 	private final DocumentFolderResource.Factory _documentFolderResourceFactory;
 	private final DocumentResource.Factory _documentResourceFactory;
-	private final ERAssetCategoryLocalService _erAssetCategoryLocalService;
 	private final FragmentsImporter _fragmentsImporter;
 	private final GroupLocalService _groupLocalService;
 	private final JournalArticleLocalService _journalArticleLocalService;
