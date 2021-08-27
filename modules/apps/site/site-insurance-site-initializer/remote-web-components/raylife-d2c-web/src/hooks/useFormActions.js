@@ -3,6 +3,7 @@ import {useFormContext} from 'react-hook-form';
 import {LiferayService} from '../services/liferay';
 import {useStepWizard} from './useStepWizard';
 import Cookies from 'js-cookie';
+import { verifyInputAgentPage } from "../utils/contact-agent";
 
 /**
  *
@@ -73,7 +74,16 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	 */
 	const onNext = async () => {
 		await _SaveData();
-
+		const responsePhraseAgentPage = verifyInputAgentPage(form,nextSection);
+		
+		if(responsePhraseAgentPage) {
+			Cookies.set('raylife-contextual-message', responsePhraseAgentPage);
+			window.location.href = '/web/raylife/get-in-touch';
+		}
+		else{
+			Cookies.remove("raylife-contextual-message");
+		}
+		
 		if (nextSection) {
 			return setSection(nextSection);
 		}
