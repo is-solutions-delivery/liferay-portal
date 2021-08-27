@@ -8,6 +8,12 @@ export const reducer = (state, action) => {
         selectedStep: action.payload,
       };
 
+    case ActionTypes.SET_SELECTED_TRIGGER:
+      return {
+        ...state,
+        selectedTrigger: action.payload,
+      };
+
     default:
       return state;
   }
