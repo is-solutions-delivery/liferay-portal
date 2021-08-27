@@ -35,14 +35,18 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	}, [applicationId]);
 
 	const _onValidation = () => {
-		const responsePhraseAgentPage = verifyInputAgentPage(form, nextSection);
-
-		if (responsePhraseAgentPage) {
-			Cookies.set('raylife-contextual-message', responsePhraseAgentPage);
+		const phraseAgentPage = verifyInputAgentPage(form, nextSection);
+		let validated = true;
+		
+		if (phraseAgentPage) {
+			Cookies.set('raylife-contextual-message', phraseAgentPage);
 			window.location.href = '/web/raylife/get-in-touch';
+			validated = false;
 		} else {
 			Cookies.remove('raylife-contextual-message');
 		}
+
+		return validated;
 	};
 
 	const _SaveData = useCallback(async () => {
@@ -86,13 +90,15 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	const onNext = async () => {
 		await _SaveData();
 
-		_onValidation();
+		const validated =_onValidation();
 
-		if (nextSection) {
-			return setSection(nextSection);
+		if (validated) {
+			if (nextSection) {
+				return setSection(nextSection);
+			}
+
+			window.location.href = '/web/raylife/hang-tight';
 		}
-
-		window.location.href = '/web/raylife/hang-tight';
 	};
 
 	return {onNext, onPrevious, onSave};
