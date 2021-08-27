@@ -38,6 +38,7 @@ function setDynamicWebContent(htmlBody, customData = {}) {
 	html = html.replace(sanitizeEmptyKeysRegex, '');
 
 	document.getElementById('dynamic-web-content').innerHTML = html;
+	dismissButtonListener();
 }
 
 async function fetchHeadless(url, resolveAsJson = true) {
@@ -98,6 +99,15 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 			console.warn(`Structure ${data.templateName} not found`);
 		}
 	});
+}
+
+function dismissButtonListener() {
+	document.getElementById('dismiss').addEventListener('click', () => window.dispatchEvent(
+		new CustomEvent('raylife-fragment-dismissed', {
+			bubbles: true,
+			composed: true,
+		})
+	));
 }
 
 async function workflow() {
