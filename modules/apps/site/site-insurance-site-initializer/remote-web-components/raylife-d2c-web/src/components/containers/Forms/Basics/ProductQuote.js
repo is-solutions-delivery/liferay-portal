@@ -80,7 +80,7 @@ export const FormBasicProductQuote = ({form}) => {
 				</div>
 			</div>
 			<CardFormActionsWithSave
-				isValid={isValid}
+				isValid={!!form.basics.productQuote}
 				onPrevious={onPrevious}
 				onNext={onNext}
 				onSave={onSave}
