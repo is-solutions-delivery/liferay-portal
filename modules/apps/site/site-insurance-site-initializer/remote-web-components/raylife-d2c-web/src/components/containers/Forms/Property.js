@@ -1,17 +1,18 @@
-import React, {useState} from 'react';
+import React from 'react';
 
-import {AVAILABLE_STEPS} from '../../../utils/constants';
-import {CardFormActionsWithSave} from '../../fragments/Card/FormActionsWithSave';
-import {ControlledSwitch} from '../../connectors/Controlled/Switch';
-import {isHabitational, isThereSwimming} from '../../../utils/propertyFields';
-import {NumberControlledInput} from '../../connectors/Controlled/Input/Number';
-import {SquareFeatControlledInput} from '../../connectors/Controlled/Input/WithMask/SquareFeet';
-import {TIP_EVENT} from '../../../events';
-import {useFormContext} from 'react-hook-form';
-import {useStepWizard} from '../../../hooks/useStepWizard';
-import {YearControlledInput} from '../../connectors/Controlled/Input/WithMask/Year';
+import { AVAILABLE_STEPS } from '../../../utils/constants';
+import { CardFormActionsWithSave } from '../../fragments/Card/FormActionsWithSave';
+import { ControlledSwitch } from '../../connectors/Controlled/Switch';
+import { isHabitational, isThereSwimming } from '../../../utils/propertyFields';
+import { NumberControlledInput } from '../../connectors/Controlled/Input/Number';
+import { SquareFeatControlledInput } from '../../connectors/Controlled/Input/WithMask/SquareFeet';
+import { TIP_EVENT } from '../../../events';
+import { useFormContext } from 'react-hook-form';
+import { useStepWizard } from '../../../hooks/useStepWizard';
+import { YearControlledInput } from '../../connectors/Controlled/Input/WithMask/Year';
 
 import useFormActions from '../../../hooks/useFormActions';
+import { useTriggerContext } from '../../../hooks/useTriggerContext';
 
 const setFormPath = (value) => `property.${value}`;
 
@@ -19,7 +20,7 @@ export const FormProperty = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const {
 		control,
-		formState: {isValid},
+		formState: { isValid },
 	} = useFormContext();
 
 	const {onNext, onPrevious, onSave} = useFormActions(
@@ -27,15 +28,7 @@ export const FormProperty = ({form}) => {
 		AVAILABLE_STEPS.EMPLOYEES
 	);
 
-	const [selectedKey, setSelectedKey] = useState('');
-
-	const changeMoreInfoSelected = (inputName) => {
-		if (inputName === selectedKey) {
-			setSelectedKey('');
-		} else {
-			setSelectedKey(inputName);
-		}
-	};
+	const { isSelected, updateState } = useTriggerContext();
 
 	return (
 		<div className="card">
@@ -44,7 +37,7 @@ export const FormProperty = ({form}) => {
 					name={setFormPath('doOwnBuildingAtAddress')}
 					control={control}
 					label={`Do you own the building at ${form.basics.businessInformation.business.location.address}?`}
-					rules={{required: true}}
+					rules={{ required: true }}
 				/>
 				<NumberControlledInput
 					name={setFormPath('stories')}
@@ -76,10 +69,9 @@ export const FormProperty = ({form}) => {
 							value: form?.property?.buildingSquareFeetOccupied,
 						},
 						selected:
-							setFormPath('buildingSquareFeetOccupied') ===
-							selectedKey,
+							isSelected(setFormPath('buildingSquareFeetOccupied')),
 						callback: () =>
-							changeMoreInfoSelected(
+							updateState(
 								setFormPath('buildingSquareFeetOccupied')
 							),
 					}}
@@ -107,16 +99,19 @@ export const FormProperty = ({form}) => {
 							inputName: setFormPath('yearBuilding'),
 							value: form?.property?.yearBuilding,
 						},
-						selected: setFormPath('yearBuilding') === selectedKey,
+						selected:
+							isSelected(setFormPath('yearBuilding')),
 						callback: () =>
-							changeMoreInfoSelected(setFormPath('yearBuilding')),
+							updateState(
+								setFormPath('yearBuilding')
+							),
 					}}
 				/>
 				<ControlledSwitch
 					name={setFormPath('isPrimaryBusinessLocation')}
 					label="Is this the primary location you conduct business?"
 					control={control}
-					rules={{required: true}}
+					rules={{ required: true }}
 					moreInfoProps={{
 						event: TIP_EVENT,
 						value: {
@@ -126,10 +121,9 @@ export const FormProperty = ({form}) => {
 							value: form?.property?.isPrimaryBusinessLocation,
 						},
 						selected:
-							setFormPath('isPrimaryBusinessLocation') ===
-							selectedKey,
+							isSelected(setFormPath('isPrimaryBusinessLocation')),
 						callback: () =>
-							changeMoreInfoSelected(
+							updateState(
 								setFormPath('isPrimaryBusinessLocation')
 							),
 					}}
@@ -137,19 +131,19 @@ export const FormProperty = ({form}) => {
 				{isHabitational(
 					form?.basics?.properties?.segment.toLowerCase()
 				) && (
-					<ControlledSwitch
-						name={setFormPath('isThereSwimming')}
-						label="Are there swimming pool(s) on the premises?"
-						control={control}
-						rules={{required: true}}
-					/>
-				)}
+						<ControlledSwitch
+							name={setFormPath('isThereSwimming')}
+							label="Are there swimming pool(s) on the premises?"
+							control={control}
+							rules={{ required: true }}
+						/>
+					)}
 				{isThereSwimming(form?.property?.isThereSwimming) && (
 					<ControlledSwitch
 						name={setFormPath('isThereDivingBoards')}
 						label="Are there diving boards or slides?"
 						control={control}
-						rules={{required: true}}
+						rules={{ required: true }}
 					/>
 				)}
 			</div>

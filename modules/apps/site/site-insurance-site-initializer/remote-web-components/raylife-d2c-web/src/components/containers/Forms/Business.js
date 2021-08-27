@@ -1,45 +1,36 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useFormContext} from 'react-hook-form';
 
-import {AVAILABLE_STEPS} from '../../../utils/constants';
-import {useStepWizard} from '../../../hooks/useStepWizard';
-import {TIP_EVENT} from '../../../events';
-import {CardFormActionsWithSave} from '../../fragments/Card/FormActionsWithSave';
-import {ControlledSwitch} from '../../connectors/Controlled/Switch';
-import {NumberControlledInput} from '../../connectors/Controlled/Input/Number';
-import {PercentageControlledInput} from '../../connectors/Controlled/Input/WithMask/Percentage';
-import {LegalEntityControlledSelect} from '../../connectors/Controlled/Select/LegalEntity';
-import {PERCENTAGE_REGEX_MAX_100} from '../../../utils/patterns';
+import { AVAILABLE_STEPS } from '../../../utils/constants';
+import { useStepWizard } from '../../../hooks/useStepWizard';
+import { TIP_EVENT } from '../../../events';
+import { CardFormActionsWithSave } from '../../fragments/Card/FormActionsWithSave';
+import { ControlledSwitch } from '../../connectors/Controlled/Switch';
+import { NumberControlledInput } from '../../connectors/Controlled/Input/Number';
+import { PercentageControlledInput } from '../../connectors/Controlled/Input/WithMask/Percentage';
+import { LegalEntityControlledSelect } from '../../connectors/Controlled/Select/LegalEntity';
+import { PERCENTAGE_REGEX_MAX_100 } from '../../../utils/patterns';
 import {
 	validateOverallSales,
 	validateOwnBrandLabel,
 	validatePercentSales,
 } from '../../../utils/businessFields';
 import useFormActions from '../../../hooks/useFormActions';
+import { useTriggerContext } from '../../../hooks/useTriggerContext';
 
 const setFormPath = (value) => `business.${value}`;
 
 export const FormBusiness = ({form}) => {
 	const {
 		control,
-		formState: {isValid},
+		formState: { isValid },
 	} = useFormContext();
-	const {selectedStep} = useStepWizard();
-	const {onNext, onPrevious, onSave} = useFormActions(
-		form,
+	const { selectedStep } = useStepWizard();
+	const { onNext, onPrevious, onSave } = useFormActions(
 		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
 		AVAILABLE_STEPS.EMPLOYEES
 	);
-
-	const [selectedKey, setSelectedKey] = useState('');
-
-	const changeMoreInfoSelected = (inputName) => {
-		if (inputName === selectedKey) {
-			setSelectedKey('');
-		} else {
-			setSelectedKey(inputName);
-		}
-	};
+	const { isSelected, updateState } = useTriggerContext();
 
 	return (
 		<div className="card">
@@ -63,9 +54,9 @@ export const FormBusiness = ({form}) => {
 							value: form?.business?.yearsOfExperience,
 						},
 						selected:
-							setFormPath('yearsOfExperience') === selectedKey,
+							isSelected(setFormPath('yearsOfExperience')),
 						callback: () =>
-							changeMoreInfoSelected(
+							updateState(
 								setFormPath('yearsOfExperience')
 							),
 					}}
@@ -74,14 +65,14 @@ export const FormBusiness = ({form}) => {
 				<ControlledSwitch
 					name={setFormPath('hasStoredCustomerInformation')}
 					label="Do you store personally identifiable information about your customers?"
-					rules={{required: true}}
+					rules={{ required: true }}
 					control={control}
 					defaultValue="true"
 				/>
 				<ControlledSwitch
 					name={setFormPath('hasAutoPolicy')}
 					label="Do you have a Raylife Auto policy?"
-					rules={{required: true}}
+					rules={{ required: true }}
 					control={control}
 				/>
 				<LegalEntityControlledSelect
@@ -113,9 +104,9 @@ export const FormBusiness = ({form}) => {
 								value: form?.business?.salesMerchandise,
 							},
 							selected:
-								setFormPath('salesMerchandise') === selectedKey,
+								isSelected(setFormPath('salesMerchandise')),
 							callback: () =>
-								changeMoreInfoSelected(
+								updateState(
 									setFormPath('salesMerchandise')
 								),
 						}}
@@ -126,7 +117,7 @@ export const FormBusiness = ({form}) => {
 					<ControlledSwitch
 						name={setFormPath('hasSellProductsUnderOwnBrand')}
 						label="Do you sell products under your own brand or label?"
-						rules={{required: true}}
+						rules={{ required: true }}
 						control={control}
 					/>
 				)}
