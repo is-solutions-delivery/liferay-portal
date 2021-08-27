@@ -28,11 +28,7 @@ export const FormBasicBusinessType = ({form}) => {
 			<CardFormActionsWithSave
 				onNext={goToNextForm}
 				onPrevious={goToPreviousPage}
-				isValid={
-					isValid &&
-					(form?.basics?.properties?.naics ||
-						form?.basics?.properties?.businessClassCode)
-				}
+				isValid={!!form?.basics?.businessCategoryId}
 			/>
 		</div>
 	);
