@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useFormContext, Controller} from 'react-hook-form';
 
 import {Radio} from '../../../fragments/Forms/Radio';
@@ -9,6 +9,7 @@ import {MoreInfoButton} from '../../../fragments/Buttons/MoreInfo';
 import {TIP_EVENT} from '../../../../events';
 import {CardFormActionsWithSave} from '../../../fragments/Card/FormActionsWithSave';
 import useFormActions from '../../../../hooks/useFormActions';
+import { useTriggerContext } from '../../../../hooks/useTriggerContext';
 
 export const FormBasicProductQuote = ({form}) => {
 	const {
@@ -23,15 +24,7 @@ export const FormBasicProductQuote = ({form}) => {
 		AVAILABLE_STEPS.BUSINESS
 	);
 
-	const [selectedKey, setSelectedKey] = useState('');
-
-	const changeMoreInfoSelected = (inputName) => {
-		if (inputName === selectedKey) {
-			setSelectedKey('');
-		} else {
-			setSelectedKey(inputName);
-		}
-	};
+	const { isSelected, updateState } = useTriggerContext();
 
 	return (
 		<div className="card">
@@ -69,10 +62,10 @@ export const FormBasicProductQuote = ({form}) => {
 														value: quote.id,
 													}}
 													selected={
-														quote.id === selectedKey
+														isSelected(quote.id)
 													}
 													callback={() =>
-														changeMoreInfoSelected(
+														updateState(
 															quote.id
 														)
 													}

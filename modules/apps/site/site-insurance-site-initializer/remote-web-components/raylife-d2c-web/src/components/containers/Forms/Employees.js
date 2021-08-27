@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useFormContext} from 'react-hook-form';
 
 import {AVAILABLE_STEPS} from '../../../utils/constants';
@@ -11,6 +11,7 @@ import {FEINControlledInput} from '../../connectors/Controlled/Input/WithMask/FE
 import {YearControlledInput} from '../../connectors/Controlled/Input/WithMask/Year';
 import {CurrencyControlledInput} from '../../connectors/Controlled/Input/WithMask/Currency';
 import useFormActions from '../../../hooks/useFormActions';
+import { useTriggerContext } from '../../../hooks/useTriggerContext';
 
 const setFormPath = (value) => `employees.${value}`;
 
@@ -29,15 +30,7 @@ export const FormEmployees = ({form}) => {
 		AVAILABLE_STEPS.PROPERTY
 	);
 
-	const [selectedKey, setSelectedKey] = useState('');
-
-	const changeMoreInfoSelected = (inputName) => {
-		if (inputName === selectedKey) {
-			setSelectedKey('');
-		} else {
-			setSelectedKey(inputName);
-		}
-	};
+	const { isSelected, updateState } = useTriggerContext();
 
 	return (
 		<div className="card">
@@ -64,9 +57,8 @@ export const FormEmployees = ({form}) => {
 								inputName: setFormPath('fein'),
 								value: form?.employees?.fein,
 							},
-							selected: setFormPath('fein') === selectedKey,
-							callback: () =>
-								changeMoreInfoSelected(setFormPath('fein')),
+							selected: isSelected(setFormPath('fein')),
+							callback: () => updateState(setFormPath('fein'))
 						}}
 						control={control}
 					/>
@@ -101,12 +93,8 @@ export const FormEmployees = ({form}) => {
 							inputName: setFormPath('partTimeEmployees'),
 							value: form?.employees?.partTimeEmployees,
 						},
-						selected:
-							setFormPath('partTimeEmployees') === selectedKey,
-						callback: () =>
-							changeMoreInfoSelected(
-								setFormPath('partTimeEmployees')
-							),
+						selected: isSelected(setFormPath('partTimeEmployees')),
+						callback: () => updateState(setFormPath('partTimeEmployees'))
 					}}
 					control={control}
 				/>
