@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {LiferayService} from '../services/liferay';
 import {useStepWizard} from './useStepWizard';
@@ -34,10 +34,14 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [applicationId]);
 
+	useEffect(() => {
+		Cookies.set('raylife-application-form', JSON.stringify(form));
+	}, [form]);
+
 	const _onValidation = () => {
 		const phraseAgentPage = verifyInputAgentPage(form, nextSection);
 		let validated = true;
-		
+
 		if (phraseAgentPage) {
 			Cookies.set('raylife-contextual-message', phraseAgentPage);
 			window.location.href = '/web/raylife/get-in-touch';
@@ -49,7 +53,8 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		return validated;
 	};
 
-	const _SaveData = useCallback(async () => {
+	const _SaveData = async () => {
+		setError('continueButton', {});
 		try {
 			const response = await LiferayService.createOrUpdateRaylifeApplication(
 				form
@@ -65,9 +70,9 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 					errorMessage ||
 					'There was an error processing your request. Please try again.',
 			});
+			throw error;
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [form]);
+	};
 
 	const onPrevious = async () => {
 		await _SaveData();
@@ -90,7 +95,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	const onNext = async () => {
 		await _SaveData();
 
-		const validated =_onValidation();
+		const validated = _onValidation();
 
 		if (validated) {
 			if (nextSection) {
