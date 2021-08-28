@@ -1,7 +1,29 @@
 {
-	"name": "d2c.web",
-	"version": "0.1.0",
+	"babel": {
+		"presets": [
+			"react-app"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
 	"description": "D2C Web",
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"name": "d2c-web",
 	"private": true,
 	"dependencies": {
 		"@babel/core": "7.12.3",
@@ -79,6 +101,10 @@
 		"webpack-manifest-plugin": "2.2.0",
 		"workbox-webpack-plugin": "5.1.4"
 	},
+	"devDependencies": {
+		"json-server": "^0.16.3",
+		"sass-to-string": "^1.5.1"
+	},
 	"scripts": {
 		"start": "node scripts/start.js",
 		"build": "node scripts/build.js",
@@ -87,81 +113,5 @@
 		"run:liferay": "yarn build:liferay && npx serve ./build",
 		"mock": "json-server -p 3333 -d 200 ./mock/db.json --routes ./mock/routes.json"
 	},
-	"eslintConfig": {
-		"extends": [
-			"react-app",
-			"react-app/jest"
-		]
-	},
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
-	},
-	"jest": {
-		"roots": [
-			"<rootDir>/src"
-		],
-		"collectCoverageFrom": [
-			"src/**/*.{js,jsx,ts,tsx}",
-			"!src/**/*.d.ts"
-		],
-		"setupFiles": [
-			"react-app-polyfill/jsdom"
-		],
-		"setupFilesAfterEnv": [],
-		"testMatch": [
-			"<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-			"<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
-		],
-		"testEnvironment": "jsdom",
-		"testRunner": "/home/giuseppe.davanzo/Documents/Repos/rl-d2c-web/node_modules/jest-circus/runner.js",
-		"transform": {
-			"^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
-			"^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-			"^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
-		},
-		"transformIgnorePatterns": [
-			"[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
-			"^.+\\.module\\.(css|sass|scss)$"
-		],
-		"modulePaths": [],
-		"moduleNameMapper": {
-			"^react-native$": "react-native-web",
-			"^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
-		},
-		"moduleFileExtensions": [
-			"web.js",
-			"js",
-			"web.ts",
-			"ts",
-			"web.tsx",
-			"tsx",
-			"json",
-			"web.jsx",
-			"jsx",
-			"node"
-		],
-		"watchPlugins": [
-			"jest-watch-typeahead/filename",
-			"jest-watch-typeahead/testname"
-		],
-		"resetMocks": true
-	},
-	"babel": {
-		"presets": [
-			"react-app"
-		]
-	},
-	"devDependencies": {
-		"json-server": "^0.16.3",
-		"sass-to-string": "^1.5.1"
-	}
+	"version": "1.0.0"
 }
