@@ -2,24 +2,24 @@
 import React, {useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
 
-import {BusinessInformationAddress} from './Address';
-import {AVAILABLE_STEPS} from '../../../../../utils/constants';
+import {TIP_EVENT} from '../../../../../events';
+import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
+import useFormActions from '../../../../../hooks/useFormActions';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
-import {CardFormActionsWithSave} from '../../../../fragments/Card/FormActionsWithSave';
+import {AVAILABLE_STEPS} from '../../../../../utils/constants';
+import {ControlledInput} from '../../../../connectors/Controlled/Input';
 import {EmailControlledInput} from '../../../../connectors/Controlled/Input/Email';
 import {WebsiteControlledInput} from '../../../../connectors/Controlled/Input/Website';
 import {PhoneControlledInput} from '../../../../connectors/Controlled/Input/WithMask/Phone';
-import {ControlledInput} from '../../../../connectors/Controlled/Input';
-import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
-import useFormActions from '../../../../../hooks/useFormActions';
-import {TIP_EVENT} from '../../../../../events';
+import {CardFormActionsWithSave} from '../../../../fragments/Card/FormActionsWithSave';
+import {BusinessInformationAddress} from './Address';
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;
 
 export const FormBasicBusinessInformation = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
-	const {onPrevious, onSave, onNext} = useFormActions(
+	const {onNext, onPrevious, onSave} = useFormActions(
 		form,
 		AVAILABLE_STEPS.BASICS_BUSINESS_TYPE,
 		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
@@ -33,15 +33,15 @@ export const FormBasicBusinessInformation = ({form}) => {
 
 	const onFirstNameSettled = () => {
 		dispatchEvent({
-			templateName: 'hi-template',
-			step: selectedStep,
 			inputName: setFormPath('firstName'),
-			value: form?.basics?.businessInformation?.firstName,
+			step: selectedStep,
 			templateData: {
 				firstName: ` ${
 					form?.basics?.businessInformation?.firstName?.trim() || ''
 				}! 👋`,
 			},
+			templateName: 'hi-template',
+			value: form?.basics?.businessInformation?.firstName,
 		});
 	};
 
@@ -65,11 +65,11 @@ export const FormBasicBusinessInformation = ({form}) => {
 				<div className="content-row">
 					<ControlledInput
 						control={control}
-						label="First Name"
 						inputProps={{
 							maxLength: 256,
 							onBlur: onFirstNameSettled,
 						}}
+						label="First Name"
 						name={setFormPath('firstName')}
 						rules={{
 							required: 'First name is required.',
@@ -77,10 +77,10 @@ export const FormBasicBusinessInformation = ({form}) => {
 					/>
 					<ControlledInput
 						control={control}
-						label="Last Name"
 						inputProps={{
 							maxLength: 256,
 						}}
+						label="Last Name"
 						name={setFormPath('lastName')}
 						rules={{
 							required: 'Last name is required.',

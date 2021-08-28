@@ -1,4 +1,4 @@
-import { US_STATES, LEGAL_ENTITIES } from "./data";
+import {LEGAL_ENTITIES, US_STATES} from './data';
 
 /**
  * @returns {Promise<{
@@ -7,16 +7,16 @@ import { US_STATES, LEGAL_ENTITIES } from "./data";
  * }[]>} Array with all US states
  */
 const getUSStates = () =>
-  new Promise((resolve) => {
-    resolve(US_STATES);
-});
+	new Promise((resolve) => {
+		resolve(US_STATES);
+	});
 
 const getLegalEntities = () =>
-  new Promise((resolve) => {
-    resolve(LEGAL_ENTITIES);
-});
+	new Promise((resolve) => {
+		resolve(LEGAL_ENTITIES);
+	});
 
 export const MockService = {
-  getUSStates,
-  getLegalEntities
+	getLegalEntities,
+	getUSStates,
 };

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useEffect, useState} from 'react';
+
 import {LiferayService} from '../services/liferay';
 
 export const useProductQuotes = () => {
@@ -14,14 +15,15 @@ export const useProductQuotes = () => {
 		try {
 			const response = await LiferayService.getProductQuotes();
 			setData(response);
-		} catch (error) {
+		}
+		catch (error) {
 			setError(error);
 		}
 	};
 
 	return {
-		productQuotes: data || [],
-		isLoading: !data && !error,
 		isError: error,
+		isLoading: !data && !error,
+		productQuotes: data || [],
 	};
 };

@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 
-import { ControlledInput } from ".";
+import {ControlledInput} from '.';
 
-export const NumberControlledInput = ({ ...props }) => {
-  return (
-    <ControlledInput
-      {...props}
-      inputProps={{
-        type: "number",
-      }}
-    />
-  );
+export const NumberControlledInput = ({...props}) => {
+	return (
+		<ControlledInput
+			{...props}
+			inputProps={{
+				type: 'number',
+			}}
+		/>
+	);
 };

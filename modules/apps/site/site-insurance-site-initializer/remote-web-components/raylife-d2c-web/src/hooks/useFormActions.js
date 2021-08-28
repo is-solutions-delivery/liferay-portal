@@ -1,9 +1,10 @@
-import {useState, useEffect} from 'react';
-import {useFormContext} from 'react-hook-form';
-import {LiferayService} from '../services/liferay';
-import {useStepWizard} from './useStepWizard';
 import Cookies from 'js-cookie';
+import {useEffect, useState} from 'react';
+import {useFormContext} from 'react-hook-form';
+
+import {LiferayService} from '../services/liferay';
 import {verifyInputAgentPage} from '../utils/contact-agent';
+import {useStepWizard} from './useStepWizard';
 
 /**
  *
@@ -46,7 +47,8 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 			Cookies.set('raylife-contextual-message', phraseAgentPage);
 			window.location.href = '/web/raylife/get-in-touch';
 			validated = false;
-		} else {
+		}
+		else {
 			Cookies.remove('raylife-contextual-message');
 		}
 
@@ -56,19 +58,19 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	const _SaveData = async () => {
 		setError('continueButton', {});
 		try {
-			const response = await LiferayService.createOrUpdateRaylifeApplication(
-				form
-			);
+			const response =
+				await LiferayService.createOrUpdateRaylifeApplication(form);
 
 			setApplicationId(response.data.id);
 
 			return response;
-		} catch (error) {
+		}
+		catch (error) {
 			setError('continueButton', {
-				type: 'manual',
 				message:
 					errorMessage ||
 					'There was an error processing your request. Please try again.',
+				type: 'manual',
 			});
 			throw error;
 		}

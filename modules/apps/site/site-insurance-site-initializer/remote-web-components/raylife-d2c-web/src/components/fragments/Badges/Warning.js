@@ -1,5 +1,5 @@
-import React from 'react';
 import ClayIcon from '@clayui/icon';
+import React from 'react';
 
 export const WarningBadge = ({children, ...props}) => {
 	return (

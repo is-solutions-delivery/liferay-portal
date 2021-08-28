@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import '../types';
+
 import {Loader} from '@googlemaps/js-api-loader';
 
 const {REACT_APP_GOOGLE_API = ''} = process.env;
@@ -10,8 +11,9 @@ const {REACT_APP_GOOGLE_API = ''} = process.env;
  */
 const setup = () => {
 	try {
-		if (!REACT_APP_GOOGLE_API)
+		if (!REACT_APP_GOOGLE_API) {
 			throw new Error('Google api key is not defined inside .env');
+		}
 
 		const googleMapsLoader = new Loader({
 			apiKey: REACT_APP_GOOGLE_API,
@@ -19,7 +21,8 @@ const setup = () => {
 		});
 
 		googleMapsLoader.load();
-	} catch (error) {
+	}
+	catch (error) {
 		console.warn(error);
 	}
 };
@@ -29,17 +32,20 @@ const setup = () => {
  * @returns {any} Google Maps Autocomplete Instance
  */
 const autocomplete = (input) => {
-	if (!google)
+	if (!google) {
 		throw new Error(
 			'google is not defined. Please check the Google Maps API key within System Settings and ensure a valid API key is entered'
 		);
+	}
 
-	if (!input)
+	if (!input) {
 		throw new Error(
 			'No HTMLElement was found as input. Ensure a valid HTMLElement reference is passed!'
 		);
+	}
 
 	// Prevent crashes if the user hits enter in a autocomplete search
+
 	google.maps.event.addDomListener(input, 'keydown', (event) => {
 		if (event.keyCode === 13 || event.key === 'Enter') {
 			event.preventDefault();
@@ -56,10 +62,11 @@ const autocomplete = (input) => {
  * @returns {any} Google Maps InfoWindow Instance
  */
 const InfoWindow = () => {
-	if (!google)
+	if (!google) {
 		throw new Error(
 			'google is not defined. Please check the Google Maps API key within System Settings and ensure a valid API key is entered'
 		);
+	}
 
 	return new google.maps.InfoWindow();
 };
@@ -70,6 +77,7 @@ const InfoWindow = () => {
  */
 const getAutocompletePlaces = (autocomplete) => {
 	const place = autocomplete.getPlace();
+
 	return _adaptGoogleMapsAddressIntoAddress(place.address_components);
 };
 
@@ -79,11 +87,11 @@ const getAutocompletePlaces = (autocomplete) => {
  */
 const _adaptGoogleMapsAddressIntoAddress = (addressComponents) => {
 	const address = {
-		streetNumber: '',
-		street: '',
 		city: '',
-		state: '',
 		country: '',
+		state: '',
+		street: '',
+		streetNumber: '',
 		zip: '',
 	};
 
@@ -122,8 +130,8 @@ const _adaptGoogleMapsAddressIntoAddress = (addressComponents) => {
 };
 
 export const GoogleMapsService = {
-	setup,
-	autocomplete,
 	InfoWindow,
+	autocomplete,
 	getAutocompletePlaces,
+	setup,
 };

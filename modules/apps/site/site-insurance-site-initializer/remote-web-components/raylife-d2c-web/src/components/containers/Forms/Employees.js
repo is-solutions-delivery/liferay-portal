@@ -1,17 +1,17 @@
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 
-import {AVAILABLE_STEPS} from '../../../utils/constants';
-import {useStepWizard} from '../../../hooks/useStepWizard';
 import {TIP_EVENT} from '../../../events';
-import {CardFormActionsWithSave} from '../../fragments/Card/FormActionsWithSave';
-import {ControlledSwitch} from '../../connectors/Controlled/Switch';
+import useFormActions from '../../../hooks/useFormActions';
+import {useStepWizard} from '../../../hooks/useStepWizard';
+import {useTriggerContext} from '../../../hooks/useTriggerContext';
+import {AVAILABLE_STEPS} from '../../../utils/constants';
 import {NumberControlledInput} from '../../connectors/Controlled/Input/Number';
+import {CurrencyControlledInput} from '../../connectors/Controlled/Input/WithMask/Currency';
 import {FEINControlledInput} from '../../connectors/Controlled/Input/WithMask/FEIN';
 import {YearControlledInput} from '../../connectors/Controlled/Input/WithMask/Year';
-import {CurrencyControlledInput} from '../../connectors/Controlled/Input/WithMask/Currency';
-import useFormActions from '../../../hooks/useFormActions';
-import { useTriggerContext } from '../../../hooks/useTriggerContext';
+import {ControlledSwitch} from '../../connectors/Controlled/Switch';
+import {CardFormActionsWithSave} from '../../fragments/Card/FormActionsWithSave';
 
 const setFormPath = (value) => `employees.${value}`;
 
@@ -30,97 +30,98 @@ export const FormEmployees = ({form}) => {
 		AVAILABLE_STEPS.PROPERTY
 	);
 
-	const { isSelected, updateState } = useTriggerContext();
+	const {isSelected, updateState} = useTriggerContext();
 
 	return (
 		<div className="card">
 			<div className="card-content">
 				<ControlledSwitch
-					name={setFormPath('hasFein')}
-					label="Does your business have a Federal Employer Identification Number (FEIN)?"
-					rules={{required: true}}
 					control={control}
+					label="Does your business have a Federal Employer Identification Number (FEIN)?"
+					name={setFormPath('hasFein')}
+					rules={{required: true}}
 				/>
 				{hasFein(form?.employees?.hasFein) && (
 					<FEINControlledInput
-						name={setFormPath('fein')}
+						control={control}
 						label="Federal Employer Identification Number (FEIN)"
+						moreInfoProps={{
+							callback: () => updateState(setFormPath('fein')),
+							event: TIP_EVENT,
+							selected: isSelected(setFormPath('fein')),
+							value: {
+								inputName: setFormPath('fein'),
+								step: selectedStep,
+								templateName:
+									'federal-employer-identification-number',
+								value: form?.employees?.fein,
+							},
+						}}
+						name={setFormPath('fein')}
 						rules={{
 							required: 'FEIN is required.',
 						}}
-						moreInfoProps={{
-							event: TIP_EVENT,
-							value: {
-								templateName:
-									'federal-employer-identification-number',
-								step: selectedStep,
-								inputName: setFormPath('fein'),
-								value: form?.employees?.fein,
-							},
-							selected: isSelected(setFormPath('fein')),
-							callback: () => updateState(setFormPath('fein'))
-						}}
-						control={control}
 					/>
 				)}
 				<YearControlledInput
-					name={setFormPath('startBusinessAtYear')}
-					label="What year did you start your business?"
-					rules={{required: 'This field is required'}}
 					control={control}
+					label="What year did you start your business?"
+					name={setFormPath('startBusinessAtYear')}
+					rules={{required: 'This field is required'}}
 				/>
 				<ControlledSwitch
-					name={setFormPath('businessOperatesYearRound')}
-					label="Does your business operate year round?"
-					rules={{required: true}}
 					control={control}
+					label="Does your business operate year round?"
+					name={setFormPath('businessOperatesYearRound')}
+					rules={{required: true}}
 				/>
 				<NumberControlledInput
-					name={setFormPath('partTimeEmployees')}
+					control={control}
 					label="How many full or part time employees do you have?"
-					rules={{
-						required: 'This field is required',
-						min: {
-							value: 1,
-							message: 'You must have at least one employee.',
-						},
-					}}
 					moreInfoProps={{
+						callback: () =>
+							updateState(setFormPath('partTimeEmployees')),
 						event: TIP_EVENT,
+						selected: isSelected(setFormPath('partTimeEmployees')),
 						value: {
-							templateName: 'full-or-part-time-employees',
-							step: selectedStep,
 							inputName: setFormPath('partTimeEmployees'),
+							step: selectedStep,
+							templateName: 'full-or-part-time-employees',
 							value: form?.employees?.partTimeEmployees,
 						},
-						selected: isSelected(setFormPath('partTimeEmployees')),
-						callback: () => updateState(setFormPath('partTimeEmployees'))
 					}}
-					control={control}
+					name={setFormPath('partTimeEmployees')}
+					rules={{
+						min: {
+							message: 'You must have at least one employee.',
+							value: 1,
+						},
+						required: 'This field is required',
+					}}
 				/>
 				<CurrencyControlledInput
-					name={setFormPath('estimatedAnnualGrossRevenue')}
+					control={control}
 					label="What is your estimated annual gross revenue for the next 12 months?"
+					name={setFormPath('estimatedAnnualGrossRevenue')}
 					rules={{required: 'This field is required'}}
-					control={control}
 				/>
 				<CurrencyControlledInput
-					name={setFormPath('annualPayrollForOwner')}
+					control={control}
 					label="What do you anticipate your annual payroll will be for all owner(s) over the next 12 months?"
+					name={setFormPath('annualPayrollForOwner')}
 					rules={{required: 'This field is required'}}
-					control={control}
 				/>
 				<CurrencyControlledInput
-					name={setFormPath('annualPayrollForEmployees')}
-					label="What do you anticipate your annual payroll will be for all employees over the next 12 months?"
-					rules={{required: 'This field is required'}}
 					control={control}
+					label="What do you anticipate your annual payroll will be for all employees over the next 12 months?"
+					name={setFormPath('annualPayrollForEmployees')}
+					rules={{required: 'This field is required'}}
 				/>
 			</div>
 			<CardFormActionsWithSave
 				isValid={isValid}
-				onPrevious={onPrevious}
 				onNext={onNext}
+				onPrevious={onPrevious}
 				onSave={onSave}
 			/>
 		</div>

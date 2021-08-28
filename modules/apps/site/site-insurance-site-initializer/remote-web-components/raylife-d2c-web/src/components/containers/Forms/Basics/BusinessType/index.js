@@ -1,15 +1,11 @@
 import React from 'react';
-import {useFormContext} from 'react-hook-form';
 
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {AVAILABLE_STEPS} from '../../../../../utils/constants';
-import {BusinessTypeSearch} from './Search';
 import {CardFormActionsWithSave} from '../../../../fragments/Card/FormActionsWithSave';
+import {BusinessTypeSearch} from './Search';
 
 export const FormBasicBusinessType = ({form}) => {
-	const {
-		formState: {isValid},
-	} = useFormContext();
 	const {setSection} = useStepWizard();
 
 	const goToNextForm = () => {
@@ -26,9 +22,9 @@ export const FormBasicBusinessType = ({form}) => {
 				<BusinessTypeSearch form={form} />
 			</div>
 			<CardFormActionsWithSave
+				isValid={!!form?.basics?.businessCategoryId}
 				onNext={goToNextForm}
 				onPrevious={goToPreviousPage}
-				isValid={!!form?.basics?.businessCategoryId}
 			/>
 		</div>
 	);

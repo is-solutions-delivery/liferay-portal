@@ -11,10 +11,12 @@ export const verifyInputAgentPage = (properties, nextSection) => {
 	if (toBool(auxBusiness) && nextSection.section === 'employees') {
 		contextualMessage =
 			'We need to ask you for more information about your business.';
-	} else if (!toBool(auxEmployees) && nextSection.section === 'property') {
+	}
+	else if (!toBool(auxEmployees) && nextSection.section === 'property') {
 		contextualMessage =
 			'We need to ask you for more information about your employees.';
-	} else if (toBool(auxProperty)) {
+	}
+	else if (toBool(auxProperty)) {
 		contextualMessage =
 			'We need to ask you for more information about your business location.';
 	}

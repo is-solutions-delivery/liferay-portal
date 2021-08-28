@@ -1,17 +1,17 @@
 import React from 'react';
 
-import { Label } from '../Label';
-import { InputAreaWithError } from '../InputArea/WithError';
+import {InputAreaWithError} from '../InputArea/WithError';
+import {Label} from '../Label';
 
 export const SearchInput = React.forwardRef(
 	(
 		{
-			name,
-			label,
-			renderActions,
 			children,
-			required = false,
 			error,
+			label,
+			name,
+			renderActions,
+			required = false,
 			...props
 		},
 		ref
@@ -19,7 +19,7 @@ export const SearchInput = React.forwardRef(
 		return (
 			<>
 				{label && (
-					<Label name={name} label={label} required={required}>
+					<Label label={label} name={name} required={required}>
 						{renderActions}
 					</Label>
 				)}
@@ -27,10 +27,10 @@ export const SearchInput = React.forwardRef(
 					<InputAreaWithError error={error}>
 						<input
 							{...props}
-							ref={ref}
-							name={name}
-							required={required}
 							maxLength={255}
+							name={name}
+							ref={ref}
+							required={required}
 						/>
 					</InputAreaWithError>
 					{children}

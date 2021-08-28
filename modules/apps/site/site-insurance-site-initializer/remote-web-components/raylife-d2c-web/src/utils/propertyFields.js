@@ -9,9 +9,12 @@ export const propertyTotalFields = (properties) => {
 
 	if (
 		properties?.basics?.properties?.segment.toLowerCase() === 'habitational'
-	)
+	) {
 		fieldCount++;
-	if (properties?.property?.areThereSwimming === 'true') fieldCount++;
+	}
+	if (properties?.property?.areThereSwimming === 'true') {
+		fieldCount++;
+	}
 
 	return fieldCount;
 };

@@ -1,28 +1,28 @@
-import React from "react";
+import React from 'react';
 
-import { ControlledInputWithMask } from ".";
-import { YEAR_REGEX } from "../../../../../utils/patterns";
+import {ControlledInputWithMask} from '.';
+import {YEAR_REGEX} from '../../../../../utils/patterns';
 
 export const YearControlledInput = ({
-  rules = {},
-  inputProps = {},
-  ...props
+	rules = {},
+	inputProps = {},
+	...props
 }) => {
-  return (
-    <ControlledInputWithMask
-      {...props}
-      rules={{
-        pattern: {
-          value: YEAR_REGEX,
-          message: "Must be a valid year.",
-        },
-        max: {
-          value: new Date().getFullYear(),
-          message: "You cannot enter a future year.",
-        },
-        ...rules,
-      }}
-      inputProps={{ format: "####", mask: "_", ...inputProps }}
-    />
-  );
+	return (
+		<ControlledInputWithMask
+			{...props}
+			inputProps={{format: '####', mask: '_', ...inputProps}}
+			rules={{
+				max: {
+					message: 'You cannot enter a future year.',
+					value: new Date().getFullYear(),
+				},
+				pattern: {
+					message: 'Must be a valid year.',
+					value: YEAR_REGEX,
+				},
+				...rules,
+			}}
+		/>
+	);
 };

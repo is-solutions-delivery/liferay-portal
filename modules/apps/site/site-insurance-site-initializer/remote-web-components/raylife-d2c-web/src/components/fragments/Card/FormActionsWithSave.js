@@ -1,17 +1,19 @@
-import React from 'react';
 import ClayIcon from '@clayui/icon';
+import React from 'react';
 import {useFormContext} from 'react-hook-form';
+
 import {WarningBadge} from '../Badges/Warning';
 
 export const CardFormActionsWithSave = ({
+	isValid = true,
+	onNext,
 	onPrevious,
 	onSave,
-	onNext,
-	isValid = true,
 }) => {
 	const {
 		formState: {errors},
 	} = useFormContext();
+
 	return (
 		<>
 			{errors?.continueButton?.message && (
@@ -20,9 +22,9 @@ export const CardFormActionsWithSave = ({
 			<div className="card-actions">
 				{onPrevious && (
 					<button
-						type="button"
 						className="btn btn-flat"
 						onClick={onPrevious}
+						type="button"
 					>
 						Previous
 					</button>
@@ -31,9 +33,9 @@ export const CardFormActionsWithSave = ({
 				<div>
 					{onSave && (
 						<button
-							type="button"
 							className="btn btn-outline"
 							onClick={onSave}
+							type="button"
 						>
 							Save & Exit
 						</button>
@@ -41,10 +43,10 @@ export const CardFormActionsWithSave = ({
 
 					{onNext && (
 						<button
-							type="submit"
 							className="btn btn-secondary continue"
-							onClick={onNext}
 							disabled={!isValid}
+							onClick={onNext}
+							type="submit"
 						>
 							Continue
 							<ClayIcon symbol="angle-right" />
