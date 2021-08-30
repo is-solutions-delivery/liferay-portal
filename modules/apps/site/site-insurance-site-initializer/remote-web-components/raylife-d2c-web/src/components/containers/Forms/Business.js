@@ -1,36 +1,37 @@
 import React from 'react';
 import {useFormContext} from 'react-hook-form';
 
-import { AVAILABLE_STEPS } from '../../../utils/constants';
-import { useStepWizard } from '../../../hooks/useStepWizard';
-import { TIP_EVENT } from '../../../events';
-import { CardFormActionsWithSave } from '../../fragments/Card/FormActionsWithSave';
-import { ControlledSwitch } from '../../connectors/Controlled/Switch';
-import { NumberControlledInput } from '../../connectors/Controlled/Input/Number';
-import { PercentageControlledInput } from '../../connectors/Controlled/Input/WithMask/Percentage';
-import { LegalEntityControlledSelect } from '../../connectors/Controlled/Select/LegalEntity';
-import { PERCENTAGE_REGEX_MAX_100 } from '../../../utils/patterns';
+import {AVAILABLE_STEPS} from '../../../utils/constants';
+import {useStepWizard} from '../../../hooks/useStepWizard';
+import {TIP_EVENT} from '../../../events';
+import {CardFormActionsWithSave} from '../../fragments/Card/FormActionsWithSave';
+import {ControlledSwitch} from '../../connectors/Controlled/Switch';
+import {NumberControlledInput} from '../../connectors/Controlled/Input/Number';
+import {PercentageControlledInput} from '../../connectors/Controlled/Input/WithMask/Percentage';
+import {LegalEntityControlledSelect} from '../../connectors/Controlled/Select/LegalEntity';
+import {PERCENTAGE_REGEX_MAX_100} from '../../../utils/patterns';
 import {
 	validateOverallSales,
 	validateOwnBrandLabel,
 	validatePercentSales,
 } from '../../../utils/businessFields';
 import useFormActions from '../../../hooks/useFormActions';
-import { useTriggerContext } from '../../../hooks/useTriggerContext';
+import {useTriggerContext} from '../../../hooks/useTriggerContext';
 
 const setFormPath = (value) => `business.${value}`;
 
 export const FormBusiness = ({form}) => {
 	const {
 		control,
-		formState: { isValid },
+		formState: {isValid},
 	} = useFormContext();
-	const { selectedStep } = useStepWizard();
-	const { onNext, onPrevious, onSave } = useFormActions(
+	const {selectedStep} = useStepWizard();
+	const {onNext, onPrevious, onSave} = useFormActions(
+		form,
 		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
 		AVAILABLE_STEPS.EMPLOYEES
 	);
-	const { isSelected, updateState } = useTriggerContext();
+	const {isSelected, updateState} = useTriggerContext();
 
 	return (
 		<div className="card">
@@ -53,26 +54,23 @@ export const FormBusiness = ({form}) => {
 							inputName: setFormPath('yearsOfExperience'),
 							value: form?.business?.yearsOfExperience,
 						},
-						selected:
-							isSelected(setFormPath('yearsOfExperience')),
+						selected: isSelected(setFormPath('yearsOfExperience')),
 						callback: () =>
-							updateState(
-								setFormPath('yearsOfExperience')
-							),
+							updateState(setFormPath('yearsOfExperience')),
 					}}
 					control={control}
 				/>
 				<ControlledSwitch
 					name={setFormPath('hasStoredCustomerInformation')}
 					label="Do you store personally identifiable information about your customers?"
-					rules={{ required: true }}
+					rules={{required: true}}
 					control={control}
 					defaultValue="true"
 				/>
 				<ControlledSwitch
 					name={setFormPath('hasAutoPolicy')}
 					label="Do you have a Raylife Auto policy?"
-					rules={{ required: true }}
+					rules={{required: true}}
 					control={control}
 				/>
 				<LegalEntityControlledSelect
@@ -103,12 +101,11 @@ export const FormBusiness = ({form}) => {
 								inputName: setFormPath('salesMerchandise'),
 								value: form?.business?.salesMerchandise,
 							},
-							selected:
-								isSelected(setFormPath('salesMerchandise')),
+							selected: isSelected(
+								setFormPath('salesMerchandise')
+							),
 							callback: () =>
-								updateState(
-									setFormPath('salesMerchandise')
-								),
+								updateState(setFormPath('salesMerchandise')),
 						}}
 						control={control}
 					/>
@@ -117,7 +114,7 @@ export const FormBusiness = ({form}) => {
 					<ControlledSwitch
 						name={setFormPath('hasSellProductsUnderOwnBrand')}
 						label="Do you sell products under your own brand or label?"
-						rules={{ required: true }}
+						rules={{required: true}}
 						control={control}
 					/>
 				)}
