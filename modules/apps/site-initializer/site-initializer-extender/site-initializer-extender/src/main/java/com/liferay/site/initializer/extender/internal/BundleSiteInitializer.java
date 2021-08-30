@@ -20,15 +20,17 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetCategoryConstants;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.util.DLURLHelper;
-import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.fragment.importer.FragmentsImporter;
+import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyCategory;
+import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyCategoryResource;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyVocabulary;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
 import com.liferay.headless.delivery.dto.v1_0.Document;
@@ -56,6 +58,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
@@ -76,6 +79,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
+import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
@@ -124,6 +128,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
+		TaxonomyCategoryResource.Factory taxonomyCategoryResourceFactory,
 		TaxonomyVocabularyResource.Factory taxonomyVocabularyResourceFactory,
 		UserLocalService userLocalService) {
 
@@ -148,6 +153,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_structuredContentFolderResourceFactory =
 			structuredContentFolderResourceFactory;
 		_styleBookEntryZipProcessor = styleBookEntryZipProcessor;
+		_taxonomyCategoryResourceFactory = taxonomyCategoryResourceFactory;
 		_taxonomyVocabularyResourceFactory = taxonomyVocabularyResourceFactory;
 		_userLocalService = userLocalService;
 
@@ -217,153 +223,134 @@ public class BundleSiteInitializer implements SiteInitializer {
 	public boolean isActive(long companyId) {
 		return true;
 	}
-
-	private void _addAssetCategories(
-			long groupId, long vocabularyId, String parentResourcePath,
-			ServiceContext serviceContext)
+	
+	private void _addTaxonomyCategories(
+			long groupId, long vocabularyId, String parentCategoryId,
+			String parentResourcePath, ServiceContext serviceContext)
 		throws Exception {
 
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
-			_read(parentResourcePath + "asset-categories.json"));
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			parentResourcePath);
 
-		for (int i = 0; i < jsonArray.length(); i++) {
-			String titleCategory = null;
-			String externalReferenceCodeCategory = null;
-			JSONArray subcategoriesJSONArray = null;
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return;
+		}
 
-			JSONObject categoryJSONObject = jsonArray.getJSONObject(i);
-
-			if (categoryJSONObject != null) {
-				titleCategory = categoryJSONObject.getString("title");
-
-				externalReferenceCodeCategory = categoryJSONObject.getString(
-					"externalReferenceCode");
-
-				subcategoriesJSONArray = categoryJSONObject.getJSONArray(
-					"subcategories");
-			}
-			else {
-				titleCategory = jsonArray.getString(i);
-			}
-
-			AssetCategory assetCategory = _addAssetCategory(
-				vocabularyId, new String[0], null,
-				externalReferenceCodeCategory, groupId,
-				AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
-				serviceContext, titleCategory);
-
-			if (categoryJSONObject == null) {
+		for (String resourcePath : resourcePaths) {
+			if (resourcePath.endsWith("/") || resourcePath.contains("permissions")) {
 				continue;
 			}
+			String jsonCategory = _read(resourcePath);
 
-			JSONArray permissionsJSONArray = categoryJSONObject.getJSONArray(
-				"permissions");
+			TaxonomyCategory taxonomyCategory = TaxonomyCategory.toDTO(
+					jsonCategory);
 
-			if ((permissionsJSONArray != null) &&
-				(permissionsJSONArray.length() > 0)) {
+			if (taxonomyCategory == null) {
+				_log.error(
+					"Unable to transform taxonomy vocabulary from JSON: " +
+							jsonCategory);
 
-				_updatePermissions(
-					assetCategory.getCompanyId(),
-					assetCategory.getModelClassName(),
-					String.valueOf(assetCategory.getCategoryId()),
-					permissionsJSONArray);
+				continue;
 			}
+			
+			if(parentCategoryId == String.valueOf(AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID)) {
+				taxonomyCategory = _addTaxonomyVocabularyTaxonomyCategory(
+					serviceContext, taxonomyCategory, vocabularyId);
+		
 
-			if (subcategoriesJSONArray != null) {
-				for (int y = 0; y < subcategoriesJSONArray.length(); y++) {
-					JSONObject subcategoryJSONObject =
-						subcategoriesJSONArray.getJSONObject(y);
-
-					String descriptionSubcategory =
-						subcategoryJSONObject.getString("description");
-
-					String titleSubcategory = subcategoryJSONObject.getString(
-						"title");
-
-					String externalReferenceCodeSubcategory =
-						subcategoryJSONObject.getString(
-							"externalReferenceCode");
-
-					JSONArray propertiesJSONArray =
-						subcategoryJSONObject.getJSONArray("properties");
-
-					String[] properties =
-						new String[propertiesJSONArray.length()];
-
-					for (int x = 0; x < propertiesJSONArray.length(); x++) {
-						JSONObject propertyJSONObject =
-							propertiesJSONArray.getJSONObject(x);
-
-						String key = propertyJSONObject.getString("key");
-						String value = propertyJSONObject.getString("value");
-
-						properties[x] = StringBundler.concat(
-							key,
-							AssetCategoryConstants.PROPERTY_KEY_VALUE_SEPARATOR,
-							value);
-					}
-
-					AssetCategory subassetcategory = _addAssetCategory(
-						vocabularyId, properties, descriptionSubcategory,
-						externalReferenceCodeSubcategory, groupId,
-						assetCategory.getCategoryId(), serviceContext,
-						titleSubcategory);
-
-					JSONArray subcategorypermissionsJSONArray =
-						subcategoryJSONObject.getJSONArray("permissions");
-
-					if ((subcategorypermissionsJSONArray != null) &&
-						(subcategorypermissionsJSONArray.length() > 0)) {
-
-						_updatePermissions(
-							subassetcategory.getCompanyId(),
-							subassetcategory.getModelClassName(),
-							String.valueOf(subassetcategory.getCategoryId()),
-							subcategorypermissionsJSONArray);
-					}
-				}
+			} else {
+				taxonomyCategory = _addTaxonomyCategoryTaxonomyCategory(
+					parentCategoryId, serviceContext, taxonomyCategory);
+			}
+			
+			String jsonCategoryPermissions = _read(StringUtil.replace(
+					resourcePath, ".json", "-permissions.json"));
+			
+			_addTaxonomyCategoryPermissions(groupId, jsonCategoryPermissions, serviceContext);
+			
+			String resourcePathCategories = StringUtil.replace(
+					resourcePath, ".json", "/");
+		
+			if (resourcePaths.contains(resourcePathCategories)) {
+				_addTaxonomyCategories(
+					groupId, vocabularyId, taxonomyCategory.getId(),
+					resourcePathCategories, serviceContext);
+			
 			}
 		}
 	}
 
-	private AssetCategory _addAssetCategory(
-			long assetVocabularyId, String[] categoryProperties,
-			String description, String externalReferenceCode, long groupId,
-			long parentCategoryId, ServiceContext serviceContext, String title)
+	private TaxonomyCategory _addTaxonomyVocabularyTaxonomyCategory(
+			ServiceContext serviceContext, TaxonomyCategory taxonomyCategory, long VocabularyId)
 		throws Exception {
+		
+		TaxonomyCategoryResource.Builder taxonomyCategoryResourceBuilder =
+				_taxonomyCategoryResourceFactory.create();
 
-		Map<Locale, String> titleMap = Collections.singletonMap(
-			LocaleUtil.getSiteDefault(), title);
+		TaxonomyCategoryResource taxonomyCategoryResource =
+			taxonomyCategoryResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
+		
+		Filter filterFetch = taxonomyCategoryResource.toFilter(
+				StringBundler.concat(
+					"name eq '",
+					taxonomyCategory.getName(),
+					"'"));
+		
+		TaxonomyCategory existingTaxonomyCategory = null;
+		
+		existingTaxonomyCategory = 
+				taxonomyCategoryResource.getTaxonomyVocabularyTaxonomyCategoriesPage(VocabularyId, "", filterFetch, null, null)
+				.getItems().iterator().next();
 
-		Map<Locale, String> descriptionMap = null;
 
-		if (Validator.isNotNull(description)) {
-			descriptionMap = Collections.singletonMap(
-				LocaleUtil.getSiteDefault(), description);
-		}
-
-		AssetCategory assetCategory = _assetCategoryLocalService.fetchCategory(
-			groupId, parentCategoryId, title, assetVocabularyId);
-
-		if (assetCategory == null) {
-			assetCategory = _assetCategoryLocalService.addCategory(
-				serviceContext.getUserId(), groupId, parentCategoryId, titleMap,
-				descriptionMap, assetVocabularyId, categoryProperties,
-				serviceContext);
-
-			assetCategory.setExternalReferenceCode(externalReferenceCode);
-
-			assetCategory = _assetCategoryLocalService.updateAssetCategory(
-				assetCategory);
+		if (existingTaxonomyCategory == null) {
+			taxonomyCategory = taxonomyCategoryResource.postTaxonomyVocabularyTaxonomyCategory(VocabularyId, taxonomyCategory);
 		}
 		else {
-			assetCategory = _assetCategoryLocalService.updateCategory(
-				serviceContext.getUserId(), assetCategory.getCategoryId(),
-				parentCategoryId, titleMap, descriptionMap, assetVocabularyId,
-				categoryProperties, serviceContext);
+			taxonomyCategory = taxonomyCategoryResource.patchTaxonomyCategory(existingTaxonomyCategory.getId(), taxonomyCategory);
+
 		}
 
-		return assetCategory;
+		return taxonomyCategory;
+	}
+	
+	private TaxonomyCategory _addTaxonomyCategoryTaxonomyCategory(
+			String parentCategoryId, ServiceContext serviceContext, 
+			TaxonomyCategory taxonomyCategory)
+		throws Exception {
+		
+		TaxonomyCategoryResource.Builder taxonomyCategoryResourceBuilder =
+				_taxonomyCategoryResourceFactory.create();
+
+		TaxonomyCategoryResource taxonomyCategoryResource =
+			taxonomyCategoryResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
+		
+		Filter filterFetch = taxonomyCategoryResource.toFilter(
+				StringBundler.concat(
+					"name eq '",
+					taxonomyCategory.getName(),
+					"'"));
+		
+		TaxonomyCategory existingTaxonomyCategory = null;
+		
+		existingTaxonomyCategory = 
+				taxonomyCategoryResource.getTaxonomyCategoryTaxonomyCategoriesPage(parentCategoryId, "", filterFetch, null, null)
+				.getItems().iterator().next();
+
+
+		if (existingTaxonomyCategory == null) {
+			taxonomyCategory = taxonomyCategoryResource.postTaxonomyCategoryTaxonomyCategory(parentCategoryId, taxonomyCategory);
+		}
+		else {
+			taxonomyCategory = taxonomyCategoryResource.patchTaxonomyCategory(existingTaxonomyCategory.getId(), taxonomyCategory);
+
+		}
+
+		return taxonomyCategory;
 	}
 
 	private void _addDDMStructures(ServiceContext serviceContext)
@@ -786,8 +773,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).build();
 
 		for (String resourcePath : resourcePaths) {
-			String jsonVocabulary = _read(
-				resourcePath + "taxonomy-vocabulary.json");
+			if (resourcePath.endsWith("/")) {
+				continue;
+			}
+
+			String jsonVocabulary = _read(resourcePath);
 
 			TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.toDTO(
 				jsonVocabulary);
@@ -799,15 +789,22 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 				continue;
 			}
+			
+			Filter filterFetch = taxonomyVocabularyResource.toFilter(
+					StringBundler.concat(
+						"name eq '",
+						taxonomyVocabulary.getName(),
+						"'"));
+										
+			TaxonomyVocabulary existingTaxonomyVocabulary = 
+					taxonomyVocabularyResource.getSiteTaxonomyVocabulariesPage(
+							groupId, "", filterFetch, null, null).getItems().iterator().next(); // ou .stream().findFirst();
 
-			AssetVocabulary existingVocabulary =
-				_assetVocabularyLocalService.fetchGroupVocabulary(
-					groupId, taxonomyVocabulary.getName());
 
-			if (existingVocabulary != null) {
+			if (existingTaxonomyVocabulary != null) {
 				taxonomyVocabulary =
 					taxonomyVocabularyResource.patchTaxonomyVocabulary(
-						existingVocabulary.getVocabularyId(),
+						existingTaxonomyVocabulary.getId(),
 						taxonomyVocabulary);
 			}
 			else {
@@ -816,9 +813,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 						groupId, taxonomyVocabulary);
 			}
 
-			_addAssetCategories(
-				groupId, taxonomyVocabulary.getId(), resourcePath,
-				serviceContext);
+			_addTaxonomyCategories(
+				groupId, taxonomyVocabulary.getId(),
+				String.valueOf(AssetCategoryConstants.DEFAULT_PARENT_CATEGORY_ID),
+				StringUtil.replace(resourcePath, ".json", "/"), serviceContext);
 		}
 	}
 
@@ -857,33 +855,36 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return StringUtil.read(entryURL.openStream());
 	}
 
-	private void _updatePermissions(
-			long companyId, String name, String primKey, JSONArray jsonArray)
+	private void _addTaxonomyCategoryPermissions(
+			long groupId, String parentResourcePath,
+			ServiceContext serviceContext)
 		throws Exception {
+		
+		TaxonomyCategoryResource.Builder taxonomyCategoryResourceBuilder =
+				_taxonomyCategoryResourceFactory.create();
 
-		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-			int scope = jsonObject.getInt("scope");
-
-			String roleName = jsonObject.getString("roleName");
-
-			Role role = _roleLocalService.getRole(companyId, roleName);
-
-			String[] actionIds = new String[0];
-
-			JSONArray actionIdsJSONArray = jsonObject.getJSONArray("actionIds");
-
-			if (actionIdsJSONArray != null) {
-				for (int j = 0; j < actionIdsJSONArray.length(); j++) {
-					actionIds = ArrayUtil.append(
-						actionIds, actionIdsJSONArray.getString(j));
+		TaxonomyCategoryResource taxonomyCategoryResource =
+			taxonomyCategoryResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
+		
+		String jsonCategoryPermissions = _read(parentResourcePath);
+		
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(jsonCategoryPermissions);
+		
+		Permission[] permissions = JSONUtil.toArray( // validar isso aqui
+			jsonArray,
+			jsonObject -> new Permission() {
+				{
+					actionIds = JSONUtil.toStringArray(jsonObject.getJSONArray("actionIds"));
+					roleName = jsonObject.getString("roleName");
 				}
-			}
-
-			_resourcePermissionLocalService.setResourcePermissions(
-				companyId, name, scope, primKey, role.getRoleId(), actionIds);
-		}
+			},
+			_log, 
+			Permission.class);
+		
+		taxonomyCategoryResource.putTaxonomyCategoryPermission(parentResourcePath, permissions);
+		
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -915,6 +916,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final StructuredContentFolderResource.Factory
 		_structuredContentFolderResourceFactory;
 	private final StyleBookEntryZipProcessor _styleBookEntryZipProcessor;
+	private final TaxonomyCategoryResource.Factory
+		_taxonomyCategoryResourceFactory;
 	private final TaxonomyVocabularyResource.Factory
 		_taxonomyVocabularyResourceFactory;
 	private final UserLocalService _userLocalService;

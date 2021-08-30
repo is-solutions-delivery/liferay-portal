@@ -15,12 +15,13 @@
 package com.liferay.site.initializer.extender.internal;
 
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
-import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.fragment.importer.FragmentsImporter;
+import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyCategoryResource;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentResource;
@@ -69,6 +70,7 @@ public class SiteInitializerRegistrar {
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
+		TaxonomyCategoryResource.Factory taxonomyCategoryResourceFactory,
 		TaxonomyVocabularyResource.Factory taxonomyVocabularyResourceFactory,
 		UserLocalService userLocalService) {
 
@@ -93,6 +95,7 @@ public class SiteInitializerRegistrar {
 		_structuredContentFolderResourceFactory =
 			structuredContentFolderResourceFactory;
 		_styleBookEntryZipProcessor = styleBookEntryZipProcessor;
+		_taxonomyCategoryResourceFactory = taxonomyCategoryResourceFactory;
 		_taxonomyVocabularyResourceFactory = taxonomyVocabularyResourceFactory;
 		_userLocalService = userLocalService;
 	}
@@ -107,14 +110,15 @@ public class SiteInitializerRegistrar {
 			new BundleSiteInitializer(
 				_assetCategoryLocalService, _assetVocabularyLocalService,
 				_bundle, _ddmStructureLocalService, _ddmTemplateLocalService,
-				_defaultDDMStructureHelper, _dlURLHelper, 
-				_documentFolderResourceFactory,
-				_documentResourceFactory, _fragmentsImporter,
-				_groupLocalService, _journalArticleLocalService, _jsonFactory,
+				_defaultDDMStructureHelper, _dlURLHelper,
+				_documentFolderResourceFactory, _documentResourceFactory,
+				_fragmentsImporter, _groupLocalService,
+				_journalArticleLocalService, _jsonFactory,
 				_objectDefinitionResourceFactory, _portal,
 				_resourcePermissionLocalService, _roleLocalService,
 				_servletContext, _structuredContentFolderResourceFactory,
-				_styleBookEntryZipProcessor, _taxonomyVocabularyResourceFactory,
+				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
+				_taxonomyVocabularyResourceFactory,
 				_userLocalService),
 			MapUtil.singletonDictionary(
 				"site.initializer.key", _bundle.getSymbolicName()));
@@ -149,6 +153,8 @@ public class SiteInitializerRegistrar {
 	private final StructuredContentFolderResource.Factory
 		_structuredContentFolderResourceFactory;
 	private final StyleBookEntryZipProcessor _styleBookEntryZipProcessor;
+	private final TaxonomyCategoryResource.Factory
+		_taxonomyCategoryResourceFactory;
 	private final TaxonomyVocabularyResource.Factory
 		_taxonomyVocabularyResourceFactory;
 	private final UserLocalService _userLocalService;
