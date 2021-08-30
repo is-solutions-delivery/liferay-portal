@@ -141,7 +141,7 @@ const getCategoryProperties = async (id) => {
  * @returns {Promise<any>}  Axios Response
  */
 const _postBasicsFormApplication = (payload) => {
-	return LiferayAPI.post('/o/raylifeapplications', payload);
+	return LiferayAPI.post('/o/c_raylifeapplications', payload);
 };
 
 /**
@@ -149,7 +149,7 @@ const _postBasicsFormApplication = (payload) => {
  * @returns {Promise<any>}  Axios Response
  */
 const _patchBasicsFormApplication = (payload, id) => {
-	return LiferayAPI.patch(`/o/raylifeapplications/${id}`, payload);
+	return LiferayAPI.patch(`/o/c_raylifeapplications/${id}`, payload);
 };
 
 const LiferayAPI = Axios.create({
