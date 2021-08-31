@@ -4,7 +4,7 @@ import {LiferayService} from '../services/liferay';
 import {useStepWizard} from './useStepWizard';
 import Cookies from 'js-cookie';
 import {verifyInputAgentPage} from '../utils/contact-agent';
-
+import { useTriggerContext } from './useTriggerContext';
 /**
  *
  * @param {String} form <useWatch>
@@ -18,6 +18,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	const [applicationId, setApplicationId] = useState();
 	const {setError, setValue} = useFormContext();
 	const {setSection} = useStepWizard();
+	const { updateState } = useTriggerContext();
 
 	/**
 	 * @description When the application is created, we set the value to Form Context
@@ -80,6 +81,14 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		if (previousSection) {
 			setSection(previousSection);
 		}
+
+		updateState('');
+
+		window.scroll({
+			top: 0, 
+			left: 0, 
+			behavior: 'smooth'
+		});
 	};
 
 	const onSave = async () => {
@@ -99,6 +108,12 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 
 		if (validated) {
 			if (nextSection) {
+				window.scroll({
+					top: 0, 
+					left: 0, 
+					behavior: 'smooth'
+				});
+
 				return setSection(nextSection);
 			}
 
