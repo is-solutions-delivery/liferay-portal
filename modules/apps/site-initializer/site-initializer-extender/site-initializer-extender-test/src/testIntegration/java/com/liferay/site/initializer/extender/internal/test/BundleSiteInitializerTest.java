@@ -22,6 +22,8 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -86,10 +88,24 @@ public class BundleSiteInitializerTest {
 		_assertObjectDefinitions(group);
 		_assertDDMStructure(group);
 		_assertDDMTemplate(group);
+		_assertFragments(group);
 
 		GroupLocalServiceUtil.deleteGroup(group);
 
 		bundle.uninstall();
+	}
+
+	private void _assertFragments(Group group){
+		FragmentEntry fragment1 =
+			_fragmentEntryLocalService.fetchFragmentEntry(group.getGroupId(),
+				"basic_frag1");
+		Assert.assertNotNull(fragment1);
+		Assert.assertEquals("basic_frag1",fragment1.getName());
+		FragmentEntry fragment2 =
+			_fragmentEntryLocalService.fetchFragmentEntry(group.getGroupId(),
+				"basic_frag2");
+		Assert.assertNotNull(fragment2);
+		Assert.assertEquals("basic_frag2",fragment2.getName());
 	}
 
 	private void _assertDDMStructure(Group group) {
@@ -165,5 +181,8 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private SiteInitializerRegistry _siteInitializerRegistry;
+
+	@Inject
+	private FragmentEntryLocalService _fragmentEntryLocalService;
 
 }
