@@ -69,6 +69,14 @@ export const BusinessTypeSearch = ({form}) => {
 		</button>
 	);
 
+	const truncateSearch = (str) => {
+		if (!str || str.length <= 28) {
+			return str;
+		}
+
+		return str.slice(0, 28) + '...';
+	}
+
 	const renderResults = () => {
 		if (isLoading || !form?.basics?.businessSearch) return;
 
@@ -78,7 +86,7 @@ export const BusinessTypeSearch = ({form}) => {
 			return (
 				<>
 					<WarningBadge>
-						There are no results for “{form?.basics?.businessSearch}
+						There are no results for “{truncateSearch(form?.basics?.businessSearch)}
 						”. Please try a different search.
 					</WarningBadge>
 					{infoPanelButton()}
