@@ -108,6 +108,7 @@ export const BusinessTypeSearch = ({form}) => {
 						required:
 							'Please, search for a business type in order to proceed.',
 					})}
+					placeholder={"Begin typing to show options..."}
 					className="search"
 				>
 					<button
