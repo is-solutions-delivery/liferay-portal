@@ -1,18 +1,18 @@
-import React from "react";
+import React from 'react';
 
-import { ControlledInputWithMask } from ".";
+import {ControlledInputWithMask} from '.';
 
-export const CurrencyControlledInput = ({ inputProps = {}, ...props }) => {
-  return (
-    <ControlledInputWithMask
-      {...props}
-      inputProps={{
-        prefix: "$",
-        decimalScale: 2,
-        thousandSeparator: true,
-        fixedDecimalScale: true,
-        ...inputProps,
-      }}
-    />
-  );
+export const CurrencyControlledInput = ({inputProps = {}, ...props}) => {
+	return (
+		<ControlledInputWithMask
+			{...props}
+			inputProps={{
+				decimalScale: 2,
+				fixedDecimalScale: true,
+				prefix: '$',
+				thousandSeparator: true,
+				...inputProps,
+			}}
+		/>
+	);
 };

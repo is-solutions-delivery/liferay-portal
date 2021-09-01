@@ -1,24 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {useFormContext, Controller} from 'react-hook-form';
+import {Controller, useFormContext} from 'react-hook-form';
 
-import {Radio} from '../../../../fragments/Forms/Radio';
 import {LiferayService} from '../../../../../services/liferay';
+import {Radio} from '../../../../fragments/Forms/Radio';
 
 export const BusinessTypeRadioGroup = ({businessTypes = [], form}) => {
 	const {control, setValue} = useFormContext();
 
 	useEffect(() => {
-		if (form?.basics?.businessCategoryId) setCategoryProperties();
+		if (form?.basics?.businessCategoryId) {
+			setCategoryProperties();
+		}
 	}, [form?.basics?.businessCategoryId]);
 
 	const setCategoryProperties = async () => {
 		try {
 			const categoryId = form.basics.businessCategoryId;
 
-			const categoryProperties = await LiferayService.getCategoryProperties(
-				categoryId
-			);
+			const categoryProperties =
+				await LiferayService.getCategoryProperties(categoryId);
 
 			setValue(
 				'basics.properties.businessClassCode',
@@ -32,33 +33,34 @@ export const BusinessTypeRadioGroup = ({businessTypes = [], form}) => {
 				'basics.properties.segment',
 				categoryProperties.find(({key}) => key === 'Segment')?.value
 			);
-		} catch (error) {
+		}
+		catch (error) {
 			console.warn(error);
 		}
 	};
 
 	return (
-		<fieldset id="businessType" className="content-column">
+		<fieldset className="content-column" id="businessType">
 			<Controller
-				name="basics.businessCategoryId"
-				defaultValue=""
 				control={control}
-				rules={{required: 'Please, Select a field.'}}
+				defaultValue=""
+				name="basics.businessCategoryId"
 				render={({field}) =>
 					businessTypes.map((businessType) => (
 						<Radio
 							{...field}
-							key={businessType.id}
-							value={businessType.id}
-							label={businessType.title}
 							description={businessType.description}
+							key={businessType.id}
+							label={businessType.title}
 							selected={
 								businessType.id ===
 								form?.basics?.businessCategoryId
 							}
+							value={businessType.id}
 						/>
 					))
 				}
+				rules={{required: 'Please, Select a field.'}}
 			/>
 		</fieldset>
 	);

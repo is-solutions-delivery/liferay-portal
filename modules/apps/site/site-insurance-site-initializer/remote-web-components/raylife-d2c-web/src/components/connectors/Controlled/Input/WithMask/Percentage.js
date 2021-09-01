@@ -1,21 +1,18 @@
-import React from "react";
+import React from 'react';
 
-import { ControlledInputWithMask } from ".";
+import {ControlledInputWithMask} from '.';
 
-export const PercentageControlledInput = ({
-  inputProps = {},
-  ...props
-}) => {
-  return (
-    <ControlledInputWithMask
-      {...props}
-      inputProps={{
-        suffix: "%",
-        mask: "_",
-        decimalScale: 2,
-        placeholder: "%",
-        ...inputProps,
-      }}
-    />
-  );
+export const PercentageControlledInput = ({inputProps = {}, ...props}) => {
+	return (
+		<ControlledInputWithMask
+			{...props}
+			inputProps={{
+				decimalScale: 2,
+				mask: '_',
+				placeholder: '%',
+				suffix: '%',
+				...inputProps,
+			}}
+		/>
+	);
 };

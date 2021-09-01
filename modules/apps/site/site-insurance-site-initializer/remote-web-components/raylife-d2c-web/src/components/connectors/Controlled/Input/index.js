@@ -1,8 +1,8 @@
 import React from 'react';
 import {Controller} from 'react-hook-form';
 
-import {Input} from '../../../fragments/Forms/Input';
 import {MoreInfoButton} from '../../../fragments/Buttons/MoreInfo';
+import {Input} from '../../../fragments/Forms/Input';
 
 export const ControlledInput = ({
 	name,
@@ -15,15 +15,14 @@ export const ControlledInput = ({
 }) => {
 	return (
 		<Controller
-			name={name}
 			control={control}
 			defaultValue=""
-			rules={rules}
+			name={name}
 			render={({field, fieldState}) => (
 				<Input
 					{...field}
-					label={label}
 					error={fieldState.error}
+					label={label}
 					renderActions={
 						moreInfoProps && <MoreInfoButton {...moreInfoProps} />
 					}
@@ -31,6 +30,7 @@ export const ControlledInput = ({
 					{...inputProps}
 				/>
 			)}
+			rules={rules}
 			{...props}
 		/>
 	);

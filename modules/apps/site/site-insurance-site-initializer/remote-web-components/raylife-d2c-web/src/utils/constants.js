@@ -5,34 +5,34 @@ export const TOTAL_OF_FIELD = {
 };
 
 export const AVAILABLE_STEPS = {
-	BASICS_BUSINESS_TYPE: {
-		title: "Welcome! Let's start.",
-		section: 'basics',
-		subsection: 'business-type',
-	},
 	BASICS_BUSINESS_INFORMATION: {
-		title: 'Just the business basics!',
 		section: 'basics',
 		subsection: 'businessInformation',
+		title: 'Just the business basics!',
+	},
+	BASICS_BUSINESS_TYPE: {
+		section: 'basics',
+		subsection: 'business-type',
+		title: "Welcome! Let's start.",
 	},
 	BASICS_PRODUCT_QUOTE: {
-		title: 'Select a product.',
 		section: 'basics',
 		subsection: 'product-quote',
+		title: 'Select a product.',
 	},
 	BUSINESS: {
-		title: "Let's get to know your business!",
 		section: 'business',
 		subsection: '',
+		title: "Let's get to know your business!",
 	},
 	EMPLOYEES: {
-		title: 'Tell us about your employees!',
 		section: 'employees',
 		subsection: '',
+		title: 'Tell us about your employees!',
 	},
 	PROPERTY: {
-		title: 'More about',
 		section: 'property',
 		subsection: '',
+		title: 'More about',
 	},
 };

@@ -4,7 +4,7 @@ import {LiferayService} from '../services/liferay';
 import {useStepWizard} from './useStepWizard';
 import Cookies from 'js-cookie';
 import {verifyInputAgentPage} from '../utils/contact-agent';
-
+import {useTriggerContext} from './useTriggerContext';
 /**
  *
  * @param {String} form <useWatch>
@@ -18,6 +18,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	const [applicationId, setApplicationId] = useState();
 	const {setError, setValue} = useFormContext();
 	const {setSection} = useStepWizard();
+	const {updateState} = useTriggerContext();
 
 	/**
 	 * @description When the application is created, we set the value to Form Context
@@ -37,6 +38,14 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	useEffect(() => {
 		Cookies.set('raylife-application-form', JSON.stringify(form));
 	}, [form]);
+
+	const _smoothScroll = () => {
+		window.scroll({
+			behavior: 'smooth',
+			left: 0,
+			top: 0,
+		});
+	};
 
 	const _onValidation = () => {
 		const phraseAgentPage = verifyInputAgentPage(form, nextSection);
@@ -65,10 +74,10 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 			return response;
 		} catch (error) {
 			setError('continueButton', {
-				type: 'manual',
 				message:
 					errorMessage ||
 					'There was an error processing your request. Please try again.',
+				type: 'manual',
 			});
 			throw error;
 		}
@@ -80,6 +89,10 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		if (previousSection) {
 			setSection(previousSection);
 		}
+
+		updateState('');
+
+		_smoothScroll();
 	};
 
 	const onSave = async () => {
@@ -99,6 +112,8 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 
 		if (validated) {
 			if (nextSection) {
+				_smoothScroll();
+
 				return setSection(nextSection);
 			}
 

@@ -1,19 +1,20 @@
-import {AVAILABLE_STEPS} from './utils/constants';
+import React from 'react';
 import {useWatch} from 'react-hook-form';
 
 import {Forms} from './components/containers/Forms';
 import {Steps} from './components/containers/Steps';
 import {useStepWizard} from './hooks/useStepWizard';
-import React from 'react';
+import {AVAILABLE_STEPS} from './utils/constants';
 
 export const App = () => {
 	const form = useWatch();
 	const {selectedStep} = useStepWizard();
 
 	const _renderTitle = () => {
-		if (selectedStep.section !== AVAILABLE_STEPS.PROPERTY.section)
+		if (selectedStep.section !== AVAILABLE_STEPS.PROPERTY.section) {
 			return selectedStep.title;
-		else
+		}
+		else {
 			return (
 				<>
 					{selectedStep.title}
@@ -25,6 +26,7 @@ export const App = () => {
 					</span>
 				</>
 			);
+		}
 	};
 
 	return (

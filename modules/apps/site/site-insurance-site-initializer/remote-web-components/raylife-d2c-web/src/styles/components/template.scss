@@ -1,13 +1,13 @@
 .template {
-  padding: 2rem 0 2rem 2rem;
+	padding: 2rem 0 2rem 2rem;
 
-  .title-area {
-    margin-left: $card-padding;
-    margin-bottom: 3rem;
-  }
+	.title-area {
+		margin-bottom: 3rem;
+		margin-left: $card-padding;
+	}
 
-  .form-area {
-    display: flex;
-    justify-content: space-between;
-  }
+	.form-area {
+		display: flex;
+		justify-content: space-between;
+	}
 }

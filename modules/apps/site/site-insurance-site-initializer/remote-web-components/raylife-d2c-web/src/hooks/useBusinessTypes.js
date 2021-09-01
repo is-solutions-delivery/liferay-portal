@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useEffect, useState} from 'react';
+
 import {LiferayService} from '../services/liferay';
 
 export const useBusinessTypes = () => {
@@ -12,12 +13,16 @@ export const useBusinessTypes = () => {
 
 	const loadBusinessTypes = async (search = '') => {
 		try {
-			if (!search.length) return reset();
+			if (!search.length) {
+				return reset();
+			}
 
 			const response = await LiferayService.getBusinessTypes(search);
 			setError('');
+
 			return setData(response);
-		} catch (error) {
+		}
+		catch (error) {
 			return setError(
 				'Unable to make the request. Please try again later.'
 			);
@@ -31,8 +36,8 @@ export const useBusinessTypes = () => {
 
 	return {
 		businessTypes: data || [],
-		isLoading: !data && !error,
 		isError: error,
+		isLoading: !data && !error,
 		reload: loadBusinessTypes,
 	};
 };

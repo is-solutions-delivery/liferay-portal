@@ -7,7 +7,7 @@ import {allowedProductQuote} from '../../utils/webContents';
  * @returns {BusinessType[]} Array of business types
  */
 const adaptToBusinessType = (data = []) =>
-	data.map(({categoryId, titleCurrentValue, descriptionCurrentValue}) => ({
+	data.map(({categoryId, descriptionCurrentValue, titleCurrentValue}) => ({
 		description: descriptionCurrentValue,
 		id: categoryId,
 		title: titleCurrentValue,
@@ -21,48 +21,45 @@ const adaptToFormApplicationRequest = (form) => ({
 	address: form?.basics?.businessInformation?.business?.location?.address,
 	addressApt:
 		form?.basics?.businessInformation?.business?.location?.addressApt,
-	city: form?.basics?.businessInformation?.business?.location?.city,
-	state: form?.basics?.businessInformation?.business?.location?.state,
-	zip: form?.basics?.businessInformation?.business?.location?.zip,
-	firstName: form?.basics?.businessInformation?.firstName,
-	lastName: form?.basics?.businessInformation?.lastName,
-	email: form?.basics?.businessInformation?.business?.email,
-	phone: form?.basics?.businessInformation?.business?.phone,
-	website: form?.basics?.businessInformation?.business?.website,
-
-	hasAutoPolicy: form?.business?.hasAutoPolicy,
-	hasSellProductsUnderOwnBrand: form?.business?.hasSellProductsUnderOwnBrand,
-	hasStoredCustomerInformation: form?.business?.hasStoredCustomerInformation,
-	legalEntity: form?.business?.legalEntity,
-	overallSales: form?.business?.overallSales,
-	salesMerchandise: form?.business?.salesMerchandise,
-	yearsOfExperience: form?.business?.yearsOfExperience,
-
 	annualPayrollForEmployees: form?.employees?.annualPayrollForEmployees,
 	annualPayrollForOwner: form?.employees?.annualPayrollForOwner,
+	buildingSquareFeetOccupied: form?.property?.buildingSquareFeetOccupied,
 	businessOperatesYearRound: form?.employees?.businessOperatesYearRound,
+	city: form?.basics?.businessInformation?.business?.location?.city,
+	doOwnBuildingAtAddress: form?.property?.doOwnBuildingAtAddress,
+	email: form?.basics?.businessInformation?.business?.email,
 	estimatedAnnualGrossRevenue: form?.employees?.estimatedAnnualGrossRevenue,
 	fein: form?.employees?.fein,
+	firstName: form?.basics?.businessInformation?.firstName,
+	hasAutoPolicy: form?.business?.hasAutoPolicy,
 	hasFein: form?.employees?.hasFein,
-	partTimeEmployees: form?.employees?.partTimeEmployees,
-	startBusinessAtYear: form?.employees?.startBusinessAtYear,
-
-	buildingSquareFeetOccupied: form?.property?.buildingSquareFeetOccupied,
-	doOwnBuildingAtAddress: form?.property?.doOwnBuildingAtAddress,
+	hasSellProductsUnderOwnBrand: form?.business?.hasSellProductsUnderOwnBrand,
+	hasStoredCustomerInformation: form?.business?.hasStoredCustomerInformation,
 	isPrimaryBusinessLocation: form?.property?.isPrimaryBusinessLocation,
 	isThereDivingBoards: form?.property?.isThereDivingBoards,
 	isThereSwimming: form?.property?.isThereSwimming,
+	lastName: form?.basics?.businessInformation?.lastName,
+	legalEntity: form?.business?.legalEntity,
+	overallSales: form?.business?.overallSales,
+	partTimeEmployees: form?.employees?.partTimeEmployees,
+	phone: form?.basics?.businessInformation?.business?.phone,
+	salesMerchandise: form?.business?.salesMerchandise,
+	startBusinessAtYear: form?.employees?.startBusinessAtYear,
+	state: form?.basics?.businessInformation?.business?.location?.state,
 	stories: form?.property?.stories,
 	totalBuildingSquareFeet: form?.property?.totalBuildingSquareFeet,
+	website: form?.basics?.businessInformation?.business?.website,
 	yearBuilding: form?.property?.yearBuilding,
+	yearsOfExperience: form?.business?.yearsOfExperience,
+	zip: form?.basics?.businessInformation?.business?.location?.zip,
 });
 
 /**
  * @param {{
- *    name: {
+ * 	  description: {
  *      en_US: string
  *    }
- *    description: {
+ *    name: {
  *      en_US: string
  *    }
  *    skus: {
@@ -73,21 +70,21 @@ const adaptToFormApplicationRequest = (form) => ({
  * @returns {ProductQuote[]} Array of business types
  */
 const adaptToProductQuote = (data = []) =>
-	data.map(({productId, name, description, skus}) => ({
-		id: productId,
-		title: name.en_US,
+	data.map(({description, name, productId, skus}) => ({
 		description: description.en_US,
-		period: `($${skus[0].promoPrice
+		id: productId,
+		period: `($${skus[0].promoPrice.toFixed(2).toString()}-${skus[0].price
 			.toFixed(2)
-			.toString()}-${skus[0].price.toFixed(2).toString()}/mo)`,
+			.toString()}/mo)`,
 		template: {
-			name: toSlug(name.en_US),
 			allowed: allowedProductQuote(name.en_US),
+			name: toSlug(name.en_US),
 		},
+		title: name.en_US,
 	}));
 
 export const LiferayAdapt = {
 	adaptToBusinessType,
-	adaptToProductQuote,
 	adaptToFormApplicationRequest,
+	adaptToProductQuote,
 };

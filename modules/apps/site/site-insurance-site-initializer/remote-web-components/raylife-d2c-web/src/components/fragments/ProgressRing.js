@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {calculateCircumference, calculateOffset} from '../../utils';
 
 export const ProgressRing = ({
@@ -13,7 +14,7 @@ export const ProgressRing = ({
 	const center = (radius - strokeWidth) / 2;
 
 	return (
-		<svg className={className} width={diameter} height={diameter}>
+		<svg className={className} height={diameter} width={diameter}>
 			<circle
 				className="progress"
 				cx={center}
@@ -21,8 +22,8 @@ export const ProgressRing = ({
 				fill="transparent"
 				r={normalizedRadius}
 				stroke={strokeColor}
-				strokeWidth={strokeWidth}
 				strokeLinecap="round"
+				strokeWidth={strokeWidth}
 				style={{
 					strokeDasharray: `${calculateCircumference(
 						normalizedRadius

@@ -1,18 +1,23 @@
+import {ClayIconSpriteContext} from '@clayui/icon';
 import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
-import {ClayIconSpriteContext} from '@clayui/icon';
 
-import {AppProvider} from './context/AppContext';
 import {Template} from './components/Template';
+import {AppProvider} from './context/AppContext';
 
 const getIconSpriteMap = () => {
 	try {
 		// eslint-disable-next-line no-undef
-		if (!themeDisplay) new Error('themeDisplay is not defined');
+		if (!themeDisplay) {
+			new Error('themeDisplay is not defined');
+		}
+
 		// eslint-disable-next-line no-undef
 		return `${themeDisplay.getPathThemeImages()}/clay/icons.svg`;
-	} catch (err) {
-		console.warn(err.message);
+	}
+	catch (erorr) {
+		console.warn(erorr.message);
+
 		return require('@clayui/css/lib/images/icons/icons.svg').default;
 	}
 };

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { MockService } from '../services/mock';
+import {useEffect, useState} from 'react';
+
+import {MockService} from '../services/mock';
 
 export const useLegalEntity = () => {
 	const [data, setData] = useState();
@@ -13,7 +14,8 @@ export const useLegalEntity = () => {
 		try {
 			const response = await MockService.getLegalEntities();
 			setData(response);
-		} catch (error) {
+		}
+		catch (error) {
 			console.warn(error);
 			setError(error);
 		}
@@ -21,7 +23,7 @@ export const useLegalEntity = () => {
 
 	return {
 		entities: data || [],
-		isLoading: !data && !error,
 		isError: error,
+		isLoading: !data && !error,
 	};
 };

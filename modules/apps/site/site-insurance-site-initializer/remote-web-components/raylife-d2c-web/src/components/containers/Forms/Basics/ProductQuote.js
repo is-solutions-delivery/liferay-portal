@@ -1,88 +1,83 @@
 import React from 'react';
-import {useFormContext, Controller} from 'react-hook-form';
+import {Controller, useFormContext} from 'react-hook-form';
 
-import {Radio} from '../../../fragments/Forms/Radio';
-import {AVAILABLE_STEPS} from '../../../../utils/constants';
-import {useStepWizard} from '../../../../hooks/useStepWizard';
-import {useProductQuotes} from '../../../../hooks/useProductQuotes';
-import {MoreInfoButton} from '../../../fragments/Buttons/MoreInfo';
 import {TIP_EVENT} from '../../../../events';
-import {CardFormActionsWithSave} from '../../../fragments/Card/FormActionsWithSave';
 import useFormActions from '../../../../hooks/useFormActions';
-import { useTriggerContext } from '../../../../hooks/useTriggerContext';
+import {useProductQuotes} from '../../../../hooks/useProductQuotes';
+import {useStepWizard} from '../../../../hooks/useStepWizard';
+import {useTriggerContext} from '../../../../hooks/useTriggerContext';
+import {AVAILABLE_STEPS} from '../../../../utils/constants';
+import {MoreInfoButton} from '../../../fragments/Buttons/MoreInfo';
+import {CardFormActionsWithSave} from '../../../fragments/Card/FormActionsWithSave';
+import {Radio} from '../../../fragments/Forms/Radio';
 
 export const FormBasicProductQuote = ({form}) => {
-	const {
-		control,
-		formState: {isValid},
-	} = useFormContext();
+	const {control} = useFormContext();
 	const {selectedStep} = useStepWizard();
 	const {productQuotes} = useProductQuotes();
-	const {onPrevious, onNext, onSave} = useFormActions(
+	const {onNext, onPrevious, onSave} = useFormActions(
 		form,
 		AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION,
 		AVAILABLE_STEPS.BUSINESS
 	);
 
-	const { isSelected, updateState } = useTriggerContext();
+	const {isSelected, updateState} = useTriggerContext();
 
 	return (
 		<div className="card">
 			<div className="card-content">
 				<div className="content-column">
 					<label>Select a product to quote.</label>
-					<fieldset id="productQuote" className="content-column">
+					<fieldset className="content-column" id="productQuote">
 						<Controller
-							name="basics.productQuote"
-							defaultValue=""
 							control={control}
-							rules={{required: true}}
+							defaultValue=""
+							name="basics.productQuote"
 							render={({field}) =>
 								productQuotes.map((quote) => (
 									<Radio
 										{...field}
+										description={quote.description}
 										key={quote.id}
 										label={quote.title}
-										sideLabel={quote.period}
-										description={quote.description}
-										value={quote.id}
+										renderActions={
+											quote.template.allowed && (
+												<MoreInfoButton
+													callback={() =>
+														updateState(quote.id)
+													}
+													event={TIP_EVENT}
+													selected={isSelected(
+														quote.id
+													)}
+													value={{
+														inputName: field.name,
+														step: selectedStep,
+														templateName:
+															quote.template.name,
+														value: quote.id,
+													}}
+												/>
+											)
+										}
 										selected={
 											quote.id ===
 											form.basics.productQuote
 										}
-										renderActions={
-											quote.template.allowed && (
-												<MoreInfoButton
-													event={TIP_EVENT}
-													value={{
-														templateName:
-															quote.template.name,
-														step: selectedStep,
-														inputName: field.name,
-														value: quote.id,
-													}}
-													selected={
-														isSelected(quote.id)
-													}
-													callback={() =>
-														updateState(
-															quote.id
-														)
-													}
-												/>
-											)
-										}
+										sideLabel={quote.period}
+										value={quote.id}
 									/>
 								))
 							}
+							rules={{required: true}}
 						/>
 					</fieldset>
 				</div>
 			</div>
 			<CardFormActionsWithSave
 				isValid={!!form.basics.productQuote}
-				onPrevious={onPrevious}
 				onNext={onNext}
+				onPrevious={onPrevious}
 				onSave={onSave}
 			/>
 		</div>

@@ -1,6 +1,6 @@
 export const ActionTypes = {
-  SET_SELECTED_STEP: "SET_SELECTED_STEP",
-  SET_SELECTED_TRIGGER: "SET_SELECTED_TRIGGER"
+	SET_SELECTED_STEP: 'SET_SELECTED_STEP',
+	SET_SELECTED_TRIGGER: 'SET_SELECTED_TRIGGER',
 };
 
 /**
@@ -13,15 +13,15 @@ export const ActionTypes = {
  * @returns {Object} action object used by the reducer
  */
 export const setSelectedStep = (payload) => {
-  return {
-    type: ActionTypes.SET_SELECTED_STEP,
-    payload,
-  };
+	return {
+		payload,
+		type: ActionTypes.SET_SELECTED_STEP,
+	};
 };
 
 export const setSelectedTrigger = (payload) => {
-  return {
-    type: ActionTypes.SET_SELECTED_TRIGGER,
-    payload,
-  };
+	return {
+		payload,
+		type: ActionTypes.SET_SELECTED_TRIGGER,
+	};
 };

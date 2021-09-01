@@ -1,12 +1,14 @@
 import '../../types';
+
 import Axios from 'axios';
 import Cookies from 'js-cookie';
+
 import {LiferayAdapt} from './adapter';
 
 const {
 	REACT_APP_LIFERAY_API = '',
-	REACT_APP_LIFERAY_AUTH_USERNAME = '',
 	REACT_APP_LIFERAY_AUTH_PASSWORD = '',
+	REACT_APP_LIFERAY_AUTH_USERNAME = '',
 } = process.env;
 
 /**
@@ -31,7 +33,9 @@ const createOrUpdateRaylifeApplication = async (data) => {
  * @returns {Promise<BusinessType[]>} Filtered Array of business types
  */
 const getBusinessTypes = async (filter = '') => {
-	if (!filter.length) return [];
+	if (!filter.length) {
+		return [];
+	}
 
 	const normalizedFilter = filter.toLowerCase().replace(/\\/g, '');
 
@@ -63,9 +67,11 @@ const getLiferayGroupId = () => {
 	try {
 		// eslint-disable-next-line no-undef
 		const groupId = Liferay.ThemeDisplay.getSiteGroupId();
+
 		return groupId;
 	} catch (error) {
 		console.warn('Not able to find Liferay Group Id\n', error);
+
 		return '';
 	}
 };
@@ -77,9 +83,11 @@ const getLiferayAuthenticationToken = () => {
 	try {
 		// eslint-disable-next-line no-undef
 		const token = Liferay.authToken;
+
 		return token;
 	} catch (error) {
 		console.warn('Not able to find Liferay auth token\n', error);
+
 		return '';
 	}
 };
@@ -103,15 +111,15 @@ const _getAssetCategoriesByParentId = async (id, normalizedFilter) => {
 		'/api/jsonws/assetcategory/search-categories-display',
 		{
 			params: {
+				'+sort': 'com.liferay.portal.kernel.search.Sort',
+				end: 50,
 				groupIds: 0,
 				parentCategoryIds: id,
-				title: normalizedFilter,
-				vocabularyIds: '',
-				start: 0,
-				end: 50,
-				'+sort': 'com.liferay.portal.kernel.search.Sort',
 				'sort.fieldName': 'name',
 				'sort.type': 6,
+				start: 0,
+				title: normalizedFilter,
+				vocabularyIds: '',
 			},
 		}
 	);
@@ -153,11 +161,11 @@ const _patchBasicsFormApplication = (payload, id) => {
 };
 
 const LiferayAPI = Axios.create({
-	baseURL: REACT_APP_LIFERAY_API,
 	auth: {
-		username: REACT_APP_LIFERAY_AUTH_USERNAME,
 		password: REACT_APP_LIFERAY_AUTH_PASSWORD,
+		username: REACT_APP_LIFERAY_AUTH_USERNAME,
 	},
+	baseURL: REACT_APP_LIFERAY_API,
 	headers: {
 		'x-csrf-token': getLiferayAuthenticationToken(),
 	},
@@ -167,8 +175,8 @@ export const LiferayService = {
 	LiferayAPI,
 	createOrUpdateRaylifeApplication,
 	getBusinessTypes,
-	getProductQuotes,
+	getCategoryProperties,
 	getLiferayAuthenticationToken,
 	getLiferayGroupId,
-	getCategoryProperties,
+	getProductQuotes,
 };

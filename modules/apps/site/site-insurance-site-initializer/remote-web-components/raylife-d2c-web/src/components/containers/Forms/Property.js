@@ -1,18 +1,17 @@
 import React from 'react';
+import {useFormContext} from 'react-hook-form';
 
-import { AVAILABLE_STEPS } from '../../../utils/constants';
-import { CardFormActionsWithSave } from '../../fragments/Card/FormActionsWithSave';
-import { ControlledSwitch } from '../../connectors/Controlled/Switch';
-import { isHabitational, isThereSwimming } from '../../../utils/propertyFields';
-import { NumberControlledInput } from '../../connectors/Controlled/Input/Number';
-import { SquareFeatControlledInput } from '../../connectors/Controlled/Input/WithMask/SquareFeet';
-import { TIP_EVENT } from '../../../events';
-import { useFormContext } from 'react-hook-form';
-import { useStepWizard } from '../../../hooks/useStepWizard';
-import { YearControlledInput } from '../../connectors/Controlled/Input/WithMask/Year';
-
+import {TIP_EVENT} from '../../../events';
 import useFormActions from '../../../hooks/useFormActions';
-import { useTriggerContext } from '../../../hooks/useTriggerContext';
+import {useStepWizard} from '../../../hooks/useStepWizard';
+import {useTriggerContext} from '../../../hooks/useTriggerContext';
+import {AVAILABLE_STEPS} from '../../../utils/constants';
+import {isHabitational, isThereSwimming} from '../../../utils/propertyFields';
+import {NumberControlledInput} from '../../connectors/Controlled/Input/Number';
+import {SquareFeatControlledInput} from '../../connectors/Controlled/Input/WithMask/SquareFeet';
+import {YearControlledInput} from '../../connectors/Controlled/Input/WithMask/Year';
+import {ControlledSwitch} from '../../connectors/Controlled/Switch';
+import {CardFormActionsWithSave} from '../../fragments/Card/FormActionsWithSave';
 
 const setFormPath = (value) => `property.${value}`;
 
@@ -20,7 +19,7 @@ export const FormProperty = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const {
 		control,
-		formState: { isValid },
+		formState: {isValid},
 	} = useFormContext();
 
 	const {onNext, onPrevious, onSave} = useFormActions(
@@ -28,129 +27,128 @@ export const FormProperty = ({form}) => {
 		AVAILABLE_STEPS.EMPLOYEES
 	);
 
-	const { isSelected, updateState } = useTriggerContext();
+	const {isSelected, updateState} = useTriggerContext();
 
 	return (
 		<div className="card">
 			<div className="card-content">
 				<ControlledSwitch
-					name={setFormPath('doOwnBuildingAtAddress')}
 					control={control}
 					label={`Do you own the building at ${form.basics.businessInformation.business.location.address}?`}
-					rules={{ required: true }}
+					name={setFormPath('doOwnBuildingAtAddress')}
+					rules={{required: true}}
 				/>
 				<NumberControlledInput
-					name={setFormPath('stories')}
 					control={control}
 					label="How many stories is this building?"
+					name={setFormPath('stories')}
 					rules={{
-						required: 'This field is required',
 						min: {
-							value: 0,
 							message: 'Must be equal or grater than 0.',
+							value: 0,
 						},
+						required: 'This field is required',
 					}}
 				/>
 				<SquareFeatControlledInput
-					name={setFormPath('buildingSquareFeetOccupied')}
-					label="How many square feet of the building does your business occupy?"
 					control={control}
-					rules={{
-						required: 'This field is required',
-					}}
+					label="How many square feet of the building does your business occupy?"
 					moreInfoProps={{
-						event: TIP_EVENT,
-						value: {
-							templateName: 'building-square-footage',
-							step: selectedStep,
-							inputName: setFormPath(
-								'buildingSquareFeetOccupied'
-							),
-							value: form?.property?.buildingSquareFeetOccupied,
-						},
-						selected:
-							isSelected(setFormPath('buildingSquareFeetOccupied')),
 						callback: () =>
 							updateState(
 								setFormPath('buildingSquareFeetOccupied')
 							),
+						event: TIP_EVENT,
+						selected: isSelected(
+							setFormPath('buildingSquareFeetOccupied')
+						),
+						value: {
+							inputName: setFormPath(
+								'buildingSquareFeetOccupied'
+							),
+							step: selectedStep,
+							templateName: 'building-square-footage',
+							value: form?.property?.buildingSquareFeetOccupied,
+						},
+					}}
+					name={setFormPath('buildingSquareFeetOccupied')}
+					rules={{
+						required: 'This field is required',
 					}}
 				/>
 				<SquareFeatControlledInput
-					name={setFormPath('totalBuildingSquareFeet')}
-					label="How many total square feet is the building?"
 					control={control}
+					label="How many total square feet is the building?"
+					name={setFormPath('totalBuildingSquareFeet')}
 					rules={{
 						required: 'This field is required',
 					}}
 				/>
 				<YearControlledInput
-					name={setFormPath('yearBuilding')}
-					label="What year was the building constructed?"
 					control={control}
+					label="What year was the building constructed?"
+					moreInfoProps={{
+						callback: () =>
+							updateState(setFormPath('yearBuilding')),
+						event: TIP_EVENT,
+						selected: isSelected(setFormPath('yearBuilding')),
+						value: {
+							inputName: setFormPath('yearBuilding'),
+							step: selectedStep,
+							templateName: 'year-constructed',
+							value: form?.property?.yearBuilding,
+						},
+					}}
+					name={setFormPath('yearBuilding')}
 					rules={{
 						required: 'This field is required',
 					}}
-					moreInfoProps={{
-						event: TIP_EVENT,
-						value: {
-							templateName: 'year-constructed',
-							step: selectedStep,
-							inputName: setFormPath('yearBuilding'),
-							value: form?.property?.yearBuilding,
-						},
-						selected:
-							isSelected(setFormPath('yearBuilding')),
-						callback: () =>
-							updateState(
-								setFormPath('yearBuilding')
-							),
-					}}
 				/>
 				<ControlledSwitch
-					name={setFormPath('isPrimaryBusinessLocation')}
-					label="Is this the primary location you conduct business?"
 					control={control}
-					rules={{ required: true }}
+					label="Is this the primary location you conduct business?"
 					moreInfoProps={{
-						event: TIP_EVENT,
-						value: {
-							templateName: 'primary-location',
-							step: selectedStep,
-							inputName: setFormPath('isPrimaryBusinessLocation'),
-							value: form?.property?.isPrimaryBusinessLocation,
-						},
-						selected:
-							isSelected(setFormPath('isPrimaryBusinessLocation')),
 						callback: () =>
 							updateState(
 								setFormPath('isPrimaryBusinessLocation')
 							),
+						event: TIP_EVENT,
+						selected: isSelected(
+							setFormPath('isPrimaryBusinessLocation')
+						),
+						value: {
+							inputName: setFormPath('isPrimaryBusinessLocation'),
+							step: selectedStep,
+							templateName: 'primary-location',
+							value: form?.property?.isPrimaryBusinessLocation,
+						},
 					}}
+					name={setFormPath('isPrimaryBusinessLocation')}
+					rules={{required: true}}
 				/>
 				{isHabitational(
 					form?.basics?.properties?.segment.toLowerCase()
 				) && (
-						<ControlledSwitch
-							name={setFormPath('isThereSwimming')}
-							label="Are there swimming pool(s) on the premises?"
-							control={control}
-							rules={{ required: true }}
-						/>
-					)}
+					<ControlledSwitch
+						control={control}
+						label="Are there swimming pool(s) on the premises?"
+						name={setFormPath('isThereSwimming')}
+						rules={{required: true}}
+					/>
+				)}
 				{isThereSwimming(form?.property?.isThereSwimming) && (
 					<ControlledSwitch
-						name={setFormPath('isThereDivingBoards')}
-						label="Are there diving boards or slides?"
 						control={control}
-						rules={{ required: true }}
+						label="Are there diving boards or slides?"
+						name={setFormPath('isThereDivingBoards')}
+						rules={{required: true}}
 					/>
 				)}
 			</div>
 			<CardFormActionsWithSave
-				onPrevious={onPrevious}
 				isValid={isValid}
 				onNext={onNext}
+				onPrevious={onPrevious}
 				onSave={onSave}
 			/>
 		</div>
