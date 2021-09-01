@@ -95,19 +95,6 @@ public class BundleSiteInitializerTest {
 		bundle.uninstall();
 	}
 
-	private void _assertFragments(Group group){
-		FragmentEntry fragment1 =
-			_fragmentEntryLocalService.fetchFragmentEntry(group.getGroupId(),
-				"basic_frag1");
-		Assert.assertNotNull(fragment1);
-		Assert.assertEquals("basic_frag1",fragment1.getName());
-		FragmentEntry fragment2 =
-			_fragmentEntryLocalService.fetchFragmentEntry(group.getGroupId(),
-				"basic_frag2");
-		Assert.assertNotNull(fragment2);
-		Assert.assertEquals("basic_frag2",fragment2.getName());
-	}
-
 	private void _assertDDMStructure(Group group) {
 		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
 			group.getGroupId(),
@@ -144,6 +131,19 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(string.contains("1. Revelation"));
 	}
 
+	private void _assertFragments(Group group) {
+		FragmentEntry fragment1 = _fragmentEntryLocalService.fetchFragmentEntry(
+			group.getGroupId(), "fragment1");
+
+		FragmentEntry fragment2 = _fragmentEntryLocalService.fetchFragmentEntry(
+			group.getGroupId(), "fragment2");
+
+		Assert.assertNotNull(fragment1);
+		Assert.assertEquals("fragment1", fragment1.getName());
+		Assert.assertNotNull(fragment2);
+		Assert.assertEquals("fragment2", fragment2.getName());
+	}
+
 	private void _assertObjectDefinitions(Group group) {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.fetchObjectDefinition(
@@ -174,6 +174,9 @@ public class BundleSiteInitializerTest {
 	private DLFileEntryLocalService _dlFileEntryLocalService;
 
 	@Inject
+	private FragmentEntryLocalService _fragmentEntryLocalService;
+
+	@Inject
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Inject
@@ -181,8 +184,5 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private SiteInitializerRegistry _siteInitializerRegistry;
-
-	@Inject
-	private FragmentEntryLocalService _fragmentEntryLocalService;
 
 }
