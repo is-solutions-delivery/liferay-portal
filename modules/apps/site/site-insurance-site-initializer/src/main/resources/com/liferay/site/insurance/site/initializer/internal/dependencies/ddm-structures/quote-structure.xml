@@ -25,7 +25,7 @@
 							},
 							"readOnly": false,
 							"repeatable": false,
-							"required": true,
+							"required": false,
 							"showLabel": true,
 							"tip": {
 								"en_US": ""
