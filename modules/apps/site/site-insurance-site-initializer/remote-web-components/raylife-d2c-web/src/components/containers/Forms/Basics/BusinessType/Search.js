@@ -30,14 +30,19 @@ export const BusinessTypeSearch = ({form}) => {
 
 	const templateName = 'i-am-unable-to-find-my-industry';
 	const selectedTrigger = isSelected(templateName);
+	let auxSearchToChange = "";
 
 	useEffect(() => {
+		auxSearchToChange = form?.basics?.businessSearch;
 		onSearch(form?.basics?.businessSearch);
 	}, [form?.basics?.businessSearch]);
 
 	const onSearch = useCallback(
 		useDebounce((searchTerm = '') => {
-			if (!searchTerm.length) setValue('basics.businessCategoryId', '');
+			if ( !searchTerm || auxSearchToChange !== searchTerm ) {
+				setValue('basics.businessCategoryId', '');
+				auxSearchToChange = searchTerm;
+			}
 			return reload(searchTerm);
 		}, 500),
 		[]

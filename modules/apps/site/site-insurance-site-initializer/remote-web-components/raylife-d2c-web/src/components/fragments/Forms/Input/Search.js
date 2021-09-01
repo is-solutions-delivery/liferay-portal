@@ -30,6 +30,11 @@ export const SearchInput = React.forwardRef(
 							ref={ref}
 							name={name}
 							required={required}
+							onKeyPress={e => {
+								if (e.key === 'Enter') {
+									e.preventDefault();	
+								} 
+							  }}
 							maxLength={255}
 						/>
 					</InputAreaWithError>
