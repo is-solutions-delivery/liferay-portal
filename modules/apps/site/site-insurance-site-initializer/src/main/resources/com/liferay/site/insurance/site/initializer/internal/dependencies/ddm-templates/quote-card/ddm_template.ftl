@@ -2,17 +2,34 @@
 	#quote {
 		background-color: #FFF;
 		border-radius: 8px;
-		width: 292px;
-		height: 576px;
 		border: 1px solid #A6C2FF;
+		height: 576px;
+		width: 292px;
+	}
+
+	#quote .most-popular  {
+		background-color: #F4870B;
+		border-radius: 8px 8px 0 0;
+		color: #FFF;
+		font-size: 18px;
+		font-weight: 600;
+		height: 25px;
+		text-align: center;
+	}
+	
+	#quote .no-most-popular  {
+		background-color: #FFF;
+		border-radius: 8px 8px 0 0;
+		border-radius: 8px;
+		height: 25px;
 	}
 	
 	#quote .quote-content {
-		padding: 24px;
 		display: flex;
-		height: 549px;
 		flex-direction: column;
+		height: 549px;
 		justify-content: space-between;
+		padding: 24px 24px 32px 24px;
 	}
 	
 	#quote .quote-header {
@@ -20,29 +37,32 @@
 	}
 	
 	#quote .quote-header .title {
-		font-weight: 700;
-		font-size: 24px;
 		color: #4D85FF;
+		font-size: 24px;
+		font-weight: 700;
 		line-height: 28px;
 	}
 	
 	#quote .quote-header .value {
-		font-weight: 800;
-		font-size: 49px;
 		color: #09101D;
+		display: flex;
+		font-size: 49px;
+		font-weight: 800;
+		justify-content: center;
 		line-height: 56px;
+    	flex-direction: row;
 	}
 	
-	#quote .quote-header .value span {
-		font-weight: 300;
-		font-size: 37px;
+	#quote .quote-header .value div {
 		color: #2F313D;
+		font-size: 37px;
+		font-weight: 300;
 	}
 	
 	#quote .quote-header .subtitle {
-		font-weight: 500;
-		font-size: 11px;
 		color: #606167;
+		font-size: 11px;
+		font-weight: 500;
 		line-height: 16px;
 	}
 	
@@ -50,42 +70,39 @@
 		color: #4D85FF;
 	}
 	
-	#quote .most-popular  {
-		background-color: #F4870B;
-		border-radius: 8px;
-		height: 25px;
-		font-size: 18px;
-		font-weight: 600;
-		color: #FFF;
-		border-radius: 8px 8px 0 0;
-		text-align: center;
-	}
-	
 	#quote ul {
+		margin: 0;
 		padding: 0;
 	}
-
+	
 	#quote li {
 		color: #606167;
+		display: flex;
+		flex: auto;
 		font-size: 13px;
 		font-weight: 500;
 		list-style: none;
-		display: flex;
-    justify-content: space-between;
-		flex: auto;
+    	justify-content: space-between;
 	}
 	
-	#quote li:not(last-child) {
+	#quote li:not(:last-child) {
 		margin-bottom: 24px;
 	}
 	
 	#quote li .checkIcon,
 	#quote li .closeIcon {
+		align-items: center;
 		display: flex;
+	}
+	
+	#quote li .closeIcon {
+		color: #a0a0a4;
 	}
 	
 	<#if checkIcon.getData() ?? && checkIcon.getData() != "">
 		#quote li .checkIcon::before {
+			-webkit-mask-size: cover;
+			-webkit-mask: url(${checkIcon.getData()}) no-repeat 50% 50%;
 			background-color: #4D85FF;
 			content: "";
 			display: inline-block;
@@ -93,90 +110,96 @@
 			margin-right: 4px;
 			mask: url(${checkIcon.getData()}) no-repeat 50% 50%;
 			width: 16px;
-			-webkit-mask: url(${checkIcon.getData()}) no-repeat 50% 50%;
-			-webkit-mask-size: cover;
 		}
 	</#if>
 
 	<#if closeIcon.getData() ?? && closeIcon.getData() != "">
 		#quote li .closeIcon::before {
-			background-color: #606167;
+			-webkit-mask-size: cover;
+			-webkit-mask: url(${closeIcon.getData()}) no-repeat 50% 50%;
+			background-color: #a0a0a4;
 			content: "";
 			display: inline-block;
 			height: 16px;
 			margin-right: 4px;
 			mask: url(${closeIcon.getData()}) no-repeat 50% 50%;
 			width: 16px;
-			-webkit-mask: url(${closeIcon.getData()}) no-repeat 50% 50%;
-			-webkit-mask-size: cover;
 		}
 	</#if>
 
+	#quote .quote-footer {
+		border: none;
+		padding: 0;
+	}
+	
 	#quote #purchase {
+		background: none;
+		border-radius: 4px;
+		border: 1px solid #4C85FF;
 		color: #4C85FF;
 		cursor: pointer;
-		background: none;
-		border: 1px solid #4C85FF;
+		font-size: 16px;
+		font-weight: 700;
 		padding: 0;
-		border-radius: 4px;
-		padding: 16px 12px;
+		padding: 16px 18px;
 	}
 	
 	#quote #purchase:hover {
+		background: #4C85FF;
+		border-radius: 4px;
+		border: 1px solid #4C85FF;
 		color: #FFF;
 		cursor: pointer;
-		background: #4C85FF;
-		border: 1px solid #4C85FF;
-		padding: 0;
-		border-radius: 4px;
-		padding: 16px 12px;
 		font-size: 16px;
 		font-weight: 700;
+		padding: 0;
+		padding: 16px 18px;
 	}
 
-	#quote #dismiss {
-		color: #7D7E85;
-		cursor: pointer;
+	#quote #details {
 		background: none;
 		border: none;
-		padding-top: 16px;
-		text-decoration-line: underline;
+		color: #7D7E85;
+		cursor: pointer;
 		font-size: 16px;
 		font-weight: 500;
+		padding-top: 16px;
+		text-decoration-line: underline;
 	}
-
 </style>
 
 <div id="quote">
-		<#if (mostPopular.getData())??>
-			<div class="most-popular">${mostPopular.getData()}</div>
-		</#if>
-		<div class="quote-content">
-			<div class="quote-header">
-				<#if (title.getData())??>
-					<div class="title">${title.getData()}</div>
-				</#if>
-				<#if (value.getData())??>
-					<div class="value">${value.getData()}</div>
-				</#if>
-				<#if (subtitle.getData())??>
-					<div class="subtitle">
-						${subtitle.getData()}
-					</div>
-				</#if>
-			</div>
-			<div class="quote-body">
-				<#if (listTerms.getData())??>
-					${listTerms.getData()}
-				</#if>
-			</div>
-			<div class="quote-footer">
-				<div class="d-flex justify-content-center">
-					<button type="button" id="purchase" onclick="event.preventDefault();">PURCHASE THIS POLICY</button>
+	<#if (mostPopular.getData())?? && mostPopular.getData() != "">
+		<div class="most-popular">${mostPopular.getData()}</div>
+	<#else>
+		<div class="no-most-popular"></div>
+	</#if>
+	<div class="quote-content">
+		<div class="quote-header">
+			<#if (title.getData())??>
+				<div class="title">${title.getData()}</div>
+			</#if>
+			<#if (value.getData())??>
+				<div class="value">${value.getData()}</div>
+			</#if>
+			<#if (subtitle.getData())??>
+				<div class="subtitle">
+					${subtitle.getData()}
 				</div>
-				<div class="d-flex justify-content-center">
-					<button type="button" id="dismiss" onclick="event.preventDefault();">Policy Details</button>
-				</div>
+			</#if>
+		</div>
+		<div class="quote-body">
+			<#if (listTerms.getData())??>
+				${listTerms.getData()}
+			</#if>
+		</div>
+		<div class="quote-footer">
+			<div class="d-flex justify-content-center">
+				<button type="button" id="purchase" onclick="event.preventDefault();">PURCHASE THIS POLICY</button>
 			</div>
+			<div class="d-flex justify-content-center">
+				<button type="button" id="details" onclick="event.preventDefault();">Policy Details</button>
+			</div>
+		</div>
 	</div>
 </div>
