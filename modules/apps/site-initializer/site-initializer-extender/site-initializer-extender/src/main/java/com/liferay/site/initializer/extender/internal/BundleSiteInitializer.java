@@ -26,6 +26,8 @@ import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyVocabulary;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
+import com.liferay.headless.commerce.admin.catalog.resource.v1_0.CatalogResource;
 import com.liferay.headless.delivery.dto.v1_0.Document;
 import com.liferay.headless.delivery.dto.v1_0.DocumentFolder;
 import com.liferay.headless.delivery.dto.v1_0.StructuredContentFolder;
@@ -73,11 +75,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -93,7 +97,8 @@ import org.osgi.framework.wiring.BundleWiring;
 public class BundleSiteInitializer implements SiteInitializer {
 
 	public BundleSiteInitializer(
-		Bundle bundle, DDMStructureLocalService ddmStructureLocalService,
+		Bundle bundle, CatalogResource.Factory catalogResourceFactory,
+		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
 		DLURLHelper dlURLHelper,
@@ -112,6 +117,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		UserLocalService userLocalService) {
 
 		_bundle = bundle;
+		_catalogResourceFactory = catalogResourceFactory;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 		_defaultDDMStructureHelper = defaultDDMStructureHelper;
@@ -179,6 +185,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, String> documentsStringUtilReplaceValues =
 				_addDocuments(serviceContext);
 
+			_addCatalog(serviceContext);
 			_addDDMStructures(serviceContext);
 			_addDDMTemplates(serviceContext);
 			_addFragmentEntries(serviceContext);
@@ -196,6 +203,46 @@ public class BundleSiteInitializer implements SiteInitializer {
 	@Override
 	public boolean isActive(long companyId) {
 		return true;
+	}
+
+	private void _addCatalog(ServiceContext serviceContext)
+		throws Exception {
+
+		_addCatalog("/site-initializer/catalogs", serviceContext);
+	}
+
+	private void _addCatalog(
+			String parentResourcePath, ServiceContext serviceContext)
+		throws Exception {
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			parentResourcePath);
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return;
+		}
+
+		CatalogResource.Builder catalogResourceBuilder =
+			_catalogResourceFactory.create();
+
+		CatalogResource catalogResource = catalogResourceBuilder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		for (String resourcePath : resourcePaths) {
+			String jsonCatalog = _read(resourcePath);
+
+			Catalog catalog = Catalog.toDTO(jsonCatalog);
+
+			if (catalog == null) {
+				_log.error(
+					"Unable to transform catalog from JSON: " + jsonCatalog);
+
+				continue;
+			}
+
+			catalogResource.postCatalog(catalog);
+		}
 	}
 
 	private void _addDDMStructures(ServiceContext serviceContext)
@@ -677,6 +724,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private static final ObjectMapper _objectMapper = new ObjectMapper();
 
 	private final Bundle _bundle;
+	private final CatalogResource.Factory _catalogResourceFactory;
 	private final ClassLoader _classLoader;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DDMTemplateLocalService _ddmTemplateLocalService;
