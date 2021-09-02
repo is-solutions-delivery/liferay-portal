@@ -27,6 +27,8 @@ import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyVocabulary;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
 import com.liferay.headless.delivery.dto.v1_0.Document;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
+import com.liferay.headless.commerce.admin.catalog.resource.v1_0.CatalogResource;
 import com.liferay.headless.delivery.dto.v1_0.DocumentFolder;
 import com.liferay.headless.delivery.dto.v1_0.StructuredContentFolder;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
@@ -74,10 +76,12 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -187,6 +191,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_addObjectDefinitions(serviceContext);
 			_addStyleBookEntries(serviceContext);
 			_addTaxonomyVocabularies(serviceContext);
+			
+			List<Catalog> commerceCatalog = _addCommerceCatalog(serviceContext);
+			
+			long catalogGroupId = commerceCatalog.getGroupId();
+
 		}
 		catch (Exception exception) {
 			throw new InitializationException(exception);
@@ -294,6 +303,55 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		return documentFolder.getId();
 	}
+	
+	private List<Catalog> _addCommerceCatalog(ServiceContext serviceContext)
+			throws Exception {
+		
+			return _addCommerceCatalog(
+				"/site-initializer/catalogs", serviceContext);
+
+	}
+	
+	private List<Catalog> _addCommerceCatalog(
+			String parentResourcePath, ServiceContext serviceContext)
+			throws Exception {
+		
+			List<Catalog> catalogs = new ArrayList<>();
+
+			Set<String> resourcePaths = _servletContext.getResourcePaths(
+					parentResourcePath);
+
+			if (SetUtil.isEmpty(resourcePaths)) {
+				return catalogs;
+			}
+			
+			CatalogResource.Builder catalogResourceBuilder =
+					_catalogResourceFactory.create();
+
+			CatalogResource catalogResource =
+				catalogResourceBuilder.user(
+					serviceContext.fetchUser()
+				).build();
+
+
+			for (String resourcePath : resourcePaths) {
+				String jsonCatalog = _read(resourcePath);
+
+				Catalog catalog = Catalog.toDTO(jsonCatalog);
+
+				if (catalog == null) {
+					_log.error(
+						"Unable to transform catalog from JSON: " +
+							jsonCatalog);
+
+					continue;
+				}				
+				
+				catalogs.add(catalogResource.postCatalog(catalog));
+			}
+
+			return catalogs;
+		}
 
 	private Map<String, String> _addDocuments(
 			Long documentFolderId, String parentResourcePath,
