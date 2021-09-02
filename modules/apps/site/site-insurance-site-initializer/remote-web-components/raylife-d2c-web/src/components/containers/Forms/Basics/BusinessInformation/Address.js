@@ -23,7 +23,10 @@ export const BusinessInformationAddress = () => {
 	}, [ref]);
 
 	const updateFormWithGoogleAddress = (address) => {
-		setValue(setFormPath('city'), address.city);
+		// We need to put shouldValidate at least in one Field
+		// to force validation to others
+
+		setValue(setFormPath('city'), address.city, {shouldValidate: true});
 		setValue(setFormPath('state'), address.state);
 		setValue(setFormPath('zip'), address.zip);
 		setValue(
