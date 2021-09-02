@@ -3,21 +3,33 @@
 		"pageElements": [
 			{
 				"definition": {
-					"fragmentStyle": {
-						"marginTop": "5"
-					},
 					"layout": {
 						"borderWidth": 0,
-						"marginTop": 4,
 						"widthType": "Fixed"
 					}
 				},
 				"pageElements": [
 					{
 						"definition": {
+							"fragment": {
+								"key": "quote-comparison-header"
+							},
+							"fragmentConfig": {},
+							"fragmentFields": [],
+							"fragmentStyle": {
+								"borderWidth": "0",
+								"marginRight": "5",
+								"opacity": "100"
+							}
+						},
+						"type": "Fragment"
+					},
+					{
+						"definition": {
+							"fragmentStyle": {},
 							"gutters": true,
-							"modulesPerRow": 2,
-							"numberOfColumns": 2,
+							"modulesPerRow": 3,
+							"numberOfColumns": 3,
 							"reverseOrder": false,
 							"rowViewports": [
 								{
@@ -51,18 +63,29 @@
 											"id": "tablet"
 										}
 									],
-									"size": 8
+									"size": 4
 								},
 								"pageElements": [
 									{
 										"definition": {
-											"fragment": {
-												"key": "quote-comparison"
+											"fragmentStyle": {
+												"marginLeft": "9",
+												"marginTop": "4"
 											},
-											"fragmentConfig": {},
-											"fragmentFields": []
+											"widgetInstance": {
+												"widgetConfig": {
+													"ddmTemplateKey": "",
+													"assetEntryId": "52963",
+													"userToolAssetAddonEntryKeys": "false",
+													"groupId": "",
+													"enableViewCountIncrement": "false",
+													"articleId": "BASIC-PRICING-TIER-TEMPLATE",
+													"contentMetadataAssetAddonEntryKeys": "false"
+												},
+												"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+											}
 										},
-										"type": "Fragment"
+										"type": "Widget"
 									}
 								],
 								"type": "Column"
@@ -88,14 +111,59 @@
 								"pageElements": [
 									{
 										"definition": {
+											"fragmentStyle": {
+												"marginLeft": "6"
+											},
 											"widgetInstance": {
 												"widgetConfig": {
 													"ddmTemplateKey": "",
-													"assetEntryId": "",
+													"assetEntryId": "52973",
 													"userToolAssetAddonEntryKeys": "false",
 													"groupId": "",
 													"enableViewCountIncrement": "false",
-													"articleId": "DID-YOU-KNOW-TEMPLATE",
+													"articleId": "STANDARD-PRICING-TIER-TEMPLATE",
+													"contentMetadataAssetAddonEntryKeys": "false"
+												},
+												"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"marginTop": "4"
+											},
+											"widgetInstance": {
+												"widgetConfig": {
+													"ddmTemplateKey": "",
+													"assetEntryId": "63367",
+													"userToolAssetAddonEntryKeys": "false",
+													"groupId": "",
+													"enableViewCountIncrement": "false",
+													"articleId": "PREMIUM-PRICING-TIER-TEMPLATE",
 													"contentMetadataAssetAddonEntryKeys": "false"
 												},
 												"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
