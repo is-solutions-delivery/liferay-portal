@@ -62,7 +62,6 @@ export const FormBusiness = ({form}) => {
 				/>
 				<ControlledSwitch
 					control={control}
-					defaultValue="true"
 					label="Do you store personally identifiable information about your customers?"
 					name={setFormPath('hasStoredCustomerInformation')}
 					rules={{required: true}}

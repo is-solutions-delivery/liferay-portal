@@ -11,7 +11,7 @@ export const ControlledSwitch = ({
 	rules,
 	moreInfoProps = undefined,
 	inputProps = {},
-	defaultValue = 'false',
+	defaultValue = '',
 	...props
 }) => {
 	return (
