@@ -14,9 +14,8 @@ const getIconSpriteMap = () => {
 
 		// eslint-disable-next-line no-undef
 		return `${themeDisplay.getPathThemeImages()}/clay/icons.svg`;
-	}
-	catch (erorr) {
-		console.warn(erorr.message);
+	} catch (error) {
+		console.warn(error.message);
 
 		return require('@clayui/css/lib/images/icons/icons.svg').default;
 	}
