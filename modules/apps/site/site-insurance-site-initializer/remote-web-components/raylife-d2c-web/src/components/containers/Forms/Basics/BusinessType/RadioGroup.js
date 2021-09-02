@@ -5,12 +5,13 @@ import {Controller, useFormContext} from 'react-hook-form';
 import {LiferayService} from '../../../../../services/liferay';
 import {Radio} from '../../../../fragments/Forms/Radio';
 
-export const BusinessTypeRadioGroup = ({businessTypes = [], form}) => {
+export const BusinessTypeRadioGroup = ({businessTypes = [], form, setNewSelectedProduct}) => {
 	const {control, setValue} = useFormContext();
 
 	useEffect(() => {
 		if (form?.basics?.businessCategoryId) {
 			setCategoryProperties();
+			setNewSelectedProduct(form?.basics?.businessCategoryId);
 		}
 	}, [form?.basics?.businessCategoryId]);
 

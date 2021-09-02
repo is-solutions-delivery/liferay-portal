@@ -17,7 +17,7 @@ import {BusinessTypeRadioGroup} from './RadioGroup';
 
 const MAX_LENGTH_TO_TRUNCATE = 28;
 
-export const BusinessTypeSearch = ({form}) => {
+export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 	const {
 		formState: {errors},
 		register,
@@ -109,6 +109,7 @@ export const BusinessTypeSearch = ({form}) => {
 			<>
 				<BusinessTypeRadioGroup
 					businessTypes={businessTypes}
+					setNewSelectedProduct={setNewSelectedProduct}
 					form={form}
 				/>
 				{infoPanelButton()}
