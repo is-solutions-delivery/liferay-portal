@@ -1,4 +1,4 @@
-import {ActionTypes} from './actions';
+import { ActionTypes } from './actions';
 
 export const reducer = (state, action) => {
 	switch (action.type) {
@@ -12,6 +12,12 @@ export const reducer = (state, action) => {
 			return {
 				...state,
 				selectedTrigger: action.payload,
+			};
+
+		case ActionTypes.SET_SELECTED_PRODUCT:
+			return {
+				...state,
+				selectedProduct: action.payload,
 			};
 
 		default:
