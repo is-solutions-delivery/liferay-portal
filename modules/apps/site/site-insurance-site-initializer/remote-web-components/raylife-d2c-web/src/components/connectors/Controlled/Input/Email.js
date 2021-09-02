@@ -9,7 +9,7 @@ export const EmailControlledInput = ({rules, ...props}) => {
 			{...props}
 			rules={{
 				pattern: {
-					message: 'Should be a valid email address.',
+					message: 'Must be a valid email address.',
 					value: EMAIL_REGEX,
 				},
 				...rules,

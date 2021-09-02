@@ -33,6 +33,7 @@
 
 	#tip .title {
 		font-size: 24px;
+		word-wrap: break-word;
 	}
 	
 	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
