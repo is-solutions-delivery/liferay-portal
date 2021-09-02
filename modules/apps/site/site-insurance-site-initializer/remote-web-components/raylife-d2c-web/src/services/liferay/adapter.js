@@ -2,6 +2,8 @@ import '../../types';
 import {toSlug} from '../../utils';
 import {allowedProductQuote} from '../../utils/webContents';
 
+const _formatCommerceProductPrice = (price) => parseInt(price, 10);
+
 /**
  * @param {AssetCategoryResponse[]}  data Array of matched categories
  * @returns {BusinessType[]} Array of business types
@@ -73,9 +75,9 @@ const adaptToProductQuote = (data = []) =>
 	data.map(({description, name, productId, skus}) => ({
 		description: description.en_US,
 		id: productId,
-		period: `($${skus[0].promoPrice.toFixed(2).toString()}-${skus[0].price
-			.toFixed(2)
-			.toString()}/mo)`,
+		period: `($${_formatCommerceProductPrice(
+			skus[0].promoPrice
+		)}-${_formatCommerceProductPrice(skus[0].price)}/mo)`,
 		template: {
 			allowed: allowedProductQuote(name.en_US),
 			name: toSlug(name.en_US),
