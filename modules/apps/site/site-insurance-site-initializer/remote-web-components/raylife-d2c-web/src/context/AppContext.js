@@ -12,6 +12,7 @@ const initialState = {
 		title: "Welcome! Let's start.",
 	},
 	selectedTrigger: '',
+	selectedProduct: ''
 };
 
 export const AppContext = createContext({});

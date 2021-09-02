@@ -1,6 +1,7 @@
 export const ActionTypes = {
 	SET_SELECTED_STEP: 'SET_SELECTED_STEP',
 	SET_SELECTED_TRIGGER: 'SET_SELECTED_TRIGGER',
+	SET_SELECTED_PRODUCT: 'SET_SELECTED_PRODUCT',
 };
 
 /**
@@ -23,5 +24,12 @@ export const setSelectedTrigger = (payload) => {
 	return {
 		payload,
 		type: ActionTypes.SET_SELECTED_TRIGGER,
+	};
+};
+
+export const setSelectedProduct = (payload) => {
+	return {
+		payload,
+		type: ActionTypes.SET_SELECTED_PRODUCT,
 	};
 };
