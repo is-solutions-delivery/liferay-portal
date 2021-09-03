@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
 
 import {TIP_EVENT} from '../../../events';
@@ -21,8 +21,21 @@ export const FormEmployees = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const {
 		control,
+		setValue,
+		getValues,
 		formState: {isValid},
 	} = useFormContext();
+
+	const forceValidation = () => {
+		setValue(
+			setFormPath('businessOperatesYearRound'),
+			getValues(setFormPath('businessOperatesYearRound')),
+			{shouldValidate: true}
+		);
+	};
+	useEffect(() => {
+		forceValidation();
+	}, []);
 
 	const {onNext, onPrevious, onSave} = useFormActions(
 		form,
