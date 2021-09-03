@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
 
 import {TIP_EVENT} from '../../../events';
@@ -23,14 +23,29 @@ const setFormPath = (value) => `business.${value}`;
 export const FormBusiness = ({form}) => {
 	const {
 		control,
+		setValue,
+		getValues,
 		formState: {isValid},
 	} = useFormContext();
+	const forceValidation = () => {
+		setValue(
+			setFormPath('hasAutoPolicy'),
+			getValues(setFormPath('hasAutoPolicy')),
+			{shouldValidate: true}
+		);
+	};
+
+	useEffect(() => {
+		forceValidation();
+	}, []);
+
 	const {selectedStep} = useStepWizard();
 	const {onNext, onPrevious, onSave} = useFormActions(
 		form,
 		AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE,
 		AVAILABLE_STEPS.EMPLOYEES
 	);
+
 	const {isSelected, updateState} = useTriggerContext();
 
 	return (
