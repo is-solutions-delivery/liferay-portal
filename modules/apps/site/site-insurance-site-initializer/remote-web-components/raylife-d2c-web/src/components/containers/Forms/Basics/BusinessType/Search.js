@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import useDebounce from 'lodash.debounce';
 
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 
 import {TIP_EVENT} from '../../../../../events';
@@ -26,8 +26,9 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 
 	const {selectedStep} = useStepWizard();
-	const {businessTypes, isError, isLoading, reload} = useBusinessTypes();
+	const {businessTypes, isError, reload} = useBusinessTypes();
 	const {isSelected, updateState} = useTriggerContext();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const templateName = 'i-am-unable-to-find-my-industry';
 	const selectedTrigger = isSelected(templateName);
@@ -36,15 +37,17 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 	useEffect(() => {
 		auxSearchToChange = form?.basics?.businessSearch;
 		onSearch(form?.basics?.businessSearch);
+		setIsLoading(true);
 	}, [form?.basics?.businessSearch]);
 
 	const onSearch = useCallback(
-		useDebounce((searchTerm = '') => {
+		useDebounce(async (searchTerm = '') => {
 			if (!searchTerm || auxSearchToChange !== searchTerm) {
 				setValue('basics.businessCategoryId', '');
 				auxSearchToChange = searchTerm;
 			}
-			return reload(searchTerm);
+			await reload(searchTerm);
+			setIsLoading(false);
 		}, 500),
 		[]
 	);
@@ -82,7 +85,7 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 			)}
 		</button>
 	);
-
+	
 	const renderResults = () => {
 		if (isLoading || !form?.basics?.businessSearch) {
 			return;
@@ -129,12 +132,14 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 					required
 					{...register('basics.businessSearch', {
 						required:
-							'Please, search for a business type in order to proceed.',
+						'Please, search for a business type in order to proceed.',
 					})}
 				>
 					<button
 						className="btn btn-primary search"
-						onClick={() => onSearch(form?.basics?.businessSearch)}
+						onClick={() => {
+							onSearch(form?.basics?.businessSearch)}
+						}
 						type="button"
 					>
 						Search
