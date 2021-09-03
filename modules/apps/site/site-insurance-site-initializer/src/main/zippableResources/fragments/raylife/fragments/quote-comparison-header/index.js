@@ -4,17 +4,13 @@ function getCookie(name) {
 	const cookies = decodedCookie.split(';');
 	for (let i = 0; i < cookies.length; i++) {
 		const cookie = cookies[i].trim();
-		
 		if (cookie.indexOf(name) == 0) {
-			let cookieObject = cookie.substring(name.length, cookie.length);
-			let firstName = JSON.parse(cookieObject).basics.businessInformation.firstName;
-		
-			return firstName;
+			return cookie.substring(name.length, cookie.length);;
 		}
 	}
 }
 
-const firstName = getCookie("raylife-application-form");
+const firstName = JSON.parse(getCookie("raylife-application-form")).basics.businessInformation.firstName;
 
 if (firstName) {
 	document.getElementById('quote-comparison-user-first-name').innerHTML = firstName;
