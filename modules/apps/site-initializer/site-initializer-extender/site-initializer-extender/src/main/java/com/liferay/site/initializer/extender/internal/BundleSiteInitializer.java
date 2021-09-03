@@ -185,6 +185,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, String> documentsStringUtilReplaceValues =
 				_addDocuments(serviceContext);
 
+			_addCatalog(serviceContext);
 			_addDDMStructures(serviceContext);
 			_addDDMTemplates(serviceContext);
 			_addFragmentEntries(serviceContext);
@@ -193,8 +194,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_addObjectDefinitions(serviceContext);
 			_addStyleBookEntries(serviceContext);
 			_addTaxonomyVocabularies(serviceContext);
-
-			_addCommerceCatalog(serviceContext);
 		}
 		catch (Exception exception) {
 			throw new InitializationException(exception);
@@ -206,14 +205,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return true;
 	}
 
-	private List<Catalog> _addCommerceCatalog(ServiceContext serviceContext)
+	private List<Catalog> _addCatalog(ServiceContext serviceContext)
 		throws Exception {
 
-		return _addCommerceCatalog(
-			"/site-initializer/catalogs", serviceContext);
+		return _addCatalog("/site-initializer/catalogs", serviceContext);
 	}
 
-	private List<Catalog> _addCommerceCatalog(
+	private List<Catalog> _addCatalog(
 			String parentResourcePath, ServiceContext serviceContext)
 		throws Exception {
 
