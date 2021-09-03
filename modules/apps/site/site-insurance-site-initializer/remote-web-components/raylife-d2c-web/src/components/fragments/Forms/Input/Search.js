@@ -29,9 +29,9 @@ export const SearchInput = React.forwardRef(
 							{...props}
 							maxLength={255}
 							name={name}
-							onKeyPress={(e) => {
-								if (e.key === 'Enter') {
-									e.preventDefault();
+							onKeyPress={(event) => {
+								if (event.key === 'Enter') {
+									event.preventDefault();
 								}
 							}}
 							ref={ref}
