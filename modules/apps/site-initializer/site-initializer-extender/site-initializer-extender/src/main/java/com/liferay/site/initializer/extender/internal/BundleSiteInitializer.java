@@ -26,9 +26,9 @@ import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyVocabulary;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
-import com.liferay.headless.delivery.dto.v1_0.Document;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.CatalogResource;
+import com.liferay.headless.delivery.dto.v1_0.Document;
 import com.liferay.headless.delivery.dto.v1_0.DocumentFolder;
 import com.liferay.headless.delivery.dto.v1_0.StructuredContentFolder;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
@@ -75,8 +75,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -97,7 +97,8 @@ import org.osgi.framework.wiring.BundleWiring;
 public class BundleSiteInitializer implements SiteInitializer {
 
 	public BundleSiteInitializer(
-		Bundle bundle, DDMStructureLocalService ddmStructureLocalService,
+		Bundle bundle, CatalogResource.Factory catalogResourceFactory,
+		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
 		DLURLHelper dlURLHelper,
@@ -116,6 +117,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		UserLocalService userLocalService) {
 
 		_bundle = bundle;
+		_catalogResourceFactory = catalogResourceFactory;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 		_defaultDDMStructureHelper = defaultDDMStructureHelper;
@@ -191,11 +193,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_addObjectDefinitions(serviceContext);
 			_addStyleBookEntries(serviceContext);
 			_addTaxonomyVocabularies(serviceContext);
-			
-			List<Catalog> commerceCatalog = _addCommerceCatalog(serviceContext);
-			
-			long catalogGroupId = commerceCatalog.getGroupId();
 
+			_addCommerceCatalog(serviceContext);
 		}
 		catch (Exception exception) {
 			throw new InitializationException(exception);
@@ -205,6 +204,51 @@ public class BundleSiteInitializer implements SiteInitializer {
 	@Override
 	public boolean isActive(long companyId) {
 		return true;
+	}
+
+	private List<Catalog> _addCommerceCatalog(ServiceContext serviceContext)
+		throws Exception {
+
+		return _addCommerceCatalog(
+			"/site-initializer/catalogs", serviceContext);
+	}
+
+	private List<Catalog> _addCommerceCatalog(
+			String parentResourcePath, ServiceContext serviceContext)
+		throws Exception {
+
+		List<Catalog> catalogs = new ArrayList<>();
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			parentResourcePath);
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return catalogs;
+		}
+
+		CatalogResource.Builder catalogResourceBuilder =
+			_catalogResourceFactory.create();
+
+		CatalogResource catalogResource = catalogResourceBuilder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		for (String resourcePath : resourcePaths) {
+			String jsonCatalog = _read(resourcePath);
+
+			Catalog catalog = Catalog.toDTO(jsonCatalog);
+
+			if (catalog == null) {
+				_log.error(
+					"Unable to transform catalog from JSON: " + jsonCatalog);
+
+				continue;
+			}
+
+			catalogs.add(catalogResource.postCatalog(catalog));
+		}
+
+		return catalogs;
 	}
 
 	private void _addDDMStructures(ServiceContext serviceContext)
@@ -303,55 +347,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		return documentFolder.getId();
 	}
-	
-	private List<Catalog> _addCommerceCatalog(ServiceContext serviceContext)
-			throws Exception {
-		
-			return _addCommerceCatalog(
-				"/site-initializer/catalogs", serviceContext);
-
-	}
-	
-	private List<Catalog> _addCommerceCatalog(
-			String parentResourcePath, ServiceContext serviceContext)
-			throws Exception {
-		
-			List<Catalog> catalogs = new ArrayList<>();
-
-			Set<String> resourcePaths = _servletContext.getResourcePaths(
-					parentResourcePath);
-
-			if (SetUtil.isEmpty(resourcePaths)) {
-				return catalogs;
-			}
-			
-			CatalogResource.Builder catalogResourceBuilder =
-					_catalogResourceFactory.create();
-
-			CatalogResource catalogResource =
-				catalogResourceBuilder.user(
-					serviceContext.fetchUser()
-				).build();
-
-
-			for (String resourcePath : resourcePaths) {
-				String jsonCatalog = _read(resourcePath);
-
-				Catalog catalog = Catalog.toDTO(jsonCatalog);
-
-				if (catalog == null) {
-					_log.error(
-						"Unable to transform catalog from JSON: " +
-							jsonCatalog);
-
-					continue;
-				}				
-				
-				catalogs.add(catalogResource.postCatalog(catalog));
-			}
-
-			return catalogs;
-		}
 
 	private Map<String, String> _addDocuments(
 			Long documentFolderId, String parentResourcePath,
@@ -735,6 +730,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private static final ObjectMapper _objectMapper = new ObjectMapper();
 
 	private final Bundle _bundle;
+	private final CatalogResource.Factory _catalogResourceFactory;
 	private final ClassLoader _classLoader;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DDMTemplateLocalService _ddmTemplateLocalService;
