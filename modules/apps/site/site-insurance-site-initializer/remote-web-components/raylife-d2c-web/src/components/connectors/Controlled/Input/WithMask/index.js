@@ -3,6 +3,7 @@ import {Controller} from 'react-hook-form';
 
 import {MoreInfoButton} from '../../../../fragments/Buttons/MoreInfo';
 import {InputWithMask} from '../../../../fragments/Forms/Input/WithMask';
+import classNames from 'classnames';
 
 export const ControlledInputWithMask = ({
 	name,
@@ -11,8 +12,11 @@ export const ControlledInputWithMask = ({
 	control,
 	moreInfoProps = undefined,
 	inputProps = {},
+	renderInput = true,
 	...props
 }) => {
+	const rulesRender = renderInput ? rules : {required: false};
+
 	return (
 		<Controller
 			control={control}
@@ -20,17 +24,20 @@ export const ControlledInputWithMask = ({
 			name={name}
 			render={({field, fieldState}) => (
 				<InputWithMask
-					{...field}
+					className={classNames({
+						'd-none': !renderInput,
+					})}
 					error={fieldState.error}
 					label={label}
 					renderActions={
 						moreInfoProps && <MoreInfoButton {...moreInfoProps} />
 					}
-					required={rules?.required}
+					required={rulesRender?.required}
+					{...field}
 					{...inputProps}
 				/>
 			)}
-			rules={rules}
+			rules={rulesRender}
 			{...props}
 		/>
 	);

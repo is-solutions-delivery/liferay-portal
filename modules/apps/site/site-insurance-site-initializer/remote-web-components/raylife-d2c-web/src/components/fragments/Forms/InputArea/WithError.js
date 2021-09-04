@@ -1,12 +1,18 @@
 import React from 'react';
 
 import {WarningBadge} from '../../Badges/Warning';
+import classNames from 'classnames';
 
-export const InputAreaWithError = ({children, error}) => {
+export const InputAreaWithError = ({className, children, error}) => {
 	return (
-		<div className={`input-area ${!!error && 'invalid'}`}>
+		<div
+			className={classNames('input-area', {
+				invalid: error,
+				[className]: className,
+			})}
+		>
 			{children}
-			{error?.message && <WarningBadge>{error.message}</WarningBadge>}
+			{error && <WarningBadge>{error.message}</WarningBadge>}
 		</div>
 	);
 };

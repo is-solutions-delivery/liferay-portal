@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactInputMask from 'react-number-format';
-
 import {InputAreaWithError} from '../InputArea/WithError';
 import {Label} from '../Label';
 
@@ -8,6 +7,7 @@ export const InputWithMask = React.forwardRef(
 	(
 		{
 			allowNegative = false,
+			className,
 			error,
 			label,
 			name,
@@ -18,7 +18,7 @@ export const InputWithMask = React.forwardRef(
 		ref
 	) => {
 		return (
-			<InputAreaWithError error={error}>
+			<InputAreaWithError error={error} className={className}>
 				{label && (
 					<Label label={label} name={name} required={required}>
 						{renderActions}
