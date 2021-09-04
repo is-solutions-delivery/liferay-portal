@@ -1,5 +1,5 @@
 export const TOTAL_OF_FIELD = {
-	BASICS: 14,
+	BASICS: 10,
 	EMPLOYEES: 7,
 	PROPERTY: 6,
 };

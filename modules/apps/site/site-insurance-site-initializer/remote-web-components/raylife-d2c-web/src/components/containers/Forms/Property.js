@@ -144,6 +144,20 @@ export const FormProperty = ({form}) => {
 				) && (
 					<ControlledSwitch
 						control={control}
+						inputProps={{
+							onChange: (e) => {
+								setValue(setFormPath('isThereSwimming'), e, {
+									shouldValidate: true,
+								});
+
+								if (e === 'false') {
+									setValue(
+										setFormPath('isThereDivingBoards'),
+										''
+									);
+								}
+							},
+						}}
 						label="Are there swimming pool(s) on the premises?"
 						name={setFormPath('isThereSwimming')}
 						rules={{required: true}}

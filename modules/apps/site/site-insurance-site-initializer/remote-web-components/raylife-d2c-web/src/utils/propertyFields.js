@@ -12,7 +12,7 @@ export const propertyTotalFields = (properties) => {
 	) {
 		fieldCount++;
 	}
-	if (properties?.property?.areThereSwimming === 'true') {
+	if (properties?.property?.isThereSwimming === 'true') {
 		fieldCount++;
 	}
 

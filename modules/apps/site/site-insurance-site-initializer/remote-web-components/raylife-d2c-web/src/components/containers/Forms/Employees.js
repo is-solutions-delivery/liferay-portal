@@ -33,6 +33,7 @@ export const FormEmployees = ({form}) => {
 			{shouldValidate: true}
 		);
 	};
+
 	useEffect(() => {
 		forceValidation();
 	}, []);
@@ -50,32 +51,42 @@ export const FormEmployees = ({form}) => {
 			<div className="card-content">
 				<ControlledSwitch
 					control={control}
+					inputProps={{
+						onChange: (e) => {
+							setValue(setFormPath('hasFein'), e, {
+								shouldValidate: true,
+							});
+
+							if (e === 'false') {
+								setValue(setFormPath('fein'), '');
+							}
+						},
+					}}
 					label="Does your business have a Federal Employer Identification Number (FEIN)?"
 					name={setFormPath('hasFein')}
 					rules={{required: true}}
 				/>
-				{hasFein(form?.employees?.hasFein) && (
-					<FEINControlledInput
-						control={control}
-						label="Federal Employer Identification Number (FEIN)"
-						moreInfoProps={{
-							callback: () => updateState(setFormPath('fein')),
-							event: TIP_EVENT,
-							selected: isSelected(setFormPath('fein')),
-							value: {
-								inputName: setFormPath('fein'),
-								step: selectedStep,
-								templateName:
-									'federal-employer-identification-number',
-								value: form?.employees?.fein,
-							},
-						}}
-						name={setFormPath('fein')}
-						rules={{
-							required: 'FEIN is required.',
-						}}
-					/>
-				)}
+				<FEINControlledInput
+					control={control}
+					label="Federal Employer Identification Number (FEIN)"
+					moreInfoProps={{
+						callback: () => updateState(setFormPath('fein')),
+						event: TIP_EVENT,
+						selected: isSelected(setFormPath('fein')),
+						value: {
+							inputName: setFormPath('fein'),
+							step: selectedStep,
+							templateName:
+								'federal-employer-identification-number',
+							value: form?.employees?.fein,
+						},
+					}}
+					name={setFormPath('fein')}
+					renderInput={hasFein(form?.employees?.hasFein)}
+					rules={{
+						required: 'FEIN is required.',
+					}}
+				/>
 				<YearControlledInput
 					control={control}
 					label="What year did you start your business?"

@@ -4,22 +4,20 @@
  */
 export const countCompletedFields = (fields) => {
 	let count = 0;
-	const keys = Object.keys(fields);
+	const values = Object.values(fields);
+	const objKey = '_f';
 
-	keys.forEach((key) => {
-		if (typeof fields[key] === 'undefined') {
-			return;
-		}
-
-		if (typeof fields[key] === 'object') {
-			count += countCompletedFields(fields[key]);
-		}
-		else if (
-			(typeof fields[key] === 'string' ||
-				typeof fields[key] === 'boolean') &&
-			fields[key] !== ''
-		) {
-			count += 1;
+	values.forEach((value) => {
+		if (value.hasOwnProperty(objKey)) {
+			if (
+				value[objKey].required &&
+				value[objKey].value &&
+				value[objKey].value !== ''
+			) {
+				count += 1;
+			}
+		} else {
+			count += countCompletedFields(value);
 		}
 	});
 
@@ -58,7 +56,6 @@ export const toSlug = (str) => {
 	str = str.toLowerCase();
 
 	// remove accents, swap ñ for n, etc
-
 	var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
 	var to = 'aaaaeeeeiiiioooouuuunc------';
 	for (var i = 0, l = from.length; i < l; i++) {
