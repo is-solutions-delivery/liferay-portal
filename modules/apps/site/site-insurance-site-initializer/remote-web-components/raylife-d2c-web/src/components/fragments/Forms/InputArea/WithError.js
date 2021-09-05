@@ -12,7 +12,7 @@ export const InputAreaWithError = ({className, children, error}) => {
 			})}
 		>
 			{children}
-			{error && <WarningBadge>{error.message}</WarningBadge>}
+			{error?.message && <WarningBadge>{error.message}</WarningBadge>}
 		</div>
 	);
 };
