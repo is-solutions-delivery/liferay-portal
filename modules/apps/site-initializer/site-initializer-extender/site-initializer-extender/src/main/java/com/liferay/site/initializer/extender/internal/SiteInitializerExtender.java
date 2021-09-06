@@ -14,8 +14,6 @@
 
 package com.liferay.site.initializer.extender.internal;
 
-import com.liferay.asset.kernel.service.AssetCategoryLocalService;
-import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
@@ -30,8 +28,6 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -73,18 +69,15 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
-				_assetCategoryLocalService, _assetVocabularyLocalService,
 				bundle, _bundleContext, _ddmStructureLocalService,
 				_ddmTemplateLocalService, _defaultDDMStructureHelper,
 				_dlURLHelper, _documentFolderResourceFactory,
 				_documentResourceFactory, _fragmentsImporter,
 				_groupLocalService, _journalArticleLocalService, _jsonFactory,
 				_objectDefinitionResourceFactory, _portal,
-				_resourcePermissionLocalService, _roleLocalService,
 				_structuredContentFolderResourceFactory,
-				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory, 
-				_taxonomyVocabularyResourceFactory,
-				_userLocalService);
+				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
+				_taxonomyVocabularyResourceFactory, _userLocalService);
 
 		siteInitializerExtension.start();
 
@@ -119,12 +112,6 @@ public class SiteInitializerExtender
 	protected void deactivate() {
 		_bundleTracker.close();
 	}
-
-	@Reference
-	private AssetCategoryLocalService _assetCategoryLocalService;
-
-	@Reference
-	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	private BundleContext _bundleContext;
 	private BundleTracker<?> _bundleTracker;
@@ -165,11 +152,6 @@ public class SiteInitializerExtender
 	@Reference
 	private Portal _portal;
 
-	private ResourcePermissionLocalService _resourcePermissionLocalService;
-
-	@Reference
-	private RoleLocalService _roleLocalService;
-
 	@Reference
 	private StructuredContentFolderResource.Factory
 		_structuredContentFolderResourceFactory;
@@ -178,9 +160,8 @@ public class SiteInitializerExtender
 	private StyleBookEntryZipProcessor _styleBookEntryZipProcessor;
 
 	@Reference
-	private TaxonomyCategoryResource.Factory
-		_taxonomyCategoryResourceFactory;
-	
+	private TaxonomyCategoryResource.Factory _taxonomyCategoryResourceFactory;
+
 	@Reference
 	private TaxonomyVocabularyResource.Factory
 		_taxonomyVocabularyResourceFactory;

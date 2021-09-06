@@ -14,8 +14,6 @@
 
 package com.liferay.site.initializer.extender.internal;
 
-import com.liferay.asset.kernel.service.AssetCategoryLocalService;
-import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
@@ -30,8 +28,6 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -50,9 +46,7 @@ import org.osgi.framework.ServiceRegistration;
 public class SiteInitializerRegistrar {
 
 	public SiteInitializerRegistrar(
-		AssetCategoryLocalService assetCategoryLocalService,
-		AssetVocabularyLocalService assetVocabularyLocalService, Bundle bundle,
-		BundleContext bundleContext,
+		Bundle bundle, BundleContext bundleContext,
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
@@ -65,8 +59,6 @@ public class SiteInitializerRegistrar {
 		JSONFactory jsonFactory,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		Portal portal,
-		ResourcePermissionLocalService resourcePermissionLocalService,
-		RoleLocalService roleLocalService,
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
@@ -74,8 +66,6 @@ public class SiteInitializerRegistrar {
 		TaxonomyVocabularyResource.Factory taxonomyVocabularyResourceFactory,
 		UserLocalService userLocalService) {
 
-		_assetCategoryLocalService = assetCategoryLocalService;
-		_assetVocabularyLocalService = assetVocabularyLocalService;
 		_bundle = bundle;
 		_bundleContext = bundleContext;
 		_ddmStructureLocalService = ddmStructureLocalService;
@@ -90,8 +80,6 @@ public class SiteInitializerRegistrar {
 		_jsonFactory = jsonFactory;
 		_objectDefinitionResourceFactory = objectDefinitionResourceFactory;
 		_portal = portal;
-		_resourcePermissionLocalService = resourcePermissionLocalService;
-		_roleLocalService = roleLocalService;
 		_structuredContentFolderResourceFactory =
 			structuredContentFolderResourceFactory;
 		_styleBookEntryZipProcessor = styleBookEntryZipProcessor;
@@ -108,18 +96,15 @@ public class SiteInitializerRegistrar {
 		_serviceRegistration = _bundleContext.registerService(
 			SiteInitializer.class,
 			new BundleSiteInitializer(
-				_assetCategoryLocalService, _assetVocabularyLocalService,
 				_bundle, _ddmStructureLocalService, _ddmTemplateLocalService,
 				_defaultDDMStructureHelper, _dlURLHelper,
 				_documentFolderResourceFactory, _documentResourceFactory,
 				_fragmentsImporter, _groupLocalService,
 				_journalArticleLocalService, _jsonFactory,
-				_objectDefinitionResourceFactory, _portal,
-				_resourcePermissionLocalService, _roleLocalService,
-				_servletContext, _structuredContentFolderResourceFactory,
+				_objectDefinitionResourceFactory, _portal, _servletContext,
+				_structuredContentFolderResourceFactory,
 				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
-				_taxonomyVocabularyResourceFactory,
-				_userLocalService),
+				_taxonomyVocabularyResourceFactory, _userLocalService),
 			MapUtil.singletonDictionary(
 				"site.initializer.key", _bundle.getSymbolicName()));
 	}
@@ -128,8 +113,6 @@ public class SiteInitializerRegistrar {
 		_serviceRegistration.unregister();
 	}
 
-	private final AssetCategoryLocalService _assetCategoryLocalService;
-	private final AssetVocabularyLocalService _assetVocabularyLocalService;
 	private final Bundle _bundle;
 	private final BundleContext _bundleContext;
 	private final DDMStructureLocalService _ddmStructureLocalService;
@@ -145,9 +128,6 @@ public class SiteInitializerRegistrar {
 	private final ObjectDefinitionResource.Factory
 		_objectDefinitionResourceFactory;
 	private final Portal _portal;
-	private final ResourcePermissionLocalService
-		_resourcePermissionLocalService;
-	private final RoleLocalService _roleLocalService;
 	private ServiceRegistration<?> _serviceRegistration;
 	private ServletContext _servletContext;
 	private final StructuredContentFolderResource.Factory
