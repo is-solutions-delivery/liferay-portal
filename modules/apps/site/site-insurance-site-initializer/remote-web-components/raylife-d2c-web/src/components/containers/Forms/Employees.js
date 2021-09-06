@@ -52,12 +52,12 @@ export const FormEmployees = ({form}) => {
 				<ControlledSwitch
 					control={control}
 					inputProps={{
-						onChange: (e) => {
-							setValue(setFormPath('hasFein'), e, {
+						onChange: (value) => {
+							setValue(setFormPath('hasFein'), value, {
 								shouldValidate: true,
 							});
 
-							if (e === 'false') {
+							if (value === 'false') {
 								setValue(setFormPath('fein'), '');
 							}
 						},

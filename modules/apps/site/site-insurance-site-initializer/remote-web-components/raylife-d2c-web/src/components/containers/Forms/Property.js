@@ -145,12 +145,16 @@ export const FormProperty = ({form}) => {
 					<ControlledSwitch
 						control={control}
 						inputProps={{
-							onChange: (e) => {
-								setValue(setFormPath('isThereSwimming'), e, {
-									shouldValidate: true,
-								});
+							onChange: (value) => {
+								setValue(
+									setFormPath('isThereSwimming'),
+									value,
+									{
+										shouldValidate: true,
+									}
+								);
 
-								if (e === 'false') {
+								if (value === 'false') {
 									setValue(
 										setFormPath('isThereDivingBoards'),
 										''
