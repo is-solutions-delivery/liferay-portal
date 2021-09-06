@@ -1,5 +1,5 @@
 <style>
-	#quote {
+	#quote-comparison {
 		background-color: #FFF;
 		border-radius: 8px;
 		border: 1px solid #A6C2FF;
@@ -7,7 +7,7 @@
 		width: 292px;
 	}
 
-	#quote .most-popular  {
+	#quote-comparison .most-popular  {
 		background-color: #F4870B;
 		border-radius: 8px 8px 0 0;
 		color: #FFF;
@@ -17,14 +17,14 @@
 		text-align: center;
 	}
 	
-	#quote .no-most-popular  {
+	#quote-comparison .no-most-popular  {
 		background-color: #FFF;
 		border-radius: 8px 8px 0 0;
 		border-radius: 8px;
 		height: 25px;
 	}
 	
-	#quote .quote-content {
+	#quote-comparison .quote-content {
 		display: flex;
 		flex-direction: column;
 		height: 549px;
@@ -32,18 +32,18 @@
 		padding: 24px 24px 32px 24px;
 	}
 	
-	#quote .quote-header {
+	#quote-comparison .quote-header {
 		text-align: center;
 	}
 	
-	#quote .quote-header .title {
+	#quote-comparison .quote-header .title {
 		color: #4D85FF;
 		font-size: 24px;
 		font-weight: 700;
 		line-height: 28px;
 	}
 	
-	#quote .quote-header .value {
+	#quote-comparison .quote-header .value {
 		color: #09101D;
 		display: flex;
 		font-size: 49px;
@@ -53,29 +53,29 @@
     	flex-direction: row;
 	}
 	
-	#quote .quote-header .value div {
+	#quote-comparison .quote-header .value div {
 		color: #2F313D;
 		font-size: 37px;
 		font-weight: 300;
 	}
 	
-	#quote .quote-header .subtitle {
+	#quote-comparison .quote-header .subtitle {
 		color: #606167;
 		font-size: 11px;
 		font-weight: 500;
 		line-height: 16px;
 	}
 	
-	#quote .quote-header .subtitle span {
+	#quote-comparison .quote-header .subtitle span {
 		color: #4D85FF;
 	}
 	
-	#quote ul {
+	#quote-comparison ul {
 		margin: 0;
 		padding: 0;
 	}
 	
-	#quote li {
+	#quote-comparison li {
 		color: #606167;
 		display: flex;
 		flex: auto;
@@ -85,22 +85,22 @@
     	justify-content: space-between;
 	}
 	
-	#quote li:not(:last-child) {
+	#quote-comparison li:not(:last-child) {
 		margin-bottom: 24px;
 	}
 	
-	#quote li .checkIcon,
-	#quote li .closeIcon {
+	#quote-comparison li .checkIcon,
+	#quote-comparison li .closeIcon {
 		align-items: center;
 		display: flex;
 	}
 	
-	#quote li .closeIcon {
+	#quote-comparison li .closeIcon {
 		color: #a0a0a4;
 	}
 	
 	<#if checkIcon.getData() ?? && checkIcon.getData() != "">
-		#quote li .checkIcon::before {
+		#quote-comparison li .checkIcon::before {
 			-webkit-mask-size: cover;
 			-webkit-mask: url(${checkIcon.getData()}) no-repeat 50% 50%;
 			background-color: #4D85FF;
@@ -114,7 +114,7 @@
 	</#if>
 
 	<#if closeIcon.getData() ?? && closeIcon.getData() != "">
-		#quote li .closeIcon::before {
+		#quote-comparison li .closeIcon::before {
 			-webkit-mask-size: cover;
 			-webkit-mask: url(${closeIcon.getData()}) no-repeat 50% 50%;
 			background-color: #a0a0a4;
@@ -127,12 +127,12 @@
 		}
 	</#if>
 
-	#quote .quote-footer {
+	#quote-comparison .quote-footer {
 		border: none;
 		padding: 0;
 	}
 	
-	#quote #purchase {
+	#quote-comparison #purchase {
 		background: none;
 		border-radius: 4px;
 		border: 1px solid #4C85FF;
@@ -144,7 +144,7 @@
 		padding: 16px 18px;
 	}
 	
-	#quote #purchase:hover {
+	#quote-comparison #purchase:hover {
 		background: #4C85FF;
 		border-radius: 4px;
 		border: 1px solid #4C85FF;
@@ -156,7 +156,7 @@
 		padding: 16px 18px;
 	}
 
-	#quote #details {
+	#quote-comparison #details {
 		background: none;
 		border: none;
 		color: #7D7E85;
@@ -168,7 +168,7 @@
 	}
 </style>
 
-<div id="quote">
+<div id="quote-comparison">
 	<#if (mostPopular.getData())?? && mostPopular.getData() != "">
 		<div class="most-popular">${mostPopular.getData()}</div>
 	<#else>
