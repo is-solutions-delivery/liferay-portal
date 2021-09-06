@@ -21,7 +21,6 @@ export const useStepWizard = () => {
 
 	useEffect(() => {
 		_updateStepPercentage();
-		console.log(form);
 	}, [form]);
 
 	useEffect(() => {

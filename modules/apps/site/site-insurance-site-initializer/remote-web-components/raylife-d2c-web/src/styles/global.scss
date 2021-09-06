@@ -17,6 +17,10 @@
 	font-family: $font-family;
 }
 
+.d-none {
+	display: none !important;
+}
+
 fieldset {
 	border: none;
 	outline: none;
@@ -25,8 +29,4 @@ fieldset {
 svg {
 	height: 0.8rem !important;
 	width: 0.8rem !important;
-}
-
-.d-none {
-	display: none !important;
 }

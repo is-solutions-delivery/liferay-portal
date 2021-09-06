@@ -18,7 +18,7 @@ export const InputWithMask = React.forwardRef(
 		ref
 	) => {
 		return (
-			<InputAreaWithError error={error} className={className}>
+			<InputAreaWithError className={className} error={error}>
 				{label && (
 					<Label label={label} name={name} required={required}>
 						{renderActions}

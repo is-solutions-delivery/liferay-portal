@@ -15,7 +15,7 @@ export const ControlledInputWithMask = ({
 	renderInput = true,
 	...props
 }) => {
-	const rulesRender = renderInput ? rules : {required: false};
+	const newRules = renderInput ? rules : {required: false};
 
 	return (
 		<Controller
@@ -32,12 +32,12 @@ export const ControlledInputWithMask = ({
 					renderActions={
 						moreInfoProps && <MoreInfoButton {...moreInfoProps} />
 					}
-					required={rulesRender?.required}
+					required={newRules?.required}
 					{...field}
 					{...inputProps}
 				/>
 			)}
-			rules={rulesRender}
+			rules={newRules}
 			{...props}
 		/>
 	);
