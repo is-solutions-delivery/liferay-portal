@@ -3,8 +3,19 @@
 		"pageElements": [
 			{
 				"definition": {
+					"fragmentStyle": {
+						"borderWidth": "0"
+					},
 					"layout": {
 						"borderWidth": 0,
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
 						"widthType": "Fixed"
 					}
 				},
@@ -26,7 +37,6 @@
 					},
 					{
 						"definition": {
-							"fragmentStyle": {},
 							"gutters": true,
 							"modulesPerRow": 3,
 							"numberOfColumns": 3,
@@ -44,7 +54,8 @@
 									"id": "tablet",
 									"rowViewportDefinition": {}
 								}
-							]
+							],
+							"verticalAlignment": "top"
 						},
 						"pageElements": [
 							{
@@ -72,20 +83,39 @@
 												"marginLeft": "9",
 												"marginTop": "4"
 											},
-											"widgetInstance": {
-												"widgetConfig": {
-													"ddmTemplateKey": "",
-													"assetEntryId": "52963",
-													"userToolAssetAddonEntryKeys": "false",
-													"groupId": "",
-													"enableViewCountIncrement": "false",
-													"articleId": "BASIC-PRICING-TIER-TEMPLATE",
-													"contentMetadataAssetAddonEntryKeys": "false"
-												},
-												"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 2,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
 											}
 										},
-										"type": "Widget"
+										"pageElements": [
+											{
+												"definition": {
+													"widgetInstance": {
+														"widgetConfig": {
+															"ddmTemplateKey": "",
+															"assetEntryId": "52963",
+															"userToolAssetAddonEntryKeys": "false",
+															"groupId": "",
+															"enableViewCountIncrement": "false",
+															"articleId": "BASIC-PRICING-TIER-TEMPLATE",
+															"contentMetadataAssetAddonEntryKeys": "false"
+														},
+														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+													}
+												},
+												"type": "Widget"
+											}
+										],
+										"type": "Section"
 									}
 								],
 								"type": "Column"
@@ -114,20 +144,39 @@
 											"fragmentStyle": {
 												"marginLeft": "6"
 											},
-											"widgetInstance": {
-												"widgetConfig": {
-													"ddmTemplateKey": "",
-													"assetEntryId": "52973",
-													"userToolAssetAddonEntryKeys": "false",
-													"groupId": "",
-													"enableViewCountIncrement": "false",
-													"articleId": "STANDARD-PRICING-TIER-TEMPLATE",
-													"contentMetadataAssetAddonEntryKeys": "false"
-												},
-												"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 6,
+												"marginRight": 0,
+												"marginTop": 0,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
 											}
 										},
-										"type": "Widget"
+										"pageElements": [
+											{
+												"definition": {
+													"widgetInstance": {
+														"widgetConfig": {
+															"ddmTemplateKey": "",
+															"assetEntryId": "52973",
+															"userToolAssetAddonEntryKeys": "false",
+															"groupId": "",
+															"enableViewCountIncrement": "false",
+															"articleId": "STANDARD-PRICING-TIER-TEMPLATE",
+															"contentMetadataAssetAddonEntryKeys": "false"
+														},
+														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+													}
+												},
+												"type": "Widget"
+											}
+										],
+										"type": "Section"
 									}
 								],
 								"type": "Column"
@@ -156,20 +205,39 @@
 											"fragmentStyle": {
 												"marginTop": "4"
 											},
-											"widgetInstance": {
-												"widgetConfig": {
-													"ddmTemplateKey": "",
-													"assetEntryId": "63367",
-													"userToolAssetAddonEntryKeys": "false",
-													"groupId": "",
-													"enableViewCountIncrement": "false",
-													"articleId": "PREMIUM-PRICING-TIER-TEMPLATE",
-													"contentMetadataAssetAddonEntryKeys": "false"
-												},
-												"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 2,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
 											}
 										},
-										"type": "Widget"
+										"pageElements": [
+											{
+												"definition": {
+													"widgetInstance": {
+														"widgetConfig": {
+															"ddmTemplateKey": "",
+															"assetEntryId": "63367",
+															"userToolAssetAddonEntryKeys": "false",
+															"groupId": "",
+															"enableViewCountIncrement": "false",
+															"articleId": "PREMIUM-PRICING-TIER-TEMPLATE",
+															"contentMetadataAssetAddonEntryKeys": "false"
+														},
+														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+													}
+												},
+												"type": "Widget"
+											}
+										],
+										"type": "Section"
 									}
 								],
 								"type": "Column"
