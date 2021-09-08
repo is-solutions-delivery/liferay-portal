@@ -10,8 +10,13 @@ function getCookie(name) {
 	}
 }
 
-const firstName = JSON.parse(getCookie("raylife-application-form")).basics.businessInformation.firstName;
+try {
+	const firstName = JSON.parse(getCookie("raylife-application-form")).basics.businessInformation.firstName;
 
-if (firstName) {
-	document.getElementById('quote-comparison-user-first-name').innerHTML = firstName;
+	if (firstName) {
+		document.getElementById('quote-comparison-user-first-name').innerHTML = firstName;
+	}
+}
+catch(error) {
+	document.getElementById('quote-comparison-user-first-name').innerHTML = "Sam";
 }
