@@ -31,7 +31,7 @@ export const BusinessInformationAddress = () => {
 		setValue(setFormPath('zip'), address.zip);
 		setValue(
 			setFormPath('address'),
-			`${address.streetNumber}, ${address.street}`
+			`${address.streetNumber} ${address.street}`
 		);
 	};
 
