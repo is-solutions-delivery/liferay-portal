@@ -57,6 +57,7 @@ import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -73,6 +74,8 @@ import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.navigation.model.SiteNavigationMenu;
+import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 
 import java.io.InputStream;
@@ -80,11 +83,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -93,6 +98,7 @@ import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
@@ -113,6 +119,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		JSONFactory jsonFactory,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		Portal portal, ServletContext servletContext,
+		SiteNavigationMenuLocalService siteNavigationMenuLocalService,
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
@@ -135,6 +142,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_objectDefinitionResourceFactory = objectDefinitionResourceFactory;
 		_portal = portal;
 		_servletContext = servletContext;
+		_siteNavigationMenuLocalService = siteNavigationMenuLocalService;
 		_structuredContentFolderResourceFactory =
 			structuredContentFolderResourceFactory;
 		_styleBookEntryZipProcessor = styleBookEntryZipProcessor;
@@ -198,6 +206,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_addJournalArticles(
 				documentsStringUtilReplaceValues, serviceContext);
 			_addObjectDefinitions(serviceContext);
+
+			Map<String, List<SiteNavigationMenu>> _layoutsSiteNavigationMenuMap = new HashMap<>();
+			Map<String, Long> _siteNavigationMenuMap = new HashMap<>();
+
+			_addSiteNavigationMenus(_layoutsSiteNavigationMenuMap, _siteNavigationMenuMap, serviceContext);
 			_addStyleBookEntries(serviceContext);
 			_addTaxonomyVocabularies(serviceContext);
 		}
@@ -294,6 +307,47 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 			assetListJSONObject.getString("title"),
 			String.valueOf(new UnicodeProperties(map, true)), serviceContext);
+	}
+
+	private void _addSiteNavigationMenus(
+		Map<String, List<SiteNavigationMenu>> _layoutsSiteNavigationMenuMap,
+		Map<String, Long> _siteNavigationMenuMap,
+		ServiceContext serviceContext)
+		throws Exception {
+
+		String json = _read("/site-initializer/site-navigation-menus.json");
+
+		if (json == null) {
+			return;
+		}
+
+		JSONArray siteNavigationMenuJSONArray = JSONFactoryUtil.createJSONArray(
+			json);
+
+		for (int i = 0; i < siteNavigationMenuJSONArray.length(); i++) {
+			JSONObject jsonObject = siteNavigationMenuJSONArray.getJSONObject(
+				i);
+
+			String name = jsonObject.getString("name");
+
+			SiteNavigationMenu siteNavigationMenu =
+				_siteNavigationMenuLocalService.addSiteNavigationMenu(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(), name, serviceContext);
+
+			_siteNavigationMenuMap.put(
+				name, siteNavigationMenu.getSiteNavigationMenuId());
+
+			JSONArray pagesJSONArray = jsonObject.getJSONArray("pages");
+
+			for (int j = 0; j < pagesJSONArray.length(); j++) {
+				List<SiteNavigationMenu> siteNavigationMenus =
+					_layoutsSiteNavigationMenuMap.computeIfAbsent(
+						pagesJSONArray.getString(j), key -> new ArrayList<>());
+
+				siteNavigationMenus.add(siteNavigationMenu);
+			}
+		}
 	}
 
 	private void _addDDMStructures(ServiceContext serviceContext)
@@ -936,6 +990,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_objectDefinitionResourceFactory;
 	private final Portal _portal;
 	private final ServletContext _servletContext;
+	private final SiteNavigationMenuLocalService _siteNavigationMenuLocalService;
 	private final StructuredContentFolderResource.Factory
 		_structuredContentFolderResourceFactory;
 	private final StyleBookEntryZipProcessor _styleBookEntryZipProcessor;

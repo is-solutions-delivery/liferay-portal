@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 
 import java.util.List;
@@ -77,6 +78,7 @@ public class SiteInitializerExtender
 				_fragmentsImporter, _groupLocalService,
 				_journalArticleLocalService, _jsonFactory,
 				_objectDefinitionResourceFactory, _portal,
+				_siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
 				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
 				_taxonomyVocabularyResourceFactory, _userLocalService);
@@ -156,6 +158,9 @@ public class SiteInitializerExtender
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SiteNavigationMenuLocalService _siteNavigationMenuLocalService;
 
 	@Reference
 	private StructuredContentFolderResource.Factory
