@@ -119,7 +119,7 @@ export const FormProperty = ({form}) => {
 				/>
 				<ControlledSwitch
 					control={control}
-					label="Is this the primary location you conduct business?"
+					label="Is this the primary location where you conduct business?"
 					moreInfoProps={{
 						callback: () =>
 							updateState(
