@@ -84,7 +84,7 @@ public class SiteInitializerExtension {
 				fragmentsImporter, groupLocalService,
 				journalArticleLocalService, jsonFactory,
 				objectDefinitionResourceFactory, portal,
-				siteNavigationMenuLocalService, 
+				siteNavigationMenuLocalService,
 				structuredContentFolderResourceFactory,
 				styleBookEntryZipProcessor, taxonomyCategoryResourceFactory,
 				taxonomyVocabularyResourceFactory, userLocalService));
