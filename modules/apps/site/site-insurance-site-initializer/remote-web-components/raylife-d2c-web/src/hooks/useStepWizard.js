@@ -36,7 +36,8 @@ export const useStepWizard = () => {
 					calculatePercentage(
 						countCompletedFields(_fields?.basics || {}),
 						TOTAL_OF_FIELD.BASICS
-					)
+					),
+					AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section
 				);
 
 			case AVAILABLE_STEPS.BUSINESS.section:
@@ -44,7 +45,8 @@ export const useStepWizard = () => {
 					calculatePercentage(
 						countCompletedFields(_fields?.business || {}),
 						businessTotalFields(form?.basics?.properties)
-					)
+					),
+					AVAILABLE_STEPS.BUSINESS.section
 				);
 
 			case AVAILABLE_STEPS.EMPLOYEES.section:
@@ -58,7 +60,8 @@ export const useStepWizard = () => {
 					calculatePercentage(
 						countCompletedFields(_fields?.employees || {}),
 						total
-					)
+					),
+					AVAILABLE_STEPS.EMPLOYEES.section
 				);
 
 			case AVAILABLE_STEPS.PROPERTY.section:
@@ -66,11 +69,15 @@ export const useStepWizard = () => {
 					calculatePercentage(
 						countCompletedFields(_fields?.property || {}),
 						propertyTotalFields(form)
-					)
+					),
+					AVAILABLE_STEPS.PROPERTY.section
 				);
 
 			default:
-				return setPercentage(0);
+				return setPercentage(
+					0,
+					AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section
+				);
 		}
 	};
 
@@ -82,11 +89,17 @@ export const useStepWizard = () => {
 			})
 		);
 
-	const setPercentage = (percentage = 0) =>
+	const setPercentage = (
+		percentage = 0,
+		step = AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section
+	) =>
 		dispatch(
 			setSelectedStep({
 				...state.selectedStep,
-				percentage,
+				percentage: {
+					...state.selectedStep.percentage,
+					[step]: percentage,
+				},
 			})
 		);
 

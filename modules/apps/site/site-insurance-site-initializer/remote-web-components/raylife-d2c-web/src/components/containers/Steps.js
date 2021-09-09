@@ -11,7 +11,11 @@ export const Steps = () => {
 	return (
 		<StepList>
 			<StepItem
-				percentage={selectedStep.percentage}
+				percentage={
+					selectedStep.percentage[
+						AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section
+					]
+				}
 				selected={
 					selectedStep.section ===
 					AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section
@@ -20,7 +24,9 @@ export const Steps = () => {
 				Basics
 			</StepItem>
 			<StepItem
-				percentage={selectedStep.percentage}
+				percentage={
+					selectedStep.percentage[AVAILABLE_STEPS.BUSINESS.section]
+				}
 				selected={
 					selectedStep.section === AVAILABLE_STEPS.BUSINESS.section
 				}
@@ -28,7 +34,9 @@ export const Steps = () => {
 				Business
 			</StepItem>
 			<StepItem
-				percentage={selectedStep.percentage}
+				percentage={
+					selectedStep.percentage[AVAILABLE_STEPS.EMPLOYEES.section]
+				}
 				selected={
 					selectedStep.section === AVAILABLE_STEPS.EMPLOYEES.section
 				}
@@ -36,7 +44,9 @@ export const Steps = () => {
 				Employees
 			</StepItem>
 			<StepItem
-				percentage={selectedStep.percentage}
+				percentage={
+					selectedStep.percentage[AVAILABLE_STEPS.PROPERTY.section]
+				}
 				selected={
 					selectedStep.section === AVAILABLE_STEPS.PROPERTY.section
 				}
