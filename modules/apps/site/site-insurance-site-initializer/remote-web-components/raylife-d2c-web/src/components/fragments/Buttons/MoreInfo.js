@@ -18,7 +18,7 @@ export const MoreInfoButton = ({callback, event, selected, value}) => {
 
 	return (
 		<button
-			className={classNames('btn badge', {
+			className={classNames('btn badge more-info', {
 				open: selected,
 			})}
 			onClick={updateState}
