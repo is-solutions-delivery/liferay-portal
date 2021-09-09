@@ -720,20 +720,95 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 						true, false, "Address Apt", "addressApt", false,
 						"String"),
 					ObjectFieldUtil.createObjectField(
+						true, false, "Annual Payroll For Employees",
+						"annualPayrollForEmployees", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Annual Payroll For Owner",
+						"annualPayrollForOwner", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Application Id", "applicationId", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Building Square Feet Occupied",
+						"buildingSquareFeetOccupied", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Business Category Id",
+						"businessCategoryId", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Business Operates Year Round",
+						"businessOperatesYearRound", false, "String"),
+					ObjectFieldUtil.createObjectField(
 						true, false, "City", "city", false, "String"),
 					ObjectFieldUtil.createObjectField(
+						true, false, "Do Own Building at Address",
+						"doOwnBuildingAtAddress", false, "String"),
+					ObjectFieldUtil.createObjectField(
 						true, false, "Email", "email", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Estimated Annual Gross Revenue",
+						"estimatedAnnualGrossRevenue", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Fein", "fein", false, "String"),
 					ObjectFieldUtil.createObjectField(
 						true, false, "First Name", "firstName", false,
 						"String"),
 					ObjectFieldUtil.createObjectField(
+						true, false, "Has Auto Policy", "hasAutoPolicy", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Has Fein", "hasFein", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Has SellProductsUnderOwnBrand",
+						"hasSellProductsUnderOwnBrand", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Has StoredCustomerInformation",
+						"hasStoredCustomerInformation", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Is Primary Business Location",
+						"isPrimaryBusinessLocation", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Is There Diving Boards",
+						"isThereDivingBoards", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Is There Swimming", "isThereSwimming",
+						false, "String"),
+					ObjectFieldUtil.createObjectField(
 						true, false, "Last Name", "lastName", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Legal Entity", "legalEntity", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Overall Sales", "overallSales", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Part Time Employees", "partTimeEmployees",
+						false, "String"),
 					ObjectFieldUtil.createObjectField(
 						true, false, "Phone", "phone", false, "String"),
 					ObjectFieldUtil.createObjectField(
+						true, false, "Product Quote", "productQuote", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Sales Merchandise", "salesMerchandise",
+						false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Start Business at Year",
+						"startBusinessAtYear", false, "String"),
+					ObjectFieldUtil.createObjectField(
 						true, false, "State", "state", false, "String"),
 					ObjectFieldUtil.createObjectField(
+						true, false, "Stories", "stories", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Total Building Square Feet",
+						"totalBuildingSquareFeet", false, "String"),
+					ObjectFieldUtil.createObjectField(
 						true, false, "Website", "website", false, "String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Year Building", "yearBuilding", false,
+						"String"),
+					ObjectFieldUtil.createObjectField(
+						true, false, "Years of Experience", "yearsOfExperience",
+						false, "String"),
 					ObjectFieldUtil.createObjectField(
 						true, false, "Zip", "zip", false, "String")));
 
@@ -741,36 +816,36 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_objectDefinitionLocalService.publishCustomObjectDefinition(
 				user.getUserId(), objectDefinition.getObjectDefinitionId());
 
-		TransactionCommitCallbackUtil.registerCallback(
-			() -> {
-				_objectEntryLocalService.addObjectEntry(
-					user.getUserId(), 0,
-					objectDefinitionPublished.getObjectDefinitionId(),
-					HashMapBuilder.<String, Serializable>put(
-						"address", "1400 Montefino Ave"
-					).put(
-						"addressApt", "123"
-					).put(
-						"city", "Diamond Bar"
-					).put(
-						"email", "test@liferay.com"
-					).put(
-						"firstName", "John"
-					).put(
-						"lastName", "Simon"
-					).put(
-						"phone", "+1 222-333-444"
-					).put(
-						"state", "CA"
-					).put(
-						"website", "mysite.com"
-					).put(
-						"zip", "91765"
-					).build(),
-					new ServiceContext());
+		// TransactionCommitCallbackUtil.registerCallback(
+		// 	() -> {
+		// 		_objectEntryLocalService.addObjectEntry(
+		// 			user.getUserId(), 0,
+		// 			objectDefinitionPublished.getObjectDefinitionId(),
+		// 			HashMapBuilder.<String, Serializable>put(
+		// 				"address", "1400 Montefino Ave"
+		// 			).put(
+		// 				"addressApt", "123"
+		// 			).put(
+		// 				"city", "Diamond Bar"
+		// 			).put(
+		// 				"email", "test@liferay.com"
+		// 			).put(
+		// 				"firstName", "John"
+		// 			).put(
+		// 				"lastName", "Simon"
+		// 			).put(
+		// 				"phone", "+1 222-333-444"
+		// 			).put(
+		// 				"state", "CA"
+		// 			).put(
+		// 				"website", "mysite.com"
+		// 			).put(
+		// 				"zip", "91765"
+		// 			).build(),
+		// 			new ServiceContext());
 
-				return null;
-			});
+		// 		return null;
+		// 	});
 	}
 
 	private void _addSiteNavigationMenus() throws Exception {
