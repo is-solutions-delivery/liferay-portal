@@ -1,10 +1,19 @@
 import React from 'react';
 
 import {ProgressRing} from '../ProgressRing';
+import ClayIcon from '@clayui/icon';
+
+import classNames from 'classnames';
 
 export const StepItem = ({children, percentage = 0, selected = false}) => {
+	const completed = percentage === 100;
 	return (
-		<div className={`step-item ${selected && 'selected'}`}>
+		<div
+			className={classNames('step-item', {
+				completed,
+				selected,
+			})}
+		>
 			<i>
 				{selected && (
 					<ProgressRing
@@ -15,6 +24,11 @@ export const StepItem = ({children, percentage = 0, selected = false}) => {
 					/>
 				)}
 			</i>
+			{completed && (
+				<div>
+					<ClayIcon symbol="check" />
+				</div>
+			)}
 			{children}
 		</div>
 	);
