@@ -76,6 +76,10 @@ getQuoteForm.onsubmit = function (event) {
 	zipContainer.classList.remove('has-error');
 	productContainer.classList.remove('has-error');
 
+	if (document.cookie.includes('raylife-get-in-touch')) {
+		document.cookie = "raylife-get-in-touch= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+	}
+
 	if (
 		!formProps.zip ||
 		formProps.zip.length !== maxCharactersZIP ||

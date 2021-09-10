@@ -20,6 +20,7 @@ const valueCall = fragmentElement.querySelector('#value-number-call')
 	.textContent;
 
 btnBack.onclick = function () {
+	document.cookie = 'raylife-get-in-touch=true';
 	window.history.back();
 };
 
