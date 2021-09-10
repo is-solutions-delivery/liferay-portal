@@ -85,7 +85,7 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 			)}
 		</button>
 	);
-	
+
 	const renderResults = () => {
 		if (isLoading || !form?.basics?.businessSearch) {
 			return;
@@ -132,14 +132,14 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 					required
 					{...register('basics.businessSearch', {
 						required:
-						'Please, search for a business type in order to proceed.',
+							'Please, search for a business type in order to proceed.',
 					})}
 				>
 					<button
 						className="btn btn-primary search"
 						onClick={() => {
-							onSearch(form?.basics?.businessSearch)}
-						}
+							onSearch(form?.basics?.businessSearch);
+						}}
 						type="button"
 					>
 						Search
