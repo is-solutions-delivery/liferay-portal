@@ -26,6 +26,8 @@ import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentResource;
 import com.liferay.headless.delivery.resource.v1_0.StructuredContentFolderResource;
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -61,6 +63,8 @@ public class SiteInitializerExtension {
 		GroupLocalService groupLocalService,
 		JournalArticleLocalService journalArticleLocalService,
 		JSONFactory jsonFactory,
+		LayoutPageTemplateEntryLocalService layoutPageTemplateEntryLocalService,
+		LayoutPageTemplatesImporter layoutPageTemplatesImporter,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		Portal portal,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService,
@@ -83,6 +87,8 @@ public class SiteInitializerExtension {
 				documentFolderResourceFactory, documentResourceFactory,
 				fragmentsImporter, groupLocalService,
 				journalArticleLocalService, jsonFactory,
+				layoutPageTemplateEntryLocalService,
+				layoutPageTemplatesImporter,
 				objectDefinitionResourceFactory, portal,
 				siteNavigationMenuLocalService,
 				structuredContentFolderResourceFactory,

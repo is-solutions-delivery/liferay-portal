@@ -26,6 +26,8 @@ import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentResource;
 import com.liferay.headless.delivery.resource.v1_0.StructuredContentFolderResource;
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -60,6 +62,8 @@ public class SiteInitializerRegistrar {
 		GroupLocalService groupLocalService,
 		JournalArticleLocalService journalArticleLocalService,
 		JSONFactory jsonFactory,
+		LayoutPageTemplateEntryLocalService layoutPageTemplateEntryLocalService,
+		LayoutPageTemplatesImporter layoutPageTemplatesImporter,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		Portal portal,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService,
@@ -83,6 +87,8 @@ public class SiteInitializerRegistrar {
 		_groupLocalService = groupLocalService;
 		_journalArticleLocalService = journalArticleLocalService;
 		_jsonFactory = jsonFactory;
+		_layoutPageTemplateEntryLocalService = layoutPageTemplateEntryLocalService;
+		_layoutPageTemplatesImporter = layoutPageTemplatesImporter;
 		_objectDefinitionResourceFactory = objectDefinitionResourceFactory;
 		_portal = portal;
 		_siteNavigationMenuLocalService = siteNavigationMenuLocalService;
@@ -107,6 +113,8 @@ public class SiteInitializerRegistrar {
 				_dlURLHelper, _documentFolderResourceFactory,
 				_documentResourceFactory, _fragmentsImporter,
 				_groupLocalService, _journalArticleLocalService, _jsonFactory,
+				_layoutPageTemplateEntryLocalService,
+				_layoutPageTemplatesImporter,
 				_objectDefinitionResourceFactory, _portal, _servletContext,
 				_siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
@@ -133,6 +141,9 @@ public class SiteInitializerRegistrar {
 	private final GroupLocalService _groupLocalService;
 	private final JournalArticleLocalService _journalArticleLocalService;
 	private final JSONFactory _jsonFactory;
+	private final LayoutPageTemplateEntryLocalService
+		_layoutPageTemplateEntryLocalService;
+	private final LayoutPageTemplatesImporter _layoutPageTemplatesImporter;
 	private final ObjectDefinitionResource.Factory
 		_objectDefinitionResourceFactory;
 	private final Portal _portal;

@@ -835,6 +835,8 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			Map<String, String> stringValuesMap)
 		throws Exception {
 
+		FileUtil.getShortFileName(url.getPath());
+
 		zipWriter.addEntry(
 			StringUtil.removeSubstring(url.getFile(), _PATH), url.openStream());
 
