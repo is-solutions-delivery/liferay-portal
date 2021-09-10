@@ -5,17 +5,20 @@ import ClayIcon from '@clayui/icon';
 
 import classNames from 'classnames';
 
-export const StepItem = ({children, percentage = 0, selected = false}) => {
+export const StepItem = ({children, percentage = 0, selected = false,onClick}) => {
 	const completed = percentage === 100;
+	const partially = percentage !== 0;
 	return (
 		<div
 			className={classNames('step-item', {
 				completed,
+				partially,
 				selected,
 			})}
+			onClick={partially && onClick}
 		>
 			<i>
-				{selected && (
+				{partially && (
 					<ProgressRing
 						className="progress-ring"
 						diameter={32}
