@@ -2,7 +2,6 @@
 	#tip {
 		background-color: #F9F9F9;
 		border-radius: 8px;
-		margin-top: 134px;
 		padding: 24px;
 		width: 368px;
 	}

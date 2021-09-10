@@ -1,4 +1,4 @@
-.get-in-touch h1, .get-in-touch h3 {
+.get-in-touch h1 {
 	font-weight: var(--display1-weight);
 }
 
@@ -41,7 +41,6 @@
 
 .get-in-touch .content-agent-text-chat {
 	color: #4C85FF;
-	cursor: pointer;
 	font-size: 13px;
 	margin-bottom: 0px;
 }
