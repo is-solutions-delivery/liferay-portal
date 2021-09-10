@@ -13,6 +13,12 @@
  * details.
  */
 
+const fragmentName = `raylife-tip-container`;
+
+const containerId = configuration.containerId;
+const dismissEventName = `${fragmentName}-dismiss-${containerId}`;
+const elementName = `.dynamic-web-content-${containerId}`;
+const eventName = `${fragmentName}-${containerId}`;
 const headlessBaseURL = `${window.location.origin}/o/headless-delivery/v1.0`;
 const siteGroupId = Liferay.ThemeDisplay.getSiteGroupId();
 
@@ -37,7 +43,8 @@ function setDynamicWebContent(htmlBody, customData = {}) {
 
 	html = html.replace(sanitizeEmptyKeysRegex, '');
 
-	document.getElementById('dynamic-web-content').innerHTML = html;
+	fragmentElement.querySelector(elementName).innerHTML = html;
+
 	dismissButtonListener();
 }
 
@@ -73,7 +80,7 @@ function fetchWebContent(structuredContentId, contentTemplateId, customData) {
  */
 
 function raylifeFragmentInteractiveListener(templateId, structuredContents) {
-	window.addEventListener('raylife-fragment-interactive', (event) => {
+	window.addEventListener(eventName, (event) => {
 		const data = event.detail.data;
 
 		function getStructuredContentIdByName(templateName) {
@@ -85,7 +92,7 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 		}
 
 		if (data.hide) {
-			document.getElementById('dynamic-web-content').innerHTML = '';
+			fragmentElement.querySelector(elementName).innerHTML = '';
 		} else if (
 			typeof data === 'object' &&
 			getStructuredContentIdByName(data.templateName)
@@ -102,12 +109,14 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 }
 
 function dismissButtonListener() {
-	document.getElementById('dismiss').addEventListener('click', () => window.dispatchEvent(
-		new CustomEvent('raylife-fragment-dismissed', {
-			bubbles: true,
-			composed: true,
-		})
-	));
+	document.getElementById('dismiss').addEventListener('click', () =>
+		window.dispatchEvent(
+			new CustomEvent(dismissEventName, {
+				bubbles: true,
+				composed: true,
+			})
+		)
+	);
 }
 
 async function workflow() {
