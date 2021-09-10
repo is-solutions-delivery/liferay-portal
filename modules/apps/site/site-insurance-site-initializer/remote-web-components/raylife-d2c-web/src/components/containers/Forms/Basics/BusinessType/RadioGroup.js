@@ -5,13 +5,21 @@ import {Controller, useFormContext} from 'react-hook-form';
 import {LiferayService} from '../../../../../services/liferay';
 import {Radio} from '../../../../fragments/Forms/Radio';
 
-export const BusinessTypeRadioGroup = ({businessTypes = [], form, setNewSelectedProduct}) => {
+export const BusinessTypeRadioGroup = ({
+	businessTypes = [],
+	form,
+	setNewSelectedProduct,
+}) => {
 	const {control, setValue} = useFormContext();
 
 	useEffect(() => {
 		if (form?.basics?.businessCategoryId) {
+			const businessType = businessTypes.find(
+				({id}) => form.basics.businessCategoryId === id
+			);
 			setCategoryProperties();
-			setNewSelectedProduct(form?.basics?.businessCategoryId);
+			setValue('basics.product', businessType?.title);
+			setNewSelectedProduct(form.basics.businessCategoryId);
 		}
 	}, [form?.basics?.businessCategoryId]);
 
@@ -19,8 +27,9 @@ export const BusinessTypeRadioGroup = ({businessTypes = [], form, setNewSelected
 		try {
 			const categoryId = form.basics.businessCategoryId;
 
-			const categoryProperties =
-				await LiferayService.getCategoryProperties(categoryId);
+			const categoryProperties = await LiferayService.getCategoryProperties(
+				categoryId
+			);
 
 			setValue(
 				'basics.properties.businessClassCode',
@@ -34,8 +43,7 @@ export const BusinessTypeRadioGroup = ({businessTypes = [], form, setNewSelected
 				'basics.properties.segment',
 				categoryProperties.find(({key}) => key === 'Segment')?.value
 			);
-		}
-		catch (error) {
+		} catch (error) {
 			console.warn(error);
 		}
 	};
