@@ -5,9 +5,10 @@ import ClayIcon from '@clayui/icon';
 
 import classNames from 'classnames';
 
-export const StepItem = ({children, percentage = 0, selected = false,onClick}) => {
+export const StepItem = ({children, onClick, percentage = 0, selected = false}) => {
 	const completed = percentage === 100;
 	const partially = percentage !== 0;
+	
 	return (
 		<div
 			className={classNames('step-item', {

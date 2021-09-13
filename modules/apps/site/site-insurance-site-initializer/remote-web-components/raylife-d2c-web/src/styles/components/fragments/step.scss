@@ -35,10 +35,10 @@
 
 		&.partially { 
 			color: $primary-default-light;
+			cursor: pointer;
 			opacity: 0.7;
 			overflow: visible;
-			cursor: pointer;
-	
+
 			i::after {
 				background: $primary-default-light;
 				border-radius: 1rem;
@@ -78,7 +78,7 @@
 		&.selected {
 			color: $primary-default-light;
 			opacity: 1;
-
+			
 			i::after {
 				background: $primary-default-light;
 				border-radius: 1rem;
