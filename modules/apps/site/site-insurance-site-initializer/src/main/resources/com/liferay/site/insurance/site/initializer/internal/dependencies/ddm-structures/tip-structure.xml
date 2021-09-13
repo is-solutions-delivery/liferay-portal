@@ -178,6 +178,48 @@
 							},
 							"type": "ddm-image"
 						},
+						{
+							"dataType": "string",
+							"fieldNamespace": "",
+							"fieldReference": "MultipleSelection",
+							"indexType": "keyword",
+							"inline": false,
+							"label": {
+								"en_US": "Page Options"
+							},
+							"localizable": true,
+							"name": "pageOptions",
+							"nativeField": false,
+							"options": [
+								{
+									"label": {
+										"en_US": "Dismissible"
+									},
+									"reference": "dismissible",
+									"value": ""
+								},
+								{
+									"label": {
+										"en_US": "Back to Edit Info"
+									},
+									"reference": "showBacktoEdit",
+									"value": ""
+								}
+							],
+							"predefinedValue": {
+								"en_US": "[]"
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showAsSwitcher": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "checkbox_multiple",
+							"visibilityExpression": ""
+						},
 					],
 					"successPage": {
 						"body": {
@@ -271,6 +313,16 @@
 										{
 											"fieldNames": [
 												"externalLinkIcon"
+											],
+											"size": 12
+										}
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
+												"pageOptions"
 											],
 											"size": 12
 										}
