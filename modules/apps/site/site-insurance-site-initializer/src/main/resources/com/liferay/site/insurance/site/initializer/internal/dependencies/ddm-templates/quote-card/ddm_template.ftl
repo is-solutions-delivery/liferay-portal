@@ -141,10 +141,17 @@
 		font-size: 16px;
 		font-weight: 700;
 		padding: 0;
-		padding: 16px 18px;
+		width: 215px;
+		height: 56px;
+		transition: all 0.2s;
 	}
 	
 	#quote-comparison #purchase:hover {
+		border: 1px solid #295ccc;
+		color: #295ccc;
+	}
+	
+	#quote-comparison #purchase.most-popular {
 		background: #4C85FF;
 		border-radius: 4px;
 		border: 1px solid #4C85FF;
@@ -153,7 +160,13 @@
 		font-size: 16px;
 		font-weight: 700;
 		padding: 0;
-		padding: 16px 18px;
+		width: 215px;
+		height: 56px;
+		transition: background 0.2s;
+	}
+	
+	#quote-comparison #purchase.most-popular:hover {
+		background: #295ccc;
 	}
 
 	#quote-comparison #details {
@@ -195,7 +208,11 @@
 		</div>
 		<div class="quote-footer">
 			<div class="d-flex justify-content-center">
-				<button type="button" id="purchase" onclick="event.preventDefault();">PURCHASE THIS POLICY</button>
+				<button type="button" id="purchase"
+					<#if (mostPopular.getData())?? && mostPopular.getData() != "">
+						class="most-popular"
+					</#if>
+					onclick="event.preventDefault();">PURCHASE THIS POLICY</button>
 			</div>
 			<div class="d-flex justify-content-center">
 				<button type="button" id="details" onclick="event.preventDefault();">Policy Details</button>
