@@ -1,26 +1,26 @@
-import { ClayIconSpriteContext } from '@clayui/icon';
+import {ClayIconSpriteContext} from '@clayui/icon';
 import React from 'react';
-import Cookie from 'js-cookie'
-import { FormProvider, useForm } from 'react-hook-form';
+import Cookie from 'js-cookie';
+import {FormProvider, useForm} from 'react-hook-form';
 
-import { Template } from './components/Template';
-import { AppProvider } from './context/AppContext';
+import {Template} from './components/Template';
+import {AppProvider} from './context/AppContext';
+import {COOKIES} from './utils/constants';
 
 const getDefaultValues = () => {
 	try {
 		let data = '';
-		
-		if (document.cookie.includes('raylife-get-in-touch')) {
-			data = JSON.parse(Cookie.get('raylife-application-form'));
+
+		if (document.cookie.includes(COOKIES.BACK_TO_EDIT)) {
+			data = JSON.parse(Cookie.get(COOKIES.APPLICATION_FORM));
 		}
 
 		return data;
-		
 	} catch (error) {
-		console.warn(error.message)
-		return {}
+		console.warn(error.message);
+		return {};
 	}
-}
+};
 
 const getIconSpriteMap = () => {
 	try {
@@ -38,15 +38,15 @@ const getIconSpriteMap = () => {
 	}
 };
 
-export const Providers = ({ children }) => {
-	const defaultValue = getDefaultValues()
-	const form = useForm({ mode: 'onChange', defaultValues: defaultValue});
+export const Providers = ({children}) => {
+	const defaultValue = getDefaultValues();
+	const form = useForm({mode: 'onChange', defaultValues: defaultValue});
 
 	return (
 		<AppProvider>
 			<ClayIconSpriteContext.Provider value={getIconSpriteMap()}>
 				<FormProvider {...form}>
-					<Template>{children}</Template>	
+					<Template>{children}</Template>
 				</FormProvider>
 			</ClayIconSpriteContext.Provider>
 		</AppProvider>
