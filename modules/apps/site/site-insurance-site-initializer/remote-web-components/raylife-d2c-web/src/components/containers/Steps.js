@@ -21,7 +21,6 @@ export const Steps = () => {
 					selectedStep.section ===
 					AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section
 				}
-				onClick={() => setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE)}
 			>
 				Basics
 			</StepItem>
@@ -33,7 +32,6 @@ export const Steps = () => {
 				selected={
 					selectedStep.section === AVAILABLE_STEPS.BUSINESS.section
 				}
-				onClick={() => setSection(AVAILABLE_STEPS.BUSINESS)}
 			>
 				Business
 			</StepItem>
@@ -45,7 +43,6 @@ export const Steps = () => {
 				selected={
 					selectedStep.section === AVAILABLE_STEPS.EMPLOYEES.section
 				}
-				onClick={() => setSection(AVAILABLE_STEPS.EMPLOYEES)}
 			>
 				Employees
 			</StepItem>
@@ -57,7 +54,6 @@ export const Steps = () => {
 				selected={
 					selectedStep.section === AVAILABLE_STEPS.PROPERTY.section
 				}
-				onClick={() => setSection(AVAILABLE_STEPS.PROPERTY)}
 			>
 				Property
 			</StepItem>
