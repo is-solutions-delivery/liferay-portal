@@ -8,24 +8,42 @@
 
 	#tip.hide {
 		opacity: 0;
-		transition: opacity .5s linear;
 		pointer-events: none;
+		transition: opacity .5s linear;
+	}
+	
+	#tip ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
 	}
 	
 	#tip li {
-		<#if listIcon.getData() ?? && listIcon.getData() != "">
-			list-style-image: url(${listIcon.getData()});
-		</#if>
 		color: #606167;
+		display: flex;
 		font-size: 16px;
 		font-weight: bold;
+    	align-items: center;
+	}
+	
+	#tip li::before {
+		-webkit-mask-size: cover;
+		-webkit-mask: url(${listIcon.getData()}) no-repeat 50% 50%;
+		background-color: #999;
+		content: "";
+		display: inline-block;
+		flex-shrink: 0;
+		height: 16px;
+		margin-right: 4px;
+		mask: url(${listIcon.getData()}) no-repeat 50% 50%;
+		width: 16px;
 	}
 
 	#tip #dismiss {
-		color: #7D7E85;
-		cursor: pointer;
 		background: none;
 		border: none;
+		color: #7D7E85;
+		cursor: pointer;
 		padding: 0;
 		text-decoration-line: underline;
 	}
@@ -37,6 +55,8 @@
 	
 	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
 		#tip .title::before {
+			-webkit-mask-size: cover;
+			-webkit-mask: url(${titleIcon.getData()}) no-repeat 50% 50%;
 			background-color: #98999B;
 			content: "";
 			display: inline-block;
@@ -44,13 +64,13 @@
 			margin-right: 5px;
 			mask: url(${titleIcon.getData()}) no-repeat 50% 50%;
 			width: 20px;
-			-webkit-mask: url(${titleIcon.getData()}) no-repeat 50% 50%;
-			-webkit-mask-size: cover;
 		}
 	</#if>
 
 	<#if externalLinkIcon.getData() ?? && externalLinkIcon.getData() != "">
 		#tip .external_link a::after {
+			-webkit-mask-size: cover;
+			-webkit-mask: url(${externalLinkIcon.getData()}) no-repeat 50% 50%;
 			background-color: #4C85FF;
 			content: "";
 			display: inline-block;
@@ -58,11 +78,33 @@
 			margin-left: 5px;
 			mask: url(${externalLinkIcon.getData()}) no-repeat 50% 50%;
 			width: 20px;
-			-webkit-mask: url(${externalLinkIcon.getData()}) no-repeat 50% 50%;
-			-webkit-mask-size: cover;
 		}
 	</#if>
+	
+	.back-to-edit-info {
+		background-color: transparent;
+		border-radius: 4px;
+		border: 1px solid #7D7E85;
+		box-sizing: border-box;
+		color: #7D7E85;
+		font-size: 14px;
+		font-style: normal;
+		font-weight: bold;
+		letter-spacing: 0.03em;
+		line-height: 24px;
+		padding: 10px;
+		text-transform: uppercase;
+	}
 </style>
+
+<#assign applicationNameSpace = randomNamespace>
+
+<script>
+	function ${applicationNameSpace}backToEdit() {
+		window.location.href = '/web/raylife/get-a-quote';
+		document.cookie = 'raylife-back-to-edit=true';
+	}
+</script>
 
 <div id="tip">
 	<#if (title.getData())??>
@@ -91,7 +133,18 @@
 		</div>
 	</#if>
 	
-	<div class="d-flex justify-content-center">
-		<button type="button" id="dismiss" onclick="event.preventDefault(); document.getElementById('tip').classList.add('hide');">Dismiss</button>
-	</div>
+	<#if pageOptions.getData()?contains("showBacktoEdit")>
+		<button class="back-to-edit-info" onclick="${applicationNameSpace}backToEdit()">
+		<#if (backIcon.getData())??>
+			<img src="${backIcon.getData()}" /> 
+		</#if>
+			Back to Edit Info
+		</button>
+	</#if>
+	
+	<#if pageOptions.getData()?contains("dismissible")>
+		<div class="d-flex justify-content-center">
+			<button type="button" id="dismiss" onclick="event.preventDefault(); document.getElementById('tip').classList.add('hide');">Dismiss</button>
+		</div>
+	</#if>
 </div>
