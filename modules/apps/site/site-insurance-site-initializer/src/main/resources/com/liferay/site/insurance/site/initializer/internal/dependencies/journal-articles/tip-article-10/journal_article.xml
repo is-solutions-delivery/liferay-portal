@@ -23,6 +23,9 @@
 	<dynamic-element index-type="text" instance-id="tjcafeqv" name="listIcon" type="image">
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 	</dynamic-element>
+	<dynamic-element index-type="text" instance-id="tytxcafv" name="backIcon" type="image">
+		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="iefpjpqx" name="externalLink" type="text_area">
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 	</dynamic-element>
@@ -30,6 +33,6 @@
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="txfghpqv" name="pageOptions" type="checkbox_multiple">
-		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[dismissible]]></dynamic-content>
 	</dynamic-element>
 </root>

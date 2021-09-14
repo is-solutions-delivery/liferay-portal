@@ -92,6 +92,7 @@
 		font-weight: bold;
 		letter-spacing: 0.03em;
 		line-height: 24px;
+		margin-bottom: 8px;
 		padding: 10px;
 		text-transform: uppercase;
 	}

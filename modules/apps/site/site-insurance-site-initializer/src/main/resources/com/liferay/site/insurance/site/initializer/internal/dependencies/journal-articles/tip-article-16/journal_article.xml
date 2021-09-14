@@ -8,7 +8,48 @@
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="ieffjpqx" name="actionList" type="text_area">
-		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[<ul class="quote-comparsion-list"></ul>
+<style type="text/css">.quote-comparsion-list li {
+  	margin-bottom: 24px;
+  }
+
+  #tip {
+  	width: 276px;
+  }
+</style>
+<script>
+const quoteComparsionList = document.querySelector(".quote-comparsion-list");
+
+  function _addItemToList(text) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(text));
+    quoteComparsionList.appendChild(li);
+  }
+
+  function _getCookie(name) {
+	name = name + "=";
+	const decodedCookie = decodeURIComponent(document.cookie);
+	const cookies = decodedCookie.split(";");
+	for (let i = 0; i < cookies.length; i++) {
+		const cookie = cookies[i].trim();
+		if (cookie.indexOf(name) == 0) {
+			return cookie.substring(name.length, cookie.length);
+		}
+	}
+}
+
+const raylifeApplicationForm = JSON.parse(_getCookie("raylife-application-form"));
+const address = raylifeApplicationForm.basics.businessInformation.business.location;
+const product = raylifeApplicationForm.basics.product;
+const annualRevenue = raylifeApplicationForm?.employees?.estimatedAnnualGrossRevenue;
+const partTimeEmployees = raylifeApplicationForm?.employees?.partTimeEmployees;
+
+_addItemToList(product);
+_addItemToList(`${annualRevenue} annual revenue`);
+_addItemToList(`${address.address}, ${address.city} ${address.state} ${address.zip}`);
+_addItemToList(`${partTimeEmployees} Total Employees, 1 Owner`);
+
+</script>]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="iesijpqx" name="description" type="text_area">
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
@@ -16,7 +57,10 @@
 	<dynamic-element index-type="text" instance-id="tjcakpfv" name="titleIcon" type="image">
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 	</dynamic-element>
-	<dynamic-element index-type="text" instance-id="tecbfeqv" name="listIcon" type="image">
+	<dynamic-element index-type="text" instance-id="tjcafeqv" name="listIcon" type="image">
+		<dynamic-content language-id="en_US"><![CDATA[[$JSON_gray_check.svg$]]]></dynamic-content>
+	</dynamic-element>
+	<dynamic-element index-type="text" instance-id="tytxcafv" name="backIcon" type="image">
 		<dynamic-content language-id="en_US"><![CDATA[[$JSON_icon_left.svg$]]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="iefpjpqx" name="externalLink" type="text_area">
@@ -26,6 +70,6 @@
 		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="txfghpqv" name="pageOptions" type="checkbox_multiple">
-		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[showBacktoEdit]]></dynamic-content>
 	</dynamic-element>
 </root>
