@@ -162,6 +162,27 @@
 							"fieldNamespace": "ddm",
 							"indexType": "text",
 							"label": {
+								"en_US": "Back Icon"
+							},
+							"localizable": true,
+							"name": "backIcon",
+							"predefinedValue": {
+								"en_US": ""
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "ddm-image"
+						},
+						{
+							"dataType": "image",
+							"fieldNamespace": "ddm",
+							"indexType": "text",
+							"label": {
 								"en_US": "External Link Icon"
 							},
 							"localizable": true,
@@ -181,7 +202,7 @@
 						{
 							"dataType": "string",
 							"fieldNamespace": "",
-							"fieldReference": "MultipleSelection",
+							"fieldReference": "pageOptions",
 							"indexType": "keyword",
 							"inline": false,
 							"label": {
@@ -195,15 +216,15 @@
 									"label": {
 										"en_US": "Dismissible"
 									},
-									"reference": "dismissible",
-									"value": ""
+									"reference": "",
+									"value": "dismissible"
 								},
 								{
 									"label": {
 										"en_US": "Back to Edit Info"
 									},
-									"reference": "showBacktoEdit",
-									"value": ""
+									"reference": "",
+									"value": "showBacktoEdit"
 								}
 							],
 							"predefinedValue": {
@@ -303,6 +324,16 @@
 										{
 											"fieldNames": [
 												"listIcon"
+											],
+											"size": 12
+										}
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
+												"backIcon"
 											],
 											"size": 12
 										}
