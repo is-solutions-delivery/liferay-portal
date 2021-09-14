@@ -7,6 +7,7 @@ import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {AVAILABLE_STEPS, COOKIES} from '../../../../../utils/constants';
 import {CardFormActionsWithSave} from '../../../../fragments/Card/FormActionsWithSave';
 import {BusinessTypeSearch} from './Search';
+import {smoothScroll} from '../../../../../utils/scroll';
 
 import Cookie from 'js-cookie';
 
@@ -64,6 +65,8 @@ export const FormBasicBusinessType = ({form}) => {
 			setValue('business', '');
 			dispatch(setSelectedProduct(newSelectedProduct));
 		}
+
+		smoothScroll();
 	};
 
 	const goToPreviousPage = () => {

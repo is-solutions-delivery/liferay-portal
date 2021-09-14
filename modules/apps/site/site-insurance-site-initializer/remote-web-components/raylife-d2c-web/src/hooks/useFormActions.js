@@ -5,6 +5,7 @@ import {useStepWizard} from './useStepWizard';
 import Cookies from 'js-cookie';
 import {verifyInputAgentPage} from '../utils/contact-agent';
 import {useTriggerContext} from './useTriggerContext';
+import {smoothScroll} from '../utils/scroll';
 /**
  *
  * @param {String} form <useWatch>
@@ -38,14 +39,6 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	useEffect(() => {
 		Cookies.set('raylife-application-form', JSON.stringify(form));
 	}, [form]);
-
-	const _smoothScroll = () => {
-		window.scroll({
-			behavior: 'smooth',
-			left: 0,
-			top: 0,
-		});
-	};
 
 	const _onValidation = () => {
 		const phraseAgentPage = verifyInputAgentPage(form, nextSection);
@@ -92,7 +85,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 
 		updateState('');
 
-		_smoothScroll();
+		smoothScroll();
 	};
 
 	const onSave = async () => {
@@ -112,7 +105,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 
 		if (validated) {
 			if (nextSection) {
-				_smoothScroll();
+				smoothScroll();
 
 				return setSection(nextSection);
 			}
