@@ -20,7 +20,6 @@
 	#quote-comparison .no-most-popular  {
 		background-color: #FFF;
 		border-radius: 8px 8px 0 0;
-		border-radius: 8px;
 		height: 25px;
 	}
 	
@@ -29,7 +28,7 @@
 		flex-direction: column;
 		height: 549px;
 		justify-content: space-between;
-		padding: 24px 24px 32px 24px;
+		padding: 24px 24px 32px;
 	}
 	
 	#quote-comparison .quote-header {

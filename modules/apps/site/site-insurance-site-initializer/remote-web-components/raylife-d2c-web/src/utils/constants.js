@@ -38,6 +38,6 @@ export const AVAILABLE_STEPS = {
 };
 
 export const COOKIES = {
-	BACK_TO_EDIT: 'raylife-back-to-edit',
 	APPLICATION_FORM: 'raylife-application-form',
+	BACK_TO_EDIT: 'raylife-back-to-edit',
 };
