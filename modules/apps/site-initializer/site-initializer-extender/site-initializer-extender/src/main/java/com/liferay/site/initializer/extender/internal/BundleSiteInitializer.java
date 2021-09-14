@@ -219,7 +219,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_addAssetListEntries(serviceContext);
 			_addCommerceCatalogs(serviceContext);
 
-			List<String> commerceChannelIds = _addCommerceChannels(
+			List<Channel> commerceChannels = _addCommerceChannels(
 				serviceContext);
 
 			_addDDMTemplates(serviceContext);
@@ -236,8 +236,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 					"/resource-permissions.json",
 				serviceContext);
 
-			_addModelResourcePermissions(
-				CommerceChannel.class.getName(), commerceChannelIds,
+			_addCommerceModelResourcePermissions(
+				CommerceChannel.class.getName(), commerceChannels,
 				"/site-initializer/model-resource-permissions" +
 					"/model-resource-permissions.json",
 				serviceContext);
@@ -378,14 +378,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private List<String> _addCommerceChannels(ServiceContext serviceContext)
+	private List<Channel> _addCommerceChannels(ServiceContext serviceContext)
 		throws Exception {
 
 		return _addCommerceChannels(
 			"/site-initializer/commerce-channels", serviceContext);
 	}
 
-	private List<String> _addCommerceChannels(
+	private List<Channel> _addCommerceChannels(
 			String parentResourcePath, ServiceContext serviceContext)
 		throws Exception {
 
@@ -403,7 +403,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext.fetchUser()
 		).build();
 
-		List<String> commerceChannelIds = new ArrayList<>();
+		List<Channel> commerceChannels = new ArrayList<>();
 
 		for (String resourcePath : resourcePaths) {
 			String json = _read(resourcePath);
@@ -419,10 +419,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			channel = channelResource.postChannel(channel);
 
-			commerceChannelIds.add(String.valueOf(channel.getId()));
+			commerceChannels.add(channel);
 		}
 
-		return commerceChannelIds;
+		return commerceChannels;
 	}
 
 	private void _addDDMStructures(ServiceContext serviceContext)
@@ -729,14 +729,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 			"/site-initializer/journal-articles", serviceContext);
 	}
 
-	private void _addModelResourcePermissions(
-			String className, List<String> commerceChannelIds, String path,
+	private void _addCommerceModelResourcePermissions(
+			String className, List<Channel> commerceChannels, String path,
 			ServiceContext serviceContext)
 		throws Exception {
 
-		for (String commerceChannelId : commerceChannelIds) {
+		for (Channel commerceChannel : commerceChannels) {
 			_addModelResourcePermissions(
-				className, commerceChannelId, path, serviceContext);
+				className, String.valueOf(commerceChannel.getId()), path, serviceContext);
 		}
 	}
 
