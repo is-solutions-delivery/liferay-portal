@@ -345,16 +345,14 @@ definition {
 
 		task ("Open the Preview modal") {
 			PageEditor.openPreviewMode();
-
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 		}
 
 		task ("Assert that Heading from 1 to 4 are shown for desktop view on preview") {
-			SelectFrameTop();
+			PageEditor.switchViewport(
+				deviceType = "Desktop",
+				modal = "true");
 
-			PageEditor.switchViewport(deviceType = "Desktop");
-
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
 
 			for (var n : list "1,2,3,4") {
 				AssertTextEquals(
@@ -373,9 +371,11 @@ definition {
 		task ("Assert that Heading from 1 to 3 are shown for tablet view on preview") {
 			SelectFrameTop();
 
-			PageEditor.switchViewport(deviceType = "Tablet");
+			PageEditor.switchViewport(
+				deviceType = "Tablet",
+				modal = "true");
 
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
 
 			for (var n : list "1,2,3") {
 				AssertTextEquals(
@@ -396,9 +396,11 @@ definition {
 		task ("Assert that Heading from 1 to 2 are shown for landscape phone view on preview") {
 			SelectFrameTop();
 
-			PageEditor.switchViewport(deviceType = "Landscape Phone");
+			PageEditor.switchViewport(
+				deviceType = "Landscape Phone",
+				modal = "true");
 
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
 
 			for (var n : list "1,2") {
 				AssertTextEquals(
@@ -419,9 +421,11 @@ definition {
 		task ("Assert that only Heading 1 is shown for portail phone view on preview") {
 			SelectFrameTop();
 
-			PageEditor.switchViewport(deviceType = "Portrait Phone");
+			PageEditor.switchViewport(
+				deviceType = "Portrait Phone",
+				modal = "true");
 
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
 
 			AssertTextEquals(
 				key_fragmentName = "heading",

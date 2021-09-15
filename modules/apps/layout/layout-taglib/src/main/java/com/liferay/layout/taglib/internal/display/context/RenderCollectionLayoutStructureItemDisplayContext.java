@@ -263,9 +263,7 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 			return _numberOfItemsToDisplay;
 		}
 
-		_numberOfItemsToDisplay = Math.min(
-			getCollectionCount(),
-			_collectionStyledLayoutStructureItem.getNumberOfItems());
+		_numberOfItemsToDisplay = getTotalNumberOfItems();
 
 		if (Validator.isNotNull(
 				_collectionStyledLayoutStructureItem.getPaginationType()) &&
@@ -331,17 +329,6 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 	public Map<String, Object> getNumericCollectionPaginationAdditionalProps() {
 		return HashMapBuilder.<String, Object>put(
 			"collectionId", _collectionStyledLayoutStructureItem.getItemId()
-		).put(
-			"numberOfItems",
-			_collectionStyledLayoutStructureItem.getNumberOfItems()
-		).put(
-			"numberOfItemsPerPage",
-			_collectionStyledLayoutStructureItem.getNumberOfItemsPerPage()
-		).put(
-			"paginationType",
-			_collectionStyledLayoutStructureItem.getPaginationType()
-		).put(
-			"totalPages", getNumberOfPages()
 		).build();
 	}
 
@@ -351,6 +338,12 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 		).put(
 			"collectionId", _collectionStyledLayoutStructureItem.getItemId()
 		).build();
+	}
+
+	public int getTotalNumberOfItems() {
+		return Math.min(
+			getCollectionCount(),
+			_collectionStyledLayoutStructureItem.getNumberOfItems());
 	}
 
 	private Map<String, String[]> _getConfiguration() {

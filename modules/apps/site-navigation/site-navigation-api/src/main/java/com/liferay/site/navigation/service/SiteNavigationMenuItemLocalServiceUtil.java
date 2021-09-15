@@ -300,6 +300,13 @@ public class SiteNavigationMenuItemLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
+	public static List<Long> getParentSiteNavigationMenuItemIds(
+		long siteNavigationMenuId, String typeSettingsKeyword) {
+
+		return getService().getParentSiteNavigationMenuItemIds(
+			siteNavigationMenuId, typeSettingsKeyword);
+	}
+
 	/**
 	 * @throws PortalException
 	 */

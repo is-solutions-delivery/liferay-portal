@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.4.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_4_0.dtd">
+
+<service-builder auto-import-default-references="false" auto-namespace-tables="false" dependency-injector="ds" mvcc-enabled="true" package-path="com.liferay.search.experiences" short-no-such-exception-enabled="false">
+	<namespace>SXP</namespace>
+	<entity local-service="true" name="SXPBlueprint" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column method-name="SXPBlueprintId" name="sxpBlueprintId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column localized="true" name="description" type="String" />
+		<column localized="true" name="title" type="String" />
+		<column name="status" type="int" />
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" />
+		<column name="statusDate" type="Date" />
+	</entity>
+	<entity local-service="true" name="SXPElement" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column method-name="SXPElementId" name="sxpElementId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column localized="true" name="description" type="String" />
+		<column localized="true" name="title" type="String" />
+		<column name="status" type="int" />
+	</entity>
+</service-builder>

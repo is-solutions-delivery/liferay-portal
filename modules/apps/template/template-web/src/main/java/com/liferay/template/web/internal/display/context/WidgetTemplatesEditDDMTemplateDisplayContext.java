@@ -15,12 +15,17 @@
 package com.liferay.template.web.internal.display.context;
 
 import com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateHandlerRegistryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.template.web.internal.configuration.TemplateConfiguration;
 
 /**
  * @author Eudaldo Alonso
@@ -30,14 +35,16 @@ public class WidgetTemplatesEditDDMTemplateDisplayContext
 	extends EditDDMTemplateDisplayContext {
 
 	public WidgetTemplatesEditDDMTemplateDisplayContext(
+		DDMWebConfiguration ddmWebConfiguration,
 		LiferayPortletRequest liferayPortletRequest,
-		LiferayPortletResponse liferayPortletResponse) {
+		LiferayPortletResponse liferayPortletResponse,
+		TemplateConfiguration templateConfiguration) {
 
 		super(liferayPortletRequest, liferayPortletResponse);
 
-		_ddmWebConfiguration =
-			(DDMWebConfiguration)liferayPortletRequest.getAttribute(
-				DDMWebConfiguration.class.getName());
+		_ddmWebConfiguration = ddmWebConfiguration;
+		_templateConfiguration = templateConfiguration;
+
 		_themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
@@ -45,6 +52,42 @@ public class WidgetTemplatesEditDDMTemplateDisplayContext
 	@Override
 	public boolean autogenerateTemplateKey() {
 		return _ddmWebConfiguration.autogenerateTemplateKey();
+	}
+
+	@Override
+	public String getLanguageType() {
+		if (_languageType != null) {
+			return _languageType;
+		}
+
+		_languageType = BeanParamUtil.getString(
+			getDDMTemplate(), httpServletRequest, "language",
+			TemplateConstants.LANG_TYPE_FTL);
+
+		return _languageType;
+	}
+
+	@Override
+	public String[] getLanguageTypes() {
+		DDMTemplate ddmTemplate = getDDMTemplate();
+
+		String[] languageTypes = ArrayUtil.filter(
+			_templateConfiguration.widgetTemplatesLanguageTypes(),
+			languageType -> ArrayUtil.contains(
+				new String[] {
+					TemplateConstants.LANG_TYPE_FTL,
+					TemplateConstants.LANG_TYPE_VM
+				},
+				languageType));
+
+		if ((ddmTemplate != null) &&
+			!ArrayUtil.contains(languageTypes, ddmTemplate.getLanguage())) {
+
+			languageTypes = ArrayUtil.append(
+				languageTypes, ddmTemplate.getLanguage());
+		}
+
+		return languageTypes;
 	}
 
 	@Override
@@ -68,6 +111,8 @@ public class WidgetTemplatesEditDDMTemplateDisplayContext
 	}
 
 	private final DDMWebConfiguration _ddmWebConfiguration;
+	private String _languageType;
+	private final TemplateConfiguration _templateConfiguration;
 	private final ThemeDisplay _themeDisplay;
 
 }

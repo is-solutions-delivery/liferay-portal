@@ -1058,6 +1058,11 @@ components:
                                 The content subtype's ID.
                             format: int64
                             type: integer
+                        subtypeKey:
+                            # @review
+                            description:
+                                The content subtype's Key.
+                            type: string
                     type: object
                 contentType:
                     # @review

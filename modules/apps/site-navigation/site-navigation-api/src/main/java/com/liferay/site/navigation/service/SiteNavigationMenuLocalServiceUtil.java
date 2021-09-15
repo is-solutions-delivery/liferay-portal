@@ -262,6 +262,12 @@ public class SiteNavigationMenuLocalServiceUtil {
 		return getService().fetchSiteNavigationMenu(groupId, type);
 	}
 
+	public static SiteNavigationMenu fetchSiteNavigationMenuByName(
+		long groupId, String name) {
+
+		return getService().fetchSiteNavigationMenuByName(groupId, name);
+	}
+
 	/**
 	 * Returns the site navigation menu matching the UUID and group.
 	 *

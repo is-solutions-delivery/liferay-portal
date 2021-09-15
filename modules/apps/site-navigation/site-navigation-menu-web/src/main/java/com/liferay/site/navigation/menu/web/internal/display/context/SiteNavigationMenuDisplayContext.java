@@ -284,10 +284,33 @@ public class SiteNavigationMenuDisplayContext {
 			return _siteNavigationMenuId;
 		}
 
-		_siteNavigationMenuId = ParamUtil.getLong(
+		long siteNavigationMenuId = ParamUtil.getLong(
 			_httpServletRequest, "siteNavigationMenuId",
 			_siteNavigationMenuPortletInstanceConfiguration.
 				siteNavigationMenuId());
+
+		if (siteNavigationMenuId > 0) {
+			_siteNavigationMenuId = siteNavigationMenuId;
+		}
+		else {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)_httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			SiteNavigationMenu siteNavigationMenu =
+				SiteNavigationMenuLocalServiceUtil.
+					fetchSiteNavigationMenuByName(
+						themeDisplay.getScopeGroupId(),
+						_getSiteNavigationMenuName());
+
+			if (siteNavigationMenu != null) {
+				_siteNavigationMenuId =
+					siteNavigationMenu.getSiteNavigationMenuId();
+			}
+			else {
+				_siteNavigationMenuId = 0L;
+			}
+		}
 
 		return _siteNavigationMenuId;
 	}
@@ -393,6 +416,19 @@ public class SiteNavigationMenuDisplayContext {
 		return SiteNavigationConstants.TYPE_PUBLIC_PAGES_HIERARCHY;
 	}
 
+	private String _getSiteNavigationMenuName() {
+		if (_siteNavigationMenuName != null) {
+			return _siteNavigationMenuName;
+		}
+
+		_siteNavigationMenuName = ParamUtil.getString(
+			_httpServletRequest, "siteNavigationMenuName",
+			_siteNavigationMenuPortletInstanceConfiguration.
+				siteNavigationMenuName());
+
+		return _siteNavigationMenuName;
+	}
+
 	private String _ddmTemplateKey;
 	private int _displayDepth = -1;
 	private String _displayStyle;
@@ -406,6 +442,7 @@ public class SiteNavigationMenuDisplayContext {
 	private String _rootMenuItemType;
 	private SiteNavigationMenu _siteNavigationMenu;
 	private Long _siteNavigationMenuId;
+	private String _siteNavigationMenuName;
 	private final SiteNavigationMenuPortletInstanceConfiguration
 		_siteNavigationMenuPortletInstanceConfiguration;
 

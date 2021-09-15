@@ -58,11 +58,17 @@ public class ObjectRelationshipDDMFormFieldTemplateContextContributor
 			return HashMapBuilder.<String, Object>put(
 				"apiURL", _getAPIURL(ddmFormField, ddmFormFieldRenderingContext)
 			).put(
+				"initialLabel", ddmFormFieldRenderingContext.getValue()
+			).put(
+				"initialValue", ddmFormFieldRenderingContext.getValue()
+			).put(
 				"inputName", ddmFormField.getName()
 			).put(
 				"itemsKey", "id"
 			).put(
 				"itemsLabel", "id"
+			).put(
+				"value", ddmFormFieldRenderingContext.getValue()
 			).build();
 		}
 		catch (PortalException portalException) {

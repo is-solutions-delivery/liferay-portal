@@ -12,8 +12,10 @@
 import {ClayCheckbox} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
+import ClayModal, {useModal} from '@clayui/modal';
 import ClayPopover from '@clayui/popover';
 import ClayTable from '@clayui/table';
+import WorkflowInstanceTracker from '@liferay/portal-workflow-instance-tracker-web/js/components/WorkflowInstanceTracker';
 import React, {useContext, useState} from 'react';
 
 import useDebounceCallback from '../../hooks/useDebounceCallback.es';
@@ -46,6 +48,16 @@ function Item({totalCount, ...instance}) {
 		slaStatus,
 		taskNames = [Liferay.Language.get('not-available')],
 	} = instance;
+
+	const [showInstanceTrackerModal, setShowInstanceTrackerModal] = useState(
+		false
+	);
+
+	const {observer} = useModal({
+		onClose: () => {
+			setShowInstanceTrackerModal(false);
+		},
+	});
 
 	const checked = !!selectedItems.find((item) => item.id === id);
 
@@ -158,14 +170,30 @@ function Item({totalCount, ...instance}) {
 				<QuickActionMenu
 					disabled={disableCheckbox}
 					instance={instance}
+					setShowInstanceTrackerModal={() =>
+						setShowInstanceTrackerModal(true)
+					}
 				/>
 			</ClayTable.Cell>
+
+			{showInstanceTrackerModal && (
+				<ClayModal observer={observer} size="full-screen">
+					<ClayModal.Header>
+						{Liferay.Language.get('track-workflow')}
+					</ClayModal.Header>
+
+					<ClayModal.Body>
+						<WorkflowInstanceTracker workflowInstanceId={id} />
+					</ClayModal.Body>
+				</ClayModal>
+			)}
 		</ClayTable.Row>
 	);
 }
 
-function QuickActionMenu({disabled, instance}) {
+function QuickActionMenu({disabled, instance, setShowInstanceTrackerModal}) {
 	const {openModal, setSingleTransition} = useContext(ModalContext);
+	const {workflowInstanceTrackerEnabled} = useContext(AppContext);
 	const {setSelectedItems} = useContext(InstanceListContext);
 	const {transitions = [], taskNames = []} = instance;
 
@@ -181,7 +209,7 @@ function QuickActionMenu({disabled, instance}) {
 		onClick: () => handleClick('bulkUpdateDueDate', 'updateDueDate'),
 	};
 
-	const kebabItems = [
+	let kebabItems = [
 		{
 			icon: 'change',
 			label: Liferay.Language.get('reassign-task'),
@@ -189,6 +217,16 @@ function QuickActionMenu({disabled, instance}) {
 		},
 		updateDueDateItem,
 	];
+
+	if (workflowInstanceTrackerEnabled) {
+		kebabItems = [
+			...kebabItems,
+			{
+				label: Liferay.Language.get('track-workflow'),
+				onClick: setShowInstanceTrackerModal,
+			},
+		];
+	}
 
 	if (transitions.length > 0) {
 		const transitionItems = [

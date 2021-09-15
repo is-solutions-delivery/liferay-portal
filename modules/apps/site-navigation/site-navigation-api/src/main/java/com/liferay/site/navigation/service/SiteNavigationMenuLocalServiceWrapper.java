@@ -290,6 +290,14 @@ public class SiteNavigationMenuLocalServiceWrapper
 			groupId, type);
 	}
 
+	@Override
+	public SiteNavigationMenu fetchSiteNavigationMenuByName(
+		long groupId, String name) {
+
+		return _siteNavigationMenuLocalService.fetchSiteNavigationMenuByName(
+			groupId, name);
+	}
+
 	/**
 	 * Returns the site navigation menu matching the UUID and group.
 	 *

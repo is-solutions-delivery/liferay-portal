@@ -33,6 +33,12 @@ definition {
 			locator1 = "ObjectAdmin#OBJECT_FIELDS_LABEL_INPUT",
 			value1 = "${fieldLabel}");
 
+		if (isSet(fieldName)) {
+			Type(
+				locator1 = "ObjectAdmin#OBJECT_FIELDS_NAME_INPUT",
+				value1 = "${fieldName}");
+		}
+
 		Select(
 			locator1 = "ObjectAdmin#OBJECT_FIELDS_TYPE",
 			value1 = "${fieldType}");
@@ -76,8 +82,6 @@ definition {
 	}
 
 	macro clickFieldsSearchableSectionRadioOption {
-		SelectFrame(locator1 = "IFrame#IFRAME");
-
 		Click.javaScriptClick(
 			key_radioOption = "${radioOption}",
 			locator1 = "ObjectAdmin#FIELDS_RADIO_OPTION");
@@ -115,6 +119,28 @@ definition {
 			userPassword = "${userPassword}");
 	}
 
+	macro editCustomObject {
+		if (isSet(fieldName)) {
+			Type(
+				locator1 = "ObjectAdmin#DETAILS_NAME_CUSTOM_OBJECT",
+				value1 = "${fieldName}");
+		}
+
+		if (isSet(fieldLabelName)) {
+			Type(
+				locator1 = "ObjectAdmin#DETAILS_LABEL_CUSTOM_OBJECT",
+				value1 = "${labelName}");
+		}
+
+		if (isSet(pluralLabelName)) {
+			Type(
+				locator1 = "ObjectAdmin#DETAILS_PLURAL_LABEL_CUSTOM_OBJECT",
+				value1 = "${pluralLabelName}");
+		}
+
+		Button.clickSave();
+	}
+
 	macro goToCustomObject {
 		var objectID = JSONObject.getObjectId(
 			objectName = "${objectName}",
@@ -128,6 +154,8 @@ definition {
 		Click(
 			key_fieldName = "${fieldName}",
 			locator1 = "ObjectAdmin#SELECT_OBJECT_FIELD");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
 	}
 
 	macro goToFieldsTab {
@@ -149,11 +177,33 @@ definition {
 		Click(locator1 = "ObjectAdmin#SAVE_CUSTOM_OBJECT");
 	}
 
+	macro selectCustomObjectFieldKebabMenuOption {
+		Click(locator1 = "ObjectAdmin#KEBAB_MENU");
+
+		Click(
+			key_kebabOption = "${kebabOption}",
+			locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
+	}
+
 	macro viewCustomObject {
 		AssertElementPresent(
 			key_name = "${name}",
 			key_system = "No",
 			locator1 = "ObjectAdmin#VIEW_OBJECT");
+	}
+
+	macro viewFieldDetails {
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		AssertElementPresent(locator1 = "ObjectAdmin#FIELDS_DETAILS_IFRAME");
+
+		AssertElementPresent(locator1 = "ObjectAdmin#FIELDS_DETAILS_TITLE");
+	}
+
+	macro viewFieldErrorMessage {
+		AssertTextEquals(
+			locator1 = "Message#ERROR",
+			value1 = "${message}");
 	}
 
 	macro viewFieldSearchableSectionLanguage {

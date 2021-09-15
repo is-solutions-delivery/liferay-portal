@@ -245,6 +245,10 @@ public abstract class BaseListTypeEntryResourceTestCase {
 			Arrays.asList(listTypeEntry1, listTypeEntry2),
 			(List<ListTypeEntry>)page.getItems());
 		assertValid(page);
+
+		listTypeEntryResource.deleteListTypeEntry(listTypeEntry1.getId());
+
+		listTypeEntryResource.deleteListTypeEntry(listTypeEntry2.getId());
 	}
 
 	@Test
@@ -343,6 +347,43 @@ public abstract class BaseListTypeEntryResourceTestCase {
 			listTypeEntry);
 	}
 
+	@Test
+	public void testDeleteListTypeEntry() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		ListTypeEntry listTypeEntry =
+			testDeleteListTypeEntry_addListTypeEntry();
+
+		assertHttpResponseStatusCode(
+			204,
+			listTypeEntryResource.deleteListTypeEntryHttpResponse(
+				listTypeEntry.getId()));
+	}
+
+	protected ListTypeEntry testDeleteListTypeEntry_addListTypeEntry()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLDeleteListTypeEntry() throws Exception {
+		ListTypeEntry listTypeEntry =
+			testGraphQLListTypeEntry_addListTypeEntry();
+
+		Assert.assertTrue(
+			JSONUtil.getValueAsBoolean(
+				invokeGraphQLMutation(
+					new GraphQLField(
+						"deleteListTypeEntry",
+						new HashMap<String, Object>() {
+							{
+								put("listTypeEntryId", listTypeEntry.getId());
+							}
+						})),
+				"JSONObject/data", "Object/deleteListTypeEntry"));
+	}
+
 	protected ListTypeEntry testGraphQLListTypeEntry_addListTypeEntry()
 		throws Exception {
 
@@ -437,6 +478,14 @@ public abstract class BaseListTypeEntryResourceTestCase {
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
+
+			if (Objects.equals("actions", additionalAssertFieldName)) {
+				if (listTypeEntry.getActions() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
 
 			if (Objects.equals("key", additionalAssertFieldName)) {
 				if (listTypeEntry.getKey() == null) {
@@ -561,6 +610,17 @@ public abstract class BaseListTypeEntryResourceTestCase {
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
+
+			if (Objects.equals("actions", additionalAssertFieldName)) {
+				if (!equals(
+						(Map)listTypeEntry1.getActions(),
+						(Map)listTypeEntry2.getActions())) {
+
+					return false;
+				}
+
+				continue;
+			}
 
 			if (Objects.equals("dateCreated", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
@@ -729,6 +789,11 @@ public abstract class BaseListTypeEntryResourceTestCase {
 		sb.append(" ");
 		sb.append(operator);
 		sb.append(" ");
+
+		if (entityFieldName.equals("actions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
 
 		if (entityFieldName.equals("dateCreated")) {
 			if (operator.equals("between")) {

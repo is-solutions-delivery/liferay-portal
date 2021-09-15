@@ -1,0 +1,23 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"name": "headingAppliedStyle",
+					"type": "select",
+					"typeOptions": {
+						"values": [
+							{
+								"value": "dark"
+							},
+							{
+								"value": "light"
+							}
+						]
+					}
+				}
+			],
+			"label": "heading"
+		}
+	]
+}

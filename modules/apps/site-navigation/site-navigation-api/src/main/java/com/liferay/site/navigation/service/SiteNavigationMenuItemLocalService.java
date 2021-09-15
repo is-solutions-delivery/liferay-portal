@@ -260,6 +260,10 @@ public interface SiteNavigationMenuItemLocalService
 	 */
 	public String getOSGiServiceIdentifier();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Long> getParentSiteNavigationMenuItemIds(
+		long siteNavigationMenuId, String typeSettingsKeyword);
+
 	/**
 	 * @throws PortalException
 	 */

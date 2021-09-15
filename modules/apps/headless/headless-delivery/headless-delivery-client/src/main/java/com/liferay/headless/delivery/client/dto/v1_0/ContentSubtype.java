@@ -55,6 +55,27 @@ public class ContentSubtype implements Cloneable, Serializable {
 
 	protected Long subtypeId;
 
+	public String getSubtypeKey() {
+		return subtypeKey;
+	}
+
+	public void setSubtypeKey(String subtypeKey) {
+		this.subtypeKey = subtypeKey;
+	}
+
+	public void setSubtypeKey(
+		UnsafeSupplier<String, Exception> subtypeKeyUnsafeSupplier) {
+
+		try {
+			subtypeKey = subtypeKeyUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String subtypeKey;
+
 	@Override
 	public ContentSubtype clone() throws CloneNotSupportedException {
 		return (ContentSubtype)super.clone();

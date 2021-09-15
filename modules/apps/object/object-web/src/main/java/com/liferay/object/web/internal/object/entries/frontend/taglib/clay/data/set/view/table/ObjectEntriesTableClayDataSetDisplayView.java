@@ -43,24 +43,27 @@ public class ObjectEntriesTableClayDataSetDisplayView
 
 		for (ObjectField objectField : objectFields) {
 			ClayTableSchemaField clayTableSchemaField =
-				new ClayTableSchemaField();
+				clayTableSchemaBuilder.addClayTableSchemaField(
+					objectField.getName(), objectField.getName());
 
 			if (Objects.equals(objectField.getType(), "Boolean")) {
 				clayTableSchemaField.setContentRenderer("boolean");
 			}
-
-			clayTableSchemaField.setFieldName(objectField.getName());
-			clayTableSchemaField.setLabel(objectField.getName());
 
 			if (!Objects.equals(objectField.getType(), "Blob") &&
 				objectField.isIndexed()) {
 
 				clayTableSchemaField.setSortable(true);
 			}
-
-			clayTableSchemaBuilder.addClayTableSchemaField(
-				clayTableSchemaField);
 		}
+
+		ClayTableSchemaField statusClayTableSchemaField =
+			clayTableSchemaBuilder.addClayTableSchemaField("status", "status");
+
+		statusClayTableSchemaField.setContentRenderer("status");
+
+		clayTableSchemaBuilder.addClayTableSchemaField(
+			"creator.name", "author");
 
 		_clayTableSchema = clayTableSchemaBuilder.build();
 	}

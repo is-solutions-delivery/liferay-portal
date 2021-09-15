@@ -87,14 +87,12 @@ definition {
 	test CanAddHyperlinkToExistingText {
 		property portal.acceptance = "true";
 
-		JSONGroup.addGroup(groupName = "Test Site Name");
-
 		JSONWebcontent.addWebContent(
 			content = "Test Link",
-			groupName = "Test Site Name",
+			groupName = "WYSIWYG Site Name",
 			title = "Test Web Content");
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "wysiwyg-site-name");
 
 		WebContent.viewTitle(webContentTitle = "Test Web Content");
 
@@ -318,7 +316,12 @@ definition {
 	@priority = "4"
 	@refactorneeded
 	test CanEditTextInPreviewSourceContent {
-		property portal.upstream = "quarantine";
+		property portal.acceptance = "true";
+
+		JSONWebcontent.addWebContent(
+			content = "",
+			groupName = "WYSIWYG Site Name",
+			title = "Web Content Title");
 
 		Open(locator1 = "http://www.standards-schmandards.com/exhibits/wysiwyg/sampledoc.htm");
 
@@ -329,10 +332,6 @@ definition {
 		Navigator.openURL();
 
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "wysiwyg-site-name");
-
-		VerifyElementPresent(
-			key_assetTitle = "Web Content Title",
-			locator1 = "WC#ENTRY_LIST_TITLE");
 
 		WebContentNavigator.gotoEditCP(webContentTitle = "Web Content Title");
 

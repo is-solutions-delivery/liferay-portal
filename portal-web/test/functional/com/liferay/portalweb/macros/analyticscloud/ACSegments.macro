@@ -16,6 +16,36 @@ definition {
 		Click(locator1 = "ACSegments#ADD_BUTTON");
 	}
 
+	macro addBreakdownByAttribute {
+		Click(locator1 = "ACSegments#ADD_BREAKDOWN_BUTTON");
+
+		Click(locator1 = "ACSegments#SEGMENT_OVERVIEW_ATTRIBUTE");
+
+		Type(
+			locator1 = "ACSegments#SEGMENT_OVERVIEW_ATTRIBUTE",
+			value1 = "${attribute}");
+
+		Click(
+			locator1 = "ACSegments#ATTRIBUTE_DROPDOWN_MENU_ITEM",
+			menuItem = "${attribute}");
+
+		if (isSet(binsAmount)) {
+			Click(locator1 = "ACSegments#BINS_INPUT");
+
+			Type(
+				locator1 = "ACSegments#BINS_INPUT",
+				value1 = "${binsAmount}");
+		}
+
+		Click(locator1 = "ACSegments#BREAKDOWN_NAME_INPUT");
+
+		Type(
+			locator1 = "ACSegments#BREAKDOWN_NAME_INPUT",
+			value1 = "${breakdownName}");
+
+		Click(locator1 = "Button#SAVE");
+	}
+
 	macro addNestedSegmentField {
 		Type(
 			locator1 = "ACSegments#SEARCH_SEGMENT",
@@ -31,6 +61,12 @@ definition {
 			index = "${index}",
 			locator1 = "ACSegments#SEGMENT_CRITERION_ITEM",
 			locator2 = "ACSegments#CRITERIA_STATEMENT_BODY");
+	}
+
+	macro addOrganizationName {
+		Type(
+			locator1 = "ACSegments#ORGANIZATION_NAME_INPUT",
+			value1 = "${organizationName}");
 	}
 
 	macro addSegmentField {
@@ -85,6 +121,13 @@ definition {
 			locator1 = "ACSegments#TABLE_CHECKBOX");
 	}
 
+	macro assertMembershipValue {
+		AssertElementPresent(
+			locator1 = "ACSegments#SEGMENT_TABLE_MEMBERSHIP_NAME_AND_VALUE",
+			membershipName = "${membership}",
+			segmentName = "${segmentName}");
+	}
+
 	macro assertSegmentAttributeNotPresent {
 		var key_SegmentField = "${segmentField}";
 
@@ -101,6 +144,13 @@ definition {
 		var key_segmentName = "${segmentName}";
 
 		AssertElementPresent(locator1 = "ACSegments#SELECT_SEGMENT");
+	}
+
+	macro assertTotalActivitiesValue {
+		AssertElementPresent(
+			locator1 = "ACSegments#SEGMENT_TABLE_TOTAL_ACTIVITIES_NAME_AND_VALUE",
+			segmentName = "${segmentName}",
+			totalActivitiesNumber = "${totalActivities}");
 	}
 
 	macro cancelSegment {
@@ -689,11 +739,13 @@ definition {
 			locator1 = "ACSegments#SEGMENT_CRITERIA_PREPOSITION_AND_TIME",
 			value1 = "${preposition}");
 
-		AssertTextEquals(
-			index = "${index}",
-			index_2 = "3",
-			locator1 = "ACSegments#SEGMENT_CRITERIA_PREPOSITION_AND_TIME",
-			value1 = "${time}");
+		if (isSet(time)) {
+			AssertTextEquals(
+				index = "${index}",
+				index_2 = "3",
+				locator1 = "ACSegments#SEGMENT_CRITERIA_PREPOSITION_AND_TIME",
+				value1 = "${time}");
+		}
 
 		if (isSet(conjunction)) {
 			AssertTextEquals(

@@ -65,12 +65,61 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8626 | Test Summary: Segment distribution chart can be filtered by date property"
-	@ignore = "true"
 	@priority = "5"
 	test CanDistributionChartFilteredDateProperty {
+		task ("Get site assigned property name") {
+			var propertyName = ACDXPSettings.getAssignedPropertyName(siteName = "Site Name");
+		}
 
-		// TODO LRAC-8626 CanDistributionChartFilteredDateProperty pending implementation
+		task ("View AC Page as new user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea@liferay.com",
+				userLoginFullName = "userfn userln");
 
+			Navigator.gotoSitePage(
+				pageName = "AC Page",
+				siteName = "Site Name");
+
+			Pause(locator1 = "5000");
+		}
+
+		task ("Switch to new property in AC") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = "${propertyName}");
+		}
+
+		task ("Add a new static segment") {
+			ACNavigation.goToSegments();
+
+			ACSegments.createStaticSegment();
+		}
+
+		task ("Type the segment name") {
+			ACSegments.nameSegment(segmentName = "Static Segment Test");
+		}
+
+		task ("Add new user as member") {
+			ACSegments.addStaticMember(tableMember = "userfn userln");
+
+			ACSegments.saveSegment();
+		}
+
+		task ("Go to Segments") {
+			ACNavigation.goToSegments();
+
+			ACSegments.accessSegment(segmentName = "Static Segment Test");
+		}
+
+		task ("Filter Attribute") {
+			ACNavigation.switchTab(tabName = "Distribution");
+
+			ACSegments.selectDistributionByAttribute(attribute = "birthDate");
+		}
+
+		task ("View Chart Entry") {
+			ACSegments.viewBreakdownChartsEntry(key_entry = "1986-05-31T00:00:00.000Z - 100.0%");
+		}
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8627 | Test Summary: Segment distribution chart can be filtered by number property"
@@ -230,11 +279,101 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8624 | Test Summary: Order the Segment Profile Distribution"
-	@ignore = "true"
 	@priority = "3"
 	test OrderSegmentProfileDistribution {
+		property portal.upstream = "quarantine";
 
-		// TODO LRAC-8624 OrderSegmentProfileDistribution pending implementation
+		// AC Bug ticket: LRAC-9250
+		// Depends on the bug fix
+
+		task ("Connect Analytics Cloud to DXP") {
+			var propertyName = ACDXPSettings.getAssignedPropertyName(siteName = "Site Name");
+		}
+
+		task ("Create page") {
+			ACUtils.addSiteAndPage(layoutName = "AC Page");
+		}
+
+		task ("Add two new users") {
+			for (var name : list "ac,liferay") {
+				JSONUser.addUser(
+					jobTitle = "QA",
+					userEmailAddress = "${name}@liferay.com",
+					userFirstName = "${name}",
+					userLastName = "${name}",
+					userScreenName = "${name}");
+			}
+
+			ACDXPSettings.syncNewContactData();
+		}
+
+		task ("Login with the users and open the site") {
+			for (var name : list "ac,liferay") {
+				User.logoutAndLoginPG(
+					userLoginEmailAddress = "${name}@liferay.com",
+					userLoginFullName = "${name} ${name}");
+
+				Navigator.gotoSitePage(
+					pageName = "AC Page",
+					siteName = "Site Name");
+
+				Pause(locator1 = "5000");
+			}
+		}
+
+		task ("Launch AC and Switch to new property") {
+			ACUtils.closeAllSessionsAndWait();
+
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = "${propertyName}");
+		}
+
+		task ("Add a new static segment") {
+			ACNavigation.goToSegments();
+
+			ACSegments.createStaticSegment();
+		}
+
+		task ("Type the segment name") {
+			ACSegments.nameSegment(segmentName = "Static Segment Test");
+		}
+
+		task ("Add new user as member") {
+			for (var name : list "ac,liferay" ) {
+				ACSegments.addStaticMember(tableMember = "${name} ${name}");
+			}
+
+			ACSegments.saveSegment();
+		}
+
+		task ("Go to Segments") {
+			ACNavigation.goToSegments();
+
+			ACSegments.accessSegment(segmentName = "Static Segment Test");
+		}
+
+		task ("Filter Attribute") {
+			ACNavigation.switchTab(tabName = "Distribution");
+
+			ACSegments.selectDistributionByAttribute(attribute = "jobTitle");
+		}
+
+		task ("Click in Chart Entry") {
+			Click(locator1 = "ACSegments#BREAKDOWN_CHART");
+		}
+
+		task ("Sort the Names in ascending order") {
+			ACInterests.viewIndividualInterestSpecificOrder(interestTopic = "ac ac,liferay liferay");
+		}
+
+		task ("Sort the Names in ascending order") {
+			Click(
+				labelOption = "Name",
+				locator1 = "FormViewBuilder#FIELD_LABEL_OPTION");
+		}
+
+		// Sorting the names in ascending order to work correctly depends on the bug fix
 
 	}
 

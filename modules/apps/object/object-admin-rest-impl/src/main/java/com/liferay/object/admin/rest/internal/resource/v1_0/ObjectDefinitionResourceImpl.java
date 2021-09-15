@@ -172,7 +172,9 @@ public class ObjectDefinitionResourceImpl
 				objectFields = transformToArray(
 					_objectFieldLocalService.getObjectFields(
 						objectDefinition.getObjectDefinitionId()),
-					ObjectFieldUtil::toObjectField, ObjectField.class);
+					objectField -> ObjectFieldUtil.toObjectField(
+						null, objectField),
+					ObjectField.class);
 				scope = objectDefinition.getScope();
 				status = new Status() {
 					{

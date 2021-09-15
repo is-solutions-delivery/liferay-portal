@@ -88,14 +88,14 @@ public class ObjectFieldResourceImpl
 						GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)));
 
 				return ObjectFieldUtil.toObjectField(
-					objectField, _getActions(objectDefinition, objectField));
+					_getActions(objectDefinition, objectField), objectField);
 			});
 	}
 
 	@Override
 	public ObjectField getObjectField(Long objectFieldId) throws Exception {
 		return ObjectFieldUtil.toObjectField(
-			_objectFieldLocalService.getObjectField(objectFieldId));
+			null, _objectFieldLocalService.getObjectField(objectFieldId));
 	}
 
 	@Override
@@ -104,6 +104,7 @@ public class ObjectFieldResourceImpl
 		throws Exception {
 
 		return ObjectFieldUtil.toObjectField(
+			null,
 			_objectFieldLocalService.addCustomObjectField(
 				contextUser.getUserId(), objectField.getListTypeDefinitionId(),
 				objectDefinitionId, objectField.getIndexed(),
@@ -120,6 +121,7 @@ public class ObjectFieldResourceImpl
 		throws Exception {
 
 		return ObjectFieldUtil.toObjectField(
+			null,
 			_objectFieldLocalService.updateCustomObjectField(
 				objectFieldId, objectField.getListTypeDefinitionId(),
 				objectField.getIndexed(), objectField.getIndexedAsKeyword(),

@@ -63,7 +63,7 @@
 								"expandedLevels": "auto",
 								"rootMenuItemLevel": "0",
 								"rootMenuItemType": "absolute",
-								"siteNavigationMenuId": "[$PUBLIC_SITE_NAVIGATION_MENU_ID$]",
+								"siteNavigationMenuName": "Public Menu",
 								"siteNavigationMenuType": "-1"
 							},
 							"widgetInstanceId": "nav",

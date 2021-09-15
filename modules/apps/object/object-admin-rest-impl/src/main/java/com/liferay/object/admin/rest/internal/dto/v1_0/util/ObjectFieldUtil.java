@@ -27,9 +27,10 @@ import java.util.Map;
 public class ObjectFieldUtil {
 
 	public static ObjectField toObjectField(
+		Map<String, Map<String, String>> actions,
 		com.liferay.object.model.ObjectField serviceBuilderObjectField) {
 
-		return new ObjectField() {
+		ObjectField objectField = new ObjectField() {
 			{
 				id = serviceBuilderObjectField.getObjectFieldId();
 				indexed = serviceBuilderObjectField.getIndexed();
@@ -47,13 +48,6 @@ public class ObjectFieldUtil {
 					serviceBuilderObjectField.getType());
 			}
 		};
-	}
-
-	public static ObjectField toObjectField(
-		com.liferay.object.model.ObjectField serviceBuilderObjectField,
-		Map<String, Map<String, String>> actions) {
-
-		ObjectField objectField = toObjectField(serviceBuilderObjectField);
 
 		objectField.setActions(actions);
 

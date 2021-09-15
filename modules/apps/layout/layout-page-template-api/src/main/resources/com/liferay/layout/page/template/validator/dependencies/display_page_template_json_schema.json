@@ -8,6 +8,10 @@
 				"subtypeId": {
 					"title": "The subtypeId Schema",
 					"type": "integer"
+				},
+				"subtypeKey": {
+					"title": "The subtypeKey Schema",
+					"type": "string"
 				}
 			},
 			"title": "The contentSubtype Schema",

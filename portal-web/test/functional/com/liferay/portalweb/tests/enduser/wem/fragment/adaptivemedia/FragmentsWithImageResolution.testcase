@@ -524,13 +524,11 @@ definition {
 		task ("Change to the Portrait Phone viewport") {
 			SelectFrameTop();
 
-			Click(
-				key_deviceType = "Portrait Phone",
-				locator1 = "Modal#DEVICE_TYPE");
+			PageEditor.switchViewport(
+				deviceType = "Portrait Phone",
+				modal = "true");
 
-			Pause(locator1 = "3000");
-
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
 		}
 
 		task ("Assert the mapping image is shown in Preview modal") {
@@ -714,13 +712,11 @@ definition {
 		task ("Change to the Tablet viewport") {
 			SelectFrameTop();
 
-			Click(
-				key_deviceType = "Tablet",
-				locator1 = "Modal#DEVICE_TYPE");
+			PageEditor.switchViewport(
+				deviceType = "Tablet",
+				modal = "true");
 
-			Pause(locator1 = "3000");
-
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
 		}
 
 		task ("Assert the mapping image is shown in Preview modal") {

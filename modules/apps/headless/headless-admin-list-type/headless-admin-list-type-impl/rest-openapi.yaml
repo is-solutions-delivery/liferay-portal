@@ -2,6 +2,13 @@ components:
     schemas:
         ListTypeDefinition:
             properties:
+                actions:
+                    additionalProperties:
+                        additionalProperties:
+                            type: string
+                        type: object
+                    readOnly: true
+                    type: object
                 dateCreated:
                     format: date
                     readOnly: true
@@ -28,6 +35,13 @@ components:
             type: object
         ListTypeEntry:
             properties:
+                actions:
+                    additionalProperties:
+                        additionalProperties:
+                            type: string
+                        type: object
+                    readOnly: true
+                    type: object
                 dateCreated:
                     format: date
                     readOnly: true
@@ -228,4 +242,20 @@ paths:
                         application/xml:
                             schema:
                                 $ref: "#/components/schemas/ListTypeEntry"
+            tags: ["ListTypeEntry"]
+    "/list-type-entries/{listTypeEntryId}":
+        delete:
+            operationId: deleteListTypeEntry
+            parameters:
+                - in: path
+                  name: listTypeEntryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
             tags: ["ListTypeEntry"]

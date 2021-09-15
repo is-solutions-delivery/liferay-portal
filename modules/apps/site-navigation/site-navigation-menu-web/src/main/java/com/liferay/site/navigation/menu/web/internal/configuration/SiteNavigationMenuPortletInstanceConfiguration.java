@@ -35,6 +35,9 @@ public interface SiteNavigationMenuPortletInstanceConfiguration {
 	@Meta.AD(name = "site-navigation-menu-id", required = false)
 	public long siteNavigationMenuId();
 
+	@Meta.AD(name = "site-navigation-menu-name", required = false)
+	public String siteNavigationMenuName();
+
 	@Meta.AD(deflt = "0", name = "display-style-group-id", required = false)
 	public long displayStyleGroupId();
 

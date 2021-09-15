@@ -21,6 +21,8 @@ import com.liferay.headless.admin.list.type.resource.v1_0.ListTypeDefinitionReso
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
@@ -95,25 +97,36 @@ public class ListTypeDefinitionResourceImpl
 
 	private ListTypeDefinition _toListTypeDefinition(
 		com.liferay.list.type.model.ListTypeDefinition
-			serviceBuilderListTypeEntry) {
+			serviceBuilderListTypeDefinition) {
 
 		return new ListTypeDefinition() {
 			{
-				dateCreated = serviceBuilderListTypeEntry.getCreateDate();
-				dateModified = serviceBuilderListTypeEntry.getModifiedDate();
-				id = serviceBuilderListTypeEntry.getListTypeDefinitionId();
+				actions = HashMapBuilder.put(
+					"delete",
+					addAction(
+						ActionKeys.DELETE, "deleteListTypeDefinition",
+						com.liferay.list.type.model.ListTypeDefinition.class.
+							getName(),
+						serviceBuilderListTypeDefinition.
+							getListTypeDefinitionId())
+				).build();
+				dateCreated = serviceBuilderListTypeDefinition.getCreateDate();
+				dateModified =
+					serviceBuilderListTypeDefinition.getModifiedDate();
+				id = serviceBuilderListTypeDefinition.getListTypeDefinitionId();
 				listTypeEntries = transformToArray(
 					_listTypeEntryLocalService.getListTypeEntries(
-						serviceBuilderListTypeEntry.getListTypeDefinitionId(),
+						serviceBuilderListTypeDefinition.
+							getListTypeDefinitionId(),
 						QueryUtil.ALL_POS, QueryUtil.ALL_POS),
 					listTypeEntry -> ListTypeEntryUtil.toListTypeEntry(
-						contextAcceptLanguage.getPreferredLocale(),
+						null, contextAcceptLanguage.getPreferredLocale(),
 						listTypeEntry),
 					ListTypeEntry.class);
-				name = serviceBuilderListTypeEntry.getName(
+				name = serviceBuilderListTypeDefinition.getName(
 					contextAcceptLanguage.getPreferredLocale());
 				name_i18n = LocalizedMapUtil.getI18nMap(
-					serviceBuilderListTypeEntry.getNameMap());
+					serviceBuilderListTypeDefinition.getNameMap());
 			}
 		};
 	}

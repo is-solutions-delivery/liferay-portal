@@ -188,17 +188,16 @@ public abstract class BaseObjectLayoutResourceTestCase {
 
 	@Test
 	public void testGetObjectDefinitionObjectLayoutsPage() throws Exception {
-		Page<ObjectLayout> page =
-			objectLayoutResource.getObjectDefinitionObjectLayoutsPage(
-				testGetObjectDefinitionObjectLayoutsPage_getObjectDefinitionId(),
-				Pagination.of(1, 2));
-
-		Assert.assertEquals(0, page.getTotalCount());
-
 		Long objectDefinitionId =
 			testGetObjectDefinitionObjectLayoutsPage_getObjectDefinitionId();
 		Long irrelevantObjectDefinitionId =
 			testGetObjectDefinitionObjectLayoutsPage_getIrrelevantObjectDefinitionId();
+
+		Page<ObjectLayout> page =
+			objectLayoutResource.getObjectDefinitionObjectLayoutsPage(
+				objectDefinitionId, Pagination.of(1, 10));
+
+		Assert.assertEquals(0, page.getTotalCount());
 
 		if (irrelevantObjectDefinitionId != null) {
 			ObjectLayout irrelevantObjectLayout =
@@ -226,7 +225,7 @@ public abstract class BaseObjectLayoutResourceTestCase {
 				objectDefinitionId, randomObjectLayout());
 
 		page = objectLayoutResource.getObjectDefinitionObjectLayoutsPage(
-			objectDefinitionId, Pagination.of(1, 2));
+			objectDefinitionId, Pagination.of(1, 10));
 
 		Assert.assertEquals(2, page.getTotalCount());
 
@@ -423,6 +422,23 @@ public abstract class BaseObjectLayoutResourceTestCase {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	protected void assertContains(
+		ObjectLayout objectLayout, List<ObjectLayout> objectLayouts) {
+
+		boolean contains = false;
+
+		for (ObjectLayout item : objectLayouts) {
+			if (equals(objectLayout, item)) {
+				contains = true;
+
+				break;
+			}
+		}
+
+		Assert.assertTrue(
+			objectLayouts + " does not contain " + objectLayout, contains);
 	}
 
 	protected void assertHttpResponseStatusCode(

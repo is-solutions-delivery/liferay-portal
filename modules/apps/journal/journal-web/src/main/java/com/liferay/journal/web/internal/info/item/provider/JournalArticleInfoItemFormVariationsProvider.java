@@ -53,6 +53,12 @@ public class JournalArticleInfoItemFormVariationsProvider
 			GetterUtil.getLong(formVariationKey));
 
 		if (ddmStructure == null) {
+			ddmStructure = _ddmStructureLocalService.fetchStructure(
+				groupId, _portal.getClassNameId(JournalArticle.class.getName()),
+				formVariationKey);
+		}
+
+		if (ddmStructure == null) {
 			return null;
 		}
 

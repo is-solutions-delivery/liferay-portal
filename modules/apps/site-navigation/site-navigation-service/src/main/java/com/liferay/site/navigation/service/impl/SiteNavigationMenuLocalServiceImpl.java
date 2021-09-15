@@ -181,6 +181,13 @@ public class SiteNavigationMenuLocalServiceImpl
 	}
 
 	@Override
+	public SiteNavigationMenu fetchSiteNavigationMenuByName(
+		long groupId, String name) {
+
+		return siteNavigationMenuPersistence.fetchByG_N(groupId, name);
+	}
+
+	@Override
 	public List<SiteNavigationMenu> getAutoSiteNavigationMenus(long groupId) {
 		return siteNavigationMenuPersistence.findByG_A(groupId, true);
 	}

@@ -28,6 +28,9 @@ import com.liferay.headless.delivery.dto.v1_0.PageTemplate;
 import com.liferay.headless.delivery.dto.v1_0.PageTemplateCollection;
 import com.liferay.headless.delivery.dto.v1_0.Settings;
 import com.liferay.headless.delivery.dto.v1_0.StyleBook;
+import com.liferay.info.item.InfoItemFormVariation;
+import com.liferay.info.item.InfoItemServiceTracker;
+import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.page.template.admin.web.internal.exception.DropzoneLayoutStructureItemException;
 import com.liferay.layout.page.template.admin.web.internal.headless.delivery.dto.v1_0.structure.importer.LayoutStructureItemImporter;
@@ -1365,6 +1368,9 @@ public class LayoutPageTemplatesImporterImpl
 	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
 
 	@Reference
+	private InfoItemServiceTracker _infoItemServiceTracker;
+
+	@Reference
 	private Language _language;
 
 	@Reference
@@ -1549,14 +1555,8 @@ public class LayoutPageTemplatesImporterImpl
 			long classNameId = _portal.getClassNameId(
 				contentType.getClassName());
 
-			long classTypeId = 0L;
-
-			ContentSubtype contentSubtype =
-				displayPageTemplate.getContentSubtype();
-
-			if (contentSubtype != null) {
-				classTypeId = contentSubtype.getSubtypeId();
-			}
+			long classTypeId = _getClassTypeId(
+				displayPageTemplate, classNameId);
 
 			LayoutPageTemplateEntry layoutPageTemplateEntry =
 				_layoutPageTemplateEntryLocalService.
@@ -1582,6 +1582,48 @@ public class LayoutPageTemplatesImporterImpl
 			_displayPageTemplateEntry = displayPageTemplateEntry;
 			_overwrite = overwrite;
 			_zipFile = zipFile;
+		}
+
+		private long _getClassTypeId(
+			DisplayPageTemplate displayPageTemplate, long classNameId) {
+
+			ContentSubtype contentSubtype =
+				displayPageTemplate.getContentSubtype();
+
+			if (contentSubtype == null) {
+				return 0;
+			}
+
+			Long subtypeId = contentSubtype.getSubtypeId();
+
+			if (subtypeId != null) {
+				return subtypeId;
+			}
+
+			String subtypeKey = contentSubtype.getSubtypeKey();
+
+			if (Validator.isNull(subtypeKey)) {
+				return 0;
+			}
+
+			InfoItemFormVariationsProvider<?> infoItemFormVariationsProvider =
+				_infoItemServiceTracker.getFirstInfoItemService(
+					InfoItemFormVariationsProvider.class,
+					_portal.getClassName(classNameId));
+
+			if (infoItemFormVariationsProvider == null) {
+				return 0;
+			}
+
+			InfoItemFormVariation infoItemFormVariation =
+				infoItemFormVariationsProvider.getInfoItemFormVariation(
+					_groupId, subtypeKey);
+
+			if (infoItemFormVariation == null) {
+				return 0;
+			}
+
+			return GetterUtil.getLong(infoItemFormVariation.getKey());
 		}
 
 		private final DisplayPageTemplateEntry _displayPageTemplateEntry;

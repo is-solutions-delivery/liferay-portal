@@ -53,14 +53,14 @@ public class InformationTemplatesEditDDMTemplateDisplayContext
 	extends EditDDMTemplateDisplayContext {
 
 	public InformationTemplatesEditDDMTemplateDisplayContext(
+		InfoItemServiceTracker infoItemServiceTracker,
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse) {
 
 		super(liferayPortletRequest, liferayPortletResponse);
 
-		_infoItemServiceTracker =
-			(InfoItemServiceTracker)liferayPortletRequest.getAttribute(
-				InfoItemServiceTracker.class.getName());
+		_infoItemServiceTracker = infoItemServiceTracker;
+
 		_themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}

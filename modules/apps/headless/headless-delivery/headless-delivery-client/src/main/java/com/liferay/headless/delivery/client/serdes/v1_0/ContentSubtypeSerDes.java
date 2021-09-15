@@ -65,6 +65,20 @@ public class ContentSubtypeSerDes {
 			sb.append(contentSubtype.getSubtypeId());
 		}
 
+		if (contentSubtype.getSubtypeKey() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"subtypeKey\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(contentSubtype.getSubtypeKey()));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -89,6 +103,14 @@ public class ContentSubtypeSerDes {
 		}
 		else {
 			map.put("subtypeId", String.valueOf(contentSubtype.getSubtypeId()));
+		}
+
+		if (contentSubtype.getSubtypeKey() == null) {
+			map.put("subtypeKey", null);
+		}
+		else {
+			map.put(
+				"subtypeKey", String.valueOf(contentSubtype.getSubtypeKey()));
 		}
 
 		return map;
@@ -116,6 +138,11 @@ public class ContentSubtypeSerDes {
 				if (jsonParserFieldValue != null) {
 					contentSubtype.setSubtypeId(
 						Long.valueOf((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "subtypeKey")) {
+				if (jsonParserFieldValue != null) {
+					contentSubtype.setSubtypeKey((String)jsonParserFieldValue);
 				}
 			}
 		}

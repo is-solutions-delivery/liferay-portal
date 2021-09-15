@@ -18,6 +18,7 @@ import com.liferay.headless.admin.list.type.dto.v1_0.ListTypeEntry;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Gabriel Albuquerque
@@ -25,10 +26,10 @@ import java.util.Locale;
 public class ListTypeEntryUtil {
 
 	public static ListTypeEntry toListTypeEntry(
-		Locale locale,
+		Map<String, Map<String, String>> actions, Locale locale,
 		com.liferay.list.type.model.ListTypeEntry serviceBuilderListTypeEntry) {
 
-		return new ListTypeEntry() {
+		ListTypeEntry listTypeEntry = new ListTypeEntry() {
 			{
 				dateCreated = serviceBuilderListTypeEntry.getCreateDate();
 				dateModified = serviceBuilderListTypeEntry.getModifiedDate();
@@ -40,6 +41,10 @@ public class ListTypeEntryUtil {
 				type = serviceBuilderListTypeEntry.getType();
 			}
 		};
+
+		listTypeEntry.setActions(actions);
+
+		return listTypeEntry;
 	}
 
 }
