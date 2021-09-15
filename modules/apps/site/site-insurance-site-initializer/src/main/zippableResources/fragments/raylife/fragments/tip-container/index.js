@@ -13,12 +13,11 @@
  * details.
  */
 
-const fragmentName = `raylife-tip-container`;
-
 const containerId = configuration.containerId;
-const dismissEventName = `${fragmentName}-dismiss-${containerId}`;
+const fragmentName = 'raylife-tip-container';
 const elementName = `.dynamic-web-content-${containerId}`;
 const eventName = `${fragmentName}-${containerId}`;
+const eventNameDismiss = `${fragmentName}-dismiss-${containerId}`;
 const headlessBaseURL = `${window.location.origin}/o/headless-delivery/v1.0`;
 const siteGroupId = Liferay.ThemeDisplay.getSiteGroupId();
 
@@ -111,7 +110,7 @@ function raylifeFragmentInteractiveListener(templateId, structuredContents) {
 function dismissButtonListener() {
 	document.getElementById('dismiss').addEventListener('click', () =>
 		window.dispatchEvent(
-			new CustomEvent(dismissEventName, {
+			new CustomEvent(eventNameDismiss, {
 				bubbles: true,
 				composed: true,
 			})

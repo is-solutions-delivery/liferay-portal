@@ -360,7 +360,7 @@
 															"userToolAssetAddonEntryKeys": "false",
 															"groupId": "",
 															"enableViewCountIncrement": "false",
-															"articleId": "QUOTE-COMPARSION-PROFILE-TEMPLATE",
+															"articleId": "QUOTE-COMPARISON-PROFILE-TEMPLATE",
 															"contentMetadataAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
