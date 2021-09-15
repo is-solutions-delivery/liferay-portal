@@ -92,6 +92,22 @@ const getLiferayAuthenticationToken = () => {
 	}
 };
 
+/**
+ * @returns {string} Liferay Authentication Token
+ */
+const getLiferaySiteName = () => {
+	let siteName = '/web/raylife';
+	try {
+		// eslint-disable-next-line no-undef
+		const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
+		const pathSplit = pathname.split('/').filter(Boolean);
+		siteName = `/${pathSplit.slice(0, pathSplit.length - 1).join('/')}`;
+	} catch (error) {
+		console.warn('Not able to find Liferay PathName\n', error);
+	}
+	return siteName;
+};
+
 const _getProductsByCategoryId = async () => {
 	const URL = `/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=skus,catalog&page=1&pageSize=50`;
 
@@ -178,5 +194,6 @@ export const LiferayService = {
 	getCategoryProperties,
 	getLiferayAuthenticationToken,
 	getLiferayGroupId,
+	getLiferaySiteName,
 	getProductQuotes,
 };

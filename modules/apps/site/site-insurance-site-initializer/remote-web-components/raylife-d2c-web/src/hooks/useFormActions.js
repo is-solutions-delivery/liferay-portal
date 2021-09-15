@@ -6,6 +6,9 @@ import Cookies from 'js-cookie';
 import {verifyInputAgentPage} from '../utils/contact-agent';
 import {useTriggerContext} from './useTriggerContext';
 import {smoothScroll} from '../utils/scroll';
+
+const liferaySiteName = LiferayService.getLiferaySiteName();
+
 /**
  *
  * @param {String} form <useWatch>
@@ -46,7 +49,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 
 		if (phraseAgentPage) {
 			Cookies.set('raylife-contextual-message', phraseAgentPage);
-			window.location.href = '/web/raylife/get-in-touch';
+			window.location.href = `${liferaySiteName}/get-in-touch`;
 			validated = false;
 		} else {
 			Cookies.remove('raylife-contextual-message');
@@ -91,7 +94,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 	const onSave = async () => {
 		await _SaveData();
 
-		window.location.href = '/web/raylife';
+		window.location.href = liferaySiteName;
 	};
 
 	/**
@@ -110,7 +113,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 				return setSection(nextSection);
 			}
 
-			window.location.href = '/web/raylife/hang-tight';
+			window.location.href = `${liferaySiteName}/hang-tight`;
 		}
 	};
 

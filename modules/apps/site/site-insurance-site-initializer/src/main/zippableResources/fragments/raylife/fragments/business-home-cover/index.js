@@ -77,7 +77,8 @@ getQuoteForm.onsubmit = function (event) {
 	productContainer.classList.remove('has-error');
 
 	if (document.cookie.includes('raylife-back-to-edit')) {
-		document.cookie = "raylife-back-to-edit= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+		document.cookie =
+			'raylife-back-to-edit= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
 	}
 
 	if (
@@ -92,9 +93,10 @@ getQuoteForm.onsubmit = function (event) {
 			productContainer.classList.add('has-error');
 		}
 	} else {
+		const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
 		document.cookie = 'raylife-zip=' + formProps.zip;
 		document.cookie = 'raylife-product=' + formProps.product;
-		window.location.href = '/web/raylife/get-a-quote';
+		window.location.href = `${pathname}/get-a-quote`;
 	}
 };
 

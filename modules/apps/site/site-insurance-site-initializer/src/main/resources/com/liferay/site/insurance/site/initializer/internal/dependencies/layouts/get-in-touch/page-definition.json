@@ -150,31 +150,45 @@
 							}
 						],
 						"type": "Row"
-					},
-					{
-						"definition": {
-							"fragment": {
-								"key": "quote-footer"
-							},
-							"fragmentConfig": {},
-							"fragmentFields": [],
-							"fragmentStyle": {
-								"borderWidth": "0",
-								"marginBottom": "",
-								"marginLeft": "10",
-								"marginRight": "10",
-								"marginTop": "",
-								"opacity": "100",
-								"paddingBottom": "",
-								"paddingLeft": "7",
-								"paddingRight": "8",
-								"paddingTop": ""
-							}
-						},
-						"type": "Fragment"
 					}
 				],
 				"type": "Section"
+			},
+			{
+				"definition": {
+					"fragment": {
+						"key": "quote-footer"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": [],
+					"fragmentStyle": {
+						"backgroundFragmentImage": {},
+						"borderRadius": "",
+						"borderWidth": "0",
+						"fontFamily": "",
+						"fontSize": "",
+						"fontWeight": "",
+						"height": "",
+						"marginBottom": "",
+						"marginLeft": "",
+						"marginRight": "",
+						"marginTop": "",
+						"maxHeight": "",
+						"maxWidth": "",
+						"minHeight": "",
+						"minWidth": "",
+						"opacity": "100",
+						"overflow": "",
+						"paddingBottom": "",
+						"paddingLeft": "",
+						"paddingRight": "",
+						"paddingTop": "",
+						"shadow": "",
+						"textAlign": "",
+						"width": ""
+					}
+				},
+				"type": "Fragment"
 			}
 		],
 		"type": "Root"
