@@ -39,8 +39,8 @@ const quoteComparsionList = document.querySelector(".quote-comparsion-list");
 }
 
 const raylifeApplicationForm = JSON.parse(_getCookie("raylife-application-form"));
-const address = raylifeApplicationForm.basics.businessInformation.business.location;
-const product = raylifeApplicationForm.basics.product;
+const address = raylifeApplicationForm?.basics?.businessInformation?.business?.location;
+const product = raylifeApplicationForm?.basics?.product;
 const annualRevenue = raylifeApplicationForm?.employees?.estimatedAnnualGrossRevenue;
 const partTimeEmployees = raylifeApplicationForm?.employees?.partTimeEmployees;
 
