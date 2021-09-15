@@ -39,8 +39,8 @@ const getIconSpriteMap = () => {
 };
 
 export const Providers = ({children}) => {
-	const defaultValue = getDefaultValues();
-	const form = useForm({mode: 'onChange', defaultValues: defaultValue});
+	const defaultValues = getDefaultValues();
+	const form = useForm({mode: 'onChange', defaultValues});
 
 	return (
 		<AppProvider>
