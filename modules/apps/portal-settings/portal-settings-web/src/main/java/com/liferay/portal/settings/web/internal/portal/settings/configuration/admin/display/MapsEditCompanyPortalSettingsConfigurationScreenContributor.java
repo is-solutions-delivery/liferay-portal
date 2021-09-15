@@ -36,7 +36,7 @@ public class MapsEditCompanyPortalSettingsConfigurationScreenContributor
 
 	@Override
 	public String getCategoryKey() {
-		return "third-party";
+		return "maps";
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class MapsEditCompanyPortalSettingsConfigurationScreenContributor
 
 	@Override
 	public String getKey() {
-		return "third-party-maps";
+		return "maps";
 	}
 
 	@Override
