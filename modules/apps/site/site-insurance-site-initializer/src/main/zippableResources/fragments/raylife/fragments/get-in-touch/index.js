@@ -50,6 +50,7 @@ if (applicationIdCookie) {
 const contextualMessageCookie = getCookie(nameCookieContextualMessage);
 
 if (contextualMessageCookie) {
-	document.getElementById('contact-agent-contextual-message').textContent =
-		contextualMessageCookie;
+	document.getElementById(
+		'contact-agent-contextual-message'
+	).textContent = contextualMessageCookie;
 }

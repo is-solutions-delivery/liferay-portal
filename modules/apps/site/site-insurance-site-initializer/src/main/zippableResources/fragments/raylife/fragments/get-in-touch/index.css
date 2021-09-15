@@ -11,26 +11,26 @@
 	padding: 0px;
 }
 
-.get-in-touch .btn-content-agent { 
+.get-in-touch .btn-content-agent {
 	background-color: white;
-	border: solid 1px ;
+	border: solid 1px;
 	border-radius: 5px;
 	cursor: pointer;
 	font-size: 14px;
 	font-weight: 700;
-	padding: 7px 35px;
+	padding: 7px 16px;
 	text-align: center;
 }
 
 .get-in-touch .btn-back-color {
-	border-color: #7D7E85;
-	color: #7D7E85;
+	border-color: #7d7e85;
+	color: #7d7e85;
 	margin-bottom: 20px;
 }
 
 .get-in-touch .btn-call-color {
-	border-color: #4C85FF;
-	color: #4C85FF;
+	border-color: #4c85ff;
+	color: #4c85ff;
 }
 
 .get-in-touch .content-agent-text-adictional {
@@ -40,15 +40,15 @@
 }
 
 .get-in-touch .content-agent-text-chat {
-	color: #4C85FF;
+	color: #4c85ff;
 	font-size: 13px;
 	margin-bottom: 0px;
 }
 
 .get-in-touch .content-agent-text-your-application {
 	border-radius: 4px;
-	background-color: #C2EADD;
-	color: #08AA72;
+	background-color: #c2eadd;
+	color: #08aa72;
 	font-size: 24px;
 	font-weight: 700;
 	padding: 8px;
