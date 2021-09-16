@@ -40,9 +40,11 @@
 	},
 	{
 		"path": "search"
-	}
-	,
+	},
 	{
 		"path": "quote-comparison"
+	},
+	{
+		"path": "selected-quote"
 	}
 ]

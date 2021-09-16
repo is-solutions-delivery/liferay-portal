@@ -1,13 +1,29 @@
 <style>
-	#quote-comparison {
+#quote-comparison {
 		background-color: #FFF;
 		border-radius: 8px;
 		border: 1px solid #A6C2FF;
-		height: 576px;
+		<#if  (hasButton.getData() == "FALSE") >
+			height: 504px;
+		<#else>
+			height: 576px;
+		</#if>
 		width: 292px;
 	}
+	
+	#quote-comparison .quote-content {
+		display: flex;
+		flex-direction: column;
+		<#if  (hasButton.getData() == "FALSE") >
+			height: 480px;
+		<#else>
+			height: 549px;
+		</#if>
+		justify-content: space-between;
+		padding: 24px 24px 32px 24px;
+	}
 
-	#quote-comparison .most-popular  {
+#quote-comparison .most-popular  {
 		background-color: #F4870B;
 		border-radius: 8px 8px 0 0;
 		color: #FFF;
@@ -20,15 +36,8 @@
 	#quote-comparison .no-most-popular  {
 		background-color: #FFF;
 		border-radius: 8px 8px 0 0;
+		border-radius: 8px;
 		height: 25px;
-	}
-	
-	#quote-comparison .quote-content {
-		display: flex;
-		flex-direction: column;
-		height: 549px;
-		justify-content: space-between;
-		padding: 24px 24px 32px;
 	}
 	
 	#quote-comparison .quote-header {
@@ -130,27 +139,23 @@
 		border: none;
 		padding: 0;
 	}
+
+
+		#quote-comparison #purchase {
+			background: none;
+			border-radius: 4px;
+			border: 1px solid #4C85FF;
+			color: #4C85FF;
+			cursor: pointer;
+			font-size: 16px;
+			font-weight: 700;
+			padding: 0;
+			padding: 16px 18px;
+		}
+
 	
-	#quote-comparison #purchase {
-		background: none;
-		border-radius: 4px;
-		border: 1px solid #4C85FF;
-		color: #4C85FF;
-		cursor: pointer;
-		font-size: 16px;
-		font-weight: 700;
-		padding: 0;
-		width: 215px;
-		height: 56px;
-		transition: all 0.2s;
-	}
 	
 	#quote-comparison #purchase:hover {
-		border: 1px solid #295ccc;
-		color: #295ccc;
-	}
-	
-	#quote-comparison #purchase.most-popular {
 		background: #4C85FF;
 		border-radius: 4px;
 		border: 1px solid #4C85FF;
@@ -159,13 +164,7 @@
 		font-size: 16px;
 		font-weight: 700;
 		padding: 0;
-		width: 215px;
-		height: 56px;
-		transition: background 0.2s;
-	}
-	
-	#quote-comparison #purchase.most-popular:hover {
-		background: #295ccc;
+		padding: 16px 18px;
 	}
 
 	#quote-comparison #details {
@@ -206,13 +205,11 @@
 			</#if>
 		</div>
 		<div class="quote-footer">
-			<div class="d-flex justify-content-center">
-				<button type="button" id="purchase"
-					<#if (mostPopular.getData())?? && mostPopular.getData() != "">
-						class="most-popular"
-					</#if>
-					onclick="event.preventDefault();">PURCHASE THIS POLICY</button>
-			</div>
+				<#if  (hasButton.getData() != "FALSE") >
+					<div class="d-flex justify-content-center">
+						<button type="button" id="purchase" onclick="event.preventDefault();">PURCHASE THIS POLICY</button>
+					</div>
+				</#if>
 			<div class="d-flex justify-content-center">
 				<button type="button" id="details" onclick="event.preventDefault();">Policy Details</button>
 			</div>
