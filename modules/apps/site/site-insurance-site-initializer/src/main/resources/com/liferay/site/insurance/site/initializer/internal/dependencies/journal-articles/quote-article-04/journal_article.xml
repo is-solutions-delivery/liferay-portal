@@ -2,7 +2,7 @@
 
 <root available-locales="en_US" default-locale="en_US">
 	<dynamic-element index-type="keyword" instance-id="viretmub" name="mostPopular" type="text">
-		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[GREAT COVERAGE]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="keyword" instance-id="viretmub" name="title" type="text">
 		<dynamic-content language-id="en_US"><![CDATA[Premium]]></dynamic-content>
@@ -27,7 +27,6 @@
 		</dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="ieffjpqx" name="hasButton" type="text">
-		<dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[FALSE]]></dynamic-content>
 	</dynamic-element>
-
 </root>
