@@ -3,6 +3,15 @@
 		"path": "home"
 	},
 	{
+		"path": "claims"
+	},
+	{
+		"path": "risk-control"
+	},
+	{
+		"path": "about-us"
+	},
+	{
 		"path": "product"
 	},
 	{
@@ -31,9 +40,6 @@
 	},
 	{
 		"path": "policies"
-	},
-	{
-		"path": "claims"
 	},
 	{
 		"path": "documents"
