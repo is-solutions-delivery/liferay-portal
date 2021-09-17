@@ -77,3 +77,8 @@
   -ms-transform: translateX(78px);
   transform: translateX(78px);
 }
+
+#navbarSupportedContent .btn.btn-ghost {
+	color: #4C85FF;
+    border-color: #4C85FF;
+}
