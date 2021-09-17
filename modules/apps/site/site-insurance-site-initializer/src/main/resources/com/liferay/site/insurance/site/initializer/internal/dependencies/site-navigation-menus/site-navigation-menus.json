@@ -11,8 +11,10 @@
 	{
 		"name": "Public Menu",
 		"pages": [
-			"product",
-			"news",
+			"business insurance",
+			"claims",
+			"risk control",
+			"about us",
 			"contact"
 		]
 	}
