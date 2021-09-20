@@ -110,7 +110,11 @@
 												"key": "tip-container"
 											},
 											"fragmentConfig": {},
-											"fragmentFields": []
+											"fragmentFields": [],
+											"fragmentStyle": {
+												"marginTop": "10",
+												"paddingTop": "4"
+											}
 										},
 										"type": "Fragment"
 									},
@@ -120,7 +124,11 @@
 												"key": "tip-container"
 											},
 											"fragmentConfig": {},
-											"fragmentFields": []
+											"fragmentFields": [],
+											"fragmentStyle": {
+												"marginTop": "10",
+												"paddingTop": "4"
+											}
 										},
 										"type": "Fragment"
 									},
