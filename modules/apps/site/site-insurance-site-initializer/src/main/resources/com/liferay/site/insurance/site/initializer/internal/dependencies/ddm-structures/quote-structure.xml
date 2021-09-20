@@ -155,6 +155,26 @@
 							},
 							"type": "ddm-image"
 						},
+						{
+							"dataType": "string",
+							"indexType": "text",
+							"label": {
+								"en_US": "Has Button"
+							},
+							"localizable": true,
+							"name": "hasButton",
+							"predefinedValue": {
+								"en_US": ""
+							},
+							"readOnly": false,
+							"repeatable": false,
+							"required": false,
+							"showLabel": true,
+							"tip": {
+								"en_US": ""
+							},
+							"type": "text"
+						},
 					],
 					"successPage": {
 						"body": {
@@ -238,6 +258,16 @@
 										{
 											"fieldNames": [
 												"closeIcon"
+											],
+											"size": 12
+										}	
+									]
+								},
+								{
+									"columns": [
+										{
+											"fieldNames": [
+												"hasButton"
 											],
 											"size": 12
 										}
