@@ -130,7 +130,7 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/asset-libraries/{assetLibraryId}/taxonomy-vocabularies' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/asset-libraries/{assetLibraryId}/taxonomy-vocabularies' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "externalReferenceCode": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@Consumes({"application/json", "application/xml"})
 	@Override
@@ -325,7 +325,7 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/sites/{siteId}/taxonomy-vocabularies' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/sites/{siteId}/taxonomy-vocabularies' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "externalReferenceCode": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@Consumes({"application/json", "application/xml"})
 	@Operation(description = "Inserts a new taxonomy vocabulary in a Site.")
@@ -566,7 +566,7 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PATCH' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/{taxonomyVocabularyId}' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PATCH' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/{taxonomyVocabularyId}' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "externalReferenceCode": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@Consumes({"application/json", "application/xml"})
 	@Operation(
@@ -627,6 +627,11 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 				taxonomyVocabulary.getDescription_i18n());
 		}
 
+		if (taxonomyVocabulary.getExternalReferenceCode() != null) {
+			existingTaxonomyVocabulary.setExternalReferenceCode(
+				taxonomyVocabulary.getExternalReferenceCode());
+		}
+
 		if (taxonomyVocabulary.getName() != null) {
 			existingTaxonomyVocabulary.setName(taxonomyVocabulary.getName());
 		}
@@ -660,7 +665,7 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/{taxonomyVocabularyId}' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/{taxonomyVocabularyId}' -d $'{"assetTypes": ___, "description": ___, "description_i18n": ___, "externalReferenceCode": ___, "name": ___, "name_i18n": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@Consumes({"application/json", "application/xml"})
 	@Operation(
