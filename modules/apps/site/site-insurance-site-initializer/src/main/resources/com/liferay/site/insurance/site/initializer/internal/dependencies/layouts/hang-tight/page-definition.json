@@ -6,14 +6,8 @@
 					"fragmentStyle": {
 						"backgroundColor": "",
 						"borderWidth": "0",
-						"marginBottom": "0",
-						"marginLeft": "0",
-						"marginRight": "0",
-						"marginTop": "0",
 						"opacity": "100",
 						"paddingBottom": "6",
-						"paddingLeft": "0",
-						"paddingRight": "0",
 						"paddingTop": "6"
 					},
 					"layout": {
@@ -33,7 +27,7 @@
 				"pageElements": [
 					{
 						"definition": {
-							"gutters": true,
+							"gutters": false,
 							"modulesPerRow": 2,
 							"numberOfColumns": 2,
 							"reverseOrder": false,
@@ -50,7 +44,8 @@
 									"id": "tablet",
 									"rowViewportDefinition": {}
 								}
-							]
+							],
+							"verticalAlignment": "top"
 						},
 						"pageElements": [
 							{
@@ -69,7 +64,7 @@
 											"id": "tablet"
 										}
 									],
-									"size": 8
+									"size": 6
 								},
 								"pageElements": [
 									{
@@ -101,39 +96,15 @@
 											"id": "tablet"
 										}
 									],
-									"size": 4
+									"size": 6
 								},
 								"pageElements": [
 									{
 										"definition": {
-											"fragment": {
-												"key": "tip-container"
-											},
-											"fragmentConfig": {},
-											"fragmentFields": [],
 											"fragmentStyle": {
-												"marginTop": "10",
-												"paddingTop": "4"
-											}
-										},
-										"type": "Fragment"
-									},
-									{
-										"definition": {
-											"fragment": {
-												"key": "tip-container"
+												"marginLeft": "7",
+												"marginTop": "6"
 											},
-											"fragmentConfig": {},
-											"fragmentFields": [],
-											"fragmentStyle": {
-												"marginTop": "10",
-												"paddingTop": "4"
-											}
-										},
-										"type": "Fragment"
-									},
-									{
-										"definition": {
 											"widgetInstance": {
 												"widgetConfig": {
 													"ddmTemplateKey": "",
