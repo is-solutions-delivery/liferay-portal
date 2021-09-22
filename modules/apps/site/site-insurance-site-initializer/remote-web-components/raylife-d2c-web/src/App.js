@@ -13,8 +13,7 @@ export const App = () => {
 	const _renderTitle = () => {
 		if (selectedStep.section !== AVAILABLE_STEPS.PROPERTY.section) {
 			return selectedStep.title;
-		}
-		else {
+		} else {
 			return (
 				<>
 					{selectedStep.title}

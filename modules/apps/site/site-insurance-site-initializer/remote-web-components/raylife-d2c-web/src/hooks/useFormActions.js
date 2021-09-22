@@ -108,9 +108,9 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 
 		if (validated) {
 			if (nextSection) {
-				smoothScroll();
+				setSection(nextSection);
 
-				return setSection(nextSection);
+				return smoothScroll();
 			}
 
 			window.location.href = `${liferaySiteName}/hang-tight`;
