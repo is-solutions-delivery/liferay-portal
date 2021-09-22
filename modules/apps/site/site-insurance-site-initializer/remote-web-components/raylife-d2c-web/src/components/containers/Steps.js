@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {useStepWizard} from '../../hooks/useStepWizard';
-import {AVAILABLE_STEPS, COOKIES} from '../../utils/constants';
+import {AVAILABLE_STEPS} from '../../utils/constants';
+import {Storage, STORAGE_KEYS} from '../../services/liferay/storage';
 import {StepItem} from '../fragments/Step/Item';
 import {StepList} from '../fragments/Step/List';
 
@@ -12,7 +13,7 @@ export const Steps = () => {
 		<StepList>
 			<StepItem
 				onClick={() => {
-					document.cookie = `${COOKIES.BASIC_STEP_CLICKED}=true`;
+					Storage.setItem(STORAGE_KEYS.BASIC_STEP_CLICKED, true);
 					setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE);
 				}}
 				percentage={

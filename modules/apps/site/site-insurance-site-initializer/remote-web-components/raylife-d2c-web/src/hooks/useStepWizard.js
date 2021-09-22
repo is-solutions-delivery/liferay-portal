@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useContext, useEffect} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
-import Cookie from 'js-cookie';
 
 import {AppContext} from '../context/AppContext';
 import {setSelectedStep} from '../context/actions';
 import {TIP_EVENT} from '../events';
 import {calculatePercentage, countCompletedFields} from '../utils';
 import {businessTotalFields} from '../utils/businessFields';
-import {AVAILABLE_STEPS, TOTAL_OF_FIELD, COOKIES} from '../utils/constants';
+import {AVAILABLE_STEPS, TOTAL_OF_FIELD} from '../utils/constants';
 import {propertyTotalFields} from '../utils/propertyFields';
+import {Storage, STORAGE_KEYS} from '../services/liferay/storage';
 import {useCustomEvent} from './useCustomEvent';
 
 export const useStepWizard = () => {
@@ -36,8 +36,8 @@ export const useStepWizard = () => {
 
 	const calculateAllSteps = () => {
 		if (
-			Cookie.get(COOKIES.BACK_TO_EDIT) &&
-			JSON.parse(Cookie.get(COOKIES.BACK_TO_EDIT))
+			Storage.getItem(STORAGE_KEYS.BACK_TO_EDIT) &&
+			JSON.parse(Storage.getItem(STORAGE_KEYS.BACK_TO_EDIT))
 		) {
 			const stepName = Object.keys(form)[
 				Object.keys(form).length - 1
@@ -74,7 +74,7 @@ export const useStepWizard = () => {
 	const _updateStepPercentage = () => {
 		switch (state.selectedStep.section) {
 			case AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section:
-				if (Cookie.get(COOKIES.BACK_TO_EDIT)) {
+				if (Storage.getItem(STORAGE_KEYS.BACK_TO_EDIT)) {
 					if (
 						state.selectedStep.subsection ===
 						AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION.subsection
@@ -88,7 +88,7 @@ export const useStepWizard = () => {
 						);
 					}
 
-					if (Cookie.get(COOKIES.BASIC_STEP_CLICKED)) {
+					if (Storage.getItem(STORAGE_KEYS.BASIC_STEP_CLICKED)) {
 						return setPercentage(
 							100,
 							AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section

@@ -93,8 +93,12 @@ getQuoteForm.onsubmit = function (event) {
 		}
 	} else {
 		const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
-		document.cookie = 'raylife-zip=' + formProps.zip;
-		document.cookie = 'raylife-product=' + formProps.product;
+
+		localStorage.setItem(
+			'raylife-business-home',
+			JSON.stringify(formProps)
+		);
+
 		window.location.href = `${pathname}/get-a-quote`;
 	}
 };

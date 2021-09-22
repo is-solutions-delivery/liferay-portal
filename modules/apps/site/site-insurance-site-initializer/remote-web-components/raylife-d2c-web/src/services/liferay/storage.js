@@ -51,6 +51,7 @@ export const Storage = {
 export const STORAGE_KEYS = {
 	APPLICATION_FORM: 'raylife-application-form',
 	APPLICATION_ID: 'raylife-application-id',
+	BASIC_STEP_CLICKED: 'basic-step-clicked',
 	BACK_TO_EDIT: 'raylife-back-to-edit',
 	CONTEXTUAL_MESSAGE: 'raylife-contextual-message',
 	PRODUCT: 'raylife-product',

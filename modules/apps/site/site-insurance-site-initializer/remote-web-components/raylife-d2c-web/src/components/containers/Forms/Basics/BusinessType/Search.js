@@ -6,22 +6,17 @@ import useDebounce from 'lodash.debounce';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 
-import Cookie from 'js-cookie';
-
 import {TIP_EVENT} from '../../../../../events';
 import {useBusinessTypes} from '../../../../../hooks/useBusinessTypes';
 import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {useTriggerContext} from '../../../../../hooks/useTriggerContext';
-import {
-	AVAILABLE_STEPS,
-	COOKIES,
-	TOTAL_OF_FIELD,
-} from '../../../../../utils/constants';
+import {AVAILABLE_STEPS, TOTAL_OF_FIELD} from '../../../../../utils/constants';
 import {calculatePercentage} from '../../../../../utils';
 import {WarningBadge} from '../../../../fragments/Badges/Warning';
 import {SearchInput} from '../../../../fragments/Forms/Input/Search';
 import {BusinessTypeRadioGroup} from './RadioGroup';
+import {Storage, STORAGE_KEYS} from '../../../../../services/liferay/storage';
 
 const MAX_LENGTH_TO_TRUNCATE = 28;
 
@@ -58,8 +53,8 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 			setIsLoading(false);
 			if (searchTerm === '' || auxSearchToChange !== searchTerm) {
 				if (
-					Cookie.get(COOKIES.BACK_TO_EDIT) &&
-					JSON.parse(Cookie.get(COOKIES.BACK_TO_EDIT))
+					Storage.getItem(STORAGE_KEYS.BACK_TO_EDIT) &&
+					JSON.parse(Storage.getItem(STORAGE_KEYS.BACK_TO_EDIT))
 				) {
 					setPercentage(
 						calculatePercentage(
