@@ -40,4 +40,5 @@ export const AVAILABLE_STEPS = {
 export const COOKIES = {
 	APPLICATION_FORM: 'raylife-application-form',
 	BACK_TO_EDIT: 'raylife-back-to-edit',
+	BASIC_STEP_CLICKED: 'basic-step-clicked',
 };

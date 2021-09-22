@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useStepWizard} from '../../hooks/useStepWizard';
-import {AVAILABLE_STEPS} from '../../utils/constants';
+import {AVAILABLE_STEPS, COOKIES} from '../../utils/constants';
 import {StepItem} from '../fragments/Step/Item';
 import {StepList} from '../fragments/Step/List';
 
@@ -11,7 +11,10 @@ export const Steps = () => {
 	return (
 		<StepList>
 			<StepItem
-				onClick={() => setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE)}
+				onClick={() => {
+					document.cookie = `${COOKIES.BASIC_STEP_CLICKED}=true`;
+					setSection(AVAILABLE_STEPS.BASICS_BUSINESS_TYPE);
+				}}
 				percentage={
 					selectedStep.percentage[
 						AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section

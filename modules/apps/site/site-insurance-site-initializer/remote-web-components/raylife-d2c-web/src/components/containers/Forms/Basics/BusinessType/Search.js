@@ -6,11 +6,19 @@ import useDebounce from 'lodash.debounce';
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 
+import Cookie from 'js-cookie';
+
 import {TIP_EVENT} from '../../../../../events';
 import {useBusinessTypes} from '../../../../../hooks/useBusinessTypes';
 import {useCustomEvent} from '../../../../../hooks/useCustomEvent';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {useTriggerContext} from '../../../../../hooks/useTriggerContext';
+import {
+	AVAILABLE_STEPS,
+	COOKIES,
+	TOTAL_OF_FIELD,
+} from '../../../../../utils/constants';
+import {calculatePercentage} from '../../../../../utils';
 import {WarningBadge} from '../../../../fragments/Badges/Warning';
 import {SearchInput} from '../../../../fragments/Forms/Input/Search';
 import {BusinessTypeRadioGroup} from './RadioGroup';
@@ -25,7 +33,7 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 	} = useFormContext();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
 
-	const {selectedStep} = useStepWizard();
+	const {selectedStep, setPercentage} = useStepWizard();
 	const {businessTypes, isError, reload} = useBusinessTypes();
 	const {isSelected, updateState} = useTriggerContext();
 	const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +56,20 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 			}
 			await reload(searchTerm);
 			setIsLoading(false);
+			if (searchTerm === '' || auxSearchToChange !== searchTerm) {
+				if (
+					Cookie.get(COOKIES.BACK_TO_EDIT) &&
+					JSON.parse(Cookie.get(COOKIES.BACK_TO_EDIT))
+				) {
+					setPercentage(
+						calculatePercentage(
+							TOTAL_OF_FIELD.BASICS - 1,
+							TOTAL_OF_FIELD.BASICS
+						),
+						AVAILABLE_STEPS.BASICS_BUSINESS_TYPE.section
+					);
+				}
+			}
 		}, 500),
 		[]
 	);
