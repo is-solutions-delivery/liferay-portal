@@ -1,9 +1,9 @@
 import '../../types';
 
 import Axios from 'axios';
-import Cookies from 'js-cookie';
 
 import {LiferayAdapt} from './adapter';
+import {Storage, STORAGE_KEYS} from './storage';
 
 const LiferayObjectAPI = 'o/c/raylifeapplications';
 
@@ -41,10 +41,10 @@ const getBusinessTypes = async (filter = '') => {
 
 	const normalizedFilter = filter.toLowerCase().replace(/\\/g, '');
 
-	const parentId = Cookies.get('raylife-product');
+	const productParentId = Storage.getItem(STORAGE_KEYS.PRODUCT);
 
 	const assetCategories = await _getAssetCategoriesByParentId(
-		parentId,
+		productParentId,
 		normalizedFilter
 	);
 

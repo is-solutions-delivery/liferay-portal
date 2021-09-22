@@ -12,15 +12,15 @@
  * details.
  */
 
+const applicationIdKey = 'raylife-application-id';
 const btnBack = fragmentElement.querySelector('#contact-agent-btn-back');
 const btnCall = fragmentElement.querySelector('#contact-agent-btn-call');
-const nameCookieContextualMessage = 'raylife-contextual-message';
-const nameCookieId = 'raylife-application-id';
+const contextualMessageIdKey = 'raylife-contextual-message';
 const valueCall = fragmentElement.querySelector('#value-number-call')
 	.textContent;
 
 btnBack.onclick = function () {
-	document.cookie = 'raylife-back-to-edit=true';
+	localStorage.setItem('raylife-back-to-edit', true);
 	window.history.back();
 };
 
@@ -28,29 +28,17 @@ btnCall.onclick = function () {
 	window.location.href = 'tel:' + valueCall;
 };
 
-function getCookie(name) {
-	name = name + '=';
-	const decodedCookie = decodeURIComponent(document.cookie);
-	const cookies = decodedCookie.split(';');
-	for (let i = 0; i < cookies.length; i++) {
-		const cookie = cookies[i].trim();
-		if (cookie.indexOf(name) == 0) {
-			return cookie.substring(name.length, cookie.length);
-		}
-	}
-}
+const applicationId = localStorage.getItem(applicationIdKey);
 
-const applicationIdCookie = getCookie(nameCookieId);
-
-if (applicationIdCookie) {
+if (applicationId) {
 	document.getElementById('content-agent-text-your-application').textContent =
-		'Your Application #' + applicationIdCookie;
+		'Your Application #' + applicationId;
 }
 
-const contextualMessageCookie = getCookie(nameCookieContextualMessage);
+const contextualMessage = localStorage.getItem(contextualMessageIdKey);
 
-if (contextualMessageCookie) {
+if (contextualMessage) {
 	document.getElementById(
 		'contact-agent-contextual-message'
-	).textContent = contextualMessageCookie;
+	).textContent = contextualMessage;
 }

@@ -102,18 +102,18 @@
 
 <script>
 	function ${applicationNameSpace}backToEdit() {
-	let siteName = '';
-	
-	try {
-		const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
-		const urlPaths = pathname.split('/').filter(Boolean);
-		siteName = '/' + urlPaths.slice(0, urlPaths.length - 1).join('/');
-	} catch (error) {
+		let siteName = '';
+		
+		try {
+			const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
+			const urlPaths = pathname.split('/').filter(Boolean);
+			siteName = '/' + urlPaths.slice(0, urlPaths.length - 1).join('/');
+		} catch (error) {
 			console.warn(error);
-	}
-	
+		}
+		
 		window.location.href = siteName + '/get-a-quote';
-		document.cookie = 'raylife-back-to-edit=true';
+		localStorage.setItem('raylife-back-to-edit', true);
 	}
 </script>
 

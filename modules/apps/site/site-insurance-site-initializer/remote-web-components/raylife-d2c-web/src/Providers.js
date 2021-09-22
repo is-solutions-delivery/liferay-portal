@@ -1,18 +1,17 @@
 import {ClayIconSpriteContext} from '@clayui/icon';
 import React from 'react';
-import Cookie from 'js-cookie';
 import {FormProvider, useForm} from 'react-hook-form';
 
 import {Template} from './components/Template';
 import {AppProvider} from './context/AppContext';
-import {COOKIES} from './utils/constants';
+import {STORAGE_KEYS, Storage} from './services/liferay/storage';
 
 const getDefaultValues = () => {
 	try {
 		let data = '';
 
-		if (document.cookie.includes(COOKIES.BACK_TO_EDIT)) {
-			data = JSON.parse(Cookie.get(COOKIES.APPLICATION_FORM));
+		if (Storage.itemExist(STORAGE_KEYS.BACK_TO_EDIT)) {
+			data = JSON.parse(Storage.getItem(STORAGE_KEYS.APPLICATION_FORM));
 		}
 
 		return data;

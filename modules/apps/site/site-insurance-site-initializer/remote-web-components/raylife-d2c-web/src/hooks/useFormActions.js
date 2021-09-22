@@ -2,10 +2,10 @@ import {useState, useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {LiferayService} from '../services/liferay';
 import {useStepWizard} from './useStepWizard';
-import Cookies from 'js-cookie';
 import {verifyInputAgentPage} from '../utils/contact-agent';
 import {useTriggerContext} from './useTriggerContext';
 import {smoothScroll} from '../utils/scroll';
+import {STORAGE_KEYS, Storage} from '../services/liferay/storage';
 
 const liferaySiteName = LiferayService.getLiferaySiteName();
 
@@ -34,13 +34,13 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		if (applicationId) {
 			setValue('basics.applicationId', applicationId);
 
-			Cookies.set('raylife-application-id', applicationId);
+			Storage.setItem(STORAGE_KEYS.APPLICATION_ID, applicationId);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [applicationId]);
 
 	useEffect(() => {
-		Cookies.set('raylife-application-form', JSON.stringify(form));
+		Storage.setItem(STORAGE_KEYS.APPLICATION_FORM, JSON.stringify(form));
 	}, [form]);
 
 	const _onValidation = () => {
@@ -48,11 +48,11 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		let validated = true;
 
 		if (phraseAgentPage) {
-			Cookies.set('raylife-contextual-message', phraseAgentPage);
+			Storage.setItem(STORAGE_KEYS.CONTEXTUAL_MESSAGE, phraseAgentPage);
 			window.location.href = `${liferaySiteName}/get-in-touch`;
 			validated = false;
 		} else {
-			Cookies.remove('raylife-contextual-message');
+			Storage.removeItem(STORAGE_KEYS.CONTEXTUAL_MESSAGE);
 		}
 
 		return validated;

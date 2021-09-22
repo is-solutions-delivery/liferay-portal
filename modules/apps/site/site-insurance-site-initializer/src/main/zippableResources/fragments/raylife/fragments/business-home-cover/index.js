@@ -76,9 +76,8 @@ getQuoteForm.onsubmit = function (event) {
 	zipContainer.classList.remove('has-error');
 	productContainer.classList.remove('has-error');
 
-	if (document.cookie.includes('raylife-back-to-edit')) {
-		document.cookie =
-			'raylife-back-to-edit= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+	if (localStorage.getItem('raylife-back-to-edit')) {
+		localStorage.removeItem('raylife-back-to-edit');
 	}
 
 	if (

@@ -36,8 +36,3 @@ export const AVAILABLE_STEPS = {
 		title: 'More about',
 	},
 };
-
-export const COOKIES = {
-	APPLICATION_FORM: 'raylife-application-form',
-	BACK_TO_EDIT: 'raylife-back-to-edit',
-};

@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import Cookie from 'js-cookie';
 
 import {useStepWizard} from '../../../hooks/useStepWizard';
-import {AVAILABLE_STEPS, COOKIES} from '../../../utils/constants';
+import {AVAILABLE_STEPS} from '../../../utils/constants';
 import {FormBasicBusinessInformation} from './Basics/BusinessInformation';
 import {FormBasicBusinessType} from './Basics/BusinessType';
 import {FormBasicProductQuote} from './Basics/ProductQuote';
 import {FormBusiness} from './Business';
 import {FormEmployees} from './Employees';
 import {FormProperty} from './Property';
+import {Storage, STORAGE_KEYS} from '../../../services/liferay/storage';
 
 const compare = (a, b) => {
 	return a.section === b.section && a.subsection === b.subsection;
@@ -29,8 +29,8 @@ export const Forms = ({form}) => {
 	useEffect(() => {
 		if (
 			loaded &&
-			Cookie.get(COOKIES.BACK_TO_EDIT) &&
-			JSON.parse(Cookie.get(COOKIES.BACK_TO_EDIT))
+			Storage.itemExist(STORAGE_KEYS.BACK_TO_EDIT) &&
+			JSON.parse(Storage.getItem(STORAGE_KEYS.BACK_TO_EDIT))
 		) {
 			loadSections();
 		} else {
