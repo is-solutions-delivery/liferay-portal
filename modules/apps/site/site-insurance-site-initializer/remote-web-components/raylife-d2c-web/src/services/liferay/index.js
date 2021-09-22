@@ -5,6 +5,8 @@ import Cookies from 'js-cookie';
 
 import {LiferayAdapt} from './adapter';
 
+const LiferayObjectAPI = 'o/c/raylifeapplications';
+
 const {
 	REACT_APP_LIFERAY_API = '',
 	REACT_APP_LIFERAY_AUTH_PASSWORD = '',
@@ -165,7 +167,7 @@ const getCategoryProperties = async (id) => {
  * @returns {Promise<any>}  Axios Response
  */
 const _postBasicsFormApplication = (payload) => {
-	return LiferayAPI.post('/o/c_raylifeapplications', payload);
+	return LiferayAPI.post(LiferayObjectAPI, payload);
 };
 
 /**
@@ -173,7 +175,7 @@ const _postBasicsFormApplication = (payload) => {
  * @returns {Promise<any>}  Axios Response
  */
 const _patchBasicsFormApplication = (payload, id) => {
-	return LiferayAPI.patch(`/o/c_raylifeapplications/${id}`, payload);
+	return LiferayAPI.patch(`${LiferayObjectAPI}/${id}`, payload);
 };
 
 const LiferayAPI = Axios.create({
