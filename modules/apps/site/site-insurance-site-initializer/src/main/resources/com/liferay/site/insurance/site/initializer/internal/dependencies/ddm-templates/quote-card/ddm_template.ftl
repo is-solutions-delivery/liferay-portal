@@ -3,6 +3,7 @@
 		background-color: #FFF;
 		border-radius: 8px;
 		border: 1px solid #A6C2FF;
+		box-shadow: 0px 10px 30px rgba(77, 133, 255, 0.09);
 		height: 576px;
 		width: 292px;
 	}
@@ -45,11 +46,11 @@
 	#quote-comparison .quote-header .value {
 		color: #09101D;
 		display: flex;
+    	flex-direction: row;
 		font-size: 49px;
 		font-weight: 800;
 		justify-content: center;
 		line-height: 56px;
-    	flex-direction: row;
 	}
 	
 	#quote-comparison .quote-header .value div {
@@ -80,8 +81,8 @@
 		flex: auto;
 		font-size: 13px;
 		font-weight: 500;
-		list-style: none;
     	justify-content: space-between;
+		list-style: none;
 	}
 	
 	#quote-comparison li:not(:last-child) {

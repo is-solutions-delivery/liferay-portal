@@ -3,6 +3,9 @@
 		"pageElements": [
 			{
 				"definition": {
+					"fragmentStyle": {
+						"borderWidth": "0"
+					},
 					"layout": {
 						"borderWidth": 0,
 						"marginBottom": 0,
@@ -19,7 +22,7 @@
 				"pageElements": [
 					{
 						"definition": {
-							"gutters": false,
+							"gutters": true,
 							"modulesPerRow": 2,
 							"numberOfColumns": 2,
 							"reverseOrder": false,
@@ -32,7 +35,10 @@
 									"id": "portraitMobile",
 									"rowViewportDefinition": {}
 								},
-								{"id": "tablet", "rowViewportDefinition": {}}
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {}
+								}
 							],
 							"verticalAlignment": "top"
 						},
@@ -68,7 +74,7 @@
 												"paddingLeft": 0,
 												"paddingRight": 0,
 												"paddingTop": 0,
-												"widthType": "Fixed"
+												"widthType": "Fluid"
 											}
 										},
 										"pageElements": [
@@ -87,221 +93,116 @@
 													}
 												},
 												"type": "Fragment"
+											}
+										],
+										"type": "Section"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 3
+								},
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					},
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 4,
+							"numberOfColumns": 4,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 3
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0",
+												"marginLeft": "4",
+												"marginTop": "4"
 											},
+											"layout": {
+												"borderWidth": 0,
+												"contentDisplay": "FlexRow",
+												"marginBottom": 0,
+												"marginLeft": 2,
+												"marginRight": 0,
+												"marginTop": 2,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
+											}
+										},
+										"pageElements": [
 											{
 												"definition": {
-													"gutters": true,
-													"modulesPerRow": 3,
-													"numberOfColumns": 3,
-													"reverseOrder": false,
-													"rowViewports": [
-														{
-															"id": "landscapeMobile",
-															"rowViewportDefinition": {}
+													"widgetInstance": {
+														"widgetConfig": {
+															"ddmTemplateKey": "",
+															"assetEntryId": "52963",
+															"userToolAssetAddonEntryKeys": "false",
+															"groupId": "",
+															"enableViewCountIncrement": "false",
+															"articleId": "BASIC-PRICING-TIER-TEMPLATE",
+															"contentMetadataAssetAddonEntryKeys": "false"
 														},
-														{
-															"id": "portraitMobile",
-															"rowViewportDefinition": {}
-														},
-														{
-															"id": "tablet",
-															"rowViewportDefinition": {}
-														}
-													],
-													"verticalAlignment": "top"
-												},
-												"pageElements": [
-													{
-														"definition": {
-															"columnViewports": [
-																{
-																	"columnViewportDefinition": {},
-																	"id": "landscapeMobile"
-																},
-																{
-																	"columnViewportDefinition": {},
-																	"id": "portraitMobile"
-																},
-																{
-																	"columnViewportDefinition": {},
-																	"id": "tablet"
-																}
-															],
-															"size": 4
-														},
-														"pageElements": [
-															{
-																"definition": {
-																	"fragmentStyle": {
-																		"borderWidth": "0",
-																		"marginLeft": "5",
-																		"marginTop": "4"
-																	},
-																	"layout": {
-																		"borderWidth": 0,
-																		"contentDisplay": "FlexRow",
-																		"marginBottom": 0,
-																		"marginLeft": 4,
-																		"marginRight": 0,
-																		"marginTop": 2,
-																		"paddingBottom": 0,
-																		"paddingLeft": 0,
-																		"paddingRight": 0,
-																		"paddingTop": 0,
-																		"widthType": "Fluid"
-																	}
-																},
-																"pageElements": [
-																	{
-																		"definition": {
-																			"widgetInstance": {
-																				"widgetConfig": {
-																					"ddmTemplateKey": "",
-																					"assetEntryId": "52963",
-																					"userToolAssetAddonEntryKeys": "false",
-																					"groupId": "",
-																					"enableViewCountIncrement": "false",
-																					"articleId": "BASIC-PRICING-TIER-TEMPLATE",
-																					"contentMetadataAssetAddonEntryKeys": "false"
-																				},
-																				"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
-																			}
-																		},
-																		"type": "Widget"
-																	}
-																],
-																"type": "Section"
-															}
-														],
-														"type": "Column"
-													},
-													{
-														"definition": {
-															"columnViewports": [
-																{
-																	"columnViewportDefinition": {},
-																	"id": "landscapeMobile"
-																},
-																{
-																	"columnViewportDefinition": {},
-																	"id": "portraitMobile"
-																},
-																{
-																	"columnViewportDefinition": {},
-																	"id": "tablet"
-																}
-															],
-															"size": 4
-														},
-														"pageElements": [
-															{
-																"definition": {
-																	"fragmentStyle": {
-																		"borderWidth": "0",
-																		"paddingLeft": "3"
-																	},
-																	"layout": {
-																		"borderWidth": 0,
-																		"marginBottom": 0,
-																		"marginLeft": 0,
-																		"marginRight": 0,
-																		"marginTop": 0,
-																		"paddingBottom": 0,
-																		"paddingLeft": 1,
-																		"paddingRight": 0,
-																		"paddingTop": 0,
-																		"widthType": "Fluid"
-																	}
-																},
-																"pageElements": [
-																	{
-																		"definition": {
-																			"widgetInstance": {
-																				"widgetConfig": {
-																					"ddmTemplateKey": "",
-																					"assetEntryId": "52973",
-																					"userToolAssetAddonEntryKeys": "false",
-																					"groupId": "",
-																					"enableViewCountIncrement": "false",
-																					"articleId": "STANDARD-PRICING-TIER-TEMPLATE",
-																					"contentMetadataAssetAddonEntryKeys": "false"
-																				},
-																				"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
-																			}
-																		},
-																		"type": "Widget"
-																	}
-																],
-																"type": "Section"
-															}
-														],
-														"type": "Column"
-													},
-													{
-														"definition": {
-															"columnViewports": [
-																{
-																	"columnViewportDefinition": {},
-																	"id": "landscapeMobile"
-																},
-																{
-																	"columnViewportDefinition": {},
-																	"id": "portraitMobile"
-																},
-																{
-																	"columnViewportDefinition": {},
-																	"id": "tablet"
-																}
-															],
-															"size": 4
-														},
-														"pageElements": [
-															{
-																"definition": {
-																	"fragmentStyle": {
-																		"borderWidth": "0",
-																		"marginLeft": "1",
-																		"marginTop": "4"
-																	},
-																	"layout": {
-																		"borderWidth": 0,
-																		"marginBottom": 0,
-																		"marginLeft": 0,
-																		"marginRight": 0,
-																		"marginTop": 2,
-																		"paddingBottom": 0,
-																		"paddingLeft": 0,
-																		"paddingRight": 0,
-																		"paddingTop": 0,
-																		"widthType": "Fluid"
-																	}
-																},
-																"pageElements": [
-																	{
-																		"definition": {
-																			"widgetInstance": {
-																				"widgetConfig": {
-																					"ddmTemplateKey": "",
-																					"assetEntryId": "63367",
-																					"userToolAssetAddonEntryKeys": "false",
-																					"groupId": "",
-																					"enableViewCountIncrement": "false",
-																					"articleId": "PREMIUM-PRICING-TIER-TEMPLATE",
-																					"contentMetadataAssetAddonEntryKeys": "false"
-																				},
-																				"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
-																			}
-																		},
-																		"type": "Widget"
-																	}
-																],
-																"type": "Section"
-															}
-														],
-														"type": "Column"
+														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
 													}
-												],
-												"type": "Row"
+												},
+												"type": "Widget"
 											}
 										],
 										"type": "Section"
@@ -331,8 +232,8 @@
 									{
 										"definition": {
 											"fragmentStyle": {
-												"marginLeft": "5",
-												"marginTop": "10"
+												"borderWidth": "0",
+												"paddingLeft": "3"
 											},
 											"layout": {
 												"borderWidth": 0,
@@ -340,6 +241,69 @@
 												"marginLeft": 0,
 												"marginRight": 0,
 												"marginTop": 0,
+												"paddingBottom": 0,
+												"paddingLeft": 1,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"widgetInstance": {
+														"widgetConfig": {
+															"ddmTemplateKey": "",
+															"assetEntryId": "52973",
+															"userToolAssetAddonEntryKeys": "false",
+															"groupId": "",
+															"enableViewCountIncrement": "false",
+															"articleId": "STANDARD-PRICING-TIER-TEMPLATE",
+															"contentMetadataAssetAddonEntryKeys": "false"
+														},
+														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+													}
+												},
+												"type": "Widget"
+											}
+										],
+										"type": "Section"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 3
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0",
+												"marginLeft": "1",
+												"marginTop": "4"
+											},
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 2,
 												"paddingBottom": 0,
 												"paddingLeft": 0,
 												"paddingRight": 0,
@@ -350,9 +314,69 @@
 										"pageElements": [
 											{
 												"definition": {
-													"fragmentStyle": {
-														"marginLeft": "5"
-													},
+													"widgetInstance": {
+														"widgetConfig": {
+															"ddmTemplateKey": "",
+															"assetEntryId": "63367",
+															"userToolAssetAddonEntryKeys": "false",
+															"groupId": "",
+															"enableViewCountIncrement": "false",
+															"articleId": "PREMIUM-PRICING-TIER-TEMPLATE",
+															"contentMetadataAssetAddonEntryKeys": "false"
+														},
+														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
+													}
+												},
+												"type": "Widget"
+											}
+										],
+										"type": "Section"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 3
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0",
+												"marginLeft": "1",
+												"marginTop": "4"
+											},
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 2,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
 													"widgetInstance": {
 														"widgetConfig": {
 															"ddmTemplateKey": "",
