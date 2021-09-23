@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useRef} from 'react';
 import {useFormContext} from 'react-hook-form';
-
 import {useLocation} from '~/apps/get-a-quote/hooks/useLocation';
 import {ControlledInput} from '~/shared/components/connectors/Controlled/Input';
 import {ZIPControlledInput} from '~/shared/components/connectors/Controlled/Input/WithMask/ZIP';

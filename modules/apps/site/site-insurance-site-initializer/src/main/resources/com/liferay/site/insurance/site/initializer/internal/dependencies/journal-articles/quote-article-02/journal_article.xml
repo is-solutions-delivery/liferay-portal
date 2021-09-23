@@ -14,7 +14,7 @@
 		<dynamic-content language-id="en_US"><![CDATA[Get covered for <span>&#36;359 today</span>]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="ieffjpqx" name="listTerms" type="text_area">
-		<dynamic-content language-id="en_US"><![CDATA[<ul><li><div class="checkIcon"><div>Per Occurrence Limit</div></div><div>$1,000,000</div></li><li><div class="checkIcon"><div>Aggregate Limit</div></div><div>$2,000,000</div></li><li><div class="checkIcon"><div>Business Personal Property</div></div><div>$50,000</div></li><li><div class="checkIcon"><div>Product Recall or Replacement</div></div><div> </div></li><li><div class="closeIcon"><div>Money &amp; Securities</div></div><div> </div></li></ul>]]></dynamic-content>
+		<dynamic-content language-id="en_US"><![CDATA[<ul><li><div class="checkIcon"><div>Per Occurrence Limit</div></div><div>$1,000,000</div></li><li><div class="checkIcon"><div>Aggregate Limit</div></div><div>$2,000,000</div></li><li><div class="checkIcon"><div>Business Personal Property</div></div><div>$50,000</div></li><li><div class="checkIcon"><div>Product Recall or Replacement</div></div><div> </div></li><li><div class="closeIcon"><div>Money &amp; Securities</div></div><div> </div></li></ul>]]></dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="tjcafeqv" name="checkIcon" type="image">
 		<dynamic-content language-id="en_US">

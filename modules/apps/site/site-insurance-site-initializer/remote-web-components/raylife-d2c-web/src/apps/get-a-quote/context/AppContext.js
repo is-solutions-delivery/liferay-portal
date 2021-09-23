@@ -1,11 +1,12 @@
 import React, {createContext, useEffect, useReducer} from 'react';
-
-import {TIP_EVENT_DISMISS} from '~/shared/utils/events';
 import {AVAILABLE_STEPS} from '~/apps/get-a-quote/utils/constants';
+import {TIP_EVENT_DISMISS} from '~/shared/utils/events';
+
 import {setSelectedTrigger} from './actions';
 import {reducer} from './reducer';
 
 const initialState = {
+	selectedProduct: '',
 	selectedStep: {
 		percentage: {
 			[AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION.section]: 0,
@@ -18,7 +19,6 @@ const initialState = {
 		title: "Welcome! Let's start.",
 	},
 	selectedTrigger: '',
-	selectedProduct: '',
 };
 
 export const AppContext = createContext({});

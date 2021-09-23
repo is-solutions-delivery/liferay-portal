@@ -1,7 +1,8 @@
-import {WebComponent} from '~/shared/WebComponent';
 import {Providers} from '~/apps/get-a-quote/Providers';
-import StylesProvider from '~/shared/styles/provider.scss';
+import {WebComponent} from '~/shared/WebComponent';
 import {GoogleMapsService} from '~/shared/services/google-maps';
+import StylesProvider from '~/shared/styles/provider.scss';
+
 import {App} from './App';
 
 const Application = () => (

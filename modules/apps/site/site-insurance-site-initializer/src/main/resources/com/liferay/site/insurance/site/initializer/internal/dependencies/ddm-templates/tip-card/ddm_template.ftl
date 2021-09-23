@@ -11,21 +11,21 @@
 		pointer-events: none;
 		transition: opacity .5s linear;
 	}
-	
+
 	#tip ul {
 		list-style-type: none;
 		margin: 0;
 		padding: 0;
 	}
-	
+
 	#tip li {
 		color: #606167;
 		display: flex;
 		font-size: 16px;
 		font-weight: bold;
-    	align-items: center;
+		align-items: center;
 	}
-	
+
 	#tip li::before {
 		-webkit-mask-size: cover;
 		-webkit-mask: url(${listIcon.getData()}) no-repeat 50% 50%;
@@ -52,7 +52,7 @@
 		font-size: 24px;
 		word-wrap: break-word;
 	}
-	
+
 	<#if titleIcon.getData() ?? && titleIcon.getData() != "">
 		#tip .title::before {
 			-webkit-mask-size: cover;
@@ -80,7 +80,7 @@
 			width: 20px;
 		}
 	</#if>
-	
+
 	.back-to-edit-info {
 		background-color: transparent;
 		border-radius: 4px;
@@ -98,12 +98,12 @@
 	}
 </style>
 
-<#assign applicationNameSpace = randomNamespace>
+<#assign applicationNameSpace = randomNamespace />
 
 <script>
 	function ${applicationNameSpace}backToEdit() {
 		let siteName = '';
-		
+
 		try {
 			const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
 			const urlPaths = pathname.split('/').filter(Boolean);
@@ -111,7 +111,7 @@
 		} catch (error) {
 			console.warn(error);
 		}
-		
+
 		window.location.href = siteName + '/get-a-quote';
 		localStorage.setItem('raylife-back-to-edit', true);
 	}
@@ -121,13 +121,13 @@
 	<#if (title.getData())??>
 		<h1 class="title">${title.getData()}</h1>
 	</#if>
-	
+
 	<#if (subtitle.getData())??>
 		<p class="subtitle">
 			${subtitle.getData()}
 		</p>
 	</#if>
-	
+
 	<#if (actionList.getData())??>
 		${actionList.getData()}
 	</#if>
@@ -143,16 +143,16 @@
 			${externalLink.getData()}
 		</div>
 	</#if>
-	
+
 	<#if pageOptions.getData()?contains("showBacktoEdit")>
 		<button class="back-to-edit-info" onclick="${applicationNameSpace}backToEdit()">
 		<#if (backIcon.getData())??>
-			<img src="${backIcon.getData()}" /> 
+			<img src="${backIcon.getData()}" />
 		</#if>
 			Back to Edit Info
 		</button>
 	</#if>
-	
+
 	<#if pageOptions.getData()?contains("dismissible")>
 		<div class="d-flex justify-content-center">
 			<button type="button" id="dismiss" onclick="event.preventDefault(); document.getElementById('tip').classList.add('hide');">Dismiss</button>

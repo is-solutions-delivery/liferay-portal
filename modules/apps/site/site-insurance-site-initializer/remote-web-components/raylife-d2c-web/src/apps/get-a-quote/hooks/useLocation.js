@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-
 import {GoogleMapsService} from '~/shared/services/google-maps';
 import {MockService} from '~/shared/services/mock';
 

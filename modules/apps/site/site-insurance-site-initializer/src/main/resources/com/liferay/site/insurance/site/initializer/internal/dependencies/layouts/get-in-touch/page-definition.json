@@ -37,15 +37,18 @@
 							"rowViewports": [
 								{
 									"id": "landscapeMobile",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								},
 								{
 									"id": "portraitMobile",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								},
 								{
 									"id": "tablet",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								}
 							],
 							"verticalAlignment": "top"
@@ -55,15 +58,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -75,8 +81,10 @@
 											"fragment": {
 												"key": "get-in-touch"
 											},
-											"fragmentConfig": {},
-											"fragmentFields": [],
+											"fragmentConfig": {
+											},
+											"fragmentFields": [
+											],
 											"fragmentStyle": {
 												"marginLeft": "10",
 												"marginTop": "5"
@@ -91,15 +99,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -129,13 +140,13 @@
 												"definition": {
 													"widgetInstance": {
 														"widgetConfig": {
-															"ddmTemplateKey": "",
-															"assetEntryId": "",
-															"userToolAssetAddonEntryKeys": "false",
-															"groupId": "",
-															"enableViewCountIncrement": "false",
 															"articleId": "DID-YOU-KNOW-TEMPLATE",
-															"contentMetadataAssetAddonEntryKeys": "false"
+															"assetEntryId": "",
+															"contentMetadataAssetAddonEntryKeys": "false",
+															"ddmTemplateKey": "",
+															"enableViewCountIncrement": "false",
+															"groupId": "",
+															"userToolAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
 													}
@@ -159,10 +170,13 @@
 					"fragment": {
 						"key": "quote-footer"
 					},
-					"fragmentConfig": {},
-					"fragmentFields": [],
+					"fragmentConfig": {
+					},
+					"fragmentFields": [
+					],
 					"fragmentStyle": {
-						"backgroundFragmentImage": {},
+						"backgroundFragmentImage": {
+						},
 						"borderRadius": "",
 						"borderWidth": "0",
 						"fontFamily": "",

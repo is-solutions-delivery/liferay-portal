@@ -1,10 +1,10 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
-import {LiferayService} from '~/shared/services/liferay';
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
 import {verifyInputAgentPage} from '~/apps/get-a-quote/utils/contact-agent';
-import {smoothScroll} from '~/shared/utils/scroll';
+import {LiferayService} from '~/shared/services/liferay';
 import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
+import {smoothScroll} from '~/shared/utils/scroll';
 
 const liferaySiteName = LiferayService.getLiferaySiteName();
 

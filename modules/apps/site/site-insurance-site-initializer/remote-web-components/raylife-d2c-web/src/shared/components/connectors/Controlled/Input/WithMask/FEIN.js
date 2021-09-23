@@ -1,7 +1,7 @@
 import React from 'react';
+import {FEIN_REGEX} from '~/shared/utils/patterns';
 
 import {ControlledInputWithMask} from '.';
-import {FEIN_REGEX} from '~/shared/utils/patterns';
 
 export const FEINControlledInput = ({
 	rules = {},

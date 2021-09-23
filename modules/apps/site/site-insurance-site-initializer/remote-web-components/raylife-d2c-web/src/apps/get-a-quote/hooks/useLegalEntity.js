@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-
 import {MockService} from '~/shared/services/mock';
 
 export const useLegalEntity = () => {

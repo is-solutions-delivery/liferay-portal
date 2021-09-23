@@ -1,7 +1,8 @@
 import {WebComponent} from '~/shared/WebComponent';
-import StylesProvider from '~/shared/styles/provider.scss';
-import {App} from './App';
 import ClayIconProvider from '~/shared/context/ClayIconProvider';
+import StylesProvider from '~/shared/styles/provider.scss';
+
+import {App} from './App';
 
 const Application = () => (
 	<ClayIconProvider>

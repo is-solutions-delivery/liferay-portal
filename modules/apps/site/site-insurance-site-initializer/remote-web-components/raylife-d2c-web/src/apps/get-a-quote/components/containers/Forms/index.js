@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
-
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
 import {AVAILABLE_STEPS} from '~/apps/get-a-quote/utils/constants';
+import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
+
 import {FormBasicBusinessInformation} from './Basics/BusinessInformation';
 import {FormBasicBusinessType} from './Basics/BusinessType';
 import {FormBasicProductQuote} from './Basics/ProductQuote';
 import {FormBusiness} from './Business';
 import {FormEmployees} from './Employees';
 import {FormProperty} from './Property';
-import {Storage, STORAGE_KEYS} from '~/shared/services/liferay/storage';
 
 const compare = (a, b) => {
 	return a.section === b.section && a.subsection === b.subsection;

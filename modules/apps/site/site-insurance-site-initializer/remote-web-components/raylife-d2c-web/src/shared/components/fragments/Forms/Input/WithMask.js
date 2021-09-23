@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactInputMask from 'react-number-format';
+
 import {InputAreaWithError} from '../InputArea/WithError';
 import {Label} from '../Label';
 

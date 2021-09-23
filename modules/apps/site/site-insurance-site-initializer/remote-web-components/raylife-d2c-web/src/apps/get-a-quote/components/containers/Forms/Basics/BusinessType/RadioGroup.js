@@ -1,9 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
-
-import {LiferayService} from '~/shared/services/liferay';
 import {Radio} from '~/shared/components/fragments/Forms/Radio';
+import {LiferayService} from '~/shared/services/liferay';
 
 export const BusinessTypeRadioGroup = ({
 	businessTypes = [],

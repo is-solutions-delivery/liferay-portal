@@ -3,10 +3,10 @@
 }
 
 .business-home-cover .btn {
-	min-height: 48px;
-	padding: 12px 16px;
 	background-color: var(--primary-raylife, #F69D37) !important;
 	border-color: var(--primary-raylife, #F69D37) !important;
+	min-height: 48px;
+	padding: 12px 16px;
 }
 
 .business-home-cover .business-home-cover-box {
@@ -114,9 +114,9 @@
 }
 
 .business-home-cover .has-error .error-feedback {
+	align-items: center;
 	display: flex;
 	position: absolute;
-	align-items: center;
 }
 
 .business-home-cover .error-feedback::before {

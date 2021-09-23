@@ -154,7 +154,7 @@
 								"en_US": ""
 							},
 							"type": "ddm-image"
-						},
+						}
 					],
 					"successPage": {
 						"body": {
@@ -242,7 +242,7 @@
 											"size": 12
 										}
 									]
-								},
+								}
 							],
 							"title": {
 								"[$LOCALE_DEFAULT$]": "Quote Structure"

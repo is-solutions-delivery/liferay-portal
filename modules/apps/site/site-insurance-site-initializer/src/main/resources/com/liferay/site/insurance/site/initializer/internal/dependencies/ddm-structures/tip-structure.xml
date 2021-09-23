@@ -240,7 +240,7 @@
 							},
 							"type": "checkbox_multiple",
 							"visibilityExpression": ""
-						},
+						}
 					],
 					"successPage": {
 						"body": {

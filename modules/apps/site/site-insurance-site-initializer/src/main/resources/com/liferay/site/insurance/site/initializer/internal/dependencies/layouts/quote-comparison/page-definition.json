@@ -29,15 +29,18 @@
 							"rowViewports": [
 								{
 									"id": "landscapeMobile",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								},
 								{
 									"id": "portraitMobile",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								},
 								{
 									"id": "tablet",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								}
 							],
 							"verticalAlignment": "top"
@@ -47,15 +50,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -83,8 +89,10 @@
 													"fragment": {
 														"key": "quote-comparison-header"
 													},
-													"fragmentConfig": {},
-													"fragmentFields": [],
+													"fragmentConfig": {
+													},
+													"fragmentFields": [
+													],
 													"fragmentStyle": {
 														"borderWidth": "0",
 														"marginRight": "5",
@@ -104,15 +112,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -132,15 +143,18 @@
 							"rowViewports": [
 								{
 									"id": "landscapeMobile",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								},
 								{
 									"id": "portraitMobile",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								},
 								{
 									"id": "tablet",
-									"rowViewportDefinition": {}
+									"rowViewportDefinition": {
+									}
 								}
 							],
 							"verticalAlignment": "top"
@@ -150,15 +164,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -191,13 +208,13 @@
 												"definition": {
 													"widgetInstance": {
 														"widgetConfig": {
-															"ddmTemplateKey": "",
-															"assetEntryId": "52963",
-															"userToolAssetAddonEntryKeys": "false",
-															"groupId": "",
-															"enableViewCountIncrement": "false",
 															"articleId": "BASIC-PRICING-TIER-TEMPLATE",
-															"contentMetadataAssetAddonEntryKeys": "false"
+															"assetEntryId": "52963",
+															"contentMetadataAssetAddonEntryKeys": "false",
+															"ddmTemplateKey": "",
+															"enableViewCountIncrement": "false",
+															"groupId": "",
+															"userToolAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
 													}
@@ -214,15 +231,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -253,13 +273,13 @@
 												"definition": {
 													"widgetInstance": {
 														"widgetConfig": {
-															"ddmTemplateKey": "",
-															"assetEntryId": "52973",
-															"userToolAssetAddonEntryKeys": "false",
-															"groupId": "",
-															"enableViewCountIncrement": "false",
 															"articleId": "STANDARD-PRICING-TIER-TEMPLATE",
-															"contentMetadataAssetAddonEntryKeys": "false"
+															"assetEntryId": "52973",
+															"contentMetadataAssetAddonEntryKeys": "false",
+															"ddmTemplateKey": "",
+															"enableViewCountIncrement": "false",
+															"groupId": "",
+															"userToolAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
 													}
@@ -276,15 +296,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -316,13 +339,13 @@
 												"definition": {
 													"widgetInstance": {
 														"widgetConfig": {
-															"ddmTemplateKey": "",
-															"assetEntryId": "63367",
-															"userToolAssetAddonEntryKeys": "false",
-															"groupId": "",
-															"enableViewCountIncrement": "false",
 															"articleId": "PREMIUM-PRICING-TIER-TEMPLATE",
-															"contentMetadataAssetAddonEntryKeys": "false"
+															"assetEntryId": "63367",
+															"contentMetadataAssetAddonEntryKeys": "false",
+															"ddmTemplateKey": "",
+															"enableViewCountIncrement": "false",
+															"groupId": "",
+															"userToolAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
 													}
@@ -339,15 +362,18 @@
 								"definition": {
 									"columnViewports": [
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {},
+											"columnViewportDefinition": {
+											},
 											"id": "tablet"
 										}
 									],
@@ -379,13 +405,13 @@
 												"definition": {
 													"widgetInstance": {
 														"widgetConfig": {
-															"ddmTemplateKey": "",
-															"assetEntryId": "42726",
-															"userToolAssetAddonEntryKeys": "false",
-															"groupId": "",
-															"enableViewCountIncrement": "false",
 															"articleId": "QUOTE-COMPARISON-PROFILE-TEMPLATE",
-															"contentMetadataAssetAddonEntryKeys": "false"
+															"assetEntryId": "42726",
+															"contentMetadataAssetAddonEntryKeys": "false",
+															"ddmTemplateKey": "",
+															"enableViewCountIncrement": "false",
+															"groupId": "",
+															"userToolAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
 													}
@@ -409,10 +435,13 @@
 					"fragment": {
 						"key": "quote-footer"
 					},
-					"fragmentConfig": {},
-					"fragmentFields": [],
+					"fragmentConfig": {
+					},
+					"fragmentFields": [
+					],
 					"fragmentStyle": {
-						"backgroundFragmentImage": {},
+						"backgroundFragmentImage": {
+						},
 						"borderRadius": "",
 						"borderWidth": "0",
 						"fontFamily": "",

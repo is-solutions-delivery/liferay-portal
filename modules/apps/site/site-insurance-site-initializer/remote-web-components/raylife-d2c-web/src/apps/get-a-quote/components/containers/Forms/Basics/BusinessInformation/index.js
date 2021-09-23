@@ -1,9 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
-
-import {TIP_EVENT} from '~/shared/utils/events';
-import {useCustomEvent} from '~/shared/hooks/useCustomEvent';
 import useFormActions from '~/apps/get-a-quote/hooks/useFormActions';
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
 import {AVAILABLE_STEPS} from '~/apps/get-a-quote/utils/constants';
@@ -12,6 +9,9 @@ import {EmailControlledInput} from '~/shared/components/connectors/Controlled/In
 import {WebsiteControlledInput} from '~/shared/components/connectors/Controlled/Input/Website';
 import {PhoneControlledInput} from '~/shared/components/connectors/Controlled/Input/WithMask/Phone';
 import {CardFormActionsWithSave} from '~/shared/components/fragments/Card/FormActionsWithSave';
+import {useCustomEvent} from '~/shared/hooks/useCustomEvent';
+import {TIP_EVENT} from '~/shared/utils/events';
+
 import {BusinessInformationAddress} from './Address';
 
 const setFormPath = (value) => `basics.businessInformation.${value}`;

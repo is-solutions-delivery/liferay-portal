@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import '~/types';
-
 import {Loader} from '@googlemaps/js-api-loader';
 
 const {REACT_APP_GOOGLE_API = ''} = process.env;

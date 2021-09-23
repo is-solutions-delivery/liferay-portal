@@ -1,7 +1,5 @@
 import React, {useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
-
-import {TIP_EVENT} from '~/shared/utils/events';
 import useFormActions from '~/apps/get-a-quote/hooks/useFormActions';
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
 import {useTriggerContext} from '~/apps/get-a-quote/hooks/useTriggerContext';
@@ -15,6 +13,7 @@ import {SquareFeatControlledInput} from '~/shared/components/connectors/Controll
 import {YearControlledInput} from '~/shared/components/connectors/Controlled/Input/WithMask/Year';
 import {ControlledSwitch} from '~/shared/components/connectors/Controlled/Switch';
 import {CardFormActionsWithSave} from '~/shared/components/fragments/Card/FormActionsWithSave';
+import {TIP_EVENT} from '~/shared/utils/events';
 
 const setFormPath = (value) => `property.${value}`;
 
@@ -22,9 +21,9 @@ export const FormProperty = ({form}) => {
 	const {selectedStep} = useStepWizard();
 	const {
 		control,
-		setValue,
-		getValues,
 		formState: {isValid},
+		getValues,
+		setValue,
 	} = useFormContext();
 
 	const forceValidation = () => {

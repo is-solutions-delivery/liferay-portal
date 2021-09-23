@@ -107,7 +107,6 @@ import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
 import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.template.TemplateConstants;
-import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -137,7 +136,6 @@ import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 
 import java.io.File;
-import java.io.Serializable;
 
 import java.net.URL;
 
@@ -846,6 +844,7 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 		// 		return null;
 		// 	});
+
 	}
 
 	private void _addSiteNavigationMenus() throws Exception {

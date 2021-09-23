@@ -1,9 +1,8 @@
+import classNames from 'classnames';
 import React from 'react';
 import {Controller} from 'react-hook-form';
-
 import {MoreInfoButton} from '~/shared/components/fragments/Buttons/MoreInfo';
 import {InputWithMask} from '~/shared/components/fragments/Forms/Input/WithMask';
-import classNames from 'classnames';
 
 export const ControlledInputWithMask = ({
 	name,

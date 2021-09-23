@@ -1,10 +1,9 @@
 import React from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
-
-import {Template} from '~/shared/components/Template';
 import {AppProvider} from '~/apps/get-a-quote/context/AppContext';
-import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
+import {Template} from '~/shared/components/Template';
 import ClayIconProvider from '~/shared/context/ClayIconProvider';
+import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
 
 const getDefaultValues = () => {
 	try {
@@ -17,13 +16,14 @@ const getDefaultValues = () => {
 		return data;
 	} catch (error) {
 		console.warn(error.message);
+
 		return {};
 	}
 };
 
 export const Providers = ({children}) => {
 	const defaultValues = getDefaultValues();
-	const form = useForm({mode: 'onChange', defaultValues});
+	const form = useForm({defaultValues, mode: 'onChange'});
 
 	return (
 		<AppProvider>

@@ -1,6 +1,5 @@
 import React from 'react';
 import {Controller} from 'react-hook-form';
-
 import {MoreInfoButton} from '~/shared/components/fragments/Buttons/MoreInfo';
 import {Input} from '~/shared/components/fragments/Forms/Input';
 

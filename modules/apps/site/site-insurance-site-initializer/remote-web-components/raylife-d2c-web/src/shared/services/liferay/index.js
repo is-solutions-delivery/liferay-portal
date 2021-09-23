@@ -1,9 +1,8 @@
 import '~/types';
-
 import Axios from 'axios';
 
 import {LiferayAdapt} from './adapter';
-import {Storage, STORAGE_KEYS} from './storage';
+import {STORAGE_KEYS, Storage} from './storage';
 
 const LiferayObjectAPI = 'o/c/raylifeapplications';
 
@@ -107,6 +106,7 @@ const getLiferaySiteName = () => {
 	} catch (error) {
 		console.warn('Not able to find Liferay PathName\n', error);
 	}
+
 	return siteName;
 };
 

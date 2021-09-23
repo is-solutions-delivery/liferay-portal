@@ -12,7 +12,7 @@
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="iesijpqx" name="description" type="text_area">
 		<dynamic-content language-id="en_US">
-			<![CDATA[<p>If you can’t find your exact industry try searching with different keywords and select the closest match. If you feel none of the options accurately describe your business please <u>contact us</u> to get a quote.</p><p>If you have questions or need help click the chat button in the bottom right to chat with an Agent.</p>]]>
+			<![CDATA[<p>If you can't find your exact industry try searching with different keywords and select the closest match. If you feel none of the options accurately describe your business please <u>contact us</u> to get a quote.</p><p>If you have questions or need help click the chat button in the bottom right to chat with an Agent.</p>]]>
 		</dynamic-content>
 	</dynamic-element>
 	<dynamic-element index-type="text" instance-id="tjcakpfv" name="titleIcon" type="image">

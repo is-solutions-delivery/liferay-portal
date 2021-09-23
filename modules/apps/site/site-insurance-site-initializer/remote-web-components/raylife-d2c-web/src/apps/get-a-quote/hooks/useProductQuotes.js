@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useEffect, useState} from 'react';
-
 import {LiferayService} from '~/shared/services/liferay';
 
 export const useProductQuotes = () => {

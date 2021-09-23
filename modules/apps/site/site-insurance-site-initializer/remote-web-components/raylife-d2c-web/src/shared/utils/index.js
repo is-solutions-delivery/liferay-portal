@@ -56,6 +56,7 @@ export const toSlug = (str) => {
 	str = str.toLowerCase();
 
 	// remove accents, swap ñ for n, etc
+
 	var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
 	var to = 'aaaaeeeeiiiioooouuuunc------';
 	for (var i = 0, l = from.length; i < l; i++) {

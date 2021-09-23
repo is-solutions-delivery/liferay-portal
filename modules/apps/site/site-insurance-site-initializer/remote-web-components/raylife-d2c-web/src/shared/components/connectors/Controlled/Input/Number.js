@@ -7,8 +7,8 @@ export const NumberControlledInput = ({...props}) => {
 		<ControlledInput
 			{...props}
 			inputProps={{
+				onWheel: (event) => event.target.blur(),
 				type: 'number',
-				onWheel: (e) => e.target.blur(),
 			}}
 		/>
 	);

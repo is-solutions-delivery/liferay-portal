@@ -1,7 +1,7 @@
 import React from 'react';
+import {useLegalEntity} from '~/apps/get-a-quote/hooks/useLegalEntity';
 
 import {ControlledSelect} from '.';
-import {useLegalEntity} from '~/apps/get-a-quote/hooks/useLegalEntity';
 
 export function LegalEntityControlledSelect({...props}) {
 	const {entities} = useLegalEntity();

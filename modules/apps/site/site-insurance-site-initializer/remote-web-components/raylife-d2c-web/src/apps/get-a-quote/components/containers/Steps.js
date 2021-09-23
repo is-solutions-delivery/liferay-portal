@@ -1,10 +1,9 @@
 import React from 'react';
-
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
 import {AVAILABLE_STEPS} from '~/apps/get-a-quote/utils/constants';
-import {Storage, STORAGE_KEYS} from '~/shared/services/liferay/storage';
 import {StepItem} from '~/shared/components/fragments/Step/Item';
 import {StepList} from '~/shared/components/fragments/Step/List';
+import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
 
 export const Steps = () => {
 	const {selectedStep, setSection} = useStepWizard();

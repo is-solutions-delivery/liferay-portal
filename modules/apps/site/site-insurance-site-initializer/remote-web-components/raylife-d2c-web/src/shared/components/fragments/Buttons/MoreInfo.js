@@ -1,7 +1,6 @@
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import React from 'react';
-
 import {useCustomEvent} from '~/shared/hooks/useCustomEvent';
 
 export const MoreInfoButton = ({callback, event, selected, value}) => {

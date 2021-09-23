@@ -1,21 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useContext, useEffect} from 'react';
 import {useFormContext, useWatch} from 'react-hook-form';
+import {useCustomEvent} from '~/shared/hooks/useCustomEvent';
+import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
+import {calculatePercentage, countCompletedFields} from '~/shared/utils';
+import {TIP_EVENT} from '~/shared/utils/events';
 
 import {AppContext} from '../context/AppContext';
 import {setSelectedStep} from '../context/actions';
-import {TIP_EVENT} from '~/shared/utils/events';
-import {calculatePercentage, countCompletedFields} from '~/shared/utils';
 import {businessTotalFields} from '../utils/businessFields';
 import {AVAILABLE_STEPS, TOTAL_OF_FIELD} from '../utils/constants';
 import {propertyTotalFields} from '../utils/propertyFields';
-import {Storage, STORAGE_KEYS} from '~/shared/services/liferay/storage';
-import {useCustomEvent} from '~/shared/hooks/useCustomEvent';
 
 export const useStepWizard = () => {
 	const form = useWatch();
 	const [dispatchEvent] = useCustomEvent(TIP_EVENT);
-	const {state, dispatch} = useContext(AppContext);
+	const {dispatch, state} = useContext(AppContext);
 	const {
 		control: {_fields},
 	} = useFormContext();
@@ -103,6 +103,7 @@ export const useStepWizard = () => {
 						);
 					}
 				}
+
 				return setPercentage(
 					calculatePercentage(
 						countCompletedFields(_fields?.basics || {}),

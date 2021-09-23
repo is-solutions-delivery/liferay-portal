@@ -2,24 +2,23 @@ import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import useDebounce from 'lodash.debounce';
 
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
-
-import {TIP_EVENT} from '~/shared/utils/events';
 import {useBusinessTypes} from '~/apps/get-a-quote/hooks/useBusinessTypes';
-import {useCustomEvent} from '~/shared/hooks/useCustomEvent';
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
 import {useTriggerContext} from '~/apps/get-a-quote/hooks/useTriggerContext';
 import {
 	AVAILABLE_STEPS,
 	TOTAL_OF_FIELD,
 } from '~/apps/get-a-quote/utils/constants';
-import {calculatePercentage} from '~/shared/utils';
 import {WarningBadge} from '~/shared/components/fragments/Badges/Warning';
 import {SearchInput} from '~/shared/components/fragments/Forms/Input/Search';
+import {useCustomEvent} from '~/shared/hooks/useCustomEvent';
+import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
+import {calculatePercentage} from '~/shared/utils';
+import {TIP_EVENT} from '~/shared/utils/events';
+
 import {BusinessTypeRadioGroup} from './RadioGroup';
-import {Storage, STORAGE_KEYS} from '~/shared/services/liferay/storage';
 
 const MAX_LENGTH_TO_TRUNCATE = 28;
 
@@ -119,9 +118,9 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 			return (
 				<>
 					<WarningBadge>
-						There are no results for "
+						There are no results for &quot;
 						{truncateSearch(form?.basics?.businessSearch)}
-						". Please try a different search.
+						&quot;. Please try a different search.
 					</WarningBadge>
 					{infoPanelButton()}
 				</>
@@ -132,8 +131,8 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 			<>
 				<BusinessTypeRadioGroup
 					businessTypes={businessTypes}
-					setNewSelectedProduct={setNewSelectedProduct}
 					form={form}
+					setNewSelectedProduct={setNewSelectedProduct}
 				/>
 				{infoPanelButton()}
 			</>

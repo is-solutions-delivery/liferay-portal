@@ -1,15 +1,14 @@
 import React, {useContext, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
-
-import {setSelectedProduct} from '~/apps/get-a-quote/context/actions';
 import {AppContext} from '~/apps/get-a-quote/context/AppContext';
-
+import {setSelectedProduct} from '~/apps/get-a-quote/context/actions';
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
-import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
 import {AVAILABLE_STEPS} from '~/apps/get-a-quote/utils/constants';
 import {CardFormActionsWithSave} from '~/shared/components/fragments/Card/FormActionsWithSave';
-import {BusinessTypeSearch} from './Search';
+import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
 import {smoothScroll} from '~/shared/utils/scroll';
+
+import {BusinessTypeSearch} from './Search';
 
 export const FormBasicBusinessType = ({form}) => {
 	const {setSection} = useStepWizard();

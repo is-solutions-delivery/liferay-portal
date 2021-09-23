@@ -32,6 +32,7 @@
 	"description": "D2C React",
 	"devDependencies": {
 		"babel-plugin-root-import": "^6.6.0",
+		"eslint": "^7.32.0",
 		"json-server": "^0.16.3",
 		"sass-to-string": "^1.5.1"
 	},
@@ -46,6 +47,7 @@
 	"scripts": {
 		"build": "craco build",
 		"build:liferay": "yarn build && ./setup-liferay.sh",
+		"lint": "eslint src --ext js",
 		"mock": "json-server -p 3333 -d 200 ./mock/db.json --routes ./mock/routes.json",
 		"run:liferay": "yarn build:liferay && npx serve ./build",
 		"serve:liferay": "npx serve ./build",

@@ -1,7 +1,5 @@
 import React, {useEffect} from 'react';
 import {useFormContext} from 'react-hook-form';
-
-import {TIP_EVENT} from '~/shared/utils/events';
 import useFormActions from '~/apps/get-a-quote/hooks/useFormActions';
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
 import {useTriggerContext} from '~/apps/get-a-quote/hooks/useTriggerContext';
@@ -11,21 +9,22 @@ import {
 	validatePercentSales,
 } from '~/apps/get-a-quote/utils/businessFields';
 import {AVAILABLE_STEPS} from '~/apps/get-a-quote/utils/constants';
-import {PERCENTAGE_REGEX_MAX_100} from '~/shared/utils/patterns';
 import {NumberControlledInput} from '~/shared/components/connectors/Controlled/Input/Number';
 import {PercentageControlledInput} from '~/shared/components/connectors/Controlled/Input/WithMask/Percentage';
 import {LegalEntityControlledSelect} from '~/shared/components/connectors/Controlled/Select/LegalEntity';
 import {ControlledSwitch} from '~/shared/components/connectors/Controlled/Switch';
 import {CardFormActionsWithSave} from '~/shared/components/fragments/Card/FormActionsWithSave';
+import {TIP_EVENT} from '~/shared/utils/events';
+import {PERCENTAGE_REGEX_MAX_100} from '~/shared/utils/patterns';
 
 const setFormPath = (value) => `business.${value}`;
 
 export const FormBusiness = ({form}) => {
 	const {
 		control,
-		setValue,
-		getValues,
 		formState: {isValid},
+		getValues,
+		setValue,
 	} = useFormContext();
 	const forceValidation = () => {
 		setValue(

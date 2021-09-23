@@ -1,7 +1,5 @@
 import React from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
-
-import {TIP_EVENT} from '~/shared/utils/events';
 import useFormActions from '~/apps/get-a-quote/hooks/useFormActions';
 import {useProductQuotes} from '~/apps/get-a-quote/hooks/useProductQuotes';
 import {useStepWizard} from '~/apps/get-a-quote/hooks/useStepWizard';
@@ -10,6 +8,7 @@ import {AVAILABLE_STEPS} from '~/apps/get-a-quote/utils/constants';
 import {MoreInfoButton} from '~/shared/components/fragments/Buttons/MoreInfo';
 import {CardFormActionsWithSave} from '~/shared/components/fragments/Card/FormActionsWithSave';
 import {Radio} from '~/shared/components/fragments/Forms/Radio';
+import {TIP_EVENT} from '~/shared/utils/events';
 
 export const FormBasicProductQuote = ({form}) => {
 	const {control} = useFormContext();

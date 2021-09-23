@@ -1,9 +1,8 @@
+import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import React from 'react';
 
 import {ProgressRing} from '../ProgressRing';
-import ClayIcon from '@clayui/icon';
-
-import classNames from 'classnames';
 
 export const StepItem = ({children, onClick, percentage = 0, selected = false}) => {
 	const completed = percentage === 100;
