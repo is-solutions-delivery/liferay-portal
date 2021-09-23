@@ -86,8 +86,6 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 			setSection(previousSection);
 		}
 
-		updateState('');
-
 		smoothScroll();
 	};
 
