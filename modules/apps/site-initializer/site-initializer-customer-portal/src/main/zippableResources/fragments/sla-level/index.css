@@ -1,0 +1,49 @@
+.card-sla .card {
+  transition: all .4s;
+	filter: blur(0.188rem);
+	background-color: #FFFBF0;
+	border: 0.125rem solid #FFEAB6;
+	margin-left: 1rem;
+	width: 98%;
+	border-radius: 0.75rem;
+}
+
+.card-sla .card.active {
+  z-index: 100;
+	filter: blur(0rem);
+	position: absolute;
+	margin-top: 1rem;
+	margin-left: 0rem;
+	top: 0;
+}
+
+.card-sla .btn-sla {
+	z-index: 1;
+	border-color: rgba(11, 95, 255, 0.25) !important;
+	height: 2.25rem;
+	width: 2.25rem;
+	opacity: 0 !important;
+	transition: all .2s;
+}
+
+
+ .sla:hover > #btn-div-sla > .btn {
+	opacity: 100 !important;
+	transition: all .2s;
+}
+
+.card-sla .card .card-sla-title {
+	color: #926800;
+	line-height: 1.25rem;
+}
+
+.card-sla .card .card-sla-status {
+	font-size: 0.75rem;
+	color: #926800;		
+	line-height: 1.25rem;
+}
+
+.card-sla .card .card-sla-body {
+	color: #926800;
+	line-height: 1.5rem;
+}
