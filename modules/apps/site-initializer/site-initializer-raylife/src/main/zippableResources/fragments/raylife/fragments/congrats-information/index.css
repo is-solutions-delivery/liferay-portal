@@ -1,0 +1,212 @@
+.congrats-information {
+	border-radius: 8px;
+	border: 1px solid #a6c2ff;
+	box-shadow: 0px 10px 30px rgba(77, 133, 255, 0.09);
+	box-sizing: border-box;
+	height: 396px;
+	margin-bottom: 38px;
+	margin-top: 56px;
+	width: 749px;
+}
+
+.column-top {
+	margin-left: 45px;
+}
+
+.column-bot {
+	margin-bottom: 40px;
+	margin-left: 45px;
+	margin-top: -60px;
+}
+
+h1 {
+	color: #09101d;
+	font-size: 32px;
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+	margin-top: 40px;
+	width: 334px;
+}
+
+h2 {
+	color: #2f313d;
+	font-size: 18px;
+	font-weight: bold;
+	height: 20px;
+	line-height: 20px;
+	top: 8px;
+	width: 207px;
+}
+
+h3 {
+	color: #09101d;
+	font-size: 16px;
+	font-weight: 500;
+	height: 24px;
+	left: 0;
+	line-height: 24px;
+	margin-bottom: 0px;
+	top: 32px;
+	width: 200px;
+}
+
+.congrats-info-price {
+	color: #2f313d;
+	font-size: 32px;
+	font-weight: 300;
+	height: 40px;
+	left: 92px;
+	line-height: 40px;
+	margin-top: 44px;
+	top: 0px;
+	width: 38px;
+}
+
+.congrats-info-price span {
+	color: #09101d;
+	font-size: 32px;
+	font-weight: bold;
+	height: 40px;
+	left: 0px;
+	line-height: 40px;
+	margin-left: 370px;
+	position: static;
+	top: 0px;
+	width: 92px;
+}
+
+.congrats-information .congrats-table-info {
+	color: #606167;
+	font-size: 13px;
+	font-weight: 500;
+	height: 20px;
+	left: 20px;
+	line-height: 35px;
+	margin-top: 90px;
+	width: 260px;
+}
+.congrats-table-info td {
+	align-content: center;
+	display: flex;
+}
+
+#congrats-check-one {
+	margin-right: 4px;
+}
+
+#congrats-check-two {
+	margin-right: 4px;
+}
+
+#congrats-check-three {
+	margin-right: 4px;
+}
+
+#congrats-check-four {
+	margin-right: 4px;
+}
+
+#congrats-check-five {
+	margin-right: 4px;
+}
+
+.congrats-table-price {
+	color: #606167;
+	font-size: 13px;
+	font-weight: 500;
+	height: 20px;
+	left: 20px;
+	line-height: 35px;
+	margin-left: -40px;
+	margin-top: 30px;
+	text-align: right;
+	width: 260px;
+}
+
+.dummy-buttons {
+	margin-left: 330px;
+	margin-top: -220px;
+	text-align: right;
+}
+
+.download {
+	background: none;
+	border: none;
+	color: #7d7e85;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: small-caps;
+	font-weight: 600;
+	height: 24px;
+	left: 12px;
+	letter-spacing: 0.01em;
+	line-height: 24px;
+	margin-bottom: 20px;
+	margin-right: 6px;
+	position: static;
+	top: 8px;
+}
+
+.download #download {
+	border-radius: 0px;
+	height: 16px;
+	left: 0px;
+	margin-left: 6px;
+	top: 0px;
+	width: 16px;
+}
+
+.print {
+	background: none;
+	border: none;
+	color: #7d7e85;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: small-caps;
+	font-weight: 600;
+	height: 24px;
+	left: 12px;
+	letter-spacing: 0.01em;
+	line-height: 24px;
+	margin-bottom: 20px;
+	margin-right: 6px;
+	position: static;
+	top: 8px;
+}
+
+.print #print {
+	border-radius: 0px;
+	height: 16px;
+	left: 0px;
+	margin-left: 6px;
+	top: 0px;
+	width: 16px;
+}
+
+.share {
+	background: none;
+	border: none;
+	color: #7d7e85;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: small-caps;
+	font-weight: 600;
+	height: 24px;
+	left: 12px;
+	letter-spacing: 0.01em;
+	line-height: 24px;
+	margin-bottom: 20px;
+	margin-right: 6px;
+	position: static;
+	top: 8px;
+}
+
+.share #share {
+	border-radius: 0px;
+	height: 16px;
+	left: 0px;
+	margin-left: 6px;
+	top: 0px;
+	width: 16px;
+}
