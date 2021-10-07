@@ -1,7 +1,6 @@
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import useDebounce from 'lodash.debounce';
-
 import React, {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {useBusinessTypes} from '~/apps/get-a-quote/hooks/useBusinessTypes';

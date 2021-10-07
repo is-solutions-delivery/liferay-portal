@@ -68,6 +68,21 @@ $font-family: var(
 	flex-direction: column;
 	flex-wrap: wrap;
 
+	.upload-footer {
+		display: flex;
+		justify-content: end;
+
+		a {
+			background-color: #4c85ff;
+			font-size: 16px;
+			color: #fff;
+			font-weight: 700;
+			padding: 16px 18px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+	}
+
 	.upload-section {
 		padding: 48px 0px 16px 22px;
 
@@ -108,7 +123,7 @@ $font-family: var(
 					flex-direction: row;
 					flex-wrap: wrap;
 
-					.view-file-content {
+					.view-file-image {
 						display: flex;
 						flex-direction: row;
 						margin-right: -16px;
@@ -124,8 +139,12 @@ $font-family: var(
 							justify-content: center;
 							position: relative;
 							right: 38px;
-							top: 3px;
+							top: 2px;
 							width: 36px;
+							fill: #7d7e85;
+							filter: drop-shadow(
+								0px 5px 15px rgba(77, 133, 255, 0.12)
+							);
 						}
 
 						.div-image {
@@ -147,6 +166,91 @@ $font-family: var(
 								border-radius: 16px;
 								height: 176px;
 								width: 176px;
+								object-fit: cover;
+							}
+						}
+					}
+
+					.view-file-document {
+						display: flex;
+						flex-direction: row;
+						margin-bottom: -36px;
+						margin-right: 16px;
+
+						.close-icon {
+							align-items: center;
+							background: #fff;
+							border-radius: 50%;
+							cursor: pointer;
+							display: flex;
+							height: 36px;
+							justify-content: center;
+							position: relative;
+							left: 137px;
+							top: -196px;
+							width: 36px;
+							fill: #7d7e85;
+							filter: drop-shadow(
+								0px 5px 15px rgba(77, 133, 255, 0.12)
+							);
+						}
+
+						.div-document {
+							display: flex;
+							text-align: center;
+							flex-direction: column;
+
+							span {
+								color: #808185;
+								margin-top: 4px;
+								font-size: 13px;
+								white-space: nowrap;
+								overflow: hidden;
+								text-overflow: ellipsis;
+								width: 176px;
+							}
+
+							.content {
+								border-radius: 16px;
+								width: 176px;
+								height: 176px;
+								background-color: #fafafa;
+								border: 1px solid #e2e2e4;
+								object-fit: cover;
+
+								display: flex;
+								justify-content: center;
+								align-items: center;
+
+								.lexicon-icon-document-pdf {
+									fill: #af78ff;
+									width: 64px !important;
+									height: 64px !important;
+								}
+
+								.lexicon-icon-document-text {
+									fill: #4d85ff;
+									width: 64px !important;
+									height: 64px !important;
+								}
+
+								.lexicon-icon-document-table {
+									fill: #50d2a0;
+									width: 64px !important;
+									height: 64px !important;
+								}
+
+								.lexicon-icon-document-presentation {
+									fill: #ffb46e;
+									width: 64px !important;
+									height: 64px !important;
+								}
+
+								.lexicon-icon-document-unknown {
+									fill: #7d7e85;
+									width: 64px !important;
+									height: 64px !important;
+								}
 							}
 						}
 					}
@@ -155,9 +259,8 @@ $font-family: var(
 				.drop-area {
 					align-items: center;
 					background: #f0f5ff;
-					border: 1px dashed #a8c4ff;
+					border: 2px dashed #a8c4ff;
 					border-radius: 16px;
-					border-width: 2px;
 					color: #606167;
 					display: flex;
 					flex-direction: row;
@@ -189,9 +292,8 @@ $font-family: var(
 							display: flex;
 							font-size: 14px;
 							font-weight: 700;
-							height: 40px;
+							padding: 8px 12px;
 							justify-content: center;
-							width: 160px;
 						}
 
 						.input-file {
@@ -202,9 +304,9 @@ $font-family: var(
 
 						svg {
 							fill: #4c85ff;
-							height: 16px !important;
-							margin-right: 6px;
-							width: 16px !important;
+							height: 12px !important;
+							margin-right: 9px;
+							width: 12px !important;
 						}
 					}
 				}

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-
 import ProductComparison from '~/shared/components/product-comparison';
 import {LiferayService} from '~/shared/services/liferay';
 import {STORAGE_KEYS, Storage} from '~/shared/services/liferay/storage';
