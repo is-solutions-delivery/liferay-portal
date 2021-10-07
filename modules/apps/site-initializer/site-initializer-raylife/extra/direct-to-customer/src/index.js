@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import GetAQuote from '~/apps/get-a-quote/pages/GetAQuote';
 import QuoteComparison from '~/apps/quote-comparison/pages/QuoteComparison';
 import SelectedQuote from '~/apps/selected-quote/pages/SelectedQuote';
