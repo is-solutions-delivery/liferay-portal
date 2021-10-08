@@ -33,7 +33,7 @@ const ViewFiles = ({files = [], onRemoveFile, type}) => {
 						<div className="div-document" title={file.name}>
 							<div className="content">
 								<ClayIcon
-									class={file.icon}
+									className={file.icon}
 									symbol={file.icon}
 								/>
 							</div>

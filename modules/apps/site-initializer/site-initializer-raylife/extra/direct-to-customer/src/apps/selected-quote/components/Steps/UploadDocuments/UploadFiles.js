@@ -6,9 +6,7 @@ import DropArea from '../../drop-area';
 
 import ViewFiles from './ViewFiles';
 
-const UploadDocuments = ({dropAreaProps, title}) => {
-	const [files, setFiles] = useState([]);
-
+const UploadDocuments = ({dropAreaProps, files, setFiles, title}) => {
 	const [showBadgeInfo, setShowBadgeInfo] = useState(false);
 
 	const filesRef = useRef(files);
