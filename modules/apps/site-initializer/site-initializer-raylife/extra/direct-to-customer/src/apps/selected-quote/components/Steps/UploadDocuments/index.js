@@ -1,25 +1,7 @@
+/* eslint-disable no-console */
+import {useState} from 'react';
+import {LiferayService} from '~/shared/services/liferay';
 import UploadFiles from './UploadFiles';
-
-const sections = [
-	{
-		required: true,
-		subtitle: 'Upload a copy of your business license',
-		title: 'Business License',
-		type: 'document',
-	},
-	{
-		required: false,
-		subtitle: 'Upload a copy of your additional documents.',
-		title: 'Additional Documents',
-		type: 'document',
-	},
-	{
-		required: true,
-		subtitle: 'Upload 4 photos of your building interior',
-		title: 'Building Interior Photos',
-		type: 'image',
-	},
-];
 
 const dropAreaProps = {
 	heightContainer: '120px',
@@ -28,7 +10,72 @@ const dropAreaProps = {
 };
 
 const UploadDocuments = () => {
-	const onClickConfirmUpload = () => {};
+	const [sections, setSections] = useState([
+		{
+			files: [],
+			required: true,
+			subtitle: 'Upload a copy of your business license',
+			title: 'Business License',
+			type: 'document',
+		},
+		{
+			files: [],
+			required: false,
+			subtitle: 'Upload a copy of your additional documents.',
+			title: 'Additional Documents',
+			type: 'document',
+		},
+		{
+			files: [],
+			required: true,
+			subtitle: 'Upload 4 photos of your building interior',
+			title: 'Building Interior Photos',
+			type: 'image',
+		},
+	]);
+
+	const onSetFiles = (_section, files) => {
+		setSections((sections) =>
+			sections.map((section) => {
+				if (section.title === _section.title) {
+					return {
+						...section,
+						files,
+					};
+				}
+
+				return section;
+			})
+		);
+	};
+
+	const sendFileToDocumentsAndMedia = async (folderId, fileEntry) => {
+		const formData = new FormData();
+
+		formData.append('file', fileEntry);
+
+		// eslint-disable-next-line @liferay/portal/no-global-fetch
+		await fetch(
+			`http://localhost:8080/o/headless-delivery/v1.0/document-folders/${folderId}/documents`,
+			{
+				body: formData,
+				headers: {
+					'x-csrf-token': LiferayService.getLiferayAuthenticationToken(),
+				},
+				method: 'POST',
+			}
+		);
+	};
+
+	const onClickConfirmUpload = async () => {
+		const folderId = 54218;
+
+		const fileEntries = sections.map(({files}) => files).flat();
+
+		for (const fileEntry of fileEntries) {
+			await sendFileToDocumentsAndMedia(folderId, fileEntry);
+		}
+	};
 
 	return (
 		<div className="upload-container">
@@ -53,6 +100,8 @@ const UploadDocuments = () => {
 								...dropAreaProps,
 								type: section.type,
 							}}
+							files={section.files}
+							setFiles={(files) => onSetFiles(section, files)}
 							title={section.title}
 						/>
 					</div>
