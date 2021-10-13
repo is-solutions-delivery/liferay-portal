@@ -1,26 +1,19 @@
+/* eslint-disable no-console */
 import ClayIcon from '@clayui/icon';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 
 import {InfoBadge} from '~/shared/components/fragments/Badges/Info';
 import DropArea from '../../drop-area';
 
 import ViewFiles from './ViewFiles';
 
-const UploadDocuments = ({dropAreaProps, files, setFiles, title}) => {
+const UploadFiles = ({dropAreaProps, files, setFiles, title}) => {
 	const [showBadgeInfo, setShowBadgeInfo] = useState(false);
-
-	const filesRef = useRef(files);
-
-	const _setFiles = (data) => {
-		filesRef.current = data;
-
-		setFiles(data);
-	};
 
 	const onRemoveFile = ({id}) => {
 		const newList = files.filter((file) => file.id !== id);
 
-		_setFiles(newList);
+		setFiles(newList);
 	};
 
 	return (
@@ -63,4 +56,4 @@ const UploadDocuments = ({dropAreaProps, files, setFiles, title}) => {
 	);
 };
 
-export default UploadDocuments;
+export default UploadFiles;

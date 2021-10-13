@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
+import axios from 'axios';
 import {useState} from 'react';
+
 import {LiferayService} from '~/shared/services/liferay';
+
 import UploadFiles from './UploadFiles';
 
 const dropAreaProps = {
@@ -49,26 +52,56 @@ const UploadDocuments = () => {
 		);
 	};
 
+	const onSetSections = (fileEntry, progress) => {
+		setSections((sections) => {
+			return sections.map((section) => {
+				return {
+					...section,
+					files: [
+						...section.files.map((_fileEntry) => {
+							if (fileEntry.id === _fileEntry.id) {
+								_fileEntry.progress = progress;
+
+								return _fileEntry;
+							}
+
+							return _fileEntry;
+						}),
+					],
+				};
+			});
+		});
+	};
+
 	const sendFileToDocumentsAndMedia = async (folderId, fileEntry) => {
 		const formData = new FormData();
 
 		formData.append('file', fileEntry);
 
-		// eslint-disable-next-line @liferay/portal/no-global-fetch
-		await fetch(
+		await axios.post(
 			`http://localhost:8080/o/headless-delivery/v1.0/document-folders/${folderId}/documents`,
+			formData,
 			{
-				body: formData,
 				headers: {
 					'x-csrf-token': LiferayService.getLiferayAuthenticationToken(),
 				},
-				method: 'POST',
+				onUploadProgress: (event) => {
+					const progress = Math.round(
+						(event.loaded * 100) / event.total
+					);
+
+					onSetSections(fileEntry, progress);
+
+					console.log(`A arquivo está ${progress}% carregada... `);
+				},
 			}
 		);
 	};
 
 	const onClickConfirmUpload = async () => {
-		const folderId = 54218;
+		const folderId = 54027;
+
+		// const folderId = 53397; // keven
 
 		const fileEntries = sections.map(({files}) => files).flat();
 
