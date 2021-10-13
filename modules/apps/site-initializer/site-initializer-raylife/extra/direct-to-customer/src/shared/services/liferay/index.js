@@ -1,10 +1,14 @@
 import '~/types';
 
 import {LiferayAdapt} from './adapter';
-import LiferayFetchAPI, {getLiferayAuthenticationToken} from './api';
+import LiferayFetchAPI, {
+	REACT_APP_LIFERAY_API,
+	getLiferayAuthenticationToken,
+} from './api';
 import {STORAGE_KEYS, Storage} from './storage';
 
 const RaylifeApplicationAPI = 'o/c/raylifeapplications';
+const DeliveryAPI = 'o/headless-delivery';
 const quoteComparisonAPI = 'o/c/quotecomparisons';
 
 /**
@@ -128,6 +132,17 @@ const _getProductsByCategoryId = async () => {
 	return data;
 };
 
+const uploadToDocumentsAndMedia = (folderId) => {
+	LiferayFetchAPI.post(
+		`${DeliveryAPI}/v1.0/document-folders/${folderId}/documents`,
+		{
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		}
+	);
+};
+
 /**
  * @param {string} id - Parent category Id of asset categories
  * @returns {Promise<AssetCategoryResponse[]>}  Array of matched categories
@@ -162,6 +177,7 @@ const _patchBasicsFormApplication = (body, id) => {
 };
 
 export const LiferayService = {
+	REACT_APP_LIFERAY_API,
 	createOrUpdateRaylifeApplication,
 	fetch: LiferayFetchAPI,
 	getBusinessTypes,
@@ -171,4 +187,5 @@ export const LiferayService = {
 	getProductQuotes,
 	getQuoteComparison,
 	getQuoteComparisonById,
+	uploadToDocumentsAndMedia,
 };

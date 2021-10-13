@@ -42,4 +42,6 @@ const LiferayFetchAPI = {
 	put: (url, options) => baseFetch(url, {...options, method: 'PUT'}),
 };
 
+export {REACT_APP_LIFERAY_API};
+
 export default LiferayFetchAPI;

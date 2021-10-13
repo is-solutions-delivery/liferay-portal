@@ -1,49 +1,89 @@
 import ClayIcon from '@clayui/icon';
+import ProgressBar from '../ProgressBar';
+import ViewDocuments from './ViewDocuments';
 
-const ViewBody = ({file, onRemoveFile, showName = true}) => (
+const ViewBody = ({
+	file,
+	onRemoveFile,
+	showCloseButton = true,
+	showName = true,
+}) => (
 	<>
-		{showName && <span>{file.name}</span>}
+		{showName && <span className="ellipsis">{file.name}</span>}
 
-		<div className="close-icon" onClick={() => onRemoveFile(file)}>
-			<ClayIcon symbol="times" />
-		</div>
+		{showCloseButton && (
+			<div className="close-icon" onClick={() => onRemoveFile(file)}>
+				<ClayIcon symbol="times" />
+			</div>
+		)}
 	</>
 );
 
 const ViewFiles = ({files = [], onRemoveFile, type}) => {
+	// eslint-disable-next-line no-console
+	console.log('Files01', files);
+
 	return (
-		<div className="view-file">
-			{files.map((file, index) =>
-				type === 'image' ? (
-					<div className="view-file-image" key={index}>
-						<div className="div-image" title={file.name}>
-							<img alt={file.name} src={file.fileURL} />
+		<>
+			<div className="view-file">
+				{files.map((file, index) => {
+					if (file.progress < 100) {
+						return (
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'column',
+								}}
+							>
+								<div
+									style={{
+										alignItems: 'center',
+										background: '#F0F5FF',
+										borderRadius: '16px',
+										display: 'flex',
+										flexDirection: 'column',
+										flexShrink: 0,
+										height: '176px',
+										justifyContent: 'center',
+										marginRight: '20px',
+										width: '176px',
+									}}
+								>
+									<p>Uploading...</p>
 
-							<span>{file.name}</span>
-						</div>
+									<ProgressBar
+										height="4"
+										progress={file.progress}
+										width="144"
+									/>
+								</div>
 
-						<ViewBody
-							file={file}
-							onRemoveFile={onRemoveFile}
-							showName={false}
-						/>
-					</div>
-				) : (
-					<div className="view-file-document" key={index}>
-						<div className="div-document" title={file.name}>
-							<div className="content">
-								<ClayIcon
-									class={file.icon}
-									symbol={file.icon}
+								<ViewBody
+									file={file}
+									onRemoveFile={onRemoveFile}
+									showCloseButton={false}
 								/>
 							</div>
+						);
+					} else if (type === 'image') {
+						<ViewDocuments
+							file={file}
+							onRemoveFile={onRemoveFile}
+							type={type}
+						/>;
+					}
 
-							<ViewBody file={file} onRemoveFile={onRemoveFile} />
-						</div>
-					</div>
-				)
-			)}
-		</div>
+					return (
+						<ViewDocuments
+							file={file}
+							key={index}
+							onRemoveFile={onRemoveFile}
+							type={type}
+						/>
+					);
+				})}
+			</div>
+		</>
 	);
 };
 

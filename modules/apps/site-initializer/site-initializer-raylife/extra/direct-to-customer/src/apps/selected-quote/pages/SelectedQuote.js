@@ -12,7 +12,7 @@ const SelectedQuote = () => {
 			<div className="selected-quote-right-page">
 				<Panel title="1. Create an Account">Create an Account...</Panel>
 
-				<Panel title="2. Upload Documents">
+				<Panel defaultExpanded title="2. Upload Documents">
 					<UploadDocuments />
 				</Panel>
 
