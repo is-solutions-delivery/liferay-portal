@@ -1,6 +1,15 @@
 {
-    "pageElement" : {
-		"pageElements" : [ 
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentSettings": {
+						"unallowedFragments": [
+						]
+					}
+				},
+				"type": "DropZone"
+			},
 			{
 				"definition": {
 					"fragment": {
@@ -39,8 +48,8 @@
 					}
 				},
 				"type": "Fragment"
-			} 
+			}
 		],
-      	"type" : "Root"
-    }
+		"type": "Root"
+	}
 }
