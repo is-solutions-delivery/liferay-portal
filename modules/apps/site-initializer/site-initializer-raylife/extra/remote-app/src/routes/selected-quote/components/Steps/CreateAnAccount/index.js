@@ -36,7 +36,7 @@ export const CreateAnAccount = ({_setExpanded, _setStepChecked}) => {
 
 			if (response === CHECK_VALUE) {
 				_setExpanded('uploadDocuments');
-				_setStepChecked('createAnAccount');
+				_setStepChecked('createAnAccount', true);
 			}
 
 			setAlert(response);

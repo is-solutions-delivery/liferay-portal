@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useState} from 'react';
 
 import {CreateAnAccount} from '../components/Steps/CreateAnAccount';
@@ -37,15 +36,26 @@ const SelectedQuote = () => {
 		setExpanded(toExpand);
 	};
 
-	const _setStepChecked = (property) => {
+	const _setStepChecked = (property, value) => {
 		setStepChecked({
 			...stepChecked,
-			[property]: true,
+			[property]: value,
 		});
 	};
 
 	const _setSection = (sections) => {
 		setSections(sections);
+	};
+
+	const hasUploadError = () => {
+		let hasError = false;
+		sections?.map((section) => {
+			if (section.error) {
+				hasError = true;
+			}
+		});
+
+		return hasError;
 	};
 
 	return (
@@ -66,6 +76,7 @@ const SelectedQuote = () => {
 
 				<Panel
 					defaultExpanded={expanded.uploadDocuments}
+					hasError={hasUploadError()}
 					sections={sections}
 					stepChecked={stepChecked.uploadDocuments}
 					title="2. Upload Documents"
