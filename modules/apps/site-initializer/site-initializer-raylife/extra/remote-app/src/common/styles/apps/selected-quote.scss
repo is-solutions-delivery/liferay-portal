@@ -335,13 +335,13 @@
 // alalalla
 
 #ca {
-	margin: 3.5rem 0rem 2rem 2.3rem;
+	margin: $spacer-5 $spacer-0 $spacer-4 $spacer-4;
 
 	.ca-alert-create {
-		background-color: #ffe4dc;
+		background-color: $color-state-error-lighten-1;
 		border-radius: 8px;
-		margin-top: 3rem;
-		padding: 0.8rem 0rem;
+		margin-top: $spacer-5;
+		padding: $spacer-2 $spacer-0;
 		vertical-align: middle;
 		width: 100%;
 	}
@@ -352,27 +352,23 @@
 	}
 
 	.ca-btn {
-		background: rgba(76, 133, 255, 1);
-		color: #fff;
-		margin: 5rem 0rem 0rem 23.7rem;
-	}
-
-	.ca-btn:disabled {
-		background: rgba(76, 133, 255, 0.5);
+		background: $primary-default-light;
+		color: $background;
+		margin: 5rem $spacer-0 $spacer-0 23.7rem;
 	}
 
 	#ca-content-input {
-		margin-top: 1.75rem;
+		margin-top: $spacer-3;
 		position: relative;
 
 		#ca-input-email {
-			background-color: #fff;
-			border: solid 1px #7d7e85;
+			background-color: $background;
+			border: solid 1px $neutral-default;
 		}
 
 		#ca-input-email + .ca-label {
-			background-color: #fff;
-			color: #7d7e85;
+			background-color: $background;
+			color: $neutral-default;
 			font-size: 13px;
 			transform: translate(0, -21px) scale(1);
 		}
@@ -380,10 +376,10 @@
 		.ca-label {
 			color: transparent;
 			font-size: 16px;
-			font-weight: 700;
+			font-weight: $font-weight-bolder;
 			left: 12px;
-			margin: 1rem 0rem;
-			padding: 0rem 0.3rem;
+			margin: $spacer-2 $spacer-0;
+			padding: $spacer-0 $spacer-1;
 			pointer-events: none;
 			position: absolute;
 			top: -5px;
@@ -391,32 +387,32 @@
 		}
 
 		input:valid {
-			background-color: #fff;
-			border: solid 1px #000;
+			background-color: $background;
+			border: solid 1px $color-neutral-0;
 		}
 
 		input:valid + .ca-label {
-			background-color: #fff;
-			color: #000;
+			background-color: $background;
+			color: $color-neutral-0;
 			font-size: 13px;
 			transform: translate(0, -21px) scale(1);
 		}
 
 		input:focus {
-			background-color: #fff;
-			border: solid 1px #4c85ff;
+			background-color: $background;
+			border: solid 1px $color-action-primary-default;
 		}
 
 		input:focus + .ca-label {
-			background-color: #fff;
-			color: #4c85ff;
+			background-color: $background;
+			color: $color-action-primary-default;
 			font-size: 13px;
 			transform: translate(0, -21px) scale(1);
 		}
 
 		::placeholder {
-			color: #080f1b;
-			font-weight: 700;
+			color: $color-neutral-0;
+			font-weight: $font-weight-bolder;
 		}
 
 		input:focus::placeholder {
@@ -424,18 +420,12 @@
 		}
 	}
 
-	.ca-icon-rule {
-		border: solid 1.2px;
-		border-radius: 1rem;
-		fill: #fff;
-		margin-right: 0.3rem;
-		padding: 1px;
-	}
+	
 
 	.ca-input {
-		background-color: aliceblue;
+		background-color: $color-brand-primary-lighten-6;
 		border: none;
-		height: 3rem;
+		height: $spacer-5;
 		width: 100%;
 	}
 
@@ -445,11 +435,49 @@
 
 	.ca-sub-title {
 		font-size: 18px;
-		font-weight: 700;
-		margin-top: 1.7rem;
+		font-weight: $font-weight-bolder;
+		margin-top: $spacer-3;
 	}
 
 	.ca-width-div {
 		width: 28.5rem;
+	}
+
+	.ca-rule-anchor {
+
+		&.checked {
+			color: $color-state-success;
+
+			.ca-icon-rule {
+				background-color: $color-state-success;
+				border: $color-state-success;
+			}
+		}
+
+		&.unchecked {
+			color: $color-state-error;	
+
+			.ca-icon-rule {
+				background-color: $color-state-error;
+				border: $color-state-error;
+			}
+		}
+
+		&.neutral {
+			color: $color-neutral-3;
+
+			.ca-icon-rule {
+				fill: $color-neutral-3;
+				border-color: $color-neutral-3;
+			}
+		}
+
+		.ca-icon-rule {
+			border: solid 1.2px;
+			border-radius: $spacer-2;
+			fill: $background;
+			margin-right: $spacer-1;
+			padding: 1px;
+		}
 	}
 }
