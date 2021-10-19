@@ -1,4 +1,5 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
+import {WarningBadge} from '~/common/components/fragments/Badges/Warning';
 
 import {ApplicationPropertiesContext} from '~/common/context/ApplicationPropertiesProvider';
 
@@ -16,32 +17,56 @@ const dropAreaProps = {
 	widthContainer: '100%',
 };
 
-const UploadDocuments = () => {
+const UploadDocuments = ({_setExpanded, _setSection, _setStepChecked}) => {
 	const properties = useContext(ApplicationPropertiesContext);
+	const [loading, setLoading] = useState(false);
 
 	const [sections, setSections] = useState([
 		{
+			error: false,
+			errorMessage: 'Please upload a copy of your business license.',
 			files: [],
 			required: true,
+			sectionId: null,
 			subtitle: 'Upload a copy of your business license',
 			title: 'Business License',
 			type: 'document',
 		},
 		{
+			error: false,
 			files: [],
 			required: false,
+			sectionId: null,
 			subtitle: 'Upload a copy of your additional documents.',
 			title: 'Additional Documents',
 			type: 'document',
 		},
 		{
+			error: false,
+			errorMessage: 'Please upload 4 photos of your building interior',
 			files: [],
 			required: true,
+			sectionId: null,
 			subtitle: 'Upload 4 photos of your building interior',
 			title: 'Building Interior Photos',
 			type: 'image',
 		},
 	]);
+
+	const onSetError = (_section, value) => {
+		setSections((sections) =>
+			sections.map((section) => {
+				if (section.title === _section.title) {
+					return {
+						...section,
+						error: value,
+					};
+				}
+
+				return section;
+			})
+		);
+	};
 
 	const onSetFiles = (_section, files) => {
 		setSections((sections) =>
@@ -58,13 +83,13 @@ const UploadDocuments = () => {
 		);
 	};
 
-	const onProgressChange = (id, progress) => {
+	const setFilePropertyValue = (id, key, value) => {
 		setSections((sections) =>
 			sections.map((section) => ({
 				...section,
 				files: section.files.map((fileEntry) => {
 					if (fileEntry.id === id) {
-						fileEntry.progress = progress;
+						fileEntry[key] = value;
 
 						return fileEntry;
 					}
@@ -76,30 +101,61 @@ const UploadDocuments = () => {
 	};
 
 	const onClickConfirmUpload = async () => {
+		setLoading(true);
+
 		const quoteFolder = await createRootFolders(
 			properties.applicationsfoldername
 		);
 
 		for (const section of sections) {
+			onSetError(section, false);
+
 			const sectionFolder = await createFolderIfNotExist(
 				quoteFolder.id,
 				section.title,
 				true
 			);
 
+			if (section.required && section.files.length === 0) {
+				onSetError(section, true);
+				continue;
+			}
+
 			for (const fileEntry of section.files) {
+				if (fileEntry.documentId) {
+					continue;
+				}
+
 				try {
-					await createDocumentInFolder(
+					const {
+						data,
+					} = await createDocumentInFolder(
 						sectionFolder.id,
 						fileEntry,
-						(progress) => onProgressChange(fileEntry.id, progress)
+						(progress) =>
+							setFilePropertyValue(
+								fileEntry.id,
+								'progress',
+								progress
+							)
 					);
+
+					setFilePropertyValue(fileEntry.id, 'documentId', data.id);
 				} catch (error) {
 					console.error(error);
 				}
 			}
 		}
+
+		setLoading(false);
+		_setExpanded('selectPaymentMethod');
+		_setStepChecked('uploadDocuments', true);
 	};
+
+	useEffect(() => {
+		_setSection(sections);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sections]);
 
 	return (
 		<div className="upload-container">
@@ -129,10 +185,28 @@ const UploadDocuments = () => {
 							title={section.title}
 						/>
 					</div>
+
+					{section.error && (
+						<div className="upload-alert">
+							<WarningBadge>
+								<div className="alert-content">
+									<div className="alert-description">
+										{section.errorMessage}
+									</div>
+								</div>
+							</WarningBadge>
+						</div>
+					)}
 				</div>
 			))}
 			<div className="upload-footer">
-				<button onClick={onClickConfirmUpload}>CONFIRM UPLOADS</button>
+				<button
+					className="btn btn-lg btn-primary"
+					disabled={loading}
+					onClick={onClickConfirmUpload}
+				>
+					CONFIRM UPLOADS
+				</button>
 			</div>
 		</div>
 	);
