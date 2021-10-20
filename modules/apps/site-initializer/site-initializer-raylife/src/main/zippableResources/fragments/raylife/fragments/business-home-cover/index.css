@@ -54,7 +54,7 @@
 	font-size: var(--display4-1-size, 2.313rem);
 	font-weight: var(--display3-weight);
 	line-height: var(--display-line-height);
-	margin-bottom: var(--spacer-6-1, 2.5rem);
+	margin-bottom: var(--spacer-5, 2.5rem);
 }
 
 .business-home-cover
@@ -66,7 +66,7 @@
 }
 
 .business-home-cover .business-home-cover-box p {
-	margin-top: var(--spacer-6-1, 2.5rem);
+	margin-top: var(--spacer-5, 2.5rem);
 }
 
 .business-home-cover .business-home-cover-image {

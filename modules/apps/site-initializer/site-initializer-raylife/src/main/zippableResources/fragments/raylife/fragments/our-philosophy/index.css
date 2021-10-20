@@ -5,7 +5,7 @@
 .product-actions .product-actions-title {
 	font-size: var(--display4-size);
 	font-weight: var(--display4-weight);
-	margin-bottom: var(--spacer-3);
+	margin-bottom: var(--spacer-2);
 }
 
 .product-actions .title-highlight {

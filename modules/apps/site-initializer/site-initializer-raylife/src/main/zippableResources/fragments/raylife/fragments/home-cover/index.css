@@ -2,9 +2,9 @@
 	background-color: var(--white);
 	font-size: var(--font-size-lg);
 	max-width: 100%;
-	padding-bottom: var(--spacer-8);
-	padding-right: var(--spacer-6);
-	padding-top: var(--spacer-6);
+	padding-bottom: var(--spacer-7);
+	padding-right: var(--spacer-5);
+	padding-top: var(--spacer-5);
 	position: absolute;
 	top: 280px;
 	width: 520px;

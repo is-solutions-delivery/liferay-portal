@@ -1,9 +1,9 @@
 .product-content {
 	background-color: var(--white);
 	border-radius: var(--border-radius-lg);
-	padding-bottom: var(--spacer-5);
-	padding-left: var(--spacer-5);
-	padding-right: var(--spacer-5);
+	padding-bottom: var(--space-4);
+	padding-left: var(--space-4);
+	padding-right: var(--space-4);
 }
 
 .product-content:before {
@@ -19,7 +19,7 @@
 	align-items: flex-start;
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: var(--spacer-8);
+	margin-bottom: var(--spacer-7);
 }
 
 .product-detail-header .product-detail-name {
