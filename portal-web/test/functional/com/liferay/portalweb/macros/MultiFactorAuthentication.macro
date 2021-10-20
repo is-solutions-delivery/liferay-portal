@@ -399,7 +399,7 @@ definition {
 	}
 
 	macro viewTOTPField {
-		AssertElementNotPresent(locator1 = "MultiFactorAuthentication#TOTP_FIELD");
+		AssertElementPresent(locator1 = "MultiFactorAuthentication#TOTP_FIELD");
 	}
 
 	macro viewTOTPFieldPresentOnMFA {

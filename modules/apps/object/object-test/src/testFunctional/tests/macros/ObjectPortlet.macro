@@ -1,15 +1,46 @@
 definition {
 
+	macro assertDuplicatedEntryNotPresent {
+		AssertElementNotPresent(
+			key_entry = "${entry}",
+			locator1 = "ObjectPortlet#DUPLICATED_ENTRY_VALUE");
+	}
+
 	macro assertEntryColumnNotPresent {
 		AssertElementNotPresent(
 			key_column = "${column}",
 			locator1 = "ObjectPortlet#ENTRY_COLUMN");
 	}
 
+	macro assertEntryDetailsLabelPresent {
+		AssertElementPresent(
+			key_entryLabel = "${entryLabel}",
+			locator1 = "ObjectPortlet#VIEW_ENTRY_DETAILS_LABEL");
+	}
+
+	macro assertEntryDetailsValuePresent {
+		AssertElementPresent(
+			key_entryValue = "${entryValue}",
+			locator1 = "ObjectPortlet#VIEW_ENTRY_DETAILS_VALUE");
+	}
+
 	macro assertEntryNotPresent {
 		AssertElementNotPresent(
 			key_entry = "${entry}",
 			locator1 = "ObjectPortlet#ENTRY_VALUE");
+	}
+
+	macro assertFieldEntryColumnIsDisplayed {
+		AssertElementPresent(
+			key_fieldLabelName = "${fieldLabelName}",
+			locator1 = "ObjectPortlet#FIELD_ENTRY_COLUMN");
+	}
+
+	macro assertFieldLabelName {
+		AssertTextEquals(
+			key_fieldLabelName = "${fieldLabelName}",
+			locator1 = "ObjectPortlet#FIELD_LABEL_NAME",
+			value1 = "${key_fieldLabelName}");
 	}
 
 	macro assertFilterResultsSpecificOrder {
@@ -23,6 +54,12 @@ definition {
 				locator1 = "ObjectPortlet#ENTRY_VALUE_SPECIFIC_ORDER",
 				resultOrder = "${resultOrder}");
 		}
+	}
+
+	macro assertGenericEntryColumnIsDisplayed {
+		AssertElementPresent(
+			key_fieldLabelName = "${fieldLabelName}",
+			locator1 = "ObjectPortlet#GENERIC_ENTRY_COLUMN");
 	}
 
 	macro assertMenuItemColumn {
@@ -106,6 +143,14 @@ definition {
 		AssertElementPresent(
 			key_entry = "${entry}",
 			locator1 = "ObjectPortlet#ENTRY_VALUE");
+	}
+
+	macro viewEntryDetails {
+		Click(
+			key_entry = "${entry}",
+			locator1 = "ObjectPortlet#ENTRY_KEBAB_MENU");
+
+		Click(locator1 = "ObjectPortlet#VIEW_ENTRY_BUTTON");
 	}
 
 }

@@ -125,23 +125,68 @@ definition {
 	}
 
 	@description = "This is a test for LPS-136760. It checks that content can be added in code view."
-	@ignore = "true"
 	@priority = "2"
 	test CanAddContentInCodeView {
-		property portal.acceptance = "false";
+		JSONLayout.addPublicLayout(
+			groupName = "Guest",
+			layoutName = "Blogs Page");
 
-		// TODO LPS-136760 CanAddContentInCodeView pending implementation
+		JSONLayout.addWidgetToPublicLayout(
+			groupName = "Guest",
+			layoutName = "Blogs Page",
+			widgetName = "Blogs");
 
+		BlogsNavigator.openToAddEntry(
+			layoutName = "Blogs Page",
+			siteURLKey = "guest");
+
+		Blogs.addEntryWithHTML(
+			entryContent = '''<h2>Blogs Entry Content</h2>''',
+			entrySubtitle = "Blogs Entry Subtitle",
+			entryTitle = "Blogs Entry Title",
+			skipNavigation = "true");
+
+		BlogsNavigator.openToBlogEntry(
+			entryTitle = "Blogs Entry Title",
+			layoutName = "Blogs Page",
+			siteURLKey = "guest");
+
+		BlogsEntry.viewEntryPG(
+			entryContentHTML = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title");
 	}
 
 	@description = "This is a test for LPS-136762. It checks that content can be added in full screen mode."
-	@ignore = "true"
 	@priority = "2"
 	test CanAddContentInFullScreenMode {
-		property portal.acceptance = "false";
+		JSONLayout.addPublicLayout(
+			groupName = "Guest",
+			layoutName = "Blogs Page");
 
-		// TODO LPS-136762 CanAddContentInFullScreenMode pending implementation
+		JSONLayout.addWidgetToPublicLayout(
+			groupName = "Guest",
+			layoutName = "Blogs Page",
+			widgetName = "Blogs");
 
+		BlogsNavigator.openToAddEntry(
+			layoutName = "Blogs Page",
+			siteURLKey = "guest");
+
+		BlogsEntry.addTitle(entryTitle = "Blogs Entry Title");
+
+		BlogsEntry.addEntryContentViaCodeView(
+			entryContent = "Blogs Entry Content",
+			viewMode = "Fullscreen");
+
+		Button.clickPublish();
+
+		Navigator.gotoSitePage(
+			pageName = "Blogs Page",
+			siteName = "Guest");
+
+		BlogsEntry.viewEntryPG(
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title");
 	}
 
 	@description = "This is a test for LPS-136763. It checks that 400 characters can be added to the description."
@@ -186,13 +231,37 @@ definition {
 	}
 
 	@description = "This is a test for LPS-136761. It checks that special characters can be added to a custom abstract"
-	@ignore = "true"
 	@priority = "3"
 	test CanAddSpecialCharactersToCustomAbstract {
-		property portal.acceptance = "false";
+		JSONLayout.addPublicLayout(
+			groupName = "Guest",
+			layoutName = "Blogs Page");
 
-		// TODO LPS-136761 CanAddSpecialCharactersToCustomAbstract pending implementation
+		JSONLayout.addWidgetToPublicLayout(
+			groupName = "Guest",
+			layoutName = "Blogs Page",
+			widgetName = "Blogs");
 
+		BlogsNavigator.openToAddEntry(
+			layoutName = "Blogs Page",
+			siteURLKey = "guest");
+
+		BlogsEntry.addTitle(entryTitle = "Blogs Entry Title");
+
+		BlogsEntry.addContent(entryContent = "Blogs Entry Content");
+
+		Panel.expandPanel(panel = "Configuration");
+
+		BlogsEntry.addCustomAbstract(entryAbstractDescription = '''~!@#$%^&*''');
+
+		Button.clickPublish();
+
+		Navigator.gotoPage(pageName = "Blogs Page");
+
+		BlogsEntry.viewAbstractDisplay(
+			entryAbstractDescription = '''~!@#$%^&*''',
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title");
 	}
 
 	@description = "This is the same case as BlogsPage#CanAddTitleWithoutEscapingCharacters, but due to LPS-130537 we should ensure both contexts are covered."

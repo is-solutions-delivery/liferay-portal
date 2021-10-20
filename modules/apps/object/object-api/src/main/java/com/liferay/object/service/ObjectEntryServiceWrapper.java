@@ -62,6 +62,15 @@ public class ObjectEntryServiceWrapper
 	}
 
 	@Override
+	public com.liferay.object.model.ObjectEntry deleteObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryService.deleteObjectEntry(
+			externalReferenceCode, companyId, groupId);
+	}
+
+	@Override
 	public com.liferay.object.model.ObjectEntry fetchObjectEntry(
 			long objectEntryId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -75,6 +84,15 @@ public class ObjectEntryServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectEntryService.getObjectEntry(objectEntryId);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectEntry getObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryService.getObjectEntry(
+			externalReferenceCode, companyId, groupId);
 	}
 
 	/**

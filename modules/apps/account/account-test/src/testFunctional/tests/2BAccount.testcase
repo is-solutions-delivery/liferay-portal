@@ -270,6 +270,47 @@ definition {
 			phoneNumber = "+1-877-543-3729");
 	}
 
+	@description = "This test asserts that an Account Admin can set a shipping address to an Account."
+	@priority = "5"
+	test AccountAdminCanSetDefaultShippingAddress {
+		Search.searchPG(
+			portletName = "Account Management",
+			searchTerm = "Account Name");
+
+		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Edit");
+
+		Accounts.gotoAssigneeTab(assigneeTab = "Addresses");
+
+		Accounts.addAddressViaSetDefaultAddress(
+			addressCity = "Shibuya-ku",
+			addressCountry = "Japan",
+			addressName = "Liferay Japan K. K.",
+			addressPostalCode = "150-0021",
+			addressRegion = "Tokyo",
+			addressStreet1 = "1F Faveur Ebisu,",
+			addressStreet2 = "1-26-7 Ebisu Nishi",
+			addressType = "Shipping",
+			phoneNumber = "+81 3-5456-5796");
+
+		Accounts.gotoAssigneeTab(assigneeTab = "Details");
+
+		Accounts.setDefaultShippingAddress(addressName = "Liferay Japan K. K.");
+
+		AssertElementPresent(
+			key_tab = "Details",
+			locator1 = "NavTab#ACTIVE_TAB_LINK");
+
+		Accounts.viewDefaultShippingAddress(
+			addressCity = "Shibuya-ku",
+			addressCountry = "Japan",
+			addressName = "Liferay Japan K. K.",
+			addressPostalCode = "150-0021",
+			addressRegion = "Tokyo",
+			addressStreet1 = "1F Faveur Ebisu,",
+			addressStreet2 = "1-26-7 Ebisu Nishi",
+			phoneNumber = "+81 3-5456-5796");
+	}
+
 	@description = "This test asserts that an Account Admin can add and unassign organization in bulk"
 	@priority = "5"
 	test AccountAdminCanUnassignOrganizationsInBulk {
@@ -350,6 +391,48 @@ definition {
 			assigneeType = "Organizations");
 	}
 
+	@description = "This test asserts Account Administrators can view all account users"
+	@priority = "5"
+	test AdminCanViewAllAccountUsers {
+		task ("Add several users to account") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Account Name");
+
+			for (var userNum : list "2,3,4") {
+				Accounts.addNewUserToBusinessAccount(
+					accountName = "Account Name",
+					assigneeName = "userfn${userNum}",
+					userEmailAddress = "userea${userNum}@liferay.com",
+					userFirstName = "userfn${userNum}",
+					userLastName = "userln${userNum}",
+					userScreenName = "usersn${userNum}");
+			}
+		}
+
+		task ("Assert all users can be viewed") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea@liferay.com",
+				userLoginFullName = "userfn userln");
+
+			Navigator.gotoPage(pageName = "2B Account Page");
+
+			LexiconEntry.gotoEntryMenuItemNoError(
+				menuItem = "Manage Users",
+				rowEntry = "Account Name");
+
+			LexiconEntry.viewEntryName(rowEntry = "userfn userln");
+
+			for (var userNum : list "2,3,4") {
+				LexiconEntry.viewEntryName(rowEntry = "userfn${userNum} userln${userNum}");
+			}
+		}
+	}
+
 	@description = "This test checks that the size of the pagination list can be changed."
 	@priority = "4"
 	test CanChangePaginationInAccounts {
@@ -376,24 +459,6 @@ definition {
 				accountName = "${accountNames}",
 				assigneeName = "userfn userln");
 		}
-	}
-
-	@description = "This test asserts that an Account Admin cannot view accounts not assigned to him."
-	@priority = "5"
-	test CannotViewOtherAccounts {
-		User.logoutAndLoginPG(
-			userLoginEmailAddress = "test@liferay.com",
-			userLoginFullName = "Test Test");
-
-		JSONAccountEntry.addAccountEntry(
-			accountEntryName = "Account Name 2",
-			accountEntryType = "Business");
-
-		Navigator.gotoPage(pageName = "2B Account Page");
-
-		LexiconEntry.viewEntryName(rowEntry = "Account Name");
-
-		LexiconEntry.viewEntryName(rowEntry = "Account Name 2");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea@liferay.com",
@@ -437,6 +502,30 @@ definition {
 				}
 			}
 		}
+	}
+
+	@description = "This test asserts that an Account Admin cannot view accounts not assigned to him."
+	@priority = "5"
+	test CannotViewOtherAccounts {
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "test@liferay.com",
+			userLoginFullName = "Test Test");
+
+		JSONAccountEntry.addAccountEntry(
+			accountEntryName = "Account Name 2",
+			accountEntryType = "Business");
+
+		Navigator.gotoPage(pageName = "2B Account Page");
+
+		LexiconEntry.viewEntryName(rowEntry = "Account Name");
+
+		LexiconEntry.viewEntryName(rowEntry = "Account Name 2");
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "userea@liferay.com",
+			userLoginFullName = "userfn userln");
+
+		Navigator.gotoPage(pageName = "2B Account Page");
 
 		LexiconEntry.viewEntryName(rowEntry = "Account Name");
 

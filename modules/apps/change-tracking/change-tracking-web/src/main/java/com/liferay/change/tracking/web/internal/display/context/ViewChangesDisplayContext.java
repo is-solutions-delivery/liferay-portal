@@ -299,6 +299,9 @@ public class ViewChangesDisplayContext {
 				return changesJSONArray;
 			}
 		).put(
+			"changeTypesFromURL",
+			ParamUtil.getString(_renderRequest, "changeTypes")
+		).put(
 			"contextView",
 			_getContextViewJSONObject(
 				ctClosure, modelInfoMap, rootClassNameIds,
@@ -446,6 +449,8 @@ public class ViewChangesDisplayContext {
 				return siteNamesJSONObject;
 			}
 		).put(
+			"sitesFromURL", ParamUtil.getString(_renderRequest, "sites")
+		).put(
 			"spritemap", _themeDisplay.getPathThemeImages() + "/clay/icons.svg"
 		).put(
 			"typeNames",
@@ -464,6 +469,8 @@ public class ViewChangesDisplayContext {
 
 				return typeNamesJSONObject;
 			}
+		).put(
+			"typesFromURL", ParamUtil.getString(_renderRequest, "types")
 		).put(
 			"updateCTCommentURL",
 			() -> {
@@ -485,6 +492,8 @@ public class ViewChangesDisplayContext {
 				CTEntryTable.INSTANCE, _themeDisplay, _userLocalService,
 				CTEntryTable.INSTANCE.ctCollectionId.eq(
 					_ctCollection.getCtCollectionId()))
+		).put(
+			"usersFromURL", ParamUtil.getString(_renderRequest, "users")
 		).build();
 	}
 
@@ -865,19 +874,6 @@ public class ViewChangesDisplayContext {
 				modelInfo._site = _isSite(model);
 			}
 			else {
-				String changeType = "modified";
-
-				if (ctEntry.getChangeType() ==
-						CTConstants.CT_CHANGE_TYPE_ADDITION) {
-
-					changeType = "added";
-				}
-				else if (ctEntry.getChangeType() ==
-							CTConstants.CT_CHANGE_TYPE_DELETION) {
-
-					changeType = "deleted";
-				}
-
 				long ctCollectionId =
 					_ctDisplayRendererRegistry.getCtCollectionId(
 						_ctCollection, ctEntry);
@@ -948,7 +944,7 @@ public class ViewChangesDisplayContext {
 				modelInfo._ctEntry = true;
 
 				modelInfo._jsonObject = JSONUtil.put(
-					"changeType", changeType
+					"changeType", ctEntry.getChangeType()
 				).put(
 					"ctEntryId", ctEntry.getCtEntryId()
 				).put(

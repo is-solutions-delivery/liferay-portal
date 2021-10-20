@@ -126,13 +126,18 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, actionResponse, jsonObject);
 		}
 		catch (CTTransactionException ctTransactionException) {
-			PortletURL redirectURL = _portal.getControlPanelPortletURL(
-				actionRequest, SiteAdminPortletKeys.SITE_ADMIN,
-				PortletRequest.RENDER_PHASE);
-
 			JSONPortletResponseUtil.writeJSON(
 				actionRequest, actionResponse,
-				JSONUtil.put("redirectURL", redirectURL.toString()));
+				JSONUtil.put(
+					"redirectURL",
+					() -> {
+						PortletURL redirectURL =
+							_portal.getControlPanelPortletURL(
+								actionRequest, SiteAdminPortletKeys.SITE_ADMIN,
+								PortletRequest.RENDER_PHASE);
+
+						return redirectURL.toString();
+					}));
 
 			throw ctTransactionException;
 		}

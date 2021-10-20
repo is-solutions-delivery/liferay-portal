@@ -348,22 +348,6 @@
 	<td>//section[contains(@id,'content')]</td>
 	<td></td>
 </tr>
-<!--EDITABLE_FIELD_TOOLBAR-->
-<tr>
-	<td>EDITABLE_FIELD_TOOLBAR_MAPPED_BUTTON</td>
-	<td>//div[contains(@class,'form-group') and contains(.,'${key_mappedField}')]//button[@*='Map' and contains(@class,'active')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EDITABLE_FIELD_TOOLBAR_MAP_BUTTON_SPECIFIC</td>
-	<td>//div[contains(@class,'form-group') and contains(.,'${key_mappedField}')]//button[@*='Map']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>EDITABLE_FIELD_TOOLBAR_LAYOUT_BACKGROUND_IMAGE_BUTTON</td>
-	<td>//button[@data-panel-id='layout_background_image']</td>
-	<td></td>
-</tr>
 <!--EXPERIENCE-->
 <tr>
 	<td>EXPERIENCE_BUTTON_NAME</td>
@@ -432,18 +416,49 @@
 </tr>
 <!--FRAGMENT_SIDEBAR-->
 <tr>
-	<td>FRAGMENT_SIDEBAR_BACK</td>
-	<td>//button[*[name()='svg'][contains(@class,'lexicon-icon-angle-left')]]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>FRAGMENT_SIDEBAR_BODY</td>
 	<td>//div[contains(@class,'page-editor__sidebar')][contains(@class,'theme-adapter-forms')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>FRAGMENT_SIDEBAR_TAB_COLLAPSED</td>
-	<td>//button[@*='${key_tabName}' and contains(@aria-pressed,'false')]</td>
+	<td>FRAGMENT_SIDEBAR_LOADED</td>
+	<td>//div[contains(@class,'sidebar')]/div[contains(@class,'buttons')]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL</td>
+	<td>//*[contains(@class,'collapse-icon')][normalize-space()='${key_collectionName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL_COLLAPSED</td>
+	<td>//*[contains(@class,'sheet-subtitle collapsed')][normalize-space()='${key_collectionName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL_EXPANDED</td>
+	<td>//*[contains(@class,'collapse-icon sheet-subtitle')][normalize-space()='${key_collectionName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRAGMENT_SIDEBAR_TAB_BUTTON</td>
+	<td>//div[contains(@class,'page-editor__sidebar__buttons')]//*[@*='${key_tabName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRAGMENT_SIDEBAR_TAB_BUTTON_ACTIVE</td>
+	<td>//button[contains(@title,'${key_tabName}')][contains(@aria-pressed,'true')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRAGMENT_SIDEBAR_TITLE</td>
+	<td>//div[contains(@class,'content--open')]//h1[contains(@class,'page-editor__sidebar__panel-header') and contains(.,'${key_sidebarButton}')]</td>
+	<td></td>
+</tr>
+<!--COMMENTS_PANEL-->
+<tr>
+	<td>FRAGMENT_SIDEBAR_BACK</td>
+	<td>//button[*[name()='svg'][contains(@class,'lexicon-icon-angle-left')]]</td>
 	<td></td>
 </tr>
 <tr>
@@ -497,11 +512,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>FRAGMENT_SIDEBAR_LOADED</td>
-	<td>//div[contains(@class,'sidebar')]/div[contains(@class,'buttons')]/button</td>
-	<td></td>
-</tr>
-<tr>
 	<td>FRAGMENT_SIDEBAR_REPLY_COMMENTS_EDITOR</td>
 	<td>//div[contains(@class,'alloy-editor-container') and contains(@id,'pageEditorCommentReplyEditor')]/div[contains(@data-placeholder,'Type your comment here.')]</td>
 	<td></td>
@@ -532,21 +542,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL</td>
-	<td>//*[contains(@class,'collapse-icon')][normalize-space()='${key_collectionName}']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL_COLLAPSED</td>
-	<td>//*[contains(@class,'sheet-subtitle collapsed')][normalize-space()='${key_collectionName}']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL_EXPANDED</td>
-	<td>//*[contains(@class,'collapse-icon sheet-subtitle')][normalize-space()='${key_collectionName}']</td>
-	<td></td>
-</tr>
-<tr>
 	<td>FRAGMENT_SIDEBAR_CENTER_TEXT</td>
 	<td>//div[contains(@class,'text-center')]/h1</td>
 	<td></td>
@@ -554,11 +549,6 @@
 <tr>
 	<td>FRAGMENT_SIDEBAR_SECONDARY_TEXT</td>
 	<td>//*[contains(@class,'text-secondary')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FRAGMENT_SIDEBAR_SECTION_TITLE</td>
-	<td>//div[contains(@class,'page-editor')]/div/h1</td>
 	<td></td>
 </tr>
 <tr>
@@ -576,32 +566,18 @@
 	<td>//label/input[@type='checkbox']</td>
 	<td></td>
 </tr>
+<!--MAPPING_PANEL-->
 <tr>
-	<td>FRAGMENT_SIDEBAR_TAB_BUTTON</td>
-	<td>//div[contains(@class,'page-editor__sidebar__buttons')]//*[@*='${key_tabName}']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FRAGMENT_SIDEBAR_TAB_BUTTON_ACTIVE</td>
-	<td>//button[contains(@title,'${key_tabName}')][contains(@aria-pressed,'true')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>FRAGMENT_SIDEBAR_TYPE_LABEL</td>
+	<td>MAPPING_PANEL_TYPE_LABEL</td>
 	<td>//p[contains(@class,'type-label')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>FRAGMENT_SIDEBAR_SUB_TYPE_LABEL</td>
+	<td>MAPPING_PANEL_SUB_TYPE_LABEL</td>
 	<td>xpath=(//p[contains(@class,'type-label')])[2]</td>
 	<td></td>
 </tr>
-<tr>
-	<td>FRAGMENT_SIDEBAR_TITLE</td>
-	<td>//div[contains(@class,'content--open')]//h1[contains(@class,'page-editor__sidebar__panel-header') and contains(.,'${key_sidebarButton}')]</td>
-	<td></td>
-</tr>
-<!--FRAGMENTS_AND_WIDGETS-->
+<!--FRAGMENTS_AND_WIDGETS_PANEL-->
 <tr>
 	<td>FRAGMENTS_AND_WIDGETS_DISPLAY_STYLE_BUTTON</td>
 	<td>//div[contains(@class,'fragments-widgets-panel')]//button[contains(@class,'tooltip')][*[name()='svg'][contains(@class,'icon-${key_displayStyle}')]]</td>
@@ -635,6 +611,11 @@
 <tr>
 	<td>FRAGMENTS_AND_WIDGETS_SEARCH_RESULTS</td>
 	<td>//li[contains(@class,'page-editor__fragments-widgets__tab-list-item')][normalize-space()='${key_fragmentName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRAGMENTS_AND_WIDGETS_SEARCH_FIELD</td>
+	<td>//div[contains(@class,'page-editor__sidebar')]//div[@role='search']//input[contains(@placeholder,'Search')]</td>
 	<td></td>
 </tr>
 <!--FOOTER_FRAGMENT-->
@@ -671,9 +652,9 @@
 	<td></td>
 </tr>
 <tr>
-<td>GRID_COLUMN_EMPTY</td>
-<td>xpath=(//div[contains(@class,'page-editor__topper__bar') and contains(.,'Grid')]//following-sibling::div[contains(@class,'page-editor__topper__content')])[${key_position}]//div[contains(@class,'page-editor__row')][contains(@class,'empty')]</td>
-<td></td>
+	<td>GRID_COLUMN_EMPTY</td>
+	<td>xpath=(//div[contains(@class,'page-editor__topper__bar') and contains(.,'Grid')]//following-sibling::div[contains(@class,'page-editor__topper__content')])[${key_position}]//div[contains(@class,'page-editor__row')][contains(@class,'empty')]</td>
+	<td></td>
 </tr>
 <tr>
 	<td>GRID_COLUMN_NESTED_ELEMENT</td>
@@ -838,11 +819,31 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PREVIEW_WITH_DROPDOWN_MENU</td>
+	<td>//span[(text())='-- None --']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PREVIEW_WITH_CUSTOM_OBJECT_ITEM</td>
+	<td>//li[contains(@class,'list-group-item list-group-item-flex  item-selector-list-row   ')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PREVIEW_WITH_OTHER_ITEM</td>
+	<td>//button[contains(text(), 'Select Other Item')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PREVIEW_WITH_SELECTED_ENTRY</td>
+	<td>//h1[contains(@class,'component-heading mb-0 text-break page-editor__editable page-editor__editable--mapped')][contains(text(),'${key_selectedEntry}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>UNDO_HISTORY</td>
 	<td>//button[contains(@aria-label,'History')]</td>
 	<td></td>
 </tr>
-<!--PAGE_CONTENTS-->
+<!--PAGE_CONTENTS_PANEL-->
 <tr>
 	<td>PAGE_CONTENTS_CONTENT_FILTER_TOGGLE</td>
 	<td>//div[contains(@class,'page-contents__content-filter')]//button[contains(@class,'dropdown-toggle')]</td>
@@ -928,12 +929,6 @@
 <tr>
 	<td>NAV_ITEM_BUTTON</td>
 	<td>//div[contains(@class,'page-structure')]//button[contains(@class,'nav-link')][normalize-space()='${key_navItem}']</td>
-	<td></td>
-</tr>
-<!--WIDGETS-->
-<tr>
-	<td>WIDGETS_APPLICATION_SEARCH_FIELD</td>
-	<td>//div[contains(@class,'page-editor__sidebar')]//div[@role='search']//input[contains(@placeholder,'Search')]</td>
 	<td></td>
 </tr>
 </tbody>

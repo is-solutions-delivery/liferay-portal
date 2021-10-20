@@ -36,15 +36,15 @@ public class SessionClicks_IW {
 			defaultValue);
 	}
 
-	public java.lang.String get(javax.servlet.http.HttpSession session,
+	public java.lang.String get(javax.servlet.http.HttpSession httpSession,
 		java.lang.String key, java.lang.String defaultValue) {
-		return SessionClicks.get(session, key, defaultValue);
+		return SessionClicks.get(httpSession, key, defaultValue);
 	}
 
-	public java.lang.String get(javax.servlet.http.HttpSession session,
+	public java.lang.String get(javax.servlet.http.HttpSession httpSession,
 		java.lang.String namespace, java.lang.String key,
 		java.lang.String defaultValue) {
-		return SessionClicks.get(session, namespace, key, defaultValue);
+		return SessionClicks.get(httpSession, namespace, key, defaultValue);
 	}
 
 	public void put(javax.servlet.http.HttpServletRequest httpServletRequest,
@@ -57,14 +57,14 @@ public class SessionClicks_IW {
 		SessionClicks.put(httpServletRequest, namespace, key, value);
 	}
 
-	public void put(javax.servlet.http.HttpSession session,
+	public void put(javax.servlet.http.HttpSession httpSession,
 		java.lang.String key, java.lang.String value) {
-		SessionClicks.put(session, key, value);
+		SessionClicks.put(httpSession, key, value);
 	}
 
-	public void put(javax.servlet.http.HttpSession session,
+	public void put(javax.servlet.http.HttpSession httpSession,
 		java.lang.String namespace, java.lang.String key, java.lang.String value) {
-		SessionClicks.put(session, namespace, key, value);
+		SessionClicks.put(httpSession, namespace, key, value);
 	}
 
 	private SessionClicks_IW() {

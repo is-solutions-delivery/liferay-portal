@@ -98,10 +98,6 @@ public class CommerceInventoryReplenishmentClayDataSetActionProvider
 		long commerceInventoryReplenishmentItemId,
 		HttpServletRequest httpServletRequest) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				_portal.getOriginalServletRequest(httpServletRequest),
@@ -111,7 +107,9 @@ public class CommerceInventoryReplenishmentClayDataSetActionProvider
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commerceInventoryReplenishmentItemId",
 			commerceInventoryReplenishmentItemId

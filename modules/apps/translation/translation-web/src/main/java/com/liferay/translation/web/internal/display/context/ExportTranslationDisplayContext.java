@@ -293,12 +293,16 @@ public class ExportTranslationDisplayContext {
 		TranslationInfoItemFieldValuesExporter
 			translationInfoItemFieldValuesExporter) {
 
-		InfoLocalizedValue<String> labelInfoLocalizedValue =
-			translationInfoItemFieldValuesExporter.getLabelInfoLocalizedValue();
-
 		return JSONUtil.put(
 			"displayName",
-			labelInfoLocalizedValue.getValue(_themeDisplay.getLocale())
+			() -> {
+				InfoLocalizedValue<String> labelInfoLocalizedValue =
+					translationInfoItemFieldValuesExporter.
+						getLabelInfoLocalizedValue();
+
+				return labelInfoLocalizedValue.getValue(
+					_themeDisplay.getLocale());
+			}
 		).put(
 			"mimeType", translationInfoItemFieldValuesExporter.getMimeType()
 		);

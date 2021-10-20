@@ -150,10 +150,6 @@ public class CommerceSubscriptionEntryDataSetDataProvider
 			long commerceAccountId, HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest, AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
@@ -161,7 +157,9 @@ public class CommerceSubscriptionEntryDataSetDataProvider
 		).setMVCRenderCommandName(
 			"/account_admin/edit_account_entry"
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"accountEntryId", commerceAccountId
 		).buildString();
@@ -176,10 +174,6 @@ public class CommerceSubscriptionEntryDataSetDataProvider
 
 		ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			PortletProviderUtil.getPortletURL(
 				httpServletRequest, themeDisplay.getScopeGroup(),
@@ -187,7 +181,9 @@ public class CommerceSubscriptionEntryDataSetDataProvider
 		).setMVCRenderCommandName(
 			"/commerce_open_order_content/edit_commerce_order"
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commerceOrderId", commerceOrderId
 		).buildString();

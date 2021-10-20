@@ -78,10 +78,6 @@ public class CommercePricingClassPriceListDataSetActionProvider
 	private PortletURL _getPriceListEditURL(
 		long commercePriceListId, HttpServletRequest httpServletRequest) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest,
@@ -90,7 +86,9 @@ public class CommercePricingClassPriceListDataSetActionProvider
 		).setMVCRenderCommandName(
 			"/commerce_price_list/edit_commerce_price_list"
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commercePriceListId", commercePriceListId
 		).buildPortletURL();

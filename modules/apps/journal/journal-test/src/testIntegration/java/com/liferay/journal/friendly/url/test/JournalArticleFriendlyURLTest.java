@@ -63,7 +63,6 @@ public class JournalArticleFriendlyURLTest {
 
 	@Test
 	public void testFriendlyURLAfterRemovingLastVersion() throws Exception {
-		String esTitle = RandomTestUtil.randomString();
 		String frTitle = RandomTestUtil.randomString();
 
 		String usTitle = RandomTestUtil.randomString();
@@ -86,7 +85,7 @@ public class JournalArticleFriendlyURLTest {
 			HashMapBuilder.put(
 				LocaleUtil.FRANCE, frTitle
 			).put(
-				LocaleUtil.SPAIN, esTitle
+				LocaleUtil.SPAIN, RandomTestUtil.randomString()
 			).put(
 				LocaleUtil.US, usTitle
 			).build());

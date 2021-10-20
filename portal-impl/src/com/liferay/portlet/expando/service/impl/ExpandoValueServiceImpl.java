@@ -38,7 +38,6 @@ import java.util.Map;
  */
 public class ExpandoValueServiceImpl extends ExpandoValueServiceBaseImpl {
 
-	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	@Override
 	public ExpandoValue addValue(
 			long companyId, String className, String tableName,
@@ -55,6 +54,7 @@ public class ExpandoValueServiceImpl extends ExpandoValueServiceBaseImpl {
 			companyId, className, tableName, columnName, classPK, data);
 	}
 
+	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	@Override
 	public ExpandoValue addValue(
 			long companyId, String className, String tableName,

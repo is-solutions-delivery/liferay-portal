@@ -102,6 +102,21 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 	}
 
 	@Override
+	public ObjectEntry deleteObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws PortalException {
+
+		ObjectEntry objectEntry = objectEntryLocalService.getObjectEntry(
+			externalReferenceCode, companyId, groupId);
+
+		_checkModelResourcePermission(
+			objectEntry.getObjectDefinitionId(), objectEntry.getObjectEntryId(),
+			ActionKeys.DELETE);
+
+		return objectEntryLocalService.deleteObjectEntry(objectEntry);
+	}
+
+	@Override
 	public ObjectEntry fetchObjectEntry(long objectEntryId)
 		throws PortalException {
 
@@ -123,6 +138,21 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 
 		ObjectEntry objectEntry = objectEntryLocalService.getObjectEntry(
 			objectEntryId);
+
+		_checkModelResourcePermission(
+			objectEntry.getObjectDefinitionId(), objectEntry.getObjectEntryId(),
+			ActionKeys.VIEW);
+
+		return objectEntry;
+	}
+
+	@Override
+	public ObjectEntry getObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws PortalException {
+
+		ObjectEntry objectEntry = objectEntryLocalService.getObjectEntry(
+			externalReferenceCode, companyId, groupId);
 
 		_checkModelResourcePermission(
 			objectEntry.getObjectDefinitionId(), objectEntry.getObjectEntryId(),

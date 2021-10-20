@@ -78,18 +78,20 @@ public class AccountEntrySearchPermissionFilterContributor
 			"organizationIds");
 
 		try {
-			User user = _userLocalService.getUser(userId);
-
 			BaseModelSearchResult<Organization> baseModelSearchResult =
 				_organizationLocalService.searchOrganizations(
 					companyId, OrganizationConstants.ANY_PARENT_ORGANIZATION_ID,
 					null,
 					LinkedHashMapBuilder.<String, Object>put(
 						"accountsOrgsTree",
-						ListUtil.filter(
-							user.getOrganizations(true),
-							organization -> _hasManageAccountsPermission(
-								permissionChecker, organization))
+						() -> {
+							User user = _userLocalService.getUser(userId);
+
+							return ListUtil.filter(
+								user.getOrganizations(true),
+								organization -> _hasManageAccountsPermission(
+									permissionChecker, organization));
+						}
 					).build(),
 					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 

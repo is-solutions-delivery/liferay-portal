@@ -202,10 +202,6 @@ public class CommerceChannelClayTable
 			Channel channel, HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		PortletURL portletURL = PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest,
@@ -215,7 +211,10 @@ public class CommerceChannelClayTable
 		).setMVCPath(
 			"/edit_permissions.jsp"
 		).setParameter(
-			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL", redirect
+			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"modelResource", CommerceChannel.class.getName()
 		).setParameter(

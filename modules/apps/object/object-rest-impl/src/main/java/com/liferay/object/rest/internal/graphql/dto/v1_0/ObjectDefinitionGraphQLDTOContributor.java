@@ -85,8 +85,7 @@ public class ObjectDefinitionGraphQLDTOContributor
 
 		return _toMap(
 			_objectEntryManager.addObjectEntry(
-				dtoConverterContext, dtoConverterContext.getUserId(),
-				_objectDefinition, _toObjectEntry(dto),
+				dtoConverterContext, _objectDefinition, _toObjectEntry(dto),
 				(String)dtoConverterContext.getAttribute("scopeKey")));
 	}
 
@@ -175,8 +174,8 @@ public class ObjectDefinitionGraphQLDTOContributor
 
 		return _toMap(
 			_objectEntryManager.updateObjectEntry(
-				dtoConverterContext, dtoConverterContext.getUserId(),
-				_objectDefinition, id, _toObjectEntry(dto)));
+				dtoConverterContext, _objectDefinition, id,
+				_toObjectEntry(dto)));
 	}
 
 	private ObjectDefinitionGraphQLDTOContributor(

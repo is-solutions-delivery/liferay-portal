@@ -15,6 +15,8 @@
 package com.liferay.commerce.internal.model.listener;
 
 import com.liferay.commerce.notification.util.CommerceNotificationHelper;
+import com.liferay.commerce.product.model.CommerceChannel;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -64,12 +66,20 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 
 	private void _sendNotifications(String action, ObjectEntry objectEntry) {
 		try {
+			CommerceChannel commerceChannel =
+				_commerceChannelLocalService.fetchCommerceChannelBySiteGroupId(
+					objectEntry.getGroupId());
+
+			if (commerceChannel == null) {
+				return;
+			}
+
 			ObjectDefinition objectDefinition =
 				_objectDefinitionLocalService.getObjectDefinition(
 					objectEntry.getObjectDefinitionId());
 
 			_commerceNotificationHelper.sendNotifications(
-				objectEntry.getGroupId(), objectEntry.getUserId(),
+				commerceChannel.getGroupId(), objectEntry.getUserId(),
 				objectDefinition.getClassName() + "#" + action, objectEntry);
 		}
 		catch (PortalException portalException) {
@@ -81,6 +91,9 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectEntryModelListener.class);
+
+	@Reference
+	private CommerceChannelLocalService _commerceChannelLocalService;
 
 	@Reference
 	private CommerceNotificationHelper _commerceNotificationHelper;

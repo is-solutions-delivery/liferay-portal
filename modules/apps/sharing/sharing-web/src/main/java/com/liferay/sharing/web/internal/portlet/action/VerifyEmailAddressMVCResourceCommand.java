@@ -69,18 +69,26 @@ public class VerifyEmailAddressMVCResourceCommand
 				themeDisplay.getUserId());
 		}
 
-		String emailAddress = ParamUtil.getString(
-			httpServletRequest, "emailAddress");
-
-		User user = _userLocalService.fetchUserByEmailAddress(
-			themeDisplay.getCompanyId(), emailAddress);
-
 		HttpServletResponse httpServletResponse =
 			_portal.getHttpServletResponse(resourceResponse);
 
 		httpServletResponse.setContentType(ContentTypes.APPLICATION_JSON);
 
-		JSONObject jsonObject = JSONUtil.put("userExists", user != null);
+		JSONObject jsonObject = JSONUtil.put(
+			"userExists",
+			() -> {
+				String emailAddress = ParamUtil.getString(
+					httpServletRequest, "emailAddress");
+
+				User user = _userLocalService.fetchUserByEmailAddress(
+					themeDisplay.getCompanyId(), emailAddress);
+
+				if (user != null) {
+					return true;
+				}
+
+				return false;
+			});
 
 		JSONPortletResponseUtil.writeJSON(
 			resourceRequest, resourceResponse, jsonObject);

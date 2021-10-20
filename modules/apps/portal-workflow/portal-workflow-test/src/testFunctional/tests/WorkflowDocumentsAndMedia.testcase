@@ -41,12 +41,59 @@ definition {
 	}
 
 	@description = "This is a test for LRQA-69298. Verify the changes to pending when a file is edited"
-	@ignore = "true"
 	@priority = "3"
 	test AfterEditFileStatusBecomePending {
+		var siteName = TestCase.getSiteName(siteName = "${siteName}");
 
-		// TODO LRQA-69298 AfterEditFileStatusBecomePending pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media",
+			site = "${siteName}");
 
+		Workflow.configureWorkflowViaPortlet(workflowDefinition = "Single Approver");
+
+		LexiconEntry.changeDisplayStyle(displayStyle = "cards");
+
+		DMDocument.addWithWorkflowCP(
+			dmDocumentFile = "Document_1.jpg",
+			dmDocumentTitle = "Document_1.jpg");
+
+		Navigator.openURL();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Navigator.gotoNavTab(navTab = "Assigned to My Roles");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Document_1",
+			workflowAssetType = "Document",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Document_1",
+			workflowAssetType = "Document",
+			workflowTask = "Review");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
+
+		DepotNavigator.gotoEdit(depotName = "Document_1");
+
+		DMDocument.editDocument(
+			dmDocumentDescription = "Document_2.pdf",
+			dmDocumentFile = "Document_2.pdf",
+			dmDocumentTitle = "Document_2");
+
+		Button.clickSubmitForPublication();
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Pending",
+			dmDocumentTitle = "Document_2");
 	}
 
 	@priority = "5"
@@ -244,21 +291,97 @@ definition {
 	}
 
 	@description = "This is a test for LRQA-69296. Assert that a file can be published"
-	@ignore = "true"
 	@priority = "3"
 	test CanPublishFile {
+		var siteName = TestCase.getSiteName(siteName = "${siteName}");
 
-		// TODO LRQA-69296 CanPublishFile pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media",
+			site = "${siteName}");
 
+		Workflow.configureWorkflowViaPortlet(workflowDefinition = "Single Approver");
+
+		DMDocument.addWithWorkflowCP(
+			dmDocumentFile = "Document_1.jpg",
+			dmDocumentTitle = "Document_1.jpg");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Navigator.gotoNavTab(navTab = "Assigned to My Roles");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Document_1",
+			workflowAssetType = "Document",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Document_1",
+			workflowAssetType = "Document",
+			workflowTask = "Review");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Approved",
+			dmDocumentTitle = "Document_1.jpg");
 	}
 
 	@description = "This is a test for LRQA-69297. Assert that the user can publish multiple files"
-	@ignore = "true"
 	@priority = "3"
 	test CanPublishMultipleFiles {
+		var siteName = TestCase.getSiteName(siteName = "${siteName}");
 
-		// TODO LRQA-69297 CanPublishMultipleFiles pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media",
+			site = "${siteName}");
 
+		Workflow.configureWorkflowViaPortlet(workflowDefinition = "Single Approver");
+
+		WorkflowDocumentsAndMedia.addMultipleCP(dmDocumentFileList = "Document_1.jpg,Document_2.pdf,Document_3.xls");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		for (var i : list "Document_2,Document_3") {
+			Navigator.gotoNavTab(navTab = "Assigned to My Roles");
+
+			Workflow.assignToMeTaskByActions(
+				workflowAssetTitle = "${i}",
+				workflowAssetType = "Document",
+				workflowTask = "Review");
+		}
+
+		for (var i : list "Document_2,Document_3") {
+			Workflow.approveTaskByActions(
+				workflowAssetTitle = "${i}",
+				workflowAssetType = "Document",
+				workflowTask = "Review");
+		}
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
+
+		for (var i : list "Document_2,Document_3") {
+			DMDocument.viewStatus(
+				dmDocumentStatus = "Approved",
+				dmDocumentTitle = "${i}");
+		}
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Pending",
+			dmDocumentTitle = "Document_1");
 	}
 
 	@description = "This is a test for LRQA-69303. Verify created file can be shared. "
@@ -556,39 +679,135 @@ definition {
 	}
 
 	@description = "This is a test for LRQA-69299. Verify that the user can set Single Approver Workflow to Documents and Media"
-	@ignore = "true"
 	@priority = "3"
 	test SetSingleApproverToDocumentsAndMedia {
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
 
-		// TODO LRQA-69299 SetSingleApproverToDocumentsAndMedia pending implementation
+		Workflow.configureWorkflowViaPortlet(workflowDefinition = "Single Approver");
 
+		Alert.viewSuccessMessageText(successMessage = "Your request completed successfully.");
 	}
 
 	@description = "This is a test for LRQA-69300. Verify the status as Draft after file checkout"
-	@ignore = "true"
 	@priority = "3"
 	test StatusBecomeDraftAfterCheckout {
+		var siteName = TestCase.getSiteName(siteName = "${siteName}");
+		var documentTitle = "Document_1";
 
-		// TODO LRQA-69300 StatusBecomeDraftAfterCheckout pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media",
+			site = "${siteName}");
 
+		Workflow.configureWorkflowViaPortlet(workflowDefinition = "Single Approver");
+
+		DMDocument.addWithWorkflowCP(
+			dmDocumentFile = "Document_1.jpg",
+			dmDocumentTitle = "${documentTitle}");
+
+		Navigator.openURL();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Navigator.gotoNavTab(navTab = "Assigned to My Roles");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "${documentTitle}",
+			workflowAssetType = "Document",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "${documentTitle}",
+			workflowAssetType = "Document",
+			workflowTask = "Review");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
+
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Checkout",
+			rowEntry = "${documentTitle}");
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Draft",
+			dmDocumentTitle = "${documentTitle}");
 	}
 
 	@description = "This is a test for LRQA-69301. Verify the status is changed to pending after a checkout is cancelled"
-	@ignore = "true"
 	@priority = "3"
 	test StatusPendingAfterCheckoutCancel {
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
 
-		// TODO LRQA-69301 StatusPendingAfterCheckoutCancel pending implementation
+		Workflow.configureWorkflowViaPortlet(workflowDefinition = "Single Approver");
 
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
+
+		DMDocument.addWithWorkflowCP(
+			dmDocumentFile = "workflow.png",
+			dmDocumentTitle = "DM Document Title");
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media");
+
+		DMDocument.checkoutCP(dmDocumentTitle = "DM Document Title");
+
+		Navigator.gotoBack();
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Draft",
+			dmDocumentTitle = "DM Document Title");
+
+		Navigator.gotoBack();
+
+		Click(
+			key_dmDocumentTitle = "DM Document Title",
+			locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_VERTICAL_ELLIPSIS_SPECIFIC");
+
+		MenuItem.click(menuItem = "Cancel Checkout");
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Pending",
+			dmDocumentTitle = "DM Document Title");
 	}
 
 	@description = "This is a test for LRQA-69302. Verify created file shows message about publication in process"
-	@ignore = "true"
 	@priority = "3"
 	test ViewPublicationInProcessMessage {
+		var siteName = TestCase.getSiteName(siteName = "${siteName}");
 
-		// TODO LRQA-69302 ViewPublicationInProcessMessage pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Documents and Media",
+			site = "${siteName}");
 
+		Workflow.configureWorkflowViaPortlet(workflowDefinition = "Single Approver");
+
+		WorkflowDocumentsAndMedia.videoShortcutAddCP(
+			videoShortcutTitle = "test",
+			videoURL = "Test");
+
+		LexiconEntry.changeDisplayStyle(displayStyle = "list");
+
+		DepotNavigator.gotoEdit(depotName = "test");
+
+		WorkflowDocumentsAndMedia.viewWorkflowInProcessMessage(errorMessage = "There is a publication workflow in process. Some actions may be disabled depending on the status and your role through this process.");
 	}
 
 }

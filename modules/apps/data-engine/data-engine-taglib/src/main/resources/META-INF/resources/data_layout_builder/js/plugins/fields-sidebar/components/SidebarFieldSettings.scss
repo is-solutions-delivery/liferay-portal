@@ -1,0 +1,10 @@
+@import 'atlas-variables';
+
+.de__sidebar-field-settings-title {
+	align-items: center;
+	display: flex;
+
+	.component-title {
+		color: $gray-600;
+	}
+}

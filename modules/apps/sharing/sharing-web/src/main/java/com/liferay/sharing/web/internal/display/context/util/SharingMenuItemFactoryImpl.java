@@ -53,12 +53,15 @@ public class SharingMenuItemFactoryImpl
 			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		String manageCollaboratorsOnClickMethod =
-			_sharingJavaScriptFactory.createManageCollaboratorsOnClickMethod(
-				className, classPK, httpServletRequest);
-
 		return DropdownItemBuilder.setHref(
-			"javascript:" + manageCollaboratorsOnClickMethod
+			() -> {
+				String manageCollaboratorsOnClickMethod =
+					_sharingJavaScriptFactory.
+						createManageCollaboratorsOnClickMethod(
+							className, classPK, httpServletRequest);
+
+				return "javascript:" + manageCollaboratorsOnClickMethod;
+			}
 		).setLabel(
 			_getManageCollaboratorsLabel(httpServletRequest)
 		).build();
@@ -107,12 +110,14 @@ public class SharingMenuItemFactoryImpl
 			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		String sharingOnClickMethod =
-			_sharingJavaScriptFactory.createSharingOnClickMethod(
-				className, classPK, httpServletRequest);
-
 		return DropdownItemBuilder.setHref(
-			"javascript:" + sharingOnClickMethod
+			() -> {
+				String sharingOnClickMethod =
+					_sharingJavaScriptFactory.createSharingOnClickMethod(
+						className, classPK, httpServletRequest);
+
+				return "javascript:" + sharingOnClickMethod;
+			}
 		).setLabel(
 			_getSharingLabel(httpServletRequest)
 		).build();

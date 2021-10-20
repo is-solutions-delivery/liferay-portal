@@ -104,12 +104,27 @@ definition {
 	}
 
 	@description = "LPS-135396 - Verify it is possible to add a Boolean field on layout"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddBooleanEntryOnLayout {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-140540 CanAddBooleanEntryOnLayout pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Boolean",
+			fieldName = "customObjectField",
+			fieldType = "Boolean",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectBoleanFieldEntryViaUI(
+			objectName = "CustomObject",
+			value = "true");
+
+		ObjectPortlet.viewEntry(entry = "Yes");
 	}
 
 	@description = "LPS-135396 - Verify it is possible to add a Date field on layout"
@@ -122,12 +137,27 @@ definition {
 	}
 
 	@description = "LPS-135396 - Verify it is possible to add a Double field on layout"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddDoubleEntryOnLayout {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-140546 CanAddDoubleEntryOnLayout pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Field",
+			fieldName = "customObjectField",
+			fieldType = "Double",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectDoubleFieldEntryViaUI(entryValue = "12345");
+
+		ObjectPortlet.viewEntry(entry = "12345");
 	}
 
 	@description = "LPS-140081 - Verify it is possible to add an entry without selecting a value for a Picklist field that is not required"
@@ -596,12 +626,34 @@ definition {
 	}
 
 	@description = "LPS-135396 - Verify it is possible to view a Long entry and label on layout"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanViewLongEntryOnLayout {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-140553 CanViewLongEntryOnLayout pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Field",
+			fieldName = "customObjectField",
+			fieldType = "Long",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "12345678");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectPortlet.viewEntryDetails(entry = "12345678");
+
+		ObjectPortlet.assertEntryDetailsLabelPresent(entryLabel = "Field");
+
+		ObjectPortlet.assertEntryDetailsValuePresent(entryValue = "12345678");
 	}
 
 	@description = "LPS-135390 - Verify it is possible to view other user's Object entry with the View permission"
@@ -633,13 +685,36 @@ definition {
 	}
 
 	@description = "LPS-135393 - Verify that the columns ID, Field(s) and Workflow Status are displayed"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test ColumnsAreDisplayed {
 		property portal.acceptance = "true";
 
-		// TODO LPS-138947 ColumnsAreDisplayed pending implementation
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "String");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectPortlet.assertGenericEntryColumnIsDisplayed(fieldLabelName = "ID");
+
+		ObjectPortlet.assertFieldEntryColumnIsDisplayed(fieldLabelName = "Field");
+
+		ObjectPortlet.assertGenericEntryColumnIsDisplayed(fieldLabelName = "Status");
 	}
 
 	@description = "LPS-135393 - Verify that a Date entry is correctly displayed on the auto-generated table on the Custom Object Portlet"
@@ -697,12 +772,29 @@ definition {
 	}
 
 	@description = "LPS-138745 - Verify that duplicated entry is not submitted when refreshing the Object portlet"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test DuplicatedEntryNotSubmittedWhenRefreshingPage {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-140566 DuplicatedEntryNotSubmittedWhenRefreshingPage pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectStringFieldEntryViaUI(entryValue = "Test Entry");
+
+		Refresh();
+
+		ObjectPortlet.assertDuplicatedEntryNotPresent(entry = "Test Entry");
 	}
 
 	@description = "LPS-135393 - Verify the empty state when searching for a value that does not exist on the auto-generated table on the Custom Object Portlet"

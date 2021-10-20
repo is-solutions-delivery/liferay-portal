@@ -14,7 +14,6 @@
 
 package com.liferay.portal.error.code.internal.servlet.taglib;
 
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
 import com.liferay.portal.kernel.util.StackTraceUtil;
@@ -49,20 +48,23 @@ public class ApplicationJSONPortalErrorCodeDynamicInclude
 		String message, PrintWriter printWriter, String requestURI,
 		int statusCode, Throwable throwable) {
 
-		JSONObject jsonObject = JSONUtil.put(
-			"message", message
-		).put(
-			"requestURI", requestURI
-		).put(
-			"statusCode", statusCode
-		);
+		printWriter.write(
+			JSONUtil.put(
+				"message", message
+			).put(
+				"requestURI", requestURI
+			).put(
+				"statusCode", statusCode
+			).put(
+				"throwable",
+				() -> {
+					if (throwable != null) {
+						return StackTraceUtil.getStackTrace(throwable);
+					}
 
-		if (throwable != null) {
-			jsonObject.put(
-				"throwable", StackTraceUtil.getStackTrace(throwable));
-		}
-
-		printWriter.write(jsonObject.toString());
+					return null;
+				}
+			).toString());
 	}
 
 }

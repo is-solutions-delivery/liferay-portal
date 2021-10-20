@@ -191,10 +191,6 @@ public class CommerceCategoryDisplayPageClayTable
 	private String _getCategoryDisplayPageDeleteURL(
 		HttpServletRequest httpServletRequest, long categoryDisplayPageId) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest, CPPortletKeys.COMMERCE_CHANNELS,
@@ -204,7 +200,9 @@ public class CommerceCategoryDisplayPageClayTable
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"cpDisplayLayoutId", categoryDisplayPageId
 		).buildString();

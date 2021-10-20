@@ -87,6 +87,35 @@ public class QueryEntry implements Serializable {
 	protected Clause[] clauses;
 
 	@Schema
+	@Valid
+	public Condition getCondition() {
+		return condition;
+	}
+
+	public void setCondition(Condition condition) {
+		this.condition = condition;
+	}
+
+	@JsonIgnore
+	public void setCondition(
+		UnsafeSupplier<Condition, Exception> conditionUnsafeSupplier) {
+
+		try {
+			condition = conditionUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Condition condition;
+
+	@Schema
 	public Boolean getEnabled() {
 		return enabled;
 	}
@@ -159,6 +188,16 @@ public class QueryEntry implements Serializable {
 			}
 
 			sb.append("]");
+		}
+
+		if (condition != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"condition\": ");
+
+			sb.append(String.valueOf(condition));
 		}
 
 		if (enabled != null) {

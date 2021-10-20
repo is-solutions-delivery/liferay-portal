@@ -1,5 +1,33 @@
 definition {
 
+	macro assertPortalBuildNumber {
+		var portalURL = PropsUtil.get("portal.url");
+
+		var buildNumberCurl = '''
+				${portalURL}/api/jsonws/portal/get-build-number -H 'Authorization: Bearer ${accessToken}'
+			''';
+
+		var buildNumberOutput = JSONCurlUtil.post("${buildNumberCurl}");
+
+		if (!(contains("${buildNumberOutput}", "${portalBuild}"))) {
+			fail("JSON-WS call failed to return build number");
+		}
+	}
+
+	macro assertPortalVersion {
+		var portalURL = PropsUtil.get("portal.url");
+
+		var portalVersionCurl = '''
+			${portalURL}/api/jsonws/portal/get-version -H 'Authorization: Bearer ${accessToken}'
+		''';
+
+		var portalVersionOutput = JSONCurlUtil.post("${portalVersionCurl}");
+
+		if (!(contains("${portalVersionOutput}", "${portalVersion}"))) {
+			fail("JSON-WS call failed to return Portal version");
+		}
+	}
+
 	macro configureDisplayStyle {
 		Click(locator1 = "Dropdown#TRIGGER");
 
@@ -139,6 +167,50 @@ definition {
 		return "${fileContent}";
 	}
 
+	macro getCurrentUserEmailResquestDenied {
+		var output = JSONCurlUtil.post("${curl}");
+
+		if (contains("${output}", "Access denied to com.liferay.portal.kernel.service.UserService#getCurrentUser")) {
+			echo("Access denied to com.liferay.portal.kernel.service.UserService#getCurrentUser");
+		}
+		else {
+			fail("FAIL! Cannot find the warning message.");
+		}
+	}
+
+	macro getUserEmailAddressRequestDenied {
+		var output = JSONCurlUtil.post("${curl}");
+
+		if (contains("${output}", "Access denied to com.liferay.portal.kernel.service.UserService#getUserByEmailAddress")) {
+			echo("Access denied to com.liferay.portal.kernel.service.UserService#getUserByEmailAddress");
+		}
+		else {
+			fail("FAIL! Cannot find the warning message.");
+		}
+	}
+
+	macro getUserEmailSuccessfully {
+		var output = JSONCurlUtil.post("${curl}");
+
+		if ((contains("${output}", ""agreedToTermsOfUse":true")) && (contains("${output}", ""companyId":"${companyId}""))) {
+			echo("Get current user successful.");
+		}
+		else {
+			fail("FAIL! Cannot find the currrent user.");
+		}
+	}
+
+	macro getViewUserEmailPermissionDenied {
+		var output = JSONCurlUtil.post("${curl}");
+
+		if (contains("${output}", "must have VIEW permission for com.liferay.portal.kernel.model.User ${userId}")) {
+			echo("Default user must have VIEW permission for com.liferay.portal.kernel.model.User ${userId}");
+		}
+		else {
+			fail("FAIL! Cannot find the user info message.");
+		}
+	}
+
 	macro gotoConfiguration {
 		Click(
 			key_itemName = "${configurationCategory}",
@@ -255,6 +327,10 @@ definition {
 			key_fieldLabel = "${fieldLabel}",
 			locator1 = "SystemSettings#LABEL",
 			value1 = "${fieldLabel}");
+	}
+
+	macro viewUserAvatarImage {
+		AssertElementPresent(locator1 = "UserBar#USER_AVATAR_IMAGE");
 	}
 
 }

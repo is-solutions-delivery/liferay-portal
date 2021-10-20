@@ -124,10 +124,6 @@ public class CommerceProductOptionValueDataSetActionProvider
 		long cpDefinitionOptionValueRelId,
 		HttpServletRequest httpServletRequest) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				_portal.getOriginalServletRequest(httpServletRequest),
@@ -137,7 +133,9 @@ public class CommerceProductOptionValueDataSetActionProvider
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"cpDefinitionOptionValueRelId", cpDefinitionOptionValueRelId
 		).buildPortletURL();
@@ -181,10 +179,6 @@ public class CommerceProductOptionValueDataSetActionProvider
 		long cpDefinitionOptionValueRelId,
 		HttpServletRequest httpServletRequest) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				_portal.getOriginalServletRequest(httpServletRequest),
@@ -194,7 +188,9 @@ public class CommerceProductOptionValueDataSetActionProvider
 		).setCMD(
 			"updatePreselected"
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"cpDefinitionOptionValueRelId", cpDefinitionOptionValueRelId
 		).buildPortletURL();

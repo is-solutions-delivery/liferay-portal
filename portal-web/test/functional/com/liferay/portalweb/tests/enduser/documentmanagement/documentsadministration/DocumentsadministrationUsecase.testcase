@@ -144,173 +144,61 @@ definition {
 		DMDocument.viewCategories(categoryNameList = "category");
 	}
 
-	@priority = "4"
-	@refactorneeded
-	test AllowMultiplePortletConfigurationsPerSite {
-		JSONGroup.addGroup(groupName = "Site Name");
-
-		JSONLayout.addPublicLayout(
-			groupName = "Site Name",
-			layoutName = "Site Page 1");
-
-		JSONLayout.addPublicLayout(
-			groupName = "Site Name",
-			layoutName = "Site Page 2");
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = "1",
-			groupName = "Site Name",
-			layoutName = "Site Page 1",
-			widgetName = "Documents and Media");
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = "1",
-			groupName = "Site Name",
-			layoutName = "Site Page 2",
-			widgetName = "Documents and Media");
-
-		Navigator.gotoSitePage(
-			pageName = "Site Page 1",
-			siteName = "Site Name");
-
-		DMPortlet.configureDisplaySettingsPG(
-			enableDisplaySettingsRelatedAssets = "false",
-			enableDisplaySettingsShowSearch = "false",
-			entriesToDisplayCount = "60");
-
-		Navigator.gotoSitePage(
-			pageName = "Site Page 2",
-			siteName = "Site Name");
-
-		DMPortlet.viewDefaultConfigurationDisplaySettingsPG();
-	}
-
-	@description = "This is a use case for LPS-50760."
-	@priority = "4"
-	@refactorneeded
-	test AssertFileSizeValidation {
-		property test.name.skip.portal.instance = "DocumentsadministrationUsecase#AssertFileSizeValidation";
+	@description = "This case covers LPS-97708. It ensures that a document can be restored from the Recycle Bin even if its original folder no longer exists."
+	@priority = "3"
+	@refactordone
+	test CanRestoreDocumentWithoutOriginalFolder {
+		JSONFolder.addFolder(
+			dmFolderDescription = "DM Folder Description",
+			dmFolderName = "DM Folder Name",
+			groupName = "Guest");
 
 		JSONDocument.addFileWithUploadedFile(
-			dmDocumentDescription = "DM Document Description",
+			dmDocumentDescription = "DM Document Description1",
 			dmDocumentTitle = "DM Document Title",
+			folderName = "DM Folder Name",
 			groupName = "Guest",
-			mimeType = "audio/x-mpeg",
-			sourceFileName = "Document_1.mp3");
+			mimeType = "application/msword",
+			sourceFileName = "Document_1.doc");
+
+		JSONDocument.deleteFile(
+			dmDocumentTitle = "DM Document Title",
+			folderId = "true",
+			folderName = "DM Folder Name",
+			groupName = "Guest");
+
+		JSONFolder.deleteFolder(
+			folderName = "DM Folder Name",
+			groupName = "Guest");
+
+		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
+
+		RecycleBin.deleteCP(
+			assetName = "DM Folder Name",
+			assetType = "Documents Folder",
+			multipleAssets = "true");
+
+		RecycleBin.restoreContentWithoutOriginalFolder(
+			assetName = "DM Document Title",
+			assetRestoreLocation = "Home",
+			assetType = "Document");
+
+		AssertTextNotPresent(value1 = "NoSuchFolderException");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
-		DMNavigator.gotoDocumentCP(dmDocumentTitle = "DM Document Title");
-
-		DMDocument.viewCP(
-			dmDocumentSize = "4.3 MB",
-			dmDocumentTitle = "DM Document Title");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		LAR.exportPortlet(larFileName = "DM.portlet.lar");
-
-		SystemSettings.openSystemSettingsAdmin();
-
-		SystemSettings.gotoConfiguration(
-			configurationCategory = "Documents and Media",
-			configurationName = "Service",
-			configurationScope = "System Scope");
-
-		Type(
-			key_fieldLabel = "Maximum File Size",
-			locator1 = "TextInput#GENERIC_TEXT_INPUT",
-			value1 = "300000");
-
-		ScrollWebElementIntoView(locator1 = "Button#SAVE");
-
-		AssertClick(
-			locator1 = "Button#SAVE",
-			value1 = "Save");
-
-		VerifyElementPresent(locator1 = "Message#SUCCESS");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMNavigator.gotoAddDocumentTypeCP(dmDocumentTypeName = "${dmDocumentTypeName}");
-
-		AssertTextEquals(
-			locator1 = "Message#INFO",
-			value1 = "Upload documents no larger than 293 KB.");
-
-		DMDocument.editCmd(
-			dmDocumentFileEdit = "Document_1.mp4",
-			dmDocumentTitle = "Document_1.mp4");
-
-		Button.clickPublish();
-
-		AssertTextEquals(
-			locator1 = "Message#WARNING_FEEDBACK",
-			value1 = "Please enter a file with a valid file size no larger than 293 KB.");
-
-		Button.clickCancel();
-
-		LAR._gotoExportImport();
-
-		AssertElementPresent(locator1 = "IFrame#MODAL_BODY");
-
-		LAR._export(
-			exportPermissions = "${exportPermissions}",
-			larFileName = "DM.portlet.lar");
-
-		SelectFrame(value1 = "relative=top");
+		DMDocument.viewCardTitle(dmDocumentTitle = "DM Document Title");
 	}
 
-	@description = "This test ensures that a checked out document cannot be edited by another user."
+	@description = "This test checks if file uploads can be restricted to .doc format."
 	@priority = "5"
-	@refactorneeded
-	test CheckOutDocument {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
+	@refactordone
+	test CanRestrictFileExtensionToDoc {
+		property test.name.skip.portal.instance = "DocumentsadministrationUsecase#CanRestrictFileExtensionToDoc";
 
-		JSONUser.addUser(
-			userEmailAddress = "userea@liferay.com",
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
+		DMDocument.updateFileExtensions(fieldValue = ".doc");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
-
-		JSONRole.assignRoleToUser(
-			roleTitle = "Administrator",
-			userEmailAddress = "userea@liferay.com");
-
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "People",
-			portlet = "Memberships");
-
-		Site.assignUserAsMemberCP(
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
-
-		JSONLayout.addPublicLayout(
-			groupName = "Guest",
-			layoutName = "Documents and Media Page");
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = "1",
-			groupName = "Guest",
-			layoutName = "Documents and Media Page",
-			widgetName = "Documents and Media");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
+		SystemSettings.saveConfiguration();
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
@@ -318,57 +206,6 @@ definition {
 			groupName = "Guest",
 			mimeType = "application/msword",
 			sourceFileName = "Document_1.doc");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMDocument.enableActionsMenuOnPortlet();
-
-		DMDocument.checkoutPG(dmDocumentTitle = "DM Document Title");
-
-		User.logoutPG();
-
-		User.loginUserPG(
-			password = "test",
-			userEmailAddress = "userea@liferay.com");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMDocument.editCmdPG(
-			checkedOut = "true",
-			dmDocumentTitle = "DM Document Title",
-			userName = "Test Test");
-	}
-
-	@description = "This test checks if the file extension upload restrictions in System Settings works as expected."
-	@priority = "5"
-	@refactorneeded
-	test CheckValidationForFileEntries {
-		property test.name.skip.portal.instance = "DocumentsadministrationUsecase#CheckValidationForFileEntries";
-
-		SystemSettings.openSystemSettingsAdmin();
-
-		SystemSettings.gotoConfiguration(
-			configurationCategory = "Documents and Media",
-			configurationName = "Service",
-			configurationScope = "System Scope");
-
-		ScrollWebElementIntoView(
-			key_text = "fileExtensions",
-			locator1 = "TextArea#ANY");
-
-		Type(
-			key_text = "fileExtensions",
-			locator1 = "TextArea#ANY",
-			value1 = ".doc");
-
-		SystemSettings.saveConfiguration();
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMDocument.addCP(
-			dmDocumentDescription = "DM Document Description",
-			dmDocumentFile = "Document_1.doc",
-			dmDocumentTitle = "DM Document Title");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
@@ -376,238 +213,13 @@ definition {
 
 		DMDocument.viewCP(dmDocumentTitle = "DM Document Title");
 
-		for (var dmDocumentTitle : list "Document_1.docx,Document_1.jpeg,Document_1.jpg,Document_1.mp4,Document_1.pdf,Document_1.png,Document_1.ppt,Document_1.pptx,Document_1.txt,Document_1.xls,Document_1.xlsx") {
+		for (var dmDocumentTitle : list "Document_1.docx,Document_1.jpeg") {
 			DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
 			DMDocument.addCP(
 				dmDocumentFile = "${dmDocumentTitle}",
 				dmDocumentTitle = "${dmDocumentTitle}",
 				validationError = "Document names must end with one of the following extensions: .doc");
-		}
-	}
-
-	@priority = "4"
-	@refactorneeded
-	test Comments {
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMFolder.addCP(dmFolderName = "Folder1");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMFolder.addCP(
-			dmFolderDescription = "Description of Folder2",
-			dmFolderName = "Folder2");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMFolder.viewCP(dmFolderName = "Folder1");
-
-		DMDocument.addCP(
-			dmDocumentDescription = "This is a file with zero bytes",
-			dmDocumentTitle = "Zero Document File",
-			nullFile = "true");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMFolder.viewCP(dmFolderName = "Folder1");
-
-		DMNavigator.gotoDocumentCP(dmDocumentTitle = "Zero Document File");
-
-		DMDocument.viewCP(
-			dmDocumentSize = "0 B",
-			dmDocumentTitle = "Zero Document File");
-
-		JSONLayout.addPublicLayout(
-			groupName = "Guest",
-			layoutName = "Documents and Media Page");
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = "1",
-			groupName = "Guest",
-			layoutName = "Documents and Media Page",
-			widgetName = "Documents and Media");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		Portlet.addPG(portletName = "Activities");
-
-		AssertTextEquals(
-			key_dmFolderName = "Folder1",
-			locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_FOLDER_TITLE",
-			value1 = "Folder1");
-
-		AssertClick(
-			key_assetName = "Zero Document File",
-			locator1 = "Activities#ACTIVITY_TITLE_ASSET_NAME",
-			value1 = "Zero Document File");
-
-		DMDocument.viewDocumentTitleCmdPG(dmDocumentTitle = "Zero Document File");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMNavigator.gotoFolder(dmFolderName = "Folder1");
-
-		DMDocumentComment.addPG(
-			commentBody = "This is the first comment",
-			dmDocumentTitle = "Zero Document File");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMNavigator.gotoFolder(dmFolderName = "Folder1");
-
-		DMDocumentComment.addPG(
-			commentBody = "This is comment #2",
-			dmDocumentTitle = "Zero Document File");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMNavigator.gotoFolder(dmFolderName = "Folder1");
-
-		DMDocumentComment.viewPG(
-			commentBody = "This is the first comment",
-			dmDocumentTitle = "Zero Document File");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMNavigator.gotoFolder(dmFolderName = "Folder1");
-
-		DMDocumentComment.viewPG(
-			commentBody = "This is comment #2",
-			dmDocumentTitle = "Zero Document File");
-	}
-
-	@priority = "3"
-	@refactorneeded
-	test ConfigureFFmpegVideoPreviewSizePG {
-		property custom.properties = "dl.file.entry.preview.video.width=0${line.separator}dl.file.entry.preview.video.height=0";
-		property test.assert.warning.exceptions = "false";
-		property test.name.skip.portal.instance = "DocumentsadministrationUsecase#ConfigureFFmpegVideoPreviewSizePG";
-
-		DMNavigator.openToConfigInSystemSettings(portlet = "FFMPEG Video Converter");
-
-		FormFields.enableCheckbox(fieldName = "enabled");
-
-		SystemSettings.saveConfiguration();
-
-		JSONLayout.addPublicLayout(
-			groupName = "Guest",
-			layoutName = "Documents and Media Page");
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = "1",
-			groupName = "Guest",
-			layoutName = "Documents and Media Page",
-			widgetName = "Documents and Media");
-
-		JSONDocument.addFileWithUploadedFile(
-			dmDocumentDescription = "DM Document Description",
-			dmDocumentTitle = "Document_1.mp4",
-			groupName = "Guest",
-			mimeType = "video/mp4",
-			sourceFileName = "Document_1.mp4");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-		Pause(locator1 = "180000");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMNavigator.gotoDocumentPG(dmDocumentTitle = "Document_1.mp4");
-
-		Pause(locator1 = "30000");
-
-		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#EXTERNAL_VIDEO_IFRAME");
-
-		var videoGenerationTimeCounter = "0";
-		var videoGenerationTimeMaxWaitTime = "6";
-
-		while (("${videoGenerationTimeCounter}" != "${videoGenerationTimeMaxWaitTime}") && (IsElementPresent(locator1 = "Message#INFO"))) {
-			var videoGenerationTimeCounter = ${videoGenerationTimeCounter} + 1;
-
-			Pause(locator1 = "30000");
-
-			Navigator.gotoPage(pageName = "Documents and Media Page");
-
-			DMNavigator.gotoDocumentPG(dmDocumentTitle = "Document_1.mp4");
-		}
-
-		var videoPreviewThumbnailLink = selenium.getAttribute("//video@poster");
-
-		SelectFrameTop();
-
-		Navigator.openSpecificURL(url = "${videoPreviewThumbnailLink}");
-
-		Pause(locator1 = "1000");
-
-		AssertElementNotPresent(
-			key_videoGenerationThumbnailResolution = "640",
-			locator1 = "DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION");
-
-		AssertElementNotPresent(
-			key_videoGenerationThumbnailResolution = "360",
-			locator1 = "DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION");
-
-		AssertElementPresent.assertElementPresent(
-			key_videoGenerationThumbnailResolution = "854",
-			locator1 = "DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION");
-
-		AssertElementPresent.assertElementPresent(
-			key_videoGenerationThumbnailResolution = "480",
-			locator1 = "DocumentsAndMediaDocument#VIDEO_GENERATION_THUMBNAIL_RESOLUTION");
-	}
-
-	@description = "This test covers LPS-128473. This test ensures that users can filter documents by Recent."
-	@priority = "3"
-	@refactorneeded
-	test FilterByRecent {
-		JSONDocument.addFileWithUploadedFile(
-			dmDocumentTitle = "DM Document Title 2",
-			groupName = "Guest",
-			mimeType = "application/msword",
-			sourceFileName = "Document_2.doc");
-
-		JSONDocument.addFileWithUploadedFile(
-			dmDocumentTitle = "DM Document Title 3",
-			groupName = "Guest",
-			mimeType = "application/msword",
-			sourceFileName = "Document_3.doc");
-
-		JSONDocument.addFileWithUploadedFile(
-			dmDocumentTitle = "DM Document Title 1",
-			groupName = "Guest",
-			mimeType = "application/msword",
-			sourceFileName = "Document_1.doc");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMDocument.editCP(
-			dmDocumentTitle = "DM Document Title 3",
-			dmDocumentTitleEdit = "DM Document Title 3 Edit");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		LexiconEntry.changeDisplayStyle(displayStyle = "table");
-
-		ManagementBar.setFilterAndOrder(
-			filterBy = "Recent",
-			orderBy = "Modified Date");
-
-		var index = "1";
-
-		for (var dmDocumentTitle : list "DM Document Title 3 Edit,DM Document Title 1,DM Document Title 2") {
-			AssertTextEquals.assertPartialText(
-				index = "${index}",
-				locator1 = "LexiconTable#TABLE_ROW",
-				value1 = "${dmDocumentTitle}");
-
-			var index = ${index} + 1;
 		}
 	}
 
@@ -700,139 +312,36 @@ definition {
 		DMPortlet.configureDisplaySettingsPG(currentDisplayStyleViews = "");
 	}
 
-	@description = "This case covers LPS-97708. It ensures that a document can be restored from the Recycle Bin even if its original folder no longer exists."
-	@priority = "3"
-	@refactorneeded
-	test RestoreDocumentWithoutOriginalFolder {
-		JSONDocument.addFolder(
-			dmFolderDescription = "DM Folder Description",
-			dmFolderName = "DM Folder Name",
-			groupName = "Guest");
+	@description = "This is a use case for LPS-50760."
+	@priority = "4"
+	@refactordone
+	test StagingFileSizeIsNotAffectedByDLRestrictions {
+		property test.name.skip.portal.instance = "DocumentsadministrationUsecase#StagingFileSizeIsNotAffectedByDLRestrictions";
 
 		JSONDocument.addFileWithUploadedFile(
-			dmDocumentDescription = "DM Document Description1",
-			dmDocumentTitle = "DM Document Title",
-			folderName = "DM Folder Name",
-			groupName = "Guest",
-			mimeType = "application/msword",
-			sourceFileName = "Document_1.doc");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMNavigator.gotoFolder(dmFolderName = "DM Folder Name");
-
-		DMDocument.moveToRecycleBinCP(
-			assetType = "Document",
-			dmDocumentTitle = "DM Document Title");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMFolder.moveToRecycleBinCP(
-			assetType = "Documents Folder",
-			dmFolderName = "DM Folder Name");
-
-		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
-
-		RecycleBin.deleteCP(
-			assetName = "DM Folder Name",
-			assetType = "Documents Folder",
-			multipleAssets = "true");
-
-		RecycleBin.restoreContentWithoutOriginalFolder(
-			assetName = "DM Document Title",
-			assetRestoreLocation = "Home",
-			assetType = "Document");
-
-		AssertTextNotPresent(value1 = "NoSuchFolderException");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		DMDocument.viewCardTitle(dmDocumentTitle = "DM Document Title");
-	}
-
-	@description = "This is a use case for LPS-98669. Ignoring until LPS-127335 is fixed"
-	@ignore = "true"
-	@priority = "4"
-	test SelectLinkToPagePage {
-		for (var pageName : list "P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12") {
-			JSONLayout.addPublicLayout(
-				groupName = "Guest",
-				layoutName = "${pageName}");
-		}
-
-		ProductMenu.gotoPortlet(
-			category = "Content &amp; Data",
-			portlet = "Documents and Media");
-
-		DMNavigator.gotoDocumentType();
-
-		DMDocumentType.add(
-			dmDocumentTypeDescription = "DM Document Type Description",
-			dmDocumentTypeFieldNames = "Link to Page",
-			dmDocumentTypeName = "DM Document Type Name");
-
-		ProductMenu.gotoPortlet(
-			category = "Content &amp; Data",
-			portlet = "Documents and Media");
-
-		DMDocument.addCP(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "DM Document Title",
-			dmDocumentTypeName = "DM Document Type Name",
-			linkedPageName = "P11");
-
-		Click(
-			key_dmDocumentTitle = "DM Document Title",
-			locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_VERTICAL_ELLIPSIS");
-
-		MenuItem.click(menuItem = "Edit");
-
-		AssertTextEquals(
-			key_fieldName = "LinktoPage",
-			locator1 = "TextInput#SELECTOR_INPUT",
-			value1 = "P11");
-	}
-
-	@description = "This test covers LPS-91597. It ensures that a user can delete multiple documents simultaneously."
-	@priority = "4"
-	@refactorneeded
-	test SelectMultipleDocumentsAndDeleteViaActionsButton {
-		JSONLayout.addPublicLayout(
 			groupName = "Guest",
-			layoutName = "Documents and Media Page");
+			mimeType = "audio/x-mpeg",
+			sourceFileName = "Document_1.mp3");
 
-		JSONLayout.addWidgetToPublicLayout(
-			column = "1",
-			groupName = "Guest",
-			layoutName = "Documents and Media Page",
-			widgetName = "Documents and Media");
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
-		Navigator.gotoPage(pageName = "Documents and Media Page");
+		LAR.exportPortlet(larFileName = "DM.portlet.lar");
 
-		DMDocument.enableActionsMenuOnPortlet();
-
-		for (var entryCount : list "1,2,3") {
-			JSONDocument.addFileWithUploadedFile(
-				dmDocumentDescription = "DM Document Description",
-				dmDocumentTitle = "Document_${entryCount}.doc",
-				groupName = "Guest",
-				mimeType = "application/msword",
-				sourceFileName = "Document_${entryCount}.doc");
-		}
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		for (var entryCount : list "1,2,3") {
-			var dmDocumentTitle = "Document_${entryCount}.doc";
-
-			LexiconCard.checkCardCheckbox(card = "${dmDocumentTitle}");
-		}
-
-		Click(locator1 = "Icon#MOVE_TO_RECYCLE_BIN");
+		DMDocument.updateMaximumFileSize(fieldValue = "300000");
 
 		VerifyElementPresent(locator1 = "Message#SUCCESS");
 
-		DMDocument.viewDefault();
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		LAR._gotoExportImport();
+
+		AssertElementPresent(locator1 = "IFrame#MODAL_BODY");
+
+		LAR._export(
+			exportPermissions = "${exportPermissions}",
+			larFileName = "DM.portlet.lar");
 	}
 
 	@description = "This test ensures that a document with forbidden characters in the filename can not be published successfully."
@@ -1136,7 +645,7 @@ definition {
 			layoutName = "Documents and Media Page",
 			widgetName = "Documents and Media");
 
-		JSONDocument.addFolder(
+		JSONFolder.addFolder(
 			dmFolderDescription = "DM Folder Description",
 			dmFolderName = "DM Folder Name",
 			groupName = "Guest");
@@ -1208,112 +717,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "ManagementBar#NAVBAR_TEXT",
 			value1 = "5 of 11 Selected");
-	}
-
-	@priority = "4"
-	@refactorneeded
-	test ViewPortletAfterRenamingDocumentWithDuplicateTitlePG {
-		JSONLayout.addPublicLayout(
-			groupName = "Guest",
-			layoutName = "Documents and Media Page");
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = "1",
-			groupName = "Guest",
-			layoutName = "Documents and Media Page",
-			widgetName = "Documents and Media");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMDocument.enableActionsMenuOnPortlet();
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-		DMDocument.addPG(
-			dmDocumentDescription = "DM Document Description",
-			dmDocumentFile = "Document_1.doc",
-			dmDocumentTitle = "DM Document Title");
-
-		DMDocument.addPG(
-			dmDocument = "Duplicate",
-			dmDocumentDescription = "DM Document 2 Description",
-			dmDocumentFile = "Document_2.doc",
-			dmDocumentTitle = "DM Document Title");
-
-		PortletEntry.inputTitle(title = "DM Document 2 Title");
-
-		PortletEntry.publish();
-
-		Pause(locator1 = "1000");
-
-		AssertTextNotPresent(value1 = "Documents and Media is temporarily unavailable.");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		Pause(locator1 = "1000");
-
-		AssertTextNotPresent(value1 = "Documents and Media is temporarily unavailable.");
-
-		DMDocument.viewPG(
-			dmDocumentDescription = "DM Document 2 Description",
-			dmDocumentTitle = "DM Document 2 Title");
-	}
-
-	@priority = "4"
-	@refactorneeded
-	test ViewSingleDocumentSelectionDoesNotCheckAllFileSelectionCP {
-		for (var documentNumber : list "1,2") {
-			DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-			DMDocument.addCP(
-				dmDocumentDescription = "DM Document Description",
-				dmDocumentFile = "Document_1.jpg",
-				dmDocumentFileName = "Document${documentNumber}.jpg",
-				dmDocumentTitle = "DM Document${documentNumber} Title");
-		}
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-		DMDocument.checkDocumentCheckboxCP(dmDocumentTitle = "DM Document1 Title");
-
-		AssertElementPresent(locator1 = "Checkbox#SELECT_ALL_CHECKBOX_TICK");
-
-		DMDocument.uncheckDocumentCheckboxCP(dmDocumentTitle = "DM Document1 Title");
-
-		AssertElementNotPresent(locator1 = "Checkbox#SELECT_ALL_CHECKBOX_TICK");
-
-		DMDocument.checkDocumentCheckboxCP(dmDocumentTitle = "DM Document1 Title");
-
-		DMDocument.checkDocumentCheckboxCP(dmDocumentTitle = "DM Document2 Title");
-
-		AssertChecked.assertCheckedNotVisible(locator1 = "Checkbox#LEXICON_SELECT_ALL_INPUT");
-	}
-
-	@description = "This test ensures that the DM widgets follow W3C accessibility standards."
-	@ignore = "true"
-	@priority = "4"
-	test WidgetsFollowAccessibilityStandards {
-		JSONLayout.addPublicLayout(
-			groupName = "Guest",
-			layoutName = "Documents and Media Page");
-
-		for (var widgetName : list "Documents and Media,Media Gallery") {
-			JSONLayout.addWidgetToPublicLayout(
-				column = "1",
-				groupName = "Guest",
-				layoutName = "Documents and Media Page",
-				widgetName = "${widgetName}");
-		}
-
-		Navigator.openSitePage(
-			pageName = "Documents and Media Page",
-			siteName = "Guest");
-
-		AssertAccessible();
 	}
 
 }

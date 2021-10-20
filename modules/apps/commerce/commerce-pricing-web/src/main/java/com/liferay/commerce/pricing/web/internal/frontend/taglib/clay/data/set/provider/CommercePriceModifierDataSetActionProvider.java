@@ -103,10 +103,6 @@ public class CommercePriceModifierDataSetActionProvider
 		CommercePriceModifier commercePriceModifier,
 		HttpServletRequest httpServletRequest) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest,
@@ -117,7 +113,9 @@ public class CommercePriceModifierDataSetActionProvider
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commercePriceListId",
 			commercePriceModifier.getCommercePriceListId()

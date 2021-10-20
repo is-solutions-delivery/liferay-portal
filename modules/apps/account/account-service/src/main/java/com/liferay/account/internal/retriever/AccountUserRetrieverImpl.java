@@ -80,15 +80,18 @@ public class AccountUserRetrieverImpl implements AccountUserRetriever {
 
 		AccountEntry accountEntry = _accountEntryLocalService.getAccountEntry(
 			accountEntryId);
-		AccountRole accountRole = _accountRoleLocalService.getAccountRole(
-			accountRoleId);
 
 		LinkedHashMap<String, Object> params =
 			LinkedHashMapBuilder.<String, Object>put(
 				"userGroupRole",
-				(Object)new Long[] {
-					accountEntry.getAccountEntryGroupId(),
-					accountRole.getRoleId()
+				() -> {
+					AccountRole accountRole =
+						_accountRoleLocalService.getAccountRole(accountRoleId);
+
+					return (Object)new Long[] {
+						accountEntry.getAccountEntryGroupId(),
+						accountRole.getRoleId()
+					};
 				}
 			).build();
 

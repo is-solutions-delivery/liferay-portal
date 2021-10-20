@@ -256,6 +256,22 @@ definition {
 			value1 = "Your request completed successfully.");
 	}
 
+	macro viewForbiddenErrorMessageAlert {
+		AssertTextEquals(
+			locator1 = "Home#ERROR_MESSAGE_ALERT_ERROR",
+			value1 = "Forbidden");
+	}
+
+	macro viewJSONWSSecurityEmptyPage {
+		AssertElementPresent(locator1 = "JSONWS#SECURITY_EMPTY_PAGE");
+	}
+
+	macro viewOutputField {
+		AssertTextEquals(
+			locator1 = "ServerAdministrationScript#OUTPUT_FIELD",
+			value1 = "${valueName}");
+	}
+
 	macro viewProperties {
 		Navigator.gotoNavItem(navItem = "Properties");
 

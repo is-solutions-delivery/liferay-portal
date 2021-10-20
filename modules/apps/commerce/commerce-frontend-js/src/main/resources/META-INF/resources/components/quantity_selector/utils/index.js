@@ -12,6 +12,8 @@
  * details.
  */
 
+export const UPDATE_AFTER = 500;
+
 export default class QuantityControls {
 	constructor({maxQuantity, minQuantity, multipleQuantity}) {
 		this.max = maxQuantity;

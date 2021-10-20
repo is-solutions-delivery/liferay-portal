@@ -160,7 +160,7 @@ public class ObjectDDMStorageAdapter implements DDMStorageAdapter {
 
 			ObjectEntry addObjectEntry = _objectEntryManager.addObjectEntry(
 				_getDTOConverterContext(null, user, ddmForm.getDefaultLocale()),
-				user.getUserId(), objectDefinition,
+				objectDefinition,
 				new ObjectEntry() {
 					{
 						properties = _getObjectEntryProperties(

@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBInspector;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -391,13 +390,11 @@ public class ContentTargetingUpgradeProcessTest {
 
 		long contentTargetingUserSegmentId = -1L;
 
-		JSONObject jsonObject = JSONUtil.put("value", "liferay");
-
-		JSONArray jsonArray = JSONUtil.put(jsonObject);
-
 		insertContentTargetingRuleInstance(
 			contentTargetingUserSegmentId, "PreviousVisitedSiteRule",
-			jsonArray.toString());
+			JSONUtil.put(
+				JSONUtil.put("value", "liferay")
+			).toString());
 
 		insertContentTargetingUserSegment(
 			contentTargetingUserSegmentId,

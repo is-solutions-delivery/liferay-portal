@@ -653,9 +653,7 @@ public class ObjectEntryDisplayContext {
 		return rowsJSONArray.toString();
 	}
 
-	private boolean _isActive(ObjectField objectField)
-		throws PortalException {
-
+	private boolean _isActive(ObjectField objectField) throws PortalException {
 		if (Validator.isNotNull(objectField.getRelationshipType())) {
 			ObjectRelationship objectRelationship =
 				_objectRelationshipLocalService.

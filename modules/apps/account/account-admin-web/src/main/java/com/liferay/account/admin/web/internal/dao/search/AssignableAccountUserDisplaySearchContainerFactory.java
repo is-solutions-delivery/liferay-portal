@@ -18,12 +18,10 @@ import com.liferay.account.admin.web.internal.display.AccountUserDisplay;
 import com.liferay.account.configuration.AccountEntryEmailDomainsConfiguration;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
-import com.liferay.account.model.AccountRole;
 import com.liferay.account.retriever.AccountUserRetriever;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountRoleLocalService;
-import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -36,7 +34,6 @@ import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -44,7 +41,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.util.TransformUtil;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -81,10 +77,7 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 		searchContainer.setOrderByType(orderByType);
 
 		searchContainer.setRowChecker(
-			new EmptyOnClickRowChecker(liferayPortletResponse));
-
-		long accountRoleId = ParamUtil.getLong(
-			liferayPortletRequest, "accountRoleId");
+			new AccountUserRowChecker(accountEntryId, liferayPortletResponse));
 
 		String navigation = ParamUtil.getString(
 			liferayPortletRequest, "navigation");
@@ -98,38 +91,15 @@ public class AssignableAccountUserDisplaySearchContainerFactory {
 
 		BaseModelSearchResult<User> baseModelSearchResult =
 			_accountUserRetriever.searchAccountUsers(
-				(accountRoleId > 0) ? accountEntryId :
-					AccountConstants.ACCOUNT_ENTRY_ID_ANY,
+				AccountConstants.ACCOUNT_ENTRY_ID_ANY,
 				_getEmailAddressDomains(accountEntryId, navigation), keywords,
 				WorkflowConstants.STATUS_APPROVED, searchContainer.getStart(),
 				searchContainer.getDelta(), orderByCol,
 				_isReverseOrder(orderByType));
 
-		List<User> users = baseModelSearchResult.getBaseModels();
-
-		if (accountRoleId > 0) {
-			AccountEntry accountEntry =
-				_accountEntryLocalService.getAccountEntry(accountEntryId);
-
-			AccountRole accountRole = _accountRoleLocalService.getAccountRole(
-				accountRoleId);
-
-			users = ListUtil.filter(
-				users,
-				user -> !_userGroupRoleLocalService.hasUserGroupRole(
-					user.getUserId(), accountEntry.getAccountEntryGroupId(),
-					accountRole.getRoleId()));
-		}
-		else {
-			users = ListUtil.filter(
-				users,
-				user ->
-					!_accountEntryUserRelLocalService.hasAccountEntryUserRel(
-						accountEntryId, user.getUserId()));
-		}
-
 		searchContainer.setResults(
-			TransformUtil.transform(users, AccountUserDisplay::of));
+			TransformUtil.transform(
+				baseModelSearchResult.getBaseModels(), AccountUserDisplay::of));
 		searchContainer.setTotal(baseModelSearchResult.getLength());
 
 		return searchContainer;

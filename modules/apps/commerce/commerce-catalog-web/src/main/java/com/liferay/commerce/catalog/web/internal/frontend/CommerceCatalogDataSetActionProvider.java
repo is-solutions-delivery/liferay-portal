@@ -152,10 +152,6 @@ public class CommerceCatalogDataSetActionProvider
 			Catalog catalog, HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		PortletURL portletURL = PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest,
@@ -165,7 +161,10 @@ public class CommerceCatalogDataSetActionProvider
 		).setMVCPath(
 			"/edit_permissions.jsp"
 		).setParameter(
-			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL", redirect
+			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"modelResource", CommerceCatalog.class.getName()
 		).setParameter(

@@ -68,6 +68,14 @@ definition {
 		AssertElementPresent(locator1 = "Picklist#VIEW_PICKLIST_ITEM");
 	}
 
+	macro assertPicklistItemDetails {
+		IFrame.selectTopFrame();
+
+		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_ITEM_MODAL");
+
+		AssertElementPresent(locator1 = "Picklist#PICKLIST_ITEM_DETAILS");
+	}
+
 	macro assertPicklistItemNotPresent {
 		var key_picklistItemName = "${picklistItemName}";
 
@@ -76,10 +84,20 @@ definition {
 		AssertElementNotPresent(locator1 = "Picklist#VIEW_PICKLIST_ITEM");
 	}
 
+	macro assertPicklistMessage {
+		var key_picklistMessage = "${picklistMessage}";
+
+		AssertElementPresent(locator1 = "Picklist#PICKLIST_MESSAGE");
+	}
+
 	macro assertPicklistNotPresent {
 		var key_picklistName = "${picklistName}";
 
 		AssertElementNotPresent(locator1 = "Picklist#VIEW_PICKLIST");
+	}
+
+	macro assertRequiredKeyItem {
+		AssertElementPresent(locator1 = "Picklist#REQUIRED_KEY_ITEM");
 	}
 
 	macro cancelPicklist {
@@ -137,6 +155,22 @@ definition {
 		Click.javaScriptClick(
 			key_picklistOption = "${picklistOption}",
 			locator1 = "Picklist#PICKLIST_KEBAB_MENU_OPTION");
+	}
+
+	macro optionsPicklistItem {
+		var key_itemKey = "${itemKey}";
+
+		var key_picklistItemOption = "${picklistItemOption}";
+
+		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_MODAL");
+
+		Click.javaScriptClick(locator1 = "Picklist#PICKLIST_ITEM_KEBAB_MENU");
+
+		Click.javaScriptClick(locator1 = "Picklist#PICKLIST_ITEM_KEBAB_MENU_OPTION");
+	}
+
+	macro selectPickilistModalFrame {
+		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_MODAL");
 	}
 
 	macro updatePicklistName {

@@ -163,6 +163,10 @@ public class WorkflowInstanceEditDisplayContext
 				String.valueOf(workflowLog.getPreviousUserId())));
 	}
 
+	public String getStatus() {
+		return getStatus(_getWorkflowInstance());
+	}
+
 	public String getTaskCompleted(WorkflowTask workflowTask) {
 		if (workflowTask.isCompleted()) {
 			return LanguageUtil.get(
@@ -258,16 +262,6 @@ public class WorkflowInstanceEditDisplayContext
 		}
 
 		return dateFormatDateTime.format(workflowInstance.getEndDate());
-	}
-
-	public String getWorkflowInstanceState() {
-		WorkflowInstance workflowInstance = _getWorkflowInstance();
-
-		List<String> currentNodeNames = workflowInstance.getCurrentNodeNames();
-
-		return LanguageUtil.get(
-			workflowInstanceRequestHelper.getRequest(),
-			currentNodeNames.get(0));
 	}
 
 	public String getWorkflowLogComment(WorkflowLog workflowLog) {

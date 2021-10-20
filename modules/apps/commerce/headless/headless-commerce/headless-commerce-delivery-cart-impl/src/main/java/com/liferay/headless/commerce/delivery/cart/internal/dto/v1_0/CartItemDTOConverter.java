@@ -23,8 +23,8 @@ import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.price.CommerceOrderItemPrice;
 import com.liferay.commerce.price.CommerceOrderPriceCalculation;
-import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
 import com.liferay.commerce.service.CPDefinitionInventoryLocalService;
@@ -93,6 +93,9 @@ public class CartItemDTOConverter
 					commerceOrderItem.getParentCommerceOrderItemId();
 				price = _getPrice(commerceOrderItem, locale);
 				productId = commerceOrderItem.getCProductId();
+				productURLs = LanguageUtils.getLanguageIdMap(
+					_cpDefinitionLocalService.getUrlTitleMap(
+						commerceOrderItem.getCPDefinitionId()));
 				quantity = commerceOrderItem.getQuantity();
 				settings = _getSettings(commerceOrderItem.getCPInstanceId());
 				sku = commerceOrderItem.getSku();
@@ -100,15 +103,6 @@ public class CartItemDTOConverter
 				subscription = commerceOrderItem.isSubscription();
 				thumbnail = _cpInstanceHelper.getCPInstanceThumbnailSrc(
 					commerceOrderItem.getCPInstanceId());
-
-				setProductURLs(
-					() -> {
-						CPDefinition cpDefinition =
-							commerceOrderItem.getCPDefinition();
-
-						return LanguageUtils.getLanguageIdMap(
-							cpDefinition.getUrlTitleMap());
-					});
 			}
 		};
 	}
@@ -274,6 +268,9 @@ public class CartItemDTOConverter
 	@Reference
 	private CPDefinitionInventoryLocalService
 		_cpDefinitionInventoryLocalService;
+
+	@Reference
+	private CPDefinitionLocalService _cpDefinitionLocalService;
 
 	@Reference
 	private CPInstanceHelper _cpInstanceHelper;

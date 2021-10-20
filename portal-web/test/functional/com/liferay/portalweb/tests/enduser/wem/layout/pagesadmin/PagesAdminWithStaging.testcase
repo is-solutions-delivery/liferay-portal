@@ -158,9 +158,9 @@ definition {
 
 		PageEditor.clickPublish();
 
-		Click(locator1 = "ProductMenu#GO_TO_SITES_LINK");
+		ProductMenu.gotoHomePage();
 
-		PagesFinder.goToFindAPage();
+		PagesFinder.goToPagesFinder();
 
 		PagesFinder.viewPageNameInPagesFinder(pageName = "Content Collection Page Name");
 

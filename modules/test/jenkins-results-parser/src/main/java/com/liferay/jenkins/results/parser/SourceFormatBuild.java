@@ -30,16 +30,46 @@ import org.dom4j.Element;
  */
 public class SourceFormatBuild
 	extends DefaultTopLevelBuild
-	implements PortalBranchInformationBuild, PullRequestBuild {
+	implements PortalBranchInformationBuild, PullRequestBuild, WorkspaceBuild {
+
+	public boolean bypassCITestRelevant() {
+		Workspace workspace = getWorkspace();
+
+		WorkspaceGitRepository workspaceGitRepository =
+			workspace.getPrimaryWorkspaceGitRepository();
+
+		if (!(workspaceGitRepository instanceof PortalWorkspaceGitRepository)) {
+			return false;
+		}
+
+		PortalWorkspaceGitRepository portalWorkspaceGitRepository =
+			(PortalWorkspaceGitRepository)workspaceGitRepository;
+
+		return portalWorkspaceGitRepository.bypassCITestRelevant();
+	}
 
 	@Override
 	public String getBaseGitRepositoryName() {
-		return _pullRequest.getGitHubRemoteGitRepositoryName();
+		PullRequest pullRequest = getPullRequest();
+
+		return pullRequest.getGitHubRemoteGitRepositoryName();
 	}
 
 	@Override
 	public String getBaseGitRepositorySHA(String gitRepositoryName) {
 		if (_baseGitRepositorySHA != null) {
+			return _baseGitRepositorySHA;
+		}
+
+		if (!fromArchive) {
+			Workspace workspace = getWorkspace();
+
+			WorkspaceGitRepository primaryWorkspaceGitRepository =
+				workspace.getPrimaryWorkspaceGitRepository();
+
+			_baseGitRepositorySHA =
+				primaryWorkspaceGitRepository.getBaseBranchSHA();
+
 			return _baseGitRepositorySHA;
 		}
 
@@ -61,7 +91,9 @@ public class SourceFormatBuild
 
 	@Override
 	public String getBranchName() {
-		return _pullRequest.getUpstreamRemoteGitBranchName();
+		PullRequest pullRequest = getPullRequest();
+
+		return pullRequest.getUpstreamRemoteGitBranchName();
 	}
 
 	@Override
@@ -81,11 +113,21 @@ public class SourceFormatBuild
 
 	@Override
 	public BranchInformation getPortalBranchInformation() {
-		return new PullRequestBranchInformation(this, _pullRequest);
+		Workspace workspace = getWorkspace();
+
+		return new WorkspaceBranchInformation(
+			workspace.getPrimaryWorkspaceGitRepository());
 	}
 
 	@Override
 	public PullRequest getPullRequest() {
+		if (_pullRequest != null) {
+			return _pullRequest;
+		}
+
+		_pullRequest = PullRequestFactory.newPullRequest(
+			getParameterValue("PULL_REQUEST_URL"));
+
 		return _pullRequest;
 	}
 
@@ -139,72 +181,33 @@ public class SourceFormatBuild
 			"html", null, getResultElement(), detailsElement);
 	}
 
-	public static class PullRequestBranchInformation
-		extends DefaultBranchInformation {
+	@Override
+	public Workspace getWorkspace() {
+		PullRequest pullRequest = getPullRequest();
 
-		@Override
-		public String getOriginName() {
-			return _pullRequest.getSenderUsername();
+		Workspace workspace = WorkspaceFactory.newWorkspace(
+			pullRequest.getGitRepositoryName(),
+			pullRequest.getUpstreamRemoteGitBranchName(), getJobName());
+
+		WorkspaceGitRepository workspaceGitRepository =
+			workspace.getPrimaryWorkspaceGitRepository();
+
+		workspaceGitRepository.setGitHubURL(pullRequest.getHtmlURL());
+
+		String senderBranchSHA = getParameterValue("GITHUB_SENDER_BRANCH_SHA");
+
+		if (JenkinsResultsParserUtil.isSHA(senderBranchSHA)) {
+			workspaceGitRepository.setSenderBranchSHA(senderBranchSHA);
 		}
 
-		@Override
-		public Integer getPullRequestNumber() {
-			String pullRequestNumber = _pullRequest.getNumber();
+		String upstreamBranchSHA = getParameterValue(
+			"GITHUB_UPSTREAM_BRANCH_SHA");
 
-			if ((pullRequestNumber == null) ||
-				!pullRequestNumber.matches("\\d+")) {
-
-				pullRequestNumber = "0";
-			}
-
-			return Integer.valueOf(pullRequestNumber);
+		if (JenkinsResultsParserUtil.isSHA(upstreamBranchSHA)) {
+			workspaceGitRepository.setBaseBranchSHA(upstreamBranchSHA);
 		}
 
-		@Override
-		public String getReceiverUsername() {
-			return _pullRequest.getReceiverUsername();
-		}
-
-		@Override
-		public String getRepositoryName() {
-			return _pullRequest.getGitRepositoryName();
-		}
-
-		@Override
-		public String getSenderBranchName() {
-			return _pullRequest.getSenderBranchName();
-		}
-
-		@Override
-		public String getSenderBranchSHA() {
-			return _pullRequest.getSenderSHA();
-		}
-
-		@Override
-		public String getSenderUsername() {
-			return _pullRequest.getSenderUsername();
-		}
-
-		@Override
-		public String getUpstreamBranchName() {
-			return _pullRequest.getUpstreamRemoteGitBranchName();
-		}
-
-		@Override
-		public String getUpstreamBranchSHA() {
-			return _pullRequest.getUpstreamBranchSHA();
-		}
-
-		protected PullRequestBranchInformation(
-			Build build, PullRequest pullRequest) {
-
-			super(build, "portal");
-
-			_pullRequest = pullRequest;
-		}
-
-		private final PullRequest _pullRequest;
-
+		return workspace;
 	}
 
 	protected SourceFormatBuild(String url) {
@@ -213,9 +216,6 @@ public class SourceFormatBuild
 
 	protected SourceFormatBuild(String url, TopLevelBuild topLevelBuild) {
 		super(url, topLevelBuild);
-
-		_pullRequest = PullRequestFactory.newPullRequest(
-			getParameterValue("PULL_REQUEST_URL"));
 	}
 
 	@Override
@@ -230,16 +230,23 @@ public class SourceFormatBuild
 	}
 
 	protected Element getSenderBranchDetailsElement() {
+		PullRequest pullRequest = getPullRequest();
+
 		String gitHubRemoteGitRepositoryName =
-			_pullRequest.getGitHubRemoteGitRepositoryName();
-		String senderBranchName = _pullRequest.getSenderBranchName();
-		String senderUsername = _pullRequest.getSenderUsername();
+			pullRequest.getGitHubRemoteGitRepositoryName();
+		String senderBranchName = pullRequest.getSenderBranchName();
+		String senderUsername = pullRequest.getSenderUsername();
 
 		String senderBranchURL = JenkinsResultsParserUtil.combine(
 			"https://github.com/", senderUsername, "/",
 			gitHubRemoteGitRepositoryName, "/tree/", senderBranchName);
 
-		String senderSHA = _pullRequest.getSenderSHA();
+		Workspace workspace = getWorkspace();
+
+		WorkspaceGitRepository primaryWorkspaceGitRepository =
+			workspace.getPrimaryWorkspaceGitRepository();
+
+		String senderSHA = primaryWorkspaceGitRepository.getSenderBranchSHA();
 
 		String senderCommitURL = JenkinsResultsParserUtil.combine(
 			"https://github.com/", senderUsername, "/",

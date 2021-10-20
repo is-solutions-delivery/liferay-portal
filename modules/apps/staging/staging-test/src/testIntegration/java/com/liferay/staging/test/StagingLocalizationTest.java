@@ -48,6 +48,8 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
@@ -138,7 +140,13 @@ public class StagingLocalizationTest {
 
 	@Test(expected = LocaleException.class)
 	public void testRemoveSupportedLocale() throws Exception {
-		testUpdateLocales("es_ES", "de_DE,es_ES", "en_US");
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.exportimport.internal.lifecycle." +
+					"LoggerExportImportLifecycleListener",
+				LoggerTestUtil.ERROR)) {
+
+			testUpdateLocales("es_ES", "de_DE,es_ES", "en_US");
+		}
 	}
 
 	@Test

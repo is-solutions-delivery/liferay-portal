@@ -11,9 +11,6 @@
 		],
 		"setupFiles": [
 			"<rootDir>/jest-setup.config.js"
-		],
-		"testPathIgnorePatterns": [
-			"LayoutProvider/util"
 		]
 	},
 	"main": "js/index.es.js",
@@ -24,5 +21,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "4.0.18"
+	"version": "4.0.19"
 }

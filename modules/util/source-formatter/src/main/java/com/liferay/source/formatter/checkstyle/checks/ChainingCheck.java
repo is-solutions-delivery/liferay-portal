@@ -174,8 +174,10 @@ public class ChainingCheck extends BaseCheck {
 
 			_checkAllowedChaining(methodCallDetailAST);
 
-			List<String> chainedMethodNames = getChainedMethodNames(
+			ChainInformation chainInformation = getChainInformation(
 				methodCallDetailAST);
+
+			List<String> chainedMethodNames = chainInformation.getMethodNames();
 
 			_checkRequiredChaining(methodCallDetailAST, chainedMethodNames);
 
@@ -212,7 +214,7 @@ public class ChainingCheck extends BaseCheck {
 			}
 
 			if (_isAllowedChainingMethodCall(
-					methodCallDetailAST, chainedMethodNames, detailAST)) {
+					methodCallDetailAST, chainInformation, detailAST)) {
 
 				continue;
 			}
@@ -250,16 +252,10 @@ public class ChainingCheck extends BaseCheck {
 
 		if ((methodCallDetailAST.getType() != TokenTypes.METHOD_CALL) ||
 			(detailAST.findFirstToken(TokenTypes.ARRAY_DECLARATOR) != null) ||
-			(detailAST.findFirstToken(TokenTypes.OBJBLOCK) != null)) {
-
-			return;
-		}
-
-		List<String> chainedMethodNames = getChainedMethodNames(
-			methodCallDetailAST);
-
-		if (_isAllowedChainingMethodCall(
-				methodCallDetailAST, chainedMethodNames, detailAST)) {
+			(detailAST.findFirstToken(TokenTypes.OBJBLOCK) != null) ||
+			_isAllowedChainingMethodCall(
+				methodCallDetailAST, getChainInformation(methodCallDetailAST),
+				detailAST)) {
 
 			return;
 		}
@@ -608,7 +604,7 @@ public class ChainingCheck extends BaseCheck {
 	}
 
 	private boolean _isAllowedChainingMethodCall(
-		DetailAST methodCallDetailAST, List<String> chainedMethodNames,
+		DetailAST methodCallDetailAST, ChainInformation chainInformation,
 		DetailAST detailAST) {
 
 		DetailAST globalVariableDefinitonDetailAST =
@@ -629,12 +625,27 @@ public class ChainingCheck extends BaseCheck {
 			return true;
 		}
 
+		List<String> chainedMethodNames = chainInformation.getMethodNames();
+
 		List<String> allowedMethodNames = getAttributeValues(
 			_ALLOWED_METHOD_NAMES_KEY);
 
 		for (String allowedMethodName : allowedMethodNames) {
 			if (chainedMethodNames.contains(allowedMethodName)) {
 				return true;
+			}
+		}
+
+		String returnType = chainInformation.getReturnType();
+
+		if (returnType != null) {
+			List<String> allowedVariableTypeNames = getAttributeValues(
+				_ALLOWED_VARIABLE_TYPE_NAMES_KEY);
+
+			for (String allowedVariableTypeName : allowedVariableTypeNames) {
+				if (returnType.matches(allowedVariableTypeName)) {
+					return true;
+				}
 			}
 		}
 
@@ -668,8 +679,7 @@ public class ChainingCheck extends BaseCheck {
 				}
 			}
 
-			String returnType = _getReturnType(
-				chainedMethodNames.get(0), detailAST);
+			returnType = _getReturnType(chainedMethodNames.get(0), detailAST);
 
 			if (returnType != null) {
 				List<String> allowedVariableTypeNames = getAttributeValues(

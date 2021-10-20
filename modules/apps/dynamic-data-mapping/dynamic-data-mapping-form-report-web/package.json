@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/layout": "3.32.0",
+		"@clayui/layout": "3.37.0",
 		"@liferay/frontend-js-react-web": "*",
 		"frontend-js-web": "*",
 		"moment": "^2.22.2",
@@ -26,5 +26,5 @@
 		"test": "env TZ=utc liferay-npm-scripts test",
 		"test:watch": "env TZ=utc liferay-npm-scripts test --watch"
 	},
-	"version": "2.0.9"
+	"version": "2.0.10"
 }

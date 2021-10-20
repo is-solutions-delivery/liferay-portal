@@ -16,6 +16,7 @@ package com.liferay.object.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.exception.DefaultObjectLayoutException;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectLayout;
@@ -76,6 +77,80 @@ public class ObjectLayoutLocalServiceTest {
 	@Test
 	public void testAddObjectLayout() throws Exception {
 		try {
+			ObjectLayoutTab objectLayoutTab1 =
+				_objectLayoutTabPersistence.create(0);
+
+			objectLayoutTab1.setNameMap(
+				LocalizedMapUtil.getLocalizedMap(
+					RandomTestUtil.randomString()));
+			objectLayoutTab1.setObjectLayoutBoxes(
+				Arrays.asList(_addObjectLayoutBox(), _addObjectLayoutBox()));
+
+			ObjectLayoutTab objectLayoutTab2 =
+				_objectLayoutTabPersistence.create(0);
+
+			objectLayoutTab2.setNameMap(
+				LocalizedMapUtil.getLocalizedMap(
+					RandomTestUtil.randomString()));
+			objectLayoutTab2.setObjectLayoutBoxes(
+				Arrays.asList(_addObjectLayoutBox(), _addObjectLayoutBox()));
+
+			_objectLayoutLocalService.addObjectLayout(
+				TestPropsValues.getUserId(),
+				_objectDefinition.getObjectDefinitionId(), true,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				Arrays.asList(objectLayoutTab1, objectLayoutTab2));
+
+			Assert.fail();
+		}
+		catch (DefaultObjectLayoutException defaultObjectLayoutException) {
+			String message = defaultObjectLayoutException.getMessage();
+
+			Assert.assertTrue(
+				message.contains(
+					"All required object fields must be associated to the " +
+						"first tab of a default object layout"));
+		}
+
+		_deleteObjectFields();
+
+		ObjectLayout objectLayout = null;
+
+		try {
+			ObjectLayoutTab objectLayoutTab =
+				_objectLayoutTabPersistence.create(0);
+
+			objectLayoutTab.setNameMap(
+				LocalizedMapUtil.getLocalizedMap(
+					RandomTestUtil.randomString()));
+			objectLayoutTab.setObjectLayoutBoxes(
+				Arrays.asList(_addObjectLayoutBox(), _addObjectLayoutBox()));
+
+			objectLayout = _objectLayoutLocalService.addObjectLayout(
+				TestPropsValues.getUserId(),
+				_objectDefinition.getObjectDefinitionId(), true,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				Collections.singletonList(objectLayoutTab));
+
+			_objectLayoutLocalService.addObjectLayout(
+				TestPropsValues.getUserId(),
+				_objectDefinition.getObjectDefinitionId(), true,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				Collections.singletonList(objectLayoutTab));
+		}
+		catch (DefaultObjectLayoutException defaultObjectLayoutException) {
+			String message = defaultObjectLayoutException.getMessage();
+
+			Assert.assertTrue(
+				message.contains(
+					"There can only be one default object layout"));
+		}
+
+		_deleteObjectFields();
+		_objectLayoutLocalService.deleteObjectLayout(
+			objectLayout.getObjectLayoutId());
+
+		try {
 			ObjectLayoutTab objectLayoutTab =
 				_objectLayoutTabPersistence.create(0);
 
@@ -105,7 +180,7 @@ public class ObjectLayoutLocalServiceTest {
 
 			_objectLayoutLocalService.addObjectLayout(
 				TestPropsValues.getUserId(),
-				_objectDefinition.getObjectDefinitionId(), true,
+				_objectDefinition.getObjectDefinitionId(), false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				Collections.singletonList(objectLayoutTab));
 
@@ -120,10 +195,11 @@ public class ObjectLayoutLocalServiceTest {
 						"than 12"));
 		}
 
-		ObjectLayout objectLayout = _addObjectLayout();
+		objectLayout = _addObjectLayout();
 
 		_assertObjectLayout(objectLayout);
 
+		_deleteObjectFields();
 		_objectLayoutLocalService.deleteObjectLayout(
 			objectLayout.getObjectLayoutId());
 	}
@@ -173,7 +249,7 @@ public class ObjectLayoutLocalServiceTest {
 
 		return _objectLayoutLocalService.addObjectLayout(
 			TestPropsValues.getUserId(),
-			_objectDefinition.getObjectDefinitionId(), true,
+			_objectDefinition.getObjectDefinitionId(), false,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			Collections.singletonList(objectLayoutTab));
 	}
@@ -245,6 +321,16 @@ public class ObjectLayoutLocalServiceTest {
 
 		Assert.assertEquals(
 			objectLayoutColumns.toString(), 4, objectLayoutColumns.size());
+	}
+
+	private void _deleteObjectFields() throws Exception {
+		List<ObjectField> objectFields =
+			_objectFieldLocalService.getObjectFields(
+				_objectDefinition.getObjectDefinitionId());
+
+		for (ObjectField objectField : objectFields) {
+			_objectFieldLocalService.deleteObjectField(objectField);
+		}
 	}
 
 	@DeleteAfterTestRun

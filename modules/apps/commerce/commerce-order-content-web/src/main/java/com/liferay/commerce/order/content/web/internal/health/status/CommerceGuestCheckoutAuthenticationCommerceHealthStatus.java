@@ -149,15 +149,19 @@ public class CommerceGuestCheckoutAuthenticationCommerceHealthStatus
 
 			JournalArticle journalArticle = journalArticles.get(0);
 
-			AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
-				JournalArticle.class.getName(),
-				journalArticle.getResourcePrimKey());
-
 			Map<String, String[]> parameterMap = HashMapBuilder.put(
 				"articleId", new String[] {journalArticle.getArticleId()}
 			).put(
 				"assetEntryId",
-				new String[] {String.valueOf(assetEntry.getEntryId())}
+				() -> {
+					AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+						JournalArticle.class.getName(),
+						journalArticle.getResourcePrimKey());
+
+					return new String[] {
+						String.valueOf(assetEntry.getEntryId())
+					};
+				}
 			).put(
 				"groupId",
 				new String[] {String.valueOf(journalArticle.getGroupId())}

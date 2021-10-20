@@ -22,7 +22,6 @@ describe('AddToCart', () => {
 	const INITIAL_PROPS = {
 		channel: {
 			currencyCode: 'USD',
-			groupId: 12345,
 			id: 12345,
 		},
 		cpInstance: {

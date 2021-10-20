@@ -27,7 +27,7 @@ definition {
 	test CanDeleteAnAccountGroup {
 		ApplicationsMenu.gotoPortlet(
 			category = "Accounts",
-			panel = "Applications",
+			panel = "Control Panel",
 			portlet = "Account Groups");
 
 		AccountGroups.addCP(

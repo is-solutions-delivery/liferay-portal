@@ -108,10 +108,6 @@ public class CPInstancePriceEntryDataSetActionProvider
 			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		CPInstance cpInstance = commercePriceEntry.getCPInstance();
 
 		return PortletURLBuilder.create(
@@ -123,7 +119,9 @@ public class CPInstancePriceEntryDataSetActionProvider
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commercePriceEntryId", commercePriceEntry.getCommercePriceEntryId()
 		).setParameter(

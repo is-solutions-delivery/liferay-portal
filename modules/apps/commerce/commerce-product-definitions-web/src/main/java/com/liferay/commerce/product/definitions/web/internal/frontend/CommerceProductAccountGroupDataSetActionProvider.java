@@ -88,10 +88,6 @@ public class CommerceProductAccountGroupDataSetActionProvider
 		CommerceAccountGroupRel commerceAccountGroupRel,
 		HttpServletRequest httpServletRequest) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest, CPPortletKeys.CP_DEFINITIONS,
@@ -101,7 +97,9 @@ public class CommerceProductAccountGroupDataSetActionProvider
 		).setCMD(
 			"deleteAccountGroup"
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commerceAccountGroupRelId",
 			commerceAccountGroupRel.getCommerceAccountGroupRelId()

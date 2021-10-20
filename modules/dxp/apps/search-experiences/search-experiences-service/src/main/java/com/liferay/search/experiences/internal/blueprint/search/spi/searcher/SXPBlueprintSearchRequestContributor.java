@@ -17,6 +17,8 @@ package com.liferay.search.experiences.internal.blueprint.search.spi.searcher;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
@@ -44,33 +46,81 @@ public class SXPBlueprintSearchRequestContributor
 		SearchRequestBuilder searchRequestBuilder =
 			_searchRequestBuilderFactory.builder(searchRequest);
 
-		long sxpBlueprintId = searchRequestBuilder.withSearchContextGet(
-			searchContext -> GetterUtil.getLong(
-				searchContext.getAttribute("search.experiences.blueprint.id")));
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Search experiences blueprint ID " + sxpBlueprintId);
-		}
-
-		if (sxpBlueprintId == 0) {
-			return searchRequest;
-		}
-
-		SXPBlueprint sxpBlueprint = _sxpBlueprintLocalService.fetchSXPBlueprint(
-			sxpBlueprintId);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Search experiences blueprint " + sxpBlueprint);
-		}
-
-		if (sxpBlueprint == null) {
-			return searchRequest;
-		}
-
-		_sxpBlueprintSearchRequestEnhancer.enhance(
-			searchRequestBuilder, sxpBlueprint);
+		_contributeSXPBlueprintId(searchRequestBuilder);
+		_contributeSXPBlueprintJSON(searchRequestBuilder);
 
 		return searchRequestBuilder.build();
+	}
+
+	private void _contributeSXPBlueprintId(
+		SearchRequestBuilder searchRequestBuilder) {
+
+		Object object = searchRequestBuilder.withSearchContextGet(
+			searchContext -> searchContext.getAttribute(
+				"search.experiences.blueprint.id"));
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Search experiences blueprint ID " + object);
+		}
+
+		if (object == null) {
+		}
+		else if (object instanceof Number) {
+			_enhance(searchRequestBuilder, GetterUtil.getLong(object));
+		}
+		else if (object instanceof String) {
+			String string = (String)object;
+
+			if (Validator.isNotNull(string)) {
+				_enhance(
+					searchRequestBuilder,
+					GetterUtil.getLongValues(StringUtil.split(string)));
+			}
+		}
+		else {
+			throw new IllegalArgumentException(
+				"Invalid search experiences blueprint ID " + object);
+		}
+	}
+
+	private void _contributeSXPBlueprintJSON(
+		SearchRequestBuilder searchRequestBuilder) {
+
+		String sxpBlueprintJSON = searchRequestBuilder.withSearchContextGet(
+			searchContext -> GetterUtil.getString(
+				searchContext.getAttribute(
+					"search.experiences.blueprint.json")));
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Search experiences blueprint JSON " + sxpBlueprintJSON);
+		}
+
+		if (Validator.isNotNull(sxpBlueprintJSON)) {
+			_sxpBlueprintSearchRequestEnhancer.enhance(
+				searchRequestBuilder, sxpBlueprintJSON);
+		}
+	}
+
+	private void _enhance(
+		SearchRequestBuilder searchRequestBuilder, long... sxpBlueprintIds) {
+
+		for (long sxpBlueprintId : sxpBlueprintIds) {
+			if (sxpBlueprintId == 0) {
+				continue;
+			}
+
+			SXPBlueprint sxpBlueprint =
+				_sxpBlueprintLocalService.fetchSXPBlueprint(sxpBlueprintId);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug("Search experiences blueprint " + sxpBlueprint);
+			}
+
+			if (sxpBlueprint != null) {
+				_sxpBlueprintSearchRequestEnhancer.enhance(
+					searchRequestBuilder, sxpBlueprint);
+			}
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

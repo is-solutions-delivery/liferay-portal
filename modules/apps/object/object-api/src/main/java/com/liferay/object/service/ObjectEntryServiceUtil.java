@@ -67,6 +67,14 @@ public class ObjectEntryServiceUtil {
 		return getService().deleteObjectEntry(objectEntryId);
 	}
 
+	public static ObjectEntry deleteObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws PortalException {
+
+		return getService().deleteObjectEntry(
+			externalReferenceCode, companyId, groupId);
+	}
+
 	public static ObjectEntry fetchObjectEntry(long objectEntryId)
 		throws PortalException {
 
@@ -77,6 +85,14 @@ public class ObjectEntryServiceUtil {
 		throws PortalException {
 
 		return getService().getObjectEntry(objectEntryId);
+	}
+
+	public static ObjectEntry getObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws PortalException {
+
+		return getService().getObjectEntry(
+			externalReferenceCode, companyId, groupId);
 	}
 
 	/**

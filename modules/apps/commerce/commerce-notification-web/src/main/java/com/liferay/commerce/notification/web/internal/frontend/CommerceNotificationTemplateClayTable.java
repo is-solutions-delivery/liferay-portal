@@ -136,10 +136,6 @@ public class CommerceNotificationTemplateClayTable
 			}
 		).add(
 			dropdownItem -> {
-				String redirect = ParamUtil.getString(
-					httpServletRequest, "currentUrl",
-					_portal.getCurrentURL(httpServletRequest));
-
 				dropdownItem.setHref(
 					PortletURLBuilder.create(
 						_portal.getControlPanelPortletURL(
@@ -150,7 +146,9 @@ public class CommerceNotificationTemplateClayTable
 					).setCMD(
 						Constants.DELETE
 					).setRedirect(
-						redirect
+						ParamUtil.getString(
+							httpServletRequest, "currentUrl",
+							_portal.getCurrentURL(httpServletRequest))
 					).setParameter(
 						"commerceNotificationTemplateId",
 						notificationTemplate.getNotificationTemplateId()

@@ -144,14 +144,12 @@ public class MultipleUploadResponseHandler implements UploadResponseHandler {
 			UploadPortletRequest uploadPortletRequest, FileEntry fileEntry)
 		throws PortalException {
 
-		String sourceFileName = uploadPortletRequest.getFileName("file");
-
 		return JSONUtil.put(
 			"groupId", fileEntry.getGroupId()
 		).put(
 			"name", fileEntry.getTitle()
 		).put(
-			"title", sourceFileName
+			"title", uploadPortletRequest.getFileName("file")
 		).put(
 			"uuid", fileEntry.getUuid()
 		);

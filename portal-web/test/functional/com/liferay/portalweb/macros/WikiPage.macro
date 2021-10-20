@@ -1516,6 +1516,10 @@ definition {
 		AssertElementNotPresent(locator1 = "WikiTable#ALL_PAGES_WIKI_PAGE_TITLE");
 	}
 
+	macro viewNotPresentInPageBody {
+		AssertElementNotPresent(locator1 = "//body[.='${elementValue}']");
+	}
+
 	macro viewPageNoAttachment {
 		WikiPage.viewPG(
 			wikiPageContent = "${wikiPageContent}",

@@ -52,7 +52,7 @@ renderResponse.setTitle(workflowInstanceEditDisplayContext.getHeaderTitle());
 				>
 					<aui:field-wrapper label="state">
 						<aui:fieldset>
-							<%= HtmlUtil.escape(workflowInstanceEditDisplayContext.getWorkflowInstanceState()) %>
+							<%= workflowInstanceEditDisplayContext.getStatus() %>
 						</aui:fieldset>
 					</aui:field-wrapper>
 				</clay:col>

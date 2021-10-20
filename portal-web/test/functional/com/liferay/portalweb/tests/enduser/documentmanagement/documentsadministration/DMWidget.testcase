@@ -64,7 +64,7 @@ definition {
 			layoutName = "Documents and Media Page",
 			widgetName = "Documents and Media");
 
-		JSONDocument.addFolder(
+		JSONFolder.addFolder(
 			dmFolderDescription = "DM Folder Description",
 			dmFolderName = "Test Folder",
 			groupName = "Site Name");
@@ -97,6 +97,14 @@ definition {
 		DMDocument.viewPG(dmDocumentTitle = "DM Document Title");
 	}
 
+	@priority = "4"
+	@refactordone
+	test CanRemoveCurrentDisplayStyleViews {
+		Navigator.gotoPage(pageName = "Documents and Media Page");
+
+		DMPortlet.configureDisplaySettingsPG(currentDisplayStyleViews = "");
+	}
+
 	@priority = "5"
 	@refactordone
 	test CanRemovePortlet {
@@ -105,6 +113,33 @@ definition {
 		Navigator.gotoPage(pageName = "Documents and Media Page");
 
 		Portlet.deletePG(portletName = "Documents and Media");
+	}
+
+	@priority = "4"
+	@refactordone
+	test ConfigurationsAreIndependentAcrossPages {
+		JSONLayout.addPublicLayout(
+			groupName = "Guest",
+			layoutName = "Documents and Media Page 2");
+
+		JSONLayout.addWidgetToPublicLayout(
+			column = "1",
+			groupName = "Guest",
+			layoutName = "Documents and Media Page 2",
+			widgetName = "Documents and Media");
+
+		Navigator.gotoSitePage(
+			pageName = "Documents and Media Page 2",
+			siteName = "Guest");
+
+		DMPortlet.configureDisplaySettingsPG(
+			enableDisplaySettingsRelatedAssets = "false",
+			enableDisplaySettingsShowSearch = "false",
+			entriesToDisplayCount = "60");
+
+		Navigator.gotoPage(pageName = "Documents and Media Page");
+
+		DMPortlet.viewDefaultConfigurationDisplaySettingsPG();
 	}
 
 	@description = "This test covers LPS-91595. It ensures that the document selection persists when navigating through the pagination in the DM widget."
@@ -154,6 +189,23 @@ definition {
 		AssertTextEquals(
 			locator1 = "ManagementBar#NAVBAR_TEXT",
 			value1 = "2 of 10 Selected");
+	}
+
+	@description = "This test ensures that the DM widgets follow W3C accessibility standards."
+	@ignore = "true"
+	@priority = "4"
+	test WidgetsFollowAccessibilityStandards {
+		JSONLayout.addWidgetToPublicLayout(
+			column = "1",
+			groupName = "Guest",
+			layoutName = "Documents and Media Page",
+			widgetName = "Media Gallery");
+
+		Navigator.openSitePage(
+			pageName = "Documents and Media Page",
+			siteName = "Guest");
+
+		AssertAccessible();
 	}
 
 }

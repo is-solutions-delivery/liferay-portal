@@ -201,6 +201,51 @@ definition {
 			value1 = "No addresses were found.");
 	}
 
+	@description = "This test asserts that an Account Manager can view all accounts that are added by other users in the Accounts Admin portlet, not just the ones he created"
+	@priority = "5"
+	test AllAccountsEntriesDisplay {
+		task ("Add several accounts") {
+			for (var accountNum : list "1,2,3") {
+				JSONAccountEntry.addAccountEntry(
+					accountEntryName = "Account Name ${accountNum}",
+					accountEntryType = "Business");
+			}
+		}
+
+		task ("Add a user") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
+		}
+
+		task ("Assign Administrator role to user") {
+			JSONRole.assignRoleToUser(
+				roleTitle = "Administrator",
+				userEmailAddress = "userea@liferay.com");
+		}
+
+		task ("Sign in as the Administrator") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea@liferay.com",
+				userLoginFullName = "userfn userln");
+		}
+
+		task ("Assert all added account entries display") {
+			Accounts.openAccountsAdmin();
+
+			for (var accountNum : list "1,2,3") {
+				LexiconEntry.viewEntryName(rowEntry = "Account Name ${accountNum}");
+			}
+		}
+	}
+
 	@description = "This test adds a new user via the Users tab of an Account"
 	@priority = "4"
 	test CanAddAccountUserViaAssignUser {
@@ -374,6 +419,28 @@ definition {
 		AssetCategorization.viewCategory(categoryName = "Category Name 1");
 
 		AssetCategorization.viewVocabulary(vocabularyName = "Vocabulary Name 1");
+	}
+
+	@description = "This test asserts that multiple accounts can be added with the same domain"
+	@priority = "3"
+	test CanAddMultipleAccountsWithSameDomain {
+		task ("Enable account email domains") {
+			AccountConfiguration.enableAccountEmailDomain();
+		}
+
+		task ("Add multiple accounts with the same domain") {
+			Accounts.openAccountsAdmin();
+
+			for (var accountNum : list "1,2,3") {
+				Accounts.addAccountWithDomain(
+					accountName = "Account Name ${accountNum}",
+					domainNames = "liferay.com");
+
+				Accounts.openAccountsAdmin();
+
+				LexiconEntry.viewEntryName(rowEntry = "Account Name ${accountNum}");
+			}
+		}
 	}
 
 	@description = "This test asserts that users can add more than one domain to a business account."
@@ -2106,6 +2173,102 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	@description = "This test asserts that a user can filter addresses by billing type"
+	@priority = "4"
+	test FilterAddressesByBillingType {
+		task ("Add an account") {
+			JSONAccountEntry.addAccountEntry(
+				accountEntryName = "Accounts Name",
+				accountEntryType = "Business");
+		}
+
+		task ("Add a billing address and a shipping address to account") {
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Accounts Name");
+
+			Accounts.gotoAssigneeTab(assigneeTab = "Addresses");
+
+			Accounts.addAddress(
+				addressCity = "Chicago",
+				addressCountry = "United States",
+				addressName = "Chicago",
+				addressPostalCode = "60606",
+				addressRegion = "Illinois",
+				addressStreet1 = "205 W. Wacker Dr",
+				addressStreet2 = "Suite 720",
+				addressType = "Billing",
+				phoneNumber = "+1-877-LIFERAY (1-877-543-3729)");
+
+			Accounts.addAddress(
+				addressCity = "Dalian",
+				addressCountry = "China",
+				addressName = "Liferay Dalian Software Co., Ltd.",
+				addressPostalCode = "116023",
+				addressRegion = "Liaoning Sheng",
+				addressStreet1 = "537 Huangpu Road Taide Building,",
+				addressStreet2 = "1005 High-Tech Zone",
+				addressType = "Shipping",
+				phoneNumber = "+86 (0)411 88120855");
+		}
+
+		task ("Assert the user can filter by billing address type") {
+			ManagementBar.setFilterAndOrder(filterBy = "Billing");
+
+			LexiconEntry.viewEntryName(rowEntry = "Chicago");
+
+			LexiconEntry.viewNoEntry(rowEntry = "Liferay Dalian Software Co., Ltd.");
+		}
+	}
+
+	@description = "This test asserts that a user can filter addresses by shipping type"
+	@priority = "4"
+	test FilterAddressesByShippingType {
+		task ("Add an account") {
+			JSONAccountEntry.addAccountEntry(
+				accountEntryName = "Accounts Name",
+				accountEntryType = "Business");
+		}
+
+		task ("Add a billing address and a shipping address to account") {
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Accounts Name");
+
+			Accounts.gotoAssigneeTab(assigneeTab = "Addresses");
+
+			Accounts.addAddress(
+				addressCity = "Chicago",
+				addressCountry = "United States",
+				addressName = "Chicago",
+				addressPostalCode = "60606",
+				addressRegion = "Illinois",
+				addressStreet1 = "205 W. Wacker Dr",
+				addressStreet2 = "Suite 720",
+				addressType = "Billing",
+				phoneNumber = "+1-877-LIFERAY (1-877-543-3729)");
+
+			Accounts.addAddress(
+				addressCity = "Dalian",
+				addressCountry = "China",
+				addressName = "Liferay Dalian Software Co., Ltd.",
+				addressPostalCode = "116023",
+				addressRegion = "Liaoning Sheng",
+				addressStreet1 = "537 Huangpu Road Taide Building,",
+				addressStreet2 = "1005 High-Tech Zone",
+				addressType = "Shipping",
+				phoneNumber = "+86 (0)411 88120855");
+		}
+
+		task ("Assert the user can filter by shipping address type") {
+			ManagementBar.setFilterAndOrder(filterBy = "Shipping");
+
+			LexiconEntry.viewEntryName(rowEntry = "Liferay Dalian Software Co., Ltd.");
+
+			LexiconEntry.viewNoEntry(rowEntry = "Chicago");
+		}
+	}
+
 	@description = "This is a use case for LPS-117171. It asserts that Filter By Navigation does not display when assigning a user to a Person Account since domains are not applicable for this type of account."
 	@priority = "3"
 	test NoFilterByNavigationForPersonAccount {
@@ -2381,7 +2544,7 @@ definition {
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Accounts",
-			panel = "Applications",
+			panel = "Control Panel",
 			portlet = "Accounts");
 
 		Accounts.addBusinessAccount(

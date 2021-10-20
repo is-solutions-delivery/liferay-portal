@@ -39,7 +39,9 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.search.experiences.model.SXPBlueprint;
 import com.liferay.search.experiences.service.SXPBlueprintLocalService;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -90,18 +92,19 @@ public class SXPBlueprintSearchRequestContributorTest {
 
 	private void _addJournalArticles(String... titles) throws Exception {
 		for (String title : titles) {
-			JournalTestUtil.addArticle(
-				TestPropsValues.getGroupId(), 0,
-				PortalUtil.getClassNameId(JournalArticle.class),
-				HashMapBuilder.put(
-					LocaleUtil.US, title
-				).build(),
-				null,
-				HashMapBuilder.put(
-					LocaleUtil.US, ""
-				).build(),
-				LocaleUtil.getSiteDefault(), false, true,
-				ServiceContextTestUtil.getServiceContext());
+			_journalArticles.add(
+				JournalTestUtil.addArticle(
+					TestPropsValues.getGroupId(), 0,
+					PortalUtil.getClassNameId(JournalArticle.class),
+					HashMapBuilder.put(
+						LocaleUtil.US, title
+					).build(),
+					null,
+					HashMapBuilder.put(
+						LocaleUtil.US, ""
+					).build(),
+					LocaleUtil.getSiteDefault(), false, true,
+					ServiceContextTestUtil.getServiceContext()));
 		}
 	}
 
@@ -113,7 +116,7 @@ public class SXPBlueprintSearchRequestContributorTest {
 			StringUtil.read(
 				clazz,
 				StringBundler.concat(
-					clazz.getSimpleName(), StringPool.PERIOD,
+					"dependencies/", clazz.getSimpleName(), StringPool.PERIOD,
 					testName.getMethodName(), ".json")),
 			Collections.singletonMap(
 				LocaleUtil.US, RandomTestUtil.randomString()),
@@ -143,6 +146,9 @@ public class SXPBlueprintSearchRequestContributorTest {
 			searchResponse.getRequestString(),
 			searchResponse.getDocumentsStream(), fieldName, expected);
 	}
+
+	@DeleteAfterTestRun
+	private List<JournalArticle> _journalArticles = new ArrayList<>();
 
 	@Inject
 	private Searcher _searcher;

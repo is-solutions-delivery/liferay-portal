@@ -22,34 +22,42 @@ CPContentHelper cpContentHelper = (CPContentHelper)request.getAttribute(CPConten
 CPCatalogEntry cpCatalogEntry = cpContentHelper.getCPCatalogEntry(request);
 
 CSDiagramCPTypeDisplayContext csDiagramCPTypeDisplayContext = (CSDiagramCPTypeDisplayContext)request.getAttribute(CSDiagramWebKeys.CS_DIAGRAM_CP_TYPE_DISPLAY_CONTEXT);
+
+CSDiagramSetting csDiagramSetting = csDiagramCPTypeDisplayContext.getCSDiagramSetting(cpCatalogEntry.getCPDefinitionId());
 %>
 
-<div id="shop-by-diagram">
-	<react:component
-		module="js/Diagram"
-		props='<%=
-			HashMapBuilder.<String, Object>put(
-				"enablePanZoom", true
-			).put(
-				"enableResetZoom", true
-			).put(
-				"imageSettings",
-				JSONUtil.put(
-					"height", "500px"
-				).put(
-					"width", "100%"
-				)
-			).put(
-				"imageURL", csDiagramCPTypeDisplayContext.getImageURL(cpCatalogEntry.getCPDefinitionId())
-			).put(
-				"isAdmin", false
-			).put(
-				"pinsEndpoint", "/o/headless-commerce-admin-catalog/v1.0/"
-			).put(
-				"productId", cpCatalogEntry.getCProductId()
-			).put(
-				"spritemap", themeDisplay.getPathThemeImages() + "/clay/icons.svg"
-			).build()
-		%>'
-	/>
+<div class="row">
+	<div class="col-lg-8">
+		<commerce-ui:panel
+			title='<%= LanguageUtil.get(resourceBundle, "diagram-mapping") %>'
+		>
+
+			<%
+			if (csDiagramSetting != null) {
+				CSDiagramType csDiagramType = csDiagramCPTypeDisplayContext.getCSDiagramType(csDiagramSetting.getType());
+
+				csDiagramType.render(csDiagramSetting, request, PipingServletResponseFactory.createPipingServletResponse(pageContext));
+			}
+			%>
+
+		</commerce-ui:panel>
+	</div>
+
+	<div class="col-lg-4">
+		<commerce-ui:panel
+			elementClasses="flex-fill"
+			title='<%= LanguageUtil.get(resourceBundle, "mapped-products") %>'
+		>
+			<clay:headless-data-set-display
+				apiURL="<%= csDiagramCPTypeDisplayContext.getCSDiagramMappedProductsAPIURL(cpCatalogEntry) %>"
+				formId="fm"
+				id="<%= CSDiagramDataSetConstants.CS_DIAGRAM_MAPPED_PRODUCTS_DATA_SET_KEY %>"
+				itemsPerPage="<%= 10 %>"
+				namespace="<%= liferayPortletResponse.getNamespace() %>"
+				pageNumber="<%= 1 %>"
+				portletURL="<%= currentURLObj %>"
+				style="stacked"
+			/>
+		</commerce-ui:panel>
+	</div>
 </div>

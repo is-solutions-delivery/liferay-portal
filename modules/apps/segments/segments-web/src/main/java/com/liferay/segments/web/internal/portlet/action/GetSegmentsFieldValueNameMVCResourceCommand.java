@@ -66,11 +66,13 @@ public class GetSegmentsFieldValueNameMVCResourceCommand
 	protected JSONObject getFieldValueNameJSONObject(
 		String entityName, String fieldName, String fieldValue, Locale locale) {
 
-		Optional<String> fieldValueNameOptional = _getFieldValueName(
-			entityName, fieldName, fieldValue, locale);
-
 		return JSONUtil.put(
-			"fieldValueName", fieldValueNameOptional.orElse(null));
+			"fieldValueName",
+			_getFieldValueName(
+				entityName, fieldName, fieldValue, locale
+			).orElse(
+				null
+			));
 	}
 
 	private Optional<String> _getFieldValueName(

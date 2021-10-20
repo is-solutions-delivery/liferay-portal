@@ -82,10 +82,8 @@ public class WikiLinksAlloyEditorConfigContributor
 	}
 
 	protected JSONObject getWikiLinkButtonJSONObject(String buttonName) {
-		JSONObject cfgJSONObject = JSONUtil.put("appendProtocol", false);
-
 		return JSONUtil.put(
-			"cfg", cfgJSONObject
+			"cfg", JSONUtil.put("appendProtocol", false)
 		).put(
 			"name", buttonName
 		);

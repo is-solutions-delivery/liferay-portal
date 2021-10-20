@@ -1,4 +1,0 @@
-Bundle-Name: Liferay Screens API
-Bundle-SymbolicName: com.liferay.screens.api
-Bundle-Version: 7.0.4
-Export-Package: com.liferay.screens.service

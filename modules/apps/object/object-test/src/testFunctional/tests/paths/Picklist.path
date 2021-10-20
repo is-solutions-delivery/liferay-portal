@@ -87,12 +87,42 @@
 	</tr>
 	<tr>
 		<td>SAVE_BUTTON</td>
-		<td>//button[@class='btn btn-primary']</td>
+		<td>//button[@type = "submit" and text() = "Save"]</td>
 		<td></td>
 	</tr>
 	<tr>
 		<td>PICKLIST_DETAILS</td>
 		<td>//div[(@class='sheet') and contains (.,'${key_title}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>PICKLIST_ITEM_KEBAB_MENU</td>
+		<td>//div[text()='${key_itemKey}']/following-sibling::div//button</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>IFRAME_PICKLIST_ITEM_MODAL</td>
+		<td>xpath=(//iframe[contains(@src,'ListTypeDefinitions')])[2]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>PICKLIST_ITEM_KEBAB_MENU_OPTION</td>
+		<td>//div[contains(.,'${key_itemKey}')]/..//button[contains(.,'${key_picklistItemOption}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>PICKLIST_ITEM_DETAILS</td>
+		<td>//div[@class='modal-title']</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>REQUIRED_KEY_ITEM</td>
+		<td>//label[@for='listTypeEntryKey']/following-sibling::div//span[contains(text(),'Required')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>PICKLIST_MESSAGE</td>
+		<td>//div[(@class='autofit-section') and contains(.,'${key_picklistMessage}')]</td>
 		<td></td>
 	</tr>
 </tbody>

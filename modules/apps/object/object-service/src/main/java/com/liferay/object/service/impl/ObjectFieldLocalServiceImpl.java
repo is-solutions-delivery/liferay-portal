@@ -159,6 +159,9 @@ public class ObjectFieldLocalServiceImpl
 					objectField.getDBColumnName()));
 		}
 
+		// TODO What happens if you delete an object field that is associated to
+		// an object layout?
+
 		return objectField;
 	}
 

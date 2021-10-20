@@ -20,6 +20,7 @@ import com.liferay.commerce.internal.order.term.contributor.ObjectCommerceDefini
 import com.liferay.commerce.internal.order.term.contributor.ObjectRecipientCommerceDefinitionTermContributor;
 import com.liferay.commerce.notification.type.CommerceNotificationType;
 import com.liferay.commerce.order.CommerceDefinitionTermContributor;
+import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.deployer.ObjectDefinitionDeployer;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -28,7 +29,9 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -47,6 +50,13 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	@Override
 	public List<ServiceRegistration<?>> deploy(
 		ObjectDefinition objectDefinition) {
+
+		if (Objects.equals(
+				objectDefinition.getScope(),
+				ObjectDefinitionConstants.SCOPE_COMPANY)) {
+
+			return Collections.emptyList();
+		}
 
 		return Arrays.asList(
 			_bundleContext.registerService(

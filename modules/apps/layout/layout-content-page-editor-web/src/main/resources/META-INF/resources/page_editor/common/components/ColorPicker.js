@@ -13,6 +13,7 @@
  */
 
 import DropDown from '@clayui/drop-down';
+import ClayEmptyState from '@clayui/empty-state';
 import {ClayInput} from '@clayui/form';
 import {FocusScope} from '@clayui/shared';
 import classNames from 'classnames';
@@ -52,8 +53,10 @@ const ColorPicker = ({
 						(acc, [tokenSet, tokenColors]) => {
 							const newColors = isFoundValue(tokenSet)
 								? tokenColors
-								: tokenColors.filter((color) =>
-										isFoundValue(color.label || color.value)
+								: tokenColors.filter(
+										(color) =>
+											isFoundValue(color.label) ||
+											isFoundValue(color.value)
 								  );
 
 							return {
@@ -112,7 +115,7 @@ const ColorPicker = ({
 					<DropDown.Menu
 						active={active}
 						alignElementRef={triggerElementRef}
-						className="clay-color-dropdown-menu"
+						className="clay-color-dropdown-menu px-0"
 						containerProps={{
 							className: 'cadmin',
 						}}
@@ -124,7 +127,7 @@ const ColorPicker = ({
 							active ? (
 								<>
 									<SearchForm
-										className="flex-grow-1"
+										className="flex-grow-1 px-3"
 										onChange={setSearchValue}
 									/>
 									{Object.keys(filteredColors).length ? (
@@ -135,20 +138,16 @@ const ColorPicker = ({
 											splotchRef={splotchRef}
 										/>
 									) : (
-										<div className="mb-4 page-editor__ColorPicker__empty-result taglib-empty-result-message text-center">
-											<div className="mb-3 mt-4 taglib-empty-state" />
-											<div className="taglib-empty-result-message-title">
-												{Liferay.Language.get(
-													'no-results-found'
-												)}
-											</div>
-
-											<p className="taglib-empty-result-message-description">
-												{Liferay.Language.get(
-													'try-again-with-a-different-search'
-												)}
-											</p>
-										</div>
+										<ClayEmptyState
+											className="mt-4 page-editor__ColorPicker__empty-result"
+											description={Liferay.Language.get(
+												'try-again-with-a-different-search'
+											)}
+											imgSrc={`${themeDisplay.getPathThemeImages()}/states/empty_state.gif`}
+											title={Liferay.Language.get(
+												'no-results-found'
+											)}
+										/>
 									)}
 								</>
 							) : null
@@ -215,9 +214,9 @@ const Splotch = React.forwardRef(
 const ColorPalette = ({colors, onSetActive, onValueChange, splotchRef}) =>
 	Object.keys(colors).map((category) => (
 		<div className="page-editor__ColorPicker__color-palette" key={category}>
-			<span className="mb-3 sheet-subtitle">{category}</span>
+			<span className="mb-3 px-3 sheet-subtitle">{category}</span>
 			{Object.keys(colors[category]).map((tokenSet) => (
-				<div key={tokenSet}>
+				<div className="px-3" key={tokenSet}>
 					<span className="text-secondary">{tokenSet}</span>
 					<div className="clay-color-swatch mb-0 mt-3">
 						{colors[category][tokenSet].map(

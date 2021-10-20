@@ -15,7 +15,6 @@
 package com.liferay.portal.license.deployer.internal.installer;
 
 import com.liferay.portal.file.install.FileInstaller;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.license.util.LicenseManagerUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -73,11 +72,8 @@ public class LicenseInstaller implements FileInstaller {
 
 	@Override
 	public URL transformURL(File file) throws Exception {
-		String content = FileUtil.read(file);
-
-		JSONObject jsonObject = JSONUtil.put("licenseXML", content);
-
-		LicenseManagerUtil.registerLicense(jsonObject);
+		LicenseManagerUtil.registerLicense(
+			JSONUtil.put("licenseXML", FileUtil.read(file)));
 
 		return null;
 	}

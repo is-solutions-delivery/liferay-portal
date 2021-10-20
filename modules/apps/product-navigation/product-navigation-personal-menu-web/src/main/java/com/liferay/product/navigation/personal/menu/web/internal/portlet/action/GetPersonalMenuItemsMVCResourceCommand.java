@@ -202,11 +202,11 @@ public class GetPersonalMenuItemsMVCResourceCommand
 				continue;
 			}
 
-			String portletId = ParamUtil.getString(portletRequest, "portletId");
-
 			JSONObject jsonObject = JSONUtil.put(
 				"active",
-				personalMenuEntry.isActive(portletRequest, portletId));
+				personalMenuEntry.isActive(
+					portletRequest,
+					ParamUtil.getString(portletRequest, "portletId")));
 
 			try {
 				jsonObject.put(
@@ -243,8 +243,6 @@ public class GetPersonalMenuItemsMVCResourceCommand
 			WebKeys.THEME_DISPLAY);
 
 		if (themeDisplay.isImpersonated()) {
-			User user = themeDisplay.getUser();
-
 			jsonArray.put(
 				JSONUtil.put(
 					"items",
@@ -252,10 +250,14 @@ public class GetPersonalMenuItemsMVCResourceCommand
 						portletRequest, themeDisplay)
 				).put(
 					"label",
-					StringUtil.appendParentheticalSuffix(
-						user.getFullName(),
-						LanguageUtil.get(
-							themeDisplay.getLocale(), "impersonated"))
+					() -> {
+						User user = themeDisplay.getUser();
+
+						return StringUtil.appendParentheticalSuffix(
+							user.getFullName(),
+							LanguageUtil.get(
+								themeDisplay.getLocale(), "impersonated"));
+					}
 				).put(
 					"type", "group"
 				));

@@ -2937,6 +2937,12 @@ definition {
 		}
 	}
 
+	macro viewExpiredSessionErrorMessage {
+		AssertTextEquals.assertPartialText(
+			locator1 = "Home#ERROR_MESSAGE_EXPIRED_SESSION",
+			value1 = "${message}");
+	}
+
 	macro viewIsPrimary {
 		if (isSet(primaryValue)) {
 			var key_primaryValue = "${primaryValue}";
@@ -3033,6 +3039,22 @@ definition {
 		AssertTextEquals(
 			locator1 = "Message#EMPTY_INFO",
 			value1 = "No users were found.");
+	}
+
+	macro viewSessionNotExpired {
+		AssertElementNotPresent(locator1 = "Home#ERROR_MESSAGE_EXPIRED_SESSION");
+
+		if (!(isSet(noSignin))) {
+			AssertElementNotPresent(locator1 = "UserBar#USER_SIGN_IN");
+		}
+	}
+
+	macro viewSignIn {
+		AssertElementPresent(locator1 = "UserBar#USER_SIGN_IN");
+	}
+
+	macro viewSignInPresent {
+		AssertElementPresent(locator1 = "UserBar#USER_SIGN_IN");
 	}
 
 	macro viewUnableToAssignRoleToUserCP {
@@ -3153,6 +3175,18 @@ definition {
 		AssertTextEquals(
 			locator1 = "UsersAndOrganizationsEditUser#USER_GROUPS_TABLE_NAME",
 			value1 = "${userGroupName}");
+	}
+
+	macro viewUserTableName {
+		AssertTextEquals(
+			locator1 = "UsersAndOrganizations#USER_TABLE_NAME",
+			value1 = "${userfn} ${userln}");
+	}
+
+	macro viewWelcomeMEssageHTML {
+		AssertHTMLSourceTextPresent(
+			locator1 = "JSONWS#SECURITY_RESULT",
+			value1 = "Welcome ${userfn} ${userln}!");
 	}
 
 }

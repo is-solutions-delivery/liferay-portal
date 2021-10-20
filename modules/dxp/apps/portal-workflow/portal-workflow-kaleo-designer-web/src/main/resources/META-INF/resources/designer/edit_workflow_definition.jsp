@@ -16,5 +16,6 @@
 
 <%@ include file="/designer/init.jsp" %>
 
-<div>
-</div>
+<react:component
+	module="designer/js/definition-builder/DefinitionBuilder"
+/>

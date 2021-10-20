@@ -83,6 +83,32 @@ definition {
 		}
 	}
 
+	macro addEntryContentViaCodeView {
+		AlloyEditor.clickContentField();
+
+		Click(locator1 = "Button#EDITOR_SWITCH");
+
+		if ("${viewMode}" == "Dark Theme") {
+			Click(
+				key_text = "moon",
+				locator1 = "Icon#ANY");
+		}
+
+		if ("${viewMode}" == "Fullscreen") {
+			Click(
+				key_text = "expand",
+				locator1 = "Icon#ANY");
+		}
+
+		Type.typeAceEditor(
+			locator1 = "TextArea#ACE_EDITOR",
+			value1 = "${entryContent}");
+
+		if ("${viewMode}" == "Fullscreen") {
+			Button.clickDone();
+		}
+	}
+
 	macro addEntryExternalLinkViaBrowseButton {
 		if (isSet(entryContent)) {
 			DoubleClick(
@@ -999,6 +1025,12 @@ definition {
 			AssertTextEquals.assertPartialText(
 				locator1 = "BlogsEntry#CONTENT_HTML_BOLD",
 				value1 = "${entryContentBold}");
+		}
+
+		if (isSet(entryContentHTML)) {
+			AssertTextEquals.assertPartialText(
+				locator1 = "BlogsEntry#CONTENT_HTML_H2",
+				value1 = "${entryContentHTML}");
 		}
 
 		if (isSet(entryContentItalics)) {

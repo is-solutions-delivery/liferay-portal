@@ -75,6 +75,16 @@ public class QueryEntrySerDes {
 			sb.append("]");
 		}
 
+		if (queryEntry.getCondition() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"condition\": ");
+
+			sb.append(String.valueOf(queryEntry.getCondition()));
+		}
+
 		if (queryEntry.getEnabled() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -108,6 +118,13 @@ public class QueryEntrySerDes {
 		}
 		else {
 			map.put("clauses", String.valueOf(queryEntry.getClauses()));
+		}
+
+		if (queryEntry.getCondition() == null) {
+			map.put("condition", null);
+		}
+		else {
+			map.put("condition", String.valueOf(queryEntry.getCondition()));
 		}
 
 		if (queryEntry.getEnabled() == null) {
@@ -148,6 +165,12 @@ public class QueryEntrySerDes {
 						).toArray(
 							size -> new Clause[size]
 						));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "condition")) {
+				if (jsonParserFieldValue != null) {
+					queryEntry.setCondition(
+						ConditionSerDes.toDTO((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "enabled")) {

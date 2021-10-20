@@ -13,7 +13,7 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {act, cleanup, fireEvent, render} from '@testing-library/react';
+import {act, cleanup, fireEvent, render, wait} from '@testing-library/react';
 import React from 'react';
 
 import WrapperWithQuantity from '../../../src/main/resources/META-INF/resources/components/add_to_cart/WrapperWithQuantity';
@@ -40,6 +40,7 @@ describe('WrapperWithQuantity', () => {
 	describe('by interaction', () => {
 		beforeEach(() => {
 			jest.resetAllMocks();
+			jest.useFakeTimers();
 		});
 
 		afterEach(() => {
@@ -62,9 +63,15 @@ describe('WrapperWithQuantity', () => {
 				});
 			});
 
-			expect(
-				AddToCartButtonElement.getAttribute('data-test-quantity')
-			).toEqual(updatedValue.toString());
+			act(() => {
+				jest.runAllTimers();
+			});
+
+			await wait(() => {
+				expect(
+					AddToCartButtonElement.getAttribute('data-test-quantity')
+				).toEqual(updatedValue.toString());
+			});
 		});
 	});
 

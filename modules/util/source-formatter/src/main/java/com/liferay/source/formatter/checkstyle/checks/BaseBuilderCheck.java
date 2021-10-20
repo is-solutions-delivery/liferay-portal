@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
+import com.puppycrawl.tools.checkstyle.utils.AnnotationUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -204,6 +205,12 @@ public abstract class BaseBuilderCheck extends BaseChainedMethodCheck {
 			DetailAST parentDetailAST = variableDefinitionDetailAST.getParent();
 
 			if (parentDetailAST.getType() == TokenTypes.OBJBLOCK) {
+				if (AnnotationUtil.containsAnnotation(
+						variableDefinitionDetailAST, "Reference")) {
+
+					continue;
+				}
+
 				DetailAST modifiersDetailAST =
 					variableDefinitionDetailAST.findFirstToken(
 						TokenTypes.MODIFIERS);
@@ -736,6 +743,21 @@ public abstract class BaseBuilderCheck extends BaseChainedMethodCheck {
 
 		if (matchingMethodName == null) {
 			return;
+		}
+
+		DetailAST literalTryDetailAST = getParentWithTokenType(
+			variableDefinitionDetailAST, TokenTypes.LITERAL_TRY);
+
+		if (literalTryDetailAST != null) {
+			DetailAST literalCatchDetailAST = getParentWithTokenType(
+				variableDefinitionDetailAST, TokenTypes.LITERAL_CATCH);
+
+			if ((literalCatchDetailAST == null) ||
+				(literalCatchDetailAST.getLineNo() <
+					literalTryDetailAST.getLineNo())) {
+
+				return;
+			}
 		}
 
 		List<DetailAST> additionalDependentDetailASTList =
@@ -1355,6 +1377,16 @@ public abstract class BaseBuilderCheck extends BaseChainedMethodCheck {
 
 					if (variableNames.contains(
 							dependentIdentDetailAST.getText())) {
+
+						List<int[]> nonfinalVariableRangeList =
+							_addNonfinalVariableRangeList(
+								null, expressionDetailAST);
+
+						for (int[] array : nonfinalVariableRangeList) {
+							if (expressionDetailAST.getLineNo() > array[0]) {
+								return null;
+							}
+						}
 
 						if (methodName != null) {
 							return null;

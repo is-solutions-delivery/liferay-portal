@@ -33,7 +33,7 @@ definition {
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Accounts",
-			panel = "Applications",
+			panel = "Control Panel",
 			portlet = "Account Users");
 
 		AccountUsers.addUser(
@@ -119,10 +119,7 @@ definition {
 				userScreenName = "usersn${accountUser}");
 		}
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Accounts",
-			panel = "Applications",
-			portlet = "Account Users");
+		AccountUsers.openAccountUsersAdmin();
 
 		Pagination.changePagination(itemsPerPage = "4");
 

@@ -374,3 +374,25 @@ use the new corresponding methods `addOrUpdate*`.
 This change was introduced to follow Liferay source formatting.
 
 ---------------------------------------
+
+### BOM Feature Is Replaced by Shop by Diagram Feature
+- **Date:** 2021-Oct-14
+- **JIRA Ticket:** [COMMERCE-3030](https://issues.liferay.com/browse/COMMERCE-3030)
+
+#### What changed?
+
+BOM feature is replaced by Shop by Diagram feature. This means that
+the enties Folder and BOM entry do not exist and there is a new
+Product Type called Diagram.
+
+#### Who is affected?
+
+Product specialists that need to create diagrams for their store will
+not need to create products with the Diagram product type.
+
+#### Why was this change made?
+
+This change was introduced to fix BOM issues and to better fullfill spare parts
+use cases.
+
+---------------------------------------

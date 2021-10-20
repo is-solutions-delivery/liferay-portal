@@ -22,8 +22,6 @@ import com.liferay.portal.vulcan.jaxrs.exception.mapper.BaseExceptionMapper;
 import com.liferay.portal.vulcan.jaxrs.exception.mapper.Problem;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.core.Response;
 
@@ -40,26 +38,29 @@ public class UnrecognizedPropertyExceptionMapper
 	protected Problem getProblem(
 		UnrecognizedPropertyException unrecognizedPropertyException) {
 
+		StringBundler sb = new StringBundler();
+
 		List<JsonMappingException.Reference> references =
 			unrecognizedPropertyException.getPath();
 
-		Stream<JsonMappingException.Reference> stream = references.stream();
+		for (int i = 0; i < references.size(); i++) {
+			JsonMappingException.Reference reference = references.get(i);
 
-		String entity = stream.map(
-			reference -> {
-				Object object = reference.getFrom();
+			Object object = reference.getFrom();
 
-				Class<?> clazz = object.getClass();
+			Class<?> clazz = object.getClass();
 
-				return StringBundler.concat(
-					"Property \"", reference.getFieldName(),
-					"\" is not defined in ", clazz.getSimpleName());
+			sb.append(
+				StringBundler.concat(
+					"The property \"", reference.getFieldName(),
+					"\" is not defined in ", clazz.getSimpleName(), "."));
+
+			if ((i + 1) < references.size()) {
+				sb.append(" ");
 			}
-		).collect(
-			Collectors.joining(".")
-		);
+		}
 
-		return new Problem(Response.Status.BAD_REQUEST, entity);
+		return new Problem(Response.Status.BAD_REQUEST, sb.toString());
 	}
 
 }

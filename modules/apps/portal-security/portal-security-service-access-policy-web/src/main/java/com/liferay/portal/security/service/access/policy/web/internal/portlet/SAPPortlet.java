@@ -113,12 +113,14 @@ public class SAPPortlet extends MVCPortlet {
 		for (JSONWebServiceActionMapping jsonWebServiceActionMapping :
 				jsonWebServiceActionMappingsSet) {
 
-			Method method = jsonWebServiceActionMapping.getActionMethod();
-
-			String actionMethodName = method.getName();
-
 			JSONObject jsonObject = JSONUtil.put(
-				"actionMethodName", actionMethodName);
+				"actionMethodName",
+				() -> {
+					Method method =
+						jsonWebServiceActionMapping.getActionMethod();
+
+					return method.getName();
+				});
 
 			jsonArray.put(jsonObject);
 		}
@@ -186,19 +188,24 @@ public class SAPPortlet extends MVCPortlet {
 			for (Map.Entry<String, Set<JSONWebServiceActionMapping>> entry :
 					jsonWebServiceActionMappingsMap.entrySet()) {
 
-				Set<JSONWebServiceActionMapping>
-					jsonWebServiceActionMappingsSet = entry.getValue();
-
-				Iterator<JSONWebServiceActionMapping> iterator =
-					jsonWebServiceActionMappingsSet.iterator();
-
-				JSONWebServiceActionMapping firstJSONWebServiceActionMapping =
-					iterator.next();
-
 				jsonArray.put(
 					JSONUtil.put(
 						"contextName",
-						firstJSONWebServiceActionMapping.getContextName()
+						() -> {
+							Set<JSONWebServiceActionMapping>
+								jsonWebServiceActionMappingsSet =
+									entry.getValue();
+
+							Iterator<JSONWebServiceActionMapping> iterator =
+								jsonWebServiceActionMappingsSet.iterator();
+
+							JSONWebServiceActionMapping
+								firstJSONWebServiceActionMapping =
+									iterator.next();
+
+							return firstJSONWebServiceActionMapping.
+								getContextName();
+						}
 					).put(
 						"serviceClassName", entry.getKey()
 					));

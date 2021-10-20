@@ -73,29 +73,6 @@ public class BatchPlannerLogServiceImpl extends BatchPlannerLogServiceBaseImpl {
 			batchPlannerLogId);
 	}
 
-	@Override
-	public List<BatchPlannerLog> getBatchPlannerLogs(long batchPlannerPlanId)
-		throws PortalException {
-
-		_batchPlannerPlanModelResourcePermission.check(
-			getPermissionChecker(), batchPlannerPlanId, ActionKeys.VIEW);
-
-		return batchPlannerLogLocalService.getBatchPlannerLogs(
-			batchPlannerPlanId);
-	}
-
-	@Override
-	public List<BatchPlannerLog> getBatchPlannerLogs(
-			long batchPlannerPlanId, int start, int end)
-		throws PortalException {
-
-		_batchPlannerPlanModelResourcePermission.check(
-			getPermissionChecker(), batchPlannerPlanId, ActionKeys.VIEW);
-
-		return batchPlannerLogLocalService.getBatchPlannerLogs(
-			batchPlannerPlanId, start, end);
-	}
-
 	public int getBatchPlannerLogsCount(long batchPlannerPlanId)
 		throws PortalException {
 
@@ -104,6 +81,30 @@ public class BatchPlannerLogServiceImpl extends BatchPlannerLogServiceBaseImpl {
 
 		return batchPlannerLogLocalService.getBatchPlannerLogsCount(
 			batchPlannerPlanId);
+	}
+
+	@Override
+	public BatchPlannerLog getBatchPlannerPlanBatchPlannerLog(
+			long batchPlannerPlanId)
+		throws PortalException {
+
+		_batchPlannerPlanModelResourcePermission.check(
+			getPermissionChecker(), batchPlannerPlanId, ActionKeys.VIEW);
+
+		return batchPlannerLogLocalService.getBatchPlannerPlanBatchPlannerLog(
+			batchPlannerPlanId);
+	}
+
+	@Override
+	public List<BatchPlannerLog> getCompanyBatchPlannerLogs(
+			long companyId, boolean export, int start, int end,
+			OrderByComparator<BatchPlannerLog> orderByComparator)
+		throws PortalException {
+
+		checkPermission(companyId, ActionKeys.VIEW);
+
+		return batchPlannerLogLocalService.getCompanyBatchPlannerLogs(
+			companyId, export, start, end, orderByComparator);
 	}
 
 	@Override
@@ -126,6 +127,16 @@ public class BatchPlannerLogServiceImpl extends BatchPlannerLogServiceBaseImpl {
 
 		return batchPlannerLogLocalService.getCompanyBatchPlannerLogsCount(
 			companyId);
+	}
+
+	@Override
+	public int getCompanyBatchPlannerLogsCount(long companyId, boolean export)
+		throws PortalException {
+
+		checkPermission(companyId, ActionKeys.VIEW);
+
+		return batchPlannerLogLocalService.getCompanyBatchPlannerLogsCount(
+			companyId, export);
 	}
 
 	protected void checkPermission(long companyId, String actionKey)

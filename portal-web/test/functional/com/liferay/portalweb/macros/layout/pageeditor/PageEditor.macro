@@ -159,7 +159,7 @@ definition {
 
 		if (("${navTab}" == "Widgets") && ("${displayStyle}" == "card")) {
 			Type.sendKeysApplicationSearch(
-				locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 				value1 = "${portletName}");
 
 			if ((isSet(targetFragmentName)) && ("${height}" == "Short")) {
@@ -193,7 +193,7 @@ definition {
 
 		if (("${navTab}" == "Widgets") && ("${displayStyle}" == "list")) {
 			Type.sendKeysApplicationSearch(
-				locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 				value1 = "${portletName}");
 
 			if ((isSet(targetFragmentName)) && ("${height}" == "Short")) {
@@ -300,7 +300,7 @@ definition {
 
 			if (("${navTab}" == "Widgets") && ("${displayStyle}" == "card")) {
 				Type.sendKeysApplicationSearch(
-					locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+					locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 					value1 = "${portletName}");
 
 				DragAndDrop.javaScriptDragAndDropToObject(
@@ -314,7 +314,7 @@ definition {
 
 			if (("${navTab}" == "Widgets") && ("${displayStyle}" == "list")) {
 				Type.sendKeysApplicationSearch(
-					locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+					locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 					value1 = "${portletName}");
 
 				DragAndDrop.javaScriptDragAndDropToObject(
@@ -421,7 +421,7 @@ definition {
 
 		if (("${navTab}" == "Widgets") && ("${displayStyle}" == "card")) {
 			Type.sendKeysApplicationSearch(
-				locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 				value1 = "${portletName}");
 
 			DragAndDrop.javaScriptDragAndDropToObject(
@@ -433,7 +433,7 @@ definition {
 
 		if (("${navTab}" == "Widgets") && ("${displayStyle}" == "list")) {
 			Type.sendKeysApplicationSearch(
-				locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 				value1 = "${portletName}");
 
 			DragAndDrop.javaScriptDragAndDropToObject(
@@ -515,7 +515,7 @@ definition {
 
 		if (("${navTab}" == "Widgets") && ("${displayStyle}" == "card")) {
 			Type.sendKeysApplicationSearch(
-				locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 				value1 = "${portletName}");
 
 			DragAndDrop.javaScriptDragAndDropToObject(
@@ -528,7 +528,7 @@ definition {
 
 		if (("${navTab}" == "Widgets") && ("${displayStyle}" == "list")) {
 			Type.sendKeysApplicationSearch(
-				locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 				value1 = "${portletName}");
 
 			DragAndDrop.javaScriptDragAndDropToObject(
@@ -880,7 +880,7 @@ definition {
 		Navigator.gotoNavTab(navTab = "Widgets");
 
 		Type.sendKeysApplicationSearch(
-			locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+			locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 			value1 = "${portletName}");
 
 		var key_portletName = "${portletName}";
@@ -1001,6 +1001,12 @@ definition {
 				fail("The auto image resolution is wrong.");
 			}
 		}
+	}
+
+	macro assertEntryIsRendered {
+		AssertElementPresent(
+			key_selectedEntry = "${selectedEntry}",
+			locator1 = "PageEditor#PREVIEW_WITH_SELECTED_ENTRY");
 	}
 
 	macro assertFalseEntryIsNotPresent {
@@ -1164,7 +1170,7 @@ definition {
 
 		Click.clickNoMouseOver(locator1 = "PageEditor#FRAGMENT_SIDEBAR_TAB_BUTTON");
 
-		AssertElementPresent(locator1 = "PageEditor#FRAGMENT_SIDEBAR_TAB_COLLAPSED");
+		AssertElementNotPresent(locator1 = "PageEditor#FRAGMENT_SIDEBAR_TAB_BUTTON_ACTIVE");
 	}
 
 	macro configureFragment {
@@ -3227,7 +3233,7 @@ definition {
 		PageEditor.gotoTab(tabName = "Fragments");
 
 		Type(
-			locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+			locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 			value1 = "${fragmentName}");
 	}
 
@@ -3235,7 +3241,7 @@ definition {
 		Navigator.gotoNavTab(navTab = "Page Content");
 
 		Type(
-			locator1 = "PageEditor#WIDGETS_APPLICATION_SEARCH_FIELD",
+			locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
 			value1 = "${searchTerm}");
 	}
 
@@ -3268,6 +3274,20 @@ definition {
 			key_fieldLabel = "${fieldLabel}",
 			locator1 = "Select#GENERIC_SELECT_FIELD",
 			value1 = "${option}");
+	}
+
+	macro selectItemToPreviewWith {
+		Click(locator1 = "PageEditor#PREVIEW_WITH_DROPDOWN_MENU");
+
+		Click(locator1 = "PageEditor#PREVIEW_WITH_OTHER_ITEM");
+
+		SelectFrame(
+			key_title = "Select",
+			locator1 = "IFrame#MODAL_ANY");
+
+		Portlet.expandTree();
+
+		Click(locator1 = "PageEditor#PREVIEW_WITH_CUSTOM_OBJECT_ITEM");
 	}
 
 	macro switchViewport {
@@ -3393,9 +3413,9 @@ definition {
 		}
 
 		else {
-			AssertTextEquals(
-				locator1 = "PageEditor#FRAGMENT_SIDEBAR_SECTION_TITLE",
-				value1 = "Comments");
+			AssertVisible(
+				key_sidebarButton = "Comments",
+				locator1 = "PageEditor#FRAGMENT_SIDEBAR_TITLE");
 
 			AssertTextEquals(
 				locator1 = "PageEditor#FRAGMENT_SIDEBAR_CENTER_TEXT",
@@ -3977,6 +3997,18 @@ definition {
 		AssertElementNotPresent(
 			key_fragmentName = "${fragmentName}",
 			locator1 = "Fragment#FRAGMENT_HEADER");
+	}
+
+	macro viewNotPresentInPermissionsIframeBody {
+		Click.clickAtNotVisible(locator1 = "Portlet#OPTIONS_ICON");
+
+		Click(
+			key_menuItem = "Permissions",
+			locator1 = "MenuItem#ANY_MENU_ITEM");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		AssertElementNotPresent(locator1 = "//body[.='${elementValue}']");
 	}
 
 	macro waitForAutoSave {

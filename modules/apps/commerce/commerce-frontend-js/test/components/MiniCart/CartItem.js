@@ -24,6 +24,7 @@ import {
 	REMOVAL_TIMEOUT,
 } from '../../../src/main/resources/META-INF/resources/components/mini_cart/util/constants';
 import * as MiniCartUtils from '../../../src/main/resources/META-INF/resources/components/mini_cart/util/index';
+import {UPDATE_AFTER} from '../../../src/main/resources/META-INF/resources/components/quantity_selector/utils';
 import {PRODUCT_REMOVED_FROM_CART} from '../../../src/main/resources/META-INF/resources/utilities/eventsDefinitions';
 
 describe('MiniCart Item', () => {
@@ -373,26 +374,30 @@ describe('MiniCart Item', () => {
 					});
 				});
 
-				const {
-					CartResource,
-					setIsUpdating,
-					updateCartModel,
-				} = BASE_CONTEXT_MOCK;
+				await wait(() => {
+					jest.advanceTimersByTime(UPDATE_AFTER);
 
-				expect(CartResource.updateItemById).toHaveBeenCalledWith(
-					BASE_PROPS.item.id,
-					{
-						...BASE_PROPS.item,
-						quantity: parseInt(UPDATED_QUANTITY, 10),
-					}
-				);
+					const {
+						CartResource,
+						setIsUpdating,
+						updateCartModel,
+					} = BASE_CONTEXT_MOCK;
 
-				const {id: orderId} = BASE_CONTEXT_MOCK.cartState;
+					expect(CartResource.updateItemById).toHaveBeenCalledWith(
+						BASE_PROPS.item.id,
+						{
+							...BASE_PROPS.item,
+							quantity: parseInt(UPDATED_QUANTITY, 10),
+						}
+					);
 
-				expect(updateCartModel).toHaveBeenCalledWith({id: orderId});
+					const {id: orderId} = BASE_CONTEXT_MOCK.cartState;
 
-				expect(setIsUpdating).toHaveBeenCalledTimes(2);
-				expect(setIsUpdating.mock.calls).toEqual([[true], [false]]);
+					expect(updateCartModel).toHaveBeenCalledWith({id: orderId});
+
+					expect(setIsUpdating).toHaveBeenCalledTimes(2);
+					expect(setIsUpdating.mock.calls).toEqual([[true], [false]]);
+				});
 			});
 
 			describe('if the request fails', () => {
@@ -421,20 +426,22 @@ describe('MiniCart Item', () => {
 						});
 					});
 
-					const {CartResource, updateCartModel} = BASE_CONTEXT_MOCK;
+					await wait(() => {
+						jest.advanceTimersByTime(UPDATE_AFTER);
 
-					expect(CartResource.updateItemById).toHaveBeenCalledWith(
-						BASE_PROPS.item.id,
-						{
+						const {
+							CartResource,
+							updateCartModel,
+						} = BASE_CONTEXT_MOCK;
+
+						expect(
+							CartResource.updateItemById
+						).toHaveBeenCalledWith(BASE_PROPS.item.id, {
 							...BASE_PROPS.item,
 							quantity: parseInt(UPDATED_QUANTITY, 10),
-						}
-					);
+						});
 
-					expect(updateCartModel).not.toHaveBeenCalled();
-
-					await wait(() => {
-						jest.advanceTimersByTime(REMOVAL_TIMEOUT);
+						expect(updateCartModel).not.toHaveBeenCalled();
 
 						const ErrorsElement = container.querySelector(
 							`${COMPONENT_SELECTOR}-errors`
@@ -477,7 +484,9 @@ describe('MiniCart Item', () => {
 						});
 
 						await wait(() => {
-							jest.advanceTimersByTime(REMOVAL_ERRORS_TIMEOUT);
+							jest.advanceTimersByTime(
+								UPDATE_AFTER + REMOVAL_ERRORS_TIMEOUT
+							);
 
 							const ErrorsElement = container.querySelector(
 								`${COMPONENT_SELECTOR}-errors`

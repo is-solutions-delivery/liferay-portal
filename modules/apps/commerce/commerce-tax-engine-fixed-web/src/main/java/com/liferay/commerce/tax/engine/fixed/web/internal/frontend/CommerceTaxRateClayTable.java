@@ -237,10 +237,6 @@ public class CommerceTaxRateClayTable
 	private String _getTaxRateDeleteURL(
 		HttpServletRequest httpServletRequest, long taxRateId) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest, CommercePortletKeys.COMMERCE_TAX_METHODS,
@@ -250,7 +246,9 @@ public class CommerceTaxRateClayTable
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commerceTaxFixedRateId", taxRateId
 		).buildString();

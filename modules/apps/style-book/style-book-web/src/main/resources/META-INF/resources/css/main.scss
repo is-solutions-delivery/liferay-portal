@@ -9,7 +9,6 @@ html#{$cadmin-selector} {
 		&.style-book-editor {
 			--style-book-color-picker-color: none;
 
-			display: flex;
 			height: calc(100vh - #{$controlMenuDesktopHeight});
 			left: 0;
 			overflow: hidden;
@@ -32,6 +31,15 @@ html#{$cadmin-selector} {
 						--style-book-color-picker-color
 					) !important;
 				}
+			}
+
+			&__old-toolbar {
+				align-items: center;
+				border-bottom: 1px solid $cadmin-gray-300;
+				display: flex;
+				flex-direction: row;
+				height: $toolbarDesktopHeight;
+				justify-content: space-between;
 			}
 
 			&__page-preview {
@@ -187,12 +195,8 @@ html#{$cadmin-selector} {
 			}
 
 			&__toolbar {
-				align-items: center;
-				border-bottom: 1px solid $cadmin-gray-300;
-				display: flex;
-				flex-direction: row;
-				height: $toolbarDesktopHeight;
-				justify-content: space-between;
+				background-color: $cadmin-white;
+				border-bottom: 1px solid fade_out($cadmin-secondary-l2, 0.5);
 			}
 		}
 	}

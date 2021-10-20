@@ -154,7 +154,9 @@ definition {
 	}
 
 	macro addEntryWithHTML {
-		BlogsNavigator.gotoAddEntry();
+		if (!(isSet(skipNavigation))) {
+			BlogsNavigator.gotoAddEntry();
+		}
 
 		BlogsEntry.addTitle(entryTitle = "${entryTitle}");
 
@@ -665,6 +667,12 @@ definition {
 			value1 = "Unsubscribe");
 
 		Alert.viewSuccessMessage();
+	}
+
+	macro viewContentAbstractDescription {
+		AssertTextEquals.assertPartialText(
+			locator1 = "BlogsEntry#CONTENT_ABSTRACT_AP",
+			value1 = "${descriptionValue}");
 	}
 
 	macro viewControlsPG {

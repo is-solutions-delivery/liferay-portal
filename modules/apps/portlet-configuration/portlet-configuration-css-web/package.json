@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/color-picker": "3.36.0",
+		"@clayui/color-picker": "3.37.0",
 		"react": "16.12.0"
 	},
 	"name": "portlet-configuration-css-web",
@@ -9,5 +9,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "6.0.14"
+	"version": "6.0.15"
 }

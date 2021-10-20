@@ -1,9 +1,9 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.32.0",
-		"@clayui/form": "3.36.0",
-		"@clayui/icon": "3.32.0",
-		"@clayui/loading-indicator": "3.32.0",
+		"@clayui/button": "3.37.0",
+		"@clayui/form": "3.37.0",
+		"@clayui/icon": "3.37.0",
+		"@clayui/loading-indicator": "3.37.0",
 		"@liferay/frontend-js-react-web": "*",
 		"classnames": "2.3.1",
 		"frontend-js-web": "*",
@@ -17,5 +17,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "1.0.22"
+	"version": "1.0.23"
 }

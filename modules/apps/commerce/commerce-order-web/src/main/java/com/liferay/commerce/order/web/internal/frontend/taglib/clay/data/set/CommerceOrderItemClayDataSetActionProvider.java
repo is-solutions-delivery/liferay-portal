@@ -100,10 +100,6 @@ public class CommerceOrderItemClayDataSetActionProvider
 	private PortletURL _getOrderItemDeleteURL(
 		long commerceOrderItemId, HttpServletRequest httpServletRequest) {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				_portal.getOriginalServletRequest(httpServletRequest),
@@ -113,7 +109,9 @@ public class CommerceOrderItemClayDataSetActionProvider
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commerceOrderItemId", commerceOrderItemId
 		).buildPortletURL();

@@ -1,4 +1,7 @@
 {
+	"dependencies": {
+		"react": "16.12.0"
+	},
 	"jest": {
 		"setupFilesAfterEnv": [
 			"<rootDir>/test/setup.js"
@@ -14,5 +17,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "5.0.17"
+	"version": "5.0.19"
 }

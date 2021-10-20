@@ -56,6 +56,16 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>ENTRY_DOUBLE_VALUE_FIELD</td>
+		<td>xpath=(//input[contains(@name,'_com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_')])[7]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>ENTRY_STRING_VALUE_FIELD</td>
+		<td>//input[contains(@class,'form-control ddm-field-text')]</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>NAME_CUSTOM_OBJECT</td>
 		<td>//input[@id='objectDefinitionName']</td>
 		<td></td>
@@ -63,6 +73,11 @@
 	<tr>
 		<td>LABEL_CUSTOM_OBJECT</td>
 		<td>//input[@id='objectDefinitionLabel']</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>LABEL_OBJECT_RELATIONSHIP</td>
+		<td>//input[@id ='objectRelationshipLabel']</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -106,6 +121,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>OBJECT_RELATIONSHIPS_TAB</td>
+		<td>//a[contains(text(),'Relationships')]</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>OBJECT_FIELDS_LABEL_INPUT</td>
 		<td>//input[contains(@id,'objectFieldLabel')]</td>
 		<td></td>
@@ -123,6 +143,21 @@
 	<tr>
 		<td>OBJECT_FIELDS_TYPE</td>
 		<td>//select[contains(@id,'objectFieldType')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>RELATIONSHIPS_TYPE_DESCRIPTION</td>
+		<td>//div[text() = '${key_type}']/..//span[@class = 'text-small']</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>RELATIONSHIPS_TYPE_FORM</td>
+		<td>//div[contains(@class, 'form-control')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>SELECT_RELATIONSHIPS_TYPE_OPTION</td>
+		<td>//button[@class = 'dropdown-item']//div[contains(text(),'${key_type}')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -181,6 +216,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>SELECT_OBJECT_RELATIONSHIP</td>
+		<td>//select[@class = 'form-control']</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>FIELDS_DETAILS_IFRAME</td>
 		<td>//div[contains(@class, 'side-panel-iframe')]</td>
 		<td></td>
@@ -223,6 +263,11 @@
 	<tr>
 		<td>VIEW_OBJECT_FIELD_TYPE</td>
 		<td>//div[(@class = 'dnd-td') and contains (.,'${key_fieldType}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>RELATIONSHIP_LABEL</td>
+		<td>//div[(@class = 'table-list-title')]//a[contains(text(),'${key_label}')]</td>
 		<td></td>
 	</tr>
 	<tr>

@@ -620,25 +620,21 @@ public class LayoutsTreeDisplayContext {
 		SiteNavigationMenuItemType siteNavigationMenuItemType =
 			_getSiteNavigationMenuItemType(siteNavigationMenuItem.getType());
 
-		String name = siteNavigationMenuItemType.getTitle(
-			siteNavigationMenuItem, _themeDisplay.getSiteDefaultLocale());
-
-		String url = _getSiteNavigationMenuItemURL(
-			siteNavigationMenuItem, siteNavigationMenuItemType);
-
-		JSONArray childSiteNavigationMenuItemsJSONArray =
+		return JSONUtil.put(
+			"children",
 			_getChildSiteNavigationMenuItemsJSONArray(
 				siteNavigationMenuItem.getSiteNavigationMenuId(),
-				siteNavigationMenuItem.getSiteNavigationMenuItemId());
-
-		return JSONUtil.put(
-			"children", childSiteNavigationMenuItemsJSONArray
+				siteNavigationMenuItem.getSiteNavigationMenuItemId())
 		).put(
 			"id", siteNavigationMenuItem.getSiteNavigationMenuItemId()
 		).put(
-			"name", name
+			"name",
+			siteNavigationMenuItemType.getTitle(
+				siteNavigationMenuItem, _themeDisplay.getSiteDefaultLocale())
 		).put(
-			"url", url
+			"url",
+			_getSiteNavigationMenuItemURL(
+				siteNavigationMenuItem, siteNavigationMenuItemType)
 		);
 	}
 

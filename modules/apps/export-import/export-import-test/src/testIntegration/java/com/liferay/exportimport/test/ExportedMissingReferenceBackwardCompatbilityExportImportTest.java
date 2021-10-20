@@ -36,6 +36,8 @@ import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipReaderFactoryUtil;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.io.File;
@@ -109,7 +111,11 @@ public class ExportedMissingReferenceBackwardCompatbilityExportImportTest
 
 		long[] layoutIds = {layout.getLayoutId()};
 
-		try {
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.exportimport.internal.lifecycle." +
+					"LoggerExportImportLifecycleListener",
+				LoggerTestUtil.ERROR)) {
+
 			exportImportLayouts(layoutIds, getExportParameterMap());
 		}
 		catch (PortletDataException portletDataException) {

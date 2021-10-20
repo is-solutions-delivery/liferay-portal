@@ -129,38 +129,44 @@ public class PluginExecutor extends BaseExecutor {
 		PluginPackage pluginPackage =
 			DeployManagerUtil.getInstalledPluginPackage(context);
 
-		boolean installed = true;
-
-		if (pluginPackage == null) {
-			installed = false;
-		}
-
-		boolean started = true;
-
-		if (pluginPackage == null) {
-			started = false;
-		}
-
-		List<String> types = new ArrayList<>();
-
-		if (pluginPackage != null) {
-			types = pluginPackage.getTypes();
-		}
-
-		JSONArray typesJSONArray = JSONFactoryUtil.createJSONArray();
-
-		for (String type : types) {
-			typesJSONArray.put(type);
-		}
-
 		responseJSONObject.put(
 			JSONKeys.OUTPUT,
 			JSONUtil.put(
-				"installed", installed
+				"installed",
+				() -> {
+					if (pluginPackage == null) {
+						return false;
+					}
+
+					return true;
+				}
 			).put(
-				"started", started
+				"started",
+				() -> {
+					if (pluginPackage == null) {
+						return false;
+					}
+
+					return true;
+				}
 			).put(
-				"types", typesJSONArray
+				"types",
+				() -> {
+					List<String> types = new ArrayList<>();
+
+					if (pluginPackage != null) {
+						types = pluginPackage.getTypes();
+					}
+
+					JSONArray typesJSONArray =
+						JSONFactoryUtil.createJSONArray();
+
+					for (String type : types) {
+						typesJSONArray.put(type);
+					}
+
+					return typesJSONArray;
+				}
 			));
 	}
 

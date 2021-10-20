@@ -92,10 +92,6 @@ public class CommerceChannelHealthCheckClayTable
 
 		return DropdownItemListBuilder.add(
 			dropdownItem -> {
-				String redirect = ParamUtil.getString(
-					httpServletRequest, "currentUrl",
-					_portal.getCurrentURL(httpServletRequest));
-
 				PortletURL portletURL = PortletURLBuilder.create(
 					_portal.getControlPanelPortletURL(
 						httpServletRequest, CPPortletKeys.COMMERCE_CHANNELS,
@@ -103,7 +99,9 @@ public class CommerceChannelHealthCheckClayTable
 				).setActionName(
 					"/commerce_channels/edit_commerce_channel_health_status"
 				).setRedirect(
-					redirect
+					ParamUtil.getString(
+						httpServletRequest, "currentUrl",
+						_portal.getCurrentURL(httpServletRequest))
 				).setParameter(
 					"commerceChannelHealthStatusKey",
 					() -> {

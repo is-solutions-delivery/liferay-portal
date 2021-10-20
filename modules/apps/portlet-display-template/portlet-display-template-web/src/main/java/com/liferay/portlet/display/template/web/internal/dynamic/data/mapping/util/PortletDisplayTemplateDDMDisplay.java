@@ -183,8 +183,6 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 				PortletRequest.RENDER_PHASE);
 		}
 		else {
-			long groupId = _portal.getScopeGroupId(liferayPortletRequest);
-
 			portletURL = PortletURLBuilder.createRenderURL(
 				liferayPortletResponse
 			).setMVCPath(
@@ -194,7 +192,7 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 			).setParameter(
 				"classPK", classPK
 			).setParameter(
-				"groupId", groupId
+				"groupId", _portal.getScopeGroupId(liferayPortletRequest)
 			).setWindowState(
 				LiferayWindowState.POP_UP
 			).buildPortletURL();

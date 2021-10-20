@@ -13,10 +13,11 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {act, cleanup, fireEvent, render} from '@testing-library/react';
+import {act, cleanup, fireEvent, render, wait} from '@testing-library/react';
 import React from 'react';
 
 import QuantitySelector from '../../../src/main/resources/META-INF/resources/components/quantity_selector/QuantitySelector';
+import {UPDATE_AFTER} from '../../../src/main/resources/META-INF/resources/components/quantity_selector/utils';
 
 describe('QuantitySelector', () => {
 	describe('by default', () => {
@@ -29,6 +30,7 @@ describe('QuantitySelector', () => {
 
 		beforeEach(() => {
 			jest.resetAllMocks();
+			jest.useFakeTimers();
 
 			onUpdateSpy = jest.fn();
 			Component = render(
@@ -41,6 +43,10 @@ describe('QuantitySelector', () => {
 
 			Component = null;
 			onUpdateSpy.mockReset();
+		});
+
+		afterAll(() => {
+			jest.useRealTimers();
 		});
 
 		it('renders as an Input element with default attributes', () => {
@@ -72,8 +78,12 @@ describe('QuantitySelector', () => {
 				fireEvent.change(element, {target: {value: updatedValue}});
 			});
 
-			expect(element.value).not.toEqual(updatedValue);
-			expect(element.value).toEqual('1');
+			await wait(() => {
+				jest.advanceTimersByTime(UPDATE_AFTER * 2);
+
+				expect(element.value).not.toEqual(updatedValue);
+				expect(element.value).toEqual('1');
+			});
 		});
 
 		it('updates the quantity if input value is changed', async () => {
@@ -84,7 +94,11 @@ describe('QuantitySelector', () => {
 				fireEvent.change(element, {target: {value: updatedValue}});
 			});
 
-			expect(element.value).toEqual(updatedValue);
+			await wait(() => {
+				jest.advanceTimersByTime(UPDATE_AFTER * 2);
+
+				expect(element.value).toEqual(updatedValue);
+			});
 		});
 
 		it('updates the quantity to the default of 1 if input value is empty', async () => {
@@ -95,10 +109,14 @@ describe('QuantitySelector', () => {
 				fireEvent.change(element, {target: {value: updatedValue}});
 			});
 
-			expect(element.value).toEqual('1');
+			await wait(() => {
+				jest.advanceTimersByTime(UPDATE_AFTER * 2);
+
+				expect(element.value).toEqual('1');
+			});
 		});
 
-		it('calls the onUpdate callback on input value change', async () => {
+		it('calls the onUpdate callback on input value change after 500ms', async () => {
 			const element = Component.container.querySelector('input');
 			const updatedValue = 2;
 
@@ -108,36 +126,45 @@ describe('QuantitySelector', () => {
 				});
 			});
 
-			expect(onUpdateSpy).toHaveBeenCalledTimes(1);
-			expect(onUpdateSpy).toHaveBeenCalledWith(updatedValue);
+			await wait(() => {
+				jest.advanceTimersByTime(UPDATE_AFTER * 2);
+
+				expect(onUpdateSpy).toHaveBeenCalledTimes(1);
+				expect(onUpdateSpy).toHaveBeenCalledWith(updatedValue);
+			});
 		});
 
-		it('Update Maximum value when maximum exceeded', async () => {
+		it('calls the onUpdate callback only once if typed value did not change within 500ms', async () => {
+			const TIMES = 3;
+			const TYPING_THRESHOLD = 25;
+
+			const TIMEOUT_AT_MS = TIMES * TYPING_THRESHOLD + UPDATE_AFTER;
+
 			const element = Component.container.querySelector('input');
-			const updatedValue = defaultProps.maxQuantity + 10;
+
+			let updatedValue = '1';
 
 			await act(async () => {
-				fireEvent.change(element, {
-					target: {value: updatedValue.toString()},
-				});
+				const updateByTyping = setInterval(() => {
+					if (updatedValue.length <= TIMES) {
+						updatedValue += '0';
+
+						fireEvent.change(element, {
+							target: {value: updatedValue},
+						});
+					}
+					else {
+						clearInterval(updateByTyping);
+					}
+				}, TYPING_THRESHOLD);
 			});
 
-			expect(onUpdateSpy).toHaveBeenCalledTimes(1);
-			expect(onUpdateSpy).toHaveBeenCalledWith(defaultProps.maxQuantity);
-		});
+			await wait(() => {
+				jest.advanceTimersByTime(TIMEOUT_AT_MS);
 
-		it('Update Minimum value when minimum exceeded', async () => {
-			const element = Component.container.querySelector('input');
-			const updatedValue = -1;
-
-			await act(async () => {
-				fireEvent.change(element, {
-					target: {value: updatedValue.toString()},
-				});
+				expect(onUpdateSpy).toHaveBeenCalledTimes(1);
+				expect(onUpdateSpy).toHaveBeenCalledWith(1000);
 			});
-
-			expect(onUpdateSpy).toHaveBeenCalledTimes(1);
-			expect(onUpdateSpy).toHaveBeenCalledWith(1);
 		});
 	});
 
@@ -151,6 +178,8 @@ describe('QuantitySelector', () => {
 		});
 
 		it('floors the input value to the closest lower multiple if multipleQuantity > 1', async () => {
+			jest.useFakeTimers();
+
 			const onUpdateSpy = jest.fn();
 
 			const optionSettingsProps = {
@@ -166,7 +195,7 @@ describe('QuantitySelector', () => {
 				<QuantitySelector onUpdate={onUpdateSpy} {...defaultProps} />
 			);
 
-			const element = Component.getByRole('textbox');
+			const element = Component.container.querySelector('input');
 			const updatedValue = 53;
 
 			await act(async () => {
@@ -175,8 +204,19 @@ describe('QuantitySelector', () => {
 				});
 			});
 
-			expect(onUpdateSpy).toHaveBeenCalledTimes(1);
-			expect(onUpdateSpy).toHaveBeenCalledWith(52);
+			await wait(
+				() => {
+					jest.advanceTimersByTime(UPDATE_AFTER);
+
+					expect(onUpdateSpy).toHaveBeenCalledTimes(1);
+					expect(onUpdateSpy).toHaveBeenCalledWith(52);
+
+					jest.clearAllTimers();
+				},
+				{
+					timeout: UPDATE_AFTER,
+				}
+			);
 		});
 
 		it('updates the quantity to the default of minQuantity if defined and if input value is empty', async () => {
@@ -198,7 +238,7 @@ describe('QuantitySelector', () => {
 				fireEvent.change(element, {target: {value: updatedValue}});
 			});
 
-			expect(element.value).toEqual(defaultProps.minQuantity.toString());
+			expect(element.value).toEqual('');
 		});
 
 		it('disables the input element if required via prop', () => {

@@ -1,8 +1,8 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.32.0",
-		"@clayui/icon": "3.32.0",
-		"@clayui/loading-indicator": "3.32.0",
+		"@clayui/button": "3.37.0",
+		"@clayui/icon": "3.37.0",
+		"@clayui/loading-indicator": "3.37.0",
 		"@liferay/document-library-preview-css": "*",
 		"frontend-js-web": "*",
 		"image-promise": "^5.0.1",
@@ -17,5 +17,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "3.0.6"
+	"version": "3.0.7"
 }

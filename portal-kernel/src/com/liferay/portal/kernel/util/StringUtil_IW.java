@@ -46,6 +46,10 @@ public class StringUtil_IW {
 		return StringUtil.appendParentheticalSuffix(s, suffix);
 	}
 
+	public java.util.List<java.lang.String> asList(java.lang.Object object) {
+		return StringUtil.asList(object);
+	}
+
 	public java.lang.String bytesToHexString(byte[] bytes) {
 		return StringUtil.bytesToHexString(bytes);
 	}

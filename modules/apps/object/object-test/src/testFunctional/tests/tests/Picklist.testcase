@@ -122,31 +122,66 @@ definition {
 	}
 
 	@description = "LPS-136595 - Verify it is possible to delete a Picklist item"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanDeletePicklistItem {
 		property portal.acceptance = "true";
 
-		// TODO LPS-139767 CanDeletePicklistItem pending implementation
+		Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
 
+		Picklist.addPicklistItemViaAPI(
+			itemKey = "PicklistItemKeyTest",
+			itemName = "Picklist Item Name Test",
+			picklistName = "Picklist Test");
+
+		Picklist.gotoPicklists();
+
+		Picklist.optionsPicklist(
+			picklistName = "Picklist Test",
+			picklistOption = "View");
+
+		Picklist.optionsPicklistItem(
+			itemKey = "PicklistItemKeyTest",
+			picklistItemOption = "Delete");
+
+		Picklist.assertPicklistItemNotPresent(
+			picklistItemKey = "PicklistItemKeyTest",
+			picklistItemName = "Picklist Item Name Test");
 	}
 
 	@description = "LPS-136595 - Verify it is not possible to add special characters for the Key field for a Picklist item"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test CannotAddSpecialCharacterForPicklistItemKeyField {
+		Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
 
-		// TODO LPS-139761 CannotAddSpecialCharacterForPicklistItemKeyField pending implementation
+		Picklist.gotoPicklists();
 
+		Picklist.gotoPicklistView(picklistName = "Picklist Test");
+
+		Picklist.addPicklistItemViaUI(
+			picklistItemKey = "key@",
+			picklistItemName = "Picklist Item Name Test");
+
+		Picklist.clickSaveButton();
+
+		Picklist.assertPicklistMessage(picklistMessage = "Key must only contain letters and digits");
 	}
 
 	@description = "LPS-136595 - Verify it is not possible to leave Key field empty for a Picklist item"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CannotLeavePicklistItemKeyFieldEmpty {
+		Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
 
-		// TODO LPS-139760 CannotLeavePicklistItemKeyFieldEmpty pending implementation
+		Picklist.gotoPicklists();
 
+		Picklist.gotoPicklistView(picklistName = "Picklist Test");
+
+		Picklist.addPicklistItemViaUI(
+			picklistItemKey = "",
+			picklistItemName = "Picklist Item Name Test");
+
+		Picklist.clickSaveButton();
+
+		Picklist.assertRequiredKeyItem();
 	}
 
 	@description = "LPS-136595 - Verify it is not possible to update a Picklist item's key"
@@ -209,12 +244,26 @@ definition {
 	}
 
 	@description = "LPS-136595 - Verify it is possible to view a Picklist item"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanViewPicklistItem {
+		Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
 
-		// TODO LPS-139765 CanViewPicklistItem pending implementation
+		Picklist.addPicklistItemViaAPI(
+			itemKey = "PicklistItemKeyTest",
+			itemName = "Picklist Item Name Test",
+			picklistName = "Picklist Test");
 
+		Picklist.gotoPicklists();
+
+		Picklist.optionsPicklist(
+			picklistName = "Picklist Test",
+			picklistOption = "View");
+
+		Picklist.optionsPicklistItem(
+			itemKey = "PicklistItemKeyTest",
+			picklistItemOption = "View");
+
+		Picklist.assertPicklistItemDetails();
 	}
 
 	@description = "LPS-136595 - Verify the empty state message when there is no Picklist"
@@ -245,12 +294,17 @@ definition {
 	}
 
 	@description = "LPS-136595 - Verify that the updating or deleting a picklist item warn message is displayed"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test WarnMessageDisplayedOnPickListItemScreen {
+		Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
 
-		// TODO LPS-139758 WarnMessageDisplayedOnPickListItemScreen pending implementation
+		Picklist.gotoPicklists();
 
+		Picklist.gotoPicklistView(picklistName = "Picklist Test");
+
+		Picklist.selectPickilistModalFrame();
+
+		Picklist.assertPicklistMessage(picklistMessage = "Updating or deleting a picklist item will automatically update every entry that is using the specific item value. This may affect multiple objects.");
 	}
 
 }

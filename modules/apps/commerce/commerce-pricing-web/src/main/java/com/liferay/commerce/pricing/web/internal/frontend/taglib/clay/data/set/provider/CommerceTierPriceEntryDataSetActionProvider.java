@@ -106,10 +106,6 @@ public class CommerceTierPriceEntryDataSetActionProvider
 			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
-		String redirect = ParamUtil.getString(
-			httpServletRequest, "currentUrl",
-			_portal.getCurrentURL(httpServletRequest));
-
 		CommercePriceEntry commercePriceEntry =
 			commerceTierPriceEntry.getCommercePriceEntry();
 
@@ -123,7 +119,9 @@ public class CommerceTierPriceEntryDataSetActionProvider
 		).setCMD(
 			Constants.DELETE
 		).setRedirect(
-			redirect
+			ParamUtil.getString(
+				httpServletRequest, "currentUrl",
+				_portal.getCurrentURL(httpServletRequest))
 		).setParameter(
 			"commercePriceEntryId", commercePriceEntry.getCommercePriceEntryId()
 		).setParameter(

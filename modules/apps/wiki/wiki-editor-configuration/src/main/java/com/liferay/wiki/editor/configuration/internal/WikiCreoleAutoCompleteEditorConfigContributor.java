@@ -14,6 +14,7 @@
 
 package com.liferay.wiki.editor.configuration.internal;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.editor.configuration.BaseEditorConfigContributor;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigContributor;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -54,25 +55,6 @@ public class WikiCreoleAutoCompleteEditorConfigContributor
 		ThemeDisplay themeDisplay,
 		RequestBackedPortletURLFactory requestBackedPortletURLFactory) {
 
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		ResourceURL autoCompletePageTitleURL =
-			(ResourceURL)requestBackedPortletURLFactory.createResourceURL(
-				portletDisplay.getId());
-
-		Map<String, String> fileBrowserParams =
-			(Map<String, String>)inputEditorTaglibAttributes.get(
-				"liferay-ui:input-editor:fileBrowserParams");
-
-		autoCompletePageTitleURL.setParameter(
-			"nodeId", fileBrowserParams.get("nodeId"));
-
-		autoCompletePageTitleURL.setResourceID("/wiki/autocomplete_page_title");
-
-		String source =
-			autoCompletePageTitleURL.toString() + "&" +
-				_portal.getPortletNamespace(portletDisplay.getId());
-
 		jsonObject.put(
 			"autocomplete",
 			JSONUtil.put(
@@ -86,7 +68,34 @@ public class WikiCreoleAutoCompleteEditorConfigContributor
 					).put(
 						"resultTextLocator", "title"
 					).put(
-						"source", source
+						"source",
+						() -> {
+							PortletDisplay portletDisplay =
+								themeDisplay.getPortletDisplay();
+
+							ResourceURL autoCompletePageTitleURL =
+								(ResourceURL)
+									requestBackedPortletURLFactory.
+										createResourceURL(
+											portletDisplay.getId());
+
+							Map<String, String> fileBrowserParams =
+								(Map<String, String>)
+									inputEditorTaglibAttributes.get(
+										"liferay-ui:input-editor:" +
+											"fileBrowserParams");
+
+							autoCompletePageTitleURL.setParameter(
+								"nodeId", fileBrowserParams.get("nodeId"));
+
+							autoCompletePageTitleURL.setResourceID(
+								"/wiki/autocomplete_page_title");
+
+							return StringBundler.concat(
+								autoCompletePageTitleURL.toString(), "&",
+								_portal.getPortletNamespace(
+									portletDisplay.getId()));
+						}
 					).put(
 						"term", "["
 					).put(

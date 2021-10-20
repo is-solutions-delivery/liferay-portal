@@ -67,6 +67,15 @@ definition {
 			locator1 = "SearchResults#ASSET_ENTRY_TABLE_TITLE");
 	}
 
+	macro viewNotPresentInContentBody {
+		AssertClick(
+			key_rowEntry = "${siteName}",
+			locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME_LINK",
+			value1 = "${siteName}");
+
+		AssertElementNotPresent(locator1 = "//body[.='${elementValue}']");
+	}
+
 	macro viewResultAssetTitle {
 		AssertTextEquals(
 			key_searchAssetTitle = "${searchAssetTitle}",

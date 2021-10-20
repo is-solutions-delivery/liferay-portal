@@ -244,17 +244,18 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<Object> {
 		if (Validator.isNotNull(conjunctionName) &&
 			Objects.equals(conjunctionName, operation.toString())) {
 
-			JSONArray jsonArray = leftJSONObject.getJSONArray("items");
-
-			jsonArray.put(rightJSONObject);
-
 			return JSONUtil.put(
 				"conjunctionName",
 				StringUtil.lowerCase(String.valueOf(operation))
 			).put(
 				"groupId", leftJSONObject.getString("groupId")
 			).put(
-				"items", jsonArray
+				"items",
+				leftJSONObject.getJSONArray(
+					"items"
+				).put(
+					rightJSONObject
+				)
 			);
 		}
 
