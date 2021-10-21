@@ -15,6 +15,8 @@
 package com.liferay.site.initializer.extender.internal.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
+import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
@@ -124,6 +126,7 @@ public class BundleSiteInitializerTest {
 
 		_assertCommerceCatalogs();
 		_assertCommerceChannel();
+		_assertCommerceInventoryWarehouse(group);
 		_assertDocuments(group);
 		_assertObjectDefinitions(group);
 		_assertDDMStructure(group);
@@ -179,6 +182,19 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("USD", channel.getCurrencyCode());
 		Assert.assertEquals("site", channel.getType());
 		Assert.assertEquals("RAYTEST0001", channel.getExternalReferenceCode());
+	}
+
+	private void _assertCommerceInventoryWarehouse(Group group) {
+		CommerceInventoryWarehouse commerceInventoryWarehouse =
+			_commerceInventoryWarehouseLocalService.
+				fetchCommerceInventoryWarehouseByExternalReferenceCode(
+					group.getCompanyId(), "WTEST0001");
+
+		Assert.assertNotNull(commerceInventoryWarehouse);
+		Assert.assertEquals(
+			"Warehouse Test", commerceInventoryWarehouse.getName());
+		Assert.assertEquals("City Test", commerceInventoryWarehouse.getCity());
+		Assert.assertEquals("98993", commerceInventoryWarehouse.getZip());
 	}
 
 	private void _assertDDMStructure(Group group) {
@@ -296,6 +312,10 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private ChannelResource.Factory _channelResourceFactory;
+
+	@Inject
+	private CommerceInventoryWarehouseLocalService
+		_commerceInventoryWarehouseLocalService;
 
 	@Inject
 	private DDMStructureLocalService _ddmStructureLocalService;
