@@ -1,5 +1,3 @@
-const sassRegex = /\.(scss|sass)$/;
-
 module.exports = {
 	babel: {
 		plugins: [
@@ -29,26 +27,6 @@ module.exports = {
 			/**
 			 * This change is necessary to import SCSS as string
 			 * to inject into style tag
-			 */
-
-			webpackConfig.module.rules[1].oneOf.unshift({
-				exclude: /node_modules/,
-				test: sassRegex,
-				use: [
-					'sass-to-string',
-					{
-						loader: 'sass-loader',
-						options: {
-							sassOptions: {
-								outputStyle: 'compressed',
-							},
-						},
-					},
-				],
-			});
-
-			/**
-			 * Avoid hashes in filenames
 			 */
 
 			webpackConfig.output.chunkFilename = 'static/js/[name].js';

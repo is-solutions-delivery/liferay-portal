@@ -1,15 +1,12 @@
 export class WebComponent extends HTMLElement {
 	constructor() {
 		super();
-		this.styleSass = document.createElement('style');
-		this.mountPoint = document.createElement('div');
 
-		this.attachShadow({mode: 'open'});
+		// this.styleSass = document.createElement('style');
 	}
 
-	connectedCallback(StylesProvider) {
-		this.styleSass.textContent = StylesProvider;
-		this.shadowRoot.appendChild(this.styleSass);
-		this.shadowRoot.appendChild(this.mountPoint);
+	connectedCallback() {
+		// this.styleSass.textContent = StylesProvider;
+		// this.appendChild(this.styleSass);
 	}
 }

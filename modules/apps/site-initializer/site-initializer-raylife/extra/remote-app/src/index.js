@@ -1,19 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import '~/common/styles/index.scss';
 import {WebComponent} from '~/common/WebComponent';
 import ApplicationContextProvider from '~/common/context/ApplicationPropertiesProvider';
 import ClayIconProvider from '~/common/context/ClayIconProvider';
 import {GoogleMapsService} from '~/common/services/google-maps';
-import SharedStyle from '~/common/styles/index.scss';
 import GetAQuote from '~/routes/get-a-quote/pages/GetAQuote';
 import QuoteComparison from '~/routes/quote-comparison/pages/QuoteComparison';
 import SelectedQuote from '~/routes/selected-quote/pages/SelectedQuote';
+import TestComponent from './test';
 
 const DirectToCustomer = ({route}) => {
 	const SearchParams = new URLSearchParams(window.location.search);
 
 	const routeEntry = SearchParams.get('raylife_dev_application') || route;
+
+	if (routeEntry === 'test') {
+		return <TestComponent />;
+	}
 
 	if (routeEntry === 'quote-comparison') {
 		return <QuoteComparison />;
@@ -30,7 +35,7 @@ const DirectToCustomer = ({route}) => {
 
 class DirectToCustomerWebComponent extends WebComponent {
 	connectedCallback() {
-		super.connectedCallback(SharedStyle);
+		super.connectedCallback();
 
 		const properties = {
 			applicationsfoldername: this.getAttribute('applicationsfoldername'),
@@ -48,7 +53,7 @@ class DirectToCustomerWebComponent extends WebComponent {
 					<DirectToCustomer route={properties.route} />
 				</ApplicationContextProvider>
 			</ClayIconProvider>,
-			this.mountPoint
+			this
 		);
 	}
 }

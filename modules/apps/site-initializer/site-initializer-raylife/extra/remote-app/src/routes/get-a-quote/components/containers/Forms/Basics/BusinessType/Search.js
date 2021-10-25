@@ -95,9 +95,12 @@ export const BusinessTypeSearch = ({form, setNewSelectedProduct}) => {
 
 	const infoPanelButton = () => (
 		<button
-			className={classNames('btn badge bottom-list', {
-				open: selectedTrigger,
-			})}
+			className={classNames(
+				'btn badge bottom-list bg-brand-primary-lighten-5 text-info',
+				{
+					open: selectedTrigger,
+				}
+			)}
 			onClick={showInfoPanel}
 			type="button"
 		>

@@ -43,12 +43,12 @@ export const CardFormActionsWithSave = ({
 
 					{onNext && (
 						<button
-							className="btn btn-secondary continue"
+							className="btn btn-block btn-lg btn-solid btn-variant-secondary"
 							disabled={!isValid}
 							onClick={onNext}
 							type="submit"
 						>
-							Continue
+							Continue &ensp;
 							<ClayIcon symbol="angle-right" />
 						</button>
 					)}
