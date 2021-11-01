@@ -1,12 +1,12 @@
-const icon = fragmentElement.querySelector("#plus-icon");
-const textDiv = fragmentElement.querySelector("#collapseExample");
+const icon = fragmentElement.querySelector('#plus-icon');
+const textDiv = fragmentElement.querySelector('#collapseExample');
 
-icon.onclick = function(){
-	let flag = textDiv.classList.contains("collapse");
-	if(flag){
-			textDiv.classList.remove("collapse");
+icon.onclick = function () {
+	let flag = textDiv.classList.contains('collapse');
+	if (flag) {
+		textDiv.classList.remove('collapse');
 	}
-	else{
-		textDiv.classList.add("collapse");
+	else {
+		textDiv.classList.add('collapse');
 	}
-}
+};
