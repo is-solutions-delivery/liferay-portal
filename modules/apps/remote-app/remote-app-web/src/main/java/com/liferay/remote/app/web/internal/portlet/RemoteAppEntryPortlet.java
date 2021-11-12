@@ -18,9 +18,15 @@ import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.taglib.aui.ScriptData;
 import com.liferay.portal.kernel.servlet.taglib.util.OutputData;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -118,6 +124,28 @@ public class RemoteAppEntryPortlet extends MVCPortlet {
 
 		Properties properties = _getProperties(renderRequest);
 
+		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+			Group group = GroupLocalServiceUtil.getGroup(
+				themeDisplay.getScopeGroupId());
+
+			StringBundler webDavURLSB = new StringBundler(4);
+
+			webDavURLSB.append(themeDisplay.getPortalURL());
+			webDavURLSB.append("/webdav");
+			webDavURLSB.append(group.getFriendlyURL());
+			webDavURLSB.append("/document_library");
+
+			properties.put("liferaywebdavurl", webDavURLSB.toString());
+		}
+		catch (PortalException portalException) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(portalException, portalException);
+			}
+		}
+
 		for (Map.Entry<Object, Object> entry : properties.entrySet()) {
 			printWriter.print(StringPool.SPACE);
 			printWriter.print(entry.getKey());
@@ -180,6 +208,9 @@ public class RemoteAppEntryPortlet extends MVCPortlet {
 
 		printWriter.flush();
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		RemoteAppEntryPortlet.class);
 
 	private final NPMResolver _npmResolver;
 	private final RemoteAppEntry _remoteAppEntry;
