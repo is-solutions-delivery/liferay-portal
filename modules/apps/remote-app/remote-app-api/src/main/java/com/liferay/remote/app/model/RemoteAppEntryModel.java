@@ -41,7 +41,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface RemoteAppEntryModel
+public interface  RemoteAppEntryModel
 	extends BaseModel<RemoteAppEntry>, ContainerModel, LocalizedModel,
 			MVCCModel, ShardedModel, StagedAuditedModel {
 

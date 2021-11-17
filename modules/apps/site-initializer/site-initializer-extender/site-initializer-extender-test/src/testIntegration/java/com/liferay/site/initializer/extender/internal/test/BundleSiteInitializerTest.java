@@ -60,6 +60,8 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+import com.liferay.remote.app.model.RemoteAppEntry;
+import com.liferay.remote.app.service.RemoteAppEntryLocalService;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.style.book.model.StyleBookEntry;
@@ -130,6 +132,7 @@ public class BundleSiteInitializerTest {
 			_assertLayoutPageTemplateEntry(group);
 			_assertLayouts(group);
 			_assertObjectDefinition(group);
+			_assertRemoteAppEntries(group);
 			_assertStyleBookEntry(group);
 
 			GroupLocalServiceUtil.deleteGroup(group);
@@ -377,6 +380,16 @@ public class BundleSiteInitializerTest {
 				group.getGroupId(), objectDefinition.getObjectDefinitionId()));
 	}
 
+	private void _assertRemoteAppEntries(Group group) throws Exception {
+		List<RemoteAppEntry> remoteAppEntries =
+			_remoteAppEntryLocalService.getRemoteAppEntries(0, 1);
+
+		RemoteAppEntry remoteAppEntry1 = remoteAppEntries.get(0);
+
+		Assert.assertEquals(
+			group.getCompanyId(), remoteAppEntry1.getCompanyId());
+	}
+
 	private void _assertStyleBookEntry(Group group) {
 		StyleBookEntry styleBookEntry =
 			_styleBookEntryLocalService.fetchStyleBookEntry(
@@ -446,6 +459,9 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private Portal _portal;
+
+	@Inject
+	private RemoteAppEntryLocalService _remoteAppEntryLocalService;
 
 	@Inject
 	private ServletContext _servletContext;

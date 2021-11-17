@@ -164,7 +164,7 @@ public interface ListTypeDefinitionResource {
 	}
 
 	@ProviderType
-	public interface Factory {
+	public interface Factory extends ListTypeDefinitionResource {
 
 		public Builder create();
 

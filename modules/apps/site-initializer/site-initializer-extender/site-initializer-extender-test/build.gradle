@@ -12,4 +12,5 @@ dependencies {
 	testIntegrationCompile project(":apps:style-book:style-book-api")
 	testIntegrationCompile project(":core:petra:petra-io")
 	testIntegrationCompile project(":test:arquillian-extension-junit-bridge")
+	testIntegrationCompile project(":apps:remote-app:remote-app-api")
 }
