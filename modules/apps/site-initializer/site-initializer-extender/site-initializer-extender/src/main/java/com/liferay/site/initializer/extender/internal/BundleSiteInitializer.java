@@ -363,11 +363,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 					documentsStringUtilReplaceValues, serviceContext));
 
 			Map<String, String> listTypeDefinitionsStringUtilReplaceValues =
-				_invoke(() -> _addListTypeDefinitions(serviceContext));
+			_invoke(() -> _addListTypeDefinitions(serviceContext));
+
+			Map<String, String> objectDefinitionsIdsStringUtilReplaceValues =
+				_invoke(() -> _addObjectDefinitions(serviceContext));
 
 			_invoke(
-				() -> _addObjectDefinitions(
-					listTypeDefinitionsStringUtilReplaceValues,
+				() -> _addObjectRelationships(
+					objectDefinitionsIdsStringUtilReplaceValues,
 					serviceContext));
 
 			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues =
@@ -1549,16 +1552,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private void _addObjectDefinitions(
-			Map<String, String> listTypeDefinitionsStringUtilReplaceValues,
+	private Map<String, String> _addObjectDefinitions(
 			ServiceContext serviceContext)
 		throws Exception {
 
 		Set<String> resourcePaths = _servletContext.getResourcePaths(
 			"/site-initializer/object-definitions");
 
+		Map<String, String> objectDefinitionMap = new HashMap<>();
+
 		if (SetUtil.isEmpty(resourcePaths)) {
-			return;
+			return objectDefinitionMap;
 		}
 
 		ObjectDefinitionResource.Builder objectDefinitionResourceBuilder =
@@ -1613,6 +1617,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 						existingObjectDefinition.getId(), objectDefinition);
 			}
 
+			Long objectDefinitionId = objectDefinition.getId();
+
+			objectDefinitionMap.put(
+				"OBJECT_DEFINITION_NAME:C_" + objectDefinition.getName(),
+				objectDefinitionId.toString());
+
 			String objectEntriesJSON = _read(
 				StringUtil.replaceLast(
 					resourcePath, ".json", ".object-entries.json"));
@@ -1632,6 +1642,82 @@ public class BundleSiteInitializer implements SiteInitializer {
 						Serializable.class,
 						String.valueOf(jsonArray.getJSONObject(i))),
 					serviceContext);
+			}
+		}
+
+		return objectDefinitionMap;
+	}
+
+	private void _addObjectRelationships(
+			Map<String, String> objectDefinitionsIdsStringUtilReplaceValues,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/object-relationships");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return;
+		}
+
+		ObjectRelationshipResource.Builder objectRelationshipResourceBuilder =
+			_objectRelationshipResourceFactory.create();
+
+		ObjectRelationshipResource objectRelationshipResource =
+			objectRelationshipResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
+
+		for (String resourcePath : resourcePaths) {
+			String json = _read(resourcePath);
+
+			json = StringUtil.replace(
+				json, "[$", "$]", objectDefinitionsIdsStringUtilReplaceValues);
+
+			ObjectRelationship objectRelationship1 = ObjectRelationship.toDTO(
+				json);
+
+			if (objectRelationship1 == null) {
+				_log.error(
+					"Unable to transform object definition from JSON: " + json);
+
+				continue;
+			}
+
+			Page<ObjectRelationship> objectRelationshipsPage =
+				objectRelationshipResource.
+					getObjectDefinitionObjectRelationshipsPage(
+						objectRelationship1.getObjectDefinitionId1(),
+						Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
+
+			List<ObjectRelationship> objectRelationshipsList =
+				(List<ObjectRelationship>)objectRelationshipsPage.getItems();
+
+			ObjectRelationship existingObjectRelationshipDefinition = null;
+
+			for (ObjectRelationship objectRelationship2 :
+					objectRelationshipsList) {
+
+				if (StringUtil.equals(
+						objectRelationship1.getName(),
+						objectRelationship2.getName())) {
+
+					existingObjectRelationshipDefinition = objectRelationship2;
+
+					break;
+				}
+			}
+
+			if (existingObjectRelationshipDefinition != null) {
+				objectRelationshipResource.putObjectRelationship(
+					existingObjectRelationshipDefinition.getId(),
+					objectRelationship1);
+			}
+			else {
+				objectRelationshipResource.
+					postObjectDefinitionObjectRelationship(
+						objectRelationship1.getObjectDefinitionId1(),
+						objectRelationship1);
 			}
 		}
 	}
