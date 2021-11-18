@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en-US": "relationship"
+	},
+	"name": "relationFirst",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_NAME:C_QuoteComparison$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_NAME:C_QuoteRetrieve$]",
+	"objectDefinitionName2": "QuoteRetrieve",
+	"type": "oneToMany"
+}
