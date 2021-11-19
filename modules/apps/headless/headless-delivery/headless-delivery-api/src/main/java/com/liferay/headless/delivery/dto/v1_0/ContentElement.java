@@ -232,7 +232,14 @@ public class ContentElement implements Serializable {
 
 			sb.append("\"content\": ");
 
-			sb.append(String.valueOf(content));
+			if (content instanceof String) {
+				sb.append("\"");
+				sb.append((String)content);
+				sb.append("\"");
+			}
+			else {
+				sb.append(content);
+			}
 		}
 
 		if (contentType != null) {

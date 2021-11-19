@@ -164,7 +164,14 @@ public class Mapping implements Serializable {
 
 			sb.append("\"itemReference\": ");
 
-			sb.append(String.valueOf(itemReference));
+			if (itemReference instanceof String) {
+				sb.append("\"");
+				sb.append((String)itemReference);
+				sb.append("\"");
+			}
+			else {
+				sb.append(itemReference);
+			}
 		}
 
 		sb.append("}");

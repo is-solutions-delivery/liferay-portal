@@ -44,7 +44,6 @@ import com.liferay.search.experiences.internal.blueprint.search.request.body.con
 import com.liferay.search.experiences.internal.blueprint.search.request.body.contributor.SortSXPSearchRequestBodyContributor;
 import com.liferay.search.experiences.internal.blueprint.search.request.body.contributor.SuggestSXPSearchRequestBodyContributor;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
-import com.liferay.search.experiences.rest.dto.v1_0.util.ConfigurationUtil;
 import com.liferay.search.experiences.rest.dto.v1_0.util.SXPBlueprintUtil;
 
 import java.util.Arrays;
@@ -156,18 +155,13 @@ public class SXPBlueprintSearchRequestEnhancerImpl
 	}
 
 	private SXPBlueprint _expand(
-		SXPBlueprint sxpBlueprint1, SXPParameterData sxpParameterData) {
+		SXPBlueprint sxpBlueprint, SXPParameterData sxpParameterData) {
 
-		SXPBlueprint sxpBlueprint2 = SXPBlueprint.toDTO(
-			String.valueOf(sxpBlueprint1));
-
-		sxpBlueprint2.setConfiguration(
-			ConfigurationUtil.toConfiguration(
-				SXPParameterParser.parse(
-					String.valueOf(sxpBlueprint1.getConfiguration()),
-					sxpParameterData)));
-
-		return sxpBlueprint2;
+		return SXPBlueprintUtil.toSXPBlueprint(
+			sxpBlueprint,
+			SXPParameterParser.parse(
+				String.valueOf(sxpBlueprint.getConfiguration()),
+				sxpParameterData));
 	}
 
 	private DTOConverter

@@ -234,7 +234,14 @@ public class Rescore implements Serializable {
 
 			sb.append("\"query\": ");
 
-			sb.append(String.valueOf(query));
+			if (query instanceof String) {
+				sb.append("\"");
+				sb.append((String)query);
+				sb.append("\"");
+			}
+			else {
+				sb.append(query);
+			}
 		}
 
 		if (queryWeight != null) {

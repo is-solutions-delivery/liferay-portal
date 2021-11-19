@@ -32,7 +32,6 @@ import {
 	ITEMS_LIST_ACTIONS,
 	OPENER,
 	ORDER_BUTTON,
-	ORDER_DETAILS_ENDPOINT,
 	ORDER_IS_EMPTY,
 	REMOVE_ALL_ITEMS,
 	REVIEW_ORDER,
@@ -96,14 +95,12 @@ function MiniCart({
 
 						latestActionURLs = {
 							...currentURLs,
-							orderDetailURL:
-								!orderDetailURL ||
-								orderDetailURL.includes(ORDER_DETAILS_ENDPOINT)
-									? regenerateOrderDetailURL(
-											orderUUID,
-											currentURLs.siteDefaultURL
-									  )
-									: new URL(orderDetailURL),
+							orderDetailURL: !orderDetailURL
+								? regenerateOrderDetailURL(
+										orderUUID,
+										currentURLs.siteDefaultURL
+								  )
+								: new URL(orderDetailURL),
 						};
 
 						return latestActionURLs;

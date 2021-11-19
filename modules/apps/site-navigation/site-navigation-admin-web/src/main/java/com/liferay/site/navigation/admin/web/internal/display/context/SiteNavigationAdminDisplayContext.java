@@ -15,7 +15,8 @@
 package com.liferay.site.navigation.admin.web.internal.display.context;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemBuilder;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
@@ -56,8 +57,11 @@ import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.staging.StagingGroupHelper;
 import com.liferay.staging.StagingGroupHelperUtil;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
@@ -97,25 +101,30 @@ public class SiteNavigationAdminDisplayContext {
 			new DefaultSiteNavigationMenuItemTypeContext(
 				themeDisplay.getScopeGroup());
 
-		return new DropdownItemList() {
-			{
-				for (SiteNavigationMenuItemType siteNavigationMenuItemType :
-						_siteNavigationMenuItemTypeRegistry.
-							getSiteNavigationMenuItemTypes()) {
+		List<SiteNavigationMenuItemType> siteNavigationMenuItemTypes =
+			_siteNavigationMenuItemTypeRegistry.
+				getSiteNavigationMenuItemTypes();
 
-					if (!siteNavigationMenuItemType.isAvailable(
-							siteNavigationMenuItemTypeContext)) {
+		Stream<SiteNavigationMenuItemType> stream =
+			siteNavigationMenuItemTypes.stream();
 
-						continue;
-					}
-
-					add(
-						dropdownItem -> _applyDropdownItem(
-							dropdownItem, siteNavigationMenuItemType,
-							themeDisplay));
-				}
-			}
-		};
+		return DropdownItemListBuilder.addAll(
+			stream.filter(
+				siteNavigationMenuItemType ->
+					siteNavigationMenuItemType.isAvailable(
+						siteNavigationMenuItemTypeContext)
+			).sorted(
+				Comparator.comparing(
+					siteNavigationMenuItemType ->
+						siteNavigationMenuItemType.getLabel(
+							themeDisplay.getLocale()))
+			).map(
+				siteNavigationMenuItemType -> _getDropdownItem(
+					siteNavigationMenuItemType, themeDisplay)
+			).collect(
+				Collectors.toList()
+			)
+		).build();
 	}
 
 	public String getDisplayStyle() {
@@ -387,42 +396,6 @@ public class SiteNavigationAdminDisplayContext {
 		return _updatePermission;
 	}
 
-	private void _applyDropdownItem(
-		DropdownItem dropdownItem,
-		SiteNavigationMenuItemType siteNavigationMenuItemType,
-		ThemeDisplay themeDisplay) {
-
-		dropdownItem.setData(
-			HashMapBuilder.<String, Object>put(
-				"addItemURL",
-				() -> {
-					if (!siteNavigationMenuItemType.isItemSelector()) {
-						return null;
-					}
-
-					RenderRequest renderRequest =
-						(RenderRequest)_httpServletRequest.getAttribute(
-							JavaConstants.JAVAX_PORTLET_REQUEST);
-					RenderResponse renderResponse =
-						(RenderResponse)_httpServletRequest.getAttribute(
-							JavaConstants.JAVAX_PORTLET_RESPONSE);
-
-					PortletURL addURL = siteNavigationMenuItemType.getAddURL(
-						renderRequest, renderResponse);
-
-					return addURL.toString();
-				}
-			).put(
-				"href", _getAddURL(siteNavigationMenuItemType)
-			).put(
-				"itemSelector", siteNavigationMenuItemType.isItemSelector()
-			).put(
-				"siteNavigationMenuId", getSiteNavigationMenuId()
-			).build());
-		dropdownItem.setLabel(
-			siteNavigationMenuItemType.getLabel(themeDisplay.getLocale()));
-	}
-
 	private String _getAddURL(
 		SiteNavigationMenuItemType siteNavigationMenuItemType) {
 
@@ -475,6 +448,42 @@ public class SiteNavigationAdminDisplayContext {
 		}
 
 		return addURL.toString();
+	}
+
+	private DropdownItem _getDropdownItem(
+		SiteNavigationMenuItemType siteNavigationMenuItemType,
+		ThemeDisplay themeDisplay) {
+
+		return DropdownItemBuilder.setData(
+			HashMapBuilder.<String, Object>put(
+				"addItemURL",
+				() -> {
+					if (!siteNavigationMenuItemType.isItemSelector()) {
+						return null;
+					}
+
+					RenderRequest renderRequest =
+						(RenderRequest)_httpServletRequest.getAttribute(
+							JavaConstants.JAVAX_PORTLET_REQUEST);
+					RenderResponse renderResponse =
+						(RenderResponse)_httpServletRequest.getAttribute(
+							JavaConstants.JAVAX_PORTLET_RESPONSE);
+
+					PortletURL addURL = siteNavigationMenuItemType.getAddURL(
+						renderRequest, renderResponse);
+
+					return addURL.toString();
+				}
+			).put(
+				"href", _getAddURL(siteNavigationMenuItemType)
+			).put(
+				"itemSelector", siteNavigationMenuItemType.isItemSelector()
+			).put(
+				"siteNavigationMenuId", getSiteNavigationMenuId()
+			).build()
+		).setLabel(
+			siteNavigationMenuItemType.getLabel(themeDisplay.getLocale())
+		).build();
 	}
 
 	private JSONArray _getSiteNavigationMenuItemsJSONArray(

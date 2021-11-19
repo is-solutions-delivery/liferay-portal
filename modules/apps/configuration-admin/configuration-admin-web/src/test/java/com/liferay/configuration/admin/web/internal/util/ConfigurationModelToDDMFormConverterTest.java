@@ -79,7 +79,6 @@ public class ConfigurationModelToDDMFormConverterTest extends Mockito {
 		whenGetAttributeDefinitions(
 			extendedObjectClassDefinition, new ExtendedAttributeDefinition[0],
 			ExtendedObjectClassDefinition.OPTIONAL);
-
 		whenGetAttributeDefinitions(
 			extendedObjectClassDefinition,
 			new ExtendedAttributeDefinition[] {extendedAttributeDefinition},
@@ -160,7 +159,7 @@ public class ConfigurationModelToDDMFormConverterTest extends Mockito {
 		DDMFormField ddmFormField = ddmFormFieldsMap.get("Integer");
 
 		Assert.assertNotNull(ddmFormField);
-		Assert.assertEquals(DDMFormFieldType.TEXT, ddmFormField.getType());
+		Assert.assertEquals(DDMFormFieldType.NUMERIC, ddmFormField.getType());
 		Assert.assertEquals("integer", ddmFormField.getDataType());
 		Assert.assertFalse(ddmFormField.isRepeatable());
 		Assert.assertTrue(ddmFormField.isRequired());
@@ -221,6 +220,60 @@ public class ConfigurationModelToDDMFormConverterTest extends Mockito {
 		Assert.assertEquals("string", ddmFormField.getDataType());
 		Assert.assertFalse(ddmFormField.isRepeatable());
 		Assert.assertTrue(ddmFormField.isRequired());
+	}
+
+	@Test
+	public void testGetWithLongField() {
+		ExtendedObjectClassDefinition extendedObjectClassDefinition = mock(
+			ExtendedObjectClassDefinition.class);
+
+		ExtendedAttributeDefinition extendedAttributeDefinition = mock(
+			ExtendedAttributeDefinition.class);
+
+		whenGetAttributeDefinitions(
+			extendedObjectClassDefinition,
+			new ExtendedAttributeDefinition[] {extendedAttributeDefinition},
+			ExtendedObjectClassDefinition.ALL);
+
+		whenGetAttributeDefinitions(
+			extendedObjectClassDefinition, new ExtendedAttributeDefinition[0],
+			ExtendedObjectClassDefinition.OPTIONAL);
+		whenGetAttributeDefinitions(
+			extendedObjectClassDefinition,
+			new ExtendedAttributeDefinition[] {extendedAttributeDefinition},
+			ExtendedObjectClassDefinition.REQUIRED);
+		whenGetCardinality(extendedAttributeDefinition, 0);
+		whenGetID(extendedAttributeDefinition, "Long");
+		whenGetType(
+			extendedAttributeDefinition, ExtendedAttributeDefinition.LONG);
+
+		ConfigurationModel configurationModel = new ConfigurationModel(
+			null, null, null, extendedObjectClassDefinition, false);
+
+		ConfigurationModelToDDMFormConverter
+			configurationModelToDDMFormConverter = spy(
+				new ConfigurationModelToDDMFormConverter(
+					configurationModel, _enLocale, new EmptyResourceBundle()));
+
+		whenGetConfigurationDDMForm(configurationModelToDDMFormConverter, null);
+
+		DDMForm ddmForm = configurationModelToDDMFormConverter.getDDMForm();
+
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(false);
+
+		DDMFormField ddmFormField = ddmFormFieldsMap.get("Long");
+
+		Assert.assertNotNull(ddmFormField);
+		Assert.assertEquals(DDMFormFieldType.NUMERIC, ddmFormField.getType());
+		Assert.assertEquals("long", ddmFormField.getDataType());
+		Assert.assertFalse(ddmFormField.isRepeatable());
+		Assert.assertTrue(ddmFormField.isRequired());
+
+		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
+
+		Assert.assertEquals(_enLocale, predefinedValue.getDefaultLocale());
+		Assert.assertEquals("0", predefinedValue.getString(_enLocale));
 	}
 
 	@Test

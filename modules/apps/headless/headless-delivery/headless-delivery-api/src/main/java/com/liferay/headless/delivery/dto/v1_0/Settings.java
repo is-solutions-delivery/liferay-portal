@@ -366,7 +366,14 @@ public class Settings implements Serializable {
 
 			sb.append("\"themeSettings\": ");
 
-			sb.append(String.valueOf(themeSettings));
+			if (themeSettings instanceof String) {
+				sb.append("\"");
+				sb.append((String)themeSettings);
+				sb.append("\"");
+			}
+			else {
+				sb.append(themeSettings);
+			}
 		}
 
 		sb.append("}");

@@ -91,12 +91,14 @@ export default ({
 	activeCTCollection,
 	changeTypesFromURL,
 	changes,
+	columnFromURL,
 	contextView,
 	ctCollectionId,
 	currentUserId,
 	dataURL,
 	defaultLocale,
 	deleteCTCommentURL,
+	deltaFromURL,
 	discardURL,
 	entryFromURL,
 	expired,
@@ -104,6 +106,8 @@ export default ({
 	keywordsFromURL,
 	modelData,
 	namespace,
+	orderByTypeFromURL,
+	pageFromURL,
 	rootDisplayClasses,
 	showHideableFromURL,
 	siteNames,
@@ -118,11 +122,11 @@ export default ({
 	const CHANGE_TYPE_ADDITION = 0;
 	const CHANGE_TYPE_DELETION = 1;
 	const CHANGE_TYPE_MODIFICATION = 2;
-	const COLUMN_CHANGE_TYPE = 'CHANGE_TYPE';
-	const COLUMN_MODIFIED_DATE = 'MODIFIED_DATE';
-	const COLUMN_SITE = 'SITE';
-	const COLUMN_TITLE = 'TITLE';
-	const COLUMN_USER = 'USER';
+	const COLUMN_CHANGE_TYPE = 'changeType';
+	const COLUMN_MODIFIED_DATE = 'modifiedDate';
+	const COLUMN_SITE = 'site';
+	const COLUMN_TITLE = 'title';
+	const COLUMN_USER = 'user';
 	const GLOBAL_SITE_NAME = Liferay.Language.get('global');
 	const MENU_CHANGE_TYPES = 'MENU_CHANGE_TYPES';
 	const MENU_ROOT = 'MENU_ROOT';
@@ -131,15 +135,21 @@ export default ({
 	const MENU_USERS = 'MENU_USERS';
 	const MVC_RENDER_COMMAND_NAME = '/change_tracking/view_changes';
 	const PARAM_CHANGE_TYPES = namespace + 'changeTypes';
+	const PARAM_COLUMN = namespace + 'column';
+	const PARAM_DELTA = namespace + 'delta';
 	const PARAM_CT_COLLECTION_ID = namespace + 'ctCollectionId';
 	const PARAM_ENTRY = namespace + 'entry';
 	const PARAM_KEYWORDS = namespace + 'keywords';
 	const PARAM_MVC_RENDER_COMMAND_NAME = namespace + 'mvcRenderCommandName';
+	const PARAM_ORDER_BY_TYPE = namespace + 'orderByType';
+	const PARAM_PAGE = namespace + 'page';
 	const PARAM_SHOW_HIDEABLE = namespace + 'showHideable';
 	const PARAM_SITES = namespace + 'sites';
 	const PARAM_TYPES = namespace + 'types';
 	const PARAM_USERS = namespace + 'users';
 	const POP_STATE = 'popstate';
+	const ORDER_BY_TYPE_ASC = 'asc';
+	const ORDER_BY_TYPE_DESC = 'desc';
 
 	const isWithinApp = useCallback(
 		(params) => {
@@ -192,8 +202,12 @@ export default ({
 	}
 
 	params.delete(PARAM_CHANGE_TYPES);
+	params.delete(PARAM_COLUMN);
+	params.delete(PARAM_DELTA);
 	params.delete(PARAM_ENTRY);
 	params.delete(PARAM_KEYWORDS);
+	params.delete(PARAM_ORDER_BY_TYPE);
+	params.delete(PARAM_PAGE);
 	params.delete(PARAM_SHOW_HIDEABLE);
 	params.delete(PARAM_SITES);
 	params.delete(PARAM_TYPES);
@@ -540,9 +554,14 @@ export default ({
 		? true
 		: !!showHideableFromURL;
 
-	const [ascendingState, setAscendingState] = useState(true);
-	const [columnState, setColumnState] = useState(COLUMN_TITLE);
-	const [deltaState, setDeltaState] = useState(20);
+	const [ascendingState, setAscendingState] = useState(
+		orderByTypeFromURL === ORDER_BY_TYPE_DESC
+			? ORDER_BY_TYPE_DESC
+			: ORDER_BY_TYPE_ASC
+	);
+	const [columnState, setColumnState] = useState(
+		columnFromURL ? columnFromURL : COLUMN_TITLE
+	);
 	const [drilldownDirection, setDrilldownDirection] = useState(
 		DIRECTION_NEXT
 	);
@@ -693,16 +712,34 @@ export default ({
 		[GLOBAL_SITE_NAME, changes, getModels, siteNames]
 	);
 
+	const initialDelta = deltaFromURL ? Number(deltaFromURL) : 20;
+	const initialNodes = filterNodes(
+		initialFilters,
+		keywordsFromURL,
+		initialShowHideable
+	);
+
+	const calculatePage = (delta, page, total) => {
+		const lastPage = total > 0 ? Math.ceil(total / delta) : 1;
+
+		if (page > lastPage) {
+			return lastPage;
+		}
+
+		return page;
+	};
+
 	const [renderState, setRenderState] = useState({
-		changes: filterNodes(
-			initialFilters,
-			keywordsFromURL,
-			initialShowHideable
-		),
+		changes: initialNodes,
 		children: initialNode.children,
+		delta: initialDelta,
 		id: initialNode.nodeId,
 		node: initialNode,
-		page: 1,
+		page: calculatePage(
+			initialDelta,
+			pageFromURL ? Number(pageFromURL) : 1,
+			initialNodes.length
+		),
 		parents: initialNode.parents,
 		showHideable: initialShowHideable,
 	});
@@ -716,13 +753,40 @@ export default ({
 	};
 
 	const getPath = useCallback(
-		(filters, entryParam, keywords, showHideable) => {
+		(
+			ascending,
+			column,
+			delta,
+			entryParam,
+			filters,
+			keywords,
+			page,
+			showHideable
+		) => {
+			let orderByType = ORDER_BY_TYPE_DESC;
+
+			if (ascending) {
+				orderByType = ORDER_BY_TYPE_ASC;
+			}
+
 			let path =
 				basePath.current +
 				'&' +
-				PARAM_ENTRY +
+				PARAM_COLUMN +
 				'=' +
-				entryParam +
+				column +
+				'&' +
+				PARAM_DELTA +
+				'=' +
+				delta.toString() +
+				'&' +
+				PARAM_ORDER_BY_TYPE +
+				'=' +
+				orderByType +
+				'&' +
+				PARAM_PAGE +
+				'=' +
+				page.toString() +
 				'&' +
 				PARAM_SHOW_HIDEABLE +
 				'=' +
@@ -737,6 +801,10 @@ export default ({
 					PARAM_CHANGE_TYPES +
 					'=' +
 					changeTypes.join(',');
+			}
+
+			if (entryParam) {
+				path = path + '&' + PARAM_ENTRY + '=' + entryParam;
 			}
 
 			if (keywords) {
@@ -765,8 +833,12 @@ export default ({
 		},
 		[
 			PARAM_CHANGE_TYPES,
+			PARAM_COLUMN,
+			PARAM_DELTA,
 			PARAM_ENTRY,
 			PARAM_KEYWORDS,
+			PARAM_ORDER_BY_TYPE,
+			PARAM_PAGE,
 			PARAM_SHOW_HIDEABLE,
 			PARAM_SITES,
 			PARAM_TYPES,
@@ -775,24 +847,20 @@ export default ({
 	);
 
 	const handleNavigationUpdate = useCallback(
-		(json) => {
-			const nodeId = json.nodeId;
-
-			let showHideable = renderState.showHideable;
-
-			if (Object.prototype.hasOwnProperty.call(json, 'showHideable')) {
-				showHideable = json.showHideable;
-			}
-
+		(nodeId, resetPage) => {
 			const node = getNode(nodeId);
 
-			const entryParam = getEntryParam(node);
+			const page = resetPage ? 1 : renderState.page;
 
 			const path = getPath(
+				ascendingState,
+				columnState,
+				renderState.delta,
+				getEntryParam(node),
 				filtersState,
-				entryParam,
 				resultsKeywords,
-				showHideable
+				page,
+				renderState.showHideable
 			);
 
 			const state = {
@@ -806,19 +874,22 @@ export default ({
 				changes: filterNodes(
 					filtersState,
 					resultsKeywords,
-					showHideable
+					renderState.showHideable
 				),
 				children: node.children,
+				delta: renderState.delta,
 				id: nodeId,
 				node,
-				page: 1,
+				page,
 				parents: node.parents,
-				showHideable,
+				showHideable: renderState.showHideable,
 			});
 
 			window.scrollTo(0, 0);
 		},
 		[
+			ascendingState,
+			columnState,
 			filtersState,
 			filterNodes,
 			getNode,
@@ -864,10 +935,43 @@ export default ({
 
 			const node = getNode(params.get(PARAM_ENTRY));
 
+			let ascending = params.get(PARAM_ORDER_BY_TYPE);
+
+			if (ascending === ORDER_BY_TYPE_DESC) {
+				ascending = false;
+			}
+			else {
+				ascending = true;
+			}
+
+			let column = params.get(PARAM_COLUMN);
+
+			if (!column) {
+				column = COLUMN_TITLE;
+			}
+
+			let delta = params.get(PARAM_DELTA);
+
+			if (delta) {
+				delta = Number(delta);
+			}
+			else {
+				delta = 20;
+			}
+
 			let keywords = params.get(PARAM_KEYWORDS);
 
 			if (!keywords) {
 				keywords = '';
+			}
+
+			let page = params.get(PARAM_PAGE);
+
+			if (page) {
+				page = Number(page);
+			}
+			else {
+				page = 1;
 			}
 
 			const filters = getFilters(
@@ -877,9 +981,14 @@ export default ({
 				params.get(PARAM_USERS)
 			);
 
-			let showHideable = node.hideable
-				? true
-				: !!renderState.showHideable;
+			let showHideable = params.get(PARAM_SHOW_HIDEABLE);
+
+			if (showHideable === 'true') {
+				showHideable = true;
+			}
+			else {
+				showHideable = false;
+			}
 
 			if (!showHideable) {
 				const typeIds = filters['types'];
@@ -893,13 +1002,18 @@ export default ({
 				}
 			}
 
+			const nodes = filterNodes(filters, keywords, showHideable);
+
+			setAscendingState(ascending);
+			setColumnState(column);
 			setFiltersState(filters);
 			setRenderState({
-				changes: filterNodes(filters, keywords, showHideable),
+				changes: nodes,
 				children: node.children,
+				delta,
 				id: node.nodeId,
 				node,
-				page: 1,
+				page: calculatePage(delta, page, nodes.length),
 				parents: node.parents,
 				showHideable,
 			});
@@ -908,8 +1022,13 @@ export default ({
 		},
 		[
 			PARAM_CHANGE_TYPES,
+			PARAM_COLUMN,
+			PARAM_DELTA,
 			PARAM_ENTRY,
 			PARAM_KEYWORDS,
+			PARAM_ORDER_BY_TYPE,
+			PARAM_PAGE,
+			PARAM_SHOW_HIDEABLE,
 			PARAM_SITES,
 			PARAM_TYPES,
 			PARAM_USERS,
@@ -917,7 +1036,6 @@ export default ({
 			getFilters,
 			getNode,
 			isWithinApp,
-			renderState,
 		]
 	);
 
@@ -1140,8 +1258,8 @@ export default ({
 
 		if (nodes.length > 5) {
 			return nodes.slice(
-				deltaState * (renderState.page - 1),
-				deltaState * renderState.page
+				renderState.delta * (renderState.page - 1),
+				renderState.delta * renderState.page
 			);
 		}
 
@@ -1161,10 +1279,46 @@ export default ({
 				displayType="unstyled"
 				onClick={() => {
 					if (columnState === column) {
+						const path = getPath(
+							!ascendingState,
+							columnState,
+							renderState.delta,
+							getEntryParam(renderState.node),
+							filtersState,
+							resultsKeywords,
+							renderState.page,
+							renderState.showHideable
+						);
+
+						const state = {
+							path,
+							senna: true,
+						};
+
+						window.history.pushState(state, document.title, path);
+
 						setAscendingState(!ascendingState);
 
 						return;
 					}
+
+					const path = getPath(
+						ascendingState,
+						column,
+						renderState.delta,
+						getEntryParam(renderState.node),
+						filtersState,
+						resultsKeywords,
+						renderState.page,
+						renderState.showHideable
+					);
+
+					const state = {
+						path,
+						senna: true,
+					};
+
+					window.history.pushState(state, document.title, path);
 
 					setColumnState(column);
 				}}
@@ -1496,11 +1650,7 @@ export default ({
 			rows.push(
 				<ClayTable.Row
 					className="cursor-pointer"
-					onClick={() =>
-						handleNavigationUpdate({
-							nodeId: node.nodeId,
-						})
-					}
+					onClick={() => handleNavigationUpdate(node.nodeId)}
 				>
 					<ClayTable.Cell>
 						<ClaySticker
@@ -1545,12 +1695,22 @@ export default ({
 	};
 
 	const handleFiltersUpdate = (filters, keywords) => {
-		const entryParam = getEntryParam(renderState.node);
+		const nodes = filterNodes(filters, keywords, renderState.showHideable);
+
+		const page = calculatePage(
+			renderState.delta,
+			renderState.page,
+			nodes.length
+		);
 
 		const path = getPath(
+			ascendingState,
+			columnState,
+			renderState.delta,
+			getEntryParam(renderState.node),
 			filters,
-			entryParam,
 			keywords,
+			page,
 			renderState.showHideable
 		);
 
@@ -1564,11 +1724,12 @@ export default ({
 		setFiltersState(filters);
 		setResultsKeywords(keywords);
 		setRenderState({
-			changes: filterNodes(filters, keywords, renderState.showHideable),
+			changes: nodes,
 			children: renderState.children,
+			delta: renderState.delta,
 			id: renderState.id,
 			node: renderState.node,
-			page: renderState.page,
+			page,
 			parents: renderState.parents,
 			showHideable: renderState.showHideable,
 		});
@@ -1577,71 +1738,52 @@ export default ({
 	};
 
 	const handleShowHideableToggle = (showHideable) => {
-		const entryParam = getEntryParam(renderState.node);
-
-		const params = new URLSearchParams(window.location.search);
-
-		const oldEntryParam = params.get(PARAM_ENTRY);
-
 		const filters = JSON.parse(JSON.stringify(filtersState));
-
-		let updatedFilters = false;
 
 		if (!showHideable) {
 			const typeIds = filters['types'];
 
 			if (typeIds && typeIds.length > 0) {
-				filters['types'] = typeIds.filter((typeId) => {
-					const type = typesRef.current[typeId];
-
-					if (type.hideable) {
-						updatedFilters = true;
-
-						return false;
-					}
-
-					return true;
-				});
+				filters['types'] = typeIds.filter(
+					(typeId) => !typesRef.current[typeId].hideable
+				);
 			}
 		}
 
-		if (
-			isWithinApp(params) &&
-			(updatedFilters || !oldEntryParam || oldEntryParam === entryParam)
-		) {
-			const path = getPath(
-				filters,
-				entryParam,
-				resultsKeywords,
-				showHideable
-			);
+		const nodes = filterNodes(filters, resultsKeywords, showHideable);
 
-			let newState = {
-				path,
-				senna: true,
-			};
+		const page = calculatePage(
+			renderState.delta,
+			renderState.id > 0 ? 1 : renderState.page,
+			nodes.length
+		);
 
-			if (window.history.state) {
-				newState = JSON.parse(JSON.stringify(window.history.state));
+		const path = getPath(
+			ascendingState,
+			columnState,
+			renderState.delta,
+			getEntryParam(renderState.node),
+			filters,
+			resultsKeywords,
+			page,
+			showHideable
+		);
 
-				newState.path = path;
-			}
+		const state = {
+			path,
+			senna: true,
+		};
 
-			if (updatedFilters && renderState.id === 0) {
-				window.history.pushState(newState, document.title, path);
-			}
-			else {
-				window.history.replaceState(newState, document.title, path);
-			}
-		}
+		window.history.pushState(state, document.title, path);
 
 		setFiltersState(filters);
 		setRenderState({
-			changes: filterNodes(filters, resultsKeywords, showHideable),
+			changes: nodes,
 			children: renderState.children,
+			delta: renderState.delta,
 			id: renderState.id,
 			node: renderState.node,
-			page: renderState.page,
+			page,
 			parents: renderState.parents,
 			showHideable,
 		});
@@ -2117,35 +2259,90 @@ export default ({
 				</ClayTable>
 				{renderState.changes.length > 5 && (
 					<ClayPaginationBarWithBasicItems
-						activeDelta={deltaState}
+						activeDelta={renderState.delta}
 						activePage={renderState.page}
 						deltas={[4, 8, 20, 40, 60].map((size) => ({
 							label: size,
 						}))}
 						ellipsisBuffer={3}
 						onDeltaChange={(delta) => {
-							setDeltaState(delta);
+							const page = calculatePage(
+								delta,
+								renderState.page,
+								renderState.changes.length
+							);
+
+							const path = getPath(
+								ascendingState,
+								columnState,
+								delta,
+								getEntryParam(renderState.node),
+								filtersState,
+								resultsKeywords,
+								page,
+								renderState.showHideable
+							);
+
+							if (delta === renderState.delta) {
+								return;
+							}
+
+							const state = {
+								path,
+								senna: true,
+							};
+
+							window.history.pushState(
+								state,
+								document.title,
+								path
+							);
+
 							setRenderState({
 								changes: renderState.changes,
 								children: renderState.children,
-								id: renderState.id,
-								node: renderState.node,
-								page: 1,
-								parents: renderState.parents,
-								showHideable: renderState.showHideable,
-							});
-						}}
-						onPageChange={(page) =>
-							setRenderState({
-								changes: renderState.changes,
-								children: renderState.children,
+								delta,
 								id: renderState.id,
 								node: renderState.node,
 								page,
 								parents: renderState.parents,
 								showHideable: renderState.showHideable,
-							})
-						}
+							});
+						}}
+						onPageChange={(page) => {
+							const path = getPath(
+								ascendingState,
+								columnState,
+								renderState.delta,
+								getEntryParam(renderState.node),
+								filtersState,
+								resultsKeywords,
+								page,
+								renderState.showHideable
+							);
+
+							const state = {
+								path,
+								senna: true,
+							};
+
+							window.history.pushState(
+								state,
+								document.title,
+								path
+							);
+
+							setRenderState({
+								changes: renderState.changes,
+								children: renderState.children,
+								delta: renderState.delta,
+								id: renderState.id,
+								node: renderState.node,
+								page,
+								parents: renderState.parents,
+								showHideable: renderState.showHideable,
+							});
+						}}
 						totalItems={renderState.changes.length}
 					/>
 				)}
@@ -2172,10 +2369,7 @@ export default ({
 		const items = [
 			{
 				label: Liferay.Language.get('all-items'),
-				onClick: () =>
-					handleNavigationUpdate({
-						nodeId: 0,
-					}),
+				onClick: () => handleNavigationUpdate(0),
 			},
 			{
 				active: true,
@@ -2213,9 +2407,7 @@ export default ({
 									]
 								}
 								handleNavigation={(nodeId) =>
-									handleNavigationUpdate({
-										nodeId,
-									})
+									handleNavigationUpdate(nodeId, true)
 								}
 								parentEntries={renderState.parents}
 								showDropdown={

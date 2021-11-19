@@ -125,7 +125,14 @@ public class FragmentFieldHTML implements Serializable {
 
 			sb.append("\"html\": ");
 
-			sb.append(String.valueOf(html));
+			if (html instanceof String) {
+				sb.append("\"");
+				sb.append((String)html);
+				sb.append("\"");
+			}
+			else {
+				sb.append(html);
+			}
 		}
 
 		sb.append("}");

@@ -70,7 +70,7 @@ public class CommerceInventoryWarehouseGeolocationFormNavigatorEntry
 
 	@Override
 	protected String getJspPath() {
-		return "/commerce_warehouse/geolocation.jsp";
+		return "/commerce_inventory_warehouse/geolocation.jsp";
 	}
 
 }

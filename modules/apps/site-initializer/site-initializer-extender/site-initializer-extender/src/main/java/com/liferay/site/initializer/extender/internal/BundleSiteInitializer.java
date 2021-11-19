@@ -499,7 +499,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 		).build();
 
 		for (String resourcePath : resourcePaths) {
-			if (resourcePath.endsWith(".products.json")) {
+			if (resourcePath.endsWith(".products.json") ||
+				!resourcePath.endsWith(".json")) {
+
 				continue;
 			}
 

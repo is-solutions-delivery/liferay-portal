@@ -19,18 +19,20 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Contact;
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.ListType;
 import com.liferay.portal.kernel.model.ListTypeConstants;
 import com.liferay.portal.kernel.model.Phone;
+import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
 import com.liferay.portal.kernel.service.AddressLocalService;
-import com.liferay.portal.kernel.service.CountryService;
+import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.ListTypeLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
-import com.liferay.portal.kernel.service.RegionService;
+import com.liferay.portal.kernel.service.RegionLocalService;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
@@ -168,20 +170,36 @@ public class AddressLocalServiceTest {
 	public void testSearchAddressesWithKeywords() throws Exception {
 		Address address = _addAddress("1234567890");
 
+		String name = RandomTestUtil.randomString();
 		String description = RandomTestUtil.randomString();
-
-		address.setDescription(description);
-
 		String street1 = RandomTestUtil.randomString();
+		String city = RandomTestUtil.randomString();
+		String zip = RandomTestUtil.randomString();
 
-		address.setStreet1(street1);
+		Country country = _countryLocalService.fetchCountryByA2(
+			TestPropsValues.getCompanyId(), "US");
 
-		_addressLocalService.updateAddress(address);
+		Region region = _regionLocalService.addRegion(
+			country.getCountryId(), RandomTestUtil.randomBoolean(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomDouble(),
+			RandomTestUtil.randomString(),
+			ServiceContextTestUtil.getServiceContext());
+
+		_addressLocalService.updateAddress(
+			address.getAddressId(), name, description, street1, null, null,
+			city, zip, region.getRegionId(), country.getCountryId(),
+			address.getTypeId(), address.isMailing(), address.isPrimary(),
+			address.getPhoneNumber());
 
 		List<Address> expectedAddresses = Arrays.asList(address);
 
+		_assertSearchAddress(expectedAddresses, name, null);
 		_assertSearchAddress(expectedAddresses, description, null);
 		_assertSearchAddress(expectedAddresses, street1, null);
+		_assertSearchAddress(expectedAddresses, city, null);
+		_assertSearchAddress(expectedAddresses, zip, null);
+		_assertSearchAddress(expectedAddresses, region.getName(), null);
+		_assertSearchAddress(expectedAddresses, country.getName(), null);
 	}
 
 	@Test
@@ -327,7 +345,7 @@ public class AddressLocalServiceTest {
 	private static AddressLocalService _addressLocalService;
 
 	@Inject
-	private static CountryService _countryService;
+	private static CountryLocalService _countryLocalService;
 
 	@Inject
 	private static ListTypeLocalService _listTypeLocalService;
@@ -336,6 +354,6 @@ public class AddressLocalServiceTest {
 	private static PhoneLocalService _phoneLocalService;
 
 	@Inject
-	private static RegionService _regionService;
+	private static RegionLocalService _regionLocalService;
 
 }

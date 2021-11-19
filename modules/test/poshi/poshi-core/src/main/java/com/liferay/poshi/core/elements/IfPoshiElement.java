@@ -151,9 +151,18 @@ public class IfPoshiElement extends PoshiElement {
 				PoshiElement poshiElement = (PoshiElement)element(
 					conditionName);
 
-				sb.append(" (");
-				sb.append(poshiElement.toPoshiScript());
-				sb.append(")");
+				String poshiScript = poshiElement.toPoshiScript();
+
+				sb.append(" ");
+
+				if (!poshiScript.startsWith("(")) {
+					sb.append("(");
+					sb.append(poshiScript);
+					sb.append(")");
+				}
+				else {
+					sb.append(poshiScript);
+				}
 
 				break;
 			}

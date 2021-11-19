@@ -65,6 +65,11 @@
 	<td>//div[@class='pie-chart-wrapper'] //td[contains(text(),'0')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>INSTRUCTIONS_SYNC_AC</td>
+	<td>//*[contains(@class,'font-weight') and contains(text(),'Sync to Liferay Analytics Cloud')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>

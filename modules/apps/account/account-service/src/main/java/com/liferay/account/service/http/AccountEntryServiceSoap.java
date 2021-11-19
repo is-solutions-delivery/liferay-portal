@@ -118,6 +118,32 @@ public class AccountEntryServiceSoap {
 		}
 	}
 
+	public static com.liferay.account.model.AccountEntrySoap
+			addOrUpdateAccountEntry(
+				String externalReferenceCode, long userId,
+				long parentAccountEntryId, String name, String description,
+				String[] domains, String emailAddress, byte[] logoBytes,
+				String taxIdNumber, String type, int status,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+
+		try {
+			com.liferay.account.model.AccountEntry returnValue =
+				AccountEntryServiceUtil.addOrUpdateAccountEntry(
+					externalReferenceCode, userId, parentAccountEntryId, name,
+					description, domains, emailAddress, logoBytes, taxIdNumber,
+					type, status, serviceContext);
+
+			return com.liferay.account.model.AccountEntrySoap.toSoapModel(
+				returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
 	public static void deactivateAccountEntries(long[] accountEntryIds)
 		throws RemoteException {
 

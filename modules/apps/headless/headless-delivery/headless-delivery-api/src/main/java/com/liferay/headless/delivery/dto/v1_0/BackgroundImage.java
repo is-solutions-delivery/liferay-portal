@@ -179,7 +179,14 @@ public class BackgroundImage implements Serializable {
 
 			sb.append("\"description\": ");
 
-			sb.append(String.valueOf(description));
+			if (description instanceof String) {
+				sb.append("\"");
+				sb.append((String)description);
+				sb.append("\"");
+			}
+			else {
+				sb.append(description);
+			}
 		}
 
 		if (title != null) {
@@ -189,7 +196,14 @@ public class BackgroundImage implements Serializable {
 
 			sb.append("\"title\": ");
 
-			sb.append(String.valueOf(title));
+			if (title instanceof String) {
+				sb.append("\"");
+				sb.append((String)title);
+				sb.append("\"");
+			}
+			else {
+				sb.append(title);
+			}
 		}
 
 		if (url != null) {
@@ -199,7 +213,14 @@ public class BackgroundImage implements Serializable {
 
 			sb.append("\"url\": ");
 
-			sb.append(String.valueOf(url));
+			if (url instanceof String) {
+				sb.append("\"");
+				sb.append((String)url);
+				sb.append("\"");
+			}
+			else {
+				sb.append(url);
+			}
 		}
 
 		sb.append("}");

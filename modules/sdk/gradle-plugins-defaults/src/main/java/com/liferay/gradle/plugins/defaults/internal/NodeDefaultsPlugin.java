@@ -69,12 +69,22 @@ public class NodeDefaultsPlugin extends BaseDefaultsPlugin<NodePlugin> {
 
 			nodeExtension.setGlobal(false);
 			nodeExtension.setNodeVersion("6.6.0");
+			nodeExtension.setNpmVersion("6.4.1");
 		}
 		else if (PortalTools.PORTAL_VERSION_7_1_X.equals(portalVersion)) {
 			NodeExtension nodeExtension = GradleUtil.getExtension(
 				project, NodeExtension.class);
 
 			nodeExtension.setNodeVersion("8.15.0");
+			nodeExtension.setNpmVersion("6.4.1");
+		}
+		else if (PortalTools.PORTAL_VERSION_7_2_X.equals(portalVersion) ||
+				 PortalTools.PORTAL_VERSION_7_3_X.equals(portalVersion)) {
+
+			NodeExtension nodeExtension = GradleUtil.getExtension(
+				project, NodeExtension.class);
+
+			nodeExtension.setNodeVersion("10.15.3");
 			nodeExtension.setNpmVersion("6.4.1");
 		}
 	}

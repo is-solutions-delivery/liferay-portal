@@ -179,7 +179,14 @@ public class CustomValue implements Serializable {
 
 			sb.append("\"data\": ");
 
-			sb.append(String.valueOf(data));
+			if (data instanceof String) {
+				sb.append("\"");
+				sb.append((String)data);
+				sb.append("\"");
+			}
+			else {
+				sb.append(data);
+			}
 		}
 
 		if (data_i18n != null) {

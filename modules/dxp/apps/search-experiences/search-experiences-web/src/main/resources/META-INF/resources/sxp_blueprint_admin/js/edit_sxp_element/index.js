@@ -23,7 +23,8 @@ export default function ({
 	redirectURL,
 	sxpElementId,
 }) {
-	const [resource, setResource] = useState(null);
+	const [sxpElement, setSXPElement] = useState(null);
+	const [predefinedVariables, setPredefinedVariables] = useState(null);
 
 	useEffect(() => {
 		fetchData(
@@ -31,12 +32,21 @@ export default function ({
 			{
 				method: 'GET',
 			},
-			(responseContent) => setResource(responseContent),
-			() => setResource({})
+			(responseContent) => setSXPElement(responseContent),
+			() => setSXPElement({})
+		);
+
+		fetchData(
+			'/o/search-experiences-rest/v1.0/sxp-parameter-contributor-definitions',
+			{
+				method: 'GET',
+			},
+			(responseContent) => setPredefinedVariables(responseContent.items),
+			() => setPredefinedVariables([])
 		);
 	}, []); //eslint-disable-line
 
-	if (!resource) {
+	if (!sxpElement || !predefinedVariables) {
 		return null;
 	}
 
@@ -51,21 +61,21 @@ export default function ({
 			<div className="edit-sxp-element-root">
 				<ErrorBoundary>
 					<EditSXPElementForm
-						initialConfiguration={getSXPBlueprintForm(resource)}
+						initialConfiguration={getSXPBlueprintForm(sxpElement)}
 						initialDescription={
-							resource.description_i18n || {
-								[defaultLocale]: resource.description,
+							sxpElement.description_i18n || {
+								[defaultLocale]: sxpElement.description,
 							}
 						}
 						initialTitle={
-							resource.title_i18n || {
-								[defaultLocale]: resource.title,
+							sxpElement.title_i18n || {
+								[defaultLocale]: sxpElement.title,
 							}
 						}
-						predefinedVariables={resource.predefinedVariables}
-						readOnly={resource.readOnly}
+						predefinedVariables={predefinedVariables}
+						readOnly={sxpElement.readOnly}
 						sxpElementId={sxpElementId}
-						type={resource.type}
+						type={sxpElement.type}
 					/>
 				</ErrorBoundary>
 			</div>

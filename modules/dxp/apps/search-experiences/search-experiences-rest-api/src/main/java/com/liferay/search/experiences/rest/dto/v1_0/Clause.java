@@ -495,7 +495,14 @@ public class Clause implements Serializable {
 
 			sb.append("\"query\": ");
 
-			sb.append(String.valueOf(query));
+			if (query instanceof String) {
+				sb.append("\"");
+				sb.append((String)query);
+				sb.append("\"");
+			}
+			else {
+				sb.append(query);
+			}
 		}
 
 		if (type != null) {

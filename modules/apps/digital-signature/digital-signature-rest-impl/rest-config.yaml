@@ -1,0 +1,10 @@
+apiDir: "../digital-signature-rest-api/src/main/java"
+apiPackagePath: "com.liferay.digital.signature.rest"
+application:
+    baseURI: "/digital-signature-rest"
+    className: "DigitalSignatureRESTApplication"
+    name: "Liferay.Digital.Signature.REST"
+author: "José Abelenda"
+clientDir: "../digital-signature-rest-client/src/main/java"
+forcePredictableOperationId: true
+testDir: "../digital-signature-rest-test/src/testIntegration/java"

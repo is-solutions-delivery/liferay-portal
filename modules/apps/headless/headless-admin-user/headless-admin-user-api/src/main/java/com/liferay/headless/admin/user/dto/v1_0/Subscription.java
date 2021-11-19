@@ -293,7 +293,14 @@ public class Subscription implements Serializable {
 
 			sb.append("\"contentId\": ");
 
-			sb.append(String.valueOf(contentId));
+			if (contentId instanceof String) {
+				sb.append("\"");
+				sb.append((String)contentId);
+				sb.append("\"");
+			}
+			else {
+				sb.append(contentId);
+			}
 		}
 
 		if (contentType != null) {

@@ -160,7 +160,14 @@ public class FragmentFieldText implements Serializable {
 
 			sb.append("\"text\": ");
 
-			sb.append(String.valueOf(text));
+			if (text instanceof String) {
+				sb.append("\"");
+				sb.append((String)text);
+				sb.append("\"");
+			}
+			else {
+				sb.append(text);
+			}
 		}
 
 		sb.append("}");

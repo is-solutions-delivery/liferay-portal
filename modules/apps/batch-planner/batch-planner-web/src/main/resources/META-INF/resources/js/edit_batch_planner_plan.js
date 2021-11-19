@@ -19,13 +19,6 @@ const HEADERS = new Headers({
 	'x-csrf-token': window.Liferay.authToken,
 });
 
-function enableButtons() {
-	const buttons = document.querySelectorAll('form button');
-	buttons.forEach((button) => {
-		button.removeAttribute('disabled');
-	});
-}
-
 function getOptionElement(label, schemaName, value) {
 	const optionElement = document.createElement('option');
 
@@ -39,7 +32,43 @@ function getOptionElement(label, schemaName, value) {
 	return optionElement;
 }
 
-export default function ({namespace}) {
+function showImportMapping(components, internalClassNameValue) {
+	const schemas = components.schemas;
+
+	const schemaEntry = schemas[internalClassNameValue];
+
+	var mappingArea = document.querySelector('.plan-mappings');
+	var mappingRowTemplate = document.querySelector('.plan-mappings-template')
+		.innerHTML;
+
+	mappingArea.innerHTML = '';
+
+	let curId = 1;
+
+	for (const key in schemaEntry.properties) {
+		const object = schemaEntry.properties[key];
+
+		if (object.readOnly) {
+			continue;
+		}
+
+		const mappingRow = mappingRowTemplate
+			.replaceAll('ID_TEMPLATE', curId)
+			.replace('VALUE_TEMPLATE', key);
+
+		mappingArea.innerHTML += mappingRow;
+
+		curId++;
+	}
+
+	document.querySelector('.import-mapping-table').classList.remove('hide');
+
+	document
+		.querySelector('form button[type="submit"]')
+		.removeAttribute('disabled');
+}
+
+export default function ({importMapping, namespace}) {
 	const headlessEnpointSelect = document.querySelector(
 		`#${namespace}headlessEndpoint`
 	);
@@ -165,7 +194,9 @@ export default function ({namespace}) {
 				schema: schemaEntry.properties,
 			});
 
-			enableButtons();
+			if (importMapping) {
+				showImportMapping(components, internalClassNameValue);
+			}
 		}
 		catch (error) {
 			openToast({

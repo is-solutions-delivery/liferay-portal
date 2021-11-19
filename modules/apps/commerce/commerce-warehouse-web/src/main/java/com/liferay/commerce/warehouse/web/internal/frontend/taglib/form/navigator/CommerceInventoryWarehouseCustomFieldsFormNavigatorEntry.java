@@ -103,7 +103,7 @@ public class CommerceInventoryWarehouseCustomFieldsFormNavigatorEntry
 
 	@Override
 	protected String getJspPath() {
-		return "/commerce_warehouse/custom_fields.jsp";
+		return "/commerce_inventory_warehouse/custom_fields.jsp";
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -84,6 +84,37 @@ public class AccountEntryServiceImpl extends AccountEntryServiceBaseImpl {
 	}
 
 	@Override
+	public AccountEntry addOrUpdateAccountEntry(
+			String externalReferenceCode, long userId,
+			long parentAccountEntryId, String name, String description,
+			String[] domains, String emailAddress, byte[] logoBytes,
+			String taxIdNumber, String type, int status,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		AccountEntry accountEntry =
+			accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
+				permissionChecker.getCompanyId(), externalReferenceCode);
+
+		if (accountEntry == null) {
+			PortalPermissionUtil.check(
+				permissionChecker, AccountActionKeys.ADD_ACCOUNT_ENTRY);
+		}
+		else {
+			_accountEntryModelResourcePermission.check(
+				permissionChecker, permissionChecker.getCompanyId(),
+				ActionKeys.UPDATE);
+		}
+
+		return accountEntryLocalService.addOrUpdateAccountEntry(
+			externalReferenceCode, userId, parentAccountEntryId, name,
+			description, domains, emailAddress, logoBytes, taxIdNumber, type,
+			status, serviceContext);
+	}
+
+	@Override
 	public void deactivateAccountEntries(long[] accountEntryIds)
 		throws PortalException {
 
@@ -154,10 +185,13 @@ public class AccountEntryServiceImpl extends AccountEntryServiceBaseImpl {
 	public AccountEntry getAccountEntry(long accountEntryId)
 		throws PortalException {
 
+		AccountEntry accountEntry = accountEntryLocalService.getAccountEntry(
+			accountEntryId);
+
 		_accountEntryModelResourcePermission.check(
 			getPermissionChecker(), accountEntryId, ActionKeys.VIEW);
 
-		return accountEntryLocalService.getAccountEntry(accountEntryId);
+		return accountEntry;
 	}
 
 	@Override

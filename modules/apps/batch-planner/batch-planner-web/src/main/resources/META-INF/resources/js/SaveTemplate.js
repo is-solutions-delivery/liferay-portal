@@ -21,7 +21,7 @@ import SaveTemplateModal from './SaveTemplateModal';
 function SaveTemplate({
 	formSaveAsTemplateDataQuerySelector,
 	formSaveAsTemplateURL,
-	namespace,
+	portletNamespace,
 }) {
 	const [disable, setDisable] = useState(true);
 	const [visible, setVisible] = useState(false);
@@ -34,7 +34,7 @@ function SaveTemplate({
 
 	useEffect(() => {
 		const externalInput = document.querySelector(
-			`#${namespace}internalClassName`
+			`#${portletNamespace}internalClassName`
 		);
 
 		if (!externalInput) {
@@ -54,14 +54,14 @@ function SaveTemplate({
 				'change',
 				handleExternalInputChange
 			);
-	}, [namespace]);
+	}, [portletNamespace]);
 
 	return (
 		<span className="mr-3">
 			<ClayButton
 				disabled={disable}
 				displayType="secondary"
-				id={`${namespace}saveTemplate`}
+				id={`${portletNamespace}saveTemplate`}
 				onClick={onButtonClick}
 				type="button"
 			>
@@ -73,7 +73,7 @@ function SaveTemplate({
 					closeModal={onClose}
 					formDataQuerySelector={formSaveAsTemplateDataQuerySelector}
 					formSubmitURL={formSaveAsTemplateURL}
-					namespace={namespace}
+					namespace={portletNamespace}
 					observer={observer}
 				/>
 			)}

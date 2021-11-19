@@ -16,13 +16,9 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayModal from '@clayui/modal';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
-import {fetch} from 'frontend-js-web';
 import React, {useState} from 'react';
 
-const HEADERS = new Headers({
-	'Accept': 'application/json',
-	'Accept-Language': Liferay.ThemeDisplay.getBCP47LanguageId(),
-});
+import {saveTemplateAPI} from './BatchPlannerExport';
 
 const SaveTemplateModal = ({
 	closeModal,
@@ -40,27 +36,18 @@ const SaveTemplateModal = ({
 	const _handleSubmit = async (event) => {
 		event.preventDefault();
 
-		const mainFormData = document.querySelector(formDataQuerySelector);
-		const modalFormData = document.getElementById(namespace + 'form');
-		const updateData = {[inputNameId]: modalFormData[inputNameId].value};
-
-		Liferay.Util.setFormValues(mainFormData, updateData);
-
-		const formData = new FormData(mainFormData);
-
 		try {
-			const response = await fetch(formSubmitURL, {
-				body: formData,
-				headers: HEADERS,
-				method: 'POST',
-			});
-
-			const responseJson = await response.json();
+			const updateData = {[inputNameId]: inputValue};
+			const saveTemplateResponse = saveTemplateAPI(
+				formDataQuerySelector,
+				updateData,
+				formSubmitURL
+			);
 
 			if (isMounted()) {
-				if (responseJson.error) {
+				if (saveTemplateResponse.error) {
 					setLoadingResponse(false);
-					setErrorMessage(responseJson.error);
+					setErrorMessage(saveTemplateResponse.error);
 				}
 				else {
 					closeModal();

@@ -1,0 +1,153 @@
+components:
+    schemas:
+        DSDocument:
+            properties:
+                data:
+                    type: string
+                fileExtension:
+                    type: string
+                id:
+                    type: string
+                name:
+                    type: string
+                uri:
+                    type: string
+        DSEnvelope:
+            properties:
+                dateCreated:
+                    format: date
+                    readOnly: true
+                    type: string
+                dateModified:
+                    format: date
+                    readOnly: true
+                    type: string
+                dsDocument:
+                    items:
+                        $ref: "#/components/schemas/DSDocument"
+                        type: array
+                dsRecipient:
+                    items:
+                        $ref: "#/components/schemas/DSRecipient"
+                        type: array
+                emailBlurb:
+                    type: string
+                emailSubject:
+                    type: string
+                id:
+                    type: string
+                name:
+                    type: string
+                senderEmailAddress:
+                    type: string
+                siteId:
+                    format: int64
+                    type: integer
+                status:
+                    type: string
+            type: object
+        DSRecipient:
+            properties:
+                emailAddress:
+                    type: string
+                id:
+                    type: string
+                name:
+                    type: string
+                status:
+                    type: string
+info:
+    description:
+        "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
+        'com.liferay.digital.signature.rest.client', and version '1.0.0'."
+    license:
+        name: "Apache 2.0"
+        url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    title: ""
+    version: v1.0
+openapi: 3.0.1
+paths:
+    "/sites/{siteId}/ds-envelopes":
+        get:
+            operationId: getSiteDSEnvelopesPage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/DSEnvelope"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/DSEnvelope"
+                                type: array
+            tags: ["DSEnvelope"]
+        post:
+            operationId: postSiteDSEnvelope
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DSEnvelope"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/DSEnvelope"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/DSEnvelope"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/DSEnvelope"
+            tags: ["DSEnvelope"]
+    "/sites/{siteId}/ds-envelopes/{dsEnvelopeId}":
+        get:
+            operationId: getSiteDSEnvelope
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: dsEnvelopeId
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/DSEnvelope"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/DSEnvelope"
+            tags: ["DSEnvelope"]

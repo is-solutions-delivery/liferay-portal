@@ -269,7 +269,14 @@ public class Range implements Serializable {
 
 			sb.append("\"gt\": ");
 
-			sb.append(String.valueOf(gt));
+			if (gt instanceof String) {
+				sb.append("\"");
+				sb.append((String)gt);
+				sb.append("\"");
+			}
+			else {
+				sb.append(gt);
+			}
 		}
 
 		if (gte != null) {
@@ -279,7 +286,14 @@ public class Range implements Serializable {
 
 			sb.append("\"gte\": ");
 
-			sb.append(String.valueOf(gte));
+			if (gte instanceof String) {
+				sb.append("\"");
+				sb.append((String)gte);
+				sb.append("\"");
+			}
+			else {
+				sb.append(gte);
+			}
 		}
 
 		if (lt != null) {
@@ -289,7 +303,14 @@ public class Range implements Serializable {
 
 			sb.append("\"lt\": ");
 
-			sb.append(String.valueOf(lt));
+			if (lt instanceof String) {
+				sb.append("\"");
+				sb.append((String)lt);
+				sb.append("\"");
+			}
+			else {
+				sb.append(lt);
+			}
 		}
 
 		if (lte != null) {
@@ -299,7 +320,14 @@ public class Range implements Serializable {
 
 			sb.append("\"lte\": ");
 
-			sb.append(String.valueOf(lte));
+			if (lte instanceof String) {
+				sb.append("\"");
+				sb.append((String)lte);
+				sb.append("\"");
+			}
+			else {
+				sb.append(lte);
+			}
 		}
 
 		if (parameterName != null) {
