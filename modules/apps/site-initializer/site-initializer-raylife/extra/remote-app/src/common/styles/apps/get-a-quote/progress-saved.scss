@@ -1,0 +1,50 @@
+.progress-saved-content {
+	margin-top: 28px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 90px;
+
+	.progress-saved-body {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 362px;
+
+		.progress-saved-icon {
+			background: #39c38d;
+			border-radius: 50%;
+			width: 56px;
+			height: 56px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+
+			svg {
+				fill: #fff;
+				width: 45px !important;
+				height: 45px !important;
+			}
+		}
+
+		.progress-saved-subtitle {
+			font-weight: 700;
+			font-size: 32px;
+		}
+
+		.progress-saved-description {
+			font-weight: 500;
+			font-size: 16px;
+			color: #5f6167;
+		}
+	}
+}
+.progress-saved-footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 8px 0 24px;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import useDebounce from 'lodash.debounce';
@@ -17,6 +18,7 @@ import {
 	AVAILABLE_STEPS,
 	TOTAL_OF_FIELD,
 } from '~/routes/get-a-quote/utils/constants';
+import ProgressSaved from '../../Modal/ProgressSaved';
 
 import {BusinessTypeRadioGroup} from './RadioGroup';
 
@@ -144,6 +146,12 @@ export function BusinessTypeSearch({form, setNewSelectedProduct}) {
 		);
 	};
 
+	const [show, setShow] = useState(false);
+
+	const handleClose = () => {
+		setShow(!show);
+	};
+
 	return (
 		<>
 			<div>
@@ -173,6 +181,12 @@ export function BusinessTypeSearch({form, setNewSelectedProduct}) {
 				<p className="paragraph">
 					i.e. Coffee shop, Plumber, Drop Shipping, Landscape, etc
 				</p>
+
+				<button id="myBtn" onClick={() => setShow(!show)}>
+					Open Modal
+				</button>
+
+				<ProgressSaved handleClose={handleClose} show={show} />
 			</div>
 			{renderResults()}
 		</>
