@@ -129,7 +129,14 @@ public class PageDropZoneDefinition implements Serializable {
 
 			sb.append("\"fragmentSettings\": ");
 
-			sb.append(String.valueOf(fragmentSettings));
+			if (fragmentSettings instanceof String) {
+				sb.append("\"");
+				sb.append((String)fragmentSettings);
+				sb.append("\"");
+			}
+			else {
+				sb.append(fragmentSettings);
+			}
 		}
 
 		sb.append("}");

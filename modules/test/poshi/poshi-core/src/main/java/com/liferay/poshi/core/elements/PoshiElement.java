@@ -19,13 +19,17 @@ import com.liferay.poshi.core.PoshiGetterUtil;
 import com.liferay.poshi.core.script.PoshiScriptParserException;
 import com.liferay.poshi.core.script.UnbalancedCodeException;
 import com.liferay.poshi.core.util.Dom4JUtil;
+import com.liferay.poshi.core.util.NaturalOrderStringComparator;
 import com.liferay.poshi.core.util.PropsValues;
 import com.liferay.poshi.core.util.RegexUtil;
+import com.liferay.poshi.core.util.StringPool;
 import com.liferay.poshi.core.util.StringUtil;
 
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -296,10 +300,16 @@ public abstract class PoshiElement
 
 		sb.append("\n");
 		sb.append(pad);
-		sb.append(getBlockName());
+
+		String blockName = getBlockName();
+
+		sb.append(blockName);
+
 		sb.append(" {");
 
 		PoshiNode<?, ?> previousPoshiNode = null;
+
+		Collections.sort(poshiNodes, new CommandComparator());
 
 		for (Iterator<PoshiNode<?, ?>> iterator = poshiNodes.iterator();
 			 iterator.hasNext();) {
@@ -314,19 +324,56 @@ public abstract class PoshiElement
 
 			if (((previousPoshiNode == null) ||
 				 ((previousPoshiNode instanceof VarPoshiElement) &&
-				  (poshiNode instanceof VarPoshiElement))) &&
+				  !(previousPoshiNode instanceof PropertyPoshiElement) &&
+				  (poshiNode instanceof VarPoshiElement)) ||
+				 ((previousPoshiNode instanceof PropertyPoshiElement) &&
+				  (poshiNode instanceof PropertyPoshiElement)) ||
+				 ((previousPoshiNode instanceof InlinePoshiComment) &&
+				  (poshiNode instanceof InlinePoshiComment))) &&
 				poshiScriptSnippet.startsWith("\n\n")) {
 
 				poshiScriptSnippet = poshiScriptSnippet.replaceFirst(
 					"\n\n", "\n");
 			}
 
-			sb.append(padPoshiScriptSnippet(poshiScriptSnippet));
+			String padPoshiScriptSnippet = padPoshiScriptSnippet(
+				poshiScriptSnippet);
+
+			if (padPoshiScriptSnippet.startsWith("\n\n") &&
+				StringUtil.endsWith(
+					sb.toString(), StringPool.OPEN_CURLY_BRACE)) {
+
+				padPoshiScriptSnippet = padPoshiScriptSnippet.replaceFirst(
+					"\n\n", "\n");
+			}
+
+			if ((previousPoshiNode == null) &&
+				(poshiNode instanceof InlinePoshiComment)) {
+
+				padPoshiScriptSnippet = "\n" + padPoshiScriptSnippet;
+			}
+
+			if (StringUtil.endsWith(sb.toString(), "\ndefinition {") &&
+				!padPoshiScriptSnippet.startsWith("\n\n")) {
+
+				sb.append("\n");
+			}
+
+			sb.append(padPoshiScriptSnippet);
 
 			previousPoshiNode = poshiNode;
 		}
 
+		if (previousPoshiNode instanceof InlinePoshiComment) {
+			sb.append("\n");
+		}
+
 		sb.append("\n");
+
+		if (blockName.equals("definition")) {
+			sb.append("\n");
+		}
+
 		sb.append(pad);
 		sb.append("}");
 
@@ -1054,6 +1101,8 @@ public abstract class PoshiElement
 
 	protected static final String PARAMETER_REGEX = "\\(.*\\)";
 
+	protected static final String QUOTED_REGEX = "\".*\"";
+
 	protected static final String STATEMENT_END_REGEX = ";$";
 
 	protected static final String VAR_NAME_REGEX =
@@ -1062,9 +1111,13 @@ public abstract class PoshiElement
 	protected static final String VAR_STATEMENT_END_REGEX = "(;|)$";
 
 	protected static final Pattern poshiScriptAnnotationPattern =
-		Pattern.compile("@[\\w-]*[\\s]*?=[\\s]\".*?\"(?=\\n)", Pattern.DOTALL);
+		Pattern.compile(
+			"@(?<name>[\\w-]*)[\\s]*?(\n|=[\\s]\"(?<value>.*?)\"(?=\\n))",
+			Pattern.DOTALL);
 	protected static final Pattern poshiScriptBlockPattern = Pattern.compile(
 		"^[^{]*\\{[\\s\\S]*\\}$");
+	protected static final Pattern quotedPattern = Pattern.compile(
+		QUOTED_REGEX);
 
 	private void _addAttributes(Element element) {
 		for (Attribute attribute :
@@ -1129,5 +1182,61 @@ public abstract class PoshiElement
 	}
 
 	private String _poshiScript;
+
+	private class CommandComparator implements Comparator<PoshiNode> {
+
+		@Override
+		public int compare(PoshiNode poshiNode1, PoshiNode poshiNode2) {
+			if ((poshiNode1 instanceof CommandPoshiElement) &&
+				(poshiNode2 instanceof CommandPoshiElement)) {
+
+				CommandPoshiElement commandPoshiElement1 =
+					(CommandPoshiElement)poshiNode1;
+
+				CommandPoshiElement commandPoshiElement2 =
+					(CommandPoshiElement)poshiNode2;
+
+				String poshiScriptKeyword1 =
+					commandPoshiElement1.getPoshiScriptKeyword();
+
+				String poshiScriptKeyword2 =
+					commandPoshiElement2.getPoshiScriptKeyword();
+
+				String blockName1 = commandPoshiElement1.getBlockName();
+
+				String blockName2 = commandPoshiElement2.getBlockName();
+
+				NaturalOrderStringComparator naturalOrderStringComparator =
+					new NaturalOrderStringComparator();
+
+				if ((blockName1.startsWith(poshiScriptKeyword1) &&
+					 blockName2.startsWith(poshiScriptKeyword2)) ||
+					(!blockName1.startsWith(poshiScriptKeyword1) &&
+					 !blockName2.startsWith(poshiScriptKeyword2))) {
+
+					return naturalOrderStringComparator.compare(
+						blockName1, blockName2);
+				}
+
+				if (blockName1.startsWith(poshiScriptKeyword1) &&
+					!blockName2.startsWith(poshiScriptKeyword2)) {
+
+					return 1;
+				}
+
+				if (blockName2.startsWith(poshiScriptKeyword2) &&
+					!blockName1.startsWith(poshiScriptKeyword1)) {
+
+					return -1;
+				}
+
+				return naturalOrderStringComparator.compare(
+					blockName1, blockName2);
+			}
+
+			return 0;
+		}
+
+	}
 
 }

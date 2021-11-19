@@ -1058,6 +1058,28 @@ definition {
 		}
 	}
 
+	@description = "LPS-132406: Given the Page Audit Panel
+	When the users leave the page because the session expires or s/he does log out
+	Then they find the panel closed"
+	@priority = "3"
+	test CheckPageAuditClosedAfterLogout {
+		task ("Open Content Performance panel") {
+			PageAudit.openPanelBeforeConfiguration();
+
+			AssertElementPresent(locator1 = "PageAudit#CONNECT_TO_GOOGLE_PAGESPEED_BUTTON");
+		}
+
+		task ("Logout and login") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+		}
+
+		task ("Check if panel is closed") {
+			AssertElementNotPresent(locator1 = "PageAudit#CONNECT_TO_GOOGLE_PAGESPEED_BUTTON");
+		}
+	}
+
 	@description = "LPS-137227 Given a content page	When a user with permissions to edit blogs visits the page Then the issue icon for displaying the page audit panel shows"
 	@priority = "4"
 	test CheckPageAuditIconInContentPageWithEditBlogsPermission {
@@ -2897,6 +2919,26 @@ definition {
 		}
 	}
 
+	@description = "LPS-132406: Given the Page Audit Panel
+	When the users leave the page using any of the internal links in the panel (to navigate to System, instance, site or page settings) and return to the page using the 'back' button
+	Then they find the panel open"
+	@priority = "3"
+	test CheckPageAuditOpenAfterNavigation {
+		task ("Open Content Performance panel") {
+			PageAudit.openPanelBeforeConfiguration();
+
+			PageAudit.connectToGooglePageAudit();
+		}
+
+		task ("Logout and login") {
+			Click(locator1 = "Icon#BACK");
+		}
+
+		task ("Check if panel is closed") {
+			AssertElementPresent(locator1 = "PageAudit#CONNECT_TO_GOOGLE_PAGESPEED_BUTTON");
+		}
+	}
+
 	@description = "LPS-132234: Given the page audit panel detail view and a user with permissions for editing the page
 	When the page is blocked from indexing
 	Then the users will see a text with a link to the configuration section: Change the robots.txt setting from the Configuration section of this page"
@@ -3350,7 +3392,6 @@ definition {
 	@description = "LPS-135681: Given the Page Audit panel when the invalid API Key error is retrieved
 	When the user clicks on the Set API Key button
 	Then the user navigates to Site settings > Pages > Google PageSpeed Insights tab"
-	@ignore = "true"
 	@priority = "3"
 	test InvalidAPIKeyErrorIsRecovered {
 		property portal.acceptance = "true";
@@ -3699,17 +3740,6 @@ definition {
 		}
 	}
 
-	@description = "LPS-132406: Given the Page Audit Panel
-	When the users leave the page because the session expires or s/he does log out
-	Then they find the panel closed"
-	@ignore = "true"
-	@priority = "3"
-	test PageAuditClosed {
-
-		// TODO LPS-132406 PageAuditClosed pending implementation
-
-	}
-
 	@description = "LPS-119068: When the Enable Page Audit check in System Settings is on and a user with permissions to view page visits the view mode of a content page, the issue icon for displaying the page audit panel shows"
 	@priority = "5"
 	test PageAuditContentPage {
@@ -3902,17 +3932,6 @@ definition {
 		task ("Check that Page Audit icon is not visible") {
 			AssertElementNotPresent(locator1 = "PageAudit#PAGE_AUDIT_BUTTON");
 		}
-	}
-
-	@description = "LPS-132406: Given the Page Audit Panel
-	When the users leave the page using any of the internal links in the panel (to navigate to System, instance, site or page settings) and return to the page using the 'back' button
-	Then they find the panel open"
-	@ignore = "true"
-	@priority = "3"
-	test PageAuditOpen {
-
-		// TODO LPS-132406 PageAuditOpen pending implementation
-
 	}
 
 	@description = "LPS-119068: When the Enable Page Audit check in System Settings is on and a user with permissions to view page visits the view mode of a widget page, the issue icon for displaying the page audit panel shows"

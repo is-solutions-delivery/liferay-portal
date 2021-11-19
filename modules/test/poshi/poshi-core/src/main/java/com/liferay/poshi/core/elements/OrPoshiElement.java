@@ -70,13 +70,36 @@ public class OrPoshiElement extends PoshiElement {
 	public String toPoshiScript() {
 		StringBuilder sb = new StringBuilder();
 
-		for (PoshiElement poshiElement : toPoshiElements(elements())) {
-			sb.append("(");
-			sb.append(poshiElement.toPoshiScript());
-			sb.append(") || ");
+		List<PoshiElement> poshiElements = toPoshiElements(elements());
+
+		for (PoshiElement poshiElement : poshiElements) {
+			String poshiScript = poshiElement.toPoshiScript();
+
+			if (poshiScript.startsWith("(") || poshiScript.startsWith("!(") ||
+				poshiScript.startsWith("isSet(") ||
+				poshiScript.startsWith("contains(")) {
+
+				sb.append(poshiScript);
+			}
+			else {
+				sb.append("(");
+				sb.append(poshiElement.toPoshiScript());
+				sb.append(")");
+			}
+
+			sb.append(" || ");
 		}
 
 		sb.setLength(sb.length() - 4);
+
+		PoshiElement parentPoshiElement = (PoshiElement)getParent();
+
+		if ((poshiElements.size() > 1) &&
+			!(parentPoshiElement instanceof NotPoshiElement)) {
+
+			sb.insert(0, "(");
+			sb.append(")");
+		}
 
 		return sb.toString();
 	}
@@ -125,6 +148,6 @@ public class OrPoshiElement extends PoshiElement {
 	private static final String _ELEMENT_NAME = "or";
 
 	private static final Pattern _conditionPattern = Pattern.compile(
-		"^(?!!|else)[\\s\\S]*\\|\\|[\\s\\S]*$");
+		"^(?!else)[\\s\\S]*\\|\\|[\\s\\S]*$");
 
 }

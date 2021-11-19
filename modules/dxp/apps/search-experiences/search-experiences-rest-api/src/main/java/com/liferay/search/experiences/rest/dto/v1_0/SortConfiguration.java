@@ -120,7 +120,14 @@ public class SortConfiguration implements Serializable {
 
 			sb.append("\"sorts\": ");
 
-			sb.append(String.valueOf(sorts));
+			if (sorts instanceof String) {
+				sb.append("\"");
+				sb.append((String)sorts);
+				sb.append("\"");
+			}
+			else {
+				sb.append(sorts);
+			}
 		}
 
 		sb.append("}");

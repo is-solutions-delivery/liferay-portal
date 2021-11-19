@@ -193,7 +193,14 @@ public class PageElement implements Serializable {
 
 			sb.append("\"definition\": ");
 
-			sb.append(String.valueOf(definition));
+			if (definition instanceof String) {
+				sb.append("\"");
+				sb.append((String)definition);
+				sb.append("\"");
+			}
+			else {
+				sb.append(definition);
+			}
 		}
 
 		if (pageElements != null) {

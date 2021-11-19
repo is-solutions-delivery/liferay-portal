@@ -58,7 +58,7 @@ public class CommerceCurrencyTestUtil {
 			RandomTestUtil.randomLocaleStringMap(), StringPool.DOLLAR,
 			BigDecimal.ONE,
 			HashMapBuilder.put(
-				LocaleUtil.US, CommerceCurrencyConstants.DEFAULT_FORMAT_PATTERN
+				LocaleUtil.US, CommerceCurrencyConstants.DECIMAL_FORMAT_PATTERN
 			).build(),
 			2, 2, StringPool.BLANK, false, RandomTestUtil.randomDouble(), true);
 	}

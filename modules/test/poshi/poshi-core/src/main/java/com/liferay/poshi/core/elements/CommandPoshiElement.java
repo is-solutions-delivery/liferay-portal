@@ -15,7 +15,11 @@
 package com.liferay.poshi.core.elements;
 
 import com.liferay.poshi.core.script.PoshiScriptParserException;
+import com.liferay.poshi.core.util.ListUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,19 +73,43 @@ public class CommandPoshiElement extends PoshiElement {
 		Matcher poshiScriptAnnotationMatcher =
 			poshiScriptAnnotationPattern.matcher(blockName);
 
-		while (poshiScriptAnnotationMatcher.find()) {
-			String annotation = poshiScriptAnnotationMatcher.group();
+		List<String> simpleAnnotations = new ArrayList<>();
 
-			if (annotation.startsWith("@description")) {
-				add(PoshiNodeFactory.newPoshiNode(this, annotation));
+		while (poshiScriptAnnotationMatcher.find()) {
+			String name = poshiScriptAnnotationMatcher.group("name");
+
+			if (name.equals("description")) {
+				add(
+					PoshiNodeFactory.newPoshiNode(
+						this, poshiScriptAnnotationMatcher.group()));
 
 				continue;
 			}
 
-			String name = getNameFromAssignment(annotation);
-			String value = getDoubleQuotedContent(annotation);
+			String value = poshiScriptAnnotationMatcher.group("value");
+
+			if (value == null) {
+				simpleAnnotations.add(name);
+
+				continue;
+			}
 
 			addAttribute(name, value);
+		}
+
+		if (!simpleAnnotations.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+
+			for (String simpleAnnotation : simpleAnnotations) {
+				sb.append(simpleAnnotation);
+				sb.append(",");
+			}
+
+			if (sb.length() != 0) {
+				sb.setLength(sb.length() - 1);
+			}
+
+			addAttribute("annotations", sb.toString());
 		}
 
 		Matcher blockNameMatcher = _blockNamePattern.matcher(blockName);
@@ -99,17 +127,13 @@ public class CommandPoshiElement extends PoshiElement {
 
 	@Override
 	public String toPoshiScript() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("\n");
-
 		DescriptionPoshiElement descriptionPoshiElement =
 			(DescriptionPoshiElement)element("description");
 
-		if (descriptionPoshiElement != null) {
-			sb.append("\n\t");
+		List<String> annotations = new ArrayList<>();
 
-			sb.append(descriptionPoshiElement.toPoshiScript());
+		if (descriptionPoshiElement != null) {
+			annotations.add("\t" + descriptionPoshiElement.toPoshiScript());
 		}
 
 		for (PoshiElementAttribute poshiElementAttribute :
@@ -121,13 +145,45 @@ public class CommandPoshiElement extends PoshiElement {
 				continue;
 			}
 
-			sb.append("\n\t@");
-			sb.append(poshiElementAttribute.toPoshiScript());
+			if (name.equals("annotations")) {
+				String annotationsValue = poshiElementAttribute.getValue();
+
+				for (String annotation : annotationsValue.split(",")) {
+					annotations.add("\t@" + annotation);
+				}
+
+				continue;
+			}
+
+			annotations.add("\t@" + poshiElementAttribute.toPoshiScript());
 		}
 
-		sb.append(createPoshiScriptBlock(getPoshiNodes()));
+		Collections.sort(
+			annotations,
+			new Comparator<String>() {
 
-		return sb.toString();
+				@Override
+				public int compare(String annotation1, String annotation2) {
+					String annotationName1 = _getAnnotationName(annotation1);
+					String annotationName2 = _getAnnotationName(annotation2);
+
+					return annotationName1.compareTo(annotationName2);
+				}
+
+				private String _getAnnotationName(String annotation) {
+					return annotation.replaceFirst("(.+)( .+|)", "$1");
+				}
+
+			});
+
+		String annotationsString = ListUtil.toString(annotations, "\n");
+
+		if (annotationsString.length() > 0) {
+			return "\n\n" + annotationsString +
+				createPoshiScriptBlock(getPoshiNodes());
+		}
+
+		return "\n" + createPoshiScriptBlock(getPoshiNodes());
 	}
 
 	protected CommandPoshiElement() {

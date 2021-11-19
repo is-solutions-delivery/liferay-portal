@@ -169,7 +169,14 @@ public class CollectionConfig implements Serializable {
 
 			sb.append("\"collectionReference\": ");
 
-			sb.append(String.valueOf(collectionReference));
+			if (collectionReference instanceof String) {
+				sb.append("\"");
+				sb.append((String)collectionReference);
+				sb.append("\"");
+			}
+			else {
+				sb.append(collectionReference);
+			}
 		}
 
 		if (collectionType != null) {

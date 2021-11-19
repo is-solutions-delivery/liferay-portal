@@ -68,6 +68,14 @@ public interface AccountEntryService extends BaseService {
 			ServiceContext serviceContext)
 		throws PortalException;
 
+	public AccountEntry addOrUpdateAccountEntry(
+			String externalReferenceCode, long userId,
+			long parentAccountEntryId, String name, String description,
+			String[] domains, String emailAddress, byte[] logoBytes,
+			String taxIdNumber, String type, int status,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	public void deactivateAccountEntries(long[] accountEntryIds)
 		throws PortalException;
 

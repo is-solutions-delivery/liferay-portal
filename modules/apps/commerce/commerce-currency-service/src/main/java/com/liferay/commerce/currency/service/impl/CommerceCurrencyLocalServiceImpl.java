@@ -93,7 +93,7 @@ public class CommerceCurrencyLocalServiceImpl
 		if (formatPatternMap.isEmpty()) {
 			formatPatternMap.put(
 				user.getLocale(),
-				CommerceCurrencyConstants.DEFAULT_FORMAT_PATTERN);
+				CommerceCurrencyConstants.DECIMAL_FORMAT_PATTERN);
 		}
 
 		if (Validator.isNull(roundingMode)) {
@@ -269,7 +269,7 @@ public class CommerceCurrencyLocalServiceImpl
 					serviceContext.getLocale(),
 					StringBundler.concat(
 						symbol, StringPool.SPACE,
-						CommerceCurrencyConstants.DEFAULT_FORMAT_PATTERN)
+						CommerceCurrencyConstants.DECIMAL_FORMAT_PATTERN)
 				).build();
 
 				RoundingMode roundingMode =
@@ -345,7 +345,7 @@ public class CommerceCurrencyLocalServiceImpl
 		if (formatPatternMap.isEmpty()) {
 			formatPatternMap.put(
 				serviceContext.getLocale(),
-				CommerceCurrencyConstants.DEFAULT_FORMAT_PATTERN);
+				CommerceCurrencyConstants.DECIMAL_FORMAT_PATTERN);
 		}
 
 		if (Validator.isNull(roundingMode)) {

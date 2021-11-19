@@ -111,7 +111,7 @@ public class CommerceCurrenciesDisplayContext {
 	}
 
 	public String getDefaultFormatPattern() throws ConfigurationException {
-		return CommerceCurrencyConstants.DEFAULT_FORMAT_PATTERN;
+		return CommerceCurrencyConstants.DECIMAL_FORMAT_PATTERN;
 	}
 
 	public int getDefaultMaxFractionDigits() throws ConfigurationException {

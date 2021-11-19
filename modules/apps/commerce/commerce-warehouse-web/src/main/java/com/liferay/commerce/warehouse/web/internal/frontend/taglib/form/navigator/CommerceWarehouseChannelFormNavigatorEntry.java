@@ -75,7 +75,7 @@ public class CommerceWarehouseChannelFormNavigatorEntry
 
 	@Override
 	protected String getJspPath() {
-		return "/commerce_warehouse/channels.jsp";
+		return "/commerce_inventory_warehouse/channels.jsp";
 	}
 
 }

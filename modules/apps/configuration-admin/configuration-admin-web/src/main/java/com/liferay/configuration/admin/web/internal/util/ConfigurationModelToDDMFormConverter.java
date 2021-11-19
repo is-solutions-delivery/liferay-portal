@@ -284,6 +284,12 @@ public class ConfigurationModelToDDMFormConverter {
 
 			return DDMFormFieldType.RADIO;
 		}
+		else if (type == AttributeDefinition.INTEGER) {
+			return DDMFormFieldType.NUMERIC;
+		}
+		else if (type == AttributeDefinition.LONG) {
+			return DDMFormFieldType.NUMERIC;
+		}
 		else if (type == AttributeDefinition.PASSWORD) {
 			return DDMFormFieldType.PASSWORD;
 		}

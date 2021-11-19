@@ -836,6 +836,26 @@ public class CommerceOrderItemLocalServiceImpl
 
 	@Override
 	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
+			long userId, long commerceOrderItemId, BigDecimal decimalQuantity,
+			BigDecimal unitPrice)
+		throws PortalException {
+
+		CommerceOrderItem commerceOrderItem =
+			commerceOrderItemPersistence.findByPrimaryKey(commerceOrderItemId);
+
+		_updateBookedQuantity(
+			userId, commerceOrderItem, commerceOrderItem.getBookedQuantityId(),
+			decimalQuantity.intValue(), commerceOrderItem.getQuantity());
+
+		commerceOrderItem.setDecimalQuantity(decimalQuantity);
+		commerceOrderItem.setManuallyAdjusted(true);
+		commerceOrderItem.setUnitPrice(unitPrice);
+
+		return commerceOrderItemPersistence.update(commerceOrderItem);
+	}
+
+	@Override
+	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
 			long userId, long commerceOrderItemId, int quantity,
 			BigDecimal unitPrice)
 		throws PortalException {

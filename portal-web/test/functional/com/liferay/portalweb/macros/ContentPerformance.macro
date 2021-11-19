@@ -1,5 +1,24 @@
 definition {
 
+	macro onlyConectWithAnalyticsCloud {
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings");
+
+		Click(locator1 = "AnalyticsCloudConnection#ANALYTICS_CLOUD_DXP_BUTTON");
+
+		Click(locator1 = "AnalyticsCloudConnection#DXP_TOKEN_INPUT");
+
+		Paste(locator1 = "AnalyticsCloudConnection#DXP_TOKEN_INPUT");
+
+		Click(locator1 = "AnalyticsCloudConnection#CONNECT_ANALYTICS_CLOUD_BUTTON");
+
+		AssertTextEquals(
+			locator1 = "AnalyticsCloudConnection#ANALYTICS_CLOUD_CONNECTED_CONFIRMATION_MESSAGE",
+			value1 = "Your DXP instance is connected to Analytics Cloud.");
+	}
+
 	macro openContentPerformance {
 		Click(locator1 = "ContentPerformance#CONTENT_PERFORMANCE_BUTTON");
 	}

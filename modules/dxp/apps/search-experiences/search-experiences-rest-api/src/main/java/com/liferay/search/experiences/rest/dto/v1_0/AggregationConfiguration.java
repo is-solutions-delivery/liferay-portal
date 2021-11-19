@@ -120,7 +120,14 @@ public class AggregationConfiguration implements Serializable {
 
 			sb.append("\"aggs\": ");
 
-			sb.append(String.valueOf(aggs));
+			if (aggs instanceof String) {
+				sb.append("\"");
+				sb.append((String)aggs);
+				sb.append("\"");
+			}
+			else {
+				sb.append(aggs);
+			}
 		}
 
 		sb.append("}");

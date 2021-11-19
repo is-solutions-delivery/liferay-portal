@@ -127,7 +127,14 @@ public class PageCollectionItemDefinition implements Serializable {
 
 			sb.append("\"collectionItemConfig\": ");
 
-			sb.append(String.valueOf(collectionItemConfig));
+			if (collectionItemConfig instanceof String) {
+				sb.append("\"");
+				sb.append((String)collectionItemConfig);
+				sb.append("\"");
+			}
+			else {
+				sb.append(collectionItemConfig);
+			}
 		}
 
 		sb.append("}");

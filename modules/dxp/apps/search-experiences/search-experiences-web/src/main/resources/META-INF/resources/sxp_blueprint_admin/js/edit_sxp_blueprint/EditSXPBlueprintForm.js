@@ -28,6 +28,7 @@ import {
 	cleanUIConfigurationJSON,
 	getSXPElementOutput,
 	getUIConfigurationValues,
+	isDefined,
 } from '../utils/utils';
 import {
 	validateBoost,
@@ -52,14 +53,13 @@ const TABS = {
 
 function EditSXPBlueprintForm({
 	entityJSON,
-	indexFields,
 	initialConfiguration = {},
 	initialDescription = {},
 	initialSXPElementInstances = {},
 	initialTitle = {},
 	sxpBlueprintId,
 }) {
-	const {namespace, redirectURL} = useContext(ThemeContext);
+	const {defaultLocale, namespace, redirectURL} = useContext(ThemeContext);
 
 	const [errors, setErrors] = useState([]);
 	const [previewInfo, setPreviewInfo] = useState(() => ({
@@ -166,14 +166,18 @@ function EditSXPBlueprintForm({
 			// TODO: Update this once a validation REST endpoint is decided
 
 			if (!showSubmitWarningModal) {
+				const validateErrors = {errors: []};
+
+				/*
 				const validateErrors = await fetch(
 					'/o/search-experiences-rest/v1.0/sxp-blueprints/validate',
 					{
 						body: JSON.stringify({
-							configuration,
-							description: _getFormInput('description'),
+							description_i18n: {
+								[defaultLocale]: _getFormInput('description'),
+							},
 							elementInstances,
-							title: _getFormInput('title'),
+							title_i18n: {[defaultLocale]: _getFormInput('title')},
 						}),
 						headers: new Headers({
 							'Content-Type': 'application/json',
@@ -181,6 +185,7 @@ function EditSXPBlueprintForm({
 						method: 'POST',
 					}
 				).then((response) => response.json());
+			*/
 
 				if (validateErrors.errors?.length) {
 					setErrors(validateErrors.errors);
@@ -195,9 +200,11 @@ function EditSXPBlueprintForm({
 				{
 					body: JSON.stringify({
 						configuration,
-						description: _getFormInput('description'),
+						description_i18n: {
+							[defaultLocale]: _getFormInput('description'),
+						},
 						elementInstances,
-						title: _getFormInput('title'),
+						title_i18n: {[defaultLocale]: _getFormInput('title')},
 					}),
 					headers: new Headers({
 						'Content-Type': 'application/json',
@@ -250,7 +257,10 @@ function EditSXPBlueprintForm({
 				},
 				index
 			) => {
-				if (!sxpElementTemplateJSON.enabled) {
+				if (
+					isDefined(sxpElementTemplateJSON.enabled) &&
+					!sxpElementTemplateJSON.enabled
+				) {
 					return;
 				}
 
@@ -429,7 +439,7 @@ function EditSXPBlueprintForm({
 		});
 	};
 
-	const _handleFetchPreviewSearch = (value, delta, page, attributes) => {
+	const _handleFetchPreviewSearch = (value, delta, page /* attributes*/) => {
 		setPreviewInfo((previewInfo) => ({
 			...previewInfo,
 			loading: true,
@@ -479,9 +489,13 @@ function EditSXPBlueprintForm({
 			{
 				body: JSON.stringify({
 					configuration,
-					previewAttributes: attributes.filter(
-						(attribute) => attribute.key
-					),
+
+					// TO DO: Enable when preview attributes available
+
+					// previewAttributes: attributes.filter(
+					// 	(attribute) => attribute.key
+					// ),
+
 				}),
 				headers: new Headers({
 					'Content-Type': 'application/json',
@@ -618,7 +632,6 @@ function EditSXPBlueprintForm({
 								entityJSON={entityJSON}
 								errors={formik.errors.selectedQuerySXPElements}
 								frameworkConfig={formik.values.frameworkConfig}
-								indexFields={indexFields}
 								isSubmitting={
 									formik.isSubmitting || previewInfo.loading
 								}
@@ -710,7 +723,6 @@ function EditSXPBlueprintForm({
 
 EditSXPBlueprintForm.propTypes = {
 	entityJSON: PropTypes.object,
-	indexFields: PropTypes.arrayOf(PropTypes.object),
 	initialConfiguration: PropTypes.object,
 	initialDescription: PropTypes.object,
 	initialSXPElementInstances: PropTypes.object,

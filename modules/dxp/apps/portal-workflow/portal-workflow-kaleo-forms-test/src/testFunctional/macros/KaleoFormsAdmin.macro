@@ -83,6 +83,14 @@ definition {
 		PortletEntry.inputTitle(title = "${workflowDefinitionTitle}");
 	}
 
+	macro assertPaginationBarNotPresent {
+		AssertElementNotPresent(locator1 = "Pagination#PAGINATION_BAR");
+	}
+
+	macro assertPaginationBarPresent {
+		AssertElementPresent(locator1 = "Pagination#PAGINATION_BAR");
+	}
+
 	macro assignForm {
 		KaleoFormsAdmin.viewNewProcessProgressBar(
 			kfProgressName = "Forms",
@@ -123,6 +131,12 @@ definition {
 		AssertClick(
 			locator1 = "Button#CANCEL",
 			value1 = "Cancel");
+	}
+
+	macro checkboxesInProcessTable {
+		Check(
+			key_checkboxOption = "${checkProcessName}",
+			locator1 = "Checkbox#SPECIFIC_CHECKBOX_IN_TABLE");
 	}
 
 	macro chooseFieldSet {
@@ -300,9 +314,7 @@ definition {
 		AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
 
 		if (IsElementNotPresent(locator1 = "Icon#BODY_VERTICAL_ELLIPSIS")) {
-			AssertTextEquals(
-				locator1 = "Message#EMPTY_INFO",
-				value1 = "No processes were found.");
+			KaleoFormsAdmin.noProcessesWereFound();
 		}
 		else {
 			AssertTextNotPresent(
@@ -323,6 +335,14 @@ definition {
 		Alert.viewSuccessMessage();
 
 		KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "${kfProcessFieldData}");
+	}
+
+	macro deleteViaDeleteIcon {
+		ClickNoError(locator1 = "Icon#DELETE");
+
+		AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
+
+		Alert.viewSuccessMessage();
 	}
 
 	macro deleteWorkflowDraft {
@@ -485,6 +505,12 @@ definition {
 			value1 = "Next");
 	}
 
+	macro noProcessesWereFound. {
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_INFO",
+			value1 = "No processes were found.");
+	}
+
 	macro populateFieldDate {
 		var key_fieldName = "${fieldName}";
 
@@ -626,9 +652,7 @@ definition {
 			KaleoFormsAdmin.deleteProcess();
 		}
 
-		AssertTextEquals(
-			locator1 = "Message#EMPTY_INFO",
-			value1 = "No processes were found.");
+		KaleoFormsAdmin.noProcessesWereFound();
 	}
 
 	macro unassignForm {
@@ -647,6 +671,16 @@ definition {
 		SelectFrame(value1 = "relative=top");
 
 		Click(locator1 = "Icon#CLOSE");
+	}
+
+	macro viewExportRecords {
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Export",
+			rowEntry = "${kfProcessName}");
+
+		AssertElementPresent(locator1 = "KaleoFormsAdminViewProcessRecords#EXPORT_TABLE_MODAL");
+
+		AssertElementPresent(locator1 = "KaleoFormsAdminViewProcessRecords#EXPORT_DIALOG_BOX_FILE_EXTENSION_SELECT");
 	}
 
 	macro viewFieldRequired {
@@ -803,6 +837,22 @@ definition {
 		AssertVisible(locator1 = "KaleoFormsAdmin#KALEO_WORKFLOW_UNPUBLISHED_EMPTY_MESSAGE");
 	}
 
+	macro viewPermissionsAndAssertModal {
+		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Permissions");
+
+		AssertElementPresent(
+			key_title = "Permissions",
+			locator1 = "Header#H3_TITLE");
+
+		AssertElementPresent(locator1 = "WorkflowDefinition#DEFINITION_TABLE_TITLE_PERMISSIONS");
+
+		IFrame.selectPermissionsFrame();
+
+		PortletEntry.save();
+
+		Alert.viewSuccessMessage();
+	}
+
 	macro viewPreviousFieldSetPage {
 		Click(locator1 = "Pagination#FIRST_LINK");
 	}
@@ -817,6 +867,13 @@ definition {
 		var key_rowEntry = "${kfProcessName}";
 
 		AssertElementPresent(locator1 = "Icon#ROW_VERTICAL_ELLIPSIS");
+	}
+
+	macro viewProcessByPosition {
+		AssertElementPresent(
+			key_order = "${order}",
+			key_title = "${title}",
+			locator1 = "AssetWorkflow#DETAILS_WORKFLOW_TITLE_ORDER");
 	}
 
 	macro viewProcessDetails {
@@ -1006,6 +1063,14 @@ definition {
 			AssertTextEquals(
 				locator1 = "KaleoFormsAdminEditProcess#SELECTED_WORKFLOW",
 				value1 = "${workflowDefinitionTitle}");
+		}
+	}
+
+	macro viewTableDisplaysColumns {
+		for (var tableHeader : list "ID,Name,Description,Modified Date") {
+			AssertElementPresent(
+				key_tableHeader = "${tableHeader}",
+				locator1 = "LexiconTable#TABLE_HEADER");
 		}
 	}
 

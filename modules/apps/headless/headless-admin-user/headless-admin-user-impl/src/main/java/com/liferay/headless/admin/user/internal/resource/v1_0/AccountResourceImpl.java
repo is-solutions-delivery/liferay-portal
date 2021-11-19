@@ -17,8 +17,8 @@ package com.liferay.headless.admin.user.internal.resource.v1_0;
 import com.liferay.account.constants.AccountActionKeys;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
-import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
+import com.liferay.account.service.AccountEntryService;
 import com.liferay.headless.admin.user.dto.v1_0.Account;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.AccountResourceDTOConverter;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.OrganizationResourceDTOConverter;
@@ -73,7 +73,7 @@ public class AccountResourceImpl
 
 	@Override
 	public void deleteAccount(Long accountId) throws Exception {
-		_accountEntryLocalService.deleteAccountEntry(accountId);
+		_accountEntryService.deleteAccountEntry(accountId);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class AccountResourceImpl
 
 	@Override
 	public Account getAccount(Long accountId) throws Exception {
-		return _toAccount(_accountEntryLocalService.getAccountEntry(accountId));
+		return _toAccount(_accountEntryService.getAccountEntry(accountId));
 	}
 
 	@Override
@@ -164,7 +164,7 @@ public class AccountResourceImpl
 					document.get(Field.ENTRY_CLASS_PK));
 
 				return _toAccount(
-					_accountEntryLocalService.getAccountEntry(accountEntryId));
+					_accountEntryService.getAccountEntry(accountEntryId));
 			});
 	}
 
@@ -225,7 +225,7 @@ public class AccountResourceImpl
 
 	@Override
 	public Account postAccount(Account account) throws Exception {
-		AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(
+		AccountEntry accountEntry = _accountEntryService.addAccountEntry(
 			contextUser.getUserId(), _getParentAccountId(account),
 			account.getName(), account.getDescription(), _getDomains(account),
 			null, null, null, _getType(account), _getStatus(account), null);
@@ -268,7 +268,7 @@ public class AccountResourceImpl
 				accountId, _getOrganizationIds(account));
 
 		return _toAccount(
-			_accountEntryLocalService.updateAccountEntry(
+			_accountEntryService.updateAccountEntry(
 				accountId, _getParentAccountId(account), account.getName(),
 				account.getDescription(), false, _getDomains(account), null,
 				null, null, _getStatus(account), null));
@@ -280,7 +280,7 @@ public class AccountResourceImpl
 		throws Exception {
 
 		return _toAccount(
-			_accountEntryLocalService.addOrUpdateAccountEntry(
+			_accountEntryService.addOrUpdateAccountEntry(
 				externalReferenceCode, contextUser.getUserId(),
 				_getParentAccountId(account), account.getName(),
 				account.getDescription(), _getDomains(account), null, null,
@@ -399,7 +399,7 @@ public class AccountResourceImpl
 				contextCompany.getCompanyId()),
 			sorts,
 			document -> _toAccount(
-				_accountEntryLocalService.getAccountEntry(
+				_accountEntryService.getAccountEntry(
 					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))));
 	}
 
@@ -442,9 +442,6 @@ public class AccountResourceImpl
 			_getDTOConverterContext(accountEntry.getAccountEntryId()));
 	}
 
-	@Reference
-	private AccountEntryLocalService _accountEntryLocalService;
-
 	@Reference(
 		target = "(model.class.name=com.liferay.account.model.AccountEntry)"
 	)
@@ -454,6 +451,9 @@ public class AccountResourceImpl
 	@Reference
 	private AccountEntryOrganizationRelLocalService
 		_accountEntryOrganizationRelLocalService;
+
+	@Reference
+	private AccountEntryService _accountEntryService;
 
 	@Reference
 	private AccountResourceDTOConverter _accountResourceDTOConverter;

@@ -515,15 +515,6 @@ definition {
 			fieldType = "String");
 	}
 
-	@description = "LPS-135402 - Verify it is possible to create a One to Many Relationship with itself"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CanCreateSelfOneToManyRelationship {
-
-		// TODO LPS-141655 CanCreateSelfOneToManyRelationship pending implementation
-
-	}
-
 	@description = "LPS-135549 - Verify it is possible to create a String field"
 	@priority = "5"
 	test CanCreateStringField {
@@ -634,15 +625,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "Message#EMPTY_INFO",
 			value1 = "No items were found.");
-	}
-
-	@description = "LPS-135649 - Verify it is possible to distinguish between Custom Object entries on My Workflow Tasks"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CanDistinguishBetweenObjectEntriesOnMyWorkflowTasks {
-
-		// TODO LPS-141634 CanDistinguishBetweenObjectEntriesOnMyWorkflowTasks pending implementation
-
 	}
 
 	@description = "LPS-135390 - Verify it is not possible to view and access the Object Admin portlet without the Access in Control Panel permission"
@@ -1424,15 +1406,6 @@ definition {
 
 	}
 
-	@description = "LPS-135400 - It is possible to search for an entry on the Relationship field"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CanSearchEntryOnRelationshipField {
-
-		// TODO LPS-141651 CanSearchEntryOnRelationshipField pending implementation
-
-	}
-
 	@description = "LPS-135547 - Verify it is possible to search for a Custom Object"
 	@ignore = "Test Stub"
 	@priority = "4"
@@ -1475,24 +1448,6 @@ definition {
 	test CanSearchObjectEntryTitleOnRelationshipField {
 
 		// TODO LPS-141618 CanSearchObjectEntryTitleOnRelationshipField pending implementation
-
-	}
-
-	@description = "LPS-135402 - Verify that it is possible to relate to another entry on the Relationship field for a self-referencing relation"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CanSelfRelateAnotherEntryOnRelationshipField {
-
-		// TODO LPS-141656 CanSelfRelateAnotherEntryOnRelationshipField pending implementation
-
-	}
-
-	@description = "LPS-135402 - Verify that it is possible to relate to another entry on the Relationship tab for a self-referencing relation"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CanSelfRelateAnotherEntryOnRelationshipTab {
-
-		// TODO LPS-141657 CanSelfRelateAnotherEntryOnRelationshipTab pending implementation
 
 	}
 
@@ -2358,15 +2313,6 @@ definition {
 
 	}
 
-	@description = "LPS-139803 - Verify if the Object Entry Title is displayed on a Display Page"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CanViewObjectEntryTitleOnDisplayPage {
-
-		// TODO LPS-141622 CanViewObjectEntryTitleOnDisplayPage pending implementation
-
-	}
-
 	@description = "LPS-139803 - Verify it the Object Entry Title is displayed on the Item Selector of a fragment on a Display Page"
 	@ignore = "Test Stub"
 	@priority = "4"
@@ -2529,24 +2475,6 @@ definition {
 
 	}
 
-	@description = "LPS-135401 - Verify if Cascade deletion type of Relationship One to Many (self-reference) will allow the child entry with relation to be teleted but not its relation"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CascadeDeletionSelfOneToManyWillAllowDeleteChild {
-
-		// TODO LPS-141674 CascadeDeletionSelfOneToManyWillAllowDeleteChild pending implementation
-
-	}
-
-	@description = "LPS-135401 - Verify if Cascade deletion type of Relationship One to Many (self-reference) will allow the parent entry with relation and its relations to be deleted"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test CascadeDeletionSelfOneToManyWillAllowDeleteParent {
-
-		// TODO LPS-141673 CascadeDeletionSelfOneToManyWillAllowDeleteParent pending implementation
-
-	}
-
 	@description = "LPS-135401 - Verify that when adding an entry that was already related to another it will keep related to both entries"
 	@ignore = "Test Stub"
 	@priority = "4"
@@ -2628,24 +2556,6 @@ definition {
 
 	}
 
-	@description = "LPS-135401 - Verify if Disassociate deletion type of Relationship One to Many (self-reference) will allow the child entry with relation to be deleted and its relation to be disassociated"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test DisassociateDeletionSelfOneToManyWillAllowDeleteChild {
-
-		// TODO LPS-141679 DisassociateDeletionSelfOneToManyWillAllowDeleteChild pending implementation
-
-	}
-
-	@description = "LPS-135401 - Verify if Disassociate deletion type of Relationship One to Many (self-reference) will allow the parent entry with relation to be deleted and its relations to be disassociated"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test DisassociateDeletionSelfOneToManyWillAllowDeleteParent {
-
-		// TODO LPS-141678 DisassociateDeletionSelfOneToManyWillAllowDeleteParent pending implementation
-
-	}
-
 	@description = "LPS-135547 - Verify the empty state when searching for an Object returns nothing"
 	@ignore = "Test Stub"
 	@priority = "3"
@@ -2681,16 +2591,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "Message#EMPTY_INFO",
 			value1 = "No items were found.");
-	}
-
-	@description = "LPS-135400 - Entries are listed when clicking on the Relationship field"
-	@ignore = "Test Stub"
-	@priority = "5"
-	test EntriesListedOnRelationshipField {
-		property portal.acceptance = "true";
-
-		// TODO LPS-141650 EntriesListedOnRelationshipField pending implementation
-
 	}
 
 	@description = "LPS-135549 - Verify that the Field Name is autofilled when Label is filled"
@@ -3294,16 +3194,6 @@ definition {
 
 	}
 
-	@description = "LPS-135551 - Verify that the Object's plural label is displayed on the chosen panel"
-	@ignore = "Test Stub"
-	@priority = "5"
-	test ObjectLabelDisplayedOnPanel {
-		property portal.acceptance = "true";
-
-		// TODO LPS-141647 ObjectLabelDisplayedOnPanel pending implementation
-
-	}
-
 	@description = "LPS-139603 - Verify that the Object Label is displayed on the Relationship tab when a Relationship is created"
 	@ignore = "Test Stub"
 	@priority = "4"
@@ -3724,24 +3614,6 @@ definition {
 		property portal.acceptance = "true";
 
 		// TODO LPS-141666 PreventDeletionOneToManyWontAllowDelete pending implementation
-
-	}
-
-	@description = "LPS-135401 - Verify if Prevent deletion type of Relationship One to Many (self-reference) will allow the user to delete a child entry with relation"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test PreventDeletionSelfOneToManyWillAllowDelete {
-
-		// TODO LPS-141669 PreventDeletionSelfOneToManyWillAllowDelete pending implementation
-
-	}
-
-	@description = "LPS-135401 - Verify if Prevent deletion type of Relationship One to Many (self-reference) won't allow the user to delete a parent entry with relation"
-	@ignore = "Test Stub"
-	@priority = "4"
-	test PreventDeletionSelfOneToManyWontAllowDelete {
-
-		// TODO LPS-141668 PreventDeletionSelfOneToManyWontAllowDelete pending implementation
 
 	}
 

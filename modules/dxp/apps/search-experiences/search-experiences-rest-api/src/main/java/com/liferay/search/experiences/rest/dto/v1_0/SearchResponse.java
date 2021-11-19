@@ -423,7 +423,14 @@ public class SearchResponse implements Serializable {
 
 			sb.append("\"request\": ");
 
-			sb.append(String.valueOf(request));
+			if (request instanceof String) {
+				sb.append("\"");
+				sb.append((String)request);
+				sb.append("\"");
+			}
+			else {
+				sb.append(request);
+			}
 		}
 
 		if (requestString != null) {
@@ -447,7 +454,14 @@ public class SearchResponse implements Serializable {
 
 			sb.append("\"response\": ");
 
-			sb.append(String.valueOf(response));
+			if (response instanceof String) {
+				sb.append("\"");
+				sb.append((String)response);
+				sb.append("\"");
+			}
+			else {
+				sb.append(response);
+			}
 		}
 
 		if (responseString != null) {

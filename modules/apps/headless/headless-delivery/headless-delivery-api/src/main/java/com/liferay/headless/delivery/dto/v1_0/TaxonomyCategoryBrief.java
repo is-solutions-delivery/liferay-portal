@@ -221,7 +221,14 @@ public class TaxonomyCategoryBrief implements Serializable {
 
 			sb.append("\"embeddedTaxonomyCategory\": ");
 
-			sb.append(String.valueOf(embeddedTaxonomyCategory));
+			if (embeddedTaxonomyCategory instanceof String) {
+				sb.append("\"");
+				sb.append((String)embeddedTaxonomyCategory);
+				sb.append("\"");
+			}
+			else {
+				sb.append(embeddedTaxonomyCategory);
+			}
 		}
 
 		if (taxonomyCategoryId != null) {

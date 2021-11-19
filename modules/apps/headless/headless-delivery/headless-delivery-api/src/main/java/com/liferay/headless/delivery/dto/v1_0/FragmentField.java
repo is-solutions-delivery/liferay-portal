@@ -162,7 +162,14 @@ public class FragmentField implements Serializable {
 
 			sb.append("\"value\": ");
 
-			sb.append(String.valueOf(value));
+			if (value instanceof String) {
+				sb.append("\"");
+				sb.append((String)value);
+				sb.append("\"");
+			}
+			else {
+				sb.append(value);
+			}
 		}
 
 		sb.append("}");

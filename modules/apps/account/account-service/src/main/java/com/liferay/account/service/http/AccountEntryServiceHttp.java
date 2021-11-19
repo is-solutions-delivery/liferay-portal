@@ -172,6 +172,53 @@ public class AccountEntryServiceHttp {
 		}
 	}
 
+	public static com.liferay.account.model.AccountEntry
+			addOrUpdateAccountEntry(
+				HttpPrincipal httpPrincipal, String externalReferenceCode,
+				long userId, long parentAccountEntryId, String name,
+				String description, String[] domains, String emailAddress,
+				byte[] logoBytes, String taxIdNumber, String type, int status,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				AccountEntryServiceUtil.class, "addOrUpdateAccountEntry",
+				_addOrUpdateAccountEntryParameterTypes3);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, externalReferenceCode, userId, parentAccountEntryId,
+				name, description, domains, emailAddress, logoBytes,
+				taxIdNumber, type, status, serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				if (exception instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						exception;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (com.liferay.account.model.AccountEntry)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
 	public static void deactivateAccountEntries(
 			HttpPrincipal httpPrincipal, long[] accountEntryIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -179,7 +226,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "deactivateAccountEntries",
-				_deactivateAccountEntriesParameterTypes3);
+				_deactivateAccountEntriesParameterTypes4);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryIds);
@@ -215,7 +262,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "deactivateAccountEntry",
-				_deactivateAccountEntryParameterTypes4);
+				_deactivateAccountEntryParameterTypes5);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryId);
@@ -255,7 +302,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "deleteAccountEntries",
-				_deleteAccountEntriesParameterTypes5);
+				_deleteAccountEntriesParameterTypes6);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryIds);
@@ -291,7 +338,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "deleteAccountEntry",
-				_deleteAccountEntryParameterTypes6);
+				_deleteAccountEntryParameterTypes7);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryId);
@@ -327,7 +374,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "fetchAccountEntry",
-				_fetchAccountEntryParameterTypes7);
+				_fetchAccountEntryParameterTypes8);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryId);
@@ -371,7 +418,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "getAccountEntries",
-				_getAccountEntriesParameterTypes8);
+				_getAccountEntriesParameterTypes9);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, companyId, status, start, end, orderByComparator);
@@ -412,7 +459,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "getAccountEntry",
-				_getAccountEntryParameterTypes9);
+				_getAccountEntryParameterTypes10);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryId);
@@ -455,7 +502,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "searchAccountEntries",
-				_searchAccountEntriesParameterTypes10);
+				_searchAccountEntriesParameterTypes11);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, keywords, params, cur, delta, orderByField, reverse);
@@ -497,7 +544,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "updateAccountEntry",
-				_updateAccountEntryParameterTypes11);
+				_updateAccountEntryParameterTypes12);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntry);
@@ -541,7 +588,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "updateAccountEntry",
-				_updateAccountEntryParameterTypes12);
+				_updateAccountEntryParameterTypes13);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryId, parentAccountEntryId, name,
@@ -585,7 +632,7 @@ public class AccountEntryServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				AccountEntryServiceUtil.class, "updateExternalReferenceCode",
-				_updateExternalReferenceCodeParameterTypes13);
+				_updateExternalReferenceCodeParameterTypes14);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, accountEntryId, externalReferenceCode);
@@ -631,38 +678,45 @@ public class AccountEntryServiceHttp {
 			String.class, byte[].class, String.class, String.class, int.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _deactivateAccountEntriesParameterTypes3 =
+	private static final Class<?>[] _addOrUpdateAccountEntryParameterTypes3 =
+		new Class[] {
+			String.class, long.class, long.class, String.class, String.class,
+			String[].class, String.class, byte[].class, String.class,
+			String.class, int.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _deactivateAccountEntriesParameterTypes4 =
 		new Class[] {long[].class};
-	private static final Class<?>[] _deactivateAccountEntryParameterTypes4 =
+	private static final Class<?>[] _deactivateAccountEntryParameterTypes5 =
 		new Class[] {long.class};
-	private static final Class<?>[] _deleteAccountEntriesParameterTypes5 =
+	private static final Class<?>[] _deleteAccountEntriesParameterTypes6 =
 		new Class[] {long[].class};
-	private static final Class<?>[] _deleteAccountEntryParameterTypes6 =
+	private static final Class<?>[] _deleteAccountEntryParameterTypes7 =
 		new Class[] {long.class};
-	private static final Class<?>[] _fetchAccountEntryParameterTypes7 =
+	private static final Class<?>[] _fetchAccountEntryParameterTypes8 =
 		new Class[] {long.class};
-	private static final Class<?>[] _getAccountEntriesParameterTypes8 =
+	private static final Class<?>[] _getAccountEntriesParameterTypes9 =
 		new Class[] {
 			long.class, int.class, int.class, int.class,
 			com.liferay.portal.kernel.util.OrderByComparator.class
 		};
-	private static final Class<?>[] _getAccountEntryParameterTypes9 =
+	private static final Class<?>[] _getAccountEntryParameterTypes10 =
 		new Class[] {long.class};
-	private static final Class<?>[] _searchAccountEntriesParameterTypes10 =
+	private static final Class<?>[] _searchAccountEntriesParameterTypes11 =
 		new Class[] {
 			String.class, java.util.LinkedHashMap.class, int.class, int.class,
 			String.class, boolean.class
 		};
-	private static final Class<?>[] _updateAccountEntryParameterTypes11 =
-		new Class[] {com.liferay.account.model.AccountEntry.class};
 	private static final Class<?>[] _updateAccountEntryParameterTypes12 =
+		new Class[] {com.liferay.account.model.AccountEntry.class};
+	private static final Class<?>[] _updateAccountEntryParameterTypes13 =
 		new Class[] {
 			long.class, long.class, String.class, String.class, boolean.class,
 			String[].class, String.class, byte[].class, String.class, int.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[]
-		_updateExternalReferenceCodeParameterTypes13 = new Class[] {
+		_updateExternalReferenceCodeParameterTypes14 = new Class[] {
 			long.class, String.class
 		};
 

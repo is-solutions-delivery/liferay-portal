@@ -105,7 +105,7 @@ public class CommercePriceFormatterImpl implements CommercePriceFormatter {
 	protected DecimalFormat getDecimalFormat(
 		CommerceCurrency commerceCurrency, Locale locale) {
 
-		String formatPattern = CommerceCurrencyConstants.DEFAULT_FORMAT_PATTERN;
+		String formatPattern = CommerceCurrencyConstants.DECIMAL_FORMAT_PATTERN;
 		int maxFractionDigits =
 			_roundingTypeConfiguration.maximumFractionDigits();
 		int minFractionDigits =

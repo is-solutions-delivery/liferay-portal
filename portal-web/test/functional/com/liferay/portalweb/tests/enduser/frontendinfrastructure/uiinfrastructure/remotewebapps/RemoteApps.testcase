@@ -79,4 +79,41 @@ definition {
 			entryType = "${customElementType}");
 	}
 
+	@description = "Verify that remote app type IFrame can display property fields"
+	@priority = "4"
+	test IframeTypeCanDisplayProperFields {
+		property portal.acceptance = "true";
+
+		var customElementType = "Custom Element";
+		var IFrameType = "IFrame";
+
+		RemoteApps.goToRemoteAppsPortlet();
+
+		LexiconEntry.gotoAdd();
+
+		Select(
+			locator1 = "Select#TYPE",
+			value1 = "${IFrameType}");
+
+		AssertNotVisible(
+			key_text = "HTML Element Name",
+			locator1 = "TextInput#ANY");
+
+		AssertNotVisible(
+			key_text = "CSS URL",
+			locator1 = "TextInput#ANY");
+
+		Select(
+			locator1 = "Select#TYPE",
+			value1 = "${customElementType}");
+
+		AssertVisible(
+			key_text = "HTML Element Name",
+			locator1 = "TextInput#ANY");
+
+		AssertVisible(
+			key_text = "CSS URL",
+			locator1 = "TextInput#ANY");
+	}
+
 }

@@ -19,6 +19,9 @@ package com.liferay.site.navigation.menu.item.display.page.internal.constants;
  */
 public class SiteNavigationMenuItemTypeDisplayPageWebKeys {
 
+	public static final String DISPLAY_PAGE_TYPE_CONTEXT =
+		"DISPLAY_PAGE_TYPE_CONTEXT";
+
 	public static final String INFO_ITEM_SERVICE_TRACKER =
 		"INFO_ITEM_SERVICE_TRACKER";
 

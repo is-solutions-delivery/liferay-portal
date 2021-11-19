@@ -3,7 +3,7 @@
 	<property name="portal.upstream" value="true" />
 	<property name="testray.main.component.name" value="Smoke" />
 
-	<!-- This is a comment -->
+	<!-- This is a comment-->
 
 	<!--This is a multiline
 		comment.-->
@@ -23,15 +23,52 @@
 		</execute>
 	</tear-down>
 
+	<command annotations="simple-annotation" name="AddBlogsEntries" priority="4">
+		<description message="Ensure that a user can add multiple Blogs Entries." />
+
+		<property name="testray.component.names" value="Blogs" />
+		<property name="testray.main.component.name" value="Blogs" />
+
+		<task summary="Add a blogs entry called 'Blogs Entry1 Title' with content 'Blogs Entry1 Content'">
+			<execute macro="Navigator#openURL" />
+
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Content" />
+				<var name="panel" value="Site Administration" />
+				<var name="portlet" value="Blogs" />
+			</execute>
+
+			<execute macro="Blogs#addEntry">
+				<var name="entryContent" value="Blogs Entry1 Content" />
+				<var name="entryTitle" value="Blogs Entry1 Title" />
+			</execute>
+		</task>
+
+		<task summary="Add a blogs entry called 'Blogs Entry2 Title' with content 'Blogs Entry2 Content'">
+			<execute macro="Navigator#openURL" />
+
+			<execute macro="ProductMenu#gotoPortlet">
+				<var name="category" value="Content" />
+				<var name="panel" value="Site Administration" />
+				<var name="portlet" value="Blogs" />
+			</execute>
+
+			<execute macro="Blogs#addEntry">
+				<var name="entryContent" value="Blogs Entry2 Content" />
+				<var name="entryTitle" value="Blogs Entry2 Title" />
+			</execute>
+		</task>
+	</command>
+
 	<command name="AddUser" priority="5">
-		<!-- This is a comment -->
+		<!-- This is a comment-->
 
 		<!--This is a multiline
 			comment.-->
 
-		<!-- End with a ; -->
+		<!-- End with a ;-->
 
-		<!-- End with a } -->
+		<!-- End with a }-->
 
 		<property name="portal.release" value="false" />
 
@@ -73,7 +110,7 @@
 
 					<echo message="Please enter a unique ID." />
 
-					<!-- This is a comment -->
+					<!-- This is a comment-->
 				</then>
 				<elseif>
 					<isset var="duplicate" />
@@ -84,11 +121,11 @@
 				<else>
 					<execute macro="Alert#viewSuccessMessage" />
 
-					<!-- This is a comment -->
+					<!-- This is a comment-->
 				</else>
 			</if>
 
-			<!-- This is a comment -->
+			<!-- This is a comment-->
 		</for>
 
 		<for list="Breadcrumb: 1, Breadcrumb: 2" param="breadcrumbName">
@@ -102,6 +139,22 @@
 			<var name="userScreenName" value="${userScreenName}" />
 			<var name="userScreenName" value="" />
 		</execute>
+	</command>
+
+	<command ignore="true" name="GotoLinkToPageChildPages">
+		<var name="key_pageName" value="${parentPage}" />
+
+		<if>
+			<not>
+				<or>
+					<equals arg1="true" arg2="true"/>
+					<equals arg1="true" arg2="false"/>
+				</or>
+			</not>
+			<then>
+				<fail message="Allowed values are 'true' or 'false'."/>
+			</then>
+		</if>
 	</command>
 
 	<command name="Smoke" priority="5">
@@ -316,58 +369,5 @@
 			<arg value="one,two,three" />
 			<arg value="," />
 		</execute>
-	</command>
-
-	<command name="AddBlogsEntries" priority="4">
-		<description message="Ensure that a user can add multiple Blogs Entries." />
-
-		<property name="testray.component.names" value="Blogs" />
-		<property name="testray.main.component.name" value="Blogs" />
-
-		<task summary="Add a blogs entry called 'Blogs Entry1 Title' with content 'Blogs Entry1 Content'">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoPortlet">
-				<var name="category" value="Content" />
-				<var name="panel" value="Site Administration" />
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="Blogs#addEntry">
-				<var name="entryContent" value="Blogs Entry1 Content" />
-				<var name="entryTitle" value="Blogs Entry1 Title" />
-			</execute>
-		</task>
-
-		<task summary="Add a blogs entry called 'Blogs Entry2 Title' with content 'Blogs Entry2 Content'">
-			<execute macro="Navigator#openURL" />
-
-			<execute macro="ProductMenu#gotoPortlet">
-				<var name="category" value="Content" />
-				<var name="panel" value="Site Administration" />
-				<var name="portlet" value="Blogs" />
-			</execute>
-
-			<execute macro="Blogs#addEntry">
-				<var name="entryContent" value="Blogs Entry2 Content" />
-				<var name="entryTitle" value="Blogs Entry2 Title" />
-			</execute>
-		</task>
-	</command>
-
-	<command ignore="true" name="GotoLinkToPageChildPages">
-		<var name="key_pageName" value="${parentPage}" />
-
-		<if>
-			<not>
-				<or>
-					<equals arg1="true" arg2="true"/>
-					<equals arg1="true" arg2="false"/>
-				</or>
-			</not>
-			<then>
-				<fail message="Allowed values are 'true' or 'false'."/>
-			</then>
-		</if>
 	</command>
 </definition>

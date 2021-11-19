@@ -169,7 +169,14 @@ public class FragmentLinkValue implements Serializable {
 
 			sb.append("\"href\": ");
 
-			sb.append(String.valueOf(href));
+			if (href instanceof String) {
+				sb.append("\"");
+				sb.append((String)href);
+				sb.append("\"");
+			}
+			else {
+				sb.append(href);
+			}
 		}
 
 		if (target != null) {
