@@ -14,8 +14,7 @@ import {AVAILABLE_STEPS} from '~/routes/get-a-quote/utils/constants';
 const getSelectedProductName = () => {
 	try {
 		return JSON.parse(Storage.getItem(STORAGE_KEYS.PRODUCT))?.productName;
-	}
-	catch (error) {
+	} catch (error) {
 		return '';
 	}
 };
@@ -97,6 +96,7 @@ export function FormBasicProductQuote({form}) {
 			</div>
 
 			<CardFormActionsWithSave
+				form={form}
 				isValid={!!form.basics.productQuote}
 				onNext={onNext}
 				onPrevious={onPrevious}

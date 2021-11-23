@@ -118,6 +118,7 @@ export function FormBasicBusinessInformation({form}) {
 			</div>
 
 			<CardFormActionsWithSave
+				form={form}
 				isValid={isValid}
 				onNext={onNext}
 				onPrevious={onPrevious}

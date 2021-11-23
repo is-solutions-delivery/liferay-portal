@@ -1,10 +1,13 @@
 import ClayIcon from '@clayui/icon';
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormContext} from 'react-hook-form';
+import ProgressSaved from '~/routes/get-a-quote/components/containers/Forms/Modal/ProgressSaved';
+import {hasEmail} from '~/routes/get-a-quote/utils/form';
 
 import {WarningBadge} from '../Badges/Warning';
 
 export function CardFormActionsWithSave({
+	form,
 	isValid = true,
 	onNext,
 	onPrevious,
@@ -13,6 +16,12 @@ export function CardFormActionsWithSave({
 	const {
 		formState: {errors},
 	} = useFormContext();
+
+	const [show, setShow] = useState(false);
+
+	const handleClose = () => {
+		setShow(!show);
+	};
 
 	return (
 		<>
@@ -34,7 +43,10 @@ export function CardFormActionsWithSave({
 					{onSave && (
 						<button
 							className="btn btn-outline"
-							onClick={onSave}
+							disabled={!hasEmail(form)}
+							onClick={() => {
+								setShow(!show);
+							}}
 							type="button"
 						>
 							Save & Exit
@@ -53,6 +65,12 @@ export function CardFormActionsWithSave({
 						</button>
 					)}
 				</div>
+
+				<ProgressSaved
+					handleClose={handleClose}
+					onSave={onSave}
+					show={show}
+				/>
 			</div>
 		</>
 	);

@@ -2,7 +2,7 @@ import ClayIcon from '@clayui/icon';
 
 import Modal from '~/common/components/modal';
 
-const ProgressSaved = ({handleClose, show}) => {
+const ProgressSaved = ({handleClose, onSave, show}) => {
 	return (
 		<Modal
 			footer={
@@ -11,7 +11,7 @@ const ProgressSaved = ({handleClose, show}) => {
 						Continue Quote
 					</button>
 
-					<button className="btn btn-primary">
+					<button className="btn btn-primary" onClick={onSave}>
 						Send Link &amp; Exit
 					</button>
 				</div>

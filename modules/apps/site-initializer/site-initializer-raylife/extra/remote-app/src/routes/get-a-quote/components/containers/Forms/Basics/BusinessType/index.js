@@ -49,6 +49,7 @@ export function FormBasicBusinessType({form}) {
 			</div>
 
 			<CardFormActionsWithSave
+				form={form}
 				isValid={!!form?.basics?.businessCategoryId}
 				onNext={goToNextForm}
 				onPrevious={goToPreviousPage}

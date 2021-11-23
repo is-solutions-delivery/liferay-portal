@@ -188,6 +188,7 @@ export function FormProperty({form}) {
 			</div>
 
 			<CardFormActionsWithSave
+				form={form}
 				isValid={isValid}
 				onNext={onNext}
 				onPrevious={onPrevious}

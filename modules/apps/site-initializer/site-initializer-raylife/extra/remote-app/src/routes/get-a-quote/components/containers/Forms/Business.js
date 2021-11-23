@@ -155,6 +155,7 @@ export function FormBusiness({form}) {
 			</div>
 
 			<CardFormActionsWithSave
+				form={form}
 				isValid={isValid}
 				onNext={onNext}
 				onPrevious={onPrevious}

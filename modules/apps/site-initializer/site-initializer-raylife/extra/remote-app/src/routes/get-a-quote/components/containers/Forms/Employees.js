@@ -151,6 +151,7 @@ export function FormEmployees({form}) {
 			</div>
 
 			<CardFormActionsWithSave
+				form={form}
 				isValid={isValid}
 				onNext={onNext}
 				onPrevious={onPrevious}

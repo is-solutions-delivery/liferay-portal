@@ -44,7 +44,7 @@
 .progress-saved-footer {
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: space-between !important;
 	align-items: center;
 	margin: 0 8px 0 24px;
 }
