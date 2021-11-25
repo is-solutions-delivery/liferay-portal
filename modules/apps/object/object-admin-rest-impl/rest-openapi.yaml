@@ -724,16 +724,16 @@ paths:
         get:
             operationId: getObjectDefinitionObjectRelationshipsPage
             parameters:
-                - in: query
-                  name: filter
-                  schema:
-                      type: string
                 - in: path
                   name: objectDefinitionId
                   required: true
                   schema:
                       format: int64
                       type: integer
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
                 - in: query
                   name: page
                   schema:
