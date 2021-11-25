@@ -724,6 +724,10 @@ paths:
         get:
             operationId: getObjectDefinitionObjectRelationshipsPage
             parameters:
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
                 - in: path
                   name: objectDefinitionId
                   required: true
