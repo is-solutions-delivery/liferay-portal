@@ -1,0 +1,71 @@
+[#assign infoListDisplayObject = (request.getAttribute("INFO_LIST_DISPLAY_OBJECT"))! /]
+[#assign objectEntryId = 0 /]
+
+[#if infoListDisplayObject?has_content]
+    [#assign objectEntryId = infoListDisplayObject.getObjectEntryId() /]
+[/#if]
+
+<div class="kanban-list-body">
+    <div data-objectid="${objectEntryId}" class="card card-task">
+        <div class="progress">
+            <div
+                    class="progress-bar bg-success"
+                    role="progressbar"
+                    style="width: 0%"
+                    aria-valuenow="10"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+            >
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="project-head">
+                <h5 onclick="getLink()">
+                    <lfr-editable id="task-title" type="rich-text">
+                        Task title not mapped
+                    </lfr-editable>
+
+                </h5>
+                <div class="dropdown card-options">
+                    <button
+                            class="btn-options"
+                            type="button"
+                            id="project-dropdown-button"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                    >
+
+                        [@liferay_ui.icon icon="ellipsis-v" markupView="lexicon" /]
+
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" style="">
+                        <a class="dropdown-item" id="view" href="#">View Task</a>
+                        <a class="dropdown-item" id="status-todo" href="#">Mark ToDo</a>
+                        <a class="dropdown-item" id="status-inprogress" href="#">Mark as In Progress</a>
+                        <a class="dropdown-item" id="status-done" href="#">Mark Done</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-10">
+                    <div class="project-details">
+                        <lfr-editable id="task-description" type="rich-text">
+                            <p>Task description not mapped</p>
+                        </lfr-editable>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <span class="progress-value">
+                        <lfr-editable id="task-progress" type="text">
+                            0
+                        </lfr-editable>
+                    </span>
+                    <span>%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

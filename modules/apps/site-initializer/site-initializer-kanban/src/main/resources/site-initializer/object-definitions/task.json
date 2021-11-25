@@ -1,0 +1,55 @@
+{
+	"label": {
+		"en_US": "Task"
+	},
+	"name": "Task",
+	"objectFields": [
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Task Title"
+			},
+			"name": "taskTitle",
+			"required": true,
+			"type": "String"
+		},
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Task Description"
+			},
+			"name": "taskDescription",
+			"required": true,
+			"type": "String"
+		},
+		{
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Task Status$]",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Task Status"
+			},
+			"name": "taskStatus",
+			"type": "String"
+		},
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Progress"
+			},
+			"name": "progress",
+			"required": true,
+			"type": "Integer"
+		}
+		
+	],
+	"panelAppOrder": "100",
+	"panelCategoryKey": "site_administration.content",
+	"pluralLabel": {
+		"en_US": "Tasks"
+	},
+	"scope": "site"
+}

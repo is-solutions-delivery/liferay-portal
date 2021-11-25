@@ -1,0 +1,24 @@
+.kanban-list-body .project-head {
+    display: flex;
+    margin-bottom: 1.25rem;
+    align-items: start;
+      flex-direction:row;
+}
+
+.kanban-list-body .card-body .card-options {
+    position: absolute;
+    top: 1.5rem;
+    right: 0.75rem;
+}
+
+.kanban-list-body .card-body {
+    min-height: 130px;
+}
+
+.kanban-list-body span{
+    display:inline-block;
+}
+
+.kanban-list-body .progress{
+    cursor:pointer;
+}

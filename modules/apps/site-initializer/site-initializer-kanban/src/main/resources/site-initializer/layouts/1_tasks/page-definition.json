@@ -1,0 +1,528 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"layout": {
+						"borderWidth": 0,
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"fragment": {
+								"key": "BASIC_COMPONENT-button"
+							},
+							"fragmentConfig": {
+								"buttonType": "primary",
+								"buttonSize": "nm"
+							},
+							"fragmentFields": [
+								{
+									"id": "link",
+									"value": {
+										"fragmentLink": {
+											"value": {
+												"href": {
+													"value": "{\"en_US\":\"/add-task\"}"
+												}
+											},
+											"value_i18n": {
+											}
+										}
+									}
+								}
+							],
+							"fragmentStyle": {
+								"marginTop": "2",
+								"textAlign": "right"
+							}
+						},
+						"type": "Fragment"
+					}
+				],
+				"type": "Section"
+			},
+			{
+				"definition": {
+					"fragmentStyle": {
+						"marginBottom": "4",
+						"marginTop": "2"
+					},
+					"layout": {
+						"borderWidth": 0,
+						"marginBottom": 2,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"fragmentStyle": {
+								"marginBottom": "5",
+								"marginTop": "2",
+								"overflow": "visible"
+							},
+							"gutters": true,
+							"modulesPerRow": 3,
+							"numberOfColumns": 3,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "BASIC_COMPONENT-heading"
+											},
+											"fragmentConfig": {
+												"headingLevel": "h1"
+											},
+											"fragmentFields": [
+												{
+													"id": "element-text",
+													"value": {
+														"fragmentLink": {
+															"value_i18n": {}
+														},
+														"text": {
+															"value_i18n": {
+																"en_US": "Todos"
+															}
+														}
+													}
+												}
+											],
+											"fragmentStyle": {
+												"marginBottom": "1"
+											}
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"collectionConfig": {
+												"collectionReference": {
+													"className": "com.liferay.object.internal.info.collection.provider.ObjectEntrySingleFormVariationInfoCollectionProvider_C_Task"
+												},
+												"collectionType": "CollectionProvider"
+											},
+											"listItemStyle": "",
+											"listStyle": "",
+											"numberOfColumns": 1,
+											"numberOfItems": 5,
+											"numberOfItemsPerPage": 5,
+											"templateKey": ""
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"collectionItemConfig": {}
+												},
+												"pageElements": [
+													{
+														"definition": {
+															"fragment": {
+																"key": "project-panel-card"
+															},
+															"fragmentConfig": {},
+															"fragmentFields": [
+																{
+																	"id": "task-description",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "taskDescription",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "task-title",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "taskTitle",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "task-progress",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "progress",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																}
+															]
+														},
+														"type": "Fragment"
+													}
+												],
+												"type": "CollectionItem"
+											}
+										],
+										"type": "Collection"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "BASIC_COMPONENT-heading"
+											},
+											"fragmentConfig": {
+												"headingLevel": "h1"
+											},
+											"fragmentFields": [
+												{
+													"id": "element-text",
+													"value": {
+														"fragmentLink": {
+															"value_i18n": {}
+														},
+														"text": {
+															"value_i18n": {
+																"en_US": "In Progress"
+															}
+														}
+													}
+												}
+											],
+											"fragmentStyle": {
+												"marginBottom": "1"
+											}
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"collectionConfig": {
+												"collectionReference": {
+													"className": "com.liferay.object.internal.info.collection.provider.ObjectEntrySingleFormVariationInfoCollectionProvider_C_Task"
+												},
+												"collectionType": "CollectionProvider"
+											},
+											"listItemStyle": "",
+											"listStyle": "",
+											"numberOfColumns": 1,
+											"numberOfItems": 5,
+											"numberOfItemsPerPage": 5,
+											"templateKey": ""
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"collectionItemConfig": {}
+												},
+												"pageElements": [
+													{
+														"definition": {
+															"fragment": {
+																"key": "project-panel-card"
+															},
+															"fragmentConfig": {},
+															"fragmentFields": [
+																{
+																	"id": "task-description",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "taskDescription",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "task-title",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "taskTitle",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "task-progress",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "progress",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																}
+															]
+														},
+														"type": "Fragment"
+													}
+												],
+												"type": "CollectionItem"
+											}
+										],
+										"type": "Collection"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "BASIC_COMPONENT-heading"
+											},
+											"fragmentConfig": {
+												"headingLevel": "h1"
+											},
+											"fragmentFields": [
+												{
+													"id": "element-text",
+													"value": {
+														"fragmentLink": {
+															"value_i18n": {}
+														},
+														"text": {
+															"value_i18n": {
+																"en_US": "Done"
+															}
+														}
+													}
+												}
+											],
+											"fragmentStyle": {
+												"marginBottom": "1"
+											}
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"collectionConfig": {
+												"collectionReference": {
+													"className": "com.liferay.object.internal.info.collection.provider.ObjectEntrySingleFormVariationInfoCollectionProvider_C_Task"
+												},
+												"collectionType": "CollectionProvider"
+											},
+											"listItemStyle": "",
+											"listStyle": "",
+											"numberOfColumns": 1,
+											"numberOfItems": 5,
+											"numberOfItemsPerPage": 5,
+											"templateKey": ""
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"collectionItemConfig": {}
+												},
+												"pageElements": [
+													{
+														"definition": {
+															"fragment": {
+																"key": "project-panel-card"
+															},
+															"fragmentConfig": {},
+															"fragmentFields": [
+																{
+																	"id": "task-description",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "taskDescription",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "task-title",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "taskTitle",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "task-progress",
+																	"value": {
+																		"fragmentLink": {
+																			"value_i18n": {}
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "progress",
+																				"itemReference": {
+																					"contextSource": "CollectionItem"
+																				}
+																			}
+																		}
+																	}
+																}
+															]
+														},
+														"type": "Fragment"
+													}
+												],
+												"type": "CollectionItem"
+											}
+										],
+										"type": "Collection"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "private"
+		}
+	}
+}

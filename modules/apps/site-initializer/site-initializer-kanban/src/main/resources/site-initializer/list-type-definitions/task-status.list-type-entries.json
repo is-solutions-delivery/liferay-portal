@@ -1,0 +1,26 @@
+[
+	{
+		"key": "done",
+		"name": "Done",
+		"name_i18n": {
+			"en-US": "Done"
+		},
+		"type": "string"
+	},
+	{
+		"key": "inprogress",
+		"name": "InProgress",
+		"name_i18n": {
+			"en-US": "In Progress"
+		},
+		"type": "string"
+	},
+	{
+		"key": "todo",
+		"name": "ToDo",
+		"name_i18n": {
+			"en-US": "To Do"
+		},
+		"type": "string"
+	}
+]
