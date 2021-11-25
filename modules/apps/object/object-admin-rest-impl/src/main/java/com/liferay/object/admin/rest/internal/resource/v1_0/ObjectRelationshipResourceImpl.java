@@ -19,13 +19,18 @@ import com.liferay.object.admin.rest.dto.v1_0.ObjectRelationship;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectRelationshipService;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.vulcan.fields.NestedField;
 import com.liferay.portal.vulcan.fields.NestedFieldSupport;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+import com.liferay.portal.vulcan.util.SearchUtil;
+
+import java.util.Collections;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -56,15 +61,27 @@ public class ObjectRelationshipResourceImpl
 	)
 	@Override
 	public Page<ObjectRelationship> getObjectDefinitionObjectRelationshipsPage(
-			Long objectDefinitionId, Pagination pagination)
+			Long objectDefinitionId, String search, Pagination pagination)
 		throws Exception {
 
-		return Page.of(
-			transform(
-				_objectRelationshipService.getObjectRelationships(
-					objectDefinitionId, pagination.getStartPosition(),
-					pagination.getEndPosition()),
-				this::_toObjectRelationship));
+		return SearchUtil.search(
+			Collections.emptyMap(),
+			booleanQuery -> {
+			},
+			null, com.liferay.object.model.ObjectRelationship.class.getName(),
+			search, pagination,
+			queryConfig -> queryConfig.setSelectedFieldNames(
+				Field.ENTRY_CLASS_PK),
+			searchContext -> {
+				searchContext.setAttribute(Field.NAME, search);
+				searchContext.setAttribute(
+					"objectDefinitionId", objectDefinitionId);
+				searchContext.setCompanyId(contextCompany.getCompanyId());
+			},
+			null,
+			document -> _toObjectRelationship(
+				_objectRelationshipService.getObjectRelationship(
+					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))));
 	}
 
 	@Override
