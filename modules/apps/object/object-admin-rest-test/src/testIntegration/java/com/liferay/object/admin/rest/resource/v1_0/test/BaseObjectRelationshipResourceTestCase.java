@@ -207,7 +207,7 @@ public abstract class BaseObjectRelationshipResourceTestCase {
 		Page<ObjectRelationship> page =
 			objectRelationshipResource.
 				getObjectDefinitionObjectRelationshipsPage(
-					objectDefinitionId, Pagination.of(1, 10));
+					objectDefinitionId, null, Pagination.of(1, 10));
 
 		Assert.assertEquals(0, page.getTotalCount());
 
@@ -220,7 +220,8 @@ public abstract class BaseObjectRelationshipResourceTestCase {
 			page =
 				objectRelationshipResource.
 					getObjectDefinitionObjectRelationshipsPage(
-						irrelevantObjectDefinitionId, Pagination.of(1, 2));
+						irrelevantObjectDefinitionId, null,
+						Pagination.of(1, 2));
 
 			Assert.assertEquals(1, page.getTotalCount());
 
@@ -241,7 +242,7 @@ public abstract class BaseObjectRelationshipResourceTestCase {
 		page =
 			objectRelationshipResource.
 				getObjectDefinitionObjectRelationshipsPage(
-					objectDefinitionId, Pagination.of(1, 10));
+					objectDefinitionId, null, Pagination.of(1, 10));
 
 		Assert.assertEquals(2, page.getTotalCount());
 
@@ -279,7 +280,7 @@ public abstract class BaseObjectRelationshipResourceTestCase {
 		Page<ObjectRelationship> page1 =
 			objectRelationshipResource.
 				getObjectDefinitionObjectRelationshipsPage(
-					objectDefinitionId, Pagination.of(1, 2));
+					objectDefinitionId, null, Pagination.of(1, 2));
 
 		List<ObjectRelationship> objectRelationships1 =
 			(List<ObjectRelationship>)page1.getItems();
@@ -290,7 +291,7 @@ public abstract class BaseObjectRelationshipResourceTestCase {
 		Page<ObjectRelationship> page2 =
 			objectRelationshipResource.
 				getObjectDefinitionObjectRelationshipsPage(
-					objectDefinitionId, Pagination.of(2, 2));
+					objectDefinitionId, null, Pagination.of(2, 2));
 
 		Assert.assertEquals(3, page2.getTotalCount());
 
@@ -303,7 +304,7 @@ public abstract class BaseObjectRelationshipResourceTestCase {
 		Page<ObjectRelationship> page3 =
 			objectRelationshipResource.
 				getObjectDefinitionObjectRelationshipsPage(
-					objectDefinitionId, Pagination.of(1, 3));
+					objectDefinitionId, null, Pagination.of(1, 3));
 
 		assertEqualsIgnoringOrder(
 			Arrays.asList(
