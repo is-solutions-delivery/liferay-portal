@@ -361,7 +361,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addListTypeDefinitions(serviceContext));
 
 			Map<String, String> objectDefinitionsIdsStringUtilReplaceValues =
-				_invoke(() -> _addObjectDefinitions(serviceContext));
+				_invoke(() -> _addObjectDefinitions(listTypeDefinitionsStringUtilReplaceValues,serviceContext));
 
 			_invoke(
 				() -> _addObjectRelationships(
@@ -1625,7 +1625,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private Map<String, String> _addObjectDefinitions(
+	private Map<String, String> _addObjectDefinitions( Map<String, String> listTypeDefinitionsStringUtilReplaceValues,
 			ServiceContext serviceContext)
 		throws Exception {
 
@@ -1760,37 +1760,24 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Page<ObjectRelationship> objectRelationshipsPage =
 				objectRelationshipResource.
 					getObjectDefinitionObjectRelationshipsPage(
-						objectRelationship1.getObjectDefinitionId1(),
-						Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
+						objectRelationship1.getObjectDefinitionId1(),null, objectRelationshipResource.toFilter(
+							StringBundler.concat(
+								"name eq '", objectRelationship1.getName(), "'")) ,null);
 
-			List<ObjectRelationship> objectRelationshipsList =
-				(List<ObjectRelationship>)objectRelationshipsPage.getItems();
+			ObjectRelationship existingRelationships =
+				objectRelationshipsPage.fetchFirstItem();
 
-			ObjectRelationship existingObjectRelationshipDefinition = null;
 
-			for (ObjectRelationship objectRelationship2 :
-					objectRelationshipsList) {
-
-				if (StringUtil.equals(
-						objectRelationship1.getName(),
-						objectRelationship2.getName())) {
-
-					existingObjectRelationshipDefinition = objectRelationship2;
-
-					break;
-				}
-			}
-
-			if (existingObjectRelationshipDefinition != null) {
-				objectRelationshipResource.putObjectRelationship(
-					existingObjectRelationshipDefinition.getId(),
-					objectRelationship1);
-			}
-			else {
+			if (existingRelationships == null) {
 				objectRelationshipResource.
 					postObjectDefinitionObjectRelationship(
 						objectRelationship1.getObjectDefinitionId1(),
 						objectRelationship1);
+			}
+			else {
+				objectRelationshipResource.putObjectRelationship(
+					existingRelationships.getId(),
+					objectRelationship1);
 			}
 		}
 	}
