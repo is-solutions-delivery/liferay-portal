@@ -86,3 +86,28 @@ export const addAccountFlag = gql`
 		}
 	}
 `;
+export const getAccountSubscriptions = gql`
+	query accountSubscriptionGroups($accountSubscriptionGroupERC: String) {
+		c {
+			accountSubscriptions(filter: $accountSubscriptionGroupERC) {
+				items {
+					name
+					accountSubscriptionGroupERC
+				}
+			}
+		}
+	}
+`;
+
+export const getAccountSubscriptionsTerms = gql`
+	query accountSubscriptionTerms($accountSubscriptionERC: String) {
+		c {
+			accountSubscriptionTerms(filter: $accountSubscriptionERC) {
+				items {
+					startDate
+					endDate
+				}
+			}
+		}
+	}
+`;
