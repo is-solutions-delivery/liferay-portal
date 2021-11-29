@@ -1227,6 +1227,32 @@ public class Mutation {
 				callbackURL, object));
 	}
 
+	@GraphQLField
+	public UserGroup updateUserGroup(
+			@GraphQLName("userGroupId") Long userGroupId,
+			@GraphQLName("userGroup") UserGroup userGroup)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_userGroupResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			userGroupResource -> userGroupResource.putUserGroup(
+				userGroupId, userGroup));
+	}
+
+	@GraphQLField
+	public Response updateUserGroupBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_userGroupResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			userGroupResource -> userGroupResource.putUserGroupBatch(
+				callbackURL, object));
+	}
+
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R
 			_applyComponentServiceObjects(
 				ComponentServiceObjects<T> componentServiceObjects,

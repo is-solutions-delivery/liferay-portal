@@ -318,6 +318,30 @@ public abstract class BaseUserGroupResourceTestCase {
 				"Object/code"));
 	}
 
+	@Test
+	public void testPutUserGroup() throws Exception {
+		UserGroup postUserGroup = testPutUserGroup_addUserGroup();
+
+		UserGroup randomUserGroup = randomUserGroup();
+
+		UserGroup putUserGroup = userGroupResource.putUserGroup(
+			postUserGroup.getId(), randomUserGroup);
+
+		assertEquals(randomUserGroup, putUserGroup);
+		assertValid(putUserGroup);
+
+		UserGroup getUserGroup = userGroupResource.getUserGroup(
+			putUserGroup.getId());
+
+		assertEquals(randomUserGroup, getUserGroup);
+		assertValid(getUserGroup);
+	}
+
+	protected UserGroup testPutUserGroup_addUserGroup() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
 	protected UserGroup testGraphQLUserGroup_addUserGroup() throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
