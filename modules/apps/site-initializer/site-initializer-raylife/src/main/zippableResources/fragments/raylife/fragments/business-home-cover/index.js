@@ -68,19 +68,25 @@ continueQuoteButton.onclick = async function () {
 	);
 
 	if (!email) {
-		errorFeedback.innerText = `Type an email address to retrieve a quote.`;
+		errorFeedback.innerText = 'Type an email address to retrieve a quote.';
+
+		return emailContainer.classList.add('has-error');
+	}
+
+	if (!new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g).test(email)) {
+		errorFeedback.innerText = 'Please enter a valid email address';
 
 		return emailContainer.classList.add('has-error');
 	}
 
 	const raylifeApplicationResponse = await fetchHeadless(
-		`o/c/raylifeapplications/scopes/${scopeGroupId}?filter=contains(email, '${email}')`
+		`o/c/raylifeapplications/scopes/${scopeGroupId}?filter=email eq '${email}'`
 	);
 
 	if (!raylifeApplicationResponse.items.length) {
 		errorFeedback.innerHTML = `We're unable to find a quote associated with this address. Please try again or <u>Start a New Quote</u>.`;
 
-		return;
+		return emailContainer.classList.add('has-error');
 	}
 
 	const raylifeApplication = raylifeApplicationResponse.items[0];
