@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 export const getUserAccount = gql`
 	query getUserAccount($id: Long!) {
@@ -74,16 +74,39 @@ export const getAccountRolesAndAccountFlags = gql`
 `;
 
 export const addAccountFlag = gql`
-	mutation addAccountFlag($accountFlag: InputC_AccountFlag!){
-  		c {
-			createAccountFlag(
-				AccountFlag: $accountFlag
-			){
+	mutation addAccountFlag($accountFlag: InputC_AccountFlag!) {
+		c {
+			createAccountFlag(AccountFlag: $accountFlag) {
 				accountFlagId
 				accountKey
 				name
 				userUuid
 				value
+			}
+		}
+	}
+`;
+export const getAccountSubscriptions = gql`
+	query accountSubscriptionGroups($accountSubscriptionGroupERC: String) {
+		c {
+			accountSubscriptions(filter: $accountSubscriptionGroupERC) {
+				items {
+					name
+					accountSubscriptionGroupERC
+				}
+			}
+		}
+	}
+`;
+
+export const getAccountSubscriptionsTerms = gql`
+	query accountSubscriptionTerms($accountSubscriptionERC: String) {
+		c {
+			accountSubscriptionTerms(filter: $accountSubscriptionERC) {
+				items {
+					startDate
+					endDate
+				}
 			}
 		}
 	}
