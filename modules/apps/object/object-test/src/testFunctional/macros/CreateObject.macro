@@ -18,10 +18,22 @@ definition {
 		AssertElementPresent(locator1 = "CreateObject#DISABLED_OBJECT_NAME");
 	}
 
+	macro assertFieldAddedOnBlock {
+		AssertElementPresent(
+			key_fieldLabelName = "${fieldLabelName}",
+			locator1 = "CreateObject#FIELD_ADDED_ON_BLOCK");
+	}
+
 	macro assertFieldName {
 		AssertTextEquals(
 			locator1 = "CreateObject#FIELD_NAME",
 			value1 = "${fieldName}");
+	}
+
+	macro assertFieldNotPresentInBlock {
+		AssertElementNotPresent(
+			key_fieldLabelName = "${fieldLabelName}",
+			locator1 = "CreateObject#FIELD_ADDED_ON_BLOCK");
 	}
 
 	macro assertFieldType {
@@ -66,6 +78,10 @@ definition {
 			locator1 = "CreateObject#PANEL_CATEGORY_KEY_SELECTED");
 	}
 
+	macro assertToggleCollapsibleChecked {
+		AssertChecked.assertCheckedNotVisible(locator1 = "CreateObject#TOGGLE_COLLAPSIBLE");
+	}
+
 	macro assertToggleMandatory {
 		AssertChecked.assertCheckedNotVisible(locator1 = "ObjectAdmin#OBJECT_FIELDS_MANDATORY_TOGGLE_SWITCH");
 	}
@@ -74,12 +90,22 @@ definition {
 		Check.checkToggleSwitch(locator1 = "CreateObject#TOGGLE_ACTIVE");
 	}
 
+	macro checkToggleCollapsible {
+		Check.checkToggleSwitch(locator1 = "CreateObject#TOGGLE_COLLAPSIBLE");
+	}
+
 	macro checkToggleInactive {
 		Uncheck.uncheckToggleSwitch(locator1 = "CreateObject#TOGGLE_INACTIVE");
 	}
 
 	macro checkToggleMandatory {
 		Check.checkToggleSwitch(locator1 = "CreateObject#TOGGLE_MANDATORY");
+	}
+
+	macro deleteFieldOnBlock {
+		Click(locator1 = "CreateObject#KEBAB_MENU_BLOCK_FIELD");
+
+		Click(locator1 = "CreateObject#KEBAB_MENU_BLOCK_FIELD_OPTION_DELETE");
 	}
 
 	macro editLabel {

@@ -480,6 +480,11 @@ public abstract class BaseSXPBlueprintResourceTestCase {
 			"This method needs to be implemented");
 	}
 
+	@Test
+	public void testGetSXPBlueprintExport() throws Exception {
+		Assert.assertTrue(false);
+	}
+
 	protected SXPBlueprint testGraphQLSXPBlueprint_addSXPBlueprint()
 		throws Exception {
 

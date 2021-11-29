@@ -404,21 +404,22 @@ definition {
 
 		WebContent.viewTitle(webContentTitle = "Web Content Title");
 
-		Navigator.gotoSitePage(
-			pageName = "Staging Test Page",
-			siteName = "Site Name");
+		Staging.openStagingAdmin(siteURLKey = "site-name");
 
-		var dateRangeEndDate = '''1/2''';
+		Staging.addCustomPublication();
 
-		var dateRangeStartDate = '''1/1''';
+		Staging.configurePublishToLive(
+			contentDateRange = "Date Range",
+			dateRangeEndDate = '''10/12/2019''',
+			dateRangeStartDate = '''10/11/2019''');
 
-		Staging.setContentDateRange(
-			dateRangeEndDate = "${dateRangeEndDate}",
-			dateRangeStartDate = "${dateRangeStartDate}");
+		Staging.viewDateRange(
+			dateRangeEndDate = '''10/12/2019''',
+			dateRangeStartDate = '''10/11/2019''');
 
-		var key_contentName = "Web Content";
-
-		AssertElementNotPresent(locator1 = "PagesConfiguration#CONTENT_CHOOSE_CONTENT_CONTENT_CHECKBOX");
+		AssertElementNotPresent(
+			key_contentName = "Web Content",
+			locator1 = "PagesConfiguration#CONTENT_CHOOSE_CONTENT_CONTENT_CHECKBOX");
 
 		Navigator.gotoSitePage(
 			pageName = "Staging Test Page",

@@ -17,6 +17,7 @@ package com.liferay.source.formatter.checks;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.checks.util.JSPSourceUtil;
 
 import java.util.regex.Matcher;
@@ -31,7 +32,7 @@ public class JSPStylingCheck extends BaseStylingCheck {
 	protected String doProcess(
 		String fileName, String absolutePath, String content) {
 
-		content = _combineJavaSourceBlocks(content);
+		content = _combineJavaSourceBlocks(fileName, content);
 
 		content = _formatLineBreak(fileName, content);
 
@@ -78,7 +79,54 @@ public class JSPStylingCheck extends BaseStylingCheck {
 		return formatStyling(content);
 	}
 
-	private String _combineJavaSourceBlocks(String content) {
+	private String _combineJavaSourceBlocks(String fileName, String content) {
+		int x = -1;
+
+		while (true) {
+			x = content.indexOf("<%!", x + 1);
+
+			if ((x == -1) || !ToolsUtil.isInsideQuotes(content, x)) {
+				break;
+			}
+		}
+
+		int y = x;
+
+		while (true) {
+			y = content.indexOf("<%\n", y + 1);
+
+			if ((y == -1) || !ToolsUtil.isInsideQuotes(content, y)) {
+				break;
+			}
+		}
+
+		if ((x != -1) && (y != -1) && (x < y)) {
+			addMessage(
+				fileName, "'<%!...%>' block should come after <%...%> blcok",
+				getLineNumber(content, x));
+		}
+
+		y = x;
+
+		while (true) {
+			y = content.indexOf("<%!", y + 1);
+
+			if (y == -1) {
+				break;
+			}
+
+			if (!ToolsUtil.isInsideQuotes(content, y)) {
+				addMessage(
+					fileName,
+					StringBundler.concat(
+						"Combine <%!...%> blocks at line '",
+						getLineNumber(content, x), "' and ",
+						getLineNumber(content, y)));
+
+				return content;
+			}
+		}
+
 		Matcher matcher = _adjacentJavaBlocksPattern.matcher(content);
 
 		if (matcher.find()) {

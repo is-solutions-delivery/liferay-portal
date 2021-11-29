@@ -22,71 +22,9 @@ definition {
 		}
 	}
 
-	@description = "This ensures that translate side by side shows the latest values after editing the web content article."
+	@description = "This ensures that the translator can select which target language she wants to translate into numeric fields."
 	@priority = "5"
-	@refactorneeded
-	test EditWCAfterSideBySideTranslation {
-		JSONWebcontent.addWebContent(
-			content = "WC WebContent Content",
-			groupName = "Guest",
-			title = "WC WebContent Title");
-
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
-
-		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
-
-		Translations.changeTargetLocale(
-			currentTargetLocale = "ar-SA",
-			newTargetLocale = "es-ES");
-
-		Translations.viewBaseFields(
-			webContentContent = "WC WebContent Content",
-			webContentTitle = "WC WebContent Title");
-
-		Translations.translateFields(
-			webContentContent = "WC WebContent Contenido",
-			webContentDescription = "WC WebContent Descripción",
-			webContentTitle = "WC WebContent Título");
-
-		PortletEntry.publish();
-
-		Translations.openTranslationAdmin(siteURLKey = "guest");
-
-		Translations.viewTranslationEntry(
-			language = "es-ES",
-			status = "Approved",
-			title = "Translation of WC WebContent Title to es-ES");
-
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
-
-		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
-
-		PortletEntry.changeLocale(locale = "es-ES");
-
-		WebContent.addCP(
-			webContentContent = "WC WebContent Contenido editar",
-			webContentTitle = "WC WebContent Título editar");
-
-		PortletEntry.publish();
-
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
-
-		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
-
-		Translations.changeTargetLocale(
-			currentTargetLocale = "ar-SA",
-			newTargetLocale = "es-ES");
-
-		Translations.viewTargetFields(
-			webContentContent = "WC WebContent Contenido editar",
-			webContentDescription = "WC WebContent Descripción",
-			webContentTitle = "WC WebContent Título editar");
-	}
-
-	@description = "This ensures that the translator can select which target language she wants to translate."
-	@priority = "5"
-	@refactorneeded
-	test TranslateCustomizedWC {
+	test CanTranslateCustomizedWCWithNumericFields {
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		NavItem.gotoStructures();
@@ -95,12 +33,9 @@ definition {
 			structureDescription = "WC Structure Description",
 			structureName = "WC Structure Name");
 
-		DataEngine.addFields(fieldNameList = "Numeric,Rich Text,Text");
-
 		DataEngine.addField(
-			fieldFieldLabel = "Text Box",
-			fieldName = "Text",
-			fieldType = "Multiple Lines");
+			fieldFieldLabel = "Numeric",
+			fieldName = "Numeric");
 
 		DataEngine.addField(
 			fieldFieldLabel = "Decimal",
@@ -128,19 +63,196 @@ definition {
 			webContentNumericFieldLabel = "Decimal");
 
 		WebContent.addWithStructureCP(
-			fieldType = "Multiple Lines",
-			webContentText = "This is a Text Box field",
-			webContentTextFieldLabel = "Text Box");
+			description = "WC WebContent Description",
+			webContentNumeric = "100",
+			webContentTitle = "WC WebContent Title");
 
-		var webContentSourceHTML = '''<h2 class="text-center">This is a HTML title</h2>''';
+		PortletEntry.publish();
+
+		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
+
+		Translations.changeTargetLocale(
+			currentTargetLocale = "ar-SA",
+			newTargetLocale = "es-ES");
+
+		Translations.viewBaseFields(
+			numericType = "Decimal",
+			webContentNumeric = "0.5",
+			webContentNumericFieldLabel = "Decimal");
+
+		Translations.viewBaseFields(
+			webContentDescription = "WC WebContent Description",
+			webContentNumeric = "100",
+			webContentTitle = "WC WebContent Title");
+
+		Translations.translateFields(
+			webContentDecimal = "2.2",
+			webContentDescription = "WC WebContent Descripción",
+			webContentNumber = "200",
+			webContentTitle = "WC WebContent Título");
+
+		PortletEntry.publish();
+
+		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
+
+		Translations.changeTargetLocale(
+			currentTargetLocale = "ar-SA",
+			newTargetLocale = "es-ES");
+
+		Translations.viewTargetFields(
+			webContentDecimal = "2,2",
+			webContentDescription = "WC WebContent Descripción",
+			webContentNumber = "200",
+			webContentTitle = "WC WebContent Título");
+
+		Translations.openTranslationAdmin(siteURLKey = "guest");
+
+		Translations.viewTranslationEntry(
+			language = "es-ES",
+			status = "Approved",
+			title = "Translation of WC WebContent Title to es-ES");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		WebContent.viewWithStructureCP(
+			description = "WC WebContent Descripción",
+			webContentLocaleFieldLabel = "es-ES",
+			webContentNumeric = "200",
+			webContentTitle = "WC WebContent Title",
+			webContentTitleTranslated = "WC WebContent Título");
+
+		WebContent.viewWithStructureCP(
+			predefinedValue = "true",
+			webContentNumeric = "2,2",
+			webContentNumericFieldLabel = "Decimal");
+	}
+
+	@description = "This ensures that the translator can select which target language she wants to translate into custom rich text."
+	@priority = "5"
+	test CanTranslateCustomizedWCWithRichText {
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		NavItem.gotoStructures();
+
+		WebContentStructures.addCP(
+			structureDescription = "WC Structure Description",
+			structureName = "WC Structure Name");
+
+		DataEngine.addField(
+			fieldFieldLabel = "Rich Text",
+			fieldName = "Rich Text");
+
+		WebContentStructures.saveCP(structureName = "WC Structure Name");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		NavItem.gotoTemplates();
+
+		WebContentTemplates.addCP(
+			structureName = "WC Structure Name",
+			templateDescription = "WC Template Description",
+			templateName = "WC Template Name");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Name");
 
 		WebContent.addWithStructureCP(
 			description = "WC WebContent Description",
 			source = "true",
+			webContentRichText = '''<h2 class="text-center">This is a HTML title</h2>''',
+			webContentTitle = "WC WebContent Title");
+
+		PortletEntry.publish();
+
+		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
+
+		Translations.changeTargetLocale(
+			currentTargetLocale = "ar-SA",
+			newTargetLocale = "es-ES");
+
+		Translations.viewBaseFields(
+			webContentDescription = "WC WebContent Description",
+			webContentRichText = "This is a HTML title",
+			webContentTitle = "WC WebContent Title");
+
+		Translations.translateFields(
+			webContentDescription = "WC WebContent Descripción",
+			webContentSourceHTML = '''<h2 class="text-center">Este es un título HTML</h2>''',
+			webContentTitle = "WC WebContent Título");
+
+		PortletEntry.publish();
+
+		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
+
+		Translations.changeTargetLocale(
+			currentTargetLocale = "ar-SA",
+			newTargetLocale = "es-ES");
+
+		Translations.viewTargetFields(
+			webContentDescription = "WC WebContent Descripción",
+			webContentHTML = "Este es un título HTML",
+			webContentTitle = "WC WebContent Título");
+
+		Translations.openTranslationAdmin(siteURLKey = "guest");
+
+		Translations.viewTranslationEntry(
+			language = "es-ES",
+			status = "Approved",
+			title = "Translation of WC WebContent Title to es-ES");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		WebContent.viewWithStructureCP(
+			description = "WC WebContent Descripción",
+			webContentLocaleFieldLabel = "es-ES",
+			webContentRichText = "Este es un título HTML",
+			webContentTitle = "WC WebContent Title",
+			webContentTitleTranslated = "WC WebContent Título");
+	}
+
+	@description = "This ensures that the translator can select which target language she wants to translate into custom text fields."
+	@priority = "5"
+	test CanTranslateCustomizedWCWithTextFields {
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		NavItem.gotoStructures();
+
+		WebContentStructures.addCP(
+			structureDescription = "WC Structure Description",
+			structureName = "WC Structure Name");
+
+		DataEngine.addField(
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		DataEngine.addField(
+			fieldFieldLabel = "Text Box",
+			fieldName = "Text",
+			fieldType = "Multiple Lines");
+
+		WebContentStructures.saveCP(structureName = "WC Structure Name");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		NavItem.gotoTemplates();
+
+		WebContentTemplates.addCP(
 			structureName = "WC Structure Name",
-			templateName = "WC Template Name",
-			webContentNumeric = "100",
-			webContentRichText = "${webContentSourceHTML}",
+			templateDescription = "WC Template Description",
+			templateName = "WC Template Name");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Name");
+
+		WebContent.addWithStructureCP(
+			fieldType = "Multiple Lines",
+			webContentText = "This is a Text Box field",
+			webContentTextFieldLabel = "Text Box");
+
+		WebContent.addWithStructureCP(
+			description = "WC WebContent Description",
 			webContentText = "Text",
 			webContentTitle = "WC WebContent Title");
 
@@ -158,26 +270,12 @@ definition {
 			webContentTextFieldLabel = "Text Box");
 
 		Translations.viewBaseFields(
-			numericType = "Decimal",
-			webContentNumeric = "0.5",
-			webContentNumericFieldLabel = "Decimal");
-
-		var webContentHTML = "This is a HTML title";
-
-		Translations.viewBaseFields(
 			webContentDescription = "WC WebContent Description",
-			webContentNumeric = "100",
-			webContentRichText = "${webContentHTML}",
 			webContentText = "Text",
 			webContentTitle = "WC WebContent Title");
 
-		var webContentSourceHTML = '''<h2 class="text-center">Este es un título HTML</h2>''';
-
 		Translations.translateFields(
-			webContentDecimal = "2.2",
 			webContentDescription = "WC WebContent Descripción",
-			webContentNumber = "200",
-			webContentSourceHTML = "${webContentSourceHTML}",
 			webContentText = "Mensaje de texto",
 			webContentTextBox = "Este es un cuadro de texto.",
 			webContentTitle = "WC WebContent Título");
@@ -190,13 +288,8 @@ definition {
 			currentTargetLocale = "ar-SA",
 			newTargetLocale = "es-ES");
 
-		var webContentHTML = "Este es un título HTML";
-
 		Translations.viewTargetFields(
-			webContentDecimal = "2,2",
 			webContentDescription = "WC WebContent Descripción",
-			webContentHTML = "${webContentHTML}",
-			webContentNumber = "200",
 			webContentText = "Mensaje de texto",
 			webContentTextBox = "Este es un cuadro de texto.",
 			webContentTitle = "WC WebContent Título");
@@ -208,23 +301,14 @@ definition {
 			status = "Approved",
 			title = "Translation of WC WebContent Title to es-ES");
 
-		var portalURL = PropsUtil.get("portal.url");
-
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		WebContent.viewWithStructureCP(
 			description = "WC WebContent Descripción",
 			webContentLocaleFieldLabel = "es-ES",
-			webContentNumeric = "200",
-			webContentRichText = "Este es un título HTML",
 			webContentText = "Mensaje de texto",
 			webContentTitle = "WC WebContent Title",
 			webContentTitleTranslated = "WC WebContent Título");
-
-		WebContent.viewWithStructureCP(
-			predefinedValue = "true",
-			webContentNumeric = "2,2",
-			webContentNumericFieldLabel = "Decimal");
 
 		WebContent.viewWithStructureCP(
 			fieldType = "Multiple Lines",
@@ -235,8 +319,8 @@ definition {
 
 	@description = "This ensures that the translator can select which base language she wants to translate."
 	@priority = "5"
-	@refactorneeded
-	test TranslateWebContent {
+	@refactordone
+	test CanTranslateWebContent {
 		property portal.acceptance = "true";
 
 		JSONWebcontent.addWebContent(
@@ -305,9 +389,11 @@ definition {
 			webContentDescription = "wc webcontent記述",
 			webContentTitle = "wc webcontentタイトル");
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
-
-		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
+		WebContentNavigator.openToEditWCInSite(
+			groupName = "Guest",
+			siteURLKey = "guest",
+			version = "1.1",
+			webContentTitle = "WC WebContent Title");
 
 		PortletEntry.changeLocale(locale = "es-ES");
 
@@ -323,9 +409,7 @@ definition {
 			webContentDescription = "wc webcontent記述",
 			webContentTitle = "wc webcontentタイトル");
 
-		ProductMenu.gotoPortlet(
-			category = "Content &amp; Data",
-			portlet = "Translation Processes");
+		Translations.openTranslationAdmin(siteURLKey = "guest");
 
 		Translations.viewTranslationEntry(
 			language = "es-ES",
@@ -336,6 +420,69 @@ definition {
 			language = "ja-JP",
 			status = "Approved",
 			title = "Translation of WC WebContent Title to ja-JP");
+	}
+
+	@description = "This ensures that translate side by side shows the latest values after editing the web content article."
+	@priority = "5"
+	@refactordone
+	test EditedValuesArePreservedInSideBySideUI {
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			groupName = "Guest",
+			title = "WC WebContent Title");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
+
+		Translations.changeTargetLocale(
+			currentTargetLocale = "ar-SA",
+			newTargetLocale = "es-ES");
+
+		Translations.viewBaseFields(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title");
+
+		Translations.translateFields(
+			webContentContent = "WC WebContent Contenido",
+			webContentDescription = "WC WebContent Descripción",
+			webContentTitle = "WC WebContent Título");
+
+		PortletEntry.publish();
+
+		Translations.openTranslationAdmin(siteURLKey = "guest");
+
+		Translations.viewTranslationEntry(
+			language = "es-ES",
+			status = "Approved",
+			title = "Translation of WC WebContent Title to es-ES");
+
+		WebContentNavigator.openToEditWCInSite(
+			groupName = "Guest",
+			siteURLKey = "guest",
+			version = "1.1",
+			webContentTitle = "WC WebContent Title");
+
+		PortletEntry.changeLocale(locale = "es-ES");
+
+		WebContent.addCP(
+			webContentContent = "WC WebContent Contenido editar",
+			webContentTitle = "WC WebContent Título editar");
+
+		PortletEntry.publish();
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
+
+		Translations.changeTargetLocale(
+			currentTargetLocale = "ar-SA",
+			newTargetLocale = "es-ES");
+
+		Translations.viewTargetFields(
+			webContentContent = "WC WebContent Contenido editar",
+			webContentDescription = "WC WebContent Descripción",
+			webContentTitle = "WC WebContent Título editar");
 	}
 
 }

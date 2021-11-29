@@ -105,6 +105,12 @@ public interface SXPBlueprintResource {
 			Long sxpBlueprintId)
 		throws Exception;
 
+	public void getSXPBlueprintExport(Long sxpBlueprintId) throws Exception;
+
+	public HttpInvoker.HttpResponse getSXPBlueprintExportHttpResponse(
+			Long sxpBlueprintId)
+		throws Exception;
+
 	public static class Builder {
 
 		public Builder authentication(String login, String password) {
@@ -902,6 +908,76 @@ public interface SXPBlueprintResource {
 				_builder._scheme + "://" + _builder._host + ":" +
 					_builder._port +
 						"/o/search-experiences-rest/v1.0/sxp-blueprints/{sxpBlueprintId}/copy");
+
+			httpInvoker.path("sxpBlueprintId", sxpBlueprintId);
+
+			httpInvoker.userNameAndPassword(
+				_builder._login + ":" + _builder._password);
+
+			return httpInvoker.invoke();
+		}
+
+		public void getSXPBlueprintExport(Long sxpBlueprintId)
+			throws Exception {
+
+			HttpInvoker.HttpResponse httpResponse =
+				getSXPBlueprintExportHttpResponse(sxpBlueprintId);
+
+			String content = httpResponse.getContent();
+
+			if ((httpResponse.getStatusCode() / 100) != 2) {
+				_logger.log(
+					Level.WARNING,
+					"Unable to process HTTP response content: " + content);
+				_logger.log(
+					Level.WARNING,
+					"HTTP response message: " + httpResponse.getMessage());
+				_logger.log(
+					Level.WARNING,
+					"HTTP response status code: " +
+						httpResponse.getStatusCode());
+
+				throw new Problem.ProblemException(Problem.toDTO(content));
+			}
+			else {
+				_logger.fine("HTTP response content: " + content);
+				_logger.fine(
+					"HTTP response message: " + httpResponse.getMessage());
+				_logger.fine(
+					"HTTP response status code: " +
+						httpResponse.getStatusCode());
+			}
+		}
+
+		public HttpInvoker.HttpResponse getSXPBlueprintExportHttpResponse(
+				Long sxpBlueprintId)
+			throws Exception {
+
+			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
+
+			if (_builder._locale != null) {
+				httpInvoker.header(
+					"Accept-Language", _builder._locale.toLanguageTag());
+			}
+
+			for (Map.Entry<String, String> entry :
+					_builder._headers.entrySet()) {
+
+				httpInvoker.header(entry.getKey(), entry.getValue());
+			}
+
+			for (Map.Entry<String, String> entry :
+					_builder._parameters.entrySet()) {
+
+				httpInvoker.parameter(entry.getKey(), entry.getValue());
+			}
+
+			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
+
+			httpInvoker.path(
+				_builder._scheme + "://" + _builder._host + ":" +
+					_builder._port +
+						"/o/search-experiences-rest/v1.0/sxp-blueprints/{sxpBlueprintId}/export");
 
 			httpInvoker.path("sxpBlueprintId", sxpBlueprintId);
 

@@ -1,4 +1,4 @@
 Bundle-Name: Liferay Amazon Rankings Web
 Bundle-SymbolicName: com.liferay.amazon.rankings.web
-Bundle-Version: 5.0.14
+Bundle-Version: 5.0.15
 Web-ContextPath: /amazon-rankings-web

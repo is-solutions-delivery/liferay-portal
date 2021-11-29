@@ -284,18 +284,18 @@ definition {
 		AssertElementNotPresent(locator1 = "ObjectAdmin#ADD_ENTRY_CANCEL_BUTTON");
 	}
 
+	macro assertBlockIsPresent {
+		AssertElementPresent(
+			key_fieldBlockName = "${fieldBlockName}",
+			locator1 = "ObjectAdmin#FIELD_BLOCK_NAME");
+
+		AssertElementPresent(locator1 = "ObjectAdmin#FIELD_BLOCK_ADD_FIELD_BUTTON");
+	}
+
 	macro assertFieldsTableColumnsAreDisplayed {
 		AssertElementPresent(locator1 = "ObjectAdmin#FIELDS_LABEL_COLUMN");
 
 		AssertElementPresent(locator1 = "ObjectAdmin#FIELDS_TYPE_COLUMN");
-	}
-
-	macro assertBlockIsPresent {
-		AssertElementPresent(
-			locator1 = "ObjectAdmin#FIELD_BLOCK_NAME",
-			key_fieldBlockName = "${fieldBlockName}");
-
-		AssertElementPresent(locator1 = "ObjectAdmin#FIELD_BLOCK_ADD_FIELD_BUTTON");
 	}
 
 	macro assertFieldTabIsPresent {
@@ -320,6 +320,18 @@ definition {
 
 	macro assertLabelFieldRequired {
 		AssertElementPresent(locator1 = "ObjectAdmin#LABEL_FIELD_REQUIRED");
+	}
+
+	macro assertNotPossibleAddFieldOnBlockWithoutChooseOptionField {
+		Click(locator1 = "ObjectAdmin#ADD_FIELD_ON_BLOCK");
+
+		Click(
+			key_tab = "Save",
+			locator1 = "Button#TAB_SUBMIT_BTN");
+
+		AssertElementPresent(locator1 = "ObjectAdmin#OBJECT_LAYOUTS_FIELD_INPUT_HAS_REQUIRED_ERROR");
+
+		AssertElementPresent(locator1 = "ObjectAdmin#OBJECT_FIELDS_REQUIRED_ERROR_MESSAGE");
 	}
 
 	macro assertObjectColumnsAreDisplayed {

@@ -15,7 +15,7 @@
 import ClayAlert from '@clayui/alert';
 import ClayBreadcrumb from '@clayui/breadcrumb';
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
-import ClayDropDown from '@clayui/drop-down';
+import ClayDropDown, {ClayDropDownWithItems} from '@clayui/drop-down';
 import {ClayCheckbox, ClayInput, ClayToggle} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
@@ -25,12 +25,14 @@ import ClayManagementToolbar, {
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import ClaySticker from '@clayui/sticker';
 import ClayTable from '@clayui/table';
+import ClayToolbar from '@clayui/toolbar';
 import classNames from 'classnames';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {CSSTransition} from 'react-transition-group';
 
 import ChangeTrackingComments from './ChangeTrackingComments';
 import ChangeTrackingRenderView from './ChangeTrackingRenderView';
+import ManageCollaborators from './ManageCollaborators';
 
 const DIRECTION_NEXT = 'next';
 const DIRECTION_PREV = 'prev';
@@ -91,6 +93,7 @@ export default function ChangeTrackingChangesView({
 	activeCTCollection,
 	changeTypesFromURL,
 	changes,
+	collaboratorsData,
 	columnFromURL,
 	contextView,
 	ctCollectionId,
@@ -99,22 +102,32 @@ export default function ChangeTrackingChangesView({
 	defaultLocale,
 	deleteCTCommentURL,
 	deltaFromURL,
+	description,
 	discardURL,
+	dropdownItems,
 	entryFromURL,
 	expired,
 	getCTCommentsURL,
 	keywordsFromURL,
 	modelData,
+	name,
 	namespace,
 	orderByTypeFromURL,
 	pageFromURL,
+	publishURL,
+	rescheduleURL,
+	revertURL,
 	rootDisplayClasses,
+	scheduleURL,
 	showHideableFromURL,
 	siteNames,
 	sitesFromURL,
 	spritemap,
+	statusLabel,
+	statusStyle,
 	typeNames,
 	typesFromURL,
+	unscheduleURL,
 	updateCTCommentURL,
 	userInfo,
 	usersFromURL,
@@ -1588,7 +1601,9 @@ export default function ChangeTrackingChangesView({
 
 	const setParameter = useCallback(
 		(url, name, value) => {
-			return url + '&' + namespace + name + '=' + value;
+			return (
+				url + '&' + namespace + name + '=' + encodeURIComponent(value)
+			);
 		},
 		[namespace]
 	);
@@ -2015,24 +2030,6 @@ export default function ChangeTrackingChangesView({
 							}
 							toggled={renderState.showHideable}
 						/>
-					</ClayManagementToolbar.Item>
-
-					<ClayManagementToolbar.Item
-						data-tooltip-align="top"
-						title={Liferay.Language.get('comments')}
-					>
-						<ClayButton
-							className={classNames(
-								'nav-link nav-link-monospaced',
-								{
-									active: showComments,
-								}
-							)}
-							displayType="unstyled"
-							onClick={() => setShowComments(!showComments)}
-						>
-							<ClayIcon spritemap={spritemap} symbol="comments" />
-						</ClayButton>
 					</ClayManagementToolbar.Item>
 				</ClayManagementToolbar.ItemList>
 			</ClayManagementToolbar>
@@ -2462,8 +2459,145 @@ export default function ChangeTrackingChangesView({
 		);
 	};
 
+	const renderToolbarAction = (displayType, label, symbol, url) => {
+		if (!url) {
+			return '';
+		}
+
+		return (
+			<ClayToolbar.Item>
+				<a
+					className={classNames(
+						'btn btn-' + displayType + ' btn-sm',
+						{
+							disabled: changes.length === 0 || expired,
+						}
+					)}
+					href={setParameter(
+						url,
+						'redirect',
+						window.location.pathname + window.location.search
+					)}
+				>
+					<span className="inline-item inline-item-before">
+						<ClayIcon spritemap={spritemap} symbol={symbol} />
+					</span>
+
+					{label}
+				</a>
+			</ClayToolbar.Item>
+		);
+	};
+
+	const renderPublicationsToolbar = () => {
+		return (
+			<ClayToolbar className="publications-tbar" light>
+				<div className="container-fluid container-fluid-max-xl">
+					<ClayToolbar.Nav>
+						<ClayToolbar.Item className="text-left" expand>
+							<ClayToolbar.Section>
+								<div className="publication-name">
+									<span>{name}</span>
+
+									<ClayLabel
+										displayType={statusStyle}
+										spritemap={spritemap}
+									>
+										{statusLabel}
+									</ClayLabel>
+								</div>
+
+								<div className="publication-description">
+									{description}
+								</div>
+							</ClayToolbar.Section>
+						</ClayToolbar.Item>
+
+						<ClayToolbar.Item>
+							<ManageCollaborators {...collaboratorsData} />
+						</ClayToolbar.Item>
+
+						{renderToolbarAction(
+							'secondary',
+							Liferay.Language.get('schedule'),
+							'calendar',
+							scheduleURL
+						)}
+
+						{renderToolbarAction(
+							'primary',
+							Liferay.Language.get('publish'),
+							'change',
+							publishURL
+						)}
+
+						{renderToolbarAction(
+							'secondary',
+							Liferay.Language.get('unschedule'),
+							'times-circle',
+							unscheduleURL
+						)}
+
+						{renderToolbarAction(
+							'primary',
+							Liferay.Language.get('reschedule'),
+							'calendar',
+							rescheduleURL
+						)}
+
+						{renderToolbarAction(
+							'secondary',
+							Liferay.Language.get('revert'),
+							'undo',
+							revertURL
+						)}
+
+						<ClayToolbar.Item
+							data-tooltip-align="top"
+							title={Liferay.Language.get('comments')}
+						>
+							<ClayButton
+								className={classNames(
+									'nav-link nav-link-monospaced',
+									{
+										active: showComments,
+									}
+								)}
+								displayType="unstyled"
+								onClick={() => setShowComments(!showComments)}
+							>
+								<ClayIcon
+									spritemap={spritemap}
+									symbol="comments"
+								/>
+							</ClayButton>
+						</ClayToolbar.Item>
+
+						{dropdownItems && dropdownItems.length > 0 && (
+							<ClayToolbar.Item>
+								<ClayDropDownWithItems
+									items={dropdownItems}
+									spritemap={spritemap}
+									trigger={
+										<ClayButtonWithIcon
+											displayType="unstyled"
+											small
+											spritemap={spritemap}
+											symbol="ellipsis-v"
+										/>
+									}
+								/>
+							</ClayToolbar.Item>
+						)}
+					</ClayToolbar.Nav>
+				</div>
+			</ClayToolbar>
+		);
+	};
+
 	return (
 		<>
+			{renderPublicationsToolbar()}
 			{renderManagementToolbar()}
 			{renderResultsBar()}
 			<div

@@ -114,11 +114,6 @@ components:
                         aggs:
                             type: object
                     type: object
-                facet:
-                    properties:
-                        enabled:
-                            type: boolean
-                    type: object
                 general:
                     properties:
                         clauseContributorsExcludes:
@@ -846,6 +841,32 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/SXPBlueprint"
             tags: ["SXPBlueprint"]
+    /sxp-blueprints/{sxpBlueprintId}/export:
+        get:
+            operationId: getSXPBlueprintExport
+            parameters:
+                - in: path
+                  name: sxpBlueprintId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                format: binary
+                                type: string
+                        application/xml:
+                            schema:
+                                format: binary
+                                type: string
+                    headers:
+                        Content-Disposition:
+                            schema:
+                                type: string
+            tags: ["SXPBlueprint"]
     /sxp-elements:
         get:
             operationId: getSXPElementsPage
@@ -998,6 +1019,32 @@ paths:
                         application/xml:
                             schema:
                                 $ref: "#/components/schemas/SXPElement"
+            tags: ["SXPElement"]
+    /sxp-elements/{sxpElementId}/export:
+        get:
+            operationId: getSXPElementExport
+            parameters:
+                - in: path
+                  name: sxpElementId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                format: binary
+                                type: string
+                        application/xml:
+                            schema:
+                                format: binary
+                                type: string
+                    headers:
+                        Content-Disposition:
+                            schema:
+                                type: string
             tags: ["SXPElement"]
     /sxp-parameter-contributor-definitions:
         get:

@@ -24,8 +24,8 @@ definition {
 
 	@description = "This ensures that the user can not translate a web content to an unavailable language."
 	@priority = "4"
-	@refactorneeded
-	test TranslateWCToUnavailableLanguage {
+	@refactordone
+	test CanTranslateWCToUnavailableLanguage {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 
 		JSONWebcontent.addWebContent(
@@ -83,19 +83,15 @@ definition {
 
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
-		LexiconEntry.openEntryMenu(rowEntry = "WC WebContent Title");
-
-		for (var menuItem : list "Translate,Export for Translation,Import Translation") {
-			AssertElementNotPresent(
-				key_menuItem = "${menuItem}",
-				locator1 = "MenuItem#ANY_MENU_ITEM");
-		}
+		Translations.viewTranslationOptions(
+			noOptions = "true",
+			webContentTitle = "WC WebContent Title");
 	}
 
 	@description = "This ensures that the user can not translate a web content without any languages permissions."
 	@priority = "4"
-	@refactorneeded
-	test TranslateWCWithoutLanguagesPermissions {
+	@refactordone
+	test CanTranslateWCWithoutLanguagesPermissions {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 
 		JSONWebcontent.addWebContent(
@@ -150,19 +146,15 @@ definition {
 
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
-		LexiconEntry.openEntryMenu(rowEntry = "WC WebContent Title");
-
-		for (var menuItem : list "Translate,Export for Translation,Import Translation") {
-			AssertElementNotPresent(
-				key_menuItem = "${menuItem}",
-				locator1 = "MenuItem#ANY_MENU_ITEM");
-		}
+		Translations.viewTranslationOptions(
+			noOptions = "true",
+			webContentTitle = "WC WebContent Title");
 	}
 
 	@description = "This ensures that the user can translate a Web content to the language she has permissions."
 	@priority = "5"
-	@refactorneeded
-	test TranslateWCWithSpecificLanguagesPermissions {
+	@refactordone
+	test CanTranslateWCWithSpecificLanguagesPermissions {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 
 		JSONWebcontent.addWebContent(

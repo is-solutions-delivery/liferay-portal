@@ -7,7 +7,7 @@ import {Steps} from '~/routes/get-a-quote/components/containers/Steps';
 import {useStepWizard} from '~/routes/get-a-quote/hooks/useStepWizard';
 import {useTriggerContext} from '~/routes/get-a-quote/hooks/useTriggerContext';
 import {AVAILABLE_STEPS} from '~/routes/get-a-quote/utils/constants';
-import {Providers} from '../Providers';
+import Providers from '../Providers';
 
 const QuoteApp = () => {
 	const form = useWatch();
@@ -42,15 +42,13 @@ const QuoteApp = () => {
 		<div className="form-area">
 			<Steps />
 
-			<div>
+			<main>
 				<h2 className="title title-area">
 					<FormTitle />
 				</h2>
 
 				<Forms form={form} />
-			</div>
-
-			<div className="info-area"></div>
+			</main>
 		</div>
 	);
 };

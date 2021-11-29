@@ -82,30 +82,123 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to add a Field for the Block with one column"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddFieldForBlockOneColumn {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141506 CanAddFieldForBlockOneColumn pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout Name",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block Name",
+			columnsNumber = "1",
+			fieldLabelName = "Custom Field",
+			tabName = "Field Tab");
+
+		CreateObject.assertFieldAddedOnBlock(fieldLabelName = "Custom Field");
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to add a Field for the Block with three columns"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddFieldForBlockThreeColumns {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141508 CanAddFieldForBlockThreeColumns pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout Name",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block Name",
+			columnsNumber = "3",
+			fieldLabelName = "Custom Field",
+			tabName = "Field Tab");
+
+		CreateObject.assertFieldAddedOnBlock(fieldLabelName = "Custom Field");
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to add a Field for the Block with two columns"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddFieldForBlockTwoColumns {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141507 CanAddFieldForBlockTwoColumns pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout Name",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block Name",
+			columnsNumber = "2",
+			fieldLabelName = "Custom Field",
+			tabName = "Field Tab");
+
+		CreateObject.assertFieldAddedOnBlock(fieldLabelName = "Custom Field");
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to add a Tab with Fields Type"
@@ -264,12 +357,56 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify it is possible to Cancel the update of a Layout"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanCancelUpdateLayout {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141519 CanCancelUpdateLayout pending implementation
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block 1",
+			columnsNumber = "2",
+			fieldLabelName = "Custom Field",
+			tabName = "Field Tab");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_INFO_TAB");
+
+		Type(
+			locator1 = "ObjectAdmin#LAYOUT_BASIC_INFO_NAME_FIELD",
+			value1 = "Layout Updated");
+
+		Button.clickCancel();
+
+		Refresh();
+
+		AssertTextNotEquals(
+			key_name = "Layout",
+			locator1 = "ObjectAdmin#TABLE_LIST_TITLE",
+			value1 = "Layout Updated");
 	}
 
 	@description = "LPS-135551 - Verify it is possible to change the Panel Category Key after publishing the Object"
@@ -593,13 +730,47 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to delete a Field"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanDeleteFieldOnLayout {
 		property portal.acceptance = "true";
 
-		// TODO LPS-141510 CanDeleteFieldOnLayout pending implementation
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
+
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout Name",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block Name",
+			columnsNumber = "1",
+			fieldLabelName = "Custom Field",
+			tabName = "Field Tab");
+
+		CreateObject.deleteFieldOnBlock();
+
+		CreateObject.assertFieldNotPresentInBlock(fieldLabelName = "Custom Field");
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to delete a Layout for an Object"
@@ -1137,12 +1308,58 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify it is not possible to set a layout as default without all the required fields on the first tab"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CannotSetLayoutDefaultWithoutAllRequiredFieldsOnFirstTab {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141520 CannotSetLayoutDefaultWithoutAllRequiredFieldsOnFirstTab pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field Required",
+			fieldName = "customObjectFieldRequired",
+			fieldType = "String",
+			isRequired = "true",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field Not Required",
+			fieldName = "customObjectFieldNotRequired",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
+
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block 1",
+			columnsNumber = "2",
+			fieldLabelName = "Custom Field Not Required",
+			tabName = "Field Tab");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_INFO_TAB");
+
+		Click.clickAtNotVisible(locator1 = "ObjectAdmin#ENTRY_BOOLEAN_CHECKBOX");
+
+		Button.clickSave();
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "Message#ERROR",
+			value1 = "All required object fields must be associated to the first tab of a default object layout");
 	}
 
 	@description = "LPS-139005 - Verify that is not possible to submit entries in a form with an Object that was inactivated"
@@ -1523,12 +1740,34 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to set the block as Collapsible"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanSetBlockCollapsible {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141505 CanSetBlockCollapsible pending implementation
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout Name",
+			objectName = "CustomObject");
 
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		ObjectAdmin.goToLayoutTabOnLayouts();
+
+		ObjectAdmin.addTabFieldsOnLayout(tabName = "Field Tab");
+
+		ObjectAdmin.addLayoutBlockViaUI(blockName = "Block Name");
+
+		CreateObject.checkToggleCollapsible();
+
+		CreateObject.assertToggleCollapsibleChecked();
 	}
 
 	@description = "LPS-135389 - Verify it is possible to set a different language value for a Field Label"
@@ -1740,12 +1979,56 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to update a Custom Layout Created"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanUpdateCustomLayout {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141517 CanUpdateCustomLayout pending implementation
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block 1",
+			columnsNumber = "2",
+			fieldLabelName = "Custom Field",
+			tabName = "Field Tab");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_INFO_TAB");
+
+		Type(
+			locator1 = "ObjectAdmin#LAYOUT_BASIC_INFO_NAME_FIELD",
+			value1 = "Layout Updated");
+
+		Button.clickSave();
+
+		Refresh();
+
+		AssertTextEquals(
+			key_name = "Layout Updated",
+			locator1 = "ObjectAdmin#TABLE_LIST_TITLE",
+			value1 = "Layout Updated");
 	}
 
 	@description = "LPS-135635 - Verify it is possible to update the Label of a Field after the Object is published"
@@ -2212,12 +2495,80 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to view Entries with Custom Layout Created"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanViewEntriesWithCustomLayout {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141516 CanViewEntriesWithCustomLayout pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block 1",
+			columnsNumber = "1",
+			fieldLabelName = "Custom Field",
+			tabName = "Field Tab");
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_INFO_TAB");
+
+		Click.clickAtNotVisible(locator1 = "ObjectAdmin#ENTRY_BOOLEAN_CHECKBOX");
+
+		Button.clickSave();
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "Entry 1");
+
+		Navigator.openURL();
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		AssertElementPresent(
+			key_tabName = "Field Tab",
+			locator1 = "ObjectAdmin#ANY_TAB_ON_ENTRY");
+
+		AssertElementPresent(
+			key_labelName = "Block 1",
+			locator1 = "ObjectAdmin#LABEL_FIELD_GROUP_TITLE");
+
+		AssertElementPresent(
+			key_labelName = "Custom Field",
+			locator1 = "ObjectAdmin#LABEL_FIELD_ENTRY");
+
+		AssertElementPresent(
+			key_text = "Save",
+			locator1 = "Button#ANY");
+
+		AssertElementPresent(
+			key_text = "Cancel",
+			locator1 = "Button#ANY");
 	}
 
 	@description = "LPS-135397 - Verify if it's possible to view the Entry with one column"
@@ -2685,12 +3036,32 @@ definition {
 	}
 
 	@description = "LPS-135397 - Verify if it's not possible to add a Field without Choose an Option Field"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test FieldOptionRequired {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141509 FieldOptionRequired pending implementation
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout Name",
+			objectName = "CustomObject");
 
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		ObjectAdmin.goToLayoutTabOnLayouts();
+
+		ObjectAdmin.addTabFieldsOnLayout(tabName = "Field Tab");
+
+		ObjectAdmin.addLayoutBlockViaUI(blockName = "Block Name");
+
+		ObjectAdmin.assertNotPossibleAddFieldOnBlockWithoutChooseOptionField();
 	}
 
 	@description = "LPS-140097 - Verify that other fields are not deleted when a Relationship field is deleted after a Relationship is deleted"
@@ -3102,11 +3473,9 @@ definition {
 	@description = "LPS-139005 - Verify that the Object entries are displayed again on Page fragments from an Object that was reactivated"
 	@priority = "4"
 	test ObjectEntriesReappearsPageFragmentsWhenReactivated {
-		property portal.upstream = "quarantine";
-
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object",
-			objectName = "CustomObject",
+			objectName = "CustomObject142598",
 			pluralLabelName = "Custom Objects");
 
 		ObjectAdmin.addObjectFieldViaAPI(
@@ -3114,13 +3483,13 @@ definition {
 			fieldName = "customObjectField",
 			fieldType = "String",
 			isRequired = "false",
-			objectName = "CustomObject");
+			objectName = "CustomObject142598");
 
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject142598");
 
 		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 			fieldName = "customObjectField",
-			objectName = "CustomObject",
+			objectName = "CustomObject142598",
 			value = "Test 1");
 
 		Navigator.openURL();
@@ -3184,7 +3553,7 @@ definition {
 	test ObjectEntriesReappearsWorkflowPagesWhenReactivated {
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object",
-			objectName = "CustomObject",
+			objectName = "CustomObject140887",
 			pluralLabelName = "Custom Objects");
 
 		ObjectAdmin.addObjectFieldViaAPI(
@@ -3192,9 +3561,9 @@ definition {
 			fieldName = "customObjectField",
 			fieldType = "String",
 			isRequired = "false",
-			objectName = "CustomObject");
+			objectName = "CustomObject140887");
 
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject140887");
 
 		ObjectAdmin.openObjectAdmin();
 
@@ -3208,12 +3577,12 @@ definition {
 
 		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 			fieldName = "customObjectField",
-			objectName = "CustomObject",
+			objectName = "CustomObject140887",
 			value = "Test");
 
 		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 			fieldName = "customObjectField",
-			objectName = "CustomObject",
+			objectName = "CustomObject140887",
 			value = "Test 2");
 
 		ObjectAdmin.openMyWorkflowTasks();

@@ -333,11 +333,8 @@ private String _getHREF(String formName, String curParam, int cur, String jsCall
 
 	return href;
 }
-%>
 
-<%!
 private String _getOnClick(String namespace, String curParam, int cur) {
 	return "event.preventDefault(); " + namespace + "submitForm('" + namespace + curParam + "','" + cur + "');";
 }
-
 %>

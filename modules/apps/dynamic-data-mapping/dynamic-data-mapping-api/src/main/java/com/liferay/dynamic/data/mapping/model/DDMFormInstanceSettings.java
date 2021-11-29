@@ -41,6 +41,10 @@ import org.osgi.annotation.versioning.ProviderType;
 				"setVisible('workflowDefinition', not(contains(getValue('storageType'), \"object\")))"
 			},
 			condition = "TRUE"
+		),
+		@DDMFormRule(
+			actions = "setValue('expirationDate', '')",
+			condition = "equals(getValue('neverExpire'), TRUE)"
 		)
 	}
 )

@@ -59,12 +59,9 @@ public abstract class BaseProcessorImpl
 	public M process(ServiceContext serviceContext) throws PortalException {
 		_preparePatches();
 
-		_consumePatches(_modelUnsafeConsumers, serviceContext);
+		_consumePatches(serviceContext);
 
-		_consumePatches(_unsafeConsumers, serviceContext);
-
-		return (M)_objectCache.get(
-			new AbstractMap.SimpleEntry<>(_model.getClass(), null));
+		return _model;
 	}
 
 	@Override
@@ -97,9 +94,12 @@ public abstract class BaseProcessorImpl
 
 			_processorContext = processorContext;
 
-			_patchingQueue = getPatchingQueue(
-				modelGetterFunction, processingIndex, publicIdentifier,
-				updateFunction);
+			_unsafeConsumers.add(
+				new AbstractMap.SimpleEntry<>(
+					processingIndex,
+					serviceContext -> _patchModel(
+						publicIdentifier, modelGetterFunction, _patchingQueue,
+						updateFunction, serviceContext)));
 		}
 
 		public <V> void handleUnsafeObjectArray(
@@ -219,7 +219,8 @@ public abstract class BaseProcessorImpl
 				(object, values) -> unsafeBiConsumer.accept(object, values[0]));
 		}
 
-		private final Queue<UnsafeConsumer<T, ?>> _patchingQueue;
+		private final Queue<UnsafeConsumer<T, ?>> _patchingQueue =
+			new LinkedList<>();
 		private final ProcessorContext<M> _processorContext;
 
 	}
@@ -275,51 +276,19 @@ public abstract class BaseProcessorImpl
 			return (V[])map.get(fieldExpression);
 		}
 
-		private String _prefix;
+		private final String _prefix;
 
-	}
-
-	protected <T extends BaseModel<T>> Queue<UnsafeConsumer<T, ?>>
-		getPatchingQueue(
-			Function<M, T> modelGetterFunction, int processingIndex,
-			String publicIdentifier,
-			ProcessorContext.UpdateFunction<T> updateFunction) {
-
-		T model = modelGetterFunction.apply(_model);
-
-		if (model != _model) {
-			if (publicIdentifier == null) {
-				throw new SystemException(
-					"Mapped models must have a public identifier");
-			}
-
-			return _getPatchingQueue(
-				model, processingIndex, _unsafeConsumers, publicIdentifier,
-				updateFunction);
-		}
-
-		if (publicIdentifier != null) {
-			throw new SystemException(
-				"The processing model can not have a public identifier");
-		}
-
-		return _getPatchingQueue(
-			model, processingIndex, _modelUnsafeConsumers, publicIdentifier,
-			updateFunction);
 	}
 
 	protected abstract PC getProcessorContext(String prefix);
 
-	private void _consumePatches(
-			Queue<Map.Entry<Integer, UnsafeConsumer<ServiceContext, ?>>>
-				unsafeConsumers,
-			ServiceContext serviceContext)
+	private void _consumePatches(ServiceContext serviceContext)
 		throws PortalException {
 
 		Map.Entry<Integer, UnsafeConsumer<ServiceContext, ?>> entry;
 
 		try {
-			while ((entry = unsafeConsumers.poll()) != null) {
+			while ((entry = _unsafeConsumers.poll()) != null) {
 				UnsafeConsumer<ServiceContext, ?> unsafeConsumer =
 					entry.getValue();
 
@@ -335,32 +304,29 @@ public abstract class BaseProcessorImpl
 		}
 	}
 
-	private <T extends BaseModel<T>> Queue<UnsafeConsumer<T, ?>>
-		_getPatchingQueue(
-			T model, int processingIndex,
-			Queue<Map.Entry<Integer, UnsafeConsumer<ServiceContext, ?>>>
-				processingQueue,
-			String publicIdentifier,
-			ProcessorContext.UpdateFunction<T> updateFunction) {
-
-		Queue<UnsafeConsumer<T, ?>> queue = new LinkedList<>();
-
-		processingQueue.add(
-			new AbstractMap.SimpleEntry<>(
-				processingIndex,
-				serviceContext -> _patchModel(
-					publicIdentifier, model, queue, updateFunction,
-					serviceContext)));
-
-		return queue;
-	}
-
 	private <T extends BaseModel<T>> T _patchModel(
-			String publicIdentifier, T model,
+			String publicIdentifier, Function<M, T> modelGetterFunction,
 			Queue<UnsafeConsumer<T, ?>> unsafeConsumers,
 			ProcessorContext.UpdateFunction<T> updateFunction,
 			ServiceContext serviceContext)
 		throws Throwable {
+
+		T model = modelGetterFunction.apply(_model);
+
+		boolean mappedModel = false;
+
+		if (model != _model) {
+			if (publicIdentifier == null) {
+				throw new SystemException(
+					"Mapped models must have a public identifier");
+			}
+
+			mappedModel = true;
+		}
+		else if (publicIdentifier != null) {
+			throw new SystemException(
+				"The processing model cannot have a public identifier");
+		}
 
 		Map.Entry<Class<?>, Serializable> objectKey =
 			new AbstractMap.SimpleEntry<>(model.getClass(), publicIdentifier);
@@ -388,6 +354,10 @@ public abstract class BaseProcessorImpl
 
 		_objectCache.put(objectKey, tNew);
 
+		if (!mappedModel) {
+			_model = (M)tNew;
+		}
+
 		return tNew;
 	}
 
@@ -400,8 +370,6 @@ public abstract class BaseProcessorImpl
 				_fieldExpressionHandlerRegistry.getFieldExpressionHandler(
 					prefix);
 
-			_prefix = prefix;
-
 			fieldExpressionHandler.bindProcessorContext(
 				getProcessorContext(prefix));
 		}
@@ -409,13 +377,9 @@ public abstract class BaseProcessorImpl
 
 	private final FEHR _fieldExpressionHandlerRegistry;
 	private final Map<Class<?>, Map<String, Object[]>> _maps = new HashMap<>();
-	private final M _model;
-	private final Queue<Map.Entry<Integer, UnsafeConsumer<ServiceContext, ?>>>
-		_modelUnsafeConsumers = new PriorityQueue<>(
-			Comparator.comparingInt(Map.Entry::getKey));
+	private M _model;
 	private final Map<Map.Entry<Class<?>, Serializable>, Object> _objectCache =
 		new HashMap<>();
-	private String _prefix;
 	private final Queue<Map.Entry<Integer, UnsafeConsumer<ServiceContext, ?>>>
 		_unsafeConsumers = new PriorityQueue<>(
 			Comparator.comparingInt(Map.Entry::getKey));

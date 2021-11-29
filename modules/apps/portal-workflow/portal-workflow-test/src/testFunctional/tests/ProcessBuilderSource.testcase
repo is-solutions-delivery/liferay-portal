@@ -214,7 +214,7 @@ definition {
 
 		MenuItem.clickNoError(menuItem = "Unpublish");
 
-		Alert.viewErrorMessage(errorMessage =  "Workflow is in use. Remove its assignment to this asset: Blogs Entry.");
+		Alert.viewErrorMessage(errorMessage = "Workflow is in use. Remove its assignment to this asset: Blogs Entry.");
 
 		Navigator.gotoBack();
 

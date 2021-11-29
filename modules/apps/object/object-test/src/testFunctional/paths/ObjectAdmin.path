@@ -11,6 +11,11 @@
 
 <tbody>
 	<tr>
+		<td>ANY_TAB_ON_ENTRY</td>
+		<td>//a[contains(text(),'${key_tabName}')]</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>ADD_BLOCK_BUTTON</td>
 		<td>//button[contains(@class,'btn btn-sm btn-secondary')]</td>
 		<td></td>
@@ -36,8 +41,18 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>LAYOUT_BASIC_INFO_NAME_FIELD</td>
+		<td>//input[@id='objectLayoutName']</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>ADD_FIELD_ON_BLOCK</td>
 		<td>//button[contains(@class,'btn-secondary') and contains (text(),'Add Field')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>BASIC_INFO_NAME_FIELD</td>
+		<td>//input[contains(@id,'objectLayoutName')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -103,6 +118,16 @@
 	<tr>
 		<td>ENTRY_RELATIONSHIP_TAB</td>
 		<td>//a[contains(text(),'${key_tabName}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>LABEL_FIELD_GROUP_TITLE</td>
+		<td>//div[@class='ddm-field-types-fieldset__nested']//label[@class = 'text-uppercase' and contains(text(),'${key_labelName}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>LABEL_FIELD_ENTRY</td>
+		<td>//div[@class='ddm-field-types-fieldset__nested']//label[text() = '${key_labelName}']</td>\
 		<td></td>
 	</tr>
 	<tr>
@@ -213,6 +238,11 @@
 	<tr>
 		<td>OBJECT_FIELDS_TAB</td>
 		<td>//a[contains(text(),'Fields')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>OBJECT_LAYOUTS_FIELD_INPUT_HAS_REQUIRED_ERROR</td>
+		<td>//div[contains(@class,'form-group has-error')]//label[contains(text(),'Field')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -353,6 +383,11 @@
 	<tr>
 		<td>TAB_TYPE</td>
 		<td>//div[@class = 'form-group']//h4[@class = 'layout-tab__tab-types__title' and contains(text(),'${key_type}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>TABLE_LIST_TITLE</td>
+		<td>//div[(@class='table-list-title') and contains (.,'${key_name}')]</td>
 		<td></td>
 	</tr>
 	<tr>

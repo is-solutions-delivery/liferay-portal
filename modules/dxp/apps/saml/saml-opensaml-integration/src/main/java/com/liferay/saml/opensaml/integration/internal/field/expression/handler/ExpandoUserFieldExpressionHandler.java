@@ -242,10 +242,14 @@ public class ExpandoUserFieldExpressionHandler
 	private ExpandoValue _getExpandoValue(
 		User user, String validUserFieldExpression) {
 
-		ExpandoValue expandoValue = _expandoValueLocalService.getValue(
-			user.getCompanyId(), User.class.getName(),
-			ExpandoTableConstants.DEFAULT_TABLE_NAME, validUserFieldExpression,
-			user.getUserId());
+		ExpandoValue expandoValue = null;
+
+		if (!user.isNew()) {
+			expandoValue = _expandoValueLocalService.getValue(
+				user.getCompanyId(), User.class.getName(),
+				ExpandoTableConstants.DEFAULT_TABLE_NAME,
+				validUserFieldExpression, user.getUserId());
+		}
 
 		if (expandoValue == null) {
 			ExpandoTable table = null;

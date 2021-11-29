@@ -43,11 +43,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>EMAIL_OTP_DISABLE</td>
-	<td>//span[@class='form-text']</td>
-	<td></td>
-</tr>
-<tr>
 	<td></td>
 	<td></td>
 	<td></td>
@@ -92,6 +87,11 @@
 <tr>
 	<td>EMAIL_OTP_VERIFY_FIELD</td>
 	<td>//div[label[contains(.,'Enter the one-time password from the email')]]/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>EMAIL_OTP_VERIFY_SUBMIT_EMAIL_BUTTON_DISABLED</td>
+	<td>//button[@disabled][contains(@type,'submit')]</td>
 	<td></td>
 </tr>
 <tr>

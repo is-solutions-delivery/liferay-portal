@@ -19,7 +19,6 @@ import {createAutoCorrectedDatePipe} from 'text-mask-addons';
 import {createTextMaskInputElement} from 'text-mask-core';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
-import {useSyncValue} from '../hooks/useSyncValue.es';
 
 const DIGIT_REGEX = /\d/i;
 const LETTER_REGEX = /[a-z]/i;
@@ -173,6 +172,7 @@ const DatePicker = ({
 	disabled,
 	formatInEditingLocale,
 	locale,
+	localizable,
 	localizedValue: localizedValueInitial = {},
 	name,
 	onBlur,
@@ -199,7 +199,12 @@ const DatePicker = ({
 		[defaultLanguageId, formatInEditingLocale, initialValue, locale]
 	);
 
-	const [value, setValue] = useSyncValue(initialValueMemoized);
+	const [value, setValue] = useState(initialValueMemoized);
+
+	useEffect(() => {
+		setValue(initialValueMemoized);
+	}, [initialValueMemoized]);
+
 	const [years, setYears] = useState(() => {
 		const currentYear = new Date().getFullYear();
 
@@ -222,7 +227,7 @@ const DatePicker = ({
 				showMask: true,
 			});
 
-			const currentValue = localizedValue[locale];
+			const currentValue = localizable ? localizedValue[locale] : value;
 
 			if (currentValue) {
 				if (
@@ -267,8 +272,10 @@ const DatePicker = ({
 		inputMask,
 		inputRef,
 		initialValueMemoized,
+		localizable,
 		localizedValue,
 		locale,
+		value,
 	]);
 
 	const handleNavigation = (date) => {
@@ -351,6 +358,7 @@ const DatePicker = ({
 const Main = ({
 	defaultLanguageId,
 	locale = themeDisplay.getDefaultLanguageId(),
+	localizable,
 	localizedValue,
 	name,
 	onBlur,
@@ -379,6 +387,7 @@ const Main = ({
 				localizedValue[locale] !== null
 			}
 			locale={locale}
+			localizable={localizable}
 			localizedValue={localizedValue}
 			name={name}
 			onBlur={onBlur}

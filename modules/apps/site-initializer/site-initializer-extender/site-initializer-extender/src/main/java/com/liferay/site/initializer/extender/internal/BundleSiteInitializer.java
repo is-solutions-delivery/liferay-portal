@@ -540,7 +540,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			String json = _read(resourcePath);
 
-			Catalog catalog = Catalog.toDTO(json);
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
+
+			String assetVocabularyName = jsonObject.getString(
+				"assetVocabularyName");
+
+			jsonObject.remove("assetVocabularyName");
+
+			Catalog catalog = Catalog.toDTO(String.valueOf(jsonObject));
 
 			if (catalog == null) {
 				_log.error(
@@ -552,7 +559,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			catalog = catalogResource.postCatalog(catalog);
 
 			_addCPDefinitions(
-				catalog, channel, commerceInventoryWarehouses,
+				assetVocabularyName, catalog, channel,
+				commerceInventoryWarehouses,
 				StringUtil.replaceLast(resourcePath, ".json", ".products.json"),
 				serviceContext);
 		}
@@ -737,50 +745,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addCPDefinitions(
-			Catalog catalog, Channel channel,
-			List<CommerceInventoryWarehouse> commerceInventoryWarehouses,
-			String resourcePath, ServiceContext serviceContext)
-		throws Exception {
-
-		String json = _read(resourcePath);
-
-		if (json == null) {
-			return;
-		}
-
-		Group commerceCatalogGroup =
-			CommerceCatalogLocalServiceUtil.getCommerceCatalogGroup(
-				catalog.getId());
-
-		TaxonomyVocabularyResource.Builder taxonomyVocabularyResourceBuilder =
-			_taxonomyVocabularyResourceFactory.create();
-
-		TaxonomyVocabularyResource taxonomyVocabularyResource =
-			taxonomyVocabularyResourceBuilder.user(
-				serviceContext.fetchUser()
-			).build();
-
-		Group companyGroup = _groupLocalService.getCompanyGroup(
-			serviceContext.getCompanyId());
-
-		TaxonomyVocabulary taxonomyVocabulary =
-			taxonomyVocabularyResource.
-				getSiteTaxonomyVocabularyByExternalReferenceCode(
-					companyGroup.getGroupId(),
-					channel.getExternalReferenceCode());
-
-		_commerceReferencesHolder.cpDefinitionsImporter.importCPDefinitions(
-			JSONFactoryUtil.createJSONArray(json), taxonomyVocabulary.getName(),
-			commerceCatalogGroup.getGroupId(), channel.getId(),
-			ListUtil.toLongArray(
-				commerceInventoryWarehouses,
-				CommerceInventoryWarehouse.
-					COMMERCE_INVENTORY_WAREHOUSE_ID_ACCESSOR),
-			_classLoader, StringUtil.replace(resourcePath, ".json", "/"),
-			serviceContext.getScopeGroupId(), serviceContext.getUserId());
-	}
-
-	private void _addCPDefinitions(
 			Map<String, String> documentsStringUtilReplaceValues,
 			ServiceContext serviceContext)
 		throws Exception {
@@ -803,6 +767,33 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext);
 		_addCommerceNotificationTemplates(
 			channel.getId(), documentsStringUtilReplaceValues, serviceContext);
+	}
+
+	private void _addCPDefinitions(
+			String assetVocabularyName, Catalog catalog, Channel channel,
+			List<CommerceInventoryWarehouse> commerceInventoryWarehouses,
+			String resourcePath, ServiceContext serviceContext)
+		throws Exception {
+
+		String json = _read(resourcePath);
+
+		if (json == null) {
+			return;
+		}
+
+		Group commerceCatalogGroup =
+			CommerceCatalogLocalServiceUtil.getCommerceCatalogGroup(
+				catalog.getId());
+
+		_commerceReferencesHolder.cpDefinitionsImporter.importCPDefinitions(
+			JSONFactoryUtil.createJSONArray(json), assetVocabularyName,
+			commerceCatalogGroup.getGroupId(), channel.getId(),
+			ListUtil.toLongArray(
+				commerceInventoryWarehouses,
+				CommerceInventoryWarehouse.
+					COMMERCE_INVENTORY_WAREHOUSE_ID_ACCESSOR),
+			_classLoader, StringUtil.replace(resourcePath, ".json", "/"),
+			serviceContext.getScopeGroupId(), serviceContext.getUserId());
 	}
 
 	private void _addDDMStructures(ServiceContext serviceContext)
@@ -905,14 +896,31 @@ public class BundleSiteInitializer implements SiteInitializer {
 				).toString());
 		}
 
-		if (documentFolderId != null) {
-			documentFolder =
-				documentFolderResource.postDocumentFolderDocumentFolder(
-					documentFolderId, documentFolder);
+		Page<DocumentFolder> documentFoldersPage =
+			documentFolderResource.getSiteDocumentFoldersPage(
+				groupId, true, null, null,
+				documentFolderResource.toFilter(
+					StringBundler.concat(
+						"name eq '", documentFolder.getName(), "'")),
+				null, null);
+
+		DocumentFolder existingDocumentFolder =
+			documentFoldersPage.fetchFirstItem();
+
+		if (existingDocumentFolder == null) {
+			if (documentFolderId != null) {
+				documentFolder =
+					documentFolderResource.postDocumentFolderDocumentFolder(
+						documentFolderId, documentFolder);
+			}
+			else {
+				documentFolder = documentFolderResource.postSiteDocumentFolder(
+					groupId, documentFolder);
+			}
 		}
 		else {
-			documentFolder = documentFolderResource.postSiteDocumentFolder(
-				groupId, documentFolder);
+			documentFolder = documentFolderResource.putDocumentFolder(
+				existingDocumentFolder.getId(), documentFolder);
 		}
 
 		return documentFolder.getId();
@@ -981,28 +989,74 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Document document = null;
 
 			if (documentFolderId != null) {
-				document = documentResource.postDocumentFolderDocument(
-					documentFolderId,
-					MultipartBody.of(
-						Collections.singletonMap(
-							"file",
-							new BinaryFile(
-								MimeTypesUtil.getContentType(fileName),
-								fileName, urlConnection.getInputStream(),
-								urlConnection.getContentLength())),
-						__ -> _objectMapper, values));
+				Page<Document> documentsPage =
+					documentResource.getDocumentFolderDocumentsPage(
+						documentFolderId, false, null, null,
+						documentResource.toFilter(
+							StringBundler.concat("title eq '", fileName, "'")),
+						null, null);
+
+				Document existingDocument = documentsPage.fetchFirstItem();
+
+				if (existingDocument == null) {
+					document = documentResource.postDocumentFolderDocument(
+						documentFolderId,
+						MultipartBody.of(
+							Collections.singletonMap(
+								"file",
+								new BinaryFile(
+									MimeTypesUtil.getContentType(fileName),
+									fileName, urlConnection.getInputStream(),
+									urlConnection.getContentLength())),
+							__ -> _objectMapper, values));
+				}
+				else {
+					document = documentResource.putDocument(
+						existingDocument.getId(),
+						MultipartBody.of(
+							Collections.singletonMap(
+								"file",
+								new BinaryFile(
+									MimeTypesUtil.getContentType(fileName),
+									fileName, urlConnection.getInputStream(),
+									urlConnection.getContentLength())),
+							__ -> _objectMapper, values));
+				}
 			}
 			else {
-				document = documentResource.postSiteDocument(
-					groupId,
-					MultipartBody.of(
-						Collections.singletonMap(
-							"file",
-							new BinaryFile(
-								MimeTypesUtil.getContentType(fileName),
-								fileName, urlConnection.getInputStream(),
-								urlConnection.getContentLength())),
-						__ -> _objectMapper, values));
+				Page<Document> documentsPage =
+					documentResource.getSiteDocumentsPage(
+						groupId, false, null, null,
+						documentResource.toFilter(
+							StringBundler.concat("title eq '", fileName, "'")),
+						null, null);
+
+				Document existingDocument = documentsPage.fetchFirstItem();
+
+				if (existingDocument == null) {
+					document = documentResource.postSiteDocument(
+						groupId,
+						MultipartBody.of(
+							Collections.singletonMap(
+								"file",
+								new BinaryFile(
+									MimeTypesUtil.getContentType(fileName),
+									fileName, urlConnection.getInputStream(),
+									urlConnection.getContentLength())),
+							__ -> _objectMapper, values));
+				}
+				else {
+					document = documentResource.putDocument(
+						existingDocument.getId(),
+						MultipartBody.of(
+							Collections.singletonMap(
+								"file",
+								new BinaryFile(
+									MimeTypesUtil.getContentType(fileName),
+									fileName, urlConnection.getInputStream(),
+									urlConnection.getContentLength())),
+							__ -> _objectMapper, values));
+				}
 			}
 
 			String key = resourcePath;

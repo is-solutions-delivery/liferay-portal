@@ -906,6 +906,7 @@ definition {
 	}
 
 	macro openToAddKBArticle {
+
 		// You can use this navigation when you need to access the configuration quickly without checking the UI.
 
 		var baseURL = "${baseURL}";
@@ -930,6 +931,7 @@ definition {
 	}
 
 	macro openToKBArticleInSite {
+
 		// You can use this navigation when you need to access the configuration quickly without checking the UI.
 
 		var baseURL = "${baseURL}";

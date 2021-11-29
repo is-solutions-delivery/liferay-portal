@@ -467,6 +467,11 @@ public abstract class BaseSXPElementResourceTestCase {
 			"This method needs to be implemented");
 	}
 
+	@Test
+	public void testGetSXPElementExport() throws Exception {
+		Assert.assertTrue(false);
+	}
+
 	protected SXPElement testGraphQLSXPElement_addSXPElement()
 		throws Exception {
 

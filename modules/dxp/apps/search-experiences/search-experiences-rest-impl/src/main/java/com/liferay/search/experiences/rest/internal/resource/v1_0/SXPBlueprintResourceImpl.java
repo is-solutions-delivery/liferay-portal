@@ -14,10 +14,13 @@
 
 package com.liferay.search.experiences.rest.internal.resource.v1_0;
 
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -35,6 +38,8 @@ import com.liferay.search.experiences.service.SXPBlueprintService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+
+import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -64,6 +69,43 @@ public class SXPBlueprintResourceImpl extends BaseSXPBlueprintResourceImpl {
 				sxpBlueprintId, contextAcceptLanguage.getPreferredLocale(),
 				contextUriInfo, contextUser),
 			_sxpBlueprintService.getSXPBlueprint(sxpBlueprintId));
+	}
+
+	@Override
+	public Response getSXPBlueprintExport(Long sxpBlueprintId)
+		throws Exception {
+
+		com.liferay.search.experiences.model.SXPBlueprint sxpBlueprint =
+			_sxpBlueprintService.getSXPBlueprint(sxpBlueprintId);
+
+		return Response.ok(
+		).entity(
+			JSONUtil.put(
+				"configuration",
+				_jsonFactory.createJSONObject(
+					sxpBlueprint.getConfigurationJSON())
+			).put(
+				"description_i18n",
+				_jsonFactory.createJSONObject(
+					_jsonFactory.looseSerialize(
+						sxpBlueprint.getDescriptionMap()))
+			).put(
+				"elementInstances",
+				_jsonFactory.createJSONArray(
+					sxpBlueprint.getElementInstancesJSON())
+			).put(
+				"title_i18n",
+				_jsonFactory.createJSONObject(
+					_jsonFactory.looseSerialize(sxpBlueprint.getTitleMap()))
+			)
+		).header(
+			"Content-Disposition",
+			StringBundler.concat(
+				"attachment; filename=\"",
+				sxpBlueprint.getTitle(
+					contextAcceptLanguage.getPreferredLocale(), true),
+				".json\"")
+		).build();
 	}
 
 	@Override
@@ -197,6 +239,9 @@ public class SXPBlueprintResourceImpl extends BaseSXPBlueprintResourceImpl {
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private SXPBlueprintDTOConverter _sxpBlueprintDTOConverter;

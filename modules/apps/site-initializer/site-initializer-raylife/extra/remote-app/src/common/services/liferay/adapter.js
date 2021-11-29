@@ -20,6 +20,89 @@ const adaptToBusinessType = (data) =>
  * @param {DataForm}  data Basics form object
  * @returns {BasicsFormApplicationRequest} Basics Form ready for application request
  */
+const adaptToRaylifeApplicationToForm = (data) => {
+	const basics = {
+		applicationId: data.id,
+		businessCategoryId: data.businessCategoryId,
+		businessInformation: {
+			business: {
+				email: data.email,
+				location: {
+					address: data.address,
+					addressApt: data.addressApt,
+					city: data.city,
+					state: data.state,
+					zip: data.zip,
+				},
+				phone: data.phone,
+				website: data.website,
+			},
+			firstName: data.firstName,
+			lastName: data.lastName,
+		},
+		businessSearch: data.businessSearch,
+		product: data.product,
+		productQuote: Number(data.productQuote),
+		properties: {
+			naics: data.naics,
+			segment: data.segment,
+		},
+	};
+
+	const business = {
+		hasAutoPolicy: data.hasAutoPolicy,
+		hasSellProductsUnderOwnBrand: data.hasSellProductsUnderOwnBrand,
+		hasStoredCustomerInformation: data.hasStoredCustomerInformation,
+		legalEntity: data.legalEntity,
+		overallSales: data.overallSales,
+		salesMerchandise: data.salesMerchandise,
+		yearsOfExperience: data.yearsOfExperience,
+	};
+
+	const employees = {
+		annualPayrollForEmployees: data.annualPayrollForEmployees,
+		annualPayrollForOwner: data.annualPayrollForOwner,
+		businessOperatesYearRound: data.businessOperatesYearRound,
+		estimatedAnnualGrossRevenue: data.estimatedAnnualGrossRevenue,
+		fein: data.fein,
+		hasFein: data.hasFein,
+		partTimeEmployees: data.partTimeEmployees,
+		startBusinessAtYear: data.startBusinessAtYear,
+	};
+
+	const property = {
+		buildingSquareFeetOccupied: data.buildingSquareFeetOccupied,
+		doOwnBuildingAtAddress: data.doOwnBuildingAtAddress,
+		isPrimaryBusinessLocation: data.isPrimaryBusinessLocation,
+		isThereDivingBoards: data.isThereDivingBoards,
+		isThereSwimming: data.isThereSwimming,
+		stories: data.stories,
+		totalBuildingSquareFeet: data.totalBuildingSquareFeet,
+		yearBuilding: data.yearBuilding,
+	};
+
+	const formState = {
+		basics,
+		business,
+		employees,
+		property,
+	};
+
+	for (const form in formState) {
+		const formKeyHasAnyValue = Object.values(formState[form]).some(Boolean);
+
+		if (!formKeyHasAnyValue) {
+			delete formState[form];
+		}
+	}
+
+	return formState;
+};
+
+/**
+ * @param {DataForm}  data Basics form object
+ * @returns {BasicsFormApplicationRequest} Basics Form ready for application request
+ */
 const adaptToFormApplicationRequest = (form) => ({
 	address: form?.basics?.businessInformation?.business?.location?.address,
 	addressApt:
@@ -27,7 +110,9 @@ const adaptToFormApplicationRequest = (form) => ({
 	annualPayrollForEmployees: form?.employees?.annualPayrollForEmployees,
 	annualPayrollForOwner: form?.employees?.annualPayrollForOwner,
 	buildingSquareFeetOccupied: form?.property?.buildingSquareFeetOccupied,
+	businessCategoryId: form?.basics?.businessCategoryId,
 	businessOperatesYearRound: form?.employees?.businessOperatesYearRound,
+	businessSearch: form?.basics?.businessSearch,
 	city: form?.basics?.businessInformation?.business?.location?.city,
 	doOwnBuildingAtAddress: form?.property?.doOwnBuildingAtAddress,
 	email: form?.basics?.businessInformation?.business?.email,
@@ -43,10 +128,14 @@ const adaptToFormApplicationRequest = (form) => ({
 	isThereSwimming: form?.property?.isThereSwimming,
 	lastName: form?.basics?.businessInformation?.lastName,
 	legalEntity: form?.business?.legalEntity,
+	naics: form?.basics?.properties?.naics,
 	overallSales: form?.business?.overallSales,
 	partTimeEmployees: form?.employees?.partTimeEmployees,
 	phone: form?.basics?.businessInformation?.business?.phone,
+	product: form?.basics?.product,
+	productQuote: `${form?.basics?.productQuote}`,
 	salesMerchandise: form?.business?.salesMerchandise,
+	segment: form?.basics?.properties?.segment,
 	startBusinessAtYear: form?.employees?.startBusinessAtYear,
 	state: form?.basics?.businessInformation?.business?.location?.state,
 	stories: form?.property?.stories,
@@ -90,4 +179,5 @@ export const LiferayAdapt = {
 	adaptToBusinessType,
 	adaptToFormApplicationRequest,
 	adaptToProductQuote,
+	adaptToRaylifeApplicationToForm,
 };

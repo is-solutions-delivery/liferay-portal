@@ -63,6 +63,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsImpl;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
@@ -105,6 +106,49 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 		setUpResourceBundleLoaderUtil();
 
 		setUpDDMFormDisplayContext();
+	}
+
+	@Test
+	public void testFormExpired() throws Exception {
+		DDMFormInstanceSettings ddmFormInstanceSettings = mock(
+			DDMFormInstanceSettings.class);
+
+		when(
+			ddmFormInstanceSettings.expirationDate()
+		).thenReturn(
+			"1987-09-22"
+		);
+
+		when(
+			ddmFormInstanceSettings.neverExpire()
+		).thenReturn(
+			false
+		);
+
+		Assert.assertTrue(
+			_ddmFormAdminDisplayContext.isFormExpired(
+				_mockDDMFormInstance(ddmFormInstanceSettings)));
+	}
+
+	@Test
+	public void testFormNotExpiredWithInexistentForm() throws Exception {
+		Assert.assertFalse(_ddmFormAdminDisplayContext.isFormExpired(null));
+	}
+
+	@Test
+	public void testFormNotExpiredWithNeverExpireSetting() throws Exception {
+		DDMFormInstanceSettings ddmFormInstanceSettings = mock(
+			DDMFormInstanceSettings.class);
+
+		when(
+			ddmFormInstanceSettings.neverExpire()
+		).thenReturn(
+			true
+		);
+
+		Assert.assertFalse(
+			_ddmFormAdminDisplayContext.isFormExpired(
+				_mockDDMFormInstance(ddmFormInstanceSettings)));
 	}
 
 	@Test
@@ -273,15 +317,15 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 	protected HttpServletRequest mockHttpServletRequest() {
 		ThemeDisplay themeDisplay = mockThemeDisplay();
 
-		HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+		_httpServletRequest = mock(HttpServletRequest.class);
 
 		when(
-			httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY)
+			_httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY)
 		).thenReturn(
 			themeDisplay
 		);
 
-		return httpServletRequest;
+		return _httpServletRequest;
 	}
 
 	protected ThemeDisplay mockThemeDisplay() {
@@ -299,6 +343,12 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 			_PORTAL_URL
 		);
 
+		when(
+			themeDisplay.getTimeZone()
+		).thenReturn(
+			TimeZone.getDefault()
+		);
+
 		return themeDisplay;
 	}
 
@@ -311,7 +361,7 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 	}
 
 	protected void setUpDDMFormDisplayContext() throws Exception {
-		_renderRequest = mock(RenderRequest.class);
+		_renderRequest = _mockRenderRequest();
 
 		_ddmFormAdminDisplayContext = new DDMFormAdminDisplayContext(
 			_renderRequest, mock(RenderResponse.class),
@@ -416,6 +466,20 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 		return ddmFormInstance;
 	}
 
+	private RenderRequest _mockRenderRequest() {
+		RenderRequest renderRequest = mock(RenderRequest.class);
+
+		ThemeDisplay themeDisplay = mockThemeDisplay();
+
+		when(
+			renderRequest.getAttribute(Matchers.eq(WebKeys.THEME_DISPLAY))
+		).thenReturn(
+			themeDisplay
+		);
+
+		return renderRequest;
+	}
+
 	private String _read(String fileName) throws Exception {
 		Class<?> clazz = getClass();
 
@@ -438,6 +502,7 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 		RandomTestUtil.randomLong();
 
 	private DDMFormAdminDisplayContext _ddmFormAdminDisplayContext;
+	private HttpServletRequest _httpServletRequest;
 	private RenderRequest _renderRequest;
 
 }

@@ -358,6 +358,38 @@ public abstract class BaseSXPElementResourceImpl
 		return new SXPElement();
 	}
 
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/search-experiences-rest/v1.0/sxp-elements/{sxpElementId}/export'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "sxpElementId"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "SXPElement")}
+	)
+	@javax.ws.rs.GET
+	@javax.ws.rs.Path("/sxp-elements/{sxpElementId}/export")
+	@javax.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Response getSXPElementExport(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@javax.validation.constraints.NotNull
+			@javax.ws.rs.PathParam("sxpElementId")
+			Long sxpElementId)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
 	@Override
 	@SuppressWarnings("PMD.UnusedLocalVariable")
 	public void create(

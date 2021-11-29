@@ -35,9 +35,11 @@ definition {
 		task ("Assert Disable multi-factor authentication system-wide message is present in Multi-Factor Authentication System configuration") {
 			MultiFactorAuthentication.openToConfigInSystemSettings();
 
-			AssertTextEquals(
-				locator1 = "MultiFactorAuthentication#EMAIL_OTP_DISABLE",
-				value1 = "Disable multi-factor authentication system-wide.");
+			AssertNotChecked.assertNotCheckedNotVisible(
+				key_settingFieldName = "Disable Multi-Factor Authentication",
+				locator1 = "SystemSettings#SETTING_FIELD_NAME_CHECKBOX");
+
+			SystemSettings.viewSettingsText(settingsText = "Disable multi-factor authentication system-wide.");
 		}
 
 		task ("Assert default descriptions at multifactor authentication") {
@@ -160,7 +162,7 @@ definition {
 		task ("Configure OTP failed attempts allowed and retry time out") {
 			MultiFactorAuthentication.emailOTPConfiguration(
 				failedAttemptsAllowed = "1",
-				retryTimeout = "5");
+				retryTimeout = "10");
 		}
 
 		task ("Sign out and login") {
@@ -175,27 +177,16 @@ definition {
 			MultiFactorAuthentication.sendOTPEmailPG();
 		}
 
-		task ("Verify password test is not valid for test test") {
-			MultiFactorAuthentication.verifyOTP(
-				portalURL = "${portalURL}",
-				recipient = "test test",
-				userEmailAddress = "test@liferay.com",
-				userPassword = "test",
-				validOTP = "false");
+		task ("Enter wrong password to reached the maximum allowed failed attempt") {
+			MultiFactorAuthentication.verifyOTP(validOTP = "false");
 
-			AssertElementPresent(
-				key_fieldName = "emailOTPSentSubject",
-				locator1 = "Message#ERROR");
+			AssertTextEquals.assertPartialText(
+				locator1 = "Message#ERROR_2",
+				value1 = "You have reached the maximum allowed failed attempts. Please retry again in 10 seconds.");
 		}
 
-		task ("Verify password test is valid for Test test") {
-			Pause(locator1 = "5000");
-
-			MultiFactorAuthentication.verifyOTP(
-				portalURL = "${portalURL}",
-				recipient = "Test Test",
-				userEmailAddress = "test@liferay.com",
-				userPassword = "test");
+		task ("Assert user cannot login portal before retry time out") {
+			AssertElementPresent(locator1 = "MultiFactorAuthentication#EMAIL_OTP_VERIFY_SUBMIT_EMAIL_BUTTON_DISABLED");
 		}
 	}
 
@@ -656,7 +647,7 @@ definition {
 
 			MultiFactorAuthentication.emailOTPConfiguration(
 				failedAttemptsAllowed = "1",
-				retryTimeout = "10");
+				retryTimeout = "5");
 		}
 
 		task ("Sign out and login") {
@@ -671,15 +662,14 @@ definition {
 			MultiFactorAuthentication.sendOTPEmailPG();
 		}
 
-		task ("Check OTP email for test test and Test Test") {
-			MultiFactorAuthentication.verifyOTP(
-				portalURL = "${portalURL}",
-				recipient = "test test",
-				userEmailAddress = "test@liferay.com",
-				userPassword = "test",
-				validOTP = "false");
+		task ("Assert user cannot login portal before retry time out") {
+			MultiFactorAuthentication.verifyOTP(validOTP = "false");
 
-			Pause(locator1 = "11000");
+			AssertElementPresent(locator1 = "MultiFactorAuthentication#EMAIL_OTP_VERIFY_SUBMIT_EMAIL_BUTTON_DISABLED");
+		}
+
+		task ("Assert user can login portal after retry time out") {
+			Pause(locator1 = "5000");
 
 			MultiFactorAuthentication.verifyOTP(
 				portalURL = "${portalURL}",
@@ -823,6 +813,14 @@ definition {
 				portlet = "IP Address");
 
 			MultiFactorAuthentication.configureIPAddress(enableIP = "true");
+		}
+
+		task ("Enable OTP") {
+			MultiFactorAuthentication.openToConfigInInstanceSettings(
+				baseURL = "http://www.able.com:8080",
+				portlet = "Time-Based OTP");
+
+			MultiFactorAuthentication.configureTOTP(enableTOTP = "true");
 		}
 
 		task ("Signout and login at able.com") {
@@ -1108,16 +1106,8 @@ definition {
 				userEmailAddress = "userea@liferay.com");
 		}
 
-		task ("Signout and login") {
-			SignOut.signOut();
-
-			User.firstLoginUI(
-				password = "test",
-				userEmailAddress = "test@liferay.com");
-		}
-
 		task ("Enable OTP") {
-			MultiFactorAuthentication.openToConfigInInstanceSettings(baseURL = "");
+			MultiFactorAuthentication.openToConfigInInstanceSettings();
 
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}

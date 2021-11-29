@@ -33,18 +33,76 @@ definition {
 	@ignore = "Test Stub"
 	@priority = "5"
 	test CanChooseEspecifcVersionOnPage {
+		Workflow.openWorkflowListView();
 
-		// TODO LRQA-68933 CanChooseEspecifcVersionOnPage pending implementation
+		Workflow.gotoEditWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
+		Workflow.updateDefinition(workflowDefinitionTitle = "Single Approver Updated");
+
+		KaleoDesigner.deleteNode(nodeNodeLabel = "update");
+
+		Button.clickUpdate();
+
+		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver Update");
+
+		WorkflowMetricsPerformanceByStep.viewPerformanceByStepTooltip();
+
+		WorkflowMetricsPerformanceByStep.clickViewAllSteps(
+			stepsNumber = "1",
+			valueSteps = "View All Steps (1)");
+
+		Click(
+			key_dateRange = "Process Version",
+			key_title = "",
+			locator1 = "WorkflowMetrics#METRICS_DATE_RANGE_DROPDOWN_BY_TITLE");
+
+		AssertElementPresent(
+			key_dateRange = "1.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#DATE_RANGE_DROPDOWN_OPTION");
+
+		AssertElementPresent(
+			key_dateRange = "2.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#DATE_RANGE_DROPDOWN_OPTION");
+
+		AssertElementPresent(
+			key_dateRange = "3.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#DATE_RANGE_DROPDOWN_OPTION");
 	}
 
 	@description = "LPS-101075 - Verify that the filter offers an option for each existing version"
 	@ignore = "Test Stub"
 	@priority = "5"
 	test CanFilterByEachExistingVersion {
+		Workflow.openWorkflowListView();
 
-		// TODO LRQA-68927 CanFilterByEachExistingVersion pending implementation
+		Workflow.gotoEditWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
+		Workflow.updateDefinition(workflowDefinitionTitle = "Single Approver Updated");
+
+		KaleoDesigner.deleteNode(nodeNodeLabel = "update");
+
+		Button.clickUpdate();
+
+		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver Update");
+
+		WorkflowMetricsPerformanceByStep.viewPerformanceByStepTooltip();
+
+		Click(
+			key_dateRange = "All Versions",
+			key_title = "",
+			locator1 = "WorkflowMetrics#METRICS_DATE_RANGE_DROPDOWN_BY_TITLE");
+
+		AssertElementPresent(
+			key_dateRange = "1.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#DATE_RANGE_DROPDOWN_OPTION");
+
+		AssertElementPresent(
+			key_dateRange = "2.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#DATE_RANGE_DROPDOWN_OPTION");
+
+		AssertElementPresent(
+			key_dateRange = "3.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#DATE_RANGE_DROPDOWN_OPTION");
 	}
 
 	@description = "LPS-101075 - Verify that the filter is available on the card in the Performance tab"
@@ -83,9 +141,41 @@ definition {
 	@ignore = "Test Stub"
 	@priority = "3"
 	test CanNotSelectMoreThanOneVersion {
+		Workflow.openWorkflowProcessBuilderConfiguration();
 
-		// TODO LRQA-68934 CanNotSelectMoreThanOneVersion pending implementation
+		Workflow.configureWorkflow(
+			workflowDefinition = "Single Approver",
+			workflowResourceValue = "Blogs Entry");
 
+		Workflow.openWorkflowListView();
+
+		Workflow.gotoEditWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
+
+		Workflow.updateDefinition(workflowDefinitionTitle = "Single Approver Updated");
+
+		KaleoDesigner.deleteNode(nodeNodeLabel = "update");
+
+		Button.clickUpdate();
+
+		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver");
+
+		Click(locator1 = "WorkflowMetrics#METRICS_PERFORMANCE_TAB");
+
+		WorkflowMetricsPerformanceByStep.clickViewAllSteps(
+			stepsNumber = "1",
+			valueSteps = "View All Steps (1)");
+
+		WorkflowMetricsPerformanceByStep.selectProcessVersion(versionOption = "1.0");
+
+		WorkflowMetricsPerformanceByStep.selectProcessVersion(versionOption = "2.0");
+
+		AssertElementPresent(
+			key_versionOption = "2.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PROCESS_VERSION_DROPDOWN_SELECTED");
+
+		AssertElementNotPresent(
+			key_versionOption = "1.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PROCESS_VERSION_DROPDOWN_SELECTED");
 	}
 
 	@description = "LPS-101075 - Verify that the filter offers an option to see all version together"
@@ -842,9 +932,85 @@ definition {
 	@ignore = "Test Stub"
 	@priority = "4"
 	test PageDisplaysSameStepsAsCard {
+		Workflow.openWorkflowProcessBuilderConfiguration();
 
-		// TODO LRQA-68930 PageDisplaysSameStepsAsCard pending implementation
+		Workflow.configureWorkflow(
+			workflowDefinition = "Single Approver",
+			workflowResourceValue = "Blogs Entry");
 
+		JSONBlog.addEntry(
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Blogs Entry Title",
+			workflowAssetType = "Blogs Entry",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Blogs Entry Title",
+			workflowAssetType = "Blogs Entry",
+			workflowTask = "Review");
+
+		Workflow.openWorkflowListView();
+
+		Workflow.gotoEditWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "update");
+
+		KaleoDesigner.editNodeName(nodeName = "update2");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "review");
+
+		KaleoDesigner.editNodeName(nodeName = "review2");
+
+		Button.click(button = "Update");
+
+		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver");
+
+		Click(locator1 = "WorkflowMetrics#METRICS_PERFORMANCE_TAB");
+
+		Click(
+			key_stepsNumber = "3",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_CARD_VIEW_ALL_STEPS");
+
+		AssertElementPresent(
+			key_stepName = "Review",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PAGE_TABLE_STEP_NAME");
+
+		AssertElementPresent(
+			key_stepName = "review2",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PAGE_TABLE_STEP_NAME");
+
+		AssertElementPresent(
+			key_stepName = "update2",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PAGE_TABLE_STEP_NAME");
+
+		Navigator.gotoBack();
+
+		Click(locator1 = "WorkflowMetricsPerformanceByStep#ALL_VERSIONS_DROPDOWN");
+
+		Click(
+			key_versionOption = "1.0",
+			locator1 = "WorkflowMetricsPerformanceByStep#ALL_VERSIONS_DROPDOWN_OPTION");
+
+		Click(
+			key_stepsNumber = "1",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_CARD_VIEW_ALL_STEPS");
+
+		AssertElementPresent(
+			key_stepName = "Review",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PAGE_TABLE_STEP_NAME");
+
+		AssertElementNotPresent(
+			key_stepName = "review2",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PAGE_TABLE_STEP_NAME");
+
+		AssertElementNotPresent(
+			key_stepName = "update2",
+			locator1 = "WorkflowMetricsPerformanceByStep#METRICS_PERFORMANCE_BY_STEP_PAGE_TABLE_STEP_NAME");
 	}
 
 	@description = "LPS-100677 - Verify that the search is an approximate match aka LIKE search type or character by character comparison"

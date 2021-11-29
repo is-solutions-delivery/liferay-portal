@@ -51,6 +51,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>FIELD_ADDED_ON_BLOCK</td>
+		<td>//div[contains(@class,'object-admin-panel__simple-body__content-left')]//div//h5[contains(text(),'${key_fieldLabelName}')]</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>FIELD_TYPE</td>
 		<td>//select[@id='_com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_type']</td>
 		<td></td>
@@ -73,6 +78,11 @@
 	<tr>
 		<td>TOGGLE_ACTIVE</td>
 		<td>//input[@id = '_com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_active']</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>TOGGLE_COLLAPSIBLE</td>
+		<td>//input[@aria-label = 'Collapsible']</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -103,6 +113,16 @@
 	<tr>
 		<td>OBJECT_NAME</td>
 		<td>//div[(@class='table-list-title') and contains(.,'${key_labelName}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>KEBAB_MENU_BLOCK_FIELD</td>
+		<td>xpath=(//*[contains(@class,'lexicon-icon-ellipsis')])[3]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>KEBAB_MENU_BLOCK_FIELD_OPTION_DELETE</td>
+		<td>xpath=(//button[(@class='dropdown-item') and contains(text(),'Delete')])[3]</td>
 		<td></td>
 	</tr>
 </tbody>

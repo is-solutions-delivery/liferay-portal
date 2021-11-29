@@ -111,7 +111,7 @@ if (cpDisplayLayout != null) {
 		).put(
 			"portletNamespace", liferayPortletResponse.getNamespace()
 		).put(
-			"title", assetCategory.getTitle(locale)
+			"title", (assetCategory == null) ? null : assetCategory.getTitle(locale)
 		).build()
 	%>'
 	module="js/EditAssetCategoryCPDisplayLayout"

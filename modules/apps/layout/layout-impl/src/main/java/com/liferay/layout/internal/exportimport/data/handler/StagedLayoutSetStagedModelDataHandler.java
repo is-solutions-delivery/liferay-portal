@@ -31,6 +31,7 @@ import com.liferay.exportimport.lar.ThemeExporter;
 import com.liferay.exportimport.lar.ThemeImporter;
 import com.liferay.layout.internal.exportimport.staged.model.repository.StagedLayoutSetStagedModelRepository;
 import com.liferay.layout.set.model.adapter.StagedLayoutSet;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -797,8 +798,14 @@ public class StagedLayoutSetStagedModelDataHandler
 			if (action.equals(Constants.SKIP) ||
 				hasSkippedSiblingLayout(layoutElement, siblingActionsMap)) {
 
-				// We do not want to update priorities if there are elements at
-				// the same level of the page hierarchy with the SKIP action
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						StringBundler.concat(
+							"Do not update priority for layout ",
+							layoutElement.attributeValue("uuid"),
+							" because there are elements at the same level of ",
+							"the page hierarchy with the SKIP action"));
+				}
 
 				continue;
 			}
@@ -809,10 +816,16 @@ public class StagedLayoutSetStagedModelDataHandler
 
 				Layout layout = layouts.get(layoutId);
 
-				// Layout might not have been imported due to a controlled
-				// error. See SitesImpl#addMergeFailFriendlyURLLayout.
-
 				if (layout == null) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(
+							StringBundler.concat(
+								"Layout ", layoutElement.attributeValue("uuid"),
+								" might not have been imported due to a ",
+								"controlled error. See ",
+								"SitesImpl#addMergeFailFriendlyURLLayout."));
+					}
+
 					continue;
 				}
 
@@ -835,7 +848,21 @@ public class StagedLayoutSetStagedModelDataHandler
 		for (long plid : updatedPlids) {
 			Layout layout = _layoutLocalService.fetchLayout(plid);
 
-			layout.setPriority(layoutPriorities.get(plid));
+			int newLayoutPriority = layoutPriorities.get(plid);
+
+			if (layout.getPriority() == newLayoutPriority) {
+				continue;
+			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					StringBundler.concat(
+						"Updated priority for layout ", layout.getUuid(),
+						" from ", layout.getPriority(), " to ",
+						newLayoutPriority));
+			}
+
+			layout.setPriority(newLayoutPriority);
 
 			_layoutLocalService.updateLayout(layout);
 
