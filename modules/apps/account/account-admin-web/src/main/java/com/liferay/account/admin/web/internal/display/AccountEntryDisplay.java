@@ -71,6 +71,10 @@ public class AccountEntryDisplay {
 			AccountEntryLocalServiceUtil.fetchAccountEntry(accountEntryId));
 	}
 
+	public AccountEntry getAccountEntry() {
+		return _accountEntry;
+	}
+
 	public long getAccountEntryId() {
 		return _accountEntryId;
 	}
@@ -205,6 +209,7 @@ public class AccountEntryDisplay {
 	}
 
 	private AccountEntryDisplay() {
+		_accountEntry = null;
 		_accountEntryId = 0;
 		_active = true;
 		_defaultBillingAddress = null;
@@ -223,6 +228,8 @@ public class AccountEntryDisplay {
 	}
 
 	private AccountEntryDisplay(AccountEntry accountEntry) {
+		_accountEntry = accountEntry;
+
 		_accountEntryId = accountEntry.getAccountEntryId();
 		_active = _isActive(accountEntry);
 		_defaultBillingAddress = accountEntry.getDefaultBillingAddress();
@@ -369,6 +376,7 @@ public class AccountEntryDisplay {
 	private static final Log _log = LogFactoryUtil.getLog(
 		AccountEntryDisplay.class);
 
+	private final AccountEntry _accountEntry;
 	private final long _accountEntryId;
 	private final boolean _active;
 	private final Address _defaultBillingAddress;
