@@ -1,9 +1,16 @@
+import {useLazyQuery, useQuery} from '@apollo/client';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {useFormikContext} from 'formik';
-import {useContext} from 'react';
+import {useContext, useEffect, useMemo} from 'react';
 import BaseButton from '~/common/components/BaseButton';
 import Input from '~/common/components/Input';
 import Select from '~/common/components/Select';
+import {LiferayTheme} from '~/common/services/liferay';
+import {
+	getAccountSubscriptionGroupsByFilter,
+	getUserAccountById,
+} from '~/common/services/liferay/graphql/queries';
+import {API_BASE_URL} from '~/common/utils';
 import Layout from '../../components/Layout';
 import {AppContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
@@ -41,16 +48,68 @@ const Invites = () => {
 	const [, dispatch] = useContext(AppContext);
 	const {setFieldValue, values} = useFormikContext();
 
+	const {data: userAccountData} = useQuery(getUserAccountById, {
+		variables: {userAccountId: LiferayTheme.getUserId()},
+	});
+
+	const accountBriefs = useMemo(() => {
+		return userAccountData?.userAccount?.accountBriefs || [];
+	}, [userAccountData]);
+
+	const [getAccSubsription, {data: getAccSubsGroups}] =
+		useLazyQuery(getAccountSubscriptionGroupsByFilter) || [];
+	const getAccountSubscriptionsGroups =
+		getAccSubsGroups?.c?.accountSubscriptionGroups?.items;
+
+	useEffect(() => {
+		getAccSubsription({
+			variables: {
+				filter: accountBriefs
+					.map(
+						(
+							{externalReferenceCode},
+							index,
+							{length: totalAccountBriefs}
+						) =>
+							`accountKey eq '${externalReferenceCode}' ${
+								index + 1 < totalAccountBriefs ? ' or ' : ' '
+							}`
+					)
+					.join(' '),
+			},
+		});
+	}, [accountBriefs, getAccSubsription]);
+
+	const hasDXPCloudSubscription = (
+		getAccountSubscriptionsGroups || []
+	).filter((accountSubscriptionGroup) => {
+		return accountSubscriptionGroup.name === 'DXP Cloud';
+	});
+
+	const nextStep =
+		accountBriefs?.length && hasDXPCloudSubscription?.length
+			? steps.dxp
+			: steps.success;
+
+	function handleSkip() {
+		const redirectUrl = `${API_BASE_URL}${LiferayTheme.getLiferaySiteName()}`;
+		window.location.href = redirectUrl;
+	}
+
 	return (
 		<Layout
 			footerProps={{
-				leftButton: <BaseButton borderless>Skip for now</BaseButton>,
+				leftButton: (
+					<BaseButton borderless onClick={handleSkip}>
+						Skip for now
+					</BaseButton>
+				),
 				middleButton: (
 					<BaseButton
 						displayType="primary"
 						onClick={() =>
 							dispatch({
-								payload: steps.dxp,
+								payload: nextStep,
 								type: actionTypes.CHANGE_STEP,
 							})
 						}

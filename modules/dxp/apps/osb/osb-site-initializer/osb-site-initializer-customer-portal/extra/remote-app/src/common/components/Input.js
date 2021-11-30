@@ -1,15 +1,23 @@
 import ClayForm, {ClayInput} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import {useField} from 'formik';
-import {email, required, validate} from '../utils/validations.form';
+import {required, validate} from '../utils/validations.form';
+
+const WarningBadge = ({children, ...props}) => {
+	return (
+		<div
+			{...props}
+			className="alert alert-danger ml-3 mr-3 p-sm-2 text-danger text-paragraph-sm"
+		>
+			<ClayIcon symbol="exclamation-full" />
+
+			{children}
+		</div>
+	);
+};
 
 const Input = ({groupStyle, helper, label, validations, ...props}) => {
-	if (props.type === 'email') {
-		validations = validations
-			? [(value) => email(value), ...validations]
-			: [(value) => email(value)];
-	}
-
 	if (props.required) {
 		validations = validations
 			? [...validations, (value) => required(value)]
@@ -33,13 +41,19 @@ const Input = ({groupStyle, helper, label, validations, ...props}) => {
 				{`${label} `}
 
 				{props.required && (
-					<span className="ml-n1 text-danger text-paragraph-sm">
-						*
+					<span className="inline-item-after reference-mark text-warning">
+						<ClayIcon symbol="asterisk" />
 					</span>
 				)}
 
 				<ClayInput {...field} {...props} />
 			</label>
+
+			{meta.touched && meta.error && props.required && (
+				<WarningBadge>
+					<span className="pl-1">{meta.error}</span>
+				</WarningBadge>
+			)}
 
 			{helper && (
 				<div className="ml-3 pl-3 text-neutral-3 text-paragraph-sm">

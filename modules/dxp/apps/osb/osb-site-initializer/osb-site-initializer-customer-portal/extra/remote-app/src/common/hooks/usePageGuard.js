@@ -46,8 +46,7 @@ const overviewPageGuard = (accountBriefs, externalReferenceCode) => {
 	const getExternalReferenceCode = () => {
 		if (isValidExternalReferenceCode) {
 			return externalReferenceCode;
-		}
-		else if (accountBriefs.length === 1) {
+		} else if (accountBriefs.length === 1) {
 			return accountBriefs[0].externalReferenceCode;
 		}
 	};
@@ -70,15 +69,8 @@ const usePageGuard = (
 
 	const {data} = useQuery(pageGuard, {
 		variables: {
-			accountFlagsFilter: {
-				filter: `accountKey eq ${externalReferenceCode} 
-				and name eq onboarding 
-				and userUuid eq ${userAccount.externalReferenceCode} 
-				and value eq 1`,
-			},
-			accountRolePage: {
-				accountId: userAccount.id,
-			},
+			accountFlagsFilter: `accountKey eq '${externalReferenceCode}' and name eq 'onboarding' and userUuid eq '${userAccount.externalReferenceCode}' and value eq 1`,
+			accountId: userAccount.id,
 		},
 	});
 
@@ -92,8 +84,8 @@ const usePageGuard = (
 				!guard(
 					userAccount.accountBriefs,
 					externalReferenceCode,
-					data.accountFlags,
-					data.accountAccountRoles
+					data.c?.accountFlags?.items,
+					data.accountAccountRoles?.items
 				).validate
 			) {
 				const {
@@ -102,18 +94,16 @@ const usePageGuard = (
 				} = alternativeGuard(
 					userAccount.accountBriefs,
 					externalReferenceCode,
-					data.accountFlags,
-					data.accountAccountRoles
+					data.c?.accountFlags?.items,
+					data.accountAccountRoles?.items
 				);
 
 				if (alternativeValidate) {
 					window.location.href = location;
-				}
-				else {
+				} else {
 					window.location.href = `${window.location.origin}${liferaySiteName}`;
 				}
-			}
-			else {
+			} else {
 				setLoading(false);
 			}
 		}

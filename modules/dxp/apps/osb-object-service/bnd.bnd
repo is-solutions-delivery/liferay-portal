@@ -1,0 +1,4 @@
+Bundle-Name: Liferay OSB Object Service
+Bundle-SymbolicName: com.liferay.osb.object.service
+Bundle-Version: 1.0.0
+-dsannotations-options: inherit
