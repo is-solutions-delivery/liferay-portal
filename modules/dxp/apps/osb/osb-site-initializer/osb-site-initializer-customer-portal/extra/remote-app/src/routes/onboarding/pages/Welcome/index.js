@@ -1,18 +1,28 @@
+<<<<<<< HEAD
 import {useMutation} from '@apollo/client';
 import {useContext, useEffect} from 'react';
+=======
+import { useContext } from 'react';
+>>>>>>> 9aa2f343 (LPS-143144 Adjustment of dialect style classes)
 import BaseButton from '../../../../common/components/BaseButton';
 import {usePageGuard} from '../../../../common/hooks/usePageGuard';
 import {addAccountFlag} from '../../../../common/services/liferay/graphql/queries';
 import Layout from '../../components/Layout';
-import {AppContext} from '../../context';
-import {actionTypes} from '../../context/reducer';
-import {steps} from '../../utils/constants';
+import { AppContext } from '../../context';
+import { actionTypes } from '../../context/reducer';
+import { steps } from '../../utils/constants';
 import WelcomeSkeleton from './Skeleton';
 
+<<<<<<< HEAD
 const Welcome = ({userAccount}) => {
 	const [{assetsPath, project}, dispatch] = useContext(AppContext);
 
 	const {loading: loadingPageGuard} = usePageGuard(
+=======
+const Welcome = ({ userAccount }) => {
+	const [{ assetsPath, project }, dispatch] = useContext(AppContext);
+	const { isLoading } = usePageGuard(
+>>>>>>> 9aa2f343 (LPS-143144 Adjustment of dialect style classes)
 		userAccount,
 		project.accountKey,
 		'onboarding'
