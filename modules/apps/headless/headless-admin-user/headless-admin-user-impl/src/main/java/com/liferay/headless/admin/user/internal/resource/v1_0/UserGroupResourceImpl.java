@@ -57,6 +57,16 @@ public class UserGroupResourceImpl extends BaseUserGroupResourceImpl {
 				userGroup.getName(), userGroup.getDescription(), null));
 	}
 
+	@Override
+	public UserGroup putUserGroup(Long userGroupId, UserGroup userGroup)
+		throws Exception {
+
+		return _toUserGroup(
+			_userGroupService.updateUserGroup(
+				userGroupId, userGroup.getName(), userGroup.getDescription(),
+				null));
+	}
+
 	private DTOConverterContext _getDTOConverterContext(long userGroupId) {
 		return new DefaultDTOConverterContext(
 			contextAcceptLanguage.isAcceptAllLanguages(),
@@ -69,6 +79,11 @@ public class UserGroupResourceImpl extends BaseUserGroupResourceImpl {
 				"get",
 				addAction(
 					ActionKeys.VIEW, userGroupId, "getUserGroup",
+					_userGroupModelResourcePermission)
+			).put(
+				"put",
+				addAction(
+					ActionKeys.UPDATE, userGroupId, "putUserGroup",
 					_userGroupModelResourcePermission)
 			).build(),
 			null, contextHttpServletRequest, userGroupId,
