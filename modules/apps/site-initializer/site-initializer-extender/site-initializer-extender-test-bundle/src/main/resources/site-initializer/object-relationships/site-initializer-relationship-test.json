@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en-US": "relationship test"
+	},
+	"name": "relationshipTest",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_NAME:C_TestBundleSiteInitializer$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_NAME:C_TestBundleSiteInitializer$]",
+	"objectDefinitionName2": "TestBundleSiteInitializer",
+	"type": "oneToMany"
+}
