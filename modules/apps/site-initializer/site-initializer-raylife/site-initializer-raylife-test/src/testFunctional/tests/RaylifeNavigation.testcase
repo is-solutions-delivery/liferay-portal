@@ -47,15 +47,15 @@ definition {
 			label = "business.yearsOfExperience",
 			value = "3");
 
-		Click(locator1 = "RaylifeIndustry#SECTION_COMPLETED");
+		Click(locator1 = "RaylifeNavigation#SECTION_COMPLETED");
 
-		AssertElementPresent(locator1 = "RaylifeIndustry#SECTION_COMPLETED_SELECTED");
+		AssertElementPresent(locator1 = "RaylifeNavigation#SECTION_COMPLETED_SELECTED");
 
-		Click(locator1 = "RaylifeIndustry#SECTION_INCOMPLETED");
+		Click(locator1 = "RaylifeNavigation#SECTION_INCOMPLETED");
 
-		AssertElementPresent(locator1 = "RaylifeIndustry#SECTION_INCOMPLETED_SELECTED");
+		AssertElementPresent(locator1 = "RaylifeNavigation#SECTION_INCOMPLETED_SELECTED");
 
-		Click(locator1 = "RaylifeIndustry#SECTION_COMPLETED");
+		Click(locator1 = "RaylifeNavigation#SECTION_COMPLETED");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 	}
@@ -77,9 +77,9 @@ definition {
 
 		Click(locator1 = "Raylife#BUTTON_CONTINUE");
 
-		AssertElementPresent(locator1 = "RaylifeIndustry#SECTION_COMPLETED");
+		AssertElementPresent(locator1 = "RaylifeNavigation#SECTION_COMPLETED");
 
-		Click(locator1 = "RaylifeIndustry#SECTION_COMPLETED");
+		Click(locator1 = "RaylifeNavigation#SECTION_COMPLETED");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 	}
@@ -95,7 +95,7 @@ definition {
 
 		Click(locator1 = "Raylife#BUTTON_CONTINUE");
 
-		AssertElementPresent(locator1 = "RaylifeIndustry#SECTION_INCOMPLETED_SELECTED");
+		AssertElementPresent(locator1 = "RaylifeNavigation#SECTION_INCOMPLETED_SELECTED");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
@@ -113,7 +113,7 @@ definition {
 
 		Click(locator1 = "Raylife#BUTTON_CONTINUE");
 
-		AssertElementPresent(locator1 = "RaylifeIndustry#SECTION_UNSTARTED");
+		AssertElementPresent(locator1 = "RaylifeNavigation#SECTION_UNSTARTED");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
