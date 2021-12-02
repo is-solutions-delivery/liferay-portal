@@ -48,6 +48,8 @@ definition {
 			panel = "Control Panel",
 			portlet = "Sites");
 
+		Refresh();
+
 		PortletEntry.selectAll();
 
 		ClickNoError(
