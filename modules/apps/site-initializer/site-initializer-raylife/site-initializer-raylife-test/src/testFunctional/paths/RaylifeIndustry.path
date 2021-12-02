@@ -11,31 +11,31 @@
 
 <tbody>
 <tr>
-    <td>SECTION_COMPLETED_SELECTED</td>
-    <td>css=liferay-remote-app-raylife>>>.step-item.completed.partially.selected</td>
-    <td></td>
+	<td>SECTION_COMPLETED_SELECTED</td>
+	<td>css=liferay-remote-app-raylife>>>.step-item.completed.partially.selected</td>
+	<td></td>
 </tr>
 <tr>
-    <td>SECTION_COMPLETED</td>
-    <td>css=liferay-remote-app-raylife>>>.step-item.completed.partially</td>
-    <td></td>
+	<td>SECTION_COMPLETED</td>
+	<td>css=liferay-remote-app-raylife>>>.step-item.completed.partially</td>
+	<td></td>
 </tr>
 <tr>
-    <td>SECTION_INCOMPLETED</td>
-    <td>css=liferay-remote-app-raylife>>>.step-item.partially</td>
-    <td></td>
+	<td>SECTION_INCOMPLETED</td>
+	<td>css=liferay-remote-app-raylife>>>.step-item.partially</td>
+	<td></td>
 </tr>
 <tr>
-    <td>SECTION_INCOMPLETED_SELECTED</td>
-    <td>css=liferay-remote-app-raylife>>>.step-item.partially.selected</td>
-    <td></td>
+	<td>SECTION_INCOMPLETED_SELECTED</td>
+	<td>css=liferay-remote-app-raylife>>>.step-item.partially.selected</td>
+	<td></td>
 </tr>
 <tr>
-    <td>SECTION_UNSTARTED</td>
-    <td>css=liferay-remote-app-raylife>>>.step-item+.step-item</td>
-    <td></td>
+	<td>SECTION_UNSTARTED</td>
+	<td>css=liferay-remote-app-raylife>>>.step-item+.step-item</td>
+	<td></td>
 </tr>
 </tbody>
 </table>
 </body>
-</html> 
+</html>

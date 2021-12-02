@@ -20,4 +20,4 @@ definition {
 		Click(locator1 = "RaylifeHomePage#HOME_PAGE_GET_A_QUOTE");
 	}
 
-} 
+}
