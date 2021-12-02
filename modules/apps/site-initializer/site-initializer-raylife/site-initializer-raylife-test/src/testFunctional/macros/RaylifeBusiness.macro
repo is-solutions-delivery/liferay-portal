@@ -1,0 +1,42 @@
+definition {
+
+    macro typeBusinessInfoFields {
+        
+        Type(
+            locator1 = "Raylife#FORMS_FIELDS",
+            value1 = "${value}");   
+    }
+
+    macro typeAllBusinessInfoFields {
+
+        RaylifeBusiness.typeBusinessInfoFields(
+            label = "business.yearsOfExperience",
+            value = "3");
+
+        Click(
+            locator1 = "Raylife#BUTTON_NO_OPTION",
+            field = "business.hasStoredCustomerInformation");
+
+        Click(
+            locator1 = "Raylife#BUTTON_NO_OPTION",
+            field = "business.hasAutoPolicy");
+
+        Select(
+            locator1 = "Raylife#FORMS_FIELDS",
+            label = "business.legalEntity",
+            value1 = "Association");
+
+        RaylifeBusiness.typeBusinessInfoFields(
+            label = "business.salesMerchandise",
+            value = "3%");
+
+        Click(
+            locator1 = "Raylife#BUTTON_NO_OPTION",
+            field = "business.hasSellProductsUnderOwnBrand");
+
+        RaylifeBusiness.typeBusinessInfoFields(
+            label = "business.overallSales",
+            value = "3%");
+    }
+    
+}
