@@ -1,16 +1,4 @@
 {
-	"colorBrandPrimary": {
-		"cssVariableMapping": "color-brand-primary",
-		"value": "#0B5FFF"
-	},
-	"colorActionPrimaryHover": {
-		"cssVariableMapping": "color-action-primary-hover",
-		"value": "#2932b3"
-	},
-	"colorNeutral10": {
-		"cssVariableMapping": "color-neutral-10",
-		"value": "#272833"
-	},
 	"boxShadowLg": {
 		"cssVariableMapping": "box-shadow-lg",
 		"value": "var(--elevation-fluffy-1) rgba(0, 54, 156, 0.12);"
@@ -19,60 +7,66 @@
 		"cssVariableMapping": "color-action-primary-active",
 		"value": "#004AD7"
 	},
+	"colorActionNeutralDefault": {
+		"cssVariableMapping": "color-action-neutral-default",
+		"value": "#2B3A4B"
+	},
 	"colorActionPrimaryDefault": {
 		"cssVariableMapping": "color-action-primary-default",
 		"value": "#0B5FFF"
 	},
 	"colorActionPrimaryHover": {
 		"cssVariableMapping": "color-action-primary-hover",
-		"value": "#2932b3"
+		"value": "#0053F0"
 	},
 	"colorBrandPrimary": {
 		"cssVariableMapping": "color-brand-primary",
 		"value": "#0B5FFF"
 	},
-	"colorNeutral10": {
-		"cssVariableMapping": "color-neutral-10",
-		"value": "#272833"
+	"colorNeutral1": {
+		"cssVariableMapping": "color-neutral-1",
+		"value": "#F7F8F9"
+	},
+	"colorNeutral2": {
+		"cssVariableMapping": "color-neutral-2",
+		"value": "#DCDEE1"
+	},
+	"colorNeutral3": {
+		"cssVariableMapping": "color-neutral-3",
+		"value": "#dcd9e2"
+	},
+	"colorNeutral4": {
+		"cssVariableMapping": "color-neutral-4",
+		"value": "#a7a3b2"
 	},
 	"colorNeutral5": {
 		"cssVariableMapping": "color-neutral-5",
 		"value": "#91959B"
 	},
-	"colorNeutral8": {
-		"cssVariableMapping": "color-neutral-8",
-		"value": "#3F3851"
+	"colorNeutral6": {
+		"cssVariableMapping": "color-neutral-6",
+		"value": "#7A7D85"
 	},
 	"colorNeutral7": {
 		"cssVariableMapping": "color-neutral-7",
-		"value": "#5A5469"
-<<<<<<< HEAD
+		"value": "#64676F"
 	},
 	"colorNeutral8": {
 		"cssVariableMapping": "color-neutral-8",
-		"value": "#3F3851"
+		"value": "#4E515A"
 	},
 	"colorNeutral9": {
 		"cssVariableMapping": "color-neutral-9",
 		"value": "#3A3C46"
-=======
->>>>>>> 9aa2f343 (LPS-143144 Adjustment of dialect style classes)
+	},
+	"colorNeutral10": {
+		"cssVariableMapping": "color-neutral-10",
+		"value": "#272833"
 	},
 	"fontFamilyBase": {
 		"cssVariableMapping": "font-family-base",
 		"value": "\"Source Sans Pro\", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'"
 	},
-<<<<<<< HEAD
-=======
-	"colorNeutral5": {
-		"cssVariableMapping": "color-neutral-5",
-		"value": "#91959B"
-	},
-	"colorActionPrimaryDefault": {
-		"cssVariableMapping": "color-action-primary-default",
-		"value": "#0B5FFF"
-	},
->>>>>>> 9aa2f343 (LPS-143144 Adjustment of dialect style classes)
 	"fontFamilySansSerif": {
 		"cssVariableMapping": "font-family-sans-serif",
 		"value": "\"Source Sans Pro\", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'"
