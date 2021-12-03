@@ -29,8 +29,7 @@ export function CardFormActionsWithSave({
 		try {
 			await onSave();
 			setShowProgressModal(true);
-		}
-		catch (error) {
+		} catch (error) {
 			alert('Unable to save your information. Please try again');
 		}
 
@@ -45,7 +44,7 @@ export function CardFormActionsWithSave({
 			<div className="card-actions">
 				{onPrevious && (
 					<button
-						className="btn btn-flat"
+						className="btn btn-borderless font-weight-bolder previous text-paragraph text-small-caps"
 						onClick={onPrevious}
 						type="button"
 					>
@@ -56,7 +55,7 @@ export function CardFormActionsWithSave({
 				<div>
 					{onSave && (
 						<button
-							className="btn btn-outline"
+							className="btn btn-outline-secondary font-weight-bolder save-exit text-paragraph text-small-caps"
 							disabled={!email || emailHasError || loading}
 							onClick={onClickSaveAndExit}
 							type="button"
@@ -67,7 +66,7 @@ export function CardFormActionsWithSave({
 
 					{onNext && (
 						<button
-							className="btn btn-secondary continue"
+							className="btn btn-solid btn-variant-secondary continue font-weight-bolder text-paragraph text-small-caps"
 							disabled={!isValid}
 							onClick={onNext}
 							type="submit"
