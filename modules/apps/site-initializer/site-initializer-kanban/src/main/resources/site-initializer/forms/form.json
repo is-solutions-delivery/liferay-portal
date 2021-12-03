@@ -1,0 +1,314 @@
+[
+	{
+		"ddmFormSettings": {
+			"availableLanguageIds": [
+				"[$LOCALE$]"
+			],
+			"defaultLanguageId": "[$LOCALE$]",
+			"fieldValues": [
+				{
+					"fieldReference": "requireAuthentication",
+					"instanceId": "",
+					"name": "requireAuthentication",
+					"value": "false"
+				},
+				{
+					"fieldReference": "requireCaptcha",
+					"instanceId": "",
+					"name": "requireCaptcha",
+					"value": "false"
+				},
+				{
+					"fieldReference": "autosaveEnabled",
+					"instanceId": "",
+					"name": "autosaveEnabled",
+					"value": "true"
+				},
+				{
+					"fieldReference": "redirectURL",
+					"instanceId": "",
+					"name": "redirectURL",
+					"value": ""
+				},
+				{
+					"fieldReference": "storageType",
+					"instanceId": "",
+					"name": "storageType",
+					"value": "[\"json\"]"
+				},
+				{
+					"fieldReference": "workflowDefinition",
+					"instanceId": "",
+					"name": "workflowDefinition",
+					"value": "[\"no-workflow\"]"
+				},
+				{
+					"fieldReference": "sendEmailNotification",
+					"instanceId": "",
+					"name": "sendEmailNotification",
+					"value": "false"
+				},
+				{
+					"fieldReference": "emailFromName",
+					"instanceId": "",
+					"name": "emailFromName",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailFromAddress",
+					"instanceId": "",
+					"name": "emailFromAddress",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailToAddress",
+					"instanceId": "",
+					"name": "emailToAddress",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailSubject",
+					"instanceId": "",
+					"name": "emailSubject",
+					"value": ""
+				},
+				{
+					"fieldReference": "published",
+					"instanceId": "",
+					"name": "published",
+					"value": "true"
+				}
+			]
+		},
+		"ddmStructure": {
+			"availableLanguageIds": [
+				"[$LOCALE$]"
+			],
+			"defaultLanguageId": "[$LOCALE$]",
+			"fields": [
+				{
+					"autocomplete": false,
+					"dataSourceType": "",
+					"dataType": "string",
+					"ddmDataProviderInstanceId": "[]",
+					"ddmDataProviderInstanceOutput": "[]",
+					"displayStyle": "singleline",
+					"fieldNamespace": "",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Task Title"
+					},
+					"localizable": true,
+					"name": "taskTitle",
+					"options": [
+						{
+							"label": {
+								"[$LOCALE$]": "Option"
+							},
+							"value": "Option"
+						}
+					],
+					"placeholder": {
+						"[$LOCALE$]": ""
+					},
+					"predefinedValue": {
+						"[$LOCALE$]": ""
+					},
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"tip": {
+						"[$LOCALE$]": ""
+					},
+					"tooltip": {
+						"[$LOCALE$]": ""
+					},
+					"type": "text",
+					"validation": {
+						"errorMessage": "",
+						"expression": ""
+					},
+					"visibilityExpression": ""
+				},
+				{
+					"dataSourceType": "manual",
+					"dataType": "string",
+					"ddmDataProviderInstanceId": "[]",
+					"ddmDataProviderInstanceOutput": "[]",
+					"fieldNamespace": "",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Task Status"
+					},
+					"localizable": true,
+					"multiple": false,
+					"name": "taskStatus",
+					"options": [
+						{
+							"label": {
+								"[$LOCALE$]": "todo"
+							},
+							"value": "todo"
+						},
+						{
+							"label": {
+								"[$LOCALE$]": "In progress"
+							},
+							"value": "inProgress"
+						},
+						{
+							"label": {
+								"[$LOCALE$]": "Done"
+							},
+							"value": "done"
+						}
+					],
+					"predefinedValue": {
+						"[$LOCALE$]": "[]"
+					},
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"tip": {
+						"[$LOCALE$]": ""
+					},
+					"type": "select",
+					"validation": {
+						"errorMessage": "",
+						"expression": ""
+					},
+					"visibilityExpression": ""
+				},
+				{
+					"dataType": "integer",
+					"fieldNamespace": "",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Progress"
+					},
+					"localizable": true,
+					"name": "progress",
+					"placeholder": {
+						"[$LOCALE$]": ""
+					},
+					"predefinedValue": {
+						"[$LOCALE$]": ""
+					},
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"tip": {
+						"[$LOCALE$]": ""
+					},
+					"tooltip": {
+						"[$LOCALE$]": ""
+					},
+					"type": "numeric",
+					"validation": {
+						"errorMessage": "",
+						"expression": ""
+					},
+					"visibilityExpression": ""
+				},
+				{
+					"autocomplete": false,
+					"dataSourceType": "",
+					"dataType": "string",
+					"ddmDataProviderInstanceId": "[]",
+					"ddmDataProviderInstanceOutput": "[]",
+					"displayStyle": "singleline",
+					"fieldNamespace": "",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Task Description"
+					},
+					"localizable": true,
+					"name": "taskDescription",
+					"options": [
+						{
+							"label": {
+								"[$LOCALE$]": "Option"
+							},
+							"value": "Option"
+						}
+					],
+					"placeholder": {
+						"[$LOCALE$]": ""
+					},
+					"predefinedValue": {
+						"[$LOCALE$]": ""
+					},
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"tip": {
+						"[$LOCALE$]": ""
+					},
+					"tooltip": {
+						"[$LOCALE$]": ""
+					},
+					"type": "text",
+					"validation": {
+						"errorMessage": "",
+						"expression": ""
+					},
+					"visibilityExpression": ""
+				}
+			]
+		},
+		"ddmStructureLayout": {
+			"defaultLanguageId": "[$LOCALE$]",
+			"pages": [
+				{
+					"description": {
+						"[$LOCALE$]": ""
+					},
+					"rows": [
+						{
+							"columns": [
+								{
+									"fieldNames": [
+										"taskTitle"
+									],
+									"size": 4
+								},
+								{
+									"fieldNames": [
+										"taskStatus"
+									],
+									"size": 4
+								},
+								{
+									"fieldNames": [
+										"progress"
+									],
+									"size": 4
+								}
+							]
+						},
+						{
+							"columns": [
+								{
+									"fieldNames": [
+										"taskDescription"
+									],
+									"size": 12
+								}
+							]
+						}
+					],
+					"title": {
+						"[$LOCALE$]": "Contact Information"
+					}
+				}
+			],
+			"paginationMode": "wizard"
+		},
+		"description": "",
+		"name": "Add Task"
+	}
+]
