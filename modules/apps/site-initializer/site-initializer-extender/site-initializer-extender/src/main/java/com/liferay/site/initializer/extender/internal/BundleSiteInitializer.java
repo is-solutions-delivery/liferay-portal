@@ -21,6 +21,7 @@ import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.commerce.account.constants.CommerceAccountConstants;
+import com.liferay.commerce.initializer.util.DDMFormImporter;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
@@ -194,6 +195,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		AssetCategoryLocalService assetCategoryLocalService,
 		AssetListEntryLocalService assetListEntryLocalService, Bundle bundle,
 		CommerceReferencesHolder commerceReferencesHolder,
+		DDMFormImporter ddmFormImporter,
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
@@ -245,6 +247,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_assetListEntryLocalService = assetListEntryLocalService;
 		_bundle = bundle;
 		_commerceReferencesHolder = commerceReferencesHolder;
+		_ddmFormImporter = ddmFormImporter;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 		_defaultDDMStructureHelper = defaultDDMStructureHelper;
@@ -357,6 +360,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			_invoke(() -> _addAccounts(serviceContext));
 			_invoke(() -> _addDDMStructures(serviceContext));
+			_invoke(() -> _addForms(serviceContext));
 			_invoke(() -> _addFragmentEntries(serviceContext));
 			_invoke(() -> _addSAPEntries(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
@@ -378,6 +382,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(
 				() -> _addDDMTemplates(
 					_ddmStructureLocalService, serviceContext));
+
 			_invoke(
 				() -> _addJournalArticles(
 					_ddmStructureLocalService, _ddmTemplateLocalService,
@@ -1329,6 +1334,25 @@ public class BundleSiteInitializer implements SiteInitializer {
 				"/site-initializer/documents/group", serviceContext,
 				siteNavigationMenuItemSettingsBuilder)
 		).build();
+	}
+
+	private void _addForms(ServiceContext serviceContext) throws Exception {
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/forms");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return;
+		}
+
+		for (String resourcePath : resourcePaths) {
+			String formsJSON = _read(resourcePath);
+
+			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(formsJSON);
+
+			_ddmFormImporter.importDDMForms(
+				jsonArray, serviceContext.getScopeGroupId(),
+				serviceContext.getUserId());
+		}
 	}
 
 	private void _addFragmentEntries(ServiceContext serviceContext)
@@ -3162,6 +3186,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final Bundle _bundle;
 	private final ClassLoader _classLoader;
 	private CommerceReferencesHolder _commerceReferencesHolder;
+	private final DDMFormImporter _ddmFormImporter;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DDMTemplateLocalService _ddmTemplateLocalService;
 	private final DefaultDDMStructureHelper _defaultDDMStructureHelper;
