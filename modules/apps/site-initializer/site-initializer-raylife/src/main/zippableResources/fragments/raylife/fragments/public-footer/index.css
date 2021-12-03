@@ -1,0 +1,40 @@
+.public-footer {
+	padding: 7.5rem 0;
+}
+
+.public-footer .col-2 h4 {
+	margin-bottom: var(--spacer-4);
+}
+
+.public-footer .col-2 li a {
+	margin-bottom: 0.75rem;
+}
+
+.public-footer .col-2 li:last-of-type a {
+	margin-bottom: var(--spacer-0);
+}
+
+.public-footer .footer-bottom {
+	border-bottom: 1px solid var(--color-neutral-3);
+	margin-top: 146px !important;
+}
+
+.public-footer .footer-bottom a {
+	padding: 0 33px 0 0;
+}
+
+.public-footer .footer-bottom li:last-of-type a {
+	padding: 0rem;
+}
+
+.public-footer .footer-copy p {
+	margin-bottom: var(--spacer-0);
+}
+
+.public-footer-opacity--50 {
+	opacity: 0.5;
+}
+
+.public-footer-opacity--70 {
+	opacity: 0.7;
+}
