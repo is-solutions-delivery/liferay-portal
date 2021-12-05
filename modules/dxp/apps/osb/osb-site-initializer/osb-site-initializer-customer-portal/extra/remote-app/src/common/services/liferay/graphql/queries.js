@@ -36,6 +36,7 @@ export const getKoroneikiAccounts = gql`
 				items {
 					accountKey
 					code
+					dxpVersion
 					slaCurrent
 					slaExpired
 					slaFuture
