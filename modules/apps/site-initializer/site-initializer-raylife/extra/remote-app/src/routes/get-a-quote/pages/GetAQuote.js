@@ -43,7 +43,7 @@ const QuoteApp = () => {
 			<Steps />
 
 			<main>
-				<h2 className="title title-area">
+				<h2 className="display-4 mb-6 mx-6">
 					<FormTitle />
 				</h2>
 
