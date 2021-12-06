@@ -12,10 +12,7 @@ import {TIP_EVENT} from '../../../../../../../common/utils/events';
 import {useBusinessTypes} from '../../../../../hooks/useBusinessTypes';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {useTriggerContext} from '../../../../../hooks/useTriggerContext';
-import {
-	AVAILABLE_STEPS,
-	TOTAL_OF_FIELD,
-} from '../../../../../utils/constants';
+import {AVAILABLE_STEPS, TOTAL_OF_FIELD} from '../../../../../utils/constants';
 import {getLoadedContentFlag} from '../../../../../utils/util';
 
 import {BusinessTypeRadioGroup} from './RadioGroup';

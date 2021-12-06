@@ -2,7 +2,10 @@ import ClayIcon from '@clayui/icon';
 import Modal from '../../../../../../common/components/modal';
 
 import {LiferayService} from '../../../../../../common/services/liferay';
-import {STORAGE_KEYS, Storage} from '../../../../../../common/services/liferay/storage';
+import {
+	STORAGE_KEYS,
+	Storage,
+} from '../../../../../../common/services/liferay/storage';
 import {clearExitAlert} from '../../../../../../common/utils/exitAlert';
 import {createQuoteRetrieve} from '../../../../services/QuoteRetrieve';
 
