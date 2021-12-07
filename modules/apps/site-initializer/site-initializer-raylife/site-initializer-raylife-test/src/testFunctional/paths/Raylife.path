@@ -26,9 +26,9 @@
 	<td></td>
 </tr>
 <tr>
-    <td>FORMS_VALUE</td>
-    <td>//input[contains(@name,'${label}') and contains(@value,'${value}')]</td>
-    <td></td>
+	<td>FORMS_VALUE</td>
+	<td>//input[contains(@name,'${label}') and contains(@value,'${value}')]</td>
+	<td></td>
 </tr>
 <tr>
 	<td>SELECT_LEGAL_ENTITY</td>
