@@ -39,7 +39,7 @@ const QuoteApp = () => {
 	}, [selectedStep.section, selectedStep.subsection]);
 
 	return (
-		<div className="form-area">
+		<div className="d-flex justify-content-between">
 			<Steps />
 
 			<main>
