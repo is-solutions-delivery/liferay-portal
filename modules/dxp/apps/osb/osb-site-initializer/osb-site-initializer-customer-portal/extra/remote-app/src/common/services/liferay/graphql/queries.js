@@ -12,6 +12,7 @@ export const getAccountSubscriptionsTerms = gql`
 				page: $page
 				pageSize: $pageSize
 			) {
+				totalCount,
 				items {
 					accountKey
 					accountSubscriptionERC
@@ -144,6 +145,20 @@ export const pageGuard = gql`
 					name
 					userUuid
 				}
+			}
+		}
+	}
+`;
+
+export const addAccountFlag = gql`
+	mutation addAccountFlag($accountFlag: InputC_AccountFlag!) {
+		c {
+			createAccountFlag(AccountFlag: $accountFlag) {
+				accountFlagId
+				accountKey
+				name
+				userUuid
+				value
 			}
 		}
 	}
