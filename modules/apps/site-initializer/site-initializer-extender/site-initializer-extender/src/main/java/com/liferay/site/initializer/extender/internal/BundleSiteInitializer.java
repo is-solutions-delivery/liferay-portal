@@ -360,7 +360,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			_invoke(() -> _addAccounts(serviceContext));
 			_invoke(() -> _addDDMStructures(serviceContext));
-			_invoke(() -> _addForms(serviceContext));
 			_invoke(() -> _addFragmentEntries(serviceContext));
 			_invoke(() -> _addSAPEntries(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
@@ -411,6 +410,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					documentsStringUtilReplaceValues,
 					objectDefinitionIdsStringUtilReplaceValues,
 					serviceContext));
+			_invoke(() -> _addForms(objectDefinitionsIdsStringUtilReplaceValues, serviceContext));
 			_invoke(
 				() -> _addObjectRelationships(
 					objectDefinitionIdsStringUtilReplaceValues,
@@ -432,7 +432,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					remoteAppEntryIdsStringUtilReplaceValues, serviceContext,
 					siteNavigationMenuItemSettingsBuilder.build()));
 		}
-		catch (Exception exception) {
+			catch (Exception exception) {
 			_log.error(exception, exception);
 
 			throw new InitializationException(exception);
@@ -1336,7 +1336,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 		).build();
 	}
 
-	private void _addForms(ServiceContext serviceContext) throws Exception {
+	private void _addForms(
+			Map<String, String> objectDefinitionsIdsStringUtilReplaceValues,
+			ServiceContext serviceContext)
+		throws Exception {
+
 		Set<String> resourcePaths = _servletContext.getResourcePaths(
 			"/site-initializer/forms");
 
@@ -1346,6 +1350,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (String resourcePath : resourcePaths) {
 			String formsJSON = _read(resourcePath);
+
+			formsJSON = StringUtil.replace(
+				formsJSON, "[$", "$]", objectDefinitionsIdsStringUtilReplaceValues);
 
 			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(formsJSON);
 
@@ -1552,6 +1559,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			json, "[$", "$]",
 			HashMapBuilder.putAll(
 				assetListEntryIdsStringUtilReplaceValues
+			).putAll(
+				formInstanceIdsStringUtilReplaceValues
 			).putAll(
 				documentsStringUtilReplaceValues
 			).putAll(
@@ -1933,6 +1942,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		if (SetUtil.isEmpty(resourcePaths)) {
 			return objectDefinitionIdsStringUtilReplaceValues;
 		}
+
+		Map<String, String> objectDefinitionsIdsStringUtilReplaceValues = new HashMap<>();
 
 		ObjectDefinitionResource.Builder objectDefinitionResourceBuilder =
 			_objectDefinitionResourceFactory.create();
