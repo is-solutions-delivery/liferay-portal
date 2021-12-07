@@ -11,7 +11,7 @@ const SubscriptionsNavbar = ({accountKey, setSelectedStatus, setSelectedTag}) =>
 		loading: isAccountSubscriptionsLoading,
 	} = useQuery(getAccountSubscriptionGroupsByFilter, {
 		variables: {
-			filter: `accountKey eq '${accountKey}'`,
+			filter: `accountKey eq '${accountKey}' and hasActivation eq true`,
 		},
 	});
 
