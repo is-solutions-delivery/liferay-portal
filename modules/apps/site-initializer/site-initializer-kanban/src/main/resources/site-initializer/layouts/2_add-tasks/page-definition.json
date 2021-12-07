@@ -1,0 +1,47 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentStyle": {
+						"marginBottom": "4",
+						"marginTop": "2"
+					},
+					"layout": {
+						"borderWidth": 0,
+						"marginBottom": 2,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"widgetInstance": {
+								"widgetConfig": {
+									"formInstanceId": "[$FORM_INSTANCE_ID:name$]",
+									"groupId": "[$GROUP_ID$]"
+								},
+								"widgetName": "com_liferay_dynamic_data_mapping_form_web_portlet_DDMFormPortlet"
+							}
+						},
+						"type": "Widget"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "private"
+		}
+	}
+}

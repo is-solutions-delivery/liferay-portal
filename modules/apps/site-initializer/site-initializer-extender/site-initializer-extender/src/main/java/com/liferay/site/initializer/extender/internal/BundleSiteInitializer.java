@@ -1560,8 +1560,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			HashMapBuilder.putAll(
 				assetListEntryIdsStringUtilReplaceValues
 			).putAll(
-				formInstanceIdsStringUtilReplaceValues
-			).putAll(
 				documentsStringUtilReplaceValues
 			).putAll(
 				remoteAppEntryIdsStringUtilReplaceValues

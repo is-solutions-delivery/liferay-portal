@@ -26,7 +26,7 @@
 		},
 		{
 			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Task Status$]",
-			"indexed": false,
+			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
 				"en_US": "Task Status"
