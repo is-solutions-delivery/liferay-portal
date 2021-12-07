@@ -97,7 +97,7 @@
 </tr>
 <tr>
 	<td>BUTTON_PREVIOUS</td>
-	<td>//button[contains(@class,'btn btn-borderless')]</td>
+	<td>//button[contains(@class,'previous')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -122,7 +122,7 @@
 </tr>
 <tr>
 	<td>ERROR_MESSAGE</td>
-	<td>//div[contains(@class, 'align-items-center badge d-flex ml-2 warning')]</td>
+	<td>//div[contains(@class, 'warning')]</td>
 	<td></td>
 </tr>
 </tbody>
