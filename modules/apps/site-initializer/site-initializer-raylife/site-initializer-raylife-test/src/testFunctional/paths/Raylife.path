@@ -21,9 +21,9 @@
 	<td></td>
 </tr>
 <tr>
-    <td>FORMS_FIELDS</td>
-    <td>//input[contains(@name,'${label}')]</td>
-    <td></td>
+	<td>FORMS_FIELDS</td>
+	<td>//input[contains(@name,'${label}')]</td>
+	<td></td>
 </tr>
 <tr>
 	<td>TABLE_CATALOG_NAME</td>
@@ -76,14 +76,14 @@
 	<td></td>
 </tr>
 <tr>
-    <td>BUTTON_CONTINUE</td>
-    <td>//button[contains(@class,'continue')]</td>
-    <td></td>
+	<td>BUTTON_CONTINUE</td>
+	<td>//button[contains(@class,'continue')]</td>
+	<td></td>
 </tr>
 <tr>
-    <td>BUTTON_CONTINUE_DISABLED</td>
-    <td>//button[contains(@class, 'continue') and 'disabled']</td>
-    <td></td>
+	<td>BUTTON_CONTINUE_DISABLED</td>
+	<td>//button[contains(@class, 'continue') and 'disabled']</td>
+	<td></td>
 </tr>
 <tr>
 	<td>BUTTON_PREVIOUS</td>

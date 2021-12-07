@@ -182,8 +182,8 @@ definition {
 		Click(locator1 = "Raylife#BUTTON_CONTINUE");
 
 		AssertElementPresent(
-			locator1 = "RaylifeContactInfo#BASICS_NAME_MAX_NUMBER",
-			label = "First Name");
+			label = "First Name",
+			locator1 = "RaylifeContactInfo#BASICS_NAME_MAX_NUMBER");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
@@ -204,8 +204,8 @@ definition {
 		Click(locator1 = "Raylife#BUTTON_CONTINUE");
 
 		AssertElementPresent(
-			locator1 = "RaylifeContactInfo#BASICS_NAME_MAX_NUMBER",
-			label = "Last Name");
+			label = "Last Name",
+			locator1 = "RaylifeContactInfo#BASICS_NAME_MAX_NUMBER");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
