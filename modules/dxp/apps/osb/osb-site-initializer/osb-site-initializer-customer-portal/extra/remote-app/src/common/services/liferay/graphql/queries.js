@@ -87,8 +87,8 @@ export const addAccountFlag = gql`
 		}
 	}
 `;
-export const getAccountSubscriptions = gql`
-	query accountSubscriptionGroups($accountSubscriptionGroupERC: String) {
+export const getAccountSubscriptionsGroups = gql`
+	query getAccountSubscriptionGroups($accountSubscriptionGroupERC: String) {
 		c {
 			accountSubscriptions(filter: $accountSubscriptionGroupERC) {
 				items {
@@ -101,10 +101,11 @@ export const getAccountSubscriptions = gql`
 `;
 
 export const getAccountSubscriptionsTerms = gql`
-	query accountSubscriptionTerms($accountSubscriptionERC: String) {
+	query getAccountSubscriptionTerms($accountSubscriptionERC: String) {
 		c {
 			accountSubscriptionTerms(filter: $accountSubscriptionERC) {
 				items {
+					accountSubscriptionTermId
 					startDate
 					endDate
 				}
