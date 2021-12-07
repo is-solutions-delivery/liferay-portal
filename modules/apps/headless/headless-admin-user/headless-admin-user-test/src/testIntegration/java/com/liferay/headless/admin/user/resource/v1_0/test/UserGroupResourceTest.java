@@ -52,6 +52,11 @@ public class UserGroupResourceTest extends BaseUserGroupResourceTestCase {
 		return _postUserGroup(userGroup);
 	}
 
+	@Override
+	protected UserGroup testPutUserGroup_addUserGroup() throws Exception {
+		return _postUserGroup();
+	}
+
 	private UserGroup _postUserGroup() throws Exception {
 		return _postUserGroup(randomUserGroup());
 	}
