@@ -19,12 +19,14 @@ export const SearchInput = React.forwardRef(
 		return (
 			<>
 				{label && (
-					<Label label={label} name={name} required={required}>
-						{renderActions}
-					</Label>
+					<div className="mb-2">
+						<Label label={label} name={name} required={required}>
+							{renderActions}
+						</Label>
+					</div>
 				)}
-				<div className="content-row">
-					<InputAreaWithError error={error}>
+				<div className="row">
+					<InputAreaWithError className="col" error={error}>
 						<input
 							{...props}
 							maxLength={255}

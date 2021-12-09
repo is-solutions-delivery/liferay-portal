@@ -12,7 +12,7 @@ export function Radio({
 }) {
 	return (
 		<div
-			className={`radio-card ${selected && 'selected'}`}
+			className={`mt-3 radio-card ${selected && 'selected'}`}
 			onClick={() =>
 				props.onChange({
 					target: {

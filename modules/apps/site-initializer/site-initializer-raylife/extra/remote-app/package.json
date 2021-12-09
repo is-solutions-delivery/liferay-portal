@@ -17,6 +17,7 @@
 		]
 	},
 	"dependencies": {
+		"@clayui/card": "^3.41.0",
 		"@clayui/core": "^3.32.0",
 		"@clayui/css": "3.33.1",
 		"@clayui/icon": "3.32.0",
