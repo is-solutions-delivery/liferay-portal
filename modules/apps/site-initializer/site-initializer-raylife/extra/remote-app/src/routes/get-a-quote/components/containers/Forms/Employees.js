@@ -50,98 +50,114 @@ export function FormEmployees({form}) {
 	return (
 		<FormCard>
 			<div className="card-content">
-				<ControlledSwitch
-					control={control}
-					inputProps={{
-						onChange: (value) => {
-							setValue(setFormPath('hasFein'), value, {
-								shouldValidate: true,
-							});
+				<div className="mb-5">
+					<ControlledSwitch
+						control={control}
+						inputProps={{
+							onChange: (value) => {
+								setValue(setFormPath('hasFein'), value, {
+									shouldValidate: true,
+								});
 
-							if (value === 'false') {
-								setValue(setFormPath('fein'), '');
-							}
-						},
-					}}
-					label="Does your business have a Federal Employer Identification Number (FEIN)?"
-					name={setFormPath('hasFein')}
-					rules={{required: true}}
-				/>
+								if (value === 'false') {
+									setValue(setFormPath('fein'), '');
+								}
+							},
+						}}
+						label="Does your business have a Federal Employer Identification Number (FEIN)?"
+						name={setFormPath('hasFein')}
+						rules={{required: true}}
+					/>
+				</div>
 
-				<FEINControlledInput
-					control={control}
-					label="Federal Employer Identification Number (FEIN)"
-					moreInfoProps={{
-						callback: () => updateState(setFormPath('fein')),
-						event: TIP_EVENT,
-						selected: isSelected(setFormPath('fein')),
-						value: {
-							inputName: setFormPath('fein'),
-							step: selectedStep,
-							templateName:
-								'federal-employer-identification-number',
-							value: form?.employees?.fein,
-						},
-					}}
-					name={setFormPath('fein')}
-					renderInput={hasFein(form?.employees?.hasFein)}
-					rules={{
-						required: 'FEIN is required.',
-					}}
-				/>
+				<div className="mb-5">
+					<FEINControlledInput
+						control={control}
+						label="Federal Employer Identification Number (FEIN)"
+						moreInfoProps={{
+							callback: () => updateState(setFormPath('fein')),
+							event: TIP_EVENT,
+							selected: isSelected(setFormPath('fein')),
+							value: {
+								inputName: setFormPath('fein'),
+								step: selectedStep,
+								templateName:
+									'federal-employer-identification-number',
+								value: form?.employees?.fein,
+							},
+						}}
+						name={setFormPath('fein')}
+						renderInput={hasFein(form?.employees?.hasFein)}
+						rules={{
+							required: 'FEIN is required.',
+						}}
+					/>
+				</div>
 
-				<YearControlledInput
-					control={control}
-					label="What year did you start your business?"
-					name={setFormPath('startBusinessAtYear')}
-					rules={{required: 'This field is required'}}
-				/>
+				<div className="mb-5">
+					<YearControlledInput
+						control={control}
+						label="What year did you start your business?"
+						name={setFormPath('startBusinessAtYear')}
+						rules={{required: 'This field is required'}}
+					/>
+				</div>
 
-				<ControlledSwitch
-					control={control}
-					label="Does your business operate year round?"
-					name={setFormPath('businessOperatesYearRound')}
-					rules={{required: true}}
-				/>
+				<div className="mb-5">
+					<ControlledSwitch
+						control={control}
+						label="Does your business operate year round?"
+						name={setFormPath('businessOperatesYearRound')}
+						rules={{required: true}}
+					/>
+				</div>
 
-				<NumberControlledInput
-					control={control}
-					label="How many full or part time employees do you have?"
-					moreInfoProps={{
-						callback: () =>
-							updateState(setFormPath('partTimeEmployees')),
-						event: TIP_EVENT,
-						selected: isSelected(setFormPath('partTimeEmployees')),
-						value: {
-							inputName: setFormPath('partTimeEmployees'),
-							step: selectedStep,
-							templateName: 'full-or-part-time-employees',
-							value: form?.employees?.partTimeEmployees,
-						},
-					}}
-					name={setFormPath('partTimeEmployees')}
-					rules={{
-						min: {
-							message: 'You must have at least one employee.',
-							value: 1,
-						},
-						required: 'This field is required',
-					}}
-				/>
+				<div className="mb-5">
+					<NumberControlledInput
+						control={control}
+						label="How many full or part time employees do you have?"
+						moreInfoProps={{
+							callback: () =>
+								updateState(setFormPath('partTimeEmployees')),
+							event: TIP_EVENT,
+							selected: isSelected(
+								setFormPath('partTimeEmployees')
+							),
+							value: {
+								inputName: setFormPath('partTimeEmployees'),
+								step: selectedStep,
+								templateName: 'full-or-part-time-employees',
+								value: form?.employees?.partTimeEmployees,
+							},
+						}}
+						name={setFormPath('partTimeEmployees')}
+						rules={{
+							min: {
+								message: 'You must have at least one employee.',
+								value: 1,
+							},
+							required: 'This field is required',
+						}}
+					/>
+				</div>
 
-				<CurrencyControlledInput
-					control={control}
-					label="What is your estimated annual gross revenue for the next 12 months?"
-					name={setFormPath('estimatedAnnualGrossRevenue')}
-					rules={{required: 'This field is required'}}
-				/>
+				<div className="mb-5">
+					<CurrencyControlledInput
+						control={control}
+						label="What is your estimated annual gross revenue for the next 12 months?"
+						name={setFormPath('estimatedAnnualGrossRevenue')}
+						rules={{required: 'This field is required'}}
+					/>
+				</div>
 
-				<CurrencyControlledInput
-					control={control}
-					label="What do you anticipate your annual payroll will be for all owner(s) over the next 12 months?"
-					name={setFormPath('annualPayrollForOwner')}
-					rules={{required: 'This field is required'}}
-				/>
+				<div className="mb-5">
+					<CurrencyControlledInput
+						control={control}
+						label="What do you anticipate your annual payroll will be for all owner(s) over the next 12 months?"
+						name={setFormPath('annualPayrollForOwner')}
+						rules={{required: 'This field is required'}}
+					/>
+				</div>
 
 				<CurrencyControlledInput
 					control={control}
