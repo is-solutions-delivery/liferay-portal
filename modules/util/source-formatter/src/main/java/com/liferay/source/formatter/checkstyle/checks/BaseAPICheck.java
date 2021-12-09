@@ -61,8 +61,8 @@ public abstract class BaseAPICheck extends BaseCheck {
 
 		for (DetailAST literalNewDetailAST : literalNewDetailASTList) {
 			if (skipDeprecated &&
-				(_hasDeprecatedParent(literalNewDetailAST) ||
-				 _hasSuppressDeprecationWarningsAnnotation(
+				(hasDeprecatedParent(literalNewDetailAST) ||
+				 hasSuppressDeprecationWarningsAnnotation(
 					 literalNewDetailAST))) {
 
 				continue;
@@ -201,8 +201,8 @@ public abstract class BaseAPICheck extends BaseCheck {
 
 		for (DetailAST methodCallDetailAST : methodCallDetailASTList) {
 			if (skipDeprecated &&
-				(_hasDeprecatedParent(methodCallDetailAST) ||
-				 _hasSuppressDeprecationWarningsAnnotation(
+				(hasDeprecatedParent(methodCallDetailAST) ||
+				 hasSuppressDeprecationWarningsAnnotation(
 					 methodCallDetailAST))) {
 
 				continue;
@@ -354,8 +354,8 @@ public abstract class BaseAPICheck extends BaseCheck {
 
 		for (DetailAST clauseDetailAST : clauseDetailASTList) {
 			if (skipDeprecated &&
-				(_hasDeprecatedParent(clauseDetailAST) ||
-				 _hasSuppressDeprecationWarningsAnnotation(clauseDetailAST))) {
+				(hasDeprecatedParent(clauseDetailAST) ||
+				 hasSuppressDeprecationWarningsAnnotation(clauseDetailAST))) {
 
 				continue;
 			}
@@ -401,8 +401,8 @@ public abstract class BaseAPICheck extends BaseCheck {
 
 		for (DetailAST typeDetailAST : typeDetailASTList) {
 			if (!skipDeprecated ||
-				(!_hasDeprecatedParent(typeDetailAST) &&
-				 !_hasSuppressDeprecationWarningsAnnotation(typeDetailAST))) {
+				(!hasDeprecatedParent(typeDetailAST) &&
+				 !hasSuppressDeprecationWarningsAnnotation(typeDetailAST))) {
 
 				typeNamesMap = _addTypeName(
 					typeNamesMap,
@@ -425,8 +425,8 @@ public abstract class BaseAPICheck extends BaseCheck {
 
 		for (DetailAST dotDetailAST : dotDetailASTList) {
 			if (skipDeprecated &&
-				(_hasDeprecatedParent(dotDetailAST) ||
-				 _hasSuppressDeprecationWarningsAnnotation(dotDetailAST))) {
+				(hasDeprecatedParent(dotDetailAST) ||
+				 hasSuppressDeprecationWarningsAnnotation(dotDetailAST))) {
 
 				continue;
 			}
@@ -490,6 +490,63 @@ public abstract class BaseAPICheck extends BaseCheck {
 		}
 
 		return null;
+	}
+
+	protected boolean hasDeprecatedParent(DetailAST detailAST) {
+		DetailAST parentDetailAST = detailAST.getParent();
+
+		while (true) {
+			if (parentDetailAST == null) {
+				return false;
+			}
+
+			if (((parentDetailAST.getType() == TokenTypes.CTOR_DEF) ||
+				 (parentDetailAST.getType() == TokenTypes.METHOD_DEF) ||
+				 (parentDetailAST.getType() == TokenTypes.VARIABLE_DEF)) &&
+				AnnotationUtil.containsAnnotation(
+					parentDetailAST, "Deprecated")) {
+
+				return true;
+			}
+
+			parentDetailAST = parentDetailAST.getParent();
+		}
+	}
+
+	protected boolean hasSuppressDeprecationWarningsAnnotation(
+		DetailAST detailAST) {
+
+		DetailAST parentDetailAST = detailAST.getParent();
+
+		while (true) {
+			if (parentDetailAST == null) {
+				return false;
+			}
+
+			if (parentDetailAST.findFirstToken(TokenTypes.MODIFIERS) != null) {
+				DetailAST annotationDetailAST = AnnotationUtil.getAnnotation(
+					parentDetailAST, "SuppressWarnings");
+
+				if (annotationDetailAST != null) {
+					List<DetailAST> literalStringDetailASTList =
+						getAllChildTokens(
+							annotationDetailAST, true,
+							TokenTypes.STRING_LITERAL);
+
+					for (DetailAST literalStringDetailAST :
+							literalStringDetailASTList) {
+
+						String s = literalStringDetailAST.getText();
+
+						if (s.equals("\"deprecation\"")) {
+							return true;
+						}
+					}
+				}
+			}
+
+			parentDetailAST = parentDetailAST.getParent();
+		}
 	}
 
 	protected class ConstructorCall {
@@ -792,63 +849,6 @@ public abstract class BaseAPICheck extends BaseCheck {
 		}
 
 		return parameterTypeNames;
-	}
-
-	private boolean _hasDeprecatedParent(DetailAST detailAST) {
-		DetailAST parentDetailAST = detailAST.getParent();
-
-		while (true) {
-			if (parentDetailAST == null) {
-				return false;
-			}
-
-			if (((parentDetailAST.getType() == TokenTypes.CTOR_DEF) ||
-				 (parentDetailAST.getType() == TokenTypes.METHOD_DEF) ||
-				 (parentDetailAST.getType() == TokenTypes.VARIABLE_DEF)) &&
-				AnnotationUtil.containsAnnotation(
-					parentDetailAST, "Deprecated")) {
-
-				return true;
-			}
-
-			parentDetailAST = parentDetailAST.getParent();
-		}
-	}
-
-	private boolean _hasSuppressDeprecationWarningsAnnotation(
-		DetailAST detailAST) {
-
-		DetailAST parentDetailAST = detailAST.getParent();
-
-		while (true) {
-			if (parentDetailAST == null) {
-				return false;
-			}
-
-			if (parentDetailAST.findFirstToken(TokenTypes.MODIFIERS) != null) {
-				DetailAST annotationDetailAST = AnnotationUtil.getAnnotation(
-					parentDetailAST, "SuppressWarnings");
-
-				if (annotationDetailAST != null) {
-					List<DetailAST> literalStringDetailASTList =
-						getAllChildTokens(
-							annotationDetailAST, true,
-							TokenTypes.STRING_LITERAL);
-
-					for (DetailAST literalStringDetailAST :
-							literalStringDetailASTList) {
-
-						String s = literalStringDetailAST.getText();
-
-						if (s.equals("\"deprecation\"")) {
-							return true;
-						}
-					}
-				}
-			}
-
-			parentDetailAST = parentDetailAST.getParent();
-		}
 	}
 
 	private boolean _isNumeric(String typeName) {
