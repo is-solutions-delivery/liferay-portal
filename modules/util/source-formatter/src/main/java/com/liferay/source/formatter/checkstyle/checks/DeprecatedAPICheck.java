@@ -60,9 +60,11 @@ public class DeprecatedAPICheck extends BaseAPICheck {
 				detailAST, javaClassesJSONObject);
 
 			for (String deprecatedImportName : deprecatedImportNames) {
-				log(
-					getImportLineNumber(detailAST, deprecatedImportName),
-					_MSG_DEPRECATED_TYPE_CALL, deprecatedImportName);
+				if (hasUndeprecatedReference(detailAST, deprecatedImportName)) {
+					log(
+						getImportLineNumber(detailAST, deprecatedImportName),
+						_MSG_DEPRECATED_TYPE_CALL, deprecatedImportName);
+				}
 			}
 
 			_checkDeprecatedConstructors(
@@ -227,6 +229,28 @@ public class DeprecatedAPICheck extends BaseAPICheck {
 		}
 
 		return detailAST.getLineNo();
+	}
+
+	protected boolean hasUndeprecatedReference(
+		DetailAST detailAST, String importName) {
+
+		int x = importName.lastIndexOf(".");
+
+		String className = importName.substring(x + 1);
+
+		List<DetailAST> identDetailASTList = getAllChildTokens(
+			detailAST, true, TokenTypes.IDENT);
+
+		for (DetailAST identDetailAST : identDetailASTList) {
+			if (className.equals(identDetailAST.getText()) &&
+				!hasDeprecatedParent(identDetailAST) &&
+				!hasSuppressDeprecationWarningsAnnotation(identDetailAST)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void _checkDeprecatedConstructors(

@@ -69,7 +69,9 @@ public class UpgradeDeprecatedAPICheck extends DeprecatedAPICheck {
 					upgradeToDeprecatedImportNames) {
 
 				if (!upgradeFromDeprecatedImportNames.contains(
-						upgradeToDeprecatedImportName)) {
+						upgradeToDeprecatedImportName) &&
+					hasUndeprecatedReference(
+						detailAST, upgradeToDeprecatedImportName)) {
 
 					log(
 						getImportLineNumber(
