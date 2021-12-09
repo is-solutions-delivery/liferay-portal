@@ -26,6 +26,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>FORMS_VALUE</td>
+	<td>//input[contains(@name,'${label}') and contains(@value,'${value}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TABLE_CATALOG_NAME</td>
 	<td>//a[contains(text(),'${name}')]</td>
 	<td></td>
@@ -71,48 +76,53 @@
 	<td></td>
 </tr>
 <tr>
-	<td>TIP_INFO_PANEL</td>
-	<td>//div[@id='tip']</td>
-	<td></td>
-</tr>
-<tr>
 	<td>BUTTON_CONTINUE</td>
 	<td>//button[contains(@class,'continue')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>BUTTON_CONTINUE_DISABLED</td>
-	<td>//button[contains(@class, 'continue') and 'disabled']</td>
+	<td>//button[contains(., 'Continue')][@disabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TIP_INFO_PANEL</td>
+	<td>//div[@id='tip']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>BUTTON_PREVIOUS</td>
-	<td>//button[contains(@class,'btn btn-borderless')]</td>
+	<td>//button[contains(@class,'previous')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>FIRST_MORE_INFO</td>
-	<td>css=liferay-remote-app-raylife>>>.input-area .btn.badge.more-info</td>
+	<td>BUTTON_MORE_INFO_PRODUCTS</td>
+	<td>//label[contains(., '${productName}')]/parent::div//span[contains(@class,'btn-more-info')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>BUTTON_MORE_INFO_FORMS</td>
+	<td>//span[contains(., '${title}')]/parent::label//span[contains(@class,'btn-more-info')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>BUTTON_YES_OPTION</td>
-	<td>css=liferay-remote-app-raylife>>>[for='${field}']+.switch-wrapper button</td>
+	<td>//label[contains(., '${field}')]/parent::div//button[contains(text(),'Yes')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>BUTTON_NO_OPTION</td>
-	<td>css=liferay-remote-app-raylife>>>[for='${field}']+.switch-wrapper button+button</td>
+	<td>//label[contains(., '${field}')]/parent::div//button[contains(text(),'No')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ERROR_MESSAGE</td>
-	<td>css=liferay-remote-app-raylife>>>.badge-error</td>
+	<td>//div[contains(@class, 'warning')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>FORMS_VALUE</td>
-	<td>css=liferay-remote-app-raylife>>>[name='${label}'][value='${value}']</td>
+	<td>RAYLIFE_LOGO</td>
+	<td>//img[contains(@src,'raylife_logo.svg')]</td>
 	<td></td>
 </tr>
 </tbody>
