@@ -72,7 +72,9 @@ public class UpgradeDeprecatedAPICheck extends DeprecatedAPICheck {
 						upgradeToDeprecatedImportName)) {
 
 					log(
-						detailAST, _MSG_DEPRECATED_TYPE_CALL,
+						getImportLineNumber(
+							detailAST, upgradeToDeprecatedImportName),
+						_MSG_DEPRECATED_TYPE_CALL,
 						upgradeToDeprecatedImportName, upgradeToVersion);
 				}
 			}

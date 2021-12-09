@@ -14,9 +14,13 @@
 
 package com.liferay.source.formatter.checkstyle.checks;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.source.formatter.checks.util.SourceUtil;
 
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
+import com.puppycrawl.tools.checkstyle.api.FileContents;
+import com.puppycrawl.tools.checkstyle.api.FileText;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import com.puppycrawl.tools.checkstyle.utils.AnnotationUtil;
 
@@ -56,7 +60,9 @@ public class DeprecatedAPICheck extends BaseAPICheck {
 				detailAST, javaClassesJSONObject);
 
 			for (String deprecatedImportName : deprecatedImportNames) {
-				log(detailAST, _MSG_DEPRECATED_TYPE_CALL, deprecatedImportName);
+				log(
+					getImportLineNumber(detailAST, deprecatedImportName),
+					_MSG_DEPRECATED_TYPE_CALL, deprecatedImportName);
 			}
 
 			_checkDeprecatedConstructors(
@@ -204,6 +210,23 @@ public class DeprecatedAPICheck extends BaseAPICheck {
 		}
 
 		return deprecatedVariableCalls;
+	}
+
+	protected int getImportLineNumber(DetailAST detailAST, String importName) {
+		FileContents fileContents = getFileContents();
+
+		FileText fileText = fileContents.getText();
+
+		String content = (String)fileText.getFullText();
+
+		int x = content.indexOf(
+			StringBundler.concat("import ", importName, ";"));
+
+		if (x != -1) {
+			return SourceUtil.getLineNumber(content, x);
+		}
+
+		return detailAST.getLineNo();
 	}
 
 	private void _checkDeprecatedConstructors(
