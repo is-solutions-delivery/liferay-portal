@@ -235,27 +235,31 @@ public class CamelCaseNameCheck extends BaseCheck {
 
 		String constantFormatName = _getConstantFormatName(name);
 
+		String lowerCaseCamelCaseFormatName = _getCamelCaseFormatName(name);
+
+		String upperCaseCamelCaseFormatName = TextFormatter.format(
+			lowerCaseCamelCaseFormatName, TextFormatter.G);
+
 		List<DetailAST> stringLiteralDetailASTlist = getAllChildTokens(
 			assignDetailAST, true, TokenTypes.STRING_LITERAL);
 
 		if (!stringLiteralDetailASTlist.isEmpty()) {
-			String camelCaseFormatName = _getCamelCaseFormatName(name);
-
-			if (camelCaseFormatName == null) {
+			if (lowerCaseCamelCaseFormatName == null) {
 				return false;
 			}
 
 			String propertyFormatName = _getPropertyFormatName(
-				camelCaseFormatName);
+				lowerCaseCamelCaseFormatName);
 
 			for (DetailAST stringLiteralDetailAST :
 					stringLiteralDetailASTlist) {
 
 				String text = stringLiteralDetailAST.getText();
 
-				if (text.contains(camelCaseFormatName) ||
-					text.contains(constantFormatName) || text.contains(name) ||
-					text.contains(propertyFormatName)) {
+				if (text.contains(constantFormatName) ||
+					text.contains(lowerCaseCamelCaseFormatName) ||
+					text.contains(name) || text.contains(propertyFormatName) ||
+					text.contains(upperCaseCamelCaseFormatName)) {
 
 					return true;
 				}
@@ -268,7 +272,11 @@ public class CamelCaseNameCheck extends BaseCheck {
 		for (DetailAST identDetailAST : identDetailASTlist) {
 			String text = identDetailAST.getText();
 
-			if (text.contains(constantFormatName)) {
+			if (text.contains(constantFormatName) ||
+				text.contains(lowerCaseCamelCaseFormatName) ||
+				text.contains(name) ||
+				text.contains(upperCaseCamelCaseFormatName)) {
+
 				return true;
 			}
 		}
