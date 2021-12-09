@@ -39,27 +39,51 @@ export const getSetupDXPCloudInfo = gql`
 	}
 `;
 
-export const getAccountSubscriptions = gql`
-	query getAccountSubscriptions(
-		$aggregation: [String]
+export const getAccountSubscriptionsTerms = gql`
+	query getAccountSubscriptionsTerms(
 		$filter: String
-		$page: Int = 1
-		$pageSize: Int = 20
-		$search: String
-		$sort: String
+		$page: Int
+		$pageSize: Int
 	) {
 		c {
-			accountSubscriptions(
-				aggregation: $aggregation
+			accountSubscriptionTerms(
 				filter: $filter
 				page: $page
 				pageSize: $pageSize
-				search: $search
-				sort: $sort
 			) {
+				totalCount,
 				items {
 					accountKey
+					accountSubscriptionERC
+					accountSubscriptionGroupERC
+					accountSubscriptionTermId
+					c_accountSubscriptionTermId
+					endDate
+					instanceSize
+					quantity
+					startDate
+					subscriptionTermStatus
+				}
+			}
+		}
+	}
+`;
+
+export const getAccountSubscriptions = gql`
+	query getAccountSubscriptions($filter: String) {
+		c {
+			accountSubscriptions(filter: $filter) {
+				items {
+					accountKey
+					accountSubscriptionId
+					c_accountSubscriptionId
+					endDate
+					instanceSize
+					quantity
+					startDate
 					name
+					accountSubscriptionGroupERC
+					subscriptionStatus
 				}
 			}
 		}
@@ -150,7 +174,7 @@ export const getAccountRolesAndAccountFlags = gql`
 `;
 
 export const getAccountSubscriptionGroups = gql`
-	query accountSubscriptionGroups(
+	query getAccountSubscriptionGroups(
 		$aggregation: [String]
 		$filter: String
 		$page: Int = 1
@@ -170,20 +194,6 @@ export const getAccountSubscriptionGroups = gql`
 				items {
 					accountKey
 					name
-				}
-			}
-		}
-	}
-`;
-
-export const getDXPCDataCenterRegions = gql`
-	query getDXPCDataCenterRegions {
-		c {
-			dXPCDataCenterRegions {
-				items {
-					dxpcDataCenterRegionId
-					name
-					value
 				}
 			}
 		}
