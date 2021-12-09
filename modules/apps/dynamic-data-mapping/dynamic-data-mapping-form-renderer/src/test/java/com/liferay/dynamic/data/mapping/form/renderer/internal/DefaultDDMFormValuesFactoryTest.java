@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -202,23 +203,72 @@ public class DefaultDDMFormValuesFactoryTest {
 		List<DDMFormFieldValue> ddmFormFieldValues =
 			ddmFormValues.getDDMFormFieldValues();
 
-		DDMFormFieldValue nameDDMFormFieldValue = ddmFormFieldValues.get(0);
+		_assertDDMFormFieldValue(
+			ddmFormFieldValues.get(0), StringPool.BLANK, StringPool.BLANK);
+	}
 
-		Value nameValue = nameDDMFormFieldValue.getValue();
+	@Test
+	public void testPopulate() {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
+
+		DDMFormField ddmFormField = DDMFormTestUtil.createDDMFormField(
+			"parentField", null, null, null, false, true, false);
+
+		ddmFormField.addNestedDDMFormField(
+			DDMFormTestUtil.createDDMFormField(
+				"nestedField", null, null, null, false, false, false, null,
+				"true", null));
+
+		ddmForm.addDDMFormField(ddmFormField);
+
+		DefaultDDMFormValuesFactory defaultDDMFormValuesFactory =
+			new DefaultDDMFormValuesFactory(ddmForm);
+
+		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
+			ddmForm);
+
+		ddmFormValues.addDDMFormFieldValue(
+			DDMFormValuesTestUtil.createUnlocalizedDDMFormFieldValue(
+				ddmFormField.getName(), "someValue1"));
+
+		ddmFormValues.addDDMFormFieldValue(
+			DDMFormValuesTestUtil.createUnlocalizedDDMFormFieldValue(
+				ddmFormField.getName(), "someValue2"));
+
+		defaultDDMFormValuesFactory.populate(ddmFormValues);
+
+		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
+			ddmFormValues.getDDMFormFieldValuesMap(false);
+
+		List<DDMFormFieldValue> ddmFormFieldValues = ddmFormFieldValuesMap.get(
+			"parentField");
+
+		_assertDDMFormFieldValue(
+			ddmFormFieldValues.get(0), "true", "someValue1");
+		_assertDDMFormFieldValue(
+			ddmFormFieldValues.get(1), "true", "someValue2");
+	}
+
+	private void _assertDDMFormFieldValue(
+		DDMFormFieldValue ddmFormFieldValue, String expectedNestedValue,
+		String expectedValue) {
+
+		Value value = ddmFormFieldValue.getValue();
 
 		Assert.assertEquals(
-			StringPool.BLANK, nameValue.getString(ddmForm.getDefaultLocale()));
+			expectedValue, value.getString(value.getDefaultLocale()));
 
 		List<DDMFormFieldValue> nestedDDMFormFieldValues =
-			nameDDMFormFieldValue.getNestedDDMFormFieldValues();
+			ddmFormFieldValue.getNestedDDMFormFieldValues();
 
-		DDMFormFieldValue ageDDMFormFieldValue = nestedDDMFormFieldValues.get(
-			0);
+		DDMFormFieldValue nestedDDMFormFieldValue =
+			nestedDDMFormFieldValues.get(0);
 
-		Value ageValue = ageDDMFormFieldValue.getValue();
+		Value nestedValue = nestedDDMFormFieldValue.getValue();
 
 		Assert.assertEquals(
-			StringPool.BLANK, ageValue.getString(ddmForm.getDefaultLocale()));
+			expectedNestedValue,
+			nestedValue.getString(nestedValue.getDefaultLocale()));
 	}
 
 	private Value _getValue(
