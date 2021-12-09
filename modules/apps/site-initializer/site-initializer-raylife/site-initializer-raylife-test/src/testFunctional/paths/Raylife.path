@@ -31,11 +31,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>FORMS_VALUE</td>
-	<td>css=liferay-remote-app-raylife>>>[name='${label}'][value='${value}']</td>
-	<td></td>
-</tr>
-<tr>
 	<td>TABLE_CATALOG_NAME</td>
 	<td>//a[contains(text(),'${name}')]</td>
 	<td></td>
@@ -61,8 +56,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>MORE_INFO_PANEL</td>
-	<td>//div[contains(@class, "dynamic-web-content-primary")]</td>
+	<td>BUTTON_MORE_INFO_PRODUCTS</td>
+	<td>//label[contains(., '${productName}')]/parent::div//span[contains(@class,'btn-more-info')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>BUTTON_MORE_INFO_FORMS</td>
+	<td>//h6[contains(., '${title}')]/parent::label//span[contains(@class,'btn-more-info')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -101,16 +101,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>BUTTON_MORE_INFO_PRODUCTS</td>
-	<td>//label[contains(., '${productName}')]/parent::div//span[contains(@class,'btn-more-info')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>BUTTON_MORE_INFO_FORMS</td>
-	<td>//span[contains(., '${title}')]/parent::label//span[contains(@class,'btn-more-info')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>BUTTON_YES_OPTION</td>
 	<td>//label[contains(., '${field}')]/parent::div//button[contains(text(),'Yes')]</td>
 	<td></td>
@@ -123,11 +113,6 @@
 <tr>
 	<td>ERROR_MESSAGE</td>
 	<td>//div[contains(@class, 'warning')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>RAYLIFE_LOGO</td>
-	<td>//img[contains(@src,'raylife_logo.svg')]</td>
 	<td></td>
 </tr>
 </tbody>
