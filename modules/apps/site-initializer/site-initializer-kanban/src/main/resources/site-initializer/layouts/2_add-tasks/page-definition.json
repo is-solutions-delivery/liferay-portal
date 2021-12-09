@@ -25,8 +25,8 @@
 						"definition": {
 							"widgetInstance": {
 								"widgetConfig": {
-									"formInstanceId": "[$FORM_INSTANCE_ID:name$]",
-									"groupId": "[$GROUP_ID$]"
+									"formInstanceId": "[$FORM_INSTANCE_ID:Add Task$]",
+									"groupId": "[$GROUP_ID:Add Task$]"
 								},
 								"widgetName": "com_liferay_dynamic_data_mapping_form_web_portlet_DDMFormPortlet"
 							}

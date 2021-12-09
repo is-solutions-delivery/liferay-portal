@@ -32,7 +32,9 @@ import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
@@ -410,7 +412,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 					documentsStringUtilReplaceValues,
 					objectDefinitionIdsStringUtilReplaceValues,
 					serviceContext));
-			_invoke(() -> _addForms(objectDefinitionsIdsStringUtilReplaceValues, serviceContext));
 			_invoke(
 				() -> _addObjectRelationships(
 					objectDefinitionIdsStringUtilReplaceValues,
@@ -425,14 +426,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 					() -> _addRemoteAppEntries(
 						documentsStringUtilReplaceValues, serviceContext));
 
+			Map<String, String> ddmFormStringUtilReplaceValues = _invoke(
+				() -> _addForms(
+					objectDefinitionsIdsStringUtilReplaceValues,serviceContext));
+
 			_invoke(
 				() -> _addLayoutsContent(
 					assetListEntryIdsStringUtilReplaceValues,
-					documentsStringUtilReplaceValues, layouts,
+					documentsStringUtilReplaceValues, 
+					ddmFormStringUtilReplaceValues, layouts,
 					remoteAppEntryIdsStringUtilReplaceValues, serviceContext,
 					siteNavigationMenuItemSettingsBuilder.build()));
 		}
-			catch (Exception exception) {
+		catch (Exception exception) {
 			_log.error(exception, exception);
 
 			throw new InitializationException(exception);
@@ -1336,7 +1342,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		).build();
 	}
 
-	private void _addForms(
+	private Map<String, String> _addForms(
 			Map<String, String> objectDefinitionsIdsStringUtilReplaceValues,
 			ServiceContext serviceContext)
 		throws Exception {
@@ -1345,21 +1351,46 @@ public class BundleSiteInitializer implements SiteInitializer {
 			"/site-initializer/forms");
 
 		if (SetUtil.isEmpty(resourcePaths)) {
-			return;
+			return Collections.emptyMap();
 		}
+
+		Map<String, String> ddmFormStringUtilReplaceValues = new HashMap<>();
 
 		for (String resourcePath : resourcePaths) {
 			String formsJSON = _read(resourcePath);
 
 			formsJSON = StringUtil.replace(
-				formsJSON, "[$", "$]", objectDefinitionsIdsStringUtilReplaceValues);
+				formsJSON, "[$", "$]",
+				objectDefinitionsIdsStringUtilReplaceValues);
 
 			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(formsJSON);
 
 			_ddmFormImporter.importDDMForms(
 				jsonArray, serviceContext.getScopeGroupId(),
 				serviceContext.getUserId());
+
+			List<DDMFormInstance> ddmFormInstances =
+				DDMFormInstanceLocalServiceUtil.getDDMFormInstances(
+					0, jsonArray.length());
+
+			if (ddmFormInstances != null) {
+				for (DDMFormInstance ddmFormInstance : ddmFormInstances) {
+					ddmFormStringUtilReplaceValues.put(
+						"FORM_INSTANCE_ID:" +
+							ddmFormInstance.getName(
+								LocaleUtil.getSiteDefault()),
+						String.valueOf(ddmFormInstance.getFormInstanceId()));
+
+					ddmFormStringUtilReplaceValues.put(
+						"GROUP_ID:" +
+							ddmFormInstance.getName(
+								LocaleUtil.getSiteDefault()),
+						String.valueOf(ddmFormInstance.getGroupId()));
+				}
+			}
 		}
+
+		return ddmFormStringUtilReplaceValues;
 	}
 
 	private void _addFragmentEntries(ServiceContext serviceContext)
@@ -1541,7 +1572,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private void _addLayoutContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
-			Map<String, String> documentsStringUtilReplaceValues, Layout layout,
+			Map<String, String> documentsStringUtilReplaceValues, 
+			Map<String, String>	ddmFormStringUtilReplaceValues, Layout layout,
 			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			String resourcePath, ServiceContext serviceContext)
 		throws Exception {
@@ -1561,6 +1593,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				assetListEntryIdsStringUtilReplaceValues
 			).putAll(
 				documentsStringUtilReplaceValues
+			).putAll(
+				ddmFormStringUtilReplaceValues
 			).putAll(
 				remoteAppEntryIdsStringUtilReplaceValues
 			).build());
@@ -1762,6 +1796,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutsContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
+			Map<String, String>	ddmFormStringUtilReplaceValues,
 			Map<String, Layout> layouts,
 			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			ServiceContext serviceContext,
@@ -1772,7 +1807,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (Map.Entry<String, Layout> entry : layouts.entrySet()) {
 			_addLayoutContent(
 				assetListEntryIdsStringUtilReplaceValues,
-				documentsStringUtilReplaceValues, entry.getValue(),
+				documentsStringUtilReplaceValues, ddmFormStringUtilReplaceValues, entry.getValue(),
 				remoteAppEntryIdsStringUtilReplaceValues, entry.getKey(),
 				serviceContext);
 		}
