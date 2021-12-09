@@ -216,35 +216,23 @@ public class DDMFormFieldTemplateContextFactory {
 
 		int index = 0;
 
-		if (ddmFormFieldValues == null) {
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			DDMFormField ddmFormField = _ddmFormFieldsMap.get(
+				ddmFormFieldValue.getName());
+
+			Map<String, Object> changedProperties = getChangedProperties(
+				ddmFormField, ddmFormFieldValue);
+
+			if (!_ddmFormRenderingContext.isReturnFullContext() &&
+				changedProperties.isEmpty() && !ddmFormField.isRequired()) {
+
+				continue;
+			}
+
 			ddmFormFieldTemplateContexts.add(
 				createDDMFormFieldTemplateContext(
-					new DDMFormFieldValue() {
-						{
-							setName(_ddmFormFieldName);
-						}
-					},
-					new HashMap<>(), index++, parentDDMFormFieldParameterName));
-		}
-		else {
-			for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
-				DDMFormField ddmFormField = _ddmFormFieldsMap.get(
-					ddmFormFieldValue.getName());
-
-				Map<String, Object> changedProperties = getChangedProperties(
-					ddmFormField, ddmFormFieldValue);
-
-				if (!_ddmFormRenderingContext.isReturnFullContext() &&
-					changedProperties.isEmpty() && !ddmFormField.isRequired()) {
-
-					continue;
-				}
-
-				ddmFormFieldTemplateContexts.add(
-					createDDMFormFieldTemplateContext(
-						ddmFormFieldValue, changedProperties, index++,
-						parentDDMFormFieldParameterName));
-			}
+					ddmFormFieldValue, changedProperties, index++,
+					parentDDMFormFieldParameterName));
 		}
 
 		return ddmFormFieldTemplateContexts;

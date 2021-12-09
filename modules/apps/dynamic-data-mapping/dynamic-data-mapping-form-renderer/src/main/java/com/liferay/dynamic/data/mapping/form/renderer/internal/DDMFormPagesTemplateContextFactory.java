@@ -81,13 +81,16 @@ public class DDMFormPagesTemplateContextFactory {
 		DDMFormValues ddmFormValues =
 			ddmFormRenderingContext.getDDMFormValues();
 
+		DefaultDDMFormValuesFactory defaultDDMFormValuesFactory =
+			new DefaultDDMFormValuesFactory(ddmForm);
+
 		if ((ddmFormValues == null) ||
 			ListUtil.isEmpty(ddmFormValues.getDDMFormFieldValues())) {
 
-			DefaultDDMFormValuesFactory defaultDDMFormValuesFactory =
-				new DefaultDDMFormValuesFactory(ddmForm);
-
 			ddmFormValues = defaultDDMFormValuesFactory.create();
+		}
+		else {
+			defaultDDMFormValuesFactory.populate(ddmFormValues);
 		}
 
 		_ddmFormValues = ddmFormValues;
