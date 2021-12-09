@@ -63,7 +63,7 @@ input,
 	}
 }
 
-input.form-control.input {
+input.form-control {
 	&::placeholder {
 		color: $color-neutral-black;
 		font-weight: 500;
@@ -73,7 +73,6 @@ input.form-control.input {
 
 input.form-control.search {
 	min-height: 3.5rem;
-	padding: 0 $spacer-4;
 
 	&::placeholder {
 		font-size: 1.313rem;
