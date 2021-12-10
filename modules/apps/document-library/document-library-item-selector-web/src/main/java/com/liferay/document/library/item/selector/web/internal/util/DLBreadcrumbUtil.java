@@ -42,7 +42,7 @@ public class DLBreadcrumbUtil {
 			String displayStyle, Folder folder,
 			HttpServletRequest httpServletRequest,
 			LiferayPortletResponse liferayPortletResponse,
-			PortletURL portletURL, boolean showGroupSelector, long repositoryId)
+			PortletURL portletURL, long repositoryId, boolean showGroupSelector)
 		throws Exception {
 
 		if (showGroupSelector) {
@@ -57,8 +57,9 @@ public class DLBreadcrumbUtil {
 			portletURL,
 			_getRepositoryId(folder, httpServletRequest, repositoryId),
 			_getRootFolderName(
-				httpServletRequest, showGroupSelector,
-				_getRepositoryId(folder, httpServletRequest, repositoryId)));
+				httpServletRequest,
+				_getRepositoryId(folder, httpServletRequest, repositoryId),
+				showGroupSelector));
 
 		if (folder != null) {
 			List<Folder> ancestorFolders = folder.getAncestors();
@@ -127,8 +128,8 @@ public class DLBreadcrumbUtil {
 	}
 
 	private static String _getRootFolderName(
-			HttpServletRequest httpServletRequest, boolean showGroupSelector,
-			long repositoryId)
+			HttpServletRequest httpServletRequest, long repositoryId,
+			boolean showGroupSelector)
 		throws Exception {
 
 		if (!showGroupSelector) {
