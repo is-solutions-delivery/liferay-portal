@@ -29,7 +29,6 @@ definition {
 	@description = "LPS-142241 - Verify if when the 'Dismiss' button is clicked, the information panel for 'More Info' is dismissed"
 	@priority = "3"
 	test CanDismissProductInfoPanel {
-
 		ApplicationsMenu.gotoSite(site = "Raylife");
 
 		RaylifeHomePage.getAQuote();
@@ -55,15 +54,13 @@ definition {
 			section = "Basics");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
-
 	}
 
 	@description = "LPS-142540 - Verify if clicking on Previous returns to Previous Screen (Contact Information/'Just the business basics!')"
 	@priority = "3"
 	test CanGoBackOnProductSelectionKeepingAllData {
-
 		ApplicationsMenu.gotoSite(site = "Raylife");
-	
+
 		RaylifeHomePage.getAQuote();
 
 		RaylifeIndustry.typeIndustry();
@@ -83,13 +80,11 @@ definition {
 			section = "Basics");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
-
 	}
 
 	@description = "LPS-142237 - Verify if only one product can be selected at a time"
 	@priority = "3"
 	test CanSelectOnlyOneProduct {
-
 		ApplicationsMenu.gotoSite(site = "Raylife");
 
 		RaylifeHomePage.getAQuote();
@@ -107,15 +102,13 @@ definition {
 		Click(
 			locator1 = "RaylifeNavigation#SECTION_COMPLETED",
 			section = "Basics");
-			
-		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
+		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 	}
 
 	@description = "LPS-142239 - Verify if when selecting 'More Info' in a product, information panel is opened"
 	@priority = "3"
 	test CanViewProductInfoPanel {
-
 		ApplicationsMenu.gotoSite(site = "Raylife");
 
 		RaylifeHomePage.getAQuote();
@@ -139,7 +132,6 @@ definition {
 			section = "Basics");
 
 		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
-
 	}
 
 }
