@@ -120,7 +120,7 @@
 			"label": {
 				"en_US": "Case Number"
 			},
-			"name": "caseNumberr",
+			"name": "caseNumber",
 			"required": false,
 			"type": "Long"
 		}
