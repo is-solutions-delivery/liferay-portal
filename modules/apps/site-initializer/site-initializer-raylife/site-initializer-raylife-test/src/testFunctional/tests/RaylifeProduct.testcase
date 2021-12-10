@@ -5,57 +5,140 @@ definition {
 	property portal.upstream = "true";
 	property testray.main.component.name = "Raylife";
 
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		Raylife.createRaylifeSite(siteName = "Raylife");
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Raylife.tearDownCP();
+
+			User.logoutPG();
+		}
+	}
+
 	@description = "LPS-142241 - Verify if when the 'Dismiss' button is clicked, the information panel for 'More Info' is dismissed"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test CanDismissProductInfoPanel {
 
-		// TODO LPS-142241 CanDismissProductInfoPanel pending implementation
+		ApplicationsMenu.gotoSite(site = "Raylife");
+
+		RaylifeHomePage.getAQuote();
+
+		RaylifeIndustry.typeIndustry();
+
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
+
+		RaylifeContactInfo.typeAllBasicsInfoFields();
+
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
+
+		Click(
+			locator1 = "Raylife#BUTTON_MORE_INFO_PRODUCTS",
+			productName = "Business Owners Policy");
+
+		Click(locator1 = "Raylife#BUTTON_DISMISS");
+
+		AssertElementPresent(locator1 = "RaylifeProduct#INFO_PANEL_TIP_HIDE");
+
+		Click(
+			locator1 = "RaylifeNavigation#SECTION_COMPLETED",
+			section = "Basics");
+
+		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
 	}
 
 	@description = "LPS-142540 - Verify if clicking on Previous returns to Previous Screen (Contact Information/'Just the business basics!')"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test CanGoBackOnProductSelectionKeepingAllData {
 
-		// TODO LPS-142540 CanGoBackOnProductSelectionKeepingAllData pending implementation
+		ApplicationsMenu.gotoSite(site = "Raylife");
+	
+		RaylifeHomePage.getAQuote();
 
-	}
+		RaylifeIndustry.typeIndustry();
 
-	@description = "LPS-142233 - Verify if user can only Continue if a Product is selected"
-	@ignore = "Test Stub"
-	@priority = "5"
-	test CanOnlyContinueWithAProductSelected {
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
 
-		// TODO LPS-142233 CanOnlyContinueWithAProductSelected pending implementation
+		RaylifeContactInfo.typeAllBasicsInfoFields();
+
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
+
+		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
+
+		RaylifeContactInfo.viewBasicsInfo();
+
+		Click(
+			locator1 = "RaylifeNavigation#SECTION_COMPLETED",
+			section = "Basics");
+
+		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
 	}
 
 	@description = "LPS-142237 - Verify if only one product can be selected at a time"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test CanSelectOnlyOneProduct {
 
-		// TODO LPS-142237 CanSelectOnlyOneProduct pending implementation
+		ApplicationsMenu.gotoSite(site = "Raylife");
+
+		RaylifeHomePage.getAQuote();
+
+		RaylifeIndustry.typeIndustry();
+
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
+
+		RaylifeContactInfo.typeAllBasicsInfoFields();
+
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
+
+		AssertElementPresent(locator1 = "RaylifeProduct#RADIO_BUTTON");
+
+		Click(
+			locator1 = "RaylifeNavigation#SECTION_COMPLETED",
+			section = "Basics");
+			
+		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
 	}
 
 	@description = "LPS-142239 - Verify if when selecting 'More Info' in a product, information panel is opened"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test CanViewProductInfoPanel {
 
-		// TODO LPS-142239 CanViewProductInfoPanel pending implementation
+		ApplicationsMenu.gotoSite(site = "Raylife");
 
-	}
+		RaylifeHomePage.getAQuote();
 
-	@description = "LPS-142235 - Verify if default display is no selection (There is no option selected previously)"
-	@ignore = "Test Stub"
-	@priority = "3"
-	test NoProductsAreSelected {
+		RaylifeIndustry.typeIndustry();
 
-		// TODO LPS-142235 NoProductsAreSelected pending implementation
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
+
+		RaylifeContactInfo.typeAllBasicsInfoFields();
+
+		Click(locator1 = "Raylife#BUTTON_CONTINUE");
+
+		Click(
+			locator1 = "Raylife#BUTTON_MORE_INFO_PRODUCTS",
+			productName = "Business Owners Policy");
+
+		AssertElementPresent(locator1 = "RaylifeProduct#INFO_PANEL_TIP");
+
+		Click(
+			locator1 = "RaylifeNavigation#SECTION_COMPLETED",
+			section = "Basics");
+
+		Click(locator1 = "Raylife#BUTTON_PREVIOUS");
 
 	}
 
