@@ -36,7 +36,7 @@ public class FunctionalTestClass extends BaseTestClass {
 
 		if (!(testClass instanceof FunctionalTestClass)) {
 			throw new NullPointerException(
-				"Test class is not instance of FunctionalTestClass");
+				"Test class is not an instance of FunctionalTestClass");
 		}
 
 		FunctionalTestClass functionalTestClass =
