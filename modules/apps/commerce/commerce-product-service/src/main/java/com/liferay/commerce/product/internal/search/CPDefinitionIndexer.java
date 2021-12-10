@@ -276,9 +276,9 @@ public class CPDefinitionIndexer extends BaseIndexer<CPDefinition> {
 					commerceAccountGroupIdsBooleanFilter,
 					BooleanClauseOccur.MUST);
 			}
-			else if (!permissionChecker.isOmniadmin() ||
-					 !permissionChecker.isCompanyAdmin(
-						 searchContext.getCompanyId())) {
+			else if (!permissionChecker.isCompanyAdmin(
+						 searchContext.getCompanyId()) ||
+					 !permissionChecker.isOmniadmin()) {
 
 				commerceAccountGroupsFilterEnabledBooleanFilter.addTerm(
 					"commerceAccountGroupIds", "-1", BooleanClauseOccur.MUST);
