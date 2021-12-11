@@ -69,8 +69,6 @@ definition {
 		task ("Assert that console outputs a different X-Request-ID than invalid inputted X-Request-ID") {
 			Navigator.openURL(baseURL = "http://localhost:8080/api/jsonws/user/get-user-by-email-address/company-id/email-address");
 
-			// Shorter than 20 characters
-
 			var invalidXRequestId = "invalidXRID";
 
 			var curl = '''http://localhost:8080/api/jsonws/user/get-user-by-email-address/company-id/email-address -H 'X-Request-Id:${invalidXRequestId}' ''';

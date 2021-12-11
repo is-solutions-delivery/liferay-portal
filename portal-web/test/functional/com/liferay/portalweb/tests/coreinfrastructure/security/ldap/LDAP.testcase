@@ -59,8 +59,6 @@ definition {
 		task ("Login and reindex sarch indexes") {
 			User.firstLoginPG();
 
-			// LRQA-46018
-
 			SearchAdministration.executeReindex();
 		}
 
@@ -108,8 +106,6 @@ definition {
 
 		task ("Login and reindex search indexes") {
 			User.firstLoginPG();
-
-			// LRQA-46018
 
 			SearchAdministration.executeReindex();
 		}

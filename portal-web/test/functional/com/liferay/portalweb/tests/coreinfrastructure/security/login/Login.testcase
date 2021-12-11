@@ -280,8 +280,6 @@ definition {
 		task ("Login and go to control panel - roles") {
 			User.firstLoginUI();
 
-			// Standard and safe UI action to assert Portal is accessible after login
-
 			ApplicationsMenu.gotoPortlet(
 				category = "Users",
 				panel = "Control Panel",
@@ -363,8 +361,6 @@ definition {
 		property dummy.socket.proxy.disabled = "true";
 		property test.name.skip.portal.instance = "Login#OpenIDConnectSmoke";
 
-		// LRQA-43729
-
 		var openIDConnectClientID = PropsUtil.get("google.client.id.3");
 		var openIDConnectClientSecret = PropsUtil.get("google.client.secret.3");
 		var userEmailAddress = PropsUtil.get("email.address.2");
@@ -414,8 +410,6 @@ definition {
 		property dummy.socket.proxy.disabled = "true";
 		property openam.enabled = "true";
 		property test.name.skip.portal.instance = "Login#OpenSSOSmoke";
-
-		// LRQA-40534
 
 		task ("Go to http://test.able.com:8080/openam and run ant command") {
 			Navigator.openSpecificURL(url = "http://test.able.com:8080/openam");
