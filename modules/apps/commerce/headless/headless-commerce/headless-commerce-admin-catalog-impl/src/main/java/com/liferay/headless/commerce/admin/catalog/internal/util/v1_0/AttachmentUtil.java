@@ -96,9 +96,8 @@ public class AttachmentUtil {
 			return null;
 		}
 
-		byte[] attachmentBytes = Base64.decode(base64EncodedContent);
-
-		File file = FileUtil.createTempFile(attachmentBytes);
+		File file = FileUtil.createTempFile(
+			Base64.decode(base64EncodedContent));
 
 		return _addFileEntry(
 			groupId, userId, file, attachmentBase64.getContentType(),
