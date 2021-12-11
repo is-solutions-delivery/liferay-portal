@@ -152,7 +152,7 @@ const ImportSXPBlueprintModal = ({redirectURL}) => {
 						</ClayButton>
 
 						<ClayButton
-							disabled={loadingResponse || !importFile}
+							disabled={!importFile || loadingResponse}
 							displayType="primary"
 							onClick={_handleSubmit}
 						>
