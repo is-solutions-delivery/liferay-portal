@@ -64,34 +64,27 @@ public class ImportPortletConfigurationIcon
 	public String getOnClick(
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
-		String portletURLString = PortletURLBuilder.create(
-			_portal.getControlPanelPortletURL(
-				portletRequest, SXPPortletKeys.SXP_BLUEPRINT_ADMIN,
-				PortletRequest.RENDER_PHASE)
-		).setMVCPath(
-			"/sxp_blueprint_admin/view_import.jsp"
-		).setRedirect(
-			() -> {
-				ThemeDisplay themeDisplay =
-					(ThemeDisplay)portletRequest.getAttribute(
-						WebKeys.THEME_DISPLAY);
+		return StringBundler.concat(
+			"Liferay.Util.openModal({height: '320px', size: 'md', title: '",
+			getMessage(portletRequest), "', url: '",
+			PortletURLBuilder.create(
+				_portal.getControlPanelPortletURL(
+					portletRequest, SXPPortletKeys.SXP_BLUEPRINT_ADMIN,
+					PortletRequest.RENDER_PHASE)
+			).setMVCPath(
+				"/sxp_blueprint_admin/view_import.jsp"
+			).setRedirect(
+				() -> {
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)portletRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
 
-				return themeDisplay.getURLCurrent();
-			}
-		).setWindowState(
-			LiferayWindowState.POP_UP
-		).buildString();
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append("Liferay.Util.openModal({height: '320px',");
-		sb.append("size: 'md', title: '");
-		sb.append(getMessage(portletRequest));
-		sb.append("', url: '");
-		sb.append(portletURLString);
-		sb.append("'});");
-
-		return sb.toString();
+					return themeDisplay.getURLCurrent();
+				}
+			).setWindowState(
+				LiferayWindowState.POP_UP
+			).buildString(),
+			"'});");
 	}
 
 	@Override
