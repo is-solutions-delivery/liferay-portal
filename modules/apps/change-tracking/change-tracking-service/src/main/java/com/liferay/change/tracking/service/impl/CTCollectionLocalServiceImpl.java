@@ -480,7 +480,7 @@ public class CTCollectionLocalServiceImpl
 	public List<CTMappingTableInfo> getCTMappingTableInfos(
 		long ctCollectionId) {
 
-		List<CTMappingTableInfo> mappingTableInfos = new ArrayList<>();
+		List<CTMappingTableInfo> ctMappingTableInfos = new ArrayList<>();
 
 		for (CTTableMapperHelper ctTableMapperHelper :
 				_ctServiceRegistry.getCTTableMapperHelpers()) {
@@ -489,11 +489,11 @@ public class CTCollectionLocalServiceImpl
 				ctTableMapperHelper.getCTMappingTableInfo(ctCollectionId);
 
 			if (ctMappingTableInfo != null) {
-				mappingTableInfos.add(ctMappingTableInfo);
+				ctMappingTableInfos.add(ctMappingTableInfo);
 			}
 		}
 
-		return mappingTableInfos;
+		return ctMappingTableInfos;
 	}
 
 	@Override
