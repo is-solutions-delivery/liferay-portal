@@ -70,7 +70,6 @@ public class GroupSearchProviderTest {
 	public static void setUpClass() {
 		_originalGroupsComplexSQLClassNames =
 			PropsValues.GROUPS_COMPLEX_SQL_CLASS_NAMES;
-
 		_originalPermissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 	}
