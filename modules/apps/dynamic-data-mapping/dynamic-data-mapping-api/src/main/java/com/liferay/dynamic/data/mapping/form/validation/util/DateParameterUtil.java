@@ -153,20 +153,22 @@ public class DateParameterUtil {
 	private static String _getDateFieldValue(
 		String dateFieldName, DDMFormValues ddmFormValues) {
 
-		if (ddmFormValues != null) {
-			Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
-				ddmFormValues.getDDMFormFieldValuesMap(true);
+		if (ddmFormValues == null) {
+			return null;
+		}
 
-			List<DDMFormFieldValue> ddmFormFieldValues =
-				ddmFormFieldValuesMap.get(dateFieldName);
+		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
+			ddmFormValues.getDDMFormFieldValuesMap(true);
 
-			if (ListUtil.isNotEmpty(ddmFormFieldValues)) {
-				DDMFormFieldValue ddmFormFieldValue = ddmFormFieldValues.get(0);
+		List<DDMFormFieldValue> ddmFormFieldValues =
+			ddmFormFieldValuesMap.get(dateFieldName);
 
-				Value value = ddmFormFieldValue.getValue();
+		if (ListUtil.isNotEmpty(ddmFormFieldValues)) {
+			DDMFormFieldValue ddmFormFieldValue = ddmFormFieldValues.get(0);
 
-				return value.getString(ddmFormValues.getDefaultLocale());
-			}
+			Value value = ddmFormFieldValue.getValue();
+
+			return value.getString(ddmFormValues.getDefaultLocale());
 		}
 
 		return null;
