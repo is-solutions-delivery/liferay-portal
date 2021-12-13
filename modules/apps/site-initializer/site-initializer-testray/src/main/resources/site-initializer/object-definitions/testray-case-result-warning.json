@@ -22,7 +22,7 @@
 			},
 			"name": "content",
 			"required": false,
-			"type": "Integer"
+			"type": "String"
 		}
 	],
 	"panelAppOrder": "100",
