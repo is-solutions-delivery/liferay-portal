@@ -3723,24 +3723,6 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		return parentLayout.getPlid();
 	}
 
-	private DSLQuery _getPublishedDraftLayoutsClassPKsDSLQuery(long groupId) {
-		return DSLQueryFactoryUtil.select(
-			LayoutTable.INSTANCE.classPK
-		).from(
-			LayoutTable.INSTANCE
-		).where(
-			LayoutTable.INSTANCE.groupId.eq(
-				groupId
-			).and(
-				LayoutTable.INSTANCE.classNameId.eq(
-					_classNameLocalService.getClassNameId(Layout.class)
-				).and(
-					LayoutTable.INSTANCE.typeSettings.like("%published=true%")
-				)
-			)
-		);
-	}
-
 	private GroupByStep _getPublishedLayoutsGroupByStep(
 		long groupId, FromStep fromStep) {
 
@@ -3759,7 +3741,23 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 					}
 				).or(
 					LayoutTable.INSTANCE.plid.in(
-						_getPublishedDraftLayoutsClassPKsDSLQuery(groupId))
+						DSLQueryFactoryUtil.select(
+							LayoutTable.INSTANCE.classPK
+						).from(
+							LayoutTable.INSTANCE
+						).where(
+							LayoutTable.INSTANCE.groupId.eq(
+								groupId
+							).and(
+								LayoutTable.INSTANCE.classNameId.eq(
+									_classNameLocalService.getClassNameId(
+										Layout.class)
+								).and(
+									LayoutTable.INSTANCE.typeSettings.like(
+										"%published=true%")
+								)
+							)
+						))
 				).or(
 					LayoutTable.INSTANCE.status.eq(
 						WorkflowConstants.STATUS_APPROVED
