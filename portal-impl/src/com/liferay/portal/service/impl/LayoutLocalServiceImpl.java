@@ -2120,7 +2120,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		long groupId, int start, int end,
 		OrderByComparator<Layout> orderByComparator) {
 
-		GroupByStep groupByStep = _getPublishedPagesDSLQuery(
+		GroupByStep groupByStep = _getPublishedLayoutsGroupByStep(
 			groupId, DSLQueryFactoryUtil.select(LayoutTable.INSTANCE));
 
 		return dslQuery(
@@ -2142,7 +2142,8 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	@Override
 	public int getPublishedLayoutsCount(long groupId) {
 		return dslQueryCount(
-			_getPublishedPagesDSLQuery(groupId, DSLQueryFactoryUtil.count()));
+			_getPublishedLayoutsGroupByStep(
+				groupId, DSLQueryFactoryUtil.count()));
 	}
 
 	@Override
@@ -3740,7 +3741,7 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		);
 	}
 
-	private GroupByStep _getPublishedPagesDSLQuery(
+	private GroupByStep _getPublishedLayoutsGroupByStep(
 		long groupId, FromStep fromStep) {
 
 		return fromStep.from(
