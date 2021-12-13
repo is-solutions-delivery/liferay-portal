@@ -1,16 +1,16 @@
-/* eslint-disable no-console */
 import ClayTable from '@clayui/table';
 import React from 'react';
 import TablePagination from './Pagination';
+import TableSkeleton from './Skeleton';
 
 const Table = ({
 	activePage = 1,
 	columns,
-	data,
 	hasPagination,
+	isLoading = false,
 	itemsPerPage = 5,
+	rows,
 	setActivePage,
-	totalCount,
 	...props
 }) => {
 	return (
@@ -22,44 +22,50 @@ const Table = ({
 							<ClayTable.Cell
 								align={column.align}
 								className={
-									column.headerClass ||
+									column.header.styles ||
 									'bg-neutral-1 font-weight-bold text-neutral-8'
 								}
 								expanded={column.expanded}
 								headingCell
 								key={column.accessor}
 							>
-								{column.Header}
+								{column.header.name}
 							</ClayTable.Cell>
 						))}
 					</ClayTable.Row>
 				</ClayTable.Head>
 
-				<ClayTable.Body>
-					{data.map((item, index) => (
-						<ClayTable.Row key={index}>
-							{columns.map((column) => (
-								<ClayTable.Cell
-									align={column.align}
-									className={column.bodyClass}
-									headingTitle={column.headingTitle}
-									key={item[column.accessor]}
-								>
-									{column.Cell
-										? column.Cell(item)
-										: item[column.accessor]}
-								</ClayTable.Cell>
-							))}
-						</ClayTable.Row>
-					))}
-				</ClayTable.Body>
+				{!isLoading ? (
+					<ClayTable.Body>
+						{rows.map((row, index) => (
+							<ClayTable.Row key={index}>
+								{columns.map((column) => (
+									<ClayTable.Cell
+										align={column.align}
+										className={column.bodyClass}
+										headingTitle={column.headingTitle}
+										key={row[column.accessor]}
+									>
+										{row[column.accessor]}
+									</ClayTable.Cell>
+								))}
+							</ClayTable.Row>
+						))}
+					</ClayTable.Body>
+				) : (
+					<TableSkeleton
+						totalColumns={columns.length}
+						totalItems={itemsPerPage}
+					/>
+				)}
 			</ClayTable>
+
 			{hasPagination && (
 				<TablePagination
 					activePage={activePage}
 					itemsPerPage={itemsPerPage}
 					setActivePage={setActivePage}
-					totalCount={totalCount}
+					totalItems={rows.length}
 				/>
 			)}
 		</>
