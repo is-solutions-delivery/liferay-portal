@@ -1,19 +1,6 @@
 .create-account {
-	margin: $spacer-6 $spacer-0 $spacer-5 $spacer-5;
-
-	&__subtitle {
-		font-size: 18px;
-		font-weight: $font-weight-bolder;
-		margin: $spacer-5 $spacer-0;
-	}
-
 	&__alert-create {
 		background-color: $color-state-error-lighten-1;
-		border-radius: 8px;
-		margin-top: $spacer-5;
-		padding: $spacer-2 $spacer-0;
-		vertical-align: middle;
-		width: 100%;
 	}
 
 	&__form {
@@ -90,25 +77,6 @@
 		}
 	}
 
-	&__align-right {
-		display: flex;
-		justify-content: end;
-
-		button {
-			background: $color-action-primary-default;
-			color: $background;
-			margin: $spacer-8 $spacer-0 $spacer-0;
-		}
-	}
-
-	&__list-rules {
-		margin-top: 12px;
-
-		ul {
-			list-style: none;
-		}
-	}
-
 	&__rule {
 		&.checked {
 			color: $color-state-success;
@@ -139,9 +107,7 @@
 
 		&__icon {
 			border: solid 1.2px;
-			border-radius: $spacer-2;
 			fill: $background;
-			margin-right: $spacer-1;
 			padding: 1px;
 		}
 	}

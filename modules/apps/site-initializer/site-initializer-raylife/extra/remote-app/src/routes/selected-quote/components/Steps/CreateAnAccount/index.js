@@ -1,3 +1,4 @@
+import ClayButton from '@clayui/button';
 import React, {useContext, useEffect, useState} from 'react';
 import {WarningBadge} from '../../../../../common/components/fragments/Badges/Warning';
 import {EMAIL_REGEX} from '../../../../../common/utils/patterns';
@@ -82,11 +83,11 @@ export function CreateAnAccount() {
 	const matchAllRules = isMatchingAllRules();
 
 	return (
-		<div className="create-account">
-			<div className="create-account__subtitle">
+		<div className="create-account mb-5 ml-5 mr-0 mt-6">
+			<h5 className="font-weight-bolder mb-5 mx-0">
 				Create a Raylife account to continue. This will be used to login
 				to your dashboard.
-			</div>
+			</h5>
 
 			<div className="create-account__form">
 				<div className="create-account__form__content-input">
@@ -149,18 +150,19 @@ export function CreateAnAccount() {
 				<ListRules objValidate={objValidate} />
 			</div>
 
-			<div className="create-account__align-right">
-				<button
-					className="btn"
+			<div className="d-flex justify-content-end">
+				<ClayButton
+					className="mb-0 mt-8 mx-0"
 					disabled={!matchAllRules}
+					displayType="primary"
 					onClick={onCreateAccount}
 				>
 					CREATE ACCOUNT
-				</button>
+				</ClayButton>
 			</div>
 
 			{email && alert === UNCHECKED_VALUE && (
-				<div className="create-account__alert-create">
+				<div className="align-middle create-account__alert-create mt-5 px-0 py-2 rounded w-100">
 					<WarningBadge>
 						Unable to create your account. Please try again
 					</WarningBadge>
