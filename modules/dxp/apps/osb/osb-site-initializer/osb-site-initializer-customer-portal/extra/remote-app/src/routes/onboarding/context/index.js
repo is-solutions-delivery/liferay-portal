@@ -7,12 +7,7 @@ import {
 	PARAMS_KEYS,
 	SearchParams,
 } from '../../../common/services/liferay/search-params';
-import {
-	getInitialDxpAdmin,
-	getInitialInvite,
-	roles,
-	steps,
-} from '../utils/constants';
+import {getInitialDxpAdmin, getInitialInvite, steps} from '../utils/constants';
 import reducer, {actionTypes} from './reducer';
 
 const initialForm = {
@@ -22,11 +17,7 @@ const initialForm = {
 		disasterDataCenterRegion: {},
 		projectId: '',
 	},
-	invites: [
-		getInitialInvite(roles.creator.id),
-		getInitialInvite(roles.watcher.id),
-		getInitialInvite(roles.watcher.id),
-	],
+	invites: [getInitialInvite(), getInitialInvite(), getInitialInvite()],
 };
 
 const AppContext = createContext();

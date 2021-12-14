@@ -1,52 +1,30 @@
 import {useQuery} from '@apollo/client';
-import ClayForm, {ClayInput} from '@clayui/form';
+import ClayForm from '@clayui/form';
 import {useFormikContext} from 'formik';
-import {useContext} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import BaseButton from '../../../../common/components/BaseButton';
-import Input from '../../../../common/components/Input';
-import Select from '../../../../common/components/Select';
+import WarningBadge from '../../../../common/components/WarningBadge';
 import {LiferayTheme} from '../../../../common/services/liferay';
 import {getAccountSubscriptionGroups} from '../../../../common/services/liferay/graphql/queries';
 import {PARAMS_KEYS} from '../../../../common/services/liferay/search-params';
 import {API_BASE_URL} from '../../../../common/utils';
+import InvitesInputs from '../../components/InvitesInputs';
 import Layout from '../../components/Layout';
 import {AppContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
-import {getInitialInvite, getRoles, steps} from '../../utils/constants';
+import {getInitialInvite, steps} from '../../utils/constants';
 
 const ACCOUNT_SUBSCRIPTION_GROUP_NAME = 'DXP Cloud';
 
-const HorizontalInputs = ({id}) => {
-	return (
-		<ClayInput.Group>
-			<ClayInput.GroupItem className="m-0">
-				<Input
-					groupStyle="m-0"
-					label="Email"
-					name={`invites[${id}].email`}
-					placeholder="email@exemple.com"
-					type="email"
-				/>
-			</ClayInput.GroupItem>
-
-			<ClayInput.GroupItem className="m-0">
-				<Select
-					groupStyle="m-0"
-					label="Role"
-					name={`invites[${id}].roleId`}
-					options={getRoles().map(({id, name}) => ({
-						label: name,
-						value: id,
-					}))}
-				/>
-			</ClayInput.GroupItem>
-		</ClayInput.Group>
-	);
-};
-
 const Invites = () => {
 	const [{project}, dispatch] = useContext(AppContext);
-	const {setFieldValue, values} = useFormikContext();
+	const {errors, setFieldValue, setTouched, values} = useFormikContext();
+	const [baseButtonDisabled, setBaseButtonDisabled] = useState();
+	const [hasInitialError, setInitialError] = useState();
+
+	const totalEmails = values?.invites?.length || 0;
+	const failedEmails = errors?.invites?.filter((email) => email).length || 0;
+	const filledEmails = values?.invites?.filter(({email}) => email).length;
 
 	const {data} = useQuery(getAccountSubscriptionGroups, {
 		variables: {
@@ -67,6 +45,31 @@ const Invites = () => {
 		}=${project.accountKey}`;
 	};
 
+	const handleSubmit = () => {
+		if (!filledEmails) {
+			setInitialError(true);
+			setBaseButtonDisabled(true);
+			setTouched({
+				invites: [{email: true}],
+			});
+		}
+		else {
+			dispatch({
+				payload: nextStep,
+				type: actionTypes.CHANGE_STEP,
+			});
+		}
+	};
+
+	useEffect(() => {
+		if (filledEmails) {
+			setInitialError(false);
+			const sucessfullyEmails = totalEmails - failedEmails;
+
+			setBaseButtonDisabled(sucessfullyEmails < filledEmails);
+		}
+	}, [failedEmails, filledEmails, totalEmails]);
+
 	return (
 		<Layout
 			footerProps={{
@@ -77,13 +80,9 @@ const Invites = () => {
 				),
 				middleButton: (
 					<BaseButton
+						disabled={baseButtonDisabled}
 						displayType="primary"
-						onClick={() =>
-							dispatch({
-								payload: nextStep,
-								type: actionTypes.CHANGE_STEP,
-							})
-						}
+						onClick={handleSubmit}
 					>
 						Send Invitations
 					</BaseButton>
@@ -95,22 +94,37 @@ const Invites = () => {
 				title: 'Invite Your Team Members',
 			}}
 		>
+			{hasInitialError && (
+				<WarningBadge>
+					<span className="pl-1">
+						Add at least one user&apos;s email to send an
+						invitation.
+					</span>
+				</WarningBadge>
+			)}
+
 			<div className="invites-form overflow-auto px-3">
 				<ClayForm.Group className="m-0">
-					{values.invites.map((_invite, index) => (
-						<HorizontalInputs id={index} key={index} />
+					{values.invites.map((invite, index) => (
+						<InvitesInputs
+							disableError={hasInitialError}
+							id={index}
+							invite={invite}
+							key={index}
+						/>
 					))}
 				</ClayForm.Group>
 
 				<BaseButton
 					borderless
 					className="mb-3 ml-3 mt-2 text-brand-primary"
-					onClick={() =>
+					onClick={() => {
+						setBaseButtonDisabled(false);
 						setFieldValue('invites', [
 							...values.invites,
 							getInitialInvite(),
-						])
-					}
+						]);
+					}}
 					prependIcon="plus"
 					small
 				>
