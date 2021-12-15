@@ -1,11 +1,17 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-console */
 import {useQuery} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {useFormikContext} from 'formik';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useMemo, useState} from 'react';
 import BaseButton from '../../../../common/components/BaseButton';
 import WarningBadge from '../../../../common/components/WarningBadge';
 import {LiferayTheme} from '../../../../common/services/liferay';
-import {getAccountSubscriptionGroups} from '../../../../common/services/liferay/graphql/queries';
+import {
+	getAccountRolesAndAccountFlags,
+	getAccountSubscriptionGroups,
+} from '../../../../common/services/liferay/graphql/queries';
 import {PARAMS_KEYS} from '../../../../common/services/liferay/search-params';
 import {API_BASE_URL} from '../../../../common/utils';
 import InvitesInputs from '../../components/InvitesInputs';
@@ -21,6 +27,13 @@ const Invites = () => {
 	const {errors, setFieldValue, setTouched, values} = useFormikContext();
 	const [baseButtonDisabled, setBaseButtonDisabled] = useState();
 	const [hasInitialError, setInitialError] = useState();
+
+	const {data: rolesData} = useQuery(getAccountRolesAndAccountFlags, {
+		variables: {
+			accountFlagsFilter: '',
+			accountId: 0,
+		},
+	});
 
 	const totalEmails = values?.invites?.length || 0;
 	const failedEmails = errors?.invites?.filter((email) => email).length || 0;
@@ -39,6 +52,32 @@ const Invites = () => {
 		? steps.dxpCloud
 		: steps.successDxpCloud;
 
+	const accountRoles = useMemo(() => {
+		let filterRoles = [
+			...new Set(
+				rolesData?.accountAccountRoles?.items.map(({name}) => name)
+			),
+		];
+		const SLA_CURRENT = project.slaCurrent;
+		const isPartner = project.partner;
+
+		if (
+			!SLA_CURRENT.includes('Gold') &&
+			!SLA_CURRENT.includes('Platinum')
+		) {
+			filterRoles = filterRoles.filter((label) => label !== 'Requestor');
+		}
+
+		if (!isPartner) {
+			filterRoles = filterRoles.filter(
+				(label) =>
+					label !== 'Partner Manager' && label !== 'Partner Member'
+			);
+		}
+
+		return filterRoles;
+	}, [rolesData]);
+
 	const handleSkip = () => {
 		window.location.href = `${API_BASE_URL}${LiferayTheme.getLiferaySiteName()}/overview?${
 			PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
@@ -52,8 +91,7 @@ const Invites = () => {
 			setTouched({
 				invites: [{email: true}],
 			});
-		}
-		else {
+		} else {
 			dispatch({
 				payload: nextStep,
 				type: actionTypes.CHANGE_STEP,
@@ -111,6 +149,7 @@ const Invites = () => {
 							id={index}
 							invite={invite}
 							key={index}
+							options={accountRoles}
 						/>
 					))}
 				</ClayForm.Group>
@@ -133,17 +172,30 @@ const Invites = () => {
 			</div>
 
 			<div className="invites-helper px-3">
-				<hr className="mt-0 mx-3" />
+				<div className="mx-3 pt-3">
+					<h5 className="text-neutral-7">
+						{`${
+							project.slaCurrent.includes('Gold') ||
+							project.slaCurrent.includes('Platinum')
+								? 'Requestor'
+								: 'Administrator'
+						}	roles available: 2 of ${project.maxRequestors}`}
+					</h5>
 
-				<div className="mx-3">
-					<a
-						className="btn font-weight-bold p-0 text-link-sm"
-						href="https://liferay.com/pt"
-						rel="noreferrer"
-						target="_blank"
-					>
-						Learn more about Customer Portal roles
-					</a>
+					<p className="mb-0 text-neutral-7 text-paragraph-sm">
+						{`Only ${project.maxRequestors} members per project (including yourself) have
+						role permissions (Admins & Requestors) to open Support
+						tickets. `}
+
+						<a
+							className="font-weight-bold text-neutral-9"
+							href="https://liferay.com/pt"
+							rel="noreferrer"
+							target="_blank"
+						>
+							Learn more about Customer Portal roles
+						</a>
+					</p>
 				</div>
 			</div>
 		</Layout>
