@@ -32,6 +32,7 @@ const elementName = `.dynamic-web-content-${containerId}`;
 const headlessBaseURL = `${window.location.origin}/o/headless-delivery/v1.0`;
 const siteGroupId = Liferay.ThemeDisplay.getSiteGroupId();
 const fragmentContainer = fragmentElement.querySelector('.cp-tip-container');
+const cardStructure = fragmentElement.querySelector('#card-structure');
 
 function setDynamicWebContent(htmlBody, customData = {}) {
 	const keys = Object.keys(customData);
@@ -155,6 +156,8 @@ fragmentElement.addEventListener('click', (event) => {
 		const iconLink = hideLinkId.innerHTML;
 
 		fragmentContainer.classList.toggle('hide');
+		cardStructure.classList.toggle('position-absolute');
+
 		hideLinkId.innerHTML = iconLink.includes('#hr')
 			? iconLink.replace('#hr', '#plus')
 			: iconLink.replace('#plus', '#hr');
