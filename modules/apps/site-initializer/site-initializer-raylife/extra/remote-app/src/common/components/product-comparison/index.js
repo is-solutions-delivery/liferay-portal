@@ -112,10 +112,13 @@ const ProductComparison = ({
 			id="quote-comparison"
 		>
 			<div
-				className={classNames('align-items-center d-flex header-size justify-content-center rounded-top', {
-					'bg-brand-secondary ': mostPopular,
-					'bg-neutral-0': !mostPopular,
-				})}
+				className={classNames(
+					'align-items-center d-flex header-size justify-content-center rounded-top',
+					{
+						'bg-brand-secondary ': mostPopular,
+						'bg-neutral-0': !mostPopular,
+					}
+				)}
 			>
 				{mostPopular && (
 					<p className="font-weight-bold text-paragraph text-small-caps text-white">
@@ -137,11 +140,10 @@ const ProductComparison = ({
 						</div>
 					</div>
 
-					<div className="font-weight-normal subtitle text-neutral-8 text-paragraph-xs">
-						Get covered for{' '}
-						<span className="text-brand-primary">
-							&#36;{promo} today
-						</span>
+					<div className="font-weight-normal m-auto mt-1 quote-subtitle text-neutral-8 text-paragraph-xs">
+						Minimum payment of{' '}
+						<span className="text-brand-primary">&#36;{promo}</span>{' '}
+						to get coverage today
 					</div>
 				</div>
 
