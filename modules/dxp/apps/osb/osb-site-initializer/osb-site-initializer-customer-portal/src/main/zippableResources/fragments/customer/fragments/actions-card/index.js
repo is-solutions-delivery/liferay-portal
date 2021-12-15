@@ -28,9 +28,7 @@
 
 const accountKey = window.location.search.replace('?kor_id=', '');
 const containerId = configuration.containerId;
-const fragmentName = 'cp-tip-container';
 const elementName = `.dynamic-web-content-${containerId}`;
-const eventName = `${fragmentName}-${containerId}`;
 const headlessBaseURL = `${window.location.origin}/o/headless-delivery/v1.0`;
 const siteGroupId = Liferay.ThemeDisplay.getSiteGroupId();
 const fragmentContainer = fragmentElement.querySelector('.cp-tip-container');
@@ -52,7 +50,7 @@ function setDynamicWebContent(htmlBody, customData = {}) {
 	html = html.replace(sanitizeEmptyKeysRegex, '');
 
 	const htmlElement = (elementName, html) => {
-		return `<div class="bg-white card-body mb-3 rounded-lg ${elementName}">${html}</div>`;
+		return `<div class="card-container bg-white card-body mb-3 rounded-lg ${elementName}">${html}</div>`;
 	};
 
 	fragmentContainer.innerHTML += htmlElement(elementName, html);
@@ -83,36 +81,30 @@ function fetchWebContent(structuredContentId, contentTemplateId, customData) {
 }
 
 function CPFragmentInteractiveListener(templateId, structuredContents) {
-	window.addEventListener(eventName, (event) => {
-		const data = event.detail.data;
+	const subscriptionGroupsItems = JSON.parse(
+		sessionStorage.getItem('cp-tip-container-primary')
+	);
 
-		function getStructuredContentIdByName(templateName) {
-			return structuredContents.find(
-				({friendlyUrlPath, key}) =>
-					friendlyUrlPath === templateName ||
-					key === templateName.toUpperCase()
-			)?.id;
-		}
+	function getStructuredContentIdByName(groupName) {
+		return structuredContents.find(
+			({friendlyUrlPath, key}) =>
+				friendlyUrlPath === groupName ||
+				key === groupName?.toUpperCase()
+		)?.id;
+	}
 
-		if (data.hide) {
-			fragmentElement.querySelector(elementName).innerHTML = '';
-		} else if (
-			typeof data === 'object' &&
-			data.templateName.every((template) =>
-				getStructuredContentIdByName(template)
-			)
-		) {
-			data.templateName.forEach((template) =>
-				fetchWebContent(
-					getStructuredContentIdByName(template),
-					templateId,
-					data.templateData
-				)
-			);
-		} else {
-			console.warn(`Structure ${data.templateName} not found`);
-		}
-	});
+	if (
+		typeof subscriptionGroupsItems === 'object' &&
+		subscriptionGroupsItems.every((item) =>
+			getStructuredContentIdByName(item)
+		)
+	) {
+		subscriptionGroupsItems.forEach((item) =>
+			fetchWebContent(getStructuredContentIdByName(item), templateId)
+		);
+	} else {
+		console.warn(`Structure ${subscriptionGroupsItems} not found`);
+	}
 }
 
 async function workflow() {
@@ -132,8 +124,6 @@ async function workflow() {
 		`/structured-content-folders/${cpFolderId}/structured-contents`
 	);
 
-	console.log(structuredContents.items);
-
 	const contentTemplates = await fetchHeadless(
 		`/sites/${siteGroupId}/content-templates`
 	);
@@ -141,30 +131,11 @@ async function workflow() {
 	const contentTemplate = contentTemplates.items.find(
 		(template) => template.name === 'Action Card'
 	);
-	console.log(contentTemplate.id);
 
 	CPFragmentInteractiveListener(
 		contentTemplate?.id,
 		structuredContents.items
 	);
-
-	const startEvent = new CustomEvent('cp-tip-container-primary', {
-		bubbles: true,
-		composed: true,
-		detail: {
-			data: {
-				templateName: [
-					'WEB-CONTENT-ACTION-01',
-					'WEB-CONTENT-ACTION-02',
-					'WEB-CONTENT-ACTION-03',
-					'WEB-CONTENT-ACTION-04',
-				],
-			},
-		},
-	});
-	console.log(startEvent);
-
-	window.dispatchEvent(startEvent);
 }
 
 workflow();
