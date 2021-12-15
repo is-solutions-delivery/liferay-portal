@@ -66,7 +66,8 @@ const Invites = () => {
 			setTouched({
 				invites: [{email: true}],
 			});
-		} else {
+		}
+		else {
 			dispatch({
 				payload: nextStep,
 				type: actionTypes.CHANGE_STEP,
@@ -161,7 +162,8 @@ const Invites = () => {
 
 			if (remainingAdmins === 0) {
 				disableAdminOptions(true);
-			} else {
+			}
+			else {
 				disableAdminOptions(false);
 			}
 
