@@ -1,6 +1,6 @@
 #card-structure {
-	width: 343px;
 	right: 0;
+	width: 343px;
 }
 
 .card-body {
@@ -9,6 +9,6 @@
 }
 
 .card-title {
-	display: flex;
 	align-items: center;
+	display: flex;
 }

@@ -3,13 +3,13 @@
 		"cssVariableMapping": "box-shadow-lg",
 		"value": "var(--elevation-fluffy-1) rgba(0, 54, 156, 0.12);"
 	},
-	"colorActionPrimaryActive": {
-		"cssVariableMapping": "color-action-primary-active",
-		"value": "#004AD7"
-	},
 	"colorActionNeutralDefault": {
 		"cssVariableMapping": "color-action-neutral-default",
 		"value": "#2B3A4B"
+	},
+	"colorActionPrimaryActive": {
+		"cssVariableMapping": "color-action-primary-active",
+		"value": "#004AD7"
 	},
 	"colorActionPrimaryDefault": {
 		"cssVariableMapping": "color-action-primary-default",
@@ -26,6 +26,10 @@
 	"colorNeutral1": {
 		"cssVariableMapping": "color-neutral-1",
 		"value": "#F7F8F9"
+	},
+	"colorNeutral10": {
+		"cssVariableMapping": "color-neutral-10",
+		"value": "#272833"
 	},
 	"colorNeutral2": {
 		"cssVariableMapping": "color-neutral-2",
@@ -58,10 +62,6 @@
 	"colorNeutral9": {
 		"cssVariableMapping": "color-neutral-9",
 		"value": "#3A3C46"
-	},
-	"colorNeutral10": {
-		"cssVariableMapping": "color-neutral-10",
-		"value": "#272833"
 	},
 	"fontFamilyBase": {
 		"cssVariableMapping": "font-family-base",
