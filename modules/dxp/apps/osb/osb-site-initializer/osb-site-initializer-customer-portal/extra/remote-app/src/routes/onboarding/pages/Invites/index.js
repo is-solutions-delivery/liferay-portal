@@ -1,10 +1,7 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-console */
 import {useQuery} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {useFormikContext} from 'formik';
-import {useContext, useEffect, useMemo, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import BaseButton from '../../../../common/components/BaseButton';
 import WarningBadge from '../../../../common/components/WarningBadge';
 import {LiferayTheme} from '../../../../common/services/liferay';
@@ -25,8 +22,12 @@ const ACCOUNT_SUBSCRIPTION_GROUP_NAME = 'DXP Cloud';
 const Invites = () => {
 	const [{project}, dispatch] = useContext(AppContext);
 	const {errors, setFieldValue, setTouched, values} = useFormikContext();
+
 	const [baseButtonDisabled, setBaseButtonDisabled] = useState();
 	const [hasInitialError, setInitialError] = useState();
+
+	const [accountRoles, setAccountRoles] = useState([]);
+	const [availableAdminsRoles, setAvailableAdminsRoles] = useState(1);
 
 	const {data: rolesData} = useQuery(getAccountRolesAndAccountFlags, {
 		variables: {
@@ -52,7 +53,28 @@ const Invites = () => {
 		? steps.dxpCloud
 		: steps.successDxpCloud;
 
-	const accountRoles = useMemo(() => {
+	const handleSkip = () => {
+		window.location.href = `${API_BASE_URL}${LiferayTheme.getLiferaySiteName()}/overview?${
+			PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
+		}=${project.accountKey}`;
+	};
+
+	const handleSubmit = () => {
+		if (!filledEmails) {
+			setInitialError(true);
+			setBaseButtonDisabled(true);
+			setTouched({
+				invites: [{email: true}],
+			});
+		} else {
+			dispatch({
+				payload: nextStep,
+				type: actionTypes.CHANGE_STEP,
+			});
+		}
+	};
+
+	useEffect(() => {
 		let filterRoles = [
 			...new Set(
 				rolesData?.accountAccountRoles?.items.map(({name}) => name)
@@ -74,30 +96,77 @@ const Invites = () => {
 					label !== 'Partner Manager' && label !== 'Partner Member'
 			);
 		}
+		setFieldValue(
+			'invites[0].roleId',
+			filterRoles.find((role) => role === 'Requestor') ||
+				filterRoles.find((role) => role === 'Account Administrator')
+		);
+		setFieldValue('invites[1].roleId', 'Account Member');
+		setFieldValue('invites[2].roleId', 'Account Member');
 
-		return filterRoles;
-	}, [rolesData]);
+		setAccountRoles(filterRoles);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [project, rolesData]);
 
-	const handleSkip = () => {
-		window.location.href = `${API_BASE_URL}${LiferayTheme.getLiferaySiteName()}/overview?${
-			PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
-		}=${project.accountKey}`;
-	};
+	useEffect(() => {
+		if (values) {
+			const totalAdmins = values.invites.reduce(
+				(invitesTotal, currentInvite) => {
+					if (
+						currentInvite.roleId === 'Requestor' ||
+						currentInvite.roleId === 'Administrator'
+					) {
+						const total = invitesTotal + 1;
 
-	const handleSubmit = () => {
-		if (!filledEmails) {
-			setInitialError(true);
-			setBaseButtonDisabled(true);
-			setTouched({
-				invites: [{email: true}],
-			});
-		} else {
-			dispatch({
-				payload: nextStep,
-				type: actionTypes.CHANGE_STEP,
-			});
+						return total;
+					}
+
+					return invitesTotal;
+				},
+				1
+			);
+
+			// console.log('totalAdmins', totalAdmins);
+
+			setAvailableAdminsRoles(project.maxRequestors - totalAdmins);
+
+			// setUpdatedRoles((updatedRoles) => {
+			// 	if (totalAdmins === project.maxRequestors) {
+			// 		return [
+			// 			...updatedRoles.filter(
+			// 				({label}) =>
+			// 					label !== 'Requestor' &&
+			// 					label !== 'Administrator'
+			// 			),
+			// 		];
+			// 	} else {
+			// 		const hasAdminRole = updatedRoles.find(
+			// 			({label}) => label === 'Administrator'
+			// 		);
+
+			// 		if (!hasAdminRole) {
+			// 			const actualRoles =
+			// 				koroneikiAccountData.slaCurrent.includes('Gold') ||
+			// 				koroneikiAccountData.slaCurrent.includes('Platinum')
+			// 					? ['Administrator', 'Requestor']
+			// 					: ['Administrator'];
+
+			// 			return [
+			// 				...updatedRoles,
+			// 				...getRoles()
+			// 					.filter(({name}) => actualRoles.includes(name))
+			// 					.map(({id, name}) => ({
+			// 						label: name,
+			// 						value: id,
+			// 					})),
+			// 			];
+			// 		}
+
+			// 		return [...updatedRoles];
+			// 	}
+			// });
 		}
-	};
+	}, [values, project]);
 
 	useEffect(() => {
 		if (filledEmails) {
@@ -179,7 +248,9 @@ const Invites = () => {
 							project.slaCurrent.includes('Platinum')
 								? 'Requestor'
 								: 'Administrator'
-						}	roles available: 2 of ${project.maxRequestors}`}
+						}	roles available: ${availableAdminsRoles} of ${
+							project.maxRequestors
+						}`}
 					</h5>
 
 					<p className="mb-0 text-neutral-7 text-paragraph-sm">
