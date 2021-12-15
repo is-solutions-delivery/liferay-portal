@@ -50,12 +50,12 @@ const Select = ({
 					<ClayIcon className="select-icon" symbol="caret-bottom" />
 
 					<ClaySelect {...field} {...props}>
-						{options.map((item) => (
+						{options.map(({disabled, label, value}) => (
 							<ClaySelect.Option
-								disabled={item.disabled}
-								key={item.value}
-								label={item.label}
-								value={item.value}
+								disabled={disabled}
+								key={value}
+								label={label}
+								value={value}
 							/>
 						))}
 					</ClaySelect>

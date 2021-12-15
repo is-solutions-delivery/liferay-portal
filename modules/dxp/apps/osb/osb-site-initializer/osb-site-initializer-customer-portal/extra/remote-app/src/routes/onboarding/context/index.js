@@ -20,7 +20,11 @@ const initialForm = {
 		disasterDataCenterRegion: {},
 		projectId: '',
 	},
-	invites: [getInitialInvite(), getInitialInvite(), getInitialInvite()],
+	invites: [
+		getInitialInvite(),
+		getInitialInvite('Account Member'),
+		getInitialInvite('Account Member'),
+	],
 };
 
 const AppContext = createContext();

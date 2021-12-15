@@ -15,7 +15,7 @@ import InvitesInputs from '../../components/InvitesInputs';
 import Layout from '../../components/Layout';
 import {AppContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
-import {getInitialInvite, steps} from '../../utils/constants';
+import {getInitialInvite, roles, steps} from '../../utils/constants';
 
 const ACCOUNT_SUBSCRIPTION_GROUP_NAME = 'DXP Cloud';
 
@@ -74,6 +74,34 @@ const Invites = () => {
 		}
 	};
 
+	const disableAdminOptions = (isDisabled) => {
+		setAccountRoles((prevAccountRoles) => {
+			const requestorRoleIndex = prevAccountRoles.findIndex(
+				({value}) => value === roles.REQUESTOR
+			);
+
+			if (requestorRoleIndex !== -1) {
+				prevAccountRoles[requestorRoleIndex] = {
+					...prevAccountRoles[requestorRoleIndex],
+					disabled: isDisabled,
+				};
+			}
+
+			const adminRoleIndex = prevAccountRoles.findIndex(
+				({value}) => value === roles.ADMIN
+			);
+
+			if (adminRoleIndex !== -1) {
+				prevAccountRoles[adminRoleIndex] = {
+					...prevAccountRoles[adminRoleIndex],
+					disabled: isDisabled,
+				};
+			}
+
+			return [...prevAccountRoles];
+		});
+	};
+
 	useEffect(() => {
 		let filterRoles = [
 			...new Set(
@@ -87,24 +115,27 @@ const Invites = () => {
 			!SLA_CURRENT.includes('Gold') &&
 			!SLA_CURRENT.includes('Platinum')
 		) {
-			filterRoles = filterRoles.filter((label) => label !== 'Requestor');
+			filterRoles = filterRoles.filter(
+				(label) => label !== roles.REQUESTOR
+			);
 		}
 
 		if (!isPartner) {
 			filterRoles = filterRoles.filter(
 				(label) =>
-					label !== 'Partner Manager' && label !== 'Partner Member'
+					label !== roles.PARTNER_MANAGER &&
+					label !== roles.PARTNER_MEMBER
 			);
 		}
 		setFieldValue(
 			'invites[0].roleId',
-			filterRoles.find((role) => role === 'Requestor') ||
-				filterRoles.find((role) => role === 'Account Administrator')
+			filterRoles.find((role) => role === roles.REQUESTOR) ||
+				filterRoles.find((role) => role === roles.ADMIN)
 		);
-		setFieldValue('invites[1].roleId', 'Account Member');
-		setFieldValue('invites[2].roleId', 'Account Member');
 
-		setAccountRoles(filterRoles);
+		setAccountRoles(
+			filterRoles.map((role) => ({disabled: false, value: role}))
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [project, rolesData]);
 
@@ -113,8 +144,8 @@ const Invites = () => {
 			const totalAdmins = values.invites.reduce(
 				(invitesTotal, currentInvite) => {
 					if (
-						currentInvite.roleId === 'Requestor' ||
-						currentInvite.roleId === 'Administrator'
+						currentInvite.roleId === roles.REQUESTOR ||
+						currentInvite.roleId === roles.ADMIN
 					) {
 						const total = invitesTotal + 1;
 
@@ -126,45 +157,15 @@ const Invites = () => {
 				1
 			);
 
-			// console.log('totalAdmins', totalAdmins);
+			const remainingAdmins = project.maxRequestors - totalAdmins;
 
-			setAvailableAdminsRoles(project.maxRequestors - totalAdmins);
+			if (remainingAdmins === 0) {
+				disableAdminOptions(true);
+			} else {
+				disableAdminOptions(false);
+			}
 
-			// setUpdatedRoles((updatedRoles) => {
-			// 	if (totalAdmins === project.maxRequestors) {
-			// 		return [
-			// 			...updatedRoles.filter(
-			// 				({label}) =>
-			// 					label !== 'Requestor' &&
-			// 					label !== 'Administrator'
-			// 			),
-			// 		];
-			// 	} else {
-			// 		const hasAdminRole = updatedRoles.find(
-			// 			({label}) => label === 'Administrator'
-			// 		);
-
-			// 		if (!hasAdminRole) {
-			// 			const actualRoles =
-			// 				koroneikiAccountData.slaCurrent.includes('Gold') ||
-			// 				koroneikiAccountData.slaCurrent.includes('Platinum')
-			// 					? ['Administrator', 'Requestor']
-			// 					: ['Administrator'];
-
-			// 			return [
-			// 				...updatedRoles,
-			// 				...getRoles()
-			// 					.filter(({name}) => actualRoles.includes(name))
-			// 					.map(({id, name}) => ({
-			// 						label: name,
-			// 						value: id,
-			// 					})),
-			// 			];
-			// 		}
-
-			// 		return [...updatedRoles];
-			// 	}
-			// });
+			setAvailableAdminsRoles(remainingAdmins);
 		}
 	}, [values, project]);
 
@@ -211,6 +212,14 @@ const Invites = () => {
 			)}
 
 			<div className="invites-form overflow-auto px-3">
+				<div className="px-3">
+					<label>Project Name</label>
+
+					<p className="text-neutral-6 text-paragraph-lg">
+						<strong>{project ? project.code : ''}</strong>
+					</p>
+				</div>
+
 				<ClayForm.Group className="m-0">
 					{values.invites.map((invite, index) => (
 						<InvitesInputs
@@ -219,25 +228,30 @@ const Invites = () => {
 							invite={invite}
 							key={index}
 							options={accountRoles}
+							placeholderEmail={`username@${
+								project ? project.code.toLowerCase() : 'example'
+							}.com`}
 						/>
 					))}
 				</ClayForm.Group>
 
-				<BaseButton
-					borderless
-					className="mb-3 ml-3 mt-2 text-brand-primary"
-					onClick={() => {
-						setBaseButtonDisabled(false);
-						setFieldValue('invites', [
-							...values.invites,
-							getInitialInvite(),
-						]);
-					}}
-					prependIcon="plus"
-					small
-				>
-					Add More Members
-				</BaseButton>
+				{values.invites.length < 10 && (
+					<BaseButton
+						borderless
+						className="mb-3 ml-3 mt-2 text-brand-primary"
+						onClick={() => {
+							setBaseButtonDisabled(false);
+							setFieldValue('invites', [
+								...values.invites,
+								getInitialInvite(roles.MEMBER),
+							]);
+						}}
+						prependIcon="plus"
+						small
+					>
+						Add More Members
+					</BaseButton>
+				)}
 			</div>
 
 			<div className="invites-helper px-3">
@@ -246,8 +260,8 @@ const Invites = () => {
 						{`${
 							project.slaCurrent.includes('Gold') ||
 							project.slaCurrent.includes('Platinum')
-								? 'Requestor'
-								: 'Administrator'
+								? roles.REQUESTOR
+								: roles.ADMIN
 						}	roles available: ${availableAdminsRoles} of ${
 							project.maxRequestors
 						}`}
@@ -260,7 +274,7 @@ const Invites = () => {
 
 						<a
 							className="font-weight-bold text-neutral-9"
-							href="https://liferay.com/pt"
+							href="https://help.liferay.com/hc/en-us/articles/360018414031-Account-Support"
 							rel="noreferrer"
 							target="_blank"
 						>

@@ -7,7 +7,13 @@ import useDebounce from '../../../../common/hooks/useDebounce';
 import {getBannedEmailDomains} from '../../../../common/services/liferay/graphql/queries';
 import {isValidEmail} from '../../../../common/utils/validations.form';
 
-const InvitesInputs = ({disableError, id, invite, options}) => {
+const InvitesInputs = ({
+	disableError,
+	id,
+	invite,
+	options,
+	placeholderEmail,
+}) => {
 	const debouncedEmail = useDebounce(invite?.email, 500);
 	const [bannedDomain, setBannedDomain] = useState(debouncedEmail);
 
@@ -39,7 +45,7 @@ const InvitesInputs = ({disableError, id, invite, options}) => {
 					groupStyle="m-0"
 					label="Email"
 					name={`invites[${id}].email`}
-					placeholder="email@exemple.com"
+					placeholder={placeholderEmail}
 					type="email"
 					validations={[(value) => isValidEmail(value, bannedDomain)]}
 				/>
@@ -50,9 +56,10 @@ const InvitesInputs = ({disableError, id, invite, options}) => {
 					groupStyle="m-0"
 					label="Role"
 					name={`invites[${id}].roleId`}
-					options={options.map((option) => ({
-						label: option,
-						value: option,
+					options={options.map(({disabled, value}) => ({
+						disabled,
+						label: value,
+						value,
 					}))}
 				/>
 			</ClayInput.GroupItem>

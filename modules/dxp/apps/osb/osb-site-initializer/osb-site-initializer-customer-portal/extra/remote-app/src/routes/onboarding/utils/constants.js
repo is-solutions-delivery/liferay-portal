@@ -5,6 +5,14 @@ const steps = {
 	welcome: 0,
 };
 
+const roles = {
+	ADMIN: 'Account Administrator',
+	MEMBER: 'Account Member',
+	PARTNER_MANAGER: 'Partner Manager',
+	PARTNER_MEMBER: 'Partner Manager',
+	REQUESTOR: 'Requestor',
+};
+
 const getInitialDxpAdmin = () => ({
 	email: '',
 	firstName: '',
@@ -12,9 +20,9 @@ const getInitialDxpAdmin = () => ({
 	lastName: '',
 });
 
-const getInitialInvite = () => ({
+const getInitialInvite = (roleId = '') => ({
 	email: '',
-	roleId: '',
+	roleId,
 });
 
-export {steps, getInitialInvite, getInitialDxpAdmin};
+export {steps, getInitialInvite, getInitialDxpAdmin, roles};
