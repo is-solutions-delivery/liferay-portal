@@ -6,6 +6,8 @@ export const status = {
 
 export const CUSTOM_EVENTS = {
 	PROJECT: 'customer-portal-project-loading',
+	QUICK_LINKS: 'customer-portal-quick-links',
+	SUBSCRIPTION_GROUPS: 'cp-tip-container-primary',
 	USER_ACCOUNT: 'customer-portal-select-user-loading',
 };
 

@@ -1,26 +1,17 @@
-<<<<<<< HEAD
 import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import {useField} from 'formik';
-import {required, validate} from '../utils/validations.form';
+import {isValidEmail, required, validate} from '../utils/validations.form';
 import WarningBadge from './WarningBadge';
 
 const Input = ({groupStyle, helper, label, validations, ...props}) => {
-=======
-import ClayForm, { ClayInput } from '@clayui/form';
-import classNames from 'classnames';
-import { useField } from 'formik';
-import { email, required, validate } from '../utils/validations.form';
-
-const Input = ({ groupStyle, helper, label, validations, ...props }) => {
 	if (props.type === 'email') {
 		validations = validations
-			? [(value) => email(value), ...validations]
-			: [(value) => email(value)];
+			? [(value) => isValidEmail(value), ...validations]
+			: [(value) => isValidEmail(value)];
 	}
 
->>>>>>> 9aa2f343 (LPS-143144 Adjustment of dialect style classes)
 	if (props.required) {
 		validations = validations
 			? [...validations, (value) => required(value)]
@@ -52,7 +43,6 @@ const Input = ({ groupStyle, helper, label, validations, ...props }) => {
 				<ClayInput {...field} {...props} />
 			</label>
 
-<<<<<<< HEAD
 			{meta.error && meta.touched ? (
 				<WarningBadge>
 					<span className="pl-1">{meta.error}</span>
@@ -63,12 +53,6 @@ const Input = ({ groupStyle, helper, label, validations, ...props }) => {
 						{helper}
 					</div>
 				)
-=======
-			{helper && (
-				<div className="ml-3 pl-3 text-neutral-7 text-paragraph-sm">
-					{helper}
-				</div>
->>>>>>> 9aa2f343 (LPS-143144 Adjustment of dialect style classes)
 			)}
 		</ClayForm.Group>
 	);

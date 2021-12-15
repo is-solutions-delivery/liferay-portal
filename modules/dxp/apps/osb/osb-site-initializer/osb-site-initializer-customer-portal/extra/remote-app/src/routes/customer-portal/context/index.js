@@ -16,8 +16,14 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 		assetsPath,
 		page,
 		project: {},
+		subscriptionGroups: [],
 		userAccount: undefined,
 	});
+
+	// useEffect(() => {
+	// 	// eslint-disable-next-line no-console
+	// 	console.log(page);
+	// }, [page]);
 
 	const {data} = useQuery(getUserAccount, {
 		variables: {id: LiferayTheme.getUserId()},
@@ -52,6 +58,27 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 					detail: userAccount,
 				})
 			);
+
+			// window.dispatchEvent(
+			// 	new CustomEvent(CUSTOM_EVENTS.QUICK_LINKS, {
+			// 		bubbles: true,
+			// 		composed: true,
+			// 		detail: {
+			// 			data: [
+			// 				'web-content-action-01',
+			// 				'web-content-action-02',
+			// 				'web-content-action-03',
+			// 				'web-content-action-04',
+			// 				'web-content-action-05',
+			// 				'web-content-action-06',
+			// 				'web-content-action-07',
+			// 				'web-content-action-08',
+			// 				'web-content-action-09',
+			// 			],
+			// 			userAccount,
+			// 		},
+			// 	})
+			// );
 		}
 	}, [userAccount]);
 

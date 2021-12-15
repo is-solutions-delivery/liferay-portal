@@ -40,7 +40,8 @@ export const getSetupDXPCloudInfo = gql`
 `;
 
 export const getAccountSubscriptionsTerms = gql`
-	query getAccountSubscriptionsTerms(
+	query getAccountSubscriptions(
+		$aggregation: [String]
 		$filter: String
 		$page: Int
 		$pageSize: Int
