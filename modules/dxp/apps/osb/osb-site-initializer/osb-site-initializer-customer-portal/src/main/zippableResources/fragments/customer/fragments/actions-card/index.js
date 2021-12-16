@@ -51,7 +51,7 @@ function setDynamicWebContent(htmlBody, customData = {}) {
 	html = html.replace(sanitizeEmptyKeysRegex, '');
 
 	const htmlElement = (elementName, html) => {
-		return `<div class="card-container bg-white card-body mb-3 rounded-lg ${elementName}">${html}</div>`;
+		return `<div class="card-container bg-white card-body link-body mb-3 rounded-lg ${elementName}">${html}</div>`;
 	};
 
 	fragmentContainer.innerHTML += htmlElement(elementName, html);
