@@ -26,6 +26,15 @@ const Overview = ({userAccount}) => {
 	);
 
 	useEffect(() => {
+		if (userAccount){
+			sessionStorage.setItem(
+				'customer-portal-account-briefs',
+				JSON.stringify(userAccount.accountBriefs)
+			);
+		}
+	}, [userAccount]);
+
+	useEffect(() => {
 		if (!isLoading && data) {
 			const koroneikiAccount = data.c?.koroneikiAccounts?.items[0];
 
