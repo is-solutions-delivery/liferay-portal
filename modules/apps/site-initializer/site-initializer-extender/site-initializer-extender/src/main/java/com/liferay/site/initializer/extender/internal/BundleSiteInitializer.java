@@ -428,7 +428,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			Map<String, String> ddmFormStringUtilReplaceValues = _invoke(
 				() -> _addForms(
-					objectDefinitionsIdsStringUtilReplaceValues,serviceContext));
+					objectDefinitionIdsStringUtilReplaceValues,
+					serviceContext));
 
 			_invoke(
 				() -> _addLayoutsContent(
@@ -1375,16 +1376,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			if (ddmFormInstances != null) {
 				for (DDMFormInstance ddmFormInstance : ddmFormInstances) {
+					String name = ddmFormInstance.getName(
+						LocaleUtil.getSiteDefault());
+
 					ddmFormStringUtilReplaceValues.put(
-						"FORM_INSTANCE_ID:" +
-							ddmFormInstance.getName(
-								LocaleUtil.getSiteDefault()),
+						"FORM_INSTANCE_ID:" + name,
 						String.valueOf(ddmFormInstance.getFormInstanceId()));
 
 					ddmFormStringUtilReplaceValues.put(
-						"GROUP_ID:" +
-							ddmFormInstance.getName(
-								LocaleUtil.getSiteDefault()),
+						"GROUP_ID:" + name,
 						String.valueOf(ddmFormInstance.getGroupId()));
 				}
 			}
@@ -1975,8 +1975,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		if (SetUtil.isEmpty(resourcePaths)) {
 			return objectDefinitionIdsStringUtilReplaceValues;
 		}
-
-		Map<String, String> objectDefinitionsIdsStringUtilReplaceValues = new HashMap<>();
 
 		ObjectDefinitionResource.Builder objectDefinitionResourceBuilder =
 			_objectDefinitionResourceFactory.create();
