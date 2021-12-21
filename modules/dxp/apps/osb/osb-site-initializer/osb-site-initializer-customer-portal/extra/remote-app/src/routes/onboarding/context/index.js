@@ -28,8 +28,8 @@ const initialForm = {
 	},
 	invites: [
 		getInitialInvite(),
-		getInitialInvite(roles.MEMBER.id),
-		getInitialInvite(roles.MEMBER.id),
+		getInitialInvite(roles.MEMBER.key),
+		getInitialInvite(roles.MEMBER.key),
 	],
 };
 
