@@ -22,7 +22,12 @@ const CustomerPortalApplication = ({liferaywebdavurl, page, route}) => {
 class CustomerPortalWebComponent extends HTMLElement {
 	connectedCallback() {
 		const properties = {
+			createSupportRequest: super.getAttribute('create-support-request'),
+			licenseKeyDownloadURL: super.getAttribute(
+				'license-key-download-url'
+			),
 			liferaywebdavurl: super.getAttribute('liferaywebdavurl'),
+			oktaSessionURL: super.getAttribute('okta-session-url'),
 			page: super.getAttribute('page'),
 			route: super.getAttribute('route'),
 			supportLink: super.getAttribute('support-link'),

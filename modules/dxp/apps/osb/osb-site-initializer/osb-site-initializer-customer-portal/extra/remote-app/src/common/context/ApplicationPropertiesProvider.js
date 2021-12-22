@@ -1,11 +1,13 @@
-import {createContext} from 'react';
+import {createContext, useContext} from 'react';
 
 const defaultProperties = {
+	createSupportRequest: '',
+	licenseKeyDownloadURL: '',
 	liferaywebdavurl: '',
+	oktaSessionURL: '',
 	page: '',
 	route: '',
-	supportLink:
-		'https://help.liferay.com/hc/en-us/articles/360018414031-Account-Support',
+	supportLink: '',
 };
 
 export const ApplicationPropertiesContext = createContext(defaultProperties);
@@ -23,3 +25,7 @@ const ApplicationContextProvider = ({children, properties}) => (
 );
 
 export default ApplicationContextProvider;
+
+const useApplicationProvider = () => useContext(ApplicationPropertiesContext);
+
+export {useApplicationProvider};
