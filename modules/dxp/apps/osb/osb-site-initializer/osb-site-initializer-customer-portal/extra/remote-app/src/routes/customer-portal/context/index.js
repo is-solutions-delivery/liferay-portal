@@ -1,7 +1,9 @@
 import {useQuery} from '@apollo/client';
-import {createContext, useEffect, useReducer} from 'react';
+import {createContext, useContext, useEffect, useReducer} from 'react';
+import {useApplicationProvider} from '../../../common/context/ApplicationPropertiesProvider';
 import {useCustomEvent} from '../../../common/hooks/useCustomEvent';
 import {LiferayTheme} from '../../../common/services/liferay';
+import {fetchSession} from '../../../common/services/liferay/api';
 import {getUserAccount} from '../../../common/services/liferay/graphql/queries';
 import {
 	PARAMS_KEYS,
@@ -13,11 +15,13 @@ import reducer, {actionTypes} from './reducer';
 const AppContext = createContext();
 
 const AppContextProvider = ({assetsPath, children, page}) => {
+	const {oktaSessionURL} = useApplicationProvider();
 	const dispatchEvent = useCustomEvent(CUSTOM_EVENTS.USER_ACCOUNT);
 	const [state, dispatch] = useReducer(reducer, {
 		assetsPath,
 		page,
 		project: {},
+		sessionId: 'sessionId',
 		subscriptionGroups: [],
 		userAccount: undefined,
 	});
@@ -29,9 +33,31 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 	const userAccount = data?.userAccount;
 
 	useEffect(() => {
+		const getSessionId = async () => {
+			const session = await fetchSession(oktaSessionURL);
+
+			if (session) {
+				dispatch({
+					payload: session.id,
+					type: actionTypes.UPDATE_SESSION_ID,
+				});
+			}
+		};
+
+		getSessionId();
+	}, [oktaSessionURL]);
+
+	useEffect(() => {
 		const projectExternalReferenceCode = SearchParams.get(
 			PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
 		);
+
+		window.addEventListener('customer-portal-menu-selected', ({detail}) => {
+			dispatch({
+				payload: detail,
+				type: actionTypes.UPDATE_PAGE,
+			});
+		});
 
 		dispatch({
 			payload: {
@@ -60,4 +86,6 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 	);
 };
 
-export {AppContext, AppContextProvider};
+const useCustomerPortal = () => useContext(AppContext);
+
+export {AppContext, AppContextProvider, useCustomerPortal};
