@@ -55,8 +55,12 @@
 		},
 		"portletCategoryName": "category.remote-apps",
 		"properties": {
+			"create-support-request": "https://help.liferay.com/hc/requests/new",
+			"license-key-download-url": "https://webserver-lrprovisioning-uat.lfr.cloud/o/provisioning-rest/v1.0/accounts",
+			"okta-session-url": "https://login-dev.liferay.com/api/v1/sessions/me/",
 			"page": "overview",
-			"route": "portal"
+			"route": "portal",
+			"support-link": "https://help.liferay.com/hc/en-us/articles/360018414031-Account-Support"
 		},
 		"remoteAppEntryKey": "CUSTOMER-PORTAL-OVERVIEW",
 		"widgetName": "com_liferay_remote_app_web_internal_portlet_RemoteAppEntryPortlet_[$REMOTE_APP_ENTRY_ID:CUSTOMER-PORTAL-OVERVIEW$]"

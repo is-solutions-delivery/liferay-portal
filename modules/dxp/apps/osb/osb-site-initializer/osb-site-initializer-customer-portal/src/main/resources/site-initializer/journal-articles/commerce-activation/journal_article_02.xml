@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+	<dynamic-element index-type="keyword" instance-id="haedfagf" name="DXPVersion" type="text">
+		<dynamic-content language-id="en_US"><![CDATA[DXP 7.3 FP3/SP2+]]></dynamic-content>
+	</dynamic-element>
+	<dynamic-element index-type="keyword" instance-id="xieebayf" name="CommerceDescription" type="text">
+		<dynamic-content language-id="en_US"><![CDATA[Commerce is activated using a portal property.]]></dynamic-content>
+	</dynamic-element>
+	<dynamic-element index-type="keyword" instance-id="kchgqfdb" name="MoreDetails" type="text">
+		<dynamic-content language-id="en_US"><![CDATA[More details:&nbsp;]]></dynamic-content>
+	</dynamic-element>
+	<dynamic-element index-type="keyword" instance-id="iatlbelj" name="CommerceUrl" type="text">
+		<dynamic-content language-id="en_US"><![CDATA[http://liferay.com/]]></dynamic-content>
+	</dynamic-element>
+	<dynamic-element index-type="keyword" instance-id="daefgaer" name="CommerceTitleUrl" type="text">
+		<dynamic-content language-id="en_US"><![CDATA[Activating Liferay Commerce]]></dynamic-content>
+	</dynamic-element>
+</root>
