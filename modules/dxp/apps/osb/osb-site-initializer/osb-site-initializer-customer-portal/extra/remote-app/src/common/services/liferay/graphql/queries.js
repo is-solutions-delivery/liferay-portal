@@ -24,8 +24,8 @@ export const getSetupDXPCloudInfo = gql`
 export const getAccountSubscriptionsTerms = gql`
 	query getAccountSubscriptionsTerms(
 		$filter: String
-		$page: Int
-		$pageSize: Int
+		$page: Int = 1
+		$pageSize: Int = 20
 	) {
 		c {
 			accountSubscriptionTerms(
