@@ -1,12 +1,11 @@
-import {useContext} from 'react';
-import {AppContext} from '../context';
+import {useCustomerPortal} from '../context';
 import {pages} from '../utils/constants';
 import ActivationKeys from './ActivationKeys';
 import Home from './Home';
 import Overview from './Overview';
 
 const Pages = () => {
-	const [{page, project, userAccount}] = useContext(AppContext);
+	const [{page, project, sessionId, userAccount}] = useCustomerPortal();
 
 	if (page === pages.OVERVIEW) {
 		if (userAccount && project) {
@@ -17,10 +16,11 @@ const Pages = () => {
 	}
 
 	if (page === pages.ENTERPRISE_SEARCH) {
-		if (project) {
+		if (project && sessionId) {
 			return (
 				<ActivationKeys.EnterpriseSearch
 					accountKey={project.accountKey}
+					sessionId={sessionId}
 				/>
 			);
 		}
@@ -29,8 +29,13 @@ const Pages = () => {
 	}
 
 	if (page === pages.COMMERCE) {
-		if (userAccount) {
-			return <ActivationKeys.Commerce accountKey={project.accountKey} />;
+		if (project && sessionId) {
+			return (
+				<ActivationKeys.Commerce
+					accountKey={project.accountKey}
+					sessionId={sessionId}
+				/>
+			);
 		}
 
 		return <ActivationKeys.Skeleton />;

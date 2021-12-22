@@ -4,6 +4,15 @@ export const status = {
 	future: 3,
 };
 
+export const STATUS_CODE = {
+	SUCCESS: 200,
+};
+
+export const CONTENT_TYPE = {
+	JSON: 'application/json',
+	XML: 'application/xml',
+};
+
 export const WEB_CONTENTS = {
 	'WEB-CONTENT-ACTION-01': 'WEB-CONTENT-ACTION-01',
 	'WEB-CONTENT-ACTION-02': 'WEB-CONTENT-ACTION-02',
