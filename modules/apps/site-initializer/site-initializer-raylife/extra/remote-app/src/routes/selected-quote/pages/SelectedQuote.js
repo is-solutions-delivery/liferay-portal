@@ -55,6 +55,7 @@ const SelectedQuote = () => {
 				</Panel>
 
 				<Panel
+					PanelRight={CheckButton}
 					id="selectPaymentMethod"
 					title="3. Select Payment Method"
 				>
