@@ -1,10 +1,10 @@
 import {useMutation, useQuery} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {useFormikContext} from 'formik';
-import {useContext, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import BaseButton from '../../../../common/components/BaseButton';
 import WarningBadge from '../../../../common/components/WarningBadge';
-import {ApplicationPropertiesContext} from '../../../../common/context/ApplicationPropertiesProvider';
+import {useApplicationProvider} from '../../../../common/context/ApplicationPropertiesProvider';
 import {LiferayTheme} from '../../../../common/services/liferay';
 import {
 	addTeamMembersInvitation,
@@ -13,9 +13,9 @@ import {
 } from '../../../../common/services/liferay/graphql/queries';
 import {PARAMS_KEYS} from '../../../../common/services/liferay/search-params';
 import {API_BASE_URL} from '../../../../common/utils';
+import {useCustomerPortal} from '../../../customer-portal/context';
 import InvitesInputs from '../../components/InvitesInputs';
 import Layout from '../../components/Layout';
-import {AppContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import {getInitialInvite, roles, steps} from '../../utils/constants';
 
@@ -28,8 +28,8 @@ const SLA = {
 };
 
 const Invites = () => {
-	const {supportLink} = useContext(ApplicationPropertiesContext);
-	const [{project}, dispatch] = useContext(AppContext);
+	const {supportLink} = useApplicationProvider();
+	const [{project}, dispatch] = useCustomerPortal();
 	const {errors, setFieldValue, setTouched, values} = useFormikContext();
 
 	const [AddTeamMemberInvitation, {called, error}] = useMutation(
