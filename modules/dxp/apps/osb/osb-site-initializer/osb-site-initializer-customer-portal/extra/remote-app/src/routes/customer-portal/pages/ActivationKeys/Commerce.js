@@ -6,7 +6,7 @@ import {fetchHeadless} from '../../../../common/services/liferay/api';
 import {getKoroneikiAccounts} from '../../../../common/services/liferay/graphql/queries';
 import ActivationKeysLayout from '../../components/ActivationKeysLayout';
 
-const Commerce = ({accountKey}) => {
+const Commerce = ({accountKey, sessionId}) => {
 	const [
 		ActivationInstructionsData,
 		setActivationInstructionsData,
@@ -24,7 +24,8 @@ const Commerce = ({accountKey}) => {
 	const dxpVersion = data?.c?.koroneikiAccounts?.items[0]?.dxpVersion;
 
 	const fetchCommerceActivationsKeysInstructions = async () => {
-		const templateName = 'COMMERCE ACTIVATION INSTRUCTIONS';
+		const webContentFolderName = 'commerce-activation';
+		const webContentTemplateName = 'COMMERCE-ACTIVATION-TEMPLATE';
 
 		const siteGroupId = Liferay.ThemeDisplay.getSiteGroupId();
 
@@ -34,7 +35,7 @@ const Commerce = ({accountKey}) => {
 
 		const {id: commerceActivationInstructionsFolderID} =
 			structuredContentFolders.items.find(
-				({name}) => name === templateName
+				({name}) => name === webContentFolderName
 			) || {};
 
 		const contentTemplates = await fetchHeadless({
@@ -42,7 +43,7 @@ const Commerce = ({accountKey}) => {
 		});
 
 		const contentTemplate = contentTemplates.items.find(
-			(template) => template.name === templateName
+			({id}) => id === webContentTemplateName
 		);
 
 		const structuredContents = await fetchHeadless({
@@ -55,7 +56,7 @@ const Commerce = ({accountKey}) => {
 
 				const dxpVersion =
 					structuredContent.contentFields.find(
-						({label}) => label === 'DXP Version'
+						({name}) => name === 'DXPVersion'
 					) || {};
 				const structuredComponent = await fetchHeadless({
 					resolveAsJson: false,
@@ -114,9 +115,11 @@ const Commerce = ({accountKey}) => {
 					accountKey={accountKey}
 					productKey="commerce"
 					productTitle="Commerce"
+					sessionId={sessionId}
 				/>
 			) : (
 				<Table
+					className="mt-4"
 					columns={columns}
 					isLoading={isLoadingActivationInstructions}
 					itemsPerPage={3}
@@ -133,7 +136,11 @@ const Commerce = ({accountKey}) => {
 									key={version}
 								></div>
 							),
-							version,
+							version: (
+								<p className="m-0 table-list-title text-neutral-7 text-paragraph">
+									{version}
+								</p>
+							),
 						})
 					)}
 				/>
