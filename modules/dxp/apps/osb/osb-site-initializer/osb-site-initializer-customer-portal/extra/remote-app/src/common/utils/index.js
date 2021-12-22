@@ -13,4 +13,13 @@ const getCurrentEndDate = (currentEndDate) => {
 	return `${month} ${day}, ${year}`;
 };
 
-export {getCurrentEndDate};
+const downloadFromBlob = (blob, filename) => {
+	const a = document.createElement('a');
+	a.href = window.URL.createObjectURL(blob);
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	a.remove();
+};
+
+export {getCurrentEndDate, downloadFromBlob};
