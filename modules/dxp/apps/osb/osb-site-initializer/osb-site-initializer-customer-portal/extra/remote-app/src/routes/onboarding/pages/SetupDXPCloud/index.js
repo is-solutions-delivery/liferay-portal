@@ -1,7 +1,7 @@
 import {useMutation, useQuery} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {useFormikContext} from 'formik';
-import {useContext, useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import BaseButton from '../../../../common/components/BaseButton';
 import Input from '../../../../common/components/Input';
 import Select from '../../../../common/components/Select';
@@ -13,14 +13,14 @@ import {
 import {PARAMS_KEYS} from '../../../../common/services/liferay/search-params';
 import {API_BASE_URL} from '../../../../common/utils';
 import {isLowercaseAndNumbers} from '../../../../common/utils/validations.form';
-import {AppContext} from '../../../../routes/onboarding/context';
+import {useOnboarding} from '../../../../routes/onboarding/context';
 import AdminInputs from '../../components/AdminInputs';
 import Layout from '../../components/Layout';
 import {actionTypes} from '../../context/reducer';
 import {getInitialDxpAdmin, steps} from '../../utils/constants';
 
 const SetupDXPCloud = () => {
-	const [{project}, dispatch] = useContext(AppContext);
+	const [{project}, dispatch] = useOnboarding();
 	const {errors, setFieldValue, touched, values} = useFormikContext();
 	const [baseButtonDisabled, setBaseButtonDisabled] = useState(true);
 

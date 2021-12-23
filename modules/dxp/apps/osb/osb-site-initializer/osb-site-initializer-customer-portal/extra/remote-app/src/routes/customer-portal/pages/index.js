@@ -7,35 +7,43 @@ import Overview from './Overview';
 const Pages = () => {
 	const [{page, project, sessionId, userAccount}] = useCustomerPortal();
 
-	if (userAccount && sessionId) {
-		switch (page) {
-			case pages.OVERVIEW:
-				return <Overview project={project} userAccount={userAccount} />;
-			case pages.ENTERPRISE_SEARCH:
-				return (
-					<ActivationKeys.EnterpriseSearch
-						accountKey={project.accountKey}
-						sessionId={sessionId}
-					/>
-				);
-			case pages.COMMERCE:
-				return (
-					<ActivationKeys.Commerce
-						accountKey={project.accountKey}
-						sessionId={sessionId}
-					/>
-				);
+	const PageSkeletons = {
+		[pages.COMMERCE]: <ActivationKeys.Skeleton />,
+		[pages.ENTERPRISE_SEARCH]: <ActivationKeys.Skeleton />,
+		[pages.OVERVIEW]: <div>Overview Skeleton</div>,
+	};
 
-			default:
-				return <Home userAccount={userAccount} />;
-		}
-	}
+	const PageComponent = {
+		[pages.COMMERCE]: (
+			<ActivationKeys.Commerce
+				accountKey={project?.accountKey}
+				sessionId={sessionId}
+			/>
+		),
+		[pages.ENTERPRISE_SEARCH]: (
+			<ActivationKeys.EnterpriseSearch
+				accountKey={project?.accountKey}
+				sessionId={sessionId}
+			/>
+		),
+		[pages.OVERVIEW]: (
+			<Overview project={project} userAccount={userAccount} />
+		),
+	};
 
 	if (page === pages.HOME) {
+		if (userAccount) {
+			return <Home userAccount={userAccount} />;
+		}
+
 		return <Home.Skeleton />;
 	}
 
-	return <ActivationKeys.Skeleton />;
+	if (project && userAccount && sessionId) {
+		return PageComponent[page];
+	}
+
+	return PageSkeletons[page];
 };
 
 export default Pages;

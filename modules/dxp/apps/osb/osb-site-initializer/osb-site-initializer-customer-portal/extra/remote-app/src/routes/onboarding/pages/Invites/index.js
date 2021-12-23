@@ -13,9 +13,9 @@ import {
 } from '../../../../common/services/liferay/graphql/queries';
 import {PARAMS_KEYS} from '../../../../common/services/liferay/search-params';
 import {API_BASE_URL} from '../../../../common/utils';
-import {useCustomerPortal} from '../../../customer-portal/context';
 import InvitesInputs from '../../components/InvitesInputs';
 import Layout from '../../components/Layout';
+import {useOnboarding} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import {getInitialInvite, roles, steps} from '../../utils/constants';
 
@@ -29,7 +29,7 @@ const SLA = {
 
 const Invites = () => {
 	const {supportLink} = useApplicationProvider();
-	const [{project}, dispatch] = useCustomerPortal();
+	const [{project}, dispatch] = useOnboarding();
 	const {errors, setFieldValue, setTouched, values} = useFormikContext();
 
 	const [AddTeamMemberInvitation, {called, error}] = useMutation(

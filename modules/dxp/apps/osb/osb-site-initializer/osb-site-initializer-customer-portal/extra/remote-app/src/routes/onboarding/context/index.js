@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {createContext, useEffect, useReducer} from 'react';
+import {createContext, useContext, useEffect, useReducer} from 'react';
 import client from '../../../apolloClient';
 import FormProvider from '../../../common/providers/FormProvider';
 import {LiferayTheme} from '../../../common/services/liferay';
@@ -90,4 +90,6 @@ const AppContextProvider = ({assetsPath, children}) => {
 	);
 };
 
-export {AppContext, AppContextProvider};
+const useOnboarding = () => useContext(AppContext);
+
+export {AppContext, AppContextProvider, useOnboarding};

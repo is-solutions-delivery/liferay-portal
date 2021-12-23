@@ -1,16 +1,16 @@
 import {useMutation} from '@apollo/client';
-import {useContext, useEffect} from 'react';
+import {useEffect} from 'react';
 import BaseButton from '../../../../common/components/BaseButton';
 import {usePageGuard} from '../../../../common/hooks/usePageGuard';
 import {addAccountFlag} from '../../../../common/services/liferay/graphql/queries';
 import Layout from '../../components/Layout';
-import {AppContext} from '../../context';
+import {useOnboarding} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import {steps} from '../../utils/constants';
 import WelcomeSkeleton from './Skeleton';
 
 const Welcome = ({project, userAccount}) => {
-	const [{assetsPath}, dispatch] = useContext(AppContext);
+	const [{assetsPath}, dispatch] = useOnboarding();
 	const {loading} = usePageGuard(
 		userAccount,
 		project.accountKey,

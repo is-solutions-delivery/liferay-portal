@@ -50,45 +50,6 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 	}, []);
 
 	useEffect(() => {
-		const getSessionId = async () => {
-			const session = await fetchSession(oktaSessionURL);
-
-			if (session) {
-				dispatch({
-					payload: session.id,
-					type: actionTypes.UPDATE_SESSION_ID,
-				});
-			}
-		};
-
-		getSessionId();
-	}, [oktaSessionURL]);
-
-	useEffect(() => {
-		const getProject = async (projectExternalReferenceCode) => {
-			const {data: projects} = await client.query({
-				query: getKoroneikiAccounts,
-				variables: {
-					filter: `accountKey eq '${projectExternalReferenceCode}'`,
-				},
-			});
-
-			if (projects) {
-				dispatch({
-					payload: projects.c.koroneikiAccounts.items[0],
-					type: actionTypes.UPDATE_PROJECT,
-				});
-			}
-		};
-
-		const projectExternalReferenceCode = SearchParams.get(
-			PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
-		);
-
-		if (projectExternalReferenceCode) {
-			getProject(projectExternalReferenceCode);
-		}
-
 		window.addEventListener(CUSTOM_EVENTS.MENU_PAGE, onPageMenuChange);
 
 		return () => {
@@ -107,9 +68,45 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 			});
 
 			dispatchEvent(userAccount);
+
+			const getProject = async (projectExternalReferenceCode) => {
+				const {data: projects} = await client.query({
+					query: getKoroneikiAccounts,
+					variables: {
+						filter: `accountKey eq '${projectExternalReferenceCode}'`,
+					},
+				});
+
+				if (projects) {
+					dispatch({
+						payload: projects.c.koroneikiAccounts.items[0],
+						type: actionTypes.UPDATE_PROJECT,
+					});
+				}
+			};
+
+			const getSessionId = async () => {
+				const session = await fetchSession(oktaSessionURL);
+
+				if (session) {
+					dispatch({
+						payload: session.id,
+						type: actionTypes.UPDATE_SESSION_ID,
+					});
+				}
+			};
+
+			const projectExternalReferenceCode = SearchParams.get(
+				PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
+			);
+
+			if (projectExternalReferenceCode) {
+				getProject(projectExternalReferenceCode);
+				getSessionId();
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userAccount]);
+	}, [userAccount, oktaSessionURL]);
 
 	return (
 		<AppContext.Provider value={[state, dispatch]}>
