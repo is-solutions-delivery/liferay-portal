@@ -12,18 +12,14 @@ import {AppContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import {CUSTOM_EVENTS} from '../../utils/constants';
 import {getWebContents} from '../../utils/webContentsGenerator';
-const Overview = ({userAccount}) => {
-	const [{project}, dispatch] = useContext(AppContext);
+const Overview = ({project, userAccount}) => {
+	const [dispatch] = useContext(AppContext);
 	const [
 		slaCurrentVersionAndProducts,
 		setSLACurrentVersionAndProducts,
 	] = useState([]);
 	const dispatchEvent = useCustomEvent(CUSTOM_EVENTS.PROJECT);
-	const {isLoading} = usePageGuard(
-		userAccount,
-		project.accountKey,
-		'overview'
-	);
+	const {loading} = usePageGuard(userAccount, project.accountKey, 'overview');
 	const {data, loading: isLoadingKoroneiki} = useQuery(getKoroneikiAccounts, {
 		variables: {
 			filter: `accountKey eq '${project.accountKey}'`,
@@ -76,7 +72,7 @@ const Overview = ({userAccount}) => {
 		isLoadingSubscritionsGroups,
 		slaCurrentVersionAndProducts,
 	]);
-	if (isLoading || isLoadingKoroneiki) {
+	if (loading || isLoadingKoroneiki) {
 		return <div>Overview Skeleton</div>;
 	}
 
