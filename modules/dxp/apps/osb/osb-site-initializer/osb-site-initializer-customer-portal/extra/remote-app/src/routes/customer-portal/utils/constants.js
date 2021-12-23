@@ -47,6 +47,7 @@ export const PRODUCTS = {
 };
 
 export const CUSTOM_EVENTS = {
+	MENU_PAGE: 'customer-portal-menu-selected',
 	PROJECT: 'customer-portal-project-loading',
 	QUICK_LINKS: 'customer-portal-quick-links',
 	SUBSCRIPTION_GROUPS: 'cp-tip-container-primary',

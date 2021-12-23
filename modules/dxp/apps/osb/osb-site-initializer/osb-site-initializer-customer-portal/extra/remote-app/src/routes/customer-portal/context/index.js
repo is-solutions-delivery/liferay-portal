@@ -1,5 +1,11 @@
 import {useQuery} from '@apollo/client';
-import {createContext, useContext, useEffect, useReducer} from 'react';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useReducer,
+} from 'react';
 import {useApplicationProvider} from '../../../common/context/ApplicationPropertiesProvider';
 import {useCustomEvent} from '../../../common/hooks/useCustomEvent';
 import {LiferayTheme} from '../../../common/services/liferay';
@@ -32,6 +38,13 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 
 	const userAccount = data?.userAccount;
 
+	const onPageMenuChange = useCallback(({detail}) => {
+		dispatch({
+			payload: detail,
+			type: actionTypes.UPDATE_PAGE,
+		});
+	}, []);
+
 	useEffect(() => {
 		const getSessionId = async () => {
 			const session = await fetchSession(oktaSessionURL);
@@ -52,20 +65,22 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 			PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
 		);
 
-		window.addEventListener('customer-portal-menu-selected', ({detail}) => {
-			dispatch({
-				payload: detail,
-				type: actionTypes.UPDATE_PAGE,
-			});
-		});
-
 		dispatch({
 			payload: {
 				accountKey: projectExternalReferenceCode,
 			},
 			type: actionTypes.UPDATE_PROJECT,
 		});
-	}, []);
+
+		window.addEventListener(CUSTOM_EVENTS.MENU_PAGE, onPageMenuChange);
+
+		return () => {
+			window.removeEventListener(
+				CUSTOM_EVENTS.MENU_PAGE,
+				onPageMenuChange
+			);
+		};
+	}, [onPageMenuChange]);
 
 	useEffect(() => {
 		if (userAccount) {
