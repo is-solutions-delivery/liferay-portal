@@ -1,11 +1,10 @@
 import ClayForm, {ClayInput} from '@clayui/form';
 import {useFormikContext} from 'formik';
-import {useContext} from 'react';
 import BaseButton from '../../../../common/components/BaseButton';
 import Input from '../../../../common/components/Input';
 import Select from '../../../../common/components/Select';
 import Layout from '../../components/Layout';
-import {AppContext} from '../../context';
+import {useOnboarding} from '../../context';
 import {getInitialDxpAdmin, getRoles} from '../../utils/constants';
 
 const AdminInputs = ({id}) => {
@@ -54,7 +53,7 @@ const AdminInputs = ({id}) => {
 };
 
 const SetupDXP = () => {
-	const [state] = useContext(AppContext);
+	const [state] = useOnboarding();
 	const {setFieldValue, values} = useFormikContext();
 
 	return (
