@@ -52,9 +52,11 @@ export const WEB_CONTENTS_BY_LIFERAY_VERSION = {
 
 export const pages = {
 	COMMERCE: 'commerce',
-	ENTERPRISE_SEARCH: 'enterprise_search',
+	DXP_CLOUD: 'dxp',
+	ENTERPRISE_SEARCH: 'enterprise',
 	HOME: 'home',
 	OVERVIEW: 'overview',
+	TEAM_MEMBERS: 'team',
 };
 
 export const PRODUCTS = {

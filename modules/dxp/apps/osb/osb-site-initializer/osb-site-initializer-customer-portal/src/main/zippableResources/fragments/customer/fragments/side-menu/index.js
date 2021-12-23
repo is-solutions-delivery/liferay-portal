@@ -45,10 +45,10 @@ const getSubscriptionKey = (name) => {
 };
 
 const htmlElement = (name, key) => {
-	return `<li><a href="#" class="btn btn-sm btn-menu">
+	return `<li><button class="align-items-center btn btn-sm btn-menu customer-portal-side-menu-button" value="${key}" type="button">
     <img class="mr-2" width="16" src="${window.location.origin}/webdav/${pathSplit[1]}/document_library/assets/navigation-menu/${key}_icon_gray.svg" alt="" />
     ${name}
-  </a></li>`;
+  </button></li>`;
 };
 
 const setSrcIcon = (keybutton) => {
@@ -88,9 +88,25 @@ const pathSplit = pathname.split('/').filter(Boolean);
 			currentProducts.innerHTML = accountSubscriptionGroups
 				.map(({name}) => htmlElement(name, getSubscriptionKey(name)))
 				.join('\n');
+
+			const buttons =
+				fragmentElement.querySelectorAll(
+					'.customer-portal-side-menu-button'
+				) || [];
+
+			buttons.forEach((button) =>
+				button.addEventListener('click', () => {
+					window.dispatchEvent(
+						new CustomEvent('customer-portal-menu-selected', {
+							bubbles: true,
+							composed: true,
+							detail: button.value,
+						})
+					);
+				})
+			);
 		}
-	}
-	catch (error) {
+	} catch (error) {
 		console.error(error.message);
 	}
 })();
@@ -112,8 +128,7 @@ fragmentElement.addEventListener('click', (event) => {
 
 		if (heightProducts < expandedHeightProducts) {
 			currentProducts.style.height = `${expandedHeightProducts}px`;
-		}
-		else {
+		} else {
 			currentProducts.style.height = '0px';
 		}
 
@@ -122,8 +137,10 @@ fragmentElement.addEventListener('click', (event) => {
 		);
 		arrow.classList.toggle('left');
 		arrow.classList.toggle('down');
-	}
-	else if (lastButton !== currentButton && currentButton.tagName === 'A') {
+	} else if (
+		lastButton !== currentButton &&
+		currentButton.tagName === 'BUTTON'
+	) {
 		currentButton.classList.toggle('active');
 		lastButton.classList.toggle('active');
 
