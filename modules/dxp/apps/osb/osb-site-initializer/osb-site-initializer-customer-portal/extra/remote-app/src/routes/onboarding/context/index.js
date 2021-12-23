@@ -81,7 +81,6 @@ const AppContextProvider = ({assetsPath, children}) => {
 				type: actionTypes.UPDATE_USER_ACCOUNT,
 			});
 		}
-
 	}, [data]);
 
 	return (
