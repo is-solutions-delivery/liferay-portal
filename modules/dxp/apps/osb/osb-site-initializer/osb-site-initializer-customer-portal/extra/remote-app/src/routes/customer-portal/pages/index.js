@@ -7,10 +7,10 @@ import Overview from './Overview';
 const Pages = () => {
 	const [{page, project, sessionId, userAccount}] = useCustomerPortal();
 
-	if (userAccount && project && sessionId) {
+	if (userAccount && sessionId) {
 		switch (page) {
 			case pages.OVERVIEW:
-				return <Overview userAccount={userAccount} />;
+				return <Overview project={project} userAccount={userAccount} />;
 			case pages.ENTERPRISE_SEARCH:
 				return (
 					<ActivationKeys.EnterpriseSearch
@@ -31,11 +31,11 @@ const Pages = () => {
 		}
 	}
 
-	return page === pages.HOME ? (
-		<Home.Skeleton />
-	) : (
-		<ActivationKeys.Skeleton />
-	);
+	if (page === pages.HOME) {
+		return <Home.Skeleton />;
+	}
+
+	return <ActivationKeys.Skeleton />;
 };
 
 export default Pages;

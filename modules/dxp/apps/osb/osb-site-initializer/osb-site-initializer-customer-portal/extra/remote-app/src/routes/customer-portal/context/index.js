@@ -6,11 +6,15 @@ import {
 	useEffect,
 	useReducer,
 } from 'react';
+import client from '../../../apolloClient';
 import {useApplicationProvider} from '../../../common/context/ApplicationPropertiesProvider';
 import {useCustomEvent} from '../../../common/hooks/useCustomEvent';
 import {LiferayTheme} from '../../../common/services/liferay';
 import {fetchSession} from '../../../common/services/liferay/api';
-import {getUserAccount} from '../../../common/services/liferay/graphql/queries';
+import {
+	getKoroneikiAccounts,
+	getUserAccount,
+} from '../../../common/services/liferay/graphql/queries';
 import {
 	PARAMS_KEYS,
 	SearchParams,
@@ -26,7 +30,7 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 	const [state, dispatch] = useReducer(reducer, {
 		assetsPath,
 		page,
-		project: {},
+		project: undefined,
 		sessionId: 'sessionId',
 		subscriptionGroups: [],
 		userAccount: undefined,
@@ -61,16 +65,29 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 	}, [oktaSessionURL]);
 
 	useEffect(() => {
+		const getProject = async (projectExternalReferenceCode) => {
+			const {data: projects} = await client.query({
+				query: getKoroneikiAccounts,
+				variables: {
+					filter: `accountKey eq '${projectExternalReferenceCode}'`,
+				},
+			});
+
+			if (projects) {
+				dispatch({
+					payload: projects.c.koroneikiAccounts.items[0],
+					type: actionTypes.UPDATE_PROJECT,
+				});
+			}
+		};
+
 		const projectExternalReferenceCode = SearchParams.get(
 			PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE
 		);
 
-		dispatch({
-			payload: {
-				accountKey: projectExternalReferenceCode,
-			},
-			type: actionTypes.UPDATE_PROJECT,
-		});
+		if (projectExternalReferenceCode) {
+			getProject(projectExternalReferenceCode);
+		}
 
 		window.addEventListener(CUSTOM_EVENTS.MENU_PAGE, onPageMenuChange);
 
