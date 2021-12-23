@@ -1,4 +1,4 @@
-const CONTENT_TYPE = {
+export const CONTENT_TYPE = {
 	JSON: 'application/json',
 	XML: 'application/xml',
 };
