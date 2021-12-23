@@ -10,6 +10,7 @@ const Pages = () => {
 	const PageSkeletons = {
 		[pages.COMMERCE]: <ActivationKeys.Skeleton />,
 		[pages.ENTERPRISE_SEARCH]: <ActivationKeys.Skeleton />,
+		[pages.HOME]: <Home.Skeleton />,
 		[pages.OVERVIEW]: <div>Overview Skeleton</div>,
 	};
 
@@ -26,20 +27,14 @@ const Pages = () => {
 				sessionId={sessionId}
 			/>
 		),
+		[pages.HOME]: <Home userAccount={userAccount} />,
+
 		[pages.OVERVIEW]: (
 			<Overview project={project} userAccount={userAccount} />
 		),
 	};
 
-	if (page === pages.HOME) {
-		if (userAccount) {
-			return <Home userAccount={userAccount} />;
-		}
-
-		return <Home.Skeleton />;
-	}
-
-	if (project && userAccount && sessionId) {
+	if ((project || page === pages.HOME) && userAccount && sessionId) {
 		return PageComponent[page];
 	}
 
