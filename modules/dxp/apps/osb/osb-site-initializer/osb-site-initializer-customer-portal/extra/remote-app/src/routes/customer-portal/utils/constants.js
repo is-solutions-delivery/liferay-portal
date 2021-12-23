@@ -1,3 +1,25 @@
+const CONTENT_TYPE = {
+	JSON: 'application/json',
+	XML: 'application/xml',
+};
+
+export const CUSTOM_EVENTS = {
+	MENU_PAGE: 'customer-portal-menu-selected',
+	PROJECT: 'customer-portal-project-loading',
+	QUICK_LINKS: 'customer-portal-quick-links',
+	SUBSCRIPTION_GROUPS: 'cp-tip-container-primary',
+	USER_ACCOUNT: 'customer-portal-select-user-loading',
+};
+
+export const EXTENSIONS_FILE_TYPE = {
+	[CONTENT_TYPE.JSON]: '.json',
+	[CONTENT_TYPE.XML]: '.xml',
+};
+
+export const SLA_NAMES = {
+	limited_subscription: 'Limited Subscription',
+};
+
 export const status = {
 	active: 1,
 	expired: 2,
@@ -6,11 +28,6 @@ export const status = {
 
 export const STATUS_CODE = {
 	SUCCESS: 200,
-};
-
-export const CONTENT_TYPE = {
-	JSON: 'application/json',
-	XML: 'application/xml',
 };
 
 export const WEB_CONTENTS = {
@@ -33,8 +50,11 @@ export const WEB_CONTENTS_BY_LIFERAY_VERSION = {
 	'7.4': WEB_CONTENTS['WEB-CONTENT-ACTION-08'],
 };
 
-export const SLA_NAMES = {
-	limited_subscription: 'Limited Subscription',
+export const pages = {
+	COMMERCE: 'commerce',
+	ENTERPRISE_SEARCH: 'enterprise_search',
+	HOME: 'home',
+	OVERVIEW: 'overview',
 };
 
 export const PRODUCTS = {
@@ -44,18 +64,4 @@ export const PRODUCTS = {
 	dxp_cloud: 'DXP Cloud',
 	partnership: 'Partnership',
 	portal: 'Portal',
-};
-
-export const CUSTOM_EVENTS = {
-	MENU_PAGE: 'customer-portal-menu-selected',
-	PROJECT: 'customer-portal-project-loading',
-	QUICK_LINKS: 'customer-portal-quick-links',
-	SUBSCRIPTION_GROUPS: 'cp-tip-container-primary',
-	USER_ACCOUNT: 'customer-portal-select-user-loading',
-};
-
-export const pages = {
-	COMMERCE: 'commerce',
-	ENTERPRISE_SEARCH: 'enterprise_search',
-	OVERVIEW: 'overview',
 };

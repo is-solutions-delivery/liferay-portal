@@ -11,7 +11,7 @@ import {
 import {fetchLicense} from '../../../../../common/services/liferay/raysource-api';
 import {downloadFromBlob, getCurrentEndDate} from '../../../../../common/utils';
 import {getYearlyTerms} from '../../../utils';
-import {CONTENT_TYPE, STATUS_CODE} from '../../../utils/constants';
+import {EXTENSIONS_FILE_TYPE, STATUS_CODE} from '../../../utils/constants';
 
 const ActivationKeysInputs = ({
 	accountKey,
@@ -107,7 +107,6 @@ const ActivationKeysInputs = ({
 	};
 
 	const handleClick = async () => {
-		let extensionFile = '';
 		const license = await fetchLicense(
 			accountKey,
 			selectDateInterval.endDate,
@@ -118,24 +117,13 @@ const ActivationKeysInputs = ({
 		);
 		if (license.status === STATUS_CODE.SUCCESS) {
 			const contentType = license.headers.get('content-type');
-
-			if (contentType === CONTENT_TYPE.JSON) {
-				extensionFile = '.json';
-			}
-			else if (contentType === CONTENT_TYPE.XML) {
-				extensionFile = '.xml';
-			}
-			else {
-				extensionFile = '.txt';
-			}
-
+			const extensionFile = EXTENSIONS_FILE_TYPE[contentType] || '.txt';
 			const licenseBlob = await license.blob();
 
-			downloadFromBlob(licenseBlob, `license${extensionFile}`);
+			return downloadFromBlob(licenseBlob, `license${extensionFile}`);
 		}
-		else {
-			setLicenseDownloadError(true);
-		}
+
+		setLicenseDownloadError(true);
 	};
 
 	return (
