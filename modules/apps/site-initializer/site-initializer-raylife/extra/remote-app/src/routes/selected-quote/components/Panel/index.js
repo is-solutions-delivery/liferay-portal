@@ -5,8 +5,8 @@ import {SelectedQuoteContext} from '../../context/SelectedQuoteContextProvider';
 const Panel = ({
 	children,
 	id,
-	PanelMiddle = () => null,
-	PanelRight = () => null,
+	Middle = () => null,
+	Right = () => null,
 	title = '',
 	hasError = false,
 }) => {
@@ -20,9 +20,9 @@ const Panel = ({
 			<div className="panel-header">
 				<div className="panel-left">{title}</div>
 
-				<PanelMiddle checked={checked} expanded={expanded} />
+				<Middle checked={checked} expanded={expanded} />
 
-				<PanelRight checked={checked} expanded={expanded} />
+				<Right checked={checked} expanded={expanded} />
 			</div>
 
 			<div
