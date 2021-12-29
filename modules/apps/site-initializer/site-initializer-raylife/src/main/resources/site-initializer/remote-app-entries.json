@@ -8,6 +8,7 @@
 			"[$DOCUMENT_URL:/site-initializer/documents/company/remote-app/main.js$]",
 			"[$DOCUMENT_URL:/site-initializer/documents/company/remote-app/runtime-main.js$]"
 		],
+		"externalReferenceCode": "RAY001",
 		"htmlElementName": "liferay-remote-app-raylife",
 		"name_i18n": {
 			"en_US": "Raylife (Get a Quote)"
