@@ -1824,8 +1824,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		Map<String, String> remoteAppEntryIdsStringUtilReplaceValues =
 			new HashMap<>();
 
-		Group group = serviceContext.getScopeGroup();
-
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
 
 		for (int i = 0; i < jsonArray.length(); i++) {
@@ -1865,9 +1863,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 							"[$", "$]", documentsStringUtilReplaceValues),
 						StringPool.BLANK, StringPool.BLANK,
 						jsonObject.getBoolean("instanceable"),
-						_toMap(
-							group.getName(LocaleUtil.getSiteDefault()) + ": ",
-							jsonObject.getString("name_i18n")),
+						_toMap(jsonObject.getString("name_i18n")),
 						jsonObject.getString("portletCategoryName"),
 						sb.toString(), StringPool.BLANK);
 
