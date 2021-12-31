@@ -121,6 +121,8 @@ public class RemoteAppEntryLocalServiceImpl
 		_validateExternalReferenceCode(
 			user.getCompanyId(), externalReferenceCode);
 
+		remoteAppEntry.setExternalReferenceCode(externalReferenceCode);
+
 		remoteAppEntry.setCompanyId(user.getCompanyId());
 		remoteAppEntry.setUserId(user.getUserId());
 		remoteAppEntry.setUserName(user.getFullName());
