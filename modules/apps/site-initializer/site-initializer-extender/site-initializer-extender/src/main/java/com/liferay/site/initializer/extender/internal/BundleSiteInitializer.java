@@ -2172,10 +2172,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext.fetchUser()
 		).build();
 
-		JSONArray propertiesJSONArray = JSONFactoryUtil.createJSONArray(json);
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
 
-		for (int i = 0; i < propertiesJSONArray.length(); i++) {
-			JSONObject jsonObject = propertiesJSONArray.getJSONObject(i);
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
 			Page<Option> optionsPage = optionResource.getOptionsPage(
 				null,
@@ -2222,14 +2222,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				JSONObject subscriptionTypeSettingsJSONObject =
 					jsonObject.getJSONObject("subscriptionTypeSettings");
 
-				UnicodeProperties subscriptionUnicodeProperties =
+				UnicodeProperties unicodeProperties =
 					new UnicodeProperties();
 
 				if (subscriptionTypeSettingsJSONObject != null) {
 					for (String key :
 							subscriptionTypeSettingsJSONObject.keySet()) {
 
-						subscriptionUnicodeProperties.put(
+						unicodeProperties.put(
 							key,
 							subscriptionTypeSettingsJSONObject.getString(key));
 					}
@@ -2247,7 +2247,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 						jsonObject.getBoolean("subscriptionEnabled"),
 						jsonObject.getInt("subscriptionLength"),
 						jsonObject.getString("subscriptionType"),
-						subscriptionUnicodeProperties,
+						unicodeProperties,
 						jsonObject.getLong("maxSubscriptionCycles"),
 						jsonObject.getBoolean("deliverySubscriptionEnabled"),
 						jsonObject.getInt("deliverySubscriptionLength"),
