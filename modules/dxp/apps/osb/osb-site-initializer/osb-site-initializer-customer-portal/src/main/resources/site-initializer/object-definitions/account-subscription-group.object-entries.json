@@ -1,0 +1,42 @@
+[
+	{
+		"accountKey": "KOR-1513847",
+		"name": "DXP Cloud"
+	},
+	{
+		"accountKey": "KOR-1513847",
+		"name": "Portal"
+	},
+	{
+		"accountKey": "KOR-1677389",
+		"name": "DXP"
+	},
+	{
+		"accountKey": "KOR-1677389",
+		"name": "Partnership"
+	},
+	{
+		"accountKey": "KOR-1677389",
+		"name": "Limited SLA"
+	},
+	{
+		"accountKey": "KOR-1407632",
+		"name": "Analytics Cloud"
+	},
+	{
+		"accountKey": "KOR-1881209",
+		"name": "Portal"
+	},
+	{
+		"accountKey": "KOR-1881209",
+		"name": "Commerce"
+	},
+	{
+		"accountKey": "KOR-3699968",
+		"name": "Portal"
+	},
+	{
+		"accountKey": "KOR-3699968",
+		"name": "DXP"
+	}
+]
