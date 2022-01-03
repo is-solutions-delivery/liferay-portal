@@ -1,66 +1,90 @@
 [
 	{
-		"alternateName": "User01",
-		"emailAddress": "user01@liferay.com",
+		"alternateName": "test.user1",
+		"emailAddress": "test.user1@liferay.com",
+		"externalReferenceCode": "ERC-001",
+		"familyName": "User 1",
+		"givenName": "Test",
+		"name": "Test User 1"
+	},
+	{
+		"alternateName": "test.user1",
+		"emailAddress": "test.user1@liferay.com",
+		"externalReferenceCode": "ERC-002",
+		"familyName": "User 1",
+		"givenName": "Test",
+		"name": "Test User 1"
+	},
+	{
+		"alternateName": "test.user1",
+		"emailAddress": "test.user1@liferay.com",
+		"externalReferenceCode": "ERC-003",
+		"familyName": "User 1",
+		"givenName": "Test",
+		"name": "Test User 1"
+	},
+	{
+		"alternateName": "test.user1",
+		"emailAddress": "test.user1@liferay.com",
+		"externalReferenceCode": "ERC-004",
+		"familyName": "User 1",
+		"givenName": "Test",
+		"name": "Test User 1"
+	},
+	{
+		"alternateName": "test.user1",
+		"emailAddress": "test.user1@liferay.com",
+		"externalReferenceCode": "ERC-005",
+		"familyName": "User 1",
+		"givenName": "Test",
+		"name": "Test User 1"
+	},
+	{
+		"alternateName": "test.user2",
+		"emailAddress": "test.user2@liferay.com",
+		"externalReferenceCode": "ERC-004",
+		"familyName": "User 2",
+		"givenName": "Test",
+		"name": "Test User 2"
+	},
+	{
+		"alternateName": "test.user2",
+		"emailAddress": "test.user2@liferay.com",
+		"externalReferenceCode": "ERC-005",
+		"familyName": "User 2",
+		"givenName": "Test",
+		"name": "Test User 2"
+	},
+	{
+		"alternateName": "test.user2",
+		"emailAddress": "test.user2@liferay.com",
+		"externalReferenceCode": "ERC-003",
+		"familyName": "User 2",
+		"givenName": "Test",
+		"name": "Test User 2"
+	},
+	{
+		"alternateName": "test",
+		"emailAddress": "test@liferay.com",
 		"externalReferenceCode": "ERC-001",
 		"familyName": "Test",
-		"givenName": "User01",
-		"name": "User 01"
+		"givenName": "Test",
+		"name": "Test Test"
 	},
 	{
-		"alternateName": "User01",
-		"emailAddress": "user01@liferay.com",
+		"alternateName": "test",
+		"emailAddress": "test@liferay.com",
 		"externalReferenceCode": "ERC-002",
 		"familyName": "Test",
-		"givenName": "User01",
-		"name": "User 01"
+		"givenName": "Test",
+		"name": "Test Test"
 	},
 	{
-		"alternateName": "User01",
-		"emailAddress": "user01@liferay.com",
+		"alternateName": "test",
+		"emailAddress": "test@liferay.com",
 		"externalReferenceCode": "ERC-003",
 		"familyName": "Test",
-		"givenName": "User01",
-		"name": "User 01"
-	},
-	{
-		"alternateName": "User01",
-		"emailAddress": "user01@liferay.com",
-		"externalReferenceCode": "ERC-004",
-		"familyName": "Test",
-		"givenName": "User01",
-		"name": "User 01"
-	},
-	{
-		"alternateName": "User01",
-		"emailAddress": "user01@liferay.com",
-		"externalReferenceCode": "ERC-005",
-		"familyName": "Test",
-		"givenName": "User01",
-		"name": "User 01"
-	},
-	{
-		"alternateName": "User02",
-		"emailAddress": "user02@liferay.com",
-		"externalReferenceCode": "ERC-004",
-		"familyName": "Test",
-		"givenName": "User02",
-		"name": "User 02"
-	},
-	{
-		"alternateName": "User02",
-		"emailAddress": "user02@liferay.com",
-		"externalReferenceCode": "ERC-005",
-		"familyName": "Test",
-		"givenName": "User02",
-		"name": "User 02"
-	},
-	{
-		"alternateName": "User02",
-		"emailAddress": "user02@liferay.com",
-		"externalReferenceCode": "ERC-003",
-		"familyName": "Test",
-		"givenName": "User02",
-		"name": "User 02"
+		"givenName": "Test",
+		"name": "Test Test"
 	}
 ]
