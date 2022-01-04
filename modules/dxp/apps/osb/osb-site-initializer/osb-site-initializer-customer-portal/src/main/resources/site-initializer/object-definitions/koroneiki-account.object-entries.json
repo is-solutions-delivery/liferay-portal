@@ -1,7 +1,8 @@
 [
 	{
-		"accountKey": "KOR-1513847",
-		"code": "GRUPOSAESA",
+		"accountKey": "ERC-001",
+		"name": "Project 01",
+		"code": "PROJECT01",
 		"dxpVersion": "",
 		"liferayContactEmailAddress": "customer-service@liferay.com",
 		"liferayContactName": "Liferay Support",
@@ -15,8 +16,9 @@
 		"slaFuture": ""
 	},
 	{
-		"accountKey": "KOR-1677389",
-		"code": "LPSPLATAM",
+		"accountKey": "ERC-002",
+		"name": "Project 02",
+		"code": "PROJECT02",
 		"dxpVersion": "",
 		"liferayContactEmailAddress": "customer-service@liferay.com",
 		"liferayContactName": "Liferay Support",
@@ -30,8 +32,9 @@
 		"slaFuture": ""
 	},
 	{
-		"accountKey": "KOR-1407632",
-		"code": "FINANCFINANC2",
+		"accountKey": "ERC-003",
+		"name": "Project 03",
+		"code": "PROJECT03",
 		"dxpVersion": "7.2",
 		"liferayContactEmailAddress": "customer-service@liferay.com",
 		"liferayContactName": "Liferay Support",
@@ -45,8 +48,9 @@
 		"slaFuture": ""
 	},
 	{
-		"accountKey": "KOR-1881209",
-		"code": "SIEMENSSFSPEP",
+		"accountKey": "ERC-004",
+		"name": "Project 04",
+		"code": "PROJECT04",
 		"dxpVersion": "",
 		"liferayContactEmailAddress": "customer-service@liferay.com",
 		"liferayContactName": "Liferay Support",
@@ -60,8 +64,9 @@
 		"slaFuture": ""
 	},
 	{
-		"accountKey": "KOR-3699968",
-		"code": "IPDCFIIPDCFI",
+		"accountKey": "ERC-005",
+		"name": "Project 05",
+		"code": "PROJECT05",
 		"dxpVersion": "",
 		"liferayContactEmailAddress": "customer-service@liferay.com",
 		"liferayContactName": "Liferay Support",

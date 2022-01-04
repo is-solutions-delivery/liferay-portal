@@ -1,42 +1,42 @@
 [
 	{
-		"accountKey": "KOR-1513847",
+		"accountKey": "ERC-001",
 		"name": "DXP Cloud"
 	},
 	{
-		"accountKey": "KOR-1513847",
+		"accountKey": "ERC-001",
 		"name": "Portal"
 	},
 	{
-		"accountKey": "KOR-1677389",
+		"accountKey": "ERC-002",
 		"name": "DXP"
 	},
 	{
-		"accountKey": "KOR-1677389",
+		"accountKey": "ERC-002",
 		"name": "Partnership"
 	},
 	{
-		"accountKey": "KOR-1677389",
+		"accountKey": "ERC-002",
 		"name": "Limited SLA"
 	},
 	{
-		"accountKey": "KOR-1407632",
+		"accountKey": "ERC-003",
 		"name": "Analytics Cloud"
 	},
 	{
-		"accountKey": "KOR-1881209",
+		"accountKey": "ERC-004",
 		"name": "Portal"
 	},
 	{
-		"accountKey": "KOR-1881209",
+		"accountKey": "ERC-004",
 		"name": "Commerce"
 	},
 	{
-		"accountKey": "KOR-3699968",
+		"accountKey": "ERC-005",
 		"name": "Portal"
 	},
 	{
-		"accountKey": "KOR-3699968",
+		"accountKey": "ERC-005",
 		"name": "DXP"
 	}
 ]

@@ -1,7 +1,7 @@
 [
 	{
-		"accountKey": "KOR-1513847",
-		"accountSubscriptionGroupERC": "KOR-1513847_commerce",
+		"accountKey": "ERC-001",
+		"accountSubscriptionGroupERC": "ERC-001_portal",
 		"c_accountSubscriptionId": null,
 		"endDate": "2024-03-31 00:00:00.0",
 		"instanceSize": "1",
@@ -11,8 +11,8 @@
 		"subscriptionStatus": "Future"
 	},
 	{
-		"accountKey": "KOR-1513847",
-		"accountSubscriptionGroupERC": "KOR-1513847_portal",
+		"accountKey": "ERC-001",
+		"accountSubscriptionGroupERC": "ERC-001_portal",
 		"c_accountSubscriptionId": null,
 		"endDate": "2021-03-31 00:00:00.0",
 		"instanceSize": "1",
@@ -22,8 +22,8 @@
 		"subscriptionStatus": "Expired"
 	},
 	{
-		"accountKey": "KOR-1513847",
-		"accountSubscriptionGroupERC": "KOR-1513847_dxp",
+		"accountKey": "ERC-001",
+		"accountSubscriptionGroupERC": "ERC-001_dxp-cloud",
 		"c_accountSubscriptionId": null,
 		"endDate": "2022-03-31 00:00:00.0",
 		"instanceSize": "1",
@@ -33,8 +33,8 @@
 		"subscriptionStatus": "Active"
 	},
 	{
-		"accountKey": "KOR-1513847",
-		"accountSubscriptionGroupERC": "KOR-1513847_dxp-cloud",
+		"accountKey": "ERC-001",
+		"accountSubscriptionGroupERC": "ERC-001_dxp-cloud",
 		"c_accountSubscriptionId": null,
 		"endDate": "2025-03-31 00:00:00.0",
 		"instanceSize": "1",
@@ -44,8 +44,8 @@
 		"subscriptionStatus": "Future"
 	},
 	{
-		"accountKey": "KOR-1513847",
-		"accountSubscriptionGroupERC": "KOR-1513847_partnership",
+		"accountKey": "ERC-002",
+		"accountSubscriptionGroupERC": "ERC-002_partnership",
 		"c_accountSubscriptionId": null,
 		"endDate": "2021-06-31 00:00:00.0",
 		"instanceSize": "1",
@@ -55,8 +55,8 @@
 		"subscriptionStatus": "Expired"
 	},
 	{
-		"accountKey": "KOR-1677389",
-		"accountSubscriptionGroupERC": "KOR-1677389_dxp-cloud",
+		"accountKey": "ERC-002",
+		"accountSubscriptionGroupERC": "ERC-002_dxp",
 		"c_accountSubscriptionId": null,
 		"endDate": "2028-01-14 00:00:00.0",
 		"instanceSize": "",
@@ -66,8 +66,8 @@
 		"subscriptionStatus": "Future"
 	},
 	{
-		"accountKey": "KOR-1677389",
-		"accountSubscriptionGroupERC": "KOR-1677389_partnership",
+		"accountKey": "ERC-002",
+		"accountSubscriptionGroupERC": "ERC-002_partnership",
 		"c_accountSubscriptionId": null,
 		"endDate": "2028-01-14 00:00:00.0",
 		"instanceSize": "",
@@ -77,8 +77,8 @@
 		"subscriptionStatus": "Future"
 	},
 	{
-		"accountKey": "KOR-1677389",
-		"accountSubscriptionGroupERC": "KOR-1677389_dxp-cloud",
+		"accountKey": "ERC-002",
+		"accountSubscriptionGroupERC": "ERC-002_dxp",
 		"c_accountSubscriptionId": null,
 		"endDate": "2028-01-14 00:00:00.0",
 		"instanceSize": "1",
@@ -88,8 +88,8 @@
 		"subscriptionStatus": "Active"
 	},
 	{
-		"accountKey": "KOR-1407632",
-		"accountSubscriptionGroupERC": "KOR-1407632_analytics-cloud",
+		"accountKey": "ERC-003",
+		"accountSubscriptionGroupERC": "ERC-003_analytics-cloud",
 		"c_accountSubscriptionId": null,
 		"endDate": "2028-01-14 00:00:00.0",
 		"instanceSize": "1",
@@ -99,8 +99,8 @@
 		"subscriptionStatus": "Active"
 	},
 	{
-		"accountKey": "KOR-1407632",
-		"accountSubscriptionGroupERC": "KOR-1407632_analytics-cloud",
+		"accountKey": "ERC-004",
+		"accountSubscriptionGroupERC": "ERC-004_portal",
 		"c_accountSubscriptionId": null,
 		"endDate": "2028-01-14 00:00:00.0",
 		"instanceSize": "1",
@@ -110,8 +110,8 @@
 		"subscriptionStatus": "Future"
 	},
 	{
-		"accountKey": "KOR-1407632",
-		"accountSubscriptionGroupERC": "KOR-1407632_analytics-cloud",
+		"accountKey": "ERC-004",
+		"accountSubscriptionGroupERC": "ERC-004_commerce",
 		"c_accountSubscriptionId": null,
 		"endDate": "2021-03-14 00:00:00.0",
 		"instanceSize": "1",
@@ -121,8 +121,8 @@
 		"subscriptionStatus": "Expired"
 	},
 	{
-		"accountKey": "KOR-1881209",
-		"accountSubscriptionGroupERC": "KOR-1881209_portal",
+		"accountKey": "ERC-004",
+		"accountSubscriptionGroupERC": "ERC-004_portal",
 		"c_accountSubscriptionId": null,
 		"endDate": "2022-12-31 00:00:00.0",
 		"instanceSize": "",
@@ -132,8 +132,8 @@
 		"subscriptionStatus": "Active"
 	},
 	{
-		"accountKey": "KOR-1881209",
-		"accountSubscriptionGroupERC": "KOR-1881209_portal",
+		"accountKey": "ERC-004",
+		"accountSubscriptionGroupERC": "ERC-004_portal",
 		"c_accountSubscriptionId": null,
 		"endDate": "2021-03-31 00:00:00.0",
 		"instanceSize": "1",
@@ -143,80 +143,14 @@
 		"subscriptionStatus": "Expired"
 	},
 	{
-		"accountKey": "KOR-1881209",
-		"accountSubscriptionGroupERC": "KOR-1881209_commerce",
+		"accountKey": "ERC-004",
+		"accountSubscriptionGroupERC": "ERC-004_dxp",
 		"c_accountSubscriptionId": null,
 		"endDate": "2023-03-31 00:00:00.0",
 		"instanceSize": "1",
 		"name": "Production",
 		"quantity": 1,
 		"startDate": "2021-01-01 00:00:00.0",
-		"subscriptionStatus": "Active"
-	},
-	{
-		"accountKey": "KOR-1412150",
-		"accountSubscriptionGroupERC": "KOR-1412150_dxp",
-		"c_accountSubscriptionId": null,
-		"endDate": "2023-03-31 00:00:00.0",
-		"instanceSize": "1",
-		"name": "Developer Tools",
-		"quantity": 1,
-		"startDate": "2021-01-01 00:00:00.0",
-		"subscriptionStatus": "Active"
-	},
-	{
-		"accountKey": "KOR-3699968",
-		"accountSubscriptionGroupERC": "KOR-3699968_dxp",
-		"c_accountSubscriptionId": null,
-		"endDate": "2026-01-14 00:00:00.0",
-		"instanceSize": "4",
-		"name": "Unlimited Enterprise-Wide",
-		"quantity": 1,
-		"startDate": "2022-01-14 00:00:00.0",
-		"subscriptionStatus": "Future"
-	},
-	{
-		"accountKey": "KOR-3699968",
-		"accountSubscriptionGroupERC": "KOR-3699968_dxp",
-		"c_accountSubscriptionId": null,
-		"endDate": "2021-12-21 00:00:00.0",
-		"instanceSize": "1",
-		"name": "Non-Production",
-		"quantity": 12,
-		"startDate": "2020-12-22 00:00:00.0",
-		"subscriptionStatus": "Expired"
-	},
-	{
-		"accountKey": "KOR-3699968",
-		"accountSubscriptionGroupERC": "KOR-3699968_portal",
-		"c_accountSubscriptionId": null,
-		"endDate": "2023-12-21 00:00:00.0",
-		"instanceSize": "1",
-		"name": "Production",
-		"quantity": 6,
-		"startDate": "2020-12-22 00:00:00.0",
-		"subscriptionStatus": "Active"
-	},
-	{
-		"accountKey": "KOR-3699968",
-		"accountSubscriptionGroupERC": "KOR-3699968_portal",
-		"c_accountSubscriptionId": null,
-		"endDate": "2023-12-21 00:00:00.0",
-		"instanceSize": "1",
-		"name": "Developer Tools",
-		"quantity": 1,
-		"startDate": "2022-12-22 00:00:00.0",
-		"subscriptionStatus": "Future"
-	},
-	{
-		"accountKey": "KOR-3699968",
-		"accountSubscriptionGroupERC": "KOR-3699968_portal",
-		"c_accountSubscriptionId": null,
-		"endDate": "2022-03-31 00:00:00.0",
-		"instanceSize": "",
-		"name": "Business",
-		"quantity": 1,
-		"startDate": "2021-04-01 00:00:00.0",
 		"subscriptionStatus": "Active"
 	}
 ]
