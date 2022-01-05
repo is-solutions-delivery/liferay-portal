@@ -22,6 +22,8 @@ import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.commerce.account.constants.CommerceAccountConstants;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
+import com.liferay.commerce.product.model.CPDefinition;
+import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceCatalogLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
@@ -41,7 +43,11 @@ import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyVocabulary;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyCategoryResource;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Option;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductOption;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.CatalogResource;
+import com.liferay.headless.commerce.admin.catalog.resource.v1_0.OptionResource;
+import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductOptionResource;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.Channel;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.ChannelResource;
 import com.liferay.headless.delivery.dto.v1_0.Document;
@@ -104,6 +110,7 @@ import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
 import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.template.TemplateConstants;
+import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -538,6 +545,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".options.json") ||
 				resourcePath.endsWith(".products.json") ||
+				resourcePath.endsWith(
+					".products.subscriptions.properties.json") ||
 				!resourcePath.endsWith(".json")) {
 
 				continue;
@@ -572,6 +581,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 				commerceInventoryWarehouses,
 				StringUtil.replaceLast(resourcePath, ".json", ".products.json"),
 				serviceContext);
+
+			TransactionCommitCallbackUtil.registerCallback(
+				() -> {
+					_addCPInstanceSubscriptions(
+						StringUtil.replaceLast(
+							resourcePath, ".json",
+							".products.subscriptions.properties.json"),
+						serviceContext);
+
+					return null;
+				});
 		}
 	}
 
@@ -798,6 +818,122 @@ public class BundleSiteInitializer implements SiteInitializer {
 					COMMERCE_INVENTORY_WAREHOUSE_ID_ACCESSOR),
 			_classLoader, StringUtil.replace(resourcePath, ".json", "/"),
 			serviceContext.getScopeGroupId(), serviceContext.getUserId());
+	}
+
+	private void _addCPInstanceSubscriptions(
+			String resourcePath, ServiceContext serviceContext)
+		throws Exception {
+
+		String json = _read(resourcePath);
+
+		if (json == null) {
+			return;
+		}
+
+		ProductOptionResource.Builder productOptionResourceBuilder =
+			_commerceReferencesHolder.productOptionResourceFactory.create();
+
+		ProductOptionResource productOptionResource =
+			productOptionResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
+
+		OptionResource.Builder optionResourceBuilder =
+			_commerceReferencesHolder.optionResourceFactory.create();
+
+		OptionResource optionResource = optionResourceBuilder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject subscriptionPropertiesJSONObject =
+				jsonArray.getJSONObject(i);
+
+			Page<Option> optionsPage = optionResource.getOptionsPage(
+				null,
+				optionResource.toFilter(
+					StringBundler.concat(
+						"name eq '",
+						StringUtil.toLowerCase(
+							subscriptionPropertiesJSONObject.getString(
+								"optionName")),
+						"'")),
+				null, null);
+
+			Option option = optionsPage.fetchFirstItem();
+
+			if (option != null) {
+				ProductOption[] productOptions = new ProductOption[1];
+
+				productOptions[0] = new ProductOption() {
+					{
+						facetable = option.getFacetable();
+						fieldType = option.getFieldType(
+						).toString();
+						key = option.getKey();
+						name = option.getName();
+						optionId = option.getId();
+						required = option.getRequired();
+						skuContributor = option.getSkuContributor();
+					}
+				};
+
+				CPDefinition cpDefinition =
+					_commerceReferencesHolder.cpDefinitionLocalService.
+						fetchCPDefinitionByCProductExternalReferenceCode(
+							subscriptionPropertiesJSONObject.getString(
+								"cpDefinitionExternalReferenceCode"),
+							serviceContext.getCompanyId());
+
+				productOptionResource.postProductIdProductOptionsPage(
+					cpDefinition.getCProductId(), productOptions);
+
+				_commerceReferencesHolder.cpInstanceLocalService.
+					buildCPInstances(
+						cpDefinition.getCPDefinitionId(), serviceContext);
+
+				JSONObject subscriptionTypeSettingsJSONObject =
+					subscriptionPropertiesJSONObject.getJSONObject(
+						"subscriptionTypeSettings");
+
+				UnicodeProperties unicodeProperties = new UnicodeProperties(
+					JSONUtil.toStringMap(subscriptionTypeSettingsJSONObject),
+					true);
+
+				CPInstance cpInstance =
+					_commerceReferencesHolder.cpInstanceLocalService.
+						getCPInstance(
+							cpDefinition.getCPDefinitionId(),
+							subscriptionPropertiesJSONObject.getString(
+								"cpInstanceSku"));
+
+				_commerceReferencesHolder.cpInstanceLocalService.
+					updateSubscriptionInfo(
+						cpInstance.getCPInstanceId(),
+						subscriptionPropertiesJSONObject.getBoolean(
+							"overrideSubscriptionInfo"),
+						subscriptionPropertiesJSONObject.getBoolean(
+							"subscriptionEnabled"),
+						subscriptionPropertiesJSONObject.getInt(
+							"subscriptionLength"),
+						subscriptionPropertiesJSONObject.getString(
+							"subscriptionType"),
+						unicodeProperties,
+						subscriptionPropertiesJSONObject.getLong(
+							"maxSubscriptionCycles"),
+						subscriptionPropertiesJSONObject.getBoolean(
+							"deliverySubscriptionEnabled"),
+						subscriptionPropertiesJSONObject.getInt(
+							"deliverySubscriptionLength"),
+						subscriptionPropertiesJSONObject.getString(
+							"deliverySubscriptionType"),
+						new UnicodeProperties(),
+						subscriptionPropertiesJSONObject.getLong(
+							"deliveryMaxSubscriptionCycles"));
+			}
+		}
 	}
 
 	private void _addCPOptions(
