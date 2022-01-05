@@ -22,8 +22,6 @@ import com.liferay.gradle.util.Validator;
 import groovy.json.JsonOutput;
 import groovy.json.JsonSlurper;
 
-import groovy.lang.Writable;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -40,8 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.codehaus.groovy.runtime.EncodingGroovyMethods;
 
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -158,18 +154,8 @@ public class PublishNodeModuleTask extends ExecutePackageManagerTask {
 	}
 
 	@Input
-	public String getNpmEmailAddress() {
-		return GradleUtil.toString(_npmEmailAddress);
-	}
-
-	@Input
-	public String getNpmPassword() {
-		return GradleUtil.toString(_npmPassword);
-	}
-
-	@Input
-	public String getNpmUserName() {
-		return GradleUtil.toString(_npmUserName);
+	public String getNpmAccessToken() {
+		return GradleUtil.toString(_npmAccessToken);
 	}
 
 	@Input
@@ -240,16 +226,8 @@ public class PublishNodeModuleTask extends ExecutePackageManagerTask {
 		_moduleVersion = moduleVersion;
 	}
 
-	public void setNpmEmailAddress(Object npmEmailAddress) {
-		_npmEmailAddress = npmEmailAddress;
-	}
-
-	public void setNpmPassword(Object npmPassword) {
-		_npmPassword = npmPassword;
-	}
-
-	public void setNpmUserName(Object npmUserName) {
-		_npmUserName = npmUserName;
+	public void setNpmAccessToken(Object npmAccessToken) {
+		_npmAccessToken = npmAccessToken;
 	}
 
 	public void setOverriddenPackageJsonKeys(
@@ -279,21 +257,12 @@ public class PublishNodeModuleTask extends ExecutePackageManagerTask {
 	}
 
 	private void _createNpmrcFile(File npmrcFile) throws IOException {
-		List<String> npmrcContents = new ArrayList<>(2);
+		List<String> npmrcContents = new ArrayList<>();
 
-		npmrcContents.add("_auth = " + _getNpmAuth());
-		npmrcContents.add("email = " + getNpmEmailAddress());
-		npmrcContents.add("username = " + getNpmUserName());
+		npmrcContents.add(
+			"//registry.npmjs.org/:_authToken=" + getNpmAccessToken());
 
 		FileUtil.write(npmrcFile, npmrcContents);
-	}
-
-	private String _getNpmAuth() {
-		String auth = getNpmUserName() + ":" + getNpmPassword();
-
-		Writable writable = EncodingGroovyMethods.encodeBase64(auth.getBytes());
-
-		return writable.toString();
 	}
 
 	private File _getNpmrcFile() {
@@ -381,9 +350,7 @@ public class PublishNodeModuleTask extends ExecutePackageManagerTask {
 	private Object _moduleName;
 	private Object _moduleRepository;
 	private Object _moduleVersion;
-	private Object _npmEmailAddress;
-	private Object _npmPassword;
-	private Object _npmUserName;
+	private Object _npmAccessToken;
 	private final Set<String> _overriddenPackageJsonKeys = new HashSet<>();
 
 }

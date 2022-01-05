@@ -840,7 +840,8 @@
 													"fragmentViewports": [
 														{
 															"fragmentViewportStyle": {
-																"marginRight": "0"
+																"marginRight": "0",
+																"textAlign": "left"
 															},
 															"id": "tablet"
 														}

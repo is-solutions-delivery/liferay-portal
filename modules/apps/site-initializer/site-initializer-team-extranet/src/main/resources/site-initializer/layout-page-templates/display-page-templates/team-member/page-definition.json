@@ -580,6 +580,7 @@
 													"fragmentViewports": [
 														{
 															"fragmentViewportStyle": {
+																"textAlign": "left"
 															},
 															"id": "tablet"
 														}

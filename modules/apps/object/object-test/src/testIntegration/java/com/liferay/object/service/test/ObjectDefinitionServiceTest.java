@@ -20,6 +20,7 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.util.LocalizedMapUtil;
+import com.liferay.object.util.ObjectFieldUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
@@ -31,8 +32,11 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -187,7 +191,11 @@ public class ObjectDefinitionServiceTest {
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			"A" + RandomTestUtil.randomString(), null, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			ObjectDefinitionConstants.SCOPE_COMPANY, null);
+			ObjectDefinitionConstants.SCOPE_COMPANY,
+			Arrays.asList(
+				ObjectFieldUtil.createObjectField(
+					RandomTestUtil.randomString(), StringUtil.randomId(),
+					"String")));
 	}
 
 	private void _setUser(User user) {
@@ -210,7 +218,11 @@ public class ObjectDefinitionServiceTest {
 					"A" + RandomTestUtil.randomString(), null, null,
 					LocalizedMapUtil.getLocalizedMap(
 						RandomTestUtil.randomString()),
-					ObjectDefinitionConstants.SCOPE_COMPANY, null);
+					ObjectDefinitionConstants.SCOPE_COMPANY,
+					Arrays.asList(
+						ObjectFieldUtil.createObjectField(
+							RandomTestUtil.randomString(),
+							StringUtil.randomId(), "String")));
 
 			objectDefinition =
 				_objectDefinitionLocalService.publishCustomObjectDefinition(
@@ -284,7 +296,11 @@ public class ObjectDefinitionServiceTest {
 					"A" + RandomTestUtil.randomString(), null, null,
 					LocalizedMapUtil.getLocalizedMap(
 						RandomTestUtil.randomString()),
-					ObjectDefinitionConstants.SCOPE_COMPANY, null);
+					ObjectDefinitionConstants.SCOPE_COMPANY,
+					Arrays.asList(
+						ObjectFieldUtil.createObjectField(
+							RandomTestUtil.randomString(),
+							StringUtil.randomId(), "String")));
 
 			objectDefinition =
 				_objectDefinitionService.publishCustomObjectDefinition(
@@ -314,7 +330,11 @@ public class ObjectDefinitionServiceTest {
 					"A" + RandomTestUtil.randomString(), null, null,
 					LocalizedMapUtil.getLocalizedMap(
 						RandomTestUtil.randomString()),
-					ObjectDefinitionConstants.SCOPE_COMPANY, null);
+					ObjectDefinitionConstants.SCOPE_COMPANY,
+					Arrays.asList(
+						ObjectFieldUtil.createObjectField(
+							RandomTestUtil.randomString(),
+							StringUtil.randomId(), "String")));
 
 			objectDefinition =
 				_objectDefinitionService.updateCustomObjectDefinition(

@@ -1147,13 +1147,97 @@ definition {
 	}
 
 	@description = "LPS-135401 - Verify that it is possible to delete a relation with an entry on the Relationship tab"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanDeleteRelationOnRelationshipTab {
 		property portal.acceptance = "true";
 
-		// TODO LPS-141661 CanDeleteRelationOnRelationshipTab pending implementation
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
+
+		ObjectAdmin.addObjectRelationshipViaAPI(
+			objectName_1 = "CustomObject",
+			objectName_2 = "CustomObject",
+			relationshipLabel = "Relationship",
+			relationshipName = "relationship",
+			relationshipType = "oneToMany");
+
+		ObjectAdmin.addObjectLayoutViaAPI(
+			layoutName = "Layout Name",
+			objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		CreateObject.selectTitleField(fieldLabel = "Custom Field");
+
+		Button.clickSave();
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+		ObjectAdmin.markLayoutAsDefault();
+
+		Click(locator1 = "ObjectAdmin#LAYOUT_LAYOUT_TAB");
+
+		ObjectAdmin.addTabFieldsOnLayout(
+			blockName = "Block 1",
+			columnsNumber = "1",
+			fieldList = "Custom Field,Custom Object",
+			tabName = "Field Tab");
+
+		ObjectAdmin.addTabFieldsOnLayout(tabName = "Field Tab");
+
+		ObjectAdmin.addTabRelationshipsOnLayout(
+			relationshipsLabelName = "Relationship",
+			tabName = "Relationship Tab");
+
+		Button.clickSave();
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "Entry A");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectStringFieldEntryViaUI(
+			entryOption = "Entry A",
+			entryValue = "Entry B");
+
+		ObjectAdmin.gotoRelationshipsTab();
+
+		CreateObject.addRelationshipAndSelectEntry(titleFieldName = "Entry A");
+
+		Navigator.openURL();
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectPortlet.viewEntryDetails(entry = "Entry A");
+
+		CreateObject.deleteEntryInRelationshipTab();
+
+		ObjectPortlet.assertEntryNotPresent(entry = "Entry B");
+
+		Navigator.openURL();
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		ObjectPortlet.viewEntryDetails(entry = "Entry B");
+
+		ObjectPortlet.assertEntryNotPresent(entry = "Entry A");
 	}
 
 	@description = "LPS-135400 - Verify it is possible to delete a Relationship"
@@ -3423,21 +3507,87 @@ definition {
 	}
 
 	@description = "LPS-139803 - Verify it the Object Entry Title of a Boolean type is displayed on the Relationship field when adding an entry"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanViewObjectEntryTitleBooleanOnRelationshipField {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141612 CanViewObjectEntryTitleBooleanOnRelationshipField pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Boolean",
+			fieldName = "customObjectField",
+			fieldType = "Boolean",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectRelationshipViaAPI(
+			objectName_1 = "CustomObject",
+			objectName_2 = "CustomObject",
+			relationshipLabel = "Relationship",
+			relationshipName = "relationship",
+			relationshipType = "oneToMany");
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		CreateObject.selectTitleField(fieldLabel = "Boolean");
+
+		Button.clickSave();
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "true");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		CreateObject.assertAddedEntryRelationshipIsDisplayed(entry = "true");
 	}
 
 	@description = "LPS-139803 - Verify it the Object Entry Title of a Date type is displayed on the Relationship field when adding an entry"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanViewObjectEntryTitleDateOnRelationshipField {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141613 CanViewObjectEntryTitleDateOnRelationshipField pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Date",
+			fieldName = "customObjectField",
+			fieldType = "Date",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectRelationshipViaAPI(
+			objectName_1 = "CustomObject",
+			objectName_2 = "CustomObject",
+			relationshipLabel = "Relationship",
+			relationshipName = "relationship",
+			relationshipType = "oneToMany");
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		CreateObject.selectTitleField(fieldLabel = "Date");
+
+		Button.clickSave();
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "2021-01-01");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		CreateObject.assertAddedEntryRelationshipIsDisplayed(entry = "2021-01-01");
 	}
 
 	@description = "LPS-139803 - Verify it the Object Entry Title of a Double type is displayed on the Relationship field when adding an entry"
@@ -3450,12 +3600,45 @@ definition {
 	}
 
 	@description = "LPS-139803 - Verify it the Object Entry Title of a Integer type is displayed on the Relationship field when adding an entry"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanViewObjectEntryTitleIntegerOnRelationshipField {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141615 CanViewObjectEntryTitleIntegerOnRelationshipField pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Integer",
+			fieldName = "customObjectField",
+			fieldType = "Integer",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.addObjectRelationshipViaAPI(
+			objectName_1 = "CustomObject",
+			objectName_2 = "CustomObject",
+			relationshipLabel = "Relationship",
+			relationshipName = "relationship",
+			relationshipType = "oneToMany");
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		CreateObject.selectTitleField(fieldLabel = "Integer");
+
+		Button.clickSave();
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "123");
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObject");
+
+		CreateObject.assertAddedEntryRelationshipIsDisplayed(entry = "123");
 	}
 
 	@description = "LPS-139803 - Verify it the Object Entry Title of a Long type is displayed on the Relationship field when adding an entry"
@@ -3501,12 +3684,57 @@ definition {
 	}
 
 	@description = "LPS-139803 - Verify it the Object Entry Title is displayed on the Item Selector of a fragment on a Display Page"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanViewObjectEntryTitleOnItemSelectorFragment {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object",
+			objectName = "CustomObject",
+			pluralLabelName = "Custom Objects");
 
-		// TODO LPS-141621 CanViewObjectEntryTitleOnItemSelectorFragment pending implementation
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldLabelName = "Custom Field",
+			fieldName = "customObjectField",
+			fieldType = "String",
+			isRequired = "false",
+			objectName = "CustomObject");
 
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object");
+
+		CreateObject.selectTitleField(fieldLabel = "Custom Field");
+
+		CreateObject.saveObject();
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+
+		ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+			fieldName = "customObjectField",
+			objectName = "CustomObject",
+			value = "Test Entry");
+
+		Navigator.openURL();
+
+		DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "guest");
+
+		DisplayPageTemplatesAdmin.addDisplayPage(
+			contentType = "Custom Object",
+			displayPageName = "Blank Display Page",
+			subtype = "Custom Object");
+
+		PageEditor.addFragment(
+			collectionName = "Basic Components",
+			fragmentName = "Heading");
+
+		VisualizeObjectCollectionDisplay.openHeading();
+
+		VisualizeObjectCollectionDisplay.mapFragment(fieldLabel = "Custom Field");
+
+		VisualizeObjectCollectionDisplay.viewMappedFragment(fieldLabel = "Custom Field");
+
+		PageEditor.selectItemToPreviewWithObject(objectLabel = "Custom Object");
+
+		VisualizeObjectDisplayPage.assertDisplayEntry(entry = "Test Entry");
 	}
 
 	@description = "LPS-139803 - Verify it the Object Entry Title is displayed on the Relationship tab"
@@ -5156,13 +5384,69 @@ definition {
 	}
 
 	@description = "LPS-135401 - Verify if Prevent deletion type of Relationship One to Many won't allow the user to delete an entry with relation from the parent Object"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test PreventDeletionOneToManyWontAllowDelete {
 		property portal.acceptance = "true";
 
-		// TODO LPS-141666 PreventDeletionOneToManyWontAllowDelete pending implementation
+		for (var nameObject : list "A,B") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object ${nameObject}",
+				objectName = "CustomObject${nameObject}",
+				pluralLabelName = "Custom Objects ${nameObject}");
+		}
 
+		for (var nameField : list "A,B") {
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldLabelName = "Custom Field ${nameField}",
+				fieldName = "customObjectField${nameField}",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "CustomObject${nameField}");
+		}
+
+		ObjectAdmin.addObjectRelationshipViaAPI(
+			objectName_1 = "CustomObjectA",
+			objectName_2 = "CustomObjectB",
+			relationshipLabel = "Relationship",
+			relationshipName = "relationship",
+			relationshipType = "oneToMany");
+
+		Navigator.openURL();
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Custom Object A");
+
+		CreateObject.selectTitleField(fieldLabel = "Custom Field A");
+
+		Button.clickSave();
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObjectA");
+
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObjectB");
+
+		for (var nameEntry : list "A,B") {
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customObjectField${nameEntry}",
+				objectName = "CustomObject${nameEntry}",
+				value = "Entry ${nameEntry}");
+		}
+
+		Navigator.openURL();
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObjectB");
+
+		ObjectPortlet.viewEntryDetails(entry = "Entry B");
+
+		CreateObject.chooseEntryOnRelationshipField(entryOption = "Entry A");
+
+		Button.clickSave();
+
+		ObjectAdmin.goToCustomObject(objectName = "CustomObjectA");
+
+		ObjectPortlet.deleteEntry(entry = "Entry A");
+
+		ObjectPortlet.viewEntry(entry = "Entry A");
 	}
 
 	@description = "LPS-139418 - Verify that previous filled data is not kept when cancelling the creation of an Object"

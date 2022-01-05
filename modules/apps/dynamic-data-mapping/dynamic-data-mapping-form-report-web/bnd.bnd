@@ -1,4 +1,4 @@
 Bundle-Name: Liferay Dynamic Data Mapping Form Report Web
 Bundle-SymbolicName: com.liferay.dynamic.data.mapping.form.report.web
-Bundle-Version: 2.0.21
+Bundle-Version: 2.0.22
 Web-ContextPath: /dynamic-data-mapping-form-report-web

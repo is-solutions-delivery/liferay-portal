@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.PortalPermissionUtil;
@@ -36,6 +37,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portlet.usergroupsadmin.search.UserGroupChecker;
 import com.liferay.portlet.usergroupsadmin.search.UserGroupDisplayTerms;
 import com.liferay.portlet.usergroupsadmin.search.UserGroupSearch;
+import com.liferay.user.groups.admin.constants.UserGroupsAdminPortletKeys;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -123,19 +125,25 @@ public class ViewUserGroupsManagementToolbarDisplayContext {
 	}
 
 	public String getOrderByCol() {
-		if (Validator.isNull(_orderByCol)) {
-			_orderByCol = ParamUtil.getString(
-				_httpServletRequest, "orderByCol", "name");
+		if (Validator.isNotNull(_orderByCol)) {
+			return _orderByCol;
 		}
+
+		_orderByCol = SearchOrderByUtil.getOrderByCol(
+			_httpServletRequest, UserGroupsAdminPortletKeys.USER_GROUPS_ADMIN,
+			"view-user-groups-order-by-col", "name");
 
 		return _orderByCol;
 	}
 
 	public String getOrderByType() {
-		if (Validator.isNull(_orderByType)) {
-			_orderByType = ParamUtil.getString(
-				_httpServletRequest, "orderByType", "asc");
+		if (Validator.isNotNull(_orderByType)) {
+			return _orderByType;
 		}
+
+		_orderByType = SearchOrderByUtil.getOrderByType(
+			_httpServletRequest, UserGroupsAdminPortletKeys.USER_GROUPS_ADMIN,
+			"view-user-groups-order-by-type", "asc");
 
 		return _orderByType;
 	}
@@ -199,8 +207,6 @@ public class ViewUserGroupsManagementToolbarDisplayContext {
 		UserGroupSearch userGroupSearch = new UserGroupSearch(
 			_renderRequest, getPortletURL());
 
-		userGroupSearch.setRowChecker(new UserGroupChecker(_renderResponse));
-
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)_httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
@@ -216,16 +222,15 @@ public class ViewUserGroupsManagementToolbarDisplayContext {
 			userGroupParams.put("expandoAttributes", keywords);
 		}
 
-		List<UserGroup> results = UserGroupLocalServiceUtil.search(
-			themeDisplay.getCompanyId(), keywords, userGroupParams,
-			userGroupSearch.getStart(), userGroupSearch.getEnd(),
-			userGroupSearch.getOrderByComparator());
+		userGroupSearch.setResultsAndTotal(
+			() -> UserGroupLocalServiceUtil.search(
+				themeDisplay.getCompanyId(), keywords, userGroupParams,
+				userGroupSearch.getStart(), userGroupSearch.getEnd(),
+				userGroupSearch.getOrderByComparator()),
+			UserGroupLocalServiceUtil.searchCount(
+				themeDisplay.getCompanyId(), keywords, userGroupParams));
 
-		int total = UserGroupLocalServiceUtil.searchCount(
-			themeDisplay.getCompanyId(), keywords, userGroupParams);
-
-		userGroupSearch.setResults(results);
-		userGroupSearch.setTotal(total);
+		userGroupSearch.setRowChecker(new UserGroupChecker(_renderResponse));
 
 		_userGroupSearch = userGroupSearch;
 

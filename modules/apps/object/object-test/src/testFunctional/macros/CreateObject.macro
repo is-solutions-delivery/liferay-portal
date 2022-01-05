@@ -182,6 +182,26 @@ definition {
 		Check.checkToggleSwitch(locator1 = "CreateObject#TOGGLE_MANDATORY");
 	}
 
+	macro chooseEntryOnRelationshipField {
+		Click(locator1 = "ObjectPortlet#SEARCH_RELATIONSHIP_ENTRY");
+
+		KeyPress(
+			locator1 = "ObjectPortlet#SEARCH_RELATIONSHIP_ENTRY",
+			value1 = "\BACK_SPACE");
+
+		Click(
+			key_picklistOption = "${entryOption}",
+			locator1 = "ObjectAdmin#ENTRY_PICKLIST_OPTION");
+	}
+
+	macro deleteEntryInRelationshipTab {
+		ObjectAdmin.gotoRelationshipsTab();
+
+		Click(locator1 = "CreateObject#DELETE_ENTRY_IN_RELATIONSHIP_TAB");
+
+		AssertElementNotPresent(locator1 = "CreateObject#KEBAB_MENU_BLOCK_FIELD_OPTION_DELETE");
+	}
+
 	macro deleteFieldOnBlock {
 		Click(locator1 = "CreateObject#KEBAB_MENU_BLOCK_FIELD");
 

@@ -14,6 +14,7 @@
 
 package com.liferay.source.formatter.checks;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.source.formatter.checks.util.SourceUtil;
@@ -38,8 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Alan Huang
@@ -84,15 +83,9 @@ public class PoshiDependenciesFileLocationCheck extends BaseFileCheck {
 					String dependenciesFileName =
 						dependenciesFileLocation.replaceFirst(".*/(.+)", "$1");
 
-					String s = Pattern.quote(dependenciesFileName);
+					if (_containsFileName(
+							testCaseFileContent, dependenciesFileName)) {
 
-					Pattern dependenciesFileNamePattern = Pattern.compile(
-						"[\",]" + s + "[\",]");
-
-					Matcher matcher = dependenciesFileNamePattern.matcher(
-						testCaseFileContent);
-
-					while (matcher.find()) {
 						Set<String> referencesFiles = entry.getValue();
 
 						referencesFiles.add(testCaseFileName);
@@ -103,6 +96,8 @@ public class PoshiDependenciesFileLocationCheck extends BaseFileCheck {
 				}
 			}
 		}
+
+		_dependenciesFileLocationsMapIsReady = true;
 
 		for (Map.Entry<String, Set<String>> entry :
 				_dependenciesFileLocationsMap.entrySet()) {
@@ -137,8 +132,6 @@ public class PoshiDependenciesFileLocationCheck extends BaseFileCheck {
 				}
 			}
 		}
-
-		_dependenciesFileLocationsMapIsReady = true;
 	}
 
 	private synchronized void _checkGlobalDependenciesFileReferences(
@@ -161,15 +154,9 @@ public class PoshiDependenciesFileLocationCheck extends BaseFileCheck {
 					String dependenciesFileName =
 						dependenciesFileLocation.replaceFirst(".*/(.+)", "$1");
 
-					String s = Pattern.quote(dependenciesFileName);
+					if (_containsFileName(
+							testCaseFileContent, dependenciesFileName)) {
 
-					Pattern dependenciesFileNamePattern = Pattern.compile(
-						"[\",]" + s + "[\",]");
-
-					Matcher matcher = dependenciesFileNamePattern.matcher(
-						testCaseFileContent);
-
-					while (matcher.find()) {
 						Set<String> referencesFiles = entry.getValue();
 
 						referencesFiles.add(testCaseFileName);
@@ -180,6 +167,8 @@ public class PoshiDependenciesFileLocationCheck extends BaseFileCheck {
 				}
 			}
 		}
+
+		_dependenciesGlobalFileLocationsMapIsReady = true;
 
 		for (Map.Entry<String, Set<String>> entry :
 				_dependenciesGlobalFileLocationsMap.entrySet()) {
@@ -201,8 +190,42 @@ public class PoshiDependenciesFileLocationCheck extends BaseFileCheck {
 				}
 			}
 		}
+	}
 
-		_dependenciesGlobalFileLocationsMapIsReady = true;
+	private boolean _containsFileName(
+		String content, String dependenciesFileName) {
+
+		int x = -1;
+
+		while (true) {
+			x = content.indexOf(dependenciesFileName, x + 1);
+
+			if (x == -1) {
+				break;
+			}
+
+			char previousChar = content.charAt(x - 1);
+
+			if ((previousChar != CharPool.QUOTE) &&
+				(previousChar != CharPool.COMMA)) {
+
+				continue;
+			}
+
+			if ((x + dependenciesFileName.length()) >= content.length()) {
+				break;
+			}
+
+			char nextChar = content.charAt(x + dependenciesFileName.length());
+
+			if ((nextChar != CharPool.QUOTE) && (nextChar != CharPool.COMMA)) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private synchronized void _getTestCaseDependenciesFileLocations()

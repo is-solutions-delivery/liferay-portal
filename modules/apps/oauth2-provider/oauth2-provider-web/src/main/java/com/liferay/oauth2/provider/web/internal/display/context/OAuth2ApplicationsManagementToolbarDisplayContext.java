@@ -28,15 +28,16 @@ import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.kernel.portlet.SearchDisplayStyleUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.portlet.PortletURL;
 
@@ -98,24 +99,15 @@ public class OAuth2ApplicationsManagementToolbarDisplayContext
 	}
 
 	public String getDisplayStyle() {
-		String displayStyle = ParamUtil.getString(
-			httpServletRequest, "displayStyle");
-
-		if (Validator.isNull(displayStyle)) {
-			displayStyle = _portalPreferences.getValue(
-				OAuth2ProviderPortletKeys.OAUTH2_ADMIN, "entries-display-style",
-				"list");
-		}
-		else {
-			_portalPreferences.setValue(
-				OAuth2ProviderPortletKeys.OAUTH2_ADMIN, "entries-display-style",
-				displayStyle);
-
-			httpServletRequest.setAttribute(
-				WebKeys.SINGLE_PAGE_APPLICATION_CLEAR_CACHE, Boolean.TRUE);
+		if (Validator.isNotNull(_displayStyle)) {
+			return _displayStyle;
 		}
 
-		return displayStyle;
+		_displayStyle = SearchDisplayStyleUtil.getDisplayStyle(
+			httpServletRequest, OAuth2ProviderPortletKeys.OAUTH2_ADMIN,
+			"entries-display-style", "list", true);
+
+		return _displayStyle;
 	}
 
 	public List<DropdownItem> getFilterDropdownItems() {
@@ -139,7 +131,6 @@ public class OAuth2ApplicationsManagementToolbarDisplayContext
 
 	public OrderByComparator<OAuth2Application> getOrderByComparator() {
 		String orderByCol = getOrderByCol();
-		String orderByType = getOrderByType();
 
 		String columnName = "name";
 
@@ -151,7 +142,8 @@ public class OAuth2ApplicationsManagementToolbarDisplayContext
 		}
 
 		return OrderByComparatorFactoryUtil.create(
-			"OAuth2Application", columnName, orderByType.equals("asc"));
+			"OAuth2Application", columnName,
+			Objects.equals(getOrderByType(), "asc"));
 	}
 
 	public ViewTypeItemList getViewTypes() {
@@ -183,6 +175,7 @@ public class OAuth2ApplicationsManagementToolbarDisplayContext
 		};
 	}
 
+	private String _displayStyle;
 	private final PortalPreferences _portalPreferences;
 
 }

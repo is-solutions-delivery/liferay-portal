@@ -9677,7 +9677,8 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 
 		<echo append="true" file="${test.ext.properties.file}">
 			analytics.cloud.asah.backend.url=${analytics.cloud.asah.backend.url}
-			analytics.cloud.asah.curator.url=${analytics.cloud.asah.curator.url}
+			analytics.cloud.asah.curator.batch.url=${analytics.cloud.asah.curator.batch.url}
+			analytics.cloud.asah.curator.stream.url=${analytics.cloud.asah.curator.stream.url}
 			analytics.cloud.asah.publisher.url=${analytics.cloud.asah.publisher.url}
 			analytics.cloud.faro.frontend.url=${analytics.cloud.faro.frontend.url}
 		</echo>
@@ -11814,19 +11815,12 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 			</then>
 		</if>
 
+		<delete dir="${liferay.home}/data/elasticsearch7" />
+
 		<unzip
 			dest="${liferay.home}"
 			src="${portal.legacy.dir}/${portal.version}/data-archive/${data.archive.type}-${database.type}.zip"
 		/>
-
-		<if>
-			<not>
-				<equals arg1="${data.archive.type}" arg2="data-archive-search-result-rankings" />
-			</not>
-			<then>
-				<delete dir="${liferay.home}/data/elasticsearch7" />
-			</then>
-		</if>
 
 		<get-testcase-property property.name="database.partition.enabled" />
 

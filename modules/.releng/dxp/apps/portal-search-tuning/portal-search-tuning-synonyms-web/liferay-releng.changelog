@@ -192,3 +192,8 @@ bbda13b298972a48f9b1c9ab42d254459cab0bd8^..e24bc39381bf823cbf9fcca451d437298f0ed
 # Bundle Version 3.0.22
 #
 e24bc39381bf823cbf9fcca451d437298f0ed381^..0ca9ed4cf5d389bb3dedf62a982a3b99fe98d9df=LPS-139233
+
+#
+# Bundle Version 3.0.23
+#
+0ca9ed4cf5d389bb3dedf62a982a3b99fe98d9df^..d5929630a099a2631d99e400ec4bdfa3a6af2baa=LPS-138464 LPS-139235

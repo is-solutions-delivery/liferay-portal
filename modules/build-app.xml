@@ -493,6 +493,7 @@
 					<filetokenizer />
 					<replacestring from="${line.separator}" to=" " />
 					<replaceregex pattern="^ | $" replace="" />
+					<replaceregex pattern=".*(.{1000})" replace="[[trimmed]]\1" />
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
@@ -673,32 +674,10 @@
 			<propertyresource name="app.names" />
 		</loadfile>
 
-		<loadfile
-			property="app.ticket.list.all"
-			srcfile="app.ticket.list.all.log"
-		>
-			<filterchain>
-				<tokenfilter>
-					<filetokenizer />
-					<replacestring from=" " to="${line.separator}" />
-				</tokenfilter>
-
-				<sortfilter />
-
-				<uniqfilter />
-
-				<tokenfilter>
-					<filetokenizer />
-					<replacestring from="${line.separator}" to=" " />
-					<replaceregex pattern="^ | $" replace="" />
-				</tokenfilter>
-			</filterchain>
-		</loadfile>
-
 		<exec dir="${modules.dir}" executable="git" failonerror="true">
 			<arg value="commit" />
 			<arg value="-m" />
-			<arg value="${git.commit.app.ticket} Release Apps: ${app.names.spaced}${line.separator}${line.separator}${app.ticket.list.all}" />
+			<arg value="${git.commit.app.ticket} Release Apps: ${app.names.spaced}" />
 		</exec>
 	</target>
 
@@ -1011,8 +990,6 @@
 		<echo append="true" file="${releng.app.dir}/app.changelog" message="${double.space}" />
 
 		<echo append="true" file="${releng.app.dir}/app.changelog" message="${app.git.id}" />
-
-		<echo append="true" file="app.ticket.list.all.log" message="${app.ticket.list} " />
 	</target>
 
 	<target depends="get-lpkg-artifacts-list" name="write-lpkg-marketplace-properties" unless="module.dirs.null">

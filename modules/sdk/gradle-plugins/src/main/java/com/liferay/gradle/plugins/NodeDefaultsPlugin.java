@@ -154,53 +154,39 @@ public class NodeDefaultsPlugin extends BaseDefaultsPlugin<NodePlugin> {
 
 		Project project = publishNodeModuleTask.getProject();
 
-		String author = GradleUtil.getProperty(
+		String moduleAuthor = GradleUtil.getProperty(
 			project, "nodejs.npm.module.author", (String)null);
 
-		if (Validator.isNotNull(author)) {
-			publishNodeModuleTask.setModuleAuthor(author);
+		if (Validator.isNotNull(moduleAuthor)) {
+			publishNodeModuleTask.setModuleAuthor(moduleAuthor);
 		}
 
-		String bugsUrl = GradleUtil.getProperty(
+		String moduleBugsUrl = GradleUtil.getProperty(
 			project, "nodejs.npm.module.bugs.url", (String)null);
 
-		if (Validator.isNotNull(bugsUrl)) {
-			publishNodeModuleTask.setModuleBugsUrl(bugsUrl);
+		if (Validator.isNotNull(moduleBugsUrl)) {
+			publishNodeModuleTask.setModuleBugsUrl(moduleBugsUrl);
 		}
 
-		String license = GradleUtil.getProperty(
+		String moduleLicense = GradleUtil.getProperty(
 			project, "nodejs.npm.module.license", (String)null);
 
-		if (Validator.isNotNull(license)) {
-			publishNodeModuleTask.setModuleLicense(license);
+		if (Validator.isNotNull(moduleLicense)) {
+			publishNodeModuleTask.setModuleLicense(moduleLicense);
 		}
 
-		String emailAddress = GradleUtil.getProperty(
-			project, "nodejs.npm.email", (String)null);
-
-		if (Validator.isNotNull(emailAddress)) {
-			publishNodeModuleTask.setNpmEmailAddress(emailAddress);
-		}
-
-		String password = GradleUtil.getProperty(
-			project, "nodejs.npm.password", (String)null);
-
-		if (Validator.isNotNull(password)) {
-			publishNodeModuleTask.setNpmPassword(password);
-		}
-
-		String userName = GradleUtil.getProperty(
-			project, "nodejs.npm.user", (String)null);
-
-		if (Validator.isNotNull(userName)) {
-			publishNodeModuleTask.setNpmUserName(userName);
-		}
-
-		String repository = GradleUtil.getProperty(
+		String moduleRepository = GradleUtil.getProperty(
 			project, "nodejs.npm.module.repository", (String)null);
 
-		if (Validator.isNotNull(repository)) {
-			publishNodeModuleTask.setModuleRepository(repository);
+		if (Validator.isNotNull(moduleRepository)) {
+			publishNodeModuleTask.setModuleRepository(moduleRepository);
+		}
+
+		String npmAccessToken = GradleUtil.getProperty(
+			project, "nodejs.npm.access.token", (String)null);
+
+		if (Validator.isNotNull(npmAccessToken)) {
+			publishNodeModuleTask.setNpmAccessToken(npmAccessToken);
 		}
 	}
 

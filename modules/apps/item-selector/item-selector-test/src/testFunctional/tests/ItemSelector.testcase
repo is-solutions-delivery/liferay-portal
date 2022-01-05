@@ -459,13 +459,15 @@ definition {
 	}
 
 	@description = "This is a test for LPS-136947. It checks that unsupported files cannot be uploaded to Blogs."
-	@ignore = "Test Stub"
 	@priority = "3"
 	test CannotUploadUnsupportedFilesToBlogs {
-		property portal.acceptance = "false";
+		BlogsNavigator.openToAddEntry(siteURLKey = "guest");
 
-		// TODO LPS-136947 CannotUploadUnsupportedFilesToBlogs pending implementation
+		BlogsNavigator.gotoSelectFile();
 
+		ItemSelector.uploadFile(
+			invalidFileValidation = "Please enter a file with a valid extension (.gif,.jpeg,.jpg,.png).",
+			uploadFileName = "Document_1.pdf");
 	}
 
 	@description = "This test covers LPS-119709. It ensures that the blog images can not filter by the everywhere and the current site."

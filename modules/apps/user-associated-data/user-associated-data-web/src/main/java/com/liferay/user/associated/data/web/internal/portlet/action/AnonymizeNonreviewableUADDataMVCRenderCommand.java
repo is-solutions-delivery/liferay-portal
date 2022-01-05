@@ -17,12 +17,11 @@ package com.liferay.user.associated.data.web.internal.portlet.action;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.user.associated.data.anonymizer.UADAnonymizer;
@@ -46,7 +45,6 @@ import java.util.stream.Stream;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -109,27 +107,30 @@ public class AnonymizeNonreviewableUADDataMVCRenderCommand
 		PortletRequest portletRequest =
 			(PortletRequest)renderRequest.getAttribute(
 				JavaConstants.JAVAX_PORTLET_REQUEST);
-		LiferayPortletResponse liferayPortletResponse =
-			_portal.getLiferayPortletResponse(
-				(PortletResponse)renderRequest.getAttribute(
-					JavaConstants.JAVAX_PORTLET_RESPONSE));
-
-		PortletURL currentURL = PortletURLUtil.getCurrent(
-			_portal.getLiferayPortletRequest(portletRequest),
-			liferayPortletResponse);
 
 		SearchContainer<UADApplicationSummaryDisplay> searchContainer =
-			new SearchContainer<>(portletRequest, currentURL, null, null);
+			new SearchContainer<>(
+				portletRequest,
+				PortletURLUtil.getCurrent(
+					_portal.getLiferayPortletRequest(portletRequest),
+					_portal.getLiferayPortletResponse(
+						(PortletResponse)renderRequest.getAttribute(
+							JavaConstants.JAVAX_PORTLET_RESPONSE))),
+				null, null);
 
 		searchContainer.setEmptyResultsMessage(
 			"there-are-no-remaining-applications-to-anonymize");
-
 		searchContainer.setId("uadApplicationSummaryDisplays");
-
 		searchContainer.setOrderByCol(
-			ParamUtil.getString(renderRequest, "orderByCol", "name"));
+			SearchOrderByUtil.getOrderByCol(
+				portletRequest,
+				UserAssociatedDataPortletKeys.USER_ASSOCIATED_DATA,
+				"anonymize-order-by-col", "name"));
 		searchContainer.setOrderByType(
-			ParamUtil.getString(renderRequest, "orderByType", "asc"));
+			SearchOrderByUtil.getOrderByType(
+				portletRequest,
+				UserAssociatedDataPortletKeys.USER_ASSOCIATED_DATA,
+				"anonymize-order-by-type", "asc"));
 
 		List<UADApplicationSummaryDisplay> uadApplicationSummaryDisplays =
 			_getUADApplicationSummaryDisplays(userId);
@@ -157,11 +158,10 @@ public class AnonymizeNonreviewableUADDataMVCRenderCommand
 				Collectors.toList()
 			);
 
-		searchContainer.setResults(results);
-
 		summaryDisplayStream = streamSupplier.get();
 
-		searchContainer.setTotal((int)summaryDisplayStream.count());
+		searchContainer.setResultsAndTotal(
+			() -> results, (int)summaryDisplayStream.count());
 
 		return searchContainer;
 	}
@@ -199,6 +199,8 @@ public class AnonymizeNonreviewableUADDataMVCRenderCommand
 			_uadRegistry.getNonreviewableApplicationUADAnonymizers(
 				applicationKey);
 
+		uadApplicationSummaryDisplay.setApplicationKey(applicationKey);
+
 		int count = 0;
 
 		for (UADAnonymizer<?> uadAnonymizer :
@@ -208,8 +210,6 @@ public class AnonymizeNonreviewableUADDataMVCRenderCommand
 		}
 
 		uadApplicationSummaryDisplay.setCount(count);
-
-		uadApplicationSummaryDisplay.setApplicationKey(applicationKey);
 
 		return uadApplicationSummaryDisplay;
 	}

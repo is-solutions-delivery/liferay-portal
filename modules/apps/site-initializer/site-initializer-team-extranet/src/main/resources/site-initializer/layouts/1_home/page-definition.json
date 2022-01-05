@@ -801,6 +801,14 @@
 								"overflow": "visible",
 								"textAlign": ""
 							},
+							"fragmentViewports": [
+								{
+									"fragmentViewportStyle": {
+										"marginBottom": "5"
+									},
+									"id": "tablet"
+								}
+							],
 							"gutters": true,
 							"modulesPerRow": 2,
 							"numberOfColumns": 2,
@@ -974,7 +982,15 @@
 											],
 											"fragmentStyle": {
 												"textAlign": "right"
-											}
+											},
+											"fragmentViewports": [
+												{
+													"fragmentViewportStyle": {
+														"textAlign": "left"
+													},
+													"id": "tablet"
+												}
+											]
 										},
 										"type": "Fragment"
 									}
@@ -1581,6 +1597,14 @@
 										"overflow": "visible",
 										"textAlign": ""
 									},
+									"fragmentViewports": [
+										{
+											"fragmentViewportStyle": {
+												"marginBottom": "5"
+											},
+											"id": "tablet"
+										}
+									],
 									"gutters": true,
 									"modulesPerRow": 2,
 									"numberOfColumns": 2,
@@ -1758,7 +1782,8 @@
 													"fragmentViewports": [
 														{
 															"fragmentViewportStyle": {
-																"marginRight": "0"
+																"marginRight": "0",
+																"textAlign": "left"
 															},
 															"id": "tablet"
 														}

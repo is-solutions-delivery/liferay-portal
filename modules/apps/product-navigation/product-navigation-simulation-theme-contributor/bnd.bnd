@@ -1,4 +1,4 @@
 Bundle-Name: Liferay Product Navigation Simulation Theme Contributor
 Bundle-SymbolicName: com.liferay.product.navigation.simulation.theme.contributor
-Bundle-Version: 6.0.10
+Bundle-Version: 6.0.11
 Web-ContextPath: /product-navigation-simulation-theme-contributor
