@@ -1,17 +1,20 @@
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import classNames from 'classnames';
-import React from 'react';
-import {useCustomEvent} from '../../../hooks/useCustomEvent';
+import React, {useContext} from 'react';
+import {WebContentContext} from '../../../../routes/get-a-quote/context/WebContentProvider';
 
 export function MoreInfoButton({callback, event, selected, value}) {
-	const [dispatchEvent] = useCustomEvent(event);
+	const [, dispatchEvent] = useContext(WebContentContext);
 
 	const updateState = () => {
-		dispatchEvent({
-			...value,
-			hide: selected,
-		});
+		dispatchEvent(
+			{
+				...value,
+				hide: selected,
+			},
+			event
+		);
 		callback();
 	};
 

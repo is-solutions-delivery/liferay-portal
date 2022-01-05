@@ -20,3 +20,32 @@ liferay-remote-app-raylife {
 	@import 'components/progress-bar';
 	@import 'components/quote-comparison';
 }
+
+@media screen and (max-width: 767px) {
+	section#content.test {
+		background-color: #001238;
+	}
+
+	.get-a-quote-structure {
+		color: #fff;
+		.step-list {
+			.step-item {
+				color: #fff !important;
+
+				i {
+					circle {
+						stroke: #fff;
+					}
+				}
+
+				i::after {
+					background-color: #fff !important;
+				}
+
+				svg {
+					fill: #fff;
+				}
+			}
+		}
+	}
+}
