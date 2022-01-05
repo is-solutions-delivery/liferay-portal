@@ -47,3 +47,44 @@ svg {
 	height: 0.8rem !important;
 	width: 0.8rem !important;
 }
+
+@media screen and (max-width: 992px) {
+	.get-a-quote-structure:not(main) {
+		flex-direction: column;
+
+		h2 {
+			text-align: center;
+		}
+
+		.step-list {
+			align-items: center;
+			flex-direction: row !important;
+			justify-content: center;
+			margin: 39px 0 39px 20px;
+
+			&::-webkit-scrollbar {
+				width: 0;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 767px) {
+	.get-a-quote-structure:not(main) {
+		h2 {
+			display: none;
+		}
+	}
+}
+
+.modal-content-body {
+	background-color: $color-brand-primary-darken-4 !important;
+}
+
+:root {
+	--header-theme: {
+		color: red;
+		font-family: cursive;
+		font-weight: 600;
+	}
+}
