@@ -23,21 +23,6 @@ const QuoteApp = () => {
 
 	const isMobileDevice = dimensions.deviceSize === DEVICES.PHONE;
 
-	const FormTitle = () => {
-		if (selectedStep.section !== AVAILABLE_STEPS.PROPERTY.section) {
-			return selectedStep.title;
-		}
-
-		return (
-			<>
-				{selectedStep.title}{' '}
-				<span className="primary">
-					{form.basics.businessInformation.business.location.address}
-				</span>
-			</>
-		);
-	};
-
 	useEffect(() => {
 		createExitAlert();
 	});
@@ -86,9 +71,19 @@ const QuoteApp = () => {
 		<div className="d-flex get-a-quote-structure justify-content-between">
 			<Steps />
 
-			<main>
+			<main className="d-flex flex-wrap">
 				<h2 className="display-4 mb-6 mx-6">
-					<FormTitle />
+					{selectedStep.title}
+
+					{selectedStep.section ===
+						AVAILABLE_STEPS.PROPERTY.section && (
+						<span className="primary">
+							{
+								form.basics.businessInformation.business
+									.location.address
+							}
+						</span>
+					)}
 				</h2>
 
 				<Forms form={form} />
