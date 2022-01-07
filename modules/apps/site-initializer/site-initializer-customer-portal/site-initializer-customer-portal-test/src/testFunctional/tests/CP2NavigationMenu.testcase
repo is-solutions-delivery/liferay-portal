@@ -1,0 +1,176 @@
+@component-name = "portal-solutions"
+definition {
+
+    property portal.release = "true";
+    property portal.upstream = "true";
+    property testray.main.component.name = "Customer Portal";
+
+    setUp {
+
+        TestCase.setUpPortalInstance();
+
+        User.firstLoginPG();
+
+        CustomerPortal.createCPSite(siteName = "Customer Portal");
+    }
+
+    tearDown {
+
+        var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+        if ("${testPortalInstance}" == "true") {
+            PortalInstances.tearDownCP();
+        }
+        else {
+            CustomerPortal.customerPortalTearDown();
+
+            User.logoutPG();
+        }
+    }
+
+    @description = "LPS-143801 - Verify if Overview is displayed on Navigation Menu."
+    @priority = "4"
+    test IsOverviewMenuDisplayed {
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			title = "Test Account 01",
+			status = "Active");
+
+		AssertElementPresent(locator1 = "CP2NavigationMenu#OVERVIEW");
+
+    }
+
+    @description = "LPS-143373 - Verify if Product Activation is displayed on Navigation Menu."
+    @priority = "4"
+    test IsProductActivationMenuDisplayed {
+        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			title = "Test Account 01",
+			status = "Active");
+
+		AssertElementPresent(locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION");
+
+    }
+
+    @description = "LPS-143809 - Verify if Team Members is displayed on Navigation Menu."
+    @priority = "4"
+    test IsTeamMembersMenuDisplayed {
+        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			title = "Test Account 01",
+			status = "Active");
+
+		AssertElementPresent(locator1 = "CP2NavigationMenu#TEAM_MEMBERS");
+
+    }
+
+    @description = "LPS-143811 - Verify if Analytics Cloud option is showing under Product Activation."
+    @priority = "3"
+    test IsAnalyticsCloudOptionAvailable {
+        ApplicationsMenu.gotoSite(site = "Customer Portal");
+
+        Click(
+            locator1 = "CP2LiferayContact#PROJECT_CARD",
+            title = "Test Account 03");
+
+        Click(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION");
+
+        AssertElementPresent(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION",
+            field = "Analytics Cloud");
+    }
+
+    @description = "LPS-143813 - Verify if Commerce option is showing under Product Activation."
+    @priority = "3"
+    test IsCommerceOptionAvailable {
+        ApplicationsMenu.gotoSite(site = "Customer Portal");
+
+        Click(
+            locator1 = "CP2LiferayContact#PROJECT_CARD",
+            title = "Test Account 04");
+
+        Click(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION");
+
+        AssertElementPresent(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION",
+            field = "Commerce");
+    }
+
+    @description = "LPS-143814 - Verify if DXP option is showing under Product Activation."
+    @priority = "3"
+    test IsDXPOptionAvailable {
+        ApplicationsMenu.gotoSite(site = "Customer Portal");
+
+        Click(
+            locator1 = "CP2LiferayContact#PROJECT_CARD",
+            title = "Test Account 02");
+
+        Click(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION");
+
+        AssertElementPresent(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION",
+            field = "DXP");
+    }
+
+    @description = "LPS-143815 - Verify if DXP Cloud option is showing under Product Activation."
+    @priority = "3"
+    test IsDXPCloudOptionAvailable {
+        ApplicationsMenu.gotoSite(site = "Customer Portal");
+
+        Click(
+            locator1 = "CP2LiferayContact#PROJECT_CARD",
+            title = "Test Account 01");
+
+        Click(locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION");
+
+        AssertElementPresent(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION",
+            field = "DXP Cloud");
+    }
+
+    @description = "LPS-143816 - Verify if Enterprise Search option is showing under Product Activation."
+    @priority = "3"
+    test IsEnterpriseSearchOptionAvailable {
+        CP2NavigationMenu.addProducts();
+
+        ApplicationsMenu.gotoSite(site = "Customer Portal");
+
+        Click(
+            locator1 = "CP2LiferayContact#PROJECT_CARD",
+            title = "Test Account 01");
+
+        Click(locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION");
+
+        AssertElementPresent(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION",
+            field = "Enterprise Search");
+
+    }
+
+    @description = "LPS-143817 - Verify if Portal option is showing under Product Activation."
+    @priority = "3"
+    test IsPortalOptionAvailable {
+        ApplicationsMenu.gotoSite(site = "Customer Portal");
+
+        Click(
+            locator1 = "CP2LiferayContact#PROJECT_CARD",
+            title = "Test Account 01");
+
+        Click(locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION");
+
+        AssertElementPresent(
+            locator1 = "CP2NavigationMenu#PRODUCT_ACTIVATION",
+            field = "Portal");
+
+    }
+
+}

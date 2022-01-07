@@ -5,11 +5,11 @@ definition {
 	property portal.upstream = "true";
 	property testray.main.component.name = "Customer Portal";
 
-	setUp {
-	}
+	// setUp {
+	// }
 
-	tearDown {
-	}
+	// tearDown {
+	// }
 
 	@description = "LPS-143375 - Verify if Liferay Contact displays Liferay Contact's email."
 	@priority = "4"
