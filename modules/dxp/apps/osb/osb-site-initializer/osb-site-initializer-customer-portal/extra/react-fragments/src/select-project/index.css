@@ -1,6 +1,8 @@
 .all-projects {
 	background: none;
 	background-size: cover;
+	border-top: 1px solid rgba(220, 217, 226, 1);
+	cursor: pointer;
 	font-size: 13px;
 	font-weight: bold;
 	line-height: 16px;
@@ -21,13 +23,25 @@
 
 .all-projects a {
 	cursor: pointer;
+	display: inline-block;
 	text-decoration: none !important;
+	transition: all 0.3s;
 }
 
-.all-projects a:hover {
+.all-projects:hover a > p {
 	color: var(--color-action-primary-active) !important;
 }
 
+.selected-project-title {
+	max-width: 50vw;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.show-arrow a {
+	transform: translateX(3px);
+}
 .arrow-down-item {
 	color: var(--color-action-primary-default);
 }
@@ -95,7 +109,7 @@
 }
 
 .inline-scroller {
-	max-height: max-content !important;
+	max-height: 403px !important;
 }
 
 .hide-scroll {
@@ -105,7 +119,6 @@
 
 .show-scroll {
 	max-width: 400px !important;
-	overflow: auto !important;
 }
 
 .selected-item {
