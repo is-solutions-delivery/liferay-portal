@@ -12,6 +12,7 @@
 import ClayButton from '@clayui/button';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import React, {useEffect, useMemo, useState} from 'react';
 
 const MAX_ITEM = 10;
@@ -39,6 +40,7 @@ const handleClickHome = () => {
 export default function () {
 	const [items, setItems] = useState([]);
 	const [value, setValue] = useState('');
+	const [isArrowShown, setIsArrowShown] = useState(false);
 	const selectedExternalReferenceCode = useMemo(() => {
 		const liferaySearchParams = new URLSearchParams(window.location.search);
 
@@ -104,14 +106,23 @@ export default function () {
 		<ClayDropDownWithItems
 			alignmentPosition={['tl', 'br']}
 			footerContent={
-				<div className="all-projects c-py-2">
-					<a onClick={handleClickHome}>
+				<div
+					className={classNames('all-projects c-py-2', {
+						'show-arrow': isArrowShown,
+					})}
+					onClick={handleClickHome}
+					onMouseEnter={() => setIsArrowShown(true)}
+					onMouseLeave={() => setIsArrowShown(false)}
+				>
+					<a>
 						<p className="c-pl-4 my-0 py-2">
-							<ClayIcon
-								className="mr-2"
-								spritemap={spritemap}
-								symbol="order-arrow-left"
-							/>
+							{isArrowShown && (
+								<ClayIcon
+									className="mr-2"
+									spritemap={spritemap}
+									symbol="order-arrow-left"
+								/>
+							)}
 							All Projects
 						</p>
 					</a>
@@ -132,22 +143,24 @@ export default function () {
 			spritemap={spritemap}
 			trigger={
 				<ClayButton className="shadow-none" displayType="unstyled">
-					<h5 className="align-items-center d-flex m-0">
-						{!itemName ? (
-							<div
-								className="customer-portal-select-project font-weight-bold mr rounded-sm skeleton text-neutral-10 text-paragraph text-truncate"
-								id="customer-portal-project-application"
-							></div>
-						) : (
-							<>{`${itemName} `}</>
-						)}
+					<div className="align-items-center d-flex">
+						<h5 className="m-0 selected-project-title">
+							{!itemName ? (
+								<div
+									className="customer-portal-select-project font-weight-bold mr rounded-sm skeleton text-neutral-10 text-paragraph text-truncate"
+									id="customer-portal-project-application"
+								></div>
+							) : (
+								<>{itemName}</>
+							)}
+						</h5>
 
 						<ClayIcon
-							className="arrow-down-item"
+							className="arrow-down-item ml-1"
 							spritemap={spritemap}
 							symbol="caret-bottom"
 						/>
-					</h5>
+					</div>
 				</ClayButton>
 			}
 		/>
