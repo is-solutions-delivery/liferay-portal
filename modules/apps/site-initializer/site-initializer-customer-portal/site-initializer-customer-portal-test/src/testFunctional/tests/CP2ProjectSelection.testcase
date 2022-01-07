@@ -10,7 +10,7 @@ definition {
 
 		User.firstLoginPG();
 
-		//CustomerPortal.createCPSite(siteName = "Customer Portal");
+		CustomerPortal.createCPSite(siteName = "Customer Portal");
 
 	}
 
@@ -22,7 +22,7 @@ definition {
 		}
 		else {
 
-			//CustomerPortal.customerPortalTearDown();
+			CustomerPortal.customerPortalTearDown();
 
 			User.logoutPG();
 		}
