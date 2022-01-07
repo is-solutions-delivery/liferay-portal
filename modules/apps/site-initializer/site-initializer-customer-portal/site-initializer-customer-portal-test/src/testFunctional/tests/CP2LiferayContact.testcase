@@ -1,14 +1,25 @@
 @component-name = "portal-solutions"
 definition {
 
+<<<<<<< HEAD
     property portal.release = "true";
     property portal.upstream = "true";
     property testray.main.component.name = "Customer Portal";
+=======
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Customer Portal";
+>>>>>>> a00e199 (LPS-143371 SF)
 
 	setUp {
 		TestCase.setUpPortalInstance();
 
 		User.firstLoginPG();
+<<<<<<< HEAD
+=======
+
+		CustomerPortal.createCPSite(siteName = "Customer Portal");
+>>>>>>> a00e199 (LPS-143371 SF)
 	}
 
 	tearDown {
@@ -17,6 +28,7 @@ definition {
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
 		}
+<<<<<<< HEAD
 	}
 
         User.firstLoginPG();
@@ -89,5 +101,60 @@ definition {
             value1 = "customer-service@liferay.com");
 
     }
+=======
+		else {
+			CustomerPortal.customerPortalTearDown();
+
+			User.logoutPG();
+		}
+	}
+
+	@description = "LPS-143375 - Verify if Liferay Contact displays Liferay Contact's email."
+	@priority = "4"
+	test IsContactEmailDisplayed {
+		ApplicationsMenu.gotoSite(site = "Customer Portal");
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			status = "Active",
+			title = "Test Account 01");
+
+		AssertElementPresent(locator1 = "CP2LiferayContact#CONTACT_NAME");
+	}
+
+	@description = "LPS-143373 - Verify if Liferay Contact displays Liferay Contact's name."
+	@priority = "4"
+	test IsContactNameDisplayed {
+		CustomerPortal.activeContactRole();
+
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			status = "Active",
+			title = "Test Account 01");
+
+		AssertTextEquals(
+			locator1 = "CP2LiferayContact#DISPLAY_CONTACT",
+			title = "Quality Assurance Analyst",
+			value1 = "Quality Assurance Analyst");
+	}
+
+	@description = "LPS-143374 - Verify if Liferay Contact displays Liferay Contact's role."
+	@priority = "3"
+	test IsContactRoleDisplayed {
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			status = "Active",
+			title = "Test Account 01");
+
+		AssertTextEquals(
+			locator1 = "CP2LiferayContact#DISPLAY_CONTACT",
+			title = "customer-service@liferay.com",
+			value1 = "customer-service@liferay.com");
+	}
+>>>>>>> a00e199 (LPS-143371 SF)
 
 }
