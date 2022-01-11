@@ -8,12 +8,13 @@ import {
 import {useStepWizard} from '../../hooks/useStepWizard';
 import {AVAILABLE_STEPS} from '../../utils/constants';
 
-export function Steps() {
+export function Steps({isMobileDevice}) {
 	const {selectedStep, setSection} = useStepWizard();
 
 	return (
 		<StepList>
 			<StepItem
+				isMobileDevice={isMobileDevice}
 				onClick={() => {
 					Storage.setItem(STORAGE_KEYS.BASIC_STEP_CLICKED, true);
 					setSection(AVAILABLE_STEPS.BASICS_PRODUCT_QUOTE);
@@ -32,6 +33,7 @@ export function Steps() {
 			</StepItem>
 
 			<StepItem
+				isMobileDevice={isMobileDevice}
 				onClick={() => setSection(AVAILABLE_STEPS.BUSINESS)}
 				percentage={
 					selectedStep.percentage[AVAILABLE_STEPS.BUSINESS.section]
@@ -44,6 +46,7 @@ export function Steps() {
 			</StepItem>
 
 			<StepItem
+				isMobileDevice={isMobileDevice}
 				onClick={() => setSection(AVAILABLE_STEPS.EMPLOYEES)}
 				percentage={
 					selectedStep.percentage[AVAILABLE_STEPS.EMPLOYEES.section]
@@ -56,6 +59,7 @@ export function Steps() {
 			</StepItem>
 
 			<StepItem
+				isMobileDevice={isMobileDevice}
 				onClick={() => setSection(AVAILABLE_STEPS.PROPERTY)}
 				percentage={
 					selectedStep.percentage[AVAILABLE_STEPS.PROPERTY.section]
