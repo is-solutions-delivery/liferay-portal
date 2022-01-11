@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {Controller, useFormContext} from 'react-hook-form';
 import {MoreInfoButton} from '../../../../../../common/components/fragments/Buttons/MoreInfo';
 import {CardFormActions} from '../../../../../../common/components/fragments/Card/FormActions';
+import {CardFormActionsMobile} from '../../../../../../common/components/fragments/Card/FormActionsMobile';
 import FormCard from '../../../../../../common/components/fragments/Card/FormCard';
 import {Radio} from '../../../../../../common/components/fragments/Forms/Radio';
 import {
@@ -53,70 +54,77 @@ export function FormBasicProductQuote({form}) {
 	const {isSelected, updateState} = useTriggerContext();
 
 	return (
-		<FormCard>
-			<div className="card-content d-flex">
-				<div className="content-column">
-					<label className="mb-3">
-						<h6 className="font-weight-bolder text-paragraph">
-							Select a product to quote.
-						</h6>
-					</label>
+		<>
+			<FormCard>
+				<div className="card-content d-flex">
+					<div className="content-column">
+						<label className="mb-3">
+							<h6 className="font-weight-bolder text-paragraph">
+								Select a product to quote.
+							</h6>
+						</label>
 
-					<fieldset
-						className="d-flex flex-column mb-4 spacer-3"
-						id="productQuote"
-					>
-						<Controller
-							control={control}
-							defaultValue={form?.basics?.productQuote}
-							name="basics.productQuote"
-							render={({field}) =>
-								productQuotes.map((quote) => (
-									<Radio
-										{...field}
-										description={quote.description}
-										key={quote.id}
-										label={quote.title}
-										renderActions={
-											quote.template.allowed && (
-												<MoreInfoButton
-													callback={() =>
-														updateState(quote.id)
-													}
-													event={TIP_EVENT}
-													selected={isSelected(
-														quote.id
-													)}
-													value={{
-														inputName: field.name,
-														step: selectedStep,
-														templateName:
-															quote.template.name,
-														value: quote.id,
-													}}
-												/>
-											)
-										}
-										selected={
-											quote.id ===
-											form?.basics?.productQuote
-										}
-										sideLabel={quote.period}
-										value={quote.id}
-									/>
-								))
-							}
-							rules={{required: true}}
-						/>
-					</fieldset>
+						<fieldset
+							className="d-flex flex-column mb-4 spacer-3"
+							id="productQuote"
+						>
+							<Controller
+								control={control}
+								defaultValue={form?.basics?.productQuote}
+								name="basics.productQuote"
+								render={({field}) =>
+									productQuotes.map((quote) => (
+										<Radio
+											{...field}
+											description={quote.description}
+											key={quote.id}
+											label={quote.title}
+											renderActions={
+												quote.template.allowed && (
+													<MoreInfoButton
+														callback={() =>
+															updateState(
+																quote.id
+															)
+														}
+														event={TIP_EVENT}
+														selected={isSelected(
+															quote.id
+														)}
+														value={{
+															inputName:
+																field.name,
+															step: selectedStep,
+															templateName:
+																quote.template
+																	.name,
+															value: quote.id,
+														}}
+													/>
+												)
+											}
+											selected={
+												quote.id ===
+												form?.basics?.productQuote
+											}
+											sideLabel={quote.period}
+											value={quote.id}
+										/>
+									))
+								}
+								rules={{required: true}}
+							/>
+						</fieldset>
+					</div>
 				</div>
-			</div>
 
-			<CardFormActions
-				isValid={!!form?.basics?.productQuote}
-				onNext={onNext}
-				onPrevious={goToPreviousPage}
-			/>
-		</FormCard>
+				<CardFormActions
+					isValid={!!form?.basics?.productQuote}
+					onNext={onNext}
+					onPrevious={goToPreviousPage}
+				/>
+			</FormCard>
+			<CardFormActionsMobile onPrevious={goToPreviousPage} />
+		</>
 	);
 }
