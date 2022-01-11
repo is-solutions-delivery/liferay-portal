@@ -1,4 +1,5 @@
 import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import Modal from '../../../../../../common/components/modal';
 import {
 	STORAGE_KEYS,
@@ -10,7 +11,14 @@ import {createQuoteRetrieve} from '../../../../services/QuoteRetrieve';
 
 const liferaySiteName = getLiferaySiteName();
 
-const ProgressSaved = ({email, onClose, productQuote, setError, show}) => {
+const ProgressSaved = ({
+	email,
+	isMobileDevice = false,
+	onClose,
+	productQuote,
+	setError,
+	show,
+}) => {
 	const onSendLinkAndExit = async () => {
 		try {
 			const applicationId = Storage.getItem(STORAGE_KEYS.APPLICATION_ID);
@@ -24,8 +32,7 @@ const ProgressSaved = ({email, onClose, productQuote, setError, show}) => {
 			clearExitAlert();
 
 			window.location.href = liferaySiteName;
-		}
-		catch (error) {
+		} catch (error) {
 			setError('Unable to save your information. Please try again.');
 			onClose();
 		}
@@ -33,17 +40,37 @@ const ProgressSaved = ({email, onClose, productQuote, setError, show}) => {
 
 	return (
 		<Modal
+			backdropLight={isMobileDevice}
 			footer={
-				<div className="align-items-center d-flex flex-row justify-content-between ml-2 mr-1 mt-auto">
+				<div
+					className={classNames(
+						'align-items-center d-flex flex-row ml-2 mr-1 mt-auto',
+						{
+							'flex-wrap justify-content-center': isMobileDevice,
+							'justify-content-between': !isMobileDevice,
+						}
+					)}
+				>
 					<button
-						className="btn btn-link link text-link-md text-neutral-7 text-small-caps"
+						className={classNames(
+							'btn btn-link link text-link-md text-small-caps',
+							{
+								'mb-1 text-neutral-0': isMobileDevice,
+								'text-neutral-7': !isMobileDevice,
+							}
+						)}
 						onClick={onClose}
 					>
 						Continue Quote
 					</button>
 
 					<button
-						className="btn btn-primary rounded text-link-md text-small-caps"
+						className={classNames(
+							'btn btn-primary rounded text-link-md text-small-caps',
+							{
+								'w-100': isMobileDevice,
+							}
+						)}
 						onClick={onSendLinkAndExit}
 					>
 						Send Link &amp; Exit
@@ -52,8 +79,17 @@ const ProgressSaved = ({email, onClose, productQuote, setError, show}) => {
 			}
 			onClose={onClose}
 			show={show}
+			size={isMobileDevice ? 'small-mobile' : 'medium'}
 		>
-			<div className="align-items-center d-flex flex-column justify-content-between mt-5 progress-saved-content">
+			<div
+				className={classNames(
+					'align-items-center d-flex flex-column justify-content-between  progress-saved-content',
+					{
+						'mt-5': !isMobileDevice,
+						'my-3': isMobileDevice,
+					}
+				)}
+			>
 				<div className="align-items-center d-flex flex-column progress-saved-body w-100">
 					<div className="align-items-center bg-success d-flex flex-shrink-0 justify-content-center progress-saved-icon rounded-circle">
 						<ClayIcon symbol="check" />
@@ -63,7 +99,15 @@ const ProgressSaved = ({email, onClose, productQuote, setError, show}) => {
 						Your progress is saved
 					</h2>
 
-					<div className="font-weight-normal pt-1 text-center text-neutral-8 text-paragraph">
+					<div
+						className={classNames(
+							'font-weight-normal pt-1 text-center  text-paragraph',
+							{
+								'text-neutral-0': isMobileDevice,
+								'text-neutral-8': !isMobileDevice,
+							}
+						)}
+					>
 						<p>
 							We will send a link to&nbsp;<b>{email}</b>.
 						</p>
