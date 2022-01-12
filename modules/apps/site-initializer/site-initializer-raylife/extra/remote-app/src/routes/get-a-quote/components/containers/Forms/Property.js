@@ -11,8 +11,7 @@ import {useTriggerContext} from '../../../hooks/useTriggerContext';
 import {AVAILABLE_STEPS} from '../../../utils/constants';
 import {isHabitational, isThereSwimming} from '../../../utils/propertyFields';
 import FormCard from '../../card/FormCard';
-import {CardFormActions} from '../../form-actions/FormActions';
-import {CardFormActionsMobile} from '../../form-actions/FormActionsMobile';
+import {CardFormActions} from '../../form-actions/FormAction';
 
 const setFormPath = (value) => `property.${value}`;
 
@@ -46,12 +45,15 @@ export function FormProperty({form}) {
 
 	return (
 		<FormCard
-			footer={
-				<CardFormActionsMobile
+			Footer={(footerProps) => (
+				<CardFormActions
+					{...footerProps}
+					isValid={isValid}
+					onNext={onNext}
 					onPrevious={onPrevious}
 					onSave={onSave}
 				/>
-			}
+			)}
 		>
 			<div className="card-content">
 				<ControlledSwitch
@@ -192,13 +194,6 @@ export function FormProperty({form}) {
 					/>
 				)}
 			</div>
-
-			<CardFormActions
-				isValid={isValid}
-				onNext={onNext}
-				onPrevious={onPrevious}
-				onSave={onSave}
-			/>
 		</FormCard>
 	);
 }

@@ -11,8 +11,7 @@ import useFormActions from '../../../../../hooks/useFormActions';
 import {useStepWizard} from '../../../../../hooks/useStepWizard';
 import {AVAILABLE_STEPS} from '../../../../../utils/constants';
 import FormCard from '../../../../card/FormCard';
-import {CardFormActions} from '../../../../form-actions/FormActions';
-import {CardFormActionsMobile} from '../../../../form-actions/FormActionsMobile';
+import {CardFormActions} from '../../../../form-actions/FormAction';
 
 import {BusinessInformationAddress} from './Address';
 
@@ -63,12 +62,15 @@ export function FormBasicBusinessInformation({form}) {
 
 	return (
 		<FormCard
-			footer={
-				<CardFormActionsMobile
+			Footer={(footerProps) => (
+				<CardFormActions
+					{...footerProps}
+					isValid={isValid}
+					onNext={onNext}
 					onPrevious={onPrevious}
 					onSave={onSave}
 				/>
-			}
+			)}
 		>
 			<div className="p-0">
 				<div className="d-flex justify-content-between mb-5">
@@ -127,13 +129,6 @@ export function FormBasicBusinessInformation({form}) {
 
 				<BusinessInformationAddress />
 			</div>
-
-			<CardFormActions
-				isValid={isValid}
-				onNext={onNext}
-				onPrevious={onPrevious}
-				onSave={onSave}
-			/>
 		</FormCard>
 	);
 }

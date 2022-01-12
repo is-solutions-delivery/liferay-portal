@@ -16,8 +16,7 @@ import {
 } from '../../../utils/businessFields';
 import {AVAILABLE_STEPS} from '../../../utils/constants';
 import FormCard from '../../card/FormCard';
-import {CardFormActions} from '../../form-actions/FormActions';
-import {CardFormActionsMobile} from '../../form-actions/FormActionsMobile';
+import {CardFormActions} from '../../form-actions/FormAction';
 
 const setFormPath = (value) => `business.${value}`;
 
@@ -53,12 +52,15 @@ export function FormBusiness({form}) {
 
 	return (
 		<FormCard
-			footer={
-				<CardFormActionsMobile
+			Footer={(footerProps) => (
+				<CardFormActions
+					{...footerProps}
+					isValid={isValid}
+					onNext={onNext}
 					onPrevious={onPrevious}
 					onSave={onSave}
 				/>
-			}
+			)}
 		>
 			<div className="card-content">
 				<NumberControlledInput
@@ -164,13 +166,6 @@ export function FormBusiness({form}) {
 					/>
 				)}
 			</div>
-
-			<CardFormActions
-				isValid={isValid}
-				onNext={onNext}
-				onPrevious={onPrevious}
-				onSave={onSave}
-			/>
 		</FormCard>
 	);
 }
