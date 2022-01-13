@@ -1,0 +1,20 @@
+[
+	{
+		"cpDefinitionExternalReferenceCode": "TEST001",
+		"cpInstanceSku": "TEST VALUE 2",
+		"deliveryMaxSubscriptionCycles": 0,
+		"deliverySubscriptionEnabled": false,
+		"deliverySubscriptionLength": 1,
+		"deliverySubscriptionType": "daily",
+		"maxSubscriptionCycles": 2,
+		"optionName": "Test Option 2",
+		"overrideSubscriptionInfo": true,
+		"subscriptionEnabled": true,
+		"subscriptionLength": 2,
+		"subscriptionType": "monthly",
+		"subscriptionTypeSettings": {
+			"monthDay": "1",
+			"monthlyMode": "0"
+		}
+	}
+]
