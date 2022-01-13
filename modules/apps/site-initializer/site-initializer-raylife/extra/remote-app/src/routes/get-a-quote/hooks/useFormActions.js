@@ -12,7 +12,7 @@
  * details.
  */
 
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {STORAGE_KEYS, Storage} from '../../../common/services/liferay/storage';
 import {clearExitAlert} from '../../../common/utils/exitAlert';
@@ -33,7 +33,13 @@ const liferaySiteName = getLiferaySiteName();
  * @returns
  */
 
-const useFormActions = (form, previousSection, nextSection, errorMessage) => {
+const useFormActions = ({
+	errorMessage = 'Unable to save your information. Please try again.',
+	form,
+	nextSection,
+	previousSection,
+	saveData = false,
+}) => {
 	const [applicationId, setApplicationId] = useState();
 	const {setError, setValue} = useFormContext();
 	const {setSection} = useStepWizard();
@@ -72,7 +78,11 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		return validated;
 	};
 
-	const onSave = async () => {
+	const onSave = useCallback(async () => {
+		if (!saveData) {
+			return;
+		}
+
 		setError('continueButton', {});
 
 		try {
@@ -88,11 +98,12 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 					'There was an error processing your request. Please try again.',
 				type: 'manual',
 			});
+
 			throw error;
 		}
-	};
+	}, [saveData]);
 
-	const onPrevious = async () => {
+	const onPrevious = useCallback(async () => {
 		await onSave();
 
 		if (previousSection) {
@@ -100,13 +111,13 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 		}
 
 		smoothScroll();
-	};
+	}, [previousSection]);
 
 	/**
 	 * @state disabled for now
 	 * @param {*} data
 	 */
-	const onNext = async () => {
+	const onNext = useCallback(async () => {
 		await onSave();
 
 		clearExitAlert();
@@ -122,7 +133,7 @@ const useFormActions = (form, previousSection, nextSection, errorMessage) => {
 
 			window.location.href = `${liferaySiteName}/hang-tight`;
 		}
-	};
+	}, [nextSection]);
 
 	return {onNext, onPrevious, onSave};
 };
