@@ -22,6 +22,7 @@ import {useCustomEvent} from '../../../common/hooks/useCustomEvent';
 import {Liferay} from '../../../common/services/liferay';
 import {fetchSession} from '../../../common/services/liferay/api';
 import {
+	getAccountRoles,
 	getAccountSubscriptionGroups,
 	getKoroneikiAccounts,
 	getStructuredContentFolders,
@@ -31,6 +32,7 @@ import {
 	PARAMS_KEYS,
 	SearchParams,
 } from '../../../common/services/liferay/search-params';
+import {ROLES_PERMISSIONS} from '../../../common/utils/constants';
 import {isValidPage} from '../../../common/utils/page.validation';
 import {CUSTOM_EVENTS} from '../utils/constants';
 import reducer, {actionTypes} from './reducer';
@@ -90,33 +92,50 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 			});
 
 			if (data) {
+				const {data: accountRolesData} = await client.query({
+					query: getAccountRoles,
+					variables: {
+						filter: data.userAccount.id,
+					},
+				});
+
+				const isAccountAdministrator = !!accountRolesData.accountAccountRoles?.items?.find(
+					({name}) => name === ROLES_PERMISSIONS.ACCOUNT_ADMINISTRATOR
+				);
+
+				const userAccount = {
+					...data.userAccount,
+					isAdmin: isAccountAdministrator,
+				};
+
 				dispatch({
-					payload: data.userAccount,
+					payload: userAccount,
 					type: actionTypes.UPDATE_USER_ACCOUNT,
 				});
 
-				dispatchEventUserAccount(data.userAccount);
+				dispatchEventUserAccount(userAccount);
 
-				return data.userAccount;
+				return userAccount;
 			}
 		};
 
-		const getProject = async (projectExternalReferenceCode) => {
+		const getProject = async (externalReferenceCode, accountBrief) => {
 			const {data: projects} = await client.query({
 				query: getKoroneikiAccounts,
 				variables: {
-					filter: `accountKey eq '${projectExternalReferenceCode}'`,
+					filter: `accountKey eq '${externalReferenceCode}'`,
 				},
 			});
 
 			if (projects) {
-				const project = projects?.c?.koroneikiAccounts?.items[0];
 				dispatch({
-					payload: project,
+					payload: {
+						...projects.c.koroneikiAccounts.items[0],
+						id: accountBrief.id,
+						name: accountBrief.name,
+					},
 					type: actionTypes.UPDATE_PROJECT,
 				});
-
-				return project;
 			}
 		};
 
@@ -184,10 +203,18 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 				);
 
 				if (isValid) {
-					getProject(projectExternalReferenceCode);
-					getSubscriptionGroups(projectExternalReferenceCode);
-					getStructuredContents();
-					getSessionId();
+					const accountBrief = user.accountBriefs?.find(
+						(accountBrief) =>
+							accountBrief.externalReferenceCode ===
+							projectExternalReferenceCode
+					);
+
+					if (accountBrief) {
+						getProject(projectExternalReferenceCode, accountBrief);
+						getSubscriptionGroups(projectExternalReferenceCode);
+						getStructuredContents();
+						getSessionId();
+					}
 				}
 			}
 		};
