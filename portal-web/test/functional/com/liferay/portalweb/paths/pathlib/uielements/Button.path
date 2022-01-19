@@ -11,6 +11,16 @@
 
 <tbody>
 <tr>
+	<td>ADD</td>
+	<td>//button[contains(@id, 'addButton')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ADD_DISABLED</td>
+	<td>//button[contains(@id, 'addButton') and @disabled]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD_ADDRESS</td>
 	<td>//a[contains(@class,'add-address')]</td>
 	<td></td>

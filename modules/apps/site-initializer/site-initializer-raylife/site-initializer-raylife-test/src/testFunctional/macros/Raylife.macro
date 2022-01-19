@@ -23,33 +23,45 @@ definition {
 	}
 
 	macro createRaylifeSite {
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+        ApplicationsMenu.gotoPortlet(
+            category = "Sites",
+            panel = "Control Panel",
+            portlet = "Sites");
 
-		Refresh();
+        Refresh();
 
-		LexiconEntry.gotoAdd();
+        LexiconEntry.gotoAdd();
 
-		LexiconCard.clickCard(card = "Raylife");
+        LexiconCard.clickCard(card = "Raylife");
 
-		PortletEntry.inputName(name = "${siteName}");
+        SelectFrame(
+            key_title = "Add Site",
+            locator1 = "IFrame#MODAL_ANY");
 
-		Click(locator1 = "Modal#SAVE_BUTTON");
+        PortletEntry.inputName(name = "${siteName}");
 
-		while (IsElementPresent(locator1 = "Raylife#SAVE_LOADING_ANIMATION")) {
+        Click(locator1 = "Button#ADD");
+
+		AssertElementPresent(locator1 = "Button#ADD_DISABLED");
+
+        while (IsElementPresent(locator1 = "Button#ADD_DISABLED")){
 			Pause(locator1 = "1500");
 		}
 
-		Click(
-			key_itemName = "Site Configuration",
-			locator1 = "ListGroupItem#ITEM_TEXT");
+		Refresh();
 
-		AssertTextEquals(
-			locator1 = "SitesEditSite#DETAILS_NAME",
-			value1 = "${siteName}");
-	}
+        WaitForElementPresent(
+			key_itemName = "Site Configuration",
+            locator1 = "ListGroupItem#ITEM_TEXT");
+
+        Click(
+            key_itemName = "Site Configuration",
+            locator1 = "ListGroupItem#ITEM_TEXT");
+
+        AssertTextEquals(
+            locator1 = "SitesEditSite#DETAILS_NAME",
+            value1 = "${siteName}");
+    }
 
 	macro tearDownCP {
 		Raylife.commerceApisTearDowm();
