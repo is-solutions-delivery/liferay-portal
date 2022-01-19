@@ -127,11 +127,11 @@ const QuickLinksPanel = ({accountKey}) => {
 								symbol={
 									isQuickLinksExpanded
 										? 'hr'
-										: 'order-arrow-left'
+										: 'plus'
 								}
 							/>
 
-							{isQuickLinksExpanded ? 'Hide' : 'Show'}
+							{isQuickLinksExpanded ? 'Hide' : ''}
 						</a>
 					</div>
 
