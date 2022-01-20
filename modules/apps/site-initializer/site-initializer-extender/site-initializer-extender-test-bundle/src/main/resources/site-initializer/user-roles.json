@@ -1,0 +1,15 @@
+[
+	{
+		"emailAddress": "test.user1@liferay.com",
+		"roles": [
+			"Test Role 1",
+			"Test Role 2"
+		]
+	},
+	{
+		"emailAddress": "test.user2@liferay.com",
+		"roles": [
+			"Test Role 3"
+		]
+	}
+]
