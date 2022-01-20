@@ -71,6 +71,7 @@ import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.Theme;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -178,6 +179,7 @@ public class BundleSiteInitializerTest {
 			_assertPermissions(group);
 			_assertSiteNavigationMenu(group);
 			_assertStyleBookEntry(group);
+			_assertUserRoles(group);
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
@@ -919,6 +921,34 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(page);
 		Assert.assertEquals(totalCount, page.getTotalCount());
+	}
+
+	private void _assertUserRoles(Group group) throws Exception {
+		User user = _userLocalService.fetchUserByEmailAddress(
+			group.getCompanyId(), "test.user1@liferay.com");
+
+		List<Role> roles = user.getRoles();
+
+		Assert.assertEquals(roles.toString(), 3, roles.size());
+
+		Role role = roles.get(1);
+
+		Assert.assertEquals("Test Role 1", role.getName());
+
+		role = roles.get(2);
+
+		Assert.assertEquals("Test Role 2", role.getName());
+
+		user = _userLocalService.fetchUserByEmailAddress(
+			group.getCompanyId(), "test.user2@liferay.com");
+
+		roles = user.getRoles();
+
+		Assert.assertEquals(roles.toString(), 2, roles.size());
+
+		role = roles.get(1);
+
+		Assert.assertEquals("Test Role 3", role.getName());
 	}
 
 	private Bundle _installBundle(BundleContext bundleContext, String location)
