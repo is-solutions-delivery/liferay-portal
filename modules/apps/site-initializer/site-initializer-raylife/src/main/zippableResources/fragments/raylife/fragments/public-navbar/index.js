@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 const checkbox = fragmentElement.querySelector('#togBtn');
 const sliderBefore = fragmentElement.querySelector(
 	'.public-site-navbar .switch .slider'
@@ -26,7 +40,7 @@ function changeBeforeText(checked) {
 
 changeBeforeText(checkbox.checked);
 
-checkbox.addEventListener('click', function (event) {
+checkbox.addEventListener('click', (event) => {
 	changeBeforeText(event.target.checked);
 });
 
@@ -36,28 +50,47 @@ const menuGrid = fragmentElement.querySelector('.menu-grid');
 const menuClose = fragmentElement.querySelector('.menu-close');
 
 menuButton.addEventListener('click', () => {
-	myDropdown.classList.toggle('menu-options');
-
-	if (myDropdown.classList.contains('menu-options')) {
+	['show-menu', 'hiden-menu'].map((cssClass) => {
+		myDropdown.classList.toggle(cssClass);
+	});
+	['show-icon', 'hiden-icon'].map((cssClass) => {
+		menuGrid.classList.toggle(cssClass);
+	});
+	['show-icon', 'hiden-icon'].map((cssClass) => {
+		menuClose.classList.toggle(cssClass);
+	});
+	if (myDropdown.classList.contains('show-menu')) {
 		fragmentElement.querySelector(
 			'.raylife-navbar-button div span'
 		).innerText = 'CLOSE';
-		menuGrid.style.display = 'none';
-		menuClose.style.display = 'block';
 	}
 	else {
 		fragmentElement.querySelector(
 			'.raylife-navbar-button div span'
 		).innerText = 'MENU';
-		menuGrid.style.display = 'block';
-		menuClose.style.display = 'none';
 	}
 });
 
 menuButton.addEventListener('blur', () => {
-	myDropdown.classList.remove('menu-options');
-	fragmentElement.querySelector('.raylife-navbar-button div span').innerText =
-		'MENU';
-	menuGrid.style.display = 'block';
-	menuClose.style.display = 'none';
+	if (myDropdown.classList.contains('show-menu')) {
+		['show-menu', 'hiden-menu'].map((cssClass) => {
+			myDropdown.classList.toggle(cssClass);
+		});
+		['show-icon', 'hiden-icon'].map((cssClass) => {
+			menuGrid.classList.toggle(cssClass);
+		});
+		['show-icon', 'hiden-icon'].map((cssClass) => {
+			menuClose.classList.toggle(cssClass);
+		});
+		if (myDropdown.classList.contains('show-menu')) {
+			fragmentElement.querySelector(
+				'.raylife-navbar-button div span'
+			).innerText = 'CLOSE';
+		}
+		else {
+			fragmentElement.querySelector(
+				'.raylife-navbar-button div span'
+			).innerText = 'MENU';
+		}
+	}
 });

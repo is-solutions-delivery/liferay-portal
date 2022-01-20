@@ -1,10 +1,121 @@
-.quote-site-navbar .menu-container {
-  cursor: pointer;
-  user-select: none;
+.background-icon-close {
+	background: url('[resources:close_menu.svg]');
+	background-repeat: no-repeat;
+	background-size: contain;
+	height: 16px;
+	transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+	width: 16px;
+}
+
+.background-icon-grid {
+	background: url('[resources:grid_icon_blue.svg]');
+	background-repeat: no-repeat;
+	background-size: contain;
+	height: 16px;
+	transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+	width: 16px;
+}
+
+.drop-content {
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-brand-primary-lighten-4);
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+
+.drop-content a {
+	display: block;
+	height: 48px;
+	text-decoration: none;
+	width: 243px;
+}
+
+.hiden-menu {
+	opacity: 0;
+	transform: translateY(-5px);
+	transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+	visibility: hidden;
+}
+
+.menu-drop {
+	display: inline-block;
+	position: relative;
+}
+
+.menu-drop .drop-content.menu-options {
+	display: block;
 }
 
 .quote-site-navbar .brand-subtext {
-  margin-left: -94px;
-  position: absolute;
-  top: 54px;
+	margin-left: -94px;
+	position: absolute;
+	top: 54px;
+}
+
+.quote-site-navbar .menu-container {
+	cursor: pointer;
+	user-select: none;
+}
+
+.raylife-navbar-button {
+	border: 1px solid var(--color-action-primary-default) !important;
+	color: var(--color-action-primary-default) !important;
+	font-size: 15px;
+	height: 48px;
+	width: 90px;
+}
+
+.show-menu {
+	opacity: 1;
+	transform: translateY(5px);
+	transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+}
+
+@media only screen and (max-width: 767px) {
+	.public-site-navbar-divider,
+	.public-site-navbar-link,
+	.public-site-navbar-switch,
+	.public-site-navbar-telephone,
+	#navbar-contact-phone,
+	.voice-chat-icon {
+		display: none;
+	}
+
+	.background-icon-close {
+		background: url('[resources:close_menu_white.svg]');
+		background-repeat: no-repeat;
+		background-size: contain;
+		height: 16px;
+		transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+		width: 16px;
+	}
+
+	.background-icon-grid {
+		background: url('[resources:grid_icon_white.svg]');
+		background-repeat: no-repeat;
+		background-size: contain;
+		height: 16px;
+		transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+		width: 16px;
+	}
+
+	.drop-content {
+		background-color: var(--color-brand-primary-darken-5);
+		border: 1px solid var(--color-neutral-0);
+		position: absolute;
+		right: 0;
+		z-index: 1;
+	}
+
+	.navbar-brand {
+		max-width: auto !important;
+		padding-left: 0;
+	}
+
+	.raylife-navbar-button {
+		border: 1px solid var(--color-neutral-0) !important;
+		color: var(--color-neutral-0) !important;
+		font-size: 15px;
+	}
 }
