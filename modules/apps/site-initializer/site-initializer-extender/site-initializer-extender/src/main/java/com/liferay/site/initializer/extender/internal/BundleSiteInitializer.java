@@ -2351,10 +2351,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
-		group.setType(jsonObject.getInt("typeSite"));
 		group.setManualMembership(jsonObject.getBoolean("manualMembership"));
 		group.setMembershipRestriction(
 			jsonObject.getInt("membershipRestriction"));
+		group.setType(jsonObject.getInt("typeSite"));
 
 		_groupLocalService.updateGroup(group);
 	}
