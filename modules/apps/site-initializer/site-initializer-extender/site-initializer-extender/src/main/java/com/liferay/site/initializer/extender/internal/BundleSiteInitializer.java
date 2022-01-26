@@ -359,6 +359,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addDDMStructures(serviceContext));
 			_invoke(() -> _addFragmentEntries(serviceContext));
 			_invoke(() -> _addSAPEntries(serviceContext));
+			_invoke(() -> _addSiteConfiguration(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
 			_invoke(
 				() -> _addTaxonomyVocabularies(
@@ -400,8 +401,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 					() -> _addObjectDefinitions(
 						listTypeDefinitionIdsStringUtilReplaceValues,
 						serviceContext, siteNavigationMenuItemSettingsBuilder));
-
-			_invoke(() -> _addSiteConfiguration(serviceContext));
 
 			_invoke(
 				() -> _addCPDefinitions(
