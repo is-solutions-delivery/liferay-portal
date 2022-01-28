@@ -2970,7 +2970,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		CPInstance cpInstance =
 			_commerceReferencesHolder.cpInstanceLocalService.getCPInstance(
 				cpDefinition.getCPDefinitionId(),
-				cpInstancePropertiesJSONObject.getString("cpInstanceSKu"));
+				cpInstancePropertiesJSONObject.getString("cpInstanceSku"));
 
 		if (cpInstance == null) {
 			return;
