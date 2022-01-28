@@ -33,7 +33,7 @@
 										"fragmentLink": {
 											"value": {
 												"href": {
-													"value": "{\"en_US\":\"/add-task\"}"
+													"value": "add-task"
 												}
 											},
 											"value_i18n": {

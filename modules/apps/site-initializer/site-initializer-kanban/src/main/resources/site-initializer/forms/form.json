@@ -247,7 +247,7 @@
 					}
 				}
 			],
-			"paginationMode": "wizard"
+			"paginationMode": "multi-pages"
 		},
 		"description": "",
 		"name": "Add Task"
