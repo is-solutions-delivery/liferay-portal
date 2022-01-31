@@ -864,14 +864,12 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(2, role4.getType());
 	}
 
-	private void _assertSiteConfiguration(Group group1) {
-		Group group2 = _groupLocalService.fetchGroup(group1.getGroupId());
-
-		Assert.assertEquals(GroupConstants.TYPE_SITE_OPEN, group2.getType());
+	private void _assertSiteConfiguration(Group group) {
 		Assert.assertEquals(
 			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
-			group2.getMembershipRestriction());
-		Assert.assertTrue(group2.isManualMembership());
+			group.getMembershipRestriction());
+		Assert.assertEquals(GroupConstants.TYPE_SITE_OPEN, group.getType());
+		Assert.assertTrue(group.isManualMembership());
 	}
 
 	private void _assertSiteNavigationMenu(Group group) {
