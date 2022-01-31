@@ -125,8 +125,9 @@ public class SiteInitializerExtension {
 
 		_component.setImplementation(
 			new SiteInitializerRegistrar(
-				accountResourceFactory, assetCategoryLocalService, assetListEntryLocalService, bundle,
-				bundleContext, commerceReferencesHolder, ddmFormImporter,
+				accountResourceFactory, assetCategoryLocalService,
+				assetListEntryLocalService, bundle, bundleContext,
+				commerceReferencesHolder, ddmFormImporter,
 				ddmStructureLocalService, ddmTemplateLocalService,
 				defaultDDMStructureHelper, dlURLHelper,
 				documentFolderResourceFactory, documentResourceFactory,

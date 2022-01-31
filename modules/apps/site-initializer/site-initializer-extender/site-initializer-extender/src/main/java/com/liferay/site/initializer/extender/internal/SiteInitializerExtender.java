@@ -96,9 +96,9 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
-				_accountResourceFactory,_assetCategoryLocalService,
-				_assetListEntryLocalService, bundle,
-				_bundleContext, _commerceReferencesHolder, _ddmFormImporter,
+				_accountResourceFactory, _assetCategoryLocalService,
+				_assetListEntryLocalService, bundle, _bundleContext,
+				_commerceReferencesHolder, _ddmFormImporter,
 				_ddmStructureLocalService, _ddmTemplateLocalService,
 				_defaultDDMStructureHelper, _dlURLHelper,
 				_documentFolderResourceFactory, _documentResourceFactory,
@@ -121,7 +121,7 @@ public class SiteInitializerExtender
 				_structuredContentFolderResourceFactory,
 				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
 				_taxonomyVocabularyResourceFactory, _themeLocalService,
-				_userAccountResourceFactory,_userLocalService);
+				_userAccountResourceFactory, _userLocalService);
 
 		siteInitializerExtension.start();
 

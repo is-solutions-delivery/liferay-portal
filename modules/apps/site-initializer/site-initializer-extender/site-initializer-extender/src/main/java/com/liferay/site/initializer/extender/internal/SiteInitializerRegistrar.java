@@ -180,14 +180,15 @@ public class SiteInitializerRegistrar {
 		_serviceRegistration = _bundleContext.registerService(
 			SiteInitializer.class,
 			new BundleSiteInitializer(
-				_accountResourceFactory, _assetCategoryLocalService, _assetListEntryLocalService,
-				_bundle, _commerceReferencesHolder, _ddmFormImporter,
-				_ddmStructureLocalService, _ddmTemplateLocalService,
-				_defaultDDMStructureHelper, _dlURLHelper,
-				_documentFolderResourceFactory, _documentResourceFactory,
-				_fragmentsImporter, _groupLocalService,
-				_journalArticleLocalService, _jsonFactory, _layoutCopyHelper,
-				_layoutLocalService, _layoutPageTemplateEntryLocalService,
+				_accountResourceFactory, _assetCategoryLocalService,
+				_assetListEntryLocalService, _bundle, _commerceReferencesHolder,
+				_ddmFormImporter, _ddmStructureLocalService,
+				_ddmTemplateLocalService, _defaultDDMStructureHelper,
+				_dlURLHelper, _documentFolderResourceFactory,
+				_documentResourceFactory, _fragmentsImporter,
+				_groupLocalService, _journalArticleLocalService, _jsonFactory,
+				_layoutCopyHelper, _layoutLocalService,
+				_layoutPageTemplateEntryLocalService,
 				_layoutPageTemplatesImporter,
 				_layoutPageTemplateStructureLocalService,
 				_layoutSetLocalService, _listTypeDefinitionResource,
@@ -209,11 +210,11 @@ public class SiteInitializerRegistrar {
 				"site.initializer.key", _bundle.getSymbolicName()));
 	}
 
-	private final AccountResource.Factory _accountResourceFactory;
 	protected void stop() {
 		_serviceRegistration.unregister();
 	}
 
+	private final AccountResource.Factory _accountResourceFactory;
 	private final AssetCategoryLocalService _assetCategoryLocalService;
 	private final AssetListEntryLocalService _assetListEntryLocalService;
 	private final Bundle _bundle;

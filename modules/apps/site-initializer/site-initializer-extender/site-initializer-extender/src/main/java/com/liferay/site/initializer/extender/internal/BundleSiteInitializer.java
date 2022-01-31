@@ -434,7 +434,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(
 				() -> _addLayoutsContent(
 					assetListEntryIdsStringUtilReplaceValues,
-					documentsStringUtilReplaceValues, 
+					documentsStringUtilReplaceValues,
 					ddmFormStringUtilReplaceValues, layouts,
 					remoteAppEntryIdsStringUtilReplaceValues, serviceContext,
 					siteNavigationMenuItemSettingsBuilder.build()));
@@ -1361,8 +1361,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String json = _read(resourcePath);
 
 			json = StringUtil.replace(
-				json, "[$", "$]",
-				objectDefinitionsIdsStringUtilReplaceValues);
+				json, "[$", "$]", objectDefinitionsIdsStringUtilReplaceValues);
 
 			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
 
@@ -1372,7 +1371,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		List<DDMFormInstance> ddmFormInstances =
-			DDMFormInstanceLocalServiceUtil.getFormInstances(serviceContext.getScopeGroupId());
+			DDMFormInstanceLocalServiceUtil.getFormInstances(
+				serviceContext.getScopeGroupId());
 
 		if (ddmFormInstances != null) {
 			for (DDMFormInstance ddmFormInstance : ddmFormInstances) {
@@ -1384,6 +1384,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					String.valueOf(ddmFormInstance.getFormInstanceId()));
 			}
 		}
+
 		return ddmFormStringUtilReplaceValues;
 	}
 
@@ -1566,8 +1567,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private void _addLayoutContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
-			Map<String, String> documentsStringUtilReplaceValues, 
-			Map<String, String>	ddmFormStringUtilReplaceValues, Layout layout,
+			Map<String, String> documentsStringUtilReplaceValues,
+			Map<String, String> ddmFormStringUtilReplaceValues, Layout layout,
 			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			String resourcePath, ServiceContext serviceContext)
 		throws Exception {
@@ -1790,7 +1791,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutsContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
-			Map<String, String>	ddmFormStringUtilReplaceValues,
+			Map<String, String> ddmFormStringUtilReplaceValues,
 			Map<String, Layout> layouts,
 			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			ServiceContext serviceContext,
@@ -1801,7 +1802,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (Map.Entry<String, Layout> entry : layouts.entrySet()) {
 			_addLayoutContent(
 				assetListEntryIdsStringUtilReplaceValues,
-				documentsStringUtilReplaceValues, ddmFormStringUtilReplaceValues, entry.getValue(),
+				documentsStringUtilReplaceValues,
+				ddmFormStringUtilReplaceValues, entry.getValue(),
 				remoteAppEntryIdsStringUtilReplaceValues, entry.getKey(),
 				serviceContext);
 		}
