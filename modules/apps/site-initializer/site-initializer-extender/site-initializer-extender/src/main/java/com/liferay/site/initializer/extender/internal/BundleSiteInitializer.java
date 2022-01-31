@@ -1358,38 +1358,32 @@ public class BundleSiteInitializer implements SiteInitializer {
 		Map<String, String> ddmFormStringUtilReplaceValues = new HashMap<>();
 
 		for (String resourcePath : resourcePaths) {
-			String formsJSON = _read(resourcePath);
+			String json = _read(resourcePath);
 
-			formsJSON = StringUtil.replace(
-				formsJSON, "[$", "$]",
+			json = StringUtil.replace(
+				json, "[$", "$]",
 				objectDefinitionsIdsStringUtilReplaceValues);
 
-			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(formsJSON);
+			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
 
 			_ddmFormImporter.importDDMForms(
 				jsonArray, serviceContext.getScopeGroupId(),
 				serviceContext.getUserId());
-
-			List<DDMFormInstance> ddmFormInstances =
-				DDMFormInstanceLocalServiceUtil.getDDMFormInstances(
-					0, jsonArray.length());
-
-			if (ddmFormInstances != null) {
-				for (DDMFormInstance ddmFormInstance : ddmFormInstances) {
-					String name = ddmFormInstance.getName(
-						LocaleUtil.getSiteDefault());
-
-					ddmFormStringUtilReplaceValues.put(
-						"FORM_INSTANCE_ID:" + name,
-						String.valueOf(ddmFormInstance.getFormInstanceId()));
-
-					ddmFormStringUtilReplaceValues.put(
-						"GROUP_ID:" + name,
-						String.valueOf(ddmFormInstance.getGroupId()));
-				}
-			}
 		}
 
+		List<DDMFormInstance> ddmFormInstances =
+			DDMFormInstanceLocalServiceUtil.getFormInstances(serviceContext.getScopeGroupId());
+
+		if (ddmFormInstances != null) {
+			for (DDMFormInstance ddmFormInstance : ddmFormInstances) {
+				String name = ddmFormInstance.getName(
+					LocaleUtil.getSiteDefault());
+
+				ddmFormStringUtilReplaceValues.put(
+					"DDM_FORM_INSTANCE_ID:" + name,
+					String.valueOf(ddmFormInstance.getFormInstanceId()));
+			}
+		}
 		return ddmFormStringUtilReplaceValues;
 	}
 

@@ -12,7 +12,7 @@
 			},
 			"name": "taskTitle",
 			"required": true,
-			"type": "String"
+			"DBType": "String"
 		},
 		{
 			"indexed": false,
@@ -22,7 +22,7 @@
 			},
 			"name": "taskDescription",
 			"required": true,
-			"type": "String"
+			"DBType": "String"
 		},
 		{
 			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Task Status$]",
@@ -32,7 +32,7 @@
 				"en_US": "Task Status"
 			},
 			"name": "taskStatus",
-			"type": "String"
+			"DBType": "String"
 		},
 		{
 			"indexed": false,
@@ -42,7 +42,7 @@
 			},
 			"name": "progress",
 			"required": true,
-			"type": "Integer"
+			"DBType": "Integer"
 		}
 		
 	],
