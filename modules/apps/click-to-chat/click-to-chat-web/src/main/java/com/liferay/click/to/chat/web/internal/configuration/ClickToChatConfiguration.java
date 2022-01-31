@@ -39,6 +39,8 @@ public interface ClickToChatConfiguration {
 
 	public boolean guestUsersAllowed();
 
+	public boolean showInControlPanel();
+
 	public String siteSettingsStrategy();
 
 }

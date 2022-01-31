@@ -40,8 +40,6 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 	<div class="col-md-12">
 
 		<%
-		boolean clickToChatEnabled = GetterUtil.getBoolean(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_ENABLED));
-
 		boolean disabled = false;
 
 		if (Objects.equals(clickToChatConfiguration.siteSettingsStrategy(), "always-inherit") || Validator.isNull(clickToChatConfiguration.siteSettingsStrategy())) {
@@ -49,8 +47,6 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		}
 		%>
 
-		<aui:input checked="<%= clickToChatEnabled %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "enable-click-to-chat") %>' labelCssClass="simple-toggle-switch" name="enabled" type="toggle-switch" value="<%= clickToChatEnabled %>" />
-	</div>
 </div>
 
 <div class="form-group row">
@@ -75,6 +71,12 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		%>
 
 		<aui:input checked="<%= clickToChatGuestUsersAllowed %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "guest-users-allowed") %>' labelCssClass="simple-toggle-switch" name="guestUsersAllowed" type="toggle-switch" value="<%= clickToChatGuestUsersAllowed %>" />
+
+		<%
+		boolean clickToChatShowInControlPanel = GetterUtil.getBoolean(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_SHOW_IN_CONTROL_PANEL));
+		%>
+
+		<aui:input checked="<%= clickToChatShowInControlPanel %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "show-in-control-panel") %>' labelCssClass="simple-toggle-switch" name="showInControlPanel" type="toggle-switch" value="<%= clickToChatShowInControlPanel %>" />
 	</div>
 
 	<div class="col-md-6">

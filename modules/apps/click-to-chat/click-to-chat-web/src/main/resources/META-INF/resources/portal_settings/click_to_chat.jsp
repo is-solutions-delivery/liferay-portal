@@ -26,6 +26,14 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 	</div>
 </div>
 
+<portlet:actionURL name="enabled" var="delete">
+	<portlet:param name="clickToChatConfiguration" value="<%= ClickToChatConfiguration.class.getName() %>" />
+</portlet:actionURL>
+
+<liferay-ui:icon-delete
+	url="<%= delete %>"
+/>
+
 <div class="form-group row">
 	<div class="col-md-12">
 		<aui:select label="site-settings-strategy" name="siteSettingsStrategy" onchange='<%= liferayPortletResponse.getNamespace() + "onChangeClickToChatSiteSettingsStrategy(event);" %>' required="<%= true %>" value="<%= clickToChatConfiguration.siteSettingsStrategy() %>">
@@ -67,6 +75,8 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		</aui:select>
 
 		<aui:input checked="<%= clickToChatConfiguration.guestUsersAllowed() %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "guest-users-allowed") %>' labelCssClass="simple-toggle-switch" name="guestUsersAllowed" type="toggle-switch" value="<%= clickToChatConfiguration.guestUsersAllowed() %>" />
+
+		<aui:input checked="<%= clickToChatConfiguration.showInControlPanel() %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "show-in-control-panel") %>' labelCssClass="simple-toggle-switch" name="showInControlPanel" type="toggle-switch" value="<%= clickToChatConfiguration.showInControlPanel() %>" />
 	</div>
 
 	<div class="col-md-6">
