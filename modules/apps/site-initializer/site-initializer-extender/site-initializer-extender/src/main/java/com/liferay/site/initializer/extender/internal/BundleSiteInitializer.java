@@ -1349,6 +1349,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		while (enumeration.hasMoreElements()) {
 			URL url = enumeration.nextElement();
 
+			// Begin LPS-146172
+
 			String fileName = url.getFile();
 
 			int index = fileName.lastIndexOf(CharPool.FORWARD_SLASH);
@@ -1362,6 +1364,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			if (Validator.isNull(fileName)) {
 				continue;
 			}
+
+			// End LPS-146172
 
 			String urlPath = url.getPath();
 
