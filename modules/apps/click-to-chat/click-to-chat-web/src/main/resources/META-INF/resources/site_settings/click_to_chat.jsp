@@ -18,6 +18,10 @@
 
 <%
 ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)request.getAttribute(ClickToChatConfiguration.class.getName());
+
+long groupId = themeDisplay.getSiteGroupId();
+
+ClickToChatConfiguration clickToChatConfigurationGroup = ConfigurationProviderUtil.getGroupConfiguration(ClickToChatConfiguration.class, groupId);
 %>
 
 <div class="form-group row">
@@ -145,7 +149,7 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 	}
 
 	<portlet:namespace />toggleClickToChatChatProviderLearnMessage(
-		'<%= clickToChatConfiguration.chatProviderId() %>',
+		'<%= clickToChatConfigurationGroup.chatProviderId() %>',
 		true
 	);
 </script>
