@@ -75,6 +75,12 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		%>
 
 		<aui:input checked="<%= clickToChatGuestUsersAllowed %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "guest-users-allowed") %>' labelCssClass="simple-toggle-switch" name="guestUsersAllowed" type="toggle-switch" value="<%= clickToChatGuestUsersAllowed %>" />
+
+		<%
+		boolean clickToChatShowInControlPanel = GetterUtil.getBoolean(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_SHOW_IN_CONTROL_PANEL));
+		%>
+
+		<aui:input checked="<%= clickToChatShowInControlPanel %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "show-in-control-panel") %>' labelCssClass="simple-toggle-switch" name="showInControlPanel" type="toggle-switch" value="<%= clickToChatShowInControlPanel %>" />
 	</div>
 
 	<div class="col-md-6">

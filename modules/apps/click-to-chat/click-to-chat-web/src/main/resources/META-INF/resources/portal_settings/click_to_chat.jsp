@@ -67,6 +67,8 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		</aui:select>
 
 		<aui:input checked="<%= clickToChatConfiguration.guestUsersAllowed() %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "guest-users-allowed") %>' labelCssClass="simple-toggle-switch" name="guestUsersAllowed" type="toggle-switch" value="<%= clickToChatConfiguration.guestUsersAllowed() %>" />
+
+		<aui:input checked="<%= clickToChatConfiguration.showInControlPanel() %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "show-in-control-panel") %>' labelCssClass="simple-toggle-switch" name="showInControlPanel" type="toggle-switch" value="<%= clickToChatConfiguration.showInControlPanel() %>" />
 	</div>
 
 	<div class="col-md-6">
