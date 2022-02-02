@@ -113,11 +113,9 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9221 | Test Summary: Create a Web Behavior criteria at least/at most times"
-	@ignore = "true"
 	@priority = "4"
 	test CanCreateWebBehaviorSegmentCriteriaLeastMostTimes {
-
-		// AC Bug Ticket: LRAC-10049
+		property portal.upstream = "quarantine";
 
 		ACUtils.createWCAndAddToPage();
 
@@ -278,13 +276,9 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9222 | Test Summary: Create a Web Behavior since X days"
-	@ignore = "true"
 	@priority = "4"
 	test CanCreateWebBehaviorSegmentSinceXdays {
-		property portal.upstream = "quarantine";
 		property test.name.skip.portal.instance = "SegmentsCreationWebBehavior#CanCreateWebBehaviorSegmentSinceXdays";
-
-		// AC Bug Ticket: LRAC-10049
 
 		ACUtils.createWCAndAddToPage();
 
@@ -433,11 +427,9 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9216 | Test Summary: Add segment using a web behavior 'after' some time"
-	@ignore = "true"
 	@priority = "4"
 	test CanCreateWebBehaviorSegmentUsingAfter {
-
-		// AC Bug Ticket: LRAC-10049
+		property portal.upstream = "quarantine";
 
 		ACUtils.createWCAndAddToPage();
 
@@ -511,11 +503,9 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9217 | Test Summary: Add segment using a web behavior 'before' some time"
-	@ignore = "true"
 	@priority = "4"
 	test CanCreateWebBehaviorSegmentUsingBefore {
-
-		// AC Bug Ticket: LRAC-10049
+		property portal.upstream = "quarantine";
 
 		ACUtils.createWCAndAddToPage();
 
@@ -589,11 +579,9 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9218 | Test Summary: Add segment using a web behavior 'between' some time"
-	@ignore = "true"
 	@priority = "4"
 	test CanCreateWebBehaviorSegmentUsingBetween {
-
-		// AC Bug Ticket: LRAC-10049
+		property portal.upstream = "quarantine";
 
 		ACUtils.createWCAndAddToPage();
 
@@ -672,11 +660,9 @@ definition {
 	}
 
 	@description = "Add segment using a web behavior 'ever' done"
-	@ignore = "true"
 	@priority = "5"
 	test CanCreateWebBehaviorSegmentUsingEver {
-
-		// AC Bug Ticket: LRAC-10049
+		property portal.upstream = "quarantine";
 
 		ACUtils.createWCAndAddToPage();
 
@@ -821,11 +807,9 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9219 | Test Summary: Add segment using a web behavior 'on' some time"
-	@ignore = "true"
 	@priority = "4"
 	test CanCreateWebBehaviorSegmentUsingOn {
-
-		// AC Bug Ticket: LRAC-10049
+		property portal.upstream = "quarantine";
 
 		ACUtils.createWCAndAddToPage();
 
@@ -1276,11 +1260,9 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9226 | Test Summary: Create a Web Behavior Segment of Viewing a Web Content"
-	@ignore = "true"
 	@priority = "4"
 	test CanCreateWebBehaviorSegmentViewingWC {
-
-		// AC Bug Ticket: 10049
+		property portal.upstream = "quarantine";
 
 		ACUtils.createWCAndAddToPage();
 

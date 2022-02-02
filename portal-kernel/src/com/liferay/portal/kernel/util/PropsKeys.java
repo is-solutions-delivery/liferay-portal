@@ -1151,9 +1151,6 @@ public interface PropsKeys {
 	public static final String DNS_SECURITY_THREAD_LIMIT =
 		"dns.security.thread.limit";
 
-	public static final String DYNAMIC_RESOURCE_SERVLET_ALLOWED_PATHS =
-		"dynamic.resource.servlet.allowed.paths";
-
 	public static final String EDITOR_WYSIWYG_DEFAULT =
 		"editor.wysiwyg.default";
 
@@ -2966,15 +2963,6 @@ public interface PropsKeys {
 
 	public static final String SPRING_INFRASTRUCTURE_CONFIGS =
 		"spring.infrastructure.configs";
-
-	public static final String SPRITE_ENABLED = "sprite.enabled";
-
-	public static final String SPRITE_FILE_NAME = "sprite.file.name";
-
-	public static final String SPRITE_PROPERTIES_FILE_NAME =
-		"sprite.properties.file.name";
-
-	public static final String SPRITE_ROOT_DIR = "sprite.root.dir";
 
 	public static final String
 		SQL_DATA_COM_LIFERAY_PORTAL_MODEL_COUNTRY_COUNTRY_ID =

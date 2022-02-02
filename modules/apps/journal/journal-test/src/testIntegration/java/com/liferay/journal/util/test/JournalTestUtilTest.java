@@ -93,7 +93,7 @@ public class JournalTestUtilTest {
 			ddmStructure.getStructureId(),
 			PortalUtil.getClassNameId(JournalArticle.class),
 			TemplateConstants.LANG_TYPE_FTL,
-			JournalTestUtil.getSampleTemplateXSL());
+			JournalTestUtil.getSampleTemplateFTL());
 
 		Assert.assertNotNull(
 			JournalTestUtil.addArticleWithXMLContent(
@@ -178,7 +178,7 @@ public class JournalTestUtilTest {
 	}
 
 	@Test
-	public void testAddDDMTemplateToDDMStructureWithXSLAndLanguage()
+	public void testAddDDMTemplateToDDMStructureWithLanguage()
 		throws Exception {
 
 		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
@@ -189,7 +189,7 @@ public class JournalTestUtilTest {
 				ddmStructure.getStructureId(),
 				PortalUtil.getClassNameId(JournalArticle.class),
 				TemplateConstants.LANG_TYPE_FTL,
-				JournalTestUtil.getSampleTemplateXSL()));
+				JournalTestUtil.getSampleTemplateFTL()));
 	}
 
 	@Test
@@ -274,9 +274,9 @@ public class JournalTestUtilTest {
 	}
 
 	@Test
-	public void testGetSampleTemplateXSL() {
+	public void testGetSampleTemplateVM() {
 		Assert.assertEquals(
-			"$name.getData()", JournalTestUtil.getSampleTemplateXSL());
+			"$name.getData()", JournalTestUtil.getSampleTemplateVM());
 	}
 
 	@Test

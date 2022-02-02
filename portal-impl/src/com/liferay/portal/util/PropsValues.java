@@ -1013,9 +1013,6 @@ public class PropsValues {
 	public static final int DNS_SECURITY_THREAD_LIMIT = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.DNS_SECURITY_THREAD_LIMIT));
 
-	public static final String[] DYNAMIC_RESOURCE_SERVLET_ALLOWED_PATHS =
-		PropsUtil.getArray(PropsKeys.DYNAMIC_RESOURCE_SERVLET_ALLOWED_PATHS);
-
 	public static final String EDITOR_WYSIWYG_DEFAULT = PropsUtil.get(
 		PropsKeys.EDITOR_WYSIWYG_DEFAULT);
 
@@ -2634,18 +2631,6 @@ public class PropsValues {
 
 	public static final String[] SPRING_INFRASTRUCTURE_CONFIGS =
 		PropsUtil.getArray(PropsKeys.SPRING_INFRASTRUCTURE_CONFIGS);
-
-	public static final boolean SPRITE_ENABLED = GetterUtil.getBoolean(
-		PropsUtil.get(PropsKeys.SPRITE_ENABLED));
-
-	public static final String SPRITE_FILE_NAME = PropsUtil.get(
-		PropsKeys.SPRITE_FILE_NAME);
-
-	public static final String SPRITE_PROPERTIES_FILE_NAME = PropsUtil.get(
-		PropsKeys.SPRITE_PROPERTIES_FILE_NAME);
-
-	public static final String SPRITE_ROOT_DIR = PropsUtil.get(
-		PropsKeys.SPRITE_ROOT_DIR);
 
 	public static final int SQL_DATA_MAX_PARAMETERS = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.SQL_DATA_MAX_PARAMETERS));
