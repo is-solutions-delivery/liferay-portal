@@ -38,6 +38,9 @@ const BUTTON_VARIANTS = [
 			{
 				displayType: 'link',
 			},
+			{
+				displayType: 'banana',
+			},
 		],
 		categoryTitle: Liferay.Language.get('buttons'),
 		inverted: false,

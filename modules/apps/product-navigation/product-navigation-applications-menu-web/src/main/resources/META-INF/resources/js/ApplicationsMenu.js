@@ -31,7 +31,7 @@ import '../css/ApplicationsMenu.scss';
 const getOpenMenuTooltip = (keyLabel) => (
 	<>
 		<div>{Liferay.Language.get('open-menu')}</div>
-		<kbd className="c-kbd c-kbd-dark">
+		<kbd className="c-kbd">
 			<kbd className="c-kbd">{keyLabel}</kbd>
 
 			<span className="c-kbd-separator">+</span>
@@ -452,8 +452,7 @@ const ApplicationsMenu = ({
 
 				if (visible) {
 					onClose();
-				}
-				else {
+				} else {
 					handleTriggerButtonClick();
 				}
 			}

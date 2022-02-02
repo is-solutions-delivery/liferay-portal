@@ -1,0 +1,46 @@
+$c-kbd: (
+	background-color: var(--color-hotkey-background),
+	border-color: var(--color-hotkey-border),
+	border-width: var(--hotkey-border-width),
+	color: var(--color-hotkey),
+	font-size: var(--hotkey-font-size),
+	line-height: var(--hotkey-line-height),
+	height: var(--hotkey-height),
+	min-width: 1rem,
+	padding-bottom: var(--hotkey-padding-y),
+	padding-left: var(--hotkey-padding-x),
+	padding-right: var(--hotkey-padding-x),
+	padding-top: var(--hotkey-padding-y),
+);
+
+$c-kbd-lg: (
+	border-width: var(--hotkey-lg-border-width),
+	font-size: var(--hotkey-lg-font-size),
+	line-height: var(--hotkey-lg-line-height),
+	padding-bottom: var(--hotkey-lg-padding-y),
+	padding-left: var(--hotkey-lg-padding-x),
+	padding-right: var(--hotkey-lg-padding-x),
+	padding-top: var(--hotkey-lg-padding-y),
+);
+
+$c-kbd-sm: (
+	border-width: var(--hotkey-sm-border-width),
+	font-size: var(--hotkey-sm-font-size),
+	line-height: var(--hotkey-sm-line-height),
+	padding-bottom: var(--hotkey-sm-padding-y),
+	padding-left: var(--hotkey-sm-padding-x),
+	padding-right: var(--hotkey-sm-padding-x),
+	padding-top: var(--hotkey-sm-padding-y),
+);
+
+$c-kbd-dark: (
+	background-color: var(--hotkey-dark-background-color),
+	border-color: var(--hotkey-dark-border-color),
+	color: var(--hotkey-dark-color),
+);
+
+$c-kbd-light: (
+	background-color: var(--hotkey-light-background-color),
+	border-color: var(--hotkey-light-border-color),
+	color: var(--hotkey-light-color),
+);
