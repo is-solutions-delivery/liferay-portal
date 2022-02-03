@@ -77,6 +77,7 @@ const HotkeyGuide = () => {
 					))}
 				</TokenGroup>
 			))}
+
 			<TokenGroup
 				group="hotkeys"
 				title={Liferay.Language.get('hotkeys-groups')}

@@ -4614,100 +4614,100 @@
 						{
 							"defaultValue": "var(--color-neutral-1)",
 							"editorType": "ColorPicker",
-							"label": "color-hotkey-background",
+							"label": "hotkeys-background-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "color-hotkey-background"
+									"value": "hotkeys-background-color"
 								}
 							],
-							"name": "coloHotkeyBackground",
+							"name": "HotkeysBackgroundColor",
 							"type": "String"
 						},
 						{
 							"defaultValue": "var(--color-neutral-6)",
 							"editorType": "ColorPicker",
-							"label": "color-hotkey-border",
+							"label": "hotkeys-border-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "color-hotkey-border"
+									"value": "hotkeys-border-color"
 								}
 							],
-							"name": "coloHotkeyBorder",
+							"name": "HotkeysBorderColor",
 							"type": "String"
 						},
 						{
 							"defaultValue": "var(--color-neutral-7)",
 							"editorType": "ColorPicker",
-							"label": "color-hotkey",
+							"label": "hotkeys-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "color-hotkey"
+									"value": "hotkeys-color"
 								}
 							],
-							"name": "coloHotkey",
+							"name": "HotkeysColor",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0.0625rem",
-							"label": "hotkey-border-width",
+							"label": "hotkeys-border-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-border-width"
+									"value": "hotkeys-border-width"
 								}
 							],
-							"name": "hotkeyBorderWidth",
+							"name": "hotkeysBorderWidth",
 							"type": "String"
 						},
 						{
 							"defaultValue": "1rem",
-							"label": "hotkey-font-size",
+							"label": "hotkeys-font-size",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-font-size"
+									"value": "hotkeys-font-size"
 								}
 							],
-							"name": "hotkeyFontSize",
+							"name": "hotkeysFontSize",
 							"type": "String"
 						},
 						{
 							"defaultValue": "1.125rem",
-							"label": "hotkey-line-height",
+							"label": "hotkeys-line-height",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-line-height"
+									"value": "hotkeys-line-height"
 								}
 							],
-							"name": "hotkeyLineHeight",
+							"name": "hotkeysLineHeight",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0.1875rem",
-							"label": "hotkey-padding-x",
+							"label": "hotkeys-padding-x",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-padding-x"
+									"value": "hotkeys-padding-x"
 								}
 							],
-							"name": "hotkeyPaddingX",
+							"name": "hotkeysPaddingX",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0",
-							"label": "hotkey-padding-y",
+							"label": "hotkeys-padding-y",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-padding-y"
+									"value": "hotkeys-padding-y"
 								}
 							],
-							"name": "hotkeyPaddingY",
+							"name": "hotkeysPaddingY",
 							"type": "String"
 						}
 					],
@@ -4718,62 +4718,62 @@
 					"frontendTokens": [
 						{
 							"defaultValue": "1.25rem",
-							"label": "hotkey-lg-font-size",
+							"label": "hotkeys-lg-font-size",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-lg-font-size"
+									"value": "hotkeys-lg-font-size"
 								}
 							],
-							"name": "hotkeyLgFontSize",
+							"name": "hotkeysLgFontSize",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0.0625rem",
-							"label": "hotkey-lg-border-width",
+							"label": "hotkeys-lg-border-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-lg-border-width"
+									"value": "hotkeys-lg-border-width"
 								}
 							],
-							"name": "hotkeyLgBorderWidth",
+							"name": "hotkeysLgBorderWidth",
 							"type": "String"
 						},
 						{
 							"defaultValue": "1.375rem",
-							"label": "hotkey-lg-line-height",
+							"label": "hotkeys-lg-line-height",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-lg-line-height"
+									"value": "hotkeys-lg-line-height"
 								}
 							],
-							"name": "hotkeyLgLineHeight",
+							"name": "hotkeysLgLineHeight",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0.1875rem",
-							"label": "hotkey-lg-padding-x",
+							"label": "hotkeys-lg-padding-x",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-lg-padding-x"
+									"value": "hotkeys-lg-padding-x"
 								}
 							],
-							"name": "hotkeyLgPaddingX",
+							"name": "hotkeysLgPaddingX",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0",
-							"label": "hotkey-lg-padding-y",
+							"label": "hotkeys-lg-padding-y",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-lg-padding-y"
+									"value": "hotkeys-lg-padding-y"
 								}
 							],
-							"name": "hotkeyLgPaddingY",
+							"name": "hotkeysLgPaddingY",
 							"type": "String"
 						}
 					],
@@ -4785,62 +4785,62 @@
 					"frontendTokens": [
 						{
 							"defaultValue": "0.75rem",
-							"label": "hotkey-sm-font-size",
+							"label": "hotkeys-sm-font-size",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-sm-font-size"
+									"value": "hotkeys-sm-font-size"
 								}
 							],
-							"name": "hotkeySmFontSize",
+							"name": "hotkeysSmFontSize",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0.0625rem",
-							"label": "hotkey-sm-border-width",
+							"label": "hotkeys-sm-border-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-sm-border-width"
+									"value": "hotkeys-sm-border-width"
 								}
 							],
-							"name": "hotkeySmBorderWidth",
+							"name": "hotkeysSmBorderWidth",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0.875rem",
-							"label": "hotkey-sm-line-height",
+							"label": "hotkeys-sm-line-height",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-sm-line-height"
+									"value": "hotkeys-sm-line-height"
 								}
 							],
-							"name": "hotkeySmLineHeight",
+							"name": "hotkeysSmLineHeight",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0.1875rem",
-							"label": "hotkey-sm-padding-x",
+							"label": "hotkeys-sm-padding-x",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-sm-padding-x"
+									"value": "hotkeys-sm-padding-x"
 								}
 							],
-							"name": "hotkeySmPaddingX",
+							"name": "hotkeysSmPaddingX",
 							"type": "String"
 						},
 						{
 							"defaultValue": "0",
-							"label": "hotkey-sm-padding-y",
+							"label": "hotkeys-sm-padding-y",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-sm-padding-y"
+									"value": "hotkeys-sm-padding-y"
 								}
 							],
-							"name": "hotkeySmPaddingY",
+							"name": "hotkeysSmPaddingY",
 							"type": "String"
 						}
 					],
@@ -4852,38 +4852,38 @@
 					"frontendTokens": [
 						{
 							"defaultValue": "var(--color-neutral-7)",
-							"label": "hotkey-dark-background-color",
+							"label": "hotkeys-dark-background-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-dark-background-color"
+									"value": "hotkeys-dark-background-color"
 								}
 							],
-							"name": "hotkeyDarkBackgroundColor",
+							"name": "hotkeysDarkBackgroundColor",
 							"type": "String"
 						},
 						{
 							"defaultValue": "var(--color-neutral-7)",
-							"label": "hotkey-dark-border-color",
+							"label": "hotkeys-dark-border-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-dark-border-color"
+									"value": "hotkeys-dark-border-color"
 								}
 							],
-							"name": "hotkeyDarkBorderColor",
+							"name": "hotkeysDarkBorderColor",
 							"type": "String"
 						},
 						{
 							"defaultValue": "var(--color-neutral-0)",
-							"label": "hotkey-dark-color",
+							"label": "hotkeys-dark-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-dark-color"
+									"value": "hotkeys-dark-color"
 								}
 							],
-							"name": "hotkeyDarkColor",
+							"name": "hotkeysDarkColor",
 							"type": "String"
 						}
 					],
@@ -4891,42 +4891,42 @@
 					"label": "hotkeys-dark",
 					"name": "hotkeysDark"
 				},
-				{"frontendTokens": 
-					[
+				{
+					"frontendTokens": [
 						{
 							"defaultValue": "var(--color-neutral-1)",
-							"label": "hotkey-light-background-color",
+							"label": "hotkeys-light-background-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-light-background-color"
+									"value": "hotkeys-light-background-color"
 								}
 							],
-							"name": "hotkeyDarkBackgroundColor",
+							"name": "hotkeysDarkBackgroundColor",
 							"type": "String"
 						},
 						{
 							"defaultValue": "var(--color-neutral-5)",
-							"label": "hotkey-light-border-color",
+							"label": "hotkeys-light-border-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-light-border-color"
+									"value": "hotkeys-light-border-color"
 								}
 							],
-							"name": "hotkeyDarkBorderColor",
+							"name": "hotkeysDarkBorderColor",
 							"type": "String"
 						},
 						{
 							"defaultValue": "var(--color-neutral-5)",
-							"label": "hotkey-light-color",
+							"label": "hotkeys-light-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "hotkey-light-color"
+									"value": "hotkeys-light-color"
 								}
 							],
-							"name": "hotkeyDarkColor",
+							"name": "hotkeysDarkColor",
 							"type": "String"
 						}
 					],

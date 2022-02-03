@@ -1,46 +1,46 @@
 $c-kbd: (
-	background-color: var(--color-hotkey-background),
-	border-color: var(--color-hotkey-border),
-	border-width: var(--hotkey-border-width),
-	color: var(--color-hotkey),
-	font-size: var(--hotkey-font-size),
-	line-height: var(--hotkey-line-height),
-	height: var(--hotkey-height),
+	background-color: var(--hotkeys-background-color),
+	border-color: var(--hotkeys-border-color),
+	border-width: var(--hotkeys-border-width),
+	color: var(--hotkeys-color),
+	font-size: var(--hotkeys-font-size),
+	line-height: var(--hotkeys-line-height),
+	height: var(--hotkeys-height),
 	min-width: 1rem,
-	padding-bottom: var(--hotkey-padding-y),
-	padding-left: var(--hotkey-padding-x),
-	padding-right: var(--hotkey-padding-x),
-	padding-top: var(--hotkey-padding-y),
+	padding-bottom: var(--hotkeys-padding-y),
+	padding-left: var(--hotkeys-padding-x),
+	padding-right: var(--hotkeys-padding-x),
+	padding-top: var(--hotkeys-padding-y),
 );
 
 $c-kbd-lg: (
-	border-width: var(--hotkey-lg-border-width),
-	font-size: var(--hotkey-lg-font-size),
-	line-height: var(--hotkey-lg-line-height),
-	padding-bottom: var(--hotkey-lg-padding-y),
-	padding-left: var(--hotkey-lg-padding-x),
-	padding-right: var(--hotkey-lg-padding-x),
-	padding-top: var(--hotkey-lg-padding-y),
+	border-width: var(--hotkeys-lg-border-width),
+	font-size: var(--hotkeys-lg-font-size),
+	line-height: var(--hotkeys-lg-line-height),
+	padding-bottom: var(--hotkeys-lg-padding-y),
+	padding-left: var(--hotkeys-lg-padding-x),
+	padding-right: var(--hotkeys-lg-padding-x),
+	padding-top: var(--hotkeys-lg-padding-y),
 );
 
 $c-kbd-sm: (
-	border-width: var(--hotkey-sm-border-width),
-	font-size: var(--hotkey-sm-font-size),
-	line-height: var(--hotkey-sm-line-height),
-	padding-bottom: var(--hotkey-sm-padding-y),
-	padding-left: var(--hotkey-sm-padding-x),
-	padding-right: var(--hotkey-sm-padding-x),
-	padding-top: var(--hotkey-sm-padding-y),
+	border-width: var(--hotkeys-sm-border-width),
+	font-size: var(--hotkeys-sm-font-size),
+	line-height: var(--hotkeys-sm-line-height),
+	padding-bottom: var(--hotkeys-sm-padding-y),
+	padding-left: var(--hotkeys-sm-padding-x),
+	padding-right: var(--hotkeys-sm-padding-x),
+	padding-top: var(--hotkeys-sm-padding-y),
 );
 
 $c-kbd-dark: (
-	background-color: var(--hotkey-dark-background-color),
-	border-color: var(--hotkey-dark-border-color),
-	color: var(--hotkey-dark-color),
+	background-color: var(--hotkeys-dark-background-color),
+	border-color: var(--hotkeys-dark-border-color),
+	color: var(--hotkeys-dark-color),
 );
 
 $c-kbd-light: (
-	background-color: var(--hotkey-light-background-color),
-	border-color: var(--hotkey-light-border-color),
-	color: var(--hotkey-light-color),
+	background-color: var(--hotkeys-light-background-color),
+	border-color: var(--hotkeys-light-border-color),
+	color: var(--hotkeys-light-color),
 );
