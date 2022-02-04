@@ -137,6 +137,8 @@ AUI.add(
 			_defSelectFn(event) {
 				var instance = this;
 
+				const mention = document.getElementById('mentionResult');
+
 				var text = event.result.text;
 
 				var tplReplace = instance.get('tplReplace');
@@ -146,6 +148,8 @@ AUI.add(
 				}
 
 				instance._inputNode.focus();
+
+				mention.style.display = 'none';
 
 				instance._updateValue(text);
 
