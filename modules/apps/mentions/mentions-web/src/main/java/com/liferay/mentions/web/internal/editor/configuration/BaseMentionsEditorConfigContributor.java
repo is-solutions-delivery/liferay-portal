@@ -80,6 +80,7 @@ public class BaseMentionsEditorConfigContributor
 					).put(
 						"tplResults",
 						StringBundler.concat(
+							"<div id=\"mentionResult\">",
 							"<div class=\"p-1 autofit-row ",
 							"autofit-row-center\"><div class=\"autofit-col ",
 							"inline-item-before\">{portraitHTML}</div><div ",
@@ -87,7 +88,7 @@ public class BaseMentionsEditorConfigContributor
 							"<strong class=\"text-truncate\">{fullName}",
 							"</strong><div class=\"autofit-col-expand\">",
 							"<small class=\"text-truncate\">@{screenName}",
-							"</small></div></div></div>")
+							"</small></div></div></div></div>")
 					))
 			));
 
