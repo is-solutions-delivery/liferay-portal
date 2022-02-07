@@ -12,17 +12,31 @@
  * details.
  */
 
-type ContainerProps = {
-	className?: string;
-	title?: string;
+import {ReactNode} from 'react';
+
+type QAItem = {
+	title: string;
+	value: string | ReactNode;
 };
 
-const Container: React.FC<ContainerProps> = ({children, className, title}) => (
-	<div className={`bg-white border-1 p-4 rounded-xs ${className}`}>
-		{title && <h5>{title}</h5>}
+type QATableProps = {
+	items: QAItem[];
+};
 
-		{children}
-	</div>
-);
+const QATable: React.FC<QATableProps> = ({items}) => {
+	return (
+		<table className="qa">
+			<tbody>
+				{items.map((item, index) => (
+					<tr key={index}>
+						<th>{item.title}</th>
 
-export default Container;
+						<td>{item.value}</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	);
+};
+
+export default QATable;
