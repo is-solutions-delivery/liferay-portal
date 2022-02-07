@@ -23,20 +23,18 @@ type QATableProps = {
 	items: QAItem[];
 };
 
-const QATable: React.FC<QATableProps> = ({items}) => {
-	return (
-		<table className="qa">
-			<tbody>
-				{items.map((item, index) => (
-					<tr key={index}>
-						<th>{item.title}</th>
+const QATable: React.FC<QATableProps> = ({items}) => (
+	<table className="qa">
+		<tbody>
+			{items.map((item, index) => (
+				<tr key={index}>
+					<th>{item.title}</th>
 
-						<td>{item.value}</td>
-					</tr>
-				))}
-			</tbody>
-		</table>
-	);
-};
+					<td>{item.value}</td>
+				</tr>
+			))}
+		</tbody>
+	</table>
+);
 
 export default QATable;
