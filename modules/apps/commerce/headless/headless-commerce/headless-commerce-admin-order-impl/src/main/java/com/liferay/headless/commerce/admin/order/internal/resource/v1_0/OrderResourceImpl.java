@@ -561,6 +561,13 @@ public class OrderResourceImpl
 				commerceShippingMethod.getCommerceShippingMethodId();
 		}
 
+		// Update nested resources
+
+		commerceOrder = _updateNestedResources(
+			order, commerceOrder,
+			_serviceContextHelper.getServiceContext(
+				commerceOrder.getGroupId()));
+
 		commerceOrder = _commerceOrderService.updateCommerceOrder(
 			GetterUtil.getString(
 				order.getExternalReferenceCode(),
@@ -652,13 +659,6 @@ public class OrderResourceImpl
 				contextCompany.getCompanyId(), CommerceOrder.class,
 				commerceOrder.getPrimaryKey(), customFields);
 		}
-
-		// Update nested resources
-
-		commerceOrder = _updateNestedResources(
-			order, commerceOrder,
-			_serviceContextHelper.getServiceContext(
-				commerceOrder.getGroupId()));
 
 		if (Validator.isNotNull(order.getOrderStatus()) &&
 			(commerceOrder.getOrderStatus() != order.getOrderStatus())) {
