@@ -12,17 +12,31 @@
  * details.
  */
 
-export const PAGINATION_DELTA = [20, 50, 75, 100, 200];
+import {gql} from '@apollo/client';
 
-export const PAGINATION = {
-	delta: [20, 50, 75, 100, 200],
-	ellipsisBuffer: 3,
-};
-
-export const DATA_COLORS = {
-	'metrics.blocked': '#F8D72E',
-	'metrics.failed': '#E73A45',
-	'metrics.incomplete': '#E3E9EE',
-	'metrics.passed': '#3CD587',
-	'metrics.test-fix': '#59BBFC',
-};
+export const getTestrayRoutines = gql`
+	query getTestrayRoutines(
+		$filter: String
+		$page: Int = 1
+		$pageSize: Int = 20
+		$scopeKey: String
+	) {
+		c {
+			testrayRoutines(
+				filter: $filter
+				page: $page
+				pageSize: $pageSize
+				scopeKey: $scopeKey
+			) {
+				items {
+					name
+					testrayRoutineId
+				}
+				lastPage
+				page
+				pageSize
+				totalCount
+			}
+		}
+	}
+`;

@@ -12,40 +12,105 @@
  * details.
  */
 
+export type Assignee = {
+	name: string;
+	url: string;
+};
+
+export type Assigned = {
+	name?: string;
+	url?: string;
+};
+
+export type Tasks = {
+	blocked?: number;
+	failed?: number;
+	incomplete?: number;
+	passed?: number;
+	test_fix?: number;
+};
+
+export type Subtask = {
+	assignee: any;
+	erro: string;
+	name: string;
+	score: number;
+	status: string;
+	tests: number;
+};
+
+export type Progress = {
+	incomplete: number;
+	other: number;
+	self: number;
+};
+
 type Routine = {
 	assigned?: any;
 	buildName?: any;
 	progress?: number;
 	projectName?: any;
 	routineName?: any;
-	score?: {passed: number; total: number};
+	score: Progress;
 	startDate?: any;
 	status?: any;
 	task?: any;
 };
-
-const assigned = [
-	{
-		name: 'John Doe',
-		url: 'https://picsum.photos/200',
-	},
-	{
-		name: 'John Doe',
-		url: 'https://picsum.photos/200',
-	},
-	{
-		name: 'John Doe',
-		url: 'https://picsum.photos/200',
-	},
-	{
-		name: 'John Doe',
-		url: 'https://picsum.photos/200',
-	},
-];
+export enum status {
+	inAnalysis = 0,
+	open = 1,
+	complete = 2,
+}
 
 const generateItems = <T>(item: T, total = 20): T[] => {
 	return [...new Array(total)].map(() => item);
 };
+
+const assigned = generateItems<Assigned>(
+	{
+		name: 'John Doe',
+	},
+	20
+);
+
+export const assignee = generateItems<Assignee>(
+	{
+		name: 'Matheus Guimarães',
+		url: 'https://picsum.photos/200',
+	},
+	20
+);
+export const tasks = generateItems<Tasks>(
+	{
+		blocked: 12,
+		failed: 31,
+		incomplete: 33,
+		passed: 87,
+		test_fix: 55,
+	},
+	20
+);
+
+export const subtask = generateItems<Subtask>(
+	{
+		assignee,
+		erro: "java.lang.Exception: No results for path: $['users'][0]['id']",
+		name: 'ST-1',
+		score: 10,
+		status: 'in analisys',
+		tests: 5,
+	},
+	20
+);
+
+export const progress = generateItems<Progress>(
+	{
+		incomplete: 10,
+		other: 0,
+		self: 101,
+	},
+	20
+);
 
 export const routines = generateItems<Routine>(
 	{
@@ -55,10 +120,153 @@ export const routines = generateItems<Routine>(
 		progress: 20,
 		projectName: 'Liferay Portal 7.4',
 		routineName: 'CE Package Tester',
-		score: {passed: 985, total: 4589},
+		score: progress[0],
 		startDate: 'a day ago',
 		status: 'IN ANALYZES',
 		task: 'CE Package Tester - 7.4.3.10-ga10 - 3099 - 2022-01-31[08:44:04]',
 	},
-	5
+	20
 );
+
+// Tomcat 9.0 Chrome 86.0 IBM DB2 11.1 Oracle JDK 8 64 Bit CentOS 7 64 Bit
+
+const name = 'Tomcat';
+
+export const runs = [
+	{
+		blocked: 0,
+		failed: 1074,
+		incomplete: 1,
+		name: `1 ${name}`,
+		passed: 1318,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 818,
+		incomplete: 2,
+		name: `2 ${name}`,
+		passed: 9779,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 2393,
+		incomplete: 0,
+		name: `3 ${name}`,
+		passed: 0,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 93,
+		incomplete: 2,
+		name: `4 ${name}`,
+		passed: 2071,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 78,
+		incomplete: 2,
+		name: `5 ${name}`,
+		passed: 2411,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 134,
+		incomplete: 2,
+		name: `6 ${name}`,
+		passed: 2258,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 0,
+		incomplete: 0,
+		name: `7 ${name}`,
+		passed: 0,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 0,
+		incomplete: 0,
+		name: `8 ${name}`,
+		passed: 0,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 3332,
+		incomplete: 2,
+		name: `9 ${name}`,
+		passed: 2411,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 93,
+		incomplete: 2,
+		name: `10 ${name}`,
+		passed: 2071,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 78,
+		incomplete: 2,
+		name: `11 ${name}`,
+		passed: 2411,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 134,
+		incomplete: 2,
+		name: `12 ${name}`,
+		passed: 2258,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 0,
+		incomplete: 0,
+		name: `13 ${name}`,
+		passed: 0,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 93,
+		incomplete: 2,
+		name: `14 ${name}`,
+		passed: 2071,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 78,
+		incomplete: 2,
+		name: `15 ${name}`,
+		passed: 2411,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 134,
+		incomplete: 2,
+		name: `16 ${name}`,
+		passed: 2258,
+		test_fix: 0,
+	},
+	{
+		blocked: 0,
+		failed: 0,
+		incomplete: 0,
+		name: `17 ${name}`,
+		passed: 0,
+		test_fix: 0,
+	},
+];

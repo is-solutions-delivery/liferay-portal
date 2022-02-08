@@ -17,9 +17,11 @@ body {
 liferay-remote-app-testray {
 	@import 'variables';
 
+	@import 'typography';
+
+	@import 'components/chart';
 	@import 'components/avatar';
-	@import 'components/layout/header';
-	@import 'components/layout/layout';
-	@import 'components/layout/sidebar';
+	@import 'components/layout';
 	@import 'components/progress_bar';
+	@import 'components/table';
 }

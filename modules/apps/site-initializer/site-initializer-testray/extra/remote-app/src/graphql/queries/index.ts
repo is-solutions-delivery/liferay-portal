@@ -12,17 +12,9 @@
  * details.
  */
 
-export const PAGINATION_DELTA = [20, 50, 75, 100, 200];
-
-export const PAGINATION = {
-	delta: [20, 50, 75, 100, 200],
-	ellipsisBuffer: 3,
-};
-
-export const DATA_COLORS = {
-	'metrics.blocked': '#F8D72E',
-	'metrics.failed': '#E73A45',
-	'metrics.incomplete': '#E3E9EE',
-	'metrics.passed': '#3CD587',
-	'metrics.test-fix': '#59BBFC',
-};
+export * from './testrayBuild';
+export * from './testrayCase';
+export * from './testrayProject';
+export * from './testrayRequirement';
+export * from './testrayRoutine';
+export * from './testraySuite';

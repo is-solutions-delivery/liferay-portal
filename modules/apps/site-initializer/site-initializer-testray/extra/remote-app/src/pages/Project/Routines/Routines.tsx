@@ -19,6 +19,7 @@ import ListView from '../../../components/ListView/ListView';
 import ProgressBar from '../../../components/ProgressBar';
 import {getTestrayRoutines} from '../../../graphql/queries';
 import {Liferay} from '../../../services/liferay/liferay';
+import {progress} from '../../../util/mock';
 
 const Routines = () => {
 	return (
@@ -42,11 +43,8 @@ const Routines = () => {
 							key: 'metrics',
 							render: () => (
 								<ProgressBar
-									blocked={10}
-									failed={0}
-									incomplete={0}
-									passed={90}
-									test_fix={0}
+									bar_style="progress"
+									items={progress[0]}
 								/>
 							),
 							value: 'METRICS',

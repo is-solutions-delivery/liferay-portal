@@ -12,17 +12,16 @@
  * details.
  */
 
-export const PAGINATION_DELTA = [20, 50, 75, 100, 200];
+import {useEffect, useRef} from 'react';
 
-export const PAGINATION = {
-	delta: [20, 50, 75, 100, 200],
-	ellipsisBuffer: 3,
+const usePrevious = <T = any>(value: T) => {
+	const prevRef = useRef<T>();
+
+	useEffect(() => {
+		prevRef.current = value;
+	}, [value]);
+
+	return prevRef.current;
 };
 
-export const DATA_COLORS = {
-	'metrics.blocked': '#F8D72E',
-	'metrics.failed': '#E73A45',
-	'metrics.incomplete': '#E3E9EE',
-	'metrics.passed': '#3CD587',
-	'metrics.test-fix': '#59BBFC',
-};
+export default usePrevious;

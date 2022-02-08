@@ -12,17 +12,29 @@
  * details.
  */
 
-export const PAGINATION_DELTA = [20, 50, 75, 100, 200];
+import {ReactNode} from 'react';
 
-export const PAGINATION = {
-	delta: [20, 50, 75, 100, 200],
-	ellipsisBuffer: 3,
+type QAItem = {
+	title: string;
+	value: string | ReactNode;
 };
 
-export const DATA_COLORS = {
-	'metrics.blocked': '#F8D72E',
-	'metrics.failed': '#E73A45',
-	'metrics.incomplete': '#E3E9EE',
-	'metrics.passed': '#3CD587',
-	'metrics.test-fix': '#59BBFC',
+type QATableProps = {
+	items: QAItem[];
 };
+
+const QATable: React.FC<QATableProps> = ({items}) => (
+	<table className="qa">
+		<tbody>
+			{items.map((item, index) => (
+				<tr key={index}>
+					<th className="small-heading">{item.title}</th>
+
+					<td>{item.value}</td>
+				</tr>
+			))}
+		</tbody>
+	</table>
+);
+
+export default QATable;
