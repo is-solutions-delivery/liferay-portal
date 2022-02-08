@@ -10,7 +10,8 @@ definition {
 
 		User.firstLoginPG();
 
-		//Raylife.createRaylifeSite(siteName = "Raylife");
+		Raylife.createRaylifeSite(siteName = "Raylife");
+
 	}
 
 	tearDown {
@@ -20,7 +21,8 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			//Raylife.tearDownCP();
+
+			Raylife.tearDownCP();
 
 			User.logoutPG();
 		}
