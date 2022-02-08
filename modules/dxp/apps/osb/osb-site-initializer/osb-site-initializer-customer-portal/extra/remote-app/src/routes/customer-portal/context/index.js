@@ -15,6 +15,7 @@ import {useApplicationProvider} from '../../../common/context/AppPropertiesProvi
 import {Liferay} from '../../../common/services/liferay';
 import {
 	getAccountSubscriptionGroups,
+	getAccounts,
 	getKoroneikiAccounts,
 	getStructuredContentFolders,
 	getUserAccount,
@@ -199,18 +200,37 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 				);
 
 				if (isValid) {
-					const accountBrief = user.accountBriefs?.find(
-						(accountBrief) =>
-							accountBrief.externalReferenceCode ===
-							projectExternalReferenceCode
+					const hasRoleBriefAdministrator = user?.roleBriefs?.some(
+						(role) => role.name === 'Administrator'
 					);
 
-					if (accountBrief) {
-						getProject(projectExternalReferenceCode, accountBrief);
-						getSubscriptionGroups(projectExternalReferenceCode);
-						getStructuredContents();
-						getSessionId();
+					let accountBrief;
+
+					if (hasRoleBriefAdministrator) {
+						const {data: dataAccount} = await client.query({
+							query: getAccounts,
+						});
+
+						if (dataAccount) {
+							accountBrief = dataAccount?.accounts?.items?.find(
+								(account) =>
+									account.externalReferenceCode ===
+									projectExternalReferenceCode
+							);
+						}
 					}
+					else {
+						accountBrief = user.accountBriefs?.find(
+							(accountBrief) =>
+								accountBrief.externalReferenceCode ===
+								projectExternalReferenceCode
+						);
+					}
+
+					getProject(projectExternalReferenceCode, accountBrief);
+					getSubscriptionGroups(projectExternalReferenceCode);
+					getStructuredContents();
+					getSessionId();
 				}
 			}
 		};
