@@ -66,12 +66,9 @@ const Sidebar = () => {
 				<div className="testray-sidebar-item">
 					<Avatar
 						name={Liferay.ThemeDisplay.getUserName()}
+						showName
 						url="https://clayui.com/images/long_user_image.png"
 					/>
-
-					<span className="ml-2">
-						{Liferay.ThemeDisplay.getUserName()}
-					</span>
 				</div>
 			</div>
 		</div>

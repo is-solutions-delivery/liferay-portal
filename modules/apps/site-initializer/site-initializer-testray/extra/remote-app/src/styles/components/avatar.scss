@@ -1,6 +1,7 @@
 .avatar {
 	border: solid 2px #fff;
 	position: relative;
+	cursor: pointer;
 }
 
 .avatar-group {
@@ -14,5 +15,29 @@
 
 	&:not(:last-child) {
 		left: 0;
+	}
+}
+.avatar-skeleton-loader:empty {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+
+	display: block;
+	background: linear-gradient(
+			to right,
+			rgba(255, 255, 255, 0),
+			rgba(255, 255, 255, 0.3) 50%,
+			rgba(255, 255, 255, 0) 80%
+		),
+		lightgray;
+	background-repeat: repeat-y;
+	background-size: 30px 500px;
+	background-position: 0 0;
+	animation: shine 1s infinite;
+}
+
+@keyframes shine {
+	to {
+		background-position: 420% 0;
 	}
 }

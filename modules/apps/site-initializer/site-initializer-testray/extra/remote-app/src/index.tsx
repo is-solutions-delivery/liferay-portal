@@ -29,6 +29,7 @@ import Build from './pages/Project/Routines/Build';
 import Routines from './pages/Project/Routines/Routines';
 import Suites from './pages/Project/Suites';
 import Testflow from './pages/Testflow';
+import {TestFlowTasks} from './pages/Testflow/TestflowTasks';
 
 import './styles/index.scss';
 
@@ -66,7 +67,14 @@ const App = () => (
 
 						<Route element={<Manage />} path="manage" />
 
-						<Route element={<Testflow />} path="testflow" />
+						<Route path="testflow">
+							<Route element={<Testflow />} index />
+
+							<Route
+								element={<TestFlowTasks />}
+								path=":testflowId"
+							/>
+						</Route>
 
 						<Route element={<div>Page not found</div>} path="*" />
 					</Route>

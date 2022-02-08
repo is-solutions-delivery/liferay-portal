@@ -10,6 +10,8 @@
 	padding: 20px 20px 0;
 	transition: all 0.3s cubic-bezier(0.2, 0.72, 0.57, 1);
 	z-index: 1;
+	position: sticky;
+	top: 0;
 
 	.header-container-tabs {
 		.nav-item button {
