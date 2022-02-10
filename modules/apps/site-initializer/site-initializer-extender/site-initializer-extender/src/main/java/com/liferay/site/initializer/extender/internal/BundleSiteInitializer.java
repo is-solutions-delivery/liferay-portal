@@ -2179,11 +2179,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		_addRoles(serviceContext);
-
-		_addResourcePermissions(
-			objectDefinitionIdsStringUtilReplaceValues,
-			"/site-initializer/resource-permissions.json", serviceContext);
+		_addRoles(objectDefinitionIdsStringUtilReplaceValues, serviceContext);
 
 		_addUserAccounts(serviceContext);
 
@@ -2373,7 +2369,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private void _addRoles(ServiceContext serviceContext) throws Exception {
+	private void _addRoles(
+			Map<String, String> objectDefinitionIdsStringUtilReplaceValues,
+			ServiceContext serviceContext)
+		throws Exception {
+
 		String json = _read("/site-initializer/roles.json");
 
 		if (json == null) {
@@ -2385,6 +2385,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			_addRole(jsonArray.getJSONObject(i), serviceContext);
 		}
+
+		_addResourcePermissions(
+			objectDefinitionIdsStringUtilReplaceValues,
+			"/site-initializer/resource-permissions.json", serviceContext);
 	}
 
 	private void _addSAPEntries(ServiceContext serviceContext)
