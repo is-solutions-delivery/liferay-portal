@@ -22,6 +22,7 @@ import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.commerce.account.constants.CommerceAccountConstants;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
+import com.liferay.commerce.product.constants.CPConstants;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CommerceChannel;
@@ -701,6 +702,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		channel = channelResource.postChannel(channel);
 
+		_addDefaultProductDisplayPage(
+			channel,
+			StringUtil.replaceLast(
+				resourcePath, ".json", ".default-product-display-page.json"),
+			serviceContext);
 		_addModelResourcePermissions(
 			CommerceChannel.class.getName(), String.valueOf(channel.getId()),
 			StringUtil.replaceLast(
@@ -1063,6 +1069,50 @@ public class BundleSiteInitializer implements SiteInitializer {
 				TemplateConstants.LANG_TYPE_FTL, _read("ddm-template.ftl", url),
 				false, false, null, null, serviceContext);
 		}
+	}
+
+	private void _addDefaultProductDisplayPage(
+			Channel channel, String resourcePath, ServiceContext serviceContext)
+		throws Exception {
+
+		String json = _read(resourcePath);
+
+		if (json == null) {
+			return;
+		}
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
+
+		Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
+			serviceContext.getScopeGroupId(),
+			jsonObject.getBoolean("privateLayout"),
+			jsonObject.getString("friendlyURL"));
+
+		if (layout == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to create a default product display page from " +
+						"JSON: " + json);
+			}
+
+			return;
+		}
+
+		CommerceChannel commerceChannel =
+			_commerceReferencesHolder.commerceChannelLocalService.
+				getCommerceChannel(channel.getId());
+
+		Settings settings = _settingsFactory.getSettings(
+			new GroupServiceSettingsLocator(
+				commerceChannel.getGroupId(),
+				CPConstants.RESOURCE_NAME_CP_DISPLAY_LAYOUT));
+
+		ModifiableSettings modifiableSettings =
+			settings.getModifiableSettings();
+
+		modifiableSettings.setValue("productLayoutUuid", layout.getUuid());
+
+		modifiableSettings.store();
 	}
 
 	private Long _addDocumentFolder(
