@@ -25,3 +25,7 @@ export function getPaymentMethodURL(orderId, callbackURL) {
 		`${DeliveryAPI}/v1.0/carts/${orderId}/payment-url?callbackURL=${callbackURL}`
 	);
 }
+
+export function checkoutOrder(orderId) {
+	return axios.post(`${DeliveryAPI}/v1.0/carts/${orderId}/checkout`);
+}
