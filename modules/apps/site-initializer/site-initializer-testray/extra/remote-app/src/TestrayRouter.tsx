@@ -43,7 +43,6 @@ import Suites from './pages/Project/Suites';
 import Suite from './pages/Project/Suites/Suite';
 import Testflow from './pages/Testflow';
 import Subtasks from './pages/Testflow/Subtask';
-import TestsDetails from './pages/Testflow/TestDetails';
 import TestflowArchived from './pages/Testflow/TestflowArchived';
 import TestflowOutlet from './pages/Testflow/TestflowOutlet';
 import TestFlowTasks from './pages/Testflow/TestflowTasks';
@@ -151,8 +150,6 @@ const TestrayRoute = () => (
 					<Route element={<Subtasks />} path="subtasks" />
 
 					<Route element={<TestFlowTasks />} path=":testflowId" />
-
-					<Route element={<TestsDetails />} path="details" />
 				</Route>
 
 				<Route element={<div>Page not found</div>} path="*" />
