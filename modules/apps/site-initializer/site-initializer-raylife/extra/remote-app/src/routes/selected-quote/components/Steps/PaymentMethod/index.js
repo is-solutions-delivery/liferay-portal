@@ -22,7 +22,7 @@ import {
 	ACTIONS,
 	SelectedQuoteContext,
 } from '../../../context/SelectedQuoteContextProvider';
-import {getPaymentMethodURL, getPaymentMethods} from '../../../services/Cart';
+import {checkoutOrder, getPaymentMethodURL, getPaymentMethods} from '../../../services/Cart';
 import {createOrder, updateOrder} from '../../../services/Order';
 import {SKU} from '../../../utils/constants';
 import RadioButton from './RadioButton';
@@ -158,6 +158,8 @@ const PaymentMethod = () => {
 		const {orderItem} = method.options.find(({checked}) => checked);
 
 		await updateOrder(method.value, orderItem, orderId);
+
+		await checkoutOrder(orderId);
 
 		const {data: paymentMethodURL} = await getPaymentMethodURL(
 			orderId,
