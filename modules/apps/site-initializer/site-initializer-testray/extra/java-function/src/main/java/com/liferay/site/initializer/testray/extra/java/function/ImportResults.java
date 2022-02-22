@@ -213,10 +213,72 @@ public class ImportResults {
 		}
 	}
 
-	public void addTestrayTeam(int projectId, Document document) {
+	public void addTestrayComponent(int projectId, int teamId, Document document) {
 		Map<String, String> map = new HashMap<>();
 
 		map.put("testrayProjectId", String.valueOf(projectId));
+
+		map.put("testrayTeamId", String.valueOf(teamId));
+
+		try {
+			NodeList testcases = document.getElementsByTagName("testcase");
+
+			for (int i = 0; i < testcases.getLength(); i++) {
+				Node testCase = testcases.item(i);
+
+				Element element = (Element)testCase;
+
+				NodeList properties = element.getElementsByTagName("property");
+
+				for (int property = 0; property < properties.getLength();
+					 property++) {
+
+					Node node = properties.item(property);
+
+					if ((node.getNodeType() == Node.ELEMENT_NODE) &&
+						!node.getNodeName(
+						).equals(
+							"#text"
+						) &&
+						(node.getAttributes(
+						).getLength() > 0)) {
+
+						String name = node.getAttributes(
+						).getNamedItem(
+							"name"
+						).getTextContent();
+
+						if (name.equals("testray.main.component.name")) {
+
+							String value = node.getAttributes(
+							).getNamedItem(
+								"value"
+							).getTextContent();
+
+							map.put("name", value);
+						}
+					}
+				}
+
+				HttpClient.post(
+					PropsValues.TESTRAY_BASE_URL + "testraycomponents/scopes/" +
+						_groupId,
+					new JSONObject(map));
+			}
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+		}
+	}
+
+	public int addTestrayTeam(int projectId, Document document) {
+		Map<String, String> map = new HashMap<>();
+
+		map.put("testrayProjectId", String.valueOf(projectId));
+
+		String teamName = null;
+
+		int teamId = -1;
 
 		try {
 			NodeList testcases = document.getElementsByTagName("testcase");
@@ -253,20 +315,51 @@ public class ImportResults {
 								"value"
 							).getTextContent();
 
+							teamName = value;
 							map.put("name", value);
 						}
 					}
 				}
 
-				HttpClient.post(
+		JSONObject responseJSONObject = HttpClient.get(
+			PropsValues.TESTRAY_BASE_URL + "testrayteams/scopes/" +
+				_groupId);
+
+		JSONArray teamsJSONArray = responseJSONObject.getJSONArray("items");
+
+		//TODO use filter
+
+		for (int j = 0; j < teamsJSONArray.length(); j++) {
+			JSONObject teamJSONObject = teamsJSONArray.getJSONObject(i);
+
+			if (teamJSONObject.getString(
+					"name"
+				).equals(
+					teamName
+				)) {
+
+				teamId = teamJSONObject.getInt("id");
+				break;
+			}
+		}
+
+		if ((teamId == -1) && !map.isEmpty()) {
+			responseJSONObject = HttpClient.post(
 					PropsValues.TESTRAY_BASE_URL + "testrayteams/scopes/" +
 						_groupId,
 					new JSONObject(map));
+
+			return responseJSONObject.getInt("id");
+				}
+
+			return teamId;
 			}
 		}
+		
 		catch (Exception exception) {
 			exception.printStackTrace();
 		}
+		return teamId;
 	}
 
 	public int addTestrayProject(Document document) throws Exception {
@@ -439,9 +532,11 @@ public class ImportResults {
 
 			int projectId = addTestrayProject(document);
 
+			int teamId = addTestrayTeam(projectId, document);
+
 			addTestrayBuild(projectId, document);
 			addTestrayCase(projectId, document);
-			addTestrayTeam(projectId, document);
+			addTestrayComponent(projectId,teamId, document);
 		}
 	}
 
