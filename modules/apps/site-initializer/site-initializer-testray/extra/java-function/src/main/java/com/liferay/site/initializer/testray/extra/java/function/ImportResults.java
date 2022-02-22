@@ -199,6 +199,79 @@ public class ImportResults {
 		}
 	}
 
+	public void addProductVersion(int projectId, Document document){
+		Map<String, String> map = new HashMap<>();
+
+		String projectVersionName = null;
+
+		try {
+			NodeList properties = document.getElementsByTagName("property");
+
+				for (int property = 0; property < properties.getLength();
+					 property++) {
+
+					Node node = properties.item(property);
+
+					if ((node.getNodeType() == Node.ELEMENT_NODE) &&
+						!node.getNodeName(
+						).equals(
+							"#text"
+						) &&
+						(node.getAttributes(
+						).getLength() > 0)) {
+
+						String name = node.getAttributes(
+						).getNamedItem(
+							"name"
+						).getTextContent();
+
+						if (name.equals("testray.product.version")) {
+							String value = node.getAttributes(
+							).getNamedItem(
+								"value"
+							).getTextContent();
+
+							projectVersionName = value;
+
+							map.put("name", value);
+							map.put("testrayProjectId", Integer.toString(projectId));
+
+							break;
+						}
+					}
+
+			}
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+		}
+
+		JSONObject responseJSONObject = HttpClient.get(
+			PropsValues.TESTRAY_BASE_URL + "testrayproductversions/scopes/" +
+			_groupId);
+
+		JSONArray projectsVersionsJSONArray = responseJSONObject.getJSONArray("items");
+
+		//TODO use filter
+
+		for (int item = 0; item < projectsVersionsJSONArray.length(); item++) {
+			JSONObject projectJSONObject = projectsVersionsJSONArray.getJSONObject(item);
+
+			if (projectJSONObject.getString(
+				"name"
+			).equals(
+				projectVersionName
+			)) {
+
+				return;
+			}
+		}
+
+			responseJSONObject = HttpClient.post(
+				PropsValues.TESTRAY_BASE_URL + "testrayproductversions/scopes/" +
+				_groupId,
+				new JSONObject(map));
+	}
 	public int addTestrayProject(Document document) throws Exception {
 		Map<String, String> map = new HashMap<>();
 
