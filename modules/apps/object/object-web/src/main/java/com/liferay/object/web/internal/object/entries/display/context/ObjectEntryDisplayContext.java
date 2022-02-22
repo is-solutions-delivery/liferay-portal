@@ -84,7 +84,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -724,25 +723,33 @@ public class ObjectEntryDisplayContext {
 		return true;
 	}
 
+	private void _removeTimeFromDateString(
+		DDMFormField ddmFormField, Map<String, Serializable> values) {
+
+		Serializable value = values.get(ddmFormField.getName());
+
+		if (value == null) {
+			return;
+		}
+
+		String valueString = String.valueOf(value);
+
+		values.put(
+			ddmFormField.getName(),
+			valueString.replaceAll(
+				" [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}.[0-9]", ""));
+	}
+
 	private void _setDateDDMFormFieldValue(
 		List<DDMFormField> ddmFormFields, Map<String, Serializable> values) {
 
 		for (DDMFormField ddmFormField : ddmFormFields) {
-			if (!StringUtil.equals(ddmFormField.getType(), "date")) {
-				continue;
+			if (StringUtil.equals(ddmFormField.getType(), "date")) {
+				_removeTimeFromDateString(ddmFormField, values);
 			}
-
-			for (Map.Entry<String, Serializable> entry : values.entrySet()) {
-				if (!Objects.equals(entry.getKey(), ddmFormField.getName())) {
-					continue;
-				}
-
-				String dateString = String.valueOf(entry.getValue());
-
-				values.replace(
-					entry.getKey(), entry.getValue(),
-					dateString.replaceAll(
-						" [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}.[0-9]", ""));
+			else if (StringUtil.equals(ddmFormField.getType(), "fieldset")) {
+				_setDateDDMFormFieldValue(
+					ddmFormField.getNestedDDMFormFields(), values);
 			}
 		}
 	}

@@ -14,6 +14,7 @@
 
 import ClayButton from '@clayui/button';
 import {useModal} from '@clayui/modal';
+import {openToast} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 
@@ -21,31 +22,48 @@ import SaveTemplateModal from './SaveTemplateModal';
 import {
 	SCHEMA_SELECTED_EVENT,
 	TEMPLATE_SELECTED_EVENT,
-	TEMPLATE_SOILED,
+	TEMPLATE_SOILED_EVENT,
 } from './constants';
 
 function SaveTemplate({
 	evaluateForm,
 	formIsValid,
+	formIsVisible,
 	formSaveAsTemplateDataQuerySelector,
 	formSaveAsTemplateURL,
 	portletNamespace,
+	type,
 }) {
 	const [disable, setDisable] = useState(true);
-	const [visible, setVisible] = useState(false);
+	const [modalVisible, setModalVisible] = useState(false);
 
 	const {observer, onClose} = useModal({
-		onClose: () => setVisible(false),
+		onClose: () => setModalVisible(false),
 	});
+
 	const useTemplateMappingRef = useRef();
 
 	const onButtonClick = useCallback(() => {
-		evaluateForm();
+		if (type === 'import') {
+			evaluateForm();
 
-		if (formIsValid) {
-			setVisible(true);
+			if (!formIsVisible) {
+				openToast({
+					message: Liferay.Language.get(
+						'please-upload-a-file-and-select-the-required-columns-before-saving-a-template'
+					),
+					type: 'danger',
+				});
+			}
+
+			if (formIsValid) {
+				setModalVisible(true);
+			}
 		}
-	}, [evaluateForm, formIsValid]);
+		else {
+			setModalVisible(true);
+		}
+	}, [evaluateForm, formIsValid, formIsVisible, type]);
 
 	useEffect(() => {
 		function handleSchemaChange({schema}) {
@@ -65,17 +83,18 @@ function SaveTemplate({
 
 		function handleTemplateSoiled() {
 			useTemplateMappingRef.current = false;
+
 			setDisable(false);
 		}
 
 		Liferay.on(SCHEMA_SELECTED_EVENT, handleSchemaChange);
 		Liferay.on(TEMPLATE_SELECTED_EVENT, handleTemplateSelection);
-		Liferay.on(TEMPLATE_SOILED, handleTemplateSoiled);
+		Liferay.on(TEMPLATE_SOILED_EVENT, handleTemplateSoiled);
 
 		return () => {
 			Liferay.detach(SCHEMA_SELECTED_EVENT, handleSchemaChange);
 			Liferay.detach(TEMPLATE_SELECTED_EVENT, handleTemplateSelection);
-			Liferay.detach(TEMPLATE_SOILED, handleTemplateSoiled);
+			Liferay.detach(TEMPLATE_SOILED_EVENT, handleTemplateSoiled);
 		};
 	}, [portletNamespace]);
 
@@ -91,7 +110,7 @@ function SaveTemplate({
 				{Liferay.Language.get('save-as-template')}
 			</ClayButton>
 
-			{visible && (
+			{modalVisible && (
 				<SaveTemplateModal
 					closeModal={onClose}
 					formDataQuerySelector={formSaveAsTemplateDataQuerySelector}
@@ -109,6 +128,7 @@ SaveTemplate.propTypes = {
 	formSaveAsTemplateDataQuerySelector: PropTypes.string.isRequired,
 	formSaveAsTemplateURL: PropTypes.string.isRequired,
 	portletNamespace: PropTypes.string.isRequired,
+	type: PropTypes.oneOf(['import', 'export']),
 };
 
 export default SaveTemplate;

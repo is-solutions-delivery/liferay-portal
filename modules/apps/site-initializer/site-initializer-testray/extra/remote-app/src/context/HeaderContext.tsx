@@ -16,6 +16,20 @@ import {createContext, useReducer} from 'react';
 
 import {ActionMap} from '../types';
 
+type DropdownItem = {
+	divider?: boolean;
+	icon?: string;
+	label: string;
+	path: string;
+};
+
+type DropdownSection = {
+	items: DropdownItem[];
+	title?: string;
+};
+
+export type Dropdown = DropdownSection[];
+
 export type HeaderTabs = {
 	active: boolean;
 	path: string;
@@ -29,11 +43,18 @@ export type HeaderTitle = {
 };
 
 type InitialState = {
+	dropdown: Dropdown;
 	heading: HeaderTitle[];
 	tabs: HeaderTabs[];
 };
 
 export const initialState: InitialState = {
+	dropdown: [
+		{
+			items: [],
+			title: '',
+		},
+	],
 	heading: [
 		{
 			category: 'PROJECT',
@@ -48,12 +69,14 @@ export const HeaderContext = createContext<
 >([initialState, () => null]);
 
 export enum HeaderTypes {
+	SET_DROPDOWN = 'SET_DROPDOWN',
+	SET_HEADING = 'SET_HEADING',
 	SET_RESET_HEADER = 'SET_RESET_HEADER',
 	SET_TABS = 'SET_TABS',
-	SET_HEADING = 'SET_HEADING',
 }
 
 export type HeaderActionsPayload = {
+	[HeaderTypes.SET_DROPDOWN]: Dropdown;
 	[HeaderTypes.SET_HEADING]: {append?: boolean; heading: HeaderTitle[]};
 	[HeaderTypes.SET_RESET_HEADER]: null;
 	[HeaderTypes.SET_TABS]: HeaderTabs[];
@@ -65,6 +88,13 @@ export type AppActions = ActionMap<HeaderActionsPayload>[keyof ActionMap<
 
 const reducer = (state: InitialState, action: AppActions): InitialState => {
 	switch (action.type) {
+		case HeaderTypes.SET_DROPDOWN: {
+			return {
+				...state,
+				dropdown: action.payload,
+			};
+		}
+
 		case HeaderTypes.SET_TABS: {
 			return {
 				...state,

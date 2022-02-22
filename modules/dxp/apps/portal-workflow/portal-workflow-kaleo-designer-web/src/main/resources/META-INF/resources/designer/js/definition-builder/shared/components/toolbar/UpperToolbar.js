@@ -75,7 +75,7 @@ export default function UpperToolbar({displayNames, languageIds, version}) {
 		}
 	};
 
-	const getXMLContent = (publishing = false) => {
+	const getXMLContent = () => {
 		let xmlContent;
 
 		if (currentEditor) {
@@ -91,7 +91,7 @@ export default function UpperToolbar({displayNames, languageIds, version}) {
 				},
 				elements.filter(isNode),
 				elements.filter(isEdge),
-				publishing
+				true
 			);
 		}
 
@@ -144,7 +144,7 @@ export default function UpperToolbar({displayNames, languageIds, version}) {
 
 			publishDefinitionRequest({
 				active,
-				content: getXMLContent(true),
+				content: getXMLContent(),
 				name: definitionId,
 				title: definitionTitle,
 				title_i18n: translations,

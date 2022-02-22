@@ -15,7 +15,7 @@
 import {HashRouter, Route, Routes} from 'react-router-dom';
 
 import Layout from './components/Layout/Layout';
-import Manage from './pages/Manage';
+import Manager from './pages/Manage';
 import OutletBridge from './pages/OutletBridge';
 import Cases from './pages/Project/Cases';
 import Case from './pages/Project/Cases/Case';
@@ -43,6 +43,7 @@ import Routines from './pages/Project/Routines/Routines';
 import Suites from './pages/Project/Suites';
 import Suite from './pages/Project/Suites/Suite';
 import Testflow from './pages/Testflow';
+import Subtasks from './pages/Testflow/Subtask';
 import TestflowArchived from './pages/Testflow/TestflowArchived';
 import TestflowOutlet from './pages/Testflow/TestflowOutlet';
 import TestFlowTasks from './pages/Testflow/TestflowTasks';
@@ -137,12 +138,16 @@ const TestrayRoute = () => (
 					</Route>
 				</Route>
 
-				<Route element={<Manage />} path="manage" />
+				<Route element={<OutletBridge />} path="manage">
+					<Route element={<Manager />} path="user" />
+				</Route>
 
 				<Route element={<TestflowOutlet />} path="testflow">
 					<Route element={<Testflow />} index />
 
 					<Route element={<TestflowArchived />} path="archived" />
+
+					<Route element={<Subtasks />} path="subtasks" />
 
 					<Route element={<TestFlowTasks />} path=":testflowId" />
 				</Route>

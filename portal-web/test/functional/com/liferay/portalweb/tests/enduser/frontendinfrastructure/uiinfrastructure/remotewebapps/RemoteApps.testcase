@@ -18,9 +18,21 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			PortalInstances.tearDownCP();
-
 			RemoteApps.tearDown();
+
+			Navigator.gotoPage(pageName = "Home");
+
+			while (IsElementPresent(locator1 = "Navigation#ANY_SITE_NAV_BUT_HOME")) {
+				var layoutName = selenium.getText("Navigation#ANY_SITE_NAV_BUT_HOME");
+
+				JSONLayout.deletePublicLayout(
+					groupName = "Guest",
+					layoutName = "${layoutName}");
+
+				Navigator.gotoPage(pageName = "Home");
+			}
+
+			PortalInstances.tearDownCP();
 		}
 	}
 
@@ -306,7 +318,7 @@ definition {
 		task ("Change the Number of Modules to 2") {
 			PageEditor.editLayoutGrid(
 				columnCount = "2",
-				panel = "General");
+				panelList = "General");
 		}
 
 		task ("Add Vanilla Counter in each module") {
@@ -413,7 +425,7 @@ definition {
 		}
 
 		task ("Create Vanilla Counter as a Custom Element") {
-			JSONRemoteApp.addCustomElementRemoteAppAllFields(
+			JSONRemoteApp.addCustomElementRemoteAppEntry(
 				customElementCssurl = "http://remote-component-test.wincent.com/index.css",
 				customElementHtmlName = "vanilla-counter",
 				customElementName = "Vanilla Counter",

@@ -17,14 +17,10 @@ import {fetch, openToast} from 'frontend-js-web';
 
 import TemplateSelect from './TemplateSelect';
 import {
-	HEADLESS_BATCH_PLANNER_URL,
-	HEADLESS_ENDPOINT_POLICY_NAME,
-	NULL_TEMPLATE_VALUE,
 	SCHEMA_SELECTED_EVENT,
 	TEMPLATE_SELECTED_EVENT,
-	TEMPLATE_SOILED,
+	TEMPLATE_SOILED_EVENT,
 } from './constants';
-import {fireTemplateSelectionEvent} from './getMappingFromTemplate';
 
 const HEADERS = new Headers({
 	'content-type': 'application/json',
@@ -73,20 +69,14 @@ export default function ({
 	const taskItemDelegateNameInput = document.querySelector(
 		`#${namespace}taskItemDelegateName`
 	);
-	const externalTypeSelect = document.querySelector(
+	const externalTypeInput = document.querySelector(
 		`#${namespace}externalType`
 	);
 
-	const handleTemplateSelectedEvent = async (event) => {
-		const {template} = event;
-
+	async function handleTemplateSelectedEvent({template}) {
 		if (template) {
-			if (externalTypeSelect) {
-				const externalTypeOption = externalTypeSelect.querySelector(
-					`option[value='${template.externalType}']`
-				);
-
-				externalTypeOption.selected = true;
+			if (template.externalType) {
+				externalTypeInput.value = template.externalType;
 			}
 
 			const headlessTemplateOption = headlessEnpointSelect.querySelector(
@@ -105,23 +95,11 @@ export default function ({
 
 			await handleClassNameSelectChange();
 		}
-	};
-
-	Liferay.on(TEMPLATE_SELECTED_EVENT, handleTemplateSelectedEvent);
-
-	headlessEnpointSelect.addEventListener(
-		'change',
-		handleHeadlessSelectChange
-	);
-
-	internalClassNameSelect.addEventListener(
-		'change',
-		handleClassNameSelectChange
-	);
+	}
 
 	async function handleHeadlessSelectChange(event) {
 		if (event) {
-			Liferay.fire(TEMPLATE_SOILED);
+			Liferay.fire(TEMPLATE_SOILED_EVENT);
 			event.target.disabled = true;
 		}
 
@@ -196,7 +174,7 @@ export default function ({
 
 	async function handleClassNameSelectChange(event) {
 		if (event) {
-			Liferay.fire(TEMPLATE_SOILED);
+			Liferay.fire(TEMPLATE_SOILED_EVENT);
 		}
 
 		const headlessEnpointValue = headlessEnpointSelect.value;
@@ -236,7 +214,7 @@ export default function ({
 
 			const schemaEntry = components.schemas[internalClassNameValue];
 
-			schemaEntry.required.forEach((requiredField) => {
+			schemaEntry.required?.forEach((requiredField) => {
 				schemaEntry.properties[requiredField].required = true;
 			});
 
@@ -254,21 +232,17 @@ export default function ({
 		}
 	}
 
-	setTimeout(() => {
-		const templateSelect = document.getElementById(
-			`${namespace}templateName`
-		);
-		const templateSelectValue =
-			templateSelect.options[templateSelect.selectedIndex].value;
+	Liferay.on(TEMPLATE_SELECTED_EVENT, handleTemplateSelectedEvent);
 
-		fireTemplateSelectionEvent(
-			templateSelectValue,
-			NULL_TEMPLATE_VALUE,
-			TEMPLATE_SELECTED_EVENT,
-			HEADLESS_BATCH_PLANNER_URL,
-			HEADLESS_ENDPOINT_POLICY_NAME
-		);
-	}, 300);
+	headlessEnpointSelect.addEventListener(
+		'change',
+		handleHeadlessSelectChange
+	);
+
+	internalClassNameSelect.addEventListener(
+		'change',
+		handleClassNameSelectChange
+	);
 
 	let initialTemplate;
 

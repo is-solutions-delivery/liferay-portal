@@ -26,6 +26,7 @@ const BASE_PROPS = {
 	formSaveAsTemplateDataQuerySelector: 'form',
 	formSaveAsTemplateURL: 'https://formUrl.test',
 	portletNamespace: 'test',
+	type: 'import',
 };
 const INPUT_VALUE_TEST = 'test';
 

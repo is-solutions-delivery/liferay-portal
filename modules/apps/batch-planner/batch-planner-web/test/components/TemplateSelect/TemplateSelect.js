@@ -45,7 +45,7 @@ const initialTemplate = {
 	externalType: 'JSONL',
 	headlessEndpoint,
 	internalClassName,
-	mapping: mockedMapping,
+	mappings: mockedMapping,
 };
 const mockPlanId = 106902;
 

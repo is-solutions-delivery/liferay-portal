@@ -33,9 +33,10 @@ export const POLL_INTERVAL = 1000;
 export const PROCESS_COMPLETED = 'COMPLETED';
 export const PROCESS_FAILED = 'FAILED';
 export const PROCESS_STARTED = 'STARTED';
-export const SCHEMA_SELECTED_EVENT = 'schema-selected';
-export const TEMPLATE_CREATED = 'TEMPLATE_CREATED';
-export const TEMPLATE_SELECTED_EVENT = 'template-selected';
-export const TEMPLATE_SOILED = 'template-soiled';
+
+export const SCHEMA_SELECTED_EVENT = 'ie-schema-selected';
+export const TEMPLATE_CREATED_EVENT = 'ie-template-created';
+export const TEMPLATE_SELECTED_EVENT = 'ie-template-selected';
+export const TEMPLATE_SOILED_EVENT = 'ie-template-soiled';
 
 export const IMPORT_FILE_FORMATS = [CSV_FORMAT, JSON_FORMAT, JSONL_FORMAT];

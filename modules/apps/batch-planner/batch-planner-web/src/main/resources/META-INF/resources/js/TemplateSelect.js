@@ -17,14 +17,13 @@ import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 
 import {
-	HEADLESS_BATCH_PLANNER_URL,
 	HEADLESS_ENDPOINT_POLICY_NAME,
 	NULL_TEMPLATE_VALUE,
-	TEMPLATE_CREATED,
+	TEMPLATE_CREATED_EVENT,
 	TEMPLATE_SELECTED_EVENT,
-	TEMPLATE_SOILED,
+	TEMPLATE_SOILED_EVENT,
 } from './constants';
-import {fireTemplateSelectionEvent} from './getMappingFromTemplate';
+import {fetchTemplateDetails} from './utilities/dataFetch';
 
 const TemplateSelect = ({
 	initialTemplate,
@@ -34,31 +33,26 @@ const TemplateSelect = ({
 	const [templateOptions, setTemplateOptions] = useState(
 		initialTemplateOptions
 	);
-	const [selectedTemplateId, setTemplate] = useState(
-		initialTemplateOptions.find((option) => option.selected)?.value
-	);
+	const [selectedTemplateId, setSelectedTemplateId] = useState(() => {
+		const id = initialTemplateOptions.find((option) => option.selected)
+			?.value;
+
+		return id || NULL_TEMPLATE_VALUE;
+	});
 
 	useEffect(() => {
-		function handleTemplateCreated({batchPlannerPlanId, name}) {
-			setTemplate(batchPlannerPlanId);
+		function handleTemplateCreated({template}) {
+			setSelectedTemplateId(template.batchPlannerPlanId);
 
 			setTemplateOptions((options) => [
-				{label: name, value: batchPlannerPlanId},
+				{label: template.name, value: template.batchPlannerPlanId},
 				...options,
 			]);
-
-			fireTemplateSelectionEvent(
-				batchPlannerPlanId,
-				NULL_TEMPLATE_VALUE,
-				TEMPLATE_SELECTED_EVENT,
-				HEADLESS_BATCH_PLANNER_URL,
-				HEADLESS_ENDPOINT_POLICY_NAME
-			);
 		}
 
-		Liferay.on(TEMPLATE_CREATED, handleTemplateCreated);
+		Liferay.on(TEMPLATE_CREATED_EVENT, handleTemplateCreated);
 
-		return () => Liferay.detach(TEMPLATE_CREATED);
+		return () => Liferay.detach(TEMPLATE_CREATED_EVENT);
 	}, []);
 
 	useEffect(() => {
@@ -71,28 +65,49 @@ const TemplateSelect = ({
 
 	useEffect(() => {
 		function handleTemplateDirty() {
-			setTemplate(NULL_TEMPLATE_VALUE);
+			setSelectedTemplateId(NULL_TEMPLATE_VALUE);
 		}
 
-		Liferay.on(TEMPLATE_SOILED, handleTemplateDirty);
+		Liferay.on(TEMPLATE_SOILED_EVENT, handleTemplateDirty);
 
 		return () => {
-			Liferay.detach(TEMPLATE_SOILED, handleTemplateDirty);
+			Liferay.detach(TEMPLATE_SOILED_EVENT, handleTemplateDirty);
 		};
 	}, []);
 
-	const onChange = (event) => {
+	const onChange = async (event) => {
 		const newTemplateId = event.target.value;
 
-		setTemplate(newTemplateId);
+		setSelectedTemplateId(newTemplateId);
 
-		fireTemplateSelectionEvent(
-			newTemplateId,
-			NULL_TEMPLATE_VALUE,
-			TEMPLATE_SELECTED_EVENT,
-			HEADLESS_BATCH_PLANNER_URL,
-			HEADLESS_ENDPOINT_POLICY_NAME
+		if (!newTemplateId) {
+			Liferay.fire(TEMPLATE_SELECTED_EVENT, {
+				template: null,
+			});
+
+			return;
+		}
+
+		const templateDetails = await fetchTemplateDetails(newTemplateId);
+
+		const headlessEndpointPolicy = templateDetails.policies.find(
+			(policy) => policy.name === HEADLESS_ENDPOINT_POLICY_NAME
 		);
+
+		Liferay.fire(TEMPLATE_SELECTED_EVENT, {
+			template: {
+				externalType: templateDetails.externalType,
+				headlessEndpoint: headlessEndpointPolicy?.value,
+				internalClassName: templateDetails.internalClassName,
+				mappings: templateDetails.mappings.reduce(
+					(mappings, mapping) => ({
+						...mappings,
+						[mapping.internalFieldName]: mapping.externalFieldName,
+					}),
+					{}
+				),
+			},
+		});
 	};
 
 	const selectId = `${portletNamespace}templateName`;
@@ -105,7 +120,7 @@ const TemplateSelect = ({
 				id={selectId}
 				name={selectId}
 				onChange={onChange}
-				value={selectedTemplateId}
+				value={selectedTemplateId || ''}
 			>
 				<ClaySelect.Option value={NULL_TEMPLATE_VALUE} />
 
@@ -126,7 +141,12 @@ TemplateSelect.propTypes = {
 	selectedTemplateClassName: PropTypes.string,
 	selectedTemplateHeadlessEndpoint: PropTypes.string,
 	selectedTemplateMapping: PropTypes.object,
-	templatesOptions: PropTypes.arrayOf(PropTypes.object),
+	templateOptions: PropTypes.arrayOf(
+		PropTypes.shape({
+			label: PropTypes.string,
+			value: PropTypes.number,
+		})
+	),
 };
 
 export default TemplateSelect;

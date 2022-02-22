@@ -13,71 +13,72 @@
  * details.
  */
 
-import {Link} from 'react-router-dom';
-
 import {AvatarGroup} from '../../components/Avatar';
 import Container from '../../components/Layout/Container';
 import ProgressBar from '../../components/ProgressBar/';
+import StatusBadge from '../../components/StatusBadge';
 import Table from '../../components/Table';
 import {routines} from '../../util/mock';
 
-const TestFlow = () => {
-	return (
-		<Container title="Tasks">
-			<Table
-				columns={[
-					{
-						key: 'status',
-						render: (value: string) => (
-							<Link
-								to={`/testflow/${value
-									.toLowerCase()
-									.replace(' ', '_')}`}
-							>
-								<span className="label label-inverse-secondary">
-									{value}
-								</span>
-							</Link>
-						),
-						value: 'Status',
-					},
-					{key: 'startDate', value: 'Start Date'},
-					{key: 'task', value: 'Task'},
-					{key: 'projectName', value: 'Project Name'},
-					{key: 'routineName', value: 'Routine Name'},
-					{key: 'buildName', value: 'Build Name'},
-					{
-						key: 'score',
-						render: ({incomplete, other, self}: any) => {
-							const total = self + other + incomplete;
-							const passed = self + other;
+const TestFlow = () => (
+	<Container title="Tasks">
+		<Table
+			columns={[
+				{
+					clickable: true,
+					key: 'status',
+					render: (status: string) => (
+						<StatusBadge type="failed">{status}</StatusBadge>
+					),
+					value: 'Status',
+				},
+				{
+					clickable: true,
+					key: 'startDate',
+					value: 'Start Date',
+				},
+				{clickable: true, key: 'task', value: 'Task'},
+				{
+					clickable: true,
+					key: 'projectName',
+					value: 'Project Name',
+				},
+				{
+					clickable: true,
+					key: 'routineName',
+					value: 'Routine Name',
+				},
+				{clickable: true, key: 'buildName', value: 'Build Name'},
+				{
+					key: 'score',
+					render: ({incomplete, other, self}: any) => {
+						const total = self + other + incomplete;
+						const passed = self + other;
 
-							return `${passed} / ${total}, ${Math.ceil(
-								(passed * 100) / total
-							)}%`;
-						},
-						value: 'Score',
+						return `${passed} / ${total}, ${Math.ceil(
+							(passed * 100) / total
+						)}%`;
 					},
-					{
-						key: 'score',
-						render: (score: any) => <ProgressBar items={score} />,
-						value: 'Progress',
-					},
-					{
-						key: 'assigned',
-						render: (assigned: any) => (
-							<AvatarGroup
-								assignedUsers={assigned}
-								groupSize={3}
-							/>
-						),
-						value: 'Assigned',
-					},
-				]}
-				items={routines}
-			/>
-		</Container>
-	);
-};
+					value: 'Score',
+				},
+				{
+					key: 'score',
+					render: (score: any) => <ProgressBar items={score} />,
+					size: 'sm',
+					value: 'Progress',
+				},
+				{
+					key: 'assigned',
+					render: (assigned: any) => (
+						<AvatarGroup assignedUsers={assigned} groupSize={3} />
+					),
+					value: 'Assigned',
+				},
+			]}
+			items={routines}
+			navigateTo={(item) => `/testflow/${item.id}`}
+		/>
+	</Container>
+);
 
 export default TestFlow;

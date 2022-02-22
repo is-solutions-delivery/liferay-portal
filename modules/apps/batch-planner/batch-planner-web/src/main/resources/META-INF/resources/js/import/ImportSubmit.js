@@ -14,6 +14,7 @@
 
 import ClayButton from '@clayui/button';
 import {useModal} from '@clayui/modal';
+import {openToast} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useCallback, useState} from 'react';
 
@@ -24,6 +25,7 @@ function ImportSubmit({
 	formDataQuerySelector,
 	formImportURL,
 	formIsValid,
+	formIsVisible,
 	portletNamespace,
 }) {
 	const [visible, setVisible] = useState(false);
@@ -33,10 +35,19 @@ function ImportSubmit({
 	const onButtonClick = useCallback(() => {
 		evaluateForm(true);
 
+		if (!formIsVisible) {
+			openToast({
+				message: Liferay.Language.get(
+					'please-upload-a-file-and-select-the-required-columns-before-saving-a-template'
+				),
+				type: 'danger',
+			});
+		}
+
 		if (formIsValid) {
 			setVisible(true);
 		}
-	}, [evaluateForm, formIsValid]);
+	}, [evaluateForm, formIsValid, formIsVisible]);
 
 	return (
 		<span className="mr-3">

@@ -126,7 +126,7 @@ definition {
 		if (IsTextEqual.isPartialText(locator1 = "Toolbar#FEEDBACK", value1 = "Successfully received translations.")) {
 			Translations.viewTargetFields(
 				contentPageName = "内容页面名称",
-				link = "去某地");
+				link = "去一个地方");
 
 			PortletEntry.publish();
 
@@ -141,7 +141,7 @@ definition {
 			ContentPages.viewFragmentText(
 				fragmentName = "button",
 				id = "link",
-				text = "去某地");
+				text = "去一个地方");
 
 			PageEditor.clickPublish();
 
@@ -193,7 +193,7 @@ definition {
 
 		Translations.translateSpecificField(fieldName = "element-text");
 
-		if (IsTextEqual.isPartialText(key_fieldName = "Content", locator1 = "Message#SUCCESS_SPECIFIC_FORM_FIELD_REQUIRED", value1 = "Field Translated")) {
+		if (IsTextEqual.isPartialText(key_fieldName = "element-text", locator1 = "Message#SUCCESS_SPECIFIC_FORM_FIELD_REQUIRED", value1 = "Field Translated")) {
 			Translations.viewTargetFields(
 				contentPageName = "Content Page Name",
 				elementText = "Üerschrift");
@@ -223,12 +223,12 @@ definition {
 
 			Page.viewCurrentPage(pageName = "Content Page Name");
 
-			PageEditor.viewFragmentEditableText(
-				editableText = "Üerschrift",
-				fragmentName = "Heading",
-				id = "element-text");
+			ContentPages.viewFragmentText(
+				fragmentName = "heading",
+				id = "element-text",
+				text = "Üerschrift");
 		}
-		else if (IsTextEqual.isPartialText(key_fieldName = "Content", locator1 = "Message#SUCCESS_SPECIFIC_FORM_FIELD_REQUIRED", value1 = "There is a problem with the translation service. Please contact your administrator.")) {
+		else if (IsTextEqual.isPartialText(key_fieldName = "element-text", locator1 = "Message#SUCCESS_SPECIFIC_FORM_FIELD_REQUIRED", value1 = "There is a problem with the translation service. Please contact your administrator.")) {
 			echo("There is a Google network issue. Ending test.");
 		}
 	}

@@ -41,34 +41,34 @@ const ActionsInfo = ({identifier, index, sectionsLength, setSections}) => {
 	const [description, setDescription] = useState(
 		actions?.description?.[index]
 	);
-	const [executionType, setExecutionType] = useState(
-		actions?.executionType?.[index] ?? executionTypeOptions[0].value
-	);
+
 	const [name, setName] = useState(actions?.name?.[index]);
 	const [priority, setPriority] = useState(actions?.priority?.[index]);
 	const [template, setTemplate] = useState(actions?.script?.[index]);
 
+	if (
+		selectedItem.type === 'task' &&
+		!executionTypeOptions
+			.map((option) => option.value)
+			.includes('onAssignment')
+	) {
+		executionTypeOptions.push({
+			label: Liferay.Language.get('on-assignment'),
+			value: 'onAssignment',
+		});
+	}
+	sortElements(executionTypeOptions, 'value');
+
+	const [executionType, setExecutionType] = useState(
+		actions?.executionType?.[index] ?? executionTypeOptions[0].value
+	);
+
 	useEffect(() => {
-		if (
-			selectedItem.type === 'task' &&
-			!executionTypeOptions
-				.map((option) => option.value)
-				.includes('onAssignment')
-		) {
-			executionTypeOptions.push({
-				label: Liferay.Language.get('on-assignment'),
-				value: 'onAssignment',
-			});
-		}
-
-		sortElements(executionTypeOptions, 'value');
-
 		return function cleanup() {
 			executionTypeOptions = executionTypeOptions.filter(({value}) => {
 				return value !== 'onAssignment';
 			});
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const deleteSection = () => {

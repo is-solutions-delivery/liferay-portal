@@ -57,7 +57,16 @@ public class DispatchTaskExecutorRegistryImpl
 
 	@Override
 	public Set<String> getDispatchTaskExecutorTypes() {
-		return _dispatchTaskExecutorNames.keySet();
+		return _dispatchTaskExecutors.keySet();
+	}
+
+	@Override
+	public boolean isHiddenInUI(String type) {
+		if (!_dispatchTaskExecutorNames.containsKey(type)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Reference(
@@ -75,7 +84,7 @@ public class DispatchTaskExecutorRegistryImpl
 		_validateDispatchTaskExecutorProperties(
 			dispatchTaskExecutor, dispatchTaskExecutorType);
 
-		if (GetterUtil.getBoolean(
+		if (!GetterUtil.getBoolean(
 				properties.get(_KEY_DISPATCH_TASK_EXECUTOR_HIDDEN_IN_UI))) {
 
 			_dispatchTaskExecutorNames.put(

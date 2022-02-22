@@ -12,41 +12,87 @@
  * details.
  */
 
-import {ClayDropDownWithItems} from '@clayui/drop-down';
+import ClayDropDown, {Align} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import {useState} from 'react';
+import React, {ReactElement, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+
+import {Dropdown} from '../../context/HeaderContext';
 
 type DropDownProps = {
-	data: any[];
+	items: Dropdown;
+	position?: any;
+	trigger: ReactElement;
 };
 
-const DropDown: React.FC<DropDownProps> = () => {
-	const [value, setValue] = useState('');
+const DropDown: React.FC<DropDownProps> = ({
+	items,
+	position = Align.BottomCenter,
+	trigger,
+}) => {
+	const navigate = useNavigate();
+	const [active, setActive] = useState(false);
 
 	return (
-		<ClayDropDownWithItems
-			caption={value}
-			items={[]}
-			onSearchValueChange={() => setValue('teste')}
-			spritemap="caret-bottom"
-			trigger={
-				<div className="align-items-center d-flex">
-					<a>
-						<ClayIcon
-							className="mr-2"
-							style={{fontSize: '30px'}}
-							symbol="polls"
-						/>
+		<ClayDropDown
+			active={active}
+			alignmentPosition={position}
+			onActiveChange={setActive}
+			trigger={trigger}
+		>
+			<ClayDropDown.ItemList>
+				{items.map((section, index) => (
+					<div key={index}>
+						<ClayDropDown.Group>
+							{section.title && (
+								<ClayDropDown.Caption>
+									{section.title}
+								</ClayDropDown.Caption>
+							)}
 
-						<ClayIcon
-							className="mr-2"
-							style={{color: 'black', fontSize: '30px'}}
-							symbol="caret-bottom"
-						/>
-					</a>
-				</div>
-			}
-		/>
+							{section.items.map(
+								({divider, icon, label, path}, itemIndex) => (
+									<React.Fragment key={itemIndex}>
+										<ClayDropDown.Item
+											onClick={() => {
+												const isHttpUrl = path.startsWith(
+													'http'
+												);
+
+												if (isHttpUrl) {
+													window.location.href = path;
+
+													return;
+												}
+
+												navigate(path);
+											}}
+										>
+											<div className="align-items-center d-flex testray-sidebar-item text-dark">
+												{icon && (
+													<ClayIcon
+														fontSize={16}
+														symbol={icon}
+													/>
+												)}
+
+												<span className="ml-1 testray-sidebar-text">
+													{label}
+												</span>
+											</div>
+										</ClayDropDown.Item>
+
+										{divider && <ClayDropDown.Divider />}
+									</React.Fragment>
+								)
+							)}
+						</ClayDropDown.Group>
+
+						{items.length - 1 !== index && <ClayDropDown.Divider />}
+					</div>
+				))}
+			</ClayDropDown.ItemList>
+		</ClayDropDown>
 	);
 };
 

@@ -27,6 +27,7 @@ import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
 import com.liferay.layout.list.retriever.LayoutListRetrieverTracker;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactoryTracker;
 import com.liferay.layout.util.LayoutClassedModelUsageRecorder;
+import com.liferay.layout.util.structure.CollectionPaginationHelper;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.SegmentsEntryRetriever;
@@ -48,6 +49,10 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  */
 @Component(immediate = true, service = {})
 public class ServletContextUtil {
+
+	public static CollectionPaginationHelper getCollectionPaginationHelper() {
+		return _collectionPaginationHelper;
+	}
 
 	public static String getContextPath() {
 		return _servletContext.getContextPath();
@@ -168,6 +173,13 @@ public class ServletContextUtil {
 	}
 
 	@Reference(unbind = "-")
+	protected void setCollectionPaginationHelper(
+		CollectionPaginationHelper collectionPaginationHelper) {
+
+		_collectionPaginationHelper = collectionPaginationHelper;
+	}
+
+	@Reference(unbind = "-")
 	protected void setFragmentCollectionContributorTracker(
 		FragmentCollectionContributorTracker
 			fragmentCollectionContributorTracker) {
@@ -275,6 +287,7 @@ public class ServletContextUtil {
 		_servletContext = servletContext;
 	}
 
+	private static CollectionPaginationHelper _collectionPaginationHelper;
 	private static FragmentCollectionContributorTracker
 		_fragmentCollectionContributorTracker;
 	private static FragmentEntryConfigurationParser

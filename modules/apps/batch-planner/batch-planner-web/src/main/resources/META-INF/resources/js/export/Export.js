@@ -34,6 +34,7 @@ function Export({
 	const onButtonClick = useCallback(
 		(event) => {
 			event.preventDefault();
+
 			setVisible(true);
 		},
 		[setVisible]

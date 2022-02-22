@@ -159,6 +159,8 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 								).buildString()
 							).put(
 								"namespace", liferayPortletResponse.getNamespace()
+							).put(
+								"type", "export"
 							).build()
 						%>'
 					/>
