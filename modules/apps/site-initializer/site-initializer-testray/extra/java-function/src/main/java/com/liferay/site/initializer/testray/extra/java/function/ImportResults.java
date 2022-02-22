@@ -173,15 +173,22 @@ public class ImportResults {
 							"name"
 						).getTextContent();
 
-						String value = node.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
 						if (name.equals("testray.testcase.priority")) {
+
+							String value = node.getAttributes(
+							).getNamedItem(
+								"value"
+							).getTextContent();
+
 							map.put("priority", value);
 						}
 						else if (name.equals("testray.testcase.name")) {
+
+							String value = node.getAttributes(
+							).getNamedItem(
+								"value"
+							).getTextContent();
+
 							map.put("name", value);
 							map.put("stepsType", name);
 						}
