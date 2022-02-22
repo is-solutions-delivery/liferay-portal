@@ -206,6 +206,62 @@ public class ImportResults {
 		}
 	}
 
+	public void addTestTeam(int projectId, Document document) {
+		Map<String, String> map = new HashMap<>();
+
+		map.put("testrayProjectId", String.valueOf(projectId));
+
+		try {
+			NodeList testcases = document.getElementsByTagName("testcase");
+
+			for (int i = 0; i < testcases.getLength(); i++) {
+				Node testCase = testcases.item(i);
+
+				Element element = (Element)testCase;
+
+				NodeList properties = element.getElementsByTagName("property");
+
+				for (int property = 0; property < properties.getLength();
+					 property++) {
+
+					Node node = properties.item(property);
+
+					if ((node.getNodeType() == Node.ELEMENT_NODE) &&
+						!node.getNodeName(
+						).equals(
+							"#text"
+						) &&
+						(node.getAttributes(
+						).getLength() > 0)) {
+
+						String name = node.getAttributes(
+						).getNamedItem(
+							"name"
+						).getTextContent();
+
+						if (name.equals("testray.team.name")) {
+
+							String value = node.getAttributes(
+							).getNamedItem(
+								"value"
+							).getTextContent();
+
+							map.put("name", value);
+						}
+					}
+				}
+
+				HttpClient.post(
+					PropsValues.TESTRAY_BASE_URL + "testrayteams/scopes/" +
+						_groupId,
+					new JSONObject(map));
+			}
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+		}
+	}
+
 	public int addTestrayProject(Document document) throws Exception {
 		Map<String, String> map = new HashMap<>();
 
@@ -378,6 +434,7 @@ public class ImportResults {
 
 			addTestrayBuild(projectId, document);
 			addTestrayCase(projectId, document);
+			addTestrayTeam(projectId, document);
 		}
 	}
 
