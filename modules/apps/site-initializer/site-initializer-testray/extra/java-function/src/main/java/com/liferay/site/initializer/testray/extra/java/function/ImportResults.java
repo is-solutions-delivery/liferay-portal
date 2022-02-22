@@ -125,15 +125,22 @@ public class ImportResults {
 							).getTextContent();
 
 							map.put("name", value);
+						} else if (name.equals("testray.build.time")){
+							
+							String value = node.getAttributes(
+							).getNamedItem(
+								"value"
+							).getTextContent();
 
-							HttpClient.post(
-								PropsValues.TESTRAY_BASE_URL +
-									"testraybuilds/scopes/" + _groupId,
-								new JSONObject(map));
+							map.put("dueDate", value);
 						}
 					}
 				}
 			}
+			HttpClient.post(
+				PropsValues.TESTRAY_BASE_URL +
+					"testraybuilds/scopes/" + _groupId,
+				new JSONObject(map));
 		}
 		catch (Exception exception) {
 			exception.printStackTrace();
@@ -206,7 +213,7 @@ public class ImportResults {
 		}
 	}
 
-	public void addTestTeam(int projectId, Document document) {
+	public void addTestrayTeam(int projectId, Document document) {
 		Map<String, String> map = new HashMap<>();
 
 		map.put("testrayProjectId", String.valueOf(projectId));
