@@ -29,7 +29,7 @@ import Layout from '../Layout';
 import TeamMemberInputs from './TeamMemberInputs';
 
 const MAXIMUM_INVITES_COUNT = 10;
-const INITIAL_INVITES_COUNT = 3;
+const INITIAL_INVITES_COUNT = 1;
 
 const SLA = {
 	gold: 'Gold',
@@ -69,6 +69,7 @@ const InviteTeamMembersPage = ({
 	const [accountRolesOptions, setAccountRolesOptions] = useState([]);
 	const [accountRoles, setAccountRoles] = useState([]);
 	const [availableAdminsRoles, setAvailableAdminsRoles] = useState(1);
+	const [showEmptyEmailError, setshowEmptyEmailError] = useState(false);
 
 	const maxRequestors = project.maxRequestors < 1 ? 1 : project.maxRequestors;
 	const projectHasSLAGoldPlatinum =
@@ -180,8 +181,7 @@ const InviteTeamMembersPage = ({
 							previousAccountRole.label === ROLE_TYPES.admin.name,
 					}))
 				);
-			}
-			else {
+			} else {
 				setAccountRolesOptions((previousAccountRoles) =>
 					previousAccountRoles.map((previousAccountRoles) => ({
 						...previousAccountRoles,
@@ -205,8 +205,8 @@ const InviteTeamMembersPage = ({
 
 			setInitialError(false);
 			setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
-		}
-		else if (touched['invites']?.some((field) => field?.email)) {
+			setshowEmptyEmailError(false);
+		} else if (touched['invites']?.some((field) => field?.email)) {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 		}
@@ -249,14 +249,26 @@ const InviteTeamMembersPage = ({
 			if (!addTeamMemberError && !associateUserAccountError) {
 				handlePage();
 			}
-		}
-		else {
+		} else {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 			setTouched({
 				invites: [{email: true}],
 			});
 		}
+	};
+
+	const handleAddTeamMember = () => {
+		const emptyEmailAddress = values?.invites?.some(({email}) => !email);
+
+		if (emptyEmailAddress) {
+			setshowEmptyEmailError(true);
+
+			return false;
+		}
+		setshowEmptyEmailError(false);
+
+		return true;
 	};
 
 	useEffect(() => {
@@ -340,6 +352,14 @@ const InviteTeamMembersPage = ({
 								))}
 							</ClayForm.Group>
 
+							{showEmptyEmailError && (
+								<Badge>
+									<span className="pl-1">
+										Please enter your email address.
+									</span>
+								</Badge>
+							)}
+
 							<div className="ml-3 my-4">
 								{values?.invites?.length > 1 && (
 									<Button
@@ -373,11 +393,14 @@ const InviteTeamMembersPage = ({
 										className="btn-outline-primary cp-btn-add-members py-2 rounded-xs"
 										onClick={() => {
 											setBaseButtonDisabled(false);
-											push(
-												getInitialInvite(
-													accountMemberRole
-												)
-											);
+
+											if (handleAddTeamMember()) {
+												push(
+													getInitialInvite(
+														accountMemberRole
+													)
+												);
+											}
 										}}
 										prependIcon="plus"
 										small
