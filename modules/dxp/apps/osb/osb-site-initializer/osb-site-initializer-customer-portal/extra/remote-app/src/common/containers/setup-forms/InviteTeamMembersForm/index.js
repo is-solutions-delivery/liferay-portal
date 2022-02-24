@@ -181,7 +181,8 @@ const InviteTeamMembersPage = ({
 							previousAccountRole.label === ROLE_TYPES.admin.name,
 					}))
 				);
-			} else {
+			}
+			else {
 				setAccountRolesOptions((previousAccountRoles) =>
 					previousAccountRoles.map((previousAccountRoles) => ({
 						...previousAccountRoles,
@@ -206,7 +207,8 @@ const InviteTeamMembersPage = ({
 			setInitialError(false);
 			setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
 			setshowEmptyEmailError(false);
-		} else if (touched['invites']?.some((field) => field?.email)) {
+		}
+		else if (touched['invites']?.some((field) => field?.email)) {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 		}
@@ -249,7 +251,8 @@ const InviteTeamMembersPage = ({
 			if (!addTeamMemberError && !associateUserAccountError) {
 				handlePage();
 			}
-		} else {
+		}
+		else {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 			setTouched({
