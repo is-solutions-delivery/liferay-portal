@@ -335,7 +335,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			"Test Asset List Entry 1", assetListEntry1.getTitle());
 		Assert.assertEquals(
-			"com.liferay.journal.model.JournalArticle",
+			"com.liferay.asset.kernel.model.AssetEntry",
 			assetListEntry1.getAssetEntryType());
 
 		AssetListEntry assetListEntry2 = assetListEntries.get(1);
@@ -343,7 +343,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			"Test Asset List Entry 2", assetListEntry2.getTitle());
 		Assert.assertEquals(
-			"com.liferay.journal.model.JournalArticle",
+			"com.liferay.asset.kernel.model.AssetEntry",
 			assetListEntry2.getAssetEntryType());
 	}
 
