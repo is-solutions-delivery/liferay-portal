@@ -1,6 +1,6 @@
 [
 	{
-		"cpDefinitionExternalReferenceCode": "TEST001",
+		"cpDefinitionExternalReferenceCode": "TESTPROD001",
 		"cpInstanceProperties": [
 			{
 				"cpInstanceSku": "TEST VALUE 1",
