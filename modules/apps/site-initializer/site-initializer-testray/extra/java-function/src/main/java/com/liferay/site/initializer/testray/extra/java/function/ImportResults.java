@@ -77,10 +77,10 @@ public class ImportResults {
 		String runName = null;
 		String buildName = null;
 		String description = null;
-		String description1 = null;
-		String description2 = null;
-		String description3 = null;
-		String description4 = null;
+		StringBuilder description1 = new StringBuilder("");
+		StringBuilder description2 = new StringBuilder("");
+		StringBuilder description3 = new StringBuilder("");
+		StringBuilder description4 = new StringBuilder("");
 		
 		Map<String, String> map = new HashMap<>();
 
@@ -150,7 +150,8 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description2 = "Plugins Hash:" + value + " ";							
+						description2.append("Plugins Hash:" + value + " ");	
+											
 					}
 					else if(name.equals("liferay.portal.branch")) {
 						value = propertyNode.getAttributes(
@@ -158,7 +159,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description3 = "Portal Branch:" + value + " ";							
+						description3.append("Portal Branch:" + value + " ");							
 					}
 					else if(name.equals("liferay.portal.bundle")) {
 						value = propertyNode.getAttributes(
@@ -166,7 +167,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description4 = "Bundle:" + value + " ";			
+						description4.append("Bundle:" + value + " ");			
 					}
 					else if(name.equals("liferay.portal.git.id")) {
 						value = propertyNode.getAttributes(
@@ -174,7 +175,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description1 = "Portal Hash:" + value + " ";						
+						description1.append("Portal Hash:" + value + " ");						
 					}
 					else if (name.equals("testray.run.id")) {
 						runName = propertyNode.getAttributes(
@@ -185,17 +186,17 @@ public class ImportResults {
 				}
 			}
 		} 
-		if (description1 != null){
-			description = description1;
+		if (description1.toString() != ""){
+			description = description1.toString();
 		}
-		 if(description2 != null){
-			description += description2;
+		 if(description2.toString() != ""){
+			description += description2.toString();
 		}
-		 if(description3 != null){
-			description += description3;			
+		 if(description3.toString() != ""){
+			description += description3.toString();			
 		}
-		 if(description4 != null){
-			description += description4;			
+		 if(description4.toString() != ""){
+			description += description4.toString();			
 		}
 
 		map.put("description", description);
@@ -220,9 +221,9 @@ public class ImportResults {
 
 		buildId = responseJSONObject.getLong("id");
 
-		if (runName != null){
-			runId = fetchOrAddTestrayRun(buildId,runName);
-		}
+			if (runName != null){
+				runId = fetchOrAddTestrayRun(buildId,runName);
+			}
         }
 
 	}
@@ -361,14 +362,34 @@ public class ImportResults {
 						).getNamedItem(
 							"value"
 						).getTextContent();
-						map.put("dueStatus", value);
+						if(value.equals("in-progress")){
+							map.put("dueStatus", String.valueOf(1));
+						} 
+						else if(value.equals("passed")){
+							map.put("dueStatus", String.valueOf(2));
+						}
+						else if(value.equals("failed")){
+							map.put("dueStatus", String.valueOf(3));
+						}
+						else if(value.equals("blocked")){
+							map.put("dueStatus", String.valueOf(4));
+						}
+						else if(value.equals("dnr")){
+							map.put("dueStatus", String.valueOf(5));
+						}
+						else if(value.equals("test-fix")){
+							map.put("dueStatus", String.valueOf(6));
+						} 
+						else {
+							map.put("dueStatus", String.valueOf(7));
+						}
 					}
 				}
 			}
 
 			String fileName = "";
 			String valueName = "";
-			String resultName = "";
+			StringBuilder resultName = new StringBuilder("");
 
 			NodeList fileNodeList = element.getElementsByTagName(
 				"file");
@@ -397,10 +418,10 @@ public class ImportResults {
 							).getTextContent();
 						if(fileName !="null" && valueName != "null"){
 
-							resultName += "key:" + fileName + " value:" + valueName +" ";
+							resultName.append("key:" + fileName + " value:" + valueName +" ");
 						}
 				}
-				map.put("attachments", resultName);
+				map.put("attachments", resultName.toString());
 			}
 		}
 		}
