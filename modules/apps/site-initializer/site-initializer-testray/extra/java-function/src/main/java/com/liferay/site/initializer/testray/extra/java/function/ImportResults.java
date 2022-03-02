@@ -75,6 +75,11 @@ public class ImportResults {
 	public void addTestrayBuild(long projectId, Document document)
 		throws Exception  {
 		String runName = null;
+		String description = null;
+		String description1 = null;
+		String description2 = null;
+		String description3 = null;
+		String description4 = null;
 		
 		Map<String, String> map = new HashMap<>();
 
@@ -138,6 +143,38 @@ public class ImportResults {
 						map.put("testrayRoutineId", String.valueOf(routineId));
 
 					}
+					else if(name.equals("liferay.plugins.git.id")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
+
+						description2 = "Plugins Hash:" + value + " ";							
+					}
+					else if(name.equals("liferay.portal.branch")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
+
+						description3 = "Portal Branch:" + value + " ";							
+					}
+					else if(name.equals("liferay.portal.bundle")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
+
+						description4 = "Bundle:" + value + " ";			
+					}
+					else if(name.equals("liferay.portal.git.id")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
+
+						description1 = "Portal Hash:" + value + " ";						
+					}
 					else if (name.equals("testray.run.id")) {
 						runName = propertyNode.getAttributes(
 						).getNamedItem(
@@ -146,7 +183,21 @@ public class ImportResults {
 					}
 				}
 			}
+		} 
+		if (description1 != null){
+			description = description1;
 		}
+		 if(description2 != null){
+			description += description2;
+		}
+		 if(description3 != null){
+			description += description3;			
+		}
+		 if(description4 != null){
+			description += description4;			
+		}
+
+		map.put("description", description);
 
 		JSONObject responseJSONObject = HttpUtil.invoke(
 				new JSONObject(
