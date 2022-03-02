@@ -17,9 +17,7 @@
 		"name": "General Liability",
 		"price": 29.0,
 		"promoPrice": 18.0,
-		"shippingConfiguration": {
-			"shippable": false
-		},
+		"shippable": false,
 		"sku": "RAY001",
 		"specificationOptions": [
 		],
@@ -44,9 +42,7 @@
 		"name": "Professional Liability",
 		"price": 45.0,
 		"promoPrice": 20.0,
-		"shippingConfiguration": {
-			"shippable": false
-		},
+		"shippable": false,
 		"sku": "RAY002",
 		"specificationOptions": [
 		],
@@ -71,9 +67,7 @@
 		"name": "Workers Compensation",
 		"price": 40.0,
 		"promoPrice": 18.0,
-		"shippingConfiguration": {
-			"shippable": false
-		},
+		"shippable": false,
 		"sku": "RAY003",
 		"specificationOptions": [
 		],
@@ -98,9 +92,7 @@
 		"name": "Business Owners Policy",
 		"price": 60.0,
 		"promoPrice": 25.0,
-		"shippingConfiguration": {
-			"shippable": false
-		},
+		"shippable": false,
 		"sku": "RAY004",
 		"specificationOptions": [
 		],

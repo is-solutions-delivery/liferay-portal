@@ -1,0 +1,38 @@
+[
+	{
+		"finishDate": "2022-03-03T00:00:00Z",
+		"monthlyPremium": "123.00",
+		"name": "test 1",
+		"policyNumber": "12345",
+		"product": "Business Owners Policy",
+		"renewalDue": 2,
+		"startDate": "2022-03-31T00:00:00Z"
+	},
+	{
+		"finishDate": "2023-03-02T00:00:00Z",
+		"monthlyPremium": "123.00",
+		"name": "test 2",
+		"policyNumber": "12346",
+		"product": "General Liability",
+		"renewalDue": 5,
+		"startDate": "2022-03-04T00:00:00Z"
+	},
+	{
+		"finishDate": "2023-03-16T00:00:00Z",
+		"monthlyPremium": "123.00",
+		"name": "test 3",
+		"policyNumber": "12347",
+		"product": "Workers Compensation",
+		"renewalDue": 3,
+		"startDate": "2022-03-07T00:00:00Z"
+	},
+	{
+		"finishDate": "2023-03-23T00:00:00Z",
+		"monthlyPremium": "123.00",
+		"name": "test 4",
+		"policyNumber": "123458",
+		"product": "Professional Liability",
+		"renewalDue": 9,
+		"startDate": "2022-03-02T00:00:00Z"
+	}
+]

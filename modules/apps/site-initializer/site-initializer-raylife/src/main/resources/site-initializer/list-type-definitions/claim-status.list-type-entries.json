@@ -1,0 +1,66 @@
+[
+  {
+    "key": "approved",
+    "name": "Approved",
+    "name_i18n": {
+      "en-US": "Approved"
+    },
+    "type": "String"
+  },
+  {
+    "key": "claimSubmitted",
+    "name": "Claim Submitted",
+    "name_i18n": {
+      "en-US": "Claim Submitted"
+    },
+    "type": "String"
+  },
+  {
+    "key": "declined",
+    "name": "Declined",
+    "name_i18n": {
+      "en-US": "Declined"
+    },
+    "type": "String"
+  },
+  {
+    "key": "inEstimation",
+    "name": "In Estimation",
+    "name_i18n": {
+      "en-US": "In Estimation"
+    },
+    "type": "String"
+  },
+  {
+    "key": "inInvestigation",
+    "name": "In Investigation",
+    "name_i18n": {
+      "en-US": "In Investigation"
+    },
+    "type": "String"
+  },
+  {
+    "key": "pendingSettlement",
+    "name": " Pending Settlement",
+    "name_i18n": {
+      "en-US": " Pending Settlement"
+    },
+    "type": "String"
+  },
+  {
+    "key": "repair",
+    "name": "Repair",
+    "name_i18n": {
+      "en-US": "Repair"
+    },
+    "type": "String"
+  },
+  {
+    "key": "settled",
+    "name": "Settled",
+    "name_i18n": {
+      "en-US": "Settled"
+    },
+    "type": "String"
+  }
+]

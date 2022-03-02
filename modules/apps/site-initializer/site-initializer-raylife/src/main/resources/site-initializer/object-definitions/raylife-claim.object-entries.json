@@ -1,0 +1,23 @@
+[
+	{
+		"claimNumber": 1,
+		"claimStatus": "inInvestigation",
+		"dateFiled": "2022-03-17",
+		"name": "User Test",
+		"product": "Professional Liability"
+	},
+	{
+		"claimNumber": 2,
+		"claimStatus": "approved",
+		"dateFiled": "2022-03-04",
+		"name": "User Test 1",
+		"product": "Business Owners Policy"
+	},
+	{
+		"claimNumber": 3,
+		"claimStatus": "inEstimation",
+		"dateFiled": "2022-03-08",
+		"name": "User Test 2",
+		"product": "General Liability"
+	}
+]

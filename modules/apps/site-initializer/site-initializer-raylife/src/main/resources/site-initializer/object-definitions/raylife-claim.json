@@ -1,0 +1,75 @@
+{
+    "label": {
+        "en_US": "Raylife Claim"
+    },
+    "name": "RaylifeClaim",
+    "objectFields": [
+        {
+            "businessType": "Date",
+            "DBType": "Date",
+            "indexed": true,
+            "indexedAsKeyword": false,
+            "label": {
+                "en_US": "Date Filed"
+            },
+            "name": "dateFiled",
+            "required": false,
+            "type": "Date"
+        },
+        {
+            "businessType": "Integer",
+            "DBType": "Integer",
+            "indexed": true,
+            "indexedAsKeyword": false,
+            "label": {
+                "en_US": "Claim Number"
+            },
+            "name": "claimNumber",
+            "required": false,
+            "type": "Integer"
+        },
+        {
+            "businessType": "Picklist",
+            "DBType": "String",
+            "indexed": true,
+            "indexedAsKeyword": false,
+            "label": {
+                "en_US": "Claim Status"
+            },
+            "listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:ClaimStatus$]",
+            "name": "claimStatus",
+            "required": false,
+            "type": "String"
+        },
+        {
+            "businessType": "Text",
+            "DBType": "String",
+            "indexed": true,
+            "indexedAsKeyword": false,
+            "label": {
+                "en_US": "Name"
+            },
+            "name": "name",
+            "required": false,
+            "type": "String"
+        },
+        {
+            "businessType": "Text",
+            "DBType": "String",
+            "indexed": true,
+            "indexedAsKeyword": false,
+            "label": {
+                "en_US": "Product"
+            },
+            "name": "product",
+            "required": false,
+            "type": "String"
+        }
+    ],
+    "panelAppOrder": "100",
+    "panelCategoryKey": "control_panel.object",
+    "pluralLabel": {
+        "en_US": "Raylife Claims"
+    },
+    "scope": "company"
+}
