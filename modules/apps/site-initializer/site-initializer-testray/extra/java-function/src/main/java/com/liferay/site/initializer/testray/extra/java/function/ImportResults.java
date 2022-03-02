@@ -75,6 +75,7 @@ public class ImportResults {
 	public void addTestrayBuild(long projectId, Document document)
 		throws Exception  {
 		String runName = null;
+		String buildName = null;
 		String description = null;
 		String description1 = null;
 		String description2 = null;
@@ -115,12 +116,12 @@ public class ImportResults {
 					String value = null;
 
 					if (name.equals("testray.build.name")) {
-						value = propertyNode.getAttributes(
+						buildName = propertyNode.getAttributes(
 						).getNamedItem(
 							"value"
 						).getTextContent();
 
-						map.put("name", value);
+						map.put("name", buildName);
 
 					}
 					else if (name.equals("testray.build.time")) {
@@ -199,19 +200,31 @@ public class ImportResults {
 
 		map.put("description", description);
 
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + buildName + "'");
+
 		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testraybuilds", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray projectsJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (projectsJSONArray.isEmpty()) {
+
+		responseJSONObject = HttpUtil.invoke(
 				new JSONObject(
 					map
 				).toString(),
 				"testraybuilds", null, null, HttpInvoker.HttpMethod.POST);
 
-		long buildId = responseJSONObject.getLong("id");
+		buildId = responseJSONObject.getLong("id");
 
 		if (runName != null){
-			long runId = fetchOrAddTestrayRun(buildId,runName);
-
-			System.out.println(runId);
+			runId = fetchOrAddTestrayRun(buildId,runName);
 		}
+        }
+
 	}
 
 	public void addTestrayCase(long projectId, Document document)
@@ -265,7 +278,7 @@ public class ImportResults {
 						).getTextContent();
 						
 						long teamId = fetchOrAddTestrayTeam(projectId, value);
-						long componentId = fetchOrAddTestrayComponent(
+						componentId = fetchOrAddTestrayComponent(
 							projectId, teamId, componentName);
 
 						map.put("testrayComponentId", String.valueOf(componentId));
@@ -290,12 +303,112 @@ public class ImportResults {
 				}
 			}
 
-			HttpUtil.invoke(
+			JSONObject responseJSONObject = HttpUtil.invoke(
 				new JSONObject(
 					map
 				).toString(),
 				"testraycases", null, null, HttpInvoker.HttpMethod.POST);
+
+			long caseId = responseJSONObject.getLong("id");
+
+			fetchOraddTestrayCaseResult(caseId, testCasesNodeList);
 		}
+	}
+
+	public void fetchOraddTestrayCaseResult(long caseId, NodeList testCasesNodeList)
+		throws Exception {
+
+		String componentName = null;
+		
+		Map<String, String> map = new HashMap<>();
+		
+		map.put("testrayCaseId", String.valueOf(caseId));
+
+		map.put("testrayComponentId", String.valueOf(componentId));
+
+		map.put("testrayRunId", String.valueOf(runId));
+
+		map.put("testrayBuildId", String.valueOf(buildId));
+
+		for (int i = 0; i < testCasesNodeList.getLength(); i++) {
+			Node testCaseNode = testCasesNodeList.item(i);
+
+			Element element = (Element)testCaseNode;
+
+			NodeList propertyNodeList = element.getElementsByTagName(
+				"property");
+
+			for (int j = 0; j < propertyNodeList.getLength(); j++) {
+				Node node = propertyNodeList.item(j);
+
+				if ((node.getNodeType() == Node.ELEMENT_NODE) &&
+					!node.getNodeName(
+					).equals(
+						"#text"
+					) &&
+					(node.getAttributes(
+					).getLength() > 0)) {
+
+					String name = node.getAttributes(
+					).getNamedItem(
+						"name"
+					).getTextContent();
+
+					String value = null;
+
+					if (name.equals("testray.testcase.status")) {
+						value = node.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
+						map.put("dueStatus", value);
+					}
+				}
+			}
+
+			String fileName = "";
+			String valueName = "";
+			String resultName = "";
+
+			NodeList fileNodeList = element.getElementsByTagName(
+				"file");
+
+			if(fileNodeList!=null){
+
+				for (int j = 0; j < fileNodeList.getLength(); j++) {
+					Node node = fileNodeList.item(j);
+
+					if ((node.getNodeType() == Node.ELEMENT_NODE) &&
+						!node.getNodeName(
+						).equals(
+							"#text"
+						) &&
+						(node.getAttributes(
+						).getLength() > 0)) {
+
+						fileName += node.getAttributes(
+						).getNamedItem(
+							"name"
+						).getTextContent();
+
+						valueName += node.getAttributes(
+							).getNamedItem(
+								"value"
+							).getTextContent();
+						if(fileName !="null" && valueName != "null"){
+
+							resultName += "key:" + fileName + " value:" + valueName +" ";
+						}
+				}
+				map.put("attachments", resultName);
+			}
+		}
+		}
+				HttpUtil.invoke(
+					new JSONObject(
+						map
+					).toString(),
+					"testraycaseresults", null, null, HttpInvoker.HttpMethod.POST);
 	}
 
 	public long fetchOrAddTestrayComponent(long projectId, long teamId,
@@ -595,5 +708,8 @@ public class ImportResults {
 	private final DocumentBuilder _documentBuilder;
 	private final DocumentBuilderFactory _documentBuilderFactory;
 	private final Storage _storage;
+	private long componentId;
+	private long buildId;
+	private long runId;
 
 }
