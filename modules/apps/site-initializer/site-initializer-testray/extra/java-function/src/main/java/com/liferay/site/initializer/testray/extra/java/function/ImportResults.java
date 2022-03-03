@@ -332,11 +332,8 @@ public class ImportResults {
 		Map<String, String> bodyMap = new HashMap<>();
 		
 		bodyMap.put("testrayCaseId", String.valueOf(caseId));
-
 		bodyMap.put("testrayComponentId", String.valueOf(componentId));
-
 		bodyMap.put("testrayRunId", String.valueOf(runId));
-
 		bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
 		for (int i = 0; i < testCasesNodeList.getLength(); i++) {
