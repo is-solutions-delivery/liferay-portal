@@ -77,12 +77,9 @@ public class ImportResults {
 		String runName = null;
 		String buildName = null;
 		String description = null;
-		StringBuilder description1 = new StringBuilder("");
-		StringBuilder description2 = new StringBuilder("");
-		StringBuilder description3 = new StringBuilder("");
-		StringBuilder description4 = new StringBuilder("");
 		
 		Map<String, String> map = new HashMap<>();
+		Map<String, String> properties = new HashMap<>();
 
 		map.put("testrayProjectId", String.valueOf(projectId));
 
@@ -150,8 +147,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description2.append("Plugins Hash:" + value + " ");	
-											
+						properties.put(name,"Plugins Hash:" + value + " ");												
 					}
 					else if(name.equals("liferay.portal.branch")) {
 						value = propertyNode.getAttributes(
@@ -159,7 +155,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description3.append("Portal Branch:" + value + " ");							
+						properties.put(name,"Portal Branch:" + value + " ");									
 					}
 					else if(name.equals("liferay.portal.bundle")) {
 						value = propertyNode.getAttributes(
@@ -167,7 +163,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description4.append("Bundle:" + value + " ");			
+						properties.put(name,"Bundle:" + value + " ");				
 					}
 					else if(name.equals("liferay.portal.git.id")) {
 						value = propertyNode.getAttributes(
@@ -175,7 +171,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						description1.append("Portal Hash:" + value + " ");						
+						properties.put(name,"Portal Hash:" + value + " ");				
 					}
 					else if (name.equals("testray.run.id")) {
 						runName = propertyNode.getAttributes(
@@ -186,20 +182,8 @@ public class ImportResults {
 				}
 			}
 		} 
-		if (description1.toString() != ""){
-			description = description1.toString();
-		}
-		 if(description2.toString() != ""){
-			description += description2.toString();
-		}
-		 if(description3.toString() != ""){
-			description += description3.toString();			
-		}
-		 if(description4.toString() != ""){
-			description += description4.toString();			
-		}
 
-		map.put("description", description);
+		map.put("description", buildTestrayBuildDescription(properties));
 
 		Map<String, String> parametersMap = new HashMap<>();
 
@@ -227,6 +211,17 @@ public class ImportResults {
 			fetchOrAddTestrayTask(buildId,buildName);
         }
 
+	}
+
+	protected static String buildTestrayBuildDescription(Map<String, String> properties) {
+		StringBuilder sb = new StringBuilder(3);
+
+		sb.append(properties.get("liferay.portal.git.id"));
+		sb.append(properties.get("liferay.plugins.git.id"));
+		sb.append(properties.get("liferay.portal.branch"));
+		sb.append(properties.get("liferay.portal.bundle"));
+
+		return sb.toString();
 	}
 
 	public void addTestrayCase(long projectId, Document document)
@@ -322,11 +317,11 @@ public class ImportResults {
 			long caseId = responseJSONObject.getLong("id");
 
 			fetchOrAddTestrayCaseType(caseTypeName);
-			fetchOraddTestrayCaseResult(caseId, testCasesNodeList);
+			fetchOrAddTestrayCaseResult(caseId, testCasesNodeList);
 		}
 	}
 
-	public void fetchOraddTestrayCaseResult(long caseId, NodeList testCasesNodeList)
+	public void fetchOrAddTestrayCaseResult(long caseId, NodeList testCasesNodeList)
 		throws Exception {
 
 		String componentName = null;
