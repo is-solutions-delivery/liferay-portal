@@ -79,10 +79,9 @@ public class ImportResults {
 		String buildName = null;
 		String description = null;
 		
-		Map<String, String> map = new HashMap<>();
-		Map<String, String> properties = new HashMap<>();
+		Map<String, String> bodyMap = new HashMap<>();
 
-		map.put("testrayProjectId", String.valueOf(projectId));
+		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
 		NodeList propertiesNodeList = document.getElementsByTagName(
 			"properties");
@@ -91,6 +90,10 @@ public class ImportResults {
 			Node propertiesNode = propertiesNodeList.item(i);
 
 			Element element = (Element)propertiesNode;
+
+			//TODO please change this methodo to use _getProperties and fill
+			//the properties
+			Map<String, String> properties = _getProperties(element);
 
 			NodeList propertyNodeList = element.getElementsByTagName(
 				"property");
@@ -119,7 +122,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						map.put("name", buildName);
+						bodyMap.put("name", buildName);
 
 					}
 					else if (name.equals("testray.build.time")) {
@@ -128,7 +131,7 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
-						map.put("dueDate", value);
+						bodyMap.put("dueDate", value);
 
 					}
 					else if (name.equals("testray.build.type")) {
@@ -139,7 +142,7 @@ public class ImportResults {
 
 						long routineId = fetchOrAddTestrayRoutine(projectId, value);
 
-						map.put("testrayRoutineId", String.valueOf(routineId));
+						bodyMap.put("testrayRoutineId", String.valueOf(routineId));
 
 					}
 					else if(name.equals("liferay.plugins.git.id")) {
@@ -182,9 +185,9 @@ public class ImportResults {
 					}
 				}
 			}
-		} 
+		}
 
-		map.put("description", buildTestrayBuildDescription(properties));
+		bodyMap.put("description", buildTestrayBuildDescription(properties));
 
 		Map<String, String> parametersMap = new HashMap<>();
 
@@ -200,7 +203,7 @@ public class ImportResults {
 
 		responseJSONObject = HttpUtil.invoke(
 				new JSONObject(
-					map
+					bodyMap
 				).toString(),
 				"testraybuilds", null, null, HttpInvoker.HttpMethod.POST);
 
@@ -232,9 +235,9 @@ public class ImportResults {
 
 		String componentName = null;
 		
-		Map<String, String> map = new HashMap<>();
+		Map<String, String> bodyMap = new HashMap<>();
 
-		map.put("testrayProjectId", String.valueOf(projectId));
+		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 		
 		NodeList testCasesNodeList = document.getElementsByTagName(
 			"testcase");
@@ -287,31 +290,31 @@ public class ImportResults {
 						componentId = fetchOrAddTestrayComponent(
 							projectId, teamId, componentName);
 
-						map.put("testrayComponentId", String.valueOf(componentId));
+						bodyMap.put("testrayComponentId", String.valueOf(componentId));
 					}
 					else if (name.equals("testray.testcase.name")) {
 						value = node.getAttributes(
 						).getNamedItem(
 							"value"
 						).getTextContent();
-						map.put("name", value);
+						bodyMap.put("name", value);
 
 						//TODO figure out what it means
-						map.put("stepsType", name);
+						bodyMap.put("stepsType", name);
 					}
 					else if (name.equals("testray.testcase.priority")) {
 						value = node.getAttributes(
 						).getNamedItem(
 							"value"
 						).getTextContent();
-						map.put("priority", value);
+						bodyMap.put("priority", value);
 					}
 				}
 			}
 
 			JSONObject responseJSONObject = HttpUtil.invoke(
 				new JSONObject(
-					map
+					bodyMap
 				).toString(),
 				"testraycases", null, null, HttpInvoker.HttpMethod.POST);
 
@@ -327,15 +330,15 @@ public class ImportResults {
 
 		String componentName = null;
 		
-		Map<String, String> map = new HashMap<>();
+		Map<String, String> bodyMap = new HashMap<>();
 		
-		map.put("testrayCaseId", String.valueOf(caseId));
+		bodyMap.put("testrayCaseId", String.valueOf(caseId));
 
-		map.put("testrayComponentId", String.valueOf(componentId));
+		bodyMap.put("testrayComponentId", String.valueOf(componentId));
 
-		map.put("testrayRunId", String.valueOf(runId));
+		bodyMap.put("testrayRunId", String.valueOf(runId));
 
-		map.put("testrayBuildId", String.valueOf(buildId));
+		bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
 		for (int i = 0; i < testCasesNodeList.getLength(); i++) {
 			Node testCaseNode = testCasesNodeList.item(i);
@@ -369,25 +372,25 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 						if(value.equals("in-progress")){
-							map.put("dueStatus", String.valueOf(1));
+							bodyMap.put("dueStatus", String.valueOf(1));
 						} 
 						else if(value.equals("passed")){
-							map.put("dueStatus", String.valueOf(2));
+							bodyMap.put("dueStatus", String.valueOf(2));
 						}
 						else if(value.equals("failed")){
-							map.put("dueStatus", String.valueOf(3));
+							bodyMap.put("dueStatus", String.valueOf(3));
 						}
 						else if(value.equals("blocked")){
-							map.put("dueStatus", String.valueOf(4));
+							bodyMap.put("dueStatus", String.valueOf(4));
 						}
 						else if(value.equals("dnr")){
-							map.put("dueStatus", String.valueOf(5));
+							bodyMap.put("dueStatus", String.valueOf(5));
 						}
 						else if(value.equals("test-fix")){
-							map.put("dueStatus", String.valueOf(6));
+							bodyMap.put("dueStatus", String.valueOf(6));
 						} 
 						else {
-							map.put("dueStatus", String.valueOf(7));
+							bodyMap.put("dueStatus", String.valueOf(7));
 						}
 					}
 				}
@@ -427,13 +430,13 @@ public class ImportResults {
 							resultName.append("key:" + fileName + " value:" + valueName +" ");
 						}
 				}
-				map.put("attachments", resultName.toString());
+				bodyMap.put("attachments", resultName.toString());
 			}
 		}
 		}
 				HttpUtil.invoke(
 					new JSONObject(
-						map
+						bodyMap
 					).toString(),
 					"testraycaseresults", null, null, HttpInvoker.HttpMethod.POST);
 	}
