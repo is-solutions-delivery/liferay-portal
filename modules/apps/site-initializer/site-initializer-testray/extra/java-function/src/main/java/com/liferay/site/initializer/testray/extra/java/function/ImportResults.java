@@ -45,6 +45,7 @@ import org.rauschig.jarchivelib.ArchiverFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -761,6 +762,35 @@ public class ImportResults {
 				}
 			}
 		}
+	}
+
+	private Map<String, String> _getProperties(Element element) {
+		Map<String, String> properties = new HashMap<String, String>();
+
+		NodeList propertyNodeList = element.getElementsByTagName(
+				"property");
+
+		for (int i = 0; i < propertyNodeList.getLength(); i++) {
+			Node propertyNode = propertyNodeList.item(i);
+
+			NamedNodeMap namedNodeMap = propertyNode.getAttributes();
+
+			Node nameNode = namedNodeMap.getNamedItem("name");
+
+			if(nameNode == null) {
+				continue;
+			}
+
+			String name = nameNode.getTextContent();
+
+			Node valueNode = namedNodeMap.getNamedItem("value");
+
+			String value = valueNode.getTextContent();
+
+			properties.put(name, value);
+		}
+
+		return properties;
 	}
 
 	private void _unTarGzip(byte[] bytes) throws Exception {
