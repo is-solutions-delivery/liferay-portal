@@ -326,8 +326,6 @@ public class ImportResults {
 
 	public void fetchOrAddTestrayCaseResult(long caseId, NodeList testCasesNodeList)
 		throws Exception {
-
-		String componentName = null;
 		
 		Map<String, String> bodyMap = new HashMap<>();
 		
