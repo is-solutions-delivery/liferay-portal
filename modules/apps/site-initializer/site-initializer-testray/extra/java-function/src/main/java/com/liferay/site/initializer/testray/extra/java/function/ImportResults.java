@@ -185,9 +185,8 @@ public class ImportResults {
 					}
 				}
 			}
+			bodyMap.put("description", buildTestrayBuildDescription(properties));
 		}
-
-		bodyMap.put("description", buildTestrayBuildDescription(properties));
 
 		Map<String, String> parametersMap = new HashMap<>();
 
