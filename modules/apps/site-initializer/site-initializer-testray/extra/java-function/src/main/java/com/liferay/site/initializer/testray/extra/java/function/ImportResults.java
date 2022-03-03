@@ -214,7 +214,7 @@ public class ImportResults {
 	}
 
 	protected static String buildTestrayBuildDescription(Map<String, String> properties) {
-		StringBuilder sb = new StringBuilder(15);
+		StringBuilder sb = new StringBuilder(3);
 
 		sb.append(properties.get("liferay.portal.git.id"));
 		sb.append(properties.get("liferay.plugins.git.id"));
@@ -317,11 +317,11 @@ public class ImportResults {
 			long caseId = responseJSONObject.getLong("id");
 
 			fetchOrAddTestrayCaseType(caseTypeName);
-			fetchOraddTestrayCaseResult(caseId, testCasesNodeList);
+			fetchOrAddTestrayCaseResult(caseId, testCasesNodeList);
 		}
 	}
 
-	public void fetchOraddTestrayCaseResult(long caseId, NodeList testCasesNodeList)
+	public void fetchOrAddTestrayCaseResult(long caseId, NodeList testCasesNodeList)
 		throws Exception {
 
 		String componentName = null;
