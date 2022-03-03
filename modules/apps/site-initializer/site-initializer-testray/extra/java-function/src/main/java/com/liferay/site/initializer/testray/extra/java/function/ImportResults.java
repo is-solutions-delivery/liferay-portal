@@ -224,12 +224,15 @@ public class ImportResults {
 			if (runName != null){
 				runId = fetchOrAddTestrayRun(buildId,runName);
 			}
+			fetchOrAddTestrayTask(buildId,buildName);
         }
 
 	}
 
 	public void addTestrayCase(long projectId, Document document)
 		throws Exception {
+
+		String caseTypeName = null;
 
 		String componentName = null;
 		
@@ -266,7 +269,13 @@ public class ImportResults {
 
 					String value = null;
 
-					if (name.equals("testray.main.component.name")) {
+					if (name.equals("testray.case.type.name")) {
+						caseTypeName = node.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
+					}
+					else if (name.equals("testray.main.component.name")) {
 						componentName = node.getAttributes(
 						).getNamedItem(
 							"value"
@@ -312,6 +321,7 @@ public class ImportResults {
 
 			long caseId = responseJSONObject.getLong("id");
 
+			fetchOrAddTestrayCaseType(caseTypeName);
 			fetchOraddTestrayCaseResult(caseId, testCasesNodeList);
 		}
 	}
@@ -430,6 +440,37 @@ public class ImportResults {
 						map
 					).toString(),
 					"testraycaseresults", null, null, HttpInvoker.HttpMethod.POST);
+	}
+
+	public long fetchOrAddTestrayCaseType(String caseTypeName) throws Exception {
+
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + caseTypeName + "'");
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testraycasetypes", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray caseTypesJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (!caseTypesJSONArray.isEmpty()) {
+			JSONObject caseTypeJSONObject = caseTypesJSONArray.getJSONObject(0);
+
+			return caseTypeJSONObject.getLong("id");
+		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name", caseTypeName);
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testraycasetypes", null, null, HttpInvoker.HttpMethod.POST);
+
+	   	return responseJSONObject.getLong("id");
 	}
 
 	public long fetchOrAddTestrayComponent(long projectId, long teamId,
@@ -615,6 +656,34 @@ public class ImportResults {
 			credentials
 		).build(
 		).getService();
+	}
+
+	public void fetchOrAddTestrayTask(long buildId, String taskName) throws Exception {
+
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + taskName + "'");
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testraytasks", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray tasksJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (tasksJSONArray.isEmpty()) {
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name", taskName);
+		bodyMap.put("dueStatus", String.valueOf(1));
+		bodyMap.put("testrayBuildId", String.valueOf(buildId));
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testraytasks", null, null, HttpInvoker.HttpMethod.POST);
+		}
+
 	}
 
 	public long fetchOrAddTestrayTeam(long projectId, String teamName) throws Exception {
