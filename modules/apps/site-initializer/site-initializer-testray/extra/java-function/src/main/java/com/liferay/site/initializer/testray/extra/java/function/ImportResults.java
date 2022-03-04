@@ -25,6 +25,7 @@ import com.liferay.petra.http.invoker.HttpInvoker;
 import com.liferay.site.initializer.testray.extra.java.function.http.HttpUtil;
 import com.liferay.site.initializer.testray.extra.java.function.util.PropsUtil;
 import com.liferay.site.initializer.testray.extra.java.function.util.PropsValues;
+import com.liferay.site.initializer.testray.extra.java.function.util.TestrayConstants;
 
 import java.io.File;
 import java.io.InputStream;
@@ -84,7 +85,14 @@ public class ImportResults {
 
 		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
-		NodeList propertyNodeList = document.getElementsByTagName(
+		NodeList propertiesNodeList = document.getElementsByTagName(
+			"properties");
+
+		Node propertiesNode = propertiesNodeList.item(0);
+
+		Element element = (Element)propertiesNode;
+
+		NodeList propertyNodeList = element.getElementsByTagName(
 			"property");
 
 		Map<String, String> properties  = _getProperties(propertyNodeList);
@@ -212,6 +220,8 @@ public class ImportResults {
 		String caseTypeName = null;
 
 		String componentName = null;
+
+		long componentId = 0;
 		
 		Map<String, String> bodyMap = new HashMap<>();
 
@@ -299,15 +309,14 @@ public class ImportResults {
 			long caseId = responseJSONObject.getLong("id");
 
 			fetchOrAddTestrayCaseType(caseTypeName);
-			fetchOrAddTestrayCaseResult(caseId, testCasesNodeList);
+			fetchOrAddTestrayCaseResult(caseId, componentId, testCasesNodeList);
 		}
 	}
 
-	public void fetchOrAddTestrayCaseResult(long caseId, NodeList testCasesNodeList)
+	public void fetchOrAddTestrayCaseResult(long caseId,long componentId, NodeList testCasesNodeList)
 		throws Exception {
 		
 		Map<String, String> bodyMap = new HashMap<>();
-		
 		bodyMap.put("testrayCaseId", String.valueOf(caseId));
 		bodyMap.put("testrayComponentId", String.valueOf(componentId));
 		bodyMap.put("testrayRunId", String.valueOf(runId));
@@ -338,7 +347,6 @@ public class ImportResults {
 					).getTextContent();
 
 					String value = null;
-
 					if (name.equals("testray.testcase.status")) {
 						value = node.getAttributes(
 						).getNamedItem(
@@ -346,25 +354,25 @@ public class ImportResults {
 						).getTextContent();
 
 						if (value.equals("in-progress")) {
-							bodyMap.put("dueStatus", String.valueOf(1));
+							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(1));
 						} 
 						else if (value.equals("passed")) {
-							bodyMap.put("dueStatus", String.valueOf(2));
+							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(2));
 						}
 						else if (value.equals("failed")) {
-							bodyMap.put("dueStatus", String.valueOf(3));
+							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(3));
 						}
 						else if (value.equals("blocked")) {
-							bodyMap.put("dueStatus", String.valueOf(4));
+							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(4));
 						}
 						else if (value.equals("dnr")) {
-							bodyMap.put("dueStatus", String.valueOf(5));
+							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(5));
 						}
 						else if (value.equals("test-fix")) {
-							bodyMap.put("dueStatus", String.valueOf(6));
+							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(6));
 						} 
 						else {
-							bodyMap.put("dueStatus", String.valueOf(7));
+							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(7));
 						}
 					}
 				}
@@ -552,16 +560,20 @@ public class ImportResults {
 	public long addTestrayProject(Document document) throws Exception {
 		Map<String, String> bodyMap = new HashMap<>();
 
-		Element element = document.getDocumentElement();
+		NodeList propertiesNodeList = document.getElementsByTagName(
+			"properties");
 
-		element.normalize();
+		Node propertiesNode = propertiesNodeList.item(0);
 
-		NodeList nodeList = document.getElementsByTagName("property");
+		Element element = (Element)propertiesNode;
+
+		NodeList propertyNodeList = element.getElementsByTagName(
+			"property");
 
 		String projectName = null;
 
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node node = nodeList.item(i);
+		for (int i = 0; i < propertyNodeList.getLength(); i++) {
+			Node node = propertyNodeList.item(i);
 
 			if ((node.getNodeType() == Node.ELEMENT_NODE) &&
 				!node.getNodeName(
@@ -649,7 +661,7 @@ public class ImportResults {
 			Map<String, String> bodyMap = new HashMap<>();
 
 			bodyMap.put("name", taskName);
-			bodyMap.put("dueStatus", String.valueOf(1));
+			bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(1));
 			bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
 			responseJSONObject = HttpUtil.invoke(
@@ -832,7 +844,6 @@ public class ImportResults {
 	private final DocumentBuilder _documentBuilder;
 	private final DocumentBuilderFactory _documentBuilderFactory;
 	private final Storage _storage;
-	private long componentId;
 	private long buildId;
 	private long runId;
 
