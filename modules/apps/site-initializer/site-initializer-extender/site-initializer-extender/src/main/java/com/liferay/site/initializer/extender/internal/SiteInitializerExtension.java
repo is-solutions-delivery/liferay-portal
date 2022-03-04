@@ -46,6 +46,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ThemeLocalService;
@@ -57,6 +58,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 import com.liferay.remote.app.service.RemoteAppEntryLocalService;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.extender.spi.CommerceSiteInitializerExtender;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
@@ -108,6 +110,7 @@ public class SiteInitializerExtension {
 		ObjectRelationshipResource.Factory objectRelationshipResourceFactory,
 		ObjectEntryLocalService objectEntryLocalService, Portal portal,
 		RemoteAppEntryLocalService remoteAppEntryLocalService,
+		ResourceActionLocalService resourceActionLocalService,
 		ResourcePermissionLocalService resourcePermissionLocalService,
 		RoleLocalService roleLocalService,
 		SAPEntryLocalService sapEntryLocalService,
@@ -146,7 +149,7 @@ public class SiteInitializerExtension {
 				listTypeEntryResource, listTypeEntryResourceFactory,
 				objectDefinitionLocalService, objectDefinitionResourceFactory,
 				objectRelationshipResourceFactory, objectEntryLocalService,
-				portal, remoteAppEntryLocalService,
+				portal, remoteAppEntryLocalService, resourceActionLocalService,
 				resourcePermissionLocalService, roleLocalService,
 				sapEntryLocalService, settingsFactory,
 				siteNavigationMenuItemLocalService,
@@ -166,9 +169,10 @@ public class SiteInitializerExtension {
 		ServiceDependency serviceDependency =
 			_dependencyManager.createServiceDependency();
 
-		serviceDependency.setCallbacks("setCommerceReferencesHolder", null);
+		serviceDependency.setCallbacks(
+			"setCommerceSiteInitializerExtender", null);
 		serviceDependency.setRequired(false);
-		serviceDependency.setService(CommerceReferencesHolder.class);
+		serviceDependency.setService(CommerceSiteInitializerExtender.class);
 
 		_component.add(serviceDependency);
 
