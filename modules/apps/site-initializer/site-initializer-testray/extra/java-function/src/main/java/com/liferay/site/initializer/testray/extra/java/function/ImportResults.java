@@ -20,6 +20,7 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.petra.http.invoker.HttpInvoker;
 import com.liferay.site.initializer.testray.extra.java.function.http.HttpUtil;
 import com.liferay.site.initializer.testray.extra.java.function.util.PropsUtil;
@@ -78,25 +79,16 @@ public class ImportResults {
 		String runName = null;
 		String buildName = null;
 		String description = null;
-		
+
+		Map<String, String> properties = new HashMap<>();
 		Map<String, String> bodyMap = new HashMap<>();
 
 		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
-		NodeList propertiesNodeList = document.getElementsByTagName(
-			"properties");
-
-		for (int i = 0; i < propertiesNodeList.getLength(); i++) {
-			Node propertiesNode = propertiesNodeList.item(i);
-
-			Element element = (Element)propertiesNode;
-
-			//TODO please change this methodo to use _getProperties and fill
-			//the properties
-			Map<String, String> properties = _getProperties(element);
-
-			NodeList propertyNodeList = element.getElementsByTagName(
+			NodeList propertyNodeList = document.getElementsByTagName(
 				"property");
+
+			properties = _getProperties(propertyNodeList);
 
 			for (int j = 0; j < propertyNodeList.getLength(); j++) {
 				Node propertyNode = propertyNodeList.item(j);
@@ -145,38 +137,6 @@ public class ImportResults {
 						bodyMap.put("testrayRoutineId", String.valueOf(routineId));
 
 					}
-					else if(name.equals("liferay.plugins.git.id")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						properties.put(name,"Plugins Hash:" + value + " ");												
-					}
-					else if(name.equals("liferay.portal.branch")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						properties.put(name,"Portal Branch:" + value + " ");									
-					}
-					else if(name.equals("liferay.portal.bundle")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						properties.put(name,"Bundle:" + value + " ");				
-					}
-					else if(name.equals("liferay.portal.git.id")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						properties.put(name,"Portal Hash:" + value + " ");				
-					}
 					else if (name.equals("testray.run.id")) {
 						runName = propertyNode.getAttributes(
 						).getNamedItem(
@@ -185,8 +145,7 @@ public class ImportResults {
 					}
 				}
 			}
-			bodyMap.put("description", buildTestrayBuildDescription(properties));
-		}
+		bodyMap.put("description", buildTestrayBuildDescription(properties));
 
 		Map<String, String> parametersMap = new HashMap<>();
 
@@ -196,9 +155,9 @@ public class ImportResults {
 			null, "testraybuilds", null, parametersMap,
 			HttpInvoker.HttpMethod.GET);
 
-		JSONArray projectsJSONArray = responseJSONObject.getJSONArray("items");
+		JSONArray buildsJSONArray = responseJSONObject.getJSONArray("items");
 
-		if (projectsJSONArray.isEmpty()) {
+		if (buildsJSONArray.isEmpty()) {
 
 		responseJSONObject = HttpUtil.invoke(
 				new JSONObject(
@@ -217,12 +176,31 @@ public class ImportResults {
 	}
 
 	protected static String buildTestrayBuildDescription(Map<String, String> properties) {
-		StringBuilder sb = new StringBuilder(3);
+		StringBuilder sb = new StringBuilder(15);
 
-		sb.append(properties.get("liferay.portal.git.id"));
-		sb.append(properties.get("liferay.plugins.git.id"));
-		sb.append(properties.get("liferay.portal.branch"));
-		sb.append(properties.get("liferay.portal.bundle"));
+		if(properties.get("liferay.portal.git.id")!=null){
+			sb.append("Portal hash: ");
+			sb.append(properties.get("liferay.portal.git.id"));
+			sb.append(StringPool.SEMICOLON);
+			sb.append(StringPool.NEW_LINE);
+		} 
+		if (properties.get("liferay.plugins.git.id") !=null){
+			sb.append("Plugins hash: ");
+			sb.append(properties.get("liferay.plugins.git.id"));
+			sb.append(StringPool.SEMICOLON);
+			sb.append(StringPool.NEW_LINE);
+		}
+		if(properties.get("liferay.portal.branch") !=null){
+			sb.append("Portal branch: ");
+			sb.append(properties.get("liferay.portal.branch"));
+			sb.append(StringPool.SEMICOLON);
+			sb.append(StringPool.NEW_LINE);
+		} 
+		if (properties.get("liferay.portal.bundle")!=null){
+			sb.append("Bundle: ");
+			sb.append(properties.get("liferay.portal.bundle"));
+			sb.append(StringPool.SEMICOLON);
+		}
 
 		return sb.toString();
 	}
@@ -761,32 +739,62 @@ public class ImportResults {
 		}
 	}
 
-	private Map<String, String> _getProperties(Element element) {
+	private Map<String, String> _getProperties(NodeList propertyNodeList) {
 		Map<String, String> properties = new HashMap<String, String>();
 
-		NodeList propertyNodeList = element.getElementsByTagName(
-				"property");
-
 		for (int i = 0; i < propertyNodeList.getLength(); i++) {
+
 			Node propertyNode = propertyNodeList.item(i);
+					
+				if ((propertyNode.getNodeType() == Node.ELEMENT_NODE) &&
+					!propertyNode.getNodeName(
+					).equals(
+						"#text"
+					) &&
+					(propertyNode.getAttributes(
+					).getLength() > 0)) {
 
-			NamedNodeMap namedNodeMap = propertyNode.getAttributes();
+					String name = propertyNode.getAttributes(
+					).getNamedItem(
+						"name"
+					).getTextContent();
 
-			Node nameNode = namedNodeMap.getNamedItem("name");
+					String value = null;
 
-			if(nameNode == null) {
-				continue;
-			}
+					if(name.equals("liferay.plugins.git.id")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
 
-			String name = nameNode.getTextContent();
+						properties.put(name,value);												
+					}
+					else if(name.equals("liferay.portal.branch")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
 
-			Node valueNode = namedNodeMap.getNamedItem("value");
+						properties.put(name,value);									
+					}
+					else if(name.equals("liferay.portal.bundle")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
 
-			String value = valueNode.getTextContent();
+						properties.put(name,value);				
+					}
+					else if(name.equals("liferay.portal.git.id")) {
+						value = propertyNode.getAttributes(
+						).getNamedItem(
+							"value"
+						).getTextContent();
 
-			properties.put(name, value);
-		}
-
+						properties.put(name,value);			
+					}
+				}
+		}	
 		return properties;
 	}
 
