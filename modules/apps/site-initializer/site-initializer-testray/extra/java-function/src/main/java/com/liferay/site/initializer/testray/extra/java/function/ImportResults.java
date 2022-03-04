@@ -354,27 +354,41 @@ public class ImportResults {
 							"value"
 						).getTextContent();
 
+						String dueStatus = String.valueOf(
+							TestrayConstants.TESTRAY_STATUS_UNTESTED);
+
 						if (value.equals("in-progress")) {
-							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(1));
+							dueStatus = String.valueOf(
+								TestrayConstants.TESTRAY_STATUS_IN_PROGRESS
+							);
 						} 
 						else if (value.equals("passed")) {
-							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(2));
+							dueStatus = String.valueOf(
+								TestrayConstants.TESTRAY_STATUS_PASSED
+							);
 						}
 						else if (value.equals("failed")) {
-							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(3));
+							dueStatus = String.valueOf(
+								TestrayConstants.TESTRAY_STATUS_FAILED
+							);
 						}
 						else if (value.equals("blocked")) {
-							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(4));
+							dueStatus = String.valueOf(
+								TestrayConstants.TESTRAY_STATUS_BLOCKED
+							);
 						}
 						else if (value.equals("dnr")) {
-							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(5));
+							dueStatus = String.valueOf(
+								TestrayConstants.TESTRAY_STATUS_DID_NOT_RUN
+							);
 						}
 						else if (value.equals("test-fix")) {
-							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(6));
-						} 
-						else {
-							bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(7));
+							dueStatus = String.valueOf(
+								TestrayConstants.TESTRAY_STATUS_TEST_FIX
+							);
 						}
+
+						bodyMap.put("dueStatus", dueStatus);
 					}
 				}
 			}
@@ -662,7 +676,9 @@ public class ImportResults {
 			Map<String, String> bodyMap = new HashMap<>();
 
 			bodyMap.put("name", taskName);
-			bodyMap.put(TestrayConstants.TESTRAY_CONSTANTS_STATUS, String.valueOf(1));
+			bodyMap.put("dueStatus", String.valueOf(
+				TestrayConstants.TESTRAY_STATUS_IN_PROGRESS
+			));
 			bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
 			responseJSONObject = HttpUtil.invoke(
