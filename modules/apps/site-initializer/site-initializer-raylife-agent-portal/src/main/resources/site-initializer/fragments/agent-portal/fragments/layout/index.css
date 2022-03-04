@@ -1,7 +1,7 @@
 .side-bar-container {
-	width: 64px;
 	height: 100vh;
 	transition: width 1.3s ease-out;
+	width: 64px;
 }
 
 .side-bar-container .footer-bar .avatar-container,
@@ -80,13 +80,13 @@
 }
 
 .side-bar-container .footer-bar .notification-container {
-	width: 24px;
 	height: 24px;
+	width: 24px;
 }
 
 .side-bar-container .footer-bar .indicator-icon {
-	right: 25px;
 	bottom: 35px;
+	right: 25px;
 }
 
 .page-header-container {
