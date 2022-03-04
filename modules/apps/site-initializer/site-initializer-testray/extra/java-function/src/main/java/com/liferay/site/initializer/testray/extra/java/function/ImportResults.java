@@ -76,19 +76,18 @@ public class ImportResults {
 
 	public void addTestrayBuild(long projectId, Document document)
 		throws Exception  {
-		String runName = null;
 		String buildName = null;
 		String description = null;
+		String runName = null;
 
-		Map<String, String> properties = new HashMap<>();
 		Map<String, String> bodyMap = new HashMap<>();
 
 		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
-			NodeList propertyNodeList = document.getElementsByTagName(
-				"property");
+		NodeList propertyNodeList = document.getElementsByTagName(
+			"property");
 
-			properties = _getProperties(propertyNodeList);
+		Map<String, String> properties  = _getProperties(propertyNodeList);
 
 			for (int j = 0; j < propertyNodeList.getLength(); j++) {
 				Node propertyNode = propertyNodeList.item(j);
@@ -158,45 +157,47 @@ public class ImportResults {
 		JSONArray buildsJSONArray = responseJSONObject.getJSONArray("items");
 
 		if (buildsJSONArray.isEmpty()) {
-
-		responseJSONObject = HttpUtil.invoke(
+			responseJSONObject = HttpUtil.invoke(
 				new JSONObject(
 					bodyMap
 				).toString(),
 				"testraybuilds", null, null, HttpInvoker.HttpMethod.POST);
 
-		buildId = responseJSONObject.getLong("id");
+			buildId = responseJSONObject.getLong("id");
 
 			if (runName != null){
 				runId = fetchOrAddTestrayRun(buildId,runName);
 			}
+
 			fetchOrAddTestrayTask(buildId,buildName);
         }
-
 	}
 
 	protected static String buildTestrayBuildDescription(Map<String, String> properties) {
 		StringBuilder sb = new StringBuilder(15);
 
-		if(properties.get("liferay.portal.git.id")!=null){
+		if(properties.get("liferay.portal.git.id") != null){
 			sb.append("Portal hash: ");
 			sb.append(properties.get("liferay.portal.git.id"));
 			sb.append(StringPool.SEMICOLON);
 			sb.append(StringPool.NEW_LINE);
-		} 
-		if (properties.get("liferay.plugins.git.id") !=null){
+		}
+
+		if (properties.get("liferay.plugins.git.id") != null){
 			sb.append("Plugins hash: ");
 			sb.append(properties.get("liferay.plugins.git.id"));
 			sb.append(StringPool.SEMICOLON);
 			sb.append(StringPool.NEW_LINE);
 		}
-		if(properties.get("liferay.portal.branch") !=null){
+
+		if(properties.get("liferay.portal.branch") != null){
 			sb.append("Portal branch: ");
 			sb.append(properties.get("liferay.portal.branch"));
 			sb.append(StringPool.SEMICOLON);
 			sb.append(StringPool.NEW_LINE);
 		} 
-		if (properties.get("liferay.portal.bundle")!=null){
+
+		if (properties.get("liferay.portal.bundle") != null){
 			sb.append("Bundle: ");
 			sb.append(properties.get("liferay.portal.bundle"));
 			sb.append(StringPool.SEMICOLON);
@@ -343,22 +344,23 @@ public class ImportResults {
 						).getNamedItem(
 							"value"
 						).getTextContent();
-						if(value.equals("in-progress")){
+
+						if (value.equals("in-progress")) {
 							bodyMap.put("dueStatus", String.valueOf(1));
 						} 
-						else if(value.equals("passed")){
+						else if (value.equals("passed")) {
 							bodyMap.put("dueStatus", String.valueOf(2));
 						}
-						else if(value.equals("failed")){
+						else if (value.equals("failed")) {
 							bodyMap.put("dueStatus", String.valueOf(3));
 						}
-						else if(value.equals("blocked")){
+						else if (value.equals("blocked")) {
 							bodyMap.put("dueStatus", String.valueOf(4));
 						}
-						else if(value.equals("dnr")){
+						else if (value.equals("dnr")) {
 							bodyMap.put("dueStatus", String.valueOf(5));
 						}
-						else if(value.equals("test-fix")){
+						else if (value.equals("test-fix")) {
 							bodyMap.put("dueStatus", String.valueOf(6));
 						} 
 						else {
@@ -375,7 +377,7 @@ public class ImportResults {
 			NodeList fileNodeList = element.getElementsByTagName(
 				"file");
 
-			if(fileNodeList!=null){
+			if (fileNodeList!=null) {
 
 				for (int j = 0; j < fileNodeList.getLength(); j++) {
 					Node node = fileNodeList.item(j);
@@ -397,20 +399,22 @@ public class ImportResults {
 							).getNamedItem(
 								"value"
 							).getTextContent();
-						if(fileName !="null" && valueName != "null"){
 
+						if (fileName !="null" && valueName != "null") {
 							resultName.append("key:" + fileName + " value:" + valueName +" ");
 						}
+					}
+
+					bodyMap.put("attachments", resultName.toString());
 				}
-				bodyMap.put("attachments", resultName.toString());
 			}
 		}
-		}
-				HttpUtil.invoke(
-					new JSONObject(
-						bodyMap
-					).toString(),
-					"testraycaseresults", null, null, HttpInvoker.HttpMethod.POST);
+
+		HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testraycaseresults", null, null, HttpInvoker.HttpMethod.POST);
 	}
 
 	public long fetchOrAddTestrayCaseType(String caseTypeName) throws Exception {
@@ -642,17 +646,17 @@ public class ImportResults {
 		JSONArray tasksJSONArray = responseJSONObject.getJSONArray("items");
 
 		if (tasksJSONArray.isEmpty()) {
-		Map<String, String> bodyMap = new HashMap<>();
+			Map<String, String> bodyMap = new HashMap<>();
 
-		bodyMap.put("name", taskName);
-		bodyMap.put("dueStatus", String.valueOf(1));
-		bodyMap.put("testrayBuildId", String.valueOf(buildId));
+			bodyMap.put("name", taskName);
+			bodyMap.put("dueStatus", String.valueOf(1));
+			bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
-		responseJSONObject = HttpUtil.invoke(
-			new JSONObject(
-				bodyMap
-			).toString(),
-			"testraytasks", null, null, HttpInvoker.HttpMethod.POST);
+			responseJSONObject = HttpUtil.invoke(
+				new JSONObject(
+					bodyMap
+				).toString(),
+				"testraytasks", null, null, HttpInvoker.HttpMethod.POST);
 		}
 
 	}
