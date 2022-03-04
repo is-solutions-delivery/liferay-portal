@@ -15,15 +15,55 @@
 import ReactDOM from 'react-dom';
 
 import ClayIconProvider from './common/context/ClayIconProvider';
-import AgentPortal from './routes/agent-portal/pages/AgentPortal';
+import Dashboard from './routes/dashboard/pages/Dashboard';
 
 import './common/styles/index.scss';
+import Applications from './routes/applications/pages/Applications';
+import Claims from './routes/claims/pages/Claims';
+import Policies from './routes/policies/pages/Policies';
+import Reports from './routes/reports/pages/Reports';
+
+interface Props {
+	route: any;
+}
+
+const DirectToCustomer = ({route}: Props) => {
+	const SearchParams = new URLSearchParams(window.location.search);
+
+	const routeEntry = SearchParams.get('raylife_dev_application') || route;
+
+	if (routeEntry === 'dashboard') {
+		return <Dashboard />;
+	}
+
+	if (routeEntry === 'applications') {
+		return <Applications />;
+	}
+
+	if (routeEntry === 'policies') {
+		return <Policies />;
+	}
+
+	if (routeEntry === 'claims') {
+		return <Claims />;
+	}
+
+	if (routeEntry === 'reports') {
+		return <Reports />;
+	}
+
+	return <></>;
+};
 
 class WebComponent extends HTMLElement {
 	connectedCallback() {
+		const properties = {
+			route: this.getAttribute('route'),
+		};
+
 		ReactDOM.render(
 			<ClayIconProvider>
-				<AgentPortal />
+				<DirectToCustomer route={properties.route} />
 			</ClayIconProvider>,
 			this
 		);
