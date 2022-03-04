@@ -757,62 +757,34 @@ public class ImportResults {
 	}
 
 	private Map<String, String> _getProperties(NodeList propertyNodeList) {
-		Map<String, String> propertiesMap = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<String, String>();
 
 		for (int i = 0; i < propertyNodeList.getLength(); i++) {
 
-			Node propertyNode = propertyNodeList.item(i);
+			Node node = propertyNodeList.item(i);
 					
-				if ((propertyNode.getNodeType() == Node.ELEMENT_NODE) &&
-					!propertyNode.getNodeName(
+				if ((node.getNodeType() == Node.ELEMENT_NODE) &&
+					!node.getNodeName(
 					).equals(
 						"#text"
 					) &&
-					(propertyNode.getAttributes(
+					(node.getAttributes(
 					).getLength() > 0)) {
 
-					String name = propertyNode.getAttributes(
-					).getNamedItem(
-						"name"
-					).getTextContent();
+					String name = node.getAttributes(
+						).getNamedItem(
+							"name"
+						).getTextContent();
 
-					String value = null;
-
-					if(name.equals("liferay.plugins.git.id")) {
-						value = propertyNode.getAttributes(
+					String value = node.getAttributes(
 						).getNamedItem(
 							"value"
 						).getTextContent();
-
-						propertiesMap.put(name,value);												
-					}
-					else if(name.equals("liferay.portal.branch")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						propertiesMap.put(name,value);									
-					}
-					else if(name.equals("liferay.portal.bundle")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						propertiesMap.put(name,value);				
-					}
-					else if(name.equals("liferay.portal.git.id")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						propertiesMap.put(name,value);			
-					}
+					
+					map.put(name,value);												
 				}
 		}	
-		return propertiesMap;
+		return map;
 	}
 
 	private void _unTarGzip(byte[] bytes) throws Exception {
