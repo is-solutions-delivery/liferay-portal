@@ -572,53 +572,7 @@ public class ImportResults {
 	}
 
 
-	public long addTestrayProject(Document document) throws Exception {
-		Map<String, String> bodyMap = new HashMap<>();
-
-		NodeList propertiesNodeList = document.getElementsByTagName(
-			"properties");
-
-		Node propertiesNode = propertiesNodeList.item(0);
-
-		Element element = (Element)propertiesNode;
-
-		NodeList propertyNodeList = element.getElementsByTagName(
-			"property");
-
-		String projectName = null;
-
-		for (int i = 0; i < propertyNodeList.getLength(); i++) {
-			Node node = propertyNodeList.item(i);
-
-			if ((node.getNodeType() == Node.ELEMENT_NODE) &&
-				!node.getNodeName(
-				).equals(
-					"#text"
-				) &&
-				(node.getAttributes(
-				).getLength() > 0)) {
-
-				String name = node.getAttributes(
-				).getNamedItem(
-					"name"
-				).getTextContent();
-
-				if (name.equals("testray.project.name")) {
-					String value = node.getAttributes(
-					).getNamedItem(
-						"value"
-					).getTextContent();
-
-					projectName = value;
-
-					bodyMap.put("description", name);
-					bodyMap.put("name", value);
-
-					break;
-				}
-			}
-		}
-
+	public long fetchOrAddTestrayProject(String projectName) throws Exception {
 		Map<String, String> parametersMap = new HashMap<>();
 
 		parametersMap.put("filter", "name eq '" + projectName + "'");
@@ -634,6 +588,10 @@ public class ImportResults {
 
 			return projectJSONObject.getLong("id");
 		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name", projectName);
 
 		responseJSONObject = HttpUtil.invoke(
 			new JSONObject(
@@ -823,7 +781,7 @@ public class ImportResults {
 		for (File file : files) {
 			Document document = _documentBuilder.parse(file);
 
-			long projectId = addTestrayProject(document);
+			long projectId = fetchOrAddTestrayProject("");
 
 			addTestrayBuild(projectId, document);
 			addTestrayCase(projectId, document);
