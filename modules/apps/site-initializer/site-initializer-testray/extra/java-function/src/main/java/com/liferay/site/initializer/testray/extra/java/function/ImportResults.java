@@ -96,7 +96,7 @@ public class ImportResults {
 		NodeList propertyNodeList = element.getElementsByTagName(
 			"property");
 
-		Map<String, String> propertiesMap  = _getProperties(propertyNodeList);
+		Map<String, String> propertiesMap  =  new HashMap<>();
 
 			for (int j = 0; j < propertyNodeList.getLength(); j++) {
 				Node propertyNode = propertyNodeList.item(j);
@@ -730,34 +730,39 @@ public class ImportResults {
 		}
 	}
 
-	private Map<String, String> _getProperties(NodeList propertyNodeList) {
+	private String _getAttributeValue(Node node, String attributeName) {
+		NamedNodeMap namedNodeMap = node.getAttributes();
+
+		if(namedNodeMap == null) {
+			return null;
+		}
+
+		Node attributeNode = namedNodeMap.getNamedItem(attributeName);
+
+		if(attributeNode == null) {
+			return null;
+		}
+
+		return attributeNode.getTextContent();
+	}
+
+	private Map<String, String> _getProperties(Element rootElement) {
 		Map<String, String> map = new HashMap<String, String>();
 
-		for (int i = 0; i < propertyNodeList.getLength(); i++) {
+		NodeList nodeList = rootElement.getElementsByTagName("properties");
 
-			Node node = propertyNodeList.item(i);
-					
-				if ((node.getNodeType() == Node.ELEMENT_NODE) &&
-					!node.getNodeName(
-					).equals(
-						"#text"
-					) &&
-					(node.getAttributes(
-					).getLength() > 0)) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
 
-					String name = node.getAttributes(
-						).getNamedItem(
-							"name"
-						).getTextContent();
+			if (!node.hasAttributes()) {
+				continue;
+			}
 
-					String value = node.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-					
-					map.put(name,value);												
-				}
-		}	
+			map.put(_getAttributeValue(node, "name"),
+				_getAttributeValue(node, "value")
+			);
+		}
+
 		return map;
 	}
 
@@ -786,6 +791,13 @@ public class ImportResults {
 			addTestrayBuild(projectId, document);
 			addTestrayCase(projectId, document);
 		}
+	}
+
+	private void _processResults(Document document) {
+		Element rootElement = document.getDocumentElement();
+
+		Map<String, String> propertiesMap = _getProperties(rootElement);
+
 	}
 
 	private final DocumentBuilder _documentBuilder;
