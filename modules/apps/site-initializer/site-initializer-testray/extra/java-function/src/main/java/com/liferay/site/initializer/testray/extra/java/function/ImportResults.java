@@ -76,112 +76,6 @@ public class ImportResults {
 		_documentBuilder = _documentBuilderFactory.newDocumentBuilder();
 	}
 
-	public void addTestrayBuild(long projectId, Document document)
-		throws Exception  {
-		String buildName = null;
-		String description = null;
-		String runName = null;
-
-		Map<String, String> bodyMap = new HashMap<>();
-
-		bodyMap.put("testrayProjectId", String.valueOf(projectId));
-
-		NodeList propertiesNodeList = document.getElementsByTagName(
-			"properties");
-
-		Node propertiesNode = propertiesNodeList.item(0);
-
-		Element element = (Element)propertiesNode;
-
-		NodeList propertyNodeList = element.getElementsByTagName(
-			"property");
-
-		Map<String, String> propertiesMap  =  new HashMap<>();
-
-			for (int j = 0; j < propertyNodeList.getLength(); j++) {
-				Node propertyNode = propertyNodeList.item(j);
-
-				if ((propertyNode.getNodeType() == Node.ELEMENT_NODE) &&
-					!propertyNode.getNodeName(
-					).equals(
-						"#text"
-					) &&
-					(propertyNode.getAttributes(
-					).getLength() > 0)) {
-
-					String name = propertyNode.getAttributes(
-					).getNamedItem(
-						"name"
-					).getTextContent();
-
-					String value = null;
-
-					if (name.equals("testray.build.name")) {
-						buildName = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						bodyMap.put("name", buildName);
-
-					}
-					else if (name.equals("testray.build.time")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						bodyMap.put("dueDate", value);
-
-					}
-					else if (name.equals("testray.build.type")) {
-						value = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-
-						long routineId = fetchOrAddTestrayRoutine(projectId, value);
-
-						bodyMap.put("testrayRoutineId", String.valueOf(routineId));
-
-					}
-					else if (name.equals("testray.run.id")) {
-						runName = propertyNode.getAttributes(
-						).getNamedItem(
-							"value"
-						).getTextContent();
-					}
-				}
-			}
-		bodyMap.put("description", buildTestrayBuildDescription(propertiesMap));
-
-		Map<String, String> parametersMap = new HashMap<>();
-
-		parametersMap.put("filter", "name eq '" + buildName + "'");
-
-		JSONObject responseJSONObject = HttpUtil.invoke(
-			null, "testraybuilds", null, parametersMap,
-			HttpInvoker.HttpMethod.GET);
-
-		JSONArray buildsJSONArray = responseJSONObject.getJSONArray("items");
-
-		if (buildsJSONArray.isEmpty()) {
-			responseJSONObject = HttpUtil.invoke(
-				new JSONObject(
-					bodyMap
-				).toString(),
-				"testraybuilds", null, null, HttpInvoker.HttpMethod.POST);
-
-			buildId = responseJSONObject.getLong("id");
-
-			if (runName != null){
-				runId = fetchOrAddTestrayRun(buildId,runName);
-			}
-
-			fetchOrAddTestrayTask(buildId,buildName);
-        }
-	}
-
 	protected static String buildTestrayBuildDescription(Map<String, String> propertiesMap) {
 		StringBundler sb = new StringBundler(15);
 
@@ -730,6 +624,49 @@ public class ImportResults {
 		}
 	}
 
+	private long _fetchOrAddTestrayBuild(long projectId,
+										 Map<String, String> propertiesMap)
+		throws Exception  {
+
+		String buildName  = propertiesMap.get("testray.build.name");
+
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + buildName + "'");
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testraybuilds", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray buildsJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (!buildsJSONArray.isEmpty()) {
+			JSONObject buildJSONObject = buildsJSONArray.getJSONObject(0);
+
+			return buildJSONObject.getLong("id");
+		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("description", buildTestrayBuildDescription(propertiesMap));
+		bodyMap.put("dueDate", propertiesMap.get("testray.build.time"));
+		bodyMap.put("name", buildName);
+		bodyMap.put("testrayProjectId", String.valueOf(projectId));
+
+		long routineId = fetchOrAddTestrayRoutine(projectId,
+			propertiesMap.get("testray.build.type"));
+
+		bodyMap.put("testrayRoutineId", String.valueOf(routineId));
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testraybuilds", null, null, HttpInvoker.HttpMethod.POST);
+
+		return responseJSONObject.getLong("id");
+	}
+
 	private String _getAttributeValue(Node node, String attributeName) {
 		NamedNodeMap namedNodeMap = node.getAttributes();
 
@@ -801,6 +738,8 @@ public class ImportResults {
 		String projectName = propertiesMap.get("testray.project.name");
 
 		long projectId = fetchOrAddTestrayProject(projectName);
+
+		long buildId = _fetchOrAddTestrayBuild(projectId, propertiesMap);
 
 	}
 
