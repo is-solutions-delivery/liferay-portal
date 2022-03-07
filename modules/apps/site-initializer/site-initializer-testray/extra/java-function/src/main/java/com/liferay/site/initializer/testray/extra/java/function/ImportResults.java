@@ -21,7 +21,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 import com.liferay.petra.http.invoker.HttpInvoker;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.site.initializer.testray.extra.java.function.http.HttpUtil;
 import com.liferay.site.initializer.testray.extra.java.function.util.PropsUtil;
@@ -81,6 +80,8 @@ public class ImportResults {
 		String buildName = null;
 		String description = null;
 		String runName = null;
+		long buildId = 0;
+		long runId = 0;
 
 		Map<String, String> bodyMap = new HashMap<>();
 
@@ -180,10 +181,11 @@ public class ImportResults {
 
 			fetchOrAddTestrayTask(buildId,buildName);
         }
+		addTestrayCase(buildId, projectId, runId, document);
 	}
 
 	protected static String buildTestrayBuildDescription(Map<String, String> propertiesMap) {
-		StringBundler sb = new StringBundler(15);
+		StringBuilder sb = new StringBuilder(15);
 
 		if(propertiesMap.get("liferay.portal.git.id") != null){
 			sb.append("Portal hash: ");
@@ -215,7 +217,7 @@ public class ImportResults {
 		return sb.toString();
 	}
 
-	public void addTestrayCase(long projectId, Document document)
+	public void addTestrayCase(long buildId, long projectId, long runId, Document document)
 		throws Exception {
 
 		String caseTypeName = null;
@@ -310,18 +312,18 @@ public class ImportResults {
 			long caseId = responseJSONObject.getLong("id");
 
 			fetchOrAddTestrayCaseType(caseTypeName);
-			fetchOrAddTestrayCaseResult(caseId, componentId, testCasesNodeList);
+			fetchOrAddTestrayCaseResult(caseId, buildId, componentId, runId, testCasesNodeList);
 		}
 	}
 
-	public void fetchOrAddTestrayCaseResult(long caseId,long componentId, NodeList testCasesNodeList)
+	public void fetchOrAddTestrayCaseResult(long caseId, long buildId, long componentId, long runId, NodeList testCasesNodeList)
 		throws Exception {
 		
 		Map<String, String> bodyMap = new HashMap<>();
 		bodyMap.put("testrayCaseId", String.valueOf(caseId));
+		bodyMap.put("testrayBuildId", String.valueOf(buildId));
 		bodyMap.put("testrayComponentId", String.valueOf(componentId));
 		bodyMap.put("testrayRunId", String.valueOf(runId));
-		bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
 		for (int i = 0; i < testCasesNodeList.getLength(); i++) {
 			Node testCaseNode = testCasesNodeList.item(i);
@@ -395,7 +397,7 @@ public class ImportResults {
 
 			String fileName = "";
 			String valueName = "";
-			StringBundler resultName = new StringBundler("");
+			StringBuilder resultName = new StringBuilder("");
 
 			NodeList fileNodeList = element.getElementsByTagName(
 				"file");
@@ -826,14 +828,11 @@ public class ImportResults {
 			long projectId = addTestrayProject(document);
 
 			addTestrayBuild(projectId, document);
-			addTestrayCase(projectId, document);
 		}
 	}
 
 	private final DocumentBuilder _documentBuilder;
 	private final DocumentBuilderFactory _documentBuilderFactory;
 	private final Storage _storage;
-	private long buildId;
-	private long runId;
 
 }
