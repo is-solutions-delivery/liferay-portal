@@ -432,40 +432,6 @@ public class ImportResults {
 	   	return responseJSONObject.getLong("id");
 	}
 
-	public long fetchOrAddTestrayRun(long buildId, String runName) throws Exception {
-
-		Map<String, String> parametersMap = new HashMap<>();
-
-		parametersMap.put("filter", "name eq '" + runName + "'");
-
-		JSONObject responseJSONObject = HttpUtil.invoke(
-			null, "testrayruns", null, parametersMap,
-			HttpInvoker.HttpMethod.GET);
-
-		JSONArray runsJSONArray = responseJSONObject.getJSONArray("items");
-
-		if (!runsJSONArray.isEmpty()) {
-			JSONObject runJSONObject = runsJSONArray.getJSONObject(0);
-
-			return runJSONObject.getLong("id");
-		}
-
-		Map<String, String> bodyMap = new HashMap<>();
-
-		bodyMap.put("externalReferencePK", runName);
-		bodyMap.put("name", runName);
-		bodyMap.put("testrayBuildId", String.valueOf(buildId));
-
-		responseJSONObject = HttpUtil.invoke(
-			new JSONObject(
-				bodyMap
-			).toString(),
-			"testrayruns", null, null, HttpInvoker.HttpMethod.POST);
-
-	   	return responseJSONObject.getLong("id");
-	}
-
-
 	public long fetchOrAddTestrayProject(String projectName) throws Exception {
 		Map<String, String> parametersMap = new HashMap<>();
 
@@ -667,6 +633,39 @@ public class ImportResults {
 		return responseJSONObject.getLong("id");
 	}
 
+	private long _fetchOrAddTestrayRun(long buildId, String runName) throws Exception {
+
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + runName + "'");
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testrayruns", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray runsJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (!runsJSONArray.isEmpty()) {
+			JSONObject runJSONObject = runsJSONArray.getJSONObject(0);
+
+			return runJSONObject.getLong("id");
+		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("externalReferencePK", runName);
+		bodyMap.put("name", runName);
+		bodyMap.put("testrayBuildId", String.valueOf(buildId));
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testrayruns", null, null, HttpInvoker.HttpMethod.POST);
+
+		return responseJSONObject.getLong("id");
+	}
+
 	private String _getAttributeValue(Node node, String attributeName) {
 		NamedNodeMap namedNodeMap = node.getAttributes();
 
@@ -740,6 +739,9 @@ public class ImportResults {
 		long projectId = fetchOrAddTestrayProject(projectName);
 
 		long buildId = _fetchOrAddTestrayBuild(projectId, propertiesMap);
+
+		long runId = _fetchOrAddTestrayRun(buildId,
+			propertiesMap.get("testray.run.id"));
 
 	}
 
