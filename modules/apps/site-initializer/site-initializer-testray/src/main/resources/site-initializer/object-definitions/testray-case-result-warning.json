@@ -1,6 +1,6 @@
 {
 	"label": {
-		"en_US": "Testray Case Result Warting"
+		"en_US": "Testray Case Result Warning"
 	},
 	"name": "TestrayCaseResultWarning",
 	"objectFields": [
@@ -26,7 +26,7 @@
 		}
 	],
 	"pluralLabel": {
-		"en_US": "Testray Cases Results Wartings"
+		"en_US": "Testray Cases Results Warnings"
 	},
 	"scope": "company"
 }
