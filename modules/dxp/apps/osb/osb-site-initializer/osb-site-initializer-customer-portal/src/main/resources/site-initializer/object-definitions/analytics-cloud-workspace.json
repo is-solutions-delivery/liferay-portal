@@ -1,0 +1,83 @@
+{
+	"label": {
+		"en-US": "Analytics Cloud Environment"
+	},
+	"name": "AnalyticsCloudEnvironment",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Account Key"
+			},
+			"name": "accountKey",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Owner Email Address"
+			},
+			"name": "ownerEmailAddress",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Workspace Name"
+			},
+			"name": "workspaceName",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Data Center Location"
+			},
+			"name": "dataCenterLocation",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Workspace Friendly URL"
+			},
+			"name": "workspaceFriendlyUrl",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Allowed Email Domains"
+			},
+			"name": "allowedEmailDomains",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Time Zone"
+			},
+			"name": "timeZone",
+			"required": false
+		}
+	],
+	"pluralLabel": {
+		"en_US": "Analytics Cloud Environments"
+	},
+	"scope": "site",
+	"system": false
+}
