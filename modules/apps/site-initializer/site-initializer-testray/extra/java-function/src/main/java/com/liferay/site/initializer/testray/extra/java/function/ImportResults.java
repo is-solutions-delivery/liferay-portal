@@ -77,39 +77,6 @@ public class ImportResults {
 		_documentBuilder = _documentBuilderFactory.newDocumentBuilder();
 	}
 
-	protected static String buildTestrayBuildDescription(Map<String, String> propertiesMap) {
-		StringBuilder sb = new StringBuilder(15);
-
-		if(propertiesMap.get("liferay.portal.git.id") != null){
-			sb.append("Portal hash: ");
-			sb.append(propertiesMap.get("liferay.portal.git.id"));
-			sb.append(StringPool.SEMICOLON);
-			sb.append(StringPool.NEW_LINE);
-		}
-
-		if (propertiesMap.get("liferay.plugins.git.id") != null){
-			sb.append("Plugins hash: ");
-			sb.append(propertiesMap.get("liferay.plugins.git.id"));
-			sb.append(StringPool.SEMICOLON);
-			sb.append(StringPool.NEW_LINE);
-		}
-
-		if(propertiesMap.get("liferay.portal.branch") != null){
-			sb.append("Portal branch: ");
-			sb.append(propertiesMap.get("liferay.portal.branch"));
-			sb.append(StringPool.SEMICOLON);
-			sb.append(StringPool.NEW_LINE);
-		} 
-
-		if (propertiesMap.get("liferay.portal.bundle") != null){
-			sb.append("Bundle: ");
-			sb.append(propertiesMap.get("liferay.portal.bundle"));
-			sb.append(StringPool.SEMICOLON);
-		}
-
-		return sb.toString();
-	}
-
 	private void _addTestrayCases(long projectId, Element rootElement)
 		throws Exception {
 
@@ -121,6 +88,10 @@ public class ImportResults {
 
 			Map<String, Object> testrayCasePropertiesMap =
 				_getTestrayCaseProperties((Element) testcaseNode);
+
+			Map<String, String> bodyMap = new HashMap<>();
+
+			bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
 		}
 
@@ -218,6 +189,39 @@ public class ImportResults {
 //			fetchOrAddTestrayCaseType(caseTypeName);
 //			fetchOrAddTestrayCaseResult(caseId, componentId, testCasesNodeList);
 //		}
+	}
+
+	private String _buildTestrayBuildDescription(Map<String, String> propertiesMap) {
+		StringBuilder sb = new StringBuilder(15);
+
+		if(propertiesMap.get("liferay.portal.git.id") != null){
+			sb.append("Portal hash: ");
+			sb.append(propertiesMap.get("liferay.portal.git.id"));
+			sb.append(StringPool.SEMICOLON);
+			sb.append(StringPool.NEW_LINE);
+		}
+
+		if (propertiesMap.get("liferay.plugins.git.id") != null){
+			sb.append("Plugins hash: ");
+			sb.append(propertiesMap.get("liferay.plugins.git.id"));
+			sb.append(StringPool.SEMICOLON);
+			sb.append(StringPool.NEW_LINE);
+		}
+
+		if(propertiesMap.get("liferay.portal.branch") != null){
+			sb.append("Portal branch: ");
+			sb.append(propertiesMap.get("liferay.portal.branch"));
+			sb.append(StringPool.SEMICOLON);
+			sb.append(StringPool.NEW_LINE);
+		}
+
+		if (propertiesMap.get("liferay.portal.bundle") != null){
+			sb.append("Bundle: ");
+			sb.append(propertiesMap.get("liferay.portal.bundle"));
+			sb.append(StringPool.SEMICOLON);
+		}
+
+		return sb.toString();
 	}
 
 	public void fetchOrAddTestrayCaseResult(long caseId,long componentId, NodeList testCasesNodeList)
@@ -596,7 +600,7 @@ public class ImportResults {
 
 		Map<String, String> bodyMap = new HashMap<>();
 
-		bodyMap.put("description", buildTestrayBuildDescription(propertiesMap));
+		bodyMap.put("description", _buildTestrayBuildDescription(propertiesMap));
 		bodyMap.put("dueDate", propertiesMap.get("testray.build.time"));
 		bodyMap.put("name", buildName);
 		bodyMap.put("testrayProjectId", String.valueOf(projectId));
