@@ -432,36 +432,6 @@ public class ImportResults {
 	   	return responseJSONObject.getLong("id");
 	}
 
-	public long fetchOrAddTestrayProject(String projectName) throws Exception {
-		Map<String, String> parametersMap = new HashMap<>();
-
-		parametersMap.put("filter", "name eq '" + projectName + "'");
-
-		JSONObject responseJSONObject = HttpUtil.invoke(
-			null, "testrayprojects", null, parametersMap,
-			HttpInvoker.HttpMethod.GET);
-
-		JSONArray projectsJSONArray = responseJSONObject.getJSONArray("items");
-
-		if (!projectsJSONArray.isEmpty()) {
-			JSONObject projectJSONObject = projectsJSONArray.getJSONObject(0);
-
-			return projectJSONObject.getLong("id");
-		}
-
-		Map<String, String> bodyMap = new HashMap<>();
-
-		bodyMap.put("name", projectName);
-
-		responseJSONObject = HttpUtil.invoke(
-			new JSONObject(
-				bodyMap
-			).toString(),
-			"testrayprojects", null, null, HttpInvoker.HttpMethod.POST);
-
-		return responseJSONObject.getLong("id");
-	}
-
 	public Storage getStorage() throws Exception {
 		InputStream inputStream = PropsUtil.class.getResourceAsStream(
 			PropsValues.TESTRAY_URL_API_KEY);
@@ -633,6 +603,36 @@ public class ImportResults {
 		return responseJSONObject.getLong("id");
 	}
 
+	private long _fetchOrAddTestrayProject(String projectName) throws Exception {
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + projectName + "'");
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testrayprojects", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray projectsJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (!projectsJSONArray.isEmpty()) {
+			JSONObject projectJSONObject = projectsJSONArray.getJSONObject(0);
+
+			return projectJSONObject.getLong("id");
+		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name", projectName);
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testrayprojects", null, null, HttpInvoker.HttpMethod.POST);
+
+		return responseJSONObject.getLong("id");
+	}
+
 	private long _fetchOrAddTestrayRun(long buildId, String runName) throws Exception {
 
 		Map<String, String> parametersMap = new HashMap<>();
@@ -736,7 +736,7 @@ public class ImportResults {
 
 		String projectName = propertiesMap.get("testray.project.name");
 
-		long projectId = fetchOrAddTestrayProject(projectName);
+		long projectId = _fetchOrAddTestrayProject(projectName);
 
 		long buildId = _fetchOrAddTestrayBuild(projectId, propertiesMap);
 
