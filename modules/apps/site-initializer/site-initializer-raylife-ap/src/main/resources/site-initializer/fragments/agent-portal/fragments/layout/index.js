@@ -11,15 +11,22 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+// eslint-disable-next-line no-undef
 const btnDashboard = fragmentElement.querySelector('.dashboard-menu');
+// eslint-disable-next-line no-undef
 const btnApplications = fragmentElement.querySelector('.applications-menu');
+// eslint-disable-next-line no-undef
 const btnPolicies = fragmentElement.querySelector('.policies-menu');
+// eslint-disable-next-line no-undef
 const btnClaims = fragmentElement.querySelector('.claims-menu');
+// eslint-disable-next-line no-undef
 const btnReports = fragmentElement.querySelector('.reports-menu');
+// eslint-disable-next-line no-undef
 const btnLogo = fragmentElement.querySelector('.top-bar');
 
-const redirectUrl = (routeName) =>
-	(window.location.href = `${origin}/web/agent-portal/${routeName}`);
+const redirectUrl = (routeName) => {
+	window.location.href = `${origin}/web/agent-portal/${routeName}`;
+};
 
 btnDashboard.onclick = () => redirectUrl('dashboard');
 btnApplications.onclick = () => redirectUrl('applications');
