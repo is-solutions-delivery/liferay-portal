@@ -21,7 +21,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 import com.liferay.petra.http.invoker.HttpInvoker;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.site.initializer.testray.extra.java.function.http.HttpUtil;
 import com.liferay.site.initializer.testray.extra.java.function.util.PropsUtil;
@@ -77,7 +76,7 @@ public class ImportResults {
 	}
 
 	protected static String buildTestrayBuildDescription(Map<String, String> propertiesMap) {
-		StringBundler sb = new StringBundler(15);
+		StringBuilder sb = new StringBuilder(15);
 
 		if(propertiesMap.get("liferay.portal.git.id") != null){
 			sb.append("Portal hash: ");
@@ -289,7 +288,7 @@ public class ImportResults {
 
 			String fileName = "";
 			String valueName = "";
-			StringBundler resultName = new StringBundler("");
+			StringBuilder resultName = new StringBuilder("");
 
 			NodeList fileNodeList = element.getElementsByTagName(
 				"file");
