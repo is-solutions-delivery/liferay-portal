@@ -786,17 +786,21 @@ public class ImportResults {
 		for (File file : files) {
 			Document document = _documentBuilder.parse(file);
 
-			long projectId = fetchOrAddTestrayProject("");
+			_processResults(document);
 
-			addTestrayBuild(projectId, document);
-			addTestrayCase(projectId, document);
+//			addTestrayBuild(projectId, document);
+//			addTestrayCase(projectId, document);
 		}
 	}
 
-	private void _processResults(Document document) {
+	private void _processResults(Document document) throws Exception {
 		Element rootElement = document.getDocumentElement();
 
 		Map<String, String> propertiesMap = _getProperties(rootElement);
+
+		String projectName = propertiesMap.get("testray.project.name");
+
+		long projectId = fetchOrAddTestrayProject(projectName);
 
 	}
 
