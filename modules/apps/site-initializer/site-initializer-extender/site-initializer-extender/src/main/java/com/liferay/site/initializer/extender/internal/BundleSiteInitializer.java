@@ -25,6 +25,7 @@ import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.commerce.account.constants.CommerceAccountConstants;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
+import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CommerceChannel;
@@ -3087,17 +3088,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (String resourcePath : resourcePaths) {
 			JSONObject workflowDefinitionJSONObject =
-				JSONFactoryUtil.createJSONObject(_read(resourcePath + ".json"));
+				JSONFactoryUtil.createJSONObject(
+					_read(resourcePath + "workflow-definition.json"));
 
 			workflowDefinitionJSONObject.put(
-				"content", _read(resourcePath + ".content.xml"));
+				"content", _read(resourcePath + "workflow-definition.xml"));
 
 			WorkflowDefinition workflowDefinition =
 				workflowDefinitionResource.postWorkflowDefinitionDeploy(
 					WorkflowDefinition.toDTO(
 						workflowDefinitionJSONObject.toString()));
 
-			String propertiesJSON = _read(resourcePath + ".properties.json");
+			String propertiesJSON = _read(
+				resourcePath + "workflow-definition.properties.json");
 
 			if (propertiesJSON == null) {
 				continue;
@@ -3146,13 +3149,28 @@ public class BundleSiteInitializer implements SiteInitializer {
 						className, "#", objectDefinition.getId());
 				}
 
-				_workflowDefinitionLinkLocalService.
-					updateWorkflowDefinitionLink(
-						serviceContext.getUserId(),
-						serviceContext.getCompanyId(), groupId, className, 0, 0,
-						StringBundler.concat(
-							workflowDefinition.getName(), "@",
-							workflowDefinition.getVersion()));
+				if (StringUtil.equals(
+						className, CommerceOrder.class.getName())) {
+
+					_workflowDefinitionLinkLocalService.
+						updateWorkflowDefinitionLink(
+							serviceContext.getUserId(),
+							serviceContext.getCompanyId(), groupId, className,
+							0, propertiesJSONObject.getLong("typePK"),
+							StringBundler.concat(
+								workflowDefinition.getName(), "@",
+								workflowDefinition.getVersion()));
+				}
+				else {
+					_workflowDefinitionLinkLocalService.
+						updateWorkflowDefinitionLink(
+							serviceContext.getUserId(),
+							serviceContext.getCompanyId(), groupId, className,
+							0, 0,
+							StringBundler.concat(
+								workflowDefinition.getName(), "@",
+								workflowDefinition.getVersion()));
+				}
 			}
 		}
 	}
