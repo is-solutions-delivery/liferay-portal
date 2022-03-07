@@ -15,6 +15,7 @@
 package com.liferay.site.initializer.extender.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountRole;
 import com.liferay.account.service.AccountRoleLocalService;
@@ -170,15 +171,15 @@ import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.wiring.BundleWiring;
 
-import javax.servlet.ServletContext;
 import java.io.InputStream;
 import java.io.Serializable;
+
 import java.math.BigDecimal;
+
 import java.net.URL;
 import java.net.URLConnection;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -191,6 +192,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.servlet.ServletContext;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.wiring.BundleWiring;
 
 /**
  * @author Brian Wing Shun Chan
@@ -3075,16 +3081,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		String json = _read(resourcePath);
 
-		Company company = _companyLocalService.getCompany(
-			serviceContext.getCompanyId());
-
 		if (json == null) {
 			return;
 		}
 
-			_portletSettingsImporter.importPortletSettings(
-			JSONFactoryUtil.createJSONArray(json),
-			_classLoader,
+		Company company = _companyLocalService.getCompany(
+			serviceContext.getCompanyId());
+
+		_portletSettingsImporter.importPortletSettings(
+			JSONFactoryUtil.createJSONArray(json), _classLoader,
 			StringUtil.replace(resourcePath, ".json", "/"),
 			serviceContext.getScopeGroupId(), company.getGroupId(),
 			serviceContext.getUserId());
@@ -3545,7 +3550,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final Bundle _bundle;
 	private final ClassLoader _classLoader;
 	private CommerceReferencesHolder _commerceReferencesHolder;
-	private CompanyLocalService _companyLocalService;
+	private final CompanyLocalService _companyLocalService;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DDMTemplateLocalService _ddmTemplateLocalService;
 	private final DefaultDDMStructureHelper _defaultDDMStructureHelper;
