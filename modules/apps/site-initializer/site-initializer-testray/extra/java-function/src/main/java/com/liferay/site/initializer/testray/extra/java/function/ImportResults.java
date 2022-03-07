@@ -77,6 +77,24 @@ public class ImportResults {
 		_documentBuilder = _documentBuilderFactory.newDocumentBuilder();
 	}
 
+	private void _addTestrayCase(long projectId,
+			 Map<String, Object> testrayCasePropertiesMap) throws Exception {
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name",
+			(String) testrayCasePropertiesMap.get("testray.testcase.name"));
+		bodyMap.put("priority",
+			(String) testrayCasePropertiesMap.get("testray.testcase.priority"));
+		bodyMap.put("testrayProjectId", String.valueOf(projectId));
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testraycases", null, null, HttpInvoker.HttpMethod.POST);
+	}
+
 	private void _addTestrayCases(long projectId, Element rootElement)
 		throws Exception {
 
@@ -89,109 +107,12 @@ public class ImportResults {
 			Map<String, Object> testrayCasePropertiesMap =
 				_getTestrayCaseProperties((Element) testcaseNode);
 
-			Map<String, String> bodyMap = new HashMap<>();
-
-			bodyMap.put("testrayProjectId", String.valueOf(projectId));
-
+			_addTestrayCase(projectId, testrayCasePropertiesMap);
 		}
-
-//		String caseTypeName = null;
-//
-//		String componentName = null;
-//
-//		long componentId = 0;
-//
-//		Map<String, String> bodyMap = new HashMap<>();
-//
-//		bodyMap.put("testrayProjectId", String.valueOf(projectId));
-//
-//		NodeList testCasesNodeList = document.getElementsByTagName(
-//			"testcase");
-//
-//		for (int i = 0; i < testCasesNodeList.getLength(); i++) {
-//			Node testCaseNode = testCasesNodeList.item(i);
-//
-//			Element element = (Element)testCaseNode;
-//
-//			NodeList propertyNodeList = element.getElementsByTagName(
-//				"property");
-//
-//			for (int j = 0; j < propertyNodeList.getLength(); j++) {
-//				Node node = propertyNodeList.item(j);
-//
-//				if ((node.getNodeType() == Node.ELEMENT_NODE) &&
-//					!node.getNodeName(
-//					).equals(
-//						"#text"
-//					) &&
-//					(node.getAttributes(
-//					).getLength() > 0)) {
-//
-//					String name = node.getAttributes(
-//					).getNamedItem(
-//						"name"
-//					).getTextContent();
-//
-//					String value = null;
-//
-//					if (name.equals("testray.case.type.name")) {
-//						caseTypeName = node.getAttributes(
-//						).getNamedItem(
-//							"value"
-//						).getTextContent();
-//					}
-//					else if (name.equals("testray.main.component.name")) {
-//						componentName = node.getAttributes(
-//						).getNamedItem(
-//							"value"
-//						).getTextContent();
-//					}
-//					else if (name.equals("testray.team.name")) {
-//						value = node.getAttributes(
-//						).getNamedItem(
-//							"value"
-//						).getTextContent();
-//
-//						long teamId = fetchOrAddTestrayTeam(projectId, value);
-//						componentId = fetchOrAddTestrayComponent(
-//							projectId, teamId, componentName);
-//
-//						bodyMap.put("testrayComponentId", String.valueOf(componentId));
-//					}
-//					else if (name.equals("testray.testcase.name")) {
-//						value = node.getAttributes(
-//						).getNamedItem(
-//							"value"
-//						).getTextContent();
-//						bodyMap.put("name", value);
-//
-//						//TODO figure out what it means
-//						bodyMap.put("stepsType", name);
-//					}
-//					else if (name.equals("testray.testcase.priority")) {
-//						value = node.getAttributes(
-//						).getNamedItem(
-//							"value"
-//						).getTextContent();
-//						bodyMap.put("priority", value);
-//					}
-//				}
-//			}
-//
-//			JSONObject responseJSONObject = HttpUtil.invoke(
-//				new JSONObject(
-//					bodyMap
-//				).toString(),
-//				"testraycases", null, null, HttpInvoker.HttpMethod.POST);
-//
-//			long caseId = responseJSONObject.getLong("id");
-//
-//			fetchOrAddTestrayCaseType(caseTypeName);
-//			fetchOrAddTestrayCaseResult(caseId, componentId, testCasesNodeList);
-//		}
 	}
 
-	private String _buildTestrayBuildDescription(Map<String, String> propertiesMap) {
+	private String _buildTestrayBuildDescription(
+			Map<String, String> propertiesMap) {
 		StringBuilder sb = new StringBuilder(15);
 
 		if(propertiesMap.get("liferay.portal.git.id") != null){
