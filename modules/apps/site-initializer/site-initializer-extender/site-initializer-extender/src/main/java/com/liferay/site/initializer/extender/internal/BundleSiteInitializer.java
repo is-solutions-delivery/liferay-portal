@@ -3149,28 +3149,28 @@ public class BundleSiteInitializer implements SiteInitializer {
 						className, "#", objectDefinition.getId());
 				}
 
+				long typePK = 0;
+
 				if (StringUtil.equals(
 						className, CommerceOrder.class.getName())) {
 
-					_workflowDefinitionLinkLocalService.
-						updateWorkflowDefinitionLink(
-							serviceContext.getUserId(),
-							serviceContext.getCompanyId(), groupId, className,
-							0, propertiesJSONObject.getLong("typePK"),
-							StringBundler.concat(
-								workflowDefinition.getName(), "@",
-								workflowDefinition.getVersion()));
+					CommerceChannel commerceChannel =
+						_commerceReferencesHolder.commerceChannelLocalService.
+							fetchCommerceChannelBySiteGroupId(groupId);
+
+					groupId = commerceChannel.getGroupId();
+
+					typePK = propertiesJSONObject.getLong("typePK");
 				}
-				else {
-					_workflowDefinitionLinkLocalService.
-						updateWorkflowDefinitionLink(
-							serviceContext.getUserId(),
-							serviceContext.getCompanyId(), groupId, className,
-							0, 0,
-							StringBundler.concat(
-								workflowDefinition.getName(), "@",
-								workflowDefinition.getVersion()));
-				}
+
+				_workflowDefinitionLinkLocalService.
+					updateWorkflowDefinitionLink(
+						serviceContext.getUserId(),
+						serviceContext.getCompanyId(), groupId, className, 0,
+						typePK,
+						StringBundler.concat(
+							workflowDefinition.getName(), "@",
+							workflowDefinition.getVersion()));
 			}
 		}
 	}
