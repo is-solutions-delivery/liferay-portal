@@ -44,7 +44,6 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
@@ -102,13 +101,12 @@ public class SiteInitializerExtender
 				_accountResourceFactory, _accountRoleLocalService,
 				_accountRoleResourceFactory, _assetCategoryLocalService,
 				_assetListEntryLocalService, bundle, _bundleContext,
-				_companyLocalService, _ddmStructureLocalService,
-				_ddmTemplateLocalService, _defaultDDMStructureHelper,
-				_dlURLHelper, _documentFolderResourceFactory,
-				_documentResourceFactory, _fragmentsImporter,
-				_groupLocalService, _journalArticleLocalService, _jsonFactory,
-				_layoutCopyHelper, _layoutLocalService,
-				_layoutPageTemplateEntryLocalService,
+				_ddmStructureLocalService, _ddmTemplateLocalService,
+				_defaultDDMStructureHelper, _dlURLHelper,
+				_documentFolderResourceFactory, _documentResourceFactory,
+				_fragmentsImporter, _groupLocalService,
+				_journalArticleLocalService, _jsonFactory, _layoutCopyHelper,
+				_layoutLocalService, _layoutPageTemplateEntryLocalService,
 				_layoutPageTemplatesImporter,
 				_layoutPageTemplateStructureLocalService,
 				_layoutSetLocalService, _listTypeDefinitionResource,
@@ -180,9 +178,6 @@ public class SiteInitializerExtender
 
 	private BundleContext _bundleContext;
 	private BundleTracker<?> _bundleTracker;
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private DDMStructureLocalService _ddmStructureLocalService;
