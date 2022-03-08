@@ -29,6 +29,7 @@ import com.liferay.site.initializer.testray.extra.java.function.util.TestrayCons
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,7 +82,7 @@ public class ImportResults {
 			 Map<String, Object> testrayCasePropertiesMap) throws Exception {
 
 		Map<String, String> bodyMap = new HashMap<>();
-
+		
 		bodyMap.put("name",
 			(String) testrayCasePropertiesMap.get("testray.testcase.name"));
 		bodyMap.put("priority",
@@ -704,7 +705,14 @@ public class ImportResults {
 
 		Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
 
-		archiver.extract(tempFile, tempDirectory);
+		try {
+			archiver.extract(tempFile, tempDirectory);
+		}
+		catch(IOException ioException) {
+			archiver = ArchiverFactory.createArchiver("tar");
+
+			archiver.extract(tempFile, tempDirectory);
+		}
 
 		File[] files = tempDirectory.listFiles();
 
@@ -712,9 +720,6 @@ public class ImportResults {
 			Document document = _documentBuilder.parse(file);
 
 			_processResults(document);
-
-//			addTestrayBuild(projectId, document);
-//			addTestrayCase(projectId, document);
 		}
 	}
 
