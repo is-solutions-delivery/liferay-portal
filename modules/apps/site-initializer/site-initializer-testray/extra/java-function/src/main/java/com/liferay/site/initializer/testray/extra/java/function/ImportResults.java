@@ -84,7 +84,7 @@ public class ImportResults {
 		Map<String, String> bodyMap = new HashMap<>();
 
 		bodyMap.put("description",
-			(String) testrayCasePropertiesMap.get("testray.testcase.description
+			(String) testrayCasePropertiesMap.get("testray.testcase.description"));
 		bodyMap.put("name",
 			(String) testrayCasePropertiesMap.get("testray.testcase.name"));
 		bodyMap.put("priority",
@@ -109,11 +109,10 @@ public class ImportResults {
 		String componentName = (String)
 			testrayCasePropertiesMap.get("testray.main.component.name");
 
-		long testrayComponentId = _fetchOrAddTestrayComponent(projectId, teamId,
-			componentName);
+		long testrayComponentId = _fetchOrAddTestrayComponent(projectId,
+			testrayTeamId, componentName);
 
 		bodyMap.put("testrayComponentId", String.valueOf(testrayComponentId));
-
 
 		JSONObject responseJSONObject = HttpUtil.invoke(
 			new JSONObject(
