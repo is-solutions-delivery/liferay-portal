@@ -99,6 +99,13 @@ public class ImportResults {
 
 		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
+		String teamName = (String)
+			testrayCasePropertiesMap.get("testray.team.name");
+
+		long testrayTeamId = _fetchOrAddTestrayTeam(projectId, teamName);
+
+		bodyMap.put("testrayTeamId", String.valueOf(testrayTeamId));
+
 		JSONObject responseJSONObject = HttpUtil.invoke(
 			new JSONObject(
 				bodyMap
@@ -426,7 +433,7 @@ public class ImportResults {
 
 	}
 
-	public long fetchOrAddTestrayTeam(long projectId, String teamName) throws Exception {
+	private long _fetchOrAddTestrayTeam(long projectId, String teamName) throws Exception {
 		Map<String, String> parametersMap = new HashMap<>();
 
 		parametersMap.put("filter", "name eq '" + teamName + "'");
