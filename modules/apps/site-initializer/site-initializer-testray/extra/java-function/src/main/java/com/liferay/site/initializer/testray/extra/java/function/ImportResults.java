@@ -84,7 +84,7 @@ public class ImportResults {
 		Map<String, String> bodyMap = new HashMap<>();
 
 		bodyMap.put("description",
-			(String) testrayCasePropertiesMap.get("testray.testcase.description"));
+			(String) testrayCasePropertiesMap.get("testray.testcase.description
 		bodyMap.put("name",
 			(String) testrayCasePropertiesMap.get("testray.testcase.name"));
 		bodyMap.put("priority",
@@ -105,6 +105,15 @@ public class ImportResults {
 		long testrayTeamId = _fetchOrAddTestrayTeam(projectId, teamName);
 
 		bodyMap.put("testrayTeamId", String.valueOf(testrayTeamId));
+
+		String componentName = (String)
+			testrayCasePropertiesMap.get("testray.main.component.name");
+
+		long testrayComponentId = _fetchOrAddTestrayComponent(projectId, teamId,
+			componentName);
+
+		bodyMap.put("testrayComponentId", String.valueOf(testrayComponentId));
+
 
 		JSONObject responseJSONObject = HttpUtil.invoke(
 			new JSONObject(
@@ -320,7 +329,7 @@ public class ImportResults {
 	   	return responseJSONObject.getLong("id");
 	}
 
-	public long fetchOrAddTestrayComponent(long projectId, long teamId,
+	private long _fetchOrAddTestrayComponent(long projectId, long teamId,
 		String componentName) throws Exception {
 
 		Map<String, String> parametersMap = new HashMap<>();
