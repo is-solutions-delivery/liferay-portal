@@ -88,16 +88,6 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Attachments"
-			},
-			"name": "attachments",
-			"required": false,
-			"type": "Clob"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
 				"en_US": "Errors"
 			},
 			"name": "errors",
