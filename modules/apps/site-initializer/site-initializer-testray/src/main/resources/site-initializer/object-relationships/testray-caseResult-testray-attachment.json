@@ -1,9 +1,9 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Testray Case Result has Testray Attachment"
+		"en-US": "One Case Result to Many Attachments"
 	},
-	"name": "testrayCaseResultsHasTestrayAttachment",
+	"name": "oneCaseResultToManyAttachments",
 	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCaseResult$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayAttachment$]",
 	"objectDefinitionName2": "TestrayAttachment",

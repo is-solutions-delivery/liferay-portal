@@ -159,7 +159,7 @@ public class ImportResults {
 						bodyMap.put("name", fileElement.getAttribute("name"));
 						bodyMap.put("url", fileElement.getAttribute("url"));
 						bodyMap.put("value", fileElement.getAttribute("value"));
-						bodyMap.put("r_testrayCaseResultsHasTestrayAttachment_c_testrayCaseResultId",
+						bodyMap.put("r_oneCaseResultToManyAttachments_c_testrayCaseResultId",
 							String.valueOf(testrayCaseResultId));
 
 						JSONObject responseJSONObject = HttpUtil.invoke(
