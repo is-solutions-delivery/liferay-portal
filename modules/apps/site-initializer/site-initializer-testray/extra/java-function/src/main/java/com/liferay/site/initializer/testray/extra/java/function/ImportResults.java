@@ -78,6 +78,49 @@ public class ImportResults {
 		_documentBuilder = _documentBuilderFactory.newDocumentBuilder();
 	}
 
+	private void _addTestrayAttachments(Node testcaseNode,
+			long testrayCaseResultId) throws Exception {
+
+		Element testcaseElement = (Element) testcaseNode;
+
+		NodeList attachmentsNodeList =
+			testcaseElement.getElementsByTagName("attachments");
+
+		for (int i = 0; i < attachmentsNodeList.getLength(); i++) {
+			Node attachmentsNode = attachmentsNodeList.item(i);
+
+			if (attachmentsNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element attachmentsElement = (Element) attachmentsNode;
+
+				NodeList fileNodeList =
+					attachmentsElement.getElementsByTagName("file");
+
+				for (int j = 0; j < fileNodeList.getLength(); j++) {
+					Node fileNode = fileNodeList.item(j);
+
+					if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element fileElement = (Element) fileNode;
+
+						Map<String, String> bodyMap = new HashMap<>();
+
+						bodyMap.put("name", fileElement.getAttribute("name"));
+						bodyMap.put("url", fileElement.getAttribute("url"));
+						bodyMap.put("value", fileElement.getAttribute("value"));
+						bodyMap.put("r_oneCaseResultToManyAttachments_c_testrayCaseResultId",
+							String.valueOf(testrayCaseResultId));
+
+						JSONObject responseJSONObject = HttpUtil.invoke(
+							new JSONObject(
+								bodyMap
+							).toString(),
+							"testrayattachments", null, null,
+							HttpInvoker.HttpMethod.POST);
+					}
+				}
+			}
+		}
+	}
+
 	private void _addTestrayCase(Node testcaseNode, long testrayBuildId,
 			 long testrayProjectId, long testrayRunId,
 			 Map<String, Object> testrayCasePropertiesMap)
@@ -130,77 +173,6 @@ public class ImportResults {
 
 		_addTestrayAttachments(testcaseNode, testrayCaseResultId);
 		_addTestrayWarnings(testrayCasePropertiesMap, testrayCaseResultId);
-	}
-
-	private void _addTestrayWarnings(
-			Map<String, Object> testrayCasePropertiesMap,
-			long testrayCaseResultId)
-		throws Exception {
-
-		List<String> warningsList = (List<String>)
-			testrayCasePropertiesMap.get("testray.testcase.warnings");
-
-		if(warningsList == null) {
-			return;
-		}
-
-		for(String warning : warningsList) {
-			Map<String, String> bodyMap = new HashMap<>();
-
-			bodyMap.put("content", warning);
-			bodyMap.put("r_oneCaseResultToManyWarnings_c_testrayCaseResultId",
-				String.valueOf(testrayCaseResultId));
-
-			JSONObject responseJSONObject = HttpUtil.invoke(
-				new JSONObject(
-					bodyMap
-				).toString(),
-				"testraywarnings", null, null,
-				HttpInvoker.HttpMethod.POST);
-		}
-	}
-
-	private void _addTestrayAttachments(Node testcaseNode,
-			long testrayCaseResultId) throws Exception {
-
-		Element testcaseElement = (Element) testcaseNode;
-
-		NodeList attachmentsNodeList =
-			testcaseElement.getElementsByTagName("attachments");
-
-		for (int i = 0; i < attachmentsNodeList.getLength(); i++) {
-			Node attachmentsNode = attachmentsNodeList.item(i);
-
-			if (attachmentsNode.getNodeType() == Node.ELEMENT_NODE) {
-				Element attachmentsElement = (Element) attachmentsNode;
-
-				NodeList fileNodeList =
-					attachmentsElement.getElementsByTagName("file");
-
-				for (int j = 0; j < fileNodeList.getLength(); j++) {
-					Node fileNode = fileNodeList.item(j);
-
-					if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element fileElement = (Element) fileNode;
-
-						Map<String, String> bodyMap = new HashMap<>();
-
-						bodyMap.put("name", fileElement.getAttribute("name"));
-						bodyMap.put("url", fileElement.getAttribute("url"));
-						bodyMap.put("value", fileElement.getAttribute("value"));
-						bodyMap.put("r_oneCaseResultToManyAttachments_c_testrayCaseResultId",
-							String.valueOf(testrayCaseResultId));
-
-						JSONObject responseJSONObject = HttpUtil.invoke(
-							new JSONObject(
-								bodyMap
-							).toString(),
-							"testrayattachments", null, null,
-							HttpInvoker.HttpMethod.POST);
-					}
-				}
-			}
-		}
 	}
 
 	private void _addTestrayCases(Element rootElement, long testrayBuildId,
@@ -312,6 +284,34 @@ public class ImportResults {
 			"testraycaseresults", null, null, HttpInvoker.HttpMethod.POST);
 
 		return responseJSONObject.getLong("id");
+	}
+
+	private void _addTestrayWarnings(
+			Map<String, Object> testrayCasePropertiesMap,
+			long testrayCaseResultId)
+		throws Exception {
+
+		List<String> warningsList = (List<String>)
+			testrayCasePropertiesMap.get("testray.testcase.warnings");
+
+		if(warningsList == null) {
+			return;
+		}
+
+		for(String warning : warningsList) {
+			Map<String, String> bodyMap = new HashMap<>();
+
+			bodyMap.put("content", warning);
+			bodyMap.put("r_oneCaseResultToManyWarnings_c_testrayCaseResultId",
+				String.valueOf(testrayCaseResultId));
+
+			JSONObject responseJSONObject = HttpUtil.invoke(
+				new JSONObject(
+					bodyMap
+				).toString(),
+				"testraywarnings", null, null,
+				HttpInvoker.HttpMethod.POST);
+		}
 	}
 
 	private long _fetchOrAddTestrayCaseType(String caseTypeName) throws Exception {
