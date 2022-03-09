@@ -1,0 +1,22 @@
+{
+	"label": {
+		"en_US": "Testray Warning"
+	},
+	"name": "TestrayWarning",
+	"objectFields": [
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Content"
+			},
+			"name": "content",
+			"required": false,
+			"type": "String"
+		}
+	],
+	"pluralLabel": {
+		"en_US": "Testray Warnings"
+	},
+	"scope": "company"
+}
