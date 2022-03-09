@@ -455,7 +455,6 @@ public class ImportResults {
 				).toString(),
 				"testraytasks", null, null, HttpInvoker.HttpMethod.POST);
 		}
-
 	}
 
 	private long _fetchOrAddTestrayTeam(long projectId, String teamName) throws Exception {
@@ -800,7 +799,8 @@ public class ImportResults {
 
 		_addTestrayCases(rootElement, testrayBuildId, testrayProjectId,
 			testrayRunId);
-
+		_fetchOrAddTestrayTask(testrayBuildId,
+			propertiesMap.get("testray.build.name"));
 	}
 
 	private final DocumentBuilder _documentBuilder;
