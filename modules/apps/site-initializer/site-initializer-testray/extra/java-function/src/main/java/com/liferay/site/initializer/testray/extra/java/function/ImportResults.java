@@ -721,7 +721,11 @@ public class ImportResults {
 				for (int j = 0; j < childNodeList.getLength(); j++) {
 					Node childNode = childNodeList.item(j);
 
-					values.add(childNode.getTextContent());
+					String warning = childNode.getTextContent();
+
+					if(!_isEmpty(warning)) {
+						values.add(childNode.getTextContent());
+					}
 				}
 
 				map.put(name, values);
@@ -732,6 +736,20 @@ public class ImportResults {
 		}
 
 		return map;
+	}
+
+	private boolean _isEmpty(String value) {
+		if (value == null) {
+			return true;
+		}
+
+		String trimmedValue = value.trim();
+
+		if (trimmedValue.isEmpty()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private void _unTarGzip(byte[] bytes) throws Exception {
