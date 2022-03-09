@@ -474,6 +474,71 @@ public class ImportResults {
 		return responseJSONObject.getLong("id");
 	}
 
+	private long _fetchOrAddTestrayFactorCategory(String category)
+		throws Exception{
+
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + category + "'");
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testrayfactorcategories", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray categoriesJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (!categoriesJSONArray.isEmpty()) {
+			JSONObject categoryJSONObject = categoriesJSONArray.getJSONObject(0);
+
+			return categoryJSONObject.getLong("id");
+		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name", category);
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testrayfactorcategories", null, null, HttpInvoker.HttpMethod.POST);
+
+		return responseJSONObject.getLong("id");
+	}
+
+	private long _fetchOrAddTestrayFactorOption(String option, long categoryId)
+		throws Exception{
+
+		Map<String, String> parametersMap = new HashMap<>();
+
+		parametersMap.put("filter", "name eq '" + option + "'");
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+			null, "testrayfactoroptions", null, parametersMap,
+			HttpInvoker.HttpMethod.GET);
+
+		JSONArray optionsJSONArray = responseJSONObject.getJSONArray("items");
+
+		if (!optionsJSONArray.isEmpty()) {
+			JSONObject optionJSONObject = optionsJSONArray.getJSONObject(0);
+
+			return optionJSONObject.getLong("id");
+		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name", option);
+		bodyMap.put("testrayFactorCategoryId", String.valueOf(categoryId));
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testrayfactoroptions", null, null, HttpInvoker.HttpMethod.POST);
+
+		return responseJSONObject.getLong("id");
+	}
+
 	private long _fetchOrAddTestrayProductVersion(long projectId,
 			String productVersion)
 		throws Exception{
@@ -573,8 +638,11 @@ public class ImportResults {
 		return responseJSONObject.getLong("id");
 	}
 
-	private long _fetchOrAddTestrayRun(long buildId, String runName)
+	private long _fetchOrAddTestrayRun(Element rootElement, long buildId,
+			Map<String, String> propertiesMap)
 		throws Exception {
+
+		String runName = propertiesMap.get("testray.run.id");
 
 		Map<String, String> parametersMap = new HashMap<>();
 
@@ -594,8 +662,11 @@ public class ImportResults {
 
 		Map<String, String> bodyMap = new HashMap<>();
 
-		bodyMap.put("externalReferencePK", runName);
-		bodyMap.put("name", runName);
+		bodyMap.put("externalReferencePK", propertiesMap.get("testray.run.id"));
+		bodyMap.put("externalReferenceType",
+			String.valueOf(TestrayConstants.EXTERNAL_REFERENCE_TYPE_POSHI));
+		bodyMap.put("jenkinsJobKey", propertiesMap.get("jenkins.job.id"));
+		bodyMap.put("name", propertiesMap.get("testray.run.id"));
 		bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
 		responseJSONObject = HttpUtil.invoke(
@@ -604,7 +675,20 @@ public class ImportResults {
 			).toString(),
 			"testrayruns", null, null, HttpInvoker.HttpMethod.POST);
 
-		return responseJSONObject.getLong("id");
+		long runId = responseJSONObject.getLong("id");
+
+		String environmentHash = _getEnvironmentHash(rootElement, runId);
+
+		bodyMap.put("environmentHash", environmentHash);
+
+		responseJSONObject = HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testrayruns/" + String.valueOf(runId), null, null,
+			HttpInvoker.HttpMethod.PUT);
+
+		return runId;
 	}
 
 	private void _fetchOrAddTestrayTask(long buildId, String taskName)
@@ -684,6 +768,53 @@ public class ImportResults {
 		}
 
 		return attributeNode.getTextContent();
+	}
+
+	private String _getEnvironmentHash(Element rootElement, long runId)
+		throws Exception{
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		NodeList environmentsNodeList = rootElement.getElementsByTagName(
+			"environment");
+
+		for(int i=0; i<environmentsNodeList.getLength();i++){
+			Node node = environmentsNodeList.item(i);
+
+			if (!node.hasAttributes()) {
+				continue;
+			}
+
+			String type = node.getAttributes().getNamedItem("type")
+				.getTextContent();
+
+			String option = node.getAttributes().getNamedItem("option")
+				.getTextContent();
+
+			long categoryId = _fetchOrAddTestrayFactorCategory(type);
+			long optionId = _fetchOrAddTestrayFactorOption(option, categoryId);
+
+			Map<String, String> map = new HashMap<>();
+			map.put("classNameId", String.valueOf(runId));
+			map.put("classPK", String.valueOf(runId));
+			map.put("testrayFactorCategoryId", String.valueOf(categoryId));
+			map.put("testrayFactorCategoryName", type);
+			map.put("testrayFactorOptionId", String.valueOf(optionId));
+			map.put("testrayFactorOptionName", option);
+
+			HttpUtil.invoke(
+				new JSONObject(
+					map
+				).toString(),
+				"testrayfactors", null, null, HttpInvoker.HttpMethod.POST);
+
+			stringBuilder.append(categoryId);
+			stringBuilder.append(optionId);
+		}
+
+		String testrayFactorsString = stringBuilder.toString();
+
+		return String.valueOf(testrayFactorsString.hashCode());
 	}
 
 	private Map<String, String> _getProperties(Element rootElement) {
@@ -802,8 +933,8 @@ public class ImportResults {
 		long testrayBuildId = _fetchOrAddTestrayBuild(
 			testrayProjectId, propertiesMap);
 
-		long testrayRunId = _fetchOrAddTestrayRun(
-			testrayBuildId, propertiesMap.get("testray.run.id"));
+		long testrayRunId = _fetchOrAddTestrayRun(rootElement,
+			testrayBuildId, propertiesMap);
 
 		_addTestrayCases(
 			rootElement, testrayBuildId, testrayProjectId, testrayRunId);
