@@ -1,9 +1,9 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Testray Builds And Cases"
+		"en-US": "Many Builds to Many Cases"
 	},
-	"name": "buildsCases",
+	"name": "buildsToCases",
 	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayBuild$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayCase$]",
 	"objectDefinitionName2": "TestrayCase",

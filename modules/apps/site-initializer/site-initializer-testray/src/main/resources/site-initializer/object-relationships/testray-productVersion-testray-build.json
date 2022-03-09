@@ -1,10 +1,10 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Testray Build And Routine"
+		"en-US": "One Product Version to Many Builds"
 	},
-	"name": "buildRoutine",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayRoutine$]",
+	"name": "productVersionToBuilds",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayProductVersion$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayBuild$]",
 	"objectDefinitionName2": "TestrayBuild",
 	"type": "oneToMany"

@@ -1,10 +1,10 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Testray Requirement And Component"
+		"en-US": "One Project to Many Requirement"
 	},
-	"name": "requirementComponent",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayComponent$]",
+	"name": "projectToRequirement",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayProject$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayRequirement$]",
 	"objectDefinitionName2": "TestrayRequirement",
 	"type": "oneToMany"

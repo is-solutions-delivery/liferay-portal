@@ -1,11 +1,11 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Testray Component And Team"
+		"en-US": "Many Cases to Many Components"
 	},
-	"name": "componentTeam",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayTeam$]",
+	"name": "casesToComponents",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCase$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayComponent$]",
 	"objectDefinitionName2": "TestrayComponent",
-	"type": "oneToMany"
+	"type": "manyToMany"
 }

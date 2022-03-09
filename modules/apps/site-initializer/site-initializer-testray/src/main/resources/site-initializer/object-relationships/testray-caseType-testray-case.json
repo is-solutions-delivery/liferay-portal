@@ -1,10 +1,10 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Testray Case Results with Testray Case"
+		"en-US": "One Case Type to Many Cases"
 	},
-	"name": "testrayCaseResultsWithTestrayCase",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCaseResult$]",
+	"name": "caseTypeToCases",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCaseType$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayCase$]",
 	"objectDefinitionName2": "TestrayCase",
 	"type": "oneToMany"

@@ -1,9 +1,9 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Testray Build And Project"
+		"en-US": "One Project to Many Builds"
 	},
-	"name": "buildProject",
+	"name": "projectToBuilds",
 	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayProject$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayBuild$]",
 	"objectDefinitionName2": "TestrayBuild",
