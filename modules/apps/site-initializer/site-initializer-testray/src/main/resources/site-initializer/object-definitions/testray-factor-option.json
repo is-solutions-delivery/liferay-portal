@@ -8,16 +8,6 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Testray Factor Category Id"
-			},
-			"name": "testrayFactorCategoryId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
 				"en_US": "Name"
 			},
 			"name": "name",

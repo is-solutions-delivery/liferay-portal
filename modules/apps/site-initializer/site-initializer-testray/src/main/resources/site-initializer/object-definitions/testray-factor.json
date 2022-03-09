@@ -28,31 +28,11 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Testray Factor Category Id"
-			},
-			"name": "testrayFactorCategoryId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
 				"en_US": "Testray Factor Category Name"
 			},
 			"name": "testrayFactorCategoryName",
 			"required": false,
 			"type": "String"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Factor Option Id"
-			},
-			"name": "testrayFactorOptionId",
-			"required": false,
-			"type": "Long"
 		},
 		{
 			"indexed": false,

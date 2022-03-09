@@ -5,16 +5,6 @@
 	"name": "TestrayRun",
 	"objectFields": [
 		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Build Id"
-			},
-			"name": "testrayBuildId",
-			"required": false,
-			"type": "Long"
-		},
-		{
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

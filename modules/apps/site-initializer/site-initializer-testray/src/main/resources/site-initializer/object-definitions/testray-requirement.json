@@ -8,26 +8,6 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Testray Component Id"
-			},
-			"name": "testrayComponentId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Project Id"
-			},
-			"name": "testrayProjectId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
 				"en_US": "Key"
 			},
 			"name": "key",

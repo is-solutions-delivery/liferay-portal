@@ -1,8 +1,8 @@
 {
 	"label": {
-		"en_US": "Testray Sub Task"
+		"en_US": "Testray Subtask"
 	},
-	"name": "TestraySubTask",
+	"name": "TestraySubtask",
 	"objectFields": [
 		{
 			"indexed": false,
@@ -31,16 +31,6 @@
 				"en_US": "Split From Testray Subtask Id"
 			},
 			"name": "splitFromTestraySubtaskId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Task Id"
-			},
-			"name": "testrayTaskId",
 			"required": false,
 			"type": "Long"
 		},
