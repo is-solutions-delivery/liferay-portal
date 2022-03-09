@@ -129,6 +129,35 @@ public class ImportResults {
 			testrayCasePropertiesMap);
 
 		_addTestrayAttachments(testcaseNode, testrayCaseResultId);
+		_addTestrayWarnings(testrayCasePropertiesMap, testrayCaseResultId);
+	}
+
+	private void _addTestrayWarnings(
+			Map<String, Object> testrayCasePropertiesMap,
+			long testrayCaseResultId)
+		throws Exception {
+
+		List<String> warningsList = (List<String>)
+			testrayCasePropertiesMap.get("testray.testcase.warnings");
+
+		if(warningsList == null) {
+			return;
+		}
+
+		for(String warning : warningsList) {
+			Map<String, String> bodyMap = new HashMap<>();
+
+			bodyMap.put("content", warning);
+			bodyMap.put("r_oneCaseResultToManyWarnings_c_testrayCaseResultId",
+				String.valueOf(testrayCaseResultId));
+
+			JSONObject responseJSONObject = HttpUtil.invoke(
+				new JSONObject(
+					bodyMap
+				).toString(),
+				"testraywarnings", null, null,
+				HttpInvoker.HttpMethod.POST);
+		}
 	}
 
 	private void _addTestrayAttachments(Node testcaseNode,
