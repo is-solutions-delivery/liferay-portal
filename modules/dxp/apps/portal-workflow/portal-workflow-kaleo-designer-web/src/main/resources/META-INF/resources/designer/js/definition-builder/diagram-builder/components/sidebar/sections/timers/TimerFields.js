@@ -61,7 +61,7 @@ const TimerFields = ({
 					updateSelectedItem={updateSelectedItem}
 				/>
 
-				<div className="help-text">{scaleHelpText}</div>
+				{scaleHelpText && <div className="help-text">{scaleHelpText}</div>}
 			</div>
 
 			<div className="form-group-item">

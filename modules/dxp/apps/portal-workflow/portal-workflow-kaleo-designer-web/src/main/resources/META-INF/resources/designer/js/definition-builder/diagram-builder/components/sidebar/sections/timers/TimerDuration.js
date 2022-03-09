@@ -66,7 +66,6 @@ const TimerDuration = ({
 		<SidebarPanel panelTitle={Liferay.Language.get('duration')}>
 			<TimerFields
 				index={index}
-				scaleHelpText={Liferay.Language.get('starter-time')}
 				selectedItem={selectedItem}
 				updateSelectedItem={updateSelectedItem}
 			/>
@@ -105,10 +104,10 @@ const TimerDuration = ({
 };
 
 TimerDuration.propTypes = {
-	index: PropTypes.number,
-	selectedItem: PropTypes.object,
-	setSelectedItem: PropTypes.func,
-	updateSelectedItem: PropTypes.func,
+	index: PropTypes.number.isRequired,
+	selectedItem: PropTypes.object.isRequired,
+	setSelectedItem: PropTypes.func.isRequired,
+	updateSelectedItem: PropTypes.func.isRequired,
 };
 
 export default TimerDuration;
