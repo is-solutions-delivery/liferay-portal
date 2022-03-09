@@ -71,7 +71,7 @@ public class ImportResults {
 	}
 
 	public ImportResults() throws Exception {
-		_storage = getStorage();
+		_storage = _getStorage();
 
 		_documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
@@ -379,8 +379,8 @@ public class ImportResults {
 	   	return responseJSONObject.getLong("id");
 	}
 
-	public long fetchOrAddTestrayRoutine(long projectId,
-		String routineName) throws Exception {
+	private long _fetchOrAddTestrayRoutine(long projectId,
+		   String routineName) throws Exception {
 
 		Map<String, String> parametersMap = new HashMap<>();
 
@@ -412,7 +412,7 @@ public class ImportResults {
 	   	return responseJSONObject.getLong("id");
 	}
 
-	public Storage getStorage() throws Exception {
+	private Storage _getStorage() throws Exception {
 		InputStream inputStream = PropsUtil.class.getResourceAsStream(
 			PropsValues.TESTRAY_URL_API_KEY);
 
@@ -428,7 +428,7 @@ public class ImportResults {
 		).getService();
 	}
 
-	public void fetchOrAddTestrayTask(long buildId, String taskName) throws Exception {
+	private void _fetchOrAddTestrayTask(long buildId, String taskName) throws Exception {
 
 		Map<String, String> parametersMap = new HashMap<>();
 
@@ -569,7 +569,7 @@ public class ImportResults {
 		bodyMap.put("name", buildName);
 		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
-		long routineId = fetchOrAddTestrayRoutine(projectId,
+		long routineId = _fetchOrAddTestrayRoutine(projectId,
 			propertiesMap.get("testray.build.type"));
 
 		bodyMap.put("testrayRoutineId", String.valueOf(routineId));
