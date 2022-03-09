@@ -29,7 +29,28 @@ const ActionsInfo = ({
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 	const {actions} = selectedItem.data;
 
-	const [template] = useState(actions?.script?.[index]);
+	const [template, setTemplate] = useState(actions?.script?.[index] || '');
+
+	const [description, setDescription] = useState(
+		actions?.description?.[index] || ''
+	);
+
+	const [executionTypeOptions, setExecutionTypeOptions] = useState([
+		{
+			label: Liferay.Language.get('on-entry'),
+			value: 'onEntry',
+		},
+		{
+			label: Liferay.Language.get('on-exit'),
+			value: 'onExit',
+		},
+	]);
+
+	const [executionType, setExecutionType] = useState(
+		actions?.executionType?.[index] ?? executionTypeOptions[0].value
+	);
+	const [name, setName] = useState(actions?.name?.[index] || '');
+	const [priority, setPriority] = useState(actions?.priority?.[index] || 1);
 
 	const deleteSection = () => {
 		setSections((prevSections) => {
@@ -80,10 +101,23 @@ const ActionsInfo = ({
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('information')}>
 			<BaseActionsInfo
+				description={description}
+				executionType={executionType}
 				executionTypeInput={executionTypeInput}
+				executionTypeOptions={executionTypeOptions}
 				index={index}
+				name={name}
 				placeholderName={Liferay.Language.get('my-action')}
 				placeholderTemplate="${userName} sent you a ${entryType} for review in the workflow."
+				priority={priority}
+				selectedItem={selectedItem}
+				setDescription={setDescription}
+				setExecutionType={setExecutionType}
+				setExecutionTypeOptions={setExecutionTypeOptions}
+				setName={setName}
+				setPriority={setPriority}
+				setTemplate={setTemplate}
+				template={template}
 				templateLabel={Liferay.Language.get('template')}
 				templateLabelSecondary={Liferay.Language.get('groovy')}
 				updateActionInfo={updateActionInfo}
@@ -120,7 +154,11 @@ const ActionsInfo = ({
 };
 
 ActionsInfo.propTypes = {
-	setContentName: PropTypes.func.isRequired,
+	executionTypeInput: PropTypes.func.isRequired,
+	identifier: PropTypes.string.isRequired,
+	index: PropTypes.number.isRequired,
+	sectionsLength: PropTypes.number.isRequired,
+	setSections: PropTypes.func.isRequired,
 };
 
 export default ActionsInfo;

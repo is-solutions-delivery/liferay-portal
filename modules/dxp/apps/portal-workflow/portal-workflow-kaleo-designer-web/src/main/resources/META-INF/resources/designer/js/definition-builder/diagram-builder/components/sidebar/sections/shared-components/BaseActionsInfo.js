@@ -12,48 +12,34 @@
 import ClayForm, {ClayInput, ClaySelect} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import PropTypes from 'prop-types';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 
-import {DiagramBuilderContext} from '../../../../DiagramBuilderContext';
 import {limitValue, sortElements} from '../utils';
 
 const DEFAULT_LIMIT = 1;
 const MIN_PRIORITY = 1;
 
-let executionTypeOptions = [
-	{
-		label: Liferay.Language.get('on-entry'),
-		value: 'onEntry',
-	},
-	{
-		label: Liferay.Language.get('on-exit'),
-		value: 'onExit',
-	},
-];
-
 const BaseActionsInfo = ({
+	description,
+	executionType,
 	executionTypeInput,
-	index,
+	executionTypeOptions,
+	name,
 	placeholderName,
 	placeholderTemplate,
+	priority,
+	selectedItem,
+	setDescription,
+	setExecutionType,
+	setExecutionTypeOptions,
+	setName,
+	setPriority,
+	setTemplate,
+	template,
 	templateLabel,
 	templateLabelSecondary,
 	updateActionInfo,
 }) => {
-	const {selectedItem} = useContext(DiagramBuilderContext);
-
-	const {actions} = selectedItem.data;
-
-	const [description, setDescription] = useState(
-		actions?.description?.[index]
-	);
-	const [executionType, setExecutionType] = useState(
-		actions?.executionType?.[index] ?? executionTypeOptions[0].value
-	);
-	const [name, setName] = useState(actions?.name?.[index]);
-	const [priority, setPriority] = useState(actions?.priority?.[index]);
-	const [template, setTemplate] = useState(actions?.script?.[index]);
-
 	useEffect(() => {
 		if (
 			selectedItem.type === 'task' &&
@@ -70,9 +56,11 @@ const BaseActionsInfo = ({
 		sortElements(executionTypeOptions, 'value');
 
 		return function cleanup() {
-			executionTypeOptions = executionTypeOptions.filter(({value}) => {
-				return value !== 'onAssignment';
-			});
+			setExecutionTypeOptions(
+				executionTypeOptions.filter(({value}) => {
+					return value !== 'onAssignment';
+				})
+			);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -164,6 +152,7 @@ const BaseActionsInfo = ({
 
 					<ClaySelect
 						aria-label="Select"
+						defaultValue={executionType}
 						id="execution-type"
 						onChange={({target}) => {
 							setExecutionType(target.value);
@@ -182,7 +171,6 @@ const BaseActionsInfo = ({
 							<ClaySelect.Option
 								key={item.value}
 								label={item.label}
-								selected={item.value === executionType}
 								value={item.value}
 							/>
 						))}
@@ -240,16 +228,27 @@ const BaseActionsInfo = ({
 					value={priority}
 				/>
 			</ClayForm.Group>
-			<div className="sheet-subtitle" />
 		</>
 	);
 };
 
 BaseActionsInfo.propTypes = {
+	description: PropTypes.string,
+	executionType: PropTypes.string,
 	executionTypeInput: PropTypes.func,
-	index: PropTypes.number,
+	executionTypeOptions: PropTypes.object,
+	name: PropTypes.string,
 	placeholderName: PropTypes.string,
 	placeholderTemplate: PropTypes.string,
+	priority: PropTypes.number,
+	selectedItem: PropTypes.object,
+	setDescription: PropTypes.func,
+	setExecutionType: PropTypes.func,
+	setExecutionTypeOptions: PropTypes.func,
+	setName: PropTypes.func,
+	setPriority: PropTypes.func,
+	setTemplate: PropTypes.func,
+	template: PropTypes.string,
 	templateLabel: PropTypes.string,
 	templateLabelSecondary: PropTypes.string,
 	updateActionInfo: PropTypes.func,
