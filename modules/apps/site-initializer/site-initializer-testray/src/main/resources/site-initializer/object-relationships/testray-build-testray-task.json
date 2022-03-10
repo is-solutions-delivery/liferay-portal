@@ -4,8 +4,8 @@
 		"en-US": "One Build to Many Tasks"
 	},
 	"name": "buildToTasks",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayBuild$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayTask$]",
-	"objectDefinitionName2": "TestrayTask",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:Build$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:Task$]",
+	"objectDefinitionName2": "Task",
 	"type": "oneToMany"
 }

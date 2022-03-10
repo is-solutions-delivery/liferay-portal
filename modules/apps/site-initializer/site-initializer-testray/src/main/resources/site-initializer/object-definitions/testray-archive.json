@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Archive"
 	},
-	"name": "TestrayArchive",
+	"name": "Archive",
 	"objectFields": [
 		{
 			"indexed": false,

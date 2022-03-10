@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Case Type"
 	},
-	"name": "TestrayCaseType",
+	"name": "CaseType",
 	"objectFields": [
 		{
 			"indexed": true,

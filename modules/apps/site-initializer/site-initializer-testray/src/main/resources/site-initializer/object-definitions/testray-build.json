@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Build"
 	},
-	"name": "TestrayBuild",
+	"name": "Build",
 	"objectFields": [
 		{
 			"indexed": false,

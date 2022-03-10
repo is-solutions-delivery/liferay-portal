@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Run"
 	},
-	"name": "TestrayRun",
+	"name": "Run",
 	"objectFields": [
 		{
 			"indexed": true,

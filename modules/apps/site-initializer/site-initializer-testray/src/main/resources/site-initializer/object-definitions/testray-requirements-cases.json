@@ -1,9 +1,19 @@
 {
 	"label": {
-		"en_US": "Testray Requirement Cases"
+		"en_US": "Testray Requirements Cases"
 	},
-	"name": "TestrayRequirementCases",
+	"name": "RequirementsCases",
 	"objectFields": [
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
+			"required": false,
+			"type": "String"
+		}
 	],
 	"pluralLabel": {
 		"en_US": "Testray Requirement Cases"

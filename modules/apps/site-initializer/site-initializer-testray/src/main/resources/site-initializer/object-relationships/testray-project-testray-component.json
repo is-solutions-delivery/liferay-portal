@@ -4,8 +4,8 @@
 		"en-US": "One Project to Many Components"
 	},
 	"name": "projectToComponents",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayProject$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayComponent$]",
-	"objectDefinitionName2": "TestrayComponent",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:Project$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:Component$]",
+	"objectDefinitionName2": "Component",
 	"type": "oneToMany"
 }

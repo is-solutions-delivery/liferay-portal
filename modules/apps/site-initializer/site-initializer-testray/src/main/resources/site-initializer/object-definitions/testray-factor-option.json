@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Factor Option"
 	},
-	"name": "TestrayFactorOption",
+	"name": "FactorOption",
 	"objectFields": [
 		{
 			"indexed": false,

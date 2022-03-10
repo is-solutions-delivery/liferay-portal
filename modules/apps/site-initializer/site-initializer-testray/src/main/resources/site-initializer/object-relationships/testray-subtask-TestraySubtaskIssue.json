@@ -1,11 +1,11 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Many Cases to Many Testray Subtasks Issues"
+		"en-US": "One Subtask to Many Testray Subtasks Issues"
 	},
-	"name": "subtasksToSubtasksIssues",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestraySubtask$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestraySubtaskIssue$]",
-	"objectDefinitionName2": "TestraySubtaskIssue",
+	"name": "subtaskToSubtasksIssues",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:Subtask$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:SubtaskIssue$]",
+	"objectDefinitionName2": "SubtaskIssue",
 	"type": "oneToMany"
 }

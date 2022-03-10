@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Task"
 	},
-	"name": "TestrayTask",
+	"name": "Task",
 	"objectFields": [
 		{
 			"indexed": true,
