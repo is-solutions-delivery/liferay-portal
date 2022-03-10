@@ -122,6 +122,7 @@ import java.io.InputStream;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -542,13 +543,15 @@ public class BundleSiteInitializerTest {
 			group.getCompanyId(), "test-option-1");
 
 		Assert.assertNotNull(cpOption1);
-		Assert.assertEquals("test-option-1", cpOption1.getKey());
+		Assert.assertEquals(
+			"Test Option 1", cpOption1.getName(LocaleUtil.getSiteDefault()));
 
 		CPOption cpOption2 = _cpOptionLocalService.fetchCPOption(
 			group.getCompanyId(), "test-option-2");
 
 		Assert.assertNotNull(cpOption2);
-		Assert.assertEquals("test-option-2", cpOption2.getKey());
+		Assert.assertEquals(
+			"Test Option 2", cpOption2.getName(LocaleUtil.getSiteDefault()));
 
 		CPDefinition cpDefinition =
 			_cpDefinitionLocalService.
@@ -564,19 +567,18 @@ public class BundleSiteInitializerTest {
 			cpDefinitionOptionRels.toString(), 2,
 			cpDefinitionOptionRels.size());
 
-		CPDefinitionOptionRel cpDefinitionOptionRel1 =
-			cpDefinitionOptionRels.get(0);
+		List<CPOption> cpOptions = new ArrayList<>(2);
 
-		cpOption1 = cpDefinitionOptionRel1.getCPOption();
+		cpDefinitionOptionRels.ge
 
-		Assert.assertEquals("test-option-1", cpOption1.getKey());
+		for (CPDefinitionOptionRel cpDefinitionOptionRel :
+				cpDefinitionOptionRels) {
 
-		CPDefinitionOptionRel cpDefinitionOptionRel2 =
-			cpDefinitionOptionRels.get(1);
+			cpOptions.add(cpDefinitionOptionRel.getCPOption());
+		}
 
-		cpOption2 = cpDefinitionOptionRel2.getCPOption();
-
-		Assert.assertEquals("test-option-2", cpOption2.getKey());
+		Assert.assertTrue(cpOptions.contains(cpOption1));
+		Assert.assertTrue(cpOptions.contains(cpOption2));
 	}
 
 	private void _assertDDMStructure(Group group) {
