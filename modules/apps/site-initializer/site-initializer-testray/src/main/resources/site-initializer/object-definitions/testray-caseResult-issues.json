@@ -1,0 +1,12 @@
+{
+	"label": {
+		"en_US": "Testray Case Results Issues"
+	},
+	"name": "TestrayCaseResultsIssues",
+	"objectFields": [
+	],
+	"pluralLabel": {
+		"en_US": "Testray Case Results Issues"
+	},
+	"scope": "company"
+}

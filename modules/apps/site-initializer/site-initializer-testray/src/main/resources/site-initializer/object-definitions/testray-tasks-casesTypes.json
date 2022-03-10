@@ -1,0 +1,12 @@
+{
+	"label": {
+		"en_US": "Testray Tasks Case Types"
+	},
+	"name": "TestrayTasksCaseTypes",
+	"objectFields": [
+	],
+	"pluralLabel": {
+		"en_US": "Testray Tasks Case Types"
+	},
+	"scope": "company"
+}

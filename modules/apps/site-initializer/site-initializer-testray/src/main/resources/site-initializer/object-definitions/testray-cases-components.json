@@ -1,0 +1,12 @@
+{
+	"label": {
+		"en_US": "Testray Cases Components"
+	},
+	"name": "TestrayCasesComponents",
+	"objectFields": [
+	],
+	"pluralLabel": {
+		"en_US": "Testray Cases Components"
+	},
+	"scope": "company"
+}

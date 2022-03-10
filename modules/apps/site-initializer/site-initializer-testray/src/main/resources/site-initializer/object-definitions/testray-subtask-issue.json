@@ -1,0 +1,12 @@
+{
+	"label": {
+		"en_US": "Testray Subtask Issue"
+	},
+	"name": "TestraySubtaskIssue",
+	"objectFields": [
+	],
+	"pluralLabel": {
+		"en_US": "Testray Subtask Issue"
+	},
+	"scope": "company"
+}
