@@ -270,13 +270,15 @@ public class ImportResults {
 		bodyMap.put("dueStatus", dueStatus);
 
 		Element testcaseElement = (Element)testcaseNode;
-		Node failure = testcaseElement.getElementsByTagName("failure").item(0);
 
-		if(failure != null){
-			String failureMessage = _getAttributeValue(failure,"message");
+		Node failureNode = testcaseElement.
+			getElementsByTagName("failure").item(0);
 
-			if(!failureMessage.isEmpty()){
-				bodyMap.put("errors", failureMessage);
+		if(failureNode != null){
+			String message = _getAttributeValue(failureNode,"message");
+
+			if(!message.isEmpty()){
+				bodyMap.put("errors", message);
 			}
 		}
 
@@ -309,11 +311,31 @@ public class ImportResults {
 		}
 	}
 
+	private void _addTestrayFactor(long runId, long categoryId,
+			String categoryName, long optionId, String optionName)
+		throws Exception{
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("classNameId", String.valueOf(runId));
+		bodyMap.put("classPK", String.valueOf(runId));
+		bodyMap.put("testrayFactorCategoryId", String.valueOf(categoryId));
+		bodyMap.put("testrayFactorCategoryName", categoryName);
+		bodyMap.put("testrayFactorOptionId", String.valueOf(optionId));
+		bodyMap.put("testrayFactorOptionName", optionName);
+
+		HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testrayfactors", null, null, HttpInvoker.HttpMethod.POST);
+	}
+
 	private void _addTestrayIssue(String issue,
 			long testrayCaseResultId)
 		throws Exception{
 
-		if( (issue==null) || (issue.isEmpty()) ){
+		if(_isEmpty(issue)){
 			return;
 		}
 
@@ -326,7 +348,6 @@ public class ImportResults {
 				bodyMap
 			).toString(),
 			"testrayissues", null, null, HttpInvoker.HttpMethod.POST);
-
 	}
 
 	private void _addTestrayWarnings(
@@ -390,6 +411,42 @@ public class ImportResults {
 		}
 
 		return sb.toString();
+	}
+
+	private String _buildTestrayRunEnvironmentHash(Element rootElement,
+			long runId)
+		throws Exception{
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		NodeList environmentsNodeList = rootElement.getElementsByTagName(
+			"environment");
+
+		for(int i=0; i<environmentsNodeList.getLength();i++){
+			Node node = environmentsNodeList.item(i);
+
+			if (!node.hasAttributes()) {
+				continue;
+			}
+
+			String categoryName = node.getAttributes().getNamedItem("type")
+				.getTextContent();
+
+			String optionName = node.getAttributes().getNamedItem("option")
+				.getTextContent();
+
+			long categoryId = _fetchOrAddTestrayFactorCategory(categoryName);
+			long optionId = _fetchOrAddTestrayFactorOption(optionName, categoryId);
+
+			_addTestrayFactor(runId, categoryId, categoryName, optionId, optionName);
+
+			stringBuilder.append(categoryId);
+			stringBuilder.append(optionId);
+		}
+
+		String testrayFactorsString = stringBuilder.toString();
+
+		return String.valueOf(testrayFactorsString.hashCode());
 	}
 
 	private long _fetchOrAddTestrayBuild(
@@ -715,7 +772,7 @@ public class ImportResults {
 
 		long runId = responseJSONObject.getLong("id");
 
-		String environmentHash = _getEnvironmentHash(rootElement, runId);
+		String environmentHash = _buildTestrayRunEnvironmentHash(rootElement, runId);
 
 		bodyMap.put("environmentHash", environmentHash);
 
@@ -806,53 +863,6 @@ public class ImportResults {
 		}
 
 		return attributeNode.getTextContent();
-	}
-
-	private String _getEnvironmentHash(Element rootElement, long runId)
-		throws Exception{
-
-		StringBuilder stringBuilder = new StringBuilder();
-
-		NodeList environmentsNodeList = rootElement.getElementsByTagName(
-			"environment");
-
-		for(int i=0; i<environmentsNodeList.getLength();i++){
-			Node node = environmentsNodeList.item(i);
-
-			if (!node.hasAttributes()) {
-				continue;
-			}
-
-			String type = node.getAttributes().getNamedItem("type")
-				.getTextContent();
-
-			String option = node.getAttributes().getNamedItem("option")
-				.getTextContent();
-
-			long categoryId = _fetchOrAddTestrayFactorCategory(type);
-			long optionId = _fetchOrAddTestrayFactorOption(option, categoryId);
-
-			Map<String, String> map = new HashMap<>();
-			map.put("classNameId", String.valueOf(runId));
-			map.put("classPK", String.valueOf(runId));
-			map.put("testrayFactorCategoryId", String.valueOf(categoryId));
-			map.put("testrayFactorCategoryName", type);
-			map.put("testrayFactorOptionId", String.valueOf(optionId));
-			map.put("testrayFactorOptionName", option);
-
-			HttpUtil.invoke(
-				new JSONObject(
-					map
-				).toString(),
-				"testrayfactors", null, null, HttpInvoker.HttpMethod.POST);
-
-			stringBuilder.append(categoryId);
-			stringBuilder.append(optionId);
-		}
-
-		String testrayFactorsString = stringBuilder.toString();
-
-		return String.valueOf(testrayFactorsString.hashCode());
 	}
 
 	private Map<String, String> _getProperties(Element rootElement) {
