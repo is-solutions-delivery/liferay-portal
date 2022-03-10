@@ -26,8 +26,7 @@ export function countCompletedFields(fields) {
 			) {
 				count += 1;
 			}
-		}
-		else {
+		} else {
 			count += countCompletedFields(value);
 		}
 	});

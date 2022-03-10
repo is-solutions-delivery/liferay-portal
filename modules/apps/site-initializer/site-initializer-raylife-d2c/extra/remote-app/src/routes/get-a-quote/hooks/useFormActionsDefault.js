@@ -11,15 +11,17 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useContext, useEffect, useState} from 'react';
 import {useFormContext} from 'react-hook-form';
 import {STORAGE_KEYS, Storage} from '../../../common/services/liferay/storage';
 import {RAYLIFE_PAGES} from '../../../common/utils/constants';
 import {clearExitAlert} from '../../../common/utils/exitAlert';
 import {redirectTo} from '../../../common/utils/liferay';
 import {smoothScroll} from '../../../common/utils/scroll';
+import {AppContext} from '../context/AppContextProvider';
 import {createOrUpdateRaylifeApplication} from '../services/RaylifeApplication';
+
+import {APPLICATION_STATUS, AVAILABLE_STEPS} from '../utils/constants';
 import {verifyInputAgentPage} from '../utils/contact-agent';
 import {useStepWizard} from './useStepWizard';
 
@@ -42,6 +44,9 @@ const useFormActions = ({
 	const [applicationId, setApplicationId] = useState();
 	const {setError, setValue} = useFormContext();
 	const {setSection} = useStepWizard();
+	const {
+		state: {selectedStep},
+	} = useContext(AppContext);
 
 	/**
 	 * @description When the application is created, we set the value to Form Context
@@ -70,39 +75,43 @@ const useFormActions = ({
 			Storage.setItem(STORAGE_KEYS.CONTEXTUAL_MESSAGE, phraseAgentPage);
 			redirectTo(RAYLIFE_PAGES.GET_IN_TOUCH);
 			validated = false;
-		}
-		else {
+		} else {
 			Storage.removeItem(STORAGE_KEYS.CONTEXTUAL_MESSAGE);
 		}
 
 		return validated;
 	}, [form, nextSection]);
 
-	const onSave = useCallback(async () => {
-		if (!saveData) {
-			return;
-		}
+	const onSave = useCallback(
+		async (status = {}) => {
+			if (!saveData) {
+				return;
+			}
 
-		setError('continueButton', {});
+			setError('continueButton', {});
 
-		try {
-			const response = await createOrUpdateRaylifeApplication(form);
+			try {
+				const response = await createOrUpdateRaylifeApplication(
+					form,
+					status
+				);
 
-			setApplicationId(response.data.id);
+				setApplicationId(response.data.id);
 
-			return response;
-		}
-		catch (error) {
-			setError('continueButton', {
-				message:
-					errorMessage ||
-					'There was an error processing your request. Please try again.',
-				type: 'manual',
-			});
+				return response;
+			} catch (error) {
+				setError('continueButton', {
+					message:
+						errorMessage ||
+						'There was an error processing your request. Please try again.',
+					type: 'manual',
+				});
 
-			throw error;
-		}
-	}, [errorMessage, form, saveData, setError]);
+				throw error;
+			}
+		},
+		[errorMessage, form, saveData, setError]
+	);
 
 	const onPrevious = useCallback(async () => {
 		await onSave();
@@ -119,7 +128,12 @@ const useFormActions = ({
 	 * @param {*} data
 	 */
 	const onNext = useCallback(async () => {
-		await onSave();
+		let status = APPLICATION_STATUS.OPEN;
+
+		if (AVAILABLE_STEPS.PROPERTY.index === selectedStep.index) {
+			status = APPLICATION_STATUS.QUOTED;
+		}
+		await onSave(status);
 
 		clearExitAlert();
 
@@ -134,7 +148,7 @@ const useFormActions = ({
 
 			redirectTo(RAYLIFE_PAGES.HANG_TIGHT);
 		}
-	}, [_onValidation, nextSection, onSave, setSection]);
+	}, [_onValidation, nextSection, selectedStep, onSave, setSection]);
 
 	return {onNext, onPrevious, onSave};
 };

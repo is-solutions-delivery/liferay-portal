@@ -30,7 +30,7 @@ const BusinessTypeRadioGroup = ({
 	useEffect(() => {
 		if (form?.basics?.businessCategoryId) {
 			setCategoryProperties();
-			setValue('basics.product', selectedBusinessType?.name);
+			setValue('basics.productCategory', selectedBusinessType?.name);
 			setNewSelectedProduct(form.basics.businessCategoryId);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
