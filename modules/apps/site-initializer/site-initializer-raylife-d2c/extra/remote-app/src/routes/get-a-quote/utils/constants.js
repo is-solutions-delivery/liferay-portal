@@ -297,3 +297,22 @@ export const AVAILABLE_STEPS = {
 export const STEP_ORDERED = Object.values(AVAILABLE_STEPS).sort(
 	(stepA, stepB) => stepA.index - stepB.index
 );
+
+export const APPLICATION_STATUS = {
+	BOUND: {
+		key: 'bound',
+		name: 'Bound',
+	},
+	INCOMPLETE: {
+		key: 'incomplete',
+		name: 'Incomplete',
+	},
+	OPEN: {
+		key: 'open',
+		name: 'Open',
+	},
+	QUOTED: {
+		key: 'quoted',
+		name: 'Quoted',
+	},
+};

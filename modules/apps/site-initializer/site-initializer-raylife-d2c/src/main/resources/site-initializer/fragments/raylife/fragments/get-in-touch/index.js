@@ -43,3 +43,32 @@ if (contextualMessage) {
 		'contact-agent-contextual-message'
 	).textContent = contextualMessage;
 }
+
+const fetchHeadless = async (url, options) => {
+	// eslint-disable-next-line @liferay/portal/no-global-fetch
+	const response = await fetch(`${window.location.origin}/${url}`, {
+		...options,
+		headers: {
+			'Content-Type': 'application/json',
+			'x-csrf-token': Liferay.authToken,
+		},
+	});
+
+	const data = await response.json();
+
+	return data;
+};
+
+const updateApplicationStatus = async () => {
+	await fetchHeadless(`o/c/raylifeapplications/${applicationId}`, {
+		body: JSON.stringify({
+			applicationStatus: {
+				key: 'incomplete',
+				name: 'Incomplete',
+			},
+		}),
+		method: 'PATCH',
+	});
+};
+
+updateApplicationStatus();

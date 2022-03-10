@@ -25,8 +25,9 @@ export function getRaylifeApplicationById(raylifeApplicationId) {
  * @param {DataForm}  data Basics form object
  * @returns {Promise<any>}  Status code
  */
-export function createOrUpdateRaylifeApplication(data) {
-	const payload = LiferayAdapt.adaptToFormApplicationRequest(data);
+
+export function createOrUpdateRaylifeApplication(data, status) {
+	const payload = LiferayAdapt.adaptToFormApplicationRequest(data, status);
 
 	if (data?.basics?.applicationId) {
 		return axios.patch(
@@ -35,8 +36,14 @@ export function createOrUpdateRaylifeApplication(data) {
 		);
 	}
 
-	return axios.post(
-		`${RaylifeApplicationAPI}/scopes/${Liferay.ThemeDisplay.getScopeGroupId()}`,
-		payload
-	);
+	return axios.post(`${RaylifeApplicationAPI}/`, payload);
+}
+
+export function updateRaylifeApplicationStatus(applicationId, status) {
+	return axios.patch(`${RaylifeApplicationAPI}/${applicationId}`, {
+		applicationStatus: {
+			key: status?.key,
+			name: status?.name,
+		},
+	});
 }
