@@ -1,11 +1,11 @@
 {
 	"label": {
-		"en_US": "Testray Case Type"
+		"en_US": "Testray Builds Cases"
 	},
-	"name": "CaseType",
+	"name": "BuildsCases",
 	"objectFields": [
 		{
-			"indexed": true,
+			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
 				"en_US": "Name"
@@ -16,7 +16,7 @@
 		}
 	],
 	"pluralLabel": {
-		"en_US": "Testray Cases Types"
+		"en_US": "Testray Builds Cases"
 	},
 	"scope": "company"
 }

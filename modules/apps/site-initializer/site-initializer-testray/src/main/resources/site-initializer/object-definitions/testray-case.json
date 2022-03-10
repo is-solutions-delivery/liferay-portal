@@ -2,10 +2,10 @@
 	"label": {
 		"en_US": "Testray Case"
 	},
-	"name": "TestrayCase",
+	"name": "Case",
 	"objectFields": [
 		{
-			"indexed": false,
+			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
 				"en_US": "Name"

@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Component"
 	},
-	"name": "TestrayComponent",
+	"name": "Component",
 	"objectFields": [
 		{
 			"indexed": false,

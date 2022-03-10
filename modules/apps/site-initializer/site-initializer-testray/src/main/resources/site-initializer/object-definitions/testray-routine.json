@@ -2,18 +2,8 @@
 	"label": {
 		"en_US": "Testray Routine"
 	},
-	"name": "TestrayRoutine",
+	"name": "Routine",
 	"objectFields": [
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Project Id"
-			},
-			"name": "testrayProjectId",
-			"required": false,
-			"type": "Long"
-		},
 		{
 			"indexed": true,
 			"indexedAsKeyword": false,

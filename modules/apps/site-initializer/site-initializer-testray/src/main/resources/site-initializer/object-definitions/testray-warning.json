@@ -1,22 +1,22 @@
 {
 	"label": {
-		"en_US": "Testray Case Type"
+		"en_US": "Testray Warning"
 	},
-	"name": "CaseType",
+	"name": "Warning",
 	"objectFields": [
 		{
-			"indexed": true,
+			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Name"
+				"en_US": "Content"
 			},
-			"name": "name",
+			"name": "content",
 			"required": false,
 			"type": "String"
 		}
 	],
 	"pluralLabel": {
-		"en_US": "Testray Cases Types"
+		"en_US": "Testray Warnings"
 	},
 	"scope": "company"
 }
