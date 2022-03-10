@@ -4,8 +4,8 @@
 		"en-US": "One Project to Many Requirement"
 	},
 	"name": "projectToRequirement",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayProject$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayRequirement$]",
-	"objectDefinitionName2": "TestrayRequirement",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:Project$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:Requirement$]",
+	"objectDefinitionName2": "Requirement",
 	"type": "oneToMany"
 }

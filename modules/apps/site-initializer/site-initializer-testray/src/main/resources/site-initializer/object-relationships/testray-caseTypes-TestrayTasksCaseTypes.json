@@ -3,9 +3,9 @@
 	"label": {
 		"en-US": "One Case Type to Many Testray Tasks Case Types"
 	},
-	"name": "caseTypesToCaseTypes",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCaseTypes$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayTasksCaseTypes$]",
-	"objectDefinitionName2": "TestrayTasksCaseTypes",
+	"name": "caseTypeToTasksCaseTypes",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:CaseType$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TasksCaseTypes$]",
+	"objectDefinitionName2": "TasksCaseTypes",
 	"type": "oneToMany"
 }

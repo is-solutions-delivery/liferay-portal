@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Team"
 	},
-	"name": "TestrayTeam",
+	"name": "Team",
 	"objectFields": [
 		{
 			"indexed": true,

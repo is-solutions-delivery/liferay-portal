@@ -2,8 +2,18 @@
 	"label": {
 		"en_US": "Testray Subtask Issue"
 	},
-	"name": "TestraySubtaskIssue",
+	"name": "SubtaskIssue",
 	"objectFields": [
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
+			"required": false,
+			"type": "String"
+		}
 	],
 	"pluralLabel": {
 		"en_US": "Testray Subtask Issue"

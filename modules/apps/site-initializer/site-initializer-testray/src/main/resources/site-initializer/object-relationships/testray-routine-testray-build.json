@@ -4,8 +4,8 @@
 		"en-US": "One Routine to Many Builds"
 	},
 	"name": "routineToBuilds",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayRoutine$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayBuild$]",
-	"objectDefinitionName2": "TestrayBuild",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:Routine$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:Build$]",
+	"objectDefinitionName2": "Build",
 	"type": "oneToMany"
 }

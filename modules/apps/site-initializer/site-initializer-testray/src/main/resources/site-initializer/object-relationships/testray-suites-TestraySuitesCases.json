@@ -4,8 +4,8 @@
 		"en-US": "One Suites to Many Testray Suites Cases"
 	},
 	"name": "suiteToSuitesCases",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestraySuite$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestraySuitesCases$]",
-	"objectDefinitionName2": "TestraySuitesCases",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:Suite$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:SuitesCases$]",
+	"objectDefinitionName2": "SuitesCases",
 	"type": "oneToMany"
 }

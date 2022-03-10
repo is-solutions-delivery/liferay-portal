@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Routine"
 	},
-	"name": "TestrayRoutine",
+	"name": "Routine",
 	"objectFields": [
 		{
 			"indexed": true,

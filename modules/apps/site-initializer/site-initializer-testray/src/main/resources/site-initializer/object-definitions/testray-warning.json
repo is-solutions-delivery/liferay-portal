@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Warning"
 	},
-	"name": "TestrayWarning",
+	"name": "Warning",
 	"objectFields": [
 		{
 			"indexed": false,

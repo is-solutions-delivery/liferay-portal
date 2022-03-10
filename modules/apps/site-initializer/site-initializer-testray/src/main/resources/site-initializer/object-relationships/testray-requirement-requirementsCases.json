@@ -1,11 +1,11 @@
 {
 	"deletionType": "cascade",
 	"label": {
-		"en-US": "Many Requirements to Many Requirements Cases"
+		"en-US": "One Requirement to Many Requirements Cases"
 	},
-	"name": "requiremensToRequirementsCases",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayRequirement$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayRequirementsCases$]",
-	"objectDefinitionName2": "TestrayRequirementsCases",
+	"name": "requiremenToRequirementsCases",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:Requirement$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:RequirementsCases$]",
+	"objectDefinitionName2": "RequirementsCases",
 	"type": "oneToMany"
 }

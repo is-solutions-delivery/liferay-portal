@@ -1,12 +1,22 @@
 {
 	"label": {
-		"en_US": "Testray Subtask CaseResult"
+		"en_US": "Testray Subtasks CaseResults"
 	},
-	"name": "TestraySubtaskCaseResult",
+	"name": "SubtasksCasesResults",
 	"objectFields": [
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
+			"required": false,
+			"type": "String"
+		}
 	],
 	"pluralLabel": {
-		"en_US": "Testray Subtask CaseResult"
+		"en_US": "Testray Subtasks CaseResults"
 	},
 	"scope": "company"
 }

@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Attachment"
 	},
-	"name": "TestrayAttachment",
+	"name": "Attachment",
 	"objectFields": [
 		{
 			"DBType": "String",

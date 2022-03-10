@@ -30,7 +30,7 @@
 			"label": {
 				"en_US": "Testray Factor Category Name"
 			},
-			"name": "testrayFactorCategoryName",
+			"name": "factorCategoryName",
 			"required": false,
 			"type": "String"
 		},
@@ -40,7 +40,7 @@
 			"label": {
 				"en_US": "Testray Factor Option Name"
 			},
-			"name": "testrayFactorOptionName",
+			"name": "factorOptionName",
 			"required": false,
 			"type": "String"
 		}

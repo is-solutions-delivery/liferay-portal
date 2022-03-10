@@ -4,8 +4,8 @@
 		"en-US": "One Case Result to Many Attachments"
 	},
 	"name": "caseResultToAttachments",
-	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCaseResult$]",
-	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayAttachment$]",
-	"objectDefinitionName2": "TestrayAttachment",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:CaseResult$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:Attachment$]",
+	"objectDefinitionName2": "Attachment",
 	"type": "oneToMany"
 }
