@@ -105,12 +105,16 @@ const adaptToRaylifeApplicationToForm = (data) => {
  * @param {DataForm}  data Basics form object
  * @returns {BasicsFormApplicationRequest} Basics Form ready for application request
  */
-const adaptToFormApplicationRequest = (form) => ({
+const adaptToFormApplicationRequest = (form, status) => ({
 	address: form?.basics?.businessInformation?.business?.location?.address,
 	addressApt:
 		form?.basics?.businessInformation?.business?.location?.addressApt,
 	annualPayrollForEmployees: form?.employees?.annualPayrollForEmployees,
 	annualPayrollForOwner: form?.employees?.annualPayrollForOwner,
+	applicationStatus: {
+		key: status?.key,
+		name: status?.name,
+	},
 	buildingSquareFeetOccupied: form?.property?.buildingSquareFeetOccupied,
 	businessCategoryId: form?.basics?.businessCategoryId,
 	businessOperatesYearRound: form?.employees?.businessOperatesYearRound,
@@ -135,7 +139,8 @@ const adaptToFormApplicationRequest = (form) => ({
 	partTimeEmployees: form?.employees?.partTimeEmployees,
 	phone: form?.basics?.businessInformation?.business?.phone,
 	policySent: false,
-	product: form?.basics?.product,
+	product: form?.basics?.productQuoteName,
+	productCategory: form?.basics?.productCategory,
 	productQuote: `${form?.basics?.productQuote}`,
 	salesMerchandise: form?.business?.salesMerchandise,
 	segment: form?.basics?.properties?.segment,

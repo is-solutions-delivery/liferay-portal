@@ -11,21 +11,29 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
+import React, {useContext} from 'react';
+import {useFormContext} from 'react-hook-form';
 import Modal from '../../../../../../common/components/modal';
 import {
 	STORAGE_KEYS,
 	Storage,
 } from '../../../../../../common/services/liferay/storage';
+import {countCompletedFields} from '../../../../../../common/utils';
 import {RAYLIFE_PAGES} from '../../../../../../common/utils/constants';
 import {clearExitAlert} from '../../../../../../common/utils/exitAlert';
 import {
 	getLiferaySiteName,
 	redirectTo,
 } from '../../../../../../common/utils/liferay';
+import {
+	APPLICATION_STATUS,
+	AVAILABLE_STEPS,
+} from '../../../../../get-a-quote/utils/constants';
+import {AppContext} from '../../../../context/AppContextProvider';
 import {createQuoteRetrieve} from '../../../../services/QuoteRetrieve';
+import {updateRaylifeApplicationStatus} from '../../../../services/RaylifeApplication';
 
 const liferaySiteName = getLiferaySiteName();
 
@@ -37,6 +45,14 @@ const ProgressSaved = ({
 	setError,
 	show,
 }) => {
+	const {
+		control: {_fields},
+	} = useFormContext();
+
+	const {
+		state: {selectedStep},
+	} = useContext(AppContext);
+
 	const onSendLinkAndExit = async () => {
 		try {
 			const applicationId = Storage.getItem(STORAGE_KEYS.APPLICATION_ID);
@@ -47,11 +63,42 @@ const ProgressSaved = ({
 				retrieveEmail: email,
 			});
 
+			let status = APPLICATION_STATUS.OPEN;
+
+			if (
+				AVAILABLE_STEPS.BASICS_BUSINESS_INFORMATION.index !==
+				selectedStep.index
+			) {
+				status = APPLICATION_STATUS.INCOMPLETE;
+			}
+
+			if (
+				AVAILABLE_STEPS.BUSINESS.index === selectedStep.index &&
+				countCompletedFields(_fields?.business || {}) === 0
+			) {
+				status = APPLICATION_STATUS.OPEN;
+			}
+
+			if (
+				AVAILABLE_STEPS.EMPLOYEES.index === selectedStep.index &&
+				countCompletedFields(_fields?.employees || {}) === 0
+			) {
+				status = APPLICATION_STATUS.OPEN;
+			}
+
+			if (
+				AVAILABLE_STEPS.PROPERTY.index === selectedStep.index &&
+				countCompletedFields(_fields?.property || {}) === 0
+			) {
+				status = APPLICATION_STATUS.OPEN;
+			}
+
+			await updateRaylifeApplicationStatus(applicationId, status);
+
 			clearExitAlert();
 
 			redirectTo(RAYLIFE_PAGES.HOME);
-		}
-		catch (error) {
+		} catch (error) {
 			setError('Unable to save your information. Please try again.');
 			onClose();
 		}

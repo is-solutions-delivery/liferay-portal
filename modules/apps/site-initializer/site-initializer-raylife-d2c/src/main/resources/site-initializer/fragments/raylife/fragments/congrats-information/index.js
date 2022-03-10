@@ -34,6 +34,18 @@ const fetchHeadless = async (url, options) => {
 	return data;
 };
 
+const addPolicyEntryData = async ({firstName, lastName, price, product}) => {
+	await fetchHeadless(`/o/c/raylifepolicies/`, {
+		body: JSON.stringify({
+			monthlyPremium: price,
+			name: `${firstName} ${lastName}`,
+			policyNumber: productId,
+			product,
+		}),
+		method: 'POST',
+	});
+};
+
 const sendDigitalSignaturePolicy = async ({email, firstName, lastName}) => {
 	await fetchHeadless(
 		`o/digital-signature-rest/v1.0/sites/${themeDisplay.getSiteGroupId()}/ds-envelopes`,
@@ -69,7 +81,13 @@ const sendDigitalSignaturePolicy = async ({email, firstName, lastName}) => {
 
 const updateObjectPolicySent = async () => {
 	await fetchHeadless(`o/c/raylifeapplications/${applicationId}`, {
-		body: JSON.stringify({policySent: true}),
+		body: JSON.stringify({
+			applicationStatus: {
+				key: 'bound',
+				name: 'Bound',
+			},
+			policySent: true,
+		}),
 		method: 'PATCH',
 	});
 };
@@ -105,14 +123,14 @@ const buildList = (items = []) => {
 						?.currentSrc;
 
 			return `<tr>
-			   <td>
-				   <img alt="icon" src="${imageSrc}" />
-				   <span class="ml-1">${title}</span>
-			   </td>
-			   <td class="text-right">${
-					typeof formattedValue === 'string' ? formattedValue : ''
-				}</td>
-			   </tr>`;
+				 <td>
+					 <img alt="icon" src="${imageSrc}" />
+					 <span class="ml-1">${title}</span>
+				 </td>
+				 <td class="text-right">${
+						typeof formattedValue === 'string' ? formattedValue : ''
+					}</td>
+				 </tr>`;
 		})
 		.join('');
 };
@@ -172,6 +190,7 @@ const main = async () => {
 	]);
 
 	if (!application.policySent) {
+		addPolicyEntryData({...application, ...quoteComparison});
 		sendDigitalSignaturePolicy(application);
 		updateObjectPolicySent();
 	}
