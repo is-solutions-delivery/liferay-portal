@@ -19,20 +19,22 @@ package com.liferay.site.initializer.testray.extra.java.function.constants;
  */
 public class TestrayConstants {
 
-	public static final int TESTRAY_STATUS_BLOCKED = 4;
+	public static final int TESTRAY_CASE_RESULT_STATUS_BLOCKED = 4;
 
-	public static final int TESTRAY_STATUS_DID_NOT_RUN = 5;
+	public static final int TESTRAY_CASE_RESULT_STATUS_DID_NOT_RUN = 6;
 
-	public static final int TESTRAY_STATUS_FAILED = 3;
+	public static final int TESTRAY_CASE_RESULT_STATUS_FAILED = 3;
 
-	public static final int TESTRAY_STATUS_IN_PROGRESS = 1;
+	public static final int TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS = 1;
 
-	public static final int TESTRAY_STATUS_PASSED = 2;
+	public static final int TESTRAY_CASE_RESULT_STATUS_PASSED = 2;
 
-	public static final int TESTRAY_STATUS_TEST_FIX = 6;
+	public static final int TESTRAY_CASE_RESULT_STATUS_TEST_FIX = 7;
 
-	public static final int TESTRAY_STATUS_UNTESTED = 0;
+	public static final int TESTRAY_CASE_RESULT_STATUS_UNTESTED = 0;
 
-	public static final int EXTERNAL_REFERENCE_TYPE_POSHI = 1;
+	public static final int TESTRAY_RUN_EXTERNAL_REFERENCE_TYPE_POSHI = 1;
+
+	public static final int TESTRAY_TASK_STATUS_IN_ANALYSIS = 1;
 
 }

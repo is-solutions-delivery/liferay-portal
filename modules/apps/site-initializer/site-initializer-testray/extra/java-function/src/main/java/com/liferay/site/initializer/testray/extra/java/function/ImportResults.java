@@ -236,31 +236,31 @@ public class ImportResults {
 		bodyMap.put("testrayRunId", String.valueOf(testrayRunId));
 
 		String dueStatus = String.valueOf(
-			TestrayConstants.TESTRAY_STATUS_UNTESTED);
+			TestrayConstants.TESTRAY_CASE_RESULT_STATUS_UNTESTED);
 
 		String testrayTestcaseStatus = (String)testrayCasePropertiesMap.get(
 			"testray.testcase.status");
 
 		if (testrayTestcaseStatus.equals("in-progress")) {
 			dueStatus = String.valueOf(
-				TestrayConstants.TESTRAY_STATUS_IN_PROGRESS);
+				TestrayConstants.TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS);
 		}
 		else if (testrayTestcaseStatus.equals("passed")) {
-			dueStatus = String.valueOf(TestrayConstants.TESTRAY_STATUS_PASSED);
+			dueStatus = String.valueOf(TestrayConstants.TESTRAY_CASE_RESULT_STATUS_PASSED);
 		}
 		else if (testrayTestcaseStatus.equals("failed")) {
-			dueStatus = String.valueOf(TestrayConstants.TESTRAY_STATUS_FAILED);
+			dueStatus = String.valueOf(TestrayConstants.TESTRAY_CASE_RESULT_STATUS_FAILED);
 		}
 		else if (testrayTestcaseStatus.equals("blocked")) {
-			dueStatus = String.valueOf(TestrayConstants.TESTRAY_STATUS_BLOCKED);
+			dueStatus = String.valueOf(TestrayConstants.TESTRAY_CASE_RESULT_STATUS_BLOCKED);
 		}
 		else if (testrayTestcaseStatus.equals("dnr")) {
 			dueStatus = String.valueOf(
-				TestrayConstants.TESTRAY_STATUS_DID_NOT_RUN);
+				TestrayConstants.TESTRAY_CASE_RESULT_STATUS_DID_NOT_RUN);
 		}
 		else if (testrayTestcaseStatus.equals("test-fix")) {
 			dueStatus = String.valueOf(
-				TestrayConstants.TESTRAY_STATUS_TEST_FIX);
+				TestrayConstants.TESTRAY_CASE_RESULT_STATUS_TEST_FIX);
 		}
 
 		bodyMap.put("dueStatus", dueStatus);
@@ -678,7 +678,7 @@ public class ImportResults {
 
 		bodyMap.put("externalReferencePK", propertiesMap.get("testray.run.id"));
 		bodyMap.put("externalReferenceType",
-			String.valueOf(TestrayConstants.EXTERNAL_REFERENCE_TYPE_POSHI));
+			String.valueOf(TestrayConstants.TESTRAY_RUN_EXTERNAL_REFERENCE_TYPE_POSHI));
 		bodyMap.put("jenkinsJobKey", propertiesMap.get("jenkins.job.id"));
 		bodyMap.put("name", propertiesMap.get("testray.run.id"));
 		bodyMap.put("testrayBuildId", String.valueOf(buildId));
@@ -723,7 +723,7 @@ public class ImportResults {
 
 			bodyMap.put(
 				"dueStatus",
-				String.valueOf(TestrayConstants.TESTRAY_STATUS_IN_PROGRESS));
+				String.valueOf(TestrayConstants.TESTRAY_TASK_STATUS_IN_ANALYSIS));
 			bodyMap.put("name", taskName);
 			bodyMap.put("testrayBuildId", String.valueOf(buildId));
 
