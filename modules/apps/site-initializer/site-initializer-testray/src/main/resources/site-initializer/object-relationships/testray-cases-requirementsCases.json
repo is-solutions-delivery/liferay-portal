@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en-US": "Many Cases to Many Requirements Cases"
+	},
+	"name": "casesToRequirementsCases",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCase$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayRequirementsCases$]",
+	"objectDefinitionName2": "TestrayRequirementsCases",
+	"type": "oneToMany"
+}

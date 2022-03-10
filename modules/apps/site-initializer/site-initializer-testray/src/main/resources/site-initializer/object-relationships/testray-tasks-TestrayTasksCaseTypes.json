@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en-US": "One Tasks to Many Cases Types"
+	},
+	"name": "tasksToRequirementsCases",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayTask$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayTasksCaseType$]",
+	"objectDefinitionName2": "TestrayTasksCaseTypes",
+	"type": "oneToMany"
+}

@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en-US": "One Case to Many BuildsCases"
+	},
+	"name": "caseToBuildsCases",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCase$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayBuildsCases$]",
+	"objectDefinitionName2": "TestrayBuildsCases",
+	"type": "oneToMany"
+}
