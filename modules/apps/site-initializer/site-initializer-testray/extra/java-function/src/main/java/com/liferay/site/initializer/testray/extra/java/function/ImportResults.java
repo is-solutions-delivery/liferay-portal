@@ -216,7 +216,7 @@ public class ImportResults {
 
 		long testrayCaseResultId = _addTestrayCaseResult(
 			testrayCaseId, testrayComponentId, testrayBuildId, testrayRunId,
-			testrayCasePropertiesMap);
+			testcaseNode, testrayCasePropertiesMap);
 
 		_addTestrayAttachments(testcaseNode, testrayCaseResultId);
 		_addTestrayWarnings(testrayCasePropertiesMap, testrayCaseResultId);
@@ -224,7 +224,8 @@ public class ImportResults {
 
 	private long _addTestrayCaseResult(
 			long testrayCaseId, long testrayComponentId, long testrayBuildId,
-			long testrayRunId, Map<String, Object> testrayCasePropertiesMap)
+			long testrayRunId, Node testcaseNode,
+			Map<String, Object> testrayCasePropertiesMap)
 		throws Exception {
 
 		Map<String, String> bodyMap = new HashMap<>();
@@ -263,6 +264,17 @@ public class ImportResults {
 		}
 
 		bodyMap.put("dueStatus", dueStatus);
+
+		Element testcaseElement = (Element)testcaseNode;
+		Node failure = testcaseElement.getElementsByTagName("failure").item(0);
+
+		if(failure != null){
+			String failureMessage = _getAttributeValue(failure,"message");
+
+			if(!failureMessage.isEmpty()){
+				bodyMap.put("errors", failureMessage);
+			}
+		}
 
 		JSONObject responseJSONObject = HttpUtil.invoke(
 			new JSONObject(
@@ -383,6 +395,8 @@ public class ImportResults {
 		bodyMap.put(
 			"description", _buildTestrayBuildDescription(propertiesMap));
 		bodyMap.put("dueDate", propertiesMap.get("testray.build.time"));
+		bodyMap.put("gitHash", propertiesMap.get("git.id"));
+		bodyMap.put("githubCompareURLs", propertiesMap.get("liferay.compare.urls"));
 		bodyMap.put("name", buildName);
 		bodyMap.put("testrayProjectId", String.valueOf(projectId));
 
