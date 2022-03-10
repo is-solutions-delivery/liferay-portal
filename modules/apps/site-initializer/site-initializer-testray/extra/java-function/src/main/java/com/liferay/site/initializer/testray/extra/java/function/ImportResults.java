@@ -219,6 +219,10 @@ public class ImportResults {
 			testcaseNode, testrayCasePropertiesMap);
 
 		_addTestrayAttachments(testcaseNode, testrayCaseResultId);
+		_addTestrayIssue((String) testrayCasePropertiesMap.get("testray.case.issue"),
+			testrayCaseResultId);
+		_addTestrayIssue((String) testrayCasePropertiesMap.get("testray.case.defect"),
+			testrayCaseResultId);
 		_addTestrayWarnings(testrayCasePropertiesMap, testrayCaseResultId);
 	}
 
@@ -303,6 +307,26 @@ public class ImportResults {
 				testcaseNode, testrayBuildId, testrayProjectId, testrayRunId,
 				testrayCasePropertiesMap);
 		}
+	}
+
+	private void _addTestrayIssue(String issue,
+			long testrayCaseResultId)
+		throws Exception{
+
+		if( (issue==null) || (issue.isEmpty()) ){
+			return;
+		}
+
+		Map<String, String> bodyMap = new HashMap<>();
+
+		bodyMap.put("name", issue);
+
+		HttpUtil.invoke(
+			new JSONObject(
+				bodyMap
+			).toString(),
+			"testrayissues", null, null, HttpInvoker.HttpMethod.POST);
+
 	}
 
 	private void _addTestrayWarnings(
