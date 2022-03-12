@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Suite"
 	},
-	"name": "TestraySuite",
+	"name": "Suite",
 	"objectFields": [
 		{
 			"indexed": false,

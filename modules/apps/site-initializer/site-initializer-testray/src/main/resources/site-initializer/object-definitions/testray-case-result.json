@@ -2,7 +2,7 @@
 	"label": {
 		"en_US": "Testray Case Result"
 	},
-	"name": "TestrayCaseResult",
+	"name": "CaseResult",
 	"objectFields": [
 		{
 			"indexed": false,
@@ -11,36 +11,6 @@
 				"en_US": "Comment MB Message Id"
 			},
 			"name": "commentMBMessageId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Build Id"
-			},
-			"name": "testrayBuildId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Component Id"
-			},
-			"name": "testrayComponentId",
-			"required": false,
-			"type": "Long"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Testray Run Id"
-			},
-			"name": "testrayRunId",
 			"required": false,
 			"type": "Long"
 		},
@@ -73,16 +43,6 @@
 			"name": "closedDate",
 			"required": false,
 			"type": "Date"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Attachments"
-			},
-			"name": "attachments",
-			"required": false,
-			"type": "String"
 		},
 		{
 			"indexed": false,
