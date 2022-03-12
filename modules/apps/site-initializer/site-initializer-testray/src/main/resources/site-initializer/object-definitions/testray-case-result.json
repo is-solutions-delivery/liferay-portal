@@ -48,6 +48,16 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
+				"en_US": "Testray Case Id"
+			},
+			"name": "testrayCaseId",
+			"required": false,
+			"type": "Long"
+		},
+		{
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
 				"en_US": "Assigned User Id"
 			},
 			"name": "assignedUserId",
@@ -73,16 +83,6 @@
 			"name": "closedDate",
 			"required": false,
 			"type": "Date"
-		},
-		{
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Attachments"
-			},
-			"name": "attachments",
-			"required": false,
-			"type": "String"
 		},
 		{
 			"indexed": false,
