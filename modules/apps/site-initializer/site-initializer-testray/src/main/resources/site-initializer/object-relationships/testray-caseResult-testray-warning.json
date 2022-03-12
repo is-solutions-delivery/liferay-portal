@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en-US": "One Case Result to Many Warnings"
+	},
+	"name": "oneCaseResultToManyWarnings",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:TestrayCaseResult$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:TestrayWarning$]",
+	"objectDefinitionName2": "TestrayWarning",
+	"type": "oneToMany"
+}
