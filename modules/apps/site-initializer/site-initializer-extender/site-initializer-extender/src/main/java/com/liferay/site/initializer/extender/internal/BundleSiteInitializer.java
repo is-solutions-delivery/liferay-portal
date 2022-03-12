@@ -1606,6 +1606,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return objectDefinitionIdsStringUtilReplaceValues;
 		}
 
+		List<com.liferay.object.model.ObjectDefinition> objectDefinitions =
+			_objectDefinitionLocalService.getObjectDefinitions(
+				serviceContext.getCompanyId(), true, true,
+				WorkflowConstants.STATUS_APPROVED);
+
+		for (com.liferay.object.model.ObjectDefinition objectDefinition :
+				objectDefinitions) {
+
+			objectDefinitionIdsStringUtilReplaceValues.put(
+				"OBJECT_DEFINITION_ID:" + objectDefinition.getName(),
+				String.valueOf(objectDefinition.getObjectDefinitionId()));
+		}
+
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-entries.json")) {
 				continue;
