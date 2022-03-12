@@ -1,0 +1,30 @@
+[
+	{
+		"key": "monthlyGoal",
+		"name": "Monthly Goal",
+		"name_i18n": {
+			"en-US": "Monthly Goal"
+		}
+	},
+	{
+		"key": "quarterlyGoal",
+		"name": "Quarterly Goal",
+		"name_i18n": {
+			"en-US": "Quarterly Goal"
+		}
+	},
+	{
+		"key": "semiannualGoal",
+		"name": "Semiannual Goal",
+		"name_i18n": {
+			"en-US": "Semiannual Goal"
+		}
+	},
+	{
+		"key": "yearlyGoal",
+		"name": "Yearly Goal",
+		"name_i18n": {
+			"en-US": "Yearly Goal"
+		}
+	}
+]

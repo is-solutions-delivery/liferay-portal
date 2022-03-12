@@ -1,0 +1,16 @@
+[
+	{
+		"key": "product",
+		"name": "Product",
+		"name_i18n": {
+			"en-US": "Product"
+		}
+	},
+	{
+		"key": "sales",
+		"name": "Sales",
+		"name_i18n": {
+			"en-US": "Sales"
+		}
+	}
+]
