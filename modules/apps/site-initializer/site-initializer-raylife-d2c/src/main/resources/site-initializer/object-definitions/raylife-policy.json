@@ -1,0 +1,110 @@
+{
+	"label": {
+		"en_US": "Raylife Policy"
+	},
+	"name": "RaylifePolicy",
+	"objectFields": [
+		{
+			"DBType": "Date",
+			"businessType": "Date",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "FinishDate"
+			},
+			"name": "finishDate",
+			"required": false,
+			"type": "Date"
+		},
+		{
+			"DBType": "Date",
+			"businessType": "Date",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "StartDate"
+			},
+			"name": "startDate",
+			"required": false,
+			"type": "Date"
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Renewal Due"
+			},
+			"name": "renewalDue",
+			"required": false,
+			"type": "Integer"
+		},
+		{
+			"DBType": "BigDecimal",
+			"businessType": "PrecisionDecimal",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Commission"
+			},
+			"name": "commission",
+			"required": false,
+			"type": "BigDecimal"
+		},
+		{
+			"DBType": "BigDecimal",
+			"businessType": "PrecisionDecimal",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Monthly Premium"
+			},
+			"name": "monthlyPremium",
+			"required": false,
+			"type": "BigDecimal"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
+			"required": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Policy Number"
+			},
+			"name": "policyNumber",
+			"required": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Product"
+			},
+			"name": "product",
+			"required": false,
+			"type": "String"
+		}
+	],
+	"panelAppOrder": "100",
+	"panelCategoryKey": "control_panel.object",
+	"pluralLabel": {
+		"en_US": "Raylife Policies"
+	},
+	"scope": "company"
+}
