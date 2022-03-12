@@ -1,0 +1,11 @@
+{
+	"deletionType": "prevent",
+	"label": {
+		"en_US": "Application User"
+	},
+	"name": "applicationUser",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:User$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:RaylifeApplication$]",
+	"objectDefinitionName2": "RaylifeApplication",
+	"type": "oneToMany"
+}
