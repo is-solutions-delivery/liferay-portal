@@ -20,7 +20,6 @@ import {Size} from '@clayui/modal/lib/types';
 import {ReactElement, useContext} from 'react';
 
 import i18n from '../../i18n';
-import NewProject from '../../pages/Project/NewProject';
 import {Liferay} from '../../services/liferay/liferay';
 import {Avatar} from '../Avatar';
 import DropDown from '../DropDown';
@@ -82,12 +81,6 @@ const SidebarFooter = () => {
 				{
 					icon: 'plus',
 					label: i18n.translate('new-project'),
-					onClick: () =>
-						onOpenModal(
-							i18n.translate('new-project'),
-							<NewProject onClose={() => state.onClose()} />,
-							'lg'
-						),
 					path: '/',
 				},
 				{
