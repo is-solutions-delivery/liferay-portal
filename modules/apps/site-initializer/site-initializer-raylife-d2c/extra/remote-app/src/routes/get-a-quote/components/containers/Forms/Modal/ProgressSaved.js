@@ -98,7 +98,8 @@ const ProgressSaved = ({
 			clearExitAlert();
 
 			redirectTo(RAYLIFE_PAGES.HOME);
-		} catch (error) {
+		}
+		catch (error) {
 			setError('Unable to save your information. Please try again.');
 			onClose();
 		}
