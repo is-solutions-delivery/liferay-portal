@@ -28,11 +28,11 @@ function _addItemToList(text) {
 
 const raylifeApplicationForm = JSON.parse(localStorage.getItem("raylife-application-form"));
 const address = raylifeApplicationForm?.basics?.businessInformation?.business?.location;
-const product = raylifeApplicationForm?.basics?.product;
+const productCategory = raylifeApplicationForm?.basics?.productCategory;
 const annualRevenue = raylifeApplicationForm?.employees?.estimatedAnnualGrossRevenue;
 const partTimeEmployees = raylifeApplicationForm?.employees?.partTimeEmployees;
 
-_addItemToList(product);
+_addItemToList(productCategory);
 _addItemToList(`${annualRevenue} annual revenue`);
 _addItemToList(`${address.address}, ${address.city} ${address.state} ${address.zip}`);
 _addItemToList(`${partTimeEmployees} Total Employees, 1 Owner`);
