@@ -75,9 +75,13 @@ const ActivationStatusLayout = ({
 									title={null}
 									truncate={false}
 								>
-									<StatusTag
-										currentStatus={activationStatus.id}
-									/>
+									<div className="align-items-center d-flex">
+										<StatusTag
+											currentStatus={activationStatus.id}
+										/>
+
+										{activationStatus.dropdownIcon}
+									</div>
 								</ClayCard.Description>
 							</div>
 						</div>
