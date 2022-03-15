@@ -9,6 +9,8 @@
  * distribution rights of the Software.
  */
 
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 
 import SidebarPanel from '../../SidebarPanel';
@@ -23,13 +25,34 @@ const actionSectionComponents = {
 	reassignments: ActionTypeReassignment,
 };
 
-const TimerAction = ({setContentName, updateSelectedItem}) => {
-	const [actionSection, setActionSection] = useState('actions');
-	const [actionSections, setActionSections] = useState([
-		{identifier: `${Date.now()}-0`},
-	]);
+const TimerAction = ({
+	actionSectionsIndex,
+	identifier,
+	sectionsLength,
+	setActionSections,
+	timersIndex,
+	updateSelectedItem,
+}) => {
+	const [actionType, setActionType] = useState('actions');
 
-	const ActionSectionComponent = actionSectionComponents[actionSection];
+	const ActionSectionComponent = actionSectionComponents[actionType];
+
+	const deleteSection = (identifier) => {
+		setActionSections((prevSections) => {
+			const newSections = prevSections.filter(
+				(prevSection) => prevSection.identifier !== identifier
+			);
+
+			return newSections;
+		});
+	};
+
+	const handleClickNew = (prev) => [
+		...prev,
+		{
+			identifier: `${Date.now()}-${prev.length}`,
+		},
+	];
 
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('action')}>
@@ -39,24 +62,47 @@ const TimerAction = ({setContentName, updateSelectedItem}) => {
 				setActionSections={setActionSections}
 			/>
 
-			{actionSections.map(({identifier, ...restProps}, index) => {
-				return (
-					ActionSectionComponent && (
-						<ActionSectionComponent
-							{...restProps}
-							identifier={identifier}
-							index={index}
-							key={`section-${identifier}`}
-							sectionsLength={actionSections?.length}
-							setContentName={setContentName}
-							setSections={setActionSections}
-							updateSelectedItem={updateSelectedItem}
+			<ActionSectionComponent
+				actionSectionsIndex={actionSectionsIndex}
+				actionType={actionType}
+				identifier={identifier}
+				key={`section-${identifier}`}
+				sectionsLength={sectionsLength}
+				setActionSections={setActionSections}
+				timersIndex={timersIndex}
+				updateSelectedItem={updateSelectedItem}
+			/>
+			
+			<div className="autofit-float autofit-padded-no-gutters-x autofit-row autofit-row-center mb-3">
+				<div className="autofit-col">
+					<ClayButton
+						className="mr-3"
+						displayType="secondary"
+						onClick={() =>
+							setActionSections((prev) => handleClickNew(prev))
+						}
+					>
+						{Liferay.Language.get('new-action')}
+					</ClayButton>
+				</div>
+
+				<div className="autofit-col autofit-col-end">
+					{sectionsLength > 1 && (
+						<ClayButtonWithIcon
+							className="delete-button"
+							displayType="unstyled"
+							onClick={() => deleteSection(identifier)}
+							symbol="trash"
 						/>
-					)
-				);
-			})}
+					)}
+				</div>
+			</div>
 		</SidebarPanel>
 	);
+};
+
+TimerAction.propTypes = {
+	updateSelectedItem: PropTypes.func.isRequired,
 };
 
 export default TimerAction;
