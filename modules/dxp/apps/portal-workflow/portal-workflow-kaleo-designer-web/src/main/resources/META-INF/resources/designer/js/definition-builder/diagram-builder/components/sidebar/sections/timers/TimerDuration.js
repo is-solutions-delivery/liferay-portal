@@ -18,55 +18,40 @@ import SidebarPanel from '../../SidebarPanel';
 import TimerFields from './TimerFields';
 
 const TimerDuration = ({
-	index,
 	selectedItem,
-	setSelectedItem,
+	setTimerSections,
+	timerIdentifier,
+	timersIndex,
 	updateSelectedItem,
 }) => {
 	const [recurrence, setRecurrence] = useState(
-		selectedItem?.data.taskTimers?.delay[index].scale.length > 1
+		selectedItem?.data.taskTimers?.delay[timersIndex]?.scale.length > 1
 	);
 
 	const handleToggle = () => {
 		if (recurrence) {
 			setRecurrence(false);
-			setSelectedItem((previousItem) => {
-				const itemCopy = {
-					...previousItem,
-				};
+			setTimerSections((previousSections) => {
+				const updatedSections = [...previousSections];
 
-				itemCopy.data.taskTimers?.blocking.splice(index, 1, true);
-				itemCopy.data.taskTimers?.delay[index].scale.splice(1, 1);
-				itemCopy.data.taskTimers?.delay[index].duration.splice(1, 1);
+				delete updatedSections[timersIndex].recurrence;
+				delete updatedSections[timersIndex].recurrenceScale;
 
-				return itemCopy;
+				return updatedSections;
 			});
 		}
 		else {
 			setRecurrence(true);
-			setSelectedItem((previousItem) => {
-				const itemCopy = {
-					...previousItem,
-				};
-
-				itemCopy.data.taskTimers?.blocking.splice(index, 1, '');
-				itemCopy.data.taskTimers?.delay[index].scale.splice(1, 1, '');
-				itemCopy.data.taskTimers?.delay[index].duration.splice(
-					1,
-					1,
-					''
-				);
-
-				return itemCopy;
-			});
 		}
 	};
 
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('duration')}>
 			<TimerFields
-				index={index}
 				selectedItem={selectedItem}
+				setTimerSections={setTimerSections}
+				timerIdentifier={timerIdentifier}
+				timersIndex={timersIndex}
 				updateSelectedItem={updateSelectedItem}
 			/>
 
@@ -92,10 +77,12 @@ const TimerDuration = ({
 
 			{recurrence && (
 				<TimerFields
-					index={index}
 					recurrence
 					scaleHelpText={Liferay.Language.get('recurrence')}
 					selectedItem={selectedItem}
+					setTimerSections={setTimerSections}
+					timerIdentifier={timerIdentifier}
+					timersIndex={timersIndex}
 					updateSelectedItem={updateSelectedItem}
 				/>
 			)}
@@ -104,9 +91,9 @@ const TimerDuration = ({
 };
 
 TimerDuration.propTypes = {
-	index: PropTypes.number.isRequired,
 	selectedItem: PropTypes.object.isRequired,
 	setSelectedItem: PropTypes.func.isRequired,
+	timersIndex: PropTypes.number.isRequired,
 	updateSelectedItem: PropTypes.func.isRequired,
 };
 
