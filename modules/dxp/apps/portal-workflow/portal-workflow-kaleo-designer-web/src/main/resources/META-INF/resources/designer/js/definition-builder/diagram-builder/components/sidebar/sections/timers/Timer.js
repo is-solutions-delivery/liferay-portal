@@ -9,9 +9,9 @@
  * distribution rights of the Software.
  */
 
-import ClayButton from '@clayui/button';
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import PropTypes from 'prop-types';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
 import {DiagramBuilderContext} from '../../../../DiagramBuilderContext';
 import TimerAction from './TimerAction';
@@ -19,96 +19,55 @@ import TimerDuration from './TimerDuration';
 import TimerInfo from './TimerInfo';
 
 const Timer = ({
-	identifier,
-	index,
+	actions,
 	sectionsLength,
-	setContentName,
-	setSections,
+	setTimerSections,
+	timerIdentifier,
+	timersIndex,
 }) => {
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 
-	const [subSections, setSubSections] = useState([
-		{identifier: `${Date.now()}-0`},
-	]);
+	const [actionSections, setActionSections] = useState(
+		actions || [{identifier: `${Date.now()}-0`}]
+	);
 
-	const updateSelectedItem = (values, options) => {
-		setSelectedItem((previousItem) => {
-			const itemCopy = {
-				...previousItem,
-			};
-			const [key, value] = Object.entries(values)[0];
+	useEffect(() => {
+		if (
+			actionSections &&
+			actionSections.some(({actionType}) => actionType === 'actions')
+		) {
+			const filteredTypeActions = actionSections.filter(
+				({actionType, name, template}) =>
+					actionType === 'actions' && name && template
+			);
 
-			if (key === 'delay') {
-				itemCopy.data.taskTimers.delay[index].duration.splice(
-					options.delay,
-					1,
-					value.duration
-				);
-				itemCopy.data.taskTimers.delay[index].scale.splice(
-					options.delay,
-					1,
-					value.scale
-				);
+			if (filteredTypeActions) {
+				setTimerSections((previousSections) => {
+					const updatedSections = [...previousSections];
+					const section = previousSections.find(
+						({identifier}) => identifier === timerIdentifier
+					);
+
+					section.actions = filteredTypeActions;
+
+					updatedSections.splice(timersIndex, 1, section);
+
+					return updatedSections;
+				});
 			}
-			else {
-				itemCopy.data.taskTimers[key].splice(index, 1, value);
-			}
-
-			return itemCopy;
-		});
-	};
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [actionSections]);
 
 	const deleteTimer = () => {
-		setSelectedItem((previousItem) => {
-			const itemCopy = {
-				...previousItem,
-			};
-
-			for (const key of Object.keys(itemCopy.data.taskTimers)) {
-				itemCopy.data.taskTimers[key].splice(index, 1);
-			}
-
-			return itemCopy;
-		});
-		setSections((prevSections) => {
+		setTimerSections((prevSections) => {
 			const newSections = prevSections.filter(
-				(prevSection) => prevSection.identifier !== identifier
+				(prevSection) => prevSection.identifier !== timerIdentifier
 			);
 
 			return newSections;
 		});
 	};
-
-	const newTaskTimer = (previousItem) => ({
-		...previousItem,
-		data: {
-			...previousItem.data,
-			taskTimers: {
-				blocking: [...previousItem.data.taskTimers.blocking, true],
-				delay: [
-					...previousItem.data.taskTimers.delay,
-					{
-						duration: [''],
-						scale: [''],
-					},
-				],
-				description: [...previousItem.data.taskTimers.description, ''],
-				name: [...previousItem.data.taskTimers.name, ''],
-				reassignments: [
-					...previousItem.data.taskTimers.reassignments,
-					{},
-				],
-				timerActions: [
-					...previousItem.data.taskTimers.timerActions,
-					{},
-				],
-				timerNotifications: [
-					...previousItem.data.taskTimers.timerNotifications,
-					{},
-				],
-			},
-		},
-	});
 
 	const handleClickNew = (prev) => [
 		...prev,
@@ -121,28 +80,31 @@ const Timer = ({
 		<div className="panel">
 			<TimerInfo
 				deleteTimer={deleteTimer}
-				index={index}
 				sectionsLength={sectionsLength}
 				selectedItem={selectedItem}
-				updateSelectedItem={updateSelectedItem}
+				setTimerSections={setTimerSections}
+				timerIdentifier={timerIdentifier}
+				timersIndex={timersIndex}
 			/>
 
 			<TimerDuration
-				index={index}
 				selectedItem={selectedItem}
 				setSelectedItem={setSelectedItem}
-				updateSelectedItem={updateSelectedItem}
+				setTimerSections={setTimerSections}
+				timerIdentifier={timerIdentifier}
+				timersIndex={timersIndex}
 			/>
 
-			{subSections.map(({identifier}, index) => (
+			{actionSections.map(({identifier}, index) => (
 				<TimerAction
+					actionSectionsIndex={index}
 					identifier={identifier}
 					index={index}
 					key={`section-${identifier}`}
-					sectionsLength={subSections?.length}
+					sectionsLength={actionSections?.length}
 					selectedItem={selectedItem}
-					setContentName={setContentName}
-					updateSelectedItem={updateSelectedItem}
+					setActionSections={setActionSections}
+					timersIndex={timersIndex}
 				/>
 			))}
 
@@ -151,40 +113,35 @@ const Timer = ({
 			<div className="autofit-float autofit-padded-no-gutters-x autofit-row autofit-row-center mb-3">
 				<div className="autofit-col">
 					<ClayButton
-						className="mr-3"
-						displayType="secondary"
-						onClick={() =>
-							setSubSections((prev) => handleClickNew(prev))
-						}
-					>
-						{Liferay.Language.get('new-action')}
-					</ClayButton>
-				</div>
-
-				<div className="autofit-col autofit-col-end">
-					<ClayButton
 						displayType="secondary"
 						onClick={() => {
-							setSections((prev) => handleClickNew(prev));
-							setSelectedItem((previousItem) =>
-								newTaskTimer(previousItem)
-							);
+							setTimerSections((prev) => handleClickNew(prev));
 						}}
 					>
 						{Liferay.Language.get('new-timer')}
 					</ClayButton>
 				</div>
+
+				{sectionsLength > 1 && (
+					<div className="autofit-col autofit-col-end">
+						<ClayButtonWithIcon
+							className="delete-button"
+							displayType="unstyled"
+							onClick={deleteTimer}
+							symbol="trash"
+						/>
+					</div>
+				)}
 			</div>
 		</div>
 	);
 };
 
 Timer.propTypes = {
-	identifier: PropTypes.string,
-	index: PropTypes.number,
-	sectionsLength: PropTypes.number,
-	setContentName: PropTypes.func,
-	setSections: PropTypes.func,
+	sectionsLength: PropTypes.number.isRequired,
+	setTimerSections: PropTypes.func.isRequired,
+	timerIdentifier: PropTypes.string.isRequired,
+	timersIndex: PropTypes.number.isRequired,
 };
 
 export default Timer;
