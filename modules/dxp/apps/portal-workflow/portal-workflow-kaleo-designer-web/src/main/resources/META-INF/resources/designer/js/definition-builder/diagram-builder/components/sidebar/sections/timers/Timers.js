@@ -14,7 +14,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {DiagramBuilderContext} from '../../../../DiagramBuilderContext';
 import Timer from './Timer';
 
-const Timers = (props) => {
+const Timers = () => {
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 	const [timerSections, setTimerSections] = useState([
 		{identifier: `${Date.now()}-0`},
@@ -156,7 +156,6 @@ const Timers = (props) => {
 
 	return timerSections.map(({actions, identifier}, index) => (
 		<Timer
-			{...props}
 			actions={actions}
 			key={`section-${identifier}`}
 			sectionsLength={timerSections?.length}

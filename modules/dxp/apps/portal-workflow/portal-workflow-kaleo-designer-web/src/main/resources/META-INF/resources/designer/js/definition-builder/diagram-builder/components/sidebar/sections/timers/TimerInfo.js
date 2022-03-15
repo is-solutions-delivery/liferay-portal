@@ -83,11 +83,10 @@ const TimerInfo = ({
 };
 
 TimerInfo.propTypes = {
-	deleteTimer: PropTypes.func.isRequired,
-	sectionsLength: PropTypes.number.isRequired,
 	selectedItem: PropTypes.object.isRequired,
+	setTimerSections: PropTypes.func.isRequired,
+	timerIdentifier: PropTypes.string.isRequired,
 	timersIndex: PropTypes.number.isRequired,
-	updateSelectedItem: PropTypes.func.isRequired,
 };
 
 export default TimerInfo;

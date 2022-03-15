@@ -12,6 +12,7 @@
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayLayout from '@clayui/layout';
 import ClayLink from '@clayui/link';
+import PropTypes from 'prop-types';
 import React, {useContext, useEffect, useState} from 'react';
 
 import {titleCase} from '../../../../../util/utils';
@@ -116,6 +117,11 @@ const CurrentTimers = ({setContentName, taskTimers}) => {
 			</ClayLayout.Row>
 		</ClayLayout.ContentCol>
 	));
+};
+
+CurrentTimers.propTypes = {
+	setContentName: PropTypes.func.isRequired,
+	taskTimers: PropTypes.object.isRequired,
 };
 
 export default CurrentTimers;

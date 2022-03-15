@@ -22,7 +22,6 @@ const TimerDuration = ({
 	setTimerSections,
 	timerIdentifier,
 	timersIndex,
-	updateSelectedItem,
 }) => {
 	const [recurrence, setRecurrence] = useState(
 		selectedItem?.data.taskTimers?.delay[timersIndex]?.scale.length > 1
@@ -52,7 +51,6 @@ const TimerDuration = ({
 				setTimerSections={setTimerSections}
 				timerIdentifier={timerIdentifier}
 				timersIndex={timersIndex}
-				updateSelectedItem={updateSelectedItem}
 			/>
 
 			<div className="timers-duration-toggle">
@@ -83,7 +81,6 @@ const TimerDuration = ({
 					setTimerSections={setTimerSections}
 					timerIdentifier={timerIdentifier}
 					timersIndex={timersIndex}
-					updateSelectedItem={updateSelectedItem}
 				/>
 			)}
 		</SidebarPanel>
@@ -92,9 +89,9 @@ const TimerDuration = ({
 
 TimerDuration.propTypes = {
 	selectedItem: PropTypes.object.isRequired,
-	setSelectedItem: PropTypes.func.isRequired,
-	timersIndex: PropTypes.number.isRequired,
-	updateSelectedItem: PropTypes.func.isRequired,
+	setTimerSections: PropTypes.func.isRequired,
+	timerIdentifier: PropTypes.string.isRequired,
+	timersIndex: PropTypes.func.isRequired,
 };
 
 export default TimerDuration;

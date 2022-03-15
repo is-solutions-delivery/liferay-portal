@@ -25,7 +25,7 @@ const Timer = ({
 	timerIdentifier,
 	timersIndex,
 }) => {
-	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
+	const {selectedItem} = useContext(DiagramBuilderContext);
 
 	const [actionSections, setActionSections] = useState(
 		actions || [{identifier: `${Date.now()}-0`}]
@@ -79,8 +79,6 @@ const Timer = ({
 	return (
 		<div className="panel">
 			<TimerInfo
-				deleteTimer={deleteTimer}
-				sectionsLength={sectionsLength}
 				selectedItem={selectedItem}
 				setTimerSections={setTimerSections}
 				timerIdentifier={timerIdentifier}
@@ -89,7 +87,6 @@ const Timer = ({
 
 			<TimerDuration
 				selectedItem={selectedItem}
-				setSelectedItem={setSelectedItem}
 				setTimerSections={setTimerSections}
 				timerIdentifier={timerIdentifier}
 				timersIndex={timersIndex}
@@ -102,7 +99,6 @@ const Timer = ({
 					index={index}
 					key={`section-${identifier}`}
 					sectionsLength={actionSections?.length}
-					selectedItem={selectedItem}
 					setActionSections={setActionSections}
 					timersIndex={timersIndex}
 				/>
@@ -138,6 +134,7 @@ const Timer = ({
 };
 
 Timer.propTypes = {
+	actions: PropTypes.array.isRequired,
 	sectionsLength: PropTypes.number.isRequired,
 	setTimerSections: PropTypes.func.isRequired,
 	timerIdentifier: PropTypes.string.isRequired,

@@ -79,7 +79,6 @@ const ActionTypeAction = ({
 			executionType={executionType}
 			executionTypeInput={executionTypeInput}
 			executionTypeOptions={executionTypeOptions}
-			index={actionSectionsIndex}
 			name={name}
 			placeholderName={Liferay.Language.get('my-action')}
 			placeholderTemplate="${userName} sent you a ${entryType} for review in the workflow."
