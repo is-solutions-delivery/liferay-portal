@@ -187,3 +187,28 @@ function parseProperty(data, item, property) {
 
 	return new Array(item[property]);
 }
+
+export function parseTimers(node) {
+	const taskTimers = {};
+	taskTimers.delay = [];
+	taskTimers.reassignments = [];
+	taskTimers.timerActions = [];
+	taskTimers.timerNotifications = [];
+
+	node.taskTimers.forEach((item, index) => {
+		taskTimers.delay.push({
+			duration: node.taskTimers[index].duration,
+			scale: node.taskTimers[index].scale,
+		});
+		taskTimers.reassignments.push({});
+		taskTimers.timerActions.push(
+			parseActions({actions: node.taskTimers[index]['timer-action']})
+		);
+		taskTimers.timerNotifications.push({});
+		taskTimers.name = parseProperty(taskTimers, item, 'name');
+		taskTimers.description = parseProperty(taskTimers, item, 'description');
+		taskTimers.blocking = parseProperty(taskTimers, item, 'blocking');
+	});
+
+	return taskTimers;
+}
