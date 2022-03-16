@@ -226,6 +226,14 @@ public class ImportResults {
 
 		Map<String, String> bodyMap = new HashMap<>();
 
+		JSONObject responseJSONObject = HttpUtil.invoke(
+				new JSONObject(
+					bodyMap
+				).toString(),
+				"User", null, null, HttpInvoker.HttpMethod.GET);
+
+		long testrayUserId = responseJSONObject.getLong("id");
+
 		bodyMap.put("r_buildToCaseResult_c_buildId",
 			String.valueOf(testrayBuildId));
 		bodyMap.put("r_caseResultToCase_c_caseId",
@@ -233,6 +241,9 @@ public class ImportResults {
 		bodyMap.put("r_componentToCaseResult_c_componentId",
 			String.valueOf(testrayComponentId));
 		bodyMap.put("r_runToCaseResult_c_runId", String.valueOf(testrayRunId));
+		bodyMap.put(
+			"r_userToCaseResult_c_userId",
+			String.valueOf(testrayUserId));
 
 		String dueStatus = String.valueOf(
 			TestrayConstants.TESTRAY_CASE_RESULT_STATUS_UNTESTED);
