@@ -1,0 +1,168 @@
+[
+	{
+		"ddmFormSettings": {
+			"availableLanguageIds": [
+				"[$LOCALE$]"
+			],
+			"defaultLanguageId": "[$LOCALE$]",
+			"fieldValues": [
+				{
+					"fieldReference": "requireAuthentication",
+					"instanceId": "",
+					"name": "requireAuthentication",
+					"value": "false"
+				},
+				{
+					"fieldReference": "requireCaptcha",
+					"instanceId": "",
+					"name": "requireCaptcha",
+					"value": "false"
+				},
+				{
+					"fieldReference": "autosaveEnabled",
+					"instanceId": "",
+					"name": "autosaveEnabled",
+					"value": "true"
+				},
+				{
+					"fieldReference": "redirectURL",
+					"instanceId": "",
+					"name": "redirectURL",
+					"value": ""
+				},
+				{
+					"fieldReference": "storageType",
+					"instanceId": "",
+					"name": "storageType",
+					"value": "[\"default\"]"
+				},
+				{
+					"fieldReference": "objectDefinitionId",
+					"instanceId": "",
+					"name": "objectDefinitionId",
+					"value": "[]"
+				},
+				{
+					"fieldReference": "workflowDefinition",
+					"instanceId": "",
+					"name": "workflowDefinition",
+					"value": "[\"no-workflow\"]"
+				},
+				{
+					"fieldReference": "submitLabel",
+					"instanceId": "",
+					"name": "submitLabel",
+					"value": "{}"
+				},
+				{
+					"fieldReference": "sendEmailNotification",
+					"instanceId": "",
+					"name": "sendEmailNotification",
+					"value": "false"
+				},
+				{
+					"fieldReference": "emailFromName",
+					"instanceId": "",
+					"name": "emailFromName",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailFromAddress",
+					"instanceId": "",
+					"name": "emailFromAddress",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailToAddress",
+					"instanceId": "",
+					"name": "emailToAddress",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailSubject",
+					"instanceId": "",
+					"name": "emailSubject",
+					"value": ""
+				},
+				{
+					"fieldReference": "published",
+					"instanceId": "",
+					"name": "published",
+					"value": "true"
+				},
+				{
+					"fieldReference": "showPartialResultsToRespondents",
+					"instanceId": "",
+					"name": "showPartialResultsToRespondents",
+					"value": "false"
+				},
+				{
+					"fieldReference": "limitToOneSubmissionPerUser",
+					"instanceId": "",
+					"name": "limitToOneSubmissionPerUser",
+					"value": "false"
+				}
+			]
+		},
+		"ddmStructure": {
+			"availableLanguageIds": [
+				"[$LOCALE$]"
+			],
+			"defaultLanguageId": "[$LOCALE$]",
+			"fields": [
+				{
+					"autocomplete": false,
+					"dataType": "string",
+					"displayStyle": "singleline",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Test Field 1"
+					},
+					"localizable": true,
+					"name": "testField1",
+					"options": [
+						{
+							"label": {
+								"[$LOCALE$]": "Option"
+							},
+							"value": "Option"
+						}
+					],
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"type": "text"
+				}
+			]
+		},
+		"ddmStructureLayout": {
+			"defaultLanguageId": "[$LOCALE$]",
+			"pages": [
+				{
+					"description": {
+						"[$LOCALE$]": ""
+					},
+					"rows": [
+						{
+							"columns": [
+								{
+									"fieldNames": [
+										"testField1"
+									],
+									"size": 12
+								}
+							]
+						}
+					],
+					"title": {
+						"[$LOCALE$]": "Test Title 1"
+					}
+				}
+			],
+			"paginationMode": "multi-pages"
+		},
+		"description": "",
+		"name": "Test DDM Form 1"
+	}
+]
