@@ -106,6 +106,7 @@ import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
@@ -338,16 +339,18 @@ public class BundleSiteInitializer implements SiteInitializer {
 			User user = _userLocalService.getUser(
 				PrincipalThreadLocal.getUserId());
 
-			ServiceContext serviceContext = new ServiceContext() {
-				{
-					setAddGroupPermissions(true);
-					setAddGuestPermissions(true);
-					setCompanyId(user.getCompanyId());
-					setScopeGroupId(groupId);
-					setTimeZone(user.getTimeZone());
-					setUserId(user.getUserId());
-				}
-			};
+			ServiceContext serviceContextThreadLocal =
+				ServiceContextThreadLocal.getServiceContext();
+
+			ServiceContext serviceContext =
+				(ServiceContext)serviceContextThreadLocal.clone();
+
+			serviceContext.setAddGroupPermissions(true);
+			serviceContext.setAddGuestPermissions(true);
+			serviceContext.setCompanyId(user.getCompanyId());
+			serviceContext.setScopeGroupId(groupId);
+			serviceContext.setTimeZone(user.getTimeZone());
+			serviceContext.setUserId(user.getUserId());
 
 			SiteNavigationMenuItemSettingsBuilder
 				siteNavigationMenuItemSettingsBuilder =
@@ -2551,6 +2554,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		UserAccountResource userAccountResource =
 			userAccountResourceBuilder.user(
 				serviceContext.fetchUser()
+			).httpServletRequest(
+				serviceContext.getRequest()
 			).build();
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
