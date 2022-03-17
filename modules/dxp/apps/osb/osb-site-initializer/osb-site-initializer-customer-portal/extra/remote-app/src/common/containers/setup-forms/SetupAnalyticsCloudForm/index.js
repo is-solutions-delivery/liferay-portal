@@ -32,6 +32,8 @@ import Layout from '../Layout';
 
 import IncidentReportInput from './IncidentReportInput';
 
+const MAXIMUM_NUMBER_OF_CHARACTERS = 255;
+
 const SetupAnalyticsCloudPage = ({
 	errors,
 	handlePage,
@@ -117,7 +119,7 @@ const SetupAnalyticsCloudPage = ({
 		setBaseButtonDisabled(hasTouched || hasError);
 	}, [touched, errors]);
 
-	const sendEmail = async () => {
+	const handleOnSubmit = async () => {
 		const analyticsCloud = values?.activations;
 
 		const {data} = await client.mutate({
@@ -139,7 +141,7 @@ const SetupAnalyticsCloudPage = ({
 					?.analyticsCloudWorkspaceId;
 			await Promise.all(
 				analyticsCloud?.incidentReportContact.map(({email}) => {
-					return client.mutate({
+					client.mutate({
 						mutation: addIncidentReportAnalyticsCloud,
 						variables: {
 							IncidentReportContactAnalyticsCloud: {
@@ -163,7 +165,7 @@ const SetupAnalyticsCloudPage = ({
 					<Button
 						borderless
 						className="text-neutral-10"
-						onClick={() => onClose()}
+						onClick={onClose}
 					>
 						{leftButton}
 					</Button>
@@ -172,7 +174,7 @@ const SetupAnalyticsCloudPage = ({
 					<Button
 						disabled={baseButtonDisabled}
 						displayType="primary"
-						onClick={sendEmail}
+						onClick={handleOnSubmit}
 					>
 						Submit
 					</Button>
@@ -211,7 +213,11 @@ const SetupAnalyticsCloudPage = ({
 							required
 							type="text"
 							validations={[
-								(value) => maxLength(value, 255),
+								(value) =>
+									maxLength(
+										value,
+										MAXIMUM_NUMBER_OF_CHARACTERS
+									),
 								(value) => isLowercaseAndNumbers(value),
 							]}
 						/>
@@ -272,7 +278,6 @@ const SetupAnalyticsCloudPage = ({
 
 			<Button
 				className="btn-outline-primary ml-3 my-2 rounded-xs"
-				disabled={baseButtonDisabled}
 				onClick={() => setBaseButtonDisabled(true)}
 				prependIcon="plus"
 				small
