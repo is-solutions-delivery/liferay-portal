@@ -10,13 +10,16 @@
  */
 
 import {ClayInput} from '@clayui/form';
+import {useMemo} from 'react';
 import {Input, Select} from '../../../../components';
 import useBannedDomains from '../../../../hooks/useBannedDomains';
+import {ROLE_TYPES} from '../../../../utils/constants';
 import {isValidEmail} from '../../../../utils/validations.form';
 
 const FETCH_DELAY_AFTER_TYPING = 500;
 
 const TeamMemberInputs = ({
+	administratorsAssetsAvailable,
 	disableError,
 	id,
 	invite,
@@ -27,6 +30,32 @@ const TeamMemberInputs = ({
 	const bannedDomains = useBannedDomains(
 		invite?.email,
 		FETCH_DELAY_AFTER_TYPING
+	);
+
+	const isAdministratorOrRequestorRoleSelected =
+		invite?.role?.name === ROLE_TYPES.requester.name ||
+		invite?.role?.name === ROLE_TYPES.admin.name;
+
+	const optionsFormated = useMemo(
+		() =>
+			options.map((option) => {
+				const isAdministratorOrRequestorRole =
+					option.label === ROLE_TYPES.requester.name ||
+					option.label === ROLE_TYPES.admin.name;
+
+				return {
+					...option,
+					disabled:
+						administratorsAssetsAvailable === 0 &&
+						isAdministratorOrRequestorRole &&
+						!isAdministratorOrRequestorRoleSelected,
+				};
+			}),
+		[
+			administratorsAssetsAvailable,
+			isAdministratorOrRequestorRoleSelected,
+			options,
+		]
 	);
 
 	return (
@@ -51,7 +80,7 @@ const TeamMemberInputs = ({
 					label="Role"
 					name={`invites[${id}].role.id`}
 					onChange={(event) => selectOnChange(event.target.value)}
-					options={options}
+					options={optionsFormated}
 				/>
 			</ClayInput.GroupItem>
 		</ClayInput.Group>
