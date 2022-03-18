@@ -1,7 +1,7 @@
 {
-    "location": {
-        "addressCountry": "United-States",
-        "addressRegion": "California"
-    },
-    "name": "Test Organization 2"
+	"location": {
+		"addressCountry": "United-States",
+		"addressRegion": "California"
+	},
+	"name": "Test Organization 2"
 }
