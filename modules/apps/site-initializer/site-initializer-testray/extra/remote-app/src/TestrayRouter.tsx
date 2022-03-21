@@ -15,6 +15,7 @@
 import {ClayModalProvider} from '@clayui/modal';
 import {HashRouter, Route, Routes} from 'react-router-dom';
 
+import CommandBar from './components/CommandBar';
 import Layout from './components/Layout/Layout';
 import OutletBridge from './pages/OutletBridge';
 import Projects from './pages/Project';
@@ -53,6 +54,8 @@ import UserList from './pages/UserManagement/UsersList';
 const TestrayRoute = () => (
 	<HashRouter>
 		<ClayModalProvider>
+			<CommandBar />
+
 			<Routes>
 				<Route element={<Layout />} path="/">
 					<Route element={<Projects />} index />
