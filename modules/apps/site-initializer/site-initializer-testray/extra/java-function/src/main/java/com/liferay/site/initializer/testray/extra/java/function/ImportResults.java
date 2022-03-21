@@ -148,9 +148,17 @@ public class ImportResults {
 			Map<String, Object> testrayCasePropertiesMap =
 				_getTestrayCaseProperties((Element)testcaseNode);
 
-			_addTestrayCase(
-				testcaseNode, testrayBuildId, testrayProjectId, testrayRunId,
-				testrayCasePropertiesMap);
+			new Thread(){
+				public void run(){
+					try{
+						_addTestrayCase(
+							testcaseNode, testrayBuildId, testrayProjectId,
+							testrayRunId, testrayCasePropertiesMap);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+			}.start();
 		}
 	}
 
