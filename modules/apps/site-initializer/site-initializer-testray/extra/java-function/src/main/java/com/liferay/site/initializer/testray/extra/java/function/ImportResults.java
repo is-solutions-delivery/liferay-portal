@@ -83,6 +83,15 @@ public class ImportResults {
 		_documentBuilder = _documentBuilderFactory.newDocumentBuilder();
 	}
 
+	private void _addEntities(JSONArray jsonArray, String objectName)
+		throws Exception {
+
+		JSONObject responseJSONObject = HttpUtil.invoke(
+				jsonArray.toString(),
+			objectName+"/batch", null, null, HttpInvoker.HttpMethod.POST);
+
+	}
+
 	private long _addEntity(Map<String, String> bodyMap, String objectName)
 		throws Exception {
 
@@ -103,6 +112,8 @@ public class ImportResults {
 
 		NodeList attachmentsNodeList = testcaseElement.getElementsByTagName(
 			"attachments");
+
+		JSONArray jsonArray = new JSONArray();
 
 		for (int i = 0; i < attachmentsNodeList.getLength(); i++) {
 			Node attachmentsNode = attachmentsNodeList.item(i);
@@ -128,11 +139,12 @@ public class ImportResults {
 						bodyMap.put("url", fileElement.getAttribute("url"));
 						bodyMap.put("value", fileElement.getAttribute("value"));
 
-						_addEntity(bodyMap, "attachments");
+						jsonArray.put(bodyMap);
 					}
 				}
 			}
 		}
+		_addEntities(jsonArray,"attachments");
 	}
 
 	private void _addTestrayCases(
@@ -367,6 +379,8 @@ public class ImportResults {
 			return;
 		}
 
+		JSONArray jsonArray = new JSONArray();
+
 		for (String warning : warningsList) {
 			Map<String, String> bodyMap = new HashMap<>();
 
@@ -375,8 +389,10 @@ public class ImportResults {
 				"r_caseResultToWarnings_c_caseResultId",
 				String.valueOf(testrayCaseResultId));
 
-			_addEntity(bodyMap, "warnings");
+			jsonArray.put(bodyMap);
+
 		}
+		_addEntities(jsonArray, "warnings");
 	}
 
 	private String _buildTestrayBuildDescription(
