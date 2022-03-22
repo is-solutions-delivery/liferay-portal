@@ -17,6 +17,7 @@ import {
 	addAnalyticsCloudWorkspace,
 	addIncidentReportAnalyticsCloud,
 	getAnalyticsCloudPageInfo,
+	getAnalyticsCloudWorkspace,
 } from '../../../../common/services/liferay/graphql/queries';
 import {
 	isLowercaseAndNumbers,
@@ -42,6 +43,7 @@ const SetupAnalyticsCloudPage = ({
 	onClose,
 	project,
 	setFieldValue,
+	setFormAlreadySubmitted,
 	touched,
 	values,
 }) => {
@@ -102,41 +104,70 @@ const SetupAnalyticsCloudPage = ({
 	const handleSubmit = async () => {
 		const analyticsCloud = values?.activations;
 
-		const {data} = await client.mutate({
-			mutation: addAnalyticsCloudWorkspace,
-			variables: {
-				analyticsCloudWorkspace: {
-					accountKey: project.accountKey,
-					dataCenterLocation: analyticsCloud.dataCenterLocation,
-					ownerEmailAddress: analyticsCloud.ownerEmailAddress,
-					workspaceName: analyticsCloud.workspaceName,
+		const getAnalyticsCloudSubmittedStatus = async (accountKey) => {
+			const {data} = await client.query({
+				query: getAnalyticsCloudWorkspace,
+				variables: {
+					filter: `accountKey eq '${accountKey}'`,
+					scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
 				},
-				scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
-			},
-		});
+			});
 
-		if (data) {
-			const analyticsCloudWorkspaceId =
-				data?.c?.createAnalyticsCloudWorkspace
-					?.analyticsCloudWorkspaceId;
+			if (data) {
+				// eslint-disable-next-line no-console
+				console.log(data);
+				const status = !!data.c?.analyticsCloudWorkspaces?.items
+					?.length;
 
-			await Promise.all(
-				analyticsCloud?.incidentReportContact.map(({email}) => {
-					return client.mutate({
-						mutation: addIncidentReportAnalyticsCloud,
-						variables: {
-							IncidentReportContactAnalyticsCloud: {
-								analyticsCloudWorkspaceId,
-								emailAddress: email,
-							},
-							scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
-						},
-					});
-				})
-			);
+				return status;
+			}
+
+			return false;
+		};
+
+		const alreadySubmitted = await getAnalyticsCloudSubmittedStatus(
+			project.accountKey
+		);
+		if (alreadySubmitted) {
+			setFormAlreadySubmitted(true);
 		}
 
-		handlePage();
+		if (!alreadySubmitted) {
+			const {data} = await client.mutate({
+				mutation: addAnalyticsCloudWorkspace,
+				variables: {
+					analyticsCloudWorkspace: {
+						accountKey: project.accountKey,
+						dataCenterLocation: analyticsCloud.dataCenterLocation,
+						ownerEmailAddress: analyticsCloud.ownerEmailAddress,
+						workspaceName: analyticsCloud.workspaceName,
+					},
+					scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
+				},
+			});
+
+			if (data) {
+				const analyticsCloudWorkspaceId =
+					data?.c?.createAnalyticsCloudWorkspace
+						?.analyticsCloudWorkspaceId;
+
+				await Promise.all(
+					analyticsCloud?.incidentReportContact.map(({email}) => {
+						return client.mutate({
+							mutation: addIncidentReportAnalyticsCloud,
+							variables: {
+								IncidentReportContactAnalyticsCloud: {
+									analyticsCloudWorkspaceId,
+									emailAddress: email,
+								},
+								scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
+							},
+						});
+					})
+				);
+			}
+			handlePage();
+		}
 	};
 
 	return (
