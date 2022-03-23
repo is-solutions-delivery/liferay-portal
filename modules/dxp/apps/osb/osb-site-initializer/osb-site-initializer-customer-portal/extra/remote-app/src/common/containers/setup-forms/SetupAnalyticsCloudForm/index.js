@@ -114,8 +114,6 @@ const SetupAnalyticsCloudPage = ({
 			});
 
 			if (data) {
-				// eslint-disable-next-line no-console
-				console.log(data);
 				const status = !!data.c?.analyticsCloudWorkspaces?.items
 					?.length;
 
