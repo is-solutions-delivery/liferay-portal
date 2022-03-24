@@ -337,7 +337,7 @@ public class ImportResults {
 			String.valueOf(testrayCategoryId));
 		bodyMap.put("testrayFactorCategoryName", factorCategoryName);
 		bodyMap.put(
-			"r_optionToFactors_c_factorOptionId",
+			"r_factorOptionToFactors_c_factorOptionId",
 			String.valueOf(testrayOptionId));
 		bodyMap.put("testrayFactorOptionName", factorOptionName);
 
@@ -541,7 +541,7 @@ public class ImportResults {
 
 		bodyMap.put("name", factorOptionName);
 		bodyMap.put(
-			"r_factorCategoryToOptions_c_categoryId",
+			"r_factorCategoryToOptions_c_factorCategoryId",
 			String.valueOf(testrayCategoryId));
 
 		return _addEntity(bodyMap, "factoroptions");

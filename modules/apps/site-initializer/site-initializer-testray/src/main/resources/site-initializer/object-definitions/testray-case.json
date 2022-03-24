@@ -38,17 +38,6 @@
 			"type": "String"
 		},
 		{
-			"DBType": "Long",
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Origination Key"
-			},
-			"name": "originationKey",
-			"required": false,
-			"type": "Long"
-		},
-		{
 			"DBType": "Integer",
 			"indexed": false,
 			"indexedAsKeyword": false,
