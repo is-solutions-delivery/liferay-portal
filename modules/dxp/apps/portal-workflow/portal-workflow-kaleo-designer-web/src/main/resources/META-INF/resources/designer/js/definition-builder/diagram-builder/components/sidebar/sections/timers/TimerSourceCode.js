@@ -19,7 +19,7 @@ const TimerSourceCode = () => {
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 
 	const scriptSourceCode =
-		selectedItem.data?.taskTimers?.reassignments?.script;
+		selectedItem.data.taskTimers?.reassignments?.[0]?.script;
 
 	const updateTimer = (editor) => {
 		if (editor.getData().trim() !== '') {

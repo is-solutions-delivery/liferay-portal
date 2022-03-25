@@ -11,6 +11,7 @@
 
 import React, {useContext, useEffect, useState} from 'react';
 
+import {DEFAULT_LANGUAGE} from '../../../../../source-builder/constants';
 import {DiagramBuilderContext} from '../../../../DiagramBuilderContext';
 import Timer from './Timer';
 
@@ -84,6 +85,19 @@ const Timers = ({setContentName, setErrors}) => {
 							);
 						}
 						else if (
+							reassignments.assignmentType[0] ===
+							'scriptedReassignment'
+						) {
+							reassignments.assignmentType = [
+								'scriptedAssignment',
+							];
+							reassignments.script = filteredTimerActions.map(
+								({script}) => script
+							)[0];
+
+							reassignments.scriptLanguage = [DEFAULT_LANGUAGE];
+						}
+						else if (
 							reassignments.assignmentType[0] === 'user' &&
 							Object.keys(filteredTimerActions[0]).includes(
 								'users'
@@ -92,6 +106,13 @@ const Timers = ({setContentName, setErrors}) => {
 							reassignments.emailAddress = filteredTimerActions[0].users.map(
 								({emailAddress}) => emailAddress
 							);
+						}
+						else if (
+							reassignments.assignmentType[0] === 'roleType'
+						) {
+
+							// TO DO
+
 						}
 
 						return reassignments;
@@ -164,6 +185,7 @@ const Timers = ({setContentName, setErrors}) => {
 				section.assignmentType = data.find(
 					(entry) => entry[0] === 'assignmentType'
 				)[1][index];
+
 				if (section.assignmentType === `resourceActions`) {
 					section.resourceAction = data.find(
 						(entry) => entry[0] === 'resourceAction'
@@ -172,6 +194,13 @@ const Timers = ({setContentName, setErrors}) => {
 				else if (section.assignmentType === 'roleId') {
 					section.roleId = data.find(
 						(entry) => entry[0] === 'roleId'
+					)[1];
+				}
+				else if (section.assignmentType === 'scriptedAssignment') {
+					section.assignmentType = 'scriptedReassignment';
+
+					section.script = data.find(
+						(entry) => entry[0] === 'script'
 					)[1];
 				}
 				else if (
