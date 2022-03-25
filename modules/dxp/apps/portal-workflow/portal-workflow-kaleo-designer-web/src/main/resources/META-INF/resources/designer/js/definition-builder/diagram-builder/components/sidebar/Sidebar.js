@@ -96,7 +96,7 @@ const contents = {
 	},
 	'scripted-reassignment': {
 		backButton: (setContentName) => () => setContentName('timers'),
-		sections: ['timersSourceCode'],
+		sections: ['timerSourceCode'],
 		showDeleteButton: false,
 		title: Liferay.Language.get('scripted-reassignment'),
 	},

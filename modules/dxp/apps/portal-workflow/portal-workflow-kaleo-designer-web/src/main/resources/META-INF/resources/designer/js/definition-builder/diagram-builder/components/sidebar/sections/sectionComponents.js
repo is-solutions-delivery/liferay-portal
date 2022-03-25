@@ -32,8 +32,8 @@ const sectionComponents = {
 	notifications: Notifications,
 	notificationsSummary: NotificationsSummary,
 	sourceCode: SourceCode,
+	timerSourceCode: TimerSourceCode,
 	timers: Timers,
-	timersSourceCode: TimerSourceCode,
 	timersSummary: TimersSummary,
 };
 
