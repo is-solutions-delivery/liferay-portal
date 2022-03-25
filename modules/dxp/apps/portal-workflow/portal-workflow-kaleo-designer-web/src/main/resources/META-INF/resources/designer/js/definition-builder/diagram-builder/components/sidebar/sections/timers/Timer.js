@@ -19,37 +19,48 @@ import TimerDuration from './TimerDuration';
 import TimerInfo from './TimerInfo';
 
 const Timer = ({
-	actions,
+	description,
+	duration,
+	durationScale,
+	name,
+	recurrence,
+	recurrenceScale,
 	sectionsLength,
+	setErrors,
 	setTimerSections,
+	timerActions,
 	timerIdentifier,
 	timersIndex,
 }) => {
 	const {selectedItem} = useContext(DiagramBuilderContext);
-
 	const [actionSections, setActionSections] = useState(
-		actions || [{identifier: `${Date.now()}-0`}]
+		timerActions?.length
+			? timerActions
+			: [{actionType: 'timerActions', identifier: `${Date.now()}-0`}]
 	);
 
 	useEffect(() => {
-		if (
-			actionSections &&
-			actionSections.some(({actionType}) => actionType === 'actions')
-		) {
-			const filteredTypeActions = actionSections.filter(
-				({actionType, name, template}) =>
-					actionType === 'actions' && name && template
-			);
+		if (actionSections.length) {
+			const filteredActionSections = [];
 
-			if (filteredTypeActions) {
+			actionSections.forEach((section) => {
+				if (
+					Object.keys(section).filter(
+						(key) => key !== 'identifier' && key !== 'actionType'
+					).length
+				) {
+					filteredActionSections.push(section);
+				}
+			});
+
+			if (filteredActionSections.length) {
 				setTimerSections((previousSections) => {
 					const updatedSections = [...previousSections];
 					const section = previousSections.find(
 						({identifier}) => identifier === timerIdentifier
 					);
 
-					section.actions = filteredTypeActions;
-
+					section.timerActions = filteredActionSections;
 					updatedSections.splice(timersIndex, 1, section);
 
 					return updatedSections;
@@ -79,6 +90,8 @@ const Timer = ({
 	return (
 		<div className="panel">
 			<TimerInfo
+				description={description}
+				name={name}
 				selectedItem={selectedItem}
 				setTimerSections={setTimerSections}
 				timerIdentifier={timerIdentifier}
@@ -86,15 +99,21 @@ const Timer = ({
 			/>
 
 			<TimerDuration
+				duration={duration}
+				durationScale={durationScale}
+				recurrence={recurrence}
+				recurrenceScale={recurrenceScale}
 				selectedItem={selectedItem}
 				setTimerSections={setTimerSections}
 				timerIdentifier={timerIdentifier}
 				timersIndex={timersIndex}
 			/>
 
-			{actionSections.map(({identifier}, index) => (
+			{actionSections.map((actionData, index) => (
 				<TimerAction
+					actionData={actionData}
 					actionSectionsIndex={index}
+					key={`section-${actionData.identifier}`}
 					reassignments={actionSections.some(
 						({actionType}) => actionType === 'reassignments'
 					)}
@@ -135,9 +154,9 @@ const Timer = ({
 };
 
 Timer.propTypes = {
-	actions: PropTypes.array.isRequired,
 	sectionsLength: PropTypes.number.isRequired,
 	setTimerSections: PropTypes.func.isRequired,
+	timerActions: PropTypes.array.isRequired,
 	timerIdentifier: PropTypes.string.isRequired,
 	timersIndex: PropTypes.number.isRequired,
 };
