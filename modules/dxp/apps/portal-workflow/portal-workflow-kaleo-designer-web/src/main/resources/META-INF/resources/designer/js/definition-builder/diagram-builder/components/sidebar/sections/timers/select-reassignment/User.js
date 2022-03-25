@@ -15,19 +15,19 @@ import SidebarPanel from '../../../SidebarPanel';
 import BaseUser from '../../shared-components/BaseUser';
 
 const User = (props) => {
-	const updateUser = (values) => {
-		props.updateSelectedItem({
-			reassignments: {
-				assignmentType: ['user'],
-				emailAddress: values.map(({emailAddress}) => emailAddress),
-				sectionsData: values.map((values) => values),
-			},
-		});
-	};
+	const {emailAddress, screenName, userId} = props.restProps;
 
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('section')}>
-			<BaseUser {...props} updateSelectedItem={updateUser} />
+			<BaseUser
+				{...props}
+				emailAddress={emailAddress}
+				identifier={props.subSectionIdentifier}
+				reassignment
+				screenName={screenName}
+				sectionsLength={props.subSectionsLength}
+				userId={userId}
+			/>
 		</SidebarPanel>
 	);
 };

@@ -24,6 +24,7 @@ const BaseUser = ({
 	identifier,
 	index,
 	notificationIndex,
+	reassignment,
 	screenName = '',
 	sectionsLength,
 	setSections,
@@ -56,14 +57,15 @@ const BaseUser = ({
 		setUser(item);
 
 		setSections((prev) => {
-			prev[index] = {
-				...prev[index],
+			const updatedSections = [...prev];
+			updatedSections[index] = {
+				...updatedSections[index],
 				...item,
 			};
 
-			updateSelectedItem(prev);
+			updateSelectedItem(updatedSections);
 
-			return prev;
+			return updatedSections;
 		});
 
 		setSearch('');
@@ -264,12 +266,16 @@ const BaseUser = ({
 						setSections((prev) => {
 							return [
 								...prev,
-								{identifier: `${Date.now()}-${prev.length}`},
+								{
+									identifier: `${Date.now()}-${prev.length}`,
+								},
 							];
 						})
 					}
 				>
-					{Liferay.Language.get('new-section')}
+					{reassignment
+						? Liferay.Language.get('new-user')
+						: Liferay.Language.get('new-section')}
 				</ClayButton>
 
 				{sectionsLength > 1 && (
