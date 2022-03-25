@@ -26,6 +26,7 @@ const Timer = ({
 	recurrence,
 	recurrenceScale,
 	sectionsLength,
+	setContentName,
 	setErrors,
 	setTimerSections,
 	timerActions,
@@ -119,6 +120,7 @@ const Timer = ({
 					)}
 					sectionsLength={actionSections?.length}
 					setActionSections={setActionSections}
+					setContentName={setContentName}
 					setErrors={setErrors}
 					timersIndex={timersIndex}
 				/>

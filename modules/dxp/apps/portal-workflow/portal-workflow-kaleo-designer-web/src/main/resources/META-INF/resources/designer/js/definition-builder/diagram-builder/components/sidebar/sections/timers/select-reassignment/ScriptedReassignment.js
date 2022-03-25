@@ -17,7 +17,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {DiagramBuilderContext} from '../../../../../DiagramBuilderContext';
 import SidebarPanel from '../../../SidebarPanel';
 
-const ScriptedReassignment = ({setContentName}) => {
+const ScriptedReassignment = ({actionData, setContentName}) => {
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 
 	const [showScriptData, setShowScriptData] = useState(
@@ -44,8 +44,8 @@ const ScriptedReassignment = ({setContentName}) => {
 	};
 
 	useEffect(() => {
-		setShowScriptData(selectedItem?.data.taskTimers?.reassignments?.script);
-	}, [selectedItem]);
+		setShowScriptData(actionData?.script);
+	}, [actionData]);
 
 	return (
 		<SidebarPanel panelTitle={panelTitle}>

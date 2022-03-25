@@ -14,7 +14,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {DiagramBuilderContext} from '../../../../DiagramBuilderContext';
 import Timer from './Timer';
 
-const Timers = ({setErrors}) => {
+const Timers = ({setContentName, setErrors}) => {
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 	const [timerSections, setTimerSections] = useState([
 		{identifier: `${Date.now()}-0`},
@@ -275,6 +275,7 @@ const Timers = ({setErrors}) => {
 			recurrence={timerData.recurrence}
 			recurrenceScale={timerData.recurrenceScale}
 			sectionsLength={timerSections?.length}
+			setContentName={setContentName}
 			setErrors={setErrors}
 			setTimerSections={setTimerSections}
 			timerActions={timerData.timerActions}

@@ -35,6 +35,7 @@ const ActionTypeReassignment = ({
 	identifier,
 	sectionsLength,
 	setActionSections,
+	setContentName,
 	setErrors,
 }) => {
 	const reassignmentType = actionData.assignmentType;
@@ -124,6 +125,7 @@ const ActionTypeReassignment = ({
 								restProps={restProps}
 								sectionsLength={sectionsLength}
 								setActionSections={setActionSections}
+								setContentName={setContentName}
 								setErrors={setErrors}
 								setSections={setSubSections}
 								subSectionIdentifier={subSectionIdentifier}

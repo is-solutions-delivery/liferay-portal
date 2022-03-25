@@ -31,6 +31,7 @@ const TimerAction = ({
 	reassignments,
 	sectionsLength,
 	setActionSections,
+	setContentName,
 	setErrors,
 	timersIndex,
 }) => {
@@ -72,6 +73,7 @@ const TimerAction = ({
 				key={`section-${actionData.identifier}`}
 				sectionsLength={sectionsLength}
 				setActionSections={setActionSections}
+				setContentName={setContentName}
 				setErrors={setErrors}
 				timersIndex={timersIndex}
 			/>
