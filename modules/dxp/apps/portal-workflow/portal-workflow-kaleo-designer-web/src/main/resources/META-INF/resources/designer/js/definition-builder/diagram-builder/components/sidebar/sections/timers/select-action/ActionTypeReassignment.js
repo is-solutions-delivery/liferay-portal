@@ -52,12 +52,8 @@ const ActionTypeReassignment = (props) => {
 							{...restProps}
 							identifier={identifier}
 							index={index}
-							key={`section-${identifier}`}
-							sectionsLength={sections?.length}
-							setSections={setSections}
-						/>
-					)
-				);
+								setErrors={setErrors}
+								setSections={setSubSections}
 			})}
 		</>
 	);

@@ -30,6 +30,7 @@ const TimerAction = ({
 	reassignments,
 	sectionsLength,
 	setActionSections,
+	setErrors,
 	timersIndex,
 }) => {
 	const [actionType, setActionType] = useState('actions');
@@ -67,6 +68,7 @@ const TimerAction = ({
 				key={`section-${identifier}`}
 				sectionsLength={sectionsLength}
 				setActionSections={setActionSections}
+				setErrors={setErrors}
 				timersIndex={timersIndex}
 			/>
 			

@@ -14,7 +14,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {DiagramBuilderContext} from '../../../../DiagramBuilderContext';
 import Timer from './Timer';
 
-const Timers = () => {
+const Timers = ({setErrors}) => {
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 	const [timerSections, setTimerSections] = useState([
 		{identifier: `${Date.now()}-0`},

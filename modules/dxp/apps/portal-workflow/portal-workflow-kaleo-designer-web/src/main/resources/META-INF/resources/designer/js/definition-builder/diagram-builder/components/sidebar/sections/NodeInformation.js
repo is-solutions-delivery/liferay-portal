@@ -81,7 +81,9 @@ export default function NodeInformation({errors, setErrors}) {
 
 			<ClayForm.Group
 				className={
-					errors.id.duplicated || errors.id.empty ? 'has-error' : ''
+					errors?.id?.duplicated || errors?.id?.empty
+						? 'has-error'
+						: ''
 				}
 			>
 				<label htmlFor="nodeId">
@@ -116,7 +118,7 @@ export default function NodeInformation({errors, setErrors}) {
 				/>
 
 				<ClayForm.FeedbackItem>
-					{(errors.id.duplicated || errors.id.empty) && (
+					{(errors?.id?.duplicated || errors?.id?.empty) && (
 						<>
 							<ClayForm.FeedbackIndicator symbol="exclamation-full" />
 

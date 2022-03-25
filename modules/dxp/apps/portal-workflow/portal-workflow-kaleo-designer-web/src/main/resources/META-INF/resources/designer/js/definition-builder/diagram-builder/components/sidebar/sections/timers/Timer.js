@@ -100,6 +100,7 @@ const Timer = ({
 					)}
 					sectionsLength={actionSections?.length}
 					setActionSections={setActionSections}
+					setErrors={setErrors}
 					timersIndex={timersIndex}
 				/>
 			))}
