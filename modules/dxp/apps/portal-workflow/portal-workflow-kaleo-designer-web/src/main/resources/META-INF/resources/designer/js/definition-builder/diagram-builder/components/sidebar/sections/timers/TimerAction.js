@@ -27,7 +27,7 @@ const actionSectionComponents = {
 
 const TimerAction = ({
 	actionSectionsIndex,
-	identifier,
+	reassignments,
 	sectionsLength,
 	setActionSections,
 	timersIndex,
@@ -56,8 +56,7 @@ const TimerAction = ({
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('action')}>
 			<SelectActionType
-				actionSection={actionSection}
-				setActionSection={setActionSection}
+				reassignments={reassignments}
 				setActionSections={setActionSections}
 			/>
 
