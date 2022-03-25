@@ -16,23 +16,18 @@ import React, {useEffect, useState} from 'react';
 import SelectTimeScale from './TimerScale';
 
 const TimerFields = ({
+	durationScaleValue,
+	durationValue,
 	recurrence,
 	scaleHelpText,
-	selectedItem,
 	setTimerSections,
 	timerIdentifier,
 	timersIndex,
 }) => {
 	const [timerScale, setTimerScale] = useState(
-		selectedItem?.data.taskTimers?.delay[timersIndex]?.scale[
-			recurrence ? 1 : 0
-		] || 'second'
+		durationScaleValue || 'second'
 	);
-	const [timerValue, setTimerValue] = useState(
-		selectedItem?.data.taskTimers?.delay[timersIndex]?.duration[
-			recurrence ? 1 : 0
-		] || ''
-	);
+	const [timerValue, setTimerValue] = useState(durationValue || '');
 
 	useEffect(() => {
 		if (timerScale && timerValue) {
@@ -44,7 +39,8 @@ const TimerFields = ({
 				if (!recurrence) {
 					section.duration = timerValue;
 					section.durationScale = timerScale;
-				} else {
+				}
+				else {
 					section.recurrence = timerValue;
 					section.recurrenceScale = timerScale;
 				}

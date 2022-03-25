@@ -16,17 +16,14 @@ import React, {useEffect, useState} from 'react';
 import SidebarPanel from '../../SidebarPanel';
 
 const TimerInfo = ({
-	selectedItem,
+	description,
+	name,
 	setTimerSections,
 	timerIdentifier,
 	timersIndex,
 }) => {
-	const [timerDescription, setTimerDescription] = useState(
-		selectedItem?.data.taskTimers?.description[timersIndex] || ''
-	);
-	const [timerName, setTimerName] = useState(
-		selectedItem?.data.taskTimers?.name[timersIndex] || ''
-	);
+	const [timerDescription, setTimerDescription] = useState(description || '');
+	const [timerName, setTimerName] = useState(name || '');
 
 	useEffect(() => {
 		if (timerDescription && timerName) {
