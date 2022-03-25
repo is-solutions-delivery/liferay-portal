@@ -77,6 +77,56 @@ export function parseAssignments(node) {
 	return assignments;
 }
 
+export function parseReassignments(node) {
+	const assignments = {};
+	const autoCreateValues = [];
+	const roleNames = [];
+	const roleTypes = [];
+	const users = [];
+
+	node.assignments.forEach((item) => {
+		const itemKeys = Object.keys(item);
+		if (itemKeys.includes('resource-action')) {
+			assignments.assignmentType = ['resourceActions'];
+			assignments.resourceAction = item['resource-action'];
+		}
+		else if (itemKeys.includes('role')) {
+			assignments.assignmentType = ['roleId'];
+			assignments.roleId = parseInt(item['role'], 10);
+		}
+		else if (itemKeys.includes('role-type')) {
+			assignments.assignmentType = ['roleType'];
+			autoCreateValues.push(item['auto-create']);
+			roleNames.push(item.name);
+			roleTypes.push(item['role-type']);
+		}
+		else if (itemKeys.includes('script')) {
+			assignments.assignmentType = ['scriptedAssignment'];
+			assignments.script = [item.script];
+			assignments.scriptLanguage = item['script-language'];
+		}
+		else if (itemKeys.includes('user')) {
+			assignments.assignmentType = ['user'];
+		}
+		else if (itemKeys.includes('email-address')) {
+			assignments.assignmentType = ['user'];
+			users.push(item['email-address']);
+		}
+	});
+
+	if (users.length) {
+		assignments.emailAddress = users;
+	}
+
+	if (assignments.assignmentType[0] === 'roleType') {
+		assignments.autoCreate = autoCreateValues[0];
+		assignments.roleName = roleNames[0];
+		assignments.roleType = roleTypes[0];
+	}
+
+	return assignments;
+}
+
 export function parseNotifications(node) {
 	const notifications = {notificationTypes: [], recipients: []};
 
@@ -200,9 +250,19 @@ export function parseTimers(node) {
 			duration: node.taskTimers[index].duration,
 			scale: node.taskTimers[index].scale,
 		});
-		taskTimers.reassignments.push({});
+		taskTimers.reassignments.push(
+			node.taskTimers[index]['reassignments']
+				? parseReassignments({
+						assignments: node.taskTimers[index]['reassignments'],
+				  })
+				: {}
+		);
 		taskTimers.timerActions.push(
-			parseActions({actions: node.taskTimers[index]['timer-action']})
+			node.taskTimers[index]['timer-action']
+				? parseActions({
+						actions: node.taskTimers[index]['timer-action'],
+				  })
+				: {}
 		);
 		taskTimers.timerNotifications.push({});
 		taskTimers.name = parseProperty(taskTimers, item, 'name');
