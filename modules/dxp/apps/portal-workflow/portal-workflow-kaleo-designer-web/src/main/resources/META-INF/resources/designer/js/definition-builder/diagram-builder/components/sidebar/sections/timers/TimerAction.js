@@ -11,7 +11,7 @@
 
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React from 'react';
 
 import SidebarPanel from '../../SidebarPanel';
 import ActionTypeAction from './select-action/ActionTypeAction';
@@ -20,12 +20,13 @@ import ActionTypeReassignment from './select-action/ActionTypeReassignment';
 import SelectActionType from './select-action/SelectActionType';
 
 const actionSectionComponents = {
-	actions: ActionTypeAction,
-	notifications: ActionTypeNotification,
 	reassignments: ActionTypeReassignment,
+	timerActions: ActionTypeAction,
+	timerNotifications: ActionTypeNotification,
 };
 
 const TimerAction = ({
+	actionData,
 	actionSectionsIndex,
 	reassignments,
 	sectionsLength,
@@ -33,9 +34,8 @@ const TimerAction = ({
 	setErrors,
 	timersIndex,
 }) => {
-	const [actionType, setActionType] = useState('actions');
-
-	const ActionSectionComponent = actionSectionComponents[actionType];
+	const ActionSectionComponent =
+		actionSectionComponents[actionData.actionType];
 
 	const deleteSection = (identifier) => {
 		setActionSections((prevSections) => {
@@ -50,6 +50,7 @@ const TimerAction = ({
 	const handleClickNew = (prev) => [
 		...prev,
 		{
+			actionType: 'timerActions',
 			identifier: `${Date.now()}-${prev.length}`,
 		},
 	];
@@ -57,21 +58,24 @@ const TimerAction = ({
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('action')}>
 			<SelectActionType
+				actionSectionsIndex={actionSectionsIndex}
+				actionType={actionData.actionType}
 				reassignments={reassignments}
 				setActionSections={setActionSections}
+				timersIndex={timersIndex}
 			/>
 
 			<ActionSectionComponent
+				actionData={actionData}
 				actionSectionsIndex={actionSectionsIndex}
-				actionType={actionType}
-				identifier={identifier}
-				key={`section-${identifier}`}
+				actionType={actionData.actionType}
+				key={`section-${actionData.identifier}`}
 				sectionsLength={sectionsLength}
 				setActionSections={setActionSections}
 				setErrors={setErrors}
 				timersIndex={timersIndex}
 			/>
-			
+
 			<div className="autofit-float autofit-padded-no-gutters-x autofit-row autofit-row-center mb-3">
 				<div className="autofit-col">
 					<ClayButton
@@ -90,7 +94,7 @@ const TimerAction = ({
 						<ClayButtonWithIcon
 							className="delete-button"
 							displayType="unstyled"
-							onClick={() => deleteSection(identifier)}
+							onClick={() => deleteSection(actionData.identifier)}
 							symbol="trash"
 						/>
 					)}

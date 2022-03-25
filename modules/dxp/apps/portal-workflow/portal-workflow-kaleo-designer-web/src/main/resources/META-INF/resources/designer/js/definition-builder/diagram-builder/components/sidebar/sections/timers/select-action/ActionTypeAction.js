@@ -18,23 +18,20 @@ import {DiagramBuilderContext} from '../../../../../DiagramBuilderContext';
 import BaseActionsInfo from '../../shared-components/BaseActionsInfo';
 
 const ActionTypeAction = ({
+	actionData,
 	actionSectionsIndex,
 	actionType,
 	executionTypeInput = () => {
 		'';
 	},
 	setActionSections,
-	timersIndex,
 }) => {
 	const {selectedItem} = useContext(DiagramBuilderContext);
-
-	const timerActions =
-		selectedItem.data.taskTimers?.timerActions[timersIndex];
-	const [template, setTemplate] = useState(
-		timerActions?.script?.[actionSectionsIndex] || ''
-	);
+	const validActionData =
+		actionData.actionType === 'timerActions' ? actionData : null;
+	const [template, setTemplate] = useState(validActionData?.template || '');
 	const [description, setDescription] = useState(
-		timerActions?.description?.[actionSectionsIndex] || ''
+		validActionData?.description || ''
 	);
 	const [executionTypeOptions, setExecutionTypeOptions] = useState([
 		{
@@ -47,15 +44,10 @@ const ActionTypeAction = ({
 		},
 	]);
 	const [executionType, setExecutionType] = useState(
-		timerActions?.executionType?.[actionSectionsIndex] ??
-			executionTypeOptions[0].value
+		validActionData?.executionType ?? executionTypeOptions[0].value
 	);
-	const [name, setName] = useState(
-		timerActions?.name?.[actionSectionsIndex] || ''
-	);
-	const [priority, setPriority] = useState(
-		timerActions?.priority?.[actionSectionsIndex] || 1
-	);
+	const [name, setName] = useState(validActionData?.name || '');
+	const [priority, setPriority] = useState(validActionData?.priority || 1);
 
 	const updateActionInfo = (item) => {
 		if (item.name && item.template && item.executionType) {
