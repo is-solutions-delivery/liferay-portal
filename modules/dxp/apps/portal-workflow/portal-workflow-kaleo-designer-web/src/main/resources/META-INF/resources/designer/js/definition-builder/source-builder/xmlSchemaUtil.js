@@ -94,7 +94,8 @@ function getLocationValue(field, context) {
 						for (const item of child.children) {
 							if (item.children.length) {
 								let childNodesAttributes = [];
-								const grandChildren = [];
+								let grandChildren = [];
+								let currentTagName;
 
 								for (const itemChild of item.children) {
 									childNodesAttributes = getChildAttributes(
@@ -147,16 +148,43 @@ function getLocationValue(field, context) {
 										break;
 									}
 									else if (itemChild.children.length) {
+										if (!currentTagName) {
+											currentTagName = itemChild.tagName;
+										}
+										else if (
+											currentTagName !== itemChild.tagName
+										) {
+											grandChildren = [];
+										}
+										currentTagName = itemChild.tagName;
 										const subItemContent = {};
 
 										for (const itemGrandChild of itemChild.children) {
-											subItemContent[
-												itemGrandChild.tagName
-											] = itemGrandChild.textContent;
+											if (
+												itemGrandChild.children.length
+											) {
+												for (const grandGrand of itemGrandChild.children) {
+													const grandGrandContent = {};
+
+													grandGrandContent[
+														grandGrand.tagName
+													] = grandGrand.textContent;
+													grandChildren.push(
+														grandGrandContent
+													);
+												}
+											}
+											else {
+												subItemContent[
+													itemGrandChild.tagName
+												] = itemGrandChild.textContent;
+												grandChildren.push(
+													subItemContent
+												);
+											}
 										}
-										grandChildren.push(subItemContent);
 										childContent[
-											itemChild.tagName
+											currentTagName
 										] = grandChildren;
 									}
 									else {
@@ -166,7 +194,6 @@ function getLocationValue(field, context) {
 												itemChild.tagName
 											] = [];
 										}
-
 										childContent[itemChild.tagName].push(
 											itemContent
 										);
