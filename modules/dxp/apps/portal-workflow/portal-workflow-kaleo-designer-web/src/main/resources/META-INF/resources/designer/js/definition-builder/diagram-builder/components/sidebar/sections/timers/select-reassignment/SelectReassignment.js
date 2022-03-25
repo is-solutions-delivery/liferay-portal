@@ -32,6 +32,7 @@ const options = [
 	},
 	{
 		assignmentType: 'roleType',
+		disabled: true,
 		label: Liferay.Language.get('role-type'),
 	},
 	{
@@ -72,11 +73,12 @@ const SelectReassignment = ({currentAssignmentType, setSection}) => {
 					setSection(event.target.value);
 				}}
 			>
-				{options.map((item) => (
+				{options.map(({assignmentType, disabled, label}) => (
 					<ClaySelect.Option
-						key={item.assignmentType}
-						label={item.label}
-						value={item.assignmentType}
+						disabled={disabled}
+						key={assignmentType}
+						label={label}
+						value={assignmentType}
 					/>
 				))}
 			</ClaySelect>

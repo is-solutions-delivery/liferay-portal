@@ -87,7 +87,7 @@ const BaseRoleType = ({
 	}, []);
 
 	const checkRoleTypeErrors = (errors, selectedRoleName) => {
-		const temp = errors.roleName ? [...errors.roleName] : [];
+		const temp = errors?.roleName ? [...errors.roleName] : [];
 
 		if (!temp[notificationIndex]) {
 			temp[notificationIndex] = [];
@@ -266,7 +266,7 @@ const BaseRoleType = ({
 			</ClayForm.Group>
 			<ClayForm.Group
 				className={
-					errors.roleName?.[notificationIndex]?.[index]
+					errors?.roleName?.[notificationIndex]?.[index]
 						? 'has-error'
 						: ''
 				}
@@ -336,7 +336,7 @@ const BaseRoleType = ({
 				</ClayAutocomplete>
 
 				<ClayForm.FeedbackItem>
-					{errors.roleName?.[notificationIndex]?.[index] && (
+					{errors?.roleName?.[notificationIndex]?.[index] && (
 						<>
 							<ClayForm.FeedbackIndicator symbol="exclamation-full" />
 
