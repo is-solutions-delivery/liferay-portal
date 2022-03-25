@@ -20,7 +20,7 @@ const options = [
 	},
 	{
 		actionType: 'timerNotifications',
-		disabled: false,
+		disabled: true,
 		label: Liferay.Language.get('notification'),
 	},
 	{
@@ -56,6 +56,7 @@ const SelectActionType = ({
 
 			<ClaySelect
 				aria-label="Select"
+				defaultValue={actionType}
 				id="action-type"
 				onChange={(event) => {
 					handleChange(event.target.value);
@@ -66,7 +67,6 @@ const SelectActionType = ({
 						disabled={item.disabled}
 						key={item.actionType}
 						label={item.label}
-						selected={item.actionType === actionSection}
 						value={item.actionType}
 					/>
 				))}
