@@ -31,7 +31,7 @@ const Actions = (props) => {
 					identifier: `${Date.now()}-${i}`,
 					name: actions.name[i],
 					priority: actions.priority[i],
-					template: actions.script[i],
+					script: actions.script[i],
 				});
 			}
 

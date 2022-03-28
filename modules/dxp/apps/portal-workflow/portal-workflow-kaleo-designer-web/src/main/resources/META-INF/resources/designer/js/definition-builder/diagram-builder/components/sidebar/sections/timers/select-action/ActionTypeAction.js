@@ -29,7 +29,7 @@ const ActionTypeAction = ({
 	const {selectedItem} = useContext(DiagramBuilderContext);
 	const validActionData =
 		actionData.actionType === 'timerActions' ? actionData : null;
-	const [template, setTemplate] = useState(validActionData?.template || '');
+	const [script, setScript] = useState(validActionData?.script || '');
 	const [description, setDescription] = useState(
 		validActionData?.description || ''
 	);
@@ -50,7 +50,7 @@ const ActionTypeAction = ({
 	const [priority, setPriority] = useState(validActionData?.priority || 1);
 
 	const updateActionInfo = (item) => {
-		if (item.name && item.template && item.executionType) {
+		if (item.name && item.script && item.executionType) {
 			setActionSections((previousSections) => {
 				const updatedSections = [...previousSections];
 
@@ -73,18 +73,18 @@ const ActionTypeAction = ({
 			executionTypeOptions={executionTypeOptions}
 			name={name}
 			placeholderName={Liferay.Language.get('my-action')}
-			placeholderTemplate="${userName} sent you a ${entryType} for review in the workflow."
+			placeholderScript="${userName} sent you a ${entryType} for review in the workflow."
 			priority={priority}
+			script={script}
+			scriptLabel={Liferay.Language.get('script')}
+			scriptLabelSecondary={Liferay.Language.get('groovy')}
 			selectedItem={selectedItem}
 			setDescription={setDescription}
 			setExecutionType={setExecutionType}
 			setExecutionTypeOptions={setExecutionTypeOptions}
 			setName={setName}
 			setPriority={setPriority}
-			setTemplate={setTemplate}
-			template={template}
-			templateLabel={Liferay.Language.get('template')}
-			templateLabelSecondary={Liferay.Language.get('groovy')}
+			setScript={setScript}
 			updateActionInfo={updateActionInfo}
 		/>
 	);

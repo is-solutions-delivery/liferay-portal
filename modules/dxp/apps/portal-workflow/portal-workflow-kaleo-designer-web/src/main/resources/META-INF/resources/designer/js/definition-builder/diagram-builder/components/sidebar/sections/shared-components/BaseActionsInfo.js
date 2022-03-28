@@ -26,18 +26,18 @@ const BaseActionsInfo = ({
 	executionTypeOptions,
 	name,
 	placeholderName,
-	placeholderTemplate,
+	placeholderScript,
 	priority,
+	script,
+	scriptLabel,
+	scriptLabelSecondary,
 	selectedItem,
 	setDescription,
 	setExecutionType,
 	setExecutionTypeOptions,
 	setName,
 	setPriority,
-	setTemplate,
-	template,
-	templateLabel,
-	templateLabelSecondary,
+	setScript,
 	updateActionInfo,
 }) => {
 	useEffect(() => {
@@ -82,7 +82,7 @@ const BaseActionsInfo = ({
 							executionType,
 							name,
 							priority,
-							template,
+							script,
 						})
 					}
 					onChange={({target}) => {
@@ -106,7 +106,7 @@ const BaseActionsInfo = ({
 							executionType,
 							name,
 							priority,
-							template,
+							script,
 						})
 					}
 					onChange={({target}) => {
@@ -117,30 +117,30 @@ const BaseActionsInfo = ({
 				/>
 			</ClayForm.Group>
 			<ClayForm.Group>
-				<label htmlFor="template">
-					{`${templateLabel} (${templateLabelSecondary})`}
+				<label htmlFor="script">
+					{`${scriptLabel} (${scriptLabelSecondary})`}
 
 					<span className="ml-1 mr-1 text-warning">*</span>
 				</label>
 
 				<ClayInput
 					component="textarea"
-					id="template"
+					id="script"
 					onBlur={() =>
 						updateActionInfo({
 							description,
 							executionType,
 							name,
 							priority,
-							template,
+							script,
 						})
 					}
 					onChange={({target}) => {
-						setTemplate(target.value);
+						setScript(target.value);
 					}}
-					placeholder={placeholderTemplate}
+					placeholder={placeholderScript}
 					type="text"
-					value={template}
+					value={script}
 				/>
 			</ClayForm.Group>
 
@@ -163,7 +163,7 @@ const BaseActionsInfo = ({
 								executionType,
 								name,
 								priority,
-								template,
+								script,
 							})
 						}
 					>
@@ -213,7 +213,7 @@ const BaseActionsInfo = ({
 							executionType,
 							name,
 							priority,
-							template,
+							script,
 						});
 					}}
 					onChange={({target}) => {
@@ -239,18 +239,18 @@ BaseActionsInfo.propTypes = {
 	executionTypeOptions: PropTypes.object,
 	name: PropTypes.string,
 	placeholderName: PropTypes.string,
-	placeholderTemplate: PropTypes.string,
+	placeholderScript: PropTypes.string,
 	priority: PropTypes.number,
+	script: PropTypes.string,
+	scriptLabel: PropTypes.string,
+	scriptLabelSecondary: PropTypes.string,
 	selectedItem: PropTypes.object,
 	setDescription: PropTypes.func,
 	setExecutionType: PropTypes.func,
 	setExecutionTypeOptions: PropTypes.func,
 	setName: PropTypes.func,
 	setPriority: PropTypes.func,
-	setTemplate: PropTypes.func,
-	template: PropTypes.string,
-	templateLabel: PropTypes.string,
-	templateLabelSecondary: PropTypes.string,
+	setScript: PropTypes.func,
 	updateActionInfo: PropTypes.func,
 };
 

@@ -138,7 +138,7 @@ const Timers = ({setContentName, setErrors}) => {
 								({priority}) => priority
 							),
 							script: filteredTimerActions.map(
-								({template}) => template
+								({script}) => script
 							),
 						};
 					}
@@ -244,9 +244,9 @@ const Timers = ({setContentName, setErrors}) => {
 				section.priority = data.find(
 					(entry) => entry[0] === 'priority'
 				)[1][index];
-				section.template = data.find(
-					(entry) => entry[0] === 'script'
-				)[1][index];
+				section.script = data.find((entry) => entry[0] === 'script')[1][
+					index
+				];
 				sections.push(section);
 			}
 		}
