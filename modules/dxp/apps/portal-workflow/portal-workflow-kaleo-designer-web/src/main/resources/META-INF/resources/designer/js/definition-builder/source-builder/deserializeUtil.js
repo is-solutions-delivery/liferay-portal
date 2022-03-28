@@ -49,9 +49,18 @@ DeserializeUtil.prototype = {
 
 		instance.definition.forEachField((tagName, fieldData) => {
 			fieldData.results.forEach((node) => {
-				if (node.actions && node.actions[0].template) {
-					node.notifications = node.actions;
-					node.actions = null;
+				if (node.actions?.length) {
+					node.notifications = node.actions.filter((item) => {
+						if (item.template) {
+							return item;
+						}
+					});
+
+					node.actions = node.actions.filter((item) => {
+						if (item.script) {
+							return item;
+						}
+					});
 				}
 
 				const position = {};
@@ -111,10 +120,10 @@ DeserializeUtil.prototype = {
 						node.scriptLanguage || DEFAULT_LANGUAGE;
 				}
 
-				data.actions = node.actions && parseActions(node);
+				data.actions = node.actions?.length && parseActions(node);
 
 				data.notifications =
-					node.notifications && parseNotifications(node);
+					node.notifications?.length && parseNotifications(node);
 
 				node.notifications?.forEach((notification) => {
 					var roleTypes = notification['role-type'];
