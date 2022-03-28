@@ -178,14 +178,9 @@ function getLocationValue(field, context) {
 												subItemContent[
 													itemGrandChild.tagName
 												] = itemGrandChild.textContent;
-												grandChildren.push(
-													subItemContent
-												);
 											}
 										}
-										childContent[
-											currentTagName
-										] = grandChildren;
+										grandChildren.push(subItemContent);
 									}
 									else {
 										itemContent = itemChild.textContent;
@@ -198,6 +193,9 @@ function getLocationValue(field, context) {
 											itemContent
 										);
 									}
+									childContent[
+										currentTagName
+									] = grandChildren;
 								}
 							}
 							else {
