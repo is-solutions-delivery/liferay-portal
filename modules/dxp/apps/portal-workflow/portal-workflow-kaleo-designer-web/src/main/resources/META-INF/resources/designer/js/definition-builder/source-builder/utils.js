@@ -9,7 +9,6 @@
  * distribution rights of the Software.
  */
 
-import {removeNewLine, replaceTabSpaces} from '../util/utils';
 import {DEFAULT_LANGUAGE} from './constants';
 
 export function parseActions(node) {
@@ -178,9 +177,9 @@ export function parseNotifications(node) {
 		else if (item['user']) {
 			const emailAddress = [];
 
-			item['user'].forEach((item) =>
-				emailAddress.push(replaceTabSpaces(removeNewLine(item)))
-			);
+			item['user'].forEach((item) => {
+				emailAddress.push(item['email-address']);
+			});
 
 			notifications.recipients[index] = {
 				assignmentType: ['user'],
@@ -198,15 +197,11 @@ export function parseNotifications(node) {
 		else if (item['role-id']) {
 			notifications.recipients[index] = {
 				assignmentType: ['roleId'],
-				roleId: replaceTabSpaces(removeNewLine(item.roles[0])),
+				roleId: item['role-id'][0],
 			};
 		}
 		else if (item['scripted-recipient']) {
-			let script = item['scripted-recipient'][0];
-
-			script = replaceTabSpaces(
-				removeNewLine(script.substring(0, script.length - 13))
-			);
+			const script = item['scripted-recipient'][0].script;
 
 			notifications.recipients[index] = {
 				assignmentType: ['scriptedRecipient'],
