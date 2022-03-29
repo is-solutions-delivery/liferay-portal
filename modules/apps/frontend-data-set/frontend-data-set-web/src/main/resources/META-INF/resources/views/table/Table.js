@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayEmptyState from '@clayui/empty-state';
 import {ClayCheckbox, ClayRadio} from '@clayui/form';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import classNames from 'classnames';
@@ -19,7 +20,6 @@ import PropTypes from 'prop-types';
 import React, {useContext, useMemo} from 'react';
 
 import DataSetContext from '../../DataSetContext';
-import EmptyResultMessage from '../../EmptyResultMessage';
 import ActionsDropdownRenderer from '../../data_renderers/ActionsDropdownRenderer';
 import {getValueDetailsFromItem} from '../../utils/index';
 import ViewsContext from '../ViewsContext';
@@ -261,7 +261,15 @@ function Table({dataLoading, items, itemsActions, schema, style}) {
 						</DndTable.Body>
 					</DndTable.Table>
 				)}
-				{!items.length && <EmptyResultMessage />}
+				{!items.length && (
+					<ClayEmptyState
+						description={Liferay.Language.get(
+							'no-items-were-found'
+						)}
+						imgSrc="/o/classic-theme/images/states/empty_state.gif"
+						title=""
+					/>
+				)}
 			</>
 		);
 	}

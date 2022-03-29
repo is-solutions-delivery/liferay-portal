@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayEmptyState from '@clayui/empty-state';
 import {ClayCheckbox, ClayRadio} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayList from '@clayui/list';
@@ -21,7 +22,6 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useContext} from 'react';
 
-import EmptyResultMessage from '../../EmptyResultMessage';
 import ActionsDropdownRenderer from '../../data_renderers/ActionsDropdownRenderer';
 import ImageRenderer from '../../data_renderers/ImageRenderer';
 
@@ -44,7 +44,13 @@ function List({
 	}
 
 	if (!items?.length) {
-		return <EmptyResultMessage />;
+		return (
+			<ClayEmptyState
+				description={Liferay.Language.get('no-items-were-found')}
+				imgSrc="/o/classic-theme/images/states/empty_state.gif"
+				title=""
+			/>
+		);
 	}
 
 	return (

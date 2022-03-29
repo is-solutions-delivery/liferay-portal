@@ -25,9 +25,11 @@ import React, {
 } from 'react';
 
 import './styles/main.scss';
+
+import ClayEmptyState from '@clayui/empty-state';
+
 import {AppContext} from './AppContext';
 import DataSetContext from './DataSetContext';
-import EmptyResultMessage from './EmptyResultMessage';
 import {updateViewComponent} from './actions/updateViewComponent';
 import ManagementBar from './management_bar/ManagementBar';
 import Modal from './modal/Modal';
@@ -65,7 +67,7 @@ const DataSet = ({
 	id,
 	inlineAddingSettings,
 	inlineEditingSettings,
-	items: itemsProp,
+	items: itemsProp = [],
 	itemsActions,
 	namespace,
 	nestedItemsKey,
@@ -374,7 +376,15 @@ const DataSet = ({
 						{...currentViewProps}
 					/>
 				) : (
-					<EmptyResultMessage />
+					<>
+						<ClayEmptyState
+							description={Liferay.Language.get(
+								'no-items-were-found'
+							)}
+							imgSrc="/o/classic-theme/images/states/empty_state.gif"
+							title=""
+						/>
+					</>
 				)}
 			</div>
 		) : (
