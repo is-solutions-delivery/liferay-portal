@@ -110,6 +110,7 @@ const DataSet = ({
 	const [sorting, setSorting] = useState(sortingProp);
 	const [total, setTotal] = useState(0);
 	const [{activeView}, dispatch] = useContext(ViewsContext);
+	const [apiError, setApiError] = useState(null);
 
 	const {
 		component: CurrentViewComponent,
@@ -138,15 +139,7 @@ const DataSet = ({
 			delta,
 			pageNumber,
 			sorting
-		).catch((error) => {
-			logError(error);
-			openToast({
-				message: Liferay.Language.get('unexpected-error'),
-				type: 'danger',
-			});
-
-			throw error;
-		});
+		);
 	}, [apiURL, currentURL, delta, filters, pageNumber, searchParam, sorting]);
 
 	const requestComponent = useCallback(() => {
@@ -236,7 +229,7 @@ const DataSet = ({
 		setDataLoading(true);
 
 		return requestData()
-			.then((data) => {
+			.then(({data}) => {
 				if (successNotification?.showSuccessNotification) {
 					openToast({
 						message:
@@ -291,15 +284,36 @@ const DataSet = ({
 
 	useEffect(() => {
 		setDataLoading(true);
+		setApiError(null);
 
-		requestData().then((data) => {
+		requestData().then(({data, ok, status}) => {
 			if (isMounted()) {
-				updateDataSetItems(data);
-
+				if (!ok) {
+					setApiError({data, status});
+				}
+				else {
+					updateDataSetItems(data);
+				}
 				setDataLoading(false);
 			}
 		});
 	}, [isMounted, requestData, setDataLoading]);
+
+	useEffect(() => {
+		if (isMounted() && apiError) {
+			const {data, status: statusCode} = apiError;
+
+			const apiErrorMessage = `${data.status}, ${data.title}`;
+
+			logError(apiErrorMessage);
+
+			openToast({
+				message: apiErrorMessage,
+				title: `${Liferay.Language.get('error')} ${statusCode}`,
+				type: 'danger',
+			});
+		}
+	}, [apiError, isMounted]);
 
 	useEffect(() => {
 		function handleRefreshFromTheOutside(event) {
@@ -376,15 +390,13 @@ const DataSet = ({
 						{...currentViewProps}
 					/>
 				) : (
-					<>
-						<ClayEmptyState
-							description={Liferay.Language.get(
-								'no-items-were-found'
-							)}
-							imgSrc="/o/classic-theme/images/states/empty_state.gif"
-							title=""
-						/>
-					</>
+					<ClayEmptyState
+						description={Liferay.Language.get(
+							'no-items-were-found'
+						)}
+						imgSrc="/o/classic-theme/images/states/empty_state.gif"
+						title=""
+					/>
 				)}
 			</div>
 		) : (
@@ -397,7 +409,7 @@ const DataSet = ({
 		formId || formName ? view : <form ref={formRef}>{view}</form>;
 
 	const paginationComponent =
-		showPagination && pagination && items?.length ? (
+		showPagination && pagination && items?.length && total ? (
 			<div className="data-set-pagination-wrapper">
 				<ClayPaginationBarWithBasicItems
 					activeDelta={delta}

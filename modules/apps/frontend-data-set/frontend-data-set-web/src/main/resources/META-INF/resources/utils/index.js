@@ -230,7 +230,7 @@ export function getFiltersString(odataFiltersStrings, providedFilters) {
 	return filtersString;
 }
 
-export function loadData(
+export async function loadData(
 	apiURL,
 	currentURL,
 	odataFiltersStrings,
@@ -266,7 +266,14 @@ export function loadData(
 		);
 	}
 
-	return executeAsyncAction(url, 'GET').then((response) => response.json());
+	const response = await executeAsyncAction(url, 'GET');
+	const responseJSON = await response.json();
+
+	return {
+		data: responseJSON,
+		ok: response.ok,
+		status: response.status,
+	};
 }
 
 export function getCurrentItemUpdates(
