@@ -47,3 +47,25 @@ headerTitleElement.innerHTML =
 	layoutName === 'Dashboard'
 		? dashBoardTitle
 		: `<span class="font-weight-bolder h3">${layoutName}</span>`;
+
+if (layoutName === 'Applications') {
+	document.querySelector(
+		'.component-tabs .navbar.navbar-collapse-absolute.navbar-expand-md.navbar-underline.navigation-bar.navigation-bar-light'
+	).style = 'border-color: #fff !important;';
+}
+
+if (layoutName !== 'Applications' && layoutName !== 'Claims') {
+	fragmentElement
+		.querySelector('.header-content .new-button')
+		.classList.add('d-none');
+}
+
+if (layoutName === 'Applications' || layoutName === 'Claims') {
+	const buttonValue =
+		layoutName === 'Claims' ? 'New Claim' : 'New Application';
+	fragmentElement.querySelector(
+		'.header-content .new-button'
+	).innerHTML = `<span class='mr-2 plus-icon'>+</span>${buttonValue}`;
+	fragmentElement.querySelector('.page-header-container').style =
+		'border-bottom: 1px solid #D3D3D4; box-shadow: none;';
+}

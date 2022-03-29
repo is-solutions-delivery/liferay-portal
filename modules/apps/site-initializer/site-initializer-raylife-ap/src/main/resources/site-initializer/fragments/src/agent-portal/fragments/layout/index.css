@@ -104,3 +104,8 @@
 .page-header-container .header-content .search-icon {
 	cursor: pointer;
 }
+
+.header-content .new-button,
+.header-content .plus-icon {
+	font-size: 16px;
+}
