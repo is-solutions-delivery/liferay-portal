@@ -92,4 +92,10 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	macro signOutTestray {
+		Click(locator1 = "Testray#USER_ICON_SIDEBAR");
+
+        Click(locator1 = "Testray#SIGN_OUT");
+	}
+
 }
