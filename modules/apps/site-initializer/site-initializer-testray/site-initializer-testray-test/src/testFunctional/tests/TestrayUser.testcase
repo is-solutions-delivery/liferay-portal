@@ -1,53 +1,54 @@
 @component-name = "portal-solutions"
 definition {
 
-    property portal.release = "false";
-    property portal.upstream = "true";
-    property testray.main.component.name = "Testray 2";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Testray 2";
 
-    setUp {
-        TestCase.setUpPortalInstance();
+	setUp {
+		TestCase.setUpPortalInstance();
 
-        User.firstLoginPG();
+		User.firstLoginPG();
 
-        Testray.createTestraySite(siteName = "Testray 2");
+		Testray.createTestraySite(siteName = "Testray 2");
 
-        Refresh();
-    }
+		Refresh();
+	}
 
-    tearDown {
-        var testPortalInstance = PropsUtil.get("test.portal.instance");
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-        Testray.tearDownCP();
+		Testray.tearDownCP();
 
-        if ("${testPortalInstance}" == "true") {
-            PortalInstances.tearDownCP();
-        }
-    }
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
 
-    @description = "LPS-149615 - Verify that user can can go to the 'Manage Users' page."
-    @priority = "5"
-    test CanAcessManageUser {
-        ApplicationsMenu.gotoSite(site = "Testray 2");
+	@description = "LPS-149615 - Verify that user can can go to the 'Manage Users' page."
+	@priority = "5"
+	test CanAcessManageUser {
+		ApplicationsMenu.gotoSite(site = "Testray 2");
 
-        Click(locator1 = "Testray#USER_ICON_SIDEBAR");
-        
-        Click(locator1 = "Testray#MANAGE_ACCOUNT");
+		Click(locator1 = "Testray#USER_ICON_SIDEBAR");
 
-        AssertElementPresent(
-            locator1 = "TestrayDropdown#PROJECT_NAME_BREADCRUMBS",
-            key_projectName = "Project Directory"); 
-    }
+		Click(locator1 = "Testray#MANAGE_ACCOUNT");
 
-    @description = "LPS-149616 - Verify that user can Sign Out."
-    @priority = "5"
-    test CanSignOut {
-        ApplicationsMenu.gotoSite(site = "Testray 2");
+		AssertElementPresent(
+			key_projectName = "Project Directory",
+			locator1 = "TestrayDropdown#PROJECT_NAME_BREADCRUMBS");
+	}
 
-        Testray.signOutTestray();
+	@description = "LPS-149616 - Verify that user can Sign Out."
+	@priority = "5"
+	test CanSignOut {
+		ApplicationsMenu.gotoSite(site = "Testray 2");
 
-        IsElementNotPresent(locator1 = "UserBar#USER_AVATAR_IMAGE");
+		Testray.signOutTestray();
 
-        User.firstLoginPG();
-    }
+		IsElementNotPresent(locator1 = "UserBar#USER_AVATAR_IMAGE");
+
+		User.firstLoginPG();
+	}
+
 }
