@@ -148,7 +148,7 @@ public class ImportResults {
 	}
 
 	private void _addTestrayCases(
-			Element element, long testrayBuildId, long testrayProjectId,
+			Element element, long testrayBuildId, String testrayBuildTime, long testrayProjectId,
 			long testrayRunId)
 		throws Exception {
 
@@ -161,14 +161,15 @@ public class ImportResults {
 				_getTestrayCaseProperties((Element)testcaseNode);
 
 			_addTestrayCase(
-				testcaseNode, testrayBuildId, testrayProjectId, testrayRunId,
-				testrayCasePropertiesMap);
+				testcaseNode, testrayBuildId, testrayBuildTime, testrayProjectId, 
+				testrayRunId, testrayCasePropertiesMap);
 		}
 	}
 
 	private void _addTestrayCase(
-			Node testcaseNode, long testrayBuildId, long testrayProjectId,
-			long testrayRunId, Map<String, Object> testrayCasePropertiesMap)
+			Node testcaseNode, long testrayBuildId, String testrayBuildTime,
+			long testrayProjectId, long testrayRunId, 
+			Map<String, Object> testrayCasePropertiesMap)
 		throws Exception {
 
 		Map<String, String> bodyMap = new HashMap<>();
@@ -218,8 +219,8 @@ public class ImportResults {
 		long testrayCaseId = _addEntity(bodyMap, "cases");
 
 		long testrayCaseResultId = _addTestrayCaseResult(
-			testrayBuildId, testrayCaseId, testrayComponentId, testrayRunId,
-			testrayCasePropertiesMap, testcaseNode);
+			testrayBuildId, testrayCaseId, testrayBuildTime, testrayComponentId, 
+			testrayRunId, testrayCasePropertiesMap, testcaseNode);
 
 		_addTestrayAttachments(testcaseNode, testrayCaseResultId);
 
@@ -233,13 +234,18 @@ public class ImportResults {
 	}
 
 	private long _addTestrayCaseResult(
-			long testrayBuildId, long testrayCaseId, long testrayComponentId,
-			long testrayRunId, Map<String, Object> testrayCasePropertiesMap,
+			long testrayBuildId, long testrayCaseId, String testrayBuildTime,
+			long testrayComponentId, long testrayRunId,
+			Map<String, Object> testrayCasePropertiesMap,
 			Node testcaseNode)
 		throws Exception {
 
 		Map<String, String> bodyMap = new HashMap<>();
 
+		bodyMap.put("closedDate",
+			testrayBuildTime);
+		bodyMap.put("startDate",
+			testrayBuildTime);
 		bodyMap.put("r_buildToCaseResult_c_buildId",
 			String.valueOf(testrayBuildId));
 		bodyMap.put("r_caseResultToCase_c_caseId",
@@ -847,6 +853,8 @@ public class ImportResults {
 
 		long testrayProjectId = _fetchOrAddTestrayProject(testrayProjectName);
 
+		String testrayBuildTime =  propertiesMap.get("testray.build.time");
+
 		long testrayBuildId = _fetchOrAddTestrayBuild(
 			testrayProjectId, propertiesMap);
 
@@ -854,7 +862,7 @@ public class ImportResults {
 			testrayBuildId, propertiesMap, element);
 		
 		_addTestrayCases(
-			element, testrayBuildId, testrayProjectId, testrayRunId);
+			element, testrayBuildId, testrayBuildTime, testrayProjectId, testrayRunId);
 
 		_fetchOrAddTestrayTask(
 			testrayBuildId, propertiesMap.get("testray.build.name"));
@@ -879,12 +887,12 @@ public class ImportResults {
 	private void _readFiles() throws Exception {
 		Page<Blob> page = _storage.list(
 			PropsValues.TESTRAY_BUCKET_NAME,
-			Storage.BlobListOption.prefix("inbox"));
+			Storage.BlobListOption.prefix("inbox-2"));
 		
 		for (Blob blob : page.iterateAll()) {
 			String name = blob.getName();
 
-			if(name.equals("inbox/")) {
+			if(name.equals("inbox-2/")) {
 				continue;
 			}
 
