@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en_US": "Quote Comparison To Raylife Orders"
+	},
+	"name": "quoteComparisonToRaylifeOrders",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:QuoteComparison$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:RaylifeOrder$]",
+	"objectDefinitionName2": "RaylifeOrder",
+	"type": "oneToMany"
+}
