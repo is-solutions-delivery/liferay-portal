@@ -41,7 +41,11 @@ const options = [
 	},
 ];
 
-const SelectReassignment = ({currentAssignmentType, setSection}) => {
+const SelectReassignment = ({
+	currentAssignmentType,
+	setSection,
+	setSubSections,
+}) => {
 	useEffect(() => {
 		if (!currentAssignmentType) {
 			setSection('assetCreator');
@@ -71,6 +75,7 @@ const SelectReassignment = ({currentAssignmentType, setSection}) => {
 				id="reassignment-type"
 				onChange={(event) => {
 					setSection(event.target.value);
+					setSubSections([{identifier: `${Date.now()}-0`}]);
 				}}
 			>
 				{options.map(({assignmentType, disabled, label}) => (

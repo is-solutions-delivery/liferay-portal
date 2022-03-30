@@ -660,6 +660,8 @@ const NotificationsInfo = ({
 							template,
 							templateLanguage,
 						});
+
+						setInternalSections([{identifier: `${Date.now()}-0`}]);
 					}}
 					value={recipientType}
 				>

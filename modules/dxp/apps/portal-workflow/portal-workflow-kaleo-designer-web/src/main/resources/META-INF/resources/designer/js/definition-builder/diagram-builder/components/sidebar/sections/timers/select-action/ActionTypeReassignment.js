@@ -108,6 +108,7 @@ const ActionTypeReassignment = ({
 			<SelectReassignment
 				currentAssignmentType={reassignmentType}
 				setSection={updateReassignmentType}
+				setSubSections={setSubSections}
 			/>
 
 			{subSections.map(
