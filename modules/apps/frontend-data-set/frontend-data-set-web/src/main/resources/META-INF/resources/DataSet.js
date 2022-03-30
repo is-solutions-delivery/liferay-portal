@@ -110,7 +110,6 @@ const DataSet = ({
 	const [sorting, setSorting] = useState(sortingProp);
 	const [total, setTotal] = useState(0);
 	const [{activeView}, dispatch] = useContext(ViewsContext);
-	const [apiError, setApiError] = useState(null);
 
 	const {
 		component: CurrentViewComponent,
@@ -282,14 +281,25 @@ const DataSet = ({
 		setComponentLoading,
 	]);
 
+	const handleApiError = ({data, statusCode}) => {
+		const apiErrorMessage = `${data.status}, ${data.title}`;
+
+		logError(apiErrorMessage);
+
+		openToast({
+			message: apiErrorMessage,
+			title: `${Liferay.Language.get('error')} ${statusCode}`,
+			type: 'danger',
+		});
+	};
+
 	useEffect(() => {
 		setDataLoading(true);
-		setApiError(null);
 
-		requestData().then(({data, ok, status}) => {
+		requestData().then(({data, ok, status: statusCode}) => {
 			if (isMounted()) {
 				if (!ok) {
-					setApiError({data, status});
+					handleApiError({data, statusCode});
 				}
 				else {
 					updateDataSetItems(data);
@@ -298,22 +308,6 @@ const DataSet = ({
 			}
 		});
 	}, [isMounted, requestData, setDataLoading]);
-
-	useEffect(() => {
-		if (isMounted() && apiError) {
-			const {data, status: statusCode} = apiError;
-
-			const apiErrorMessage = `${data.status}, ${data.title}`;
-
-			logError(apiErrorMessage);
-
-			openToast({
-				message: apiErrorMessage,
-				title: `${Liferay.Language.get('error')} ${statusCode}`,
-				type: 'danger',
-			});
-		}
-	}, [apiError, isMounted]);
 
 	useEffect(() => {
 		function handleRefreshFromTheOutside(event) {
