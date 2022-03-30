@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en_US": "Commerce Order To Raylife Orders"
+	},
+	"name": "commerceOrderToRaylifeOrders",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:CommerceOrder$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:RaylifeOrder$]",
+	"objectDefinitionName2": "RaylifeOrder",
+	"type": "oneToMany"
+}
