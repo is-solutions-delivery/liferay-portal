@@ -3083,19 +3083,30 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	}
 
 	@Override
-	public void uploadCommonFile(String location, String value)
+	public void uploadCommonFile(String locator, String commonFilePath)
 		throws Exception {
 
-		String fileName =
+		String filePath =
 			FileUtil.getSeparator() + getTestDependenciesDirName() +
-				FileUtil.getSeparator() + value;
+				FileUtil.getSeparator() + commonFilePath;
 
-		fileName = LiferaySeleniumUtil.getSourceDirFilePath(fileName);
+		filePath = LiferaySeleniumUtil.getSourceDirFilePath(filePath);
 
-		if (value.endsWith(".jar") || value.endsWith(".lar") ||
-			value.endsWith(".war") || value.endsWith(".zip")) {
+		uploadFile(locator, FileUtil.fixFilePath(filePath));
+	}
 
-			File file = new File(fileName);
+	@Override
+	public void uploadFile(String locator, String filePath) {
+		makeVisible(locator);
+
+		WebElement webElement = getWebElement(locator);
+
+		filePath = FileUtil.getCanonicalPath(filePath);
+
+		if (filePath.endsWith(".jar") || filePath.endsWith(".lar") ||
+			filePath.endsWith(".war") || filePath.endsWith(".zip")) {
+
+			File file = new File(filePath);
 
 			if (file.isDirectory()) {
 				String archiveFilePath =
@@ -3104,24 +3115,15 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 				archiveFilePath = FileUtil.getCanonicalPath(archiveFilePath);
 
-				ArchiveUtil.archive(fileName, archiveFilePath);
+				ArchiveUtil.archive(filePath, archiveFilePath);
 
-				fileName = archiveFilePath;
+				filePath = archiveFilePath;
 			}
 		}
 
-		fileName = FileUtil.fixFilePath(fileName);
+		filePath = FileUtil.fixFilePath(filePath);
 
-		uploadFile(location, fileName);
-	}
-
-	@Override
-	public void uploadFile(String location, String value) {
-		makeVisible(location);
-
-		WebElement webElement = getWebElement(location);
-
-		webElement.sendKeys(FileUtil.getCanonicalPath(value));
+		webElement.sendKeys(filePath);
 	}
 
 	@Override

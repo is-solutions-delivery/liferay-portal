@@ -1,0 +1,19 @@
+@import 'cadmin-variables';
+
+.cookies-banner {
+	background-color: $cadmin-white;
+	box-shadow: $cadmin-box-shadow-lg;
+	left: 0;
+	right: 0;
+	z-index: 990;
+
+	&.cookies-banner-bottom {
+		bottom: 0;
+		position: fixed;
+	}
+
+	&.cookies-banner-top {
+		position: fixed;
+		top: 0;
+	}
+}

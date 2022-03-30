@@ -114,6 +114,7 @@ public class Scanner {
 		crc32.update(name.getBytes());
 
 		if (file.isFile()) {
+			_checksum(file.canWrite() ? 1000L : -1000L, crc32);
 			_checksum(file.lastModified(), crc32);
 			_checksum(file.length(), crc32);
 		}

@@ -218,5 +218,85 @@
 		"quantity": 1,
 		"startDate": "2021-10-01 00:00:00.0",
 		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_partnership",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_dxp-cloud",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_dxp",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_analytics-cloud",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_commerce",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_enterprise-search",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_portal",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
+	},
+	{
+		"accountKey": "ERC-009",
+		"accountSubscriptionGroupERC": "ERC-009_other",
+		"endDate": "2024-01-31 00:00:00.0",
+		"instanceSize": "1",
+		"name": "Production",
+		"quantity": 1,
+		"startDate": "2021-10-01 00:00:00.0",
+		"subscriptionStatus": "Active"
 	}
 ]
