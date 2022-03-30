@@ -50,6 +50,46 @@
 	<td>//button[contains(@class, 'nav-link') and contains(text(), "${key_navTabName}")]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>MANAGE_SIDEBAR</td>
+	<td>//div[contains(@class, 'dropdown-toggle') and contains(., 'Manage')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TESTFLOW_SIDEBAR</td>
+	<td>//a[contains(@href, '#/testflow')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMPARE_RUNS_SIDEBAR</td>
+	<td>//a[contains(@href, '#/compare-runs')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TESTFLOW_RESULTS</td>
+	<td>//span[contains(text(),'Results')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>USER_ICON_SIDEBAR</td>
+	<td>//div[contains(@class, 'dropdown')]//span[contains(., 'Test Test')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MANAGE_ACCOUNT</td>
+	<td>//span[contains(text(),'Manage Account')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SIGN_OUT</td>
+	<td>//span[contains(text(),'Sign Out')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NAME_TITLE</td>
+	<td>//h5[contains(text(),'${key_title}')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
