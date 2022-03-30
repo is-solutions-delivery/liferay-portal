@@ -318,6 +318,16 @@ describe('Analytics', () => {
 			expect(console.error).toHaveBeenCalledTimes(1);
 		});
 
+		it('returns a type error if the attribute type is not valid', () => {
+			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
+
+			console.error = jest.fn((val) => val);
+
+			Analytics.track('foo', {bar: []});
+
+			expect(console.error).toHaveBeenCalledTimes(1);
+		});
+
 		it('uses the applicationId from options', async () => {
 			Analytics = AnalyticsClient.create(INITIAL_CONFIG);
 

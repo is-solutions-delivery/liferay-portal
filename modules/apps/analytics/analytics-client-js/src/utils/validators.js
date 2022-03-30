@@ -31,6 +31,7 @@ const isValidEvent = ({eventId, eventProps}) => {
 	]);
 	const validationsValue = _validate([
 		validateMaxLength(VALIDATION_PROPERTY_VALUE_MAXIMUM_LENGTH),
+		validateAttributeType,
 	]);
 	let errors = [];
 
@@ -54,6 +55,20 @@ const isValidEvent = ({eventId, eventProps}) => {
 	}
 
 	return true;
+};
+
+const validateAttributeType = (attributeValue) => {
+	let error = '';
+
+	const valid = ['string', 'number', 'boolean'].includes(
+		typeof attributeValue
+	);
+
+	if (!valid) {
+		error = 'Attribute must be a String, Number, or Boolean.';
+	}
+
+	return error;
 };
 
 const validateEmptyString = (labelField) => (str) => {
@@ -114,6 +129,7 @@ const _showErrors = (errorsArr) =>
 
 export {
 	isValidEvent,
+	validateAttributeType,
 	validateEmptyString,
 	validateMaxLength,
 	validatePropsLength,
