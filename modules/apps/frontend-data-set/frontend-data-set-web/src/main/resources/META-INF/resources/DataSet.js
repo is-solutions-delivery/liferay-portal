@@ -391,11 +391,8 @@ const DataSet = ({
 					/>
 				) : (
 					<ClayEmptyState
-						description={Liferay.Language.get(
-							'no-items-were-found'
-						)}
-						imgSrc="/o/classic-theme/images/states/empty_state.gif"
-						title=""
+						imgSrc={`${themeDisplay.getPathThemeImages()}/states/empty_state.gif`}
+						title={Liferay.Language.get('no-items-were-found')}
 					/>
 				)}
 			</div>
