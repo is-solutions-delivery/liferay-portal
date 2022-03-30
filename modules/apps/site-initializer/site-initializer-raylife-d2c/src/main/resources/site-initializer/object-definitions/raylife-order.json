@@ -1,0 +1,28 @@
+{
+	"label": {
+		"en_US": "Raylife Order"
+	},
+	"name": "RaylifeOrder",
+	"objectFields":[
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId":"",
+			"label": {
+				"en_US": "Billing Option"
+			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:BillingOption$]",
+			"name": "billingOption",
+			"required": true,
+			"type": "String"
+		}
+	],
+	"panelAppOrder": "100",
+	"panelCategoryKey": "control_panel.object",
+	"pluralLabel": {
+		"en_US": "Raylife Orders"
+	},
+	"scope": "company"
+}
