@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en_US": "Raylife Application To Raylife Orders"
+	},
+	"name": "raylifeApplicationToRaylifeOrders",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:RaylifeApplication$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:RaylifeOrder$]",
+	"objectDefinitionName2": "RaylifeOrder",
+	"type": "oneToMany"
+}
