@@ -51,6 +51,7 @@ public class XLSBatchEngineTaskProgressImpl implements BatchEngineTaskProgress {
 
 			while (iterator.hasNext()) {
 				iterator.next();
+
 				totalItemsCount++;
 			}
 		}
