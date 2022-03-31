@@ -549,20 +549,20 @@ public class Main {
 		String testrayTestcaseStatus = (String)testrayCasePropertiesMap.get(
 			"testray.testcase.status");
 
-		if (testrayTestcaseStatus.equals("in-progress")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS);
-		}
-		else if (testrayTestcaseStatus.equals("passed")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_PASSED);
-		}
-		else if (testrayTestcaseStatus.equals("failed")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_FAILED);
-		}
-		else if (testrayTestcaseStatus.equals("blocked")) {
+		if (testrayTestcaseStatus.equals("blocked")) {
 			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_BLOCKED);
 		}
 		else if (testrayTestcaseStatus.equals("dnr")) {
 			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_DID_NOT_RUN);
+		}
+		else if (testrayTestcaseStatus.equals("failed")) {
+			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_FAILED);
+		}
+		else if (testrayTestcaseStatus.equals("in-progress")) {
+			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS);
+		}
+		else if (testrayTestcaseStatus.equals("passed")) {
+			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_PASSED);
 		}
 		else if (testrayTestcaseStatus.equals("test-fix")) {
 			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_TEST_FIX);
