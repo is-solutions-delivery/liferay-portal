@@ -1194,10 +1194,8 @@ public class TestrayImporter {
 
 				workspaceGitRepository.addPropertyOption(
 					String.valueOf(topLevelBuild.getBuildProfile()));
-
 				workspaceGitRepository.addPropertyOption(
 					topLevelBuild.getJobName());
-
 				workspaceGitRepository.addPropertyOption(
 					workspaceGitRepository.getUpstreamBranchName());
 
