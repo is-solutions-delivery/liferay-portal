@@ -179,9 +179,6 @@ public class Main {
 			long testrayRunId)
 		throws Exception {
 
-		long testrayCaseTypeId = _getTestrayCaseTypeId(
-			(String)testrayCasePropertiesMap.get("testray.case.type.name"));
-
 		long testrayTeamId = _getTestrayTeamId(
 			testrayProjectId,
 			(String)testrayCasePropertiesMap.get("testray.team.name"));
@@ -191,24 +188,23 @@ public class Main {
 			testrayProjectId, testrayTeamId);
 
 		long testrayCaseId = _postObjectEntry(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Object>put(
 				"description",
-				(String)testrayCasePropertiesMap.get(
-					"testray.testcase.description")
+				testrayCasePropertiesMap.get("testray.testcase.description")
 			).put(
 				"priority",
-				(String)testrayCasePropertiesMap.get(
-					"testray.testcase.priority")
+				testrayCasePropertiesMap.get("testray.testcase.priority")
 			).put(
 				"r_caseTypeToCases_c_caseTypeId",
-				String.valueOf(testrayCaseTypeId)
+				_getTestrayCaseTypeId(
+					(String)testrayCasePropertiesMap.get(
+						"testray.case.type.name"))
 			).put(
-				"r_componentToCases_componentId",
-				String.valueOf(testrayComponentId)
+				"r_componentToCases_componentId", testrayComponentId
 			).put(
-				"r_projectToCases_c_projectId", String.valueOf(testrayProjectId)
+				"r_projectToCases_c_projectId", testrayProjectId
 			).put(
-				"r_teamToCases_teamId", String.valueOf(testrayTeamId)
+				"r_teamToCases_teamId", testrayTeamId
 			).build(),
 			(String)testrayCasePropertiesMap.get("testray.testcase.name"),
 			"cases");
@@ -254,21 +250,20 @@ public class Main {
 		throws Exception {
 
 		_postObjectEntry(
-			HashMapBuilder.put(
-				"classNameId", String.valueOf(testrayRunId)
+			HashMapBuilder.<String, Object>put(
+				"classNameId", testrayRunId
 			).put(
-				"classPK", String.valueOf(testrayRunId)
+				"classPK", testrayRunId
 			).put(
 				"r_factorCategoryToFactors_c_factorCategoryId",
-				String.valueOf(testrayFactorCategoryId)
+				testrayFactorCategoryId
 			).put(
 				"r_factorOptionToFactors_c_factorOptionId",
-				String.valueOf(testrayFactorOptionId)
+				testrayFactorOptionId
 			).put(
 				"testrayFactorCategoryName", testrayFactorCategoryName
 			).put(
-				"testrayFactorOptionName",
-				String.valueOf(testrayFactorOptionName)
+				"testrayFactorOptionName", testrayFactorOptionName
 			).build(),
 			null, "factors");
 	}
@@ -282,13 +277,12 @@ public class Main {
 		}
 
 		_postObjectEntry(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Object>put(
 				"r_caseResultToCaseResultsIssues_c_caseResultId",
-				String.valueOf(testrayCaseResultId)
+				testrayCaseResultId
 			).put(
 				"r_issueToCaseResultsIssues_c_issueId",
-				String.valueOf(
-					_postObjectEntry(null, testrayIssueName, "issues"))
+				_postObjectEntry(null, testrayIssueName, "issues")
 			).build(),
 			null, "caseresultsissueses");
 	}
@@ -305,11 +299,10 @@ public class Main {
 		LocalDateTime currentLocalDateTime = LocalDateTime.now(ZoneOffset.UTC);
 
 		_postObjectEntry(
-			HashMapBuilder.put(
-				"dueStatus",
-				String.valueOf(_TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS)
+			HashMapBuilder.<String, Object>put(
+				"dueStatus", _TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS
 			).put(
-				"r_buildToTasks_c_buildId", String.valueOf(testrayBuildId)
+				"r_buildToTasks_c_buildId", testrayBuildId
 			).put(
 				"statusUpdateDate", currentLocalDateTime::toString
 			).build(),
@@ -477,7 +470,7 @@ public class Main {
 			testrayProjectId, propertiesMap.get("testray.build.type"));
 
 		return _postObjectEntry(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Object>put(
 				"description", _getTestrayBuildDescription(propertiesMap)
 			).put(
 				"dueDate", propertiesMap.get("testray.build.time")
@@ -487,13 +480,11 @@ public class Main {
 				"githubCompareURLs", propertiesMap.get("liferay.compare.urls")
 			).put(
 				"r_productVersionToBuilds_c_productVersionId",
-				String.valueOf(testrayProductVersionId)
+				testrayProductVersionId
 			).put(
-				"r_projectToBuilds_c_projectId",
-				String.valueOf(testrayProjectId)
+				"r_projectToBuilds_c_projectId", testrayProjectId
 			).put(
-				"r_routineToBuilds_c_routineId",
-				String.valueOf(testrayRoutineId)
+				"r_routineToBuilds_c_routineId", testrayRoutineId
 			).build(),
 			testrayBuildName, "builds");
 	}
@@ -634,11 +625,10 @@ public class Main {
 		}
 
 		return _postObjectEntry(
-			HashMapBuilder.put(
-				"r_projectToComponents_c_projectId",
-				String.valueOf(testrayProjectId)
+			HashMapBuilder.<String, Object>put(
+				"r_projectToComponents_c_projectId", testrayProjectId
 			).put(
-				"r_teamToComponents_c_teamId", String.valueOf(testrayTeamId)
+				"r_teamToComponents_c_teamId", testrayTeamId
 			).build(),
 			testrayComponentName, "components");
 	}
@@ -669,9 +659,9 @@ public class Main {
 		}
 
 		return _postObjectEntry(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Object>put(
 				"r_factorCategoryToOptions_c_factorCategoryId",
-				String.valueOf(testrayFactorCategoryId)
+				testrayFactorCategoryId
 			).build(),
 			testrayFactorOptionName, "factoroptions");
 	}
@@ -688,9 +678,8 @@ public class Main {
 		}
 
 		return _postObjectEntry(
-			HashMapBuilder.put(
-				"r_projectToProductVersions_c_projectId",
-				String.valueOf(testrayProjectId)
+			HashMapBuilder.<String, Object>put(
+				"r_projectToProductVersions_c_projectId", testrayProjectId
 			).build(),
 			testrayProductVersionName, "productversions");
 	}
@@ -720,9 +709,8 @@ public class Main {
 		}
 
 		return _postObjectEntry(
-			HashMapBuilder.put(
-				"r_routineToProjects_c_projectId",
-				String.valueOf(testrayProjectId)
+			HashMapBuilder.<String, Object>put(
+				"r_routineToProjects_c_projectId", testrayProjectId
 			).build(),
 			testrayRoutineName, "routines");
 	}
@@ -778,17 +766,17 @@ public class Main {
 		}
 
 		testrayRunId = _postObjectEntry(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Object>put(
 				"externalReferencePK", propertiesMap.get("testray.run.id")
 			).put(
 				"externalReferenceType",
-				String.valueOf(_TESTRAY_RUN_EXTERNAL_REFERENCE_TYPE_POSHI)
+				_TESTRAY_RUN_EXTERNAL_REFERENCE_TYPE_POSHI
 			).put(
 				"jenkinsJobKey", propertiesMap.get("jenkins.job.id")
 			).put(
 				"name", testrayRunName
 			).put(
-				"r_buildToRuns_c_buildId", String.valueOf(testrayBuildId)
+				"r_buildToRuns_c_buildId", testrayBuildId
 			).build(),
 			testrayRunName, "runs");
 
@@ -817,7 +805,7 @@ public class Main {
 
 		return _postObjectEntry(
 			HashMapBuilder.put(
-				"r_projectToTeams_c_projectId", String.valueOf(testrayProjectId)
+				"r_projectToTeams_c_projectId", testrayProjectId
 			).build(),
 			testrayTeamName, "teams");
 	}
@@ -872,7 +860,7 @@ public class Main {
 	}
 
 	private long _postObjectEntry(
-			Map<String, String> headers, String name,
+			Map<String, ?> headers, String name,
 			String objectDefinitionShortName)
 		throws Exception {
 
