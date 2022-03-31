@@ -544,32 +544,36 @@ public class Main {
 			long testrayComponentId, long testrayRunId)
 		throws Exception {
 
-		String dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_UNTESTED);
-
-		String testrayTestcaseStatus = (String)testrayCasePropertiesMap.get(
-			"testray.testcase.status");
-
-		if (testrayTestcaseStatus.equals("blocked")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_BLOCKED);
-		}
-		else if (testrayTestcaseStatus.equals("dnr")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_DID_NOT_RUN);
-		}
-		else if (testrayTestcaseStatus.equals("failed")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_FAILED);
-		}
-		else if (testrayTestcaseStatus.equals("in-progress")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS);
-		}
-		else if (testrayTestcaseStatus.equals("passed")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_PASSED);
-		}
-		else if (testrayTestcaseStatus.equals("test-fix")) {
-			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_TEST_FIX);
-		}
-
 		Map<String, Object> map = HashMapBuilder.<String, Object>put(
-			"dueStatus", dueStatus
+			"dueStatus",
+			() -> {
+				String testrayTestcaseStatus =
+					(String)testrayCasePropertiesMap.get(
+						"testray.testcase.status");
+
+				if (testrayTestcaseStatus.equals("blocked")) {
+					return String.valueOf(_TESTRAY_CASE_RESULT_STATUS_BLOCKED);
+				}
+				else if (testrayTestcaseStatus.equals("dnr")) {
+					return String.valueOf(
+						_TESTRAY_CASE_RESULT_STATUS_DID_NOT_RUN);
+				}
+				else if (testrayTestcaseStatus.equals("failed")) {
+					return String.valueOf(_TESTRAY_CASE_RESULT_STATUS_FAILED);
+				}
+				else if (testrayTestcaseStatus.equals("in-progress")) {
+					return String.valueOf(
+						_TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS);
+				}
+				else if (testrayTestcaseStatus.equals("passed")) {
+					return String.valueOf(_TESTRAY_CASE_RESULT_STATUS_PASSED);
+				}
+				else if (testrayTestcaseStatus.equals("test-fix")) {
+					return String.valueOf(_TESTRAY_CASE_RESULT_STATUS_TEST_FIX);
+				}
+
+				return String.valueOf(_TESTRAY_CASE_RESULT_STATUS_UNTESTED);
+			}
 		).put(
 			"r_buildToCaseResult_c_buildId", testrayBuildId
 		).put(
