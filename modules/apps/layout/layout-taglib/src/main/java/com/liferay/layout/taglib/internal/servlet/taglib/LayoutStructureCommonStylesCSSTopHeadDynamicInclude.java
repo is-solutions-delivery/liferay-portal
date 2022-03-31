@@ -217,8 +217,8 @@ public class LayoutStructureCommonStylesCSSTopHeadDynamicInclude
 			return JSONFactoryUtil.createJSONObject();
 		}
 
-		JSONObject frontendTokenDefinitionJSONObject = _createJSONObject(
-			frontendTokenDefinition.getJSON(locale));
+		JSONObject frontendTokenDefinitionJSONObject =
+			frontendTokenDefinition.getJSONObject(locale);
 
 		JSONArray frontendTokenCategoriesJSONArray =
 			frontendTokenDefinitionJSONObject.getJSONArray(
