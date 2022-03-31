@@ -296,7 +296,7 @@ public class Main {
 			return;
 		}
 
-		LocalDateTime currentLocalDateTime = LocalDateTime.now(ZoneOffset.UTC);
+		LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
 
 		_postObjectEntry(
 			HashMapBuilder.<String, Object>put(
@@ -304,7 +304,7 @@ public class Main {
 			).put(
 				"r_buildToTasks_c_buildId", testrayBuildId
 			).put(
-				"statusUpdateDate", currentLocalDateTime::toString
+				"statusUpdateDate", localDateTime::toString
 			).build(),
 			testrayTaskName, "tasks");
 	}
