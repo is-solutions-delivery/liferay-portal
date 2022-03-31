@@ -264,10 +264,10 @@ function Table({dataLoading, items, itemsActions, schema, style}) {
 				{!items.length && (
 					<ClayEmptyState
 						description={Liferay.Language.get(
-							'no-items-were-found'
+							'sorry,-no-results-were-found'
 						)}
-						imgSrc="/o/classic-theme/images/states/empty_state.gif"
-						title=""
+						imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
+						title={Liferay.Language.get('no-results-found')}
 					/>
 				)}
 			</>

@@ -67,9 +67,11 @@ function SelectableTable({dataLoading, items: itemsProp, schema, style}) {
 	if (!items || items?.length === 0) {
 		return (
 			<ClayEmptyState
-				description={Liferay.Language.get('no-items-were-found')}
-				imgSrc="/o/classic-theme/images/states/empty_state.gif"
-				title=""
+				description={Liferay.Language.get(
+					'sorry,-no-results-were-found'
+				)}
+				imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
+				title={Liferay.Language.get('no-results-found')}
 			/>
 		);
 	}
