@@ -138,30 +138,32 @@ public class Main {
 		for (int i = 0; i < attachmentsNodeList.getLength(); i++) {
 			Node attachmentsNode = attachmentsNodeList.item(i);
 
-			if (attachmentsNode.getNodeType() == Node.ELEMENT_NODE) {
-				Element attachmentsElement = (Element)attachmentsNode;
+			if (attachmentsNode.getNodeType() != Node.ELEMENT_NODE) {
+				continue;
+			}
 
-				NodeList fileNodeList = attachmentsElement.getElementsByTagName(
-					"file");
+			Element attachmentsElement = (Element)attachmentsNode;
 
-				for (int j = 0; j < fileNodeList.getLength(); j++) {
-					Node fileNode = fileNodeList.item(j);
+			NodeList fileNodeList = attachmentsElement.getElementsByTagName(
+				"file");
 
-					if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element fileElement = (Element)fileNode;
+			for (int j = 0; j < fileNodeList.getLength(); j++) {
+				Node fileNode = fileNodeList.item(j);
 
-						jsonArray.put(
-							HashMapBuilder.put(
-								"name", fileElement.getAttribute("name")
-							).put(
-								"r_caseResultToAttachments_c_caseResultId",
-								String.valueOf(testrayCaseResultId)
-							).put(
-								"url", fileElement.getAttribute("url")
-							).put(
-								"value", fileElement.getAttribute("value")
-							).build());
-					}
+				if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element fileElement = (Element)fileNode;
+
+					jsonArray.put(
+						HashMapBuilder.put(
+							"name", fileElement.getAttribute("name")
+						).put(
+							"r_caseResultToAttachments_c_caseResultId",
+							String.valueOf(testrayCaseResultId)
+						).put(
+							"url", fileElement.getAttribute("url")
+						).put(
+							"value", fileElement.getAttribute("value")
+						).build());
 				}
 			}
 		}
