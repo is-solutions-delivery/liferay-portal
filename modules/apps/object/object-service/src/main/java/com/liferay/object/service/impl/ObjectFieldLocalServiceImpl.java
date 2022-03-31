@@ -219,7 +219,7 @@ public class ObjectFieldLocalServiceImpl
 			List<ObjectField> objectFields)
 		throws PortalException {
 
-		List<ObjectField> newObjectFields = new ArrayList<>();
+		List<ObjectField> activeObjectFields = new ArrayList<>();
 
 		for (ObjectField objectField : objectFields) {
 			if (Validator.isNotNull(objectField.getRelationshipType())) {
@@ -232,15 +232,15 @@ public class ObjectFieldLocalServiceImpl
 						objectRelationship.getObjectDefinitionId1());
 
 				if (objectDefinition.isActive()) {
-					newObjectFields.add(objectField);
+					activeObjectFields.add(objectField);
 				}
 			}
 			else {
-				newObjectFields.add(objectField);
+				activeObjectFields.add(objectField);
 			}
 		}
 
-		return newObjectFields;
+		return activeObjectFields;
 	}
 
 	@Override
