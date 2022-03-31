@@ -855,11 +855,7 @@ public class Main {
 
 		String trimmedValue = value.trim();
 
-		if (trimmedValue.isEmpty()) {
-			return true;
-		}
-
-		return false;
+		return trimmedValue.isEmpty();
 	}
 
 	private void _postObjectEntries(
