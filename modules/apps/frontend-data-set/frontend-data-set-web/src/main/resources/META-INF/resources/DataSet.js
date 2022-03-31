@@ -388,7 +388,7 @@ const DataSet = ({
 						description={Liferay.Language.get(
 							'sorry,-no-results-were-found'
 						)}
-						imgSrc={`${themeDisplay.getPathThemeImages()}/states/empty_state.gif`}
+						imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
 						title={Liferay.Language.get('no-results-found')}
 					/>
 				)}
