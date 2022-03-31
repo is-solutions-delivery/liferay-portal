@@ -38,6 +38,69 @@ import java.util.function.Function;
  */
 public class StringUtil {
 
+	public static boolean equalsIgnoreCase(char c1, char c2) {
+		if (c1 == c2) {
+			return true;
+		}
+
+		// Fast fallback for non-acsii code.
+
+		if ((c1 > 127) || (c2 > 127)) {
+
+			// Georgian alphabet needs to check both upper and lower case
+
+			if ((Character.toLowerCase(c1) == Character.toLowerCase(c2)) ||
+				(Character.toUpperCase(c1) == Character.toUpperCase(c2))) {
+
+				return true;
+			}
+
+			return false;
+		}
+
+		// Fast fallback for non-letter ascii code
+
+		if ((c1 < CharPool.UPPER_CASE_A) || (c1 > CharPool.LOWER_CASE_Z) ||
+			(c2 < CharPool.UPPER_CASE_A) || (c2 > CharPool.LOWER_CASE_Z)) {
+
+			return false;
+		}
+
+		int delta = c1 - c2;
+
+		if ((delta != 32) && (delta != -32)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns <code>true</code> if the strings are equal, ignoring case.
+	 *
+	 * @param  s1 the first string to compare
+	 * @param  s2 the second string to compare
+	 * @return <code>true</code> if the strings are equal, ignoring case;
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean equalsIgnoreCase(String s1, String s2) {
+		if (s1 == s2) {
+			return true;
+		}
+
+		if ((s1 == null) || (s2 == null) || (s1.length() != s2.length())) {
+			return false;
+		}
+
+		for (int i = 0; i < s1.length(); i++) {
+			if (!equalsIgnoreCase(s1.charAt(i), s2.charAt(i))) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public static String merge(boolean[] array, String delimiter) {
 		if (array == null) {
 			return null;
