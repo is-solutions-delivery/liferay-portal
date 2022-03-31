@@ -190,17 +190,17 @@ public class FormFieldProjectTemplateCustomizer
 			Path projectPath, String nodeModulesPath)
 		throws IOException {
 
-		Path packageJsonPath = projectPath.resolve("package.json");
+		Path packageJSONPath = projectPath.resolve("package.json");
 
-		if (Files.exists(packageJsonPath)) {
-			String packageJsonContent = new String(
-				Files.readAllBytes(packageJsonPath), StandardCharsets.UTF_8);
+		if (Files.exists(packageJSONPath)) {
+			String json = new String(
+				Files.readAllBytes(packageJSONPath), StandardCharsets.UTF_8);
 
-			String newContent = packageJsonContent.replaceAll(
+			json = json.replaceAll(
 				"../../node_modules/", nodeModulesPath + "node_modules/");
 
 			FileUtils.writeStringToFile(
-				packageJsonPath.toFile(), newContent, "UTF-8", false);
+				packageJSONPath.toFile(), json, "UTF-8", false);
 		}
 	}
 
