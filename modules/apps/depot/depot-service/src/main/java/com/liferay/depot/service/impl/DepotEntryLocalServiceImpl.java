@@ -50,6 +50,7 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -214,18 +215,10 @@ public class DepotEntryLocalServiceImpl extends DepotEntryLocalServiceBaseImpl {
 			long groupId, int start, int end)
 		throws PortalException {
 
-		List<DepotEntry> depotEntries = new ArrayList<>();
-
-		List<DepotEntryGroupRel> depotEntryGroupRels =
-			_depotEntryGroupRelPersistence.findByToGroupId(groupId, start, end);
-
-		for (DepotEntryGroupRel depotEntryGroupRel : depotEntryGroupRels) {
-			depotEntries.add(
-				depotEntryLocalService.getDepotEntry(
-					depotEntryGroupRel.getDepotEntryId()));
-		}
-
-		return depotEntries;
+		return TransformUtil.transform(
+			_depotEntryGroupRelPersistence.findByToGroupId(groupId, start, end),
+			depotEntryGroupRel -> depotEntryLocalService.getDepotEntry(
+				depotEntryGroupRel.getDepotEntryId()));
 	}
 
 	@Override
