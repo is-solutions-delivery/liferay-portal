@@ -150,21 +150,23 @@ public class Main {
 			for (int j = 0; j < fileNodeList.getLength(); j++) {
 				Node fileNode = fileNodeList.item(j);
 
-				if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element fileElement = (Element)fileNode;
-
-					jsonArray.put(
-						HashMapBuilder.put(
-							"name", fileElement.getAttribute("name")
-						).put(
-							"r_caseResultToAttachments_c_caseResultId",
-							String.valueOf(testrayCaseResultId)
-						).put(
-							"url", fileElement.getAttribute("url")
-						).put(
-							"value", fileElement.getAttribute("value")
-						).build());
+				if (fileNode.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
 				}
+
+				Element fileElement = (Element)fileNode;
+
+				jsonArray.put(
+					HashMapBuilder.put(
+						"name", fileElement.getAttribute("name")
+					).put(
+						"r_caseResultToAttachments_c_caseResultId",
+						String.valueOf(testrayCaseResultId)
+					).put(
+						"url", fileElement.getAttribute("url")
+					).put(
+						"value", fileElement.getAttribute("value")
+					).build());
 			}
 		}
 
