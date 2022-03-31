@@ -128,12 +128,12 @@ public class Main {
 			Node testcaseNode, long testrayCaseResultId)
 		throws Exception {
 
+		JSONArray jsonArray = new JSONArray();
+
 		Element testcaseElement = (Element)testcaseNode;
 
 		NodeList attachmentsNodeList = testcaseElement.getElementsByTagName(
 			"attachments");
-
-		JSONArray jsonArray = new JSONArray();
 
 		for (int i = 0; i < attachmentsNodeList.getLength(); i++) {
 			Node attachmentsNode = attachmentsNodeList.item(i);
