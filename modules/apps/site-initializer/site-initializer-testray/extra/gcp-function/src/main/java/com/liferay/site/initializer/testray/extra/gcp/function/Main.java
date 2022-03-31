@@ -157,11 +157,11 @@ public class Main {
 				Element fileElement = (Element)fileNode;
 
 				jsonArray.put(
-					HashMapBuilder.put(
+					HashMapBuilder.<String, Object>put(
 						"name", fileElement.getAttribute("name")
 					).put(
 						"r_caseResultToAttachments_c_caseResultId",
-						String.valueOf(testrayCaseResultId)
+						testrayCaseResultId
 					).put(
 						"url", fileElement.getAttribute("url")
 					).put(
@@ -325,11 +325,10 @@ public class Main {
 
 		for (String warning : warningsList) {
 			jsonArray.put(
-				HashMapBuilder.put(
+				HashMapBuilder.<String, Object>put(
 					"content", warning
 				).put(
-					"r_caseResultToWarnings_c_caseResultId",
-					String.valueOf(testrayCaseResultId)
+					"r_caseResultToWarnings_c_caseResultId", testrayCaseResultId
 				).build());
 		}
 
@@ -569,17 +568,16 @@ public class Main {
 			dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_TEST_FIX);
 		}
 
-		Map<String, String> map = HashMapBuilder.put(
+		Map<String, Object> map = HashMapBuilder.<String, Object>put(
 			"dueStatus", dueStatus
 		).put(
-			"r_buildToCaseResult_c_buildId", String.valueOf(testrayBuildId)
+			"r_buildToCaseResult_c_buildId", testrayBuildId
 		).put(
-			"r_caseResultToCase_c_caseId", String.valueOf(testrayCaseId)
+			"r_caseResultToCase_c_caseId", testrayCaseId
 		).put(
-			"r_componentToCaseResult_c_componentId",
-			String.valueOf(testrayComponentId)
+			"r_componentToCaseResult_c_componentId", testrayComponentId
 		).put(
-			"r_runToCaseResult_c_runId", String.valueOf(testrayRunId)
+			"r_runToCaseResult_c_runId", testrayRunId
 		).build();
 
 		Element element = (Element)testcaseNode;
@@ -804,7 +802,7 @@ public class Main {
 		}
 
 		return _postObjectEntry(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Object>put(
 				"r_projectToTeams_c_projectId", testrayProjectId
 			).build(),
 			testrayTeamName, "teams");
