@@ -125,10 +125,10 @@ public class Main {
 	}
 
 	private void _addTestrayAttachments(
-			long testrayCaseResultId, Node testrayTestcaseNode)
+			Node testcaseNode, long testrayCaseResultId)
 		throws Exception {
 
-		Element testcaseElement = (Element)testrayTestcaseNode;
+		Element testcaseElement = (Element)testcaseNode;
 
 		NodeList attachmentsNodeList = testcaseElement.getElementsByTagName(
 			"attachments");
@@ -170,8 +170,9 @@ public class Main {
 	}
 
 	private void _addTestrayCase(
-			long testrayBuildId, Map<String, Object> testrayCasePropertiesMap,
-			long testrayProjectId, long testrayRunId, Node testrayTestcaseNode)
+			Node testcaseNode, long testrayBuildId,
+			Map<String, Object> testrayCasePropertiesMap, long testrayProjectId,
+			long testrayRunId)
 		throws Exception {
 
 		long testrayCaseTypeId = _getTestrayCaseTypeId(
@@ -209,10 +210,10 @@ public class Main {
 			"cases");
 
 		long testrayCaseResultId = _getTestrayCaseResultId(
-			testrayBuildId, testrayCaseId, testrayCasePropertiesMap,
-			testrayComponentId, testrayRunId, testrayTestcaseNode);
+			testcaseNode, testrayBuildId, testrayCaseId,
+			testrayCasePropertiesMap, testrayComponentId, testrayRunId);
 
-		_addTestrayAttachments(testrayCaseResultId, testrayTestcaseNode);
+		_addTestrayAttachments(testcaseNode, testrayCaseResultId);
 
 		_addTestrayIssue(
 			testrayCaseResultId,
@@ -237,8 +238,8 @@ public class Main {
 				_getTestrayCaseProperties((Element)testcaseNode);
 
 			_addTestrayCase(
-				testrayBuildId, testrayCasePropertiesMap, testrayProjectId,
-				testrayRunId, testcaseNode);
+				testcaseNode, testrayBuildId, testrayCasePropertiesMap,
+				testrayProjectId, testrayRunId);
 		}
 	}
 
@@ -544,10 +545,9 @@ public class Main {
 	}
 
 	private long _getTestrayCaseResultId(
-			long testrayBuildId, long testrayCaseId,
+			Node testcaseNode, long testrayBuildId, long testrayCaseId,
 			Map<String, Object> testrayCasePropertiesMap,
-			long testrayComponentId, long testrayRunId,
-			Node testrayTestcaseNode)
+			long testrayComponentId, long testrayRunId)
 		throws Exception {
 
 		String dueStatus = String.valueOf(_TESTRAY_CASE_RESULT_STATUS_UNTESTED);
@@ -587,7 +587,7 @@ public class Main {
 			"r_runToCaseResult_c_runId", String.valueOf(testrayRunId)
 		).build();
 
-		Element element = (Element)testrayTestcaseNode;
+		Element element = (Element)testcaseNode;
 
 		NodeList nodeList = element.getElementsByTagName("failure");
 
