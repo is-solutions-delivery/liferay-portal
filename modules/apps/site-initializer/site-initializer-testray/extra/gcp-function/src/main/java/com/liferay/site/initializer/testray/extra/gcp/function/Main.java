@@ -518,12 +518,12 @@ public class Main {
 				NodeList warningsNodeList = propertyNode.getChildNodes();
 
 				for (int j = 0; j < warningsNodeList.getLength(); j++) {
-					Node warningdNode = warningsNodeList.item(j);
+					Node warningNode = warningsNodeList.item(j);
 
-					String warning = warningdNode.getTextContent();
+					String warning = warningNode.getTextContent();
 
 					if (!_isEmpty(warning)) {
-						warningsList.add(warningdNode.getTextContent());
+						warningsList.add(warningNode.getTextContent());
 					}
 				}
 
