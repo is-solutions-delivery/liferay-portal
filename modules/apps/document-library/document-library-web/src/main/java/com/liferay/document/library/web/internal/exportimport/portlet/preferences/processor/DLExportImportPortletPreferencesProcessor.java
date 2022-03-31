@@ -524,11 +524,11 @@ public class DLExportImportPortletPreferencesProcessor
 		}
 		catch (PortalException portalException) {
 			if (_log.isWarnEnabled()) {
-				String warnMessage = StringBundler.concat(
-					"Portlet ", portletDataContext.getPortletId(),
-					" refers to an invalid root folder ID ", folderId);
-
-				_log.warn(warnMessage, portalException);
+				_log.warn(
+					StringBundler.concat(
+						"Portlet ", portletDataContext.getPortletId(),
+						" refers to an invalid root folder ID ", folderId),
+					portalException);
 			}
 		}
 
