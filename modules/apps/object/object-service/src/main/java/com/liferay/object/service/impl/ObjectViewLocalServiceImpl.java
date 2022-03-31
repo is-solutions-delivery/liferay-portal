@@ -36,10 +36,11 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.vulcan.util.TransformUtil;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -290,7 +291,7 @@ public class ObjectViewLocalServiceImpl extends ObjectViewLocalServiceBaseImpl {
 			List<ObjectViewSortColumn> objectViewSortColumns)
 		throws ObjectViewSortColumnException {
 
-		List<String> objectFieldNames = new ArrayList<String>() {
+		Set<String> objectFieldNames = new HashSet<String>() {
 			{
 				add("creator");
 				add("dateCreated");
