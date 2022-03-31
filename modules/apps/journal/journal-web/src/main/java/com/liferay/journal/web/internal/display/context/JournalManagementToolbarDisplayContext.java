@@ -650,13 +650,13 @@ public class JournalManagementToolbarDisplayContext
 	private OrderByComparator<DDMStructure>
 		_getDDMStructureOrderByComparator() {
 
+		OrderByComparator<DDMStructure> orderByComparator = null;
+
 		boolean orderByAsc = false;
 
 		if (Objects.equals(_getDDMStructureOrderByType(), "asc")) {
 			orderByAsc = true;
 		}
-
-		OrderByComparator<DDMStructure> orderByComparator = null;
 
 		String orderByCol = _getDDMStructureOrderByCol();
 
