@@ -835,20 +835,22 @@ public class CPDefinitionIndexer extends BaseIndexer<CPDefinition> {
 							cpInstance.getCPInstanceUuid(),
 							CommercePriceListConstants.TYPE_PRICE_LIST);
 
-				if (commercePriceEntry != null) {
-					BigDecimal price = commercePriceEntry.getPrice();
+				if (commercePriceEntry == null) {
+					continue;
+				}
 
-					BigDecimal promoPrice = cpInstance.getPromoPrice();
+				BigDecimal price = commercePriceEntry.getPrice();
 
-					if ((promoPrice.compareTo(BigDecimal.ZERO) > 0) &&
-						CommerceBigDecimalUtil.lt(promoPrice, price)) {
+				BigDecimal promoPrice = cpInstance.getPromoPrice();
 
-						price = promoPrice;
-					}
+				if ((promoPrice.compareTo(BigDecimal.ZERO) > 0) &&
+					CommerceBigDecimalUtil.lt(promoPrice, price)) {
 
-					if (CommerceBigDecimalUtil.lt(price, lowestPrice)) {
-						lowestPrice = price;
-					}
+					price = promoPrice;
+				}
+
+				if (CommerceBigDecimalUtil.lt(price, lowestPrice)) {
+					lowestPrice = price;
 				}
 			}
 
