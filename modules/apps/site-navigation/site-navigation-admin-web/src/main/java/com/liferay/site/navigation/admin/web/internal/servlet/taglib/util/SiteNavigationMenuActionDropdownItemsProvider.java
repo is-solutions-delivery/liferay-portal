@@ -49,14 +49,12 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 		SiteNavigationMenu siteNavigationMenu) {
 
 		_hasEditPermission = hasEditPermission;
-
-		_httpServletRequest = PortalUtil.getHttpServletRequest(
-			liferayPortletRequest);
-
 		_liferayPortletResponse = liferayPortletResponse;
 		_primarySiteNavigationMenu = primarySiteNavigationMenu;
 		_siteNavigationMenu = siteNavigationMenu;
 
+		_httpServletRequest = PortalUtil.getHttpServletRequest(
+			liferayPortletRequest);
 		_themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
@@ -146,7 +144,6 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 					"siteNavigationMenuId",
 					_siteNavigationMenu.getSiteNavigationMenuId()
 				).buildString());
-
 			dropdownItem.setIcon("trash");
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "delete"));
@@ -168,7 +165,6 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 					"siteNavigationMenuId",
 					_siteNavigationMenu.getSiteNavigationMenuId()
 				).buildString());
-
 			dropdownItem.setIcon("pencil");
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "edit"));
@@ -240,7 +236,6 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 				).setParameter(
 					"type", SiteNavigationConstants.TYPE_PRIMARY
 				).buildString());
-
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "primary-navigation"));
 		};
@@ -261,13 +256,11 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 					"siteNavigationMenuId",
 					_siteNavigationMenu.getSiteNavigationMenuId()
 				).buildString());
-
 			dropdownItem.putData(
 				"idFieldValue",
 				String.valueOf(_siteNavigationMenu.getSiteNavigationMenuId()));
 			dropdownItem.putData(
 				"mainFieldValue", _siteNavigationMenu.getName());
-
 			dropdownItem.setIcon("textbox");
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "rename"));
@@ -285,7 +278,6 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 			}
 
 			dropdownItem.putData("action", "markAsSecondary");
-
 			dropdownItem.putData(
 				"markAsSecondaryURL",
 				PortletURLBuilder.createActionURL(
@@ -302,7 +294,6 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 				).setParameter(
 					"type", SiteNavigationConstants.TYPE_SECONDARY
 				).buildString());
-
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "secondary-navigation"));
 		};
@@ -319,7 +310,6 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 			}
 
 			dropdownItem.putData("action", "markAsSocial");
-
 			dropdownItem.putData(
 				"markAsSocialURL",
 				PortletURLBuilder.createActionURL(
@@ -336,7 +326,6 @@ public class SiteNavigationMenuActionDropdownItemsProvider {
 				).setParameter(
 					"type", SiteNavigationConstants.TYPE_SOCIAL
 				).buildString());
-
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "social-navigation"));
 		};
