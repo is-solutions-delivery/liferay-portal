@@ -23,6 +23,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.liferay.petra.http.invoker.HttpInvoker;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.petra.string.StringUtil;
 
 import java.io.File;
 import java.io.InputStream;
@@ -514,7 +515,9 @@ public class Main {
 
 			String propertyName = _getAttributeValue("name", propertyNode);
 
-			if (propertyName.equalsIgnoreCase("testray.testcase.warnings")) {
+			if (StringUtil.equalsIgnoreCase(
+					propertyName, "testray.testcase.warnings")) {
+
 				List<String> warningsList = new ArrayList<>();
 
 				NodeList warningsNodeList = propertyNode.getChildNodes();
