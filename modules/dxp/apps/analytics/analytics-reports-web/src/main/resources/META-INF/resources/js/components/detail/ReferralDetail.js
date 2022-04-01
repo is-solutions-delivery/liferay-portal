@@ -103,9 +103,9 @@ export default function ReferralDetail({
 			});
 
 			trafficSourcesDataProvider()
-				.then((trafficSources) =>
-					handleDetailPeriodChange(trafficSources, 'referral')
-				)
+				.then((trafficSources) => {
+					handleDetailPeriodChange(trafficSources, 'referral', true);
+				})
 				.catch(() => {
 					dispatch({type: 'ADD_WARNING'});
 				})

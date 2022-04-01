@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
@@ -156,6 +157,11 @@ public class ObjectViewResourceImpl extends BaseObjectViewResourceImpl {
 		com.liferay.object.model.ObjectViewColumn
 			serviceBuilderObjectViewColumn =
 				_objectViewColumnPersistence.create(0L);
+
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-149119"))) {
+			serviceBuilderObjectViewColumn.setLabelMap(
+				LocalizedMapUtil.getLocalizedMap(objectViewColumn.getLabel()));
+		}
 
 		serviceBuilderObjectViewColumn.setObjectFieldName(
 			objectViewColumn.getObjectFieldName());

@@ -67,10 +67,10 @@ public class BatchEngineImportTaskItemReaderUtil {
 			}
 
 			for (Field declaredField : itemClass.getDeclaredFields()) {
-				JsonAnySetter[] annotationsByType =
+				JsonAnySetter[] jsonAnySetters =
 					declaredField.getAnnotationsByType(JsonAnySetter.class);
 
-				if (annotationsByType.length > 0) {
+				if (jsonAnySetters.length > 0) {
 					field = declaredField;
 
 					break;

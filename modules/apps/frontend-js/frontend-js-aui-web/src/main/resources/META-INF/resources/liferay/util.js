@@ -33,8 +33,6 @@
 		},
 	};
 
-	var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
-
 	var SRC_HIDE_LINK = {
 		src: 'hideLink',
 	};
@@ -439,54 +437,6 @@
 			return Liferay.Util.sub(TPL_LEXICON_ICON, icon, cssClass || '');
 		},
 
-		getTop() {
-			var topWindow = Util._topWindow;
-
-			if (!topWindow) {
-				var parentWindow = window.parent;
-
-				var parentThemeDisplay;
-
-				while (parentWindow !== window) {
-					try {
-						if (typeof parentWindow.location.href === 'undefined') {
-							break;
-						}
-
-						parentThemeDisplay = parentWindow.themeDisplay;
-					}
-					catch (error) {
-						break;
-					}
-
-					if (
-						!parentThemeDisplay ||
-						window.name === 'simulationDeviceIframe'
-					) {
-						break;
-					}
-					else if (
-						!parentThemeDisplay.isStatePopUp() ||
-						parentWindow === parentWindow.parent
-					) {
-						topWindow = parentWindow;
-
-						break;
-					}
-
-					parentWindow = parentWindow.parent;
-				}
-
-				if (!topWindow) {
-					topWindow = window;
-				}
-
-				Util._topWindow = topWindow;
-			}
-
-			return topWindow;
-		},
-
 		getWindow(id) {
 			if (!id) {
 				id = Util.getWindowName();
@@ -835,21 +785,6 @@
 			}
 
 			return 0;
-		},
-
-		sub(string, data) {
-			if (
-				arguments.length > 2 ||
-				(typeof data !== 'object' && typeof data !== 'function')
-			) {
-				data = Array.prototype.slice.call(arguments, 1);
-			}
-
-			return string.replace
-				? string.replace(REGEX_SUB, (match, key) => {
-						return data[key] === undefined ? match : data[key];
-				  })
-				: string;
 		},
 
 		submitCountdown: 0,

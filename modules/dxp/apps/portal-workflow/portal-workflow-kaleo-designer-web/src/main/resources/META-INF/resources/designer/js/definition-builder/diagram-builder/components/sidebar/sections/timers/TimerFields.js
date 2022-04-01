@@ -11,67 +11,80 @@
 
 import {ClayInput} from '@clayui/form';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import SelectTimeScale from './TimerScale';
 
 const TimerFields = ({
-	index,
+	durationScaleValue,
+	durationValue,
 	recurrence,
 	scaleHelpText,
-	selectedItem,
-	updateSelectedItem,
+	setTimerSections,
+	timerIdentifier,
+	timersIndex,
 }) => {
 	const [timerScale, setTimerScale] = useState(
-		selectedItem?.data.taskTimers?.delay[index].scale[recurrence ? 1 : 0] ||
-			'second'
+		durationScaleValue || 'second'
 	);
-	const [timerValue, setTimerValue] = useState(
-		selectedItem?.data.taskTimers?.delay[index].duration[
-			recurrence ? 1 : 0
-		] || ''
-	);
+	const [timerValue, setTimerValue] = useState(durationValue || '');
 
-	const handleBlur = () => {
-		updateSelectedItem(
-			{
-				delay: {
-					duration: timerValue,
-					scale: timerScale,
-				},
-			},
-			{
-				delay: recurrence ? 1 : 0,
-			}
-		);
-	};
+	useEffect(() => {
+		if (timerScale && timerValue) {
+			setTimerSections((previousSections) => {
+				const updatedSectios = [...previousSections];
+				const section = previousSections.find(
+					({identifier}) => identifier === timerIdentifier
+				);
+				if (!recurrence) {
+					section.duration = timerValue;
+					section.durationScale = timerScale;
+				}
+				else {
+					section.recurrence = timerValue;
+					section.recurrenceScale = timerScale;
+				}
+
+				updatedSectios.splice(timersIndex, 1, section);
+
+				return updatedSectios;
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [timerIdentifier, timerScale, timersIndex, timerValue]);
 
 	return (
 		<div className="form-group-autofit timer-inputs">
 			<div className="form-group-item">
 				<label htmlFor="timerScale">
 					{Liferay.Language.get('scale')}
+
+					{!recurrence && (
+						<span className="ml-1 mr-1 text-warning">*</span>
+					)}
 				</label>
 
 				<SelectTimeScale
-					recurrence={recurrence}
 					setTimerScale={setTimerScale}
-					setTimerValue={setTimerValue}
 					timerScale={timerScale}
-					updateSelectedItem={updateSelectedItem}
 				/>
 
-				<div className="help-text">{scaleHelpText}</div>
+				{scaleHelpText && (
+					<div className="help-text">{scaleHelpText}</div>
+				)}
 			</div>
 
 			<div className="form-group-item">
 				<label htmlFor="timerValue">
 					{Liferay.Language.get('duration')}
+
+					{!recurrence && (
+						<span className="ml-1 mr-1 text-warning">*</span>
+					)}
 				</label>
 
 				<ClayInput
 					min="0"
-					onBlur={handleBlur}
 					onChange={({target}) => setTimerValue(target.value)}
 					step="1"
 					type="number"
@@ -83,10 +96,10 @@ const TimerFields = ({
 };
 
 TimerFields.propTypes = {
-	index: PropTypes.number,
 	recurrence: PropTypes.bool,
 	scaleHelpText: PropTypes.string,
 	selectedItem: PropTypes.object,
+	timersIndex: PropTypes.number,
 	updateSelectedItem: PropTypes.func,
 };
 

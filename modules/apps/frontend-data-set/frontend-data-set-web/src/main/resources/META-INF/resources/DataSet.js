@@ -25,9 +25,11 @@ import React, {
 } from 'react';
 
 import './styles/main.scss';
+
+import ClayEmptyState from '@clayui/empty-state';
+
 import {AppContext} from './AppContext';
 import DataSetContext from './DataSetContext';
-import EmptyResultMessage from './EmptyResultMessage';
 import {updateViewComponent} from './actions/updateViewComponent';
 import ManagementBar from './management_bar/ManagementBar';
 import Modal from './modal/Modal';
@@ -65,7 +67,7 @@ const DataSet = ({
 	id,
 	inlineAddingSettings,
 	inlineEditingSettings,
-	items: itemsProp,
+	items: itemsProp = [],
 	itemsActions,
 	namespace,
 	nestedItemsKey,
@@ -136,15 +138,7 @@ const DataSet = ({
 			delta,
 			pageNumber,
 			sorting
-		).catch((error) => {
-			logError(error);
-			openToast({
-				message: Liferay.Language.get('unexpected-error'),
-				type: 'danger',
-			});
-
-			throw error;
-		});
+		);
 	}, [apiURL, currentURL, delta, filters, pageNumber, searchParam, sorting]);
 
 	const requestComponent = useCallback(() => {
@@ -234,7 +228,7 @@ const DataSet = ({
 		setDataLoading(true);
 
 		return requestData()
-			.then((data) => {
+			.then(({data}) => {
 				if (successNotification?.showSuccessNotification) {
 					openToast({
 						message:
@@ -287,13 +281,29 @@ const DataSet = ({
 		setComponentLoading,
 	]);
 
+	const handleApiError = ({data, statusCode}) => {
+		const apiErrorMessage = `${data.status}, ${data.title}`;
+
+		logError(apiErrorMessage);
+
+		openToast({
+			message: apiErrorMessage,
+			title: `${Liferay.Language.get('error')} ${statusCode}`,
+			type: 'danger',
+		});
+	};
+
 	useEffect(() => {
 		setDataLoading(true);
 
-		requestData().then((data) => {
+		requestData().then(({data, ok, status: statusCode}) => {
 			if (isMounted()) {
-				updateDataSetItems(data);
-
+				if (!ok) {
+					handleApiError({data, statusCode});
+				}
+				else {
+					updateDataSetItems(data);
+				}
 				setDataLoading(false);
 			}
 		});
@@ -374,7 +384,13 @@ const DataSet = ({
 						{...currentViewProps}
 					/>
 				) : (
-					<EmptyResultMessage />
+					<ClayEmptyState
+						description={Liferay.Language.get(
+							'sorry,-no-results-were-found'
+						)}
+						imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
+						title={Liferay.Language.get('no-results-found')}
+					/>
 				)}
 			</div>
 		) : (
@@ -387,7 +403,7 @@ const DataSet = ({
 		formId || formName ? view : <form ref={formRef}>{view}</form>;
 
 	const paginationComponent =
-		showPagination && pagination && items?.length ? (
+		showPagination && pagination && items?.length && total ? (
 			<div className="data-set-pagination-wrapper">
 				<ClayPaginationBarWithBasicItems
 					activeDelta={delta}

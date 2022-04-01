@@ -96,7 +96,7 @@ const contents = {
 	},
 	'scripted-reassignment': {
 		backButton: (setContentName) => () => setContentName('timers'),
-		sections: ['timersSourceCode'],
+		sections: ['timerSourceCode'],
 		showDeleteButton: false,
 		title: Liferay.Language.get('scripted-reassignment'),
 	},
@@ -167,10 +167,10 @@ export default function Sidebar() {
 
 	useEffect(() => {
 		setBlockingErrors((prev) => {
-			if (errors.label === true || errors.id.empty === true) {
+			if (errors?.label === true || errors?.id?.empty === true) {
 				return {...prev, errorType: 'emptyField'};
 			}
-			if (errors.id.duplicated === true) {
+			if (errors?.id?.duplicated === true) {
 				return {...prev, errorType: 'duplicated'};
 			}
 			else {

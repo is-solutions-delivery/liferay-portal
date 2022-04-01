@@ -11,9 +11,7 @@
 
 import ClayForm, {ClaySelect} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import React from 'react';
-
-import SidebarPanel from '../../../SidebarPanel';
+import React, {useEffect} from 'react';
 
 const options = [
 	{
@@ -34,6 +32,7 @@ const options = [
 	},
 	{
 		assignmentType: 'roleType',
+		disabled: true,
 		label: Liferay.Language.get('role-type'),
 	},
 	{
@@ -42,46 +41,53 @@ const options = [
 	},
 ];
 
-const SelectReassignment = ({section, setSection, setSections}) => {
+const SelectReassignment = ({
+	currentAssignmentType,
+	setSection,
+	setSubSections,
+}) => {
+	useEffect(() => {
+		if (!currentAssignmentType) {
+			setSection('assetCreator');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
-		<SidebarPanel panelTitle={Liferay.Language.get('select-reassignment')}>
-			<ClayForm.Group>
-				<label htmlFor="reassignment-type">
-					{Liferay.Language.get('reassignment-type')}
+		<ClayForm.Group>
+			<label htmlFor="reassignment-type">
+				{Liferay.Language.get('reassignment-type')}
 
-					<span
-						className="ml-2"
-						title={Liferay.Language.get(
-							'select-the-reassignment-type'
-						)}
-					>
-						<ClayIcon
-							className="text-muted"
-							symbol="question-circle-full"
-						/>
-					</span>
-				</label>
-
-				<ClaySelect
-					aria-label="Select"
-					id="reassignment-type"
-					onChange={(event) => {
-						setSection(event.target.value);
-						setSections([{identifier: `${Date.now()}-0`}]);
-					}}
+				<span
+					className="ml-2"
+					title={Liferay.Language.get('select-the-reassignment-type')}
 				>
-					{options.map((item) => (
-						<ClaySelect.Option
-							disabled={item?.disabled}
-							key={item.assignmentType}
-							label={item.label}
-							selected={item.assignmentType === section}
-							value={item.assignmentType}
-						/>
-					))}
-				</ClaySelect>
-			</ClayForm.Group>
-		</SidebarPanel>
+					<ClayIcon
+						className="text-muted"
+						symbol="question-circle-full"
+					/>
+				</span>
+			</label>
+
+			<ClaySelect
+				aria-label="Select"
+				defaultValue={currentAssignmentType}
+				id="reassignment-type"
+				onChange={(event) => {
+					setSection(event.target.value);
+					setSubSections([{identifier: `${Date.now()}-0`}]);
+				}}
+			>
+				{options.map(({assignmentType, disabled, label}) => (
+					<ClaySelect.Option
+						disabled={disabled}
+						key={assignmentType}
+						label={label}
+						value={assignmentType}
+					/>
+				))}
+			</ClaySelect>
+		</ClayForm.Group>
 	);
 };
 

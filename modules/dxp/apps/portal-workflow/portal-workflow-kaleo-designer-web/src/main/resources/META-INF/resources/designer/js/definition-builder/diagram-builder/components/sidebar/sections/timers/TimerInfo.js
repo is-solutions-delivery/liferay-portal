@@ -9,41 +9,43 @@
  * distribution rights of the Software.
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
-import ClayLayout from '@clayui/layout';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import SidebarPanel from '../../SidebarPanel';
 
 const TimerInfo = ({
-	deleteTimer,
-	index,
-	sectionsLength,
-	selectedItem,
-	updateSelectedItem,
+	description,
+	name,
+	setTimerSections,
+	timerIdentifier,
+	timersIndex,
 }) => {
-	const [timerDescription, setTimerDescription] = useState(
-		selectedItem?.data.taskTimers?.description[index] || ''
-	);
-	const [timerName, setTimerName] = useState(
-		selectedItem?.data.taskTimers?.name[index] || ''
-	);
+	const [timerDescription, setTimerDescription] = useState(description || '');
+	const [timerName, setTimerName] = useState(name || '');
+
+	useEffect(() => {
+		if (timerDescription && timerName) {
+			setTimerSections((previousSections) => {
+				const updatedSectios = [...previousSections];
+				const section = previousSections.find(
+					({identifier}) => identifier === timerIdentifier
+				);
+
+				section.description = timerDescription;
+				section.name = timerName;
+
+				updatedSectios.splice(timersIndex, 1, section);
+
+				return updatedSectios;
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [timerDescription, timerIdentifier, timerName, timersIndex]);
 
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('information')}>
-			{sectionsLength > 1 && (
-				<ClayLayout.Row justify="end">
-					<ClayButtonWithIcon
-						className="delete-button text-secondary trash-button"
-						displayType="unstyled"
-						onClick={deleteTimer}
-						symbol="trash"
-					/>
-				</ClayLayout.Row>
-			)}
-
 			<ClayForm.Group>
 				<label htmlFor="timerName">
 					{Liferay.Language.get('name')}
@@ -51,9 +53,7 @@ const TimerInfo = ({
 
 				<ClayInput
 					id="timerName"
-					onBlur={({target}) =>
-						updateSelectedItem({name: target.value})
-					}
+					onBlur={({target}) => setTimerName(target.value)}
 					onChange={({target}) => setTimerName(target.value)}
 					placeholder={Liferay.Language.get('my-task-timer')}
 					type="text"
@@ -69,9 +69,7 @@ const TimerInfo = ({
 				<ClayInput
 					component="textarea"
 					id="timerDescription"
-					onBlur={({target}) =>
-						updateSelectedItem({description: target.value})
-					}
+					onBlur={({target}) => setTimerDescription(target.value)}
 					onChange={({target}) => setTimerDescription(target.value)}
 					type="text"
 					value={timerDescription}
@@ -82,11 +80,10 @@ const TimerInfo = ({
 };
 
 TimerInfo.propTypes = {
-	deleteTimer: PropTypes.func,
-	index: PropTypes.number,
-	sectionsLength: PropTypes.number,
-	selectedItem: PropTypes.object,
-	updateSelectedItem: PropTypes.func,
+	selectedItem: PropTypes.object.isRequired,
+	setTimerSections: PropTypes.func.isRequired,
+	timerIdentifier: PropTypes.string.isRequired,
+	timersIndex: PropTypes.number.isRequired,
 };
 
 export default TimerInfo;

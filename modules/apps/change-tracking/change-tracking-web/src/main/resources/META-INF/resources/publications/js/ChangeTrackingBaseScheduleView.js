@@ -13,7 +13,6 @@
  */
 
 import {fetch} from 'frontend-js-web';
-import moment from 'moment';
 import React from 'react';
 
 class ChangeTrackingBaseScheduleView extends React.Component {
@@ -53,6 +52,18 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 		}
 
 		if (errorSet) {
+			return;
+		}
+
+		const date = this.getJSDate(this.state.date, this.state.time);
+
+		if (Number.isNaN(date.getTime())) {
+			this.setState({
+				validationError: Liferay.Language.get(
+					'please-enter-a-valid-date'
+				),
+			});
+
 			return;
 		}
 
@@ -130,32 +141,69 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 		return '';
 	}
 
-	getPublishDate(date, time) {
+	getJSDate(date, time) {
 		if (typeof date === 'string') {
+			const split = date.split('-');
+
+			if (split.length === 3) {
+				return new Date(
+					split[0] +
+						'-' +
+						this.pad(split[1]) +
+						'-' +
+						this.pad(split[2]) +
+						'T' +
+						time.hours +
+						':' +
+						time.minutes +
+						':00'
+				);
+			}
+
 			return new Date(
-				date +
-					' ' +
-					time.hours +
-					':' +
-					time.minutes +
-					':00 ' +
-					this.timeZone
+				date + 'T' + time.hours + ':' + time.minutes + ':00'
 			);
 		}
 
 		return new Date(
 			date.getFullYear() +
 				'-' +
-				(date.getMonth() + 1) +
+				this.pad(date.getMonth() + 1) +
 				'-' +
-				date.getDate() +
-				' ' +
+				this.pad(date.getDate()) +
+				'T' +
 				time.hours +
 				':' +
 				time.minutes +
-				':00 ' +
-				this.timeZone
+				':00'
 		);
+	}
+
+	getPublishDate(date, time) {
+		let publishDate = this.getJSDate(date, time);
+
+		publishDate = new Date(
+			Date.UTC(
+				publishDate.getFullYear(),
+				publishDate.getMonth(),
+				publishDate.getDate(),
+				publishDate.getHours(),
+				publishDate.getMinutes()
+			)
+		);
+
+		const tzDate = new Date(
+			publishDate.toLocaleString('en-US', {timeZone: this.timeZone})
+		);
+		const utcDate = new Date(
+			publishDate.toLocaleString('en-US', {timeZone: 'UTC'})
+		);
+
+		const offset = utcDate.getTime() - tzDate.getTime();
+
+		publishDate.setTime(publishDate.getTime() + offset);
+
+		return publishDate;
 	}
 
 	getTimeClassName() {
@@ -252,11 +300,25 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 
 		date = date.trim();
 
-		if (date.match(datePattern) && moment(date).isValid()) {
-			return true;
+		if (!date.match(datePattern)) {
+			return false;
 		}
 
-		return false;
+		const split = date.split('-');
+
+		if (split.length !== 3) {
+			return false;
+		}
+
+		const jsDate = new Date(
+			split[0] + '-' + this.pad(split[1]) + '-' + this.pad(split[2])
+		);
+
+		if (Number.isNaN(jsDate.getTime())) {
+			return false;
+		}
+
+		return true;
 	}
 
 	isValidTime(time) {
@@ -265,6 +327,20 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 		}
 
 		return false;
+	}
+
+	pad(value) {
+		let number = value;
+
+		if (typeof value === 'string') {
+			number = parseInt(value, 10);
+		}
+
+		if (number < 10) {
+			return '0' + number;
+		}
+
+		return number.toString();
 	}
 }
 

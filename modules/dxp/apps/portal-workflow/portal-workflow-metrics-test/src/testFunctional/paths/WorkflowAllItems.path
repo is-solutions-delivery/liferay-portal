@@ -86,6 +86,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>KEBAB_MENU_OPTIONS</td>
+	<td>//div[@class='dropdown-menu show']//button[@class='dropdown-item'][contains(text(),'${key_menuOption}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TRANSITION_DROPDOWN</td>
 	<td>//div[@class='dropdown-menu show']//button[@class='dropdown-item'][contains(text(),'Transition')]</td>
 	<td></td>
@@ -481,6 +486,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>TRACK_APPROVAL_CURRENT_NODE_LINK</td>
+	<td>//div[contains(@class,'current-node')]//a[@class='current-node-link']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TRACK_APPROVAL_REACT_CONTROLS</td>
 	<td>//div[contains(@class,'react-flow__controls')]</td>
 	<td></td>
@@ -493,6 +503,16 @@
 <tr>
 	<td>TRACK_APPROVAL_BODY</td>
 	<td>//div[contains(@class, 'modal-title') and contains(.,'Track Workflow')]//..//..//div[contains(@class,'modal-body')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CURRENT_NODE_CIRCLE_ICON</td>
+	<td>//div[contains(@class, 'current-task') and contains(@title,'${key_currentNode}')]//*[name()='svg'][contains(@class,'lexicon-icon')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TRANSITION_NAME_HOVER</td>
+	<td>//*[contains(@class, 'react-flow__edge react-flow__edge-transition')]//..//*[contains(text(),'${nameOverTransition}')]</td>
 	<td></td>
 </tr>
 </tbody>

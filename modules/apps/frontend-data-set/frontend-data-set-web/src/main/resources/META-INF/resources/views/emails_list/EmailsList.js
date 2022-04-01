@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayEmptyState from '@clayui/empty-state';
 import ClayLabel from '@clayui/label';
 import ClayList from '@clayui/list';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
@@ -20,7 +21,6 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useContext} from 'react';
 
-import EmptyResultMessage from '../../EmptyResultMessage';
 import ActionsDropdownRenderer from '../../data_renderers/ActionsDropdownRenderer';
 
 function Email({
@@ -153,7 +153,15 @@ function EmailsList({dataLoading, dataSetContext, items}) {
 	}
 
 	if (!items?.length) {
-		return <EmptyResultMessage />;
+		return (
+			<ClayEmptyState
+				description={Liferay.Language.get(
+					'sorry,-no-results-were-found'
+				)}
+				imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
+				title={Liferay.Language.get('no-results-found')}
+			/>
+		);
 	}
 
 	return (

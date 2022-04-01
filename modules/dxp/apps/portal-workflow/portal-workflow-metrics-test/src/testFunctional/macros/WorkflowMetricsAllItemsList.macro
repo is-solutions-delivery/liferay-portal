@@ -46,10 +46,50 @@ definition {
 			locator1 = "WorkflowAllItems#TOOLTIP_MESSAGE");
 	}
 
+	macro goToTrackWorkflowlink {
+		Click(locator1 = "WorkflowMetricsAllItemsList#TRACK_WORKFLOW_LINK");
+	}
+
 	macro orderByCreationDateAsc {
 		Click(locator1 = "WorkflowAllItems#WORKFLOW_ALL_ITEMS_CREATION_DATE");
 
 		Click(locator1 = "WorkflowAllItems#WORKFLOW_ALL_ITEMS_CREATION_DATE");
+	}
+
+	macro selectAndChangeNodeName {
+		KaleoDesigner.selectNode(nodeNodeLabel = "${nodeNodeLabel}");
+
+		KaleoDesigner.editNodeName(nodeName = "${nodeName}");
+
+		if (isSet(update)) {
+			Button.click(button = "Update");
+		}
+	}
+
+	macro selectSingleApproverWorkflow {
+		Click(
+			key_workflowDefinitionTitle = "${key_workflowDefinitionTitle}",
+			locator1 = "WorkflowDefinition#DEFINITION_TABLE_SPECIFIC_DEFINITION_ELLIPSIS");
+
+		MenuItem.clickNoError(menuItem = "${menuItem}");
+	}
+
+	macro viewDetailsModal {
+		Click(locator1 = "WorkflowAllItems#WORKFLOW_INSTANCE_ID");
+
+		AssertElementPresent(locator1 = "WorkflowDefinition#DIALOG_BOX_BODY");
+	}
+
+	macro viewNodesDisplayed {
+		for (var nodesTrackWorkflow : list "${nodesTrackWorkflow}") {
+			AssertTextEquals(
+				locator1 = "WorkflowMetricsAllItemsList#NODES_MODAL_TRACK_WORKFLOW",
+				value1 = "${nodesTrackWorkflow}");
+		}
+	}
+
+	macro viewTrackWorkflowLink {
+		AssertElementPresent(locator1 = "WorkflowMetricsAllItemsList#TRACK_WORKFLOW_LINK");
 	}
 
 }

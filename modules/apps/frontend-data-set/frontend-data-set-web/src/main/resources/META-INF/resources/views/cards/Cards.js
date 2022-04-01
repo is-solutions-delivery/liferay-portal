@@ -13,12 +13,12 @@
  */
 
 import {ClayCardWithInfo} from '@clayui/card';
+import ClayEmptyState from '@clayui/empty-state';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useContext} from 'react';
 
-import EmptyResultMessage from '../../EmptyResultMessage';
 import {
 	handleAction,
 	isLink,
@@ -42,7 +42,15 @@ function Cards({dataLoading, dataSetContext, items, schema}) {
 	}
 
 	if (!items?.length) {
-		return <EmptyResultMessage />;
+		return (
+			<ClayEmptyState
+				description={Liferay.Language.get(
+					'sorry,-no-results-were-found'
+				)}
+				imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
+				title={Liferay.Language.get('no-results-found')}
+			/>
+		);
 	}
 
 	return (

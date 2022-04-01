@@ -50,11 +50,6 @@
 	<td>//button[contains(@class, 'nav-link') and contains(text(), "${key_navTabName}")]</td>
 	<td></td>
 </tr>
-<tr>
-	<td>MANAGE_SIDEBAR</td>
-	<td>//div[contains(@class, 'dropdown-toggle') and contains(., 'Manage')]</td>
-	<td></td>
-</tr>
 </tbody>
 </table>
 </body>

@@ -14,6 +14,7 @@
 
 import {
 	isValidEvent,
+	validateAttributeType,
 	validateEmptyString,
 	validateIsString,
 	validateMaxLength,
@@ -129,6 +130,44 @@ describe('isValidEvent()', () => {
 
 		expect(isValidEvent(event)).toBe(false);
 		expect(console.error).toBeCalledTimes(2);
+	});
+});
+
+describe('validateAttributeType()', () => {
+	it('returns nothing when attribute is a string', () => {
+		const errorMsg = validateAttributeType('testLabel');
+
+		expect(errorMsg).toBeFalsy();
+	});
+
+	it('returns nothing when attribute is a number', () => {
+		const errorMsg = validateAttributeType(123);
+
+		expect(errorMsg).toBeFalsy();
+	});
+
+	it('returns nothing when attribute is a boolean', () => {
+		const errorMsg = validateAttributeType(false);
+
+		expect(errorMsg).toBeFalsy();
+	});
+
+	it('returns an error msg when attribute is an object', () => {
+		const errorMsg = validateAttributeType({test: 'test'});
+
+		expect(errorMsg).toBeTruthy();
+	});
+
+	it('returns an error msg when attribute is an array', () => {
+		const errorMsg = validateAttributeType([1, 2, 3]);
+
+		expect(errorMsg).toBeTruthy();
+	});
+
+	it('returns an error msg when attribute is a function', () => {
+		const errorMsg = validateAttributeType(() => {});
+
+		expect(errorMsg).toBeTruthy();
 	});
 });
 

@@ -29,7 +29,28 @@ const ActionsInfo = ({
 	const {selectedItem, setSelectedItem} = useContext(DiagramBuilderContext);
 	const {actions} = selectedItem.data;
 
-	const [template] = useState(actions?.script?.[index]);
+	const [script, setScript] = useState(actions?.script?.[index] || '');
+
+	const [description, setDescription] = useState(
+		actions?.description?.[index] || ''
+	);
+
+	const [executionTypeOptions, setExecutionTypeOptions] = useState([
+		{
+			label: Liferay.Language.get('on-entry'),
+			value: 'onEntry',
+		},
+		{
+			label: Liferay.Language.get('on-exit'),
+			value: 'onExit',
+		},
+	]);
+
+	const [executionType, setExecutionType] = useState(
+		actions?.executionType?.[index] ?? executionTypeOptions[0].value
+	);
+	const [name, setName] = useState(actions?.name?.[index] || '');
+	const [priority, setPriority] = useState(actions?.priority?.[index] || 1);
 
 	const deleteSection = () => {
 		setSections((prevSections) => {
@@ -44,7 +65,7 @@ const ActionsInfo = ({
 	};
 
 	const updateActionInfo = (item) => {
-		if (item.name && item.template && item.executionType) {
+		if (item.name && item.script && item.executionType) {
 			setSections((prev) => {
 				prev[index] = {
 					...prev[index],
@@ -70,7 +91,7 @@ const ActionsInfo = ({
 					),
 					name: values.map(({name}) => name),
 					priority: values.map(({priority}) => priority),
-					script: values.map(({template}) => template),
+					script: values.map(({script}) => script),
 					sectionsData: values.map((values) => values),
 				},
 			},
@@ -80,19 +101,32 @@ const ActionsInfo = ({
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('information')}>
 			<BaseActionsInfo
+				description={description}
+				executionType={executionType}
 				executionTypeInput={executionTypeInput}
+				executionTypeOptions={executionTypeOptions}
 				index={index}
+				name={name}
 				placeholderName={Liferay.Language.get('my-action')}
-				placeholderTemplate="${userName} sent you a ${entryType} for review in the workflow."
-				templateLabel={Liferay.Language.get('template')}
-				templateLabelSecondary={Liferay.Language.get('groovy')}
+				placeholderScript="${userName} sent you a ${entryType} for review in the workflow."
+				priority={priority}
+				script={script}
+				scriptLabel={Liferay.Language.get('script')}
+				scriptLabelSecondary={Liferay.Language.get('groovy')}
+				selectedItem={selectedItem}
+				setDescription={setDescription}
+				setExecutionType={setExecutionType}
+				setExecutionTypeOptions={setExecutionTypeOptions}
+				setName={setName}
+				setPriority={setPriority}
+				setScript={setScript}
 				updateActionInfo={updateActionInfo}
 			/>
 
 			<div className="section-buttons-area">
 				<ClayButton
 					className="mr-3"
-					disabled={actions?.name === '' || template === ''}
+					disabled={actions?.name === '' || script === ''}
 					displayType="secondary"
 					onClick={() =>
 						setSections((prev) => {
@@ -120,7 +154,11 @@ const ActionsInfo = ({
 };
 
 ActionsInfo.propTypes = {
-	setContentName: PropTypes.func.isRequired,
+	executionTypeInput: PropTypes.func.isRequired,
+	identifier: PropTypes.string.isRequired,
+	index: PropTypes.number.isRequired,
+	sectionsLength: PropTypes.number.isRequired,
+	setSections: PropTypes.func.isRequired,
 };
 
 export default ActionsInfo;

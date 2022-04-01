@@ -41,6 +41,8 @@ BatchPlannerLogDisplay batchPlannerLogDisplay = (BatchPlannerLogDisplay)resultRo
 				HashMapBuilder.<String, Object>put(
 					"batchEngineImportTaskId", batchPlannerLogDisplay.getBatchEngineImportTaskERC()
 				).put(
+					"HTMLElementId", liferayPortletResponse.getNamespace() + "downloadErrorReport" + batchPlannerLogDisplay.getBatchEngineImportTaskERC()
+				).put(
 					"type", "errorReport"
 				).build()
 			%>'
@@ -59,6 +61,8 @@ BatchPlannerLogDisplay batchPlannerLogDisplay = (BatchPlannerLogDisplay)resultRo
 			context='<%=
 				HashMapBuilder.<String, Object>put(
 					"batchEngineImportTaskId", batchPlannerLogDisplay.getBatchEngineImportTaskERC()
+				).put(
+					"HTMLElementId", liferayPortletResponse.getNamespace() + "downloadImportFile" + batchPlannerLogDisplay.getBatchEngineImportTaskERC()
 				).put(
 					"type", "importFile"
 				).build()

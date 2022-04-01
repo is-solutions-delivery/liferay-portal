@@ -13,21 +13,10 @@
  */
 
 import React from 'react';
-export default function Input({
-	className,
-	component,
-	disabled,
-	error,
-	feedbackMessage,
-	id,
-	label,
-	name,
-	onChange,
-	required,
-	type,
-	value,
-	...otherProps
-}: IProps): JSX.Element;
+declare const Input: React.ForwardRefExoticComponent<
+	IProps & React.RefAttributes<HTMLInputElement>
+>;
+export default Input;
 interface IProps
 	extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
 	component?: 'input' | 'textarea' | React.ForwardRefExoticComponent<any>;
@@ -36,9 +25,8 @@ interface IProps
 	feedbackMessage?: string;
 	id?: string;
 	label: string;
-	name: string;
+	name?: string;
 	required?: boolean;
 	type?: 'number' | 'text';
 	value?: string | number | string[];
 }
-export {};

@@ -16,23 +16,32 @@ import React, {useContext, useEffect, useState} from 'react';
 import {DiagramBuilderContext} from '../../../../../DiagramBuilderContext';
 import SidebarPanel from '../../../SidebarPanel';
 
-const ResourceActions = ({updateSelectedItem}) => {
+const ResourceActions = ({
+	actionData,
+	actionSectionsIndex,
+	setActionSections,
+}) => {
 	const {selectedItem} = useContext(DiagramBuilderContext);
 	const [resourceActions, setResourceActions] = useState('');
 
 	const onChange = ({target: {value}}) => {
-		updateSelectedItem({
-			reassignments: {
-				assignmentType: ['resourceActions'],
-				resourceAction: value,
-			},
-		});
+		setActionSections((currentSections) => {
+			const updatedSections = [...currentSections];
 
+			updatedSections[actionSectionsIndex].assignmentType =
+				'resourceActions';
+			updatedSections[actionSectionsIndex].resourceAction = value;
+
+			return updatedSections;
+		});
 		setResourceActions(value);
 	};
 
 	useEffect(() => {
 		setResourceActions(selectedItem.data.assignments?.resourceAction || '');
+		if (actionData.resourceAction) {
+			setResourceActions(actionData.resourceAction);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

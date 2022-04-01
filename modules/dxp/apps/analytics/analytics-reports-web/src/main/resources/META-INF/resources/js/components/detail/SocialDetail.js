@@ -126,7 +126,7 @@ export default function SocialDetail({
 
 			trafficSourcesDataProvider()
 				.then((trafficSources) => {
-					handleDetailPeriodChange(trafficSources, 'social');
+					handleDetailPeriodChange(trafficSources, 'social', true);
 				})
 				.catch(() => {
 					dispatch({type: 'ADD_WARNING'});

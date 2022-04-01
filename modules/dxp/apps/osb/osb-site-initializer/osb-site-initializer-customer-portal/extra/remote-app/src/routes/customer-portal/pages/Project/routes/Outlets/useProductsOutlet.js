@@ -9,10 +9,11 @@
  * distribution rights of the Software.
  */
 
-import {useOutletContext, useParams} from 'react-router-dom';
+import {Navigate, useOutletContext, useParams} from 'react-router-dom';
 
 const ProductsOutlet = () => {
-	const {productId} = useParams();
+	const {accountKey, productId} = useParams();
+
 	const {
 		activationComponents,
 		hasAccessToCurrentProduct,
@@ -21,7 +22,7 @@ const ProductsOutlet = () => {
 	const currentProduct = activationComponents[productId];
 
 	if (!currentProduct || !hasAccessToCurrentProduct) {
-		return <h3>Page not found</h3>;
+		return <Navigate replace={true} to={`/${accountKey}`} />;
 	}
 
 	return currentProduct;

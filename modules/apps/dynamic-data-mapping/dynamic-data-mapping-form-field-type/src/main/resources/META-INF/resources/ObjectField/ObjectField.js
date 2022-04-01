@@ -79,7 +79,11 @@ const ObjectField = ({
 				) {
 					return false;
 				}
-				else if (focusedFieldType === 'text' && type === 'Clob') {
+				else if (
+					(focusedFieldType === 'rich_text' ||
+						focusedFieldType === 'text') &&
+					type === 'Clob'
+				) {
 					return true;
 				}
 				else if (relationshipType) {

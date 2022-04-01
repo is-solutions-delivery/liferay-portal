@@ -172,7 +172,7 @@ const SlaCard = ({project}) => {
 				</div>
 			) : (
 				<div className="bg-neutral-1 cp-n-sla-card rounded-lg">
-					<p className="p-3 text-neutral-7 text-paragraph-sm">
+					<p className="px-3 py-2 text-neutral-7 text-paragraph-sm">
 						The project&apos;s Support Level is displayed here for
 						projects with ticketing support.
 					</p>

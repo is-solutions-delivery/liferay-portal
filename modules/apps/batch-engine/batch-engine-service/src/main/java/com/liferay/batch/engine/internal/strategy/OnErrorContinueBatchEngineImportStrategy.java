@@ -14,6 +14,7 @@
 
 package com.liferay.batch.engine.internal.strategy;
 
+import com.liferay.batch.engine.internal.util.ItemIndexThreadLocal;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -27,12 +28,10 @@ public class OnErrorContinueBatchEngineImportStrategy
 	extends BaseBatchEngineImportStrategy {
 
 	public OnErrorContinueBatchEngineImportStrategy(
-		long batchEngineImportTaskId, long companyId, int processedItemsCount,
-		long userId) {
+		long batchEngineImportTaskId, long companyId, long userId) {
 
 		_batchEngineImportTaskId = batchEngineImportTaskId;
 		_companyId = companyId;
-		_processedItemsCount = processedItemsCount;
 		_userId = userId;
 	}
 
@@ -42,12 +41,8 @@ public class OnErrorContinueBatchEngineImportStrategy
 			UnsafeConsumer<T, Exception> unsafeConsumer)
 		throws Exception {
 
-		int index = 0;
-
 		for (T item : collection) {
 			try {
-				index++;
-
 				unsafeConsumer.accept(item);
 			}
 			catch (Exception exception) {
@@ -57,7 +52,7 @@ public class OnErrorContinueBatchEngineImportStrategy
 
 				addBatchEngineImportTaskError(
 					_companyId, _userId, _batchEngineImportTaskId,
-					item.toString(), _processedItemsCount + index,
+					item.toString(), ItemIndexThreadLocal.get(item),
 					exception.getMessage());
 			}
 		}
@@ -68,7 +63,6 @@ public class OnErrorContinueBatchEngineImportStrategy
 
 	private final long _batchEngineImportTaskId;
 	private final long _companyId;
-	private final int _processedItemsCount;
 	private final long _userId;
 
 }

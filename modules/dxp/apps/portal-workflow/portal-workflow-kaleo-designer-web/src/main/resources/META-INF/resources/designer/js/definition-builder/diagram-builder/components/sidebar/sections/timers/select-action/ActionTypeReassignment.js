@@ -9,9 +9,9 @@
  * distribution rights of the Software.
  */
 
-import React, {useContext, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
-import {DiagramBuilderContext} from '../../../../../DiagramBuilderContext';
+import {retrieveUsersBy} from '../../../../../../util/fetchUtil';
 import AssetCreator from '../select-reassignment/AssetCreator';
 import ResourceActions from '../select-reassignment/ResourceActions';
 import Role from '../select-reassignment/Role';
@@ -29,36 +29,113 @@ const assignmentSectionComponents = {
 	user: User,
 };
 
-const ActionTypeReassignment = (props) => {
-	const {selectedItem} = useContext(DiagramBuilderContext);
-	const assignmentType = selectedItem?.data?.assignments;
-	const [section, setSection] = useState(assignmentType || 'assetCreator');
-	const [sections, setSections] = useState([{identifier: `${Date.now()}-0`}]);
-	const ReassignmentSectionComponent = assignmentSectionComponents[section];
+const ActionTypeReassignment = ({
+	actionData,
+	actionSectionsIndex,
+	identifier,
+	sectionsLength,
+	setActionSections,
+	setContentName,
+	setErrors,
+}) => {
+	const reassignmentType = actionData.assignmentType;
+	const [subSections, setSubSections] = useState(
+		actionData?.users?.length &&
+			actionData.users.some(({emailAddress}) => emailAddress)
+			? actionData.users
+			: [{identifier: `${Date.now()}-0`}]
+	);
+
+	useEffect(() => {
+		if (reassignmentType === 'user') {
+			setActionSections((currentSections) => {
+				const updatedSections = [...currentSections];
+
+				updatedSections[actionSectionsIndex].assignmentType = 'user';
+				updatedSections[actionSectionsIndex].users = subSections;
+
+				return updatedSections;
+			});
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [subSections]);
+
+	useEffect(() => {
+		if (
+			actionData?.users?.length &&
+			actionData.users.some(({emailAddress}) => emailAddress)
+		) {
+			const retrievedUsers = [];
+			retrieveUsersBy(
+				'emailAddress',
+				actionData.users.map(({emailAddress}) => emailAddress)
+			)
+				.then((response) => response.json())
+				.then(({items}) => {
+					items.forEach((item, index) => {
+						retrievedUsers.push({
+							emailAddress: item.emailAddress,
+							identifier: `${Date.now()}-${index}`,
+							name: item.name,
+							screenName: item.alternateName,
+							userId: item.id,
+						});
+					});
+				})
+				.then(() => {
+					setSubSections(retrievedUsers);
+				});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const updateReassignmentType = (value) => {
+		setActionSections((currentSections) => {
+			const updatedSections = [...currentSections];
+
+			updatedSections[actionSectionsIndex].assignmentType = value;
+
+			return updatedSections;
+		});
+	};
+
+	const ReassignmentSectionComponent =
+		assignmentSectionComponents[reassignmentType];
 
 	return (
 		<>
 			<SelectReassignment
-				section={section}
-				setSection={setSection}
-				setSections={setSections}
+				currentAssignmentType={reassignmentType}
+				setSection={updateReassignmentType}
+				setSubSections={setSubSections}
 			/>
 
-			{sections.map(({identifier, ...restProps}, index) => {
-				return (
-					ReassignmentSectionComponent && (
-						<ReassignmentSectionComponent
-							{...props}
-							{...restProps}
-							identifier={identifier}
-							index={index}
-							key={`section-${identifier}`}
-							sectionsLength={sections?.length}
-							setSections={setSections}
-						/>
-					)
-				);
-			})}
+			{subSections.map(
+				({identifier: subSectionIdentifier, ...restProps}, index) => {
+					return (
+						ReassignmentSectionComponent && (
+							<ReassignmentSectionComponent
+								actionData={actionData}
+								actionSectionsIndex={actionSectionsIndex}
+								currentAssignmentType={reassignmentType}
+								identifier={identifier}
+								index={index}
+								key={`section-${subSectionIdentifier}`}
+								reassignmentType={reassignmentType}
+								restProps={restProps}
+								sectionsLength={sectionsLength}
+								setActionSections={setActionSections}
+								setContentName={setContentName}
+								setErrors={setErrors}
+								setSections={setSubSections}
+								subSectionIdentifier={subSectionIdentifier}
+								subSectionsLength={subSections.length}
+							/>
+						)
+					);
+				}
+			)}
 		</>
 	);
 };

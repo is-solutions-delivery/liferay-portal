@@ -9,66 +9,92 @@
  * distribution rights of the Software.
  */
 
-import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
-import React, {useState} from 'react';
+// import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 
+import PropTypes from 'prop-types';
+import React, {useContext, useState} from 'react';
+
+import {DiagramBuilderContext} from '../../../../../DiagramBuilderContext';
 import BaseActionsInfo from '../../shared-components/BaseActionsInfo';
 
-const ActionTypeAction = () => {
-	const [scriptSections, setScriptSections] = useState([
-		{identifier: `${Date.now()}-0`},
+const ActionTypeAction = ({
+	actionData,
+	actionSectionsIndex,
+	actionType,
+	executionTypeInput = () => {
+		'';
+	},
+	setActionSections,
+}) => {
+	const {selectedItem} = useContext(DiagramBuilderContext);
+	const validActionData =
+		actionData.actionType === 'timerActions' ? actionData : null;
+	const [script, setScript] = useState(validActionData?.script || '');
+	const [description, setDescription] = useState(
+		validActionData?.description || ''
+	);
+	const [executionTypeOptions, setExecutionTypeOptions] = useState([
+		{
+			label: Liferay.Language.get('on-entry'),
+			value: 'onEntry',
+		},
+		{
+			label: Liferay.Language.get('on-exit'),
+			value: 'onExit',
+		},
 	]);
+	const [executionType, setExecutionType] = useState(
+		validActionData?.executionType ?? executionTypeOptions[0].value
+	);
+	const [name, setName] = useState(validActionData?.name || '');
+	const [priority, setPriority] = useState(validActionData?.priority || 1);
 
-	const deleteSection = (identifier) => {
-		setScriptSections((prevSections) => {
-			const newSections = prevSections.filter(
-				(prevSection) => prevSection.identifier !== identifier
-			);
+	const updateActionInfo = (item) => {
+		if (item.name && item.script && item.executionType) {
+			setActionSections((previousSections) => {
+				const updatedSections = [...previousSections];
 
-			return newSections;
-		});
+				updatedSections[actionSectionsIndex] = {
+					...previousSections[actionSectionsIndex],
+					...item,
+					actionType,
+				};
+
+				return updatedSections;
+			});
+		}
 	};
 
-	return scriptSections.map(({identifier}) => {
-		return (
-			<div key={`section-${identifier}`}>
-				<BaseActionsInfo
-					templateLabel={Liferay.Language.get('script')}
-					templateLabelSecondary={Liferay.Language.get('groovy')}
-				/>
+	return (
+		<BaseActionsInfo
+			description={description}
+			executionType={executionType}
+			executionTypeInput={executionTypeInput}
+			executionTypeOptions={executionTypeOptions}
+			name={name}
+			placeholderName={Liferay.Language.get('my-action')}
+			placeholderScript="${userName} sent you a ${entryType} for review in the workflow."
+			priority={priority}
+			script={script}
+			scriptLabel={Liferay.Language.get('script')}
+			scriptLabelSecondary={Liferay.Language.get('groovy')}
+			selectedItem={selectedItem}
+			setDescription={setDescription}
+			setExecutionType={setExecutionType}
+			setExecutionTypeOptions={setExecutionTypeOptions}
+			setName={setName}
+			setPriority={setPriority}
+			setScript={setScript}
+			updateActionInfo={updateActionInfo}
+		/>
+	);
+};
 
-				<div className="section-buttons-area">
-					<ClayButton
-						className="mr-3"
-						displayType="secondary"
-						onClick={() =>
-							setScriptSections((prev) => {
-								return [
-									...prev,
-									{
-										identifier: `${Date.now()}-${
-											prev.length
-										}`,
-									},
-								];
-							})
-						}
-					>
-						{Liferay.Language.get('new-section')}
-					</ClayButton>
-
-					{scriptSections.length > 1 && (
-						<ClayButtonWithIcon
-							className="delete-button"
-							displayType="unstyled"
-							onClick={() => deleteSection(identifier)}
-							symbol="trash"
-						/>
-					)}
-				</div>
-			</div>
-		);
-	});
+ActionTypeAction.propTypes = {
+	actionSectionsIndex: PropTypes.number.isRequired,
+	actionSubSectionsIndex: PropTypes.number.isRequired,
+	timersIndex: PropTypes.number.isRequired,
+	updateSelectedItem: PropTypes.func.isRequired,
 };
 
 export default ActionTypeAction;

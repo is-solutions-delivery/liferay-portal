@@ -9,36 +9,52 @@
  * distribution rights of the Software.
  */
 
-import React, {useContext} from 'react';
+import React, {useEffect} from 'react';
 
-import {DiagramBuilderContext} from '../../../../../DiagramBuilderContext';
+import {retrieveRolesBy} from '../../../../../../util/fetchUtil';
 import SidebarPanel from '../../../SidebarPanel';
 import BaseRole from '../../shared-components/BaseRole';
 
-const Role = ({updateSelectedItem}) => {
-	const {selectedItem} = useContext(DiagramBuilderContext);
-
+const Role = ({actionData, actionSectionsIndex, setActionSections}) => {
 	const updateRole = (role) => {
-		updateSelectedItem({
-			reassignments: {
-				assignmentType: ['roleId'],
-				roleId: role.id,
-				sectionsData: {
-					id: role.id,
-					name: role.name,
-					roleType: role.roleType,
-				},
-			},
+		setActionSections((currentSections) => {
+			const updatedSections = [...currentSections];
+
+			updatedSections[actionSectionsIndex].assignmentType = 'roleId';
+			updatedSections[actionSectionsIndex].roleId = role.id;
+			updatedSections[actionSectionsIndex].name = role.name;
+			updatedSections[actionSectionsIndex].roleType = role.roleType;
+
+			return updatedSections;
 		});
 	};
+
+	useEffect(() => {
+		if (actionData.roleId && !actionData.name) {
+			retrieveRolesBy('roleId', actionData.roleId)
+				.then((response) => response.json())
+				.then((response) => {
+					setActionSections((currentSections) => {
+						const updatedSections = [...currentSections];
+						updatedSections[actionSectionsIndex].name =
+							response.name;
+						updatedSections[actionSectionsIndex].roleType =
+							response.roleType;
+
+						return updatedSections;
+					});
+				});
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<SidebarPanel panelTitle={Liferay.Language.get('select-role')}>
 			<BaseRole
 				defaultFieldValue={{
-					id: selectedItem.data.assignments?.sectionsData?.id || '',
-					name:
-						selectedItem.data.assignments?.sectionsData?.name || '',
+					id: actionData.roleId || '',
+					name: actionData.name || '',
 				}}
 				inputLabel={Liferay.Language.get('role-id')}
 				selectLabel={Liferay.Language.get('role')}

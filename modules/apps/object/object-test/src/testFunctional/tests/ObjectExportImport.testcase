@@ -27,101 +27,202 @@ definition {
 	@ignore = "Test Stub"
 	@priority = "4"
 	test CanCancelImport {
+		ObjectAdmin.openObjectAdmin();
 
-		// TODO LPS-146369 CanCancelImport pending implementation
+		Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 
+		Click(
+			key_menuItem = "Import Object",
+			locator1 = "Notifications#NOTIFICATIONS_CONFIGURATION_MENUITEM");
+
+		var filePath = TestCase.getDependenciesDirPath(fileName = "ImportedSimpleObject.json");
+
+		UploadFile(
+			locator1 = "TextInput#FILE",
+			value1 = "${filePath}");
+
+		Button.clickCancel();
+
+		AssertElementNotPresent(locator1 = "IFrame#MODAL_BODY");
+
+		CreateObject.assertCustomObjectNotPresent(labelName = "Imported Simple Object");
 	}
 
 	@description = "LPS-142175 - Verify it is possible to clear the JSON file on the import dialog"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanClearJsonFile {
+		ObjectAdmin.openObjectAdmin();
 
-		// TODO LPS-146368 CanClearJsonFile pending implementation
+		Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 
+		Click(
+			key_menuItem = "Import Object",
+			locator1 = "Notifications#NOTIFICATIONS_CONFIGURATION_MENUITEM");
+
+		var filePath = TestCase.getDependenciesDirPath(fileName = "ImportedSimpleObject.json");
+
+		UploadFile(
+			locator1 = "TextInput#FILE",
+			value1 = "${filePath}");
+
+		Button.click(button = "Clear");
+
+		AssertElementNotPresent(
+			fieldName = "JSON File",
+			locator1 = "ObjectAdmin#OBJECT_IMPORT_FIELDS",
+			valueName = "ImportedSimpleObject.json");
 	}
 
 	@description = "LPS-142175 - Verify if it is possible to export the data structure from a custom objects"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanExportDataStructure {
 		property portal.acceptance = "true";
 
-		// TODO LPS-146357 CanExportDataStructure pending implementation
+		ObjectAdmin.addObjectViaAPI(
+			labelName = "Custom Object 146357",
+			objectName = "CustomObject146357",
+			pluralLabelName = "Custom Objects 146357");
 
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectExportImport.exportObject(
+			objectLabel = "Custom Object 146357",
+			objectName = "CustomObject146357");
 	}
 
 	@description = "LPS-142175 - Verify if it is possible to import the data structure to a custom objects"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanImportDataStructure {
 		property portal.acceptance = "true";
 
-		// TODO LPS-146358 CanImportDataStructure pending implementation
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedSimpleObject",
+			objectName = "ImportedSimpleObject146358");
 
+		CreateObject.assertCustomObject(labelName = "Imported Simple Object");
 	}
 
 	@description = "LPS-142175 - Verify it is possible to maintain Fields after importing an Object"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanImportFields {
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedObjectWithField",
+			objectName = "ImportedObjectWithField146361");
 
-		// TODO LPS-146361 CanImportFields pending implementation
+		CreateObject.assertCustomObject(labelName = "Imported Object With Field");
 
+		ObjectPortlet.selectCustomObject(label = "Imported Object With Field");
+
+		ObjectAdmin.goToFieldsTab();
+
+		ObjectAdmin.assertObjectField(
+			key_fieldLabel = "Custom Field",
+			key_fieldType = "Text");
 	}
 
 	@description = "LPS-142175 - Verify it is possible to maintain Layouts after importing an Object"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanImportLayouts {
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedObjectWithLayout",
+			objectName = "ImportedObjectWithLayout146360");
 
-		// TODO LPS-146360 CanImportLayouts pending implementation
+		CreateObject.assertCustomObject(labelName = "Imported Object With Layout");
 
+		ObjectPortlet.selectCustomObject(label = "Imported Object With Layout");
+
+		ObjectAdmin.goToLayoutsTab();
+
+		ObjectAdmin.assertObjectLayout(layoutLabel = "Layout");
 	}
 
 	@description = "LPS-142175 - Verify it is possible to import the same object more then one time"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanImportSameObjectMoreThanOnce {
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedSimpleObject",
+			objectName = "ImportedSimpleObject146367A");
 
-		// TODO LPS-146367 CanImportSameObjectMoreThanOnce pending implementation
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedSimpleObject",
+			objectName = "ImportedSimpleObject146367B");
 
+		CreateObject.assertCustomObjectWithIndex(
+			index = "1",
+			labelName = "Imported Simple Object");
+
+		CreateObject.assertCustomObjectWithIndex(
+			index = "2",
+			labelName = "Imported Simple Object");
 	}
 
 	@description = "LPS-142175 - Verify it's possible to maintain Scope after importing an Object"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanImportScope {
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedObjectWithScope",
+			objectName = "ImportedObjectWithScope146370");
 
-		// TODO LPS-146370 CanImportScope pending implementation
+		CreateObject.assertCustomObject(labelName = "Imported Object With Scope");
 
+		ObjectPortlet.selectCustomObject(label = "Imported Object With Scope");
+
+		CreateObject.assertScopeFieldSelected(fieldScope = "Company");
+
+		CreateObject.assertPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
 	}
 
 	@description = "LPS-142175 - Verify it is not possible to maintain Relationships after importing an Object"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CannotImportRelationships {
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedObjectWithRelationship",
+			objectName = "ImportedObjectWithRelationship146359");
 
-		// TODO LPS-146359 CannotImportRelationships pending implementation
+		CreateObject.assertCustomObject(labelName = "Imported Object With Relationship");
 
+		ObjectPortlet.selectCustomObject(label = "Imported Object With Relationship");
+
+		ObjectAdmin.gotoRelationshipsTab();
+
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_INFO",
+			value1 = "No Items were found.");
 	}
 
 	@description = "LPS-142175 - Verify it is possible to publish an imported custom object"
 	@ignore = "Test Stub"
 	@priority = "4"
 	test CanPublishImportedObject {
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedObjectWithField",
+			objectName = "ImportedObjectWithField146365");
 
-		// TODO LPS-146365 CanPublishImportedObject pending implementation
+		CreateObject.assertCustomObject(labelName = "Imported Object With Field");
 
+		ObjectPortlet.selectCustomObject(label = "Imported Object With Field");
+
+		Button.clickPublish();
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectAdmin.assertObjectStatus(
+			label = "Imported Object With Field",
+			status = "Approved");
 	}
 
 	@description = "LPS-142175 - Verify that an imported custom object is created with Draft Status"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test ImportedObjectIsDraft {
+		ObjectExportImport.importObject(
+			objectFileName = "ImportedSimpleObject",
+			objectName = "ImportedSimpleObject146363");
 
-		// TODO LPS-146363 ImportedObjectIsDraft pending implementation
+		CreateObject.assertCustomObject(labelName = "Imported Simple Object");
 
+		ObjectAdmin.assertObjectStatus(
+			label = "Imported Simple Object",
+			status = "Draft");
 	}
 
 }

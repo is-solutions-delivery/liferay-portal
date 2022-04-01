@@ -56,67 +56,142 @@ definition {
 		}
 	}
 
-	@description = "LRQA-71885 - Verify that the user can change Permissions for the Resource"
-	@ignore = "Test Stub"
+	@description = "LRQA-71925 - Verify that the user can change Permissions for the Resource"
 	@priority = "3"
 	test CanChangeResourcePermissions {
+		CalendarNavigator.gotoAddResource();
 
-		// TODO LRQA-71925 CanChangeResourcePermissions pending implementation
+		CalendarResource.editResourceName(calendarResourceName = "New Resource");
 
+		CalendarResource.save();
+
+		CalendarResource.gotoPermissions(key_calendarName = "New Resource");
+
+		CalendarResource.viewMenuPermissionsModal();
 	}
 
-	@description = "LRQA-71885 - Verify that the user can Clear the search results"
-	@ignore = "Test Stub"
+	@description = "LRQA-71926 - Verify that the user can Clear the search results"
 	@priority = "3"
 	test CanClearSearchResults {
+		CalendarNavigator.gotoAddResource();
 
-		// TODO LRQA-71926 CanClearSearchResults pending implementation
+		CalendarResource.editResourceName(calendarResourceName = "New Resource1");
 
+		CalendarResource.save();
+
+		CalendarNavigator.gotoAddResource();
+
+		CalendarResource.editResourceName(calendarResourceName = "New Resource2");
+
+		CalendarResource.save();
+
+		CalendarResource.search(searchTerm = "Resource1");
+
+		CalendarResource.viewSearchSummaryResults(searchResults = '''1 Results for "Resource1"''');
+
+		CalendarResource.viewResourceName(calendarResourceName = "New Resource1");
+
+		CalendarResource.clearSearchResults();
+
+		CalendarResource.notDisplayResultBar();
+
+		CalendarResource.viewResourceName(calendarResourceName = "New Resource1");
+
+		CalendarResource.viewResourceName(calendarResourceName = "New Resource2");
 	}
 
-	@description = "LRQA-71885 - Verify that the user can create a New Calendar for the Resource"
-	@ignore = "Test Stub"
+	@description = "LRQA-71924 - Verify that the user can create a New Calendar for the Resource"
 	@priority = "3"
 	test CanCreateCalendarForResource {
+		CalendarNavigator.gotoAddResource();
 
-		// TODO LRQA-71924 CanCreateCalendarForResource pending implementation
+		CalendarResource.editResourceName(calendarResourceName = "New Resource");
 
+		CalendarResource.save();
+
+		CalendarNavigator.gotoResourceCalendars(calendarResourceName = "New Resource");
+
+		CalendarResource.addCalendarByResource(
+			calendarName = "Calendar for New Resource",
+			menuItem = "View Calendars");
+
+		CalendarResource.viewCalendarNameByResourceOntable(key_calendarName = "Calendar for New Resource");
 	}
 
-	@description = "LRQA-71885 - Verify that the user can filter by Active Resources"
-	@ignore = "Test Stub"
+	@description = "LRQA-71922 - Verify that the user can filter by Active Resources"
 	@priority = "3"
 	test CanFilterByActiveResources {
+		CalendarNavigator.gotoAddResource();
 
-		// TODO LRQA-71922 CanFilterByActiveResources pending implementation
+		CalendarResource.editResourceName(calendarResourceName = "Active Resource");
 
+		CalendarResource.save();
+
+		CalendarNavigator.gotoAddResource();
+
+		CalendarResource.editResourceName(calendarResourceName = "Inactive Resource");
+
+		CalendarResource.deactivate();
+
+		CalendarResource.save();
+
+		CalendarResource.viewResourceNameNotPresent(calendarResourceName = "Inactive Resource");
+
+		CalendarResource.resourceSetFilterAndOrder(filterBy = "Yes");
+
+		CalendarResource.viewResourceName(calendarResourceName = "Active Resource");
 	}
 
-	@description = "LRQA-71885 - Verify that the user can filter by Current Scope"
-	@ignore = "Test Stub"
+	@description = "LRQA-71921 - Verify that the user can filter by Current Scope"
 	@priority = "3"
 	test CanFilterByCurrentScope {
+		CalendarNavigator.gotoAddResource();
 
-		// TODO LRQA-71921 CanFilterByCurrentScope pending implementation
+		CalendarResource.editResourceName(calendarResourceName = "Current Scope Resource");
 
+		CalendarResource.save();
+
+		CalendarResource.resourceSetFilterAndOrder(filterBy = "Current");
+
+		CalendarResource.viewResourceName(calendarResourceName = "Current Scope Resource");
 	}
 
-	@description = "LRQA-71885 - Verify that the user can filter by Global Scope"
-	@ignore = "Test Stub"
+	@description = "LRQA-71920 - Verify that the user can filter by Global Scope"
 	@priority = "3"
 	test CanFilterByGlobalScope {
+		CalendarNavigator.gotoAddResource();
 
-		// TODO LRQA-71920 CanFilterByGlobalScope pending implementation
+		CalendarResource.editResourceName(calendarResourceName = "Global Scope Resource");
 
+		CalendarResource.save();
+
+		CalendarResource.resourceSetFilterAndOrder(filterBy = "Global");
+
+		CalendarResource.viewResourceNameNotPresent(calendarResourceName = "Global Scope Resource");
 	}
 
-	@description = "LRQA-71885 - Verify that the user can filter by Nonactive Resources"
-	@ignore = "Test Stub"
+	@description = "LRQA-71923 - Verify that the user can filter by Nonactive Resources"
 	@priority = "3"
 	test CanFilterByNonactiveResources {
+		CalendarNavigator.gotoAddResource();
 
-		// TODO LRQA-71923 CanFilterByNonactiveResources pending implementation
+		CalendarResource.editResourceName(calendarResourceName = "Active Resource");
 
+		CalendarResource.save();
+
+		CalendarNavigator.gotoAddResource();
+
+		CalendarResource.editResourceName(calendarResourceName = "Inactive Resource");
+
+		CalendarResource.deactivate();
+
+		CalendarResource.save();
+
+		CalendarResource.viewResourceNameNotPresent(calendarResourceName = "Inactive Resource");
+
+		CalendarResource.resourceSetFilterAndOrder(filterBy = "No");
+
+		CalendarResource.viewResourceName(calendarResourceName = "Inactive Resource");
 	}
 
 	@description = "LRQA-71885 - Verify that the user can search by Resource Description"
@@ -132,7 +207,7 @@ definition {
 
 		CalendarResource.search(searchTerm = "Description");
 
-		CalendarResource.viewSearchSummaryResults(searchResults = "1 Results for Description");
+		CalendarResource.viewSearchSummaryResults(searchResults = "1 Results for &quot;Description&quot;");
 
 		CalendarResource.viewResourceName(calendarResourceName = "Resource Name");
 
@@ -140,7 +215,7 @@ definition {
 
 		CalendarResource.search(searchTerm = "Test Test");
 
-		CalendarResource.viewSearchSummaryResults(searchResults = "0 Results for Test Test");
+		CalendarResource.viewSearchSummaryResults(searchResults = "0 Results for &quot;Test Test&quot;");
 
 		CalendarResource.viewTableEmpty();
 	}

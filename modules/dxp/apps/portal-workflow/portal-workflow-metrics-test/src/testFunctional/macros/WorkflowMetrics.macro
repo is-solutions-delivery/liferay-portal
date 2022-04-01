@@ -847,6 +847,16 @@ definition {
 			value1 = "${workflowSlaName}");
 	}
 
+	macro goToCurrentNode {
+		Click(
+			locator1 = "WorkflowAllItems#TRACK_APPROVAL_CURRENT_NODE_LINK",
+			value1 = "${currentNode}");
+
+		AssertVisible(
+			key_currentNode = "${currentNode}",
+			locator1 = "WorkflowAllItems#CURRENT_NODE_CIRCLE_ICON");
+	}
+
 	macro goToDashboardAllItemsWithFilter {
 		var key_workflowProcess = "${workflowProcess}";
 		var key_workflowMetricsTab = "${workflowMetricsTab}";
@@ -1582,6 +1592,24 @@ definition {
 			locator1 = "WorkflowMetricsProcessListView#ANY_ARROW_ORDER");
 	}
 
+	macro viewCurrentNode {
+		AssertElementPresent(
+			locator1 = "WorkflowAllItems#TRACK_APPROVAL_CURRENT_NODE",
+			value1 = "${currentNode}");
+	}
+
+	macro viewCurrentNodeCircleIcon {
+		AssertElementPresent(
+			key_currentNode = "${currentNode}",
+			locator1 = "WorkflowAllItems#CURRENT_NODE_CIRCLE_ICON");
+	}
+
+	macro viewCurrentNodeCircleNotPresent {
+		AssertElementNotPresent(
+			key_currentNode = "${currentNode}",
+			locator1 = "WorkflowAllItems#CURRENT_NODE_CIRCLE_ICON");
+	}
+
 	macro viewDateRangeErrorMessage {
 		var key_errorMessage = "${errorMessage}";
 
@@ -1634,10 +1662,26 @@ definition {
 		if ("${dropdownItem}" == "Update Due Date") {
 			AssertElementPresent(locator1 = "WorkflowAllItems#UPDATE_DUE_DATE_DROPDOWN");
 		}
+
+		if ("${dropdownItem}" == "Track Workflow") {
+			AssertElementPresent(
+				key_menuOption = "${dropdownItem}",
+				locator1 = "WorkflowAllItems#KEBAB_MENU_OPTIONS");
+		}
 	}
 
 	macro viewKebabMenuOptionsIsNotAvailable {
 		AssertElementNotPresent(locator1 = "WorkflowAllItems#UPDATE_DUE_DATE_DROPDOWN");
+	}
+
+	macro viewNameHoverTransition {
+		SelectFrame(locator1 = "WorkflowAllItems#TRACK_APPROVAL_BODY");
+
+		MouseOver(
+			locator1 = "WorkflowMetricsAllItemsList#NODES_MODAL_TRACK_WORKFLOW",
+			nodesTrackWorkflow = "${nodesTrackWorkflow}");
+
+		AssertElementPresent(locator1 = "WorkflowAllItems#TRANSITION_NAME_HOVER");
 	}
 
 	macro viewPerformanceByAssignee {
@@ -1770,6 +1814,12 @@ definition {
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#TOOLTIP",
 			value1 = "Completion velocity tracks the number of completed workflow instances over the selected time period.");
+	}
+
+	macro viewTrackWorkflowModal {
+		SelectFrame(locator1 = "WorkflowAllItems#TRACK_APPROVAL_BODY");
+
+		AssertElementPresent(locator1 = "WorkflowAllItems#TRACK_APPROVAL_BODY");
 	}
 
 	macro viewUserWorkloadByStepOnAllItems {

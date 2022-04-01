@@ -47,6 +47,8 @@ export default function Navigation({
 
 	const [currentPage, setCurrentPage] = useState({view: 'main'});
 
+	const [loadingDetailView, setLoadingDetailView] = useState(false);
+
 	const [trafficSources, setTrafficSources] = useState([]);
 
 	const [trafficSourceName, setTrafficSourceName] = useState('');
@@ -113,20 +115,40 @@ export default function Navigation({
 	]);
 
 	const updateTrafficSourcesAndCurrentPage = useCallback(
-		(trafficSources, trafficSourceName) => {
+		(trafficSources, trafficSourceName, sameTrafficSource) => {
 			setTrafficSources(trafficSources);
 			setTrafficSourceName(trafficSourceName);
 
-			const trafficSource = trafficSources.find((trafficSource) => {
-				return trafficSource.name === trafficSourceName;
-			});
+			const trafficSource = trafficSources.find(
+				(source) => source.name === trafficSourceName
+			);
 
+			if (!sameTrafficSource) {
+				setLoadingDetailView(true);
+			}
 			setCurrentPage({
-				data: trafficSource,
-				view: trafficSource.name,
+				data: sameTrafficSource ? currentPage.data : null,
+				view: trafficSourceName,
+			});
+			APIService.getTrafficSources(trafficSource.endpointURL, {
+				namespace,
+				plid: page.plid,
+				timeSpanKey,
+				timeSpanOffset,
+			}).then((response) => {
+				response.title = trafficSource.title;
+
+				setCurrentPage({
+					data: response,
+					view: trafficSourceName,
+				});
+				if (!sameTrafficSource) {
+					setLoadingDetailView(false);
+				}
 			});
 		},
-		[]
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[namespace, page.plid, timeSpanKey, timeSpanOffset]
 	);
 
 	const handleTrafficSourceName = (trafficSourceName) =>
@@ -151,10 +173,10 @@ export default function Navigation({
 	const showDetail = currentPage.view !== 'main';
 
 	useEffect(() => {
-		if (showDetail) {
+		if (showDetail && !loadingDetailView) {
 			detailRef.current.scrollIntoView();
 		}
-	}, [showDetail]);
+	}, [showDetail, loadingDetailView]);
 
 	return (
 		<>
@@ -222,6 +244,7 @@ export default function Navigation({
 						handleDetailPeriodChange={
 							updateTrafficSourcesAndCurrentPage
 						}
+						loadingData={loadingDetailView}
 						onCurrentPageChange={handleCurrentPage}
 						onTrafficSourceNameChange={handleTrafficSourceName}
 						refProp={detailRef}

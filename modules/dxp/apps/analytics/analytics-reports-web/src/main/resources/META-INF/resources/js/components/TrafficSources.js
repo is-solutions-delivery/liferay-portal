@@ -173,10 +173,7 @@ export default function TrafficSources({dataProvider, onTrafficSourceClick}) {
 						<tbody>
 							{trafficSources?.map((entry) => {
 								const hasDetails =
-									entry?.countryKeywords ||
-									(entry?.referringPages &&
-										entry?.referringDomains) ||
-									entry?.referringSocialMedia;
+									entry?.value > 0 && entry.name !== 'direct';
 
 								return (
 									<tr key={entry.name}>
@@ -210,7 +207,6 @@ export default function TrafficSources({dataProvider, onTrafficSourceClick}) {
 										>
 											{validAnalyticsConnection &&
 											!publishedToday &&
-											entry.value > 0 &&
 											hasDetails ? (
 												<ClayButton
 													className="px-0 py-1 text-primary"
@@ -218,7 +214,8 @@ export default function TrafficSources({dataProvider, onTrafficSourceClick}) {
 													onClick={() =>
 														onTrafficSourceClick(
 															trafficSources,
-															entry.name
+															entry.name,
+															false
 														)
 													}
 													small

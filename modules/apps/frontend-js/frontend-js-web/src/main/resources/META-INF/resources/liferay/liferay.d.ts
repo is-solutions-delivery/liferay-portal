@@ -122,6 +122,8 @@ declare module Liferay {
 			cssClass?: string
 		): HTMLElement;
 
+		export function getTop(): Window;
+
 		export function getOpener(): any;
 
 		/**
@@ -172,7 +174,17 @@ declare module Liferay {
 			data: Object
 		): void;
 
-		export function sub(langKey: string, ...args: any[]): string;
+		export function sub(
+			string: string,
+			data:
+				| string
+				| number
+				| string[]
+				| number[]
+				| Array<string>
+				| Array<number>,
+			...args: string[] | number[]
+		): string;
 
 		/**
 		 * Get character code at the start of the given string.

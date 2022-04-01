@@ -68,6 +68,13 @@ definition {
 			locator1 = "CreateObject#OBJECT_NAME");
 	}
 
+	macro assertCustomObjectWithIndex {
+		AssertElementPresent(
+			key_index = "${index}",
+			key_labelName = "${labelName}",
+			locator1 = "CreateObject#OBJECT_NAME_INDEX");
+	}
+
 	macro assertDisabledAllFields {
 		CreateObject.assertDisabledObjectName();
 

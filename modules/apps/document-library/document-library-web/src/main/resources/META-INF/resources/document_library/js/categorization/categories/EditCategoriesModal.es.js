@@ -291,7 +291,7 @@ const EditCategoriesModal = ({
 							>
 								<div className="form-text">
 									{Liferay.Language.get(
-										'these-categories-replace-all-existing-categories'
+										'add-new-categories-or-remove-common-categories'
 									)}
 								</div>
 							</ClayRadio>

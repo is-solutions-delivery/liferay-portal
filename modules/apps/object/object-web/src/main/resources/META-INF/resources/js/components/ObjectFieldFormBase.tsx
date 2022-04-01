@@ -57,6 +57,7 @@ async function fetchPickList() {
 }
 
 export default function ObjectFieldFormBase({
+	allowMaxLength,
 	children,
 	disabled,
 	errors,
@@ -82,23 +83,41 @@ export default function ObjectFieldFormBase({
 			setPickList(await fetchPickList());
 		}
 
-		const objectFieldSettings: ObjectFieldSetting[] | undefined =
-			option.businessType === 'Attachment'
-				? [
+		let objectFieldSettings: ObjectFieldSetting[] | undefined;
+
+		switch (option.businessType) {
+			case 'Attachment':
+				objectFieldSettings = [
+					{
+						name: 'acceptedFileExtensions',
+						value: 'jpeg, jpg, pdf, png',
+					},
+					{
+						name: 'fileSource',
+						value: 'userComputer',
+					},
+					{
+						name: 'maximumFileSize',
+						value: 100,
+					},
+				];
+				break;
+
+			case 'LongText':
+			case 'Text':
+				if (allowMaxLength) {
+					objectFieldSettings = [
 						{
-							name: 'acceptedFileExtensions',
-							value: 'jpeg, jpg, pdf, png',
+							name: 'showCounter',
+							value: false,
 						},
-						{
-							name: 'fileSource',
-							value: 'userComputer',
-						},
-						{
-							name: 'maximumFileSize',
-							value: 100,
-						},
-				  ]
-				: undefined;
+					];
+				}
+				break;
+
+			default:
+				break;
+		}
 
 		const isSearchableByText =
 			option.businessType === 'Attachment' || option.dbType === 'String';
@@ -189,6 +208,14 @@ export function useObjectFieldForm({
 
 		const label = field.label?.[defaultLanguageId];
 
+		const settings: {
+			[key in ObjectFieldSettingName]?: string | number | boolean;
+		} = {};
+
+		field.objectFieldSettings?.forEach(({name, value}) => {
+			settings[name] = value;
+		});
+
 		if (invalidateRequired(label)) {
 			errors.label = REQUIRED_MSG;
 		}
@@ -201,14 +228,6 @@ export function useObjectFieldForm({
 			errors.businessType = REQUIRED_MSG;
 		}
 		else if (field.businessType === 'Attachment') {
-			const settings: {
-				[key in ObjectFieldSettingName]?: string | number;
-			} = {};
-
-			field.objectFieldSettings?.forEach(({name, value}) => {
-				settings[name] = value;
-			});
-
 			if (
 				invalidateRequired(
 					settings.acceptedFileExtensions as string | undefined
@@ -229,6 +248,14 @@ export function useObjectFieldForm({
 					),
 					0
 				);
+			}
+		}
+		else if (
+			field.businessType === 'Text' ||
+			field.businessType === 'LongText'
+		) {
+			if (settings.showCounter && !settings.maxLength) {
+				errors.maxLength = REQUIRED_MSG;
 			}
 		}
 		else if (field.businessType === 'Picklist') {
@@ -262,6 +289,7 @@ interface IPickList {
 }
 
 interface IProps {
+	allowMaxLength?: boolean;
 	children?: ReactNode;
 	disabled?: boolean;
 	errors: ObjectFieldErrors;

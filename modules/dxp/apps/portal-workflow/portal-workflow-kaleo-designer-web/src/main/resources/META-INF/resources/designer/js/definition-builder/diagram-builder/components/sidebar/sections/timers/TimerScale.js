@@ -52,6 +52,7 @@ const SelectTimeScale = ({setTimerScale, timerScale}) => {
 		<ClayForm.Group className="mb-0">
 			<ClaySelect
 				aria-label="Select"
+				defaultValue={timerScale}
 				id="scale"
 				onChange={({target}) => {
 					handleChange(target);
@@ -61,7 +62,6 @@ const SelectTimeScale = ({setTimerScale, timerScale}) => {
 					<ClaySelect.Option
 						key={item.scale}
 						label={item.label}
-						selected={item.scale === timerScale}
 						value={item.scale}
 					/>
 				))}

@@ -24,9 +24,14 @@ export default function useFilters(setFilterTerm, productName) {
 		let hasFilterPill = false;
 
 		if (filters.searchTerm) {
-			const searchTermFilter = `(contains(name, '${filters.searchTerm}') or contains(description, '${filters.searchTerm}') or contains(hostName, '${filters.searchTerm}'))`;
+			const seachTermSplitted = filters.searchTerm
+				.split(' ')
+				.map((term) => {
+					return `(contains(name, '${term}') or contains(description, '${term}') or contains(hostName, '${term}') or ipAddresses/any(s:contains(s, '${term}')) or macAddresses/any(s:contains(s, '${term}')))`;
+				})
+				.join(' and ');
 
-			initialFilter = initialFilter.concat(` and ${searchTermFilter}`);
+			initialFilter = initialFilter.concat(` and (${seachTermSplitted})`);
 		}
 
 		if (filters.instanceSizes.value.length) {
@@ -68,16 +73,16 @@ export default function useFilters(setFilterTerm, productName) {
 			const statusFilter = filters.status.value.reduce(
 				(accumulatorStatusFilter, status, index) => {
 					let filter = '';
+					if (status === ACTIVATION_STATUS.expired.title) {
+						filter = `(expirationDate lt ${now})`;
+					}
+
 					if (status === ACTIVATION_STATUS.activated.title) {
 						filter = `(startDate le ${now} and expirationDate gt ${now})`;
 					}
 
-					if (status === ACTIVATION_STATUS.expired.title) {
-						filter = `expirationDate lt ${now}`;
-					}
-
 					if (status === ACTIVATION_STATUS.notActivated.title) {
-						filter = `startDate gt ${now}`;
+						filter = `(startDate gt ${now})`;
 					}
 
 					return `${accumulatorStatusFilter}${
@@ -87,7 +92,7 @@ export default function useFilters(setFilterTerm, productName) {
 				''
 			);
 
-			initialFilter = initialFilter.concat(` and ${statusFilter}`);
+			initialFilter = initialFilter.concat(` and (${statusFilter})`);
 		}
 
 		if (filters.environmentTypes.value.length) {
@@ -125,20 +130,19 @@ export default function useFilters(setFilterTerm, productName) {
 			const filterDates = [];
 			hasFilterPill = true;
 
+			if (filters.expirationDate.value.onOrBefore) {
+				filterDates.push(
+					`expirationDate lt ${filters.expirationDate.value.onOrBefore.toISOString()}`
+				);
+			}
 			if (filters.expirationDate.value.onOrAfter) {
 				filterDates.push(
 					`expirationDate ge ${filters.expirationDate.value.onOrAfter.toISOString()}`
 				);
 			}
 
-			if (filters.expirationDate.value.onOrBefore) {
-				filterDates.push(
-					`expirationDate lt ${filters.expirationDate.value.onOrBefore.toISOString()}`
-				);
-			}
-
 			initialFilter = initialFilter.concat(
-				` and (${filterDates.join(' and ')})`
+				` and (${filterDates.join(' or ')})`
 			);
 		}
 
@@ -146,20 +150,19 @@ export default function useFilters(setFilterTerm, productName) {
 			const filterDates = [];
 			hasFilterPill = true;
 
+			if (filters.startDate.value.onOrBefore) {
+				filterDates.push(
+					`startDate lt ${filters.startDate.value.onOrBefore.toISOString()}`
+				);
+			}
 			if (filters.startDate.value.onOrAfter) {
 				filterDates.push(
 					`startDate ge ${filters.startDate.value.onOrAfter.toISOString()}`
 				);
 			}
 
-			if (filters.startDate.value.onOrBefore) {
-				filterDates.push(
-					`startDate lt ${filters.startDate.value.onOrBefore.toISOString()}`
-				);
-			}
-
 			initialFilter = initialFilter.concat(
-				` and (${filterDates.join(' and ')})`
+				` and (${filterDates.join(' or ')})`
 			);
 		}
 
@@ -167,6 +170,7 @@ export default function useFilters(setFilterTerm, productName) {
 			Object.values(filters.keyType.value).every((value) => !isNaN(value))
 		) {
 			const filtersKeyType = [];
+			let showOnPrem = false;
 
 			if (
 				!filters.keyType.value.hasOnPremise ||
@@ -213,17 +217,37 @@ export default function useFilters(setFilterTerm, productName) {
 				filtersKeyType.push(
 					`maxClusterNodes le ${filters.keyType.value.maxNodes}`
 				);
+				showOnPrem = true;
 			}
 
 			if (filters.keyType.value.minNodes) {
 				filtersKeyType.push(
 					`maxClusterNodes ge ${filters.keyType.value.minNodes}`
 				);
+				showOnPrem = true;
+			}
+
+			if (showOnPrem) {
+				filtersKeyType.push(
+					" or not contains(licenseEntryType, 'cluster')"
+				);
 			}
 
 			if (filtersKeyType.length) {
+				const filtersKeyTypeSetted = filtersKeyType.reduce(
+					(filtersAccumulator, filterKey, index) => {
+						let filter = filterKey;
+						if (!filterKey.startsWith(' or')) {
+							filter = `${index > 0 ? ` and ${filter}` : filter}`;
+						}
+
+						return `${filtersAccumulator}${filter}`;
+					},
+					''
+				);
+
 				initialFilter = initialFilter.concat(
-					` and (${filtersKeyType.join(' and ')})`
+					` and (${filtersKeyTypeSetted})`
 				);
 			}
 		}

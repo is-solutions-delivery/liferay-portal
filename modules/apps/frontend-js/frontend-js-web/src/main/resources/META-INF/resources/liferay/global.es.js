@@ -59,6 +59,7 @@ import getLexiconIcon from './util/get_lexicon_icon';
 import getOpener from './util/get_opener';
 import getPortletId from './util/get_portlet_id';
 import getPortletNamespace from './util/get_portlet_namespace.es';
+import getTop from './util/get_top';
 import getURLWithSessionId from './util/get_url_with_session_id';
 import {
 	MAP_HTML_CHARS_ESCAPED,
@@ -77,6 +78,7 @@ import createPortletURL from './util/portlet_url/create_portlet_url.es';
 import createRenderURL from './util/portlet_url/create_render_url.es';
 import createResourceURL from './util/portlet_url/create_resource_url.es';
 import {getSessionValue, setSessionValue} from './util/session.es';
+import sub from './util/sub';
 import toCharCode from './util/to_char_code.es';
 import toggleDisabled from './util/toggle_disabled';
 import zIndex from './zIndex';
@@ -211,6 +213,7 @@ Liferay.Util.getOpener = getOpener;
 Liferay.Util.getPortletId = getPortletId;
 
 Liferay.Util.getPortletNamespace = getPortletNamespace;
+Liferay.Util.getTop = getTop;
 Liferay.Util.getURLWithSessionId = getURLWithSessionId;
 Liferay.Util.groupBy = groupBy;
 
@@ -292,6 +295,8 @@ Liferay.Util.openToast = (...args) => {
 		}
 	);
 };
+
+Liferay.Util.sub = sub;
 
 Liferay.Util.Session = {
 	get: getSessionValue,

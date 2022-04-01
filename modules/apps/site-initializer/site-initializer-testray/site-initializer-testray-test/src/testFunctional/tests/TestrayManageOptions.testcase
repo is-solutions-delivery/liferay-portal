@@ -2,7 +2,7 @@
 definition {
 
 	property portal.release = "false";
-	property portal.upstream = "true";
+	property portal.upstream = "false";
 	property testray.main.component.name = "Testray 2";
 
 	setUp {
@@ -30,13 +30,13 @@ definition {
 	test CanAcessOptionModal {
 		ApplicationsMenu.gotoSite(key_site = "Testray 2");
 
-		Click(locator1 = "Testray#MANAGE_SIDEBAR");
+		Click(locator1 = "TestrayManage#MANAGE_SIDEBAR");
 
-		Click(locator1 = "TestrayManageOptions#OPTIONS_MANAGE");
+		Click(locator1 = "TestrayManage#OPTIONS_MANAGE");
 
-		AssertElementPresent(locator1 = "TestrayManageOptions#OPTIONS_MODAL");
+		AssertElementPresent(locator1 = "TestrayManage#OPTIONS_MODAL");
 
-		Click(locator1 = "TestrayManageOptions#CLOSE_MODAL");
+		Click(locator1 = "TestrayManage#CLOSE_MODAL");
 	}
 
 	@description = "LPS-150349 - Verify that User can add new option."
@@ -44,20 +44,20 @@ definition {
 	test CanAddNewOption {
 		ApplicationsMenu.gotoSite(key_site = "Testray 2");
 
-		Click(locator1 = "Testray#MANAGE_SIDEBAR");
+		Click(locator1 = "TestrayManage#MANAGE_SIDEBAR");
 
-		Click(locator1 = "TestrayManageOptions#OPTIONS_MANAGE");
+		Click(locator1 = "TestrayManage#OPTIONS_MANAGE");
 
-		Click(locator1 = "TestrayManageOptions#ADD_OPTIONS");
+		Click(locator1 = "TestrayManage#ADD_OPTIONS");
 
 		Type(
-			locator1 = "TestrayManageOptions#NEW_OPTION_NAME",
+			locator1 = "TestrayManage#NEW_OPTION_NAME",
 			value1 = "Test");
 
-		Click(locator1 = "TestrayManageOptions#SAVE_BUTTON");
+		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 
 		AssertElementPresent(
-			locator1 = "TestrayManageOptions#OPTIONS_NAME",
+			locator1 = "TestrayManage#OPTIONS_NAME",
 			value = "Test");
 	}
 

@@ -24,6 +24,7 @@ const BaseUser = ({
 	identifier,
 	index,
 	notificationIndex,
+	reassignment,
 	screenName = '',
 	sectionsLength,
 	setSections,
@@ -56,21 +57,22 @@ const BaseUser = ({
 		setUser(item);
 
 		setSections((prev) => {
-			prev[index] = {
-				...prev[index],
+			const updatedSections = [...prev];
+			updatedSections[index] = {
+				...updatedSections[index],
 				...item,
 			};
 
-			updateSelectedItem(prev);
+			updateSelectedItem(updatedSections);
 
-			return prev;
+			return updatedSections;
 		});
 
 		setSearch('');
 	};
 
 	const checkSearchErrors = (errors, user) => {
-		const temp = errors.user ? [...errors.user] : [];
+		const temp = errors?.user ? [...errors.user] : [];
 
 		if (!temp[notificationIndex]) {
 			temp[notificationIndex] = [];
@@ -162,7 +164,9 @@ const BaseUser = ({
 
 			<ClayForm.Group
 				className={
-					errors.user?.[notificationIndex]?.[index] ? 'has-error' : ''
+					errors?.user?.[notificationIndex]?.[index]
+						? 'has-error'
+						: ''
 				}
 			>
 				<label htmlFor="screen-name">
@@ -180,7 +184,7 @@ const BaseUser = ({
 				/>
 
 				<ClayForm.FeedbackItem>
-					{errors.user?.[notificationIndex]?.[index] && (
+					{errors?.user?.[notificationIndex]?.[index] && (
 						<>
 							<ClayForm.FeedbackIndicator symbol="exclamation-full" />
 
@@ -192,7 +196,9 @@ const BaseUser = ({
 
 			<ClayForm.Group
 				className={
-					errors.user?.[notificationIndex]?.[index] ? 'has-error' : ''
+					errors?.user?.[notificationIndex]?.[index]
+						? 'has-error'
+						: ''
 				}
 			>
 				<label htmlFor="email-address">
@@ -210,7 +216,7 @@ const BaseUser = ({
 				/>
 
 				<ClayForm.FeedbackItem>
-					{errors.user?.[notificationIndex]?.[index] && (
+					{errors?.user?.[notificationIndex]?.[index] && (
 						<>
 							<ClayForm.FeedbackIndicator symbol="exclamation-full" />
 
@@ -222,7 +228,9 @@ const BaseUser = ({
 
 			<ClayForm.Group
 				className={
-					errors.user?.[notificationIndex]?.[index] ? 'has-error' : ''
+					errors?.user?.[notificationIndex]?.[index]
+						? 'has-error'
+						: ''
 				}
 			>
 				<label htmlFor="user-id">
@@ -240,7 +248,7 @@ const BaseUser = ({
 				/>
 
 				<ClayForm.FeedbackItem>
-					{errors.user?.[notificationIndex]?.[index] && (
+					{errors?.user?.[notificationIndex]?.[index] && (
 						<>
 							<ClayForm.FeedbackIndicator symbol="exclamation-full" />
 
@@ -258,12 +266,16 @@ const BaseUser = ({
 						setSections((prev) => {
 							return [
 								...prev,
-								{identifier: `${Date.now()}-${prev.length}`},
+								{
+									identifier: `${Date.now()}-${prev.length}`,
+								},
 							];
 						})
 					}
 				>
-					{Liferay.Language.get('new-section')}
+					{reassignment
+						? Liferay.Language.get('new-user')
+						: Liferay.Language.get('new-section')}
 				</ClayButton>
 
 				{sectionsLength > 1 && (

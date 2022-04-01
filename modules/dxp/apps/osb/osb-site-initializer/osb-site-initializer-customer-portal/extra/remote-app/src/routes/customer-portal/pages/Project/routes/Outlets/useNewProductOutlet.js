@@ -9,18 +9,26 @@
  * distribution rights of the Software.
  */
 
-import {useOutletContext, useParams} from 'react-router-dom';
-import GenerateNewDXPKey from '../../../../containers/GenerateNewDXPKey';
-import {PAGE_TYPES} from '../../../../utils/constants';
+import {Navigate, useOutletContext, useParams} from 'react-router-dom';
+import GenerateNewKey from '../../../../containers/GenerateNewKey';
+import {PAGE_TYPES, PRODUCT_TYPES} from '../../../../utils/constants';
 
 const NewProductOutlet = () => {
-	const {productId} = useParams();
+	const {accountKey, productId} = useParams();
 	const {hasAccessToCurrentProduct, project, sessionId} = useOutletContext();
 
 	const newActivationComponents = {
 		[PAGE_TYPES.dxpNew]: (
-			<GenerateNewDXPKey
+			<GenerateNewKey
 				accountKey={project.accountKey}
+				productGroupName={PRODUCT_TYPES.dxp}
+				sessionId={sessionId}
+			/>
+		),
+		[PAGE_TYPES.portalNew]: (
+			<GenerateNewKey
+				accountKey={project.accountKey}
+				productGroupName={PRODUCT_TYPES.portal}
 				sessionId={sessionId}
 			/>
 		),
@@ -29,7 +37,7 @@ const NewProductOutlet = () => {
 	const currentProduct = newActivationComponents[`${productId}_new`];
 
 	if (!currentProduct || !hasAccessToCurrentProduct) {
-		return <h3>Page not found</h3>;
+		return <Navigate replace={true} to={`/${accountKey}`} />;
 	}
 
 	return currentProduct;
