@@ -59,7 +59,6 @@
 						import java.math.BigDecimal;
 
 						Map<String, Serializable> objectEntryValues = ObjectEntryLocalServiceUtil.getValues(kaleoInstanceToken.getClassPK());
-						System.out.println(objectEntryValues);
 						Map<String, Serializable> quoteComparisonEntryValues = ObjectEntryLocalServiceUtil.getValues(GetterUtil.getLong(objectEntryValues.get("r_quoteComparisonToRaylifeOrders_c_quoteComparisonId")));
 
 						BigDecimal finalPrice = 0.0;

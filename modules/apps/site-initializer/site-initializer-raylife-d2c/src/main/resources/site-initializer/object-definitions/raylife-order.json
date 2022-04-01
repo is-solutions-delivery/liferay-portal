@@ -3,13 +3,13 @@
 		"en_US": "Raylife Order"
 	},
 	"name": "RaylifeOrder",
-	"objectFields":[
+	"objectFields": [
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
 			"indexed": true,
 			"indexedAsKeyword": false,
-			"indexedLanguageId":"",
+			"indexedLanguageId": "",
 			"label": {
 				"en_US": "Billing Option"
 			},
