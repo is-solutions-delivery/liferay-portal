@@ -1,0 +1,9 @@
+{
+	"active": true,
+	"description": "Workflow to update the price for the order lifecycle",
+	"name": "Order Price Update",
+	"title": "Order Price Update",
+	"title_i18n": {
+		"en_US": "Order Price Update"
+	}
+}
