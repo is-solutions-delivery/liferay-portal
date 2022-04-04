@@ -33,9 +33,7 @@ import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.Inject;
@@ -186,20 +184,18 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 
 	@Test
 	public void testClob() throws Exception {
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-143064"))) {
-			_testCharacterDataType(
-				false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-				ObjectFieldConstants.DB_TYPE_CLOB, false, false);
-			_testCharacterDataType(
-				false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-				ObjectFieldConstants.DB_TYPE_CLOB, true, false);
-			_testCharacterDataType(
-				false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-				ObjectFieldConstants.DB_TYPE_CLOB, true, true);
-			_testCharacterDataType(
-				true, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-				ObjectFieldConstants.DB_TYPE_CLOB, true, false);
-		}
+		_testCharacterDataType(
+			false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, false, false);
+		_testCharacterDataType(
+			false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, true, false);
+		_testCharacterDataType(
+			false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, true, true);
+		_testCharacterDataType(
+			true, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, true, false);
 	}
 
 	@Test

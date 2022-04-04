@@ -38,7 +38,6 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Arrays;
@@ -155,12 +154,7 @@ public class ObjectDefinitionsFieldsDisplayContext {
 					(!StringUtil.equals(
 						objectFieldBusinessType.getName(),
 						ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP) ||
-					 includeRelationshipObjectFieldBusinessType) &&
-					(!StringUtil.equals(
-						objectFieldBusinessType.getName(),
-						ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT) ||
-					 GetterUtil.getBoolean(
-						 PropsUtil.get("feature.flag.LPS-143064")))
+					 includeRelationshipObjectFieldBusinessType)
 			).collect(
 				Collectors.toList()
 			));
