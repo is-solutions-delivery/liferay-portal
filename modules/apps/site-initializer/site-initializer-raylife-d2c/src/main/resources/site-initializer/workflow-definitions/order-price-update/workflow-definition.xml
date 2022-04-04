@@ -6,7 +6,7 @@
 	xsi:schemaLocation="urn:liferay.com:liferay-workflow_7.4.0 http://www.liferay.com/dtd/liferay-workflow-definition_7_4_0.xsd"
 >
 	<name>Order Price Update</name>
-	<description>Workflow to update the price for the order lifecycle.</description>
+	<description>Workflow to update order price.</description>
 	<version>1</version>
 	<state>
 		<name>StartNode</name>
@@ -58,21 +58,22 @@
 
 						import java.math.BigDecimal;
 
-						Map<String, Serializable> objectEntryValues = ObjectEntryLocalServiceUtil.getValues(kaleoInstanceToken.getClassPK());
+						Map<String, Serializable> objectEntryValuesMap = ObjectEntryLocalServiceUtil.getValues(kaleoInstanceToken.getClassPK());
 
-						int billingOption = GetterUtil.getInteger(objectEntryValues.get("billingOption"));
+						int billingOption = GetterUtil.getInteger(objectEntryValuesMap.get("billingOption"));
 
 						BigDecimal finalPrice = 0.0;
 
-						Map<String, Serializable> quoteComparisonEntryValues = ObjectEntryLocalServiceUtil.getValues(GetterUtil.getLong(objectEntryValues.get("r_quoteComparisonToRaylifeOrders_c_quoteComparisonId")));
+						Map<String, Serializable> quoteComparisonEntryValuesMap = ObjectEntryLocalServiceUtil.getValues(GetterUtil.getLong(objectEntryValuesMap.get("r_quoteComparisonToRaylifeOrders_c_quoteComparisonId")));
 
 						if (billingOption == 1) {
-							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValues.get("promo"));
-						} else if (billingOption == 2) {
-							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValues.get("price")) / 2;;
+							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValuesMap.get("promo"));
+						}
+						else {
+							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValuesMap.get("price")) / 2;
 						}
 
-						CommerceOrder commerceOrder = CommerceOrderLocalServiceUtil.getCommerceOrder(GetterUtil.getLong(objectEntryValues.get("r_commerceOrderToRaylifeOrders_commerceOrderId")));
+						CommerceOrder commerceOrder = CommerceOrderLocalServiceUtil.getCommerceOrder(GetterUtil.getLong(objectEntryValuesMap.get("r_commerceOrderToRaylifeOrders_commerceOrderId")));
 
 						commerceOrder.setTotal(finalPrice);
 						commerceOrder.setSubtotal(finalPrice);
