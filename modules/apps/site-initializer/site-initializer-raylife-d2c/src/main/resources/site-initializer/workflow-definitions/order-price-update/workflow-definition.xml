@@ -75,8 +75,8 @@
 
 						CommerceOrder commerceOrder = CommerceOrderLocalServiceUtil.getCommerceOrder(GetterUtil.getLong(objectEntryValuesMap.get("r_commerceOrderToRaylifeOrders_commerceOrderId")));
 
-						commerceOrder.setTotal(finalPrice);
 						commerceOrder.setSubtotal(finalPrice);
+						commerceOrder.setTotal(finalPrice);
 
 						CommerceOrderLocalServiceUtil.updateCommerceOrder(commerceOrder);
 
