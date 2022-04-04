@@ -542,7 +542,7 @@ public class Main {
 
 	private long _getTestrayBuildId(
 			Map<String, String> propertiesMap, String testrayBuildName,
-			long testrayProjectId)
+			long testrayProjectId, long testrayRoutineId)
 		throws Exception {
 
 		String objectEntryMapKey = StringBundler.concat(
@@ -560,8 +560,6 @@ public class Main {
 
 		long testrayProductVersionId = _getTestrayProductVersionId(
 			testrayProjectId, propertiesMap.get("testray.product.version"));
-		long testrayRoutineId = _getTestrayRoutineId(
-			testrayProjectId, propertiesMap.get("testray.build.type"));
 
 		testrayBuildId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
@@ -1113,6 +1111,14 @@ public class Main {
 		return httpResponse;
 	}
 
+	private void _isAutoanalyze(long testrayBuildId, long testrayProjectId,
+			long testrayRunId)
+		throws Exception{
+
+
+
+	}
+
 	private boolean _isEmpty(String value) {
 		if (value == null) {
 			return true;
@@ -1419,16 +1425,32 @@ public class Main {
 		long testrayProjectId = _getTestrayProjectId(
 			propertiesMap.get("testray.project.name"));
 
+		long testrayRoutineId = _getTestrayRoutineId(
+			testrayProjectId, propertiesMap.get("testray.build.type"));
+
 		long testrayBuildId = _getTestrayBuildId(
 			propertiesMap, propertiesMap.get("testray.build.name"),
-			testrayProjectId);
+			testrayProjectId, testrayRoutineId);
+
+		long testrayRunId = _getTestrayRunId(
+			element, propertiesMap, testrayBuildId,
+			propertiesMap.get("testray.run.id"));
 
 		_addTestrayCases(
 			element, testrayBuildId, propertiesMap.get("testray.build.time"),
-			testrayProjectId,
-			_getTestrayRunId(
-				element, propertiesMap, testrayBuildId,
-				propertiesMap.get("testray.run.id")));
+			testrayProjectId,testrayRunId);
+
+		_addTestrayTask(
+			testrayBuildId, propertiesMap.get("testray.build.name"));
+
+		JSONObject jsonObject = new JSONObject(_invoke(
+			null, null, HttpInvoker.HttpMethod.GET,
+			"routines/" + testrayRoutineId, null).getContent());
+
+		if(jsonObject.getBoolean("autoanalyze")){
+
+		}
+
 	}
 
 	private static final int _TESTRAY_CASE_RESULT_STATUS_BLOCKED = 4;
