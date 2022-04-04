@@ -1,6 +1,6 @@
 {
 	"active": true,
-	"description": "Workflow to update the price for the order lifecycle",
+	"description": "Workflow to update order price.",
 	"name": "Order Price Update",
 	"title": "Order Price Update",
 	"title_i18n": {
