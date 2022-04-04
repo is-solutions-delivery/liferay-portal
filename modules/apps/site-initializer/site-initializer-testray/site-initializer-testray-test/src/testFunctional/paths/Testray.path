@@ -70,6 +70,21 @@
 	<td>//span[contains(text(),'Results')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>OVERVIEW_LAYOUT_VALUES</td>
+	<td>//th[contains(@class, 'small-heading') and contains(text(),'${key_rowValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OVERVIEW_ROW_VALUES</td>
+	<td>xpath=(//table[contains(@class, 'qa w-100')]//td)[key_Index]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OVERVIEW_ROW_VALUES_RESULTS</td>
+	<td>//table[contains(@class, 'qa w-100')]//td[contains(text(),"${key_overviewValue}")]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
