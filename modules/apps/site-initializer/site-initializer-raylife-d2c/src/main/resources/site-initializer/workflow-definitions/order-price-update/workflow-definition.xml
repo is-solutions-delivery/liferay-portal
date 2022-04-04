@@ -59,10 +59,12 @@
 						import java.math.BigDecimal;
 
 						Map<String, Serializable> objectEntryValues = ObjectEntryLocalServiceUtil.getValues(kaleoInstanceToken.getClassPK());
-						Map<String, Serializable> quoteComparisonEntryValues = ObjectEntryLocalServiceUtil.getValues(GetterUtil.getLong(objectEntryValues.get("r_quoteComparisonToRaylifeOrders_c_quoteComparisonId")));
+
+						int billingOption = GetterUtil.getInteger(objectEntryValues.get("billingOption"));
 
 						BigDecimal finalPrice = 0.0;
-						int billingOption = GetterUtil.getInteger(objectEntryValues.get("billingOption"));
+
+						Map<String, Serializable> quoteComparisonEntryValues = ObjectEntryLocalServiceUtil.getValues(GetterUtil.getLong(objectEntryValues.get("r_quoteComparisonToRaylifeOrders_c_quoteComparisonId")));
 
 						if (billingOption == 1) {
 							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValues.get("promo"));
