@@ -319,4 +319,13 @@ definition {
 
 	}
 
+	@description = "This is a test for LPS-68939. It ensures that the message threads appear from newest to oldest by default."
+	@ignore = "Test Stub"
+	@priority = "4"
+	test ThreadsAreSortedFromNewestToOldestByDefault {
+
+		// TODO LPS-150860 ThreadsAreSortedFromNewestToOldestByDefault pending implementation
+
+	}
+
 }
