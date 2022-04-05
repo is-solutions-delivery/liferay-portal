@@ -323,8 +323,10 @@ public class Main {
 			).put(
 				"r_issueToCaseResultsIssues_c_issueId",
 				() -> {
+					String filterString = "name eq '" + testrayIssueName + "'";
+
 					long testrayIssueId = _getObjectEntryId(
-						testrayIssueName, "issues");
+						null, filterString, "issues");
 
 					if (testrayIssueId > 0) {
 						return testrayIssueId;
@@ -339,7 +341,27 @@ public class Main {
 	private void _addTestrayTask(long testrayBuildId, String testrayTaskName)
 		throws Exception {
 
-		long testrayTaskId = _getObjectEntryId(testrayTaskName, "tasks");
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("Task#");
+		sb.append(testrayTaskName);
+		sb.append("#testrayBuildId#");
+		sb.append(testrayBuildId);
+
+		String objectEntryMapKey = sb.toString();
+
+		sb = new StringBundler(5);
+
+		sb.append("buildId eq ");
+		sb.append(testrayBuildId);
+		sb.append(" and name eq '");
+		sb.append(testrayTaskName);
+		sb.append("'");
+
+		String filterString = sb.toString();
+
+		long testrayTaskId = _getObjectEntryId(
+			objectEntryMapKey, filterString, "tasks");
 
 		if (testrayTaskId != 0) {
 			return;
@@ -347,7 +369,7 @@ public class Main {
 
 		LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
 
-		_postObjectEntry(
+		testrayTaskId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"dueStatus", _TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS
 			).put(
@@ -356,6 +378,8 @@ public class Main {
 				"statusUpdateDate", localDateTime::toString
 			).build(),
 			testrayTaskName, "tasks");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayTaskId);
 	}
 
 	private void _addTestrayWarnings(
@@ -401,11 +425,11 @@ public class Main {
 	}
 
 	private long _getObjectEntryId(
-			String name, String objectDefinitionShortName)
+			String objectEntryMapKey, String filterString,
+			String objectDefinitionShortName)
 		throws Exception {
 
-		Long objectEntryId = _objectEntryIds.get(
-			objectDefinitionShortName + "#" + name);
+		Long objectEntryId = _objectEntryIds.get(objectEntryMapKey);
 
 		if (objectEntryId != null) {
 			return objectEntryId;
@@ -416,7 +440,7 @@ public class Main {
 			HashMapBuilder.put(
 				"fields", "id"
 			).put(
-				"filter", "name eq '" + name + "'"
+				"filter", filterString
 			).build());
 
 		JSONObject responseJSONObject = new JSONObject(
@@ -428,17 +452,9 @@ public class Main {
 			return 0;
 		}
 
-		_objectEntryIds.put(
-			objectDefinitionShortName + "#" + name, objectEntryId);
-
 		JSONObject jsonObject = jsonArray.getJSONObject(0);
 
-		objectEntryId = jsonObject.getLong("id");
-
-		_objectEntryIds.put(
-			objectDefinitionShortName + "#" + name, objectEntryId);
-
-		return objectEntryId;
+		return jsonObject.getLong("id");
 	}
 
 	private Map<String, String> _getPropertiesMap(Element element) {
@@ -509,7 +525,27 @@ public class Main {
 			long testrayProjectId)
 		throws Exception {
 
-		long testrayBuildId = _getObjectEntryId(testrayBuildName, "builds");
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("Build#");
+		sb.append(testrayBuildName);
+		sb.append("#testrayProjectId#");
+		sb.append(testrayProjectId);
+
+		String objectEntryMapKey = sb.toString();
+
+		sb = new StringBundler(5);
+
+		sb.append("projectId eq ");
+		sb.append(testrayProjectId);
+		sb.append(" and name eq '");
+		sb.append(testrayBuildName);
+		sb.append("'");
+
+		String filterString = sb.toString();
+
+		long testrayBuildId = _getObjectEntryId(
+			objectEntryMapKey, filterString, "builds");
 
 		if (testrayBuildId != 0) {
 			return testrayBuildId;
@@ -520,7 +556,7 @@ public class Main {
 		long testrayRoutineId = _getTestrayRoutineId(
 			testrayProjectId, propertiesMap.get("testray.build.type"));
 
-		return _postObjectEntry(
+		testrayBuildId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"description", _getTestrayBuildDescription(propertiesMap)
 			).put(
@@ -538,6 +574,10 @@ public class Main {
 				"r_routineToBuilds_c_routineId", testrayRoutineId
 			).build(),
 			testrayBuildName, "builds");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayBuildId);
+
+		return testrayBuildId;
 	}
 
 	private Map<String, Object> _getTestrayCaseProperties(Element element) {
@@ -658,14 +698,22 @@ public class Main {
 	private long _getTestrayCaseTypeId(String testrayCaseTypeName)
 		throws Exception {
 
+		String objectEntryMapKey = "CaseType#" + testrayCaseTypeName;
+		String filterString = "name eq '" + testrayCaseTypeName + "'";
+
 		long testrayCaseTypeId = _getObjectEntryId(
-			testrayCaseTypeName, "casetypes");
+			objectEntryMapKey, filterString, "casetypes");
 
 		if (testrayCaseTypeId != 0) {
 			return testrayCaseTypeId;
 		}
 
-		return _postObjectEntry(null, testrayCaseTypeName, "casetypes");
+		testrayCaseTypeId = _postObjectEntry(
+			null, testrayCaseTypeName, "casetypes");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayCaseTypeId);
+
+		return testrayCaseTypeId;
 	}
 
 	private long _getTestrayComponentId(
@@ -673,102 +721,195 @@ public class Main {
 			long testrayTeamId)
 		throws Exception {
 
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("Component#");
+		sb.append(testrayComponentName);
+		sb.append("#testrayProjectId#");
+		sb.append(testrayProjectId);
+
+		String objectEntryMapKey = sb.toString();
+
+		sb = new StringBundler(5);
+
+		sb.append("projectId eq ");
+		sb.append(testrayProjectId);
+		sb.append(" and name eq '");
+		sb.append(testrayComponentName);
+		sb.append("'");
+
+		String filterString = sb.toString();
+
 		long testrayComponentId = _getObjectEntryId(
-			testrayComponentName, "components");
+			objectEntryMapKey, filterString, "components");
 
 		if (testrayComponentId != 0) {
 			return testrayComponentId;
 		}
 
-		return _postObjectEntry(
+		testrayComponentId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"r_projectToComponents_c_projectId", testrayProjectId
 			).put(
 				"r_teamToComponents_c_teamId", testrayTeamId
 			).build(),
 			testrayComponentName, "components");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayComponentId);
+
+		return testrayComponentId;
 	}
 
 	private long _getTestrayFactorCategoryId(String testrayFactorCategoryName)
 		throws Exception {
 
+		String objectEntryMapKey =
+			"FactorCategory#" + testrayFactorCategoryName;
+		String filterString = "name eq '" + testrayFactorCategoryName + "'";
+
 		long testrayFactorCategoryId = _getObjectEntryId(
-			testrayFactorCategoryName, "factorcategories");
+			objectEntryMapKey, filterString, "factorcategories");
 
 		if (testrayFactorCategoryId != 0) {
 			return testrayFactorCategoryId;
 		}
 
-		return _postObjectEntry(
+		testrayFactorCategoryId = _postObjectEntry(
 			null, testrayFactorCategoryName, "factorcategories");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayFactorCategoryId);
+
+		return testrayFactorCategoryId;
 	}
 
 	private long _getTestrayFactorOptionId(
 			long testrayFactorCategoryId, String testrayFactorOptionName)
 		throws Exception {
 
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("FactorOption#");
+		sb.append(testrayFactorOptionName);
+		sb.append("#testrayFactorCategoryId#");
+		sb.append(testrayFactorCategoryId);
+
+		String objectEntryMapKey = sb.toString();
+
+		sb = new StringBundler(5);
+
+		sb.append("factorCategoryId eq ");
+		sb.append(testrayFactorCategoryId);
+		sb.append(" and name eq '");
+		sb.append(testrayFactorOptionName);
+		sb.append("'");
+
+		String filterString = sb.toString();
+
 		long testrayFactorOptionId = _getObjectEntryId(
-			testrayFactorOptionName, "factoroptions");
+			objectEntryMapKey, filterString, "factoroptions");
 
 		if (testrayFactorOptionId != 0) {
 			return testrayFactorOptionId;
 		}
 
-		return _postObjectEntry(
+		testrayFactorOptionId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"r_factorCategoryToOptions_c_factorCategoryId",
 				testrayFactorCategoryId
 			).build(),
 			testrayFactorOptionName, "factoroptions");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayFactorOptionId);
+
+		return testrayFactorOptionId;
 	}
 
 	private long _getTestrayProductVersionId(
 			long testrayProjectId, String testrayProductVersionName)
 		throws Exception {
 
+		String objectEntryMapKey =
+			"ProductVersion#" + testrayProductVersionName;
+		String filterString = "name eq '" + testrayProductVersionName + "'";
+
 		long testrayProductVersionId = _getObjectEntryId(
-			testrayProductVersionName, "productversions");
+			objectEntryMapKey, filterString, "productversions");
 
 		if (testrayProductVersionId != 0) {
 			return testrayProductVersionId;
 		}
 
-		return _postObjectEntry(
+		testrayProductVersionId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"r_projectToProductVersions_c_projectId", testrayProjectId
 			).build(),
 			testrayProductVersionName, "productversions");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayProductVersionId);
+
+		return testrayProductVersionId;
 	}
 
 	private long _getTestrayProjectId(String testrayProjectName)
 		throws Exception {
 
+		String objectEntryMapKey = "Project#" + testrayProjectName;
+		String filterString = "name eq '" + testrayProjectName + "'";
+
 		long testrayProjectId = _getObjectEntryId(
-			testrayProjectName, "projects");
+			objectEntryMapKey, filterString, "projects");
 
 		if (testrayProjectId != 0) {
 			return testrayProjectId;
 		}
 
-		return _postObjectEntry(null, testrayProjectName, "projects");
+		testrayProjectId = _postObjectEntry(
+			null, testrayProjectName, "projects");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayProjectId);
+
+		return testrayProjectId;
 	}
 
 	private long _getTestrayRoutineId(
 			long testrayProjectId, String testrayRoutineName)
 		throws Exception {
 
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("Routine#");
+		sb.append(testrayRoutineName);
+		sb.append("#testrayProjectId#");
+		sb.append(testrayProjectId);
+
+		String objectEntryMapKey = sb.toString();
+
+		sb = new StringBundler(5);
+
+		sb.append("projectId eq ");
+		sb.append(testrayProjectId);
+		sb.append(" and name eq '");
+		sb.append(testrayRoutineName);
+		sb.append("'");
+
+		String filterString = sb.toString();
+
 		long testrayRoutineId = _getObjectEntryId(
-			testrayRoutineName, "routines");
+			objectEntryMapKey, filterString, "routines");
 
 		if (testrayRoutineId != 0) {
 			return testrayRoutineId;
 		}
 
-		return _postObjectEntry(
+		testrayRoutineId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"r_routineToProjects_c_projectId", testrayProjectId
 			).build(),
 			testrayRoutineName, "routines");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayRoutineId);
+
+		return testrayRoutineId;
 	}
 
 	private String _getTestrayRunEnvironmentHash(
@@ -815,7 +956,27 @@ public class Main {
 			long testrayBuildId, String testrayRunName)
 		throws Exception {
 
-		long testrayRunId = _getObjectEntryId(testrayRunName, "runs");
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("Run#");
+		sb.append(testrayRunName);
+		sb.append("#testrayBuildId#");
+		sb.append(testrayBuildId);
+
+		String objectEntryMapKey = sb.toString();
+
+		sb = new StringBundler(5);
+
+		sb.append("buildId eq ");
+		sb.append(testrayBuildId);
+		sb.append(" and name eq '");
+		sb.append(testrayRunName);
+		sb.append("'");
+
+		String filterString = sb.toString();
+
+		long testrayRunId = _getObjectEntryId(
+			objectEntryMapKey, filterString, "runs");
 
 		if (testrayRunId != 0) {
 			return testrayRunId;
@@ -838,6 +999,8 @@ public class Main {
 			).build(),
 			testrayRunName, "runs");
 
+		_objectEntryIds.put(objectEntryMapKey, testrayRunId);
+
 		JSONObject jsonObject = new JSONObject();
 
 		jsonObject.put(
@@ -855,17 +1018,41 @@ public class Main {
 			long testrayProjectId, String testrayTeamName)
 		throws Exception {
 
-		long testrayTeamId = _getObjectEntryId(testrayTeamName, "teams");
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("Team#");
+		sb.append(testrayTeamName);
+		sb.append("#testrayProjectId#");
+		sb.append(testrayProjectId);
+
+		String objectEntryMapKey = sb.toString();
+
+		sb = new StringBundler(5);
+
+		sb.append("projectId eq ");
+		sb.append(testrayProjectId);
+		sb.append(" and name eq '");
+		sb.append(testrayTeamName);
+		sb.append("'");
+
+		String filterString = sb.toString();
+
+		long testrayTeamId = _getObjectEntryId(
+			objectEntryMapKey, filterString, "teams");
 
 		if (testrayTeamId != 0) {
 			return testrayTeamId;
 		}
 
-		return _postObjectEntry(
+		testrayTeamId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"r_projectToTeams_c_projectId", testrayProjectId
 			).build(),
 			testrayTeamName, "teams");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayTeamId);
+
+		return testrayTeamId;
 	}
 
 	private long _increment(
@@ -972,13 +1159,7 @@ public class Main {
 		JSONObject responseJSONObject = new JSONObject(
 			httpResponse.getContent());
 
-		long id = responseJSONObject.getLong("id");
-
-		if (id > 0) {
-			_objectEntryIds.put(objectDefinitionShortName + "#" + name, id);
-		}
-
-		return id;
+		return responseJSONObject.getLong("id");
 	}
 
 	private void _processArchive(byte[] bytes) throws Exception {
