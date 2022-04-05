@@ -6,14 +6,6 @@ definition {
 			locator1 = "Testray#ITEMS_PER_PAGE_VALUE_BUTTON");
 	}
 
-	macro assertOverviewValue {
-		var overviewValue = selenium.getElementValue("Testray#OVERVIEW_ROW_VALUES");
-
-		AssertElementPresent(
-			key_overviewValue = "${overviewValue}",
-			locator1 = "Testray#OVERVIEW_ROW_VALUES_RESULTS");
-	}
-
 	macro assertPageNumber {
 		AssertElementPresent(
 			key_pageNumber = "${pageNumber}",
@@ -160,8 +152,6 @@ definition {
 		AssertElementPresent(
 			key_rowValue = "${rowValue}",
 			locator1 = "Testray#OVERVIEW_LAYOUT_VALUES");
-
-		Testray.assertOverviewValue(key_Index = "${index}");
 	}
 
 }

@@ -77,7 +77,7 @@
 </tr>
 <tr>
 	<td>OVERVIEW_ROW_VALUES</td>
-	<td>xpath=(//table[contains(@class, 'qa w-100')]//td)[key_Index]</td>
+	<td>xpath=(//table[contains(@class, 'qa w-100')]//td)[key_index]</td>
 	<td></td>
 </tr>
 <tr>
