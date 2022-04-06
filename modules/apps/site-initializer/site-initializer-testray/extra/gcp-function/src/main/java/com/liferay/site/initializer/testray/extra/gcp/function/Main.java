@@ -501,27 +501,14 @@ public class Main {
 			long testrayProjectId)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append("Build#");
-		sb.append(testrayBuildName);
-		sb.append("#testrayProjectId#");
-		sb.append(testrayProjectId);
-
-		String objectEntryMapKey = sb.toString();
-
-		sb = new StringBundler(5);
-
-		sb.append("projectId eq ");
-		sb.append(testrayProjectId);
-		sb.append(" and name eq '");
-		sb.append(testrayBuildName);
-		sb.append("'");
-
-		String filterString = sb.toString();
+		String objectEntryMapKey = StringBundler.concat(
+			"Build#", testrayBuildName, "#testrayProjectId#", testrayProjectId);
 
 		long testrayBuildId = _getObjectEntryId(
-			filterString, "builds", objectEntryMapKey);
+			StringBundler.concat(
+				"projectId eq ", testrayProjectId, " and name eq '",
+				testrayBuildName, "'"),
+			"builds", objectEntryMapKey);
 
 		if (testrayBuildId != 0) {
 			return testrayBuildId;
@@ -675,10 +662,10 @@ public class Main {
 		throws Exception {
 
 		String objectEntryMapKey = "CaseType#" + testrayCaseTypeName;
-		String filterString = "name eq '" + testrayCaseTypeName + "'";
 
 		long testrayCaseTypeId = _getObjectEntryId(
-			filterString, "casetypes", objectEntryMapKey);
+			"name eq '" + testrayCaseTypeName + "'", "casetypes",
+			objectEntryMapKey);
 
 		if (testrayCaseTypeId != 0) {
 			return testrayCaseTypeId;
@@ -697,27 +684,15 @@ public class Main {
 			long testrayTeamId)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append("Component#");
-		sb.append(testrayComponentName);
-		sb.append("#testrayProjectId#");
-		sb.append(testrayProjectId);
-
-		String objectEntryMapKey = sb.toString();
-
-		sb = new StringBundler(5);
-
-		sb.append("projectId eq ");
-		sb.append(testrayProjectId);
-		sb.append(" and name eq '");
-		sb.append(testrayComponentName);
-		sb.append("'");
-
-		String filterString = sb.toString();
+		String objectEntryMapKey = StringBundler.concat(
+			"Component#", testrayComponentName, "#testrayProjectId#",
+			testrayProjectId);
 
 		long testrayComponentId = _getObjectEntryId(
-			filterString, "components", objectEntryMapKey);
+			StringBundler.concat(
+				"projectId eq ", testrayProjectId, " and name eq '",
+				testrayComponentName, "'"),
+			"components", objectEntryMapKey);
 
 		if (testrayComponentId != 0) {
 			return testrayComponentId;
@@ -741,10 +716,10 @@ public class Main {
 
 		String objectEntryMapKey =
 			"FactorCategory#" + testrayFactorCategoryName;
-		String filterString = "name eq '" + testrayFactorCategoryName + "'";
 
 		long testrayFactorCategoryId = _getObjectEntryId(
-			filterString, "factorcategories", objectEntryMapKey);
+			"name eq '" + testrayFactorCategoryName + "'", "factorcategories",
+			objectEntryMapKey);
 
 		if (testrayFactorCategoryId != 0) {
 			return testrayFactorCategoryId;
@@ -762,27 +737,15 @@ public class Main {
 			long testrayFactorCategoryId, String testrayFactorOptionName)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append("FactorOption#");
-		sb.append(testrayFactorOptionName);
-		sb.append("#testrayFactorCategoryId#");
-		sb.append(testrayFactorCategoryId);
-
-		String objectEntryMapKey = sb.toString();
-
-		sb = new StringBundler(5);
-
-		sb.append("factorCategoryId eq ");
-		sb.append(testrayFactorCategoryId);
-		sb.append(" and name eq '");
-		sb.append(testrayFactorOptionName);
-		sb.append("'");
-
-		String filterString = sb.toString();
+		String objectEntryMapKey = StringBundler.concat(
+			"FactorOption#", testrayFactorOptionName,
+			"#testrayFactorCategoryId#", testrayFactorCategoryId);
 
 		long testrayFactorOptionId = _getObjectEntryId(
-			filterString, "factoroptions", objectEntryMapKey);
+			StringBundler.concat(
+				"factorCategoryId eq ", testrayFactorCategoryId,
+				" and name eq '", testrayFactorOptionName, "'"),
+			"factoroptions", objectEntryMapKey);
 
 		if (testrayFactorOptionId != 0) {
 			return testrayFactorOptionId;
@@ -801,11 +764,10 @@ public class Main {
 	}
 
 	private long _getTestrayIssueId(String testrayIssueName) throws Exception {
-		String filterString = "name eq '" + testrayIssueName + "'";
 		String objectEntryMapKey = "Issue#" + testrayIssueName;
 
 		long testrayIssueId = _getObjectEntryId(
-			filterString, "issues", objectEntryMapKey);
+			"name eq '" + testrayIssueName + "'", "issues", objectEntryMapKey);
 
 		if (testrayIssueId > 0) {
 			return testrayIssueId;
@@ -824,10 +786,10 @@ public class Main {
 
 		String objectEntryMapKey =
 			"ProductVersion#" + testrayProductVersionName;
-		String filterString = "name eq '" + testrayProductVersionName + "'";
 
 		long testrayProductVersionId = _getObjectEntryId(
-			filterString, "productversions", objectEntryMapKey);
+			"name eq '" + testrayProductVersionName + "'", "productversions",
+			objectEntryMapKey);
 
 		if (testrayProductVersionId != 0) {
 			return testrayProductVersionId;
@@ -848,10 +810,10 @@ public class Main {
 		throws Exception {
 
 		String objectEntryMapKey = "Project#" + testrayProjectName;
-		String filterString = "name eq '" + testrayProjectName + "'";
 
 		long testrayProjectId = _getObjectEntryId(
-			filterString, "projects", objectEntryMapKey);
+			"name eq '" + testrayProjectName + "'", "projects",
+			objectEntryMapKey);
 
 		if (testrayProjectId != 0) {
 			return testrayProjectId;
@@ -869,27 +831,15 @@ public class Main {
 			long testrayProjectId, String testrayRoutineName)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append("Routine#");
-		sb.append(testrayRoutineName);
-		sb.append("#testrayProjectId#");
-		sb.append(testrayProjectId);
-
-		String objectEntryMapKey = sb.toString();
-
-		sb = new StringBundler(5);
-
-		sb.append("projectId eq ");
-		sb.append(testrayProjectId);
-		sb.append(" and name eq '");
-		sb.append(testrayRoutineName);
-		sb.append("'");
-
-		String filterString = sb.toString();
+		String objectEntryMapKey = StringBundler.concat(
+			"Routine#", testrayRoutineName, "#testrayProjectId#",
+			testrayProjectId);
 
 		long testrayRoutineId = _getObjectEntryId(
-			filterString, "routines", objectEntryMapKey);
+			StringBundler.concat(
+				"projectId eq ", testrayProjectId, " and name eq '",
+				testrayRoutineName, "'"),
+			"routines", objectEntryMapKey);
 
 		if (testrayRoutineId != 0) {
 			return testrayRoutineId;
@@ -950,27 +900,14 @@ public class Main {
 			long testrayBuildId, String testrayRunName)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append("Run#");
-		sb.append(testrayRunName);
-		sb.append("#testrayBuildId#");
-		sb.append(testrayBuildId);
-
-		String objectEntryMapKey = sb.toString();
-
-		sb = new StringBundler(5);
-
-		sb.append("buildId eq ");
-		sb.append(testrayBuildId);
-		sb.append(" and name eq '");
-		sb.append(testrayRunName);
-		sb.append("'");
-
-		String filterString = sb.toString();
+		String objectEntryMapKey = StringBundler.concat(
+			"Run#", testrayRunName, "#testrayBuildId#", testrayBuildId);
 
 		long testrayRunId = _getObjectEntryId(
-			filterString, "runs", objectEntryMapKey);
+			StringBundler.concat(
+				"buildId eq ", testrayBuildId, " and name eq '", testrayRunName,
+				"'"),
+			"runs", objectEntryMapKey);
 
 		if (testrayRunId != 0) {
 			return testrayRunId;
@@ -1012,27 +949,14 @@ public class Main {
 			long testrayProjectId, String testrayTeamName)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
-
-		sb.append("Team#");
-		sb.append(testrayTeamName);
-		sb.append("#testrayProjectId#");
-		sb.append(testrayProjectId);
-
-		String objectEntryMapKey = sb.toString();
-
-		sb = new StringBundler(5);
-
-		sb.append("projectId eq ");
-		sb.append(testrayProjectId);
-		sb.append(" and name eq '");
-		sb.append(testrayTeamName);
-		sb.append("'");
-
-		String filterString = sb.toString();
+		String objectEntryMapKey = StringBundler.concat(
+			"Team#", testrayTeamName, "#testrayProjectId#", testrayProjectId);
 
 		long testrayTeamId = _getObjectEntryId(
-			filterString, "teams", objectEntryMapKey);
+			StringBundler.concat(
+				"projectId eq ", testrayProjectId, " and name eq '",
+				testrayTeamName, "'"),
+			"teams", objectEntryMapKey);
 
 		if (testrayTeamId != 0) {
 			return testrayTeamId;
