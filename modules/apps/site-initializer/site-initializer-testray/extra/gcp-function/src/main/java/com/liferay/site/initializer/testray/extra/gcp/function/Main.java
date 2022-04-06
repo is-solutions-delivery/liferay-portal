@@ -330,27 +330,23 @@ public class Main {
 	private void _addTestrayTask(long testrayBuildId, String testrayTaskName)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
+		StringBundler filterSB = new StringBundler(5);
 
-		sb.append("Task#");
-		sb.append(testrayTaskName);
-		sb.append("#testrayBuildId#");
-		sb.append(testrayBuildId);
+		filterSB.append("buildId eq ");
+		filterSB.append(testrayBuildId);
+		filterSB.append(" and name eq '");
+		filterSB.append(testrayTaskName);
+		filterSB.append("'");
 
-		String objectEntryMapKey = sb.toString();
+		StringBundler objectEntryMapKeySB = new StringBundler(4);
 
-		sb = new StringBundler(5);
-
-		sb.append("buildId eq ");
-		sb.append(testrayBuildId);
-		sb.append(" and name eq '");
-		sb.append(testrayTaskName);
-		sb.append("'");
-
-		String filterString = sb.toString();
+		objectEntryMapKeySB.append("Task#");
+		objectEntryMapKeySB.append(testrayTaskName);
+		objectEntryMapKeySB.append("#testrayBuildId#");
+		objectEntryMapKeySB.append(testrayBuildId);
 
 		long testrayTaskId = _getObjectEntryId(
-			filterString, "tasks", objectEntryMapKey);
+			filterSB.toString(), "tasks", objectEntryMapKeySB.toString());
 
 		if (testrayTaskId != 0) {
 			return;
@@ -368,7 +364,7 @@ public class Main {
 			).build(),
 			testrayTaskName, "tasks");
 
-		_objectEntryIds.put(objectEntryMapKey, testrayTaskId);
+		_objectEntryIds.put(objectEntryMapKeySB.toString(), testrayTaskId);
 	}
 
 	private void _addTestrayWarnings(
