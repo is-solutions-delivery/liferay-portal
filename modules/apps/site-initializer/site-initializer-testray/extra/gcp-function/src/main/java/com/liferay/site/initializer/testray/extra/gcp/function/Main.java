@@ -326,7 +326,7 @@ public class Main {
 					String filterString = "name eq '" + testrayIssueName + "'";
 
 					long testrayIssueId = _getObjectEntryId(
-						null, filterString, "issues");
+						filterString, "issues", null);
 
 					if (testrayIssueId > 0) {
 						return testrayIssueId;
@@ -361,7 +361,7 @@ public class Main {
 		String filterString = sb.toString();
 
 		long testrayTaskId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "tasks");
+			filterString, "tasks", objectEntryMapKey);
 
 		if (testrayTaskId != 0) {
 			return;
@@ -425,8 +425,8 @@ public class Main {
 	}
 
 	private long _getObjectEntryId(
-			String objectEntryMapKey, String filterString,
-			String objectDefinitionShortName)
+			String filterString, String objectDefinitionShortName,
+			String objectEntryMapKey)
 		throws Exception {
 
 		Long objectEntryId = _objectEntryIds.get(objectEntryMapKey);
@@ -545,7 +545,7 @@ public class Main {
 		String filterString = sb.toString();
 
 		long testrayBuildId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "builds");
+			filterString, "builds", objectEntryMapKey);
 
 		if (testrayBuildId != 0) {
 			return testrayBuildId;
@@ -702,7 +702,7 @@ public class Main {
 		String filterString = "name eq '" + testrayCaseTypeName + "'";
 
 		long testrayCaseTypeId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "casetypes");
+			filterString, "casetypes", objectEntryMapKey);
 
 		if (testrayCaseTypeId != 0) {
 			return testrayCaseTypeId;
@@ -741,7 +741,7 @@ public class Main {
 		String filterString = sb.toString();
 
 		long testrayComponentId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "components");
+			filterString, "components", objectEntryMapKey);
 
 		if (testrayComponentId != 0) {
 			return testrayComponentId;
@@ -768,7 +768,7 @@ public class Main {
 		String filterString = "name eq '" + testrayFactorCategoryName + "'";
 
 		long testrayFactorCategoryId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "factorcategories");
+			filterString, "factorcategories", objectEntryMapKey);
 
 		if (testrayFactorCategoryId != 0) {
 			return testrayFactorCategoryId;
@@ -806,7 +806,7 @@ public class Main {
 		String filterString = sb.toString();
 
 		long testrayFactorOptionId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "factoroptions");
+			filterString, "factoroptions", objectEntryMapKey);
 
 		if (testrayFactorOptionId != 0) {
 			return testrayFactorOptionId;
@@ -833,7 +833,7 @@ public class Main {
 		String filterString = "name eq '" + testrayProductVersionName + "'";
 
 		long testrayProductVersionId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "productversions");
+			filterString, "productversions", objectEntryMapKey);
 
 		if (testrayProductVersionId != 0) {
 			return testrayProductVersionId;
@@ -857,7 +857,7 @@ public class Main {
 		String filterString = "name eq '" + testrayProjectName + "'";
 
 		long testrayProjectId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "projects");
+			filterString, "projects", objectEntryMapKey);
 
 		if (testrayProjectId != 0) {
 			return testrayProjectId;
@@ -895,7 +895,7 @@ public class Main {
 		String filterString = sb.toString();
 
 		long testrayRoutineId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "routines");
+			filterString, "routines", objectEntryMapKey);
 
 		if (testrayRoutineId != 0) {
 			return testrayRoutineId;
@@ -976,7 +976,7 @@ public class Main {
 		String filterString = sb.toString();
 
 		long testrayRunId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "runs");
+			filterString, "runs", objectEntryMapKey);
 
 		if (testrayRunId != 0) {
 			return testrayRunId;
@@ -1038,7 +1038,7 @@ public class Main {
 		String filterString = sb.toString();
 
 		long testrayTeamId = _getObjectEntryId(
-			objectEntryMapKey, filterString, "teams");
+			filterString, "teams", objectEntryMapKey);
 
 		if (testrayTeamId != 0) {
 			return testrayTeamId;
