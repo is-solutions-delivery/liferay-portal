@@ -50,6 +50,10 @@
 					<![CDATA[
 						import com.liferay.commerce.constants.CommerceOrderConstants;
 						import com.liferay.commerce.model.CommerceOrder;
+						import com.liferay.commerce.model.CommerceOrderItem;
+						import com.liferay.commerce.product.model.CPInstance;
+						import com.liferay.commerce.product.model.CPSubscriptionInfo;
+						import com.liferay.commerce.product.service.CPInstanceLocalServiceUtil;
 						import com.liferay.commerce.service.CommerceOrderLocalServiceUtil;
 						import com.liferay.object.service.ObjectEntryLocalServiceUtil;
 						import com.liferay.portal.kernel.util.GetterUtil;
@@ -66,14 +70,20 @@
 
 						Map<String, Serializable> quoteComparisonEntryValuesMap = ObjectEntryLocalServiceUtil.getValues(GetterUtil.getLong(objectEntryValuesMap.get("r_quoteComparisonToRaylifeOrders_c_quoteComparisonId")));
 
+						CommerceOrder commerceOrder = CommerceOrderLocalServiceUtil.getCommerceOrder(GetterUtil.getLong(objectEntryValuesMap.get("r_commerceOrderToRaylifeOrders_commerceOrderId")));
+
+						List<CommerceOrderItem> commerceOrderItems = commerceOrder.getCommerceOrderItems();
+
+						CommerceOrderItem commerceOrderItem = commerceOrderItems.get(0);
+
+						CPInstance cpInstance = commerceOrderItem.fetchCPInstance();
+
 						if (billingOption == 1) {
 							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValuesMap.get("promo"));
 						}
 						else {
-							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValuesMap.get("price")) / 2;
+							finalPrice = GetterUtil.getNumber(quoteComparisonEntryValuesMap.get("price")) / cpInstance.getSubscriptionLength();
 						}
-
-						CommerceOrder commerceOrder = CommerceOrderLocalServiceUtil.getCommerceOrder(GetterUtil.getLong(objectEntryValuesMap.get("r_commerceOrderToRaylifeOrders_commerceOrderId")));
 
 						commerceOrder.setSubtotal(finalPrice);
 						commerceOrder.setTotal(finalPrice);
