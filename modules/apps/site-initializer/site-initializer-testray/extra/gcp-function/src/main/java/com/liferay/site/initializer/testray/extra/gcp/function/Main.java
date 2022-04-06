@@ -330,23 +330,14 @@ public class Main {
 	private void _addTestrayTask(long testrayBuildId, String testrayTaskName)
 		throws Exception {
 
-		StringBundler filterSB = new StringBundler(5);
-
-		filterSB.append("buildId eq ");
-		filterSB.append(testrayBuildId);
-		filterSB.append(" and name eq '");
-		filterSB.append(testrayTaskName);
-		filterSB.append("'");
-
-		StringBundler objectEntryMapKeySB = new StringBundler(4);
-
-		objectEntryMapKeySB.append("Task#");
-		objectEntryMapKeySB.append(testrayTaskName);
-		objectEntryMapKeySB.append("#testrayBuildId#");
-		objectEntryMapKeySB.append(testrayBuildId);
+		String objectEntryMapKey = StringBundler.concat(
+			"Task#", testrayTaskName, "#testrayBuildId#", testrayBuildId);
 
 		long testrayTaskId = _getObjectEntryId(
-			filterSB.toString(), "tasks", objectEntryMapKeySB.toString());
+			StringBundler.concat(
+				"buildId eq ", testrayBuildId, " and name eq '",
+				testrayTaskName, "'"),
+			"tasks", objectEntryMapKey);
 
 		if (testrayTaskId != 0) {
 			return;
@@ -364,7 +355,7 @@ public class Main {
 			).build(),
 			testrayTaskName, "tasks");
 
-		_objectEntryIds.put(objectEntryMapKeySB.toString(), testrayTaskId);
+		_objectEntryIds.put(objectEntryMapKey, testrayTaskId);
 	}
 
 	private void _addTestrayWarnings(
