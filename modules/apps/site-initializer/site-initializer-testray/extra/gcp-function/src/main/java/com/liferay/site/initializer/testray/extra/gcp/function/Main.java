@@ -255,13 +255,32 @@ public class Main {
 
 		_addTestrayAttachments(testcaseNode, testrayCaseResultId);
 
-		_addTestrayIssue(
+		_addTestrayCaseResultIssue(
 			testrayCaseResultId,
 			(String)testrayCasePropertiesMap.get("testray.case.issue"));
-		_addTestrayIssue(
+		_addTestrayCaseResultIssue(
 			testrayCaseResultId,
 			(String)testrayCasePropertiesMap.get("testray.case.defect"));
 		_addTestrayWarnings(testrayCasePropertiesMap, testrayCaseResultId);
+	}
+
+	private void _addTestrayCaseResultIssue(
+			long testrayCaseResultId, String testrayIssueName)
+		throws Exception {
+
+		if (_isEmpty(testrayIssueName)) {
+			return;
+		}
+
+		_postObjectEntry(
+			HashMapBuilder.<String, Object>put(
+				"r_caseResultToCaseResultsIssues_c_caseResultId",
+				testrayCaseResultId
+			).put(
+				"r_issueToCaseResultsIssues_c_issueId",
+				_getTestrayIssueId(testrayIssueName)
+			).build(),
+			null, "caseresultsissueses");
 	}
 
 	private void _addTestrayCases(
@@ -306,36 +325,6 @@ public class Main {
 				"testrayFactorOptionName", testrayFactorOptionName
 			).build(),
 			null, "factors");
-	}
-
-	private void _addTestrayIssue(
-			long testrayCaseResultId, String testrayIssueName)
-		throws Exception {
-
-		if (_isEmpty(testrayIssueName)) {
-			return;
-		}
-
-		_postObjectEntry(
-			HashMapBuilder.<String, Object>put(
-				"r_caseResultToCaseResultsIssues_c_caseResultId",
-				testrayCaseResultId
-			).put(
-				"r_issueToCaseResultsIssues_c_issueId",
-				() -> {
-					String filterString = "name eq '" + testrayIssueName + "'";
-
-					long testrayIssueId = _getObjectEntryId(
-						filterString, "issues", null);
-
-					if (testrayIssueId > 0) {
-						return testrayIssueId;
-					}
-
-					return _postObjectEntry(null, testrayIssueName, "issues");
-				}
-			).build(),
-			null, "caseresultsissueses");
 	}
 
 	private void _addTestrayTask(long testrayBuildId, String testrayTaskName)
@@ -822,6 +811,24 @@ public class Main {
 		_objectEntryIds.put(objectEntryMapKey, testrayFactorOptionId);
 
 		return testrayFactorOptionId;
+	}
+
+	private long _getTestrayIssueId(String testrayIssueName) throws Exception {
+		String filterString = "name eq '" + testrayIssueName + "'";
+		String objectEntryMapKey = "Issue#" + testrayIssueName;
+
+		long testrayIssueId = _getObjectEntryId(
+			filterString, "issues", objectEntryMapKey);
+
+		if (testrayIssueId > 0) {
+			return testrayIssueId;
+		}
+
+		testrayIssueId = _postObjectEntry(null, testrayIssueName, "issues");
+
+		_objectEntryIds.put(objectEntryMapKey, testrayIssueId);
+
+		return testrayIssueId;
 	}
 
 	private long _getTestrayProductVersionId(
