@@ -229,7 +229,8 @@ public class Main {
 		long testrayCaseId = _postObjectEntry(
 			HashMapBuilder.<String, Object>put(
 				"caseNumber",
-				_increment("projectId eq " + testrayProjectId, "cases")
+				_increment(
+					"projectId eq " + testrayProjectId, "cases", "caseNumber")
 			).put(
 				"description",
 				testrayCasePropertiesMap.get("testray.testcase.description")
@@ -924,7 +925,8 @@ public class Main {
 			).put(
 				"name", testrayRunName
 			).put(
-				"number", _increment("buildId eq " + testrayBuildId, "runs")
+				"number",
+				_increment("buildId eq " + testrayBuildId, "runs", "number")
 			).put(
 				"r_buildToRuns_c_buildId", testrayBuildId
 			).build(),
@@ -974,7 +976,8 @@ public class Main {
 	}
 
 	private long _increment(
-			String filterString, String objectDefinitionShortName)
+			String filterString, String objectDefinitionShortName,
+			String sortField)
 		throws Exception {
 
 		// TODO Make this a feature in objects
@@ -982,15 +985,25 @@ public class Main {
 		HttpInvoker.HttpResponse httpResponse = _invoke(
 			null, null, HttpInvoker.HttpMethod.GET, objectDefinitionShortName,
 			HashMapBuilder.put(
-				"fields", "id"
+				"fields", sortField
 			).put(
 				"filter", () -> filterString
+			).put(
+				"sort", sortField + ":desc"
 			).build());
 
 		JSONObject responseJSONObject = new JSONObject(
 			httpResponse.getContent());
 
-		return responseJSONObject.getLong("totalCount") + 1;
+		JSONArray jsonArray = responseJSONObject.getJSONArray("items");
+
+		if (jsonArray.isEmpty()) {
+			return 1;
+		}
+
+		JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+		return jsonObject.getLong(sortField) + 1;
 	}
 
 	private HttpInvoker.HttpResponse _invoke(
