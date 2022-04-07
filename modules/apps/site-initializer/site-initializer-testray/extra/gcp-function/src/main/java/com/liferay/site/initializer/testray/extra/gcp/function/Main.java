@@ -143,17 +143,65 @@ public class Main {
 			_s3BucketName,
 			Storage.BlobListOption.prefix(_s3InboxFolderName + "/"));
 
+		int totalFiles = 0;
+
+		for (Blob blob : page.iterateAll()) {
+			totalFiles++;
+		}
+
+		int processedFiles = 0;
+
 		for (Blob blob : page.iterateAll()) {
 			String name = blob.getName();
+			long blobSize = blob.getSize();
+			String blobSizeString = blob.getSize() + " B";
+
+			if (blobSize > 1024) {
+				blobSize = blobSize / 1000;
+				blobSizeString = blobSize + " KB";
+			}
+
+			if (blobSize > 1024) {
+				blobSize = blobSize / 1024;
+				blobSizeString = blobSize + " MB";
+			}
 
 			if (name.equals(_s3InboxFolderName + "/")) {
 				continue;
 			}
 
 			try {
-				_logger.info("Processing archive " + name);
+				long initialTime = System.currentTimeMillis();
+
+				_logger.info(
+					"Processing archive " + name + " - " + blobSizeString +
+						" (" + ++processedFiles + "/" + totalFiles + ")");
 
 				_processArchive(blob.getContent());
+
+				long spentTime = System.currentTimeMillis() - initialTime;
+
+				String spentTimeString = spentTime + " ms";
+
+				if (spentTime > 1000) {
+					spentTime = spentTime / 1000;
+					spentTimeString = spentTime + " s";
+				}
+
+				if (spentTime > 60) {
+					spentTime = spentTime / 60;
+					spentTimeString = spentTime + " m";
+				}
+
+				if (spentTime > 60) {
+					spentTime = spentTime / 60;
+					spentTimeString = spentTime + " h";
+				}
+
+				_logger.info(
+					"File processed in " + spentTimeString + " - " +
+						blobSizeString + " (" + processedFiles + "/" +
+							totalFiles + ")");
 
 				blob.copyTo(
 					_s3BucketName,
@@ -1275,13 +1323,59 @@ public class Main {
 			DocumentBuilder documentBuilder =
 				documentBuilderFactory.newDocumentBuilder();
 
+			int totalDocuments = tempDirectoryFile.listFiles().length;
+
+			int processedDocuments = 0;
+
 			for (File file : tempDirectoryFile.listFiles()) {
 				try {
-					_logger.info("Parsing document " + file.getName());
+					long fileSize = file.length();
+					String fileSizeString = fileSize + " B";
+
+					if (fileSize > 1024) {
+						fileSize = fileSize / 1000;
+						fileSizeString = fileSize + " KB";
+					}
+
+					if (fileSize > 1024) {
+						fileSize = fileSize / 1024;
+						fileSizeString = fileSize + " MB";
+					}
+
+					long initialTime = System.currentTimeMillis();
+
+					_logger.info(
+						"Parsing document " + file.getName() + " - " +
+							fileSizeString + " (" + ++processedDocuments + "/" +
+								totalDocuments + ")");
 
 					Document document = documentBuilder.parse(file);
 
 					_processDocument(document);
+
+					long spentTime = System.currentTimeMillis() - initialTime;
+
+					String spentTimeString = spentTime + " ms";
+
+					if (spentTime > 1000) {
+						spentTime = spentTime / 1000;
+						spentTimeString = spentTime + " s";
+					}
+
+					if (spentTime > 60) {
+						spentTime = spentTime / 60;
+						spentTimeString = spentTime + " m";
+					}
+
+					if (spentTime > 60) {
+						spentTime = spentTime / 60;
+						spentTimeString = spentTime + " h";
+					}
+
+					_logger.info(
+						"Document processed in " + spentTimeString + " - " +
+							fileSizeString + " (" + processedDocuments + "/" +
+								totalDocuments + ")");
 				}
 				catch (Exception exception) {
 					_logger.log(
