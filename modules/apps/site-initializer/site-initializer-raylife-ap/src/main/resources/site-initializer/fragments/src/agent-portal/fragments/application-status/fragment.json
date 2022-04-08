@@ -1,8 +1,8 @@
 {
-  "cssPath": "index.css",
-  "configurationPath": "configuration.json",
-  "htmlPath": "index.html",
-  "jsPath": "index.js",
-  "name": "Application Status",
-  "type": "react"
+	"configurationPath": "configuration.json",
+	"cssPath": "index.css",
+	"htmlPath": "index.html",
+	"jsPath": "index.js",
+	"name": "Application Status",
+	"type": "react"
 }

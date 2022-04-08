@@ -16,20 +16,13 @@ const EMAIL_INPUT_ID = '_com_liferay_login_web_portlet_LoginPortlet_login';
 const PASSWORD_INPUT_ID =
 	'_com_liferay_login_web_portlet_LoginPortlet_password';
 
-const emailInput = document.getElementById(EMAIL_INPUT_ID);
-emailInput.setAttribute('placeholder', 'Email');
-emailInput.removeAttribute('value');
-
-const passwordInput = document.getElementById(PASSWORD_INPUT_ID);
-passwordInput.setAttribute('placeholder', 'Password');
-
-window.onload = function () {
-	document.getElementById(EMAIL_INPUT_ID).focus();
-};
-
-document.getElementById(EMAIL_INPUT_ID).focus();
-
 function inputValidation() {
+	window.onload = function () {
+		document.getElementById(EMAIL_INPUT_ID).focus();
+	};
+
+	document.getElementById(EMAIL_INPUT_ID).focus();
+
 	const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
 	const TEXT_VARIANT = {
