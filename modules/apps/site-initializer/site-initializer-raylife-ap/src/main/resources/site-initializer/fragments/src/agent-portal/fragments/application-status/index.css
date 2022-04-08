@@ -1,0 +1,19 @@
+.chart-legend {
+	line-height: 2;
+}
+
+.bb-chart-arcs-title {
+	dominant-baseline: central;
+	font-size: 32px;
+	font-weight: 700;
+}
+
+.raylife-status-chart h5::after {
+	background-color: #4c84ff;
+	content: '';
+	display: block;
+	height: 1px;
+	margin-top: 7px;
+	position: absolute;
+	width: 19px;
+}
