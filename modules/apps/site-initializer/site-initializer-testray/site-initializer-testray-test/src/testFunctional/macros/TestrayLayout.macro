@@ -7,7 +7,7 @@ definition {
 	macro assertTabPageTitle {
 		Click(
 			key_pageTabTilte = "${pageTabTilte}",
-			locator1 = "TestrayLayout#PAGE_TAB_TITLE");
+			locator1 = "TestrayHeader#PAGE_TAB_TITLE");
 	}
 
 	macro clickLogoOnSidebar {
@@ -15,7 +15,7 @@ definition {
 	}
 
 	macro clickManageOnSidebar {
-		Click(locator1 = "TestrayLayout#MANAGE_SIDEBAR");
+		Click(locator1 = "TestrayManage#MANAGE_SIDEBAR");
 	}
 
 	macro clickResultsOnSidebar {
@@ -23,11 +23,11 @@ definition {
 	}
 
 	macro clickTestfowOnSidebar {
-		Click(locator1 = "TestrayLayout#TESTFLOW_SIDEBAR");
+		Click(locator1 = "TestrayTestflow#TESTFLOW_SIDEBAR");
 	}
 
 	macro clickUserOnSidebar {
-		Click(locator1 = "TestrayLayout#USER_SIDEBAR");
+		Click(locator1 = "TestrayUser#USER_ICON_SIDEBAR");
 	}
 
 }
