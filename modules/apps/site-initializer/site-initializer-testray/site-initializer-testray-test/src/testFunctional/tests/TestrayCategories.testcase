@@ -26,44 +26,44 @@ definition {
 		}
 	}
 
+	@description = "LPS-150328 - Verify that User can acess category modal."
+	@priority = "5"
+	test CanAcessCategoryModal {
+		ApplicationsMenu.gotoSite(site = "Testray 2");
+
+		Click(locator1 = "TestrayManage#MANAGE_SIDEBAR");
+
+		Click(
+			key_itemvalue = "Categories",
+			locator1 = "TestrayDropdown#DROPDOWN_ITEM");
+
+		AssertElementPresent(
+			key_title = "Categories",
+			locator1 = "TestrayManage#TITLE_MODAL_ITEM");
+	}
+
 	@description = "LPS-150329 - Verify that User can add new category."
-    @priority = "5"
-    test CanAddNewCategory {
-        ApplicationsMenu.gotoSite(site = "Testray 2");
+	@priority = "5"
+	test CanAddNewCategory {
+		ApplicationsMenu.gotoSite(site = "Testray 2");
 
-        Click(locator1 = "TestrayManage#MANAGE_SIDEBAR");
+		Click(locator1 = "TestrayManage#MANAGE_SIDEBAR");
 
-        Click(
+		Click(
 			key_itemvalue = "Categories",
 			locator1 = "TestrayDropdown#DROPDOWN_ITEM");
 
-        Click(locator1 = "TestrayManage#ADD_OPTIONS");
+		Click(locator1 = "TestrayManage#ADD_OPTIONS");
 
-        Type(
-            locator1 = "TestrayManage#NEW_OPTION_NAME",
-            value1 = "New Category Test");
+		Type(
+			locator1 = "TestrayManage#NEW_OPTION_NAME",
+			value1 = "New Category Test");
 
-        Click(locator1 = "TestrayManage#SAVE_BUTTON");
+		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 
-        AssertElementPresent(
-            locator1 = "TestrayManage#PROJECT_NAME_MODAL",
-            key_title = "New Category Test");
-    }
+		AssertElementPresent(
+			key_title = "New Category Test",
+			locator1 = "TestrayManage#PROJECT_NAME_MODAL");
+	}
 
-    @description = "LPS-150328 - Verify that User can acess category modal."
-    @priority = "5"
-    test CanAcessCategoryModal {
-        ApplicationsMenu.gotoSite(site = "Testray 2");
-
-        Click(locator1 = "TestrayManage#MANAGE_SIDEBAR");
-
-        Click(
-			key_itemvalue = "Categories",
-			locator1 = "TestrayDropdown#DROPDOWN_ITEM");
-
-        AssertElementPresent(
-            locator1 = "TestrayManage#TITLE_MODAL_ITEM",
-            key_title = "Categories");
-    }
-
-}   
+}
