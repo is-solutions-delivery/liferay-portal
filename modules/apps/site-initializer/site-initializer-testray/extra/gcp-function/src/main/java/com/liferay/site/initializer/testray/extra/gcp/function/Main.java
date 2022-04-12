@@ -84,6 +84,7 @@ public class Main {
 			properties.getProperty("s3.inbox.folder.name"),
 			properties.getProperty("s3.processed.folder.name"));
 
+		main.prepareCache();
 		main.uploadToTestray();
 	}
 
@@ -119,6 +120,15 @@ public class Main {
 		catch (Exception exception) {
 			_logger.log(Level.SEVERE, exception.getMessage(), exception);
 		}
+	}
+
+	public void prepareCache() throws Exception {
+		_loadTestrayCaseTypes();
+		_loadTestrayComponents();
+		_loadTestrayFactorCategories();
+		_loadTestrayFactorOptions();
+		_loadTestrayProjects();
+		_loadTestrayTeams();
 	}
 
 	public void uploadToTestray() throws Exception {
@@ -1049,6 +1059,168 @@ public class Main {
 		String trimmedValue = value.trim();
 
 		return trimmedValue.isEmpty();
+	}
+
+	private void _loadTestrayCaseTypes() throws Exception {
+		HttpInvoker.HttpResponse httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "casetypes",
+			HashMapBuilder.put(
+				"fields", "id,name"
+			).put(
+				"page", "0"
+			).build());
+
+		JSONObject responseJSONObject = new JSONObject(
+			httpResponse.getContent());
+
+		JSONArray jsonArray = responseJSONObject.getJSONArray("items");
+
+		if (!jsonArray.isEmpty()) {
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				_objectEntryIds.put(
+					"CaseType#" + jsonObject.getString("name"),
+					jsonObject.getLong("id"));
+			}
+		}
+	}
+
+	private void _loadTestrayComponents() throws Exception {
+		HttpInvoker.HttpResponse httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "components",
+			HashMapBuilder.put(
+				"fields",
+				"id,name,r_projectToComponents_c_projectId," +
+					"r_teamToComponents_c_teamId"
+			).put(
+				"page", "0"
+			).build());
+
+		JSONObject responseJSONObject = new JSONObject(
+			httpResponse.getContent());
+
+		JSONArray jsonArray = responseJSONObject.getJSONArray("items");
+
+		if (!jsonArray.isEmpty()) {
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				_objectEntryIds.put(
+					StringBundler.concat(
+						"Component#", jsonObject.getString("name"),
+						"#testrayTeamId#",
+						jsonObject.getLong("r_teamToComponents_c_teamId")),
+					jsonObject.getLong("id"));
+			}
+		}
+	}
+
+	private void _loadTestrayFactorCategories() throws Exception {
+		HttpInvoker.HttpResponse httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "factorcategories",
+			HashMapBuilder.put(
+				"fields", "id,name"
+			).put(
+				"page", "0"
+			).build());
+
+		JSONObject responseJSONObject = new JSONObject(
+			httpResponse.getContent());
+
+		JSONArray jsonArray = responseJSONObject.getJSONArray("items");
+
+		if (!jsonArray.isEmpty()) {
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				_objectEntryIds.put(
+					"FactorCategory#" + jsonObject.getString("name"),
+					jsonObject.getLong("id"));
+			}
+		}
+	}
+
+	private void _loadTestrayFactorOptions() throws Exception {
+		HttpInvoker.HttpResponse httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "factoroptions",
+			HashMapBuilder.put(
+				"fields", "id,name,r_factorCategoryToOptions_c_factorCategoryId"
+			).put(
+				"page", "0"
+			).build());
+
+		JSONObject responseJSONObject = new JSONObject(
+			httpResponse.getContent());
+
+		JSONArray jsonArray = responseJSONObject.getJSONArray("items");
+
+		if (!jsonArray.isEmpty()) {
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				_objectEntryIds.put(
+					StringBundler.concat(
+						"FactorOption#", jsonObject.getString("name"),
+						"#testrayFactorCategoryId#",
+						jsonObject.getLong(
+							"r_factorCategoryToOptions_c_factorCategoryId")),
+					jsonObject.getLong("id"));
+			}
+		}
+	}
+
+	private void _loadTestrayProjects() throws Exception {
+		HttpInvoker.HttpResponse httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "projects",
+			HashMapBuilder.put(
+				"fields", "id,name"
+			).put(
+				"page", "0"
+			).build());
+
+		JSONObject responseJSONObject = new JSONObject(
+			httpResponse.getContent());
+
+		JSONArray jsonArray = responseJSONObject.getJSONArray("items");
+
+		if (!jsonArray.isEmpty()) {
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				_objectEntryIds.put(
+					"Project#" + jsonObject.getString("name"),
+					jsonObject.getLong("id"));
+			}
+		}
+	}
+
+	private void _loadTestrayTeams() throws Exception {
+		HttpInvoker.HttpResponse httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "teams",
+			HashMapBuilder.put(
+				"fields", "id,name,r_projectToTeams_c_projectId"
+			).put(
+				"page", "0"
+			).build());
+
+		JSONObject responseJSONObject = new JSONObject(
+			httpResponse.getContent());
+
+		JSONArray jsonArray = responseJSONObject.getJSONArray("items");
+
+		if (!jsonArray.isEmpty()) {
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				_objectEntryIds.put(
+					StringBundler.concat(
+						"Team#", jsonObject.getString("name"),
+						"#testrayProjectId#",
+						jsonObject.getLong("r_projectToTeams_c_projectId")),
+					jsonObject.getLong("id"));
+			}
+		}
 	}
 
 	private void _postObjectEntries(
