@@ -1625,10 +1625,20 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return objectDefinitionIdsStringUtilReplaceValues;
 		}
 
+		Set<String> sortedResourcePaths = new TreeSet<>(
+			new NaturalOrderStringComparator());
+
+		sortedResourcePaths.addAll(resourcePaths);
+
+		resourcePaths = sortedResourcePaths;
+
 		List<com.liferay.object.model.ObjectDefinition> objectDefinitions =
 			_objectDefinitionLocalService.getObjectDefinitions(
 				serviceContext.getCompanyId(), true,
 				WorkflowConstants.STATUS_APPROVED);
+
+		Map<String, String> objectEntryIdsStringUtilReplaceValues =
+			new HashMap<>();
 
 		for (com.liferay.object.model.ObjectDefinition objectDefinition :
 				objectDefinitions) {
@@ -1709,6 +1719,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
+			objectEntriesJSON = StringUtil.replace(
+				objectEntriesJSON, "[$", "$]",
+				objectEntryIdsStringUtilReplaceValues);
+
 			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
 				objectEntriesJSON);
 
@@ -1722,6 +1736,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 						ObjectMapperUtil.readValue(
 							Serializable.class, String.valueOf(jsonObject)),
 						serviceContext);
+
+				if (jsonObject.has("externalReferenceCode")) {
+					objectEntryIdsStringUtilReplaceValues.put(
+						StringBundler.concat(
+							objectDefinition.getName(), "#",
+							jsonObject.getString("externalReferenceCode")),
+						String.valueOf(objectEntry.getObjectEntryId()));
+				}
 
 				String objectEntrySiteInitializerKey = jsonObject.getString(
 					"objectEntrySiteInitializerKey");
