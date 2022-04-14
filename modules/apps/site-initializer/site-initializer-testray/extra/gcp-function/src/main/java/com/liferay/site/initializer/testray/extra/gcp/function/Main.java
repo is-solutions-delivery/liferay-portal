@@ -402,37 +402,6 @@ public class Main {
 			null, "factors");
 	}
 
-	private void _addTestrayTask(long testrayBuildId, String testrayTaskName)
-		throws Exception {
-
-		String objectEntryMapKey = StringBundler.concat(
-			"Task#", testrayTaskName, "#testrayBuildId#", testrayBuildId);
-
-		long testrayTaskId = _getObjectEntryId(
-			StringBundler.concat(
-				"buildId eq ", testrayBuildId, " and name eq '",
-				testrayTaskName, "'"),
-			"tasks", objectEntryMapKey);
-
-		if (testrayTaskId != 0) {
-			return;
-		}
-
-		LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
-
-		testrayTaskId = _postObjectEntry(
-			HashMapBuilder.<String, Object>put(
-				"dueStatus", _TESTRAY_CASE_RESULT_STATUS_IN_PROGRESS
-			).put(
-				"r_buildToTasks_c_buildId", testrayBuildId
-			).put(
-				"statusUpdateDate", localDateTime::toString
-			).build(),
-			testrayTaskName, "tasks");
-
-		_objectEntryIds.put(objectEntryMapKey, testrayTaskId);
-	}
-
 	private void _addTestrayWarnings(
 			Map<String, Object> testrayCasePropertiesMap,
 			long testrayCaseResultId)
@@ -1460,9 +1429,6 @@ public class Main {
 			_getTestrayRunId(
 				element, propertiesMap, testrayBuildId,
 				propertiesMap.get("testray.run.id")));
-
-		_addTestrayTask(
-			testrayBuildId, propertiesMap.get("testray.build.name"));
 	}
 
 	private static final int _TESTRAY_CASE_RESULT_STATUS_BLOCKED = 4;
