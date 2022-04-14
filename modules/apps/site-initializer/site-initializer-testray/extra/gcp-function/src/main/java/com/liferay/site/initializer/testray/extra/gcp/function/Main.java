@@ -276,6 +276,18 @@ public class Main {
 			long testrayRunId)
 		throws Exception {
 
+		String testrayCaseName = (String)testrayCasePropertiesMap.get(
+			"testray.testcase.name");
+
+		String objectEntryMapKey = StringBundler.concat(
+			"Case#", testrayCaseName, "#testrayProjectId#", testrayProjectId);
+
+		long testrayCaseId = _getObjectEntryId(
+			StringBundler.concat(
+				"projectId eq ", testrayProjectId, " and name eq '",
+				testrayCaseName, "'"),
+			"cases", objectEntryMapKey);
+
 		long testrayTeamId = _getTestrayTeamId(
 			testrayProjectId,
 			(String)testrayCasePropertiesMap.get("testray.team.name"));
@@ -284,29 +296,33 @@ public class Main {
 			(String)testrayCasePropertiesMap.get("testray.main.component.name"),
 			testrayProjectId, testrayTeamId);
 
-		long testrayCaseId = _postObjectEntry(
-			HashMapBuilder.<String, Object>put(
-				"caseNumber",
-				_increment(
-					"projectId eq " + testrayProjectId, "cases", "caseNumber")
-			).put(
-				"description",
-				testrayCasePropertiesMap.get("testray.testcase.description")
-			).put(
-				"priority",
-				testrayCasePropertiesMap.get("testray.testcase.priority")
-			).put(
-				"r_caseTypeToCases_c_caseTypeId",
-				_getTestrayCaseTypeId(
-					(String)testrayCasePropertiesMap.get(
-						"testray.case.type.name"))
-			).put(
-				"r_componentToCases_c_componentId", testrayComponentId
-			).put(
-				"r_projectToCases_c_projectId", testrayProjectId
-			).build(),
-			(String)testrayCasePropertiesMap.get("testray.testcase.name"),
-			"cases");
+		if (testrayCaseId == 0) {
+
+			testrayCaseId = _postObjectEntry(
+				HashMapBuilder.<String, Object>put(
+					"caseNumber",
+					_increment(
+						"projectId eq " + testrayProjectId, "cases",
+						"caseNumber")
+				).put(
+					"description",
+					testrayCasePropertiesMap.get("testray.testcase.description")
+				).put(
+					"priority",
+					testrayCasePropertiesMap.get("testray.testcase.priority")
+				).put(
+					"r_caseTypeToCases_c_caseTypeId",
+					_getTestrayCaseTypeId(
+						(String)testrayCasePropertiesMap.get(
+							"testray.case.type.name"))
+				).put(
+					"r_componentToCases_c_componentId", testrayComponentId
+				).put(
+					"r_projectToCases_c_projectId", testrayProjectId
+				).build(),
+				(String)testrayCasePropertiesMap.get("testray.testcase.name"),
+				"cases");
+		}
 
 		long testrayCaseResultId = _getTestrayCaseResultId(
 			testcaseNode, testrayBuildId, testrayBuildTime, testrayCaseId,
@@ -658,6 +674,11 @@ public class Main {
 			long testrayComponentId, long testrayRunId)
 		throws Exception {
 
+		long testrayCaseResultId = _getObjectEntryId(
+			StringBundler.concat(
+				"caseId eq ", testrayCaseId, " and runId eq ", testrayRunId),
+			"caseresults", null);
+
 		Map<String, Object> map = HashMapBuilder.<String, Object>put(
 			"closedDate", testrayBuildTime
 		).put(
@@ -712,6 +733,17 @@ public class Main {
 			if (!message.isEmpty()) {
 				map.put("errors", message);
 			}
+		}
+
+		if (testrayCaseResultId != 0) {
+			_invoke(
+				new JSONObject(
+					map
+				).toString(),
+				null, HttpInvoker.HttpMethod.PATCH,
+				"caseresults/" + testrayCaseResultId, null);
+
+			return testrayCaseResultId;
 		}
 
 		return _postObjectEntry(map, null, "caseresults");
