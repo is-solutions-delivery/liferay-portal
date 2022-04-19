@@ -297,7 +297,6 @@ public class Main {
 			testrayProjectId, testrayTeamId);
 
 		if (testrayCaseId == 0) {
-
 			testrayCaseId = _postObjectEntry(
 				HashMapBuilder.<String, Object>put(
 					"caseNumber",
@@ -428,6 +427,56 @@ public class Main {
 		_postObjectEntries(jsonArray, "warnings");
 	}
 
+	private long _fetchLatestMachingTestrayRun(
+			long testrayRoutineId, long testrayRunId)
+		throws Exception {
+
+		HttpInvoker.HttpResponse httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "builds",
+			HashMapBuilder.put(
+				"fields", "id, buildId"
+			).put(
+				"filter", "routineId eq " + testrayRoutineId
+			).build());
+
+		JSONObject responseJSONObject = new JSONObject(
+			httpResponse.getContent());
+
+		JSONArray buildsJSONArray = responseJSONObject.getJSONArray("items");
+
+		httpResponse = _invoke(
+			null, null, HttpInvoker.HttpMethod.GET, "runs",
+			HashMapBuilder.put(
+				"fields", "id"
+			).put(
+				"filter",
+				StringBundler.concat(
+					"environmentHash eq '",
+					new JSONObject(
+						_invoke(
+							null, null, HttpInvoker.HttpMethod.GET,
+							"runs/" + testrayRunId, null
+						).getContent()
+					).getString(
+						"environmentHash"
+					),
+					"' and id ne '", testrayRunId, "'")
+			).build());
+
+		responseJSONObject = new JSONObject(httpResponse.getContent());
+
+		JSONArray runsJSONArray = responseJSONObject.getJSONArray("items");
+
+		List<Long> runs = _getBuildInRun(
+			buildsJSONArray, runsJSONArray, testrayRunId);
+
+		if (runs != null) {
+			return runs.get(0);
+		}
+
+		return 0;
+	}
+
 	private String _getAttributeValue(String attributeName, Node node) {
 		NamedNodeMap namedNodeMap = node.getAttributes();
 
@@ -442,6 +491,28 @@ public class Main {
 		}
 
 		return attributeNode.getTextContent();
+	}
+
+	private List<Long> _getBuildInRun(
+		JSONArray buildsJSONArray, JSONArray runsJSONArray, long currentRun) {
+
+		List<Object> test = buildsJSONArray.toList();
+
+		List<Long> matchList = new ArrayList<>();
+
+		for (int i = 0; i < runsJSONArray.length(); i++) {
+			JSONObject jsonObject = runsJSONArray.getJSONObject(i);
+
+			long buildId = jsonObject.getLong("buildId");
+
+			if (test.contains(buildId) &&
+				(jsonObject.getLong("id") != currentRun)) {
+
+				matchList.add(jsonObject.getLong("runId"));
+			}
+		}
+
+		return matchList;
 	}
 
 	private long _getObjectEntryId(
@@ -1111,14 +1182,6 @@ public class Main {
 		return httpResponse;
 	}
 
-	private void _isAutoanalyze(long testrayBuildId, long testrayProjectId,
-			long testrayRunId)
-		throws Exception{
-
-
-
-	}
-
 	private boolean _isEmpty(String value) {
 		if (value == null) {
 			return true;
@@ -1438,19 +1501,24 @@ public class Main {
 
 		_addTestrayCases(
 			element, testrayBuildId, propertiesMap.get("testray.build.time"),
-			testrayProjectId,testrayRunId);
+			testrayProjectId, testrayRunId);
 
-		_addTestrayTask(
-			testrayBuildId, propertiesMap.get("testray.build.name"));
+		JSONObject jsonObject = new JSONObject(
+			_invoke(
+				null, null, HttpInvoker.HttpMethod.GET,
+				"routines/" + testrayRoutineId, null
+			).getContent());
 
-		JSONObject jsonObject = new JSONObject(_invoke(
-			null, null, HttpInvoker.HttpMethod.GET,
-			"routines/" + testrayRoutineId, null).getContent());
+		if (jsonObject.getBoolean("autoanalyze")) {
+			long testrayTestRunId = _fetchLatestMachingTestrayRun(
+				testrayRoutineId, testrayRunId);
 
-		if(jsonObject.getBoolean("autoanalyze")){
+			if (testrayTestRunId != 0) {
 
+				// TODO
+
+			}
 		}
-
 	}
 
 	private static final int _TESTRAY_CASE_RESULT_STATUS_BLOCKED = 4;
