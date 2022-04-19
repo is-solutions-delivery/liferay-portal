@@ -14,12 +14,10 @@
 
 import {axios} from './liferay/api';
 
-const DeliveryAPI = 'o/c/raylifeapplications';
+const headlessAPI = 'o/headless-commerce-admin-catalog/v1.0';
 
-export function getApplicationsStatus(status) {
-	return axios.get(`${DeliveryAPI}/?filter=applicationStatus eq '${status}'`);
-}
-
-export function getApplications() {
-	return axios.get(`${DeliveryAPI}/`);
+export function getProductQuotes() {
+	return axios.get(
+		`${headlessAPI}/products?nestedFields=skus,catalog&page=1&pageSize=50`
+	);
 }
