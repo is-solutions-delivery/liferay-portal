@@ -14,9 +14,11 @@
 export const CONSTANTS = {
 	STATUS: {
 		APPROVED: 'approved',
+		BOUND: 'bound',
 		INCOMPLETE: 'incomplete',
 		ININVESTIGATION: 'inInvestigation',
 		QUOTED: 'quoted',
 		REVIEWED: 'reviewed',
+		UNDERWRITING: 'underwriting',
 	},
 };

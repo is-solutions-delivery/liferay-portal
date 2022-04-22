@@ -11,61 +11,119 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 import ClayChart from '@clayui/charts';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+
+import {getApplicationsStatus} from '../../../common/services/Application';
+import {CONSTANTS} from '../../../common/utils/constants';
 
 export default function () {
-	const chartData = {
-		colors: {
-			Bound: '#D9E4FE',
-			Quoted: '#81A8FF',
-			Reviewed: '#4C84FF',
-			Underwriting: '#B5CDFE',
-			Incomplete: '#1F77D4'
-		},
-		columns: [
-			['Incomplete', 67],
-			['Quoted', 69],
-			['Underwriting', 10],
-			['Reviewed', 5],
-			['Bound', 240],
-		],
+	const [chartData, setChartData] = useState({
+		colors: {},
+		columns: [],
 		type: 'donut',
+	});
+
+	const chartRef = useRef();
+
+	const titleUpdate = (title) => {
+		const titleElement = chartRef.current.element.querySelector(
+			'.bb-chart-arcs-title'
+		);
+
+		titleElement.textContent = title;
 	};
 
-	const title = chartData.columns
-		.map((array) => array[1])
-		.reduce((sum, i) => sum + i)
-		.toString();
+	const loadChartData = () => {
+		Promise.allSettled([
+			getApplicationsStatus(CONSTANTS.STATUS.BOUND),
+			getApplicationsStatus(CONSTANTS.STATUS.INCOMPLETE),
+			getApplicationsStatus(CONSTANTS.STATUS.QUOTED),
+			getApplicationsStatus(CONSTANTS.STATUS.REVIEWED),
+			getApplicationsStatus(CONSTANTS.STATUS.UNDERWRITING),
+		]).then((results) => {
+			const getTotalCount = (result) => {
+				return result?.value?.data?.totalCount || 0;
+			};
+
+			const [
+				boundApplicationsResult,
+				incompleteApplicationsResult,
+				quotedApplicationsResult,
+				reviewedApplicationsResult,
+				underwritingApplicationsResult,
+			] = results;
+
+			const colors = {
+				bound: '#D9E4FE',
+				incomplete: '#1F77D4',
+				quoted: '#81A8FF',
+				reviewed: '#4C84FF',
+				underwriting: '#B5CDFE',
+			};
+
+			const columns = [
+				[
+					CONSTANTS.STATUS.INCOMPLETE,
+					getTotalCount(incompleteApplicationsResult),
+				],
+				[
+					CONSTANTS.STATUS.QUOTED,
+					getTotalCount(quotedApplicationsResult),
+				],
+				[
+					CONSTANTS.STATUS.UNDERWRITING,
+					getTotalCount(underwritingApplicationsResult),
+				],
+				[
+					CONSTANTS.STATUS.REVIEWED,
+					getTotalCount(reviewedApplicationsResult),
+				],
+				[
+					CONSTANTS.STATUS.BOUND,
+					getTotalCount(boundApplicationsResult),
+				],
+			];
+
+			setChartData({...chartData, ...{colors, columns}});
+
+			const title = columns
+				.map((array) => array[1])
+				.reduce((sum, i) => {
+					return sum + i;
+				})
+				.toString();
+
+			titleUpdate(title);
+		});
+	};
+
+	useEffect(() => {
+		loadChartData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
-		<div className="d-flex flex-column flex-shrink-0 pb-4 pt-3 px-3">
-			<div className="font-weight-bolder h4 raylife-status-chart">
+		<div className="applications-products-container d-flex flex-column flex-shrink-0 pb-4 pt-3 px-3 w-100">
+			<div className="applications-products-title font-weight-bold h4 raylife-status-chart">
 				Status
 			</div>
 
 			<div className="align-items-center d-flex flex-lg-row flex-md-column flex-sm-column justify-content-between px-2">
 				<ClayChart
-					data={{
-						colors: chartData.colors,
-						columns: chartData.columns,
-						type: chartData.type,
-					}}
+					data={chartData}
 					donut={{
 						label: {
 							show: false,
 						},
-						title: title,
+						title: '0',
 						width: 15,
 					}}
 					legend={{
-						position: 'right',
 						show: false,
-						usePoint: true,
 					}}
-					point={{
-						pattern: ['circle'],
-					}}
+					ref={chartRef}
 					size={{
 						height: 190,
 						width: 190,
@@ -80,12 +138,12 @@ export default function () {
 							const title = Liferay.Language.get(data[0].id);
 							const percent = (data[0].ratio * 100).toFixed(1);
 
-							return `<div style='border: 1px solid lightblue; background-color: #ffffff; padding: 5px; border-radius: 4px;'>${title} ${percent}%</div>`;
+							return `<div class="applications-products-tooltip bg-neutral-0 d-flex font-weight-bold p-2 rounded-sm text-capitalize"><span class="d-flex mr-2 w-100 text-capitalize">${title}</span> ${percent}%</div>`;
 						},
 					}}
 				/>
 
-				<div className="d-flex flex-column">
+				<div className="d-flex flex-column ml-3 w-50">
 					{chartData.columns.map((column, index) => (
 						<div
 							className="chart-legend d-flex flex-row justify-content-between"
@@ -93,20 +151,14 @@ export default function () {
 						>
 							<div className="align-items-center d-flex flex-row justify-content-between mr-2">
 								<div
-									className="flex-shrink-0 mr-1 rounded-circle"
+									className="flex-shrink-0 legend-color mr-1 rounded-circle"
 									style={{
 										backgroundColor:
 											chartData.colors[column[0]],
-
-										height: '8px',
-										width: '8px',
 									}}
 								></div>
 
-								<div
-									className="d-flex flex-row lh-lg"
-									style={{color: '#5C5E5E', fontSize: '14px'}}
-								>
+								<div className="d-flex flex-row legend-title text-capitalize text-truncate">
 									{column[0]}
 								</div>
 							</div>
@@ -124,55 +176,3 @@ export default function () {
 		</div>
 	);
 }
-
-// import ClayChart from '@clayui/charts';
-// import React from 'react';
-// import './index.css';
-
-// export default function () {
-// 	const COLUMNS = [
-// 		['Review', 70],
-// 		['Quote', 36],
-// 		['Underwriting', 17],
-// 		['Bound', 8],
-// 	];
-
-// 	const title = COLUMNS.map((array) => array[1]).reduce((sum, i) => sum + i).toString();
-
-// 	console.log('title:', title);
-// 	return (
-// 		<div>
-// 			<ClayChart
-// 				data={{
-// 					colors: {
-// 						Bound: '#D9E4FE',
-// 						Quote: '#81A8FF',
-// 						Review: '#4C84FF',
-// 						Underwriting: '#B5CDFE',
-// 					},
-// 					columns: COLUMNS,
-// 					type: 'donut',
-// 				}}
-// 				donut={{
-// 					label: {
-// 						show: false,
-// 					},
-// 					title: title,
-// 					width: 15,
-// 				}}
-// 				point={{
-// 					pattern: ['circle'],
-// 				}}
-// 				legend={{
-// 					position: 'right',
-// 					show: true,
-// 					usePoint: true,
-// 				}}
-// 				size={{
-// 					height: 300,
-// 					width: 300,
-// 				}}
-// 			/>
-// 		</div>
-// 	);
-// }
