@@ -12,8 +12,14 @@
 				"en_US": "Name"
 			},
 			"name": "name",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "String",
@@ -23,8 +29,14 @@
 				"en_US": "Description"
 			},
 			"name": "description",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "String",
@@ -34,8 +46,14 @@
 				"en_US": "External Reference PK"
 			},
 			"name": "externalReferencePK",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "Integer",
@@ -78,8 +96,14 @@
 				"en_US": "Environment Hash"
 			},
 			"name": "environmentHash",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		}
 	],
 	"pluralLabel": {

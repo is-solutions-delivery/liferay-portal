@@ -12,8 +12,14 @@
 				"en_US": "Key"
 			},
 			"name": "key",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "String",
@@ -23,8 +29,14 @@
 				"en_US": "Summary"
 			},
 			"name": "summary",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "String",
@@ -34,8 +46,14 @@
 				"en_US": "Components"
 			},
 			"name": "components",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "String",
@@ -45,8 +63,14 @@
 				"en_US": "Link Title"
 			},
 			"name": "linkTitle",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "String",
@@ -56,8 +80,14 @@
 				"en_US": "Link URL"
 			},
 			"name": "linkURL",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "Clob",
@@ -78,8 +108,14 @@
 				"en_US": "Description Type"
 			},
 			"name": "descriptionType",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		}
 	],
 	"pluralLabel": {

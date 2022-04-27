@@ -12,8 +12,14 @@
 				"en_US": "Name"
 			},
 			"name": "name",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "Clob",
@@ -34,8 +40,14 @@
 				"en_US": "Description Type"
 			},
 			"name": "descriptionType",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "Integer",
@@ -78,8 +90,14 @@
 				"en_US": "Steps Type"
 			},
 			"name": "stepsType",
-			"required": false,
-			"type": "String"
+            "objectFieldSettings": [
+                {
+                    "name": "showCounter",
+                    "value": "false"
+                }
+            ],
+            "required": false,
+            "type": "String"
 		},
 		{
 			"DBType": "Long",
