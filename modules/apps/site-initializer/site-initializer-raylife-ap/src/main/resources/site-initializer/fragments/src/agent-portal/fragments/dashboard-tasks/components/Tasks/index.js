@@ -146,7 +146,7 @@ export default function () {
 	return (
 		<div className="dashboard-tasks-container flex-shrink-0 pb-4 pt-3 px-3">
 			<div className="align-items-center d-flex dashboard-tasks-header justify-content-between">
-				<div className="dashboard-tasks-title font-weight-bolder h4">
+				<div className="dashboard-tasks-title font-weight-bolder h4 mb-0">
 					Tasks
 				</div>
 

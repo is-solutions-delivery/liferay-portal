@@ -5,13 +5,13 @@
 .dashboard-tasks-container
 	.dashboard-tasks-header
 	.dashboard-tasks-title::after {
-	background-color: #4d85ff;
+	background-color: var(--primary);
 	content: '';
+	display: block;
 	height: 1px;
-	left: 28px;
-	min-width: 20px;
+	margin-top: 6px;
 	position: absolute;
-	top: 50px;
+	width: 19px;
 }
 
 .dashboard-tasks-container
@@ -23,8 +23,8 @@
 .dashboard-tasks-container .dashboard-tasks-subsection .arrow-icon svg,
 .dashboard-tasks-container .dashboard-tasks-header .settings-icon svg {
 	cursor: pointer;
-	height: 24px !important;
-	width: 24px !important;
+	height: 20px !important;
+	width: 20px !important;
 }
 
 .dashboard-tasks-container .dashboard-tasks-subsection .bubble-element {

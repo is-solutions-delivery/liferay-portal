@@ -1,0 +1,41 @@
+.dashboard-whats-new-container
+	.dashboard-whats-new-header
+	.dashboard-whats-new-title::after {
+	background-color: var(--primary);
+	content: '';
+	display: block;
+	height: 1px;
+	margin-top: 6px;
+	position: absolute;
+	width: 19px;
+}
+
+.dashboard-whats-new-container .dashboard-whats-new-subtext {
+	margin-top: 50px;
+}
+
+.dashboard-whats-new-container .dashboard-whats-new-subsection .arrow-icon svg,
+.dashboard-whats-new-container .dashboard-whats-new-header .settings-icon svg {
+	cursor: pointer;
+	height: 20px !important;
+	width: 20px !important;
+}
+
+.dashboard-whats-new-container .dashboard-whats-new-subsection .bubble-element {
+	height: 24px !important;
+	width: 30px !important;
+}
+
+.dashboard-whats-new-container .dashboard-whats-new-subsection .bubble-element,
+.dashboard-whats-new-container
+	.dashboard-whats-new-content
+	.dashboard-whats-new-section
+	.dashboard-whats-new-subsection {
+	cursor: pointer;
+}
+
+.dashboard-whats-new-container
+	.dashboard-whats-new-section
+	.dashboard-whats-new-section-header {
+	font-weight: 900 !important;
+}
