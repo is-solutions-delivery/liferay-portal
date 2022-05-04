@@ -25,9 +25,13 @@ import useCompareRuns from './useCompareRuns';
 const COMPARE_RUNS_ROOT_PATH = '/compare-runs';
 
 const CompareRunsOutlet: React.FC = () => {
-	const {setHeading, setTabs} = useHeader();
+	const {setDropdownIcon, setHeading, setTabs} = useHeader();
 	const {comparableTabs, currentTab} = useCompareRuns();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		setDropdownIcon('drop');
+	}, [setDropdownIcon]);
 
 	useEffect(() => {
 		setTimeout(() => {
