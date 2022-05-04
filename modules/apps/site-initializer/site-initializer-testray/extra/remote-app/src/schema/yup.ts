@@ -24,7 +24,8 @@ const yupSchema = {
 		name: yup.string().required(),
 		priority: yup.number(),
 		steps: yup.string(),
-		stepsType: yup.string().required(),
+		stepsType: yup.string(),
+		type: yup.string().required(),
 	}),
 	caseType: yup.object({
 		name: yup.string().required(),
@@ -33,7 +34,7 @@ const yupSchema = {
 		name: yup.string().required(),
 	}),
 	factorOption: yup.object({
-		factorCategoryId: yup.string().required(),
+		factorCategoryId: yup.string(),
 		name: yup.string().required(),
 	}),
 	project: yup.object({

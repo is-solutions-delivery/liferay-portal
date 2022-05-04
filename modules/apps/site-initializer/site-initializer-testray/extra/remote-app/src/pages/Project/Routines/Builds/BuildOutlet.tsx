@@ -60,28 +60,31 @@ const BuildOutlet: React.FC<BuildOutletProps> = ({ignorePath}) => {
 
 	const basePath = `/project/${projectId}/routines/${routineId}/build/${buildId}`;
 
-	const {setHeading, setTabs} = useHeader({shouldUpdate: false});
+	const {setHeading, setTabs} = useHeader({shouldUpdate: true});
 
 	useEffect(() => {
 		if (testrayBuild) {
 			setTimeout(() => {
-				setHeading([
-					{
-						category: i18n.translate('project').toUpperCase(),
-						path: `/project/${testrayProject.id}/routines`,
-						title: testrayProject.name,
-					},
-					{
-						category: i18n.translate('routine').toUpperCase(),
-						path: `/project/${testrayProject.id}/routines/${testrayRoutine.id}`,
-						title: testrayRoutine.name,
-					},
-					{
-						category: i18n.translate('build').toUpperCase(),
-						path: basePath,
-						title: testrayBuild.name,
-					},
-				]);
+				setHeading(
+					[
+						{
+							category: i18n.translate('project').toUpperCase(),
+							path: `/project/${testrayProject.id}/routines`,
+							title: testrayProject.name,
+						},
+						{
+							category: i18n.translate('routine').toUpperCase(),
+							path: `/project/${testrayProject.id}/routines/${testrayRoutine.id}`,
+							title: testrayRoutine.name,
+						},
+						{
+							category: i18n.translate('build').toUpperCase(),
+							path: basePath,
+							title: testrayBuild.name,
+						},
+					],
+					false
+				);
 			});
 		}
 	}, [basePath, setHeading, testrayBuild, testrayProject, testrayRoutine]);

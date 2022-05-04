@@ -101,8 +101,11 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 		>
 			<Input label={i18n.translate('name')} name="name" {...inputProps} />
 
-			<label htmlFor="category-type">
-				{i18n.translate('category-type')}
+			<label
+				className="font-weight-normal mb-1 mx-0 text-paragraph"
+				htmlFor="category-type"
+			>
+				{i18n.translate('category')}
 			</label>
 
 			<select
