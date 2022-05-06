@@ -1,5 +1,9 @@
 definition {
 
+	macro accountTableProject {
+		Click(locator1 = "CustomerPortalSite#ACCOUNTS_PROJECTS");
+	}
+
 	macro activeContactRole {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -29,6 +33,19 @@ definition {
 		if (isSet(addMembers)) {
 			Click(locator1 = "CustomerPortalSite#ADD_MORE_MEMBERS");
 		}
+	macro activeDisasterRecoveryDataCenter {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Account Subscriptions");
+
+		CustomerPortal.viewObjectInfo();
+
+		Click(locator1 = "CP2DXPCloudSetup#HAS_DISASTER_DATA_CENTER_REGION");
+
+		Click(locator1 = "Button#SAVE");
+
+		Alert.viewSuccessMessage();
 	}
 
 	macro addIdPCForCustomerPortal {
@@ -108,8 +125,13 @@ definition {
 		Check.checkToggleSwitch(locator1 = "CP2LiferayContact#HIDE_WIDGET");
 	}
 
+<<<<<<< HEAD
 	macro clickInviteMembers {
 		Click(locator1 = "CustomerPortalSite#INVITE_BUTTON");
+=======
+	macro clickOnSendInvitationButton {
+		Click(locator1 = "CustomerPortalSite#SEND_INVITATIONS_BUTTON");
+>>>>>>> 1c155e1 (LPS-144864 SF)
 	}
 
 	macro clickOnSkipForNowButton {
@@ -118,10 +140,6 @@ definition {
 
 	macro clickOnStartProjectSetup {
 		Click(locator1 = "CustomerPortalSite#START_PROJECT_SETUP_BUTTON");
-	}
-
-	macro clickOnSendInvitationButton {
-		Click(locator1 = "CustomerPortalSite#SEND_INVITATIONS_BUTTON");
 	}
 
 	macro createCPSite {
@@ -192,19 +210,56 @@ definition {
 		CustomerPortal.customerPortalApisTearDown();
 	}
 
-	macro accountTableProject {
-		Click(locator1 = "CustomerPortalSite#ACCOUNTS_PROJECTS");
+	macro deactivateDisasterRecoveryDataCenter {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Account Subscriptions");
+
+		CustomerPortal.viewObjectInfo();
+
+		Click(locator1 = "CP2DXPCloudSetup#HAS_DISASTER_DATA_CENTER_REGION");
+
+		Click(locator1 = "Button#SAVE");
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro deleteCPObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		ObjectPortlet.selectCustomObject(label = "${title}");
+
+		CreateObject.checkToggleInactive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Choose an Option");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
+	}
+
+	macro deleteEntryAccountFlag {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Account Flags");
+
+		ObjectPortlet.deleteEntry(entry = "${entry}");
 	}
 
 	macro enterOnProject {
-        if(!(isSet(status))) {
-            var status = "Active";
-        }
-        
-        Click(
-            title = "${title}",
-            locator1 = "CP2LiferayContact#PROJECT_CARD");
-    }
+		if (!(isSet(status))) {
+			var status = "Active";
+		}
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			title = "${title}");
+	}
 
 	macro loginOktaToUpdateCP {
 		var userEmailAddress = "garrettz@mbopartners.com.broken";
@@ -348,6 +403,23 @@ definition {
 		}
 	}
 
+	macro showCPAccountFlagObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		ObjectPortlet.selectCustomObject(label = "${title}");
+
+		CreateObject.checkToggleActive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
+	}
+
 	macro showCPObject {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -355,6 +427,25 @@ definition {
 			portlet = "Objects");
 
 		ObjectPortlet.selectCustomObject(label = "Koroneiki Account");
+
+		CreateObject.checkToggleActive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
+	}
+
+	macro showCPSubscriptionsObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		ObjectPortlet.selectCustomObject(
+			key_index = "3",
+			label = "Account Subscription");
 
 		CreateObject.checkToggleActive();
 
@@ -415,6 +506,15 @@ definition {
 		MenuItem.click(menuItem = "View");
 	}
 
+	macro viewObjectInfo {
+		Click(
+			key_index = "4",
+			key_text = "",
+			locator1 = "Icon#VERTICAL_ELLIPSIS_INDEXED");
+
+		MenuItem.click(menuItem = "View");
+	}
+
 	macro viewStartProjectSetupButton {
 		AssertElementPresent(locator1 = "CustomerPortalSite#START_PROJECT_SETUP_BUTTON");
 	}
@@ -423,6 +523,7 @@ definition {
 		AssertElementPresent(locator1 = "CustomerPortalSite#SUBCRIPTIONS_PROJECT_INSIDE_PAGE");
 	}
 
+<<<<<<< HEAD
 	macro viewTeamMembersPage {
 		AssertElementPresent(locator1 = "CustomerPortalSite#TEAM_MEMBERS_MAIN_PAGE");
 	}
@@ -527,4 +628,6 @@ definition {
 
 		MenuItem.click(menuItem = "View");
 	}
+=======
+>>>>>>> 1c155e1 (LPS-144864 SF)
 }
