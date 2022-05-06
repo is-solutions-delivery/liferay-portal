@@ -16,6 +16,11 @@
 	<td></td>
 </tr>
 <tr>
+    <td>ACCOUNTS_PROJECTS</td>
+    <td>//td[contains(@class, 'lfr-name-column')]//a[contains(text(), '${title}')]</td>
+    <td></td>
+</tr>
+<tr>
 	<td>OBJECTS_TABLE</td>
 	<td>//div[(@class='dnd-tbody') and contains(., '${value}') and contains(., 'Approved')]</td>
 	<td></td>
@@ -72,7 +77,7 @@
 </tr>
 <tr>
 	<td>START_PROJECT_SETUP_BUTTON</td>
-	<td>//div[contains(@class,'d-flex')]//button[contains(@class,'btn-primary')]</td>
+	<td>//button[contains(text(), 'Start Project Setup')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,13 +87,28 @@
 </tr>
 <tr>
 	<td>SKIP_FOR_NOW_BUTTON</td>
-	<td>//div[contains(@class,'d-flex')]//button[contains(@class,'btn-outline-borderless')]</td>
+	<td>//button[contains(text(), 'Skip for now')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SEND_INVITATIONS_BUTTON</td>
+	<td>//button[contains(text(), 'Send Invitations')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PROJECT_TITLE_MAIN_PAGE</td>
 	<td>//div//h2[contains(@id,'project-title')]</td>
 	<td></td>
+</tr>
+<tr>
+    <td>ERROR_MESSAGE</td>
+    <td>//div[contains(@class, 'alert-danger')]</td>
+    <td></td>
+</tr>
+<tr>
+    <td>SUCCESS_MESSAGE</td>
+    <td>//div[contains(@class, 'text-center') and contains(text(), 'Thank you for submitting this request!')]</td>
+    <td></td>
 </tr>
 </tbody>
 </table>
