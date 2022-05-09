@@ -43,7 +43,7 @@ definition {
 
 		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
-		CustomerPortal.enterOnProject(projectName = "Test Account 01");
+		CustomerPortal.enterOnProject(title = "Test Account 01");
 
 		CustomerPortal.viewSubcriptionsPage();
 	}
