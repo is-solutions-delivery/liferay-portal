@@ -32,7 +32,7 @@ definition {
 	@priority = "4"
 	test IsContactEmailDisplayed {
 		property portal.upstream = "quarantine";
-		
+
 		ApplicationsMenu.gotoSite(site = "Customer Portal");
 
 		Click(
