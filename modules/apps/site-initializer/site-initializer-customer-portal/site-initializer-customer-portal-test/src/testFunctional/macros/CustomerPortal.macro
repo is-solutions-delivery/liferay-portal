@@ -197,7 +197,9 @@ definition {
 			panel = "Control Panel",
 			portlet = "Objects");
 
-		ObjectPortlet.selectCustomObject(label = "${title}");
+		ObjectPortlet.selectCustomObject(
+			key_index = "${index}",
+			label = "${title}");
 
 		CreateObject.checkToggleInactive();
 
