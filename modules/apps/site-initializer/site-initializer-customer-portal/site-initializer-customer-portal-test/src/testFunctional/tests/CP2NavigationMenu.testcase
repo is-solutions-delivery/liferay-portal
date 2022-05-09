@@ -33,6 +33,8 @@ definition {
 	@description = "LPS-143811 - Verify if Analytics Cloud option is showing under Product Activation."
 	@priority = "3"
 	test IsAnalyticsCloudOptionAvailable {
+		property portal.upstream = "quarantine";
+
 		ApplicationsMenu.gotoSite(site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
@@ -53,6 +55,8 @@ definition {
 	@description = "LPS-143813 - Verify if Commerce option is showing under Product Activation."
 	@priority = "3"
 	test IsCommerceOptionAvailable {
+		property portal.upstream = "quarantine";
+
 		ApplicationsMenu.gotoSite(site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
@@ -73,6 +77,8 @@ definition {
 	@description = "LPS-143815 - Verify if DXP Cloud option is showing under Product Activation."
 	@priority = "3"
 	test IsDXPCloudOptionAvailable {
+		property portal.upstream = "quarantine";
+
 		ApplicationsMenu.gotoSite(site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
@@ -95,6 +101,8 @@ definition {
 	@description = "LPS-143814 - Verify if DXP option is showing under Product Activation."
 	@priority = "3"
 	test IsDXPOptionAvailable {
+		property portal.upstream = "quarantine";
+
 		ApplicationsMenu.gotoSite(site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
@@ -115,6 +123,8 @@ definition {
 	@description = "LPS-143816 - Verify if Enterprise Search option is showing under Product Activation."
 	@priority = "3"
 	test IsEnterpriseSearchOptionAvailable {
+		property portal.upstream = "quarantine";
+
 		ApplicationsMenu.gotoSite(site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
@@ -135,6 +145,8 @@ definition {
 	@description = "LPS-143801 - Verify if Overview is displayed on Navigation Menu."
 	@priority = "4"
 	test IsOverviewMenuDisplayed {
+		property portal.upstream = "quarantine";
+
 		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
@@ -152,6 +164,8 @@ definition {
 	@description = "LPS-143817 - Verify if Portal option is showing under Product Activation."
 	@priority = "3"
 	test IsPortalOptionAvailable {
+		property portal.upstream = "quarantine";
+
 		ApplicationsMenu.gotoSite(site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
@@ -172,6 +186,8 @@ definition {
 	@description = "LPS-143809 - Verify if Team Members is displayed on Navigation Menu."
 	@priority = "4"
 	test IsTeamMembersMenuDisplayed {
+		property portal.upstream = "quarantine";
+		
 		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
