@@ -125,13 +125,12 @@ definition {
 		Check.checkToggleSwitch(locator1 = "CP2LiferayContact#HIDE_WIDGET");
 	}
 
-<<<<<<< HEAD
 	macro clickInviteMembers {
 		Click(locator1 = "CustomerPortalSite#INVITE_BUTTON");
-=======
+	}
+
 	macro clickOnSendInvitationButton {
 		Click(locator1 = "CustomerPortalSite#SEND_INVITATIONS_BUTTON");
->>>>>>> 1c155e1 (LPS-144864 SF)
 	}
 
 	macro clickOnSkipForNowButton {
@@ -210,15 +209,41 @@ definition {
 		CustomerPortal.customerPortalApisTearDown();
 	}
 
+	macro deleteCPObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		ObjectPortlet.selectCustomObject(label = "${title}");
+
+		CreateObject.checkToggleInactive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Choose an Option");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
+	}
+
+	macro deleteEntryAccountFlag {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Account Flags");
+
+		ObjectPortlet.deleteEntry(entry = "${entry}");
+	}
+
 	macro enterOnProject {
-        if(!(isSet(status))) {
-            var status = "Active";
-        }
-        
-        Click(
-            title = "${title}",
-            locator1 = "CP2LiferayContact#PROJECT_CARD");
-    }
+		if (!(isSet(status))) {
+			var status = "Active";
+		}
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			title = "${title}");
+	}
 
 	macro loginOktaToUpdateCP {
 		var userEmailAddress = "garrettz@mbopartners.com.broken";
@@ -484,6 +509,7 @@ definition {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	macro viewTeamMembersPage {
 		AssertElementPresent(locator1 = "CustomerPortalSite#TEAM_MEMBERS_MAIN_PAGE");
 	}
@@ -599,4 +625,6 @@ definition {
 >>>>>>> 1c155e1 (LPS-144864 SF)
 =======
 >>>>>>> 51a9cf8 (LPS-144864 Fix Tests for [CP2.0])
+=======
+>>>>>>> f24210e (LPS-144864 SF)
 }
