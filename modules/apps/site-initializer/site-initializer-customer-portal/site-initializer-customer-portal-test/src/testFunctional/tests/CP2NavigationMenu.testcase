@@ -12,7 +12,7 @@ definition {
 
 		User.firstLoginPG();
 
-		CustomerPortal.setUpForCP20();
+		//CustomerPortal.setUpForCP20();
 
 		CustomerPortal.createCPSite(siteName = "Customer Portal");
 	}
