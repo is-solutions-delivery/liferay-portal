@@ -30,7 +30,10 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			CustomerPortal.tearDownForOktaAndSAML();
+
+			//CustomerPortal.tearDownForOktaAndSAML();
+
+			CustomerPortal.customerPortalTearDown();
 
 			User.logoutPG();
 		}
@@ -138,6 +141,7 @@ definition {
 	}
 
 	@description = "Verify a success message is shown after finishing setting DXP Cloud up"
+	@ignore = "true"
 	@priority = "4"
 	test CanViewDXPCloudSetupSuccessMessage {
 		Accounts.openAccountsAdmin();
