@@ -38,6 +38,7 @@ definition {
 
 	@description = "Verify if the user can choose an option at 'Disaster Recovery Data Center Region'"
 	@priority = "5"
+	@ignore = "true"
 	test CanChooseDisasterRecoveryDataCenter {
 		CustomerPortal.showCPSubscriptionsObject();
 
@@ -61,7 +62,9 @@ definition {
 
 		CP2DXPCloudSetup.viewDisasterRegionList(regionRow = "Oregon, USA,Iowa, USA,London, England,Frankfurt, Germany,São Paulo, Brazil,Sydney, Australia,Mumbai, India,Tokyo, Japan,Montreal, Canada,Dubai, UAE,Hamina, Finland");
 
-		CustomerPortal.deleteCPObject(title = "Account Subscriptions");
+		CustomerPortal.deleteCPObject(
+			index = "3",
+			title = "Account Subscription");
 	}
 
 	@description = "Verify if the user can choose an option at 'Primary Data Center Region"
