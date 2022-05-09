@@ -1,126 +1,124 @@
 definition {
+    macro viewRegionList {
+        Click(locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION");
+        
+        for (var regionName : list "${regionList}") {
+            AssertElementPresent(
+                key_regionName = "${regionList}",
+                locator1 = "CP2DXPCloudSetup#REGIONS_NAMES",
+                value1 = "${regionName}");
+        }
+    }
 
-	macro typeAllSetupDXPCloudInfoFields {
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.projectId",
-			value = "006");
+    macro viewDisasterRegionList {
+        for (var region : list "${regionRow}") {
+            AssertElementPresent(
+                key_region = "${regionRow}",
+                locator1 = "CP2DXPCloudSetup#DISASTER_REGION",
+                value1 = "${region}");
+        }
+    }
 
-		Select(
-			locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION",
-			value1 = "Iowa, USA");
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[0].email",
-			value = "test@liferay.com");
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[0].firstName",
-			value = "FirstName");
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[0].lastName",
-			value = "LastName");
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[0].github",
-			value = "GitHubUser");
-	}
-
-	macro typeAllSetupDXPCloufEXtraInfo {
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[1].email",
-			value = "test@liferay.com");
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[1].firstName",
-			value = "FirstName");
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[1].lastName",
-			value = "LastName");
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "dxp.admins[1].github",
-			value = "GitHubUser");
-	}
-
-	macro typeSetupDXPCloudInfoFields {
+    macro typeSetupDXPCloudInfoFields {
 		Type(
 			locator1 = "CP2DXPCloudSetup#SETUP_FIELDS",
 			value1 = "${value}");
 	}
 
-	macro viewDisasterRegionList {
-		for (var region : list "${regionRow}") {
-			AssertElementPresent(
-				key_region = "${regionRow}",
-				locator1 = "CP2DXPCloudSetup#DISASTER_REGION",
-				value1 = "${region}");
-		}
-	}
+    macro typeAllSetupDXPCloudInfoFields {
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.projectId",
+            value = "006");
 
-	macro viewRegionList {
-		Click(locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION");
+        Select(
+            locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION",
+            value1 = "Iowa, USA");
 
-		for (var regionName : list "${regionList}") {
-			AssertElementPresent(
-				key_regionName = "${regionList}",
-				locator1 = "CP2DXPCloudSetup#REGIONS_NAMES",
-				value1 = "${regionName}");
-		}
-	}
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[0].email",
+            value = "test@liferay.com");
 
-	macro viewSetupDXPCloufEXtraInfo {
-		AssertElementPresent(
-			label = "dxp.admins[1].email",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "test@liferay.com");
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[0].firstName",
+            value = "FirstName");
 
-		AssertElementPresent(
-			label = "dxp.admins[1].firstName",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "FirstName");
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[0].lastName",
+            value = "LastName");
 
-		AssertElementPresent(
-			label = "dxp.admins[1].lastName",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "LastName");
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[0].github",
+            value = "GitHubUser");
+    }
 
-		AssertElementPresent(
-			label = "dxp.admins[1].github",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "GitHubUser");
-	}
+    macro viewSetupDXPCloufInfo {
+        AssertElementPresent(
+            label = "dxp.projectId",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "006");
 
-	macro viewSetupDXPCloufInfo {
-		AssertElementPresent(
-			label = "dxp.projectId",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "006");
+        AssertElementPresent(
+            locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION",
+            value1 = "Iowa, USA");
 
-		AssertElementPresent(
-			locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION",
-			value1 = "Iowa, USA");
+        AssertElementPresent(
+            label = "dxp.admins[0].email",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "test@liferay.com");
 
-		AssertElementPresent(
-			label = "dxp.admins[0].email",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "test@liferay.com");
+        AssertElementPresent(
+            label = "dxp.admins[0].firstName",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "FirstName");
 
-		AssertElementPresent(
-			label = "dxp.admins[0].firstName",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "FirstName");
+        AssertElementPresent(
+            label = "dxp.admins[0].lastName",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "LastName");
 
-		AssertElementPresent(
-			label = "dxp.admins[0].lastName",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "LastName");
+        AssertElementPresent(
+            label = "dxp.admins[0].github",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "GitHubUser");
+    }
 
-		AssertElementPresent(
-			label = "dxp.admins[0].github",
-			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
-			value = "GitHubUser");
-	}
+    macro typeAllSetupDXPCloufEXtraInfo {
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[1].email",
+            value = "test@liferay.com");
 
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[1].firstName",
+            value = "FirstName");
+
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[1].lastName",
+            value = "LastName");
+
+        CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+            label = "dxp.admins[1].github",
+            value = "GitHubUser");
+    }
+
+    macro viewSetupDXPCloufEXtraInfo {
+        AssertElementPresent(
+            label = "dxp.admins[1].email",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "test@liferay.com");
+
+        AssertElementPresent(
+            label = "dxp.admins[1].firstName",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "FirstName");
+
+        AssertElementPresent(
+            label = "dxp.admins[1].lastName",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "LastName");
+
+        AssertElementPresent(
+            label = "dxp.admins[1].github",
+            locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
+            value = "GitHubUser");
+    }
 }

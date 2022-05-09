@@ -329,7 +329,7 @@ definition {
 		if (!(isSet(key_index))) {
 			var key_index = "1";
 		}
-
+		
 		Click(
 			key_label = "${label}",
 			locator1 = "ObjectPortlet#SELECT_CUSTOM_OBJECT");
