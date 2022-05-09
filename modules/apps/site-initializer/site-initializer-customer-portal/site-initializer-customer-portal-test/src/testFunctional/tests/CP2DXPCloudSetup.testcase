@@ -37,8 +37,8 @@ definition {
 	}
 
 	@description = "Verify if the user can choose an option at 'Disaster Recovery Data Center Region'"
-	@priority = "5"
 	@ignore = "true"
+	@priority = "5"
 	test CanChooseDisasterRecoveryDataCenter {
 		CustomerPortal.showCPSubscriptionsObject();
 

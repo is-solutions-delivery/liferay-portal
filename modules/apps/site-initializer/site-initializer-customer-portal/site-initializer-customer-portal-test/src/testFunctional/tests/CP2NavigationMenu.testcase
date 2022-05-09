@@ -187,7 +187,7 @@ definition {
 	@priority = "4"
 	test IsTeamMembersMenuDisplayed {
 		property portal.upstream = "quarantine";
-		
+
 		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
 		CustomerPortal.loginOktaToUpdateCP();
