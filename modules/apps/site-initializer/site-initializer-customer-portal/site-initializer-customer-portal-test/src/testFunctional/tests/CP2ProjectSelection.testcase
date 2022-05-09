@@ -218,7 +218,7 @@ definition {
 	@priority = "4"
 	test VerifyWhenCardIsClickedGoesAnotherPage {
 		property portal.upstream = "quarantine";
-		
+
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
 			panel = "Control Panel",
