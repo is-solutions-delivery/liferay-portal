@@ -191,15 +191,41 @@ definition {
 		CustomerPortal.customerPortalApisTearDown();
 	}
 
+	macro deleteCPObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		ObjectPortlet.selectCustomObject(label = "${title}");
+
+		CreateObject.checkToggleInactive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Choose an Option");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
+	}
+
+	macro deleteEntryAccountFlag {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Account Flags");
+
+		ObjectPortlet.deleteEntry(entry = "${entry}");
+	}
+
 	macro enterOnProject {
-        if(!(isSet(status))) {
-            var status = "Active";
-        }
-        
-        Click(
-            title = "${title}",
-            locator1 = "CP2LiferayContact#PROJECT_CARD");
-    }
+		if (!(isSet(status))) {
+			var status = "Active";
+		}
+
+		Click(
+			locator1 = "CP2LiferayContact#PROJECT_CARD",
+			title = "${title}");
+	}
 
 	macro loginOktaToUpdateCP {
 		var userEmailAddress = "garrettz@mbopartners.com.broken";
@@ -459,29 +485,4 @@ definition {
 		AssertElementPresent(locator1 = "CustomerPortalSite#SUBCRIPTIONS_PROJECT_INSIDE_PAGE");
 	}
 
-	macro deleteCPObject {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
-
-		ObjectPortlet.selectCustomObject(label = "${title}");
-
-		CreateObject.checkToggleInactive();
-
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Choose an Option");
-
-		CustomerPortal.checkToggleHideWidget();
-
-		CreateObject.saveObject();
-	}
-
-	macro deleteEntryAccountFlag {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Account Flags");
-
-		ObjectPortlet.deleteEntry(entry = "${entry}");
-	}
 }
