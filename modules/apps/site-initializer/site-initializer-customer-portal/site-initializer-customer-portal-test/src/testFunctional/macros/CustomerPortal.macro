@@ -34,6 +34,23 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	macro addCPDXPCloudObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		CustomerPortal.viewObjectInfo(index = "13");
+
+		CreateObject.checkToggleActive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Site Administration > Content & Data");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
+	}
+
 	macro addIdPCForCustomerPortal {
 		AssertClick(
 			locator1 = "CPSAMLAdminIdentityProviderConnection#ADD_IDENTITY_PROVIDER_BUTTON",
@@ -414,23 +431,6 @@ definition {
 		CreateObject.checkToggleActive();
 
 		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
-
-		CustomerPortal.checkToggleHideWidget();
-
-		CreateObject.saveObject();
-	}
-
-	macro addCPDXPCloudObject {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
-
-		CustomerPortal.viewObjectInfo(index = "13");
-
-		CreateObject.checkToggleActive();
-
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Site Administration > Content & Data");
 
 		CustomerPortal.checkToggleHideWidget();
 

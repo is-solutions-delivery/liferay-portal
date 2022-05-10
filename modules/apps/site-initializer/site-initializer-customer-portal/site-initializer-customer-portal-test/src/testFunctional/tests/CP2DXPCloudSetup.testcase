@@ -14,7 +14,7 @@ definition {
 
 		//CustomerPortal.setUpForCP20();
 
-		//CustomerPortal.createCPSite(siteName = "Customer Portal");
+		CustomerPortal.createCPSite(siteName = "Customer Portal");
 
 		CustomerPortal.showCPAccountFlagObject(title = "Account Flag");
 	}
@@ -33,7 +33,7 @@ definition {
 
 			//CustomerPortal.tearDownForOktaAndSAML();
 
-			//CustomerPortal.customerPortalTearDown();
+			CustomerPortal.customerPortalTearDown();
 
 			User.logoutPG();
 		}

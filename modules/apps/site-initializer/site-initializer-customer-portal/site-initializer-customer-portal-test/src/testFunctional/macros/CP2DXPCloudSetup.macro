@@ -1,5 +1,76 @@
 definition {
 
+	macro clearActivationStatus {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Account Subscription Groups");
+
+		CustomerPortal.viewKoroneikiInfo();
+
+		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+			label = "activationStatus",
+			value = "");
+
+		Click(locator1 = "Button#SAVE");
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro clearDXPCloudInfo {
+		CP2DXPCloudSetup.clearActivationStatus();
+
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		CP2DXPCloudSetup.deleteEntryDXPCloudEnvironments(entry = "ERC-001");
+	}
+
+	macro createDXPCloudObjects {
+		CustomerPortal.showCPObject(label = "Account Subscription Group");
+
+		CustomerPortal.addCPDXPCloudObject();
+	}
+
+	macro deleteDXPCloudObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		CustomerPortal.viewObjectInfo(index = "13");
+
+		CreateObject.checkToggleActive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Choose an Option");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
+	}
+
+	macro deleteEntryAccountSubscription {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Account Subscriptions");
+
+		CustomerPortal.viewObjectInfo(index = "4");
+
+		Click(locator1 = "CP2DXPCloudSetup#HAS_DISASTER_DATA_CENTER_REGION");
+
+		Click(locator1 = "Button#SAVE");
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro deleteEntryDXPCloudEnvironments {
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "DXP Cloud Environments");
+
+		ObjectPortlet.deleteEntry(entry = "${entry}");
+	}
+
 	macro typeAllSetupDXPCloudInfoFields {
 		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
 			label = "dxp.projectId",
@@ -121,77 +192,6 @@ definition {
 			label = "dxp.admins[0].github",
 			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
 			value = "GitHubUser");
-	}
-
-	macro deleteEntryAccountSubscription {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Account Subscriptions");
-
-		CustomerPortal.viewObjectInfo(index = "4");
-
-		Click(locator1 = "CP2DXPCloudSetup#HAS_DISASTER_DATA_CENTER_REGION");
-
-		Click(locator1 = "Button#SAVE");
-
-		Alert.viewSuccessMessage();
-	}
-
-	macro createDXPCloudObjects {
-		CustomerPortal.showCPObject(label = "Account Subscription Group");
-
-		CustomerPortal.addCPDXPCloudObject();
-	}
-
-	macro clearActivationStatus {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Account Subscription Groups");
-
-		CustomerPortal.viewKoroneikiInfo();
-
-		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
-			label = "activationStatus",
-			value = "");
-
-		Click(locator1 = "Button#SAVE");
-
-		Alert.viewSuccessMessage();
-	}
-
-	macro deleteEntryDXPCloudEnvironments {
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "DXP Cloud Environments");
-
-		ObjectPortlet.deleteEntry(entry = "${entry}");
-	}
-
-	macro deleteDXPCloudObject {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
-
-		CustomerPortal.viewObjectInfo(index = "13");
-
-		CreateObject.checkToggleActive();
-
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Choose an Option");
-
-		CustomerPortal.checkToggleHideWidget();
-
-		CreateObject.saveObject();
-	}
-
-	macro clearDXPCloudInfo {
-		CP2DXPCloudSetup.clearActivationStatus();
-
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
-
-		CP2DXPCloudSetup.deleteEntryDXPCloudEnvironments(entry = "ERC-001");
 	}
 
 }
