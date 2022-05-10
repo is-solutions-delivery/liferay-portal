@@ -14,7 +14,7 @@ definition {
 
 		//CustomerPortal.setUpForCP20();
 
-		CustomerPortal.createCPSite(siteName = "Customer Portal");
+		//CustomerPortal.createCPSite(siteName = "Customer Portal");
 
 		CustomerPortal.showCPAccountFlagObject(title = "Account Flag");
 	}
@@ -33,7 +33,7 @@ definition {
 
 			//CustomerPortal.tearDownForOktaAndSAML();
 
-			CustomerPortal.customerPortalTearDown();
+			//CustomerPortal.customerPortalTearDown();
 
 			User.logoutPG();
 		}
@@ -63,10 +63,6 @@ definition {
 		CustomerPortal.clickOnSkipForNowButton();
 
 		CP2DXPCloudSetup.viewDisasterRegionList(regionRow = "Oregon, USA,Iowa, USA,London, England,Frankfurt, Germany,São Paulo, Brazil,Sydney, Australia,Mumbai, India,Tokyo, Japan,Montreal, Canada,Dubai, UAE,Hamina, Finland");
-
-		CustomerPortal.deleteCPObject(
-			index = "3",
-			title = "Account Subscription");
 	}
 
 	@description = "Verify if the user can choose an option at 'Primary Data Center Region"
@@ -116,7 +112,6 @@ definition {
 	}
 
 	@description = "If the admin user selects 'Skip for Now' then the user is taken to that project's home page / subscriptions page"
-	@ignore = "true"
 	@priority = "4"
 	test CanSkipForNowToOverview {
 		Accounts.openAccountsAdmin();
@@ -141,9 +136,10 @@ definition {
 	}
 
 	@description = "Verify a success message is shown after finishing setting DXP Cloud up"
-	@ignore = "true"
 	@priority = "4"
 	test CanViewDXPCloudSetupSuccessMessage {
+		CP2DXPCloudSetup.createDXPCloudObjects();
+
 		Accounts.openAccountsAdmin();
 
 		CustomerPortal.accountTableProject(title = "Test Account 01");
@@ -165,6 +161,10 @@ definition {
 		Click(locator1 = "CP2DXPCloudSetup#SUBMIT_BUTTON");
 
 		AssertElementPresent(locator1 = "CustomerPortalSite#SUCCESS_MESSAGE");
+
+		CP2DXPCloudSetup.clearDXPCloudInfo();
+
+		CP2DXPCloudSetup.deleteDXPCloudObject();
 	}
 
 	@description = "Verify message 'This field is required.' on DXP Cloud System Admin's Email Address"
@@ -226,9 +226,9 @@ definition {
 			label = "dxp.admins[0].email",
 			value = "test.com");
 
-		Select(
-			locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION",
-			value1 = "Iowa, USA");
+		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+			label = "dxp.projectId",
+			value = "006");
 
 		AssertTextEquals(
 			locator1 = "CustomerPortalSite#ERROR_MESSAGE",
@@ -262,9 +262,9 @@ definition {
 			label = "dxp.projectId",
 			value = "");
 
-		Select(
-			locator1 = "CP2DXPCloudSetup#SELECT_DATA_CENTER_REGION",
-			value1 = "Iowa, USA");
+		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+			label = "dxp.admins[0].firstName",
+			value = "FirstName");
 
 		AssertTextEquals(
 			locator1 = "CustomerPortalSite#ERROR_MESSAGE",
@@ -377,6 +377,12 @@ definition {
 		AssertTextEquals(
 			locator1 = "CustomerPortalSite#ERROR_MESSAGE",
 			value1 = "This field is required.");
+
+		CP2DXPCloudSetup.deleteEntryAccountSubscription();
+
+		CustomerPortal.deleteCPObject(
+			index = "3",
+			title = "Account Subscription");
 	}
 
 }
