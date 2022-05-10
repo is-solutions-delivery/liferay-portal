@@ -39,13 +39,30 @@ definition {
 			panel = "Control Panel",
 			portlet = "Account Subscriptions");
 
-		CustomerPortal.viewObjectInfo();
+		CustomerPortal.viewObjectInfo(index = "4");
 
 		Click(locator1 = "CP2DXPCloudSetup#HAS_DISASTER_DATA_CENTER_REGION");
 
 		Click(locator1 = "Button#SAVE");
 
 		Alert.viewSuccessMessage();
+	}
+
+	macro addCPDXPCloudObject {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "Objects");
+
+		CustomerPortal.viewObjectInfo(index = "13");
+
+		CreateObject.checkToggleActive();
+
+		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Site Administration > Content & Data");
+
+		CustomerPortal.checkToggleHideWidget();
+
+		CreateObject.saveObject();
 	}
 
 	macro addIdPCForCustomerPortal {
@@ -412,7 +429,7 @@ definition {
 			panel = "Control Panel",
 			portlet = "Objects");
 
-		ObjectPortlet.selectCustomObject(label = "Koroneiki Account");
+		ObjectPortlet.selectCustomObject(label = "${label}");
 
 		CreateObject.checkToggleActive();
 
@@ -494,7 +511,7 @@ definition {
 
 	macro viewObjectInfo {
 		Click(
-			key_index = "4",
+			key_index = "${index}",
 			key_text = "",
 			locator1 = "Icon#VERTICAL_ELLIPSIS_INDEXED");
 
