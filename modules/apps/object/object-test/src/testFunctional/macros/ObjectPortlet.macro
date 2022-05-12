@@ -326,13 +326,15 @@ definition {
 	}
 
 	macro selectCustomObject {
-		if (!(isSet(key_index))) {
-			var key_index = "1";
-		}
-
 		Click(
 			key_label = "${label}",
 			locator1 = "ObjectPortlet#SELECT_CUSTOM_OBJECT");
+	}
+
+	macro selectObject {
+		Click(
+			key_label = "${label}",
+			locator1 = "ObjectPortlet#SELECT_OBJECT");
 	}
 
 	macro selectRelationshipFieldEntry {

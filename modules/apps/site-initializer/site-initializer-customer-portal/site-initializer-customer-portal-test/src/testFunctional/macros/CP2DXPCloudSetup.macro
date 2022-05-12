@@ -86,9 +86,7 @@ definition {
 
 		CP2DXPCloudSetup.deleteEntryAccountSubscription();
 
-		CustomerPortal.deleteCPObject(
-			index = "3",
-			title = "Account Subscription");
+		CustomerPortal.deleteCPObject(title = "Account Subscription");
 	}
 
 	macro typeAllSetupDXPCloudInfoFields {
