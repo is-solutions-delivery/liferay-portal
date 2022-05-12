@@ -51,9 +51,9 @@
 	<td></td>
 </tr>
 <tr>
-    <td>SETUP_DXP_CLOUD_PAGE</td>
-    <td>//h2[contains(text(), 'Set up DXP Cloud')]</td>
-    <td></td>
+	<td>SETUP_DXP_CLOUD_PAGE</td>
+	<td>//h2[contains(text(), 'Set up DXP Cloud')]</td>
+	<td></td>
 </tr>
 </tbody>
 </table>

@@ -13,7 +13,6 @@ definition {
 		User.firstLoginPG();
 
 		//CustomerPortal.setUpForCP20();
-
 		//CustomerPortal.createCPSite(siteName = "Customer Portal");
 
 		CP2DXPCloudSetup.addObjectsForDXPCloud();
@@ -30,7 +29,6 @@ definition {
 		else {
 
 			//CustomerPortal.tearDownForOktaAndSAML();
-
 			//CustomerPortal.customerPortalTearDown();
 
 			User.logoutPG();
