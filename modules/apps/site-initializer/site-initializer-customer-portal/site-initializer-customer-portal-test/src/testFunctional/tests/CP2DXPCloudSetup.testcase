@@ -14,7 +14,7 @@ definition {
 
 		//CustomerPortal.setUpForCP20();
 
-		CustomerPortal.createCPSite(siteName = "Customer Portal");
+		//CustomerPortal.createCPSite(siteName = "Customer Portal");
 
 		CP2DXPCloudSetup.addObjectsForDXPCloud();
 	}
@@ -31,7 +31,7 @@ definition {
 
 			//CustomerPortal.tearDownForOktaAndSAML();
 
-			CustomerPortal.customerPortalTearDown();
+			//CustomerPortal.customerPortalTearDown();
 
 			User.logoutPG();
 		}

@@ -132,7 +132,12 @@
 	</tr>
 	<tr>
 		<td>SELECT_CUSTOM_OBJECT</td>
-		<td>xpath=(//div[(@class='table-list-title') and contains (.,'${key_label}')])[${key_index}]</td>
+		<td>//div[(@class='table-list-title') and contains (.,'${key_label}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>SELECT_OBJECT</td>
+		<td>//div[(@class='table-list-title')]//a[text()= '${label}']</td>
 		<td></td>
 	</tr>
 	<tr>

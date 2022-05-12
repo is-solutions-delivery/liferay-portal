@@ -50,6 +50,11 @@
 	<td>//div[contains(@class, 'checkbox')]//span[contains(text(), 'Has Disaster Data Center Region')]</td>
 	<td></td>
 </tr>
+<tr>
+    <td>SETUP_DXP_CLOUD_PAGE</td>
+    <td>//h2[contains(text(), 'Set up DXP Cloud')]</td>
+    <td></td>
+</tr>
 </tbody>
 </table>
 </body>
