@@ -193,5 +193,23 @@ definition {
 			locator1 = "CP2DXPCloudSetup#SETUP_VALUE",
 			value = "GitHubUser");
 	}
+	 macro addObjectsForDXPCloud {
+		CustomerPortal.showCPAccountFlagObject(title = "Account Flag");
 
+		CustomerPortal.showCPSubscriptionsObject();
+
+		CustomerPortal.activeDisasterRecoveryDataCenter();
+	 }
+
+	 macro deleteObjectsForDXPCloud {
+		CustomerPortal.deleteEntryAccountFlag(entry = "ERC-001");
+
+		CustomerPortal.deleteCPObject(title = "Account Flag");
+
+		CP2DXPCloudSetup.deleteEntryAccountSubscription();
+
+		CustomerPortal.deleteCPObject(
+			index = "3",
+			title = "Account Subscription");
+	 }
 }
