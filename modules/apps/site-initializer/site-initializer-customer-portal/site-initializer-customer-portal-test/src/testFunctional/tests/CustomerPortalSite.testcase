@@ -42,7 +42,7 @@ definition {
 	@priority = "5"
 	test CanConnectWithOkta {
 		property portal.upstream = "quarantine";
-		
+
 		task ("Login in Okta") {
 
 			//var userEmailAddress = PropsUtil.get("okta.cp.email");
