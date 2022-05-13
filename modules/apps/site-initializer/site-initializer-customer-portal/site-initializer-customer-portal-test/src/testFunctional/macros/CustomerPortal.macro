@@ -1,9 +1,5 @@
 definition {
 
-	macro accountTableProject {
-		Click(locator1 = "CustomerPortalSite#ACCOUNTS_PROJECTS");
-	}
-
 	macro activeContactRole {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -19,36 +15,20 @@ definition {
 		Click(locator1 = "Button#SAVE");
 	}
 
-	macro activeDisasterRecoveryDataCenter {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Account Subscriptions");
+	macro addFieldsTeamMembersExtra {
+		Type(
+			key_fieldNumber = "${position}",
+			locator1 = "CustomerPortalSite#EMAIL_FIELD",
+			value1 = "${rowEmail}");
 
-		CustomerPortal.viewObjectInfo();
+		Select(
+			key_rowNumber = "${positionNumber}",
+			locator1 = "CustomerPortalSite#ROLE_SELECT",
+			value1 = "${rowRole}");
 
-		Click(locator1 = "CP2DXPCloudSetup#HAS_DISASTER_DATA_CENTER_REGION");
-
-		Click(locator1 = "Button#SAVE");
-
-		Alert.viewSuccessMessage();
-	}
-
-	macro addCPDXPCloudObject {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
-
-		CustomerPortal.viewObjectInfo(index = "13");
-
-		CreateObject.checkToggleActive();
-
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Site Administration > Content & Data");
-
-		CustomerPortal.checkToggleHideWidget();
-
-		CreateObject.saveObject();
+		if (isSet(addMembers)) {
+			Click(locator1 = "CustomerPortalSite#ADD_MORE_MEMBERS");
+		}
 	}
 
 	macro addIdPCForCustomerPortal {
@@ -128,8 +108,8 @@ definition {
 		Check.checkToggleSwitch(locator1 = "CP2LiferayContact#HIDE_WIDGET");
 	}
 
-	macro clickOnSendInvitationButton {
-		Click(locator1 = "CustomerPortalSite#SEND_INVITATIONS_BUTTON");
+	macro clickInviteMembers {
+		Click(locator1 = "CustomerPortalSite#INVITE_BUTTON");
 	}
 
 	macro clickOnSkipForNowButton {
@@ -138,6 +118,10 @@ definition {
 
 	macro clickOnStartProjectSetup {
 		Click(locator1 = "CustomerPortalSite#START_PROJECT_SETUP_BUTTON");
+	}
+
+	macro clickOnSendInvitationButton {
+		Click(locator1 = "CustomerPortalSite#SEND_INVITATIONS_BUTTON");
 	}
 
 	macro createCPSite {
@@ -174,7 +158,7 @@ definition {
 			locator1 = "SitesEditSite#DETAILS_NAME",
 			value1 = "${siteName}");
 
-		CustomerPortal.showCPObject();
+		CustomerPortal.showCPObject(title = "Koroneiki Account");
 	}
 
 	macro customerPortalApisTearDown {
@@ -208,21 +192,6 @@ definition {
 		CustomerPortal.customerPortalApisTearDown();
 	}
 
-	macro deactivateDisasterRecoveryDataCenter {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Account Subscriptions");
-
-		CustomerPortal.viewObjectInfo();
-
-		Click(locator1 = "CP2DXPCloudSetup#HAS_DISASTER_DATA_CENTER_REGION");
-
-		Click(locator1 = "Button#SAVE");
-
-		Alert.viewSuccessMessage();
-	}
-
 	macro deleteCPObject {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -240,6 +209,10 @@ definition {
 		CreateObject.saveObject();
 	}
 
+	macro accountTableProject {
+		Click(locator1 = "CustomerPortalSite#ACCOUNTS_PROJECTS");
+	}
+
 	macro deleteEntryAccountFlag {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -250,14 +223,14 @@ definition {
 	}
 
 	macro enterOnProject {
-		if (!(isSet(status))) {
-			var status = "Active";
-		}
-
-		Click(
-			locator1 = "CP2LiferayContact#PROJECT_CARD",
-			title = "${title}");
-	}
+        if(!(isSet(status))) {
+            var status = "Active";
+        }
+        
+        Click(
+            title = "${title}",
+            locator1 = "CP2LiferayContact#PROJECT_CARD");
+    }
 
 	macro loginOktaToUpdateCP {
 		var userEmailAddress = "garrettz@mbopartners.com.broken";
@@ -329,6 +302,10 @@ definition {
 			locator1 = "CPSAMLAdmin#REPLACE_CERTIFICATE");
 	}
 
+	macro selectNavigatorWindow {
+		SelectWindow(locator1 = "title=${navigatorWidow}");
+	}
+
 	macro setUpForCP20 {
 		task ("Configure SAML Admin general info") {
 			ApplicationsMenu.gotoPortlet(
@@ -397,47 +374,13 @@ definition {
 		}
 	}
 
-	macro showCPAccountFlagObject {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
-
-		ObjectPortlet.selectCustomObject(label = "${title}");
-
-		CreateObject.checkToggleActive();
-
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
-
-		CustomerPortal.checkToggleHideWidget();
-
-		CreateObject.saveObject();
-	}
-
 	macro showCPObject {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
 			panel = "Control Panel",
 			portlet = "Objects");
 
-		ObjectPortlet.selectCustomObject(label = "Koroneiki Account");
-
-		CreateObject.checkToggleActive();
-
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
-
-		CustomerPortal.checkToggleHideWidget();
-
-		CreateObject.saveObject();
-	}
-
-	macro showCPSubscriptionsObject {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
-
-		ObjectPortlet.selectObject(label = "Account Subscription");
+		ObjectPortlet.selectObject(label = "${title}");
 
 		CreateObject.checkToggleActive();
 
@@ -498,10 +441,18 @@ definition {
 		MenuItem.click(menuItem = "View");
 	}
 
-	macro viewObjectInfo {
+	macro viewCPObjectInfo {
 		Click(
-			key_index = "4",
 			key_text = "",
+			locator1 = "Icon#ANY_VERTICAL_ELLIPSIS");
+
+		MenuItem.click(menuItem = "View");
+	}
+
+	macro viewCPObjectCustomInfo {
+		Click(
+			key_text = "",
+			key_index = "${index}",
 			locator1 = "Icon#VERTICAL_ELLIPSIS_INDEXED");
 
 		MenuItem.click(menuItem = "View");
@@ -513,6 +464,10 @@ definition {
 
 	macro viewSubcriptionsPage {
 		AssertElementPresent(locator1 = "CustomerPortalSite#SUBCRIPTIONS_PROJECT_INSIDE_PAGE");
+	}
+
+	macro viewTeamMembersPage {
+		AssertElementPresent(locator1 = "CustomerPortalSite#TEAM_MEMBERS_MAIN_PAGE");
 	}
 
 }

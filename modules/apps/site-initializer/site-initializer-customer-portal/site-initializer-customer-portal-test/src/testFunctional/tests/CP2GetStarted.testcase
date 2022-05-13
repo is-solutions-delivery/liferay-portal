@@ -21,7 +21,9 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			CustomerPortal.tearDownForOktaAndSAML();
+			//CustomerPortal.tearDownForOktaAndSAML();
+
+			CustomerPortal.customerPortalApisTearDown();
 		}
 	}
 
