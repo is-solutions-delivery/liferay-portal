@@ -2,9 +2,9 @@
 definition {
 
 	property portal.release = "false";
-	property portal.upstream = "true";
+	property portal.upstream = "false";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
-	property testray.main.component.name = "Raylife ap";
+	property testray.main.component.name = "Raylife AP";
 
 	setUp {
 		TestCase.setUpPortalInstance();
