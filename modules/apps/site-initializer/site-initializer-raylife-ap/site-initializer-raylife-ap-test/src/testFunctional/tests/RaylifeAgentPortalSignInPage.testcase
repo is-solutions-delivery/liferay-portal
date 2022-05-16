@@ -11,7 +11,7 @@ definition {
 
 		User.firstLoginPG();
 
-        Raylife.createRaylifeSite(siteName = "Raylife AP");
+		Raylife.createRaylifeSite(siteName = "Raylife AP");
 	}
 
 	tearDown {
