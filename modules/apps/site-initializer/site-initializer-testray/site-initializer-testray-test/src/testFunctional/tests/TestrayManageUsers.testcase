@@ -27,7 +27,7 @@ definition {
 		}
 	}
 
-	@description = "LPS-150613 - Verify that User can access Manage Users page."
+	@description = "This is a test for LPS-150613 - Verify that User can access Manage Users page."
 	@priority = "5"
 	test CanAcessManageUsersPage {
 		task ("Go to Testray") {
@@ -42,4 +42,5 @@ definition {
 			TestrayHeader.assertBreadcrumbTitle(key_value = "Manage Users");
 		}
 	}
+
 }
