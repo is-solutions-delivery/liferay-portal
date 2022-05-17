@@ -510,7 +510,8 @@ public class TestrayDispatchTaskExecutor extends BaseDispatchTaskExecutor {
 
 	private long _getTestrayBuildId(
 			long companyId, Map<String, String> propertiesMap,
-			String testrayBuildName, long testrayProjectId)
+			String testrayBuildName, long testrayProjectId,
+			long testrayRoutineId)
 		throws Exception {
 
 		String objectEntryIdsKey = StringBundler.concat(
@@ -530,9 +531,6 @@ public class TestrayDispatchTaskExecutor extends BaseDispatchTaskExecutor {
 		long testrayProductVersionId = _getTestrayProductVersionId(
 			companyId, propertiesMap.get("testray.product.version"),
 			testrayProjectId);
-		long testrayRoutineId = _getTestrayRoutineId(
-			companyId, testrayProjectId,
-			propertiesMap.get("testray.build.type"));
 
 		ObjectEntry objectEntry = _addObjectEntry(
 			"Build",
@@ -1223,16 +1221,22 @@ public class TestrayDispatchTaskExecutor extends BaseDispatchTaskExecutor {
 		long testrayProjectId = _getTestrayProjectId(
 			companyId, propertiesMap.get("testray.project.name"));
 
+		long testrayRoutineId = _getTestrayRoutineId(
+			companyId, testrayProjectId,
+			propertiesMap.get("testray.build.type"));
+
 		long testrayBuildId = _getTestrayBuildId(
 			companyId, propertiesMap, propertiesMap.get("testray.build.name"),
-			testrayProjectId);
+			testrayProjectId, testrayRoutineId);
+
+		long testrayRunId = _getTestrayRunId(
+			companyId, element, propertiesMap, testrayBuildId,
+			propertiesMap.get("testray.run.id"));
 
 		_addTestrayCases(
 			companyId, element, testrayBuildId,
 			propertiesMap.get("testray.build.time"), testrayProjectId,
-			_getTestrayRunId(
-				companyId, element, propertiesMap, testrayBuildId,
-				propertiesMap.get("testray.run.id")));
+			testrayRunId);
 	}
 
 	private void _uploadToTestray(
