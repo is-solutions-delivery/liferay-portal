@@ -13,7 +13,7 @@
  */
 
 import ClayIcon from '@clayui/icon';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
 import Container from '../../../components/Layout/Container';
 import ListView from '../../../components/ListView/ListView';
@@ -25,6 +25,7 @@ import useRequirementActions from './useRequirementActions';
 const Requirements = () => {
 	const {actions, formModal} = useRequirementActions();
 	const {projectId} = useParams();
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -32,8 +33,7 @@ const Requirements = () => {
 				<ListView
 					forceRefetch={formModal.forceRefetch}
 					managementToolbarProps={{
-						addButton: () => formModal.modal.open(),
-						visible: true,
+						addButton: () => navigate(`create`),
 					}}
 					query={getRequirements}
 					tableProps={{
