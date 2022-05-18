@@ -61,12 +61,16 @@ const PanelBody: React.FC<IPanelBodyProps> = ({children, className}) => {
 interface IPanelHeaderProps extends React.HTMLAttributes<HTMLElement> {
 	contentLeft?: React.ReactNode;
 	contentRight?: React.ReactNode;
+	displayCollapseIcon?: boolean;
+	displayDragIcon?: boolean;
 	title: string;
 }
 
 const PanelHeader: React.FC<IPanelHeaderProps> = ({
 	contentLeft,
 	contentRight,
+	displayCollapseIcon,
+	displayDragIcon,
 	title,
 }) => {
 	const [{expanded}, dispatch] = useContext(PanelContext);
@@ -78,9 +82,17 @@ const PanelHeader: React.FC<IPanelHeaderProps> = ({
 			})}
 		>
 			<div className="object-admin-panel__header__content-left">
-				<ClayButtonWithIcon displayType="unstyled" symbol="drag" />
+				{displayDragIcon && (
+					<ClayButtonWithIcon displayType="unstyled" symbol="drag" />
+				)}
 
-				<h3 className="object-admin-panel__title">{title}</h3>
+				<h3
+					className={classNames('object-admin-panel__title', {
+						'ml-3': !displayDragIcon,
+					})}
+				>
+					{title}
+				</h3>
 
 				{contentLeft && (
 					<span className="align-items-center d-flex ml-2">
@@ -96,16 +108,18 @@ const PanelHeader: React.FC<IPanelHeaderProps> = ({
 					</span>
 				)}
 
-				<ClayButtonWithIcon
-					displayType="unstyled"
-					onClick={() =>
-						dispatch({
-							payload: {expanded: !expanded},
-							type: TYPES.CHANGE_PANEL_EXPANDED,
-						})
-					}
-					symbol={expanded ? 'angle-down' : 'angle-right'}
-				/>
+				{displayCollapseIcon && (
+					<ClayButtonWithIcon
+						displayType="unstyled"
+						onClick={() =>
+							dispatch({
+								payload: {expanded: !expanded},
+								type: TYPES.CHANGE_PANEL_EXPANDED,
+							})
+						}
+						symbol={expanded ? 'angle-down' : 'angle-right'}
+					/>
+				)}
 			</div>
 		</div>
 	);

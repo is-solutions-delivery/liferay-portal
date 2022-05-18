@@ -30,6 +30,8 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 
 /**
  * @author Andrea Di Giorgi
@@ -107,6 +109,7 @@ public class ExecutePackageManagerTask extends ExecuteNodeScriptTask {
 
 	@InputDirectory
 	@Optional
+	@PathSensitive(PathSensitivity.RELATIVE)
 	public File getCacheDir() {
 		return GradleUtil.toFile(getProject(), _cacheDir);
 	}
@@ -129,7 +132,6 @@ public class ExecutePackageManagerTask extends ExecuteNodeScriptTask {
 	}
 
 	@Input
-	@Optional
 	public boolean isCacheConcurrent() {
 		return GradleUtil.toBoolean(_cacheConcurrent);
 	}
@@ -140,13 +142,11 @@ public class ExecutePackageManagerTask extends ExecuteNodeScriptTask {
 	}
 
 	@Input
-	@Optional
 	public boolean isProduction() {
 		return _production;
 	}
 
 	@Input
-	@Optional
 	public boolean isProgress() {
 		return _progress;
 	}

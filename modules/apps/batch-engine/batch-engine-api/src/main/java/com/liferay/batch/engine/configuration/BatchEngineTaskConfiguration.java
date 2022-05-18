@@ -35,15 +35,6 @@ public interface BatchEngineTaskConfiguration {
 	)
 	public int completedTasksCleanerScanInterval();
 
-	@Meta.AD(deflt = ",", name = "csv-file-column-delimiter", required = false)
-	public String csvFileColumnDelimiter();
-
-	@Meta.AD(deflt = "100", name = "export-batch-size", required = false)
-	public int exportBatchSize();
-
-	@Meta.AD(deflt = "100", name = "import-batch-size", required = false)
-	public int importBatchSize();
-
 	@Meta.AD(deflt = "30", name = "orphanage-threshold", required = false)
 	public int orphanageThreshold();
 

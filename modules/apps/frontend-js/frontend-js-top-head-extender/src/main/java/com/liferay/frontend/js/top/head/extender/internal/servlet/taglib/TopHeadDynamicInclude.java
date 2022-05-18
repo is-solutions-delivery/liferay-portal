@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.url.builder.AbsolutePortalURLBuilder;
 import com.liferay.portal.url.builder.AbsolutePortalURLBuilderFactory;
+import com.liferay.portal.url.builder.ComboRequestAbsolutePortalURLBuilder;
 import com.liferay.portal.util.JavaScriptBundleUtil;
 
 import java.io.IOException;
@@ -64,30 +65,22 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 				WebKeys.THEME_DISPLAY);
 
 		if (themeDisplay.isThemeJsFastLoad()) {
-			boolean cdnDynamicResourcesEnabled =
-				_portal.isCDNDynamicResourcesEnabled(
-					themeDisplay.getCompanyId());
-
 			if (themeDisplay.isThemeJsBarebone()) {
 				_renderBundleComboURLs(
-					httpServletRequest, httpServletResponse, _jsResourceURLs,
-					cdnDynamicResourcesEnabled);
+					httpServletRequest, httpServletResponse, _jsResourceURLs);
 			}
 			else {
 				_renderBundleComboURLs(
-					httpServletRequest, httpServletResponse, _allJsResourceURLs,
-					cdnDynamicResourcesEnabled);
+					httpServletRequest, httpServletResponse,
+					_allJsResourceURLs);
 			}
 		}
 		else {
 			if (themeDisplay.isThemeJsBarebone()) {
-				_renderBundleURLs(
-					httpServletRequest, httpServletResponse, _jsResourceURLs);
+				_renderBundleURLs(httpServletResponse, _jsResourceURLs);
 			}
 			else {
-				_renderBundleURLs(
-					httpServletRequest, httpServletResponse,
-					_allJsResourceURLs);
+				_renderBundleURLs(httpServletResponse, _allJsResourceURLs);
 			}
 		}
 	}
@@ -191,6 +184,12 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 		_addPortalBundles(_jsResourceURLs, PropsKeys.JAVASCRIPT_BAREBONE_FILES);
 
 		synchronized (_topHeadResourcesServiceReferences) {
+			String contextPath = _portal.getPathContext();
+			String proxyPath = _portal.getPathProxy();
+
+			String unproxiedContextPath = contextPath.substring(
+				proxyPath.length());
+
 			for (ServiceReference<TopHeadResources>
 					topHeadResourcesServiceReference :
 						_topHeadResourcesServiceReferences) {
@@ -199,18 +198,20 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 					topHeadResourcesServiceReference);
 
 				try {
-					String portalPathContext = _portal.getPathContext();
-
-					String servletPathContext = _portal.getPathContext(
+					String bundleContextPath = _portal.getPathContext(
 						topHeadResources.getServletContextPath());
 
-					String servletContextPath = servletPathContext.substring(
-						portalPathContext.length());
+					String unproxiedBundleContextPath =
+						bundleContextPath.substring(proxyPath.length());
+
+					String urlPrefix = StringBundler.concat(
+						proxyPath, unproxiedContextPath,
+						unproxiedBundleContextPath);
 
 					for (String jsResourcePath :
 							topHeadResources.getJsResourcePaths()) {
 
-						String url = servletContextPath.concat(jsResourcePath);
+						String url = urlPrefix + jsResourcePath;
 
 						_allJsResourceURLs.add(url);
 						_jsResourceURLs.add(url);
@@ -220,8 +221,7 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 							topHeadResources.
 								getAuthenticatedJsResourcePaths()) {
 
-						_allJsResourceURLs.add(
-							servletContextPath.concat(jsResourcePath));
+						_allJsResourceURLs.add(urlPrefix + jsResourcePath);
 					}
 				}
 				finally {
@@ -234,34 +234,30 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 
 	private void _renderBundleComboURLs(
 			HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, List<String> urls,
-			boolean cdnDynamicResourcesEnabled)
+			HttpServletResponse httpServletResponse, List<String> urls)
 		throws IOException {
-
-		PrintWriter printWriter = httpServletResponse.getWriter();
-
-		StringBundler sb = new StringBundler();
-
-		long jsLastModified = -1;
-
-		if (_portalWebResources != null) {
-			jsLastModified = _portalWebResources.getLastModified();
-		}
-
-		String comboPath = _portal.getStaticResourceURL(
-			httpServletRequest, "/combo", "minifierType=js", jsLastModified);
 
 		AbsolutePortalURLBuilder absolutePortalURLBuilder =
 			_absolutePortalURLBuilderFactory.getAbsolutePortalURLBuilder(
 				httpServletRequest);
 
-		if (!cdnDynamicResourcesEnabled) {
-			absolutePortalURLBuilder.ignoreCDNHost();
+		ComboRequestAbsolutePortalURLBuilder
+			comboRequestAbsolutePortalURLBuilder =
+				absolutePortalURLBuilder.forComboRequest();
+
+		long timestamp = -1;
+
+		if (_portalWebResources != null) {
+			timestamp = _portalWebResources.getLastModified();
 		}
 
-		String comboURL = absolutePortalURLBuilder.forResource(
-			comboPath
-		).build();
+		comboRequestAbsolutePortalURLBuilder.setTimestamp(timestamp);
+
+		String comboURL = comboRequestAbsolutePortalURLBuilder.build();
+
+		PrintWriter printWriter = httpServletResponse.getWriter();
+
+		StringBundler sb = new StringBundler();
 
 		for (String url : urls) {
 			if ((sb.length() + url.length() + 1) >= 2000) {
@@ -284,21 +280,12 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 	}
 
 	private void _renderBundleURLs(
-			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, List<String> urls)
 		throws IOException {
 
 		PrintWriter printWriter = httpServletResponse.getWriter();
 
 		for (String url : urls) {
-			AbsolutePortalURLBuilder absolutePortalURLBuilder =
-				_absolutePortalURLBuilderFactory.getAbsolutePortalURLBuilder(
-					httpServletRequest);
-
-			url = absolutePortalURLBuilder.forResource(
-				url
-			).build();
-
 			_renderScriptURL(printWriter, url);
 		}
 	}

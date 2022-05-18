@@ -17,6 +17,7 @@ import {TObjectLayoutRow} from '../types';
 interface IObjectLayoutBoxProps extends React.HTMLAttributes<HTMLElement> {
 	boxIndex: number;
 	collapsable: boolean;
+	displayAddButton?: boolean;
 	label: string;
 	objectLayoutRows?: TObjectLayoutRow[];
 	tabIndex: number;

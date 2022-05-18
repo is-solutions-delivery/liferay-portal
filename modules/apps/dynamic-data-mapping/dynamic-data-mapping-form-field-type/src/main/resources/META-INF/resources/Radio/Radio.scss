@@ -4,4 +4,8 @@
 	.custom-control-inline + .custom-control-inline {
 		margin-left: 0;
 	}
+
+	.custom-control:not(:last-child) {
+		margin-right: 1rem;
+	}
 }

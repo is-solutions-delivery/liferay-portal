@@ -31,6 +31,8 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 
 /**
@@ -129,12 +131,12 @@ public class ExecuteNodeTask extends DefaultTask {
 
 	@InputDirectory
 	@Optional
+	@PathSensitive(PathSensitivity.RELATIVE)
 	public File getNodeDir() {
 		return _nodeExecutor.getNodeDir();
 	}
 
 	@Input
-	@Optional
 	public int getNpmInstallRetries() {
 		return _npmInstallRetries;
 	}
@@ -154,13 +156,11 @@ public class ExecuteNodeTask extends DefaultTask {
 	}
 
 	@Input
-	@Optional
 	public boolean isInheritProxy() {
 		return _nodeExecutor.isInheritProxy();
 	}
 
 	@Input
-	@Optional
 	public boolean isUseGradleExec() {
 		return _nodeExecutor.isUseGradleExec();
 	}

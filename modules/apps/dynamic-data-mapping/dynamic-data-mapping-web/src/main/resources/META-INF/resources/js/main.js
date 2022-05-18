@@ -34,7 +34,11 @@ AUI.add(
 		var DEFAULTS_FORM_VALIDATOR = A.config.FormValidator;
 
 		var ICON_ASTERISK_TPL =
-			'<span>' + Liferay.Util.getLexiconIconTpl('asterisk') + '</span>';
+			'<label>' +
+			'<span class="reference-mark">' +
+			Liferay.Util.getLexiconIconTpl('asterisk') +
+			'</span>' +
+			'</label>';
 
 		var ICON_QUESTION_TPL =
 			'<span>' +

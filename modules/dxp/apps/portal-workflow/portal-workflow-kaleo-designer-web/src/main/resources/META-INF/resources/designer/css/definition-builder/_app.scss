@@ -19,3 +19,7 @@
 		white-space: nowrap;
 	}
 }
+
+.modal-dialog.modal-sm.modal-dialog-centered:focus-visible {
+	outline: none;
+}

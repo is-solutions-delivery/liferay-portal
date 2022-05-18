@@ -23,6 +23,8 @@ interface IPanelBodyProps extends React.HTMLAttributes<HTMLElement> {}
 interface IPanelHeaderProps extends React.HTMLAttributes<HTMLElement> {
 	contentLeft?: React.ReactNode;
 	contentRight?: React.ReactNode;
+	displayCollapseIcon?: boolean;
+	displayDragIcon?: boolean;
 	title: string;
 }
 interface IPanelSimpleBodyProps extends React.HTMLAttributes<HTMLElement> {

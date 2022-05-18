@@ -18,7 +18,7 @@ import {defaultLanguageId} from '../../../utils/locale';
 import Panel from '../../Panel/Panel';
 import LayoutContext, {TYPES} from '../context';
 import {TObjectField} from '../types';
-import DropdownWithDeleteButton from './DropdownWithDeleteButton';
+import HeaderDropdown from './HeaderDropdown';
 import RequiredLabel from './RequiredLabel';
 
 interface IObjectLayoutFieldProps extends React.HTMLAttributes<HTMLElement> {
@@ -54,8 +54,8 @@ const ObjectLayoutField: React.FC<IObjectLayoutFieldProps> = ({
 			<Panel key={`field_${objectFieldId}`}>
 				<Panel.SimpleBody
 					contentRight={
-						<DropdownWithDeleteButton
-							onClick={() => {
+						<HeaderDropdown
+							deleteElement={() => {
 								dispatch({
 									payload: {
 										boxIndex,
