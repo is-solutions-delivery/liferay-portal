@@ -6,25 +6,13 @@ definition {
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Raylife AP";
 
-	setUp {
-		TestCase.setUpPortalInstance();
+	@description = "LPS-151790 - Check that the message 'This field is required' appears when the e-mail field is required"
+	@ignore = "Test Stub"
+	@priority = "5"
+	test CanViewMessageFieldEmailRequired {
 
-		User.firstLoginPG();
+		// TODO LPS-151790 CanViewMessageFieldEmailRequired pending implementation
 
-		Raylife.createRaylifeSite(siteName = "Raylife AP");
-	}
-
-	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
-
-		Raylife.tearDownCP();
-
-		if ("${testPortalInstance}" == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			User.logoutPG();
-		}
 	}
 
 }
