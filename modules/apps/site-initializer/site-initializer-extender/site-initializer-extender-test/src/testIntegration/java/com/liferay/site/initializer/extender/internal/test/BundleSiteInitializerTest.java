@@ -631,7 +631,7 @@ public class BundleSiteInitializerTest {
 	private void _assertCustomFields(ServiceContext serviceContext) {
 		ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(
 			serviceContext.getCompanyId(),
-			"com.liferay.account.model.AccountEntry");
+			"com.liferay.commerce.product.model.CPDefinition");
 
 		Assert.assertNotNull(expandoBridge);
 		Assert.assertNotNull(
@@ -639,6 +639,14 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(
 			expandoBridge.getAttribute("Test Expando Column 2"));
 		Assert.assertNull(expandoBridge.getAttribute("Test Expando Column 3"));
+		_assertCustomValue(expandoBridge);
+	}
+
+	private void _assertCustomValue(ExpandoBridge expandoBridge) {
+
+		Assert.assertNotNull(expandoBridge);
+		Assert.assertEquals(expandoBridge.getAttribute("Test Expando Column 1"), 0.1);
+		Assert.assertEquals(expandoBridge.getAttribute("Test Expando Column 2"), "Test");
 	}
 
 	private void _assertDDMStructure(Group group) {
