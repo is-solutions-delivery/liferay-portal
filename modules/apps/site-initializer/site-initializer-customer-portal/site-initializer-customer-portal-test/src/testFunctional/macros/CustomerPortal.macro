@@ -472,4 +472,12 @@ definition {
 		AssertElementPresent(locator1 = "CustomerPortalSite#SUBCRIPTIONS_PROJECT_INSIDE_PAGE");
 	}
 
+	macro enterOnSubscription {
+		Click(
+			cardName = "Non-Production",
+			locator1 = "CustomerPortalSite#CARD_NAME");
+
+        Click(locator1 = "CustomerPortalSite#CLOSE_MODAL_CARD");
+	}
+
 }
