@@ -44,18 +44,18 @@ definition {
 
 	macro clickOnStatusButton {
 		Click(
-			title = "${title}",
-			locator1 = "CP2NavigationMenu#STATUS_BUTTON");
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "${title}");
 
 		Click(
-			status = "All",
-			locator1 = "CP2NavigationMenu#SELECT_STATUS_OVERVIEW");
+			locator1 = "CP2NavigationMenu#SELECT_STATUS_OVERVIEW",
+			status = "All");
 
 		Click(
-			status = "${status}",
-			locator1 = "CP2NavigationMenu#SELECT_STATUS_OVERVIEW");
+			locator1 = "CP2NavigationMenu#SELECT_STATUS_OVERVIEW",
+			status = "${status}");
 	}
-	
+
 	macro goToCP2 {
 		Refresh();
 

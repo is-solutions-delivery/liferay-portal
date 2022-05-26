@@ -12,7 +12,7 @@ definition {
 
 		User.firstLoginPG();
 
-		//CustomerPortal.createCPSite(siteName = "Customer Portal");
+		CustomerPortal.createCPSite(siteName = "Customer Portal");
 	}
 
 	tearDown {
@@ -22,40 +22,19 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			//CustomerPortal.customerPortalTearDown();
+			CustomerPortal.customerPortalTearDown();
 
 			User.logoutPG();
 		}
 	}
 
-    @description = "LPS-144412 - Verify if the user can open the drop-down filter and select Active Status"
-    @priority = "4"
-    test CanUserSelectActiveStatus {
-        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+	@description = "LPS-144412 - Verify if the user can open the drop-down filter and select Active Status"
+	@ignore = "true"
+	@priority = "4"
+	test CanUserSelectActiveStatus {
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
-        CustomerPortal.loginOktaToUpdateCP();
-
-		SelectWindow(locator1 = "title=Home - Customer Portal - Liferay");
-
-		Refresh();
-
-		CustomerPortal.enterOnProject(title = "Test Account 01");
-
-        CP2NavigationMenu.clickOnStatusButton(
-            title = "All",
-            status = "Active");
-
-        AssertElementPresent(
-            title = "Active",
-            locator1 = "CP2NavigationMenu#STATUS_BUTTON");
-    }
-
-    @description = "LPS-144413 - Verify if the user can open the drop-down filter and select Expired Status"
-    @priority = "4"
-    test CanUserSelectExpiredStatus {
-        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
-
-        CustomerPortal.loginOktaToUpdateCP();
+		CustomerPortal.loginOktaToUpdateCP();
 
 		SelectWindow(locator1 = "title=Home - Customer Portal - Liferay");
 
@@ -63,43 +42,22 @@ definition {
 
 		CustomerPortal.enterOnProject(title = "Test Account 01");
 
-        CP2NavigationMenu.clickOnStatusButton(
-            title = "All",
-            status = "Expired");
+		CP2NavigationMenu.clickOnStatusButton(
+			status = "Active",
+			title = "All");
 
-        AssertElementPresent(
-            title = "Expired",
-            locator1 = "CP2NavigationMenu#STATUS_BUTTON");
-    }
+		AssertElementPresent(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "Active");
+	}
 
-    @description = "LPS-144414 - Verify if the user can open the drop-down filter and select Future Status"
-    @priority = "4"
-    test CanUserSelectFutureStatus {
-        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+	@description = "LPS-144413 - Verify if the user can open the drop-down filter and select Expired Status"
+	@ignore = "true"
+	@priority = "4"
+	test CanUserSelectExpiredStatus {
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
-        CustomerPortal.loginOktaToUpdateCP();
-
-		SelectWindow(locator1 = "title=Home - Customer Portal - Liferay");
-
-		Refresh();
-
-		CustomerPortal.enterOnProject(title = "Test Account 01");
-
-        CP2NavigationMenu.clickOnStatusButton(
-            title = "All",
-            status = "Future");
-
-        AssertElementPresent(
-            title = "Future",
-            locator1 = "CP2NavigationMenu#STATUS_BUTTON");
-    }
-
-    @description = "LPS-144416 - Verify if the user can open the drop-down filter and select three statuses"
-    @priority = "3"
-    test CanUserSelectThreeStatuses {
-        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
-
-        CustomerPortal.loginOktaToUpdateCP();
+		CustomerPortal.loginOktaToUpdateCP();
 
 		SelectWindow(locator1 = "title=Home - Customer Portal - Liferay");
 
@@ -107,21 +65,22 @@ definition {
 
 		CustomerPortal.enterOnProject(title = "Test Account 01");
 
-        CP2NavigationMenu.clickOnStatusButton(
-            title = "All",
-            status = "All");
+		CP2NavigationMenu.clickOnStatusButton(
+			status = "Expired",
+			title = "All");
 
-        AssertElementPresent(
-            title = "All",
-            locator1 = "CP2NavigationMenu#STATUS_BUTTON");
-    }
+		AssertElementPresent(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "Expired");
+	}
 
-    @description = "LPS-144419 - Verify if the value of the filter when transitioning between subscription types is kept and only reset when the user leaves the page"
-    @priority = "4"
-    test ValueIsKeptOnTransition {
-        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+	@description = "LPS-144414 - Verify if the user can open the drop-down filter and select Future Status"
+	@ignore = "true"
+	@priority = "4"
+	test CanUserSelectFutureStatus {
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
-        CustomerPortal.loginOktaToUpdateCP();
+		CustomerPortal.loginOktaToUpdateCP();
 
 		SelectWindow(locator1 = "title=Home - Customer Portal - Liferay");
 
@@ -129,23 +88,69 @@ definition {
 
 		CustomerPortal.enterOnProject(title = "Test Account 01");
 
-        CP2NavigationMenu.clickOnStatusButton(
-            title = "All",
-            status = "Active");
+		CP2NavigationMenu.clickOnStatusButton(
+			status = "Future",
+			title = "All");
 
-        CustomerPortal.enterOnSubscription();
+		AssertElementPresent(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "Future");
+	}
 
-        AssertElementPresent(
-            title = "Active",
-            locator1 = "CP2NavigationMenu#STATUS_BUTTON");
+	@description = "LPS-144416 - Verify if the user can open the drop-down filter and select three statuses"
+	@ignore = "true"
+	@priority = "3"
+	test CanUserSelectThreeStatuses {
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
 
-        ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+		CustomerPortal.loginOktaToUpdateCP();
 
-        CustomerPortal.enterOnProject(title = "Test Account 01");
+		SelectWindow(locator1 = "title=Home - Customer Portal - Liferay");
 
-        AssertElementNotPresent(
-            title = "Active",
-            locator1 = "CP2NavigationMenu#STATUS_BUTTON");
-    }
+		Refresh();
+
+		CustomerPortal.enterOnProject(title = "Test Account 01");
+
+		CP2NavigationMenu.clickOnStatusButton(
+			status = "All",
+			title = "All");
+
+		AssertElementPresent(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "All");
+	}
+
+	@description = "LPS-144419 - Verify if the value of the filter when transitioning between subscription types is kept and only reset when the user leaves the page"
+	@ignore = "true"
+	@priority = "4"
+	test ValueIsKeptOnTransition {
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		CustomerPortal.loginOktaToUpdateCP();
+
+		SelectWindow(locator1 = "title=Home - Customer Portal - Liferay");
+
+		Refresh();
+
+		CustomerPortal.enterOnProject(title = "Test Account 01");
+
+		CP2NavigationMenu.clickOnStatusButton(
+			status = "Active",
+			title = "All");
+
+		CustomerPortal.enterOnSubscription();
+
+		AssertElementPresent(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "Active");
+
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal");
+
+		CustomerPortal.enterOnProject(title = "Test Account 01");
+
+		AssertElementNotPresent(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "Active");
+	}
 
 }
