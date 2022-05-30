@@ -314,29 +314,30 @@ public class CPDefinitionsImporter {
 		return cpTaxCategory.getCPTaxCategoryId();
 	}
 
-	private void _addExpandoBridge(CPDefinition cpDefinition, JSONObject jsonObject1)
+	private void _addExpandoBridge(CPDefinition cpDefinition, JSONArray jsonArray)
 		throws JSONException {
+
+		if (jsonArray == null){
+			return;
+		}
+
 		ExpandoBridge expandoBridge = cpDefinition.getExpandoBridge();
 
 		if (expandoBridge == null){
 			return;
 		}
 
-		JSONArray jsonArray = jsonObject1.getJSONArray("customFields");
-
-		if (jsonArray != null) {
 			for (int i = 0; i < jsonArray.length(); i++) {
-				JSONObject jsonObject2 = jsonArray.getJSONObject(i);
+				JSONObject customFieldJSONObject = jsonArray.getJSONObject(i);
 
-				JSONObject jsonObject3 = jsonObject2.getJSONObject("customValue");
+				JSONObject customValueJSONObject = customFieldJSONObject.getJSONObject("customValue");
 
-				if (jsonObject2.getString("customValue") != null) {
+				if (customValueJSONObject != null) {
 					expandoBridge.setAttributeDefault(
-						jsonObject2.getString("name"),
-						(Serializable)jsonObject3.get("data"));
+						customFieldJSONObject.getString("name"),
+						(Serializable)customValueJSONObject.get("data"));
 				}
 			}
-		}
 	}
 		private UnicodeProperties _getSubscriptionTypeSettingsUnicodeProperties(
 		JSONObject subscriptionInfoJSONObject) {
@@ -407,7 +408,7 @@ public class CPDefinitionsImporter {
 					externalReferenceCode, company.getCompanyId());
 
 		if (cpDefinition != null) {
-			_addExpandoBridge(cpDefinition,jsonObject);
+			_addExpandoBridge(cpDefinition,jsonObject.getJSONArray("customFields"));
 
 			_commerceChannelRelLocalService.addCommerceChannelRel(
 				CPDefinition.class.getName(), cpDefinition.getCPDefinitionId(),
@@ -471,7 +472,7 @@ public class CPDefinitionsImporter {
 			maxSubscriptionCycles, assetCategoryIds, assetTagNames,
 			serviceContext);
 
-		_addExpandoBridge(cpDefinition,jsonObject);
+		_addExpandoBridge(cpDefinition,jsonObject.getJSONArray("customFields"));
 
 		serviceContext.setWorkflowAction(originalWorkflowAction);
 
