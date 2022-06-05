@@ -9,26 +9,16 @@
  * distribution rights of the Software.
  */
 
-import LiferayContact from '../LiferayContact';
-import SlaCard from '../SlaCard';
-import ProjectSupportSkeleton from './Skeleton';
-
-const ProjectSupport = ({project}) => {
+import i18n from '../../../../../../common/I18n';
+const CardWithoutSla = () => {
 	return (
-		<div className="container cp-project-contacs-container mb-5 mx-0">
-			<div className="row">
-				<div className="col-5 pb-8">
-					<SlaCard project={project} />
-				</div>
-
-				<div className="col-7">
-					<LiferayContact project={project} />
-				</div>
-			</div>
+		<div className="bg-neutral-1 cp-n-sla-card rounded-lg">
+			<p className="px-3 py-2 text-neutral-7 text-paragraph-sm">
+				{i18n.translate(
+					"the-project's-support-level-is-displayed-here-for-projects-with-ticketing-support"
+				)}
+			</p>
 		</div>
 	);
 };
-
-ProjectSupport.Skeleton = ProjectSupportSkeleton;
-
-export default ProjectSupport;
+export default CardWithoutSla;
