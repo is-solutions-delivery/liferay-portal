@@ -42,9 +42,9 @@ const lastYearSixMonthsAgoPeriod = convertDateToString(
 	new Date(new Date(new Date().setFullYear(lastYear)).setMonth(sixMonthsAgo))
 ).split('-');
 
-const initialTimeStamp = 'T00:00:00.00Z';
+const initialTimeStamp = 'T00:00:00Z';
 
-const finalTimeStamp = 'T23:59:59.59Z';
+const finalTimeStamp = 'T23:59:59Z';
 
 export function getPoliciesStatus(totalCount) {
 	return new Promise((resolve) => {
