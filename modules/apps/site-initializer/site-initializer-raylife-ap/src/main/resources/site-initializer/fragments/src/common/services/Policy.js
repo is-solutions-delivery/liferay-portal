@@ -42,6 +42,10 @@ const lastYearSixMonthsAgoPeriod = convertDateToString(
 	new Date(new Date(new Date().setFullYear(lastYear)).setMonth(sixMonthsAgo))
 ).split('-');
 
+const initialTimeStamp = 'T00:00:00.00Z';
+
+const finalTimeStamp = 'T23:59:59.59Z';
+
 export function getPoliciesStatus(totalCount) {
 	return new Promise((resolve) => {
 		resolve({data: {totalCount}});
@@ -54,24 +58,24 @@ export function getPolicies() {
 
 export function getSixMonthsAgoPolicies() {
 	return axios.get(
-		`${DeliveryAPI}/?filter=startDate le ${currentDate} and startDate ge ${sixMonthsAgoDate[0]}-${sixMonthsAgoDate[1]}-01`
+		`${DeliveryAPI}/?filter=startDate le ${currentDate}${finalTimeStamp} and startDate ge ${sixMonthsAgoDate[0]}-${sixMonthsAgoDate[1]}-01${initialTimeStamp}`
 	);
 }
 
 export function getLastYearSixMonthsPolicies() {
 	return axios.get(
-		`${DeliveryAPI}/?filter=startDate le ${oneYearAgoDate} and startDate ge ${lastYearSixMonthsAgoPeriod[0]}-${lastYearSixMonthsAgoPeriod[1]}-01`
+		`${DeliveryAPI}/?filter=startDate le ${oneYearAgoDate}${finalTimeStamp} and startDate ge ${lastYearSixMonthsAgoPeriod[0]}-${lastYearSixMonthsAgoPeriod[1]}-01${initialTimeStamp}`
 	);
 }
 
 export function getPoliciesUntilCurrentMonth() {
 	return axios.get(
-		`${DeliveryAPI}/?filter=startDate le ${currentDate} and startDate ge ${currentYear}-01-01`
+		`${DeliveryAPI}/?filter=startDate le ${currentDate}${finalTimeStamp} and startDate ge ${currentYear}-01-01${initialTimeStamp}`
 	);
 }
 
 export function getPoliciesUntilCurrentMonthLastYear() {
 	return axios.get(
-		`${DeliveryAPI}/?filter=startDate le ${oneYearAgoDate} and startDate ge ${lastYear}-01-01`
+		`${DeliveryAPI}/?filter=startDate le ${oneYearAgoDate}${finalTimeStamp} and startDate ge ${lastYear}-01-01${initialTimeStamp}`
 	);
 }
