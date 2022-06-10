@@ -42,6 +42,7 @@ const Requirements = () => {
 							<>
 								<ClayManagementToolbar.Item>
 									<Button
+										className="text-nowrap"
 										displayType="secondary"
 										symbol="redo"
 									>

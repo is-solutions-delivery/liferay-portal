@@ -15,10 +15,10 @@
 
 import {ReactNode, createContext, useReducer} from 'react';
 
-import {ActionMap, SortOption} from '../types';
+import {ActionMap, SortDirection, SortOption} from '../types';
 
 export type Sort = {
-	direction: SortOption;
+	direction: SortDirection;
 	key: string;
 };
 
@@ -97,8 +97,7 @@ const reducer = (state: InitialState, action: AppActions) => {
 
 			if (rowAlreadyInserted) {
 				selectedRows = selectedRows.filter((row) => row !== rowId);
-			}
-			else {
+			} else {
 				selectedRows = [...selectedRows, rowId];
 			}
 

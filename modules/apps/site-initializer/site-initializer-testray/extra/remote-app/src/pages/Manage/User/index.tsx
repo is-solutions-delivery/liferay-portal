@@ -54,17 +54,14 @@ const UserListView: React.FC<UserListViewProps> = ({
 						key: 'givenName',
 						render: (givenName, {familyName}) =>
 							`${givenName} ${familyName}`,
-						sorteable: true,
 						value: i18n.translate('name'),
 					},
 					{
 						key: 'alternateName',
-						sorteable: true,
 						value: i18n.translate('screen-name'),
 					},
 					{
 						key: 'emailAddress',
-						sorteable: true,
 						value: i18n.translate('email-address'),
 					},
 				],

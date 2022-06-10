@@ -39,6 +39,7 @@ type RequirementsFormType = {
 	description: string;
 	descriptionType: string;
 	id: number;
+	key?: string;
 	linkTitle: string;
 	linkURL: string;
 	summary: string;
@@ -63,7 +64,7 @@ const RequirementsForm: React.FC = () => {
 
 	const {setTabs} = useHeader({shouldUpdate: false});
 
-	const context: {requirement?: TestrayRequirement} = useOutletContext();
+	const testrayRequirement: TestrayRequirement | undefined = useOutletContext();
 
 	const {
 		formState: {errors},
@@ -72,10 +73,10 @@ const RequirementsForm: React.FC = () => {
 		setValue,
 		watch,
 	} = useForm<RequirementsFormType>({
-		defaultValues: context?.requirement
+		defaultValues: testrayRequirement
 			? ({
-					...context?.requirement,
-					componentId: context?.requirement?.component?.id,
+					...testrayRequirement,
+					componentId: testrayRequirement?.component?.id,
 			  } as any)
 			: {},
 		resolver: yupResolver(yupSchema.requirement),
@@ -90,7 +91,7 @@ const RequirementsForm: React.FC = () => {
 
 	const _onSubmit = (form: RequirementsFormType) => {
 		onSubmitAndSave(
-			{...form, projectId},
+			{...form, key: form.id ? form.key : crypto.randomUUID().split("-")[0], projectId},
 			{
 				createMutation: CreateRequirement,
 				updateMutation: UpdateRequirement,
@@ -126,12 +127,12 @@ const RequirementsForm: React.FC = () => {
 	}, [testrayComponents, setValue]);
 
 	useEffect(() => {
-		if (!context.requirement) {
+		if (!testrayRequirement) {
 			setTimeout(() => {
 				setTabs([]);
 			}, 10);
 		}
-	}, [context.requirement, setTabs]);
+	}, [testrayRequirement, setTabs]);
 
 	return (
 		<Container className="container">
