@@ -13,6 +13,7 @@
  */
 
 import {useMutation} from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 import {DeleteRequirement} from '../../../graphql/mutations';
 import {TestrayRequirement} from '../../../graphql/queries';
@@ -21,18 +22,15 @@ import i18n from '../../../i18n';
 
 const useRequirementActions = () => {
 	const [onDeleteRequirement] = useMutation(DeleteRequirement);
-
+	const navigate = useNavigate();
+	
 	const formModal = useFormModal();
 	const modal = formModal.modal;
 
 	return {
 		actions: [
 			{
-				action: (requirement: TestrayRequirement) =>
-					modal.open({
-						...requirement,
-						componentId: requirement.component?.id,
-					}),
+				action: ({id}: TestrayRequirement) => navigate(`${id}/update`),
 				name: i18n.translate('edit'),
 			},
 			{
