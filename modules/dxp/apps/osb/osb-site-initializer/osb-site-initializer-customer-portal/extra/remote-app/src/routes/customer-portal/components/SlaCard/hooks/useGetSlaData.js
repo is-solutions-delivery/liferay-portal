@@ -67,15 +67,18 @@ const useGetSlaData = (project) => {
 			slaRawData.current.dateStart = slaRawData.expired.dateStart;
 			slaRawData.current.dateEnd = slaRawData.future.dateEnd;
 			slaFiltedData.push(slaRawData.current);
-		} else if (slaRawData.current.title === slaRawData.expired.title) {
+		}
+		else if (slaRawData.current.title === slaRawData.expired.title) {
 			slaRawData.current.dateStart = slaRawData.expired.dateStart;
 			slaFiltedData.push(slaRawData.current);
 			slaFiltedData.push(slaRawData.future);
-		} else if (slaRawData.current.title === slaRawData.future.title) {
+		}
+		else if (slaRawData.current.title === slaRawData.future.title) {
 			slaRawData.current.dateEnd = slaRawData.future.dateEnd;
 			slaFiltedData.push(slaRawData.current);
 			slaFiltedData.push(slaRawData.expired);
-		} else {
+		}
+		else {
 			slaFiltedData.push(slaRawData.current);
 			slaFiltedData.push(slaRawData.expired);
 			slaFiltedData.push(slaRawData.future);
