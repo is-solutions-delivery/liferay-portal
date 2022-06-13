@@ -1,0 +1,55 @@
+.ray-dashboard-recent-applications {
+	.btn {
+		font-size: 15px !important;
+	}
+
+	.ray-header-container {
+		padding-top: 11px;
+
+		button svg {
+			width: 10px;
+		}
+	}
+
+	.ray-table {
+		th {
+			font-size: 14px !important;
+		}
+
+		tbody {
+			tr {
+				td {
+					border-top: 0;
+
+					.bound {
+						background-color: #d9e4fe;
+					}
+
+					.underwriting {
+						background-color: #b5cdfe;
+					}
+
+					.quoted {
+						background-color: #81a8ff;
+					}
+
+					.reviewed {
+						background-color: #4c84ff;
+					}
+
+					.incomplete {
+						background-color: #1f77d4;
+					}
+
+					.rejected {
+						background-color: #191970;
+					}
+
+					.open {
+						background-color: #ff7f0e;
+					}
+				}
+			}
+		}
+	}
+}
