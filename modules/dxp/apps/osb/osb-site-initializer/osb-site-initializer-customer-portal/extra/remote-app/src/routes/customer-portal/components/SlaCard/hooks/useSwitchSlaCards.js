@@ -42,7 +42,8 @@ export default function useSwitchSlaCards(setSlaSelected, slaData) {
 		if (slaData[nextPosition]) {
 			setSlaSelected(slaData[nextPosition].label);
 			setSlaPosition(nextPosition);
-		} else {
+		}
+		else {
 			setSlaSelected(slaData[0].label);
 			setSlaPosition(0);
 		}
