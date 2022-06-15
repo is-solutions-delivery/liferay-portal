@@ -9,7 +9,7 @@
 	"activation-keys-will-be-valid-indefinitely-starting-x-or-until-manually-deactivated": "Las claves de activación serán válidas de forma indefinida a partir del {0} o hasta que se desactiven manualmente.",
 	"activation-keys-will-be-valid-x-x": "Las claves de activación serán válidas del {0} al {1}",
 	"activation-status": "Estado de activación",
-	"active": "Activo",
+	"active": "Activa",
 	"add-activation-key": "Añadir clave de activación",
 	"add-another-admin": "Añadir otro administrador",
 	"add-at-least-one-user-s-email-to-send-an-invitation": "Añada como mínimo el correo electrónico de un usuario para enviar una invitación.",
