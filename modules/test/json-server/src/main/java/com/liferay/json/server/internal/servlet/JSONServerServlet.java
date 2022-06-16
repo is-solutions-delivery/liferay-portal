@@ -391,21 +391,22 @@ public class JSONServerServlet extends HttpServlet {
 				{
 					model = _modelsMap.get(chave);
 
-					if (_modelsMap.get(_modelName) != null){
-						model = _modelsMap.get(_modelName);
+					if (_modelsMap.get(partsTest.get(index)) != null && index==partsTest.size()-1){
+						model = _modelsMap.get(partsTest.get(index));
 						return (List<Map<String, Object>>) model;
 					}
 					if (model instanceof ArrayList) {
 						test = (List<Map<String, Object>>) model;
 						_modelsMap = test.get(0);
+						index ++;
 						getModels();
-						if (_modelsMap.get(_modelName) != null){
-							model = _modelsMap.get(_modelName);
+						if (_modelsMap.get(partsTest.get(index)) != null){
+							model = _modelsMap.get(partsTest.get(index));
 							return (List<Map<String, Object>>) model;
 						}
 					}
 				}
-				throw new ServletException("Unknown model name " + _modelName);
+				throw new ServletException("Unknown model name " + partsTest.get(index));
 
 		}
 
@@ -419,6 +420,8 @@ public class JSONServerServlet extends HttpServlet {
 			String path = httpServletRequest.getPathInfo();
 
 			List<String> parts = StringUtil.split(path, '/');
+			partsTest = StringUtil.split(path, '/');
+
 
 			if (parts.isEmpty()) {
 				throw new IllegalArgumentException(
@@ -463,6 +466,9 @@ public class JSONServerServlet extends HttpServlet {
 		private final String _modelName;
 		private Map<String, Object> _modelsMap = null;
 
+		private int index = 1;
+
+		private List<String> partsTest;
 		private List<Map<String, Object>> test = null;
 		private final Map<String, Object> _parameters;
 		private final String _relativePath;
