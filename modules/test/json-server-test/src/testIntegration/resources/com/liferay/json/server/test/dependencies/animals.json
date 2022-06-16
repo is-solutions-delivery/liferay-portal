@@ -1,0 +1,121 @@
+{
+	"taxonomy": [
+		{
+			"animalia": [
+				{
+					"chordata": [
+						{
+							"mammalia": [
+								{
+									"carnivora": [
+										{
+											"ursidae": [
+												{
+													"ursus": [
+														{
+															"ursusAmerican": [
+																{
+																	"id": 1,
+																	"type": "Specie",
+																	"animals": [
+																		{
+																			"name": "Ursus Americanus"
+																		}
+																	]}
+															],
+															"id": 2,
+															"type": "Genre",
+															"animals": [
+																{
+																	"name": "Ailuropoda melanoleuca"
+																},
+																{
+																	"name": "Ursus Americanus"
+																}
+															]														}
+													],
+													"id": 3,
+													"type": "Family",
+													"animals": [
+														{
+															"name": "Ailuropoda melanoleuca"
+														},
+														{
+															"name": "Ursus Americanus"
+														}
+													]}
+											],
+											"id": 4,
+											"type": "Order",
+											"animals": [
+												{
+													"name": "Ailuropoda melanoleuca"
+												},
+												{
+													"name": "Ursus Americanus"
+												}
+											]
+										}
+									],
+									"id": 5,
+									"type": "Class",
+									"animals": [
+										{
+											"name": "Ailuropoda melanoleuca"
+										},
+										{
+											"name": "Equus quagga"
+										},
+										{
+											"name": "Helarctus"
+										}
+									]
+								}
+							],
+							"id": 5,
+							"type": "Phylum",
+							"animals": [
+								{
+									"name": "Ailuropoda melanoleuca"
+								},
+								{
+									"name": "Equus quagga"
+								},
+								{
+									"name": "Helarctus"
+								}
+							]
+						}
+					],
+					"id": 6,
+					"type": "Kingdom",
+					"animals": [
+						{
+							"name": "Ailuropoda melanoleuca"
+						},
+						{
+							"name": "Equus quagga"
+						},
+						{
+							"name": "Helarctus"
+						}
+					]
+				}
+			],
+			"id": 7,
+			"name": "Eukarya",
+			"type": "Domain",
+			"animals": [
+				{
+					"name": "Ailuropoda melanoleuca"
+				},
+				{
+					"name": "Equus quagga"
+				},
+				{
+					"name": "Helarctus"
+				}
+			]
+		}
+	]
+}

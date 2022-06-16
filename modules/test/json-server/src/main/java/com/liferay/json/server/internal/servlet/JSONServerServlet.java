@@ -16,7 +16,8 @@ package com.liferay.json.server.internal.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
+import java.util.Set;
+import java.util.ArrayList;
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -379,13 +380,33 @@ public class JSONServerServlet extends HttpServlet {
 		}
 
 		public List<Map<String, Object>> getModels() throws ServletException {
-			Object models = _applicationMap.get(_modelName);
 
-			if ((models == null) || !(models instanceof List)) {
-				throw new ServletException("Unknown model name " + _modelName);
+			if (_modelsMap == null){
+				_modelsMap = _applicationMap;
 			}
+			Object model;
 
-			return (List<Map<String, Object>>)models;
+				Set<String> chaves = _modelsMap.keySet();
+				for (String chave : chaves)
+				{
+					model = _modelsMap.get(chave);
+
+					if (_modelsMap.get(_modelName) != null){
+						model = _modelsMap.get(_modelName);
+						return (List<Map<String, Object>>) model;
+					}
+					if (model instanceof ArrayList) {
+						test = (List<Map<String, Object>>) model;
+						_modelsMap = test.get(0);
+						getModels();
+						if (_modelsMap.get(_modelName) != null){
+							model = _modelsMap.get(_modelName);
+							return (List<Map<String, Object>>) model;
+						}
+					}
+				}
+				throw new ServletException("Unknown model name " + _modelName);
+
 		}
 
 		public Map<String, Object> getParameters() {
@@ -416,14 +437,12 @@ public class JSONServerServlet extends HttpServlet {
 					"Unknown application name " + parts.get(0));
 			}
 
-			_modelName = parts.get(1);
+			int childrenSize = parts.size() - 1;
 
-			if (parts.size() > 2) {
-				_id = GetterUtil.getLongStrict(parts.get(2));
-			}
-			else {
+			_modelName = parts.get(childrenSize);
+
 				_id = -1;
-			}
+
 
 			byte[] bytes = StreamUtil.toByteArray(
 				httpServletRequest.getInputStream());
@@ -442,6 +461,9 @@ public class JSONServerServlet extends HttpServlet {
 		private final Map<String, Object> _applicationMap;
 		private final long _id;
 		private final String _modelName;
+		private Map<String, Object> _modelsMap = null;
+
+		private List<Map<String, Object>> test = null;
 		private final Map<String, Object> _parameters;
 		private final String _relativePath;
 
