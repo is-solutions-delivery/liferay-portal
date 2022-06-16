@@ -74,12 +74,22 @@ processResources {
 		dependsOn buildExtraRemoteApp
 
 		into("site-initializer/documents/company/remote-app/" + webContextPath) {
-			from(new File(projectDir, "extra/remote-app/build/assets")) {
-				include "*.css"
-			}
+			File file = new File(projectDir, "extra/remote-app/build/assets")
 
-			from(new File(projectDir, "extra/remote-app/build/assets")) {
-				include "*.js"
+			if (!file.exists()) {
+				from(new File(projectDir, "extra/remote-app/build/static/css")) {
+					include "*.css"
+				}
+
+				from(new File(projectDir, "extra/remote-app/build/static/js")) {
+					include "*.js"
+				}
+			}
+			else {
+				from(file) {
+					include "*.css"
+					include "*.js"
+				}
 			}
 
 			rename(/([0-9a-zA-Z-]+).*\.(css|js)$/, '$1.$2')
