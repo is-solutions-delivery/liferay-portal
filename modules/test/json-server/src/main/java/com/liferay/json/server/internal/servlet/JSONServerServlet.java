@@ -384,29 +384,30 @@ public class JSONServerServlet extends HttpServlet {
 			if (_modelsMap == null){
 				_modelsMap = _applicationMap;
 			}
-			Object model;
 
-				Set<String> chaves = _modelsMap.keySet();
-				for (String chave : chaves)
+			Object modelChildObject;
+
+				Set<String> modelChilds = _modelsMap.keySet();
+				for (String modelChild : modelChilds)
 				{
-					model = _modelsMap.get(chave);
+					modelChildObject = _modelsMap.get(modelChild);
 
-					if (_modelsMap.get(partsTest.get(index)) != null && index==partsTest.size()-1){
-						model = _modelsMap.get(partsTest.get(index));
-						return (List<Map<String, Object>>) model;
+					if (_modelsMap.get(parts.get(index)) != null && index==parts.size()-1){
+						modelChildObject = _modelsMap.get(parts.get(index));
+						return (List<Map<String, Object>>) modelChildObject;
 					}
-					if (model instanceof ArrayList) {
-						test = (List<Map<String, Object>>) model;
-						_modelsMap = test.get(0);
+					if (modelChildObject instanceof ArrayList) {
+						modelChildList = (List<Map<String, Object>>) modelChildObject;
+						_modelsMap = modelChildList.get(0);
 						index ++;
 						getModels();
-						if (_modelsMap.get(partsTest.get(index)) != null){
-							model = _modelsMap.get(partsTest.get(index));
-							return (List<Map<String, Object>>) model;
+						if (_modelsMap.get(parts.get(index)) != null&& index==parts.size()-1){
+							modelChildObject = _modelsMap.get(parts.get(index));
+							return (List<Map<String, Object>>) modelChildObject;
 						}
 					}
 				}
-				throw new ServletException("Unknown model name " + partsTest.get(index));
+				throw new ServletException("Unknown model name " + parts.get(index));
 
 		}
 
@@ -419,9 +420,7 @@ public class JSONServerServlet extends HttpServlet {
 
 			String path = httpServletRequest.getPathInfo();
 
-			List<String> parts = StringUtil.split(path, '/');
-			partsTest = StringUtil.split(path, '/');
-
+			parts = StringUtil.split(path, '/');
 
 			if (parts.isEmpty()) {
 				throw new IllegalArgumentException(
@@ -468,8 +467,8 @@ public class JSONServerServlet extends HttpServlet {
 
 		private int index = 1;
 
-		private List<String> partsTest;
-		private List<Map<String, Object>> test = null;
+		private List<String> parts;
+		private List<Map<String, Object>> modelChildList = null;
 		private final Map<String, Object> _parameters;
 		private final String _relativePath;
 
