@@ -16,8 +16,7 @@ package com.liferay.json.server.internal.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import java.util.Set;
-import java.util.ArrayList;
+
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -37,11 +36,13 @@ import java.net.URL;
 
 import java.rmi.ServerException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -380,35 +381,46 @@ public class JSONServerServlet extends HttpServlet {
 		}
 
 		public List<Map<String, Object>> getModels() throws ServletException {
-
-			if (_modelsMap == null){
+			if (_modelsMap == null) {
 				_modelsMap = _applicationMap;
 			}
 
 			Object modelChildObject;
 
-				Set<String> modelChilds = _modelsMap.keySet();
-				for (String modelChild : modelChilds)
-				{
-					modelChildObject = _modelsMap.get(modelChild);
+			Set<String> modelChilds = _modelsMap.keySet();
 
-					if (_modelsMap.get(parts.get(index)) != null && index==parts.size()-1){
-						modelChildObject = _modelsMap.get(parts.get(index));
-						return (List<Map<String, Object>>) modelChildObject;
-					}
-					if (modelChildObject instanceof ArrayList) {
-						modelChildList = (List<Map<String, Object>>) modelChildObject;
-						_modelsMap = modelChildList.get(0);
-						index ++;
-						getModels();
-						if (_modelsMap.get(parts.get(index)) != null&& index==parts.size()-1){
-							modelChildObject = _modelsMap.get(parts.get(index));
-							return (List<Map<String, Object>>) modelChildObject;
-						}
+			for (String modelChild : modelChilds) {
+				modelChildObject = _modelsMap.get(modelChild);
+
+				if ((_modelsMap.get(_parts.get(_index)) != null) &&
+					(_index == (_parts.size() - 1))) {
+
+					modelChildObject = _modelsMap.get(_parts.get(_index));
+
+					return (List<Map<String, Object>>)modelChildObject;
+				}
+
+				if (modelChildObject instanceof ArrayList) {
+					_modelChildList =
+						(List<Map<String, Object>>)modelChildObject;
+
+					_modelsMap = _modelChildList.get(0);
+
+					_index++;
+					getModels();
+
+					if ((_modelsMap.get(_parts.get(_index)) != null) &&
+						(_index == (_parts.size() - 1))) {
+
+						modelChildObject = _modelsMap.get(_parts.get(_index));
+
+						return (List<Map<String, Object>>)modelChildObject;
 					}
 				}
-				throw new ServletException("Unknown model name " + parts.get(index));
+			}
 
+			throw new ServletException(
+				"Unknown model name " + _parts.get(_index));
 		}
 
 		public Map<String, Object> getParameters() {
@@ -420,31 +432,30 @@ public class JSONServerServlet extends HttpServlet {
 
 			String path = httpServletRequest.getPathInfo();
 
-			parts = StringUtil.split(path, '/');
+			_parts = StringUtil.split(path, '/');
 
-			if (parts.isEmpty()) {
+			if (_parts.isEmpty()) {
 				throw new IllegalArgumentException(
 					"Missing application name in path " + path);
 			}
 
-			if (parts.size() < 2) {
+			if (_parts.size() < 2) {
 				throw new IllegalArgumentException(
 					"Missing model name in path " + path);
 			}
 
-			_applicationMap = _applicationMaps.get(parts.get(0));
+			_applicationMap = _applicationMaps.get(_parts.get(0));
 
 			if (_applicationMap == null) {
 				throw new IllegalArgumentException(
-					"Unknown application name " + parts.get(0));
+					"Unknown application name " + _parts.get(0));
 			}
 
-			int childrenSize = parts.size() - 1;
+			int childrenSize = _parts.size() - 1;
 
-			_modelName = parts.get(childrenSize);
+			_modelName = _parts.get(childrenSize);
 
-				_id = -1;
-
+			_id = -1;
 
 			byte[] bytes = StreamUtil.toByteArray(
 				httpServletRequest.getInputStream());
@@ -457,19 +468,17 @@ public class JSONServerServlet extends HttpServlet {
 			}
 
 			_relativePath = StringUtil.merge(
-				parts.subList(1, parts.size()), StringPool.SLASH);
+				_parts.subList(1, _parts.size()), StringPool.SLASH);
 		}
 
 		private final Map<String, Object> _applicationMap;
 		private final long _id;
+		private int _index = 1;
+		private List<Map<String, Object>> _modelChildList;
 		private final String _modelName;
-		private Map<String, Object> _modelsMap = null;
-
-		private int index = 1;
-
-		private List<String> parts;
-		private List<Map<String, Object>> modelChildList = null;
+		private Map<String, Object> _modelsMap;
 		private final Map<String, Object> _parameters;
+		private final List<String> _parts;
 		private final String _relativePath;
 
 	}
