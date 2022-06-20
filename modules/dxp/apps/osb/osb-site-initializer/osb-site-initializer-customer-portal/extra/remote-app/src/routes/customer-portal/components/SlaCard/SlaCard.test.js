@@ -9,113 +9,94 @@
  * distribution rights of the Software.
  */
 
-import {faker} from '@faker-js/faker';
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import SlaCard from '.';
-import {FORMAT_DATE} from '../../../../common/utils/constants/slaCardDate';
-import getDateCustomFormat from '../../utils/getDateCustomFormat';
-import getKebabCase from '../../utils/getKebabCase';
 
-const currentEndDate = faker.date.between();
-const currentStartDate = faker.date.between();
-const projectLiferayContactName = faker.name.findName();
-const projectLiferayContactEmailAddress = faker.internet.email();
-const projectLiferayContactRole = getKebabCase(faker.name.jobTitle());
-const projectDxpVersion = faker.datatype.number({
-	precision: 0.1,
-});
+describe('SLA Card', () => {
+	const projectMock = {
+		slaCurrent: 'Limited Subscription',
+		slaCurrentEndDate: '06/16/2022',
+		slaCurrentStartDate: '06/16/2022',
+		slaExpired: 'Gold Subscription',
+		slaExpiredEndDate: '25/07/2018',
+		slaExpiredStartDate: '25/08/2017',
+		slaFuture: 'Platinum Subscription',
+		slaFutureEndDate: '25/07/2024',
+		slaFutureStartDate: '25/08/2023',
+	};
 
-const projectMock = {
-	accountKey: 'ERC-006',
-	code: 'PROJECT06',
-	dxpVersion: projectDxpVersion,
-	liferayContactEmailAddress: projectLiferayContactEmailAddress,
-	liferayContactName: projectLiferayContactName,
-	liferayContactRole: projectLiferayContactRole,
-	maxRequestors: 2,
-	name: 'Project 06',
-	partner: false,
-	region: faker.address.country(),
-	slaCurrent: 'Limited Subscription',
-	slaCurrentEndDate: currentEndDate,
-	slaCurrentStartDate: currentStartDate,
-	slaExpired: 'Gold Subscription',
-	slaExpiredEndDate: '2018-07-25T00:00:00Z',
-	slaExpiredStartDate: '2017-08-25T00:00:00Z',
-	slaFuture: 'Platinum Subscription',
-	slaFutureEndDate: '2024-07-25T00:00:00Z',
-	slaFutureStartDate: '2023-08-25T00:00:00Z',
-};
+	it('displays Support Level title', () => {
+		render(<SlaCard project={projectMock} />);
 
-const projectNoSlaMock = {
-	accountKey: 'ERC-008',
-	code: 'PROJECT08',
-	dxpVersion: null,
-	liferayContactEmailAddress: projectLiferayContactEmailAddress,
-	liferayContactName: projectLiferayContactName,
-	liferayContactRole: projectLiferayContactRole,
-	maxRequestors: 1,
-	name: 'Project 08',
-	partner: false,
-	region: faker.address.country(),
-	slaCurrent: null,
-	slaCurrentEndDate: null,
-	slaCurrentStartDate: null,
-	slaExpired: null,
-	slaExpiredEndDate: null,
-	slaExpiredStartDate: null,
-	slaFuture: null,
-	slaFutureEndDate: null,
-	slaFutureStartDate: null,
-};
+		const slaTitle = screen.getByRole('heading', {name: /support level/i});
+		expect(slaTitle).toHaveTextContent('Support Level');
+	});
 
-test('renders SLA Card', () => {
-	render(<SlaCard project={projectMock} />);
-});
+	it('displays Limited Support Level type', () => {
+		render(<SlaCard project={projectMock} />);
 
-test('renders SLA Card start and end date', () => {
-	render(<SlaCard project={projectMock} />);
-	const linkElementNameslaCurrent = screen.getByText('Limited');
-	const linkElementNameslaExpired = screen.getByText('Gold');
-	const linkElementNameslaFuture = screen.getByText('Platinum');
+		const linkElementNameslaCurrent = screen.getByText('Limited');
+		expect(linkElementNameslaCurrent).toBeInTheDocument();
+	});
 
-	const linkElementEndDate = screen.getByText(
-		getDateCustomFormat(currentEndDate, FORMAT_DATE),
-		{exact: false}
-	);
+	it('displays Gold Support Level type', () => {
+		render(<SlaCard project={projectMock} />);
 
-	const linkElementStartDate = screen.getByText(
-		getDateCustomFormat(currentEndDate, FORMAT_DATE),
-		{exact: false}
-	);
-	expect(linkElementNameslaCurrent).toBeInTheDocument();
-	expect(linkElementNameslaExpired).toBeInTheDocument();
-	expect(linkElementNameslaFuture).toBeInTheDocument();
+		const linkElementNameslaExpired = screen.getByText('Gold');
+		expect(linkElementNameslaExpired).toBeInTheDocument();
+	});
 
-	expect(linkElementEndDate).toBeInTheDocument();
-	expect(linkElementStartDate).toBeInTheDocument();
-});
+	it('displays Platinum Support Level type', () => {
+		render(<SlaCard project={projectMock} />);
 
-test('renders SLA Card with no SLA on the project', () => {
-	render(<SlaCard project={projectNoSlaMock} />);
-	const linkElement = screen.getByText(
-		"The project's Support Level is displayed here for projects with ticketing support."
-	);
-	expect(linkElement).toBeInTheDocument();
-});
+		const linkElementNameslaFuture = screen.getByText('Platinum');
+		expect(linkElementNameslaFuture).toBeInTheDocument();
+	});
 
-test('test if when user has multiple statuses, the status order went from highest to lowest (Current > Future > Expired)', async () => {
-	const user = userEvent.setup();
-	render(<SlaCard project={projectMock} />);
-	const linkElementName = screen.getByText('Current');
-	expect(linkElementName).toBeInTheDocument();
-	expect(screen.getByRole('button')).toBeInTheDocument();
-	await user.click(screen.getByRole('button'));
-	const linkElementName2 = screen.getByText('Future');
-	expect(linkElementName2).toBeInTheDocument();
-	await user.click(screen.getByRole('button'));
-	const linkElementName3 = screen.getByText('Expired');
-	expect(linkElementName3).toBeInTheDocument();
+	it('shows SLA Card start and end date', () => {
+		render(<SlaCard project={projectMock} />);
+
+		const linkElementEndDate = screen.getByText('06/16/2022', {
+			exact: false,
+		});
+		expect(linkElementEndDate).toHaveTextContent('06/16/2022');
+
+		const linkElementStartDate = screen.getByText('06/16/2022', {
+			exact: false,
+		});
+		expect(linkElementStartDate).toHaveTextContent('06/16/2022');
+	});
+
+	it('displays a message when the project do not have Sla Support', () => {
+		const projectNoSlaMock = {};
+
+		render(<SlaCard project={projectNoSlaMock} />);
+		const linkElement = screen.getByText(
+			/support level is displayed here/i
+		);
+		expect(linkElement).toHaveTextContent(
+			"The project's Support Level is displayed here for projects with ticketing support."
+		);
+	});
+
+	it('displays an order from highest to lowest when user has multiple status (Current > Future > Expired)', async () => {
+		const user = userEvent.setup();
+
+		render(<SlaCard project={projectMock} />);
+
+		const linkCurrentStatus = screen.getByText('Current');
+
+		expect(linkCurrentStatus).toBeInTheDocument();
+		expect(screen.getByRole('button')).toBeInTheDocument();
+		await user.click(screen.getByRole('button'));
+
+		const linkFutureStatus = screen.getByText('Future');
+		expect(linkFutureStatus).toBeInTheDocument();
+		await user.click(screen.getByRole('button'));
+
+		const linkExpiredStatus = screen.getByText('Expired');
+		expect(linkExpiredStatus).toBeInTheDocument();
+	});
 });
