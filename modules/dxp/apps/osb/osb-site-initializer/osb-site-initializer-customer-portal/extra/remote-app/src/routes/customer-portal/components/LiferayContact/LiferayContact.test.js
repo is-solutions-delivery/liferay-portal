@@ -9,55 +9,39 @@
  * distribution rights of the Software.
  */
 
-import {faker} from '@faker-js/faker';
 import {render, screen} from '@testing-library/react';
-import getKebabCase from '../../utils/getKebabCase';
 import LiferayContact from '../LiferayContact';
 
-const currentEndDate = faker.date.between();
-const currentStartDate = faker.date.between();
-const projectLiferayContactName = faker.name.findName();
-const projectLiferayContactEmailAddress = faker.internet.email();
-const projectLiferayContactRole = getKebabCase(faker.name.jobTitle());
-const projectDxpVersion = faker.datatype.number({
-	precision: 0.1,
-});
+describe('LiferayContact', () => {
+	const project = {
+		liferayContactEmailAddress: 'janedoe@company.com',
+		liferayContactName: 'Jane Doe',
+		liferayContactRole: 'Administrator',
+	};
 
-const project = {
-	accountKey: 'ERC-006',
-	code: 'PROJECT06',
-	dxpVersion: projectDxpVersion,
-	liferayContactEmailAddress: projectLiferayContactEmailAddress,
-	liferayContactName: projectLiferayContactName,
-	liferayContactRole: projectLiferayContactRole,
-	maxRequestors: 2,
-	name: 'Project 06',
-	partner: false,
-	region: faker.address.country(),
-	slaCurrent: 'Limited Subscription',
-	slaCurrentEndDate: currentEndDate,
-	slaCurrentStartDate: currentStartDate,
-	slaExpired: null,
-	slaExpiredEndDate: null,
-	slaExpiredStartDate: null,
-	slaFuture: 'Platinum Subscription',
-	slaFutureEndDate: '2023-07-25T00:00:00Z',
-	slaFutureStartDate: '2022-08-25T00:00:00Z',
-};
+	it('displays project support liferay contact name', () => {
+		render(<LiferayContact project={project} />);
+		const linkElementContactName = screen.getByText('Jane Doe');
 
-test('renders project support liferay contact name, role and emailadress', () => {
-	render(<LiferayContact project={project} />);
-	const linkElementLiferayContactName = screen.getByText(
-		projectLiferayContactName
-	);
-	const linkElementLiferayContactEmailAddress = screen.getByText(
-		projectLiferayContactEmailAddress
-	);
-	const linkElementLiferayContactRole = screen.getByText(
-		projectLiferayContactRole
-	);
+		expect(linkElementContactName).toBeInTheDocument();
+	});
 
-	expect(linkElementLiferayContactName).toBeInTheDocument();
-	expect(linkElementLiferayContactEmailAddress).toBeInTheDocument();
-	expect(linkElementLiferayContactRole).toBeInTheDocument();
+	it('displays project support liferay contact email address', () => {
+		render(<LiferayContact project={project} />);
+
+		const linkElementContactEmailAddress = screen.getByText(
+			/janedoe@company/i,
+			{exact: false}
+		);
+
+		expect(linkElementContactEmailAddress).toBeInTheDocument();
+	});
+
+	it('displays project support liferay contact role', () => {
+		render(<LiferayContact project={project} />);
+
+		const linkElementContactRole = screen.getByText(/administrator/i);
+
+		expect(linkElementContactRole).toBeInTheDocument();
+	});
 });
