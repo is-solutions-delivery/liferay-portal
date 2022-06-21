@@ -1688,8 +1688,13 @@ public class ObjectEntryLocalServiceImpl
 
 		sb.append(") values (?");
 
+		int valuesSize = 0;
+
+		valuesSize++;
+
 		for (int i = 1; i < count; i++) {
 			sb.append(", ?");
+			valuesSize++;
 		}
 
 		sb.append(")");
@@ -1708,7 +1713,7 @@ public class ObjectEntryLocalServiceImpl
 
 			int index = 1;
 
-			_setColumn(preparedStatement, index++, Types.BIGINT, objectEntryId);
+			_setColumn(preparedStatement, index, Types.BIGINT, objectEntryId);
 
 			for (ObjectField objectField : objectFields) {
 				Object value = values.get(objectField.getName());
@@ -1717,11 +1722,17 @@ public class ObjectEntryLocalServiceImpl
 					continue;
 				}
 
+				index = index + 1;
+
+				if (index > valuesSize) {
+					continue;
+				}
+
 				Column<?, ?> column = dynamicObjectDefinitionTable.getColumn(
 					objectField.getDBColumnName());
 
 				_setColumn(
-					preparedStatement, index++, column.getSQLType(), value);
+					preparedStatement, index, column.getSQLType(), value);
 			}
 
 			preparedStatement.executeUpdate();
