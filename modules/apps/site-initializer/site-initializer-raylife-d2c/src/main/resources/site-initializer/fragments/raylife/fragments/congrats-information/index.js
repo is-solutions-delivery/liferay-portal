@@ -43,10 +43,11 @@ const addPolicyEntryData = async ({
 }) => {
 	await fetchHeadless(`/o/c/raylifepolicies/`, {
 		body: JSON.stringify({
-			dataJSON: JSON.stringify({productName}),
-			policyOwnerName: `${firstName} ${lastName}`,
-			r_quoteToPolicies_c_raylifeQuoteId: quoteId,
-			termPremium: price,
+			monthlyPremium: price,
+			name: `${firstName} ${lastName}`,
+			policyNumber: quoteId,
+			productName,
+			r_applicationToPolicies_c_raylifeApplicationId: applicationId,
 		}),
 		method: 'POST',
 	});
@@ -172,8 +173,7 @@ const main = async () => {
 			fragmentElement.querySelector('#congrats-price'),
 			`$${Number(quoteComparison.price || 0).toLocaleString('en-US')}`
 		);
-	}
-	else {
+	} else {
 		const discountInPrice = quoteComparison.price * 0.05;
 
 		const discountDescription = `You saved 5% ($${Number(
