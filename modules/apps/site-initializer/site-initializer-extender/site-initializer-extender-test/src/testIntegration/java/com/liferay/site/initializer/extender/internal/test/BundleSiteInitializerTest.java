@@ -222,10 +222,10 @@ public class BundleSiteInitializerTest {
 			_assertCommerceSpecificationProducts(serviceContext);
 			_assertCPDefinition(group);
 			_assertCPInstanceProperties(group);
-			_assertCustomFields(serviceContext);
 			_assertDDMStructure(group);
 			_assertDDMTemplate(group);
 			_assertDLFileEntry(group);
+			_assertExpandoColumns(serviceContext);
 			_assertFragmentEntries(group);
 			_assertJournalArticles(group);
 			_assertKBArticles(group);
@@ -629,7 +629,7 @@ public class BundleSiteInitializerTest {
 			cpDefinitionOptionRels.size());
 	}
 
-	private void _assertCustomFields(ServiceContext serviceContext) {
+	private void _assertExpandoColumns(ServiceContext serviceContext) {
 		ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(
 			serviceContext.getCompanyId(),
 			"com.liferay.commerce.product.model.CPDefinition");
