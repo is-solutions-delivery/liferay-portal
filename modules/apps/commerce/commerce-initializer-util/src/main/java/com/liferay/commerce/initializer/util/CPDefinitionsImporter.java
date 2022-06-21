@@ -259,7 +259,7 @@ public class CPDefinitionsImporter {
 			WorkflowConstants.STATUS_DRAFT, serviceContext);
 	}
 
-	private void _addExpandoBridge(
+	private void _addExpandoValue(
 		CPDefinition cpDefinition, JSONArray jsonArray) {
 
 		if (jsonArray == null) {
@@ -408,7 +408,7 @@ public class CPDefinitionsImporter {
 					externalReferenceCode, company.getCompanyId());
 
 		if (cpDefinition != null) {
-			_addExpandoBridge(
+			_addExpandoValue(
 				cpDefinition, jsonObject.getJSONArray("customFields"));
 
 			_commerceChannelRelLocalService.addCommerceChannelRel(
@@ -473,7 +473,7 @@ public class CPDefinitionsImporter {
 			maxSubscriptionCycles, assetCategoryIds, assetTagNames,
 			serviceContext);
 
-		_addExpandoBridge(
+		_addExpandoValue(
 			cpDefinition, jsonObject.getJSONArray("customFields"));
 
 		serviceContext.setWorkflowAction(originalWorkflowAction);
