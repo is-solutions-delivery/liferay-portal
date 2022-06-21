@@ -17,14 +17,14 @@ import SlaCard from '.';
 describe('SLA Card', () => {
 	const projectMock = {
 		slaCurrent: 'Limited Subscription',
-		slaCurrentEndDate: '06/16/2022',
-		slaCurrentStartDate: '06/16/2022',
+		slaCurrentEndDate: '2022-06-16T00:00:00Z',
+		slaCurrentStartDate: '2022-06-16T00:00:00Z',
 		slaExpired: 'Gold Subscription',
-		slaExpiredEndDate: '25/07/2018',
-		slaExpiredStartDate: '25/08/2017',
+		slaExpiredEndDate: '2018-07-25T00:00:00Z',
+		slaExpiredStartDate: '2017-08-25T00:00:00Z',
 		slaFuture: 'Platinum Subscription',
-		slaFutureEndDate: '25/07/2024',
-		slaFutureStartDate: '25/08/2023',
+		slaFutureEndDate: '2024-07-25T00:00:00Z',
+		slaFutureStartDate: '2023-08-25T00:00:00Z',
 	};
 
 	it('displays Support Level title', () => {
@@ -58,18 +58,18 @@ describe('SLA Card', () => {
 	it('shows SLA Card start and end date', () => {
 		render(<SlaCard project={projectMock} />);
 
-		const linkElementEndDate = screen.getByText('06/16/2022', {
+		const linkElementEndDate = screen.getByText('06/15/2022', {
 			exact: false,
 		});
-		expect(linkElementEndDate).toHaveTextContent('06/16/2022');
+		expect(linkElementEndDate).toHaveTextContent('06/15/2022');
 
-		const linkElementStartDate = screen.getByText('06/16/2022', {
+		const linkElementStartDate = screen.getByText('06/15/2022', {
 			exact: false,
 		});
-		expect(linkElementStartDate).toHaveTextContent('06/16/2022');
+		expect(linkElementStartDate).toHaveTextContent('06/15/2022');
 	});
 
-	it('displays a message when the project do not have Sla Support', () => {
+	it('displays a message when the projectd do not have Sla Support', () => {
 		const projectNoSlaMock = {};
 
 		render(<SlaCard project={projectNoSlaMock} />);
