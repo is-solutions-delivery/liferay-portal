@@ -648,8 +648,9 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			expandoBridge.getAttribute("Test Expando Column 1"), 0.1);
 		Assert.assertEquals(
-			"Test Expando Column 2 Value",
-			expandoBridge.getAttribute("Test Expando Column 2"));
+			expandoBridge.getAttribute("Test Expando Column 2"),
+			"Test Expando Column 2 Value"
+			);
 	}
 
 	private void _assertDDMStructure(Group group) {
