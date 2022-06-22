@@ -15,7 +15,7 @@ import React from 'react';
 import SlaCard from '.';
 
 describe('SLA Card', () => {
-	const projectMock = {
+	const project = {
 		slaCurrent: 'Limited Subscription',
 		slaCurrentEndDate: '2022-06-16T00:00:00Z',
 		slaCurrentStartDate: '2022-06-16T00:00:00Z',
@@ -28,35 +28,35 @@ describe('SLA Card', () => {
 	};
 
 	it('displays Support Level title', () => {
-		render(<SlaCard project={projectMock} />);
+		render(<SlaCard project={project} />);
 
 		const slaTitle = screen.getByRole('heading', {name: /support level/i});
 		expect(slaTitle).toHaveTextContent('Support Level');
 	});
 
 	it('displays Limited Support Level type', () => {
-		render(<SlaCard project={projectMock} />);
+		render(<SlaCard project={project} />);
 
 		const linkElementNameslaCurrent = screen.getByText('Limited');
 		expect(linkElementNameslaCurrent).toBeInTheDocument();
 	});
 
 	it('displays Gold Support Level type', () => {
-		render(<SlaCard project={projectMock} />);
+		render(<SlaCard project={project} />);
 
 		const linkElementNameslaExpired = screen.getByText('Gold');
 		expect(linkElementNameslaExpired).toBeInTheDocument();
 	});
 
 	it('displays Platinum Support Level type', () => {
-		render(<SlaCard project={projectMock} />);
+		render(<SlaCard project={project} />);
 
 		const linkElementNameslaFuture = screen.getByText('Platinum');
 		expect(linkElementNameslaFuture).toBeInTheDocument();
 	});
 
 	it('shows SLA Card start and end date', () => {
-		render(<SlaCard project={projectMock} />);
+		render(<SlaCard project={project} />);
 
 		const linkElementEndDate = screen.getByText('06/15/2022', {
 			exact: false,
@@ -84,7 +84,7 @@ describe('SLA Card', () => {
 	it('displays an order from highest to lowest when user has multiple status (Current > Future > Expired)', async () => {
 		const user = userEvent.setup();
 
-		render(<SlaCard project={projectMock} />);
+		render(<SlaCard project={project} />);
 
 		const linkCurrentStatus = screen.getByText('Current');
 
