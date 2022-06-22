@@ -473,8 +473,7 @@ public class CPDefinitionsImporter {
 			maxSubscriptionCycles, assetCategoryIds, assetTagNames,
 			serviceContext);
 
-		_addExpandoValue(
-			cpDefinition, jsonObject.getJSONArray("customFields"));
+		_addExpandoValue(cpDefinition, jsonObject.getJSONArray("customFields"));
 
 		serviceContext.setWorkflowAction(originalWorkflowAction);
 
