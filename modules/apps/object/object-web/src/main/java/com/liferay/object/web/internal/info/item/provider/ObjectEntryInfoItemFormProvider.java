@@ -91,13 +91,6 @@ public class ObjectEntryInfoItemFormProvider
 	public InfoForm getInfoForm(String formVariationKey)
 		throws NoSuchFormVariationException {
 
-		return _getInfoForm(GetterUtil.getLong(formVariationKey));
-	}
-
-	@Override
-	public InfoForm getInfoForm(String formVariationKey, long groupId)
-		throws NoSuchFormVariationException {
-
 		long objectDefinitionId = GetterUtil.getLong(formVariationKey);
 
 		if (objectDefinitionId == 0) {
@@ -105,6 +98,13 @@ public class ObjectEntryInfoItemFormProvider
 		}
 
 		return _getInfoForm(objectDefinitionId);
+	}
+
+	@Override
+	public InfoForm getInfoForm(String formVariationKey, long groupId)
+		throws NoSuchFormVariationException {
+
+		return getInfoForm(formVariationKey);
 	}
 
 	private InfoFieldSet _getBasicInformationInfoFieldSet() {

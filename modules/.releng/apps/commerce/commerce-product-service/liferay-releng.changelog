@@ -377,3 +377,8 @@ c79f0421aaede587cee9adfdfdedbb5c0f844d03^..502e003f175afd25d373a5ba6e29f94b640a5
 # Bundle Version 6.0.66
 #
 ef33c07e1eb52d6371855d7de6d3c3665e39ecc5^..e3eeebcf80308ce00eefb0def6b4089f7aa65df1=COMMERCE-7694
+
+#
+# Bundle Version 6.0.67
+#
+e3eeebcf80308ce00eefb0def6b4089f7aa65df1^..157770a71ef6dd01f1f2857a4774ed5a21bfc6a9=COMMERCE-9502 LPS-155786 LPS-156136

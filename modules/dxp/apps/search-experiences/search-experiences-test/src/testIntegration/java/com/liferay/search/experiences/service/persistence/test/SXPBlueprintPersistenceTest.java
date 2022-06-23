@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -127,6 +129,8 @@ public class SXPBlueprintPersistenceTest {
 
 		newSXPBlueprint.setUuid(RandomTestUtil.randomString());
 
+		newSXPBlueprint.setExternalReferenceCode(RandomTestUtil.randomString());
+
 		newSXPBlueprint.setCompanyId(RandomTestUtil.nextLong());
 
 		newSXPBlueprint.setUserId(RandomTestUtil.nextLong());
@@ -169,6 +173,9 @@ public class SXPBlueprintPersistenceTest {
 			newSXPBlueprint.getMvccVersion());
 		Assert.assertEquals(
 			existingSXPBlueprint.getUuid(), newSXPBlueprint.getUuid());
+		Assert.assertEquals(
+			existingSXPBlueprint.getExternalReferenceCode(),
+			newSXPBlueprint.getExternalReferenceCode());
 		Assert.assertEquals(
 			existingSXPBlueprint.getSXPBlueprintId(),
 			newSXPBlueprint.getSXPBlueprintId());
@@ -242,6 +249,15 @@ public class SXPBlueprintPersistenceTest {
 	}
 
 	@Test
+	public void testCountByC_ERC() throws Exception {
+		_persistence.countByC_ERC(RandomTestUtil.nextLong(), "");
+
+		_persistence.countByC_ERC(0L, "null");
+
+		_persistence.countByC_ERC(0L, (String)null);
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		SXPBlueprint newSXPBlueprint = addSXPBlueprint();
 
@@ -266,11 +282,12 @@ public class SXPBlueprintPersistenceTest {
 
 	protected OrderByComparator<SXPBlueprint> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create(
-			"SXPBlueprint", "mvccVersion", true, "uuid", true, "sxpBlueprintId",
-			true, "companyId", true, "userId", true, "userName", true,
-			"createDate", true, "modifiedDate", true, "description", true,
-			"key", true, "schemaVersion", true, "title", true, "version", true,
-			"status", true, "statusByUserId", true, "statusByUserName", true,
+			"SXPBlueprint", "mvccVersion", true, "uuid", true,
+			"externalReferenceCode", true, "sxpBlueprintId", true, "companyId",
+			true, "userId", true, "userName", true, "createDate", true,
+			"modifiedDate", true, "description", true, "key", true,
+			"schemaVersion", true, "title", true, "version", true, "status",
+			true, "statusByUserId", true, "statusByUserName", true,
 			"statusDate", true);
 	}
 
@@ -487,6 +504,69 @@ public class SXPBlueprintPersistenceTest {
 		Assert.assertEquals(0, result.size());
 	}
 
+	@Test
+	public void testResetOriginalValues() throws Exception {
+		SXPBlueprint newSXPBlueprint = addSXPBlueprint();
+
+		_persistence.clearCache();
+
+		_assertOriginalValues(
+			_persistence.findByPrimaryKey(newSXPBlueprint.getPrimaryKey()));
+	}
+
+	@Test
+	public void testResetOriginalValuesWithDynamicQueryLoadFromDatabase()
+		throws Exception {
+
+		_testResetOriginalValuesWithDynamicQuery(true);
+	}
+
+	@Test
+	public void testResetOriginalValuesWithDynamicQueryLoadFromSession()
+		throws Exception {
+
+		_testResetOriginalValuesWithDynamicQuery(false);
+	}
+
+	private void _testResetOriginalValuesWithDynamicQuery(boolean clearSession)
+		throws Exception {
+
+		SXPBlueprint newSXPBlueprint = addSXPBlueprint();
+
+		if (clearSession) {
+			Session session = _persistence.openSession();
+
+			session.flush();
+
+			session.clear();
+		}
+
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
+			SXPBlueprint.class, _dynamicQueryClassLoader);
+
+		dynamicQuery.add(
+			RestrictionsFactoryUtil.eq(
+				"sxpBlueprintId", newSXPBlueprint.getSXPBlueprintId()));
+
+		List<SXPBlueprint> result = _persistence.findWithDynamicQuery(
+			dynamicQuery);
+
+		_assertOriginalValues(result.get(0));
+	}
+
+	private void _assertOriginalValues(SXPBlueprint sxpBlueprint) {
+		Assert.assertEquals(
+			Long.valueOf(sxpBlueprint.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(
+				sxpBlueprint, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "companyId"));
+		Assert.assertEquals(
+			sxpBlueprint.getExternalReferenceCode(),
+			ReflectionTestUtil.invoke(
+				sxpBlueprint, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "externalReferenceCode"));
+	}
+
 	protected SXPBlueprint addSXPBlueprint() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
@@ -495,6 +575,8 @@ public class SXPBlueprintPersistenceTest {
 		sxpBlueprint.setMvccVersion(RandomTestUtil.nextLong());
 
 		sxpBlueprint.setUuid(RandomTestUtil.randomString());
+
+		sxpBlueprint.setExternalReferenceCode(RandomTestUtil.randomString());
 
 		sxpBlueprint.setCompanyId(RandomTestUtil.nextLong());
 

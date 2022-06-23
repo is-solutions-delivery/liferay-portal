@@ -257,6 +257,35 @@ public class SXPElementLocalServiceWrapper
 	}
 
 	/**
+	 * Returns the sxp element with the matching external reference code and company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @param externalReferenceCode the sxp element's external reference code
+	 * @return the matching sxp element, or <code>null</code> if a matching sxp element could not be found
+	 */
+	@Override
+	public com.liferay.search.experiences.model.SXPElement
+		fetchSXPElementByExternalReferenceCode(
+			long companyId, String externalReferenceCode) {
+
+		return _sxpElementLocalService.fetchSXPElementByExternalReferenceCode(
+			companyId, externalReferenceCode);
+	}
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchSXPElementByExternalReferenceCode(long, String)}
+	 */
+	@Deprecated
+	@Override
+	public com.liferay.search.experiences.model.SXPElement
+		fetchSXPElementByReferenceCode(
+			long companyId, String externalReferenceCode) {
+
+		return _sxpElementLocalService.fetchSXPElementByReferenceCode(
+			companyId, externalReferenceCode);
+	}
+
+	/**
 	 * Returns the sxp element with the matching UUID and company.
 	 *
 	 * @param uuid the sxp element's UUID
@@ -329,6 +358,24 @@ public class SXPElementLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _sxpElementLocalService.getSXPElement(sxpElementId);
+	}
+
+	/**
+	 * Returns the sxp element with the matching external reference code and company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @param externalReferenceCode the sxp element's external reference code
+	 * @return the matching sxp element
+	 * @throws PortalException if a matching sxp element could not be found
+	 */
+	@Override
+	public com.liferay.search.experiences.model.SXPElement
+			getSXPElementByExternalReferenceCode(
+				long companyId, String externalReferenceCode)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _sxpElementLocalService.getSXPElementByExternalReferenceCode(
+			companyId, externalReferenceCode);
 	}
 
 	/**

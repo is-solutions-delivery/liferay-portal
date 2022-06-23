@@ -1,15 +1,15 @@
 Bundle-Name: Liferay Portal K8s Agent Implementation
 Bundle-SymbolicName: com.liferay.portal.k8s.agent.impl
-Bundle-Version: 1.0.2
+Bundle-Version: 3.0.1
 Export-Package:\
-	com.fasterxml.jackson.*;usage=test;mandatory:=usage,\
+	com.fasterxml.jackson.*;mandatory:=usage;usage=test;version="2.13.2",\
 	\
-	io.fabric8.kubernetes.internal;usage=test;mandatory:=usage,\
-	io.fabric8.kubernetes.*;usage=test;mandatory:=usage,\
+	io.fabric8.kubernetes.internal;mandatory:=usage;usage=test;version="5.12.2",\
+	io.fabric8.kubernetes.*;mandatory:=usage;usage=test;version="5.12.2",\
 	\
-	okhttp3.*;usage=test;mandatory:=usage,\
+	okhttp3.*;mandatory:=usage;usage=test;version="3.12.12",\
 	\
-	okio;usage=test;mandatory:=usage
+	okio;mandatory:=usage;usage=test;version="1.15.0"
 Import-Package:\
 	!android.*,\
 	\

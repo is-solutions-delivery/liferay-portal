@@ -27,11 +27,11 @@ import com.liferay.portal.util.PropsValues;
 import java.util.Map;
 
 import org.osgi.framework.Constants;
-import org.osgi.service.component.ComponentConstants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -55,12 +55,20 @@ public class CETConfigurationFactory {
 	}
 
 	@Deactivate
-	protected void deactivate(Integer reason) throws Exception {
-		if (reason ==
-				ComponentConstants.DEACTIVATION_REASON_CONFIGURATION_DELETED) {
+	protected void deactivate() {
+		_cetManager.deleteCET(_cet);
+	}
 
-			_cetManager.deleteCET(_cet);
-		}
+	@Modified
+	protected void modified(Map<String, Object> properties) throws Exception {
+		_cetManager.deleteCET(_cet);
+
+		CETConfiguration cetConfiguration = ConfigurableUtil.createConfigurable(
+			CETConfiguration.class, properties);
+
+		_cet = _cetManager.addCET(
+			cetConfiguration, _getCompanyId(properties),
+			_getExternalReferenceCode(properties));
 	}
 
 	private long _getCompanyId(Map<String, Object> properties)
@@ -94,7 +102,7 @@ public class CETConfigurationFactory {
 		return "LXC:" + pid;
 	}
 
-	private CET _cet;
+	private volatile CET _cet;
 
 	@Reference
 	private CETManager _cetManager;

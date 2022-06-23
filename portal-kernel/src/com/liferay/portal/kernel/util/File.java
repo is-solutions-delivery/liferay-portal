@@ -41,14 +41,7 @@ public interface File {
 	public void copyFile(java.io.File source, java.io.File destination)
 		throws IOException;
 
-	public void copyFile(
-			java.io.File source, java.io.File destination, boolean lazy)
-		throws IOException;
-
 	public void copyFile(String source, String destination) throws IOException;
-
-	public void copyFile(String source, String destination, boolean lazy)
-		throws IOException;
 
 	public java.io.File createTempFile();
 
@@ -124,7 +117,7 @@ public interface File {
 
 	public String[] listFiles(String fileName);
 
-	public void mkdirs(java.io.File file) throws IOException;
+	public void mkdirs(java.io.File file);
 
 	public void mkdirs(String pathName);
 

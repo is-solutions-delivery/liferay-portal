@@ -122,6 +122,35 @@ public class EditLayoutSetMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
+	private void _addClientExtensionEntryRel(
+			String cetExternalReferenceCode, LayoutSet layoutSet, String type,
+			long userId)
+		throws Exception {
+
+		if (Validator.isNotNull(cetExternalReferenceCode)) {
+			ClientExtensionEntryRel clientExtensionEntryRel =
+				_clientExtensionEntryRelLocalService.
+					fetchClientExtensionEntryRelByExternalReferenceCode(
+						layoutSet.getCompanyId(), cetExternalReferenceCode);
+
+			if (clientExtensionEntryRel == null) {
+				_clientExtensionEntryRelLocalService.
+					deleteClientExtensionEntryRels(
+						_portal.getClassNameId(LayoutSet.class),
+						layoutSet.getLayoutSetId(), type);
+
+				_clientExtensionEntryRelLocalService.addClientExtensionEntryRel(
+					userId, _portal.getClassNameId(LayoutSet.class),
+					layoutSet.getLayoutSetId(), cetExternalReferenceCode, type);
+			}
+		}
+		else {
+			_clientExtensionEntryRelLocalService.deleteClientExtensionEntryRels(
+				_portal.getClassNameId(LayoutSet.class),
+				layoutSet.getLayoutSetId(), type);
+		}
+	}
+
 	private void _updateClientExtensions(
 			ActionRequest actionRequest, LayoutSet layoutSet,
 			ThemeDisplay themeDisplay)
@@ -134,34 +163,10 @@ public class EditLayoutSetMVCActionCommand extends BaseMVCActionCommand {
 		String themeFaviconCETExternalReferenceCode = ParamUtil.getString(
 			actionRequest, "themeFaviconCETExternalReferenceCode");
 
-		if (Validator.isNotNull(themeFaviconCETExternalReferenceCode)) {
-			ClientExtensionEntryRel clientExtensionEntryRel =
-				_clientExtensionEntryRelLocalService.
-					fetchClientExtensionEntryRelByExternalReferenceCode(
-						layoutSet.getCompanyId(),
-						themeFaviconCETExternalReferenceCode);
-
-			if (clientExtensionEntryRel == null) {
-				_clientExtensionEntryRelLocalService.
-					deleteClientExtensionEntryRels(
-						_portal.getClassNameId(LayoutSet.class),
-						layoutSet.getLayoutSetId(),
-						ClientExtensionEntryConstants.TYPE_THEME_FAVICON);
-
-				_clientExtensionEntryRelLocalService.addClientExtensionEntryRel(
-					themeDisplay.getUserId(),
-					_portal.getClassNameId(LayoutSet.class),
-					layoutSet.getLayoutSetId(),
-					themeFaviconCETExternalReferenceCode,
-					ClientExtensionEntryConstants.TYPE_THEME_FAVICON);
-			}
-		}
-		else {
-			_clientExtensionEntryRelLocalService.deleteClientExtensionEntryRels(
-				_portal.getClassNameId(LayoutSet.class),
-				layoutSet.getLayoutSetId(),
-				ClientExtensionEntryConstants.TYPE_THEME_FAVICON);
-		}
+		_addClientExtensionEntryRel(
+			themeFaviconCETExternalReferenceCode, layoutSet,
+			ClientExtensionEntryConstants.TYPE_THEME_FAVICON,
+			themeDisplay.getUserId());
 
 		_clientExtensionEntryRelLocalService.deleteClientExtensionEntryRels(
 			themeDisplay.getCompanyId(), layoutSet.getLayoutSetId(),
@@ -198,13 +203,10 @@ public class EditLayoutSetMVCActionCommand extends BaseMVCActionCommand {
 		String themeCSSCETExternalReferenceCode = ParamUtil.getString(
 			actionRequest, "themeCSSCETExternalReferenceCode");
 
-		if (Validator.isNotNull(themeCSSCETExternalReferenceCode)) {
-			_clientExtensionEntryRelLocalService.addClientExtensionEntryRel(
-				themeDisplay.getUserId(),
-				_portal.getClassNameId(LayoutSet.class),
-				layoutSet.getLayoutSetId(), themeCSSCETExternalReferenceCode,
-				ClientExtensionEntryConstants.TYPE_THEME_CSS);
-		}
+		_addClientExtensionEntryRel(
+			themeCSSCETExternalReferenceCode, layoutSet,
+			ClientExtensionEntryConstants.TYPE_THEME_CSS,
+			themeDisplay.getUserId());
 	}
 
 	private void _updateLogo(

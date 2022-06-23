@@ -14,18 +14,17 @@
 
 package com.liferay.client.extension.type.internal.factory;
 
+import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.exception.ClientExtensionEntryTypeException;
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.CET;
 import com.liferay.client.extension.type.configuration.CETConfiguration;
 import com.liferay.client.extension.type.factory.CETFactory;
 import com.liferay.client.extension.type.factory.CETImplFactory;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapListener;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -33,19 +32,15 @@ import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.portlet.PortletRequest;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -108,7 +103,7 @@ public class CETFactoryImpl implements CETFactory {
 
 	@Override
 	public Collection<String> getTypes() {
-		return Collections.unmodifiableCollection(_types);
+		return Collections.unmodifiableSet(_cetImplFactories.keySet());
 	}
 
 	@Override
@@ -123,33 +118,16 @@ public class CETFactoryImpl implements CETFactory {
 			newTypeSettingsUnicodeProperties, oldTypeSettingsUnicodeProperties);
 	}
 
-	@Activate
-	protected void activate(BundleContext bundleContext) {
-		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
-			bundleContext, CETImplFactory.class, "type",
-			_serviceTrackerMapListener);
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		if (_serviceTrackerMap != null) {
-			_serviceTrackerMap.close();
-		}
-
-		_serviceTrackerMap = null;
-	}
-
 	private CETImplFactory _getCETImplFactory(String type)
 		throws ClientExtensionEntryTypeException {
 
-		CETImplFactory cetImplFactory = _serviceTrackerMap.getService(type);
+		CETImplFactory cetImplFactory = _cetImplFactories.get(type);
 
-		if (cetImplFactory == null) {
-			throw new ClientExtensionEntryTypeException(
-				"No CET implementation factory registered for type " + type);
+		if (cetImplFactory != null) {
+			return cetImplFactory;
 		}
 
-		return cetImplFactory;
+		throw new ClientExtensionEntryTypeException("Unknown type " + type);
 	}
 
 	private Properties _loadProperties(CETConfiguration cetConfiguration)
@@ -186,42 +164,31 @@ public class CETFactoryImpl implements CETFactory {
 		return typeSettingsUnicodeProperties;
 	}
 
+	private final Map<String, CETImplFactory> _cetImplFactories =
+		HashMapBuilder.<String, CETImplFactory>put(
+			ClientExtensionEntryConstants.TYPE_CUSTOM_ELEMENT,
+			new CustomElementCETImplFactoryImpl()
+		).put(
+			ClientExtensionEntryConstants.TYPE_GLOBAL_CSS,
+			new GlobalCSSCETImplFactoryImpl()
+		).put(
+			ClientExtensionEntryConstants.TYPE_GLOBAL_JS,
+			new GlobalJSCETImplFactoryImpl()
+		).put(
+			ClientExtensionEntryConstants.TYPE_IFRAME,
+			new IFrameCETImplFactoryImpl()
+		).put(
+			ClientExtensionEntryConstants.TYPE_THEME_CSS,
+			new ThemeCSSCETImplFactoryImpl()
+		).put(
+			ClientExtensionEntryConstants.TYPE_THEME_FAVICON,
+			new ThemeFaviconCETImplFactoryImpl()
+		).put(
+			ClientExtensionEntryConstants.TYPE_THEME_JS,
+			new ThemeJSCETImplFactoryImpl()
+		).build();
+
 	@Reference
 	private Portal _portal;
-
-	private ServiceTrackerMap<String, CETImplFactory> _serviceTrackerMap;
-
-	private final ServiceTrackerMapListener
-		<String, CETImplFactory, CETImplFactory> _serviceTrackerMapListener =
-			new ServiceTrackerMapListener
-				<String, CETImplFactory, CETImplFactory>() {
-
-				@Override
-				public void keyEmitted(
-					ServiceTrackerMap<String, CETImplFactory> serviceTrackerMap,
-					String key, CETImplFactory serviceCETImplFactory,
-					CETImplFactory contentCETImplFactory) {
-
-					synchronized (_types) {
-						_types.add(key);
-
-						Collections.sort(_types);
-					}
-				}
-
-				@Override
-				public void keyRemoved(
-					ServiceTrackerMap<String, CETImplFactory> serviceTrackerMap,
-					String key, CETImplFactory serviceCETImplFactory,
-					CETImplFactory contentCETImplFactory) {
-
-					synchronized (_types) {
-						_types.remove(key);
-					}
-				}
-
-			};
-
-	private final List<String> _types = new ArrayList<>();
 
 }

@@ -11,6 +11,16 @@
 
 <tbody>
 <tr>
+	<td>DELETE_ACTION_BUTTON</td>
+	<td>//div[contains(@class,'dnd-td') and text()='${key_title}']//..//*[*[name()='svg'][contains(@class,'lexicon-icon-times-circle')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>EDIT_ACTION_BUTTON</td>
+	<td>//div[contains(@class,'dnd-td') and text()='${key_title}']//..//*[*[name()='svg'][contains(@class,'lexicon-icon-pencil')]]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>VIEW_ACTION_BUTTON</td>
 	<td>//div[contains(@class,'dnd-td') and text()='${key_title}']//..//*[*[name()='svg'][contains(@class,'lexicon-icon-view')]]</td>
 	<td></td>
@@ -18,6 +28,11 @@
 <tr>
 	<td>VERTICAL_ELLIPSIS_BUTTON</td>
 	<td>//*[normalize-space(text())='${key_itemName}']/parent::*[contains(@class,'dnd-tr')]//button[contains(@class,'dropdown-toggle')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TABLE_BODY</td>
+	<td>//*[contains(@class,'fds')]//*[@class='dnd-tbody']</td>
 	<td></td>
 </tr>
 <tr>

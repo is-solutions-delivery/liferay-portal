@@ -41,6 +41,72 @@ definition {
 	}
 
 	@priority = "4"
+	test CanConfigureSearchContributorSize {
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			description = "WC WebContent Description",
+			groupName = "Guest",
+			title = "Apple");
+
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			description = "WC WebContent Description",
+			groupName = "Guest",
+			title = "Apple Pie");
+
+		SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(
+			suggestionContributorOrder = "1",
+			suggestionContributorSize = "1");
+
+		Type(
+			locator1 = "Search#EMBEDDED_SEARCH_BAR",
+			value1 = "Apple");
+
+		SearchBarSuggestions.viewSuggestions(
+			searchAssetDescription = "WC WebContent Description",
+			searchAssetTitle = "Apple");
+
+		SearchBarSuggestions.viewNoResultAssetTitle(searchAssetTitle = "Apple Pie");
+	}
+
+	@priority = "4"
+	test CanViewBasicAndBlueprintSuggestionsTogether {
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			description = "WC WebContent Description",
+			groupName = "Guest",
+			title = "Apple");
+
+		Blueprints.openBlueprintsAdmin();
+
+		Blueprints.createBlueprint(title = "Empty Blueprint");
+
+		Navigator.openURL();
+
+		SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(
+			addContributor = "true",
+			suggestionContributor = "Blueprint",
+			suggestionContributorBlueprint = "Empty Blueprint",
+			suggestionContributorDisplayGroupName = "blueprint suggestions",
+			suggestionContributorOrder = "2",
+			suggestionContributorSize = "5");
+
+		Type(
+			locator1 = "Search#EMBEDDED_SEARCH_BAR",
+			value1 = "Apple");
+
+		SearchBarSuggestions.viewSuggestions(
+			searchAssetDescription = "WC WebContent Description",
+			searchAssetTitle = "Apple",
+			suggestionContributorDisplayGroupName = "suggestions");
+
+		SearchBarSuggestions.viewSuggestions(
+			searchAssetDescription = "WC WebContent Description",
+			searchAssetTitle = "Apple",
+			suggestionContributorDisplayGroupName = "blueprint suggestions");
+	}
+
+	@priority = "4"
 	test CanViewSearchBarSuggestionsResultDetails {
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
@@ -142,7 +208,7 @@ definition {
 			mimeType = "application/msword",
 			sourceFileName = "Document_1.doc");
 
-		SearchPortlets.configureEmbeddedSearchBar(characterThresholdForDisplayingSuggestions = "3");
+		SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(characterThresholdForDisplayingSuggestions = "3");
 
 		Type(
 			locator1 = "Search#EMBEDDED_SEARCH_BAR",
@@ -164,7 +230,7 @@ definition {
 	}
 
 	@priority = "5"
-	test ShowBasicSuggestionsAcrossDifferentScopes {
+	test ViewBasicSuggestionsAcrossDifferentScopes {
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
 			description = "WC WebContent Description",
@@ -207,6 +273,97 @@ definition {
 		/*SearchBarSuggestions.viewSuggestions(
 			searchAssetDescription = "DM Document Description",
 			searchAssetTitle = "Apple Pie");*/
+	}
+
+	@priority = "5"
+	test ViewBlueprintSuggestionsAcrossDifferentScopes {
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			description = "WC WebContent Description",
+			groupName = "Guest",
+			title = "Apple Guest");
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description",
+			dmDocumentTitle = "Apple Pie Guest",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_1.doc");
+
+		JSONGroup.addGroup(groupName = "Site Name");
+
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			description = "WC WebContent Description",
+			groupName = "Site Name",
+			title = "Apple Site Name");
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description",
+			dmDocumentTitle = "Apple Pie Site Name",
+			groupName = "Site Name",
+			mimeType = "application/msword",
+			sourceFileName = "Document_1.doc");
+
+		Blueprints.openBlueprintsAdmin();
+
+		Blueprints.createBlueprint(title = "Test Blueprint");
+
+		Navigator.gotoNavNested(navNested = "Query Settings");
+
+		Check.checkNotVisible(
+			locator1 = "Radio#ANY",
+			radioLabel = "Selected Types");
+
+		Button.click(button = "Select Asset Types");
+
+		Check.checkNotVisible(
+			assetType = "Web Content Article",
+			locator1 = "Blueprints#BLUEPRINTS_SEARCHABLE_ASSET_TYPE_CHECKBOX");
+
+		Button.clickDone();
+
+		PortletEntry.save();
+
+		Navigator.openURL();
+
+		SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(
+			suggestionContributor = "Blueprint",
+			suggestionContributorBlueprint = "Test Blueprint");
+
+		Type(
+			locator1 = "Search#EMBEDDED_SEARCH_BAR",
+			value1 = "Apple");
+
+		SearchBarSuggestions.viewSuggestions(
+			searchAssetDescription = "WC WebContent Description",
+			searchAssetTitle = "Apple Guest");
+
+		SearchBarSuggestions.viewNoResultAssetTitle(searchAssetTitle = "Apple Pie Guest");
+
+		SearchBarSuggestions.viewNoResultAssetTitle(searchAssetTitle = "Apple Site Name");
+
+		SearchBarSuggestions.viewNoResultAssetTitle(searchAssetTitle = "Apple Pie Site Name");
+
+		SearchPortlets.configureEmbeddedSearchBar(searchScope = "Everything");
+
+		Type(
+			locator1 = "Search#EMBEDDED_SEARCH_BAR",
+			value1 = "Apple");
+
+		SearchBarSuggestions.viewSuggestions(
+			searchAssetDescription = "WC WebContent Description",
+			searchAssetTitle = "Apple Guest");
+
+		SearchBarSuggestions.viewNoResultAssetTitle(searchAssetTitle = "Apple Pie Guest");
+
+		// Workaround for LPS-155753
+
+		/*SearchBarSuggestions.viewSuggestions(
+			searchAssetDescription = "WC WebContent Description",
+			searchAssetTitle = "Apple Site Name");*/
+
+		SearchBarSuggestions.viewNoResultAssetTitle(searchAssetTitle = "Apple Pie Site Name");
 	}
 
 }

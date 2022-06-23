@@ -116,6 +116,16 @@
 	 <td></td>
 </tr>
 <tr>
+	<td>SHIPMENT_ITEM_ERC_COLUMN</td>
+	<td>//div[contains(@class,'dnd-tbody')]//div[contains(text(),'${key_ercColumnValue}')]/..//div[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SHIPMENT_ITEMS_TABLE_ERC</td>
+	<td>//div[contains(@class,'dnd-tbody')]//a[text()= '${key_shipmentItemSku}']/../../../div[3]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PENDING_ORDERS_ORDER_ID</td>
 	<td>//dt[contains(text(),'Order Id')]/..//dd</td>
 	<td></td>

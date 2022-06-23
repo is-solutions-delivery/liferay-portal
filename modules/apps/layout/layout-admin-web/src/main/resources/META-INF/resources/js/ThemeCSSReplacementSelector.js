@@ -21,11 +21,12 @@ export default function ThemeCSSReplacementSelector({
 	portletNamespace,
 	selectThemeCSSClientExtensionEventName,
 	selectThemeCSSClientExtensionURL,
+	themeCSSCETExternalReferenceCode,
 	themeCSSExtensionName,
 }) {
 	const [extensionName, setExtensionName] = useState(themeCSSExtensionName);
 	const [cetExternalReferenceCode, setCETExternalReferenceCode] = useState(
-		''
+		themeCSSCETExternalReferenceCode
 	);
 
 	const onClick = () => {

@@ -1368,6 +1368,58 @@ public interface SXPElementPersistence extends BasePersistence<SXPElement> {
 	public int filterCountByC_T_S(long companyId, int type, int status);
 
 	/**
+	 * Returns the sxp element where companyId = &#63; and externalReferenceCode = &#63; or throws a <code>NoSuchSXPElementException</code> if it could not be found.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the matching sxp element
+	 * @throws NoSuchSXPElementException if a matching sxp element could not be found
+	 */
+	public SXPElement findByC_ERC(long companyId, String externalReferenceCode)
+		throws NoSuchSXPElementException;
+
+	/**
+	 * Returns the sxp element where companyId = &#63; and externalReferenceCode = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the matching sxp element, or <code>null</code> if a matching sxp element could not be found
+	 */
+	public SXPElement fetchByC_ERC(
+		long companyId, String externalReferenceCode);
+
+	/**
+	 * Returns the sxp element where companyId = &#63; and externalReferenceCode = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching sxp element, or <code>null</code> if a matching sxp element could not be found
+	 */
+	public SXPElement fetchByC_ERC(
+		long companyId, String externalReferenceCode, boolean useFinderCache);
+
+	/**
+	 * Removes the sxp element where companyId = &#63; and externalReferenceCode = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the sxp element that was removed
+	 */
+	public SXPElement removeByC_ERC(
+			long companyId, String externalReferenceCode)
+		throws NoSuchSXPElementException;
+
+	/**
+	 * Returns the number of sxp elements where companyId = &#63; and externalReferenceCode = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the number of matching sxp elements
+	 */
+	public int countByC_ERC(long companyId, String externalReferenceCode);
+
+	/**
 	 * Caches the sxp element in the entity cache if it is enabled.
 	 *
 	 * @param sxpElement the sxp element

@@ -42,6 +42,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
@@ -50,14 +51,14 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -119,26 +120,33 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 
 		mkdirs(destination);
 
-		File[] fileArray = source.listFiles();
+		Queue<File> queue = new LinkedList<>();
 
-		if (fileArray == null) {
-			return;
-		}
+		queue.add(source);
 
-		for (File file : fileArray) {
-			if (file.isDirectory()) {
-				copyDirectory(
-					file,
-					new File(
-						destination.getPath() + File.separator +
-							file.getName()));
-			}
-			else {
-				copyFile(
-					file,
-					new File(
-						destination.getPath() + File.separator +
-							file.getName()));
+		String basePath = source.getPath();
+
+		int prefixLength = basePath.length() + 1;
+
+		File directory;
+
+		while ((directory = queue.poll()) != null) {
+			for (File file : directory.listFiles()) {
+				String path = file.getPath();
+
+				File targetFile = new File(
+					destination, path.substring(prefixLength));
+
+				if (file.isFile()) {
+					StreamUtil.transfer(
+						new FileInputStream(file),
+						new FileOutputStream(targetFile));
+				}
+				else {
+					targetFile.mkdir();
+
+					queue.add(file);
+				}
 			}
 		}
 	}
@@ -152,64 +160,19 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 
 	@Override
 	public void copyFile(File source, File destination) throws IOException {
-		copyFile(source, destination, false);
-	}
-
-	@Override
-	public void copyFile(File source, File destination, boolean lazy)
-		throws IOException {
-
 		if (!source.exists()) {
 			return;
 		}
 
-		if (lazy) {
-			String oldContent = null;
+		mkdirsParentFile(destination);
 
-			try {
-				oldContent = read(source);
-			}
-			catch (Exception exception) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(exception);
-				}
-
-				return;
-			}
-
-			String newContent = null;
-
-			try {
-				newContent = read(destination);
-			}
-			catch (Exception exception) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(exception);
-				}
-			}
-
-			if ((oldContent == null) || !oldContent.equals(newContent)) {
-				copyFile(source, destination, false);
-			}
-		}
-		else {
-			mkdirsParentFile(destination);
-
-			StreamUtil.transfer(
-				new FileInputStream(source), new FileOutputStream(destination));
-		}
+		StreamUtil.transfer(
+			new FileInputStream(source), new FileOutputStream(destination));
 	}
 
 	@Override
 	public void copyFile(String source, String destination) throws IOException {
-		copyFile(source, destination, false);
-	}
-
-	@Override
-	public void copyFile(String source, String destination, boolean lazy)
-		throws IOException {
-
-		copyFile(new File(source), new File(destination), lazy);
+		copyFile(new File(source), new File(destination));
 	}
 
 	@Override
@@ -295,24 +258,7 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 	@Override
 	public boolean delete(File file) {
 		if (file != null) {
-			boolean exists = true;
-
-			try {
-				exists = file.exists();
-			}
-			catch (SecurityException securityException) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(securityException);
-				}
-
-				// We may have the permission to delete a specific file without
-				// having the permission to check if the file exists
-
-			}
-
-			if (exists) {
-				return file.delete();
-			}
+			return file.delete();
 		}
 
 		return false;
@@ -325,22 +271,33 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 
 	@Override
 	public void deltree(File directory) {
-		if (directory.exists() && directory.isDirectory()) {
-			File[] fileArray = directory.listFiles();
+		if (directory.isDirectory()) {
+			Deque<File> deleteDeque = new LinkedList<>();
 
-			if (fileArray == null) {
-				return;
+			deleteDeque.push(directory);
+
+			Queue<File> visitQueue = new LinkedList<>();
+
+			visitQueue.add(directory);
+
+			File curDirectory;
+
+			while ((curDirectory = visitQueue.poll()) != null) {
+				for (File file : curDirectory.listFiles()) {
+					if (file.isFile()) {
+						file.delete();
+					}
+					else {
+						visitQueue.add(file);
+
+						deleteDeque.push(file);
+					}
+				}
 			}
 
-			for (File file : fileArray) {
-				if (file.isDirectory()) {
-					deltree(file);
-				}
-				else {
-					file.delete();
-				}
-			}
-
+			deleteDeque.forEach(File::delete);
+		}
+		else {
 			directory.delete();
 		}
 	}
@@ -578,8 +535,8 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 	}
 
 	@Override
-	public void mkdirs(File file) throws IOException {
-		Files.createDirectories(file.toPath());
+	public void mkdirs(File file) {
+		file.mkdirs();
 	}
 
 	@Override
@@ -594,12 +551,7 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 			return;
 		}
 
-		try {
-			mkdirs(file);
-		}
-		catch (IOException ioException) {
-			ReflectionUtil.throwException(ioException);
-		}
+		mkdirs(file);
 	}
 
 	@Override
@@ -818,25 +770,28 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 
 	@Override
 	public void unzip(File source, File destination) {
-		Path destinationPath = destination.toPath();
-
 		try (InputStream inputStream = new FileInputStream(source);
 			ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
 
 			ZipEntry entry = null;
 
 			while ((entry = zipInputStream.getNextEntry()) != null) {
-				Path path = destinationPath.resolve(entry.getName());
+				File destinationFile = new File(destination, entry.getName());
 
 				if (entry.isDirectory()) {
-					Files.createDirectories(path);
+					destinationFile.mkdirs();
 				}
 				else {
-					Files.createDirectories(path.getParent());
+					File parentFile = destinationFile.getParentFile();
 
-					Files.copy(
-						zipInputStream, path,
-						StandardCopyOption.REPLACE_EXISTING);
+					parentFile.mkdirs();
+
+					try (OutputStream outputStream = new FileOutputStream(
+							destinationFile)) {
+
+						StreamUtil.transfer(
+							zipInputStream, outputStream, false);
+					}
 				}
 			}
 		}

@@ -36,6 +36,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>VIEW_ITEM_FROM_LIST</td>
+	<td>//div[contains(@class,'table-list-title')]/a[contains(.,'${key_itemName}')]//following::div//a[contains(.,'View')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>WISH_LIST_NAME</td>
 	<td>//td[contains(@class,'lfr-name-column')]//*[contains(.,'${wishListName}')]</td>
 	<td></td>
@@ -1062,7 +1067,7 @@
 </tr>
 <tr>
 	<td>QUANTITY_IN_SHIPMENT_BY_WAREHOUSE</td>
-	<td>//div[contains(@class,'dnd-tbody')]//div[contains(text(),'${key_warehouseName}')]/..//div[5]</td>
+	<td>//div[contains(@class,'dnd-tbody')]//div[contains(text(),'${key_warehouseName}')]/..//div[6]</td>
 	<td></td>
 </tr>
 

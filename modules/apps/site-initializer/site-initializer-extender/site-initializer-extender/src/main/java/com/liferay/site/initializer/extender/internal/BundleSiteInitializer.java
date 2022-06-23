@@ -125,7 +125,6 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.template.TemplateConstants;
-import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -473,14 +472,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					siteNavigationMenuItemSettingsBuilder.build(),
 					taxonomyCategoryIdsStringUtilReplaceValues));
 
-			TransactionCommitCallbackUtil.registerCallback(
-				() -> {
-					_invoke(
-						() -> _addWorkflowDefinitions(
-							objectDefinitionResource, serviceContext));
-
-					return null;
-				});
+			_invoke(() -> _addWorkflowDefinitions(serviceContext));
 		}
 		catch (Exception exception) {
 			_log.error(exception);
@@ -1480,24 +1472,40 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
+		Map<Locale, String> nameMap = new HashMap<>(
+			SiteInitializerUtil.toMap(jsonObject.getString("name_i18n")));
+
+		Locale siteDefaultLocale = _portal.getSiteDefaultLocale(
+			serviceContext.getScopeGroupId());
+
+		if (!nameMap.containsKey(siteDefaultLocale)) {
+			nameMap.put(siteDefaultLocale, jsonObject.getString("name"));
+		}
+
 		String type = StringUtil.toLowerCase(jsonObject.getString("type"));
 
 		if (Objects.equals(type, "widget")) {
 			type = LayoutConstants.TYPE_PORTLET;
 		}
 
+		Map<Locale, String> friendlyURLMap = new HashMap<>(
+			SiteInitializerUtil.toMap(
+				jsonObject.getString("friendlyURL_i18n")));
+
+		if (!friendlyURLMap.containsKey(siteDefaultLocale)) {
+			friendlyURLMap.put(
+				siteDefaultLocale, jsonObject.getString("friendlyURL"));
+		}
+
 		Layout layout = _layoutLocalService.addLayout(
 			serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-			jsonObject.getBoolean("private"), parentLayoutId,
-			SiteInitializerUtil.toMap(jsonObject.getString("name_i18n")),
+			jsonObject.getBoolean("private"), parentLayoutId, nameMap,
 			SiteInitializerUtil.toMap(jsonObject.getString("title_i18n")),
 			SiteInitializerUtil.toMap(jsonObject.getString("description_i18n")),
 			SiteInitializerUtil.toMap(jsonObject.getString("keywords_i18n")),
 			SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
 			type, null, jsonObject.getBoolean("hidden"),
-			jsonObject.getBoolean("system"),
-			SiteInitializerUtil.toMap(jsonObject.getString("friendlyURL_i18n")),
-			serviceContext);
+			jsonObject.getBoolean("system"), friendlyURLMap, serviceContext);
 
 		if (jsonObject.has("priority")) {
 			layout = _layoutLocalService.updatePriority(
@@ -2589,7 +2597,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		SiteNavigationMenu siteNavigationMenu =
 			_siteNavigationMenuLocalService.addSiteNavigationMenu(
 				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-				jsonObject.getString("name"), serviceContext);
+				jsonObject.getString("name"), jsonObject.getInt("typeSite"),
+				serviceContext);
 
 		_addSiteNavigationMenuItems(
 			jsonObject, siteNavigationMenu, 0, serviceContext,
@@ -3156,9 +3165,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private void _addWorkflowDefinitions(
-			ObjectDefinitionResource objectDefinitionResource,
-			ServiceContext serviceContext)
+	private void _addWorkflowDefinitions(ServiceContext serviceContext)
 		throws Exception {
 
 		Set<String> resourcePaths = _servletContext.getResourcePaths(
@@ -3223,25 +3230,18 @@ public class BundleSiteInitializer implements SiteInitializer {
 						com.liferay.object.model.ObjectDefinition.class.
 							getName())) {
 
-					Page<ObjectDefinition> objectDefinitionsPage =
-						objectDefinitionResource.getObjectDefinitionsPage(
-							null, null,
-							objectDefinitionResource.toFilter(
-								StringBundler.concat(
-									"name eq '",
-									propertiesJSONObject.getString("assetName"),
-									"'")),
-							null, null);
-
-					ObjectDefinition objectDefinition =
-						objectDefinitionsPage.fetchFirstItem();
+					com.liferay.object.model.ObjectDefinition objectDefinition =
+						_objectDefinitionLocalService.fetchObjectDefinition(
+							serviceContext.getCompanyId(),
+							propertiesJSONObject.getString("assetName"));
 
 					if (objectDefinition == null) {
 						continue;
 					}
 
 					className = StringBundler.concat(
-						className, "#", objectDefinition.getId());
+						className, "#",
+						objectDefinition.getObjectDefinitionId());
 				}
 
 				long typePK = 0;

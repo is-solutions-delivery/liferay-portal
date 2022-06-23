@@ -21,6 +21,7 @@ import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.model.ClientExtensionEntryRel;
 import com.liferay.client.extension.service.ClientExtensionEntryRelLocalServiceUtil;
+import com.liferay.client.extension.type.CET;
 import com.liferay.client.extension.type.item.selector.CETItemSelectorReturnType;
 import com.liferay.client.extension.type.item.selector.criterion.CETItemSelectorCriterion;
 import com.liferay.client.extension.type.manager.CETManager;
@@ -1230,6 +1231,24 @@ public class LayoutsAdminDisplayContext {
 		String selectThemeCSSClientExtensionEventName =
 			"selectThemeCSSClientExtension";
 
+		LayoutSet setLayoutSet = getSelLayoutSet();
+
+		String className = LayoutSet.class.getName();
+		long classPK = setLayoutSet.getLayoutSetId();
+
+		Layout selLayout = getSelLayout();
+
+		if (selLayout != null) {
+			className = Layout.class.getName();
+			classPK = selLayout.getPlid();
+		}
+
+		ClientExtensionEntryRel clientExtensionEntryRel =
+			ClientExtensionEntryRelLocalServiceUtil.
+				fetchClientExtensionEntryRel(
+					PortalUtil.getClassNameId(className), classPK,
+					ClientExtensionEntryConstants.TYPE_THEME_CSS);
+
 		return HashMapBuilder.<String, Object>put(
 			"selectThemeCSSClientExtensionEventName",
 			selectThemeCSSClientExtensionEventName
@@ -1239,6 +1258,30 @@ public class LayoutsAdminDisplayContext {
 				getCETItemSelectorURL(
 					selectThemeCSSClientExtensionEventName,
 					ClientExtensionEntryConstants.TYPE_THEME_CSS))
+		).put(
+			"themeCSSCETExternalReferenceCode",
+			() -> {
+				if (clientExtensionEntryRel != null) {
+					return clientExtensionEntryRel.getExternalReferenceCode();
+				}
+
+				return StringPool.BLANK;
+			}
+		).put(
+			"themeCSSExtensionName",
+			() -> {
+				if (clientExtensionEntryRel != null) {
+					CET cet = _cetManager.getCET(
+						themeDisplay.getCompanyId(),
+						clientExtensionEntryRel.getCETExternalReferenceCode());
+
+					if (cet != null) {
+						return cet.getName(themeDisplay.getLocale());
+					}
+				}
+
+				return StringPool.BLANK;
+			}
 		).build();
 	}
 

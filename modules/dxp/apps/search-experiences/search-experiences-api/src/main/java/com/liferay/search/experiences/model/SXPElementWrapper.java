@@ -45,6 +45,7 @@ public class SXPElementWrapper
 
 		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
+		attributes.put("externalReferenceCode", getExternalReferenceCode());
 		attributes.put("sxpElementId", getSXPElementId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
@@ -77,6 +78,13 @@ public class SXPElementWrapper
 
 		if (uuid != null) {
 			setUuid(uuid);
+		}
+
+		String externalReferenceCode = (String)attributes.get(
+			"externalReferenceCode");
+
+		if (externalReferenceCode != null) {
+			setExternalReferenceCode(externalReferenceCode);
 		}
 
 		Long sxpElementId = (Long)attributes.get("sxpElementId");
@@ -296,6 +304,16 @@ public class SXPElementWrapper
 	@Override
 	public String getElementDefinitionJSON() {
 		return model.getElementDefinitionJSON();
+	}
+
+	/**
+	 * Returns the external reference code of this sxp element.
+	 *
+	 * @return the external reference code of this sxp element
+	 */
+	@Override
+	public String getExternalReferenceCode() {
+		return model.getExternalReferenceCode();
 	}
 
 	/**
@@ -659,6 +677,16 @@ public class SXPElementWrapper
 	@Override
 	public void setElementDefinitionJSON(String elementDefinitionJSON) {
 		model.setElementDefinitionJSON(elementDefinitionJSON);
+	}
+
+	/**
+	 * Sets the external reference code of this sxp element.
+	 *
+	 * @param externalReferenceCode the external reference code of this sxp element
+	 */
+	@Override
+	public void setExternalReferenceCode(String externalReferenceCode) {
+		model.setExternalReferenceCode(externalReferenceCode);
 	}
 
 	/**

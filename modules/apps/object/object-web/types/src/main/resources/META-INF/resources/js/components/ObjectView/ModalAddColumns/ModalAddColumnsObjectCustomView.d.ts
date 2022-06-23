@@ -13,7 +13,6 @@
  */
 
 import React from 'react';
-import './ModalAddColumnsObjectCustomView.scss';
 interface IProps extends React.HTMLAttributes<HTMLElement> {
 	observer: any;
 	onClose: () => void;

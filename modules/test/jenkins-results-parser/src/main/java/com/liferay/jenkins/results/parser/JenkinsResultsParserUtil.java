@@ -85,6 +85,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TimeZone;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -1393,11 +1394,11 @@ public class JenkinsResultsParserUtil {
 		return Arrays.asList(propertyContent.split(","));
 	}
 
-	public static Map<String, JSONObject> getBuildResultJSONObjects(
+	public static Map<URL, JSONObject> getBuildResultJSONObjects(
 		List<String> buildResultJsonURLs) {
 
-		final Map<String, JSONObject> buildResultJSONObjects =
-			Collections.synchronizedMap(new HashMap<String, JSONObject>());
+		final Map<URL, JSONObject> buildResultJSONObjects =
+			Collections.synchronizedMap(new TreeMap<URL, JSONObject>());
 
 		List<Callable<Void>> callables = new ArrayList<>();
 
@@ -1416,8 +1417,13 @@ public class JenkinsResultsParserUtil {
 					}
 
 					if (jsonObject != null) {
-						buildResultJSONObjects.put(
-							buildResultJsonURL, jsonObject);
+						try {
+							buildResultJSONObjects.put(
+								new URL(buildResultJsonURL), jsonObject);
+						}
+						catch (MalformedURLException malformedURLException) {
+							throw new RuntimeException(malformedURLException);
+						}
 					}
 
 					return null;
@@ -1447,7 +1453,8 @@ public class JenkinsResultsParserUtil {
 		int lastCompletedBuildNumber =
 			JenkinsAPIUtil.getLastCompletedBuildNumber(jobURL);
 
-		int buildNumber = Math.max(0, lastCompletedBuildNumber - maxBuildCount);
+		int buildNumber = Math.max(
+			0, lastCompletedBuildNumber - (maxBuildCount - 1));
 
 		while (buildNumber <= lastCompletedBuildNumber) {
 			String buildURL = jobURL + "/" + buildNumber;
@@ -3639,7 +3646,37 @@ public class JenkinsResultsParserUtil {
 	}
 
 	public static String read(File file) throws IOException {
-		return new String(Files.readAllBytes(Paths.get(file.toURI())));
+		String fileName = file.getName();
+
+		if (!fileName.endsWith(".gz")) {
+			return new String(Files.readAllBytes(Paths.get(file.toURI())));
+		}
+
+		String timeStamp = getDistinctTimeStamp();
+
+		File tempFile = new File(System.getenv("WORKSPACE"), timeStamp);
+		File tempGzipFile = new File(
+			System.getenv("WORKSPACE"), timeStamp + ".gz");
+
+		try {
+			copy(file, tempGzipFile);
+
+			unGzip(tempGzipFile, tempFile);
+
+			return read(tempFile);
+		}
+		catch (Exception exception) {
+			return null;
+		}
+		finally {
+			if (tempFile.exists()) {
+				delete(tempFile);
+			}
+
+			if (tempGzipFile.exists()) {
+				delete(tempGzipFile);
+			}
+		}
 	}
 
 	public static String readInputStream(InputStream inputStream)

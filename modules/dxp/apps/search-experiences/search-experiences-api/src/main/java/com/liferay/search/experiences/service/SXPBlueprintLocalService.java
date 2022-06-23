@@ -222,6 +222,25 @@ public interface SXPBlueprintLocalService
 	public SXPBlueprint fetchSXPBlueprint(long sxpBlueprintId);
 
 	/**
+	 * Returns the sxp blueprint with the matching external reference code and company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @param externalReferenceCode the sxp blueprint's external reference code
+	 * @return the matching sxp blueprint, or <code>null</code> if a matching sxp blueprint could not be found
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SXPBlueprint fetchSXPBlueprintByExternalReferenceCode(
+		long companyId, String externalReferenceCode);
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #fetchSXPBlueprintByExternalReferenceCode(long, String)}
+	 */
+	@Deprecated
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SXPBlueprint fetchSXPBlueprintByReferenceCode(
+		long companyId, String externalReferenceCode);
+
+	/**
 	 * Returns the sxp blueprint with the matching UUID and company.
 	 *
 	 * @param uuid the sxp blueprint's UUID
@@ -266,6 +285,19 @@ public interface SXPBlueprintLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public SXPBlueprint getSXPBlueprint(long sxpBlueprintId)
+		throws PortalException;
+
+	/**
+	 * Returns the sxp blueprint with the matching external reference code and company.
+	 *
+	 * @param companyId the primary key of the company
+	 * @param externalReferenceCode the sxp blueprint's external reference code
+	 * @return the matching sxp blueprint
+	 * @throws PortalException if a matching sxp blueprint could not be found
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SXPBlueprint getSXPBlueprintByExternalReferenceCode(
+			long companyId, String externalReferenceCode)
 		throws PortalException;
 
 	/**

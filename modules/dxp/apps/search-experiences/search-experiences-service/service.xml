@@ -3,7 +3,7 @@
 
 <service-builder auto-import-default-references="false" auto-namespace-tables="false" dependency-injector="ds" mvcc-enabled="true" package-path="com.liferay.search.experiences" short-no-such-exception-enabled="false">
 	<namespace>SXP</namespace>
-	<entity local-service="true" name="SXPBlueprint" remote-service="true" uuid="true">
+	<entity external-reference-code="true" local-service="true" name="SXPBlueprint" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -37,7 +37,7 @@
 			<finder-column name="companyId" />
 		</finder>
 	</entity>
-	<entity local-service="true" name="SXPElement" remote-service="true" uuid="true">
+	<entity external-reference-code="true" local-service="true" name="SXPElement" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 

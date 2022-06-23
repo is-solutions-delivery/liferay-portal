@@ -14,7 +14,6 @@
 
 package com.liferay.client.extension.type.internal.factory;
 
-import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.exception.ClientExtensionEntryTypeSettingsException;
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.GlobalCSSCET;
@@ -29,15 +28,9 @@ import java.util.Properties;
 
 import javax.portlet.PortletRequest;
 
-import org.osgi.service.component.annotations.Component;
-
 /**
  * @author Iván Zaera Avellón
  */
-@Component(
-	property = "type=" + ClientExtensionEntryConstants.TYPE_GLOBAL_CSS,
-	service = CETImplFactory.class
-)
 public class GlobalCSSCETImplFactoryImpl
 	implements CETImplFactory<GlobalCSSCET> {
 

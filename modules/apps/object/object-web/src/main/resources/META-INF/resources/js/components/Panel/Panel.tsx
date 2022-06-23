@@ -13,6 +13,7 @@
  */
 
 import {ClayButtonWithIcon} from '@clayui/button';
+import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import React, {useContext} from 'react';
 
@@ -93,6 +94,20 @@ const PanelHeader: React.FC<IPanelHeaderProps> = ({
 				>
 					{title}
 				</h3>
+
+				{type === 'categorization' && (
+					<span
+						className="ml-2"
+						title={Liferay.Language.get(
+							'visibility-and-permissions-can-affect-how-the-categorization-block-will-be-displayed'
+						)}
+					>
+						<ClayIcon
+							className="object-admin-panel__tooltip-icon"
+							symbol="info-panel-open"
+						/>
+					</span>
+				)}
 
 				{contentLeft && (
 					<span className="align-items-center d-flex ml-2">

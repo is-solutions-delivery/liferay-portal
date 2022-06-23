@@ -14,18 +14,31 @@
 
 package com.liferay.segments.internal.configuration.provider;
 
+import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
+import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.segments.configuration.SegmentsCompanyConfiguration;
 import com.liferay.segments.configuration.SegmentsConfiguration;
 import com.liferay.segments.configuration.provider.SegmentsConfigurationProvider;
 
 import java.io.IOException;
 
+import java.util.Dictionary;
 import java.util.Map;
+
+import javax.portlet.PortletRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
@@ -46,6 +59,37 @@ public class SegmentsConfigurationProviderImpl
 	implements SegmentsConfigurationProvider {
 
 	@Override
+	public String getConfigurationURL(HttpServletRequest httpServletRequest)
+		throws PortalException {
+
+		PermissionChecker permissionChecker = _permissionCheckerFactory.create(
+			_portal.getUser(httpServletRequest));
+
+		if (permissionChecker.isCompanyAdmin()) {
+			String configurationPid =
+				"com.liferay.segments.configuration." +
+					"SegmentsCompanyConfiguration";
+
+			return PortletURLBuilder.create(
+				_portal.getControlPanelPortletURL(
+					httpServletRequest,
+					ConfigurationAdminPortletKeys.INSTANCE_SETTINGS,
+					PortletRequest.RENDER_PHASE)
+			).setMVCRenderCommandName(
+				"/configuration_admin/edit_configuration"
+			).setRedirect(
+				_portal.getCurrentCompleteURL(httpServletRequest)
+			).setParameter(
+				"factoryPid", configurationPid
+			).setParameter(
+				"pid", configurationPid
+			).buildString();
+		}
+
+		return null;
+	}
+
+	@Override
 	public boolean isRoleSegmentationEnabled() throws ConfigurationException {
 		return _segmentsConfiguration.roleSegmentationEnabled();
 	}
@@ -58,7 +102,7 @@ public class SegmentsConfigurationProviderImpl
 			return false;
 		}
 
-		if (!_isSegmentsCompanyConfigurationDefined(companyId)) {
+		if (!isSegmentsCompanyConfigurationDefined(companyId)) {
 			return _segmentsConfiguration.roleSegmentationEnabled();
 		}
 
@@ -86,7 +130,7 @@ public class SegmentsConfigurationProviderImpl
 			return false;
 		}
 
-		if (!_isSegmentsCompanyConfigurationDefined(companyId)) {
+		if (!isSegmentsCompanyConfigurationDefined(companyId)) {
 			return _segmentsConfiguration.segmentationEnabled();
 		}
 
@@ -101,6 +145,61 @@ public class SegmentsConfigurationProviderImpl
 		return true;
 	}
 
+	public boolean isSegmentsCompanyConfigurationDefined(long companyId)
+		throws ConfigurationException {
+
+		if (_getSegmentsCompanyConfiguration(companyId) != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public void updateSegmentsCompanyConfiguration(
+			long companyId,
+			SegmentsCompanyConfiguration segmentsCompanyConfiguration)
+		throws ConfigurationException {
+
+		Dictionary<String, Object> properties = null;
+
+		Configuration configuration = _getSegmentsCompanyConfiguration(
+			companyId);
+
+		if (configuration == null) {
+			try {
+				configuration = _configurationAdmin.createFactoryConfiguration(
+					SegmentsCompanyConfiguration.class.getName() + ".scoped",
+					StringPool.QUESTION);
+			}
+			catch (IOException ioException) {
+				throw new ConfigurationException(ioException);
+			}
+
+			properties = HashMapDictionaryBuilder.<String, Object>put(
+				ExtendedObjectClassDefinition.Scope.COMPANY.getPropertyKey(),
+				companyId
+			).build();
+		}
+		else {
+			properties = configuration.getProperties();
+		}
+
+		properties.put(
+			"roleSegmentationEnabled",
+			segmentsCompanyConfiguration.roleSegmentationEnabled());
+		properties.put(
+			"segmentationEnabled",
+			segmentsCompanyConfiguration.segmentationEnabled());
+
+		try {
+			configuration.update(properties);
+		}
+		catch (IOException ioException) {
+			throw new ConfigurationException(ioException);
+		}
+	}
+
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
@@ -108,7 +207,7 @@ public class SegmentsConfigurationProviderImpl
 			SegmentsConfiguration.class, properties);
 	}
 
-	private boolean _isSegmentsCompanyConfigurationDefined(long companyId)
+	private Configuration _getSegmentsCompanyConfiguration(long companyId)
 		throws ConfigurationException {
 
 		try {
@@ -121,10 +220,10 @@ public class SegmentsConfigurationProviderImpl
 				_configurationAdmin.listConfigurations(filterString);
 
 			if (configuration != null) {
-				return true;
+				return configuration[0];
 			}
 
-			return false;
+			return null;
 		}
 		catch (InvalidSyntaxException | IOException exception) {
 			throw new ConfigurationException(exception);
@@ -136,6 +235,12 @@ public class SegmentsConfigurationProviderImpl
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;
+
+	@Reference
+	private PermissionCheckerFactory _permissionCheckerFactory;
+
+	@Reference
+	private Portal _portal;
 
 	private volatile SegmentsConfiguration _segmentsConfiguration;
 

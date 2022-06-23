@@ -126,6 +126,32 @@ public class ObjectFieldLocalServiceImpl
 
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
+	public ObjectField addOrUpdateSystemObjectField(
+			long userId, long objectDefinitionId, String businessType,
+			String dbColumnName, String dbTableName, String dbType,
+			boolean indexed, boolean indexedAsKeyword, String indexedLanguageId,
+			Map<Locale, String> labelMap, String name, boolean required)
+		throws PortalException {
+
+		ObjectField existingObjectField = objectFieldPersistence.fetchByODI_N(
+			objectDefinitionId, name);
+
+		if (existingObjectField == null) {
+			return addSystemObjectField(
+				userId, objectDefinitionId, businessType, dbColumnName,
+				dbTableName, dbType, indexed, indexedAsKeyword,
+				indexedLanguageId, labelMap, name, required);
+		}
+
+		_validateLabel(labelMap);
+
+		existingObjectField.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
+
+		return objectFieldPersistence.update(existingObjectField);
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
 	public ObjectField addSystemObjectField(
 			long userId, long objectDefinitionId, String businessType,
 			String dbColumnName, String dbTableName, String dbType,
@@ -406,6 +432,30 @@ public class ObjectFieldLocalServiceImpl
 		_addOrUpdateObjectFieldSettings(objectField, objectFieldSettings);
 
 		return objectField;
+	}
+
+	@Override
+	public ObjectField updateObjectField(
+			long userId, long objectDefinitionId, long objectFieldId,
+			String externalReferenceCode, long listTypeDefinitionId,
+			String businessType, String dbColumnName, String dbTableName,
+			String dbType, boolean indexed, boolean indexedAsKeyword,
+			String indexedLanguageId, Map<Locale, String> labelMap, String name,
+			boolean required, boolean system,
+			List<ObjectFieldSetting> objectFieldSettings)
+		throws PortalException {
+
+		if (system) {
+			return objectFieldLocalService.addOrUpdateSystemObjectField(
+				userId, objectDefinitionId, businessType, dbColumnName,
+				dbTableName, dbType, indexed, indexedAsKeyword,
+				indexedLanguageId, labelMap, name, required);
+		}
+
+		return objectFieldLocalService.updateCustomObjectField(
+			objectFieldId, externalReferenceCode, listTypeDefinitionId,
+			businessType, dbType, indexed, indexedAsKeyword, indexedLanguageId,
+			labelMap, name, required, objectFieldSettings);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)

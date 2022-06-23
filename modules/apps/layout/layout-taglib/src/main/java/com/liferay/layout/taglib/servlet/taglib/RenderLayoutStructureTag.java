@@ -16,6 +16,7 @@ package com.liferay.layout.taglib.servlet.taglib;
 
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.constants.FragmentWebKeys;
+import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
 import com.liferay.fragment.renderer.FragmentRendererController;
@@ -178,9 +179,8 @@ public class RenderLayoutStructureTag extends IncludeTag {
 		RenderLayoutStructureTag.class.getName() + "#COLLECTION_ELEMENT_INDEX";
 
 	private String _getErrorMessage(
-			FormStyledLayoutStructureItem formStyledLayoutStructureItem,
-			InfoForm infoForm)
-		throws Exception {
+		FormStyledLayoutStructureItem formStyledLayoutStructureItem,
+		InfoForm infoForm) {
 
 		HttpServletRequest httpServletRequest = getRequest();
 
@@ -216,7 +216,7 @@ public class RenderLayoutStructureTag extends IncludeTag {
 				formInputLabel, themeDisplay.getLocale());
 		}
 
-		InfoField infoField = infoForm.getInfoField(
+		InfoField<?> infoField = infoForm.getInfoField(
 			infoFormValidationException.getInfoFieldUniqueId());
 
 		formInputLabel = infoField.getLabel(themeDisplay.getLocale());
@@ -340,7 +340,9 @@ public class RenderLayoutStructureTag extends IncludeTag {
 			fragmentEntryLink.getEditableValues());
 
 		JSONObject stylesFragmentEntryEntryProcessorJSONObject =
-			jsonObject.getJSONObject(_KEY_STYLES_FRAGMENT_ENTRY_PROCESSOR);
+			jsonObject.getJSONObject(
+				FragmentEntryProcessorConstants.
+					KEY_STYLES_FRAGMENT_ENTRY_PROCESSOR);
 
 		if (stylesFragmentEntryEntryProcessorJSONObject == null) {
 			return false;
@@ -386,7 +388,6 @@ public class RenderLayoutStructureTag extends IncludeTag {
 					httpServletResponse);
 
 		jspWriter.write("<div class=\"");
-
 		jspWriter.write(
 			LayoutStructureItemCSSUtil.getLayoutStructureItemUniqueCssClass(
 				collectionStyledLayoutStructureItem));
@@ -394,7 +395,6 @@ public class RenderLayoutStructureTag extends IncludeTag {
 		jspWriter.write(
 			LayoutStructureItemCSSUtil.getLayoutStructureItemCssClass(
 				layoutStructureItem));
-
 		jspWriter.write("\" style=\"");
 		jspWriter.write(
 			renderLayoutStructureDisplayContext.getStyle(
@@ -764,6 +764,27 @@ public class RenderLayoutStructureTag extends IncludeTag {
 
 				jspWriter.write(" d-flex flex-row");
 			}
+
+			String align = containerStyledLayoutStructureItem.getAlign();
+
+			if (Validator.isNotNull(align)) {
+				jspWriter.append(StringPool.SPACE);
+				jspWriter.append(align);
+			}
+
+			String flexWrap = containerStyledLayoutStructureItem.getFlexWrap();
+
+			if (Validator.isNotNull(flexWrap)) {
+				jspWriter.append(StringPool.SPACE);
+				jspWriter.append(flexWrap);
+			}
+
+			String justify = containerStyledLayoutStructureItem.getJustify();
+
+			if (Validator.isNotNull(justify)) {
+				jspWriter.append(StringPool.SPACE);
+				jspWriter.append(justify);
+			}
 		}
 
 		jspWriter.write("\" style=\"");
@@ -871,28 +892,30 @@ public class RenderLayoutStructureTag extends IncludeTag {
 				renderLayoutStructureDisplayContext)
 		throws Exception {
 
+		if (infoForm == null) {
+			return;
+		}
+
 		JspWriter jspWriter = pageContext.getOut();
+
+		FormStyledLayoutStructureItem formStyledLayoutStructureItem =
+			(FormStyledLayoutStructureItem)layoutStructureItem;
 
 		jspWriter.write("<form action=\"");
 		jspWriter.write(
 			renderLayoutStructureDisplayContext.getAddInfoItemActionURL());
 		jspWriter.write("\" class=\"");
-
-		FormStyledLayoutStructureItem formStyledLayoutStructureItem =
-			(FormStyledLayoutStructureItem)layoutStructureItem;
-
 		jspWriter.write(
 			LayoutStructureItemCSSUtil.getLayoutStructureItemUniqueCssClass(
-				layoutStructureItem));
+				formStyledLayoutStructureItem));
 		jspWriter.write(StringPool.SPACE);
 		jspWriter.write(
 			LayoutStructureItemCSSUtil.getLayoutStructureItemCssClass(
-				layoutStructureItem));
+				formStyledLayoutStructureItem));
 		jspWriter.write(StringPool.SPACE);
 		jspWriter.write(
 			LayoutStructureItemCSSUtil.getStyledLayoutStructureItemCssClasses(
 				formStyledLayoutStructureItem));
-
 		jspWriter.write("\" method=\"POST=\" style=\"");
 		jspWriter.write(
 			renderLayoutStructureDisplayContext.getStyle(
@@ -1317,10 +1340,6 @@ public class RenderLayoutStructureTag extends IncludeTag {
 				fragmentStyledLayoutStructureItem));
 		jspWriter.write("\">");
 	}
-
-	private static final String _KEY_STYLES_FRAGMENT_ENTRY_PROCESSOR =
-		"com.liferay.fragment.entry.processor.styles." +
-			"StylesFragmentEntryProcessor";
 
 	private static final String _PAGE = "/render_layout_structure/page.jsp";
 

@@ -77,12 +77,14 @@ public class SXPElementCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(39);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
 		sb.append(", uuid=");
 		sb.append(uuid);
+		sb.append(", externalReferenceCode=");
+		sb.append(externalReferenceCode);
 		sb.append(", sxpElementId=");
 		sb.append(sxpElementId);
 		sb.append(", companyId=");
@@ -131,6 +133,13 @@ public class SXPElementCacheModel
 		}
 		else {
 			sxpElementImpl.setUuid(uuid);
+		}
+
+		if (externalReferenceCode == null) {
+			sxpElementImpl.setExternalReferenceCode("");
+		}
+		else {
+			sxpElementImpl.setExternalReferenceCode(externalReferenceCode);
 		}
 
 		sxpElementImpl.setSXPElementId(sxpElementId);
@@ -219,6 +228,7 @@ public class SXPElementCacheModel
 
 		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
+		externalReferenceCode = objectInput.readUTF();
 
 		sxpElementId = objectInput.readLong();
 
@@ -253,6 +263,13 @@ public class SXPElementCacheModel
 		}
 		else {
 			objectOutput.writeUTF(uuid);
+		}
+
+		if (externalReferenceCode == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(externalReferenceCode);
 		}
 
 		objectOutput.writeLong(sxpElementId);
@@ -324,6 +341,7 @@ public class SXPElementCacheModel
 
 	public long mvccVersion;
 	public String uuid;
+	public String externalReferenceCode;
 	public long sxpElementId;
 	public long companyId;
 	public long userId;

@@ -130,7 +130,9 @@ const PaymentMethod = () => {
 		if (!orderId) {
 			createOrder(accountId, channel.id, skus[0].id).then((response) => {
 				const orderId = response.data.id;
-				updateQuoteOrder(orderId);
+				
+        updateQuoteOrder(orderId);
+
 				setItem('orderId', orderId);
 				dispatch({
 					payload: orderId,

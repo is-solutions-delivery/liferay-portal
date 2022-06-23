@@ -77,12 +77,14 @@ public class SXPBlueprintCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(39);
+		StringBundler sb = new StringBundler(41);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
 		sb.append(", uuid=");
 		sb.append(uuid);
+		sb.append(", externalReferenceCode=");
+		sb.append(externalReferenceCode);
 		sb.append(", sxpBlueprintId=");
 		sb.append(sxpBlueprintId);
 		sb.append(", companyId=");
@@ -133,6 +135,13 @@ public class SXPBlueprintCacheModel
 		}
 		else {
 			sxpBlueprintImpl.setUuid(uuid);
+		}
+
+		if (externalReferenceCode == null) {
+			sxpBlueprintImpl.setExternalReferenceCode("");
+		}
+		else {
+			sxpBlueprintImpl.setExternalReferenceCode(externalReferenceCode);
 		}
 
 		sxpBlueprintImpl.setSXPBlueprintId(sxpBlueprintId);
@@ -237,6 +246,7 @@ public class SXPBlueprintCacheModel
 
 		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
+		externalReferenceCode = objectInput.readUTF();
 
 		sxpBlueprintId = objectInput.readLong();
 
@@ -270,6 +280,13 @@ public class SXPBlueprintCacheModel
 		}
 		else {
 			objectOutput.writeUTF(uuid);
+		}
+
+		if (externalReferenceCode == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(externalReferenceCode);
 		}
 
 		objectOutput.writeLong(sxpBlueprintId);
@@ -353,6 +370,7 @@ public class SXPBlueprintCacheModel
 
 	public long mvccVersion;
 	public String uuid;
+	public String externalReferenceCode;
 	public long sxpBlueprintId;
 	public long companyId;
 	public long userId;

@@ -680,6 +680,59 @@ public interface SXPBlueprintPersistence extends BasePersistence<SXPBlueprint> {
 	public int filterCountByCompanyId(long companyId);
 
 	/**
+	 * Returns the sxp blueprint where companyId = &#63; and externalReferenceCode = &#63; or throws a <code>NoSuchSXPBlueprintException</code> if it could not be found.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the matching sxp blueprint
+	 * @throws NoSuchSXPBlueprintException if a matching sxp blueprint could not be found
+	 */
+	public SXPBlueprint findByC_ERC(
+			long companyId, String externalReferenceCode)
+		throws NoSuchSXPBlueprintException;
+
+	/**
+	 * Returns the sxp blueprint where companyId = &#63; and externalReferenceCode = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the matching sxp blueprint, or <code>null</code> if a matching sxp blueprint could not be found
+	 */
+	public SXPBlueprint fetchByC_ERC(
+		long companyId, String externalReferenceCode);
+
+	/**
+	 * Returns the sxp blueprint where companyId = &#63; and externalReferenceCode = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching sxp blueprint, or <code>null</code> if a matching sxp blueprint could not be found
+	 */
+	public SXPBlueprint fetchByC_ERC(
+		long companyId, String externalReferenceCode, boolean useFinderCache);
+
+	/**
+	 * Removes the sxp blueprint where companyId = &#63; and externalReferenceCode = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the sxp blueprint that was removed
+	 */
+	public SXPBlueprint removeByC_ERC(
+			long companyId, String externalReferenceCode)
+		throws NoSuchSXPBlueprintException;
+
+	/**
+	 * Returns the number of sxp blueprints where companyId = &#63; and externalReferenceCode = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param externalReferenceCode the external reference code
+	 * @return the number of matching sxp blueprints
+	 */
+	public int countByC_ERC(long companyId, String externalReferenceCode);
+
+	/**
 	 * Caches the sxp blueprint in the entity cache if it is enabled.
 	 *
 	 * @param sxpBlueprint the sxp blueprint

@@ -57,13 +57,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -534,52 +530,6 @@ public class BaseAutoDeployer implements AutoDeployer {
 	protected String uiTaglibDTD;
 	protected String utilTaglibDTD;
 
-	private void _copyDirectory(File source, File destination) {
-		Path sourcePath = source.toPath();
-
-		Path destinationPath = destination.toPath();
-
-		try {
-			Files.walkFileTree(
-				sourcePath,
-				new SimpleFileVisitor<Path>() {
-
-					@Override
-					public FileVisitResult preVisitDirectory(
-							Path dirPath,
-							BasicFileAttributes basicFileAttributes)
-						throws IOException {
-
-						Files.createDirectories(
-							destinationPath.resolve(
-								sourcePath.relativize(dirPath)));
-
-						return FileVisitResult.CONTINUE;
-					}
-
-					@Override
-					public FileVisitResult visitFile(
-							Path filePath,
-							BasicFileAttributes basicFileAttributes)
-						throws IOException {
-
-						Path destinationFile = destinationPath.resolve(
-							sourcePath.relativize(filePath));
-
-						Files.copy(
-							filePath, destinationFile,
-							StandardCopyOption.REPLACE_EXISTING);
-
-						return FileVisitResult.CONTINUE;
-					}
-
-				});
-		}
-		catch (IOException ioException) {
-			_log.error(ioException);
-		}
-	}
-
 	private void _copyJars(File srcFile) throws Exception {
 		for (String jar : _jars) {
 			String jarFullName = DeployUtil.getResourcePath(tempDirPaths, jar);
@@ -591,8 +541,7 @@ public class BaseAutoDeployer implements AutoDeployer {
 				DeployUtil.getResourcePath(tempDirPaths, jarName);
 			}
 
-			FileUtil.copyFile(
-				jarFullName, srcFile + "/WEB-INF/lib/" + jarName, false);
+			FileUtil.copyFile(jarFullName, srcFile + "/WEB-INF/lib/" + jarName);
 		}
 	}
 
@@ -623,7 +572,7 @@ public class BaseAutoDeployer implements AutoDeployer {
 						portalJar;
 
 				FileUtil.copyFile(
-					portalJarPath, srcFile + "/WEB-INF/lib/" + portalJar, true);
+					portalJarPath, srcFile + "/WEB-INF/lib/" + portalJar);
 			}
 			catch (Exception exception) {
 				_log.error("Unable to copy portal JAR " + portalJar, exception);
@@ -649,7 +598,7 @@ public class BaseAutoDeployer implements AutoDeployer {
 					tempDirPaths, portalTld);
 
 				FileUtil.copyFile(
-					portalTldPath, srcFile + "/WEB-INF/tld/" + portalTld, true);
+					portalTldPath, srcFile + "/WEB-INF/tld/" + portalTld);
 			}
 			catch (Exception exception) {
 				_log.error("Unable to copy portal TLD " + portalTld, exception);
@@ -670,8 +619,8 @@ public class BaseAutoDeployer implements AutoDeployer {
 						"commons-logging.jar";
 
 				FileUtil.copyFile(
-					portalJarPath, srcFile + "/WEB-INF/lib/commons-logging.jar",
-					true);
+					portalJarPath,
+					srcFile + "/WEB-INF/lib/commons-logging.jar");
 			}
 		}
 
@@ -687,24 +636,21 @@ public class BaseAutoDeployer implements AutoDeployer {
 						"log4j-api.jar";
 
 				FileUtil.copyFile(
-					portalJarPath, srcFile + "/WEB-INF/lib/log4j-api.jar",
-					true);
+					portalJarPath, srcFile + "/WEB-INF/lib/log4j-api.jar");
 
 				portalJarPath =
 					PropsValues.LIFERAY_SHIELDED_CONTAINER_LIB_PORTAL_DIR +
 						"log4j-1.2-api.jar";
 
 				FileUtil.copyFile(
-					portalJarPath, srcFile + "/WEB-INF/lib/log4j-1.2-api.jar",
-					true);
+					portalJarPath, srcFile + "/WEB-INF/lib/log4j-1.2-api.jar");
 
 				portalJarPath =
 					PropsValues.LIFERAY_SHIELDED_CONTAINER_LIB_PORTAL_DIR +
 						"log4j-core.jar";
 
 				FileUtil.copyFile(
-					portalJarPath, srcFile + "/WEB-INF/lib/log4j-core.jar",
-					true);
+					portalJarPath, srcFile + "/WEB-INF/lib/log4j-core.jar");
 			}
 		}
 	}
@@ -752,45 +698,43 @@ public class BaseAutoDeployer implements AutoDeployer {
 	private void _copyTlds(File srcFile) throws Exception {
 		if (Validator.isNotNull(auiTaglibDTD)) {
 			FileUtil.copyFile(
-				auiTaglibDTD, srcFile + "/WEB-INF/tld/liferay-aui.tld", true);
+				auiTaglibDTD, srcFile + "/WEB-INF/tld/liferay-aui.tld");
 		}
 
 		if (Validator.isNotNull(portletTaglibDTD)) {
 			FileUtil.copyFile(
-				portletTaglibDTD, srcFile + "/WEB-INF/tld/liferay-portlet.tld",
-				true);
+				portletTaglibDTD, srcFile + "/WEB-INF/tld/liferay-portlet.tld");
 			FileUtil.copyFile(
 				DeployUtil.getResourcePath(
 					tempDirPaths, "liferay-portlet_2_0.tld"),
-				srcFile + "/WEB-INF/tld/liferay-portlet_2_0.tld", true);
+				srcFile + "/WEB-INF/tld/liferay-portlet_2_0.tld");
 		}
 
 		if (Validator.isNotNull(portletExtTaglibDTD)) {
 			FileUtil.copyFile(
 				portletExtTaglibDTD,
-				srcFile + "/WEB-INF/tld/liferay-portlet-ext.tld", true);
+				srcFile + "/WEB-INF/tld/liferay-portlet-ext.tld");
 		}
 
 		if (Validator.isNotNull(securityTaglibDTD)) {
 			FileUtil.copyFile(
 				securityTaglibDTD,
-				srcFile + "/WEB-INF/tld/liferay-security.tld", true);
+				srcFile + "/WEB-INF/tld/liferay-security.tld");
 		}
 
 		if (Validator.isNotNull(themeTaglibDTD)) {
 			FileUtil.copyFile(
-				themeTaglibDTD, srcFile + "/WEB-INF/tld/liferay-theme.tld",
-				true);
+				themeTaglibDTD, srcFile + "/WEB-INF/tld/liferay-theme.tld");
 		}
 
 		if (Validator.isNotNull(uiTaglibDTD)) {
 			FileUtil.copyFile(
-				uiTaglibDTD, srcFile + "/WEB-INF/tld/liferay-ui.tld", true);
+				uiTaglibDTD, srcFile + "/WEB-INF/tld/liferay-ui.tld");
 		}
 
 		if (Validator.isNotNull(utilTaglibDTD)) {
 			FileUtil.copyFile(
-				utilTaglibDTD, srcFile + "/WEB-INF/tld/liferay-util.tld", true);
+				utilTaglibDTD, srcFile + "/WEB-INF/tld/liferay-util.tld");
 		}
 	}
 
@@ -821,7 +765,7 @@ public class BaseAutoDeployer implements AutoDeployer {
 
 		updateDeployDirectory(srcFile);
 
-		_copyDirectory(srcFile, deployDir);
+		FileUtil.copyDirectory(srcFile, deployDir);
 	}
 
 	private boolean _deployFile(
@@ -1077,12 +1021,14 @@ public class BaseAutoDeployer implements AutoDeployer {
 		).build();
 	}
 
-	private void _mergeDirectory(File mergeDir, File targetDir) {
+	private void _mergeDirectory(File mergeDir, File targetDir)
+		throws Exception {
+
 		if ((mergeDir == null) || !mergeDir.exists()) {
 			return;
 		}
 
-		_copyDirectory(mergeDir, targetDir);
+		FileUtil.copyDirectory(mergeDir, targetDir);
 	}
 
 	private PluginPackage _readPluginPackage(File file) {

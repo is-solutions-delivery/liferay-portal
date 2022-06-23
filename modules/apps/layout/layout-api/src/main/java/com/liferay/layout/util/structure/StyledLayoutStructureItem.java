@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
@@ -109,6 +110,10 @@ public abstract class StyledLayoutStructureItem extends LayoutStructureItem {
 		return _cssClasses;
 	}
 
+	public String getCustomCSS() {
+		return _customCSS;
+	}
+
 	public String getDisplay() {
 		return _getStringStyleProperty("display");
 	}
@@ -138,6 +143,8 @@ public abstract class StyledLayoutStructureItem extends LayoutStructureItem {
 		JSONObject jsonObject = JSONUtil.put(
 			"cssClasses", JSONFactoryUtil.createJSONArray(_cssClasses)
 		).put(
+			"customCSS", _customCSS
+		).put(
 			"styles", stylesJSONObject
 		);
 
@@ -149,10 +156,14 @@ public abstract class StyledLayoutStructureItem extends LayoutStructureItem {
 			jsonObject.put(
 				viewportSize.getViewportSizeId(),
 				JSONUtil.put(
+					"customCSS",
+					_viewportCustomCSS.get(viewportSize.getViewportSizeId())
+				).put(
 					"styles",
 					viewportStyleJSONObjects.getOrDefault(
 						viewportSize.getViewportSizeId(),
-						JSONFactoryUtil.createJSONObject())));
+						JSONFactoryUtil.createJSONObject())
+				));
 		}
 
 		return jsonObject;
@@ -247,6 +258,10 @@ public abstract class StyledLayoutStructureItem extends LayoutStructureItem {
 		_cssClasses = cssClasses;
 	}
 
+	public void setCustomCSS(String customCSS) {
+		_customCSS = customCSS;
+	}
+
 	@Override
 	public void updateItemConfig(JSONObject itemConfigJSONObject) {
 		if (itemConfigJSONObject.has("cssClasses")) {
@@ -256,6 +271,10 @@ public abstract class StyledLayoutStructureItem extends LayoutStructureItem {
 				cssClasses, itemConfigJSONObject.getJSONArray("cssClasses"));
 
 			setCssClasses(cssClasses);
+		}
+
+		if (itemConfigJSONObject.has("customCSS")) {
+			setCustomCSS(itemConfigJSONObject.getString("customCSS"));
 		}
 
 		try {
@@ -273,39 +292,11 @@ public abstract class StyledLayoutStructureItem extends LayoutStructureItem {
 					continue;
 				}
 
-				JSONObject currentViewportStyleJSONObject =
-					viewportStyleJSONObjects.getOrDefault(
-						viewportSize.getViewportSizeId(),
-						JSONFactoryUtil.createJSONObject());
+				_updateViewportCustomCSSJSONObjects(
+					itemConfigJSONObject, viewportSize);
 
-				if (itemConfigJSONObject.has(
-						viewportSize.getViewportSizeId())) {
-
-					JSONObject viewportItemConfigJSONObject =
-						itemConfigJSONObject.getJSONObject(
-							viewportSize.getViewportSizeId());
-
-					JSONObject newStylesJSONObject =
-						viewportItemConfigJSONObject.getJSONObject("styles");
-
-					if (newStylesJSONObject == null) {
-						continue;
-					}
-
-					List<String> availableStyleNames =
-						CommonStylesUtil.getAvailableStyleNames();
-
-					for (String styleName : availableStyleNames) {
-						if (newStylesJSONObject.has(styleName)) {
-							currentViewportStyleJSONObject.put(
-								styleName, newStylesJSONObject.get(styleName));
-						}
-					}
-				}
-
-				viewportStyleJSONObjects.put(
-					viewportSize.getViewportSizeId(),
-					currentViewportStyleJSONObject);
+				_updateViewportStyleJSONObjects(
+					itemConfigJSONObject, viewportSize);
 			}
 		}
 		catch (Exception exception) {
@@ -437,11 +428,70 @@ public abstract class StyledLayoutStructureItem extends LayoutStructureItem {
 		}
 	}
 
+	private void _updateViewportCustomCSSJSONObjects(
+		JSONObject itemConfigJSONObject, ViewportSize viewportSize) {
+
+		JSONObject viewportItemConfigJSONObject =
+			itemConfigJSONObject.getJSONObject(
+				viewportSize.getViewportSizeId());
+
+		if ((viewportItemConfigJSONObject != null) &&
+			viewportItemConfigJSONObject.has("customCSS")) {
+
+			_viewportCustomCSS.put(
+				viewportSize.getViewportSizeId(),
+				viewportItemConfigJSONObject.getString("customCSS"));
+		}
+	}
+
+	private void _updateViewportStyleJSONObjects(
+		JSONObject itemConfigJSONObject, ViewportSize viewportSize) {
+
+		List<String> availableStyleNames =
+			CommonStylesUtil.getAvailableStyleNames();
+
+		JSONObject viewportItemConfigJSONObject =
+			itemConfigJSONObject.getJSONObject(
+				viewportSize.getViewportSizeId());
+
+		if (ListUtil.isEmpty(availableStyleNames) ||
+			(viewportItemConfigJSONObject == null)) {
+
+			return;
+		}
+
+		JSONObject newStylesJSONObject =
+			viewportItemConfigJSONObject.getJSONObject("styles");
+
+		if ((newStylesJSONObject == null) ||
+			(newStylesJSONObject.length() == 0)) {
+
+			return;
+		}
+
+		JSONObject currentViewportStyleJSONObject =
+			viewportStyleJSONObjects.getOrDefault(
+				viewportSize.getViewportSizeId(),
+				JSONFactoryUtil.createJSONObject());
+
+		for (String styleName : availableStyleNames) {
+			if (newStylesJSONObject.has(styleName)) {
+				currentViewportStyleJSONObject.put(
+					styleName, newStylesJSONObject.get(styleName));
+			}
+		}
+
+		viewportStyleJSONObjects.put(
+			viewportSize.getViewportSizeId(), currentViewportStyleJSONObject);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		StyledLayoutStructureItem.class);
 
 	private static final ViewportSize[] _viewportSizes = ViewportSize.values();
 
 	private Set<String> _cssClasses;
+	private String _customCSS;
+	private final Map<String, String> _viewportCustomCSS = new HashMap<>();
 
 }

@@ -104,11 +104,29 @@ renderResponse.setTitle(role.getTitle(locale));
 
 <c:if test='<%= !SegmentsEntryDisplayContext.isRoleSegmentationEnabled(themeDisplay.getCompanyId()) && tabs2.equals("segments") %>'>
 	<clay:stripe
-		elementClasses="assign-roles-segments-warning"
-		message="assigning-roles-by-segment-is-disabled-.to-enable,-go-to-system-settings-segments-segments-service"
-		style="warning"
-		title="Warning"
-	/>
+		displayType="warning"
+	>
+		<strong class="lead"><%= LanguageUtil.get(request, "assigning-roles-by-segment-is-disabled") %></strong>
+
+		<%
+		String segmentsConfigurationURL = SegmentsEntryDisplayContext.getSegmentsConfigurationURL(request);
+		%>
+
+		<c:choose>
+			<c:when test="<%= segmentsConfigurationURL != null %>">
+				<clay:link
+					cssClass="assign-roles-segments-warning"
+					href="<%= segmentsConfigurationURL %>"
+					label='<%= LanguageUtil.get(request, "to-enable,-go-to-instance-settings") %>'
+				/>
+			</c:when>
+			<c:otherwise>
+				<span><%=
+				LanguageUtil.get(
+					request, "to-enable,-go-to-instance-settings") %></span>
+			</c:otherwise>
+		</c:choose>
+	</clay:stripe>
 </c:if>
 
 <aui:form action="<%= portletURL %>" cssClass="container-fluid container-fluid-max-xl container-form-view" method="post" name="fm">

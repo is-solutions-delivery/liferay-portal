@@ -18,6 +18,7 @@ import com.liferay.commerce.constants.CommerceShipmentConstants;
 import com.liferay.commerce.exception.CommerceShipmentInactiveWarehouseException;
 import com.liferay.commerce.exception.CommerceShipmentItemQuantityException;
 import com.liferay.commerce.exception.CommerceShipmentStatusException;
+import com.liferay.commerce.exception.DuplicateCommerceShipmentItemException;
 import com.liferay.commerce.inventory.engine.CommerceInventoryEngine;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouseItem;
@@ -44,6 +45,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Alessio Antonio Rendina
@@ -64,7 +66,13 @@ public class CommerceShipmentItemLocalServiceImpl
 		// Commerce shipment item
 
 		User user = userLocalService.getUser(serviceContext.getUserId());
-		long groupId = serviceContext.getScopeGroupId();
+
+		if (Validator.isBlank(externalReferenceCode)) {
+			externalReferenceCode = null;
+		}
+
+		_validateExternalReferenceCode(
+			0, serviceContext.getCompanyId(), externalReferenceCode);
 
 		CommerceOrderItem commerceOrderItem =
 			commerceOrderItemLocalService.getCommerceOrderItem(
@@ -83,12 +91,8 @@ public class CommerceShipmentItemLocalServiceImpl
 		CommerceShipmentItem commerceShipmentItem =
 			commerceShipmentItemPersistence.create(commerceShipmentItemId);
 
-		if (Validator.isBlank(externalReferenceCode)) {
-			externalReferenceCode = null;
-		}
-
 		commerceShipmentItem.setExternalReferenceCode(externalReferenceCode);
-		commerceShipmentItem.setGroupId(groupId);
+		commerceShipmentItem.setGroupId(serviceContext.getScopeGroupId());
 		commerceShipmentItem.setCompanyId(user.getCompanyId());
 		commerceShipmentItem.setUserId(user.getUserId());
 		commerceShipmentItem.setUserName(user.getFullName());
@@ -395,6 +399,17 @@ public class CommerceShipmentItemLocalServiceImpl
 			commerceShipmentItemPersistence.findByPrimaryKey(
 				commerceShipmentItemId);
 
+		if (Objects.equals(
+				commerceShipmentItem.getExternalReferenceCode(),
+				externalReferenceCode)) {
+
+			return commerceShipmentItem;
+		}
+
+		_validateExternalReferenceCode(
+			commerceShipmentItemId, commerceShipmentItem.getCompanyId(),
+			externalReferenceCode);
+
 		commerceShipmentItem.setExternalReferenceCode(externalReferenceCode);
 
 		return commerceShipmentItemPersistence.update(commerceShipmentItem);
@@ -532,6 +547,32 @@ public class CommerceShipmentItemLocalServiceImpl
 				CommerceInventoryAuditTypeConstants.SHIPMENT_ITEM_ID,
 				String.valueOf(commerceShipmentItemId)
 			).build());
+	}
+
+	private void _validateExternalReferenceCode(
+			long commerceShipmentItemId, long companyId,
+			String externalReferenceCode)
+		throws PortalException {
+
+		if (Validator.isNull(externalReferenceCode)) {
+			return;
+		}
+
+		CommerceShipmentItem commerceShipmentItem =
+			commerceShipmentItemPersistence.fetchByC_ERC(
+				companyId, externalReferenceCode);
+
+		if (commerceShipmentItem == null) {
+			return;
+		}
+
+		if (commerceShipmentItem.getCommerceShipmentItemId() !=
+				commerceShipmentItemId) {
+
+			throw new DuplicateCommerceShipmentItemException(
+				"There is another commerce shipment item with external " +
+					"reference code " + externalReferenceCode);
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -19,7 +19,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.PropsValues;
 
@@ -28,20 +28,10 @@ import java.util.Objects;
 
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationPlugin;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Raymond Augé
  */
-@Component(
-	immediate = true,
-	property = {
-		ConfigurationPlugin.CM_RANKING + ":Integer=400",
-		"config.plugin.id=com.liferay.portal.configuration.plugin.internal.WebIdToCompanyConfigurationPluginImpl"
-	},
-	service = ConfigurationPlugin.class
-)
 public class WebIdToCompanyConfigurationPluginImpl
 	implements ConfigurationPlugin {
 
@@ -64,7 +54,12 @@ public class WebIdToCompanyConfigurationPluginImpl
 		Company company = null;
 
 		try {
-			company = _companyLocalService.getCompanyByWebId(webId);
+
+			// Use CompanyLocalServiceUtil because this executes early in the
+			// portal initialization when Spring has been wired but the OSGi
+			// service is not yet published
+
+			company = CompanyLocalServiceUtil.getCompanyByWebId(webId);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -90,8 +85,5 @@ public class WebIdToCompanyConfigurationPluginImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		WebIdToCompanyConfigurationPluginImpl.class);
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
 
 }

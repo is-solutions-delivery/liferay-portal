@@ -470,9 +470,7 @@ const ExperiencesSelectorHeader = ({
 						)}
 					</strong>
 
-					{Liferay.Language.get(
-						'to-enable-segmentation-go-to-system-settings-segments-segments-service'
-					)}
+					{Liferay.Language.get('to-enable,-go-to-instance-settings')}
 				</ClayAlert>
 			) : (
 				<ClayAlert
