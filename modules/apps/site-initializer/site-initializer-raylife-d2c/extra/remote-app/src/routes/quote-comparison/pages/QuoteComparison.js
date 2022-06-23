@@ -20,7 +20,7 @@ import {STORAGE_KEYS, Storage} from '../../../common/services/liferay/storage';
 import {RAYLIFE_PAGES} from '../../../common/utils/constants';
 import {redirectTo} from '../../../common/utils/liferay';
 import Carousel from '../components/Carousel';
-import {getQuoteComparisons} from '../service/QuoteComparison';
+import {getQuotes} from '../service/Quote';
 
 const QuoteComparison = () => {
 	const [quotes, setQuotes] = useState([]);
@@ -31,6 +31,12 @@ const QuoteComparison = () => {
 
 	const isMobileDevice = isMobile || isTablet;
 
+	const sortData = (data) => {
+		return data.sort(
+			(x, y) => JSON.parse(x.dataJSON).id - JSON.parse(y.dataJSON).id
+		);
+	};
+
 	useEffect(() => {
 		const quoteElements = document.querySelector(
 			'section#content #main-content .container-fluid'
@@ -38,8 +44,8 @@ const QuoteComparison = () => {
 
 		quoteElements.classList.add('quote-comparison-content');
 
-		getQuoteComparisons()
-			.then((data) => setQuotes(data.items))
+		getQuotes()
+			.then((data) => setQuotes(sortData(data.items)))
 			.catch((error) => console.error(error.message));
 	}, []);
 
