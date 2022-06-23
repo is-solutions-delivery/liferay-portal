@@ -15,7 +15,7 @@
 			},
 			{
 				"customValue": {
-					"data": "Test"
+					"data": "Test Expando Column Value 2"
 				},
 				"dataType": "Text",
 				"name": "Test Expando Column 2"
