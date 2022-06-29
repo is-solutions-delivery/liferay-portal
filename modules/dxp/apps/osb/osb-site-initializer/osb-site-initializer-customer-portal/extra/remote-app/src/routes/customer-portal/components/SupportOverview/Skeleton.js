@@ -15,28 +15,23 @@ const SupportOverviewSkeleton = () => {
 	return (
 		<div className="container mb-5 mx-0 project-contacs-container">
 			<div className="row">
-
 				<div className="col-5">
+					<Skeleton className="mb-5" height={20} width={215} />
 
-					<Skeleton className="mb-4" height={21} width={215} />
-
-					<Skeleton className="mb-1" height={85} width={215} />
-
+					<Skeleton className="mb-2" height={85} width={215} />
 				</div>
 
 				<div className="col-5">
-					<Skeleton className="mb-4" height={21} width={250}/>
+					<Skeleton className="mb-5" height={20} width={250} />
 
-					<Skeleton className="mb-1" height={24} width={250}/>
+					<Skeleton className="mb-2" height={25} width={250} />
 
-					<Skeleton className="" height={16} width={250} />
-
-				</div>
-				
-				<div className="mt-6"> 
-					<Skeleton height={40} width={300}/>
+					<Skeleton height={20} width={250} />
 				</div>
 
+				<div className="mt-6">
+					<Skeleton height={40} width={250} />
+				</div>
 			</div>
 		</div>
 	);
