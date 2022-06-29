@@ -23,6 +23,10 @@
 		white-space: nowrap;
 	}
 }
+.question-tags-ellipsis {
+	text-overflow: ellipsis;
+	max-width: 250px;
+}
 
 .questions-title {
 	&:after {
