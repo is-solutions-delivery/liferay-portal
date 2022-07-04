@@ -313,15 +313,6 @@ definition {
 		AssertElementPresent(locator1 = "CustomerPortalSite#INVITE_TEAM_MEMBERS_TITLE");
 	}
 
-	macro viewObjectInfo {
-		Click(
-			key_index = "4",
-			key_text = "",
-			locator1 = "Icon#VERTICAL_ELLIPSIS_INDEXED");
-
-		MenuItem.click(menuItem = "View");
-	}
-
 	macro viewStartProjectSetupButton {
 		AssertElementPresent(locator1 = "CustomerPortalSite#START_PROJECT_SETUP_BUTTON");
 	}
