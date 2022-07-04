@@ -89,7 +89,7 @@
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:CaseType$]",
 		"roleName": "Testray Administrator",
 		"scope": 1
-},
+	},
 	{
 		"actionId": "UPDATE",
 		"primKey": "0",
@@ -117,7 +117,7 @@
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:Component$]",
 		"roleName": "Testray Administrator",
 		"scope": 1
-},
+	},
 	{
 		"actionId": "UPDATE",
 		"primKey": "0",
