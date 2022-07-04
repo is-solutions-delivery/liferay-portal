@@ -1,5 +1,13 @@
 definition {
 
+	macro addCustomerPortalSite {
+		Site.openSitesAdmin();
+
+		Site.addSiteTemplateCP(
+			siteName = "${siteName}",
+			siteTemplateName = "Liferay OSB Site Initializer Customer Portal");
+	}
+
 	macro accountTableProject {
 		Click(locator1 = "CustomerPortalSite#ACCOUNTS_PROJECTS");
 	}
@@ -221,23 +229,6 @@ definition {
 			locator1 = "CustomerPortalSite#CARD_NAME");
 
 		Click(locator1 = "CustomerPortalSite#CLOSE_MODAL_CARD");
-	}
-
-	macro loginOktaToUpdateCP {
-		var userEmailAddress = "garrettz@mbopartners.com.broken";
-		var userPassword = "q4F63ZEH3njnnA34S761";
-
-		Open.openInTheNewTab(locator1 = "https://login-dev.liferay.com/");
-
-		Type(
-			locator1 = "CustomerPortalSite#OKTA_USERNAME",
-			value1 = "${userEmailAddress}");
-
-		Type(
-			locator1 = "CustomerPortalSite#OKTA_PASSWORD",
-			value1 = "${userPassword}");
-
-		Click(locator1 = "CustomerPortalSite#OKTA_SUBMIT");
 	}
 
 	macro notViewProduct {
