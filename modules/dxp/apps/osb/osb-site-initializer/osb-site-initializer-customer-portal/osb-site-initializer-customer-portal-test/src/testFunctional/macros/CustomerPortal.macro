@@ -240,59 +240,6 @@ definition {
 		}
 	}
 
-	macro replaceCertificateAndPrivateKey {
-		WaitForLiferayEvent.initializeLiferayEventLog();
-
-		AssertClick(
-			key_certificateUsage = "${certificateUsage}",
-			locator1 = "CPSAMLAdmin#REPLACE_CERTIFICATE",
-			value1 = "Replace Certificate");
-
-		SelectFrame(locator1 = "IFrame#MODAL_BODY");
-
-		Type(
-			locator1 = "CPSAMLAdmin#CERTIFICATE_AND_PRIVATE_KEY_COMMON_NAME_FIELD",
-			value1 = "Liferay QA");
-
-		Type(
-			locator1 = "CPSAMLAdmin#CERTIFICATE_AND_PRIVATE_KEY_ORGANIZATION_FIELD",
-			value1 = "Liferay");
-
-		Type(
-			locator1 = "CPSAMLAdmin#CERTIFICATE_AND_PRIVATE_KEY_COUNTRY_FIELD",
-			value1 = "USA");
-
-		if ("${certificateUsage}" == "SIGNING") {
-			Select(
-				locator1 = "CPSAMLAdmin#CERTIFICATE_AND_PRIVATE_KEY_KEY_ALGORITHM_SELECT",
-				value1 = "RSA");
-		}
-
-		Select(
-			locator1 = "CPSAMLAdmin#CERTIFICATE_AND_PRIVATE_KEY_KEY_LENGTH_SELECT",
-			value1 = "2048");
-
-		Type(
-			locator1 = "CPSAMLAdmin#CERTIFICATE_AND_PRIVATE_KEY_KEY_PASSWORD_FIELD",
-			value1 = "${samlKeyPassword}");
-
-		AssertClick(
-			locator1 = "Button#SUBMIT",
-			value1 = "Save");
-
-		Refresh();
-
-		WaitForElementNotPresent(locator1 = "IFrame#MODAL_BODY");
-
-		AssertElementPresent(
-			key_certificateUsage = "${certificateUsage}",
-			locator1 = "CPSAMLAdmin#DOWNLOAD_CERTIFICATE");
-
-		AssertElementPresent(
-			key_certificateUsage = "${certificateUsage}",
-			locator1 = "CPSAMLAdmin#REPLACE_CERTIFICATE");
-	}
-
 	macro selectNavigatorWindow {
 		SelectWindow(locator1 = "title=${navigatorWidow}");
 	}
