@@ -104,6 +104,7 @@ const ProjectPermissions: React.FC<ProjectsProps> = (props) => {
 		'CREATE',
 		'UPDATE',
 		'DELETE',
+		'VIEW'
 	]);
 
 	if (permissions) {
