@@ -261,36 +261,6 @@ definition {
 		CreateObject.saveObject();
 	}
 
-	macro tearDownForOktaAndSAML {
-		task ("Teardown") {
-			var entityId = "http://www.okta.com/exk158id544C4j3KK0h8";
-
-			ApplicationsMenu.gotoPortlet(
-				category = "Security",
-				panel = "Control Panel",
-				portlet = "SAML Admin");
-
-			SAMLNavigation.gotoIdentityProviderConnections();
-
-			SAMLPortlet.deleteSAMLConnection(samlEntityId = "${entityId}");
-
-			ApplicationsMenu.gotoPortlet(
-				category = "Security",
-				panel = "Control Panel",
-				portlet = "SAML Admin");
-
-			Click(locator1 = "CPSAMLAdmin#SAML_ENABLED_CHECKBOX");
-
-			AssertClick(
-				locator1 = "Button#SAVE",
-				value1 = "Save");
-
-			SAMLRole.deleteCertificate();
-
-			CustomerPortal.customerPortalTearDown();
-		}
-	}
-
 	macro uncheckToggleHideInactiveWidget {
 		Uncheck.uncheckToggleSwitch(locator1 = "CP2LiferayContact#HIDE_WIDGET");
 	}
