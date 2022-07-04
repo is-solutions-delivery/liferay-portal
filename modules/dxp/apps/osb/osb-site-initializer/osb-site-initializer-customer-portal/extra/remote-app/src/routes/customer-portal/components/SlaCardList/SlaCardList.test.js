@@ -12,7 +12,7 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import SlaCard from '.';
+import SlaCardList from '.';
 
 describe('SLA Card', () => {
 	const project = {
@@ -28,35 +28,35 @@ describe('SLA Card', () => {
 	};
 
 	it('displays Support Level title', () => {
-		render(<SlaCard project={project} />);
+		render(<SlaCardList project={project} />);
 
 		const slaTitle = screen.getByRole('heading', {name: /support level/i});
 		expect(slaTitle).toHaveTextContent('Support Level');
 	});
 
 	it('displays Limited Support Level type', () => {
-		render(<SlaCard project={project} />);
+		render(<SlaCardList project={project} />);
 
 		const linkElementNameslaCurrent = screen.getByText('Limited');
 		expect(linkElementNameslaCurrent).toBeInTheDocument();
 	});
 
 	it('displays Gold Support Level type', () => {
-		render(<SlaCard project={project} />);
+		render(<SlaCardList project={project} />);
 
 		const linkElementNameslaExpired = screen.getByText('Gold');
 		expect(linkElementNameslaExpired).toBeInTheDocument();
 	});
 
 	it('displays Platinum Support Level type', () => {
-		render(<SlaCard project={project} />);
+		render(<SlaCardList project={project} />);
 
 		const linkElementNameslaFuture = screen.getByText('Platinum');
 		expect(linkElementNameslaFuture).toBeInTheDocument();
 	});
 
 	it('shows SLA Card start and end date', () => {
-		render(<SlaCard project={project} />);
+		render(<SlaCardList project={project} />);
 
 		const linkElementEndDate = screen.getByText('06/15/2022', {
 			exact: false,
@@ -72,7 +72,7 @@ describe('SLA Card', () => {
 	it('displays a message when the projectd do not have Sla Support', () => {
 		const projectNoSlaMock = {};
 
-		render(<SlaCard project={projectNoSlaMock} />);
+		render(<SlaCardList project={projectNoSlaMock} />);
 		const linkElement = screen.getByText(
 			/support level is displayed here/i
 		);
@@ -84,7 +84,7 @@ describe('SLA Card', () => {
 	it('displays an order from highest to lowest when user has multiple status (Current > Future > Expired)', async () => {
 		const user = userEvent.setup();
 
-		render(<SlaCard project={project} />);
+		render(<SlaCardList project={project} />);
 
 		const linkCurrentStatus = screen.getByText('Current');
 

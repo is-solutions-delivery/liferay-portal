@@ -9,10 +9,15 @@
  * distribution rights of the Software.
  */
 
-import SupportOverview from '../../../components/SupportOverview';
+import ClayIcon from '@clayui/icon';
+import React from 'react';
 
-const OverviewSkeleton = () => {
-	return <SupportOverview.Skeleton />;
-};
-
-export default OverviewSkeleton;
+const SwitchSlaCardsButton = ({handleClick}) => (
+	<button
+		className="btn btn-outline-primary d-none hide ml-3 position-relative rounded-circle"
+		onClick={handleClick}
+	>
+		<ClayIcon symbol="angle-right" />
+	</button>
+);
+export default SwitchSlaCardsButton;

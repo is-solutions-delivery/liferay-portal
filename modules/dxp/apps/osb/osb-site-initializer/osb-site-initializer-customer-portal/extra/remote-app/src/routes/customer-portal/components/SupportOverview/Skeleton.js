@@ -11,7 +11,7 @@
 
 import {Skeleton} from '../../../../common/components';
 
-const ProjectSupportSkeleton = () => {
+const SupportOverviewSkeleton = () => {
 	return (
 		<div className="container mb-5 mx-0 project-contacs-container">
 			<div className="row">
@@ -31,4 +31,4 @@ const ProjectSupportSkeleton = () => {
 	);
 };
 
-export default ProjectSupportSkeleton;
+export default SupportOverviewSkeleton;

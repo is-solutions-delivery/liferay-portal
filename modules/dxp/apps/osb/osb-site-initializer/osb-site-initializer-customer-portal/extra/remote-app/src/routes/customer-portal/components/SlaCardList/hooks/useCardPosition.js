@@ -9,10 +9,21 @@
  * distribution rights of the Software.
  */
 
-import SupportOverview from '../../../components/SupportOverview';
+import {useState} from 'react';
 
-const OverviewSkeleton = () => {
-	return <SupportOverview.Skeleton />;
-};
+export default function useCardPosition() {
+	const [currentPosition, setCurrentPosition] = useState(0);
 
-export default OverviewSkeleton;
+	const changePosition = (slaCards) => {
+		const nextPosition = currentPosition + 1;
+
+		if (slaCards[nextPosition]) {
+			setCurrentPosition(nextPosition);
+		}
+		else {
+			setCurrentPosition(0);
+		}
+	};
+
+	return {changePosition, currentPosition};
+}

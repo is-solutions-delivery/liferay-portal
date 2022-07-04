@@ -9,10 +9,14 @@
  * distribution rights of the Software.
  */
 
-import SupportOverview from '../../../components/SupportOverview';
+import {FORMAT_DATE} from '../../../../../common/utils/constants/slaCardDate';
+import getDateCustomFormat from '../../../../../common/utils/getDateCustomFormat';
 
-const OverviewSkeleton = () => {
-	return <SupportOverview.Skeleton />;
-};
-
-export default OverviewSkeleton;
+export default function getSlaCard(endDate, startDate, title, label) {
+	return {
+		endDate: getDateCustomFormat(endDate, FORMAT_DATE, 'en-US'),
+		label,
+		startDate: getDateCustomFormat(startDate, FORMAT_DATE, 'en-US'),
+		title: title.split(' ')[0],
+	};
+}
