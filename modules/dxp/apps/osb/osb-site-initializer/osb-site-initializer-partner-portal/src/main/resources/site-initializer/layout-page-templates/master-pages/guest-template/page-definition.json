@@ -101,8 +101,7 @@
 																}
 															}
 														},
-														"fragmentLink": {
-														}
+														"fragmentLink": {}
 													}
 												}
 											],
@@ -122,11 +121,22 @@
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
-																"en_US": "Partner Portal"
+																"en_US": "Partner Portal",
+																"ar_SA": "Partner Portal",
+																"ca_ES": "Partner Portal",
+																"de_DE": "Partner Portal",
+																"es_ES": "Partner Portal",
+																"fi_FI": "Partner Portal",
+																"fr_FR": "Partner Portal",
+																"hu_HU": "Partner Portal",
+																"ja_JP": "Partner Portal",
+																"nl_NL": "Partner Portal",
+																"pt_BR": "Partner Portal",
+																"sv_SE": "Partner Portal",
+																"zh_CN": "Partner Portal"
 															}
 														}
 													}
@@ -152,8 +162,7 @@
 			{
 				"definition": {
 					"fragmentSettings": {
-						"unallowedFragments": [
-						]
+						"unallowedFragments": []
 					}
 				},
 				"type": "DropZone"
