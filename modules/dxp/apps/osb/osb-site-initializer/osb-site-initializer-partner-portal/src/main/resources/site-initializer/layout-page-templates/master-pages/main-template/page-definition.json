@@ -119,8 +119,7 @@
 																}
 															}
 														},
-														"fragmentLink": {
-														}
+														"fragmentLink": {}
 													}
 												}
 											],
@@ -140,8 +139,7 @@
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Partner Portal",
@@ -218,13 +216,11 @@
 												"navType": "nav-primary",
 												"orientation": "nav-horizontal"
 											},
-											"fragmentFields": [
-											],
+											"fragmentFields": [],
 											"indexed": true,
 											"widgetInstances": [
 												{
-													"widgetConfig": {
-													},
+													"widgetConfig": {},
 													"widgetName": "com_liferay_site_navigation_menu_web_portlet_SiteNavigationMenuPortlet"
 												}
 											]
@@ -259,8 +255,7 @@
 																}
 															}
 														},
-														"fragmentLink": {
-														}
+														"fragmentLink": {}
 													}
 												}
 											],
@@ -303,8 +298,7 @@
 																}
 															}
 														},
-														"fragmentLink": {
-														}
+														"fragmentLink": {}
 													}
 												}
 											],
@@ -348,8 +342,7 @@
 																}
 															}
 														},
-														"fragmentLink": {
-														}
+														"fragmentLink": {}
 													}
 												}
 											],
@@ -441,8 +434,7 @@
 					{
 						"definition": {
 							"fragmentSettings": {
-								"unallowedFragments": [
-								]
+								"unallowedFragments": []
 							}
 						},
 						"type": "DropZone"
@@ -450,8 +442,7 @@
 					{
 						"definition": {
 							"widgetInstance": {
-								"widgetConfig": {
-								},
+								"widgetConfig": {},
 								"widgetName": "com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet"
 							}
 						},
@@ -503,13 +494,11 @@
 								},
 								{
 									"id": "portraitMobile",
-									"rowViewportDefinition": {
-									}
+									"rowViewportDefinition": {}
 								},
 								{
 									"id": "tablet",
-									"rowViewportDefinition": {
-									}
+									"rowViewportDefinition": {}
 								}
 							],
 							"verticalAlignment": "top"
@@ -525,13 +514,11 @@
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "tablet"
 										}
 									],
@@ -550,8 +537,7 @@
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Platform",
@@ -586,14 +572,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Resource Library",
@@ -627,14 +611,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Subscription Services",
@@ -668,14 +650,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Request a Demo",
@@ -709,14 +689,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Marketplace Apps",
@@ -750,14 +728,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Downloads",
@@ -799,13 +775,11 @@
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "tablet"
 										}
 									],
@@ -824,8 +798,7 @@
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Company",
@@ -860,14 +833,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Press Releases",
@@ -901,14 +872,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Careers",
@@ -942,14 +911,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Locations",
@@ -983,14 +950,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Newsletter Sign Up",
@@ -1024,14 +989,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Our Story",
@@ -1073,13 +1036,11 @@
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "tablet"
 										}
 									],
@@ -1098,8 +1059,7 @@
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Contact Us",
@@ -1134,14 +1094,12 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Contact your Channel Account Manager<br />\nor email the Liferay Channel team:",
@@ -1175,17 +1133,27 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
-																"en_US": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>"
+																"en_US": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"ar_SA": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"ca_ES": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"de_DE": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"es_ES": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"fi_FI": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"fr_FR": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"hu_HU": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"ja_JP": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"nl_NL": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"pt_BR": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"sv_SE": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>",
+																"zh_CN": "<a href=\"mailto:partner-sales@liferay.com\">partner-sales@liferay.com</a>"
 															}
 														}
 													}
@@ -1204,17 +1172,27 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
-																"en_US": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>"
+																"en_US": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"ar_SA": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"ca_ES": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"de_DE": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"es_ES": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"fi_FI": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"fr_FR": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"hu_HU": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"ja_JP": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"nl_NL": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"pt_BR": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"sv_SE": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>",
+																"zh_CN": "<a href=\"mailto:partner-enablement@liferay.com\">partner-enablement@liferay.com</a>"
 															}
 														}
 													}
@@ -1236,17 +1214,27 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
-																"en_US": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>"
+																"en_US": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"ar_SA": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"ca_ES": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"de_DE": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"es_ES": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"fi_FI": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"fr_FR": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"hu_HU": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"ja_JP": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"nl_NL": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"pt_BR": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"sv_SE": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>",
+																"zh_CN": "<a href=\"mailto:partner-marketing@liferay.com\">partner-marketing@liferay.com</a>"
 															}
 														}
 													}
@@ -1265,17 +1253,27 @@
 											"fragment": {
 												"key": "BASIC_COMPONENT-paragraph"
 											},
-											"fragmentConfig": {
-											},
+											"fragmentConfig": {},
 											"fragmentFields": [
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
-																"en_US": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>"
+																"en_US": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"ar_SA": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"ca_ES": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"de_DE": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"es_ES": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"fi_FI": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"fr_FR": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"hu_HU": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"ja_JP": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"nl_NL": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"pt_BR": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"sv_SE": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>",
+																"zh_CN": "<a href=\"mailto:sales-engineering-channels@liferay.com\">sales-engineering-channels@liferay.com</a>"
 															}
 														}
 													}
@@ -1302,13 +1300,11 @@
 											"id": "landscapeMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "portraitMobile"
 										},
 										{
-											"columnViewportDefinition": {
-											},
+											"columnViewportDefinition": {},
 											"id": "tablet"
 										}
 									],
@@ -1327,8 +1323,7 @@
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"ar_SA": "Connect",
@@ -1439,8 +1434,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1510,8 +1504,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1581,8 +1574,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1652,8 +1644,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1723,8 +1714,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1793,8 +1783,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1845,14 +1834,12 @@
 									"fragment": {
 										"key": "BASIC_COMPONENT-paragraph"
 									},
-									"fragmentConfig": {
-									},
+									"fragmentConfig": {},
 									"fragmentFields": [
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {
-												},
+												"fragmentLink": {},
 												"text": {
 													"value_i18n": {
 														"en_US": "<span class=\"small\">© 2022 Liferay Inc. All Rights Reserved • Privacy Policy</span>"
@@ -1870,14 +1857,12 @@
 									"fragment": {
 										"key": "BASIC_COMPONENT-paragraph"
 									},
-									"fragmentConfig": {
-									},
+									"fragmentConfig": {},
 									"fragmentFields": [
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {
-												},
+												"fragmentLink": {},
 												"text": {
 													"value_i18n": {
 														"en_US": "<span class=\"small\">Powered by <a href=\"https://www.liferay.com\">Liferay</a></span>"
