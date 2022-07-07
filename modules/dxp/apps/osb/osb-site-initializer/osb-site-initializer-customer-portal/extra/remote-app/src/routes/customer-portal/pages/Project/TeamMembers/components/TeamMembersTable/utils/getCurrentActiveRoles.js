@@ -9,20 +9,22 @@
  * distribution rights of the Software.
  */
 
-import {memo} from 'react';
-import {StatusTag} from '../../../../../../../common/components';
-import {STATUS_TAG_TYPES} from '../../../../../utils/constants';
+import {ROLE_TYPES} from '../../../../../../../../common/utils/constants';
 
-const StatusColumnType = memo(({hasLoggedBefore}) => {
-	return (
-		<StatusTag
-			currentStatus={
-				hasLoggedBefore
-					? STATUS_TAG_TYPES.active
-					: STATUS_TAG_TYPES.invited
-			}
-		/>
+export function getCurrentActiveRoles(roles) {
+	const roleValues = Object.values(ROLE_TYPES);
+
+	const filteredRoles = roles?.filter((role) =>
+		roleValues?.some((roleType) => roleType?.key === role)
 	);
-});
 
-export {StatusColumnType};
+	if (filteredRoles.length) {
+		const activeRole = roleValues.find(
+			(role) => role.key === filteredRoles[0]
+		);
+
+		return activeRole?.name;
+	}
+
+	return ROLE_TYPES.member.name;
+}

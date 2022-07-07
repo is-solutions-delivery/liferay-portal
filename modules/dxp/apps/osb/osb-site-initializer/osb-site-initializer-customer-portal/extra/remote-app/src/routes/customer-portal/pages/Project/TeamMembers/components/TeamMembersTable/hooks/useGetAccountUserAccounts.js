@@ -10,8 +10,8 @@
  */
 
 import {useEffect, useState} from 'react';
-import {useAppPropertiesContext} from '../../../../../common/contexts/AppPropertiesContext';
-import {getAccountUserAccountsByExternalReferenceCode} from '../../../../../common/services/liferay/graphql/queries';
+import {useAppPropertiesContext} from '../../../../../../../../common/contexts/AppPropertiesContext';
+import {getAccountUserAccountsByExternalReferenceCode} from '../../../../../../../../common/services/liferay/graphql/queries';
 
 const MAX_PAGE_SIZE = 9999;
 

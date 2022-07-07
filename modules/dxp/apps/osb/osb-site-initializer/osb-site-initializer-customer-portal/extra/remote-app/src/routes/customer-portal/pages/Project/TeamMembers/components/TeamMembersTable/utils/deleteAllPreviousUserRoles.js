@@ -9,7 +9,7 @@
  * distribution rights of the Software.
  */
 
-import {deleteAccountUserRoles} from '../../../../../common/services/liferay/graphql/queries';
+import {deleteAccountUserRoles} from '../../../../../../../../common/services/liferay/graphql/queries';
 
 export async function deleteAllPreviousUserRoles(
 	client,

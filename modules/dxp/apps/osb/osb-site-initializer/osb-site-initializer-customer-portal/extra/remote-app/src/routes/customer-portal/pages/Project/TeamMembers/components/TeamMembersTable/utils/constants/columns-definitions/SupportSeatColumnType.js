@@ -11,7 +11,7 @@
 
 import ClayIcon from '@clayui/icon';
 import {memo} from 'react';
-import {ROLE_TYPES} from '../../../../../../../common/utils/constants';
+import {ROLE_TYPES} from '../../../../../../../../../../common/utils/constants';
 
 const SupportSeatColumnType = memo(({roles}) => {
 	const hasAdministratorAccess = !!roles?.find(

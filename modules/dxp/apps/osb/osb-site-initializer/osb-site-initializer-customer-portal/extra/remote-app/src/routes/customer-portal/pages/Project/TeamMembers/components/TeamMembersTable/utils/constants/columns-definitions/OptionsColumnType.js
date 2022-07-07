@@ -11,8 +11,11 @@
 
 import {TEAM_MEMBERS_ACTION_TYPES} from '..';
 import {ButtonWithIcon} from '@clayui/core';
-import i18n from '../../../../../../../common/I18n';
-import {Button, ButtonDropDown} from '../../../../../../../common/components';
+import i18n from '../../../../../../../../../../common/I18n';
+import {
+	Button,
+	ButtonDropDown,
+} from '../../../../../../../../../../common/components';
 import {getIsEditingUser} from '../../getIsEditingUser';
 
 const MenuUserActions = ({cancelChanges, confirmChanges, userAccount}) => (

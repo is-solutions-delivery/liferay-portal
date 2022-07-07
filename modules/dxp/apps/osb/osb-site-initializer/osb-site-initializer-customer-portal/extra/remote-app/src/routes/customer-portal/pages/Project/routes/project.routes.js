@@ -23,7 +23,7 @@ import DXP from '../DXP';
 import DXPCloud from '../DXPCloud';
 import Overview from '../Overview';
 import Portal from '../Portal';
-import TeamMembers from '../TeamMembers';
+import TeamMembers from '../TeamMembers/TeamMembers';
 import ActivationOutlet from './Outlets/ActivationOutlet';
 import ProductOutlet from './Outlets/ProductOutlet';
 

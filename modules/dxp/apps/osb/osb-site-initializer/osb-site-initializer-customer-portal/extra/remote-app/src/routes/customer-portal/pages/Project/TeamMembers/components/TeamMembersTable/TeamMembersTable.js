@@ -11,18 +11,18 @@
 
 import ClayAlert from '@clayui/alert';
 import {useEffect, useMemo, useState} from 'react';
-import {Table} from '../../../../common/components';
-import {useAppPropertiesContext} from '../../../../common/contexts/AppPropertiesContext';
-import {Liferay} from '../../../../common/services/liferay';
+import {Table} from '../../../../../../../common/components';
+import {useAppPropertiesContext} from '../../../../../../../common/contexts/AppPropertiesContext';
+import {Liferay} from '../../../../../../../common/services/liferay';
 import {
 	associateUserAccountWithAccountAndAccountRole,
 	deleteAccountUserAccount,
-} from '../../../../common/services/liferay/graphql/queries';
+} from '../../../../../../../common/services/liferay/graphql/queries';
 import {
 	associateContactRoleNameByEmailByProject,
 	deleteContactRoleNameByEmailByProject,
-} from '../../../../common/services/liferay/rest/raysource/LicenseKeys';
-import {ROLE_TYPES} from '../../../../common/utils/constants';
+} from '../../../../../../../common/services/liferay/rest/raysource/LicenseKeys';
+import {ROLE_TYPES} from '../../../../../../../common/utils/constants';
 import TeamMembersTableHeader from './components/Header';
 import RemoveUserModal from './components/RemoveUserModal';
 import useAccountRoles from './hooks/useAccountRoles';

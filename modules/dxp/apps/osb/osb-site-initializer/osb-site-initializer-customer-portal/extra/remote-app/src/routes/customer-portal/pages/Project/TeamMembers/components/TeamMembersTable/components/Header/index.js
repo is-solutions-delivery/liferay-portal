@@ -12,9 +12,9 @@
 import {useModal} from '@clayui/core';
 import classNames from 'classnames';
 import {useEffect, useState} from 'react';
-import i18n from '../../../../../../common/I18n';
-import {Button} from '../../../../../../common/components';
-import {ROLE_TYPES} from '../../../../../../common/utils/constants';
+import i18n from '../../../../../../../../../common/I18n';
+import {Button} from '../../../../../../../../../common/components';
+import {ROLE_TYPES} from '../../../../../../../../../common/utils/constants';
 import BadgeFilter from '../BadgeFilter';
 import TeamMembersFilter from '../Filter';
 import InvitesModal from '../InvitesModal';

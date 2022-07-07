@@ -10,8 +10,8 @@
  */
 
 import {useEffect, useState} from 'react';
-import {useAppPropertiesContext} from '../../../../../common/contexts/AppPropertiesContext';
-import getProjectRoles from '../../../../../common/utils/getProjectRoles';
+import {useAppPropertiesContext} from '../../../../../../../../common/contexts/AppPropertiesContext';
+import getProjectRoles from '../../../../../../../../common/utils/getProjectRoles';
 
 const useAccountRoles = (project) => {
 	const [accountRoles, setAccountRoles] = useState([]);
