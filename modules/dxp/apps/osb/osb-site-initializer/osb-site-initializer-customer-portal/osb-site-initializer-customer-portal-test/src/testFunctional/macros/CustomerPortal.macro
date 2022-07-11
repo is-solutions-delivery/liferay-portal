@@ -1,13 +1,5 @@
 definition {
 
-	macro addCustomerPortalSite {
-		Site.openSitesAdmin();
-
-		Site.addSiteTemplateCP(
-			siteName = "${siteName}",
-			siteTemplateName = "Liferay OSB Site Initializer Customer Portal");
-	}
-
 	macro accountTableProject {
 		Click(locator1 = "CustomerPortalSite#ACCOUNTS_PROJECTS");
 	}
@@ -25,6 +17,14 @@ definition {
 			value1 = "Quality Assurance Analyst");
 
 		Click(locator1 = "Button#SAVE");
+	}
+
+	macro addCustomerPortalSite {
+		Site.openSitesAdmin();
+
+		Site.addSiteTemplateCP(
+			siteName = "${siteName}",
+			siteTemplateName = "Liferay OSB Site Initializer Customer Portal");
 	}
 
 	macro addIdPCForCustomerPortal {

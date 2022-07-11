@@ -19,11 +19,7 @@ definition {
 		}
 
 		task ("Create a new Customer Portal Site") {
-			Site.openSitesAdmin();
-
-			TeamExtranet.addSiteTemplateCP(
-				siteName = "${testSiteName}",
-				siteTemplateName = "Liferay OSB Site Initializer Customer Portal");
+			CustomerPortal.addCustomerPortalSite(siteName = "${testSiteName}");
 		}
 
 		task ("Create CP2.0 objects") {
@@ -41,8 +37,6 @@ definition {
 			JSONGroup.deleteGroupByName(groupName = "${testSiteName}");
 
 			CustomerPortal.customerPortalTearDown();
-
-			User.logoutPG();
 		}
 	}
 
