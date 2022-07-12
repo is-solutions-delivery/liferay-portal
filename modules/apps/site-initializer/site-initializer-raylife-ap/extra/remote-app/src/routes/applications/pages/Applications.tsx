@@ -15,7 +15,7 @@
 import React, {useContext} from 'react';
 
 import {NewApplicationAutoContext} from '../context/NewApplicationAutoContextProvider';
-import DriverInfo from '../forms/steps/DriverInfo';
+import ContactInfo from '../forms/steps/ContactInfo';
 import VehicleInfo from '../forms/steps/VehicleInfo';
 import NewApplication from './NewApplications';
 
@@ -24,7 +24,7 @@ const Applications = () => {
 
 	return (
 		<NewApplication>
-			{state.currentStep === 0 && <DriverInfo />}
+			{state.currentStep === 0 && <ContactInfo />}
 
 			{state.currentStep === 1 && <VehicleInfo />}
 		</NewApplication>
