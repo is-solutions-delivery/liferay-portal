@@ -24,9 +24,9 @@ const Applications = () => {
 
 	return (
 		<NewApplication>
-			{state.currentStep === 0 && <DriverInfo />}
+			{state.currentStep === 0 && <VehicleInfo />}
 
-			{state.currentStep === 1 && <VehicleInfo />}
+			{state.currentStep === 1 && <DriverInfo />}
 		</NewApplication>
 	);
 };

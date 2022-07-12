@@ -39,7 +39,7 @@ type CoverageFormTypes = {
 	uninsuredOrUnderinsuredMPD: string;
 };
 
-type DriverInfoFormTypes = {
+export type DriverInfoFormTypes = {
 	accidentCitation: string;
 	ageFirstLicenced: string;
 	firstName: string;
@@ -47,6 +47,7 @@ type DriverInfoFormTypes = {
 	governmentAffiliation: string;
 	hasAccidentOrCitations: boolean;
 	highestEducation: string;
+	id: number;
 	lastName: string;
 	maritalStatus: string;
 	militaryAffiliation: string;
@@ -79,7 +80,7 @@ export type InitialStateTypes = {
 			name: string;
 		};
 		driverInfo: {
-			form: DriverInfoFormTypes;
+			form: DriverInfoFormTypes[];
 			index: number;
 			name: string;
 		};
@@ -129,21 +130,24 @@ const initialState: InitialStateTypes = {
 			name: 'Coverage',
 		},
 		driverInfo: {
-			form: {
-				accidentCitation: '',
-				ageFirstLicenced: '',
-				firstName: '',
-				gender: '',
-				governmentAffiliation: '',
-				hasAccidentOrCitations: false,
-				highestEducation: '',
-				lastName: '',
-				maritalStatus: '',
-				militaryAffiliation: '',
-				ocupation: '',
-				otherOcupation: '',
-				relationToContact: '',
-			},
+			form: [
+				{
+					accidentCitation: '',
+					ageFirstLicenced: '',
+					firstName: '',
+					gender: '',
+					governmentAffiliation: '',
+					hasAccidentOrCitations: false,
+					highestEducation: '',
+					id: Number((Math.random() * 1000000).toFixed(0)),
+					lastName: '',
+					maritalStatus: '',
+					militaryAffiliation: '',
+					ocupation: '',
+					otherOcupation: '',
+					relationToContact: '',
+				},
+			],
 			index: 2,
 			name: 'Driver Info',
 		},
@@ -173,14 +177,22 @@ export enum ACTIONS {
 	SET_COVERAGE_FORM = 'SET_COVERAGE_FORM',
 	SET_DRIVER_INFO_FORM = 'SET_DRIVER_INFO_FORM',
 	SET_HAS_FORM_CHANGE = 'SET_HAS_FORM_CHANGE',
+	SET_NEW_DRIVER = 'SET_NEW_DRIVER',
+	SET_REMOVE_DRIVER = 'SET_REMOVE_DRIVER',
 }
 
 type ActionsPayload = {
 	[ACTIONS.SET_CONTACT_INFO_FORM]: ContactInfoFormTypes;
 	[ACTIONS.SET_COVERAGE_FORM]: CoverageFormTypes;
 	[ACTIONS.SET_CURRENT_STEP]: number;
-	[ACTIONS.SET_DRIVER_INFO_FORM]: DriverInfoFormTypes;
+	[ACTIONS.SET_DRIVER_INFO_FORM]: {
+		fieldName: string;
+		id: number;
+		value: string;
+	};
 	[ACTIONS.SET_HAS_FORM_CHANGE]: boolean;
+	[ACTIONS.SET_NEW_DRIVER]: DriverInfoFormTypes;
+	[ACTIONS.SET_REMOVE_DRIVER]: {id: number};
 	[ACTIONS.SET_VEHICLE_INFO_FORM]: VehicleInfoFormTypes;
 };
 
@@ -248,13 +260,59 @@ const reducer = (state: InitialStateTypes, action: ApplicationActions) => {
 		}
 
 		case ACTIONS.SET_DRIVER_INFO_FORM: {
+			const payload = state.steps.driverInfo.form.map((currentForm) => {
+				if (currentForm.id === action.payload.id) {
+					return {
+						...currentForm,
+						[action.payload.fieldName]: action.payload.value,
+					};
+				}
+
+				return currentForm;
+			});
+
 			return {
 				...state,
 				steps: {
 					...state.steps,
 					driverInfo: {
 						...state.steps.driverInfo,
-						form: action.payload,
+						form: payload,
+					},
+				},
+			};
+		}
+
+		case ACTIONS.SET_NEW_DRIVER: {
+			const payload = state.steps.driverInfo.form;
+
+			payload.push(action.payload);
+
+			return {
+				...state,
+				steps: {
+					...state.steps,
+					driverInfo: {
+						...state.steps.driverInfo,
+						form: payload,
+					},
+				},
+			};
+		}
+
+		case ACTIONS.SET_REMOVE_DRIVER: {
+			const id = action.payload.id;
+			const forms = state.steps.driverInfo.form;
+
+			const payload = forms.filter((form) => form.id !== id);
+
+			return {
+				...state,
+				steps: {
+					...state.steps,
+					driverInfo: {
+						...state.steps.vehicleInfo,
+						form: payload,
 					},
 				},
 			};
