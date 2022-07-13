@@ -36,6 +36,10 @@ import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.fragment.importer.FragmentsImporter;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.service.FragmentEntryLinkLocalService;
+import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition;
 import com.liferay.headless.admin.list.type.dto.v1_0.ListTypeEntry;
 import com.liferay.headless.admin.list.type.resource.v1_0.ListTypeDefinitionResource;
@@ -173,6 +177,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Dictionary;
@@ -184,6 +189,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.zip.ZipFile;
 
 import javax.servlet.ServletContext;
 
@@ -208,6 +214,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		DLURLHelper dlURLHelper,
 		DocumentFolderResource.Factory documentFolderResourceFactory,
 		DocumentResource.Factory documentResourceFactory,
+		FragmentEntryLinkLocalService fragmentEntryLinkLocalService,
+		FragmentEntryLocalService fragmentEntryLocalService,
 		FragmentsImporter fragmentsImporter,
 		GroupLocalService groupLocalService,
 		JournalArticleLocalService journalArticleLocalService,
@@ -266,6 +274,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_dlURLHelper = dlURLHelper;
 		_documentFolderResourceFactory = documentFolderResourceFactory;
 		_documentResourceFactory = documentResourceFactory;
+		_fragmentEntryLinkLocalService = fragmentEntryLinkLocalService;
+		_fragmentEntryLocalService = fragmentEntryLocalService;
 		_fragmentsImporter = fragmentsImporter;
 		_groupLocalService = groupLocalService;
 		_journalArticleLocalService = journalArticleLocalService;
@@ -1087,6 +1097,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String parentResourcePath, ServiceContext serviceContext)
 		throws Exception {
 
+
 		Enumeration<URL> enumeration = _bundle.findEntries(
 			parentResourcePath, StringPool.STAR, true);
 
@@ -1095,6 +1106,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		ZipWriter zipWriter = ZipWriterFactoryUtil.getZipWriter();
+
+		String fragmentEntryKey = null;
 
 		while (enumeration.hasMoreElements()) {
 			URL url = enumeration.nextElement();
@@ -1131,14 +1144,39 @@ public class BundleSiteInitializer implements SiteInitializer {
 					StringUtil.removeFirst(fileName, parentResourcePath), json);
 			}
 			else {
-				zipWriter.addEntry(
-					StringUtil.removeFirst(fileName, parentResourcePath),
-					url.openStream());
+
+				String relativePath = StringUtil.removeFirst(fileName, parentResourcePath);
+
+				zipWriter.addEntry(relativePath,url.openStream());
+
+				List<String> parts = Arrays.asList(StringUtil.split(relativePath, '/'));
+
+				fragmentEntryKey = parts.get(1);
 			}
 		}
 
-		_fragmentsImporter.importFragmentEntries(
-			serviceContext.getUserId(), groupId, 0, zipWriter.getFile(), false);
+		FragmentEntry fragmentEntry =
+			_fragmentEntryLocalService.fetchFragmentEntry(
+				groupId, fragmentEntryKey);
+
+		if (fragmentEntry == null){
+			_fragmentsImporter.importFragmentEntries(
+				serviceContext.getUserId(), groupId, 0, zipWriter.getFile(), false);
+
+		}else {
+				List <FragmentEntryLink> fragmentEntriesLinkList = _fragmentEntryLinkLocalService.getFragmentEntryLinksByFragmentEntryId(
+					fragmentEntry.getFragmentEntryId());
+
+			for(FragmentEntryLink fragmentEntryLink: fragmentEntriesLinkList ){
+				_fragmentEntryLinkLocalService.deleteFragmentEntryLink(fragmentEntryLink.getFragmentEntryLinkId());
+			}
+
+			_fragmentEntryLocalService.deleteFragmentEntry(fragmentEntry);
+
+			_fragmentsImporter.importFragmentEntries(
+				serviceContext.getUserId(), groupId, 0, zipWriter.getFile(), false);
+
+		}
 	}
 
 	private void _addFragmentEntries(
@@ -3736,6 +3774,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final DLURLHelper _dlURLHelper;
 	private final DocumentFolderResource.Factory _documentFolderResourceFactory;
 	private final DocumentResource.Factory _documentResourceFactory;
+	private final FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
+	private final FragmentEntryLocalService _fragmentEntryLocalService;
 	private final FragmentsImporter _fragmentsImporter;
 	private final GroupLocalService _groupLocalService;
 	private final JournalArticleLocalService _journalArticleLocalService;
