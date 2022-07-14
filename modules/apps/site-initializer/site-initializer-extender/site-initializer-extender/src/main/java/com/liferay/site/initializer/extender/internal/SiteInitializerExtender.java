@@ -125,9 +125,8 @@ public class SiteInitializerExtender
 				_ddmTemplateLocalService, _defaultDDMStructureHelper,
 				_dlURLHelper, _documentFolderResourceFactory,
 				_documentResourceFactory, _fragmentEntryLinkLocalService,
-				_fragmentEntryLocalService,
-				_fragmentsImporter, _groupLocalService,
-				_journalArticleLocalService, _jsonFactory,
+				_fragmentEntryLocalService, _fragmentsImporter,
+				_groupLocalService, _journalArticleLocalService, _jsonFactory,
 				_knowledgeBaseArticleResourceFactory,
 				_knowledgeBaseFolderResourceFactory, _layoutCopyHelper,
 				_layoutLocalService, _layoutPageTemplateEntryLocalService,
@@ -234,8 +233,7 @@ public class SiteInitializerExtender
 				_ddmTemplateLocalService, _defaultDDMStructureHelper,
 				_dlURLHelper, _documentFolderResourceFactory,
 				_documentResourceFactory, _fragmentEntryLinkLocalService,
-				_fragmentEntryLocalService,
-				_fragmentsImporter,
+				_fragmentEntryLocalService, _fragmentsImporter,
 				_groupLocalService, _journalArticleLocalService, _jsonFactory,
 				_knowledgeBaseArticleResourceFactory,
 				_knowledgeBaseFolderResourceFactory, _layoutCopyHelper,
@@ -319,6 +317,7 @@ public class SiteInitializerExtender
 
 	@Reference
 	private FragmentEntryLocalService _fragmentEntryLocalService;
+
 	@Reference
 	private FragmentsImporter _fragmentsImporter;
 

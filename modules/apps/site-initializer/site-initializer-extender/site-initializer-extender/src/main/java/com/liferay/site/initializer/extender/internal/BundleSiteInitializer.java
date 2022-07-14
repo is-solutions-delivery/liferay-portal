@@ -189,7 +189,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.zip.ZipFile;
 
 import javax.servlet.ServletContext;
 
@@ -1097,7 +1096,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String parentResourcePath, ServiceContext serviceContext)
 		throws Exception {
 
-
 		Enumeration<URL> enumeration = _bundle.findEntries(
 			parentResourcePath, StringPool.STAR, true);
 
@@ -1144,12 +1142,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 					StringUtil.removeFirst(fileName, parentResourcePath), json);
 			}
 			else {
+				String relativePath = StringUtil.removeFirst(
+					fileName, parentResourcePath);
 
-				String relativePath = StringUtil.removeFirst(fileName, parentResourcePath);
+				zipWriter.addEntry(relativePath, url.openStream());
 
-				zipWriter.addEntry(relativePath,url.openStream());
-
-				List<String> parts = Arrays.asList(StringUtil.split(relativePath, '/'));
+				List<String> parts = Arrays.asList(
+					StringUtil.split(relativePath, '/'));
 
 				fragmentEntryKey = parts.get(1);
 			}
@@ -1159,23 +1158,29 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_fragmentEntryLocalService.fetchFragmentEntry(
 				groupId, fragmentEntryKey);
 
-		if (fragmentEntry == null){
+		if (fragmentEntry == null) {
 			_fragmentsImporter.importFragmentEntries(
-				serviceContext.getUserId(), groupId, 0, zipWriter.getFile(), false);
+				serviceContext.getUserId(), groupId, 0, zipWriter.getFile(),
+				false);
+		}
+		else {
+			List<FragmentEntryLink> fragmentEntriesLinkList =
+				_fragmentEntryLinkLocalService.
+					getFragmentEntryLinksByFragmentEntryId(
+						fragmentEntry.getFragmentEntryId());
 
-		}else {
-				List <FragmentEntryLink> fragmentEntriesLinkList = _fragmentEntryLinkLocalService.getFragmentEntryLinksByFragmentEntryId(
-					fragmentEntry.getFragmentEntryId());
+			for (FragmentEntryLink fragmentEntryLink :
+					fragmentEntriesLinkList) {
 
-			for(FragmentEntryLink fragmentEntryLink: fragmentEntriesLinkList ){
-				_fragmentEntryLinkLocalService.deleteFragmentEntryLink(fragmentEntryLink.getFragmentEntryLinkId());
+				_fragmentEntryLinkLocalService.deleteFragmentEntryLink(
+					fragmentEntryLink.getFragmentEntryLinkId());
 			}
 
 			_fragmentEntryLocalService.deleteFragmentEntry(fragmentEntry);
 
 			_fragmentsImporter.importFragmentEntries(
-				serviceContext.getUserId(), groupId, 0, zipWriter.getFile(), false);
-
+				serviceContext.getUserId(), groupId, 0, zipWriter.getFile(),
+				false);
 		}
 	}
 
