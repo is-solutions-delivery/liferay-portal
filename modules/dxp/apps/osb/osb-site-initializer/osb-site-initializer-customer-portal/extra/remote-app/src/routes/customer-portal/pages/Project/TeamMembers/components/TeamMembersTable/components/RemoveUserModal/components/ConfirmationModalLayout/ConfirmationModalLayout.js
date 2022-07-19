@@ -10,7 +10,7 @@
  */
 
 import ClayModal from '@clayui/modal';
-import {Button} from '../../../../common/components';
+import {Button} from '../../../../../../../../../../../common/components';
 
 const ConfirmationModalLayout = ({
 	children,

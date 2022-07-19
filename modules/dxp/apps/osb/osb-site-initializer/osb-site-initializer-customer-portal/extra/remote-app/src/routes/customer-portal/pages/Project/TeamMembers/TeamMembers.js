@@ -13,8 +13,8 @@ import {useEffect} from 'react';
 import {useOutletContext} from 'react-router-dom';
 import i18n from '../../../../../common/I18n';
 import {useAppPropertiesContext} from '../../../../../common/contexts/AppPropertiesContext';
-import ManageProductUser from '../../../components/ManageProductUsers';
 import {useCustomerPortal} from '../../../context';
+import ManageProductUser from './components/ManageProductUsers';
 import TeamMembersTable from './components/TeamMembersTable/TeamMembersTable';
 
 const TeamMembers = () => {

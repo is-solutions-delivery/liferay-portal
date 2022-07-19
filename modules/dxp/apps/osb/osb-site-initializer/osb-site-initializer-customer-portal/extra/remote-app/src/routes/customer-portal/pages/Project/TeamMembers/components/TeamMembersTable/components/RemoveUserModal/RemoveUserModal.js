@@ -14,8 +14,8 @@ import classNames from 'classnames';
 import {memo, useState} from 'react';
 import i18n from '../../../../../../../../../common/I18n';
 import {Button} from '../../../../../../../../../common/components';
-import ConfirmationModalLayout from '../../../../../../../layouts/ConfirmationModalLayout';
 import {TEAM_MEMBERS_ACTION_TYPES} from '../../utils/constants';
+import ConfirmationModalLayout from './components/ConfirmationModalLayout/ConfirmationModalLayout';
 
 const RemoveUserModal = ({onRemoveTeamMember, setUserAction, userAction}) => {
 	const [isRemovingUser, setIsRemovingUser] = useState(false);

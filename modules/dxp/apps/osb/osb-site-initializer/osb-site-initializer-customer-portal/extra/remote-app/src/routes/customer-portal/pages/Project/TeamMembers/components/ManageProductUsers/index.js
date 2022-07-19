@@ -9,20 +9,4 @@
  * distribution rights of the Software.
  */
 
-import {Button} from '../../../../common/components';
-
-const ManageProductButton = ({activatedLink, activatedTitle}) => (
-	<a href={activatedLink} rel="noopener noreferrer" target="_blank">
-		<Button
-			appendIcon="shortcut"
-			className="align-items-stretch btn cp-manager-product-button d-flex mr-3 p-2 text-neutral-10"
-			displayType="secudary"
-		>
-			<p className="font-weight-semi-bold h6 m-0 pl-1">
-				{activatedTitle}
-			</p>
-		</Button>
-	</a>
-);
-
-export default ManageProductButton;
+export {default} from './ManageProductUser';

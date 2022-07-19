@@ -10,15 +10,15 @@
  */
 
 import {useEffect, useState} from 'react';
-import i18n from '../../../../common/I18n';
-import {useAppPropertiesContext} from '../../../../common/contexts/AppPropertiesContext';
+import i18n from '../../../../../../../common/I18n';
+import {useAppPropertiesContext} from '../../../../../../../common/contexts/AppPropertiesContext';
 import {
 	getAnalyticsCloudWorkspace,
 	getDXPCloudEnvironment,
-} from '../../../../common/services/liferay/graphql/queries';
-import {PRODUCT_TYPES} from '../../utils/constants/productTypes';
-import {STATUS_TAG_TYPE_NAMES} from '../../utils/constants/statusTag';
-import ManageProductButton from '../ManageProductButton';
+} from '../../../../../../../common/services/liferay/graphql/queries';
+import {PRODUCT_TYPES} from '../../../../../utils/constants/productTypes';
+import {STATUS_TAG_TYPE_NAMES} from '../../../../../utils/constants/statusTag';
+import ManageProductButton from './components/ManageProductButton';
 
 const ManageProductUser = ({project, subscriptionGroups}) => {
 	const [dxpCloudProjectId, setDxpCloudProjectId] = useState('');
