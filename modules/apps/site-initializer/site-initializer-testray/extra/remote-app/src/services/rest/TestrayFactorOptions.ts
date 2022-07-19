@@ -50,11 +50,11 @@ const getFactorOptionQuery = (factorCategoryId: number | string) =>
 	`/factoroptions/${factorCategoryId}?${nestedFieldsParam}`;
 
 const getFactorOptionTransformData = (
-	testrayFactorOption: TestrayFactorOptions
+	testrayfactoroption: TestrayFactorOptions
 ): TestrayFactorOptions => ({
-	...testrayFactorOption,
-	factorCategory: testrayFactorOption?.r_factorCategoryToOptions_c_factorCategory
-		? {...testrayFactorOption.r_factorCategoryToOptions_c_factorCategory}
+	...testrayfactoroption,
+	factorCategory: testrayfactoroption.r_factorCategoryToOptions_c_factorCategory
+		? {...testrayfactoroption.r_factorCategoryToOptions_c_factorCategory}
 		: undefined,
 });
 
