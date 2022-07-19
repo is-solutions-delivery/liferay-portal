@@ -9,7 +9,7 @@
  * distribution rights of the Software.
  */
 
-import i18n from '../../../../../../../../../common/I18n';
+import i18n from '../../../../../../../../../../../common/I18n';
 
 const BadgeFilter = ({
 	activationKeysLength,

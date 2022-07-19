@@ -10,8 +10,8 @@
  */
 
 import ClayModal from '@clayui/modal';
-import i18n from '../../../../../../../../../common/I18n';
-import InviteTeamMembersForm from '../../../../../../../../../common/containers/setup-forms/InviteTeamMembersForm';
+import i18n from '../../../../../../../../../../../common/I18n';
+import InviteTeamMembersForm from '../../../../../../../../../../../common/containers/setup-forms/InviteTeamMembersForm';
 
 const InvitesModal = ({
 	availableAdministratorAssets,

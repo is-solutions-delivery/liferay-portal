@@ -11,7 +11,7 @@
 
 import {useEffect, useRef} from 'react';
 
-import SearchBar from '../../../../../../../components/SearchBar';
+import SearchBar from '../../../../../../../../../components/SearchBar';
 
 const TeamMembersFilter = ({userAccounts, filtersState: [setFilters]}) => {
 	const countFetchUserAccountsRef = useRef(0);

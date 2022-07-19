@@ -15,10 +15,10 @@ import {useEffect, useState} from 'react';
 import i18n from '../../../../../../../../../common/I18n';
 import {Button} from '../../../../../../../../../common/components';
 import {ROLE_TYPES} from '../../../../../../../../../common/utils/constants';
-import BadgeFilter from '../BadgeFilter';
-import TeamMembersFilter from '../Filter';
-import InvitesModal from '../InvitesModal';
-import PopoverIconButton from '../PopoverIconButton';
+import BadgeFilter from './components/BadgeFilter';
+import InvitesModal from './components/InvitesModal';
+import PopoverIconButton from './components/PopoverIconButton';
+import TeamMembersFilter from './components/TeamMembersFilter';
 
 const TeamMembersTableHeader = ({
 	administratorsAvailable,
