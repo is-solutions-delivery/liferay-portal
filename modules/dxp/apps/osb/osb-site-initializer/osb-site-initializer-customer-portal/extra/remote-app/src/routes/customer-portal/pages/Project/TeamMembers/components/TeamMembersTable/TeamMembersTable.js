@@ -25,6 +25,13 @@ import {
 import {ROLE_TYPES} from '../../../../../../../common/utils/constants';
 import RemoveUserModal from './components/RemoveUserModal';
 import TeamMembersTableHeader from './components/TeamMembersTableHeader';
+import {
+	NameColumnType,
+	OptionsColumnType,
+	RoleColumnType,
+	StatusColumnType,
+	SupportSeatColumnType,
+} from './components/colums-definitions';
 import useAccountRoles from './hooks/useAccountRoles';
 import useFilters from './hooks/useFilters';
 import useGetAccountUserAccount from './hooks/useGetAccountUserAccounts';
@@ -33,13 +40,6 @@ import {
 	STATUS_NAME_TYPES,
 	TEAM_MEMBERS_ACTION_TYPES,
 } from './utils/constants';
-import {
-	NameColumnType,
-	OptionsColumnType,
-	RoleColumnType,
-	StatusColumnType,
-	SupportSeatColumnType,
-} from './utils/constants/columns-definitions';
 import {deleteAllPreviousUserRoles} from './utils/deleteAllPreviousUserRoles';
 import {getColumnsByUserAccess} from './utils/getColumnsByUserAccess';
 

@@ -9,14 +9,14 @@
  * distribution rights of the Software.
  */
 
-import {TEAM_MEMBERS_ACTION_TYPES} from '..';
 import {ButtonWithIcon} from '@clayui/core';
-import i18n from '../../../../../../../../../../common/I18n';
+import i18n from '../../../../../../../../../../../common/I18n';
 import {
 	Button,
 	ButtonDropDown,
-} from '../../../../../../../../../../common/components';
-import {getIsEditingUser} from '../../getIsEditingUser';
+} from '../../../../../../../../../../../common/components';
+import {TEAM_MEMBERS_ACTION_TYPES} from '../../../../utils/constants';
+import {getIsEditingUser} from '../../../../utils/getIsEditingUser';
 
 const MenuUserActions = ({cancelChanges, confirmChanges, userAccount}) => (
 	<div className="align-items-center d-flex">

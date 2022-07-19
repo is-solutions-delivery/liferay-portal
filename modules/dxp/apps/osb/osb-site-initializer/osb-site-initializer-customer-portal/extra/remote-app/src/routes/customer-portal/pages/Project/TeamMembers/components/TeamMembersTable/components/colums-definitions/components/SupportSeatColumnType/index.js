@@ -9,20 +9,4 @@
  * distribution rights of the Software.
  */
 
-import {memo} from 'react';
-import {StatusTag} from '../../../../../../../../../../common/components';
-import {STATUS_TAG_TYPES} from '../../../../../../../../utils/constants';
-
-const StatusColumnType = memo(({hasLoggedBefore}) => {
-	return (
-		<StatusTag
-			currentStatus={
-				hasLoggedBefore
-					? STATUS_TAG_TYPES.active
-					: STATUS_TAG_TYPES.invited
-			}
-		/>
-	);
-});
-
-export {StatusColumnType};
+export {default} from './SupportSeatColumnType';

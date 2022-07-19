@@ -11,11 +11,11 @@
  */
 
 import {memo} from 'react';
-import i18n from '../../../../../../../../../../common/I18n';
-import {useAppPropertiesContext} from '../../../../../../../../../../common/contexts/AppPropertiesContext';
-import {Liferay} from '../../../../../../../../../../common/services/liferay';
-import {getMd5Hash} from '../../../../../../../../utils/getMd5Hash';
-import {getInitials} from '../../getInitials';
+import i18n from '../../../../../../../../../../../common/I18n';
+import {useAppPropertiesContext} from '../../../../../../../../../../../common/contexts/AppPropertiesContext';
+import {Liferay} from '../../../../../../../../../../../common/services/liferay';
+import {getMd5Hash} from '../../../../../../../../../utils/getMd5Hash';
+import {getInitials} from '../../../../utils/getInitials';
 
 const AVATAR_SIZE_IN_PX = 40;
 

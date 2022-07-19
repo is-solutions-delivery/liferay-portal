@@ -9,8 +9,4 @@
  * distribution rights of the Software.
  */
 
-export * from './NameColumnType';
-export * from './SupportSeatColumnType';
-export * from './RoleColumnType';
-export * from './StatusColumnType';
-export * from './OptionsColumnType';
+export {default} from './StatusColumnType';

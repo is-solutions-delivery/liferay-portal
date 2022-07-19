@@ -9,26 +9,20 @@
  * distribution rights of the Software.
  */
 
-import ClayIcon from '@clayui/icon';
 import {memo} from 'react';
-import {ROLE_TYPES} from '../../../../../../../../../../common/utils/constants';
+import {StatusTag} from '../../../../../../../../../../../common/components';
+import {STATUS_TAG_TYPES} from '../../../../../../../../../utils/constants';
 
-const SupportSeatColumnType = memo(({roles}) => {
-	const hasAdministratorAccess = !!roles?.find(
-		(role) =>
-			role === ROLE_TYPES.admin.key || role === ROLE_TYPES.requester.key
-	);
-
+const StatusColumnType = memo(({hasLoggedBefore}) => {
 	return (
-		<>
-			{hasAdministratorAccess && (
-				<ClayIcon
-					className="cp-team-members-support-seat-icon"
-					symbol="check-circle-full"
-				/>
-			)}
-		</>
+		<StatusTag
+			currentStatus={
+				hasLoggedBefore
+					? STATUS_TAG_TYPES.active
+					: STATUS_TAG_TYPES.invited
+			}
+		/>
 	);
 });
 
-export {SupportSeatColumnType};
+export {StatusColumnType};
