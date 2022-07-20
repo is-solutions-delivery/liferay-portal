@@ -13,15 +13,14 @@
  */
 
 import Container from '../../../../../components/Layout/Container';
-import ListView from '../../../../../components/ListView/ListView';
+import ListViewRest from '../../../../../components/ListView/ListViewRest';
 import ProgressBar from '../../../../../components/ProgressBar';
-import {getCaseTypes} from '../../../../../graphql/queries';
 import i18n from '../../../../../i18n';
 import {filters} from '../../../../../schema/filter';
 
 const CaseTypes = () => (
 	<Container className="mt-4">
-		<ListView
+		<ListViewRest
 			initialContext={{
 				columns: {
 					blocked: false,
@@ -34,7 +33,7 @@ const CaseTypes = () => (
 				filterFields: filters.build.caseTypes,
 				title: i18n.translate('case-types'),
 			}}
-			query={getCaseTypes}
+			resource="/casetypes"
 			tableProps={{
 				columns: [
 					{
@@ -103,7 +102,6 @@ const CaseTypes = () => (
 					},
 				],
 			}}
-			transformData={(data) => data?.c?.caseTypes}
 		/>
 	</Container>
 );
