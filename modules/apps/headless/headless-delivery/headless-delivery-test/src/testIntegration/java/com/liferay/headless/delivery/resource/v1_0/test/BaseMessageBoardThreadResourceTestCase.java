@@ -648,6 +648,413 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 	}
 
 	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPage()
+		throws Exception {
+
+		Long messageBoardSectionId =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId();
+		Long irrelevantMessageBoardSectionId =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getIrrelevantMessageBoardSectionId();
+
+		Page<MessageBoardThread> page =
+			messageBoardThreadResource.
+				getMessageBoardSectionFilteredMessageBoardThreadsPage(
+					messageBoardSectionId, null, RandomTestUtil.randomString(),
+					null, null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(0, page.getTotalCount());
+
+		if (irrelevantMessageBoardSectionId != null) {
+			MessageBoardThread irrelevantMessageBoardThread =
+				testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+					irrelevantMessageBoardSectionId,
+					randomIrrelevantMessageBoardThread());
+
+			page =
+				messageBoardThreadResource.
+					getMessageBoardSectionFilteredMessageBoardThreadsPage(
+						irrelevantMessageBoardSectionId, null, null, null, null,
+						Pagination.of(1, 2), null);
+
+			Assert.assertEquals(1, page.getTotalCount());
+
+			assertEquals(
+				Arrays.asList(irrelevantMessageBoardThread),
+				(List<MessageBoardThread>)page.getItems());
+			assertValid(page);
+		}
+
+		MessageBoardThread messageBoardThread1 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		MessageBoardThread messageBoardThread2 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		page =
+			messageBoardThreadResource.
+				getMessageBoardSectionFilteredMessageBoardThreadsPage(
+					messageBoardSectionId, null, null, null, null,
+					Pagination.of(1, 10), null);
+
+		Assert.assertEquals(2, page.getTotalCount());
+
+		assertEqualsIgnoringOrder(
+			Arrays.asList(messageBoardThread1, messageBoardThread2),
+			(List<MessageBoardThread>)page.getItems());
+		assertValid(page);
+
+		messageBoardThreadResource.deleteMessageBoardThread(
+			messageBoardThread1.getId());
+
+		messageBoardThreadResource.deleteMessageBoardThread(
+			messageBoardThread2.getId());
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithFilterDateTimeEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.DATE_TIME);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long messageBoardSectionId =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId();
+
+		MessageBoardThread messageBoardThread1 = randomMessageBoardThread();
+
+		messageBoardThread1 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, messageBoardThread1);
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardThread> page =
+				messageBoardThreadResource.
+					getMessageBoardSectionFilteredMessageBoardThreadsPage(
+						messageBoardSectionId, null, null, null,
+						getFilterString(
+							entityField, "between", messageBoardThread1),
+						Pagination.of(1, 2), null);
+
+			assertEquals(
+				Collections.singletonList(messageBoardThread1),
+				(List<MessageBoardThread>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithFilterDoubleEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.DOUBLE);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long messageBoardSectionId =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId();
+
+		MessageBoardThread messageBoardThread1 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		MessageBoardThread messageBoardThread2 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardThread> page =
+				messageBoardThreadResource.
+					getMessageBoardSectionFilteredMessageBoardThreadsPage(
+						messageBoardSectionId, null, null, null,
+						getFilterString(entityField, "eq", messageBoardThread1),
+						Pagination.of(1, 2), null);
+
+			assertEquals(
+				Collections.singletonList(messageBoardThread1),
+				(List<MessageBoardThread>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithFilterStringEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.STRING);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long messageBoardSectionId =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId();
+
+		MessageBoardThread messageBoardThread1 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		MessageBoardThread messageBoardThread2 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardThread> page =
+				messageBoardThreadResource.
+					getMessageBoardSectionFilteredMessageBoardThreadsPage(
+						messageBoardSectionId, null, null, null,
+						getFilterString(entityField, "eq", messageBoardThread1),
+						Pagination.of(1, 2), null);
+
+			assertEquals(
+				Collections.singletonList(messageBoardThread1),
+				(List<MessageBoardThread>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithPagination()
+		throws Exception {
+
+		Long messageBoardSectionId =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId();
+
+		MessageBoardThread messageBoardThread1 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		MessageBoardThread messageBoardThread2 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		MessageBoardThread messageBoardThread3 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, randomMessageBoardThread());
+
+		Page<MessageBoardThread> page1 =
+			messageBoardThreadResource.
+				getMessageBoardSectionFilteredMessageBoardThreadsPage(
+					messageBoardSectionId, null, null, null, null,
+					Pagination.of(1, 2), null);
+
+		List<MessageBoardThread> messageBoardThreads1 =
+			(List<MessageBoardThread>)page1.getItems();
+
+		Assert.assertEquals(
+			messageBoardThreads1.toString(), 2, messageBoardThreads1.size());
+
+		Page<MessageBoardThread> page2 =
+			messageBoardThreadResource.
+				getMessageBoardSectionFilteredMessageBoardThreadsPage(
+					messageBoardSectionId, null, null, null, null,
+					Pagination.of(2, 2), null);
+
+		Assert.assertEquals(3, page2.getTotalCount());
+
+		List<MessageBoardThread> messageBoardThreads2 =
+			(List<MessageBoardThread>)page2.getItems();
+
+		Assert.assertEquals(
+			messageBoardThreads2.toString(), 1, messageBoardThreads2.size());
+
+		Page<MessageBoardThread> page3 =
+			messageBoardThreadResource.
+				getMessageBoardSectionFilteredMessageBoardThreadsPage(
+					messageBoardSectionId, null, null, null, null,
+					Pagination.of(1, 3), null);
+
+		assertEqualsIgnoringOrder(
+			Arrays.asList(
+				messageBoardThread1, messageBoardThread2, messageBoardThread3),
+			(List<MessageBoardThread>)page3.getItems());
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSortDateTime()
+		throws Exception {
+
+		testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSort(
+			EntityField.Type.DATE_TIME,
+			(entityField, messageBoardThread1, messageBoardThread2) -> {
+				BeanTestUtil.setProperty(
+					messageBoardThread1, entityField.getName(),
+					DateUtils.addMinutes(new Date(), -2));
+			});
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSortDouble()
+		throws Exception {
+
+		testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSort(
+			EntityField.Type.DOUBLE,
+			(entityField, messageBoardThread1, messageBoardThread2) -> {
+				BeanTestUtil.setProperty(
+					messageBoardThread1, entityField.getName(), 0.1);
+				BeanTestUtil.setProperty(
+					messageBoardThread2, entityField.getName(), 0.5);
+			});
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSortInteger()
+		throws Exception {
+
+		testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSort(
+			EntityField.Type.INTEGER,
+			(entityField, messageBoardThread1, messageBoardThread2) -> {
+				BeanTestUtil.setProperty(
+					messageBoardThread1, entityField.getName(), 0);
+				BeanTestUtil.setProperty(
+					messageBoardThread2, entityField.getName(), 1);
+			});
+	}
+
+	@Test
+	public void testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSortString()
+		throws Exception {
+
+		testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSort(
+			EntityField.Type.STRING,
+			(entityField, messageBoardThread1, messageBoardThread2) -> {
+				Class<?> clazz = messageBoardThread1.getClass();
+
+				String entityFieldName = entityField.getName();
+
+				Method method = clazz.getMethod(
+					"get" + StringUtil.upperCaseFirstLetter(entityFieldName));
+
+				Class<?> returnType = method.getReturnType();
+
+				if (returnType.isAssignableFrom(Map.class)) {
+					BeanTestUtil.setProperty(
+						messageBoardThread1, entityFieldName,
+						Collections.singletonMap("Aaa", "Aaa"));
+					BeanTestUtil.setProperty(
+						messageBoardThread2, entityFieldName,
+						Collections.singletonMap("Bbb", "Bbb"));
+				}
+				else if (entityFieldName.contains("email")) {
+					BeanTestUtil.setProperty(
+						messageBoardThread1, entityFieldName,
+						"aaa" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()) +
+									"@liferay.com");
+					BeanTestUtil.setProperty(
+						messageBoardThread2, entityFieldName,
+						"bbb" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()) +
+									"@liferay.com");
+				}
+				else {
+					BeanTestUtil.setProperty(
+						messageBoardThread1, entityFieldName,
+						"aaa" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()));
+					BeanTestUtil.setProperty(
+						messageBoardThread2, entityFieldName,
+						"bbb" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()));
+				}
+			});
+	}
+
+	protected void
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPageWithSort(
+				EntityField.Type type,
+				UnsafeTriConsumer
+					<EntityField, MessageBoardThread, MessageBoardThread,
+					 Exception> unsafeTriConsumer)
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(type);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long messageBoardSectionId =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId();
+
+		MessageBoardThread messageBoardThread1 = randomMessageBoardThread();
+		MessageBoardThread messageBoardThread2 = randomMessageBoardThread();
+
+		for (EntityField entityField : entityFields) {
+			unsafeTriConsumer.accept(
+				entityField, messageBoardThread1, messageBoardThread2);
+		}
+
+		messageBoardThread1 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, messageBoardThread1);
+
+		messageBoardThread2 =
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				messageBoardSectionId, messageBoardThread2);
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardThread> ascPage =
+				messageBoardThreadResource.
+					getMessageBoardSectionFilteredMessageBoardThreadsPage(
+						messageBoardSectionId, null, null, null, null,
+						Pagination.of(1, 2), entityField.getName() + ":asc");
+
+			assertEquals(
+				Arrays.asList(messageBoardThread1, messageBoardThread2),
+				(List<MessageBoardThread>)ascPage.getItems());
+
+			Page<MessageBoardThread> descPage =
+				messageBoardThreadResource.
+					getMessageBoardSectionFilteredMessageBoardThreadsPage(
+						messageBoardSectionId, null, null, null, null,
+						Pagination.of(1, 2), entityField.getName() + ":desc");
+
+			assertEquals(
+				Arrays.asList(messageBoardThread2, messageBoardThread1),
+				(List<MessageBoardThread>)descPage.getItems());
+		}
+	}
+
+	protected MessageBoardThread
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_addMessageBoardThread(
+				Long messageBoardSectionId,
+				MessageBoardThread messageBoardThread)
+		throws Exception {
+
+		return messageBoardThreadResource.
+			postMessageBoardSectionMessageBoardThread(
+				messageBoardSectionId, messageBoardThread);
+	}
+
+	protected Long
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected Long
+			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getIrrelevantMessageBoardSectionId()
+		throws Exception {
+
+		return null;
+	}
+
+	@Test
 	public void testGetMessageBoardThreadsRankedPage() throws Exception {
 		Page<MessageBoardThread> page =
 			messageBoardThreadResource.getMessageBoardThreadsRankedPage(
