@@ -13,16 +13,15 @@
  */
 
 import Container from '../../../../../components/Layout/Container';
-import ListView from '../../../../../components/ListView/ListView';
+import ListViewRest from '../../../../../components/ListView/ListViewRest';
 import ProgressBar from '../../../../../components/ProgressBar';
-import {getTeams} from '../../../../../graphql/queries/testrayTeam';
 import i18n from '../../../../../i18n';
 import {filters} from '../../../../../schema/filter';
 
 const Teams = () => {
 	return (
 		<Container className="mt-4">
-			<ListView
+			<ListViewRest
 				initialContext={{
 					columns: {
 						blocked: false,
@@ -35,7 +34,7 @@ const Teams = () => {
 					filterFields: filters.build.teams,
 					title: i18n.translate('teams'),
 				}}
-				query={getTeams}
+				resource="/teams"
 				tableProps={{
 					columns: [
 						{
@@ -104,7 +103,6 @@ const Teams = () => {
 						},
 					],
 				}}
-				transformData={(data) => data?.c?.teams}
 			/>
 		</Container>
 	);
