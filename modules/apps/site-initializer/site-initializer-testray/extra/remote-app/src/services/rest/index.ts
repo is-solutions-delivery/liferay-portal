@@ -27,6 +27,7 @@ export * from './TestrayFactorCategory';
 export * from './TestrayProject';
 export * from './TestrayRequirement';
 export * from './TestrayRoutine';
+export * from './TestrayRun';
 export * from './TestraySuite';
 export * from './TestraySuiteCases';
 export * from './TestrayTask';
