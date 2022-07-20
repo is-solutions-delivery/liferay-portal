@@ -862,6 +862,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			String fileName = FileUtil.getShortFileName(resourcePath);
 
+			sdgnasdkgnsdçgm
 			URL url = _servletContext.getResource(resourcePath);
 
 			URLConnection urlConnection = url.openConnection();
