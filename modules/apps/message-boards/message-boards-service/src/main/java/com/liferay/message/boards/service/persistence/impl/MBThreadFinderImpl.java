@@ -414,6 +414,57 @@ public class MBThreadFinderImpl
 	}
 
 	@Override
+	public int countMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = _customSQL.get(
+				getClass(), FIND_BY_MB_SECTION_MB_THREADS, queryDefinition,
+				MBThreadImpl.TABLE_NAME);
+
+			sql = StringUtil.replace(
+				sql, "MBThread.groupId = ?",
+				"MBThread.groupId = " + groupId);
+
+			sql = StringUtil.replace(
+				sql, "MBThread.categoryId = ?",
+				"MBThread.categoryId = " + categoryId);
+
+			sql = StringUtil.replace(
+				sql, "DISTINCT {MBThread.*}",
+				"COUNT(DISTINCT MBThread.threadId) AS COUNT_VALUE");
+
+			sql = _addFilterToSQL(filter, sql);
+			sql = _addSortToSQL(sorts, sql);
+			sql = _addTagFilterToSQL(tag, sql);
+
+			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			sqlQuery.addScalar(COUNT_COLUMN_NAME, Type.LONG);
+
+			Iterator<Long> iterator = sqlQuery.iterate();
+
+			if (iterator.hasNext()) {
+				Long count = iterator.next();
+
+				if (count != null) {
+					return count.intValue();
+				}
+			}
+			return 0;
+		}
+		catch (Exception exception) {
+			throw new SystemException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	@Override
 	public int filterCountByG_C(long groupId, long categoryId) {
 		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
 			return MBThreadUtil.countByG_C(groupId, categoryId);
@@ -846,6 +897,7 @@ public class MBThreadFinderImpl
 			groupId, userId, categoryIds, queryDefinition, false);
 	}
 
+	@Override
 	public List<MBThread> findByMessageBoardSectionMessageBoardThreadsPage(
 		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 
@@ -1209,7 +1261,7 @@ public class MBThreadFinderImpl
 		return _customSQL.appendCriteria(sql, "AND (MBThread.status = ?)");
 	}
 
-	private String _addFilterToSQL(Filter filter, String sql) {
+	protected String _addFilterToSQL(Filter filter, String sql) {
 		if (filter != null) {
 			String sqlFilter = filter.toString();
 
@@ -1243,7 +1295,7 @@ public class MBThreadFinderImpl
 		return sql;
 	}
 
-	private String _addSortToSQL(Sort[] sorts, String sql) {
+	protected String _addSortToSQL(Sort[] sorts, String sql) {
 		if (sorts != null) {
 			for (Sort sort : sorts) {
 				String fieldName = sort.getFieldName();
@@ -1312,7 +1364,7 @@ public class MBThreadFinderImpl
 		return sql;
 	}
 
-	private String _addTagFilterToSQL(String tag, String sql) {
+	protected String _addTagFilterToSQL(String tag, String sql) {
 		if (tag != null) {
 			sql = StringUtil.replace(
 				sql, "INNER JOIN2 ?",
