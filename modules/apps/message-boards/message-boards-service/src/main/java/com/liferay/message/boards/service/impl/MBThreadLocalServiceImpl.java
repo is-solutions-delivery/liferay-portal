@@ -431,6 +431,24 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 	}
 
 	@Override
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
+
+		return mbThreadFinder.findByMessageBoardSectionMessageBoardThreadsPage(
+			groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
+	@Override
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
+
+		return mbThreadFinder.countMessageBoardSectionMessageBoardThreadsPage(
+			groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
+	@Override
 	public int getMessageCount(long threadId, int status) {
 		if (status == WorkflowConstants.STATUS_ANY) {
 			return _mbMessagePersistence.countByThreadId(threadId);
@@ -444,18 +462,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		return mbThreadFinder.findByMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
 	}
 
-	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
-		return mbThreadFinder.countMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
-	}
-
-	@Override
-	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
-		return mbThreadFinder.findByMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
-	}
-
-	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
 		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 		return mbThreadFinder.countMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);

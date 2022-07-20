@@ -19,6 +19,7 @@ import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.model.impl.MBThreadImpl;
 import com.liferay.message.boards.service.persistence.MBThreadFinder;
 import com.liferay.message.boards.service.persistence.MBThreadUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
@@ -100,7 +101,8 @@ public class MBThreadFinderImpl
 		MBThreadFinder.class.getName() + ".findByS_G_U_C";
 
 	public static final String FIND_BY_MB_SECTION_MB_THREADS =
-		MBThreadFinder.class.getName() + ".findMessageBoardSectionMessageBoardThreadsPage";
+		MBThreadFinder.class.getName() +
+			".findMessageBoardSectionMessageBoardThreadsPage";
 
 	@Override
 	public int countByG_U(
@@ -412,9 +414,11 @@ public class MBThreadFinderImpl
 		return doCountByS_G_U_C(
 			groupId, userId, categoryIds, queryDefinition, false);
 	}
+
 	@Override
 	public int countMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
 
 		Session session = null;
 
@@ -426,8 +430,7 @@ public class MBThreadFinderImpl
 				MBThreadImpl.TABLE_NAME);
 
 			sql = StringUtil.replace(
-				sql, "MBThread.groupId = ?",
-				"MBThread.groupId = " + groupId);
+				sql, "MBThread.groupId = ?", "MBThread.groupId = " + groupId);
 
 			sql = StringUtil.replace(
 				sql, "MBThread.categoryId = ?",
@@ -437,11 +440,12 @@ public class MBThreadFinderImpl
 				sql, "DISTINCT {MBThread.*}",
 				"COUNT(DISTINCT MBThread.threadId) AS COUNT_VALUE");
 
-			sql = _addFilterToSQL(filter, sql);
-			sql = _addSortToSQL(sorts, sql);
-			sql = _addTagFilterToSQL(tag, sql);
+			sql = addFilterToSQL(filter, sql);
+			sql = addSortToSQL(sorts, sql);
+			sql = addTagFilterToSQL(tag, sql);
 
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+
 			sqlQuery.addScalar(COUNT_COLUMN_NAME, Type.LONG);
 
 			Iterator<Long> iterator = sqlQuery.iterate();
@@ -453,6 +457,7 @@ public class MBThreadFinderImpl
 					return count.intValue();
 				}
 			}
+
 			return 0;
 		}
 		catch (Exception exception) {
@@ -592,6 +597,47 @@ public class MBThreadFinderImpl
 
 		return doFindByS_G_U_C(
 			groupId, userId, categoryIds, queryDefinition, true);
+	}
+
+	@Override
+	public List<MBThread> findByMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			String sql = _customSQL.get(
+				getClass(), FIND_BY_MB_SECTION_MB_THREADS, queryDefinition,
+				MBThreadImpl.TABLE_NAME);
+
+			sql = StringUtil.replace(
+				sql, "MBThread.groupId = ?", "MBThread.groupId = " + groupId);
+
+			sql = StringUtil.replace(
+				sql, "MBThread.categoryId = ?",
+				"MBThread.categoryId = " + categoryId);
+
+			sql = addFilterToSQL(filter, sql);
+			sql = addSortToSQL(sorts, sql);
+			sql = addTagFilterToSQL(tag, sql);
+
+			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+
+			sqlQuery.addEntity("MBThread", MBThreadImpl.class);
+
+			return (List<MBThread>)QueryUtil.list(
+				sqlQuery, getDialect(), queryDefinition.getStart(),
+				queryDefinition.getEnd());
+		}
+		catch (Exception exception) {
+			throw new SystemException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
 	}
 
 	@Override
@@ -896,44 +942,171 @@ public class MBThreadFinderImpl
 			groupId, userId, categoryIds, queryDefinition, false);
 	}
 
-	@Override
-	public List<MBThread> findByMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
+	protected String addFilterToSQL(Filter filter, String sql) {
+		if (filter != null) {
+			String sqlFilter = filter.toString();
 
-		Session session = null;
+			sqlFilter = StringUtil.removeSubstring(
+				sqlFilter,
+				"{(query={className=TermQueryImpl, queryTerm={field=");
 
-		try {
-			session = openSession();
+			sqlFilter = StringUtil.removeSubstring(
+				sqlFilter, "}}), (cached=null, executionOption=null)}");
 
-			String sql = _customSQL.get(
-				getClass(), FIND_BY_MB_SECTION_MB_THREADS, queryDefinition,
-				MBThreadImpl.TABLE_NAME);
+			String[] sqlFilters = sqlFilter.split("_sortable, value=");
+
+			if (sqlFilters[0].equals("hasValidAnswer") &&
+				sqlFilters[1].equals("false")) {
+
+				String sqlAppend = StringBundler.concat(
+					"AND NOT EXISTS ( SELECT threadId FROM MBMessage WHERE ",
+					"(MBThread.threadId = MBMessage.threadId) AND ",
+					"(MBMessage.answer = TRUE) )");
+
+				sql = StringUtil.replace(sql, "NOT EXISTS ?", sqlAppend);
+			}
+			else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
+					 sqlFilters[1].equals("0")) {
+
+				String sqlAppend = StringBundler.concat(
+					"AND NOT EXISTS ( SELECT DISTINCT threadId FROM MBMessage ",
+					"WHERE (MBThread.threadId = MBMessage.threadId) AND ",
+					"(MBMessage.parentMessageId != 0) )");
+
+				sql = StringUtil.replace(sql, "NOT EXISTS ?", sqlAppend);
+			}
+			else if (sqlFilters[0].equals("hasValidAnswer") &&
+					 sqlFilters[1].equals("true")) {
+
+				String sqlAppend = StringBundler.concat(
+					"AND EXISTS ( SELECT threadId FROM MBMessage WHERE ",
+					"(MBThread.threadId = MBMessage.threadId) AND ",
+					"(MBMessage.answer = TRUE) )");
+
+				sql = StringUtil.replace(sql, "NOT EXISTS ?", sqlAppend);
+			}
+		}
+		else {
+			sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
+		}
+
+		return sql;
+	}
+
+	protected String addSortToSQL(Sort[] sorts, String sql) {
+		if (sorts != null) {
+			for (Sort sort : sorts) {
+				String fieldName = sort.getFieldName();
+
+				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
+
+				if (fieldName.equals("modified")) {
+					fieldName = "modifiedDate";
+				}
+
+				if (!fieldName.equals("totalScore") &&
+					!fieldName.equals("viewCount")) {
+
+					sql = StringUtil.removeSubstring(sql, "INNER JOIN ?");
+				}
+
+				if (fieldName.equals("totalScore")) {
+					sql = StringUtil.replace(
+						sql, "INNER JOIN ?",
+						"INNER JOIN RatingsStats ON (MBThread.rootMessageId " +
+							"= RatingsStats.classPK)");
+
+					sql = StringUtil.replace(
+						sql, "{MBThread.*}",
+						"MBThread.*, RatingsStats.totalScore");
+
+					if (sort.isReverse()) {
+						sql = StringUtil.replace(
+							sql, "MBThread.createDate DESC",
+							"RatingsStats.totalScore DESC");
+					}
+					else {
+						sql = StringUtil.replace(
+							sql, "MBThread.createDate DESC",
+							"RatingsStats.totalScore ASC");
+					}
+				}
+				else if (fieldName.equals("viewCount")) {
+					sql = StringUtil.replace(
+						sql, "INNER JOIN ?",
+						"INNER JOIN ViewCountEntry ON (MBThread.threadId = " +
+							"ViewCountEntry.classPK)");
+
+					sql = StringUtil.replace(
+						sql, "{MBThread.*}",
+						"MBThread.*, ViewCountEntry.viewCount");
+
+					if (sort.isReverse()) {
+						sql = StringUtil.replace(
+							sql, "MBThread.createDate DESC",
+							"ViewCountEntry.viewCount DESC");
+					}
+					else {
+						sql = StringUtil.replace(
+							sql, "MBThread.createDate DESC",
+							"ViewCountEntry.viewCount ASC");
+					}
+				}
+				else if ((fieldName.equals("createDate") ||
+						  fieldName.equals("modifiedDate")) &&
+						 sort.isReverse()) {
+
+					sql = StringUtil.replace(
+						sql, "MBThread.createDate DESC",
+						"MBThread." + fieldName + " DESC");
+				}
+				else if ((fieldName.equals("createDate") ||
+						  fieldName.equals("modifiedDate")) &&
+						 !sort.isReverse()) {
+
+					sql = StringUtil.replace(
+						sql, "MBThread.createDate DESC",
+						"MBThread." + fieldName + " ASC");
+				}
+			}
+		}
+		else {
+			sql = StringUtil.removeSubstring(sql, "INNER JOIN ?");
+		}
+
+		return sql;
+	}
+
+	protected String addTagFilterToSQL(String tag, String sql) {
+		if (tag != null) {
+			String sqlAppend = StringBundler.concat(
+				"INNER JOIN AssetEntry ON AssetEntry.classPK = ",
+				"MBThread.rootMessageId INNER JOIN AssetEntries_AssetTags ON ",
+				"AssetEntries_AssetTags.entryId = AssetEntry.entryId INNER ",
+				"JOIN AssetTag ON AssetTag.tagId = ",
+				"AssetEntries_AssetTags.tagId");
+
+			sql = StringUtil.replace(sql, "INNER JOIN2 ?", sqlAppend);
+
+			String[] tags = tag.split(",");
+
+			StringBuilder myTags = new StringBuilder('"' + tags[0] + '"');
+
+			for (int i = 1; i < tags.length; i++) {
+				myTags.append(",\"");
+				myTags.append(tags[i]);
+				myTags.append('"');
+			}
 
 			sql = StringUtil.replace(
-				sql, "MBThread.groupId = ?",
-				"MBThread.groupId = " + groupId);
-
-			sql = StringUtil.replace(
-				sql, "MBThread.categoryId = ?",
-				"MBThread.categoryId = " + categoryId);
-
-			sql = _addFilterToSQL(filter, sql);
-			sql = _addSortToSQL(sorts, sql);
-			sql = _addTagFilterToSQL(tag, sql);
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
-			sqlQuery.addEntity("MBThread", MBThreadImpl.class);
-
-			return (List<MBThread>)QueryUtil.list(
-				sqlQuery, getDialect(), queryDefinition.getStart(),
-				queryDefinition.getEnd());
+				sql, "TAGS ?", " AND AssetTag.name IN (" + myTags + ")");
 		}
-		catch (Exception exception) {
-			throw new SystemException(exception);
+		else {
+			sql = StringUtil.removeSubstring(sql, "INNER JOIN2 ?");
+			sql = StringUtil.removeSubstring(sql, "TAGS ?");
 		}
-		finally {
-			closeSession(session);
-		}
+
+		return sql;
 	}
 
 	protected int doCountByG_C(
@@ -1258,144 +1431,6 @@ public class MBThreadFinderImpl
 		}
 
 		return _customSQL.appendCriteria(sql, "AND (MBThread.status = ?)");
-	}
-
-	protected String _addFilterToSQL(Filter filter, String sql) {
-		if (filter != null) {
-			String sqlFilter = filter.toString();
-
-			sqlFilter = StringUtil.removeSubstring(
-				sqlFilter, "{(query={className=TermQueryImpl, queryTerm={field=");
-
-			sqlFilter = StringUtil.removeSubstring(
-				sqlFilter, "}}), (cached=null, executionOption=null)}");
-
-			String[] sqlFilters = sqlFilter.split("_sortable, value=");
-
-			if (sqlFilters[0].equals("hasValidAnswer") && sqlFilters[1].equals("false")) {
-				sql = StringUtil.replace(
-					sql, "NOT EXISTS ?",
-					"AND NOT EXISTS ( SELECT threadId FROM MBMessage WHERE (MBThread.threadId = MBMessage.threadId) AND (MBMessage.answer = TRUE) )");
-
-			} else if (sqlFilters[0].equals("numberOfMessageBoardMessages") && sqlFilters[1].equals("0")) {
-				sql = StringUtil.replace(
-					sql, "NOT EXISTS ?",
-					"AND NOT EXISTS ( SELECT DISTINCT threadId FROM MBMessage WHERE (MBThread.threadId = MBMessage.threadId) AND (MBMessage.parentMessageId != 0) )");
-
-			} else if (sqlFilters[0].equals("hasValidAnswer") && sqlFilters[1].equals("true")) {
-				sql = StringUtil.replace(
-					sql, "NOT EXISTS ?",
-					"AND EXISTS ( SELECT threadId FROM MBMessage WHERE (MBThread.threadId = MBMessage.threadId) AND (MBMessage.answer = TRUE) )");
-			}
-		} else {
-			sql = StringUtil.removeSubstring(
-				sql, "NOT EXISTS ?");
-		}
-		return sql;
-	}
-
-	protected String _addSortToSQL(Sort[] sorts, String sql) {
-		if (sorts != null) {
-			for (Sort sort : sorts) {
-				String fieldName = sort.getFieldName();
-				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
-
-				if (fieldName.equals("modified")) {
-					fieldName = "modifiedDate";
-				}
-
-				if (!fieldName.equals("totalScore") && !fieldName.equals("viewCount")) {
-					sql = StringUtil.removeSubstring(
-						sql, "INNER JOIN ?");
-				}
-
-				if (fieldName.equals("totalScore")) {
-					sql = StringUtil.replace(
-						sql, "INNER JOIN ?",
-						"INNER JOIN RatingsStats ON (MBThread.rootMessageId = RatingsStats.classPK)");
-
-					sql = StringUtil.replace(
-						sql, "{MBThread.*}",
-						"MBThread.*, RatingsStats.totalScore");
-
-					if(sort.isReverse()) {
-						sql = StringUtil.replace(
-							sql, "MBThread.createDate DESC",
-							"RatingsStats.totalScore DESC");
-					} else {
-						sql = StringUtil.replace(
-							sql, "MBThread.createDate DESC",
-							"RatingsStats.totalScore ASC");
-					}
-
-				} else if (fieldName.equals("viewCount")) {
-					sql = StringUtil.replace(
-						sql, "INNER JOIN ?",
-						"INNER JOIN ViewCountEntry ON (MBThread.threadId = ViewCountEntry.classPK)");
-
-					sql = StringUtil.replace(
-						sql, "{MBThread.*}",
-						"MBThread.*, ViewCountEntry.viewCount");
-
-					if(sort.isReverse()) {
-						sql = StringUtil.replace(
-							sql, "MBThread.createDate DESC",
-							"ViewCountEntry.viewCount DESC");
-					} else {
-						sql = StringUtil.replace(
-							sql, "MBThread.createDate DESC",
-							"ViewCountEntry.viewCount ASC");
-					}
-				} else if ((fieldName.equals("createDate") || fieldName.equals("modifiedDate")) && sort.isReverse()) {
-					sql = StringUtil.replace(
-						sql, "MBThread.createDate DESC",
-						"MBThread." + fieldName + " DESC");
-				} else if ((fieldName.equals("createDate") || fieldName.equals("modifiedDate")) && !sort.isReverse()) {
-					sql = StringUtil.replace(
-						sql, "MBThread.createDate DESC",
-						"MBThread." + fieldName + " ASC");
-				}
-			}
-		} else {
-			sql = StringUtil.removeSubstring(
-				sql, "INNER JOIN ?");
-		}
-		return sql;
-	}
-
-	protected String _addTagFilterToSQL(String tag, String sql) {
-		if (tag != null) {
-			sql = StringUtil.replace(
-				sql, "INNER JOIN2 ?",
-				"INNER JOIN " +
-				"AssetEntry ON " +
-				"AssetEntry.classPK = MBThread.rootMessageId " +
-				"INNER JOIN " +
-				"AssetEntries_AssetTags ON " +
-				"AssetEntries_AssetTags.entryId = AssetEntry.entryId " +
-				"INNER JOIN " +
-				"AssetTag ON " +
-				"AssetTag.tagId = AssetEntries_AssetTags.tagId");
-
-			String[] tags = tag.split(",");
-
-			StringBuilder myTags = new StringBuilder('"' + tags[0] + '"');
-
-			for (int i = 1; i < tags.length; i++) {
-				myTags.append("," + '"').append(tags[i]).append('"');
-			}
-
-			sql = StringUtil.replace(
-				sql, "TAGS ?",
-				" AND AssetTag.name IN (" + myTags + ")");
-
-		} else {
-			sql = StringUtil.removeSubstring(
-				sql, "INNER JOIN2 ?");
-			sql = StringUtil.removeSubstring(
-				sql, "TAGS ?");
-		}
-		return sql;
 	}
 
 	private static final String _INNER_JOIN_SQL =

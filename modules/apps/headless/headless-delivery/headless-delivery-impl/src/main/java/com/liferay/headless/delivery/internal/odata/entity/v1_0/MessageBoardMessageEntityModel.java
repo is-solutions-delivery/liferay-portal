@@ -78,7 +78,19 @@ public class MessageBoardMessageEntityModel implements EntityModel {
 				"headline",
 				locale -> Field.getSortableFieldName(
 					"localized_title_".concat(
-						LocaleUtil.toLanguageId(locale)))));
+						LocaleUtil.toLanguageId(locale)))),
+			new IntegerEntityField(
+				"viewCount", locale -> Field.getSortableFieldName("viewCount")),
+			new IntegerEntityField(
+				"totalScore",
+				locale -> Field.getSortableFieldName("totalScore")),
+			new StringEntityField(
+				"hasValidAnswer",
+				locale -> Field.getSortableFieldName("hasValidAnswer")),
+			new IntegerEntityField(
+				"numberOfMessageBoardMessages",
+				locale -> Field.getSortableFieldName(
+					"numberOfMessageBoardMessages")));
 	}
 
 	@Override

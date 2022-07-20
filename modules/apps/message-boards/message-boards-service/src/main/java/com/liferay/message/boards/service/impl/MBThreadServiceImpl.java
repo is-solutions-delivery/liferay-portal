@@ -314,6 +314,26 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	@Override
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
+
+		return mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPage(
+				groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
+	@Override
+	public int getSectionThreadsCount(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
+
+		return mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPageCount(
+				groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
+	@Override
 	public List<MBThread> getThreads(
 		long groupId, long categoryId, int status, int start, int end) {
 
@@ -374,17 +394,6 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 		return mbThreadLocalService.getMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
 	}
 
-	public int getSectionThreadsCount(long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
-		return mbThreadLocalService.getMessageBoardSectionMessageBoardThreadsPageCount(groupId, categoryId, sorts, filter, tag, queryDefinition);
-	}
-
-	@Override
-	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
-		return mbThreadLocalService.getMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
-	}
-
-	@Override
 	public int getSectionThreadsCount(long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 		return mbThreadLocalService.getMessageBoardSectionMessageBoardThreadsPageCount(groupId, categoryId, sorts, filter, tag, queryDefinition);
 	}
