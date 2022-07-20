@@ -25,6 +25,9 @@ import com.liferay.commerce.initializer.util.PortletSettingsImporter;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.notification.service.CommerceNotificationTemplateLocalService;
+import com.liferay.commerce.price.list.model.CommercePriceList;
+import com.liferay.commerce.price.list.service.CommercePriceEntryLocalService;
+import com.liferay.commerce.price.list.service.CommercePriceListLocalService;
 import com.liferay.commerce.product.constants.CPConstants;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
@@ -32,6 +35,7 @@ import com.liferay.commerce.product.model.CPOption;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
+import com.liferay.commerce.product.service.CPInstanceService;
 import com.liferay.commerce.product.service.CPMeasurementUnitLocalService;
 import com.liferay.commerce.product.service.CPOptionLocalService;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
@@ -73,6 +77,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.site.initializer.extender.internal.util.SiteInitializerUtil;
 
@@ -118,6 +123,55 @@ public class CommerceSiteInitializer {
 			bundle, channel.getId(), documentsStringUtilReplaceValues,
 			objectDefinitionIdsStringUtilReplaceValues, serviceContext,
 			servletContext);
+
+		List<CPInstance> cpInstances = _cpInstanceLocalService.getCPInstances(serviceContext.getCompanyId(),
+			"RAY004");
+
+		for (CPInstance cpInstance : cpInstances) {
+			_cpInstanceService.updateCPInstance(cpInstance.getCPInstanceId(),
+				"RAY004", "",
+				"", true, 0.0, 2.0, 7.0, 0.0, BigDecimal.valueOf(0.00),
+				BigDecimal.valueOf(0.00), BigDecimal.valueOf(0.00), true, 6, 20,
+				2021, 18, 37, 0, 0, 0, 0, 0, true, "", false, null, 0, 0, 0, 0,
+				serviceContext);
+
+			_cpInstanceService.updatePricingInfo(
+				cpInstance.getCPInstanceId(), BigDecimal.valueOf(0.00),
+				BigDecimal.valueOf(0.00), BigDecimal.valueOf(0.00),
+				serviceContext);
+
+			CommercePriceList commercePriceList =
+				_commercePriceListLocalService.
+					getCatalogBaseCommercePriceListByType(
+						cpInstance.getGroupId(), "price-list");
+
+			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
+
+			CPDefinition cpDefinition =
+				_cpDefinitionLocalService.
+					fetchCPDefinitionByCProductExternalReferenceCode(
+						"RAY004",
+						serviceContext.getCompanyId());
+
+			_commercePriceEntryLocalService.addCommercePriceEntry(
+				cpDefinition.getCProductId(), cpInstance.getCPInstanceUuid(),
+				commercePriceList.getCommercePriceListId(),
+				BigDecimal.valueOf(0.00), null,
+				serviceContext);
+
+			CommercePriceList commercePriceList2 =
+				_commercePriceListLocalService.
+					getCatalogBaseCommercePriceListByType(
+						cpInstance.getGroupId(), "price-list");
+
+			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
+
+			_commercePriceEntryLocalService.addCommercePriceEntry(
+				cpDefinition.getCProductId(), cpInstance.getCPInstanceUuid(),
+				commercePriceList2.getCommercePriceListId(),
+				BigDecimal.valueOf(0.00), null,
+				serviceContext);
+		}
 	}
 
 	public void addPortletSettings(
@@ -790,5 +844,15 @@ public class CommerceSiteInitializer {
 
 	@Reference
 	private SettingsFactory _settingsFactory;
+
+		@Reference
+		private CommercePriceListLocalService _commercePriceListLocalService;
+
+		@Reference
+		private CPInstanceService _cpInstanceService;
+
+		@Reference
+		private CommercePriceEntryLocalService _commercePriceEntryLocalService;
+
 
 }
