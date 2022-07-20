@@ -324,7 +324,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	@Override
-	public int getSectionThreadsCount(
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
 		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
 		QueryDefinition<MBThread> queryDefinition) {
 
