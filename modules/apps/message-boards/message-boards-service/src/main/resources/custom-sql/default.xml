@@ -531,4 +531,21 @@
 				MBThread.lastPostDate DESC
 		]]>
 	</sql>
+	<sql id="com.liferay.message.boards.service.persistence.MBThreadFinder.findMessageBoardSectionMessageBoardThreadsPage">
+		<![CDATA[
+			SELECT
+				DISTINCT {MBThread.*}
+			FROM
+				MBThread
+			INNER JOIN ?
+			INNER JOIN2 ?
+			WHERE
+				(MBThread.categoryId = ?) AND
+				(MBThread.groupId = ?)
+				TAGS ?
+				NOT EXISTS ?
+			ORDER BY
+				MBThread.createDate DESC
+		]]>
+	</sql>
 </custom-sql>
