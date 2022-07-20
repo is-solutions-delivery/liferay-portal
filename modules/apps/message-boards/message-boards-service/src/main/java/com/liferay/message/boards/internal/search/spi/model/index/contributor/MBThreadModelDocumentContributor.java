@@ -21,10 +21,11 @@ import com.liferay.message.boards.service.MBDiscussionLocalService;
 import com.liferay.message.boards.service.MBThreadLocalService;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
+import com.liferay.ratings.kernel.model.RatingsStats;
+import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 
 import java.util.Date;
 
-import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -45,6 +46,9 @@ public class MBThreadModelDocumentContributor
 			mbDiscussionLocalService.fetchThreadDiscussion(
 				mbThread.getThreadId());
 
+		RatingsStats ratingsStats = ratingsStatsLocalService.fetchStats(
+			MBMessage.class.getName(), mbThread.getRootMessageId());
+
 		if (discussion == null) {
 			document.addKeyword("discussion", false);
 		}
@@ -60,8 +64,8 @@ public class MBThreadModelDocumentContributor
 			"participantUserIds", mbThread.getParticipantUserIds());
 
 		document.addKeyword("viewCount", mbThread.getViewCount());
-		document.addKeyword("totalScore", _ratingsStatsLocalService.fetchStats(
-			MBMessage.class.getName(), mbThread.getRootMessageId()).getTotalScore());
+
+		document.addKeyword("totalScore", ratingsStats.getTotalScore());
 		document.addKeyword(
 			"hasValidAnswer",
 			mbThreadLocalService.hasAnswerMessage(mbThread.getThreadId()));
@@ -77,5 +81,6 @@ public class MBThreadModelDocumentContributor
 	protected MBThreadLocalService mbThreadLocalService;
 
 	@Reference
-	protected RatingsStatsLocalService _ratingsStatsLocalService;
+	protected RatingsStatsLocalService ratingsStatsLocalService;
+
 }
