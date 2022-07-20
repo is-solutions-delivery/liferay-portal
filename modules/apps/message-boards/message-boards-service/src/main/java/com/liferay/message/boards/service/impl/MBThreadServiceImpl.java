@@ -389,11 +389,6 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 			groupId, categoryId, queryDefinition);
 	}
 
-	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
-		return mbThreadLocalService.getMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
-	}
-
 	public int getSectionThreadsCount(long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 		return mbThreadLocalService.getMessageBoardSectionMessageBoardThreadsPageCount(groupId, categoryId, sorts, filter, tag, queryDefinition);
 	}
