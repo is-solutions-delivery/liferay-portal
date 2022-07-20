@@ -46,15 +46,19 @@ import {getColumnsByUserAccess} from './utils/getColumnsByUserAccess';
 const ROLE_FILTER_NAME = 'contactRoleNames';
 const ALERT_TIMEOUT = 3000;
 
-const TeamMembersTable = ({project, provisioningServerAPI, sessionId}) => {
-	const {accountRoles} = useAccountRoles(project);
+const TeamMembersTable = ({
+	KoroneikiAccount,
+	provisioningServerAPI,
+	sessionId,
+}) => {
+	const {accountRoles} = useAccountRoles(KoroneikiAccount);
 	const {client} = useAppPropertiesContext();
 
 	const {
 		isLoadingUserAccounts,
 		setFilterTerm,
 		userAccountsState: [userAccounts, setUserAccounts],
-	} = useGetAccountUserAccount(project);
+	} = useGetAccountUserAccount(KoroneikiAccount);
 
 	const [administratorsAvailable, setAdministratorsAvailable] = useState();
 	const [filters, setFilters] = useFilters(setFilterTerm);
@@ -122,7 +126,7 @@ const TeamMembersTable = ({project, provisioningServerAPI, sessionId}) => {
 
 			deleteAllPreviousUserRoles(
 				client,
-				project.accountKey,
+				KoroneikiAccount.accountKey,
 				userAccount,
 				accountRolesOptions
 			);
@@ -130,14 +134,14 @@ const TeamMembersTable = ({project, provisioningServerAPI, sessionId}) => {
 			client.mutate({
 				mutation: associateUserAccountWithAccountAndAccountRole,
 				variables: {
-					accountKey: project.accountKey,
+					accountKey: KoroneikiAccount.accountKey,
 					accountRoleId: currentRole.id,
 					emailAddress: userAccount?.emailAddress,
 				},
 			});
 
 			associateContactRoleNameByEmailByProject(
-				project.accountKey,
+				KoroneikiAccount.accountKey,
 				provisioningServerAPI,
 				sessionId,
 				encodeURI(userAccount?.emailAddress),
@@ -174,7 +178,7 @@ const TeamMembersTable = ({project, provisioningServerAPI, sessionId}) => {
 			await client.mutate({
 				mutation: deleteAccountUserAccount,
 				variables: {
-					accountKey: project.accountKey,
+					accountKey: KoroneikiAccount.accountKey,
 					emailAddress: userToBeRemoved?.emailAddress,
 				},
 			});
@@ -195,7 +199,7 @@ const TeamMembersTable = ({project, provisioningServerAPI, sessionId}) => {
 			);
 
 			deleteContactRoleNameByEmailByProject(
-				project.accountKey,
+				KoroneikiAccount.accountKey,
 				provisioningServerAPI,
 				sessionId,
 				encodeURI(userToBeRemoved?.emailAddress),
@@ -239,11 +243,11 @@ const TeamMembersTable = ({project, provisioningServerAPI, sessionId}) => {
 			/>
 
 			<TeamMembersTableHeader
+				KoroneikiAccount={KoroneikiAccount}
 				administratorsAvailable={administratorsAvailable}
 				filterState={[filters, setFilters]}
 				hasAdminAccess={hasAdminAccess}
 				loading={isLoadingUserAccounts}
-				project={project}
 				sessionId={sessionId}
 				setAdministratorsAvailable={setAdministratorsAvailable}
 				setUserAccounts={setUserAccounts}

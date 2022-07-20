@@ -23,7 +23,7 @@ import TeamMembersFilter from './components/TeamMembersFilter';
 const TeamMembersTableHeader = ({
 	administratorsAvailable,
 	hasAdminAccess,
-	project,
+	KoroneikiAccount,
 	sessionId,
 	setAdministratorsAvailable,
 	setUserAccounts,
@@ -43,9 +43,13 @@ const TeamMembersTableHeader = ({
 		)?.length;
 
 		setAdministratorsAvailable(
-			project.maxRequestors - currentAdministrators
+			KoroneikiAccount.maxRequestors - currentAdministrators
 		);
-	}, [project.maxRequestors, setAdministratorsAvailable, userAccounts]);
+	}, [
+		KoroneikiAccount.maxRequestors,
+		setAdministratorsAvailable,
+		userAccounts,
+	]);
 
 	const handleOnUserInvite = (invitedUsers) => {
 		setVisible(false);
@@ -81,7 +85,7 @@ const TeamMembersTableHeader = ({
 				/>
 
 				<div className="align-items-center d-flex ml-auto">
-					{project?.maxRequestors > 0 && (
+					{KoroneikiAccount?.maxRequestors > 0 && (
 						<>
 							<PopoverIconButton alignPosition="top" />
 
@@ -103,7 +107,7 @@ const TeamMembersTableHeader = ({
 											? '0'
 											: administratorsAvailable
 									}`,
-									project.maxRequestors,
+									KoroneikiAccount.maxRequestors,
 								])}`}
 							</p>
 						</>
@@ -132,8 +136,8 @@ const TeamMembersTableHeader = ({
 				<InvitesModal
 					mutateUserData={handleOnUserInvite}
 					{...modalProps}
+					KoroneikiAccount={KoroneikiAccount}
 					availableAdministratorAssets={administratorsAvailable}
-					project={project}
 					sessionId={sessionId}
 				/>
 			)}

@@ -20,7 +20,7 @@ import {PRODUCT_TYPES} from '../../../../../utils/constants/productTypes';
 import {STATUS_TAG_TYPE_NAMES} from '../../../../../utils/constants/statusTag';
 import ManageProductButton from './components/ManageProductButton';
 
-const ManageProductUser = ({project, subscriptionGroups}) => {
+const ManageProductUser = ({KoroneikiAccount, subscriptionGroups}) => {
 	const [dxpCloudProjectId, setDxpCloudProjectId] = useState('');
 	const [analyctsCloudGroupId, setAnalyctsCloudGroupId] = useState('');
 	const {client} = useAppPropertiesContext();
@@ -33,7 +33,7 @@ const ManageProductUser = ({project, subscriptionGroups}) => {
 			const {data} = await client.query({
 				query: getDXPCloudEnvironment,
 				variables: {
-					filter: `accountKey eq '${project.accountKey}'`,
+					filter: `accountKey eq '${KoroneikiAccount.accountKey}'`,
 					scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
 				},
 			});
@@ -51,7 +51,7 @@ const ManageProductUser = ({project, subscriptionGroups}) => {
 			const {data} = await client.query({
 				query: getAnalyticsCloudWorkspace,
 				variables: {
-					filter: `accountKey eq '${project.accountKey}'`,
+					filter: `accountKey eq '${KoroneikiAccount.accountKey}'`,
 					scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
 				},
 			});
@@ -63,7 +63,7 @@ const ManageProductUser = ({project, subscriptionGroups}) => {
 			}
 		};
 		getAnalyticsCloudWorkspaces();
-	}, [client, project.accountKey]);
+	}, [client, KoroneikiAccount.accountKey]);
 
 	const isActiveStatusDXPC =
 		subscriptionGroups.find(
