@@ -439,6 +439,18 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 	}
 
 	@Override
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
+		return mbThreadFinder.findByMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
+	@Override
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
+		return mbThreadFinder.countMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
+	@Override
 	public List<MBThread> getPriorityThreads(long categoryId, double priority)
 		throws PortalException {
 

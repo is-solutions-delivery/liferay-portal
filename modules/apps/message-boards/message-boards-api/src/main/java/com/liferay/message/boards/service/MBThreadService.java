@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.service.BaseService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -109,6 +111,16 @@ public interface MBThreadService extends BaseService {
 	public int getGroupThreadsCount(
 		long groupId, long userId, int status, boolean subscribed,
 		boolean includeAnonymous);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition);
 
 	/**
 	 * Returns the OSGi service identifier.
