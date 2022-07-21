@@ -1432,18 +1432,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				KnowledgeBaseFolder.toDTO(jsonObject.toString()));
 	}
 
-	private void _addKnowledgeBaseFolder(
-			JSONObject jsonObject, long parentKnowledgeBaseObjectId,
-			String resourcePath, ServiceContext serviceContext)
-		throws Exception {
-
-		KnowledgeBaseFolder knowledgeBaseFolder = _addKnowledgeBaseFolder(
-			jsonObject, parentKnowledgeBaseObjectId, serviceContext);
-
-		_addKnowledgeBaseObjects(
-			true, knowledgeBaseFolder.getId(), resourcePath, serviceContext);
-	}
-
 	private void _addKnowledgeBaseObjects(
 			boolean folder, long parentKnowledgeBaseObjectId,
 			String parentResourcePath, ServiceContext serviceContext)
@@ -1478,7 +1466,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext);
 			}
 			else {
-				_addKnowledgeBaseFolder(
+				_addOrUpdateKnowledgeBaseFolder(
 					jsonObject, parentKnowledgeBaseObjectId,
 					resourcePath.substring(
 						0, resourcePath.indexOf(".metadata.json")),
@@ -2470,6 +2458,41 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_assetListEntryLocalService.updateAssetListEntry(
 				assetListEntry.getAssetListEntryId(),
 				assetListJSONObject.getString("title"));
+		}
+	}
+
+	private void _addOrUpdateKnowledgeBaseFolder(
+			JSONObject jsonObject, long parentKnowledgeBaseObjectId,
+			String resourcePath, ServiceContext serviceContext)
+		throws Exception {
+
+		KnowledgeBaseFolderResource.Builder knowledgeBaseFolderResourceBuilder =
+			_knowledgeBaseFolderResourceFactory.create();
+
+		KnowledgeBaseFolderResource knowledgeBaseFolderResource =
+			knowledgeBaseFolderResourceBuilder.httpServletRequest(
+				serviceContext.getRequest()
+			).user(
+				serviceContext.fetchUser()
+			).build();
+
+		KnowledgeBaseFolder knowledgeBaseFolder = _addKnowledgeBaseFolder(
+			jsonObject, parentKnowledgeBaseObjectId, serviceContext);
+
+		KnowledgeBaseFolder knowledgeBaseFolderResult =
+			knowledgeBaseFolderResource.
+				getSiteKnowledgeBaseFolderByExternalReferenceCode(
+					knowledgeBaseFolder.getSiteId(),
+					knowledgeBaseFolder.getExternalReferenceCode());
+
+		if (knowledgeBaseFolderResult != null) {
+			knowledgeBaseFolderResource.putKnowledgeBaseFolder(
+				knowledgeBaseFolderResult.getId(), knowledgeBaseFolderResult);
+		}
+		else {
+			_addKnowledgeBaseObjects(
+				true, knowledgeBaseFolder.getId(), resourcePath,
+				serviceContext);
 		}
 	}
 
