@@ -13,6 +13,10 @@
  */
 
 import {APIResponse, TestrayCaseResult} from '../../graphql/queries';
+import yupSchema from '../../schema/yup';
+import fetcher from '../fetcher';
+
+type CaseResult = typeof yupSchema.caseResult.__outputType;
 
 const caseResultResource =
 	'/caseresults?nestedFields=case,component.team,build.productVersion,build.routine,run,user&nestedFieldsDepth=3';
@@ -56,6 +60,18 @@ const normalizeCaseResultResponse = (caseResult: TestrayCaseResult) => ({
 	user: caseResult.r_userToCaseResults_user,
 });
 
+const adapter = ({comment, dueStatus, issues}: CaseResult) => ({
+	comment,
+	dueStatus,
+	issues,
+});
+
+const createCaseResult = (caseResult: CaseResult) =>
+	fetcher.post('/caseresults', adapter(caseResult));
+
+const updateCaseResult = (id: number, caseResult: CaseResult) =>
+	fetcher.put(`/caseresults/${id}`, adapter(caseResult));
+
 const getCaseResultTransformData = (
 	response: APIResponse<TestrayCaseResult>
 ) => ({
@@ -63,4 +79,11 @@ const getCaseResultTransformData = (
 	items: response?.items?.map(normalizeCaseResultResponse),
 });
 
-export {caseResultResource, getCaseResultTransformData, getCaseResults};
+export {
+	caseResultResource,
+	createCaseResult,
+	getCaseResults,
+	getCaseResultTransformData,
+	normalizeCaseResultResponse,
+	updateCaseResult,
+};

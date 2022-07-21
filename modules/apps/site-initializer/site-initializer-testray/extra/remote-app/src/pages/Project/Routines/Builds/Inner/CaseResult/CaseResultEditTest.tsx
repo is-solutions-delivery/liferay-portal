@@ -26,7 +26,13 @@ import useFormActions from '../../../../../../hooks/useFormActions';
 import i18n from '../../../../../../i18n';
 import yupSchema from '../../../../../../schema/yup';
 import {Liferay} from '../../../../../../services/liferay';
+import {
+	createCaseResult,
+	updateCaseResult,
+} from '../../../../../../services/rest/TestrayCaseResult';
+import {createProject} from '../../../../../../services/rest/TestrayProject';
 import {TEST_STATUS} from '../../../../../../util/constants';
+import {APIResponse, TestrayCaseResult} from '../../graphql/queries';
 
 type CaseResultForm = {
 	comment: string;
@@ -36,7 +42,7 @@ type CaseResultForm = {
 
 const CaseResultEditTest = () => {
 	const {
-		form: {onClose, onSave},
+		form: {onClose, onError, onSave, onSubmitRest},
 	} = useFormActions();
 
 	const {refetch}: {refetch: () => void} = useOutletContext();
@@ -60,22 +66,28 @@ const CaseResultEditTest = () => {
 		register,
 	};
 
-	const _onSubmit = async (form: CaseResultForm) => {
-		await onUpdateCaseResult({
-			variables: {
-				CaseResult: {
-					...form,
-					closedDate: new Date(),
-					r_userToCaseResults_userId: Liferay.ThemeDisplay.getUserId(),
-				},
-				caseResultId,
-			},
-		});
+	// const _onSubmit = async (form: CaseResultForm) => {
+	// 	await onUpdateCaseResult({
+	// 		variables: {
+	// 			CaseResult: {
+	// 				...form,
+	// 				closedDate: new Date(),
+	// 				r_userToCaseResults_userId: Liferay.ThemeDisplay.getUserId(),
+	// 			},
+	// 			caseResultId,
+	// 		},
+	// 	});
 
-		await refetch();
+	// 	onSave();
+	// };
 
-		onSave();
-	};
+	const _onSubmit = (form: TestrayCaseResult) =>
+		onSubmitRest(form, {
+			create: createCaseResult,
+			update: updateCaseResult,
+		})
+			.then(onSave)
+			.catch(onError);
 
 	const dueStatus = watch('dueStatus');
 
