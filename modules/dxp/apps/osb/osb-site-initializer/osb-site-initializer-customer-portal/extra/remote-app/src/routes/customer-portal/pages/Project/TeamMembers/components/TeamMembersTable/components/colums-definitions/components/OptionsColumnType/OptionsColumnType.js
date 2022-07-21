@@ -16,7 +16,7 @@ import {
 	ButtonDropDown,
 } from '../../../../../../../../../../../common/components';
 import {TEAM_MEMBERS_ACTION_TYPES} from '../../../../utils/constants';
-import {getIsEditingUser} from '../../../../utils/getIsEditingUser';
+import {getIsEditingUser} from '../../utils/getIsEditingUser';
 
 const MenuUserActions = ({cancelChanges, confirmChanges, userAccount}) => (
 	<div className="align-items-center d-flex">

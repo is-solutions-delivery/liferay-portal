@@ -9,7 +9,7 @@
  * distribution rights of the Software.
  */
 
-import {TEAM_MEMBERS_ACTION_TYPES} from './constants';
+import {TEAM_MEMBERS_ACTION_TYPES} from '../../../utils/constants';
 
 export function getIsEditingUser(userAction, currentUserId) {
 	return (

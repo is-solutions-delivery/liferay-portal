@@ -9,9 +9,9 @@
  * distribution rights of the Software.
  */
 import {useMemo} from 'react';
-import {getCurrentActiveRoles} from '../../../../utils/getCurrentActiveRoles';
-import {getIsEditingUser} from '../../../../utils/getIsEditingUser';
 import SelectRole from '../../../SelectRoles';
+import {getCurrentActiveRoles} from '../../utils/getCurrentActiveRoles';
+import {getIsEditingUser} from '../../utils/getIsEditingUser';
 
 const RoleColumnType = ({
 	accountRoles,
