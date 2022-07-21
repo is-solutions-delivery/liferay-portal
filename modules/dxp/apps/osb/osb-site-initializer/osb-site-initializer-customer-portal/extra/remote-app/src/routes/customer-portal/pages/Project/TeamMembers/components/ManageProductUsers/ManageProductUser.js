@@ -9,72 +9,23 @@
  * distribution rights of the Software.
  */
 
-import {useEffect, useState} from 'react';
 import i18n from '../../../../../../../common/I18n';
-import {useAppPropertiesContext} from '../../../../../../../common/contexts/AppPropertiesContext';
-import {
-	getAnalyticsCloudWorkspace,
-	getDXPCloudEnvironment,
-} from '../../../../../../../common/services/liferay/graphql/queries';
-import {PRODUCT_TYPES} from '../../../../../utils/constants/productTypes';
-import {STATUS_TAG_TYPE_NAMES} from '../../../../../utils/constants/statusTag';
 import ManageProductButton from './components/ManageProductButton';
+import useGetAnalyticsCloudWorkspace from './hooks/useGetAnalyticsCloudWorkspaces';
+import useGetDxpCloudEnvimentProjectId from './hooks/useGetDxpCloudEnvimentProjectId';
+import getActiveStatusAC from './utils/getActiveStatusAC';
+import getActivateStatusDXPC from './utils/getActiveStatusDXPC';
 
-const ManageProductUser = ({KoroneikiAccount, subscriptionGroups}) => {
-	const [dxpCloudProjectId, setDxpCloudProjectId] = useState('');
-	const [analyctsCloudGroupId, setAnalyctsCloudGroupId] = useState('');
-	const {client} = useAppPropertiesContext();
+const ManageProductUser = ({koroneikiAccount, subscriptionGroups}) => {
+	const {activatedLinkAC} = useGetAnalyticsCloudWorkspace(koroneikiAccount);
 
-	const activatedLinkDXPC = `https://console.liferay.cloud/projects/${dxpCloudProjectId}/overview`;
-	const activatedLinkAC = `https://analytics.liferay.com/workspace/${analyctsCloudGroupId}/sites`;
+	const {activatedLinkDXPC} = useGetDxpCloudEnvimentProjectId(
+		koroneikiAccount
+	);
 
-	useEffect(() => {
-		const getDxpCloudEnvimentProjectId = async () => {
-			const {data} = await client.query({
-				query: getDXPCloudEnvironment,
-				variables: {
-					filter: `accountKey eq '${KoroneikiAccount.accountKey}'`,
-					scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
-				},
-			});
+	const isActiveStatusDXPC = getActivateStatusDXPC(subscriptionGroups);
 
-			if (data) {
-				const dxpProjectId =
-					data.c?.dXPCloudEnvironments?.items[0]?.projectId;
-				setDxpCloudProjectId(dxpProjectId);
-			}
-		};
-
-		getDxpCloudEnvimentProjectId();
-
-		const getAnalyticsCloudWorkspaces = async () => {
-			const {data} = await client.query({
-				query: getAnalyticsCloudWorkspace,
-				variables: {
-					filter: `accountKey eq '${KoroneikiAccount.accountKey}'`,
-					scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
-				},
-			});
-			if (data) {
-				const analyticsCloudWorkspacesGroupID =
-					data?.c?.analyticsCloudWorkspaces?.items[0]
-						?.workspaceGroupId;
-				setAnalyctsCloudGroupId(analyticsCloudWorkspacesGroupID);
-			}
-		};
-		getAnalyticsCloudWorkspaces();
-	}, [client, KoroneikiAccount.accountKey]);
-
-	const isActiveStatusDXPC =
-		subscriptionGroups.find(
-			(subscriptionGroup) =>
-				subscriptionGroup.name === PRODUCT_TYPES.dxpCloud
-		)?.activationStatus === STATUS_TAG_TYPE_NAMES.active;
-	const isActiveStatusAC =
-		subscriptionGroups.find(
-			(subscriptionGroup) =>
-				subscriptionGroup.name === PRODUCT_TYPES.analyticsCloud
-		)?.activationStatus === STATUS_TAG_TYPE_NAMES.active;
+	const isActiveStatusAC = getActiveStatusAC(subscriptionGroups);
 
 	return (
 		<>

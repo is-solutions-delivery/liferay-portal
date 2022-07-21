@@ -45,7 +45,7 @@ const TeamMembers = () => {
 
 			<div className="mt-4">
 				<TeamMembersTable
-					KoroneikiAccount={project}
+					koroneikiAccount={project}
 					provisioningServerAPI={provisioningServerAPI}
 					sessionId={sessionId}
 				/>
@@ -53,7 +53,7 @@ const TeamMembers = () => {
 
 			<div className="mt-5">
 				<ManageProductUser
-					KoroneikiAccount={project}
+					koroneikiAccount={project}
 					subscriptionGroups={subscriptionGroups}
 				/>
 			</div>

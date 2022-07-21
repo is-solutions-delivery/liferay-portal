@@ -14,8 +14,8 @@ import i18n from '../../../../../../../../../../../common/I18n';
 import InviteTeamMembersForm from '../../../../../../../../../../../common/containers/setup-forms/InviteTeamMembersForm';
 
 const InvitesModal = ({
-	KoroneikiAccount,
 	availableAdministratorAssets,
+	koroneikiAccount,
 	mutateUserData,
 	observer,
 	onClose,
@@ -28,7 +28,7 @@ const InvitesModal = ({
 				handlePage={onClose}
 				leftButton={i18n.translate('cancel')}
 				mutateUserData={mutateUserData}
-				project={KoroneikiAccount}
+				project={koroneikiAccount}
 				sessionId={sessionId}
 			/>
 		</ClayModal>

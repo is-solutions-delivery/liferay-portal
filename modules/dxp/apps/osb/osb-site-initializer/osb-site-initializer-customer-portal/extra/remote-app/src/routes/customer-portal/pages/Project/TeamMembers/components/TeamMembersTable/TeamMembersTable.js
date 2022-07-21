@@ -47,18 +47,18 @@ const ROLE_FILTER_NAME = 'contactRoleNames';
 const ALERT_TIMEOUT = 3000;
 
 const TeamMembersTable = ({
-	KoroneikiAccount,
+	koroneikiAccount,
 	provisioningServerAPI,
 	sessionId,
 }) => {
-	const {accountRoles} = useAccountRoles(KoroneikiAccount);
+	const {accountRoles} = useAccountRoles(koroneikiAccount);
 	const {client} = useAppPropertiesContext();
 
 	const {
 		isLoadingUserAccounts,
 		setFilterTerm,
 		userAccountsState: [userAccounts, setUserAccounts],
-	} = useGetAccountUserAccount(KoroneikiAccount);
+	} = useGetAccountUserAccount(koroneikiAccount);
 
 	const [administratorsAvailable, setAdministratorsAvailable] = useState();
 	const [filters, setFilters] = useFilters(setFilterTerm);
@@ -126,7 +126,7 @@ const TeamMembersTable = ({
 
 			deleteAllPreviousUserRoles(
 				client,
-				KoroneikiAccount.accountKey,
+				koroneikiAccount.accountKey,
 				userAccount,
 				accountRolesOptions
 			);
@@ -134,14 +134,14 @@ const TeamMembersTable = ({
 			client.mutate({
 				mutation: associateUserAccountWithAccountAndAccountRole,
 				variables: {
-					accountKey: KoroneikiAccount.accountKey,
+					accountKey: koroneikiAccount.accountKey,
 					accountRoleId: currentRole.id,
 					emailAddress: userAccount?.emailAddress,
 				},
 			});
 
 			associateContactRoleNameByEmailByProject(
-				KoroneikiAccount.accountKey,
+				koroneikiAccount.accountKey,
 				provisioningServerAPI,
 				sessionId,
 				encodeURI(userAccount?.emailAddress),
@@ -178,7 +178,7 @@ const TeamMembersTable = ({
 			await client.mutate({
 				mutation: deleteAccountUserAccount,
 				variables: {
-					accountKey: KoroneikiAccount.accountKey,
+					accountKey: koroneikiAccount.accountKey,
 					emailAddress: userToBeRemoved?.emailAddress,
 				},
 			});
@@ -199,7 +199,7 @@ const TeamMembersTable = ({
 			);
 
 			deleteContactRoleNameByEmailByProject(
-				KoroneikiAccount.accountKey,
+				koroneikiAccount.accountKey,
 				provisioningServerAPI,
 				sessionId,
 				encodeURI(userToBeRemoved?.emailAddress),
@@ -243,10 +243,10 @@ const TeamMembersTable = ({
 			/>
 
 			<TeamMembersTableHeader
-				KoroneikiAccount={KoroneikiAccount}
 				administratorsAvailable={administratorsAvailable}
 				filterState={[filters, setFilters]}
 				hasAdminAccess={hasAdminAccess}
+				koroneikiAccount={koroneikiAccount}
 				loading={isLoadingUserAccounts}
 				sessionId={sessionId}
 				setAdministratorsAvailable={setAdministratorsAvailable}
