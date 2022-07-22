@@ -21,6 +21,53 @@ type CaseResult = typeof yupSchema.caseResult.__outputType;
 const caseResultResource =
 	'/caseresults?nestedFields=case,component.team,build.productVersion,build.routine,run,user&nestedFieldsDepth=3';
 
+const nestedFieldsParam =
+	'nestedFields=case.caseType,component,build.productVersion,build.routine,run,user&nestedFieldsDepth=3';
+
+const caseResultsResource = `/caseresults?${nestedFieldsParam}`;
+
+const getCaseResultsQuery = (caseResultId: number | string | undefined) => {
+	const url = `/caseresults/${caseResultId}`;
+	// eslint-disable-next-line no-console
+	console.log('INTERN', url);
+
+	return url;
+};
+
+const transformDataCaseResults = (caseResult: TestrayCaseResult) => {
+	return {
+		...caseResult,
+		build: caseResult?.r_buildToCaseResult_c_build
+			? {
+					...caseResult?.r_buildToCaseResult_c_build,
+					productVersion:
+						caseResult.r_buildToCaseResult_c_build
+							?.r_productVersionToBuilds_c_productVersion,
+					routine:
+						caseResult.r_buildToCaseResult_c_build
+							?.r_routineToBuilds_c_routine,
+			  }
+			: null,
+		case: caseResult?.r_caseToCaseResult_c_case
+			? {
+					...caseResult?.r_caseToCaseResult_c_case,
+					caseType: caseResult?.r_caseToCaseResult_c_case?.caseType,
+					component:
+						caseResult?.r_caseToCaseResult_c_case
+							?.r_componentToCases_c_component,
+			  }
+			: null,
+		component: caseResult?.r_componentToCaseResult_c_component || null,
+		run: caseResult?.r_runToCaseResult_c_run
+			? {
+					...caseResult?.r_runToCaseResult_c_run,
+					build: caseResult?.r_runToCaseResult_c_run?.build,
+			  }
+			: null,
+		user: caseResult?.r_userToCaseResults_user,
+	};
+};
+
 const normalizeCaseResultResponse = (caseResult: TestrayCaseResult) => ({
 	...caseResult,
 	build: caseResult.r_buildToCaseResult_c_build
@@ -78,8 +125,11 @@ const getCaseResultTransformData = (
 
 export {
 	caseResultResource,
+	caseResultsResource,
+	createCaseResult,
+	getCaseResultsQuery,
 	getCaseResultTransformData,
 	normalizeCaseResultResponse,
-	createCaseResult,
 	updateCaseResult,
+	transformDataCaseResults,
 };

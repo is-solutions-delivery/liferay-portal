@@ -78,8 +78,7 @@ const CaseResult = () => {
 	const getAttachments = (): TestrayAttachment[] => {
 		try {
 			return JSON.parse(caseResult.attachments);
-		}
-		catch (error) {
+		} catch (error) {
 			return [];
 		}
 	};
@@ -222,7 +221,7 @@ const CaseResult = () => {
 						/>
 
 						<Link
-							to={`/project/${projectId}/cases/${caseResult.case.id}`}
+							to={`/project/${projectId}/cases/${caseResult.id}`}
 						>
 							{i18n.translate('view-case')}
 						</Link>
