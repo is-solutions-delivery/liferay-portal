@@ -1,0 +1,17 @@
+[
+	{
+		"externalReferenceCode": "CO-001",
+		"name": "Company 01",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "CO-002",
+		"name": "Company 02",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "CO-003",
+		"name": "Company 03",
+		"type": "business"
+	}	
+]

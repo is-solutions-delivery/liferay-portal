@@ -1,0 +1,18 @@
+[
+	{
+		"actions": [
+		],
+		"description": "",
+		"name": "Account Role 01",
+		"subtype": "",
+		"type": 6
+	},
+	{
+		"actions": [
+		],
+		"description": "",
+		"name": "Account Role 02",
+		"subtype": "",
+		"type": 6
+	}
+]

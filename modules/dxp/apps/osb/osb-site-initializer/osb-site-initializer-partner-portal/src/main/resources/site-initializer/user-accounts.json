@@ -1,0 +1,16 @@
+[
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "CO-001",
+				"roleBriefs": [
+					"Account Role 01"
+				]
+			}
+		],
+		"emailAddress": "test.user1@liferay.com",
+		"familyName": "User 1",
+		"givenName": "Test",
+		"name": "Test User 1"
+	}
+]
