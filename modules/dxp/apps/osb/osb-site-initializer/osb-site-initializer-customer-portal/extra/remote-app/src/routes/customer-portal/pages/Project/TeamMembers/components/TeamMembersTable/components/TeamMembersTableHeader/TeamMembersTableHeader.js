@@ -11,10 +11,10 @@
 
 import {useModal} from '@clayui/core';
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import i18n from '../../../../../../../../../common/I18n';
 import {Button} from '../../../../../../../../../common/components';
-import {ROLE_TYPES} from '../../../../../../../../../common/utils/constants';
+import useAvailablesAdmins from '../../hooks/useAvailablesAdmins';
 import BadgeFilter from './components/BadgeFilter';
 import InvitesModal from './components/InvitesModal';
 import PopoverIconButton from './components/PopoverIconButton';
@@ -31,25 +31,13 @@ const TeamMembersTableHeader = ({
 	loading,
 	filterState: [filters, setFilters],
 }) => {
-	const [visible, setVisible] = useState(false);
-
-	useEffect(() => {
-		const currentAdministrators = userAccounts?.filter((userAccount) =>
-			userAccount?.roles?.some(
-				(role) =>
-					role === ROLE_TYPES.admin.key ||
-					role === ROLE_TYPES.requester.key
-			)
-		)?.length;
-
-		setAdministratorsAvailable(
-			koroneikiAccount.maxRequestors - currentAdministrators
-		);
-	}, [
-		koroneikiAccount.maxRequestors,
-		setAdministratorsAvailable,
+	administratorsAvailable = useAvailablesAdmins(
 		userAccounts,
-	]);
+		setAdministratorsAvailable,
+		koroneikiAccount
+	);
+
+	const [visible, setVisible] = useState(false);
 
 	const handleOnUserInvite = (invitedUsers) => {
 		setVisible(false);
