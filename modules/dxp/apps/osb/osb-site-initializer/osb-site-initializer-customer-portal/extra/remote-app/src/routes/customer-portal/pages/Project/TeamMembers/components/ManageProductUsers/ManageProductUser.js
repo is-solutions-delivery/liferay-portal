@@ -19,9 +19,7 @@ import getActivateStatusDXPC from './utils/getActiveStatusDXPC';
 const ManageProductUser = ({koroneikiAccount, subscriptionGroups}) => {
 	const {activatedLinkAC} = useGetAnalyticsCloudWorkspace(koroneikiAccount);
 
-	const {activatedLinkDXPC} = useGetDxpCloudEnvimentProjectId(
-		koroneikiAccount
-	);
+	const activatedLinkDXPC = useGetDxpCloudEnvimentProjectId(koroneikiAccount);
 
 	const isActiveStatusDXPC = getActivateStatusDXPC(subscriptionGroups);
 

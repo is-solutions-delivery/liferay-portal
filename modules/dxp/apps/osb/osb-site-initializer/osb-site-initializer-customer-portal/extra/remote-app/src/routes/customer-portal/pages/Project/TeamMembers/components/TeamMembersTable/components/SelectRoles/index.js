@@ -8,48 +8,5 @@
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
  */
-import {ClaySelect} from '@clayui/form';
-import ClayIcon from '@clayui/icon';
 
-const SelectRole = ({
-	accountRoles,
-	currentRole,
-	selectedRole,
-	setSelectedRole,
-}) => {
-	const handleOnChangeRole = (roleName) => {
-		const accountRole = accountRoles?.find(
-			(accountRole) => accountRole?.name === roleName
-		);
-
-		if (accountRole) {
-			setSelectedRole(accountRole.name);
-		}
-	};
-
-	return (
-		<div className="position-relative">
-			<ClayIcon className="select-icon" symbol="caret-bottom" />
-
-			<ClaySelect
-				className="font-weight-bold"
-				onChange={({target}) => {
-					handleOnChangeRole(target.value);
-				}}
-				value={selectedRole || currentRole}
-			>
-				{accountRoles?.map(({disabled, id, name}) => (
-					<ClaySelect.Option
-						className="options"
-						disabled={disabled}
-						key={id}
-						label={name}
-						value={name}
-					/>
-				))}
-			</ClaySelect>
-		</div>
-	);
-};
-
-export default SelectRole;
+export {default} from './SelectRole';
