@@ -1,16 +1,14 @@
 @component-name = "portal-solutions"
-@ignore = "true"
 definition {
 
-	property custom.properties = "javascript.single.page.application.enabled=false${line.separator}jsonws.web.service.paths.excludes=";
 	property osgi.modules.includes = "osb-site-initializer-customer-portal";
 	property portal.release = "false";
 	property portal.upstream = "true";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "OSB Site Initializer Customer Portal";
 
-	var testSiteName = "Customer Portal Name";
-	var testSiteURL = "customer-portal-name";
+	var testSiteName = "Customer Portal Site";
+	var testSiteURL = "customer-portal-site";
 
 	setUp {
 		task ("Set up instance and sign in") {
@@ -20,31 +18,27 @@ definition {
 		}
 
 		task ("Create a new Customer Portal Site") {
-			Site.openSitesAdmin();
-
-			TeamExtranet.addSiteTemplateCP(
-				siteName = "${testSiteName}",
-				siteTemplateName = "Liferay OSB Site Initializer Customer Portal");
+			CustomerPortal.addCustomerPortalSite(siteName = "${testSiteName}");
 		}
 	}
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
+		CustomerPortal.customerPortalApisTearDown();
+
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
 			JSONGroup.deleteGroupByName(groupName = "${testSiteName}");
-
-			CustomerPortal.customerPortalApisTearDown();
 		}
 	}
 
 	@description = "LPS-143811 - Verify if Analytics Cloud option is showing under Product Activation."
 	@priority = "3"
 	test IsAnalyticsCloudOptionAvailable {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
@@ -60,7 +54,7 @@ definition {
 	@description = "LPS-143813 - Verify if Commerce option is showing under Product Activation."
 	@priority = "3"
 	test IsCommerceOptionAvailable {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
@@ -76,7 +70,7 @@ definition {
 	@description = "LPS-143815 - Verify if DXP Cloud option is showing under Product Activation."
 	@priority = "3"
 	test IsDXPCloudOptionAvailable {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
@@ -92,7 +86,7 @@ definition {
 	@description = "LPS-143814 - Verify if DXP option is showing under Product Activation."
 	@priority = "3"
 	test IsDXPOptionAvailable {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
@@ -108,7 +102,7 @@ definition {
 	@description = "LPS-143816 - Verify if Enterprise Search option is showing under Product Activation."
 	@priority = "3"
 	test IsEnterpriseSearchOptionAvailable {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
@@ -124,7 +118,7 @@ definition {
 	@description = "LPS-143801 - Verify if Overview is displayed on Navigation Menu."
 	@priority = "4"
 	test IsOverviewMenuDisplayed {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
@@ -137,7 +131,7 @@ definition {
 	@description = "LPS-143817 - Verify if Portal option is showing under Product Activation."
 	@priority = "3"
 	test IsPortalOptionAvailable {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
@@ -154,7 +148,7 @@ definition {
 	@ignore = "true"
 	@priority = "4"
 	test IsTeamMembersMenuDisplayed {
-		ApplicationsMenu.gotoSite(key_site = "Customer Portal Name");
+		ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 		Click(
 			locator1 = "CP2LiferayContact#PROJECT_CARD",
