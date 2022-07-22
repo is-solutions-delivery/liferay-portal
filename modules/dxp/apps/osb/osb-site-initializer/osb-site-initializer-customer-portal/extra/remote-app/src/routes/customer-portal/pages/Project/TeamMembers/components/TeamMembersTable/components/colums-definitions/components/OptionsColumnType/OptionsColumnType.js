@@ -12,7 +12,7 @@
 import {ButtonWithIcon} from '@clayui/core';
 import {ButtonDropDown} from '../../../../../../../../../../../common/components';
 import {TEAM_MEMBERS_ACTION_TYPES} from '../../../../utils/constants';
-import {getIsEditingUser} from '../../commom/utils/getIsEditingUser';
+import {getIsEditingUser} from '../commom/utils/getIsEditingUser';
 import MenuUserActions from './components/MenuUserActions';
 import {getUserOptions} from './utils/getUserOptions';
 
