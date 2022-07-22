@@ -12,27 +12,22 @@
  * details.
  */
 
-import {useMutation} from '@apollo/client';
 import ClayAlert from '@clayui/alert';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useForm} from 'react-hook-form';
-import {useOutletContext, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 
 import Form from '../../../../../../components/Form';
 import Footer from '../../../../../../components/Form/Footer';
 import Container from '../../../../../../components/Layout/Container';
-import {UpdateCaseResult} from '../../../../../../graphql/mutations';
 import useFormActions from '../../../../../../hooks/useFormActions';
 import i18n from '../../../../../../i18n';
 import yupSchema from '../../../../../../schema/yup';
-import {Liferay} from '../../../../../../services/liferay';
 import {
 	createCaseResult,
 	updateCaseResult,
 } from '../../../../../../services/rest/TestrayCaseResult';
-import {createProject} from '../../../../../../services/rest/TestrayProject';
 import {TEST_STATUS} from '../../../../../../util/constants';
-import {APIResponse, TestrayCaseResult} from '../../graphql/queries';
 
 type CaseResultForm = {
 	comment: string;
@@ -45,11 +40,7 @@ const CaseResultEditTest = () => {
 		form: {onClose, onError, onSave, onSubmitRest},
 	} = useFormActions();
 
-	const {refetch}: {refetch: () => void} = useOutletContext();
-
-	const [onUpdateCaseResult] = useMutation(UpdateCaseResult);
-
-	const {caseResultId, status} = useParams();
+	const {status} = useParams();
 
 	const {
 		formState: {errors},
@@ -66,22 +57,7 @@ const CaseResultEditTest = () => {
 		register,
 	};
 
-	// const _onSubmit = async (form: CaseResultForm) => {
-	// 	await onUpdateCaseResult({
-	// 		variables: {
-	// 			CaseResult: {
-	// 				...form,
-	// 				closedDate: new Date(),
-	// 				r_userToCaseResults_userId: Liferay.ThemeDisplay.getUserId(),
-	// 			},
-	// 			caseResultId,
-	// 		},
-	// 	});
-
-	// 	onSave();
-	// };
-
-	const _onSubmit = (form: TestrayCaseResult) =>
+	const _onSubmit = (form: CaseResultForm) =>
 		onSubmitRest(form, {
 			create: createCaseResult,
 			update: updateCaseResult,
