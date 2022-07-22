@@ -89,6 +89,21 @@
 			},
 			{
 				"externalReferenceCode": "ERC-011"
+			},
+			{
+				"externalReferenceCode": "ERC-012"
+			},
+			{
+				"externalReferenceCode": "ERC-013"
+			},
+			{
+				"externalReferenceCode": "ERC-014"
+			},
+			{
+				"externalReferenceCode": "ERC-015"
+			},
+			{
+				"externalReferenceCode": "ERC-016"
 			}
 		],
 		"alternateName": "test",
