@@ -9,7 +9,7 @@
  * distribution rights of the Software.
  */
 
-import {ROLE_TYPES} from '../../../../../../../../../../common/utils/constants';
+import {ROLE_TYPES} from '../../../../../../../../../../../../common/utils/constants';
 
 export function getCurrentActiveRoles(roles) {
 	const roleValues = Object.values(ROLE_TYPES);

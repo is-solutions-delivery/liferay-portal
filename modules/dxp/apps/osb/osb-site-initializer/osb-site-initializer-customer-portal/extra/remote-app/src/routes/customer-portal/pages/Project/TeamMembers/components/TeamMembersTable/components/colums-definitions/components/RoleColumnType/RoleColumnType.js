@@ -10,8 +10,8 @@
  */
 import {useMemo} from 'react';
 import SelectRole from '../../../SelectRoles';
-import {getCurrentActiveRoles} from '../../utils/getCurrentActiveRoles';
-import {getIsEditingUser} from '../../utils/getIsEditingUser';
+import {getIsEditingUser} from '../../commom/utils/getIsEditingUser';
+import {getCurrentActiveRoles} from './utils/getCurrentActiveRoles';
 
 const RoleColumnType = ({
 	accountRoles,

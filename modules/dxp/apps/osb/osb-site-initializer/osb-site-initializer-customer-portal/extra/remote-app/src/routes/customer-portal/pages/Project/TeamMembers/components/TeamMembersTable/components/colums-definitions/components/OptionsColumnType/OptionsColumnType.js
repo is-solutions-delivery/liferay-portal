@@ -10,30 +10,11 @@
  */
 
 import {ButtonWithIcon} from '@clayui/core';
-import i18n from '../../../../../../../../../../../common/I18n';
-import {
-	Button,
-	ButtonDropDown,
-} from '../../../../../../../../../../../common/components';
+import {ButtonDropDown} from '../../../../../../../../../../../common/components';
 import {TEAM_MEMBERS_ACTION_TYPES} from '../../../../utils/constants';
-import {getIsEditingUser} from '../../utils/getIsEditingUser';
-
-const MenuUserActions = ({cancelChanges, confirmChanges, userAccount}) => (
-	<div className="align-items-center d-flex">
-		<Button
-			className="mr-2"
-			displayType="secondary"
-			onClick={cancelChanges}
-			small
-		>
-			{i18n.translate('cancel')}
-		</Button>
-
-		<Button onClick={() => confirmChanges(userAccount)} small>
-			{i18n.translate('save')}
-		</Button>
-	</div>
-);
+import {getIsEditingUser} from '../../commom/utils/getIsEditingUser';
+import MenuUserActions from './components/MenuUserActions';
+import {getUserOptions} from './utils/getUserOptions';
 
 const OptionsColumnType = ({
 	confirmChanges,
@@ -42,25 +23,7 @@ const OptionsColumnType = ({
 	userAccount,
 	userAction,
 }) => {
-	const userOptions = [
-		{
-			label: i18n.translate('edit'),
-			onClick: () =>
-				setUserAction({
-					type: TEAM_MEMBERS_ACTION_TYPES.edit,
-					userId: userAccount?.id,
-				}),
-		},
-		{
-			customOptionStyle: 'cp-remove-member-option',
-			label: i18n.translate('remove'),
-			onClick: () =>
-				setUserAction({
-					type: TEAM_MEMBERS_ACTION_TYPES.remove,
-					userId: userAccount?.id,
-				}),
-		},
-	];
+	const userOptions = getUserOptions(userAccount, setUserAction);
 
 	const handleOnCancelChanges = () => {
 		setSelectedRole();

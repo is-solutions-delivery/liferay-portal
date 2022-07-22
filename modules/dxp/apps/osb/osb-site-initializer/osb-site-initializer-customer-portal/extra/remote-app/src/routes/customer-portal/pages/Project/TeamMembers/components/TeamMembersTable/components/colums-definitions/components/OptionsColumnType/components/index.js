@@ -9,11 +9,4 @@
  * distribution rights of the Software.
  */
 
-import {TEAM_MEMBERS_ACTION_TYPES} from '../../../utils/constants';
-
-export function getIsEditingUser(userAction, currentUserId) {
-	return (
-		userAction?.type === TEAM_MEMBERS_ACTION_TYPES.edit &&
-		userAction?.userId === currentUserId
-	);
-}
+export {default} from './MenuUserActions';

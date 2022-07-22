@@ -12,32 +12,8 @@
 
 import {memo} from 'react';
 import i18n from '../../../../../../../../../../../common/I18n';
-import {useAppPropertiesContext} from '../../../../../../../../../../../common/contexts/AppPropertiesContext';
 import {Liferay} from '../../../../../../../../../../../common/services/liferay';
-import {getInitials} from './utils/getInitials';
-import {getMd5Hash} from './utils/getMd5Hash';
-
-const AVATAR_SIZE_IN_PX = 40;
-
-const Avatar = ({emailAddress, userName}) => {
-	const {gravatarAPI} = useAppPropertiesContext();
-	const emailAddressMD5 = getMd5Hash(emailAddress);
-	const uiAvatarURL = `https://ui-avatars.com/api/${getInitials(
-		userName
-	)}/128/0B5FFF/FFFFFF/2/0.33/true/true/true`;
-
-	return (
-		<div className="cp-team-members-avatar mr-2">
-			<img
-				height={AVATAR_SIZE_IN_PX}
-				src={`${gravatarAPI}/${emailAddressMD5}?d=${encodeURIComponent(
-					uiAvatarURL
-				)}`}
-				width={AVATAR_SIZE_IN_PX}
-			/>
-		</div>
-	);
-};
+import Avatar from './components/Avatar';
 
 const NameColumnType = memo(({userAccount}) => {
 	const currentLoggedUserId = +Liferay.ThemeDisplay.getUserId();
