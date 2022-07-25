@@ -22,6 +22,12 @@ import Modal from '../../components/Modal';
 import {getBuilds, getProjects, getRoutines} from '../../graphql/queries';
 import {FormModalOptions} from '../../hooks/useFormModal';
 import i18n from '../../i18n';
+import {
+	buildsResource,
+	getBuildsTransformData,
+	getProjectsTransformData,
+	getRoutinesTransformData,
+} from '../../services/rest';
 
 type TestflowModalProps = {
 	modal: FormModalOptions;
@@ -58,6 +64,8 @@ const TestflowForm = () => {
 				label="Project"
 				objectName="projects"
 				onSearch={(keyword) => `contains(name, '${keyword}')`}
+				resource="/projects"
+				transformData={getProjectsTransformData}
 			/>
 
 			<Form.AutoComplete
@@ -65,6 +73,8 @@ const TestflowForm = () => {
 				label="Routine"
 				objectName="routines"
 				onSearch={(keyword) => `contains(name, '${keyword}')`}
+				resource="/routines"
+				transformData={getRoutinesTransformData}
 			/>
 
 			<Form.AutoComplete
@@ -72,9 +82,9 @@ const TestflowForm = () => {
 				label="Build"
 				objectName="builds"
 				onSearch={(keyword) => `contains(name, '${keyword}')`}
-				transformData={(data) => data?.Builds?.items || []}
+				resource={buildsResource}
+				transformData={getBuildsTransformData}
 			/>
-
 			<Form.Input label="Name" name="name" required />
 
 			<div className="my-4">
