@@ -34,8 +34,6 @@ definition {
 	}
 
 	tearDown {
-		PortalInstances.tearDownCP();
-
 		JSONGroup.deleteGroupByName(groupName = "${testSiteName}");
 
 		CustomerPortal.customerPortalApisTearDown();
