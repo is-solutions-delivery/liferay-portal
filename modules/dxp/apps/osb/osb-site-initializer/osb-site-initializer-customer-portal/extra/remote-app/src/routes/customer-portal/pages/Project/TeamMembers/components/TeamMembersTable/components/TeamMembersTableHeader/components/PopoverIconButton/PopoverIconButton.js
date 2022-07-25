@@ -14,6 +14,7 @@ import ClayIcon from '@clayui/icon';
 import ClayPopover from '@clayui/popover';
 import i18n from '../../../../../../../../../../../common/I18n';
 import {useAppPropertiesContext} from '../../../../../../../../../../../common/contexts/AppPropertiesContext';
+
 const PopoverIconButton = ({alignPosition = 'bottom'}) => {
 	const {articleAccountSupportURL} = useAppPropertiesContext();
 
