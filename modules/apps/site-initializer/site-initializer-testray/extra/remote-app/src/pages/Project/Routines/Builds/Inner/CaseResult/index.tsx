@@ -124,7 +124,7 @@ const CaseResult = () => {
 									flexHeading: true,
 									title: i18n.sub(
 										'warnings-x',
-										caseResult.warnings.toString()
+										caseResult.warnings?.toString()
 									),
 									value: attachments.find(({name}) =>
 										name.toLowerCase().includes('warning')

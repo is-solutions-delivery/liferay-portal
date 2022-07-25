@@ -61,20 +61,23 @@ const reducer = (state: InitialState, action: AppActions) => {
 const AccountContextProvider: React.FC<{
 	children: ReactNode;
 }> = ({children}) => {
+	const {data} = useFetch('/my-user-account');
+
 	const [state, dispatch] = useReducer(reducer, initialState);
-	const transformUserData = (data: any): UserAccount => {
+	const transformUserData = (user: any): UserAccount => {
 		return {
-			additionalName: data?.additionalName,
-			alternateName: data.alternateName,
-			emailAddress: data.emailAddress,
-			familyName: data?.familyName,
-			givenName: data?.givenName,
-			id: data?.id,
+			additionalName: user?.additionalName,
+			alternateName: user?.alternateName,
+			emailAddress: user?.emailAddress,
+			familyName: user?.familyName,
+			givenName: user?.givenName,
+			id: user?.id,
 			image: '',
-			roleBriefs: data?.roleBriefs,
+			roleBriefs: user?.roleBriefs,
+			uuid: user?.uuid,
 		};
 	};
-	const {data} = useFetch('/my-user-account');
+
 	const myUserAccount = useMemo(() => transformUserData(data), [data]);
 
 	useEffect(() => {

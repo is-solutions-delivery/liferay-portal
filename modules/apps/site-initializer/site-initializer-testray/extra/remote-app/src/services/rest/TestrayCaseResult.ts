@@ -13,16 +13,19 @@
  */
 
 import {APIResponse, TestrayCaseResult} from '../../graphql/queries';
+import CaseResult from '../../pages/Project/Routines/Builds/Inner/CaseResult';
 import yupSchema from '../../schema/yup';
 import fetcher from '../fetcher';
+import {Liferay} from '../liferay';
 
 type CaseResult = typeof yupSchema.caseResult.__outputType;
+
+const getCaseResults =
+	'/caseresults?nestedFields=case,component.team,build.productVersion,build.routine,run,user&nestedFieldsDepth=3';
 
 const caseResultResource =
 	'/caseresults?nestedFields=case,component.team,build.productVersion,build.routine,run,user&nestedFieldsDepth=3';
 
-const getCaseResults =
-	'/caseresults?nestedFields=case,component.team,build.productVersion,build.routine,run,user&nestedFieldsDepth=3';
 const nestedFieldsParam =
 	'nestedFields=case.caseType,component,build.productVersion,build.routine,run,user&nestedFieldsDepth=3';
 
@@ -37,9 +40,13 @@ const getCaseResultsQuery = (caseResultId: number | string | undefined) => {
 const transformDataCaseResults = (caseResult: TestrayCaseResult) => {
 	return {
 		...caseResult,
+		assignedUserId: caseResult?.assignedUserId,
+		attachments: caseResult?.attachments,
 		build: caseResult?.r_buildToCaseResult_c_build
 			? {
 					...caseResult?.r_buildToCaseResult_c_build,
+					gitHash: caseResult.r_buildToCaseResult_c_build.gitHash,
+					id: caseResult.r_buildToCaseResult_c_build.id,
 					productVersion:
 						caseResult.r_buildToCaseResult_c_build
 							?.r_productVersionToBuilds_c_productVersion,
@@ -51,20 +58,49 @@ const transformDataCaseResults = (caseResult: TestrayCaseResult) => {
 		case: caseResult?.r_caseToCaseResult_c_case
 			? {
 					...caseResult?.r_caseToCaseResult_c_case,
-					caseType: caseResult?.r_caseToCaseResult_c_case?.caseType,
+					caseNumber:
+						caseResult?.r_caseToCaseResult_c_case?.caseNumber,
+					caseType: caseResult?.r_caseToCaseResult_c_case?.caseType
+						? {
+								name:
+									caseResult.r_caseToCaseResult_c_case
+										.caseType?.name,
+						  }
+						: null,
 					component:
 						caseResult?.r_caseToCaseResult_c_case
 							?.r_componentToCases_c_component,
+					id: caseResult?.r_caseToCaseResult_c_case?.id,
+					name: caseResult?.r_caseToCaseResult_c_case.name,
+					priority: caseResult.r_caseToCaseResult_c_case.priority,
 			  }
 			: null,
+		commentMBMessageId: caseResult?.commentMBMessageId,
 		component: caseResult?.r_componentToCaseResult_c_component || null,
+		dateCreated: caseResult?.dateCreated,
+		dateModified: caseResult?.dateModified,
+		dueStatus: caseResult?.dueStatus,
+		errors: caseResult?.errors,
+		id: caseResult?.id,
 		run: caseResult?.r_runToCaseResult_c_run
 			? {
 					...caseResult?.r_runToCaseResult_c_run,
 					build: caseResult?.r_runToCaseResult_c_run?.build,
 			  }
 			: null,
-		user: caseResult?.r_userToCaseResults_user,
+		startDate: caseResult?.startDate,
+		user: caseResult?.r_userToCaseResults_user
+			? {
+					...caseResult?.r_userToCaseResults_user,
+					additionalName:
+						caseResult?.r_userToCaseResults_user?.additionalName,
+					emailAddress:
+						caseResult?.r_userToCaseResults_user?.emailAddress,
+					givenName: caseResult?.r_userToCaseResults_user?.givenName,
+					id: caseResult?.r_userToCaseResults_user?.uuid,
+			  }
+			: null,
+		warnings: caseResult?.warnings,
 	};
 };
 
@@ -104,10 +140,18 @@ const normalizeCaseResultResponse = (caseResult: TestrayCaseResult) => ({
 	user: caseResult.r_userToCaseResults_user,
 });
 
-const adapter = ({comment, dueStatus, issues}: CaseResult) => ({
-	comment,
-	dueStatus,
-	issues,
+// {
+// 	"dueStatus": "4",
+// 	"issue": "dfgdfgfd",
+// 	"comment": "gfdgdf",
+// 	"closedDate": "2022-07-25T20:15:33.478Z",
+// 	"r_userToCaseResults_userId": "20125"
+//   }
+
+const adapter = ({...form}: CaseResult) => ({
+	...form,
+	closedDate: new Date(),
+	r_userToCaseResults_userId: Liferay.ThemeDisplay.getUserId(),
 });
 
 const createCaseResult = (caseResult: CaseResult) =>
@@ -131,6 +175,6 @@ export {
 	getCaseResultsQuery,
 	getCaseResultTransformData,
 	normalizeCaseResultResponse,
-	transformDataCaseResults,
 	updateCaseResult,
+	transformDataCaseResults,
 };

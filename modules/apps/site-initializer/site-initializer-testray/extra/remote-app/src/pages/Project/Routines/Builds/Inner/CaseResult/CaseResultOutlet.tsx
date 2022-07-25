@@ -18,10 +18,7 @@ import {Outlet, useLocation, useParams} from 'react-router-dom';
 import {useFetch} from '../../../../../../hooks/useFetch';
 import useHeader from '../../../../../../hooks/useHeader';
 import i18n from '../../../../../../i18n';
-import {
-	normalizeCaseResultResponse,
-	transformDataCaseResults,
-} from '../../../../../../services/rest';
+import {transformDataCaseResults} from '../../../../../../services/rest';
 
 const CaseResultOutlet = () => {
 	const {pathname} = useLocation();
@@ -31,11 +28,10 @@ const CaseResultOutlet = () => {
 		`/caseresults/${caseResultId}?nestedFields=case.caseType,component,build.productVersion,build.routine,run,user&nestedFieldsDepth=3`
 	);
 
-	console.log(data);
-
-	// somente data sem transform ou normalize ele nao quebra
-
 	const caseResult = transformDataCaseResults(data);
+
+	console.log('before', data);
+
 	console.log(caseResult);
 
 	const basePath = `/project/${projectId}/routines/${routineId}/build/${buildId}/case-result/${caseResultId}`;

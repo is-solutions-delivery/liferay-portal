@@ -40,7 +40,7 @@ const CaseResultEditTest = () => {
 		form: {onClose, onError, onSave, onSubmitRest},
 	} = useFormActions();
 
-	const {status} = useParams();
+	const {caseResultId, status} = useParams();
 
 	const {
 		formState: {errors},
@@ -57,11 +57,14 @@ const CaseResultEditTest = () => {
 		register,
 	};
 
-	const _onSubmit = (form: CaseResultForm) =>
-		onSubmitRest(form, {
-			create: createCaseResult,
-			update: updateCaseResult,
-		})
+	const _onSubmit = ({comment, dueStatus, issue}: CaseResultForm) =>
+		onSubmitRest(
+			{comment, dueStatus, id: caseResultId, issue},
+			{
+				create: createCaseResult,
+				update: updateCaseResult,
+			}
+		)
 			.then(onSave)
 			.catch(onError);
 
