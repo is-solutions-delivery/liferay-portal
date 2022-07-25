@@ -567,7 +567,7 @@ public class CommerceSiteInitializer {
 					serviceContext);
 			}
 
-			_updateCommercePriceEntries(
+			_addOrUpdateCommercePriceEntries(
 				cpDefinition,
 				_cpInstanceLocalService.fetchByExternalReferenceCode(
 					subscriptionPropertiesJSONObject.getString(
@@ -670,6 +670,19 @@ public class CommerceSiteInitializer {
 		}
 	}
 
+	private void _addOrUpdateCommercePriceEntries(
+			CPDefinition cpDefinition, CPInstance cpInstance,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		_addOrUpdateCommercePriceEntry(
+			cpDefinition, cpInstance,
+			CommercePriceListConstants.TYPE_PRICE_LIST, serviceContext);
+		_addOrUpdateCommercePriceEntry(
+			cpDefinition, cpInstance, CommercePriceListConstants.TYPE_PROMOTION,
+			serviceContext);
+	}
+
 	private void _addOrUpdateCommercePriceEntry(
 			CPDefinition cpDefinition, CPInstance cpInstance, String typePrice,
 			ServiceContext serviceContext)
@@ -698,19 +711,6 @@ public class CommerceSiteInitializer {
 				commercePriceEntry.getCommercePriceEntryId(), BigDecimal.ZERO,
 				null, serviceContext);
 		}
-	}
-
-	private void _updateCommercePriceEntries(
-			CPDefinition cpDefinition, CPInstance cpInstance,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		_addOrUpdateCommercePriceEntry(
-			cpDefinition, cpInstance,
-			CommercePriceListConstants.TYPE_PRICE_LIST, serviceContext);
-		_addOrUpdateCommercePriceEntry(
-			cpDefinition, cpInstance, CommercePriceListConstants.TYPE_PROMOTION,
-			serviceContext);
 	}
 
 	private void _updateCPInstanceProperties(
@@ -769,7 +769,8 @@ public class CommerceSiteInitializer {
 			_cpInstanceLocalService.updateCPInstance(cpInstance);
 		}
 
-		_updateCommercePriceEntries(cpDefinition, cpInstance, serviceContext);
+		_addOrUpdateCommercePriceEntries(
+			cpDefinition, cpInstance, serviceContext);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
