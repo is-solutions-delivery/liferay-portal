@@ -440,9 +440,9 @@ public class MBThreadFinderImpl
 				sql, "DISTINCT {MBThread.*}",
 				"COUNT(DISTINCT MBThread.threadId) AS COUNT_VALUE");
 
-			sql = addFilterToSQL(filter, sql);
-			sql = addSortToSQL(sorts, sql);
-			sql = addTagFilterToSQL(tag, sql);
+			sql = _addFilterToSQL(filter, sql);
+			sql = _addSortToSQL(sorts, sql);
+			sql = _addTagFilterToSQL(tag, sql);
 
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
 
@@ -620,9 +620,9 @@ public class MBThreadFinderImpl
 				sql, "MBThread.categoryId = ?",
 				"MBThread.categoryId = " + categoryId);
 
-			sql = addFilterToSQL(filter, sql);
-			sql = addSortToSQL(sorts, sql);
-			sql = addTagFilterToSQL(tag, sql);
+			sql = _addFilterToSQL(filter, sql);
+			sql = _addSortToSQL(sorts, sql);
+			sql = _addTagFilterToSQL(tag, sql);
 
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
 
@@ -942,7 +942,7 @@ public class MBThreadFinderImpl
 			groupId, userId, categoryIds, queryDefinition, false);
 	}
 
-	protected String addFilterToSQL(Filter filter, String sql) {
+	private String _addFilterToSQL(Filter filter, String sql) {
 		if (filter != null) {
 			String sqlFilter = filter.toString();
 
@@ -993,7 +993,7 @@ public class MBThreadFinderImpl
 		return sql;
 	}
 
-	protected String addSortToSQL(Sort[] sorts, String sql) {
+	private String _addSortToSQL(Sort[] sorts, String sql) {
 		if (sorts != null) {
 			for (Sort sort : sorts) {
 				String fieldName = sort.getFieldName();
@@ -1077,7 +1077,7 @@ public class MBThreadFinderImpl
 		return sql;
 	}
 
-	protected String addTagFilterToSQL(String tag, String sql) {
+	private String _addTagFilterToSQL(String tag, String sql) {
 		if (tag != null) {
 			String sqlAppend = StringBundler.concat(
 				"INNER JOIN AssetEntry ON AssetEntry.classPK = ",
