@@ -10,6 +10,7 @@
  */
 import {ClaySelect} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
+import {getHandleOnChangeRole} from './utils/getHandleOnChangeRole';
 
 const SelectRole = ({
 	accountRoles,
@@ -17,15 +18,10 @@ const SelectRole = ({
 	selectedRole,
 	setSelectedRole,
 }) => {
-	const handleOnChangeRole = (roleName) => {
-		const accountRole = accountRoles?.find(
-			(accountRole) => accountRole?.name === roleName
-		);
-
-		if (accountRole) {
-			setSelectedRole(accountRole.name);
-		}
-	};
+	const handleOnChangeRole = getHandleOnChangeRole(
+		accountRoles,
+		setSelectedRole
+	);
 
 	return (
 		<div className="position-relative">

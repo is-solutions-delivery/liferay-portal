@@ -9,16 +9,27 @@
  * distribution rights of the Software.
  */
 
-import i18n from '../../../../../../../../../../../../common/I18n';
-import {Button} from '../../../../../../../../../../../../common/components';
+import i18n from '../../../../../../../../../../../../../common/I18n';
+import {Button} from '../../../../../../../../../../../../../common/components';
+import {TEAM_MEMBERS_ACTION_TYPES} from '../../../../../../utils/constants';
 
-const MenuUserActions = ({cancelChanges, confirmChanges, userAccount}) => {
+const MenuUserActions = ({
+	confirmChanges,
+	setSelectedRole,
+	setUserAction,
+	userAccount,
+}) => {
+	const handleOnCancelChanges = () => {
+		setSelectedRole();
+		setUserAction(TEAM_MEMBERS_ACTION_TYPES.close);
+	};
+
 	return (
 		<div className="align-items-center d-flex">
 			<Button
 				className="mr-2"
 				displayType="secondary"
-				onClick={cancelChanges}
+				onClick={handleOnCancelChanges}
 				small
 			>
 				{i18n.translate('cancel')}

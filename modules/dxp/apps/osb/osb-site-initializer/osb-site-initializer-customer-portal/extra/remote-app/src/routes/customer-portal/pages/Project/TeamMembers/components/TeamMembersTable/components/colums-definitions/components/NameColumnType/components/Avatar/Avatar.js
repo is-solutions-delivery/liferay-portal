@@ -9,7 +9,7 @@
  * distribution rights of the Software.
  */
 
-import {useAppPropertiesContext} from '../../../../../../../../../../../../common/contexts/AppPropertiesContext';
+import {useAppPropertiesContext} from '../../../../../../../../../../../../../common/contexts/AppPropertiesContext';
 import {getInitials} from './utils/getInitials';
 import {getMd5Hash} from './utils/getMd5Hash';
 

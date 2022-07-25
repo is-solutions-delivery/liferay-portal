@@ -13,7 +13,7 @@
 import {memo} from 'react';
 import i18n from '../../../../../../../../../../../common/I18n';
 import {Liferay} from '../../../../../../../../../../../common/services/liferay';
-import Avatar from './components/Avatar';
+import Avatar from './components/Avatar/Avatar';
 
 const NameColumnType = memo(({userAccount}) => {
 	const currentLoggedUserId = +Liferay.ThemeDisplay.getUserId();

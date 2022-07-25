@@ -11,9 +11,8 @@
 
 import {ButtonWithIcon} from '@clayui/core';
 import {ButtonDropDown} from '../../../../../../../../../../../common/components';
-import {TEAM_MEMBERS_ACTION_TYPES} from '../../../../utils/constants';
 import {getIsEditingUser} from '../commom/utils/getIsEditingUser';
-import MenuUserActions from './components/MenuUserActions';
+import MenuUserActions from './components/MenuUserActions/MenuUserActions';
 import {getUserOptions} from './utils/getUserOptions';
 
 const OptionsColumnType = ({
@@ -25,17 +24,13 @@ const OptionsColumnType = ({
 }) => {
 	const userOptions = getUserOptions(userAccount, setUserAction);
 
-	const handleOnCancelChanges = () => {
-		setSelectedRole();
-		setUserAction(TEAM_MEMBERS_ACTION_TYPES.close);
-	};
-
 	const isEditingUser = getIsEditingUser(userAction, userAccount?.id);
 
 	return isEditingUser ? (
 		<MenuUserActions
-			cancelChanges={handleOnCancelChanges}
 			confirmChanges={confirmChanges}
+			setSelectedRole={setSelectedRole}
+			setUserAction={setUserAction}
 			userAccount={userAccount}
 		/>
 	) : (

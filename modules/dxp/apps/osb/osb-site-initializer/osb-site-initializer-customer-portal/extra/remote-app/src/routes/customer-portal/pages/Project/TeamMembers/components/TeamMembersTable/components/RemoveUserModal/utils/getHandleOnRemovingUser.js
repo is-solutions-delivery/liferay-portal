@@ -8,5 +8,19 @@
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
  */
+import {TEAM_MEMBERS_ACTION_TYPES} from '../../../utils/constants';
 
-export {default} from './Avatar';
+export function getHandleOnRemovingUser(
+	setIsRemovingUser,
+	onRemoveTeamMember,
+	setUserAction
+) {
+	const handleOnRemovingUser = async () => {
+		setIsRemovingUser(true);
+		await onRemoveTeamMember();
+		setIsRemovingUser(false);
+		setUserAction(TEAM_MEMBERS_ACTION_TYPES.close);
+	};
+
+	return handleOnRemovingUser;
+}

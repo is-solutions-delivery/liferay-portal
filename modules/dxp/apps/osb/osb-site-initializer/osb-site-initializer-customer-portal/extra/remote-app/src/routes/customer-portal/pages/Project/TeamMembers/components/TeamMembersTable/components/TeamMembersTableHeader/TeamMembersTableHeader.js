@@ -19,6 +19,7 @@ import BadgeFilter from './components/BadgeFilter';
 import InvitesModal from './components/InvitesModal';
 import PopoverIconButton from './components/PopoverIconButton';
 import TeamMembersFilter from './components/TeamMembersFilter';
+import {getHandleOnUserInvite} from './utils/getHandleOnUserInvite';
 
 const TeamMembersTableHeader = ({
 	administratorsAvailable,
@@ -39,26 +40,10 @@ const TeamMembersTableHeader = ({
 
 	const [visible, setVisible] = useState(false);
 
-	const handleOnUserInvite = (invitedUsers) => {
-		setVisible(false);
-
-		if (invitedUsers) {
-			const formattedInvitedUsers = invitedUsers?.map((invite) => {
-				const userData = invite?.data?.c?.createTeamMembersInvitation;
-
-				return {
-					emailAddress: userData?.email,
-					name: userData?.email,
-					roles: [userData?.role],
-				};
-			});
-
-			setUserAccounts((previousUserAccounts) => [
-				...previousUserAccounts,
-				...formattedInvitedUsers,
-			]);
-		}
-	};
+	const handleOnUserInvite = getHandleOnUserInvite(
+		setUserAccounts,
+		setVisible
+	);
 
 	const modalProps = useModal({
 		onClose: () => setVisible(false),
