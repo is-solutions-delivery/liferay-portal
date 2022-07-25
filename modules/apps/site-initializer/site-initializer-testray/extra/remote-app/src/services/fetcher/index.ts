@@ -22,7 +22,7 @@ function changeResource(resource: RequestInfo) {
 		return `${liferayHost}/o/headless-admin-user/v1.0${resource}`;
 	}
 
-	if (resource.toString().includes('user-accounts')) {
+	if (resource.toString().includes('account')) {
 		return `${liferayHost}/o/headless-admin-user/v1.0${resource}`;
 	}
 
