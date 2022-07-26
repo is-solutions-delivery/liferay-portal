@@ -1,0 +1,8 @@
+.cp-remove-member-option {
+	color: var(--color-state-error) !important;
+
+	&:hover {
+		background-color: var(--color-state-error-lighten-2) !important;
+		color: var(--color-state-error) !important;
+	}
+}

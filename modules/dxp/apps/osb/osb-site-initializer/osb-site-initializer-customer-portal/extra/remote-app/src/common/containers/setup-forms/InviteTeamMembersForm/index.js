@@ -28,6 +28,7 @@ import getInitialInvite from '../../../utils/getInitialInvite';
 import getProjectRoles from '../../../utils/getProjectRoles';
 import Layout from '../Layout';
 import TeamMemberInputs from './TeamMemberInputs';
+import './app.scss';
 
 const MAXIMUM_INVITES_COUNT = 10;
 const INITIAL_INVITES_COUNT = 1;
@@ -157,8 +158,7 @@ const InviteTeamMembersPage = ({
 			setInitialError(false);
 			setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
 			setshowEmptyEmailError(false);
-		}
-		else if (touched['invites']?.some((field) => field?.email)) {
+		} else if (touched['invites']?.some((field) => field?.email)) {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 		}
@@ -213,8 +213,7 @@ const InviteTeamMembersPage = ({
 				}
 				handlePage();
 			}
-		}
-		else {
+		} else {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 			setTouched({

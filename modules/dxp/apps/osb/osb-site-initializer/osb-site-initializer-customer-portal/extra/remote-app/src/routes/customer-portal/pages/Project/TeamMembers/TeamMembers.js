@@ -14,8 +14,9 @@ import {useOutletContext} from 'react-router-dom';
 import i18n from '../../../../../common/I18n';
 import {useAppPropertiesContext} from '../../../../../common/contexts/AppPropertiesContext';
 import {useCustomerPortal} from '../../../context';
-import ManageProductUser from './components/ManageProductUsers';
+import ManageProductUser from './components/ManageProductUser';
 import TeamMembersTable from './components/TeamMembersTable/TeamMembersTable';
+import './teamMembers.scss';
 
 const TeamMembers = () => {
 	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
