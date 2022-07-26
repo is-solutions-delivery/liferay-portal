@@ -12,7 +12,6 @@
  * details.
  */
 
-import ClayButton from '@clayui/button';
 import ClayCard from '@clayui/card';
 import ClayModal from '@clayui/modal';
 import classNames from 'classnames';
@@ -27,31 +26,6 @@ const ProductCardBusiness = () => {
 	const onClickCard = (index: number) => {
 		setCardBusinessSelected(cardsBusiness[index]);
 	};
-
-	const onCancel = () => {};
-
-	const onPrevious = () => {};
-
-	const onNextForm = () => {};
-
-	const [buttons] = useState([
-		{
-			atributesClassName: 'border-white',
-			displayType: 'secondary',
-			onAction: () => onCancel(),
-			title: 'Cancel',
-		},
-		{
-			atributesClassName: 'border-black',
-			displayType: 'secondary',
-			onAction: () => onPrevious(),
-			title: 'Previous',
-		},
-		{
-			onAction: () => onNextForm(),
-			title: 'Next',
-		},
-	]);
 
 	return (
 		<>
@@ -74,12 +48,12 @@ const ProductCardBusiness = () => {
 													cardBusiness,
 											}
 										)}
-										onClick={() => onClickCard}
+										onClick={() => onClickCard(index)}
 									>
-										<ClayCard.Body>
-											<div className="autofit-col autofit-col-expand border-dark">
-												<section className="autofit-section">
-													<h6 className="align-items-center d-flex justify-content-center mt-4">
+										<ClayCard.Body className="d-flex h-100 justify-content-center">
+											<div className="border-dark text-break text-center">
+												<section className="align-items-center autofit-section d-flex h-100">
+													<h6 className="my-0">
 														{cardBusiness}
 													</h6>
 												</section>
@@ -92,25 +66,6 @@ const ProductCardBusiness = () => {
 					})}
 				</div>
 			</ClayModal.Body>
-			<ClayModal.Footer
-				last={
-					<ClayButton.Group spaced>
-						{buttons.map((button: any, index: any) => {
-							return (
-								<div key={index}>
-									<ClayButton
-										className={button?.atributesClassName}
-										displayType={button?.displayType}
-										onClick={() => button.onAction()}
-									>
-										{button?.title}
-									</ClayButton>
-								</div>
-							);
-						})}
-					</ClayButton.Group>
-				}
-			/>
 		</>
 	);
 };

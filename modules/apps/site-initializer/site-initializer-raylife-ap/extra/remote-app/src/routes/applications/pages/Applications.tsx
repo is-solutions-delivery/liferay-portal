@@ -21,6 +21,7 @@ import {redirectTo} from '../../../common/utils/liferay';
 import LoadingIndicator from '../components/LoadingIndicator';
 import Modal from '../components/Modal';
 import InsuranceCard from '../contents/InsuranceCard';
+import ProductCardBusiness from '../contents/ProductCardBusiness';
 import ProductCardPersona from '../contents/ProductCardPersona';
 
 enum ModalType {
@@ -48,6 +49,14 @@ const Applications = () => {
 
 	const handlePreviousClick = () => {
 		setContentModal(ModalType.insurance);
+	};
+
+	const callProducts = (selectCard: string) => {
+		if (cardSelected === insuranceCards[0] || selectCard === 'Personal') {
+			return <ProductCardPersona />;
+		} else {
+			return <ProductCardBusiness />;
+		}
 	};
 
 	const onClickInsuranceCard = (index: number) => {
@@ -133,7 +142,7 @@ const Applications = () => {
 						onClickInsuranceCard={onClickInsuranceCard}
 					/>
 				) : (
-					<ProductCardPersona />
+					callProducts(cardSelected)
 				)}
 			</Modal>
 		</>

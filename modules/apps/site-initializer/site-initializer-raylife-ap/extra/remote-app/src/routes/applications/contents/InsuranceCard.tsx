@@ -51,10 +51,10 @@ const InsuranceCard: React.FC<InsuranceProps> = ({
 											onClickInsuranceCard(index)
 										}
 									>
-										<ClayCard.Body>
-											<div className="autofit-col autofit-col-expand border-dark">
-												<section className="autofit-section">
-													<h6 className="align-items-center d-flex justify-content-center mt-4">
+										<ClayCard.Body className="d-flex h-100 justify-content-center">
+											<div className="border-dark text-break text-center">
+												<section className="align-items-center autofit-section d-flex h-100">
+													<h6 className="my-0">
 														{cardName}
 													</h6>
 												</section>

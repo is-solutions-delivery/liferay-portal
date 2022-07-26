@@ -28,6 +28,7 @@ import {redirectTo} from '../../../common/utils/liferay';
 import LoadingIndicator from '../../applications/components/LoadingIndicator';
 import Modal from '../../applications/components/Modal';
 import InsuranceCard from '../../applications/contents/InsuranceCard';
+import ProductCardBusiness from '../../applications/contents/ProductCardBusiness';
 import ProductCardPersona from '../../applications/contents/ProductCardPersona';
 
 const HEADERS = [
@@ -201,6 +202,14 @@ const RecentApplications = () => {
 		</>
 	);
 
+	const callProducts = (selectCard: string) => {
+		if (cardSelected === insuranceCards[0] || selectCard === 'Personal') {
+			return <ProductCardPersona />;
+		} else {
+			return <ProductCardBusiness />;
+		}
+	};
+
 	return (
 		<div className="px-3 ray-dashboard-recent-applications">
 			<Modal
@@ -226,7 +235,7 @@ const RecentApplications = () => {
 						onClickInsuranceCard={onClickInsuranceCard}
 					/>
 				) : (
-					<ProductCardPersona />
+					callProducts(cardSelected)
 				)}
 			</Modal>
 
