@@ -12,12 +12,14 @@
  * details.
  */
 
-import {TypedDocumentNode, useLazyQuery} from '@apollo/client';
+import {TypedDocumentNode} from '@apollo/client';
 import ClayAutocomplete from '@clayui/autocomplete';
 import ClayDropDown from '@clayui/drop-down';
 import {useEffect, useMemo, useState} from 'react';
 
 import useDebounce from '../../../hooks/useDebounce';
+import {useFetch} from '../../../hooks/useFetch';
+import SwrDemoComponent from '../../../services/fetcher/Refetch';
 
 export type AutoCompleteProps = {
 	gqlQuery: TypedDocumentNode;
@@ -25,38 +27,61 @@ export type AutoCompleteProps = {
 	label?: string;
 	objectName: string;
 	onSearch: (keyword: string) => any;
+	resource: string;
 	transformData?: (item: any) => any;
 };
 
 const AutoComplete: React.FC<AutoCompleteProps> = ({
-	gqlQuery,
 	label,
-	objectName,
 	onSearch,
+	resource,
 	transformData,
 }) => {
 	const [showValue, setShowValue] = useState('');
 	const [value, setValue] = useState('');
 	const [active, setActive] = useState(false);
-	const [fetchQuery, {called, data, error, loading}] = useLazyQuery(gqlQuery);
+
+	const {data, error, loading, mutate} = useFetch(resource);
 
 	const debouncedValue = useDebounce(value, 1000);
 
 	const items = useMemo(() => {
-		return transformData
-			? transformData(data)
-			: data?.c[objectName].items || [];
-	}, [data, objectName, transformData]);
+		if (transformData) {
+			return transformData(data);
+		}
+	}, [data, transformData]);
+
+	const getItems = items;
+
+	// variables: onSearch(debouncedValue)
+
+	const {info} = SwrDemoComponent(resource);
+
+	// eslint-disable-next-line no-console
+	console.warn(info);
 
 	useEffect(() => {
 		if (debouncedValue) {
-			fetchQuery({
-				variables: {filter: onSearch(debouncedValue)},
-			}).then(() => {
-				setActive(true);
-			});
+			setValue;
 		}
-	}, [debouncedValue, onSearch, fetchQuery]);
+	}, [debouncedValue, onSearch, mutate, resource]);
+
+	// useEffect(() => {
+
+	// if (debouncedValue) {
+	// 	onSearch(debouncedValue);
+	// }
+
+	// }, [debouncedValue, onSearch]);
+
+	// useEffect(() => {
+	// 	async function fetchData() {
+	// 		return onSearch(resource).then(() => {
+	// 			setActive(true);
+	// 		});
+	// 	}
+	// 	fetchData();
+	// }, [onSearch, data, debouncedValue]);
 
 	const onClickItem = (name: string) => {
 		setShowValue(name);
@@ -78,14 +103,14 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
 
 			<ClayAutocomplete.DropDown active={active}>
 				<ClayDropDown.ItemList>
-					{called && (error || (items && !items.length)) && (
+					{(error || (items && !items.length)) && (
 						<ClayDropDown.Item className="disabled">
 							No Results Found
 						</ClayDropDown.Item>
 					)}
 
 					{!error &&
-						items?.map((item: any) => (
+						getItems?.items?.map((item: any) => (
 							<ClayAutocomplete.Item
 								key={item.id}
 								match={value}
