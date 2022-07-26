@@ -1013,7 +1013,7 @@ public class MBThreadFinderImpl
 				if (fieldName.equals("totalScore")) {
 					sql = StringUtil.replace(
 						sql, "INNER JOIN ?",
-						"INNER JOIN RatingsStats ON (MBThread.rootMessageId " +
+						"LEFT JOIN RatingsStats ON (MBThread.rootMessageId " +
 							"= RatingsStats.classPK)");
 
 					sql = StringUtil.replace(
