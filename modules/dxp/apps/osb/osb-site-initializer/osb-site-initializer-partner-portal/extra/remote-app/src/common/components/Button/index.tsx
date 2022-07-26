@@ -11,36 +11,35 @@
 
 import ClayButton from '@clayui/button';
 import ClayIcon, {ClayIconSpriteContext} from '@clayui/icon';
-
 import {forwardRef} from 'react';
+
 import getIconSpriteMap from '../../../utils/getIconSpriteMap';
 
 const ButtonBase = ({
 	buttonText,
 	icon,
-	...props }: { buttonText: string; icon: string; }) => {
+	...props
+}: {
+	buttonText: string;
+	icon: string;
+}) => {
 	return (
 		<>
 			{icon ? (
-						<ClayIconSpriteContext.Provider value={getIconSpriteMap()}>
-						<ClayButton {...props}>
-							<ClayIcon symbol={icon} className="mr-1" />
-							
-							<span>
-								{buttonText}
-							</span>
-						</ClayButton>
-					</ClayIconSpriteContext.Provider>	
-			):
-			<ClayButton {...props}>		
-				<span>
-					{buttonText}
-				</span>
-			</ClayButton>
-			} 
+				<ClayIconSpriteContext.Provider value={getIconSpriteMap()}>
+					<ClayButton {...props}>
+						<ClayIcon className="mr-1" symbol={icon} />
+
+						<span>{buttonText}</span>
+					</ClayButton>
+				</ClayIconSpriteContext.Provider>
+			) : (
+				<ClayButton {...props}>
+					<span>{buttonText}</span>
+				</ClayButton>
+			)}
 		</>
 	);
 };
 const Button = forwardRef(ButtonBase);
 export default Button;
-
