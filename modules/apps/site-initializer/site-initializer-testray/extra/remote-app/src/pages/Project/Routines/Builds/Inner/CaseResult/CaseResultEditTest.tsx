@@ -30,7 +30,7 @@ import {
 import {TEST_STATUS} from '../../../../../../util/constants';
 
 type CaseResultForm = {
-	comment: string;
+	commentMBMessage: string;
 	dueStatus: string;
 	issue: string;
 };
@@ -57,9 +57,9 @@ const CaseResultEditTest = () => {
 		register,
 	};
 
-	const _onSubmit = ({comment, dueStatus, issue}: CaseResultForm) =>
+	const _onSubmit = ({commentMBMessage, dueStatus, issue}: CaseResultForm) =>
 		onSubmitRest(
-			{comment, dueStatus, id: caseResultId, issue},
+			{commentMBMessage, dueStatus, id: caseResultId, issue},
 			{
 				create: createCaseResult,
 				update: updateCaseResult,
@@ -103,7 +103,7 @@ const CaseResultEditTest = () => {
 			<Form.Input
 				className="container-fluid-max-md"
 				label={i18n.translate('comment')}
-				name="comment"
+				name="commentMBMessage"
 				type="textarea"
 				{...inputProps}
 			/>

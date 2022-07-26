@@ -75,7 +75,7 @@ const transformDataCaseResults = (caseResult: TestrayCaseResult) => {
 					priority: caseResult.r_caseToCaseResult_c_case.priority,
 			  }
 			: null,
-		commentMBMessageId: caseResult?.commentMBMessageId,
+		comment: caseResult?.commentMBMessage,
 		component: caseResult?.r_componentToCaseResult_c_component || null,
 		dateCreated: caseResult?.dateCreated,
 		dateModified: caseResult?.dateModified,
@@ -139,14 +139,6 @@ const normalizeCaseResultResponse = (caseResult: TestrayCaseResult) => ({
 	run: caseResult.r_runToCaseResult_c_run,
 	user: caseResult.r_userToCaseResults_user,
 });
-
-// {
-// 	"dueStatus": "4",
-// 	"issue": "dfgdfgfd",
-// 	"comment": "gfdgdf",
-// 	"closedDate": "2022-07-25T20:15:33.478Z",
-// 	"r_userToCaseResults_userId": "20125"
-//   }
 
 const adapter = ({...form}: CaseResult) => ({
 	...form,

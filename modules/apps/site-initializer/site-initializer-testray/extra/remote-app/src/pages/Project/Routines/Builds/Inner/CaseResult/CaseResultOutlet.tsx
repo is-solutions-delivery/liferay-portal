@@ -25,14 +25,10 @@ const CaseResultOutlet = () => {
 	const {buildId, caseResultId, projectId, routineId} = useParams();
 
 	const {data} = useFetch(
-		`/caseresults/${caseResultId}?nestedFields=case.caseType,component,build.productVersion,build.routine,run,user&nestedFieldsDepth=3`
+		`/caseresults/${caseResultId}?nestedFields=case.caseType,commentMBMessage,component,build.productVersion,build.routine,run,user&nestedFieldsDepth=3`
 	);
 
 	const caseResult = transformDataCaseResults(data);
-
-	console.log('before', data);
-
-	console.log(caseResult);
 
 	const basePath = `/project/${projectId}/routines/${routineId}/build/${buildId}/case-result/${caseResultId}`;
 

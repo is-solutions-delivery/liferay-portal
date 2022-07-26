@@ -73,7 +73,7 @@ const CaseResult = () => {
 		refetch: () => void;
 	} = useOutletContext();
 
-	const {onAssignToMe} = useAssignCaseResult();
+	const {onAssignToMeFetch} = useAssignCaseResult();
 
 	const getAttachments = (): TestrayAttachment[] => {
 		try {
@@ -260,9 +260,9 @@ const CaseResult = () => {
 									) : (
 										<AssignToMe
 											onClick={() =>
-												onAssignToMe(caseResult).then(
-													refetch
-												)
+												onAssignToMeFetch(
+													caseResult
+												).then(refetch)
 											}
 										/>
 									),
@@ -274,7 +274,7 @@ const CaseResult = () => {
 								},
 								{
 									title: i18n.translate('comment'),
-									value: 'None',
+									value: caseResult.commentMBMessage,
 								},
 							]}
 							orientation={Orientation.VERTICAL}

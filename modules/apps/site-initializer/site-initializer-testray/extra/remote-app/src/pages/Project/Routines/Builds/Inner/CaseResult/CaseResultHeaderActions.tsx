@@ -20,6 +20,7 @@ import {
 	UserAccount,
 } from '../../../../../../graphql/queries';
 import useAssignCaseResult from '../../../../../../hooks/useAssignCaseResult';
+import {useFetch} from '../../../../../../hooks/useFetch';
 import useFormModal from '../../../../../../hooks/useFormModal';
 import i18n from '../../../../../../i18n';
 import {Liferay} from '../../../../../../services/liferay';
@@ -32,10 +33,13 @@ const CaseResultHeaderActions: React.FC<{
 	caseResult: TestrayCaseResult;
 	refetch: () => void;
 }> = ({caseResult, refetch}) => {
-	const {onAssignTo, onAssignToMe, onRemoveAssign} = useAssignCaseResult();
+	const {
+		onAssignToFetch,
+		onAssignToMeFetch,
+		onRemoveAssignFetch,
+	} = useAssignCaseResult();
 	const {modal} = useFormModal({
-		onSave: (user: UserAccount) =>
-			onAssignTo(caseResult, user.id).then(refetch),
+		onSave: (user: UserAccount) => onAssignToFetch(caseResult, user.id),
 	});
 	const navigate = useNavigate();
 
@@ -79,10 +83,10 @@ const CaseResultHeaderActions: React.FC<{
 					displayType="secondary"
 					onClick={() => {
 						const assignFN = isCaseResultAssignedToMe
-							? onRemoveAssign
-							: onAssignToMe;
+							? onRemoveAssignFetch
+							: onAssignToMeFetch;
 
-						assignFN(caseResult).then(refetch);
+						assignFN(caseResult);
 					}}
 				>
 					{i18n.translate(
@@ -116,7 +120,7 @@ const CaseResultHeaderActions: React.FC<{
 					displayType={
 						buttonValidations.reopenTest ? 'unstyled' : 'primary'
 					}
-					onClick={() => onAssignToMe(caseResult).then(refetch)}
+					onClick={() => onAssignToMeFetch(caseResult)}
 				>
 					{i18n.translate('reopen-test')}
 				</ClayButton>
@@ -136,7 +140,9 @@ const CaseResultHeaderActions: React.FC<{
 				{caseResult.dueStatus === TEST_STATUS['In Progress'] && (
 					<ClayButton
 						displayType="secondary"
-						onClick={() => onRemoveAssign(caseResult).then(refetch)}
+						onClick={() =>
+							onRemoveAssignFetch(caseResult).then(refetch)
+						}
 					>
 						{i18n.translate('reset-test')}
 					</ClayButton>
