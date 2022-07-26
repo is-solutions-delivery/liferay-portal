@@ -17,15 +17,15 @@ import ClayModal from '@clayui/modal';
 import classNames from 'classnames';
 import {useState} from 'react';
 
-const cardsPersona = ['Auto', 'Home', 'Property', 'Life', 'Health'];
+const cardsPersonal = ['Auto', 'Home', 'Property', 'Life', 'Health'];
 
-const ProductCardPersona = () => {
-	const [cardPersonaSelected, setCardPersonaSelected] = useState<string>(
+const PersonalProductCard = () => {
+	const [cardPersonalSelected, setCardPersonalSelected] = useState<string>(
 		'Auto'
 	);
 
 	const onClickCard = (index: number) => {
-		setCardPersonaSelected(cardsPersona[index]);
+		setCardPersonalSelected(cardsPersonal[index]);
 	};
 
 	return (
@@ -36,7 +36,7 @@ const ProductCardPersona = () => {
 				</div>
 
 				<div className="align-items-center d-flex flex-wrap justify-content-center">
-					{cardsPersona.map((cardPersona, index) => {
+					{cardsPersonal.map((cardPersonal, index) => {
 						return (
 							<div className="px-2 row" key={index}>
 								<div className="col">
@@ -45,8 +45,8 @@ const ProductCardPersona = () => {
 											'application-card card-hover border border-secondary',
 											{
 												active:
-													cardPersonaSelected ===
-													cardPersona,
+													cardPersonalSelected ===
+													cardPersonal,
 											}
 										)}
 										onClick={() => onClickCard(index)}
@@ -55,7 +55,7 @@ const ProductCardPersona = () => {
 											<div className="border-dark text-break text-center">
 												<section className="align-items-center autofit-section d-flex h-100">
 													<h6 className="my-0">
-														{cardPersona}
+														{cardPersonal}
 													</h6>
 												</section>
 											</div>
@@ -71,4 +71,4 @@ const ProductCardPersona = () => {
 	);
 };
 
-export default ProductCardPersona;
+export default PersonalProductCard;

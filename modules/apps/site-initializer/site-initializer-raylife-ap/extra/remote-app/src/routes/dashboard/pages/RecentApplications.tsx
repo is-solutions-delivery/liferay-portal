@@ -27,9 +27,9 @@ import formatDate from '../../../common/utils/dateFormater';
 import {redirectTo} from '../../../common/utils/liferay';
 import LoadingIndicator from '../../applications/components/LoadingIndicator';
 import Modal from '../../applications/components/Modal';
+import BusinessProductCard from '../../applications/contents/BusinessProductCard';
 import InsuranceCard from '../../applications/contents/InsuranceCard';
-import ProductCardBusiness from '../../applications/contents/ProductCardBusiness';
-import ProductCardPersona from '../../applications/contents/ProductCardPersona';
+import PersonalProductCard from '../../applications/contents/PersonalProductCard';
 
 const HEADERS = [
 	{
@@ -204,10 +204,10 @@ const RecentApplications = () => {
 
 	const callProducts = (selectCard: string) => {
 		if (cardSelected === insuranceCards[0] || selectCard === 'Personal') {
-			return <ProductCardPersona />;
-		} else {
-			return <ProductCardBusiness />;
+			return <PersonalProductCard />;
 		}
+
+		return <BusinessProductCard />;
 	};
 
 	return (

@@ -20,9 +20,9 @@ import {Liferay} from '../../../common/services/liferay/liferay';
 import {redirectTo} from '../../../common/utils/liferay';
 import LoadingIndicator from '../components/LoadingIndicator';
 import Modal from '../components/Modal';
+import ProductCardBusiness from '../contents/BusinessProductCard';
 import InsuranceCard from '../contents/InsuranceCard';
-import ProductCardBusiness from '../contents/ProductCardBusiness';
-import ProductCardPersona from '../contents/ProductCardPersona';
+import PersonalProductCard from '../contents/PersonalProductCard';
 
 enum ModalType {
 	insurance = 1,
@@ -53,10 +53,10 @@ const Applications = () => {
 
 	const callProducts = (selectCard: string) => {
 		if (cardSelected === insuranceCards[0] || selectCard === 'Personal') {
-			return <ProductCardPersona />;
-		} else {
-			return <ProductCardBusiness />;
+			return <PersonalProductCard />;
 		}
+
+		return <ProductCardBusiness />;
 	};
 
 	const onClickInsuranceCard = (index: number) => {

@@ -19,7 +19,7 @@ import {useState} from 'react';
 
 const cardsBusiness = ['Auto', 'Property', 'Health', "Workers' Compensation"];
 
-const ProductCardBusiness = () => {
+const BusinessProductCard = () => {
 	const [cardBusinessSelected, setCardBusinessSelected] = useState<string>(
 		"Workers' Compensation"
 	);
@@ -70,4 +70,4 @@ const ProductCardBusiness = () => {
 	);
 };
 
-export default ProductCardBusiness;
+export default BusinessProductCard;
