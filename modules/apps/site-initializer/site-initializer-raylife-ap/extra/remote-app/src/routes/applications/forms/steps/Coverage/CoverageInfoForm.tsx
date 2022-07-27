@@ -41,6 +41,8 @@ type hasRequiredErrorTypes = {
 	uninsuredOrUnderinsuredMPD: boolean;
 };
 
+type StateInfoTypes = 'CA' | 'NY' | 'NV';
+
 const hasRequiredError: hasRequiredErrorTypes = {
 	bodilyInjury: false,
 	collision: false,
@@ -56,10 +58,9 @@ const CoverageInfoForm = () => {
 
 	const { form } = state?.steps?.coverage;
 
-
 	const vehicleInfoForm = state.steps.vehicleInfo.form;
 
-	vehicleInfoForm.length
+	const stateInfoForm = state.steps.contactInfo.form.state as StateInfoTypes;
 
 	const handleChangeField = (fieldName: string, fieldValue: string) => {
 		const payload = {
@@ -140,7 +141,7 @@ const CoverageInfoForm = () => {
 		</div>
 	);
 
-	const VehicleForm = (vehicleInfoForm:any, formNumber:number): JSX.Element => (
+	const VehicleForm = (vehicleInfoForm: any, formNumber: number): JSX.Element => (
 		<>
 			<div className="font-weight-bolder mb-4 mt-3 text-paragraph-sm text-uppercase">
 				<u>VEHICLE {formNumber}: {vehicleInfoForm.year} {vehicleInfoForm.make}</u>
@@ -188,7 +189,7 @@ const CoverageInfoForm = () => {
 						}}
 						value={form.comprehensive}
 					>
-						{comprehensiveOptions.map(
+						{comprehensiveOptions[stateInfoForm].map(
 							(comprehensiveOption, index) => (
 								<ClaySelect.Option
 									className="font-weight-bold text-center text-primary"
@@ -246,7 +247,7 @@ const CoverageInfoForm = () => {
 						}}
 						value={form.collision}
 					>
-						{collisionOptions.map((collisionOption, index) => (
+						{collisionOptions[stateInfoForm].map((collisionOption, index) => (
 							<ClaySelect.Option
 								className="font-weight-bold text-center text-primary"
 								key={index}
@@ -322,7 +323,7 @@ const CoverageInfoForm = () => {
 						}}
 						value={form.bodilyInjury}
 					>
-						{bodilyInjuryOptions.map(
+						{bodilyInjuryOptions[stateInfoForm].map(
 							(bodilyInjuryOption, index) => (
 								<ClaySelect.Option
 									className="font-weight-bold text-center text-primary"
@@ -383,7 +384,7 @@ const CoverageInfoForm = () => {
 						}}
 						value={form.propertyDamage}
 					>
-						{propertyDamageOptions.map(
+						{propertyDamageOptions[stateInfoForm].map(
 							(propertyDamageOption, index) => (
 								<ClaySelect.Option
 									className="font-weight-bold text-center text-primary"
@@ -452,7 +453,7 @@ const CoverageInfoForm = () => {
 						}}
 						value={form.uninsuredOrUnderinsuredMBI}
 					>
-						{uninsuredOrUnderinsuredMBIOptions.map(
+						{uninsuredOrUnderinsuredMBIOptions[stateInfoForm].map(
 							(uninsuredOrUnderinsuredMBIOption, index) => (
 								<ClaySelect.Option
 									className="font-weight-bold text-center text-primary"
@@ -521,7 +522,7 @@ const CoverageInfoForm = () => {
 						}}
 						value={form.uninsuredOrUnderinsuredMPD}
 					>
-						{uninsuredOrUnderinsuredMPDOptions.map(
+						{uninsuredOrUnderinsuredMPDOptions[stateInfoForm].map(
 							(uninsuredOrUnderinsuredMPDOption, index) => (
 								<ClaySelect.Option
 									className="font-weight-bold text-center text-primary"
@@ -585,7 +586,7 @@ const CoverageInfoForm = () => {
 						}}
 						value={form.medical}
 					>
-						{medicalOptions.map((medicalOption, index) => (
+						{medicalOptions[stateInfoForm].map((medicalOption, index) => (
 							<ClaySelect.Option
 								className="font-weight-bold text-center text-primary"
 								key={index}
