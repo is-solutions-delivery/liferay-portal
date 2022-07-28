@@ -9,4 +9,22 @@
  * distribution rights of the Software.
  */
 
-export {default} from './inputText';
+import ClayForm, {ClayInput} from '@clayui/form';
+
+type Props = {
+	inputTitle: string;
+};
+
+const InputText = ({inputTitle, ...props}: Props) => {
+	return (
+		<>
+			<ClayForm.Group>
+				<label>{inputTitle}</label>
+
+				<ClayInput {...props} />
+			</ClayForm.Group>
+		</>
+	);
+};
+
+export default InputText;
