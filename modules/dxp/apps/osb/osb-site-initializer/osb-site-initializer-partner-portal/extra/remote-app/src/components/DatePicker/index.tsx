@@ -9,12 +9,4 @@
  * distribution rights of the Software.
  */
 
-import ClayDatePicker from '@clayui/date-picker';
-
-import getIconSpriteMap from '../../utils/getIconSpriteMap';
-
-const DatePicker = ({...props}) => {
-	return <ClayDatePicker spritemap={getIconSpriteMap()} {...props} />;
-};
-
-export default DatePicker;
+export {default} from './DatePicker';
