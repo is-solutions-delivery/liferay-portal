@@ -24,10 +24,6 @@ import {useFetch} from '../../../../../../hooks/useFetch';
 import useFormActions from '../../../../../../hooks/useFormActions';
 import i18n from '../../../../../../i18n';
 import yupSchema from '../../../../../../schema/yup';
-import {
-	createCaseResult,
-	updateCaseResult,
-} from '../../../../../../services/rest/TestrayCaseResult';
 import {TEST_STATUS} from '../../../../../../util/constants';
 
 type CaseResultForm = {
