@@ -13,7 +13,6 @@ import classNames from 'classnames';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import i18n from '../../../../common/I18n';
 import {Button} from '../../../../common/components';
-import SetupLXCForm from '../../../../common/containers/setup-forms/SetupLXCForm';
 import getKebabCase from '../../../../common/utils/getKebabCase';
 import {useCustomerPortal} from '../../context';
 import {MENU_TYPES} from '../../utils/constants';
@@ -26,8 +25,6 @@ const SideMenu = () => {
 	const [{subscriptionGroups}] = useCustomerPortal();
 	const [isOpenedProductsMenu, setIsOpenedProductsMenu] = useState(false);
 	const [menuItemActiveStatus, setMenuItemActiveStatus] = useState([]);
-
-	const [openModal, setOpenModal] = useState(false);
 
 	const productActivationMenuRef = useRef();
 
@@ -91,10 +88,6 @@ const SideMenu = () => {
 				<MenuItem to="">
 					{i18n.translate(getKebabCase(MENU_TYPES.overview))}
 				</MenuItem>
-
-				<Button onClick={() => setOpenModal(true)}>Test</Button>
-
-				{openModal && <SetupLXCForm setOpenModal={setOpenModal} />}
 
 				<li>
 					<Button

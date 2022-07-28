@@ -9,6 +9,7 @@
  * distribution rights of the Software.
  */
 
+import ClayModal, {useModal} from '@clayui/modal';
 import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 import {useOutletContext} from 'react-router-dom';
@@ -25,10 +26,18 @@ import {getWebContents} from '../../../utils/getWebContents';
 import SupportOverview from './components/SupportOverview/';
 import './app.scss';
 
+import SetupLXCForm from '../../../../../common/containers/setup-forms/SetupLXCForm';
+
 const Overview = () => {
 	const [{project, subscriptionGroups}, dispatch] = useCustomerPortal();
 	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
 	const {client} = useAppPropertiesContext();
+
+	const {observer} = useModal({
+		onClose: () => {
+			setOpenModal(false);
+		},
+	});
 
 	const [accountSubscriptions, setAccountSubscriptions] = useState([]);
 	const [selectedSubscriptionGroup, setSelectedSubscriptionGroup] = useState(
@@ -39,6 +48,8 @@ const Overview = () => {
 		SUBSCRIPTIONS_STATUS.expired,
 		SUBSCRIPTIONS_STATUS.future,
 	]);
+
+	const [openModal, setOpenModal] = useState(false);
 
 	const [
 		subscriptionGroupsWithSubscriptions,
@@ -188,6 +199,19 @@ const Overview = () => {
 								</p>
 							)}
 						</div>
+
+						<button
+							className="btn btn-link"
+							onClick={() => setOpenModal(true)}
+						>
+							Modal
+						</button>
+
+						{openModal && (
+							<ClayModal center observer={observer}>
+								<SetupLXCForm setOpenModal={setOpenModal} />
+							</ClayModal>
+						)}
 					</>
 				)}
 			</div>

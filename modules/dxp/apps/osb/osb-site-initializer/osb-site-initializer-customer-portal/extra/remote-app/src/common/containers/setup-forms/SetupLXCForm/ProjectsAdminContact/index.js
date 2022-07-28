@@ -15,15 +15,15 @@ import {Input} from '../../../../components';
 import useBannedDomains from '../../../../hooks/useBannedDomains';
 import {isValidEmail} from '../../../../utils/validations.form';
 
-const ProjectsAdminContact = ({admin}) => {
+const ProjectsAdminContact = ({admin, id}) => {
 	const bannedDomains = useBannedDomains(admin.email);
 
 	return (
 		<ClayForm>
 			<Input
 				groupStyle="pt-1"
-				label={i18n.translate('Project Admin’s First and Last Name')}
-				name="activations.projectsAdminContact.name"
+				label={i18n.translate('project-admin-first-and-last-name')}
+				name={`activations.projectsAdminContact[${id}].name`}
 				placeholder="User Name"
 				required
 				type="text"
@@ -32,10 +32,10 @@ const ProjectsAdminContact = ({admin}) => {
 			<Input
 				groupStyle="pb-1"
 				helper={i18n.translate(
-					'Please enter an individual email ID. Group email IDs are not allowed.'
+					'please-enter-an-individual-email-id-group-email-ids-are-not-allowed'
 				)}
-				label={i18n.translate('Project Admin’s Email Address')}
-				name="activations.projectsAdminContact.email"
+				label={i18n.translate('project-admin-email-address')}
+				name={`activations.projectsAdminContact[${id}].email`}
 				placeholder="user@mycompany.com"
 				required
 				type="email"
@@ -45,10 +45,10 @@ const ProjectsAdminContact = ({admin}) => {
 			<Input
 				groupStyle="pb-1"
 				helper={i18n.translate(
-					'Please, provide the username that appears in your profile e.g. https://github.com/bchandotcom. The initial template for your project will be shared with this user.'
+					'please-provide-the-username-that-appears-in-your-profile-bchandotcom-the-initial-template-for-your-project-will-be-shared-with-this-user'
 				)}
-				label={i18n.translate('Project Admin’s GitHub Username')}
-				name="activations.projectsAdminContact.github"
+				label={i18n.translate('project-admin-github-username')}
+				name={`activations.projectsAdminContact[${id}].github`}
 				placeholder="Username"
 				required
 				type="text"

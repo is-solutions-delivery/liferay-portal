@@ -16,6 +16,7 @@ export const PRODUCT_TYPES = {
 	dxpCloud: 'DXP Cloud',
 	enterpriseSearch: 'Enterprise Search',
 	liferayExperienceCloud: 'Liferay Experience Cloud',
+	lxc: 'LXC',
 	partnership: 'Partnership',
 	portal: 'Portal',
 };
