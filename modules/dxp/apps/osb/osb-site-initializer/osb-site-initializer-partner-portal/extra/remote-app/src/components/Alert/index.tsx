@@ -21,12 +21,7 @@ type AlertProps = {
 	title: string;
 };
 
-const Alert: React.FC<AlertProps> = ({
-	closeAlert,
-	displayType,
-	setShowAlert,
-	title,
-}) => {
+const Alert = ({closeAlert, displayType, setShowAlert, title}: AlertProps) => {
 	return (
 		<ClayAlert
 			displayType={displayType}
