@@ -133,6 +133,25 @@ const CoverageInfoForm = () => {
 			</div>
 		</div>
 	);
+	const handleSelectComprehensive = (comprehensive: string) => {
+		dispatch({
+			payload: {
+				...state.steps.coverage.form,
+				comprehensive,
+			},
+			type: ACTIONS.SET_COVERAGE_FORM,
+		});
+	};
+
+	const handleSelectCollision = (collision: string) => {
+		dispatch({
+			payload: {
+				...state.steps.coverage.form,
+				collision,
+			},
+			type: ACTIONS.SET_COVERAGE_FORM,
+		});
+	};
 
 	return (
 		<div className="container m-0 p-4">
@@ -387,212 +406,123 @@ const CoverageInfoForm = () => {
 							});
 						}}
 						value={form.uninsuredOrUnderinsuredMPD}
-					>
-						{uninsuredOrUnderinsuredMPDOptions.map(
-							(uninsuredOrUnderinsuredMPDOption, index) => (
+					/>
+
+					<div className="col-sm filled form-condensed form-group">
+						<ClaySelect
+							aria-label="Select Label"
+							id="uninsuredDamage"
+						>
+							{uninsuredOrUnderinsuredMPDOptions.map(
+								(uninsuredOrUnderinsuredMPDOption, index) => (
+									<ClaySelect.Option
+										className="font-weight-bold text-center text-primary"
+										key={index}
+										label={
+											uninsuredOrUnderinsuredMPDOption.label
+										}
+										value={
+											uninsuredOrUnderinsuredMPDOption.value
+										}
+									/>
+								)
+							)}
+						</ClaySelect>
+
+						<label htmlFor="uninsuredDamage">
+							Uninsured / Underinsured Motorist Property
+							Damage&nbsp;
+							<span className="text-danger-darken-1">*</span>
+						</label>
+
+						{hasError.uninsuredOrUnderinsuredMPD && (
+							<ErrorMessage />
+						)}
+					</div>
+				</div>
+
+				<div className="row">
+					<div className="col-sm filled form-condensed form-group">
+						<ClaySelect aria-label="Select Label" id="medical">
+							{medicalOptions.map((medicalOption, index) => (
 								<ClaySelect.Option
 									className="font-weight-bold text-center text-primary"
 									key={index}
-									label={
-										uninsuredOrUnderinsuredMPDOption.label
-									}
-									value={
-										uninsuredOrUnderinsuredMPDOption.value
-									}
+									label={medicalOption.label}
+									value={medicalOption.value}
 								/>
-							)
-						)}
-					</ClaySelect>
+							))}
+						</ClaySelect>
 
-					<label htmlFor="uninsuredOrUnderinsuredMPD">
-						Uninsured / Underinsured Motorist Property Damage&nbsp;
-						<span className="text-danger-darken-1">*</span>
-					</label>
+						<label htmlFor="medical">
+							Medical&nbsp;
+							<span className="text-danger-darken-1">*</span>
+						</label>
 
-					{hasError.uninsuredOrUnderinsuredMPD && <ErrorMessage />}
-				</div>
-			</div>
+						{hasError.medical && <ErrorMessage />}
+					</div>
 
-			<div className="row">
-				<div
-					className={classNames(
-						'col-sm filled form-condensed form-group',
-
-						{
-							'has-error': hasError.medical,
-						}
-					)}
-				>
-					<ClaySelect
-						aria-label="Select Label"
-						id="Medical"
-						onBlur={(event) => {
-							const medicalValue = event.target.value;
-							setHasError({
-								...hasError,
-								medical:
-									medicalValue === '' ||
-									medicalValue === 'CHOOSE AN OPTION'
-										? true
-										: false,
-							});
-						}}
-						onChange={(event) => {
-							const medicalValue = event.target.value;
-							handleChangeField('medical', medicalValue);
-
-							setHasError({
-								...hasError,
-								medical:
-									medicalValue === '' ||
-									medicalValue === 'CHOOSE AN OPTION'
-										? true
-										: false,
-							});
-						}}
-						value={form.medical}
-					>
-						{medicalOptions.map((medicalOption, index) => (
-							<ClaySelect.Option
-								className="font-weight-bold text-center text-primary"
-								key={index}
-								label={medicalOption.label}
-								value={medicalOption.value}
-							/>
-						))}
-					</ClaySelect>
-
-					<label htmlFor="Medical">
-						Medical&nbsp;
-						<span className="text-danger-darken-1">*</span>
-					</label>
-
-					{hasError.medical && <ErrorMessage />}
+					<div className="col-sm"></div>
 				</div>
 
-				<div className="col-sm"></div>
-			</div>
+				<div className="font-weight-bolder mb-4 mt-3 text-paragraph-sm text-uppercase">
+					<u>Vehicle 1: 2018 Toyota</u>
+				</div>
 
-			<div className="font-weight-bolder mb-4 mt-3 text-paragraph-sm text-uppercase">
-				<u>Vehicle 1: 2018 Toyota</u>
-			</div>
+				<div className="row">
+					<div className="col-sm filled form-condensed form-group">
+						<ClaySelect
+							aria-label="Select Label"
+							id="comprehensive"
+							onChange={(event) =>
+								handleSelectComprehensive(event.target.value)
+							}
+						>
+							{comprehensiveOptions.map(
+								(comprehensiveOption, index) => (
+									<ClaySelect.Option
+										className="font-weight-bold text-center text-primary"
+										key={index}
+										label={comprehensiveOption.label}
+										value={comprehensiveOption.value}
+									/>
+								)
+							)}
+						</ClaySelect>
 
-			<div className="row">
-				<div
-					className={classNames(
-						'col-sm filled form-condensed form-group',
+						<label htmlFor="comprehensive">
+							Comprehensive&nbsp;
+							<span className="text-danger-darken-1">*</span>
+						</label>
 
-						{
-							'has-error': hasError.comprehensive,
-						}
-					)}
-				>
-					<ClaySelect
-						aria-label="Select Label"
-						id="Comprehensive"
-						onBlur={(event) => {
-							const comprehensiveValue = event.target.value;
-							setHasError({
-								...hasError,
-								comprehensive:
-									comprehensiveValue === '' ||
-									comprehensiveValue === 'CHOOSE AN OPTION'
-										? true
-										: false,
-							});
-						}}
-						onChange={(event) => {
-							const comprehensiveValue = event.target.value;
-							handleChangeField(
-								'comprehensive',
-								comprehensiveValue
-							);
+						{hasError.comprehensive && <ErrorMessage />}
+					</div>
 
-							setHasError({
-								...hasError,
-								comprehensive:
-									comprehensiveValue === '' ||
-									comprehensiveValue === 'CHOOSE AN OPTION'
-										? true
-										: false,
-							});
-						}}
-						value={form.comprehensive}
-					>
-						{comprehensiveOptions.map(
-							(comprehensiveOption, index) => (
+					<div className="col-sm filled form-condensed form-group">
+						<ClaySelect
+							aria-label="Select Label"
+							id="collision"
+							onChange={(event) =>
+								handleSelectCollision(event.target.value)
+							}
+						>
+							{collisionOptions.map((collisionOption, index) => (
 								<ClaySelect.Option
 									className="font-weight-bold text-center text-primary"
 									key={index}
-									label={comprehensiveOption.label}
-									value={comprehensiveOption.value}
+									label={collisionOption.label}
+									value={collisionOption.value}
 								/>
-							)
-						)}
-					</ClaySelect>
+							))}
+						</ClaySelect>
 
-					<label htmlFor="Comprehensive">
-						Comprehensive&nbsp;
-						<span className="text-danger-darken-1">*</span>
-					</label>
+						<label htmlFor="collision">
+							Collision&nbsp;
+							<span className="text-danger-darken-1">*</span>
+						</label>
 
-					{hasError.comprehensive && <ErrorMessage />}
-				</div>
-
-				<div
-					className={classNames(
-						'col-sm filled form-condensed form-group',
-
-						{
-							'has-error': hasError.collision,
-						}
-					)}
-				>
-					<ClaySelect
-						aria-label="Select Label"
-						id="Collision"
-						onBlur={(event) => {
-							const collisionValue = event.target.value;
-							setHasError({
-								...hasError,
-								collision:
-									collisionValue === '' ||
-									collisionValue === 'CHOOSE AN OPTION'
-										? true
-										: false,
-							});
-						}}
-						onChange={(event) => {
-							const collisionValue = event.target.value;
-							handleChangeField('collision', collisionValue);
-
-							setHasError({
-								...hasError,
-								collision:
-									collisionValue === '' ||
-									collisionValue === 'CHOOSE AN OPTION'
-										? true
-										: false,
-							});
-						}}
-						value={form.collision}
-					>
-						{collisionOptions.map((collisionOption, index) => (
-							<ClaySelect.Option
-								className="font-weight-bold text-center text-primary"
-								key={index}
-								label={collisionOption.label}
-								value={collisionOption.value}
-							/>
-						))}
-					</ClaySelect>
-
-					<label htmlFor="collision">
-						Collision&nbsp;
-						<span className="text-danger-darken-1">*</span>
-					</label>
-
-					{hasError.collision && <ErrorMessage />}
+						{hasError.collision && <ErrorMessage />}
+					</div>
 				</div>
 			</div>
 		</div>
