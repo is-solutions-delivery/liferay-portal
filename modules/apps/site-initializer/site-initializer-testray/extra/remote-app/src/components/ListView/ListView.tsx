@@ -53,7 +53,11 @@ export type ListViewProps<T = any> = {
 		visible?: boolean;
 	} & Omit<
 		ManagementToolbarProps,
-		'tableProps' | 'totalItems' | 'onSelectAllRows' | 'rowSelectable'
+		| 'actions'
+		| 'tableProps'
+		| 'totalItems'
+		| 'onSelectAllRows'
+		| 'rowSelectable'
 	>;
 
 	onContextChange?: (context: ListViewContextState) => void;
@@ -193,6 +197,7 @@ const ListView: React.FC<ListViewProps> = ({
 		<>
 			{managementToolbarVisible && (
 				<ManagementToolbar
+					actions={{}}
 					{...managementToolbarProps}
 					tableProps={tableProps}
 					totalItems={items.length}

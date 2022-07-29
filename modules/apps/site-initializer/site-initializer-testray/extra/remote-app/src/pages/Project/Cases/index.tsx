@@ -15,19 +15,22 @@
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import Container from '../../../components/Layout/Container';
-import ListView, {ListViewProps} from '../../../components/ListView/ListView';
+import ListView, {
+	ListViewProps,
+} from '../../../components/ListView/ListViewRest';
 import {TableProps} from '../../../components/Table';
-import {getCases} from '../../../graphql/queries';
 import {FormModal} from '../../../hooks/useFormModal';
 import i18n from '../../../i18n';
 import {filters} from '../../../schema/filter';
+import {casesResource, getCasesTransformData} from '../../../services/rest';
+import {ActionList} from '../../../types';
 import dayjs from '../../../util/date';
 import {searchUtil} from '../../../util/search';
 import CaseModal from './CaseModal';
 import useCaseActions from './useCaseActions';
 
 type CaseListViewProps = {
-	actions?: any[];
+	actions?: ActionList;
 	formModal?: FormModal;
 	projectId?: number | string;
 	variables?: any;
@@ -54,7 +57,7 @@ const CaseListView: React.FC<CaseListViewProps> = ({
 				filterFields: filters.case as any,
 				title: i18n.translate('cases'),
 			}}
-			query={getCases}
+			resource={casesResource}
 			tableProps={{
 				actions,
 				columns: [
@@ -102,7 +105,7 @@ const CaseListView: React.FC<CaseListViewProps> = ({
 				navigateTo: ({id}) => id?.toString(),
 				...tableProps,
 			}}
-			transformData={(data) => data?.cases}
+			transformData={getCasesTransformData}
 			variables={variables}
 			{...listViewProps}
 		/>

@@ -21,10 +21,12 @@ const yupSchema = {
 	build: yup.object({
 		description: yup.string(),
 		gitHash: yup.string(),
+		id: yup.string(),
 		name: yup.string().required(),
 		productVersionId: yup.string().required(),
+		promoted: yup.boolean(),
 		routineId: yup.string().required(),
-		template: yup.string(),
+		template: yup.boolean(),
 	}),
 	case: yup.object({
 		addAnother: yup.boolean(),
@@ -47,6 +49,7 @@ const yupSchema = {
 		name: yup.string().required(),
 	}),
 	factorCategory: yup.object({
+		id: yup.string(),
 		name: yup.string().required(),
 	}),
 	factorOption: yup.object({
@@ -73,13 +76,16 @@ const yupSchema = {
 			),
 	}),
 	project: yup.object({
-		description: yup.string(),
+		description: yup.string().notRequired(),
+		id: yup.string().notRequired(),
 		name: yup.string().required(),
 	}),
 	requirement: yup.object({
 		componentId: yup.string().required(),
 		description: yup.string().required(),
 		descriptionType: yup.string().required(),
+		id: yup.string(),
+		key: yup.string(),
 		linkTitle: yup.string().required(),
 		linkURL: yup.string().required(),
 		summary: yup.string().required(),
@@ -90,7 +96,9 @@ const yupSchema = {
 	}),
 	suite: yup.object({
 		autoanalyze: yup.boolean(),
+		caseParameters: yup.string(),
 		description: yup.string(),
+		id: yup.string(),
 		name: yup.string().required(),
 		smartSuite: yup.string(),
 	}),

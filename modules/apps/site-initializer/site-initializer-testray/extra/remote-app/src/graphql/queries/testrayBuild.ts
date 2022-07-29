@@ -31,7 +31,11 @@ export type TestrayBuild = {
 	productVersion?: TestrayProductVersion;
 	project?: TestrayProject;
 	promoted: boolean;
+	r_productVersionToBuilds_c_productVersion?: TestrayProductVersion;
+	r_projectToBuilds_c_project?: TestrayProject;
+	r_routineToBuilds_c_routine?: TestrayRoutine;
 	routine?: TestrayRoutine;
+	template: boolean;
 };
 
 export const getBuilds = gql`

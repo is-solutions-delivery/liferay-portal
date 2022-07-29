@@ -26,6 +26,11 @@ type OnSubmitOptions = {
 	updateMutation: DocumentNode;
 };
 
+type OnSubmitOptionsRest<T = any> = {
+	create: (data: any) => Promise<T>;
+	update: (id: number, data: any) => Promise<T>;
+};
+
 export type FormOptions = {
 	onChange: (
 		state: any
@@ -43,6 +48,11 @@ export type FormOptions = {
 		onSubmitOptions: OnSubmitOptions,
 		mutationOptions?: Omit<MutationOptions, 'mutation'>
 	) => Promise<void>;
+	onSubmitRest: <T = any>(
+		data: any,
+		options: OnSubmitOptionsRest<T>
+	) => Promise<T>;
+	onSuccess: () => void;
 };
 
 export type Form = {
@@ -52,6 +62,22 @@ export type Form = {
 
 export type FormComponent = Omit<Form, 'forceRefetch'>;
 
+const onError = (error: any) => {
+	console.error(error);
+
+	Liferay.Util.openToast({
+		message: i18n.translate('an-unexpected-error-occurred'),
+		type: 'danger',
+	});
+};
+
+const onSuccess = () => {
+	Liferay.Util.openToast({
+		message: i18n.translate('your-request-completed-successfully'),
+		type: 'success',
+	});
+};
+
 const useFormActions = (): Form => {
 	const [forceRefetch, setForceRefetch] = useState(0);
 	const navigate = useNavigate();
@@ -60,26 +86,11 @@ const useFormActions = (): Form => {
 		navigate(-1);
 	};
 
-	const onError = (error: any) => {
-		console.error(error);
-
-		Liferay.Util.openToast({
-			message: i18n.translate('an-unexpected-error-occurred'),
-			type: 'danger',
-		});
-	};
-
-	const onSave = (state?: any) => {
-		Liferay.Util.openToast({
-			message: i18n.translate('your-request-completed-successfully'),
-			type: 'success',
-		});
+	const onSave = () => {
+		onSuccess();
 
 		setForceRefetch(new Date().getTime());
 
-		if (state) {
-			onSave(state);
-		}
 		navigate(-1);
 	};
 
@@ -104,8 +115,30 @@ const useFormActions = (): Form => {
 				variables,
 				...options,
 			});
+		} catch (error) {
+			onError(error);
+
+			throw error;
 		}
-		catch (error) {
+	};
+
+	const onSubmitRest = async <T = any>(
+		data: any,
+		{create, update}: OnSubmitOptionsRest<T>
+	): Promise<T> => {
+		const form = {...data};
+
+		delete form.id;
+
+		try {
+			const fn = data.id
+				? () => update(data.id, form)
+				: () => create(form);
+
+			const response = await fn();
+
+			return response;
+		} catch (error) {
 			onError(error);
 
 			throw error;
@@ -145,6 +178,8 @@ const useFormActions = (): Form => {
 			onSave,
 			onSubmit,
 			onSubmitAndSave,
+			onSubmitRest,
+			onSuccess,
 		},
 	};
 };
