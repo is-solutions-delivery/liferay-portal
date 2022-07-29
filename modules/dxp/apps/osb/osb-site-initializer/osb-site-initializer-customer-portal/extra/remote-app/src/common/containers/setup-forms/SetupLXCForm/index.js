@@ -11,22 +11,27 @@
 
 import ClayForm from '@clayui/form';
 import {FieldArray, Formik} from 'formik';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import i18n from '../../../I18n';
 import {Button, Input, Select} from '../../../components';
+import {useAppPropertiesContext} from '../../../contexts/AppPropertiesContext';
+import {getListTypeDefinitions} from '../../../services/liferay/graphql/queries';
 import getInititalLXCInvite from '../../../utils/getInititalLXCInvite';
 import Layout from '../Layout';
 import ConfirmationLXCMessageModal from './ConfirmationLXCMessageModal';
 import ProjectsAdminContact from './ProjectsAdminContact';
-
 const INITIAL_SETUP_ADMIN_COUNT = 1;
 
 // const MAXIMUM_NUMBER_OF_CHARACTERS = 77;
 
-const SetupLXCPage = ({errors, setOpenModal, touched, values}) => {
+const SetupLXCPage = ({errors, listType, setOpenModal, touched, values}) => {
 	const [isSuccess, setIsSuccess] = useState(false);
 
 	const [baseButtonDisabled, setBaseButtonDisabled] = useState(true);
+
+	const {client} = useAppPropertiesContext();
+
+	const [listItem, setListItem] = useState([]);
 
 	useEffect(() => {
 		const hasTouched = !Object.keys(touched).length;
@@ -34,6 +39,28 @@ const SetupLXCPage = ({errors, setOpenModal, touched, values}) => {
 
 		setBaseButtonDisabled(hasTouched || hasError);
 	}, [touched, errors]);
+
+	useEffect(() => {
+		const fetchListPrimaryRegions = async () => {
+			const {data} = await client.query({
+				query: getListTypeDefinitions,
+				variables: {filter: `name eq '${listType}'`},
+			});
+			const items = data.listTypeDefinitions.items[0].listTypeEntries;
+
+			setListItem(items);
+		};
+		fetchListPrimaryRegions();
+	}, [client, listType]);
+
+	const primaryRegionList = useMemo(
+		() =>
+			listItem.map(({name}) => ({
+				label: name,
+				value: name,
+			})) || [],
+		[listItem]
+	);
 
 	if (isSuccess) {
 		return (
@@ -92,7 +119,7 @@ const SetupLXCPage = ({errors, setOpenModal, touched, values}) => {
 
 							<div className="flex-fill">
 								<label>
-									{i18n.translate('liferay-dxp-version')}
+									{i18n.translate('liferay-lxc-version')}
 								</label>
 
 								<p className="text-neutral-6">
@@ -118,30 +145,7 @@ const SetupLXCPage = ({errors, setOpenModal, touched, values}) => {
 									groupStyle="pb-1"
 									label={i18n.translate('primary-region')}
 									name="activations.primaryRegion"
-									options={[
-										{
-											disabled: false,
-											label: 'Select an option',
-
-											value: '0',
-										},
-
-										{
-											disabled: false,
-											label: 'Europe',
-											value: '1',
-										},
-										{
-											disabled: false,
-											label: 'Noth America',
-											value: '2',
-										},
-										{
-											disabled: false,
-											label: 'South America',
-											value: '3',
-										},
-									]}
+									options={primaryRegionList}
 									required
 								/>
 							</ClayForm.Group>

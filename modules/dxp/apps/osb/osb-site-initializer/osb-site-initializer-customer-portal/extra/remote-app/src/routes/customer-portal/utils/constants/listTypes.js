@@ -11,5 +11,6 @@
 
 export const LIST_TYPES = {
 	dxpVersion: 'DXP Version',
+	lxcPrimaryRegion: 'LXC Primary Region',
 	portalVersion: 'Portal Version',
 };

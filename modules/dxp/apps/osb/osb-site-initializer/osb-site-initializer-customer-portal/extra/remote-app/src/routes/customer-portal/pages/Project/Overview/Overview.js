@@ -21,7 +21,11 @@ import SubscriptionsFilterByStatus from '../../../components/SubscriptionsFilter
 import SubscriptionsNavbar from '../../../components/SubscriptionsNavbar';
 import {useCustomerPortal} from '../../../context';
 import {actionTypes} from '../../../context/reducer';
-import {PRODUCT_TYPES, SUBSCRIPTIONS_STATUS} from '../../../utils/constants';
+import {
+	LIST_TYPES,
+	PRODUCT_TYPES,
+	SUBSCRIPTIONS_STATUS,
+} from '../../../utils/constants';
 import {getWebContents} from '../../../utils/getWebContents';
 import SupportOverview from './components/SupportOverview/';
 import './app.scss';
@@ -209,7 +213,10 @@ const Overview = () => {
 
 						{openModal && (
 							<ClayModal center observer={observer}>
-								<SetupLXCForm setOpenModal={setOpenModal} />
+								<SetupLXCForm
+									listType={LIST_TYPES.lxcPrimaryRegion}
+									setOpenModal={setOpenModal}
+								/>
 							</ClayModal>
 						)}
 					</>
