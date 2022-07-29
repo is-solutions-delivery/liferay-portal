@@ -42,8 +42,8 @@ public class MBSuspiciousActivityServiceImpl
 		throws PortalException {
 
 		return mbSuspiciousActivityLocalService.
-			addOrUpdateSuspiciousActivityByMessage(
-				messageId, reason, getUserId());
+			addOrUpdateMessageSuspiciousActivity(
+				getUserId(),messageId, reason);
 	}
 
 	@Override
@@ -52,8 +52,8 @@ public class MBSuspiciousActivityServiceImpl
 		throws PortalException {
 
 		return mbSuspiciousActivityLocalService.
-			addOrUpdateSuspiciousActivityByThread(
-				reason, threadId, getUserId());
+			addOrUpdateThreadSuspiciousActivity(
+				getUserId(),reason, threadId);
 	}
 
 	@Override
