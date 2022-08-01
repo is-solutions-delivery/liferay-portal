@@ -13,7 +13,7 @@ import {useModal} from '@clayui/core';
 import classNames from 'classnames';
 import {useState} from 'react';
 import i18n from '../../../../../../../../../common/I18n';
-import {Button} from '../../../../../../../../../common/components';
+import {Button, Skeleton} from '../../../../../../../../../common/components';
 import useAvailablesAdmins from '../../hooks/useAvailablesAdmins';
 import BadgeFilter from './components/BadgeFilter';
 import InvitesModal from './components/InvitesModal';
@@ -50,69 +50,80 @@ const TeamMembersTableHeader = ({
 	});
 
 	return (
-		<div className="bg-neutral-1 d-flex flex-column pt-3 px-3 py-3 rounded">
-			<div className="d-flex">
-				<TeamMembersFilter
-					filtersState={[setFilters]}
-					userAccounts={userAccounts}
-				/>
+		<div>
+			{!koroneikiAccount || !sessionId ? (
+				<div>
+					<Skeleton height={72} width={1550}></Skeleton>
+				</div>
+			) : (
+				<div className="bg-neutral-1 d-flex flex-column pt-3 px-3 py-3 rounded">
+					<div className="d-flex">
+						<TeamMembersFilter
+							filtersState={[setFilters]}
+							userAccounts={userAccounts}
+						/>
 
-				<div className="align-items-center d-flex ml-auto">
-					{koroneikiAccount?.maxRequestors > 0 && (
-						<>
-							<PopoverIconButton alignPosition="top" />
+						<div className="align-items-center d-flex ml-auto">
+							{koroneikiAccount?.maxRequestors > 0 && (
+								<>
+									<PopoverIconButton alignPosition="top" />
 
-							<p className="font-weight-bold m-0">
-								{i18n.translate('support-seats')}: &nbsp;
-							</p>
+									<p className="font-weight-bold m-0">
+										{i18n.translate('support-seats')}:
+										&nbsp;
+									</p>
 
-							<p
-								className={classNames(
-									'font-weight-semi-bold m-0 text-neutral-7',
-									{
-										'mr-4': !hasAdminAccess,
-									}
-								)}
-							>
-								{`${i18n.sub('x-of-x-available', [
-									`${
-										administratorsAvailable < 0
-											? '0'
-											: administratorsAvailable
-									}`,
-									koroneikiAccount.maxRequestors,
-								])}`}
-							</p>
-						</>
-					)}
+									<p
+										className={classNames(
+											'font-weight-semi-bold m-0 text-neutral-7',
+											{
+												'mr-4': !hasAdminAccess,
+											}
+										)}
+									>
+										{`${i18n.sub('x-of-x-available', [
+											`${
+												administratorsAvailable < 0
+													? '0'
+													: administratorsAvailable
+											}`,
+											koroneikiAccount.maxRequestors,
+										])}`}
+									</p>
+								</>
+							)}
 
-					{hasAdminAccess && (
-						<Button
-							className="btn-outline-primary invite-button ml-3 mr-1 px-3 py-2"
-							onClick={() => setVisible(true)}
-							prependIcon="user-plus"
-							prependIconClassName="mr-2"
-						>
-							{i18n.translate('invite')}
-						</Button>
+							{hasAdminAccess && (
+								<Button
+									className="btn-outline-primary invite-button ml-3 mr-1 px-3 py-2"
+									onClick={() => setVisible(true)}
+									prependIcon="user-plus"
+									prependIconClassName="mr-2"
+								>
+									{i18n.translate('invite')}
+								</Button>
+							)}
+						</div>
+					</div>
+
+					<BadgeFilter
+						activationKeysLength={userAccounts?.length}
+						filtersState={[filters]}
+						loading={loading}
+					/>
+
+					{visible && (
+						<InvitesModal
+							mutateUserData={handleOnUserInvite}
+							{...modalProps}
+							availableAdministratorAssets={
+								administratorsAvailable
+							}
+							koroneikiAccount={koroneikiAccount}
+							sessionId={sessionId}
+						/>
 					)}
 				</div>
-			</div>
-
-			<BadgeFilter
-				activationKeysLength={userAccounts?.length}
-				filtersState={[filters]}
-				loading={loading}
-			/>
-
-			{visible && (
-				<InvitesModal
-					mutateUserData={handleOnUserInvite}
-					{...modalProps}
-					availableAdministratorAssets={administratorsAvailable}
-					koroneikiAccount={koroneikiAccount}
-					sessionId={sessionId}
-				/>
 			)}
 		</div>
 	);

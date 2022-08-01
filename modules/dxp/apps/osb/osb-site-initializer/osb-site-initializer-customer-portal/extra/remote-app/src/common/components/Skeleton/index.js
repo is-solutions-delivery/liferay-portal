@@ -29,6 +29,7 @@ const Skeleton = ({align, count = 1, height, width, ...props}) => {
 					)}
 					key={index}
 					style={{
+						cursor: 'wait',
 						height: `${height}px`,
 						width: `${width - index * 100}px`,
 					}}

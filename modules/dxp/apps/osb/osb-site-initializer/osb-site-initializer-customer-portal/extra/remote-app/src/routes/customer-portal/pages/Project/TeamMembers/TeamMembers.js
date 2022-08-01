@@ -17,6 +17,7 @@ import {useCustomerPortal} from '../../../context';
 import ManageProductUser from './components/ManageProductUser';
 import TeamMembersTable from './components/TeamMembersTable/TeamMembersTable';
 import './teamMembers.scss';
+import {Skeleton} from '../../../../../common/components';
 
 const TeamMembers = () => {
 	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
@@ -29,20 +30,32 @@ const TeamMembers = () => {
 	}, [setHasSideMenu, setHasQuickLinksPanel]);
 
 	if (!project || !subscriptionGroups || !sessionId) {
-		return <>{i18n.translate('loading')}...</>;
+		return <></>;
 	}
 
 	return (
 		<>
-			<div>
-				<h1 className="m-0">{i18n.translate('team-members')}</h1>
+			{!project || !subscriptionGroups || !sessionId ? (
+				<div>
+					<Skeleton height={45} width={250}></Skeleton>
 
-				<p className="mb-0 mt-1 text-neutral-7 text-paragraph-sm">
-					{i18n.translate(
-						'team-members-have-access-to-this-project-in-customer-portal'
-					)}
-				</p>
-			</div>
+					<Skeleton
+						className="mt-1"
+						height={25}
+						width={400}
+					></Skeleton>
+				</div>
+			) : (
+				<div>
+					<h1 className="m-0">{i18n.translate('team-members')}</h1>
+
+					<p className="mb-0 mt-1 text-neutral-7 text-paragraph-sm">
+						{i18n.translate(
+							'team-members-have-access-to-this-project-in-customer-portal'
+						)}
+					</p>
+				</div>
+			)}
 
 			<div className="mt-4">
 				<TeamMembersTable
