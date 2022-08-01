@@ -44,10 +44,23 @@ const VehicleInfo = () => {
 				year: '',
 			};
 
+			const coverageVehicleObject = {
+				collision: '',
+				comprehensive: '',
+			}
+
 			dispatch({
 				payload: vehicleInfoObject,
 				type: ACTIONS.SET_NEW_VEHICLE,
 			});
+
+			dispatch({
+				payload: {
+					...state.steps.coverage.form,
+					vehicles: [...state.steps.coverage.form.vehicles, coverageVehicleObject]
+				},
+				type: ACTIONS.SET_COVERAGE_FORM
+			})
 		}
 	};
 
