@@ -76,6 +76,9 @@ const yupSchema = {
 				i18n.translate('password-can-only-contain-latin-letters')
 			),
 	}),
+	productVersion: yup.object({
+		name: yup.string(),
+	}),
 	project: yup.object({
 		description: yup.string().notRequired(),
 		id: yup.string().notRequired(),

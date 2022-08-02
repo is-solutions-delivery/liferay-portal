@@ -37,8 +37,10 @@ import {
 import {searchUtil} from '../../../../util/search';
 import {CaseListView} from '../../Cases';
 import SuiteFormSelectModal from '../../Suites/modal';
+import BuildNewProductVersionModal from './BuildNewProductVersionModal';
 import BuildOptionModal from './BuildOptionModal';
 import BuildSelectOptionsModal from './BuildSelectOptionsModal';
+import BuildSelectSuitesModal from './BuildSelectSuitesModal';
 
 import type {KeyedMutator} from 'swr';
 
@@ -47,6 +49,8 @@ type RoutineBuildData = typeof yupSchema.build.__outputType;
 const RoutineBuildForm = () => {
 	const {modal: optionModal} = useFormModal();
 	const {modal: optionSelectModal} = useFormModal();
+	const {modal: newProductVersionModal} = useFormModal();
+	const {modal: buildSelectSuitesModal} = useFormModal();
 	const navigate = useNavigate();
 	const [cases, setCases] = useState<number[]>([]);
 	const {projectId, routineId} = useParams();
@@ -66,6 +70,8 @@ const RoutineBuildForm = () => {
 		onSave: (newCases) =>
 			setCases((prevCases) => [...new Set([...prevCases, ...newCases])]),
 	});
+
+	console.log(cases);
 
 	const {
 		formState: {errors},
@@ -196,6 +202,7 @@ const RoutineBuildForm = () => {
 					<ClayButtonWithIcon
 						className="mt-5"
 						displayType="secondary"
+						onClick={() => newProductVersionModal.open()}
 						symbol="plus"
 						title={i18n.translate('add-product-version')}
 					/>
@@ -247,7 +254,11 @@ const RoutineBuildForm = () => {
 						{i18n.translate('add-cases')}
 					</ClayButton>
 
-					<ClayButton className="ml-1" displayType="secondary">
+					<ClayButton
+						className="ml-1"
+						displayType="secondary"
+						onClick={() => buildSelectSuitesModal.open()}
+					>
 						{i18n.translate('add-suites')}
 					</ClayButton>
 				</ClayButton.Group>
@@ -299,11 +310,15 @@ const RoutineBuildForm = () => {
 				</div>
 			</ClayForm>
 
+			<BuildNewProductVersionModal modal={newProductVersionModal} />
+
 			<SuiteFormSelectModal modal={modal} type="select-cases" />
 
 			<BuildOptionModal modal={optionModal} />
 
 			<BuildSelectOptionsModal modal={optionSelectModal} />
+
+			<BuildSelectSuitesModal modal={buildSelectSuitesModal} />
 		</Container>
 	);
 };
