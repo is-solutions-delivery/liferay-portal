@@ -57,8 +57,6 @@ const SetupLXCPage = ({errors, listType, setOpenModal, touched, values}) => {
 		fetchListPrimaryRegions();
 	}, [client, listType]);
 
-	// criar mutation
-
 	const lxcSubmitValues = values?.activations;
 
 	const {data} = useAddLiferayExperienceCloudEnviroments(
@@ -118,7 +116,7 @@ const SetupLXCPage = ({errors, listType, setOpenModal, touched, values}) => {
 					<Button
 						disabled={baseButtonDisabled}
 						displayType="primary"
-						onClick={() => useAddLiferayExperienceCloudEnviroments}
+						onClick={() => setIsSuccess(true)}
 					>
 						{i18n.translate('submit')}
 					</Button>
@@ -143,16 +141,6 @@ const SetupLXCPage = ({errors, listType, setOpenModal, touched, values}) => {
 
 								<p className="text-neutral-6 text-paragraph-lg">
 									<strong>SuperBank</strong>
-								</p>
-							</div>
-
-							<div className="flex-fill">
-								<label>
-									{i18n.translate('liferay-lxc-version')}
-								</label>
-
-								<p className="text-neutral-6">
-									<strong>7.3</strong>
 								</p>
 							</div>
 						</div>

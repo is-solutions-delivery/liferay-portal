@@ -34,7 +34,7 @@ const ConfirmationLXCMessageModal = ({handlePage}) => {
 
 				<p>
 					{i18n.translate(
-						'your-liferay-experience-cloud-workspace-will-be-provisioned-in-1-2-business-days-an-email-will-be-sent-once-your-project-is-ready'
+						'your-liferay-experience-cloud-workspace-will-be-provisioned-within-3-business-days-an-email-will-be-sent-once-your-project-is-ready'
 					)}
 				</p>
 			</div>
