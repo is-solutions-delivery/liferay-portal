@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -15,11 +16,14 @@ import {useEffect, useMemo, useState} from 'react';
 import i18n from '../../../I18n';
 import {Button, Input, Select} from '../../../components';
 import {useAppPropertiesContext} from '../../../contexts/AppPropertiesContext';
+import {Liferay} from '../../../services/liferay';
+import {useAddLiferayExperienceCloudEnviroments} from '../../../services/liferay/graphql/liferay-experience-cloud-enviroment/queries/useAddLiferayExperienceCloudEnviroments';
 import {getListTypeDefinitions} from '../../../services/liferay/graphql/queries';
 import getInititalLXCInvite from '../../../utils/getInititalLXCInvite';
 import Layout from '../Layout';
 import ConfirmationLXCMessageModal from './ConfirmationLXCMessageModal';
 import ProjectsAdminContact from './ProjectsAdminContact';
+
 const INITIAL_SETUP_ADMIN_COUNT = 1;
 
 // const MAXIMUM_NUMBER_OF_CHARACTERS = 77;
@@ -53,6 +57,28 @@ const SetupLXCPage = ({errors, listType, setOpenModal, touched, values}) => {
 		fetchListPrimaryRegions();
 	}, [client, listType]);
 
+	// criar mutation
+
+	const lxcSubmitValues = values?.activations;
+
+	const {data} = useAddLiferayExperienceCloudEnviroments(
+		Liferay.ThemeDisplay.getScopeGroupId(),
+		{
+			variables: {
+				incidentManagementEmailAddress:
+					lxcSubmitValues.incidentManagementEmail,
+				incidentManagementFirstAndLastName:
+					lxcSubmitValues.incidentManagementName,
+				primaryRegion: lxcSubmitValues.primaryRegion,
+				projectId: lxcSubmitValues.projectId,
+				projectsAdminEmailAddress:
+					lxcSubmitValues.projectsAdminEmailAddress,
+				projectsAdminFirstAndLastName:
+					lxcSubmitValues.projectsAdminFirstAndLastName,
+			},
+		}
+	);
+
 	const primaryRegionList = useMemo(
 		() =>
 			listItem.map(({name}) => ({
@@ -72,6 +98,9 @@ const SetupLXCPage = ({errors, listType, setOpenModal, touched, values}) => {
 		);
 	}
 
+	// eslint-disable-next-line no-console
+	console.log(data);
+
 	return (
 		<Layout
 			className="bg-neutral-0 ml-0 mr-0 pt-1 px-3 w-100"
@@ -89,7 +118,7 @@ const SetupLXCPage = ({errors, listType, setOpenModal, touched, values}) => {
 					<Button
 						disabled={baseButtonDisabled}
 						displayType="primary"
-						onClick={() => setIsSuccess(true)}
+						onClick={() => useAddLiferayExperienceCloudEnviroments}
 					>
 						{i18n.translate('submit')}
 					</Button>

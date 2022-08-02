@@ -30,6 +30,7 @@ import {getWebContents} from '../../../utils/getWebContents';
 import SupportOverview from './components/SupportOverview/';
 import './app.scss';
 
+import {Button} from '../../../../../common/components';
 import SetupLXCForm from '../../../../../common/containers/setup-forms/SetupLXCForm';
 
 const Overview = () => {
@@ -204,12 +205,14 @@ const Overview = () => {
 							)}
 						</div>
 
-						<button
+						<Button
+							appendIcon="order-arrow-right"
 							className="btn btn-link"
+							displayType="link"
 							onClick={() => setOpenModal(true)}
 						>
-							Modal
-						</button>
+							Finish Activation
+						</Button>
 
 						{openModal && (
 							<ClayModal center observer={observer}>
