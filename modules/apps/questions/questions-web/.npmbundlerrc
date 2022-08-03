@@ -1,0 +1,9 @@
+{
+	"config": {
+		"imports": {
+			"@liferay/flags-taglib": {
+				"/": "*"
+			}
+		}
+	}
+}

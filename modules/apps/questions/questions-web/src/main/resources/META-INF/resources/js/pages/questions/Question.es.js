@@ -17,6 +17,7 @@ import ClayEmptyState from '@clayui/empty-state';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import {useModal} from '@clayui/modal';
+import {TEST_VARIABLE} from '@liferay/flags-taglib';
 import classNames from 'classnames';
 import {useMutation} from 'graphql-hooks';
 import React, {
@@ -131,8 +132,7 @@ export default withRouter(
 							);
 							setError(errorObject);
 							setLoading(false);
-						}
-						else {
+						} else {
 							setQuestion(messageBoardThreadByFriendlyUrlPath);
 							setLoading(false);
 						}
@@ -222,8 +222,7 @@ export default withRouter(
 				await onSubscription();
 
 				fetchMessages();
-			}
-			catch (error) {}
+			} catch (error) {}
 		};
 
 		const deleteAnswer = useCallback(
@@ -380,6 +379,8 @@ export default withRouter(
 												</span>
 											)}
 										</h1>
+
+										{TEST_VARIABLE}
 
 										<p className="c-mb-0 small text-secondary">
 											{`${Liferay.Language.get(

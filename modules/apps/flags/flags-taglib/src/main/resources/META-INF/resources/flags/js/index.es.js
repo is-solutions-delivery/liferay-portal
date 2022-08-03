@@ -24,3 +24,5 @@ export default function ({context, props}) {
 		</ThemeContext.Provider>
 	);
 }
+
+export const TEST_VARIABLE = 'Liferay Portal';
