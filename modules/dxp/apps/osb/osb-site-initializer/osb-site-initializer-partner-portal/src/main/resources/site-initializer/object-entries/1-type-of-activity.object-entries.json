@@ -1,0 +1,21 @@
+{
+    "object-entries": [
+        {
+            "name": "Event",
+            "externalReferenceCode": "ACTIVITY-001"
+        },
+        {
+            "name": "Digital Marketing",
+            "externalReferenceCode": "ACTIVITY-002"
+        },
+        {
+            "name": "Content Marketing",
+            "externalReferenceCode": "ACTIVITY-003"
+        },
+        {
+            "name": "Miscellaneous Marketing",
+            "externalReferenceCode": "ACTIVITY-004"
+        }
+    ],
+    "objectDefinitionName": "TypeOfActivity"
+}
