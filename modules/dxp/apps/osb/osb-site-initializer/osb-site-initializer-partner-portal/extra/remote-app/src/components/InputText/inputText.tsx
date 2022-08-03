@@ -14,6 +14,7 @@
  * placeholder: string; type: string; value: string; }' is not assignable to type 'IntrinsicAttributes & Props'.
  */
 import {ClayInput} from '@clayui/form';
+import {ErrorMessage, useField} from 'formik';
 
 type Props = {
 	className: any;
@@ -27,12 +28,25 @@ type Props = {
 };
 
 const InputText = ({label, ...props}: Props) => {
+	const [field, meta] = useField(props);
+
+	const fieldClass =
+		meta.touched && meta.error
+			? 'has-error'
+			: meta.touched && !meta.error && 'has-success';
+
 	return (
-		<>
-			{label && <label>{label}</label>}
+		<div className={`form-group-item ${fieldClass}`}>
+			<label htmlFor={field.name}>{label}</label>
 
 			<ClayInput {...props} />
-		</>
+
+			<ErrorMessage
+				className={`error ${fieldClass}`}
+				component="div"
+				name={field.name}
+			/>
+		</div>
 	);
 };
 

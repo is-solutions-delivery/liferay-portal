@@ -10,6 +10,7 @@
  */
 
 import {ClaySelect} from '@clayui/form';
+import {ErrorMessage, useField} from 'formik';
 
 type Props = {
 	label: string;
@@ -19,9 +20,16 @@ type Props = {
 };
 
 const Select = ({label, options, ...props}: Props) => {
+	const [field, meta] = useField(props);
+
+	const fieldClass =
+		meta.touched && meta.error
+			? 'has-error'
+			: meta.touched && !meta.error && 'has-success';
+
 	return (
-		<>
-			<label>{label}</label>
+		<div className={`form-group-item ${fieldClass}`}>
+			<label htmlFor={field.name}>{label}</label>
 
 			<ClaySelect {...props}>
 				{options.map((item: any) => (
@@ -32,7 +40,13 @@ const Select = ({label, options, ...props}: Props) => {
 					/>
 				))}
 			</ClaySelect>
-		</>
+
+			<ErrorMessage
+				className={`error ${fieldClass}`}
+				component="div"
+				name={field.name}
+			/>
+		</div>
 	);
 };
 

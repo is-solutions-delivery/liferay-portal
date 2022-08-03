@@ -10,6 +10,7 @@
  */
 
 import {ClayRadio} from '@clayui/form';
+import {ErrorMessage, useField} from 'formik';
 
 type Props = {
 	checked: boolean;
@@ -21,9 +22,22 @@ type Props = {
 };
 
 const Radio = ({...props}: Props) => {
+	const [field, meta] = useField(props);
+
+	const fieldClass =
+		meta.touched && meta.error
+			? 'has-error'
+			: meta.touched && !meta.error && 'has-success';
+
 	return (
 		<>
 			<ClayRadio {...props} />
+
+			<ErrorMessage
+				className={`error ${fieldClass}`}
+				component="div"
+				name={field.name}
+			/>
 		</>
 	);
 };

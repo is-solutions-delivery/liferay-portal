@@ -24,6 +24,7 @@ import LIST_TYPE_ENTRIES from '../../constants/listTypeEntries';
 import {useGetListTypeDefinitions} from '../../services/list-type-definitions/useGetListTypeDefinitions';
 import {useGetTypeOfActivity} from '../../services/type-of-activity/useGetTypeOfActivity';
 import getInitialGenerateNewKey from '../utils/constants/getInitialGenerateNewKey';
+import validations from './validationsActivities';
 
 const CLAIM_PERCENT = 50;
 
@@ -150,7 +151,7 @@ const ActivitiesForm: any = ({
 				liferayParticipationRequirements: '',
 				overallMessage: '',
 				sourceSizeInviteList: '',
-				startDateValue: '',
+				startDate: '',
 				tactic: '',
 				targetLeads: '',
 				totalMdfRequestedAmount: '',
@@ -169,6 +170,7 @@ const ActivitiesForm: any = ({
 					valueTotalBudget
 				);
 			}}
+			validationSchema={validations}
 		>
 			{(formik) => (
 				<div className="align-items-start d-flex justify-content-center">
@@ -256,21 +258,21 @@ const ActivitiesForm: any = ({
 											<div className="form-group-autofit">
 												<div className="form-group-item">
 													<DatePicker
-														dateFormat="dd/MM/yyyy"
+														dateFormat="MM/dd/yyyy"
 														label="Start Date"
 														name="startDate"
 														onChange={(
 															value: any
 														) => {
 															formik.setFieldValue(
-																'starDate',
+																'startDate',
 																value
 															);
 															setStartDateValue(
 																value
 															);
 														}}
-														placeholder="DD/MM/YYYY"
+														placeholder="MM/DD/YYYY"
 														value={startDateValue}
 														years={{
 															end: 2025,
@@ -281,7 +283,7 @@ const ActivitiesForm: any = ({
 
 												<div className="form-group-item">
 													<DatePicker
-														dateFormat="dd/MM/yyyy"
+														dateFormat="MM/dd/yyyy"
 														label="End Date"
 														name="endDate"
 														onChange={(
@@ -295,7 +297,7 @@ const ActivitiesForm: any = ({
 																value
 															);
 														}}
-														placeholder="DD/MM/YYYY"
+														placeholder="MM/DD/YYYY"
 														value={endDateValue}
 														years={{
 															end: 2025,

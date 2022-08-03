@@ -21,6 +21,7 @@ import SiteMapCard from '../../components/SiteMapCard';
 import LIST_TYPE_ENTRIES from '../../constants/listTypeEntries';
 import {useGetUserAccounts} from '../../services/headless-admin-user/useGetUserAccounts';
 import {useGetListTypeDefinitions} from '../../services/list-type-definitions/useGetListTypeDefinitions';
+import validations from './validationsGoals';
 
 const GoalsPage: any = ({
 	setGeneralObject,
@@ -55,7 +56,9 @@ const GoalsPage: any = ({
 		updateCheckTargetAudience,
 		setUpdateCheckTargetAudience,
 	] = useState();
-	const [checkTargetAudienceError, setCheckTargetAudienceError] = useState();
+	const [checkTargetAudienceError, setCheckTargetAudienceError] = useState(
+		false
+	);
 
 	const handleOnSubmit = (
 		formData: any,
@@ -130,6 +133,7 @@ const GoalsPage: any = ({
 					updateCheckTargetAudience
 				);
 			}}
+			validationSchema={validations}
 		>
 			{(formik) => (
 				<div className="align-items-start d-flex justify-content-center">

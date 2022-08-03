@@ -11,6 +11,7 @@
 
 import ClayDatePicker from '@clayui/date-picker';
 import {ClayIconSpriteContext} from '@clayui/icon';
+import {ErrorMessage, useField} from 'formik';
 
 import getIconSpriteMap from '../../utils/getIconSpriteMap';
 
@@ -25,13 +26,27 @@ type Props = {
 };
 
 const DatePicker = ({label, ...props}: Props) => {
+	const [field, meta] = useField(props);
+
+	const fieldClass =
+		meta.touched && meta.error
+			? 'has-error'
+			: meta.touched && !meta.error && 'has-success';
+
 	return (
-		<>
-			<label>{label}</label>
+		<div className={`form-group-item ${fieldClass}`}>
+			<label htmlFor={field.name}>{label}</label>
+
 			<ClayIconSpriteContext.Provider value={getIconSpriteMap()}>
 				<ClayDatePicker {...props} />
 			</ClayIconSpriteContext.Provider>
-		</>
+
+			<ErrorMessage
+				className={`error ${fieldClass}`}
+				component="div"
+				name={field.name}
+			/>
+		</div>
 	);
 };
 
