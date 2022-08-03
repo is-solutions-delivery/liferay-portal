@@ -77,3 +77,9 @@ export function getPoliciesUntilCurrentMonthLastYear() {
 		`${DeliveryAPI}/?filter=policyStatus ne 'declined' and startDate le ${oneYearAgoDate} and startDate ge ${lastYear}-01-01&pageSize=200`
 	);
 }
+
+export function getPoliciesForSalesGoalCurrentMonth() {
+	return axios.get(
+		`${DeliveryAPI}/?fields=boundDate,termPremium&pageSize=200&filter=policyStatus ne 'declined' and boundDate le 2022-08-31 and boundDate ge 2022-08-01`
+	);
+}

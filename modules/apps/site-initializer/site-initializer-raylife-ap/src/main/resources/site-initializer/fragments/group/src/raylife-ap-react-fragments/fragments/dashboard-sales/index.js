@@ -14,12 +14,17 @@
 
 import {ClaySelect} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import DonutChart from '../../../common/components/donut-chart';
+import {getPoliciesForSalesGoalCurrentMonth} from '../../../common/services/Policy';
+import {getSalesGoalCurrentMonth} from '../../../common/services/SalesGoal';
 
 export default function () {
 	const [selectedFilterDate, setSelectedFilterDate] = useState('1');
+	const [sumOfSalesCurrentMonth, setSumOfSalesCurrentMonth] = useState(0);
+	const [sumOfGoalsCurrentMonth, setSumOfGoalsCurrentMonth] = useState(0);
+	const [daysUntilGoal, setDaysUntilGoal] = useState(0);
 
 	const colors = {
 		reached: '#ec0d6b',
@@ -45,17 +50,91 @@ export default function () {
 		},
 	];
 
+	const getCurrentDay = new Date().getDay();
+	const getCurrentMonth = new Date().getMonth();
+	const arrayOfMonthsWith30Days = [3, 5, 8, 10];
+	const arrayOfMonthsWith31Days = [0, 2, 4, 6, 7, 9, 11];
+
+	function getDaysUntilGoal(currentDay, currentMonth, filterOption) {
+		if (filterOption === '1') {
+			if (arrayOfMonthsWith31Days.includes(currentMonth)) {
+				return 31 - currentDay;
+			} else if (arrayOfMonthsWith30Days.includes(currentMonth)) {
+				return 30 - currentDay;
+			} else {
+				return 28 - currentDay;
+			}
+		}
+	}
+
+	function getArrayFromArrayOfObjects(arrayOfObjects) {
+		const valuesArray = arrayOfObjects.map((values) => {
+			return Object.values(values)[1];
+		});
+
+		return valuesArray;
+	}
+
+	function getSumFromArrayOfValues(comissionsArray) {
+		const totalValue = comissionsArray.reduce(
+			(commissionSum, commission) => commissionSum + commission,
+			0
+		);
+
+		return totalValue;
+	}
+
+	useEffect(() => {
+		getSalesGoalCurrentMonth().then((results) => {
+			const salesGoalResult = results?.data?.items;
+
+			const arrayValueOfGoals = salesGoalResult?.map((salesGoal) => {
+				return salesGoal.goalValue;
+			});
+
+			setSumOfGoalsCurrentMonth(
+				getSumFromArrayOfValues(arrayValueOfGoals)
+			);
+		});
+
+		getPoliciesForSalesGoalCurrentMonth().then((results) => {
+			const policiesForSalesGoalResult = results?.data?.items;
+
+			const arrayValueOfSales = Object.values(
+				getArrayFromArrayOfObjects(policiesForSalesGoalResult)
+			);
+
+			setSumOfSalesCurrentMonth(
+				getSumFromArrayOfValues(arrayValueOfSales)
+			);
+		});
+
+		setDaysUntilGoal(
+			getDaysUntilGoal(getCurrentDay, getCurrentMonth, selectedFilterDate)
+		);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// eslint-disable-next-line no-console
+	console.log('sumOfSalesCurrentMonth', sumOfSalesCurrentMonth);
+
+	const reachedValue =
+		(sumOfSalesCurrentMonth / sumOfGoalsCurrentMonth) * 100;
+	// eslint-disable-next-line no-console
+	console.log('reachedValue', reachedValue);
+
 	const loadData = [
 		{
 			dataColumns: [
-				['reached', 20],
-				['remaining', 100],
+				['reached', sumOfSalesCurrentMonth],
+				['remaining', sumOfGoalsCurrentMonth],
 			],
-			dateUntilGoal: '156 days to goal',
-			goalValue: '$72,500.00',
+			dateUntilGoal: `${daysUntilGoal} days to goal`,
+			goalValue: sumOfGoalsCurrentMonth,
 			period: 1,
-			salesPercentual: '17%',
-			salesValue: '$5,012.55',
+			salesPercentual: `${reachedValue.toFixed(0)}%`,
+			salesValue: sumOfSalesCurrentMonth,
 		},
 		{
 			dataColumns: [
@@ -63,10 +142,10 @@ export default function () {
 				['remaining', 80],
 			],
 			dateUntilGoal: '84 days to goal',
-			goalValue: '$111,500.00',
+			goalValue: 111500,
 			period: 2,
 			salesPercentual: '27%',
-			salesValue: '$12,012.55',
+			salesValue: 120000,
 		},
 		{
 			dataColumns: [
@@ -74,10 +153,10 @@ export default function () {
 				['remaining', 100],
 			],
 			dateUntilGoal: '110 days to goal',
-			goalValue: '$12,500.00',
+			goalValue: 12500,
 			period: 3,
 			salesPercentual: '37%',
-			salesValue: '$3,012.55',
+			salesValue: 30120,
 		},
 		{
 			dataColumns: [
@@ -85,10 +164,10 @@ export default function () {
 				['remaining', 90],
 			],
 			dateUntilGoal: '02 days to goal',
-			goalValue: '$6,500.00',
+			goalValue: 6.5,
 			period: 4,
 			salesPercentual: '25%',
-			salesValue: '$1,012.55',
+			salesValue: 1000,
 		},
 	];
 
@@ -112,11 +191,17 @@ export default function () {
 	const LegendElement = () => (
 		<div className="d-flex donut-chart-legend flex-column h-100 justify-content-end ml-5 mt-5">
 			<div className="donut-chart-screen font-weight-bolder h5">
-				{getSalesValue}
+				{new Intl.NumberFormat('en-US', {
+					currency: 'USD',
+					style: 'currency',
+				}).format(getSalesValue)}
 			</div>
 
 			<div className="font-weight-normal mb-2 text-neutral-8 text-paragraph-sm">
-				{`Goal ${getGoalValue}`}
+				{`Goal: ${new Intl.NumberFormat('en-US', {
+					currency: 'USD',
+					style: 'currency',
+				}).format(getGoalValue)}`}
 			</div>
 
 			<div className="font-weight-bolder text-danger text-paragraph-sm">
