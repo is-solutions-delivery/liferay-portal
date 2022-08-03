@@ -9,4 +9,22 @@
  * distribution rights of the Software.
  */
 
-export {default} from './TeamMembers';
+import {ROLE_TYPES} from '../../../../../../../../../../../../common/utils/constants';
+
+export function getCurrentActiveRoles(roles) {
+	const roleValues = Object.values(ROLE_TYPES);
+
+	const filteredRoles = roles?.filter((role) =>
+		roleValues?.some((roleType) => roleType?.key === role)
+	);
+
+	if (filteredRoles.length) {
+		const activeRole = roleValues.find(
+			(role) => role.key === filteredRoles[0]
+		);
+
+		return activeRole?.name;
+	}
+
+	return ROLE_TYPES.member.name;
+}

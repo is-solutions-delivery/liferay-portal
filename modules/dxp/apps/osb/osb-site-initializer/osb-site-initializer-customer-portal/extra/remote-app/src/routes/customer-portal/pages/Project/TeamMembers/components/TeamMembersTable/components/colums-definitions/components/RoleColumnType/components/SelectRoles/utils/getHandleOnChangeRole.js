@@ -9,4 +9,16 @@
  * distribution rights of the Software.
  */
 
-export {default} from './TeamMembers';
+export function getHandleOnChangeRole(accountRoles, setSelectedRole) {
+	const handleOnChangeRole = (roleName) => {
+		const accountRole = accountRoles?.find(
+			(accountRole) => accountRole?.name === roleName
+		);
+
+		if (accountRole) {
+			setSelectedRole(accountRole.name);
+		}
+	};
+
+	return handleOnChangeRole;
+}

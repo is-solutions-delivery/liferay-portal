@@ -8,5 +8,14 @@
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
  */
+import {PRODUCT_TYPES} from '../../../../../../utils/constants/productTypes';
+import {STATUS_TAG_TYPE_NAMES} from '../../../../../../utils/constants/statusTag';
 
-export {default} from './TeamMembers';
+export default function getActiveStatusAC(subscriptionGroups) {
+	return (
+		subscriptionGroups.find(
+			(subscriptionGroup) =>
+				subscriptionGroup.name === PRODUCT_TYPES.dxpCloud
+		)?.activationStatus === STATUS_TAG_TYPE_NAMES.active
+	);
+}
