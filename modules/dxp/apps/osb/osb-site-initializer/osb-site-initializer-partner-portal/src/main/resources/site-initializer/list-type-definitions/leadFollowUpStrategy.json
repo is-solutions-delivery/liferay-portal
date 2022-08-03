@@ -1,6 +1,6 @@
 {
-    "name": "leadFollowUpStrategy",
-    "name_i18n": {
-        "en-US": "leadFollowUpStrategy"
-    }
+	"name": "leadFollowUpStrategy",
+	"name_i18n": {
+		"en-US": "leadFollowUpStrategy"
+	}
 }
