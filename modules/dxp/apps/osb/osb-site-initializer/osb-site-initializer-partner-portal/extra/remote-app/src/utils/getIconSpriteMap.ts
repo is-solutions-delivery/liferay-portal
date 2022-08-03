@@ -9,23 +9,16 @@
  * distribution rights of the Software.
  */
 
-import {useState} from 'react';
+import iconSVG from '@clayui/css/lib/images/icons/icons.svg';
 
-import Alert from './components/Alert';
+import { Liferay } from "../services/liferay";
 
-const App: any = () => {
-	const [showAlert, setShowAlert] = useState(true);
+export default function getIconSpriteMap() {
+	const pathThemeImages = Liferay.ThemeDisplay.getPathThemeImages();
 
-	return (
-		showAlert && (
-			<Alert
-				closeAlert={true}
-				displayType="info"
-				setShowAlert={setShowAlert}
-				title="my-title"
-			/>
-		)
-	);
-};
+	if (pathThemeImages) {
+		return `${pathThemeImages}/clay/icons.svg`;
+	}
 
-export default App;
+	return iconSVG;
+}

@@ -1,5 +1,9 @@
 {
 	"dependencies": {
+		"@clayui/alert": "^3.65.1",
+		"@clayui/core": "^3.67.0",
+		"@clayui/css": "^3.65.2",
+		"@clayui/icon": "^3.56.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

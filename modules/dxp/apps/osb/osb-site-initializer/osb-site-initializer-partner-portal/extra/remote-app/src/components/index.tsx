@@ -9,23 +9,4 @@
  * distribution rights of the Software.
  */
 
-import {useState} from 'react';
-
-import Alert from './components/Alert';
-
-const App: any = () => {
-	const [showAlert, setShowAlert] = useState(true);
-
-	return (
-		showAlert && (
-			<Alert
-				closeAlert={true}
-				displayType="info"
-				setShowAlert={setShowAlert}
-				title="my-title"
-			/>
-		)
-	);
-};
-
-export default App;
+export {default as Alert} from './Alert';
