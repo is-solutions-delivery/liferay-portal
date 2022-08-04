@@ -261,6 +261,7 @@ public class BundleSiteInitializerTest {
 			_assertUserGroups(group);
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
+
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
