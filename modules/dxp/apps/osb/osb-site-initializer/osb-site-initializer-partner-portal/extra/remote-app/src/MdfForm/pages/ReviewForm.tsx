@@ -12,7 +12,7 @@
 import { Form, Formik } from 'formik';
 
 import Button from '../../components/Button';
-import listActivities from '../../components/listActivities';
+import ListActivities from '../../components/ListActivities';
 import SiteMapCard from '../../components/SiteMapCard';
 
 const ReviewForm: any = ({
@@ -31,7 +31,7 @@ const ReviewForm: any = ({
 		activities: [
 			{
 				activityDesription: "teste",
-				activityName: "teste",
+				activityName: "Super Great Conference",
 				activityPromotion: "teste",
 				addExpenses: [
 					{
@@ -63,15 +63,15 @@ const ReviewForm: any = ({
 			},
 			{
 				activityDesription: "teste2",
-				activityName: "teste2",
+				activityName: "Super pool party",
 				activityPromotion: "teste2",
 				addExpenses: [
 					{
-						budget: "$1,500.00",
+						budget: "$6,500.00",
 						expense: "foodAndBeverage"
 					},
 					{
-						budget: "$2,500.00",
+						budget: "$9,500.00",
 						expense: "roomRental"
 					}
 				],
@@ -106,7 +106,7 @@ const ReviewForm: any = ({
 			"aerospaceDefense",
 			"agriculture"
 		],
-		provideNameAndDescription: "teste",
+		provideNameAndDescription: "Insurance Industry Lead Gen",
 		targetAudienceRole: [
 			"cLevelExecutiveVP",
 			"directorManager"
@@ -243,139 +243,13 @@ const ReviewForm: any = ({
 								<h6>ACTIVITIES</h6>
 
 								<h5>{objectTeste.provideNameAndDescription}</h5>
-							
-								{objectTeste.activities.map((activity) => (
-									<div>	
-										<table className='table table-striped'>
-									<thead>
-										<tr>
-											<th scope='col'>Campaign Activity</th>
-										</tr>
-									</thead>
 
-									<tbody>
-										<tr>
-											<td>Activity Name</td>
+								<ListActivities activityObj={objectTeste}></ListActivities>
 
-											<td>{activity.activityName}</td>
-										</tr>
 
-										<tr>
-											<td>Type of Activity</td>
 
-											<td>{activity.typeActivity}</td>
-										</tr>
-
-										<tr>
-											<td>Tactic</td>
-
-											<td>{activity.tactic}</td>
-										</tr>
-
-										<tr>
-											<td>Activity Description</td>
-
-											<td>{activity.activityDesription}</td>
-										</tr>
-
-										<tr>
-											<td>Venue Name</td>
-
-											<td>{activity.venueName}</td>
-										</tr>
-
-										<tr>
-											<td>Liferay Branding</td>
-
-											<td>{activity.liferayBranding}</td>
-										</tr>
-
-										<tr>
-											<td>Liferay Participation / Requirements</td>
-
-											<td>{activity.liferayParticipationRequirements}</td>
-										</tr>
-
-										<tr>
-											<td>Source and Size of Invite List</td>
-
-											<td>{activity.sourceSizeInviteList}</td>
-										</tr>
-
-										<tr>
-											<td>Activity Promotion</td>
-
-											<td>{activity.activityPromotion}</td>
-										</tr>
-
-										<tr>
-											<td>Start Date</td>
-
-											<td>{activity.starDate}</td>
-										</tr>
-
-										<tr>
-											<td>End Date</td>
-
-											<td>{activity.endDate}</td>
-										</tr>
-									</tbody>
-								</table>
-
-									
-							<hr></hr>	
-									<table className='table table-striped'>
-										<thead>
-											<tr>
-												<th scope='col'>Budget Breakdown</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>Sponsorship Fee</td>
-												<td>{ }</td>
-											</tr>
-											<tr>
-												<td>Room Rental</td>
-												<td>{ }</td>
-											</tr>
-										</tbody>
-									</table>
-
-									<hr></hr>
-									
-									<table className='table table-striped'>
-										<thead>
-											<tr>
-												<th scope='col'>Lead List</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>Is a lead list an outcome of this activity?</td>
-												<td>Yes</td>
-											</tr>
-											<tr>
-												<td>Target # of Leads</td>
-												<td>1,000</td>
-											</tr>
-											<tr>
-												<td>Lead Follow Up strategy</td>
-												<td>Social Campaign</td>
-											</tr>
-											<tr>
-												<td>Details on Lead Follow Up</td>
-												<td>()</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-
-								))}
-
-							
 							</div>
-				
+
 
 
 							<div className='border-0 mt-1 shadow-lg sheet'>
@@ -400,7 +274,7 @@ const ReviewForm: any = ({
 										</tr>
 									</tbody>
 								</table>
-								
+
 								<div className='border-0 d-flex justify-content-between mt-5 sheet sheet-lg'>
 									<div className="mr-auto p-2">
 										<Button
