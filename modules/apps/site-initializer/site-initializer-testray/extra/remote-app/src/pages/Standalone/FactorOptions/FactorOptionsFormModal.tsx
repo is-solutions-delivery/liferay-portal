@@ -49,18 +49,15 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 		resolver: yupResolver(yupSchema.factorOption),
 	});
 
-	const {data} = useFetch('/factoroptions', getFactorOptionsTransformData);
+	const {data} = useFetch('/factorcategories', getFactorOptionsTransformData);
 
 	const factorCategories = data?.items || [];
 
 	const _onSubmit = (form: FactorOptionsForm) => {
-		onSubmit(
-			{id: form.id, name: form.name},
-			{
-				create: createFactorOption,
-				update: updateFactorOption,
-			}
-		)
+		onSubmit(form, {
+			create: createFactorOption,
+			update: updateFactorOption,
+		})
 			.then(onSave)
 			.catch(onError);
 	};
@@ -94,12 +91,14 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 			/>
 
 			<Form.Select
+				{...inputProps}
 				label={i18n.translate('category')}
-				name="category"
+				name="factorCategoryId"
 				options={factorCategories.map(({id: value, name: label}) => ({
 					label,
 					value,
 				}))}
+				required={false}
 			/>
 		</Modal>
 	);
