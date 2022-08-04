@@ -241,7 +241,6 @@ public class BundleSiteInitializerTest {
 			_assertExpandoColumns(serviceContext);
 			_assertFragmentEntries(group, serviceContext);
 			_assertJournalArticles(group);
-			_assertKBArticles(group);
 			_assertLayoutPageTemplateEntry(group);
 			_assertLayouts(group, serviceContext);
 			_assertLayoutSets(group);
@@ -259,6 +258,7 @@ public class BundleSiteInitializerTest {
 			_assertUserGroups(group);
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
+
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
