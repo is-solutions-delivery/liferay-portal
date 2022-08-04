@@ -9,31 +9,4 @@
  * distribution rights of the Software.
  */
 
-import {ClaySelect} from '@clayui/form';
-
-type Props = {
-	label: string;
-	name: string;
-	onChange: any;
-	options: any;
-};
-
-const Select = ({label, options, ...props}: Props) => {
-	return (
-		<>
-			<label>{label}</label>
-
-			<ClaySelect {...props}>
-				{options.map((item: any) => (
-					<ClaySelect.Option
-						key={!item.key ? item.id : item.key}
-						label={item.name}
-						value={!item.key ? item.id : item.key}
-					/>
-				))}
-			</ClaySelect>
-		</>
-	);
-};
-
-export default Select;
+export {default} from './FieldsTypeActivity';

@@ -50,10 +50,6 @@ const ActivitiesList: any = ({
 
 									<h2>Insurance Industry Lead Gen Request</h2>
 
-									<h5 className="text-secondary">
-										ID Nº 1157074
-									</h5>
-
 									<h6 className="text-secondary">
 										Choose the activities that best match
 										your Campaign MDF request

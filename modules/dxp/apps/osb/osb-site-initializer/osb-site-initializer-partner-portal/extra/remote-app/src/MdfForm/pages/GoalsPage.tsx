@@ -111,7 +111,7 @@ const GoalsPage: any = ({
 				additionalOptions: '',
 				businessSalesGoals: '',
 				businessSalesGoalsOther: '',
-				companyName: 'Deathray Parent-A*',
+				companyName: '',
 				country: '',
 				goalsTargetMarket: '',
 				provideNameAndDescription: '',

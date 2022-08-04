@@ -15,13 +15,17 @@ import {useState} from 'react';
 import Button from '../../components/Button';
 import CheckBoxList from '../../components/CheckBoxList';
 import DatePicker from '../../components/DatePicker';
+import FieldsTypeActivity from '../../components/FieldsTypeActivity';
 import InputText from '../../components/InputText';
 import Radio from '../../components/Radio';
 import Select from '../../components/Select';
 import SiteMapCard from '../../components/SiteMapCard';
 import LIST_TYPE_ENTRIES from '../../constants/listTypeEntries';
 import {useGetListTypeDefinitions} from '../../services/list-type-definitions/useGetListTypeDefinitions';
+import {useGetTypeOfActivity} from '../../services/type-of-activity/useGetTypeOfActivity';
 import getInitialGenerateNewKey from '../utils/constants/getInitialGenerateNewKey';
+
+const CLAIM_PERCENT = 50;
 
 const ActivitiesForm: any = ({
 	generalObject,
@@ -32,12 +36,12 @@ const ActivitiesForm: any = ({
 	setGeneralObject: any;
 	setStep: any;
 }) => {
+	const [valueTotalBudget, setValueTotalBudget] = useState('');
+
 	const [startDateValue, setStartDateValue] = useState('');
 	const [endDateValue, setEndDateValue] = useState('');
 
-	const typeOfActivity = useGetListTypeDefinitions(
-		LIST_TYPE_ENTRIES.typeOfActivity
-	);
+	const typeOfActivity = useGetTypeOfActivity();
 
 	const checkLeadFollowStrategy = useGetListTypeDefinitions(
 		LIST_TYPE_ENTRIES.leadFollowUpStrategy
@@ -48,21 +52,23 @@ const ActivitiesForm: any = ({
 	const [updateLeadFollowStrategy, setUpdateLeadFollowStrategy] = useState();
 
 	const handleOnSubmit = (
+		CLAIM_PERCENT: number,
 		formData: any,
 		generalObject: any,
 		setGeneralObject: any,
 		setStep: any,
-		updateLeadFollowStrategy: any
+		updateLeadFollowStrategy: any,
+		valueTotalBudget: any
 	) => {
 		const createForm = {
 			...formData,
+			claimPercent: CLAIM_PERCENT,
 			leadFollowStrategy: updateLeadFollowStrategy,
+			totalBudget: valueTotalBudget,
 		};
 
 		generalObject.activities.push(createForm);
 
-		// eslint-disable-next-line no-console
-		console.log(`createForm=`, generalObject);
 		setGeneralObject(generalObject);
 		setStep(1);
 	};
@@ -78,29 +84,71 @@ const ActivitiesForm: any = ({
 		},
 	];
 
-	const optionsBudget = [
-		{
-			key: '$1,500.00',
-			name: '$1,500.00',
-		},
-		{
-			key: '$2,500.00',
-			name: '$2,500.00',
-		},
-	];
+	const handleTotalBudget = (
+		objectAddExpenses: any,
+		setValueTotalBudget: any
+	) => {
+		const totalBudget = objectAddExpenses.reduce(
+			(accumulator: any, object: any) => {
+				return accumulator + Number(object.budget);
+			},
+			0
+		);
+
+		setValueTotalBudget(totalBudget);
+
+		return totalBudget;
+	};
+
+	const handleOptionsTotalMDF = (CLAIM_PERCENT: number, totalBudget: any) => {
+		const percentTotalBudget = (totalBudget * CLAIM_PERCENT) / 100;
+
+		let options: any = [];
+
+		if (totalBudget > 0) {
+			options = [
+				{
+					key: '',
+					name: '',
+				},
+				{
+					key: Number(totalBudget),
+					name: Number(totalBudget),
+				},
+				{
+					key: Number(percentTotalBudget),
+					name: Number(percentTotalBudget),
+				},
+			];
+		}
+
+		return options;
+	};
 
 	return (
 		<Formik
 			initialValues={{
 				activityDesription: '',
+				activityLocation: '',
 				activityName: '',
 				activityPromotion: '',
+				ad: '',
 				addExpenses: [getInitialGenerateNewKey()],
+				anySpecificSitesToBeUsed: '',
+				areYouHiringAnOutsideWriterOrAgencyToPrepareTheContent: '',
+				claimPercent: '',
+				describeTheMarketingActivity: '',
+				describeThePrimaryThemeOrMessageOfYourContent: '',
 				detailsOnLead: '',
+				doYouRequireAnyAssetsFromLiferay: '',
 				endDate: '',
+				goalOfContent: '',
+				howWillTheLiferayBrandBeUsedInTheCampaign: '',
+				keywordsForPpcCampaigns: '',
 				leadListOutcomeActivity: '',
 				liferayBranding: '',
 				liferayParticipationRequirements: '',
+				overallMessage: '',
 				sourceSizeInviteList: '',
 				startDateValue: '',
 				tactic: '',
@@ -108,14 +156,17 @@ const ActivitiesForm: any = ({
 				totalMdfRequestedAmount: '',
 				typeActivity: '',
 				venueName: '',
+				willThisContentBeGatedAndHaveALandingPage: '',
 			}}
 			onSubmit={(formData) => {
 				handleOnSubmit(
+					CLAIM_PERCENT,
 					formData,
 					generalObject,
 					setGeneralObject,
 					setStep,
-					updateLeadFollowStrategy
+					updateLeadFollowStrategy,
+					valueTotalBudget
 				);
 			}}
 		>
@@ -141,10 +192,6 @@ const ActivitiesForm: any = ({
 												<h2>
 													Insurance Industry Lead Gen
 												</h2>
-
-												<h5 className="text-secondary">
-													ID Nº 1157074
-												</h5>
 
 												<h6 className="text-secondary">
 													Choose the activities that
@@ -201,125 +248,10 @@ const ActivitiesForm: any = ({
 												</div>
 											</div>
 
-											<div className="form-group-autofit">
-												<div className="form-group-item">
-													<InputText
-														className="form-control shadow-none"
-														disabled={false}
-														label="Activity Description"
-														name="activityDesription"
-														onChange={
-															formik.handleChange
-														}
-														placeholder="Activity Description"
-														type="text"
-														value={
-															formik.values
-																.activityDesription
-														}
-													/>
-												</div>
-											</div>
-
-											<div className="form-group-autofit">
-												<div className="form-group-item">
-													<InputText
-														className="form-control shadow-none"
-														disabled={false}
-														label="Venue Name"
-														name="venueName"
-														onChange={
-															formik.handleChange
-														}
-														placeholder="Venue Name"
-														type="text"
-														value={
-															formik.values
-																.venueName
-														}
-													/>
-												</div>
-											</div>
-
-											<div className="form-group-autofit">
-												<div className="form-group-item">
-													<InputText
-														className="form-control shadow-none"
-														disabled={false}
-														label="Liferay Branding"
-														name="liferayBranding"
-														onChange={
-															formik.handleChange
-														}
-														placeholder="Liferay Branding"
-														type="text"
-														value={
-															formik.values
-																.liferayBranding
-														}
-													/>
-												</div>
-											</div>
-
-											<div className="form-group-autofit">
-												<div className="form-group-item">
-													<InputText
-														className="form-control shadow-none"
-														disabled={false}
-														label="Liferay Participation / Requirements"
-														name="liferayParticipationRequirements"
-														onChange={
-															formik.handleChange
-														}
-														placeholder="Liferay Participation / Requirements"
-														type="text"
-														value={
-															formik.values
-																.liferayParticipationRequirements
-														}
-													/>
-												</div>
-											</div>
-
-											<div className="form-group-autofit">
-												<div className="form-group-item">
-													<InputText
-														className="form-control shadow-none"
-														disabled={false}
-														label="Source and Size of Invite List"
-														name="sourceSizeInviteList"
-														onChange={
-															formik.handleChange
-														}
-														placeholder="Source and Size of Invite List"
-														type="text"
-														value={
-															formik.values
-																.sourceSizeInviteList
-														}
-													/>
-												</div>
-											</div>
-
-											<div className="form-group-autofit">
-												<div className="form-group-item">
-													<InputText
-														className="form-control shadow-none"
-														disabled={false}
-														label="Activity Promotion"
-														name="activityPromotion"
-														onChange={
-															formik.handleChange
-														}
-														placeholder="Activity Promotion"
-														type="text"
-														value={
-															formik.values
-																.activityPromotion
-														}
-													/>
-												</div>
-											</div>
+											<FieldsTypeActivity
+												formik={formik}
+												typeOfActivity={typeOfActivity}
+											/>
 
 											<div className="form-group-autofit">
 												<div className="form-group-item">
@@ -411,7 +343,11 @@ const ActivitiesForm: any = ({
 															</div>
 
 															<div className="form-group-item">
-																<Select
+																<InputText
+																	className="form-control shadow-none"
+																	disabled={
+																		false
+																	}
 																	label="Budget"
 																	name={`addExpenses[${index}].budget`}
 																	onChange={(
@@ -424,8 +360,14 @@ const ActivitiesForm: any = ({
 																				.value
 																		);
 																	}}
-																	options={
-																		optionsBudget
+																	placeholder=""
+																	type="text"
+																	value={
+																		formik
+																			.values
+																			.addExpenses[
+																			index
+																		].budget
 																	}
 																/>
 															</div>
@@ -455,7 +397,13 @@ const ActivitiesForm: any = ({
 												</div>
 
 												<div className="form-group-item text-right">
-													<div>$2,500.00</div>
+													<div>
+														{handleTotalBudget(
+															formik.values
+																.addExpenses,
+															setValueTotalBudget
+														)}
+													</div>
 												</div>
 											</div>
 
@@ -477,7 +425,10 @@ const ActivitiesForm: any = ({
 														onChange={
 															formik.handleChange
 														}
-														options={optionsBudget}
+														options={handleOptionsTotalMDF(
+															CLAIM_PERCENT,
+															valueTotalBudget
+														)}
 													/>
 												</div>
 											</div>
