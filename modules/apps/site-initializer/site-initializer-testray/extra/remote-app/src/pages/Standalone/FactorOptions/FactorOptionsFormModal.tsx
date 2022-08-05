@@ -44,8 +44,15 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 		formState: {errors},
 		handleSubmit,
 		register,
+		watch,
 	} = useForm<FactorOptionsForm>({
-		defaultValues: modalState,
+		defaultValues: modalState
+			? {
+					factorCategoryId: modalState?.factorCategory?.id,
+					id: modalState.id,
+					name: modalState.name,
+			  }
+			: {},
 		resolver: yupResolver(yupSchema.factorOption),
 	});
 
@@ -54,13 +61,21 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 	const factorCategories = data?.items || [];
 
 	const _onSubmit = (form: FactorOptionsForm) => {
-		onSubmit(form, {
-			create: createFactorOption,
-			update: updateFactorOption,
-		})
+		onSubmit(
+			{...form},
+
+			{
+				create: createFactorOption,
+				update: updateFactorOption,
+			}
+		)
 			.then(onSave)
 			.catch(onError);
 	};
+
+	const factorCategoryId = watch('factorCategoryId');
+
+	const name = watch('name');
 
 	const inputProps = {
 		errors,
@@ -88,6 +103,7 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 				label={i18n.translate('name')}
 				name="name"
 				{...inputProps}
+				value={name}
 			/>
 
 			<Form.Select
@@ -99,6 +115,7 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 					value,
 				}))}
 				required={false}
+				value={factorCategoryId}
 			/>
 		</Modal>
 	);
