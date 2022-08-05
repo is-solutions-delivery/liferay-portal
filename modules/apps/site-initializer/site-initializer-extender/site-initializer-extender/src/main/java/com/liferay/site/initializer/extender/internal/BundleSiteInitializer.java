@@ -1344,11 +1344,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteNavigationMenuItemSettingsBuilder)
 		throws Exception {
 
-		_addJournalArticles(
-			ddmStructureLocalService, ddmTemplateLocalService, null,
-			documentsStringUtilReplaceValues,
-			"/site-initializer/journal-articles", serviceContext,
-			siteNavigationMenuItemSettingsBuilder);
+//		_addJournalArticles(
+//			ddmStructureLocalService, ddmTemplateLocalService, null,
+//			documentsStringUtilReplaceValues,
+//			"/site-initializer/journal-articles", serviceContext,
+//			siteNavigationMenuItemSettingsBuilder);
 	}
 
 	private KnowledgeBaseArticle _addKnowledgeBaseArticle(
@@ -1478,11 +1478,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext);
 			}
 			else {
-				_addKnowledgeBaseFolder(
-					jsonObject, parentKnowledgeBaseObjectId,
-					resourcePath.substring(
-						0, resourcePath.indexOf(".metadata.json")),
-					serviceContext);
+//				_addKnowledgeBaseFolder(
+//					jsonObject, parentKnowledgeBaseObjectId,
+//					resourcePath.substring(
+//						0, resourcePath.indexOf(".metadata.json")),
+//					serviceContext);
 			}
 		}
 	}
@@ -1522,15 +1522,47 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteDefaultLocale, jsonObject.getString("friendlyURL"));
 		}
 
-		Layout layout = _layoutLocalService.addLayout(
-			serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-			jsonObject.getBoolean("private"), parentLayoutId, nameMap,
-			SiteInitializerUtil.toMap(jsonObject.getString("title_i18n")),
-			SiteInitializerUtil.toMap(jsonObject.getString("description_i18n")),
-			SiteInitializerUtil.toMap(jsonObject.getString("keywords_i18n")),
-			SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
-			type, null, jsonObject.getBoolean("hidden"),
-			jsonObject.getBoolean("system"), friendlyURLMap, serviceContext);
+		String friendlyURL = StringUtil.toLowerCase("/"+
+			_replace(nameMap.get(siteDefaultLocale), " ", "-"));
+
+		Layout layout =_layoutLocalService.fetchLayoutByFriendlyURL(
+			serviceContext.getScopeGroupId(),
+			jsonObject.getBoolean("private"),
+			friendlyURL);
+
+		if (layout == null){
+			layout = _layoutLocalService.addLayout(
+				serviceContext.getUserId(),
+				serviceContext.getScopeGroupId(),
+				jsonObject.getBoolean("private"),
+				parentLayoutId,
+				nameMap,
+				SiteInitializerUtil.toMap(jsonObject.getString("title_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("description_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("keywords_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
+				type, null, jsonObject.getBoolean("hidden"),
+				jsonObject.getBoolean("system"), friendlyURLMap, serviceContext);
+
+		}
+		else {
+			layout = _layoutLocalService.updateLayout(
+				serviceContext.getScopeGroupId(),
+				jsonObject.getBoolean("private"),
+				layout.getLayoutId(),
+				parentLayoutId,
+				nameMap,
+				SiteInitializerUtil.toMap(jsonObject.getString("title_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("description_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("keywords_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
+				type,
+				jsonObject.getBoolean("hidden"),
+				friendlyURLMap,
+				false,null,layout.getStyleBookEntryId(),layout.getFaviconFileEntryId(),layout.getMasterLayoutPlid(),serviceContext);
+
+		}
+
 
 		if (jsonObject.has("priority")) {
 			layout = _layoutLocalService.updatePriority(
@@ -2953,15 +2985,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 			StructuredContentFolder.toDTO(json);
 
 		if (documentFolderId != null) {
-			structuredContentFolder =
-				structuredContentFolderResource.
-					postStructuredContentFolderStructuredContentFolder(
-						documentFolderId, structuredContentFolder);
+//			structuredContentFolder =
+//				structuredContentFolderResource.
+//					postStructuredContentFolderStructuredContentFolder(
+//						documentFolderId, structuredContentFolder);
 		}
 		else {
-			structuredContentFolder =
-				structuredContentFolderResource.postSiteStructuredContentFolder(
-					serviceContext.getScopeGroupId(), structuredContentFolder);
+//			structuredContentFolder =
+//				structuredContentFolderResource.postSiteStructuredContentFolder(
+//					serviceContext.getScopeGroupId(), structuredContentFolder);
 		}
 
 		return structuredContentFolder.getId();
