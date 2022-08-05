@@ -17,7 +17,7 @@ import ClayEmptyState from '@clayui/empty-state';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import {useModal} from '@clayui/modal';
-import {TEST_VARIABLE} from '@liferay/flags-taglib';
+import Flags, {TEST_VARIABLE} from '@liferay/flags-taglib';
 import classNames from 'classnames';
 import {useMutation} from 'graphql-hooks';
 import React, {
@@ -39,7 +39,6 @@ import CreatorRow from '../../components/CreatorRow.es';
 import DefaultQuestionsEditor from '../../components/DefaultQuestionsEditor.es';
 import DeleteQuestion from '../../components/DeleteQuestion.es';
 import Link from '../../components/Link.es';
-import ModerationModal from '../../components/ModerationModal.es';
 import PaginatedList from '../../components/PaginatedList.es';
 import Rating from '../../components/Rating.es';
 import SectionLabel from '../../components/SectionLabel.es';
@@ -65,6 +64,7 @@ import {
 	getFullPath,
 	historyPushWithSlug,
 } from '../../utils/utils.es';
+import FlagsContainer from './components/FlagsContainer';
 
 export default withRouter(
 	({
@@ -382,6 +382,23 @@ export default withRouter(
 
 										{TEST_VARIABLE}
 
+										<Flags
+											context={
+												context?.flagsProperties
+													?.context
+											}
+											props={{
+												...context?.flagsProperties
+													?.props,
+												baseData: {abc: 123},
+												message: Liferay.Language.get(
+													'report'
+												),
+												onlyIcon: true,
+												signedIn: Liferay.ThemeDisplay.isSignedIn(),
+											}}
+										/>
+
 										<p className="c-mb-0 small text-secondary">
 											{`${Liferay.Language.get(
 												'asked'
@@ -473,27 +490,10 @@ export default withRouter(
 													</>
 												)}
 
-												<>
-													<ModerationModal
-														onOpenChange={
-															onOpenChange
-														}
-														open={open}
-													/>
-
-													<ClayButton
-														data-tooltip-align="top"
-														displayType="secondary"
-														onClick={() =>
-															onOpenChange(true)
-														}
-														title={Liferay.Language.get(
-															'report'
-														)}
-													>
-														<ClayIcon symbol="warning" />
-													</ClayButton>
-												</>
+												<FlagsContainer
+													context={context}
+													question={question}
+												/>
 
 												{question.actions.replace && (
 													<Link to={`${url}/edit`}>

@@ -155,7 +155,7 @@ public class FlagsTag extends IncludeTag {
 			String message = _getMessage();
 
 			httpServletRequest.setAttribute(
-				"liferay-flags:flags:data", _getData(message));
+				"liferay-flags:flags:data", getData(message));
 
 			httpServletRequest.setAttribute(
 				"liferay-flags:flags:elementClasses", _elementClasses);
@@ -169,7 +169,8 @@ public class FlagsTag extends IncludeTag {
 		}
 	}
 
-	private Map<String, Object> _getData(String message)
+
+	public Map<String, Object> getData(String message)
 		throws PortalException {
 
 		return HashMapBuilder.<String, Object>put(

@@ -1,7 +1,7 @@
 {
 	"dependencies": {},
 	"name": "@liferay/flags-taglib",
-	"main": "js/index.es.js",
+	"main": "flags/js/index.es.js",
 	"private": true,
 	"scripts": {
 		"build": "liferay-npm-scripts build",

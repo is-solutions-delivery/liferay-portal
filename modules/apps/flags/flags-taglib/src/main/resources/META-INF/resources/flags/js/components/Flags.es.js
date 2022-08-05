@@ -32,6 +32,7 @@ import FlagsModal from './FlagsModal.es';
 
 const Flags = ({
 	baseData,
+	btnProps,
 	captchaURI,
 	companyName,
 	disabled = false,
@@ -84,11 +85,9 @@ const Flags = ({
 
 		if (name === 'otherReason') {
 			setOtherReason(value);
-		}
-		else if (name === 'reporterEmailAddress') {
+		} else if (name === 'reporterEmailAddress') {
 			setReporterEmailAddress(value);
-		}
-		else if (name === 'selectedReason') {
+		} else if (name === 'selectedReason') {
 			setSelectedReason(value);
 		}
 	};
@@ -103,13 +102,10 @@ const Flags = ({
 		const formDataObj = {
 			...baseData,
 			[`${namespace}reason`]: getReason(),
+			[`${namespace}reporterEmailAddress`]: signedIn
+				? Liferay.ThemeDisplay.getUserEmailAddress()
+				: reporterEmailAddress,
 		};
-
-		if (!signedIn) {
-			formDataObj[
-				`${namespace}reporterEmailAddress`
-			] = reporterEmailAddress;
-		}
 
 		fetch(uri, {
 			body: objectToFormData(formDataObj, new FormData(event.target)),
@@ -148,6 +144,7 @@ const Flags = ({
 				monospaced={onlyIcon}
 				onClick={handleClickShow}
 				small
+				{...btnProps}
 			>
 				<span
 					className={
