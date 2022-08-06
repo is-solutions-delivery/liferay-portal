@@ -16,8 +16,6 @@ import ClayButton from '@clayui/button';
 import ClayEmptyState from '@clayui/empty-state';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
-import {useModal} from '@clayui/modal';
-import Flags, {TEST_VARIABLE} from '@liferay/flags-taglib';
 import classNames from 'classnames';
 import {useMutation} from 'graphql-hooks';
 import React, {
@@ -112,8 +110,6 @@ export default withRouter(
 				);
 			}
 		}, [question, page, pageSize]);
-
-		const {onOpenChange, open} = useModal();
 
 		useEffect(() => {
 			getThread(questionId, context.siteKey)
@@ -380,25 +376,6 @@ export default withRouter(
 											)}
 										</h1>
 
-										{TEST_VARIABLE}
-
-										<Flags
-											context={
-												context?.flagsProperties
-													?.context
-											}
-											props={{
-												...context?.flagsProperties
-													?.props,
-												baseData: {abc: 123},
-												message: Liferay.Language.get(
-													'report'
-												),
-												onlyIcon: true,
-												signedIn: Liferay.ThemeDisplay.isSignedIn(),
-											}}
-										/>
-
 										<p className="c-mb-0 small text-secondary">
 											{`${Liferay.Language.get(
 												'asked'
@@ -491,8 +468,8 @@ export default withRouter(
 												)}
 
 												<FlagsContainer
+													content={question}
 													context={context}
-													question={question}
 												/>
 
 												{question.actions.replace && (

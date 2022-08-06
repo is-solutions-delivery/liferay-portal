@@ -15,7 +15,16 @@
 import Flags from '@liferay/flags-taglib';
 import React from 'react';
 
-const FlagsContainer = ({context, question = {}}) => {
+const FlagsContainer = ({
+	btnProps = {
+		className: 'btn btn-secondary',
+		small: false,
+	},
+	content = {},
+	context,
+	onlyIcon = true,
+	showIcon,
+}) => {
 	const {context: flagsContext, props: flagsProps} =
 		context?.flagsProperties || {};
 
@@ -25,17 +34,16 @@ const FlagsContainer = ({context, question = {}}) => {
 		...flagsProps,
 		baseData: {
 			[`${namespace}className`]: 'com.liferay.message.boards.model.MBMessage',
-			[`${namespace}classPK`]: question.id,
-			[`${namespace}contentTitle`]: question.headline,
+			[`${namespace}classPK`]: content.id,
+			[`${namespace}contentTitle`]:
+				content.headline || content.articleBody,
 			[`${namespace}contentURL`]: window.location.href,
-			[`${namespace}reportedUserId`]: question?.creator?.id,
+			[`${namespace}reportedUserId`]: content?.creator?.id,
 		},
-		btnProps: {
-			className: 'btn btn-secondary',
-			small: false,
-		},
+		btnProps,
 		message: Liferay.Language.get('report'),
-		onlyIcon: true,
+		onlyIcon,
+		showIcon,
 		signedIn: Liferay.ThemeDisplay.isSignedIn(),
 	};
 

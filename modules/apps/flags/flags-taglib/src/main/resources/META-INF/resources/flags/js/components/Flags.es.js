@@ -40,6 +40,7 @@ const Flags = ({
 	message = Liferay.Language.get('report'),
 	onlyIcon = false,
 	pathTermsOfUse,
+	showIcon = true,
 	reasons,
 	signedIn = false,
 	uri,
@@ -146,13 +147,17 @@ const Flags = ({
 				small
 				{...btnProps}
 			>
-				<span
-					className={
-						!onlyIcon ? 'inline-item inline-item-before' : undefined
-					}
-				>
-					<ClayIcon symbol="flag-empty" />
-				</span>
+				{showIcon && (
+					<span
+						className={
+							!onlyIcon
+								? 'inline-item inline-item-before'
+								: undefined
+						}
+					>
+						<ClayIcon symbol="flag-empty" />
+					</span>
+				)}
 
 				<span className={onlyIcon ? 'sr-only' : undefined}>
 					{message}
@@ -180,6 +185,7 @@ const Flags = ({
 };
 Flags.propTypes = {
 	baseData: PropTypes.object.isRequired,
+	btnProps: PropTypes.object,
 	captchaURI: PropTypes.string.isRequired,
 	companyName: PropTypes.string.isRequired,
 	disabled: PropTypes.bool,
@@ -188,6 +194,7 @@ Flags.propTypes = {
 	onlyIcon: PropTypes.bool,
 	pathTermsOfUse: PropTypes.string.isRequired,
 	reasons: PropTypes.object.isRequired,
+	showIcon: PropTypes.bool,
 	signedIn: PropTypes.bool,
 	uri: PropTypes.string.isRequired,
 };
