@@ -1,0 +1,30 @@
+[
+	{
+		"segments": [
+			" "
+		],
+		"nameMap": {
+			"title": "Test-Test"
+		},
+		"descriptionMap": {
+			"description": " "
+		},
+		"active": "true",
+		"criteria": " ",
+		"type": "com.liferay.portal.kernel.model.User"
+	},
+	{
+		"segments": [
+			 " "
+		],
+		"nameMap": {
+			"title": "Test"
+		},
+		"descriptionMap": {
+			"description": " "
+		},
+		"active": "true",
+		"criteria": " ",
+		"type": "com.liferay.portal.kernel.model.User"
+	}
+]
