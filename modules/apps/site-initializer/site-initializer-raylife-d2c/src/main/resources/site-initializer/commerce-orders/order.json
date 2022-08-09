@@ -1,0 +1,24 @@
+{
+	"billingAddressId": 45510,
+	"createDate": "2022-05-23T19:07:15Z",
+	"currencyCode": "USD",
+	"lastPriceUpdateDate": "2022-05-23T19:07:19Z",
+	"modifiedDate": "2022-05-23T19:07:21Z",
+	"orderDate": "2022-05-23T19:07:20Z",
+	"orderStatusInfo": {
+		"code": 6,
+		"label": "in-progress",
+		"label_i18n": "In Progress"
+	},
+	"paymentMethod": "paypal",
+	"paymentStatus": 4,
+	"paymentStatusInfo": {
+		"code": 4
+	},
+	"shippingAddressId": 45512,
+	"subtotalAmount": 683.05,
+	"subtotalFormatted": "$ 683.05",
+	"subtotalWithTaxAmountFormatted": "$ 0.00",
+	"totalAmount": 683.05,
+	"totalFormatted": "$ 683.05"
+}

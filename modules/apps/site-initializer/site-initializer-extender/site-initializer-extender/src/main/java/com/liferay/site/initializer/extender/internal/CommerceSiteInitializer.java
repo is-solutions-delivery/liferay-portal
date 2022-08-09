@@ -43,6 +43,8 @@ import com.liferay.commerce.product.service.CPOptionLocalService;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.service.CommerceChannelService;
+import com.liferay.headless.admin.user.dto.v1_0.Account;
+import com.liferay.headless.admin.user.resource.v1_0.AccountResource;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductOption;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductSpecification;
@@ -52,6 +54,8 @@ import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductOptionRe
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductSpecificationResource;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.Channel;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.ChannelResource;
+import com.liferay.headless.commerce.admin.order.dto.v1_0.Order;
+import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderResource;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -112,6 +116,8 @@ public class CommerceSiteInitializer {
 		throws Exception {
 
 		Channel channel = _addCommerceChannel(serviceContext, servletContext);
+
+		_addCommerceOrders(serviceContext, servletContext, channel.getId());
 
 		if (channel == null) {
 			return;
@@ -399,6 +405,61 @@ public class CommerceSiteInitializer {
 				bundle, commerceChannelId, documentsStringUtilReplaceValues,
 				objectDefinitionIdsStringUtilReplaceValues, resourcePath,
 				serviceContext, servletContext);
+		}
+	}
+
+	private void _addCommerceOrders(
+			ServiceContext serviceContext, ServletContext servletContext,
+			Long channelId)
+		throws Exception {
+
+		Set<String> resourcePaths = servletContext.getResourcePaths(
+			"/site-initializer/commerce-orders");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return;
+		}
+
+		OrderResource.Builder builder = _orderResourceFactory.create();
+
+		OrderResource orderResourceFactory = builder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		Order order = new Order();
+
+		AccountResource.Builder accountResourceBuilder =
+			_accountResourceFactory.create();
+
+		AccountResource accountResource = accountResourceBuilder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		Account account = accountResource.getAccountByExternalReferenceCode(
+			"TESTACC0001");
+
+		for (String resourcePath : resourcePaths) {
+			String json = SiteInitializerUtil.read(
+				resourcePath, servletContext);
+
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
+
+			jsonObject.put(
+				"accountId", account.getId()
+			).put(
+				"channelId", channelId
+			);
+
+			order = Order.toDTO(String.valueOf(jsonObject));
+
+			if (order == null) {
+				_log.error(
+					"Unable to transform commerce order from JSON: " + json);
+
+				continue;
+			}
+
+			orderResourceFactory.postOrder(order);
 		}
 	}
 
@@ -777,6 +838,9 @@ public class CommerceSiteInitializer {
 		CommerceSiteInitializer.class);
 
 	@Reference
+	private AccountResource.Factory _accountResourceFactory;
+
+	@Reference
 	private CatalogResource.Factory _catalogResourceFactory;
 
 	@Reference
@@ -846,6 +910,9 @@ public class CommerceSiteInitializer {
 
 	@Reference
 	private OptionResource.Factory _optionResourceFactory;
+
+	@Reference
+	private OrderResource.Factory _orderResourceFactory;
 
 	@Reference
 	private PortletSettingsImporter _portletSettingsImporter;
