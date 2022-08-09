@@ -158,6 +158,8 @@ import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.util.ObjectMapperUtil;
+import com.liferay.segments.model.SegmentsEntry;
+import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.extender.internal.util.SiteInitializerUtil;
@@ -241,6 +243,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		ResourcePermissionLocalService resourcePermissionLocalService,
 		RoleLocalService roleLocalService,
 		SAPEntryLocalService sapEntryLocalService,
+		SegmentsEntryLocalService segmentsEntryLocalService,
 		SettingsFactory settingsFactory,
 		SiteNavigationMenuItemLocalService siteNavigationMenuItemLocalService,
 		SiteNavigationMenuItemTypeRegistry siteNavigationMenuItemTypeRegistry,
@@ -303,6 +306,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_resourcePermissionLocalService = resourcePermissionLocalService;
 		_roleLocalService = roleLocalService;
 		_sapEntryLocalService = sapEntryLocalService;
+		_segmentsEntryLocalService = segmentsEntryLocalService;
 		_settingsFactory = settingsFactory;
 		_siteNavigationMenuItemLocalService =
 			siteNavigationMenuItemLocalService;
@@ -419,6 +423,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addKnowledgeBaseArticles(serviceContext));
 			_invoke(() -> _addOrganizations(serviceContext));
 			_invoke(() -> _addSAPEntries(serviceContext));
+			_invoke(() -> _addSegmentEntry(serviceContext));
 			_invoke(() -> _addSiteConfiguration(serviceContext));
 			_invoke(() -> _addSiteSettings(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
@@ -2737,6 +2742,55 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
+	private void _addSegmentEntry(ServiceContext serviceContext)
+		throws Exception {
+
+		String json = SiteInitializerUtil.read(
+			"/site-initializer/segments.json", _servletContext);
+
+		if (json == null) {
+			return;
+		}
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+			SegmentsEntry segmentsEntry =
+				_segmentsEntryLocalService.fetchSegmentsEntry(
+					serviceContext.getCompanyId(), jsonObject.getString("name"),
+					true);
+
+			if (segmentsEntry == null) {
+				_segmentsEntryLocalService.addSegmentsEntry(
+					StringUtil.merge(
+						JSONUtil.toStringArray(
+							jsonObject.getJSONArray("segments")),
+						StringPool.NEW_LINE),
+					SiteInitializerUtil.toMap(jsonObject.getString("nameMap")),
+					SiteInitializerUtil.toMap(
+						jsonObject.getString("descriptionMap")),
+					jsonObject.getBoolean("active", true),
+					jsonObject.getString("criteria"),
+					jsonObject.getString("type"), serviceContext);
+			}
+			else {
+				_segmentsEntryLocalService.updateSegmentsEntry(
+					segmentsEntry.getSegmentsEntryId(),
+					StringUtil.merge(
+						JSONUtil.toStringArray(
+							jsonObject.getJSONArray("segments")),
+						StringPool.NEW_LINE),
+					SiteInitializerUtil.toMap(jsonObject.getString("name")),
+					SiteInitializerUtil.toMap(
+						jsonObject.getString("descriptionMap")),
+					jsonObject.getBoolean("active", true),
+					jsonObject.getString("criteria"), serviceContext);
+			}
+		}
+	}
+
 	private void _addSiteConfiguration(ServiceContext serviceContext)
 		throws Exception {
 
@@ -3935,6 +3989,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_resourcePermissionLocalService;
 	private final RoleLocalService _roleLocalService;
 	private final SAPEntryLocalService _sapEntryLocalService;
+	private final SegmentsEntryLocalService _segmentsEntryLocalService;
 	private ServletContext _servletContext;
 	private final SettingsFactory _settingsFactory;
 	private final SiteNavigationMenuItemLocalService

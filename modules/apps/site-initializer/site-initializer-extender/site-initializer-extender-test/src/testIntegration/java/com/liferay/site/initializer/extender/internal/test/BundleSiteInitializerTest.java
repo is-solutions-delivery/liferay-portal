@@ -144,6 +144,8 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.segments.model.SegmentsEntry;
+import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.site.navigation.menu.item.layout.constants.SiteNavigationMenuItemTypeConstants;
@@ -254,6 +256,7 @@ public class BundleSiteInitializerTest {
 			_assertPortletSettings(group);
 			_assertClientExtension(group);
 			_assertSAPEntries(group);
+			_assertSegmentsEntry();
 			_assertSiteConfiguration(group.getGroupId());
 			_assertSiteSettings(group.getGroupId());
 			_assertSiteNavigationMenu(group);
@@ -1348,6 +1351,27 @@ public class BundleSiteInitializerTest {
 			allowedServiceSignaturesList2.size());
 	}
 
+	private void _assertSegmentsEntry() {
+		List<SegmentsEntry> segmentEntry =
+			_segmentsEntryLocalService.getSegmentsEntries(-1, -1);
+
+		for (SegmentsEntry segmentsEntry1 : segmentEntry) {
+			Assert.assertNotNull(segmentsEntry1);
+			Assert.assertNotNull(segmentsEntry1.getSegmentsEntryKey());
+			Assert.assertNotNull(segmentsEntry1.getName());
+			Assert.assertTrue(true);
+			Assert.assertNotNull(segmentsEntry1.getType());
+		}
+
+		for (SegmentsEntry segmentsEntry2 : segmentEntry) {
+			Assert.assertNotNull(segmentsEntry2);
+			Assert.assertNotNull(segmentsEntry2.getSegmentsEntryKey());
+			Assert.assertNotNull(segmentsEntry2.getName());
+			Assert.assertFalse(false);
+			Assert.assertNotNull(segmentsEntry2.getType());
+		}
+	}
+
 	private void _assertSiteConfiguration(Long groupId) {
 		Group group = _groupLocalService.fetchGroup(groupId);
 
@@ -1747,6 +1771,9 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private SAPEntryLocalService _sapEntryLocalService;
+
+	@Inject
+	private SegmentsEntryLocalService _segmentsEntryLocalService;
 
 	@Inject
 	private ServletContext _servletContext;
