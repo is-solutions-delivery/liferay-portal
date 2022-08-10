@@ -1,18 +1,18 @@
 [
 	{
-		"segmentsEntriesKey": "TEST-SEGMENTS-ENTRY-1",
 		"active": "true",
 		"name_i18n": {
 			"en-US": "Segments Entries 1"
 		},
+		"segmentsEntriesKey": "TEST-SEGMENTS-ENTRY-1",
 		"type": "com.liferay.portal.kernel.model.User"
 	},
 	{
-		"segmentsEntriesKey": "TEST-SEGMENTS-ENTRY-TEST-2",
 		"active": "true",
 		"name_i18n": {
 			"en-US": "Segments Entries 2"
 		},
+		"segmentsEntriesKey": "TEST-SEGMENTS-ENTRY-TEST-2",
 		"type": "com.liferay.portal.kernel.model.User"
 	}
 ]
