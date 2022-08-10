@@ -18,7 +18,12 @@ import React, {useContext, useEffect, useState} from 'react';
 
 import {AppContext} from '../AppContext.es';
 
-export default function TagSelector({tagsChange, tagsLoaded, tags = []}) {
+export default function TagSelector({
+	tagsChange,
+	tagsLoaded,
+	tags = [],
+	showSelectButton = true,
+}) {
 	const context = useContext(AppContext);
 
 	const [error, setError] = useState(false);
@@ -27,8 +32,7 @@ export default function TagSelector({tagsChange, tagsLoaded, tags = []}) {
 	useEffect(() => {
 		if (inputValue) {
 			tagsLoaded(false);
-		}
-		else {
+		} else {
 			tagsLoaded(true);
 		}
 	}, [inputValue, tagsLoaded]);
@@ -41,8 +45,7 @@ export default function TagSelector({tagsChange, tagsLoaded, tags = []}) {
 		if (!maxTags(tags) && !duplicatedTags(tags)) {
 			setError(false);
 			tagsChange(tags);
-		}
-		else {
+		} else {
 			setError(true);
 		}
 	};
@@ -59,7 +62,7 @@ export default function TagSelector({tagsChange, tagsLoaded, tags = []}) {
 						onSelectedItemsChange={filterItems}
 						portletURL={context.tagSelectorURL}
 						selectedItems={tags}
-						showSelectButton={true}
+						showSelectButton={showSelectButton}
 					/>
 				</div>
 
