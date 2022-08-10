@@ -641,6 +641,8 @@ export default withRouter(
 		);
 
 		function QuestionsNavigationBar() {
+			const [searchInput, setSearchInput] = useState('');
+
 			return (
 				<div className="d-flex flex-column flex-xl-row justify-content-between">
 					<div className="align-items-center d-flex flex-grow-1">
@@ -729,8 +731,13 @@ export default withRouter(
 											!questions.items.length
 										}
 										onChange={(event) =>
-											debounceCallback(event.target.value)
+											setSearchInput(event.target.value)
 										}
+										onKeyDown={(event) => {
+											if (event.key === 'Enter') {
+												debounceCallback(searchInput);
+											}
+										}}
 										placeholder={Liferay.Language.get(
 											'search'
 										)}
@@ -758,15 +765,20 @@ export default withRouter(
 											((!!search && (
 												<ClayButtonWithIcon
 													displayType="unstyled"
-													onClick={() => {
-														debounceCallback('');
-													}}
+													onClick={() =>
+														debounceCallback('')
+													}
 													symbol="times-circle"
 													type="submit"
 												/>
 											)) || (
 												<ClayButtonWithIcon
 													displayType="unstyled"
+													onClick={() => {
+														debounceCallback(
+															searchInput
+														);
+													}}
 													symbol="search"
 													type="search"
 												/>
