@@ -67,6 +67,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.site.initializer.extender.internal.file.backed.osgi.FileBackedBundleDelegate;
 import com.liferay.site.initializer.extender.internal.file.backed.servlet.FileBackedServletContextDelegate;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
@@ -139,8 +140,8 @@ public class SiteInitializerExtender
 				_organizationLocalService, _organizationResourceFactory,
 				_portal, _resourceActionLocalService,
 				_resourcePermissionLocalService, _roleLocalService,
-				_sapEntryLocalService, null, _settingsFactory,
-				_siteNavigationMenuItemLocalService,
+				_sapEntryLocalService, _segmentsEntryLocalService, null,
+				_settingsFactory, _siteNavigationMenuItemLocalService,
 				_siteNavigationMenuItemTypeRegistry,
 				_siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
@@ -247,7 +248,7 @@ public class SiteInitializerExtender
 				_organizationLocalService, _organizationResourceFactory,
 				_portal, _resourceActionLocalService,
 				_resourcePermissionLocalService, _roleLocalService,
-				_sapEntryLocalService,
+				_sapEntryLocalService, _segmentsEntryLocalService,
 				ProxyUtil.newDelegateProxyInstance(
 					ServletContext.class.getClassLoader(), ServletContext.class,
 					new FileBackedServletContextDelegate(
@@ -403,6 +404,9 @@ public class SiteInitializerExtender
 
 	@Reference
 	private SAPEntryLocalService _sapEntryLocalService;
+
+	@Reference
+	private SegmentsEntryLocalService _segmentsEntryLocalService;
 
 	@Reference
 	private SettingsFactory _settingsFactory;
