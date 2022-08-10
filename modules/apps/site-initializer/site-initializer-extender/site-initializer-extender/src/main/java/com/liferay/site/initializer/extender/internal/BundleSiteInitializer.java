@@ -92,6 +92,7 @@ import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -1438,16 +1439,37 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.fetchUser()
 			).build();
 
-		if (parentKnowledgeBaseObjectId == 0) {
-			return knowledgeBaseFolderResource.postSiteKnowledgeBaseFolder(
-				serviceContext.getScopeGroupId(),
-				KnowledgeBaseFolder.toDTO(jsonObject.toString()));
+		KnowledgeBaseFolder knowledgeBaseFolder = KnowledgeBaseFolder.toDTO(
+			jsonObject.toString());
+
+		KnowledgeBaseFolder kbResult = null;
+
+		try {
+			kbResult =
+				knowledgeBaseFolderResource.
+					getSiteKnowledgeBaseFolderByExternalReferenceCode(
+						serviceContext.getScopeGroupId(),
+						knowledgeBaseFolder.getExternalReferenceCode());
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (kbResult == null) {
+				if (parentKnowledgeBaseObjectId == 0) {
+					return knowledgeBaseFolderResource.
+						postSiteKnowledgeBaseFolder(
+							serviceContext.getScopeGroupId(),
+							knowledgeBaseFolder);
+				}
+
+				return knowledgeBaseFolderResource.
+					postKnowledgeBaseFolderKnowledgeBaseFolder(
+						parentKnowledgeBaseObjectId, knowledgeBaseFolder);
+			}
 		}
 
 		return knowledgeBaseFolderResource.
-			postKnowledgeBaseFolderKnowledgeBaseFolder(
-				parentKnowledgeBaseObjectId,
-				KnowledgeBaseFolder.toDTO(jsonObject.toString()));
+			putSiteKnowledgeBaseFolderByExternalReferenceCode(
+				kbResult.getSiteId(), kbResult.getExternalReferenceCode(),
+				kbResult);
 	}
 
 	private void _addKnowledgeBaseFolder(
