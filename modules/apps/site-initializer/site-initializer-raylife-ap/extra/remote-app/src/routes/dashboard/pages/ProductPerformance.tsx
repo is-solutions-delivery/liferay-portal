@@ -16,24 +16,80 @@ import ClayButton from '@clayui/button';
 import {ClaySelect} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import Header from '../../../common/components/header';
+import ProductList, {
+	ProductCell,
+} from '../../../common/components/product-list';
 
-const PRODUCT_LIST = [
-	'All',
-	'Auto',
-	'General Liability',
-	'Professional Liability',
-	'Workers Compensation',
-	'Business Owners Policy',
+const PRODUCT_SALES_GOAL = [
+	{
+		active: false,
+		productName: 'Auto',
+		salesGoal: 102000,
+		totalSales: 120000,
+	},
+	{
+		active: false,
+		productName: 'Business Owners Policy',
+		salesGoal: 102000,
+		totalSales: 90000,
+	},
+	{
+		active: false,
+		productName: 'General Liability',
+		salesGoal: 102000,
+		totalSales: 10000,
+	},
+	{
+		active: false,
+		productName: 'Professional Liability',
+		salesGoal: 102000,
+		totalSales: 150000,
+	},
+	{
+		active: false,
+		productName: 'Workers Compensation',
+		salesGoal: 102000,
+		totalSales: 60000,
+	},
 ];
 
 const TIME_PERIODS = ['YTD', '3 MO', '6 MO'];
 
 const ProductPerformance = () => {
-	const [choosenProduct, setChoosenProduct] = useState(PRODUCT_LIST[0]);
+	const [products, setProducts] = useState<ProductCell[]>([]);
+	const [productFilterState, setProductFilterState] = useState('All');
 	const [timePeriod, setTimePeriod] = useState(TIME_PERIODS[0]);
+
+	useEffect(() => {
+		setProducts(PRODUCT_SALES_GOAL);
+	}, []);
+
+	const handleProductFilterToggle = (productName: string) => {
+		const newProducts = products.map((product) => {
+			product.productName === productName
+				? (product.active = true)
+				: (product.active = false);
+
+			return product;
+		});
+
+		setProducts(newProducts);
+	};
+
+	useEffect(() => {
+		const activeProduct = products.filter((product) => product.active);
+
+		if (activeProduct[0]) {
+			setProductFilterState(activeProduct[0].productName);
+
+			return;
+		}
+
+		setProductFilterState('All');
+	}, [products]);
 
 	return (
 		<div className="d-flex flex-wrap ray-dashboard-product-performance">
@@ -43,7 +99,12 @@ const ProductPerformance = () => {
 					title="Product Performance"
 				/>
 
-				<div className="p-5"></div>
+				<div className="">
+					<ProductList
+						onSelect={handleProductFilterToggle}
+						productList={products}
+					/>
+				</div>
 			</div>
 
 			<div className="col-7 px-0 right-container">
@@ -51,22 +112,28 @@ const ProductPerformance = () => {
 					<p className="m-0 text-paragraph">
 						<ClayButton
 							className={classNames('general-filter mr-1', {
-								'font-weight-bolder': choosenProduct === 'All',
+								'disabled font-weight-bolder':
+									productFilterState === 'All',
 							})}
 							displayType="unstyled"
-							onClick={() => setChoosenProduct('All')}
+							onClick={() => {
+								if (productFilterState !== 'All') {
+									handleProductFilterToggle('All');
+									setProductFilterState('All');
+								}
+							}}
 						>
 							All
 						</ClayButton>
 
-						{choosenProduct !== 'All' && (
+						{productFilterState !== 'All' && (
 							<>
 								<ClayIcon
-									className="font-weight-bolder mr-1"
+									className="mr-1"
 									symbol="angle-right-small"
 								/>
 
-								<span className="font-weight-bolder">{`${choosenProduct}`}</span>
+								<span className="font-weight-bolder">{`${productFilterState}`}</span>
 							</>
 						)}
 					</p>

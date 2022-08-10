@@ -8,8 +8,14 @@
 			width: 85px;
 		}
 
-		.general-filter:focus {
-			box-shadow: none !important;
+		.general-filter {
+			&.disabled {
+				cursor: default !important;
+			}
+
+			&:focus {
+				box-shadow: none !important;
+			}
 		}
 
 		@media screen and (min-width: $breakpoint-tablet) and (max-width: 1163px) {

@@ -1,0 +1,48 @@
+.ray-product-list {
+	.product-item {
+		// &:before {
+		// 	background-image: linear-gradient(
+		// 		to right,
+		// 		#aaa 0%,
+		// 		#aaa 20%,
+		// 		transparent 20%
+		// 	);
+		// 	background-position: 0 0;
+		// 	background-repeat: repeat-x;
+		// 	background-size: 6px 1px;
+		// 	bottom: -1px;
+		// 	content: '';
+		// 	height: 1px;
+		// 	left: 0.625rem;
+		// 	position: absolute;
+		// 	right: 0.625rem;
+		// }
+
+		&.product-selected {
+			box-shadow: 0 5px 20px rgb(0 0 0 / 10%), inset 7px 0 0 #4c84ff,
+				inset 0 1px 0 #fff;
+		}
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		.product-container {
+			.product-title {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+
+		.goals-container {
+			.yearly-goal {
+				color: rgba(39, 40, 50, 0.35);
+			}
+		}
+
+		.grey-title-color {
+			color: rgba(39, 40, 50, 0.7);
+		}
+	}
+}
