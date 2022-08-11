@@ -12,9 +12,9 @@
 import {Button as ClayButton, DropDown} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
 import React, {useEffect, useRef, useState} from 'react';
-import i18n from '../../../../common/I18n';
-import RoundedGroupButtons from '../../../../common/components/RoundedGroupButtons';
-import {useCustomerPortal} from '../../context';
+import i18n from '../../../../../../../../../common/I18n';
+import RoundedGroupButtons from '../../../../../../../../../common/components/RoundedGroupButtons';
+import useUpdateShowDropDown from './hooks/useUpdateShowDropDown';
 
 const SubscriptionDropDownMenu = ({
 	selectedSubscriptionGroup,
@@ -72,31 +72,15 @@ const SubscriptionsNavbar = ({
 	setSelectedSubscriptionGroup,
 	subscriptionGroups,
 }) => {
-	const [showDropDown, setShowDropDown] = useState(false);
-	const [{isQuickLinksExpanded}] = useCustomerPortal();
-
 	const subscriptionNavbarRef = useRef();
+
+	const showDropDown = useUpdateShowDropDown();
 
 	useEffect(() => {
 		setSelectedSubscriptionGroup(subscriptionGroups[0]?.name);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [subscriptionGroups]);
-
-	useEffect(() => {
-		const updateShowDropDown = () => {
-			setShowDropDown(
-				subscriptionNavbarRef?.current &&
-					subscriptionNavbarRef.current.offsetWidth <
-						(isQuickLinksExpanded ? 500 : 570)
-			);
-		};
-
-		updateShowDropDown();
-		window.addEventListener('resize', updateShowDropDown);
-
-		return () => window.removeEventListener('resize', updateShowDropDown);
-	}, [isQuickLinksExpanded]);
 
 	return (
 		<div className="d-flex rounded-pill w-100" ref={subscriptionNavbarRef}>

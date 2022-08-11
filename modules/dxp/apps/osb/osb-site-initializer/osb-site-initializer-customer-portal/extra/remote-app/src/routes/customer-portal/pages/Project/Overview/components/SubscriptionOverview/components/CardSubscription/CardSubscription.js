@@ -11,13 +11,13 @@
 
 import {useModal} from '@clayui/modal';
 import {useState} from 'react';
-import i18n from '../../../../common/I18n';
-import {StatusTag} from '../../../../common/components';
-import {useAppPropertiesContext} from '../../../../common/contexts/AppPropertiesContext';
-import {SLA_STATUS_TYPES} from '../../../../common/utils/constants';
-import getDateCustomFormat from '../../../../common/utils/getDateCustomFormat';
-import getKebabCase from '../../../../common/utils/getKebabCase';
-import ModalCardSubscription from '../../containers/ModalCardSubscription';
+import i18n from '../../../../../../../../../common/I18n';
+import {StatusTag} from '../../../../../../../../../common/components';
+import {useAppPropertiesContext} from '../../../../../../../../../common/contexts/AppPropertiesContext';
+import {SLA_STATUS_TYPES} from '../../../../../../../../../common/utils/constants';
+import getDateCustomFormat from '../../../../../../../../../common/utils/getDateCustomFormat';
+import getKebabCase from '../../../../../../../../../common/utils/getKebabCase';
+import ModalCardSubscription from '../../../../../../../containers/ModalCardSubscription';
 
 const dateFormat = {
 	day: '2-digit',
