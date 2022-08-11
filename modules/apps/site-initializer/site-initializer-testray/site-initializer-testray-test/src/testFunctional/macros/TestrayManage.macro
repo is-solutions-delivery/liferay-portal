@@ -24,9 +24,21 @@ definition {
 		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 	}
 
+	macro assertCategorieNotPresent {
+		TestrayManage.selectOptionsManage(itemvalue = "Categories");
+
+		TestrayManage.assertNameNotPresent(name = "${key_title}");
+	}
+
 	macro assertName {
 		AssertElementPresent(
 			key_value = "${name}",
+			locator1 = "TestrayManage#OPTIONS_NAME");
+	}
+
+	macro assertNameCategoryInOptions {
+		AssertElementPresent(
+			key_value = "${category}",
 			locator1 = "TestrayManage#OPTIONS_NAME");
 	}
 
@@ -34,6 +46,12 @@ definition {
 		AssertElementNotPresent(
 			locator1 = "TestrayManage#OPTIONS_NAME",
 			value = "${name}");
+	}
+
+	macro assertOptionNotPresent {
+		TestrayManage.selectOptionsManage(itemvalue = "Options");
+
+		TestrayManage.assertNameNotPresent(name = "${key_title}");
 	}
 
 	macro assertTitleModal {
@@ -64,10 +82,30 @@ definition {
 			value1 = "${key_value}");
 
 		Select(
-			locator1 = "TestrayManage#OPTIONS_CATEGORIES",
-			key_value = "${categorie}");
+			key_value = "${categorie}",
+			locator1 = "TestrayManage#OPTIONS_CATEGORIES");
 
 		Click(locator1 = "TestrayManage#SAVE_BUTTON");
+	}
+
+	macro deleteCategory {
+		TestrayManage.selectOptionsManage(itemvalue = "Categories");
+
+		TestrayManage.selectOptionDropdownCategory(
+			key_title = "${categorie}",
+			menuItem = "${menuItem}");
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro deleteOption {
+		TestrayManage.selectOptionsManage(itemvalue = "Options");
+
+		TestrayManage.selectOptionDropdownCategory(
+			key_title = "${categorie}",
+			menuItem = "${menuItem}");
+
+		Alert.viewSuccessMessage();
 	}
 
 	macro deleteProject {
@@ -78,6 +116,22 @@ definition {
 		Click(locator1 = "TestrayDropdown#DROPDOWN_ITEM");
 
 		MenuItem.clickNoError(menuItem = "Delete");
+	}
+
+	macro editCategoryOption {
+		Type(
+			locator1 = "TestrayManage#OPTIONS_CATEGORIES",
+			value1 = "${category}");
+
+		Click(locator1 = "TestrayManage#SAVE_BUTTON");
+	}
+
+	macro editNameCategory {
+		Type(
+			locator1 = "TestrayManage#NEW_OPTION_NAME",
+			value1 = "${category}");
+
+		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 	}
 
 	macro editNewName {
@@ -114,10 +168,8 @@ definition {
 		MenuItem.clickNoError(menuItem = "Edit");
 	}
 
-	macro selectOptionsManage {
-		Click(
-			key_itemvalue = "${itemvalue}",
-			locator1 = "TestrayDropdown#OPTIONS_SIDEBAR");
+	macro selectOption {
+		Select(locator1 = "TestrayManage#OPTIONS_NAME");
 	}
 
 	macro selectOptionDropdownCategory {
@@ -128,61 +180,10 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
-	macro editNameCategory {
-		Type(
-			locator1 = "TestrayManage#NEW_OPTION_NAME",
-			value1 = "${category}");
-
-		Click(locator1 = "TestrayManage#SAVE_BUTTON");
-	}
-
-	macro selectOption {
-		Select(locator1 = "TestrayManage#OPTIONS_NAME");
-	}
-
-	macro editCategoryOption {
-		Type(
-			locator1 = "TestrayManage#OPTIONS_CATEGORIES",
-			value1 = "${category}");
-
-		Click(locator1 = "TestrayManage#SAVE_BUTTON");
-	}
-
-	macro assertNameCategoryInOptions {
-		AssertElementPresent(locator1 = "TestrayManage#OPTIONS_NAME",
-		key_value = "${category}")
-	}
-
-	macro deleteCategory {
-		TestrayManage.selectOptionsManage(itemvalue = "Categories");
-
-		TestrayManage.selectOptionDropdownCategory(
-				menuItem = "${menuItem}",
-				key_title = "${categorie}");
-
-		Alert.viewSuccessMessage();
-	}
-
-	macro deleteOption {
-		TestrayManage.selectOptionsManage(itemvalue = "Options");
-
-		TestrayManage.selectOptionDropdownCategory(
-				menuItem = "${menuItem}",
-				key_title = "${categorie}");
-
-		Alert.viewSuccessMessage();
-	}
-
-	macro assertOptionNotPresent {
-		TestrayManage.selectOptionsManage(itemvalue = "Options");
-
-		TestrayManage.assertNameNotPresent(name = "${key_title}")
-	}
-
-	macro assertCategorieNotPresent {
-		TestrayManage.selectOptionsManage(itemvalue = "Categories");
-
-		TestrayManage.assertNameNotPresent(name = "${key_title}")
+	macro selectOptionsManage {
+		Click(
+			key_itemvalue = "${itemvalue}",
+			locator1 = "TestrayDropdown#OPTIONS_SIDEBAR");
 	}
 
 }

@@ -44,24 +44,23 @@ definition {
 			TestrayManage.selectOptionsManage(itemvalue = "Options");
 
 			TestrayManage.createNewOption(
-				key_value = "Environments_2 Factor Option",
-				categorie = "Environments_2 Factor Category");
+				categorie = "Environments_2 Factor Category",
+				key_value = "Environments_2 Factor Option");
 		}
 
 		task ("Delete Category and Option and state if deleted") {
 			TestrayManage.deleteCategory(
-				menuItem = "Delete",
-				categorie = "Environments_2 Factor Category");
+				categorie = "Environments_2 Factor Category",
+				menuItem = "Delete");
 
 			TestrayManage.deleteOption(
-				menuItem = "Delete",
-				categorie = "Environments_2 Factor Option");
+				categorie = "Environments_2 Factor Option",
+				menuItem = "Delete");
 
 			TestrayManage.assertCategorieNotPresent(key_title = "Environments_2 Factor Category");
 
 			TestrayManage.assertOptionNotPresent(key_title = "Environments_2 Factor Option");
 		}
-
 	}
 
 	@description = "This is a test for LPS-157231 - Verify if as an Administrator I am able to add Factor Categories"
@@ -83,8 +82,8 @@ definition {
 
 		task ("TearDown") {
 			TestrayManage.deleteCategory(
-				menuItem = "Delete",
-				categorie = "Environments_1 Category");
+				categorie = "Environments_1 Category",
+				menuItem = "Delete");
 		}
 	}
 
@@ -107,23 +106,21 @@ definition {
 			TestrayManage.selectOptionsManage(itemvalue = "Options");
 
 			TestrayManage.addNewOptions(
-				options = "Environments_2 Option",
-				category = "Environments_2 Category");
+				category = "Environments_2 Category",
+				options = "Environments_2 Option");
 
 			TestrayManage.assertName(name = "Environments_2 Option");
 		}
 
 		task ("TearDown") {
 			TestrayManage.deleteCategory(
-				menuItem = "Delete",
-				categorie = "Environments_2 Category");
+				categorie = "Environments_2 Category",
+				menuItem = "Delete");
 
 			TestrayManage.deleteOption(
-				menuItem = "Delete",
-				categorie = "Environments_2 Option");
-			
+				categorie = "Environments_2 Option",
+				menuItem = "Delete");
 		}
-
 	}
 
 	@description = "This is a test for LPS-157321 - Verify if as an Administrator I am able to configure Default Environment Factors for a Routine"
@@ -150,8 +147,8 @@ definition {
 			TestrayManage.addNewCategory(category = "Environments_1 Category");
 
 			TestrayManage.selectOptionDropdownCategory(
-				menuItem = "Delete",
-				key_title = "Environments_1 Category");
+				key_title = "Environments_1 Category",
+				menuItem = "Delete");
 
 			TestrayManage.assertNameNotPresent(name = "Environments_1 Category");
 		}
@@ -172,18 +169,18 @@ definition {
 			TestrayManage.addNewCategory(category = "Environments_6 Category");
 
 			TestrayManage.selectOptionDropdownCategory(
-				menuItem = "Edit",
-				key_title = "Environments_6 Category");
+				key_title = "Environments_6 Category",
+				menuItem = "Edit");
 
 			TestrayManage.editNameCategory(category = "Environments_6 Category Edited");
-			
+
 			TestrayManage.assertName(name = "Environments_6 Category Edited");
 		}
 
 		task ("TearDown") {
 			TestrayManage.deleteCategory(
-				menuItem = "Delete",
-				categorie = "Environments_6 Category Edited");
+				categorie = "Environments_6 Category Edited",
+				menuItem = "Delete");
 		}
 	}
 
@@ -208,8 +205,8 @@ definition {
 			TestrayManage.selectOptionsManage(itemvalue = "Options");
 
 			TestrayManage.createNewOption(
-				key_value = "Environments_8 Option",
-				categorie = "Environments_8 Category A");
+				categorie = "Environments_8 Category A",
+				key_value = "Environments_8 Option");
 		}
 
 		task ("Check if you can edit the Option by changing the Category") {
@@ -218,24 +215,21 @@ definition {
 			TestrayManage.editCategoryOption(category = "Environments_8 Category B");
 
 			TestrayManage.assertNameCategoryInOptions(category = "Environments_8 Category B");
-
 		}
 
 		task ("TearDown") {
 			TestrayManage.deleteCategory(
-				menuItem = "Delete",
-				categorie = "Environments_8 Category A");
+				categorie = "Environments_8 Category A",
+				menuItem = "Delete");
 
 			TestrayManage.deleteCategory(
-				menuItem = "Delete",
-				categorie = "Environments_8 Category B");
+				categorie = "Environments_8 Category B",
+				menuItem = "Delete");
 
 			TestrayManage.deleteOption(
-				menuItem = "Delete",
-				categorie = "Environments_8 Option");
-			
+				categorie = "Environments_8 Option",
+				menuItem = "Delete");
 		}
-
 	}
 
 	@description = "This is a test for LPS-157323 - Verify if as an Administrator I am able to edit the Option Name"
