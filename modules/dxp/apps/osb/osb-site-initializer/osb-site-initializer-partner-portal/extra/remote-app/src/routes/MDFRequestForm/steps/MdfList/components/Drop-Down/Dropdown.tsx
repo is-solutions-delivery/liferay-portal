@@ -13,36 +13,36 @@ import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 
 type OptionList = {
-    icon:string;
-    label:string;
-    optionKey:string;
-}
+	icon: string;
+	label: string;
+	optionKey: string;
+};
 
 type Props = {
-    optionList: OptionList[]
-}
+	optionList: OptionList[];
+};
 
-const DropDown = ({optionList}:Props) => {
-    return (
-        <ClayDropDown
-            trigger={
-                <button className=" btn-unstyled">
-                    <ClayIcon symbol="ellipsis-v"></ClayIcon>
-                </button>
-            }
+const DropDown = ({optionList}: Props) => {
+	return (
+		<ClayDropDown
+			trigger={
+				<button className="btn-unstyled">
+					<ClayIcon symbol="ellipsis-v"></ClayIcon>
+				</button>
+			}
+		>
+			<ClayDropDown.ItemList>
+				<ClayDropDown.Group>
+					{optionList.map((item, i) => (
+						<ClayDropDown.Item key={i} onClick={() => {}}>
+							<ClayIcon symbol={item.icon}></ClayIcon>
 
-        >
-            <ClayDropDown.ItemList>
-                <ClayDropDown.Group>
-                    {optionList.map((item, i) => (
-                        <ClayDropDown.Item onClick={() => { }} key={i}>
-                            <ClayIcon symbol={item.icon}></ClayIcon>
-                            {item.label}
-                        </ClayDropDown.Item>
-                    ))}
-                </ClayDropDown.Group>
-            </ClayDropDown.ItemList>
-        </ClayDropDown> 
-    );
+							{item.label}
+						</ClayDropDown.Item>
+					))}
+				</ClayDropDown.Group>
+			</ClayDropDown.ItemList>
+		</ClayDropDown>
+	);
 };
 export default DropDown;

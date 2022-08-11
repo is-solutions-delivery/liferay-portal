@@ -9,4 +9,4 @@
  * distribution rights of the Software.
  */
 
- export {default} from './Dropdown';
+export {default} from './Dropdown';

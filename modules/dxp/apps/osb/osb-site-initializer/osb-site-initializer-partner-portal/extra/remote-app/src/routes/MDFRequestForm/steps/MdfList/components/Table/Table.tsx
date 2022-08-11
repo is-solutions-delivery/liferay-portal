@@ -9,53 +9,53 @@
  * distribution rights of the Software.
  */
 
- import ClayTable from '@clayui/table';
+import ClayTable from '@clayui/table';
 
- type Columns = {
-     label: string;
-     columnKey: string;
-     render?: (data: any, item: any) => any;
- };
- 
- type TableProps<T = any> = {
-     actions?: any[];
-     columns: Columns[];
-     responsive?:boolean
-     rows: T[];
- };
- 
- const Table: React.FC<TableProps> = ({columns, rows, ...props}) => {
-     return (
-         <ClayTable {...props}>
-             <ClayTable.Head>
-                 <ClayTable.Row>
-                     {columns.map((column, index) => (
-                         <ClayTable.Cell headingCell key={index}>
-                             {column.label}
-                         </ClayTable.Cell>
-                     ))}
-                 </ClayTable.Row>
-             </ClayTable.Head>
- 
-             <ClayTable.Body>
-                 {rows.map((row, index) => (
-                     <ClayTable.Row key={index}>
-                         {columns.map((column, index) => {
-                             const data = row[column.columnKey];
-                             return (
-                                 <ClayTable.Cell headingCell key={index}>
-                                     {column.render
-                                         ? column.render(data, row)
-                                         : data}
-                                         
-                                 </ClayTable.Cell>
-                             );
-                         })}
-                     </ClayTable.Row>
-                 ))}
-             </ClayTable.Body>
-         </ClayTable>
-     );
- };
- 
- export default Table;
+type Columns = {
+	label: string;
+	columnKey: string;
+	render?: (data: any, item: any) => any;
+};
+
+type TableProps<T = any> = {
+	actions?: any[];
+	columns: Columns[];
+	responsive?: boolean;
+	rows: T[];
+};
+
+const Table: React.FC<TableProps> = ({columns, rows, ...props}) => {
+	return (
+		<ClayTable {...props}>
+			<ClayTable.Head>
+				<ClayTable.Row>
+					{columns.map((column, index) => (
+						<ClayTable.Cell headingCell key={index}>
+							{column.label}
+						</ClayTable.Cell>
+					))}
+				</ClayTable.Row>
+			</ClayTable.Head>
+
+			<ClayTable.Body>
+				{rows.map((row, index) => (
+					<ClayTable.Row key={index}>
+						{columns.map((column, index) => {
+							const data = row[column.columnKey];
+
+							return (
+								<ClayTable.Cell headingCell key={index}>
+									{column.render
+										? column.render(data, row)
+										: data}
+								</ClayTable.Cell>
+							);
+						})}
+					</ClayTable.Row>
+				))}
+			</ClayTable.Body>
+		</ClayTable>
+	);
+};
+
+export default Table;
