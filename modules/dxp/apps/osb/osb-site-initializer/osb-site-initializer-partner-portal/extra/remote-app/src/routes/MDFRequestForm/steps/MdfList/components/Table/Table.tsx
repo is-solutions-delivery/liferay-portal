@@ -46,8 +46,7 @@
                                  <ClayTable.Cell headingCell key={index}>
                                      {column.render
                                          ? column.render(data, row)
-                                         : column.columnKey === "requestId" ? <a href='/marketing'>{data}</a> :
-                                         data}
+                                         : data}
                                          
                                  </ClayTable.Cell>
                              );
