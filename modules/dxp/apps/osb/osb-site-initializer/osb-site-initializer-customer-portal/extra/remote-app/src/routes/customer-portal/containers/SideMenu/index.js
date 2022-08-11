@@ -15,7 +15,7 @@ import i18n from '../../../../common/I18n';
 import {Button} from '../../../../common/components';
 import getKebabCase from '../../../../common/utils/getKebabCase';
 import {useCustomerPortal} from '../../context';
-import {MENU_TYPES} from '../../utils/constants';
+import {MENU_TYPES, PRODUCT_TYPES} from '../../utils/constants';
 import SideMenuSkeleton from './Skeleton';
 import MenuItem from './components/MenuItem';
 
@@ -49,32 +49,40 @@ const SideMenu = () => {
 
 	const accountSubscriptionGroupsMenuItem = useMemo(
 		() =>
-			subscriptionGroups?.map(({name}, index) => {
-				const redirectPage = getKebabCase(name);
+			subscriptionGroups
+				?.filter(
+					({name}) => name !== PRODUCT_TYPES.liferayExperienceCloud
+				)
+				.map(({name}, index) => {
+					const redirectPage = getKebabCase(name);
 
-				const menuUpdateStatus = (isActive) =>
-					setMenuItemActiveStatus((previousMenuItemActiveStatus) => {
-						const menuItemStatus = [
-							...previousMenuItemActiveStatus,
-						];
-						menuItemStatus[index] = isActive;
+					const menuUpdateStatus = (isActive) =>
+						setMenuItemActiveStatus(
+							(previousMenuItemActiveStatus) => {
+								const menuItemStatus = [
+									...previousMenuItemActiveStatus,
+								];
+								menuItemStatus[index] = isActive;
 
-						setIsOpenedProductsMenu(menuItemStatus.some(Boolean));
+								setIsOpenedProductsMenu(
+									menuItemStatus.some(Boolean)
+								);
 
-						return menuItemStatus;
-					});
+								return menuItemStatus;
+							}
+						);
 
-				return (
-					<MenuItem
-						iconKey={redirectPage.split('-')[0]}
-						key={`${name}-${index}`}
-						setActive={menuUpdateStatus}
-						to={`${ACTIVATION_PATH}/${redirectPage}`}
-					>
-						{name}
-					</MenuItem>
-				);
-			}),
+					return (
+						<MenuItem
+							iconKey={redirectPage.split('-')[0]}
+							key={`${name}-${index}`}
+							setActive={menuUpdateStatus}
+							to={`${ACTIVATION_PATH}/${redirectPage}`}
+						>
+							{name}
+						</MenuItem>
+					);
+				}),
 		[subscriptionGroups]
 	);
 
@@ -87,6 +95,12 @@ const SideMenu = () => {
 			<ul className="list-unstyled mr-2">
 				<MenuItem to="">
 					{i18n.translate(getKebabCase(MENU_TYPES.overview))}
+				</MenuItem>
+
+				<MenuItem
+					to={getKebabCase(PRODUCT_TYPES.liferayExperienceCloud)}
+				>
+					{PRODUCT_TYPES.liferayExperienceCloud}
 				</MenuItem>
 
 				<li>
@@ -112,9 +126,7 @@ const SideMenu = () => {
 							)
 						}
 					>
-						{i18n.translate(
-							getKebabCase(MENU_TYPES.productActivation)
-						)}
+						{MENU_TYPES.productActivation}
 					</Button>
 
 					<ul

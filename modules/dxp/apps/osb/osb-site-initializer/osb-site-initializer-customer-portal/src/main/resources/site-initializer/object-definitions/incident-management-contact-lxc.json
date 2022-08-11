@@ -1,0 +1,53 @@
+{
+	"label": {
+		"en-US": "Incident Management Contact Liferay Experience Cloud"
+	},
+	"name": "IncidentManagementContactLXC",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "First Name"
+			},
+			"name": "firstName",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Last Name"
+			},
+			"name": "lastName",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Email Address"
+			},
+			"name": "emailAddress",
+			"required": true
+		},
+		{
+			"DBType": "Long",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Liferay Experience Cloud Environment"
+			},
+			"name": "liferayExperienceCloudEnvironmentId",
+			"required": true
+		}
+	],
+	"pluralLabel": {
+		"en_US": "Incident Management Contacts Liferay Experience Cloud"
+	},
+	"scope": "site",
+	"system": false
+}
