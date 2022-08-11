@@ -412,7 +412,6 @@ public class MBThreadFinderImpl
 		return doCountByS_G_U_C(
 			groupId, userId, categoryIds, queryDefinition, false);
 	}
-
 	@Override
 	public int countMessageBoardSectionMessageBoardThreadsPage(
 		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
