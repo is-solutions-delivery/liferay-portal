@@ -62,6 +62,7 @@ import {
 	getFullPath,
 	historyPushWithSlug,
 } from '../../utils/utils.es';
+import FlagsContainer from './components/FlagsContainer';
 
 export default withRouter(
 	({
@@ -469,6 +470,11 @@ export default withRouter(
 														</ClayButton>
 													</>
 												)}
+
+												<FlagsContainer
+													content={question}
+													context={context}
+												/>
 
 												{question.actions.replace && (
 													<Link to={`${url}/edit`}>
