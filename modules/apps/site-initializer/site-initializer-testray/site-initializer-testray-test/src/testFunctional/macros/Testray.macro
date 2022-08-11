@@ -227,4 +227,21 @@ definition {
 			locator1 = "Testray#OVERVIEW_LAYOUT_VALUES");
 	}
 
+	macro createProjectTestray {
+		Click(locator1 = "Testray#ADD_PROJECT");
+
+		SelectFrame(locator1 = "Testray#MODAL_BODY");
+
+		Type(
+			locator1 = "TestrayManage#NEW_OPTION_NAME",
+			value1 = "${key_name}");
+
+		Type(
+			locator1 = "Testray#NEW_DESCRIPTION_PROJECT",
+			value1 = "ci:test");
+
+		Click(locator1 = "TestrayManage#SAVE_BUTTON");
+	}
+
+
 }
