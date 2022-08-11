@@ -1078,7 +1078,9 @@ public class MBThreadFinderImpl
 	}
 
 	private String _addTagFilterToSQL(String tag, String sql) {
-		if (tag != null) {
+		tag = tag.trim();
+
+		if (tag != null && tag.length() != 0) {
 			String sqlAppend = StringBundler.concat(
 				"INNER JOIN AssetEntry ON AssetEntry.classPK = ",
 				"MBThread.rootMessageId INNER JOIN AssetEntries_AssetTags ON ",
