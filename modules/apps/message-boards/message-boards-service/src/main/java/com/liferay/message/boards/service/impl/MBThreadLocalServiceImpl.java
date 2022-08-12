@@ -430,6 +430,22 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			queryDefinition.getStatus());
 	}
 
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
+
+		return mbThreadFinder.findByMessageBoardSectionMessageBoardThreadsPage(
+			groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		QueryDefinition<MBThread> queryDefinition) {
+
+		return mbThreadFinder.countMessageBoardSectionMessageBoardThreadsPage(
+			groupId, categoryId, sorts, filter, tag, queryDefinition);
+	}
+
 	@Override
 	public int getMessageCount(long threadId, int status) {
 		if (status == WorkflowConstants.STATUS_ANY) {
@@ -437,16 +453,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		return _mbMessagePersistence.countByT_S(threadId, status);
-	}
-
-	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
-		return mbThreadFinder.findByMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
-	}
-
-	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
-		return mbThreadFinder.countMessageBoardSectionMessageBoardThreadsPage(groupId, categoryId, sorts, filter, tag, queryDefinition);
 	}
 
 	@Override

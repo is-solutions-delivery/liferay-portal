@@ -537,8 +537,10 @@
 				DISTINCT {MBThread.*}
 			FROM
 				MBThread
-			INNER JOIN ?
-			INNER JOIN2 ?
+			INNER JOIN
+				?
+			INNER JOIN2
+				?
 			WHERE
 				(MBThread.categoryId = ?) AND
 				(MBThread.groupId = ?)
