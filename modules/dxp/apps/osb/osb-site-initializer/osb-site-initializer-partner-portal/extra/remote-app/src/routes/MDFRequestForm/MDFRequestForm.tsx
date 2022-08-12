@@ -107,11 +107,19 @@ const MDFRequestForm = () => {
 		formikHelpers.setTouched(setNestedObjectValues(validationErrors, true));
 	};
 
-	const onPrevious = () => setStep(StepType.GOALS);
+	const onPrevious = () => {
+		setStep(StepType.GOALS);
+		return;
+	};
+
+	const onNewRequest = () => setStep(StepType.GOALS);
+	
 
 	const StepFormComponent: StepComponent = {
 		[StepType.MDFLIST]:(
-			<MdfList></MdfList>
+			<MdfList
+			onNewRequest={onNewRequest}
+				/>
 		),
 		[StepType.GOALS]: (
 			<Goals

@@ -19,6 +19,7 @@ type Columns = {
 
 type TableProps<T = any> = {
 	actions?: any[];
+	borderless?:boolean;
 	columns: Columns[];
 	responsive?: boolean;
 	rows: T[];
@@ -26,12 +27,12 @@ type TableProps<T = any> = {
 
 const Table: React.FC<TableProps> = ({columns, rows, ...props}) => {
 	return (
-		<ClayTable {...props}>
+		<ClayTable {...props} tableVerticalAlignment='middle'>
 			<ClayTable.Head>
 				<ClayTable.Row>
 					{columns.map((column, index) => (
 						<ClayTable.Cell headingCell key={index}>
-							{column.label}
+							<span className='text-neutral-10'>{column.label}</span>
 						</ClayTable.Cell>
 					))}
 				</ClayTable.Row>
@@ -44,7 +45,7 @@ const Table: React.FC<TableProps> = ({columns, rows, ...props}) => {
 							const data = row[column.columnKey];
 
 							return (
-								<ClayTable.Cell headingCell key={index}>
+								<ClayTable.Cell headingCell className='font-weight-normal text-neutral-10' key={index}>
 									{column.render
 										? column.render(data, row)
 										: data}

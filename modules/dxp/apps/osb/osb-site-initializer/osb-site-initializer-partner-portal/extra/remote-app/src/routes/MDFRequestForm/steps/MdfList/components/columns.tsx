@@ -20,7 +20,7 @@ const columns = [
 		columnKey: 'status',
 		render: (status: string) => (
 			<div className="align-items-center">
-				<ClayIcon symbol="simple-circle" />
+				<ClayIcon className='mr-1' symbol="simple-circle" />
 
 				{status}
 			</div>
