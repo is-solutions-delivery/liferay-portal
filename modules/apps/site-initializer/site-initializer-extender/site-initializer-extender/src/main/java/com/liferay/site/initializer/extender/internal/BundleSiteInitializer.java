@@ -1535,13 +1535,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 			SiteInitializerUtil.toMap(
 				jsonObject.getString("friendlyURL_i18n")));
 
+		String friendlyURL;
+
 		if (!friendlyURLMap.containsKey(siteDefaultLocale)) {
 			friendlyURLMap.put(
 				siteDefaultLocale, jsonObject.getString("friendlyURL"));
+			friendlyURL = jsonObject.getString("friendlyURL");
 		}
-
-		String friendlyURL = StringUtil.toLowerCase(
-			"/" + _replace(nameMap.get(siteDefaultLocale), " ", "-"));
+		else {
+			friendlyURL = StringUtil.toLowerCase(
+				"/" + _replace(nameMap.get(siteDefaultLocale), " ", "-"));
+		}
 
 		Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
 			serviceContext.getScopeGroupId(), jsonObject.getBoolean("private"),
@@ -1563,7 +1567,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 		else {
 			URL url = _servletContext.getResource(
-				parentResourcePath + "/logo.png");
+				parentResourcePath + "/favicon.png");
 
 			layout = _layoutLocalService.updateLayout(
 				serviceContext.getScopeGroupId(),
