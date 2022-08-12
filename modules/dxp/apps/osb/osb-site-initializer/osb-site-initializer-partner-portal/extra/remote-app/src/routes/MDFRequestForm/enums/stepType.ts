@@ -12,5 +12,6 @@
 export enum StepType {
 	ACTIVITIES = 'activities',
 	GOALS = 'goals',
+	MDFLIST = 'mdfList',
 	REVIEW = 'review',
 }

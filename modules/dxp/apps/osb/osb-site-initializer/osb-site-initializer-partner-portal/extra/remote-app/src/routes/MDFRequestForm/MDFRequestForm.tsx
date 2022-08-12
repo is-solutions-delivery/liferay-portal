@@ -24,6 +24,7 @@ import {StepType} from './enums/stepType';
 import Activities from './steps/Activities';
 import Goals from './steps/Goals';
 import goalsSchema from './steps/Goals/schema/yup';
+import MdfList from './steps/MdfList';
 import isObjectEmpty from './utils/isObjectEmpty';
 
 const initialFormValues: MDFRequest = {
@@ -89,7 +90,7 @@ const onSaveAsDraft = async (
 const onCancel = () => liferayNavigate(PRMPageRoute.MDF_REQUESTS_LISTING);
 
 const MDFRequestForm = () => {
-	const [step, setStep] = useState<StepType>(StepType.GOALS);
+	const [step, setStep] = useState<StepType>(StepType.MDFLIST);
 
 	const onContinue = async (
 		formikHelpers: Omit<FormikHelpers<MDFRequest>, 'setFieldValue'>,
@@ -109,6 +110,9 @@ const MDFRequestForm = () => {
 	const onPrevious = () => setStep(StepType.GOALS);
 
 	const StepFormComponent: StepComponent = {
+		[StepType.MDFLIST]:(
+			<MdfList></MdfList>
+		),
 		[StepType.GOALS]: (
 			<Goals
 				onCancel={onCancel}
