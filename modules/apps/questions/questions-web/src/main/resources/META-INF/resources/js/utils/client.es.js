@@ -494,6 +494,60 @@ export const getSectionThreadsQuery = `
 	}
 `;
 
+export const getMessageBoardSectionFilteredMessageBoardThreads = `
+query messageBoardSectionFilteredMessageBoardThreads(
+	$messageBoardSectionId: Long!
+	$page: Int!
+	$pageSize: Int!
+  	$filter: String!
+  	$sort: String!
+  	$tag: String
+	) {
+		messageBoardSectionFilteredMessageBoardThreads(
+			messageBoardSectionId: $messageBoardSectionId
+			page: $page
+			pageSize: $pageSize
+            filter: $filter
+            sort: $sort
+            tag: $tag
+		) {
+			items {
+				aggregateRating {
+					ratingAverage
+					ratingCount
+					ratingValue
+				}
+				articleBody
+				creator {
+					id
+					image
+					name
+				}
+				dateModified
+				friendlyUrlPath
+				hasValidAnswer
+				headline
+				id
+				keywords
+				locked
+				messageBoardSection {
+					numberOfMessageBoardSections
+					parentMessageBoardSectionId
+					title
+				}
+				numberOfMessageBoardMessages
+				seen
+				status
+				viewCount
+			}
+          lastPage
+			page
+			pageSize
+			totalCount
+		}
+	}
+`;
+
 export const getThreadsQuery = `
 	query messageBoardThreads(
 		$filter: String!

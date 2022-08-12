@@ -14,27 +14,31 @@
 
 import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
-import ClayForm, {ClayRadio, ClayRadioGroup} from '@clayui/form';
+import {ClayRadio, ClayRadioGroup} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 import TagSelector from '../TagSelector.es';
 
 const filterByOptions = [
 	{
+		filterValue: '',
 		label: Liferay.Language.get('none'),
 		value: 'none',
 	},
 	{
+		filterValue: 'numberOfMessageBoardMessages eq 0',
 		label: Liferay.Language.get('no-answer'),
 		value: 'no-answer',
 	},
 	{
+		filterValue: `hasValidAnswer eq 'false'`,
 		label: Liferay.Language.get('no-accepted-answer'),
 		value: 'no-accepted-answer',
 	},
 
 	{
+		filterValue: `hasValidAnswer eq 'true'`,
 		label: Liferay.Language.get('accepted-answer'),
 		value: 'accepted-answer',
 	},
@@ -43,28 +47,36 @@ const filterByOptions = [
 const sortedByOptions = [
 	{
 		label: Liferay.Language.get('newest'),
+		sortValue: 'dateCreated:asc',
 		value: 'newest',
 	},
 	{
 		label: Liferay.Language.get('oldest'),
+		sortValue: 'dateCreated:desc',
 		value: 'oldest',
 	},
 	{
 		label: Liferay.Language.get('recent-activity'),
+		sortValue: 'dateModified:asc',
 		value: 'recent-activity',
 	},
-
 	{
 		label: Liferay.Language.get('highest-score'),
+		sortValue: 'totalScore:desc',
 		value: 'highest-score',
 	},
 	{
 		label: Liferay.Language.get('most-frequent'),
+		sortValue: 'viewCount:desc',
 		value: 'most-frequent',
 	},
 ];
 
 const taggedWithOptions = [
+	{
+		label: Liferay.Language.get('none'),
+		value: 'none',
+	},
 	{
 		label: Liferay.Language.get('my-watched-tags'),
 		value: 'my-watched-tags',
@@ -76,152 +88,197 @@ const taggedWithOptions = [
 ];
 
 const initialState = {
-	filterBy: '',
-	sortedBy: '',
+	filterBy: 'none',
+	sortedBy: 'newest',
 	taggedWith: {
-		property: '',
+		property: 'none',
 		values: [],
 	},
 };
 
-const QuestionsFilter = () => {
+const QuestionsFilter = ({onApplyFilter}) => {
 	const [form, setForm] = useState(initialState);
 	const [tags, setTags] = useState([]);
+	const triggerElementRef = useRef();
+	const [expand, setExpand] = useState(false);
+	const menuElementRef = useRef(null);
 	const [, setTagsLoaded] = useState(true);
 
-	const cleanOnHandle = () => {
-		setForm(initialState);
-		setTags([]);
+	// eslint-disable-next-line no-console
+	console.log(JSON.stringify(form));
+
+	const onSubmit = (event) => {
+		event.preventDefault();
+
+		const query = {
+			filter: '',
+			sort: '',
+			tag: '',
+		};
+
+		query.sort = sortedByOptions.find(
+			({value}) => value === form.sortedBy
+		)?.sortValue;
+
+		query.filter = filterByOptions.find(
+			({value}) => value === form.filterBy
+		)?.filterValue;
+
+		if (form.taggedWith.property === 'some-specific-tag') {
+			query.tag = tags.map(({value}) => value).join(',');
+		}
+
+		setExpand(false);
+
+		onApplyFilter(query);
+	};
+
+	const handleExpand = (event) => {
+		// This is not ideal for allowing you to have more than
+		// one trigger for the same content but it simulates the
+		// advantages of controlling `DropDown.Menu`.
+
+		triggerElementRef.current = event.target;
+
+		setExpand(!expand);
 	};
 
 	return (
-		<ClayDropDown
-			menuHeight="auto"
-			menuWidth="sm"
-			trigger={
-				<ClayButton displayType="secondary">
-					{Liferay.Language.get('filter-and-order')}
+		<>
+			<ClayButton displayType="secondary" onClick={handleExpand}>
+				{Liferay.Language.get('filter-and-order')}
 
-					<ClayIcon className="ml-2" symbol="caret-bottom" />
-				</ClayButton>
-			}
-		>
-			<ClayForm className="mx-3 pl-3 pr-3 py-3">
-				<ClayDropDown.ItemList>
-					<ClayDropDown.Group>
-						<label className="align-items-center d-inline-flex">
-							{Liferay.Language.get('filter-by')}
-						</label>
+				<ClayIcon className="ml-2" symbol="caret-bottom" />
+			</ClayButton>
 
-						<div className="form-check">
-							<ClayRadioGroup
-								defaultValue={filterByOptions[0].value}
-							>
-								{filterByOptions.map(
-									({label, value}, index) => (
-										<ClayRadio
-											aria-label={label}
-											checked={form.filterBy === value}
-											key={index}
-											label={label}
-											onClick={({target: {value}}) =>
-												setForm({
-													...form,
-													filterBy: value,
-												})
-											}
-											value={value}
-										/>
-									)
+			<ClayDropDown.Menu
+				active={expand}
+				alignElementRef={triggerElementRef}
+				menuHeight="auto"
+				menuWidth="md"
+				onActiveChange={() => setExpand(!expand)}
+				ref={menuElementRef}
+			>
+				<div className="mx-3 pl-3 pr-3 py-3">
+					<ClayDropDown.ItemList>
+						<ClayDropDown.Group>
+							<label className="align-items-center d-inline-flex">
+								{Liferay.Language.get('filter-by')}
+							</label>
+
+							<div className="form-check">
+								<ClayRadioGroup
+									defaultValue={form.filterBy}
+									name="filterBy"
+									onChange={(value) => {
+										setForm({
+											...form,
+											filterBy: value,
+										});
+									}}
+									value={form.filterBy}
+								>
+									{filterByOptions.map(
+										({label, value}, index) => (
+											<ClayRadio
+												aria-label={label}
+												key={index}
+												label={label}
+												value={value}
+											/>
+										)
+									)}
+								</ClayRadioGroup>
+							</div>
+						</ClayDropDown.Group>
+
+						<ClayDropDown.Group>
+							<label className="align-items-center d-inline-flex form-check">
+								{Liferay.Language.get('sort-by')}
+							</label>
+
+							<div className="form-check">
+								<ClayRadioGroup
+									defaultValue={form.sortedBy}
+									name="sortedBy"
+									onChange={(value) => {
+										setForm({
+											...form,
+											sortedBy: value,
+										});
+									}}
+									value={form.sortedBy}
+								>
+									{sortedByOptions.map(
+										({label, value}, index) => (
+											<ClayRadio
+												aria-label={label}
+												key={index}
+												label={label}
+												value={value}
+											/>
+										)
+									)}
+								</ClayRadioGroup>
+							</div>
+						</ClayDropDown.Group>
+
+						<ClayDropDown.Group>
+							<label className="align-items-center d-inline-flex">
+								{Liferay.Language.get('tagged-with')}
+							</label>
+
+							<div className="form-check">
+								<ClayRadioGroup
+									defaultValue={form.taggedWith.property}
+									onChange={(value) =>
+										setForm({
+											...form,
+											taggedWith: {
+												...form.taggedWith,
+												property: value,
+											},
+										})
+									}
+									value={form.taggedWith.property}
+								>
+									{taggedWithOptions.map(
+										({label, value}, index) => (
+											<ClayRadio
+												aria-label={label}
+												key={index}
+												label={label}
+												value={value}
+											/>
+										)
+									)}
+								</ClayRadioGroup>
+
+								{form.taggedWith.property ===
+									'some-specific-tag' && (
+									<TagSelector
+										className="c-mt-3"
+										showSelectButton={false}
+										tags={tags}
+										tagsChange={setTags}
+										tagsLoaded={setTagsLoaded}
+									/>
 								)}
-							</ClayRadioGroup>
-						</div>
-					</ClayDropDown.Group>
+							</div>
+						</ClayDropDown.Group>
+					</ClayDropDown.ItemList>
 
-					<ClayDropDown.Group>
-						<label className="align-items-center d-inline-flex form-check">
-							{Liferay.Language.get('sort-by')}
-						</label>
-
-						<div className="form-check">
-							<ClayRadioGroup
-								defaultValue={sortedByOptions[0].value}
-							>
-								{sortedByOptions.map(
-									({label, value}, index) => (
-										<ClayRadio
-											aria-label={label}
-											key={index}
-											label={label}
-											onClick={({target: {value}}) =>
-												setForm({
-													...form,
-													sortedBy: value,
-												})
-											}
-											value={value}
-										/>
-									)
-								)}
-							</ClayRadioGroup>
-						</div>
-					</ClayDropDown.Group>
-
-					<ClayDropDown.Group>
-						<label className="align-items-center d-inline-flex">
-							{Liferay.Language.get('tagged-with')}
-						</label>
-
-						<div className="form-check">
-							<ClayRadioGroup
-								defaultValue={taggedWithOptions[0].value}
-							>
-								{taggedWithOptions.map(
-									({label, value}, index) => (
-										<ClayRadio
-											aria-label={label}
-											key={index}
-											label={label}
-											onClick={({target: {value}}) =>
-												setForm({
-													...form,
-													taggedWith: {
-														property: value,
-													},
-												})
-											}
-											value={value}
-										/>
-									)
-								)}
-							</ClayRadioGroup>
-
-							{form.taggedWith.property ===
-								'some-specific-tag' && (
-								<TagSelector
-									className="c-mt-3"
-									showSelectButton={false}
-									tags={tags}
-									tagsChange={setTags}
-									tagsLoaded={setTagsLoaded}
-								/>
-							)}
-						</div>
-					</ClayDropDown.Group>
-				</ClayDropDown.ItemList>
-
-				<ClayButton className="btn btn-primary c-mt-4 c-mt-sm-0">
-					{Liferay.Language.get('apply')}
-				</ClayButton>
-
-				<ClayButton
-					className="btn btn-secondary c-ml-sm-3"
-					onClick={cleanOnHandle}
-				>
-					{Liferay.Language.get('clear')}
-				</ClayButton>
-			</ClayForm>
-		</ClayDropDown>
+					<ClayButton
+						block
+						className="btn btn-primary c-mt-4 c-mt-sm-0"
+						onClick={onSubmit}
+						type="button"
+					>
+						{Liferay.Language.get('apply')}
+					</ClayButton>
+				</div>
+			</ClayDropDown.Menu>
+		</>
 	);
 };
 
