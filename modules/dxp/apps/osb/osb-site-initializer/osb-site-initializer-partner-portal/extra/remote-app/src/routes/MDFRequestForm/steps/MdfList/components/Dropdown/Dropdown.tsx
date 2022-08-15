@@ -22,8 +22,7 @@ type Props = {
 	optionList: OptionList[];
 };
 
-const DropDown = ({optionList}: Props) => {
-	return (
+const DropDown = ({optionList}: Props) => (
 		<ClayDropDown
 			trigger={
 				<button className="btn-unstyled">
@@ -33,8 +32,8 @@ const DropDown = ({optionList}: Props) => {
 		>
 			<ClayDropDown.ItemList>
 				<ClayDropDown.Group>
-					{optionList.map((item, i) => (
-						<ClayDropDown.Item key={i} onClick={() => {}}>
+					{optionList.map((item, index) => (
+						<ClayDropDown.Item key={index}>
 							<ClayIcon symbol={item.icon}></ClayIcon>
 
 							{item.label}
@@ -44,5 +43,5 @@ const DropDown = ({optionList}: Props) => {
 			</ClayDropDown.ItemList>
 		</ClayDropDown>
 	);
-};
+
 export default DropDown;
