@@ -417,8 +417,8 @@ public class MBThreadFinderImpl
 
 	@Override
 	public int countMessageBoardSectionMessageBoardThreadsPage(
-		long userId, long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) {
+		long userId, long groupId, long categoryId, String search, Sort[] sorts,
+		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 
 		Session session = null;
 
@@ -440,16 +440,20 @@ public class MBThreadFinderImpl
 				sql, "DISTINCT {MBThread.*}",
 				"COUNT(DISTINCT MBThread.threadId) AS COUNT_VALUE");
 
-			if(search != null){search = search.trim();}
+			if (search != null) {
+				search = search.trim();
+			}
 
-			if(search != null && search.length() != 0){
-				sql = _addSearchSQL(search,sql);
-			}else if (filter != null || sorts != null || tag != null) {
+			if ((search != null) && (search.length() != 0)) {
+				sql = _addSearchSQL(search, sql);
+			}
+			else if ((filter != null) || (sorts != null) || (tag != null)) {
 				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
 				sql = _addFilterToSQL(filter, sql);
 				sql = _addSortToSQL(sorts, sql);
 				sql = _addTagFilterToSQL(tag, sql, userId);
-			}else{
+			}
+			else {
 				sql = StringUtil.removeSubstring(sql, "TAGS ?");
 				sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
 				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
@@ -614,8 +618,8 @@ public class MBThreadFinderImpl
 
 	@Override
 	public List<MBThread> findByMessageBoardSectionMessageBoardThreadsPage(
-		long userId, long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) {
+		long userId, long groupId, long categoryId, String search, Sort[] sorts,
+		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 
 		Session session = null;
 
@@ -633,16 +637,20 @@ public class MBThreadFinderImpl
 				sql, "MBThread.categoryId = ?",
 				"MBThread.categoryId = " + categoryId);
 
-			if(search != null){search = search.trim();}
+			if (search != null) {
+				search = search.trim();
+			}
 
-			if(search != null && search.length() != 0){
-				sql = _addSearchSQL(search,sql);
-			}else if (filter != null || sorts != null || tag != null) {
+			if ((search != null) && (search.length() != 0)) {
+				sql = _addSearchSQL(search, sql);
+			}
+			else if ((filter != null) || (sorts != null) || (tag != null)) {
 				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
 				sql = _addFilterToSQL(filter, sql);
 				sql = _addSortToSQL(sorts, sql);
 				sql = _addTagFilterToSQL(tag, sql, userId);
-			}else{
+			}
+			else {
 				sql = StringUtil.removeSubstring(sql, "TAGS ?");
 				sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
 				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
@@ -1344,10 +1352,8 @@ public class MBThreadFinderImpl
 	}
 
 	private String _addSearchSQL(String search, String sql) {
-
-		sql = StringUtil.replace(sql, "HEADLINE ?",
-			"AND MBThread.title LIKE '%" +
-			search + "%'");
+		sql = StringUtil.replace(
+			sql, "HEADLINE ?", "AND MBThread.title LIKE '%" + search + "%'");
 		sql = StringUtil.removeSubstring(sql, "TAGS ?");
 		sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
 		sql = StringUtil.removeSubstring(sql, "INNER JOIN ?");
@@ -1462,11 +1468,18 @@ public class MBThreadFinderImpl
 				myTags.append(tags[i]);
 				myTags.append('"');
 			}
-			if(tag.equals("myWatchedTags")){
-				String myWatchedTags = "SELECT AssetTag.name  FROM Subscription INNER JOIN AssetTag at2 ON AssetTag.tagId = Subscription.classPK WHERE Subscription.userId = " + userId;
+
+			if (tag.equals("myWatchedTags")) {
+				String myWatchedTags = StringBundler.concat(
+					"SELECT AssetTag.name  FROM Subscription INNER JOIN ",
+					"AssetTag at2 ON AssetTag.tagId = Subscription.classPK ",
+					"WHERE Subscription.userId = ", userId);
+
 				sql = StringUtil.replace(
-					sql, "TAGS ?", " AND AssetTag.name IN (" + myWatchedTags + ")");
-			}else {
+					sql, "TAGS ?",
+					" AND AssetTag.name IN (" + myWatchedTags + ")");
+			}
+			else {
 				sql = StringUtil.replace(
 					sql, "TAGS ?", " AND AssetTag.name IN (" + myTags + ")");
 			}

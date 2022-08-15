@@ -431,19 +431,21 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 	}
 
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long userId,long groupId, long categoryId,  String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) {
+		long userId, long groupId, long categoryId, String search, Sort[] sorts,
+		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 
 		return mbThreadFinder.findByMessageBoardSectionMessageBoardThreadsPage(
-			userId, groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+			userId, groupId, categoryId, search, sorts, filter, tag,
+			queryDefinition);
 	}
 
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long userId, long groupId, long categoryId,  String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) {
+		long userId, long groupId, long categoryId, String search, Sort[] sorts,
+		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
 
 		return mbThreadFinder.countMessageBoardSectionMessageBoardThreadsPage(
-			userId, groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+			userId, groupId, categoryId, search, sorts, filter, tag,
+			queryDefinition);
 	}
 
 	@Override

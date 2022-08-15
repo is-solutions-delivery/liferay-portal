@@ -316,34 +316,40 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) throws PrincipalException {
+			long groupId, long categoryId, String search, Sort[] sorts,
+			Filter filter, String tag,
+			QueryDefinition<MBThread> queryDefinition)
+		throws PrincipalException {
 
-			return mbThreadLocalService.
-				getMessageBoardSectionMessageBoardThreadsPage(
-					getUserId(), groupId, categoryId, search, sorts, filter, tag, queryDefinition);
-
-
+		return mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPage(
+				getUserId(), groupId, categoryId, search, sorts, filter, tag,
+				queryDefinition);
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) throws PrincipalException {
-
-			return mbThreadLocalService.
-				getMessageBoardSectionMessageBoardThreadsPageCount(
-					getUserId(), groupId, categoryId, search, sorts, filter, tag, queryDefinition);
-
-	}
-
-	public int getSectionThreadsCount(
-		long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) throws PrincipalException {
+			long groupId, long categoryId, String search, Sort[] sorts,
+			Filter filter, String tag,
+			QueryDefinition<MBThread> queryDefinition)
+		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				getUserId(), groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+				getUserId(), groupId, categoryId, search, sorts, filter, tag,
+				queryDefinition);
+	}
+
+	public int getSectionThreadsCount(
+			long groupId, long categoryId, String search, Sort[] sorts,
+			Filter filter, String tag,
+			QueryDefinition<MBThread> queryDefinition)
+		throws PrincipalException {
+
+		return mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPageCount(
+				getUserId(), groupId, categoryId, search, sorts, filter, tag,
+				queryDefinition);
 	}
 
 	@Override
