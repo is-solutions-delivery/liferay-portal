@@ -18,22 +18,8 @@ import {SLA_STATUS_TYPES} from '../../../../../../../../../common/utils/constant
 import getDateCustomFormat from '../../../../../../../../../common/utils/getDateCustomFormat';
 import getKebabCase from '../../../../../../../../../common/utils/getKebabCase';
 import ModalCardSubscription from '../../../../../../../containers/ModalCardSubscription';
-
-const dateFormat = {
-	day: '2-digit',
-	month: '2-digit',
-	year: 'numeric',
-};
-
-const SUBSCRIPTION_IMAGE_FILE = {
-	'Analytics': 'analytics_icon.svg',
-	'Commerce': 'commerce_icon.svg',
-	'DXP': 'dxp_icon.svg',
-	'Enterprise Search': 'enterprise_icon.svg',
-	'LXC - SM': 'dxp_icon.svg',
-	'Liferay Experience Cloud': 'dxp_icon.svg',
-	'Portal': 'portal_icon.svg',
-};
+import {dateFormat} from './utils/dateFormat';
+import {SUBSCRIPTION_IMAGE_FILE} from './utils/subscriptionImageFile';
 
 const CardSubscription = ({
 	cardSubscriptionData,
