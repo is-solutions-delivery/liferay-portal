@@ -18,20 +18,19 @@ type Columns = {
 };
 
 type TableProps<T = any> = {
-	actions?: any[];
 	borderless?:boolean;
 	columns: Columns[];
 	responsive?: boolean;
 	rows: T[];
 };
 
-const Table: React.FC<TableProps> = ({columns, rows, ...props}) => {
+const Table = ({columns, 	rows, ...props}: TableProps) => {
 	return (
 		<ClayTable {...props} tableVerticalAlignment='middle'>
 			<ClayTable.Head>
 				<ClayTable.Row>
 					{columns.map((column, index) => (
-						<ClayTable.Cell headingCell key={index}>
+						<ClayTable.Cell align='left' headingCell key={index}>
 							<span className='text-neutral-10'>{column.label}</span>
 						</ClayTable.Cell>
 					))}
@@ -43,9 +42,8 @@ const Table: React.FC<TableProps> = ({columns, rows, ...props}) => {
 					<ClayTable.Row key={index}>
 						{columns.map((column, index) => {
 							const data = row[column.columnKey];
-
 							return (
-								<ClayTable.Cell headingCell className='font-weight-normal text-neutral-10' key={index}>
+								<ClayTable.Cell align='left' headingCell className='py-5 font-weight-normal text-neutral-10' key={index}>
 									{column.render
 										? column.render(data, row)
 										: data}
