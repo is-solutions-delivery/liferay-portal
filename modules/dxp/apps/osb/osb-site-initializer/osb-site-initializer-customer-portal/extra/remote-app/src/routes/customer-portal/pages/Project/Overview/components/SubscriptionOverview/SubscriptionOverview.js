@@ -13,8 +13,6 @@ import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 import {useOutletContext} from 'react-router-dom';
 import i18n from '../../../../../../../common/I18n';
-import {useAppPropertiesContext} from '../../../../../../../common/contexts/AppPropertiesContext';
-import {getAccountSubscriptions} from '../../../../../../../common/services/liferay/graphql/queries';
 import {useCustomerPortal} from '../../../../../context';
 import {actionTypes} from '../../../../../context/reducer';
 import {
@@ -26,13 +24,20 @@ import CardSubscription from '../SubscriptionOverview/components/CardSubscriptio
 import SubscriptionsFilterByStatus from '../SubscriptionOverview/components/SubscriptionsFilterByStatus';
 import SubscriptionsNavbar from '../SubscriptionOverview/components/SubscriptionsNavbar';
 import '../../app.scss';
+import useGetAllSubscriptions from './hooks/useGetAllSubscriptions';
+
+import {parseAccountSubscriptionGroupERC} from './utils/parseAccountSubscriptionGroupERC';
 
 const SubscriptionOverview = () => {
 	const [{project, subscriptionGroups}, dispatch] = useCustomerPortal();
-	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
-	const {client} = useAppPropertiesContext();
 
-	const [accountSubscriptions, setAccountSubscriptions] = useState([]);
+	const {
+		accountSubscriptions,
+		subscriptionGroupsWithSubscriptions,
+	} = useGetAllSubscriptions(parseAccountSubscriptionGroupERC);
+
+	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
+
 	const [selectedSubscriptionGroup, setSelectedSubscriptionGroup] = useState(
 		''
 	);
@@ -41,15 +46,6 @@ const SubscriptionOverview = () => {
 		SUBSCRIPTIONS_STATUS.expired,
 		SUBSCRIPTIONS_STATUS.future,
 	]);
-
-	const [
-		subscriptionGroupsWithSubscriptions,
-		setSubscriptionGroupsWithSubscriptions,
-	] = useState([]);
-
-	const parseAccountSubscriptionGroupERC = (subscriptionName) => {
-		return subscriptionName.toLowerCase().replaceAll(' ', '-');
-	};
 
 	const subscriptionsCards = accountSubscriptions.filter(
 		(subscription) =>
@@ -64,54 +60,6 @@ const SubscriptionOverview = () => {
 		setHasQuickLinksPanel(true);
 		setHasSideMenu(true);
 	}, [setHasSideMenu, setHasQuickLinksPanel]);
-
-	useEffect(() => {
-		const getAllSubscriptions = async (accountKey) => {
-			const {data: dataAccountSubscriptions} = await client.query({
-				fetchPolicy: 'network-only',
-				query: getAccountSubscriptions,
-				variables: {
-					filter: `accountKey eq '${accountKey}'`,
-				},
-			});
-
-			if (dataAccountSubscriptions) {
-				const dataAllSubscriptions =
-					dataAccountSubscriptions?.c?.accountSubscriptions?.items;
-
-				const accountSubscriptionGroups = subscriptionGroups.filter(
-					(subscriptionGroup) =>
-						dataAllSubscriptions.some(
-							(subscription) =>
-								subscription.accountSubscriptionGroupERC.replace(
-									`${accountKey}_`,
-									''
-								) ===
-								parseAccountSubscriptionGroupERC(
-									subscriptionGroup.name
-								)
-						)
-				);
-
-				setAccountSubscriptions(dataAllSubscriptions);
-
-				setSubscriptionGroupsWithSubscriptions(
-					accountSubscriptionGroups.sort(
-						(
-							previousAccountSubscriptionGroup,
-							nextAccountSubscriptionGroup
-						) =>
-							previousAccountSubscriptionGroup?.tabOrder -
-							nextAccountSubscriptionGroup?.tabOrder
-					)
-				);
-			}
-		};
-
-		if (subscriptionGroups && project) {
-			getAllSubscriptions(project.accountKey);
-		}
-	}, [client, project, subscriptionGroups]);
 
 	useEffect(() => {
 		if (project && subscriptionGroups) {
@@ -132,12 +80,12 @@ const SubscriptionOverview = () => {
 			subscriptionGroups[0]?.name === PRODUCT_TYPES.partnership);
 
 	return (
-		<>
+		<div>
 			<div className="d-flex flex-column mr-4 mt-6">
 				{!isPartnership && <h3>{i18n.translate('subscriptions')}</h3>}
 
 				{!!subscriptionGroupsWithSubscriptions.length && (
-					<>
+					<div>
 						<div
 							className={classNames('align-items-center d-flex', {
 								'justify-content-between':
@@ -189,10 +137,10 @@ const SubscriptionOverview = () => {
 								</p>
 							)}
 						</div>
-					</>
+					</div>
 				)}
 			</div>
-		</>
+		</div>
 	);
 };
 

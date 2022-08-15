@@ -9,21 +9,6 @@
  * distribution rights of the Software.
  */
 
-import SupportOverview from './components/SupportOverview/';
-import './app.scss';
-import {useCustomerPortal} from '../../../context';
-import SubscriptionOverview from './components/SubscriptionOverview';
-
-const Overview = () => {
-	const [{project}] = useCustomerPortal();
-
-	return (
-		<div>
-			<SupportOverview koroneikiAccount={project} />
-
-			<SubscriptionOverview />
-		</div>
-	);
-};
-
-export default Overview;
+export function parseAccountSubscriptionGroupERC(subscriptionName) {
+	return subscriptionName.toLowerCase().replaceAll(' ', '-');
+}
