@@ -124,25 +124,25 @@ public class MBThreadServiceUtil {
 	}
 
 	public static List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId,
+		long groupId, long categoryId, String search,
 		com.liferay.portal.kernel.search.Sort[] sorts,
 		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 			queryDefinition) {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPage(
-			groupId, categoryId, sorts, filter, tag, queryDefinition);
+			groupId, categoryId, search, sorts, filter, tag, queryDefinition);
 	}
 
 	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId,
+		long groupId, long categoryId, String search,
 		com.liferay.portal.kernel.search.Sort[] sorts,
 		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 			queryDefinition) {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
-			groupId, categoryId, sorts, filter, tag, queryDefinition);
+			groupId, categoryId, search, sorts, filter, tag, queryDefinition);
 	}
 
 	/**
@@ -152,6 +152,17 @@ public class MBThreadServiceUtil {
 	 */
 	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static int getSectionThreadsCount(
+		long groupId, long categoryId, String search,
+		com.liferay.portal.kernel.search.Sort[] sorts,
+		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+			queryDefinition) {
+
+		return getService().getSectionThreadsCount(
+			groupId, categoryId, search, sorts, filter, tag, queryDefinition);
 	}
 
 	public static List<MBThread> getThreads(

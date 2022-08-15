@@ -473,7 +473,7 @@ public class MBThreadServiceHttp {
 	public static java.util.List<com.liferay.message.boards.model.MBThread>
 		getMessageBoardSectionMessageBoardThreadsPage(
 			HttpPrincipal httpPrincipal, long groupId, long categoryId,
-			com.liferay.portal.kernel.search.Sort[] sorts,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
 			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition
 				<com.liferay.message.boards.model.MBThread> queryDefinition) {
@@ -485,7 +485,7 @@ public class MBThreadServiceHttp {
 				_getMessageBoardSectionMessageBoardThreadsPageParameterTypes11);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, groupId, categoryId, sorts, filter, tag,
+				methodKey, groupId, categoryId, search, sorts, filter, tag,
 				queryDefinition);
 
 			Object returnObj = null;
@@ -512,7 +512,7 @@ public class MBThreadServiceHttp {
 
 	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
 		HttpPrincipal httpPrincipal, long groupId, long categoryId,
-		com.liferay.portal.kernel.search.Sort[] sorts,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
 		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition
 			<com.liferay.message.boards.model.MBThread> queryDefinition) {
@@ -524,7 +524,44 @@ public class MBThreadServiceHttp {
 				_getMessageBoardSectionMessageBoardThreadsPageCountParameterTypes12);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, groupId, categoryId, sorts, filter, tag,
+				methodKey, groupId, categoryId, search, sorts, filter, tag,
+				queryDefinition);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return ((Integer)returnObj).intValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
+	public static int getSectionThreadsCount(
+		HttpPrincipal httpPrincipal, long groupId, long categoryId,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition
+			<com.liferay.message.boards.model.MBThread> queryDefinition) {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				MBThreadServiceUtil.class, "getSectionThreadsCount",
+				_getSectionThreadsCountParameterTypes13);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, groupId, categoryId, search, sorts, filter, tag,
 				queryDefinition);
 
 			Object returnObj = null;
@@ -556,7 +593,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "getThreads",
-				_getThreadsParameterTypes13);
+				_getThreadsParameterTypes14);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, categoryId, status, start, end);
@@ -593,7 +630,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "getThreads",
-				_getThreadsParameterTypes14);
+				_getThreadsParameterTypes15);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, categoryId, queryDefinition);
@@ -634,7 +671,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "getThreadsCount",
-				_getThreadsCountParameterTypes15);
+				_getThreadsCountParameterTypes16);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, categoryId, status);
@@ -669,7 +706,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "getThreadsCount",
-				_getThreadsCountParameterTypes16);
+				_getThreadsCountParameterTypes17);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, categoryId, queryDefinition);
@@ -709,7 +746,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "lockThread",
-				_lockThreadParameterTypes17);
+				_lockThreadParameterTypes18);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, threadId);
@@ -749,7 +786,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "moveThread",
-				_moveThreadParameterTypes18);
+				_moveThreadParameterTypes19);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, categoryId, threadId);
@@ -789,7 +826,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "moveThreadFromTrash",
-				_moveThreadFromTrashParameterTypes19);
+				_moveThreadFromTrashParameterTypes20);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, categoryId, threadId);
@@ -829,7 +866,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "moveThreadToTrash",
-				_moveThreadToTrashParameterTypes20);
+				_moveThreadToTrashParameterTypes21);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, threadId);
@@ -869,7 +906,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "restoreThreadFromTrash",
-				_restoreThreadFromTrashParameterTypes21);
+				_restoreThreadFromTrashParameterTypes22);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, threadId);
@@ -905,7 +942,7 @@ public class MBThreadServiceHttp {
 
 		try {
 			MethodKey methodKey = new MethodKey(
-				MBThreadServiceUtil.class, "search", _searchParameterTypes22);
+				MBThreadServiceUtil.class, "search", _searchParameterTypes23);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, creatorUserId, status, start, end);
@@ -945,7 +982,7 @@ public class MBThreadServiceHttp {
 
 		try {
 			MethodKey methodKey = new MethodKey(
-				MBThreadServiceUtil.class, "search", _searchParameterTypes23);
+				MBThreadServiceUtil.class, "search", _searchParameterTypes24);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, creatorUserId, startDate, endDate, status,
@@ -987,7 +1024,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "splitThread",
-				_splitThreadParameterTypes24);
+				_splitThreadParameterTypes25);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, messageId, subject, serviceContext);
@@ -1026,7 +1063,7 @@ public class MBThreadServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				MBThreadServiceUtil.class, "unlockThread",
-				_unlockThreadParameterTypes25);
+				_unlockThreadParameterTypes26);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, threadId);
@@ -1100,7 +1137,7 @@ public class MBThreadServiceHttp {
 	private static final Class<?>[]
 		_getMessageBoardSectionMessageBoardThreadsPageParameterTypes11 =
 			new Class[] {
-				long.class, long.class,
+				long.class, long.class, String.class,
 				com.liferay.portal.kernel.search.Sort[].class,
 				com.liferay.portal.kernel.search.filter.Filter.class,
 				String.class,
@@ -1109,50 +1146,57 @@ public class MBThreadServiceHttp {
 	private static final Class<?>[]
 		_getMessageBoardSectionMessageBoardThreadsPageCountParameterTypes12 =
 			new Class[] {
-				long.class, long.class,
+				long.class, long.class, String.class,
 				com.liferay.portal.kernel.search.Sort[].class,
 				com.liferay.portal.kernel.search.filter.Filter.class,
 				String.class,
 				com.liferay.portal.kernel.dao.orm.QueryDefinition.class
 			};
-	private static final Class<?>[] _getThreadsParameterTypes13 = new Class[] {
+	private static final Class<?>[] _getSectionThreadsCountParameterTypes13 =
+		new Class[] {
+			long.class, long.class, String.class,
+			com.liferay.portal.kernel.search.Sort[].class,
+			com.liferay.portal.kernel.search.filter.Filter.class, String.class,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition.class
+		};
+	private static final Class<?>[] _getThreadsParameterTypes14 = new Class[] {
 		long.class, long.class, int.class, int.class, int.class
 	};
-	private static final Class<?>[] _getThreadsParameterTypes14 = new Class[] {
+	private static final Class<?>[] _getThreadsParameterTypes15 = new Class[] {
 		long.class, long.class,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition.class
 	};
-	private static final Class<?>[] _getThreadsCountParameterTypes15 =
-		new Class[] {long.class, long.class, int.class};
 	private static final Class<?>[] _getThreadsCountParameterTypes16 =
+		new Class[] {long.class, long.class, int.class};
+	private static final Class<?>[] _getThreadsCountParameterTypes17 =
 		new Class[] {
 			long.class, long.class,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition.class
 		};
-	private static final Class<?>[] _lockThreadParameterTypes17 = new Class[] {
+	private static final Class<?>[] _lockThreadParameterTypes18 = new Class[] {
 		long.class
 	};
-	private static final Class<?>[] _moveThreadParameterTypes18 = new Class[] {
+	private static final Class<?>[] _moveThreadParameterTypes19 = new Class[] {
 		long.class, long.class
 	};
-	private static final Class<?>[] _moveThreadFromTrashParameterTypes19 =
+	private static final Class<?>[] _moveThreadFromTrashParameterTypes20 =
 		new Class[] {long.class, long.class};
-	private static final Class<?>[] _moveThreadToTrashParameterTypes20 =
+	private static final Class<?>[] _moveThreadToTrashParameterTypes21 =
 		new Class[] {long.class};
-	private static final Class<?>[] _restoreThreadFromTrashParameterTypes21 =
+	private static final Class<?>[] _restoreThreadFromTrashParameterTypes22 =
 		new Class[] {long.class};
-	private static final Class<?>[] _searchParameterTypes22 = new Class[] {
+	private static final Class<?>[] _searchParameterTypes23 = new Class[] {
 		long.class, long.class, int.class, int.class, int.class
 	};
-	private static final Class<?>[] _searchParameterTypes23 = new Class[] {
+	private static final Class<?>[] _searchParameterTypes24 = new Class[] {
 		long.class, long.class, long.class, long.class, int.class, int.class,
 		int.class
 	};
-	private static final Class<?>[] _splitThreadParameterTypes24 = new Class[] {
+	private static final Class<?>[] _splitThreadParameterTypes25 = new Class[] {
 		long.class, String.class,
 		com.liferay.portal.kernel.service.ServiceContext.class
 	};
-	private static final Class<?>[] _unlockThreadParameterTypes25 =
+	private static final Class<?>[] _unlockThreadParameterTypes26 =
 		new Class[] {long.class};
 
 }

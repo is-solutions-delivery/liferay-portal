@@ -70,7 +70,7 @@ public interface MBThreadFinder {
 			<com.liferay.message.boards.model.MBThread> queryDefinition);
 
 	public int countMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId,
+		long groupId, long categoryId, String search,
 		com.liferay.portal.kernel.search.Sort[] sorts,
 		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition
@@ -105,7 +105,7 @@ public interface MBThreadFinder {
 
 	public java.util.List<com.liferay.message.boards.model.MBThread>
 		findByMessageBoardSectionMessageBoardThreadsPage(
-			long groupId, long categoryId,
+			long groupId, long categoryId, String search,
 			com.liferay.portal.kernel.search.Sort[] sorts,
 			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition
