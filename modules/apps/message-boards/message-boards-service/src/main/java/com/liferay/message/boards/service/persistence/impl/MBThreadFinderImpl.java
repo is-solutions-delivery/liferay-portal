@@ -417,7 +417,7 @@ public class MBThreadFinderImpl
 
 	@Override
 	public int countMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
 		QueryDefinition<MBThread> queryDefinition) {
 
 		Session session = null;
@@ -440,9 +440,22 @@ public class MBThreadFinderImpl
 				sql, "DISTINCT {MBThread.*}",
 				"COUNT(DISTINCT MBThread.threadId) AS COUNT_VALUE");
 
-			sql = _addFilterToSQL(filter, sql);
-			sql = _addSortToSQL(sorts, sql);
-			sql = _addTagFilterToSQL(tag, sql);
+			if(search != null){search = search.trim();}
+
+			if(search != null && search.length() != 0){
+				sql = _addSearchSQL(search,sql);
+			}else if (filter != null || sorts != null || tag != null) {
+				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
+				sql = _addFilterToSQL(filter, sql);
+				sql = _addSortToSQL(sorts, sql);
+				sql = _addTagFilterToSQL(tag, sql);
+			}else{
+				sql = StringUtil.removeSubstring(sql, "TAGS ?");
+				sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
+				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
+				sql = StringUtil.removeSubstring(sql, "INNER JOIN ?");
+				sql = StringUtil.removeSubstring(sql, "INNER JOIN2 ?");
+			}
 
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
 
@@ -601,7 +614,7 @@ public class MBThreadFinderImpl
 
 	@Override
 	public List<MBThread> findByMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Sort[] sorts, Filter filter, String tag,
+		long groupId, long categoryId,  String search, Sort[] sorts, Filter filter, String tag,
 		QueryDefinition<MBThread> queryDefinition) {
 
 		Session session = null;
@@ -620,9 +633,22 @@ public class MBThreadFinderImpl
 				sql, "MBThread.categoryId = ?",
 				"MBThread.categoryId = " + categoryId);
 
-			sql = _addFilterToSQL(filter, sql);
-			sql = _addSortToSQL(sorts, sql);
-			sql = _addTagFilterToSQL(tag, sql);
+			if(search != null){search = search.trim();}
+
+			if(search != null && search.length() != 0){
+				sql = _addSearchSQL(search,sql);
+			}else if (filter != null || sorts != null || tag != null) {
+				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
+				sql = _addFilterToSQL(filter, sql);
+				sql = _addSortToSQL(sorts, sql);
+				sql = _addTagFilterToSQL(tag, sql);
+			}else{
+				sql = StringUtil.removeSubstring(sql, "TAGS ?");
+				sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
+				sql = StringUtil.removeSubstring(sql, "HEADLINE ?");
+				sql = StringUtil.removeSubstring(sql, "INNER JOIN ?");
+				sql = StringUtil.removeSubstring(sql, "INNER JOIN2 ?");
+			}
 
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
 
@@ -1313,6 +1339,19 @@ public class MBThreadFinderImpl
 		else {
 			sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
 		}
+
+		return sql;
+	}
+
+	private String _addSearchSQL(String search, String sql) {
+
+		sql = StringUtil.replace(sql, "HEADLINE ?",
+			"AND MBThread.title LIKE '%" +
+			search + "%'");
+		sql = StringUtil.removeSubstring(sql, "TAGS ?");
+		sql = StringUtil.removeSubstring(sql, "NOT EXISTS ?");
+		sql = StringUtil.removeSubstring(sql, "INNER JOIN ?");
+		sql = StringUtil.removeSubstring(sql, "INNER JOIN2 ?");
 
 		return sql;
 	}

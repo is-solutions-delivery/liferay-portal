@@ -545,6 +545,7 @@
 				(MBThread.categoryId = ?) AND
 				(MBThread.groupId = ?)
 				TAGS ?
+				HEADLINE ?
 				NOT EXISTS ?
 			ORDER BY
 				MBThread.createDate DESC

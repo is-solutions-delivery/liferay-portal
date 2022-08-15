@@ -158,7 +158,7 @@ public class MessageBoardThreadResourceImpl
 		return Page.of(
 			TransformUtil.transform(
 				_mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
-					mbCategory.getGroupId(), messageBoardSectionId, sorts,
+					mbCategory.getGroupId(), messageBoardSectionId, search, sorts,
 					filter, tag,
 					new QueryDefinition<>(
 						status, contextUser.getUserId(), true,
@@ -168,7 +168,7 @@ public class MessageBoardThreadResourceImpl
 				this::_toMessageBoardThread),
 			pagination,
 			_mbThreadService.getMessageBoardSectionMessageBoardThreadsPageCount(
-				mbCategory.getGroupId(), messageBoardSectionId, sorts, filter,
+				mbCategory.getGroupId(), messageBoardSectionId, search, sorts, filter,
 				tag,
 				new QueryDefinition<>(
 					status, contextUser.getUserId(), true,
