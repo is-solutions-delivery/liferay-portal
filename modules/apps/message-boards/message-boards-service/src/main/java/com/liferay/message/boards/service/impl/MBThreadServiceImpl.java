@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -316,30 +317,33 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
 		long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) {
+		QueryDefinition<MBThread> queryDefinition) throws PrincipalException {
 
-		return mbThreadLocalService.
-			getMessageBoardSectionMessageBoardThreadsPage(
-				groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+			return mbThreadLocalService.
+				getMessageBoardSectionMessageBoardThreadsPage(
+					getUserId(), groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+
+
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
 		long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) {
+		QueryDefinition<MBThread> queryDefinition) throws PrincipalException {
 
-		return mbThreadLocalService.
-			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+			return mbThreadLocalService.
+				getMessageBoardSectionMessageBoardThreadsPageCount(
+					getUserId(), groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+
 	}
 
 	public int getSectionThreadsCount(
 		long groupId, long categoryId, String search, Sort[] sorts, Filter filter, String tag,
-		QueryDefinition<MBThread> queryDefinition) {
+		QueryDefinition<MBThread> queryDefinition) throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+				getUserId(), groupId, categoryId, search, sorts, filter, tag, queryDefinition);
 	}
 
 	@Override
