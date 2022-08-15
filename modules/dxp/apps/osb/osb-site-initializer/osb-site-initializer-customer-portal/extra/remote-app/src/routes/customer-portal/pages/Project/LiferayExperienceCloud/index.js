@@ -28,7 +28,7 @@ const LiferayExperienceCloud = () => {
 	const {data} = useGetLiferayExperienceCloudEnvironments(
 		Liferay.ThemeDisplay.getScopeGroupId(),
 		{
-			filter: `accountKey eq '${project?.accountKey}'`,
+			filter: `accountKey eq '${project?.accountKey}' and hasActivation eq true`,
 		}
 	);
 
