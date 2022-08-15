@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.BaseService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
@@ -119,8 +120,10 @@ public interface MBThreadService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId, String search, Sort[] sorts,
-		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition);
+			long groupId, long categoryId, String search, Sort[] sorts,
+			Filter filter, String tag,
+			QueryDefinition<MBThread> queryDefinition)
+		throws PrincipalException;
 
 	/**
 	 * Returns the OSGi service identifier.
@@ -131,8 +134,10 @@ public interface MBThreadService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getSectionThreadsCount(
-		long groupId, long categoryId, String search, Sort[] sorts,
-		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition);
+			long groupId, long categoryId, String search, Sort[] sorts,
+			Filter filter, String tag,
+			QueryDefinition<MBThread> queryDefinition)
+		throws PrincipalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MBThread> getThreads(

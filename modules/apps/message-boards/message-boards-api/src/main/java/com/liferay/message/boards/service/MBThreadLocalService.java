@@ -374,12 +374,12 @@ public interface MBThreadLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, String search, Sort[] sorts,
+		long userId, long groupId, long categoryId, String search, Sort[] sorts,
 		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId, String search, Sort[] sorts,
+		long userId, long groupId, long categoryId, String search, Sort[] sorts,
 		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

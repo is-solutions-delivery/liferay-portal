@@ -135,11 +135,12 @@ public class MBThreadServiceUtil {
 	}
 
 	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId, String search,
-		com.liferay.portal.kernel.search.Sort[] sorts,
-		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
-		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-			queryDefinition) {
+			long groupId, long categoryId, String search,
+			com.liferay.portal.kernel.search.Sort[] sorts,
+			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+				queryDefinition)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
 			groupId, categoryId, search, sorts, filter, tag, queryDefinition);
@@ -155,11 +156,12 @@ public class MBThreadServiceUtil {
 	}
 
 	public static int getSectionThreadsCount(
-		long groupId, long categoryId, String search,
-		com.liferay.portal.kernel.search.Sort[] sorts,
-		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
-		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-			queryDefinition) {
+			long groupId, long categoryId, String search,
+			com.liferay.portal.kernel.search.Sort[] sorts,
+			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+				queryDefinition)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return getService().getSectionThreadsCount(
 			groupId, categoryId, search, sorts, filter, tag, queryDefinition);
