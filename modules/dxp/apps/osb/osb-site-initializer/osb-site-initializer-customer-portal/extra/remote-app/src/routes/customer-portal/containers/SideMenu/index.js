@@ -53,11 +53,8 @@ const SideMenu = () => {
 
 	const accountSubscriptionGroupsMenuItem = useMemo(
 		() =>
-			subscriptionGroups
-				?.filter(
-					({name}) => name !== PRODUCT_TYPES.liferayExperienceCloud
-				)
-				.map(({name}, index) => {
+			subscriptionGroups?.map(({name}, index) => {
+				if (name !== PRODUCT_TYPES.liferayExperienceCloud) {
 					const redirectPage = getKebabCase(name);
 
 					const menuUpdateStatus = (isActive) =>
@@ -86,7 +83,8 @@ const SideMenu = () => {
 							{name}
 						</MenuItem>
 					);
-				}),
+				}
+			}),
 		[subscriptionGroups]
 	);
 
@@ -101,16 +99,13 @@ const SideMenu = () => {
 					{i18n.translate(getKebabCase(MENU_TYPES.overview))}
 				</MenuItem>
 
-				{Liferay.FeatureFlags['LPS-153478'] &&
-					isLiferayExperienceCloud && (
-						<MenuItem
-							to={getKebabCase(
-								PRODUCT_TYPES.liferayExperienceCloud
-							)}
-						>
-							{MENU_TYPES.liferayExperienceCloud}
-						</MenuItem>
-					)}
+				{isLiferayExperienceCloud && (
+					<MenuItem
+						to={getKebabCase(PRODUCT_TYPES.liferayExperienceCloud)}
+					>
+						{MENU_TYPES.liferayExperienceCloud}
+					</MenuItem>
+				)}
 
 				<li>
 					<Button
