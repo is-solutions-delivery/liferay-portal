@@ -70,8 +70,8 @@ const InsuranceProducts: React.FC<InsuranceProductsProps> = ({
 		};
 
 		localStorage.setItem(
-			'raylife-ap-storage',
-			JSON.stringify(newApplicationStorage)
+			'raylife-ap-storage-productName',
+			JSON.stringify(newApplicationStorage.productName)
 		);
 	};
 
