@@ -17,29 +17,12 @@ import i18n from '../../../../../../../../../common/I18n';
 import getKebabCase from '../../../../../../../../../common/utils/getKebabCase';
 import {SUBSCRIPTIONS_STATUS} from '../../../../../../../utils/constants';
 
-const SubscriptionsFilterByStatus = ({selectedStatus, setSelectedStatus}) => {
+import useSelectedStatus from './hooks/useSelectedStatus';
+
+const SubscriptionsFilterByStatus = ({selectedStatus}) => {
 	const [active, setActive] = useState(false);
 
-	const handleChange = (status) => {
-		if (status === 'All') {
-			return setSelectedStatus(
-				selectedStatus.length ===
-					Object.keys(SUBSCRIPTIONS_STATUS).length
-					? []
-					: [
-							SUBSCRIPTIONS_STATUS.active,
-							SUBSCRIPTIONS_STATUS.expired,
-							SUBSCRIPTIONS_STATUS.future,
-					  ]
-			);
-		}
-
-		setSelectedStatus(
-			selectedStatus.includes(status)
-				? selectedStatus.filter((value) => status !== value)
-				: [...selectedStatus, status]
-		);
-	};
+	const {handleChange} = useSelectedStatus(SUBSCRIPTIONS_STATUS);
 
 	return (
 		<div className="d-flex mr-5 mt-4">
