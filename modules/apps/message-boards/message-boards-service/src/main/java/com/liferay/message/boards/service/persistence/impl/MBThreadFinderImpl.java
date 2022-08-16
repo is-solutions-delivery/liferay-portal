@@ -417,8 +417,8 @@ public class MBThreadFinderImpl
 
 	@Override
 	public int countMessageBoardSectionMessageBoardThreadsPage(
-		long userId, long groupId, long categoryId, String search, Sort[] sorts,
-		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
+		long groupId, long userId, long categoryId, Filter filter, QueryDefinition<MBThread>
+		queryDefinition, String search, Sort[] sorts, String tag) {
 
 		Session session = null;
 
@@ -618,8 +618,8 @@ public class MBThreadFinderImpl
 
 	@Override
 	public List<MBThread> findByMessageBoardSectionMessageBoardThreadsPage(
-		long userId, long groupId, long categoryId, String search, Sort[] sorts,
-		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition) {
+		long groupId, long userId, long categoryId, Filter filter, QueryDefinition<MBThread>
+		queryDefinition, String search, Sort[] sorts, String tag) {
 
 		Session session = null;
 
