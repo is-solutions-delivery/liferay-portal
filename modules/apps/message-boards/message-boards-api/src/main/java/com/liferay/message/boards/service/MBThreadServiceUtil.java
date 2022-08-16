@@ -159,15 +159,16 @@ public class MBThreadServiceUtil {
 	}
 
 	public static int getSectionThreadsCount(
-			long groupId, long categoryId, String search,
-			com.liferay.portal.kernel.search.Sort[] sorts,
-			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+			long groupId, long categoryId,
+			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-				queryDefinition)
+				queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return getService().getSectionThreadsCount(
-			groupId, categoryId, search, sorts, filter, tag, queryDefinition);
+			groupId, categoryId, filter, queryDefinition, search, sorts, tag);
 	}
 
 	public static List<MBThread> getThreads(
