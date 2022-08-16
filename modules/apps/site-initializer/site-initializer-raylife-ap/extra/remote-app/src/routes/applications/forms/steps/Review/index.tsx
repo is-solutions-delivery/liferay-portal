@@ -26,7 +26,7 @@ const Review = () => {
 		},
 	} = state;
 
-	const vehicleInfoForms = state.steps.vehicleInfo.form;
+	const vehiclesInfoFormsCoverage = state.steps.coverage.form.vehicles;
 
 	const coverages = [
 		{
@@ -56,7 +56,7 @@ const Review = () => {
 		},
 	];
 
-	const vehiclesTable = vehicleInfoForms.map(
+	const vehiclesCoverageTable = vehiclesInfoFormsCoverage.map(
 		(_vehicleInfoForm: any, index: number) => (
 			<>
 				<ClayTable.Row className="no-gutters row text-uppercase">
@@ -151,8 +151,8 @@ const Review = () => {
 					))}
 				</ClayTable.Body>
 
-				<ClayTable.Body className="table-borderless">
-					{vehiclesTable}
+				<ClayTable.Body className="border-0 table-borderless">
+					{vehiclesCoverageTable}
 				</ClayTable.Body>
 
 				<ClayTable.Head className="border-top">
