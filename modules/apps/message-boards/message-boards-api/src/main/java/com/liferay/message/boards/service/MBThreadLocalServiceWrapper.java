@@ -489,30 +489,32 @@ public class MBThreadLocalServiceWrapper
 	@Override
 	public java.util.List<MBThread>
 		getMessageBoardSectionMessageBoardThreadsPage(
-			long userId, long groupId, long categoryId, String search,
-			com.liferay.portal.kernel.search.Sort[] sorts,
-			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+			long groupId, long userId, long categoryId,
+			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-				queryDefinition) {
+				queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag) {
 
 		return _mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPage(
-				userId, groupId, categoryId, search, sorts, filter, tag,
-				queryDefinition);
+				groupId, userId, categoryId, filter, queryDefinition, search,
+				sorts, tag);
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long userId, long groupId, long categoryId, String search,
-		com.liferay.portal.kernel.search.Sort[] sorts,
-		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+		long groupId, long userId, long categoryId,
+		com.liferay.portal.kernel.search.filter.Filter filter,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-			queryDefinition) {
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
 
 		return _mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				userId, groupId, categoryId, search, sorts, filter, tag,
-				queryDefinition);
+				groupId, userId, categoryId, filter, queryDefinition, search,
+				sorts, tag);
 	}
 
 	@Override

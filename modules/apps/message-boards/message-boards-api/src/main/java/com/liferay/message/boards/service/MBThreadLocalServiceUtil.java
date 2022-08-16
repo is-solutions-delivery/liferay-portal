@@ -434,27 +434,29 @@ public class MBThreadLocalServiceUtil {
 	}
 
 	public static List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long userId, long groupId, long categoryId, String search,
-		com.liferay.portal.kernel.search.Sort[] sorts,
-		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+		long groupId, long userId, long categoryId,
+		com.liferay.portal.kernel.search.filter.Filter filter,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-			queryDefinition) {
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPage(
-			userId, groupId, categoryId, search, sorts, filter, tag,
-			queryDefinition);
+			groupId, userId, categoryId, filter, queryDefinition, search, sorts,
+			tag);
 	}
 
 	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long userId, long groupId, long categoryId, String search,
-		com.liferay.portal.kernel.search.Sort[] sorts,
-		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+		long groupId, long userId, long categoryId,
+		com.liferay.portal.kernel.search.filter.Filter filter,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-			queryDefinition) {
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
-			userId, groupId, categoryId, search, sorts, filter, tag,
-			queryDefinition);
+			groupId, userId, categoryId, filter, queryDefinition, search, sorts,
+			tag);
 	}
 
 	public static int getMessageCount(long threadId, int status) {
