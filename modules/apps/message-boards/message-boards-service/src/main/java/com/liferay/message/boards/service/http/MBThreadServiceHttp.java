@@ -473,11 +473,11 @@ public class MBThreadServiceHttp {
 	public static java.util.List<com.liferay.message.boards.model.MBThread>
 			getMessageBoardSectionMessageBoardThreadsPage(
 				HttpPrincipal httpPrincipal, long groupId, long categoryId,
-				String search, com.liferay.portal.kernel.search.Sort[] sorts,
 				com.liferay.portal.kernel.search.filter.Filter filter,
-				String tag,
 				com.liferay.portal.kernel.dao.orm.QueryDefinition
-					<com.liferay.message.boards.model.MBThread> queryDefinition)
+					<com.liferay.message.boards.model.MBThread> queryDefinition,
+				String search, com.liferay.portal.kernel.search.Sort[] sorts,
+				String tag)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		try {
@@ -487,8 +487,8 @@ public class MBThreadServiceHttp {
 				_getMessageBoardSectionMessageBoardThreadsPageParameterTypes11);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, groupId, categoryId, search, sorts, filter, tag,
-				queryDefinition);
+				methodKey, groupId, categoryId, filter, queryDefinition, search,
+				sorts, tag);
 
 			Object returnObj = null;
 
@@ -522,10 +522,11 @@ public class MBThreadServiceHttp {
 
 	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
 			HttpPrincipal httpPrincipal, long groupId, long categoryId,
-			String search, com.liferay.portal.kernel.search.Sort[] sorts,
-			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition
-				<com.liferay.message.boards.model.MBThread> queryDefinition)
+				<com.liferay.message.boards.model.MBThread> queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		try {
@@ -535,8 +536,8 @@ public class MBThreadServiceHttp {
 				_getMessageBoardSectionMessageBoardThreadsPageCountParameterTypes12);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, groupId, categoryId, search, sorts, filter, tag,
-				queryDefinition);
+				methodKey, groupId, categoryId, filter, queryDefinition, search,
+				sorts, tag);
 
 			Object returnObj = null;
 
@@ -1165,20 +1166,20 @@ public class MBThreadServiceHttp {
 	private static final Class<?>[]
 		_getMessageBoardSectionMessageBoardThreadsPageParameterTypes11 =
 			new Class[] {
-				long.class, long.class, String.class,
-				com.liferay.portal.kernel.search.Sort[].class,
+				long.class, long.class,
 				com.liferay.portal.kernel.search.filter.Filter.class,
-				String.class,
-				com.liferay.portal.kernel.dao.orm.QueryDefinition.class
+				com.liferay.portal.kernel.dao.orm.QueryDefinition.class,
+				String.class, com.liferay.portal.kernel.search.Sort[].class,
+				String.class
 			};
 	private static final Class<?>[]
 		_getMessageBoardSectionMessageBoardThreadsPageCountParameterTypes12 =
 			new Class[] {
-				long.class, long.class, String.class,
-				com.liferay.portal.kernel.search.Sort[].class,
+				long.class, long.class,
 				com.liferay.portal.kernel.search.filter.Filter.class,
-				String.class,
-				com.liferay.portal.kernel.dao.orm.QueryDefinition.class
+				com.liferay.portal.kernel.dao.orm.QueryDefinition.class,
+				String.class, com.liferay.portal.kernel.search.Sort[].class,
+				String.class
 			};
 	private static final Class<?>[] _getSectionThreadsCountParameterTypes13 =
 		new Class[] {
