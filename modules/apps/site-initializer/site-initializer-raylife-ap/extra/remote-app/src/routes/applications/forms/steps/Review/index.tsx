@@ -67,9 +67,7 @@ const Review = () => {
 					</ClayTable.Cell>
 
 					<ClayTable.Cell className="col-4">
-						<p className="text-secondary">
-							{_vehicleInfoForm.comprehensive}
-						</p>
+						<p className="text-secondary">{form.comprehensive}</p>
 					</ClayTable.Cell>
 
 					<ClayTable.Cell className="col">
@@ -85,9 +83,7 @@ const Review = () => {
 					</ClayTable.Cell>
 
 					<ClayTable.Cell className="col-4">
-						<p className="text-secondary">
-							{_vehicleInfoForm.collision}
-						</p>
+						<p className="text-secondary">{form.collision}</p>
 					</ClayTable.Cell>
 
 					<ClayTable.Cell className="col">
