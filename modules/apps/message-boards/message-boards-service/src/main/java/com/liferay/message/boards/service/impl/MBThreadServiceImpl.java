@@ -337,15 +337,13 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	public int getSectionThreadsCount(
-			long groupId, long categoryId, String search, Sort[] sorts,
-			Filter filter, String tag,
-			QueryDefinition<MBThread> queryDefinition)
+		long groupId, long categoryId, Filter filter, QueryDefinition<MBThread>
+		queryDefinition, String search, Sort[] sorts, String tag)
 		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				getUserId(), groupId, categoryId, search, sorts, filter, tag,
-				queryDefinition);
+				groupId, getUserId(), categoryId, filter, queryDefinition, search, sorts, tag);
 	}
 
 	@Override
