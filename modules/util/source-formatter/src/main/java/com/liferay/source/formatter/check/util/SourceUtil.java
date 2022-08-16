@@ -222,7 +222,7 @@ public class SourceUtil {
 		String s, boolean allowDash, String... exceptions) {
 
 		if (!allowDash) {
-			s = replace(s, CharPool.DASH, CharPool.SPACE);
+			s = StringUtil.replace(s, CharPool.DASH, CharPool.SPACE);
 		}
 
 		String[] words = s.split("\\s+");
@@ -242,7 +242,7 @@ public class SourceUtil {
 			}
 
 			for (String exception : exceptions) {
-				if (equalsIgnoreCase(exception, word)) {
+				if (StringUtil.equalsIgnoreCase(exception, word)) {
 					sb.append(exception);
 					sb.append(CharPool.SPACE);
 
@@ -251,7 +251,7 @@ public class SourceUtil {
 			}
 
 			if ((i != 0) && (i != words.length)) {
-				String lowerCaseWord = toLowerCase(word);
+				String lowerCaseWord = StringUtil.toLowerCase(word);
 
 				if (ArrayUtil.contains(_ARTICLES, lowerCaseWord) ||
 					ArrayUtil.contains(_CONJUNCTIONS, lowerCaseWord) ||
@@ -268,7 +268,7 @@ public class SourceUtil {
 				sb.append(word);
 			}
 			else {
-				sb.append(upperCaseFirstLetter(word));
+				sb.append(StringUtil.upperCaseFirstLetter(word));
 			}
 
 			sb.append(CharPool.SPACE);
