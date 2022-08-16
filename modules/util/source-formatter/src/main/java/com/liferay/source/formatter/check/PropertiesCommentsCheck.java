@@ -15,6 +15,7 @@
 package com.liferay.source.formatter.check;
 
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.source.formatter.check.util.SourceUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ public class PropertiesCommentsCheck extends BaseFileCheck {
 
 			String comment = matcher.group(2);
 
-			String titleCaseComment = StringUtil.getTitleCase(
+			String titleCaseComment = SourceUtil.getTitleCase(
 				comment, true, _BRAND_NAMES);
 
 			titleCaseComment = titleCaseComment.replaceAll(
