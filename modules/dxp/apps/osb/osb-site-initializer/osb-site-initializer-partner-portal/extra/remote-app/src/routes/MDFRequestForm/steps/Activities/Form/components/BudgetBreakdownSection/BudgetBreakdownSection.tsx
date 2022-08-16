@@ -17,6 +17,7 @@ import React, {useEffect, useState} from 'react';
 import PRMForm from '../../../../../../../common/components/PRMForm';
 import PRMFormik from '../../../../../../../common/components/PRMFormik';
 import MDFRequestBudget from '../../../../../../../common/interfaces/mdfRequestBudget';
+import currencyMask from '../../../../../../../common/utils/currencyMask';
 import BudgetResumeCard from './components/BudgetResumeCard';
 import getNewBudget from './utils/getNewBudget';
 
@@ -60,7 +61,8 @@ const BudgetBreakdownSection = ({
 
 	useEffect(() => {
 		const amountValue = budgets?.reduce<number>(
-			(previousValue, currentValue) => previousValue + +currentValue.cost,
+			(previousValue, currentValue) =>
+				previousValue + +currencyMask('remove', currentValue.cost),
 			0
 		);
 
@@ -69,12 +71,12 @@ const BudgetBreakdownSection = ({
 
 			setFieldValue(
 				`activities[${currentActivityIndex}].totalCostOfExpense`,
-				amountValue
+				currencyMask('add', String(amountValue))
 			);
 
 			setFieldValue(
 				`activities[${currentActivityIndex}].mdfRequestAmount`,
-				amountValue * 0.5
+				currencyMask('add', String(amountValue * 0.5))
 			);
 		}
 	}, [budgets, currentActivityIndex, setFieldValue]);
@@ -103,6 +105,9 @@ const BudgetBreakdownSection = ({
 								component={PRMForm.InputText}
 								label="Budget"
 								name={`activities[${currentActivityIndex}].budgets[${index}].cost`}
+								onKeyPress={(event: any) => {
+									currencyMask('input', event);
+								}}
 								required
 							/>
 						</PRMForm.Group>
@@ -133,7 +138,7 @@ const BudgetBreakdownSection = ({
 			<div className="my-3">
 				<BudgetResumeCard
 					leftContent="Total MDF Requested Amount"
-					rightContent={String(budgetsAmount)}
+					rightContent={currencyMask('add', String(budgetsAmount))}
 				/>
 
 				<BudgetResumeCard
@@ -143,12 +148,9 @@ const BudgetBreakdownSection = ({
 				/>
 			</div>
 
-			<PRMFormik.Field
-				component={PRMForm.InputText}
-				disabled
-				label="Total MDF Requested Amount"
-				name={`activities[${currentActivityIndex}].mdfRequestAmount`}
-				required
+			<BudgetResumeCard
+				leftContent="Total MDF Requested Amount"
+				rightContent={currencyMask('add', String(budgetsAmount * 0.5))}
 			/>
 		</PRMForm.Section>
 	);
