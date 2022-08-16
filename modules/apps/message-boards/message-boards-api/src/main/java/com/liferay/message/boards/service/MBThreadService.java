@@ -115,8 +115,9 @@ public interface MBThreadService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, String search, Sort[] sorts,
-		Filter filter, String tag, QueryDefinition<MBThread> queryDefinition)
+			long groupId, long categoryId, String search, Sort[] sorts,
+			Filter filter, String tag,
+			QueryDefinition<MBThread> queryDefinition)
 		throws PrincipalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

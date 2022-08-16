@@ -124,11 +124,12 @@ public class MBThreadServiceUtil {
 	}
 
 	public static List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, String search,
-		com.liferay.portal.kernel.search.Sort[] sorts,
-		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
-		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-			queryDefinition) {
+			long groupId, long categoryId, String search,
+			com.liferay.portal.kernel.search.Sort[] sorts,
+			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+				queryDefinition)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPage(
 			groupId, categoryId, search, sorts, filter, tag, queryDefinition);

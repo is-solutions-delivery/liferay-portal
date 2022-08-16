@@ -471,12 +471,14 @@ public class MBThreadServiceHttp {
 	}
 
 	public static java.util.List<com.liferay.message.boards.model.MBThread>
-		getMessageBoardSectionMessageBoardThreadsPage(
-			HttpPrincipal httpPrincipal, long groupId, long categoryId,
-			String search, com.liferay.portal.kernel.search.Sort[] sorts,
-			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
-			com.liferay.portal.kernel.dao.orm.QueryDefinition
-				<com.liferay.message.boards.model.MBThread> queryDefinition) {
+			getMessageBoardSectionMessageBoardThreadsPage(
+				HttpPrincipal httpPrincipal, long groupId, long categoryId,
+				String search, com.liferay.portal.kernel.search.Sort[] sorts,
+				com.liferay.portal.kernel.search.filter.Filter filter,
+				String tag,
+				com.liferay.portal.kernel.dao.orm.QueryDefinition
+					<com.liferay.message.boards.model.MBThread> queryDefinition)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		try {
 			MethodKey methodKey = new MethodKey(
@@ -494,6 +496,14 @@ public class MBThreadServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception exception) {
+				if (exception instanceof
+						com.liferay.portal.kernel.security.auth.
+							PrincipalException) {
+
+					throw (com.liferay.portal.kernel.security.auth.
+						PrincipalException)exception;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(
 					exception);
 			}

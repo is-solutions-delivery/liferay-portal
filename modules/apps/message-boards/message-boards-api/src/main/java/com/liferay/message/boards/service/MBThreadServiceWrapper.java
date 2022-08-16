@@ -133,12 +133,14 @@ public class MBThreadServiceWrapper
 
 	@Override
 	public java.util.List<MBThread>
-		getMessageBoardSectionMessageBoardThreadsPage(
-			long groupId, long categoryId, String search,
-			com.liferay.portal.kernel.search.Sort[] sorts,
-			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
-			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
-				queryDefinition) {
+			getMessageBoardSectionMessageBoardThreadsPage(
+				long groupId, long categoryId, String search,
+				com.liferay.portal.kernel.search.Sort[] sorts,
+				com.liferay.portal.kernel.search.filter.Filter filter,
+				String tag,
+				com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+					queryDefinition)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return _mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
 			groupId, categoryId, search, sorts, filter, tag, queryDefinition);

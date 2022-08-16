@@ -70,11 +70,12 @@ public interface MBThreadFinder {
 			<com.liferay.message.boards.model.MBThread> queryDefinition);
 
 	public int countMessageBoardSectionMessageBoardThreadsPage(
-		long userId, long groupId, long categoryId, String search,
-		com.liferay.portal.kernel.search.Sort[] sorts,
-		com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+		long groupId, long userId, long categoryId,
+		com.liferay.portal.kernel.search.filter.Filter filter,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition
-			<com.liferay.message.boards.model.MBThread> queryDefinition);
+			<com.liferay.message.boards.model.MBThread> queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag);
 
 	public int filterCountByG_C(long groupId, long categoryId);
 
@@ -105,11 +106,12 @@ public interface MBThreadFinder {
 
 	public java.util.List<com.liferay.message.boards.model.MBThread>
 		findByMessageBoardSectionMessageBoardThreadsPage(
-			long userId, long groupId, long categoryId, String search,
-			com.liferay.portal.kernel.search.Sort[] sorts,
-			com.liferay.portal.kernel.search.filter.Filter filter, String tag,
+			long groupId, long userId, long categoryId,
+			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition
-				<com.liferay.message.boards.model.MBThread> queryDefinition);
+				<com.liferay.message.boards.model.MBThread> queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag);
 
 	public java.util.List<com.liferay.message.boards.model.MBThread> findByG_U(
 		long groupId, long userId,
