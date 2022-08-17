@@ -46,6 +46,10 @@ public class DDMUserPersonalFolderUploadResponseHandler
 			PortletRequest portletRequest, PortalException portalException)
 		throws PortalException {
 
+		if (_log.isDebugEnabled()) {
+			_log.debug(portalException);
+		}
+
 		return _itemSelectorUploadResponseHandler.onFailure(
 			portletRequest, portalException);
 	}

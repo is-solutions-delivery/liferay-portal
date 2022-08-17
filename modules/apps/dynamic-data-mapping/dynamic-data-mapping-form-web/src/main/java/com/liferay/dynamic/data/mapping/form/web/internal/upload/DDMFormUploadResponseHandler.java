@@ -23,6 +23,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
@@ -45,6 +47,10 @@ public class DDMFormUploadResponseHandler implements UploadResponseHandler {
 	public JSONObject onFailure(
 			PortletRequest portletRequest, PortalException portalException)
 		throws PortalException {
+
+		if (_log.isDebugEnabled()) {
+			_log.debug(portalException);
+		}
 
 		JSONObject jsonObject = _defaultUploadResponseHandler.onFailure(
 			portletRequest, portalException);
@@ -91,6 +97,9 @@ public class DDMFormUploadResponseHandler implements UploadResponseHandler {
 		return _defaultUploadResponseHandler.onSuccess(
 			uploadPortletRequest, fileEntry);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMFormUploadResponseHandler.class);
 
 	@Reference
 	private DDMFormUploadValidator _ddmFormUploadValidator;
