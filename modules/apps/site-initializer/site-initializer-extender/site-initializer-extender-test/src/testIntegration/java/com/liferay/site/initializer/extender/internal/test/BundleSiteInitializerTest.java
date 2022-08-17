@@ -137,6 +137,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.security.service.access.policy.model.SAPEntry;
@@ -166,6 +167,7 @@ import java.math.BigDecimal;
 
 import java.util.Dictionary;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -604,7 +606,7 @@ public class BundleSiteInitializerTest {
 					"TESTPROD001", group.getCompanyId());
 
 		CPInstance cpInstance1 = _cpInstanceLocalService.getCPInstance(
-			cpDefinition.getCPDefinitionId(), "Test Value 1");
+			cpDefinition.getCPDefinitionId(), "TEST VALUE 1");
 
 		Assert.assertNotNull(cpInstance1);
 
@@ -617,7 +619,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(25.0, actualPromoPrice.doubleValue(), 0.0001);
 
 		CPInstance cpInstance2 = _cpInstanceLocalService.getCPInstance(
-			cpDefinition.getCPDefinitionId(), "Test Value 2");
+			cpDefinition.getCPDefinitionId(), "TEST VALUE 2");
 
 		Assert.assertNotNull(cpInstance2);
 		Assert.assertTrue(cpInstance2.isSubscriptionEnabled());
@@ -954,6 +956,15 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertEquals(
 			"Test Notification Template", notificationTemplate.getName());
+
+		Map<String, String> subjectMap = notificationTemplate.getSubject();
+
+		Assert.assertNotNull(subjectMap);
+
+		String subject = subjectMap.get("en_US");
+
+		Assert.assertTrue(
+			subject.equals(StringUtil.getTitleCase(subject, true, "DXP")));
 	}
 
 	private void _assertObjectActions(
