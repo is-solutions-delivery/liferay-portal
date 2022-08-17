@@ -18,6 +18,33 @@ import MDFRequestStepProps from '../../interfaces/mdfRequestStepProps';
 const MdfList: any = ({
 	onNewRequest
 }:MDFRequestStepProps<MDFRequest>) => {
+
+	const {data} = useGetMDFRequest();
+
+	const mdfListObject = data?.items.reduce(
+		(objAccumulator: any, values: any) => {
+
+			const obj = {
+				activityPeriod: values.minDateActivity + values.maxDateActivity,
+				approved: '',
+				reimpursementClaim: '',
+				requestId: values.id,
+				requested: '',
+				status: values.status.label_i18n,
+				totalCost: '',
+			
+		};
+
+			return {
+ 
+				items: [...objAccumulator.items, obj],
+
+			};
+		},
+		{items: []}
+	);
+
+
 	return (
 		<div className="border-0 pb-3 pt-5 px-6 sheet">
 			<h1>MDF Requests</h1>
@@ -36,7 +63,7 @@ const MdfList: any = ({
 					borderless = {true}
 					columns={MDFListColumn}
 					responsive={true}
-					rows={}
+					rows={mdfListObject?.items}
 				></Table>
 			</div>
 

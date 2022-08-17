@@ -21,7 +21,7 @@ type TableProps<T = any> = {
 	borderless?:boolean;
 	columns: Columns[];
 	responsive?: boolean;
-	rows: T[];
+	rows: T[] | undefined;
 };
 
 const Table = ({columns, 	rows, ...props}: TableProps) => {
@@ -38,7 +38,7 @@ const Table = ({columns, 	rows, ...props}: TableProps) => {
 			</ClayTable.Head>
 
 			<ClayTable.Body>
-				{rows.map((row, index) => (
+				{rows?.map((row, index) => (
 					<ClayTable.Row key={index}>
 						{columns.map((column, index) => {
 							const data = row[column.columnKey];

@@ -19,7 +19,7 @@ const MDFListColumn = [
 		columnKey: 'status',
 		render: (status: string) => (
 			<div className="align-items-center">
-				<ClayIcon className='mr-1' symbol="simple-circle" />
+				<ClayIcon symbol="simple-circle" />
 				{status}
 			</div>
 		),
