@@ -46,8 +46,6 @@ public class MBThreadModelDocumentContributor
 			mbDiscussionLocalService.fetchThreadDiscussion(
 				mbThread.getThreadId());
 
-		RatingsStats ratingsStats = ratingsStatsLocalService.fetchStats(
-			MBMessage.class.getName(), mbThread.getRootMessageId());
 
 		if (discussion == null) {
 			document.addKeyword("discussion", false);
@@ -62,16 +60,18 @@ public class MBThreadModelDocumentContributor
 
 		document.addKeyword(
 			"participantUserIds", mbThread.getParticipantUserIds());
-
 		document.addKeyword("viewCount", mbThread.getViewCount());
-
-		document.addKeyword("totalScore", ratingsStats.getTotalScore());
 		document.addKeyword(
 			"hasValidAnswer",
 			mbThreadLocalService.hasAnswerMessage(mbThread.getThreadId()));
 		document.addKeyword(
 			"numberOfMessageBoardMessages",
 			mbThreadLocalService.getMessageCount(mbThread.getThreadId(), 0));
+
+		RatingsStats ratingsStats = ratingsStatsLocalService.fetchStats(
+			MBMessage.class.getName(), mbThread.getRootMessageId());
+
+		document.addKeyword("totalScore", ratingsStats.getTotalScore());
 	}
 
 	@Reference
