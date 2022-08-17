@@ -103,13 +103,11 @@ const ComponentFormModal: React.FC<ComponentProps> = ({
 			/>
 
 			<Form.Select
-				defaultOption={false}
 				errors={errors}
 				label={i18n.translate('team')}
 				name="teamId"
 				options={teams.map(({id, name}) => ({label: name, value: id}))}
 				register={register}
-				required
 				value={teamId}
 			/>
 		</Modal>
