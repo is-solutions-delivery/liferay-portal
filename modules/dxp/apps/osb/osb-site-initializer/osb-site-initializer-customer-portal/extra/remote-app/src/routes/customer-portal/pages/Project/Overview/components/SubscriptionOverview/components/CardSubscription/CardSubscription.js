@@ -52,7 +52,8 @@ const CardSubscription = ({
 				/>
 			)}
 			<div
-				className="border border-light cp-card-subscription px-3 py-4 rounded"
+				className="border border-neutral-3
+				cp-card-subscription px-3 py-4 rounded"
 				onClick={() => setVisible(true)}
 			>
 				<div className="text-center">
@@ -78,7 +79,7 @@ const CardSubscription = ({
 
 						{`${cardSubscriptionData?.instanceSize || ' - '}`}
 					</p>
-
+						
 					<p className="mb-3 text-center">
 						{`${getDateCustomFormat(
 							cardSubscriptionData?.startDate,

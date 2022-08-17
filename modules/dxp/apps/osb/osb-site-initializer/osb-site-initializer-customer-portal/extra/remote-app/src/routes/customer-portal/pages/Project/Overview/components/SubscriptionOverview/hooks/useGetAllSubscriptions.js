@@ -21,7 +21,7 @@ export default function useGetAllSubscriptions(
 	const {client} = useAppPropertiesContext();
 	const [{project, subscriptionGroups}] = useCustomerPortal();
 
-	const [accountSubscriptions, setAccountSubscriptions] = useState([]);
+	const [accountSubscriptions, setAccountSubscriptions] = useState();
 	const [
 		subscriptionGroupsWithSubscriptions,
 		setSubscriptionGroupsWithSubscriptions,

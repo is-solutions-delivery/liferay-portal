@@ -24,8 +24,10 @@ import CardSubscription from '../SubscriptionOverview/components/CardSubscriptio
 import SubscriptionsFilterByStatus from '../SubscriptionOverview/components/SubscriptionsFilterByStatus';
 import SubscriptionsNavbar from '../SubscriptionOverview/components/SubscriptionsNavbar';
 import '../../app.scss';
-import useGetAllSubscriptions from './hooks/useGetAllSubscriptions';
+import { Skeleton } from '../../../../../../../common/components';
 
+import CardSubscriptionSkeleton from './components/CardSubscription/CardSubscriptionSkeleton';
+import useGetAllSubscriptions from './hooks/useGetAllSubscriptions';
 import {parseAccountSubscriptionGroupERC} from './utils/parseAccountSubscriptionGroupERC';
 
 const SubscriptionOverview = () => {
@@ -36,18 +38,24 @@ const SubscriptionOverview = () => {
 		subscriptionGroupsWithSubscriptions,
 	} = useGetAllSubscriptions(parseAccountSubscriptionGroupERC);
 
+	const THRESHOLD_COUNT = 4;
+
+const getLoadingCards = () =>
+	[...new Array(THRESHOLD_COUNT)].map((_, index) => (
+		<CardSubscriptionSkeleton  key={index}/>
+	));
+
 	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
 
-	const [selectedSubscriptionGroup, setSelectedSubscriptionGroup] = useState(
-		''
-	);
+	const [selectedSubscriptionGroup, setSelectedSubscriptionGroup] = useState('');
+
 	const [selectedStatus, setSelectedStatus] = useState([
 		SUBSCRIPTIONS_STATUS.active,
 		SUBSCRIPTIONS_STATUS.expired,
 		SUBSCRIPTIONS_STATUS.future,
 	]);
 
-	const subscriptionsCards = accountSubscriptions.filter(
+	const subscriptionsCards = accountSubscriptions?.filter(
 		(subscription) =>
 			subscription.accountSubscriptionGroupERC.replace(
 				`${project?.accountKey}_`,
@@ -73,19 +81,21 @@ const SubscriptionOverview = () => {
 			});
 		}
 	}, [dispatch, project, subscriptionGroups]);
-
+	
 	const isPartnership =
-		selectedSubscriptionGroup === PRODUCT_TYPES.partnership ||
-		(subscriptionGroups &&
-			subscriptionGroups[0]?.name === PRODUCT_TYPES.partnership);
+	selectedSubscriptionGroup === PRODUCT_TYPES.partnership ||
+	(subscriptionGroups &&
+		subscriptionGroups[0]?.name === PRODUCT_TYPES.partnership);
 
 	return (
 		<div>
 			<div className="d-flex flex-column mr-4 mt-6">
-				{!isPartnership && <h3>{i18n.translate('subscriptions')}</h3>}
 
-				{!!subscriptionGroupsWithSubscriptions.length && (
-					<div>
+				{!isPartnership && subscriptionGroups ? (<h3>{i18n.translate('subscriptions')}</h3>) : (
+					<Skeleton  height={50} width={200} />
+				)}
+
+				<div>
 						<div
 							className={classNames('align-items-center d-flex', {
 								'justify-content-between':
@@ -96,7 +106,7 @@ const SubscriptionOverview = () => {
 									4,
 							})}
 						>
-							<SubscriptionsNavbar
+							{subscriptionGroupsWithSubscriptions.length ? (<><SubscriptionsNavbar
 								selectedSubscriptionGroup={
 									selectedSubscriptionGroup
 								}
@@ -111,11 +121,17 @@ const SubscriptionOverview = () => {
 							<SubscriptionsFilterByStatus
 								selectedStatus={selectedStatus}
 								setSelectedStatus={setSelectedStatus}
-							/>
+							/></>) : (
+							<div className='d-flex justify-content-between mt-3 w-100'>
+								 <Skeleton height={30} width={150}/>	 
+
+								 <Skeleton height={30} width={150}/>  
+								 </div>
+								 )}
 						</div>
 
 						<div className="cp-overview-cards-subscription d-flex flex-wrap mt-4">
-							{subscriptionsCards.length ? (
+							{subscriptionsCards ? (subscriptionsCards.length ? (
 								subscriptionsCards.map(
 									(accountSubscription, index) => (
 										<CardSubscription
@@ -135,10 +151,9 @@ const SubscriptionOverview = () => {
 										'no-subscriptions-match-these-criteria'
 									)}
 								</p>
-							)}
+							)) : getLoadingCards()}
 						</div>
 					</div>
-				)}
 			</div>
 		</div>
 	);
