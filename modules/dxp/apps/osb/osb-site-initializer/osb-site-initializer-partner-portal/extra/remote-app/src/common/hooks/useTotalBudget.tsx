@@ -11,13 +11,13 @@
 
 import {useMemo} from 'react';
 
-import MDFRequest from '../../../../../common/interfaces/mdfRequest';
-import MDFRequestActivity from '../../../../../common/interfaces/mdfRequestActivity';
+import MDFRequest from '../interfaces/mdfRequest';
+import MDFRequestActivity from '../interfaces/mdfRequestActivity';
 
-const GetTotalBudget = (values: MDFRequest) => {
-	const totalBudget = useMemo(
+const useTotalBudget = (mdfRequest: MDFRequest) => {
+	return useMemo(
 		() =>
-			values.activities.reduce(
+			mdfRequest.activities.reduce(
 				(previousValue: number, currentValue: MDFRequestActivity) => {
 					const sumBudgets = currentValue.budgets.reduce<number>(
 						(previousValue, currentValue) =>
@@ -29,9 +29,7 @@ const GetTotalBudget = (values: MDFRequest) => {
 				},
 				0
 			),
-		[values.activities]
+		[mdfRequest.activities]
 	);
-
-	return totalBudget;
 };
-export default GetTotalBudget;
+export default useTotalBudget;
