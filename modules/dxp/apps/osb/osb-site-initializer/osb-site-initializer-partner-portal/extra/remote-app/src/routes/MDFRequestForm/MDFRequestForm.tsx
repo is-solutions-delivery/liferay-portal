@@ -24,6 +24,7 @@ import {StepType} from './enums/stepType';
 import Activities from './steps/Activities';
 import Goals from './steps/Goals';
 import goalsSchema from './steps/Goals/schema/yup';
+import Review from './steps/Review/Review';
 import isObjectEmpty from './utils/isObjectEmpty';
 
 const initialFormValues: MDFRequest = {
@@ -106,7 +107,7 @@ const MDFRequestForm = () => {
 		formikHelpers.setTouched(setNestedObjectValues(validationErrors, true));
 	};
 
-	const onPrevious = () => setStep(StepType.GOALS);
+	const onPrevious = (previousStep: StepType) => setStep(previousStep);
 
 	const StepFormComponent: StepComponent = {
 		[StepType.GOALS]: (
@@ -123,6 +124,13 @@ const MDFRequestForm = () => {
 				name="activities"
 				onCancel={onCancel}
 				onContinue={onContinue}
+				onPrevious={onPrevious}
+				onSaveAsDraft={onSaveAsDraft}
+			/>
+		),
+		[StepType.REVIEW]: (
+			<Review
+				onCancel={onCancel}
 				onPrevious={onPrevious}
 				onSaveAsDraft={onSaveAsDraft}
 			/>

@@ -9,12 +9,20 @@
  * distribution rights of the Software.
  */
 
-import MDFRequestBudget from '../../../../../../../../common/interfaces/mdfRequestBudget';
+import {useMemo} from 'react';
 
-export default function getNewBudget(): MDFRequestBudget {
-	return {
-		cost: '',
-		expense: {},
-		r_activityToBudgets_c_activityId: '',
-	};
+import useGetTacticsByTypeActivityId from '../../../../../common/services/liferay/object/type-activities/useGetTacticsByTypeActivityId';
+
+export default function useGetTacticName(
+	TypeActivityId: string,
+	id?: string | undefined
+) {
+	const {data: tactics} = useGetTacticsByTypeActivityId(TypeActivityId);
+
+	const TaticName = useMemo(
+		() => tactics?.items.find((tactic) => tactic.id === id),
+		[id, tactics?.items]
+	);
+
+	return TaticName?.name;
 }

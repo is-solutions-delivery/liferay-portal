@@ -9,12 +9,17 @@
  * distribution rights of the Software.
  */
 
-import MDFRequestBudget from '../../../../../../../../common/interfaces/mdfRequestBudget';
+import {useMemo} from 'react';
 
-export default function getNewBudget(): MDFRequestBudget {
-	return {
-		cost: '',
-		expense: {},
-		r_activityToBudgets_c_activityId: '',
-	};
+import useGetMyUserAccount from '../../../../../common/services/liferay/user-account/useGetMyUserAccount';
+
+export default function useGetCompanyName(id: string) {
+	const {data: userAccount} = useGetMyUserAccount();
+
+	const companiesName = useMemo(
+		() => userAccount?.accountBriefs.find((company) => company.id === +id),
+		[id, userAccount?.accountBriefs]
+	);
+
+	return companiesName?.name;
 }

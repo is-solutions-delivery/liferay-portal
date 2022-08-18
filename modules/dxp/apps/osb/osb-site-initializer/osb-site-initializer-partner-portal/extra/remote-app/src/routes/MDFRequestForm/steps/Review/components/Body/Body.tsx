@@ -9,12 +9,24 @@
  * distribution rights of the Software.
  */
 
-import MDFRequestBudget from '../../../../../../../../common/interfaces/mdfRequestBudget';
-
-export default function getNewBudget(): MDFRequestBudget {
-	return {
-		cost: '',
-		expense: {},
-		r_activityToBudgets_c_activityId: '',
-	};
+interface IProps {
+	children?: React.ReactNode;
+	name?: string;
+	title?: string;
 }
+
+const Body = ({children, name, title}: IProps) => (
+	<div className="bg-neutral-0 mt-4 p-4 pt-4 rounded">
+		{name && (
+			<div className="font-weight-bold mb-1 text-brand-primary-lighten-2 text-small-caps">
+				{name}
+			</div>
+		)}
+
+		<h5>{title}</h5>
+
+		{children}
+	</div>
+);
+
+export default Body;

@@ -9,12 +9,4 @@
  * distribution rights of the Software.
  */
 
-import MDFRequestBudget from '../../../../../../../../common/interfaces/mdfRequestBudget';
-
-export default function getNewBudget(): MDFRequestBudget {
-	return {
-		cost: '',
-		expense: {},
-		r_activityToBudgets_c_activityId: '',
-	};
-}
+export {default} from './Header';
