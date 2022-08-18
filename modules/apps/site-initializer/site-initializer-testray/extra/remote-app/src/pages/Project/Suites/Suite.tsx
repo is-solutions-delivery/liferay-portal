@@ -24,8 +24,8 @@ import {
 	TestrayCase,
 	TestraySuite,
 	TestraySuiteCase,
-	casesResource,
 	suitesCasesResource,
+	testrayCaseRest,
 } from '../../../services/rest';
 import dayjs from '../../../util/date';
 import useSuiteCaseFilter, {getCaseParameters} from './useSuiteCaseFilter';
@@ -45,8 +45,7 @@ const transformData = (isSmartSuite: boolean) => (
 			},
 			id: testrayCase.id,
 		}));
-	}
-	else {
+	} else {
 		items = (items as any[]).map((suiteCase) => ({
 			...suiteCase,
 			case: suiteCase.r_caseToSuitesCases_c_case
@@ -164,7 +163,9 @@ const Suite = () => {
 					forceRefetch={suiteCaseActions.formModal.forceRefetch}
 					managementToolbarProps={{visible: false}}
 					resource={
-						isSmartSuite ? casesResource : suitesCasesResource
+						isSmartSuite
+							? testrayCaseRest.resource
+							: suitesCasesResource
 					}
 					tableProps={{
 						actions: suiteCaseActions.actions,
