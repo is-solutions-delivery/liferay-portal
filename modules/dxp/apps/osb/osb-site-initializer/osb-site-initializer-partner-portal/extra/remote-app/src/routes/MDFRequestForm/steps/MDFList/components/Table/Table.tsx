@@ -21,7 +21,7 @@ type TableProps<T = any> = {
 	borderless?: boolean;
 	columns: Columns[];
 	responsive?: boolean;
-	rows: T[] | undefined;
+	rows: T[] | void;
 };
 
 const Table = ({columns, rows, ...props}: TableProps) => {

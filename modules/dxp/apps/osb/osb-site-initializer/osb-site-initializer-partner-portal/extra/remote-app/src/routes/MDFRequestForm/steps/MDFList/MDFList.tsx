@@ -14,34 +14,17 @@ import mdfListColumn from './components/mdfListColumn';
 import ClayButton from '@clayui/button';
 import MDFRequest from '../../../../common/interfaces/mdfRequest';
 import MDFRequestStepProps from '../../interfaces/mdfRequestStepProps';
+import useGetMDFRequest from '../../../../common/services/liferay/object/mdf-requests/useGetMDFRequest';
+import getMDFListObject from './hooks/mdfListObject';
+import { useMemo } from 'react';
 
 const MDFList= ({
 }:MDFRequestStepProps<MDFRequest>) => {
 
 	const {data} = useGetMDFRequest();
-
-	const mdfListObject = data?.items.reduce(
-		(objAccumulator: any, values: any) => {
-
-			const obj = {
-				activityPeriod: values.minDateActivity + values.maxDateActivity,
-				approved: '',
-				reimpursementClaim: '',
-				requestId: values.id,
-				requested: '',
-				status: values.status.label_i18n,
-				totalCost: '',
-		};
-
-			return {
- 
-				items: [...objAccumulator.items, obj],
-
-			};
-		},
-		{items: []}
-	);
-
+	console.log(data)
+	const mdfListObject = useMemo(() => getMDFListObject(data?.items), data?.items) 
+	console.log(mdfListObject)
 
 	return (
 		<div className="border-0 pb-3 pt-5 px-6 sheet">
@@ -61,7 +44,7 @@ const MDFList= ({
 					borderless
 					columns={mdfListColumn}
 					responsive
-					rows={mdfListObject?.items}
+					rows={mdfListObject}
 				></Table>
 			</div>
 
