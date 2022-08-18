@@ -9,25 +9,26 @@
  * distribution rights of the Software.
  */
 
+import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 
-type OptionList = {
+interface OptionList {
 	icon: string;
 	label: string;
-	optionKey: string;
+	key: string;
 };
 
-type Props = {
+interface Props {
 	optionList: OptionList[];
 };
 
 const DropDown = ({optionList}: Props) => (
 		<ClayDropDown
 			trigger={
-				<button className="btn-unstyled">
+				<ClayButton displayType={"unstyled"}>
 					<ClayIcon symbol="ellipsis-v"></ClayIcon>
-				</button>
+				</ClayButton>
 			}
 		>
 			<ClayDropDown.ItemList>

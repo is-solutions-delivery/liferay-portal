@@ -90,7 +90,7 @@ const onSaveAsDraft = async (
 const onCancel = () => liferayNavigate(PRMPageRoute.MDF_REQUESTS_LISTING);
 
 const MDFRequestForm = () => {
-	const [step, setStep] = useState<StepType>(StepType.MDFLIST);
+	const [step, setStep] = useState<StepType>(StepType.GOALS);
 
 	const onContinue = async (
 		formikHelpers: Omit<FormikHelpers<MDFRequest>, 'setFieldValue'>,
@@ -107,20 +107,10 @@ const MDFRequestForm = () => {
 		formikHelpers.setTouched(setNestedObjectValues(validationErrors, true));
 	};
 
-	const onPrevious = () => {
-		setStep(StepType.GOALS);
-		return;
-	};
-
-	const onNewRequest = () => setStep(StepType.GOALS);
+	const onPrevious = () => setStep(StepType.GOALS);
 	
 
 	const StepFormComponent: StepComponent = {
-		[StepType.MDFLIST]:(
-			<MdfList
-			onNewRequest={onNewRequest}
-				/>
-		),
 		[StepType.GOALS]: (
 			<Goals
 				onCancel={onCancel}

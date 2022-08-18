@@ -18,18 +18,18 @@ type Columns = {
 };
 
 type TableProps<T = any> = {
-	borderless?:boolean;
+	borderless?: boolean;
 	columns: Columns[];
 	responsive?: boolean;
 	rows: T[] | undefined;
 };
 
-const Table = ({columns, 	rows, ...props}: TableProps) => {
+const Table = ({columns, rows, ...props}: TableProps) => {
 	return (
 		<ClayTable {...props} tableVerticalAlignment='middle'>
 			<ClayTable.Head>
 				<ClayTable.Row>
-					{columns.map((column, index) => (
+					{columns.map((column:Columns, index:number) => (
 						<ClayTable.Cell align='left' headingCell key={index}>
 							<span className='text-neutral-10'>{column.label}</span>
 						</ClayTable.Cell>

@@ -12,7 +12,7 @@
 import ClayIcon from '@clayui/icon';
 import DropDown from './Dropdown';
 
-const MDFListColumn = [
+const mdfListColumn = [
 	{label: 'Request ID', columnKey: 'requestId'},
 	{
 		label: 'Status',
@@ -52,12 +52,12 @@ const MDFListColumn = [
 						{
 							icon: 'check',
 							label: 'Approve',
-							optionKey: 'approve',
+							key: 'approve',
 						},
 						{
 							icon: 'times',
 							label: 'Reject',
-							optionKey: 'reject',
+							key: 'reject',
 						},
 					]}
 				></DropDown>
@@ -66,4 +66,4 @@ const MDFListColumn = [
 	},
 ];
 
-export default MDFListColumn;
+export default mdfListColumn;

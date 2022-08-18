@@ -10,13 +10,12 @@
  */
 
 import Table from './components/Table';
-import MDFListColumn from './components/MDFListColumn';
-import Button from '@clayui/button';
+import mdfListColumn from './components/mdfListColumn';
+import ClayButton from '@clayui/button';
 import MDFRequest from '../../../../common/interfaces/mdfRequest';
 import MDFRequestStepProps from '../../interfaces/mdfRequestStepProps';
 
-const MdfList: any = ({
-	onNewRequest
+const MDFList= ({
 }:MDFRequestStepProps<MDFRequest>) => {
 
 	const {data} = useGetMDFRequest();
@@ -32,7 +31,6 @@ const MdfList: any = ({
 				requested: '',
 				status: values.status.label_i18n,
 				totalCost: '',
-			
 		};
 
 			return {
@@ -48,21 +46,21 @@ const MdfList: any = ({
 	return (
 		<div className="border-0 pb-3 pt-5 px-6 sheet">
 			<h1>MDF Requests</h1>
-			<div className='bg-neutral-1 rounded p-3'>
-				<Button className='mr-1' displayType={"secondary"}>
+
+			<div className="bg-neutral-1 rounded p-3">
+				<ClayButton className="mr-1" displayType="secondary">
 					Export MDF Report
-				</Button>
-				<Button
-					onClick={onNewRequest}
+				</ClayButton>
+				<ClayButton
 				>
 					New Request
-				</Button>
+				</ClayButton>
 			</div>
 			<div className="mt-3">
 				<Table
-					borderless = {true}
-					columns={MDFListColumn}
-					responsive={true}
+					borderless
+					columns={mdfListColumn}
+					responsive
 					rows={mdfListObject?.items}
 				></Table>
 			</div>
@@ -70,4 +68,4 @@ const MdfList: any = ({
 		</div>
 	);
 };
-export default MdfList;
+export default MDFList;
