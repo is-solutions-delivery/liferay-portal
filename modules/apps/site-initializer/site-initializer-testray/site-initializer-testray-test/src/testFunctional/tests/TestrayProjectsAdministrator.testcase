@@ -14,17 +14,17 @@ definition {
 
 		Testray.createTestraySite(siteName = "Testray 2");
 
-        Refresh();
+		Refresh();
 	}
 
 	tearDown {
-        var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-        Testray.deleteProject();
+		Testray.deleteProject();
 
-        Testray.tearDownCP();
+		Testray.tearDownCP();
 
-        if ("${testPortalInstance}" == "true") {
+		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -45,8 +45,7 @@ definition {
 
 			Testray.assertProjectDescription(value = "Projects_1 Project Description");
 		}
-
-    }
+	}
 
 	@description = "This is a test for LPS-160538. Verify if as an Administrator I am able to delete a Project"
 	@priority = "5"
@@ -96,7 +95,6 @@ definition {
 
 			Testray.assertProjectDescription(value = "Projects_3 Project Description Edited");
 		}
-
 	}
 
 	@description = "This is a test for LPS-160541. Verify if as an Administrator I should not be able to add a duplicate Project"
@@ -111,7 +109,7 @@ definition {
 	@description = "This is a test for LPS-160536. Verify if as an Administrator I am able to view a Project"
 	@priority = "3"
 	test AdminCanViewProject {
-        task ("Go to Testray and Create Project") {
+		task ("Go to Testray and Create Project") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
 			Testray.createProjectTestray(
@@ -126,8 +124,7 @@ definition {
 
 			TestrayDropdown.assertTitleBreadcrumbs(key_projectName = "Projects_4 Project");
 		}
-
-    }
+	}
 
 	@description = "This is a test for LPS-160898. Verify if as an Administrator I should be able to delete a project that contains routines without associated builds"
 	@priority = "5"
@@ -142,10 +139,8 @@ definition {
 			Testray.goToProjectPage(projectName = "Projects_4 Project");
 
 			TestrayRoutines.createRoutine(key_value = "Projects_4 Routine");
-
 		}
-
-    }
+	}
 
 	@description = "This is a test for LPS-160897. Verify if as an Administrator I should not be able to delete a project that contains routines with associated builds"
 	@ignore = "Test Stub"
