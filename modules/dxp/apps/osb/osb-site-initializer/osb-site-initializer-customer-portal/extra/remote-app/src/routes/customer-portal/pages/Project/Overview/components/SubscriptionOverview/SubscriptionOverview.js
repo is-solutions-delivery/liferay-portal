@@ -24,7 +24,7 @@ import CardSubscription from '../SubscriptionOverview/components/CardSubscriptio
 import SubscriptionsFilterByStatus from '../SubscriptionOverview/components/SubscriptionsFilterByStatus';
 import SubscriptionsNavbar from '../SubscriptionOverview/components/SubscriptionsNavbar';
 import '../../app.scss';
-import { Skeleton } from '../../../../../../../common/components';
+import {Skeleton} from '../../../../../../../common/components';
 
 import CardSubscriptionSkeleton from './components/CardSubscription/CardSubscriptionSkeleton';
 import useGetAllSubscriptions from './hooks/useGetAllSubscriptions';
@@ -40,14 +40,16 @@ const SubscriptionOverview = () => {
 
 	const THRESHOLD_COUNT = 4;
 
-const getLoadingCards = () =>
-	[...new Array(THRESHOLD_COUNT)].map((_, index) => (
-		<CardSubscriptionSkeleton  key={index}/>
-	));
+	const getLoadingCards = () =>
+		[...new Array(THRESHOLD_COUNT)].map((_, index) => (
+			<CardSubscriptionSkeleton key={index} />
+		));
 
 	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
 
-	const [selectedSubscriptionGroup, setSelectedSubscriptionGroup] = useState('');
+	const [selectedSubscriptionGroup, setSelectedSubscriptionGroup] = useState(
+		''
+	);
 
 	const [selectedStatus, setSelectedStatus] = useState([
 		SUBSCRIPTIONS_STATUS.active,
@@ -81,57 +83,61 @@ const getLoadingCards = () =>
 			});
 		}
 	}, [dispatch, project, subscriptionGroups]);
-	
+
 	const isPartnership =
-	selectedSubscriptionGroup === PRODUCT_TYPES.partnership ||
-	(subscriptionGroups &&
-		subscriptionGroups[0]?.name === PRODUCT_TYPES.partnership);
+		selectedSubscriptionGroup === PRODUCT_TYPES.partnership ||
+		(subscriptionGroups &&
+			subscriptionGroups[0]?.name === PRODUCT_TYPES.partnership);
 
 	return (
 		<div>
 			<div className="d-flex flex-column mr-4 mt-6">
-
-				{!isPartnership && subscriptionGroups ? (<h3>{i18n.translate('subscriptions')}</h3>) : (
-					<Skeleton  height={50} width={200} />
+				{!isPartnership && subscriptionGroups ? (
+					<h3>{i18n.translate('subscriptions')}</h3>
+				) : (
+					<Skeleton height={50} width={200} />
 				)}
 
 				<div>
-						<div
-							className={classNames('align-items-center d-flex', {
-								'justify-content-between':
-									subscriptionGroupsWithSubscriptions.length <
-									5,
-								'justify-content-evenly':
-									subscriptionGroupsWithSubscriptions.length >
-									4,
-							})}
-						>
-							{subscriptionGroupsWithSubscriptions.length ? (<><SubscriptionsNavbar
-								selectedSubscriptionGroup={
-									selectedSubscriptionGroup
-								}
-								setSelectedSubscriptionGroup={
-									setSelectedSubscriptionGroup
-								}
-								subscriptionGroups={
-									subscriptionGroupsWithSubscriptions
-								}
-							/>
+					<div
+						className={classNames('align-items-center d-flex', {
+							'justify-content-between':
+								subscriptionGroupsWithSubscriptions.length < 5,
+							'justify-content-evenly':
+								subscriptionGroupsWithSubscriptions.length > 4,
+						})}
+					>
+						{subscriptionGroupsWithSubscriptions.length ? (
+							<>
+								<SubscriptionsNavbar
+									selectedSubscriptionGroup={
+										selectedSubscriptionGroup
+									}
+									setSelectedSubscriptionGroup={
+										setSelectedSubscriptionGroup
+									}
+									subscriptionGroups={
+										subscriptionGroupsWithSubscriptions
+									}
+								/>
 
-							<SubscriptionsFilterByStatus
-								selectedStatus={selectedStatus}
-								setSelectedStatus={setSelectedStatus}
-							/></>) : (
-							<div className='d-flex justify-content-between mt-3 w-100'>
-								 <Skeleton height={30} width={150}/>	 
+								<SubscriptionsFilterByStatus
+									selectedStatus={selectedStatus}
+									setSelectedStatus={setSelectedStatus}
+								/>
+							</>
+						) : (
+							<div className="d-flex justify-content-between mt-3 w-100">
+								<Skeleton height={30} width={150} />
 
-								 <Skeleton height={30} width={150}/>  
-								 </div>
-								 )}
-						</div>
+								<Skeleton height={30} width={150} />
+							</div>
+						)}
+					</div>
 
-						<div className="cp-overview-cards-subscription d-flex flex-wrap mt-4">
-							{subscriptionsCards ? (subscriptionsCards.length ? (
+					<div className="cp-overview-cards-subscription d-flex flex-wrap mt-4">
+						{subscriptionsCards ? (
+							subscriptionsCards.length ? (
 								subscriptionsCards.map(
 									(accountSubscription, index) => (
 										<CardSubscription
@@ -151,9 +157,12 @@ const getLoadingCards = () =>
 										'no-subscriptions-match-these-criteria'
 									)}
 								</p>
-							)) : getLoadingCards()}
-						</div>
+							)
+						) : (
+							getLoadingCards()
+						)}
 					</div>
+				</div>
 			</div>
 		</div>
 	);

@@ -9,30 +9,27 @@
  * distribution rights of the Software.
  */
 
-import { Skeleton } from '../../../../../../../../../common/components';
+import {Skeleton} from '../../../../../../../../../common/components';
 
 const CardSubscriptionSkeleton = () => {
-  return (
-    <div className="align-items-center border border-neutral-3 cp-card-subscription d-flex flex-column px-3 py-4 rounded">
-      <div>
-        <Skeleton height={46.5} width={46.5} />
-      </div>
+	return (
+		<div className="align-items-center border border-neutral-3 cp-card-subscription d-flex flex-column px-3 py-4 rounded">
+			<div>
+				<Skeleton height={46.5} width={46.5} />
+			</div>
 
-      <div className='align-items-center d-flex flex-column mt-2'>
-          <Skeleton className="mt-3" height={18} width={186} />
+			<div className="align-items-center d-flex flex-column mt-2">
+				<Skeleton className="mt-3" height={18} width={186} />
 
-          <Skeleton className="mt-3" height={13} width={186} />
-     
-          <Skeleton className="mt-3" height={14} width={186} />
-        
-          <Skeleton className="mt-3" height={14} width={186} />
+				<Skeleton className="mt-3" height={13} width={186} />
 
-          <Skeleton className="mt-3" height={13} width={67.9} />       
-       </div>
+				<Skeleton className="mt-3" height={14} width={186} />
 
-      </div>
- 
-  )
+				<Skeleton className="mt-3" height={14} width={186} />
 
-}
+				<Skeleton className="mt-3" height={13} width={67.9} />
+			</div>
+		</div>
+	);
+};
 export default CardSubscriptionSkeleton;
