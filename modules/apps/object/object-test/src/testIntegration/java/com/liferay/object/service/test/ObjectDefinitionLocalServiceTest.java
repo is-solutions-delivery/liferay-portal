@@ -1021,7 +1021,7 @@ public class ObjectDefinitionLocalServiceTest {
 				_objectDefinitionLocalService.updateCustomObjectDefinition(
 					objectDefinition.getObjectDefinitionId(), 0,
 					RandomTestUtil.randomLong(), RandomTestUtil.randomLong(),
-					false, objectDefinition.isActive(),
+					false, objectDefinition.isActive(), true, false,
 					LocalizedMapUtil.getLocalizedMap("Able"), "Able", null,
 					null, false, LocalizedMapUtil.getLocalizedMap("Ables"),
 					objectDefinition.getScope());
@@ -1044,7 +1044,7 @@ public class ObjectDefinitionLocalServiceTest {
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
 				objectDefinition.getObjectDefinitionId(), 0,
 				objectField.getObjectFieldId(), objectField.getObjectFieldId(),
-				false, objectDefinition.isActive(),
+				false, objectDefinition.isActive(), true, false,
 				LocalizedMapUtil.getLocalizedMap("Able"), "Able", null, null,
 				false, LocalizedMapUtil.getLocalizedMap("Ables"),
 				objectDefinition.getScope());
@@ -1059,7 +1059,7 @@ public class ObjectDefinitionLocalServiceTest {
 		objectDefinition =
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
 				objectDefinition.getObjectDefinitionId(), 0, 0, 0, false,
-				objectDefinition.isActive(),
+				objectDefinition.isActive(), true, false,
 				LocalizedMapUtil.getLocalizedMap("Able"), "Able", null, null,
 				false, LocalizedMapUtil.getLocalizedMap("Ables"),
 				objectDefinition.getScope());
@@ -1078,7 +1078,7 @@ public class ObjectDefinitionLocalServiceTest {
 		objectDefinition =
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
 				objectDefinition.getObjectDefinitionId(), 0, 0, 0, false,
-				objectDefinition.isActive(),
+				objectDefinition.isActive(), true, false,
 				LocalizedMapUtil.getLocalizedMap("Baker"), "Baker", null, null,
 				false, LocalizedMapUtil.getLocalizedMap("Bakers"),
 				objectDefinition.getScope());
@@ -1099,8 +1099,9 @@ public class ObjectDefinitionLocalServiceTest {
 		objectDefinition =
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
 				objectDefinition.getObjectDefinitionId(), 0, 0, 0, false, true,
-				LocalizedMapUtil.getLocalizedMap("Charlie"), "Charlie", null,
-				null, false, LocalizedMapUtil.getLocalizedMap("Charlies"),
+				true, false, LocalizedMapUtil.getLocalizedMap("Charlie"),
+				"Charlie", null, null, false,
+				LocalizedMapUtil.getLocalizedMap("Charlies"),
 				objectDefinition.getScope());
 
 		Assert.assertTrue(objectDefinition.isActive());
@@ -1476,7 +1477,7 @@ public class ObjectDefinitionLocalServiceTest {
 				_objectDefinitionLocalService.updateCustomObjectDefinition(
 					objectDefinition2.getObjectDefinitionId(), 0,
 					objectRelationship.getObjectFieldId2(), 0, false,
-					objectDefinition2.isActive(),
+					objectDefinition2.isActive(), true, false,
 					LocalizedMapUtil.getLocalizedMap("Able"), "Able", null,
 					null, false, LocalizedMapUtil.getLocalizedMap("Ables"),
 					objectDefinition2.getScope());
