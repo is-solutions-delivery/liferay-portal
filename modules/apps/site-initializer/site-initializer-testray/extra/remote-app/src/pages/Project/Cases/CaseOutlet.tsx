@@ -23,38 +23,56 @@ import {
 import {useFetch} from '../../../hooks/useFetch';
 import useHeader from '../../../hooks/useHeader';
 import i18n from '../../../i18n';
-import {getCaseQuery, getCaseTransformData} from '../../../services/rest';
+import {
+	TestrayCase,
+	TestrayProject,
+	getCaseQuery,
+	getCaseTransformData,
+} from '../../../services/rest';
 import {isIncludingFormPage} from '../../../util';
+import useCaseActions from './useCaseActions';
 
 const CaseOutlet = () => {
-	const {testrayProject}: any = useOutletContext();
-	const {caseId, projectId} = useParams();
+	const {actions} = useCaseActions({isHeaderActions: true});
 	const {pathname} = useLocation();
-	const basePath = `/project/${projectId}/cases/${caseId}`;
-	const isFormPage = isIncludingFormPage(pathname);
-
-	const {setHeading, setTabs} = useHeader({timeout: 100});
-
-	const {data: testrayCase, mutate: mutateCase} = useFetch(
+	const {caseId, projectId, ...otherParams} = useParams();
+	const {
+		testrayProject,
+	}: {testrayProject: TestrayProject} = useOutletContext();
+	const {data: testrayCase, mutate} = useFetch<TestrayCase>(
 		getCaseQuery(caseId as string),
 		getCaseTransformData
 	);
 
+	const isFormPage = isIncludingFormPage(pathname);
+
+	const hasOtherParams = !!Object.values(otherParams).length;
+
+	const {setHeaderActions, setHeading, setTabs} = useHeader({
+		shouldUpdate: !hasOtherParams,
+		timeout: 100,
+	});
+
 	useEffect(() => {
-		if (testrayCase && testrayProject) {
-			setHeading([
-				{
-					category: i18n.translate('project').toUpperCase(),
-					path: `/project/${testrayProject.id}/cases`,
-					title: testrayProject.name,
-				},
-				{
-					category: i18n.translate('case').toUpperCase(),
-					title: testrayCase.name,
-				},
-			]);
-		}
-	}, [testrayProject, testrayCase, setHeading]);
+		setHeaderActions({actions, item: testrayCase, mutate});
+	}, [actions, mutate, setHeaderActions, testrayCase]);
+
+	const basePath = `/project/${projectId}/cases/${caseId}`;
+
+	useEffect(() => {
+		setTabs([
+			{
+				active: pathname === basePath,
+				path: basePath,
+				title: i18n.translate('current'),
+			},
+			{
+				active: pathname !== basePath,
+				path: `${basePath}/archived`,
+				title: i18n.translate('archived'),
+			},
+		]);
+	}, [basePath, pathname, setTabs]);
 
 	useEffect(() => {
 		if (!isFormPage) {
@@ -73,8 +91,33 @@ const CaseOutlet = () => {
 		}
 	}, [basePath, isFormPage, pathname, setTabs]);
 
-	if (testrayCase) {
-		return <Outlet context={{mutateCase, projectId, testrayCase}} />;
+	useEffect(() => {
+		if (testrayCase && testrayProject) {
+			setHeading([
+				{
+					category: i18n.translate('project').toUpperCase(),
+					path: `/project/${testrayProject.id}/cases`,
+					title: testrayProject.name,
+				},
+				{
+					category: i18n.translate('case').toUpperCase(),
+					path: `/project/${testrayProject.id}/cases/${testrayCase.id}`,
+					title: testrayCase.name,
+				},
+			]);
+		}
+	}, [setHeading, testrayProject, testrayCase]);
+
+	if (testrayProject && testrayCase) {
+		return (
+			<Outlet
+				context={{
+					mutateTestrayCase: mutate,
+					testrayCase,
+					testrayProject,
+				}}
+			/>
+		);
 	}
 
 	return null;
