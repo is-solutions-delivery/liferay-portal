@@ -78,6 +78,7 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.dao.jdbc.CurrentConnection;
+import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -1283,6 +1284,8 @@ public class ObjectEntryLocalServiceImpl
 			StringBundler.concat(
 				"delete from ", dbTableName, " where ",
 				pkObjectFieldDBColumnName, " = ", primaryKey));
+
+		FinderCacheUtil.clearDSLQueryCache(dbTableName);
 	}
 
 	private Predicate _fillAccountEntriesPredicate(
