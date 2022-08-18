@@ -112,8 +112,22 @@ definition {
 
 	macro selectOptionsManage {
 		Click(
-			key_itemvalue = "${itemvalue}",
+			key_itemvalue = "${key_itemValue}",
 			locator1 = "TestrayDropdown#OPTIONS_SIDEBAR");
+	}
+
+	macro addProjectManageBar {
+		TestrayLayout.clickManageOnSidebar();
+
+		SelectFrame(locator1 = "TestrayManage#OPTIONS_MODAL");
+		
+		TestrayManage.selectOptionsManage(key_itemValue = "Add Project");
+
+		Testray.createProjectTestray(
+			key_name = "${name}",
+			description = "${description}");
+
+		Click(locator1 = "TestrayManage#CLOSE_MODAL");
 	}
 
 }
