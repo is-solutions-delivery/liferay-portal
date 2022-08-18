@@ -24,7 +24,6 @@ import {StepType} from './enums/stepType';
 import Activities from './steps/Activities';
 import Goals from './steps/Goals';
 import goalsSchema from './steps/Goals/schema/yup';
-import MdfList from './steps/MDFList';
 import isObjectEmpty from './utils/isObjectEmpty';
 
 const initialFormValues: MDFRequest = {
@@ -108,7 +107,6 @@ const MDFRequestForm = () => {
 	};
 
 	const onPrevious = () => setStep(StepType.GOALS);
-	
 
 	const StepFormComponent: StepComponent = {
 		[StepType.GOALS]: (

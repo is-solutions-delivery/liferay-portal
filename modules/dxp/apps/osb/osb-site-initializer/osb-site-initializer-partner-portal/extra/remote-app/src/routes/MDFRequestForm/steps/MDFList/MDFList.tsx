@@ -9,36 +9,33 @@
  * distribution rights of the Software.
  */
 
+import ClayButton from '@clayui/button';
+import {useMemo} from 'react';
+
+import useGetMDFRequest from '../../../../common/services/liferay/object/mdf-requests/useGetMDFRequest';
 import Table from './components/Table';
 import mdfListColumn from './components/mdfListColumn';
-import ClayButton from '@clayui/button';
-import MDFRequest from '../../../../common/interfaces/mdfRequest';
-import MDFRequestStepProps from '../../interfaces/mdfRequestStepProps';
-import useGetMDFRequest from '../../../../common/services/liferay/object/mdf-requests/useGetMDFRequest';
 import getMDFListObject from './hooks/mdfListObject';
-import { useMemo } from 'react';
 
-const MDFList= ({
-}:MDFRequestStepProps<MDFRequest>) => {
-
+const MDFList = () => {
 	const {data} = useGetMDFRequest();
-	console.log(data)
-	const mdfListObject = useMemo(() => getMDFListObject(data?.items), data?.items) 
-	console.log(mdfListObject)
+	const mdfListObject = useMemo(
+		() => getMDFListObject(data?.items),
+		data?.items
+	);
 
 	return (
 		<div className="border-0 pb-3 pt-5 px-6 sheet">
 			<h1>MDF Requests</h1>
 
-			<div className="bg-neutral-1 rounded p-3">
+			<div className="bg-neutral-1 p-3 rounded">
 				<ClayButton className="mr-1" displayType="secondary">
 					Export MDF Report
 				</ClayButton>
-				<ClayButton
-				>
-					New Request
-				</ClayButton>
+
+				<ClayButton>New Request</ClayButton>
 			</div>
+
 			<div className="mt-3">
 				<Table
 					borderless
@@ -47,7 +44,6 @@ const MDFList= ({
 					rows={mdfListObject}
 				></Table>
 			</div>
-
 		</div>
 	);
 };

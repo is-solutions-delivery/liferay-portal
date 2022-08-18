@@ -1,40 +1,24 @@
-/*	const mdfListObject = data?.items.reduce(
-        (objAccumulator: any, values: any) => {
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * The contents of this file are subject to the terms of the Liferay Enterprise
+ * Subscription License ("License"). You may not use this file except in
+ * compliance with the License. You can obtain a copy of the License by
+ * contacting Liferay, Inc. See the License for the specific language governing
+ * permissions and limitations under the License, including but not limited to
+ * distribution rights of the Software.
+ */
 
-            const obj = {
-                activityPeriod: values.minDateActivity + values.maxDateActivity,
-                approved: '',
-                reimpursementClaim: '',
-                requestId: values.id,
-                requested: '',
-                status: values.status.label_i18n,
-                totalCost: '',
-        };
-            return {
- 
-                items: [...objAccumulator.items, obj],
-
-            };
-        },
-        {items: []}
-    );
-*/
-
-import MDFRequest from "../../../../../common/interfaces/mdfRequest";
-
+import MDFRequest from '../../../../../common/interfaces/mdfRequest';
 
 export default function getMDFListObject(data: MDFRequest[] | undefined) {
-    return (
-    data?.map((values) => (
-             {
-                activityPeriod: values.minDateActivity + values.maxDateActivity,
-                approved: '',
-                reimpursementClaim: '',
-                requestId: values.id,
-                requested: '',
-                status: '',
-                totalCost: values.totalCostOfExpense,
-        }
-    )))
-    
+	return data?.map((values) => ({
+		activityPeriod: values.minDateActivity + values.maxDateActivity,
+		approved: '',
+		reimpursementClaim: '',
+		requestId: values.id,
+		requested: '',
+		status: '',
+		totalCost: values.totalCostOfExpense,
+	}));
 }

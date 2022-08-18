@@ -12,8 +12,8 @@
 import ClayTable from '@clayui/table';
 
 type Columns = {
-	label: string;
 	columnKey: string;
+	label: string;
 	render?: (data: any, item: any) => any;
 };
 
@@ -26,12 +26,14 @@ type TableProps<T = any> = {
 
 const Table = ({columns, rows, ...props}: TableProps) => {
 	return (
-		<ClayTable {...props} tableVerticalAlignment='middle'>
+		<ClayTable {...props} tableVerticalAlignment="middle">
 			<ClayTable.Head>
 				<ClayTable.Row>
-					{columns.map((column:Columns, index:number) => (
-						<ClayTable.Cell align='left' headingCell key={index}>
-							<span className='text-neutral-10'>{column.label}</span>
+					{columns.map((column: Columns, index: number) => (
+						<ClayTable.Cell align="left" headingCell key={index}>
+							<span className="text-neutral-10">
+								{column.label}
+							</span>
 						</ClayTable.Cell>
 					))}
 				</ClayTable.Row>
@@ -42,8 +44,14 @@ const Table = ({columns, rows, ...props}: TableProps) => {
 					<ClayTable.Row key={index}>
 						{columns.map((column, index) => {
 							const data = row[column.columnKey];
+
 							return (
-								<ClayTable.Cell align='left' headingCell className='py-5 font-weight-normal text-neutral-10' key={index}>
+								<ClayTable.Cell
+									align="left"
+									className="font-weight-normal py-5 text-neutral-10"
+									headingCell
+									key={index}
+								>
 									{column.render
 										? column.render(data, row)
 										: data}

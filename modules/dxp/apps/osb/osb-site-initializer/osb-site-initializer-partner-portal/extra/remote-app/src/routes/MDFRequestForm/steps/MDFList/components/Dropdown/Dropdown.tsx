@@ -15,34 +15,34 @@ import ClayIcon from '@clayui/icon';
 
 interface OptionList {
 	icon: string;
-	label: string;
 	key: string;
-};
+	label: string;
+}
 
 interface Props {
 	optionList: OptionList[];
-};
+}
 
 const DropDown = ({optionList}: Props) => (
-		<ClayDropDown
-			trigger={
-				<ClayButton displayType={"unstyled"}>
-					<ClayIcon symbol="ellipsis-v"></ClayIcon>
-				</ClayButton>
-			}
-		>
-			<ClayDropDown.ItemList>
-				<ClayDropDown.Group>
-					{optionList.map((item, index) => (
-						<ClayDropDown.Item key={index}>
-							<ClayIcon symbol={item.icon}></ClayIcon>
+	<ClayDropDown
+		trigger={
+			<ClayButton displayType="unstyled">
+				<ClayIcon symbol="ellipsis-v"></ClayIcon>
+			</ClayButton>
+		}
+	>
+		<ClayDropDown.ItemList>
+			<ClayDropDown.Group>
+				{optionList.map((item, index) => (
+					<ClayDropDown.Item key={index}>
+						<ClayIcon symbol={item.icon}></ClayIcon>
 
-							{item.label}
-						</ClayDropDown.Item>
-					))}
-				</ClayDropDown.Group>
-			</ClayDropDown.ItemList>
-		</ClayDropDown>
-	);
+						{item.label}
+					</ClayDropDown.Item>
+				))}
+			</ClayDropDown.Group>
+		</ClayDropDown.ItemList>
+	</ClayDropDown>
+);
 
 export default DropDown;

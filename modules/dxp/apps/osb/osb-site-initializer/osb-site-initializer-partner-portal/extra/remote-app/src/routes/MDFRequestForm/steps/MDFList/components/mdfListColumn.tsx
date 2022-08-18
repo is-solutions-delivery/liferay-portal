@@ -10,32 +10,34 @@
  */
 
 import ClayIcon from '@clayui/icon';
+
 import DropDown from './Dropdown';
 
 const mdfListColumn = [
-	{label: 'Request ID', columnKey: 'requestId'},
+	{columnKey: 'requestId', label: 'Request ID'},
 	{
-		label: 'Status',
 		columnKey: 'status',
+		label: 'Status',
 		render: (status: string) => (
 			<div className="align-items-center">
 				<ClayIcon symbol="simple-circle" />
+
 				{status}
 			</div>
 		),
 	},
-	{label: 'Activity Period', columnKey: 'activityPeriod'},
-	{label: 'Total Cost', columnKey: 'totalCost'},
-	{label: 'Requested', columnKey: 'requested'},
-	{label: 'Approved', columnKey: 'approved'},
+	{columnKey: 'activityPeriod', label: 'Activity Period'},
+	{columnKey: 'totalCost', label: 'Total Cost'},
+	{columnKey: 'requested', label: 'Requested'},
+	{columnKey: 'approved', label: 'Approved'},
 
 	{
-		label: 'Reimpursement Claim(s)',
 		columnKey: 'reimpursementClaim',
+		label: 'Reimpursement Claim(s)',
 	},
 	{
-		label: '',
 		columnKey: '',
+		label: '',
 		render: () => (
 			<div>
 				<ClayIcon symbol="comments" />
@@ -43,21 +45,21 @@ const mdfListColumn = [
 		),
 	},
 	{
-		label: '',
 		columnKey: '',
+		label: '',
 		render: () => (
 			<div>
 				<DropDown
 					optionList={[
 						{
 							icon: 'check',
-							label: 'Approve',
 							key: 'approve',
+							label: 'Approve',
 						},
 						{
 							icon: 'times',
-							label: 'Reject',
 							key: 'reject',
+							label: 'Reject',
 						},
 					]}
 				></DropDown>

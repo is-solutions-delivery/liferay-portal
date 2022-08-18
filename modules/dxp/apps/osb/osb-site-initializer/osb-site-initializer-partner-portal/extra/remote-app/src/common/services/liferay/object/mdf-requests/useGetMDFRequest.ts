@@ -9,17 +9,17 @@
  * distribution rights of the Software.
  */
 
- import useSWR from 'swr';
+import useSWR from 'swr';
 
- import {Liferay} from '../..';
- import MDFRequest from '../../../../interfaces/mdfRequest';
- import {LiferayAPIs} from '../../common/enums/apis';
- import LiferayItems from '../../common/interfaces/liferayItems';
- import liferayFetcher from '../../common/utils/fetcher';
- 
- export default function useGetMDFRequest() {
-     return useSWR(
-         [`/o/${LiferayAPIs.OBJECT}/mdfrequests`, Liferay.authToken],
-         (url, token) => liferayFetcher<LiferayItems<MDFRequest[]>>(url, token)
-     );
- }
+import {Liferay} from '../..';
+import MDFRequest from '../../../../interfaces/mdfRequest';
+import {LiferayAPIs} from '../../common/enums/apis';
+import LiferayItems from '../../common/interfaces/liferayItems';
+import liferayFetcher from '../../common/utils/fetcher';
+
+export default function useGetMDFRequest() {
+	return useSWR(
+		[`/o/${LiferayAPIs.OBJECT}/mdfrequests`, Liferay.authToken],
+		(url, token) => liferayFetcher<LiferayItems<MDFRequest[]>>(url, token)
+	);
+}
