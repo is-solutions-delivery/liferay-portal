@@ -13,6 +13,7 @@
  */
 
 import yupSchema from '../../schema/yup';
+import {searchUtil} from '../../util/search';
 import fetcher from '../fetcher';
 import {APIResponse, TestrayProductVersion} from './types';
 
@@ -26,18 +27,15 @@ const adapter = ({
 	r_projectToProductVersions_c_projectId,
 });
 
-const createProductVersion = (team: ProductVersion) =>
-	fetcher.post('/productversions', adapter(team));
-
-const updateProductVersion = (id: number, team: ProductVersion) =>
-	fetcher.put(`/productversions/${id}`, adapter(team));
+const updateProductVersion = (id: number, productVersion: ProductVersion) =>
+	fetcher.put(`/productversions/${id}`, adapter(productVersion));
 
 const nestedFieldsParam = 'nestedFields=project';
 
 const productVersionsResource = `/productversions?${nestedFieldsParam}`;
 
-const getProductVersionQuery = (teamId: number | string) =>
-	`/productversions/${teamId}?${nestedFieldsParam}`;
+const getProductVersionQuery = (productVersionId: number | string) =>
+	`/productversions/${productVersionId}?${nestedFieldsParam}`;
 
 const getProductVersionTransformData = (
 	testrayProductVersion: TestrayProductVersion
@@ -52,6 +50,21 @@ const getProductVersionsTransformData = (
 	...response,
 	items: response?.items?.map(getProductVersionTransformData),
 });
+
+const createProductVersion = async (productVersion: ProductVersion) => {
+	const response = await fetcher<APIResponse<TestrayProductVersion>>(
+		`/productversions?filter=${searchUtil.eq(
+			'projectId',
+			productVersion.projectId as string
+		)} and ${searchUtil.eq('name', productVersion.name)}`
+	);
+
+	if ((response?.totalCount as number) > 0) {
+		throw new Error('The product version name already exists');
+	}
+
+	return fetcher.post('/productversions', adapter(productVersion));
+};
 
 export {
 	productVersionsResource,

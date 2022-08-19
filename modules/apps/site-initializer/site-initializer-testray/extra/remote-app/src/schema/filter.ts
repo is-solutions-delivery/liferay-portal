@@ -256,6 +256,18 @@ const filters = {
 		},
 	],
 	routines: [baseFilters.priority, baseFilters.caseType, baseFilters.team],
+	suites: [
+		{
+			label: 'Suite Name',
+			name: 'suiteName',
+			type: 'text',
+		},
+		{
+			label: 'Description',
+			name: 'description',
+			type: 'text',
+		},
+	],
 };
 
 export {filters};

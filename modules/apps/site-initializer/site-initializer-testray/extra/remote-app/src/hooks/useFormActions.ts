@@ -51,8 +51,14 @@ export type FormComponent = Omit<Form, 'forceRefetch'>;
 const onError = (error: any) => {
 	console.error(error);
 
+	let errorMessage = i18n.translate('an-unexpected-error-occurred');
+
+	if (process.env.NODE_ENV === 'development') {
+		errorMessage = error.message;
+	}
+
 	Liferay.Util.openToast({
-		message: i18n.translate('an-unexpected-error-occurred'),
+		message: errorMessage,
 		type: 'danger',
 	});
 };
@@ -88,20 +94,11 @@ const useFormActions = (): Form => {
 
 		delete form.id;
 
-		try {
-			const fn = data.id
-				? () => update(data.id, form)
-				: () => create(form);
+		const fn = data.id ? () => update(data.id, form) : () => create(form);
 
-			const response = await fn();
+		const response = await fn();
 
-			return response;
-		}
-		catch (error) {
-			onError(error);
-
-			throw error;
-		}
+		return response;
 	};
 
 	const onSubmitAndSave = async (
