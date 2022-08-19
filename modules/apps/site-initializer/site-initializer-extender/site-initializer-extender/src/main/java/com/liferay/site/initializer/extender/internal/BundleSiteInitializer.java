@@ -1303,8 +1303,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				JSONUtil.toStringArray(
 					jsonObject.getJSONArray("assetTagNames")));
 
-			JournalArticle journalArticle;
-
 			JournalArticle existingJournalArticle =
 				_journalArticleLocalService.fetchArticle(
 					serviceContext.getScopeGroupId(),
@@ -1314,7 +1312,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				Map<Locale, String> titleMap = Collections.singletonMap(
 					LocaleUtil.getSiteDefault(), jsonObject.getString("name"));
 
-				journalArticle = _journalArticleLocalService.addArticle(
+				existingJournalArticle = _journalArticleLocalService.addArticle(
 					null, serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(), journalFolderId,
 					JournalArticleConstants.CLASS_NAME_ID_DEFAULT, 0,
@@ -1335,13 +1333,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext);
 			}
 			else {
-				journalArticle = _journalArticleLocalService.updateArticle(
-					existingJournalArticle.getId(),
-					existingJournalArticle.getUrlTitle());
+				existingJournalArticle =
+					_journalArticleLocalService.updateArticle(
+						existingJournalArticle.getId(),
+						existingJournalArticle.getUrlTitle());
 			}
 
 			serviceContext.setAssetCategoryIds(null);
 			serviceContext.setAssetTagNames(null);
+
+			JournalArticle journalArticle = existingJournalArticle;
 
 			DDMStructure ddmStructure = journalArticle.getDDMStructure();
 
