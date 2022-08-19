@@ -251,6 +251,9 @@
 											},
 											"fragmentFields": [
 											],
+											"fragmentStyle": {
+												"paddingRight": "1"
+											},
 											"indexed": true,
 											"widgetInstances": [
 												{
@@ -264,47 +267,67 @@
 									},
 									{
 										"definition": {
-											"fragment": {
-												"key": "BASIC_COMPONENT-image"
-											},
-											"fragmentConfig": {
-												"imageSize": "w-100"
-											},
-											"fragmentFields": [
-												{
-													"id": "image-square",
-													"value": {
-														"fragmentImage": {
-															"description": {
-																"value_i18n": {
-																	"en_US": ""
+											"fragmentLink": {
+												"href": {
+													"mapping": {
+														"itemReference": {
+															"className": "com.liferay.portal.kernel.model.Layout",
+															"fields": [
+																{
+																	"fieldName": "friendlyURL",
+																	"fieldValue": "/search"
+																},
+																{
+																	"fieldName": "privatePage",
+																	"fieldValue": "false"
+																},
+																{
+																	"fieldName": "siteKey",
+																	"fieldValue": "[$GROUP_KEY$]"
 																}
-															},
-															"url": {
-																"mapping": {
-																	"fieldKey": "FileEntry_previewImage",
-																	"itemReference": {
-																		"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																		"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/placeholder/search-icon-placeholder.png$]"
-																	}
-																}
-															}
-														},
-														"fragmentLink": {
+															]
 														}
 													}
 												}
-											],
-											"fragmentStyle": {
-												"height": "4%",
-												"marginLeft": "3",
-												"marginRight": "3",
-												"textAlign": "",
-												"width": "4%"
 											},
-											"indexed": true
+											"fragmentStyle": {
+												"borderWidth": "0",
+												"marginLeft": "4",
+												"marginRight": "4",
+												"textAlign": ""
+											},
+											"indexed": true,
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 2,
+												"marginRight": 2,
+												"marginTop": 0,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
+											}
 										},
-										"type": "Fragment"
+										"pageElements": [
+											{
+												"definition": {
+													"fragment": {
+														"key": "clay-icon-link"
+													},
+													"fragmentConfig": {
+														"iconLink": "",
+														"iconName": "search"
+													},
+													"fragmentFields": [
+													],
+													"indexed": true
+												},
+												"type": "Fragment"
+											}
+										],
+										"type": "Section"
 									},
 									{
 										"definition": {
@@ -364,18 +387,8 @@
 													"id": "image-square",
 													"value": {
 														"fragmentImage": {
-															"description": {
-																"value_i18n": {
-																	"en_US": ""
-																}
-															},
 															"url": {
-																"mapping": {
-																	"fieldKey": "FileEntry_previewImage",
-																	"itemReference": {
-																		"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																		"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/placeholder/arrow-down-placeholder.png$]"
-																	}
+																"value_i18n": {
 																}
 															}
 														},
@@ -457,10 +470,6 @@
 				"pageElements": [
 					{
 						"definition": {
-							"fragmentStyle": {
-								"textAlign": "",
-								"textColor": ""
-							},
 							"widgetInstance": {
 								"widgetConfig": {
 									"lfrAppShowShareWithFriendsLink": "false",

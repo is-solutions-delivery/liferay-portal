@@ -1,0 +1,329 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentStyle": {
+						"borderWidth": "0",
+						"textAlign": ""
+					},
+					"indexed": true,
+					"layout": {
+						"borderWidth": 0,
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
+						"widthType": "Fluid"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"fragmentStyle": {
+								"backgroundFragmentImage": {
+									"title": {
+										"value": "banner-background-partner-portal.svg"
+									},
+									"url": {
+										"mapping": {
+											"fieldKey": "FileEntry_previewImage",
+											"itemReference": {
+												"className": "com.liferay.portal.kernel.repository.model.FileEntry",
+												"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/banner-background-partner-portal.svg$]"
+											}
+										}
+									}
+								},
+								"borderWidth": "0",
+								"textAlign": ""
+							},
+							"indexed": true,
+							"layout": {
+								"align": "Center",
+								"borderWidth": 0,
+								"contentDisplay": "FlexColumn",
+								"justify": "Center",
+								"marginBottom": 0,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"indexed": true,
+									"layout": {
+										"align": "Center",
+										"borderWidth": 0,
+										"contentDisplay": "FlexColumn",
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "DIALECT-dialect-text"
+											},
+											"fragmentConfig": {
+												"textType": "h1"
+											},
+											"fragmentFields": [
+												{
+													"id": "element-text",
+													"value": {
+														"fragmentLink": {
+														},
+														"text": {
+															"value_i18n": {
+																"en_US": "Search Results"
+															}
+														}
+													}
+												}
+											],
+											"fragmentStyle": {
+												"fontWeight": "fontWeightBold",
+												"paddingBottom": "3",
+												"paddingTop": "5",
+												"textAlign": "center",
+												"textColor": "colorNeutral0"
+											},
+											"indexed": true
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragmentStyle": {
+												"paddingBottom": "5",
+												"paddingTop": "3",
+												"width": "700px"
+											},
+											"widgetInstance": {
+												"widgetConfig": {
+													"searchScope": "this-site"
+												},
+												"widgetName": "com_liferay_portal_search_web_search_bar_portlet_SearchBarPortlet"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Section"
+							}
+						],
+						"type": "Section"
+					},
+					{
+						"definition": {
+							"fragmentStyle": {
+								"backgroundColor": "colorNeutral0",
+								"borderWidth": "0",
+								"marginLeft": "6",
+								"marginRight": "6",
+								"textAlign": ""
+							},
+							"indexed": true,
+							"layout": {
+								"align": "Start",
+								"borderWidth": 0,
+								"contentDisplay": "FlexRow",
+								"justify": "Center",
+								"marginBottom": 0,
+								"marginLeft": 6,
+								"marginRight": 6,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"fragmentStyle": {
+										"backgroundColor": "colorNeutral1",
+										"borderWidth": "0",
+										"marginLeft": "5",
+										"marginRight": "5",
+										"marginTop": "5",
+										"textAlign": ""
+									},
+									"indexed": true,
+									"layout": {
+										"borderWidth": 0,
+										"marginBottom": 0,
+										"marginLeft": 4,
+										"marginRight": 4,
+										"marginTop": 4,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"backgroundColor": "colorNeutral0",
+												"borderColor": "colorNeutral3",
+												"borderRadius": "borderRadiusSm",
+												"borderWidth": "1",
+												"marginBottom": "4",
+												"marginLeft": "4",
+												"marginRight": "4",
+												"marginTop": "4"
+											},
+											"widgetInstance": {
+												"widgetConfig": {
+												},
+												"widgetName": "com_liferay_portal_search_web_category_facet_portlet_CategoryFacetPortlet"
+											}
+										},
+										"type": "Widget"
+									},
+									{
+										"definition": {
+											"fragmentStyle": {
+												"backgroundColor": "colorNeutral0",
+												"borderColor": "colorNeutral3",
+												"borderRadius": "borderRadiusSm",
+												"borderWidth": "1",
+												"marginBottom": "4",
+												"marginLeft": "4",
+												"marginRight": "4",
+												"marginTop": "4"
+											},
+											"widgetInstance": {
+												"widgetConfig": {
+												},
+												"widgetName": "com_liferay_portal_search_web_tag_facet_portlet_TagFacetPortlet"
+											}
+										},
+										"type": "Widget"
+									},
+									{
+										"definition": {
+											"fragmentStyle": {
+												"backgroundColor": "colorNeutral0",
+												"borderColor": "colorNeutral3",
+												"borderRadius": "borderRadiusSm",
+												"borderWidth": "1",
+												"marginBottom": "4",
+												"marginLeft": "4",
+												"marginRight": "4",
+												"marginTop": "4"
+											},
+											"widgetInstance": {
+												"widgetConfig": {
+												},
+												"widgetName": "com_liferay_portal_search_web_type_facet_portlet_TypeFacetPortlet"
+											}
+										},
+										"type": "Widget"
+									},
+									{
+										"definition": {
+											"fragmentStyle": {
+												"backgroundColor": "colorNeutral0",
+												"borderColor": "colorNeutral3",
+												"borderRadius": "borderRadiusSm",
+												"borderWidth": "1",
+												"marginBottom": "4",
+												"marginLeft": "4",
+												"marginRight": "4",
+												"marginTop": "4"
+											},
+											"widgetInstance": {
+												"widgetConfig": {
+												},
+												"widgetName": "com_liferay_portal_search_web_modified_facet_portlet_ModifiedFacetPortlet"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Section"
+							},
+							{
+								"definition": {
+									"widgetInstance": {
+										"widgetConfig": {
+										},
+										"widgetName": "com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet"
+									}
+								},
+								"type": "Widget"
+							}
+						],
+						"type": "Section"
+					},
+					{
+						"definition": {
+							"widgetInstance": {
+								"widgetConfig": {
+								},
+								"widgetName": "com_liferay_search_experiences_web_internal_blueprint_options_portlet_SXPBlueprintOptionsPortlet",
+								"widgetPermissions": [
+									{
+										"actionKeys": [
+											"PERMISSIONS",
+											"PREFERENCES",
+											"CONFIGURATION",
+											"VIEW",
+											"ADD_TO_PAGE"
+										],
+										"roleKey": "Owner"
+									},
+									{
+										"actionKeys": [
+										],
+										"roleKey": "Site Member"
+									},
+									{
+										"actionKeys": [
+										],
+										"roleKey": "Guest"
+									}
+								]
+							}
+						},
+						"type": "Widget"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "content-template"
+		}
+	},
+	"version": 1.1
+}

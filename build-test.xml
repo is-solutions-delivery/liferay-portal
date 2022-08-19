@@ -12729,6 +12729,22 @@ ANT_OPTS=${env.ANT_OPTS}</echo>
 			<param name="test.build.license.xml.zip.url" value="${test.license.xml.url}" />
 		</antcall>
 
+		<if>
+			<equals arg1="${downgrade.from.original.bundle}" arg2="true" />
+			<then>
+				<delete dir="${test.release.bundle.parent.dir}/bundles/data" />
+
+				<move
+					file="${test.release.bundle.parent.dir}/bundles-original/data"
+					tofile="${test.release.bundle.parent.dir}/bundles/data"
+				/>
+
+				<delete dir="${test.release.bundle.parent.dir}/bundles/data/elasticsearch7" />
+
+				<delete dir="${test.release.bundle.parent.dir}/bundles-original" />
+			</then>
+		</if>
+
 		<get-test-app-server-lib-portal-dir />
 
 		<antcall inheritAll="false" target="copy-optional-jars">
@@ -15001,6 +15017,77 @@ url=${short.hostname}:8080</echo>
 		<start-docker-database />
 	</target>
 
+	<target name="start-docker-database-mariadb">
+		<if>
+			<not>
+				<isset property="database.version" />
+			</not>
+			<then>
+				<var name="database.version" value="10.6" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${database.version}" arg2="10.2" />
+
+			<then>
+				<var name="database.version" value="10.2.25" />
+			</then>
+
+			<elseif>
+				<equals arg1="${database.version}" arg2="10.4" />
+
+				<then>
+					<var name="database.version" value="10.4.14" />
+				</then>
+			</elseif>
+		</if>
+
+		<get-database-property property.name="database.host" />
+
+		<antcall target="stop-docker-database">
+			<param name="database.mariadb.host" value="${database.host}_mariadb" />
+			<param name="database.type" value="mariadb" />
+		</antcall>
+
+		<antcall inheritAll="false" target="start-docker-database">
+			<param name="database.mariadb.docker.image" value="mariadb:${database.version}" />
+			<param name="database.mariadb.docker.run.options" value="--env=MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3308:3306" />
+			<param name="database.mariadb.host" value="${database.host}_mariadb" />
+			<param name="database.mariadb.name" value="MariaDB" />
+			<param name="database.mariadb.version" value="${database.version}" />
+			<param name="database.type" value="mariadb" />
+		</antcall>
+
+		<if>
+			<not>
+				<isset property="skip.prepare.portal.ext.properties" />
+			</not>
+			<then>
+				<antcall inheritAll="false" target="prepare-portal-ext-properties">
+					<param name="database.mariadb.host" value="${database.host}_mariadb" />
+					<param name="database.mariadb.schema" value="lportal" />
+					<param name="database.mariadb.url" value="jdbc:mariadb://${database.host}:3308/${database.mariadb.schema}?useUnicode=true&amp;characterEncoding=UTF-8&amp;useFastDateParsing=false" />
+					<param name="database.type" value="mariadb" />
+				</antcall>
+			</then>
+		</if>
+
+		<if>
+			<not>
+				<isset property="skip.rebuild.database" />
+			</not>
+			<then>
+				<antcall target="rebuild-database">
+					<param name="database.bare.enabled" value="true" />
+					<param name="database.mariadb.docker.image" value="mariadb:${database.version}" />
+					<param name="database.mariadb.host" value="${database.host}_mariadb" />
+					<param name="database.type" value="mariadb" />
+				</antcall>
+			</then>
+		</if>
+	</target>
+
 	<target name="start-docker-database-postgresql">
 		<if>
 			<not>
@@ -15020,7 +15107,7 @@ url=${short.hostname}:8080</echo>
 
 		<antcall inheritAll="false" target="start-docker-database">
 			<param name="database.postgresql.docker.image" value="postgres:${database.version}" />
-			<param name="database.postgresql.docker.run.options" value="--env=POSTGRES_USER=root --expose=5432 -p 5432:5432 --env=POSTGRES_HOST_AUTH_METHOD=trust" />
+			<param name="database.postgresql.docker.run.options" value="--env=POSTGRES_USER=root -p 5433:5432 --env=POSTGRES_HOST_AUTH_METHOD=trust" />
 			<param name="database.postgresql.host" value="${database.host}_postgresql" />
 			<param name="database.postgresql.name" value="PostgreSQL" />
 			<param name="database.postgresql.version" value="${database.version}" />
@@ -15034,7 +15121,7 @@ url=${short.hostname}:8080</echo>
 			<then>
 				<antcall inheritAll="false" target="prepare-portal-ext-properties">
 					<param name="database.postgresql.schema" value="lportal" />
-					<param name="database.postgresql.url" value="jdbc:postgresql://localhost:5432/${database.postgresql.schema}" />
+					<param name="database.postgresql.url" value="jdbc:postgresql://localhost:5433/${database.postgresql.schema}" />
 					<param name="database.type" value="postgresql" />
 				</antcall>
 			</then>
@@ -15051,6 +15138,99 @@ url=${short.hostname}:8080</echo>
 					<param name="database.type" value="postgresql" />
 					<param name="sql.dir" value="sql/create-bare/" />
 					<param name="sql.file" value="create-bare-postgresql.sql" />
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+	<target name="start-docker-database-sqlserver">
+		<if>
+			<not>
+				<isset property="database.version" />
+			</not>
+			<then>
+				<var name="database.version" value="2019" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${database.version}" arg2="2017" />
+
+			<then>
+				<var name="database.sqlserver.docker.image" value="mcr.microsoft.com/mssql/server:2017-CU19-ubuntu-16.04" />
+			</then>
+
+			<elseif>
+				<equals arg1="${database.version}" arg2="2019" />
+
+				<then>
+					<var name="database.sqlserver.docker.image" value="mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04" />
+				</then>
+			</elseif>
+		</if>
+
+		<get-database-property property.name="database.host" />
+
+		<antcall target="stop-docker-database">
+			<param name="database.sqlserver.host" value="${database.host}_sqlserver" />
+			<param name="database.type" value="sqlserver" />
+		</antcall>
+
+		<antcall inheritAll="false" target="start-docker-database">
+			<param name="database.sqlserver.docker.image" value="${database.sqlserver.docker.image}" />
+			<param name="database.sqlserver.docker.run.options" value="--env=ACCEPT_EULA=Y --env=SA_PASSWORD=Liferay123 -p 1434:1433" />
+			<param name="database.sqlserver.host" value="${database.host}_sqlserver" />
+			<param name="database.sqlserver.name" value="SQL Server" />
+			<param name="database.sqlserver.password" value="Liferay123" />
+			<param name="database.sqlserver.username" value="sa" />
+			<param name="database.sqlserver.version" value="${database.version}" />
+			<param name="database.type" value="sqlserver" />
+		</antcall>
+
+		<if>
+			<not>
+				<isset property="skip.prepare.portal.ext.properties" />
+			</not>
+			<then>
+				<antcall inheritAll="false" target="prepare-portal-ext-properties">
+					<param name="database.sqlserver.host" value="${database.host}_sqlserver" />
+					<param name="database.sqlserver.password" value="Liferay123" />
+					<param name="database.sqlserver.schema" value="lportal" />
+					<param name="database.sqlserver.url" value="jdbc:sqlserver://${database.host}:1434;databaseName=${database.sqlserver.schema}" />
+					<param name="database.sqlserver.username" value="sa" />
+					<param name="database.type" value="sqlserver" />
+				</antcall>
+			</then>
+		</if>
+
+		<if>
+			<not>
+				<isset property="skip.rebuild.database" />
+			</not>
+			<then>
+				<antcall target="rebuild-database">
+					<param name="database.bare.enabled" value="true" />
+					<param name="database.sqlserver.docker.image" value="${database.sqlserver.docker.image}" />
+					<param name="database.sqlserver.host" value="${database.host}_sqlserver" />
+					<param name="database.sqlserver.password" value="Liferay123" />
+					<param name="database.sqlserver.username" value="sa" />
+					<param name="database.type" value="sqlserver" />
+				</antcall>
+			</then>
+		</if>
+
+		<if>
+			<not>
+				<isset property="skip.copy.optional.jars" />
+			</not>
+			<then>
+				<get-test-app-server-lib-portal-dir />
+
+				<antcall target="copy-optional-jars">
+					<param name="database.sqlserver.version" value="${database.version}" />
+					<param name="database.type" value="sqlserver" />
+					<param name="test.jdbc.drivers.url" value="http://mirrors.lax.liferay.com/files.liferay.com/private/jdbc" />
+					<param name="todir" value="${test.app.server.lib.portal.dir}" />
 				</antcall>
 			</then>
 		</if>

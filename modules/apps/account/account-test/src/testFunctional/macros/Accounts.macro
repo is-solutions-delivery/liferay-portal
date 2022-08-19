@@ -926,6 +926,19 @@ definition {
 			value1 = "Edit ${accountName}");
 	}
 
+	macro grantUserAccessToAccountAdmin {
+		JSONRole.addRegularRole(roleTitle = "Access Account Permission");
+
+		Permissions.definePermissionViaJSONAPI(
+			resourceAction = "ACCESS_IN_CONTROL_PANEL",
+			resourceName = "com_liferay_account_admin_web_internal_portlet_AccountEntriesAdminPortlet",
+			roleTitle = "Access Account Permission");
+
+		JSONRole.assignRoleToUser(
+			roleTitle = "Access Account Permission",
+			userEmailAddress = "${userEmailAddress}");
+	}
+
 	macro viewErrorWhenAddingUserWithBlockedDomain {
 		Accounts.gotoAssigneeTab(assigneeTab = "Users");
 

@@ -15,12 +15,14 @@ import MDFRequestBudget from './mdfRequestBudget';
 export default interface MDFRequestActivity extends Partial<LiferayObject> {
 	activityPromotion: string;
 	ad: string;
-	assetsLiferayRequired: boolean;
+	assetsLiferayRequired: string;
 	budgets: MDFRequestBudget[];
 	description: string;
+	detailsLeadFollowUp: string;
 	endDate: Date;
-	gatedLandingPage: boolean;
+	gatedLandingPage: string;
 	goalOfContent: string;
+	hiringOutsideWriterOrAgency: string;
 	howLiferayBrandUsed: string;
 	keywordsForPPCCampaigns: string;
 	leadFollowUpStrategies: string[];
@@ -33,6 +35,7 @@ export default interface MDFRequestActivity extends Partial<LiferayObject> {
 	name: string;
 	overallMessageContentCTA: string;
 	primaryThemeOrMessage: string;
+	r_mdfRequestToActivities_c_mdfRequestId?: string;
 	r_tacticToActivities_c_tacticId: string;
 	r_typeActivityToActivities_c_typeActivityId: string;
 	sourceAndSizeOfInviteeList: string;
@@ -40,4 +43,5 @@ export default interface MDFRequestActivity extends Partial<LiferayObject> {
 	startDate: Date;
 	targetofLeads: string;
 	totalCostOfExpense: string;
+	venueName: string;
 }

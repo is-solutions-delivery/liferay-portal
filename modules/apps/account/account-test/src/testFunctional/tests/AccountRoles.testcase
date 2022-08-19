@@ -75,4 +75,117 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-142654. This asserts user with View Account Roles permissions for an account can only view and cannot do other actions to those roles. It also asserts that a user only has this permissions to the account he has the role in."
+	@priority = "4"
+	test CanViewAccountRolesWithPermissions {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
+		task ("Given a user is granted permissions to access Account Admin portlet") {
+			JSONUser.addUser(
+				userEmailAddress = "userea1@liferay.com",
+				userFirstName = "userfn1",
+				userLastName = "userln1",
+				userScreenName = "usersn1");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea1@liferay.com");
+
+			Accounts.grantUserAccessToAccountAdmin(userEmailAddress = "userea1@liferay.com");
+		}
+
+		task ("And he is a member of two business accounts") {
+			for (var accountNum : list "1,2") {
+				JSONAccountEntry.addAccountEntry(
+					accountEntryName = "Account Name ${accountNum}",
+					accountEntryType = "Business");
+
+				Accounts.openAccountsAdmin();
+
+				LexiconEntry.gotoEntry(rowEntry = "Account Name ${accountNum}");
+
+				Accounts.assignUsers(
+					accountName = "Account Name ${accountNum}",
+					assigneeName = "userfn1");
+			}
+		}
+
+		task ("When this user is granted permissions to Update account entry and View account roles for Account Name 1") {
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Account Name 1");
+
+			Accounts.addOwnedAccountRole(accountRoleTitle = "Account Specific Role1");
+
+			for (var resourceActionIndex : list "UPDATE,VIEW_ACCOUNT_ROLES") {
+				Permissions.definePermissionViaJSONAPI(
+					resourceAction = "${resourceActionIndex}",
+					resourceName = "com.liferay.account.model.AccountEntry",
+					roleTitle = "Account Specific Role1",
+					roleType = "account");
+			}
+
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Account Name 1");
+
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Specific Role1",
+				accountUserName = "userfn1 userln1");
+		}
+
+		task ("And user is granted permissions to only Update an account entry for Account Name 2") {
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Account Name 2");
+
+			Accounts.addOwnedAccountRole(accountRoleTitle = "Account Specific Role2");
+
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "UPDATE",
+				resourceName = "com.liferay.account.model.AccountEntry",
+				roleTitle = "Account Specific Role2",
+				roleType = "account");
+
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Account Name 2");
+
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Specific Role2",
+				accountUserName = "userfn1 userln1");
+		}
+
+		task ("Then he can view account roles in Account Name 1") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea1@liferay.com",
+				userLoginFullName = "userfn1 userln1");
+
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Account Name 1");
+
+			Accounts.gotoAssigneeTab(assigneeTab = "Roles");
+
+			LexiconEntry.viewEntryName(rowEntry = "Account Specific Role1");
+		}
+
+		task ("and this user cannot do any other actions to these account roles") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+
+			LexiconEntry.viewNoEntryMenu(rowEntry = "Account Specific Role1");
+		}
+
+		task ("and this user cannot view account roles in Account Name 2") {
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Account Name 2");
+
+			AssertElementNotPresent(
+				key_tab = "Roles",
+				locator1 = "NavTab#ACTIVE_TAB_LINK");
+		}
+	}
+
 }

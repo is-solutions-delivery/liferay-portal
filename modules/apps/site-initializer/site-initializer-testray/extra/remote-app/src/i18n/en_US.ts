@@ -108,6 +108,7 @@ export default {
 	'delete-project': 'Delete Project',
 	'delete-requirement': 'Delete Requirement',
 	'delete-routine': 'Delete Routine',
+	'delete-suite': 'Delete Suite',
 	'demote': 'Demote',
 	'description': 'Description',
 	'description-type': 'Description type',
@@ -121,7 +122,6 @@ export default {
 	'edit-project': 'Edit Project',
 	'edit-requirement': 'Edit Requirement',
 	'edit-routine': 'Edit Routine',
-	'edit-team': 'Edit Team',
 	'edit-user-account': 'Edit User Account',
 	'email-address': 'Email Address',
 	'enter-the-case-name': 'Enter the Case Name',
@@ -269,6 +269,7 @@ export default {
 	'the-team-cannot-be-deleted-because-it-has-associated-components':
 		'The team cannot be deleted because it has associated components',
 	'the-team-name-already-exists': 'The team name already exists',
+	'the-x-name-already-exists': 'The {0} name already exists',
 	'there-are-no-entries-yet': 'There are no entries yet.',
 	'there-are-no-matching-results': 'There are no matching results.',
 	'this-build-has-been-analyzed': 'This build has been analyzed.',
