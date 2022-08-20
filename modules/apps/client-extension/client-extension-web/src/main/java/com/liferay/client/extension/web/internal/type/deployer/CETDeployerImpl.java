@@ -123,7 +123,8 @@ public class CETDeployerImpl implements CETDeployer {
 			"com_liferay_client_extension_web_internal_portlet_",
 			"ClientExtensionEntryPortlet_",
 			externalReferenceCode.replaceAll(
-				"[^a-zA-Z0-9_]", StringPool.UNDERLINE));
+				"[^a-zA-Z0-9_]", StringPool.UNDERLINE),
+			StringPool.UNDERLINE, cet.getCompanyId());
 	}
 
 	private ServiceRegistration<ConfigurationAction>
