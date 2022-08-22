@@ -1477,6 +1477,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 			URL url = _servletContext.getResource(
 				parentResourcePath + "/favicon.png");
 
+			byte[] iconBytes = null;
+
+			if (url != null) {
+				iconBytes = FileUtil.getBytes(url.openStream());
+			}
+
 			layout = _layoutLocalService.updateLayout(
 				serviceContext.getScopeGroupId(),
 				jsonObject.getBoolean("private"), layout.getLayoutId(),
@@ -1488,9 +1494,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 					jsonObject.getString("keywords_i18n")),
 				SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
 				type, jsonObject.getBoolean("hidden"), friendlyURLMap,
-				layout.getIconImage(), FileUtil.getBytes(url.openStream()),
-				layout.getStyleBookEntryId(), layout.getFaviconFileEntryId(),
-				layout.getMasterLayoutPlid(), serviceContext);
+				layout.getIconImage(), iconBytes, layout.getStyleBookEntryId(),
+				layout.getFaviconFileEntryId(), layout.getMasterLayoutPlid(),
+				serviceContext);
 		}
 
 		_setResourcePermissions(
