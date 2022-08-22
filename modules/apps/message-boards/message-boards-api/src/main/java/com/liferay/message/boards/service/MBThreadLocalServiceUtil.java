@@ -433,6 +433,32 @@ public class MBThreadLocalServiceUtil {
 		return getService().getMBThreadsCount();
 	}
 
+	public static List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long userId, long categoryId,
+		com.liferay.portal.kernel.search.filter.Filter filter,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
+
+		return getService().getMessageBoardSectionMessageBoardThreadsPage(
+			groupId, userId, categoryId, filter, queryDefinition, search, sorts,
+			tag);
+	}
+
+	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long userId, long categoryId,
+		com.liferay.portal.kernel.search.filter.Filter filter,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
+
+		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
+			groupId, userId, categoryId, filter, queryDefinition, search, sorts,
+			tag);
+	}
+
 	public static int getMessageCount(long threadId, int status) {
 		return getService().getMessageCount(threadId, status);
 	}

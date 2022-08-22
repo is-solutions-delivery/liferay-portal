@@ -123,6 +123,32 @@ public class MBThreadServiceUtil {
 			groupId, userId, status, subscribed, includeAnonymous);
 	}
 
+	public static List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+			long groupId, long categoryId,
+			com.liferay.portal.kernel.search.filter.Filter filter,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+				queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		return getService().getMessageBoardSectionMessageBoardThreadsPage(
+			groupId, categoryId, filter, queryDefinition, search, sorts, tag);
+	}
+
+	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
+			long groupId, long categoryId,
+			com.liferay.portal.kernel.search.filter.Filter filter,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+				queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
+			groupId, categoryId, filter, queryDefinition, search, sorts, tag);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
