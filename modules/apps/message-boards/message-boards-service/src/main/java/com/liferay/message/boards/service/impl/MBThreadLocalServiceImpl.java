@@ -14,11 +14,15 @@
 
 package com.liferay.message.boards.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntries_AssetTagsTable;
 import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetEntryTable;
+import com.liferay.asset.kernel.model.AssetTagTable;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.mail.kernel.model.Filter;
 import com.liferay.message.boards.constants.MBCategoryConstants;
 import com.liferay.message.boards.constants.MBConstants;
 import com.liferay.message.boards.constants.MBMessageConstants;
@@ -27,7 +31,9 @@ import com.liferay.message.boards.exception.SplitThreadException;
 import com.liferay.message.boards.internal.util.MBMessageUtil;
 import com.liferay.message.boards.model.MBCategory;
 import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.model.MBMessageTable;
 import com.liferay.message.boards.model.MBThread;
+import com.liferay.message.boards.model.MBThreadTable;
 import com.liferay.message.boards.model.MBTreeWalker;
 import com.liferay.message.boards.model.impl.MBTreeWalkerImpl;
 import com.liferay.message.boards.service.base.MBThreadLocalServiceBaseImpl;
@@ -35,6 +41,10 @@ import com.liferay.message.boards.service.persistence.MBCategoryPersistence;
 import com.liferay.message.boards.service.persistence.MBMessageFinder;
 import com.liferay.message.boards.service.persistence.MBMessagePersistence;
 import com.liferay.message.boards.util.comparator.MessageThreadComparator;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.expression.Predicate;
+import com.liferay.petra.sql.dsl.query.JoinStep;
+import com.liferay.petra.sql.dsl.query.sort.OrderByExpression;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -74,8 +84,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.view.count.ViewCountManager;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.ratings.kernel.model.RatingsStatsTable;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.subscription.model.SubscriptionTable;
 import com.liferay.subscription.service.SubscriptionLocalService;
 import com.liferay.trash.kernel.exception.RestoreEntryException;
 import com.liferay.trash.kernel.exception.TrashEntryException;
@@ -412,6 +424,322 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		long groupId, long userId, QueryDefinition<MBThread> queryDefinition) {
 
 		return getGroupThreadsCount(groupId, userId, false, queryDefinition);
+	}
+
+	@Override
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long userId, long categoryId, Filter filter, QueryDefinition<MBThread>
+		queryDefinition, String search, Sort[] sorts, String tag) {
+
+		JoinStep dslQuery = null;
+
+
+		Predicate whereQuery = MBThreadTable.INSTANCE.categoryId.eq(categoryId).and(MBThreadTable.INSTANCE.groupId.eq(groupId));
+		if(sorts != null){
+
+			dslQuery = DSLQueryFactoryUtil.select(MBThreadTable.INSTANCE.threadId,
+				RatingsStatsTable.INSTANCE.totalScore).from(
+				MBThreadTable.INSTANCE
+			);
+		}else{
+
+
+			dslQuery = DSLQueryFactoryUtil.selectDistinct(MBThreadTable.INSTANCE).from(
+				MBThreadTable.INSTANCE
+			);
+		}
+
+		OrderByExpression orderByQuery = null;
+
+		if(search != null) {
+			search = search.trim();
+		}
+
+		if((search != null) && (search.length() != 0)){
+
+			whereQuery = whereQuery.and(MBThreadTable.INSTANCE.title.like("%" + search + "%"));
+
+			return mbThreadPersistence.dslQuery(dslQuery.where(whereQuery));
+
+		}else{
+
+			if (filter != null){
+
+				String sqlFilter = filter.toString();
+
+				sqlFilter = StringUtil.removeSubstring(
+					sqlFilter,
+					"{(query={className=TermQueryImpl, queryTerm={field=");
+
+				sqlFilter = StringUtil.removeSubstring(
+					sqlFilter, "}}), (cached=null, executionOption=null)}");
+
+				String[] sqlFilters = sqlFilter.split("_sortable, value=");
+
+				if (sqlFilters[0].equals("hasValidAnswer") &&
+					sqlFilters[1].equals("false")) {
+
+					whereQuery = whereQuery.and(
+						MBThreadTable.INSTANCE.threadId.notIn(
+							DSLQueryFactoryUtil.select(
+								MBMessageTable.INSTANCE.threadId
+							).from(MBMessageTable.INSTANCE).where(
+								MBMessageTable.INSTANCE.answer.eq(true)))
+					);
+
+
+				}else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
+						  sqlFilters[1].equals("0")){
+
+					whereQuery = whereQuery.and(
+						MBThreadTable.INSTANCE.threadId.notIn(
+							DSLQueryFactoryUtil.select(
+								MBMessageTable.INSTANCE.threadId
+							).from(MBMessageTable.INSTANCE).where(
+								MBThreadTable.INSTANCE.threadId.eq(
+									MBMessageTable.INSTANCE.threadId
+								).and(MBMessageTable.INSTANCE.parentMessageId.neq(
+									0L)))
+						));
+				}else if (sqlFilters[0].equals("hasValidAnswer"	) &&
+						  sqlFilters[1].equals("true")){
+
+
+					whereQuery = whereQuery.and(
+						MBThreadTable.INSTANCE.threadId.in(
+							DSLQueryFactoryUtil.select(
+								MBMessageTable.INSTANCE.threadId
+							).from(MBMessageTable.INSTANCE).where(
+								MBMessageTable.INSTANCE.answer.eq(true)))
+					);
+
+
+				}
+
+
+
+			}
+			if(tag != null){
+
+
+
+				dslQuery = dslQuery.innerJoinON(
+					AssetEntryTable.INSTANCE,
+					AssetEntryTable.INSTANCE.classPK.eq(MBThreadTable.INSTANCE.rootMessageId
+					)).innerJoinON(
+					AssetEntries_AssetTagsTable.INSTANCE,
+					AssetEntries_AssetTagsTable.INSTANCE.entryId.eq(AssetEntryTable.INSTANCE.entryId)
+				).innerJoinON(AssetTagTable.INSTANCE,AssetTagTable.INSTANCE.tagId.eq(AssetEntries_AssetTagsTable.INSTANCE.tagId));
+
+				if(tag.equals("myWatchedTags")){
+					whereQuery = whereQuery.and(AssetTagTable.INSTANCE.name.in(
+
+						DSLQueryFactoryUtil.select(AssetTagTable.INSTANCE.name).from(
+							SubscriptionTable.INSTANCE).innerJoinON(
+							AssetTagTable.INSTANCE,AssetTagTable.INSTANCE.tagId.eq(
+								SubscriptionTable.INSTANCE.classPK)).where(
+							SubscriptionTable.INSTANCE.userId.eq(userId))
+
+					));
+
+				}else {
+
+					String[] tags = tag.split(",");
+
+					whereQuery =
+						whereQuery.and(AssetTagTable.INSTANCE.name.in(tags));
+				}
+
+			}
+			if(sorts!= null){
+
+				Sort sort = sorts[0];
+				String fieldName = sort.getFieldName();
+				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
+				if(fieldName.equals("totalScore")) {
+
+					dslQuery = dslQuery.leftJoinOn(RatingsStatsTable.INSTANCE,MBThreadTable.INSTANCE.rootMessageId.eq(RatingsStatsTable.INSTANCE.classPK));
+
+					if(sort.isReverse()){
+						orderByQuery = RatingsStatsTable.INSTANCE.totalScore.descending();
+
+					}else{
+						orderByQuery = RatingsStatsTable.INSTANCE.totalScore.ascending();
+
+					}
+
+				}
+
+			}
+
+
+
+		}
+
+		if(orderByQuery == null){
+			orderByQuery = MBThreadTable.INSTANCE.createDate.descending();
+		}
+
+
+		return (List<MBThread>) mbThreadPersistence.dslQuery(dslQuery.where(whereQuery).orderBy(orderByQuery));
+	}
+
+	@Override
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long userId, long categoryId, Filter filter, QueryDefinition<MBThread>
+		queryDefinition, String search, Sort[] sorts, String tag) {
+
+		JoinStep dslQuery = null;
+
+
+		Predicate whereQuery = MBThreadTable.INSTANCE.categoryId.eq(categoryId).and(MBThreadTable.INSTANCE.groupId.eq(groupId));
+		if(sorts != null){
+
+			dslQuery = DSLQueryFactoryUtil.select(MBThreadTable.INSTANCE.threadId,
+				RatingsStatsTable.INSTANCE.totalScore).from(
+				MBThreadTable.INSTANCE
+			);
+		}else{
+
+
+			dslQuery = DSLQueryFactoryUtil.selectDistinct(MBThreadTable.INSTANCE).from(
+				MBThreadTable.INSTANCE
+			);
+		}
+
+		OrderByExpression orderByQuery = null;
+
+		if(search != null) {
+			search = search.trim();
+		}
+
+		if((search != null) && (search.length() != 0)){
+
+			whereQuery = whereQuery.and(MBThreadTable.INSTANCE.title.like("%" + search + "%"));
+
+			return mbThreadPersistence.dslQuery(dslQuery.where(whereQuery));
+
+		}else{
+
+			if (filter != null){
+
+				String sqlFilter = filter.toString();
+
+				sqlFilter = StringUtil.removeSubstring(
+					sqlFilter,
+					"{(query={className=TermQueryImpl, queryTerm={field=");
+
+				sqlFilter = StringUtil.removeSubstring(
+					sqlFilter, "}}), (cached=null, executionOption=null)}");
+
+				String[] sqlFilters = sqlFilter.split("_sortable, value=");
+
+				if (sqlFilters[0].equals("hasValidAnswer") &&
+					sqlFilters[1].equals("false")) {
+
+					whereQuery = whereQuery.and(
+						MBThreadTable.INSTANCE.threadId.notIn(
+							DSLQueryFactoryUtil.select(
+								MBMessageTable.INSTANCE.threadId
+							).from(MBMessageTable.INSTANCE).where(
+								MBMessageTable.INSTANCE.answer.eq(true)))
+					);
+
+
+				}else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
+						  sqlFilters[1].equals("0")){
+
+					whereQuery = whereQuery.and(
+						MBThreadTable.INSTANCE.threadId.notIn(
+							DSLQueryFactoryUtil.select(
+								MBMessageTable.INSTANCE.threadId
+							).from(MBMessageTable.INSTANCE).where(
+								MBThreadTable.INSTANCE.threadId.eq(
+									MBMessageTable.INSTANCE.threadId
+								).and(MBMessageTable.INSTANCE.parentMessageId.neq(
+									0L)))
+						));
+				}else if (sqlFilters[0].equals("hasValidAnswer"	) &&
+						  sqlFilters[1].equals("true")){
+
+
+					whereQuery = whereQuery.and(
+						MBThreadTable.INSTANCE.threadId.in(
+							DSLQueryFactoryUtil.select(
+								MBMessageTable.INSTANCE.threadId
+							).from(MBMessageTable.INSTANCE).where(
+								MBMessageTable.INSTANCE.answer.eq(true)))
+					);
+
+
+				}
+
+
+
+			}
+			if(tag != null){
+
+
+
+				dslQuery = dslQuery.innerJoinON(
+					AssetEntryTable.INSTANCE,
+					AssetEntryTable.INSTANCE.classPK.eq(MBThreadTable.INSTANCE.rootMessageId
+					)).innerJoinON(
+					AssetEntries_AssetTagsTable.INSTANCE,
+					AssetEntries_AssetTagsTable.INSTANCE.entryId.eq(AssetEntryTable.INSTANCE.entryId)
+				).innerJoinON(AssetTagTable.INSTANCE,AssetTagTable.INSTANCE.tagId.eq(AssetEntries_AssetTagsTable.INSTANCE.tagId));
+
+				if(tag.equals("myWatchedTags")){
+					whereQuery = whereQuery.and(AssetTagTable.INSTANCE.name.in(
+
+						DSLQueryFactoryUtil.select(AssetTagTable.INSTANCE.name).from(
+							SubscriptionTable.INSTANCE).innerJoinON(
+							AssetTagTable.INSTANCE,AssetTagTable.INSTANCE.tagId.eq(
+								SubscriptionTable.INSTANCE.classPK)).where(
+							SubscriptionTable.INSTANCE.userId.eq(userId))
+
+					));
+
+				}else {
+
+					String[] tags = tag.split(",");
+
+					whereQuery =
+						whereQuery.and(AssetTagTable.INSTANCE.name.in(tags));
+				}
+
+			}
+			if(sorts!= null){
+
+				Sort sort = sorts[0];
+				String fieldName = sort.getFieldName();
+				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
+				if(fieldName.equals("totalScore")) {
+
+					dslQuery = dslQuery.leftJoinOn(RatingsStatsTable.INSTANCE,MBThreadTable.INSTANCE.rootMessageId.eq(RatingsStatsTable.INSTANCE.classPK));
+
+					if(sort.isReverse()){
+						orderByQuery = RatingsStatsTable.INSTANCE.totalScore.descending();
+
+					}else{
+						orderByQuery = RatingsStatsTable.INSTANCE.totalScore.ascending();
+
+					}
+
+				}
+
+			}
+
+
+
+		}
+
+		if(orderByQuery == null){
+			orderByQuery = MBThreadTable.INSTANCE.createDate.descending();
+		}
+
+
+		return (List<MBThread>) mbThreadPersistence.dslQuery(dslQuery.where(whereQuery).orderBy(orderByQuery));
 	}
 
 	@Override
