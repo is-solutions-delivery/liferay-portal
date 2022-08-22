@@ -64,9 +64,39 @@ definition {
     @description = "Automation ID: LPS-150163 | Test Summary: Verify if the Activation form link works"
     @priority = "5"
     test IfActivationFormLinkWorks {
-        
-        // TODO LPS-150163 IfActivationFormLinkWorks pending implementation
+        task ("Change the user role in the project") {
+            Accounts.openAccountsAdmin();
 
+            CustomerPortal.accountTableProject(title = "Test Account Analytics Cloud");
+
+            Accounts.addAssigneeToRoleViaUsersTab(
+                accountRoleTitle = "Account Administrator",
+                accountUserName = "Test Test");
+        }
+
+        task ("Go to CP2.0 and join a project") {
+            ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
+
+            CustomerPortal.enterOnProject(title = "Test Account Analytics Cloud");
+        }
+
+        task ("Going through onboarding") {
+            CustomerPortal.fullOnboardingFlow();
+        }
+
+        task ("Go to the product activation page") {
+            CP2NavigationMenu.goToProductActivation();
+
+            CP2NavigationMenu.clickOnProductButton(product = "Analytics Cloud");
+        }
+
+        task ("Assert that the Setup Analytics Cloud modal opens") {
+            CustomerPortal.clickOnFinishActivationButton();
+
+            AssertElementPresent(
+                modal = "Set up Analytics Cloud",
+                locator1 = "CustomerPortalSite#MODAL_PAGE");
+        }
     }
 
     @description = "Automation ID: LPS-150370 | Test Summary: Verify the page subtitle: Almost there! Setup Analytics Cloud by finishing the activation form"
