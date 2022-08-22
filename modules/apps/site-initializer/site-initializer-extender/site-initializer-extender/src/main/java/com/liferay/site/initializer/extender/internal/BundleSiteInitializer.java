@@ -1540,6 +1540,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteDefaultLocale, jsonObject.getString("friendlyURL"));
 		}
 
+		byte[] iconBytes = null;
+
+		URL url = _servletContext.getResource(
+			parentResourcePath + "/favicon.png");
+
+		if (url != null) {
+			iconBytes = FileUtil.getBytes(url.openStream());
+		}
+
 		Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
 			serviceContext.getScopeGroupId(), jsonObject.getBoolean("private"),
 			jsonObject.getString("friendlyURL"));
@@ -1557,17 +1566,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 				type, null, jsonObject.getBoolean("hidden"),
 				jsonObject.getBoolean("system"), friendlyURLMap,
 				serviceContext);
+
+			if (iconBytes != null) {
+				_layoutLocalService.updateIconImage(
+					layout.getPlid(), iconBytes);
+			}
 		}
 		else {
-			URL url = _servletContext.getResource(
-				parentResourcePath + "/favicon.png");
-
-			byte[] iconBytes = null;
-
-			if (url != null) {
-				iconBytes = FileUtil.getBytes(url.openStream());
-			}
-
 			layout = _layoutLocalService.updateLayout(
 				serviceContext.getScopeGroupId(),
 				jsonObject.getBoolean("private"), layout.getLayoutId(),
