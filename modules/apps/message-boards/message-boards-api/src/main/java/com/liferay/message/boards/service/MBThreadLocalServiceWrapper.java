@@ -487,6 +487,37 @@ public class MBThreadLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<MBThread>
+		getMessageBoardSectionMessageBoardThreadsPage(
+			long groupId, long userId, long categoryId,
+			com.liferay.portal.kernel.search.filter.Filter filter,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+				queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag) {
+
+		return _mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPage(
+				groupId, userId, categoryId, filter, queryDefinition, search,
+				sorts, tag);
+	}
+
+	@Override
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long userId, long categoryId,
+		com.liferay.portal.kernel.search.filter.Filter filter,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
+
+		return _mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPageCount(
+				groupId, userId, categoryId, filter, queryDefinition, search,
+				sorts, tag);
+	}
+
+	@Override
 	public int getMessageCount(long threadId, int status) {
 		return _mbThreadLocalService.getMessageCount(threadId, status);
 	}
