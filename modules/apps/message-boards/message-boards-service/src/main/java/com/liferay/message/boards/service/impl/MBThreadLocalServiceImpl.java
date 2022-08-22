@@ -427,29 +427,17 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 	}
 
 	@Override
-	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
 		long groupId, long userId, long categoryId, Filter filter, QueryDefinition<MBThread>
 		queryDefinition, String search, Sort[] sorts, String tag) {
 
 		JoinStep dslQuery = null;
 
-
 		Predicate whereQuery = MBThreadTable.INSTANCE.categoryId.eq(categoryId).and(MBThreadTable.INSTANCE.groupId.eq(groupId));
-		if(sorts != null){
 
-			dslQuery = DSLQueryFactoryUtil.select(MBThreadTable.INSTANCE.threadId,
-				RatingsStatsTable.INSTANCE.totalScore).from(
-				MBThreadTable.INSTANCE
-			);
-		}else{
-
-
-			dslQuery = DSLQueryFactoryUtil.selectDistinct(MBThreadTable.INSTANCE).from(
-				MBThreadTable.INSTANCE
-			);
-		}
-
-		OrderByExpression orderByQuery = null;
+		dslQuery = DSLQueryFactoryUtil.countDistinct(MBThreadTable.INSTANCE.threadId).from(
+			MBThreadTable.INSTANCE
+		);
 
 		if(search != null) {
 			search = search.trim();
@@ -551,41 +539,19 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				}
 
 			}
-			if(sorts!= null){
-
-				Sort sort = sorts[0];
-				String fieldName = sort.getFieldName();
-				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
-				if(fieldName.equals("totalScore")) {
-
-					dslQuery = dslQuery.leftJoinOn(RatingsStatsTable.INSTANCE,MBThreadTable.INSTANCE.rootMessageId.eq(RatingsStatsTable.INSTANCE.classPK));
-
-					if(sort.isReverse()){
-						orderByQuery = RatingsStatsTable.INSTANCE.totalScore.descending();
-
-					}else{
-						orderByQuery = RatingsStatsTable.INSTANCE.totalScore.ascending();
-
-					}
-
-				}
-
-			}
 
 
 
 		}
 
-		if(orderByQuery == null){
-			orderByQuery = MBThreadTable.INSTANCE.createDate.descending();
-		}
 
 
-		return (List<MBThread>) mbThreadPersistence.dslQuery(dslQuery.where(whereQuery).orderBy(orderByQuery));
+
+		return (int) mbThreadPersistence.dslQuery(dslQuery);
 	}
 
 	@Override
-	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPageCount(
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
 		long groupId, long userId, long categoryId, Filter filter, QueryDefinition<MBThread>
 		queryDefinition, String search, Sort[] sorts, String tag) {
 
