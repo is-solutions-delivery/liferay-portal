@@ -232,9 +232,8 @@ public class ObjectEntryLocalServiceTest {
 					ObjectFieldConstants.DB_TYPE_INTEGER, true, false, null,
 					"Number of Books Written", "numberOfBooksWritten", false),
 				ObjectFieldUtil.createObjectField(
-					ObjectFieldConstants.BUSINESS_TYPE_LONG_TEXT,
-					ObjectFieldConstants.DB_TYPE_CLOB, false, false, null,
-					"Script", "script", false)));
+					"LongText", "Clob", false, false, null, "Script", "script",
+					false)));
 
 		_objectDefinition =
 			_objectDefinitionLocalService.publishCustomObjectDefinition(
