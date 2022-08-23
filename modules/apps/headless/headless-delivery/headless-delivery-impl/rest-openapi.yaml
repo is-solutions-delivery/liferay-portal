@@ -15823,7 +15823,7 @@ paths:
                   schema:
                       type: string
                 - in: query
-                  name: tag
+                  name: search
                   schema:
                       type: string
                 - in: query
@@ -15839,7 +15839,7 @@ paths:
                   schema:
                       type: integer
                 - in: query
-                  name: search
+                  name: tag
                   schema:
                       type: string
                 - in: query
