@@ -14,7 +14,6 @@
 
 package com.liferay.message.boards.service.impl;
 
-import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.message.boards.constants.MBCategoryConstants;
 import com.liferay.message.boards.exception.LockedThreadException;
 import com.liferay.message.boards.model.MBCategory;
@@ -34,6 +33,7 @@ import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
@@ -316,26 +316,29 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long categoryId, Filter filter, QueryDefinition<MBThread>
-		queryDefinition, String search, Sort[] sorts, String tag)
+			long groupId, long categoryId, Filter filter,
+			QueryDefinition<MBThread> queryDefinition, String search,
+			Sort[] sorts, String tag)
 		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPage(
-				groupId, getUserId(), categoryId, filter, queryDefinition, search, sorts, tag);
+				groupId, getUserId(), categoryId, filter, queryDefinition,
+				search, sorts, tag);
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long categoryId, Filter filter, QueryDefinition<MBThread>
-		queryDefinition, String search, Sort[] sorts, String tag)
+			long groupId, long categoryId, Filter filter,
+			QueryDefinition<MBThread> queryDefinition, String search,
+			Sort[] sorts, String tag)
 		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, getUserId(), categoryId, filter, queryDefinition, search, sorts, tag);
+				groupId, getUserId(), categoryId, filter, queryDefinition,
+				search, sorts, tag);
 	}
-
 
 	@Override
 	public List<MBThread> getThreads(
