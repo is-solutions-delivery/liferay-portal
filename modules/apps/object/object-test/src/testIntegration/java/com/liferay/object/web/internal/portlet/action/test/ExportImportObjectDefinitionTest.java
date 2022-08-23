@@ -72,6 +72,8 @@ public class ExportImportObjectDefinitionTest {
 		PropsUtil.addProperties(
 			UnicodePropertiesBuilder.setProperty(
 				"feature.flag.LPS-158821", "true"
+			).setProperty(
+				"feature.flag.LPS-158672", "true"
 			).build());
 
 		ObjectDefinition objectDefinition = _importObjectDefinition();
@@ -99,6 +101,8 @@ public class ExportImportObjectDefinitionTest {
 		PropsUtil.addProperties(
 			UnicodePropertiesBuilder.setProperty(
 				"feature.flag.LPS-158821", "false"
+			).setProperty(
+				"feature.flag.LPS-158672", "false"
 			).build());
 	}
 
