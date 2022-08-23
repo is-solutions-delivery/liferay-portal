@@ -105,6 +105,7 @@ export default {
 	'dates': 'Dates',
 	'delete': 'Delete',
 	'delete-build': 'Delete Build',
+	'delete-case-result': 'Delete Case Result',
 	'delete-project': 'Delete Project',
 	'delete-requirement': 'Delete Requirement',
 	'delete-routine': 'Delete Routine',
