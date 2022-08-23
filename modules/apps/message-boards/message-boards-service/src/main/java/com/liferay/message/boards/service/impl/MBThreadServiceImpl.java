@@ -14,7 +14,7 @@
 
 package com.liferay.message.boards.service.impl;
 
-import com.liferay.mail.kernel.model.Filter;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.message.boards.constants.MBCategoryConstants;
 import com.liferay.message.boards.exception.LockedThreadException;
 import com.liferay.message.boards.model.MBCategory;
