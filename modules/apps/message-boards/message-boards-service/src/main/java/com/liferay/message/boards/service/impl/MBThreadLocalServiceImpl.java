@@ -102,6 +102,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.liferay.view.count.model.ViewCountEntryTable;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -447,7 +448,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 			whereQuery = whereQuery.and(MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 
-			return mbThreadPersistence.dslQuery(dslQuery.where(whereQuery));
+			return Integer.parseInt(mbThreadPersistence.dslQuery(dslQuery.where(whereQuery)).toString());
 
 		}else{
 
@@ -547,7 +548,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 
 
-		return (int) mbThreadPersistence.dslQuery(dslQuery);
+		return Integer.parseInt(mbThreadPersistence.dslQuery(dslQuery.where(whereQuery)).toString());
 	}
 
 	@Override
@@ -561,8 +562,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		Predicate whereQuery = MBThreadTable.INSTANCE.categoryId.eq(categoryId).and(MBThreadTable.INSTANCE.groupId.eq(groupId));
 		if(sorts != null){
 
-			dslQuery = DSLQueryFactoryUtil.select(MBThreadTable.INSTANCE.threadId,
-				RatingsStatsTable.INSTANCE.totalScore).from(
+			dslQuery = DSLQueryFactoryUtil.select(MBThreadTable.INSTANCE).from(
 				MBThreadTable.INSTANCE
 			);
 		}else{
@@ -577,6 +577,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		if(search != null) {
 			search = search.trim();
+		}
+		if(tag != null) {
+			tag = tag.trim();
 		}
 
 		if((search != null) && (search.length() != 0)){
@@ -643,7 +646,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 
 			}
-			if(tag != null){
+			if((tag != null) && (tag.length() != 0)){
 
 
 
@@ -680,6 +683,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				Sort sort = sorts[0];
 				String fieldName = sort.getFieldName();
 				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
+
 				if(fieldName.equals("totalScore")) {
 
 					dslQuery = dslQuery.leftJoinOn(RatingsStatsTable.INSTANCE,MBThreadTable.INSTANCE.rootMessageId.eq(RatingsStatsTable.INSTANCE.classPK));
@@ -692,7 +696,40 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 					}
 
+				}else if (fieldName.equals("viewCount")){
+
+					dslQuery = dslQuery.innerJoinON(ViewCountEntryTable.INSTANCE,MBThreadTable.INSTANCE.threadId.eq(ViewCountEntryTable.INSTANCE.classPK));
+
+					if(sort.isReverse()){
+						orderByQuery = ViewCountEntryTable.INSTANCE.viewCount.descending();
+
+					}else{
+						orderByQuery = ViewCountEntryTable.INSTANCE.viewCount.ascending();
+
+					}
+
+				}else if(fieldName.equals("dateCreated")){
+
+					if(sort.isReverse()){
+						orderByQuery = MBThreadTable.INSTANCE.createDate.descending();
+
+					}else{
+						orderByQuery = MBThreadTable.INSTANCE.createDate.ascending();
+
+					}
+
+				}else if(fieldName.equals("dateModified")){
+
+					if(sort.isReverse()){
+						orderByQuery = MBThreadTable.INSTANCE.modifiedDate.descending();
+
+					}else{
+						orderByQuery = MBThreadTable.INSTANCE.modifiedDate.ascending();
+
+					}
+
 				}
+
 
 			}
 
@@ -702,10 +739,11 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		if(orderByQuery == null){
 			orderByQuery = MBThreadTable.INSTANCE.createDate.descending();
+
 		}
 
+		return mbThreadPersistence.dslQuery(dslQuery.where(whereQuery).orderBy(orderByQuery));
 
-		return (List<MBThread>) mbThreadPersistence.dslQuery(dslQuery.where(whereQuery).orderBy(orderByQuery));
 	}
 
 	@Override
