@@ -53,13 +53,11 @@ const BuildOutlet: React.FC<BuildOutletProps> = ({ignorePaths}) => {
 		tasksResource,
 		getTasksTransformData
 	);
-
 	const testrayTasks = testrayTasksData?.items || [];
 
 	const testrayTask = testrayTasks.find(
 		(testrayTask) => testrayTask?.build?.id === Number(buildId)
 	);
-
 	const isCurrentPathIgnored = ignorePaths.some((ignorePath) =>
 		pathname.includes(ignorePath)
 	);
@@ -97,11 +95,12 @@ const BuildOutlet: React.FC<BuildOutletProps> = ({ignorePaths}) => {
 	useEffect(() => {
 		if (!isCurrentPathIgnored) {
 			setTabs([
-				{
-					active: pathname === basePath,
-					path: basePath,
-					title: i18n.translate('results'),
-				},
+				// {
+				// 	active: pathname === basePath,
+				// 	path: basePath,
+				// 	title: i18n.translate('results'),
+				// },
+
 				{
 					active: pathname === `${basePath}/runs`,
 					path: `${basePath}/runs`,

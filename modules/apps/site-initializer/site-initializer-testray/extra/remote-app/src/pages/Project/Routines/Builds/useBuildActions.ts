@@ -61,8 +61,9 @@ const useBuildActions = ({isHeaderActions}: ActionsHookParameter = {}) => {
 					)
 					.then(modal.onSuccess),
 			icon: 'star',
-			name: ({promoted}) =>
-				i18n.translate(promoted ? 'demote' : 'promote'),
+
+			name: (itens) =>
+				i18n.translate(itens?.promoted ? 'demote' : 'promote'),
 			permission: 'UPDATE',
 		},
 		{

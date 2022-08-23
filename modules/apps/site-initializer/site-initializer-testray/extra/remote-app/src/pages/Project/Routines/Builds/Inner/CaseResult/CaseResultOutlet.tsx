@@ -12,31 +12,38 @@
  * details.
  */
 
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {Outlet, useLocation, useParams} from 'react-router-dom';
 
 import {useFetch} from '../../../../../../hooks/useFetch';
 import useHeader from '../../../../../../hooks/useHeader';
 import i18n from '../../../../../../i18n';
 import {transformDataCaseResults} from '../../../../../../services/rest';
+import useCaseResultActions from './useCaseResultActions';
 
 const CaseResultOutlet = () => {
 	const {pathname} = useLocation();
 	const {buildId, caseResultId, projectId, routineId} = useParams();
+	const {actions} = useCaseResultActions();
 
 	const {data, mutate: mutateCaseResult} = useFetch(
 		`/caseresults/${caseResultId}?nestedFields=case.caseType,commentMBMessage,component,build.productVersion,build.routine,run,user&nestedFieldsDepth=3`
 	);
 
-	const caseResult = transformDataCaseResults(data);
+	const caseResult = useMemo(() => {
+		return transformDataCaseResults(data);
+	}, [data]);
 
 	const basePath = `/project/${projectId}/routines/${routineId}/build/${buildId}/case-result/${caseResultId}`;
 
-	const {context, setHeading, setTabs} = useHeader({shouldUpdate: false});
+	const {context, setHeaderActions, setHeading, setTabs} = useHeader({
+		shouldUpdate: true,
+	});
 
 	const maxHeads = context.heading.length === 4;
 
 	useEffect(() => {
+		setHeaderActions({actions, item: caseResult, mutate: mutateCaseResult});
 		if (caseResult && !maxHeads) {
 			setHeading(
 				[
@@ -48,7 +55,14 @@ const CaseResultOutlet = () => {
 				true
 			);
 		}
-	}, [setHeading, maxHeads, caseResult]);
+	}, [
+		actions,
+		caseResult,
+		mutateCaseResult,
+		maxHeads,
+		setHeading,
+		setHeaderActions,
+	]);
 
 	useEffect(() => {
 		setTimeout(() => {
