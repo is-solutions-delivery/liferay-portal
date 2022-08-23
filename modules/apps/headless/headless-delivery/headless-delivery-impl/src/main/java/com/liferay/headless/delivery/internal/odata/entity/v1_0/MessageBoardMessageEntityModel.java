@@ -80,7 +80,7 @@ public class MessageBoardMessageEntityModel implements EntityModel {
 					"localized_title_".concat(
 						LocaleUtil.toLanguageId(locale)))),
 			new IntegerEntityField(
-			"viewCount", locale -> Field.getSortableFieldName("viewCount")),
+				"viewCount", locale -> Field.getSortableFieldName("viewCount")),
 			new IntegerEntityField(
 				"totalScore",
 				locale -> Field.getSortableFieldName("totalScore")),
