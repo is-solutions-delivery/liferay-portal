@@ -159,7 +159,7 @@ public class MessageBoardThreadResourceImpl
 			TransformUtil.transform(
 				_mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
 					mbCategory.getGroupId(), messageBoardSectionId,
-					(com.liferay.mail.kernel.model.Filter) filter,
+					filter,
 					new QueryDefinition<>(
 						status, contextUser.getUserId(), true,
 						pagination.getStartPosition(),
@@ -171,7 +171,7 @@ public class MessageBoardThreadResourceImpl
 			pagination,
 			_mbThreadService.getMessageBoardSectionMessageBoardThreadsPageCount(
 				mbCategory.getGroupId(), messageBoardSectionId,
-				(com.liferay.mail.kernel.model.Filter) filter,
+				filter,
 				new QueryDefinition<>(
 					status, contextUser.getUserId(), true,
 					pagination.getStartPosition(),
