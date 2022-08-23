@@ -1186,13 +1186,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 					assetListEntryIdsStringUtilReplaceValues,
 					documentsStringUtilReplaceValues);
 
-				Group scopeGroup = serviceContext.getScopeGroup();
+				Group group = serviceContext.getScopeGroup();
 
 				json = _replace(
 					json,
 					new String[] {"[$GROUP_FRIENDLY_URL$]", "[$GROUP_ID$]"},
 					new String[] {
-						scopeGroup.getFriendlyURL(), String.valueOf(groupId)
+						group.getFriendlyURL(), String.valueOf(groupId)
 					});
 
 				zipWriter.addEntry(
@@ -1620,21 +1620,20 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
-		Group scopeGroup = serviceContext.getScopeGroup();
+		Group group = serviceContext.getScopeGroup();
 
 		json = _replace(
-			json,
-			new String[] {
-				"[$GROUP_FRIENDLY_URL$]", "[$GROUP_ID$]", "[$GROUP_KEY$]"
-			},
-			new String[] {
-				scopeGroup.getFriendlyURL(),
-				String.valueOf(serviceContext.getScopeGroupId()),
-				scopeGroup.getGroupKey()
-			});
-
-		json = _replace(
-			json, "[$", "$]", assetListEntryIdsStringUtilReplaceValues,
+			_replace(
+				json,
+				new String[] {
+					"[$GROUP_FRIENDLY_URL$]", "[$GROUP_ID$]", "[$GROUP_KEY$]"
+				},
+				new String[] {
+					group.getFriendlyURL(),
+					String.valueOf(serviceContext.getScopeGroupId()),
+					group.getGroupKey()
+				}),
+			"[$", "$]", assetListEntryIdsStringUtilReplaceValues,
 			clientExtensionEntryIdsStringUtilReplaceValues,
 			ddmStructureEntryIdsStringUtilReplaceValues,
 			documentsStringUtilReplaceValues,
@@ -1769,7 +1768,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					documentsStringUtilReplaceValues,
 					taxonomyCategoryIdsStringUtilReplaceValues);
 
-				Group scopeGroup = serviceContext.getScopeGroup();
+				Group group = serviceContext.getScopeGroup();
 
 				json = _replace(
 					json,
@@ -1778,9 +1777,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 						"[$GROUP_KEY$]"
 					},
 					new String[] {
-						scopeGroup.getFriendlyURL(),
+						group.getFriendlyURL(),
 						String.valueOf(serviceContext.getScopeGroupId()),
-						scopeGroup.getGroupKey()
+						group.getGroupKey()
 					});
 
 				String css = _replace(
