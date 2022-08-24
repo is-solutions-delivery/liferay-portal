@@ -36,6 +36,7 @@ import Breadcrumb from '../../components/Breadcrumb.es';
 import CreatorRow from '../../components/CreatorRow.es';
 import DefaultQuestionsEditor from '../../components/DefaultQuestionsEditor.es';
 import DeleteQuestion from '../../components/DeleteQuestion.es';
+import EditedTimestamp from '../../components/EditedTimestamp.es';
 import Link from '../../components/Link.es';
 import PaginatedList from '../../components/PaginatedList.es';
 import Rating from '../../components/Rating.es';
@@ -55,7 +56,6 @@ import {
 import {ALL_SECTIONS_ID} from '../../utils/contants.es';
 import lang from '../../utils/lang.es';
 import {
-	dateToInternationalHuman,
 	deleteCacheKey,
 	getContextLink,
 	getErrorObject,
@@ -128,8 +128,7 @@ export default withRouter(
 							);
 							setError(errorObject);
 							setLoading(false);
-						}
-						else {
+						} else {
 							setQuestion(messageBoardThreadByFriendlyUrlPath);
 							setLoading(false);
 						}
@@ -219,8 +218,7 @@ export default withRouter(
 				await onSubscription();
 
 				fetchMessages();
-			}
-			catch (error) {}
+			} catch (error) {}
 		};
 
 		const deleteAnswer = useCallback(
@@ -379,22 +377,17 @@ export default withRouter(
 										</h1>
 
 										<p className="c-mb-0 small text-secondary">
-											{`${Liferay.Language.get(
-												'asked'
-											)} - ${dateToInternationalHuman(
-												question.dateCreated,
-												Liferay.ThemeDisplay.getBCP47LanguageId()
-											)} / ${Liferay.Language.get(
-												'active'
-											)} - ${dateToInternationalHuman(
-												question.dateModified,
-												Liferay.ThemeDisplay.getBCP47LanguageId()
-											)} - ${lang.sub(
-												Liferay.Language.get(
-													'viewed-x-times'
-												),
-												[question.viewCount]
-											)}`}
+											<EditedTimestamp
+												dateCreated={
+													question.dateCreated
+												}
+												dateModified={
+													question.dateModified
+												}
+											/>
+
+											{`
+											/ ${lang.sub(Liferay.Language.get('viewed-x-times'), [question.viewCount])}`}
 										</p>
 									</div>
 
