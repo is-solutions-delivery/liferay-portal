@@ -1539,15 +1539,54 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteDefaultLocale, jsonObject.getString("friendlyURL"));
 		}
 
-		Layout layout = _layoutLocalService.addLayout(
-			serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-			jsonObject.getBoolean("private"), parentLayoutId, nameMap,
-			SiteInitializerUtil.toMap(jsonObject.getString("title_i18n")),
-			SiteInitializerUtil.toMap(jsonObject.getString("description_i18n")),
-			SiteInitializerUtil.toMap(jsonObject.getString("keywords_i18n")),
-			SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
-			type, null, jsonObject.getBoolean("hidden"),
-			jsonObject.getBoolean("system"), friendlyURLMap, serviceContext);
+		byte[] iconBytes = null;
+
+		URL url = _servletContext.getResource(
+			parentResourcePath + "/favicon.png");
+
+		if (url != null) {
+			iconBytes = FileUtil.getBytes(url.openStream());
+		}
+
+		Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
+			serviceContext.getScopeGroupId(), jsonObject.getBoolean("private"),
+			jsonObject.getString("friendlyURL"));
+
+		if (layout == null) {
+			layout = _layoutLocalService.addLayout(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				jsonObject.getBoolean("private"), parentLayoutId, nameMap,
+				SiteInitializerUtil.toMap(jsonObject.getString("title_i18n")),
+				SiteInitializerUtil.toMap(
+					jsonObject.getString("description_i18n")),
+				SiteInitializerUtil.toMap(
+					jsonObject.getString("keywords_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
+				type, null, jsonObject.getBoolean("hidden"),
+				jsonObject.getBoolean("system"), friendlyURLMap,
+				serviceContext);
+
+			if (iconBytes != null) {
+				_layoutLocalService.updateIconImage(
+					layout.getPlid(), iconBytes);
+			}
+		}
+		else {
+			layout = _layoutLocalService.updateLayout(
+				serviceContext.getScopeGroupId(),
+				jsonObject.getBoolean("private"), layout.getLayoutId(),
+				parentLayoutId, nameMap,
+				SiteInitializerUtil.toMap(jsonObject.getString("title_i18n")),
+				SiteInitializerUtil.toMap(
+					jsonObject.getString("description_i18n")),
+				SiteInitializerUtil.toMap(
+					jsonObject.getString("keywords_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("robots_i18n")),
+				type, jsonObject.getBoolean("hidden"), friendlyURLMap,
+				layout.getIconImage(), iconBytes, layout.getStyleBookEntryId(),
+				layout.getFaviconFileEntryId(), layout.getMasterLayoutPlid(),
+				serviceContext);
+		}
 
 		_setResourcePermissions(
 			layout.getCompanyId(), layout.getModelClassName(),
