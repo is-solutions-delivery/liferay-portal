@@ -783,6 +783,8 @@
 		<exception>ObjectDefinitionAccountEntryRestricted</exception>
 		<exception>ObjectDefinitionAccountEntryRestrictedObjectFieldId</exception>
 		<exception>ObjectDefinitionActive</exception>
+		<exception>ObjectDefinitionEnableCategorization</exception>
+		<exception>ObjectDefinitionEnableComments</exception>
 		<exception>ObjectDefinitionLabel</exception>
 		<exception>ObjectDefinitionName</exception>
 		<exception>ObjectDefinitionPluralLabel</exception>
