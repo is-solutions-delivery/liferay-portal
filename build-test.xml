@@ -2454,6 +2454,25 @@ sendPasswordCaptchaEnabled=&quot;false&quot;</echo>
 				<elseif>
 					<equals arg1="${app.server.type}" arg2="wildfly" />
 					<then>
+						<propertycopy from="jdbc.${database.type}.driver" name="jdbc.driver" />
+
+						<copy
+							file="${test.app.server.lib.portal.dir}/${jdbc.driver}"
+							tofile="${app.server.lib.global.dir}/${jdbc.driver}"
+						/>
+
+						<echo file="${app.server.lib.global.dir}/module.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<module name="com.liferay.portal" xmlns="urn:jboss:module:1.5">
+	<resources>
+		<resource-root path="${jdbc.driver}" />
+	</resources>
+	<dependencies>
+		<module name="javax.api" />
+		<module name="javax.transaction.api" />
+		<module name="javax.servlet.api" optional="true" />
+	</dependencies>
+</module>]]></echo>
+
 						<if>
 							<not>
 								<resourcecontains
