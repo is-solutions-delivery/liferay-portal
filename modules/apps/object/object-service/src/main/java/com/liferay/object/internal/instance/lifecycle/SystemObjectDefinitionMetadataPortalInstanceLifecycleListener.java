@@ -212,6 +212,11 @@ public class SystemObjectDefinitionMetadataPortalInstanceLifecycleListener
 					objectDefinition.getExtensionDBTableName()),
 				null);
 			_bundleContext.registerService(
+				ArgumentsResolver.class,
+				new ObjectDefinitionTableArgumentsResolver(
+					objectDefinition.getExtensionDBTableName()),
+				null);
+			_bundleContext.registerService(
 				ItemSelectorView.class,
 				new SystemObjectEntryItemSelectorView(
 					_itemSelectorViewDescriptorRenderer, objectDefinition,
