@@ -673,12 +673,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			predicate = predicate.and(
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 
-			joinStep = (JoinStep)joinStep.where(predicate);
-
-			String dslQueryString = String.valueOf(
-				mbThreadPersistence.dslQuery(joinStep));
-
-			return GetterUtil.getInteger(dslQueryString);
+			return GetterUtil.getInteger(
+				(Long)mbThreadPersistence.dslQuery(joinStep.where(predicate)));
 		}
 
 		if (filter != null) {
@@ -776,10 +772,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			}
 		}
 
-		GroupByStep groupByStep = joinStep.where(predicate);
-
 		return GetterUtil.getInteger(
-			(Long)mbThreadPersistence.dslQuery(groupByStep));
+			(Long)mbThreadPersistence.dslQuery(joinStep.where(predicate)));
 	}
 
 	@Override
