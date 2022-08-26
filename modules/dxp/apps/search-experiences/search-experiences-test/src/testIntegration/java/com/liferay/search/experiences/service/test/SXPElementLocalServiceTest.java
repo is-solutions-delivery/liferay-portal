@@ -69,7 +69,7 @@ public class SXPElementLocalServiceTest {
 			externalReferenceCode, sxpElement.getExternalReferenceCode());
 		Assert.assertEquals("1.0", sxpElement.getVersion());
 
-		// Duplicate external reference code in different company
+		// Duplicate external reference code in a different company
 
 		User user = UserTestUtil.addCompanyAdminUser(
 			CompanyTestUtil.addCompany());
@@ -81,7 +81,7 @@ public class SXPElementLocalServiceTest {
 			sxpElement.getExternalReferenceCode(),
 			differentCompanySXPElement.getExternalReferenceCode());
 
-		// Duplicate external reference code in same company
+		// Duplicate external reference code in the same company
 
 		try {
 			_addSXPElement(sxpElement.getExternalReferenceCode());

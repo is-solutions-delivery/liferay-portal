@@ -69,7 +69,7 @@ public class SXPBlueprintLocalServiceTest {
 			externalReferenceCode, sxpBlueprint.getExternalReferenceCode());
 		Assert.assertEquals("1.0", sxpBlueprint.getVersion());
 
-		// Duplicate external reference code in different company
+		// Duplicate external reference code in a different company
 
 		User user = UserTestUtil.addCompanyAdminUser(
 			CompanyTestUtil.addCompany());
@@ -81,7 +81,7 @@ public class SXPBlueprintLocalServiceTest {
 			sxpBlueprint.getExternalReferenceCode(),
 			differentCompanySXPBlueprint.getExternalReferenceCode());
 
-		// Duplicate external reference code in same company
+		// Duplicate external reference code in the same company
 
 		try {
 			_addSXPBlueprint(sxpBlueprint.getExternalReferenceCode());
