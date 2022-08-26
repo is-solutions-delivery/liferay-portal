@@ -460,7 +460,7 @@ public class DownstreamBuild extends BaseBuild {
 		durationValuesElement.addAttribute("style", "display: none;");
 
 		Element durationValuesDataElement = Dom4JUtil.getNewElement(
-			"th", durationValuesElement, "Full Build");
+			"td", durationValuesElement, "Full Build");
 
 		durationValuesDataElement.addAttribute("style", style);
 
