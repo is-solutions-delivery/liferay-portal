@@ -450,23 +450,23 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
-		JoinStep dslQuery = null;
+		JoinStep joinStep = null;
 
-		Predicate whereQuery = MBThreadTable.INSTANCE.categoryId.eq(
+		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
 			categoryId
 		).and(
 			MBThreadTable.INSTANCE.groupId.eq(groupId)
 		);
 
 		if (sorts != null) {
-			dslQuery = DSLQueryFactoryUtil.select(
+			joinStep = DSLQueryFactoryUtil.select(
 				MBThreadTable.INSTANCE
 			).from(
 				MBThreadTable.INSTANCE
 			);
 		}
 		else {
-			dslQuery = DSLQueryFactoryUtil.selectDistinct(
+			joinStep = DSLQueryFactoryUtil.selectDistinct(
 				MBThreadTable.INSTANCE
 			).from(
 				MBThreadTable.INSTANCE
@@ -482,30 +482,30 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if ((search != null) && (search.length() != 0)) {
-			whereQuery = whereQuery.and(
+			predicate = predicate.and(
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 
-			return mbThreadPersistence.dslQuery(dslQuery.where(whereQuery));
+			return mbThreadPersistence.dslQuery(joinStep.where(predicate));
 		}
 
-		OrderByExpression orderByQuery = null;
+		OrderByExpression orderByExpression = null;
 
 		if (filter != null) {
-			String sqlFilter = filter.toString();
+			String filterString = filter.toString();
 
-			sqlFilter = StringUtil.removeSubstring(
-				sqlFilter,
+			filterString = StringUtil.removeSubstring(
+				filterString,
 				"{(query={className=TermQueryImpl, queryTerm={field=");
 
-			sqlFilter = StringUtil.removeSubstring(
-				sqlFilter, "}}), (cached=null, executionOption=null)}");
+			filterString = StringUtil.removeSubstring(
+				filterString, "}}), (cached=null, executionOption=null)}");
 
-			String[] sqlFilters = sqlFilter.split("_sortable, value=");
+			String[] sqlFilters = filterString.split("_sortable, value=");
 
 			if (sqlFilters[0].equals("hasValidAnswer") &&
 				sqlFilters[1].equals("false")) {
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
 							MBMessageTable.INSTANCE.threadId
@@ -518,7 +518,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
 					 sqlFilters[1].equals("0")) {
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
 							MBMessageTable.INSTANCE.threadId
@@ -535,7 +535,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else if (sqlFilters[0].equals("hasValidAnswer") &&
 					 sqlFilters[1].equals("true")) {
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
 						DSLQueryFactoryUtil.select(
 							MBMessageTable.INSTANCE.threadId
@@ -548,7 +548,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if ((tag != null) && (tag.length() != 0)) {
-			dslQuery = dslQuery.innerJoinON(
+			joinStep = joinStep.innerJoinON(
 				AssetEntryTable.INSTANCE,
 				AssetEntryTable.INSTANCE.classPK.eq(
 					MBThreadTable.INSTANCE.rootMessageId)
@@ -563,7 +563,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			);
 
 			if (tag.equals("myWatchedTags")) {
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					AssetTagTable.INSTANCE.name.in(
 						DSLQueryFactoryUtil.select(
 							AssetTagTable.INSTANCE.name
@@ -580,7 +580,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else {
 				String[] tags = tag.split(",");
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					AssetTagTable.INSTANCE.name.in(tags));
 			}
 		}
@@ -593,66 +593,66 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
 
 			if (fieldName.equals("totalScore")) {
-				dslQuery = dslQuery.leftJoinOn(
+				joinStep = joinStep.leftJoinOn(
 					RatingsStatsTable.INSTANCE,
 					MBThreadTable.INSTANCE.rootMessageId.eq(
 						RatingsStatsTable.INSTANCE.classPK));
 
 				if (sort.isReverse()) {
-					orderByQuery =
+					orderByExpression =
 						RatingsStatsTable.INSTANCE.totalScore.descending();
 				}
 				else {
-					orderByQuery =
+					orderByExpression =
 						RatingsStatsTable.INSTANCE.totalScore.ascending();
 				}
 			}
 			else if (fieldName.equals("viewCount")) {
-				dslQuery = dslQuery.innerJoinON(
+				joinStep = joinStep.innerJoinON(
 					ViewCountEntryTable.INSTANCE,
 					MBThreadTable.INSTANCE.threadId.eq(
 						ViewCountEntryTable.INSTANCE.classPK));
 
 				if (sort.isReverse()) {
-					orderByQuery =
+					orderByExpression =
 						ViewCountEntryTable.INSTANCE.viewCount.descending();
 				}
 				else {
-					orderByQuery =
+					orderByExpression =
 						ViewCountEntryTable.INSTANCE.viewCount.ascending();
 				}
 			}
 			else if (fieldName.equals("dateCreated")) {
 				if (sort.isReverse()) {
-					orderByQuery =
+					orderByExpression =
 						MBThreadTable.INSTANCE.createDate.descending();
 				}
 				else {
-					orderByQuery =
+					orderByExpression =
 						MBThreadTable.INSTANCE.createDate.ascending();
 				}
 			}
 			else if (fieldName.equals("dateModified")) {
 				if (sort.isReverse()) {
-					orderByQuery =
+					orderByExpression =
 						MBThreadTable.INSTANCE.modifiedDate.descending();
 				}
 				else {
-					orderByQuery =
+					orderByExpression =
 						MBThreadTable.INSTANCE.modifiedDate.ascending();
 				}
 			}
 		}
 
-		if (orderByQuery == null) {
-			orderByQuery = MBThreadTable.INSTANCE.createDate.descending();
+		if (orderByExpression == null) {
+			orderByExpression = MBThreadTable.INSTANCE.createDate.descending();
 		}
 
 		return mbThreadPersistence.dslQuery(
-			dslQuery.where(
-				whereQuery
+			joinStep.where(
+				predicate
 			).orderBy(
-				orderByQuery
+				orderByExpression
 			));
 	}
 
@@ -662,13 +662,13 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
-		Predicate whereQuery = MBThreadTable.INSTANCE.categoryId.eq(
+		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
 			categoryId
 		).and(
 			MBThreadTable.INSTANCE.groupId.eq(groupId)
 		);
 
-		JoinStep dslQuery = DSLQueryFactoryUtil.countDistinct(
+		JoinStep joinStep = DSLQueryFactoryUtil.countDistinct(
 			MBThreadTable.INSTANCE.threadId
 		).from(
 			MBThreadTable.INSTANCE
@@ -679,33 +679,33 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if ((search != null) && (search.length() != 0)) {
-			whereQuery = whereQuery.and(
+			predicate = predicate.and(
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 
-			dslQuery = (JoinStep)dslQuery.where(whereQuery);
+			joinStep = (JoinStep)joinStep.where(predicate);
 
 			String dslQueryString = String.valueOf(
-				mbThreadPersistence.dslQuery(dslQuery));
+				mbThreadPersistence.dslQuery(joinStep));
 
 			return GetterUtil.getInteger(dslQueryString);
 		}
 
 		if (filter != null) {
-			String sqlFilter = filter.toString();
+			String filterString = filter.toString();
 
-			sqlFilter = StringUtil.removeSubstring(
-				sqlFilter,
+			filterString = StringUtil.removeSubstring(
+				filterString,
 				"{(query={className=TermQueryImpl, queryTerm={field=");
 
-			sqlFilter = StringUtil.removeSubstring(
-				sqlFilter, "}}), (cached=null, executionOption=null)}");
+			filterString = StringUtil.removeSubstring(
+				filterString, "}}), (cached=null, executionOption=null)}");
 
-			String[] sqlFilters = sqlFilter.split("_sortable, value=");
+			String[] sqlFilters = filterString.split("_sortable, value=");
 
 			if (sqlFilters[0].equals("hasValidAnswer") &&
 				sqlFilters[1].equals("false")) {
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
 							MBMessageTable.INSTANCE.threadId
@@ -718,7 +718,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
 					 sqlFilters[1].equals("0")) {
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
 							MBMessageTable.INSTANCE.threadId
@@ -735,7 +735,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else if (sqlFilters[0].equals("hasValidAnswer") &&
 					 sqlFilters[1].equals("true")) {
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
 						DSLQueryFactoryUtil.select(
 							MBMessageTable.INSTANCE.threadId
@@ -748,7 +748,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if (tag != null) {
-			dslQuery = dslQuery.innerJoinON(
+			joinStep = joinStep.innerJoinON(
 				AssetEntryTable.INSTANCE,
 				AssetEntryTable.INSTANCE.classPK.eq(
 					MBThreadTable.INSTANCE.rootMessageId)
@@ -763,7 +763,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			);
 
 			if (tag.equals("myWatchedTags")) {
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					AssetTagTable.INSTANCE.name.in(
 						DSLQueryFactoryUtil.select(
 							AssetTagTable.INSTANCE.name
@@ -780,12 +780,12 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else {
 				String[] tags = tag.split(",");
 
-				whereQuery = whereQuery.and(
+				predicate = predicate.and(
 					AssetTagTable.INSTANCE.name.in(tags));
 			}
 		}
 
-		GroupByStep groupByStep = dslQuery.where(whereQuery);
+		GroupByStep groupByStep = joinStep.where(predicate);
 
 		return GetterUtil.getInteger(
 			(Long)mbThreadPersistence.dslQuery(groupByStep));
