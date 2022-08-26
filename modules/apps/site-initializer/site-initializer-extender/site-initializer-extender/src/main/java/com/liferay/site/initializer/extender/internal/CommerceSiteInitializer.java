@@ -212,11 +212,13 @@ public class CommerceSiteInitializer {
 			}
 
 			try {
+				Catalog catalog2 =
+					catalogResource.getCatalogByExternalReferenceCode(
+						jsonObject.getString("externalReferenceCode"));
 
-				Catalog catalog2 = catalogResource.getCatalogByExternalReferenceCode(jsonObject.getString("externalReferenceCode"));
-				catalogResource.patchCatalog(catalog2.getId(),catalog1);
-
-			} catch (Exception exception){
+				catalogResource.patchCatalog(catalog2.getId(), catalog1);
+			}
+			catch (Exception exception) {
 				catalog1 = catalogResource.postCatalog(catalog1);
 			}
 
