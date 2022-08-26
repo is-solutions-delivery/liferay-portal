@@ -42,7 +42,6 @@ import com.liferay.message.boards.service.persistence.MBMessagePersistence;
 import com.liferay.message.boards.util.comparator.MessageThreadComparator;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.expression.Predicate;
-import com.liferay.petra.sql.dsl.query.GroupByStep;
 import com.liferay.petra.sql.dsl.query.JoinStep;
 import com.liferay.petra.sql.dsl.query.sort.OrderByExpression;
 import com.liferay.portal.aop.AopService;
@@ -452,7 +451,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		JoinStep joinStep = null;
 
-
 		if (sorts != null) {
 			joinStep = DSLQueryFactoryUtil.select(
 				MBThreadTable.INSTANCE
@@ -480,7 +478,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 			return mbThreadPersistence.dslQuery(joinStep.where(predicate));
 		}
-
 
 		if (filter != null) {
 			String filterString = filter.toString();
@@ -572,8 +569,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else {
 				String[] tags = tag.split(",");
 
-				predicate = predicate.and(
-					AssetTagTable.INSTANCE.name.in(tags));
+				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(tags));
 			}
 		}
 
@@ -655,7 +651,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		long groupId, long userId, long categoryId, Filter filter,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
-
 
 		JoinStep joinStep = DSLQueryFactoryUtil.countDistinct(
 			MBThreadTable.INSTANCE.threadId
@@ -767,8 +762,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			else {
 				String[] tags = tag.split(",");
 
-				predicate = predicate.and(
-					AssetTagTable.INSTANCE.name.in(tags));
+				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(tags));
 			}
 		}
 
