@@ -468,17 +468,13 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			);
 		}
 
-		if (search != null) {
-			search = search.trim();
-		}
-
 		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
 			categoryId
 		).and(
 			MBThreadTable.INSTANCE.groupId.eq(groupId)
 		);
 
-		if ((search != null) && (search.length() != 0)) {
+		if (Validator.isNotNull(search)) {
 			predicate = predicate.and(
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 
@@ -543,11 +539,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			}
 		}
 
-		if (tag != null) {
-			tag = tag.trim();
-		}
-
-		if ((tag != null) && (tag.length() != 0)) {
+		if (Validator.isNotNull(tag)) {
 			joinStep = joinStep.innerJoinON(
 				AssetEntryTable.INSTANCE,
 				AssetEntryTable.INSTANCE.classPK.eq(
@@ -671,17 +663,13 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			MBThreadTable.INSTANCE
 		);
 
-		if (search != null) {
-			search = search.trim();
-		}
-
 		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
 			categoryId
 		).and(
 			MBThreadTable.INSTANCE.groupId.eq(groupId)
 		);
 
-		if ((search != null) && (search.length() != 0)) {
+		if (Validator.isNotNull(search)) {
 			predicate = predicate.and(
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 
