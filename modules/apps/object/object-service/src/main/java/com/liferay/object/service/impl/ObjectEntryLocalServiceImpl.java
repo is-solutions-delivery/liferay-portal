@@ -1964,7 +1964,7 @@ public class ObjectEntryLocalServiceImpl
 			return GetterUtil.getInteger(object);
 		}
 		else if (sqlType == Types.VARCHAR) {
-			return GetterUtil.getString(object, null);
+			return object;
 		}
 		else {
 			throw new IllegalArgumentException(
