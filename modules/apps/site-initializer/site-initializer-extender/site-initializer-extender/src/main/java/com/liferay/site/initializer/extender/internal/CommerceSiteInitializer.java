@@ -202,23 +202,30 @@ public class CommerceSiteInitializer {
 
 			jsonObject.remove("assetVocabularyName");
 
-			Catalog catalog = Catalog.toDTO(String.valueOf(jsonObject));
+			Catalog catalog1 = Catalog.toDTO(String.valueOf(jsonObject));
 
-			if (catalog == null) {
+			if (catalog1 == null) {
 				_log.error(
 					"Unable to transform commerce catalog from JSON: " + json);
 
 				continue;
 			}
 
-			catalog = catalogResource.postCatalog(catalog);
+			try {
+
+				Catalog catalog2 = catalogResource.getCatalogByExternalReferenceCode(jsonObject.getString("externalReferenceCode"));
+				catalogResource.patchCatalog(catalog2.getId(),catalog1);
+
+			} catch (Exception exception){
+				catalog1 = catalogResource.postCatalog(catalog1);
+			}
 
 			_addCPOptions(
-				catalog,
+				catalog1,
 				StringUtil.replaceLast(resourcePath, ".json", ".options.json"),
 				serviceContext, servletContext);
 			_addCPDefinitions(
-				assetVocabularyName, bundle, catalog, channel,
+				assetVocabularyName, bundle, catalog1, channel,
 				commerceInventoryWarehouses,
 				StringUtil.replaceLast(resourcePath, ".json", ".products.json"),
 				serviceContext, servletContext);
