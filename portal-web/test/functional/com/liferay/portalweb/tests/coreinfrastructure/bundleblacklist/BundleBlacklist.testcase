@@ -132,7 +132,7 @@ definition {
 
 		PagesAdmin.viewWidgetPageCurrentTheme(
 			pageName = "Search",
-			themeName = "Classic Theme");
+			themeName = "Classic");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
@@ -158,7 +158,7 @@ definition {
 
 		Navigator.gotoNavTab(navTab = "Look and Feel");
 
-		AssertTextNotPresent(value1 = "Classic Theme");
+		AssertTextNotPresent(value1 = "Classic");
 	}
 
 	@priority = "3"
