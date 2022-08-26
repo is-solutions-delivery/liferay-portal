@@ -452,11 +452,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		JoinStep joinStep = null;
 
-		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
-			categoryId
-		).and(
-			MBThreadTable.INSTANCE.groupId.eq(groupId)
-		);
 
 		if (sorts != null) {
 			joinStep = DSLQueryFactoryUtil.select(
@@ -477,9 +472,11 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			search = search.trim();
 		}
 
-		if (tag != null) {
-			tag = tag.trim();
-		}
+		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
+			categoryId
+		).and(
+			MBThreadTable.INSTANCE.groupId.eq(groupId)
+		);
 
 		if ((search != null) && (search.length() != 0)) {
 			predicate = predicate.and(
@@ -488,7 +485,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			return mbThreadPersistence.dslQuery(joinStep.where(predicate));
 		}
 
-		OrderByExpression orderByExpression = null;
 
 		if (filter != null) {
 			String filterString = filter.toString();
@@ -547,6 +543,10 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			}
 		}
 
+		if (tag != null) {
+			tag = tag.trim();
+		}
+
 		if ((tag != null) && (tag.length() != 0)) {
 			joinStep = joinStep.innerJoinON(
 				AssetEntryTable.INSTANCE,
@@ -584,6 +584,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 					AssetTagTable.INSTANCE.name.in(tags));
 			}
 		}
+
+		OrderByExpression orderByExpression = null;
 
 		if (sorts != null) {
 			Sort sort = sorts[0];
@@ -662,11 +664,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
-		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
-			categoryId
-		).and(
-			MBThreadTable.INSTANCE.groupId.eq(groupId)
-		);
 
 		JoinStep joinStep = DSLQueryFactoryUtil.countDistinct(
 			MBThreadTable.INSTANCE.threadId
@@ -677,6 +674,12 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (search != null) {
 			search = search.trim();
 		}
+
+		Predicate predicate = MBThreadTable.INSTANCE.categoryId.eq(
+			categoryId
+		).and(
+			MBThreadTable.INSTANCE.groupId.eq(groupId)
+		);
 
 		if ((search != null) && (search.length() != 0)) {
 			predicate = predicate.and(
