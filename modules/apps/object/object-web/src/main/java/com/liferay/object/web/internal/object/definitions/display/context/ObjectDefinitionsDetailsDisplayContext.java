@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.util.Validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -166,9 +167,7 @@ public class ObjectDefinitionsDetailsDisplayContext
 		String name, List<ObjectField> objectFields) {
 
 		for (ObjectField objectField : objectFields) {
-			String objectFieldName = objectField.getName();
-
-			if (objectFieldName.equals(name)) {
+			if (Objects.equals(objectField.getName(), name)) {
 				return objectField;
 			}
 		}
