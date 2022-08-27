@@ -24,7 +24,10 @@ ObjectDefinitionsDetailsDisplayContext objectDefinitionsDetailsDisplayContext = 
 ObjectDefinition objectDefinition = objectDefinitionsDetailsDisplayContext.getObjectDefinition();
 
 List<ObjectField> accountEntryRelationshipObjectFields = objectDefinitionsDetailsDisplayContext.getAccountEntryRelationshipObjectFields();
+
 List<ObjectField> nonrelationshipObjectFields = objectDefinitionsDetailsDisplayContext.getNonrelationshipObjectFields();
+
+ObjectField idObjectField = objectDefinitionsDetailsDisplayContext.getObjectField("id", nonrelationshipObjectFields);
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(backURL);
@@ -97,11 +100,6 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 					<clay:col
 						md="11"
 					>
-
-						<%
-						ObjectField idObjectField = objectDefinitionsDetailsDisplayContext.getObjectField("id", nonrelationshipObjectFields);
-						%>
-
 						<aui:select disabled="<%= !objectDefinitionsDetailsDisplayContext.hasUpdateObjectDefinitionPermission() %>" name="titleObjectFieldId" showEmptyOption="<%= false %>">
 							<aui:option label="<%= HtmlUtil.escape(idObjectField.getLabel(locale)) %>" selected="<%= true %>" value="<%= idObjectField.getObjectFieldId() %>" />
 
