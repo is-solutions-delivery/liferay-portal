@@ -27,7 +27,7 @@ List<ObjectField> accountEntryRelationshipObjectFields = objectDefinitionsDetail
 
 List<ObjectField> nonrelationshipObjectFields = objectDefinitionsDetailsDisplayContext.getNonrelationshipObjectFields();
 
-ObjectField objectIdField = objectDefinitionsDetailsDisplayContext.getObjectField("id", nonrelationshipObjectFields);
+ObjectField objectIdField = objectDefinitionsDetailsDisplayContext.getObjectFieldByName("id", nonrelationshipObjectFields);
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(backURL);

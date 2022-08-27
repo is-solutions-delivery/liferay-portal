@@ -163,7 +163,7 @@ public class ObjectDefinitionsDetailsDisplayContext
 			ObjectWebKeys.OBJECT_DEFINITION);
 	}
 
-	public ObjectField getObjectField(
+	public ObjectField getObjectFieldByName(
 		String name, List<ObjectField> objectFields) {
 
 		for (ObjectField objectField : objectFields) {
