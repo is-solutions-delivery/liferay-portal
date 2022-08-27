@@ -168,9 +168,9 @@ public class ObjectDefinitionsDetailsDisplayContext
 		for (ObjectField objectField : objectFields) {
 			String objectFieldName = objectField.getName();
 
-			if (objectFieldName.equals(name))
-
+			if (objectFieldName.equals(name)) {
 				return objectField;
+			}
 		}
 
 		return null;
