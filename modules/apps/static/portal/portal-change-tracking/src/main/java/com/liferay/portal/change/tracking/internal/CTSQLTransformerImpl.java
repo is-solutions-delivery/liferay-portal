@@ -301,16 +301,15 @@ public class CTSQLTransformerImpl implements CTSQLTransformer {
 	}
 
 	private void _loadCache() {
-		File transformationCacheFile = _bundleContext.getDataFile(
-			_SQL_CACHE_FILE);
+		File sqlCacheFile = _bundleContext.getDataFile(_SQL_CACHE_FILE_NAME);
 
-		if (!transformationCacheFile.exists()) {
+		if (!sqlCacheFile.exists()) {
 			return;
 		}
 
 		try {
 			Deserializer deserializer = new Deserializer(
-				ByteBuffer.wrap(FileUtil.getBytes(transformationCacheFile)));
+				ByteBuffer.wrap(FileUtil.getBytes(sqlCacheFile)));
 
 			Bundle bundle = _bundleContext.getBundle();
 
@@ -329,7 +328,7 @@ public class CTSQLTransformerImpl implements CTSQLTransformer {
 			_log.error("Unable to load cache", ioException);
 		}
 		finally {
-			transformationCacheFile.delete();
+			sqlCacheFile.delete();
 		}
 	}
 
@@ -354,18 +353,15 @@ public class CTSQLTransformerImpl implements CTSQLTransformer {
 			serializer.writeString(entry.getValue());
 		}
 
-		File transformationCacheFile = _bundleContext.getDataFile(
-			_SQL_CACHE_FILE);
+		File sqlCacheFile = _bundleContext.getDataFile(_SQL_CACHE_FILE_NAME);
 
-		try (OutputStream outputStream = new FileOutputStream(
-				transformationCacheFile)) {
-
+		try (OutputStream outputStream = new FileOutputStream(sqlCacheFile)) {
 			serializer.writeTo(outputStream);
 		}
 		catch (IOException ioException) {
 			_log.error("Unable to write cache file", ioException);
 
-			transformationCacheFile.delete();
+			sqlCacheFile.delete();
 		}
 	}
 
@@ -377,7 +373,7 @@ public class CTSQLTransformerImpl implements CTSQLTransformer {
 			sql, "LIKE '[$LFR_LIKE_ESCAPE_STRING$]'", "LIKE ? ESCAPE '\\'");
 	}
 
-	private static final String _SQL_CACHE_FILE = "sqlCacheFile";
+	private static final String _SQL_CACHE_FILE_NAME = "sqlCacheFile";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CTSQLTransformerImpl.class);
