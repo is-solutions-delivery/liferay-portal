@@ -119,7 +119,8 @@ definition {
 	@ignore = "true"
 	@priority = "5"
 	test IfPartnershipUrlFollowsRespectivePage {
-		//Reason: Partnership page not yet implemented
+
+		// Reason: Partnership page not yet implemented
 
 		task ("Go to CP2.0 and navigate to the product activation page") {
 			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");

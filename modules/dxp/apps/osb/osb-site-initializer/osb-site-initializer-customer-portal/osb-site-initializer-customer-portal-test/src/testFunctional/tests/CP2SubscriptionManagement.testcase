@@ -43,7 +43,7 @@ definition {
 
 			CustomerPortal.enterOnProject(title = "Test Account LXC-SM");
 		}
-		
+
 		task ("Assert the signature card details") {
 			CustomerPortal.viewCardValue();
 		}
