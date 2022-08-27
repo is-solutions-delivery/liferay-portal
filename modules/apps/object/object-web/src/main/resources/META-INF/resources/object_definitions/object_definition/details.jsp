@@ -102,6 +102,9 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 
 							<%
 							for (ObjectField objectField : nonrelationshipObjectFields) {
+								if (Objects.equals(objectField.getName(), "id")) {
+									continue;
+								}
 							%>
 
 								<aui:option label="<%= HtmlUtil.escape(objectField.getLabel(locale)) %>" selected="<%= Objects.equals(objectField.getObjectFieldId(), objectDefinition.getTitleObjectFieldId()) %>" value="<%= objectField.getObjectFieldId() %>" />
