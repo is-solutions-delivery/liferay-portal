@@ -27,7 +27,7 @@ List<ObjectField> accountEntryRelationshipObjectFields = objectDefinitionsDetail
 
 List<ObjectField> nonrelationshipObjectFields = objectDefinitionsDetailsDisplayContext.getNonrelationshipObjectFields();
 
-ObjectField idObjectField = objectDefinitionsDetailsDisplayContext.getObjectField("id", nonrelationshipObjectFields);
+ObjectField objectIdField = objectDefinitionsDetailsDisplayContext.getObjectField("id", nonrelationshipObjectFields);
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(backURL);
@@ -101,11 +101,11 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 						md="11"
 					>
 						<aui:select disabled="<%= !objectDefinitionsDetailsDisplayContext.hasUpdateObjectDefinitionPermission() %>" name="titleObjectFieldId" showEmptyOption="<%= false %>">
-							<aui:option label="<%= HtmlUtil.escape(idObjectField.getLabel(locale)) %>" selected="<%= true %>" value="<%= idObjectField.getObjectFieldId() %>" />
+							<aui:option label="<%= HtmlUtil.escape(objectIdField.getLabel(locale)) %>" selected="<%= true %>" value="<%= objectIdField.getObjectFieldId() %>" />
 
 							<%
 							for (ObjectField objectField : nonrelationshipObjectFields) {
-								String idFieldLabel = HtmlUtil.escape(idObjectField.getLabel(locale));
+								String idFieldLabel = HtmlUtil.escape(objectIdField.getLabel(locale));
 								String objectFieldLabel = HtmlUtil.escape(objectField.getLabel(locale));
 							%>
 
