@@ -46,13 +46,13 @@ const populateNotificationsData = (initialElements, setElements) => {
 					let filterTypeRetrieveUsersBy = Object.keys(recipient)[1];
 					const keywordRetrieveUsersBy = Object.values(recipient)[1];
 
-					if (filterTypeRetrieveUsersBy === 'userId') {
+					if (filterTypeRetrieveUsersBy === 'screenName') {
+						filterTypeRetrieveUsersBy = 'alternateName';
+					}
+					else if (filterTypeRetrieveUsersBy === 'userId') {
 						filterTypeRetrieveUsersBy = filterTypeRetrieveUsersBy
 							.toLocaleLowerCase()
 							.replace('user', '');
-					}
-					else if (filterTypeRetrieveUsersBy === 'screenName') {
-						filterTypeRetrieveUsersBy = 'alternateName';
 					}
 
 					retrieveUsersBy(
