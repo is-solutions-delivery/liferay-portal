@@ -39,6 +39,10 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
  */
 public abstract class BaseConfigurationFactory {
 
+	public String getConfigMapName() {
+		return _configMapName;
+	}
+
 	public String getConfigMapName(String webId) {
 		if (_configMapName != null) {
 			return _configMapName;
@@ -51,10 +55,6 @@ public abstract class BaseConfigurationFactory {
 
 		return _configMapName = StringBundler.concat(
 			_serviceId, StringPool.DASH, webId, "-lxc-ext-init-metadata");
-	}
-
-	public String getConfigMapName() {
-		return _configMapName;
 	}
 
 	public Map<String, String> getExtensionProperties() {
