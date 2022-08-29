@@ -141,7 +141,7 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 							properties.get("ext.lxc.liferay.com.serviceUid")));
 					labels.put("lxc.liferay.com/metadataType", "ext-init");
 				},
-				createAndRetainConfigMapName(company.getWebId()));
+				getConfigMapName(company.getWebId()));
 		}
 
 		setOAuth2Application(oAuth2Application);

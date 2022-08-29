@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
  */
 public abstract class BaseConfigurationFactory {
 
-	public String createAndRetainConfigMapName(String webId) {
+	public String getConfigMapName(String webId) {
 		if (_configMapName != null) {
 			return _configMapName;
 		}
