@@ -38,8 +38,8 @@ const populateNotificationsData = (initialElements, setElements) => {
 				else if (
 					recipient?.assignmentType?.[0] === 'user' &&
 					(recipient.emailAddress ||
-						recipient.userId ||
-						recipient.screenName)
+						recipient.screenName ||
+						recipient.userId)
 				) {
 					const sectionsData = [];
 
