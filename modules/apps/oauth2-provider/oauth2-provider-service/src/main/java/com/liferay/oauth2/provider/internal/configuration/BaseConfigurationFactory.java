@@ -49,8 +49,7 @@ public abstract class BaseConfigurationFactory {
 		}
 
 		if (_serviceId == null) {
-			throw new IllegalStateException(
-				"setServiceId must be called first");
+			throw new IllegalStateException("Service ID is null");
 		}
 
 		return _configMapName = StringBundler.concat(
