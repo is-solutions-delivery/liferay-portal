@@ -1,0 +1,85 @@
+@component-name = "portal-solutions"
+definition {
+
+	property osgi.modules.includes = "osb-site-initializer-customer-portal";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer Customer Portal";
+
+	var testSiteName = "Customer Portal Site";
+	var testSiteURL = "customer-portal-site";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Customer Portal Site") {
+			CustomerPortal.addCustomerPortalSite(siteName = "${testSiteName}");
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		CustomerPortal.customerPortalApisTearDown();
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "${testSiteName}");
+		}
+	}
+
+    @description = "Automation ID: LPS-150003 | Test Summary: Verify if after the user clicks on Remove in the actions menu, a modal opens with a confirmation message"
+    @priority = "4"
+    test CanViewAConfirmationMessage {
+
+        // TODO LPS-150003 CanViewAConfirmationMessage pending implementation
+
+    }
+
+    @description = "Automation ID: LPS-150004 | Test Summary: Verify if the user clicks the Cancel button he stays on the Team Members page"
+    @priority = "4"
+    test AfterCancellingTheActionHeStaysOnTheSamePage {
+
+        // TODO LPS-150004 AfterCancellingTheActionHeStaysOnTheSamePage pending implementation
+
+    }
+
+    @description = "Automation ID: LPS-150005 | Test Summary: Verify that if the user clicks the Remove confirmation button the staff member is indeed removed"
+    @priority = "5"
+    test CanViewIfTheUserIsRemoved {
+
+        // TODO LPS-150005 CanViewIfTheUserIsRemoved pending implementation
+
+    }
+
+    @description = "Automation ID: LPS-150007 | Test Summary: Verify if by clicking Edit the user can change a function already selected among the available functions in the drop-down"
+    @priority = "4"
+    test ChangeAnAlreadySelectedRole {
+
+        // TODO LPS-150007 ChangeAnAlreadySelectedRole pending implementation
+
+    }
+
+    @description = "Automation ID: LPS-150012 | Test Summary: Verify that after the user clicks Edit a Save button is available"
+    @priority = ""
+    test CanViewSaveButton {
+
+        // TODO LPS-150012 CanViewSaveButton pending implementation
+
+    }
+
+    @description = "Automation ID: LPS-150013 | Test Summary: Verify that after the user clicks Edit a Cancel button is available"
+    @priority = "5"
+    test CanViewCancelButton {
+
+        // TODO LPS-150013 CanViewCancelButton pending implementation
+
+    }
+}
