@@ -6575,8 +6575,6 @@ definition {
 			category = "Content & Data",
 			portlet = "Web Content");
 
-		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent1 Title");
-
 		WebContent.viewWithStructureCP(
 			webContentRichText = "WC WebContent1 Content",
 			webContentRichTextFieldLabel = "content",
@@ -6631,8 +6629,6 @@ definition {
 		ProductMenu.gotoPortlet(
 			category = "Content & Data",
 			portlet = "Web Content");
-
-		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent2 Title");
 
 		WebContent.viewWithStructureCP(
 			webContentRichText = "WC WebContent2 Content",
