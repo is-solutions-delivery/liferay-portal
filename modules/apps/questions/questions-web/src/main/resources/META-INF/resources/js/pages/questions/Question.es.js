@@ -48,6 +48,7 @@ import {
 	getMessages,
 	getSubscriptionsQuery,
 	getThread,
+	getUserActivityQuery,
 	markAsAnswerMessageBoardMessageQuery,
 	subscribeQuery,
 	unsubscribeQuery,
@@ -128,8 +129,7 @@ export default withRouter(
 							);
 							setError(errorObject);
 							setLoading(false);
-						}
-						else {
+						} else {
 							setQuestion(messageBoardThreadByFriendlyUrlPath);
 							setLoading(false);
 						}
@@ -219,8 +219,14 @@ export default withRouter(
 				await onSubscription();
 
 				fetchMessages();
-			}
-			catch (error) {}
+
+				deleteCacheKey(getUserActivityQuery, {
+					filter: `creatorId eq ${context.userId}`,
+					page,
+					pageSize,
+					siteKey: context.siteKey,
+				});
+			} catch (error) {}
 		};
 
 		const deleteAnswer = useCallback(
