@@ -726,6 +726,9 @@ public class ObjectDefinitionLocalServiceImpl
 		pkObjectFieldDBColumnName = _getPKObjectFieldDBColumnName(
 			pkObjectFieldDBColumnName, pkObjectFieldName, system);
 
+		storageType = Validator.isNotNull(storageType) ? storageType :
+			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT;
+
 		_validateLabel(labelMap);
 		_validateName(0, user.getCompanyId(), name, system);
 		_validatePluralLabel(pluralLabelMap);
@@ -734,9 +737,6 @@ public class ObjectDefinitionLocalServiceImpl
 
 		ObjectDefinition objectDefinition = objectDefinitionPersistence.create(
 			counterLocalService.increment());
-
-		storageType = Validator.isNotNull(storageType) ? storageType :
-			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT;
 
 		objectDefinition.setCompanyId(user.getCompanyId());
 		objectDefinition.setUserId(user.getUserId());
@@ -1080,6 +1080,13 @@ public class ObjectDefinitionLocalServiceImpl
 				accountEntryRestrictedObjectFieldId, true);
 		}
 
+		objectDefinition.setAccountEntryRestrictedObjectFieldId(
+			accountEntryRestrictedObjectFieldId);
+		objectDefinition.setDescriptionObjectFieldId(descriptionObjectFieldId);
+		objectDefinition.setTitleObjectFieldId(titleObjectFieldId);
+		objectDefinition.setAccountEntryRestricted(accountEntryRestricted);
+		objectDefinition.setActive(active);
+
 		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672"))) {
 			objectDefinition.setEnableCategorization(enableCategorization);
 			objectDefinition.setEnableComments(enableComments);
@@ -1093,12 +1100,6 @@ public class ObjectDefinitionLocalServiceImpl
 			objectDefinition.setEnableComments(false);
 		}
 
-		objectDefinition.setAccountEntryRestrictedObjectFieldId(
-			accountEntryRestrictedObjectFieldId);
-		objectDefinition.setDescriptionObjectFieldId(descriptionObjectFieldId);
-		objectDefinition.setTitleObjectFieldId(titleObjectFieldId);
-		objectDefinition.setAccountEntryRestricted(accountEntryRestricted);
-		objectDefinition.setActive(active);
 		objectDefinition.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectDefinition.setPanelAppOrder(panelAppOrder);
 		objectDefinition.setPanelCategoryKey(panelCategoryKey);
@@ -1237,7 +1238,7 @@ public class ObjectDefinitionLocalServiceImpl
 		if (enableCategorization && system) {
 			throw new ObjectDefinitionEnableCategorizationException(
 				"Enable categorization is not allowed for system object " +
-					"definition");
+					"definitions");
 		}
 
 		if (enableCategorization &&
@@ -1245,8 +1246,8 @@ public class ObjectDefinitionLocalServiceImpl
 				storageType, ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT)) {
 
 			throw new ObjectDefinitionEnableCategorizationException(
-				"Enable categorization is allowed only in object definition " +
-					"with default storage type");
+				"Enable categorization is allowed only for object " +
+					"definitions with the default storage type");
 		}
 	}
 
@@ -1256,7 +1257,7 @@ public class ObjectDefinitionLocalServiceImpl
 
 		if (enableComments && system) {
 			throw new ObjectDefinitionEnableCommentsException(
-				"Enable comments is not allowed for system object definition");
+				"Enable comments is not allowed for system object definitions");
 		}
 
 		if (enableComments &&
@@ -1264,8 +1265,8 @@ public class ObjectDefinitionLocalServiceImpl
 				storageType, ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT)) {
 
 			throw new ObjectDefinitionEnableCategorizationException(
-				"Enable comments is allowed only in object definition with " +
-					"default storage type");
+				"Enable comments is allowed only for object definitions with " +
+					"the default storage type");
 		}
 	}
 
