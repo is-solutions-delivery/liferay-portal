@@ -35,13 +35,13 @@ const populateAssignmentsData = (initialElements, setElements) => {
 					element.data.assignments
 				)[1];
 
-				if (filterTypeRetrieveUsersBy === 'userId') {
+				if (filterTypeRetrieveUsersBy === 'screenName') {
+					filterTypeRetrieveUsersBy = 'alternateName';
+				}
+				else if (filterTypeRetrieveUsersBy === 'userId') {
 					filterTypeRetrieveUsersBy = filterTypeRetrieveUsersBy
 						.toLocaleLowerCase()
 						.replace('user', '');
-				}
-				else if (filterTypeRetrieveUsersBy === 'screenName') {
-					filterTypeRetrieveUsersBy = 'alternateName';
 				}
 
 				retrieveUsersBy(
