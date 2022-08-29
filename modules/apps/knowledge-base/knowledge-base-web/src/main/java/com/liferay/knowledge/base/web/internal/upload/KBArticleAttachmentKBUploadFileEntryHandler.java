@@ -77,7 +77,7 @@ public class KBArticleAttachmentKBUploadFileEntryHandler
 			}
 		}
 
-		return _editImageKBAttachment(
+		return _addKBAttachment(
 			kbArticle, resourcePrimKey, uploadPortletRequest, themeDisplay);
 	}
 
@@ -97,7 +97,7 @@ public class KBArticleAttachmentKBUploadFileEntryHandler
 			inputStream, uploadPortletRequest.getContentType(parameterName));
 	}
 
-	private FileEntry _editImageKBAttachment(
+	private FileEntry _addKBAttachment(
 			KBArticle kbArticle, long resourcePrimKey,
 			UploadPortletRequest uploadPortletRequest,
 			ThemeDisplay themeDisplay)
