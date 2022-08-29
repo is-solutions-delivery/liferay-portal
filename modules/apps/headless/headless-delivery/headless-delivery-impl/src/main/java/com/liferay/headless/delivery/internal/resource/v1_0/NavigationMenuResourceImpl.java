@@ -625,7 +625,6 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 							"getSiteSitePage", contextUriInfo,
 							arguments.toArray(new Object[0]));
 					});
-
 				setType(
 					() -> {
 						DTOConverter<?, ?> dtoConverter =
@@ -635,10 +634,10 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 							return type;
 						}
 
-						String typeContent = dtoConverter.getContentType();
+						String contentType = dtoConverter.getContentType();
 
-						return Character.toLowerCase(typeContent.charAt(0)) +
-							typeContent.substring(1);
+						return Character.toLowerCase(contentType.charAt(0)) +
+							contentType.substring(1);
 					});
 			}
 		};
