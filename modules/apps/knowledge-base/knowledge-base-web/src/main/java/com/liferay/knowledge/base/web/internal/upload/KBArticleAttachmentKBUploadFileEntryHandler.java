@@ -82,22 +82,6 @@ public class KBArticleAttachmentKBUploadFileEntryHandler
 	}
 
 	private FileEntry _addKBAttachment(
-			String fileName, InputStream inputStream, KBArticle kbArticle,
-			String parameterName, long resourcePrimKey,
-			UploadPortletRequest uploadPortletRequest,
-			ThemeDisplay themeDisplay)
-		throws PortalException {
-
-		String uniqueFileName = _uniqueFileNameProvider.provide(
-			fileName,
-			curFileName -> _exists(themeDisplay, kbArticle, curFileName));
-
-		return _kbArticleLocalService.addAttachment(
-			themeDisplay.getUserId(), resourcePrimKey, uniqueFileName,
-			inputStream, uploadPortletRequest.getContentType(parameterName));
-	}
-
-	private FileEntry _addKBAttachment(
 			KBArticle kbArticle, long resourcePrimKey,
 			UploadPortletRequest uploadPortletRequest,
 			ThemeDisplay themeDisplay)
@@ -115,6 +99,22 @@ public class KBArticleAttachmentKBUploadFileEntryHandler
 				fileEntry.getFileName(), inputStream, kbArticle, "imageBlob",
 				resourcePrimKey, uploadPortletRequest, themeDisplay);
 		}
+	}
+
+	private FileEntry _addKBAttachment(
+			String fileName, InputStream inputStream, KBArticle kbArticle,
+			String parameterName, long resourcePrimKey,
+			UploadPortletRequest uploadPortletRequest,
+			ThemeDisplay themeDisplay)
+		throws PortalException {
+
+		String uniqueFileName = _uniqueFileNameProvider.provide(
+			fileName,
+			curFileName -> _exists(themeDisplay, kbArticle, curFileName));
+
+		return _kbArticleLocalService.addAttachment(
+			themeDisplay.getUserId(), resourcePrimKey, uniqueFileName,
+			inputStream, uploadPortletRequest.getContentType(parameterName));
 	}
 
 	private boolean _exists(
