@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.search.filter;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.search.Query;
+import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 
 /**
  * @author Michael C. Han
@@ -34,6 +35,29 @@ public class QueryFilter extends BaseFilter {
 	public Query getQuery() {
 		return _query;
 	}
+
+	public String getField(){
+		try {
+			String field =
+				((TermQueryImpl) getQuery()).getQueryTerm().getField();
+			return field;
+		}catch (Exception E){
+
+			return null;
+		}
+	}
+
+	public String getValue(){
+		try {
+			String value =
+				((TermQueryImpl) getQuery()).getQueryTerm().getValue();
+			return value;
+		}catch (Exception E){
+
+			return null;
+		}
+	}
+
 
 	@Override
 	public int getSortOrder() {
