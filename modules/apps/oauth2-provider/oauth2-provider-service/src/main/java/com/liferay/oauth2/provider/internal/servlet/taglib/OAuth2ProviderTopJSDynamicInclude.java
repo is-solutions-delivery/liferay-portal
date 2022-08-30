@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -48,49 +49,8 @@ public class OAuth2ProviderTopJSDynamicInclude implements DynamicInclude {
 
 		PrintWriter printWriter = httpServletResponse.getWriter();
 
-		printWriter.write("<script data-senna-track=\"temporary\" ");
-		printWriter.write("type=\"");
-		printWriter.write(ContentTypes.TEXT_JAVASCRIPT);
-		printWriter.write("\">");
-		printWriter.write("window.Liferay = Liferay || {};");
-		printWriter.write("window.Liferay.OAuth2 = {");
-		printWriter.write("getAuthorizeURL: function() {");
-		printWriter.write("return '");
-
-		String portalURL = _portal.getPortalURL(httpServletRequest);
-
-		printWriter.write(portalURL);
-
-		String contextPath = _portal.getPathContext();
-
-		printWriter.write(contextPath);
-
-		printWriter.write("/o/oauth2/authorize';");
-		printWriter.write("}, ");
-		printWriter.write("getBuiltInRedirectURL: function() {");
-		printWriter.write("return '");
-		printWriter.write(portalURL);
-		printWriter.write(contextPath);
-		printWriter.write("/o/oauth2/redirect';");
-		printWriter.write("}, ");
-		printWriter.write("getIntrospectURL: function() {");
-		printWriter.write("return '");
-		printWriter.write(portalURL);
-		printWriter.write(contextPath);
-		printWriter.write("/o/oauth2/introspect';");
-		printWriter.write("}, ");
-		printWriter.write("getTokenURL: function() {");
-		printWriter.write("return '");
-		printWriter.write(portalURL);
-		printWriter.write(contextPath);
-		printWriter.write("/o/oauth2/token';");
-		printWriter.write("}, ");
-		printWriter.write(
-			"getUserAgentApplication: function(externalReferenceCode) {");
-		printWriter.write("return Liferay.OAuth2._userAgentApplications[");
-		printWriter.write("externalReferenceCode];");
-		printWriter.write("}, ");
-		printWriter.write("_userAgentApplications: ");
+		String url =
+			_portal.getPortalURL(httpServletRequest) + _portal.getPathContext();
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -114,9 +74,21 @@ public class OAuth2ProviderTopJSDynamicInclude implements DynamicInclude {
 				));
 		}
 
-		printWriter.write(jsonObject.toString());
+		String string = StringBundler.concat(
+			"<script data-senna-track=\"temporary\" type=\"",
+			ContentTypes.TEXT_JAVASCRIPT,
+			"\">window.Liferay = Liferay || {}; window.Liferay.OAuth2 = ",
+			"{getAuthorizeURL: function() {return '", url,
+			"/o/oauth2/authorize';}, getBuiltInRedirectURL: function() ",
+			"{return '", url,
+			"/o/oauth2/redirect';}, getIntrospectURL: function() { return '",
+			url, "/o/oauth2/introspect';}, getTokenURL: function() {return '",
+			url, "/o/oauth2/token';}, getUserAgentApplication: ",
+			"function(externalReferenceCode) {return ",
+			"Liferay.OAuth2._userAgentApplications[externalReferenceCode];}, ",
+			"_userAgentApplications: ", jsonObject.toString(), "}</script>");
 
-		printWriter.write("}</script>");
+		printWriter.write(string);
 	}
 
 	@Override
