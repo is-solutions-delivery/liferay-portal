@@ -316,28 +316,28 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-			long groupId, long categoryId, Filter filter,
+			long groupId, long categoryId, String field,
 			QueryDefinition<MBThread> queryDefinition, String search,
-			Sort[] sorts, String tag)
+			Sort[] sorts, String tag, String value)
 		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPage(
-				groupId, getUserId(), categoryId, filter, queryDefinition,
-				search, sorts, tag);
+				groupId, getUserId(), categoryId, field, queryDefinition,
+				search, sorts, tag, value);
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-			long groupId, long categoryId, Filter filter,
+			long groupId, long categoryId, String field,
 			QueryDefinition<MBThread> queryDefinition, String search,
-			Sort[] sorts, String tag)
+			Sort[] sorts, String tag, String value)
 		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, getUserId(), categoryId, filter, queryDefinition,
-				search, sorts, tag);
+				groupId, getUserId(), categoryId, field, queryDefinition,
+				search, sorts, value);
 	}
 
 	@Override
