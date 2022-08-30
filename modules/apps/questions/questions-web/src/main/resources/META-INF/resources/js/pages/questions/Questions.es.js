@@ -489,7 +489,7 @@ export default withRouter(
 				window.location.replace(
 					`/c/portal/login?redirect=${baseURL}${
 						context.historyRouterBasePath
-							? context.historyRouterBasePath.replace('/', '')
+							? context.historyRouterBasePath
 							: '#'
 					}/questions/${sectionTitle}/new`
 				);

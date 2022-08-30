@@ -78,6 +78,12 @@ const Flags = ({
 		setReportDialogOpen(false);
 	};
 
+	const form = {
+		otherReason,
+		reporterEmailAddress,
+		selectedReason,
+	};
+
 	const handleInputChange = (event) => {
 		const target = event.target;
 		const value =
@@ -170,6 +176,7 @@ const Flags = ({
 					captchaURI={captchaURI}
 					companyName={companyName}
 					error={error}
+					form={form}
 					handleClose={onClose}
 					handleInputChange={handleInputChange}
 					handleSubmit={handleSubmitReport}

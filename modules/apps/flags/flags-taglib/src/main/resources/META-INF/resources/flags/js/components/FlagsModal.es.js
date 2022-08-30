@@ -29,9 +29,12 @@ import {
 import {sub} from '../utils.es';
 import Captcha from './Captcha.es';
 
+const OTHER_REASON_MAX_LENGTH = 75;
+
 const ModalContentForm = ({
 	captchaURI,
 	error,
+	form = {},
 	handleClose,
 	handleInputChange,
 	handleSubmit,
@@ -106,15 +109,21 @@ const ModalContentForm = ({
 							htmlFor={`${namespace}otherReason`}
 						>
 							{Liferay.Language.get('other-reason')}
+
+							{` (${
+								OTHER_REASON_MAX_LENGTH -
+								(form.otherReason?.length ?? 0)
+							} ${Liferay.Language.get('characters')})`}
 						</label>
 
 						<input
 							autoFocus
 							className="form-control"
 							id={`${namespace}otherReason`}
-							maxLength={75}
+							maxLength={OTHER_REASON_MAX_LENGTH}
 							name="otherReason"
 							onChange={handleInputChange}
+							value={form.otherReason}
 						/>
 					</div>
 				)}
@@ -224,6 +233,7 @@ const FlagsModal = ({
 	captchaURI,
 	companyName,
 	error,
+	form,
 	handleClose,
 	handleInputChange,
 	handleSubmit,
@@ -245,6 +255,7 @@ const FlagsModal = ({
 				<ModalContentForm
 					captchaURI={captchaURI}
 					error={error}
+					form={form}
 					handleClose={handleClose}
 					handleInputChange={handleInputChange}
 					handleSubmit={handleSubmit}
