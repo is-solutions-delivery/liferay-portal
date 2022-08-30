@@ -38,8 +38,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Raymond Augé
  */
 @Component(immediate = true, service = DynamicInclude.class)
-public class OAuth2ProviderApplicationUserAgentDynamicInclude
-	implements DynamicInclude {
+public class OAuth2ProviderTopJSDynamicInclude implements DynamicInclude {
 
 	@Override
 	public void include(
