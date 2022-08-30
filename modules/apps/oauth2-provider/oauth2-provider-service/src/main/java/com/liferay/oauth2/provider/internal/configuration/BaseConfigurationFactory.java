@@ -43,23 +43,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
  */
 public abstract class BaseConfigurationFactory {
 
-	public String getConfigMapName() {
-		return _configMapName;
-	}
-
-	public String getConfigMapName(String webId) {
-		if (_configMapName != null) {
-			return _configMapName;
-		}
-
-		if (_serviceId == null) {
-			throw new IllegalStateException("Service ID is null");
-		}
-
-		return _configMapName = StringBundler.concat(
-			_serviceId, StringPool.DASH, webId, "-lxc-ext-init-metadata");
-	}
-
 	public String getExternalReferenceCode(Map<String, Object> properties) {
 		String externalReferenceCode = GetterUtil.getString(
 			properties.get(Constants.SERVICE_PID));
@@ -111,7 +94,7 @@ public abstract class BaseConfigurationFactory {
 			portalK8sConfigMapModifier.modifyConfigMap(
 				configMapModel -> _extensionProperties.forEach(
 					configMapModel.data()::remove),
-				getConfigMapName());
+				_configMapName);
 		}
 
 		oAuth2ApplicationLocalService.deleteOAuth2Application(
@@ -124,7 +107,7 @@ public abstract class BaseConfigurationFactory {
 		long companyId = GetterUtil.getLong(properties.get("companyId"));
 
 		if (companyId > 0) {
-			return companyLocalService.getCompanyById(companyId);
+			return _companyLocalService.getCompanyById(companyId);
 		}
 
 		String webId = (String)properties.get(
@@ -135,7 +118,7 @@ public abstract class BaseConfigurationFactory {
 				webId = PropsValues.COMPANY_DEFAULT_WEB_ID;
 			}
 
-			return companyLocalService.getCompanyByWebId(webId);
+			return _companyLocalService.getCompanyByWebId(webId);
 		}
 
 		throw new IllegalStateException(
@@ -180,11 +163,8 @@ public abstract class BaseConfigurationFactory {
 						properties.get("ext.lxc.liferay.com.serviceUid")));
 				labels.put("lxc.liferay.com/metadataType", "ext-init");
 			},
-			getConfigMapName(company.getWebId()));
+			_getConfigMapName(company.getWebId()));
 	}
-
-	@Reference
-	protected CompanyLocalService companyLocalService;
 
 	@Reference
 	protected OAuth2ApplicationLocalService oAuth2ApplicationLocalService;
@@ -194,6 +174,22 @@ public abstract class BaseConfigurationFactory {
 
 	@Reference
 	protected UserLocalService userLocalService;
+
+	private String _getConfigMapName(String webId) {
+		if (_configMapName != null) {
+			return _configMapName;
+		}
+
+		if (_serviceId == null) {
+			throw new IllegalStateException("Service ID is null");
+		}
+
+		return _configMapName = StringBundler.concat(
+			_serviceId, StringPool.DASH, webId, "-lxc-ext-init-metadata");
+	}
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
 
 	private volatile String _configMapName;
 	private volatile Map<String, String> _extensionProperties;
