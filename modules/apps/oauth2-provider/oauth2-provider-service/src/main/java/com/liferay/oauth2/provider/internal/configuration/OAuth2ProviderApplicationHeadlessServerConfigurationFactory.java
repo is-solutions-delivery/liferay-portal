@@ -76,6 +76,10 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			oAuth2ProviderApplicationHeadlessServerConfiguration,
 			scopeAliasesList);
 
+		if (_log.isDebugEnabled()) {
+			_log.debug("OAuth 2 application " + oAuth2Application);
+		}
+
 		String serviceAddress = Http.HTTPS_WITH_SLASH.concat(
 			company.getVirtualHostname());
 
@@ -101,10 +105,6 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 				serviceAddress.concat("/o/oauth2/token")
 			).build(),
 			properties);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("OAuth 2 application " + oAuth2Application);
-		}
 	}
 
 	@Override

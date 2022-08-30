@@ -80,6 +80,10 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 			oAuth2ProviderApplicationUserAgentConfiguration, redirectURIsList,
 			scopeAliasesList);
 
+		if (_log.isDebugEnabled()) {
+			_log.debug("OAuth 2 application " + oAuth2Application);
+		}
+
 		modifyConfigMap(
 			company,
 			HashMapBuilder.put(
@@ -102,10 +106,6 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 				StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
 			).build(),
 			properties);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("OAuth 2 application " + oAuth2Application);
-		}
 	}
 
 	@Override
