@@ -50,9 +50,7 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testCreateHeadlessServerApplicationUsingConfiguration()
-		throws Exception {
-
+	public void testGetFactoryConfiguration() throws Exception {
 		String externalReferenceCode = "foo";
 
 		try (ConfigurationHolder configurationHolder = new ConfigurationHolder(

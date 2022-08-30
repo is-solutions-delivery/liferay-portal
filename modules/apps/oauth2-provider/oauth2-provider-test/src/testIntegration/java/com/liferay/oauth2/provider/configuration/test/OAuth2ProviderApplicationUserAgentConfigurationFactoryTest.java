@@ -50,9 +50,7 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactoryTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testCreateUserAgentApplicationUsingConfiguration()
-		throws Exception {
-
+	public void testGetFactoryConfiguration() throws Exception {
 		String externalReferenceCode = "foo";
 
 		try (ConfigurationHolder configurationHolder = new ConfigurationHolder(
