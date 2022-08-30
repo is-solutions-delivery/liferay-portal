@@ -21,6 +21,8 @@ import com.liferay.commerce.term.service.CommerceTermEntryLocalService;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
+import com.liferay.portal.kernel.upgrade.UpgradeStep;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,6 +57,15 @@ public class AccountEntryUpgradeProcess extends UpgradeProcess {
 
 			_updateDefaultCommerceTermEntries();
 		}
+	}
+
+	@Override
+	protected UpgradeStep[] getPostUpgradeSteps() {
+		return new UpgradeStep[] {
+			UpgradeProcessFactory.dropColumns(
+				"AccountEntry", "defaultDeliveryCTermEntryId",
+				"defaultPaymentCTermEntryId")
+		};
 	}
 
 	private void _updateDefaultAddresses() throws Exception {
@@ -141,9 +152,6 @@ public class AccountEntryUpgradeProcess extends UpgradeProcess {
 				}
 			}
 		}
-
-		alterTableDropColumn("AccountEntry", "defaultDeliveryCTermEntryId");
-		alterTableDropColumn("AccountEntry", "defaultPaymentCTermEntryId");
 	}
 
 	private final AddressLocalService _addressLocalService;
