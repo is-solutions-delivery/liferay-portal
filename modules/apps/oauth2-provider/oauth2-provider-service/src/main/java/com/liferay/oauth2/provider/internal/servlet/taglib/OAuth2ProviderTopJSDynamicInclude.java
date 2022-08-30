@@ -48,31 +48,6 @@ public class OAuth2ProviderTopJSDynamicInclude implements DynamicInclude {
 
 		PrintWriter printWriter = httpServletResponse.getWriter();
 
-		List<OAuth2Application> oAuth2Applications =
-			_oAuth2ApplicationLocalService.getOAuth2Applications(
-				_portal.getCompanyId(httpServletRequest),
-				ClientProfile.USER_AGENT_APPLICATION.id());
-
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-		for (OAuth2Application oAuth2Application : oAuth2Applications) {
-			jsonObject.put(
-				oAuth2Application.getExternalReferenceCode(),
-				JSONFactoryUtil.createJSONObject(
-				).put(
-					"clientId", oAuth2Application.getClientId()
-				).put(
-					"homePageURL", oAuth2Application.getHomePageURL()
-				).put(
-					"redirectURIs",
-					JSONFactoryUtil.createJSONArray(
-						oAuth2Application.getRedirectURIsList())
-				));
-		}
-
-		String portalURL = _portal.getPortalURL(httpServletRequest);
-		String pathContext = _portal.getPathContext();
-
 		printWriter.write("<script data-senna-track=\"temporary\" ");
 		printWriter.write("type=\"");
 		printWriter.write(ContentTypes.TEXT_JAVASCRIPT);
@@ -81,8 +56,15 @@ public class OAuth2ProviderTopJSDynamicInclude implements DynamicInclude {
 		printWriter.write("window.Liferay.OAuth2 = {");
 		printWriter.write("getAuthorizeURL: function() {");
 		printWriter.write("return '");
+
+		String portalURL = _portal.getPortalURL(httpServletRequest);
+
 		printWriter.write(portalURL);
+
+		String pathContext = _portal.getPathContext();
+
 		printWriter.write(pathContext);
+
 		printWriter.write("/o/oauth2/authorize';");
 		printWriter.write("}, ");
 		printWriter.write("getBuiltInRedirectURL: function() {");
@@ -109,7 +91,31 @@ public class OAuth2ProviderTopJSDynamicInclude implements DynamicInclude {
 		printWriter.write("externalReferenceCode];");
 		printWriter.write("}, ");
 		printWriter.write("_userAgentApplications: ");
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		List<OAuth2Application> oAuth2Applications =
+			_oAuth2ApplicationLocalService.getOAuth2Applications(
+				_portal.getCompanyId(httpServletRequest),
+				ClientProfile.USER_AGENT_APPLICATION.id());
+
+		for (OAuth2Application oAuth2Application : oAuth2Applications) {
+			jsonObject.put(
+				oAuth2Application.getExternalReferenceCode(),
+				JSONFactoryUtil.createJSONObject(
+				).put(
+					"clientId", oAuth2Application.getClientId()
+				).put(
+					"homePageURL", oAuth2Application.getHomePageURL()
+				).put(
+					"redirectURIs",
+					JSONFactoryUtil.createJSONArray(
+						oAuth2Application.getRedirectURIsList())
+				));
+		}
+
 		printWriter.write(jsonObject.toString());
+
 		printWriter.write("}</script>");
 	}
 
