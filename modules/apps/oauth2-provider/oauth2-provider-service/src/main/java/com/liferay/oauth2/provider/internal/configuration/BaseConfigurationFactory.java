@@ -114,7 +114,7 @@ public abstract class BaseConfigurationFactory {
 
 		_extensionProperties = extensionProperties;
 
-		serviceId = GetterUtil.getString(
+		String serviceId = GetterUtil.getString(
 			properties.get("ext.lxc.liferay.com.serviceId"));
 
 		if ((portalK8sConfigMapModifier == null) ||
@@ -166,8 +166,6 @@ public abstract class BaseConfigurationFactory {
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
 	protected PortalK8sConfigMapModifier portalK8sConfigMapModifier;
-
-	protected volatile String serviceId;
 
 	@Reference
 	protected UserLocalService userLocalService;
