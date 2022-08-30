@@ -43,19 +43,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
  */
 public abstract class BaseConfigurationFactory {
 
-	protected String getExternalReferenceCode(Map<String, Object> properties) {
-		String externalReferenceCode = GetterUtil.getString(
-			properties.get(Constants.SERVICE_PID));
-
-		int index = externalReferenceCode.indexOf('~');
-
-		if (index > 0) {
-			externalReferenceCode = externalReferenceCode.substring(index + 1);
-		}
-
-		return externalReferenceCode;
-	}
-
 	@Deactivate
 	protected void deactivate(Integer reason) throws PortalException {
 		if (reason !=
@@ -106,6 +93,19 @@ public abstract class BaseConfigurationFactory {
 		throw new IllegalStateException(
 			"The property \"companyId\" or " +
 				"\"dxp.lxc.liferay.com.virtualInstanceId\" must be set");
+	}
+
+	protected String getExternalReferenceCode(Map<String, Object> properties) {
+		String externalReferenceCode = GetterUtil.getString(
+			properties.get(Constants.SERVICE_PID));
+
+		int index = externalReferenceCode.indexOf('~');
+
+		if (index > 0) {
+			externalReferenceCode = externalReferenceCode.substring(index + 1);
+		}
+
+		return externalReferenceCode;
 	}
 
 	protected abstract Log getLog();
