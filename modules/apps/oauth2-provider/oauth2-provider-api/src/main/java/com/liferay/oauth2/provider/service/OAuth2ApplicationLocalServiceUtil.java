@@ -466,6 +466,12 @@ public class OAuth2ApplicationLocalServiceUtil {
 		return getService().getOAuth2Applications(companyId);
 	}
 
+	public static List<OAuth2Application> getOAuth2Applications(
+		long companyId, int clientProfile) {
+
+		return getService().getOAuth2Applications(companyId, clientProfile);
+	}
+
 	/**
 	 * Returns the number of o auth2 applications.
 	 *

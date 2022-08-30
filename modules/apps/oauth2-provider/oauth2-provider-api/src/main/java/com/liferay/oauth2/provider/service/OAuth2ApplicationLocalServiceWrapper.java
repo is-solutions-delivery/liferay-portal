@@ -529,6 +529,14 @@ public class OAuth2ApplicationLocalServiceWrapper
 		return _oAuth2ApplicationLocalService.getOAuth2Applications(companyId);
 	}
 
+	@Override
+	public java.util.List<com.liferay.oauth2.provider.model.OAuth2Application>
+		getOAuth2Applications(long companyId, int clientProfile) {
+
+		return _oAuth2ApplicationLocalService.getOAuth2Applications(
+			companyId, clientProfile);
+	}
+
 	/**
 	 * Returns the number of o auth2 applications.
 	 *

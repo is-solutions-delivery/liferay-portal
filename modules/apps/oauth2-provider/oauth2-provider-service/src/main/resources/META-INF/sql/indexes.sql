@@ -2,6 +2,7 @@ create index IX_87DAF9C3 on OA2Auths_OA2ScopeGrants (companyId);
 create index IX_2F541817 on OA2Auths_OA2ScopeGrants (oAuth2ScopeGrantId);
 
 create index IX_523E5C67 on OAuth2Application (companyId, clientId[$COLUMN_LENGTH:75$]);
+create index IX_949C9C01 on OAuth2Application (companyId, clientProfile);
 create unique index IX_67BC29B0 on OAuth2Application (companyId, externalReferenceCode[$COLUMN_LENGTH:75$]);
 create index IX_4E7858F on OAuth2Application (uuid_[$COLUMN_LENGTH:75$], companyId);
 

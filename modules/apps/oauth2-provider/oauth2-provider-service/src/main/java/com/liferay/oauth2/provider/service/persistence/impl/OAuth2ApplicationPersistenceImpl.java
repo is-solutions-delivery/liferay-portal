@@ -3250,6 +3250,960 @@ public class OAuth2ApplicationPersistenceImpl
 	private static final String _FINDER_COLUMN_C_C_CLIENTID_3 =
 		"(oAuth2Application.clientId IS NULL OR oAuth2Application.clientId = '')";
 
+	private FinderPath _finderPathWithPaginationFindByC_CP;
+	private FinderPath _finderPathWithoutPaginationFindByC_CP;
+	private FinderPath _finderPathCountByC_CP;
+
+	/**
+	 * Returns all the o auth2 applications where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @return the matching o auth2 applications
+	 */
+	@Override
+	public List<OAuth2Application> findByC_CP(
+		long companyId, int clientProfile) {
+
+		return findByC_CP(
+			companyId, clientProfile, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
+	}
+
+	/**
+	 * Returns a range of all the o auth2 applications where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuth2ApplicationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param start the lower bound of the range of o auth2 applications
+	 * @param end the upper bound of the range of o auth2 applications (not inclusive)
+	 * @return the range of matching o auth2 applications
+	 */
+	@Override
+	public List<OAuth2Application> findByC_CP(
+		long companyId, int clientProfile, int start, int end) {
+
+		return findByC_CP(companyId, clientProfile, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the o auth2 applications where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuth2ApplicationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param start the lower bound of the range of o auth2 applications
+	 * @param end the upper bound of the range of o auth2 applications (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching o auth2 applications
+	 */
+	@Override
+	public List<OAuth2Application> findByC_CP(
+		long companyId, int clientProfile, int start, int end,
+		OrderByComparator<OAuth2Application> orderByComparator) {
+
+		return findByC_CP(
+			companyId, clientProfile, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the o auth2 applications where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuth2ApplicationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param start the lower bound of the range of o auth2 applications
+	 * @param end the upper bound of the range of o auth2 applications (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching o auth2 applications
+	 */
+	@Override
+	public List<OAuth2Application> findByC_CP(
+		long companyId, int clientProfile, int start, int end,
+		OrderByComparator<OAuth2Application> orderByComparator,
+		boolean useFinderCache) {
+
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByC_CP;
+				finderArgs = new Object[] {companyId, clientProfile};
+			}
+		}
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindByC_CP;
+			finderArgs = new Object[] {
+				companyId, clientProfile, start, end, orderByComparator
+			};
+		}
+
+		List<OAuth2Application> list = null;
+
+		if (useFinderCache) {
+			list = (List<OAuth2Application>)finderCache.getResult(
+				finderPath, finderArgs);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (OAuth2Application oAuth2Application : list) {
+					if ((companyId != oAuth2Application.getCompanyId()) ||
+						(clientProfile !=
+							oAuth2Application.getClientProfile())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler sb = null;
+
+			if (orderByComparator != null) {
+				sb = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				sb = new StringBundler(4);
+			}
+
+			sb.append(_SQL_SELECT_OAUTH2APPLICATION_WHERE);
+
+			sb.append(_FINDER_COLUMN_C_CP_COMPANYID_2);
+
+			sb.append(_FINDER_COLUMN_C_CP_CLIENTPROFILE_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else {
+				sb.append(OAuth2ApplicationModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(companyId);
+
+				queryPos.add(clientProfile);
+
+				list = (List<OAuth2Application>)QueryUtil.list(
+					query, getDialect(), start, end);
+
+				cacheResult(list);
+
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first o auth2 application in the ordered set where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching o auth2 application
+	 * @throws NoSuchOAuth2ApplicationException if a matching o auth2 application could not be found
+	 */
+	@Override
+	public OAuth2Application findByC_CP_First(
+			long companyId, int clientProfile,
+			OrderByComparator<OAuth2Application> orderByComparator)
+		throws NoSuchOAuth2ApplicationException {
+
+		OAuth2Application oAuth2Application = fetchByC_CP_First(
+			companyId, clientProfile, orderByComparator);
+
+		if (oAuth2Application != null) {
+			return oAuth2Application;
+		}
+
+		StringBundler sb = new StringBundler(6);
+
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		sb.append("companyId=");
+		sb.append(companyId);
+
+		sb.append(", clientProfile=");
+		sb.append(clientProfile);
+
+		sb.append("}");
+
+		throw new NoSuchOAuth2ApplicationException(sb.toString());
+	}
+
+	/**
+	 * Returns the first o auth2 application in the ordered set where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching o auth2 application, or <code>null</code> if a matching o auth2 application could not be found
+	 */
+	@Override
+	public OAuth2Application fetchByC_CP_First(
+		long companyId, int clientProfile,
+		OrderByComparator<OAuth2Application> orderByComparator) {
+
+		List<OAuth2Application> list = findByC_CP(
+			companyId, clientProfile, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last o auth2 application in the ordered set where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching o auth2 application
+	 * @throws NoSuchOAuth2ApplicationException if a matching o auth2 application could not be found
+	 */
+	@Override
+	public OAuth2Application findByC_CP_Last(
+			long companyId, int clientProfile,
+			OrderByComparator<OAuth2Application> orderByComparator)
+		throws NoSuchOAuth2ApplicationException {
+
+		OAuth2Application oAuth2Application = fetchByC_CP_Last(
+			companyId, clientProfile, orderByComparator);
+
+		if (oAuth2Application != null) {
+			return oAuth2Application;
+		}
+
+		StringBundler sb = new StringBundler(6);
+
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		sb.append("companyId=");
+		sb.append(companyId);
+
+		sb.append(", clientProfile=");
+		sb.append(clientProfile);
+
+		sb.append("}");
+
+		throw new NoSuchOAuth2ApplicationException(sb.toString());
+	}
+
+	/**
+	 * Returns the last o auth2 application in the ordered set where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching o auth2 application, or <code>null</code> if a matching o auth2 application could not be found
+	 */
+	@Override
+	public OAuth2Application fetchByC_CP_Last(
+		long companyId, int clientProfile,
+		OrderByComparator<OAuth2Application> orderByComparator) {
+
+		int count = countByC_CP(companyId, clientProfile);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<OAuth2Application> list = findByC_CP(
+			companyId, clientProfile, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the o auth2 applications before and after the current o auth2 application in the ordered set where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param oAuth2ApplicationId the primary key of the current o auth2 application
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next o auth2 application
+	 * @throws NoSuchOAuth2ApplicationException if a o auth2 application with the primary key could not be found
+	 */
+	@Override
+	public OAuth2Application[] findByC_CP_PrevAndNext(
+			long oAuth2ApplicationId, long companyId, int clientProfile,
+			OrderByComparator<OAuth2Application> orderByComparator)
+		throws NoSuchOAuth2ApplicationException {
+
+		OAuth2Application oAuth2Application = findByPrimaryKey(
+			oAuth2ApplicationId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			OAuth2Application[] array = new OAuth2ApplicationImpl[3];
+
+			array[0] = getByC_CP_PrevAndNext(
+				session, oAuth2Application, companyId, clientProfile,
+				orderByComparator, true);
+
+			array[1] = oAuth2Application;
+
+			array[2] = getByC_CP_PrevAndNext(
+				session, oAuth2Application, companyId, clientProfile,
+				orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected OAuth2Application getByC_CP_PrevAndNext(
+		Session session, OAuth2Application oAuth2Application, long companyId,
+		int clientProfile,
+		OrderByComparator<OAuth2Application> orderByComparator,
+		boolean previous) {
+
+		StringBundler sb = null;
+
+		if (orderByComparator != null) {
+			sb = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			sb = new StringBundler(4);
+		}
+
+		sb.append(_SQL_SELECT_OAUTH2APPLICATION_WHERE);
+
+		sb.append(_FINDER_COLUMN_C_CP_COMPANYID_2);
+
+		sb.append(_FINDER_COLUMN_C_CP_CLIENTPROFILE_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				sb.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			sb.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC);
+					}
+					else {
+						sb.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			sb.append(OAuth2ApplicationModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = sb.toString();
+
+		Query query = session.createQuery(sql);
+
+		query.setFirstResult(0);
+		query.setMaxResults(2);
+
+		QueryPos queryPos = QueryPos.getInstance(query);
+
+		queryPos.add(companyId);
+
+		queryPos.add(clientProfile);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						oAuth2Application)) {
+
+				queryPos.add(orderByConditionValue);
+			}
+		}
+
+		List<OAuth2Application> list = query.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns all the o auth2 applications that the user has permission to view where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @return the matching o auth2 applications that the user has permission to view
+	 */
+	@Override
+	public List<OAuth2Application> filterFindByC_CP(
+		long companyId, int clientProfile) {
+
+		return filterFindByC_CP(
+			companyId, clientProfile, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
+	}
+
+	/**
+	 * Returns a range of all the o auth2 applications that the user has permission to view where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuth2ApplicationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param start the lower bound of the range of o auth2 applications
+	 * @param end the upper bound of the range of o auth2 applications (not inclusive)
+	 * @return the range of matching o auth2 applications that the user has permission to view
+	 */
+	@Override
+	public List<OAuth2Application> filterFindByC_CP(
+		long companyId, int clientProfile, int start, int end) {
+
+		return filterFindByC_CP(companyId, clientProfile, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the o auth2 applications that the user has permissions to view where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>OAuth2ApplicationModelImpl</code>.
+	 * </p>
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param start the lower bound of the range of o auth2 applications
+	 * @param end the upper bound of the range of o auth2 applications (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching o auth2 applications that the user has permission to view
+	 */
+	@Override
+	public List<OAuth2Application> filterFindByC_CP(
+		long companyId, int clientProfile, int start, int end,
+		OrderByComparator<OAuth2Application> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
+			return findByC_CP(
+				companyId, clientProfile, start, end, orderByComparator);
+		}
+
+		StringBundler sb = null;
+
+		if (orderByComparator != null) {
+			sb = new StringBundler(
+				4 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			sb = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			sb.append(_FILTER_SQL_SELECT_OAUTH2APPLICATION_WHERE);
+		}
+		else {
+			sb.append(
+				_FILTER_SQL_SELECT_OAUTH2APPLICATION_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		sb.append(_FINDER_COLUMN_C_CP_COMPANYID_2);
+
+		sb.append(_FINDER_COLUMN_C_CP_CLIENTPROFILE_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			sb.append(
+				_FILTER_SQL_SELECT_OAUTH2APPLICATION_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					sb, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				sb.append(OAuth2ApplicationModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				sb.append(OAuth2ApplicationModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			sb.toString(), OAuth2Application.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				sqlQuery.addEntity(
+					_FILTER_ENTITY_ALIAS, OAuth2ApplicationImpl.class);
+			}
+			else {
+				sqlQuery.addEntity(
+					_FILTER_ENTITY_TABLE, OAuth2ApplicationImpl.class);
+			}
+
+			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
+
+			queryPos.add(companyId);
+
+			queryPos.add(clientProfile);
+
+			return (List<OAuth2Application>)QueryUtil.list(
+				sqlQuery, getDialect(), start, end);
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the o auth2 applications before and after the current o auth2 application in the ordered set of o auth2 applications that the user has permission to view where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param oAuth2ApplicationId the primary key of the current o auth2 application
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next o auth2 application
+	 * @throws NoSuchOAuth2ApplicationException if a o auth2 application with the primary key could not be found
+	 */
+	@Override
+	public OAuth2Application[] filterFindByC_CP_PrevAndNext(
+			long oAuth2ApplicationId, long companyId, int clientProfile,
+			OrderByComparator<OAuth2Application> orderByComparator)
+		throws NoSuchOAuth2ApplicationException {
+
+		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
+			return findByC_CP_PrevAndNext(
+				oAuth2ApplicationId, companyId, clientProfile,
+				orderByComparator);
+		}
+
+		OAuth2Application oAuth2Application = findByPrimaryKey(
+			oAuth2ApplicationId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			OAuth2Application[] array = new OAuth2ApplicationImpl[3];
+
+			array[0] = filterGetByC_CP_PrevAndNext(
+				session, oAuth2Application, companyId, clientProfile,
+				orderByComparator, true);
+
+			array[1] = oAuth2Application;
+
+			array[2] = filterGetByC_CP_PrevAndNext(
+				session, oAuth2Application, companyId, clientProfile,
+				orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected OAuth2Application filterGetByC_CP_PrevAndNext(
+		Session session, OAuth2Application oAuth2Application, long companyId,
+		int clientProfile,
+		OrderByComparator<OAuth2Application> orderByComparator,
+		boolean previous) {
+
+		StringBundler sb = null;
+
+		if (orderByComparator != null) {
+			sb = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			sb = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			sb.append(_FILTER_SQL_SELECT_OAUTH2APPLICATION_WHERE);
+		}
+		else {
+			sb.append(
+				_FILTER_SQL_SELECT_OAUTH2APPLICATION_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		sb.append(_FINDER_COLUMN_C_CP_COMPANYID_2);
+
+		sb.append(_FINDER_COLUMN_C_CP_CLIENTPROFILE_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			sb.append(
+				_FILTER_SQL_SELECT_OAUTH2APPLICATION_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				sb.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					sb.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					sb.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			sb.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					sb.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					sb.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC);
+					}
+					else {
+						sb.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				sb.append(OAuth2ApplicationModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				sb.append(OAuth2ApplicationModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			sb.toString(), OAuth2Application.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
+
+		SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+
+		sqlQuery.setFirstResult(0);
+		sqlQuery.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			sqlQuery.addEntity(
+				_FILTER_ENTITY_ALIAS, OAuth2ApplicationImpl.class);
+		}
+		else {
+			sqlQuery.addEntity(
+				_FILTER_ENTITY_TABLE, OAuth2ApplicationImpl.class);
+		}
+
+		QueryPos queryPos = QueryPos.getInstance(sqlQuery);
+
+		queryPos.add(companyId);
+
+		queryPos.add(clientProfile);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						oAuth2Application)) {
+
+				queryPos.add(orderByConditionValue);
+			}
+		}
+
+		List<OAuth2Application> list = sqlQuery.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the o auth2 applications where companyId = &#63; and clientProfile = &#63; from the database.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 */
+	@Override
+	public void removeByC_CP(long companyId, int clientProfile) {
+		for (OAuth2Application oAuth2Application :
+				findByC_CP(
+					companyId, clientProfile, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null)) {
+
+			remove(oAuth2Application);
+		}
+	}
+
+	/**
+	 * Returns the number of o auth2 applications where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @return the number of matching o auth2 applications
+	 */
+	@Override
+	public int countByC_CP(long companyId, int clientProfile) {
+		FinderPath finderPath = _finderPathCountByC_CP;
+
+		Object[] finderArgs = new Object[] {companyId, clientProfile};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+
+		if (count == null) {
+			StringBundler sb = new StringBundler(3);
+
+			sb.append(_SQL_COUNT_OAUTH2APPLICATION_WHERE);
+
+			sb.append(_FINDER_COLUMN_C_CP_COMPANYID_2);
+
+			sb.append(_FINDER_COLUMN_C_CP_CLIENTPROFILE_2);
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(companyId);
+
+				queryPos.add(clientProfile);
+
+				count = (Long)query.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
+	 * Returns the number of o auth2 applications that the user has permission to view where companyId = &#63; and clientProfile = &#63;.
+	 *
+	 * @param companyId the company ID
+	 * @param clientProfile the client profile
+	 * @return the number of matching o auth2 applications that the user has permission to view
+	 */
+	@Override
+	public int filterCountByC_CP(long companyId, int clientProfile) {
+		if (!InlineSQLHelperUtil.isEnabled(companyId, 0)) {
+			return countByC_CP(companyId, clientProfile);
+		}
+
+		StringBundler sb = new StringBundler(3);
+
+		sb.append(_FILTER_SQL_COUNT_OAUTH2APPLICATION_WHERE);
+
+		sb.append(_FINDER_COLUMN_C_CP_COMPANYID_2);
+
+		sb.append(_FINDER_COLUMN_C_CP_CLIENTPROFILE_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			sb.toString(), OAuth2Application.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+
+			sqlQuery.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos queryPos = QueryPos.getInstance(sqlQuery);
+
+			queryPos.add(companyId);
+
+			queryPos.add(clientProfile);
+
+			Long count = (Long)sqlQuery.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	private static final String _FINDER_COLUMN_C_CP_COMPANYID_2 =
+		"oAuth2Application.companyId = ? AND ";
+
+	private static final String _FINDER_COLUMN_C_CP_CLIENTPROFILE_2 =
+		"oAuth2Application.clientProfile = ?";
+
 	private FinderPath _finderPathFetchByC_ERC;
 	private FinderPath _finderPathCountByC_ERC;
 
@@ -4189,6 +5143,25 @@ public class OAuth2ApplicationPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_C",
 			new String[] {Long.class.getName(), String.class.getName()},
 			new String[] {"companyId", "clientId"}, false);
+
+		_finderPathWithPaginationFindByC_CP = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByC_CP",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			},
+			new String[] {"companyId", "clientProfile"}, true);
+
+		_finderPathWithoutPaginationFindByC_CP = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByC_CP",
+			new String[] {Long.class.getName(), Integer.class.getName()},
+			new String[] {"companyId", "clientProfile"}, true);
+
+		_finderPathCountByC_CP = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByC_CP",
+			new String[] {Long.class.getName(), Integer.class.getName()},
+			new String[] {"companyId", "clientProfile"}, false);
 
 		_finderPathFetchByC_ERC = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByC_ERC",

@@ -366,6 +366,10 @@ public interface OAuth2ApplicationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<OAuth2Application> getOAuth2Applications(long companyId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<OAuth2Application> getOAuth2Applications(
+		long companyId, int clientProfile);
+
 	/**
 	 * Returns the number of o auth2 applications.
 	 *
