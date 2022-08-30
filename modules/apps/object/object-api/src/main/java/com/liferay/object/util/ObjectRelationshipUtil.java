@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * @author Marcela Cunha
@@ -41,15 +40,13 @@ public class ObjectRelationshipUtil {
 			return objectRelationships.get(0);
 		}
 
-		Stream<ObjectRelationship> objectRelationshipsStream =
-			objectRelationships.stream();
+		for (ObjectRelationship objectRelationship : objectRelationships) {
+			if (!objectRelationship.isReverse()) {
+				return objectRelationship;
+			}
+		}
 
-		return objectRelationshipsStream.filter(
-			objectRelationship -> !objectRelationship.isReverse()
-		).findFirst(
-		).orElseThrow(
-			ObjectRelationshipReverseException::new
-		);
+		throw new ObjectRelationshipReverseException();
 	}
 
 	public static Map<String, String> getPKObjectFieldDBColumnNames(
