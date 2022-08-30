@@ -282,6 +282,7 @@ export default {
 	 */
 	toggleFragmentHighlighted({
 		fragmentEntryKey,
+		groupId = '0',
 		highlighted,
 		onNetworkStatus,
 	}) {
@@ -290,6 +291,7 @@ export default {
 			{
 				body: {
 					fragmentEntryKey,
+					groupId,
 					highlighted,
 				},
 			},
