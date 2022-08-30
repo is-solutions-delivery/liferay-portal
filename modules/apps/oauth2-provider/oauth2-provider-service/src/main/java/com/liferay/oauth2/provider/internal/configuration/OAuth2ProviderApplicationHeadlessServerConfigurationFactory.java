@@ -22,7 +22,6 @@ import com.liferay.oauth2.provider.util.OAuth2SecureRandomGenerator;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -40,11 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.osgi.service.component.ComponentConstants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Deactivate;
 
 /**
  * @author Raymond Augé
@@ -151,33 +148,9 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 		}
 	}
 
-	@Deactivate
-	protected void deactivate(Integer reason) throws PortalException {
-		if (reason !=
-				ComponentConstants.DEACTIVATION_REASON_CONFIGURATION_DELETED) {
-
-			return;
-		}
-
-		OAuth2Application oAuth2Application = getOAuth2Application();
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Deactivating " + oAuth2Application.toString());
-		}
-
-		if ((portalK8sConfigMapModifier != null) &&
-			Validator.isNotNull(getServiceId())) {
-
-			Map<String, String> extensionProperties = getExtensionProperties();
-
-			portalK8sConfigMapModifier.modifyConfigMap(
-				configMapModel -> extensionProperties.forEach(
-					configMapModel.data()::remove),
-				getConfigMapName());
-		}
-
-		oAuth2ApplicationLocalService.deleteOAuth2Application(
-			oAuth2Application);
+	@Override
+	protected Log getLog() {
+		return _log;
 	}
 
 	private OAuth2Application _addOrUpdateOAuth2Application(

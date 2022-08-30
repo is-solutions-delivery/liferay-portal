@@ -19,6 +19,8 @@ import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.k8s.agent.PortalK8sConfigMapModifier;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -30,6 +32,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.osgi.framework.Constants;
+import org.osgi.service.component.ComponentConstants;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 
@@ -95,6 +99,37 @@ public abstract class BaseConfigurationFactory {
 		_serviceId = serviceId;
 	}
 
+	@Deactivate
+	protected void deactivate(Integer reason) throws PortalException {
+		if (reason !=
+				ComponentConstants.DEACTIVATION_REASON_CONFIGURATION_DELETED) {
+
+			return;
+		}
+
+		OAuth2Application oAuth2Application = getOAuth2Application();
+
+		Log log = getLog();
+
+		if (log.isDebugEnabled()) {
+			log.debug("Deactivating " + oAuth2Application.toString());
+		}
+
+		if ((portalK8sConfigMapModifier != null) &&
+			Validator.isNotNull(getServiceId())) {
+
+			Map<String, String> extensionProperties = getExtensionProperties();
+
+			portalK8sConfigMapModifier.modifyConfigMap(
+				configMapModel -> extensionProperties.forEach(
+					configMapModel.data()::remove),
+				getConfigMapName());
+		}
+
+		oAuth2ApplicationLocalService.deleteOAuth2Application(
+			oAuth2Application);
+	}
+
 	protected Company getCompany(Map<String, Object> properties)
 		throws Exception {
 
@@ -119,6 +154,8 @@ public abstract class BaseConfigurationFactory {
 			"The property \"companyId\" or " +
 				"\"dxp.lxc.liferay.com.virtualInstanceId\" must be set");
 	}
+
+	protected abstract Log getLog();
 
 	@Reference
 	protected CompanyLocalService companyLocalService;
