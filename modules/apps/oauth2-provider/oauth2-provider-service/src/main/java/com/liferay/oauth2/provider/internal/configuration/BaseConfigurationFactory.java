@@ -57,15 +57,15 @@ public abstract class BaseConfigurationFactory {
 			log.debug("Deactivating " + oAuth2Application);
 		}
 
+		oAuth2ApplicationLocalService.deleteOAuth2Application(
+			oAuth2Application);
+
 		if (Validator.isNotNull(_configMapName)) {
 			portalK8sConfigMapModifier.modifyConfigMap(
 				configMapModel -> _extensionProperties.forEach(
 					configMapModel.data()::remove),
 				_configMapName);
 		}
-
-		oAuth2ApplicationLocalService.deleteOAuth2Application(
-			oAuth2Application);
 	}
 
 	protected Company getCompany(Map<String, Object> properties)
