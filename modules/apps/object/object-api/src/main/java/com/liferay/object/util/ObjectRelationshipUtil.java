@@ -55,7 +55,6 @@ public class ObjectRelationshipUtil {
 
 		String pkObjectFieldDBColumnName1 =
 			objectDefinition1.getPKObjectFieldDBColumnName();
-
 		String pkObjectFieldDBColumnName2 =
 			objectDefinition2.getPKObjectFieldDBColumnName();
 
