@@ -61,28 +61,28 @@ public class OAuth2ProviderTopJSDynamicInclude implements DynamicInclude {
 
 		printWriter.write(portalURL);
 
-		String pathContext = _portal.getPathContext();
+		String contextPath = _portal.getPathContext();
 
-		printWriter.write(pathContext);
+		printWriter.write(contextPath);
 
 		printWriter.write("/o/oauth2/authorize';");
 		printWriter.write("}, ");
 		printWriter.write("getBuiltInRedirectURL: function() {");
 		printWriter.write("return '");
 		printWriter.write(portalURL);
-		printWriter.write(pathContext);
+		printWriter.write(contextPath);
 		printWriter.write("/o/oauth2/redirect';");
 		printWriter.write("}, ");
 		printWriter.write("getIntrospectURL: function() {");
 		printWriter.write("return '");
 		printWriter.write(portalURL);
-		printWriter.write(pathContext);
+		printWriter.write(contextPath);
 		printWriter.write("/o/oauth2/introspect';");
 		printWriter.write("}, ");
 		printWriter.write("getTokenURL: function() {");
 		printWriter.write("return '");
 		printWriter.write(portalURL);
-		printWriter.write(pathContext);
+		printWriter.write(contextPath);
 		printWriter.write("/o/oauth2/token';");
 		printWriter.write("}, ");
 		printWriter.write(
