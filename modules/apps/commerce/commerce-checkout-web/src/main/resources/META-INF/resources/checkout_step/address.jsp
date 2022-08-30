@@ -23,14 +23,12 @@ BaseAddressCheckoutStepDisplayContext baseAddressCheckoutStepDisplayContext = (B
 
 List<CommerceAddress> commerceAddresses = baseAddressCheckoutStepDisplayContext.getCommerceAddresses();
 
-long commerceChannelId = commerceContext.getCommerceChannelId();
-
 String paramName = baseAddressCheckoutStepDisplayContext.getParamName();
 
 long commerceAddressId = BeanParamUtil.getLong(baseAddressCheckoutStepDisplayContext.getCommerceOrder(), request, paramName);
 
 if (commerceAddressId == 0) {
-	commerceAddressId = baseAddressCheckoutStepDisplayContext.getDefaultCommerceAddressId(commerceChannelId);
+	commerceAddressId = baseAddressCheckoutStepDisplayContext.getDefaultCommerceAddressId(commerceContext.getCommerceChannelId());
 }
 
 String selectLabel = "choose-" + baseAddressCheckoutStepDisplayContext.getTitle();
@@ -418,7 +416,7 @@ boolean hasManageAddressesPermission = baseAddressCheckoutStepDisplayContext.has
 						Liferay.Service(
 							'/commerce.commercecountrymanagerimpl/<%= baseAddressCheckoutStepDisplayContext.getCommerceCountrySelectionMethodName() %>-by-channel-id',
 							{
-								channelId: <%= commerceChannelId %>,
+								channelId: <%= commerceContext.getCommerceChannelId() %>,
 								end: -1,
 								start: -1,
 							},
