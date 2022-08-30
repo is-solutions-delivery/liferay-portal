@@ -337,7 +337,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
 				groupId, getUserId(), categoryId, field, queryDefinition,
-				search, sorts, value);
+				search, sorts, tag ,value);
 	}
 
 	@Override

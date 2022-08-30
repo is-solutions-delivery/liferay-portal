@@ -36,7 +36,6 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.ExceptionRetryAcceptor;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
@@ -374,15 +373,15 @@ public interface MBThreadLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long userId, long categoryId, Filter filter,
+		long groupId, long userId, long categoryId, String field,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
-		String tag);
+		String tag, String value);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long userId, long categoryId, Filter filter,
+		long groupId, long userId, long categoryId, String field,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
-		String tag);
+		String tag, String value);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageCount(long threadId, int status);

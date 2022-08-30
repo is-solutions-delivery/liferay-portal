@@ -489,32 +489,30 @@ public class MBThreadLocalServiceWrapper
 	@Override
 	public java.util.List<MBThread>
 		getMessageBoardSectionMessageBoardThreadsPage(
-			long groupId, long userId, long categoryId,
-			com.liferay.portal.kernel.search.filter.Filter filter,
+			long groupId, long userId, long categoryId, String field,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 				queryDefinition,
 			String search, com.liferay.portal.kernel.search.Sort[] sorts,
-			String tag) {
+			String tag, String value) {
 
 		return _mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPage(
-				groupId, userId, categoryId, filter, queryDefinition, search,
-				sorts, tag);
+				groupId, userId, categoryId, field, queryDefinition, search,
+				sorts, tag, value);
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long userId, long categoryId,
-		com.liferay.portal.kernel.search.filter.Filter filter,
+		long groupId, long userId, long categoryId, String field,
 		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 			queryDefinition,
 		String search, com.liferay.portal.kernel.search.Sort[] sorts,
-		String tag) {
+		String tag, String value) {
 
 		return _mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, userId, categoryId, filter, queryDefinition, search,
-				sorts, tag);
+				groupId, userId, categoryId, field, queryDefinition, search,
+				sorts, tag, value);
 	}
 
 	@Override
