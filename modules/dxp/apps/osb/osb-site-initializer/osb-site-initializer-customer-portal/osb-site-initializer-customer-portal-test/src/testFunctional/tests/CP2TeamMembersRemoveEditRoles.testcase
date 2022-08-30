@@ -244,9 +244,43 @@ definition {
     @description = "Automation ID: LPS-150012 | Test Summary: Verify that after the user clicks Edit a Save button is available"
     @priority = ""
     test CanViewSaveButton {
+        task ("Change the user role in the project") {
+            Accounts.openAccountsAdmin();
 
-        // TODO LPS-150012 CanViewSaveButton pending implementation
+            CustomerPortal.accountTableProject(title = "Test Account DXP");
 
+            Accounts.addAssigneeToRoleViaUsersTab(
+                accountRoleTitle = "Account Administrator",
+                accountUserName = "Test Test");
+        }
+
+        task ("Go to CP2.0 and login to okta") {
+            ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
+
+			CustomerPortal.loginOktaToUpdateCP();
+
+            SelectWindow(locator1 = "title=Home - Customer Portal Site - Liferay DXP");
+
+            Refresh();
+        }
+
+        task ("Get into the project and go to Team Members page") {
+            CP2TeamMembers.teamMembersFlow();
+        }
+
+        task ("Open the action menu and click the Edit option") {
+			CP2Utils.openActionMenu(
+				openUser = "Test User 2",
+				menuItem = "Edit");
+        }
+
+		task ("Change the guest user role and save") {
+			Button.click(button = "Save");
+		}
+
+		task ("Delete the entries and objects created") {
+			CustomerPortal.deleteEntryAccountFlag(entry = "ERC-002");
+		}
     }
 
     @description = "Automation ID: LPS-150013 | Test Summary: Verify that after the user clicks Edit a Cancel button is available"
