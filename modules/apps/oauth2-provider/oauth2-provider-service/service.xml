@@ -47,6 +47,10 @@
 			<finder-column name="companyId" />
 			<finder-column name="clientId" />
 		</finder>
+		<finder name="C_CP" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="clientProfile" />
+		</finder>
 	</entity>
 	<entity local-service="true" name="OAuth2ApplicationScopeAliases" remote-service="false">
 

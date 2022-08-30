@@ -488,6 +488,14 @@ public class OAuth2ApplicationLocalServiceImpl
 		return oAuth2ApplicationPersistence.findByCompanyId(companyId);
 	}
 
+	@Override
+	public List<OAuth2Application> getOAuth2Applications(
+		long companyId, int clientProfile) {
+
+		return oAuth2ApplicationPersistence.findByC_CP(
+			companyId, clientProfile);
+	}
+
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public OAuth2Application updateExternalReferenceCode(
