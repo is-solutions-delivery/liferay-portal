@@ -480,7 +480,6 @@ public class ObjectRelationshipLocalServiceImpl
 
 			String pkObjectFieldDBColumnName1 = pkObjectFieldDBColumnNames.get(
 				"pkObjectFieldDBColumnName1");
-
 			String pkObjectFieldDBColumnName2 = pkObjectFieldDBColumnNames.get(
 				"pkObjectFieldDBColumnName2");
 
