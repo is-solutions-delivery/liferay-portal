@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -80,8 +79,7 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			_log.debug("OAuth 2 application " + oAuth2Application);
 		}
 
-		String serviceAddress = Http.HTTPS_WITH_SLASH.concat(
-			company.getVirtualHostname());
+		String serviceAddress = getServiceAddress(company);
 
 		modifyConfigMap(
 			company,

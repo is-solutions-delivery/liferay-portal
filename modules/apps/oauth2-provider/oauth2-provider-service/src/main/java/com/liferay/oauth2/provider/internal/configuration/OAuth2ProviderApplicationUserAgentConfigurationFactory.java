@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.Arrays;
@@ -66,8 +65,7 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 					OAuth2ProviderApplicationUserAgentConfiguration.class,
 					properties);
 
-		String serviceAddress = Http.HTTPS_WITH_SLASH.concat(
-			company.getVirtualHostname());
+		String serviceAddress = getServiceAddress(company);
 
 		List<String> redirectURIsList = Collections.singletonList(
 			serviceAddress.concat("/o/oauth2/redirect"));

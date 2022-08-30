@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.PropsValues;
 
@@ -107,6 +108,10 @@ public abstract class BaseConfigurationFactory {
 	}
 
 	protected abstract Log getLog();
+
+	protected String getServiceAddress(Company company) {
+		return Http.HTTPS_WITH_SLASH.concat(company.getVirtualHostname());
+	}
 
 	protected void modifyConfigMap(
 		Company company, Map<String, String> extensionProperties,
