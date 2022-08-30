@@ -67,6 +67,8 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.search.filter.QueryFilter;
+import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ExceptionRetryAcceptor;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -445,9 +447,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long userId, long categoryId, Filter filter,
+		long groupId, long userId, long categoryId, String field,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
-		String tag) {
+		String tag, String value) {
 
 		JoinStep joinStep = null;
 
@@ -479,20 +481,11 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			return mbThreadPersistence.dslQuery(joinStep.where(predicate));
 		}
 
-		if (filter != null) {
-			String filterString = filter.toString();
+		if (field != null) {
 
-			filterString = StringUtil.removeSubstring(
-				filterString,
-				"{(query={className=TermQueryImpl, queryTerm={field=");
 
-			filterString = StringUtil.removeSubstring(
-				filterString, "}}), (cached=null, executionOption=null)}");
-
-			String[] sqlFilters = filterString.split("_sortable, value=");
-
-			if (sqlFilters[0].equals("hasValidAnswer") &&
-				sqlFilters[1].equals("false")) {
+			if (field.equals("hasValidAnswer_sortable") &&
+				value.equals("false")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -504,8 +497,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
-					 sqlFilters[1].equals("0")) {
+			else if (field.equals("numberOfMessageBoardMessages_sortable") &&
+					 value.equals("0")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -521,8 +514,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (sqlFilters[0].equals("hasValidAnswer") &&
-					 sqlFilters[1].equals("true")) {
+			else if (field.equals("hasValidAnswer_sortable") &&
+					 value.equals("true")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
@@ -648,9 +641,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long userId, long categoryId, Filter filter,
+		long groupId, long userId, long categoryId, String field,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
-		String tag) {
+		String tag, String value) {
 
 		JoinStep joinStep = DSLQueryFactoryUtil.countDistinct(
 			MBThreadTable.INSTANCE.threadId
@@ -672,20 +665,10 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				(Long)mbThreadPersistence.dslQuery(joinStep.where(predicate)));
 		}
 
-		if (filter != null) {
-			String filterString = filter.toString();
+		if (field != null) {
 
-			filterString = StringUtil.removeSubstring(
-				filterString,
-				"{(query={className=TermQueryImpl, queryTerm={field=");
-
-			filterString = StringUtil.removeSubstring(
-				filterString, "}}), (cached=null, executionOption=null)}");
-
-			String[] sqlFilters = filterString.split("_sortable, value=");
-
-			if (sqlFilters[0].equals("hasValidAnswer") &&
-				sqlFilters[1].equals("false")) {
+			if (field.equals("hasValidAnswer_sortable") &&
+				value.equals("false")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -697,8 +680,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
-					 sqlFilters[1].equals("0")) {
+			else if (field.equals("numberOfMessageBoardMessages_sortable") &&
+					 value.equals("0")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -714,8 +697,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (sqlFilters[0].equals("hasValidAnswer") &&
-					 sqlFilters[1].equals("true")) {
+			else if (field.equals("hasValidAnswer_sortable") &&
+					 value.equals("true")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
