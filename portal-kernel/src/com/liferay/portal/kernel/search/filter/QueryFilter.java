@@ -36,29 +36,6 @@ public class QueryFilter extends BaseFilter {
 		return _query;
 	}
 
-	public String getField(){
-		try {
-			String field =
-				((TermQueryImpl) getQuery()).getQueryTerm().getField();
-			return field;
-		}catch (Exception E){
-
-			return null;
-		}
-	}
-
-	public String getValue(){
-		try {
-			String value =
-				((TermQueryImpl) getQuery()).getQueryTerm().getValue();
-			return value;
-		}catch (Exception E){
-
-			return null;
-		}
-	}
-
-
 	@Override
 	public int getSortOrder() {
 		return 30;
