@@ -53,7 +53,7 @@ public class PredicateExpressionVisitorImpl
 		long objectDefinitionId,
 		ObjectFieldLocalService objectFieldLocalService) {
 
-		this(objectDefinitionId, objectFieldLocalService, new HashMap<>());
+		this(new HashMap<>(), objectDefinitionId, objectFieldLocalService);
 	}
 
 	@Override
@@ -79,10 +79,10 @@ public class PredicateExpressionVisitorImpl
 
 		return (Predicate)lambdaFunctionExpression.accept(
 			new PredicateExpressionVisitorImpl(
-				_objectDefinitionId, _objectFieldLocalService,
 				Collections.singletonMap(
 					lambdaFunctionExpression.getVariableName(),
-					collectionPropertyExpression.getName())));
+					collectionPropertyExpression.getName()),
+				_objectDefinitionId, _objectFieldLocalService));
 	}
 
 	@Override
@@ -222,14 +222,14 @@ public class PredicateExpressionVisitorImpl
 	}
 
 	private PredicateExpressionVisitorImpl(
+		Map<String, String> lambdaVariableExpressionFieldNames,
 		long objectDefinitionId,
-		ObjectFieldLocalService objectFieldLocalService,
-		Map<String, String> lambdaVariableExpressionFieldNames) {
+		ObjectFieldLocalService objectFieldLocalService) {
 
-		_objectDefinitionId = objectDefinitionId;
-		_objectFieldLocalService = objectFieldLocalService;
 		_lambdaVariableExpressionFieldNames =
 			lambdaVariableExpressionFieldNames;
+		_objectDefinitionId = objectDefinitionId;
+		_objectFieldLocalService = objectFieldLocalService;
 	}
 
 	private Predicate _contains(Object fieldName, Object fieldValue) {
