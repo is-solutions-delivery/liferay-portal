@@ -59,17 +59,17 @@ public class AccountEntryUpgradeProcess extends UpgradeProcess {
 
 	private void _updateDefaultAddresses() throws Exception {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
-				"select accountEntryId, defaultBillingAddressId, " +
-					"defaultShippingAddressId, userId from AccountEntry");
+				"select accountEntryId, userId, defaultBillingAddressId, " +
+					"defaultShippingAddressId from AccountEntry");
 			ResultSet resultSet = preparedStatement.executeQuery()) {
 
 			while (resultSet.next()) {
+				long userId = resultSet.getLong("userId");
 				long accountEntryId = resultSet.getLong("accountEntryId");
 				long defaultBillingAddressId = resultSet.getLong(
 					"defaultBillingAddressId");
 				long defaultShippingAddressId = resultSet.getLong(
 					"defaultShippingAddressId");
-				long userId = resultSet.getLong("userId");
 
 				Address billingAddress = _addressLocalService.fetchAddress(
 					defaultBillingAddressId);
@@ -100,17 +100,17 @@ public class AccountEntryUpgradeProcess extends UpgradeProcess {
 
 	private void _updateDefaultCommerceTermEntries() throws Exception {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
-				"select accountEntryId, defaultDeliveryCTermEntryId, " +
-					"defaultPaymentCTermEntryId, userId from AccountEntry");
+				"select accountEntryId, userId, defaultDeliveryCTermEntryId, " +
+					"defaultPaymentCTermEntryId from AccountEntry");
 			ResultSet resultSet = preparedStatement.executeQuery()) {
 
 			while (resultSet.next()) {
+				long userId = resultSet.getLong("userId");
 				long accountEntryId = resultSet.getLong("accountEntryId");
 				long defaultDeliveryCTermEntryId = resultSet.getLong(
 					"defaultDeliveryCTermEntryId");
 				long defaultPaymentCTermEntryId = resultSet.getLong(
 					"defaultPaymentCTermEntryId");
-				long userId = resultSet.getLong("userId");
 
 				CommerceTermEntry deliveryCommerceTermEntry =
 					_commerceTermEntryLocalService.fetchCommerceTermEntry(
