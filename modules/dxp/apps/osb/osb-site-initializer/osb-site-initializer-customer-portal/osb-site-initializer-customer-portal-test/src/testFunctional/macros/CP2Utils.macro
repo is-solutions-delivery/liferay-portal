@@ -1,6 +1,6 @@
 definition {
 
-    macro closeModal {
+	macro closeModal {
 		Click(locator1 = "CP2Utils#CLOSE_BUTTON");
 	}
 

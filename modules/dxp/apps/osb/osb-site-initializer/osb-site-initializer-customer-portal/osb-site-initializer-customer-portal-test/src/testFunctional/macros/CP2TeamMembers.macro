@@ -31,6 +31,22 @@ definition {
 		}
 	}
 
+	macro assertDropDownOptionsEnabled {
+		Click(locator1 = "CP2TeamMembers#DROPDOWN");
+
+		AssertElementPresent(
+			key_option = "User",
+			locator1 = "CP2TeamMembers#ROLE_OPTIONS");
+
+		AssertElementPresent(
+			key_option = "Administrator",
+			locator1 = "CP2TeamMembers#ROLE_OPTIONS");
+
+		AssertElementPresent(
+			key_option = "Requester",
+			locator1 = "CP2TeamMembers#ROLE_OPTIONS");
+	}
+
 	macro clickInviteMembers {
 		Click(locator1 = "CP2TeamMembers#INVITE_BUTTON");
 	}
@@ -55,26 +71,6 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
-	macro viewTeamMembersPage {
-		AssertElementPresent(locator1 = "CustomerPortalSite#TEAM_MEMBERS_MAIN_PAGE");
-	}
-
-	macro assertDropDownOptionsEnabled {
-		Click(locator1 = "CP2TeamMembers#DROPDOWN");
-
-		AssertElementPresent(
-			key_option = "User",
-			locator1 = "CP2TeamMembers#ROLE_OPTIONS");
-
-		AssertElementPresent(
-			key_option = "Administrator",
-			locator1 = "CP2TeamMembers#ROLE_OPTIONS");
-
-		AssertElementPresent(
-			key_option = "Requester",
-			locator1 = "CP2TeamMembers#ROLE_OPTIONS");
-	}
-
 	macro teamMembersFlow {
 		CustomerPortal.enterOnProject(title = "Test Account DXP");
 
@@ -84,4 +80,9 @@ definition {
 
 		CP2NavigationMenu.goToTeamMembers();
 	}
+
+	macro viewTeamMembersPage {
+		AssertElementPresent(locator1 = "CustomerPortalSite#TEAM_MEMBERS_MAIN_PAGE");
+	}
+
 }
