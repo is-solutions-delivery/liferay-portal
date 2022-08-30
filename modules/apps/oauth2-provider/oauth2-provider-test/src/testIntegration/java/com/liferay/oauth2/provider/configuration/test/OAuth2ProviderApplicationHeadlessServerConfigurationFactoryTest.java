@@ -55,13 +55,13 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
 
 		String externalReferenceCode = "foo";
 
-		try (ConfigurationHolder configurationHolder1 = new ConfigurationHolder(
+		try (ConfigurationHolder configurationHolder = new ConfigurationHolder(
 				() -> _configurationAdmin.getFactoryConfiguration(
 					OAuth2ProviderApplicationHeadlessServerConfiguration.class.
 						getName(),
 					externalReferenceCode, "?"))) {
 
-			configurationHolder1.update(
+			configurationHolder.update(
 				HashMapDictionaryBuilder.<String, Object>put(
 					"_portalK8sConfigMapModifier.cardinality.minimum", 0
 				).put(
