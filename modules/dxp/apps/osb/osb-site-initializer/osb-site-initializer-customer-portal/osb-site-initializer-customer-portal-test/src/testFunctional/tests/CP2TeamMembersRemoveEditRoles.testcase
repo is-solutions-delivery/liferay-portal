@@ -38,9 +38,45 @@ definition {
     @description = "Automation ID: LPS-150003 | Test Summary: Verify if after the user clicks on Remove in the actions menu, a modal opens with a confirmation message"
     @priority = "4"
     test CanViewAConfirmationMessage {
+        task ("Change the user role in the project") {
+			Accounts.openAccountsAdmin();
 
-        // TODO LPS-150003 CanViewAConfirmationMessage pending implementation
+			CustomerPortal.accountTableProject(title = "Test Account DXP");
 
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Administrator",
+				accountUserName = "Test Test");
+		}
+
+		task ("Go to CP2.0 and login to okta") {
+            ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
+
+			CustomerPortal.loginOktaToUpdateCP();
+
+            SelectWindow(locator1 = "title=Home - Customer Portal Site - Liferay DXP");
+
+            Refresh();
+        }
+
+		task ("Get into the project and go to Team Members page") {
+			CP2TeamMembers.teamMembersFlow();
+		}
+
+        task ("Assert the confirmation message in the modal") {
+            CP2TeamMembers.actionMenu(menuItem = "Remove");
+            
+			AssertElementPresent(
+				locator1 = "CP2Utils#MODAL",
+				value = "Are you sure you want to remove this team member from the project?");
+        }
+
+        task ("Close the confirmation modal") {
+			CP2Utils.closeModal();
+		}
+
+        task ("Delete the entries and objects created") {
+			CustomerPortal.deleteEntryAccountFlag(entry = "ERC-002");
+		}
     }
 
     @description = "Automation ID: LPS-150004 | Test Summary: Verify if the user clicks the Cancel button he stays on the Team Members page"
