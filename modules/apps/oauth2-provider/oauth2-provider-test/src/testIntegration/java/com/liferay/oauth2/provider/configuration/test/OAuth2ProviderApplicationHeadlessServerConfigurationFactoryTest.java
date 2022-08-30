@@ -72,7 +72,6 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
 				externalReferenceCode);
 
 			Assert.assertNotNull(oAuth2Application);
-
 			Assert.assertEquals(
 				externalReferenceCode, oAuth2Application.getName());
 		}
@@ -116,11 +115,11 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
 			String externalReferenceCode)
 		throws Exception {
 
-		CountDownLatch latch = new CountDownLatch(50);
+		CountDownLatch countDownLatch = new CountDownLatch(50);
 
 		OAuth2Application oAuth2Application = null;
 
-		while ((latch.getCount() > 0) && (oAuth2Application == null)) {
+		while ((countDownLatch.getCount() > 0) && (oAuth2Application == null)) {
 			try {
 				oAuth2Application =
 					_oAuth2ApplicationLocalService.
@@ -130,12 +129,13 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
 			}
 			catch (Exception exception) {
 
-				// Ignore this scenario
+				// Ignore
 
 			}
 
-			latch.countDown();
-			latch.await(10, TimeUnit.MILLISECONDS);
+			countDownLatch.countDown();
+
+			countDownLatch.await(10, TimeUnit.MILLISECONDS);
 		}
 
 		return oAuth2Application;
