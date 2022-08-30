@@ -57,9 +57,7 @@ public abstract class BaseConfigurationFactory {
 			log.debug("Deactivating " + oAuth2Application);
 		}
 
-		if ((portalK8sConfigMapModifier != null) &&
-			Validator.isNotNull(serviceId)) {
-
+		if (Validator.isNotNull(_configMapName)) {
 			portalK8sConfigMapModifier.modifyConfigMap(
 				configMapModel -> _extensionProperties.forEach(
 					configMapModel.data()::remove),
@@ -125,6 +123,10 @@ public abstract class BaseConfigurationFactory {
 			return;
 		}
 
+		_configMapName = StringBundler.concat(
+			serviceId, StringPool.DASH, company.getWebId(),
+			"-lxc-ext-init-metadata");
+
 		portalK8sConfigMapModifier.modifyConfigMap(
 			configMapModel -> {
 				Map<String, String> data = configMapModel.data();
@@ -154,7 +156,7 @@ public abstract class BaseConfigurationFactory {
 						properties.get("ext.lxc.liferay.com.serviceUid")));
 				labels.put("lxc.liferay.com/metadataType", "ext-init");
 			},
-			_getConfigMapName(company.getWebId()));
+			_configMapName);
 	}
 
 	protected volatile OAuth2Application oAuth2Application;
@@ -169,19 +171,6 @@ public abstract class BaseConfigurationFactory {
 
 	@Reference
 	protected UserLocalService userLocalService;
-
-	private String _getConfigMapName(String webId) {
-		if (_configMapName != null) {
-			return _configMapName;
-		}
-
-		if (serviceId == null) {
-			throw new IllegalStateException("Service ID is null");
-		}
-
-		return _configMapName = StringBundler.concat(
-			serviceId, StringPool.DASH, webId, "-lxc-ext-init-metadata");
-	}
 
 	@Reference
 	private CompanyLocalService _companyLocalService;
