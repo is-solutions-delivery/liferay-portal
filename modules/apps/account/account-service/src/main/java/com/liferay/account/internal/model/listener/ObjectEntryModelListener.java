@@ -82,10 +82,10 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 			return;
 		}
 
+		Map<String, Serializable> values = objectEntry.getValues();
+
 		ObjectField objectField = _objectFieldLocalService.getObjectField(
 			objectDefinition.getAccountEntryRestrictedObjectFieldId());
-
-		Map<String, Serializable> values = objectEntry.getValues();
 
 		if (!values.containsKey(objectField.getName())) {
 			return;
