@@ -204,13 +204,13 @@ public class CommerceTermEntryLocalServiceImpl
 			ResourceConstants.SCOPE_INDIVIDUAL,
 			commerceTermEntry.getCommerceTermEntryId());
 
-		_commerceTermEntryRelLocalService.deleteCommerceTermEntryRels(
-			commerceTermEntry.getCommerceTermEntryId());
-
 		_commerceChannelAccountEntryRelLocalService.
 			deleteCommerceChannelAccountEntryRels(
 				CommerceTermEntry.class.getName(),
 				commerceTermEntry.getCommerceTermEntryId());
+
+		_commerceTermEntryRelLocalService.deleteCommerceTermEntryRels(
+			commerceTermEntry.getCommerceTermEntryId());
 
 		_workflowInstanceLinkLocalService.deleteWorkflowInstanceLinks(
 			commerceTermEntry.getCompanyId(), 0L,
