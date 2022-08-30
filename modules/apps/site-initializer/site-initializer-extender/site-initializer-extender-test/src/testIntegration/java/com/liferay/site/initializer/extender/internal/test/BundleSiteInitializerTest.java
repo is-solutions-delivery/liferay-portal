@@ -168,6 +168,7 @@ import java.math.BigDecimal;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.ServletContext;
 
@@ -964,7 +965,8 @@ public class BundleSiteInitializerTest {
 		String subject = subjectMap.get("en_US");
 
 		Assert.assertTrue(
-			subject.equals(StringUtil.getTitleCase(subject, true, "DXP")));
+			Objects.equals(
+				subject, StringUtil.getTitleCase(subject, true, "DXP")));
 	}
 
 	private void _assertObjectActions(
@@ -984,14 +986,16 @@ public class BundleSiteInitializerTest {
 			UnicodeProperties parametersUnicodeProperties =
 				objectAction.getParametersUnicodeProperties();
 
-			if (objectActionExecutorKey.equals(
+			if (Objects.equals(
+					objectActionExecutorKey,
 					ObjectActionExecutorConstants.KEY_GROOVY)) {
 
 				String script = parametersUnicodeProperties.get("script");
 
 				Assert.assertNotNull(script);
 			}
-			else if (objectActionExecutorKey.equals(
+			else if (Objects.equals(
+						objectActionExecutorKey,
 						ObjectActionExecutorConstants.KEY_WEBHOOK)) {
 
 				String secret = parametersUnicodeProperties.get("secret");
