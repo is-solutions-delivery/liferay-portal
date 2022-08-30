@@ -116,6 +116,15 @@ public abstract class BaseConfigurationFactory {
 
 		_extensionProperties = extensionProperties;
 
+		serviceId = GetterUtil.getString(
+			properties.get("ext.lxc.liferay.com.serviceId"));
+
+		if ((portalK8sConfigMapModifier == null) ||
+			Validator.isNull(serviceId)) {
+
+			return;
+		}
+
 		portalK8sConfigMapModifier.modifyConfigMap(
 			configMapModel -> {
 				Map<String, String> data = configMapModel.data();

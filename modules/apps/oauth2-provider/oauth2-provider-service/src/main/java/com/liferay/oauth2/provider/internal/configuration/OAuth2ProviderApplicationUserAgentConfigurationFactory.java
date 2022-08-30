@@ -27,11 +27,9 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -82,35 +80,28 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 			oAuth2ProviderApplicationUserAgentConfiguration, redirectURIsList,
 			scopeAliasesList);
 
-		serviceId = GetterUtil.getString(
-			properties.get("ext.lxc.liferay.com.serviceId"));
-
-		if ((portalK8sConfigMapModifier != null) &&
-			Validator.isNotNull(serviceId)) {
-
-			modifyConfigMap(
-				company,
-				HashMapBuilder.put(
-					externalReferenceCode + ".oauth2.authorization.uri",
-					serviceAddress.concat("/o/oauth2/authorize")
-				).put(
-					externalReferenceCode + ".oauth2.introspection.uri",
-					serviceAddress.concat("/o/oauth2/introspect")
-				).put(
-					externalReferenceCode + ".oauth2.redirect.uris",
-					StringUtil.merge(redirectURIsList, StringPool.NEW_LINE)
-				).put(
-					externalReferenceCode + ".oauth2.token.uri",
-					serviceAddress.concat("/o/oauth2/token")
-				).put(
-					externalReferenceCode + ".oauth2.user.agent.client.id",
-					oAuth2Application.getClientId()
-				).put(
-					externalReferenceCode + ".oauth2.user.agent.scopes",
-					StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
-				).build(),
-				properties);
-		}
+		modifyConfigMap(
+			company,
+			HashMapBuilder.put(
+				externalReferenceCode + ".oauth2.authorization.uri",
+				serviceAddress.concat("/o/oauth2/authorize")
+			).put(
+				externalReferenceCode + ".oauth2.introspection.uri",
+				serviceAddress.concat("/o/oauth2/introspect")
+			).put(
+				externalReferenceCode + ".oauth2.redirect.uris",
+				StringUtil.merge(redirectURIsList, StringPool.NEW_LINE)
+			).put(
+				externalReferenceCode + ".oauth2.token.uri",
+				serviceAddress.concat("/o/oauth2/token")
+			).put(
+				externalReferenceCode + ".oauth2.user.agent.client.id",
+				oAuth2Application.getClientId()
+			).put(
+				externalReferenceCode + ".oauth2.user.agent.scopes",
+				StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
+			).build(),
+			properties);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("OAuth 2 application " + oAuth2Application);

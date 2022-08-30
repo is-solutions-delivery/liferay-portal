@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -77,39 +76,31 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			oAuth2ProviderApplicationHeadlessServerConfiguration,
 			scopeAliasesList);
 
-		serviceId = GetterUtil.getString(
-			properties.get("ext.lxc.liferay.com.serviceId"));
+		String serviceAddress = Http.HTTPS_WITH_SLASH.concat(
+			company.getVirtualHostname());
 
-		if ((portalK8sConfigMapModifier != null) &&
-			Validator.isNotNull(serviceId)) {
-
-			String serviceAddress = Http.HTTPS_WITH_SLASH.concat(
-				company.getVirtualHostname());
-
-			modifyConfigMap(
-				company,
-				HashMapBuilder.put(
-					externalReferenceCode +
-						".oauth2.headless.server.client.secret",
-					oAuth2Application.getClientSecret()
-				).put(
-					externalReferenceCode + ".oauth2.authorization.uri",
-					serviceAddress.concat("/o/oauth2/authorize")
-				).put(
-					externalReferenceCode + ".oauth2.headless.server.client.id",
-					oAuth2Application.getClientId()
-				).put(
-					externalReferenceCode + ".oauth2.headless.server.scopes",
-					StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
-				).put(
-					externalReferenceCode + ".oauth2.introspection.uri",
-					serviceAddress.concat("/o/oauth2/introspect")
-				).put(
-					externalReferenceCode + ".oauth2.token.uri",
-					serviceAddress.concat("/o/oauth2/token")
-				).build(),
-				properties);
-		}
+		modifyConfigMap(
+			company,
+			HashMapBuilder.put(
+				externalReferenceCode + ".oauth2.authorization.uri",
+				serviceAddress.concat("/o/oauth2/authorize")
+			).put(
+				externalReferenceCode + ".oauth2.headless.server.client.id",
+				oAuth2Application.getClientId()
+			).put(
+				externalReferenceCode + ".oauth2.headless.server.client.secret",
+				oAuth2Application.getClientSecret()
+			).put(
+				externalReferenceCode + ".oauth2.headless.server.scopes",
+				StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
+			).put(
+				externalReferenceCode + ".oauth2.introspection.uri",
+				serviceAddress.concat("/o/oauth2/introspect")
+			).put(
+				externalReferenceCode + ".oauth2.token.uri",
+				serviceAddress.concat("/o/oauth2/token")
+			).build(),
+			properties);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("OAuth 2 application " + oAuth2Application);
