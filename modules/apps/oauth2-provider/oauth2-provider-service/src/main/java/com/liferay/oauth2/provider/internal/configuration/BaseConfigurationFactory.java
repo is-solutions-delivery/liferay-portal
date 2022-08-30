@@ -56,22 +56,6 @@ public abstract class BaseConfigurationFactory {
 		return externalReferenceCode;
 	}
 
-	public OAuth2Application getOAuth2Application() {
-		return _oAuth2Application;
-	}
-
-	public String getServiceId() {
-		return _serviceId;
-	}
-
-	public void setOAuth2Application(OAuth2Application oAuth2Application) {
-		_oAuth2Application = oAuth2Application;
-	}
-
-	public void setServiceId(String serviceId) {
-		_serviceId = serviceId;
-	}
-
 	@Deactivate
 	protected void deactivate(Integer reason) throws PortalException {
 		if (reason !=
@@ -80,16 +64,14 @@ public abstract class BaseConfigurationFactory {
 			return;
 		}
 
-		OAuth2Application oAuth2Application = getOAuth2Application();
-
 		Log log = getLog();
 
 		if (log.isDebugEnabled()) {
-			log.debug("Deactivating " + oAuth2Application.toString());
+			log.debug("Deactivating " + oAuth2Application);
 		}
 
 		if ((portalK8sConfigMapModifier != null) &&
-			Validator.isNotNull(getServiceId())) {
+			Validator.isNotNull(serviceId)) {
 
 			portalK8sConfigMapModifier.modifyConfigMap(
 				configMapModel -> _extensionProperties.forEach(
@@ -166,11 +148,15 @@ public abstract class BaseConfigurationFactory {
 			_getConfigMapName(company.getWebId()));
 	}
 
+	protected volatile OAuth2Application oAuth2Application;
+
 	@Reference
 	protected OAuth2ApplicationLocalService oAuth2ApplicationLocalService;
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
 	protected PortalK8sConfigMapModifier portalK8sConfigMapModifier;
+
+	protected volatile String serviceId;
 
 	@Reference
 	protected UserLocalService userLocalService;
@@ -180,12 +166,12 @@ public abstract class BaseConfigurationFactory {
 			return _configMapName;
 		}
 
-		if (_serviceId == null) {
+		if (serviceId == null) {
 			throw new IllegalStateException("Service ID is null");
 		}
 
 		return _configMapName = StringBundler.concat(
-			_serviceId, StringPool.DASH, webId, "-lxc-ext-init-metadata");
+			serviceId, StringPool.DASH, webId, "-lxc-ext-init-metadata");
 	}
 
 	@Reference
@@ -193,7 +179,5 @@ public abstract class BaseConfigurationFactory {
 
 	private volatile String _configMapName;
 	private volatile Map<String, String> _extensionProperties;
-	private volatile OAuth2Application _oAuth2Application;
-	private volatile String _serviceId;
 
 }

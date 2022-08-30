@@ -77,17 +77,16 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 		List<String> scopeAliasesList = ListUtil.fromArray(
 			oAuth2ProviderApplicationUserAgentConfiguration.scopes());
 
-		OAuth2Application oAuth2Application = _addOrUpdateOAuth2Application(
+		oAuth2Application = _addOrUpdateOAuth2Application(
 			company.getCompanyId(), externalReferenceCode,
 			oAuth2ProviderApplicationUserAgentConfiguration, redirectURIsList,
 			scopeAliasesList);
 
-		setServiceId(
-			GetterUtil.getString(
-				properties.get("ext.lxc.liferay.com.serviceId")));
+		serviceId = GetterUtil.getString(
+			properties.get("ext.lxc.liferay.com.serviceId"));
 
 		if ((portalK8sConfigMapModifier != null) &&
-			Validator.isNotNull(getServiceId())) {
+			Validator.isNotNull(serviceId)) {
 
 			modifyConfigMap(
 				company,
@@ -112,8 +111,6 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 				).build(),
 				properties);
 		}
-
-		setOAuth2Application(oAuth2Application);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("OAuth 2 application " + oAuth2Application);

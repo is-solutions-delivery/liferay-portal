@@ -72,17 +72,16 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 		List<String> scopeAliasesList = ListUtil.fromArray(
 			oAuth2ProviderApplicationHeadlessServerConfiguration.scopes());
 
-		OAuth2Application oAuth2Application = _addOrUpdateOAuth2Application(
+		oAuth2Application = _addOrUpdateOAuth2Application(
 			company.getCompanyId(), externalReferenceCode,
 			oAuth2ProviderApplicationHeadlessServerConfiguration,
 			scopeAliasesList);
 
-		setServiceId(
-			GetterUtil.getString(
-				properties.get("ext.lxc.liferay.com.serviceId")));
+		serviceId = GetterUtil.getString(
+			properties.get("ext.lxc.liferay.com.serviceId"));
 
 		if ((portalK8sConfigMapModifier != null) &&
-			Validator.isNotNull(getServiceId())) {
+			Validator.isNotNull(serviceId)) {
 
 			String serviceAddress = Http.HTTPS_WITH_SLASH.concat(
 				company.getVirtualHostname());
@@ -111,8 +110,6 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 				).build(),
 				properties);
 		}
-
-		setOAuth2Application(oAuth2Application);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("OAuth 2 application " + oAuth2Application);
