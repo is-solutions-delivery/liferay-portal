@@ -286,8 +286,44 @@ definition {
     @description = "Automation ID: LPS-150013 | Test Summary: Verify that after the user clicks Edit a Cancel button is available"
     @priority = "5"
     test CanViewCancelButton {
+		task ("Change the user role in the project") {
+            Accounts.openAccountsAdmin();
 
-        // TODO LPS-150013 CanViewCancelButton pending implementation
+            CustomerPortal.accountTableProject(title = "Test Account DXP");
 
+            Accounts.addAssigneeToRoleViaUsersTab(
+                accountRoleTitle = "Account Administrator",
+                accountUserName = "Test Test");
+        }
+
+        task ("Go to CP2.0 and login to okta") {
+            ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
+
+			CustomerPortal.loginOktaToUpdateCP();
+
+            SelectWindow(locator1 = "title=Home - Customer Portal Site - Liferay DXP");
+
+            Refresh();
+        }
+
+        task ("Get into the project and go to Team Members page") {
+            CP2TeamMembers.teamMembersFlow();
+        }
+
+        task ("Open the action menu and click the Edit option") {
+			CP2Utils.openActionMenu(
+				openUser = "Test User 2",
+				menuItem = "Edit");
+        }
+
+		task ("Click the Cancel button and affirm that you have remained on the Team Members page") {
+			Button.click(button = "Cancel");
+
+			CP2TeamMembers.viewTeamMembersPage();
+		}
+
+		task ("Delete the entries and objects created") {
+			CustomerPortal.deleteEntryAccountFlag(entry = "ERC-002");
+		}
     }
 }
