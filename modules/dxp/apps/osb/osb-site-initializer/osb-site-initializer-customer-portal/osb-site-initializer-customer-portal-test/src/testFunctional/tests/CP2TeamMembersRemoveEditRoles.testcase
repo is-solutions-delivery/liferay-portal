@@ -41,6 +41,7 @@ definition {
 		property portal.upstream = "quarantine";
 
 		// "Reason: Not eble to reproduce scenario without OKTA workaround."
+
 		task ("Change the user role in the project") {
 			Accounts.openAccountsAdmin();
 
@@ -88,6 +89,7 @@ definition {
 		property portal.upstream = "quarantine";
 
 		// "Reason: Not eble to reproduce scenario without OKTA workaround."
+
 		task ("Change the user role in the project") {
 			Accounts.openAccountsAdmin();
 
@@ -137,6 +139,7 @@ definition {
 		property portal.upstream = "quarantine";
 
 		// "Reason: Not eble to reproduce scenario without OKTA workaround."
+
 		task ("Change the user role in the project") {
 			Accounts.openAccountsAdmin();
 
@@ -184,6 +187,7 @@ definition {
 		property portal.upstream = "quarantine";
 
 		// "Reason: Not eble to reproduce scenario without OKTA workaround."
+
 		task ("Adding a user to the project") {
 			JSONUser.addUserWithRole(
 				roleTitle = "Power User",
@@ -248,6 +252,7 @@ definition {
 		property portal.upstream = "quarantine";
 
 		// "Reason: Not eble to reproduce scenario without OKTA workaround."
+
 		task ("Change the user role in the project") {
 			Accounts.openAccountsAdmin();
 
@@ -293,6 +298,7 @@ definition {
 		property portal.upstream = "quarantine";
 
 		// "Reason: Not eble to reproduce scenario without OKTA workaround."
+
 		task ("Adding a user to the project") {
 			JSONUser.addUserWithRole(
 				roleTitle = "Power User",
