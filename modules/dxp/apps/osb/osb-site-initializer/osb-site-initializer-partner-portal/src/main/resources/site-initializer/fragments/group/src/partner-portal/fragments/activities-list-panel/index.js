@@ -51,7 +51,9 @@ const BudgetBreakdownTable = ({mdfRequestActivityId}) => {
 				type: 'danger',
 			});
 		};
-		getActivityToBudgets();
+		if (mdfRequestActivityId) {
+			getActivityToBudgets();
+		}
 	}, [mdfRequestActivityId]);
 
 	return (
@@ -339,14 +341,15 @@ export default function () {
 
 				return;
 			}
-
 			Liferay.Util.openToast({
 				message: 'An unexpected error occured.',
 				type: 'danger',
 			});
 		};
 
-		getActivities();
+		if (mdfRequestId) {
+			getActivities();
+		}
 	}, []);
 
 	return (
