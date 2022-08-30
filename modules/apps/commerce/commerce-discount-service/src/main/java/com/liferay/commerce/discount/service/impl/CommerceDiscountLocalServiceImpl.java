@@ -581,15 +581,17 @@ public class CommerceDiscountLocalServiceImpl
 			CommerceDiscount commerceDiscount)
 		throws PortalException {
 
-		_commerceDiscountUsageEntryLocalService.
-			deleteCommerceUsageEntryByDiscountId(
+		commerceDiscountPersistence.remove(commerceDiscount);
+
+		_resourceLocalService.deleteResource(
+			commerceDiscount.getCompanyId(), CommerceDiscount.class.getName(),
+			ResourceConstants.SCOPE_INDIVIDUAL,
+			commerceDiscount.getCommerceDiscountId());
+
+		_commerceChannelAccountEntryRelLocalService.
+			deleteCommerceChannelAccountEntryRels(
+				CommerceDiscount.class.getName(),
 				commerceDiscount.getCommerceDiscountId());
-
-		_commerceDiscountRelLocalService.deleteCommerceDiscountRels(
-			commerceDiscount.getCommerceDiscountId());
-
-		_commerceDiscountRuleLocalService.deleteCommerceDiscountRules(
-			commerceDiscount.getCommerceDiscountId());
 
 		_commerceDiscountCommerceAccountGroupRelLocalService.
 			deleteCommerceDiscountCommerceAccountGroupRelsByCommerceDiscountId(
@@ -599,17 +601,15 @@ public class CommerceDiscountLocalServiceImpl
 			deleteCommerceDiscountOrderTypeRels(
 				commerceDiscount.getCommerceDiscountId());
 
-		commerceDiscountPersistence.remove(commerceDiscount);
-
-		_commerceChannelAccountEntryRelLocalService.
-			deleteCommerceChannelAccountEntryRels(
-				CommerceDiscount.class.getName(),
-				commerceDiscount.getCommerceDiscountId());
-
-		_resourceLocalService.deleteResource(
-			commerceDiscount.getCompanyId(), CommerceDiscount.class.getName(),
-			ResourceConstants.SCOPE_INDIVIDUAL,
+		_commerceDiscountRelLocalService.deleteCommerceDiscountRels(
 			commerceDiscount.getCommerceDiscountId());
+
+		_commerceDiscountRuleLocalService.deleteCommerceDiscountRules(
+			commerceDiscount.getCommerceDiscountId());
+
+		_commerceDiscountUsageEntryLocalService.
+			deleteCommerceUsageEntryByDiscountId(
+				commerceDiscount.getCommerceDiscountId());
 
 		_expandoRowLocalService.deleteRows(
 			commerceDiscount.getCommerceDiscountId());

@@ -173,7 +173,7 @@ public class CommerceChannelLocalServiceImpl
 			CommerceChannel commerceChannel)
 		throws PortalException {
 
-		commerceChannel = commerceChannelPersistence.remove(commerceChannel);
+		commerceChannelPersistence.remove(commerceChannel);
 
 		resourceLocalService.deleteResource(
 			commerceChannel, ResourceConstants.SCOPE_INDIVIDUAL);
