@@ -17,8 +17,6 @@ package com.liferay.oauth2.provider.internal.servlet.taglib;
 import com.liferay.oauth2.provider.constants.ClientProfile;
 import com.liferay.oauth2.provider.model.OAuth2Application;
 import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
@@ -51,19 +49,10 @@ public class OAuth2ProviderApplicationUserAgentDynamicInclude
 
 		PrintWriter printWriter = httpServletResponse.getWriter();
 
-		DynamicQuery dynamicQuery =
-			_oAuth2ApplicationLocalService.dynamicQuery();
-
-		dynamicQuery.add(
-			RestrictionsFactoryUtil.eq(
-				"companyId", _portal.getCompanyId(httpServletRequest)));
-
-		dynamicQuery.add(
-			RestrictionsFactoryUtil.eq(
-				"clientProfile", ClientProfile.USER_AGENT_APPLICATION.id()));
-
 		List<OAuth2Application> oAuth2Applications =
-			_oAuth2ApplicationLocalService.dynamicQuery(dynamicQuery);
+			_oAuth2ApplicationLocalService.getOAuth2Applications(
+				_portal.getCompanyId(httpServletRequest),
+				ClientProfile.USER_AGENT_APPLICATION.id());
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
