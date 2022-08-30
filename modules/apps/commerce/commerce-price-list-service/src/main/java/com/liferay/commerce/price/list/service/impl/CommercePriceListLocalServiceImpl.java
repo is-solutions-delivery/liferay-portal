@@ -436,6 +436,16 @@ public class CommercePriceListLocalServiceImpl
 			CommercePriceList commercePriceList)
 		throws PortalException {
 
+		commercePriceListPersistence.remove(commercePriceList);
+
+		resourceLocalService.deleteResource(
+			commercePriceList, ResourceConstants.SCOPE_INDIVIDUAL);
+
+		_commerceChannelAccountEntryRelLocalService.
+			deleteCommerceChannelAccountEntryRels(
+				CommercePriceList.class.getName(),
+				commercePriceList.getCommercePriceListId());
+
 		commercePriceEntryLocalService.deleteCommercePriceEntries(
 			commercePriceList.getCommercePriceListId());
 
@@ -461,16 +471,6 @@ public class CommercePriceListLocalServiceImpl
 
 		_commercePriceModifierLocalService.
 			deleteCommercePriceModifiersByCommercePriceListId(
-				commercePriceList.getCommercePriceListId());
-
-		resourceLocalService.deleteResource(
-			commercePriceList, ResourceConstants.SCOPE_INDIVIDUAL);
-
-		commercePriceListPersistence.remove(commercePriceList);
-
-		_commerceChannelAccountEntryRelLocalService.
-			deleteCommerceChannelAccountEntryRels(
-				CommercePriceList.class.getName(),
 				commercePriceList.getCommercePriceListId());
 
 		_expandoRowLocalService.deleteRows(
