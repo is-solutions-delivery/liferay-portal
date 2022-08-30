@@ -60,10 +60,6 @@ public abstract class BaseConfigurationFactory {
 			_serviceId, StringPool.DASH, webId, "-lxc-ext-init-metadata");
 	}
 
-	public Map<String, String> getExtensionProperties() {
-		return _extensionProperties;
-	}
-
 	public String getExternalReferenceCode(Map<String, Object> properties) {
 		String externalReferenceCode = GetterUtil.getString(
 			properties.get(Constants.SERVICE_PID));
@@ -83,12 +79,6 @@ public abstract class BaseConfigurationFactory {
 
 	public String getServiceId() {
 		return _serviceId;
-	}
-
-	public void setExtensionProperties(
-		Map<String, String> extensionProperties) {
-
-		_extensionProperties = extensionProperties;
 	}
 
 	public void setOAuth2Application(OAuth2Application oAuth2Application) {
@@ -118,10 +108,8 @@ public abstract class BaseConfigurationFactory {
 		if ((portalK8sConfigMapModifier != null) &&
 			Validator.isNotNull(getServiceId())) {
 
-			Map<String, String> extensionProperties = getExtensionProperties();
-
 			portalK8sConfigMapModifier.modifyConfigMap(
-				configMapModel -> extensionProperties.forEach(
+				configMapModel -> _extensionProperties.forEach(
 					configMapModel.data()::remove),
 				getConfigMapName());
 		}
@@ -156,6 +144,44 @@ public abstract class BaseConfigurationFactory {
 	}
 
 	protected abstract Log getLog();
+
+	protected void modifyConfigMap(
+		Company company, Map<String, String> extensionProperties,
+		Map<String, Object> properties) {
+
+		_extensionProperties = extensionProperties;
+
+		portalK8sConfigMapModifier.modifyConfigMap(
+			configMapModel -> {
+				Map<String, String> data = configMapModel.data();
+
+				extensionProperties.forEach(data::put);
+
+				Map<String, String> labels = configMapModel.labels();
+
+				labels.put(
+					"dxp.lxc.liferay.com/virtualInstanceId",
+					company.getWebId());
+				labels.put(
+					"ext.lxc.liferay.com/projectId",
+					GetterUtil.getString(
+						properties.get("ext.lxc.liferay.com.projectId")));
+				labels.put(
+					"ext.lxc.liferay.com/projectUid",
+					GetterUtil.getString(
+						properties.get("ext.lxc.liferay.com.projectUid")));
+				labels.put(
+					"ext.lxc.liferay.com/serviceId",
+					GetterUtil.getString(
+						properties.get("ext.lxc.liferay.com.serviceId")));
+				labels.put(
+					"ext.lxc.liferay.com/serviceUid",
+					GetterUtil.getString(
+						properties.get("ext.lxc.liferay.com.serviceUid")));
+				labels.put("lxc.liferay.com/metadataType", "ext-init");
+			},
+			getConfigMapName(company.getWebId()));
+	}
 
 	@Reference
 	protected CompanyLocalService companyLocalService;

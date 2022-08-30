@@ -89,58 +89,28 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 		if ((portalK8sConfigMapModifier != null) &&
 			Validator.isNotNull(getServiceId())) {
 
-			Map<String, String> extensionProperties = HashMapBuilder.put(
-				externalReferenceCode + ".oauth2.authorization.uri",
-				serviceAddress.concat("/o/oauth2/authorize")
-			).put(
-				externalReferenceCode + ".oauth2.introspection.uri",
-				serviceAddress.concat("/o/oauth2/introspect")
-			).put(
-				externalReferenceCode + ".oauth2.redirect.uris",
-				StringUtil.merge(redirectURIsList, StringPool.NEW_LINE)
-			).put(
-				externalReferenceCode + ".oauth2.token.uri",
-				serviceAddress.concat("/o/oauth2/token")
-			).put(
-				externalReferenceCode + ".oauth2.user.agent.client.id",
-				oAuth2Application.getClientId()
-			).put(
-				externalReferenceCode + ".oauth2.user.agent.scopes",
-				StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
-			).build();
-
-			setExtensionProperties(extensionProperties);
-
-			portalK8sConfigMapModifier.modifyConfigMap(
-				configMapModel -> {
-					Map<String, String> data = configMapModel.data();
-
-					extensionProperties.forEach(data::put);
-
-					Map<String, String> labels = configMapModel.labels();
-
-					labels.put(
-						"dxp.lxc.liferay.com/virtualInstanceId",
-						company.getWebId());
-					labels.put(
-						"ext.lxc.liferay.com/projectId",
-						GetterUtil.getString(
-							properties.get("ext.lxc.liferay.com.projectId")));
-					labels.put(
-						"ext.lxc.liferay.com/projectUid",
-						GetterUtil.getString(
-							properties.get("ext.lxc.liferay.com.projectUid")));
-					labels.put(
-						"ext.lxc.liferay.com/serviceId",
-						GetterUtil.getString(
-							properties.get("ext.lxc.liferay.com.serviceId")));
-					labels.put(
-						"ext.lxc.liferay.com/serviceUid",
-						GetterUtil.getString(
-							properties.get("ext.lxc.liferay.com.serviceUid")));
-					labels.put("lxc.liferay.com/metadataType", "ext-init");
-				},
-				getConfigMapName(company.getWebId()));
+			modifyConfigMap(
+				company,
+				HashMapBuilder.put(
+					externalReferenceCode + ".oauth2.authorization.uri",
+					serviceAddress.concat("/o/oauth2/authorize")
+				).put(
+					externalReferenceCode + ".oauth2.introspection.uri",
+					serviceAddress.concat("/o/oauth2/introspect")
+				).put(
+					externalReferenceCode + ".oauth2.redirect.uris",
+					StringUtil.merge(redirectURIsList, StringPool.NEW_LINE)
+				).put(
+					externalReferenceCode + ".oauth2.token.uri",
+					serviceAddress.concat("/o/oauth2/token")
+				).put(
+					externalReferenceCode + ".oauth2.user.agent.client.id",
+					oAuth2Application.getClientId()
+				).put(
+					externalReferenceCode + ".oauth2.user.agent.scopes",
+					StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
+				).build(),
+				properties);
 		}
 
 		setOAuth2Application(oAuth2Application);
