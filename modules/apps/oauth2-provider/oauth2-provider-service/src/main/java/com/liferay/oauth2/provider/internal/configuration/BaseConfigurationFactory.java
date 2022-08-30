@@ -43,7 +43,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
  */
 public abstract class BaseConfigurationFactory {
 
-	public String getExternalReferenceCode(Map<String, Object> properties) {
+	protected String getExternalReferenceCode(Map<String, Object> properties) {
 		String externalReferenceCode = GetterUtil.getString(
 			properties.get(Constants.SERVICE_PID));
 
