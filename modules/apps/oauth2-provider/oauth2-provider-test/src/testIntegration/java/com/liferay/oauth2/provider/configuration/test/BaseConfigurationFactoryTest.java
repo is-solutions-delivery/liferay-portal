@@ -16,6 +16,7 @@ package com.liferay.oauth2.provider.configuration.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.oauth2.provider.configuration.OAuth2ProviderApplicationHeadlessServerConfiguration;
+import com.liferay.oauth2.provider.configuration.OAuth2ProviderApplicationUserAgentConfiguration;
 import com.liferay.oauth2.provider.model.OAuth2Application;
 import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
 import com.liferay.petra.function.UnsafeSupplier;
@@ -42,7 +43,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
  * @author Raymond Augé
  */
 @RunWith(Arquillian.class)
-public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
+public class BaseConfigurationFactoryTest {
 
 	@ClassRule
 	@Rule
@@ -51,37 +52,11 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
 
 	@Test
 	public void testGetFactoryConfiguration() throws Exception {
-		String externalReferenceCode = "foo";
-
-		try (ConfigurationHolder configurationHolder = new ConfigurationHolder(
-				() -> _configurationAdmin.getFactoryConfiguration(
-					OAuth2ProviderApplicationHeadlessServerConfiguration.class.
-						getName(),
-					externalReferenceCode, "?"))) {
-
-			configurationHolder.update(
-				HashMapDictionaryBuilder.<String, Object>put(
-					"_portalK8sConfigMapModifier.cardinality.minimum", 0
-				).put(
-					"companyId", TestPropsValues.getCompanyId()
-				).put(
-					"homePageURL", "http://foo.me"
-				).build());
-
-			OAuth2Application oAuth2Application = _fetchOAuthApplication(
-				externalReferenceCode);
-
-			Assert.assertNotNull(oAuth2Application);
-			Assert.assertEquals(
-				externalReferenceCode, oAuth2Application.getName());
-		}
-
-		Thread.sleep(200);
-
-		OAuth2Application oAuth2Application = _fetchOAuthApplication(
-			externalReferenceCode);
-
-		Assert.assertNull(oAuth2Application);
+		_testGetFactoryConfiguration(
+			OAuth2ProviderApplicationHeadlessServerConfiguration.class.
+				getName());
+		_testGetFactoryConfiguration(
+			OAuth2ProviderApplicationUserAgentConfiguration.class.getName());
 	}
 
 	public static class ConfigurationHolder
@@ -139,6 +114,40 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactoryTest {
 		}
 
 		return oAuth2Application;
+	}
+
+	private void _testGetFactoryConfiguration(String className)
+		throws Exception {
+
+		String externalReferenceCode = "foo";
+
+		try (ConfigurationHolder configurationHolder = new ConfigurationHolder(
+				() -> _configurationAdmin.getFactoryConfiguration(
+					className, externalReferenceCode, "?"))) {
+
+			configurationHolder.update(
+				HashMapDictionaryBuilder.<String, Object>put(
+					"_portalK8sConfigMapModifier.cardinality.minimum", 0
+				).put(
+					"companyId", TestPropsValues.getCompanyId()
+				).put(
+					"homePageURL", "http://foo.me"
+				).build());
+
+			OAuth2Application oAuth2Application = _fetchOAuthApplication(
+				externalReferenceCode);
+
+			Assert.assertNotNull(oAuth2Application);
+			Assert.assertEquals(
+				externalReferenceCode, oAuth2Application.getName());
+		}
+
+		Thread.sleep(200);
+
+		OAuth2Application oAuth2Application = _fetchOAuthApplication(
+			externalReferenceCode);
+
+		Assert.assertNull(oAuth2Application);
 	}
 
 	@Inject
