@@ -67,6 +67,8 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.search.filter.QueryFilter;
+import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ExceptionRetryAcceptor;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -81,6 +83,7 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.view.count.ViewCountManager;
@@ -102,6 +105,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
@@ -445,7 +449,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long userId, long categoryId, Filter filter,
+		long groupId, long userId, long categoryId, Map map,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
@@ -479,20 +483,10 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			return mbThreadPersistence.dslQuery(joinStep.where(predicate));
 		}
 
-		if (filter != null) {
-			String filterString = filter.toString();
+		if (map != null) {
 
-			filterString = StringUtil.removeSubstring(
-				filterString,
-				"{(query={className=TermQueryImpl, queryTerm={field=");
 
-			filterString = StringUtil.removeSubstring(
-				filterString, "}}), (cached=null, executionOption=null)}");
-
-			String[] sqlFilters = filterString.split("_sortable, value=");
-
-			if (sqlFilters[0].equals("hasValidAnswer") &&
-				sqlFilters[1].equals("false")) {
+			if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("false")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -504,8 +498,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
-					 sqlFilters[1].equals("0")) {
+			else if (MapUtil.getString(map,"numberOfMessageBoardMessages_sortable").equals("0")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -521,8 +514,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (sqlFilters[0].equals("hasValidAnswer") &&
-					 sqlFilters[1].equals("true")) {
+			else if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("true")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
@@ -648,7 +640,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long userId, long categoryId, Filter filter,
+		long groupId, long userId, long categoryId, Map map,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
@@ -672,20 +664,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				(Long)mbThreadPersistence.dslQuery(joinStep.where(predicate)));
 		}
 
-		if (filter != null) {
-			String filterString = filter.toString();
+		if (map != null) {
 
-			filterString = StringUtil.removeSubstring(
-				filterString,
-				"{(query={className=TermQueryImpl, queryTerm={field=");
-
-			filterString = StringUtil.removeSubstring(
-				filterString, "}}), (cached=null, executionOption=null)}");
-
-			String[] sqlFilters = filterString.split("_sortable, value=");
-
-			if (sqlFilters[0].equals("hasValidAnswer") &&
-				sqlFilters[1].equals("false")) {
+				if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("false")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -697,8 +678,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (sqlFilters[0].equals("numberOfMessageBoardMessages") &&
-					 sqlFilters[1].equals("0")) {
+			else if (MapUtil.getString(map,"numberOfMessageBoardMessages_sortable").equals("0")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
@@ -714,8 +694,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (sqlFilters[0].equals("hasValidAnswer") &&
-					 sqlFilters[1].equals("true")) {
+			else if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("true")) {
 
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
