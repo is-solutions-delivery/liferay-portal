@@ -117,12 +117,10 @@ export default function EditObjectField({
 		onSubmit,
 	});
 
-	const disableLabel = !!(readOnly || values.relationshipType);
-
 	const disableFieldFormBase = !!(
-		disableLabel ||
 		isApproved ||
-		values.system
+		values.system ||
+		values.relationshipType
 	);
 
 	const handleSettingsChange = ({name, value}: ObjectFieldSetting) =>
@@ -515,13 +513,13 @@ export default function EditObjectField({
 		<SidePanelForm
 			className="lfr-objects__edit-object-field"
 			onSubmit={handleSubmit}
-			readOnly={disableLabel}
+			readOnly={readOnly}
 			title={Liferay.Language.get('field')}
 		>
 			<Card title={Liferay.Language.get('basic-info')}>
 				<InputLocalized
-					disableFlag={disableLabel}
-					disabled={disableLabel}
+					disableFlag={readOnly}
+					disabled={readOnly}
 					error={errors.label}
 					label={Liferay.Language.get('label')}
 					onChange={(label) => setValues({label})}
