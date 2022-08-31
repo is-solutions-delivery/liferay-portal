@@ -2386,6 +2386,43 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {messageBoardSectionFilteredMessageBoardThreads(aggregation: ___, filter: ___, messageBoardSectionId: ___, page: ___, pageSize: ___, search: ___, sorts: ___, tag: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Retrieves the message board section's filtered threads. Results can be paginated, filtered, searched, and sorted."
+	)
+	public MessageBoardThreadPage
+			messageBoardSectionFilteredMessageBoardThreads(
+				@GraphQLName("messageBoardSectionId") Long
+					messageBoardSectionId,
+				@GraphQLName("search") String search,
+				@GraphQLName("tag") String tag,
+				@GraphQLName("aggregation") List<String> aggregations,
+				@GraphQLName("filter") String filterString,
+				@GraphQLName("pageSize") int pageSize,
+				@GraphQLName("page") int page,
+				@GraphQLName("sort") String sortsString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_messageBoardThreadResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			messageBoardThreadResource -> new MessageBoardThreadPage(
+				messageBoardThreadResource.
+					getMessageBoardSectionFilteredMessageBoardThreadsPage(
+						messageBoardSectionId, search, tag,
+						_aggregationBiFunction.apply(
+							messageBoardThreadResource, aggregations),
+						_filterBiFunction.apply(
+							messageBoardThreadResource, filterString),
+						Pagination.of(page, pageSize),
+						_sortsBiFunction.apply(
+							messageBoardThreadResource, sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {messageBoardSectionMessageBoardThreads(aggregation: ___, filter: ___, messageBoardSectionId: ___, page: ___, pageSize: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
@@ -2570,43 +2607,6 @@ public class Query {
 				messageBoardThreadResource.
 					getSiteMessageBoardThreadPermissionsPage(
 						Long.valueOf(siteKey), roleNames)));
-	}
-
-	/**
-	 * Invoke this method with the command line:
-	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {messageBoardSectionFilteredMessageBoardThreads(aggregation: ___, filter: ___, messageBoardSectionId: ___, page: ___, pageSize: ___, search: ___, sorts: ___, tag: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
-	 */
-	@GraphQLField(
-		description = "Retrieves the message board section's filtered threads. Results can be paginated, filtered, searched, and sorted."
-	)
-	public MessageBoardThreadPage
-			messageBoardSectionFilteredMessageBoardThreads(
-				@GraphQLName("messageBoardSectionId") Long
-					messageBoardSectionId,
-				@GraphQLName("search") String search,
-				@GraphQLName("tag") String tag,
-				@GraphQLName("aggregation") List<String> aggregations,
-				@GraphQLName("filter") String filterString,
-				@GraphQLName("pageSize") int pageSize,
-				@GraphQLName("page") int page,
-				@GraphQLName("sort") String sortsString)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_messageBoardThreadResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			messageBoardThreadResource -> new MessageBoardThreadPage(
-				messageBoardThreadResource.
-					getMessageBoardSectionFilteredMessageBoardThreadsPage(
-						messageBoardSectionId, search, tag,
-						_aggregationBiFunction.apply(
-							messageBoardThreadResource, aggregations),
-						_filterBiFunction.apply(
-							messageBoardThreadResource, filterString),
-						Pagination.of(page, pageSize),
-						_sortsBiFunction.apply(
-							messageBoardThreadResource, sortsString))));
 	}
 
 	/**
