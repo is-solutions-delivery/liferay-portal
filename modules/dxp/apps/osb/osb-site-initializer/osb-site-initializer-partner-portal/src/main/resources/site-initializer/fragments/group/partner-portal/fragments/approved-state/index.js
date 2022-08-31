@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -9,54 +10,53 @@
  * distribution rights of the Software.
  */
 
-const currentPath = Liferay.currentURL.split('/')
-const mdfRequestId = +currentPath[currentPath.length -1]; 
+const currentPath = Liferay.currentURL.split('/');
+const mdfRequestId = +currentPath[currentPath.length - 1];
 
-const atualizationStatusApproved = fragmentElement.querySelector('.st-approved');
+const atualizationStatusApproved = fragmentElement.querySelector(
+	'.st-approved'
+);
 const atualizationStatusRequest = fragmentElement.querySelector('.st-request');
 const atualizationStatusReject = fragmentElement.querySelector('.st-reject');
 const handleFetch = (status) => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch
-		fetch(`/o/c/mdfrequests/${mdfRequestId}`, {
-		"method": "PATCH",
-		"headers": {
-			"accept": "application/json",
-			"Content-Type": "application/json",
-			"x-csrf-token": Liferay.authToken
+	fetch(`/o/c/mdfrequests/${mdfRequestId}`, {
+		body: `{"mdfRequestStatus": "${status}"}`,
+		headers: {
+			'accept': 'application/json',
+			'content-type': 'application/json',
+			'x-csrf-token': Liferay.authToken,
 		},
-		"body": `{\"mdfRequestStatus\": "${status}"}`
-	})
-}
+		method: 'PATCH',
+	});
+};
 
-atualizationStatusApproved.onclick = () => 
-Liferay.Util.openConfirmModal({
-				message:
-					'Do you want to update the status?',
-				onConfirm: (isConfirmed) => {
-					if (isConfirmed) {
-						handleFetch('approved');
-					}
-				},	
-});
+atualizationStatusApproved.onclick = () =>
+	Liferay.Util.openConfirmModal({
+		message: 'Do you want to update the status?',
+		onConfirm: (isConfirmed) => {
+			if (isConfirmed) {
+				handleFetch('approved');
+			}
+		},
+	});
 
 atualizationStatusRequest.onclick = () =>
 	Liferay.Util.openConfirmModal({
-				message:
-					'Do you want to update the status?',
-				onConfirm: (isConfirmed) => {
-					if (isConfirmed) {
-						handleFetch('request');
-					}
-				},	
-});
+		message: 'Do you want to update the status?',
+		onConfirm: (isConfirmed) => {
+			if (isConfirmed) {
+				handleFetch('request');
+			}
+		},
+	});
 
 atualizationStatusReject.onclick = () =>
-		Liferay.Util.openConfirmModal({
-				message:
-					'Do you want to update the status?',
-				onConfirm: (isConfirmed) => {
-					if (isConfirmed) {
-						handleFetch('reject');
-					}
-				},	
-});
+	Liferay.Util.openConfirmModal({
+		message: 'Do you want to update the status?',
+		onConfirm: (isConfirmed) => {
+			if (isConfirmed) {
+				handleFetch('reject');
+			}
+		},
+	});
