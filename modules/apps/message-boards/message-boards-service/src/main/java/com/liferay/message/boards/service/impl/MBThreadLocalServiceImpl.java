@@ -66,9 +66,6 @@ import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.filter.QueryFilter;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ExceptionRetryAcceptor;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -484,10 +481,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if (map != null) {
+			String value = MapUtil.getString(map, "hasValidAnswer_sortable");
 
-
-			if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("false")) {
-
+			if (value.equals("false")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -498,8 +494,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (MapUtil.getString(map,"numberOfMessageBoardMessages_sortable").equals("0")) {
-
+			else if (value.equals("0")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -514,8 +509,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("true")) {
-
+			else if (value.equals("true")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
 						DSLQueryFactoryUtil.select(
@@ -665,9 +659,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if (map != null) {
+			String value = MapUtil.getString(map, "hasValidAnswer_sortable");
 
-				if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("false")) {
-
+			if (value.equals("false")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -678,8 +672,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (MapUtil.getString(map,"numberOfMessageBoardMessages_sortable").equals("0")) {
-
+			else if (value.equals("0")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -694,8 +687,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (MapUtil.getString(map,"hasValidAnswer_sortable").equals("true")) {
-
+			else if (value.equals("true")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
 						DSLQueryFactoryUtil.select(
