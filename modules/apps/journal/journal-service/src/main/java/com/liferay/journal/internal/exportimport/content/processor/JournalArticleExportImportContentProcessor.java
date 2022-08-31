@@ -112,8 +112,8 @@ public class JournalArticleExportImportContentProcessor
 			_isJournalArticleExportImportProcessorCacheEnabled(
 				stagedModel.getCompanyId());
 
-		StringBundler sb = null;
 		String processedContent = null;
+		StringBundler sb = null;
 
 		if (journalArticleExportImportCacheEnabled) {
 			sb = new StringBundler(3);
