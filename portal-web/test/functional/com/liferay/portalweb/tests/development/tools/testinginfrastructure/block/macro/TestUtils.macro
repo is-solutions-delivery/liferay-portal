@@ -104,7 +104,7 @@ return element.textContent;
 	macro getScreenWidth {
 		WaitForSPARefresh();
 
-		var screenWidth = selenium.getEval("return	screen.width.toString();");
+		var screenWidth = selenium.getEval("return screen.width.toString();");
 
 		return "${screenWidth}";
 	}
