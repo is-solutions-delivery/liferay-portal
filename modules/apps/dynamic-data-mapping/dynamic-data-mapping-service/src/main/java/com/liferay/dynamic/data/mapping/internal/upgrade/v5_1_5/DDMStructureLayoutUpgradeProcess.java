@@ -60,22 +60,20 @@ public class DDMStructureLayoutUpgradeProcess extends UpgradeProcess {
 
 			try (ResultSet resultSet = preparedStatement1.executeQuery()) {
 				while (resultSet.next()) {
-					JSONObject definitionJSONObject =
-						_jsonFactory.createJSONObject(
-							resultSet.getString("definition"));
+					JSONObject jsonObject = _jsonFactory.createJSONObject(
+						resultSet.getString("definition"));
 
 					if (!Objects.equals(
-							definitionJSONObject.getString("paginationMode"),
+							jsonObject.getString("paginationMode"),
 							"paginated")) {
 
 						continue;
 					}
 
-					definitionJSONObject.put(
+					jsonObject.put(
 						"paginationMode", DDMFormLayout.MULTI_PAGES);
 
-					preparedStatement2.setString(
-						1, definitionJSONObject.toString());
+					preparedStatement2.setString(1, jsonObject.toString());
 
 					preparedStatement2.setLong(
 						2, resultSet.getLong("structureLayoutId"));
