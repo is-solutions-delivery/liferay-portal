@@ -59,10 +59,10 @@ public class EntityFieldConfigurationFieldOptionsProvider
 	@Activate
 	@Modified
 	protected void activate() {
+		List<Option> options = new ArrayList<>();
+
 		Map<String, EntityField> entityFieldsMap =
 			_entityModel.getEntityFieldsMap();
-
-		List<Option> options = new ArrayList<>();
 
 		for (EntityField entityField : entityFieldsMap.values()) {
 			if (Objects.equals(
