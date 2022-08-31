@@ -16,7 +16,6 @@ package com.liferay.portal.kernel.search.filter;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.search.Query;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 
 /**
  * @author Michael C. Han

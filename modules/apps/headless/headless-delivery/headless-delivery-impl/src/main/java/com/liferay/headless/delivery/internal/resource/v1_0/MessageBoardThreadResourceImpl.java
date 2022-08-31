@@ -14,7 +14,6 @@
 
 package com.liferay.headless.delivery.internal.resource.v1_0;
 
-import com.liferay.dynamic.data.mapping.expression.model.Term;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
@@ -45,7 +44,6 @@ import com.liferay.message.boards.util.comparator.ThreadCreateDateComparator;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.dao.orm.hibernate.QueryImpl;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
@@ -55,12 +53,12 @@ import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.QueryTerm;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
-import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -161,17 +159,22 @@ public class MessageBoardThreadResourceImpl
 
 		int status = WorkflowConstants.STATUS_APPROVED;
 
-		QueryFilter queryFilter = (QueryFilter) filter;
+		QueryFilter queryFilter = (QueryFilter)filter;
 		Map<String, String> map;
 
 		try {
+			TermQueryImpl termQueryImpl = (TermQueryImpl)queryFilter.getQuery();
+
+			QueryTerm queryTerm = termQueryImpl.getQueryTerm();
+
 			map = HashMapBuilder.put(
-				((TermQueryImpl) queryFilter.getQuery()).getQueryTerm().getField(),
-				((TermQueryImpl) queryFilter.getQuery()).getQueryTerm().getValue()
+				queryTerm.getField(), queryTerm.getValue()
 			).build();
-		}catch (Exception E){
+		}
+		catch (Exception exception) {
 			map = null;
 		}
+
 		return Page.of(
 			TransformUtil.transform(
 				_mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(

@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
@@ -324,8 +323,8 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPage(
-				groupId, getUserId(), categoryId, map, queryDefinition,
-				search, sorts, tag);
+				groupId, getUserId(), categoryId, map, queryDefinition, search,
+				sorts, tag);
 	}
 
 	@Override
@@ -337,8 +336,8 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, getUserId(), categoryId, map, queryDefinition,
-				search, sorts, tag);
+				groupId, getUserId(), categoryId, map, queryDefinition, search,
+				sorts, tag);
 	}
 
 	@Override
