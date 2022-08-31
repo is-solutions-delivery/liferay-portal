@@ -86,50 +86,58 @@ const colors: {[keys: string]: {}} = {
 };
 
 const date = new Date();
-const currentMonth = date.getMonth();
-const threeMonthsAgo = currentMonth - 3;
-const sixMonthsAgo = currentMonth - 6;
+const actualMonth = date.getMonth();
+
+const filterYearly = Object.values(dataColumn).filter(
+	(month: MonthProperties) => month.index <= actualMonth
+);
+
+const filterSix = Object.values(dataColumn).filter(
+	(month: MonthProperties) =>
+		month.index < actualMonth + 1 && month.index > actualMonth - 6
+);
+
+const filterThree = Object.values(dataColumn).filter(
+	(month: MonthProperties) =>
+		month.index < actualMonth + 1 && month.index > actualMonth - 3
+);
+
+const setLabelYearly = Object.values(dataColumn)
+	.filter((label: MonthProperties) => label.index <= actualMonth)
+	.map((label: MonthProperties) => label.label);
+
+const setLabelSix = Object.values(dataColumn)
+	.filter(
+		(label: MonthProperties) =>
+			label.index < actualMonth + 1 && label.index > actualMonth - 6
+	)
+	.map((label: MonthProperties) => label.label);
+
+const setLabelThree = Object.values(dataColumn)
+	.filter(
+		(label: MonthProperties) =>
+			label.index < actualMonth + 1 && label.index > actualMonth - 3
+	)
+	.map((label: MonthProperties) => label.label);
 
 const paddingValue = 100;
 
 const ProductPerformance = () => {
 	const [products, setProducts] = useState<ProductCell[]>([]);
 	const [timePeriod, setTimePeriod] = useState(PERIOD.THREE_MONTH);
-	const [filterChart, setFilterChart] = useState<MonthProperties[]>(
-		filterByPeriod(threeMonthsAgo)
-	);
+	const [filt, setFilt] = useState<MonthProperties[]>(filterYearly);
 	const [labelAxisX] = useState<[]>();
 	const ref = useRef<any>();
 
-	function filterByPeriod(period: number) {
-		const months: MonthProperties[] = Object.values(dataColumn);
-		const periodFiltered = months.filter((month) =>
-			timePeriod === PERIOD.YTD
-				? month.index <= currentMonth
-				: month.index < currentMonth + 1 && month.index > period
-		);
-
-		return periodFiltered;
-	}
-
-	function setLabelByPeriod(filteredPeriod: MonthProperties[]) {
-		const definedLabel = filteredPeriod.map((month) => month.label);
-
-		return definedLabel;
-	}
-
-	const setLabelYearly = setLabelByPeriod(filterByPeriod(currentMonth));
-	const setLabelSix = setLabelByPeriod(filterByPeriod(sixMonthsAgo));
-	const setLabelThree = setLabelByPeriod(filterByPeriod(threeMonthsAgo));
-
-	const achieved = filterChart.map((month: MonthProperties) =>
-		month.achieved > month.goals ? month.goals : month.achieved
+	const achieved = filt.map((item: MonthProperties) =>
+		item.achieved > item.goals ? item.goals : item.achieved
 	);
-	const exceeded = filterChart.map((month: MonthProperties) =>
-		month.achieved > month.goals ? month.achieved - month.goals : NaN
+
+	const exceeded = filt.map((item: MonthProperties) =>
+		item.achieved > item.goals ? item.achieved - item.goals : NaN
 	);
-	const goals = filterChart.map((month: MonthProperties) =>
-		month.goals < 0 || month.goals < month.achieved ? NaN : month.goals
+	const goals = filt.map((item: MonthProperties) =>
+		item.goals < 0 || item.goals < item.achieved ? NaN : item.goals
 	);
 
 	const dataChart: DataChart = {
@@ -146,26 +154,21 @@ const ProductPerformance = () => {
 		},
 	};
 
-	const changeFilter = (timePeriod: string) => {
+	const defineFilt = (timePeriod: string) => {
 		if (timePeriod === PERIOD.SIX_MONTH) {
-			setFilterChart(filterByPeriod(sixMonthsAgo));
-
-			return ref.current.categories(setLabelSix);
+			setFilt(filterSix);
+			ref.current.categories(setLabelSix);
 		}
-
 		if (timePeriod === PERIOD.THREE_MONTH) {
-			setFilterChart(filterByPeriod(threeMonthsAgo));
-
-			return ref.current.categories(setLabelThree);
+			setFilt(filterThree);
+			ref.current.categories(setLabelThree);
 		}
-
 		if (timePeriod === PERIOD.YTD) {
-			setFilterChart(filterByPeriod(currentMonth));
-
-			return ref.current.categories(setLabelYearly);
+			setFilt(filterYearly);
+			ref.current.categories(setLabelYearly);
+		} else {
+			timePeriod = PERIOD.YTD;
 		}
-
-		return timePeriod === PERIOD.YTD;
 	};
 
 	const productsBaseSetup = async () => {
@@ -243,9 +246,7 @@ const ProductPerformance = () => {
 	useEffect(() => {
 		productsBaseSetup();
 
-		changeFilter(timePeriod);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		defineFilt(timePeriod);
 	}, [timePeriod]);
 
 	const handleProductFilterToggle = (
@@ -358,8 +359,8 @@ const ProductPerformance = () => {
 								},
 								show: true,
 								tick: {
-									format(value: string) {
-										return '$' + value;
+									format(x: string) {
+										return '$' + x;
 									},
 									stepSize: 50,
 								},
@@ -377,8 +378,8 @@ const ProductPerformance = () => {
 								function() {
 									Object.values(
 										dataColumn
-									).map((month: MonthProperties) =>
-										month.achieved > month.goals
+									).map((item: MonthProperties) =>
+										item.achieved > item.goals
 											? 'asc'
 											: 'desc '
 									);
