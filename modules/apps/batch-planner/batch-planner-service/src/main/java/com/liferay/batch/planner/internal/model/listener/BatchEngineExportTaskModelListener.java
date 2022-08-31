@@ -18,7 +18,7 @@ import com.liferay.batch.engine.BatchEngineTaskExecuteStatus;
 import com.liferay.batch.engine.model.BatchEngineExportTask;
 import com.liferay.batch.planner.constants.BatchPlannerPlanConstants;
 import com.liferay.batch.planner.constants.BatchPlannerPortletKeys;
-import com.liferay.batch.planner.internal.notification.BatchPlannerNotificationSender;
+import com.liferay.batch.planner.internal.notifications.BatchPlannerNotificationSender;
 import com.liferay.batch.planner.model.BatchPlannerPlan;
 import com.liferay.batch.planner.service.BatchPlannerPlanLocalService;
 import com.liferay.portal.kernel.exception.ModelListenerException;

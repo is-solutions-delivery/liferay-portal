@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.batch.planner.internal.notification;
+package com.liferay.batch.planner.internal.notifications;
 
 import com.liferay.batch.engine.BatchEngineTaskExecuteStatus;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
