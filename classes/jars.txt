@@ -1,1 +1,0 @@
-modules/core/portal-bootstrap/lib/org.eclipse.osgi.jar,tools/sdk/dist/com.liferay.portal.bootstrap-7.0.0.1.jar,tools/sdk/dist/com.liferay.registry.impl-7.0.0.1.jar
