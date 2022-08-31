@@ -112,7 +112,7 @@ public class TalendDispatchTaskExecutorTest {
 	public void testExecuteLiferayOutputBlog() throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
-		User user = _getGroupAdminUser(group.getGroupId());
+		User user = _getSiteAdministratorUser(group.getGroupId());
 
 		DispatchTrigger dispatchTrigger =
 			_dispatchTriggerLocalService.addDispatchTrigger(
@@ -155,7 +155,7 @@ public class TalendDispatchTaskExecutorTest {
 			DispatchTaskStatus.valueOf(dispatchLog.getStatus()));
 	}
 
-	private User _getGroupAdminUser(long groupId) throws Exception {
+	private User _getSiteAdministratorUser(long groupId) throws Exception {
 		User user = UserTestUtil.addUser(
 			TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
 			RandomTestUtil.randomString(),
