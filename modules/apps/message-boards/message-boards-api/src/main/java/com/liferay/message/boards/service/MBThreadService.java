@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.transaction.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -115,14 +114,16 @@ public interface MBThreadService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-			long groupId, long categoryId, Map map,
+			long groupId, long categoryId, String hasValidAnswer,
+			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
 		throws PrincipalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-			long groupId, long categoryId, Map map,
+			long groupId, long categoryId, String hasValidAnswer,
+			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
 		throws PrincipalException;

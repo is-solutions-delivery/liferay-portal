@@ -18,7 +18,6 @@ import com.liferay.message.boards.model.MBThread;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Provides the remote service utility for MBThread. This utility wraps
@@ -125,7 +124,8 @@ public class MBThreadServiceUtil {
 	}
 
 	public static List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-			long groupId, long categoryId, Map map,
+			long groupId, long categoryId, String hasValidAnswer,
+			String numberOfMessageBoardMessages,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 				queryDefinition,
 			String search, com.liferay.portal.kernel.search.Sort[] sorts,
@@ -133,11 +133,13 @@ public class MBThreadServiceUtil {
 		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPage(
-			groupId, categoryId, map, queryDefinition, search, sorts, tag);
+			groupId, categoryId, hasValidAnswer, numberOfMessageBoardMessages,
+			queryDefinition, search, sorts, tag);
 	}
 
 	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
-			long groupId, long categoryId, Map map,
+			long groupId, long categoryId, String hasValidAnswer,
+			String numberOfMessageBoardMessages,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 				queryDefinition,
 			String search, com.liferay.portal.kernel.search.Sort[] sorts,
@@ -145,7 +147,8 @@ public class MBThreadServiceUtil {
 		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
-			groupId, categoryId, map, queryDefinition, search, sorts, tag);
+			groupId, categoryId, hasValidAnswer, numberOfMessageBoardMessages,
+			queryDefinition, search, sorts, tag);
 	}
 
 	/**

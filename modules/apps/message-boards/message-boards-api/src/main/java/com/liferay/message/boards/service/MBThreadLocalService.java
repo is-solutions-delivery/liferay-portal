@@ -54,7 +54,6 @@ import java.io.Serializable;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -374,13 +373,15 @@ public interface MBThreadLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long userId, long categoryId, Map map,
+		long groupId, long userId, long categoryId, String hasValidAnswer,
+		String numberOfMessageBoardMessages,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long userId, long categoryId, Map map,
+		long groupId, long userId, long categoryId, String hasValidAnswer,
+		String numberOfMessageBoardMessages,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag);
 
