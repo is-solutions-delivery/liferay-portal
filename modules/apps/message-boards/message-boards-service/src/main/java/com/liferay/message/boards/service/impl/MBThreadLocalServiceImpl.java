@@ -446,7 +446,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long userId, long categoryId, Map map,
+		long groupId, long userId, long categoryId, String hasValidAnswer, String numberOfMessageBoardMessages,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
@@ -480,10 +480,26 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			return mbThreadPersistence.dslQuery(joinStep.where(predicate));
 		}
 
-		if (map != null) {
-			String value = MapUtil.getString(map, "hasValidAnswer_sortable");
+		if (Validator.isNotNull(hasValidAnswer) ||
+			Validator.isNotNull(numberOfMessageBoardMessages)) {
+			String  hasValidAnswerValue;
+			String numberOfMessageBoardMessagesValue;
 
-			if (value.equals("false")) {
+			if(Validator.isNotNull(hasValidAnswer)){
+				hasValidAnswerValue = hasValidAnswer;
+			}else{
+				hasValidAnswerValue = "";
+			}
+
+			if(Validator.isNotNull(numberOfMessageBoardMessages)){
+				numberOfMessageBoardMessagesValue = numberOfMessageBoardMessages;
+
+			}else{
+				numberOfMessageBoardMessagesValue = "";
+			}
+
+
+			if (hasValidAnswerValue.equals("false")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -494,7 +510,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (value.equals("0")) {
+
+			if (numberOfMessageBoardMessagesValue.equals("0")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -509,7 +526,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (value.equals("true")) {
+
+			if (hasValidAnswerValue.equals("true")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
 						DSLQueryFactoryUtil.select(
@@ -634,7 +652,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long userId, long categoryId, Map map,
+		long groupId, long userId, long categoryId,  String hasValidAnswer, String numberOfMessageBoardMessages,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
@@ -658,10 +676,25 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				(Long)mbThreadPersistence.dslQuery(joinStep.where(predicate)));
 		}
 
-		if (map != null) {
-			String value = MapUtil.getString(map, "hasValidAnswer_sortable");
+		if (Validator.isNotNull(hasValidAnswer) || Validator.isNotNull(numberOfMessageBoardMessages)) {
 
-			if (value.equals("false")) {
+			String  hasValidAnswerValue;
+			String numberOfMessageBoardMessagesValue;
+
+			if(Validator.isNotNull(hasValidAnswer)){
+				hasValidAnswerValue = hasValidAnswer;
+			}else{
+				hasValidAnswerValue = "";
+			}
+
+			if(Validator.isNotNull(numberOfMessageBoardMessages)){
+				numberOfMessageBoardMessagesValue = numberOfMessageBoardMessages;
+
+			}else{
+				numberOfMessageBoardMessagesValue = "";
+			}
+
+			if (hasValidAnswerValue.equals("false")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -672,7 +705,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
-			else if (value.equals("0")) {
+
+			if (numberOfMessageBoardMessagesValue.equals("0")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -687,7 +721,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							)
 						)));
 			}
-			else if (value.equals("true")) {
+
+			if (hasValidAnswerValue.equals("true")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.in(
 						DSLQueryFactoryUtil.select(
@@ -700,7 +735,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			}
 		}
 
-		if (tag != null) {
+		if (Validator.isNotNull(tag)) {
 			joinStep = joinStep.innerJoinON(
 				AssetEntryTable.INSTANCE,
 				AssetEntryTable.INSTANCE.classPK.eq(
