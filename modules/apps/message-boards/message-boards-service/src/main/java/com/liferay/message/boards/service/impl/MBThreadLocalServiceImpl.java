@@ -553,9 +553,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						)));
 			}
 			else {
-				String[] tags = tag.split(",");
-
-				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(tags));
+				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(
+					StringUtil.split(tag)));
 			}
 		}
 
@@ -568,7 +567,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 			fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
 
-			if (fieldName.equals("totalScore")) {
+			if (Objects.equals(fieldName, "totalScore")) {
 				joinStep = joinStep.leftJoinOn(
 					RatingsStatsTable.INSTANCE,
 					MBThreadTable.INSTANCE.rootMessageId.eq(
@@ -576,14 +575,16 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 				if (sort.isReverse()) {
 					orderByExpression =
-						RatingsStatsTable.INSTANCE.totalScore.descending();
+						RatingsStatsTable.INSTANCE.getColumn(
+							fieldName).descending();
 				}
 				else {
 					orderByExpression =
-						RatingsStatsTable.INSTANCE.totalScore.ascending();
+						RatingsStatsTable.INSTANCE.getColumn(
+							fieldName).ascending();
 				}
 			}
-			else if (fieldName.equals("viewCount")) {
+			else if (Objects.equals(fieldName, "viewCount")) {
 				joinStep = joinStep.innerJoinON(
 					ViewCountEntryTable.INSTANCE,
 					MBThreadTable.INSTANCE.threadId.eq(
@@ -598,7 +599,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						ViewCountEntryTable.INSTANCE.viewCount.ascending();
 				}
 			}
-			else if (fieldName.equals("dateCreated")) {
+			else if (Objects.equals(fieldName, "dateCreated")) {
 				if (sort.isReverse()) {
 					orderByExpression =
 						MBThreadTable.INSTANCE.createDate.descending();
@@ -608,7 +609,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						MBThreadTable.INSTANCE.createDate.ascending();
 				}
 			}
-			else if (fieldName.equals("dateModified")) {
+			else if (Objects.equals(fieldName, "dateModified")) {
 				if (sort.isReverse()) {
 					orderByExpression =
 						MBThreadTable.INSTANCE.modifiedDate.descending();
@@ -619,8 +620,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				}
 			}
 		}
-
-		if (orderByExpression == null) {
+		else {
 			orderByExpression = MBThreadTable.INSTANCE.createDate.descending();
 		}
 
@@ -731,9 +731,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						)));
 			}
 			else {
-				String[] tags = tag.split(",");
-
-				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(tags));
+				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(
+					StringUtil.split(tag)));
 			}
 		}
 
