@@ -475,8 +475,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (Validator.isNotNull(search)) {
 			predicate = predicate.and(
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
-
-			return mbThreadPersistence.dslQuery(joinStep.where(predicate));
 		}
 
 		if (Validator.isNotNull(hasValidAnswer) ||
@@ -673,9 +671,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (Validator.isNotNull(search)) {
 			predicate = predicate.and(
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
-
-			return GetterUtil.getInteger(
-				(Long)mbThreadPersistence.dslQuery(joinStep.where(predicate)));
 		}
 
 		if (Validator.isNotNull(hasValidAnswer) ||
