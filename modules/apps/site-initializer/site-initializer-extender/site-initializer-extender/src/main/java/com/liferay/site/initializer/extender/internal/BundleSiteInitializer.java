@@ -1370,65 +1370,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 			siteNavigationMenuItemSettingsBuilder);
 	}
 
-	private KnowledgeBaseArticle _addKnowledgeBaseArticle(
-			boolean folder, JSONObject jsonObject,
-			long parentKnowledgeBaseObjectId, ServiceContext serviceContext)
-		throws Exception {
-
-		KnowledgeBaseArticleResource.Builder
-			knowledgeBaseArticleResourceBuilder =
-				_knowledgeBaseArticleResourceFactory.create();
-
-		KnowledgeBaseArticleResource knowledgeBaseArticleResource =
-			knowledgeBaseArticleResourceBuilder.user(
-				serviceContext.fetchUser()
-			).build();
-
-		KnowledgeBaseArticle knowledgeBaseArticle = KnowledgeBaseArticle.toDTO(
-			jsonObject.toString());
-
-		KnowledgeBaseArticle existingKnowledgeBaseArticle = null;
-
-		try {
-			existingKnowledgeBaseArticle =
-				knowledgeBaseArticleResource.
-					getSiteKnowledgeBaseArticleByExternalReferenceCode(
-						serviceContext.getScopeGroupId(),
-						knowledgeBaseArticle.getExternalReferenceCode());
-		}
-		catch (NoSuchModelException noSuchModelException) {
-			if (!folder) {
-				return knowledgeBaseArticleResource.
-					postKnowledgeBaseArticleKnowledgeBaseArticle(
-						parentKnowledgeBaseObjectId, knowledgeBaseArticle);
-			}
-
-			if (parentKnowledgeBaseObjectId == 0) {
-				return knowledgeBaseArticleResource.
-					postSiteKnowledgeBaseArticle(
-						serviceContext.getScopeGroupId(), knowledgeBaseArticle);
-			}
-
-			return knowledgeBaseArticleResource.
-				postKnowledgeBaseFolderKnowledgeBaseArticle(
-					parentKnowledgeBaseObjectId, knowledgeBaseArticle);
-		}
-
-		return knowledgeBaseArticleResource.
-			putSiteKnowledgeBaseArticleByExternalReferenceCode(
-				existingKnowledgeBaseArticle.getSiteId(),
-				existingKnowledgeBaseArticle.getExternalReferenceCode(),
-				existingKnowledgeBaseArticle);
-	}
-
 	private void _addKnowledgeBaseArticle(
 			boolean folder, JSONObject jsonObject,
 			long parentKnowledgeBaseObjectId, String resourcePath,
 			ServiceContext serviceContext)
 		throws Exception {
 
-		KnowledgeBaseArticle knowledgeBaseArticle = _addKnowledgeBaseArticle(
-			folder, jsonObject, parentKnowledgeBaseObjectId, serviceContext);
+		KnowledgeBaseArticle knowledgeBaseArticle =
+			_addOrUpdateKnowledgeBaseArticle(
+				folder, jsonObject, parentKnowledgeBaseObjectId,
+				serviceContext);
 
 		_addKnowledgeBaseObjects(
 			false, knowledgeBaseArticle.getId(), resourcePath, serviceContext);
@@ -2628,6 +2579,57 @@ public class BundleSiteInitializer implements SiteInitializer {
 				assetListEntry.getAssetListEntryId(),
 				assetListJSONObject.getString("title"));
 		}
+	}
+
+	private KnowledgeBaseArticle _addOrUpdateKnowledgeBaseArticle(
+			boolean folder, JSONObject jsonObject,
+			long parentKnowledgeBaseObjectId, ServiceContext serviceContext)
+		throws Exception {
+
+		KnowledgeBaseArticleResource.Builder
+			knowledgeBaseArticleResourceBuilder =
+				_knowledgeBaseArticleResourceFactory.create();
+
+		KnowledgeBaseArticleResource knowledgeBaseArticleResource =
+			knowledgeBaseArticleResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
+
+		KnowledgeBaseArticle knowledgeBaseArticle = KnowledgeBaseArticle.toDTO(
+			jsonObject.toString());
+
+		KnowledgeBaseArticle existingKnowledgeBaseArticle = null;
+
+		try {
+			existingKnowledgeBaseArticle =
+				knowledgeBaseArticleResource.
+					getSiteKnowledgeBaseArticleByExternalReferenceCode(
+						serviceContext.getScopeGroupId(),
+						knowledgeBaseArticle.getExternalReferenceCode());
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (!folder) {
+				return knowledgeBaseArticleResource.
+					postKnowledgeBaseArticleKnowledgeBaseArticle(
+						parentKnowledgeBaseObjectId, knowledgeBaseArticle);
+			}
+
+			if (parentKnowledgeBaseObjectId == 0) {
+				return knowledgeBaseArticleResource.
+					postSiteKnowledgeBaseArticle(
+						serviceContext.getScopeGroupId(), knowledgeBaseArticle);
+			}
+
+			return knowledgeBaseArticleResource.
+				postKnowledgeBaseFolderKnowledgeBaseArticle(
+					parentKnowledgeBaseObjectId, knowledgeBaseArticle);
+		}
+
+		return knowledgeBaseArticleResource.
+			putSiteKnowledgeBaseArticleByExternalReferenceCode(
+				existingKnowledgeBaseArticle.getSiteId(),
+				existingKnowledgeBaseArticle.getExternalReferenceCode(),
+				existingKnowledgeBaseArticle);
 	}
 
 	private KnowledgeBaseFolder _addOrUpdateKnowledgeBaseFolder(
