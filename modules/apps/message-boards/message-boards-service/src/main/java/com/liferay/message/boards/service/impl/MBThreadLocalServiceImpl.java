@@ -80,7 +80,6 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.view.count.ViewCountManager;
@@ -102,7 +101,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
@@ -446,7 +444,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-		long groupId, long userId, long categoryId, String hasValidAnswer, String numberOfMessageBoardMessages,
+		long groupId, long userId, long categoryId, String hasValidAnswer,
+		String numberOfMessageBoardMessages,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
@@ -652,7 +651,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-		long groupId, long userId, long categoryId,  String hasValidAnswer, String numberOfMessageBoardMessages,
+		long groupId, long userId, long categoryId, String hasValidAnswer,
+		String numberOfMessageBoardMessages,
 		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
 		String tag) {
 
@@ -676,7 +676,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				(Long)mbThreadPersistence.dslQuery(joinStep.where(predicate)));
 		}
 
-		if (Validator.isNotNull(hasValidAnswer) || Validator.isNotNull(numberOfMessageBoardMessages)) {
+		if (Validator.isNotNull(hasValidAnswer) ||
+			Validator.isNotNull(numberOfMessageBoardMessages)) {
 
 			String  hasValidAnswerValue;
 			String numberOfMessageBoardMessagesValue;
