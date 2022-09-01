@@ -1384,23 +1384,41 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.fetchUser()
 			).build();
 
-		if (!folder) {
-			return knowledgeBaseArticleResource.
-				postKnowledgeBaseArticleKnowledgeBaseArticle(
-					parentKnowledgeBaseObjectId,
-					KnowledgeBaseArticle.toDTO(jsonObject.toString()));
-		}
+		KnowledgeBaseArticle knowledgeBaseArticle = KnowledgeBaseArticle.toDTO(
+			jsonObject.toString());
 
-		if (parentKnowledgeBaseObjectId == 0) {
-			return knowledgeBaseArticleResource.postSiteKnowledgeBaseArticle(
-				serviceContext.getScopeGroupId(),
-				KnowledgeBaseArticle.toDTO(jsonObject.toString()));
+		KnowledgeBaseArticle existingKnowledgeBaseArticle = null;
+
+		try {
+			existingKnowledgeBaseArticle =
+				knowledgeBaseArticleResource.
+					getSiteKnowledgeBaseArticleByExternalReferenceCode(
+						serviceContext.getScopeGroupId(),
+						knowledgeBaseArticle.getExternalReferenceCode());
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (!folder) {
+				return knowledgeBaseArticleResource.
+					postKnowledgeBaseArticleKnowledgeBaseArticle(
+						parentKnowledgeBaseObjectId, knowledgeBaseArticle);
+			}
+
+			if (parentKnowledgeBaseObjectId == 0) {
+				return knowledgeBaseArticleResource.
+					postSiteKnowledgeBaseArticle(
+						serviceContext.getScopeGroupId(), knowledgeBaseArticle);
+			}
+
+			return knowledgeBaseArticleResource.
+				postKnowledgeBaseFolderKnowledgeBaseArticle(
+					parentKnowledgeBaseObjectId, knowledgeBaseArticle);
 		}
 
 		return knowledgeBaseArticleResource.
-			postKnowledgeBaseFolderKnowledgeBaseArticle(
-				parentKnowledgeBaseObjectId,
-				KnowledgeBaseArticle.toDTO(jsonObject.toString()));
+			putSiteKnowledgeBaseArticleByExternalReferenceCode(
+				existingKnowledgeBaseArticle.getSiteId(),
+				existingKnowledgeBaseArticle.getExternalReferenceCode(),
+				existingKnowledgeBaseArticle);
 	}
 
 	private void _addKnowledgeBaseArticle(
