@@ -101,6 +101,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
@@ -480,25 +481,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (Validator.isNotNull(hasValidAnswer) ||
 			Validator.isNotNull(numberOfMessageBoardMessages)) {
 
-			String hasValidAnswerValue;
-			String numberOfMessageBoardMessagesValue;
-
-			if (Validator.isNotNull(hasValidAnswer)) {
-				hasValidAnswerValue = hasValidAnswer;
-			}
-			else {
-				hasValidAnswerValue = "";
-			}
-
-			if (Validator.isNotNull(numberOfMessageBoardMessages)) {
-				numberOfMessageBoardMessagesValue =
-					numberOfMessageBoardMessages;
-			}
-			else {
-				numberOfMessageBoardMessagesValue = "";
-			}
-
-			if (hasValidAnswerValue.equals("false")) {
+			if (Objects.equals(hasValidAnswer, "false")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -510,7 +493,19 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						)));
 			}
 
-			if (numberOfMessageBoardMessagesValue.equals("0")) {
+			if (Objects.equals(hasValidAnswer, "true")) {
+				predicate = predicate.and(
+					MBThreadTable.INSTANCE.threadId.in(
+						DSLQueryFactoryUtil.select(
+							MBMessageTable.INSTANCE.threadId
+						).from(
+							MBMessageTable.INSTANCE
+						).where(
+							MBMessageTable.INSTANCE.answer.eq(true)
+						)));
+			}
+
+			if (Objects.equals(numberOfMessageBoardMessages, "0")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -523,18 +518,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							).and(
 								MBMessageTable.INSTANCE.parentMessageId.neq(0L)
 							)
-						)));
-			}
-
-			if (hasValidAnswerValue.equals("true")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.in(
-						DSLQueryFactoryUtil.select(
-							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
 		}
@@ -554,7 +537,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 					AssetEntries_AssetTagsTable.INSTANCE.tagId)
 			);
 
-			if (tag.equals("myWatchedTags")) {
+			if (Objects.equals(tag, "myWatchedTags")) {
 				predicate = predicate.and(
 					AssetTagTable.INSTANCE.name.in(
 						DSLQueryFactoryUtil.select(
@@ -676,25 +659,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (Validator.isNotNull(hasValidAnswer) ||
 			Validator.isNotNull(numberOfMessageBoardMessages)) {
 
-			String hasValidAnswerValue;
-			String numberOfMessageBoardMessagesValue;
-
-			if (Validator.isNotNull(hasValidAnswer)) {
-				hasValidAnswerValue = hasValidAnswer;
-			}
-			else {
-				hasValidAnswerValue = "";
-			}
-
-			if (Validator.isNotNull(numberOfMessageBoardMessages)) {
-				numberOfMessageBoardMessagesValue =
-					numberOfMessageBoardMessages;
-			}
-			else {
-				numberOfMessageBoardMessagesValue = "";
-			}
-
-			if (hasValidAnswerValue.equals("false")) {
+			if (Objects.equals(hasValidAnswer, "false")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -706,7 +671,19 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						)));
 			}
 
-			if (numberOfMessageBoardMessagesValue.equals("0")) {
+			if (Objects.equals(hasValidAnswer, "true")) {
+				predicate = predicate.and(
+					MBThreadTable.INSTANCE.threadId.in(
+						DSLQueryFactoryUtil.select(
+							MBMessageTable.INSTANCE.threadId
+						).from(
+							MBMessageTable.INSTANCE
+						).where(
+							MBMessageTable.INSTANCE.answer.eq(true)
+						)));
+			}
+
+			if (Objects.equals(numberOfMessageBoardMessages, "0")) {
 				predicate = predicate.and(
 					MBThreadTable.INSTANCE.threadId.notIn(
 						DSLQueryFactoryUtil.select(
@@ -719,18 +696,6 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							).and(
 								MBMessageTable.INSTANCE.parentMessageId.neq(0L)
 							)
-						)));
-			}
-
-			if (hasValidAnswerValue.equals("true")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.in(
-						DSLQueryFactoryUtil.select(
-							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBMessageTable.INSTANCE.answer.eq(true)
 						)));
 			}
 		}
@@ -750,7 +715,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 					AssetEntries_AssetTagsTable.INSTANCE.tagId)
 			);
 
-			if (tag.equals("myWatchedTags")) {
+			if (Objects.equals(tag, "myWatchedTags")) {
 				predicate = predicate.and(
 					AssetTagTable.INSTANCE.name.in(
 						DSLQueryFactoryUtil.select(
