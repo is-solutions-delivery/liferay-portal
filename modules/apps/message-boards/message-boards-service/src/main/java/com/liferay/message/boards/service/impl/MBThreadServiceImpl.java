@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -316,28 +315,32 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
-			long groupId, long categoryId, String hasValidAnswer, String numberOfMessageBoardMessages,
+			long groupId, long categoryId, String hasValidAnswer,
+			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
 		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPage(
-				groupId, getUserId(), categoryId, hasValidAnswer, numberOfMessageBoardMessages, queryDefinition, search,
-				sorts, tag);
+				groupId, getUserId(), categoryId, hasValidAnswer,
+				numberOfMessageBoardMessages, queryDefinition, search, sorts,
+				tag);
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-			long groupId, long categoryId, String hasValidAnswer, String numberOfMessageBoardMessages,
+			long groupId, long categoryId, String hasValidAnswer,
+			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
 		throws PrincipalException {
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, getUserId(), categoryId,hasValidAnswer, numberOfMessageBoardMessages, queryDefinition, search,
-				sorts, tag);
+				groupId, getUserId(), categoryId, hasValidAnswer,
+				numberOfMessageBoardMessages, queryDefinition, search, sorts,
+				tag);
 	}
 
 	@Override
