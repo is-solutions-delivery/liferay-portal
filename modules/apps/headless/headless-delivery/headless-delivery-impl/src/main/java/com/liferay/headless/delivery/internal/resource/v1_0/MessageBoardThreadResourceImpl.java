@@ -53,13 +53,10 @@ import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.QueryTerm;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
-import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
@@ -149,10 +146,9 @@ public class MessageBoardThreadResourceImpl
 	@Override
 	public Page<MessageBoardThread>
 			getMessageBoardSectionFilteredMessageBoardThreadsPage(
-				Long messageBoardSectionId, String hasValidAnswer, String numberOfMessageBoardMessages,
-				String search, String tag,
-				Aggregation aggregation, Filter filter,
-				Pagination pagination,
+				Long messageBoardSectionId, String hasValidAnswer,
+				String numberOfMessageBoardMessages, String search, String tag,
+				Aggregation aggregation, Filter filter, Pagination pagination,
 				Sort[] sorts)
 		throws Exception {
 
@@ -164,7 +160,8 @@ public class MessageBoardThreadResourceImpl
 		return Page.of(
 			TransformUtil.transform(
 				_mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
-					mbCategory.getGroupId(), messageBoardSectionId, hasValidAnswer, numberOfMessageBoardMessages,
+					mbCategory.getGroupId(), messageBoardSectionId,
+					hasValidAnswer, numberOfMessageBoardMessages,
 					new QueryDefinition<>(
 						status, contextUser.getUserId(), true,
 						pagination.getStartPosition(),
@@ -174,7 +171,8 @@ public class MessageBoardThreadResourceImpl
 				this::_toMessageBoardThread),
 			pagination,
 			_mbThreadService.getMessageBoardSectionMessageBoardThreadsPageCount(
-				mbCategory.getGroupId(), messageBoardSectionId, hasValidAnswer, numberOfMessageBoardMessages,
+				mbCategory.getGroupId(), messageBoardSectionId, hasValidAnswer,
+				numberOfMessageBoardMessages,
 				new QueryDefinition<>(
 					status, contextUser.getUserId(), true,
 					pagination.getStartPosition(), pagination.getEndPosition(),
