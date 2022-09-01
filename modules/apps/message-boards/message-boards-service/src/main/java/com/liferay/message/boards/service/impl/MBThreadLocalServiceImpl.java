@@ -480,48 +480,45 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 		}
 
-		if (Validator.isNotNull(hasValidAnswer) ||
-			Validator.isNotNull(numberOfMessageBoardMessages)) {
-
-			if (Objects.equals(hasValidAnswer, "false")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.notIn(
-						DSLQueryFactoryUtil.select(
+		if (Validator.isNotNull(numberOfMessageBoardMessages)) {
+			predicate = predicate.and(
+				MBThreadTable.INSTANCE.threadId.notIn(
+					DSLQueryFactoryUtil.select(
+						MBMessageTable.INSTANCE.threadId
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBThreadTable.INSTANCE.threadId.eq(
 							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBMessageTable.INSTANCE.answer.eq(true)
-						)));
-			}
+						).and(
+							MBMessageTable.INSTANCE.parentMessageId.neq(
+								Long.valueOf(numberOfMessageBoardMessages))
+						)
+					)));
+		}
 
-			if (Objects.equals(hasValidAnswer, "true")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.in(
-						DSLQueryFactoryUtil.select(
-							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBMessageTable.INSTANCE.answer.eq(true)
-						)));
-			}
+		if (Objects.equals(hasValidAnswer, "false")) {
+			predicate = predicate.and(
+				MBThreadTable.INSTANCE.threadId.notIn(
+					DSLQueryFactoryUtil.select(
+						MBMessageTable.INSTANCE.threadId
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBMessageTable.INSTANCE.answer.eq(true)
+					)));
+		}
 
-			if (Objects.equals(numberOfMessageBoardMessages, "0")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.notIn(
-						DSLQueryFactoryUtil.select(
-							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBThreadTable.INSTANCE.threadId.eq(
-								MBMessageTable.INSTANCE.threadId
-							).and(
-								MBMessageTable.INSTANCE.parentMessageId.neq(0L)
-							)
-						)));
-			}
+		if (Objects.equals(hasValidAnswer, "true")) {
+			predicate = predicate.and(
+				MBThreadTable.INSTANCE.threadId.in(
+					DSLQueryFactoryUtil.select(
+						MBMessageTable.INSTANCE.threadId
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBMessageTable.INSTANCE.answer.eq(true)
+					)));
 		}
 
 		if (Validator.isNotNull(tag)) {
@@ -665,48 +662,45 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 				MBThreadTable.INSTANCE.title.like("%" + search + "%"));
 		}
 
-		if (Validator.isNotNull(hasValidAnswer) ||
-			Validator.isNotNull(numberOfMessageBoardMessages)) {
-
-			if (Objects.equals(hasValidAnswer, "false")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.notIn(
-						DSLQueryFactoryUtil.select(
+		if (Validator.isNotNull(numberOfMessageBoardMessages)) {
+			predicate = predicate.and(
+				MBThreadTable.INSTANCE.threadId.notIn(
+					DSLQueryFactoryUtil.select(
+						MBMessageTable.INSTANCE.threadId
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBThreadTable.INSTANCE.threadId.eq(
 							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBMessageTable.INSTANCE.answer.eq(true)
-						)));
-			}
+						).and(
+							MBMessageTable.INSTANCE.parentMessageId.neq(
+								Long.valueOf(numberOfMessageBoardMessages))
+						)
+					)));
+		}
 
-			if (Objects.equals(hasValidAnswer, "true")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.in(
-						DSLQueryFactoryUtil.select(
-							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBMessageTable.INSTANCE.answer.eq(true)
-						)));
-			}
+		if (Objects.equals(hasValidAnswer, "false")) {
+			predicate = predicate.and(
+				MBThreadTable.INSTANCE.threadId.notIn(
+					DSLQueryFactoryUtil.select(
+						MBMessageTable.INSTANCE.threadId
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBMessageTable.INSTANCE.answer.eq(true)
+					)));
+		}
 
-			if (Objects.equals(numberOfMessageBoardMessages, "0")) {
-				predicate = predicate.and(
-					MBThreadTable.INSTANCE.threadId.notIn(
-						DSLQueryFactoryUtil.select(
-							MBMessageTable.INSTANCE.threadId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBThreadTable.INSTANCE.threadId.eq(
-								MBMessageTable.INSTANCE.threadId
-							).and(
-								MBMessageTable.INSTANCE.parentMessageId.neq(0L)
-							)
-						)));
-			}
+		if (Objects.equals(hasValidAnswer, "true")) {
+			predicate = predicate.and(
+				MBThreadTable.INSTANCE.threadId.in(
+					DSLQueryFactoryUtil.select(
+						MBMessageTable.INSTANCE.threadId
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBMessageTable.INSTANCE.answer.eq(true)
+					)));
 		}
 
 		if (Validator.isNotNull(tag)) {
