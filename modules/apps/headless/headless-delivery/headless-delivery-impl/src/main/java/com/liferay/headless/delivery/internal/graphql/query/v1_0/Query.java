@@ -2386,7 +2386,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {messageBoardSectionFilteredMessageBoardThreads(aggregation: ___, filter: ___, messageBoardSectionId: ___, page: ___, pageSize: ___, search: ___, sorts: ___, tag: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {messageBoardSectionFilteredMessageBoardThreads(aggregation: ___, filter: ___, hasValidAnswer: ___, messageBoardSectionId: ___, numberOfMessageBoardMessages: ___, page: ___, pageSize: ___, search: ___, sorts: ___, tag: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
 		description = "Retrieves the message board section's filtered threads. Results can be paginated, filtered, searched, and sorted."
@@ -2395,6 +2395,9 @@ public class Query {
 			messageBoardSectionFilteredMessageBoardThreads(
 				@GraphQLName("messageBoardSectionId") Long
 					messageBoardSectionId,
+				@GraphQLName("hasValidAnswer") String hasValidAnswer,
+				@GraphQLName("numberOfMessageBoardMessages") String
+					numberOfMessageBoardMessages,
 				@GraphQLName("search") String search,
 				@GraphQLName("tag") String tag,
 				@GraphQLName("aggregation") List<String> aggregations,
@@ -2410,7 +2413,8 @@ public class Query {
 			messageBoardThreadResource -> new MessageBoardThreadPage(
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
-						messageBoardSectionId, search, tag,
+						messageBoardSectionId, hasValidAnswer,
+						numberOfMessageBoardMessages, search, tag,
 						_aggregationBiFunction.apply(
 							messageBoardThreadResource, aggregations),
 						_filterBiFunction.apply(
@@ -4075,6 +4079,9 @@ public class Query {
 			description = "Retrieves the message board section's filtered threads. Results can be paginated, filtered, searched, and sorted."
 		)
 		public MessageBoardThreadPage filteredMessageBoardThreads(
+				@GraphQLName("hasValidAnswer") String hasValidAnswer,
+				@GraphQLName("numberOfMessageBoardMessages") String
+					numberOfMessageBoardMessages,
 				@GraphQLName("search") String search,
 				@GraphQLName("tag") String tag,
 				@GraphQLName("aggregation") List<String> aggregations,
@@ -4090,7 +4097,8 @@ public class Query {
 				messageBoardThreadResource -> new MessageBoardThreadPage(
 					messageBoardThreadResource.
 						getMessageBoardSectionFilteredMessageBoardThreadsPage(
-							_messageBoardSection.getId(), search, tag,
+							_messageBoardSection.getId(), hasValidAnswer,
+							numberOfMessageBoardMessages, search, tag,
 							_aggregationBiFunction.apply(
 								messageBoardThreadResource, aggregations),
 							_filterBiFunction.apply(
