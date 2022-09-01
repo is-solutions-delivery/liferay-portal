@@ -80,7 +80,6 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.view.count.ViewCountManager;
@@ -552,15 +551,15 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						)));
 			}
 			else {
-				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(
-					StringUtil.split(tag)));
+				predicate = predicate.and(
+					AssetTagTable.INSTANCE.name.in(StringUtil.split(tag)));
 			}
 		}
 
 		List<OrderByExpression> orderByExpressions = new ArrayList<>();
 
 		if (sorts != null) {
-			for(Sort sort : sorts) {
+			for (Sort sort : sorts) {
 				String fieldName = sort.getFieldName();
 
 				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
@@ -573,12 +572,14 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 					OrderByExpression orderByExpression =
 						RatingsStatsTable.INSTANCE.getColumn(
-							fieldName).ascending();
+							fieldName
+						).ascending();
 
 					if (sort.isReverse()) {
 						orderByExpression =
 							RatingsStatsTable.INSTANCE.getColumn(
-								fieldName).descending();
+								fieldName
+							).descending();
 					}
 
 					orderByExpressions.add(orderByExpression);
@@ -632,8 +633,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			joinStep.where(
 				predicate
 			).orderBy(
-				TransformUtil.transformToArray(orderByExpressions,
-					orderByExpression -> orderByExpression,
+				TransformUtil.transformToArray(
+					orderByExpressions, orderByExpression -> orderByExpression,
 					OrderByExpression.class)
 			));
 	}
@@ -734,8 +735,8 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 						)));
 			}
 			else {
-				predicate = predicate.and(AssetTagTable.INSTANCE.name.in(
-					StringUtil.split(tag)));
+				predicate = predicate.and(
+					AssetTagTable.INSTANCE.name.in(StringUtil.split(tag)));
 			}
 		}
 
