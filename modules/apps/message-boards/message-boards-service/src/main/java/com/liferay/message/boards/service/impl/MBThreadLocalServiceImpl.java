@@ -557,7 +557,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			}
 		}
 
-		List<OrderByExpression> orderByExpressionList = new ArrayList<>();
+		List<OrderByExpression> orderByExpressions = new ArrayList<>();
 
 		if (sorts != null) {
 			for(Sort sort : sorts) {
@@ -581,7 +581,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 								fieldName).descending();
 					}
 
-					orderByExpressionList.add(orderByExpression);
+					orderByExpressions.add(orderByExpression);
 				}
 				else if (Objects.equals(fieldName, "viewCount")) {
 					joinStep = joinStep.innerJoinON(
@@ -597,7 +597,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							ViewCountEntryTable.INSTANCE.viewCount.descending();
 					}
 
-					orderByExpressionList.add(orderByExpression);
+					orderByExpressions.add(orderByExpression);
 				}
 				else if (Objects.equals(fieldName, "dateCreated")) {
 					OrderByExpression orderByExpression =
@@ -608,7 +608,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBThreadTable.INSTANCE.createDate.descending();
 					}
 
-					orderByExpressionList.add(orderByExpression);
+					orderByExpressions.add(orderByExpression);
 				}
 				else if (Objects.equals(fieldName, "dateModified")) {
 					OrderByExpression orderByExpression =
@@ -619,12 +619,12 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 							MBThreadTable.INSTANCE.modifiedDate.descending();
 					}
 
-					orderByExpressionList.add(orderByExpression);
+					orderByExpressions.add(orderByExpression);
 				}
 			}
 		}
 		else {
-			orderByExpressionList.add(
+			orderByExpressions.add(
 				MBThreadTable.INSTANCE.createDate.descending());
 		}
 
@@ -632,7 +632,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			joinStep.where(
 				predicate
 			).orderBy(
-				TransformUtil.transformToArray(orderByExpressionList,
+				TransformUtil.transformToArray(orderByExpressions,
 					orderByExpression -> orderByExpression,
 					OrderByExpression.class)
 			));
