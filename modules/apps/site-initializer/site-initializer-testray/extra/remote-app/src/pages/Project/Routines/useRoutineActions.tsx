@@ -27,6 +27,7 @@ const useRoutineActions = ({isHeaderActions}: ActionsHookParameter = {}) => {
 	const {form} = useFormActions();
 	const navigate = useNavigate();
 	const {removeItemFromList} = useMutate();
+
 	const {onOpenModal} = useModalContext();
 
 	const actionsRef = useRef([

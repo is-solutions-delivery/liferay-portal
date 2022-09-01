@@ -12,7 +12,19 @@
  * details.
  */
 
+import {useEffect} from 'react';
+import {useState} from 'react';
+
 import Form from '../../../components/Form';
+import {useFetch} from '../../../hooks/useFetch';
+import {
+	APIResponse,
+	TestrayFactor,
+	getFactorOptionQuery,
+	testrayFactorRest,
+} from '../../../services/rest';
+import {testrayFactorCategoryRest} from '../../../services/rest/TestrayFactorCategory';
+import {searchUtil} from '../../../util/search';
 
 type FactorsToOptionsProps = {
 	lastStep: Boolean;
@@ -23,22 +35,47 @@ const FactorsToOptions: React.FC<FactorsToOptionsProps> = ({
 	lastStep,
 	routineId,
 }) => {
+	const [factorOptionsList, setFactorOptionsList] = useState<
+		TestrayFactor[][]
+	>([[] as any]);
+	const {data: factorsData} = useFetch<APIResponse<TestrayFactor>>(
+		`${testrayFactorRest.resource}&filter=${searchUtil.eq(
+			'routineId',
+			routineId
+		)}`,
+		(response) => testrayFactorRest.transformDataFromList(response)
+	);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const factorItems = factorsData?.items || [];
+
+	console.log(factorOptionsList);
+
+	useEffect(() => {
+		testrayFactorCategoryRest
+			.getFactoryCategoryItems(factorItems)
+			.then(setFactorOptionsList);
+	}, [factorItems]);
+
 	return (
 		<>
-			<Form.Select
-				defaultOption={false}
-				key={4}
-				label="teste"
-				multiple={!lastStep}
-				name="type"
-				options={[
-					{
-						label: 'teste',
-						value: routineId,
-					},
-				]}
-				required
-			/>
+			{factorItems.map((factorItem, index) => (
+				<Form.Select
+					defaultOption={false}
+					defaultValue={factorItem.factorOption?.id}
+					key={index}
+					label={factorItem.factorCategory?.name}
+					multiple={!lastStep}
+					name="type"
+					options={(factorOptionsList[index] || []).map(
+						({id, name}: any) => ({
+							label: name,
+							value: id,
+						})
+					)}
+					required
+				/>
+			))}
 		</>
 	);
 };

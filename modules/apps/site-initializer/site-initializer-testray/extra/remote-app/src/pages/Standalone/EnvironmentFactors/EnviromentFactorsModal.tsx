@@ -15,6 +15,7 @@
 import {useState} from 'react';
 
 import Form from '../../../components/Form';
+import {Boxes} from '../../../components/Form/DualListBox';
 import i18n from '../../../i18n';
 import FactorsToCategory from './FactorsToCategory';
 import FactorsToOptions from './FactorsToOptions';
@@ -22,13 +23,21 @@ import FactorsToOptions from './FactorsToOptions';
 type EnvironmentFactorsModalProps = {
 	routineId: number;
 };
+export type State = Boxes<[]>;
 
 const EnvironmentFactorsModal: React.FC<EnvironmentFactorsModalProps> = ({
 	routineId,
 }) => {
+	const [state, setState] = useState<State>([]);
 	const [step, setStep] = useState(0);
 
 	const _onSubmit = () => {
+		if (step === 0) {
+			return setStep(1);
+		}
+	};
+
+	const _onClose = () => {
 		if (step === 0) {
 			return setStep(1);
 		}
@@ -39,7 +48,12 @@ const EnvironmentFactorsModal: React.FC<EnvironmentFactorsModalProps> = ({
 	return (
 		<>
 			{step === 0 && (
-				<FactorsToCategory lastStep={lastStep} routineId={routineId} />
+				<FactorsToCategory
+					lastStep={lastStep}
+					routineId={routineId}
+					setState={setState}
+					state={state}
+				/>
 			)}
 
 			{step === 1 && (
@@ -49,7 +63,7 @@ const EnvironmentFactorsModal: React.FC<EnvironmentFactorsModalProps> = ({
 			<Form.Footer
 				isModal
 				onClose={() => {
-					lastStep ? _onSubmit() : alert;
+					lastStep ? _onClose() : alert;
 				}}
 				onSubmit={() => _onSubmit()}
 				primaryButtonTitle={i18n.translate(lastStep ? 'Save' : 'next')}
