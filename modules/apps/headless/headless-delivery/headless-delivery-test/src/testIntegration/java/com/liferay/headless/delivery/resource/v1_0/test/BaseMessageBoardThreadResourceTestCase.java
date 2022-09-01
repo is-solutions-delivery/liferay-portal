@@ -227,8 +227,10 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 		Page<MessageBoardThread> page =
 			messageBoardThreadResource.
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
-					messageBoardSectionId, null, RandomTestUtil.randomString(),
-					null, null, Pagination.of(1, 10), null);
+					messageBoardSectionId, RandomTestUtil.randomString(),
+					RandomTestUtil.randomString(), null,
+					RandomTestUtil.randomString(), null, null,
+					Pagination.of(1, 10), null);
 
 		Assert.assertEquals(0, page.getTotalCount());
 
@@ -242,7 +244,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
 						irrelevantMessageBoardSectionId, null, null, null, null,
-						Pagination.of(1, 2), null);
+						null, null, Pagination.of(1, 2), null);
 
 			Assert.assertEquals(1, page.getTotalCount());
 
@@ -263,7 +265,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 		page =
 			messageBoardThreadResource.
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
-					messageBoardSectionId, null, null, null, null,
+					messageBoardSectionId, null, null, null, null, null, null,
 					Pagination.of(1, 10), null);
 
 		Assert.assertEquals(2, page.getTotalCount());
@@ -304,7 +306,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			Page<MessageBoardThread> page =
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
-						messageBoardSectionId, null, null, null,
+						messageBoardSectionId, null, null, null, null, null,
 						getFilterString(
 							entityField, "between", messageBoardThread1),
 						Pagination.of(1, 2), null);
@@ -342,7 +344,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			Page<MessageBoardThread> page =
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
-						messageBoardSectionId, null, null, null,
+						messageBoardSectionId, null, null, null, null, null,
 						getFilterString(entityField, "eq", messageBoardThread1),
 						Pagination.of(1, 2), null);
 
@@ -379,7 +381,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			Page<MessageBoardThread> page =
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
-						messageBoardSectionId, null, null, null,
+						messageBoardSectionId, null, null, null, null, null,
 						getFilterString(entityField, "eq", messageBoardThread1),
 						Pagination.of(1, 2), null);
 
@@ -411,7 +413,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 		Page<MessageBoardThread> page1 =
 			messageBoardThreadResource.
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
-					messageBoardSectionId, null, null, null, null,
+					messageBoardSectionId, null, null, null, null, null, null,
 					Pagination.of(1, 2), null);
 
 		List<MessageBoardThread> messageBoardThreads1 =
@@ -423,7 +425,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 		Page<MessageBoardThread> page2 =
 			messageBoardThreadResource.
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
-					messageBoardSectionId, null, null, null, null,
+					messageBoardSectionId, null, null, null, null, null, null,
 					Pagination.of(2, 2), null);
 
 		Assert.assertEquals(3, page2.getTotalCount());
@@ -437,7 +439,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 		Page<MessageBoardThread> page3 =
 			messageBoardThreadResource.
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
-					messageBoardSectionId, null, null, null, null,
+					messageBoardSectionId, null, null, null, null, null, null,
 					Pagination.of(1, 3), null);
 
 		assertEqualsIgnoringOrder(
@@ -577,8 +579,9 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			Page<MessageBoardThread> ascPage =
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
-						messageBoardSectionId, null, null, null, null,
-						Pagination.of(1, 2), entityField.getName() + ":asc");
+						messageBoardSectionId, null, null, null, null, null,
+						null, Pagination.of(1, 2),
+						entityField.getName() + ":asc");
 
 			assertEquals(
 				Arrays.asList(messageBoardThread1, messageBoardThread2),
@@ -587,8 +590,9 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			Page<MessageBoardThread> descPage =
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
-						messageBoardSectionId, null, null, null, null,
-						Pagination.of(1, 2), entityField.getName() + ":desc");
+						messageBoardSectionId, null, null, null, null, null,
+						null, Pagination.of(1, 2),
+						entityField.getName() + ":desc");
 
 			assertEquals(
 				Arrays.asList(messageBoardThread2, messageBoardThread1),
