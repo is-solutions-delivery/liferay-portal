@@ -481,22 +481,24 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		if (Validator.isNotNull(hasValidAnswer) ||
 			Validator.isNotNull(numberOfMessageBoardMessages)) {
-			String  hasValidAnswerValue;
+
+			String hasValidAnswerValue;
 			String numberOfMessageBoardMessagesValue;
 
-			if(Validator.isNotNull(hasValidAnswer)){
+			if (Validator.isNotNull(hasValidAnswer)) {
 				hasValidAnswerValue = hasValidAnswer;
-			}else{
+			}
+			else {
 				hasValidAnswerValue = "";
 			}
 
-			if(Validator.isNotNull(numberOfMessageBoardMessages)){
-				numberOfMessageBoardMessagesValue = numberOfMessageBoardMessages;
-
-			}else{
+			if (Validator.isNotNull(numberOfMessageBoardMessages)) {
+				numberOfMessageBoardMessagesValue =
+					numberOfMessageBoardMessages;
+			}
+			else {
 				numberOfMessageBoardMessagesValue = "";
 			}
-
 
 			if (hasValidAnswerValue.equals("false")) {
 				predicate = predicate.and(
@@ -679,19 +681,21 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		if (Validator.isNotNull(hasValidAnswer) ||
 			Validator.isNotNull(numberOfMessageBoardMessages)) {
 
-			String  hasValidAnswerValue;
+			String hasValidAnswerValue;
 			String numberOfMessageBoardMessagesValue;
 
-			if(Validator.isNotNull(hasValidAnswer)){
+			if (Validator.isNotNull(hasValidAnswer)) {
 				hasValidAnswerValue = hasValidAnswer;
-			}else{
+			}
+			else {
 				hasValidAnswerValue = "";
 			}
 
-			if(Validator.isNotNull(numberOfMessageBoardMessages)){
-				numberOfMessageBoardMessagesValue = numberOfMessageBoardMessages;
-
-			}else{
+			if (Validator.isNotNull(numberOfMessageBoardMessages)) {
+				numberOfMessageBoardMessagesValue =
+					numberOfMessageBoardMessages;
+			}
+			else {
 				numberOfMessageBoardMessagesValue = "";
 			}
 
