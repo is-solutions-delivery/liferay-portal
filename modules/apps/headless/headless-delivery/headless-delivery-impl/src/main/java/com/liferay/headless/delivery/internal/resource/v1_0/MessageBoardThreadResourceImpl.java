@@ -149,8 +149,10 @@ public class MessageBoardThreadResourceImpl
 	@Override
 	public Page<MessageBoardThread>
 			getMessageBoardSectionFilteredMessageBoardThreadsPage(
-				Long messageBoardSectionId, String search, String tag,
-				Aggregation aggregation, Filter filter, Pagination pagination,
+				Long messageBoardSectionId, String hasValidAnswer, String numberOfMessageBoardMessages,
+				String search, String tag,
+				Aggregation aggregation, Filter filter,
+				Pagination pagination,
 				Sort[] sorts)
 		throws Exception {
 
@@ -159,26 +161,10 @@ public class MessageBoardThreadResourceImpl
 
 		int status = WorkflowConstants.STATUS_APPROVED;
 
-		QueryFilter queryFilter = (QueryFilter)filter;
-		Map<String, String> map;
-
-		try {
-			TermQueryImpl termQueryImpl = (TermQueryImpl)queryFilter.getQuery();
-
-			QueryTerm queryTerm = termQueryImpl.getQueryTerm();
-
-			map = HashMapBuilder.put(
-				queryTerm.getField(), queryTerm.getValue()
-			).build();
-		}
-		catch (Exception exception) {
-			map = null;
-		}
-
 		return Page.of(
 			TransformUtil.transform(
 				_mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
-					mbCategory.getGroupId(), messageBoardSectionId, map,
+					mbCategory.getGroupId(), messageBoardSectionId, hasValidAnswer, numberOfMessageBoardMessages,
 					new QueryDefinition<>(
 						status, contextUser.getUserId(), true,
 						pagination.getStartPosition(),
@@ -188,7 +174,7 @@ public class MessageBoardThreadResourceImpl
 				this::_toMessageBoardThread),
 			pagination,
 			_mbThreadService.getMessageBoardSectionMessageBoardThreadsPageCount(
-				mbCategory.getGroupId(), messageBoardSectionId, map,
+				mbCategory.getGroupId(), messageBoardSectionId, hasValidAnswer, numberOfMessageBoardMessages,
 				new QueryDefinition<>(
 					status, contextUser.getUserId(), true,
 					pagination.getStartPosition(), pagination.getEndPosition(),
