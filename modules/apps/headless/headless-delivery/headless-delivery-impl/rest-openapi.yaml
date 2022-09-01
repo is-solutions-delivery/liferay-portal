@@ -9643,7 +9643,15 @@ paths:
                   schema:
                       type: string
                 - in: query
+                  name: hasValidAnswer
+                  schema:
+                      type: string
+                - in: query
                   name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: numberOfMessageBoardMessages
                   schema:
                       type: string
                 - in: query
@@ -9651,7 +9659,7 @@ paths:
                   schema:
                       type: string
                 - in: query
-                  name: tag
+                  name: search
                   schema:
                       type: string
                 - in: query
@@ -9667,7 +9675,7 @@ paths:
                   schema:
                       type: integer
                 - in: query
-                  name: search
+                  name: tag
                   schema:
                       type: string
                 - in: query
