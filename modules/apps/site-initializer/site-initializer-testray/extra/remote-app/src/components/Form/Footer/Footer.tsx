@@ -21,6 +21,7 @@ type FooterProps = {
 	onClose: () => void;
 	onSubmit: () => void;
 	primaryButtonTitle?: string;
+	secondaryButtonTitle?: string;
 };
 
 const Footer: React.FC<FooterProps> = ({
@@ -28,6 +29,7 @@ const Footer: React.FC<FooterProps> = ({
 	onClose,
 	onSubmit,
 	primaryButtonTitle = 'save',
+	secondaryButtonTitle = isModal ? 'close' : 'cancel',
 }) => (
 	<ClayButton.Group spaced>
 		<ClayButton displayType="primary" onClick={onSubmit}>
@@ -35,7 +37,7 @@ const Footer: React.FC<FooterProps> = ({
 		</ClayButton>
 
 		<ClayButton displayType="secondary" onClick={() => onClose()}>
-			{i18n.translate(isModal ? 'close' : 'cancel')}
+			{i18n.translate(secondaryButtonTitle)}
 		</ClayButton>
 	</ClayButton.Group>
 );
