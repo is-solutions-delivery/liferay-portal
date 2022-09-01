@@ -80,10 +80,12 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.view.count.ViewCountManager;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.vulcan.util.TransformUtil;
 import com.liferay.ratings.kernel.model.RatingsStatsTable;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import com.liferay.social.kernel.model.SocialActivityConstants;
@@ -558,77 +560,84 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			}
 		}
 
-		OrderByExpression orderByExpression = null;
+		List<OrderByExpression> orderByExpressionList = new ArrayList<>();
 
 		if (sorts != null) {
-			Sort sort = sorts[0];
+			for(Sort sort : sorts) {
+				String fieldName = sort.getFieldName();
 
-			String fieldName = sort.getFieldName();
+				fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
 
-			fieldName = StringUtil.removeSubstring(fieldName, "_sortable");
+				if (Objects.equals(fieldName, "totalScore")) {
+					joinStep = joinStep.leftJoinOn(
+						RatingsStatsTable.INSTANCE,
+						MBThreadTable.INSTANCE.rootMessageId.eq(
+							RatingsStatsTable.INSTANCE.classPK));
 
-			if (Objects.equals(fieldName, "totalScore")) {
-				joinStep = joinStep.leftJoinOn(
-					RatingsStatsTable.INSTANCE,
-					MBThreadTable.INSTANCE.rootMessageId.eq(
-						RatingsStatsTable.INSTANCE.classPK));
-
-				if (sort.isReverse()) {
-					orderByExpression =
-						RatingsStatsTable.INSTANCE.getColumn(
-							fieldName).descending();
-				}
-				else {
-					orderByExpression =
+					OrderByExpression orderByExpression =
 						RatingsStatsTable.INSTANCE.getColumn(
 							fieldName).ascending();
-				}
-			}
-			else if (Objects.equals(fieldName, "viewCount")) {
-				joinStep = joinStep.innerJoinON(
-					ViewCountEntryTable.INSTANCE,
-					MBThreadTable.INSTANCE.threadId.eq(
-						ViewCountEntryTable.INSTANCE.classPK));
 
-				if (sort.isReverse()) {
-					orderByExpression =
-						ViewCountEntryTable.INSTANCE.viewCount.descending();
+					if (sort.isReverse()) {
+						orderByExpression =
+							RatingsStatsTable.INSTANCE.getColumn(
+								fieldName).descending();
+					}
+
+					orderByExpressionList.add(orderByExpression);
 				}
-				else {
-					orderByExpression =
+				else if (Objects.equals(fieldName, "viewCount")) {
+					joinStep = joinStep.innerJoinON(
+						ViewCountEntryTable.INSTANCE,
+						MBThreadTable.INSTANCE.threadId.eq(
+							ViewCountEntryTable.INSTANCE.classPK));
+
+					OrderByExpression orderByExpression =
 						ViewCountEntryTable.INSTANCE.viewCount.ascending();
+
+					if (sort.isReverse()) {
+						orderByExpression =
+							ViewCountEntryTable.INSTANCE.viewCount.descending();
+					}
+
+					orderByExpressionList.add(orderByExpression);
 				}
-			}
-			else if (Objects.equals(fieldName, "dateCreated")) {
-				if (sort.isReverse()) {
-					orderByExpression =
-						MBThreadTable.INSTANCE.createDate.descending();
-				}
-				else {
-					orderByExpression =
+				else if (Objects.equals(fieldName, "dateCreated")) {
+					OrderByExpression orderByExpression =
 						MBThreadTable.INSTANCE.createDate.ascending();
+
+					if (sort.isReverse()) {
+						orderByExpression =
+							MBThreadTable.INSTANCE.createDate.descending();
+					}
+
+					orderByExpressionList.add(orderByExpression);
 				}
-			}
-			else if (Objects.equals(fieldName, "dateModified")) {
-				if (sort.isReverse()) {
-					orderByExpression =
-						MBThreadTable.INSTANCE.modifiedDate.descending();
-				}
-				else {
-					orderByExpression =
+				else if (Objects.equals(fieldName, "dateModified")) {
+					OrderByExpression orderByExpression =
 						MBThreadTable.INSTANCE.modifiedDate.ascending();
+
+					if (sort.isReverse()) {
+						orderByExpression =
+							MBThreadTable.INSTANCE.modifiedDate.descending();
+					}
+
+					orderByExpressionList.add(orderByExpression);
 				}
 			}
 		}
 		else {
-			orderByExpression = MBThreadTable.INSTANCE.createDate.descending();
+			orderByExpressionList.add(
+				MBThreadTable.INSTANCE.createDate.descending());
 		}
 
 		return mbThreadPersistence.dslQuery(
 			joinStep.where(
 				predicate
 			).orderBy(
-				orderByExpression
+				TransformUtil.transformToArray(orderByExpressionList,
+					orderByExpression -> orderByExpression,
+					OrderByExpression.class)
 			));
 	}
 
