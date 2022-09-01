@@ -51,14 +51,16 @@ public interface MessageBoardThreadResource {
 
 	public Page<MessageBoardThread>
 			getMessageBoardSectionFilteredMessageBoardThreadsPage(
-				Long messageBoardSectionId, String search, String tag,
+				Long messageBoardSectionId, String hasValidAnswer,
+				String numberOfMessageBoardMessages, String search, String tag,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getMessageBoardSectionFilteredMessageBoardThreadsPageHttpResponse(
-				Long messageBoardSectionId, String search, String tag,
+				Long messageBoardSectionId, String hasValidAnswer,
+				String numberOfMessageBoardMessages, String search, String tag,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 		throws Exception;
@@ -353,14 +355,16 @@ public interface MessageBoardThreadResource {
 
 		public Page<MessageBoardThread>
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
-					Long messageBoardSectionId, String search, String tag,
-					List<String> aggregations, String filterString,
+					Long messageBoardSectionId, String hasValidAnswer,
+					String numberOfMessageBoardMessages, String search,
+					String tag, List<String> aggregations, String filterString,
 					Pagination pagination, String sortString)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
 				getMessageBoardSectionFilteredMessageBoardThreadsPageHttpResponse(
-					messageBoardSectionId, search, tag, aggregations,
+					messageBoardSectionId, hasValidAnswer,
+					numberOfMessageBoardMessages, search, tag, aggregations,
 					filterString, pagination, sortString);
 
 			String content = httpResponse.getContent();
@@ -402,8 +406,9 @@ public interface MessageBoardThreadResource {
 
 		public HttpInvoker.HttpResponse
 				getMessageBoardSectionFilteredMessageBoardThreadsPageHttpResponse(
-					Long messageBoardSectionId, String search, String tag,
-					List<String> aggregations, String filterString,
+					Long messageBoardSectionId, String hasValidAnswer,
+					String numberOfMessageBoardMessages, String search,
+					String tag, List<String> aggregations, String filterString,
 					Pagination pagination, String sortString)
 			throws Exception {
 
@@ -427,6 +432,17 @@ public interface MessageBoardThreadResource {
 			}
 
 			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
+
+			if (hasValidAnswer != null) {
+				httpInvoker.parameter(
+					"hasValidAnswer", String.valueOf(hasValidAnswer));
+			}
+
+			if (numberOfMessageBoardMessages != null) {
+				httpInvoker.parameter(
+					"numberOfMessageBoardMessages",
+					String.valueOf(numberOfMessageBoardMessages));
+			}
 
 			if (search != null) {
 				httpInvoker.parameter("search", String.valueOf(search));
