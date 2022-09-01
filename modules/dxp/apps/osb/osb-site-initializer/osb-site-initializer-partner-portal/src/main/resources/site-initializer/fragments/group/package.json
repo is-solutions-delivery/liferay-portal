@@ -1,0 +1,14 @@
+{
+	"dependencies": {
+		"react": "16.12.0",
+		"react-dom": "16.12.0"
+	},
+	"devDependencies": {
+		"generator-liferay-fragments": "2.0.2"
+	},
+	"name": "@liferay/site-initializer-partner-portal-fragments",
+	"scripts": {
+		"build": "yo liferay-fragments:build"
+	},
+	"version": "1.0.0"
+}
