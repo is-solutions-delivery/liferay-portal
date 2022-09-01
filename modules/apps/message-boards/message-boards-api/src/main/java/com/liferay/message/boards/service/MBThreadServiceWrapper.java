@@ -134,7 +134,8 @@ public class MBThreadServiceWrapper
 	@Override
 	public java.util.List<MBThread>
 			getMessageBoardSectionMessageBoardThreadsPage(
-				long groupId, long categoryId, java.util.Map map,
+				long groupId, long categoryId, String hasValidAnswer,
+				String numberOfMessageBoardMessages,
 				com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 					queryDefinition,
 				String search, com.liferay.portal.kernel.search.Sort[] sorts,
@@ -142,12 +143,14 @@ public class MBThreadServiceWrapper
 		throws com.liferay.portal.kernel.security.auth.PrincipalException {
 
 		return _mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
-			groupId, categoryId, map, queryDefinition, search, sorts, tag);
+			groupId, categoryId, hasValidAnswer, numberOfMessageBoardMessages,
+			queryDefinition, search, sorts, tag);
 	}
 
 	@Override
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
-			long groupId, long categoryId, java.util.Map map,
+			long groupId, long categoryId, String hasValidAnswer,
+			String numberOfMessageBoardMessages,
 			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
 				queryDefinition,
 			String search, com.liferay.portal.kernel.search.Sort[] sorts,
@@ -156,7 +159,9 @@ public class MBThreadServiceWrapper
 
 		return _mbThreadService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
-				groupId, categoryId, map, queryDefinition, search, sorts, tag);
+				groupId, categoryId, hasValidAnswer,
+				numberOfMessageBoardMessages, queryDefinition, search, sorts,
+				tag);
 	}
 
 	/**
