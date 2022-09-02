@@ -53,10 +53,13 @@ import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.QueryTerm;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
+import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
@@ -141,6 +144,56 @@ public class MessageBoardThreadResourceImpl
 					_portal.getClassNameId(MBMessage.class.getName()),
 					contextCompany.getCompanyId(), _expandoBridgeIndexer,
 					_expandoColumnLocalService, _expandoTableLocalService)));
+	}
+
+	@Override
+	public Page<MessageBoardThread>
+			getMessageBoardSectionFilteredMessageBoardThreadsPage(
+				Long messageBoardSectionId, String search, String tag,
+				Aggregation aggregation, Filter filter, Pagination pagination,
+				Sort[] sorts)
+		throws Exception {
+
+		MBCategory mbCategory = _mbCategoryService.getCategory(
+			messageBoardSectionId);
+
+		int status = WorkflowConstants.STATUS_APPROVED;
+
+		QueryFilter queryFilter = (QueryFilter)filter;
+		Map<String, String> map;
+
+		try {
+			TermQueryImpl termQueryImpl = (TermQueryImpl)queryFilter.getQuery();
+
+			QueryTerm queryTerm = termQueryImpl.getQueryTerm();
+
+			map = HashMapBuilder.put(
+				queryTerm.getField(), queryTerm.getValue()
+			).build();
+		}
+		catch (Exception exception) {
+			map = null;
+		}
+
+		return Page.of(
+			TransformUtil.transform(
+				_mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
+					mbCategory.getGroupId(), messageBoardSectionId, map,
+					new QueryDefinition<>(
+						status, contextUser.getUserId(), true,
+						pagination.getStartPosition(),
+						pagination.getEndPosition(),
+						new ThreadCreateDateComparator()),
+					search, sorts, tag),
+				this::_toMessageBoardThread),
+			pagination,
+			_mbThreadService.getMessageBoardSectionMessageBoardThreadsPageCount(
+				mbCategory.getGroupId(), messageBoardSectionId, map,
+				new QueryDefinition<>(
+					status, contextUser.getUserId(), true,
+					pagination.getStartPosition(), pagination.getEndPosition(),
+					new ThreadCreateDateComparator()),
+				search, sorts, tag));
 	}
 
 	@Override

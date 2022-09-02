@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.ExceptionRetryAcceptor;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
@@ -53,6 +54,7 @@ import java.io.Serializable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -369,6 +371,18 @@ public interface MBThreadLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMBThreadsCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long userId, long categoryId, Map map,
+		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
+		String tag);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long userId, long categoryId, Map map,
+		QueryDefinition<MBThread> queryDefinition, String search, Sort[] sorts,
+		String tag);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageCount(long threadId, int status);

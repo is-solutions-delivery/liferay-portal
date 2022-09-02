@@ -32,6 +32,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -309,6 +312,32 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 		return _mbMessageFinder.filterCountByG_U_C_A_S(
 			groupId, userId, categoryIds, false, status);
+	}
+
+	@Override
+	public List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+			long groupId, long categoryId, Map map,
+			QueryDefinition<MBThread> queryDefinition, String search,
+			Sort[] sorts, String tag)
+		throws PrincipalException {
+
+		return mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPage(
+				groupId, getUserId(), categoryId, map, queryDefinition, search,
+				sorts, tag);
+	}
+
+	@Override
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+			long groupId, long categoryId, Map map,
+			QueryDefinition<MBThread> queryDefinition, String search,
+			Sort[] sorts, String tag)
+		throws PrincipalException {
+
+		return mbThreadLocalService.
+			getMessageBoardSectionMessageBoardThreadsPageCount(
+				groupId, getUserId(), categoryId, map, queryDefinition, search,
+				sorts, tag);
 	}
 
 	@Override

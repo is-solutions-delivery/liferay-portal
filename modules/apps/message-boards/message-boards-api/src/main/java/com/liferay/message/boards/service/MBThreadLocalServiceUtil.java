@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides the local service utility for MBThread. This utility wraps
@@ -431,6 +432,30 @@ public class MBThreadLocalServiceUtil {
 	 */
 	public static int getMBThreadsCount() {
 		return getService().getMBThreadsCount();
+	}
+
+	public static List<MBThread> getMessageBoardSectionMessageBoardThreadsPage(
+		long groupId, long userId, long categoryId, Map map,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
+
+		return getService().getMessageBoardSectionMessageBoardThreadsPage(
+			groupId, userId, categoryId, map, queryDefinition, search, sorts,
+			tag);
+	}
+
+	public static int getMessageBoardSectionMessageBoardThreadsPageCount(
+		long groupId, long userId, long categoryId, Map map,
+		com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+			queryDefinition,
+		String search, com.liferay.portal.kernel.search.Sort[] sorts,
+		String tag) {
+
+		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
+			groupId, userId, categoryId, map, queryDefinition, search, sorts,
+			tag);
 	}
 
 	public static int getMessageCount(long threadId, int status) {
