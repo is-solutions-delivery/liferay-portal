@@ -23,5 +23,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "env TZ=utc liferay-npm-scripts test"
 	},
-	"version": "1.0.30"
+	"version": "1.0.31"
 }

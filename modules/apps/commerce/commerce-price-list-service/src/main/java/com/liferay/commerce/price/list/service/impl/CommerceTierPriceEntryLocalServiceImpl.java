@@ -24,13 +24,14 @@ import com.liferay.commerce.price.list.exception.NoSuchTierPriceEntryException;
 import com.liferay.commerce.price.list.model.CommercePriceEntry;
 import com.liferay.commerce.price.list.model.CommercePriceList;
 import com.liferay.commerce.price.list.model.CommerceTierPriceEntry;
+import com.liferay.commerce.price.list.service.CommercePriceEntryLocalService;
 import com.liferay.commerce.price.list.service.base.CommerceTierPriceEntryLocalServiceBaseImpl;
 import com.liferay.commerce.price.list.service.persistence.CommercePriceEntryPersistence;
 import com.liferay.commerce.price.list.util.comparator.CommerceTierPriceEntryMinQuantityComparator;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -51,17 +52,17 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
 
@@ -75,10 +76,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Alessio Antonio Rendina
  * @author Zoltán Takács
  */
+@Component(
+	enabled = false,
+	property = "model.class.name=com.liferay.commerce.price.list.model.CommerceTierPriceEntry",
+	service = AopService.class
+)
 public class CommerceTierPriceEntryLocalServiceImpl
 	extends CommerceTierPriceEntryLocalServiceBaseImpl {
 
@@ -138,7 +147,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 
 		// Commerce tier price entry
 
-		User user = userLocalService.getUser(serviceContext.getUserId());
+		User user = _userLocalService.getUser(serviceContext.getUserId());
 
 		validate(0, commercePriceEntryId, minQuantity);
 
@@ -152,13 +161,13 @@ public class CommerceTierPriceEntryLocalServiceImpl
 		Date expirationDate = null;
 		Date date = new Date();
 
-		Date displayDate = PortalUtil.getDate(
+		Date displayDate = _portal.getDate(
 			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
 			displayDateMinute, user.getTimeZone(),
 			CommerceTierPriceEntryDisplayDateException.class);
 
 		if (!neverExpire) {
-			expirationDate = PortalUtil.getDate(
+			expirationDate = _portal.getDate(
 				expirationDateMonth, expirationDateDay, expirationDateYear,
 				expirationDateHour, expirationDateMinute, user.getTimeZone(),
 				CommerceTierPriceEntryExpirationDateException.class);
@@ -202,7 +211,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 
 		// Commerce price entry
 
-		commercePriceEntryLocalService.setHasTierPrice(
+		_commercePriceEntryLocalService.setHasTierPrice(
 			commercePriceEntryId, true, bulkPricing);
 
 		return startWorkflowInstance(
@@ -475,7 +484,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		if (commerceTierPriceEntries.isEmpty()) {
-			commercePriceEntryLocalService.setHasTierPrice(
+			_commercePriceEntryLocalService.setHasTierPrice(
 				commerceTierPriceEntry.getCommercePriceEntryId(), false);
 		}
 
@@ -634,7 +643,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		User user = userLocalService.getUser(serviceContext.getUserId());
+		User user = _userLocalService.getUser(serviceContext.getUserId());
 
 		CommerceTierPriceEntry commerceTierPriceEntry =
 			commerceTierPriceEntryPersistence.findByPrimaryKey(
@@ -647,13 +656,13 @@ public class CommerceTierPriceEntryLocalServiceImpl
 		Date expirationDate = null;
 		Date date = new Date();
 
-		Date displayDate = PortalUtil.getDate(
+		Date displayDate = _portal.getDate(
 			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
 			displayDateMinute, user.getTimeZone(),
 			CommercePriceEntryDisplayDateException.class);
 
 		if (!neverExpire) {
-			expirationDate = PortalUtil.getDate(
+			expirationDate = _portal.getDate(
 				expirationDateMonth, expirationDateDay, expirationDateYear,
 				expirationDateHour, expirationDateMinute, user.getTimeZone(),
 				CommercePriceEntryExpirationDateException.class);
@@ -684,7 +693,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 
 		// Commerce price entry
 
-		commercePriceEntryLocalService.setHasTierPrice(
+		_commercePriceEntryLocalService.setHasTierPrice(
 			commerceTierPriceEntry.getCommercePriceEntryId(), true,
 			bulkPricing);
 
@@ -760,7 +769,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 			Map<String, Serializable> workflowContext)
 		throws PortalException {
 
-		User user = userLocalService.getUser(userId);
+		User user = _userLocalService.getUser(userId);
 		Date date = new Date();
 
 		CommerceTierPriceEntry commerceTierPriceEntry =
@@ -844,7 +853,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 		for (CommerceTierPriceEntry commerceTierPriceEntry :
 				commerceTierPriceEntries) {
 
-			long userId = PortalUtil.getValidUserId(
+			long userId = _portal.getValidUserId(
 				commerceTierPriceEntry.getCompanyId(),
 				commerceTierPriceEntry.getUserId());
 
@@ -886,7 +895,7 @@ public class CommerceTierPriceEntryLocalServiceImpl
 			for (CommerceTierPriceEntry commerceTierPriceEntry :
 					commerceTierPriceEntries) {
 
-				long userId = PortalUtil.getValidUserId(
+				long userId = _portal.getValidUserId(
 					commerceTierPriceEntry.getCompanyId(),
 					commerceTierPriceEntry.getUserId());
 
@@ -1043,10 +1052,19 @@ public class CommerceTierPriceEntryLocalServiceImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		CommerceTierPriceEntryLocalServiceImpl.class);
 
-	@BeanReference(type = CommercePriceEntryPersistence.class)
+	@Reference
+	private CommercePriceEntryLocalService _commercePriceEntryLocalService;
+
+	@Reference
 	private CommercePriceEntryPersistence _commercePriceEntryPersistence;
 
-	@ServiceReference(type = ExpandoRowLocalService.class)
+	@Reference
 	private ExpandoRowLocalService _expandoRowLocalService;
+
+	@Reference
+	private Portal _portal;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

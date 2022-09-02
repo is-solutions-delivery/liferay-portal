@@ -74,6 +74,15 @@ public class BaseDLEditFileEntryDisplayContext
 	}
 
 	@Override
+	public DDMFormValues getDDMFormValues(
+			DDMStructure ddmStructure, long fileVersionId)
+		throws PortalException {
+
+		return parentDisplayContext.getDDMFormValues(
+			ddmStructure, fileVersionId);
+	}
+
+	@Override
 	public DDMFormValues getDDMFormValues(long classPK) throws PortalException {
 		return parentDisplayContext.getDDMFormValues(classPK);
 	}

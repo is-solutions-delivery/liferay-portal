@@ -37,11 +37,10 @@ definition {
 	}
 
 	@priority = "3"
-	@refactorneeded
+	@refactordone
 	test DeleteKBArticleViaKBArticle {
-		KBAdmin.openKBAdmin(siteURLKey = "guest");
-
-		KBArticle.addCP(
+		JSONKnowledgeBase.addkBArticle(
+			groupName = "Guest",
 			kbArticleContent = "Knowledge Base Article Content",
 			kbArticleTitle = "Knowledge Base Article Title");
 

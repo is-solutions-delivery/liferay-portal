@@ -17,8 +17,13 @@ package com.liferay.commerce.product.service.impl;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionLink;
 import com.liferay.commerce.product.model.CProduct;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
+import com.liferay.commerce.product.service.CProductLocalService;
 import com.liferay.commerce.product.service.base.CPDefinitionLinkLocalServiceBaseImpl;
+import com.liferay.commerce.product.service.persistence.CPDefinitionPersistence;
+import com.liferay.commerce.product.service.persistence.CProductPersistence;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.SystemEventConstants;
@@ -26,6 +31,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -40,24 +46,6 @@ import java.util.List;
 public class CPDefinitionLinkLocalServiceImpl
 	extends CPDefinitionLinkLocalServiceBaseImpl {
 
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
-	@Override
-	public CPDefinitionLink addCPDefinitionLink(
-			long cpDefinitionId1, long cpDefinitionId2, double priority,
-			String type, ServiceContext serviceContext)
-		throws PortalException {
-
-		CPDefinition cpDefinition2 = cpDefinitionPersistence.findByPrimaryKey(
-			cpDefinitionId2);
-
-		return addCPDefinitionLinkByCProductId(
-			cpDefinitionId1, cpDefinition2.getCProductId(), priority, type,
-			serviceContext);
-	}
-
 	@Override
 	public CPDefinitionLink addCPDefinitionLinkByCProductId(
 			long cpDefinitionId, long cProductId, double priority, String type,
@@ -66,18 +54,18 @@ public class CPDefinitionLinkLocalServiceImpl
 
 		CPDefinition cpDefinition;
 
-		if (cpDefinitionLocalService.isVersionable(cpDefinitionId)) {
-			cpDefinition = cpDefinitionLocalService.copyCPDefinition(
+		if (_cpDefinitionLocalService.isVersionable(cpDefinitionId)) {
+			cpDefinition = _cpDefinitionLocalService.copyCPDefinition(
 				cpDefinitionId);
 
 			cpDefinitionId = cpDefinition.getCPDefinitionId();
 		}
 		else {
-			cpDefinition = cpDefinitionPersistence.findByPrimaryKey(
+			cpDefinition = _cpDefinitionPersistence.findByPrimaryKey(
 				cpDefinitionId);
 		}
 
-		User user = userLocalService.getUser(serviceContext.getUserId());
+		User user = _userLocalService.getUser(serviceContext.getUserId());
 
 		long cpDefinitionLinkId = counterLocalService.increment();
 
@@ -96,7 +84,7 @@ public class CPDefinitionLinkLocalServiceImpl
 
 		cpDefinitionLink = cpDefinitionLinkPersistence.update(cpDefinitionLink);
 
-		CProduct cProduct = cProductLocalService.getCProduct(cProductId);
+		CProduct cProduct = _cProductLocalService.getCProduct(cProductId);
 
 		reindexCPDefinition(cProduct.getPublishedCPDefinitionId());
 
@@ -111,12 +99,12 @@ public class CPDefinitionLinkLocalServiceImpl
 			CPDefinitionLink cpDefinitionLink)
 		throws PortalException {
 
-		if (cpDefinitionLocalService.isVersionable(
+		if (_cpDefinitionLocalService.isVersionable(
 				cpDefinitionLink.getCPDefinitionId())) {
 
 			try {
 				CPDefinition newCPDefinition =
-					cpDefinitionLocalService.copyCPDefinition(
+					_cpDefinitionLocalService.copyCPDefinition(
 						cpDefinitionLink.getCPDefinitionId());
 
 				cpDefinitionLink = cpDefinitionLinkPersistence.findByC_C_T(
@@ -138,7 +126,7 @@ public class CPDefinitionLinkLocalServiceImpl
 		_expandoRowLocalService.deleteRows(
 			cpDefinitionLink.getCPDefinitionLinkId());
 
-		CProduct cProduct = cProductLocalService.getCProduct(
+		CProduct cProduct = _cProductLocalService.getCProduct(
 			cpDefinitionLink.getCProductId());
 
 		reindexCPDefinition(cProduct.getPublishedCPDefinitionId());
@@ -157,24 +145,6 @@ public class CPDefinitionLinkLocalServiceImpl
 
 		return cpDefinitionLinkLocalService.deleteCPDefinitionLink(
 			cpDefinitionLink);
-	}
-
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
-	@Override
-	public void deleteCPDefinitionLinks(long cpDefinitionId)
-		throws PortalException {
-
-		deleteCPDefinitionLinksByCPDefinitionId(cpDefinitionId);
-
-		CPDefinition cpDefinition = cpDefinitionPersistence.fetchByPrimaryKey(
-			cpDefinitionId);
-
-		if (cpDefinition != null) {
-			deleteCPDefinitionLinksByCProductId(cpDefinition.getCProductId());
-		}
 	}
 
 	@Override
@@ -267,11 +237,11 @@ public class CPDefinitionLinkLocalServiceImpl
 		CPDefinitionLink cpDefinitionLink =
 			cpDefinitionLinkPersistence.findByPrimaryKey(cpDefinitionLinkId);
 
-		if (cpDefinitionLocalService.isVersionable(
+		if (_cpDefinitionLocalService.isVersionable(
 				cpDefinitionLink.getCPDefinitionId())) {
 
 			CPDefinition newCPDefinition =
-				cpDefinitionLocalService.copyCPDefinition(
+				_cpDefinitionLocalService.copyCPDefinition(
 					cpDefinitionLink.getCPDefinitionId());
 
 			cpDefinitionLink = cpDefinitionLinkPersistence.findByC_C_T(
@@ -286,7 +256,7 @@ public class CPDefinitionLinkLocalServiceImpl
 
 		reindexCPDefinition(cpDefinitionLink.getCPDefinitionId());
 
-		CProduct cProduct = cProductPersistence.findByPrimaryKey(
+		CProduct cProduct = _cProductPersistence.findByPrimaryKey(
 			cpDefinitionLink.getCProductId());
 
 		reindexCPDefinition(cProduct.getPublishedCPDefinitionId());
@@ -316,7 +286,7 @@ public class CPDefinitionLinkLocalServiceImpl
 			}
 		}
 
-		CPDefinition cpDefinition = cpDefinitionPersistence.findByPrimaryKey(
+		CPDefinition cpDefinition = _cpDefinitionPersistence.findByPrimaryKey(
 			cpDefinitionId);
 
 		for (long cProductId : cProductIds) {
@@ -333,41 +303,12 @@ public class CPDefinitionLinkLocalServiceImpl
 				}
 			}
 
-			CProduct cProduct = cProductLocalService.getCProduct(cProductId);
+			CProduct cProduct = _cProductLocalService.getCProduct(cProductId);
 
 			reindexCPDefinition(cProduct.getPublishedCPDefinitionId());
 		}
 
 		reindexCPDefinition(cpDefinitionId);
-	}
-
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
-	@Override
-	public void updateCPDefinitionLinks(
-			long cpDefinitionId1, long[] cpDefinitionIds2, String type,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		if (cpDefinitionIds2 == null) {
-			return;
-		}
-
-		long[] cProductIds = new long[cpDefinitionIds2.length];
-
-		for (int i = 0; i < cProductIds.length; i++) {
-			long cpDefinitionId = cpDefinitionIds2[i];
-
-			CPDefinition cpDefinition =
-				cpDefinitionPersistence.findByPrimaryKey(cpDefinitionId);
-
-			cProductIds[i] = cpDefinition.getCProductId();
-		}
-
-		cpDefinitionLinkLocalService.updateCPDefinitionLinkCProductIds(
-			cpDefinitionId1, cProductIds, type, serviceContext);
 	}
 
 	protected void reindexCPDefinition(long cpDefinitionId)
@@ -379,7 +320,22 @@ public class CPDefinitionLinkLocalServiceImpl
 		indexer.reindex(CPDefinition.class.getName(), cpDefinitionId);
 	}
 
+	@BeanReference(type = CPDefinitionLocalService.class)
+	private CPDefinitionLocalService _cpDefinitionLocalService;
+
+	@BeanReference(type = CPDefinitionPersistence.class)
+	private CPDefinitionPersistence _cpDefinitionPersistence;
+
+	@BeanReference(type = CProductLocalService.class)
+	private CProductLocalService _cProductLocalService;
+
+	@BeanReference(type = CProductPersistence.class)
+	private CProductPersistence _cProductPersistence;
+
 	@ServiceReference(type = ExpandoRowLocalService.class)
 	private ExpandoRowLocalService _expandoRowLocalService;
+
+	@ServiceReference(type = UserLocalService.class)
+	private UserLocalService _userLocalService;
 
 }

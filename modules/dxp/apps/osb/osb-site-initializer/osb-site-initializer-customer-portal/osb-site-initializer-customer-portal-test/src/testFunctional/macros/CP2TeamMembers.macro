@@ -31,6 +31,13 @@ definition {
 		}
 	}
 
+	macro assertTheInvitedUser {
+		AssertVisible(
+			key_name = "${name}",
+			key_status = "${status}",
+			locator1 = "CP2TeamMembers#TEAM_MEMBERS_TABLE");
+	}
+
 	macro clickInviteMembers {
 		Click(locator1 = "CP2TeamMembers#INVITE_BUTTON");
 	}
@@ -53,6 +60,42 @@ definition {
 		AssertConfirm(value1 = "Are you sure you want to remove this user?");
 
 		Alert.viewSuccessMessage();
+	}
+
+	macro teamMembersFlow {
+		CustomerPortal.enterOnProject(title = "Test Account DXP");
+
+		CustomerPortal.clickOnStartProjectSetup();
+
+		CustomerPortal.clickOnSkipForNowButton();
+
+		CP2NavigationMenu.goToTeamMembers();
+	}
+
+	macro viewSupportSeatsAvailable {
+		AssertElementPresent(
+			key_number = "${available}",
+			locator1 = "CP2TeamMembers#SUPPORT_SEATS");
+	}
+
+	macro viewTableValue {
+		AssertElementPresent(
+			locator1 = "CP2TeamMembers#TABLE",
+			value = "${name}");
+
+		AssertElementPresent(
+			locator1 = "CP2TeamMembers#TABLE",
+			value = "${email}");
+
+		AssertElementPresent(locator1 = "CP2TeamMembers#ICON_CHECK");
+
+		AssertElementPresent(
+			locator1 = "CP2TeamMembers#TABLE",
+			value = "${role}");
+
+		AssertElementPresent(
+			key_status = "${status}",
+			locator1 = "CustomerPortalSite#STATUS_CARD");
 	}
 
 	macro viewTeamMembersPage {

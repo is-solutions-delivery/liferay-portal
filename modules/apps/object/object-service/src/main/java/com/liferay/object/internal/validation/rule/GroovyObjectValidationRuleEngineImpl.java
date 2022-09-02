@@ -36,7 +36,7 @@ public class GroovyObjectValidationRuleEngineImpl
 		Map<String, Object> inputObjects, String script) {
 
 		return _objectScriptingExecutor.execute(
-			inputObjects, "groovy", SetUtil.fromArray("invalidFields"), script);
+			inputObjects, SetUtil.fromArray("invalidFields"), script);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class GroovyObjectValidationRuleEngineImpl
 		return ObjectValidationRuleConstants.ENGINE_TYPE_GROOVY;
 	}
 
-	@Reference
+	@Reference(target = "(scripting.language=groovy)")
 	private ObjectScriptingExecutor _objectScriptingExecutor;
 
 }

@@ -309,15 +309,17 @@ public class GetContentDashboardItemInfoMVCResourceCommandTest {
 		Assert.assertEquals("portraitURL", userJSONObject.getString("url"));
 
 		List<ContentDashboardItem.Version> versions =
-			contentDashboardItem.getVersions(LocaleUtil.US);
+			contentDashboardItem.getLatestVersions(LocaleUtil.US);
 
 		ContentDashboardItem.Version version = versions.get(0);
 
 		JSONObject expectedVersionJSONObject = version.toJSONObject();
 
-		JSONArray versionsJSONArray = jsonObject.getJSONArray("versions");
+		JSONArray latestVersionsJSONArray = jsonObject.getJSONArray(
+			"latestVersions");
 
-		JSONObject actualVersionJSONObject = versionsJSONArray.getJSONObject(0);
+		JSONObject actualVersionJSONObject =
+			latestVersionsJSONArray.getJSONObject(0);
 
 		Assert.assertEquals(
 			expectedVersionJSONObject.toString(),
@@ -638,6 +640,11 @@ public class GetContentDashboardItemInfoMVCResourceCommandTest {
 			return new ContentDashboardItem() {
 
 				@Override
+				public List<Version> getAllVersions(ThemeDisplay themeDisplay) {
+					return Collections.emptyList();
+				}
+
+				@Override
 				public List<AssetCategory> getAssetCategories() {
 					return Arrays.asList(assetCategory1, assetCategory2);
 				}
@@ -728,6 +735,13 @@ public class GetContentDashboardItemInfoMVCResourceCommandTest {
 				}
 
 				@Override
+				public List<Version> getLatestVersions(Locale locale) {
+					return Collections.singletonList(
+						new Version(
+							"version", "style", "0.1", null, "user", null));
+				}
+
+				@Override
 				public Date getModifiedDate() {
 					return new Date();
 				}
@@ -773,12 +787,6 @@ public class GetContentDashboardItemInfoMVCResourceCommandTest {
 				@Override
 				public String getUserName() {
 					return userName;
-				}
-
-				@Override
-				public List<Version> getVersions(Locale locale) {
-					return Collections.singletonList(
-						new Version("version", "style", "0.1"));
 				}
 
 				@Override

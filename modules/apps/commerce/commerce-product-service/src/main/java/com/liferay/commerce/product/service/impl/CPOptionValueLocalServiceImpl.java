@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizer;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -82,7 +83,7 @@ public class CPOptionValueLocalServiceImpl
 
 		// Commerce product option value
 
-		User user = userLocalService.getUser(serviceContext.getUserId());
+		User user = _userLocalService.getUser(serviceContext.getUserId());
 
 		if (Validator.isBlank(externalReferenceCode)) {
 			externalReferenceCode = null;
@@ -232,31 +233,6 @@ public class CPOptionValueLocalServiceImpl
 		catch (Exception exception) {
 			throw new SystemException(exception);
 		}
-	}
-
-	/**
-	 * @param      companyId
-	 * @param      groupId
-	 * @param      cpOptionId
-	 * @param      keywords
-	 * @param      start
-	 * @param      end
-	 * @param      sort
-	 * @return
-	 *
-	 * @throws     PortalException
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #searchCPOptionValues(long, long, String, int, int, Sort[])}
-	 */
-	@Deprecated
-	@Override
-	public BaseModelSearchResult<CPOptionValue> searchCPOptionValues(
-			long companyId, long groupId, long cpOptionId, String keywords,
-			int start, int end, Sort sort)
-		throws PortalException {
-
-		return cpOptionValueLocalService.searchCPOptionValues(
-			companyId, cpOptionId, keywords, start, end, new Sort[] {sort});
 	}
 
 	@Override
@@ -451,5 +427,8 @@ public class CPOptionValueLocalServiceImpl
 
 	@ServiceReference(type = FriendlyURLNormalizer.class)
 	private FriendlyURLNormalizer _friendlyURLNormalizer;
+
+	@ServiceReference(type = UserLocalService.class)
+	private UserLocalService _userLocalService;
 
 }

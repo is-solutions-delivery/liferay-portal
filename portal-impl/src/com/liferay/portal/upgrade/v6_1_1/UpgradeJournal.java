@@ -19,7 +19,9 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.util.PropsValues;
 
 import java.sql.PreparedStatement;
@@ -43,17 +45,15 @@ public class UpgradeJournal extends UpgradeProcess {
 					"update JournalArticle set content = ? where id_ = ?")) {
 
 			while (resultSet.next()) {
+				long id = resultSet.getLong("id_");
 				String content = resultSet.getString("content");
 
-				String upgradedContent = _upgradeContent(content);
+				String upgradedContent = _upgradeContent(id, content);
 
 				if (!Objects.equals(content, upgradedContent)) {
-					long id = resultSet.getLong("id_");
-
 					if (_log.isWarnEnabled()) {
 						_log.warn(
-							"Detected invalid content in journal article " +
-								id);
+							"Fixing invalid content in journal article " + id);
 					}
 
 					preparedStatement2.setString(1, upgradedContent);
@@ -67,7 +67,7 @@ public class UpgradeJournal extends UpgradeProcess {
 		}
 	}
 
-	private String _upgradeContent(String content) throws Exception {
+	private String _upgradeContent(long id, String content) throws Exception {
 
 		// LPS-23332 and LPS-26009
 
@@ -119,6 +119,16 @@ public class UpgradeJournal extends UpgradeProcess {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Upgraded dynamic content: " + content);
+		}
+
+		try {
+			SAXReaderUtil.read(content);
+		}
+		catch (Exception exception) {
+			_log.error(
+				StringBundler.concat(
+					"Journal article ", String.valueOf(id),
+					" has invalid content due to: ", exception.getMessage()));
 		}
 
 		return content;

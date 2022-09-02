@@ -1230,6 +1230,36 @@ definition {
 		}
 	}
 
+	@description = "LPS-160210: Add WebDAV URL to Info Panel"
+	@priority = "3"
+	test CheckDocumentURLLabel {
+		task ("Given a Document Asset at Content Dashboard") {
+			JSONDocument.addFileWithUploadedFile(
+				dmDocumentTitle = "DM Document Title",
+				groupName = "Test Site Name",
+				mimeType = "text/plain",
+				sourceFileName = "Document_1.txt");
+		}
+
+		task ("When the user accesses the information panel") {
+			ContentDashboard.goToContentDashboard();
+
+			ContentDashboard.openInfoPanelByDropdownMenu();
+
+			Panel.expandPanel(panel = "Details");
+		}
+
+		task ("Then the field labels should be added to distinguish between the two URLs ") {
+			AssertTextPresent(
+				locator1 = "ContentDashboard#URL_LABEL",
+				value1 = "WebDAV URL");
+
+			AssertTextPresent(
+				locator1 = "ContentDashboard#URL_LABEL",
+				value1 = "Latest Version URL");
+		}
+	}
+
 	@description = "LPS-131936 Given the Content Dashboard
     When there is an asset with more than one category per vocabulary
     Then the table will show a label with the first of the categories and another one with a + and the number of remaining categories"
@@ -3679,6 +3709,76 @@ definition {
 			AssertTextPresent(
 				locator1 = "ContentDashboard#FIRST_ELEMENT_LISTED",
 				value1 = "WC Title Draft");
+		}
+	}
+
+	@description = "LPS-155386: Add Filtering by Pending Status to the Content Dashboard"
+	@priority = "4"
+	test FilterByStatusPendingBlog {
+		property portal.acceptance = "true";
+
+		task ("Given a pending Blog") {
+			task ("Configure Blogs Entry workflow to Single Approver") {
+				Workflow.openWorkflowAdmin(siteURLKey = "test-site-name");
+
+				Workflow.configureWorkflow(
+					workflowDefinition = "Single Approver",
+					workflowResourceValue = "Blogs Entry");
+			}
+
+			task ("Create a Blog Entry") {
+				JSONBlog.addEntry(
+					entryContent = "Blogs Entry Content",
+					entryTitle = "Blogs Entry Title",
+					groupName = "Test Site Name");
+			}
+		}
+
+		task ("When user filters by 'Pending' status") {
+			ContentDashboard.goToContentDashboard();
+
+			ContentDashboard.filterByStatusDraft(filterOption = "Pending");
+		}
+
+		task ("Then the asset is filtered") {
+			AssertTextPresent(
+				locator1 = "ContentDashboard#FIRST_ELEMENT_LISTED",
+				value1 = "Blogs Entry Title");
+		}
+	}
+
+	@description = "LPS-155386: Add Filtering by Pending Status to the Content Dashboard"
+	@priority = "4"
+	test FilterByStatusPendingWebContent {
+		property portal.acceptance = "true";
+
+		task ("Given a pending Web Content") {
+			task ("Configure Web Content Article workflow to Single Approver") {
+				Workflow.openWorkflowAdmin(siteURLKey = "test-site-name");
+
+				Workflow.configureWorkflow(
+					workflowDefinition = "Single Approver",
+					workflowResourceValue = "Web Content Article");
+			}
+
+			task ("Create a Web Content") {
+				JSONWebcontent.addWebContent(
+					content = "Web Content Content",
+					groupName = "Test Site Name",
+					title = "Web Content Title");
+			}
+		}
+
+		task ("When user filters by 'Pending' status") {
+			ContentDashboard.goToContentDashboard();
+
+			ContentDashboard.filterByStatusDraft(filterOption = "Pending");
+		}
+
+		task ("Then the asset is filtered") {
+			AssertTextPresent(
+				locator1 = "ContentDashboard#FIRST_ELEMENT_LISTED",
+				value1 = "Web Content Title");
 		}
 	}
 

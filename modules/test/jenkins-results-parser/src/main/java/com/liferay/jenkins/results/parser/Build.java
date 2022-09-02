@@ -34,6 +34,8 @@ public interface Build {
 
 	public static final String DEPENDENCIES_URL_TOKEN = "${dependencies.url}";
 
+	public void addDownstreamBuilds(Map<String, String> urlAxisNames);
+
 	public void addDownstreamBuilds(String... urls);
 
 	public void archive();

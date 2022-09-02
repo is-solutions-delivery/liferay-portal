@@ -13,22 +13,7 @@
  */
 
 import getLayoutDataItemUniqueClassName from './getLayoutDataItemUniqueClassName';
-
-function isVisible(element, globalContext) {
-	const computedStyle = globalContext.window.getComputedStyle(element);
-	const {parentElement} = element;
-
-	return (
-		computedStyle.display !== 'none' &&
-		computedStyle.visibility !== 'collapse' &&
-		computedStyle.visibility !== 'hidden' &&
-		!element.hasAttribute('hidden') &&
-		!element.hasAttribute('aria-hidden') &&
-		(!parentElement ||
-			parentElement.classList.contains('page-editor__form-children') ||
-			isVisible(parentElement, globalContext))
-	);
-}
+import isVisible from './isVisible';
 
 export default function hasVisibleSubmitChild(itemId, globalContext) {
 	const element = document.querySelector(

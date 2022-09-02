@@ -97,3 +97,8 @@ b26252bef81fd075f10e4203bb0222ca92c61791^..aadbeb3b0aac4c66d06ed4d46e8df70fb9f1d
 # Bundle Version 6.0.16
 #
 aadbeb3b0aac4c66d06ed4d46e8df70fb9f1dc5a^..f418db47b0d11b1b5f2bebae7b74ff8d710b9460=LPS-160997
+
+#
+# Bundle Version 6.0.17
+#
+f418db47b0d11b1b5f2bebae7b74ff8d710b9460^..8b5af6e7767ea20b31c6f4a329493de7f5f7cdfb=LPS-155604 LPS-160997

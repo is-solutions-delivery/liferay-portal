@@ -11,8 +11,13 @@
 
 <tbody>
 <tr>
-	<td>AUTH_SERVER_LOCAL_WELL_KNOWN_URI</td>
+	<td>AUTH_SERVER_LOCAL_WELL_KNOWN_URI_LIST_NAME</td>
 	<td>//td[contains(@class,'well-known-uri')]//a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>AUTH_SERVER_LOCAL_WELL_KNOWN_URI</td>
+	<td>//input[contains(@id,'localWellKnownURI')]</td>
 	<td></td>
 </tr>
 </tbody>

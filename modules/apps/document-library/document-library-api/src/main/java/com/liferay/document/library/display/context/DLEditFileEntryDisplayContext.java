@@ -25,6 +25,10 @@ import java.util.Locale;
  */
 public interface DLEditFileEntryDisplayContext extends DLDisplayContext {
 
+	public DDMFormValues getDDMFormValues(
+			DDMStructure ddmStructure, long fileVersionId)
+		throws PortalException;
+
 	public DDMFormValues getDDMFormValues(long classPK) throws PortalException;
 
 	public String getDLFileEntryTypeLanguageId(

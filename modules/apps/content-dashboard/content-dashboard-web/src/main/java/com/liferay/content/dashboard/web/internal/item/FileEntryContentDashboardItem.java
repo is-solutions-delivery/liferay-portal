@@ -35,8 +35,10 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -105,6 +107,40 @@ public class FileEntryContentDashboardItem
 		_infoItemFieldValuesProvider = infoItemFieldValuesProvider;
 		_language = language;
 		_portal = portal;
+	}
+
+	@Override
+	public List<Version> getAllVersions(ThemeDisplay themeDisplay) {
+		int status = WorkflowConstants.STATUS_APPROVED;
+
+		PermissionChecker permissionChecker =
+			themeDisplay.getPermissionChecker();
+
+		User user = themeDisplay.getUser();
+
+		if ((user.getUserId() == _fileEntry.getUserId()) ||
+			permissionChecker.isContentReviewer(
+				user.getCompanyId(), themeDisplay.getScopeGroupId())) {
+
+			status = WorkflowConstants.STATUS_ANY;
+		}
+
+		Stream<FileVersion> stream = _fileEntry.getFileVersions(
+			status
+		).stream();
+
+		return stream.map(
+			fileVersion -> new Version(
+				_language.get(
+					themeDisplay.getLocale(),
+					WorkflowConstants.getStatusLabel(fileVersion.getStatus())),
+				WorkflowConstants.getStatusStyle(fileVersion.getStatus()),
+				String.valueOf(fileVersion.getVersion()),
+				fileVersion.getChangeLog(), fileVersion.getUserName(),
+				fileVersion.getCreateDate())
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	@Override
@@ -278,6 +314,42 @@ public class FileEntryContentDashboardItem
 	}
 
 	@Override
+	public List<Version> getLatestVersions(Locale locale) {
+		try {
+			FileVersion latestFileVersion = _fileEntry.getLatestFileVersion();
+			FileVersion latestTrustedFileVersion =
+				_fileEntry.getLatestFileVersion(true);
+
+			List<FileVersion> fileVersions = new ArrayList<>();
+
+			fileVersions.add(latestTrustedFileVersion);
+
+			if (!latestFileVersion.equals(latestTrustedFileVersion)) {
+				fileVersions.add(latestFileVersion);
+			}
+
+			Stream<FileVersion> stream = fileVersions.stream();
+
+			return stream.map(
+				fileVersion -> _toVersionOptional(fileVersion, locale)
+			).filter(
+				Optional::isPresent
+			).map(
+				Optional::get
+			).sorted(
+				Comparator.comparing(Version::getVersion)
+			).collect(
+				Collectors.toList()
+			);
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException);
+
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
 	public Date getModifiedDate() {
 		return _fileEntry.getModifiedDate();
 	}
@@ -335,42 +407,6 @@ public class FileEntryContentDashboardItem
 	}
 
 	@Override
-	public List<Version> getVersions(Locale locale) {
-		try {
-			FileVersion latestFileVersion = _fileEntry.getLatestFileVersion();
-			FileVersion latestTrustedFileVersion =
-				_fileEntry.getLatestFileVersion(true);
-
-			List<FileVersion> fileVersions = new ArrayList<>();
-
-			fileVersions.add(latestTrustedFileVersion);
-
-			if (!latestFileVersion.equals(latestTrustedFileVersion)) {
-				fileVersions.add(latestFileVersion);
-			}
-
-			Stream<FileVersion> stream = fileVersions.stream();
-
-			return stream.map(
-				fileVersion -> _toVersionOptional(fileVersion, locale)
-			).filter(
-				Optional::isPresent
-			).map(
-				Optional::get
-			).sorted(
-				Comparator.comparing(Version::getVersion)
-			).collect(
-				Collectors.toList()
-			);
-		}
-		catch (PortalException portalException) {
-			_log.error(portalException);
-
-			return Collections.emptyList();
-		}
-	}
-
-	@Override
 	public boolean isViewable(HttpServletRequest httpServletRequest) {
 		if (ListUtil.isEmpty(
 				_fileEntry.getFileVersions(
@@ -402,7 +438,7 @@ public class FileEntryContentDashboardItem
 	}
 
 	private Version _getLastVersion(Locale locale) {
-		List<Version> versions = getVersions(locale);
+		List<Version> versions = getLatestVersions(locale);
 
 		return versions.get(versions.size() - 1);
 	}
@@ -555,7 +591,8 @@ public class FileEntryContentDashboardItem
 					WorkflowConstants.getStatusLabel(
 						curFileVersion.getStatus())),
 				WorkflowConstants.getStatusStyle(curFileVersion.getStatus()),
-				curFileVersion.getVersion())
+				curFileVersion.getVersion(), curFileVersion.getChangeLog(),
+				curFileVersion.getUserName(), curFileVersion.getCreateDate())
 		);
 	}
 

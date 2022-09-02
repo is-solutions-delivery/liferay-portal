@@ -15,7 +15,7 @@
 import ClayModal, {useModal} from '@clayui/modal';
 import React from 'react';
 
-const KEY_LABEL = Liferay.Browser.isMac() ? '⌘' : 'Ctrl';
+const KEY_LABEL = Liferay.Browser?.isMac() ? '⌘' : 'Ctrl';
 
 export default function ShortcutModal({onCloseModal}) {
 	const {observer} = useModal({onClose: () => onCloseModal()});
@@ -86,13 +86,13 @@ function KeyboardShorcut({description, keyCombinations}) {
 			<div className="page-editor__shorcut-modal__shorcut text-right">
 				<kbd className="c-kbd text-secondary">
 					{keyCombinations.map((key, index) => (
-						<>
+						<React.Fragment key={index}>
 							<kbd className="c-kbd">{key}</kbd>
 
 							{index < keyCombinations.length - 1 ? (
 								<span className="c-kbd-separator">+</span>
 							) : null}
-						</>
+						</React.Fragment>
 					))}
 				</kbd>
 			</div>

@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -88,6 +89,11 @@ public class BlogsEntryContentDashboardItem
 		_infoItemFieldValuesProvider = infoItemFieldValuesProvider;
 		_language = language;
 		_portal = portal;
+	}
+
+	@Override
+	public List<Version> getAllVersions(ThemeDisplay themeDisplay) {
+		return getLatestVersions(themeDisplay.getLocale());
 	}
 
 	@Override
@@ -260,6 +266,18 @@ public class BlogsEntryContentDashboardItem
 	}
 
 	@Override
+	public List<Version> getLatestVersions(Locale locale) {
+		return Collections.singletonList(
+			new Version(
+				_language.get(
+					locale,
+					WorkflowConstants.getStatusLabel(_blogsEntry.getStatus())),
+				WorkflowConstants.getStatusStyle(_blogsEntry.getStatus()),
+				"1.0", null, _blogsEntry.getUserName(),
+				_blogsEntry.getCreateDate()));
+	}
+
+	@Override
 	public Date getModifiedDate() {
 		return _blogsEntry.getModifiedDate();
 	}
@@ -311,17 +329,6 @@ public class BlogsEntryContentDashboardItem
 	}
 
 	@Override
-	public List<Version> getVersions(Locale locale) {
-		return Collections.singletonList(
-			new Version(
-				_language.get(
-					locale,
-					WorkflowConstants.getStatusLabel(_blogsEntry.getStatus())),
-				WorkflowConstants.getStatusStyle(_blogsEntry.getStatus()),
-				"1.0"));
-	}
-
-	@Override
 	public boolean isViewable(HttpServletRequest httpServletRequest) {
 		Optional<ContentDashboardItemActionProvider>
 			contentDashboardItemActionProviderOptional =
@@ -340,7 +347,7 @@ public class BlogsEntryContentDashboardItem
 	}
 
 	private Version _getLastVersion(Locale locale) {
-		List<Version> versions = getVersions(locale);
+		List<Version> versions = getLatestVersions(locale);
 
 		return versions.get(versions.size() - 1);
 	}

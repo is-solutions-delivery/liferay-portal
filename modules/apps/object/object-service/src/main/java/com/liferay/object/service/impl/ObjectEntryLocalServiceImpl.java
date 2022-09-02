@@ -812,21 +812,8 @@ public class ObjectEntryLocalServiceImpl
 				).and(
 					_fillPredicate(objectDefinitionId, predicate, search)
 				).and(
-					() -> {
-						if (PermissionThreadLocal.getPermissionChecker() ==
-								null) {
-
-							return null;
-						}
-
-						ObjectDefinition objectDefinition =
-							_objectDefinitionPersistence.fetchByPrimaryKey(
-								objectDefinitionId);
-
-						return _inlineSQLHelper.getPermissionWherePredicate(
-							objectDefinition.getClassName(),
-							dynamicObjectDefinitionTable.getPrimaryKeyColumn());
-					}
+					_getPermissionWherePredicate(
+						dynamicObjectDefinitionTable, groupId)
 				)
 			).orderBy(
 				orderByExpressions
@@ -887,19 +874,8 @@ public class ObjectEntryLocalServiceImpl
 			).and(
 				_fillPredicate(objectDefinitionId, predicate, search)
 			).and(
-				() -> {
-					if (PermissionThreadLocal.getPermissionChecker() == null) {
-						return null;
-					}
-
-					ObjectDefinition objectDefinition =
-						_objectDefinitionPersistence.fetchByPrimaryKey(
-							objectDefinitionId);
-
-					return _inlineSQLHelper.getPermissionWherePredicate(
-						objectDefinition.getClassName(),
-						dynamicObjectDefinitionTable.getPrimaryKeyColumn());
-				}
+				_getPermissionWherePredicate(
+					dynamicObjectDefinitionTable, groupId)
 			)
 		);
 
@@ -1717,6 +1693,25 @@ public class ObjectEntryLocalServiceImpl
 				}
 			)
 		);
+	}
+
+	private Predicate _getPermissionWherePredicate(
+		DynamicObjectDefinitionTable dynamicObjectDefinitionTable,
+		long groupId) {
+
+		ObjectDefinition objectDefinition =
+			dynamicObjectDefinitionTable.getObjectDefinition();
+
+		if ((PermissionThreadLocal.getPermissionChecker() == null) ||
+			!_inlineSQLHelper.isEnabled(
+				objectDefinition.getCompanyId(), groupId)) {
+
+			return null;
+		}
+
+		return _inlineSQLHelper.getPermissionWherePredicate(
+			objectDefinition.getClassName(),
+			dynamicObjectDefinitionTable.getPrimaryKeyColumn());
 	}
 
 	private Expression<?>[] _getSelectExpressions(

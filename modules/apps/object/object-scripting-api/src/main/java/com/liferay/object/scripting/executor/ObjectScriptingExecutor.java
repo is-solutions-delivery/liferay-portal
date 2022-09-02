@@ -23,7 +23,7 @@ import java.util.Set;
 public interface ObjectScriptingExecutor {
 
 	public Map<String, Object> execute(
-		Map<String, Object> inputObjects, String language,
-		Set<String> outputNames, String script);
+		Map<String, Object> inputObjects, Set<String> outputNames,
+		String script);
 
 }

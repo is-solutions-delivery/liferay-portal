@@ -15,34 +15,28 @@
 import ClayAlert from '@clayui/alert';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
-import ClayLink from '@clayui/link';
 import ClayPanel from '@clayui/panel';
 import ClaySticker from '@clayui/sticker';
+import ClayTabs from '@clayui/tabs';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useCallback, useState} from 'react';
 
 import Sidebar from '../Sidebar';
-import CollapsibleSection from './CollapsibleSection';
-import ItemLanguages from './ItemLanguages';
-import ItemVocabularies from './ItemVocabularies';
+import DetailsContent from './DetailsContent';
 import ManageCollaborators from './ManageCollaborators';
-import Preview from './Preview';
-import Share from './Share';
-import SpecificFields from './SpecificFields';
 import Subscribe from './Subscribe';
+import VersionsContent from './VersionsContent';
 import formatDate from './utils/formatDate';
-import {
-	getCategoriesCountFromVocabularies,
-	groupVocabulariesBy,
-} from './utils/taxonomiesUtils';
 
 const SidebarPanelInfoView = ({
+	allVersions = [],
 	classPK,
 	createDate,
 	description,
 	downloadURL,
 	languageTag = 'en',
+	latestVersions = [],
 	modifiedDate,
 	specificFields = {},
 	subscribe,
@@ -54,34 +48,16 @@ const SidebarPanelInfoView = ({
 	fetchSharingButtonURL,
 	fetchSharingCollaboratorsURL,
 	user,
-	versions = [],
 	viewURLs = [],
 	vocabularies = {},
 }) => {
+	const [activeTabKeyValue, setActiveTabKeyValue] = useState(0);
+
+	const showTabs = !!(allVersions && allVersions.length);
+
 	const [error, setError] = useState(false);
 
 	const stickerColor = parseInt(user.userId, 10) % 10;
-
-	const [publicVocabularies, internalVocabularies] = groupVocabulariesBy({
-		array: Object.values(vocabularies),
-		key: 'isPublic',
-		value: true,
-	});
-
-	const internalCategoriesCount = getCategoriesCountFromVocabularies(
-		internalVocabularies
-	);
-
-	const publicCategoriesCount = getCategoriesCountFromVocabularies(
-		publicVocabularies
-	);
-
-	const specificItems = Object.values(specificFields);
-
-	const showTaxonomies =
-		!!internalCategoriesCount || !!publicCategoriesCount || !!tags?.length;
-
-	const hasActions = downloadURL || fetchSharingButtonURL;
 
 	const handleError = useCallback(() => {
 		setError(true);
@@ -118,16 +94,18 @@ const SidebarPanelInfoView = ({
 							{subType ? `${type} - ${subType}` : `${type}`}
 						</p>
 
-						{versions.map((version) => (
-							<div className="c-mt-2" key={version.version}>
+						{latestVersions.map((latestVersion) => (
+							<div className="c-mt-2" key={latestVersion.version}>
 								<ClayLabel displayType="info">
 									{Liferay.Language.get('version') + ' '}
 
-									{version.version}
+									{latestVersion.version}
 								</ClayLabel>
 
-								<ClayLabel displayType={version.statusStyle}>
-									{version.statusLabel}
+								<ClayLabel
+									displayType={latestVersion.statusStyle}
+								>
+									{latestVersion.statusLabel}
 								</ClayLabel>
 							</div>
 						))}
@@ -167,149 +145,64 @@ const SidebarPanelInfoView = ({
 						)}
 					</div>
 
-					{preview && preview.imageURL && (
-						<Preview
-							compressed={!!hasActions}
-							imageURL={preview.imageURL}
-							title={title}
-							url={preview.url}
-						/>
-					)}
-
-					{hasActions && (
-						<div className="sidebar-section">
-							{downloadURL && (
-								<ClayLink
-									className="btn btn-primary"
-									href={downloadURL}
+					<ClayPanel.Group className="panel-group-flush panel-group-sm">
+						{showTabs && (
+							<ClayTabs modern>
+								<ClayTabs.Item
+									active={activeTabKeyValue === 0}
+									innerProps={{
+										'aria-controls': 'details',
+									}}
+									onClick={() => setActiveTabKeyValue(0)}
 								>
-									{Liferay.Language.get('download')}
-								</ClayLink>
-							)}
+									{Liferay.Language.get('details')}
+								</ClayTabs.Item>
 
-							{fetchSharingButtonURL && (
-								<Share
+								<ClayTabs.Item
+									active={activeTabKeyValue === 1}
+									innerProps={{
+										'aria-controls': 'versions',
+									}}
+									onClick={() => setActiveTabKeyValue(1)}
+								>
+									{Liferay.Language.get('versions')}
+								</ClayTabs.Item>
+							</ClayTabs>
+						)}
+
+						<ClayTabs.Content activeIndex={activeTabKeyValue} fade>
+							<ClayTabs.TabPane
+								aria-labelledby="tab-1"
+								className="mt-4"
+							>
+								<DetailsContent
+									classPK={classPK}
+									createDate={createDate}
+									description={description}
+									downloadURL={downloadURL}
 									fetchSharingButtonURL={
 										fetchSharingButtonURL
 									}
-									onError={handleError}
+									formatDate={formatDate}
+									languageTag={languageTag}
+									modifiedDate={modifiedDate}
+									preview={preview}
+									specificFields={specificFields}
+									tags={tags}
+									title={title}
+									viewURLs={viewURLs}
+									vocabularies={vocabularies}
 								/>
-							)}
-						</div>
-					)}
+							</ClayTabs.TabPane>
 
-					{description && (
-						<div className="sidebar-section">
-							<h5 className="c-mb-1 font-weight-semi-bold">
-								{Liferay.Language.get('description')}
-							</h5>
-
-							<div
-								className="text-secondary"
-								dangerouslySetInnerHTML={{__html: description}}
-							/>
-						</div>
-					)}
-
-					<ClayPanel.Group className="panel-group-flush panel-group-sm">
-						{showTaxonomies && (
-							<CollapsibleSection
-								expanded={true}
-								title={Liferay.Language.get('categorization')}
-							>
-								{!!publicCategoriesCount && (
-									<ItemVocabularies
-										title={Liferay.Language.get(
-											'public-categories'
-										)}
-										vocabularies={publicVocabularies}
-									/>
-								)}
-
-								{!!internalCategoriesCount && (
-									<ItemVocabularies
-										cssClassNames="c-mt-4"
-										title={Liferay.Language.get(
-											'internal-categories'
-										)}
-										vocabularies={internalVocabularies}
-									/>
-								)}
-
-								{!!tags.length && (
-									<div className="c-mb-4 sidebar-dl sidebar-section">
-										<h5 className="c-mb-1 font-weight-semi-bold">
-											{Liferay.Language.get('tags')}
-										</h5>
-
-										<p>
-											{tags.map((tag) => (
-												<ClayLabel
-													className="c-mb-2 c-mr-2"
-													displayType="secondary"
-													key={tag}
-													large
-												>
-													{tag}
-												</ClayLabel>
-											))}
-										</p>
-									</div>
-								)}
-							</CollapsibleSection>
-						)}
-
-						<CollapsibleSection
-							title={Liferay.Language.get('details')}
-						>
-							<div className="sidebar-section">
-								<SpecificFields
-									fields={specificItems}
+							<ClayTabs.TabPane aria-labelledby="tab-2">
+								<VersionsContent
+									allVersions={allVersions}
+									formatDate={formatDate}
 									languageTag={languageTag}
 								/>
-
-								<div
-									className="c-mb-4 sidebar-dl sidebar-section"
-									key="creation-date"
-								>
-									<h5 className="c-mb-1 font-weight-semi-bold">
-										{Liferay.Language.get('creation-date')}
-									</h5>
-
-									<p className="text-secondary">
-										{formatDate(createDate, languageTag)}
-									</p>
-								</div>
-
-								<div
-									className="c-mb-4 sidebar-dl sidebar-section"
-									key="modified-date"
-								>
-									<h5 className="c-mb-1 font-weight-semi-bold">
-										{Liferay.Language.get('modified-date')}
-									</h5>
-
-									<p className="text-secondary">
-										{formatDate(modifiedDate, languageTag)}
-									</p>
-								</div>
-
-								<div
-									className="c-mb-4 sidebar-dl sidebar-section"
-									key="id"
-								>
-									<h5 className="c-mb-1 font-weight-semi-bold">
-										{Liferay.Language.get('id')}
-									</h5>
-
-									<p className="text-secondary">{classPK}</p>
-								</div>
-							</div>
-
-							{!!viewURLs.length && (
-								<ItemLanguages urls={viewURLs} />
-							)}
-						</CollapsibleSection>
+							</ClayTabs.TabPane>
+						</ClayTabs.Content>
 					</ClayPanel.Group>
 				</div>
 			</Sidebar.Body>
@@ -325,11 +218,13 @@ SidebarPanelInfoView.defaultProps = {
 };
 
 SidebarPanelInfoView.propTypes = {
+	allVersions: PropTypes.array.isRequired,
 	classPK: PropTypes.string.isRequired,
 	createDate: PropTypes.string.isRequired,
 	description: PropTypes.string,
 	fetchSharingButtonURL: PropTypes.string,
 	fetchSharingCollaboratorsURL: PropTypes.string,
+	latestVersions: PropTypes.array.isRequired,
 	modifiedDate: PropTypes.string.isRequired,
 	preview: PropTypes.object,
 	specificFields: PropTypes.object.isRequired,
@@ -337,7 +232,6 @@ SidebarPanelInfoView.propTypes = {
 	tags: PropTypes.array,
 	title: PropTypes.string.isRequired,
 	user: PropTypes.object.isRequired,
-	versions: PropTypes.array.isRequired,
 	viewURLs: PropTypes.array.isRequired,
 	vocabularies: PropTypes.object,
 };

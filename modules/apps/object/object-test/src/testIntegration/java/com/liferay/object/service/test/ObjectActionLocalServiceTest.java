@@ -418,9 +418,8 @@ public class ObjectActionLocalServiceTest {
 				"firstName", "João"
 			).build(),
 			arguments[0]);
-		Assert.assertEquals("groovy", arguments[1]);
-		Assert.assertEquals(Collections.emptySet(), arguments[2]);
-		Assert.assertEquals("println \"Hello World\"", arguments[3]);
+		Assert.assertEquals(Collections.emptySet(), arguments[1]);
+		Assert.assertEquals("println \"Hello World\"", arguments[2]);
 
 		_objectActionLocalService.deleteObjectAction(objectAction);
 	}

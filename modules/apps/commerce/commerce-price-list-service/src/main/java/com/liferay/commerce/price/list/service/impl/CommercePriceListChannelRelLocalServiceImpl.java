@@ -18,22 +18,31 @@ import com.liferay.commerce.price.list.model.CommercePriceList;
 import com.liferay.commerce.price.list.model.CommercePriceListChannelRel;
 import com.liferay.commerce.price.list.service.base.CommercePriceListChannelRelLocalServiceBaseImpl;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.util.List;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Riccardo Alberti
  * @see CommercePriceListChannelRelLocalServiceBaseImpl
  */
+@Component(
+	enabled = false,
+	property = "model.class.name=com.liferay.commerce.price.list.model.CommercePriceListChannelRel",
+	service = AopService.class
+)
 public class CommercePriceListChannelRelLocalServiceImpl
 	extends CommercePriceListChannelRelLocalServiceBaseImpl {
 
@@ -43,7 +52,7 @@ public class CommercePriceListChannelRelLocalServiceImpl
 			int order, ServiceContext serviceContext)
 		throws PortalException {
 
-		User user = userLocalService.getUser(userId);
+		User user = _userLocalService.getUser(userId);
 
 		CommercePriceListChannelRel commercePriceListChannelRel =
 			commercePriceListChannelRelPersistence.create(
@@ -169,7 +178,10 @@ public class CommercePriceListChannelRelLocalServiceImpl
 		indexer.reindex(CommercePriceList.class.getName(), commercePriceListId);
 	}
 
-	@ServiceReference(type = ExpandoRowLocalService.class)
+	@Reference
 	private ExpandoRowLocalService _expandoRowLocalService;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

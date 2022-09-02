@@ -21,6 +21,7 @@ import com.liferay.oauth2.provider.model.OAuth2Application;
 import com.liferay.oauth2.provider.model.OAuth2ApplicationScopeAliases;
 import com.liferay.oauth2.provider.model.OAuth2Authorization;
 import com.liferay.oauth2.provider.model.OAuth2ScopeGrant;
+import com.liferay.oauth2.provider.rest.internal.configuration.OAuth2AuthorizationServerConfiguration;
 import com.liferay.oauth2.provider.rest.internal.endpoint.authorize.configuration.OAuth2AuthorizationFlowConfiguration;
 import com.liferay.oauth2.provider.rest.internal.endpoint.constants.OAuth2ProviderRESTEndpointConstants;
 import com.liferay.oauth2.provider.rest.spi.bearer.token.provider.BearerTokenProvider;
@@ -41,6 +42,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -49,6 +51,7 @@ import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.nio.charset.StandardCharsets;
@@ -70,6 +73,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.cxf.jaxrs.utils.HttpUtils;
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
+import org.apache.cxf.rs.security.jose.jws.JwsHeaders;
+import org.apache.cxf.rs.security.jose.jws.JwsUtils;
+import org.apache.cxf.rs.security.jose.jwt.JwtClaims;
+import org.apache.cxf.rs.security.jose.jwt.JwtToken;
 import org.apache.cxf.rs.security.oauth2.common.AccessTokenRegistration;
 import org.apache.cxf.rs.security.oauth2.common.Client;
 import org.apache.cxf.rs.security.oauth2.common.OAuthPermission;
@@ -79,6 +88,7 @@ import org.apache.cxf.rs.security.oauth2.grants.code.AbstractAuthorizationCodeDa
 import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeRegistration;
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.grants.jwt.Constants;
+import org.apache.cxf.rs.security.oauth2.provider.OAuthJoseJwtProducer;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
 import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
@@ -98,6 +108,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 @Component(
 	configurationPid = {
 		"com.liferay.oauth2.provider.configuration.OAuth2ProviderConfiguration",
+		"com.liferay.oauth2.provider.rest.internal.configuration.OAuth2AuthorizationServerConfiguration",
 		"com.liferay.oauth2.provider.rest.internal.endpoint.authorize.configuration.OAuth2AuthorizationFlowConfiguration"
 	},
 	service = LiferayOAuthDataProvider.class
@@ -348,6 +359,12 @@ public class LiferayOAuthDataProvider
 
 		return _serverAuthorizationCodeGrantProvider.
 			getServerAuthorizationCodeGrants(client, subject);
+	}
+
+	public String getIssuer() {
+		MessageContext messageContext = getMessageContext();
+
+		return _portal.getHost(messageContext.getHttpServletRequest());
 	}
 
 	public OAuth2Authorization getOAuth2Authorization(
@@ -638,61 +655,87 @@ public class LiferayOAuthDataProvider
 		_oAuth2AuthorizationFlowConfiguration =
 			ConfigurableUtil.createConfigurable(
 				OAuth2AuthorizationFlowConfiguration.class, properties);
+		_oAuth2AuthorizationServerConfiguration =
+			ConfigurableUtil.createConfigurable(
+				OAuth2AuthorizationServerConfiguration.class, properties);
 		_oAuth2ProviderConfiguration = ConfigurableUtil.createConfigurable(
 			OAuth2ProviderConfiguration.class, properties);
 
-		setGrantLifetime(
-			_oAuth2AuthorizationFlowConfiguration.authorizationCodeGrantTTL());
+		_init();
+	}
+
+	@Override
+	protected JwtClaims createJwtAccessToken(
+		ServerAccessToken serverAccessToken) {
+
+		// Fix a bug in CXF. Scopes in JWT claim should be a string.
+
+		JwtClaims jwtClaims = super.createJwtAccessToken(serverAccessToken);
+
+		List<OAuthPermission> oAuthPermissions = serverAccessToken.getScopes();
+
+		if (!oAuthPermissions.isEmpty()) {
+			jwtClaims.setClaim(
+				OAuthConstants.SCOPE,
+				OAuthUtils.convertPermissionsToScope(oAuthPermissions));
+		}
+
+		return jwtClaims;
+	}
+
+	@Override
+	protected ServerAccessToken createNewAccessToken(
+		Client client, UserSubject userSubject) {
+
+		ServerAccessToken serverAccessToken = super.createNewAccessToken(
+			client, userSubject);
+
+		if (getIssuer() != null) {
+			serverAccessToken.setIssuer(getIssuer());
+		}
+
+		return serverAccessToken;
 	}
 
 	@Override
 	protected ServerAccessToken doCreateAccessToken(
 		AccessTokenRegistration accessTokenRegistration) {
 
-		ServerAccessToken serverAccessToken = super.doCreateAccessToken(
-			accessTokenRegistration);
-
-		BearerTokenProvider.AccessToken accessToken = fromCXFAccessToken(
-			serverAccessToken);
-
-		OAuth2Application oAuth2Application =
-			accessToken.getOAuth2Application();
-
-		BearerTokenProvider bearerTokenProvider = getBearerTokenProvider(
-			oAuth2Application.getCompanyId(), oAuth2Application.getClientId());
-
-		bearerTokenProvider.onBeforeCreate(accessToken);
-
-		serverAccessToken.setAudiences(accessToken.getAudiences());
-		serverAccessToken.setClientCodeVerifier(
-			accessToken.getClientCodeVerifier());
-		serverAccessToken.setExpiresIn(accessToken.getExpiresIn());
-		serverAccessToken.setExtraProperties(accessToken.getExtraProperties());
-		serverAccessToken.setGrantCode(accessToken.getGrantCode());
-		serverAccessToken.setGrantType(accessToken.getGrantType());
-		serverAccessToken.setIssuedAt(accessToken.getIssuedAt());
-		serverAccessToken.setIssuer(accessToken.getIssuer());
-		serverAccessToken.setNonce(accessToken.getNonce());
-
-		Map<String, String> accessTokenParameters = accessToken.getParameters();
-
-		accessTokenParameters.putAll(
-			accessTokenRegistration.getExtraProperties());
-
-		serverAccessToken.setParameters(accessTokenParameters);
-
-		serverAccessToken.setRefreshToken(accessToken.getRefreshToken());
-		serverAccessToken.setResponseType(accessToken.getResponseType());
-		serverAccessToken.setScopes(
+		ServerAccessToken serverAccessToken = _createOpaqueServerAccessToken(
+			accessTokenRegistration.getAudiences(),
+			accessTokenRegistration.getClient(),
+			accessTokenRegistration.getClientCodeVerifier(),
+			accessTokenRegistration.getGrantCode(),
+			accessTokenRegistration.getGrantType(),
+			accessTokenRegistration.getNonce(),
+			accessTokenRegistration.getExtraProperties(),
 			convertScopeToPermissions(
-				serverAccessToken.getClient(), accessToken.getScopes()));
-		serverAccessToken.setTokenKey(accessToken.getTokenKey());
-		serverAccessToken.setTokenType(accessToken.getTokenType());
+				accessTokenRegistration.getClient(),
+				accessTokenRegistration.getApprovedScope()),
+			accessTokenRegistration.getResponseType(),
+			accessTokenRegistration.getSubject());
 
-		UserSubject userSubject = serverAccessToken.getSubject();
+		MessageContext messageContext = getMessageContext();
 
-		userSubject.setId(String.valueOf(accessToken.getUserId()));
-		userSubject.setLogin(accessToken.getUserName());
+		if (messageContext != null) {
+			String x509 = (String)messageContext.get(
+				JoseConstants.HEADER_X509_THUMBPRINT_SHA256);
+
+			if (x509 != null) {
+				Map<String, String> extraProperties =
+					serverAccessToken.getExtraProperties();
+
+				extraProperties.put(
+					JoseConstants.HEADER_X509_THUMBPRINT_SHA256, x509);
+			}
+		}
+
+		_customizeServerAccessToken(
+			accessTokenRegistration.getExtraProperties(), serverAccessToken);
+
+		if (isUseJwtFormatForAccessTokens()) {
+			_convertToJWTAccessToken(serverAccessToken);
+		}
 
 		return serverAccessToken;
 	}
@@ -765,43 +808,38 @@ public class LiferayOAuthDataProvider
 		Client client, RefreshToken oldRefreshToken,
 		List<String> restrictedScopes) {
 
-		ServerAccessToken serverAccessToken = super.doRefreshAccessToken(
-			client, oldRefreshToken, restrictedScopes);
+		List<OAuthPermission> oAuthPermissions = null;
 
-		BearerTokenProvider.AccessToken accessToken = fromCXFAccessToken(
-			serverAccessToken);
+		if (restrictedScopes.isEmpty()) {
+			oAuthPermissions = (oldRefreshToken.getScopes() != null) ?
+				new ArrayList<>(oldRefreshToken.getScopes()) : null;
+		}
+		else {
+			oAuthPermissions = convertScopeToPermissions(
+				client, restrictedScopes);
 
-		OAuth2Application oAuth2Application =
-			accessToken.getOAuth2Application();
+			List<OAuthPermission> originalScopes = oldRefreshToken.getScopes();
 
-		BearerTokenProvider bearerTokenProvider = getBearerTokenProvider(
-			oAuth2Application.getCompanyId(), oAuth2Application.getClientId());
+			if (!originalScopes.containsAll(oAuthPermissions)) {
+				throw new OAuthServiceException("Invalid scopes");
+			}
+		}
 
-		bearerTokenProvider.onBeforeCreate(accessToken);
+		List<String> audiences = (oldRefreshToken.getAudiences() != null) ?
+			new ArrayList<>(oldRefreshToken.getAudiences()) : null;
 
-		serverAccessToken.setAudiences(accessToken.getAudiences());
-		serverAccessToken.setClientCodeVerifier(
-			accessToken.getClientCodeVerifier());
-		serverAccessToken.setExpiresIn(accessToken.getExpiresIn());
-		serverAccessToken.setExtraProperties(accessToken.getExtraProperties());
-		serverAccessToken.setGrantCode(accessToken.getGrantCode());
-		serverAccessToken.setGrantType(accessToken.getGrantType());
-		serverAccessToken.setIssuedAt(accessToken.getIssuedAt());
-		serverAccessToken.setIssuer(accessToken.getIssuer());
-		serverAccessToken.setNonce(accessToken.getNonce());
-		serverAccessToken.setParameters(accessToken.getParameters());
-		serverAccessToken.setRefreshToken(accessToken.getRefreshToken());
-		serverAccessToken.setResponseType(accessToken.getResponseType());
-		serverAccessToken.setScopes(
-			convertScopeToPermissions(
-				serverAccessToken.getClient(), accessToken.getScopes()));
-		serverAccessToken.setTokenKey(accessToken.getTokenKey());
-		serverAccessToken.setTokenType(accessToken.getTokenType());
+		ServerAccessToken serverAccessToken = _createOpaqueServerAccessToken(
+			audiences, client, oldRefreshToken.getClientCodeVerifier(),
+			oldRefreshToken.getGrantCode(), oldRefreshToken.getGrantType(),
+			oldRefreshToken.getNonce(), oldRefreshToken.getExtraProperties(),
+			oAuthPermissions, oldRefreshToken.getResponseType(),
+			oldRefreshToken.getSubject());
 
-		UserSubject userSubject = serverAccessToken.getSubject();
+		_customizeServerAccessToken(Collections.emptyMap(), serverAccessToken);
 
-		userSubject.setId(String.valueOf(accessToken.getUserId()));
-		userSubject.setLogin(accessToken.getUserName());
+		if (isUseJwtFormatForAccessTokens()) {
+			_convertToJWTAccessToken(serverAccessToken);
+		}
 
 		return serverAccessToken;
 	}
@@ -809,6 +847,21 @@ public class LiferayOAuthDataProvider
 	@Override
 	protected void doRemoveClient(Client c) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected String processJwtAccessToken(JwtClaims jwtClaims) {
+		OAuthJoseJwtProducer oAuthJoseJwtProducer = getJwtAccessTokenProducer();
+
+		// Fix a bug in CXF. See
+		// https://datatracker.ietf.org/doc/html/rfc9068#section-2.1.
+
+		JwsHeaders jwsHeaders = new JwsHeaders();
+
+		jwsHeaders.setHeader("typ", "at+jwt");
+
+		return oAuthJoseJwtProducer.processJwt(
+			new JwtToken(jwsHeaders, jwtClaims));
 	}
 
 	@Override
@@ -841,11 +894,11 @@ public class LiferayOAuthDataProvider
 
 		oAuth2Authorization.setRefreshTokenContent(refreshToken.getTokenKey());
 
-		Date createDate = _fromCXFTime(refreshToken.getIssuedAt());
+		Date createDate = _toDate(refreshToken.getIssuedAt());
 
 		oAuth2Authorization.setRefreshTokenCreateDate(createDate);
 
-		Date expirationDate = _fromCXFTime(
+		Date expirationDate = _toDate(
 			refreshToken.getIssuedAt() + refreshToken.getExpiresIn());
 
 		oAuth2Authorization.setRefreshTokenExpirationDate(expirationDate);
@@ -854,8 +907,88 @@ public class LiferayOAuthDataProvider
 			oAuth2Authorization);
 	}
 
-	private Date _fromCXFTime(long issuedAt) {
-		return new Date(issuedAt * 1000);
+	private void _convertToJWTAccessToken(ServerAccessToken serverAccessToken) {
+		String jose = processJwtAccessToken(
+			createJwtAccessToken(serverAccessToken));
+
+		if (isPersistJwtEncoding()) {
+			serverAccessToken.setTokenKey(jose);
+		}
+		else {
+			serverAccessToken.setEncodedToken(jose);
+		}
+	}
+
+	private ServerAccessToken _createOpaqueServerAccessToken(
+		List<String> audiences, Client client, String clientCodeVerifier,
+		String grantCode, String grantType, String nonce,
+		Map<String, String> properties, List<OAuthPermission> oAuthPermissions,
+		String responseType, UserSubject userSubject) {
+
+		ServerAccessToken serverAccessToken = createNewAccessToken(
+			client, userSubject);
+
+		Map<String, String> extraProperties =
+			serverAccessToken.getExtraProperties();
+
+		extraProperties.putAll(properties);
+
+		serverAccessToken.setAudiences(audiences);
+		serverAccessToken.setClientCodeVerifier(clientCodeVerifier);
+		serverAccessToken.setGrantCode(grantCode);
+		serverAccessToken.setGrantType(grantType);
+		serverAccessToken.setNonce(nonce);
+		serverAccessToken.setResponseType(responseType);
+		serverAccessToken.setScopes(oAuthPermissions);
+		serverAccessToken.setSubject(userSubject);
+
+		return serverAccessToken;
+	}
+
+	private void _customizeServerAccessToken(
+		Map<String, String> extraProperties,
+		ServerAccessToken serverAccessToken) {
+
+		BearerTokenProvider.AccessToken accessToken = fromCXFAccessToken(
+			serverAccessToken);
+
+		UserSubject userSubject = serverAccessToken.getSubject();
+
+		userSubject.setId(String.valueOf(accessToken.getUserId()));
+		userSubject.setLogin(accessToken.getUserName());
+
+		OAuth2Application oAuth2Application =
+			accessToken.getOAuth2Application();
+
+		BearerTokenProvider bearerTokenProvider = getBearerTokenProvider(
+			oAuth2Application.getCompanyId(), oAuth2Application.getClientId());
+
+		bearerTokenProvider.onBeforeCreate(accessToken);
+
+		serverAccessToken.setAudiences(accessToken.getAudiences());
+		serverAccessToken.setClientCodeVerifier(
+			accessToken.getClientCodeVerifier());
+		serverAccessToken.setExpiresIn(accessToken.getExpiresIn());
+		serverAccessToken.setExtraProperties(accessToken.getExtraProperties());
+		serverAccessToken.setGrantCode(accessToken.getGrantCode());
+		serverAccessToken.setGrantType(accessToken.getGrantType());
+		serverAccessToken.setIssuedAt(accessToken.getIssuedAt());
+		serverAccessToken.setIssuer(accessToken.getIssuer());
+		serverAccessToken.setNonce(accessToken.getNonce());
+
+		Map<String, String> accessTokenParameters = accessToken.getParameters();
+
+		accessTokenParameters.putAll(extraProperties);
+
+		serverAccessToken.setParameters(accessTokenParameters);
+
+		serverAccessToken.setRefreshToken(accessToken.getRefreshToken());
+		serverAccessToken.setResponseType(accessToken.getResponseType());
+		serverAccessToken.setScopes(
+			convertScopeToPermissions(
+				serverAccessToken.getClient(), accessToken.getScopes()));
+		serverAccessToken.setTokenKey(accessToken.getTokenKey());
+		serverAccessToken.setTokenType(accessToken.getTokenType());
 	}
 
 	private Collection<LiferayOAuth2Scope> _getLiferayOAuth2Scopes(
@@ -935,6 +1068,16 @@ public class LiferayOAuthDataProvider
 
 		return _userLocalService.getUser(
 			GetterUtil.getLong(userSubject.getId()));
+	}
+
+	private void _init() {
+		setGrantLifetime(
+			_oAuth2AuthorizationFlowConfiguration.authorizationCodeGrantTTL());
+
+		_setJwtAccessTokenProducer();
+
+		setUseJwtFormatForAccessTokens(
+			_oAuth2AuthorizationServerConfiguration.issueJWTAccessToken());
 	}
 
 	private void _invokeTransactionally(Runnable runnable) throws Throwable {
@@ -1134,15 +1277,31 @@ public class LiferayOAuthDataProvider
 		return userSubject;
 	}
 
+	private void _setJwtAccessTokenProducer() {
+		OAuthJoseJwtProducer oAuthJoseJwtProducer = new OAuthJoseJwtProducer();
+
+		oAuthJoseJwtProducer.setSignatureProvider(
+			JwsUtils.getSignatureProvider(
+				JwkUtils.readJwkKey(
+					_oAuth2AuthorizationServerConfiguration.
+						jwtAccessTokenSigningJSONWebKey())));
+
+		super.setJwtAccessTokenProducer(oAuthJoseJwtProducer);
+	}
+
 	private long _toCXFTime(Date dateCreated) {
 		return dateCreated.getTime() / 1000;
+	}
+
+	private Date _toDate(long issuedAt) {
+		return new Date(issuedAt * 1000);
 	}
 
 	private void _transactionalSaveServerAccessToken(
 		ServerAccessToken serverAccessToken) {
 
-		Date createDate = _fromCXFTime(serverAccessToken.getIssuedAt());
-		Date expirationDate = _fromCXFTime(
+		Date createDate = _toDate(serverAccessToken.getIssuedAt());
+		Date expirationDate = _toDate(
 			serverAccessToken.getIssuedAt() + serverAccessToken.getExpiresIn());
 
 		if (serverAccessToken.getRefreshToken() != null) {
@@ -1237,6 +1396,9 @@ public class LiferayOAuthDataProvider
 	private volatile BearerTokenProviderAccessor _bearerTokenProviderAccessor;
 
 	@Reference
+	private ConfigurationProvider _configurationProvider;
+
+	@Reference
 	private OAuth2ApplicationLocalService _oAuth2ApplicationLocalService;
 
 	@Reference
@@ -1249,10 +1411,15 @@ public class LiferayOAuthDataProvider
 	@Reference
 	private OAuth2AuthorizationLocalService _oAuth2AuthorizationLocalService;
 
+	private OAuth2AuthorizationServerConfiguration
+		_oAuth2AuthorizationServerConfiguration;
 	private OAuth2ProviderConfiguration _oAuth2ProviderConfiguration;
 
 	@Reference
 	private OAuth2ScopeGrantLocalService _oAuth2ScopeGrantLocalService;
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private ScopeLocator _scopeLocator;

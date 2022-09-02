@@ -12,19 +12,28 @@
  * details.
  */
 
+import {ClayButtonWithIcon} from '@clayui/button';
 import {TreeView as ClayTreeView} from '@clayui/core';
+import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import classnames from 'classnames';
 import {navigate} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import normalizeDropdownItems from './normalizeDropdownItems';
+
 const ITEM_TYPES_SYMBOL = {
 	article: 'document-text',
 	folder: 'folder',
 };
+
 export default function NavigationPanel({items, selectedItemId}) {
 	const handleClickItem = (event, item) => {
+		if (event.defaultPrevented) {
+			return;
+		}
+
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -60,6 +69,22 @@ export default function NavigationPanel({items, selectedItemId}) {
 							{(item) => {
 								return (
 									<ClayTreeView.Item
+										actions={
+											item?.actions?.length && (
+												<ClayDropDownWithItems
+													items={normalizeDropdownItems(
+														item.actions
+													)}
+													trigger={
+														<ClayButtonWithIcon
+															displayType="unstyled"
+															small
+															symbol="ellipsis-v"
+														/>
+													}
+												/>
+											)
+										}
 										onClick={(event) => {
 											handleClickItem(event, item);
 										}}

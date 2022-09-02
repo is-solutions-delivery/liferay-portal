@@ -133,7 +133,9 @@ definition {
 	}
 
 	macro getWellKnownURI {
-		Click(locator1 = "OAuthClient#AUTH_SERVER_LOCAL_WELL_KNOWN_URI");
+		Click(locator1 = "OAuthClient#AUTH_SERVER_LOCAL_WELL_KNOWN_URI_LIST_NAME");
+
+		WaitForElementPresent(locator1 = "OAuthClient#AUTH_SERVER_LOCAL_WELL_KNOWN_URI");
 
 		var wellknownURI = selenium.getAttribute("//input[contains(@id,'localWellKnownURI')]@value");
 

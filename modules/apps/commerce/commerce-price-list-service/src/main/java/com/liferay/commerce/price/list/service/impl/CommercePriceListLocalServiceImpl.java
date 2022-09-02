@@ -33,7 +33,14 @@ import com.liferay.commerce.price.list.model.CommercePriceListChannelRelTable;
 import com.liferay.commerce.price.list.model.CommercePriceListCommerceAccountGroupRelTable;
 import com.liferay.commerce.price.list.model.CommercePriceListOrderTypeRelTable;
 import com.liferay.commerce.price.list.model.CommercePriceListTable;
+import com.liferay.commerce.price.list.service.CommercePriceEntryLocalService;
+import com.liferay.commerce.price.list.service.CommercePriceListAccountRelLocalService;
+import com.liferay.commerce.price.list.service.CommercePriceListChannelRelLocalService;
+import com.liferay.commerce.price.list.service.CommercePriceListCommerceAccountGroupRelLocalService;
+import com.liferay.commerce.price.list.service.CommercePriceListDiscountRelLocalService;
+import com.liferay.commerce.price.list.service.CommercePriceListOrderTypeRelLocalService;
 import com.liferay.commerce.price.list.service.base.CommercePriceListLocalServiceBaseImpl;
+import com.liferay.commerce.price.list.service.persistence.CommercePriceEntryPersistence;
 import com.liferay.commerce.pricing.exception.CommerceUndefinedBasePriceListException;
 import com.liferay.commerce.pricing.service.CommercePriceModifierLocalService;
 import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalService;
@@ -45,6 +52,7 @@ import com.liferay.petra.sql.dsl.query.GroupByStep;
 import com.liferay.petra.sql.dsl.query.JoinStep;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
@@ -70,7 +78,9 @@ import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -80,13 +90,12 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ProxyFactory;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
 
@@ -99,11 +108,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.LongStream;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Marco Leo
  * @author Alessio Antonio Rendina
  * @author Zoltán Takács
  */
+@Component(
+	enabled = false,
+	property = "model.class.name=com.liferay.commerce.price.list.model.CommercePriceList",
+	service = AopService.class
+)
 public class CommercePriceListLocalServiceImpl
 	extends CommercePriceListLocalServiceBaseImpl {
 
@@ -161,7 +180,7 @@ public class CommercePriceListLocalServiceImpl
 
 		// Commerce price list
 
-		User user = userLocalService.getUser(userId);
+		User user = _userLocalService.getUser(userId);
 
 		if (Validator.isBlank(externalReferenceCode)) {
 			externalReferenceCode = null;
@@ -177,13 +196,13 @@ public class CommercePriceListLocalServiceImpl
 		Date expirationDate = null;
 		Date date = new Date();
 
-		Date displayDate = PortalUtil.getDate(
+		Date displayDate = _portal.getDate(
 			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
 			displayDateMinute, user.getTimeZone(),
 			CommercePriceListDisplayDateException.class);
 
 		if (!neverExpire) {
-			expirationDate = PortalUtil.getDate(
+			expirationDate = _portal.getDate(
 				expirationDateMonth, expirationDateDay, expirationDateYear,
 				expirationDateHour, expirationDateMinute, user.getTimeZone(),
 				CommercePriceListExpirationDateException.class);
@@ -235,7 +254,7 @@ public class CommercePriceListLocalServiceImpl
 
 		// Resources
 
-		resourceLocalService.addModelResources(
+		_resourceLocalService.addModelResources(
 			commercePriceList, serviceContext);
 
 		return commercePriceList;
@@ -310,15 +329,6 @@ public class CommercePriceListLocalServiceImpl
 	}
 
 	@Override
-	public void afterPropertiesSet() {
-		super.afterPropertiesSet();
-
-		_portalCache =
-			(PortalCache<String, CommercePriceList>)_multiVMPool.getPortalCache(
-				"PRICE_LISTS", false, true);
-	}
-
-	@Override
 	public void checkCommercePriceLists() throws PortalException {
 		checkCommercePriceListsByDisplayDate();
 		checkCommercePriceListsByExpirationDate();
@@ -367,13 +377,6 @@ public class CommercePriceListLocalServiceImpl
 			commercePriceListLocalService.forceDeleteCommercePriceList(
 				commercePriceList);
 		}
-	}
-
-	@Override
-	public void destroy() {
-		super.destroy();
-
-		_multiVMPool.removePortalCache(_portalCache.getPortalCacheName());
 	}
 
 	@Override
@@ -438,7 +441,7 @@ public class CommercePriceListLocalServiceImpl
 
 		commercePriceListPersistence.remove(commercePriceList);
 
-		resourceLocalService.deleteResource(
+		_resourceLocalService.deleteResource(
 			commercePriceList, ResourceConstants.SCOPE_INDIVIDUAL);
 
 		_commerceChannelAccountEntryRelLocalService.
@@ -446,26 +449,26 @@ public class CommercePriceListLocalServiceImpl
 				CommercePriceList.class.getName(),
 				commercePriceList.getCommercePriceListId());
 
-		commercePriceEntryLocalService.deleteCommercePriceEntries(
+		_commercePriceEntryLocalService.deleteCommercePriceEntries(
 			commercePriceList.getCommercePriceListId());
 
-		commercePriceListAccountRelLocalService.
+		_commercePriceListAccountRelLocalService.
 			deleteCommercePriceListAccountRels(
 				commercePriceList.getCommercePriceListId());
 
-		commercePriceListChannelRelLocalService.
+		_commercePriceListChannelRelLocalService.
 			deleteCommercePriceListChannelRels(
 				commercePriceList.getCommercePriceListId());
 
-		commercePriceListCommerceAccountGroupRelLocalService.
+		_commercePriceListCommerceAccountGroupRelLocalService.
 			deleteCommercePriceListCommerceAccountGroupRels(
 				commercePriceList.getCommercePriceListId());
 
-		commercePriceListDiscountRelLocalService.
+		_commercePriceListDiscountRelLocalService.
 			deleteCommercePriceListDiscountRels(
 				commercePriceList.getCommercePriceListId());
 
-		commercePriceListOrderTypeRelLocalService.
+		_commercePriceListOrderTypeRelLocalService.
 			deleteCommercePriceListOrderTypeRels(
 				commercePriceList.getCommercePriceListId());
 
@@ -820,7 +823,7 @@ public class CommercePriceListLocalServiceImpl
 		throws PortalException {
 
 		List<CommercePriceEntry> commercePriceEntries =
-			commercePriceEntryPersistence.dslQuery(
+			_commercePriceEntryPersistence.dslQuery(
 				_getGroupByStep(
 					DSLQueryFactoryUtil.selectDistinct(
 						CommercePriceEntryTable.INSTANCE),
@@ -1233,7 +1236,7 @@ public class CommercePriceListLocalServiceImpl
 
 		// Commerce price list
 
-		User user = userLocalService.getUser(serviceContext.getUserId());
+		User user = _userLocalService.getUser(serviceContext.getUserId());
 
 		CommercePriceList commercePriceList =
 			commercePriceListPersistence.findByPrimaryKey(commercePriceListId);
@@ -1246,13 +1249,13 @@ public class CommercePriceListLocalServiceImpl
 		Date expirationDate = null;
 		Date date = new Date();
 
-		Date displayDate = PortalUtil.getDate(
+		Date displayDate = _portal.getDate(
 			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
 			displayDateMinute, user.getTimeZone(),
 			CommercePriceListDisplayDateException.class);
 
 		if (!neverExpire) {
-			expirationDate = PortalUtil.getDate(
+			expirationDate = _portal.getDate(
 				expirationDateMonth, expirationDateDay, expirationDateYear,
 				expirationDateHour, expirationDateMinute, user.getTimeZone(),
 				CommercePriceListExpirationDateException.class);
@@ -1332,7 +1335,7 @@ public class CommercePriceListLocalServiceImpl
 			Map<String, Serializable> workflowContext)
 		throws PortalException {
 
-		User user = userLocalService.getUser(userId);
+		User user = _userLocalService.getUser(userId);
 		Date date = new Date();
 
 		CommercePriceList commercePriceList =
@@ -1365,6 +1368,13 @@ public class CommercePriceListLocalServiceImpl
 		commercePriceList.setStatusDate(modifiedDate);
 
 		return commercePriceListPersistence.update(commercePriceList);
+	}
+
+	@Activate
+	protected void activate() {
+		_portalCache =
+			(PortalCache<String, CommercePriceList>)_multiVMPool.getPortalCache(
+				"PRICE_LISTS", false, true);
 	}
 
 	protected SearchContext buildSearchContext(
@@ -1450,7 +1460,7 @@ public class CommercePriceListLocalServiceImpl
 				new Date(), WorkflowConstants.STATUS_SCHEDULED);
 
 		for (CommercePriceList commercePriceList : commercePriceLists) {
-			long userId = PortalUtil.getValidUserId(
+			long userId = _portal.getValidUserId(
 				commercePriceList.getCompanyId(),
 				commercePriceList.getUserId());
 
@@ -1483,7 +1493,7 @@ public class CommercePriceListLocalServiceImpl
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			for (CommercePriceList commercePriceList : commercePriceLists) {
-				long userId = PortalUtil.getValidUserId(
+				long userId = _portal.getValidUserId(
 					commercePriceList.getCompanyId(),
 					commercePriceList.getUserId());
 
@@ -1498,6 +1508,11 @@ public class CommercePriceListLocalServiceImpl
 					new HashMap<String, Serializable>());
 			}
 		}
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_multiVMPool.removePortalCache(_portalCache.getPortalCacheName());
 	}
 
 	protected void doReindex(long commercePriceListId) throws PortalException {
@@ -1858,26 +1873,61 @@ public class CommercePriceListLocalServiceImpl
 	private static final CommercePriceList _dummyCommercePriceList =
 		ProxyFactory.newDummyInstance(CommercePriceList.class);
 
-	@ServiceReference(type = CommerceChannelAccountEntryRelLocalService.class)
+	@Reference
 	private CommerceChannelAccountEntryRelLocalService
 		_commerceChannelAccountEntryRelLocalService;
 
-	@ServiceReference(type = CommerceCurrencyLocalService.class)
+	@Reference
 	private CommerceCurrencyLocalService _commerceCurrencyLocalService;
 
-	@ServiceReference(type = CommercePriceModifierLocalService.class)
+	@Reference
+	private CommercePriceEntryLocalService _commercePriceEntryLocalService;
+
+	@Reference
+	private CommercePriceEntryPersistence _commercePriceEntryPersistence;
+
+	@Reference
+	private CommercePriceListAccountRelLocalService
+		_commercePriceListAccountRelLocalService;
+
+	@Reference
+	private CommercePriceListChannelRelLocalService
+		_commercePriceListChannelRelLocalService;
+
+	@Reference
+	private CommercePriceListCommerceAccountGroupRelLocalService
+		_commercePriceListCommerceAccountGroupRelLocalService;
+
+	@Reference
+	private CommercePriceListDiscountRelLocalService
+		_commercePriceListDiscountRelLocalService;
+
+	@Reference
+	private CommercePriceListOrderTypeRelLocalService
+		_commercePriceListOrderTypeRelLocalService;
+
+	@Reference
 	private CommercePriceModifierLocalService
 		_commercePriceModifierLocalService;
 
-	@ServiceReference(type = ExpandoRowLocalService.class)
+	@Reference
 	private ExpandoRowLocalService _expandoRowLocalService;
 
-	@ServiceReference(type = MultiVMPool.class)
+	@Reference
 	private MultiVMPool _multiVMPool;
+
+	@Reference
+	private Portal _portal;
 
 	private PortalCache<String, CommercePriceList> _portalCache;
 
-	@ServiceReference(type = WorkflowInstanceLinkLocalService.class)
+	@Reference
+	private ResourceLocalService _resourceLocalService;
+
+	@Reference
+	private UserLocalService _userLocalService;
+
+	@Reference
 	private WorkflowInstanceLinkLocalService _workflowInstanceLinkLocalService;
 
 }

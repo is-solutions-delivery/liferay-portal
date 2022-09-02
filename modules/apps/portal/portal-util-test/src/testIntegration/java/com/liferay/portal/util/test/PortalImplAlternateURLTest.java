@@ -44,6 +44,7 @@ import com.liferay.portal.util.PropsValues;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -101,6 +102,26 @@ public class PortalImplAlternateURLTest {
 			"localhost",
 			Arrays.asList(LocaleUtil.US, LocaleUtil.SPAIN, LocaleUtil.GERMANY),
 			LocaleUtil.US);
+	}
+
+	@Test
+	public void testAlternateURLWithFriendlyURL() throws Exception {
+		_testAlternateURLWithFriendlyURL(
+			"liferay.com",
+			Arrays.asList(LocaleUtil.US, LocaleUtil.SPAIN, LocaleUtil.GERMANY),
+			LocaleUtil.US, LocaleUtil.BRAZIL, "/pt-BR");
+		_testAlternateURLWithFriendlyURL(
+			"liferay.com",
+			Arrays.asList(LocaleUtil.US, LocaleUtil.SPAIN, LocaleUtil.GERMANY),
+			LocaleUtil.US, LocaleUtil.SPAIN, "/es");
+		_testAlternateURLWithFriendlyURL(
+			"localhost",
+			Arrays.asList(LocaleUtil.US, LocaleUtil.SPAIN, LocaleUtil.GERMANY),
+			LocaleUtil.US, LocaleUtil.BRAZIL, "/pt-BR");
+		_testAlternateURLWithFriendlyURL(
+			"localhost",
+			Arrays.asList(LocaleUtil.US, LocaleUtil.SPAIN, LocaleUtil.GERMANY),
+			LocaleUtil.US, LocaleUtil.SPAIN, "/es");
 	}
 
 	@Test
@@ -342,6 +363,76 @@ public class PortalImplAlternateURLTest {
 			Assert.assertTrue(
 				alternateURLs.toString(), alternateURLs.containsKey(locale));
 		}
+	}
+
+	private void _testAlternateURLWithFriendlyURL(
+			String portalDomain, Collection<Locale> groupAvailableLocales,
+			Locale groupDefaultLocale, Locale alternateLocale,
+			String expectedI18nPath)
+		throws Exception {
+
+		_group = GroupTestUtil.addGroup();
+
+		_group = GroupTestUtil.updateDisplaySettings(
+			_group.getGroupId(), groupAvailableLocales, groupDefaultLocale);
+
+		Map<Locale, String> nameMap = new HashMap<>();
+		Map<Locale, String> friendlyURLMap = new HashMap<>();
+
+		for (Locale availableLocale : groupAvailableLocales) {
+			nameMap.put(
+				availableLocale, "welcome-" + availableLocale.getCountry());
+			friendlyURLMap.put(
+				availableLocale,
+				"/friendlyurl-" + availableLocale.getCountry());
+		}
+
+		Layout layout = LayoutTestUtil.addTypePortletLayout(
+			_group.getGroupId(), false, nameMap, friendlyURLMap);
+
+		String canonicalURL = _generateURL(
+			portalDomain, StringPool.BLANK, _group.getFriendlyURL(),
+			layout.getFriendlyURL());
+
+		String expectedAlternateURL = _generateURL(
+			portalDomain, expectedI18nPath, _group.getFriendlyURL(),
+			layout.getFriendlyURL(alternateLocale));
+
+		Assert.assertEquals(
+			expectedAlternateURL,
+			_portal.getAlternateURL(
+				canonicalURL, _getThemeDisplay(_group, canonicalURL),
+				alternateLocale, layout));
+
+		String canonicalAssetPublisherContentURL =
+			_generateAssetPublisherContentURL(
+				portalDomain, StringPool.BLANK, _group.getFriendlyURL());
+
+		String expectedAssetPublisherContentAlternateURL =
+			_generateAssetPublisherContentURL(
+				portalDomain, expectedI18nPath, _group.getFriendlyURL());
+
+		Assert.assertEquals(
+			expectedAssetPublisherContentAlternateURL,
+			_portal.getAlternateURL(
+				canonicalAssetPublisherContentURL,
+				_getThemeDisplay(_group, canonicalAssetPublisherContentURL),
+				alternateLocale, layout));
+
+		TestPropsUtil.set(PropsKeys.LOCALE_PREPEND_FRIENDLY_URL_STYLE, "2");
+
+		Assert.assertEquals(
+			expectedAlternateURL,
+			_portal.getAlternateURL(
+				canonicalURL, _getThemeDisplay(_group, canonicalURL),
+				alternateLocale, layout));
+
+		Assert.assertEquals(
+			expectedAssetPublisherContentAlternateURL,
+			_portal.getAlternateURL(
+				canonicalAssetPublisherContentURL,
+				_getThemeDisplay(_group, canonicalAssetPublisherContentURL),
+				alternateLocale, layout));
 	}
 
 	private void _testAlternateURLWithVirtualHosts(

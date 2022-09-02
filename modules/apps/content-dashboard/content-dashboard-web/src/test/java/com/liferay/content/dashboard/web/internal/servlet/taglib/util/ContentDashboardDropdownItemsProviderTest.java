@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderResponse;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletURL;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -203,6 +204,11 @@ public class ContentDashboardDropdownItemsProviderTest {
 		return new ContentDashboardItem() {
 
 			@Override
+			public List<Version> getAllVersions(ThemeDisplay themeDisplay) {
+				return Collections.emptyList();
+			}
+
+			@Override
 			public List<AssetCategory> getAssetCategories() {
 				return Collections.emptyList();
 			}
@@ -287,6 +293,11 @@ public class ContentDashboardDropdownItemsProviderTest {
 			}
 
 			@Override
+			public List<Version> getLatestVersions(Locale locale) {
+				return null;
+			}
+
+			@Override
 			public Date getModifiedDate() {
 				return null;
 			}
@@ -324,11 +335,6 @@ public class ContentDashboardDropdownItemsProviderTest {
 			@Override
 			public String getUserName() {
 				return RandomTestUtil.randomString();
-			}
-
-			@Override
-			public List<Version> getVersions(Locale locale) {
-				return null;
 			}
 
 			@Override

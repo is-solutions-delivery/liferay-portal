@@ -454,11 +454,12 @@ renderResponse.setTitle(headerTitle);
 										com.liferay.dynamic.data.mapping.storage.DDMFormValues ddmFormValues = null;
 
 										try {
-											DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
-
-											ddmFormValues = dlEditFileEntryDisplayContext.getDDMFormValues(fileEntryMetadata.getDDMStorageId());
+											ddmFormValues = dlEditFileEntryDisplayContext.getDDMFormValues(ddmStructure, fileVersionId);
 										}
-										catch (Exception e) {
+										catch (Exception exception) {
+											if (_log.isWarnEnabled()) {
+												_log.warn(exception);
+											}
 										}
 								%>
 
@@ -483,8 +484,8 @@ renderResponse.setTitle(headerTitle);
 										localizable = false;
 									}
 								}
-								catch (Exception e) {
-									_log.error(e);
+								catch (Exception exception) {
+									_log.error(exception);
 								}
 								%>
 
@@ -677,11 +678,38 @@ renderResponse.setTitle(headerTitle);
 	var form = document.<portlet:namespace />fm;
 
 	function <portlet:namespace />changeFileEntryType() {
-		Liferay.Util.setFormValues(form, {
-			<%= Constants.CMD %>: '<%= Constants.PREVIEW %>',
-		});
+		function updateFileEntryType() {
+			Liferay.Util.setFormValues(form, {
+				<%= Constants.CMD %>: '<%= Constants.PREVIEW %>',
+			});
 
-		form.submit();
+			form.submit();
+		}
+
+		var fileElement = Liferay.Util.getFormElement(form, 'file');
+
+		if (
+			(fileElement && fileElement.value) ||
+			document.querySelector('.file-entry-type-fields:not(.hide)')
+		) {
+			Liferay.Util.openConfirmModal({
+				message:
+					'<liferay-ui:message key="changing-the-document-type-will-cause-data-loss" />',
+				onConfirm: (isConfirmed) => {
+					if (isConfirmed) {
+						updateFileEntryType();
+					}
+					else {
+						Liferay.Util.setFormValues(form, {
+							fileEntryTypeId: '<%= fileEntryTypeId %>',
+						});
+					}
+				},
+			});
+		}
+		else {
+			updateFileEntryType();
+		}
 	}
 
 	function <portlet:namespace />cancelCheckOut() {

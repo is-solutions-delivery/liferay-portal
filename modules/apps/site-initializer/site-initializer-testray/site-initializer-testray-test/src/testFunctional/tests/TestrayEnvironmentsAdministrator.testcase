@@ -13,10 +13,14 @@ definition {
 		User.firstLoginPG();
 
 		Testray.createTestraySite(siteName = "Testray 2");
+
+		Refresh();
 	}
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		TestrayManage.deleteAllCategories();
 
 		Testray.tearDownCP();
 
@@ -25,40 +29,94 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-157239 - Verify if As an Administrator I should be able to add and delete a Factor Category"
-	@ignore = "Test Stub"
-	@priority = "5"
-	test AdminCanAddAndDeleteFactorCategory {
-
-		// TODO LPS-157239 AdminCanAddAndDeleteFactorCategory pending implementation
-
-	}
-
 	@description = "This is a test for LPS-157327 - Verify if As an Administrator I should be able to add and delete a Factor Option"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanAddAndDeleteFactorOption {
+		task ("Go to Categories on Manage Sidebar and Add Factor Category") {
+			ApplicationsMenu.gotoSite(site = "Testray 2");
 
-		// TODO LPS-157327 AdminCanAddAndDeleteFactorOption pending implementation
+			TestrayLayout.clickManageOnSidebar();
 
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
+
+			TestrayManage.addNewCategory(category = "Environments_2 Factor Category");
+		}
+
+		task ("Go to Options on Manage Sidebar, Add Factor Option, change pagination and assert the Factor option has been created") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Options");
+
+			TestrayManage.createNewOption(
+				category = "Environments_2 Factor Category",
+				option = "Environments_2 Factor Option");
+
+			Testray.changePaginationInModal(
+				numberItems = "20",
+				valuePagination = "150");
+
+			Testray.clickOnPageNumberModal(pageNumber = "2");
+
+			TestrayManage.assertName(name = "Environments_2 Factor Option");
+		}
+
+		task ("Delete Factor Option and assert it deleted") {
+			TestrayManage.deleteOption(nameOptions = "Environments_2 Factor Option");
+
+			TestrayManage.assertOptionNotPresent(key_title = "Environments_2 Factor Option");
+		}
 	}
 
 	@description = "This is a test for LPS-157231 - Verify if as an Administrator I am able to add Factor Categories"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanAddCategory {
+		task ("Go to Categories on Manage Sidebar") {
+			ApplicationsMenu.gotoSite(site = "Testray 2");
 
-		// TODO LPS-157231 AdminCanAddCategory pending implementation
+			TestrayLayout.clickManageOnSidebar();
 
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
+		}
+
+		task ("Add a category and check if the category was created") {
+			TestrayManage.addNewCategory(category = "Environments_1 Category");
+
+			TestrayManage.assertName(name = "Environments_1 Category");
+		}
 	}
 
 	@description = "This is a test for LPS-157309 - Verify if as an Administrator I am able to add Options"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanAddOptions {
+		task ("Go to Categories on Manage Sidebar and Add Category") {
+			ApplicationsMenu.gotoSite(site = "Testray 2");
 
-		// TODO LPS-157309 AdminCanAddOptions pending implementation
+			TestrayLayout.clickManageOnSidebar();
 
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
+
+			TestrayManage.addNewCategory(category = "Environments_2 Category");
+		}
+
+		task ("Go to Options on Manage Sidebar, Add Options") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Options");
+
+			TestrayManage.createNewOption(
+				category = "Environments_2 Category",
+				option = "Environments_2 Option");
+		}
+
+		task ("Change pagination and assert the new option has been created") {
+			Testray.changePaginationInModal(
+				numberItems = "20",
+				valuePagination = "150");
+
+			Testray.clickOnPageNumberModal(pageNumber = "2");
+
+			TestrayManage.assertName(name = "Environments_2 Option");
+		}
 	}
 
 	@description = "This is a test for LPS-157321 - Verify if as an Administrator I am able to configure Default Environment Factors for a Routine"
@@ -71,39 +129,129 @@ definition {
 	}
 
 	@description = "This is a test for LPS-157237 - Verify if as an Administrator I am able to delete Factor Categories"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanDeleteCategory {
+		task ("Go to Categories on Manage Sidebar") {
+			ApplicationsMenu.gotoSite(site = "Testray 2");
 
-		// TODO LPS-157237 AdminCanDeleteCategory pending implementation
+			TestrayLayout.clickManageOnSidebar();
 
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
+		}
+
+		task ("Add a category, Delete it, and check if the category has been deleted") {
+			TestrayManage.addNewCategory(category = "Environments_4 Category");
+
+			TestrayManage.deleteCategory(
+				nameCategory = "Environments_4 Category",
+				selectCategories = "Categories");
+
+			TestrayManage.assertNameNotPresent(name = "Environments_4 Category");
+		}
 	}
 
 	@description = "This is a test for LPS-157307 - Verify if as an Administrator I am able to edit Factor Categories"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanEditFactorCategories {
+		task ("Go to Categories on Manage Sidebar") {
+			ApplicationsMenu.gotoSite(site = "Testray 2");
 
-		// TODO LPS-157307 AdminCanEditFactorCategories pending implementation
+			TestrayLayout.clickManageOnSidebar();
 
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
+		}
+
+		task ("Create the new category and then edit and state if the name has changed") {
+			TestrayManage.addNewCategory(category = "Environments_6 Category");
+
+			TestrayManage.editNameCategory(category = "Environments_6 Category Edited");
+
+			TestrayManage.assertName(name = "Environments_6 Category Edited");
+		}
 	}
 
 	@description = "This is a test for LPS-157326 - Verify if as an Administrator I am able to edit the Option by changing the Category"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanEditOptionChangingCategory {
+		task ("Go to Categories on Manage Sidebar and Add Category") {
+			ApplicationsMenu.gotoSite(site = "Testray 2");
 
-		// TODO LPS-157326 AdminCanEditOptionChangingCategory pending implementation
+			TestrayLayout.clickManageOnSidebar();
 
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
+
+			TestrayManage.addNewCategory(category = "Environments_8 Category A");
+
+			TestrayManage.addNewCategory(category = "Environments_8 Category B");
+		}
+
+		task ("Go to Options on Manage Sidebar and Add New Option") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Options");
+
+			TestrayManage.createNewOption(
+				category = "Environments_8 Category A",
+				option = "Environments_8 Option");
+		}
+
+		task ("Change pagination and edit new Option by changing the Category") {
+			Testray.changePaginationInModal(
+				numberItems = "20",
+				valuePagination = "150");
+
+			Testray.clickOnPageNumberModal(pageNumber = "2");
+
+			TestrayManage.editNewOptionName(
+				category = "Environments_8 Category B",
+				option = "Environments_8 Option");
+		}
+
+		task ("Change the pagination and confirm that the option has been changed with a new category") {
+			TestrayManage.assertNameCategoryInOptions(category = "Environments_8 Category B");
+
+			TestrayManage.assertCategoryNotPresent(key_title = "Environments_8 Category A");
+
+			TestrayManage.assertName(name = "Environments_8 Option");
+		}
 	}
 
 	@description = "This is a test for LPS-157323 - Verify if as an Administrator I am able to edit the Option Name"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanEditOptionName {
+		task ("Go to Categories on Manage Sidebar and Add Category") {
+			ApplicationsMenu.gotoSite(site = "Testray 2");
 
-		// TODO LPS-157323 AdminCanEditOptionName pending implementation
+			TestrayLayout.clickManageOnSidebar();
 
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
+
+			TestrayManage.addNewCategory(category = "Environments_7 Category");
+		}
+
+		task ("Go to Categories on Manage Sidebar and Create the new Options") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Options");
+
+			TestrayManage.createNewOption(
+				category = "Environments_7 Category",
+				option = "Environments_7 Option");
+		}
+
+		task ("Change the pagination and then edit and state if the name has Edited") {
+			Testray.changePaginationInModal(
+				numberItems = "20",
+				valuePagination = "150");
+
+			Testray.clickOnPageNumberModal(pageNumber = "2");
+
+			TestrayManage.editNewOptionName(
+				category = "Environments_7 Category",
+				option = "Environments_7 Option Edited");
+
+			TestrayManage.assertName(name = "Environments_7 Option Edited");
+		}
 	}
 
 	@description = "This is a test for LPS-157328 - Verify if As an Administrator I should not be able to add a duplicate Factor Category"

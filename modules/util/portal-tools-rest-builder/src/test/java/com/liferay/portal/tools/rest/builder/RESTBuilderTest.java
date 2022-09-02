@@ -57,6 +57,8 @@ public class RESTBuilderTest {
 
 		Assert.assertTrue(applicationFile.exists());
 
+		_assertBooleanParameterName(filesPath);
+
 		_assertResourceFilesExist(filesPath, "Document");
 		_assertResourceFilesExist(filesPath, "Folder");
 		_assertResourceFilesExist(filesPath, "Test");
@@ -82,26 +84,40 @@ public class RESTBuilderTest {
 		Assert.assertFalse(sampleImplDir.exists());
 	}
 
+	private void _assertBooleanParameterName(String filesPath)
+		throws Exception {
+
+		File file = new File(
+			filesPath.concat(
+				"/sample-impl/src/main/java/com/example/sample/internal" +
+					"/resource/v1_0_0/BaseTestBooleanResourceImpl.java"));
+
+		String text = new String(
+			Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+
+		Assert.assertTrue(text.contains("Boolean booleanValue"));
+	}
+
 	private void _assertDTOFile(String filesPath, String resourceName) {
-		File dtoFolderFile = new File(
+		File file = new File(
 			_getResourcePath(
 				filesPath,
 				"/sample-api/src/main/java/com/example/sample/dto/v1_0_0/",
 				resourceName, ".java"));
 
-		Assert.assertTrue(dtoFolderFile.exists());
+		Assert.assertTrue(file.exists());
 	}
 
 	private void _assertForcePredictableOperationId(String filesPath)
 		throws Exception {
 
-		File queryJavaFile = new File(
+		File file = new File(
 			filesPath.concat(
 				"/sample-impl/src/main/java/com/example/sample/internal" +
 					"/graphql/query/v1_0_0/Query.java"));
 
 		String text = new String(
-			Files.readAllBytes(queryJavaFile.toPath()), StandardCharsets.UTF_8);
+			Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
 
 		Assert.assertFalse(text.contains("ForcePredictableOperationIdTest"));
 	}
@@ -110,13 +126,13 @@ public class RESTBuilderTest {
 			String filesPath, String resourceName, String propertyName)
 		throws Exception {
 
-		File dtoResourceFile = new File(
+		File file = new File(
 			_getResourcePath(
 				filesPath,
 				"/sample-api/src/main/java/com/example/sample/dto/v1_0_0/",
 				resourceName, ".java"));
 
-		List<String> lines = Files.readAllLines(dtoResourceFile.toPath());
+		List<String> lines = Files.readAllLines(file.toPath());
 
 		Stream<String> stream = lines.stream();
 
@@ -138,13 +154,13 @@ public class RESTBuilderTest {
 			String filesPath, String resourceName, String xmlPropertyName)
 		throws Exception {
 
-		File dtoResourceFile = new File(
+		File file = new File(
 			_getResourcePath(
 				filesPath,
 				"/sample-api/src/main/java/com/example/sample/dto/v1_0_0/",
 				resourceName, ".java"));
 
-		List<String> lines = Files.readAllLines(dtoResourceFile.toPath());
+		List<String> lines = Files.readAllLines(file.toPath());
 
 		Stream<String> stream = lines.stream();
 

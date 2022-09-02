@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.PortletURLWrapper;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ProxyFactory;
@@ -66,6 +67,13 @@ public class WikiAttachmentImageHTMLEditorConfigContributorTest {
 	public void setUp() {
 		_inputEditorTaglibAttributes.put(
 			"liferay-ui:input-editor:name", "testEditor");
+
+		_wikiAttachmentImageHTMLEditorConfigContributor =
+			new WikiAttachmentImageHTMLEditorConfigContributor();
+
+		ReflectionTestUtil.setFieldValue(
+			_wikiAttachmentImageHTMLEditorConfigContributor, "_itemSelector",
+			_itemSelector);
 	}
 
 	@Test
@@ -98,15 +106,9 @@ public class WikiAttachmentImageHTMLEditorConfigContributorTest {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			originalJSONObject.toString());
 
-		WikiAttachmentImageHTMLEditorConfigContributor
-			wikiAttachmentImageHTMLEditorConfigContributor =
-				new WikiAttachmentImageHTMLEditorConfigContributor();
-
-		wikiAttachmentImageHTMLEditorConfigContributor.setItemSelector(
-			_itemSelector);
-
-		wikiAttachmentImageHTMLEditorConfigContributor.populateConfigJSONObject(
-			jsonObject, _inputEditorTaglibAttributes, null, null);
+		_wikiAttachmentImageHTMLEditorConfigContributor.
+			populateConfigJSONObject(
+				jsonObject, _inputEditorTaglibAttributes, null, null);
 
 		JSONAssert.assertEquals(
 			JSONUtil.put(
@@ -158,13 +160,7 @@ public class WikiAttachmentImageHTMLEditorConfigContributorTest {
 
 		JSONObject jsonObject = getJSONObjectWithDefaultItemSelectorURL();
 
-		WikiAttachmentImageHTMLEditorConfigContributor
-			wikiAttachmentImageHTMLEditorConfigContributor =
-				new WikiAttachmentImageHTMLEditorConfigContributor();
-
-		wikiAttachmentImageHTMLEditorConfigContributor.setItemSelector(
-			_itemSelector);
-		wikiAttachmentImageHTMLEditorConfigContributor.
+		_wikiAttachmentImageHTMLEditorConfigContributor.
 			setWikiFileUploadConfiguration(
 				new WikiFileUploadConfiguration() {
 
@@ -180,9 +176,10 @@ public class WikiAttachmentImageHTMLEditorConfigContributorTest {
 
 				});
 
-		wikiAttachmentImageHTMLEditorConfigContributor.populateConfigJSONObject(
-			jsonObject, _inputEditorTaglibAttributes, new ThemeDisplay(),
-			requestBackedPortletURLFactory);
+		_wikiAttachmentImageHTMLEditorConfigContributor.
+			populateConfigJSONObject(
+				jsonObject, _inputEditorTaglibAttributes, new ThemeDisplay(),
+				requestBackedPortletURLFactory);
 
 		JSONAssert.assertEquals(
 			JSONUtil.put(
@@ -210,15 +207,9 @@ public class WikiAttachmentImageHTMLEditorConfigContributorTest {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			originalJSONObject.toString());
 
-		WikiAttachmentImageHTMLEditorConfigContributor
-			wikiAttachmentImageHTMLEditorConfigContributor =
-				new WikiAttachmentImageHTMLEditorConfigContributor();
-
-		wikiAttachmentImageHTMLEditorConfigContributor.setItemSelector(
-			_itemSelector);
-
-		wikiAttachmentImageHTMLEditorConfigContributor.populateConfigJSONObject(
-			jsonObject, _inputEditorTaglibAttributes, null, null);
+		_wikiAttachmentImageHTMLEditorConfigContributor.
+			populateConfigJSONObject(
+				jsonObject, _inputEditorTaglibAttributes, null, null);
 
 		JSONObject expectedJSONObject = JSONFactoryUtil.createJSONObject(
 			originalJSONObject.toString());
@@ -242,15 +233,9 @@ public class WikiAttachmentImageHTMLEditorConfigContributorTest {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
 			originalJSONObject.toString());
 
-		WikiAttachmentImageHTMLEditorConfigContributor
-			wikiAttachmentImageHTMLEditorConfigContributor =
-				new WikiAttachmentImageHTMLEditorConfigContributor();
-
-		wikiAttachmentImageHTMLEditorConfigContributor.setItemSelector(
-			_itemSelector);
-
-		wikiAttachmentImageHTMLEditorConfigContributor.populateConfigJSONObject(
-			jsonObject, _inputEditorTaglibAttributes, null, null);
+		_wikiAttachmentImageHTMLEditorConfigContributor.
+			populateConfigJSONObject(
+				jsonObject, _inputEditorTaglibAttributes, null, null);
 
 		JSONObject expectedJSONObject = JSONFactoryUtil.createJSONObject(
 			originalJSONObject.toString());
@@ -288,5 +273,7 @@ public class WikiAttachmentImageHTMLEditorConfigContributorTest {
 	private final Map<String, Object> _inputEditorTaglibAttributes =
 		new HashMap<>();
 	private final ItemSelector _itemSelector = Mockito.mock(ItemSelector.class);
+	private WikiAttachmentImageHTMLEditorConfigContributor
+		_wikiAttachmentImageHTMLEditorConfigContributor;
 
 }

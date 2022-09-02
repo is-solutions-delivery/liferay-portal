@@ -397,6 +397,12 @@ public class JSONServerServlet extends HttpServlet {
 
 			String path = httpServletRequest.getPathInfo();
 
+			String queryString = httpServletRequest.getQueryString();
+
+			if ((queryString != null) && !queryString.isEmpty()) {
+				path = StringBundler.concat(path, "?", queryString);
+			}
+
 			List<String> parts = StringUtil.split(path, '/');
 
 			if (parts.isEmpty()) {

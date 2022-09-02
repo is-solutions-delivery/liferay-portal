@@ -21,17 +21,14 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -56,45 +53,33 @@ public class EntityFieldConfigurationFieldOptionsProvider
 
 	@Override
 	public List<Option> getOptions() {
-		return Optional.of(
-			_options
-		).orElse(
-			Collections.emptyList()
-		);
+		return _options;
 	}
 
 	@Activate
 	@Modified
 	protected void activate() {
+		List<Option> options = new ArrayList<>();
+
 		Map<String, EntityField> entityFieldsMap =
 			_entityModel.getEntityFieldsMap();
 
-		Set<Map.Entry<String, EntityField>> entries =
-			entityFieldsMap.entrySet();
+		for (EntityField entityField : entityFieldsMap.values()) {
+			if (Objects.equals(
+					entityField.getType(), EntityField.Type.STRING)) {
 
-		Stream<Map.Entry<String, EntityField>> stream = entries.stream();
-
-		_options = stream.filter(
-			entry -> {
-				EntityField entityField = entry.getValue();
-
-				return Objects.equals(
-					entityField.getType(), EntityField.Type.STRING);
+				options.add(_toOption(entityField.getName()));
 			}
-		).map(
-			Map.Entry::getKey
-		).map(
-			this::_toOption
-		).sorted(
-			Comparator.comparing(Option::getValue)
-		).collect(
-			Collectors.toList()
-		);
+		}
+
+		Collections.sort(options, Comparator.comparing(Option::getValue));
+
+		_options = options;
 	}
 
 	@Deactivate
 	protected void deactivate() {
-		_options = null;
+		_options = Collections.emptyList();
 	}
 
 	private Option _toOption(String value) {

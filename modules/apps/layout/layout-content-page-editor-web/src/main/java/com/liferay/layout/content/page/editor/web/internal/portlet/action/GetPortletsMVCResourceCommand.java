@@ -28,7 +28,9 @@ import com.liferay.portal.kernel.model.PortletCategory;
 import com.liferay.portal.kernel.model.PortletItem;
 import com.liferay.portal.kernel.model.PortletPreferences;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
+import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletConfigFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -38,10 +40,13 @@ import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -54,7 +59,10 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.portlet.PortletConfig;
 import javax.portlet.ResourceRequest;
@@ -111,7 +119,32 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 		}
 	}
 
+	private Set<String> _getHighlightedPortletIds(
+		HttpServletRequest httpServletRequest,
+		PortletCategory highlightedPortletCategory) {
+
+		Set<String> highlightedPortletIds = new TreeSet<>(
+			highlightedPortletCategory.getPortletIds());
+
+		PortalPreferences portalPreferences =
+			_portletPreferencesFactory.getPortalPreferences(httpServletRequest);
+
+		highlightedPortletIds.removeAll(
+			SetUtil.fromArray(
+				portalPreferences.getValues(
+					ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
+					"nonhighlightedPortletIds", new String[0])));
+		highlightedPortletIds.addAll(
+			SetUtil.fromArray(
+				portalPreferences.getValues(
+					ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
+					"highlightedPortletIds", new String[0])));
+
+		return highlightedPortletIds;
+	}
+
 	private JSONArray _getPortletCategoriesJSONArray(
+			Set<String> highlightedPortletIds,
 			HttpServletRequest httpServletRequest,
 			PortletCategory portletCategory, ThemeDisplay themeDisplay)
 		throws Exception {
@@ -134,8 +167,8 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 				JSONUtil.put(
 					"categories",
 					_getPortletCategoriesJSONArray(
-						httpServletRequest, currentPortletCategory,
-						themeDisplay)
+						highlightedPortletIds, httpServletRequest,
+						currentPortletCategory, themeDisplay)
 				).put(
 					"path",
 					StringUtil.replace(
@@ -144,8 +177,8 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 				).put(
 					"portlets",
 					_getPortletsJSONArray(
-						httpServletRequest, currentPortletCategory,
-						themeDisplay)
+						highlightedPortletIds, httpServletRequest,
+						currentPortletCategory, themeDisplay)
 				).put(
 					"title",
 					_getPortletCategoryTitle(
@@ -226,11 +259,20 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 	}
 
 	private List<Portlet> _getPortlets(
-		PortletCategory portletCategory, ThemeDisplay themeDisplay) {
+		Set<String> highlightedPortletIds, PortletCategory portletCategory,
+		ThemeDisplay themeDisplay) {
 
 		List<Portlet> portlets = new ArrayList<>();
 
-		for (String portletId : portletCategory.getPortletIds()) {
+		Set<String> portletIds = portletCategory.getPortletIds();
+
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158737")) &&
+			Objects.equals(portletCategory.getName(), "category.highlighted")) {
+
+			portletIds = highlightedPortletIds;
+		}
+
+		for (String portletId : portletIds) {
 			Portlet portlet = _portletLocalService.getPortletById(
 				themeDisplay.getCompanyId(), portletId);
 
@@ -262,6 +304,29 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 	}
 
 	private JSONArray _getPortletsJSONArray(
+			HttpServletRequest httpServletRequest, ThemeDisplay themeDisplay)
+		throws Exception {
+
+		PortletCategory rootPortletCategory = (PortletCategory)WebAppPool.get(
+			themeDisplay.getCompanyId(), WebKeys.PORTLET_CATEGORY);
+
+		PortletCategory highlightedPortletCategory =
+			rootPortletCategory.getCategory("category.highlighted");
+
+		PortletCategory portletCategory =
+			PortletCategoryUtil.getRelevantPortletCategory(
+				themeDisplay.getPermissionChecker(),
+				themeDisplay.getCompanyId(), themeDisplay.getLayout(),
+				rootPortletCategory, themeDisplay.getLayoutTypePortlet());
+
+		return _getPortletCategoriesJSONArray(
+			_getHighlightedPortletIds(
+				httpServletRequest, highlightedPortletCategory),
+			httpServletRequest, portletCategory, themeDisplay);
+	}
+
+	private JSONArray _getPortletsJSONArray(
+			Set<String> highlightedPortletIds,
 			HttpServletRequest httpServletRequest,
 			PortletCategory portletCategory, ThemeDisplay themeDisplay)
 		throws Exception {
@@ -272,7 +337,8 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 
 		ServletContext servletContext = httpSession.getServletContext();
 
-		List<Portlet> portlets = _getPortlets(portletCategory, themeDisplay);
+		List<Portlet> portlets = _getPortlets(
+			highlightedPortletIds, portletCategory, themeDisplay);
 
 		portlets = ListUtil.sort(
 			portlets,
@@ -282,6 +348,9 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 		for (Portlet portlet : portlets) {
 			jsonArray.put(
 				JSONUtil.put(
+					"highlighted",
+					highlightedPortletIds.contains(portlet.getPortletId())
+				).put(
 					"instanceable", portlet.isInstanceable()
 				).put(
 					"portletId", portlet.getPortletId()
@@ -296,22 +365,6 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 		}
 
 		return jsonArray;
-	}
-
-	private JSONArray _getPortletsJSONArray(
-			HttpServletRequest httpServletRequest, ThemeDisplay themeDisplay)
-		throws Exception {
-
-		PortletCategory portletCategory = (PortletCategory)WebAppPool.get(
-			themeDisplay.getCompanyId(), WebKeys.PORTLET_CATEGORY);
-
-		portletCategory = PortletCategoryUtil.getRelevantPortletCategory(
-			themeDisplay.getPermissionChecker(), themeDisplay.getCompanyId(),
-			themeDisplay.getLayout(), portletCategory,
-			themeDisplay.getLayoutTypePortlet());
-
-		return _getPortletCategoriesJSONArray(
-			httpServletRequest, portletCategory, themeDisplay);
 	}
 
 	private static final String[] _UNSUPPORTED_PORTLETS_NAMES = {
@@ -332,6 +385,9 @@ public class GetPortletsMVCResourceCommand extends BaseMVCResourceCommand {
 
 	@Reference
 	private PortletLocalService _portletLocalService;
+
+	@Reference
+	private PortletPreferencesFactory _portletPreferencesFactory;
 
 	@Reference
 	private PortletPreferencesLocalService _portletPreferencesLocalService;

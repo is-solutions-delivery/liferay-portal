@@ -129,6 +129,9 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
 				JSONUtil.put(
+					"allVersions",
+					_getAllVersionsJSONArray(contentDashboardItem, themeDisplay)
+				).put(
 					"className", _getClassName(contentDashboardItem)
 				).put(
 					"classPK", _getClassPK(contentDashboardItem)
@@ -152,6 +155,9 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 						contentDashboardItem, httpServletRequest)
 				).put(
 					"languageTag", locale.toLanguageTag()
+				).put(
+					"latestVersions",
+					_getLatestVersionsJSONArray(contentDashboardItem, locale)
 				).put(
 					"modifiedDate",
 					_toString(contentDashboardItem.getModifiedDate())
@@ -191,9 +197,6 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 					"user",
 					_getUserJSONObject(contentDashboardItem, themeDisplay)
 				).put(
-					"versions",
-					_getVersionsJSONArray(contentDashboardItem, locale)
-				).put(
 					"viewURLs",
 					_getViewURLsJSONArray(
 						contentDashboardItem, httpServletRequest)
@@ -216,6 +219,20 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 						ResourceBundleUtil.getBundle(locale, getClass()),
 						"an-unexpected-error-occurred")));
 		}
+	}
+
+	private JSONArray _getAllVersionsJSONArray(
+		ContentDashboardItem contentDashboardItem, ThemeDisplay themeDisplay) {
+
+		List<ContentDashboardItem.Version> allVersions =
+			contentDashboardItem.getAllVersions(themeDisplay);
+
+		Stream<ContentDashboardItem.Version> stream = allVersions.stream();
+
+		return JSONUtil.putAll(
+			stream.map(
+				ContentDashboardItem.Version::toJSONObject
+			).toArray());
 	}
 
 	private JSONArray _getAssetTagsJSONArray(
@@ -376,6 +393,20 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 		return null;
 	}
 
+	private JSONArray _getLatestVersionsJSONArray(
+		ContentDashboardItem contentDashboardItem, Locale locale) {
+
+		List<ContentDashboardItem.Version> latestVersions =
+			contentDashboardItem.getLatestVersions(locale);
+
+		Stream<ContentDashboardItem.Version> stream = latestVersions.stream();
+
+		return JSONUtil.putAll(
+			stream.map(
+				ContentDashboardItem.Version::toJSONObject
+			).toArray());
+	}
+
 	private JSONObject _getSpecificFieldsJSONObject(
 		ContentDashboardItem contentDashboardItem, Locale locale) {
 
@@ -514,20 +545,6 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 		).put(
 			"userId", contentDashboardItem.getUserId()
 		);
-	}
-
-	private JSONArray _getVersionsJSONArray(
-		ContentDashboardItem contentDashboardItem, Locale locale) {
-
-		List<ContentDashboardItem.Version> versions =
-			contentDashboardItem.getVersions(locale);
-
-		Stream<ContentDashboardItem.Version> stream = versions.stream();
-
-		return JSONUtil.putAll(
-			stream.map(
-				ContentDashboardItem.Version::toJSONObject
-			).toArray());
 	}
 
 	private JSONArray _getViewURLsJSONArray(
