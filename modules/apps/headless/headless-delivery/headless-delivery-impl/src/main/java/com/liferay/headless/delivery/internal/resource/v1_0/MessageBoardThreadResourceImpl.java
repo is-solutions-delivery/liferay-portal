@@ -14,6 +14,7 @@
 
 package com.liferay.headless.delivery.internal.resource.v1_0;
 
+import com.liferay.dynamic.data.mapping.expression.model.Term;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
@@ -44,6 +45,7 @@ import com.liferay.message.boards.util.comparator.ThreadCreateDateComparator;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.dao.orm.hibernate.QueryImpl;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
@@ -56,7 +58,10 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
+import com.liferay.portal.kernel.search.filter.TermsFilter;
+import com.liferay.portal.kernel.search.generic.TermQueryImpl;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
@@ -141,6 +146,45 @@ public class MessageBoardThreadResourceImpl
 					_portal.getClassNameId(MBMessage.class.getName()),
 					contextCompany.getCompanyId(), _expandoBridgeIndexer,
 					_expandoColumnLocalService, _expandoTableLocalService)));
+	}
+
+	@Override
+	public Page<MessageBoardThread>
+			getMessageBoardSectionFilteredMessageBoardThreadsPage(
+				Long messageBoardSectionId, String search, String tag,
+				Aggregation aggregation, Filter filter, Pagination pagination,
+				Sort[] sorts)
+		throws Exception {
+
+		MBCategory mbCategory = _mbCategoryService.getCategory(
+			messageBoardSectionId);
+
+		int status = WorkflowConstants.STATUS_APPROVED;
+
+		QueryFilter queryFilter = (QueryFilter) filter;
+		String field = queryFilter.getField();
+		String value = queryFilter.getValue();
+
+
+		return Page.of(
+			TransformUtil.transform(
+				_mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
+					mbCategory.getGroupId(), messageBoardSectionId, field,
+					new QueryDefinition<>(
+						status, contextUser.getUserId(), true,
+						pagination.getStartPosition(),
+						pagination.getEndPosition(),
+						new ThreadCreateDateComparator()),
+					search, sorts, tag, value),
+				this::_toMessageBoardThread),
+			pagination,
+			_mbThreadService.getMessageBoardSectionMessageBoardThreadsPageCount(
+				mbCategory.getGroupId(), messageBoardSectionId, field,
+				new QueryDefinition<>(
+					status, contextUser.getUserId(), true,
+					pagination.getStartPosition(), pagination.getEndPosition(),
+					new ThreadCreateDateComparator()),
+				search, sorts, tag, value));
 	}
 
 	@Override

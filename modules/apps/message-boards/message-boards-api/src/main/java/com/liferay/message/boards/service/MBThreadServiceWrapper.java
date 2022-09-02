@@ -131,6 +131,36 @@ public class MBThreadServiceWrapper
 			groupId, userId, status, subscribed, includeAnonymous);
 	}
 
+	@Override
+	public java.util.List<MBThread>
+			getMessageBoardSectionMessageBoardThreadsPage(
+				long groupId, long categoryId, String field,
+				com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+					queryDefinition,
+				String search, com.liferay.portal.kernel.search.Sort[] sorts,
+				String tag, String value)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		return _mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
+			groupId, categoryId, field, queryDefinition, search, sorts, tag,
+			value);
+	}
+
+	@Override
+	public int getMessageBoardSectionMessageBoardThreadsPageCount(
+			long groupId, long categoryId, String field,
+			com.liferay.portal.kernel.dao.orm.QueryDefinition<MBThread>
+				queryDefinition,
+			String search, com.liferay.portal.kernel.search.Sort[] sorts,
+			String tag, String value)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		return _mbThreadService.
+			getMessageBoardSectionMessageBoardThreadsPageCount(
+				groupId, categoryId, field, queryDefinition, search, sorts, tag,
+				value);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
