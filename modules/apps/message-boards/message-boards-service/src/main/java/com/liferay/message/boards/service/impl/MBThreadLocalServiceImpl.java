@@ -40,18 +40,13 @@ import com.liferay.message.boards.service.persistence.MBCategoryPersistence;
 import com.liferay.message.boards.service.persistence.MBMessageFinder;
 import com.liferay.message.boards.service.persistence.MBMessagePersistence;
 import com.liferay.message.boards.util.comparator.MessageThreadComparator;
-import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
-import com.liferay.petra.sql.dsl.expression.Expression;
 import com.liferay.petra.sql.dsl.expression.Predicate;
-import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.petra.sql.dsl.query.JoinStep;
-import com.liferay.petra.sql.dsl.query.WhereStep;
 import com.liferay.petra.sql.dsl.query.sort.OrderByExpression;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.increment.BufferedIncrement;
 import com.liferay.portal.kernel.increment.DateOverrideIncrement;
@@ -104,6 +99,7 @@ import com.liferay.trash.service.TrashVersionLocalService;
 import com.liferay.view.count.model.ViewCountEntryTable;
 
 import java.sql.Types;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -113,8 +109,6 @@ import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
 /**
  * @author Brian Wing Shun Chan
@@ -488,24 +482,23 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if (Validator.isNotNull(numberOfMessageBoardMessages)) {
-			predicate = predicate.and(DSLQueryFactoryUtil.scalarSubDSLQuery(
-				DSLQueryFactoryUtil.count(
-				).from(
-					MBMessageTable.INSTANCE
-				).where(
-					MBMessageTable.INSTANCE.messageId.neq(
-						MBThreadTable.INSTANCE.rootMessageId
-					).and(
-						MBMessageTable.INSTANCE.threadId.eq(
-							MBThreadTable.INSTANCE.threadId
+			predicate = predicate.and(
+				DSLQueryFactoryUtil.scalarSubDSLQuery(
+					DSLQueryFactoryUtil.count(
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBMessageTable.INSTANCE.messageId.neq(
+							MBThreadTable.INSTANCE.rootMessageId
+						).and(
+							MBMessageTable.INSTANCE.threadId.eq(
+								MBThreadTable.INSTANCE.threadId)
 						)
-					)
-				),
-				Long.class,
-				null,
-				Types.BIGINT
-			).eq(
-				Long.valueOf(numberOfMessageBoardMessages)));
+					),
+					Long.class, null, Types.BIGINT
+				).eq(
+					Long.valueOf(numberOfMessageBoardMessages)
+				));
 		}
 
 		if (Objects.equals(hasValidAnswer, "false")) {
@@ -676,24 +669,23 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		}
 
 		if (Validator.isNotNull(numberOfMessageBoardMessages)) {
-			predicate = predicate.and(DSLQueryFactoryUtil.scalarSubDSLQuery(
-				DSLQueryFactoryUtil.count(
-				).from(
-					MBMessageTable.INSTANCE
-				).where(
-					MBMessageTable.INSTANCE.messageId.neq(
-						MBThreadTable.INSTANCE.rootMessageId
-					).and(
-						MBMessageTable.INSTANCE.threadId.eq(
-							MBThreadTable.INSTANCE.threadId
+			predicate = predicate.and(
+				DSLQueryFactoryUtil.scalarSubDSLQuery(
+					DSLQueryFactoryUtil.count(
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBMessageTable.INSTANCE.messageId.neq(
+							MBThreadTable.INSTANCE.rootMessageId
+						).and(
+							MBMessageTable.INSTANCE.threadId.eq(
+								MBThreadTable.INSTANCE.threadId)
 						)
-					)
-				),
-				Long.class,
-				null,
-				Types.BIGINT
-			).eq(
-				Long.valueOf(numberOfMessageBoardMessages)));
+					),
+					Long.class, null, Types.BIGINT
+				).eq(
+					Long.valueOf(numberOfMessageBoardMessages)
+				));
 		}
 
 		if (Objects.equals(hasValidAnswer, "false")) {
