@@ -228,8 +228,8 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			messageBoardThreadResource.
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
 					messageBoardSectionId, RandomTestUtil.randomString(),
-					RandomTestUtil.randomString(), null,
-					RandomTestUtil.randomString(), null, null,
+					RandomTestUtil.randomString(),
+					RandomTestUtil.randomString(), null, null, null,
 					Pagination.of(1, 10), null);
 
 		Assert.assertEquals(0, page.getTotalCount());

@@ -52,7 +52,7 @@ public interface MessageBoardThreadResource {
 	public Page<MessageBoardThread>
 			getMessageBoardSectionFilteredMessageBoardThreadsPage(
 				Long messageBoardSectionId, String hasValidAnswer,
-				String numberOfMessageBoardMessages, String search, String tag,
+				String numberOfMessageBoardMessages, String tag, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 		throws Exception;
@@ -60,7 +60,7 @@ public interface MessageBoardThreadResource {
 	public HttpInvoker.HttpResponse
 			getMessageBoardSectionFilteredMessageBoardThreadsPageHttpResponse(
 				Long messageBoardSectionId, String hasValidAnswer,
-				String numberOfMessageBoardMessages, String search, String tag,
+				String numberOfMessageBoardMessages, String tag, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 		throws Exception;
@@ -356,15 +356,16 @@ public interface MessageBoardThreadResource {
 		public Page<MessageBoardThread>
 				getMessageBoardSectionFilteredMessageBoardThreadsPage(
 					Long messageBoardSectionId, String hasValidAnswer,
-					String numberOfMessageBoardMessages, String search,
-					String tag, List<String> aggregations, String filterString,
-					Pagination pagination, String sortString)
+					String numberOfMessageBoardMessages, String tag,
+					String search, List<String> aggregations,
+					String filterString, Pagination pagination,
+					String sortString)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
 				getMessageBoardSectionFilteredMessageBoardThreadsPageHttpResponse(
 					messageBoardSectionId, hasValidAnswer,
-					numberOfMessageBoardMessages, search, tag, aggregations,
+					numberOfMessageBoardMessages, tag, search, aggregations,
 					filterString, pagination, sortString);
 
 			String content = httpResponse.getContent();
@@ -407,9 +408,10 @@ public interface MessageBoardThreadResource {
 		public HttpInvoker.HttpResponse
 				getMessageBoardSectionFilteredMessageBoardThreadsPageHttpResponse(
 					Long messageBoardSectionId, String hasValidAnswer,
-					String numberOfMessageBoardMessages, String search,
-					String tag, List<String> aggregations, String filterString,
-					Pagination pagination, String sortString)
+					String numberOfMessageBoardMessages, String tag,
+					String search, List<String> aggregations,
+					String filterString, Pagination pagination,
+					String sortString)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -444,12 +446,12 @@ public interface MessageBoardThreadResource {
 					String.valueOf(numberOfMessageBoardMessages));
 			}
 
-			if (search != null) {
-				httpInvoker.parameter("search", String.valueOf(search));
-			}
-
 			if (tag != null) {
 				httpInvoker.parameter("tag", String.valueOf(tag));
+			}
+
+			if (search != null) {
+				httpInvoker.parameter("search", String.valueOf(search));
 			}
 
 			if (filterString != null) {
