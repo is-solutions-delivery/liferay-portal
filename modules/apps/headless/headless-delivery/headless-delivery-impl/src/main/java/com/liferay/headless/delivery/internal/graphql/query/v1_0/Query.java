@@ -2398,8 +2398,8 @@ public class Query {
 				@GraphQLName("hasValidAnswer") String hasValidAnswer,
 				@GraphQLName("numberOfMessageBoardMessages") String
 					numberOfMessageBoardMessages,
-				@GraphQLName("search") String search,
 				@GraphQLName("tag") String tag,
+				@GraphQLName("search") String search,
 				@GraphQLName("aggregation") List<String> aggregations,
 				@GraphQLName("filter") String filterString,
 				@GraphQLName("pageSize") int pageSize,
@@ -2414,7 +2414,7 @@ public class Query {
 				messageBoardThreadResource.
 					getMessageBoardSectionFilteredMessageBoardThreadsPage(
 						messageBoardSectionId, hasValidAnswer,
-						numberOfMessageBoardMessages, search, tag,
+						numberOfMessageBoardMessages, tag, search,
 						_aggregationBiFunction.apply(
 							messageBoardThreadResource, aggregations),
 						_filterBiFunction.apply(
@@ -4082,8 +4082,8 @@ public class Query {
 				@GraphQLName("hasValidAnswer") String hasValidAnswer,
 				@GraphQLName("numberOfMessageBoardMessages") String
 					numberOfMessageBoardMessages,
-				@GraphQLName("search") String search,
 				@GraphQLName("tag") String tag,
+				@GraphQLName("search") String search,
 				@GraphQLName("aggregation") List<String> aggregations,
 				@GraphQLName("filter") String filterString,
 				@GraphQLName("pageSize") int pageSize,
@@ -4098,7 +4098,7 @@ public class Query {
 					messageBoardThreadResource.
 						getMessageBoardSectionFilteredMessageBoardThreadsPage(
 							_messageBoardSection.getId(), hasValidAnswer,
-							numberOfMessageBoardMessages, search, tag,
+							numberOfMessageBoardMessages, tag, search,
 							_aggregationBiFunction.apply(
 								messageBoardThreadResource, aggregations),
 							_filterBiFunction.apply(
