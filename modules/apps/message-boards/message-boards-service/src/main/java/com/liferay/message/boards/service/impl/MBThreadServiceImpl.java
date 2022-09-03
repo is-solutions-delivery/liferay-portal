@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -319,7 +318,11 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
-		throws PrincipalException {
+		throws PortalException {
+
+		ModelResourcePermissionUtil.check(
+			_categoryModelResourcePermission, getPermissionChecker(), groupId,
+			categoryId, ActionKeys.VIEW);
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPage(
@@ -334,7 +337,11 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
-		throws PrincipalException {
+		throws PortalException {
+
+		ModelResourcePermissionUtil.check(
+			_categoryModelResourcePermission, getPermissionChecker(), groupId,
+			categoryId, ActionKeys.VIEW);
 
 		return mbThreadLocalService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(

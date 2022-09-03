@@ -130,7 +130,7 @@ public class MBThreadServiceUtil {
 				queryDefinition,
 			String search, com.liferay.portal.kernel.search.Sort[] sorts,
 			String tag)
-		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+		throws PortalException {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPage(
 			groupId, categoryId, hasValidAnswer, numberOfMessageBoardMessages,
@@ -144,7 +144,7 @@ public class MBThreadServiceUtil {
 				queryDefinition,
 			String search, com.liferay.portal.kernel.search.Sort[] sorts,
 			String tag)
-		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+		throws PortalException {
 
 		return getService().getMessageBoardSectionMessageBoardThreadsPageCount(
 			groupId, categoryId, hasValidAnswer, numberOfMessageBoardMessages,

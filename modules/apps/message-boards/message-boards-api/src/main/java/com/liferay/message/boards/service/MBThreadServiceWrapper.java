@@ -140,7 +140,7 @@ public class MBThreadServiceWrapper
 					queryDefinition,
 				String search, com.liferay.portal.kernel.search.Sort[] sorts,
 				String tag)
-		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _mbThreadService.getMessageBoardSectionMessageBoardThreadsPage(
 			groupId, categoryId, hasValidAnswer, numberOfMessageBoardMessages,
@@ -155,7 +155,7 @@ public class MBThreadServiceWrapper
 				queryDefinition,
 			String search, com.liferay.portal.kernel.search.Sort[] sorts,
 			String tag)
-		throws com.liferay.portal.kernel.security.auth.PrincipalException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _mbThreadService.
 			getMessageBoardSectionMessageBoardThreadsPageCount(
