@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
-import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.BaseService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
@@ -118,7 +117,7 @@ public interface MBThreadService extends BaseService {
 			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
-		throws PrincipalException;
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getMessageBoardSectionMessageBoardThreadsPageCount(
@@ -126,7 +125,7 @@ public interface MBThreadService extends BaseService {
 			String numberOfMessageBoardMessages,
 			QueryDefinition<MBThread> queryDefinition, String search,
 			Sort[] sorts, String tag)
-		throws PrincipalException;
+		throws PortalException;
 
 	/**
 	 * Returns the OSGi service identifier.
