@@ -1123,6 +1123,20 @@ public class SQLDSLTest {
 			"(select count(MainExample.mainExampleId) from MainExample" +
 				") as mainExampleField",
 			scalarSubDSLQuery.toString());
+
+		scalarSubDSLQuery =
+			(ScalarDSLQueryAlias)DSLQueryFactoryUtil.scalarSubDSLQuery(
+				DSLQueryFactoryUtil.select(
+					DSLFunctionFactoryUtil.count(
+						MainExampleTable.INSTANCE.mainExampleIdColumn)
+				).from(
+					MainExampleTable.INSTANCE
+				),
+				Long.class, null, Types.BIGINT);
+
+		Assert.assertEquals(
+			"(select count(MainExample.mainExampleId) from MainExample)",
+			scalarSubDSLQuery.toString());
 	}
 
 	@Test
