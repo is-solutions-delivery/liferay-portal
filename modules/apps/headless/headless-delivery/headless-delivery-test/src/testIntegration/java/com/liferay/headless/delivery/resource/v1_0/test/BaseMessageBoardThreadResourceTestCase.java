@@ -23,14 +23,17 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import com.liferay.headless.delivery.client.dto.v1_0.Field;
+import com.liferay.headless.delivery.client.dto.v1_0.MessageBoardSection;
 import com.liferay.headless.delivery.client.dto.v1_0.MessageBoardThread;
 import com.liferay.headless.delivery.client.dto.v1_0.Rating;
 import com.liferay.headless.delivery.client.http.HttpInvoker;
 import com.liferay.headless.delivery.client.pagination.Page;
 import com.liferay.headless.delivery.client.pagination.Pagination;
 import com.liferay.headless.delivery.client.permission.Permission;
+import com.liferay.headless.delivery.client.resource.v1_0.MessageBoardSectionResource;
 import com.liferay.headless.delivery.client.resource.v1_0.MessageBoardThreadResource;
 import com.liferay.headless.delivery.client.serdes.v1_0.MessageBoardThreadSerDes;
+import com.liferay.message.boards.model.MBCategory;
 import com.liferay.petra.function.UnsafeTriConsumer;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
@@ -610,13 +613,25 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			postMessageBoardSectionMessageBoardThread(
 				messageBoardSectionId, messageBoardThread);
 	}
-
-	protected Long
+	@Test
+	public Long
 			testGetMessageBoardSectionFilteredMessageBoardThreadsPage_getMessageBoardSectionId()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		MessageBoardSectionResource.Builder builder =
+			MessageBoardSectionResource.builder();
+
+		_messageBoardSectionResource = builder.authentication(
+			"test@liferay.com", "test"
+		).locale(
+			LocaleUtil.getDefault()
+		).build();
+		MessageBoardSection messageBoardSection = new MessageBoardSection();
+		messageBoardSection.setTitle("Topic 01");
+		messageBoardSection = _messageBoardSectionResource.postSiteMessageBoardSection(GroupTestUtil.addGroup().getGroupId(),messageBoardSection);
+
+		return messageBoardSection.getParentMessageBoardSectionId();
+
 	}
 
 	protected Long
@@ -3830,6 +3845,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 	}
 
 	protected MessageBoardThreadResource messageBoardThreadResource;
+	private MessageBoardSectionResource _messageBoardSectionResource;
 	protected Group irrelevantGroup;
 	protected Company testCompany;
 	protected Group testGroup;
