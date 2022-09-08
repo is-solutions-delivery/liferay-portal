@@ -10,13 +10,14 @@
  */
 
 import React, {useEffect, useRef} from 'react';
-import RoundedGroupButtons from '../../../../../../../../../common/components/RoundedGroupButtons';
+import RoundedGroupButtons from '../../../../../../../../../../../common/components/RoundedGroupButtons';
 import SubscriptionsDropDownMenu from './components/SubscriptionsDropdownMenu';
 import useUpdateShowDropDown from './hooks/useUpdateShowDropDown';
 
 const SubscriptionsNavbar = ({
+	firstselectedSubscriptionGroup,
+	handleChangeSubscriptionGroup,
 	selectedSubscriptionGroup,
-	setSelectedSubscriptionGroup,
 	subscriptionGroups,
 }) => {
 	const subscriptionNavbarRef = useRef();
@@ -24,16 +25,16 @@ const SubscriptionsNavbar = ({
 	const showDropDown = useUpdateShowDropDown();
 
 	useEffect(() => {
-		setSelectedSubscriptionGroup(subscriptionGroups[0]?.name);
+		firstselectedSubscriptionGroup(subscriptionGroups);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [subscriptionGroups]);
 
 	return (
 		<div className="d-flex rounded-pill w-100" ref={subscriptionNavbarRef}>
-			<nav className="mb-2 mt-4 pt-2">
-				{subscriptionGroups.length === 1 &&
-					subscriptionGroups.map((subscriptionGroup) => (
+			<div className="mb-2 mt-4 pt-2">
+				{subscriptionGroups?.length === 1 &&
+					subscriptionGroups?.map((subscriptionGroup) => (
 						<h5
 							className="text-brand-primary"
 							key={subscriptionGroup.name}
@@ -42,16 +43,16 @@ const SubscriptionsNavbar = ({
 						</h5>
 					))}
 
-				{subscriptionGroups.length > 1 &&
-					subscriptionGroups.length < 5 && (
+				{subscriptionGroups?.length > 1 &&
+					subscriptionGroups?.length < 5 && (
 						<>
 							{showDropDown && (
 								<SubscriptionsDropDownMenu
+									handleChangeSubscriptionGroup={
+										handleChangeSubscriptionGroup
+									}
 									selectedSubscriptionGroup={
 										selectedSubscriptionGroup
-									}
-									setSelectedSubscriptionGroup={
-										setSelectedSubscriptionGroup
 									}
 									subscriptionGroups={subscriptionGroups}
 								/>
@@ -66,25 +67,25 @@ const SubscriptionsNavbar = ({
 											value: subscriptionGroup.name,
 										})
 									)}
-									handleOnChange={(value) => {
-										setSelectedSubscriptionGroup(value);
-									}}
+									handleOnChange={(value) =>
+										handleChangeSubscriptionGroup(value)
+									}
 									id="subscription-navbar"
 								/>
 							)}
 						</>
 					)}
 
-				{subscriptionGroups.length > 4 && (
+				{subscriptionGroups?.length > 4 && (
 					<SubscriptionsDropDownMenu
-						selectedSubscriptionGroup={selectedSubscriptionGroup}
-						setSelectedSubscriptionGroup={
-							setSelectedSubscriptionGroup
+						handleChangeSubscriptionGroup={
+							handleChangeSubscriptionGroup
 						}
+						selectedSubscriptionGroup={selectedSubscriptionGroup}
 						subscriptionGroups={subscriptionGroups}
 					/>
 				)}
-			</nav>
+			</div>
 		</div>
 	);
 };

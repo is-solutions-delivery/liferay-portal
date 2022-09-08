@@ -9,5 +9,17 @@
  * distribution rights of the Software.
  */
 
-export * from './queries/useGetAccountSubscriptionGroups';
-export * from './queries/updateAccountSubscriptionGroups';
+export default function getSubscriptionsTermsColumnsWithoutProvisioned(
+	subscriptionsTermsColumns
+) {
+	const provisionedIndex = 1;
+
+	const columnsWithoutProvisioned = () => {
+		const customColumns = [...subscriptionsTermsColumns];
+		customColumns.splice(provisionedIndex, 1);
+
+		return customColumns;
+	};
+
+	return columnsWithoutProvisioned;
+}

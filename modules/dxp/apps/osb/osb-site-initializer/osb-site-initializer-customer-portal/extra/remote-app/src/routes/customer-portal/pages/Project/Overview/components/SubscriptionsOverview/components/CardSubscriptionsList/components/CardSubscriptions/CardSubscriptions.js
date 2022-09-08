@@ -11,12 +11,12 @@
 
 import {useModal} from '@clayui/modal';
 import {useState} from 'react';
-import i18n from '../../../../../../../../../common/I18n';
-import {StatusTag} from '../../../../../../../../../common/components';
-import {useAppPropertiesContext} from '../../../../../../../../../common/contexts/AppPropertiesContext';
-import {SLA_STATUS_TYPES} from '../../../../../../../../../common/utils/constants';
-import getDateCustomFormat from '../../../../../../../../../common/utils/getDateCustomFormat';
+import i18n from '../../../../../../../../../../../common/I18n';
+import {StatusTag} from '../../../../../../../../../../../common/components';
+import {SLA_STATUS_TYPES} from '../../../../../../../../../../../common/utils/constants';
+import getDateCustomFormat from '../../../../../../../../../../../common/utils/getDateCustomFormat';
 import ModalCardSubscriptions from './components/ModalCardSubscriptions/ModalCardSubscriptions';
+import useSubscriptionGroupsImage from './hooks/useSubscriptionGroupsImage';
 
 const dateFormat = {
 	day: '2-digit',
@@ -24,25 +24,18 @@ const dateFormat = {
 	year: 'numeric',
 };
 
-const SUBSCRIPTION_IMAGE_FILE = {
-	'Analytics': 'analytics_icon.svg',
-	'Commerce': 'commerce_icon.svg',
-	'DXP': 'dxp_icon.svg',
-	'Enterprise Search': 'enterprise_icon.svg',
-	'LXC-SM': 'dxp_icon.svg',
-	'Liferay Experience Cloud': 'dxp_icon.svg',
-	'Portal': 'portal_icon.svg',
-};
-
 const CardSubscriptions = ({
 	cardSubscriptionData,
 	selectedSubscriptionGroup,
 }) => {
-	const {liferayWebDAV} = useAppPropertiesContext();
 	const [visible, setVisible] = useState(false);
 	const {observer, onClose} = useModal({
 		onClose: () => setVisible(false),
 	});
+
+	const subscriptionGroupsImage = useSubscriptionGroupsImage(
+		selectedSubscriptionGroup
+	);
 
 	const subscriptionStatus = cardSubscriptionData.subscriptionStatus.toLowerCase();
 
@@ -55,28 +48,12 @@ const CardSubscriptions = ({
 
 	return (
 		<>
-			{visible && (
-				<ModalCardSubscriptions
-					accountSubscriptionERC={accountSubscriptionERC}
-					observer={observer}
-					onClose={onClose}
-					subscriptionGroup={selectedSubscriptionGroup}
-					subscriptionName={cardSubscriptionData.name}
-				/>
-			)}
 			<div
 				className="border border-light cp-card-subscription px-3 py-4 rounded"
 				onClick={() => setVisible(true)}
 			>
 				<div className="text-center">
-					<img
-						className="w-25"
-						src={`${liferayWebDAV}/assets/navigation-menu/${
-							SUBSCRIPTION_IMAGE_FILE[
-								selectedSubscriptionGroup
-							] || 'portal_icon.svg'
-						}`}
-					/>
+					<img className="w-25" src={subscriptionGroupsImage} />
 				</div>
 
 				<div className="mt-4">
@@ -109,6 +86,15 @@ const CardSubscriptions = ({
 					</div>
 				</div>
 			</div>
+			{visible && (
+				<ModalCardSubscriptions
+					accountSubscriptionERC={accountSubscriptionERC}
+					observer={observer}
+					onClose={onClose}
+					subscriptionGroup={selectedSubscriptionGroup}
+					subscriptionName={cardSubscriptionData.name}
+				/>
+			)}
 		</>
 	);
 };

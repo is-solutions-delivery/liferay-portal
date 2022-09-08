@@ -9,5 +9,4 @@
  * distribution rights of the Software.
  */
 
-export * from './queries/useGetAccountSubscriptionGroups';
-export * from './queries/updateAccountSubscriptionGroups';
+export {default} from './SubscriptionGroupsNavBar';

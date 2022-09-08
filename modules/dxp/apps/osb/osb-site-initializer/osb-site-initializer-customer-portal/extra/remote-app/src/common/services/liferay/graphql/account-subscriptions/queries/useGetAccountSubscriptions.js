@@ -11,48 +11,49 @@
 
 import {gql, useQuery} from '@apollo/client';
 
-const GET_ACCOUNT_SUBSCRIPTION_GROUPS = gql`
-	query getAccountSubscriptionGroups(
+const GET_ACCOUNT_SUBSCRIPTIONS = gql`
+	query getAccountSubscriptions(
 		$aggregation: [String]
 		$filter: String
 		$page: Int = 1
 		$pageSize: Int = 20
 		$search: String
-		$sort: String
 	) {
 		c {
-			accountSubscriptionGroups(
+			accountSubscriptions(
 				aggregation: $aggregation
 				filter: $filter
 				page: $page
 				pageSize: $pageSize
 				search: $search
-				sort: $sort
 			) {
 				items {
-					accountSubscriptionGroupId
 					accountKey
-					activationStatus
+					accountSubscriptionGroupERC
+					accountSubscriptionId
+					c_accountSubscriptionId
+					endDate
+					instanceSize
 					name
-					tabOrder
-					menuOrder
+					quantity
+					startDate
+					subscriptionStatus
 				}
 			}
 		}
 	}
 `;
 
-export function useGetAccountSubscriptionGroups(
+export function useGetAccountSubscriptions(
 	options = {
 		filter: '',
 		notifyOnNetworkStatusChange: false,
 		page: 1,
 		pageSize: 20,
 		skip: false,
-		sort: '',
 	}
 ) {
-	return useQuery(GET_ACCOUNT_SUBSCRIPTION_GROUPS, {
+	return useQuery(GET_ACCOUNT_SUBSCRIPTIONS, {
 		fetchPolicy: 'cache-and-network',
 		nextFetchPolicy: 'cache-first',
 		notifyOnNetworkStatusChange: options.notifyOnNetworkStatusChange,

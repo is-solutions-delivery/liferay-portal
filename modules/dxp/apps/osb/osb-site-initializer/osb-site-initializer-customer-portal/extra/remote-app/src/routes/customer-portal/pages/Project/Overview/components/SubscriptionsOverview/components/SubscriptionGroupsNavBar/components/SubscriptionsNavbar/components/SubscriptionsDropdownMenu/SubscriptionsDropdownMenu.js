@@ -9,14 +9,15 @@
  * distribution rights of the Software.
  */
 
-import {ClayButton, DropDown} from '@clayui/core';
+import ClayButton from '@clayui/button';
+import {DropDown} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
 import {useState} from 'react';
-import i18n from '../../../../../../../../../../../common/I18n';
+import i18n from '../../../../../../../../../../../../../common/I18n';
 
 const SubscriptionsDropdownMenu = ({
+	handleChangeSubscriptionGroup,
 	selectedSubscriptionGroup,
-	setSelectedSubscriptionGroup,
 	subscriptionGroups,
 }) => {
 	const [active, setActive] = useState(false);
@@ -47,7 +48,7 @@ const SubscriptionsDropdownMenu = ({
 					<DropDown.Item
 						key={subscriptionGroup.name}
 						onClick={(event) => {
-							setSelectedSubscriptionGroup(event.target.value);
+							handleChangeSubscriptionGroup(event.target.value);
 							setActive(false);
 						}}
 						symbolRight={
