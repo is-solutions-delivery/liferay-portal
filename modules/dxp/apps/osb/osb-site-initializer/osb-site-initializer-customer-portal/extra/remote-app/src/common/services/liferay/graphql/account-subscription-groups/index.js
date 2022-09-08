@@ -10,3 +10,4 @@
  */
 
 export * from './queries/useGetAccountSubscriptionGroups';
+export * from './queries/updateAccountSubscriptionGroups';
