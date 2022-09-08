@@ -49,6 +49,7 @@ export function useGetAccountSubscriptionGroups(
 		page: 1,
 		pageSize: 20,
 		skip: false,
+		sort: '',
 	}
 ) {
 	return useQuery(GET_ACCOUNT_SUBSCRIPTION_GROUPS, {
@@ -60,6 +61,7 @@ export function useGetAccountSubscriptionGroups(
 			filter: options.filter || '',
 			page: options.page || 1,
 			pageSize: options.pageSize || 20,
+			sort: options.sort || '',
 		},
 	});
 }
