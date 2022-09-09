@@ -101,13 +101,13 @@ public class MessageBoardMessageDTOConverter
 						MBMessage.class.getName(), mbMessage.getMessageId()));
 				anonymous = mbMessage.isAnonymous();
 				articleBody = mbMessage.getBody();
-				badge = "";
+				featuredDomain = "";
 				for (String featuredDomain : getFeaturedDomains(mbMessage.getGroupId()))  {
 					if (Validator.isNotNull(
 						getFeaturedDomains(mbMessage.getGroupId())) &&
 						StringUtil.endsWith(
 							user.getEmailAddress(), featuredDomain)) {
-						badge = featuredDomain;
+						this.featuredDomain = featuredDomain;
 					}
 				}
 				customFields = CustomFieldsUtil.toCustomFields(
