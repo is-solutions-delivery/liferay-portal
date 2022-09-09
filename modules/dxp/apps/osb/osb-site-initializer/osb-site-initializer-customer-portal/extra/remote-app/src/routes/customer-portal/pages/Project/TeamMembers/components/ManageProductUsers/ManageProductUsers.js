@@ -96,7 +96,10 @@ const ManageProductUsers = ({project, subscriptionGroups}) => {
 	return (
 		<>
 			{(isActiveStatusDXPC || isActiveStatusAC || isActiveStatusLXC) && (
-				<div className="bg-brand-primary-lighten-6 border-0 card card-flat cp-manager-product-container mt-5">
+				<div
+					className="bg-brand-primary-lighten-6 border-0 card card-flat cp-manager-product-container mt-5"
+					data-testid="test-id"
+				>
 					<div className="p-4">
 						<h4>
 							{isActiveStatusLXC
