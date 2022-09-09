@@ -2617,7 +2617,7 @@ components:
                     description:
                         The message's main content.
                     type: string
-                badge:
+                featuredDomain:
                     description:
                         The domain of the user.
                     type: string
