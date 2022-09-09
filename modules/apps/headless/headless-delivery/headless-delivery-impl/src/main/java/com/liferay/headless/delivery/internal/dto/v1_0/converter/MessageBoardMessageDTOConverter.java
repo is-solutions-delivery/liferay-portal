@@ -26,10 +26,13 @@ import com.liferay.headless.delivery.internal.dto.v1_0.util.CreatorStatisticsUti
 import com.liferay.headless.delivery.internal.dto.v1_0.util.RelatedContentUtil;
 import com.liferay.message.boards.model.MBMessage;
 import com.liferay.message.boards.model.MBThread;
+import com.liferay.message.boards.moderation.configuration.MBModerationGroupConfiguration;
 import com.liferay.message.boards.service.MBMessageLocalService;
 import com.liferay.message.boards.service.MBMessageService;
 import com.liferay.message.boards.service.MBStatsUserLocalService;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -59,6 +62,24 @@ public class MessageBoardMessageDTOConverter
 	@Override
 	public String getContentType() {
 		return MessageBoardMessage.class.getSimpleName();
+	}
+
+	private String getDomains(Long groupId){
+
+		MBModerationGroupConfiguration mbModerationGroupConfiguration =
+			null;
+		try {
+			mbModerationGroupConfiguration = _configurationProvider.getGroupConfiguration(
+				MBModerationGroupConfiguration.class, groupId);
+		}
+		catch (
+			ConfigurationException e) {
+			throw new RuntimeException(e);
+		}
+
+		String domains = mbModerationGroupConfiguration.badgeDomains();
+
+		return domains;
 	}
 
 	@Override
@@ -161,6 +182,9 @@ public class MessageBoardMessageDTOConverter
 
 	@Reference
 	private AssetTagLocalService _assetTagLocalService;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
 
 	@Reference
 	private MBMessageLocalService _mbMessageLocalService;
