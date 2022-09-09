@@ -66,7 +66,7 @@ public class MessageBoardMessageDTOConverter
 		return MessageBoardMessage.class.getSimpleName();
 	}
 
-	private String getDomains(Long groupId){
+	private String[] getDomains(Long groupId){
 
 		MBModerationGroupConfiguration mbModerationGroupConfiguration =
 			null;
@@ -79,7 +79,7 @@ public class MessageBoardMessageDTOConverter
 			throw new RuntimeException(e);
 		}
 
-		String domains = mbModerationGroupConfiguration.badgeDomains();
+		String[] domains = mbModerationGroupConfiguration.badgeDomains();
 
 		return domains;
 	}
@@ -102,9 +102,13 @@ public class MessageBoardMessageDTOConverter
 				anonymous = mbMessage.isAnonymous();
 				articleBody = mbMessage.getBody();
 				badge = "";
-				if (Validator.isNotNull(getDomains(mbMessage.getGroupId())) &&
-					StringUtil.endsWith(user.getEmailAddress(), getDomains(mbMessage.getGroupId()).trim())) {
-					badge = getDomains(mbMessage.getGroupId());
+				for (String dominio : getDomains(mbMessage.getGroupId()))  {
+					if (Validator.isNotNull(
+						getDomains(mbMessage.getGroupId())) &&
+						StringUtil.endsWith(
+							user.getEmailAddress(), dominio)) {
+						badge = dominio;
+					}
 				}
 				customFields = CustomFieldsUtil.toCustomFields(
 					dtoConverterContext.isAcceptAllLanguages(),
