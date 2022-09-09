@@ -181,9 +181,8 @@ definition {
 		Click(
 			key_action = "Deactivate",
 			locator1 = "CP2ActivationKeys#ACTIONS_DROPDOWN");
-		
-		AssertElementPresent(
-			locator1 = "CP2ActivationKeys#DEACTIVATE_KEY_PAGE");
+
+		AssertElementPresent(locator1 = "CP2ActivationKeys#DEACTIVATE_KEY_PAGE");
 	}
 
 	macro goToKeyTab {
