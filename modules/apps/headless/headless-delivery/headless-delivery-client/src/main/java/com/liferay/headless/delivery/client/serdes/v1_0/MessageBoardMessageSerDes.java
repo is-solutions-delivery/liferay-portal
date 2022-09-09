@@ -212,6 +212,20 @@ public class MessageBoardMessageSerDes {
 			sb.append("\"");
 		}
 
+		if (messageBoardMessage.getFeaturedDomainName() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"featuredDomainName\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(messageBoardMessage.getFeaturedDomainName()));
+
+			sb.append("\"");
+		}
+
 		if (messageBoardMessage.getFriendlyUrlPath() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -529,6 +543,15 @@ public class MessageBoardMessageSerDes {
 				String.valueOf(messageBoardMessage.getExternalReferenceCode()));
 		}
 
+		if (messageBoardMessage.getFeaturedDomainName() == null) {
+			map.put("featuredDomainName", null);
+		}
+		else {
+			map.put(
+				"featuredDomainName",
+				String.valueOf(messageBoardMessage.getFeaturedDomainName()));
+		}
+
 		if (messageBoardMessage.getFriendlyUrlPath() == null) {
 			map.put("friendlyUrlPath", null);
 		}
@@ -754,6 +777,14 @@ public class MessageBoardMessageSerDes {
 
 				if (jsonParserFieldValue != null) {
 					messageBoardMessage.setExternalReferenceCode(
+						(String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "featuredDomainName")) {
+
+				if (jsonParserFieldValue != null) {
+					messageBoardMessage.setFeaturedDomainName(
 						(String)jsonParserFieldValue);
 				}
 			}

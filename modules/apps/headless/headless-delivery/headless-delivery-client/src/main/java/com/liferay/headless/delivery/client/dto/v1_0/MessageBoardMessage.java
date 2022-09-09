@@ -270,6 +270,27 @@ public class MessageBoardMessage implements Cloneable, Serializable {
 
 	protected String externalReferenceCode;
 
+	public String getFeaturedDomainName() {
+		return featuredDomainName;
+	}
+
+	public void setFeaturedDomainName(String featuredDomainName) {
+		this.featuredDomainName = featuredDomainName;
+	}
+
+	public void setFeaturedDomainName(
+		UnsafeSupplier<String, Exception> featuredDomainNameUnsafeSupplier) {
+
+		try {
+			featuredDomainName = featuredDomainNameUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String featuredDomainName;
+
 	public String getFriendlyUrlPath() {
 		return friendlyUrlPath;
 	}

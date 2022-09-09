@@ -195,6 +195,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 		messageBoardMessage.setArticleBody(regex);
 		messageBoardMessage.setEncodingFormat(regex);
 		messageBoardMessage.setExternalReferenceCode(regex);
+		messageBoardMessage.setFeaturedDomainName(regex);
 		messageBoardMessage.setFriendlyUrlPath(regex);
 		messageBoardMessage.setHeadline(regex);
 		messageBoardMessage.setStatus(regex);
@@ -209,6 +210,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 		Assert.assertEquals(regex, messageBoardMessage.getEncodingFormat());
 		Assert.assertEquals(
 			regex, messageBoardMessage.getExternalReferenceCode());
+		Assert.assertEquals(regex, messageBoardMessage.getFeaturedDomainName());
 		Assert.assertEquals(regex, messageBoardMessage.getFriendlyUrlPath());
 		Assert.assertEquals(regex, messageBoardMessage.getHeadline());
 		Assert.assertEquals(regex, messageBoardMessage.getStatus());
@@ -2493,6 +2495,16 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"featuredDomainName", additionalAssertFieldName)) {
+
+				if (messageBoardMessage.getFeaturedDomainName() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("friendlyUrlPath", additionalAssertFieldName)) {
 				if (messageBoardMessage.getFriendlyUrlPath() == null) {
 					valid = false;
@@ -2907,6 +2919,19 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 				if (!Objects.deepEquals(
 						messageBoardMessage1.getExternalReferenceCode(),
 						messageBoardMessage2.getExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"featuredDomainName", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						messageBoardMessage1.getFeaturedDomainName(),
+						messageBoardMessage2.getFeaturedDomainName())) {
 
 					return false;
 				}
@@ -3399,6 +3424,15 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("featuredDomainName")) {
+			sb.append("'");
+			sb.append(
+				String.valueOf(messageBoardMessage.getFeaturedDomainName()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("friendlyUrlPath")) {
 			sb.append("'");
 			sb.append(String.valueOf(messageBoardMessage.getFriendlyUrlPath()));
@@ -3541,6 +3575,8 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 				encodingFormat = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				featuredDomainName = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				friendlyUrlPath = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
