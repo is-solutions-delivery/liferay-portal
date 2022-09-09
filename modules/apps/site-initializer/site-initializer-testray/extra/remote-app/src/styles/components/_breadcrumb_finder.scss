@@ -336,19 +336,3 @@
 		}
 	}
 }
-
-.breadcrumb-finder-validator-container {
-	margin-bottom: 5px;
-
-	.breadcrumb-finder-validator-item {
-		color: $color-gray;
-
-		&:not(:last-child) {
-			margin-right: 10px;
-		}
-
-		&.success {
-			color: $passed-color;
-		}
-	}
-}

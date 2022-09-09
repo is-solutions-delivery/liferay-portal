@@ -12,6 +12,7 @@
  * details.
  */
 
+import BreadcrumbSearch from '../../components/BreadcrumbSearch';
 import Container from '../../components/Layout/Container';
 import ListView from '../../components/ListView';
 import {useHeader} from '../../hooks';
@@ -68,4 +69,16 @@ const Projects: React.FC<ProjectsProps> = ({PageContainer = Container}) => {
 	);
 };
 
-export default Projects;
+const Project = () => {
+	return (
+		<Container>
+			<h1>Hey</h1>
+
+			<BreadcrumbSearch></BreadcrumbSearch>
+		</Container>
+	);
+};
+
+export {Projects};
+
+export default Project;
