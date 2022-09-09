@@ -2620,7 +2620,7 @@ components:
                 badge:
                     description:
                         The domain of the user.
-                type: string
+                    type: string
                 creator:
                     allOf:
                         - $ref: "#/components/schemas/Creator"
