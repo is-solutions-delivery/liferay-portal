@@ -89,6 +89,10 @@ class TestrayBuildRest extends Rest<Build, TestrayBuild> {
 				buildId: build.id,
 				description: undefined,
 				environmentHash: undefined,
+				factorCategoryId: undefined,
+				factorOptionId: undefined,
+				factorOptionName: undefined,
+				id: undefined,
 				name: factorOptionsList.join(' | '),
 				number: runIndex,
 			});

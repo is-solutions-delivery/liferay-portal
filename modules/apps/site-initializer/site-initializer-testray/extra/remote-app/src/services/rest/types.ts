@@ -276,4 +276,6 @@ export type TestrayFactor = {
 	id: number;
 	r_factorCategoryToFactors_c_factorCategory?: TestrayFactorCategory;
 	r_factorOptionToFactors_c_factorOption?: TestrayFactorOptions;
+	r_runToFactors_c_run?: TestrayRun;
+	run: TestrayRun;
 };
