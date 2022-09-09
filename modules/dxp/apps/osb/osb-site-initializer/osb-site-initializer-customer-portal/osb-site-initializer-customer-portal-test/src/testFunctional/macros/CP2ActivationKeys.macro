@@ -173,6 +173,19 @@ definition {
 		return "${downloadedFileName}";
 	}
 
+	macro gotoKeyDeactivation {
+		Click(
+			key_text = "Actions",
+			locator1 = "Button#ANY");
+
+		Click(
+			key_action = "Deactivate",
+			locator1 = "CP2ActivationKeys#ACTIONS_DROPDOWN");
+		
+		AssertElementPresent(
+			locator1 = "CP2ActivationKeys#DEACTIVATE_KEY_PAGE");
+	}
+
 	macro goToKeyTab {
 		var key_licenseTab = CP2ActivationKeys._formatCamelCase(camelCase = "${licenseTab}");
 
