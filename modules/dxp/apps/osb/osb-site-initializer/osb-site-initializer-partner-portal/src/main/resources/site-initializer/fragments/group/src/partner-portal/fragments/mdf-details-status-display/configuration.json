@@ -1,7 +1,7 @@
 {
 	"fieldSets": [
 		{
-		"fields": [
+			"fields": [
 				{
 					"dataType": "string",
 					"defaultValue": "mdfrequests",
@@ -24,7 +24,5 @@
 				}
 			]
 		}
-		
 	]
-	
 }
