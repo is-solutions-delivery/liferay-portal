@@ -51,9 +51,9 @@ public interface MBModerationGroupConfiguration {
 	public int minimumContributedMessages();
 
 	@Meta.AD(
-		description = "enter-the-badge-domains",
-		name = "badge-domains", required = false
+		description = "enter-featured-domains",
+		name = "featured-domains", required = false
 	)
-	public String[] badgeDomains();
+	public String[] featuredDomains();
 
 }
