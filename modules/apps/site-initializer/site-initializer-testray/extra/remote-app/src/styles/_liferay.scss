@@ -1,5 +1,30 @@
 @import 'components/input';
 
+.breadcumbSeachList {
+	background-color: #f1f2f5;
+	border-color: #e7e7ed;
+	border-style: solid;
+	border-width: 0.0625rem;
+	border-bottom-width: 0.0625rem;
+	border-left-width: 0.0625rem;
+	border-right-width: 0.0625rem;
+	border-top-width: 0.0625rem;
+	border-radius: 0.25rem;
+	box-shadow: none;
+	color: #272833;
+	display: block;
+	font-size: 1rem;
+	font-weight: var(--font-weight-normal, 400);
+	line-height: 1.5;
+	min-width: 0;
+	padding-bottom: 0.4375rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-top: 0.4375rem;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	width: 100%;
+	position: relative !important;
+}
 *,
 *:after,
 *:before {

@@ -12,25 +12,16 @@
  * details.
  */
 
-import {ClayCheckbox} from '@clayui/form';
-import {useState} from 'react';
+import {Outlet, useParams} from 'react-router-dom';
 
-type CheckboxProps = {
-	inline?: boolean;
-	label?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+const TestflowFormOutlet = () => {
+	const {buildId, projectId, routineId} = useParams();
 
-const Checkbox: React.FC<CheckboxProps> = (props) => {
-	const [value, setValue] = useState(false);
+	if (projectId) {
+		return <Outlet context={{buildId, projectId, routineId}} />;
+	}
 
-	return (
-		<ClayCheckbox
-			checked={value}
-			name={props.name}
-			onChange={() => setValue(!value)}
-			{...props}
-		/>
-	);
+	return null;
 };
 
-export default Checkbox;
+export default TestflowFormOutlet;

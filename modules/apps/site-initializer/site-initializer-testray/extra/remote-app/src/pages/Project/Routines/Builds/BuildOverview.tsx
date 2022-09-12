@@ -45,10 +45,7 @@ const BuildOverview: React.FC<BuildOverviewProps> = ({
 	return (
 		<>
 			{!testrayTask && (
-				<ClayButton
-					className="mb-4"
-					onClick={() => navigate('/testflow/create')}
-				>
+				<ClayButton className="mb-4" onClick={() => navigate('create')}>
 					{i18n.translate('analyze')}
 				</ClayButton>
 			)}

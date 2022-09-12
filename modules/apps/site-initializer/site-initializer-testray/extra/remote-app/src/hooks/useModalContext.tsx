@@ -61,7 +61,7 @@ const useModalContext = () => {
 		});
 	};
 
-	return {onOpenModal, state};
+	return {dispatch, onOpenModal, state};
 };
 
 export default useModalContext;

@@ -177,12 +177,18 @@ const TestrayRoute = () => (
 												ignorePaths={[
 													'case-result',
 													'update',
+													'create',
 												]}
 											/>
 										}
 										path="build/:buildId"
 									>
 										<Route element={<Build />} index />
+
+										<Route
+											element={<TestflowForm />}
+											path="create"
+										/>
 
 										<Route
 											element={<BuildForm />}

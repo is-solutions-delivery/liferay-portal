@@ -72,6 +72,8 @@ const Projects: React.FC<ProjectsProps> = ({PageContainer = Container}) => {
 const Project = () => {
 	return (
 		<Container>
+			<Projects></Projects>
+
 			<h1>Hey</h1>
 
 			<BreadcrumbSearch></BreadcrumbSearch>

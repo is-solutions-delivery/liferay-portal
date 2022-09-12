@@ -14,7 +14,7 @@
  */
 
 import {useEffect} from 'react';
-import {useOutletContext} from 'react-router-dom';
+import {useNavigate, useOutletContext} from 'react-router-dom';
 
 import Avatar from '../../components/Avatar';
 import Container from '../../components/Layout/Container';
@@ -32,6 +32,7 @@ import TestflowModal from './TestflowModal';
 const TestFlow = () => {
 	const {modal} = useFormModal();
 	const {setDropdownIcon}: any = useOutletContext();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		setDropdownIcon('merge');
@@ -41,7 +42,7 @@ const TestFlow = () => {
 		<Container>
 			<ListView
 				managementToolbarProps={{
-					addButton: () => modal.open(),
+					addButton: () => navigate('/testflow/newtask'),
 					title: i18n.translate('tasks'),
 				}}
 				resource={tasksResource}
@@ -50,6 +51,7 @@ const TestFlow = () => {
 						{
 							clickable: true,
 							key: 'dueStatus',
+
 							render: (status: number) => (
 								<StatusBadge
 									type={
@@ -112,20 +114,28 @@ const TestFlow = () => {
 							value: i18n.translate('progress'),
 						},
 						{
-							key: 'assigned',
-							render: () => (
-								<Avatar.Group
-									assignedUsers={routines[0].assigned}
-									groupSize={3}
-								/>
-							),
+							key: 'userToTasks',
+							render: () => {
+								return (
+									<Avatar.Group
+										assignedUsers={routines[0].assigned}
+										groupSize={3}
+									/>
+								);
+							},
 							value: i18n.translate('assigned'),
 						},
 					],
 					navigateTo: (item) => `/testflow/${item.id}`,
 				}}
 				transformData={getTasksTransformData}
-			/>
+			>
+				{(response) => {
+					console.log('RESPONSE', response);
+
+					return <div></div>;
+				}}
+			</ListView>
 
 			<TestflowModal modal={modal} />
 		</Container>

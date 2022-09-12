@@ -70,7 +70,9 @@ const RequirementsForm = () => {
 		setValue,
 		watch,
 	} = useForm<RequirementsFormType>({
-		defaultValues: requirementId ? (testrayRequirement as any) : {},
+		defaultValues: requirementId
+			? (testrayRequirement as any)
+			: {descriptionType: ''},
 		resolver: yupResolver(yupSchema.requirement),
 	});
 	const {data: testrayComponentsData} = useFetch<
@@ -171,7 +173,7 @@ const RequirementsForm = () => {
 					<Form.Select
 						{...inputProps}
 						className="col-2 ml-auto"
-						defaultOption={false}
+						defaultOption={true}
 						name="descriptionType"
 						options={descriptionTypes}
 						required={false}

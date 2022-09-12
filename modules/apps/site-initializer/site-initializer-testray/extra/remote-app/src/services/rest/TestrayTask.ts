@@ -12,6 +12,9 @@
  * details.
  */
 
+import yupSchema from '../../schema/yup';
+import Rest from './Rest';
+import {testrayTaskUsersImpl} from './TestrayTaskUsers';
 import {APIResponse, TestrayTask} from './types';
 
 const nestedFieldsParam =
@@ -38,6 +41,7 @@ const getTaskTransformData = (testrayTask: TestrayTask): TestrayTask => ({
 						.r_routineToBuilds_c_routine,
 		  }
 		: undefined,
+	userToTask: testrayTask?.userToTask,
 });
 
 const getTasksTransformData = (response: APIResponse<TestrayTask>) => ({
@@ -51,3 +55,58 @@ export {
 	getTaskTransformData,
 	getTasksTransformData,
 };
+
+type Task = typeof yupSchema.task.__outputType & {projectId: number};
+
+class TestrayTaskRest extends Rest<Task, TestrayTask> {
+	constructor() {
+		super({
+			adapter: ({
+				build: r_buildToTasks_c_buildId,
+				caseTypes: taskToTasksCaseTypes,
+				dueStatus,
+				name,
+				userToTasks,
+			}) => ({
+				dueStatus,
+				name,
+				r_buildToTasks_c_buildId,
+				taskToTasksCaseTypes,
+				userToTasks,
+			}),
+			nestedFields: '',
+			transformData: (TestrayTaskId) => ({
+				...TestrayTaskId,
+				buildTaskId: TestrayTaskId?.r_buildToTasks_c_build,
+			}),
+			uri: 'tasks',
+		});
+	}
+
+	public async create(data: Task): Promise<any> {
+		const task = await super.create(data);
+
+		if (data.userToTasks?.length) {
+			for (const userIds of data.userToTasks) {
+				await testrayTaskUsersImpl.create({
+					name: JSON.stringify(task.id),
+					projectId: 0,
+					taskId: task.id,
+					userId: userIds,
+				});
+			}
+		}
+	}
+
+	public async createBatch(data: Task[]): Promise<void> {
+		if (data.length >= 20) {
+			return this.fetcher.post(
+				`/${this.uri}/batch`,
+				data.map((item) => this.adapter(item))
+			);
+		}
+
+		await Promise.allSettled(data.map((item) => this.create(item)));
+	}
+}
+export const testRayTaskRest = new TestrayTaskRest();

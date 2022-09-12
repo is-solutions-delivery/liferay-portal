@@ -1,12 +1,16 @@
 .breadcrumb-search-container {
-	padding: 25px 30px 20px;
+	margin: 0 8px;
 
 	.breadcrumb-search-content,
 	.breadcrumb-search-input-edit {
 		display: inline-block;
 		font-size: 1em;
 		font-weight: $font-header-weight;
-		line-height: 1.5;
+		background: none !important;
+		&:focus-visible {
+			border: none !important;
+			outline: none !important;
+		}
 	}
 
 	.breadcrumb-search-input-edit-wrapper {
@@ -153,6 +157,12 @@
 				// box-shadow: $box-shadow-deep;
 				font-size: 1em;
 			}
+		}
+		.breadcrumb-selected-item {
+			max-width: 300px;
+			overflow: hidden;
+			text-overflow: clip;
+			white-space: nowrap;
 		}
 
 		.selected-container {

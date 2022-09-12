@@ -12,14 +12,21 @@
  * details.
  */
 
+import ClayAutocomplete from '@clayui/autocomplete';
+import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import {Fragment} from 'react';
+import {Fragment, useState} from 'react';
 
 import useBreadcrumb, {defaultEntities} from '../../hooks/useBreadcrumb';
+import i18n from '../../i18n';
 
 const MAX_ENTITIES_TO_SEARCH = 3;
 
-const BreadcrumbSearch = () => {
+type BreadccrumbSearchProps = {
+	onClick: (value: any) => void;
+};
+
+const BreadcrumbSearch: React.FC<BreadccrumbSearchProps> = ({onClick}) => {
 	const {
 		breadCrumb,
 		entities,
@@ -31,6 +38,43 @@ const BreadcrumbSearch = () => {
 		setSearch,
 	} = useBreadcrumb([...defaultEntities].slice(0, MAX_ENTITIES_TO_SEARCH));
 
+	const [active, setActive] = useState(false);
+
+	// useEffect(() => {
+	// 	if (
+	// 		breadCrumb.length === MAX_ENTITIES_TO_SEARCH &&
+	// 		active === true &&
+	// 		entities.length === 3
+	// 	) {
+	// 		setActive(false);
+	// 	} else if (entities.length < 3) {
+	// 		setActive(true);
+	// 	}
+
+	// }, [breadCrumb, breadCrumb.length, items, items.length, search]);
+
+	const showResults = () => {
+		if (!items.length) {
+			setActive(false);
+		}
+		setActive(!active);
+	};
+
+	const onClickItem = (item: any, itemIndex: any) => {
+		onClick(item);
+		onClickRow(itemIndex);
+
+		if (
+			breadCrumb.length + 1 === MAX_ENTITIES_TO_SEARCH &&
+			active === true &&
+			entities.length === 3
+		) {
+			return setActive(false);
+		} else if (entities.length <= 3) {
+			return setActive(true);
+		}
+	};
+
 	return (
 		<div className="breadcrumb-finder-navigator breadcrumb-search-container">
 			<div
@@ -38,7 +82,7 @@ const BreadcrumbSearch = () => {
 				id="breadcrumbSearchContent"
 			>
 				<div className="d-flex flex-column w-100">
-					<ul className="d-flex">
+					<ul className="d-flex overflow-hidden">
 						{entities.map((entity, index) => {
 							const selected = !!breadCrumb[index];
 
@@ -60,12 +104,12 @@ const BreadcrumbSearch = () => {
 						})}
 					</ul>
 
-					<div>
+					<div className="form-control" onClick={() => showResults()}>
 						<span
 							className="selected-container"
 							id="selectedContainer"
 						>
-							{!!breadCrumb.length && (
+							{breadCrumb.length >= 1 && (
 								<div className="divider">/</div>
 							)}
 
@@ -102,25 +146,51 @@ const BreadcrumbSearch = () => {
 						</div>
 					</div>
 
-					<hr></hr>
+					<ClayAutocomplete className="mb-4">
+						<ClayAutocomplete.DropDown active={active}>
+							<ClayDropDown.ItemList>
+								{items.length ? (
+									items?.map((item: any, itemIndex: any) => (
+										<ClayAutocomplete.Item
+											key={item.label}
+											match={item.label}
+											onClick={() => {
+												onClickItem(item, itemIndex);
+											}}
+											value={item.label}
+										/>
+									))
+								) : (
+									<ClayAutocomplete.Item
+										match={i18n.translate(
+											'no-results-found'
+										)}
+										value=""
+									/>
+								)}
+							</ClayDropDown.ItemList>
+						</ClayAutocomplete.DropDown>
+					</ClayAutocomplete>
 
-					{breadCrumb.length !== MAX_ENTITIES_TO_SEARCH && (
-						<ul className="list-unstyled" tabIndex={-1}>
-							{items.map((item, itemIndex) => (
-								<li
-									className="breadcrumb-finder-item cursor-pointer"
-									key={itemIndex}
-									onClick={() => onClickRow(itemIndex)}
-								>
-									<div className="d-flex justify-content-between result-item">
-										<span className="result-text">
-											{item.label}
-										</span>
-									</div>
-								</li>
-							))}
-						</ul>
-					)}
+					{/* {breadCrumb.length !== MAX_ENTITIES_TO_SEARCH && (
+						<div className="breadcumbSeachList mt-2 position-relative">
+							<ul className="list-unstyled" tabIndex={-1}>
+								{items.map((item, itemIndex) => (
+									<li
+										className="breadcrumb-finder-item cursor-pointer"
+										key={itemIndex}
+										onClick={() => onClickRow(itemIndex)}
+									>
+										<div className="d-flex justify-content-between result-item">
+											<span className="result-text">
+												{item.label}
+											</span>
+										</div>
+									</li>
+								))}
+							</ul>
+						</div>
+					)} */}
 				</div>
 			</div>
 		</div>

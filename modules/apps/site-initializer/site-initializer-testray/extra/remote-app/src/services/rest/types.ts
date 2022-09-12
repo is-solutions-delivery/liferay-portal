@@ -225,6 +225,7 @@ export type TestrayTask = {
 	id: number;
 	name: string;
 	r_buildToTasks_c_build?: TestrayBuild;
+	userToTask?: string;
 };
 
 export type TestrayTeam = {
