@@ -9,8 +9,10 @@
  * distribution rights of the Software.
  */
 
-export enum AppRouteType {
-	MDF_REQUEST_FORM = 'mdf-request-form',
-	MDF_REQUEST_LIST = 'mdf-request-list',
-	MDF_CLAIM = 'mdf-claim',
-}
+import {number, object} from 'yup';
+
+const claimSchema = object({
+	totalClaimAmount: number().moreThan(0, 'Required').required('Required'),
+});
+
+export default claimSchema;
