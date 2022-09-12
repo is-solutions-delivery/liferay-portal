@@ -30,6 +30,7 @@ import com.liferay.message.boards.moderation.configuration.MBModerationGroupConf
 import com.liferay.message.boards.service.MBMessageLocalService;
 import com.liferay.message.boards.service.MBMessageService;
 import com.liferay.message.boards.service.MBStatsUserLocalService;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -66,24 +67,6 @@ public class MessageBoardMessageDTOConverter
 		return MessageBoardMessage.class.getSimpleName();
 	}
 
-	private String[] getFeaturedDomains(Long groupId){
-
-		MBModerationGroupConfiguration mbModerationGroupConfiguration =
-			null;
-		try {
-			mbModerationGroupConfiguration = _configurationProvider.getGroupConfiguration(
-				MBModerationGroupConfiguration.class, groupId);
-		}
-		catch (
-			ConfigurationException e) {
-			throw new RuntimeException(e);
-		}
-
-		String[] featuredDomains = mbModerationGroupConfiguration.featuredDomains();
-
-		return featuredDomains;
-	}
-
 	@Override
 	public MessageBoardMessage toDTO(DTOConverterContext dtoConverterContext)
 		throws Exception {
@@ -101,15 +84,6 @@ public class MessageBoardMessageDTOConverter
 						MBMessage.class.getName(), mbMessage.getMessageId()));
 				anonymous = mbMessage.isAnonymous();
 				articleBody = mbMessage.getBody();
-				featuredDomain = "";
-				for (String featuredDomain : getFeaturedDomains(mbMessage.getGroupId()))  {
-					if (Validator.isNotNull(
-						getFeaturedDomains(mbMessage.getGroupId())) &&
-						StringUtil.endsWith(
-							user.getEmailAddress(), featuredDomain)) {
-						this.featuredDomain = featuredDomain;
-					}
-				}
 				customFields = CustomFieldsUtil.toCustomFields(
 					dtoConverterContext.isAcceptAllLanguages(),
 					MBMessage.class.getName(), mbMessage.getMessageId(),
@@ -118,6 +92,21 @@ public class MessageBoardMessageDTOConverter
 				dateModified = mbMessage.getModifiedDate();
 				encodingFormat = mbMessage.getFormat();
 				externalReferenceCode = mbMessage.getExternalReferenceCode();
+
+				featuredDomain = StringPool.BLANK;
+
+				for (String featuredDomain :
+						_getFeaturedDomains(mbMessage.getGroupId())) {
+
+					if (Validator.isNotNull(
+							_getFeaturedDomains(mbMessage.getGroupId())) &&
+						StringUtil.endsWith(
+							user.getEmailAddress(), featuredDomain)) {
+
+						this.featuredDomain = featuredDomain;
+					}
+				}
+
 				friendlyUrlPath = mbMessage.getUrlSubject();
 				headline = mbMessage.getSubject();
 				id = mbMessage.getMessageId();
@@ -183,6 +172,21 @@ public class MessageBoardMessageDTOConverter
 					});
 			}
 		};
+	}
+
+	private String[] _getFeaturedDomains(Long groupId) {
+		MBModerationGroupConfiguration mbModerationGroupConfiguration = null;
+
+		try {
+			mbModerationGroupConfiguration =
+				_configurationProvider.getGroupConfiguration(
+					MBModerationGroupConfiguration.class, groupId);
+		}
+		catch (ConfigurationException configurationException) {
+			throw new RuntimeException(configurationException);
+		}
+
+		return mbModerationGroupConfiguration.featuredDomains();
 	}
 
 	@Reference
