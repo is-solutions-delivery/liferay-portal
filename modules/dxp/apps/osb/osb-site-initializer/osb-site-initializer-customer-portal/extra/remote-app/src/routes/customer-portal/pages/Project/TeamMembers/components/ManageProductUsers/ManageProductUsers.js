@@ -138,7 +138,7 @@ const ManageProductUsers = ({project, subscriptionGroups}) => {
 								<ManageProductButton
 									activatedLink={activatedLinkLxc}
 									activatedTitle={i18n.translate(
-										'manage-lxc-sm-users'
+										'manage-liferay-experience-cloud-users'
 									)}
 								/>
 							)}

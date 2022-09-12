@@ -31,7 +31,7 @@ describe('Manage Product Users', () => {
 		mockedProps.subscriptionGroups = [];
 	});
 
-	it('renders in the screen', () => {
+	it('renders in the screen liferay experience cloud with status active ', () => {
 		mockedProps.subscriptionGroups.push({
 			activationStatus: 'Active',
 			name: 'Liferay Experience Cloud',
@@ -44,6 +44,81 @@ describe('Manage Product Users', () => {
 		);
 
 		expect(queryByTestId('test-id')).toBeTruthy();
+	});
+
+	it("doesn't renders in the screen with status in progress", () => {
+		mockedProps.subscriptionGroups.push({
+			activationStatus: 'In Progress',
+			name: 'Liferay Experience Cloud',
+		});
+
+		const {queryByTestId} = render(
+			<MockedProvider>
+				<ManageProductUsers {...mockedProps} />
+			</MockedProvider>
+		);
+
+		expect(queryByTestId('test-id')).toBeFalsy();
+	});
+
+	it('renders in the screen analytics cloud with status active', () => {
+		mockedProps.subscriptionGroups.push({
+			activationStatus: 'Active',
+			name: 'Analytics Cloud',
+		});
+
+		const {queryByTestId} = render(
+			<MockedProvider>
+				<ManageProductUsers {...mockedProps} />
+			</MockedProvider>
+		);
+
+		expect(queryByTestId('test-id')).toBeTruthy();
+	});
+
+	it("doesn't renders in the screen with status in progress", () => {
+		mockedProps.subscriptionGroups.push({
+			activationStatus: 'In Progress',
+			name: 'Analytics Cloud',
+		});
+
+		const {queryByTestId} = render(
+			<MockedProvider>
+				<ManageProductUsers {...mockedProps} />
+			</MockedProvider>
+		);
+
+		expect(queryByTestId('test-id')).toBeFalsy();
+	});
+
+	it('renders in the screen LXC-SM with status active', () => {
+		mockedProps.subscriptionGroups.push({
+			activationStatus: 'Active',
+			name: 'LXC-SM',
+		});
+
+		const {queryByTestId} = render(
+			<MockedProvider>
+				<ManageProductUsers {...mockedProps} />
+			</MockedProvider>
+		);
+
+		expect(queryByTestId('test-id')).toBeTruthy();
+	});
+
+	it("doesn't renders in the screen with status in progress", () => {
+		mockedProps.subscriptionGroups.push({
+			activationStatus: 'In Progress',
+			name: 'LXC-SM',
+		});
+
+		const {queryByTestId} = render(
+			<MockedProvider>
+				<ManageProductUsers {...mockedProps} />
+			</MockedProvider>
+		);
+
+		expect(queryByTestId('test-id')).toBeFalsy();
 	});
 
 	it("doesn't renders without valid subscription group", () => {
