@@ -18,7 +18,14 @@ import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import handleError from './common/utils/handleError';
 import MDFRequestForm from './routes/MDFRequestForm';
 import MDFRequestList from './routes/MDFRequestList';
+import MDFClaimForm from './routes/MDFClaimForm';
+import PRMFormik from './common/components/PRMFormik';
+import MDFClaim from './common/interfaces/mdfClaim';
+import claimSchema from './routes/MDFClaimForm/schema/yup';
 
+const initialMDFClaimFormValues: MDFClaim = {
+	totalClaimAmount: 0,
+};
 interface IProps {
 	route: AppRouteType;
 }
@@ -30,6 +37,14 @@ type AppRouteComponent = {
 const appRoutes: AppRouteComponent = {
 	[AppRouteType.MDF_REQUEST_FORM]: <MDFRequestForm />,
 	[AppRouteType.MDF_REQUEST_LIST]: <MDFRequestList />,
+	[AppRouteType.MDF_CLAIM]: (
+		<PRMFormik
+			initialValues={initialMDFClaimFormValues}
+			onSubmit={() => {}}
+		>
+			<MDFClaimForm validationSchema={claimSchema} />
+		</PRMFormik>
+	),
 };
 
 const PartnerPortalApp = ({route}: IProps) => {
