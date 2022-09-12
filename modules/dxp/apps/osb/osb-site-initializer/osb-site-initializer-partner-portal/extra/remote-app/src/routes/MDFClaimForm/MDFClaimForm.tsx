@@ -12,12 +12,15 @@
 import Button from '@clayui/button';
 import {useFormikContext} from 'formik';
 import {useMemo} from 'react';
-import PRMForm from '../../common/components/PRMForm';
 
+import PRMForm from '../../common/components/PRMForm';
 import PRMFormik from '../../common/components/PRMFormik';
 import PRMFormikPageProps from '../../common/components/PRMFormik/interfaces/prmFormikPageProps';
 import MDFClaim from '../../common/interfaces/mdfClaim';
+import useGetMDFRequestToActivities from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestToActivities';
+// import useGetMDFRequestToActivities from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestToActivities';
 import isObjectEmpty from '../MDFRequestForm/utils/isObjectEmpty';
+import ClaimPanel from './components/ClaimPanel';
 import ClaimTotalResumeCard from './components/ClaimTotalResumeCard';
 
 const MDFClaimForm = ({}: PRMFormikPageProps) => {
@@ -34,9 +37,18 @@ const MDFClaimForm = ({}: PRMFormikPageProps) => {
 		return errors;
 	}, [errors]);
 
+	const swrResponse = useGetMDFRequestToActivities(46598);
+
 	return (
 		<PRMForm className="mb-4" name="NEW" title="Reimbursement Claim">
-			<PRMForm.Section title="Insurance Industry Lead Gen"></PRMForm.Section>
+			<PRMForm.Section
+				subtitle="Check each expense you would like claim and please provide proof of performance for each of the selected expenses."
+				title="Insurance Industry Lead Gen"
+			></PRMForm.Section>
+
+			<PRMForm.Section title="Upload Proof of Performance Documents">
+				<ClaimPanel />
+			</PRMForm.Section>
 
 			<PRMForm.Section
 				subtitle="Total Claim is the reimbursement of your expenses, and is up to the Total MDF Requested. In case need to claim more than the MDF Requested you need to apply for a  New MDF Request."
