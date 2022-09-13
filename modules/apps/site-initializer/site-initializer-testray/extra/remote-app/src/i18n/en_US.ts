@@ -244,6 +244,7 @@ export default {
 	'screen-name': 'Screen Name',
 	'search': 'Search',
 	'search-in': 'Search in...',
+	'select-build': 'Select Build',
 	'select-case-parameters': 'Select Case Parameters',
 	'select-cases': 'Select Cases',
 	'select-default-environment-factors': 'Select Default Environment Factors',
@@ -298,7 +299,8 @@ export default {
 	'the-team-name-already-exists': 'The team name already exists',
 	'the-x-name-already-exists': 'The {0} name already exists',
 	'there-are-no-entries-yet': 'There are no entries yet.',
-	'there-are-no-linked-cases': 'There are no linked cases',
+	'there-are-no-linked-cases': 'There are no linked cases.',
+	'there-are-no-linked-users': 'There are no linked users.',
 	'there-are-no-matching-results': 'There are no matching results.',
 	'this-build-has-been-analyzed': 'This build has been analyzed.',
 	'this-build-is-currently-in-analysis':

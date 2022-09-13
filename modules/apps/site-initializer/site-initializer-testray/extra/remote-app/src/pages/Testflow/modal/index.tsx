@@ -18,7 +18,7 @@ import Form from '../../../components/Form';
 import Modal from '../../../components/Modal';
 import {FormModalOptions} from '../../../hooks/useFormModal';
 import i18n from '../../../i18n';
-import TestflowAssignUserGroups from './TestflowAssignUserGroups';
+import UserGroups from './TestflowAssignUserGroups';
 import TestflowAssignUsers from './TestflowAssignUsers';
 
 type SuiteSelectCasesModalProps = {
@@ -30,7 +30,7 @@ const TestflowAssignUserModal: React.FC<SuiteSelectCasesModalProps> = ({
 	modal: {observer, onClose, onSave, visible},
 	type,
 }) => {
-	const [state, setState] = useState<any>({});
+	const [state, setState] = useState<any>([]);
 
 	return (
 		<Modal
@@ -43,7 +43,7 @@ const TestflowAssignUserModal: React.FC<SuiteSelectCasesModalProps> = ({
 			visible={visible}
 		>
 			{type === 'assign-user-groups' && (
-				<TestflowAssignUserGroups setState={setState} state={state} />
+				<UserGroups setState={setState} />
 			)}
 
 			{type === 'assign-users' && (

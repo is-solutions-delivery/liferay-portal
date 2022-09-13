@@ -18,17 +18,24 @@ import {useEffect, useState} from 'react';
 
 import useDebounce from '../../../hooks/useDebounce';
 import {useFetch} from '../../../hooks/useFetch';
+import {BaseWrapper} from '../Base';
 
 export type AutoCompleteProps = {
+	errors?: any;
 	label?: string;
+	onClick?: (name: string, value: any) => void;
 	onSearch: (keyword: string) => any;
+	required?: boolean;
 	resource: string;
 	transformData?: (item: any) => any;
 };
 
 const AutoComplete: React.FC<AutoCompleteProps> = ({
+	errors,
 	label,
+	onClick,
 	onSearch,
+	required,
 	resource,
 	transformData,
 }) => {
@@ -46,9 +53,14 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
 	);
 
 	const items = data?.items || [];
-	const onClickItem = (name: string) => {
-		setShowValue(name);
+
+	const onClickItem = (name: any, item: any) => {
+		setShowValue(item.name);
 		setActive(false);
+
+		if (onClick) {
+			onClick(name, item);
+		}
 	};
 
 	useEffect(() => {
@@ -59,37 +71,41 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
 
 	return (
 		<ClayAutocomplete className="mb-4">
-			<label>{label}</label>
+			<BaseWrapper
+				error={label ? errors[label]?.message : null}
+				label={label}
+				required={required}
+			>
+				<ClayAutocomplete.Input
+					onBlur={() => setTimeout(() => setActive(false), 200)}
+					onChange={(event) => {
+						setValue(event.target.value);
+						setShowValue(event.target.value);
+					}}
+					placeholder="Type here"
+					value={showValue || value}
+				/>
 
-			<ClayAutocomplete.Input
-				onBlur={() => setTimeout(() => setActive(false), 200)}
-				onChange={(event) => {
-					setValue(event.target.value);
-					setShowValue(event.target.value);
-				}}
-				placeholder="Type here"
-				value={showValue || value}
-			/>
+				<ClayAutocomplete.DropDown active={active}>
+					<ClayDropDown.ItemList>
+						{called && (error || (items && !items.length)) && (
+							<ClayDropDown.Item className="disabled">
+								No Results Found
+							</ClayDropDown.Item>
+						)}
 
-			<ClayAutocomplete.DropDown active={active}>
-				<ClayDropDown.ItemList>
-					{called && (error || (items && !items.length)) && (
-						<ClayDropDown.Item className="disabled">
-							No Results Found
-						</ClayDropDown.Item>
-					)}
-
-					{!error &&
-						items?.map((item: any) => (
-							<ClayAutocomplete.Item
-								key={item.id}
-								match={value}
-								onClick={() => onClickItem(item.name)}
-								value={item.name}
-							/>
-						))}
-				</ClayDropDown.ItemList>
-			</ClayAutocomplete.DropDown>
+						{!error &&
+							items?.map((item: any) => (
+								<ClayAutocomplete.Item
+									key={item.id}
+									match={value}
+									onClick={() => onClickItem(label, item)}
+									value={item.name}
+								/>
+							))}
+					</ClayDropDown.ItemList>
+				</ClayAutocomplete.DropDown>
+			</BaseWrapper>
 
 			{isValidating && <ClayAutocomplete.LoadingIndicator />}
 		</ClayAutocomplete>

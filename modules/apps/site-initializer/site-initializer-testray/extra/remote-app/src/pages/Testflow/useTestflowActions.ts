@@ -12,24 +12,18 @@
  * details.
  */
 
-import {ClayCheckbox} from '@clayui/form';
-import {useState} from 'react';
+import useFormModal from '../../hooks/useFormModal';
 
-type CheckboxProps = {
-	inline?: boolean;
-	label?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+const useTestflowActions = () => {
+	const {forceRefetch, modal} = useFormModal();
 
-const Checkbox: React.FC<CheckboxProps> = (props) => {
-	const [value, setValue] = useState(false);
+	const actions: any[] = [];
 
-	return (
-		<ClayCheckbox
-			checked={value}
-			onChange={() => setValue(!value)}
-			{...props}
-		/>
-	);
+	return {
+		actions,
+		forceRefetch,
+		modal,
+	};
 };
 
-export default Checkbox;
+export default useTestflowActions;

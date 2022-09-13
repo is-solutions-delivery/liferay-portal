@@ -14,6 +14,7 @@
 
 import React from 'react';
 
+import {getUniqueList} from '../../../util';
 import {UserListView} from '../../Manage/User';
 
 type SelectCaseParametersProps = {
@@ -25,7 +26,10 @@ const SelectCaseParameters: React.FC<SelectCaseParametersProps> = ({
 }) => (
 	<UserListView
 		listViewProps={{
-			onContextChange: ({selectedRows}) => setState(selectedRows),
+			onContextChange: ({selectedRows}) =>
+				setState((state: any) =>
+					getUniqueList([...state, ...selectedRows])
+				),
 		}}
 		tableProps={{rowSelectable: true}}
 	/>

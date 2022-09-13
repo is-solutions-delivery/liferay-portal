@@ -12,30 +12,80 @@
  * details.
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import {useState} from 'react';
+import {ClayInput} from '@clayui/form';
+import {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {useParams} from 'react-router-dom';
 
 import Form from '../../components/Form';
 import Container from '../../components/Layout/Container';
+import {useHeader} from '../../hooks';
 import {useFetch} from '../../hooks/useFetch';
+import useFormActions from '../../hooks/useFormActions';
 import useFormModal from '../../hooks/useFormModal';
 import i18n from '../../i18n';
-import {TestrayCaseType} from '../../services/rest';
+import yupSchema, {yupResolver} from '../../schema/yup';
+import {
+	TestrayBuild,
+	TestrayCaseType,
+	testrayBuildImpl,
+	testrayTaskImpl,
+} from '../../services/rest';
 import {searchUtil} from '../../util/search';
 import {UserListView} from '../Manage/User';
 import TestflowAssignUserModal from './modal';
 
+type TestflowFormType = typeof yupSchema.task.__outputType;
+
 const TestflowForm = () => {
-	const [users, setUsers] = useState([]);
+	const {
+		form: {onClose, onError, onSave, onSubmit},
+	} = useFormActions();
+
 	const [modalType, setModalType] = useState('assign-users');
-
-	const {data} = useFetch('/casetypes');
-
-	const caseTypes = data?.items || [];
-
+	const [users, setUsers] = useState([]);
 	const {modal} = useFormModal({
 		onSave: setUsers,
 	});
+	const {buildId} = useParams();
+
+	const {data} = useFetch('/casetypes');
+	const {data: testrayBuild} = useFetch<TestrayBuild>(
+		testrayBuildImpl.getResource(buildId as string)
+	);
+
+	const {
+		formState: {errors},
+		handleSubmit,
+		register,
+		setValue,
+		watch,
+	} = useForm<TestflowFormType>({
+		defaultValues: buildId
+			? {
+					build: Number(buildId),
+					caseTypes: [],
+					dueStatus: 1,
+			  }
+			: {
+					caseTypes: [],
+					dueStatus: 1,
+			  },
+		resolver: yupResolver(yupSchema.task),
+	});
+
+	useHeader({
+		useHeading: [
+			{
+				category: i18n.translate('task'),
+				title: i18n.translate('testflow'),
+			},
+		],
+	});
+
+	const caseTypes = data?.items || [];
 
 	const onOpenModal = (option: 'assign-users' | 'assign-user-groups') => {
 		setModalType(option);
@@ -43,21 +93,88 @@ const TestflowForm = () => {
 		modal.open();
 	};
 
+	const _onSubmit = (form: TestflowFormType) => {
+		// eslint-disable-next-line no-console
+		console.log('FORM', form);
+
+		onSubmit(
+			{...form},
+			{
+				create: (data) => testrayTaskImpl.create(data),
+				update: (id, data) => testrayTaskImpl.update(id, data),
+			}
+		)
+			.then(() => {
+				// onSuccess();
+
+				return onSave();
+			})
+
+			.catch(onError);
+	};
+
+	const inputProps = {
+		errors,
+		register,
+	};
+
+	const caseTypesWatch = watch('caseTypes') as number[];
+
+	const onClickCaseType = (event: any) => {
+		const value = Number(event.target.value);
+
+		const caseTypesFiltered = caseTypesWatch.includes(value)
+			? caseTypesWatch.filter((caseTypeId) => caseTypeId !== value)
+			: [...caseTypesWatch, value];
+
+		setValue('caseTypes', caseTypesFiltered);
+	};
+
+	useEffect(() => {
+		setValue('name', testrayBuild?.name);
+	}, [testrayBuild, setValue]);
+
+	useEffect(() => {
+		setValue('userToTasks', users);
+	}, [setValue, users]);
+
 	return (
 		<Container>
-			<Form.Input label={i18n.translate('name')} name="name" required />
+			<ClayInput.GroupItem shrink>
+				<Form.Input
+					{...inputProps}
+					label={i18n.translate('name')}
+					name="name"
+					required
+					size={100}
+				/>
+			</ClayInput.GroupItem>
 
 			<Form.Clay.Group>
-				<label className="mb-2">{i18n.translate('case-type')}</label>
+				<label className="mb-2 required">
+					{i18n.translate('case-type')}
+				</label>
 
-				{caseTypes
-					.slice(0, 10)
-					.map((caseType: TestrayCaseType, index: number) => (
-						<Form.Checkbox key={index} label={caseType.name} />
-					))}
+				<div className="d-flex flex-wrap">
+					{caseTypes.map(
+						(caseType: TestrayCaseType, index: number) => (
+							<div className="col-4" key={index}>
+								<Form.Checkbox
+									checked={caseTypesWatch.includes(
+										caseType.id
+									)}
+									label={caseType.name}
+									name={caseType.name}
+									onChange={onClickCaseType}
+									value={caseType.id}
+								/>
+							</div>
+						)
+					)}
+				</div>
 			</Form.Clay.Group>
 
-			<h3>{i18n.translate('users')}</h3>
+			<h5>{i18n.translate('users')}</h5>
 
 			<Form.Divider />
 
@@ -78,6 +195,12 @@ const TestflowForm = () => {
 				</ClayButton>
 			</Form.Clay.Group>
 
+			{!users.length && (
+				<ClayAlert>
+					{i18n.translate('there-are-no-linked-users')}
+				</ClayAlert>
+			)}
+
 			{!!users.length && (
 				<UserListView
 					listViewProps={{
@@ -87,7 +210,12 @@ const TestflowForm = () => {
 				/>
 			)}
 
-			<Form.Footer onClose={() => null} onSubmit={() => null} />
+			<Form.Divider />
+
+			<Form.Footer
+				onClose={() => onClose()}
+				onSubmit={handleSubmit(_onSubmit)}
+			/>
 
 			<TestflowAssignUserModal modal={modal} type={modalType as any} />
 		</Container>
