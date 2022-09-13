@@ -13,20 +13,13 @@ import {ClayIconSpriteContext} from '@clayui/icon';
 import {Root, createRoot} from 'react-dom/client';
 import {SWRConfig} from 'swr';
 
-import PRMFormik from './common/components/PRMFormik';
 import {AppRouteType} from './common/enums/appRouteType';
-import MDFClaim from './common/interfaces/mdfClaim';
 import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import handleError from './common/utils/handleError';
-import MDFClaimForm from './routes/MDFClaimForm';
-import claimSchema from './routes/MDFClaimForm/schema/yup';
 import MDFRequestForm from './routes/MDFRequestForm';
 import MDFRequestList from './routes/MDFRequestList';
+import MDFClaimFormik from './routes/MDFClaimForm/components/MDFClaimFormik';
 
-const initialMDFClaimFormValues: MDFClaim = {
-	mdfClaimActivities: [],
-	totalClaimAmount: 0,
-};
 interface IProps {
 	route: AppRouteType;
 }
@@ -38,14 +31,7 @@ type AppRouteComponent = {
 const appRoutes: AppRouteComponent = {
 	[AppRouteType.MDF_REQUEST_FORM]: <MDFRequestForm />,
 	[AppRouteType.MDF_REQUEST_LIST]: <MDFRequestList />,
-	[AppRouteType.MDF_CLAIM]: (
-		<PRMFormik
-			initialValues={initialMDFClaimFormValues}
-			onSubmit={() => {}}
-		>
-			<MDFClaimForm validationSchema={claimSchema} />
-		</PRMFormik>
-	),
+	[AppRouteType.MDF_CLAIM_FORM]: <MDFClaimFormik />,
 };
 
 const PartnerPortalApp = ({route}: IProps) => {
