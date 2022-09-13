@@ -1281,9 +1281,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
-			Map<Locale, String> titleMap = Collections.singletonMap(
-				LocaleUtil.getSiteDefault(), jsonObject.getString("name"));
-
 			String ddmStructureKey = jsonObject.getString("ddmStructureKey");
 
 			ddmStructureLocalService.getStructure(
@@ -1308,8 +1305,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 				JSONUtil.toStringArray(
 					jsonObject.getJSONArray("assetTagNames")));
 
-			JournalArticle journalArticle =
-				_journalArticleLocalService.addArticle(
+			JournalArticle existingJournalArticle =
+				_journalArticleLocalService.fetchArticle(
+					serviceContext.getScopeGroupId(),
+					jsonObject.getString("articleId"));
+
+			if (existingJournalArticle == null) {
+				Map<Locale, String> titleMap = Collections.singletonMap(
+					LocaleUtil.getSiteDefault(), jsonObject.getString("name"));
+
+				existingJournalArticle = _journalArticleLocalService.addArticle(
 					null, serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(), journalFolderId,
 					JournalArticleConstants.CLASS_NAME_ID_DEFAULT, 0,
@@ -1328,9 +1333,18 @@ public class BundleSiteInitializer implements SiteInitializer {
 					calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true, 0, 0, 0,
 					0, 0, true, true, false, null, null, null, null,
 					serviceContext);
+			}
+			else {
+				existingJournalArticle =
+					_journalArticleLocalService.updateArticle(
+						existingJournalArticle.getId(),
+						existingJournalArticle.getUrlTitle());
+			}
 
 			serviceContext.setAssetCategoryIds(null);
 			serviceContext.setAssetTagNames(null);
+
+			JournalArticle journalArticle = existingJournalArticle;
 
 			DDMStructure ddmStructure = journalArticle.getDDMStructure();
 
