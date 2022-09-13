@@ -16,9 +16,9 @@ import {SWRConfig} from 'swr';
 import {AppRouteType} from './common/enums/appRouteType';
 import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import handleError from './common/utils/handleError';
+import MDFClaimFormik from './routes/MDFClaimForm/components/MDFClaimFormik';
 import MDFRequestForm from './routes/MDFRequestForm';
 import MDFRequestList from './routes/MDFRequestList';
-import MDFClaimFormik from './routes/MDFClaimForm/components/MDFClaimFormik';
 
 interface IProps {
 	route: AppRouteType;

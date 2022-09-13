@@ -26,8 +26,8 @@ const MDFClaimFormik = () => {
 			onSubmit={submitForm}
 		>
 			<MDFClaimForm
-				validationSchema={claimSchema}
 				onSaveAsDraft={submitForm}
+				validationSchema={claimSchema}
 			/>
 		</PRMFormik>
 	);
