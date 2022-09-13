@@ -104,6 +104,7 @@ public class MessageBoardMessageDTOConverter
 							user.getEmailAddress(), featuredDomain)) {
 
 						this.featuredDomain = featuredDomain;
+
 						break;
 					}
 				}
