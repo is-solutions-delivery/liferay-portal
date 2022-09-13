@@ -19,8 +19,11 @@ import PRMFormikPageProps from '../../common/components/PRMFormik/interfaces/prm
 import MDFClaim from '../../common/interfaces/mdfClaim';
 import isObjectEmpty from '../MDFRequestForm/utils/isObjectEmpty';
 import ClaimTotalResumeCard from './components/ClaimTotalResumeCard';
+import mdfClaimProps from './interfaces/mdfClaimProps';
 
-const MDFClaimForm = ({}: PRMFormikPageProps) => {
+const MDFClaimForm = ({
+	onSaveAsDraft,
+}: PRMFormikPageProps & mdfClaimProps<MDFClaim>) => {
 	const {
 		errors,
 		isSubmitting,
@@ -62,7 +65,14 @@ const MDFClaimForm = ({}: PRMFormikPageProps) => {
 
 			<PRMForm.Footer>
 				<div className="d-flex mr-auto">
-					<Button displayType={null}>Save as Draft</Button>
+					<Button
+						className="pl-0"
+						disabled={isSubmitting}
+						displayType={null}
+						onClick={() => onSaveAsDraft?.(values, formikHelpers)}
+					>
+						Save as Draft
+					</Button>
 				</div>
 
 				<div>
@@ -75,6 +85,7 @@ const MDFClaimForm = ({}: PRMFormikPageProps) => {
 							(!isValid && !isObjectEmpty(claimErrors)) ||
 							isSubmitting
 						}
+						type="submit"
 					>
 						Submit
 					</Button>
