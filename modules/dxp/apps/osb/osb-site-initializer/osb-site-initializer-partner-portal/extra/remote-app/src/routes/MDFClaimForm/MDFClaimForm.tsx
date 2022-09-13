@@ -12,8 +12,8 @@
 import Button from '@clayui/button';
 import {useFormikContext} from 'formik';
 import {useMemo} from 'react';
-import PRMForm from '../../common/components/PRMForm';
 
+import PRMForm from '../../common/components/PRMForm';
 import PRMFormik from '../../common/components/PRMFormik';
 import PRMFormikPageProps from '../../common/components/PRMFormik/interfaces/prmFormikPageProps';
 import MDFClaim from '../../common/interfaces/mdfClaim';
