@@ -14,6 +14,7 @@
 
 export default {
 	'activate': 'Activate',
+	'active': 'Active',
 	'add': 'Add',
 	'add-another': 'Add Another',
 	'add-case': 'Add Case',
@@ -115,6 +116,7 @@ export default {
 	'date-modified': 'Date Modified',
 	'dates': 'Dates',
 	'deactivate': 'Deactivate',
+	'deactive': 'Deactive',
 	'delete': 'Delete',
 	'delete-build': 'Delete Build',
 	'delete-case': 'Delete Case',
