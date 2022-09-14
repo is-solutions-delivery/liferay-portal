@@ -2656,7 +2656,7 @@ components:
                     description:
                         The message's external reference code.
                     type: string
-                featuredDomain:
+                featuredDomainName:
                     description:
                         The user's domain.
                     type: string
