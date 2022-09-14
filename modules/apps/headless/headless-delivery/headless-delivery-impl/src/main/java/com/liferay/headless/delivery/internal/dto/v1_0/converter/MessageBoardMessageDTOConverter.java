@@ -92,23 +92,7 @@ public class MessageBoardMessageDTOConverter
 				dateModified = mbMessage.getModifiedDate();
 				encodingFormat = mbMessage.getFormat();
 				externalReferenceCode = mbMessage.getExternalReferenceCode();
-
-				featuredDomain = StringPool.BLANK;
-
-				for (String featuredDomain :
-						_getFeaturedDomains(mbMessage.getGroupId())) {
-
-					if (Validator.isNotNull(
-							_getFeaturedDomains(mbMessage.getGroupId())) &&
-						StringUtil.endsWith(
-							user.getEmailAddress(), "@" + featuredDomain)) {
-
-						this.featuredDomain = featuredDomain;
-
-						break;
-					}
-				}
-
+				featuredDomain = _getFeaturedDomainName(mbMessage);
 				friendlyUrlPath = mbMessage.getUrlSubject();
 				headline = mbMessage.getSubject();
 				id = mbMessage.getMessageId();
@@ -176,19 +160,22 @@ public class MessageBoardMessageDTOConverter
 		};
 	}
 
-	private String[] _getFeaturedDomains(Long groupId) {
-		MBModerationGroupConfiguration mbModerationGroupConfiguration = null;
+	private String _getFeaturedDomainName(MBMessage mbMessage)
+		throws ConfigurationException {
 
-		try {
-			mbModerationGroupConfiguration =
-				_configurationProvider.getGroupConfiguration(
-					MBModerationGroupConfiguration.class, groupId);
-		}
-		catch (ConfigurationException configurationException) {
-			throw new RuntimeException(configurationException);
-		}
+		for (String featuredDomainName :
+			_configurationProvider.getGroupConfiguration(
+				MBModerationGroupConfiguration.class, mbMessage.getGroupId()).authorizedDomainNames()) {
 
-		return mbModerationGroupConfiguration.featuredDomainsNames();
+			if (Validator.isNotNull(featuredDomainName ) &&
+				StringUtil.endsWith(
+					_userLocalService.fetchUser(mbMessage.getUserId()).getEmailAddress(), "@" + featuredDomainName)) {
+
+				return featuredDomainName;
+
+			}
+		}
+		return StringPool.BLANK;
 	}
 
 	@Reference
