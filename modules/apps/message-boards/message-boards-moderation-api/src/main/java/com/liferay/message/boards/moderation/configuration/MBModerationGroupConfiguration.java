@@ -45,6 +45,12 @@ public interface MBModerationGroupConfiguration {
 	public String[] authorizedDomainNames();
 
 	@Meta.AD(
+		description = "featured-domain-names-help",
+		name = "featured-domain-names", required = false
+	)
+	public String[] featuredDomainNames();
+
+	@Meta.AD(
 		deflt = "1", description = "minimum-contributed-messages-help",
 		min = "1", name = "minimum-contributed-messages", required = false
 	)

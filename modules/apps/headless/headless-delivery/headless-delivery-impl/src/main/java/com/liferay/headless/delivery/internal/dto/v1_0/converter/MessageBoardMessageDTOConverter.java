@@ -26,13 +26,19 @@ import com.liferay.headless.delivery.internal.dto.v1_0.util.CreatorStatisticsUti
 import com.liferay.headless.delivery.internal.dto.v1_0.util.RelatedContentUtil;
 import com.liferay.message.boards.model.MBMessage;
 import com.liferay.message.boards.model.MBThread;
+import com.liferay.message.boards.moderation.configuration.MBModerationGroupConfiguration;
 import com.liferay.message.boards.service.MBMessageLocalService;
 import com.liferay.message.boards.service.MBMessageService;
 import com.liferay.message.boards.service.MBStatsUserLocalService;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
@@ -86,6 +92,8 @@ public class MessageBoardMessageDTOConverter
 				dateModified = mbMessage.getModifiedDate();
 				encodingFormat = mbMessage.getFormat();
 				externalReferenceCode = mbMessage.getExternalReferenceCode();
+				featuredDomain = _getFeaturedDomainName(
+					mbMessage.getGroupId(), user);
 				friendlyUrlPath = mbMessage.getUrlSubject();
 				headline = mbMessage.getSubject();
 				id = mbMessage.getMessageId();
@@ -153,6 +161,30 @@ public class MessageBoardMessageDTOConverter
 		};
 	}
 
+	private String _getFeaturedDomainName(long groupId, User user) {
+		try {
+			MBModerationGroupConfiguration mbModerationGroupConfiguration =
+				_configurationProvider.getGroupConfiguration(
+					MBModerationGroupConfiguration.class, groupId);
+
+			for (String featuredDomainName :
+					mbModerationGroupConfiguration.featuredDomainNames()) {
+
+				if (Validator.isNotNull(featuredDomainName) &&
+					StringUtil.endsWith(
+						user.getEmailAddress(), "@" + featuredDomainName)) {
+
+					return featuredDomainName;
+				}
+			}
+		}
+		catch (ConfigurationException configurationException) {
+			throw new RuntimeException(configurationException);
+		}
+
+		return StringPool.BLANK;
+	}
+
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
 
@@ -161,6 +193,9 @@ public class MessageBoardMessageDTOConverter
 
 	@Reference
 	private AssetTagLocalService _assetTagLocalService;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
 
 	@Reference
 	private MBMessageLocalService _mbMessageLocalService;

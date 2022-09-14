@@ -2656,6 +2656,10 @@ components:
                     description:
                         The message's external reference code.
                     type: string
+                featuredDomain:
+                    description:
+                        The user's domain.
+                    type: string
                 friendlyUrlPath:
                     type: string
                 headline:
