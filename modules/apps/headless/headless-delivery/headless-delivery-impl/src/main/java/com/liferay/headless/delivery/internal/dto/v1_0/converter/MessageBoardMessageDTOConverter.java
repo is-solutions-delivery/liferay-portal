@@ -92,7 +92,7 @@ public class MessageBoardMessageDTOConverter
 				dateModified = mbMessage.getModifiedDate();
 				encodingFormat = mbMessage.getFormat();
 				externalReferenceCode = mbMessage.getExternalReferenceCode();
-				featuredDomain = _getFeaturedDomainName(
+				featuredDomainName = _getFeaturedDomainName(
 					mbMessage.getGroupId(), user);
 				friendlyUrlPath = mbMessage.getUrlSubject();
 				headline = mbMessage.getSubject();
