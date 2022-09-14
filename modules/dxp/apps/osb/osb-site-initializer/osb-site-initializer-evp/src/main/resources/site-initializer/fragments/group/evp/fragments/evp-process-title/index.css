@@ -1,0 +1,26 @@
+.evp-process .number-process{
+	font-size: 128px;
+	font-weight: normal;
+	line-height: 115px;
+	min-width: 0ch !important;
+}
+
+.evp-process .process-title-1{
+	font-size: 48px !important;
+	font-weight: 400;
+	line-height: 48px;
+}
+
+.evp-process .steps-process{
+	font-size: 64px;
+	font-weight: normal;
+	line-height: 23px;
+}
+
+.evp-process .process-title-container {
+	max-width: 400px;
+}
+
+.evp-process .process-icon{
+ width:40px
+}
