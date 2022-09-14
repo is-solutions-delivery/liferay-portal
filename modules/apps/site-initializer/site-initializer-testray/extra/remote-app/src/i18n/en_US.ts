@@ -244,6 +244,7 @@ export default {
 	'screen-name': 'Screen Name',
 	'search': 'Search',
 	'search-in': 'Search in...',
+	'select-build': 'Select Build',
 	'select-case-parameters': 'Select Case Parameters',
 	'select-cases': 'Select Cases',
 	'select-default-environment-factors': 'Select Default Environment Factors',
@@ -298,14 +299,15 @@ export default {
 	'the-team-name-already-exists': 'The team name already exists',
 	'the-x-name-already-exists': 'The {0} name already exists',
 	'there-are-no-entries-yet': 'There are no entries yet.',
-	'there-are-no-linked-cases': 'There are no linked cases',
+	'there-are-no-linked-cases': 'There are no linked cases.',
+	'there-are-no-linked-users': 'There are no linked users.',
 	'there-are-no-matching-results': 'There are no matching results.',
 	'this-build-has-been-analyzed': 'This build has been analyzed.',
 	'this-build-is-currently-in-analysis':
 		'This build is currently in analysis.',
 	'this-builds-task-has-been-abandoned':
 		"This build's task has been abandoned.",
-	'this-field-is-required': 'This field is required.',
+	'this-field-is-required': 'This field is Required.',
 	'this-role-is-for-general-liferay-employees-and-enables-authenticated-users-to-view-test-results':
 		'This role is for general Liferay employees and enables authenticated users to view test results.',
 	'time-x-total-issues': 'Time {0} Total Issues',
@@ -321,6 +323,7 @@ export default {
 	'update-x': 'Update {0}',
 	'updated': 'Updated',
 	'upload-csv': 'Upload CSV',
+	'user-groups': 'User Groups',
 	'user-information': 'User Information',
 	'users': 'Users',
 	'view-case': 'View Case',
