@@ -272,6 +272,7 @@ const filters = {
 		{
 			label: i18n.translate('team-name'),
 			name: 'team',
+			type: 'text',
 		},
 	],
 };
