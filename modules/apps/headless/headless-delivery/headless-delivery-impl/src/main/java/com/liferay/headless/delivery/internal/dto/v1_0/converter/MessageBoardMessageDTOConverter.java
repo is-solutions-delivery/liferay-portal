@@ -168,7 +168,7 @@ public class MessageBoardMessageDTOConverter
 					MBModerationGroupConfiguration.class, groupId);
 
 			for (String featuredDomainName :
-					mbModerationGroupConfiguration.authorizedDomainNames()) {
+					mbModerationGroupConfiguration.featuredDomainNames()) {
 
 				if (Validator.isNotNull(featuredDomainName) &&
 					StringUtil.endsWith(
