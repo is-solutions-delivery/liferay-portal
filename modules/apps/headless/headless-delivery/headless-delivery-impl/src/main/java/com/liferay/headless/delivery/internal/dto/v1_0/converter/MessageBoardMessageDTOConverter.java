@@ -92,7 +92,8 @@ public class MessageBoardMessageDTOConverter
 				dateModified = mbMessage.getModifiedDate();
 				encodingFormat = mbMessage.getFormat();
 				externalReferenceCode = mbMessage.getExternalReferenceCode();
-				featuredDomain = _getFeaturedDomainName(mbMessage);
+				featuredDomain = _getFeaturedDomainName(
+					mbMessage.getGroupId(), user);
 				friendlyUrlPath = mbMessage.getUrlSubject();
 				headline = mbMessage.getSubject();
 				id = mbMessage.getMessageId();
@@ -160,21 +161,27 @@ public class MessageBoardMessageDTOConverter
 		};
 	}
 
-	private String _getFeaturedDomainName(MBMessage mbMessage)
-		throws ConfigurationException {
+	private String _getFeaturedDomainName(long groupId, User user) {
+		try {
+			MBModerationGroupConfiguration mbModerationGroupConfiguration =
+				_configurationProvider.getGroupConfiguration(
+					MBModerationGroupConfiguration.class, groupId);
 
-		for (String featuredDomainName :
-			_configurationProvider.getGroupConfiguration(
-				MBModerationGroupConfiguration.class, mbMessage.getGroupId()).authorizedDomainNames()) {
+			for (String featuredDomainName :
+					mbModerationGroupConfiguration.authorizedDomainNames()) {
 
-			if (Validator.isNotNull(featuredDomainName ) &&
-				StringUtil.endsWith(
-					_userLocalService.fetchUser(mbMessage.getUserId()).getEmailAddress(), "@" + featuredDomainName)) {
+				if (Validator.isNotNull(featuredDomainName) &&
+					StringUtil.endsWith(
+						user.getEmailAddress(), "@" + featuredDomainName)) {
 
-				return featuredDomainName;
-
+					return featuredDomainName;
+				}
 			}
 		}
+		catch (ConfigurationException configurationException) {
+			throw new RuntimeException(configurationException);
+		}
+
 		return StringPool.BLANK;
 	}
 
