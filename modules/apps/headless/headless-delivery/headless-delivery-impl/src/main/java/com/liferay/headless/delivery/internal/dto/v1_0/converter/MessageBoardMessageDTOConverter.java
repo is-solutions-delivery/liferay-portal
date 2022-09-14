@@ -101,7 +101,7 @@ public class MessageBoardMessageDTOConverter
 					if (Validator.isNotNull(
 							_getFeaturedDomains(mbMessage.getGroupId())) &&
 						StringUtil.endsWith(
-							user.getEmailAddress(), featuredDomain)) {
+							user.getEmailAddress(), "@"+featuredDomain)) {
 
 						this.featuredDomain = featuredDomain;
 
@@ -188,7 +188,7 @@ public class MessageBoardMessageDTOConverter
 			throw new RuntimeException(configurationException);
 		}
 
-		return mbModerationGroupConfiguration.featuredDomains();
+		return mbModerationGroupConfiguration.featuredDomainsNames();
 	}
 
 	@Reference
