@@ -94,7 +94,8 @@ import org.w3c.dom.NodeList;
 	},
 	service = DispatchTaskExecutor.class
 )
-public class TestrayDispatchTaskExecutor extends BaseDispatchTaskExecutor {
+public class SiteInitializerTestrayDispatchTaskExecutor
+	extends BaseDispatchTaskExecutor {
 
 	// TODO "feature.flag.LPS-163118"
 
@@ -1599,7 +1600,7 @@ public class TestrayDispatchTaskExecutor extends BaseDispatchTaskExecutor {
 	private static final int _TESTRAY_RUN_EXTERNAL_REFERENCE_TYPE_POSHI = 1;
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		TestrayDispatchTaskExecutor.class);
+		SiteInitializerTestrayDispatchTaskExecutor.class);
 
 	private DefaultDTOConverterContext _defaultDTOConverterContext;
 
