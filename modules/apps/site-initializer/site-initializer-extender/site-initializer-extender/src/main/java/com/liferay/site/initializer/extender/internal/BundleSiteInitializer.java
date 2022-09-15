@@ -458,12 +458,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, Layout> layouts = _invoke(
 				() -> _addLayouts(serviceContext));
 
-			_invoke(
-				() -> _addLayoutPageTemplates(
-					assetListEntryIdsStringUtilReplaceValues,
-					documentsStringUtilReplaceValues, serviceContext,
-					taxonomyCategoryIdsStringUtilReplaceValues));
-
 			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
 				_invoke(() -> _addListTypeDefinitions(serviceContext));
 
@@ -482,6 +476,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 							listTypeDefinitionIdsStringUtilReplaceValues,
 							objectDefinitionResource, serviceContext,
 							siteNavigationMenuItemSettingsBuilder));
+
+			_invoke(
+				() -> _addLayoutPageTemplates(
+					assetListEntryIdsStringUtilReplaceValues,
+					documentsStringUtilReplaceValues, serviceContext,
+					taxonomyCategoryIdsStringUtilReplaceValues));
 
 			_invoke(
 				() -> _addCPDefinitions(
@@ -1675,7 +1675,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			String urlPath = url.getPath();
 
-			if (StringUtil.endsWith(urlPath, "page-definition.json")) {
+			if (StringUtil.endsWith(urlPath, "page-definition.json") |
+				StringUtil.endsWith(urlPath, "display-page-template.json")) {
+
 				String json = StringUtil.read(url.openStream());
 
 				json = _replace(
@@ -1684,18 +1686,27 @@ public class BundleSiteInitializer implements SiteInitializer {
 					documentsStringUtilReplaceValues,
 					taxonomyCategoryIdsStringUtilReplaceValues);
 
+				com.liferay.object.model.ObjectDefinition objectDefinition =
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						serviceContext.getCompanyId(), "C_MDFRequest");
+
+				if (objectDefinition == null) {
+					continue;
+				}
+
 				Group group = serviceContext.getScopeGroup();
 
 				json = _replace(
 					json,
 					new String[] {
 						"[$GROUP_FRIENDLY_URL$]", "[$GROUP_ID$]",
-						"[$GROUP_KEY$]"
+						"[$GROUP_KEY$]", "[$OBJECT_DEFINITION_ID$]"
 					},
 					new String[] {
 						group.getFriendlyURL(),
 						String.valueOf(serviceContext.getScopeGroupId()),
-						group.getGroupKey()
+						group.getGroupKey(),
+						String.valueOf(objectDefinition.getObjectDefinitionId())
 					});
 
 				String css = _replace(
