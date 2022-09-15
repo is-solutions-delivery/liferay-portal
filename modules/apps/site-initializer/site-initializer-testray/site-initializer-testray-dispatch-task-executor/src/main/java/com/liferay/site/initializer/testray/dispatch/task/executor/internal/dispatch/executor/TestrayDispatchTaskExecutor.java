@@ -12,7 +12,7 @@
  *
  */
 
-package com.liferay.osb.testray.dispatch.task.executor.internal.dispatch.executor;
+package com.liferay.site.initializer.testray.dispatch.task.executor.internal.dispatch.executor;
 
 import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
