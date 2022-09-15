@@ -87,6 +87,7 @@ import org.w3c.dom.NodeList;
 @Component(
 	property = {
 		"dispatch.task.executor.cluster.mode=single-node",
+		"dispatch.task.executor.feature.flag=LPS-163118",
 		"dispatch.task.executor.name=testray",
 		"dispatch.task.executor.overlapping=false",
 		"dispatch.task.executor.type=testray"
@@ -94,6 +95,8 @@ import org.w3c.dom.NodeList;
 	service = DispatchTaskExecutor.class
 )
 public class TestrayDispatchTaskExecutor extends BaseDispatchTaskExecutor {
+
+	// TODO "feature.flag.LPS-163118"
 
 	@Override
 	public void doExecute(
