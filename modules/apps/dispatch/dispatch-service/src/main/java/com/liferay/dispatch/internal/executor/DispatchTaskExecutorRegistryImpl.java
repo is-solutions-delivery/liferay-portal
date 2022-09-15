@@ -22,6 +22,8 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,6 +92,16 @@ public class DispatchTaskExecutorRegistryImpl
 	protected void addDispatchTaskExecutor(
 		DispatchTaskExecutor dispatchTaskExecutor,
 		Map<String, Object> properties) {
+
+		String dispatchTaskFeatureFlag = (String)properties.get(
+			_KEY_DISPATCH_TASK_FEATURE_FLAG);
+
+		if (Validator.isNotNull(dispatchTaskFeatureFlag) &&
+			!GetterUtil.getBoolean(
+				PropsUtil.get("feature.flag." + dispatchTaskFeatureFlag))) {
+
+			return;
+		}
 
 		String dispatchTaskExecutorType = (String)properties.get(
 			_KEY_DISPATCH_TASK_EXECUTOR_TYPE);
@@ -170,6 +182,9 @@ public class DispatchTaskExecutorRegistryImpl
 
 	private static final String _KEY_DISPATCH_TASK_EXECUTOR_TYPE =
 		"dispatch.task.executor.type";
+
+	private static final String _KEY_DISPATCH_TASK_FEATURE_FLAG =
+		"dispatch.task.executor.feature.flag";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DispatchTaskExecutorRegistryImpl.class);
