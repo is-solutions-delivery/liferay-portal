@@ -12,30 +12,18 @@
  * details.
  */
 
-import React from 'react';
+import useFormModal from '../../hooks/useFormModal';
 
-import {getUniqueList} from '../../../util';
-import {UserListView} from '../../Manage/User';
+const useTestflowActions = () => {
+	const {forceRefetch, modal} = useFormModal();
 
-type TestflowAssignUsersProps = {
-	modalState: any;
-	setState: any;
+	const actions: any[] = [];
+
+	return {
+		actions,
+		forceRefetch,
+		modal,
+	};
 };
 
-const TestflowAssignUsers: React.FC<TestflowAssignUsersProps> = ({
-	modalState,
-	setState,
-}) => (
-	<UserListView
-		listViewProps={{
-			initialContext: {selectedRows: modalState},
-			onContextChange: ({selectedRows}) =>
-				setState((state: any) =>
-					getUniqueList([...state, ...selectedRows])
-				),
-		}}
-		tableProps={{rowSelectable: true}}
-	/>
-);
-
-export default TestflowAssignUsers;
+export default useTestflowActions;

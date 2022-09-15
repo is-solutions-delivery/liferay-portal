@@ -106,10 +106,10 @@ export enum SUB_TASK_STATUS {
 }
 
 export const SUBTASK_STATUS = {
-	1: {color: 'label-chart-in-analysis', label: 'IN ANALYSIS'},
-	2: {color: 'label-secondary', label: 'ABANDONED'},
-	3: {color: 'label-primary', label: 'COMPLETE'},
-	4: {color: 'label-secondary', label: 'OPEN'},
+	0: {color: 'label-chart-in-analysis', label: 'IN ANALYSIS'},
+	1: {color: 'label-secondary', label: 'ABANDONED'},
+	2: {color: 'label-primary', label: 'COMPLETE'},
+	3: {color: 'label-secondary', label: 'OPEN'},
 };
 
 export const BUILD_STATUS = {

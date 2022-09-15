@@ -12,17 +12,91 @@
  * details.
  */
 
-import React from 'react';
+import {useEffect, useState} from 'react';
 
-type State = {};
+import Container from '../../../components/Layout/Container';
+import ListView, {ListViewProps} from '../../../components/ListView';
+import {TableProps} from '../../../components/Table';
+import i18n from '../../../i18n';
+import fetcher from '../../../services/fetcher';
+import {Actions} from '../../../types';
+import {getUniqueList} from '../../../util';
+import {searchUtil} from '../../../util/search';
 
-type TestflowAssignUserGroupsProps = {
+type UserGroupsListViewProps = {
+	actions?: Actions;
+	projectId?: number | string;
+	variables?: any;
+} & {listViewProps?: Partial<ListViewProps>; tableProps?: Partial<TableProps>};
+
+const UserGroupsListView: React.FC<UserGroupsListViewProps> = ({
+	listViewProps,
+	tableProps,
+	variables,
+}) => {
+	return (
+		<ListView
+			resource="/user-groups"
+			tableProps={{
+				columns: [
+					{
+						key: 'name',
+						size: 'xl',
+						value: i18n.translate('name'),
+					},
+
+					// {
+					// 	key: 'usersCount',
+					// 	size: 'xl',
+					// 	value: i18n.translate('users-count'),
+					// },
+				],
+				rowSelectable: true,
+				...tableProps,
+			}}
+			transformData={(data: any) => data}
+			variables={variables}
+			{...listViewProps}
+		/>
+	);
+};
+
+type UserGroupProps = {
 	setState: any;
-	state: State;
+	state: any;
 };
 
-const TestflowAssignUserGroups: React.FC<TestflowAssignUserGroupsProps> = () => {
-	return <>TestflowAssignUserGroups</>;
+const UserGroups: React.FC<UserGroupProps> = ({setState}) => {
+	const [value, setValue] = useState<any>([]);
+
+	useEffect(() => {
+		if (value?.length) {
+			fetcher(
+				`/user-accounts?field=id&filter=${searchUtil.in(
+					'userGroupIds',
+					value
+				)}`
+			).then((response) => {
+				const userId = response?.items?.map(({id}: any) => id);
+
+				setState((state: any) => getUniqueList([...state, ...userId]));
+			});
+		}
+	}, [setState, value]);
+
+	return (
+		<Container>
+			<UserGroupsListView
+				listViewProps={{
+					onContextChange: ({selectedRows}) => {
+						setValue(selectedRows);
+					},
+				}}
+			/>
+		</Container>
+	);
 };
 
-export default TestflowAssignUserGroups;
+export {UserGroupsListView, UserGroups};
+
+export default UserGroups;

@@ -6,7 +6,7 @@
 .breadcrumb-content {
 	align-items: flex-end;
 	display: flex;
-
+	background-color: grey;
 	font-size: 1.8em;
 	font-weight: $font-header-weight;
 	line-height: 32px;
@@ -333,22 +333,6 @@
 				background: $color-gray-lighter;
 				text-decoration: none;
 			}
-		}
-	}
-}
-
-.breadcrumb-finder-validator-container {
-	margin-bottom: 5px;
-
-	.breadcrumb-finder-validator-item {
-		color: $color-gray;
-
-		&:not(:last-child) {
-			margin-right: 10px;
-		}
-
-		&.success {
-			color: $passed-color;
 		}
 	}
 }
