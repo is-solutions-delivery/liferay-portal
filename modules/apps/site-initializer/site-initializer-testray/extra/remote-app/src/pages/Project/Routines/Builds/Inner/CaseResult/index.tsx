@@ -70,19 +70,16 @@ const CaseResult = () => {
 		caseResult,
 		mutateCaseResult,
 		projectId,
-		refetch,
 	}: {
 		caseResult: TestrayCaseResult;
 		mutateCaseResult: KeyedMutator<any>;
 		projectId: string;
-		refetch: () => void;
 	} = useOutletContext();
 
 	const getAttachments = (): TestrayAttachment[] => {
 		try {
 			return JSON.parse(caseResult.attachments);
-		}
-		catch (error) {
+		} catch (error) {
 			return [];
 		}
 	};
@@ -266,7 +263,7 @@ const CaseResult = () => {
 											onClick={() =>
 												testrayCaseResultRest
 													.assignToMe(caseResult)
-													.then(refetch)
+													.then(mutateCaseResult)
 											}
 										/>
 									),
