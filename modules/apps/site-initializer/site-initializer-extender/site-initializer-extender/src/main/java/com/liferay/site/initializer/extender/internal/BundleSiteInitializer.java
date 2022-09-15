@@ -534,6 +534,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	@Override
 	public boolean isActive(long companyId) {
+		Dictionary<String, String> headers = _bundle.getHeaders(
+			StringPool.BLANK);
+
+		String featureFlag = headers.get(
+			"Liferay-Site-Initializer-Feature-Flag");
+
+		if (Validator.isNotNull(featureFlag) &&
+			!GetterUtil.getBoolean(
+				PropsUtil.get("feature.flag." + featureFlag))) {
+
+			return false;
+		}
+
 		return true;
 	}
 
