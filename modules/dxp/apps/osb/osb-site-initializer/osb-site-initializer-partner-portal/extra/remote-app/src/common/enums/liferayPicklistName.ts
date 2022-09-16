@@ -18,4 +18,5 @@ export enum LiferayPicklistName {
 	REGIONS = 'Regions',
 	TARGET_AUDIENCE_ROLES = 'Target Audience/Roles',
 	TARGET_MARKETS = 'Target Markets',
+	MDF_DOCUMENT_TYPES = 'MDF Document Types',
 }
