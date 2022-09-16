@@ -16,9 +16,12 @@ import {useMemo} from 'react';
 import PRMForm from '../../common/components/PRMForm';
 import PRMFormik from '../../common/components/PRMFormik';
 import PRMFormikPageProps from '../../common/components/PRMFormik/interfaces/prmFormikPageProps';
+import {LiferayPicklistName} from '../../common/enums/liferayPicklistName';
 import MDFClaim from '../../common/interfaces/mdfClaim';
+import useGetMDFRequestToActivities from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestToActivities';
 import isObjectEmpty from '../MDFRequestForm/utils/isObjectEmpty';
 import ClaimTotalResumeCard from './components/ClaimTotalResumeCard';
+import useDynamicFieldEntries from './hooks/useDynamicFieldEntries';
 import mdfClaimProps from './interfaces/mdfClaimProps';
 
 const MDFClaimForm = ({
@@ -33,13 +36,38 @@ const MDFClaimForm = ({
 		...formikHelpers
 	} = useFormikContext<MDFClaim>();
 
+	const {fieldEntries} = useDynamicFieldEntries();
+
 	const claimErrors = useMemo(() => {
 		return errors;
 	}, [errors]);
 
+	const idMDFRequest = 45016;
+
+	const objActivities = useGetMDFRequestToActivities(idMDFRequest);
+
+	const MDF_DOCUMENT_TYPES =
+		fieldEntries[LiferayPicklistName.MDF_DOCUMENT_TYPES];
+
 	return (
 		<PRMForm className="mb-4" name="NEW" title="Reimbursement Claim">
 			<PRMForm.Section title="Insurance Industry Lead Gen"></PRMForm.Section>
+
+			<PRMForm.Section title="Uploads">
+				{objActivities?.data?.items.map((activities, index) => (
+					<div key={index}>
+						<PRMFormik.Field
+							component={PRMForm.InputFile}
+							label="Reimbursement Invoice"
+							name={`mdfClaimDocuments[${index}]`}
+							idActivity={activities.id}
+							setFieldValue={setFieldValue}
+							typeDocument={MDF_DOCUMENT_TYPES[0].label}
+							required
+						/>
+					</div>
+				))}
+			</PRMForm.Section>
 
 			<PRMForm.Section
 				subtitle="Total Claim is the reimbursement of your expenses, and is up to the Total MDF Requested. In case need to claim more than the MDF Requested you need to apply for a  New MDF Request."

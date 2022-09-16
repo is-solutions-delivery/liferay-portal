@@ -12,6 +12,7 @@
 import {FormikHelpers} from 'formik';
 
 import MDFClaim from '../../../common/interfaces/mdfClaim';
+import createMDFClaimDocuments from '../../../common/services/liferay/object/mdf-claim-document/createMDFClaimDocuments';
 import createMDFClaim from '../../../common/services/liferay/object/mdf-claim/createMDFClaim';
 
 export default async function submitForm(
@@ -21,4 +22,11 @@ export default async function submitForm(
 	formikHelpers.setSubmitting(true);
 
 	const dtoMDFClaim = await createMDFClaim(values);
+
+	if (values.mdfClaimDocuments.length && dtoMDFClaim?.id) {
+		const dtoMDFClaimDocuments = await createMDFClaimDocuments(
+			dtoMDFClaim.id,
+			values.mdfClaimDocuments
+		);
+	}
 }
