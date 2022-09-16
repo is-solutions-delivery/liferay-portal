@@ -10,20 +10,44 @@
  */
 
 import useSWR from 'swr';
-
 import {Liferay} from '../..';
-import MDFRequestActivityDTO from '../../../../interfaces/dto/mdfRequestActivityDTO';
+import documentAndMidiaFolder from '../../../../interfaces/documentAndMidiaFolder';
 import {LiferayAPIs} from '../../common/enums/apis';
 import LiferayItems from '../../common/interfaces/liferayItems';
 import liferayFetcher from '../../common/utils/fetcher';
 
-export default function useGetMDFRequestToActivities(id: number) {
+export async function createDocumentFolder(
+	data: documentAndMidiaFolder,
+	siteId: string
+) {
+	return await liferayFetcher.post(
+		`/o/${LiferayAPIs.HEADERLESS_DELIVERY}/sites/${siteId}/document-folders`,
+		Liferay.authToken,
+		data
+	);
+}
+
+const getDocumentFolders = (siteId: string, filter: string) => {
 	return useSWR(
 		[
-			`/o/${LiferayAPIs.OBJECT}/mdfrequests/${id}/mdfRequestToActivities`,
+			`/o/${LiferayAPIs.HEADERLESS_DELIVERY}/sites/${siteId}/document-folders/${filter}`,
 			Liferay.authToken,
 		],
 		(url, token) =>
-			liferayFetcher<LiferayItems<MDFRequestActivityDTO[]>>(url, token)
+			liferayFetcher<LiferayItems<documentAndMidiaFolder>>(url, token)
 	);
+};
+
+export async function createFolderIfNotExist(
+	siteId: string,
+	folderName: string
+) {
+	let folder;
+
+	const folderExist = await getDocumentFolders(
+		siteId,
+		`?filter=contains(name, '${folderName}')`
+	);
+
+	return folderExist;
 }

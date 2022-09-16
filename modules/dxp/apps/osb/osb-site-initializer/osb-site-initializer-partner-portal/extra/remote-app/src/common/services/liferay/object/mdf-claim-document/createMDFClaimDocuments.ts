@@ -9,21 +9,23 @@
  * distribution rights of the Software.
  */
 
-import useSWR from 'swr';
-
 import {Liferay} from '../..';
-import MDFRequestActivityDTO from '../../../../interfaces/dto/mdfRequestActivityDTO';
+import MDFClaimDocuments from '../../../../interfaces/mdfClaimDocuments';
+import getDTOFromMDFClaimDocument from '../../../../utils/dto/mdf-claim-document/getDTOFromMDFClaimDocument';
 import {LiferayAPIs} from '../../common/enums/apis';
-import LiferayItems from '../../common/interfaces/liferayItems';
 import liferayFetcher from '../../common/utils/fetcher';
 
-export default function useGetMDFRequestToActivities(id: number) {
-	return useSWR(
-		[
-			`/o/${LiferayAPIs.OBJECT}/mdfrequests/${id}/mdfRequestToActivities`,
-			Liferay.authToken,
-		],
-		(url, token) =>
-			liferayFetcher<LiferayItems<MDFRequestActivityDTO[]>>(url, token)
+export default async function createMDFClaimDocuments(
+	mdfRClaimId: number,
+	mdfClaimDocuments: MDFClaimDocuments[]
+) {
+	return await Promise.all(
+		mdfClaimDocuments.map((document) =>
+			liferayFetcher.post(
+				`/o/${LiferayAPIs.OBJECT}/mdfclaimdocuments`,
+				Liferay.authToken,
+				getDTOFromMDFClaimDocument(document, mdfRClaimId)
+			)
+		)
 	);
 }
