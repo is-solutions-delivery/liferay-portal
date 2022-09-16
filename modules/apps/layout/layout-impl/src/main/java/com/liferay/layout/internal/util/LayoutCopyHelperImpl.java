@@ -19,15 +19,12 @@ import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.client.extension.model.ClientExtensionEntryRel;
 import com.liferay.client.extension.service.ClientExtensionEntryRelLocalService;
 import com.liferay.counter.kernel.service.CounterLocalService;
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.PortletRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
-import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.layout.model.LayoutClassedModelUsage;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
-import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
 import com.liferay.layout.seo.model.LayoutSEOEntry;
 import com.liferay.layout.seo.service.LayoutSEOEntryLocalService;
 import com.liferay.layout.service.LayoutClassedModelUsageLocalService;
@@ -60,11 +57,8 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
-import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferenceValueLocalService;
-import com.liferay.portal.kernel.service.PortletPreferenceValueLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
-import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -81,7 +75,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
+import com.liferay.portal.kernel.uuid.PortalUUID;
 import com.liferay.portlet.exportimport.staging.StagingAdvicesThreadLocal;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.model.SegmentsExperience;
@@ -327,7 +321,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		throws PortalException {
 
 		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			LayoutPageTemplateStructureLocalServiceUtil.
+			_layoutPageTemplateStructureLocalService.
 				fetchLayoutPageTemplateStructure(groupId, plid, true);
 
 		LayoutStructure layoutStructure = LayoutStructure.of(
@@ -338,7 +332,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			sourceSegmentsExperienceId, serviceContextFunction,
 			targetSegmentsExperienceId, userId);
 
-		LayoutPageTemplateStructureLocalServiceUtil.
+		_layoutPageTemplateStructureLocalService.
 			updateLayoutPageTemplateStructureData(
 				groupId, plid, targetSegmentsExperienceId,
 				dataJSONObject.toString());
@@ -785,7 +779,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		String namespace, String newNamespace, long plid, String portletId) {
 
 		PortletPreferences portletPreferences =
-			PortletPreferencesLocalServiceUtil.fetchPortletPreferences(
+			_portletPreferencesLocalService.fetchPortletPreferences(
 				PortletKeys.PREFS_OWNER_ID_DEFAULT,
 				PortletKeys.PREFS_OWNER_TYPE_LAYOUT, plid, portletId);
 
@@ -793,7 +787,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			return Optional.empty();
 		}
 
-		Portlet portlet = PortletLocalServiceUtil.getPortletById(portletId);
+		Portlet portlet = _portletLocalService.getPortletById(portletId);
 
 		if ((portlet == null) || portlet.isUndeployedPortlet()) {
 			return Optional.empty();
@@ -803,17 +797,17 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			namespace, newNamespace, portletId);
 
 		PortletPreferences existingPortletPreferences =
-			PortletPreferencesLocalServiceUtil.fetchPortletPreferences(
+			_portletPreferencesLocalService.fetchPortletPreferences(
 				portletPreferences.getOwnerId(),
 				portletPreferences.getOwnerType(), plid, newPortletId);
 
 		javax.portlet.PortletPreferences jxPortletPreferences =
-			PortletPreferenceValueLocalServiceUtil.getPreferences(
+			_portletPreferenceValueLocalService.getPreferences(
 				portletPreferences);
 
 		if (existingPortletPreferences == null) {
 			return Optional.of(
-				PortletPreferencesLocalServiceUtil.addPortletPreferences(
+				_portletPreferencesLocalService.addPortletPreferences(
 					portletPreferences.getCompanyId(),
 					portletPreferences.getOwnerId(),
 					portletPreferences.getOwnerType(), plid, newPortletId,
@@ -822,7 +816,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		}
 
 		return Optional.of(
-			PortletPreferencesLocalServiceUtil.updatePreferences(
+			_portletPreferencesLocalService.updatePreferences(
 				existingPortletPreferences.getOwnerId(),
 				existingPortletPreferences.getOwnerType(),
 				existingPortletPreferences.getPlid(),
@@ -1015,7 +1009,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		throws PortalException {
 
 		List<FragmentEntryLink> fragmentEntryLinks =
-			FragmentEntryLinkLocalServiceUtil.
+			_fragmentEntryLinkLocalService.
 				getFragmentEntryLinksBySegmentsExperienceId(
 					groupId, sourceSegmentsExperienceId, plid);
 
@@ -1054,9 +1048,9 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			FragmentEntryLink newFragmentEntryLink =
 				(FragmentEntryLink)fragmentEntryLink.clone();
 
-			newFragmentEntryLink.setUuid(PortalUUIDUtil.generate());
+			newFragmentEntryLink.setUuid(_portalUUID.generate());
 			newFragmentEntryLink.setFragmentEntryLinkId(
-				CounterLocalServiceUtil.increment());
+				_counterLocalService.increment());
 			newFragmentEntryLink.setCreateDate(new Date());
 			newFragmentEntryLink.setModifiedDate(new Date());
 			newFragmentEntryLink.setOriginalFragmentEntryLinkId(
@@ -1076,7 +1070,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			newFragmentEntryLink.setLastPropagationDate(new Date());
 
 			newFragmentEntryLink =
-				FragmentEntryLinkLocalServiceUtil.addFragmentEntryLink(
+				_fragmentEntryLinkLocalService.addFragmentEntryLink(
 					newFragmentEntryLink);
 
 			fragmentStyledLayoutStructureItem.setFragmentEntryLinkId(
@@ -1140,6 +1134,9 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortalUUID _portalUUID;
 
 	@Reference
 	private PortletLocalService _portletLocalService;
