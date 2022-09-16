@@ -1,0 +1,19 @@
+{
+    "fieldSets": [
+        {
+            "fields": [
+                {
+                    "name": "textColor",
+                    "label": "Text Color",
+                    "description": "text-color",
+                    "type": "text",
+                    "typeOptions": {
+                        "placeholder": "#FAFAFA"
+                    },
+                    "dataType": "string",
+                    "defaultValue": "#3D8CCB"
+                }
+            ]
+        }
+    ]
+}

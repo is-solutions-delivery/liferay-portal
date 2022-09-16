@@ -1,0 +1,28 @@
+.evp-slider-card {
+	width:450px;
+	height:500px;
+	
+}
+
+.evp-slider-card .step-icon{
+	width: 170px;
+	height:170px;
+}
+
+.evp-slider-card .image-container{
+	padding: 65px;
+}
+
+.evp-slider-card .process-step{
+	border-right: 1px solid #3D8CCB;
+	line-height: 116px;
+	font-size: 48px;
+}
+
+.evp-slider-card .step-content{
+	height: 140px;
+}
+
+.evp-slider-card .step-description{
+	font-size: 24px;
+}
