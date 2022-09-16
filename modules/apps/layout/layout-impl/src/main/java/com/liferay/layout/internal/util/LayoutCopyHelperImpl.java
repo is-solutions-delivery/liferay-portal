@@ -105,7 +105,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = LayoutCopyHelper.class)
 public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 
-	public static void copySegmentsExperienceData(
+	public void copySegmentsExperienceData(
 			long plid, CommentManager commentManager, long groupId,
 			PortletRegistry portletRegistry, long sourceSegmentsExperienceId,
 			long targetSegmentsExperienceId,
@@ -235,7 +235,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		}
 	}
 
-	private static void _copyLayoutData(
+	private void _copyLayoutData(
 			long plid, CommentManager commentManager, long groupId,
 			PortletRegistry portletRegistry, long sourceSegmentsExperienceId,
 			long targetSegmentsExperienceId,
@@ -261,7 +261,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 				dataJSONObject.toString());
 	}
 
-	private static void _copyPortletPreferences(
+	private void _copyPortletPreferences(
 		FragmentEntryLink fragmentEntryLink,
 		FragmentEntryLink newFragmentEntryLink, long plid,
 		PortletRegistry portletRegistry) {
@@ -276,7 +276,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		}
 	}
 
-	private static String _getNewEditableValues(
+	private String _getNewEditableValues(
 			String editableValues, String namespace, String newNamespace,
 			long plid)
 		throws JSONException {
@@ -309,7 +309,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		);
 	}
 
-	private static String _getNewPortletId(
+	private String _getNewPortletId(
 		String namespace, String newNamespace, String portletId) {
 
 		if (!portletId.contains(namespace)) {
@@ -320,7 +320,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		return StringUtil.replace(portletId, namespace, newNamespace);
 	}
 
-	private static Optional<PortletPreferences>
+	private Optional<PortletPreferences>
 		_getNewPortletPreferencesOptional(
 			String namespace, String newNamespace, long plid,
 			String portletId) {
@@ -371,7 +371,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 				jxPortletPreferences));
 	}
 
-	private static JSONObject _updateLayoutDataJSONObject(
+	private JSONObject _updateLayoutDataJSONObject(
 			long plid, CommentManager commentManager,
 			LayoutStructure layoutStructure, long groupId,
 			PortletRegistry portletRegistry, long sourceSegmentsExperienceId,
