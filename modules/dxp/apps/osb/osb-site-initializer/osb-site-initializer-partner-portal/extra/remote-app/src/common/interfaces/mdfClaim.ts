@@ -12,5 +12,5 @@
 import LiferayObject from './liferayObject';
 
 export default interface MDFClaim extends Partial<LiferayObject> {
-	totalClaimAmount: number;
+	totalClaimRequestedAmount: number;
 }

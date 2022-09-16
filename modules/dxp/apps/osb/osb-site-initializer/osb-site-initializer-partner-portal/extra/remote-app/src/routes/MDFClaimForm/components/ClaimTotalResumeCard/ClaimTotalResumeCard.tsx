@@ -23,7 +23,7 @@ const ClaimTotalResumeCard = ({
 }: IProps & React.HTMLAttributes<HTMLDivElement>) => (
 	<div
 		className={classNames(
-			'bg-neutral-1 rounded d-flex justify-content-between p-3 align-items-center',
+			'align-items-center bg-neutral-1 d-flex justify-content-between p-3 rounded',
 			className
 		)}
 	>

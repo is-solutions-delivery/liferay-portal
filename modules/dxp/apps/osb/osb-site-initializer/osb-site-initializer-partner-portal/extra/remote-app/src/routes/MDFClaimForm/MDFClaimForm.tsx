@@ -55,9 +55,9 @@ const MDFClaimForm = ({
 				<PRMFormik.Field
 					component={PRMForm.InputCurrency}
 					label="Total MDF Requested Amount"
-					name="totalClaimAmount"
+					name="totalClaimRequestedAmount"
 					onAccept={(value: number) =>
-						setFieldValue('totalClaimAmount', value)
+						setFieldValue('totalClaimRequestedAmount', value)
 					}
 					required
 				/>

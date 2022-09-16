@@ -13,6 +13,6 @@ import MDFClaim from '../../../interfaces/mdfClaim';
 
 export function getDTOFromMDFClaim(mdfClaim: MDFClaim) {
 	return {
-		totalClaimAmount: mdfClaim.totalClaimAmount,
+		mdfRequestedAmount: mdfClaim.totalClaimRequestedAmount,
 	};
 }

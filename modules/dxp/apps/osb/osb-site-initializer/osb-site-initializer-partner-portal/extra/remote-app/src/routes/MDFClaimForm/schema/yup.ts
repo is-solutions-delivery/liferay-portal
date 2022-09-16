@@ -12,7 +12,9 @@
 import {number, object} from 'yup';
 
 const claimSchema = object({
-	totalClaimAmount: number().moreThan(0, 'Required').required('Required'),
+	totalClaimRequestedAmount: number()
+		.moreThan(0, 'Required')
+		.required('Required'),
 });
 
 export default claimSchema;
