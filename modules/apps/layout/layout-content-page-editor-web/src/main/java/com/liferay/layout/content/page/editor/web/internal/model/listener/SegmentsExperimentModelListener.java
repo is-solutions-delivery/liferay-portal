@@ -15,7 +15,7 @@
 package com.liferay.layout.content.page.editor.web.internal.model.listener;
 
 import com.liferay.fragment.processor.PortletRegistry;
-import com.liferay.layout.content.page.editor.web.internal.segments.SegmentsExperienceUtil;
+import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -63,7 +63,7 @@ public class SegmentsExperimentModelListener
 					fetchDefaultSegmentsExperienceId(
 						segmentsExperiment.getClassPK());
 
-			SegmentsExperienceUtil.copySegmentsExperienceData(
+			_layoutCopyHelper.copySegmentsExperienceData(
 				segmentsExperiment.getClassPK(), _commentManager,
 				segmentsExperiment.getGroupId(), _portletRegistry,
 				segmentsExperiment.getWinnerSegmentsExperienceId(),
@@ -74,7 +74,7 @@ public class SegmentsExperimentModelListener
 				segmentsExperiment.getClassPK());
 
 			if (draftLayout != null) {
-				SegmentsExperienceUtil.copySegmentsExperienceData(
+				_layoutCopyHelper.copySegmentsExperienceData(
 					draftLayout.getPlid(), _commentManager,
 					segmentsExperiment.getGroupId(), _portletRegistry,
 					segmentsExperiment.getWinnerSegmentsExperienceId(),
@@ -110,6 +110,9 @@ public class SegmentsExperimentModelListener
 
 	@Reference
 	private CommentManager _commentManager;
+
+	@Reference
+	private LayoutCopyHelper _layoutCopyHelper;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
