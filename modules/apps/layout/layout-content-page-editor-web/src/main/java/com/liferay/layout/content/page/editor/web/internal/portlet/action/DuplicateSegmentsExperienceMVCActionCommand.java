@@ -23,6 +23,7 @@ import com.liferay.layout.content.page.editor.web.internal.util.FragmentEntryLin
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -97,7 +98,7 @@ public class DuplicateSegmentsExperienceMVCActionCommand
 				segmentsExperience.isActive(), new UnicodeProperties(true),
 				serviceContext);
 
-		SegmentsExperienceUtil.copySegmentsExperienceData(
+		_layoutCopyHelper.copySegmentsExperienceData(
 			themeDisplay.getPlid(), _commentManager,
 			themeDisplay.getScopeGroupId(), _portletRegistry,
 			segmentsExperienceId,
@@ -175,6 +176,9 @@ public class DuplicateSegmentsExperienceMVCActionCommand
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private LayoutCopyHelper _layoutCopyHelper;
 
 	@Reference
 	private LayoutPageTemplateStructureLocalService
