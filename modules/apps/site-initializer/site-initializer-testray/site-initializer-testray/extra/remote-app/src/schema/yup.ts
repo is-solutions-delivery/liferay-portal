@@ -72,6 +72,7 @@ const yupSchema = {
 		id: yup.string(),
 		name: yup.string().required(),
 		productVersionId: yup.string().required(),
+		projectId: yup.number(),
 		promoted: yup.boolean(),
 		routineId: yup.string().required(),
 		template: yup.boolean(),
