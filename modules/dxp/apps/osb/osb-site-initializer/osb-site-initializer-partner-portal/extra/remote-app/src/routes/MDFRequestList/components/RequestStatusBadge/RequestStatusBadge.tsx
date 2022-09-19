@@ -23,7 +23,7 @@ type StatusClassname = {
 
 const statusClassName: StatusClassname = {
 	[RequestStatus.DRAFT]: 'text-neutral-5',
-	[RequestStatus.PENDING]: 'text-secondary',
+	[RequestStatus.PENDING]: 'text-warning',
 };
 
 const RequestStatusBadge = ({status}: IProps) => {

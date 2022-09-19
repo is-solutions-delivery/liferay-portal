@@ -29,7 +29,6 @@ import com.liferay.object.admin.rest.internal.odata.entity.v1_0.ObjectDefinition
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectConstants;
-import com.liferay.object.exception.ObjectDefinitionStorageTypeException;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -48,7 +47,6 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -143,12 +141,6 @@ public class ObjectDefinitionResourceImpl
 			ObjectDefinition objectDefinition)
 		throws Exception {
 
-		if (!Validator.isBlank(objectDefinition.getStorageType()) &&
-			!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-135430"))) {
-
-			throw new ObjectDefinitionStorageTypeException();
-		}
-
 		return _toObjectDefinition(
 			_objectDefinitionService.addCustomObjectDefinition(
 				LocalizedMapUtil.getLocalizedMap(objectDefinition.getLabel()),
@@ -177,7 +169,7 @@ public class ObjectDefinitionResourceImpl
 	public ObjectDefinition putObjectDefinition(
 			Long objectDefinitionId, ObjectDefinition objectDefinition)
 		throws Exception {
-		
+
 		com.liferay.object.model.ObjectDefinition
 			serviceBuilderObjectDefinition =
 				_objectDefinitionService.getObjectDefinition(

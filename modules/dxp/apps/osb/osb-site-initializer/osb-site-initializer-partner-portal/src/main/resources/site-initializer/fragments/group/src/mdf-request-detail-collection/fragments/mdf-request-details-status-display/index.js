@@ -29,6 +29,19 @@ const getMDFRequestStatus = async () => {
 			'#mdf-request-status-display'
 		).innerHTML = `Status: ${Liferay.Util.escape(data.requestStatus)}`;
 
+		if (data.requestStatus === 'Pending Marketing Review') {
+			const updateStatusToPending = document.getElementById(
+				'status-pending'
+			);
+
+			updateStatusToPending.disabled = true;
+			updateStatusToPending.innerHTML = Liferay.Util.escape(
+				data.requestStatus
+			);
+			updateStatusToPending.classList.toggle('border-primary');
+			updateStatusToPending.classList.toggle('border-warning');
+		}
+
 		return;
 	}
 
@@ -38,6 +51,6 @@ const getMDFRequestStatus = async () => {
 	});
 };
 
-if (layoutMode !== 'edit') {
+if (layoutMode !== 'edit' && mdfRequestId) {
 	getMDFRequestStatus();
 }

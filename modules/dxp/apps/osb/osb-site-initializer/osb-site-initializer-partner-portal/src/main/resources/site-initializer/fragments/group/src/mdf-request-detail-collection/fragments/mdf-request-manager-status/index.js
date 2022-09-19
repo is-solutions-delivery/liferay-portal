@@ -13,13 +13,7 @@
 const currentPath = Liferay.currentURL.split('/');
 const mdfRequestId = +currentPath[currentPath.length - 1];
 
-const updateStatusToApproved = fragmentElement.querySelector(
-	'#status-approved'
-);
-const updateStatusToRequestMoreInfo = fragmentElement.querySelector(
-	'#status-request'
-);
-const updateStatusToReject = fragmentElement.querySelector('#status-reject');
+const updateStatusToPending = fragmentElement.querySelector('#status-pending');
 
 const updateStatus = async (status) => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch
@@ -34,11 +28,20 @@ const updateStatus = async (status) => {
 			method: 'PATCH',
 		}
 	);
+
 	if (statusManagerResponse.ok) {
 		const data = await statusManagerResponse.json();
+
 		document.getElementById(
 			'mdf-request-status-display'
-		).innerHTML = `Status:${Liferay.Util.escape(data.requestStatus)}`;
+		).innerHTML = `Status: ${Liferay.Util.escape(data.requestStatus)}`;
+
+		updateStatusToPending.disabled = true;
+		updateStatusToPending.innerHTML = Liferay.Util.escape(
+			data.requestStatus
+		);
+		updateStatusToPending.classList.toggle('border-primary');
+		updateStatusToPending.classList.toggle('border-warning');
 
 		return;
 	}
@@ -49,32 +52,12 @@ const updateStatus = async (status) => {
 	});
 };
 
-updateStatusToApproved.onclick = () =>
+updateStatusToPending.onclick = () =>
 	Liferay.Util.openConfirmModal({
-		message: 'Do you want to Approve this MDF?',
+		message: 'Do you want to submit this MDF?',
 		onConfirm: (isConfirmed) => {
 			if (isConfirmed) {
-				updateStatus('Approved');
-			}
-		},
-	});
-
-updateStatusToRequestMoreInfo.onclick = () =>
-	Liferay.Util.openConfirmModal({
-		message: 'Do you want to Request more info for this MDF?',
-		onConfirm: (isConfirmed) => {
-			if (isConfirmed) {
-				updateStatus('Request More Info');
-			}
-		},
-	});
-
-updateStatusToReject.onclick = () =>
-	Liferay.Util.openConfirmModal({
-		message: 'Do you want to Reject this MDF?',
-		onConfirm: (isConfirmed) => {
-			if (isConfirmed) {
-				updateStatus('Reject');
+				updateStatus('Pending Marketing Review');
 			}
 		},
 	});

@@ -30,6 +30,9 @@ export default function useGetListItemsFromMDFRequests(
 				[MDFColumnKey.LIFERAY_BUSINESS_SALES_GOALS]:
 					item.liferayBusinessSalesGoals?.name,
 				[MDFColumnKey.TARGET_MARKETS]: item.targetMarkets?.name,
+				[MDFColumnKey.ADDITIONAL_OPTION]: item.additionalOption.name,
+				[MDFColumnKey.TARGET_AUDIENCE_ROLES]:
+					item.targetAudienceRoles?.name,
 				[MDFColumnKey.STATUS]: item.requestStatus,
 				[MDFColumnKey.PARTNER]:
 					item.r_accountToMDFRequests_accountEntry?.name,

@@ -79,7 +79,7 @@ const MDFRequestList = () => {
 
 	return (
 		<div className="border-0 pb-3 pt-5 px-6 sheet">
-			<h1>MDF Requests</h1>
+			<h1 className="mb-4 pb-2">MDF Requests</h1>
 
 			<div className="bg-neutral-1 d-flex justify-content-end p-3 rounded">
 				<ClayButton
