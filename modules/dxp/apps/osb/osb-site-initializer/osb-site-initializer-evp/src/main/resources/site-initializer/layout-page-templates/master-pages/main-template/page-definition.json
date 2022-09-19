@@ -124,7 +124,7 @@
 														"classPKReferences": {
 															"en_US": {
 																"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/evp_logo.svg$]"
+																"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/logos/evp_logo.svg$]"
 															}
 														},
 														"fragmentImageConfiguration": {
@@ -217,8 +217,7 @@
 														"navType": "nav-primary",
 														"orientation": "nav-horizontal"
 													},
-													"fragmentFields": [
-													],
+													"fragmentFields": [],
 													"fragmentStyle": {
 														"paddingRight": "1",
 														"textAlign": ""
@@ -226,8 +225,7 @@
 													"indexed": true,
 													"widgetInstances": [
 														{
-															"widgetConfig": {
-															},
+															"widgetConfig": {},
 															"widgetName": "com_liferay_site_navigation_menu_web_portlet_SiteNavigationMenuPortlet"
 														}
 													]
@@ -260,8 +258,7 @@
 												{
 													"id": "link",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"en_US": "Sign Out"
@@ -342,8 +339,7 @@
 					{
 						"definition": {
 							"fragmentSettings": {
-								"unallowedFragments": [
-								]
+								"unallowedFragments": []
 							}
 						},
 						"type": "DropZone"
@@ -417,13 +413,11 @@
 										},
 										{
 											"id": "portraitMobile",
-											"rowViewportDefinition": {
-											}
+											"rowViewportDefinition": {}
 										},
 										{
 											"id": "tablet",
-											"rowViewportDefinition": {
-											}
+											"rowViewportDefinition": {}
 										}
 									],
 									"verticalAlignment": "middle"
@@ -439,13 +433,11 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "portraitMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "tablet"
 												}
 											],
@@ -498,7 +490,7 @@
 																				"classPKReferences": {
 																					"en_US": {
 																						"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																						"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/liferay_logo.svg$]"
+																						"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/logos/liferay_logo.svg$]"
 																					}
 																				},
 																				"fragmentImageConfiguration": {
@@ -508,8 +500,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -529,8 +520,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"en_US": "Handmade on Liferay in Diamond Bar, CA"
@@ -564,13 +554,11 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "portraitMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "tablet"
 												}
 											],
@@ -620,7 +608,7 @@
 																				"classPKReferences": {
 																					"en_US": {
 																						"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																						"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/evp_icon_heart.svg$]"
+																						"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/logos/evp_icon_heart.svg$]"
 																					}
 																				},
 																				"fragmentImageConfiguration": {
@@ -630,8 +618,7 @@
 																				}
 																			}
 																		},
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -660,13 +647,11 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "portraitMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "tablet"
 												}
 											],
@@ -719,7 +704,7 @@
 																				"classPKReferences": {
 																					"en_US": {
 																						"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																						"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/loop_icon.svg$]"
+																						"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/logos/loop_icon.svg$]"
 																					}
 																				},
 																				"fragmentImageConfiguration": {
@@ -770,8 +755,7 @@
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {
-												},
+												"fragmentLink": {},
 												"text": {
 													"value_i18n": {
 														"en_US": "© 2022 Liferay Inc. All Rights Reserved"
