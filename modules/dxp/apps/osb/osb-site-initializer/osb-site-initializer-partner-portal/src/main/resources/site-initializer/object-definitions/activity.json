@@ -46,45 +46,9 @@
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Total Cost of Expense"
-			},
-			"name": "totalCostOfExpense",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Marketing Activity Description"
-			},
-			"name": "marketingActivity",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
 				"en_US": "Description"
 			},
 			"name": "description",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Location"
-			},
-			"name": "location",
 			"required": false,
 			"type": "String"
 		},
@@ -109,18 +73,6 @@
 				"en_US": "Liferay Branding"
 			},
 			"name": "liferayBranding",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "How will the Liferay brand be used in the campaign?"
-			},
-			"name": "howLiferayBrandUsed",
 			"required": false,
 			"type": "String"
 		},
@@ -166,123 +118,6 @@
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Overall Message/Content/CTA"
-			},
-			"name": "overallMessageContentCTA",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Any specific sites to be used"
-			},
-			"name": "specificSites",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Keywords for PPC campaigns"
-			},
-			"name": "keywordsForPPCCampaigns",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Ad (any size/type)"
-			},
-			"name": "ad",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "Boolean",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Requires any assets from Liferay?"
-			},
-			"name": "assetsLiferayRequired",
-			"required": false,
-			"type": "Boolean"
-		},
-		{
-			"DBType": "Boolean",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Gated and have a landing page?"
-			},
-			"name": "gatedLandingPage",
-			"required": false,
-			"type": "Boolean"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Primary Theme or Message"
-			},
-			"name": "primaryThemeOrMessage",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Goal of Content"
-			},
-			"name": "goalOfContent",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "Boolean",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Hiring Outsite Writer or Agency?"
-			},
-			"name": "hiringOutsideWriterOrAgency",
-			"required": false,
-			"type": "Boolean"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "MDF Requested Amount"
-			},
-			"name": "mdfRequestAmount",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
 				"en_US": "Target # of Leads"
 			},
 			"name": "targetOfLeads",
@@ -290,27 +125,17 @@
 			"type": "String"
 		},
 		{
-			"DBType": "Boolean",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Lead Generated?"
-			},
-			"name": "leadGenerated",
-			"required": false,
-			"type": "Boolean"
-		},
-		{
-			"DBType": "Clob",
-			"businessType": "LongText",
+			"DBType": "String",
+			"businessType": "Picklist",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
 				"en_US": "Lead Follow Up Strategies"
 			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Lead Follow Up Strategies$]",
 			"name": "leadFollowUpStrategies",
 			"required": false,
-			"type": "Clob"
+			"type": "String"
 		},
 		{
 			"DBType": "Clob",
@@ -323,6 +148,17 @@
 			"name": "detailsLeadFollowUp",
 			"required": false,
 			"type": "Clob"
+		},
+		{
+			"DBType": "Boolean",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Is a lead list an outcome of this activity?"
+			},
+			"name": "leadGenerated",
+			"required": false,
+			"type": "Boolean"
 		}
 	],
 	"pluralLabel": {

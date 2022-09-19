@@ -1,47 +1,39 @@
 {
 	"object-entries": [
 		{
-			"externalReferenceCode": "PRMMDFC-001",
-			"label": "Activity Period"
-		},
-		{
 			"externalReferenceCode": "PRMMDFC-002",
 			"label": "Partner"
 		},
 		{
 			"externalReferenceCode": "PRMMDFC-003",
-			"label": "Total Cost"
+			"label": "Country"
 		},
 		{
 			"externalReferenceCode": "PRMMDFC-004",
-			"label": "Name"
+			"label": "Overall Campaign"
 		},
 		{
 			"externalReferenceCode": "PRMMDFC-005",
-			"label": "Requested"
+			"label": "Liferay Business/Sales Goals"
 		},
 		{
 			"externalReferenceCode": "PRMMDFC-006",
-			"label": "Amount Claimed"
+			"label": "Target Markets"
 		},
 		{
 			"externalReferenceCode": "PRMMDFC-007",
-			"label": "Approved"
+			"label": "Additional Option"
 		},
 		{
 			"externalReferenceCode": "PRMMDFC-008",
-			"label": "Paid"
+			"label": "Target Audience/Roles"
 		},
 		{
 			"externalReferenceCode": "PRMMDFC-009",
-			"label": "Reimbursement Claim(s)"
-		},
-		{
-			"externalReferenceCode": "PRMMDFC-010",
 			"label": "Date Submitted"
 		},
 		{
-			"externalReferenceCode": "PRMMDFC-011",
+			"externalReferenceCode": "PRMMDFC-010",
 			"label": "Last Modified"
 		}
 	],

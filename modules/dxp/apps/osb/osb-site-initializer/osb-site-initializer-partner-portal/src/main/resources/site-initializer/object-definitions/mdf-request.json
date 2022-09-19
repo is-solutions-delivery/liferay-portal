@@ -30,28 +30,30 @@
 			"type": "Clob"
 		},
 		{
-			"DBType": "Clob",
-			"businessType": "LongText",
+			"DBType": "String",
+			"businessType": "Picklist",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Liferay Business/Sales Goals"
+				"en_US": "Liferay Business Sales Goals"
 			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Liferay Business Sales Goals$]",
 			"name": "liferayBusinessSalesGoals",
 			"required": false,
-			"type": "Clob"
+			"type": "String"
 		},
 		{
-			"DBType": "Clob",
-			"businessType": "LongText",
+			"DBType": "String",
+			"businessType": "Picklist",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
 				"en_US": "Target Markets"
 			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Target Markets$]",
 			"name": "targetMarkets",
 			"required": false,
-			"type": "Clob"
+			"type": "String"
 		},
 		{
 			"DBType": "String",
@@ -67,62 +69,15 @@
 			"type": "String"
 		},
 		{
-			"DBType": "Clob",
-			"businessType": "LongText",
+			"DBType": "String",
+			"businessType": "Picklist",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Target Audience/Roles"
+				"en_US": "Target Audience Roles"
 			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Target Audience Roles$]",
 			"name": "targetAudienceRoles",
-			"required": false,
-			"type": "Clob"
-		},
-		{
-			"DBType": "Date",
-			"businessType": "Date",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Minimum Activity Date"
-			},
-			"name": "minDateActivity",
-			"required": false,
-			"type": "Date"
-		},
-		{
-			"DBType": "Date",
-			"businessType": "Date",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Maximum Activity Date"
-			},
-			"name": "maxDateActivity",
-			"required": false,
-			"type": "Date"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Total Cost of Expense"
-			},
-			"name": "totalCostOfExpense",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Total MDF Requested Amount"
-			},
-			"name": "totalMDFRequestAmount",
 			"required": false,
 			"type": "String"
 		},

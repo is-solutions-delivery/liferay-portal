@@ -10,6 +10,7 @@
  */
 
 import AccountEntry from '../accountEntry';
+import LiferayPicklist from '../liferayPicklist';
 import MDFRequest from '../mdfRequest';
 
 export default interface MDFRequestDTO
@@ -21,12 +22,9 @@ export default interface MDFRequestDTO
 		| 'targetMarkets'
 		| 'company'
 	> {
-	liferayBusinessSalesGoals?: string;
+	liferayBusinessSalesGoals?: LiferayPicklist;
 	r_accountToMDFRequests_accountEntry?: AccountEntry;
 	r_accountToMDFRequests_accountEntryId?: number;
-	targetAudienceRoles?: string;
-	targetMarkets?: string;
-	totalCostOfExpense?: number;
-	totalMDFRequestAmount?: number;
-	totalRequested?: number;
+	targetAudienceRoles?: LiferayPicklist;
+	targetMarkets?: LiferayPicklist;
 }

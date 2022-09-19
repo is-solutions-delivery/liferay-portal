@@ -18,13 +18,8 @@ export function getDTOFromMDFRequest(mdfRequest: MDFRequest): MDFRequestDTO {
 		...getSummaryActivities(mdfRequest.activities),
 		additionalOption: mdfRequest.additionalOption,
 		country: mdfRequest.country,
-		liferayBusinessSalesGoals: mdfRequest.liferayBusinessSalesGoals.join(
-			', '
-		),
 		overallCampaign: mdfRequest.overallCampaign,
 		r_accountToMDFRequests_accountEntryId: mdfRequest.company.id,
 		requestStatus: mdfRequest.requestStatus,
-		targetAudienceRoles: mdfRequest.targetAudienceRoles.join(', '),
-		targetMarkets: mdfRequest.targetMarkets.join(', '),
 	};
 }

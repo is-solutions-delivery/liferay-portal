@@ -13,8 +13,6 @@ import {useMemo} from 'react';
 
 import {MDFColumnKey} from '../../../common/enums/mdfColumnKey';
 import useGetMDFRequests from '../../../common/services/liferay/object/mdf-requests/useGetMDFRequests';
-import getMDFActivityPeriod from '../utils/getMDFActivityPeriod';
-import getMDFBudgetInfos from '../utils/getMDFBudgetInfos';
 import getMDFDates from '../utils/getMDFDates';
 
 export default function useGetListItemsFromMDFRequests(
@@ -27,19 +25,15 @@ export default function useGetListItemsFromMDFRequests(
 		() =>
 			swrResponse.data?.items.map((item) => ({
 				[MDFColumnKey.ID]: String(item.id),
-				[MDFColumnKey.NAME]: item.overallCampaign,
-				...getMDFActivityPeriod(
-					item.minDateActivity,
-					item.maxDateActivity
-				),
+				[MDFColumnKey.OVERALL_CAMPAIGN]: item.overallCampaign,
+				[MDFColumnKey.COUNTRY]: item.country.name,
+				[MDFColumnKey.LIFERAY_BUSINESS_SALES_GOALS]:
+					item.liferayBusinessSalesGoals?.name,
+				[MDFColumnKey.TARGET_MARKETS]: item.targetMarkets?.name,
 				[MDFColumnKey.STATUS]: item.requestStatus,
 				[MDFColumnKey.PARTNER]:
 					item.r_accountToMDFRequests_accountEntry?.name,
 				...getMDFDates(item.dateCreated, item.dateModified),
-				...getMDFBudgetInfos(
-					item.totalCostOfExpense,
-					item.totalMDFRequestAmount
-				),
 			})),
 		[swrResponse.data?.items]
 	);
