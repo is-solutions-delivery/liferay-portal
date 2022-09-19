@@ -11,6 +11,7 @@
 
 import AccountEntry from '../accountEntry';
 import MDFRequest from '../mdfRequest';
+import User from '../user';
 
 export default interface MDFRequestDTO
 	extends Omit<
@@ -24,6 +25,8 @@ export default interface MDFRequestDTO
 	liferayBusinessSalesGoals?: string;
 	r_accountToMDFRequests_accountEntry?: AccountEntry;
 	r_accountToMDFRequests_accountEntryId?: number;
+	r_userToMDFRequest_user?: User;
+	r_userToMDFRequest_userId?: string;
 	targetAudienceRoles?: string;
 	targetMarkets?: string;
 	totalCostOfExpense?: number;

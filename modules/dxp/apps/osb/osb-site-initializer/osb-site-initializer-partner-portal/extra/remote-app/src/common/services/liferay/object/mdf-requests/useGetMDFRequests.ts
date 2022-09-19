@@ -20,7 +20,7 @@ import liferayFetcher from '../../common/utils/fetcher';
 export default function useGetMDFRequests(page: number, pageSize: number) {
 	return useSWR(
 		[
-			`/o/${LiferayAPIs.OBJECT}/mdfrequests?nestedFields=accountEntry&page=${page}&pageSize=${pageSize}`,
+			`/o/${LiferayAPIs.OBJECT}/mdfrequests?nestedFields=accountEntry,user&page=${page}&pageSize=${pageSize}`,
 			Liferay.authToken,
 		],
 		(url, token) =>
