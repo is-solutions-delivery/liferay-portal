@@ -20,5 +20,6 @@
 	"pluralLabel": {
 		"en_US": "Type of Activities"
 	},
-	"scope": "company"
+	"scope": "company",
+	"storageType": "default"
 }

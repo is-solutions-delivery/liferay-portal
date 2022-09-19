@@ -33,5 +33,6 @@
 	"pluralLabel": {
 		"en_US": "Budgets"
 	},
-	"scope": "company"
+	"scope": "company",
+	"storageType": "default"
 }

@@ -20,5 +20,6 @@
 	"pluralLabel": {
 		"en_US": "MDF Listings Columns"
 	},
-	"scope": "company"
+	"scope": "company",
+	"storageType": "default"
 }

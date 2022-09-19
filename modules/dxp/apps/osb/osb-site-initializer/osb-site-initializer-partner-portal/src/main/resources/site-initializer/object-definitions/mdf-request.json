@@ -97,5 +97,6 @@
 	"pluralLabel": {
 		"en_US": "MDF Requests"
 	},
-	"scope": "company"
+	"scope": "company",
+	"storageType": "default"
 }
