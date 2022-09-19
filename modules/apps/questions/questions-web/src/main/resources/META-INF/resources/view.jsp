@@ -32,6 +32,9 @@
 			).put(
 				"flagsProperties", renderRequest.getAttribute(QuestionsWebKeys.FLAGS_PROPERTIES)
 			).put(
+				"notification",renderRequest.getAttribute(QuestionsWebKeys.NOTIFICATION)
+			)
+			.put(
 				"historyRouterBasePath", questionsConfiguration.historyRouterBasePath()
 			).put(
 				"i18nPath", renderRequest.getAttribute(WebKeys.I18N_PATH)
