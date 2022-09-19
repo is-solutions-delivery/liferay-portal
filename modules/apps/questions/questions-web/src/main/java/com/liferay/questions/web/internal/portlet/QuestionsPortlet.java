@@ -168,7 +168,10 @@ public class QuestionsPortlet extends MVCPortlet {
 					FlagsTagUtil.isFlagsEnabled(themeDisplay) &&
 					GetterUtil.getBoolean(
 						PropsUtil.get("feature.flag.LPS-159928"))
-				).put(
+				).put("notification", _notification( themeDisplay.getScopeGroupId()
+							,themeDisplay.getUserId() )
+						)
+				.put(
 					"pathTermsOfUse",
 					_portal.getPathMain() + "/portal/terms_of_use"
 				).put(
@@ -200,6 +203,20 @@ public class QuestionsPortlet extends MVCPortlet {
 	protected void activate(Map<String, Object> properties) {
 		_questionsConfiguration = ConfigurableUtil.createConfigurable(
 			QuestionsConfiguration.class, properties);
+	}
+
+	private boolean _notification(long groupId,long userId) throws Exception {
+		MBModerationGroupConfiguration mbModerationGroupConfiguration =
+			_configurationProvider.getGroupConfiguration(
+				MBModerationGroupConfiguration.class, groupId);
+
+		if (_mbStatsUserLocalService.getMessageCountByUserId(userId) >=
+			mbModerationGroupConfiguration.minimumContributedMessages() && mbModerationGroupConfiguration.enableNotificationModeration() == true ) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private String _getTagSelectorURL(
