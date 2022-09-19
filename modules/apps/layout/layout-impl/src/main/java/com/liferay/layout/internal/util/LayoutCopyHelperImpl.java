@@ -1092,7 +1092,6 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutCopyHelperImpl.class);
 
-	private static PortalUUID _portalUUID;
 	private static final TransactionConfig _transactionConfig =
 		TransactionConfig.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
@@ -1135,6 +1134,9 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortalUUID _portalUUID;
 
 	@Reference
 	private PortletLocalService _portletLocalService;
