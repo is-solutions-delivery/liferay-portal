@@ -13,6 +13,8 @@
  */
 
 export default {
+	'activate': 'Activate',
+	'active': 'Active',
 	'add': 'Add',
 	'add-another': 'Add Another',
 	'add-case': 'Add Case',
@@ -114,6 +116,8 @@ export default {
 	'date-last-modified': 'Date Last Modified',
 	'date-modified': 'Date Modified',
 	'dates': 'Dates',
+	'deactivate': 'Deactivate',
+	'deactive': 'Deactive',
 	'delete': 'Delete',
 	'delete-build': 'Delete Build',
 	'delete-case': 'Delete Case',
@@ -163,6 +167,8 @@ export default {
 	'jira-components': 'Jira Components',
 	'key': 'Key',
 	'last-name': 'Last Name',
+	'last-used-date': 'Last Used Date',
+	'latest-build': 'Latest Build',
 	'link': 'Link',
 	'link-cases': 'Link Cases',
 	'link-requirements': 'Link Requirements',
@@ -216,6 +222,10 @@ export default {
 	'password-may-contain-letters-and-numbers':
 		'Password may contain letters and numbers.',
 	'passwords-do-not-match': 'Passwords do not match.',
+	'please-mark-at-last-one-case-type-for-processing':
+		'Please mark at last one case type for processing.',
+	'please-mark-at-last-one-user-or-user-group-for-assignment':
+		'Please mark at last one user or user group for assignment.',
 	'priority': 'Priority',
 	'product-version': 'Product Version',
 	'progress': 'Progress',
@@ -226,6 +236,7 @@ export default {
 	'projects': 'Projects',
 	'promote': 'Promote',
 	'remaining-estimated': 'Remaining Estimated',
+	'remove': 'Remove',
 	'reopen-test': 'Reopen Test',
 	'reports': 'Reports',
 	'requirements': 'Requirements',
@@ -245,6 +256,7 @@ export default {
 	'screen-name': 'Screen Name',
 	'search': 'Search',
 	'search-in': 'Search in...',
+	'select-build': 'Select Build',
 	'select-case-parameters': 'Select Case Parameters',
 	'select-cases': 'Select Cases',
 	'select-default-environment-factors': 'Select Default Environment Factors',
@@ -253,6 +265,8 @@ export default {
 	'select-requirements': 'Select Requirements',
 	'select-stacks': 'Select Stacks',
 	'select-suites': 'Select Suites',
+	'select-user-groups': 'Select User Groups',
+	'select-users': 'Select Users',
 	'selected': 'Selected',
 	'show': 'Show',
 	'showing-x-to-x-of-x': 'Showing {0} to {1} of {2}',
@@ -280,6 +294,9 @@ export default {
 	'team-name': 'Team Name',
 	'teams': 'Teams',
 	'template': 'Template',
+	'template-name': 'Template Name',
+	'template-test': 'Template Test',
+	'templates': 'Templates',
 	'test-fix': 'Test Fix',
 	'test-history': 'Test History',
 	'test-lead-should-only-have-access-to-builds-test-plans-test-suites-and-test-cases-.-this-role-will-be-responsible-for-creating-builds-and-for-creating-test-plans-test-runs-the-people-assigned-to-these-would-be-our-current-product-leads':
@@ -299,14 +316,15 @@ export default {
 	'the-team-name-already-exists': 'The team name already exists',
 	'the-x-name-already-exists': 'The {0} name already exists',
 	'there-are-no-entries-yet': 'There are no entries yet.',
-	'there-are-no-linked-cases': 'There are no linked cases',
+	'there-are-no-linked-cases': 'There are no linked cases.',
+	'there-are-no-linked-users': 'There are no linked users.',
 	'there-are-no-matching-results': 'There are no matching results.',
 	'this-build-has-been-analyzed': 'This build has been analyzed.',
 	'this-build-is-currently-in-analysis':
 		'This build is currently in analysis.',
 	'this-builds-task-has-been-abandoned':
 		"This build's task has been abandoned.",
-	'this-field-is-required': 'This field is required.',
+	'this-field-is-required': 'This field is Required.',
 	'this-role-is-for-general-liferay-employees-and-enables-authenticated-users-to-view-test-results':
 		'This role is for general Liferay employees and enables authenticated users to view test results.',
 	'time-x-total-issues': 'Time {0} Total Issues',
@@ -323,6 +341,7 @@ export default {
 	'update-x': 'Update {0}',
 	'updated': 'Updated',
 	'upload-csv': 'Upload CSV',
+	'user-groups': 'User Groups',
 	'user-information': 'User Information',
 	'users': 'Users',
 	'view-case': 'View Case',

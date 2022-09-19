@@ -14,28 +14,28 @@
 
 import React from 'react';
 
-import {getUniqueList} from '../../../util';
-import {UserListView} from '../../Manage/User';
+import i18n from '../../i18n';
+import {Action} from '../../types';
 
-type TestflowAssignUsersProps = {
-	modalState: any;
-	setState: any;
+type UseTestflowAssign = {
+	setUsers: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
-const TestflowAssignUsers: React.FC<TestflowAssignUsersProps> = ({
-	modalState,
-	setState,
-}) => (
-	<UserListView
-		listViewProps={{
-			initialContext: {selectedRows: modalState},
-			onContextChange: ({selectedRows}) =>
-				setState((state: any) =>
-					getUniqueList([...state, ...selectedRows])
-				),
-		}}
-		tableProps={{rowSelectable: true}}
-	/>
-);
+const useTestFlowAssign = ({setUsers}: UseTestflowAssign) => {
+	const actions: Action[] = [
+		{
+			action: ({id}: {id: number}) => {
+				setUsers((users: number[]) =>
+					users.filter((item) => item !== id)
+				);
+			},
+			name: i18n.translate('remove'),
+		},
+	];
 
-export default TestflowAssignUsers;
+	return {
+		actions,
+	};
+};
+
+export default useTestFlowAssign;
