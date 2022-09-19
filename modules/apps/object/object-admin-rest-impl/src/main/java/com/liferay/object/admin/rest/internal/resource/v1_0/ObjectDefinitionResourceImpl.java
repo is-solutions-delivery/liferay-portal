@@ -177,11 +177,7 @@ public class ObjectDefinitionResourceImpl
 	public ObjectDefinition putObjectDefinition(
 			Long objectDefinitionId, ObjectDefinition objectDefinition)
 		throws Exception {
-
-		if (!Validator.isBlank(objectDefinition.getStorageType())) {
-			throw new ObjectDefinitionStorageTypeException();
-		}
-
+		
 		com.liferay.object.model.ObjectDefinition
 			serviceBuilderObjectDefinition =
 				_objectDefinitionService.getObjectDefinition(

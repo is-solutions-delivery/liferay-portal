@@ -20,6 +20,5 @@
 	"pluralLabel": {
 		"en_US": "Tactics"
 	},
-	"scope": "company",
-	"storageType": "default"
+	"scope": "company"
 }
