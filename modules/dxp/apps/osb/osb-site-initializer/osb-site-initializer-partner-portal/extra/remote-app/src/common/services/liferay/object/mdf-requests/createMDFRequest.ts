@@ -18,6 +18,7 @@ import liferayFetcher from '../../common/utils/fetcher';
 export default async function createMDFRequest(mdfRequest: MDFRequest) {
 	const dtoMDFRequest = getDTOFromMDFRequest(mdfRequest);
 
+	// eslint-disable-next-line no-console
 	return await liferayFetcher.post(
 		`/o/${LiferayAPIs.OBJECT}/mdfrequests`,
 		Liferay.authToken,

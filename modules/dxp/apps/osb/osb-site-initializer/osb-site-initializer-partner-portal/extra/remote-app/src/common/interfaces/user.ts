@@ -9,10 +9,9 @@
  * distribution rights of the Software.
  */
 
- import LiferayObject from './liferayObject';
+import LiferayObject from './liferayObject';
 
- export default interface User extends Partial<LiferayObject> { 
-    emailAddress: string;
-    givenName: string;
- }
- 
+export default interface User extends Partial<LiferayObject> {
+	emailAddress: string;
+	givenName: string;
+}

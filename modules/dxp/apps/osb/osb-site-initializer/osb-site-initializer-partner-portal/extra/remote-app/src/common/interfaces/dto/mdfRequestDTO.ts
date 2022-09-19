@@ -26,7 +26,7 @@ export default interface MDFRequestDTO
 	r_accountToMDFRequests_accountEntry?: AccountEntry;
 	r_accountToMDFRequests_accountEntryId?: number;
 	r_userToMDFRequest_user?: User;
-	r_userToMDFRequest_userId?: string;
+	r_userToMDFRequest_userId?: number;
 	targetAudienceRoles?: string;
 	targetMarkets?: string;
 	totalCostOfExpense?: number;
