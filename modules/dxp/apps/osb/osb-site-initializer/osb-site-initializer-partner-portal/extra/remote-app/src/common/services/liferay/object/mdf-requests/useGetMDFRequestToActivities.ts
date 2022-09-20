@@ -10,10 +10,11 @@
  */
 import useSWR from 'swr';
 import {Liferay} from '../..';
-import MDFRequestDTO from '../../../../interfaces/dto/mdfRequestDTO';
+import MDFRequestActivity from '../../../../interfaces/mdfRequestActivity';
 import {LiferayAPIs} from '../../common/enums/apis';
 import LiferayItems from '../../common/interfaces/liferayItems';
 import liferayFetcher from '../../common/utils/fetcher';
+
 export default function useGetMDFRequestToActivities(id: number) {
 	return useSWR(
 		[
@@ -21,6 +22,6 @@ export default function useGetMDFRequestToActivities(id: number) {
 			Liferay.authToken,
 		],
 		(url, token) =>
-			liferayFetcher<LiferayItems<MDFRequestDTO[]>>(url, token)
+			liferayFetcher<LiferayItems<MDFRequestActivity[]>>(url, token)
 	)?.data;
 }

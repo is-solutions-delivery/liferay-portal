@@ -11,18 +11,13 @@
 
 import useSWR from 'swr';
 import {Liferay} from '../..';
-import MDFRequestBudget from '../../../../interfaces/mdfRequestBudget';
+import MDFRequest from '../../../../interfaces/mdfRequest';
 import {LiferayAPIs} from '../../common/enums/apis';
-import LiferayItems from '../../common/interfaces/liferayItems';
 import liferayFetcher from '../../common/utils/fetcher';
 
-export default function useGetActivityToBudgets(id?: number) {
+export default function useGetMDFRequest(id: number) {
 	return useSWR(
-		[
-			`/o/${LiferayAPIs.OBJECT}/activities/${id}/activityToBudgets`,
-			Liferay.authToken,
-		],
-		(url, token) =>
-			liferayFetcher<LiferayItems<MDFRequestBudget[]>>(url, token)
+		[`/o/${LiferayAPIs.OBJECT}/mdfrequests/${id}`, Liferay.authToken],
+		(url, token) => liferayFetcher<MDFRequest>(url, token)
 	)?.data;
 }
