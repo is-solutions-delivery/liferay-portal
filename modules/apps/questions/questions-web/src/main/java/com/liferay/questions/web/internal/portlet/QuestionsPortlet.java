@@ -193,7 +193,10 @@ public class QuestionsPortlet extends MVCPortlet {
 		renderRequest.setAttribute(
 			QuestionsWebKeys.TRUSTED_USER, _isTrustedUser(renderRequest));
 
-		renderRequest.setAttribute(QuestionsWebKeys.ALERT_MODERATION, _alertModeration(themeDisplay.getScopeGroupId(),themeDisplay.getUserId()));
+		renderRequest.setAttribute(
+			QuestionsWebKeys.ALERT_MODERATION,
+			_alertModeration(
+				themeDisplay.getScopeGroupId(), themeDisplay.getUserId()));
 
 		super.doView(renderRequest, renderResponse);
 	}
@@ -203,6 +206,28 @@ public class QuestionsPortlet extends MVCPortlet {
 	protected void activate(Map<String, Object> properties) {
 		_questionsConfiguration = ConfigurableUtil.createConfigurable(
 			QuestionsConfiguration.class, properties);
+	}
+
+	private boolean _alertModeration(long groupId, long userId) {
+		try {
+			MBModerationGroupConfiguration mbModerationGroupConfiguration =
+				_configurationProvider.getGroupConfiguration(
+					MBModerationGroupConfiguration.class, groupId);
+
+			if ((_mbStatsUserLocalService.getMessageCountByUserId(userId) <
+					mbModerationGroupConfiguration.
+						minimumContributedMessages()) &&
+				(mbModerationGroupConfiguration.enableAlertModeration() ==
+					true)) {
+
+				return true;
+			}
+
+			return false;
+		}
+		catch (Exception exception) {
+			return false;
+		}
 	}
 
 	private String _getTagSelectorURL(
@@ -271,26 +296,6 @@ public class QuestionsPortlet extends MVCPortlet {
 		}
 
 		return true;
-	}
-
-	private boolean _alertModeration(long groupId,long userId) {
-
-		try {
-
-			MBModerationGroupConfiguration mbModerationGroupConfiguration =
-				_configurationProvider.getGroupConfiguration(
-					MBModerationGroupConfiguration.class, groupId);
-
-			return _mbStatsUserLocalService.getMessageCountByUserId(userId) <
-				   mbModerationGroupConfiguration.minimumContributedMessages()
-				   &&
-				   mbModerationGroupConfiguration.enableAlertModeration() ==
-				   true;
-		}
-		catch (ConfigurationException e) {
-
-		return false;
-	}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
