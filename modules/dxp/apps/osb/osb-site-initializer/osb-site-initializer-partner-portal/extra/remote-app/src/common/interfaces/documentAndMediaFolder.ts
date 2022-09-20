@@ -9,15 +9,10 @@
  * distribution rights of the Software.
  */
 
-import MDFClaimDocuments from '../mdfClaimDocuments';
+import LiferayObject from './liferayObject';
 
-export default interface mdfClaimDocumentDTO
-	extends Omit<
-		MDFClaimDocuments,
-		'fileURL' | 'idActivity' | 'idBudget' | 'idMdfRequest' | 'type'
-	> {
-	url: string;
-	r_mdfClaimToMdfClaimDocuments_c_mdfClaimActivityId: number;
-	r_mdfClaimToMdfClaimDocuments_c_mdfClaimBudgetId: number;
-	r_mdfClaimToMdfClaimDocuments_c_mdfClaimId: number;
+export default interface documentAndMediaFolder extends Partial<LiferayObject> {
+	description: string;
+	id: number;
+	name: string;
 }
