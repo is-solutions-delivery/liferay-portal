@@ -143,8 +143,7 @@
 														{
 															"id": "element-text",
 															"value": {
-																"fragmentLink": {
-																},
+																"fragmentLink": {},
 																"text": {
 																	"value_i18n": {
 																		"ar_SA": "Campaign MDF Request",
@@ -209,8 +208,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Date Submitted:",
@@ -252,8 +250,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectEntry_createDate",
@@ -286,8 +283,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": ", Last Modified:",
@@ -329,8 +325,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectEntry_modifiedDate",
@@ -364,10 +359,8 @@
 									"fragment": {
 										"key": "mdf-request-details-status-display"
 									},
-									"fragmentConfig": {
-									},
-									"fragmentFields": [
-									],
+									"fragmentConfig": {},
+									"fragmentFields": [],
 									"indexed": true
 								},
 								"type": "Fragment"
@@ -398,10 +391,8 @@
 											"fragment": {
 												"key": "mdf-request-manager-status"
 											},
-											"fragmentConfig": {
-											},
-											"fragmentFields": [
-											],
+											"fragmentConfig": {},
+											"fragmentFields": [],
 											"indexed": true
 										},
 										"type": "Fragment"
@@ -453,8 +444,7 @@
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {
-												},
+												"fragmentLink": {},
 												"text": {
 													"value_i18n": {
 														"ar_SA": "Summary",
@@ -493,8 +483,7 @@
 										"bottomSpacing": "3",
 										"separatorColor": ""
 									},
-									"fragmentFields": [
-									],
+									"fragmentFields": [],
 									"fragmentStyle": {
 										"marginTop": "1",
 										"textAlign": ""
@@ -508,10 +497,8 @@
 									"fragment": {
 										"key": "mdf-request-details-summary"
 									},
-									"fragmentConfig": {
-									},
-									"fragmentFields": [
-									],
+									"fragmentConfig": {},
+									"fragmentFields": [],
 									"indexed": true
 								},
 								"type": "Fragment"
@@ -561,8 +548,7 @@
 										},
 										{
 											"id": "portraitMobile",
-											"rowViewportDefinition": {
-											}
+											"rowViewportDefinition": {}
 										},
 										{
 											"id": "tablet",
@@ -584,8 +570,7 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "portraitMobile"
 												},
 												{
@@ -639,8 +624,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "ACTIVITIES",
@@ -683,8 +667,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Insurance Industry Lead Gen",
@@ -724,8 +707,7 @@
 																"bottomSpacing": "3",
 																"separatorColor": ""
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"fragmentStyle": {
 																"marginTop": "1",
 																"textAlign": ""
@@ -739,10 +721,8 @@
 															"fragment": {
 																"key": "activities-list-panel"
 															},
-															"fragmentConfig": {
-															},
-															"fragmentFields": [
-															],
+															"fragmentConfig": {},
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -813,8 +793,7 @@
 																		{
 																			"id": "element-text",
 																			"value": {
-																				"fragmentLink": {
-																				},
+																				"fragmentLink": {},
 																				"text": {
 																					"value_i18n": {
 																						"ar_SA": "GOALS",
@@ -857,8 +836,7 @@
 																		{
 																			"id": "element-text",
 																			"value": {
-																				"fragmentLink": {
-																				},
+																				"fragmentLink": {},
 																				"text": {
 																					"value_i18n": {
 																						"ar_SA": "Campaign Information",
@@ -898,8 +876,7 @@
 																		"bottomSpacing": "3",
 																		"separatorColor": ""
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"fragmentStyle": {
 																		"marginTop": "1",
 																		"textAlign": ""
@@ -923,8 +900,7 @@
 																{
 																	"id": "rowValue-1",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_r_accountToMDFRequests_accountEntryId",
@@ -938,8 +914,7 @@
 																{
 																	"id": "rowTitle-2",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Region",
@@ -962,8 +937,7 @@
 																{
 																	"id": "rowTitle-1",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Company Name",
@@ -986,15 +960,13 @@
 																{
 																	"id": "rowTitle-3",
 																	"value": {
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																},
 																{
 																	"id": "tableTitle",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Partner Summary",
@@ -1017,8 +989,7 @@
 																{
 																	"id": "rowValue-2",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_country",
@@ -1032,8 +1003,7 @@
 																{
 																	"id": "rowValue-3",
 																	"value": {
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1047,11 +1017,9 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"bottomSpacing": "3",
-																"separatorColor": ""
+																"bottomSpacing": "3"
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1068,8 +1036,7 @@
 																{
 																	"id": "rowValue-1",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_overallCampaign",
@@ -1083,8 +1050,7 @@
 																{
 																	"id": "rowTitle-2",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Liferay business/sales goals",
@@ -1107,8 +1073,7 @@
 																{
 																	"id": "rowTitle-1",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Provide a name and short description of the overall campaign",
@@ -1131,15 +1096,13 @@
 																{
 																	"id": "rowTitle-3",
 																	"value": {
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																},
 																{
 																	"id": "tableTitle",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Activity Summay",
@@ -1162,8 +1125,7 @@
 																{
 																	"id": "rowValue-2",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_liferayBusinessSalesGoals",
@@ -1177,8 +1139,7 @@
 																{
 																	"id": "rowValue-3",
 																	"value": {
-																		"fragmentLink": {
-																		}
+																		"fragmentLink": {}
 																	}
 																}
 															],
@@ -1195,8 +1156,7 @@
 																"bottomSpacing": "3",
 																"separatorColor": ""
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1213,8 +1173,7 @@
 																{
 																	"id": "rowValue-1",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_targetMarkets",
@@ -1228,8 +1187,7 @@
 																{
 																	"id": "rowTitle-2",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Additional Options",
@@ -1252,8 +1210,7 @@
 																{
 																	"id": "rowTitle-1",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Target Market(s)",
@@ -1276,8 +1233,7 @@
 																{
 																	"id": "rowTitle-3",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Target Audience/Role",
@@ -1300,8 +1256,7 @@
 																{
 																	"id": "tableTitle",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Target Market",
@@ -1324,8 +1279,7 @@
 																{
 																	"id": "rowValue-2",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_additionalOption",
@@ -1339,8 +1293,7 @@
 																{
 																	"id": "rowValue-3",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_targetAudienceRoles",
@@ -1365,8 +1318,7 @@
 																"bottomSpacing": "3",
 																"separatorColor": ""
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1379,8 +1331,7 @@
 															"fragmentConfig": {
 																"numberOfRows": 4
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1401,8 +1352,7 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "portraitMobile"
 												},
 												{
@@ -1454,8 +1404,7 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Comments",
@@ -1494,8 +1443,7 @@
 																"bottomSpacing": "3",
 																"separatorColor": ""
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1503,8 +1451,7 @@
 													{
 														"definition": {
 															"widgetInstance": {
-																"widgetConfig": {
-																},
+																"widgetConfig": {},
 																"widgetName": "com_liferay_comment_page_comments_web_portlet_PageCommentsPortlet"
 															}
 														},

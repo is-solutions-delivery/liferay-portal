@@ -25,8 +25,8 @@ export default interface MDFRequestDTO
 	liferayBusinessSalesGoals?: string;
 	r_accountToMDFRequests_accountEntry?: AccountEntry;
 	r_accountToMDFRequests_accountEntryId?: number;
-	r_userToMDFRequest_user?: User;
-	r_userToMDFRequest_userId?: number;
+	r_userToMDFRequests_user?: User;
+	r_userToMDFRequests_userId?: number;
 	targetAudienceRoles?: string;
 	targetMarkets?: string;
 	totalCostOfExpense?: number;
