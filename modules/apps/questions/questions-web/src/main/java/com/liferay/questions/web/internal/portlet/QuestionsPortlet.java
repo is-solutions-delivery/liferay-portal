@@ -188,13 +188,7 @@ public class QuestionsPortlet extends MVCPortlet {
 				).build()
 			).build());
 
-		try {
-			renderRequest.setAttribute(QuestionsWebKeys.NOTIFICATION, HashMapBuilder.put("notification",
-				_notification(themeDisplay.getScopeGroupId(),themeDisplay.getUserId())));
-		}
-		catch (Exception exception) {
-			throw new RuntimeException(exception);
-		}
+			renderRequest.setAttribute(QuestionsWebKeys.NOTIFICATION, _notification(themeDisplay.getScopeGroupId(),themeDisplay.getUserId()));
 
 		renderRequest.setAttribute(
 			QuestionsWebKeys.TAG_SELECTOR_URL,
@@ -212,13 +206,28 @@ public class QuestionsPortlet extends MVCPortlet {
 			QuestionsConfiguration.class, properties);
 	}
 
-	private boolean _notification(long groupId,long userId) throws Exception {
+	private boolean _notification(long groupId,long userId) {
 		MBModerationGroupConfiguration mbModerationGroupConfiguration =
-			_configurationProvider.getGroupConfiguration(
+			null;
+		try {
+			mbModerationGroupConfiguration = _configurationProvider.getGroupConfiguration(
 				MBModerationGroupConfiguration.class, groupId);
 
-			return _mbStatsUserLocalService.getMessageCountByUserId(userId) <
-				   mbModerationGroupConfiguration.minimumContributedMessages() && mbModerationGroupConfiguration.enableNotificationModeration() == true;
+			if(mbModerationGroupConfiguration.enableMessageBoardsModeration() == true
+			   && mbModerationGroupConfiguration.minimumContributedMessages() > _mbStatsUserLocalService.getMessageCountByUserId(userId)){
+				return mbModerationGroupConfiguration.enableNotificationModeration();
+			}else if(mbModerationGroupConfiguration.enableNotificationModeration() == true ){
+				return false;
+			}
+
+			return mbModerationGroupConfiguration.enableNotificationModeration() == true;
+		}
+		catch (ConfigurationException e) {
+			return false;
+
+		}
+
+
 
 	}
 
