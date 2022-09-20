@@ -189,8 +189,11 @@ public class QuestionsPortlet extends MVCPortlet {
 		renderRequest.setAttribute(
 			QuestionsWebKeys.TAG_SELECTOR_URL,
 			_getTagSelectorURL(renderRequest, renderResponse));
+
 		renderRequest.setAttribute(
 			QuestionsWebKeys.TRUSTED_USER, _isTrustedUser(renderRequest));
+
+		renderRequest.setAttribute(QuestionsWebKeys.NOTIFICATION, _notification(themeDisplay.getScopeGroupId(),themeDisplay.getUserId()));
 
 		super.doView(renderRequest, renderResponse);
 	}
@@ -270,14 +273,24 @@ public class QuestionsPortlet extends MVCPortlet {
 		return true;
 	}
 
-	private boolean _notification(long groupId,long userId) throws Exception {
-		MBModerationGroupConfiguration mbModerationGroupConfiguration =
-			_configurationProvider.getGroupConfiguration(
-				MBModerationGroupConfiguration.class, groupId);
+	private boolean _notification(long groupId,long userId) {
 
-		return _mbStatsUserLocalService.getMessageCountByUserId(userId) <
-			   mbModerationGroupConfiguration.minimumContributedMessages()
-			   && mbModerationGroupConfiguration.enableNotificationModeration() == true;
+		try {
+
+			MBModerationGroupConfiguration mbModerationGroupConfiguration =
+				_configurationProvider.getGroupConfiguration(
+					MBModerationGroupConfiguration.class, groupId);
+
+			return _mbStatsUserLocalService.getMessageCountByUserId(userId) <
+				   mbModerationGroupConfiguration.minimumContributedMessages()
+				   &&
+				   mbModerationGroupConfiguration.enableNotificationModeration() ==
+				   true;
+		}
+		catch (ConfigurationException e) {
+
+		return false;
+	}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
