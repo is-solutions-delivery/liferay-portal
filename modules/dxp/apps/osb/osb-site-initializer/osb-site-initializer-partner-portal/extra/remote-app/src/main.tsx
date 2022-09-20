@@ -13,17 +13,18 @@ import {ClayIconSpriteContext} from '@clayui/icon';
 import {Root, createRoot} from 'react-dom/client';
 import {SWRConfig} from 'swr';
 
+import PRMFormik from './common/components/PRMFormik';
 import {AppRouteType} from './common/enums/appRouteType';
+import MDFClaim from './common/interfaces/mdfClaim';
 import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import handleError from './common/utils/handleError';
+import MDFClaimForm from './routes/MDFClaimForm';
+import claimSchema from './routes/MDFClaimForm/schema/yup';
 import MDFRequestForm from './routes/MDFRequestForm';
 import MDFRequestList from './routes/MDFRequestList';
-import MDFClaimForm from './routes/MDFClaimForm';
-import PRMFormik from './common/components/PRMFormik';
-import MDFClaim from './common/interfaces/mdfClaim';
-import claimSchema from './routes/MDFClaimForm/schema/yup';
 
 const initialMDFClaimFormValues: MDFClaim = {
+	mdfClaimActivities: [],
 	totalClaimAmount: 0,
 };
 interface IProps {

@@ -10,9 +10,7 @@
  */
 
 import LiferayObject from './liferayObject';
-import MDFClaimActivity from './mdfClaimActivity';
 
-export default interface MDFClaim extends Partial<LiferayObject> {
-	mdfClaimActivities: MDFClaimActivity[];
-	totalClaimAmount: number;
+export default interface MDFClaimBudget extends Partial<LiferayObject> {
+	cost: number;
 }
