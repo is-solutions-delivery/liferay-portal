@@ -19,6 +19,7 @@ import PRMFormFieldStateProps from '../common/interfaces/prmFormFieldStateProps'
 interface IProps {
 	idActivity?: number;
 	idBudget?: number;
+	idMdfRequest?: number;
 	setFieldValue: (
 		field: string,
 		value: any,
@@ -32,6 +33,7 @@ const InputFile = ({
 	label,
 	meta,
 	idActivity,
+	idMdfRequest,
 	idBudget,
 	required,
 	typeDocument,
@@ -52,6 +54,7 @@ const InputFile = ({
 						field.name,
 						idActivity,
 						idBudget,
+						idMdfRequest,
 						setFieldValue,
 						typeDocument
 					);

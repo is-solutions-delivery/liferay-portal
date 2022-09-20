@@ -10,6 +10,8 @@
  */
 
 import {Liferay} from '../..';
+import createDocumentInFolder from '../../../../../routes/MDFClaimForm/hooks/createDocumentInFolder';
+import {createFolder} from '../../../../../routes/MDFClaimForm/hooks/createFolder';
 import MDFClaimDocuments from '../../../../interfaces/mdfClaimDocuments';
 import getDTOFromMDFClaimDocument from '../../../../utils/dto/mdf-claim-document/getDTOFromMDFClaimDocument';
 import {LiferayAPIs} from '../../common/enums/apis';
@@ -17,15 +19,36 @@ import liferayFetcher from '../../common/utils/fetcher';
 
 export default async function createMDFClaimDocuments(
 	mdfRClaimId: number,
-	mdfClaimDocuments: MDFClaimDocuments[]
+	mdfClaimDocuments: MDFClaimDocuments[],
+	idMainFolder: number
 ) {
 	return await Promise.all(
-		mdfClaimDocuments.map((document) =>
+		mdfClaimDocuments.map(async (document) => {
+			let folderName = '';
+
+			if (document.idActivity > 0) {
+				folderName = `activities_${document.idActivity}`;
+			}
+
+			if (document.idBudget > 0) {
+				folderName = `budget_${document.idBudget}`;
+			}
+
+			const result = await createFolder(
+				Liferay.ThemeDisplay.getSiteGroupId(),
+				folderName,
+				idMainFolder
+			);
+			const createDocument = createDocumentInFolder(
+				result.id,
+				document.fileURL
+			);
+
 			liferayFetcher.post(
 				`/o/${LiferayAPIs.OBJECT}/mdfclaimdocuments`,
 				Liferay.authToken,
 				getDTOFromMDFClaimDocument(document, mdfRClaimId)
-			)
-		)
+			);
+		})
 	);
 }

@@ -19,7 +19,7 @@ export default function getDTOFromMDFClaimDocument(
 	return {
 		url: mdfClaimDocument.fileURL,
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimActivityId:
-			mdfClaimDocument.idActivities,
+			mdfClaimDocument.idActivity,
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimBudgetId:
 			mdfClaimDocument.idBudget,
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimId: mdfRClaimId,

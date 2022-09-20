@@ -16,7 +16,11 @@ import claimSchema from '../../schema/yup';
 import submitForm from '../../utils/submitForm';
 
 const initialMDFClaimFormValues: MDFClaim = {
-	mdfClaimDocuments: [],
+	mdfClaimDocuments: {
+		claims: [],
+		budgets: [],
+		activities: [],
+	},
 	totalClaimAmount: 0,
 };
 
