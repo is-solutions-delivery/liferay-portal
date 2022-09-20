@@ -193,7 +193,7 @@ public class QuestionsPortlet extends MVCPortlet {
 		renderRequest.setAttribute(
 			QuestionsWebKeys.TRUSTED_USER, _isTrustedUser(renderRequest));
 
-		renderRequest.setAttribute(QuestionsWebKeys.NOTIFICATION, _notification(themeDisplay.getScopeGroupId(),themeDisplay.getUserId()));
+		renderRequest.setAttribute(QuestionsWebKeys.ALERT_MODERATION, _alertModeration(themeDisplay.getScopeGroupId(),themeDisplay.getUserId()));
 
 		super.doView(renderRequest, renderResponse);
 	}
@@ -273,7 +273,7 @@ public class QuestionsPortlet extends MVCPortlet {
 		return true;
 	}
 
-	private boolean _notification(long groupId,long userId) {
+	private boolean _alertModeration(long groupId,long userId) {
 
 		try {
 
@@ -284,7 +284,7 @@ public class QuestionsPortlet extends MVCPortlet {
 			return _mbStatsUserLocalService.getMessageCountByUserId(userId) <
 				   mbModerationGroupConfiguration.minimumContributedMessages()
 				   &&
-				   mbModerationGroupConfiguration.enableNotificationModeration() ==
+				   mbModerationGroupConfiguration.enableAlertModeration() ==
 				   true;
 		}
 		catch (ConfigurationException e) {

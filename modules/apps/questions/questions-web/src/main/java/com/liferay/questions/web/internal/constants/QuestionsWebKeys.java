@@ -19,11 +19,11 @@ package com.liferay.questions.web.internal.constants;
  */
 public class QuestionsWebKeys {
 
+	public static final String ALERT_MODERATION = "ALERT_MODERATION";
+
 	public static final String DEFAULT_RANK = "DEFAULT_RANK";
 
 	public static final String FLAGS_PROPERTIES = "FLAGS_PROPERTIES";
-
-	public static final String NOTIFICATION = "NOTIFICATION";
 
 	public static final String IMAGE_BROWSE_URL = "IMAGE_BROWSE_URL";
 
