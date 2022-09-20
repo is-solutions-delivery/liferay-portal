@@ -18,11 +18,11 @@ import com.liferay.fragment.processor.PortletRegistry;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
-
 import com.liferay.portal.kernel.service.ServiceContext;
-import org.osgi.annotation.versioning.ProviderType;
 
 import java.util.function.Function;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Pavel Savinov
@@ -43,11 +43,11 @@ public interface LayoutCopyHelper {
 		throws Exception;
 
 	public void copySegmentsExperienceData(
-		long plid, CommentManager commentManager, long groupId,
-		PortletRegistry portletRegistry, long sourceSegmentsExperienceId,
-		long targetSegmentsExperienceId,
-		Function<String, ServiceContext> serviceContextFunction,
-		long userId)
+			long plid, CommentManager commentManager, long groupId,
+			PortletRegistry portletRegistry, long sourceSegmentsExperienceId,
+			long targetSegmentsExperienceId,
+			Function<String, ServiceContext> serviceContextFunction,
+			long userId)
 		throws PortalException;
 
 }
