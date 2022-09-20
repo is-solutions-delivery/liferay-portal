@@ -270,6 +270,16 @@ public class QuestionsPortlet extends MVCPortlet {
 		return true;
 	}
 
+	private boolean _notification(long groupId,long userId) throws Exception {
+		MBModerationGroupConfiguration mbModerationGroupConfiguration =
+			_configurationProvider.getGroupConfiguration(
+				MBModerationGroupConfiguration.class, groupId);
+
+		return _mbStatsUserLocalService.getMessageCountByUserId(userId) <
+			   mbModerationGroupConfiguration.minimumContributedMessages()
+			   && mbModerationGroupConfiguration.enableNotificationModeration() == true;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		QuestionsPortlet.class);
 
