@@ -25,6 +25,7 @@ export default async function setFileFormik(
 	name: string,
 	idActivity?: number,
 	idBudget?: number,
+	idMdfRequest?: number,
 	setFieldValue?: (
 		field: string,
 		value: any,
@@ -34,15 +35,25 @@ export default async function setFileFormik(
 ) {
 	const fileReader = await getFileReader(file[0]);
 
-	const currentFile = {fileURL: file, idActivities: 0, idBudget: 0, type: ''};
+	const currentFile = {
+		fileURL: file,
+		idActivity: 0,
+		idBudget: 0,
+		idMdfRequest: 0,
+		type: '',
+	};
 	currentFile.fileURL = fileReader.result;
 
 	if (idActivity) {
-		currentFile.idActivities = idActivity;
+		currentFile.idActivity = idActivity;
 	}
 
 	if (idBudget) {
 		currentFile.idBudget = idBudget;
+	}
+
+	if (idMdfRequest) {
+		currentFile.idMdfRequest = idMdfRequest;
 	}
 
 	if (typeDocument) {
