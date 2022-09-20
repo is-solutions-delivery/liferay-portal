@@ -13,7 +13,7 @@ import classNames from 'classnames';
 
 interface IProps {
 	leftContent: string;
-	rightContent: string;
+	rightContent?: string;
 }
 
 const ClaimTotalResumeCard = ({

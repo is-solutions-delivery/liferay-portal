@@ -9,16 +9,18 @@
  * distribution rights of the Software.
  */
 
-import Button from '@clayui/button';
+import ClayButton from '@clayui/button';
+import ClayIcon from '@clayui/icon';
 import {useFormikContext} from 'formik';
-import {useMemo} from 'react';
-
+import {useEffect, useMemo} from 'react';
 import PRMForm from '../../common/components/PRMForm';
 import PRMFormik from '../../common/components/PRMFormik';
 import PRMFormikPageProps from '../../common/components/PRMFormik/interfaces/prmFormikPageProps';
 import MDFClaim from '../../common/interfaces/mdfClaim';
+import useGetMDFRequest from '../../common/services/liferay/object/mdf-requests/useGetMDFRequest';
 import useGetMDFRequestToActivities from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestToActivities';
-// import useGetMDFRequestToActivities from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestToActivities';
+import getIntlNumberFormat from '../../common/utils/getIntlNumberFormat';
+import getTotalBudgetByClaim from './utils/getTotalBudgetByClaim';
 import isObjectEmpty from '../MDFRequestForm/utils/isObjectEmpty';
 import ClaimPanel from './components/ClaimPanel';
 import ClaimTotalResumeCard from './components/ClaimTotalResumeCard';
@@ -33,21 +35,41 @@ const MDFClaimForm = ({}: PRMFormikPageProps) => {
 		...formikHelpers
 	} = useFormikContext<MDFClaim>();
 
+	const mdfRequest = useGetMDFRequest(46806);
+
+	const activities = useGetMDFRequestToActivities(46806);
+
+	useEffect(() => {
+		if (values.mdfClaimActivities) {
+			setFieldValue(
+				'totalClaimAmount',
+				getTotalBudgetByClaim(values.mdfClaimActivities) * 0.5
+			);
+		}
+	}, [values.mdfClaimActivities]);
+
 	const claimErrors = useMemo(() => {
 		return errors;
 	}, [errors]);
-
-	const swrResponse = useGetMDFRequestToActivities(46598);
 
 	return (
 		<PRMForm className="mb-4" name="NEW" title="Reimbursement Claim">
 			<PRMForm.Section
 				subtitle="Check each expense you would like claim and please provide proof of performance for each of the selected expenses."
-				title="Insurance Industry Lead Gen"
-			></PRMForm.Section>
-
-			<PRMForm.Section title="Upload Proof of Performance Documents">
-				<ClaimPanel />
+				title={mdfRequest?.overallCampaign}
+			>
+				<h5 className="my-4">Upload Proof of Performance Documents </h5>
+				{activities &&
+					activities.items.map((activity, index) => (
+						<ClaimPanel
+							activity={activity}
+							currentActivityIndex={index}
+							mdfRequest={mdfRequest}
+							values={values}
+							setFieldValue={setFieldValue}
+							key={`${activity.id}-${index}`}
+						/>
+					))}
 			</PRMForm.Section>
 
 			<PRMForm.Section
@@ -57,13 +79,15 @@ const MDFClaimForm = ({}: PRMFormikPageProps) => {
 				<div className="my-3">
 					<ClaimTotalResumeCard
 						leftContent="Total MDF Requested Amount"
-						rightContent="$6,000.00"
+						rightContent={getIntlNumberFormat().format(
+							mdfRequest?.totalMDFRequestAmount || 0
+						)}
 					/>
 				</div>
 
 				<PRMFormik.Field
 					component={PRMForm.InputCurrency}
-					label="Total MDF Requested Amount"
+					label="Total Claim Amount"
 					name="totalClaimAmount"
 					onAccept={(value: number) =>
 						setFieldValue('totalClaimAmount', value)
@@ -72,24 +96,37 @@ const MDFClaimForm = ({}: PRMFormikPageProps) => {
 				/>
 			</PRMForm.Section>
 
+			<PRMForm.Section
+				subtitle="Upload an invoice for the Total Claim Amount."
+				title="Reimbursement Invoice"
+			>
+				<ClayButton
+					className="d-flex align-items-center"
+					displayType="secondary"
+				>
+					<ClayIcon className="mr-1" symbol="upload"></ClayIcon>
+					Upload file
+				</ClayButton>
+			</PRMForm.Section>
+
 			<PRMForm.Footer>
 				<div className="d-flex mr-auto">
-					<Button displayType={null}>Save as Draft</Button>
+					<ClayButton displayType={null}>Save as Draft</ClayButton>
 				</div>
 
 				<div>
-					<Button className="mr-4" displayType="secondary">
+					<ClayButton className="mr-4" displayType="secondary">
 						Cancel
-					</Button>
+					</ClayButton>
 
-					<Button
+					<ClayButton
 						disabled={
 							(!isValid && !isObjectEmpty(claimErrors)) ||
 							isSubmitting
 						}
 					>
 						Submit
-					</Button>
+					</ClayButton>
 				</div>
 			</PRMForm.Footer>
 		</PRMForm>
