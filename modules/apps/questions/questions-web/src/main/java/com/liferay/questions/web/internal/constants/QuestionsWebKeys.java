@@ -23,6 +23,8 @@ public class QuestionsWebKeys {
 
 	public static final String FLAGS_PROPERTIES = "FLAGS_PROPERTIES";
 
+	public static final String NOTIFICATION = "NOTIFICATION";
+
 	public static final String IMAGE_BROWSE_URL = "IMAGE_BROWSE_URL";
 
 	public static final String ROOT_TOPIC = "ROOT_TOPIC";
