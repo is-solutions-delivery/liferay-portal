@@ -13,7 +13,8 @@ import LiferayObject from './liferayObject';
 
 export default interface MDFClaimDocuments extends Partial<LiferayObject> {
 	fileURL: string;
-	idActivities: number;
+	idActivity: number;
 	idBudget: number;
+	idMdfRequest: number;
 	type: string;
 }

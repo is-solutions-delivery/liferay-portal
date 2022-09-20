@@ -10,14 +10,9 @@
  */
 
 import LiferayObject from './liferayObject';
-import MDFClaimActivity from './mdfClaimActivity';
-import MDFClaimDocuments from './mdfClaimDocuments';
-export default interface MDFClaim extends Partial<LiferayObject> {
-	mdfClaimActivities: MDFClaimActivity[];
-	mdfClaimDocuments: {
-		claims: MDFClaimDocuments[];
-		budgets: MDFClaimDocuments[];
-		activities: MDFClaimDocuments[];
-	};
-	totalClaimAmount: number;
+
+export default interface documentAndMediaFolder extends Partial<LiferayObject> {
+	description: string;
+	id: number;
+	name: string;
 }

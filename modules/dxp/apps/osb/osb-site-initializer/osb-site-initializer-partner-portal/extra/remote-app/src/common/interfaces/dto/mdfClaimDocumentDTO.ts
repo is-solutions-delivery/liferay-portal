@@ -14,7 +14,7 @@ import MDFClaimDocuments from '../mdfClaimDocuments';
 export default interface mdfClaimDocumentDTO
 	extends Omit<
 		MDFClaimDocuments,
-		'fileURL' | 'idActivities' | 'idBudget' | 'type'
+		'fileURL' | 'idActivity' | 'idBudget' | 'idMdfRequest' | 'type'
 	> {
 	url: string;
 	r_mdfClaimToMdfClaimDocuments_c_mdfClaimActivityId: number;
