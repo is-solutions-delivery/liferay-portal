@@ -3950,7 +3950,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		Map<String, String> map = new HashMap<>();
 
 		Class<?>[] classes = {
-			DDMStructure.class, JournalArticle.class, Layout.class
+			DDMStructure.class, JournalArticle.class
 		};
 
 		for (Class<?> clazz : classes) {
