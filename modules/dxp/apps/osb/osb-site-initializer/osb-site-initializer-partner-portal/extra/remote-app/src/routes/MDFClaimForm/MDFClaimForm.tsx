@@ -10,7 +10,6 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayIcon from '@clayui/icon';
 import {useFormikContext} from 'formik';
 import {useEffect, useMemo} from 'react';
 import PRMForm from '../../common/components/PRMForm';
@@ -38,9 +37,9 @@ const MDFClaimForm = ({
 		...formikHelpers
 	} = useFormikContext<MDFClaim>();
 
-	const mdfRequest = useGetMDFRequest(46806);
+	const mdfRequest = useGetMDFRequest(45116);
 
-	const activities = useGetMDFRequestToActivities(46806);
+	const activities = useGetMDFRequestToActivities(45116);
 
 	useEffect(() => {
 		if (values.mdfClaimActivities) {
@@ -72,15 +71,6 @@ const MDFClaimForm = ({
 								values={values}
 								setFieldValue={setFieldValue}
 								key={`${activity.id}-${index}`}
-							/>
-							<PRMFormik.Field
-								component={PRMForm.InputFile}
-								label="List of Qualified Leads"
-								name={`mdfClaimDocuments.activities[${index}.listLeads]`}
-								idActivity={activity.id}
-								setFieldValue={setFieldValue}
-								typeDocument="ListLeads"
-								required
 							/>
 						</div>
 					))}

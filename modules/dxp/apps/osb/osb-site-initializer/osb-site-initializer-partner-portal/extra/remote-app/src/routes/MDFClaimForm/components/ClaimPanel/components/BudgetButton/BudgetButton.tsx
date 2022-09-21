@@ -9,21 +9,41 @@
  * distribution rights of the Software.
  */
 
+import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-
-import MDFRequestBudget from '../../../../../../common/interfaces/mdfRequestBudget';
+import {useEffect, useState} from 'react';
+import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
+import MDFClaimBudget from '../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../common/utils/getIntlNumberFormat';
 
 interface IProps {
-	budget: MDFRequestBudget;
-	cost: number;
+	budget: MDFClaimBudget;
+	cost?: number;
+	values: MDFClaim;
 }
 
 const BudgetButton = ({
 	onClick,
 	budget,
 	cost,
+	values,
 }: IProps & React.HTMLAttributes<HTMLDivElement>) => {
+	const [checkInvoice, setCheckInvoice] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (values.mdfClaimDocuments.budgets.length) {
+			const resultDocument = values.mdfClaimDocuments.budgets.find(
+				(element) => {
+					return element.thirdPartyInvoices.idBudget === budget.id;
+				}
+			);
+
+			if (resultDocument) {
+				setCheckInvoice(true);
+			}
+		}
+	}, [values.mdfClaimDocuments.budgets]);
+
 	return (
 		<div
 			className={classNames(
@@ -31,12 +51,32 @@ const BudgetButton = ({
 			)}
 			onClick={onClick}
 		>
-			<div className="font-weight-bold text-neutral-10 text-paragraph">
-				{budget?.expense?.name}
-			</div>
+			<div className="w-100">
+				<div className="d-flex justify-content-between align-items-center">
+					<div>
+						<div className="font-weight-bold text-neutral-10 text-paragraph">
+							{budget?.expense?.name}
+						</div>
+						<div
+							className={classNames({
+								'text-neutral-7': checkInvoice === false,
+								'text-success': checkInvoice === true,
+							})}
+						>
+							<ClayIcon
+								className="mr-2"
+								symbol="check-circle-full"
+							/>
+							{checkInvoice ? 'Invoice Added' : 'Pedding Invoice'}
+						</div>
+					</div>
 
-			<div className="font-weight-bold text-neutral-10 text-paragraph">
-				{getIntlNumberFormat().format(cost)}
+					<div>
+						<div className="font-weight-bold text-neutral-10 text-paragraph">
+							{getIntlNumberFormat().format(cost ? cost : 0)}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

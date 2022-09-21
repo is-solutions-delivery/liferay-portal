@@ -10,7 +10,6 @@
  */
 
 import {useModal} from '@clayui/modal';
-import ClayIcon from '@clayui/icon';
 import ClayPanel from '@clayui/panel';
 import MDFRequestActivity from '../../../../common/interfaces/mdfRequestActivity';
 import useGetActivityToBudgets from '../../../../common/services/liferay/object/activity/useGetActivityToBudgets';
@@ -24,6 +23,7 @@ import PRMForm from '../../../../common/components/PRMForm';
 import MDFRequest from '../../../../common/interfaces/mdfRequest';
 import getBudgetCost from '../../utils/getBudgetCost';
 import getSumBudgetsOfActivity from '../../utils/getSumBudgetsOfActivity';
+import {ClayCheckbox} from '@clayui/form';
 
 interface IProps {
 	activity: MDFRequestActivity;
@@ -42,7 +42,6 @@ const ClaimPanel = ({
 	currentActivityIndex,
 	mdfRequest,
 	values,
-
 	setFieldValue,
 }: IProps) => {
 	const budgets = useGetActivityToBudgets(activity.id);
@@ -50,6 +49,7 @@ const ClaimPanel = ({
 	const {observer, onOpenChange, open} = useModal();
 	const [currentBudget, setCurrentBudget] = useState<MDFRequestBudget>();
 	const [currentBudgetIndex, setCurrentBudgetIndex] = useState<number>();
+	const [valueCheckBox, setValueCheckBox] = useState<boolean>(false);
 
 	useEffect(() => {
 		budgets?.items.forEach((budget, budgetIndex) => {
@@ -66,30 +66,37 @@ const ClaimPanel = ({
 			collapsable
 			displayTitle={
 				<ClayPanel.Title>
-					<h6>{mdfRequest?.overallCampaign}</h6>
-
-					<h4 className="text-neutral-10">
-						{activity.name} ({activity.id})
-					</h4>
-					<div className="d-flex justify-content-between">
-						<div className="d-flex justify-content-between">
-							<h6>Claim: </h6>
-
-							<div>
-								<ClayIcon
-									className="mx-2 pt-1"
-									symbol="check-circle-full"
-								/>
-								Invoice Added
-							</div>
+					<div className="d-flex">
+						<div className="mr-3 mb-2 d-flex align-items-center">
+							<ClayCheckbox
+								checked={valueCheckBox}
+								onChange={() => {
+									setValueCheckBox((value) => !value);
+									setFieldValue(
+										`mdfClaimActivities[${currentActivityIndex}].checkedPanel`,
+										!valueCheckBox
+									);
+								}}
+							/>
 						</div>
 
-						<h5 className="text-neutral-10">
-							{getSumBudgetsOfActivity(
-								values,
-								currentActivityIndex
-							)}
-						</h5>
+						<div className="w-100">
+							<h6>{mdfRequest?.overallCampaign}</h6>
+
+							<h4 className="text-neutral-10">
+								{activity.name} ({activity.id})
+							</h4>
+							<div className="d-flex justify-content-end">
+								<div>
+									<h5 className="text-neutral-10">
+										{getSumBudgetsOfActivity(
+											values,
+											currentActivityIndex
+										)}
+									</h5>
+								</div>
+							</div>
+						</div>
 					</div>
 				</ClayPanel.Title>
 			}
@@ -113,29 +120,43 @@ const ClaimPanel = ({
 							values,
 							currentActivityIndex
 						)}
+						values={values}
 					/>
 				))}
 				<div className="mt-4">
 					<PRMFormik.Field
-						component={PRMForm.InputText}
+						component={PRMForm.InputFile}
 						label="List of Qualified Leads"
-						description="You can downloaded the Excel Template, fill it out, and upload it back here"
-						name={`mdfClaimActivities[${currentActivityIndex}].ListOfLeads`}
+						name={`mdfClaimDocuments.activities[${currentActivityIndex}.listLeads]`}
+						idActivity={activity.id}
+						setFieldValue={setFieldValue}
+						typeDocument="listLeads"
+						required
+					/>
+				</div>
+				<div className="mt-4">
+					<PRMFormik.Field
+						component={PRMForm.InputFile}
+						label="All Contents"
+						name={`mdfClaimDocuments.activities[${currentActivityIndex}.contents]`}
+						idActivity={activity.id}
+						setFieldValue={setFieldValue}
+						typeDocument="contents"
 						required
 					/>
 				</div>
 				<div className="mt-4">
 					<PRMFormik.Field
 						component={PRMForm.InputText}
-						label="All Contents"
-						name={`mdfClaimActivities[${currentActivityIndex}].Contents`}
+						label="Metrics"
+						name={`mdfClaimActivities[${currentActivityIndex}].metrics`}
 					/>
-				</div>
-				<div className="mt-4">
+
 					<PRMFormik.Field
 						component={PRMForm.InputText}
-						label="Metrics"
-						name={`mdfClaimActivities[${currentActivityIndex}].Metrics`}
+						label="Target # of Leads"
+						name={`mdfClaimActivities[${currentActivityIndex}].targetOfLeads`}
+						required
 					/>
 				</div>
 			</ClayPanel.Body>
@@ -147,6 +168,8 @@ const ClaimPanel = ({
 				onOpenChange={onOpenChange}
 				observer={observer}
 				setFieldValue={setFieldValue}
+				activityId={activity.id}
+				values={values}
 			/>
 		</ClayPanel>
 	);

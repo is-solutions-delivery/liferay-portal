@@ -16,14 +16,16 @@ export default function getTotalBudgetByClaim(
 ) {
 	return mdfRequestActivities.reduce(
 		(previousValue: number, currentValue: mdfClaimActivity) => {
-			const sumBudgets =
-				currentValue.mdfClaimBudgets &&
-				currentValue.mdfClaimBudgets.reduce(
-					(previousValue, currentValue) =>
-						previousValue + +(currentValue.cost || 0),
-					0
-				);
-
+			let sumBudgets = 0;
+			if (currentValue.checkedPanel) {
+				sumBudgets =
+					currentValue.mdfClaimBudgets &&
+					currentValue.mdfClaimBudgets.reduce(
+						(previousValue, currentValue) =>
+							previousValue + +(currentValue.cost || 0),
+						0
+					);
+			}
 			return previousValue + +sumBudgets;
 		},
 		0

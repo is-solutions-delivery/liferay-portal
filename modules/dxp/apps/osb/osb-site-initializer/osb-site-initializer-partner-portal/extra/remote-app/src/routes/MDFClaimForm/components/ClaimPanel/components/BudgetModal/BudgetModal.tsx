@@ -1,15 +1,17 @@
 import ClayModal from '@clayui/modal';
 import ClayButton from '@clayui/button';
-import ClayIcon from '@clayui/icon';
 import PRMFormik from '../../../../../../common/components/PRMFormik';
 import PRMForm from '../../../../../../common/components/PRMForm';
-import MDFRequestBudget from '../../../../../../common/interfaces/mdfRequestBudget';
 import {useModal} from '@clayui/modal';
 import {useState} from 'react';
+import MDFClaimBudget from '../../../../../../common/interfaces/mdfClaimBudget';
+import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
 
 interface IProps {
 	currentBudgetIndex: number | undefined;
 	currentActivityIndex: number | undefined;
+	activityId?: number;
+	values: MDFClaim;
 	setFieldValue: (
 		field: string,
 		value: any,
@@ -18,16 +20,16 @@ interface IProps {
 }
 
 const BudgetModal = ({
+	values,
 	currentActivityIndex,
+	activityId,
 	observer,
 	setFieldValue,
 	onOpenChange,
 	open,
 	currentBudgetIndex,
 	...budget
-}: Omit<ReturnType<typeof useModal>, 'onClose'> &
-	MDFRequestBudget &
-	IProps) => {
+}: Omit<ReturnType<typeof useModal>, 'onClose'> & MDFClaimBudget & IProps) => {
 	const [bugetCost, setBugetCost] = useState<any>({});
 
 	const key = budget.id || '';
@@ -73,21 +75,16 @@ const BudgetModal = ({
 									description="Silver Partner can claim up to 50%"
 								/>
 
-								<label className="font-weight-semi-bold ml-0">
-									Third Party Invoices
-									<span className="text-danger">*</span>
-								</label>
-
-								<ClayButton
-									className="d-flex align-items-center"
-									displayType="secondary"
-								>
-									<ClayIcon
-										className="mr-1"
-										symbol="upload"
-									></ClayIcon>
-									Upload file
-								</ClayButton>
+								<PRMFormik.Field
+									component={PRMForm.InputFile}
+									label="Third Party Invoices"
+									name={`mdfClaimDocuments.budgets[${currentActivityIndex}.thirdPartyInvoices]`}
+									idBudget={budget.id}
+									idActivity={activityId}
+									setFieldValue={setFieldValue}
+									typeDocument="ListLeads"
+									required
+								/>
 							</div>
 						</ClayModal.Body>
 						<ClayModal.Footer
@@ -98,6 +95,10 @@ const BudgetModal = ({
 										displayType="secondary"
 										onClick={() => {
 											onOpenChange(false);
+											setFieldValue(
+												`mdfClaimActivities[${currentActivityIndex}].mdfClaimBudgets[${currentBudgetIndex}].cost`,
+												bugetCost[key]?.savedValue
+											);
 											setFieldValue(
 												`mdfClaimActivities[${currentActivityIndex}].mdfClaimBudgets[${currentBudgetIndex}].cost`,
 												bugetCost[key]?.savedValue
