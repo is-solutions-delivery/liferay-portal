@@ -25,7 +25,7 @@ const mdfRequestId = +currentPath[currentPath.length - 1];
 const getContactInfo = async () => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch
 	const response = await fetch(
-		`/o/c/mdfrequests/${mdfRequestId}?nestedFields=accountEntry,user`,
+		`/o/c/mdfrequests/${mdfRequestId}?nestedFields=user`,
 		{
 			headers: {
 				'accept': 'application/json',
