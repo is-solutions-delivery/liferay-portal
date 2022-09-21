@@ -3103,7 +3103,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_segmentsExperienceLocalService.fetchSegmentsExperience(
 					serviceContext.getScopeGroupId(),
 					jsonObject.getString("segmentsExperienceKey"),
-					jsonObject.getLong("classNameId"), draftLayout.getClassPK());
+					_portal.getClassNameId(Layout.class), draftLayout.getClassPK());
 
 			if (segmentsExperience == null) {
 				segmentsExperience =
@@ -3112,7 +3112,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 						serviceContext.getScopeGroupId(),
 						jsonObject.getLong("segmentsEntryId"),
 						jsonObject.getString("segmentsExperienceKey"),
-						jsonObject.getLong("classNameId"), draftLayout.getClassPK(),
+						_portal.getClassNameId(Layout.class), draftLayout.getClassPK(),
 						SiteInitializerUtil.toMap(
 							jsonObject.getString("name_i18n")),
 						jsonObject.getInt("priority"),
