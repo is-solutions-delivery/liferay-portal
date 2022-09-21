@@ -98,7 +98,6 @@ import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
@@ -269,7 +268,6 @@ public class BundleSiteInitializerTest {
 			_assertClientExtension(group);
 			_assertSAPEntries(group);
 			_assertSegmentsEntries(group.getGroupId());
-			_assertSegmentsExperiences(group.getGroupId());
 			_assertSiteConfiguration(group.getGroupId());
 			_assertSiteSettings(group.getGroupId());
 			_assertSiteNavigationMenu(group);
@@ -1439,6 +1437,23 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			"com.liferay.portal.kernel.model.User", segmentsEntry1.getType());
 
+		Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
+			groupId, false, "/test-public-layout");
+
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		SegmentsExperience segmentsExperience1 =
+			_segmentsExperienceLocalService.fetchSegmentsExperience(
+				groupId, "TEST-SEGMENTS-EXPERIENCE-1",
+				_portal.getClassNameId(Layout.class), draftLayout.getClassPK());
+
+		Assert.assertNotNull(segmentsExperience1);
+		Assert.assertEquals(
+			"Test Segments Experience 1", segmentsExperience1.getName("en-US"));
+		Assert.assertEquals(
+			segmentsEntry1.getSegmentsEntryId(),
+			segmentsExperience1.getSegmentsEntryId());
+
 		SegmentsEntry segmentsEntry2 =
 			_segmentsEntryLocalService.fetchSegmentsEntry(
 				groupId, "TEST-SEGMENTS-ENTRY-2", true);
@@ -1450,47 +1465,18 @@ public class BundleSiteInitializerTest {
 			segmentsEntry2.getName(LocaleUtil.getSiteDefault()));
 		Assert.assertEquals(
 			"com.liferay.portal.kernel.model.User", segmentsEntry2.getType());
-	}
 
-	private void _assertSegmentsExperiences(Long groupId)
-		throws PortalException {
+		SegmentsExperience segmentsExperience2 =
+			_segmentsExperienceLocalService.fetchSegmentsExperience(
+				groupId, "TEST-SEGMENTS-EXPERIENCE-2",
+				_portal.getClassNameId(Layout.class), draftLayout.getClassPK());
 
-		Layout layout = _layoutLocalService.getFriendlyURLLayout(
-			groupId, false, "/home");
-
-		Layout draftLayout = layout.fetchDraftLayout();
-
-		List<SegmentsExperience> segmentsExperiences =
-			_segmentsExperienceLocalService.getSegmentsExperiences(
-				groupId,
-				_portal.getClassNameId(
-					"com.liferay.portal.kernel.model.Layout"),
-				draftLayout.getClassPK());
-
+		Assert.assertNotNull(segmentsExperience2);
 		Assert.assertEquals(
-			segmentsExperiences.toString(), 3, segmentsExperiences.size());
-		Assert.assertNotNull(segmentsExperiences);
-
-		SegmentsExperience segmentsExperience = segmentsExperiences.get(0);
-
-		Assert.assertTrue(segmentsExperience.isActive());
+			"Test Segments Experience 2", segmentsExperience2.getName("en-US"));
 		Assert.assertEquals(
-			"Test Segments Experience 2",
-			segmentsExperience.getName(LocaleUtil.getSiteDefault()));
-		Assert.assertNotNull(segmentsExperience.getSegmentsEntryId());
-
-		segmentsExperience = segmentsExperiences.get(1);
-
-		Assert.assertFalse(segmentsExperience.isActive());
-		Assert.assertEquals(
-			"Test Segments Experience 1",
-			segmentsExperience.getName(LocaleUtil.getSiteDefault()));
-		Assert.assertNotNull(segmentsExperience.getSegmentsEntryId());
-
-		segmentsExperience = segmentsExperiences.get(2);
-
-		Assert.assertEquals(
-			"Default", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+			segmentsEntry2.getSegmentsEntryId(),
+			segmentsExperience2.getSegmentsEntryId());
 	}
 
 	private void _assertSiteConfiguration(Long groupId) {
