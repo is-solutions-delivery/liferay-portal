@@ -430,7 +430,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addKnowledgeBaseArticles(serviceContext));
 			_invoke(() -> _addOrganizations(serviceContext));
 			_invoke(() -> _addSAPEntries(serviceContext));
-			_invoke(() -> _addSegmentsEntries(serviceContext));
+
+			Map<String, String> segmentsEntriesIdsStringUtilReplaceValues =
+				_invoke(() -> _addSegmentsEntries(serviceContext));
+
 			_invoke(() -> _addSiteConfiguration(serviceContext));
 			_invoke(() -> _addSiteSettings(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
@@ -3005,14 +3008,18 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private void _addSegmentsEntries(ServiceContext serviceContext)
+	private Map<String, String> _addSegmentsEntries(
+			ServiceContext serviceContext)
 		throws Exception {
+
+		Map<String, String> segmentsEntriesIdsStringUtilReplaceValues =
+			new HashMap<>();
 
 		String json = SiteInitializerUtil.read(
 			"/site-initializer/segments-entries.json", _servletContext);
 
 		if (json == null) {
-			return;
+			Collections.emptyMap();
 		}
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
@@ -3026,7 +3033,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					jsonObject.getString("segmentsEntryKey"), true);
 
 			if (segmentsEntry == null) {
-				_segmentsEntryLocalService.addSegmentsEntry(
+				segmentsEntry = _segmentsEntryLocalService.addSegmentsEntry(
 					jsonObject.getString("segmentsEntryKey"),
 					SiteInitializerUtil.toMap(
 						jsonObject.getString("name_i18n")),
@@ -3035,7 +3042,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					jsonObject.getString("type"), serviceContext);
 			}
 			else {
-				_segmentsEntryLocalService.updateSegmentsEntry(
+				segmentsEntry = _segmentsEntryLocalService.updateSegmentsEntry(
 					segmentsEntry.getSegmentsEntryId(),
 					jsonObject.getString("segmentsEntryKey"),
 					SiteInitializerUtil.toMap(
@@ -3043,7 +3050,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 					null, jsonObject.getBoolean("active", true),
 					jsonObject.getString("criteria"), serviceContext);
 			}
+
+			segmentsEntriesIdsStringUtilReplaceValues.put(
+				"SEGMENTS_ENTRY_ID:" + segmentsEntry.getSegmentsEntryKey(),
+				String.valueOf(segmentsEntry.getSegmentsEntryId()));
 		}
+
+		return segmentsEntriesIdsStringUtilReplaceValues;
 	}
 
 	private void _addSiteConfiguration(ServiceContext serviceContext)
