@@ -47,6 +47,16 @@ const useSlaCards = (koroneikiAccount) =>
 				)
 			);
 		}
+		if (!!slaFuture && slaFuture !== slaCurrent) {
+			slaCards.push(
+				getSlaCard(
+					slaFutureEndDate,
+					slaFutureStartDate,
+					slaFuture,
+					SLA_CARD_NAMES.future
+				)
+			);
+		}
 
 		if (!!slaExpired && slaExpired !== slaCurrent) {
 			slaCards.push(
@@ -55,17 +65,6 @@ const useSlaCards = (koroneikiAccount) =>
 					slaExpiredStartDate,
 					slaExpired,
 					SLA_CARD_NAMES.expired
-				)
-			);
-		}
-
-		if (!!slaFuture && slaFuture !== slaCurrent) {
-			slaCards.push(
-				getSlaCard(
-					slaFutureEndDate,
-					slaFutureStartDate,
-					slaFuture,
-					SLA_CARD_NAMES.future
 				)
 			);
 		}
