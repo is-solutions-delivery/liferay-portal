@@ -148,7 +148,6 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
-import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsEntryLocalService;
@@ -1440,32 +1439,38 @@ public class BundleSiteInitializerTest {
 			groupId, false, "/home");
 
 		Layout draftLayout = layout.fetchDraftLayout();
-		Long classPK = draftLayout.getClassPK();
 
 		List<SegmentsExperience> segmentsExperiences =
 			_segmentsExperienceLocalService.getSegmentsExperiences(
 				groupId,
-				_portal.getClassNameId("com.liferay.portal.kernel.model.Layout"),
-				classPK);
+				_portal.getClassNameId(
+					"com.liferay.portal.kernel.model.Layout"),
+				draftLayout.getClassPK());
 
-		Assert.assertEquals(segmentsExperiences.toString(),3, segmentsExperiences.size());
+		Assert.assertEquals(
+			segmentsExperiences.toString(), 3, segmentsExperiences.size());
 		Assert.assertNotNull(segmentsExperiences);
 
 		SegmentsExperience segmentsExperience = segmentsExperiences.get(0);
 
 		Assert.assertTrue(segmentsExperience.isActive());
-		Assert.assertEquals("Test Segments Experience 2", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertEquals(
+			"Test Segments Experience 2",
+			segmentsExperience.getName(LocaleUtil.getSiteDefault()));
 		Assert.assertNotNull(segmentsExperience.getSegmentsEntryId());
 
 		segmentsExperience = segmentsExperiences.get(1);
 
 		Assert.assertFalse(segmentsExperience.isActive());
-		Assert.assertEquals("Test Segments Experience 1", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertEquals(
+			"Test Segments Experience 1",
+			segmentsExperience.getName(LocaleUtil.getSiteDefault()));
 		Assert.assertNotNull(segmentsExperience.getSegmentsEntryId());
 
 		segmentsExperience = segmentsExperiences.get(2);
 
-		Assert.assertEquals("Default", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertEquals(
+			"Default", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
 	}
 
 	private void _assertSiteConfiguration(Long groupId) {

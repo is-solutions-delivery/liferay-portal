@@ -145,12 +145,14 @@ public class SiteInitializerExtender
 				_organizationLocalService, _organizationResourceFactory,
 				_portal, _resourceActionLocalService,
 				_resourcePermissionLocalService, _roleLocalService,
-				_sapEntryLocalService, _segmentsEntryLocalService, _segmentsExperienceLocalService, null,
-				_settingsFactory, _siteNavigationMenuItemLocalService,
+				_sapEntryLocalService, _segmentsEntryLocalService,
+				_segmentsExperienceLocalService, null, _settingsFactory,
+				_siteNavigationMenuItemLocalService,
 				_siteNavigationMenuItemTypeRegistry,
 				_siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
-				_styleBookEntryZipProcessor, _portletRegistry, _taxonomyCategoryResourceFactory,
+				_styleBookEntryZipProcessor, _portletRegistry,
+				_taxonomyCategoryResourceFactory,
 				_taxonomyVocabularyResourceFactory, _themeLocalService,
 				_userAccountResourceFactory, _userGroupLocalService,
 				_userLocalService, _workflowDefinitionLinkLocalService,
@@ -233,13 +235,13 @@ public class SiteInitializerExtender
 					Bundle.class.getClassLoader(), Bundle.class,
 					new FileBackedBundleDelegate(
 						_bundleContext, file, _jsonFactory, symbolicName),
-					null), _commentManager,
-				_clientExtensionEntryLocalService, _configurationProvider,
-				_ddmStructureLocalService, _ddmTemplateLocalService,
-				_defaultDDMStructureHelper, _dlURLHelper,
-				_documentFolderResourceFactory, _documentResourceFactory,
-				_fragmentsImporter, _groupLocalService,
-				_journalArticleLocalService, _jsonFactory,
+					null),
+				_commentManager, _clientExtensionEntryLocalService,
+				_configurationProvider, _ddmStructureLocalService,
+				_ddmTemplateLocalService, _defaultDDMStructureHelper,
+				_dlURLHelper, _documentFolderResourceFactory,
+				_documentResourceFactory, _fragmentsImporter,
+				_groupLocalService, _journalArticleLocalService, _jsonFactory,
 				_knowledgeBaseArticleResourceFactory,
 				_knowledgeBaseFolderResourceFactory, _layoutCopyHelper,
 				_layoutLocalService, _layoutPageTemplateEntryLocalService,
@@ -265,7 +267,8 @@ public class SiteInitializerExtender
 				_siteNavigationMenuItemTypeRegistry,
 				_siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
-				_styleBookEntryZipProcessor, _portletRegistry, _taxonomyCategoryResourceFactory,
+				_styleBookEntryZipProcessor, _portletRegistry,
+				_taxonomyCategoryResourceFactory,
 				_taxonomyVocabularyResourceFactory, _themeLocalService,
 				_userAccountResourceFactory, _userGroupLocalService,
 				_userLocalService, _workflowDefinitionLinkLocalService,
@@ -295,10 +298,10 @@ public class SiteInitializerExtender
 	private BundleTracker<?> _bundleTracker;
 
 	@Reference
-	private CommentManager _commentManager;
+	private ClientExtensionEntryLocalService _clientExtensionEntryLocalService;
 
 	@Reference
-	private ClientExtensionEntryLocalService _clientExtensionEntryLocalService;
+	private CommentManager _commentManager;
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;
@@ -408,6 +411,9 @@ public class SiteInitializerExtender
 	private Portal _portal;
 
 	@Reference
+	private PortletRegistry _portletRegistry;
+
+	@Reference
 	private ResourceActionLocalService _resourceActionLocalService;
 
 	@Reference
@@ -445,9 +451,6 @@ public class SiteInitializerExtender
 
 	@Reference
 	private StyleBookEntryZipProcessor _styleBookEntryZipProcessor;
-
-	@Reference
-	private PortletRegistry _portletRegistry;
 
 	@Reference
 	private TaxonomyCategoryResource.Factory _taxonomyCategoryResourceFactory;
