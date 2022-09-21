@@ -55,9 +55,6 @@ const MDFClaimForm = ({
 		return errors;
 	}, [errors]);
 
-	const idMDFRequest = 45016;
-	const objActivities = useGetMDFRequestToActivities(idMDFRequest);
-
 	return (
 		<PRMForm className="mb-4" name="NEW" title="Reimbursement Claim">
 			<PRMForm.Section
@@ -67,50 +64,26 @@ const MDFClaimForm = ({
 				<h5 className="my-4">Upload Proof of Performance Documents </h5>
 				{activities &&
 					activities.items.map((activity, index) => (
-						<ClaimPanel
-							activity={activity}
-							currentActivityIndex={index}
-							mdfRequest={mdfRequest}
-							values={values}
-							setFieldValue={setFieldValue}
-							key={`${activity.id}-${index}`}
-						/>
+						<div key={index}>
+							<ClaimPanel
+								activity={activity}
+								currentActivityIndex={index}
+								mdfRequest={mdfRequest}
+								values={values}
+								setFieldValue={setFieldValue}
+								key={`${activity.id}-${index}`}
+							/>
+							<PRMFormik.Field
+								component={PRMForm.InputFile}
+								label="List of Qualified Leads"
+								name={`mdfClaimDocuments.activities[${index}.listLeads]`}
+								idActivity={activity.id}
+								setFieldValue={setFieldValue}
+								typeDocument="ListLeads"
+								required
+							/>
+						</div>
 					))}
-			</PRMForm.Section>
-
-			<PRMForm.Section title="Uploads">
-				{objActivities?.items.map((activities, index) => (
-					<div key={index}>
-						<h3>activity {activities.id}</h3>
-
-						<PRMFormik.Field
-							component={PRMForm.InputFile}
-							label="List of Qualified Leads"
-							name={`mdfClaimDocuments.activities[${index}.listLeads]`}
-							idActivity={activities.id}
-							setFieldValue={setFieldValue}
-							typeDocument="ListLeads"
-							required
-						/>
-
-						<PRMFormik.Field
-							component={PRMForm.InputFile}
-							label="All Content"
-							name={`mdfClaimDocuments.activities[${index}.allContent]`}
-							idActivity={activities.id}
-							setFieldValue={setFieldValue}
-							typeDocument="allContent"
-							required
-						/>
-
-						<PRMFormik.Field
-							component={PRMForm.InputText}
-							label="Metrics"
-							name={`activities[${index}].metrics`}
-							required
-						/>
-					</div>
-				))}
 			</PRMForm.Section>
 
 			<PRMForm.Section
@@ -140,24 +113,11 @@ const MDFClaimForm = ({
 					component={PRMForm.InputFile}
 					label="Reimbursement Invoice"
 					name={`mdfClaimDocuments.claims[0.reimbursementInvoice]`}
-					idMdfRequest={idMDFRequest}
+					idMdfRequest={mdfRequest?.id}
 					setFieldValue={setFieldValue}
 					typeDocument="reimbursementInvoice"
 					required
 				/>
-			</PRMForm.Section>
-
-			<PRMForm.Section
-				subtitle="Upload an invoice for the Total Claim Amount."
-				title="Reimbursement Invoice"
-			>
-				<ClayButton
-					className="d-flex align-items-center"
-					displayType="secondary"
-				>
-					<ClayIcon className="mr-1" symbol="upload"></ClayIcon>
-					Upload file
-				</ClayButton>
 			</PRMForm.Section>
 
 			<PRMForm.Footer>
