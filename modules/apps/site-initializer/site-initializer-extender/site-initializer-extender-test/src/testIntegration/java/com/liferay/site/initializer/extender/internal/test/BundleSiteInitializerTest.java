@@ -98,6 +98,7 @@ import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
@@ -147,8 +148,11 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.model.SegmentsEntry;
+import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsEntryLocalService;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.site.navigation.menu.item.layout.constants.SiteNavigationMenuItemTypeConstants;
@@ -263,6 +267,7 @@ public class BundleSiteInitializerTest {
 			_assertClientExtension(group);
 			_assertSAPEntries(group);
 			_assertSegmentsEntries(group.getGroupId());
+			_assertSegmentsExperiences(group.getGroupId());
 			_assertSiteConfiguration(group.getGroupId());
 			_assertSiteSettings(group.getGroupId());
 			_assertSiteNavigationMenu(group);
@@ -1428,6 +1433,41 @@ public class BundleSiteInitializerTest {
 			"com.liferay.portal.kernel.model.User", segmentsEntry2.getType());
 	}
 
+	private void _assertSegmentsExperiences(Long groupId)
+		throws PortalException {
+
+		Layout layout = _layoutLocalService.getFriendlyURLLayout(
+			groupId, false, "/home");
+
+		Layout draftLayout = layout.fetchDraftLayout();
+		Long classPK = draftLayout.getClassPK();
+
+		List<SegmentsExperience> segmentsExperiences =
+			_segmentsExperienceLocalService.getSegmentsExperiences(
+				groupId,
+				_portal.getClassNameId("com.liferay.portal.kernel.model.Layout"),
+				classPK);
+
+		Assert.assertEquals(segmentsExperiences.toString(),3, segmentsExperiences.size());
+		Assert.assertNotNull(segmentsExperiences);
+
+		SegmentsExperience segmentsExperience = segmentsExperiences.get(0);
+
+		Assert.assertTrue(segmentsExperience.isActive());
+		Assert.assertEquals("Test Segments Experience 2", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertNotNull(segmentsExperience.getSegmentsEntryId());
+
+		segmentsExperience = segmentsExperiences.get(1);
+
+		Assert.assertFalse(segmentsExperience.isActive());
+		Assert.assertEquals("Test Segments Experience 1", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertNotNull(segmentsExperience.getSegmentsEntryId());
+
+		segmentsExperience = segmentsExperiences.get(2);
+
+		Assert.assertEquals("Default", segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+	}
+
 	private void _assertSiteConfiguration(Long groupId) {
 		Group group = _groupLocalService.fetchGroup(groupId);
 
@@ -1834,6 +1874,9 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private SegmentsEntryLocalService _segmentsEntryLocalService;
+
+	@Inject
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	@Inject
 	private ServletContext _servletContext;

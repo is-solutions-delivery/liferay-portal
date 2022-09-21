@@ -1,0 +1,26 @@
+[
+	{
+		"active": "true",
+		"classNameId": "[$CLASS_NAME_ID:com.liferay.portal.kernel.model.Layout$]",
+		"friendlyURL": "/home",
+		"name_i18n": {
+			"en-US": "Segments Experience 1"
+		},
+		"privateLayout": false,
+		"segmentsEntryId": "[$SEGMENTS_ENTRY_ID:AFRICA$]",
+		"segmentsExperienceID": "[$SEGMENTS_EXPERIENCE_ID:SEGMENTS-EXPERIENCE-1$]",
+		"segmentsExperienceKey": "SEGMENTS-EXPERIENCE-1"
+	},
+	{
+		"active": "true",
+		"classNameId": "[$CLASS_NAME_ID:com.liferay.portal.kernel.model.Layout$]",
+		"friendlyURL": "/home",
+		"name_i18n": {
+			"en-US": "Segments Experience 2"
+		},
+		"privateLayout": false,
+		"segmentsEntryId": "[$SEGMENTS_ENTRY_ID:ANZ$]",
+		"segmentsExperienceID": "[$SEGMENTS_EXPERIENCE_ID:SEGMENTS-EXPERIENCE-2$]",
+		"segmentsExperienceKey": "SEGMENTS-EXPERIENCE-2"
+	}
+]
