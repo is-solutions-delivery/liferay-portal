@@ -3074,8 +3074,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addSegmentsExperiences(
-		ServiceContext serviceContext,
-		Map<String, String> segmentsEntriesIdsStringUtilReplaceValues)
+			ServiceContext serviceContext,
+			Map<String, String> segmentsEntriesIdsStringUtilReplaceValues)
 		throws Exception {
 
 		String json = SiteInitializerUtil.read(
@@ -3949,9 +3949,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private Map<String, String> _getClassNameIdStringUtilReplaceValues() {
 		Map<String, String> map = new HashMap<>();
 
-		Class<?>[] classes = {
-			DDMStructure.class, JournalArticle.class, Layout.class
-		};
+		Class<?>[] classes = {DDMStructure.class, JournalArticle.class};
 
 		for (Class<?> clazz : classes) {
 			map.put(
