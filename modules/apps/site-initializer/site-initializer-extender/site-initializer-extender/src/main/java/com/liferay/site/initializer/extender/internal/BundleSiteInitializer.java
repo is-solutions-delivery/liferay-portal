@@ -3103,7 +3103,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_segmentsExperienceLocalService.fetchSegmentsExperience(
 					serviceContext.getScopeGroupId(),
 					jsonObject.getString("segmentsExperienceKey"),
-					_portal.getClassNameId(Layout.class), draftLayout.getClassPK());
+					_portal.getClassNameId(Layout.class),
+					draftLayout.getClassPK());
 
 			if (segmentsExperience == null) {
 				segmentsExperience =
@@ -3112,7 +3113,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 						serviceContext.getScopeGroupId(),
 						jsonObject.getLong("segmentsEntryId"),
 						jsonObject.getString("segmentsExperienceKey"),
-						_portal.getClassNameId(Layout.class), draftLayout.getClassPK(),
+						_portal.getClassNameId(Layout.class),
+						draftLayout.getClassPK(),
 						SiteInitializerUtil.toMap(
 							jsonObject.getString("name_i18n")),
 						jsonObject.getInt("priority"),
@@ -3129,19 +3131,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 						jsonObject.getBoolean("active", true));
 			}
 
-				SegmentsExperience segmentsExperienceDefault =
-					_segmentsExperienceLocalService.fetchSegmentsExperience(
-						serviceContext.getScopeGroupId(),
-						_portal.getClassNameId(Layout.class),
-						draftLayout.getClassPK(), 0);
-
-				_layoutCopyHelper.copySegmentsExperienceData(
-					layout.getPlid(), _commentManager,
-					serviceContext.getScopeGroupId(), _portletRegistry,
-					segmentsExperienceDefault.getSegmentsExperienceId(),
-					segmentsExperience.getSegmentsExperienceId(),
-					className -> serviceContext, serviceContext.getUserId());
-
+			_layoutCopyHelper.copySegmentsExperienceData(
+				layout.getPlid(), _commentManager,
+				serviceContext.getScopeGroupId(), _portletRegistry,
+				_segmentsExperienceLocalService.
+					fetchDefaultSegmentsExperienceId(draftLayout.getClassPK()),
+				segmentsExperience.getSegmentsExperienceId(),
+				className -> serviceContext, serviceContext.getUserId());
 		}
 	}
 
