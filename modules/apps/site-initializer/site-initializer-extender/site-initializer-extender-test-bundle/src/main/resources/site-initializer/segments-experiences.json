@@ -1,7 +1,6 @@
 [
 	{
 		"active": "false",
-		"classNameId": "[$CLASS_NAME_ID:com.liferay.portal.kernel.model.Layout$]",
 		"friendlyURL": "/home",
 		"name_i18n": {
 			"en-US": "Test Segments Experience 1"
@@ -13,7 +12,6 @@
 	},
 	{
 		"active": "true",
-		"classNameId": "[$CLASS_NAME_ID:com.liferay.portal.kernel.model.Layout$]",
 		"friendlyURL": "/home",
 		"name_i18n": {
 			"en-US": "Test Segments Experience 2"
