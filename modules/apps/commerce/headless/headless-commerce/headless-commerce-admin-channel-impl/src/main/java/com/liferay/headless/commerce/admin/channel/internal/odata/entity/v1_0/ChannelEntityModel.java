@@ -32,7 +32,7 @@ public class ChannelEntityModel implements EntityModel {
 			new StringEntityField(
 				"name", locale -> Field.getSortableFieldName("name")),
 			new IntegerEntityField(
-				"scopeGroupId", locale -> "scopeGroupId"));
+				"siteGroupId", locale -> Field.SCOPE_GROUP_ID));
 	}
 
 	@Override
