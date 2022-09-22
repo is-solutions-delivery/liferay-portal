@@ -458,8 +458,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, Layout> layouts = _invoke(
 				() -> _addLayouts(serviceContext));
 
-
-
 			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
 				_invoke(() -> _addListTypeDefinitions(serviceContext));
 
@@ -1693,7 +1691,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutPageTemplates(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
-			Map<String, String> objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
+			Map<String, String>
+				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 			ServiceContext serviceContext,
 			Map<String, String> taxonomyCategoryIdsStringUtilReplaceValues)
 		throws Exception {
@@ -1720,6 +1719,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			if (StringUtil.endsWith(urlPath, "display-page-template.json") |
 				StringUtil.endsWith(urlPath, "page-definition.json")) {
+
 				String json = StringUtil.read(url.openStream());
 
 				json = _replace(
@@ -1744,7 +1744,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 						group.getFriendlyURL(),
 						String.valueOf(serviceContext.getScopeGroupId()),
 						group.getGroupKey(),
-						objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues.toString()
+						objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues.
+							toString()
 					});
 
 				String css = _replace(
