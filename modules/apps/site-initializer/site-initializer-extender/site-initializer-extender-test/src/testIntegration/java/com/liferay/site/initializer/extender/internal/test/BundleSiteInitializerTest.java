@@ -1449,10 +1449,12 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(segmentsExperience1);
 		Assert.assertEquals(
-			"Test Segments Experience 1", segmentsExperience1.getName("en-US"));
-		Assert.assertEquals(
 			segmentsEntry1.getSegmentsEntryId(),
 			segmentsExperience1.getSegmentsEntryId());
+		Assert.assertEquals(
+			"Test Segments Experience 1",
+			segmentsExperience1.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertFalse(segmentsExperience1.isActive());
 
 		SegmentsEntry segmentsEntry2 =
 			_segmentsEntryLocalService.fetchSegmentsEntry(
@@ -1473,10 +1475,12 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(segmentsExperience2);
 		Assert.assertEquals(
-			"Test Segments Experience 2", segmentsExperience2.getName("en-US"));
-		Assert.assertEquals(
 			segmentsEntry2.getSegmentsEntryId(),
 			segmentsExperience2.getSegmentsEntryId());
+		Assert.assertEquals(
+			"Test Segments Experience 2",
+			segmentsExperience2.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertFalse(segmentsExperience2.isActive());
 	}
 
 	private void _assertSiteConfiguration(Long groupId) {
