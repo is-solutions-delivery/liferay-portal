@@ -545,6 +545,7 @@ public class BundleSiteInitializerTest {
 			"Test Commerce Notification Template",
 			commerceNotificationTemplate.getName());
 	}
+
 	private void _assertCommerceSpecificationProducts(
 			ServiceContext serviceContext)
 		throws Exception {
