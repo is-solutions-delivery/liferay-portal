@@ -545,7 +545,6 @@ public class BundleSiteInitializerTest {
 			"Test Commerce Notification Template",
 			commerceNotificationTemplate.getName());
 	}
-
 	private void _assertCommerceSpecificationProducts(
 			ServiceContext serviceContext)
 		throws Exception {
@@ -1480,7 +1479,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			"Test Segments Experience 2",
 			segmentsExperience2.getName(LocaleUtil.getSiteDefault()));
-		Assert.assertFalse(segmentsExperience2.isActive());
+		Assert.assertTrue(segmentsExperience2.isActive());
 	}
 
 	private void _assertSiteConfiguration(Long groupId) {
