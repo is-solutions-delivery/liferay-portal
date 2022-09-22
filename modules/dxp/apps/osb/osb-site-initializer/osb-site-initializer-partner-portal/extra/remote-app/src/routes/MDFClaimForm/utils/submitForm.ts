@@ -9,9 +9,15 @@
  * distribution rights of the Software.
  */
 
-export enum LiferayAPIs {
-	HEADERLESS_ADMIN_LIST_TYPE = 'headless-admin-list-type/v1.0',
-	HEADERLESS_ADMIN_USER = 'headless-admin-user/v1.0',
-	HEADERLESS_DELIVERY = 'headless-delivery/v1.0',
-	OBJECT = 'c',
+import {FormikHelpers} from 'formik';
+import MDFClaim from '../../../common/interfaces/mdfClaim';
+import createMDFClaim from '../../../common/services/liferay/object/mdf-claim/createMDFClaim';
+
+export default async function submitForm(
+	values: MDFClaim,
+	formikHelpers: Omit<FormikHelpers<MDFClaim>, 'setFieldValue'>
+) {
+	formikHelpers.setSubmitting(true);
+
+	const dtoMDFClaim = await createMDFClaim(values);
 }

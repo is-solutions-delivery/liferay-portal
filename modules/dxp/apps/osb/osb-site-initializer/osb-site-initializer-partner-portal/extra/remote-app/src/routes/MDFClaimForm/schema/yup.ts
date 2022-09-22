@@ -9,9 +9,10 @@
  * distribution rights of the Software.
  */
 
-export enum LiferayAPIs {
-	HEADERLESS_ADMIN_LIST_TYPE = 'headless-admin-list-type/v1.0',
-	HEADERLESS_ADMIN_USER = 'headless-admin-user/v1.0',
-	HEADERLESS_DELIVERY = 'headless-delivery/v1.0',
-	OBJECT = 'c',
-}
+import {number, object} from 'yup';
+
+const claimSchema = object({
+	totalClaimAmount: number().moreThan(0, 'Required').required('Required'),
+});
+
+export default claimSchema;

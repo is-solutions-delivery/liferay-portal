@@ -9,9 +9,15 @@
  * distribution rights of the Software.
  */
 
-export enum LiferayAPIs {
-	HEADERLESS_ADMIN_LIST_TYPE = 'headless-admin-list-type/v1.0',
-	HEADERLESS_ADMIN_USER = 'headless-admin-user/v1.0',
-	HEADERLESS_DELIVERY = 'headless-delivery/v1.0',
-	OBJECT = 'c',
+import LiferayObject from './liferayObject';
+import MDFClaimActivity from './mdfClaimActivity';
+import MDFClaimDocuments from './mdfClaimDocuments';
+export default interface MDFClaim extends Partial<LiferayObject> {
+	mdfClaimActivities: MDFClaimActivity[];
+	mdfClaimDocuments: {
+		claims: MDFClaimDocuments[];
+		budgets: MDFClaimDocuments[];
+		activities: MDFClaimDocuments[];
+	};
+	totalClaimAmount: number;
 }

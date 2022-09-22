@@ -9,22 +9,32 @@
  * distribution rights of the Software.
  */
 
+import classNames from 'classnames';
+
 interface IProps {
-	children?: React.ReactNode;
-	subtitle?: string;
-	title?: string;
+	leftContent: string;
+	rightContent?: string;
 }
 
-const Section = ({children, subtitle, title}: IProps) => (
-	<div>
-		<div className="border-bottom border-neutral-2 mb-4 py-2">
-			<h5 className="font-weight-bold mb-0 text-paragraph">{title}</h5>
-
-			<div className="text-neutral-8 text-paragraph-sm">{subtitle}</div>
+const ClaimTotalResumeCard = ({
+	className,
+	leftContent,
+	rightContent,
+}: IProps & React.HTMLAttributes<HTMLDivElement>) => (
+	<div
+		className={classNames(
+			'bg-neutral-1 rounded d-flex justify-content-between p-3 align-items-center',
+			className
+		)}
+	>
+		<div className="font-weight-semi-bold text-paragraph">
+			{leftContent}
 		</div>
 
-		{children}
+		<div className="font-weight-semi-bold text-paragraph">
+			{rightContent}
+		</div>
 	</div>
 );
 
-export default Section;
+export default ClaimTotalResumeCard;
