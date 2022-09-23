@@ -9,14 +9,10 @@
  * distribution rights of the Software.
  */
 
-export enum LiferayPicklistName {
-	ADDITIONAL_OPTIONS = 'MDF Request: Additional Options',
-	BUDGET_EXPENSES = 'Budget Expenses',
-	LEAD_FOLLOW_UP_STRATEGIES = 'Lead Follow Up Strategies',
-	LIFERAY_BUSINESS_SALES_GOALS = 'Liferay Business/Sales Goals',
-	PARTNER_LEVELS = 'Partner Levels',
-	REGIONS = 'Regions',
-	TARGET_AUDIENCE_ROLES = 'Target Audience/Roles',
-	TARGET_MARKETS = 'Target Markets',
-	MDF_DOCUMENT_TYPES = 'MDF Document Types',
-}
+import {number, object} from 'yup';
+
+const claimSchema = object({
+	totalClaimAmount: number().moreThan(0, 'Required').required('Required'),
+});
+
+export default claimSchema;
