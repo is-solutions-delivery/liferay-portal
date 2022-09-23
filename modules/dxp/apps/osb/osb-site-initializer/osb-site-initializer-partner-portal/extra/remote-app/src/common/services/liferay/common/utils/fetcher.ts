@@ -31,7 +31,7 @@ export default async function liferayFetcher<T>(
 	return response.json();
 }
 
-liferayFetcher.post = <T>(url: string, token: string, data: T) =>
+liferayFetcher.post = <T = any>(url: string, token: string, data: unknown) =>
 	liferayFetcher<T>(url, token, {
 		body: JSON.stringify(data),
 		headers: {
