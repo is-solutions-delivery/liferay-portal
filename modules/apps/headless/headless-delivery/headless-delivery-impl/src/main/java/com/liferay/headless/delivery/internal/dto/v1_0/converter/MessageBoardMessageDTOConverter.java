@@ -151,7 +151,7 @@ public class MessageBoardMessageDTOConverter
 					});
 			}
 		};
-	}q
+	}
 
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
