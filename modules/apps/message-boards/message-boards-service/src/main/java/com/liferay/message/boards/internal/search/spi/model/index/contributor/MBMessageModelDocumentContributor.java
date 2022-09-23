@@ -41,6 +41,7 @@ import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContri
 import java.util.List;
 import java.util.Locale;
 
+import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -103,7 +104,11 @@ public class MBMessageModelDocumentContributor
 
 			document.addKeyword("question", mbThread.isQuestion());
 
+			document.addNumber("ratingValue", _ratingsStatsLocalService.fetchStats(
+				MBMessage.class.getName(), mbThread.getRootMessageId()).getTotalScore());
+
 			document.addNumber("viewCount", mbThread.getViewCount());
+			
 		}
 
 		document.addKeyword("threadId", mbMessage.getThreadId());
@@ -175,5 +180,8 @@ public class MBMessageModelDocumentContributor
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private RatingsStatsLocalService _ratingsStatsLocalService;
 
 }
