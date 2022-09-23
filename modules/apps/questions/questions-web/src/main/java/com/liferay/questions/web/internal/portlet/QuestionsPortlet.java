@@ -214,11 +214,15 @@ public class QuestionsPortlet extends MVCPortlet {
 				_configurationProvider.getGroupConfiguration(
 					MBModerationGroupConfiguration.class, groupId);
 
-			return (mbModerationGroupConfiguration.enableAlertModeration() &&
-				_mbStatsUserLocalService.getMessageCountByUserId(userId) <
+			if (mbModerationGroupConfiguration.enableAlertModeration() &&
+				(_mbStatsUserLocalService.getMessageCountByUserId(userId) <
 					mbModerationGroupConfiguration.
-						minimumContributedMessages());
+						minimumContributedMessages())) {
 
+				return true;
+			}
+
+			return false;
 		}
 		catch (Exception exception) {
 			return false;
