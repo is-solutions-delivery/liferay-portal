@@ -36,9 +36,9 @@ export default async function setFileFormik(
 	const fileReader = await getFileReader(file[0]);
 
 	const currentFile = {
-		fileURL: file,
 		activityId: 0,
 		budgetId: 0,
+		fileURL: file,
 		mdfRequestId: 0,
 		type: '',
 	};

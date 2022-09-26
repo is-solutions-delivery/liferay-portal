@@ -10,6 +10,7 @@
  */
 
 import {ClayInput} from '@clayui/form';
+
 import setFileFormik from '../../../../../utils/setFileFormik';
 import WrapperInput from '../common/components/WrapperInput';
 import PRMFormFieldProps from '../common/interfaces/prmFormFieldProps';
@@ -28,15 +29,15 @@ interface IProps {
 }
 
 const InputFile = ({
+	activityId,
+	budgetId,
 	field,
 	label,
-	meta,
-	activityId,
 	mdfRequestId,
-	budgetId,
+	meta,
 	required,
-	typeDocument,
 	setFieldValue,
+	typeDocument,
 	...props
 }: PRMFormFieldProps &
 	PRMFormFieldStateProps<string> &
@@ -46,7 +47,6 @@ const InputFile = ({
 		<WrapperInput {...meta} label={label} required={required}>
 			<ClayInput
 				{...props}
-				type="file"
 				onChange={(event) => {
 					setFileFormik(
 						event.target.files,
@@ -58,6 +58,7 @@ const InputFile = ({
 						typeDocument
 					);
 				}}
+				type="file"
 			/>
 		</WrapperInput>
 	);

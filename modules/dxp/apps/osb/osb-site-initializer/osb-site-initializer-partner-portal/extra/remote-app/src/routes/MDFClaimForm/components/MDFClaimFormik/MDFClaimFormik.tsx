@@ -18,9 +18,9 @@ import submitForm from '../../utils/submitForm';
 const initialMDFClaimFormValues: MDFClaim = {
 	mdfClaimActivities: [],
 	mdfClaimDocuments: {
-		claims: [],
-		budgets: [],
 		activities: [],
+		budgets: [],
+		claims: [],
 	},
 	totalClaimAmount: 0,
 };

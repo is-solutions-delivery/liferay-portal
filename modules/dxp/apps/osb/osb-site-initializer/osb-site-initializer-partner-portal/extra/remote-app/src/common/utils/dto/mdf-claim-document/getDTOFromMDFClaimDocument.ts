@@ -17,11 +17,11 @@ export default function getDTOFromMDFClaimDocument(
 	mdfRClaimId: number
 ): mdfClaimDocumentDTO {
 	return {
-		url: mdfClaimDocument.fileURL,
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimActivityId:
 			mdfClaimDocument.activityId,
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimBudgetId:
 			mdfClaimDocument.budgetId,
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimId: mdfRClaimId,
+		url: mdfClaimDocument.fileURL,
 	};
 }

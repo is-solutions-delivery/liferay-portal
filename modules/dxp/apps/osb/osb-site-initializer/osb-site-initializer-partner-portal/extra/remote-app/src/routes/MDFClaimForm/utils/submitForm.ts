@@ -10,6 +10,7 @@
  */
 
 import {FormikHelpers} from 'formik';
+
 import MDFClaim from '../../../common/interfaces/mdfClaim';
 import createMDFClaim from '../../../common/services/liferay/object/mdf-claim/createMDFClaim';
 
@@ -19,5 +20,5 @@ export default async function submitForm(
 ) {
 	formikHelpers.setSubmitting(true);
 
-	const dtoMDFClaim = await createMDFClaim(values);
+	await createMDFClaim(values);
 }
