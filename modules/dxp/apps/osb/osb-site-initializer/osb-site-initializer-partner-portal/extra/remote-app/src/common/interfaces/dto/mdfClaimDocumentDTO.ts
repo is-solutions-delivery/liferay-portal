@@ -21,8 +21,8 @@ export default interface mdfClaimDocumentDTO
 		| 'type'
 		| 'thirdPartyInvoices'
 	> {
-	url: string;
 	r_mdfClaimToMdfClaimDocuments_c_mdfClaimActivityId: number;
 	r_mdfClaimToMdfClaimDocuments_c_mdfClaimBudgetId: number;
 	r_mdfClaimToMdfClaimDocuments_c_mdfClaimId: number;
+	url: string;
 }

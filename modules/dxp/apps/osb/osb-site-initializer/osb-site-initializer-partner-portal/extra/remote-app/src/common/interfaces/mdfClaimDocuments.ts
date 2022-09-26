@@ -15,10 +15,10 @@ interface thirdPartyInvoices {
 	budgetId: number;
 }
 export default interface MDFClaimDocuments extends Partial<LiferayObject> {
-	thirdPartyInvoices: thirdPartyInvoices;
-	fileURL: string;
 	activityId: number;
 	budgetId: number;
+	fileURL: string;
 	mdfRequestId: number;
+	thirdPartyInvoices: thirdPartyInvoices;
 	type: string;
 }

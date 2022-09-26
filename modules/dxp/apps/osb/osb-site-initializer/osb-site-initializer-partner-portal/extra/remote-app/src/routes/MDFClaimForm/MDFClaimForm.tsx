@@ -11,12 +11,12 @@
 
 import ClayButton from '@clayui/button';
 import {useFormikContext} from 'formik';
-import {useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
+
 import PRMForm from '../../common/components/PRMForm';
 import PRMFormik from '../../common/components/PRMFormik';
 import PRMFormikPageProps from '../../common/components/PRMFormik/interfaces/prmFormikPageProps';
 import MDFClaim from '../../common/interfaces/mdfClaim';
-import getIntlNumberFormat from '../../common/utils/getIntlNumberFormat';
 import isObjectEmpty from '../MDFRequestForm/utils/isObjectEmpty';
 import mdfClaimProps from './interfaces/mdfClaimProps';
 
@@ -40,7 +40,7 @@ const MDFClaimForm = ({
 		<PRMForm className="mb-4" name="NEW" title="Reimbursement Claim">
 			<PRMForm.Section
 				subtitle="Check each expense you would like claim and please provide proof of performance for each of the selected expenses."
-				title={'title'}
+				title="title"
 			></PRMForm.Section>
 
 			<PRMForm.Section
