@@ -15,11 +15,11 @@ import liferayFetcher from '../../../common/services/liferay/common/utils/fetche
 
 export default async function createDocumentInFolder(
 	folderId: number,
-	fileEntry: string
+	fileName: string
 ) {
 	const formData = new FormData();
 
-	formData.append('file', fileEntry);
+	formData.append('file', fileName);
 
 	return liferayFetcher.post(
 		`/o/${LiferayAPIs.HEADERLESS_DELIVERY}/document-folders/${folderId}/documents`,

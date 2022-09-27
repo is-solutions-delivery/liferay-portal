@@ -10,22 +10,22 @@
  */
 
 import {Liferay} from '../..';
-import MDFClaimDocuments from '../../../../interfaces/mdfClaimDocuments';
-import getDTOFromMDFClaimDocument from '../../../../utils/dto/mdf-claim-document/getDTOFromMDFClaimDocument';
+import MDFClaimActivity from '../../../../interfaces/mdfClaimActivity';
+import getDTOFromMDFClaimActivity from '../../../../utils/dto/mdf-claim-activities/getDTOFromMDFClaimActivity';
 import {LiferayAPIs} from '../../common/enums/apis';
 import liferayFetcher from '../../common/utils/fetcher';
 
-export default async function createMDFClaimDocuments(
+export default async function createMDFClaimActivities(
 	mdfClaimId: number,
-	mdfClaimDocuments: MDFClaimDocuments[]
+	mdfClaimActivities: MDFClaimActivity[]
 ) {
 	return await Promise.all(
-		mdfClaimDocuments.map(async (document) => {
+		mdfClaimActivities.map((activity) =>
 			liferayFetcher.post(
-				`/o/${LiferayAPIs.OBJECT}/mdfclaimdocuments`,
+				`/o/${LiferayAPIs.OBJECT}/mdfclaimactivities`,
 				Liferay.authToken,
-				getDTOFromMDFClaimDocument(document, mdfClaimId)
-			);
-		})
+				getDTOFromMDFClaimActivity(activity, mdfClaimId)
+			)
+		)
 	);
 }

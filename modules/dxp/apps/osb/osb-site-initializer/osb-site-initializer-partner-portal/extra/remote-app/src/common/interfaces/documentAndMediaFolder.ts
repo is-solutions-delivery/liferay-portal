@@ -11,7 +11,7 @@
 
 import LiferayObject from './liferayObject';
 
-export default interface documentAndMediaFolder extends Partial<LiferayObject> {
+export default interface DocumentAndMediaFolder extends Partial<LiferayObject> {
 	description: string;
 	id: number;
 	name: string;

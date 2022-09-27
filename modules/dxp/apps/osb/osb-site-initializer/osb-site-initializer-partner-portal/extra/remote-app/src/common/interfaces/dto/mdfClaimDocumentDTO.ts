@@ -11,16 +11,7 @@
 
 import MDFClaimDocuments from '../mdfClaimDocuments';
 
-export default interface mdfClaimDocumentDTO
-	extends Omit<
-		MDFClaimDocuments,
-		| 'fileURL'
-		| 'activityId'
-		| 'budgetId'
-		| 'mdfRequestId'
-		| 'type'
-		| 'thirdPartyInvoices'
-	> {
+export default interface mdfClaimDocumentDTO extends MDFClaimDocuments {
 	r_mdfClaimToMdfClaimDocuments_c_mdfClaimActivityId: number;
 	r_mdfClaimToMdfClaimDocuments_c_mdfClaimBudgetId: number;
 	r_mdfClaimToMdfClaimDocuments_c_mdfClaimId: number;

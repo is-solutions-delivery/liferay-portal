@@ -56,9 +56,9 @@ PRMForm.Group = Group;
 PRMForm.Footer = Footer;
 
 PRMForm.CheckboxGroup = CheckboxGroup;
-PRMForm.InputText = InputText;
-PRMForm.InputFile = InputFile;
 PRMForm.InputCurrency = InputCurrency;
+PRMForm.InputFile = InputFile;
+PRMForm.InputText = InputText;
 PRMForm.RadioGroup = RadioGroup;
 PRMForm.Select = Select;
 PRMForm.DatePicker = DatePicker;

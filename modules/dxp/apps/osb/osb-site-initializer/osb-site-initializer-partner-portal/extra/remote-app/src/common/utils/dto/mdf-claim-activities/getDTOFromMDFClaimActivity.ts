@@ -9,17 +9,17 @@
  * distribution rights of the Software.
  */
 
-import LiferayObject from './liferayObject';
+import MDFClaimActivityDTO from '../../../interfaces/dto/mdfClaimActivityDTO';
+import MDFClaimActivity from '../../../interfaces/mdfClaimActivity';
 
-interface thirdPartyInvoices {
-	budgetId: number;
-}
-
-export default interface MDFClaimDocuments extends Partial<LiferayObject> {
-	activityId: number;
-	budgetId: number;
-	fileURL: string;
-	mdfRequestId: number;
-	thirdPartyInvoices: thirdPartyInvoices;
-	type: string;
+export default function getDTOFromMDFClaimActivity(
+	mdfClaimActivity: MDFClaimActivity,
+	mdfClaimId?: number
+): MDFClaimActivityDTO {
+	return {
+		metrics: mdfClaimActivity.metrics,
+		r_activityToMDFClaimActivities_c_activityId:
+			mdfClaimActivity.activityId,
+		r_mdfClaimToMdfClaimActivities_c_mdfClaimId: mdfClaimId,
+	};
 }

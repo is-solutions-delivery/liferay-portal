@@ -32,10 +32,6 @@ const MDFClaimForm = ({
 		...formikHelpers
 	} = useFormikContext<MDFClaim>();
 
-	const claimErrors = useMemo(() => {
-		return errors;
-	}, [errors]);
-
 	return (
 		<PRMForm className="mb-4" name="NEW" title="Reimbursement Claim">
 			<PRMForm.Section
@@ -77,8 +73,7 @@ const MDFClaimForm = ({
 
 					<ClayButton
 						disabled={
-							(!isValid && !isObjectEmpty(claimErrors)) ||
-							isSubmitting
+							(!isValid && !isObjectEmpty(errors)) || isSubmitting
 						}
 						type="submit"
 					>

@@ -23,7 +23,7 @@ interface IProps {
 	setFieldValue: (
 		field: string,
 		value: any,
-		shouldValidate?: boolean | undefined
+		shouldValidate?: boolean
 	) => void;
 	typeDocument: string;
 }
@@ -43,20 +43,24 @@ const InputFile = ({
 	PRMFormFieldStateProps<string> &
 	React.ComponentProps<typeof ClayInput> &
 	IProps) => {
+	const handleFileObject = (file: any) => {
+		return {
+			file: file,
+			name: field.name,
+			activityId: activityId,
+			budgetId: budgetId,
+			mdfRequestId: mdfRequestId,
+			setFieldValue: setFieldValue,
+			typeDocument: typeDocument,
+		};
+	};
+
 	return (
 		<WrapperInput {...meta} label={label} required={required}>
 			<ClayInput
 				{...props}
 				onChange={(event) => {
-					setFileFormik(
-						event.target.files,
-						field.name,
-						activityId,
-						budgetId,
-						mdfRequestId,
-						setFieldValue,
-						typeDocument
-					);
+					setFileFormik(handleFileObject(event.target.files));
 				}}
 				type="file"
 			/>

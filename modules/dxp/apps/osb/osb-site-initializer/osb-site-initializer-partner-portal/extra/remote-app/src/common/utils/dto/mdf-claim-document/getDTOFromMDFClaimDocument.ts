@@ -14,14 +14,14 @@ import MDFClaimDocuments from '../../../interfaces/mdfClaimDocuments';
 
 export default function getDTOFromMDFClaimDocument(
 	mdfClaimDocument: MDFClaimDocuments,
-	mdfRClaimId: number
+	mdfClaimId: number
 ): mdfClaimDocumentDTO {
 	return {
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimActivityId:
 			mdfClaimDocument.activityId,
 		r_mdfClaimToMdfClaimDocuments_c_mdfClaimBudgetId:
 			mdfClaimDocument.budgetId,
-		r_mdfClaimToMdfClaimDocuments_c_mdfClaimId: mdfRClaimId,
+		r_mdfClaimToMdfClaimDocuments_c_mdfClaimId: mdfClaimId,
 		url: mdfClaimDocument.fileURL,
 	};
 }

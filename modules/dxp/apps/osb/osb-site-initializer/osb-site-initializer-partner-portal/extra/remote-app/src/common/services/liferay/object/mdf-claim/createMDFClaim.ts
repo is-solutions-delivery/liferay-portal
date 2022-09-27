@@ -15,10 +15,9 @@ import {getDTOFromMDFClaim} from '../../../../utils/dto/mdf-claim/getDTOFromMDFC
 import {LiferayAPIs} from '../../common/enums/apis';
 import liferayFetcher from '../../common/utils/fetcher';
 
-export default async function createMDFClaim(mdfClaim: MDFClaim) {
+export default function createMDFClaim(mdfClaim: MDFClaim) {
 	const dtoMDFClaim = getDTOFromMDFClaim(mdfClaim);
-
-	return await liferayFetcher.post(
+	return liferayFetcher.post(
 		`/o/${LiferayAPIs.OBJECT}/mdfclaims`,
 		Liferay.authToken,
 		dtoMDFClaim

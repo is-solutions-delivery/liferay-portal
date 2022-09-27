@@ -6,7 +6,7 @@
  * distribution rights of the Software.
  */
 
-const getFileReader = (file: any) => {
+const getFileReader = (file: Blob) => {
 	return new Promise<{result: unknown}>((resolve, reject) => {
 		const fileReader: FileReader = new FileReader();
 
@@ -20,47 +20,32 @@ const getFileReader = (file: any) => {
 	});
 };
 
-export default async function setFileFormik(
-	file: any,
-	name: string,
-	activityId?: number,
-	budgetId?: number,
-	mdfRequestId?: number,
+interface IProps {
+	file: any;
+	name: string;
+	activityId?: number;
+	budgetId?: number;
+	mdfRequestId?: number;
 	setFieldValue?: (
 		field: string,
 		value: any,
 		shouldValidate?: boolean | undefined
-	) => void,
-	typeDocument?: string
-) {
-	const fileReader = await getFileReader(file[0]);
+	) => void;
+	typeDocument?: string;
+}
+
+export default async function setFileFormik(valuesFile: IProps) {
+	const fileReader = await getFileReader(valuesFile.file[0]);
 
 	const currentFile = {
-		activityId: 0,
-		budgetId: 0,
-		fileURL: file,
-		mdfRequestId: 0,
-		type: '',
+		activityId: valuesFile.activityId ?? 0,
+		budgetId: valuesFile.budgetId ?? 0,
+		fileURL: fileReader.result ?? valuesFile.file,
+		mdfRequestId: valuesFile.mdfRequestId ?? 0,
+		type: valuesFile.typeDocument ?? '',
 	};
-	currentFile.fileURL = fileReader.result;
 
-	if (activityId) {
-		currentFile.activityId = activityId;
-	}
-
-	if (budgetId) {
-		currentFile.budgetId = budgetId;
-	}
-
-	if (mdfRequestId) {
-		currentFile.mdfRequestId = mdfRequestId;
-	}
-
-	if (typeDocument) {
-		currentFile.type = typeDocument;
-	}
-
-	if (setFieldValue) {
-		setFieldValue(`${name}`, currentFile);
+	if (valuesFile.setFieldValue) {
+		valuesFile.setFieldValue(`${valuesFile.name}`, currentFile);
 	}
 }
