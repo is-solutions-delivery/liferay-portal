@@ -17,6 +17,7 @@ import liferayFetcher from '../../common/utils/fetcher';
 
 export default function createMDFClaim(mdfClaim: MDFClaim) {
 	const dtoMDFClaim = getDTOFromMDFClaim(mdfClaim);
+
 	return liferayFetcher.post(
 		`/o/${LiferayAPIs.OBJECT}/mdfclaims`,
 		Liferay.authToken,

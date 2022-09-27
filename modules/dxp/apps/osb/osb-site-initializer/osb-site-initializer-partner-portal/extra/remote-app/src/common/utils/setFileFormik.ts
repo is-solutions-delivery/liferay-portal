@@ -21,11 +21,11 @@ const getFileReader = (file: Blob) => {
 };
 
 interface IProps {
-	file: any;
-	name: string;
 	activityId?: number;
 	budgetId?: number;
+	file: FileList;
 	mdfRequestId?: number;
+	name: string;
 	setFieldValue?: (
 		field: string,
 		value: any,

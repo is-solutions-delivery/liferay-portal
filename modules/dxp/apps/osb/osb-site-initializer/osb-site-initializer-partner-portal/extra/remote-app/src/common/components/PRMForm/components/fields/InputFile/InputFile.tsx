@@ -45,13 +45,13 @@ const InputFile = ({
 	IProps) => {
 	const handleFileObject = (file: any) => {
 		return {
-			file: file,
+			activityId,
+			budgetId,
+			file,
+			mdfRequestId,
 			name: field.name,
-			activityId: activityId,
-			budgetId: budgetId,
-			mdfRequestId: mdfRequestId,
-			setFieldValue: setFieldValue,
-			typeDocument: typeDocument,
+			setFieldValue,
+			typeDocument,
 		};
 	};
 
