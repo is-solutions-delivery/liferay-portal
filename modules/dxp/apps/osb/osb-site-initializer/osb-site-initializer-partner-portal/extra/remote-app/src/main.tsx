@@ -18,6 +18,7 @@ import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import handleError from './common/utils/handleError';
 import MDFRequestForm from './routes/MDFRequestForm';
 import MDFRequestList from './routes/MDFRequestList';
+import SalesRequestForm from './routes/SalesRequestForm';
 
 interface IProps {
 	route: AppRouteType;
@@ -30,6 +31,7 @@ type AppRouteComponent = {
 const appRoutes: AppRouteComponent = {
 	[AppRouteType.MDF_REQUEST_FORM]: <MDFRequestForm />,
 	[AppRouteType.MDF_REQUEST_LIST]: <MDFRequestList />,
+	[AppRouteType.SALES_REQUEST_FORM]: <SalesRequestForm />,
 };
 
 const PartnerPortalApp = ({route}: IProps) => {

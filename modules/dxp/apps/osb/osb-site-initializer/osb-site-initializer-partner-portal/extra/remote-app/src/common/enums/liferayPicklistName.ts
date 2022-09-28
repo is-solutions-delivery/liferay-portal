@@ -18,4 +18,6 @@ export enum LiferayPicklistName {
 	REGIONS = 'Regions',
 	TARGET_AUDIENCE_ROLES = 'Target Audience/Roles',
 	TARGET_MARKETS = 'Target Markets',
+	SALES_PROJECT_INFORMATION = 'Sales: Project Information',
+	SALES_PROJECT_CATEGORIES = 'Sales: Project Categories',
 }
