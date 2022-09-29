@@ -3033,7 +3033,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			"/site-initializer/segments-entries.json", _servletContext);
 
 		if (json == null) {
-			Collections.emptyMap();
+			return segmentsEntriesIdsStringUtilReplaceValues;
 		}
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
