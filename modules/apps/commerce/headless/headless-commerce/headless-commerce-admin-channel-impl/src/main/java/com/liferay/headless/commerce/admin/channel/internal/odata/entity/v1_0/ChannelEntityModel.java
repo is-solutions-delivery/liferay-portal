@@ -33,7 +33,7 @@ public class ChannelEntityModel implements EntityModel {
 				"name", locale -> Field.getSortableFieldName("name")),
 			new IntegerEntityField(
 				"siteGroupId",
-				locale -> Field.getSortableFieldName("siteGroupId")));
+				locale -> Field.getSortableFieldName(Field.GROUP_ID)));
 	}
 
 	@Override
