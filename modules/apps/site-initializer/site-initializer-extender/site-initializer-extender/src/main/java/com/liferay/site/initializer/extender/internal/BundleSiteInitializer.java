@@ -441,7 +441,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addOrganizations(serviceContext));
 			_invoke(() -> _addSAPEntries(serviceContext));
 
-			Map<String, String> segmentsEntriesIdsStringUtilReplaceValues =
+			Map<String, String> segmentsEntryIdsStringUtilReplaceValues =
 				_invoke(() -> _addSegmentsEntries(serviceContext));
 
 			_invoke(() -> _addSiteConfiguration(serviceContext));
@@ -531,7 +531,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			_invoke(
 				() -> _addSegmentsExperiences(
-					serviceContext, segmentsEntriesIdsStringUtilReplaceValues));
+					serviceContext, segmentsEntryIdsStringUtilReplaceValues));
 
 			_invoke(() -> _addWorkflowDefinitions(serviceContext));
 		}
@@ -3026,14 +3026,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		Map<String, String> segmentsEntriesIdsStringUtilReplaceValues =
+		Map<String, String> segmentsEntryIdsStringUtilReplaceValues =
 			new HashMap<>();
 
 		String json = SiteInitializerUtil.read(
 			"/site-initializer/segments-entries.json", _servletContext);
 
 		if (json == null) {
-			return segmentsEntriesIdsStringUtilReplaceValues;
+			return segmentsEntryIdsStringUtilReplaceValues;
 		}
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
@@ -3065,17 +3065,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 					jsonObject.getString("criteria"), serviceContext);
 			}
 
-			segmentsEntriesIdsStringUtilReplaceValues.put(
+			segmentsEntryIdsStringUtilReplaceValues.put(
 				"SEGMENTS_ENTRY_ID:" + segmentsEntry.getSegmentsEntryKey(),
 				String.valueOf(segmentsEntry.getSegmentsEntryId()));
 		}
 
-		return segmentsEntriesIdsStringUtilReplaceValues;
+		return segmentsEntryIdsStringUtilReplaceValues;
 	}
 
 	private void _addSegmentsExperiences(
 			ServiceContext serviceContext,
-			Map<String, String> segmentsEntriesIdsStringUtilReplaceValues)
+			Map<String, String> segmentsEntryIdsStringUtilReplaceValues)
 		throws Exception {
 
 		String json = SiteInitializerUtil.read(
@@ -3087,8 +3087,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
 			_replace(
-				json, "\"[$", "$]\"",
-				segmentsEntriesIdsStringUtilReplaceValues));
+				json, "\"[$", "$]\"", segmentsEntryIdsStringUtilReplaceValues));
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
