@@ -441,9 +441,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addOrganizations(serviceContext));
 			_invoke(() -> _addSAPEntries(serviceContext));
 
-			Map<String, String> segmentsEntryIdsStringUtilReplaceValues =
-				_invoke(() -> _addSegmentsEntries(serviceContext));
-
 			_invoke(() -> _addSiteConfiguration(serviceContext));
 			_invoke(() -> _addSiteSettings(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
@@ -528,6 +525,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext,
 					siteNavigationMenuItemSettingsBuilder.build(),
 					taxonomyCategoryIdsStringUtilReplaceValues));
+
+			Map<String, String> segmentsEntryIdsStringUtilReplaceValues =
+				_invoke(() -> _addSegmentsEntries(serviceContext));
 
 			_invoke(
 				() -> _addSegmentsExperiences(
