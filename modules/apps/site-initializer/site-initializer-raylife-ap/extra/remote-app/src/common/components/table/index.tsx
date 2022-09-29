@@ -30,6 +30,7 @@ type TableHeaders = {
 	clickable?: boolean;
 	greyColor?: boolean;
 	key: string;
+	redColor?: boolean;
 	type?: string;
 	value: string;
 };
@@ -63,7 +64,13 @@ const Table: React.FC<TableProps> = ({data, headers, actions = []}) => {
 				{data.map((rowContent, rowIndex) => (
 					<Row key={rowIndex}>
 						{headers.map((item, index) => (
-							<Cell className="border-top-0" key={index}>
+							<Cell
+								className={classnames('border-top-0', {
+									'ray-row-table-danger':
+										rowContent.isRedLine === 'true',
+								})}
+								key={index}
+							>
 								<div
 									className={classnames({
 										'align-items-center d-flex':
@@ -82,6 +89,11 @@ const Table: React.FC<TableProps> = ({data, headers, actions = []}) => {
 										className={classnames('', {
 											'cursor-pointer': !!item.clickable,
 											'font-weight-bolder': !!item.bold,
+											'text-danger font-weight-bolder':
+												Number(rowContent[item.key]) <
+													15 ||
+												rowContent[item.key] ===
+													'Due Today',
 											'text-neutral-7': !!item.greyColor,
 										})}
 										onClick={() => {
@@ -102,7 +114,12 @@ const Table: React.FC<TableProps> = ({data, headers, actions = []}) => {
 						))}
 
 						{!!actions.length && (
-							<Cell className="border-top-0">
+							<Cell
+								className={classnames('border-top-0', {
+									'ray-row-table-danger':
+										rowContent.isRedLine === 'true',
+								})}
+							>
 								<SettingsButton
 									actions={actions}
 									identifier={rowContent.key}
