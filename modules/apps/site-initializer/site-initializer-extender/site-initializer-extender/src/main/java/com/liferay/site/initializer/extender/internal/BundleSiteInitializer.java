@@ -648,15 +648,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 			ServiceContext serviceContext)
 		throws Exception {
 
+		Map<String, String> clientExtensionEntryIdsStringUtilReplaceValues =
+			new HashMap<>();
+
 		String json = SiteInitializerUtil.read(
 			"/site-initializer/client-extension-entries.json", _servletContext);
 
 		if (json == null) {
-			return Collections.emptyMap();
+			return clientExtensionEntryIdsStringUtilReplaceValues;
 		}
-
-		Map<String, String> clientExtensionEntryIdsStringUtilReplaceValues =
-			new HashMap<>();
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
 
