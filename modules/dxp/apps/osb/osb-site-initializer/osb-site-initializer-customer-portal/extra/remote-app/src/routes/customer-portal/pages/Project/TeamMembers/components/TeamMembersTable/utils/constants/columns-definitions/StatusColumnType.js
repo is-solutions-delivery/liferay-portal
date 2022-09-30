@@ -13,11 +13,11 @@ import {memo} from 'react';
 import {StatusTag} from '../../../../../../../../../../common/components';
 import {STATUS_TAG_TYPES} from '../../../../../../../../utils/constants';
 
-const StatusColumnType = memo(({hasLoggedBefore}) => {
+const StatusColumnType = memo(({jobTitle, lastLoginDate}) => {
 	return (
 		<StatusTag
 			currentStatus={
-				hasLoggedBefore
+				jobTitle || lastLoginDate
 					? STATUS_TAG_TYPES.active
 					: STATUS_TAG_TYPES.invited
 			}

@@ -283,7 +283,8 @@ const TeamMembersTable = ({project, provisioningServerAPI, sessionId}) => {
 							),
 							status: (
 								<StatusColumnType
-									hasLoggedBefore={userAccount?.lastLoginDate}
+									jobTitle={userAccount?.jobTitle}
+									lastLoginDate={userAccount?.lastLoginDate}
 								/>
 							),
 							supportSeat: (

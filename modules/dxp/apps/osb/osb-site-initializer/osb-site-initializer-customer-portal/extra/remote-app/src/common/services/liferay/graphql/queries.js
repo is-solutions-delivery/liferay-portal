@@ -484,6 +484,7 @@ export const getAccountUserAccountsByExternalReferenceCode = gql`
 			items {
 				id
 				emailAddress
+				jobTitle
 				lastLoginDate
 				name
 				accountBriefs {
