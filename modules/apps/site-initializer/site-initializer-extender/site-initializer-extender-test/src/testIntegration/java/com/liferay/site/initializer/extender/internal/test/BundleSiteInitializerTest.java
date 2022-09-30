@@ -274,7 +274,6 @@ public class BundleSiteInitializerTest {
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
 
-
 			siteInitializer.initialize(group.getGroupId());
 
 			_assertAccounts(serviceContext);
@@ -312,7 +311,6 @@ public class BundleSiteInitializerTest {
 			_assertUserGroups(group);
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
-
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
