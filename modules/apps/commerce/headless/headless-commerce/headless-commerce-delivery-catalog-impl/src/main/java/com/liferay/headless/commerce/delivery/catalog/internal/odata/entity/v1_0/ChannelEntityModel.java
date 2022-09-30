@@ -31,8 +31,8 @@ public class ChannelEntityModel implements EntityModel {
 		_entityFieldsMap = EntityModel.toEntityFieldsMap(
 			new StringEntityField(
 				"name", locale -> Field.getSortableFieldName("name")),
-			new IntegerEntityField("siteGroupId", locale ->
-				Field.SCOPE_GROUP_ID));
+			new IntegerEntityField(
+				"siteGroupId", locale -> Field.SCOPE_GROUP_ID));
 	}
 
 	@Override
