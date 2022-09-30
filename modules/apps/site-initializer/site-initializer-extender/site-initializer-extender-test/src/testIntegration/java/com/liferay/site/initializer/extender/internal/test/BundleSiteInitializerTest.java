@@ -313,7 +313,6 @@ public class BundleSiteInitializerTest {
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
 
-
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
@@ -705,7 +704,7 @@ public class BundleSiteInitializerTest {
 		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
 			group.getGroupId(),
 			_portal.getClassNameId(JournalArticle.class.getName()),
-			"TEST DDM STRUCTURE NAME");
+			"TEST-DDM-STRUCTURE");
 
 		Assert.assertNotNull(ddmStructure);
 		Assert.assertTrue(ddmStructure.hasField("aField"));
