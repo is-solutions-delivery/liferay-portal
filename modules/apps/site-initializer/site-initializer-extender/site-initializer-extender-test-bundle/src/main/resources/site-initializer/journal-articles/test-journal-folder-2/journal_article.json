@@ -1,6 +1,6 @@
 {
 	"articleId": "test-journal-article-2",
-	"ddmStructureKey": "TEST DDM STRUCTURE NAME",
+	"ddmStructureKey": "TEST-DDM-STRUCTURE",
 	"ddmTemplateKey": "TEST DDM TEMPLATE KEY",
 	"folder": "test-journal-article-2",
 	"name": "Test Journal Article 2"

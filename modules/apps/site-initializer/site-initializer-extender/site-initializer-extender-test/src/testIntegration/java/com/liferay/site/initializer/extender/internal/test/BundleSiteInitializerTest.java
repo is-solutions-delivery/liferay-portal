@@ -273,6 +273,49 @@ public class BundleSiteInitializerTest {
 			_assertUserGroups(group);
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
+<<<<<<< HEAD
+=======
+
+
+			siteInitializer.initialize(group.getGroupId());
+
+			_assertAccounts(serviceContext);
+			_assertAssetListEntries(group);
+			_assertAssetVocabularies(group);
+			_assertCommerceCatalogs(group);
+			_assertCommerceChannel(group);
+			_assertCommerceInventoryWarehouse(group);
+			_assertCommerceSpecificationProducts(serviceContext);
+			_assertCPDefinition(group);
+			_assertCPInstanceProperties(group);
+			_assertDDMStructure(group);
+			_assertDDMTemplate(group);
+			_assertDLFileEntry(group);
+			_assertExpandoColumns(serviceContext);
+			_assertFragmentEntries(group, serviceContext);
+			_assertJournalArticles(group);
+			_assertKBArticles(group);
+			_assertLayoutPageTemplateEntry(group);
+			_assertLayouts(group, serviceContext);
+			_assertLayoutSets(group);
+			_assertListTypeDefinitions(serviceContext);
+			_assertNotificationTemplate(serviceContext);
+			_assertObjectDefinitions(group, serviceContext);
+			_assertOrganizations(serviceContext);
+			_assertPermissions(group);
+			_assertPortletSettings(group);
+			_assertClientExtension(group);
+			_assertSAPEntries(group);
+			_assertSegmentsEntries(group.getGroupId());
+			_assertSiteConfiguration(group.getGroupId());
+			_assertSiteSettings(group.getGroupId());
+			_assertSiteNavigationMenu(group);
+			_assertStyleBookEntry(group);
+			_assertUserGroups(group);
+			_assertUserRoles(group);
+			_assertWorkflowDefinitions(group, serviceContext);
+
+>>>>>>> ac6cd28 (LPS-164394 Fix DDMStructures Test)
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
@@ -664,7 +707,7 @@ public class BundleSiteInitializerTest {
 		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
 			group.getGroupId(),
 			_portal.getClassNameId(JournalArticle.class.getName()),
-			"TEST DDM STRUCTURE NAME");
+			"TEST-DDM-STRUCTURE");
 
 		Assert.assertNotNull(ddmStructure);
 		Assert.assertTrue(ddmStructure.hasField("aField"));
