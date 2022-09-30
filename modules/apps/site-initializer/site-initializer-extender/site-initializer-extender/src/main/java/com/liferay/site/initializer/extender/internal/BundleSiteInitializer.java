@@ -180,6 +180,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Dictionary;
@@ -374,10 +375,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	@Override
 	public void initialize(long groupId) throws InitializationException {
-		if (_log.isDebugEnabled()) {
+		/*if (_log.isDebugEnabled()) {
 			_log.debug("Commerce site initializer " + _commerceSiteInitializer);
 		}
-
+*/
 		long startTime = System.currentTimeMillis();
 
 		if (_log.isInfoEnabled()) {
@@ -745,23 +746,25 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return ddmStructuresIdsStringUtilReplaceValues;
 		}
 
-		DDMStructure ddmStructure = null;
-
 		for (String resourcePath : resourcePaths) {
 
-		 ddmStructure = _ddmStructureLocalService.fetchStructure(
-			serviceContext.getScopeGroupId(), _portal.getClassNameId(
-				JournalArticle.class),
-			 resourcePath.substring("name"));
+			List<String> parts =
+				Arrays.asList(StringUtil.split(resourcePath, '/'));
 
-		if (ddmStructure == null) {
+			String ddmStructureKey = StringUtil.upperCase(
+				_replace(parts.get(parts.size()-1), ".xml", ""));
+
+			DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
+			serviceContext.getScopeGroupId(), _portal.getClassNameId(
+				JournalArticle.class), ddmStructureKey);
+
+			if (ddmStructure == null) {
 			_defaultDDMStructureHelper.addDDMStructures(
 				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 				_portal.getClassNameId(JournalArticle.class), _classLoader,
 				resourcePath, serviceContext);
-		}
-		else{
-			ddmStructure =
+			}
+			else{
 				_ddmStructureLocalService.updateStructure(
 				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 				ddmStructure.getStructureId(),_portal.getClassNameId(
@@ -770,16 +773,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 				ddmStructure.getDDMForm(), ddmStructure.getDDMFormLayout(),
 					serviceContext);
 
-			}
+				}
 		}
 		List<DDMStructure> ddmStructures =
 			_ddmStructureLocalService.getStructures(
 				serviceContext.getScopeGroupId());
 
-		for (DDMStructure ddmStructure1 : ddmStructures) {
+		for (DDMStructure ddmStructure : ddmStructures) {
 			ddmStructuresIdsStringUtilReplaceValues.put(
-				"DDM_STRUCTURE_ID:" + ddmStructure1.getStructureKey(),
-				String.valueOf(ddmStructure1.getStructureId()));
+				"DDM_STRUCTURE_ID:" + ddmStructure.getStructureKey(),
+				String.valueOf(ddmStructure.getStructureId()));
 		}
 
 		return ddmStructuresIdsStringUtilReplaceValues;
