@@ -461,12 +461,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, Layout> layouts = _invoke(
 				() -> _addOrUpdateLayouts(serviceContext));
 
-			_invoke(
-				() -> _addLayoutPageTemplates(
-					assetListEntryIdsStringUtilReplaceValues,
-					documentsStringUtilReplaceValues, serviceContext,
-					taxonomyCategoryIdsStringUtilReplaceValues));
-
 			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
 				_invoke(() -> _addOrUpdateListTypeDefinitions(serviceContext));
 
@@ -491,6 +485,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 					documentsStringUtilReplaceValues,
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 					serviceContext));
+
+			_invoke(
+				() -> _addLayoutPageTemplates(
+					assetListEntryIdsStringUtilReplaceValues,
+					documentsStringUtilReplaceValues,
+					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
+					serviceContext,
+					taxonomyCategoryIdsStringUtilReplaceValues));
+
 			_invoke(
 				() -> _addOrUpdateNotificationTemplates(
 					documentsStringUtilReplaceValues,
@@ -947,6 +950,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutPageTemplates(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
+			Map<String, String>
+				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 			ServiceContext serviceContext,
 			Map<String, String> taxonomyCategoryIdsStringUtilReplaceValues)
 		throws Exception {
@@ -971,9 +976,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			String urlPath = url.getPath();
 
-			if (StringUtil.endsWith(urlPath, "page-definition.json")) {
-				String json = StringUtil.read(url.openStream());
+			String json = StringUtil.read(url.openStream());
 
+			if (StringUtil.endsWith(urlPath, "page-definition.json")) {
 				json = _replace(
 					json, "\"[$", "$]\"",
 					assetListEntryIdsStringUtilReplaceValues,
@@ -1019,10 +1024,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 					json);
 			}
 			else {
+				json = _replace(
+					json, "[$", "$]",
+					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues);
+
 				zipWriter.addEntry(
 					StringUtil.removeFirst(
 						urlPath, "/site-initializer/layout-page-templates"),
-					url.openStream());
+					json);
 			}
 		}
 
