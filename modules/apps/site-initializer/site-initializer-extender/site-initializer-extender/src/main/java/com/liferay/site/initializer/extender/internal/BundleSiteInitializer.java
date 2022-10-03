@@ -650,59 +650,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext, _servletContext);
 	}
 
-	private Map<String, String> _addOrUpdateDDMStructures(ServiceContext serviceContext)
-		throws Exception {
-
-		Map<String, String> ddmStructuresIdsStringUtilReplaceValues =
-			new HashMap<>();
-
-		Set<String> resourcePaths = _servletContext.getResourcePaths(
-			"/site-initializer/ddm-structures");
-
-		if (SetUtil.isEmpty(resourcePaths)) {
-			return ddmStructuresIdsStringUtilReplaceValues;
-		}
-
-		for (String resourcePath : resourcePaths) {
-
-			List<String> parts =
-				Arrays.asList(StringUtil.split(resourcePath, '/'));
-
-			String ddmStructureKey = StringUtil.upperCase(
-				_replace(parts.get(parts.size()-1), ".xml", ""));
-
-			DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
-				serviceContext.getScopeGroupId(), _portal.getClassNameId(
-					JournalArticle.class), ddmStructureKey);
-
-			if (ddmStructure == null) {
-				_defaultDDMStructureHelper.addDDMStructures(
-					serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-					_portal.getClassNameId(JournalArticle.class), _classLoader,
-					resourcePath, serviceContext);
-			}
-			else{
-				_ddmStructureLocalService.updateStructure(
-					serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-					ddmStructure.getStructureId(),_portal.getClassNameId(
-						JournalArticle.class), ddmStructure.getStructureKey(),
-					ddmStructure.getNameMap(),ddmStructure.getDescriptionMap(),
-					ddmStructure.getDDMForm(), ddmStructure.getDDMFormLayout(),
-					serviceContext);
-			}
-		}
-		List<DDMStructure> ddmStructures =
-			_ddmStructureLocalService.getStructures(
-				serviceContext.getScopeGroupId());
-
-		for (DDMStructure ddmStructure : ddmStructures) {
-			ddmStructuresIdsStringUtilReplaceValues.put(
-				"DDM_STRUCTURE_ID:" + ddmStructure.getStructureKey(),
-				String.valueOf(ddmStructure.getStructureId()));
-		}
-		return ddmStructuresIdsStringUtilReplaceValues;
-	}
-
 	private void _addExpandoColumns(ServiceContext serviceContext)
 		throws Exception {
 
@@ -1460,6 +1407,65 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		return clientExtensionEntryIdsStringUtilReplaceValues;
+	}
+
+	private Map<String, String> _addOrUpdateDDMStructures(
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Map<String, String> ddmStructuresIdsStringUtilReplaceValues =
+			new HashMap<>();
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/ddm-structures");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return ddmStructuresIdsStringUtilReplaceValues;
+		}
+
+		for (String resourcePath : resourcePaths) {
+			List<String> parts = Arrays.asList(
+				StringUtil.split(resourcePath, '/'));
+
+			String ddmStructureKey = StringUtil.upperCase(
+				_replace(parts.get(parts.size() - 1), ".xml", ""));
+
+			DDMStructure ddmStructure =
+				_ddmStructureLocalService.fetchStructure(
+					serviceContext.getScopeGroupId(),
+					_portal.getClassNameId(JournalArticle.class),
+					ddmStructureKey);
+
+			if (ddmStructure == null) {
+				_defaultDDMStructureHelper.addDDMStructures(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					_portal.getClassNameId(JournalArticle.class), _classLoader,
+					resourcePath, serviceContext);
+			}
+			else {
+				_ddmStructureLocalService.updateStructure(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					ddmStructure.getStructureId(),
+					_portal.getClassNameId(JournalArticle.class),
+					ddmStructure.getStructureKey(), ddmStructure.getNameMap(),
+					ddmStructure.getDescriptionMap(), ddmStructure.getDDMForm(),
+					ddmStructure.getDDMFormLayout(), serviceContext);
+			}
+		}
+
+		List<DDMStructure> ddmStructures =
+			_ddmStructureLocalService.getStructures(
+				serviceContext.getScopeGroupId());
+
+		for (DDMStructure ddmStructure : ddmStructures) {
+			ddmStructuresIdsStringUtilReplaceValues.put(
+				"DDM_STRUCTURE_ID:" + ddmStructure.getStructureKey(),
+				String.valueOf(ddmStructure.getStructureId()));
+		}
+
+		return ddmStructuresIdsStringUtilReplaceValues;
 	}
 
 	private void _addOrUpdateDDMTemplates(
