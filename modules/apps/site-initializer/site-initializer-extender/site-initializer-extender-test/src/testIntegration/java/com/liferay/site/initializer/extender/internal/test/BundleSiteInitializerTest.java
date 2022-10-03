@@ -273,9 +273,6 @@ public class BundleSiteInitializerTest {
 			_assertUserGroups(group);
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
-<<<<<<< HEAD
-=======
-
 
 			siteInitializer.initialize(group.getGroupId());
 
@@ -314,8 +311,6 @@ public class BundleSiteInitializerTest {
 			_assertUserGroups(group);
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
-
->>>>>>> ac6cd28 (LPS-164394 Fix DDMStructures Test)
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
