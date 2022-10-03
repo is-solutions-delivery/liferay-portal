@@ -181,6 +181,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Dictionary;
@@ -413,7 +414,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addAccounts(serviceContext));
 
 			Map<String, String> ddmStructureEntryIdsStringUtilReplaceValues =
-				_invoke(() -> _addDDMStructures(serviceContext));
+				_invoke(() -> _addOrUpdateDDMStructures(serviceContext));
 
 			_invoke(() -> _addExpandoColumns(serviceContext));
 
@@ -649,7 +650,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext, _servletContext);
 	}
 
-	private Map<String, String> _addDDMStructures(ServiceContext serviceContext)
+	private Map<String, String> _addOrUpdateDDMStructures(ServiceContext serviceContext)
 		throws Exception {
 
 		Map<String, String> ddmStructuresIdsStringUtilReplaceValues =
@@ -663,12 +664,33 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		for (String resourcePath : resourcePaths) {
-			_defaultDDMStructureHelper.addDDMStructures(
-				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-				_portal.getClassNameId(JournalArticle.class), _classLoader,
-				resourcePath, serviceContext);
-		}
 
+			List<String> parts =
+				Arrays.asList(StringUtil.split(resourcePath, '/'));
+
+			String ddmStructureKey = StringUtil.upperCase(
+				_replace(parts.get(parts.size()-1), ".xml", ""));
+
+			DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
+				serviceContext.getScopeGroupId(), _portal.getClassNameId(
+					JournalArticle.class), ddmStructureKey);
+
+			if (ddmStructure == null) {
+				_defaultDDMStructureHelper.addDDMStructures(
+					serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+					_portal.getClassNameId(JournalArticle.class), _classLoader,
+					resourcePath, serviceContext);
+			}
+			else{
+				_ddmStructureLocalService.updateStructure(
+					serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+					ddmStructure.getStructureId(),_portal.getClassNameId(
+						JournalArticle.class), ddmStructure.getStructureKey(),
+					ddmStructure.getNameMap(),ddmStructure.getDescriptionMap(),
+					ddmStructure.getDDMForm(), ddmStructure.getDDMFormLayout(),
+					serviceContext);
+			}
+		}
 		List<DDMStructure> ddmStructures =
 			_ddmStructureLocalService.getStructures(
 				serviceContext.getScopeGroupId());
@@ -678,7 +700,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				"DDM_STRUCTURE_ID:" + ddmStructure.getStructureKey(),
 				String.valueOf(ddmStructure.getStructureId()));
 		}
-
 		return ddmStructuresIdsStringUtilReplaceValues;
 	}
 
