@@ -195,8 +195,7 @@ export default withRouter(
 							);
 							setError(errorObject);
 							setLoading(false);
-						}
-						else {
+						} else {
 							setQuestion(messageBoardThreadByFriendlyUrlPath);
 							setLoading(false);
 						}
@@ -306,8 +305,7 @@ export default withRouter(
 						pageSize: 20,
 						siteKey: context.siteKey,
 					});
-				}
-				catch (error) {
+				} catch (error) {
 					return setStep(1);
 				}
 
@@ -410,18 +408,14 @@ export default withRouter(
 							autoClose={6000}
 							displayType="warning"
 							onClose={() => setIsModerate(false)}
-							title={Liferay.Language.get('confirm-answer')}
+							title={Liferay.Language.get(
+								'do-you-wish-to-add-another-answer'
+							)}
 							variant="inline"
 						>
 							<div>
 								{Liferay.Language.get(
-									'are-you-sure-you-want-to-add-another-answer?'
-								)}
-
-								<br />
-
-								{Liferay.Language.get(
-									'you-could-use-the-add-comment-to-continue-the-existing-thread-instead.'
+									'you-could-use-the-add-comment-to-continue-the-existing-thread-instead'
 								)}
 							</div>
 
