@@ -25,6 +25,9 @@ public class QuestionsWebKeys {
 
 	public static final String IMAGE_BROWSE_URL = "IMAGE_BROWSE_URL";
 
+	public static final String MINIMUM_CONTRIBUTED_MESSAGES =
+		"MINIMUM_CONTRIBUTED_MESSAGES";
+
 	public static final String ROOT_TOPIC = "ROOT_TOPIC";
 
 	public static final String TAG_SELECTOR_URL = "TAG_SELECTOR_URL";

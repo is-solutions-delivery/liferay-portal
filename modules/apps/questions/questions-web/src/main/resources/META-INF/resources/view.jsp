@@ -42,6 +42,8 @@
 			).put(
 				"isOmniAdmin", permissionChecker.isOmniadmin()
 			).put(
+				"minimumContributedMessages", renderRequest.getAttribute(QuestionsWebKeys.MINIMUM_CONTRIBUTED_MESSAGES)
+			).put(
 				"npmResolvedPackageName", npmResolvedPackageName
 			).put(
 				"redirectToLogin", questionsConfiguration.enableRedirectToLogin()
