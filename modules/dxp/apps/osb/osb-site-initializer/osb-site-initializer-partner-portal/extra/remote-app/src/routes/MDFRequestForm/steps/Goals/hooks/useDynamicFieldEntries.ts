@@ -24,6 +24,8 @@ export default function useDynamicFieldEntries() {
 		LiferayPicklistName.LIFERAY_BUSINESS_SALES_GOALS,
 		LiferayPicklistName.TARGET_AUDIENCE_ROLES,
 		LiferayPicklistName.TARGET_MARKETS,
+		LiferayPicklistName.SALES_PROJECT_CATEGORIES,
+		LiferayPicklistName.SALES_PROJECT_INFORMATION,
 	]);
 
 	const companiesEntries = useMemo(

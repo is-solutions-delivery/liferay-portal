@@ -8,9 +8,3 @@
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
  */
-
-export enum AppRouteType {
-	MDF_REQUEST_FORM = 'mdf-request-form',
-	MDF_REQUEST_LIST = 'mdf-request-list',
-	SALES_REQUEST_FORM = 'sales-request-form',
-}
