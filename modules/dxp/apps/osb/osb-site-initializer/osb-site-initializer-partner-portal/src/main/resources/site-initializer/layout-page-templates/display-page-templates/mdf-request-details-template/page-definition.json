@@ -143,22 +143,23 @@
 														{
 															"id": "element-text",
 															"value": {
-																"fragmentLink": {},
+																"fragmentLink": {
+																},
 																"text": {
 																	"value_i18n": {
-																		"sv_SE": "Campaign MDF Request",
-																		"pt_BR": "Campaign MDF Request",
-																		"fr_FR": "Campaign MDF Request",
-																		"ja_JP": "Campaign MDF Request",
+																		"ar_SA": "Campaign MDF Request",
 																		"ca_ES": "Campaign MDF Request",
 																		"de_DE": "Campaign MDF Request",
-																		"hu_HU": "Campaign MDF Request",
-																		"ar_SA": "Campaign MDF Request",
-																		"fi_FI": "Campaign MDF Request",
 																		"en_US": "Campaign MDF Request",
 																		"es_ES": "Campaign MDF Request",
-																		"zh_CN": "Campaign MDF Request",
-																		"nl_NL": "Campaign MDF Request"
+																		"fi_FI": "Campaign MDF Request",
+																		"fr_FR": "Campaign MDF Request",
+																		"hu_HU": "Campaign MDF Request",
+																		"ja_JP": "Campaign MDF Request",
+																		"nl_NL": "Campaign MDF Request",
+																		"pt_BR": "Campaign MDF Request",
+																		"sv_SE": "Campaign MDF Request",
+																		"zh_CN": "Campaign MDF Request"
 																	}
 																}
 															}
@@ -208,22 +209,23 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Date Submitted:",
-																				"pt_BR": "Date Submitted:",
-																				"fr_FR": "Date Submitted:",
-																				"ja_JP": "Date Submitted:",
+																				"ar_SA": "Date Submitted:",
 																				"ca_ES": "Date Submitted:",
 																				"de_DE": "Date Submitted:",
-																				"hu_HU": "Date Submitted:",
-																				"ar_SA": "Date Submitted:",
-																				"fi_FI": "Date Submitted:",
 																				"en_US": "Date Submitted:",
 																				"es_ES": "Date Submitted:",
-																				"zh_CN": "Date Submitted:",
-																				"nl_NL": "Date Submitted:"
+																				"fi_FI": "Date Submitted:",
+																				"fr_FR": "Date Submitted:",
+																				"hu_HU": "Date Submitted:",
+																				"ja_JP": "Date Submitted:",
+																				"nl_NL": "Date Submitted:",
+																				"pt_BR": "Date Submitted:",
+																				"sv_SE": "Date Submitted:",
+																				"zh_CN": "Date Submitted:"
 																			}
 																		}
 																	}
@@ -250,7 +252,8 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectEntry_createDate",
@@ -283,22 +286,23 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": ", Last Modified:",
-																				"pt_BR": ", Last Modified:",
-																				"fr_FR": ", Last Modified:",
-																				"ja_JP": ", Last Modified:",
+																				"ar_SA": ", Last Modified:",
 																				"ca_ES": ", Last Modified:",
 																				"de_DE": ", Last Modified:",
-																				"hu_HU": ", Last Modified:",
-																				"ar_SA": ", Last Modified:",
-																				"fi_FI": ", Last Modified:",
 																				"en_US": ", Last Modified:",
 																				"es_ES": ", Last Modified:",
-																				"zh_CN": ", Last Modified:",
-																				"nl_NL": ", Last Modified:"
+																				"fi_FI": ", Last Modified:",
+																				"fr_FR": ", Last Modified:",
+																				"hu_HU": ", Last Modified:",
+																				"ja_JP": ", Last Modified:",
+																				"nl_NL": ", Last Modified:",
+																				"pt_BR": ", Last Modified:",
+																				"sv_SE": ", Last Modified:",
+																				"zh_CN": ", Last Modified:"
 																			}
 																		}
 																	}
@@ -325,7 +329,8 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectEntry_modifiedDate",
@@ -360,14 +365,15 @@
 										"key": "mdf-request-details-status-display"
 									},
 									"fragmentConfig": {
-										"channelGlobalMarketingManager": false,
 										"channelAccountManager": false,
 										"channelFinanceManager": false,
-										"user": false,
 										"channelGeneralManager": false,
-										"channelRegionalMarketingManager": false
+										"channelGlobalMarketingManager": false,
+										"channelRegionalMarketingManager": false,
+										"user": false
 									},
-									"fragmentFields": [],
+									"fragmentFields": [
+									],
 									"indexed": true
 								},
 								"type": "Fragment"
@@ -416,22 +422,23 @@
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {},
+												"fragmentLink": {
+												},
 												"text": {
 													"value_i18n": {
-														"sv_SE": "Summary",
-														"pt_BR": "Summary",
-														"fr_FR": "Summary",
-														"ja_JP": "Summary",
+														"ar_SA": "Summary",
 														"ca_ES": "Summary",
 														"de_DE": "Summary",
-														"hu_HU": "Summary",
-														"ar_SA": "Summary",
-														"fi_FI": "Summary",
 														"en_US": "Summary",
 														"es_ES": "Summary",
-														"zh_CN": "Summary",
-														"nl_NL": "Summary"
+														"fi_FI": "Summary",
+														"fr_FR": "Summary",
+														"hu_HU": "Summary",
+														"ja_JP": "Summary",
+														"nl_NL": "Summary",
+														"pt_BR": "Summary",
+														"sv_SE": "Summary",
+														"zh_CN": "Summary"
 													}
 												}
 											}
@@ -452,10 +459,11 @@
 										"key": "BASIC_COMPONENT-separator"
 									},
 									"fragmentConfig": {
-										"separatorColor": "",
-										"bottomSpacing": "3"
+										"bottomSpacing": "3",
+										"separatorColor": ""
 									},
-									"fragmentFields": [],
+									"fragmentFields": [
+									],
 									"fragmentStyle": {
 										"marginTop": "1",
 										"textAlign": ""
@@ -469,8 +477,10 @@
 									"fragment": {
 										"key": "mdf-request-details-summary"
 									},
-									"fragmentConfig": {},
-									"fragmentFields": [],
+									"fragmentConfig": {
+									},
+									"fragmentFields": [
+									],
 									"indexed": true
 								},
 								"type": "Fragment"
@@ -520,7 +530,8 @@
 										},
 										{
 											"id": "portraitMobile",
-											"rowViewportDefinition": {}
+											"rowViewportDefinition": {
+											}
 										},
 										{
 											"id": "tablet",
@@ -542,7 +553,8 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {},
+													"columnViewportDefinition": {
+													},
 													"id": "portraitMobile"
 												},
 												{
@@ -597,22 +609,23 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Reimbursement Claims",
-																				"pt_BR": "Reimbursement Claims",
-																				"fr_FR": "Reimbursement Claims",
-																				"ja_JP": "Reimbursement Claims",
+																				"ar_SA": "Reimbursement Claims",
 																				"ca_ES": "Reimbursement Claims",
 																				"de_DE": "Reimbursement Claims",
-																				"hu_HU": "Reimbursement Claims",
-																				"ar_SA": "Reimbursement Claims",
-																				"fi_FI": "Reimbursement Claims",
 																				"en_US": "Reimbursement Claims",
 																				"es_ES": "Reimbursement Claims",
-																				"zh_CN": "Reimbursement Claims",
-																				"nl_NL": "Reimbursement Claims"
+																				"fi_FI": "Reimbursement Claims",
+																				"fr_FR": "Reimbursement Claims",
+																				"hu_HU": "Reimbursement Claims",
+																				"ja_JP": "Reimbursement Claims",
+																				"nl_NL": "Reimbursement Claims",
+																				"pt_BR": "Reimbursement Claims",
+																				"sv_SE": "Reimbursement Claims",
+																				"zh_CN": "Reimbursement Claims"
 																			}
 																		}
 																	}
@@ -634,10 +647,11 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"separatorColor": "",
-																"bottomSpacing": "3"
+																"bottomSpacing": "3",
+																"separatorColor": ""
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"fragmentStyle": {
 																"marginTop": "1",
 																"textAlign": ""
@@ -694,22 +708,23 @@
 																				{
 																					"id": "element-text",
 																					"value": {
-																						"fragmentLink": {},
+																						"fragmentLink": {
+																						},
 																						"text": {
 																							"value_i18n": {
-																								"sv_SE": "Get Reimbursed",
-																								"pt_BR": "Get Reimbursed",
-																								"fr_FR": "Get Reimbursed",
-																								"ja_JP": "Get Reimbursed",
+																								"ar_SA": "Get Reimbursed",
 																								"ca_ES": "Get Reimbursed",
 																								"de_DE": "Get Reimbursed",
-																								"hu_HU": "Get Reimbursed",
-																								"ar_SA": "Get Reimbursed",
-																								"fi_FI": "Get Reimbursed",
 																								"en_US": "Get Reimbursed",
 																								"es_ES": "Get Reimbursed",
-																								"zh_CN": "Get Reimbursed",
-																								"nl_NL": "Get Reimbursed"
+																								"fi_FI": "Get Reimbursed",
+																								"fr_FR": "Get Reimbursed",
+																								"hu_HU": "Get Reimbursed",
+																								"ja_JP": "Get Reimbursed",
+																								"nl_NL": "Get Reimbursed",
+																								"pt_BR": "Get Reimbursed",
+																								"sv_SE": "Get Reimbursed",
+																								"zh_CN": "Get Reimbursed"
 																							}
 																						}
 																					}
@@ -737,22 +752,23 @@
 																				{
 																					"id": "element-text",
 																					"value": {
-																						"fragmentLink": {},
+																						"fragmentLink": {
+																						},
 																						"text": {
 																							"value_i18n": {
-																								"sv_SE": "You can submit up to 2 claim(s).",
-																								"pt_BR": "You can submit up to 2 claim(s).",
-																								"fr_FR": "You can submit up to 2 claim(s).",
-																								"ja_JP": "You can submit up to 2 claim(s).",
+																								"ar_SA": "You can submit up to 2 claim(s).",
 																								"ca_ES": "You can submit up to 2 claim(s).",
 																								"de_DE": "You can submit up to 2 claim(s).",
-																								"hu_HU": "You can submit up to 2 claim(s).",
-																								"ar_SA": "You can submit up to 2 claim(s).",
-																								"fi_FI": "You can submit up to 2 claim(s).",
 																								"en_US": "You can submit up to 2 claim(s).",
 																								"es_ES": "You can submit up to 2 claim(s).",
-																								"zh_CN": "You can submit up to 2 claim(s).",
-																								"nl_NL": "You can submit up to 2 claim(s)."
+																								"fi_FI": "You can submit up to 2 claim(s).",
+																								"fr_FR": "You can submit up to 2 claim(s).",
+																								"hu_HU": "You can submit up to 2 claim(s).",
+																								"ja_JP": "You can submit up to 2 claim(s).",
+																								"nl_NL": "You can submit up to 2 claim(s).",
+																								"pt_BR": "You can submit up to 2 claim(s).",
+																								"sv_SE": "You can submit up to 2 claim(s).",
+																								"zh_CN": "You can submit up to 2 claim(s)."
 																							}
 																						}
 																					}
@@ -776,8 +792,10 @@
 																	"fragment": {
 																		"key": "new-claim-button"
 																	},
-																	"fragmentConfig": {},
-																	"fragmentFields": [],
+																	"fragmentConfig": {
+																	},
+																	"fragmentFields": [
+																	],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -791,10 +809,11 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"separatorColor": "",
-																"bottomSpacing": "3"
+																"bottomSpacing": "3",
+																"separatorColor": ""
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"fragmentStyle": {
 																"marginTop": "1",
 																"textAlign": ""
@@ -848,22 +867,23 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "ACTIVITIES",
-																				"pt_BR": "ACTIVITIES",
-																				"fr_FR": "ACTIVITIES",
-																				"ja_JP": "ACTIVITIES",
+																				"ar_SA": "ACTIVITIES",
 																				"ca_ES": "ACTIVITIES",
 																				"de_DE": "ACTIVITIES",
-																				"hu_HU": "ACTIVITIES",
-																				"ar_SA": "ACTIVITIES",
-																				"fi_FI": "ACTIVITIES",
 																				"en_US": "ACTIVITIES",
 																				"es_ES": "ACTIVITIES",
-																				"zh_CN": "ACTIVITIES",
-																				"nl_NL": "ACTIVITIES"
+																				"fi_FI": "ACTIVITIES",
+																				"fr_FR": "ACTIVITIES",
+																				"hu_HU": "ACTIVITIES",
+																				"ja_JP": "ACTIVITIES",
+																				"nl_NL": "ACTIVITIES",
+																				"pt_BR": "ACTIVITIES",
+																				"sv_SE": "ACTIVITIES",
+																				"zh_CN": "ACTIVITIES"
 																			}
 																		}
 																	}
@@ -891,22 +911,23 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Insurance Industry Lead Gen",
-																				"pt_BR": "Insurance Industry Lead Gen",
-																				"fr_FR": "Insurance Industry Lead Gen",
-																				"ja_JP": "Insurance Industry Lead Gen",
+																				"ar_SA": "Insurance Industry Lead Gen",
 																				"ca_ES": "Insurance Industry Lead Gen",
 																				"de_DE": "Insurance Industry Lead Gen",
-																				"hu_HU": "Insurance Industry Lead Gen",
-																				"ar_SA": "Insurance Industry Lead Gen",
-																				"fi_FI": "Insurance Industry Lead Gen",
 																				"en_US": "Insurance Industry Lead Gen",
 																				"es_ES": "Insurance Industry Lead Gen",
-																				"zh_CN": "Insurance Industry Lead Gen",
-																				"nl_NL": "Insurance Industry Lead Gen"
+																				"fi_FI": "Insurance Industry Lead Gen",
+																				"fr_FR": "Insurance Industry Lead Gen",
+																				"hu_HU": "Insurance Industry Lead Gen",
+																				"ja_JP": "Insurance Industry Lead Gen",
+																				"nl_NL": "Insurance Industry Lead Gen",
+																				"pt_BR": "Insurance Industry Lead Gen",
+																				"sv_SE": "Insurance Industry Lead Gen",
+																				"zh_CN": "Insurance Industry Lead Gen"
 																			}
 																		}
 																	}
@@ -928,10 +949,11 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"separatorColor": "",
-																"bottomSpacing": "3"
+																"bottomSpacing": "3",
+																"separatorColor": ""
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"fragmentStyle": {
 																"marginTop": "1",
 																"textAlign": ""
@@ -945,8 +967,10 @@
 															"fragment": {
 																"key": "activities-list-panel"
 															},
-															"fragmentConfig": {},
-															"fragmentFields": [],
+															"fragmentConfig": {
+															},
+															"fragmentFields": [
+															],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1017,22 +1041,23 @@
 																		{
 																			"id": "element-text",
 																			"value": {
-																				"fragmentLink": {},
+																				"fragmentLink": {
+																				},
 																				"text": {
 																					"value_i18n": {
-																						"sv_SE": "GOALS",
-																						"pt_BR": "GOALS",
-																						"fr_FR": "GOALS",
-																						"ja_JP": "GOALS",
+																						"ar_SA": "GOALS",
 																						"ca_ES": "GOALS",
 																						"de_DE": "GOALS",
-																						"hu_HU": "GOALS",
-																						"ar_SA": "GOALS",
-																						"fi_FI": "GOALS",
 																						"en_US": "GOALS",
 																						"es_ES": "GOALS",
-																						"zh_CN": "GOALS",
-																						"nl_NL": "GOALS"
+																						"fi_FI": "GOALS",
+																						"fr_FR": "GOALS",
+																						"hu_HU": "GOALS",
+																						"ja_JP": "GOALS",
+																						"nl_NL": "GOALS",
+																						"pt_BR": "GOALS",
+																						"sv_SE": "GOALS",
+																						"zh_CN": "GOALS"
 																					}
 																				}
 																			}
@@ -1060,22 +1085,23 @@
 																		{
 																			"id": "element-text",
 																			"value": {
-																				"fragmentLink": {},
+																				"fragmentLink": {
+																				},
 																				"text": {
 																					"value_i18n": {
-																						"sv_SE": "Campaign Information",
-																						"pt_BR": "Campaign Information",
-																						"fr_FR": "Campaign Information",
-																						"ja_JP": "Campaign Information",
+																						"ar_SA": "Campaign Information",
 																						"ca_ES": "Campaign Information",
 																						"de_DE": "Campaign Information",
-																						"hu_HU": "Campaign Information",
-																						"ar_SA": "Campaign Information",
-																						"fi_FI": "Campaign Information",
 																						"en_US": "Campaign Information",
 																						"es_ES": "Campaign Information",
-																						"zh_CN": "Campaign Information",
-																						"nl_NL": "Campaign Information"
+																						"fi_FI": "Campaign Information",
+																						"fr_FR": "Campaign Information",
+																						"hu_HU": "Campaign Information",
+																						"ja_JP": "Campaign Information",
+																						"nl_NL": "Campaign Information",
+																						"pt_BR": "Campaign Information",
+																						"sv_SE": "Campaign Information",
+																						"zh_CN": "Campaign Information"
 																					}
 																				}
 																			}
@@ -1097,10 +1123,11 @@
 																		"key": "BASIC_COMPONENT-separator"
 																	},
 																	"fragmentConfig": {
-																		"separatorColor": "",
-																		"bottomSpacing": "3"
+																		"bottomSpacing": "3",
+																		"separatorColor": ""
 																	},
-																	"fragmentFields": [],
+																	"fragmentFields": [
+																	],
 																	"fragmentStyle": {
 																		"marginTop": "1",
 																		"textAlign": ""
@@ -1124,7 +1151,8 @@
 																{
 																	"id": "rowValue-1",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_r_accountToMDFRequests_accountEntryId",
@@ -1138,22 +1166,23 @@
 																{
 																	"id": "rowTitle-2",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Region",
-																				"pt_BR": "Region",
-																				"fr_FR": "Region",
-																				"ja_JP": "Region",
+																				"ar_SA": "Region",
 																				"ca_ES": "Region",
 																				"de_DE": "Region",
-																				"hu_HU": "Region",
-																				"ar_SA": "Region",
-																				"fi_FI": "Region",
 																				"en_US": "Region",
 																				"es_ES": "Region",
-																				"zh_CN": "Region",
-																				"nl_NL": "Region"
+																				"fi_FI": "Region",
+																				"fr_FR": "Region",
+																				"hu_HU": "Region",
+																				"ja_JP": "Region",
+																				"nl_NL": "Region",
+																				"pt_BR": "Region",
+																				"sv_SE": "Region",
+																				"zh_CN": "Region"
 																			}
 																		}
 																	}
@@ -1161,22 +1190,23 @@
 																{
 																	"id": "rowTitle-1",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Company Name",
-																				"pt_BR": "Company Name",
-																				"fr_FR": "Company Name",
-																				"ja_JP": "Company Name",
+																				"ar_SA": "Company Name",
 																				"ca_ES": "Company Name",
 																				"de_DE": "Company Name",
-																				"hu_HU": "Company Name",
-																				"ar_SA": "Company Name",
-																				"fi_FI": "Company Name",
 																				"en_US": "Company Name",
 																				"es_ES": "Company Name",
-																				"zh_CN": "Company Name",
-																				"nl_NL": "Company Name"
+																				"fi_FI": "Company Name",
+																				"fr_FR": "Company Name",
+																				"hu_HU": "Company Name",
+																				"ja_JP": "Company Name",
+																				"nl_NL": "Company Name",
+																				"pt_BR": "Company Name",
+																				"sv_SE": "Company Name",
+																				"zh_CN": "Company Name"
 																			}
 																		}
 																	}
@@ -1184,28 +1214,30 @@
 																{
 																	"id": "rowTitle-3",
 																	"value": {
-																		"fragmentLink": {}
+																		"fragmentLink": {
+																		}
 																	}
 																},
 																{
 																	"id": "tableTitle",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Partner Summary",
-																				"pt_BR": "Partner Summary",
-																				"fr_FR": "Partner Summary",
-																				"ja_JP": "Partner Summary",
+																				"ar_SA": "Partner Summary",
 																				"ca_ES": "Partner Summary",
 																				"de_DE": "Partner Summary",
-																				"hu_HU": "Partner Summary",
-																				"ar_SA": "Partner Summary",
-																				"fi_FI": "Partner Summary",
 																				"en_US": "Partner Summary",
 																				"es_ES": "Partner Summary",
-																				"zh_CN": "Partner Summary",
-																				"nl_NL": "Partner Summary"
+																				"fi_FI": "Partner Summary",
+																				"fr_FR": "Partner Summary",
+																				"hu_HU": "Partner Summary",
+																				"ja_JP": "Partner Summary",
+																				"nl_NL": "Partner Summary",
+																				"pt_BR": "Partner Summary",
+																				"sv_SE": "Partner Summary",
+																				"zh_CN": "Partner Summary"
 																			}
 																		}
 																	}
@@ -1213,7 +1245,8 @@
 																{
 																	"id": "rowValue-2",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_country",
@@ -1227,7 +1260,8 @@
 																{
 																	"id": "rowValue-3",
 																	"value": {
-																		"fragmentLink": {}
+																		"fragmentLink": {
+																		}
 																	}
 																}
 															],
@@ -1241,10 +1275,11 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"separatorColor": "",
-																"bottomSpacing": "3"
+																"bottomSpacing": "3",
+																"separatorColor": ""
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1261,28 +1296,30 @@
 																{
 																	"id": "rowValue-1",
 																	"value": {
-																		"fragmentLink": {}
+																		"fragmentLink": {
+																		}
 																	}
 																},
 																{
 																	"id": "rowTitle-2",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Liferay business/sales goals",
-																				"pt_BR": "Liferay business/sales goals",
-																				"fr_FR": "Liferay business/sales goals",
-																				"ja_JP": "Liferay business/sales goals",
+																				"ar_SA": "Liferay business/sales goals",
 																				"ca_ES": "Liferay business/sales goals",
 																				"de_DE": "Liferay business/sales goals",
-																				"hu_HU": "Liferay business/sales goals",
-																				"ar_SA": "Liferay business/sales goals",
-																				"fi_FI": "Liferay business/sales goals",
 																				"en_US": "Liferay business/sales goals",
 																				"es_ES": "Liferay business/sales goals",
-																				"zh_CN": "Liferay business/sales goals",
-																				"nl_NL": "Liferay business/sales goals"
+																				"fi_FI": "Liferay business/sales goals",
+																				"fr_FR": "Liferay business/sales goals",
+																				"hu_HU": "Liferay business/sales goals",
+																				"ja_JP": "Liferay business/sales goals",
+																				"nl_NL": "Liferay business/sales goals",
+																				"pt_BR": "Liferay business/sales goals",
+																				"sv_SE": "Liferay business/sales goals",
+																				"zh_CN": "Liferay business/sales goals"
 																			}
 																		}
 																	}
@@ -1290,22 +1327,23 @@
 																{
 																	"id": "rowTitle-1",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Provide a name and short description of the overall campaign",
-																				"pt_BR": "Provide a name and short description of the overall campaign",
-																				"fr_FR": "Provide a name and short description of the overall campaign",
-																				"ja_JP": "Provide a name and short description of the overall campaign",
+																				"ar_SA": "Provide a name and short description of the overall campaign",
 																				"ca_ES": "Provide a name and short description of the overall campaign",
 																				"de_DE": "Provide a name and short description of the overall campaign",
-																				"hu_HU": "Provide a name and short description of the overall campaign",
-																				"ar_SA": "Provide a name and short description of the overall campaign",
-																				"fi_FI": "Provide a name and short description of the overall campaign",
 																				"en_US": "Provide a name and short description of the overall campaign",
 																				"es_ES": "Provide a name and short description of the overall campaign",
-																				"zh_CN": "Provide a name and short description of the overall campaign",
-																				"nl_NL": "Provide a name and short description of the overall campaign"
+																				"fi_FI": "Provide a name and short description of the overall campaign",
+																				"fr_FR": "Provide a name and short description of the overall campaign",
+																				"hu_HU": "Provide a name and short description of the overall campaign",
+																				"ja_JP": "Provide a name and short description of the overall campaign",
+																				"nl_NL": "Provide a name and short description of the overall campaign",
+																				"pt_BR": "Provide a name and short description of the overall campaign",
+																				"sv_SE": "Provide a name and short description of the overall campaign",
+																				"zh_CN": "Provide a name and short description of the overall campaign"
 																			}
 																		}
 																	}
@@ -1313,28 +1351,30 @@
 																{
 																	"id": "rowTitle-3",
 																	"value": {
-																		"fragmentLink": {}
+																		"fragmentLink": {
+																		}
 																	}
 																},
 																{
 																	"id": "tableTitle",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Activity Summay",
-																				"pt_BR": "Activity Summay",
-																				"fr_FR": "Activity Summay",
-																				"ja_JP": "Activity Summay",
+																				"ar_SA": "Activity Summay",
 																				"ca_ES": "Activity Summay",
 																				"de_DE": "Activity Summay",
-																				"hu_HU": "Activity Summay",
-																				"ar_SA": "Activity Summay",
-																				"fi_FI": "Activity Summay",
 																				"en_US": "Activity Summay",
 																				"es_ES": "Activity Summay",
-																				"zh_CN": "Activity Summay",
-																				"nl_NL": "Activity Summay"
+																				"fi_FI": "Activity Summay",
+																				"fr_FR": "Activity Summay",
+																				"hu_HU": "Activity Summay",
+																				"ja_JP": "Activity Summay",
+																				"nl_NL": "Activity Summay",
+																				"pt_BR": "Activity Summay",
+																				"sv_SE": "Activity Summay",
+																				"zh_CN": "Activity Summay"
 																			}
 																		}
 																	}
@@ -1342,7 +1382,8 @@
 																{
 																	"id": "rowValue-2",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_liferayBusinessSalesGoals",
@@ -1356,7 +1397,8 @@
 																{
 																	"id": "rowValue-3",
 																	"value": {
-																		"fragmentLink": {}
+																		"fragmentLink": {
+																		}
 																	}
 																}
 															],
@@ -1370,10 +1412,11 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"separatorColor": "",
-																"bottomSpacing": "3"
+																"bottomSpacing": "3",
+																"separatorColor": ""
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1390,7 +1433,8 @@
 																{
 																	"id": "rowValue-1",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_targetMarkets",
@@ -1404,22 +1448,23 @@
 																{
 																	"id": "rowTitle-2",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Additional Options",
-																				"pt_BR": "Additional Options",
-																				"fr_FR": "Additional Options",
-																				"ja_JP": "Additional Options",
+																				"ar_SA": "Additional Options",
 																				"ca_ES": "Additional Options",
 																				"de_DE": "Additional Options",
-																				"hu_HU": "Additional Options",
-																				"ar_SA": "Additional Options",
-																				"fi_FI": "Additional Options",
 																				"en_US": "Additional Options",
 																				"es_ES": "Additional Options",
-																				"zh_CN": "Additional Options",
-																				"nl_NL": "Additional Options"
+																				"fi_FI": "Additional Options",
+																				"fr_FR": "Additional Options",
+																				"hu_HU": "Additional Options",
+																				"ja_JP": "Additional Options",
+																				"nl_NL": "Additional Options",
+																				"pt_BR": "Additional Options",
+																				"sv_SE": "Additional Options",
+																				"zh_CN": "Additional Options"
 																			}
 																		}
 																	}
@@ -1427,22 +1472,23 @@
 																{
 																	"id": "rowTitle-1",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Target Market(s)",
-																				"pt_BR": "Target Market(s)",
-																				"fr_FR": "Target Market(s)",
-																				"ja_JP": "Target Market(s)",
+																				"ar_SA": "Target Market(s)",
 																				"ca_ES": "Target Market(s)",
 																				"de_DE": "Target Market(s)",
-																				"hu_HU": "Target Market(s)",
-																				"ar_SA": "Target Market(s)",
-																				"fi_FI": "Target Market(s)",
 																				"en_US": "Target Market(s)",
 																				"es_ES": "Target Market(s)",
-																				"zh_CN": "Target Market(s)",
-																				"nl_NL": "Target Market(s)"
+																				"fi_FI": "Target Market(s)",
+																				"fr_FR": "Target Market(s)",
+																				"hu_HU": "Target Market(s)",
+																				"ja_JP": "Target Market(s)",
+																				"nl_NL": "Target Market(s)",
+																				"pt_BR": "Target Market(s)",
+																				"sv_SE": "Target Market(s)",
+																				"zh_CN": "Target Market(s)"
 																			}
 																		}
 																	}
@@ -1450,22 +1496,23 @@
 																{
 																	"id": "rowTitle-3",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Target Audience/Role",
-																				"pt_BR": "Target Audience/Role",
-																				"fr_FR": "Target Audience/Role",
-																				"ja_JP": "Target Audience/Role",
+																				"ar_SA": "Target Audience/Role",
 																				"ca_ES": "Target Audience/Role",
 																				"de_DE": "Target Audience/Role",
-																				"hu_HU": "Target Audience/Role",
-																				"ar_SA": "Target Audience/Role",
-																				"fi_FI": "Target Audience/Role",
 																				"en_US": "Target Audience/Role",
 																				"es_ES": "Target Audience/Role",
-																				"zh_CN": "Target Audience/Role",
-																				"nl_NL": "Target Audience/Role"
+																				"fi_FI": "Target Audience/Role",
+																				"fr_FR": "Target Audience/Role",
+																				"hu_HU": "Target Audience/Role",
+																				"ja_JP": "Target Audience/Role",
+																				"nl_NL": "Target Audience/Role",
+																				"pt_BR": "Target Audience/Role",
+																				"sv_SE": "Target Audience/Role",
+																				"zh_CN": "Target Audience/Role"
 																			}
 																		}
 																	}
@@ -1473,22 +1520,23 @@
 																{
 																	"id": "tableTitle",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Target Market",
-																				"pt_BR": "Target Market",
-																				"fr_FR": "Target Market",
-																				"ja_JP": "Target Market",
+																				"ar_SA": "Target Market",
 																				"ca_ES": "Target Market",
 																				"de_DE": "Target Market",
-																				"hu_HU": "Target Market",
-																				"ar_SA": "Target Market",
-																				"fi_FI": "Target Market",
 																				"en_US": "Target Market",
 																				"es_ES": "Target Market",
-																				"zh_CN": "Target Market",
-																				"nl_NL": "Target Market"
+																				"fi_FI": "Target Market",
+																				"fr_FR": "Target Market",
+																				"hu_HU": "Target Market",
+																				"ja_JP": "Target Market",
+																				"nl_NL": "Target Market",
+																				"pt_BR": "Target Market",
+																				"sv_SE": "Target Market",
+																				"zh_CN": "Target Market"
 																			}
 																		}
 																	}
@@ -1496,7 +1544,8 @@
 																{
 																	"id": "rowValue-2",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_additionalOption",
@@ -1510,7 +1559,8 @@
 																{
 																	"id": "rowValue-3",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_targetAudienceRoles",
@@ -1532,10 +1582,11 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"separatorColor": "",
-																"bottomSpacing": "3"
+																"bottomSpacing": "3",
+																"separatorColor": ""
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1548,7 +1599,8 @@
 															"fragmentConfig": {
 																"numberOfRows": 4
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1569,7 +1621,8 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {},
+													"columnViewportDefinition": {
+													},
 													"id": "portraitMobile"
 												},
 												{
@@ -1621,22 +1674,23 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"value_i18n": {
-																				"sv_SE": "Comments",
-																				"pt_BR": "Comments",
-																				"fr_FR": "Comments",
-																				"ja_JP": "Comments",
+																				"ar_SA": "Comments",
 																				"ca_ES": "Comments",
 																				"de_DE": "Comments",
-																				"hu_HU": "Comments",
-																				"ar_SA": "Comments",
-																				"fi_FI": "Comments",
 																				"en_US": "Comments",
 																				"es_ES": "Comments",
-																				"zh_CN": "Comments",
-																				"nl_NL": "Comments"
+																				"fi_FI": "Comments",
+																				"fr_FR": "Comments",
+																				"hu_HU": "Comments",
+																				"ja_JP": "Comments",
+																				"nl_NL": "Comments",
+																				"pt_BR": "Comments",
+																				"sv_SE": "Comments",
+																				"zh_CN": "Comments"
 																			}
 																		}
 																	}
@@ -1657,10 +1711,11 @@
 																"key": "BASIC_COMPONENT-separator"
 															},
 															"fragmentConfig": {
-																"separatorColor": "",
-																"bottomSpacing": "3"
+																"bottomSpacing": "3",
+																"separatorColor": ""
 															},
-															"fragmentFields": [],
+															"fragmentFields": [
+															],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1668,7 +1723,8 @@
 													{
 														"definition": {
 															"widgetInstance": {
-																"widgetConfig": {},
+																"widgetConfig": {
+																},
 																"widgetName": "com_liferay_comment_page_comments_web_portlet_PageCommentsPortlet"
 															}
 														},
@@ -1699,10 +1755,10 @@
 		},
 		"themeName": "Dialect",
 		"themeSettings": {
+			"lfr-theme:regular:show-footer": "false",
 			"lfr-theme:regular:show-header": "false",
-			"lfr-theme:regular:wrap-widget-page-content": "false",
 			"lfr-theme:regular:show-header-search": "false",
-			"lfr-theme:regular:show-footer": "false"
+			"lfr-theme:regular:wrap-widget-page-content": "false"
 		}
 	},
 	"version": 1.1
