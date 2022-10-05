@@ -153,6 +153,9 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
 import com.liferay.portal.security.service.access.policy.model.SAPEntry;
@@ -161,6 +164,7 @@ import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.util.ObjectMapperUtil;
+import com.liferay.portal.vulcan.yaml.openapi.Content;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.site.exception.InitializationException;
@@ -181,8 +185,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -665,30 +669,45 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (String resourcePath : resourcePaths) {
 
-			List<String> parts =
-				Arrays.asList(StringUtil.split(resourcePath, '/'));
+			String xml = StringUtil.read(_classLoader, resourcePath);
 
-			String ddmStructureKey = StringUtil.upperCase(
-				_replace(parts.get(parts.size()-1), ".xml", ""));
+			xml = StringUtil.replace(xml, "[$LOCALE_DEFAULT$]", String.valueOf(
+				_portal.getSiteDefaultLocale(serviceContext.getScopeGroupId())));
 
-			DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
-				serviceContext.getScopeGroupId(), _portal.getClassNameId(
-					JournalArticle.class), ddmStructureKey);
+			com.liferay.portal.kernel.xml.Document document = UnsecureSAXReaderUtil.read(xml);
+
+			Element rootElement = document.getRootElement();
+
+			List<Element> structureElements = rootElement.elements("structure");
+
+			for (Element structureElement : structureElements) {
+				String ddmStructureKey = structureElement.elementText("name");
+
+				DDMStructure ddmStructure =
+					_ddmStructureLocalService.fetchStructure(
+						serviceContext.getScopeGroupId(),
+						_portal.getClassNameId(
+							JournalArticle.class),
+						ddmStructureKey);
 
 			if (ddmStructure == null) {
 				_defaultDDMStructureHelper.addDDMStructures(
-					serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
 					_portal.getClassNameId(JournalArticle.class), _classLoader,
 					resourcePath, serviceContext);
 			}
-			else{
+			else {
 				_ddmStructureLocalService.updateStructure(
-					serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-					ddmStructure.getStructureId(),_portal.getClassNameId(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					ddmStructure.getParentStructureId(), _portal.getClassNameId(
 						JournalArticle.class), ddmStructure.getStructureKey(),
-					ddmStructure.getNameMap(),ddmStructure.getDescriptionMap(),
-					ddmStructure.getDDMForm(), ddmStructure.getDDMFormLayout(),
+					ddmStructure.getNameMap(), ddmStructure.getDescriptionMap(),
+					ddmStructure.getDDMForm(),
+					ddmStructure.getDDMFormLayout(),
 					serviceContext);
+				}
 			}
 		}
 		List<DDMStructure> ddmStructures =
