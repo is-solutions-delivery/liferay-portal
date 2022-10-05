@@ -154,7 +154,6 @@ import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
@@ -164,7 +163,6 @@ import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.util.ObjectMapperUtil;
-import com.liferay.portal.vulcan.yaml.openapi.Content;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.site.exception.InitializationException;
@@ -186,7 +184,6 @@ import java.net.URLConnection;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -652,74 +649,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_bundle, documentsStringUtilReplaceValues,
 			objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 			serviceContext, _servletContext);
-	}
-
-	private Map<String, String> _addOrUpdateDDMStructures(ServiceContext serviceContext)
-		throws Exception {
-
-		Map<String, String> ddmStructuresIdsStringUtilReplaceValues =
-			new HashMap<>();
-
-		Set<String> resourcePaths = _servletContext.getResourcePaths(
-			"/site-initializer/ddm-structures");
-
-		if (SetUtil.isEmpty(resourcePaths)) {
-			return ddmStructuresIdsStringUtilReplaceValues;
-		}
-
-		for (String resourcePath : resourcePaths) {
-
-			String xml = StringUtil.read(_classLoader, resourcePath);
-
-			xml = StringUtil.replace(xml, "[$LOCALE_DEFAULT$]", String.valueOf(
-				_portal.getSiteDefaultLocale(serviceContext.getScopeGroupId())));
-
-			com.liferay.portal.kernel.xml.Document document = UnsecureSAXReaderUtil.read(xml);
-
-			Element rootElement = document.getRootElement();
-
-			List<Element> structureElements = rootElement.elements("structure");
-
-			for (Element structureElement : structureElements) {
-				String ddmStructureKey = structureElement.elementText("name");
-
-				DDMStructure ddmStructure =
-					_ddmStructureLocalService.fetchStructure(
-						serviceContext.getScopeGroupId(),
-						_portal.getClassNameId(
-							JournalArticle.class),
-						ddmStructureKey);
-
-			if (ddmStructure == null) {
-				_defaultDDMStructureHelper.addDDMStructures(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(),
-					_portal.getClassNameId(JournalArticle.class), _classLoader,
-					resourcePath, serviceContext);
-			}
-			else {
-				_ddmStructureLocalService.updateStructure(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(),
-					ddmStructure.getParentStructureId(), _portal.getClassNameId(
-						JournalArticle.class), ddmStructure.getStructureKey(),
-					ddmStructure.getNameMap(), ddmStructure.getDescriptionMap(),
-					ddmStructure.getDDMForm(),
-					ddmStructure.getDDMFormLayout(),
-					serviceContext);
-				}
-			}
-		}
-		List<DDMStructure> ddmStructures =
-			_ddmStructureLocalService.getStructures(
-				serviceContext.getScopeGroupId());
-
-		for (DDMStructure ddmStructure : ddmStructures) {
-			ddmStructuresIdsStringUtilReplaceValues.put(
-				"DDM_STRUCTURE_ID:" + ddmStructure.getStructureKey(),
-				String.valueOf(ddmStructure.getStructureId()));
-		}
-		return ddmStructuresIdsStringUtilReplaceValues;
 	}
 
 	private void _addExpandoColumns(ServiceContext serviceContext)
@@ -1479,6 +1408,80 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		return clientExtensionEntryIdsStringUtilReplaceValues;
+	}
+
+	private Map<String, String> _addOrUpdateDDMStructures(
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Map<String, String> ddmStructuresIdsStringUtilReplaceValues =
+			new HashMap<>();
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/ddm-structures");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return ddmStructuresIdsStringUtilReplaceValues;
+		}
+
+		for (String resourcePath : resourcePaths) {
+			String xml = StringUtil.read(_classLoader, resourcePath);
+
+			xml = StringUtil.replace(
+				xml, "[$LOCALE_DEFAULT$]",
+				String.valueOf(
+					_portal.getSiteDefaultLocale(
+						serviceContext.getScopeGroupId())));
+
+			com.liferay.portal.kernel.xml.Document document =
+				UnsecureSAXReaderUtil.read(xml);
+
+			Element rootElement = document.getRootElement();
+
+			List<Element> structureElements = rootElement.elements("structure");
+
+			for (Element structureElement : structureElements) {
+				String ddmStructureKey = structureElement.elementText("name");
+
+				DDMStructure ddmStructure =
+					_ddmStructureLocalService.fetchStructure(
+						serviceContext.getScopeGroupId(),
+						_portal.getClassNameId(JournalArticle.class),
+						ddmStructureKey);
+
+				if (ddmStructure == null) {
+					_defaultDDMStructureHelper.addDDMStructures(
+						serviceContext.getUserId(),
+						serviceContext.getScopeGroupId(),
+						_portal.getClassNameId(JournalArticle.class),
+						_classLoader, resourcePath, serviceContext);
+				}
+				else {
+					_ddmStructureLocalService.updateStructure(
+						serviceContext.getUserId(),
+						serviceContext.getScopeGroupId(),
+						ddmStructure.getParentStructureId(),
+						_portal.getClassNameId(JournalArticle.class),
+						ddmStructure.getStructureKey(),
+						ddmStructure.getNameMap(),
+						ddmStructure.getDescriptionMap(),
+						ddmStructure.getDDMForm(),
+						ddmStructure.getDDMFormLayout(), serviceContext);
+				}
+			}
+		}
+
+		List<DDMStructure> ddmStructures =
+			_ddmStructureLocalService.getStructures(
+				serviceContext.getScopeGroupId());
+
+		for (DDMStructure ddmStructure : ddmStructures) {
+			ddmStructuresIdsStringUtilReplaceValues.put(
+				"DDM_STRUCTURE_ID:" + ddmStructure.getStructureKey(),
+				String.valueOf(ddmStructure.getStructureId()));
+		}
+
+		return ddmStructuresIdsStringUtilReplaceValues;
 	}
 
 	private void _addOrUpdateDDMTemplates(
