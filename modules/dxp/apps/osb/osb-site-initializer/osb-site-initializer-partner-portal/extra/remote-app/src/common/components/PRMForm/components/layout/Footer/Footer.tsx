@@ -11,10 +11,13 @@
 
 interface IProps {
 	children?: React.ReactNode;
+	className?: string;
 }
 
-const Footer = ({children}: IProps) => (
-	<div className="border-neutral-2 border-top d-flex mt-4 pt-4">
+const Footer = ({children, className}: IProps) => (
+	<div
+		className={`"border-neutral-2 border-top d-flex mt-4 pt-4 " ${className}`}
+	>
 		{children}
 	</div>
 );
