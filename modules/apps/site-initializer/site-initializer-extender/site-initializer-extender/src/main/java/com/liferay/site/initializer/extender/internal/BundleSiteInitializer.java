@@ -1440,33 +1440,29 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			Element structureElement = rootElement.element("structure");
 
-				DDMStructure ddmStructure =
-					_ddmStructureLocalService.fetchStructure(
-						serviceContext.getScopeGroupId(),
-						_portal.getClassNameId(JournalArticle.class),
-						structureElement.elementText("name"));
+			DDMStructure ddmStructure =
+				_ddmStructureLocalService.fetchStructure(
+					serviceContext.getScopeGroupId(),
+					_portal.getClassNameId(JournalArticle.class),
+					structureElement.elementText("name"));
 
-				if (ddmStructure == null) {
-					_defaultDDMStructureHelper.addDDMStructures(
-						serviceContext.getUserId(),
-						serviceContext.getScopeGroupId(),
-						_portal.getClassNameId(JournalArticle.class),
-						_classLoader,
-						resourcePath,
-						serviceContext);
-				}
-				else {
-					_ddmStructureLocalService.updateStructure(
-						serviceContext.getUserId(),
-						serviceContext.getScopeGroupId(),
-						ddmStructure.getParentStructureId(),
-						_portal.getClassNameId(JournalArticle.class),
-						ddmStructure.getStructureKey(),
-						ddmStructure.getNameMap(),
-						ddmStructure.getDescriptionMap(),
-						ddmStructure.getDDMForm(),
-						ddmStructure.getDDMFormLayout(), serviceContext);
-				}
+			if (ddmStructure == null) {
+				_defaultDDMStructureHelper.addDDMStructures(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					_portal.getClassNameId(JournalArticle.class), _classLoader,
+					resourcePath, serviceContext);
+			}
+			else {
+				_ddmStructureLocalService.updateStructure(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					ddmStructure.getParentStructureId(),
+					_portal.getClassNameId(JournalArticle.class),
+					ddmStructure.getStructureKey(), ddmStructure.getNameMap(),
+					ddmStructure.getDescriptionMap(), ddmStructure.getDDMForm(),
+					ddmStructure.getDDMFormLayout(), serviceContext);
+			}
 		}
 
 		List<DDMStructure> ddmStructures =
