@@ -1427,12 +1427,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (String resourcePath : resourcePaths) {
 			String xml = StringUtil.read(_classLoader, resourcePath);
 
-			xml = StringUtil.replace(
-				xml, "[$LOCALE_DEFAULT$]",
-				String.valueOf(
-					_portal.getSiteDefaultLocale(
-						serviceContext.getScopeGroupId())));
-
 			com.liferay.portal.kernel.xml.Document document =
 				UnsecureSAXReaderUtil.read(xml);
 
