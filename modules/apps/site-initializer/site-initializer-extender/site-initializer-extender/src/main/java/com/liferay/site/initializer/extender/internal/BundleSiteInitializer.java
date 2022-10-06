@@ -1438,23 +1438,22 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			Element rootElement = document.getRootElement();
 
-			List<Element> structureElements = rootElement.elements("structure");
-
-			for (Element structureElement : structureElements) {
-				String ddmStructureKey = structureElement.elementText("name");
+			Element structureElement = rootElement.element("structure");
 
 				DDMStructure ddmStructure =
 					_ddmStructureLocalService.fetchStructure(
 						serviceContext.getScopeGroupId(),
 						_portal.getClassNameId(JournalArticle.class),
-						ddmStructureKey);
+						structureElement.elementText("name"));
 
 				if (ddmStructure == null) {
 					_defaultDDMStructureHelper.addDDMStructures(
 						serviceContext.getUserId(),
 						serviceContext.getScopeGroupId(),
 						_portal.getClassNameId(JournalArticle.class),
-						_classLoader, resourcePath, serviceContext);
+						_classLoader,
+						resourcePath,
+						serviceContext);
 				}
 				else {
 					_ddmStructureLocalService.updateStructure(
@@ -1468,7 +1467,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 						ddmStructure.getDDMForm(),
 						ddmStructure.getDDMFormLayout(), serviceContext);
 				}
-			}
 		}
 
 		List<DDMStructure> ddmStructures =
