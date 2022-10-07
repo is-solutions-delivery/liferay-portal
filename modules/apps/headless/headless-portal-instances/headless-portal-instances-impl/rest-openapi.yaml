@@ -272,4 +272,4 @@ paths:
                     description:
                         default response
             # @review
-            tags: [ "SiteInstance" ]
+            tags: ["SiteInstance"]
