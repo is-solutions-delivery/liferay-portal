@@ -1448,14 +1448,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 					resourcePath, serviceContext);
 			}
 			else {
-				_ddmStructureLocalService.updateStructure(
+				_defaultDDMStructureHelper.updateStructure(
 					serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(),
-					ddmStructure.getParentStructureId(),
-					_portal.getClassNameId(JournalArticle.class),
-					ddmStructure.getStructureKey(), ddmStructure.getNameMap(),
-					ddmStructure.getDescriptionMap(), ddmStructure.getDDMForm(),
-					ddmStructure.getDDMFormLayout(), serviceContext);
+					_portal.getClassNameId(JournalArticle.class)
+					,_classLoader, resourcePath,
+					structureElement.elementText("name"),
+					serviceContext);
 			}
 		}
 
