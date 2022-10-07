@@ -11,7 +11,7 @@
  */
 
 const currentPath = Liferay.currentURL.split('/');
-const mdfRequestedId = +currentPath[currentPath.length - 1];
+const mdfRequestId = +currentPath.at(-1);
 const SITE_URL = Liferay.ThemeDisplay.getLayoutRelativeURL()
 	.split('/')
 	.slice(0, 3)
@@ -21,6 +21,6 @@ const claimButton = fragmentElement.querySelector('.newClaim');
 
 claimButton.onclick = () => {
 	Liferay.Util.navigate(
-		`${SITE_URL}/marketing/mdf-claim/new/#/mdfrequest/${mdfRequestedId}`
+		`${SITE_URL}/marketing/mdf-claim/new/#/mdfrequest/${mdfRequestId}`
 	);
 };
