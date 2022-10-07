@@ -1425,36 +1425,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		for (String resourcePath : resourcePaths) {
-			String xml = StringUtil.read(_classLoader, resourcePath);
 
-			com.liferay.portal.kernel.xml.Document document =
-				UnsecureSAXReaderUtil.read(xml);
-
-			Element rootElement = document.getRootElement();
-
-			Element structureElement = rootElement.element("structure");
-
-			DDMStructure ddmStructure =
-				_ddmStructureLocalService.fetchStructure(
-					serviceContext.getScopeGroupId(),
-					_portal.getClassNameId(JournalArticle.class),
-					structureElement.elementText("name"));
-
-			if (ddmStructure == null) {
-				_defaultDDMStructureHelper.addDDMStructures(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(),
-					_portal.getClassNameId(JournalArticle.class), _classLoader,
-					resourcePath, serviceContext);
-			}
-			else {
-				_defaultDDMStructureHelper.updateStructure(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(),
-					_portal.getClassNameId(JournalArticle.class), _classLoader,
-					resourcePath, structureElement.elementText("name"),
-					serviceContext);
-			}
+			_defaultDDMStructureHelper.addOrUpdateDDMStructures(
+				serviceContext.getUserId(),
+				serviceContext.getScopeGroupId(),
+				_portal.getClassNameId(JournalArticle.class),
+				_classLoader,
+				resourcePath, serviceContext);
 		}
 
 		List<DDMStructure> ddmStructures =
