@@ -1451,9 +1451,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_defaultDDMStructureHelper.updateStructure(
 					serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(),
-					_portal.getClassNameId(JournalArticle.class)
-					,_classLoader, resourcePath,
-					structureElement.elementText("name"),
+					_portal.getClassNameId(JournalArticle.class), _classLoader,
+					resourcePath, structureElement.elementText("name"),
 					serviceContext);
 			}
 		}

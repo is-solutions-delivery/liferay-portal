@@ -35,10 +35,7 @@ import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.search.Indexable;
-import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
@@ -191,6 +188,52 @@ public class DefaultDDMStructureHelperImpl
 
 		return null;
 	}
+
+	@Override
+	public DDMStructure updateStructure(
+			long userId, long groupId, long classNameId,
+			ClassLoader classLoader, String fileName, String structureKey,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Locale locale = _portal.getSiteDefaultLocale(groupId);
+		DDMStructure ddmStructure = null;
+
+		List<Element> structureElements = _getDDMStructures(
+			classLoader, fileName, locale);
+
+		for (Element structureElement : structureElements) {
+			String description = structureElement.elementText("description");
+
+			Map<Locale, String> nameMap = new HashMap<>();
+			Map<Locale, String> descriptionMap = new HashMap<>();
+
+			for (Locale curLocale : _language.getAvailableLocales(groupId)) {
+				ResourceBundle resourceBundle =
+					ResourceBundleUtil.getModuleAndPortalResourceBundle(
+						curLocale, getClass());
+
+				nameMap.put(
+					curLocale, _language.get(resourceBundle, structureKey));
+				descriptionMap.put(
+					curLocale, _language.get(resourceBundle, description));
+			}
+
+			DDMForm ddmForm = getDDMForm(groupId, locale, structureElement);
+
+			DDMFormLayout ddmFormLayout = _getDDMFormLayout(
+				structureElement, ddmForm);
+
+			ddmStructure = _ddmStructureLocalService.updateStructure(
+				userId, groupId,
+				DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID, classNameId,
+				structureKey, nameMap, descriptionMap, ddmForm, ddmFormLayout,
+				serviceContext);
+		}
+
+		return ddmStructure;
+	}
+
 	protected DDMForm deserialize(
 		String content, DDMFormDeserializer ddmFormDeserializer) {
 
@@ -329,52 +372,6 @@ public class DefaultDDMStructureHelperImpl
 		}
 
 		return localizedValue;
-	}
-	@Override
-	public DDMStructure updateStructure(
-		long userId, long groupId, long classNameId,
-		 ClassLoader classLoader, String fileName, String structureKey,
-		ServiceContext serviceContext)
-		throws Exception {
-
-		Locale locale = _portal.getSiteDefaultLocale(groupId);
-		DDMStructure ddmStructure = null;
-
-		List<Element> structureElements = _getDDMStructures(
-			classLoader, fileName, locale);
-
-		for (Element structureElement : structureElements) {
-
-			String description = structureElement.elementText("description");
-
-			Map<Locale, String> nameMap = new HashMap<>();
-			Map<Locale, String> descriptionMap = new HashMap<>();
-
-			for (Locale curLocale : _language.getAvailableLocales(groupId)) {
-				ResourceBundle resourceBundle =
-					ResourceBundleUtil.getModuleAndPortalResourceBundle(
-						curLocale, getClass());
-
-				nameMap.put(curLocale, _language.get(resourceBundle, structureKey));
-				descriptionMap.put(
-					curLocale, _language.get(resourceBundle, description));
-			}
-
-			DDMForm ddmForm = getDDMForm(groupId, locale, structureElement);
-
-			DDMFormLayout ddmFormLayout = _getDDMFormLayout(
-				structureElement, ddmForm);
-
-			ddmStructure =
-				_ddmStructureLocalService.updateStructure(
-					userId, groupId,
-					DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
-					classNameId,
-					structureKey, nameMap, descriptionMap, ddmForm,
-					ddmFormLayout,
-					serviceContext);
-			}
-		return ddmStructure;
 	}
 
 	@Reference
