@@ -87,7 +87,7 @@
 </tr>
 <tr>
 	<td>PROJECT_LOGO</td>
-	<td>//div[contains(@class, 'card-subscription')]//img[contains(@src, '${logo}')]</td>
+<td>//div[contains(@class, 'cp-account-subscription')]/div/img[contains(@src, '${logo}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -102,12 +102,12 @@
 </tr>
 <tr>
 	<td>CARD_DATE</td>
-	<td>//div[contains(@class, 'card-subscription')]//p[(text()='${date}')]//..//span[(text()='${status}')]</td>
+	<td>//div[contains(@class, 'm-0 p-3 rounded-lg border')]//p[contains(@class, 'card-text')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>CARD_INSTANCE</td>
-	<td>xpath=(//div[contains(@class, 'card-subscription')]//..//p[contains(text(), '${title}')])[${key_index}]</td>
+	<td>xpath=(//div[contains(@class, 'cp-account-subscription')]//..//..//p[contains(text(), '${title}')])[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -122,17 +122,17 @@
 </tr>
 <tr>
 	<td>SUBSCRIPTION_NAVBAR</td>
-	<td>//div[@id='subscription-navbar']/button[@value='${value}']</td>
+	<td>//div//ul[contains(@class, 'nav-segment')]//*[contains(text(), '${value}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SUBSCRIPTION_DROPDOWN</td>
-	<td>//*[contains(text(), '${key_dropdownLabel}')]/following-sibling::*[@class='dropdown']</td>
+	<td>//*[@type='button' and @data-testid='subscriptionDropDown']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SUBSCRIPTION_DROPDOWN_ITEM</td>
-	<td>//*[@class='dropdown-item' and text()='${key_text}']</td>
+	<td>//*[@role='menuitem' and text()='LXC - SM']</td>
 	<td></td>
 </tr>
 <tr>
@@ -222,12 +222,12 @@
 </tr>
 <tr>
 	<td>SLA_CARD</td>
-	<td>//div[contains(text(), '${type}')]</td>
+	<td>//div[contains(@class, 'cp')]//*[contains(text(), '${type}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>FRAGMENT_HEADING</td>
-	<td>//div[contains(@id, 'welcome-user') and contains(.,'${key_title}')]</td>
+	<td>//div[contains(@class, 'customer-portal-welcome-banner') and contains(.,'${key_title}')]</td>
 	<td></td>
 </tr>
 <tr>
