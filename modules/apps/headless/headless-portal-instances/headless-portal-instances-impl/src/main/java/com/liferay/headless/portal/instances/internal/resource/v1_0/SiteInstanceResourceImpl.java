@@ -14,9 +14,14 @@
 
 package com.liferay.headless.portal.instances.internal.resource.v1_0;
 
+import com.liferay.headless.portal.instances.dto.v1_0.SiteInstance;
 import com.liferay.headless.portal.instances.resource.v1_0.SiteInstanceResource;
 
+import com.liferay.site.exception.InitializationException;
+import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.SiteInitializerRegistry;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 /**
@@ -27,4 +32,23 @@ import org.osgi.service.component.annotations.ServiceScope;
 	scope = ServiceScope.PROTOTYPE, service = SiteInstanceResource.class
 )
 public class SiteInstanceResourceImpl extends BaseSiteInstanceResourceImpl {
+
+	@Override
+	public SiteInstance postSiteInstance(SiteInstance siteInstance){
+
+		SiteInitializer siteInitializer =
+			_siteInitializerRegistry.getSiteInitializer(siteInstance.getSiteInitializerKey());
+
+		try {
+			siteInitializer.initialize(siteInstance.getGroupId());
+		}
+		catch (InitializationException e) {
+			throw new RuntimeException(e);
+		}
+		return siteInstance;
+	}
+
+	@Reference
+	private SiteInitializerRegistry _siteInitializerRegistry;
+
 }
