@@ -11,7 +11,7 @@
  */
 
 const currentPath = Liferay.currentURL.split('/');
-const mdfClaimId = +currentPath[currentPath.length - 1];
+const mdfClaimId = +currentPath.at(-1);
 
 const getMDFClaimStatus = async () => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch

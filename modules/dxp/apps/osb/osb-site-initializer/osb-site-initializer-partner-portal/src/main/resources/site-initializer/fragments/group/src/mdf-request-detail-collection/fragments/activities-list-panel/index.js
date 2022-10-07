@@ -15,7 +15,7 @@ import ClayTable from '@clayui/table';
 import React, {useEffect, useState} from 'react';
 
 const currentPath = Liferay.currentURL.split('/');
-const mdfRequestId = +currentPath[currentPath.length - 1];
+const mdfRequestId = +currentPath.at(-1);
 
 const getIntlNumberFormat = () =>
 	new Intl.NumberFormat(Liferay.ThemeDisplay.getBCP47LanguageId(), {

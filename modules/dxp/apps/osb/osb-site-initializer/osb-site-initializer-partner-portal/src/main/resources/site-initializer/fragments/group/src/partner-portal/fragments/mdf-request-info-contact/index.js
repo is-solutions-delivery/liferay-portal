@@ -11,7 +11,7 @@
 /* eslint-disable no-undef */
 
 const currentPath = Liferay.currentURL.split('/');
-const mdfRequestId = +currentPath[currentPath.length - 1];
+const mdfRequestId = +currentPath.at(-1);
 
 const getContactInfo = async () => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch

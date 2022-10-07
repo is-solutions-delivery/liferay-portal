@@ -11,7 +11,7 @@
  */
 
 const currentPath = Liferay.currentURL.split('/');
-const mdfRequestId = +currentPath[currentPath.length - 1];
+const mdfRequestId = +currentPath.at(-1);
 
 const updateMDFDetailsSummary = async () => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch
