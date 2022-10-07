@@ -100,6 +100,8 @@ public class OpenAPIResourceImpl {
 		{
 			add(PortalInstanceResourceImpl.class);
 
+			add(SiteInstanceResourceImpl.class);
+
 			add(OpenAPIResourceImpl.class);
 		}
 	};
