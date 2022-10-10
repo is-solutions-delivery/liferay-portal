@@ -87,7 +87,7 @@
 </tr>
 <tr>
 	<td>PROJECT_LOGO</td>
-<td>//div[contains(@class, 'cp-account-subscription')]/div/img[contains(@src, '${logo}')]</td>
+	<td>//div[contains(@class, 'cp-account-subscription')]/div/img[contains(@src, '${logo}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -132,7 +132,7 @@
 </tr>
 <tr>
 	<td>SUBSCRIPTION_DROPDOWN_ITEM</td>
-	<td>//*[@role='menuitem' and text()='LXC - SM']</td>
+	<td>//*[contains(@class,'show')]//*[contains(@class,'dropdown-item') and text()='${key_text}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -227,7 +227,7 @@
 </tr>
 <tr>
 	<td>FRAGMENT_HEADING</td>
-	<td>//div[contains(@class, 'customer-portal-welcome-banner') and contains(.,'${key_title}')]</td>
+	<td>//*[contains(@class, 'customer-portal-welcome-banner') and contains(.,'${key_title}')]</td>
 	<td></td>
 </tr>
 <tr>
