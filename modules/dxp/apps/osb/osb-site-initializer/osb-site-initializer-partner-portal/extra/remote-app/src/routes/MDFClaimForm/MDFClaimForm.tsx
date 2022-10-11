@@ -17,6 +17,10 @@ import MDFRequestActivityDTO from '../../common/interfaces/dto/mdfRequestActivit
 import MDFClaim from '../../common/interfaces/mdfClaim';
 import useGetMDFRequestById from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestById';
 import MDFClaimPage from './components/MDFClaimPage';
+import submitForm from './utils/submitForm';
+import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
+import {Liferay} from '../../common/services/liferay';
+import {PRMPageRoute} from '../../common/enums/prmPageRoute';
 
 const getInitialFormValues = (
 	totalrequestedAmount?: number,
@@ -24,6 +28,7 @@ const getInitialFormValues = (
 ): MDFClaim => ({
 	activities: activitiesDTO?.map((activity) => ({
 		budgets: activity.activityToBudgets?.map((budget) => ({
+			id: budget.id,
 			claimAmount: budget.cost,
 			expenseName: budget.expense.name,
 		})),
@@ -35,10 +40,16 @@ const getInitialFormValues = (
 	})),
 	totalClaimAmount: 0,
 	totalrequestedAmount,
+	r_mdfRequestToMdfClaims_c_mdfRequestId: 45281,
 });
 
 const MDFClaimForm = () => {
-	const {data: mdfRequest, isValidating} = useGetMDFRequestById(46006);
+	const siteURL = useLiferayNavigate();
+
+	const onCancel = () =>
+		Liferay.Util.navigate(`${siteURL}/${PRMPageRoute.MDF_CLAIM_LISTING}`);
+
+	const {data: mdfRequest, isValidating} = useGetMDFRequestById(45281);
 
 	if (!mdfRequest || isValidating) {
 		return <ClayLoadingIndicator />;
@@ -51,14 +62,14 @@ const MDFClaimForm = () => {
 				mdfRequest.mdfRequestToActivities
 			)}
 			onSubmit={(values, formikHelpers) =>
-				console.log(values, formikHelpers)
+				submitForm(values, formikHelpers, siteURL)
 			}
 		>
 			<MDFClaimPage
 				mdfRequest={mdfRequest}
-				onCancel={() => console.log('canceled')}
+				onCancel={onCancel}
 				onSaveAsDraft={(values, formikHelpers) =>
-					console.log(values, formikHelpers)
+					submitForm(values, formikHelpers, siteURL)
 				}
 			/>
 		</PRMFormik>
