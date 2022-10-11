@@ -9,13 +9,16 @@
  * distribution rights of the Software.
  */
 
-import LiferayObject from './liferayObject';
-import MDFClaimActivity from './mdfClaimActivity';
+import MDFClaimActivity from '../mdfClaimActivity';
 
-export default interface MDFClaim extends Partial<LiferayObject> {
-	activities?: MDFClaimActivity[];
-	reimbursementInvoice?: File;
-	totalClaimAmount?: number;
-	totalrequestedAmount?: number;
-	r_mdfRequestToMdfClaims_c_mdfRequestId: number;
+export default interface MDFClaimActivityDTO
+	extends Omit<
+		MDFClaimActivity,
+		'metrics' | 'name' | 'selected' | 'totalCost'
+	> {
+	totalCost?: number;
+	name?: string;
+	metrics?: string;
+	r_mdfClaimToMdfClaimActivities_c_mdfClaimId?: number;
+	r_activityToMDFClaimActivities_c_activityId?: number;
 }
