@@ -9,13 +9,9 @@
  * distribution rights of the Software.
  */
 
-import LiferayObject from './liferayObject';
-import MDFClaimActivity from './mdfClaimActivity';
-
-export default interface MDFClaim extends Partial<LiferayObject> {
-	activities?: MDFClaimActivity[];
-	reimbursementInvoice?: File;
-	totalClaimAmount?: number;
-	totalrequestedAmount?: number;
-	r_mdfRequestToMdfClaims_c_mdfRequestId: number;
+export enum MDFClaimTypeFile {
+	REIMBURSEMENT_INVOICE = 'Reimbursement Invoice',
+	LIST_OF_QUALIFIED_LEADS = 'List of Qualified Leads',
+	ALL_CONTENTS = 'All Contents',
+	THIRD_PARTY_INVOICES = 'Third Party Invoices',
 }

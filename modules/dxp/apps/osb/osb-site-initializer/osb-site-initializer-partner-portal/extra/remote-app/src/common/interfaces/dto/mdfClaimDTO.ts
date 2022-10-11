@@ -9,13 +9,9 @@
  * distribution rights of the Software.
  */
 
-import LiferayObject from './liferayObject';
-import MDFClaimActivity from './mdfClaimActivity';
+import MDFClaim from '../mdfClaim';
 
-export default interface MDFClaim extends Partial<LiferayObject> {
-	activities?: MDFClaimActivity[];
-	reimbursementInvoice?: File;
-	totalClaimAmount?: number;
-	totalrequestedAmount?: number;
-	r_mdfRequestToMdfClaims_c_mdfRequestId: number;
+export default interface MDFClaimDTO extends MDFClaim {
+	amountClaimed?: number;
+	mdfRequestedAmount?: number;
 }
