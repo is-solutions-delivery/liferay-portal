@@ -13,14 +13,14 @@
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 
 import PRMFormik from '../../common/components/PRMFormik';
+import {PRMPageRoute} from '../../common/enums/prmPageRoute';
+import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import MDFRequestActivityDTO from '../../common/interfaces/dto/mdfRequestActivityDTO';
 import MDFClaim from '../../common/interfaces/mdfClaim';
+import {Liferay} from '../../common/services/liferay';
 import useGetMDFRequestById from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestById';
 import MDFClaimPage from './components/MDFClaimPage';
 import submitForm from './utils/submitForm';
-import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
-import {Liferay} from '../../common/services/liferay';
-import {PRMPageRoute} from '../../common/enums/prmPageRoute';
 
 const getInitialFormValues = (
 	totalrequestedAmount?: number,
