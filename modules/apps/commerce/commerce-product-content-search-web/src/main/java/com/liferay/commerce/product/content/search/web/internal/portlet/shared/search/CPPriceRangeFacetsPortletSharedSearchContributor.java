@@ -47,7 +47,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Shuyang Zhou
  */
 @Component(
-	enabled = false,
 	property = "javax.portlet.name=" + CPPortletKeys.CP_PRICE_RANGE_FACETS,
 	service = PortletSharedSearchContributor.class
 )
