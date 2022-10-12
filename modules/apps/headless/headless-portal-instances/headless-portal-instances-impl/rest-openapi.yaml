@@ -55,6 +55,16 @@ components:
                 virtualHost:
                     type: string
             type: object
+        SiteInstance:
+            properties:
+                groupId:
+                    description:
+                        Site's group
+                    format: int64
+                    type: integer
+                siteInitializerKey:
+                    type: string
+                    writeOnly: true
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
@@ -237,3 +247,29 @@ paths:
                     description:
                         default response
             tags: ["PortalInstance"]
+    /site-instances:
+        post:
+            description:
+                Adds a new site instance
+            operationId: postSiteInstance
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/SiteInstance"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/SiteInstance"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SiteInstance"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/SiteInstance"
+                    description:
+                        default response
+            # @review
+            tags: ["SiteInstance"]
