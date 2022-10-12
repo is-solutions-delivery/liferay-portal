@@ -621,6 +621,9 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		}
 
 		layoutPageTemplateEntry.setModifiedDate(new Date());
+		layoutPageTemplateEntry.setLayoutPageTemplateEntryKey(
+			_generateLayoutPageTemplateEntryKey(
+				layoutPageTemplateEntry.getGroupId(), name));
 		layoutPageTemplateEntry.setName(name);
 		layoutPageTemplateEntry.setStatus(status);
 		layoutPageTemplateEntry.setStatusByUserId(userId);
@@ -649,6 +652,9 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 			layoutPageTemplateEntry.getType());
 
 		layoutPageTemplateEntry.setModifiedDate(new Date());
+		layoutPageTemplateEntry.setLayoutPageTemplateEntryKey(
+			_generateLayoutPageTemplateEntryKey(
+				layoutPageTemplateEntry.getGroupId(), name));
 		layoutPageTemplateEntry.setName(name);
 
 		layoutPageTemplateEntry =
