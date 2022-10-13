@@ -414,6 +414,10 @@ public class OrganizationResourceImpl
 		long countryId = _getCountryId(organization);
 		Group group = serviceBuilderOrganization.getGroup();
 
+		ServiceContext serviceContext = _createServiceContext(organization);
+
+		serviceContext.setUserId(contextUser.getUserId());
+
 		return _organizationResourceDTOConverter.toDTO(
 			_getDTOConverterContext(organizationId),
 			_organizationService.updateOrganization(
@@ -425,8 +429,7 @@ public class OrganizationResourceImpl
 				organization.getComment(), false, null, group.isSite(),
 				_getAddresses(organization), _getEmailAddresses(organization),
 				_getOrgLabors(organization), _getPhones(organization),
-				_getWebsites(organization),
-				_createServiceContext(organization)));
+				_getWebsites(organization), serviceContext));
 	}
 
 	@Override
