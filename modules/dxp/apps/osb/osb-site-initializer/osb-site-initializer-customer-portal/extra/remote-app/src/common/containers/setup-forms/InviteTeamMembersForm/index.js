@@ -56,6 +56,11 @@ const InviteTeamMembersPage = ({
 	);
 
 	const [
+		isAdministratorOrRequestrorSelectedUser,
+		setIsAdministratorOrRequestrorSelected,
+	] = useState(false);
+
+	const [
 		associateUserAccount,
 		{error: associateUserAccountError},
 	] = useMutation(associateUserAccountWithAccountAndAccountRole);
@@ -154,15 +159,27 @@ const InviteTeamMembersPage = ({
 		if (filledEmails) {
 			const sucessfullyEmails = totalEmails - failedEmails;
 
-			setInitialError(false);
-			setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
-			setshowEmptyEmailError(false);
-		}
-		else if (touched['invites']?.some((field) => field?.email)) {
+			if (
+				availableAdministratorAssets < 1 &&
+				isAdministratorOrRequestrorSelectedUser
+			) {
+				setBaseButtonDisabled(true);
+			} else {
+				setInitialError(false);
+				setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
+				setshowEmptyEmailError(false);
+			}
+		} else if (touched['invites']?.some((field) => field?.email)) {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 		}
-	}, [touched, values, errors]);
+	}, [
+		touched,
+		values,
+		availableAdministratorAssets,
+		isAdministratorOrRequestrorSelectedUser,
+		errors,
+	]);
 
 	const handleSubmit = async () => {
 		const filledEmails = values?.invites?.filter(({email}) => email) || [];
@@ -216,8 +233,7 @@ const InviteTeamMembersPage = ({
 				}
 				handlePage();
 			}
-		}
-		else {
+		} else {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 			setTouched({
@@ -296,6 +312,9 @@ const InviteTeamMembersPage = ({
 										disableError={hasInitialError}
 										id={index}
 										invite={invite}
+										isAdministratorOrRequestrorSelectedUser={
+											isAdministratorOrRequestrorSelectedUser
+										}
 										key={index}
 										options={accountRolesOptions}
 										placeholderEmail={`username@${
@@ -309,6 +328,9 @@ const InviteTeamMembersPage = ({
 													({id}) => id === +roleId
 												)
 											)
+										}
+										setIsAdministratorOrRequestrorSelectedUser={
+											setIsAdministratorOrRequestrorSelected
 										}
 									/>
 								))}

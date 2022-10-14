@@ -27,6 +27,7 @@ const TeamMemberInputs = ({
 	options,
 	placeholderEmail,
 	selectOnChange,
+	setIsAdministratorOrRequestrorSelectedUser,
 }) => {
 	const bannedDomains = useBannedDomains(
 		invite?.email,
@@ -36,6 +37,10 @@ const TeamMemberInputs = ({
 	const isAdministratorOrRequestorRoleSelected =
 		invite?.role?.name === ROLE_TYPES.requester.name ||
 		invite?.role?.name === ROLE_TYPES.admin.name;
+
+	setIsAdministratorOrRequestrorSelectedUser(
+		isAdministratorOrRequestorRoleSelected
+	);
 
 	const optionsFormated = useMemo(
 		() =>
