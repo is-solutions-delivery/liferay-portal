@@ -155,7 +155,7 @@ const defaultEntities: Entity[] = [
 			`/caseresults?filter=${searchUtil.eq(
 				'buildId',
 				buildId
-			)}&nestedFields=case,r_runToCaseResult_c_runId&pageSize=1000`,
+			)}&nestedFields=&pageSize=1000`,
 		name: i18n.translate('case-result'),
 		transformer: (response: APIResponse<TestrayCaseResult>) => {
 			const transformedResponse = testrayCaseResultRest.transformDataFromList(
