@@ -42,6 +42,34 @@ definition {
 		}
 	}
 
+	@description = "Automation ID: LPS-150533 | Test Summary: Verify if for projects with DXP version 7.4 the card title is Latest Updates".
+	@priority = "4"
+	test CanViewCardLatestUpdates {
+		task ("Go to CP2.0 and join a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
+		}
+
+		task ("Assert that the desired card appears in the panel") {
+			CustomerPortal.assertQuickLinksPanelInfo(title = "Latest Updates");
+		}
+	}
+
+	@description = "Automation ID: LPS-150533 | Test Summary: Verify if the Submit a Ticket card is visible to the user."
+	@priority = "3"
+	test CanViewSubmitATicketCard {
+		task ("Go to CP2.0 and join a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
+		}
+
+		task ("Assert that the desired card appears in the panel") {
+			CustomerPortal.assertQuickLinksPanelInfo(title = "Submit a Ticket");
+		}
+	}
+
 	@description = "Automation ID: LPS-144906 | Test Summary: Verify if when Hide button is clicked by user, the Quick Links panel collapses"
 	@priority = "3"
 	test HideButtonClickedPanelCollapses {
@@ -426,31 +454,4 @@ definition {
 		}
 	}
 
-	@description = "Automation ID: LPS-150533 | Test Summary: Verify if the Submit a Ticket card is visible to the user."
-	@priority = "3"
-	test CanViewSubmitATicketCard {
-		
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
-			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
-		}
-		task ("Assert that the desired card appears in the panel") {
-			CustomerPortal.assertQuickLinksPanelInfo(title = "Submit a Ticket");
-		}
-	}
-
-	@description = "Automation ID: LPS-150533 | Test Summary: Verify if for projects with DXP version 7.4 the card title is Latest Updates".
-	@priority = "4"
-	test CanViewCardLatestUpdates {
-		
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
-			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
-		}
-		task ("Assert that the desired card appears in the panel") {
-			CustomerPortal.assertQuickLinksPanelInfo(title = "Latest Updates");
-		}
-	}
 }
