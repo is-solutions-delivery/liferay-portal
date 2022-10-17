@@ -102,14 +102,6 @@ paths:
                   schema:
                       format: int64
                       type: integer
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            type: string
-                    application/xml:
-                        schema:
-                            type: string
             responses:
                 200:
                     content:
