@@ -57,11 +57,13 @@ public interface DispatchTriggerResource {
 		return FactoryHolder.factory.create();
 	}
 
-	public DispatchTrigger postCreateDispatchTaskExecutorType(
-			String dispatchTaskExecutorType, String string)
+	public Page<DispatchTrigger> getDispatchTriggersPage() throws Exception;
+
+	public DispatchTrigger postDispatchTrigger(DispatchTrigger dispatchTrigger)
 		throws Exception;
 
-	public Page<DispatchTrigger> getDispatchTriggersPage() throws Exception;
+	public Response postDispatchTriggerBatch(String callbackURL, Object object)
+		throws Exception;
 
 	public Response postExecuteDispatchTrigger(Long dispatchTriggerId)
 		throws Exception;

@@ -184,6 +184,7 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 		dispatchTrigger.setCronExpression(regex);
 		dispatchTrigger.setDispatchTaskExecutorType(regex);
 		dispatchTrigger.setDispatchTaskSettings(regex);
+		dispatchTrigger.setExternalReferenceCode(regex);
 		dispatchTrigger.setName(regex);
 		dispatchTrigger.setTimeZoneId(regex);
 
@@ -197,29 +198,9 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 		Assert.assertEquals(
 			regex, dispatchTrigger.getDispatchTaskExecutorType());
 		Assert.assertEquals(regex, dispatchTrigger.getDispatchTaskSettings());
+		Assert.assertEquals(regex, dispatchTrigger.getExternalReferenceCode());
 		Assert.assertEquals(regex, dispatchTrigger.getName());
 		Assert.assertEquals(regex, dispatchTrigger.getTimeZoneId());
-	}
-
-	@Test
-	public void testPostCreateDispatchTaskExecutorType() throws Exception {
-		DispatchTrigger randomDispatchTrigger = randomDispatchTrigger();
-
-		DispatchTrigger postDispatchTrigger =
-			testPostCreateDispatchTaskExecutorType_addDispatchTrigger(
-				randomDispatchTrigger);
-
-		assertEquals(randomDispatchTrigger, postDispatchTrigger);
-		assertValid(postDispatchTrigger);
-	}
-
-	protected DispatchTrigger
-			testPostCreateDispatchTaskExecutorType_addDispatchTrigger(
-				DispatchTrigger dispatchTrigger)
-		throws Exception {
-
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
 	}
 
 	@Test
@@ -302,6 +283,25 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 		throws Exception {
 
 		return testGraphQLDispatchTrigger_addDispatchTrigger();
+	}
+
+	@Test
+	public void testPostDispatchTrigger() throws Exception {
+		DispatchTrigger randomDispatchTrigger = randomDispatchTrigger();
+
+		DispatchTrigger postDispatchTrigger =
+			testPostDispatchTrigger_addDispatchTrigger(randomDispatchTrigger);
+
+		assertEquals(randomDispatchTrigger, postDispatchTrigger);
+		assertValid(postDispatchTrigger);
+	}
+
+	protected DispatchTrigger testPostDispatchTrigger_addDispatchTrigger(
+			DispatchTrigger dispatchTrigger)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	@Test
@@ -456,6 +456,16 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 
 			if (Objects.equals("endDate", additionalAssertFieldName)) {
 				if (dispatchTrigger.getEndDate() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"externalReferenceCode", additionalAssertFieldName)) {
+
+				if (dispatchTrigger.getExternalReferenceCode() == null) {
 					valid = false;
 				}
 
@@ -679,6 +689,19 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 				if (!Objects.deepEquals(
 						dispatchTrigger1.getEndDate(),
 						dispatchTrigger2.getEndDate())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"externalReferenceCode", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						dispatchTrigger1.getExternalReferenceCode(),
+						dispatchTrigger2.getExternalReferenceCode())) {
 
 					return false;
 				}
@@ -935,6 +958,15 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("externalReferenceCode")) {
+			sb.append("'");
+			sb.append(
+				String.valueOf(dispatchTrigger.getExternalReferenceCode()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("id")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -1058,6 +1090,8 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 				dispatchTaskSettings = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				endDate = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				overlapAllowed = RandomTestUtil.randomBoolean();

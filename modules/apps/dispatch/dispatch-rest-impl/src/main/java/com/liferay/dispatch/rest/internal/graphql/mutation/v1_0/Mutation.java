@@ -54,18 +54,29 @@ public class Mutation {
 	}
 
 	@GraphQLField
-	public DispatchTrigger createCreateDispatchTaskExecutorType(
-			@GraphQLName("dispatchTaskExecutorType") String
-				dispatchTaskExecutorType,
-			@GraphQLName("string") String string)
+	public DispatchTrigger createDispatchTrigger(
+			@GraphQLName("dispatchTrigger") DispatchTrigger dispatchTrigger)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
 			_dispatchTriggerResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			dispatchTriggerResource ->
-				dispatchTriggerResource.postCreateDispatchTaskExecutorType(
-					dispatchTaskExecutorType, string));
+				dispatchTriggerResource.postDispatchTrigger(dispatchTrigger));
+	}
+
+	@GraphQLField
+	public Response createDispatchTriggerBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_dispatchTriggerResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			dispatchTriggerResource ->
+				dispatchTriggerResource.postDispatchTriggerBatch(
+					callbackURL, object));
 	}
 
 	@GraphQLField

@@ -56,6 +56,7 @@ import javax.annotation.Generated;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -74,32 +75,33 @@ public abstract class BaseDispatchTriggerResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/dispatch-rest/v1.0/create/{dispatchTaskExecutorType}'  -u 'test@liferay.com:test'
+	 * curl -X 'GET' 'http://localhost:8080/o/dispatch-rest/v1.0/dispatchTriggers'  -u 'test@liferay.com:test'
 	 */
-	@io.swagger.v3.oas.annotations.Parameters(
-		value = {
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
-				name = "dispatchTaskExecutorType"
-			)
-		}
-	)
+	@io.swagger.v3.oas.annotations.tags.Tags(value = {})
+	@javax.ws.rs.GET
+	@javax.ws.rs.Path("/dispatchTriggers")
+	@javax.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Page<DispatchTrigger> getDispatchTriggersPage() throws Exception {
+		return Page.of(Collections.emptyList());
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'POST' 'http://localhost:8080/o/dispatch-rest/v1.0/dispatchTriggers' -d $'{"active": ___, "companyId": ___, "cronExpression": ___, "dispatchTaskClusterMode": ___, "dispatchTaskExecutorType": ___, "dispatchTaskSettings": ___, "externalReferenceCode": ___, "id": ___, "name": ___, "overlapAllowed": ___, "system": ___, "timeZoneId": ___, "userId": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 */
 	@io.swagger.v3.oas.annotations.tags.Tags(
 		value = {
 			@io.swagger.v3.oas.annotations.tags.Tag(name = "DispatchTrigger")
 		}
 	)
 	@javax.ws.rs.Consumes({"application/json", "application/xml"})
-	@javax.ws.rs.Path("/create/{dispatchTaskExecutorType}")
+	@javax.ws.rs.Path("/dispatchTriggers")
 	@javax.ws.rs.POST
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public DispatchTrigger postCreateDispatchTaskExecutorType(
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.validation.constraints.NotNull
-			@javax.ws.rs.PathParam("dispatchTaskExecutorType")
-			String dispatchTaskExecutorType,
-			String string)
+	public DispatchTrigger postDispatchTrigger(DispatchTrigger dispatchTrigger)
 		throws Exception {
 
 		return new DispatchTrigger();
@@ -108,19 +110,47 @@ public abstract class BaseDispatchTriggerResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'GET' 'http://localhost:8080/o/dispatch-rest/v1.0/dispatchTriggers'  -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/dispatch-rest/v1.0/dispatchTriggers/batch'  -u 'test@liferay.com:test'
 	 */
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "callbackURL"
+			)
+		}
+	)
 	@io.swagger.v3.oas.annotations.tags.Tags(
 		value = {
 			@io.swagger.v3.oas.annotations.tags.Tag(name = "DispatchTrigger")
 		}
 	)
-	@javax.ws.rs.GET
-	@javax.ws.rs.Path("/dispatchTriggers")
-	@javax.ws.rs.Produces({"application/json", "application/xml"})
+	@javax.ws.rs.Consumes("application/json")
+	@javax.ws.rs.Path("/dispatchTriggers/batch")
+	@javax.ws.rs.POST
+	@javax.ws.rs.Produces("application/json")
 	@Override
-	public Page<DispatchTrigger> getDispatchTriggersPage() throws Exception {
-		return Page.of(Collections.emptyList());
+	public Response postDispatchTriggerBatch(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@javax.ws.rs.QueryParam("callbackURL")
+			String callbackURL,
+			Object object)
+		throws Exception {
+
+		vulcanBatchEngineImportTaskResource.setContextAcceptLanguage(
+			contextAcceptLanguage);
+		vulcanBatchEngineImportTaskResource.setContextCompany(contextCompany);
+		vulcanBatchEngineImportTaskResource.setContextHttpServletRequest(
+			contextHttpServletRequest);
+		vulcanBatchEngineImportTaskResource.setContextUriInfo(contextUriInfo);
+		vulcanBatchEngineImportTaskResource.setContextUser(contextUser);
+
+		Response.ResponseBuilder responseBuilder = Response.accepted();
+
+		return responseBuilder.entity(
+			vulcanBatchEngineImportTaskResource.postImportTask(
+				DispatchTrigger.class.getName(), callbackURL, null, object)
+		).build();
 	}
 
 	/**
@@ -164,8 +194,32 @@ public abstract class BaseDispatchTriggerResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		UnsafeConsumer<DispatchTrigger, Exception>
+			dispatchTriggerUnsafeConsumer = null;
+
+		String createStrategy = (String)parameters.getOrDefault(
+			"createStrategy", "INSERT");
+
+		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+			dispatchTriggerUnsafeConsumer =
+				dispatchTrigger -> postDispatchTrigger(dispatchTrigger);
+		}
+
+		if (dispatchTriggerUnsafeConsumer == null) {
+			throw new NotSupportedException(
+				"Create strategy \"" + createStrategy +
+					"\" is not supported for DispatchTrigger");
+		}
+
+		if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				dispatchTriggers, dispatchTriggerUnsafeConsumer);
+		}
+		else {
+			for (DispatchTrigger dispatchTrigger : dispatchTriggers) {
+				dispatchTriggerUnsafeConsumer.accept(dispatchTrigger);
+			}
+		}
 	}
 
 	@Override
@@ -179,7 +233,7 @@ public abstract class BaseDispatchTriggerResourceImpl
 	}
 
 	public Set<String> getAvailableCreateStrategies() {
-		return SetUtil.fromArray();
+		return SetUtil.fromArray("INSERT");
 	}
 
 	public Set<String> getAvailableUpdateStrategies() {

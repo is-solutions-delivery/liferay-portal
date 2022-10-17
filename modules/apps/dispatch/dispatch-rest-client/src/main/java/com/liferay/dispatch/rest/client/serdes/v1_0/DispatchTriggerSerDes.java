@@ -148,6 +148,20 @@ public class DispatchTriggerSerDes {
 			sb.append("\"");
 		}
 
+		if (dispatchTrigger.getExternalReferenceCode() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"externalReferenceCode\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(dispatchTrigger.getExternalReferenceCode()));
+
+			sb.append("\"");
+		}
+
 		if (dispatchTrigger.getId() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -313,6 +327,15 @@ public class DispatchTriggerSerDes {
 				liferayToJSONDateFormat.format(dispatchTrigger.getEndDate()));
 		}
 
+		if (dispatchTrigger.getExternalReferenceCode() == null) {
+			map.put("externalReferenceCode", null);
+		}
+		else {
+			map.put(
+				"externalReferenceCode",
+				String.valueOf(dispatchTrigger.getExternalReferenceCode()));
+		}
+
 		if (dispatchTrigger.getId() == null) {
 			map.put("id", null);
 		}
@@ -433,6 +456,14 @@ public class DispatchTriggerSerDes {
 				if (jsonParserFieldValue != null) {
 					dispatchTrigger.setEndDate(
 						toDate((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "externalReferenceCode")) {
+
+				if (jsonParserFieldValue != null) {
+					dispatchTrigger.setExternalReferenceCode(
+						(String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "id")) {
