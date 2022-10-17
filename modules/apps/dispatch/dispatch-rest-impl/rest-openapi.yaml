@@ -14,7 +14,8 @@ components:
                 dispatchTaskExecutorType:
                     type: string
                 dispatchTaskSettings:
-                    type: string
+                    additionalProperties: true
+                    type: object
                 endDate:
                     format: date
                     readOnly: true
@@ -66,6 +67,7 @@ paths:
                                 items:
                                     $ref: "#/components/schemas/DispatchTrigger"
                                 type: array
+            tags: ["DispatchTrigger"]
         post:
             operationId: postDispatchTrigger
             requestBody:

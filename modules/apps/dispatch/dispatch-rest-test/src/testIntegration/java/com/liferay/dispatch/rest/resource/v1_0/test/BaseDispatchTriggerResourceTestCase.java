@@ -183,7 +183,6 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 
 		dispatchTrigger.setCronExpression(regex);
 		dispatchTrigger.setDispatchTaskExecutorType(regex);
-		dispatchTrigger.setDispatchTaskSettings(regex);
 		dispatchTrigger.setExternalReferenceCode(regex);
 		dispatchTrigger.setName(regex);
 		dispatchTrigger.setTimeZoneId(regex);
@@ -197,7 +196,6 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 		Assert.assertEquals(regex, dispatchTrigger.getCronExpression());
 		Assert.assertEquals(
 			regex, dispatchTrigger.getDispatchTaskExecutorType());
-		Assert.assertEquals(regex, dispatchTrigger.getDispatchTaskSettings());
 		Assert.assertEquals(regex, dispatchTrigger.getExternalReferenceCode());
 		Assert.assertEquals(regex, dispatchTrigger.getName());
 		Assert.assertEquals(regex, dispatchTrigger.getTimeZoneId());
@@ -675,9 +673,9 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 			if (Objects.equals(
 					"dispatchTaskSettings", additionalAssertFieldName)) {
 
-				if (!Objects.deepEquals(
-						dispatchTrigger1.getDispatchTaskSettings(),
-						dispatchTrigger2.getDispatchTaskSettings())) {
+				if (!equals(
+						(Map)dispatchTrigger1.getDispatchTaskSettings(),
+						(Map)dispatchTrigger2.getDispatchTaskSettings())) {
 
 					return false;
 				}
@@ -918,12 +916,8 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 		}
 
 		if (entityFieldName.equals("dispatchTaskSettings")) {
-			sb.append("'");
-			sb.append(
-				String.valueOf(dispatchTrigger.getDispatchTaskSettings()));
-			sb.append("'");
-
-			return sb.toString();
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
 		}
 
 		if (entityFieldName.equals("endDate")) {
@@ -1086,8 +1080,6 @@ public abstract class BaseDispatchTriggerResourceTestCase {
 					RandomTestUtil.randomString());
 				dispatchTaskClusterMode = RandomTestUtil.randomInt();
 				dispatchTaskExecutorType = StringUtil.toLowerCase(
-					RandomTestUtil.randomString());
-				dispatchTaskSettings = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				endDate = RandomTestUtil.nextDate();
 				externalReferenceCode = StringUtil.toLowerCase(
