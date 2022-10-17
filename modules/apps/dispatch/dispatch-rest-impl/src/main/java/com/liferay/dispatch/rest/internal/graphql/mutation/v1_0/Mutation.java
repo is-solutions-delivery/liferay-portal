@@ -70,8 +70,7 @@ public class Mutation {
 
 	@GraphQLField
 	public Response createExecuteDispatchTrigger(
-			@GraphQLName("dispatchTriggerId") Long dispatchTriggerId,
-			@GraphQLName("string") String string)
+			@GraphQLName("dispatchTriggerId") Long dispatchTriggerId)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
@@ -79,7 +78,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			dispatchTriggerResource ->
 				dispatchTriggerResource.postExecuteDispatchTrigger(
-					dispatchTriggerId, string));
+					dispatchTriggerId));
 	}
 
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R

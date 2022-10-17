@@ -63,8 +63,7 @@ public interface DispatchTriggerResource {
 
 	public Page<DispatchTrigger> getDispatchTriggersPage() throws Exception;
 
-	public Response postExecuteDispatchTrigger(
-			Long dispatchTriggerId, String string)
+	public Response postExecuteDispatchTrigger(Long dispatchTriggerId)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

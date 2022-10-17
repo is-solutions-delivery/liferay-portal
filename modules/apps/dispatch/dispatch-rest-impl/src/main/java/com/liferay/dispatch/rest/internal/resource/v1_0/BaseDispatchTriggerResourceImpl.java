@@ -141,7 +141,6 @@ public abstract class BaseDispatchTriggerResourceImpl
 			@io.swagger.v3.oas.annotations.tags.Tag(name = "DispatchTrigger")
 		}
 	)
-	@javax.ws.rs.Consumes({"application/json", "application/xml"})
 	@javax.ws.rs.Path("/execute/{dispatchTriggerId}")
 	@javax.ws.rs.POST
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
@@ -150,8 +149,7 @@ public abstract class BaseDispatchTriggerResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.validation.constraints.NotNull
 			@javax.ws.rs.PathParam("dispatchTriggerId")
-			Long dispatchTriggerId,
-			String string)
+			Long dispatchTriggerId)
 		throws Exception {
 
 		Response.ResponseBuilder responseBuilder = Response.ok();

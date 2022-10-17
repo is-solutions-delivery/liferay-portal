@@ -53,12 +53,11 @@ public interface DispatchTriggerResource {
 	public HttpInvoker.HttpResponse getDispatchTriggersPageHttpResponse()
 		throws Exception;
 
-	public void postExecuteDispatchTrigger(
-			Long dispatchTriggerId, String string)
+	public void postExecuteDispatchTrigger(Long dispatchTriggerId)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postExecuteDispatchTriggerHttpResponse(
-			Long dispatchTriggerId, String string)
+			Long dispatchTriggerId)
 		throws Exception;
 
 	public static class Builder {
@@ -305,13 +304,11 @@ public interface DispatchTriggerResource {
 			return httpInvoker.invoke();
 		}
 
-		public void postExecuteDispatchTrigger(
-				Long dispatchTriggerId, String string)
+		public void postExecuteDispatchTrigger(Long dispatchTriggerId)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				postExecuteDispatchTriggerHttpResponse(
-					dispatchTriggerId, string);
+				postExecuteDispatchTriggerHttpResponse(dispatchTriggerId);
 
 			String content = httpResponse.getContent();
 
@@ -340,12 +337,10 @@ public interface DispatchTriggerResource {
 		}
 
 		public HttpInvoker.HttpResponse postExecuteDispatchTriggerHttpResponse(
-				Long dispatchTriggerId, String string)
+				Long dispatchTriggerId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
-
-			httpInvoker.body(string.toString(), "application/json");
 
 			if (_builder._locale != null) {
 				httpInvoker.header(
