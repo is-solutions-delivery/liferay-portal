@@ -426,4 +426,17 @@ definition {
 		}
 	}
 
+	@description = "Automation ID: LPS-150533 | Test Summary: Verify if the Submit a Ticket card is visible to the user."
+	@priority = "3"
+	test CanViewSubmitATicketCard {
+		
+		task ("Go to CP2.0 and join a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
+		}
+		task ("Assert that the desired card appears in the panel") {
+			CustomerPortal.assertQuickLinksPanelInfo(title = "Submit a Ticket");
+		}
+	}
 }
