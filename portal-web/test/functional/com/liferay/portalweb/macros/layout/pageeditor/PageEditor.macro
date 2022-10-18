@@ -1237,10 +1237,12 @@ definition {
 		}
 
 		if (isSet(borderRadius)) {
-			Select(
-				key_text = "corner-radius",
-				locator1 = "Select#GENERIC_SELECT_FIELD_WITH_ICON",
-				value1 = "${borderRadius}");
+			Click(
+				key_fieldLabel = "Border Radius",
+				key_text = "theme",
+				locator1 = "PageEditor#FIELDSET_ICON");
+
+			MenuItem.click(menuItem = "${borderRadius}");
 
 			PageEditor.waitForAutoSave();
 		}
@@ -1276,10 +1278,12 @@ definition {
 		}
 
 		if (isSet(boxShadow)) {
-			Select(
-				key_text = "shadow",
-				locator1 = "Select#GENERIC_SELECT_FIELD_WITH_ICON",
-				value1 = "${boxShadow}");
+			Click(
+				key_fieldLabel = "Shadow",
+				key_text = "theme",
+				locator1 = "PageEditor#FIELDSET_ICON");
+
+			MenuItem.click(menuItem = "${boxShadow}");
 
 			PageEditor.waitForAutoSave();
 		}
@@ -1482,8 +1486,8 @@ definition {
 
 		if (isSet(opacity)) {
 			Type(
-				key_fieldLabel = "Opacity",
-				locator1 = "FormFields#NUMBER_FIELD",
+				ariaLabel = "Opacity",
+				locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
 				value1 = "${opacity}");
 
 			Click(
@@ -3072,10 +3076,12 @@ definition {
 			}
 
 			if (isSet(borderRadius)) {
-				Select(
-					key_text = "corner-radius",
-					locator1 = "Select#GENERIC_SELECT_FIELD_WITH_ICON",
-					value1 = "${borderRadius}");
+				Click(
+					key_fieldLabel = "Border Radius",
+					key_text = "theme",
+					locator1 = "PageEditor#FIELDSET_ICON");
+
+				MenuItem.click(menuItem = "${borderRadius}");
 
 				PageEditor.waitForAutoSave();
 			}
@@ -3090,10 +3096,12 @@ definition {
 			}
 
 			if (isSet(boxShadow)) {
-				Select(
-					key_text = "shadow",
-					locator1 = "Select#GENERIC_SELECT_FIELD_WITH_ICON",
-					value1 = "${boxShadow}");
+				Click(
+					key_fieldLabel = "Shadow",
+					key_text = "theme",
+					locator1 = "PageEditor#FIELDSET_ICON");
+
+				MenuItem.click(menuItem = "${boxShadow}");
 
 				PageEditor.waitForAutoSave();
 			}
@@ -3110,8 +3118,8 @@ definition {
 
 			if (isSet(opacity)) {
 				Type(
-					key_fieldLabel = "Opacity",
-					locator1 = "FormFields#NUMBER_FIELD",
+					ariaLabel = "Opacity",
+					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
 					value1 = "${opacity}");
 
 				Click(
@@ -3121,8 +3129,8 @@ definition {
 				PageEditor.waitForAutoSave();
 
 				AssertTextEquals(
-					key_fieldLabel = "Opacity",
-					locator1 = "FormFields#NUMBER_FIELD",
+					ariaLabel = "Opacity",
+					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
 					value1 = "${opacity}");
 			}
 		}
@@ -3421,10 +3429,12 @@ definition {
 			}
 
 			if (isSet(borderRadius)) {
-				Select(
-					key_text = "corner-radius",
-					locator1 = "Select#GENERIC_SELECT_FIELD_WITH_ICON",
-					value1 = "${borderRadius}");
+				Click(
+					key_fieldLabel = "Border Radius",
+					key_text = "theme",
+					locator1 = "PageEditor#FIELDSET_ICON");
+
+				MenuItem.click(menuItem = "${borderRadius}");
 
 				PageEditor.waitForAutoSave();
 			}
@@ -3439,10 +3449,12 @@ definition {
 			}
 
 			if (isSet(boxShadow)) {
-				Select(
-					key_text = "shadow",
-					locator1 = "Select#GENERIC_SELECT_FIELD_WITH_ICON",
-					value1 = "${boxShadow}");
+				Click(
+					key_fieldLabel = "Shadow",
+					key_text = "theme",
+					locator1 = "PageEditor#FIELDSET_ICON");
+
+				MenuItem.click(menuItem = "${boxShadow}");
 
 				PageEditor.waitForAutoSave();
 			}
@@ -3459,8 +3471,8 @@ definition {
 
 			if (isSet(opacity)) {
 				Type(
-					key_fieldLabel = "Opacity",
-					locator1 = "FormFields#NUMBER_FIELD",
+					ariaLabel = "Opacity",
+					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
 					value1 = "${opacity}");
 
 				Click(
@@ -3470,8 +3482,8 @@ definition {
 				PageEditor.waitForAutoSave();
 
 				AssertTextEquals(
-					key_fieldLabel = "Opacity",
-					locator1 = "FormFields#NUMBER_FIELD",
+					ariaLabel = "Opacity",
+					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
 					value1 = "${opacity}");
 			}
 		}
