@@ -10,7 +10,7 @@
  */
 
 import {ClayInput} from '@clayui/form';
-import {useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 import i18n from '../../../../I18n';
 import {Input, Select} from '../../../../components';
 import useBannedDomains from '../../../../hooks/useBannedDomains';
@@ -24,10 +24,10 @@ const TeamMemberInputs = ({
 	disableError,
 	id,
 	invite,
+	onSelectRole,
 	options,
 	placeholderEmail,
 	selectOnChange,
-	setIsAdministratorOrRequestrorSelectedUser,
 }) => {
 	const bannedDomains = useBannedDomains(
 		invite?.email,
@@ -38,9 +38,9 @@ const TeamMemberInputs = ({
 		invite?.role?.name === ROLE_TYPES.requester.name ||
 		invite?.role?.name === ROLE_TYPES.admin.name;
 
-	setIsAdministratorOrRequestrorSelectedUser(
-		isAdministratorOrRequestorRoleSelected
-	);
+	useEffect(() => {
+		onSelectRole(isAdministratorOrRequestorRoleSelected);
+	}, [onSelectRole, isAdministratorOrRequestorRoleSelected]);
 
 	const optionsFormated = useMemo(
 		() =>

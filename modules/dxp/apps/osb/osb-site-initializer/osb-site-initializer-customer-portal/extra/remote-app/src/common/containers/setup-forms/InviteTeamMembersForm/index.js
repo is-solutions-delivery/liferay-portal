@@ -56,8 +56,8 @@ const InviteTeamMembersPage = ({
 	);
 
 	const [
-		isAdministratorOrRequestrorSelectedUser,
-		setIsAdministratorOrRequestrorSelected,
+		isSelectdAdministratorOrRequestorRole,
+		setIsSelectedAdministratorOrRequestorRole,
 	] = useState(false);
 
 	const [
@@ -161,17 +161,15 @@ const InviteTeamMembersPage = ({
 
 			if (
 				availableAdministratorAssets < 1 &&
-				isAdministratorOrRequestrorSelectedUser
+				isSelectdAdministratorOrRequestorRole
 			) {
 				setBaseButtonDisabled(true);
-			}
-			else {
+			} else {
 				setInitialError(false);
 				setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
 				setshowEmptyEmailError(false);
 			}
-		}
-		else if (touched['invites']?.some((field) => field?.email)) {
+		} else if (touched['invites']?.some((field) => field?.email)) {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 		}
@@ -179,7 +177,7 @@ const InviteTeamMembersPage = ({
 		touched,
 		values,
 		availableAdministratorAssets,
-		isAdministratorOrRequestrorSelectedUser,
+		isSelectdAdministratorOrRequestorRole,
 		errors,
 	]);
 
@@ -235,8 +233,7 @@ const InviteTeamMembersPage = ({
 				}
 				handlePage();
 			}
-		}
-		else {
+		} else {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 			setTouched({
@@ -315,10 +312,12 @@ const InviteTeamMembersPage = ({
 										disableError={hasInitialError}
 										id={index}
 										invite={invite}
-										isAdministratorOrRequestrorSelectedUser={
-											isAdministratorOrRequestrorSelectedUser
-										}
 										key={index}
+										onSelectRole={(role) => {
+											setIsSelectedAdministratorOrRequestorRole(
+												role
+											);
+										}}
 										options={accountRolesOptions}
 										placeholderEmail={`username@${
 											project?.code?.toLowerCase() ||
@@ -331,9 +330,6 @@ const InviteTeamMembersPage = ({
 													({id}) => id === +roleId
 												)
 											)
-										}
-										setIsAdministratorOrRequestrorSelectedUser={
-											setIsAdministratorOrRequestrorSelected
 										}
 									/>
 								))}
