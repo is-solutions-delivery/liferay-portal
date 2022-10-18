@@ -51,24 +51,17 @@ const VerticalNavigationBar = ({
 
 	useEffect(() => {
 		if (productMenu && activePanel !== SUGGESTION_KEY) {
-			const productMenuOpenListener = productMenu.on(
-				'openStart.lexicon.sidenav',
-				() => {
-					setProductMenuOpen(true);
-					setVerticalBarOpen(false);
-				}
-			);
+			productMenu.on('openStart.lexicon.sidenav', () => {
+				setProductMenuOpen(true);
+				setVerticalBarOpen(false);
+			});
 
-			const productMenuCloseListener = productMenu.on(
-				'closedStart.lexicon.sidenav',
-				() => {
-					setProductMenuOpen(false);
-				}
-			);
+			productMenu.on('closedStart.lexicon.sidenav', () => {
+				setProductMenuOpen(false);
+			});
 
 			return () => {
-				productMenuOpenListener.removeListener();
-				productMenuCloseListener.removeListener();
+				productMenu.destroy();
 			};
 		}
 	}, [activePanel, productMenu]);
