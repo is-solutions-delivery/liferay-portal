@@ -22,6 +22,7 @@ interface PrimaryProspect {
 	lastName: string;
 	phone: string;
 }
+
 interface Prospect {
 	accountName: string;
 	address: string;
@@ -32,16 +33,20 @@ interface Prospect {
 	state: LiferayPicklist;
 }
 
+interface AdditionalContact {
+	emailAddress: string;
+	firstName: string;
+	lastName: string;
+}
+
 export default interface DealRegistration extends Partial<LiferayObject> {
-	additionalContactEmailAddress: string;
-	additionalContactFirstName: string;
-	additionalContactLastName: string;
+	additionalContact: AdditionalContact;
 	additionalInformationAboutTheOpportunity: string;
+	categories: string[];
 	generalMdfActivityAssociated: string;
 	generalPartnerAccountName: string;
 	primaryProspect?: PrimaryProspect;
-	projectInformationProjectNeed: LiferayPicklist;
-	projectSolutionCategories: LiferayPicklist;
+	projectNeed: string[];
 	projectTimeline: string;
 	prospect?: Prospect;
 	requestStatus?: RequestStatus;

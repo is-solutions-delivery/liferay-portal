@@ -20,15 +20,20 @@ import {LiferayPicklistName} from '../../../../common/enums/liferayPicklistName'
 import DealRegistration from '../../../../common/interfaces/dealRegistration';
 import useCompanyOptions from '../../../MDFRequestForm/steps/Goals/hooks/useCompanyOptions';
 import getPicklistOptions from '../../../MDFRequestForm/utils/getPicklistOptions';
+import {StepType} from '../../enums/stepType';
 import useDynamicFieldEntries from '../../hooks/useDynamicFieldEntries';
 import DealRegistrationStepProps from '../../interfaces/dealRegistrationStepProps';
 
 const General = ({
 	onCancel,
+	onContinue,
 }: PRMFormikPageProps & DealRegistrationStepProps<DealRegistration>) => {
-	const {isSubmitting, setFieldValue, values} = useFormikContext<
-		DealRegistration
-	>();
+	const {
+		isSubmitting,
+		setFieldValue,
+		values,
+		...formikHelpers
+	} = useFormikContext<DealRegistration>();
 
 	const {companiesEntries, fieldEntries} = useDynamicFieldEntries();
 
@@ -184,7 +189,7 @@ const General = ({
 					<PRMFormik.Field
 						component={PRMForm.Select}
 						label="Department"
-						name="prospect.department"
+						name="primaryProspect.department"
 						onChange={onDepartmentSelected}
 						options={departmentOptions}
 					/>
@@ -192,7 +197,7 @@ const General = ({
 					<PRMFormik.Field
 						component={PRMForm.Select}
 						label="Job Role"
-						name="prospect.jobRole"
+						name="primaryProspect.jobRole"
 						onChange={onJobRoleSelected}
 						options={jobRoleOptions}
 					/>
@@ -203,20 +208,20 @@ const General = ({
 						<PRMFormik.Field
 							component={PRMForm.InputText}
 							label="First Name"
-							name="aditionalContact.firstName"
+							name="additionalContact.firstName"
 						/>
 
 						<PRMFormik.Field
 							component={PRMForm.InputText}
 							label="Last Name"
-							name="aditionalContact.lastName"
+							name="additionalContact.lastName"
 						/>
 					</PRMForm.Group>
 
 					<PRMFormik.Field
 						component={PRMForm.InputText}
 						label="Email Address"
-						name="aditionalContact.emailAddress"
+						name="additionalContact.emailAddress"
 					/>
 				</PRMForm.Section>
 
@@ -224,7 +229,7 @@ const General = ({
 					<PRMFormik.Field
 						component={PRMForm.InputText}
 						label="Additional Information about the Opportunity"
-						name="dealInformation.additionalInformationAboutTheOpportunity"
+						name="additionalInformationAboutTheOpportunity"
 					/>
 				</PRMForm.Section>
 
@@ -237,7 +242,7 @@ const General = ({
 							]
 						}
 						label="Project Need (Select all that apply)"
-						name="projectInformation.projectNeed"
+						name="projectNeed"
 					/>
 				</PRMForm.Section>
 
@@ -247,7 +252,7 @@ const General = ({
 						items={
 							fieldEntries[LiferayPicklistName.PROJECT_CATEGORIES]
 						}
-						name="projectSolution.categories"
+						name="categories"
 					/>
 				</PRMForm.Section>
 
@@ -255,7 +260,7 @@ const General = ({
 					<PRMFormik.Field
 						component={PRMForm.InputText}
 						label="Project Timeline"
-						name="businessObjective.projectTimeline"
+						name="projectTimeline"
 					/>
 				</PRMForm.Section>
 			</PRMForm.Section>
@@ -275,7 +280,11 @@ const General = ({
 					</Button>
 				</div>
 
-				<Button>Proceed</Button>
+				<Button
+					onClick={() => onContinue?.(formikHelpers, StepType.REVIEW)}
+				>
+					Proceed
+				</Button>
 			</PRMForm.Footer>
 		</PRMForm>
 	);

@@ -50,31 +50,31 @@ const Review = ({
 					items={[
 						{
 							title: 'Account Name',
-							value: '{}',
+							value: values.prospect?.accountName,
 						},
 						{
 							title: 'Industry',
-							value: 'Insurance',
+							value: values.prospect?.industry?.name,
 						},
 						{
 							title: 'Address',
-							value: '...',
+							value: values.prospect?.address,
 						},
 						{
 							title: 'City',
-							value: 'Los Angeles',
+							value: values.prospect?.city,
 						},
 						{
 							title: 'Postal Code',
-							value: '91765',
+							value: values.prospect?.postalCode,
 						},
 						{
 							title: 'State',
-							value: 'California',
+							value: values.prospect?.state?.name,
 						},
 						{
 							title: 'Country',
-							value: 'US',
+							value: values.prospect?.country?.name,
 						},
 					]}
 					title="Prospect Information"
@@ -84,27 +84,27 @@ const Review = ({
 					items={[
 						{
 							title: 'First Name',
-							value: 'Jane',
+							value: values.primaryProspect?.firstName,
 						},
 						{
 							title: 'Last Name',
-							value: 'Doe',
+							value: values.primaryProspect?.lastName,
 						},
 						{
 							title: 'Email Address',
-							value: 'jane@example.com',
+							value: values.primaryProspect?.emailAddress,
 						},
 						{
 							title: 'Phone',
-							value: '(714) 718-4565',
+							value: values.primaryProspect?.phone,
 						},
 						{
 							title: 'Department',
-							value: 'Business - Marketing',
+							value: values.primaryProspect?.department?.name,
 						},
 						{
 							title: 'Job Role',
-							value: 'Project Manager',
+							value: values.primaryProspect?.jobRole?.name,
 						},
 					]}
 					title="Primary Prospect Contact"
@@ -114,15 +114,15 @@ const Review = ({
 					items={[
 						{
 							title: 'First Name',
-							value: 'Jane',
+							value: values.additionalContact?.firstName,
 						},
 						{
 							title: 'Last Name',
-							value: 'Doe',
+							value: values.additionalContact?.lastName,
 						},
 						{
 							title: 'Email Address',
-							value: 'jane@example.com',
+							value: values.additionalContact?.emailAddress,
 						},
 					]}
 					title="Additional Contacts"
@@ -132,7 +132,8 @@ const Review = ({
 					items={[
 						{
 							title: 'Additional Information',
-							value: '...',
+							value:
+								values.additionalInformationAboutTheOpportunity,
 						},
 					]}
 					title="Deal Information"
@@ -142,11 +143,11 @@ const Review = ({
 					items={[
 						{
 							title: 'Project Need',
-							value: '...',
+							value: values.projectNeed.join(', '),
 						},
 						{
 							title: 'Project Solution Categories',
-							value: '...',
+							value: values.categories.join(', '),
 						},
 					]}
 					title="Project Information"
@@ -156,11 +157,7 @@ const Review = ({
 					items={[
 						{
 							title: 'Project Timeline',
-							value: '...',
-						},
-						{
-							title: 'Project Solution Categories',
-							value: '...',
+							value: values.projectTimeline,
 						},
 					]}
 					title="Business Objectives"
