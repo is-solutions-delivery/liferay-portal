@@ -63,6 +63,10 @@ public class InfoItemHelper {
 			Object object = infoItemObjectProvider.getInfoItem(
 				infoItemReference.getClassPK());
 
+			if (object == null) {
+				return Optional.empty();
+			}
+
 			return _getTitleOptional(
 				infoItemReference.getClassName(), object, locale
 			).map(
