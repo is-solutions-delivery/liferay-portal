@@ -12,5 +12,5 @@
 export enum PRMPageRoute {
 	CREATE_MDF_REQUEST = 'marketing/mdf-requests/new',
 	MDF_REQUESTS_LISTING = 'marketing/mdf-requests',
-	MDF_CLAIM_LISTING = 'marketing/mdf-claim',
+	MDF_CLAIM_LISTING = 'marketing/mdf-claims',
 }
