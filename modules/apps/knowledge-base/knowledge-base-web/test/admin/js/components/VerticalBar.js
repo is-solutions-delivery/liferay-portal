@@ -80,6 +80,7 @@ describe('VerticalBar', () => {
 		};
 
 		const productMenu = {
+			destroy: jest.fn(),
 			hide: jest.fn(),
 			on: () => productMenuOn,
 		};
