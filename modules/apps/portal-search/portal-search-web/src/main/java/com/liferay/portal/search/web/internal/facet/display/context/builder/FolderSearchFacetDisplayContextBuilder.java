@@ -83,7 +83,7 @@ public class FolderSearchFacetDisplayContextBuilder {
 		folderSearchFacetDisplayContext.setParameterValues(
 			getParameterValueStrings());
 		folderSearchFacetDisplayContext.setRenderNothing(
-			isRenderNothing(getTermCollectors(), bucketDisplayContexts));
+			isRenderNothing(bucketDisplayContexts, getTermCollectors()));
 
 		return folderSearchFacetDisplayContext;
 	}
@@ -191,8 +191,8 @@ public class FolderSearchFacetDisplayContextBuilder {
 	}
 
 	protected boolean isRenderNothing(
-		List<TermCollector> termCollectors,
-		List<BucketDisplayContext> bucketDisplayContexts) {
+		List<BucketDisplayContext> bucketDisplayContexts,
+		List<TermCollector> termCollectors) {
 
 		if ((isNothingSelected() && ListUtil.isEmpty(termCollectors)) ||
 			ListUtil.isEmpty(bucketDisplayContexts)) {
