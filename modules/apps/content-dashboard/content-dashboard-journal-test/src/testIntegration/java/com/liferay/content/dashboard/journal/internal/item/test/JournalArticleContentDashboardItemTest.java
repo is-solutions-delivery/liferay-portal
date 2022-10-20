@@ -273,7 +273,6 @@ public class JournalArticleContentDashboardItemTest {
 
 		Assert.assertEquals(
 			availableLocales.toString(), 2, availableLocales.size());
-
 		Assert.assertTrue(availableLocales.contains(LocaleUtil.SPAIN));
 		Assert.assertTrue(availableLocales.contains(LocaleUtil.US));
 	}
@@ -646,7 +645,6 @@ public class JournalArticleContentDashboardItemTest {
 
 		Assert.assertEquals(
 			specificInformation.toString(), 3, specificInformation.size());
-
 		Assert.assertEquals(
 			specificInformation.get("display-date"),
 			journalArticle.getDisplayDate());
@@ -1116,14 +1114,11 @@ public class JournalArticleContentDashboardItemTest {
 
 		themeDisplay.setCompany(
 			_companyLocalService.getCompany(_group.getCompanyId()));
-
 		themeDisplay.setLayoutSet(
 			_layoutSetLocalService.getLayoutSet(_group.getGroupId(), false));
-
 		themeDisplay.setLocale(locale);
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
-
 		themeDisplay.setRequest(new MockHttpServletRequest());
 		themeDisplay.setScopeGroupId(_group.getGroupId());
 		themeDisplay.setSiteGroupId(_group.getGroupId());
