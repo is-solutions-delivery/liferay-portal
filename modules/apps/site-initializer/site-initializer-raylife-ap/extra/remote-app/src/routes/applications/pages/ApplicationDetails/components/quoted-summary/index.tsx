@@ -14,6 +14,7 @@
 
 import './index.scss';
 
+import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 
 import {getPolicies} from '../../../../../../common/services';
@@ -28,9 +29,24 @@ const QuotedSummary = ({externalReferenceCode}: externalReferenceCodeType) => {
 	const [policyStartDate, setPolicyStartDate] = useState<string>('');
 	const [policyEndDate, setPolicyEndDate] = useState<string>('');
 	const [totalPremium, setTotalPremium] = useState<number>(0);
+	const [productName, setProductName] = useState<string>('');
+	const [bodilyInjury, setBodilyInjury] = useState<string>('');
+	const [medicalPayments, setMedicalPayments] = useState<string>('');
+	const [propertyDamage, setPropertyDamage] = useState<string>('');
+	const [motoristBodilyInjury, setMotoristBodilyInjury] = useState<string>(
+		''
+	);
+	const [motoristPropertyDamage, setMotoristPropertyDamage] = useState<
+		string
+	>('');
 
 	const PARAMETERS_APPLICATIONS = {
 		filter: `contains(externalReferenceCode,'${externalReferenceCode}')`,
+		pageSize: '0',
+	};
+
+	const PARAMETERS_GET_ALL_ITEMS = {
+		pageSize: '0',
 	};
 
 	const getPoliciesThroughApplicationERC = async () => {
@@ -38,8 +54,23 @@ const QuotedSummary = ({externalReferenceCode}: externalReferenceCodeType) => {
 			PARAMETERS_APPLICATIONS
 		);
 		const applicationId = applicationRequest?.data?.items[0]?.id;
+		const dataJSON = applicationRequest.data?.items[0]?.dataJSON
+			? JSON.parse(applicationRequest.data?.items[0]?.dataJSON)
+			: {};
 
-		const quoteRequest = await getQuotes();
+		setProductName(applicationRequest?.data?.items[0]?.productName);
+
+		setBodilyInjury(dataJSON?.coverage?.form?.bodilyInjury);
+		setMedicalPayments(dataJSON?.coverage?.form?.medical);
+		setPropertyDamage(dataJSON?.coverage?.form?.propertyDamage);
+		setMotoristBodilyInjury(
+			dataJSON?.coverage?.form?.uninsuredOrUnderinsuredMBI
+		);
+		setMotoristPropertyDamage(
+			dataJSON?.coverage?.form?.uninsuredOrUnderinsuredMPD
+		);
+
+		const quoteRequest = await getQuotes(PARAMETERS_GET_ALL_ITEMS);
 		const quoteItems = quoteRequest?.data?.items;
 		const quoteItem = quoteItems.find(
 			(item: any) =>
@@ -48,7 +79,7 @@ const QuotedSummary = ({externalReferenceCode}: externalReferenceCodeType) => {
 		);
 		const quoteId = quoteItem.id;
 
-		const policiesRequest = await getPolicies();
+		const policiesRequest = await getPolicies(PARAMETERS_GET_ALL_ITEMS);
 		const policiesItems = policiesRequest?.data?.items;
 		const policyItem = policiesItems.find(
 			(item: any) => item?.r_quoteToPolicies_c_raylifeQuoteId === quoteId
@@ -82,6 +113,15 @@ const QuotedSummary = ({externalReferenceCode}: externalReferenceCodeType) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	function handleValuesFormatter(value: string) {
+		if (value === bodilyInjury || motoristBodilyInjury) {
+			return value.replaceAll(',000', ',000.00');
+		}
+		else {
+			return value.replace(',000', ',000.00');
+		}
+	}
+
 	return (
 		<div className="bg-neutral-0 quoted-summary-container rounded">
 			<div className="pt-3 px-5 quoted-summary-title">
@@ -98,7 +138,7 @@ const QuotedSummary = ({externalReferenceCode}: externalReferenceCodeType) => {
 			</div>
 
 			<div className="justify-content-between px-5 quoted-summary-content">
-				<div className="d-flex flex-column mb-3">
+				<div className="col-md-4 d-flex flex-column mb-3">
 					<label>Policy Period</label>
 
 					{policyStartDate && policyEndDate ? (
@@ -110,7 +150,7 @@ const QuotedSummary = ({externalReferenceCode}: externalReferenceCodeType) => {
 					)}
 				</div>
 
-				<div className="d-flex flex-column mb-3">
+				<div className="col-md-4 d-flex flex-column mb-3">
 					<label>Total Premium</label>
 
 					{totalPremium ? (
@@ -120,10 +160,87 @@ const QuotedSummary = ({externalReferenceCode}: externalReferenceCodeType) => {
 					)}
 				</div>
 
-				<div className="d-flex flex-column mb-3">
+				<div className="col-md-4 d-flex flex-column mb-3">
 					<label>Coverage Limit</label>
 
 					<span className="font-weight-bold">$100,000.00</span>
+				</div>
+			</div>
+
+			<div
+				className={classNames('quoted-summary-content px-5', {
+					'd-block': productName === 'Auto',
+					'd-none': productName !== 'Auto',
+				})}
+			>
+				<p>For Drivers & Passengers</p>
+
+				<div className="justify-content-between quoted-summary-content">
+					<div className="col-md-4 d-flex flex-column mb-3 mx-0">
+						<label>Bodily Injury Liability</label>
+
+						{bodilyInjury ? (
+							<span className="font-weight-bold">
+								{handleValuesFormatter(bodilyInjury)}
+							</span>
+						) : (
+							<i>No data</i>
+						)}
+					</div>
+
+					<div className="col-md-4 d-flex flex-column mb-3">
+						<label>Property Damage Liability</label>
+
+						{propertyDamage ? (
+							<span className="font-weight-bold">
+								{handleValuesFormatter(propertyDamage)}
+							</span>
+						) : (
+							<i>No data</i>
+						)}
+					</div>
+
+					<div className="col-md-4 d-flex flex-column mb-3">
+						<label>
+							Uninsured/Underinsured Motorist Bodily Injury
+						</label>
+
+						{motoristBodilyInjury ? (
+							<span className="font-weight-bold">
+								{handleValuesFormatter(motoristBodilyInjury)}
+							</span>
+						) : (
+							<i>No data</i>
+						)}
+					</div>
+				</div>
+
+				<div className="justify-content-between quoted-summary-content">
+					<div className="col-md-4 d-flex flex-column mb-3">
+						<label>Medial Payments</label>
+
+						{medicalPayments ? (
+							<span className="font-weight-bold">
+								{handleValuesFormatter(medicalPayments)}
+							</span>
+						) : (
+							<i>No data</i>
+						)}
+					</div>
+
+					<div className="col-md-8 d-flex flex-column mb-3">
+						<label>
+							Uninsured/Underinsured Motorist Property Damage
+						</label>
+
+						{motoristPropertyDamage ? (
+							<span className="font-weight-bold">
+								{handleValuesFormatter(motoristPropertyDamage)}
+							</span>
+						) : (
+							<i>No data</i>
+						)}
+					</div>
 				</div>
 			</div>
 
