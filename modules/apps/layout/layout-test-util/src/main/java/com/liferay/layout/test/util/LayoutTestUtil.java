@@ -167,8 +167,8 @@ public class LayoutTestUtil {
 	}
 
 	public static Layout addTypeContentLayout(
-			Group group, long masterLayoutPlid, boolean privateLayout,
-			boolean system)
+			Group group, boolean privateLayout, boolean system,
+			long masterLayoutPlid)
 		throws Exception {
 
 		return LayoutLocalServiceUtil.addLayout(

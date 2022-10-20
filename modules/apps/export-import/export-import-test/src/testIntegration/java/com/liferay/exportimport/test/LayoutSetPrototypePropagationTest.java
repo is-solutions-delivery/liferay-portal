@@ -327,14 +327,14 @@ public class LayoutSetPrototypePropagationTest
 			_layoutSetPrototypeGroup, true, false);
 
 		LayoutTestUtil.addTypeContentLayout(
-			_layoutSetPrototypeGroup, siteTemplateMasterLayout.getPlid(), true,
-			false);
+			_layoutSetPrototypeGroup, true, false,
+			siteTemplateMasterLayout.getPlid());
 
 		propagateChanges(group);
 
 		LayoutTestUtil.addTypeContentLayout(
-			_layoutSetPrototypeGroup, siteTemplateMasterLayout.getPlid(), true,
-			false);
+			_layoutSetPrototypeGroup, true, false,
+			siteTemplateMasterLayout.getPlid());
 
 		propagateChanges(group);
 
