@@ -244,6 +244,20 @@ public class AttachmentUtil {
 			ServiceContext serviceContext)
 		throws Exception {
 
+		long fileEntryId = 0;
+
+		ServiceContext cloneServiceContext =
+			(ServiceContext)serviceContext.clone();
+
+		cloneServiceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
+
+		FileEntry fileEntry = addFileEntry(
+			attachment, uniqueFileNameProvider, cloneServiceContext);
+
+		if (fileEntry != null) {
+			fileEntryId = fileEntry.getFileEntryId();
+		}
+
 		Calendar displayCalendar = CalendarFactoryUtil.getCalendar(
 			serviceContext.getTimeZone());
 
@@ -265,20 +279,6 @@ public class AttachmentUtil {
 		}
 
 		DateConfig expirationDateConfig = new DateConfig(expirationCalendar);
-
-		ServiceContext cloneServiceContext =
-			(ServiceContext)serviceContext.clone();
-
-		cloneServiceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
-
-		long fileEntryId = 0;
-
-		FileEntry fileEntry = addFileEntry(
-			attachment, uniqueFileNameProvider, cloneServiceContext);
-
-		if (fileEntry != null) {
-			fileEntryId = fileEntry.getFileEntryId();
-		}
 
 		return cpAttachmentFileEntryService.addOrUpdateCPAttachmentFileEntry(
 			attachment.getExternalReferenceCode(), groupId, classNameId,
