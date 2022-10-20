@@ -126,11 +126,7 @@ public class DispatchTriggerSerDes {
 
 			sb.append("\"dispatchTaskSettings\": ");
 
-			sb.append("\"");
-
-			sb.append(_escape(dispatchTrigger.getDispatchTaskSettings()));
-
-			sb.append("\"");
+			sb.append(_toJSON(dispatchTrigger.getDispatchTaskSettings()));
 		}
 
 		if (dispatchTrigger.getEndDate() != null) {
@@ -449,7 +445,8 @@ public class DispatchTriggerSerDes {
 
 				if (jsonParserFieldValue != null) {
 					dispatchTrigger.setDispatchTaskSettings(
-						(String)jsonParserFieldValue);
+						(Map)DispatchTriggerSerDes.toMap(
+							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "endDate")) {

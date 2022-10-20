@@ -40,6 +40,8 @@ import java.util.Set;
 
 import javax.annotation.Generated;
 
+import javax.validation.Valid;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -205,17 +207,19 @@ public class DispatchTrigger implements Serializable {
 	protected String dispatchTaskExecutorType;
 
 	@Schema
-	public String getDispatchTaskSettings() {
+	@Valid
+	public Map<String, ?> getDispatchTaskSettings() {
 		return dispatchTaskSettings;
 	}
 
-	public void setDispatchTaskSettings(String dispatchTaskSettings) {
+	public void setDispatchTaskSettings(Map<String, ?> dispatchTaskSettings) {
 		this.dispatchTaskSettings = dispatchTaskSettings;
 	}
 
 	@JsonIgnore
 	public void setDispatchTaskSettings(
-		UnsafeSupplier<String, Exception> dispatchTaskSettingsUnsafeSupplier) {
+		UnsafeSupplier<Map<String, ?>, Exception>
+			dispatchTaskSettingsUnsafeSupplier) {
 
 		try {
 			dispatchTaskSettings = dispatchTaskSettingsUnsafeSupplier.get();
@@ -230,7 +234,7 @@ public class DispatchTrigger implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String dispatchTaskSettings;
+	protected Map<String, ?> dispatchTaskSettings;
 
 	@Schema
 	public Date getEndDate() {
@@ -575,11 +579,7 @@ public class DispatchTrigger implements Serializable {
 
 			sb.append("\"dispatchTaskSettings\": ");
 
-			sb.append("\"");
-
-			sb.append(_escape(dispatchTaskSettings));
-
-			sb.append("\"");
+			sb.append(_toJSON(dispatchTaskSettings));
 		}
 
 		if (endDate != null) {

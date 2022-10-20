@@ -20,6 +20,7 @@ import com.liferay.dispatch.rest.client.serdes.v1_0.DispatchTriggerSerDes;
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -144,16 +145,17 @@ public class DispatchTrigger implements Cloneable, Serializable {
 
 	protected String dispatchTaskExecutorType;
 
-	public String getDispatchTaskSettings() {
+	public Map<String, ?> getDispatchTaskSettings() {
 		return dispatchTaskSettings;
 	}
 
-	public void setDispatchTaskSettings(String dispatchTaskSettings) {
+	public void setDispatchTaskSettings(Map<String, ?> dispatchTaskSettings) {
 		this.dispatchTaskSettings = dispatchTaskSettings;
 	}
 
 	public void setDispatchTaskSettings(
-		UnsafeSupplier<String, Exception> dispatchTaskSettingsUnsafeSupplier) {
+		UnsafeSupplier<Map<String, ?>, Exception>
+			dispatchTaskSettingsUnsafeSupplier) {
 
 		try {
 			dispatchTaskSettings = dispatchTaskSettingsUnsafeSupplier.get();
@@ -163,7 +165,7 @@ public class DispatchTrigger implements Cloneable, Serializable {
 		}
 	}
 
-	protected String dispatchTaskSettings;
+	protected Map<String, ?> dispatchTaskSettings;
 
 	public Date getEndDate() {
 		return endDate;

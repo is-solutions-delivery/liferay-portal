@@ -77,7 +77,11 @@ public abstract class BaseDispatchTriggerResourceImpl
 	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/dispatch-rest/v1.0/dispatchTriggers'  -u 'test@liferay.com:test'
 	 */
-	@io.swagger.v3.oas.annotations.tags.Tags(value = {})
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "DispatchTrigger")
+		}
+	)
 	@javax.ws.rs.GET
 	@javax.ws.rs.Path("/dispatchTriggers")
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
