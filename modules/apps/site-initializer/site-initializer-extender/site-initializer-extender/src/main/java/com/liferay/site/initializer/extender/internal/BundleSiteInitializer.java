@@ -3583,11 +3583,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 					accountBriefsJSONArray.getJSONObject(j);
 
 				userAccount =
-					userAccountResource.
-						postAccountUserAccountByExternalReferenceCode(
-							accountBriefsJSONObject.getString(
-								"externalReferenceCode"),
-							userAccount);
+					userAccountResource.putUserAccountByExternalReferenceCode(
+						jsonObject.getString("externalReferenceCode"),
+						userAccount);
+
+				userAccountResource.
+					postAccountByExternalReferenceCodeUserAccountByExternalReferenceCode(
+						accountBriefsJSONObject.getString(
+							"externalReferenceCode"),
+						userAccount.getExternalReferenceCode());
 
 				j++;
 
