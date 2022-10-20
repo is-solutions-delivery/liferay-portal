@@ -486,11 +486,11 @@ public class LayoutPageTemplateCollectionServiceTest {
 					"Layout Page Template Collection New", "Description New");
 
 		Assert.assertEquals(
-			"Layout Page Template Collection New",
-			layoutPageTemplateCollection.getName());
-		Assert.assertEquals(
 			"layout-page-template-collection-new",
 			layoutPageTemplateCollection.getLayoutPageTemplateCollectionKey());
+		Assert.assertEquals(
+			"Layout Page Template Collection New",
+			layoutPageTemplateCollection.getName());
 		Assert.assertEquals(
 			"Description New", layoutPageTemplateCollection.getDescription());
 	}

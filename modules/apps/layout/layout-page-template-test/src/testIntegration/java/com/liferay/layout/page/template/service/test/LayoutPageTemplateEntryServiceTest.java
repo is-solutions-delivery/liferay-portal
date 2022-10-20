@@ -336,19 +336,19 @@ public class LayoutPageTemplateEntryServiceTest {
 				layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
 
 		Assert.assertEquals(
-			"tiger", persistedLayoutPageTemplateEntry.getName());
-		Assert.assertEquals(
 			"tiger",
 			persistedLayoutPageTemplateEntry.getLayoutPageTemplateEntryKey());
+		Assert.assertEquals(
+			"tiger", persistedLayoutPageTemplateEntry.getName());
 
 		_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
 			layoutPageTemplateEntry.getLayoutPageTemplateEntryId(), "leopard");
 
 		Assert.assertEquals(
-			"leopard", persistedLayoutPageTemplateEntry.getName());
-		Assert.assertEquals(
 			"leopard",
 			persistedLayoutPageTemplateEntry.getLayoutPageTemplateEntryKey());
+		Assert.assertEquals(
+			"leopard", persistedLayoutPageTemplateEntry.getName());
 	}
 
 	@Test
