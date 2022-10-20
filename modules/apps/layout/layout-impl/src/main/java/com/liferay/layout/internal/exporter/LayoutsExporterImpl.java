@@ -298,8 +298,7 @@ public class LayoutsExporterImpl implements LayoutsExporter {
 		ObjectWriter objectWriter = _objectMapper.writer(filterProvider);
 
 		zipWriter.addEntry(
-			layoutUtilityPageEntryPath + StringPool.SLASH +
-				_FILE_NAME_UTILITY_PAGE,
+			layoutUtilityPageEntryPath + "/utility-page.json",
 			objectWriter.writeValueAsString(
 				UtilityPageTemplateDTOConverter.toDTO(layoutUtilityPageEntry)));
 
@@ -448,8 +447,6 @@ public class LayoutsExporterImpl implements LayoutsExporter {
 				previewFileEntry.getContentStream());
 		}
 	}
-
-	private static final String _FILE_NAME_UTILITY_PAGE = "utility-page.json";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutsExporterImpl.class);
