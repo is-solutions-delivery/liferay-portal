@@ -62,13 +62,15 @@ public class FolderSearchFacetDisplayContextBuilder {
 		FolderSearchFacetDisplayContext folderSearchFacetDisplayContext =
 			new FolderSearchFacetDisplayContext();
 
+		folderSearchFacetDisplayContext.setDisplayStyleGroupId(
+			getDisplayStyleGroupId());
+
 		List<BucketDisplayContext> bucketDisplayContexts =
 			_buildBucketDisplayContexts();
 
-		folderSearchFacetDisplayContext.setDisplayStyleGroupId(
-			getDisplayStyleGroupId());
 		folderSearchFacetDisplayContext.setBucketDisplayContexts(
 			bucketDisplayContexts);
+
 		folderSearchFacetDisplayContext.
 			setFolderFacetPortletInstanceConfiguration(
 				_folderFacetPortletInstanceConfiguration);
