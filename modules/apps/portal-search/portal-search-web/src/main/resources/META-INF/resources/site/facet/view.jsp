@@ -108,7 +108,7 @@ SiteFacetPortletInstanceConfiguration siteFacetPortletInstanceConfiguration = sc
 													<span class="custom-control-label-text"><%= HtmlUtil.escape(scopeSearchFacetTermDisplayContext.getBucketText()) %></span>
 												</span>
 
-												<c:if test="<%= scopeSearchFacetTermDisplayContext.isShowCount() %>">
+												<c:if test="<%= scopeSearchFacetTermDisplayContext.isFrequencyVisible() %>">
 													<small class="term-count">
 														(<%= scopeSearchFacetTermDisplayContext.getFrequency() %>)
 													</small>
