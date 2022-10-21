@@ -12,13 +12,22 @@
  * details.
  */
 
-import {useManualQuery} from 'graphql-hooks';
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {useManualQuery, useQuery} from 'graphql-hooks';
+import React, {
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import {withRouter} from 'react-router-dom';
 
 import {AppContext} from '../../AppContext.es';
 import Breadcrumb from '../../components/Breadcrumb.es';
-import {getSectionThreadsQuery} from '../../utils/client.es';
+import {
+	getSectionThreadsQuery,
+	getTagsOrderByDateCreatedQuery,
+} from '../../utils/client.es';
 import {getFilterValues} from './components/QuestionFilter.es';
 import QuestionList from './components/QuestionList.es';
 import QuestionsNavigationBar from './components/QuestionNavigationBar.es';
@@ -31,8 +40,35 @@ const MAX_NUMBER_OF_QUESTIONS = 500;
 export default withRouter(({history, location, match: {params}}) => {
 	const {creatorId, sectionTitle} = params;
 
+	const urlParams = useQuestionsURLParameters(location);
+
+	const {
+		filterBy,
+		page,
+		pageSize,
+		search,
+		selectedTags,
+		sortBy,
+		taggedWith,
+	} = urlParams;
+
 	const context = useContext(AppContext);
 	const [getThreadsFiltered] = useManualQuery(getSectionThreadsQuery);
+
+	const {data, loading: tagLoading} = useQuery(
+		getTagsOrderByDateCreatedQuery,
+		{
+			useCache: false,
+			variables: {
+				filter: 'subscribed eq true',
+				page: 1,
+				pageSize: 20,
+				siteKey: context.siteKey,
+			},
+		}
+	);
+
+	const tagsWatched = useMemo(() => data?.keywords?.items || [], [data]);
 
 	const [error, setError] = useState({});
 	const [loading, setLoading] = useState(true);
@@ -50,17 +86,6 @@ export default withRouter(({history, location, match: {params}}) => {
 		setError,
 		setLoading,
 	});
-	const urlParams = useQuestionsURLParameters(location);
-
-	const {
-		filterBy,
-		page,
-		pageSize,
-		search,
-		selectedTags,
-		sortBy,
-		taggedWith,
-	} = urlParams;
 
 	const {
 		changePage,
@@ -76,7 +101,9 @@ export default withRouter(({history, location, match: {params}}) => {
 					sortBy: params.sortBy,
 					taggedWith: params.taggedWith,
 				},
-				params.selectedTags
+				params.taggedWith === 'some-specific-tag'
+					? params.selectedTags
+					: tagsWatched
 			);
 
 			const {
@@ -111,8 +138,7 @@ export default withRouter(({history, location, match: {params}}) => {
 							? MAX_NUMBER_OF_QUESTIONS
 							: messageBoardThreads.totalCount,
 				});
-			}
-			catch (error) {
+			} catch (error) {
 				if (process.env.NODE_ENV === 'development') {
 					console.error(error);
 				}
@@ -124,11 +150,11 @@ export default withRouter(({history, location, match: {params}}) => {
 
 			setLoading(false);
 		},
-		[getThreadsFiltered, page, search, pageSize, section.id]
+		[getThreadsFiltered, page, pageSize, search, section.id, tagsWatched]
 	);
 
 	useEffect(() => {
-		if (section.id) {
+		if (section.id && !tagLoading) {
 			getMbThreads({
 				filterBy,
 				messageBoardSectionId: section.id,
@@ -146,6 +172,7 @@ export default withRouter(({history, location, match: {params}}) => {
 		taggedWith,
 		search,
 		section.id,
+		tagLoading,
 	]);
 
 	const commonProps = {

@@ -78,6 +78,10 @@ export const taggedWithOptions = [
 		value: 'none',
 	},
 	{
+		label: Liferay.Language.get('my-watched-tags'),
+		value: 'my-watched-tags',
+	},
+	{
 		label: Liferay.Language.get('some-specific-tag'),
 		value: 'some-specific-tag',
 	},
@@ -114,12 +118,35 @@ const getFilterValues = (form, tags) => {
 
 	query.sortBy = sortOption?.sortValue;
 
+	const _tags =
+		form.taggedWith === 'some-specific-tag'
+			? tags.map(({value}) => value)
+			: tags.map((item) => item.name);
+
 	if (form.taggedWith === 'some-specific-tag') {
 		if (tags.length) {
-			const _tags = tags.map(({value}) => value);
 			query.resultBar.push({
 				label: Liferay.Language.get('some-specific-tag'),
 				value: _tags.join(', '),
+			});
+
+			const filterKeyword = _tags
+				.map((value) => `(x eq '${value}')`)
+				.join(' or ');
+
+			if (query.filterBy) {
+				query.filterBy += ' and ';
+			}
+
+			query.filterBy = `${query.filterBy} (keywords/any(x:${filterKeyword}))`;
+		}
+	}
+
+	if (form.taggedWith === 'my-watched-tags') {
+		if (tags.length) {
+			query.resultBar.push({
+				label: Liferay.Language.get('my-watched-tags'),
+				value: _tags.join(','),
 			});
 
 			const filterKeyword = _tags
