@@ -110,7 +110,7 @@ SiteFacetPortletInstanceConfiguration siteFacetPortletInstanceConfiguration = sc
 
 												<c:if test="<%= scopeSearchFacetTermDisplayContext.isShowCount() %>">
 													<small class="term-count">
-														(<%= scopeSearchFacetTermDisplayContext.getCount() %>)
+														(<%= scopeSearchFacetTermDisplayContext.getFrequency() %>)
 													</small>
 												</c:if>
 											</label>
