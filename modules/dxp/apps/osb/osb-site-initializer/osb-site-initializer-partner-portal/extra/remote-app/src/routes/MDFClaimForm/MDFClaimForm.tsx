@@ -31,9 +31,10 @@ const getInitialFormValues = (
 ): MDFClaim => ({
 	activities: activitiesDTO?.map((activity) => ({
 		budgets: activity.activityToBudgets?.map((budget) => ({
-			claimAmount: budget.cost,
+			claimAmount: 0,
 			expenseName: budget.expense.name,
 			id: budget.id,
+			requestAmount: budget.cost,
 		})),
 		id: activity.id,
 		metrics: '',

@@ -9,7 +9,7 @@
  * distribution rights of the Software.
  */
 
-import ClayButton from '@clayui/button';
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayModal, {useModal} from '@clayui/modal';
 import {useState} from 'react';
 
@@ -22,6 +22,7 @@ interface IProps {
 	name: string;
 	onCancel: React.MouseEventHandler<HTMLButtonElement>;
 	onConfirm: (claimAmount?: number, invoice?: File) => void;
+	onDelete: () => void;
 }
 
 const BudgetModal = ({
@@ -29,6 +30,7 @@ const BudgetModal = ({
 	observer,
 	onCancel,
 	onConfirm,
+	onDelete,
 	...budget
 }: Partial<MDFClaimBudget> &
 	IProps &
@@ -66,21 +68,36 @@ const BudgetModal = ({
 						value={currentClaimAmount}
 					/>
 
-					<PRMFormik.Field
-						component={PRMForm.InputFile}
-						displayType="secondary"
-						label="Third Party Invoice"
-						name={`${name}.invoice`}
-						onAccept={(value: File) => {
-							if (value) {
-								setCurrentInvoiceFile(value);
-							}
-						}}
-						outline
-						required
-						small
-						value={currentInvoiceFile}
-					/>
+					<div className="align-items-center d-flex justify-content-start">
+						<PRMFormik.Field
+							component={PRMForm.InputFile}
+							displayType="secondary"
+							label="Third Party Invoice"
+							name={`${name}.invoice`}
+							onAccept={(value: File) => {
+								if (value) {
+									setCurrentInvoiceFile(value);
+								}
+							}}
+							outline
+							required
+							small
+							value={currentInvoiceFile}
+						/>
+
+						{currentInvoiceFile && (
+							<ClayButtonWithIcon
+								className="ml-4 mt-2"
+								displayType="secondary"
+								onClick={() => {
+									setCurrentInvoiceFile(undefined);
+									onDelete();
+								}}
+								small
+								symbol="times"
+							/>
+						)}
+					</div>
 				</ClayModal.Body>
 
 				<ClayModal.Footer
@@ -96,6 +113,7 @@ const BudgetModal = ({
 							</ClayButton>
 
 							<ClayButton
+								disabled={!currentInvoiceFile}
 								onClick={() =>
 									onConfirm(
 										currentClaimAmount,
