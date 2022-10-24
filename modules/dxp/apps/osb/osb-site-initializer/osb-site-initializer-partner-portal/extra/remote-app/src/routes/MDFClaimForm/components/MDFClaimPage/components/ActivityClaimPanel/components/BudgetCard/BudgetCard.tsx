@@ -18,18 +18,26 @@ import getIntlNumberFormat from '../../../../../../../../common/utils/getIntlNum
 
 interface IProps {
 	budget: MDFClaimBudget;
+	isValid: Boolean;
 	onClick: () => void;
 }
 
 const BudgetCard = ({
 	budget,
+	isValid,
 	onClick,
 }: IProps & React.HTMLAttributes<HTMLDivElement>) => {
 	const hasInvoices = !!budget.invoice;
 
 	return (
 		<ClayCard
-			className="border border-neutral-10 card-horizontal card-interactive shadow-none"
+			className={classNames(
+				'border card-horizontal card-interactive shadow-none',
+				{
+					'border-danger': !isValid,
+					'border-neutral-10': isValid,
+				}
+			)}
 			onClick={onClick}
 		>
 			<ClayCard.Body className="m-1 p-2">
@@ -41,7 +49,9 @@ const BudgetCard = ({
 
 						<div
 							className={classNames('text-paragraph-xs', {
-								'text-brand-primary-lighten-2': hasInvoices,
+								'text-brand-primary-lighten-2':
+									hasInvoices && isValid,
+								'text-danger': hasInvoices && !isValid,
 								'text-neutral-7': !hasInvoices,
 							})}
 						>
@@ -49,12 +59,18 @@ const BudgetCard = ({
 								className="mr-1"
 								symbol={
 									hasInvoices
-										? 'check-circle-full'
+										? isValid
+											? 'check-circle-full'
+											: 'exclamation-full'
 										: 'staging'
 								}
 							/>
 
-							{hasInvoices ? 'Invoice Added' : 'Pending Invoice'}
+							{hasInvoices
+								? isValid
+									? 'Invoice Added'
+									: 'There is a issue'
+								: 'Pending Invoice'}
 						</div>
 					</div>
 

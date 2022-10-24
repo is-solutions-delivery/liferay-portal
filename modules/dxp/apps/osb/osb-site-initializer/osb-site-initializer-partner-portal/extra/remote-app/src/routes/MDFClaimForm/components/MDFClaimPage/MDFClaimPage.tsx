@@ -34,6 +34,7 @@ const MDFClaimPage = ({
 	onSaveAsDraft,
 }: PRMFormikPageProps & MDFClaimProps & IProps) => {
 	const {
+		errors,
 		isSubmitting,
 		isValid,
 		setFieldValue,
@@ -65,10 +66,12 @@ const MDFClaimPage = ({
 					<ActivityClaimPanel
 						activity={activity}
 						activityIndex={index}
+						errors={errors}
 						key={`${activity.id}-${index}`}
 						overallCampaignDescription={
 							mdfRequest.overallCampaignDescription
 						}
+						setFieldTouched={formikHelpers.setFieldTouched}
 						setFieldValue={setFieldValue}
 					/>
 				))}

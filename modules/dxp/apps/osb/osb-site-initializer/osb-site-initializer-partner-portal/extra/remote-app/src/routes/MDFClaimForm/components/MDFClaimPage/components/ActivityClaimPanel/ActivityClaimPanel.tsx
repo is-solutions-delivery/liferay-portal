@@ -13,14 +13,15 @@ import ClayIcon from '@clayui/icon';
 import Link from '@clayui/link';
 import {useModal} from '@clayui/modal';
 import ClayPanel from '@clayui/panel';
-import {FormikContextType} from 'formik';
-import {useCallback, useState} from 'react';
+import {FormikContextType, FormikErrors} from 'formik';
+import {useCallback, useEffect, useState} from 'react';
 
 import PRMForm from '../../../../../../common/components/PRMForm';
 import PRMFormik from '../../../../../../common/components/PRMFormik';
 import {useWebDAV} from '../../../../../../common/context/WebDAV';
 import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../../../common/interfaces/mdfClaimActivity';
+import MDFClaimBudget from '../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../common/utils/getIntlNumberFormat';
 import BudgetCard from './components/BudgetCard/BudgetCard';
 import BudgetModal from './components/BudgetModal';
@@ -37,11 +38,39 @@ interface IProps {
 const ActivityClaimPanel = ({
 	activity,
 	activityIndex,
+	errors,
 	overallCampaignDescription,
+	setFieldTouched,
 	setFieldValue,
-}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue'>) => {
+}: IProps &
+	Pick<
+		FormikContextType<MDFClaim>,
+		'setFieldValue' | 'setFieldTouched' | 'errors'
+	>) => {
 	const [currentBudgetIndex, setCurrentBudgetIndex] = useState<number>();
 	const {observer, onOpenChange, open} = useModal();
+
+	const [deleteInvoiceBudget, setDeleteInvoiceBudget] = useState<boolean>(
+		false
+	);
+
+	const webDAV = useWebDAV();
+
+	const activityErrors = errors.activities?.[activityIndex] as FormikErrors<
+		MDFClaimActivity
+	>;
+	const budgetErrors =
+		currentBudgetIndex !== undefined &&
+		(activityErrors?.budgets?.[currentBudgetIndex] as FormikErrors<
+			MDFClaimBudget
+		>);
+
+	useEffect(() => {
+		if (!budgetErrors && !deleteInvoiceBudget && !open) {
+			onOpenChange(false);
+			setDeleteInvoiceBudget(false);
+		}
+	}, [budgetErrors, deleteInvoiceBudget, onOpenChange, open]);
 
 	useBudgetsAmount(
 		activity.budgets,
@@ -54,8 +83,6 @@ const ActivityClaimPanel = ({
 			[activityIndex, setFieldValue]
 		)
 	);
-
-	const webDAV = useWebDAV();
 
 	const currentBudgetFieldName = `activities[${activityIndex}].budgets[${currentBudgetIndex}]`;
 
@@ -74,6 +101,12 @@ const ActivityClaimPanel = ({
 					observer={observer}
 					onCancel={() => onOpenChange(false)}
 					onConfirm={(claimAmount, invoice) => {
+						setFieldTouched(
+							`${currentBudgetFieldName}.claimAmount`
+						);
+
+						setFieldTouched(`${currentBudgetFieldName}.invoice`);
+
 						setFieldValue(
 							`${currentBudgetFieldName}.claimAmount`,
 							claimAmount
@@ -82,8 +115,14 @@ const ActivityClaimPanel = ({
 							`${currentBudgetFieldName}.invoice`,
 							invoice
 						);
+					}}
+					onDelete={() => {
+						setDeleteInvoiceBudget(true);
 
-						onOpenChange(false);
+						setFieldValue(
+							`${currentBudgetFieldName}.invoice`,
+							undefined
+						);
 					}}
 				/>
 			)}
@@ -122,6 +161,7 @@ const ActivityClaimPanel = ({
 					{activity.budgets?.map((budget, index) => (
 						<BudgetCard
 							budget={budget}
+							isValid={!budgetErrors}
 							key={`${budget.id}-${index}`}
 							onClick={() => {
 								setCurrentBudgetIndex(index);

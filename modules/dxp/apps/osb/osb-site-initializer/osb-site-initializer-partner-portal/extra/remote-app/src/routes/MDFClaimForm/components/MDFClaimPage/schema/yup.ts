@@ -11,8 +11,11 @@
 
 import {array, boolean, mixed, number, object, string} from 'yup';
 
+const KB_TO_MB = 1024;
+const MAX_MB = KB_TO_MB * 3;
+
 const validDocument = {
-	maxSize: 100000,
+	maxSize: MAX_MB,
 	types: [
 		'image/jpg',
 		'image/jpeg',
@@ -26,7 +29,46 @@ const claimSchema = object({
 	activities: array()
 		.of(
 			object({
-				budgets: array().of(object({invoice: mixed()})),
+				budgets: array().of(
+					object({
+						claimAmount: number().when('invoice', {
+							is: (invoice: File) => Boolean(invoice),
+							then: (schema) =>
+								schema
+									.moreThan(0, 'Need be bigger than 0')
+									.test(
+										'biggerAmount',
+										'Invoice amount is bigger than requested amount early',
+										(claimAmount, testContext) =>
+											Number(claimAmount) <=
+											Number(
+												testContext.parent.requestAmount
+											)
+									),
+						}),
+						invoice: mixed()
+							.test(
+								'fileSize',
+								'File Size is too large',
+								(invoice) => {
+									return invoice
+										? Math.ceil(invoice.size / 1000) <=
+												validDocument.maxSize
+										: true;
+								}
+							)
+							.test(
+								'fileType',
+								'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
+								(invoice) =>
+									invoice
+										? validDocument.types.includes(
+												invoice.type
+										  )
+										: true
+							),
+					})
+				),
 				listQualifiedLeads: mixed().when('selected', {
 					is: (selected: boolean) => selected,
 					then: (schema) =>
@@ -35,13 +77,12 @@ const claimSchema = object({
 								'fileSize',
 								'File Size is too large',
 								(listQualifiedLeads) =>
-									validDocument.types.includes(
-										listQualifiedLeads?.type
-									)
+									listQualifiedLeads?.size <=
+									validDocument.maxSize
 							)
 							.test(
 								'fileType',
-								'Unsupported File Format',
+								'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
 								(listQualifiedLeads) =>
 									validDocument.types.includes(
 										listQualifiedLeads?.type
@@ -82,8 +123,11 @@ const claimSchema = object({
 			(reimbursementInvoice) =>
 				reimbursementInvoice?.size <= validDocument.maxSize
 		)
-		.test('fileType', 'Unsupported File Format', (reimbursementInvoice) =>
-			validDocument.types.includes(reimbursementInvoice?.type)
+		.test(
+			'fileType',
+			'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
+			(reimbursementInvoice) =>
+				validDocument.types.includes(reimbursementInvoice?.type)
 		),
 	totalClaimAmount: number()
 		.moreThan(0, 'Need be bigger than 0')
