@@ -49,10 +49,10 @@ const ShortcutIcon = () => (
 );
 
 const TestFlowTasks = () => {
-	const {testrayTaskId} = useParams();
+	const {taskId} = useParams();
 
 	const {data: testrayTask, loading} = useFetch<TestrayTask>(
-		testrayTaskImpl.getResource(testrayTaskId as string),
+		testrayTaskImpl.getResource(taskId as string),
 		(response) => testrayTaskImpl.transformData(response)
 	);
 
@@ -265,13 +265,10 @@ const TestFlowTasks = () => {
 								value: i18n.translate('assignee'),
 							},
 						],
-						navigateTo: () => '/testflow/subtasks',
+						navigateTo: (subtask) => `subtasks/${subtask.id}`,
 					}}
 					variables={{
-						filter: searchUtil.eq(
-							'taskId',
-							testrayTaskId as string
-						),
+						filter: searchUtil.eq('taskId', taskId as string),
 					}}
 				/>
 			</Container>
