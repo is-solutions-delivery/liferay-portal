@@ -15,14 +15,20 @@ const KB_TO_MB = 1024;
 const MAX_MB = KB_TO_MB * 3;
 
 const validDocument = {
-	maxSize: MAX_MB,
-	types: [
+	imageDocumentsTypes: [
 		'image/jpg',
 		'image/jpeg',
-		'image/gif',
+		'image/tiff',
 		'image/png',
 		'application/pdf',
+		'application/msword',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 	],
+	listOfLeadsDocumentsTypes: [
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		'text/csv',
+	],
+	maxSize: MAX_MB,
 };
 
 export const requiredBudgetSchema = object({
@@ -52,7 +58,9 @@ export const requiredBudgetSchema = object({
 			'fileType',
 			'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
 			(invoice) =>
-				invoice ? validDocument.types.includes(invoice.type) : true
+				invoice
+					? validDocument.imageDocumentsTypes.includes(invoice.type)
+					: true
 		),
 	requestAmount: number(),
 });
@@ -102,7 +110,7 @@ const claimSchema = object({
 										'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
 										(invoice) =>
 											invoice
-												? validDocument.types.includes(
+												? validDocument.imageDocumentsTypes.includes(
 														invoice.type
 												  )
 												: true
@@ -128,10 +136,10 @@ const claimSchema = object({
 							)
 							.test(
 								'fileType',
-								'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
+								'Unsupported File Format, upload a valid format *csv *xlsx *xls ',
 								(listQualifiedLeads) =>
 									listQualifiedLeads
-										? validDocument.types.includes(
+										? validDocument.listOfLeadsDocumentsTypes.includes(
 												listQualifiedLeads.type
 										  )
 										: true
@@ -175,7 +183,9 @@ const claimSchema = object({
 			'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
 			(reimbursementInvoice) =>
 				reimbursementInvoice
-					? validDocument.types.includes(reimbursementInvoice.type)
+					? validDocument.imageDocumentsTypes.includes(
+							reimbursementInvoice.type
+					  )
 					: true
 		),
 	totalClaimAmount: number()
