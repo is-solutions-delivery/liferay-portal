@@ -12,30 +12,38 @@
 import ClayCard from '@clayui/card';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
+import {FormikErrors} from 'formik';
 
+import MDFClaimActivity from '../../../../../../../../common/interfaces/mdfClaimActivity';
 import MDFClaimBudget from '../../../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../../../common/utils/getIntlNumberFormat';
 
 interface IProps {
+	activityErrors: FormikErrors<MDFClaimActivity>;
 	budget: MDFClaimBudget;
-	isValid: Boolean;
+	currentBudget: number;
 	onClick: () => void;
 }
 
 const BudgetCard = ({
+	activityErrors,
 	budget,
-	isValid,
+	currentBudget,
 	onClick,
 }: IProps & React.HTMLAttributes<HTMLDivElement>) => {
 	const hasInvoices = !!budget.invoice;
+
+	const budgetErrors = !activityErrors?.budgets?.[
+		currentBudget
+	] as FormikErrors<MDFClaimBudget>;
 
 	return (
 		<ClayCard
 			className={classNames(
 				'border card-horizontal card-interactive shadow-none',
 				{
-					'border-danger': !isValid,
-					'border-neutral-10': isValid,
+					'border-danger': !budgetErrors,
+					'border-neutral-10': budgetErrors,
 				}
 			)}
 			onClick={onClick}
@@ -50,8 +58,8 @@ const BudgetCard = ({
 						<div
 							className={classNames('text-paragraph-xs', {
 								'text-brand-primary-lighten-2':
-									hasInvoices && isValid,
-								'text-danger': hasInvoices && !isValid,
+									hasInvoices && budgetErrors,
+								'text-danger': hasInvoices && !budgetErrors,
 								'text-neutral-7': !hasInvoices,
 							})}
 						>
@@ -59,7 +67,7 @@ const BudgetCard = ({
 								className="mr-1"
 								symbol={
 									hasInvoices
-										? isValid
+										? budgetErrors
 											? 'check-circle-full'
 											: 'exclamation-full'
 										: 'staging'
@@ -67,7 +75,7 @@ const BudgetCard = ({
 							/>
 
 							{hasInvoices
-								? isValid
+								? budgetErrors
 									? 'Invoice Added'
 									: 'There is a issue'
 								: 'Pending Invoice'}
