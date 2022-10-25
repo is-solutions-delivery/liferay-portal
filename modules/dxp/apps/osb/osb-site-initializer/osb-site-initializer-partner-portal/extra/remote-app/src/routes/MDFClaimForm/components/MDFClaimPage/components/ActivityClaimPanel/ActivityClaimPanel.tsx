@@ -21,7 +21,6 @@ import PRMFormik from '../../../../../../common/components/PRMFormik';
 import {useWebDAV} from '../../../../../../common/context/WebDAV';
 import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../../../common/interfaces/mdfClaimActivity';
-import MDFClaimBudget from '../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../common/utils/getIntlNumberFormat';
 import {requiredBudgetSchema} from '../../schema/yup';
 import BudgetCard from './components/BudgetCard/BudgetCard';
@@ -56,11 +55,6 @@ const ActivityClaimPanel = ({
 	const activityErrors = errors.activities?.[activityIndex] as FormikErrors<
 		MDFClaimActivity
 	>;
-	const budgetErrors =
-		currentBudgetIndex !== undefined &&
-		(activityErrors?.budgets?.[currentBudgetIndex] as FormikErrors<
-			MDFClaimBudget
-		>);
 
 	useBudgetsAmount(
 		activity.budgets,
@@ -168,8 +162,9 @@ const ActivityClaimPanel = ({
 				<PanelBody expanded={activity.selected}>
 					{activity.budgets?.map((budget, index) => (
 						<BudgetCard
+							activityErrors={activityErrors}
 							budget={budget}
-							isValid={!budgetErrors}
+							currentBudget={index}
 							key={`${budget.id}-${index}`}
 							onClick={() => {
 								setCurrentBudgetIndex(index);
