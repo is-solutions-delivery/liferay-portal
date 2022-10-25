@@ -63,7 +63,7 @@ const BudgetModal = ({
 					<PRMFormik.Field
 						component={PRMForm.InputCurrency}
 						description="Silver Partner can claim up to 50%"
-						label="Claim Amount"
+						label="Invoice Amount"
 						name={`${name}.invoiceAmount`}
 						onAccept={(value: number) =>
 							setCurrentinvoiceAmount(value)
