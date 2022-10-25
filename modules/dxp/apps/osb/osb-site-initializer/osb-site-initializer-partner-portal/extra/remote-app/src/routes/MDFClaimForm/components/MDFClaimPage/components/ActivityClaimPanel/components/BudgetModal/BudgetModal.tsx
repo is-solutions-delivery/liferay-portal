@@ -21,7 +21,11 @@ import getIconSpriteMap from '../../../../../../../../common/utils/getIconSprite
 interface IProps {
 	name: string;
 	onCancel: React.MouseEventHandler<HTMLButtonElement>;
-	onConfirm: (claimAmount?: number, invoice?: File) => void;
+	onConfirm: (
+		claimAmount?: number,
+		invoice?: File,
+		requestAmount?: number
+	) => void;
 	onDelete: () => void;
 }
 
@@ -117,7 +121,8 @@ const BudgetModal = ({
 								onClick={() =>
 									onConfirm(
 										currentClaimAmount,
-										currentInvoiceFile
+										currentInvoiceFile,
+										budget.requestAmount
 									)
 								}
 							>

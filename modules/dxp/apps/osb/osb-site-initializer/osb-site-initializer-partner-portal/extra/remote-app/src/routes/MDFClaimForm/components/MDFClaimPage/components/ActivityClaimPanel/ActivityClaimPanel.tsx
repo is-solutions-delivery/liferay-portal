@@ -14,7 +14,7 @@ import Link from '@clayui/link';
 import {useModal} from '@clayui/modal';
 import ClayPanel from '@clayui/panel';
 import {FormikContextType, FormikErrors} from 'formik';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useState} from 'react';
 
 import PRMForm from '../../../../../../common/components/PRMForm';
 import PRMFormik from '../../../../../../common/components/PRMFormik';
@@ -23,6 +23,7 @@ import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../../../common/interfaces/mdfClaimActivity';
 import MDFClaimBudget from '../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../common/utils/getIntlNumberFormat';
+import {requiredBudgetSchema} from '../../schema/yup';
 import BudgetCard from './components/BudgetCard/BudgetCard';
 import BudgetModal from './components/BudgetModal';
 import PanelBody from './components/PanelBody';
@@ -50,10 +51,6 @@ const ActivityClaimPanel = ({
 	const [currentBudgetIndex, setCurrentBudgetIndex] = useState<number>();
 	const {observer, onOpenChange, open} = useModal();
 
-	const [deleteInvoiceBudget, setDeleteInvoiceBudget] = useState<boolean>(
-		false
-	);
-
 	const webDAV = useWebDAV();
 
 	const activityErrors = errors.activities?.[activityIndex] as FormikErrors<
@@ -64,13 +61,6 @@ const ActivityClaimPanel = ({
 		(activityErrors?.budgets?.[currentBudgetIndex] as FormikErrors<
 			MDFClaimBudget
 		>);
-
-	useEffect(() => {
-		if (!budgetErrors && !deleteInvoiceBudget && !open) {
-			onOpenChange(false);
-			setDeleteInvoiceBudget(false);
-		}
-	}, [budgetErrors, deleteInvoiceBudget, onOpenChange, open]);
 
 	useBudgetsAmount(
 		activity.budgets,
@@ -100,7 +90,7 @@ const ActivityClaimPanel = ({
 					name={currentBudgetFieldName}
 					observer={observer}
 					onCancel={() => onOpenChange(false)}
-					onConfirm={(claimAmount, invoice) => {
+					onConfirm={async (claimAmount, invoice, requestAmount) => {
 						setFieldTouched(
 							`${currentBudgetFieldName}.claimAmount`
 						);
@@ -115,13 +105,31 @@ const ActivityClaimPanel = ({
 							`${currentBudgetFieldName}.invoice`,
 							invoice
 						);
+
+						try {
+							await requiredBudgetSchema.validate({
+								claimAmount,
+								invoice,
+								requestAmount,
+							});
+
+							onOpenChange(false);
+						} catch {}
 					}}
 					onDelete={() => {
-						setDeleteInvoiceBudget(true);
-
 						setFieldValue(
 							`${currentBudgetFieldName}.invoice`,
 							undefined
+						);
+
+						setFieldValue(
+							`${currentBudgetFieldName}.claimAmount`,
+							''
+						);
+
+						setFieldValue(
+							`activities[${activityIndex}].totalCost`,
+							''
 						);
 					}}
 				/>

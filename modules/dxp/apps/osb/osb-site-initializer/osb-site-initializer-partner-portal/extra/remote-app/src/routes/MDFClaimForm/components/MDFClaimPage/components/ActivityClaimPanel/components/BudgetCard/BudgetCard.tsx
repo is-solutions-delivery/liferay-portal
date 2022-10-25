@@ -42,7 +42,7 @@ const BudgetCard = ({
 		>
 			<ClayCard.Body className="m-1 p-2">
 				<ClayCard.Row className="justify-content-between">
-					<div className="d-flex flex-row">
+					<div className="align-items-center d-flex flex-row">
 						<div className="font-weight-bold mr-3 text-neutral-10 text-paragraph">
 							{budget.expenseName}
 						</div>
