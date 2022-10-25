@@ -32,28 +32,12 @@ const validDocument = {
 };
 
 export const requiredBudgetSchema = object({
-	claimAmount: number().when('invoice', {
-		is: (invoice: File) => Boolean(invoice),
-		then: (schema) =>
-			schema
-				.moreThan(0, 'Need be bigger than 0')
-				.test(
-					'biggerAmount',
-					'Invoice amount is bigger than requested amount early',
-					(claimAmount, testContext) => {
-						return (
-							Number(claimAmount) <=
-							Number(testContext.parent.requestAmount)
-						);
-					}
-				),
-	}),
 	invoice: mixed()
-		.test('fileSize', 'File Size is too large', (invoice) => {
-			return invoice
+		.test('fileSize', 'File Size is too large', (invoice) =>
+			invoice
 				? Math.ceil(invoice.size / 1000) <= validDocument.maxSize
-				: true;
-		})
+				: true
+		)
 		.test(
 			'fileType',
 			'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
@@ -62,6 +46,20 @@ export const requiredBudgetSchema = object({
 					? validDocument.imageDocumentsTypes.includes(invoice.type)
 					: true
 		),
+	invoiceAmount: number().when('invoice', {
+		is: (invoice: File) => Boolean(invoice),
+		then: (schema) =>
+			schema
+				.moreThan(0, 'Need be bigger than 0')
+				.test(
+					'biggerAmount',
+					'Invoice amount is bigger than requested amount early',
+					(invoiceAmount, testContext) =>
+						Number(invoiceAmount) <=
+						Number(testContext.parent.requestAmount)
+				),
+	}),
+
 	requestAmount: number(),
 });
 
@@ -74,36 +72,16 @@ const claimSchema = object({
 					then: (schema) =>
 						schema.of(
 							object({
-								claimAmount: number().when('invoice', {
-									is: (invoice: File) => Boolean(invoice),
-									then: (schema) =>
-										schema
-											.moreThan(
-												0,
-												'Need be bigger than 0'
-											)
-											.test(
-												'biggerAmount',
-												'Invoice amount is bigger than requested amount early',
-												(claimAmount, testContext) =>
-													Number(claimAmount) <=
-													Number(
-														testContext.parent
-															.requestAmount
-													)
-											),
-								}),
 								invoice: mixed()
 									.test(
 										'fileSize',
 										'File Size is too large',
-										(invoice) => {
-											return invoice
+										(invoice) =>
+											invoice
 												? Math.ceil(
 														invoice.size / 1000
 												  ) <= validDocument.maxSize
-												: true;
-										}
+												: true
 									)
 									.test(
 										'fileType',
@@ -115,6 +93,25 @@ const claimSchema = object({
 												  )
 												: true
 									),
+								invoiceAmount: number().when('invoice', {
+									is: (invoice: File) => Boolean(invoice),
+									then: (schema) =>
+										schema
+											.moreThan(
+												0,
+												'Need be bigger than 0'
+											)
+											.test(
+												'biggerAmount',
+												'Invoice amount is bigger than requested amount early',
+												(invoiceAmount, testContext) =>
+													Number(invoiceAmount) <=
+													Number(
+														testContext.parent
+															.requestAmount
+													)
+											),
+								}),
 							})
 						),
 				}),
@@ -126,13 +123,12 @@ const claimSchema = object({
 							.test(
 								'fileSize',
 								'File Size is too large',
-								(listQualifiedLeads) => {
-									return listQualifiedLeads
+								(listQualifiedLeads) =>
+									listQualifiedLeads
 										? Math.ceil(
 												listQualifiedLeads.size / 1000
 										  ) <= validDocument.maxSize
-										: true;
-								}
+										: true
 							)
 							.test(
 								'fileType',
@@ -172,12 +168,12 @@ const claimSchema = object({
 		),
 	reimbursementInvoice: mixed()
 		.required('Required')
-		.test('fileSize', 'File Size is too large', (reimbursementInvoice) => {
-			return reimbursementInvoice
+		.test('fileSize', 'File Size is too large', (reimbursementInvoice) =>
+			reimbursementInvoice
 				? Math.ceil(reimbursementInvoice.size / 1000) <=
-						validDocument.maxSize
-				: true;
-		})
+				  validDocument.maxSize
+				: true
+		)
 		.test(
 			'fileType',
 			'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',

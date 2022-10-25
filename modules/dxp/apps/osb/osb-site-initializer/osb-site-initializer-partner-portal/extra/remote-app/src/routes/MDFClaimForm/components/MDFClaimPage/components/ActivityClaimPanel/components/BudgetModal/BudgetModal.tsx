@@ -22,7 +22,7 @@ interface IProps {
 	name: string;
 	onCancel: React.MouseEventHandler<HTMLButtonElement>;
 	onConfirm: (
-		claimAmount?: number,
+		invoiceAmount?: number,
 		invoice?: File,
 		requestAmount?: number
 	) => void;
@@ -39,9 +39,9 @@ const BudgetModal = ({
 }: Partial<MDFClaimBudget> &
 	IProps &
 	Pick<ReturnType<typeof useModal>, 'observer'>) => {
-	const [currentClaimAmount, setCurrentClaimAmount] = useState<
+	const [currentinvoiceAmount, setCurrentinvoiceAmount] = useState<
 		number | undefined
-	>(budget?.claimAmount);
+	>(budget?.invoiceAmount);
 
 	const [currentInvoiceFile, setCurrentInvoiceFile] = useState<
 		File | undefined
@@ -64,12 +64,12 @@ const BudgetModal = ({
 						component={PRMForm.InputCurrency}
 						description="Silver Partner can claim up to 50%"
 						label="Claim Amount"
-						name={`${name}.claimAmount`}
+						name={`${name}.invoiceAmount`}
 						onAccept={(value: number) =>
-							setCurrentClaimAmount(value)
+							setCurrentinvoiceAmount(value)
 						}
 						required
-						value={currentClaimAmount}
+						value={currentinvoiceAmount}
 					/>
 
 					<div className="align-items-center d-flex justify-content-start">
@@ -120,7 +120,7 @@ const BudgetModal = ({
 								disabled={!currentInvoiceFile}
 								onClick={() =>
 									onConfirm(
-										currentClaimAmount,
+										currentinvoiceAmount,
 										currentInvoiceFile,
 										budget.requestAmount
 									)
