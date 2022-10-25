@@ -84,16 +84,20 @@ const ActivityClaimPanel = ({
 					name={currentBudgetFieldName}
 					observer={observer}
 					onCancel={() => onOpenChange(false)}
-					onConfirm={async (claimAmount, invoice, requestAmount) => {
+					onConfirm={async (
+						invoiceAmount,
+						invoice,
+						requestAmount
+					) => {
 						setFieldTouched(
-							`${currentBudgetFieldName}.claimAmount`
+							`${currentBudgetFieldName}.invoiceAmount`
 						);
 
 						setFieldTouched(`${currentBudgetFieldName}.invoice`);
 
 						setFieldValue(
-							`${currentBudgetFieldName}.claimAmount`,
-							claimAmount
+							`${currentBudgetFieldName}.invoiceAmount`,
+							invoiceAmount
 						);
 						setFieldValue(
 							`${currentBudgetFieldName}.invoice`,
@@ -102,8 +106,8 @@ const ActivityClaimPanel = ({
 
 						try {
 							await requiredBudgetSchema.validate({
-								claimAmount,
 								invoice,
+								invoiceAmount,
 								requestAmount,
 							});
 
@@ -117,7 +121,7 @@ const ActivityClaimPanel = ({
 						);
 
 						setFieldValue(
-							`${currentBudgetFieldName}.claimAmount`,
+							`${currentBudgetFieldName}.invoiceAmount`,
 							''
 						);
 

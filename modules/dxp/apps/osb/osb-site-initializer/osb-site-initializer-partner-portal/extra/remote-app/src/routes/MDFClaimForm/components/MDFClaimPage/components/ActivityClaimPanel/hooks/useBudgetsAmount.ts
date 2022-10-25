@@ -30,7 +30,7 @@ export default function useBudgetsAmount(
 					return previousValue;
 				}
 
-				return previousValue + +currentValue.claimAmount;
+				return previousValue + +currentValue.invoiceAmount;
 			},
 			0
 		);

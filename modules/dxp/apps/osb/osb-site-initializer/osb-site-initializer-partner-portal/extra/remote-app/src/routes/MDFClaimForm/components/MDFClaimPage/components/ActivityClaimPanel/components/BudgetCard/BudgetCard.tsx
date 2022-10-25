@@ -83,7 +83,7 @@ const BudgetCard = ({
 					</div>
 
 					<div className="font-weight-bold text-neutral-10 text-paragraph">
-						{getIntlNumberFormat().format(budget.claimAmount)}
+						{getIntlNumberFormat().format(budget.invoiceAmount)}
 					</div>
 				</ClayCard.Row>
 			</ClayCard.Body>

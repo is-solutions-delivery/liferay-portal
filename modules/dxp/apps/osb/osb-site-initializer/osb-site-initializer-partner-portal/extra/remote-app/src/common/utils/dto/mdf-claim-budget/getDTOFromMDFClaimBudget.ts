@@ -17,9 +17,9 @@ export default function getDTOFromMDFClaimBudget(
 	activityId: number
 ): MDFClaimBudgetDTO {
 	return {
-		claimAmount: budget.claimAmount,
 		expenseName: budget.expenseName,
 		invoice: budget.invoice,
+		invoiceAmount: budget.invoiceAmount,
 		r_budgetToMdfClaimBudgets_c_budgetId: budget.id,
 		r_mdfClaimActivityToMdfClaimBudgets_c_mdfClaimActivityId: activityId,
 	};
