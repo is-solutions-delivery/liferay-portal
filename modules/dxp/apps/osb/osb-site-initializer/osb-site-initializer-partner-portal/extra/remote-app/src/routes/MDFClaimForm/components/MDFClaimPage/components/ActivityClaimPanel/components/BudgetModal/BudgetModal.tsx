@@ -121,8 +121,7 @@ const BudgetModal = ({
 								onClick={() =>
 									onConfirm(
 										currentinvoiceAmount,
-										currentInvoiceFile,
-										budget.requestAmount
+										currentInvoiceFile
 									)
 								}
 							>

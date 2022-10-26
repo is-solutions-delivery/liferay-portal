@@ -31,38 +31,6 @@ const validDocument = {
 	maxSize: MAX_MB,
 };
 
-export const requiredBudgetSchema = object({
-	invoice: mixed()
-		.test('fileSize', 'File Size is too large', (invoice) =>
-			invoice
-				? Math.ceil(invoice.size / 1000) <= validDocument.maxSize
-				: true
-		)
-		.test(
-			'fileType',
-			'Unsupported File Format, upload a valid format *jpg *jpeg *gif *png *pdf',
-			(invoice) =>
-				invoice
-					? validDocument.imageDocumentsTypes.includes(invoice.type)
-					: true
-		),
-	invoiceAmount: number().when('invoice', {
-		is: (invoice: File) => Boolean(invoice),
-		then: (schema) =>
-			schema
-				.moreThan(0, 'Need be bigger than 0')
-				.test(
-					'biggerAmount',
-					'Invoice amount is bigger than requested amount early',
-					(invoiceAmount, testContext) =>
-						Number(invoiceAmount) <=
-						Number(testContext.parent.requestAmount)
-				),
-	}),
-
-	requestAmount: number(),
-});
-
 const claimSchema = object({
 	activities: array()
 		.of(

@@ -14,7 +14,7 @@ import Link from '@clayui/link';
 import {useModal} from '@clayui/modal';
 import ClayPanel from '@clayui/panel';
 import {FormikContextType, FormikErrors} from 'formik';
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import PRMForm from '../../../../../../common/components/PRMForm';
 import PRMFormik from '../../../../../../common/components/PRMFormik';
@@ -23,12 +23,12 @@ import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../../../common/interfaces/mdfClaimActivity';
 import MDFClaimBudget from '../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../common/utils/getIntlNumberFormat';
-import {requiredBudgetSchema} from '../../schema/yup';
 import BudgetCard from './components/BudgetCard/BudgetCard';
 import BudgetModal from './components/BudgetModal';
 import PanelBody from './components/PanelBody';
 import PanelHeader from './components/PanelHeader';
 import useBudgetsAmount from './hooks/useBudgetsAmount';
+import getBudgetErrors from './utils/getBudgetErrors';
 
 interface IProps {
 	activity: MDFClaimActivity;
@@ -43,19 +43,16 @@ const ActivityClaimPanel = ({
 	overallCampaignDescription,
 	setFieldTouched,
 	setFieldValue,
+	touched,
 }: IProps &
 	Pick<
 		FormikContextType<MDFClaim>,
-		'setFieldValue' | 'setFieldTouched' | 'errors'
+		'setFieldValue' | 'setFieldTouched' | 'errors' | 'touched'
 	>) => {
 	const [currentBudgetIndex, setCurrentBudgetIndex] = useState<number>();
 	const {observer, onOpenChange, open} = useModal();
 
 	const webDAV = useWebDAV();
-
-	const activityErrors = errors.activities?.[activityIndex] as FormikErrors<
-		MDFClaimActivity
-	>;
 
 	useBudgetsAmount(
 		activity.budgets,
@@ -71,6 +68,16 @@ const ActivityClaimPanel = ({
 
 	const currentBudgetFieldName = `activities[${activityIndex}].budgets[${currentBudgetIndex}]`;
 
+	const currentBudgetErrors =
+		currentBudgetIndex !== undefined &&
+		getBudgetErrors(errors, activityIndex)?.[currentBudgetIndex];
+
+	useEffect(() => {
+		if (!currentBudgetErrors && open && currentBudgetTouched) {
+			onOpenChange(false);
+		}
+	}, []);
+
 	const getCurrentBudget = () => {
 		if (currentBudgetIndex !== undefined && activity.budgets) {
 			return activity.budgets[currentBudgetIndex];
@@ -79,7 +86,7 @@ const ActivityClaimPanel = ({
 
 	const getBudgetsButtonsModal = () =>
 		activity.budgets?.map((budget, index) => {
-			const budgetErrors = !activityErrors?.budgets?.[
+			const budgetErrors = !getBudgetErrors(errors, activityIndex)?.[
 				index
 			] as FormikErrors<MDFClaimBudget>;
 
@@ -104,11 +111,7 @@ const ActivityClaimPanel = ({
 					name={currentBudgetFieldName}
 					observer={observer}
 					onCancel={() => onOpenChange(false)}
-					onConfirm={async (
-						invoiceAmount,
-						invoice,
-						requestAmount
-					) => {
+					onConfirm={(invoiceAmount, invoice) => {
 						setFieldTouched(
 							`${currentBudgetFieldName}.invoiceAmount`
 						);
@@ -123,16 +126,6 @@ const ActivityClaimPanel = ({
 							`${currentBudgetFieldName}.invoice`,
 							invoice
 						);
-
-						try {
-							await requiredBudgetSchema.validate({
-								invoice,
-								invoiceAmount,
-								requestAmount,
-							});
-
-							onOpenChange(false);
-						} catch {}
 					}}
 					onDelete={() => {
 						setFieldValue(

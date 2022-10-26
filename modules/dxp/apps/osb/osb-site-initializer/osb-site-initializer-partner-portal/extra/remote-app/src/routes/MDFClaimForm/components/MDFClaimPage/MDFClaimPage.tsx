@@ -73,6 +73,7 @@ const MDFClaimPage = ({
 						}
 						setFieldTouched={formikHelpers.setFieldTouched}
 						setFieldValue={setFieldValue}
+						touched={formikHelpers.touched}
 					/>
 				))}
 			</PRMForm.Section>
