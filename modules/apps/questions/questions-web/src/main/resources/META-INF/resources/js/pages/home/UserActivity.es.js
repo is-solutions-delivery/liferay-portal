@@ -24,6 +24,7 @@ import UserIcon from '../../components/UserIcon.es';
 import useQueryParams from '../../hooks/useQueryParams.es';
 import {getUserActivityQuery} from '../../utils/client.es';
 import {historyPushWithSlug} from '../../utils/utils.es';
+import {Question} from '../questions/Question.es';
 
 export default withRouter(
 	({
@@ -31,6 +32,7 @@ export default withRouter(
 		location,
 		match: {
 			params: {creatorId},
+			url,
 		},
 	}) => {
 		const context = useContext(AppContext);
@@ -40,6 +42,7 @@ export default withRouter(
 		const [page, setPage] = useState(null);
 		const [pageSize, setPageSize] = useState(null);
 		const [totalCount, setTotalCount] = useState(0);
+		const [currentQuestion, setCurrentQuestion] = useState({});
 		const [userInfo, setUserInfo] = useState({
 			id: creatorId,
 			image: null,
@@ -119,6 +122,18 @@ export default withRouter(
 			};
 		};
 
+		// console.log(data?.messageBoardMessages?.items[0]);
+
+		useEffect(() => {
+			if (data) {
+				setCurrentQuestion(data?.messageBoardMessages?.items[0]);
+			}
+		}, [data]);
+
+		const sectionTitleQuestion =
+			data?.messageBoardMessages?.items[0].messageBoardThread
+				.messageBoardSection.title;
+
 		return (
 			<section className="questions-section questions-section-list">
 				<div className="c-p-5 questions-container row">
@@ -169,54 +184,70 @@ export default withRouter(
 						</div>
 					</div>
 
-					<div className="c-mx-auto c-px-0 col-xl-10">
-						<PaginatedList
-							activeDelta={pageSize}
-							activePage={page}
-							changeDelta={(pageSize) =>
-								changePage(page, pageSize)
-							}
-							changePage={(page) => changePage(page, pageSize)}
-							data={data && data.messageBoardMessages}
-							emptyState={
-								<ClayEmptyState
-									description={Liferay.Language.get(
-										'sorry,-no-results-were-found'
-									)}
-									imgSrc={
-										context.includeContextPath +
-										'/assets/empty_questions_list.png'
-									}
-									title={Liferay.Language.get(
-										'there-are-no-results'
-									)}
-								/>
-							}
-							loading={loading}
-							totalCount={totalCount}
-						>
-							{(question) => (
-								<QuestionRow
-									context={context}
-									currentSection={
-										context.useTopicNamesInURL
-											? question.messageBoardThread
-													.messageBoardSection &&
-											  question.messageBoardThread
-													.messageBoardSection.title
-											: (question.messageBoardThread
-													.messageBoardSection &&
-													question.messageBoardThread
+					<div className="container d-flex flex-row justify-content-between">
+						<div className="c-mx-auto c-px-0 col-xl-6">
+							<PaginatedList
+								activeDelta={pageSize}
+								activePage={page}
+								changeDelta={(pageSize) =>
+									changePage(page, pageSize)
+								}
+								changePage={(page) =>
+									changePage(page, pageSize)
+								}
+								data={data && data.messageBoardMessages}
+								emptyState={
+									<ClayEmptyState
+										description={Liferay.Language.get(
+											'sorry,-no-results-were-found'
+										)}
+										imgSrc={
+											context.includeContextPath +
+											'/assets/empty_questions_list.png'
+										}
+										title={Liferay.Language.get(
+											'there-are-no-results'
+										)}
+									/>
+								}
+								loading={loading}
+								totalCount={totalCount}
+							>
+								{(question) => (
+									<QuestionRow
+										context={context}
+										currentSection={
+											context.useTopicNamesInURL
+												? question.messageBoardThread
 														.messageBoardSection
-														.id) ||
-											  context.rootTopicId
-									}
-									key={question.id}
-									question={addSectionToQuestion(question)}
-									showSectionLabel={true}
-								/>
-							)}
-						</PaginatedList>
+												: (question.messageBoardThread
+														.messageBoardSection &&
+														question
+															.messageBoardThread
+															.messageBoardSection
+															.id) ||
+												  context.rootTopicId
+										}
+										key={question.id}
+										onClick={setCurrentQuestion}
+										question={addSectionToQuestion(
+											question
+										)}
+										showSectionLabel={true}
+									/>
+								)}
+							</PaginatedList>
+						</div>
+
+						<div className="border-left border-right border-top c-ml-7 c-p-4 col-xl-5">
+							<Question
+								history={history}
+								isActivity={false}
+								questionId={currentQuestion.friendlyUrlPath}
+								sectionTitle={sectionTitleQuestion}
+								url={url}
+							/>
+						</div>
 					</div>
 				</div>
 			</section>

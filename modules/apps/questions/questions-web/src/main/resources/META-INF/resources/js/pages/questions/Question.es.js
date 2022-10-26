@@ -66,309 +66,294 @@ import {
 } from '../../utils/utils.es';
 import FlagsContainer from './components/FlagsContainer';
 
-export default withRouter(
-	({
-		history,
-		match: {
-			params: {questionId, sectionTitle},
-			url,
-		},
-	}) => {
-		const sectionRef = useRef(null);
+const Question = ({history, isActivity, questionId, sectionTitle, url}) => {
+	const sectionRef = useRef(null);
 
-		const runScroll = () =>
-			sectionRef.current.scrollIntoView({
-				behavior: 'smooth',
-				block: 'start',
-			});
+	const runScroll = () =>
+		sectionRef.current.scrollIntoView({
+			behavior: 'smooth',
+			block: 'start',
+		});
 
-		const context = useContext(AppContext);
-		const historyPushParser = historyPushWithSlug(history.push);
+	const context = useContext(AppContext);
+	const historyPushParser = historyPushWithSlug(history.push);
 
-		const [error, setError] = useState(null);
-		const [isPageScroll, setIsPageScroll] = useState(false);
+	const [error, setError] = useState(null);
+	const [isPageScroll, setIsPageScroll] = useState(false);
 
-		const editorRef = useRef('');
+	const editorRef = useRef('');
 
-		const [isModerate, setIsModerate] = useState(false);
-		const [isPostButtonDisable, setIsPostButtonDisable] = useState(true);
-		const [isVisibleEditor, setIsVisibleEditor] = useState(false);
-		const [showDeleteModalPanel, setShowDeleteModalPanel] = useState(false);
+	const [isModerate, setIsModerate] = useState(false);
+	const [isPostButtonDisable, setIsPostButtonDisable] = useState(true);
+	const [isVisibleEditor, setIsVisibleEditor] = useState(false);
+	const [showDeleteModalPanel, setShowDeleteModalPanel] = useState(false);
 
-		const [allowSubscription, setAllowSubscription] = useState(false);
-		const [page, setPage] = useState(1);
-		const [pageSize, setPageSize] = useState(20);
+	const [allowSubscription, setAllowSubscription] = useState(false);
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(20);
 
-		const [loading, setLoading] = useState(true);
-		const [loadingAnswer, setLoadingAnswer] = useState(true);
-		const [question, setQuestion] = useState({});
-		const [answers, setAnswers] = useState({});
+	const [loading, setLoading] = useState(true);
+	const [loadingAnswer, setLoadingAnswer] = useState(true);
+	const [question, setQuestion] = useState({});
+	const [answers, setAnswers] = useState({});
 
-		const fetchMessages = useCallback(() => {
-			if (question && question.id) {
-				getMessages(question.id, page, pageSize).then(
-					({data: {messageBoardThreadMessageBoardMessages}}) => {
-						setAnswers(messageBoardThreadMessageBoardMessages);
-						setLoadingAnswer(false);
-					}
-				);
-			}
-		}, [question, page, pageSize]);
+	const fetchMessages = useCallback(() => {
+		if (question && question.id) {
+			getMessages(question.id, page, pageSize).then(
+				({data: {messageBoardThreadMessageBoardMessages}}) => {
+					setAnswers(messageBoardThreadMessageBoardMessages);
+					setLoadingAnswer(false);
+				}
+			);
+		}
+	}, [question, page, pageSize]);
 
-		useEffect(() => {
-			getThread(questionId, context.siteKey)
-				.then(
-					({data: {messageBoardThreadByFriendlyUrlPath}, error}) => {
-						if (error) {
-							const errorObject = getErrorObject(
-								error.graphQLErrors[0].extensions.exception
-									.errno,
-								Liferay.Language.get(
-									'the-link-you-followed-may-be-broken-or-the-question-no-longer-exists'
-								),
-								Liferay.Language.get(
-									'the-question-is-not-found'
-								)
-							);
-							setError(errorObject);
-							setLoading(false);
-						}
-						else {
-							setQuestion(messageBoardThreadByFriendlyUrlPath);
-							setLoading(false);
-						}
-					}
-				)
-				.catch((error) => {
-					if (process.env.NODE_ENV === 'development') {
-						console.error(error);
-					}
+	useEffect(() => {
+		getThread(questionId, context.siteKey)
+			.then(({data: {messageBoardThreadByFriendlyUrlPath}, error}) => {
+				if (error) {
 					const errorObject = getErrorObject(
 						error.graphQLErrors[0].extensions.exception.errno,
-						'the-link-you-followed-may-be-broken-or-the-question-no-longer-exists',
-						'the-question-is-not-found'
+						Liferay.Language.get(
+							'the-link-you-followed-may-be-broken-or-the-question-no-longer-exists'
+						),
+						Liferay.Language.get('the-question-is-not-found')
 					);
 					setError(errorObject);
 					setLoading(false);
-				});
-		}, [questionId, context.siteKey]);
-
-		sectionTitle =
-			sectionTitle || sectionTitle === ALL_SECTIONS_ID
-				? sectionTitle
-				: question.messageBoardSection &&
-				  question.messageBoardSection.title;
-
-		useEffect(() => {
-			document.title = (question && question.title) || questionId;
-		}, [question, questionId]);
-
-		useEffect(() => {
-			fetchMessages();
-		}, [fetchMessages]);
-
-		const questionVisited = context?.questionsVisited?.includes(
-			question.id
-		);
-
-		useEffect(() => {
-			if (question.id && context?.questionsVisited && !questionVisited) {
-				context.setQuestionsVisited([
-					...context.questionsVisited,
-					question.id,
-				]);
-			}
-		}, [context, question, questionVisited]);
-
-		const [createAnswer] = useMutation(createAnswerQuery);
-		const [subscribe] = useMutation(subscribeQuery);
-
-		const onSubscription = useCallback(
-			async ({
-				allowSubscription: _allowSubscription = allowSubscription,
-			} = {}) => {
-				if (question.subscribed || !_allowSubscription) {
-					return;
+				} else {
+					setQuestion(messageBoardThreadByFriendlyUrlPath);
+					setLoading(false);
 				}
-
-				await subscribe({
-					variables: {
-						messageBoardThreadId: question.id,
-					},
-				});
-
-				deleteCacheKey(getSubscriptionsQuery, {
-					contentType: 'MessageBoardThread',
-				});
-
-				setQuestion({...question, subscribed: true});
-			},
-			[allowSubscription, question, subscribe, setQuestion]
-		);
-
-		const onShowEditorAnswer = () => {
-			const threadAnswers = answers.items || [];
-
-			const hasUserAnswered = threadAnswers.some(
-				(answer) => answer.creator.id === Number(context.userId)
-			);
-			if (!context.trustedUser && hasUserAnswered) {
-				setIsModerate(true);
-			}
-
-			return setIsVisibleEditor(true);
-		};
-
-		const onCreateAnswer = async () => {
-			try {
-				await createAnswer({
-					fetchOptionsOverrides: getContextLink(
-						`${sectionTitle}/${questionId}`
-					),
-					variables: {
-						articleBody: editorRef.current.getContent(),
-						messageBoardThreadId: question.id,
-					},
-				});
-
-				editorRef.current.clearContent();
-
-				await onSubscription();
-
-				fetchMessages();
-
-				deleteCacheKey(getUserActivityQuery, {
-					filter: `creatorId eq ${context.userId}`,
-					page: 1,
-					pageSize: 20,
-					siteKey: context.siteKey,
-				});
-				setIsVisibleEditor(false);
-			}
-			catch (error) {}
-		};
-
-		const deleteAnswer = useCallback(
-			(answer) => {
-				setAnswers({
-					...answers,
-					items: [
-						...answers.items?.filter(
-							(otherAnswer) => answer.id !== otherAnswer.id
-						),
-					],
-					totalCount: answers.totalCount - 1,
-				});
-			},
-			[answers]
-		);
-
-		const [markAsAnswerMessageBoardMessage] = useMutation(
-			markAsAnswerMessageBoardMessageQuery
-		);
-
-		const answerChange = useCallback(
-			(answerId) => {
-				const answer = answers.items?.find(
-					(answer) => answer.showAsAnswer && answer.id !== answerId
+			})
+			.catch((error) => {
+				if (process.env.NODE_ENV === 'development') {
+					console.error(error);
+				}
+				const errorObject = getErrorObject(
+					error.graphQLErrors[0].extensions.exception.errno,
+					'the-link-you-followed-may-be-broken-or-the-question-no-longer-exists',
+					'the-question-is-not-found'
 				);
+				setError(errorObject);
+				setLoading(false);
+			});
+	}, [questionId, context.siteKey]);
 
-				if (answer) {
-					markAsAnswerMessageBoardMessage({
-						variables: {
-							messageBoardMessageId: answer.id,
-							showAsAnswer: false,
-						},
-					}).then(() => {
-						fetchMessages();
-					});
-				}
-			},
-			[markAsAnswerMessageBoardMessage, answers.items, fetchMessages]
+	sectionTitle =
+		sectionTitle || sectionTitle === ALL_SECTIONS_ID
+			? sectionTitle
+			: question.messageBoardSection &&
+			  question.messageBoardSection.title;
+
+	useEffect(() => {
+		document.title = (question && question.title) || questionId;
+	}, [question, questionId]);
+
+	useEffect(() => {
+		fetchMessages();
+	}, [fetchMessages]);
+
+	const questionVisited = context?.questionsVisited?.includes(question.id);
+
+	useEffect(() => {
+		if (question.id && context?.questionsVisited && !questionVisited) {
+			context.setQuestionsVisited([
+				...context.questionsVisited,
+				question.id,
+			]);
+		}
+	}, [context, question, questionVisited]);
+
+	const [createAnswer] = useMutation(createAnswerQuery);
+	const [subscribe] = useMutation(subscribeQuery);
+
+	const onSubscription = useCallback(
+		async ({
+			allowSubscription: _allowSubscription = allowSubscription,
+		} = {}) => {
+			if (question.subscribed || !_allowSubscription) {
+				return;
+			}
+
+			await subscribe({
+				variables: {
+					messageBoardThreadId: question.id,
+				},
+			});
+
+			deleteCacheKey(getSubscriptionsQuery, {
+				contentType: 'MessageBoardThread',
+			});
+
+			setQuestion({...question, subscribed: true});
+		},
+		[allowSubscription, question, subscribe, setQuestion]
+	);
+
+	const onShowEditorAnswer = () => {
+		const threadAnswers = answers.items || [];
+
+		const hasUserAnswered = threadAnswers.some(
+			(answer) => answer.creator.id === Number(context.userId)
 		);
+		if (!context.trustedUser && hasUserAnswered) {
+			setIsModerate(true);
+		}
 
-		useEffect(() => {
-			const body = document.body;
-			const html = document.documentElement;
+		return setIsVisibleEditor(true);
+	};
 
-			const docHeight = Math.max(
-				body.scrollHeight,
-				body.offsetHeight,
-				html.clientHeight,
-				html.scrollHeight,
-				html.offsetHeight
+	const onCreateAnswer = async () => {
+		try {
+			await createAnswer({
+				fetchOptionsOverrides: getContextLink(
+					`${sectionTitle}/${questionId}`
+				),
+				variables: {
+					articleBody: editorRef.current.getContent(),
+					messageBoardThreadId: question.id,
+				},
+			});
+
+			editorRef.current.clearContent();
+
+			await onSubscription();
+
+			fetchMessages();
+
+			deleteCacheKey(getUserActivityQuery, {
+				filter: `creatorId eq ${context.userId}`,
+				page: 1,
+				pageSize: 20,
+				siteKey: context.siteKey,
+			});
+			setIsVisibleEditor(false);
+		} catch (error) {}
+	};
+
+	const deleteAnswer = useCallback(
+		(answer) => {
+			setAnswers({
+				...answers,
+				items: [
+					...answers.items?.filter(
+						(otherAnswer) => answer.id !== otherAnswer.id
+					),
+				],
+				totalCount: answers.totalCount - 1,
+			});
+		},
+		[answers]
+	);
+
+	const [markAsAnswerMessageBoardMessage] = useMutation(
+		markAsAnswerMessageBoardMessageQuery
+	);
+
+	const answerChange = useCallback(
+		(answerId) => {
+			const answer = answers.items?.find(
+				(answer) => answer.showAsAnswer && answer.id !== answerId
 			);
 
-			const winHeight = window.innerHeight;
-			setIsPageScroll(docHeight > winHeight);
-		}, [question, answers]);
+			if (answer) {
+				markAsAnswerMessageBoardMessage({
+					variables: {
+						messageBoardMessageId: answer.id,
+						showAsAnswer: false,
+					},
+				}).then(() => {
+					fetchMessages();
+				});
+			}
+		},
+		[markAsAnswerMessageBoardMessage, answers.items, fetchMessages]
+	);
 
-		return (
-			<section className="questions-section questions-section-single">
+	useEffect(() => {
+		const body = document.body;
+		const html = document.documentElement;
+
+		const docHeight = Math.max(
+			body.scrollHeight,
+			body.offsetHeight,
+			html.clientHeight,
+			html.scrollHeight,
+			html.offsetHeight
+		);
+
+		const winHeight = window.innerHeight;
+		setIsPageScroll(docHeight > winHeight);
+	}, [question, answers]);
+
+	return (
+		<section className="questions-section questions-section-single">
+			{isActivity && (
 				<Breadcrumb
 					section={
 						question.messageBoardSection || context.rootTopicId
 					}
 				/>
+			)}
 
-				{error && (
-					<div className="questions-container row">
-						<div className="c-mx-auto c-px-0 col-xl-10">
-							<ClayEmptyState
-								description={error.message}
-								imgSrc={
-									context.includeContextPath +
-									'/assets/empty_questions_list.png'
-								}
-								title={error.title}
-							>
-								<ClayButton
-									displayType="primary"
-									onClick={() =>
-										historyPushParser('/questions')
-									}
-								>
-									{Liferay.Language.get('home')}
-								</ClayButton>
-							</ClayEmptyState>
-						</div>
-					</div>
-				)}
-
-				{isModerate && (
-					<ClayAlert.ToastContainer>
-						<ClayAlert
-							autoClose={6000}
-							displayType="warning"
-							onClose={() => setIsModerate(false)}
-							title={Liferay.Language.get(
-								'are-you-sure-you-want-to-add-another-answer'
-							)}
-							variant="inline"
+			{error && (
+				<div className="questions-container row">
+					<div className="c-mx-auto c-px-0 col-xl-10">
+						<ClayEmptyState
+							description={error.message}
+							imgSrc={
+								context.includeContextPath +
+								'/assets/empty_questions_list.png'
+							}
+							title={error.title}
 						>
-							<div>
-								{Liferay.Language.get(
-									'you-can-add-a-comment-to-continue-the-existing-thread'
-								)}
-							</div>
+							<ClayButton
+								displayType="primary"
+								onClick={() => historyPushParser('/questions')}
+							>
+								{Liferay.Language.get('home')}
+							</ClayButton>
+						</ClayEmptyState>
+					</div>
+				</div>
+			)}
 
-							<ClayAlert.Footer>
-								<ClayButton.Group className="ml-0">
-									<ClayButton
-										alert
-										onClick={() => setIsModerate(false)}
-									>
-										{Liferay.Language.get('cancel')}
-									</ClayButton>
-								</ClayButton.Group>
-							</ClayAlert.Footer>
-						</ClayAlert>
-					</ClayAlert.ToastContainer>
-				)}
+			{isModerate && (
+				<ClayAlert.ToastContainer>
+					<ClayAlert
+						autoClose={6000}
+						displayType="warning"
+						onClose={() => setIsModerate(false)}
+						title={Liferay.Language.get(
+							'are-you-sure-you-want-to-add-another-answer'
+						)}
+						variant="inline"
+					>
+						<div>
+							{Liferay.Language.get(
+								'you-can-add-a-comment-to-continue-the-existing-thread'
+							)}
+						</div>
 
-				<div className="c-mt-5">
-					{!loading && !error && (
-						<div className="questions-container row">
+						<ClayAlert.Footer>
+							<ClayButton.Group className="ml-0">
+								<ClayButton
+									alert
+									onClick={() => setIsModerate(false)}
+								>
+									{Liferay.Language.get('cancel')}
+								</ClayButton>
+							</ClayButton.Group>
+						</ClayAlert.Footer>
+					</ClayAlert>
+				</ClayAlert.ToastContainer>
+			)}
+
+			<div className="c-mt-1">
+				{!loading && !error && (
+					<div className="questions-container row">
+						{isActivity && (
 							<div className="col-md-1 text-md-center">
 								<Rating
 									aggregateRating={question.aggregateRating}
@@ -381,210 +366,205 @@ export default withRouter(
 									type="Thread"
 								/>
 							</div>
+						)}
 
-							<div className="col-md-10">
-								<div className="align-items-top flex-column-reverse flex-md-row row">
-									<div className="c-mt-4 c-mt-md-0 col-md-7">
-										{!!question.messageBoardSection &&
-											!!question.messageBoardSection
-												.numberOfMessageBoardSections && (
-												<Link
-													to={`/questions/${
-														context.useTopicNamesInURL
-															? sectionTitle
-															: question
-																	.messageBoardSection
-																	.id
-													}`}
-												>
-													<SectionLabel
-														section={
-															question.messageBoardSection
+						<div className="col-md-12">
+							<div className="align-items-top flex-column-reverse flex-md-row row">
+								<div className="c-mt-4 c-mt-md-0 col-md-12">
+									{!!question.messageBoardSection &&
+										!!question.messageBoardSection
+											.numberOfMessageBoardSections && (
+											<Link
+												to={`/questions/${
+													context.useTopicNamesInURL
+														? sectionTitle
+														: question
+																.messageBoardSection
+																.id
+												}`}
+											>
+												<SectionLabel
+													section={
+														question.messageBoardSection
+													}
+												/>
+											</Link>
+										)}
+
+									<h1
+										className={classNames(
+											'c-mt-2',
+											'question-headline',
+											'row',
+											{
+												'question-seen': question.seen,
+											}
+										)}
+									>
+										{question.headline}
+
+										{question.status &&
+											question.status !== 'approved' && (
+												<span className="c-ml-2">
+													<ClayLabel displayType="info">
+														{question.status}
+													</ClayLabel>
+												</span>
+											)}
+
+										{!!question.locked && (
+											<span className="c-ml-2">
+												<ClayIcon symbol="lock" />
+											</span>
+										)}
+									</h1>
+
+									<p className="c-mb-0 small text-secondary">
+										<EditedTimestamp
+											dateCreated={question.dateCreated}
+											dateModified={question.dateModified}
+											operationText={Liferay.Language.get(
+												'asked'
+											)}
+										/>
+
+										{`
+										/ ${lang.sub(Liferay.Language.get('viewed-x-times'), [question.viewCount])}`}
+									</p>
+								</div>
+
+								{isActivity && !question.locked && (
+									<div className="col-md-5 text-right">
+										<ClayButton.Group
+											className="questions-actions"
+											spaced={true}
+										>
+											{question.actions.subscribe && (
+												<SubscriptionButton
+													isSubscribed={
+														question.subscribed
+													}
+													onSubscription={(
+														subscribed
+													) => {
+														deleteCacheKey(
+															getSubscriptionsQuery,
+															{
+																contentType:
+																	'MessageBoardThread',
+															}
+														);
+
+														setQuestion(
+															(prevQuestion) => ({
+																...prevQuestion,
+																subscribed,
+															})
+														);
+													}}
+													queryVariables={{
+														messageBoardThreadId:
+															question.id,
+													}}
+													subscribeQuery={
+														subscribeQuery
+													}
+													unsubscribeQuery={
+														unsubscribeQuery
+													}
+												/>
+											)}
+
+											{question.actions.delete && (
+												<>
+													<DeleteQuestion
+														deleteModalVisibility={
+															showDeleteModalPanel
+														}
+														question={question}
+														setDeleteModalVisibility={
+															setShowDeleteModalPanel
 														}
 													/>
+
+													<ClayButton
+														data-tooltip-align="top"
+														displayType="secondary"
+														onClick={() =>
+															setShowDeleteModalPanel(
+																true
+															)
+														}
+														title={Liferay.Language.get(
+															'delete'
+														)}
+													>
+														<ClayIcon symbol="trash" />
+													</ClayButton>
+												</>
+											)}
+
+											<FlagsContainer
+												content={question}
+												context={context}
+											/>
+
+											{question.actions.replace && (
+												<Link to={`${url}/edit`}>
+													<ClayButton displayType="secondary">
+														{Liferay.Language.get(
+															'edit'
+														)}
+													</ClayButton>
 												</Link>
 											)}
 
-										<h1
-											className={classNames(
-												'c-mt-2',
-												'question-headline',
-												{
-													'question-seen':
-														question.seen,
-												}
-											)}
-										>
-											{question.headline}
-
-											{question.status &&
-												question.status !==
-													'approved' && (
-													<span className="c-ml-2">
-														<ClayLabel displayType="info">
-															{question.status}
-														</ClayLabel>
-													</span>
+											{isPageScroll &&
+												!!answers.items?.length && (
+													<ClayButton
+														className="btn btn-secondary"
+														displayType="secondary"
+														onClick={runScroll}
+													>
+														{Liferay.Language.get(
+															'go-to-answers'
+														)}
+													</ClayButton>
 												)}
-
-											{!!question.locked && (
-												<span className="c-ml-2">
-													<ClayIcon symbol="lock" />
-												</span>
-											)}
-										</h1>
-
-										<p className="c-mb-0 small text-secondary">
-											<EditedTimestamp
-												dateCreated={
-													question.dateCreated
-												}
-												dateModified={
-													question.dateModified
-												}
-												operationText={Liferay.Language.get(
-													'asked'
-												)}
-											/>
-
-											{`
-											/ ${lang.sub(Liferay.Language.get('viewed-x-times'), [question.viewCount])}`}
-										</p>
+										</ClayButton.Group>
 									</div>
+								)}
+							</div>
 
-									{!question.locked && (
-										<div className="col-md-5 text-right">
-											<ClayButton.Group
-												className="questions-actions"
-												spaced={true}
-											>
-												{question.actions.subscribe && (
-													<SubscriptionButton
-														isSubscribed={
-															question.subscribed
-														}
-														onSubscription={(
-															subscribed
-														) => {
-															deleteCacheKey(
-																getSubscriptionsQuery,
-																{
-																	contentType:
-																		'MessageBoardThread',
-																}
-															);
+							<div className="c-mt-4">
+								<ArticleBodyRenderer {...question} />
+							</div>
 
-															setQuestion(
-																(
-																	prevQuestion
-																) => ({
-																	...prevQuestion,
-																	subscribed,
-																})
-															);
-														}}
-														queryVariables={{
-															messageBoardThreadId:
-																question.id,
-														}}
-														subscribeQuery={
-															subscribeQuery
-														}
-														unsubscribeQuery={
-															unsubscribeQuery
-														}
-													/>
-												)}
+							<div className="c-mt-4" ref={sectionRef}>
+								<TagList
+									sectionTitle={sectionTitle}
+									tags={question.keywords}
+								/>
+							</div>
 
-												{question.actions.delete && (
-													<>
-														<DeleteQuestion
-															deleteModalVisibility={
-																showDeleteModalPanel
-															}
-															question={question}
-															setDeleteModalVisibility={
-																setShowDeleteModalPanel
-															}
-														/>
+							<div className="c-mt-4 position-relative questions-creator text-center text-md-right">
+								<CreatorRow
+									answers={answers}
+									question={question}
+								/>
+							</div>
 
-														<ClayButton
-															data-tooltip-align="top"
-															displayType="secondary"
-															onClick={() =>
-																setShowDeleteModalPanel(
-																	true
-																)
-															}
-															title={Liferay.Language.get(
-																'delete'
-															)}
-														>
-															<ClayIcon symbol="trash" />
-														</ClayButton>
-													</>
-												)}
+							<h3 className="c-mt-4 text-secondary">
+								{loadingAnswer
+									? `${Liferay.Language.get(
+											'loading-answers'
+									  )}`
+									: `${
+											answers.totalCount
+									  } ${Liferay.Language.get('answers')}`}
+							</h3>
 
-												<FlagsContainer
-													content={question}
-													context={context}
-												/>
-
-												{question.actions.replace && (
-													<Link to={`${url}/edit`}>
-														<ClayButton displayType="secondary">
-															{Liferay.Language.get(
-																'edit'
-															)}
-														</ClayButton>
-													</Link>
-												)}
-
-												{isPageScroll &&
-													!!answers.items?.length && (
-														<ClayButton
-															className="btn btn-secondary"
-															displayType="secondary"
-															onClick={runScroll}
-														>
-															{Liferay.Language.get(
-																'go-to-answers'
-															)}
-														</ClayButton>
-													)}
-											</ClayButton.Group>
-										</div>
-									)}
-								</div>
-
-								<div className="c-mt-4">
-									<ArticleBodyRenderer {...question} />
-								</div>
-
-								<div className="c-mt-4" ref={sectionRef}>
-									<TagList
-										sectionTitle={sectionTitle}
-										tags={question.keywords}
-									/>
-								</div>
-
-								<div className="c-mt-4 position-relative questions-creator text-center text-md-right">
-									<CreatorRow
-										answers={answers}
-										question={question}
-									/>
-								</div>
-
-								<h3 className="c-mt-4 text-secondary">
-									{loadingAnswer
-										? `${Liferay.Language.get(
-												'loading-answers'
-										  )}`
-										: `${
-												answers.totalCount
-										  } ${Liferay.Language.get('answers')}`}
-								</h3>
-
+							{isActivity && (
 								<div className="c-mt-3">
 									<PaginatedList
 										activeDelta={pageSize}
@@ -612,91 +592,105 @@ export default withRouter(
 										)}
 									</PaginatedList>
 								</div>
+							)}
 
-								{question &&
-									question.status !== 'pending' &&
-									question.actions &&
-									question.actions['reply-to-thread'] && (
-										<div className="c-mt-5">
-											{isVisibleEditor && (
-												<>
-													<DefaultQuestionsEditor
-														label={Liferay.Language.get(
-															'your-answer'
-														)}
-														onContentLengthValid={
-															setIsPostButtonDisable
-														}
-														question={question}
-														ref={editorRef}
-													/>
-
-													<SubscritionCheckbox
-														checked={
-															allowSubscription
-														}
-														setChecked={
-															setAllowSubscription
-														}
-													/>
-												</>
-											)}
-
-											{!isVisibleEditor && (
-												<ClayButton
-													displayType="primary"
-													onClick={onShowEditorAnswer}
-												>
-													{Liferay.Language.get(
-														'add-answer'
+							{question &&
+								question.status !== 'pending' &&
+								question.actions &&
+								question.actions['reply-to-thread'] && (
+									<div className="c-mt-5">
+										{isVisibleEditor && (
+											<>
+												<DefaultQuestionsEditor
+													label={Liferay.Language.get(
+														'your-answer'
 													)}
-												</ClayButton>
-											)}
+													onContentLengthValid={
+														setIsPostButtonDisable
+													}
+													question={question}
+													ref={editorRef}
+												/>
 
-											{!question.locked &&
-												isVisibleEditor && (
-													<ClayButton
-														disabled={
-															isPostButtonDisable
-														}
-														displayType="primary"
-														onClick={onCreateAnswer}
-													>
-														{context.trustedUser
-															? Liferay.Language.get(
-																	'post-answer'
-															  )
-															: Liferay.Language.get(
-																	'submit-for-publication'
-															  )}
-													</ClayButton>
+												<SubscritionCheckbox
+													checked={allowSubscription}
+													setChecked={
+														setAllowSubscription
+													}
+												/>
+											</>
+										)}
+
+										{isActivity && !isVisibleEditor && (
+											<ClayButton
+												displayType="primary"
+												onClick={onShowEditorAnswer}
+											>
+												{Liferay.Language.get(
+													'add-answer'
 												)}
-										</div>
-									)}
-							</div>
+											</ClayButton>
+										)}
+
+										{!question.locked && isVisibleEditor && (
+											<ClayButton
+												disabled={isPostButtonDisable}
+												displayType="primary"
+												onClick={onCreateAnswer}
+											>
+												{context.trustedUser
+													? Liferay.Language.get(
+															'post-answer'
+													  )
+													: Liferay.Language.get(
+															'submit-for-publication'
+													  )}
+											</ClayButton>
+										)}
+									</div>
+								)}
 						</div>
-					)}
-
-					<Alert info={error} />
-				</div>
-
-				{question && (
-					<Helmet>
-						<title>{question.headline}</title>
-
-						<link
-							href={`${getFullPath(
-								context.historyRouterBasePath || 'questions'
-							)}${
-								context.historyRouterBasePath
-									? context.historyRouterBasePath
-									: '#'
-							}/questions/${sectionTitle}/${questionId}`}
-							rel="canonical"
-						/>
-					</Helmet>
+					</div>
 				)}
-			</section>
-		);
-	}
+
+				<Alert info={error} />
+			</div>
+
+			{question && (
+				<Helmet>
+					<title>{question.headline}</title>
+
+					<link
+						href={`${getFullPath(
+							context.historyRouterBasePath || 'questions'
+						)}${
+							context.historyRouterBasePath
+								? context.historyRouterBasePath
+								: '#'
+						}/questions/${sectionTitle}/${questionId}`}
+						rel="canonical"
+					/>
+				</Helmet>
+			)}
+		</section>
+	);
+};
+
+export default withRouter(
+	({
+		history,
+		match: {
+			params: {questionId, sectionTitle},
+			url,
+		},
+	}) => (
+		<Question
+			history={history}
+			questionId={questionId}
+			sectionTitle={sectionTitle}
+			url={url}
+		/>
+	)
 );
+
+export {Question};
