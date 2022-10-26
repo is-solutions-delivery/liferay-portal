@@ -12,30 +12,22 @@
 import ClayCard from '@clayui/card';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import {FormikErrors} from 'formik';
 
-import MDFClaimActivity from '../../../../../../../../common/interfaces/mdfClaimActivity';
 import MDFClaimBudget from '../../../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../../../common/utils/getIntlNumberFormat';
 
 interface IProps {
-	activityErrors: FormikErrors<MDFClaimActivity>;
 	budget: MDFClaimBudget;
-	currentBudget: number;
+	budgetErrors: boolean;
 	onClick: () => void;
 }
 
 const BudgetCard = ({
-	activityErrors,
 	budget,
-	currentBudget,
+	budgetErrors,
 	onClick,
 }: IProps & React.HTMLAttributes<HTMLDivElement>) => {
 	const hasInvoices = !!budget.invoice;
-
-	const budgetErrors = !activityErrors?.budgets?.[
-		currentBudget
-	] as FormikErrors<MDFClaimBudget>;
 
 	return (
 		<ClayCard
