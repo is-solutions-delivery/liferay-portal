@@ -132,7 +132,9 @@ const ActivityClaimPanel = ({
 							});
 
 							onOpenChange(false);
-						} catch {}
+						} catch {
+							Promise.resolve();
+						}
 					}}
 					onDelete={() => {
 						setFieldValue(
