@@ -21,6 +21,7 @@ import PRMFormik from '../../../../../../common/components/PRMFormik';
 import {useWebDAV} from '../../../../../../common/context/WebDAV';
 import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../../../common/interfaces/mdfClaimActivity';
+import MDFClaimBudget from '../../../../../../common/interfaces/mdfClaimBudget';
 import getIntlNumberFormat from '../../../../../../common/utils/getIntlNumberFormat';
 import {requiredBudgetSchema} from '../../schema/yup';
 import BudgetCard from './components/BudgetCard/BudgetCard';
@@ -76,6 +77,25 @@ const ActivityClaimPanel = ({
 		}
 	};
 
+	const getBudgetsButtonsModal = () =>
+		activity.budgets?.map((budget, index) => {
+			const budgetErrors = !activityErrors?.budgets?.[
+				index
+			] as FormikErrors<MDFClaimBudget>;
+
+			return (
+				<BudgetCard
+					budget={budget}
+					budgetErrors={Boolean(budgetErrors)}
+					key={`${budget.id}-${index}`}
+					onClick={() => {
+						setCurrentBudgetIndex(index);
+						onOpenChange(true);
+					}}
+				/>
+			);
+		});
+
 	return (
 		<>
 			{open && (
@@ -112,8 +132,7 @@ const ActivityClaimPanel = ({
 							});
 
 							onOpenChange(false);
-						}
-						catch {}
+						} catch {}
 					}}
 					onDelete={() => {
 						setFieldValue(
@@ -165,18 +184,7 @@ const ActivityClaimPanel = ({
 				</PanelHeader>
 
 				<PanelBody expanded={activity.selected}>
-					{activity.budgets?.map((budget, index) => (
-						<BudgetCard
-							activityErrors={activityErrors}
-							budget={budget}
-							currentBudget={index}
-							key={`${budget.id}-${index}`}
-							onClick={() => {
-								setCurrentBudgetIndex(index);
-								onOpenChange(true);
-							}}
-						/>
-					))}
+					{getBudgetsButtonsModal()}
 
 					<PRMFormik.Field
 						component={PRMForm.InputText}
