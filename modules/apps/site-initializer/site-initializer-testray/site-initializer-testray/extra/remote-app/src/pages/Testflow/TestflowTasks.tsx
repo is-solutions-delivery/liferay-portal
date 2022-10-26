@@ -13,8 +13,7 @@
  */
 
 import ClayIcon from '@clayui/icon';
-import {useEffect} from 'react';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useOutletContext} from 'react-router-dom';
 
 import Avatar from '../../components/Avatar';
 import Code from '../../components/Code';
@@ -25,10 +24,9 @@ import TaskbarProgress from '../../components/ProgressBar/TaskbarProgress';
 import StatusBadge from '../../components/StatusBadge';
 import QATable from '../../components/Table/QATable';
 import useCaseResultGroupBy from '../../data/useCaseResultGroupBy';
-import {useFetch} from '../../hooks/useFetch';
 import useHeader from '../../hooks/useHeader';
 import i18n from '../../i18n';
-import {TestrayTask, testrayTaskImpl} from '../../services/rest';
+import {TestrayTask} from '../../services/rest';
 import {
 	SUBTASK_STATUS,
 	StatusesProgressScore,
@@ -37,6 +35,10 @@ import {
 import {getTimeFromNow} from '../../util/date';
 import {assigned} from '../../util/mock';
 import {searchUtil} from '../../util/search';
+
+type OutletContext = {
+	testrayTask: TestrayTask;
+};
 
 export const progressScoreItems = [
 	[StatusesProgressScore.SELF, 7000],
@@ -49,31 +51,15 @@ const ShortcutIcon = () => (
 );
 
 const TestFlowTasks = () => {
-	const {taskId} = useParams();
+	const {testrayTask} = useOutletContext<OutletContext>();
 
-	const {data: testrayTask, loading} = useFetch<TestrayTask>(
-		testrayTaskImpl.getResource(taskId as string),
-		(response) => testrayTaskImpl.transformData(response)
-	);
+	useHeader({useTabs: []});
 
 	const {
 		donut: {columns},
 	} = useCaseResultGroupBy(testrayTask?.build?.id);
 
-	const {setHeading} = useHeader({timeout: 50, useTabs: []});
-
-	useEffect(() => {
-		if (testrayTask) {
-			setHeading([
-				{
-					category: i18n.translate('tasks'),
-					title: testrayTask.name,
-				},
-			]);
-		}
-	}, [setHeading, testrayTask]);
-
-	if (loading || !testrayTask) {
+	if (!testrayTask) {
 		return <Loading />;
 	}
 
@@ -268,7 +254,7 @@ const TestFlowTasks = () => {
 						navigateTo: (subtask) => `subtasks/${subtask.id}`,
 					}}
 					variables={{
-						filter: searchUtil.eq('taskId', taskId as string),
+						filter: searchUtil.eq('taskId', testrayTask.id),
 					}}
 				/>
 			</Container>
