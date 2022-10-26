@@ -16,6 +16,7 @@ import ClayButton from '@clayui/button';
 import {useNavigate} from 'react-router-dom';
 import {KeyedMutator} from 'swr';
 
+import AssignModal from '../../../../../../components/AssignModal';
 import useFormModal from '../../../../../../hooks/useFormModal';
 import i18n from '../../../../../../i18n';
 import {Liferay} from '../../../../../../services/liferay';
@@ -25,7 +26,6 @@ import {
 	testrayCaseResultRest,
 } from '../../../../../../services/rest';
 import {TEST_STATUS} from '../../../../../../util/constants';
-import CaseResultAssignModal from './CaseResultAssignModal';
 
 const userId = Number(Liferay.ThemeDisplay.getUserId());
 
@@ -65,7 +65,7 @@ const CaseResultHeaderActions: React.FC<{
 
 	return (
 		<>
-			<CaseResultAssignModal modal={modal} />
+			<AssignModal modal={modal} />
 
 			<ClayButton.Group className="mb-3 ml-3" spaced>
 				<ClayButton
