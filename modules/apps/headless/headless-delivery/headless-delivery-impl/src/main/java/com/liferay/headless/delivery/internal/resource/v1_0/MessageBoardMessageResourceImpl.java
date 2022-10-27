@@ -78,10 +78,16 @@ import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -329,11 +335,47 @@ public class MessageBoardMessageResourceImpl
 
 	@Override
 	public Page<MessageBoardMessage> getSiteMessageBoardMessagesPage(
-			Long siteId, Boolean flatten, String search,
-			Aggregation aggregation, Filter filter, Pagination pagination,
-			Sort[] sorts)
+		Long siteId, Boolean flatten, String search,
+		Aggregation aggregation, Filter filter, Pagination pagination,
+		Sort[] sorts)
 		throws Exception {
 
+		Page<MessageBoardMessage> messageBoardMessagesPage = _getMessageBoardMessagesPage(
+			HashMapBuilder.put(
+				"deleteBatch",
+				addAction(
+					ActionKeys.DELETE, "deleteMessageBoardMessageBatch",
+					MBConstants.RESOURCE_NAME, null)
+			).put(
+				"get",
+				addAction(
+					ActionKeys.VIEW, "getSiteMessageBoardMessagesPage",
+					MBConstants.RESOURCE_NAME, siteId)
+			).put(
+				"updateBatch",
+				addAction(
+					ActionKeys.UPDATE, "putMessageBoardMessageBatch",
+					MBConstants.RESOURCE_NAME, null)
+			).build(),
+			null, siteId, flatten, search, aggregation, filter, pagination,
+			sorts);
+
+		Collection<MessageBoardMessage> mb = messageBoardMessagesPage.getItems();
+		List<MessageBoardMessage> bbb   = new ArrayList<>();
+		for(MessageBoardMessage m : mb){
+
+			Stream<MessageBoardMessage> same = mb.stream().filter(mm ->
+				mm.getMessageBoardThreadId().equals(m.getMessageBoardThreadId())).sorted(
+				Comparator.comparing(MessageBoardMessage::getDateModified).reversed());
+
+			Optional<MessageBoardMessage> aaa = same.findFirst();
+
+			MessageBoardMessage bbbbb =  aaa.get();
+			if (!bbb.contains(bbbbb)){
+				bbb.add(bbbbb);
+			}
+
+		}
 		return _getMessageBoardMessagesPage(
 			HashMapBuilder.put(
 				"deleteBatch",
