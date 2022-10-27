@@ -339,44 +339,41 @@ public class MessageBoardMessageResourceImpl
 			Sort[] sorts)
 		throws Exception {
 
+		List<MessageBoardMessage> filteredMessageBoardMessages =
+			new ArrayList<>();
+
 		Page<MessageBoardMessage> messageBoardMessagesPage =
 			getSiteMessageBoardMessagesPage(
 				siteId, flatten, search, aggregation, filter, pagination,
 				sorts);
 
-		Collection<MessageBoardMessage> messageBoardMessageCollection =
+		Collection<MessageBoardMessage> messageBoardMessages =
 			messageBoardMessagesPage.getItems();
 
-		List<MessageBoardMessage> messageBoardMessageList = new ArrayList<>();
-
-		for (MessageBoardMessage messageBoardMessage1 :
-				messageBoardMessageCollection) {
-
+		for (MessageBoardMessage messageBoardMessage1 : messageBoardMessages) {
 			Comparator<MessageBoardMessage> comparator = Comparator.comparing(
 				MessageBoardMessage::getDateModified);
 
-			Stream<MessageBoardMessage> messageBoardMessageStream =
-				messageBoardMessageCollection.stream(
-				).filter(
-					messageBoardMessage2 ->
-						messageBoardMessage2.getMessageBoardThreadId(
-						).equals(
-							messageBoardMessage1.getMessageBoardThreadId()
-						)
-				).sorted(
-					comparator.reversed()
-				);
+			Stream<MessageBoardMessage> stream = messageBoardMessages.stream(
+			).filter(
+				messageBoardMessage2 ->
+					messageBoardMessage2.getMessageBoardThreadId(
+					).equals(
+						messageBoardMessage1.getMessageBoardThreadId()
+					)
+			).sorted(
+				comparator.reversed()
+			);
 
-			MessageBoardMessage messageBoardMessage3 =
-				messageBoardMessageStream.findFirst(
-				).get();
+			MessageBoardMessage messageBoardMessage3 = stream.findFirst(
+			).get();
 
-			if (!messageBoardMessageList.contains(messageBoardMessage3)) {
-				messageBoardMessageList.add(messageBoardMessage3);
+			if (!filteredMessageBoardMessages.contains(messageBoardMessage3)) {
+				filteredMessageBoardMessages.add(messageBoardMessage3);
 			}
 		}
 
-		return Page.of(messageBoardMessageList);
+		return Page.of(filteredMessageBoardMessages);
 	}
 
 	@Override
