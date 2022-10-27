@@ -360,19 +360,17 @@ public class MessageBoardMessageResourceImpl
 			null, siteId, flatten, search, aggregation, filter, pagination,
 			sorts);
 
-		Collection<MessageBoardMessage> mb = messageBoardMessagesPage.getItems();
-		List<MessageBoardMessage> bbb   = new ArrayList<>();
-		for(MessageBoardMessage m : mb){
+		Collection<MessageBoardMessage> messageBoardMessageCollection = messageBoardMessagesPage.getItems();
+		List<MessageBoardMessage> messageBoardMessageList   = new ArrayList<>();
+		for(MessageBoardMessage messageBoardMessage1 : messageBoardMessageCollection){
 
-			Stream<MessageBoardMessage> same = mb.stream().filter(mm ->
-				mm.getMessageBoardThreadId().equals(m.getMessageBoardThreadId())).sorted(
+			Stream<MessageBoardMessage> messageBoardMessageStream = messageBoardMessageCollection.stream().filter(mm ->
+				mm.getMessageBoardThreadId().equals(messageBoardMessage1.getMessageBoardThreadId())).sorted(
 				Comparator.comparing(MessageBoardMessage::getDateModified).reversed());
 
-			Optional<MessageBoardMessage> aaa = same.findFirst();
-
-			MessageBoardMessage bbbbb =  aaa.get();
-			if (!bbb.contains(bbbbb)){
-				bbb.add(bbbbb);
+			MessageBoardMessage messageBoardMessage2 =  messageBoardMessageStream.findFirst().get();
+			if (!messageBoardMessageList.contains(messageBoardMessage2)){
+				messageBoardMessageList.add(messageBoardMessage2);
 			}
 
 		}
