@@ -368,24 +368,8 @@ public class MessageBoardMessageResourceImpl
 		throws Exception {
 
 		Page<MessageBoardMessage> messageBoardMessagesPage =
-			_getMessageBoardMessagesPage(
-				HashMapBuilder.put(
-					"deleteBatch",
-					addAction(
-						ActionKeys.DELETE, "deleteMessageBoardMessageBatch",
-						MBConstants.RESOURCE_NAME, null)
-				).put(
-					"get",
-					addAction(
-						ActionKeys.VIEW, "getSiteMessageBoardMessagesPage",
-						MBConstants.RESOURCE_NAME, siteId)
-				).put(
-					"updateBatch",
-					addAction(
-						ActionKeys.UPDATE, "putMessageBoardMessageBatch",
-						MBConstants.RESOURCE_NAME, null)
-				).build(),
-				null, siteId, flatten, search, aggregation, filter, pagination,
+			getSiteMessageBoardMessagesPage(
+				siteId, flatten, search, aggregation, filter, pagination,
 				sorts);
 
 		Collection<MessageBoardMessage> messageBoardMessageCollection =
