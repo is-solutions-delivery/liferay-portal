@@ -14,9 +14,9 @@ definition {
 
 			User.firstLoginPG();
 
-			Testray.createTestraySite(siteName = "Testray 2");
+			// Testray.createTestraySite(siteName = "Testray 2");
 
-			Refresh();
+			// Refresh();
 		}
 
 		task ("Go to Testray, Create Project and change pagination") {
@@ -126,11 +126,11 @@ definition {
 
 		TestrayManage.deleteAllCasesTypes();
 
-		Testray.tearDownCP();
+		// Testray.tearDownCP();
 
-		if ("${testPortalInstance}" == "true") {
-			PortalInstances.tearDownCP();
-		}
+		// if ("${testPortalInstance}" == "true") {
+		// 	PortalInstances.tearDownCP();
+		// }
 	}
 
 	@description = "This is a test for LPS-160701 - Verify if as an Administrator I am able to Assign Tests directly to me through the context menu"
