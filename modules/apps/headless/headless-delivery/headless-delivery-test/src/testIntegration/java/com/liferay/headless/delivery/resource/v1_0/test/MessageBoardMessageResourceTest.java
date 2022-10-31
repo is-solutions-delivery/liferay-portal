@@ -105,7 +105,14 @@ public class MessageBoardMessageResourceTest
 			(List<MessageBoardMessage>)page.getItems());
 		assertValid(page);
 	}
+	@Override
+	protected MessageBoardMessage
+	testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+		Long siteId, MessageBoardMessage messageBoardMessage)
+		throws Exception {
 
+		return _addMessageBoardMessage();;
+	}
 	@Test
 	public void testPutSiteMessageBoardMessageWithoutParentMessageId()
 		throws Exception {
@@ -162,7 +169,7 @@ public class MessageBoardMessageResourceTest
 	}
 
 	@Override
-		protected MessageBoardMessage
+	protected MessageBoardMessage
 			testDeleteMessageBoardMessageMyRating_addMessageBoardMessage()
 		throws Exception {
 
@@ -183,13 +190,6 @@ public class MessageBoardMessageResourceTest
 		throws Exception {
 
 		return _addMessageBoardMessage();
-	}
-
-	@Override
-	public void
-	testGetSiteMessageBoardMessagesMyActivityPage()
-		throws Exception {
-
 	}
 
 	@Override
