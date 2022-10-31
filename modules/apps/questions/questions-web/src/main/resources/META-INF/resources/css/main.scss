@@ -347,13 +347,13 @@
 .scroll-from-activity {
 	max-height: 850px;
 	overflow: auto;
-	padding: 8px;
 	overflow-x: hidden;
+	padding: 8px;
 }
 ::-webkit-scrollbar {
 	background: #fff;
-	width: 5px;
 	border-radius: 5px;
+	width: 5px;
 }
 ::-webkit-scrollbar-thumb {
 	background: #a7a9bc;
