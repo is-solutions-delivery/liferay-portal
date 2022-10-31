@@ -162,7 +162,7 @@ public class MessageBoardMessageResourceTest
 	}
 
 	@Override
-	protected MessageBoardMessage
+		protected MessageBoardMessage
 			testDeleteMessageBoardMessageMyRating_addMessageBoardMessage()
 		throws Exception {
 
@@ -183,6 +183,13 @@ public class MessageBoardMessageResourceTest
 		throws Exception {
 
 		return _addMessageBoardMessage();
+	}
+
+	@Override
+	public void
+	testGetSiteMessageBoardMessagesMyActivityPage()
+		throws Exception {
+
 	}
 
 	@Override
