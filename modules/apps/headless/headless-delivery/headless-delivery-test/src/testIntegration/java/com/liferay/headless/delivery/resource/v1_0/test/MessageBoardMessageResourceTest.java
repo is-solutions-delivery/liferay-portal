@@ -131,6 +131,15 @@ public class MessageBoardMessageResourceTest
 	}
 
 	@Override
+	protected MessageBoardMessage
+	testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+		Long siteId, MessageBoardMessage messageBoardMessage)
+		throws Exception {
+
+		return _addMessageBoardMessage();
+	}
+
+	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {"articleBody", "headline"};
 	}
