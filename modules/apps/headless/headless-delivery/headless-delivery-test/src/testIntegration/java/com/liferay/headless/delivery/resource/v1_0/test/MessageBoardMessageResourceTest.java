@@ -131,15 +131,6 @@ public class MessageBoardMessageResourceTest
 	}
 
 	@Override
-	protected MessageBoardMessage
-	testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
-		Long siteId, MessageBoardMessage messageBoardMessage)
-		throws Exception {
-
-		return _addMessageBoardMessage();
-	}
-
-	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {"articleBody", "headline"};
 	}
@@ -238,6 +229,15 @@ public class MessageBoardMessageResourceTest
 	@Override
 	protected MessageBoardMessage
 			testGetSiteMessageBoardMessagePermissionsPage_addMessageBoardMessage()
+		throws Exception {
+
+		return _addMessageBoardMessage();
+	}
+
+	@Override
+	protected MessageBoardMessage
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				Long siteId, MessageBoardMessage messageBoardMessage)
 		throws Exception {
 
 		return _addMessageBoardMessage();
