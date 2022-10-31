@@ -33,8 +33,9 @@ export default function QuestionRow({
 	creatorId,
 	currentSection,
 	items,
-	onClick,
+	linkProps,
 	question,
+	rowSelected,
 	showSectionLabel,
 }) {
 	const sectionTitle =
@@ -56,17 +57,14 @@ export default function QuestionRow({
 				portraitURL: '',
 				userId: '0',
 		  };
-
-	const handleClick = (event) => {
-		if (onClick) {
-			event.preventDefault();
-		}
-
-		return onClick(question);
-	};
+	const isRowSelected = rowSelected === question.friendlyUrlPath;
 
 	return (
-		<div className="c-mt-4 c-p-3 position-relative question-row text-secondary">
+		<div
+			className={`c-mt-4 c-p-3 position-relative question-row text-secondary ${
+				isRowSelected && 'questionRowSelected'
+			}`}
+		>
 			<div className="align-items-center d-flex flex-wrap justify-content-between">
 				<span>
 					{showSectionLabel && (
@@ -132,8 +130,8 @@ export default function QuestionRow({
 
 			<Link
 				className="questions-title stretched-link"
-				onClick={handleClick}
 				to={`/questions/${sectionTitle}/${question.friendlyUrlPath}`}
+				{...linkProps}
 			>
 				<h2
 					className={classNames(
