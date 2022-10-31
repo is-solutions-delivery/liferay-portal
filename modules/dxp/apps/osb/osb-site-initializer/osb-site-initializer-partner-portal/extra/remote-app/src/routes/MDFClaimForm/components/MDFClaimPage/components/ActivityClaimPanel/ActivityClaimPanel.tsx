@@ -16,8 +16,8 @@ import ClayPanel from '@clayui/panel';
 import {FormikContextType} from 'formik';
 import {useCallback, useState} from 'react';
 
-import ListFiles from '../../../../../../common/components/ListFiles';
 import PRMForm from '../../../../../../common/components/PRMForm';
+import InputMultipleFilesListing from '../../../../../../common/components/PRMForm/components/fields/InputMultipleFilesListing';
 import PRMFormik from '../../../../../../common/components/PRMFormik';
 import {useWebDAV} from '../../../../../../common/context/WebDAV';
 import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
@@ -173,22 +173,19 @@ const ActivityClaimPanel = ({
 							</div>
 						</div>
 
-						<PRMFormik.Field
-							component={PRMForm.DragAndDrop}
+						<InputMultipleFilesListing
 							description="Drag and drop your files here to upload."
+							fieldValue={`activities[${activityIndex}].contents`}
+							files={activity.contents}
 							label="All Contents"
 							onAccept={(value: File[]) =>
 								setFieldValue(
-									`activities[${activityIndex}].documents`,
-									value
+									`activities[${activityIndex}].contents`,
+									activity.contents
+										? activity.contents.concat(value)
+										: value
 								)
 							}
-						/>
-						<PRMFormik.Array
-							component={ListFiles}
-							files={activity.contents}
-							name={`activities[${activityIndex}].contents`}
-							setFieldValue={setFieldValue}
 						/>
 					</>
 				</PanelBody>
