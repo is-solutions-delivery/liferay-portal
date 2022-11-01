@@ -239,10 +239,65 @@ public class MessageBoardMessageResourceTest
 			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
 				Long siteId, MessageBoardMessage messageBoardMessage)
 		throws Exception {
+		_addMessageBoardMessage(messageBoardMessage, siteId);
 
-		return _addMessageBoardMessage(messageBoardMessage, siteId);
+		return messageBoardMessageResource.getSiteMessageBoardMessagesMyActivityPage(
+			siteId, null, null, null, null, null, null).fetchFirstItem();
 	}
+	@Test
+	@Override
+	public void
+	testGetSiteMessageBoardMessagesMyActivityPageWithPagination()
+		throws Exception {
+		Long siteId = testGetSiteMessageBoardMessagesMyActivityPage_getSiteId();
 
+		MessageBoardMessage messageBoardMessage1 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		MessageBoardMessage messageBoardMessage2 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		MessageBoardMessage messageBoardMessage3 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		Page<MessageBoardMessage> page1 =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(1, 2), null);
+
+		List<MessageBoardMessage> messageBoardMessages1 =
+			(List<MessageBoardMessage>)page1.getItems();
+
+		Assert.assertEquals(
+			messageBoardMessages1.toString(), 2, messageBoardMessages1.size());
+
+		Page<MessageBoardMessage> page2 =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(2, 2), null);
+
+		Assert.assertEquals(1, page2.getTotalCount());
+
+		List<MessageBoardMessage> messageBoardMessages2 =
+			(List<MessageBoardMessage>)page2.getItems();
+
+		Assert.assertEquals(
+			messageBoardMessages2.toString(), 1, messageBoardMessages2.size());
+
+		Page<MessageBoardMessage> page3 =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(1, 3), null);
+
+		assertEqualsIgnoringOrder(
+			Arrays.asList(
+				messageBoardMessage1, messageBoardMessage2,
+				messageBoardMessage3),
+			(List<MessageBoardMessage>)page3.getItems());
+	}
 	@Override
 	protected MessageBoardMessage
 			testGetSiteMessageBoardMessagesPage_addMessageBoardMessage(
