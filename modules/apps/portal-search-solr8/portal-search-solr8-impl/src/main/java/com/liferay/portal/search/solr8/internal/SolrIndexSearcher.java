@@ -368,11 +368,6 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 		baseSearchRequest.setQuery(query);
 	}
 
-	@Reference(unbind = "-")
-	protected void setProps(Props props) {
-		_props = props;
-	}
-
 	protected void setQuery(
 		BaseSearchRequest baseSearchRequest, SearchRequest searchRequest) {
 
@@ -418,6 +413,8 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 
 	private volatile String _defaultCollection;
 	private volatile boolean _logExceptionsOnly;
+
+	@Reference
 	private Props _props;
 
 	@Reference(target = "(search.engine.impl=Solr)")
