@@ -226,6 +226,7 @@ type ObjectFieldSettingName =
 	| 'showCounter'
 	| 'showFilesInDocumentsAndMedia'
 	| 'stateFlow'
+	| 'readOnly'
 	| 'storageDLFolderPath';
 
 interface ObjectValidation {
