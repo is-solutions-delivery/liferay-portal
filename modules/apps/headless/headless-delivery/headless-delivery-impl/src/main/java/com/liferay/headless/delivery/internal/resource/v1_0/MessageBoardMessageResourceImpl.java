@@ -333,9 +333,9 @@ public class MessageBoardMessageResourceImpl
 
 	@Override
 	public Page<MessageBoardMessage> getSiteMessageBoardMessagesMyActivityPage(
-		Long siteId, Boolean flatten, String search,
-		Aggregation aggregation, Filter filter, Pagination pagination,
-		Sort[] sorts)
+			Long siteId, Boolean flatten, String search,
+			Aggregation aggregation, Filter filter, Pagination pagination,
+			Sort[] sorts)
 		throws Exception {
 
 		List<MessageBoardMessage> filteredMessageBoardMessages =
