@@ -12783,7 +12783,7 @@ paths:
         # @review
         get:
             description:
-                Retrieves the site's message board messages.
+                Retrieves the site's message board messages activity page.
             operationId: getSiteMessageBoardMessagesMyActivityPage
             parameters:
                 - in: path
