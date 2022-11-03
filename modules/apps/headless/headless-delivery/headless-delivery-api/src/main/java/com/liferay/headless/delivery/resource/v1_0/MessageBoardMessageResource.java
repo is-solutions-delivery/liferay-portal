@@ -164,6 +164,12 @@ public interface MessageBoardMessageResource {
 			Long siteId, String friendlyUrlPath)
 		throws Exception;
 
+	public Page<MessageBoardMessage> getSiteMessageBoardMessagesMyActivityPage(
+			Long siteId, Boolean flatten, String search,
+			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception;
+
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			getSiteMessageBoardMessagePermissionsPage(
 				Long siteId, String roleNames)

@@ -2172,6 +2172,399 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 	}
 
 	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPage()
+		throws Exception {
+
+		Long siteId = testGetSiteMessageBoardMessagesMyActivityPage_getSiteId();
+		Long irrelevantSiteId =
+			testGetSiteMessageBoardMessagesMyActivityPage_getIrrelevantSiteId();
+
+		Page<MessageBoardMessage> page =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(0, page.getTotalCount());
+
+		if (irrelevantSiteId != null) {
+			MessageBoardMessage irrelevantMessageBoardMessage =
+				testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+					irrelevantSiteId, randomIrrelevantMessageBoardMessage());
+
+			page =
+				messageBoardMessageResource.
+					getSiteMessageBoardMessagesMyActivityPage(
+						irrelevantSiteId, null, null, null, null,
+						Pagination.of(1, 2), null);
+
+			Assert.assertEquals(1, page.getTotalCount());
+
+			assertEquals(
+				Arrays.asList(irrelevantMessageBoardMessage),
+				(List<MessageBoardMessage>)page.getItems());
+			assertValid(page);
+		}
+
+		MessageBoardMessage messageBoardMessage1 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		MessageBoardMessage messageBoardMessage2 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		page =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(2, page.getTotalCount());
+
+		assertEqualsIgnoringOrder(
+			Arrays.asList(messageBoardMessage1, messageBoardMessage2),
+			(List<MessageBoardMessage>)page.getItems());
+		assertValid(page);
+
+		messageBoardMessageResource.deleteMessageBoardMessage(
+			messageBoardMessage1.getId());
+
+		messageBoardMessageResource.deleteMessageBoardMessage(
+			messageBoardMessage2.getId());
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithFilterDateTimeEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.DATE_TIME);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long siteId = testGetSiteMessageBoardMessagesMyActivityPage_getSiteId();
+
+		MessageBoardMessage messageBoardMessage1 = randomMessageBoardMessage();
+
+		messageBoardMessage1 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, messageBoardMessage1);
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardMessage> page =
+				messageBoardMessageResource.
+					getSiteMessageBoardMessagesMyActivityPage(
+						siteId, null, null, null,
+						getFilterString(
+							entityField, "between", messageBoardMessage1),
+						Pagination.of(1, 2), null);
+
+			assertEquals(
+				Collections.singletonList(messageBoardMessage1),
+				(List<MessageBoardMessage>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithFilterDoubleEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.DOUBLE);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long siteId = testGetSiteMessageBoardMessagesMyActivityPage_getSiteId();
+
+		MessageBoardMessage messageBoardMessage1 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		MessageBoardMessage messageBoardMessage2 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardMessage> page =
+				messageBoardMessageResource.
+					getSiteMessageBoardMessagesMyActivityPage(
+						siteId, null, null, null,
+						getFilterString(
+							entityField, "eq", messageBoardMessage1),
+						Pagination.of(1, 2), null);
+
+			assertEquals(
+				Collections.singletonList(messageBoardMessage1),
+				(List<MessageBoardMessage>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithFilterStringEquals()
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(
+			EntityField.Type.STRING);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long siteId = testGetSiteMessageBoardMessagesMyActivityPage_getSiteId();
+
+		MessageBoardMessage messageBoardMessage1 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		MessageBoardMessage messageBoardMessage2 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardMessage> page =
+				messageBoardMessageResource.
+					getSiteMessageBoardMessagesMyActivityPage(
+						siteId, null, null, null,
+						getFilterString(
+							entityField, "eq", messageBoardMessage1),
+						Pagination.of(1, 2), null);
+
+			assertEquals(
+				Collections.singletonList(messageBoardMessage1),
+				(List<MessageBoardMessage>)page.getItems());
+		}
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithPagination()
+		throws Exception {
+
+		Long siteId = testGetSiteMessageBoardMessagesMyActivityPage_getSiteId();
+
+		MessageBoardMessage messageBoardMessage1 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		MessageBoardMessage messageBoardMessage2 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		MessageBoardMessage messageBoardMessage3 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, randomMessageBoardMessage());
+
+		Page<MessageBoardMessage> page1 =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(1, 2), null);
+
+		List<MessageBoardMessage> messageBoardMessages1 =
+			(List<MessageBoardMessage>)page1.getItems();
+
+		Assert.assertEquals(
+			messageBoardMessages1.toString(), 2, messageBoardMessages1.size());
+
+		Page<MessageBoardMessage> page2 =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(2, 2), null);
+
+		Assert.assertEquals(3, page2.getTotalCount());
+
+		List<MessageBoardMessage> messageBoardMessages2 =
+			(List<MessageBoardMessage>)page2.getItems();
+
+		Assert.assertEquals(
+			messageBoardMessages2.toString(), 1, messageBoardMessages2.size());
+
+		Page<MessageBoardMessage> page3 =
+			messageBoardMessageResource.
+				getSiteMessageBoardMessagesMyActivityPage(
+					siteId, null, null, null, null, Pagination.of(1, 3), null);
+
+		assertEqualsIgnoringOrder(
+			Arrays.asList(
+				messageBoardMessage1, messageBoardMessage2,
+				messageBoardMessage3),
+			(List<MessageBoardMessage>)page3.getItems());
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithSortDateTime()
+		throws Exception {
+
+		testGetSiteMessageBoardMessagesMyActivityPageWithSort(
+			EntityField.Type.DATE_TIME,
+			(entityField, messageBoardMessage1, messageBoardMessage2) -> {
+				BeanTestUtil.setProperty(
+					messageBoardMessage1, entityField.getName(),
+					DateUtils.addMinutes(new Date(), -2));
+			});
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithSortDouble()
+		throws Exception {
+
+		testGetSiteMessageBoardMessagesMyActivityPageWithSort(
+			EntityField.Type.DOUBLE,
+			(entityField, messageBoardMessage1, messageBoardMessage2) -> {
+				BeanTestUtil.setProperty(
+					messageBoardMessage1, entityField.getName(), 0.1);
+				BeanTestUtil.setProperty(
+					messageBoardMessage2, entityField.getName(), 0.5);
+			});
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithSortInteger()
+		throws Exception {
+
+		testGetSiteMessageBoardMessagesMyActivityPageWithSort(
+			EntityField.Type.INTEGER,
+			(entityField, messageBoardMessage1, messageBoardMessage2) -> {
+				BeanTestUtil.setProperty(
+					messageBoardMessage1, entityField.getName(), 0);
+				BeanTestUtil.setProperty(
+					messageBoardMessage2, entityField.getName(), 1);
+			});
+	}
+
+	@Test
+	public void testGetSiteMessageBoardMessagesMyActivityPageWithSortString()
+		throws Exception {
+
+		testGetSiteMessageBoardMessagesMyActivityPageWithSort(
+			EntityField.Type.STRING,
+			(entityField, messageBoardMessage1, messageBoardMessage2) -> {
+				Class<?> clazz = messageBoardMessage1.getClass();
+
+				String entityFieldName = entityField.getName();
+
+				Method method = clazz.getMethod(
+					"get" + StringUtil.upperCaseFirstLetter(entityFieldName));
+
+				Class<?> returnType = method.getReturnType();
+
+				if (returnType.isAssignableFrom(Map.class)) {
+					BeanTestUtil.setProperty(
+						messageBoardMessage1, entityFieldName,
+						Collections.singletonMap("Aaa", "Aaa"));
+					BeanTestUtil.setProperty(
+						messageBoardMessage2, entityFieldName,
+						Collections.singletonMap("Bbb", "Bbb"));
+				}
+				else if (entityFieldName.contains("email")) {
+					BeanTestUtil.setProperty(
+						messageBoardMessage1, entityFieldName,
+						"aaa" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()) +
+									"@liferay.com");
+					BeanTestUtil.setProperty(
+						messageBoardMessage2, entityFieldName,
+						"bbb" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()) +
+									"@liferay.com");
+				}
+				else {
+					BeanTestUtil.setProperty(
+						messageBoardMessage1, entityFieldName,
+						"aaa" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()));
+					BeanTestUtil.setProperty(
+						messageBoardMessage2, entityFieldName,
+						"bbb" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()));
+				}
+			});
+	}
+
+	protected void testGetSiteMessageBoardMessagesMyActivityPageWithSort(
+			EntityField.Type type,
+			UnsafeTriConsumer
+				<EntityField, MessageBoardMessage, MessageBoardMessage,
+				 Exception> unsafeTriConsumer)
+		throws Exception {
+
+		List<EntityField> entityFields = getEntityFields(type);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		Long siteId = testGetSiteMessageBoardMessagesMyActivityPage_getSiteId();
+
+		MessageBoardMessage messageBoardMessage1 = randomMessageBoardMessage();
+		MessageBoardMessage messageBoardMessage2 = randomMessageBoardMessage();
+
+		for (EntityField entityField : entityFields) {
+			unsafeTriConsumer.accept(
+				entityField, messageBoardMessage1, messageBoardMessage2);
+		}
+
+		messageBoardMessage1 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, messageBoardMessage1);
+
+		messageBoardMessage2 =
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				siteId, messageBoardMessage2);
+
+		for (EntityField entityField : entityFields) {
+			Page<MessageBoardMessage> ascPage =
+				messageBoardMessageResource.
+					getSiteMessageBoardMessagesMyActivityPage(
+						siteId, null, null, null, null, Pagination.of(1, 2),
+						entityField.getName() + ":asc");
+
+			assertEquals(
+				Arrays.asList(messageBoardMessage1, messageBoardMessage2),
+				(List<MessageBoardMessage>)ascPage.getItems());
+
+			Page<MessageBoardMessage> descPage =
+				messageBoardMessageResource.
+					getSiteMessageBoardMessagesMyActivityPage(
+						siteId, null, null, null, null, Pagination.of(1, 2),
+						entityField.getName() + ":desc");
+
+			assertEquals(
+				Arrays.asList(messageBoardMessage2, messageBoardMessage1),
+				(List<MessageBoardMessage>)descPage.getItems());
+		}
+	}
+
+	protected MessageBoardMessage
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				Long siteId, MessageBoardMessage messageBoardMessage)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected Long testGetSiteMessageBoardMessagesMyActivityPage_getSiteId()
+		throws Exception {
+
+		return testGroup.getGroupId();
+	}
+
+	protected Long
+			testGetSiteMessageBoardMessagesMyActivityPage_getIrrelevantSiteId()
+		throws Exception {
+
+		return irrelevantGroup.getGroupId();
+	}
+
+	@Test
 	public void testGetSiteMessageBoardMessagePermissionsPage()
 		throws Exception {
 
