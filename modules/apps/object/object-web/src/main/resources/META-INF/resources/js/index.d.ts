@@ -222,11 +222,11 @@ type ObjectFieldSettingName =
 	| 'objectRelationshipName'
 	| 'output'
 	| 'readOnly'
+	| 'readOnlyScript'
 	| 'script'
 	| 'showCounter'
 	| 'showFilesInDocumentsAndMedia'
 	| 'stateFlow'
-	| 'readOnly'
 	| 'storageDLFolderPath';
 
 interface ObjectValidation {
