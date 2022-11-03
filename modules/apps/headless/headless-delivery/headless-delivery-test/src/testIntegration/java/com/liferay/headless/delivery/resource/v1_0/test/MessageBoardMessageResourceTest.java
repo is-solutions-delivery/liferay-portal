@@ -245,6 +245,15 @@ public class MessageBoardMessageResourceTest
 
 	@Override
 	protected MessageBoardMessage
+	testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+		Long siteId, MessageBoardMessage messageBoardMessage)
+		throws Exception {
+
+		return _addMessageBoardMessage(messageBoardMessage, siteId);
+	}
+
+	@Override
+	protected MessageBoardMessage
 			testGraphQLMessageBoardMessage_addMessageBoardMessage()
 		throws Exception {
 
