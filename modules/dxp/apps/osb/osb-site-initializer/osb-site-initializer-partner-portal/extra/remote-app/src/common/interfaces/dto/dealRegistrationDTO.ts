@@ -24,10 +24,14 @@ export default interface DealRegistrationDTO
 		| 'prospect'
 		| 'primaryProspect'
 	> {
+	accountExternalReferenceCodeSF?: string;
 	additionalContactEmailAddress?: string;
 	additionalContactFirstName?: string;
 	additionalContactLastName?: string;
+	additionalContacts?: string;
 	additionalInformationAboutTheOpportunity?: string;
+	leadExternalReferenceCode?: string;
+	mdfActivityExternalReferenceCodeSF?: string;
 	primaryProspectBusinessUnit?: string;
 	primaryProspectDepartment?: LiferayPicklist;
 	primaryProspectEmailAddress?: string;
@@ -42,9 +46,11 @@ export default interface DealRegistrationDTO
 	prospectAddress?: string;
 	prospectCity?: string;
 	prospectCountry?: LiferayPicklist;
+	prospectCountryCode?: string;
 	prospectIndustry?: LiferayPicklist;
 	prospectPostalCode?: string;
 	prospectState?: LiferayPicklist;
+	prospectStateCode?: string;
 	r_accountToDealRegistrations_accountEntry?: AccountEntry;
 	r_accountToDealRegistrations_accountEntryId?: number;
 	r_activityToDealRegistrations_c_activity?: MDFRequestActivity;

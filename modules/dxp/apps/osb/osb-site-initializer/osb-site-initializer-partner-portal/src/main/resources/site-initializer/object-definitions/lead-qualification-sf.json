@@ -1,0 +1,92 @@
+{
+	"externalReferenceCode": "Lead_Qualification__c",
+	"label": {
+		"en_US": "Lead Qualification SF"
+	},
+	"name": "LeadQualificationSF",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "Lead__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Lead External Reference Code"
+			},
+			"name": "leadExternalReferenceCode",
+			"required": false,
+			"type": "String"
+		},
+		{
+			"DBType": "Clob",
+			"businessType": "LongText",
+			"externalReferenceCode": "Additional_Details__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Additional Information About The Opportunity"
+			},
+			"name": "additionalInformationAboutTheOpportunity",
+			"required": false,
+			"type": "Clob"
+		},
+		{
+			"DBType": "Clob",
+			"businessType": "LongText",
+			"externalReferenceCode": "Use_Case__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Project Need"
+			},
+			"name": "projectNeed",
+			"required": false,
+			"type": "Clob"
+		},
+		{
+			"DBType": "Clob",
+			"businessType": "LongText",
+			"externalReferenceCode": "Project_Solution_Categories__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Project Solution Categories"
+			},
+			"name": "projectCategories",
+			"required": false,
+			"type": "Clob"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "MDF_Request_Activity__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "MDF Activity External Reference Code SF"
+			},
+			"name": "mdfActivityExternalReferenceCodeSF",
+			"required": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "Project_Roadmap__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Project Timeline"
+			},
+			"name": "projectTimeline",
+			"required": false,
+			"type": "String"
+		}
+	],
+	"pluralLabel": {
+		"en_US": "Lead Qualifications SF"
+	},
+	"scope": "company",
+	"storageType": "salesforce"
+}

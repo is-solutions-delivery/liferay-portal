@@ -45,8 +45,12 @@ const General = ({
 	const {companyOptions, onCompanySelected} = useCompanyOptions(
 		companiesEntries,
 		useCallback(
-			(country, company) => {
+			(country, company, accountExternalReferenceCodeSF) => {
 				setFieldValue('partnerAccount', company);
+				setFieldValue(
+					'accountExternalReferenceCodeSF',
+					accountExternalReferenceCodeSF
+				);
 			},
 			[setFieldValue]
 		)
@@ -66,7 +70,7 @@ const General = ({
 		onSelected: onCountrySelected,
 		options: countryOptions,
 	} = getPicklistOptions(
-		fieldEntries[LiferayPicklistName.REGIONS],
+		fieldEntries[LiferayPicklistName.COUNTRIES],
 		(selected) => setFieldValue('prospect.country', selected)
 	);
 
@@ -175,7 +179,7 @@ const General = ({
 						required
 					/>
 
-					{values.prospect?.country.name === 'US' && (
+					{values.prospect?.country.key === 'US' && (
 						<PRMFormik.Field
 							component={PRMForm.Select}
 							label="State"

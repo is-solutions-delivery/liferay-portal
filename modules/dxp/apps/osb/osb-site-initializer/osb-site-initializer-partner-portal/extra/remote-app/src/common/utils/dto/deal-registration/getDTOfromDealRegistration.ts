@@ -13,16 +13,23 @@ import DealRegistration from '../../../interfaces/dealRegistration';
 import DealRegistrationDTO from '../../../interfaces/dto/dealRegistrationDTO';
 
 export function getDTOFromDealRegistration(
-	dealRegistration: DealRegistration
+	dealRegistration: DealRegistration,
+	leadExternalReferenceCode?: string
 ): DealRegistrationDTO {
 	return {
+		accountExternalReferenceCodeSF:
+			dealRegistration.accountExternalReferenceCodeSF,
 		additionalContactEmailAddress:
 			dealRegistration.additionalContact?.emailAddress,
 		additionalContactFirstName:
 			dealRegistration.additionalContact?.firstName,
 		additionalContactLastName: dealRegistration.additionalContact?.lastName,
+		additionalContacts: `${dealRegistration.additionalContact?.firstName} ${dealRegistration.additionalContact?.lastName}, ${dealRegistration.additionalContact?.emailAddress}`,
 		additionalInformationAboutTheOpportunity:
 			dealRegistration.additionalInformationAboutTheOpportunity,
+		leadExternalReferenceCode,
+		mdfActivityExternalReferenceCodeSF:
+			dealRegistration.mdfActivityAssociated.externalReferenceCodeSF,
 		primaryProspectBusinessUnit:
 			dealRegistration.primaryProspect.businessUnit,
 		primaryProspectDepartment: dealRegistration.primaryProspect.department,
@@ -39,9 +46,11 @@ export function getDTOFromDealRegistration(
 		prospectAddress: dealRegistration.prospect.address,
 		prospectCity: dealRegistration.prospect.city,
 		prospectCountry: dealRegistration.prospect.country,
+		prospectCountryCode: dealRegistration.prospect.country.key,
 		prospectIndustry: dealRegistration.prospect.industry,
 		prospectPostalCode: dealRegistration.prospect.postalCode,
 		prospectState: dealRegistration.prospect.state,
+		prospectStateCode: dealRegistration.prospect.state.key,
 		r_accountToDealRegistrations_accountEntryId:
 			dealRegistration.partnerAccount.id,
 		r_activityToDealRegistrations_c_activityId:
