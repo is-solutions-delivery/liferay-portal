@@ -13,7 +13,7 @@ definition {
 
 		User.firstLoginPG();
 
-		Testray.addTestraySite();
+		Testray.Testray.createTestraySite(siteName = "Testray 2");();
 	}
 
 	tearDown {
