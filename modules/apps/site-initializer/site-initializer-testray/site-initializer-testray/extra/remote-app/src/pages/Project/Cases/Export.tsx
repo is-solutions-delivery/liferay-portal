@@ -13,6 +13,7 @@
  */
 
 import ClayTable from '@clayui/table';
+import dayjs from 'dayjs';
 import React, {useMemo} from 'react';
 import {useParams} from 'react-router-dom';
 
@@ -117,7 +118,7 @@ const CaseItems: React.FC<CaseItemsProps> = ({caseWithRequirements, cases}) => {
 										value: Case?.caseType?.name,
 									},
 									{
-										title: i18n.translate('piority'),
+										title: i18n.translate('priority'),
 										value: Case?.priority,
 									},
 									{
@@ -150,7 +151,9 @@ const CaseItems: React.FC<CaseItemsProps> = ({caseWithRequirements, cases}) => {
 										title: i18n.translate(
 											'data-last-modified'
 										),
-										value: Case?.dateModified,
+										value: dayjs(Case?.dateModified).format(
+											'lll'
+										),
 									},
 									{
 										title: i18n.translate(
@@ -181,7 +184,11 @@ const ExportCaseContainer: React.FC<CaseItemsProps> = ({
 	cases,
 }) => (
 	<div>
-		<h5 className="mt-5">{i18n.translate('associated-requirements')}</h5>
+		{caseWithRequirements && (
+			<h5 className="mt-5">
+				{i18n.translate('associated-requirements')}
+			</h5>
+		)}
 
 		{cases.map((Case: TestrayCase) => {
 			const requirements = caseWithRequirements[Case?.id] || [];
@@ -218,8 +225,8 @@ const ExportCaseContainer: React.FC<CaseItemsProps> = ({
 									value: requirement?.component?.name,
 								},
 								{
-									title: i18n.translate('jira-component'),
-									value: Case?.component?.team?.name,
+									title: i18n.translate('jira-components'),
+									value: requirement?.component?.team?.name,
 								},
 								{
 									title: i18n.translate('summary'),
@@ -284,8 +291,7 @@ const Export = () => {
 
 			if (requirement && casesWithRequirement[caseId]) {
 				casesWithRequirement[caseId].push(requirement);
-			}
-			else {
+			} else {
 				casesWithRequirement[caseId] = [requirement];
 			}
 		});
@@ -305,7 +311,7 @@ const Export = () => {
 					cases={cases}
 				/>
 
-				{!!cases.length && (
+				{cases?.length && casesWithRequirements && (
 					<ExportCaseContainer
 						caseWithRequirements={casesWithRequirements}
 						cases={cases}
