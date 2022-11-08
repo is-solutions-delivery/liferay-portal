@@ -37,6 +37,12 @@ export function getActivePolicies() {
 	);
 }
 
+export function getThreeMonthsPolicies() {
+	return axios.get(
+		`${DeliveryAPI}/?fields=productName,termPremium&filter=policyStatus ne 'declined' and (startDate le ${currentDate} and startDate ge ${sixMonthsAgoDate[0]}-${sixMonthsAgoDate[1]}-01)&pageSize=200`
+	);
+}
+
 export function getSixMonthsAgoPolicies() {
 	return axios.get(
 		`${DeliveryAPI}/?filter=policyStatus ne 'declined' and (startDate le ${currentDate} and startDate ge ${sixMonthsAgoDate[0]}-${sixMonthsAgoDate[1]}-01)&pageSize=200`
