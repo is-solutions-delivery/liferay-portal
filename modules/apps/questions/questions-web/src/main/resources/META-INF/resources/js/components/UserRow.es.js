@@ -23,7 +23,7 @@ export default withRouter(
 	({creator = {}, statistics, hasCompanyMx, companyName}) => {
 		return (
 			<Link
-				className="align-items-center border-0 btn btn-block btn-secondary d-flex position-relative questions-user text-left text-md-right"
+				className="align-items-center border-0 btn btn-block btn-secondary d-flex position-relative questions-creator-success questions-user text-left text-md-right"
 				to={`/questions/all/creator/${creator.id}`}
 			>
 				<UserIcon
