@@ -243,8 +243,7 @@ public class SolrIndexingFixture implements IndexingFixture {
 			solrIndexSearcher, "_querySuggester",
 			createSolrQuerySuggester(solrClientManager));
 		ReflectionTestUtil.setFieldValue(
-			solrIndexSearcher, "_searchEngineAdapter",
-			searchEngineAdapter);
+			solrIndexSearcher, "_searchEngineAdapter", searchEngineAdapter);
 		ReflectionTestUtil.setFieldValue(
 			solrIndexSearcher, "_searchRequestBuilderFactory",
 			new SearchRequestBuilderFactoryImpl());

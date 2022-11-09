@@ -28,6 +28,7 @@ import com.liferay.portal.search.internal.stats.StatsResponseBuilderFactoryImpl;
 import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 import com.liferay.portal.search.solr8.internal.facet.FacetProcessor;
 import com.liferay.portal.search.solr8.internal.filter.BooleanFilterTranslatorImpl;
+import com.liferay.portal.search.solr8.internal.filter.DateRangeFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.DateRangeTermFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.ExistsFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.GeoBoundingBoxFilterTranslatorImpl;
@@ -244,11 +245,11 @@ public class SearchRequestExecutorFixture {
 		SolrFilterTranslator solrFilterTranslator = new SolrFilterTranslator();
 
 		ReflectionTestUtil.setFieldValue(
-			solrFilterTranslator, "_rangeTermFilterTranslator",
-			new RangeTermFilterTranslatorImpl());
-		ReflectionTestUtil.setFieldValue(
 			solrFilterTranslator, "_booleanQueryTranslator",
 			new BooleanFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "dateRangeFilterTranslator",
+			new DateRangeFilterTranslatorImpl());
 		ReflectionTestUtil.setFieldValue(
 			solrFilterTranslator, "_dateRangeTermFilterTranslator",
 			new DateRangeTermFilterTranslatorImpl());
@@ -276,6 +277,9 @@ public class SearchRequestExecutorFixture {
 		ReflectionTestUtil.setFieldValue(
 			solrFilterTranslator, "_queryFilterTranslator",
 			new QueryFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_rangeTermFilterTranslator",
+			new RangeTermFilterTranslatorImpl());
 		ReflectionTestUtil.setFieldValue(
 			solrFilterTranslator, "_termFilterTranslator",
 			new TermFilterTranslatorImpl());

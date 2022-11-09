@@ -52,9 +52,7 @@ public class CompositeFacetProcessor implements FacetProcessor<SolrQuery> {
 		return facetProcessor.processFacet(facet);
 	}
 
-	@Reference(
-		target = "(class.name=DEFAULT)"
-	)
+	@Reference(target = "(class.name=DEFAULT)", unbind = "-")
 	protected void setDefaultFacetProcessor(
 		FacetProcessor<SolrQuery> defaultFacetProcessor) {
 
