@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.solr8.internal.search.engine.adapter.index;
 
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.engine.adapter.index.IndexRequestExecutor;
 import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 
@@ -33,22 +34,27 @@ public class IndexRequestExecutorFixture {
 	protected IndexRequestExecutor createIndexRequestExecutor(
 		SolrClientManager solrClientManager) {
 
-		return new SolrIndexRequestExecutor() {
-			{
-				setRefreshIndexRequestExecutor(
-					createRefreshIndexRequestExecutor(solrClientManager));
-			}
-		};
+		SolrIndexRequestExecutor solrIndexRequestExecutor =
+			new SolrIndexRequestExecutor();
+
+		ReflectionTestUtil.setFieldValue(
+			solrIndexRequestExecutor, "_refreshIndexRequestExecutor",
+			createRefreshIndexRequestExecutor(solrClientManager));
+
+		return solrIndexRequestExecutor;
 	}
 
 	protected RefreshIndexRequestExecutor createRefreshIndexRequestExecutor(
 		SolrClientManager solrClientManager) {
 
-		return new RefreshIndexRequestExecutorImpl() {
-			{
-				setSolrClientManager(solrClientManager);
-			}
-		};
+		RefreshIndexRequestExecutorImpl refreshIndexRequestExecutorImpl =
+			new RefreshIndexRequestExecutorImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			refreshIndexRequestExecutorImpl, "_solrClientManager",
+			solrClientManager);
+
+		return refreshIndexRequestExecutorImpl;
 	}
 
 	protected void setSolrClientManager(SolrClientManager solrClientManager) {

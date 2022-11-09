@@ -16,6 +16,7 @@ package com.liferay.portal.search.solr8.internal.facet;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.solr8.internal.SolrIndexingFixture;
 import com.liferay.portal.search.test.util.facet.BaseAggregationFilteringTestCase;
 import com.liferay.portal.search.test.util.indexing.IndexingFixture;
@@ -50,12 +51,13 @@ public class AggregationFilteringTest extends BaseAggregationFilteringTestCase {
 		CompositeFacetProcessor compositeFacetProcessor =
 			new CompositeFacetProcessor();
 
-		compositeFacetProcessor.setDefaultFacetProcessor(
-			new DefaultFacetProcessor() {
-				{
-					setJSONFactory(_jsonFactory);
-				}
-			});
+		DefaultFacetProcessor defaultFacetProcessor =
+			new DefaultFacetProcessor();
+
+		ReflectionTestUtil.setFieldValue(
+			defaultFacetProcessor, "_jsonFactory", _jsonFactory);
+
+		compositeFacetProcessor.setDefaultFacetProcessor(defaultFacetProcessor);
 
 		addFacetProcessor(
 			"com.liferay.portal.search.internal.facet.ModifiedFacetImpl",

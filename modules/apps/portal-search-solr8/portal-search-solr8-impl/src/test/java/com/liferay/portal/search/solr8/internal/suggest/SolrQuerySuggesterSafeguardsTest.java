@@ -15,6 +15,7 @@
 package com.liferay.portal.search.solr8.internal.suggest;
 
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.solr8.internal.SolrQuerySuggester;
 import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
@@ -59,11 +60,13 @@ public class SolrQuerySuggesterSafeguardsTest {
 	}
 
 	protected SolrQuerySuggester createSolrQuerySuggester() {
-		return new SolrQuerySuggester() {
-			{
-				setSolrClientManager(Mockito.mock(SolrClientManager.class));
-			}
-		};
+		SolrQuerySuggester solrQuerySuggester = new SolrQuerySuggester();
+
+		ReflectionTestUtil.setFieldValue(
+			solrQuerySuggester, "_solrClientManager",
+			Mockito.mock(SolrClientManager.class));
+
+		return solrQuerySuggester;
 	}
 
 }

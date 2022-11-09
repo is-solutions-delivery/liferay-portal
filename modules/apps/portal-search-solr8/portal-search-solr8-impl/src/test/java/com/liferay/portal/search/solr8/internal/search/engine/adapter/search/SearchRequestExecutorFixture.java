@@ -15,6 +15,7 @@
 package com.liferay.portal.search.solr8.internal.search.engine.adapter.search;
 
 import com.liferay.portal.kernel.search.query.QueryTranslator;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.engine.adapter.search.SearchRequestExecutor;
 import com.liferay.portal.search.internal.groupby.GroupByResponseFactoryImpl;
 import com.liferay.portal.search.internal.hits.SearchHitBuilderFactoryImpl;
@@ -27,7 +28,6 @@ import com.liferay.portal.search.internal.stats.StatsResponseBuilderFactoryImpl;
 import com.liferay.portal.search.solr8.internal.connection.SolrClientManager;
 import com.liferay.portal.search.solr8.internal.facet.FacetProcessor;
 import com.liferay.portal.search.solr8.internal.filter.BooleanFilterTranslatorImpl;
-import com.liferay.portal.search.solr8.internal.filter.DateRangeFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.DateRangeTermFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.ExistsFilterTranslatorImpl;
 import com.liferay.portal.search.solr8.internal.filter.GeoBoundingBoxFilterTranslatorImpl;
@@ -67,25 +67,35 @@ public class SearchRequestExecutorFixture {
 	protected static BaseSearchResponseAssembler
 		createBaseSearchResponseAssembler() {
 
-		return new BaseSearchResponseAssemblerImpl() {
-			{
-				setStatsTranslator(createStatsTranslator());
-			}
-		};
+		BaseSearchResponseAssemblerImpl baseSearchResponseAssemblerImpl =
+			new BaseSearchResponseAssemblerImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			baseSearchResponseAssemblerImpl, "_statsTranslator",
+			createStatsTranslator());
+
+		return baseSearchResponseAssemblerImpl;
 	}
 
 	protected static BaseSolrQueryAssembler createBaseSolrQueryAssembler(
 		FacetProcessor<SolrQuery> facetProcessor,
 		QueryTranslator<String> queryTranslator) {
 
-		return new BaseSolrQueryAssemblerImpl() {
-			{
-				setQueryTranslator(queryTranslator);
-				setStatsTranslator(createStatsTranslator());
-				setFilterTranslator(createSolrFilterTranslator());
-				setFacetProcessor(facetProcessor);
-			}
-		};
+		BaseSolrQueryAssemblerImpl baseSolrQueryAssemblerImpl =
+			new BaseSolrQueryAssemblerImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			baseSolrQueryAssemblerImpl, "_queryTranslator", queryTranslator);
+		ReflectionTestUtil.setFieldValue(
+			baseSolrQueryAssemblerImpl, "_statsTranslator",
+			createStatsTranslator());
+		ReflectionTestUtil.setFieldValue(
+			baseSolrQueryAssemblerImpl, "_filterTranslator",
+			createSolrFilterTranslator());
+		ReflectionTestUtil.setFieldValue(
+			baseSolrQueryAssemblerImpl, "_facetProcessor", facetProcessor);
+
+		return baseSolrQueryAssemblerImpl;
 	}
 
 	protected static CountSearchRequestExecutor
@@ -94,16 +104,20 @@ public class SearchRequestExecutorFixture {
 			FacetProcessor<SolrQuery> facetProcessor,
 			QueryTranslator<String> queryTranslator) {
 
-		return new CountSearchRequestExecutorImpl() {
-			{
-				setBaseSearchResponseAssembler(
-					createBaseSearchResponseAssembler());
-				setBaseSolrQueryAssembler(
-					createBaseSolrQueryAssembler(
-						facetProcessor, queryTranslator));
-				setSolrClientManager(solrClientManager);
-			}
-		};
+		CountSearchRequestExecutorImpl countSearchRequestExecutorImpl =
+			new CountSearchRequestExecutorImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			countSearchRequestExecutorImpl, "_baseSearchResponseAssembler",
+			createBaseSearchResponseAssembler());
+		ReflectionTestUtil.setFieldValue(
+			countSearchRequestExecutorImpl, "_baseSolrQueryAssembler",
+			createBaseSolrQueryAssembler(facetProcessor, queryTranslator));
+		ReflectionTestUtil.setFieldValue(
+			countSearchRequestExecutorImpl, "_solrClientManager",
+			solrClientManager);
+
+		return countSearchRequestExecutorImpl;
 	}
 
 	protected static SearchRequestExecutor createSearchRequestExecutor(
@@ -111,18 +125,22 @@ public class SearchRequestExecutorFixture {
 		FacetProcessor<SolrQuery> facetProcessor,
 		QueryTranslator<String> queryTranslator) {
 
-		return new SolrSearchRequestExecutor() {
-			{
-				setCountSearchRequestExecutor(
-					createCountSearchRequestExecutor(
-						solrClientManager, facetProcessor, queryTranslator));
-				setMultisearchSearchRequestExecutor(
-					new MultisearchSearchRequestExecutorImpl());
-				setSearchSearchRequestExecutor(
-					createSearchSearchRequestExecutor(
-						solrClientManager, facetProcessor, queryTranslator));
-			}
-		};
+		SolrSearchRequestExecutor solrSearchRequestExecutor =
+			new SolrSearchRequestExecutor();
+
+		ReflectionTestUtil.setFieldValue(
+			solrSearchRequestExecutor, "_countSearchRequestExecutor",
+			createCountSearchRequestExecutor(
+				solrClientManager, facetProcessor, queryTranslator));
+		ReflectionTestUtil.setFieldValue(
+			solrSearchRequestExecutor, "_multisearchSearchRequestExecutor",
+			new MultisearchSearchRequestExecutorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrSearchRequestExecutor, "_searchSearchRequestExecutor",
+			createSearchSearchRequestExecutor(
+				solrClientManager, facetProcessor, queryTranslator));
+
+		return solrSearchRequestExecutor;
 	}
 
 	protected static SearchSearchRequestExecutor
@@ -131,100 +149,152 @@ public class SearchRequestExecutorFixture {
 			FacetProcessor<SolrQuery> facetProcessor,
 			QueryTranslator<String> queryTranslator) {
 
-		return new SearchSearchRequestExecutorImpl() {
-			{
-				setSearchSearchResponseAssembler(
-					createSearchSearchResponseAssembler());
-				setSearchSolrQueryAssembler(
-					createSearchSolrQueryAssembler(
-						facetProcessor, queryTranslator));
-				setSolrClientManager(solrClientManager);
-			}
-		};
+		SearchSearchRequestExecutorImpl searchSearchRequestExecutorImpl =
+			new SearchSearchRequestExecutorImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			searchSearchRequestExecutorImpl, "_searchSearchResponseAssembler",
+			createSearchSearchResponseAssembler());
+		ReflectionTestUtil.setFieldValue(
+			searchSearchRequestExecutorImpl, "_searchSolrQueryAssembler",
+			createSearchSolrQueryAssembler(facetProcessor, queryTranslator));
+		ReflectionTestUtil.setFieldValue(
+			searchSearchRequestExecutorImpl, "_solrClientManager",
+			solrClientManager);
+
+		return searchSearchRequestExecutorImpl;
 	}
 
 	protected static SearchSearchResponseAssembler
 		createSearchSearchResponseAssembler() {
 
-		return new SearchSearchResponseAssemblerImpl() {
-			{
-				setBaseSearchResponseAssembler(
-					createBaseSearchResponseAssembler());
-				setSearchSearchResponseAssemblerHelper(
-					createSearchSearchResponseAssemblerHelper());
-			}
-		};
+		SearchSearchResponseAssemblerImpl searchSearchResponseAssemblerImpl =
+			new SearchSearchResponseAssemblerImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			searchSearchResponseAssemblerImpl, "_baseSearchResponseAssembler",
+			createBaseSearchResponseAssembler());
+		ReflectionTestUtil.setFieldValue(
+			searchSearchResponseAssemblerImpl,
+			"_searchSearchResponseAssemblerHelper",
+			createSearchSearchResponseAssemblerHelper());
+
+		return searchSearchResponseAssemblerImpl;
 	}
 
 	protected static SearchSearchResponseAssemblerHelper
 		createSearchSearchResponseAssemblerHelper() {
 
-		return new DefaultSearchSearchResponseAssemblerHelperImpl() {
-			{
-				setDocumentBuilderFactory(new DocumentBuilderFactoryImpl());
-				setGroupByResponseFactory(new GroupByResponseFactoryImpl());
-				setSearchHitBuilderFactory(new SearchHitBuilderFactoryImpl());
-				setSearchHitsBuilderFactory(new SearchHitsBuilderFactoryImpl());
-				setStatsTranslator(createStatsTranslator());
-				setStatsResultsTranslator(new StatsResultsTranslatorImpl());
-			}
-		};
+		DefaultSearchSearchResponseAssemblerHelperImpl
+			defaultSearchSearchResponseAssemblerHelperImpl =
+				new DefaultSearchSearchResponseAssemblerHelperImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			defaultSearchSearchResponseAssemblerHelperImpl,
+			"_documentBuilderFactory", new DocumentBuilderFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
+			defaultSearchSearchResponseAssemblerHelperImpl,
+			"_groupByResponseFactory", new GroupByResponseFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
+			defaultSearchSearchResponseAssemblerHelperImpl,
+			"_searchHitBuilderFactory", new SearchHitBuilderFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
+			defaultSearchSearchResponseAssemblerHelperImpl,
+			"_searchHitsBuilderFactory", new SearchHitsBuilderFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
+			defaultSearchSearchResponseAssemblerHelperImpl, "_statsTranslator",
+			createStatsTranslator());
+		ReflectionTestUtil.setFieldValue(
+			defaultSearchSearchResponseAssemblerHelperImpl,
+			"_statsResultsTranslator", new StatsResultsTranslatorImpl());
+
+		return defaultSearchSearchResponseAssemblerHelperImpl;
 	}
 
 	protected static SearchSolrQueryAssembler createSearchSolrQueryAssembler(
 		FacetProcessor<SolrQuery> facetProcessor,
 		QueryTranslator<String> queryTranslator) {
 
-		return new SearchSolrQueryAssemblerImpl() {
-			{
-				setBaseSolrQueryAssembler(
-					createBaseSolrQueryAssembler(
-						facetProcessor, queryTranslator));
-				setGroupByRequestFactory(new GroupByRequestFactoryImpl());
-				setGroupByTranslator(new DefaultGroupByTranslator());
-				setSortFieldTranslator(new SolrSortFieldTranslator());
-				setStatsRequestBuilderFactory(
-					new StatsRequestBuilderFactoryImpl());
-				setStatsTranslator(createStatsTranslator());
-			}
-		};
+		SearchSolrQueryAssemblerImpl searchSolrQueryAssemblerImpl =
+			new SearchSolrQueryAssemblerImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			searchSolrQueryAssemblerImpl, "_baseSolrQueryAssembler",
+			createBaseSolrQueryAssembler(facetProcessor, queryTranslator));
+		ReflectionTestUtil.setFieldValue(
+			searchSolrQueryAssemblerImpl, "_groupByRequestFactory",
+			new GroupByRequestFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
+			searchSolrQueryAssemblerImpl, "_groupByTranslator",
+			new DefaultGroupByTranslator());
+		ReflectionTestUtil.setFieldValue(
+			searchSolrQueryAssemblerImpl, "_sortFieldTranslator",
+			new SolrSortFieldTranslator());
+		ReflectionTestUtil.setFieldValue(
+			searchSolrQueryAssemblerImpl, "_statsRequestBuilderFactory",
+			new StatsRequestBuilderFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
+			searchSolrQueryAssemblerImpl, "_statsTranslator",
+			createStatsTranslator());
+
+		return searchSolrQueryAssemblerImpl;
 	}
 
 	protected static SolrFilterTranslator createSolrFilterTranslator() {
-		return new SolrFilterTranslator() {
-			{
-				dateRangeFilterTranslator = new DateRangeFilterTranslatorImpl();
+		SolrFilterTranslator solrFilterTranslator = new SolrFilterTranslator();
 
-				setBooleanQueryTranslator(new BooleanFilterTranslatorImpl());
-				setDateRangeTermFilterTranslator(
-					new DateRangeTermFilterTranslatorImpl());
-				setExistsFilterTranslator(new ExistsFilterTranslatorImpl());
-				setGeoBoundingBoxFilterTranslator(
-					new GeoBoundingBoxFilterTranslatorImpl());
-				setGeoDistanceFilterTranslator(
-					new GeoDistanceFilterTranslatorImpl());
-				setGeoDistanceRangeFilterTranslator(
-					new GeoDistanceRangeFilterTranslatorImpl());
-				setGeoPolygonFilterTranslator(
-					new GeoPolygonFilterTranslatorImpl());
-				setMissingFilterTranslator(new MissingFilterTranslatorImpl());
-				setPrefixFilterTranslator(new PrefixFilterTranslatorImpl());
-				setQueryFilterTranslator(new QueryFilterTranslatorImpl());
-				setRangeTermFilterTranslator(
-					new RangeTermFilterTranslatorImpl());
-				setTermFilterTranslator(new TermFilterTranslatorImpl());
-				setTermsFilterTranslator(new TermsFilterTranslatorImpl());
-			}
-		};
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_rangeTermFilterTranslator",
+			new RangeTermFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_booleanQueryTranslator",
+			new BooleanFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_dateRangeTermFilterTranslator",
+			new DateRangeTermFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_existsFilterTranslator",
+			new ExistsFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_geoBoundingBoxFilterTranslator",
+			new GeoBoundingBoxFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_geoDistanceFilterTranslator",
+			new GeoDistanceFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_geoDistanceRangeFilterTranslator",
+			new GeoDistanceRangeFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_geoPolygonFilterTranslator",
+			new GeoPolygonFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_missingFilterTranslator",
+			new MissingFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_prefixFilterTranslator",
+			new PrefixFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_queryFilterTranslator",
+			new QueryFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_termFilterTranslator",
+			new TermFilterTranslatorImpl());
+		ReflectionTestUtil.setFieldValue(
+			solrFilterTranslator, "_termsFilterTranslator",
+			new TermsFilterTranslatorImpl());
+
+		return solrFilterTranslator;
 	}
 
 	protected static StatsTranslator createStatsTranslator() {
-		return new DefaultStatsTranslator() {
-			{
-				setStatsResponseBuilderFactory(
-					new StatsResponseBuilderFactoryImpl());
-			}
-		};
+		DefaultStatsTranslator defaultStatsTranslator =
+			new DefaultStatsTranslator();
+
+		ReflectionTestUtil.setFieldValue(
+			defaultStatsTranslator, "_statsResponseBuilderFactory",
+			new StatsResponseBuilderFactoryImpl());
+
+		return defaultStatsTranslator;
 	}
 
 	protected void setFacetProcessor(FacetProcessor<SolrQuery> facetProcessor) {
