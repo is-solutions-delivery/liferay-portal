@@ -11,6 +11,7 @@ definition {
 	var testSiteURL = "customer-portal-site";
 	var testAccount = "Test Account Analytics Cloud";
 	var testProduct = "Analytics Cloud";
+    var testUserFirstName = "Test";
 
 	setUp {
 		task ("Set up instance and sign in") {
@@ -46,8 +47,53 @@ definition {
     @description = "Automation ID: LPS-150649 | Test Summary: Verify if team member administrator can only submit the form after filling out all required fields"
     @priority = "4"
     test CanViewTheAdministratorSubmitTheForm {
-        
-        // TODO LPS-150649 CanViewTheAdministratorSubmitTheForm pending implementation
+        task ("Change the user role in the project") {
+			Accounts.openAccountsAdmin();
+
+			CustomerPortal.accountTableProject(title = "${testAccount}");
+
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Administrator",
+				accountUserName = "Test Test");
+		}
+
+        task ("Go to Customer Portal Site") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.waitCP20PageToLoad(userFirstName = "${testUserFirstName}");
+		}
+
+        task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
+
+			CustomerPortal.enterOnProject(
+                status = "Expired",
+                title = "${testAccount}");
+		}
+
+        task ("And I go through onboarding") {
+            CP2Utils.onboardingFlow();
+        }
+
+        task ("Then I click on the DXP product") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
+		}
+
+        task ("And the Submit button must be disabled") {
+            CustomerPortal.clickOnFinishActivationButton();
+
+			CustomerPortal.assertButtonIsDisabled(text = "Submit");
+		}
+
+        task ("And I fill in all the required fields") {
+            CP2AnalyticsCloudSetup.typeAllSetupAnalyticsCloudInfoFields();
+        }
+
+        task ("Then The Submit button should be active") {
+			CustomerPortal.assertButtonIsActive(text = "Submit");
+		}
 
     }
 
