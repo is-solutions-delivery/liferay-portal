@@ -5345,7 +5345,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.delivery.client', and version '4.0.42'."
+        'com.liferay.headless.delivery.client', and version '4.0.43'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -12778,6 +12778,75 @@ paths:
                         application/xml:
                             schema:
                                 $ref: "#/components/schemas/MessageBoardMessage"
+            tags: ["MessageBoardMessage"]
+    "/sites/{siteId}/message-board-messages/my-activity":
+        # @review
+        get:
+            description:
+                Retrieves the site's message board messages activity page.
+            operationId: getSiteMessageBoardMessagesMyActivityPage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/MessageBoardMessage"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/MessageBoardMessage"
+                                type: array
             tags: ["MessageBoardMessage"]
     "/sites/{siteId}/message-board-messages/permissions":
         get:

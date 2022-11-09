@@ -77,10 +77,15 @@ import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MultivaluedMap;
@@ -324,6 +329,51 @@ public class MessageBoardMessageResourceImpl
 		}
 
 		return _toMessageBoardMessage(mbMessage);
+	}
+
+	@Override
+	public Page<MessageBoardMessage> getSiteMessageBoardMessagesMyActivityPage(
+			Long siteId, Boolean flatten, String search,
+			Aggregation aggregation, Filter filter, Pagination pagination,
+			Sort[] sorts)
+		throws Exception {
+
+		List<MessageBoardMessage> filteredMessageBoardMessages =
+			new ArrayList<>();
+
+		Page<MessageBoardMessage> messageBoardMessagesPage =
+			getSiteMessageBoardMessagesPage(
+				siteId, flatten, search, aggregation, filter, pagination,
+				sorts);
+
+		Collection<MessageBoardMessage> messageBoardMessages =
+			messageBoardMessagesPage.getItems();
+
+		for (MessageBoardMessage messageBoardMessage1 : messageBoardMessages) {
+			Comparator<MessageBoardMessage> comparator = Comparator.comparing(
+				MessageBoardMessage::getDateModified);
+
+			Stream<MessageBoardMessage> stream = messageBoardMessages.stream(
+			).filter(
+				messageBoardMessage2 ->
+					messageBoardMessage2.getMessageBoardThreadId(
+					).equals(
+						messageBoardMessage1.getMessageBoardThreadId()
+					)
+			).sorted(
+				comparator.reversed()
+			);
+
+			MessageBoardMessage messageBoardMessage3 = stream.findFirst(
+			).get();
+
+			if (!filteredMessageBoardMessages.contains(messageBoardMessage3)) {
+				filteredMessageBoardMessages.add(messageBoardMessage3);
+			}
+		}
+
+		return Page.of(filteredMessageBoardMessages,Pagination.of(pagination.getPage(), pagination.getPageSize()),
+			messageBoardMessagesPage.getTotalCount());
 	}
 
 	@Override

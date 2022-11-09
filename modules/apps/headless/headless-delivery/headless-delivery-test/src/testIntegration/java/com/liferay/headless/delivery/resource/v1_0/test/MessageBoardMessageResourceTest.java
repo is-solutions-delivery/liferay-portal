@@ -138,8 +138,10 @@ public class MessageBoardMessageResourceTest
 	@Override
 	protected String[] getIgnoredEntityFieldNames() {
 		return new String[] {
-			"creatorId", "dateCreated", "dateModified", "messageBoardSectionId",
-			"messageBoardThreadId", "parentMessageBoardMessageId", "ratingValue"
+			"childMessagesCount", "creatorId", "dateCreated", "dateModified",
+			"messageBoardSectionId", "messageBoardThreadId",
+			"parentMessageBoardMessageId", "ratingsStatTotalScore",
+			"ratingValue", "viewCount"
 		};
 	}
 
@@ -232,6 +234,15 @@ public class MessageBoardMessageResourceTest
 		throws Exception {
 
 		return _addMessageBoardMessage();
+	}
+
+	@Override
+	protected MessageBoardMessage
+			testGetSiteMessageBoardMessagesMyActivityPage_addMessageBoardMessage(
+				Long siteId, MessageBoardMessage messageBoardMessage)
+		throws Exception {
+
+		return _addMessageBoardMessage(messageBoardMessage, siteId);
 	}
 
 	@Override
