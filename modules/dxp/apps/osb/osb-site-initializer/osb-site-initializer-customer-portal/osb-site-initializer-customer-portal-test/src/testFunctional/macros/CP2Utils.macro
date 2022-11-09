@@ -87,4 +87,12 @@ definition {
 		}
 	}
 
+	macro onboardingFlow {
+		CustomerPortal.clickOnStartProjectSetup();
+
+		CustomerPortal.clickOnSkipForNowButton();
+
+        CustomerPortal.clickOnSkipForNowButton();
+	}
+
 }
