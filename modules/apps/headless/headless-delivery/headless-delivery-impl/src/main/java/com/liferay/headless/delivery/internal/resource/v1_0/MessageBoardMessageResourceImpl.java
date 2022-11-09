@@ -372,7 +372,9 @@ public class MessageBoardMessageResourceImpl
 			}
 		}
 
-		return Page.of(filteredMessageBoardMessages,Pagination.of(pagination.getPage(), pagination.getPageSize()),
+		return Page.of(
+			filteredMessageBoardMessages,
+			Pagination.of(pagination.getPage(), pagination.getPageSize()),
 			messageBoardMessagesPage.getTotalCount());
 	}
 
