@@ -107,11 +107,6 @@ public class BaseSearchResponseAssemblerImpl
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setStatsTranslator(StatsTranslator statsTranslator) {
-		_statsTranslator = statsTranslator;
-	}
-
 	protected void updateStatsResponses(
 		BaseSearchResponse baseSearchResponse,
 		Map<String, StatsResponse> statsResponseMap,
@@ -126,6 +121,7 @@ public class BaseSearchResponseAssemblerImpl
 		}
 	}
 
+	@Reference
 	private StatsTranslator _statsTranslator;
 
 }

@@ -138,15 +138,12 @@ public class SSLSocketFactoryBuilderImpl implements SSLSocketFactoryBuilder {
 			_solrSSLSocketFactoryConfiguration.verifyServerName();
 	}
 
-	@Reference(unbind = "-")
-	protected void setKeyStoreLoader(KeyStoreLoader keyStoreLoader) {
-		_keyStoreLoader = keyStoreLoader;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		SSLSocketFactoryBuilderImpl.class);
 
+	@Reference
 	private KeyStoreLoader _keyStoreLoader;
+
 	private volatile char[] _keyStorePassword;
 	private volatile String _keyStorePath;
 	private volatile String _keyStoreType = KeyStore.getDefaultType();

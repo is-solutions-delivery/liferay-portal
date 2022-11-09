@@ -287,16 +287,6 @@ public class SolrQuerySuggester implements QuerySuggester {
 		_localization = localization;
 	}
 
-	@Reference(unbind = "-")
-	protected void setNGramQueryBuilder(NGramQueryBuilder nGramQueryBuilder) {
-		_nGramQueryBuilder = nGramQueryBuilder;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
 	protected List<String> suggestKeywords(
 			SearchContext searchContext, int max, String input)
 		throws SearchException {
@@ -432,8 +422,12 @@ public class SolrQuerySuggester implements QuerySuggester {
 	@Reference
 	private Localization _localization;
 
+	@Reference
 	private NGramQueryBuilder _nGramQueryBuilder;
+
+	@Reference
 	private SolrClientManager _solrClientManager;
+
 	private volatile SolrConfiguration _solrConfiguration;
 
 	@Reference(

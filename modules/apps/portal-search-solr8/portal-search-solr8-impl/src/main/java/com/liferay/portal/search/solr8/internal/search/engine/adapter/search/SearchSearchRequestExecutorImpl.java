@@ -95,25 +95,6 @@ public class SearchSearchRequestExecutorImpl
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setSearchSearchResponseAssembler(
-		SearchSearchResponseAssembler searchSearchResponseAssembler) {
-
-		_searchSearchResponseAssembler = searchSearchResponseAssembler;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSearchSolrQueryAssembler(
-		SearchSolrQueryAssembler searchSolrQueryAssembler) {
-
-		_searchSolrQueryAssembler = searchSolrQueryAssembler;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
 	private String _getDebugRequestString(String requestString) {
 		requestString = URLCodec.decodeURL(requestString);
 
@@ -127,8 +108,13 @@ public class SearchSearchRequestExecutorImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		SearchSearchRequestExecutorImpl.class);
 
+	@Reference
 	private SearchSearchResponseAssembler _searchSearchResponseAssembler;
+
+	@Reference
 	private SearchSolrQueryAssembler _searchSolrQueryAssembler;
+
+	@Reference
 	private SolrClientManager _solrClientManager;
 
 }

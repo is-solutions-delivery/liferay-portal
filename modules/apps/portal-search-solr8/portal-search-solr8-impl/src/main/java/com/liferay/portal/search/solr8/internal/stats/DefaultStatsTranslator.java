@@ -164,13 +164,7 @@ public class DefaultStatsTranslator implements StatsTranslator {
 		return sb.toString();
 	}
 
-	@Reference(unbind = "-")
-	protected void setStatsResponseBuilderFactory(
-		StatsResponseBuilderFactory statsResponseBuilderFactory) {
-
-		_statsResponseBuilderFactory = statsResponseBuilderFactory;
-	}
-
+	@Reference
 	private StatsResponseBuilderFactory _statsResponseBuilderFactory;
 
 }

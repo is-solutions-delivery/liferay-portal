@@ -84,59 +84,24 @@ public class SolrSnapshotRequestExecutor implements SnapshotRequestExecutor {
 		return _restoreSnapshotRequestExecutor.execute(restoreSnapshotRequest);
 	}
 
-	@Reference(unbind = "-")
-	protected void setCreateSnapshotRepositoryRequestExecutor(
-		CreateSnapshotRepositoryRequestExecutor
-			createSnapshotRepositoryRequestExecutor) {
-
-		_createSnapshotRepositoryRequestExecutor =
-			createSnapshotRepositoryRequestExecutor;
-	}
-
-	@Reference(unbind = "-")
-	protected void setCreateSnapshotRequestExecutor(
-		CreateSnapshotRequestExecutor createSnapshotRequestExecutor) {
-
-		_createSnapshotRequestExecutor = createSnapshotRequestExecutor;
-	}
-
-	@Reference(unbind = "-")
-	protected void setDeleteSnapshotRequestExecutor(
-		DeleteSnapshotRequestExecutor deleteSnapshotRequestExecutor) {
-
-		_deleteSnapshotRequestExecutor = deleteSnapshotRequestExecutor;
-	}
-
-	@Reference(unbind = "-")
-	protected void setGetSnapshotRepositoriesRequestExecutor(
-		GetSnapshotRepositoriesRequestExecutor
-			getSnapshotRepositoriesRequestExecutor) {
-
-		_getSnapshotRepositoriesRequestExecutor =
-			getSnapshotRepositoriesRequestExecutor;
-	}
-
-	@Reference(unbind = "-")
-	protected void setGetSnapshotsRequestExecutor(
-		GetSnapshotsRequestExecutor getSnapshotsRequestExecutor) {
-
-		_getSnapshotsRequestExecutor = getSnapshotsRequestExecutor;
-	}
-
-	@Reference(unbind = "-")
-	protected void setRestoreSnapshotRequestExecutor(
-		RestoreSnapshotRequestExecutor restoreSnapshotRequestExecutor) {
-
-		_restoreSnapshotRequestExecutor = restoreSnapshotRequestExecutor;
-	}
-
+	@Reference
 	private CreateSnapshotRepositoryRequestExecutor
 		_createSnapshotRepositoryRequestExecutor;
+
+	@Reference
 	private CreateSnapshotRequestExecutor _createSnapshotRequestExecutor;
+
+	@Reference
 	private DeleteSnapshotRequestExecutor _deleteSnapshotRequestExecutor;
+
+	@Reference
 	private GetSnapshotRepositoriesRequestExecutor
 		_getSnapshotRepositoriesRequestExecutor;
+
+	@Reference
 	private GetSnapshotsRequestExecutor _getSnapshotsRequestExecutor;
+
+	@Reference
 	private RestoreSnapshotRequestExecutor _restoreSnapshotRequestExecutor;
 
 }

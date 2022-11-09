@@ -105,11 +105,7 @@ public class DefaultFacetProcessor implements FacetProcessor<SolrQuery> {
 		return jsonObject;
 	}
 
-	@Reference(unbind = "-")
-	protected void setJSONFactory(JSONFactory jsonFactory) {
-		_jsonFactory = jsonFactory;
-	}
-
+	@Reference
 	private JSONFactory _jsonFactory;
 
 }

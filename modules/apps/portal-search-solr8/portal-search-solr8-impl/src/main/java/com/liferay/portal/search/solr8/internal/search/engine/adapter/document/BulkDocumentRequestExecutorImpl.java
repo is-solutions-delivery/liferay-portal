@@ -346,24 +346,17 @@ public class BulkDocumentRequestExecutorImpl
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSolrDocumentFactory(
-		SolrDocumentFactory solrDocumentFactory) {
-
-		_solrDocumentFactory = solrDocumentFactory;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		BulkDocumentRequestExecutorImpl.class);
 
 	private volatile String _defaultCollection;
+
+	@Reference
 	private SolrClientManager _solrClientManager;
+
 	private volatile SolrConfiguration _solrConfiguration;
+
+	@Reference
 	private SolrDocumentFactory _solrDocumentFactory;
 
 	private class BulkDocumentRequestClassifier {

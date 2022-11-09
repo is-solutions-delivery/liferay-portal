@@ -55,11 +55,7 @@ public class RefreshIndexRequestExecutorImpl
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
+	@Reference
 	private SolrClientManager _solrClientManager;
 
 }

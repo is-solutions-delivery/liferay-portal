@@ -219,19 +219,15 @@ public class SolrSpellCheckIndexWriter
 		}
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setSearchEngineAdapter(
-		SearchEngineAdapter searchEngineAdapter) {
-
-		_searchEngineAdapter = searchEngineAdapter;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		SolrSpellCheckIndexWriter.class);
 
 	private volatile String _defaultCollection;
 	private volatile boolean _logExceptionsOnly;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private SearchEngineAdapter _searchEngineAdapter;
+
 	private volatile SolrConfiguration _solrConfiguration;
 
 }

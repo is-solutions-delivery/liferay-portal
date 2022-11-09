@@ -112,7 +112,6 @@ public class SolrClientManager {
 	}
 
 	@Reference(
-		cardinality = ReferenceCardinality.MANDATORY,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY, target = "(type=CLOUD)"
 	)
@@ -142,7 +141,6 @@ public class SolrClientManager {
 	}
 
 	@Reference(
-		cardinality = ReferenceCardinality.MANDATORY,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY,
 		target = "(type=REPLICATED)"

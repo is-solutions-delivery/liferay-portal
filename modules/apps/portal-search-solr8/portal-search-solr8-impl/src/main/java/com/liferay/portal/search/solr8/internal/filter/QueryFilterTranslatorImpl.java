@@ -33,13 +33,7 @@ public class QueryFilterTranslatorImpl implements QueryFilterTranslator {
 		return _luceneQueryConverter.convert(queryFilter.getQuery());
 	}
 
-	@Reference(unbind = "-")
-	protected void setLuceneQueryConverter(
-		LuceneQueryConverter luceneQueryConverter) {
-
-		_luceneQueryConverter = luceneQueryConverter;
-	}
-
+	@Reference
 	private LuceneQueryConverter _luceneQueryConverter;
 
 }

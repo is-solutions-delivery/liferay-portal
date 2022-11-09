@@ -84,19 +84,14 @@ public class DeleteByQueryDocumentRequestExecutorImpl
 		_defaultCollection = _solrConfiguration.defaultCollection();
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setQueryTranslator(QueryTranslator<String> queryTranslator) {
-		_queryTranslator = queryTranslator;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
 	private volatile String _defaultCollection;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private QueryTranslator<String> _queryTranslator;
+
+	@Reference
 	private SolrClientManager _solrClientManager;
+
 	private volatile SolrConfiguration _solrConfiguration;
 
 }

@@ -85,30 +85,16 @@ public class GetDocumentRequestExecutorImpl
 		}
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setBulkableDocumentRequestTranslator(
-		BulkableDocumentRequestTranslator bulkableDocumentRequestTranslator) {
-
-		_bulkableDocumentRequestTranslator = bulkableDocumentRequestTranslator;
-	}
-
-	@Reference(unbind = "-")
-	protected void setDocumentBuilderFactory(
-		DocumentBuilderFactory documentBuilderFactory) {
-
-		_documentBuilderFactory = documentBuilderFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
 	private static final String _VERSION_FIELD = "_version_";
 
+	@Reference(target = "(search.engine.impl=Solr)")
 	private BulkableDocumentRequestTranslator
 		_bulkableDocumentRequestTranslator;
+
+	@Reference
 	private DocumentBuilderFactory _documentBuilderFactory;
+
+	@Reference
 	private SolrClientManager _solrClientManager;
 
 }

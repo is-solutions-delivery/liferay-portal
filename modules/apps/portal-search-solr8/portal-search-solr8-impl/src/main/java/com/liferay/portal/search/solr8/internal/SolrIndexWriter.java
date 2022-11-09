@@ -400,19 +400,15 @@ public class SolrIndexWriter extends BaseIndexWriter {
 		return _spellCheckIndexWriter;
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setSearchEngineAdapter(
-		SearchEngineAdapter searchEngineAdapter) {
-
-		_searchEngineAdapter = searchEngineAdapter;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		SolrIndexWriter.class);
 
 	private volatile String _defaultCollection;
 	private volatile boolean _logExceptionsOnly;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private SearchEngineAdapter _searchEngineAdapter;
+
 	private volatile SolrConfiguration _solrConfiguration;
 
 	@Reference(target = "(search.engine.impl=Solr)")

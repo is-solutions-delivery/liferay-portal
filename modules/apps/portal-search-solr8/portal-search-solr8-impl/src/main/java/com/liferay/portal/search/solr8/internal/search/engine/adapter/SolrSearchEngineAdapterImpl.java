@@ -120,46 +120,6 @@ public class SolrSearchEngineAdapterImpl implements SearchEngineAdapter {
 		}
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setClusterRequestExecutor(
-		ClusterRequestExecutor clusterRequestExecutor) {
-
-		_clusterRequestExecutor = clusterRequestExecutor;
-	}
-
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setDocumentRequestExecutor(
-		DocumentRequestExecutor documentRequestExecutor) {
-
-		_documentRequestExecutor = documentRequestExecutor;
-	}
-
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setIndexRequestExecutor(
-		IndexRequestExecutor indexRequestExecutor) {
-
-		_indexRequestExecutor = indexRequestExecutor;
-	}
-
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setQueryTranslator(QueryTranslator<String> queryTranslator) {
-		_queryTranslator = queryTranslator;
-	}
-
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setSearchRequestExecutor(
-		SearchRequestExecutor searchRequestExecutor) {
-
-		_searchRequestExecutor = searchRequestExecutor;
-	}
-
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setSnapshotRequestExecutor(
-		SnapshotRequestExecutor snapshotRequestExecutor) {
-
-		_snapshotRequestExecutor = snapshotRequestExecutor;
-	}
-
 	protected void setThrowOriginalExceptions(boolean throwOriginalExceptions) {
 		_throwOriginalExceptions = throwOriginalExceptions;
 	}
@@ -187,12 +147,24 @@ public class SolrSearchEngineAdapterImpl implements SearchEngineAdapter {
 		return runtimeException1;
 	}
 
+	@Reference(target = "(search.engine.impl=Solr)")
 	private ClusterRequestExecutor _clusterRequestExecutor;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private DocumentRequestExecutor _documentRequestExecutor;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private IndexRequestExecutor _indexRequestExecutor;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private QueryTranslator<String> _queryTranslator;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private SearchRequestExecutor _searchRequestExecutor;
+
+	@Reference(target = "(search.engine.impl=Solr)")
 	private SnapshotRequestExecutor _snapshotRequestExecutor;
+
 	private boolean _throwOriginalExceptions;
 
 }

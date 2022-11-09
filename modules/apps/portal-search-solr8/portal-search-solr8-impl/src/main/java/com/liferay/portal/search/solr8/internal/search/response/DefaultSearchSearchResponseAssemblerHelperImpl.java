@@ -278,46 +278,6 @@ public class DefaultSearchSearchResponseAssemblerHelperImpl
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setDocumentBuilderFactory(
-		DocumentBuilderFactory documentBuilderFactory) {
-
-		_documentBuilderFactory = documentBuilderFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setGroupByResponseFactory(
-		GroupByResponseFactory groupByResponseFactory) {
-
-		_groupByResponseFactory = groupByResponseFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSearchHitBuilderFactory(
-		SearchHitBuilderFactory searchHitBuilderFactory) {
-
-		_searchHitBuilderFactory = searchHitBuilderFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSearchHitsBuilderFactory(
-		SearchHitsBuilderFactory searchHitsBuilderFactory) {
-
-		_searchHitsBuilderFactory = searchHitsBuilderFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setStatsResultsTranslator(
-		StatsResultsTranslator statsResultsTranslator) {
-
-		_statsResultsTranslator = statsResultsTranslator;
-	}
-
-	@Reference(unbind = "-")
-	protected void setStatsTranslator(StatsTranslator statsTranslator) {
-		_statsTranslator = statsTranslator;
-	}
-
 	protected SearchHit toSearchHit(Document document) {
 		SearchHitBuilder searchHitBuilder =
 			_searchHitBuilderFactory.getSearchHitBuilder();
@@ -434,11 +394,22 @@ public class DefaultSearchSearchResponseAssemblerHelperImpl
 
 	private static final String[] _EXCLUDED_FIELDS = {"_root_", "_version_"};
 
+	@Reference
 	private DocumentBuilderFactory _documentBuilderFactory;
+
+	@Reference
 	private GroupByResponseFactory _groupByResponseFactory;
+
+	@Reference
 	private SearchHitBuilderFactory _searchHitBuilderFactory;
+
+	@Reference
 	private SearchHitsBuilderFactory _searchHitsBuilderFactory;
+
+	@Reference
 	private StatsResultsTranslator _statsResultsTranslator;
+
+	@Reference
 	private StatsTranslator _statsTranslator;
 
 }

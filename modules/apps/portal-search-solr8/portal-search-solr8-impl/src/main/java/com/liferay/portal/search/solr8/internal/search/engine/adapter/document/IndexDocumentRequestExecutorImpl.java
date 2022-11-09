@@ -59,20 +59,11 @@ public class IndexDocumentRequestExecutorImpl
 		}
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setBulkableDocumentRequestTranslator(
-		BulkableDocumentRequestTranslator bulkableDocumentRequestTranslator) {
-
-		_bulkableDocumentRequestTranslator = bulkableDocumentRequestTranslator;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
+	@Reference(target = "(search.engine.impl=Solr)")
 	private BulkableDocumentRequestTranslator
 		_bulkableDocumentRequestTranslator;
+
+	@Reference
 	private SolrClientManager _solrClientManager;
 
 }

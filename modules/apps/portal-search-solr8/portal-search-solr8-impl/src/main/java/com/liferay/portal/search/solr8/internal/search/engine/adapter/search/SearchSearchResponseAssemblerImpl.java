@@ -44,23 +44,10 @@ public class SearchSearchResponseAssemblerImpl
 			searchSearchResponse, queryResponse, searchSearchRequest);
 	}
 
-	@Reference(unbind = "-")
-	protected void setBaseSearchResponseAssembler(
-		BaseSearchResponseAssembler baseSearchResponseAssembler) {
-
-		_baseSearchResponseAssembler = baseSearchResponseAssembler;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSearchSearchResponseAssemblerHelper(
-		SearchSearchResponseAssemblerHelper
-			searchSearchResponseAssemblerHelper) {
-
-		_searchSearchResponseAssemblerHelper =
-			searchSearchResponseAssemblerHelper;
-	}
-
+	@Reference
 	private BaseSearchResponseAssembler _baseSearchResponseAssembler;
+
+	@Reference
 	private SearchSearchResponseAssemblerHelper
 		_searchSearchResponseAssemblerHelper;
 

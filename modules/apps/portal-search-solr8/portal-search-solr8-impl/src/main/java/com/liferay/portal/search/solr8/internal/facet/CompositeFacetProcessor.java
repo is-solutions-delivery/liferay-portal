@@ -53,8 +53,7 @@ public class CompositeFacetProcessor implements FacetProcessor<SolrQuery> {
 	}
 
 	@Reference(
-		cardinality = ReferenceCardinality.MANDATORY,
-		target = "(class.name=DEFAULT)", unbind = "-"
+		target = "(class.name=DEFAULT)"
 	)
 	protected void setDefaultFacetProcessor(
 		FacetProcessor<SolrQuery> defaultFacetProcessor) {

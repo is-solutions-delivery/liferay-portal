@@ -113,13 +113,7 @@ public class SolrBulkableDocumentRequestTranslator
 		return updateRequest;
 	}
 
-	@Reference(unbind = "-")
-	protected void setSolrDocumentFactory(
-		SolrDocumentFactory solrDocumentFactory) {
-
-		_solrDocumentFactory = solrDocumentFactory;
-	}
-
+	@Reference
 	private SolrDocumentFactory _solrDocumentFactory;
 
 }

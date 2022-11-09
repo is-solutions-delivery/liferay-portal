@@ -95,30 +95,16 @@ public class CountSearchRequestExecutorImpl
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setBaseSearchResponseAssembler(
-		BaseSearchResponseAssembler baseSearchResponseAssembler) {
-
-		_baseSearchResponseAssembler = baseSearchResponseAssembler;
-	}
-
-	@Reference(unbind = "-")
-	protected void setBaseSolrQueryAssembler(
-		BaseSolrQueryAssembler baseSolrQueryAssembler) {
-
-		_baseSolrQueryAssembler = baseSolrQueryAssembler;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSolrClientManager(SolrClientManager solrClientManager) {
-		_solrClientManager = solrClientManager;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		CountSearchRequestExecutorImpl.class);
 
+	@Reference
 	private BaseSearchResponseAssembler _baseSearchResponseAssembler;
+
+	@Reference
 	private BaseSolrQueryAssembler _baseSolrQueryAssembler;
+
+	@Reference
 	private SolrClientManager _solrClientManager;
 
 }

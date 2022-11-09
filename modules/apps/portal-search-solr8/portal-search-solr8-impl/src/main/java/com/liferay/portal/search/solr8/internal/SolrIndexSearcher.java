@@ -374,27 +374,6 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 		baseSearchRequest.setQuery(searchRequest.getQuery());
 	}
 
-	@Reference(target = "(search.engine.impl=Solr)", unbind = "-")
-	protected void setSearchEngineAdapter(
-		SearchEngineAdapter searchEngineAdapter) {
-
-		_searchEngineAdapter = searchEngineAdapter;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSearchRequestBuilderFactory(
-		SearchRequestBuilderFactory searchRequestBuilderFactory) {
-
-		_searchRequestBuilderFactory = searchRequestBuilderFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setSearchResponseBuilderFactory(
-		SearchResponseBuilderFactory searchResponseBuilderFactory) {
-
-		_searchResponseBuilderFactory = searchResponseBuilderFactory;
-	}
-
 	private SearchRequest _getSearchRequest(SearchContext searchContext) {
 		SearchRequestBuilder searchRequestBuilder =
 			_searchRequestBuilderFactory.builder(searchContext);
@@ -420,9 +399,15 @@ public class SolrIndexSearcher extends BaseIndexSearcher {
 	@Reference(target = "(search.engine.impl=Solr)")
 	private QuerySuggester _querySuggester;
 
+	@Reference(target = "(search.engine.impl=Solr)")
 	private SearchEngineAdapter _searchEngineAdapter;
+
+	@Reference
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
+
+	@Reference
 	private SearchResponseBuilderFactory _searchResponseBuilderFactory;
+
 	private volatile SolrConfiguration _solrConfiguration;
 
 }
