@@ -90,4 +90,12 @@ definition {
 			value1 = "${value}");
 	}
 
+	macro assertFieldExtraIsVisible {
+		var key_index = "${position}";
+
+		AssertVisible(
+			label = "${field}",
+			locator1 = "CustomerPortalSite#SETUP_FIELDS");
+	}
+
 }
