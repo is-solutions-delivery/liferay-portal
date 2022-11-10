@@ -100,9 +100,49 @@ definition {
     @description = "Automation ID: LPS-150650 | Test Summary: Verify if the user can add additional Incident Report Contacts using the 'Add Incident Report Contact' button"
     @priority = "3"
     test AddingAdditionalIncidentReportContacts {
+		task ("Change the user role in the project") {
+			Accounts.openAccountsAdmin();
 
-        // TODO LPS-150650 AddingAdditionalIncidentReportContacts pending implementation
+			CustomerPortal.accountTableProject(title = "${testAccount}");
 
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Administrator",
+				accountUserName = "Test Test");
+		}
+
+        task ("Go to Customer Portal Site") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.waitCP20PageToLoad(userFirstName = "${testUserFirstName}");
+		}
+
+        task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
+
+			CustomerPortal.enterOnProject(
+                status = "Expired",
+                title = "${testAccount}");
+		}
+
+        task ("And I go through onboarding") {
+            CP2Utils.onboardingFlow();
+        }
+
+        task ("Then I click on the DXP product") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
+		}
+
+		task ("And I assert that one more Incident Report Contact field has been added") {
+			CustomerPortal.clickOnFinishActivationButton();
+
+			CustomerPortal.clickAtButton(text = "Add Incident Report Contact");
+
+			CP2AnalyticsCloudSetup.assertFieldExtraIsVisible(
+				position = "2",
+				field = "email");
+		}
     }
 
     @description = "Automation ID: LPS-150651 | Test Summary: Verify if the user can remove additional contacts from the incident report"
