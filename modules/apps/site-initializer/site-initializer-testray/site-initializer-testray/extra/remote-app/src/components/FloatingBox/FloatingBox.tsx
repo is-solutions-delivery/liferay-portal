@@ -25,8 +25,8 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 type FloatingBoxProps = {
 	alerts?: {text: string; title?: string}[];
+	clearList?: () => void;
 	isVisible: boolean;
-	onClear?: () => void;
 	onSubmit?: () => void;
 	primaryButtonProps?: ButtonProps;
 	selectdCount?: number;
@@ -35,8 +35,8 @@ type FloatingBoxProps = {
 
 const FloatingBox: React.FC<FloatingBoxProps> = ({
 	alerts,
+	clearList,
 	isVisible,
-	onClear,
 	onSubmit,
 	selectdCount,
 	primaryButtonProps: {loading, ...primaryButtonProps} = {},
@@ -83,8 +83,8 @@ const FloatingBox: React.FC<FloatingBoxProps> = ({
 							<ClayButton
 								className="mr-1"
 								displayType="secondary"
-								onClick={() => onClear}
-								title="Deselect Items"
+								onClick={() => clearList}
+								title={i18n.translate('deselect-items')}
 							>
 								{i18n.translate('clear')}
 							</ClayButton>
