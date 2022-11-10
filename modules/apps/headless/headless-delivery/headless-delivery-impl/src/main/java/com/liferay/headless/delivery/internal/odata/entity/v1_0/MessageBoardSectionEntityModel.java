@@ -39,6 +39,10 @@ public class MessageBoardSectionEntityModel implements EntityModel {
 				locale -> Field.getSortableFieldName(Field.CREATE_DATE),
 				locale -> Field.CREATE_DATE),
 			new DateTimeEntityField(
+					"lastPostDate",
+				locale -> Field.getSortableFieldName("lastPostDate"),
+				locale -> "lastPostDate"),
+			new DateTimeEntityField(
 				"dateModified",
 				locale -> Field.getSortableFieldName(Field.MODIFIED_DATE),
 				locale -> Field.MODIFIED_DATE),
@@ -46,7 +50,6 @@ public class MessageBoardSectionEntityModel implements EntityModel {
 			new StringEntityField(
 				"title", locale -> Field.getSortableFieldName(Field.NAME)));
 	}
-
 	@Override
 	public Map<String, EntityField> getEntityFieldsMap() {
 		return _entityFieldsMap;
