@@ -327,6 +327,7 @@ export const getThreadQuery = `
 			id
 			messageBoardRootMessageId
 			keywords
+			lastPostDate
 			locked
 			messageBoardSection {
 				id
