@@ -21,12 +21,14 @@ import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
 import com.liferay.headless.common.spi.resource.SPIRatingResource;
 import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
 import com.liferay.headless.delivery.dto.v1_0.MessageBoardMessage;
+import com.liferay.headless.delivery.dto.v1_0.MessageBoardThread;
 import com.liferay.headless.delivery.dto.v1_0.Rating;
 import com.liferay.headless.delivery.dto.v1_0.util.CustomFieldsUtil;
 import com.liferay.headless.delivery.internal.dto.v1_0.converter.MessageBoardMessageDTOConverter;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.RatingUtil;
 import com.liferay.headless.delivery.internal.odata.entity.v1_0.MessageBoardMessageEntityModel;
 import com.liferay.headless.delivery.resource.v1_0.MessageBoardMessageResource;
+import com.liferay.headless.delivery.resource.v1_0.MessageBoardThreadResource;
 import com.liferay.headless.delivery.search.aggregation.AggregationUtil;
 import com.liferay.headless.delivery.search.filter.FilterUtil;
 import com.liferay.headless.delivery.search.sort.SortUtil;
@@ -284,7 +286,7 @@ public class MessageBoardMessageResourceImpl
 				actions,
 				transform(
 					_mbMessageService.getChildMessages(
-						mbThread.getRootMessageId(), false,
+						mbThread.getThreadId(), false,
 						new QueryDefinition<>(
 							status, contextUser.getUserId(), true,
 							pagination.getStartPosition(),
@@ -292,7 +294,7 @@ public class MessageBoardMessageResourceImpl
 					this::_toMessageBoardMessage),
 				pagination,
 				_mbMessageService.getChildMessagesCount(
-					mbThread.getRootMessageId(), false,
+					mbThread.getThreadId(), false,
 					new QueryDefinition<>(
 						status, contextUser.getUserId(), true,
 						pagination.getStartPosition(),
@@ -338,44 +340,44 @@ public class MessageBoardMessageResourceImpl
 			Sort[] sorts)
 		throws Exception {
 
-		List<MessageBoardMessage> filteredMessageBoardMessages =
+			List<MessageBoardMessage> filteredMessageBoardMessages =
 			new ArrayList<>();
 
-		Page<MessageBoardMessage> messageBoardMessagesPage =
-			getSiteMessageBoardMessagesPage(
-				siteId, flatten, search, aggregation, filter, pagination,
-				sorts);
+		_messageBoardThreadResource.setContextAcceptLanguage(contextAcceptLanguage);
+		_messageBoardThreadResource.setContextUser(contextUser);
+		_messageBoardThreadResource.setContextUriInfo(contextUriInfo);
+		_messageBoardThreadResource.setContextHttpServletRequest(contextHttpServletRequest);
+		_messageBoardThreadResource.setContextCompany(contextCompany);
+		Page<MessageBoardThread> messageBoardThreadPage =
+			_messageBoardThreadResource.getSiteMessageBoardThreadsPage(siteId, flatten, search, aggregation, filter, null,
+			null);
 
-		Collection<MessageBoardMessage> messageBoardMessages =
-			messageBoardMessagesPage.getItems();
+		Collection<MessageBoardThread> items = messageBoardThreadPage.getItems();
 
-		for (MessageBoardMessage messageBoardMessage1 : messageBoardMessages) {
+
+		for(MessageBoardThread messageBoardThread: items){
+
+			Page<MessageBoardMessage> messageBoardMessagePage =
+				getMessageBoardThreadMessageBoardMessagesPage(messageBoardThread.getId(),
+				search, aggregation, filter, pagination,
+				null);
+
 			Comparator<MessageBoardMessage> comparator = Comparator.comparing(
 				MessageBoardMessage::getDateModified);
 
-			Stream<MessageBoardMessage> stream = messageBoardMessages.stream(
-			).filter(
-				messageBoardMessage2 ->
-					messageBoardMessage2.getMessageBoardThreadId(
-					).equals(
-						messageBoardMessage1.getMessageBoardThreadId()
-					)
-			).sorted(
-				comparator.reversed()
-			);
+			Stream<MessageBoardMessage> stream = messageBoardMessagePage.getItems().stream(
+			).sorted(comparator.reversed());
 
-			MessageBoardMessage messageBoardMessage3 = stream.findFirst(
-			).get();
-
-			if (!filteredMessageBoardMessages.contains(messageBoardMessage3)) {
-				filteredMessageBoardMessages.add(messageBoardMessage3);
+			if (stream.findFirst().isPresent()){
+				filteredMessageBoardMessages.add(stream.findFirst().get());
 			}
+
 		}
 
 		return Page.of(
 			filteredMessageBoardMessages,
 			Pagination.of(pagination.getPage(), pagination.getPageSize()),
-			messageBoardMessagesPage.getTotalCount());
+			filteredMessageBoardMessages.size());
 	}
 
 	@Override
@@ -878,6 +880,8 @@ public class MessageBoardMessageResourceImpl
 	@Reference
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
 
+	@Reference
+	private MessageBoardThreadResource _messageBoardThreadResource;
 	@Reference
 	private Sorts _sorts;
 

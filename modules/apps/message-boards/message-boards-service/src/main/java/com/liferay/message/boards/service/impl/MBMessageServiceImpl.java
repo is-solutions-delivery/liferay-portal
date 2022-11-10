@@ -500,8 +500,7 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 			queryDefinition.setOwnerUserId(getUserId());
 		}
 
-		return mbMessageFinder.findByParentMessageId(
-			parentMessageId, flatten, queryDefinition);
+		return mbMessageFinder.findByThreadId(parentMessageId, queryDefinition);
 	}
 
 	@Override
