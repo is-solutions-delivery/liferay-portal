@@ -134,12 +134,22 @@ definition {
 			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
 		}
 
-		task ("And I assert that one more Incident Report Contact field has been added") {
+		task ("And I assert that one more 'Incident Report Contact' field has been added") {
 			CustomerPortal.clickOnFinishActivationButton();
 
 			CustomerPortal.clickAtButton(text = "Add Incident Report Contact");
 
 			CP2AnalyticsCloudSetup.assertFieldExtraIsVisible(
+				position = "2",
+				field = "email");
+		}
+
+		task ("Given that I click on the 'Remove Incident Report Contact' button") {
+			CustomerPortal.clickAtButton(text = "Remove Incident Report Contact");
+		}
+
+		task ("Then I assert that the 'Incident Report Contact' field is no longer visible") {
+			CP2AnalyticsCloudSetup.assertFieldExtraIsNotVisible(
 				position = "2",
 				field = "email");
 		}
@@ -149,8 +159,7 @@ definition {
     @priority = "3"
     test RemovingAdditionalContactsFromTheIncidentReport {
         
-        // TODO LPS-150651 RemovingAdditionalContactsFromTheIncidentReport pending implementation
-
+        // TODO LPS-150651 RemovingAdditionalContactsFromTheIncidentReport was implemented in the test AddingAdditionalIncidentReportContacts
     }
 
     @description = "Automation ID: LPS-150654 | Test Summary: Verify if the user enters a wrong value in 'Owner Email' an error message is displayed"
