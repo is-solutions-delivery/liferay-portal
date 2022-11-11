@@ -503,11 +503,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 					serviceContext,
 					taxonomyCategoryIdsStringUtilReplaceValues));
-			/*_invoke(
+			_invoke(
 				() -> _addOrUpdateNotificationTemplates(
 					documentsStringUtilReplaceValues,
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
-					serviceContext));*/
+					serviceContext));
 			_invoke(
 				() -> _addPermissions(
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
@@ -1069,7 +1069,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		Map<String, String> objectDefinitionIdsStringUtilReplaceValues =
 			new HashMap<>();
 
-
 		Set<String> resourcePaths = _servletContext.getResourcePaths(
 			"/site-initializer/object-definitions");
 
@@ -1088,25 +1087,23 @@ public class BundleSiteInitializer implements SiteInitializer {
 			objectDefinitionIdsStringUtilReplaceValues.put(
 				"OBJECT_DEFINITION_ID:" + objectDefinition.getName(),
 				String.valueOf(objectDefinition.getObjectDefinitionId()));
-
 		}
 
-		Long objectDefinitionId1 = null;
 		ObjectDefinition objectDefinition = null;
+
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-actions.json")) {
 				continue;
 			}
 
-			 String json = SiteInitializerUtil.read(
+			String json = SiteInitializerUtil.read(
 				resourcePath, _servletContext);
 
 			json = _replace(json, listTypeDefinitionIdsStringUtilReplaceValues);
 
 			JSONObject jsonObjects = _jsonFactory.createJSONObject(json);
 
-			jsonObjects.remove("accountEntryRestrictedObjectFieldId");
-			Object json3 = jsonObjects.remove("accountEntryRestricted");
+			Object restricted = jsonObjects.remove("accountEntryRestrictedObjectFieldId");
 
 			json = JSONUtil.toString(jsonObjects);
 
@@ -1136,30 +1133,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 					objectDefinitionResource.postObjectDefinition(
 						objectDefinition);
 
-				if (json3 == null) {
+				if (restricted == null) {
 
 					objectDefinitionResource.postObjectDefinitionPublish(
 						objectDefinition.getId());
 				}
-				else {
-					objectDefinitionId1 = objectDefinition.getId();
-				}
-
-				_invoke(
-					() -> _addOrUpdateObjectRelationships(
-						objectDefinitionIdsStringUtilReplaceValues,
-						serviceContext));
 			}
-
 			else {
+
 				objectDefinition =
 					objectDefinitionResource.patchObjectDefinition(
 						existingObjectDefinition.getId(), objectDefinition);
-
-				_invoke(
-					() -> _addOrUpdateObjectRelationships(
-						objectDefinitionIdsStringUtilReplaceValues,
-						serviceContext));
 			}
 
 			objectDefinitionIdsStringUtilReplaceValues.put(
@@ -1204,20 +1188,22 @@ public class BundleSiteInitializer implements SiteInitializer {
 						parametersJSONObject.toMap()));
 			}
 		}
+		_invoke(
+			() -> _addOrUpdateObjectRelationships(
+				objectDefinitionIdsStringUtilReplaceValues,
+				serviceContext));
 
-		Set<String> resourcePaths1 = _servletContext.getResourcePaths(
-			"/site-initializer/object-definitions");
-
-		for (String resourcePath2 : resourcePaths1) {
+		for (String parentResourcePath : resourcePaths) {
 			String json = SiteInitializerUtil.read(
-				resourcePath2, _servletContext);
+				parentResourcePath, _servletContext);
 
 			Map<String, String> objectFieldIdsStringUtilReplaceValues =
 				new HashMap<>();
 
 			List<ObjectField> objectFields =
-				_objectFieldLocalService.getObjectFields(
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+				_objectFieldLocalService.
+					getObjectFields(
+						QueryUtil.ALL_POS,QueryUtil.ALL_POS);
 
 			for (ObjectField objectField :
 				objectFields) {
@@ -1233,37 +1219,41 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			JSONObject jsonObjects = _jsonFactory.createJSONObject(json);
 
-			if (jsonObjects.getBoolean("accountEntryRestricted")  == true) {
+			com.liferay.object.model.ObjectDefinition objectDefinitionPublish =
+				 _objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_"+jsonObjects.getString("name"));
+
+			if (objectDefinitionPublish.isAccountEntryRestricted() != true
+				&& jsonObjects.get("accountEntryRestrictedObjectFieldId") != null) {
+
+				Long objectFieldId = jsonObjects.getLong(
+					"accountEntryRestrictedObjectFieldId");
 
 				JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-				Long objectFieldId = jsonObjects.getLong("accountEntryRestrictedObjectFieldId");
+				Object objectRelationShip = jsonObject.put("accountEntryRestrictedObjectFieldId", objectFieldId)
+					.put("accountEntryRestricted", true);
 
-				Object objectRelationShip =
-					jsonObject.put("accountEntryRestrictedObjectFieldId",objectFieldId)
-						.put("accountEntryRestricted", true);
+				String relationShipJson = objectRelationShip.toString();
 
-				String json4 = objectRelationShip.toString();
+				objectDefinition = ObjectDefinition.toDTO(relationShipJson);
 
-				JSONObject relationShipJsonObject = _jsonFactory.createJSONObject(json4);
-
-				String json1 = JSONUtil.toString(relationShipJsonObject);
-
-				objectDefinition = ObjectDefinition.toDTO(json1);
+				Long ObjectDefinitionId = Long.valueOf(
+					objectDefinitionIdsStringUtilReplaceValues.get(
+						"OBJECT_DEFINITION_ID:" + jsonObjects.getString("name")));
 
 				objectDefinition =
 					objectDefinitionResource.patchObjectDefinition(
-						objectDefinitionId1, objectDefinition);
+						ObjectDefinitionId, objectDefinition);
 
 				objectDefinitionResource.postObjectDefinitionPublish(
-					objectDefinitionId1);
+					ObjectDefinitionId);
 			}
 		}
 
 		objectDefinitionIdsStringUtilReplaceValues.put(
 			"OBJECT_DEFINITION_ID:" + objectDefinition.getName(),
 			String.valueOf(objectDefinition.getId()));
-
 
 		Map<String, String> objectEntryIdsStringUtilReplaceValues = _invoke(
 			() -> _addOrUpdateObjectEntries(
