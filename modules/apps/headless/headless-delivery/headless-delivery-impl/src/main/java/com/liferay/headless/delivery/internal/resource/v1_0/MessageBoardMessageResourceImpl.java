@@ -87,6 +87,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ws.rs.BadRequestException;
@@ -368,15 +369,24 @@ public class MessageBoardMessageResourceImpl
 			Stream<MessageBoardMessage> stream = messageBoardMessagePage.getItems().stream(
 			).sorted(comparator.reversed());
 
-			if (stream.findFirst().isPresent()){
-				filteredMessageBoardMessages.add(stream.findFirst().get());
-			}
+			filteredMessageBoardMessages.add(stream.findFirst().get());
 
+			stream.close();
 		}
+
+		Comparator<MessageBoardMessage> comparator = Comparator.comparing(
+			MessageBoardMessage::getDateModified);
+
+		Stream<MessageBoardMessage> stream = filteredMessageBoardMessages.stream(
+		).sorted(comparator.reversed());
+
+		filteredMessageBoardMessages = stream.collect(Collectors.toList());
+
+		stream.close();
 
 		return Page.of(
 			filteredMessageBoardMessages,
-			Pagination.of(pagination.getPage(), pagination.getPageSize()),
+			pagination,
 			filteredMessageBoardMessages.size());
 	}
 
