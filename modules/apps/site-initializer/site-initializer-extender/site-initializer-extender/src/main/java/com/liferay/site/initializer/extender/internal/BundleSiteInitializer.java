@@ -86,10 +86,10 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
-import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
@@ -1101,11 +1101,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			json = _replace(json, listTypeDefinitionIdsStringUtilReplaceValues);
 
-			JSONObject jsonObjects = _jsonFactory.createJSONObject(json);
+			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 
-			Object restricted = jsonObjects.remove("accountEntryRestrictedObjectFieldId");
+			Object restricted = jsonObject.remove(
+				"accountEntryRestrictedObjectFieldId");
 
-			json = JSONUtil.toString(jsonObjects);
+			json = JSONUtil.toString(jsonObject);
 
 			objectDefinition = ObjectDefinition.toDTO(json);
 
@@ -1128,19 +1129,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 				objectDefinitionsPage.fetchFirstItem();
 
 			if (existingObjectDefinition == null) {
-
 				objectDefinition =
 					objectDefinitionResource.postObjectDefinition(
 						objectDefinition);
 
 				if (restricted == null) {
-
 					objectDefinitionResource.postObjectDefinitionPublish(
 						objectDefinition.getId());
 				}
 			}
 			else {
-
 				objectDefinition =
 					objectDefinitionResource.patchObjectDefinition(
 						existingObjectDefinition.getId(), objectDefinition);
@@ -1171,27 +1169,27 @@ public class BundleSiteInitializer implements SiteInitializer {
 				objectActionsJSON);
 
 			for (int i = 0; i < jsonArray.length(); i++) {
-				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
-				JSONObject parametersJSONObject = jsonObject.getJSONObject(
+				JSONObject parametersJSONObject = jsonObject1.getJSONObject(
 					"parameters");
 
 				_objectActionLocalService.addObjectAction(
 					serviceContext.getUserId(), objectDefinition.getId(),
-					jsonObject.getBoolean("active"),
-					jsonObject.getString("conditionExpression"),
-					jsonObject.getString("description"),
-					jsonObject.getString("name"),
-					jsonObject.getString("objectActionExecutorKey"),
-					jsonObject.getString("objectActionTriggerKey"),
+					jsonObject1.getBoolean("active"),
+					jsonObject1.getString("conditionExpression"),
+					jsonObject1.getString("description"),
+					jsonObject1.getString("name"),
+					jsonObject1.getString("objectActionExecutorKey"),
+					jsonObject1.getString("objectActionTriggerKey"),
 					ObjectActionUtil.toParametersUnicodeProperties(
 						parametersJSONObject.toMap()));
 			}
 		}
+
 		_invoke(
 			() -> _addOrUpdateObjectRelationships(
-				objectDefinitionIdsStringUtilReplaceValues,
-				serviceContext));
+				objectDefinitionIdsStringUtilReplaceValues, serviceContext));
 
 		for (String parentResourcePath : resourcePaths) {
 			String json = SiteInitializerUtil.read(
@@ -1201,53 +1199,51 @@ public class BundleSiteInitializer implements SiteInitializer {
 				new HashMap<>();
 
 			List<ObjectField> objectFields =
-				_objectFieldLocalService.
-					getObjectFields(
-						QueryUtil.ALL_POS,QueryUtil.ALL_POS);
+				_objectFieldLocalService.getObjectFields(
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-			for (ObjectField objectField :
-				objectFields) {
-
+			for (ObjectField objectField : objectFields) {
 				objectFieldIdsStringUtilReplaceValues.put(
 					"OBJECT_FIELD_ID:" + objectField.getDBColumnName(),
-					String.valueOf(
-						objectField.getObjectFieldId()));
+					String.valueOf(objectField.getObjectFieldId()));
 			}
 
-			json =
-				_replace(json, objectFieldIdsStringUtilReplaceValues);
+			json = _replace(json, objectFieldIdsStringUtilReplaceValues);
 
-			JSONObject jsonObjects = _jsonFactory.createJSONObject(json);
+			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 
 			com.liferay.object.model.ObjectDefinition objectDefinitionPublish =
-				 _objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_"+jsonObjects.getString("name"));
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(),
+					"C_" + jsonObject.getString("name"));
 
-			if (objectDefinitionPublish.isAccountEntryRestricted() != true
-				&& jsonObjects.get("accountEntryRestrictedObjectFieldId") != null) {
+			if ((objectDefinitionPublish.isAccountEntryRestricted() != true) &&
+				(jsonObject.get("accountEntryRestrictedObjectFieldId") !=
+					null)) {
 
-				Long objectFieldId = jsonObjects.getLong(
+				Long objectFieldId = jsonObject.getLong(
 					"accountEntryRestrictedObjectFieldId");
 
-				JSONObject jsonObject = _jsonFactory.createJSONObject();
+				JSONObject jsonObject1 = _jsonFactory.createJSONObject();
 
-				Object objectRelationShip = jsonObject.put("accountEntryRestrictedObjectFieldId", objectFieldId)
-					.put("accountEntryRestricted", true);
+				objectDefinition = ObjectDefinition.toDTO(
+					jsonObject1.put(
+						"accountEntryRestricted", true
+					).put(
+						"accountEntryRestrictedObjectFieldId", objectFieldId
+					).toString());
 
-				String relationShipJson = objectRelationShip.toString();
-
-				objectDefinition = ObjectDefinition.toDTO(relationShipJson);
-
-				Long ObjectDefinitionId = Long.valueOf(
+				Long objectDefinitionId = Long.valueOf(
 					objectDefinitionIdsStringUtilReplaceValues.get(
-						"OBJECT_DEFINITION_ID:" + jsonObjects.getString("name")));
+						"OBJECT_DEFINITION_ID:" +
+							jsonObject.getString("name")));
 
 				objectDefinition =
 					objectDefinitionResource.patchObjectDefinition(
-						ObjectDefinitionId, objectDefinition);
+						objectDefinitionId, objectDefinition);
 
 				objectDefinitionResource.postObjectDefinitionPublish(
-					ObjectDefinitionId);
+					objectDefinitionId);
 			}
 		}
 
@@ -4422,7 +4418,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final ObjectDefinitionResource.Factory
 		_objectDefinitionResourceFactory;
 	private final ObjectEntryLocalService _objectEntryLocalService;
-
 	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectRelationshipLocalService
 		_objectRelationshipLocalService;
