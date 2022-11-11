@@ -163,6 +163,7 @@
 													"fragmentStyle": {
 														"borderRadius": "",
 														"borderWidth": "0",
+														"marginBottom": "7",
 														"marginRight": "4",
 														"shadow": "",
 														"textAlign": ""
@@ -170,7 +171,7 @@
 													"indexed": true,
 													"layout": {
 														"borderWidth": 0,
-														"marginBottom": 0,
+														"marginBottom": 8,
 														"marginLeft": 0,
 														"marginRight": 2,
 														"marginTop": 0,
@@ -201,9 +202,9 @@
 									{
 										"definition": {
 											"cssClasses": [
-												"position-fixed",
 												"w-100",
-												"bg-white"
+												"bg-white",
+												"position-fixed"
 											],
 											"customCSS": ".[$FRAGMENT_CLASS$] {\nbottom: 0;\n}",
 											"fragmentStyle": {
@@ -373,7 +374,8 @@
 																		"key": "DIALECT-dialect-text"
 																	},
 																	"fragmentConfig": {
-																		"textType": "h6"
+																		"textType": "h6",
+																		"truncateText": false
 																	},
 																	"fragmentFields": [
 																		{
@@ -435,7 +437,8 @@
 																		"key": "DIALECT-dialect-text"
 																	},
 																	"fragmentConfig": {
-																		"textType": "h6"
+																		"textType": "h6",
+																		"truncateText": false
 																	},
 																	"fragmentFields": [
 																		{
