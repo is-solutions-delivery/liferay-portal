@@ -24,8 +24,13 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 type FloatingBoxProps = {
+<<<<<<< HEAD
 	alerts?: {header?: string; text: string}[];
 	clearList?: () => void;
+=======
+	alerts?: {text: string; title?: string}[];
+	clearList: () => void;
+>>>>>>> d87f040 (LPS-167868 Create unchecked action for selected subtasks)
 	isVisible: boolean;
 	onSubmit?: () => void;
 	primaryButtonProps?: ButtonProps;
