@@ -37,3 +37,18 @@ export function getChannelId(channelName) {
 		`${headlessAPI}/channels?filter=contains(name, '${channelName}')&fields=id`
 	);
 }
+
+export function getProductsNames() {
+	const result = getChannelId('Raylife AP').then((response) => {
+		const {
+			data: {items},
+		} = response;
+		const channelId = items[0].id;
+
+		return axios.get(
+			`${headlessAPI}/channels/${channelId}/products?fields=name&page=1&pageSize=50`
+		);
+	});
+
+	return result;
+}

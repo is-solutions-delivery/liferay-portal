@@ -37,6 +37,12 @@ export function getActivePolicies() {
 	);
 }
 
+export function getThreeMonthsPolicies() {
+	return axios.get(
+		`${DeliveryAPI}/?fields=productName,termPremium&filter=policyStatus ne 'declined' and (startDate le ${currentDate} and startDate ge ${sixMonthsAgoDate[0]}-${sixMonthsAgoDate[1]}-01)&pageSize=200`
+	);
+}
+
 export function getSixMonthsAgoPolicies() {
 	return axios.get(
 		`${DeliveryAPI}/?filter=policyStatus ne 'declined' and (startDate le ${currentDate} and startDate ge ${sixMonthsAgoDate[0]}-${sixMonthsAgoDate[1]}-01)&pageSize=200`
@@ -81,6 +87,6 @@ export function getPoliciesChartExpiringPolicies(
 	periodDay
 ) {
 	return axios.get(
-		`${DeliveryAPI}/?fields=endDate,totalCount,productName&pageSize=200&filter=endDate ge ${currentYear}-${currentMonth}-${currentDay} and endDate le ${periodYear}-${periodMonth}-${periodDay}`
+		`${DeliveryAPI}/?fields=endDate,totalCount,productName,termPremium&pageSize=200&filter=endDate ge ${currentYear}-${currentMonth}-${currentDay} and endDate le ${periodYear}-${periodMonth}-${periodDay}`
 	);
 }

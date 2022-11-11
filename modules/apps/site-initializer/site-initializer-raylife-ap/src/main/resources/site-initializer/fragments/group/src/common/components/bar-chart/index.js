@@ -20,6 +20,7 @@ import './index.css';
 const BarChart = ({
 	colors,
 	dataColumns,
+	format = false,
 	height = 200,
 	labelColumns,
 	showLegend = false,
@@ -62,6 +63,18 @@ const BarChart = ({
 					columns: [labelColumns, dataColumns],
 					labels: {
 						colors: '#272833',
+						format: {
+							data: (x) => {
+								if (format) {
+									return new Intl.NumberFormat('en-us', {
+										currency: 'USD',
+										style: 'currency',
+									}).format(x);
+								}
+
+								return x;
+							},
+						},
 						position: {
 							y: -10,
 						},
