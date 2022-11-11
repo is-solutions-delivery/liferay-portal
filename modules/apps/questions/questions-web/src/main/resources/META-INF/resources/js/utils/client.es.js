@@ -804,6 +804,7 @@ export const getUserActivityQuery = `
 					postsNumber
 					rank
 				}
+				dateCreated
 				dateModified
 				friendlyUrlPath
 				headline

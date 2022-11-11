@@ -379,3 +379,21 @@ div {
 	border: 1px solid $primary-l1;
 	border-radius: 0.25rem;
 }
+
+.new-question-badge {
+	align-items: center;
+	background: #0b5fff;
+	border-radius: 4px;
+	color: #fff;
+	display: flex;
+	flex-direction: row;
+	font-size: 12px;
+	font-weight: bold;
+	height: 36px;
+	padding: 3px 8px;
+	width: 45px;
+}
+
+.list-badges {
+	gap: 10px;
+}

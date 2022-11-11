@@ -28,10 +28,18 @@ import SectionLabel from './SectionLabel.es';
 import TagList from './TagList.es';
 import UserIcon from './UserIcon.es';
 
+const DAYS_UNTIL_SHOW_LABEL = 3;
+
 export default function QuestionRow({
 	context,
 	creatorId,
 	currentSection,
+	getQuestionCreatedInDays,
+	display = {
+		articleBody: true,
+		linksLayer: false,
+		styled: true,
+	},
 	items,
 	linkProps,
 	question,
@@ -60,6 +68,13 @@ export default function QuestionRow({
 
 	const isRowSelected = question.friendlyUrlPath === rowSelected;
 
+	const rowLabelAnswers =
+		question.labelAnswers === 'RE:'
+			? Liferay.Language.get('answer')
+			: Liferay.Language.get('question');
+	const rowLabelAsk =
+		question.labelAnswers === 'RE:' ? '' : Liferay.Language.get('asked');
+
 	return (
 		<div
 			className={classNames(
@@ -67,67 +82,114 @@ export default function QuestionRow({
 				{'question-row-selected': isRowSelected}
 			)}
 		>
-			<div className="align-items-center d-flex flex-wrap justify-content-between">
-				<span>
-					{showSectionLabel && (
-						<SectionLabel section={question.messageBoardSection} />
-					)}
-				</span>
+			<div
+				className={classNames(
+					'align-items-center mb-0 d-flex flex-wrap',
+					{
+						'justify-content-between': display.styled,
+					}
+				)}
+			>
+				{!display.linksLayer && (
+					<>
+						<span>
+							{showSectionLabel && (
+								<SectionLabel
+									section={question.messageBoardSection}
+								/>
+							)}
+						</span>
+						<ul className="c-mb-0 d-flex flex-wrap list-unstyled mb-3 stretched-link-layer">
+							<li>
+								<QuestionBadge
+									symbol={
+										normalizeRating(
+											question.aggregateRating
+										) < 0
+											? 'caret-bottom'
+											: 'caret-top'
+									}
+									tooltip={Liferay.Language.get('votes')}
+									value={normalizeRating(
+										question.aggregateRating
+									)}
+								/>
+							</li>
 
-				<ul className="c-mb-0 d-flex flex-wrap list-unstyled stretched-link-layer">
-					<li>
-						<QuestionBadge
-							symbol={
-								normalizeRating(question.aggregateRating) < 0
-									? 'caret-bottom'
-									: 'caret-top'
-							}
-							tooltip={Liferay.Language.get('votes')}
-							value={normalizeRating(question.aggregateRating)}
-						/>
-					</li>
+							<li>
+								<QuestionBadge
+									symbol="view"
+									tooltip={Liferay.Language.get('view-count')}
+									value={question.viewCount}
+								/>
+							</li>
 
-					<li>
-						<QuestionBadge
-							symbol="view"
-							tooltip={Liferay.Language.get('view-count')}
-							value={question.viewCount}
-						/>
-					</li>
+							<li data-testid="has-valid-answer-badge">
+								<QuestionBadge
+									className={
+										question.hasValidAnswer
+											? 'alert-success border-0'
+											: question.hasValidAnswer
+									}
+									symbol={
+										question.hasValidAnswer
+											? 'check-circle-full'
+											: 'message'
+									}
+									tooltip={Liferay.Language.get(
+										'number-of-replies'
+									)}
+									value={
+										question.numberOfMessageBoardMessages
+									}
+								/>
+							</li>
 
-					<li data-testid="has-valid-answer-badge">
-						<QuestionBadge
-							className={
-								question.hasValidAnswer
-									? 'alert-success border-0'
-									: ''
-							}
-							symbol={
-								question.hasValidAnswer
-									? 'check-circle-full'
-									: 'message'
-							}
-							tooltip={Liferay.Language.get('number-of-replies')}
-							value={question.numberOfMessageBoardMessages}
-						/>
-					</li>
-
-					{items && !!items.length && (
-						<li>
-							<ClayDropDownWithItems
-								className="c-py-1"
-								items={items}
-								trigger={
-									<ClayButtonWithIcon
-										displayType="unstyled"
-										small
-										symbol="ellipsis-v"
+							{items && !!items.length && (
+								<li>
+									<ClayDropDownWithItems
+										className="c-py-1"
+										items={items}
+										trigger={
+											<ClayButtonWithIcon
+												displayType="unstyled"
+												small
+												symbol="ellipsis-v"
+											/>
+										}
 									/>
-								}
+								</li>
+							)}
+						</ul>
+					</>
+				)}
+
+				{display.linksLayer && (
+					<ul className="align-items-center c-mb-2 d-flex flex-nowrap list-badges list-unstyled stretched-link-layer">
+						{getQuestionCreatedInDays <= DAYS_UNTIL_SHOW_LABEL && (
+							<li>
+								<span className="new-question-badge">
+									{Liferay.Language.get('new')}
+								</span>
+							</li>
+						)}
+
+						<li>
+							<QuestionBadge
+								className="bg-light label-secondary"
+								symbol="question-circle-full"
+								value={rowLabelAnswers}
 							/>
 						</li>
-					)}
-				</ul>
+
+						<li>
+							<QuestionBadge
+								className="bg-light label-secondary"
+								value={question.messageBoardSection.title}
+							/>
+						</li>
+					</ul>
+				)}
 			</div>
 
 			<Link
@@ -173,12 +235,21 @@ export default function QuestionRow({
 				</h2>
 			</Link>
 
-			<div className="c-mb-0 c-mt-3 question-row-article-body stretched-link-layer text-truncate">
-				<ArticleBodyRenderer
-					{...question}
-					articleBody={stripHTML(question.articleBody)}
-					compactMode={true}
-				/>
+			<div
+				className={classNames(
+					'c-mb-0 c-mt-3 stretched-link-layer text-truncate',
+					{
+						'question-row-article-body': display.styled,
+					}
+				)}
+			>
+				{display.articleBody && (
+					<ArticleBodyRenderer
+						{...question}
+						articleBody={stripHTML(question.articleBody)}
+						compactMode={true}
+					/>
+				)}
 			</div>
 
 			<div className="align-items-sm-center align-items-start d-flex flex-column-reverse flex-sm-row justify-content-between">
@@ -189,12 +260,14 @@ export default function QuestionRow({
 						})}
 						to={creatorInformation.link}
 					>
-						<UserIcon
-							fullName={creatorInformation.name}
-							portraitURL={creatorInformation.portraitURL}
-							size="sm"
-							userId={creatorInformation.userId}
-						/>
+						{creatorInformation.portraitURL && (
+							<UserIcon
+								fullName={creatorInformation.name}
+								portraitURL={creatorInformation.portraitURL}
+								size="sm"
+								userId={creatorInformation.userId}
+							/>
+						)}
 
 						<strong className="c-ml-2 text-dark">
 							{creatorInformation.name ||
@@ -207,11 +280,20 @@ export default function QuestionRow({
 					<EditedTimestamp
 						dateCreated={question.dateCreated}
 						dateModified={question.dateModified}
-						operationText={Liferay.Language.get('asked')}
+						operationText={Liferay.Language.get(`${rowLabelAsk}`)}
 					/>
 				</div>
 
-				<TagList sectionTitle={sectionTitle} tags={question.keywords} />
+				{question.keywords && (
+					<TagList
+						sectionTitle={
+							sectionTitle?.title
+								? sectionTitle.title
+								: sectionTitle
+						}
+						tags={question.keywords}
+					/>
+				)}
 			</div>
 		</div>
 	);

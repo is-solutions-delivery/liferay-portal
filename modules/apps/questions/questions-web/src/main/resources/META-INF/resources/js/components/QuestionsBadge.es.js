@@ -22,7 +22,7 @@ export default function QuestionsBadge({className, symbol, tooltip, value}) {
 			data-tooltip-align="top"
 			title={tooltip}
 		>
-			<ClayIcon symbol={symbol} />
+			{symbol && <ClayIcon symbol={symbol} />}
 
 			<span className="c-ml-2 font-weight-bold small">{value || 0}</span>
 		</div>

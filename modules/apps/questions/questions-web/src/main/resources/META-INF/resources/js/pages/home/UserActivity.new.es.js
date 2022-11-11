@@ -25,6 +25,8 @@ import {getUserActivityQuery} from '../../utils/client.es';
 import {historyPushWithSlug} from '../../utils/utils.es';
 import {Question} from '../questions/Question.new.es';
 
+const TIME_IN_DAYS = 1000 * 60 * 60 * 24;
+
 export default withRouter(
 	({
 		history,
@@ -93,10 +95,20 @@ export default withRouter(
 
 		const addSectionToQuestion = (question) => {
 			return {
+				labelAnswers: question.headline.substr(0, 3),
 				messageBoardSection:
 					question.messageBoardThread.messageBoardSection,
 				...question,
 			};
+		};
+
+		const getQuestionCreatedInDays = (question) => {
+			const givenDate = new Date(question.dateCreated);
+			const now = new Date();
+			const timeDifference = now.getTime() - givenDate.getTime();
+			const diffDays = (timeDifference / TIME_IN_DAYS).toFixed(0);
+
+			return diffDays;
 		};
 
 		useEffect(() => {
@@ -163,6 +175,14 @@ export default withRouter(
 															.id) ||
 												  context.rootTopicId
 										}
+										display={{
+											articleBody: false,
+											linksLayer: true,
+											styled: false,
+										}}
+										getQuestionCreatedInDays={getQuestionCreatedInDays(
+											question
+										)}
 										key={question.id}
 										linkProps={{
 											id: 'user-activity-row',
