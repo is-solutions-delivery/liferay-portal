@@ -65,12 +65,12 @@ public class SolrFilterTranslator
 
 	@Override
 	public Query visit(BooleanFilter booleanFilter) {
-		return _booleanQueryTranslator.translate(booleanFilter, this);
+		return _booleanFilterTranslator.translate(booleanFilter, this);
 	}
 
 	@Override
 	public Query visit(DateRangeFilter dateRangeFilter) {
-		return dateRangeFilterTranslator.translate(dateRangeFilter);
+		return _dateRangeFilterTranslator.translate(dateRangeFilter);
 	}
 
 	@Override
@@ -140,10 +140,10 @@ public class SolrFilterTranslator
 	}
 
 	@Reference
-	protected DateRangeFilterTranslator dateRangeFilterTranslator;
+	private BooleanFilterTranslator _booleanFilterTranslator;
 
 	@Reference
-	private BooleanFilterTranslator _booleanQueryTranslator;
+	private DateRangeFilterTranslator _dateRangeFilterTranslator;
 
 	@Reference
 	private DateRangeTermFilterTranslator _dateRangeTermFilterTranslator;
