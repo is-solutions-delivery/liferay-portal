@@ -235,8 +235,6 @@ public class SolrIndexingFixture implements IndexingFixture {
 			}
 		};
 
-		setFacetProcessor(_facetProcessor);
-
 		ReflectionTestUtil.setFieldValue(
 			solrIndexSearcher, "_props", createProps());
 		ReflectionTestUtil.setFieldValue(
@@ -255,7 +253,7 @@ public class SolrIndexingFixture implements IndexingFixture {
 	}
 
 	protected IndexWriter createIndexWriter(
-		SearchEngineAdapter searchEngineAdapterParam) {
+		SearchEngineAdapter searchEngineAdapter) {
 
 		SolrIndexWriter solrIndexWriter = new SolrIndexWriter() {
 			{
@@ -264,10 +262,10 @@ public class SolrIndexingFixture implements IndexingFixture {
 		};
 
 		ReflectionTestUtil.setFieldValue(
-			solrIndexWriter, "_searchEngineAdapter", searchEngineAdapterParam);
+			solrIndexWriter, "_searchEngineAdapter", searchEngineAdapter);
 		ReflectionTestUtil.setFieldValue(
 			solrIndexWriter, "_spellCheckIndexWriter",
-			createSolrSpellCheckIndexWriter(searchEngineAdapterParam));
+			createSolrSpellCheckIndexWriter(searchEngineAdapter));
 
 		return solrIndexWriter;
 	}
@@ -322,11 +320,12 @@ public class SolrIndexingFixture implements IndexingFixture {
 	}
 
 	protected SolrQuerySuggester createSolrQuerySuggester(
-		SolrClientManager solrClientManagerParam) {
+		SolrClientManager solrClientManager) {
 
 		SolrQuerySuggester solrQuerySuggester = new SolrQuerySuggester() {
 			{
 				setLocalization(_localization);
+
 				activate(_properties);
 			}
 		};
@@ -335,13 +334,13 @@ public class SolrIndexingFixture implements IndexingFixture {
 			solrQuerySuggester, "_nGramQueryBuilder",
 			createNGramQueryBuilder());
 		ReflectionTestUtil.setFieldValue(
-			solrQuerySuggester, "_solrClientManager", solrClientManagerParam);
+			solrQuerySuggester, "_solrClientManager", solrClientManager);
 
 		return solrQuerySuggester;
 	}
 
 	protected SolrSpellCheckIndexWriter createSolrSpellCheckIndexWriter(
-		SearchEngineAdapter searchEngineAdapterParam) {
+		SearchEngineAdapter searchEngineAdapter) {
 
 		SolrSpellCheckIndexWriter solrSpellCheckIndexWriter =
 			new SolrSpellCheckIndexWriter() {
@@ -355,7 +354,7 @@ public class SolrIndexingFixture implements IndexingFixture {
 
 		ReflectionTestUtil.setFieldValue(
 			solrSpellCheckIndexWriter, "_searchEngineAdapter",
-			searchEngineAdapterParam);
+			searchEngineAdapter);
 
 		return solrSpellCheckIndexWriter;
 	}

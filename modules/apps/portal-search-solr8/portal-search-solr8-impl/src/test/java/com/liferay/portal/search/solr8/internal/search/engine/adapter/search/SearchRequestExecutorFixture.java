@@ -245,10 +245,10 @@ public class SearchRequestExecutorFixture {
 		SolrFilterTranslator solrFilterTranslator = new SolrFilterTranslator();
 
 		ReflectionTestUtil.setFieldValue(
-			solrFilterTranslator, "_booleanQueryTranslator",
+			solrFilterTranslator, "_booleanFilterTranslator",
 			new BooleanFilterTranslatorImpl());
 		ReflectionTestUtil.setFieldValue(
-			solrFilterTranslator, "dateRangeFilterTranslator",
+			solrFilterTranslator, "_dateRangeFilterTranslator",
 			new DateRangeFilterTranslatorImpl());
 		ReflectionTestUtil.setFieldValue(
 			solrFilterTranslator, "_dateRangeTermFilterTranslator",

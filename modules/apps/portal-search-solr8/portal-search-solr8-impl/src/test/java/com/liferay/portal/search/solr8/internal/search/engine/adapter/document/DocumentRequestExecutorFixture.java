@@ -68,7 +68,6 @@ public class DocumentRequestExecutorFixture {
 		ReflectionTestUtil.setFieldValue(
 			bulkDocumentRequestExecutorImpl, "_solrClientManager",
 			solrClientManager);
-
 		ReflectionTestUtil.setFieldValue(
 			bulkDocumentRequestExecutorImpl, "_solrDocumentFactory",
 			solrDocumentFactory);
@@ -175,11 +174,11 @@ public class DocumentRequestExecutorFixture {
 			"_bulkableDocumentRequestTranslator",
 			bulkableDocumentRequestTranslator);
 		ReflectionTestUtil.setFieldValue(
-			getDocumentRequestExecutorImpl, "_solrClientManager",
-			solrClientManager);
-		ReflectionTestUtil.setFieldValue(
 			getDocumentRequestExecutorImpl, "_documentBuilderFactory",
 			new DocumentBuilderFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
+			getDocumentRequestExecutorImpl, "_solrClientManager",
+			solrClientManager);
 
 		return getDocumentRequestExecutorImpl;
 	}

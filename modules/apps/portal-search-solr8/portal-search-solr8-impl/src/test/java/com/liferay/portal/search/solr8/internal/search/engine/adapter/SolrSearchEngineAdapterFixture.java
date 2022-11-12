@@ -103,11 +103,11 @@ public class SolrSearchEngineAdapterFixture {
 			solrSearchEngineAdapterImpl, "_documentRequestExecutor",
 			documentRequestExecutorFixture.getDocumentRequestExecutor());
 		ReflectionTestUtil.setFieldValue(
-			solrSearchEngineAdapterImpl, "_searchRequestExecutor",
-			searchRequestExecutorFixture.getSearchRequestExecutor());
-		ReflectionTestUtil.setFieldValue(
 			solrSearchEngineAdapterImpl, "_indexRequestExecutor",
 			indexRequestExecutorFixture.getIndexRequestExecutor());
+		ReflectionTestUtil.setFieldValue(
+			solrSearchEngineAdapterImpl, "_searchRequestExecutor",
+			searchRequestExecutorFixture.getSearchRequestExecutor());
 
 		return solrSearchEngineAdapterImpl;
 	}
