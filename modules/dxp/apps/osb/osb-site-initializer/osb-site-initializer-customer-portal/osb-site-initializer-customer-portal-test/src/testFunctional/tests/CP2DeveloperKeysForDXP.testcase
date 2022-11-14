@@ -91,7 +91,7 @@ definition {
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
 
-			CustomerPortal.enterOnProject(title = "${testAccount}");
+			CustomerPortal.enterOnProject(title = "Test Account DXP");
 		}
 
 		task ("Go to the product activation page") {
