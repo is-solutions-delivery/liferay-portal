@@ -75,7 +75,7 @@ definition {
             CP2Utils.onboardingFlow();
         }
 
-        task ("Then I click on the DXP product") {
+        task ("Then I click on the AC product") {
 			CP2NavigationMenu.goToProductActivation();
 
 			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
@@ -128,7 +128,7 @@ definition {
             CP2Utils.onboardingFlow();
         }
 
-        task ("Then I click on the DXP product") {
+        task ("Then I click on the AC product") {
 			CP2NavigationMenu.goToProductActivation();
 
 			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
@@ -160,6 +160,7 @@ definition {
     test RemovingAdditionalContactsFromTheIncidentReport {
         
         // TODO LPS-150651 RemovingAdditionalContactsFromTheIncidentReport was implemented in the test AddingAdditionalIncidentReportContacts
+
     }
 
     @description = "Automation ID: LPS-150654 | Test Summary: Verify if the user enters a wrong value in 'Owner Email' an error message is displayed"
