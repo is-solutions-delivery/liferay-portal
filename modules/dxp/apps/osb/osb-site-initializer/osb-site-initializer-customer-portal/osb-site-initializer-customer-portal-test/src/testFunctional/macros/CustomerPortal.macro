@@ -773,6 +773,12 @@ definition {
 			status = "Active");
 	}
 
+	macro viewConfirmationModal {
+		var key_text = "${text}";
+
+		AssertElementPresent(locator1 = "CustomerPortalSite#MODAL_INFO");
+	}
+
 	macro viewCPObjectCustomInfo {
 		Click(
 			key_index = "${index}",
@@ -804,13 +810,6 @@ definition {
 
 	macro viewInviteTeamMembersModalPage {
 		AssertElementPresent(locator1 = "CustomerPortalSite#INVITE_TEAM_MEMBERS_TITLE");
-	}
-
-	macro viewConfirmationModal {
-		var key_text = "${text}";
-
-		AssertElementPresent(locator1 = "CustomerPortalSite#MODAL_INFO");
-
 	}
 
 	macro viewObjectInfo {
