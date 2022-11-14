@@ -165,9 +165,92 @@ definition {
 
     @description = "Automation ID: LPS-150654 | Test Summary: Verify if the user enters a wrong value in 'Owner Email' an error message is displayed"
     @priority = "3"
-    test CanViewTheErrorMessageInTheOwnerEmailField {
-        
-        // TODO LPS-150654 CanViewTheErrorMessageInTheOwnerEmailField pending implementation
+    test CanSeeTheErrorMessageInAllTheRequiredFields {
+        task ("Change the user role in the project") {
+			Accounts.openAccountsAdmin();
+
+			CustomerPortal.accountTableProject(title = "${testAccount}");
+
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Administrator",
+				accountUserName = "Test Test");
+		}
+
+        task ("Go to Customer Portal Site") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.waitCP20PageToLoad(userFirstName = "${testUserFirstName}");
+		}
+
+        task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
+
+			CustomerPortal.enterOnProject(
+                status = "Expired",
+                title = "${testAccount}");
+		}
+
+        task ("And I go through onboarding") {
+            CP2Utils.onboardingFlow();
+        }
+
+        task ("Then I click on the AC product") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
+		}
+
+		task ("And I enter Setup AC") {
+			CustomerPortal.clickOnFinishActivationButton();
+		}
+
+		task ("Then I assert that the 'Owner Email' field is required") {
+			CP2AnalyticsCloudSetup.typeSetupAnalyticsCloudInfoFields(
+				label = "Address",
+				value = "test@liferay.com");
+
+			CP2AnalyticsCloudSetup.typeSetupAnalyticsCloudInfoFields(
+				label = "Address",
+				value = "");
+
+			KeyPress(
+                locator1 = "CustomerPortalSite#MODAL_SETUP",
+                value1 = "\ESCAPE"); 
+
+			Alert.viewErrorMessage(errorMessage = "This field is required.");
+		}
+
+		task ("Then I assert that the 'Workspace Name' field is required") {
+            CP2AnalyticsCloudSetup.typeSetupAnalyticsCloudInfoFields(
+                label = "workspaceName",
+                value = "testing1");
+
+            CP2AnalyticsCloudSetup.typeSetupAnalyticsCloudInfoFields(
+                label = "workspaceName",
+                value = "");
+            
+            KeyPress(
+                locator1 = "CustomerPortalSite#MODAL_SETUP",
+                value1 = "\ESCAPE");
+
+            Alert.viewErrorMessage(errorMessage = "This field is required.");
+        }
+
+        task ("Then I assert that the 'Incident Report Contact' field is required") {
+            CP2AnalyticsCloudSetup.typeSetupAnalyticsCloudInfoFields(
+                label = "email",
+                value = "test@liferay.com");
+
+            CP2AnalyticsCloudSetup.typeSetupAnalyticsCloudInfoFields(
+                label = "email",
+                value = "");
+                
+            KeyPress(
+                locator1 = "CustomerPortalSite#MODAL_SETUP",
+                value1 = "\ESCAPE");
+
+            Alert.viewErrorMessage(errorMessage = "This field is required.");
+        }
 
     }
 
@@ -175,7 +258,7 @@ definition {
     @priority = ""
     test CanViewTheErrorMessageInTheWorkspaceNameField {
         
-        // TODO LPS-150657 CanViewTheErrorMessageInTheWorkspaceNameField pending implementation
+        // TODO LPS-150657 CanViewTheErrorMessageInTheWorkspaceNameField was implemented in the test CanSeeTheErrorMessageInAllTheRequiredFields
 
     }
 
@@ -183,7 +266,7 @@ definition {
     @priority = "3"
     test CanViewTheErrorMessageInTheIncidentReportContactField {
         
-        // TODO LPS-150659 CanViewTheErrorMessageInTheIncidentReportContactField pending implementation
+        // TODO LPS-150659 CanViewTheErrorMessageInTheIncidentReportContactField was implemented in the test CanSeeTheErrorMessageInAllTheRequiredFields
 
     }
 
