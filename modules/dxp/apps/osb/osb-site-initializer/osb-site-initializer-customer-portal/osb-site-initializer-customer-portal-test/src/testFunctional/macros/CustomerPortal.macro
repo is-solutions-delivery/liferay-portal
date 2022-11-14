@@ -806,6 +806,13 @@ definition {
 		AssertElementPresent(locator1 = "CustomerPortalSite#INVITE_TEAM_MEMBERS_TITLE");
 	}
 
+	macro viewConfirmationModal {
+		var key_text = "${text}";
+
+		AssertElementPresent(locator1 = "CustomerPortalSite#MODAL_INFO");
+
+	}
+
 	macro viewObjectInfo {
 		Click(
 			key_index = "${index}",
