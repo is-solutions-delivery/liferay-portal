@@ -48,6 +48,7 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -124,6 +125,7 @@ public class SiteInitializerExtension {
 		ObjectActionLocalService objectActionLocalService,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
+		ObjectFieldLocalService objectFieldLocalService,
 		ObjectRelationshipLocalService objectRelationshipLocalService,
 		ObjectRelationshipResource.Factory objectRelationshipResourceFactory,
 		ObjectEntryLocalService objectEntryLocalService,
@@ -167,6 +169,7 @@ public class SiteInitializerExtension {
 			jsonFactory, knowledgeBaseArticleResourceFactory,
 			knowledgeBaseFolderResourceFactory, layoutCopyHelper,
 			layoutLocalService, layoutPageTemplateEntryLocalService,
+<<<<<<< HEAD
 			layoutsImporter, layoutPageTemplateStructureLocalService,
 			layoutSetLocalService, listTypeDefinitionResource,
 			listTypeDefinitionResourceFactory, listTypeEntryResource,
@@ -177,6 +180,19 @@ public class SiteInitializerExtension {
 			organizationLocalService, organizationResourceFactory, portal,
 			resourceActionLocalService, resourcePermissionLocalService,
 			roleLocalService, sapEntryLocalService, segmentsEntryLocalService,
+=======
+			layoutPageTemplatesImporter,
+			layoutPageTemplateStructureLocalService, layoutSetLocalService,
+			listTypeDefinitionResource, listTypeDefinitionResourceFactory,
+			listTypeEntryResource, listTypeEntryResourceFactory,
+			notificationTemplateResourceFactory, objectActionLocalService,
+			objectDefinitionLocalService, objectDefinitionResourceFactory, objectFieldLocalService,
+			objectRelationshipLocalService, objectRelationshipResourceFactory,
+			objectEntryLocalService, organizationLocalService,
+			organizationResourceFactory, portal, resourceActionLocalService,
+			resourcePermissionLocalService, roleLocalService,
+			sapEntryLocalService, segmentsEntryLocalService,
+>>>>>>> dafc144 (LPS-167118 - Fix ObjectDefinition)
 			segmentsExperienceLocalService, settingsFactory,
 			siteNavigationMenuItemLocalService,
 			siteNavigationMenuItemTypeRegistry, siteNavigationMenuLocalService,
