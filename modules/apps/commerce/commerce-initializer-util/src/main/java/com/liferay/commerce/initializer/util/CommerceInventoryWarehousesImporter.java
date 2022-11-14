@@ -17,6 +17,7 @@ package com.liferay.commerce.initializer.util;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseLocalService;
 import com.liferay.commerce.product.model.CommerceChannel;
+import com.liferay.commerce.product.model.CommerceChannelRel;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.service.CommerceChannelRelLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -142,11 +143,19 @@ public class CommerceInventoryWarehousesImporter {
 			_commerceChannelLocalService.fetchCommerceChannelBySiteGroupId(
 				serviceContext.getScopeGroupId());
 
-		if (commerceChannel != null) {
-			_commerceChannelRelLocalService.addCommerceChannelRel(
-				CommerceInventoryWarehouse.class.getName(),
-				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				commerceChannel.getCommerceChannelId(), serviceContext);
+		if (commerceChannel != null){
+			CommerceChannelRel commerceChannelRel =
+				_commerceChannelRelLocalService.fetchCommerceChannelRel(
+					CommerceInventoryWarehouse.class.getName(),
+					commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+					commerceChannel.getCommerceChannelId());
+
+			if (commerceChannelRel == null) {
+				_commerceChannelRelLocalService.addCommerceChannelRel(
+					CommerceInventoryWarehouse.class.getName(),
+					commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+					commerceChannel.getCommerceChannelId(), serviceContext);
+			}
 		}
 
 		return commerceInventoryWarehouse;
