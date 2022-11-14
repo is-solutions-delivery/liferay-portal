@@ -346,6 +346,10 @@ const SelectSubscription = ({
 									? 0
 									: numberOfActivationKeysAvailable;
 
+							const currentDate = new Date()
+								.toISOString()
+								.split('T')[0];
+
 							return (
 								<Radio
 									description={i18n.sub(
@@ -361,7 +365,8 @@ const SelectSubscription = ({
 									isActivationKeyAvailable={
 										subscriptionTerm.quantity -
 											subscriptionTerm.provisionedCount >
-										0
+											0 &&
+										subscriptionTerm.endDate > currentDate
 									}
 									key={index}
 									label={currentStartAndEndDate}
