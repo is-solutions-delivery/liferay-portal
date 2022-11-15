@@ -207,6 +207,7 @@ export default function ({
 			txtaiHostAddress,
 		},
 		validate: _handleFormikValidate,
+		validateOnMount: true,
 	});
 
 	const _handleCheckboxChange = (name) => (event) => {
