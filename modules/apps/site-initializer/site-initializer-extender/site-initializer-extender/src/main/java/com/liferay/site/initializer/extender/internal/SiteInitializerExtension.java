@@ -169,7 +169,6 @@ public class SiteInitializerExtension {
 			jsonFactory, knowledgeBaseArticleResourceFactory,
 			knowledgeBaseFolderResourceFactory, layoutCopyHelper,
 			layoutLocalService, layoutPageTemplateEntryLocalService,
-<<<<<<< HEAD
 			layoutsImporter, layoutPageTemplateStructureLocalService,
 			layoutSetLocalService, listTypeDefinitionResource,
 			listTypeDefinitionResourceFactory, listTypeEntryResource,
@@ -181,18 +180,13 @@ public class SiteInitializerExtension {
 			resourceActionLocalService, resourcePermissionLocalService,
 			roleLocalService, sapEntryLocalService, segmentsEntryLocalService,
 =======
-			layoutPageTemplatesImporter,
-			layoutPageTemplateStructureLocalService, layoutSetLocalService,
-			listTypeDefinitionResource, listTypeDefinitionResourceFactory,
-			listTypeEntryResource, listTypeEntryResourceFactory,
-			notificationTemplateResourceFactory, objectActionLocalService,
-			objectDefinitionLocalService, objectDefinitionResourceFactory, objectFieldLocalService,
-			objectRelationshipLocalService, objectRelationshipResourceFactory,
-			objectEntryLocalService, organizationLocalService,
-			organizationResourceFactory, portal, resourceActionLocalService,
-			resourcePermissionLocalService, roleLocalService,
-			sapEntryLocalService, segmentsEntryLocalService,
->>>>>>> dafc144 (LPS-167118 - Fix ObjectDefinition)
+			objectDefinitionLocalService, objectDefinitionResourceFactory,
+			objectFieldLocalService, objectRelationshipLocalService,
+			objectRelationshipResourceFactory, objectEntryLocalService,
+			organizationLocalService, organizationResourceFactory, portal,
+			resourceActionLocalService, resourcePermissionLocalService,
+			roleLocalService, sapEntryLocalService, segmentsEntryLocalService,
+>>>>>>> 5dfbe0e (LPS-167118 - SF)
 			segmentsExperienceLocalService, settingsFactory,
 			siteNavigationMenuItemLocalService,
 			siteNavigationMenuItemTypeRegistry, siteNavigationMenuLocalService,
