@@ -1106,7 +1106,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			JSONObject jsonObjects = _jsonFactory.createJSONObject(json);
 
-			Object restricted = jsonObjects.remove("accountEntryRestrictedObjectFieldId");
+			String restricted =
+				jsonObjects.remove("accountEntryRestrictedObjectFieldId").toString();
 
 			json = JSONUtil.toString(jsonObjects);
 
@@ -1197,58 +1198,56 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext));
 
 		for (String parentResourcePath : resourcePaths) {
-			String json = SiteInitializerUtil.read(
-				parentResourcePath, _servletContext);
+			if (parentResourcePath.endsWith(".object-actions.json")) {
+				continue;
+			}
 
 			Map<String, String> objectFieldIdsStringUtilReplaceValues =
 				new HashMap<>();
 
-			List<ObjectField> objectFields =
-				_objectFieldLocalService.
-					getObjectFields(
-						QueryUtil.ALL_POS,QueryUtil.ALL_POS);
-
-			for (ObjectField objectField :
-				objectFields) {
-
-				objectFieldIdsStringUtilReplaceValues.put(
-					"OBJECT_FIELD_ID:" + objectField.getDBColumnName(),
-					String.valueOf(
-						objectField.getObjectFieldId()));
-			}
-
-			json =
-				_replace(json, objectFieldIdsStringUtilReplaceValues);
+			String json = SiteInitializerUtil.read(
+				parentResourcePath, _servletContext);
 
 			JSONObject jsonObjects = _jsonFactory.createJSONObject(json);
 
 			com.liferay.object.model.ObjectDefinition objectDefinitionPublish =
-				 _objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_"+jsonObjects.getString("name"));
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(),
+					"C_"+jsonObjects.getString("name"));
 
-			Boolean objectPublish = objectDefinitionPublish.isApproved();
+			if (!objectDefinitionPublish.isApproved()) {
 
-			if (!objectPublish) {
+				List<ObjectField> objectFields =
+					_objectFieldLocalService.getObjectFields(
+						objectDefinitionPublish.getObjectDefinitionId(), false);
 
-				Long objectFieldId = jsonObjects.getLong(
-					"accountEntryRestrictedObjectFieldId");
+				for (ObjectField objectField: objectFields) {
+
+					objectFieldIdsStringUtilReplaceValues.put(
+						"OBJECT_FIELD_ID:" + objectField.getDBColumnName(),
+						String.valueOf(
+							objectField.getObjectFieldId()));
+				}
 
 				JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-				objectDefinition = ObjectDefinition.toDTO(
-					jsonObject.put("accountEntryRestrictedObjectFieldId", objectFieldId)
-					.put("accountEntryRestricted", true).toString());
+				Object restrictedObjectFieldId = jsonObjects.
+					remove("accountEntryRestrictedObjectFieldId").toString();
 
-				Long objectDefinitionId = Long.valueOf(
-					objectDefinitionIdsStringUtilReplaceValues.get(
-						"OBJECT_DEFINITION_ID:" + jsonObjects.getString("name")));
+				String json1 = jsonObject.put("accountEntryRestrictedObjectFieldId",
+						restrictedObjectFieldId)
+					.put("accountEntryRestricted", true).toString();
+
+				json1 =_replace(json1, objectFieldIdsStringUtilReplaceValues);
+
+				objectDefinition = ObjectDefinition.toDTO(json1);
 
 				objectDefinition =
 					objectDefinitionResource.patchObjectDefinition(
-						objectDefinitionId, objectDefinition);
+						objectDefinitionPublish.getObjectDefinitionId(), objectDefinition);
 
 				objectDefinitionResource.postObjectDefinitionPublish(
-					objectDefinitionId);
+					objectDefinitionPublish.getObjectDefinitionId());
 			}
 		}
 
