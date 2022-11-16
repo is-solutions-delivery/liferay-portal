@@ -59,19 +59,19 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class AnnotationFeature implements Feature {
 
 	@Override
-	public boolean configure(FeatureContext featureContext) {
+	public boolean configure(FeatureContext featureContext1) {
 		Set<String> scopes = new HashSet<>();
 
-		featureContext.register(
-			(DynamicFeature)(resourceInfo, fc) -> scopes.addAll(
+		featureContext1.register(
+			(DynamicFeature)(resourceInfo, featureContext2) -> scopes.addAll(
 				RequiresScopeAnnotationFinder.find(
 					resourceInfo.getResourceClass())));
 
-		featureContext.register(
+		featureContext1.register(
 			new AnnotationContainerScopeCheckerContainerRequestFilter(),
 			Priorities.AUTHORIZATION - 8);
 
-		Configuration configuration = featureContext.getConfiguration();
+		Configuration configuration = featureContext1.getConfiguration();
 
 		Map<String, Object> applicationProperties =
 			(Map<String, Object>)configuration.getProperty(
