@@ -2607,19 +2607,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 
-			Long objectDefinitionId = Long.valueOf((String)jsonObject.remove(
-				"objectDefinitionId"));
+			Long objectDefinitionId = Long.valueOf(
+				(String)jsonObject.remove("objectDefinitionId"));
 
-			ObjectField objectField = ObjectField.toDTO(JSONUtil.toString(jsonObject));
+			ObjectField objectField = ObjectField.toDTO(
+				JSONUtil.toString(jsonObject));
 
-			Page<ObjectField> objectFieldPage =
-				objectFieldResource.getObjectDefinitionObjectFieldsPage(
-					objectDefinitionId, null,
-					objectFieldResource.toFilter(
-						"name eq '" + objectField.getName() + "'"),
-					null, null);
-
-			ObjectField existingObjectField = objectFieldPage.fetchFirstItem();
+			com.liferay.object.model.ObjectField existingObjectField =
+				_objectFieldLocalService.fetchObjectField(
+					objectDefinitionId, objectField.getName());
 
 			if (existingObjectField == null) {
 				objectFieldResource.postObjectDefinitionObjectField(
@@ -2627,7 +2623,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 			else {
 				objectFieldResource.putObjectField(
-					existingObjectField.getId(), objectField);
+					existingObjectField.getObjectFieldId(), objectField);
 			}
 		}
 	}
