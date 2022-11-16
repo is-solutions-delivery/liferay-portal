@@ -1154,10 +1154,9 @@ public class JournalTestUtil {
 
 		DDMForm ddmForm = new DDMForm();
 
-		ddmForm.setDefaultLocale(locale);
 		ddmForm.addAvailableLocale(locale);
-
 		ddmForm.addDDMFormField(ddmFormField);
+		ddmForm.setDefaultLocale(locale);
 
 		return ddmForm;
 	}
