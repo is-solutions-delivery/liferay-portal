@@ -346,9 +346,8 @@ const SelectSubscription = ({
 									? 0
 									: numberOfActivationKeysAvailable;
 
-							const currentDate = new Date()
-								.toISOString()
-								.split('T')[0];
+							const isNotExpired =
+								new Date() < new Date(subscriptionTerm.endDate);
 
 							return (
 								<Radio
@@ -365,8 +364,7 @@ const SelectSubscription = ({
 									isActivationKeyAvailable={
 										subscriptionTerm.quantity -
 											subscriptionTerm.provisionedCount >
-											0 &&
-										subscriptionTerm.endDate > currentDate
+											0 && isNotExpired
 									}
 									key={index}
 									label={currentStartAndEndDate}
