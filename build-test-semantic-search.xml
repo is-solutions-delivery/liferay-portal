@@ -9,19 +9,20 @@
 
 	<macrodef name="build-txtai-docker-image">
 		<sequential>
-			<echo file="${project.dir}/txtai/config.yml">path: /tmp/index
-writable: False
-embeddings:
-     path: sentence-transformers/msmarco-distilbert-base-dot-prod-v3</echo>
+			<echo file="${project.dir}/txtai/config.yml">embeddings:
+    path: sentence-transformers/msmarco-distilbert-base-dot-prod-v3
+path: /tmp/index
+writable: False</echo>
 
 			<echo file="${project.dir}/txtai/Dockerfile">FROM neuml/txtai-cpu:5.1.0
 
 COPY config.yml .
 
-RUN python -c "from txtai.api import API; API('config.yml', False)"
-
 ENV CONFIG "config.yml"
-ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "txtai.api:app"]</echo>
+
+ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "txtai.api:app"]
+
+RUN python -c "from txtai.api import API; API('config.yml', False)"</echo>
 
 			<execute dir="${project.dir}/txtai">
 				<![CDATA[
