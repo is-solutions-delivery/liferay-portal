@@ -139,6 +139,9 @@ public class ImportObjectDefinitionMVCActionCommand
 		JSONObject objectDefinitionJSONObject = _jsonFactory.createJSONObject(
 			objectDefinitionJSON);
 
+		objectDefinitionJSONObject.remove(
+			"accountEntryRestrictedObjectFieldId");
+
 		ObjectDefinition objectDefinition = ObjectDefinition.toDTO(
 			objectDefinitionJSONObject.toString());
 
