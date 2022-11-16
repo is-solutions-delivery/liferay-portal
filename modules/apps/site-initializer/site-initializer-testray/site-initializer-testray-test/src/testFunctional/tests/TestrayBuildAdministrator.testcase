@@ -2,6 +2,7 @@
 definition {
 
 	property custom.properties = "feature.flag.LPS-163118=true";
+	property custom.properties = "feature.flag.LPS-165482=true";
 	property osgi.modules.includes = "site-initializer-testray";
 	property portal.release = "false";
 	property portal.upstream = "true";

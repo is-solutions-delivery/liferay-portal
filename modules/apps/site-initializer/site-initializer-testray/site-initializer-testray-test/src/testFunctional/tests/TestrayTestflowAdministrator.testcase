@@ -17,20 +17,6 @@ definition {
 			Testray.addTestraySite();
 
 			Refresh();
-
-			JSONUser.addUser(
-				userEmailAddress = "userea@liferay.com",
-				userFirstName = "userfn",
-				userLastName = "userln",
-				userScreenName = "usersn");
-
-			JSONUserGroup.addUserGroup(
-				userGroupDescription = "UG UserGroup Name Description",
-				userGroupName = "UG UserGroup Name");
-
-			UserGroup.openUserGroupsAdmin();
-
-			UserGroup.assignAllMembersCP(userGroupName = "UG UserGroup Name");
 		}
 
 		task ("Go to Testray, Create Project and change pagination") {
@@ -145,6 +131,24 @@ definition {
 	@priority = "5"
 	test AdminCanAddTaskWithUserGroups {
 		task ("Given the user add a Task with user groups") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUserGroup.addUserGroup(
+				userGroupDescription = "UG UserGroup Name Description",
+				userGroupName = "UG UserGroup Name");
+
+			UserGroup.openUserGroupsAdmin();
+
+			UserGroup.assignAllMembersCP(userGroupName = "UG UserGroup Name");
+
+			ApplicationsMenu.gotoSite(site = "Testray 2");
+
+			TestrayTestflow.goToTestflow();
+
 			Click(locator1 = "Button#PLUS");
 
 			TestrayTestflow.editBreadcrumb(

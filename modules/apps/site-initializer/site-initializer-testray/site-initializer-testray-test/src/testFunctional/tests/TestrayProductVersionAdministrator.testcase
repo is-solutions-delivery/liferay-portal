@@ -12,7 +12,7 @@ definition {
 		task ("Login and create a Testray Site") {
 			TestCase.setUpPortalInstance();
 
-			User.firstLoginPG();
+			User.firstLoginUI();
 
 			Testray.addTestraySite();
 

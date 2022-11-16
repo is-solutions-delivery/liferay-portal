@@ -34,7 +34,7 @@ definition {
 	@priority = "5"
 	test AdminCanAddTeam {
 		task ("Go to Testray and Create Project") {
-			ApplicationsMenu.gotoSite(site = "Testray 2");
+			Site.openSitesAdmin();
 
 			Testray.createProjectTestray(
 				description = "Projects_1 Project Description",
@@ -59,7 +59,7 @@ definition {
 	@priority = "5"
 	test AdminCanDeleteTeam {
 		task ("Go to Testray and Create Project") {
-			ApplicationsMenu.gotoSite(site = "Testray 2");
+			Site.openSitesAdmin();
 
 			Testray.createProjectTestray(
 				description = "Projects_1 Project Description",
@@ -90,7 +90,7 @@ definition {
 	@priority = "5"
 	test AdminCanEditTeam {
 		task ("Go to Testray and Create Project") {
-			ApplicationsMenu.gotoSite(site = "Testray 2");
+			Site.openSitesAdmin();
 
 			Testray.createProjectTestray(
 				description = "Projects_1 Project Description",
@@ -121,7 +121,7 @@ definition {
 	@priority = "5"
 	test AdminCanNotAddDuplicateTeams {
 		task ("Go to Testray and Create Project") {
-			ApplicationsMenu.gotoSite(site = "Testray 2");
+			Site.openSitesAdmin();
 
 			Testray.createProjectTestray(
 				description = "Projects_1 Project Description",
@@ -153,7 +153,7 @@ definition {
 	@priority = "4"
 	test AdminCanViewWarningMessage {
 		task ("Go to Testray and Create Project") {
-			ApplicationsMenu.gotoSite(site = "Testray 2");
+			Site.openSitesAdmin();
 
 			Testray.createProjectTestray(
 				description = "Projects_1 Project Description",
