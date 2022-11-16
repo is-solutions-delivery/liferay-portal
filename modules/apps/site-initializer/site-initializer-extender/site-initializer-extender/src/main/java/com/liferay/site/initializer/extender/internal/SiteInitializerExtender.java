@@ -49,6 +49,7 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -141,15 +142,14 @@ public class SiteInitializerExtender
 				_listTypeEntryResourceFactory,
 				_notificationTemplateResourceFactory, _objectActionLocalService,
 				_objectDefinitionLocalService, _objectDefinitionResourceFactory,
-				_objectEntryLocalService, _objectFieldResourceFactory,
-				_objectRelationshipLocalService,
-				_objectRelationshipResourceFactory,
-				_organizationLocalService, _organizationResourceFactory,
-				_portal, _resourceActionLocalService,
-				_resourcePermissionLocalService, _roleLocalService,
-				_sapEntryLocalService, _segmentsEntryLocalService,
-				_segmentsExperienceLocalService, null, _settingsFactory,
-				_siteNavigationMenuItemLocalService,
+				_objectEntryLocalService, _objectFieldLocalService,
+				_objectFieldResourceFactory, _objectRelationshipLocalService,
+				_objectRelationshipResourceFactory, _organizationLocalService,
+				_organizationResourceFactory, _portal,
+				_resourceActionLocalService, _resourcePermissionLocalService,
+				_roleLocalService, _sapEntryLocalService,
+				_segmentsEntryLocalService, _segmentsExperienceLocalService,
+				null, _settingsFactory, _siteNavigationMenuItemLocalService,
 				_siteNavigationMenuItemTypeRegistry,
 				_siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
@@ -253,8 +253,8 @@ public class SiteInitializerExtender
 				_listTypeEntryResourceFactory,
 				_notificationTemplateResourceFactory, _objectActionLocalService,
 				_objectDefinitionLocalService, _objectDefinitionResourceFactory,
-				_objectEntryLocalService, _objectFieldResourceFactory,
-				_objectRelationshipLocalService,
+				_objectEntryLocalService, _objectFieldLocalService,
+				_objectFieldResourceFactory, _objectRelationshipLocalService,
 				_objectRelationshipResourceFactory, _organizationLocalService,
 				_organizationResourceFactory, _portal,
 				_resourceActionLocalService, _resourcePermissionLocalService,
@@ -394,6 +394,9 @@ public class SiteInitializerExtender
 
 	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Reference
+	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
 	private ObjectFieldResource.Factory _objectFieldResourceFactory;
