@@ -327,7 +327,7 @@ renderResponse.setTitle(blogsEditEntryDisplayContext.getPageTitle(resourceBundle
 					</aui:fieldset>
 				</liferay-expando:custom-attributes-available>
 
-				<c:if test="<%= (entry == null) || (entry.getStatus() == WorkflowConstants.STATUS_DRAFT) %>">
+				<c:if test="<%= (entry == null) || ((entry.getStatus() == WorkflowConstants.STATUS_DRAFT) && entry.isNew()) %>">
 					<aui:fieldset collapsed="<%= true %>" collapsible="<%= true %>" label="permissions">
 						<liferay-ui:input-permissions
 							modelName="<%= BlogsEntry.class.getName() %>"
