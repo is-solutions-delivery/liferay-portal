@@ -439,6 +439,7 @@ public class CPDefinitionsImporter {
 
 			Indexer<CPDefinition> indexer =
 				IndexerRegistryUtil.nullSafeGetIndexer(CPDefinition.class);
+
 			indexer.reindex(cpDefinition);
 
 			return cpDefinition;
