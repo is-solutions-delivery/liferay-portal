@@ -16,10 +16,9 @@ package com.liferay.portal.company.log.internal.servlet;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.exception.NoSuchCompanyException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -89,11 +88,10 @@ public class CompanyLogServlet extends HttpServlet {
 			String[] pathArray = StringUtil.split(path, CharPool.SLASH);
 
 			if (pathArray.length == 0) {
-				_listCompaniesLogFiles(httpServletRequest, httpServletResponse);
+				_list(httpServletRequest, httpServletResponse);
 			}
 			else if (pathArray.length == 2) {
-				_downloadLogFile(
-					httpServletRequest, httpServletResponse, pathArray);
+				_download(httpServletRequest, httpServletResponse, pathArray);
 			}
 		}
 		catch (FileNotFoundException fileNotFoundException) {
@@ -115,17 +113,14 @@ public class CompanyLogServlet extends HttpServlet {
 		}
 	}
 
-	private void _downloadLogFile(
+	private void _download(
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, String[] pathArray)
 		throws Exception {
 
 		long companyId = GetterUtil.getLongStrict(pathArray[0]);
 
-		if (_companyLocalService.fetchCompanyById(companyId) == null) {
-			throw new NoSuchCompanyException(
-				"No Company exists with the primary key " + companyId);
-		}
+		_companyLocalService.getCompanyById(companyId);
 
 		PermissionChecker permissionChecker = _getPermissionChecker(
 			httpServletRequest);
@@ -144,58 +139,54 @@ public class CompanyLogServlet extends HttpServlet {
 		path = path.normalize();
 
 		if (!path.startsWith(companyLogDirectory.getPath())) {
-			throw new PrincipalException("Unauthorized access");
+			throw new PrincipalException("Invalid path " + path);
 		}
 
-		File logFile = path.toFile();
+		File file = path.toFile();
 
-		if (!logFile.exists()) {
+		if (!file.exists()) {
 			throw new FileNotFoundException(
 				StringBundler.concat(
-					"Unable to find log file ", fileName, " for company ",
+					"Unable to get file ", fileName, " for company ",
 					companyId));
 		}
 
-		String startIndex = ParamUtil.getString(
-			httpServletRequest, "startIndex");
-		String endIndex = ParamUtil.getString(httpServletRequest, "endIndex");
+		String startString = ParamUtil.getString(httpServletRequest, "start");
+		String endString = ParamUtil.getString(httpServletRequest, "end");
 
-		if (Validator.isNull(startIndex) && Validator.isNull(endIndex)) {
+		if (Validator.isNull(startString) && Validator.isNull(endString)) {
 			ServletResponseUtil.sendFile(
 				httpServletRequest, httpServletResponse, fileName,
-				Files.newInputStream(logFile.toPath()), logFile.length(),
+				Files.newInputStream(file.toPath()), file.length(),
 				_mimeTypes.getContentType(fileName),
 				HttpHeaders.CONTENT_DISPOSITION_ATTACHMENT);
 		}
 		else {
 			long start = 0;
 
-			if (Validator.isNotNull(startIndex)) {
-				start = GetterUtil.getLongStrict(startIndex);
+			if (Validator.isNotNull(startString)) {
+				start = GetterUtil.getLongStrict(startString);
 			}
 
-			long end = logFile.length();
+			long end = file.length();
 
-			if (Validator.isNotNull(endIndex)) {
-				long parsedEnd = GetterUtil.getLongStrict(endIndex);
+			if (Validator.isNotNull(endString) &&
+				(GetterUtil.getLongStrict(endString) < end)) {
 
-				if (parsedEnd < end) {
-					end = parsedEnd;
-				}
+				end = GetterUtil.getLongStrict(endString);
 			}
 
 			if ((start < 0) || (end < 0) || (start >= end)) {
-				throw new PrincipalException(
-					"startIndex or endIndex can not be less than 0, and " +
-						"startIndex can not be greater than or equal to " +
-							"endIndex");
+				throw new IllegalArgumentException(
+					"Start and end cannot be less than 0. Start cannot be " +
+						"greater than or equal to end.");
 			}
 
 			if (start != 0) {
 				--start;
 			}
 
-			try (FileChannel fileChannel = FileChannel.open(logFile.toPath())) {
+			try (FileChannel fileChannel = FileChannel.open(file.toPath())) {
 				fileChannel.position(start);
 
 				ServletResponseUtil.sendFile(
@@ -214,89 +205,75 @@ public class CompanyLogServlet extends HttpServlet {
 		User user = _portal.getUser(httpServletRequest);
 
 		if (user == null) {
-			throw new PrincipalException(
-				"The current user is not authenticated");
+			throw new PrincipalException.MustBeAuthenticated(0);
 		}
 
 		return _permissionCheckerFactory.create(user);
 	}
 
-	private void _listCompaniesLogFiles(
+	private void _list(
+			Company company, JSONArray jsonArray,
+			HttpServletRequest httpServletRequest)
+		throws Exception {
+
+		jsonArray.put(
+			JSONUtil.put(
+				"companyId", company.getCompanyId()
+			).put(
+				"companyLogs",
+				() -> {
+					File companyLogDirectory = Log4JUtil.getCompanyLogDirectory(
+						company.getCompanyId());
+
+					File[] files = companyLogDirectory.listFiles();
+
+					Arrays.sort(files);
+
+					return JSONUtil.toJSONArray(
+						files,
+						file -> JSONUtil.put(
+							"fileName", file.getName()
+						).put(
+							"fileSize",
+							_language.formatStorageSize(
+								file.length(), httpServletRequest.getLocale())
+						));
+				}
+			).put(
+				"webId", company.getWebId()
+			));
+	}
+
+	private void _list(
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse)
 		throws Exception {
 
+		httpServletResponse.setContentType(ContentTypes.APPLICATION_JSON);
+		httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+
 		PermissionChecker permissionChecker = _getPermissionChecker(
 			httpServletRequest);
 
-		JSONArray companyLogFilesJSONArray = _jsonFactory.createJSONArray();
-
 		if (permissionChecker.isOmniadmin()) {
 			_companyLocalService.forEachCompany(
-				company -> _listCompanyLogFiles(
-					httpServletRequest, company, companyLogFilesJSONArray));
+				company -> _list(company, jsonArray, httpServletRequest));
 		}
 		else if (permissionChecker.isCompanyAdmin()) {
 			User user = permissionChecker.getUser();
 
-			_listCompanyLogFiles(
-				httpServletRequest,
-				_companyLocalService.getCompany(user.getCompanyId()),
-				companyLogFilesJSONArray);
+			_list(
+				_companyLocalService.getCompany(user.getCompanyId()), jsonArray,
+				httpServletRequest);
 		}
 		else {
 			throw new PrincipalException.MustBeCompanyAdmin(
 				permissionChecker.getUserId());
 		}
 
-		httpServletResponse.setContentType(ContentTypes.APPLICATION_JSON);
-		httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-
-		ServletResponseUtil.write(
-			httpServletResponse, companyLogFilesJSONArray.toString());
-	}
-
-	private void _listCompanyLogFiles(
-			HttpServletRequest httpServletRequest, Company company,
-			JSONArray companyLogFilesJSONArray)
-		throws Exception {
-
-		File companyLogDirectory = Log4JUtil.getCompanyLogDirectory(
-			company.getCompanyId());
-
-		JSONObject companyLogFileJSONObject = _jsonFactory.createJSONObject();
-
-		companyLogFileJSONObject.put(
-			"companyId", company.getCompanyId()
-		).put(
-			"webId", company.getWebId()
-		);
-
-		JSONArray companyLogFileInfosJSONArray = _jsonFactory.createJSONArray();
-
-		File[] companyLogFiles = companyLogDirectory.listFiles();
-
-		Arrays.sort(companyLogFiles);
-
-		for (File file : companyLogFiles) {
-			JSONObject companyLogFileInfoJSONObject =
-				_jsonFactory.createJSONObject();
-
-			companyLogFileInfoJSONObject.put(
-				"logFileName", file.getName()
-			).put(
-				"logFileSize",
-				_language.formatStorageSize(
-					file.length(), httpServletRequest.getLocale())
-			);
-
-			companyLogFileInfosJSONArray.put(companyLogFileInfoJSONObject);
-		}
-
-		companyLogFileJSONObject.put(
-			"companyLogFileInfos", companyLogFileInfosJSONArray);
-
-		companyLogFilesJSONArray.put(companyLogFileJSONObject);
+		ServletResponseUtil.write(httpServletResponse, jsonArray.toString());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
