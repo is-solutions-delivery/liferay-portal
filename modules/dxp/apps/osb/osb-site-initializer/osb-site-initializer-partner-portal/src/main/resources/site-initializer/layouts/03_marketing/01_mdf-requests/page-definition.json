@@ -20,6 +20,25 @@
 				"pageElements": [
 					{
 						"definition": {
+							"fragment": {
+								"key": "change-mdf-listing-pages"
+							},
+							"fragmentConfig": {
+								"channelAccountManager": true,
+								"channelFinanceManager": true,
+								"channelGeneralManager": true,
+								"channelGlobalMarketingManager": true,
+								"channelRegionalMarketingManager": true,
+								"user": false
+							},
+							"fragmentFields": [
+							],
+							"indexed": true
+						},
+						"type": "Fragment"
+					},
+					{
+						"definition": {
 							"widgetInstance": {
 								"widgetConfig": {
 									"properties": "route=mdf-request-list"
