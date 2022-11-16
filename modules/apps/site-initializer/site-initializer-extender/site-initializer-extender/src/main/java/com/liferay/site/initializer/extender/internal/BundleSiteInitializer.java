@@ -470,20 +470,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
 				_invoke(() -> _addOrUpdateListTypeDefinitions(serviceContext));
 
-			ObjectDefinitionResource.Builder objectDefinitionResourceBuilder =
-				_objectDefinitionResourceFactory.create();
-
-			ObjectDefinitionResource objectDefinitionResource =
-				objectDefinitionResourceBuilder.user(
-					serviceContext.fetchUser()
-				).build();
-
 			Map<String, String>
 				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues =
 					_invoke(
 						() -> _addObjectDefinitions(
 							listTypeDefinitionIdsStringUtilReplaceValues,
-							objectDefinitionResource, serviceContext,
+							serviceContext,
 							siteNavigationMenuItemSettingsBuilder));
 
 			_invoke(
@@ -1055,7 +1047,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private Map<String, String> _addObjectDefinitions(
 			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues,
-			ObjectDefinitionResource objectDefinitionResource,
 			ServiceContext serviceContext,
 			SiteNavigationMenuItemSettingsBuilder
 				siteNavigationMenuItemSettingsBuilder)
@@ -1083,6 +1074,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				"OBJECT_DEFINITION_ID:" + objectDefinition.getName(),
 				String.valueOf(objectDefinition.getObjectDefinitionId()));
 		}
+
+		ObjectDefinitionResource.Builder objectDefinitionResourceBuilder =
+			_objectDefinitionResourceFactory.create();
+
+		ObjectDefinitionResource objectDefinitionResource =
+			objectDefinitionResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
 
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-actions.json")) {
