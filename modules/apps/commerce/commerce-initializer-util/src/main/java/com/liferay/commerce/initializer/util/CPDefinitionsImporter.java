@@ -39,6 +39,7 @@ import com.liferay.commerce.product.model.CPOption;
 import com.liferay.commerce.product.model.CPOptionCategory;
 import com.liferay.commerce.product.model.CPSpecificationOption;
 import com.liferay.commerce.product.model.CPTaxCategory;
+import com.liferay.commerce.product.model.CommerceChannelRel;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelLocalService;
 import com.liferay.commerce.product.service.CPDefinitionOptionValueRelLocalService;
@@ -424,13 +425,20 @@ public class CPDefinitionsImporter {
 			_addExpandoValue(
 				cpDefinition, jsonObject.getJSONArray("customFields"));
 
-			_commerceChannelRelLocalService.addCommerceChannelRel(
-				CPDefinition.class.getName(), cpDefinition.getCPDefinitionId(),
-				commerceChannelId, serviceContext);
+			CommerceChannelRel commerceChannelRel =
+				_commerceChannelRelLocalService.fetchCommerceChannelRel(
+					CPDefinition.class.getName(),
+					cpDefinition.getCPDefinitionId(), commerceChannelId);
+
+			if (commerceChannelRel == null) {
+				_commerceChannelRelLocalService.addCommerceChannelRel(
+					CPDefinition.class.getName(),
+					cpDefinition.getCPDefinitionId(), commerceChannelId,
+					serviceContext);
+			}
 
 			Indexer<CPDefinition> indexer =
 				IndexerRegistryUtil.nullSafeGetIndexer(CPDefinition.class);
-
 			indexer.reindex(cpDefinition);
 
 			return cpDefinition;
