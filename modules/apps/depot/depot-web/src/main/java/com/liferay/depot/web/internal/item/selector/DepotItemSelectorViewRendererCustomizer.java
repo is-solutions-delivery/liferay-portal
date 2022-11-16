@@ -100,8 +100,8 @@ public class DepotItemSelectorViewRendererCustomizer
 			AssetEntryItemSelectorCriterion.class,
 			AudioItemSelectorCriterion.class, FileItemSelectorCriterion.class,
 			ImageItemSelectorCriterion.class,
-			InfoItemItemSelectorCriterion.class,
 			InfoCollectionProviderItemSelectorCriterion.class,
+			InfoItemItemSelectorCriterion.class,
 			LayoutItemSelectorCriterion.class,
 			VideoItemSelectorCriterion.class);
 
