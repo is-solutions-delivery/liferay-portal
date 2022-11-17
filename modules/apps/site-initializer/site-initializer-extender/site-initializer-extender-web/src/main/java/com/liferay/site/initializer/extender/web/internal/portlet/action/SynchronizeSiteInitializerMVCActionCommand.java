@@ -25,8 +25,11 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.site.initializer.extender.web.internal.constants.SiteInitializerExtenderPortletKeys;
+
+import java.io.File;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -78,11 +81,23 @@ public class SynchronizeSiteInitializerMVCActionCommand
 			return;
 		}
 
+		if (false) {
+
+			// TODO BundleSiteInitializerTest#testInitializeFromFile
+
+			File file = new File("");
+
+			siteInitializer = _siteInitializerFactory.create(file);
+		}
+
 		siteInitializer.initialize(themeDisplay.getScopeGroupId());
 	}
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private SiteInitializerFactory _siteInitializerFactory;
 
 	@Reference
 	private SiteInitializerRegistry _siteInitializerRegistry;
