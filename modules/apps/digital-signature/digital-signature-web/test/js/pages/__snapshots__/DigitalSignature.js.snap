@@ -67,7 +67,7 @@ exports[`DigitalSignature renders 1`] = `
               <button
                 class="nav-link nav-link-monospaced order-arrow-down-active btn btn-monospaced btn-unstyled"
                 disabled=""
-                title="reverse-order-direction"
+                title="reverse-sort-direction"
                 type="button"
               >
                 <svg
