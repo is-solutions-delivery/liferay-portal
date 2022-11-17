@@ -73,18 +73,16 @@ public class EditKBArticleDisplayContext {
 		_liferayPortletResponse = liferayPortletResponse;
 		_portletConfig = portletConfig;
 
-		_redirect = PortalUtil.escapeRedirect(
-			ParamUtil.getString(
-				_liferayPortletRequest.getHttpServletRequest(), "redirect",
-				String.valueOf(
-					PortletURLUtil.getCurrent(
-						_liferayPortletRequest, _liferayPortletResponse))));
-
-		_themeDisplay = (ThemeDisplay)_liferayPortletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		_httpServletRequest = PortalUtil.getHttpServletRequest(
 			liferayPortletRequest);
+		_redirect = PortalUtil.escapeRedirect(
+			ParamUtil.getString(
+				liferayPortletRequest.getHttpServletRequest(), "redirect",
+				String.valueOf(
+					PortletURLUtil.getCurrent(
+						liferayPortletRequest, liferayPortletResponse))));
+		_themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 	}
 
 	public Map<String, String> getAvailableKBArticleSections()
