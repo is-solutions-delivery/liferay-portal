@@ -118,8 +118,6 @@ public class JournalArticleDDMFormFieldTemplateContextContributor
 		infoItemItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
 			new JournalArticleItemSelectorReturnType());
 
-		long articleId = ParamUtil.getLong(httpServletRequest, "articleId");
-
 		return PortletURLBuilder.create(
 			_itemSelector.getItemSelectorURL(
 				RequestBackedPortletURLFactoryUtil.create(httpServletRequest),
@@ -129,6 +127,9 @@ public class JournalArticleDDMFormFieldTemplateContextContributor
 		).setParameter(
 			"refererClassPK",
 			() -> {
+				long articleId = ParamUtil.getLong(
+					httpServletRequest, "articleId");
+
 				if (articleId <= 0) {
 					return 0;
 				}
