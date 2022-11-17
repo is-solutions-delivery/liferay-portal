@@ -68,10 +68,10 @@ public class MVCCVersionUpgradeProcess extends UpgradeProcess {
 		try (LoggingTimer loggingTimer = new LoggingTimer()) {
 			DatabaseMetaData databaseMetaData = connection.getMetaData();
 
-			String[] moduleTableNames = getTableNames();
+			String[] tableNames = getTableNames();
 
-			for (String moduleTableName : moduleTableNames) {
-				upgradeMVCCVersion(databaseMetaData, moduleTableName);
+			for (String tableName : tableNames) {
+				upgradeMVCCVersion(databaseMetaData, tableName);
 			}
 		}
 	}
