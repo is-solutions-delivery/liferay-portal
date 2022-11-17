@@ -235,7 +235,7 @@ export default function ManagementToolbarFilterAndOrder({
 							onClick={() => onSortButtonClick(!asc, column)}
 							symbol="order-arrow"
 							title={Liferay.Language.get(
-								'reverse-order-direction'
+								'reverse-sort-direction'
 							)}
 						/>
 					</ManagementToolbar.Item>
