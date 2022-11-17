@@ -18,7 +18,6 @@ import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.dynamic.data.mapping.form.field.type.constants.ObjectDDMFormFieldTypeConstants;
-import com.liferay.object.exception.NoSuchObjectEntryException;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
 import com.liferay.object.model.ObjectDefinition;
@@ -139,14 +138,8 @@ public class RelationshipObjectFieldBusinessType
 			return baseModel.getPrimaryKeyObj();
 		}
 
-		ObjectEntry objectEntry = _objectEntryLocalService.fetchObjectEntry(
+		ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
 			externalReferenceCode, objectDefinition.getObjectDefinitionId());
-
-		if (objectEntry == null) {
-			throw new NoSuchObjectEntryException(
-				externalReferenceCode,
-				objectDefinition.getObjectDefinitionId());
-		}
 
 		return objectEntry.getObjectEntryId();
 	}
