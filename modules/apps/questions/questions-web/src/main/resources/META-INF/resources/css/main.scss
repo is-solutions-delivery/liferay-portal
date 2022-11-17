@@ -379,3 +379,38 @@ div {
 	border: 1px solid $primary-l1;
 	border-radius: 0.25rem;
 }
+
+.new-question-badge {
+	align-items: center;
+	background: #0b5fff;
+	border-radius: 4px;
+	color: #fff;
+	display: flex;
+	flex-direction: row;
+	font-size: 12px;
+	font-weight: bold;
+	height: 24px;
+	padding: 3px 8px;
+	width: 3rem;
+}
+.list-badges {
+	gap: 10px;
+}
+
+.rectangle-comment-reply {
+	border: 1px solid #cdced9;
+	border-radius: 4px;
+}
+
+.badge-activity {
+	border-radius: 4px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	padding: 3px 8px;
+}
+
+.label-badge-activity {
+	font-size: 0.75rem;
+	font-weight: bold;
+}
