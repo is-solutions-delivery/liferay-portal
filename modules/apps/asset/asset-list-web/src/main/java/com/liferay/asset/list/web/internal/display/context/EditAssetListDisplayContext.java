@@ -1202,11 +1202,7 @@ public class EditAssetListDisplayContext {
 		return JSONUtil.putAll(
 			stream.sorted(
 				Comparator.comparingInt(
-					AssetListEntrySegmentsEntryRel::getPriority
-				).thenComparing(
-						AssetListEntrySegmentsEntryRel::getCreateDate,
-						Comparator.reverseOrder()
-				)
+					AssetListEntrySegmentsEntryRel::getPriority)
 			).map(
 				assetListEntrySegmentsEntryRel -> JSONUtil.put(
 					"active",
