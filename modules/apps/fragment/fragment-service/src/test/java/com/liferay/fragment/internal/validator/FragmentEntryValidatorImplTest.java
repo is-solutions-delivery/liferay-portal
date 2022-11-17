@@ -66,7 +66,6 @@ public class FragmentEntryValidatorImplTest {
 
 		ReflectionTestUtil.setFieldValue(
 			_fragmentEntryValidatorImpl, "_jsonFactory", new JSONFactoryImpl());
-
 		ReflectionTestUtil.setFieldValue(
 			_fragmentEntryValidatorImpl, "_language", new LanguageImpl());
 	}
