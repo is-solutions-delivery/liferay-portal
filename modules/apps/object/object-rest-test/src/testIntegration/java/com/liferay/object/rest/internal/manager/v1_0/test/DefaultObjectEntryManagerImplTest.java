@@ -876,6 +876,7 @@ public class DefaultObjectEntryManagerImplTest {
 
 		Map<String, Object> actualObjectEntryProperties =
 			actualObjectEntry.getProperties();
+
 		Map<String, Object> expectedObjectEntryProperties =
 			expectedObjectEntry.getProperties();
 
