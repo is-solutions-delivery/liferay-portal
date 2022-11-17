@@ -122,9 +122,6 @@ public class DocumentRequestExecutorFixture {
 		SolrClientManager solrClientManager,
 		SolrDocumentFactory solrDocumentFactory) {
 
-		BulkableDocumentRequestTranslator bulkableDocumentRequestTranslator =
-			createBulkableDocumentRequestTranslator(solrDocumentFactory);
-
 		SolrDocumentRequestExecutor solrDocumentRequestExecutor =
 			new SolrDocumentRequestExecutor();
 
@@ -137,6 +134,10 @@ public class DocumentRequestExecutorFixture {
 			"_deleteByQueryDocumentRequestExecutor",
 			createDeleteByQueryDocumentRequestExecutor(
 				queryTranslator, solrClientManager));
+
+		BulkableDocumentRequestTranslator bulkableDocumentRequestTranslator =
+			createBulkableDocumentRequestTranslator(solrDocumentFactory);
+
 		ReflectionTestUtil.setFieldValue(
 			solrDocumentRequestExecutor, "_deleteDocumentRequestExecutor",
 			createDeleteDocumentRequestExecutor(
@@ -149,6 +150,7 @@ public class DocumentRequestExecutorFixture {
 			solrDocumentRequestExecutor, "_indexDocumentRequestExecutor",
 			createIndexDocumentRequestExecutor(
 				bulkableDocumentRequestTranslator, solrClientManager));
+
 		ReflectionTestUtil.setFieldValue(
 			solrDocumentRequestExecutor,
 			"_updateByQueryDocumentRequestExecutor",
