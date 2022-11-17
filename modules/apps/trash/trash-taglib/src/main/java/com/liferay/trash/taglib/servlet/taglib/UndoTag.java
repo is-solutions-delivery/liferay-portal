@@ -123,13 +123,13 @@ public class UndoTag extends IncludeTag {
 		List<Long> restoreTrashEntryIds = new ArrayList<>();
 		List<String> titles = new ArrayList<>();
 
-		TrashHelper trashHelper = ServletContextUtil.getTrashHelper();
-
 		for (TrashedModel trashedModel : trashedModels) {
 			try {
 				if (!(trashedModel instanceof BaseModel)) {
 					continue;
 				}
+
+				TrashHelper trashHelper = ServletContextUtil.getTrashHelper();
 
 				TrashEntry trashEntry = trashHelper.getTrashEntry(trashedModel);
 
