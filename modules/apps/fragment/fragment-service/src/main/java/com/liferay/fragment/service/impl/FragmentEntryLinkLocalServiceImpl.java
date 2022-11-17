@@ -576,7 +576,7 @@ public class FragmentEntryLinkLocalServiceImpl
 				 fragmentEntryLink.getRendererKey()))) {
 
 			throw new UnsupportedOperationException(
-				"Invalid Fragment Entry for propagation");
+				"Unable to propagate fragment entry " + fragmentEntryId);
 		}
 
 		boolean modified = false;
