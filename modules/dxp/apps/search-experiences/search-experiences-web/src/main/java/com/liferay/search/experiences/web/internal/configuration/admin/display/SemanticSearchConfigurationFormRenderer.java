@@ -115,8 +115,8 @@ public class SemanticSearchConfigurationFormRenderer
 			"txtaiPassword",
 			ParamUtil.getString(httpServletRequest, "txtaiPassword")
 		).put(
-			"txtaiUserName",
-			ParamUtil.getString(httpServletRequest, "txtaiUserName")
+			"txtaiUsername",
+			ParamUtil.getString(httpServletRequest, "txtaiUsername")
 		).build();
 	}
 
@@ -189,7 +189,7 @@ public class SemanticSearchConfigurationFormRenderer
 		semanticSearchCompanyConfigurationDisplayContext.setTxtaiPassword(
 			_semanticSearchConfiguration.txtaiPassword());
 		semanticSearchCompanyConfigurationDisplayContext.setTxtaiUserName(
-			_semanticSearchConfiguration.txtaiUserName());
+			_semanticSearchConfiguration.txtaiUsername());
 
 		httpServletRequest.setAttribute(
 			SemanticSearchCompanyConfigurationDisplayContext.class.getName(),

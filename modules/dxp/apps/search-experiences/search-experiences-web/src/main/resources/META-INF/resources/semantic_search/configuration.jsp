@@ -72,7 +72,7 @@ SemanticSearchCompanyConfigurationDisplayContext semanticSearchCompanyConfigurat
 			).put(
 				"txtaiPassword", semanticSearchCompanyConfigurationDisplayContext.getTxtaiPassword()
 			).put(
-				"txtaiUserName", semanticSearchCompanyConfigurationDisplayContext.getTxtaiUserName()
+				"txtaiUsername", semanticSearchCompanyConfigurationDisplayContext.getTxtaiUserName()
 			).build()
 		%>'
 	/>

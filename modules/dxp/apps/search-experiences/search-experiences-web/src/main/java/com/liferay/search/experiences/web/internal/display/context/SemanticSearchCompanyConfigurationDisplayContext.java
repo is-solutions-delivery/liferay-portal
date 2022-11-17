@@ -91,7 +91,7 @@ public class SemanticSearchCompanyConfigurationDisplayContext {
 	}
 
 	public String getTxtaiUserName() {
-		return _txtaiUserName;
+		return _txtaiUsername;
 	}
 
 	public boolean isSentenceTransformerEnabled() {
@@ -184,8 +184,8 @@ public class SemanticSearchCompanyConfigurationDisplayContext {
 		_txtaiPassword = txtaiPassword;
 	}
 
-	public void setTxtaiUserName(String txtaiUserName) {
-		_txtaiUserName = txtaiUserName;
+	public void setTxtaiUserName(String txtaiUsername) {
+		_txtaiUsername = txtaiUsername;
 	}
 
 	private List<String> _assetEntryClassNames;
@@ -206,6 +206,6 @@ public class SemanticSearchCompanyConfigurationDisplayContext {
 	private String _textTruncationStrategy;
 	private String _txtaiHostAddress;
 	private String _txtaiPassword;
-	private String _txtaiUserName;
+	private String _txtaiUsername;
 
 }

@@ -76,7 +76,7 @@ export default function ({
 	textTruncationStrategy,
 	txtaiHostAddress,
 	txtaiPassword,
-	txtaiUserName,
+	txtaiUsername,
 }) {
 	const _handleFormikValidate = (values) => {
 		const errors = {};
@@ -208,7 +208,7 @@ export default function ({
 			textTruncationStrategy,
 			txtaiHostAddress,
 			txtaiPassword,
-			txtaiUserName,
+			txtaiUsername,
 		},
 		validate: _handleFormikValidate,
 		validateOnMount: true,
@@ -279,15 +279,15 @@ export default function ({
 						/>
 
 						<Input
-							error={formik.errors.txtaiUserName}
+							error={formik.errors.txtaiUsername}
 							helpText={Liferay.Language.get(
 								'sentence-transformer-txtai-username-help'
 							)}
 							label={Liferay.Language.get('username')}
-							name={`${namespace}txtaiUserName`}
-							onBlur={_handleInputBlur('txtaiUserName')}
-							onChange={_handleInputChange('txtaiUserName')}
-							value={formik.values.txtaiUserName}
+							name={`${namespace}txtaiUsername`}
+							onBlur={_handleInputBlur('txtaiUsername')}
+							onChange={_handleInputChange('txtaiUsername')}
+							value={formik.values.txtaiUsername}
 						/>
 
 						<Input

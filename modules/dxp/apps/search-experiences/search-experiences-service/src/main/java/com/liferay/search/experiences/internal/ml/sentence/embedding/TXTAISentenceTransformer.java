@@ -75,7 +75,7 @@ public class TXTAISentenceTransformer
 			Http.Options options = new Http.Options();
 
 			if (!Validator.isBlank(
-					semanticSearchConfiguration.txtaiUserName())) {
+					semanticSearchConfiguration.txtaiUsername())) {
 
 				_setAuthOptions(options, semanticSearchConfiguration);
 			}
@@ -114,7 +114,7 @@ public class TXTAISentenceTransformer
 		options.setAuth(
 			HttpComponentsUtil.getDomain(
 				semanticSearchConfiguration.txtaiHostAddress()),
-			-1, null, semanticSearchConfiguration.txtaiUserName(),
+			-1, null, semanticSearchConfiguration.txtaiUsername(),
 			semanticSearchConfiguration.txtaiPassword());
 	}
 

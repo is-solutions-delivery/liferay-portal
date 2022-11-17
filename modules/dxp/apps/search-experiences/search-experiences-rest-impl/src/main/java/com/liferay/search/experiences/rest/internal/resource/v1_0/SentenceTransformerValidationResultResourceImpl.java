@@ -92,7 +92,7 @@ public class SentenceTransformerValidationResultResourceImpl
 		).put(
 			"txtaiPassword", jsonObject.getString("txtaiPassword")
 		).put(
-			"txtaiUserName", jsonObject.getString("txtaiUserName")
+			"txtaiUsername", jsonObject.getString("txtaiUsername")
 		).build();
 	}
 

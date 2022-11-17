@@ -59,7 +59,7 @@ public interface SemanticSearchConfiguration {
 		deflt = "", description = "sentence-transformer-txtai-username-help",
 		name = "username", required = false
 	)
-	public String txtaiUserName();
+	public String txtaiUsername();
 
 	@Meta.AD(
 		deflt = "", description = "sentence-transformer-txtai-password-help",
