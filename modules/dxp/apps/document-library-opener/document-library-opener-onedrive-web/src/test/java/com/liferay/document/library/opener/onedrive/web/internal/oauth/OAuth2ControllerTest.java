@@ -117,13 +117,10 @@ public class OAuth2ControllerTest {
 
 		ReflectionTestUtil.setFieldValue(
 			_oAuth2ControllerFactory, "_jsonFactory", new JSONFactoryImpl());
-
 		ReflectionTestUtil.setFieldValue(
 			_oAuth2ControllerFactory, "_oAuth2Manager", _oAuth2Manager);
-
 		ReflectionTestUtil.setFieldValue(
 			_oAuth2ControllerFactory, "_portal", _portal);
-
 		ReflectionTestUtil.setFieldValue(
 			_oAuth2ControllerFactory, "_portletURLFactory", _portletURLFactory);
 	}
