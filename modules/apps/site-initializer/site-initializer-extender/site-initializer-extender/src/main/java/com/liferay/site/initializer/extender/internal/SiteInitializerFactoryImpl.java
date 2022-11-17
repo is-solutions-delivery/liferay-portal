@@ -96,7 +96,7 @@ import org.osgi.service.component.annotations.Reference;
 public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 
 	@Override
-	public SiteInitializer create(File folder) throws Exception {
+	public SiteInitializer create(File file) throws Exception {
 		String fileKey = StringUtil.randomString(16);
 
 		String symbolicName = "Liferay Site Initializer - File - " + fileKey;
@@ -104,7 +104,7 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 		Bundle bundle = ProxyUtil.newDelegateProxyInstance(
 			Bundle.class.getClassLoader(), Bundle.class,
 			new FileBackedBundleDelegate(
-				_bundleContext, folder, _jsonFactory, symbolicName),
+				_bundleContext, file, _jsonFactory, symbolicName),
 			null);
 
 		BundleSiteInitializer bundleSiteInitializer = new BundleSiteInitializer(
@@ -152,7 +152,7 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			ProxyUtil.newDelegateProxyInstance(
 				ServletContext.class.getClassLoader(), ServletContext.class,
 				new FileBackedServletContextDelegate(
-					folder, fileKey, symbolicName),
+					file, fileKey, symbolicName),
 				null));
 
 		return bundleSiteInitializer;
