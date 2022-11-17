@@ -19,9 +19,12 @@ import java.text.DateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * @author Brian Wing Shun Chan
  */
+@ProviderType
 public interface DateFormatFactory {
 
 	public DateFormat getDate(Locale locale);

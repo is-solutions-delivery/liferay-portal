@@ -18,10 +18,13 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * @author Brian Wing Shun Chan
  * @author Marcellus Tavares
  */
+@ProviderType
 public interface CalendarFactory {
 
 	public Calendar getCalendar();
