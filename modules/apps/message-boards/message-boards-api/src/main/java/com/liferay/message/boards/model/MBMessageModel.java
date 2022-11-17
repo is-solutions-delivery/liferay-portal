@@ -687,4 +687,8 @@ public interface MBMessageModel
 	@Override
 	public MBMessage cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }

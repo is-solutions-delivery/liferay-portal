@@ -847,4 +847,8 @@ public interface CalendarBookingModel
 	@Override
 	public CalendarBooking cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }

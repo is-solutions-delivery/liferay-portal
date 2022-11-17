@@ -666,6 +666,11 @@ public class ExportImportConfigurationWrapper
 	}
 
 	@Override
+	public String toXmlString() {
+		return model.toXmlString();
+	}
+
+	@Override
 	protected ExportImportConfigurationWrapper wrap(
 		ExportImportConfiguration exportImportConfiguration) {
 

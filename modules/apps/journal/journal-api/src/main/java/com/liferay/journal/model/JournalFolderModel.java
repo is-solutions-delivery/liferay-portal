@@ -551,4 +551,8 @@ public interface JournalFolderModel
 	@Override
 	public JournalFolder cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }

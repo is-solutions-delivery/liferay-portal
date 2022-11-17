@@ -502,4 +502,8 @@ public interface BookmarksFolderModel
 	@Override
 	public BookmarksFolder cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }

@@ -690,4 +690,8 @@ public interface BlogsEntryModel
 	@Override
 	public BlogsEntry cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }

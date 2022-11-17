@@ -1235,6 +1235,11 @@ public class MBMessageWrapper
 	}
 
 	@Override
+	public String toXmlString() {
+		return model.toXmlString();
+	}
+
+	@Override
 	public void updateTreePath(String treePath) {
 		model.updateTreePath(treePath);
 	}

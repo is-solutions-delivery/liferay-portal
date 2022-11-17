@@ -746,4 +746,8 @@ public interface JournalArticleModel
 	@Override
 	public JournalArticle cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }

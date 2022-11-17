@@ -638,4 +638,8 @@ public interface WikiPageModel
 	@Override
 	public WikiPage cloneWithOriginalValues();
 
+	public default String toXmlString() {
+		return null;
+	}
+
 }
