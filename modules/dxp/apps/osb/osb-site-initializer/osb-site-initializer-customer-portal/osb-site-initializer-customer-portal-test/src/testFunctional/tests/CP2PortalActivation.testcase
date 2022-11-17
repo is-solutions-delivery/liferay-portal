@@ -1,0 +1,94 @@
+@component-name = "portal-solutions"
+definition {
+
+	property osgi.modules.includes = "osb-site-initializer-customer-portal";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer Customer Portal";
+
+	var testSiteName = "Customer Portal Site";
+	var testSiteURL = "customer-portal-site";
+	var testAccount = "NASA ICE";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Customer Portal Site") {
+			CustomerPortal.addCustomerPortalSite(siteName = "${testSiteName}");
+		}
+
+		task ("Add test user access to all Accounts") {
+			CustomerPortal.assignUserToOrganization();
+
+			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = "${testAccount}");
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		CustomerPortal.customerPortalApisTearDown();
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "${testSiteName}");
+		}
+	}
+    @description = "Automation ID: LPS-151346 | Test Summary: Verify if the filter Instance Size option displays a list 1 or more, depends on project"
+	@priority = "3"
+	test IfListOnInstanceSizeIsPresent{
+		
+       // TODO LPS-151343 archive pending implementation asdasda
+    }
+
+	@description = "Automation ID: LPS-151348 | Test Summary: Verify if the user can search a IP Addresses."
+	@priority = "3"
+	test IfUserCanSearchIPAddresses{
+
+	// TODO LPS-151343 archive pending implementation 
+
+	}
+
+	@description = "Automation ID: LPS-151350 | Test Summary: Verify if after the user click on the Apply button, the list of activation keys matches the selected criteria."
+	@priority = "3"
+	test PortalActivationApplyButton{
+
+        // TODO LPS-151343 archive pending implementation
+	}
+
+	@description = "Automation ID: LPS-151351 | Test Summary: Verify that the Environment Type has the options according to the project keys."
+	@priority = "2"
+	test EnvironmentTypeOptionsArePresent{
+
+        // TODO LPS-151343 archive pending implementation
+	}
+
+	@description = "Automation ID: LPS-151352 | Test Summary: Verify if the user can type a date in 'On or after' field on Start Date."
+	@priority = "4"
+	test IfDateOnStartDateWorks{
+
+        // TODO LPS-151343 archive pending implementation
+	}
+
+	@description = "Automation ID: LPS-151353 | Test Summary: Verify if the user can type a date in 'On or after' field on Expiration Date."
+	@priority = "4"
+	test IfDateOnExpirationDateWorks{
+
+        // TODO LPS-151343 archive pending implementation
+	}
+
+	@description = "Automation ID: LPS-151354 | Test Summary: Verify if Clear Filters button works."
+	@priority = "2"
+	test IfClearFiltersButtonWorks{
+
+        // TODO LPS-151343 archive pending implementation
+	}
+
+}
