@@ -89,7 +89,6 @@ public class SearchResponseResourceImplTest {
 		ReflectionTestUtil.setFieldValue(
 			_searchResponseResourceImpl, "contextUser",
 			Mockito.mock(User.class));
-
 		ReflectionTestUtil.setFieldValue(
 			_searchResponseResourceImpl, "_jsonFactory", new JSONFactoryImpl());
 		ReflectionTestUtil.setFieldValue(
