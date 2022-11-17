@@ -116,9 +116,9 @@ public class VulcanBatchEngineImportTaskResourceImpl
 			return object;
 		}
 
-		Map<?, ?> objectMap = (Map)object;
+		Map<?, ?> map = (Map)object;
 
-		return objectMap.get("items");
+		return map.get("items");
 	}
 
 	private String _getQueryParameterValue(String queryParameterName) {
