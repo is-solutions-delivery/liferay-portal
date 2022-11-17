@@ -220,225 +220,38 @@ public class BundleSiteInitializerTest {
 
 		bundle.start();
 
-		SiteInitializer siteInitializer =
-			_siteInitializerRegistry.getSiteInitializer(
-				bundle.getSymbolicName());
-
-		Group group = GroupTestUtil.addGroup();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				group.getGroupId(), TestPropsValues.getUserId());
-
-		MockHttpServletRequest mockHttpServletRequest =
-			new MockHttpServletRequest();
-
-		mockHttpServletRequest.setAttribute(
-			WebKeys.USER, TestPropsValues.getUser());
-		mockHttpServletRequest.setParameter(
-			"currentURL", "http://www.liferay.com");
-
-		serviceContext.setRequest(mockHttpServletRequest);
-
-		ServiceContextThreadLocal.pushServiceContext(serviceContext);
-
 		try {
-			siteInitializer.initialize(group.getGroupId());
-
-			_assertAccounts(serviceContext);
-			_assertAssetListEntries(group);
-			_assertAssetVocabularies(group);
-			_assertCommerceCatalogs(group);
-			_assertCommerceChannel(group);
-			_assertCommerceInventoryWarehouse(group);
-			_assertCommerceSpecificationProducts(serviceContext);
-			_assertCPDefinition(group);
-			_assertCPInstanceProperties(group);
-			_assertDDMStructure(group);
-			_assertDDMTemplate(group);
-			_assertDLFileEntry(group);
-			_assertExpandoColumns(serviceContext);
-			_assertFragmentEntries(group, serviceContext);
-			_assertJournalArticles(group);
-			_assertKBArticles(group);
-			_assertLayoutPageTemplateEntry(group);
-			_assertLayouts(group, serviceContext);
-			_assertLayoutSets(group);
-			_assertListTypeDefinitions(serviceContext);
-			_assertNotificationTemplate(serviceContext);
-			_assertObjectDefinitions(group, serviceContext);
-			_assertOrganizations(serviceContext);
-			_assertPermissions(group);
-			_assertPortletSettings(group);
-			_assertClientExtension(group);
-			_assertSAPEntries(group);
-			_assertSegmentsEntries(group.getGroupId());
-			_assertSiteConfiguration(group.getGroupId());
-			_assertSiteSettings(group.getGroupId());
-			_assertSiteNavigationMenu(group);
-			_assertStyleBookEntry(group);
-			_assertUserGroups(group);
-			_assertUserRoles(group);
-			_assertWorkflowDefinitions(group, serviceContext);
+			_test(
+				_siteInitializerRegistry.getSiteInitializer(
+					bundle.getSymbolicName()));
 		}
 		finally {
-			ServiceContextThreadLocal.popServiceContext();
-
-			GroupLocalServiceUtil.deleteGroup(group);
-
-			// TODO We should not need to delete the object definition manually
-			// because of DataGuardTestRule. However,
-			// ObjectDefinitionLocalServiceImpl#deleteObjectDefinition checks
-			// for PortalRunMode#isTestMode which is not returning true when the
-			// DataGuardTestRule runs.
-
-			ObjectDefinition objectDefinition1 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition1");
-
-			if (objectDefinition1 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition1.getObjectDefinitionId());
-			}
-
-			ObjectDefinition objectDefinition2 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition2");
-
-			if (objectDefinition2 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition2.getObjectDefinitionId());
-			}
-
-			ObjectDefinition objectDefinition3 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition3");
-
-			if (objectDefinition3 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition3.getObjectDefinitionId());
-			}
-
 			bundle.uninstall();
 		}
 	}
 
 	@Test
-	public void testInitializeFromFolder() throws Exception {
-		File tempBundleFile = FileUtil.createTempFile();
+	public void testInitializeFromFile() throws Exception {
+		File tempFile = FileUtil.createTempFile();
 
 		FileUtil.write(
-			tempBundleFile,
+			tempFile,
 			BundleSiteInitializerTest.class.getResourceAsStream(
 				"/com.liferay.site.initializer.extender.test.bundle.jar"));
 
-		File unzipFolder = FileUtil.createTempFolder();
+		File tempFolder = FileUtil.createTempFolder();
 
-		FileUtil.unzip(tempBundleFile, unzipFolder);
+		FileUtil.unzip(tempFile, tempFolder);
 
-		tempBundleFile.delete();
-
-		File siteInitializerFolder = new File(unzipFolder, "site-initializer");
-
-		SiteInitializer siteInitializer = _siteInitializerFactory.create(
-			siteInitializerFolder);
-
-		Group group = GroupTestUtil.addGroup();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				group.getGroupId(), TestPropsValues.getUserId());
-
-		MockHttpServletRequest mockHttpServletRequest =
-			new MockHttpServletRequest();
-
-		mockHttpServletRequest.setAttribute(
-			WebKeys.USER, TestPropsValues.getUser());
-		mockHttpServletRequest.setParameter(
-			"currentURL", "http://www.liferay.com");
-
-		serviceContext.setRequest(mockHttpServletRequest);
-
-		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+		tempFile.delete();
 
 		try {
-			siteInitializer.initialize(group.getGroupId());
-
-			_assertAccounts(serviceContext);
-			_assertAssetListEntries(group);
-			_assertAssetVocabularies(group);
-			_assertCommerceCatalogs(group);
-			_assertCommerceChannel(group);
-			_assertCommerceInventoryWarehouse(group);
-			_assertCommerceSpecificationProducts(serviceContext);
-			_assertCPDefinition(group);
-			_assertCPInstanceProperties(group);
-			_assertDDMStructure(group);
-			_assertDDMTemplate(group);
-			_assertDLFileEntry(group);
-			_assertExpandoColumns(serviceContext);
-			_assertFragmentEntries(group, serviceContext);
-			_assertJournalArticles(group);
-			_assertKBArticles(group);
-			_assertLayoutPageTemplateEntry(group);
-			_assertLayouts(group, serviceContext);
-			_assertLayoutSets(group);
-			_assertListTypeDefinitions(serviceContext);
-			_assertNotificationTemplate(serviceContext);
-			_assertObjectDefinitions(group, serviceContext);
-			_assertOrganizations(serviceContext);
-			_assertPermissions(group);
-			_assertPortletSettings(group);
-			_assertClientExtension(group);
-			_assertSAPEntries(group);
-			_assertSegmentsEntries(group.getGroupId());
-			_assertSiteConfiguration(group.getGroupId());
-			_assertSiteSettings(group.getGroupId());
-			_assertSiteNavigationMenu(group);
-			_assertStyleBookEntry(group);
-			_assertUserGroups(group);
-			_assertUserRoles(group);
-			_assertWorkflowDefinitions(group, serviceContext);
+			_test(
+				_siteInitializerFactory.create(
+					new File(tempFolder, "site-initializer")));
 		}
 		finally {
-			ServiceContextThreadLocal.popServiceContext();
-
-			GroupLocalServiceUtil.deleteGroup(group);
-
-			// TODO We should not need to delete the object definition manually
-			// because of DataGuardTestRule. However,
-			// ObjectDefinitionLocalServiceImpl#deleteObjectDefinition checks
-			// for PortalRunMode#isTestMode which is not returning true when the
-			// DataGuardTestRule runs.
-
-			ObjectDefinition objectDefinition1 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition1");
-
-			if (objectDefinition1 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition1.getObjectDefinitionId());
-			}
-
-			ObjectDefinition objectDefinition2 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition2");
-
-			if (objectDefinition2 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition2.getObjectDefinitionId());
-			}
-
-			ObjectDefinition objectDefinition3 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition3");
-
-			if (objectDefinition3 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition3.getObjectDefinitionId());
-			}
-
-			FileUtil.deltree(unzipFolder);
+			FileUtil.deltree(tempFolder);
 		}
 	}
 
@@ -1883,6 +1696,106 @@ public class BundleSiteInitializerTest {
 				BundleSiteInitializerTest.class.getResourceAsStream(location)) {
 
 			return bundleContext.installBundle(location, inputStream);
+		}
+	}
+
+	private void _test(SiteInitializer siteInitializer) throws Exception {
+		Group group = GroupTestUtil.addGroup();
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				group.getGroupId(), TestPropsValues.getUserId());
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.USER, TestPropsValues.getUser());
+		mockHttpServletRequest.setParameter(
+			"currentURL", "http://www.liferay.com");
+
+		serviceContext.setRequest(mockHttpServletRequest);
+
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+		try {
+			siteInitializer.initialize(group.getGroupId());
+
+			_assertAccounts(serviceContext);
+			_assertAssetListEntries(group);
+			_assertAssetVocabularies(group);
+			_assertCommerceCatalogs(group);
+			_assertCommerceChannel(group);
+			_assertCommerceInventoryWarehouse(group);
+			_assertCommerceSpecificationProducts(serviceContext);
+			_assertCPDefinition(group);
+			_assertCPInstanceProperties(group);
+			_assertDDMStructure(group);
+			_assertDDMTemplate(group);
+			_assertDLFileEntry(group);
+			_assertExpandoColumns(serviceContext);
+			_assertFragmentEntries(group, serviceContext);
+			_assertJournalArticles(group);
+			_assertKBArticles(group);
+			_assertLayoutPageTemplateEntry(group);
+			_assertLayouts(group, serviceContext);
+			_assertLayoutSets(group);
+			_assertListTypeDefinitions(serviceContext);
+			_assertNotificationTemplate(serviceContext);
+			_assertObjectDefinitions(group, serviceContext);
+			_assertOrganizations(serviceContext);
+			_assertPermissions(group);
+			_assertPortletSettings(group);
+			_assertClientExtension(group);
+			_assertSAPEntries(group);
+			_assertSegmentsEntries(group.getGroupId());
+			_assertSiteConfiguration(group.getGroupId());
+			_assertSiteSettings(group.getGroupId());
+			_assertSiteNavigationMenu(group);
+			_assertStyleBookEntry(group);
+			_assertUserGroups(group);
+			_assertUserRoles(group);
+			_assertWorkflowDefinitions(group, serviceContext);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+
+			GroupLocalServiceUtil.deleteGroup(group);
+
+			// TODO We should not need to delete the object definition manually
+			// because of DataGuardTestRule. However,
+			// ObjectDefinitionLocalServiceImpl#deleteObjectDefinition checks
+			// for PortalRunMode#isTestMode which is not returning true when the
+			// DataGuardTestRule runs.
+
+			ObjectDefinition objectDefinition1 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition1");
+
+			if (objectDefinition1 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition1.getObjectDefinitionId());
+			}
+
+			ObjectDefinition objectDefinition2 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition2");
+
+			if (objectDefinition2 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition2.getObjectDefinitionId());
+			}
+
+			ObjectDefinition objectDefinition3 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition3");
+
+			if (objectDefinition3 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition3.getObjectDefinitionId());
+			}
+
+			//FileUtil.deltree(unzipFolder);
 		}
 	}
 
