@@ -12,25 +12,12 @@
  * details.
  */
 
-import ClayIcon from '@clayui/icon';
 import React from 'react';
 
-export default function QuestionsBadge({
-	className,
-	iconInvert,
-	symbol,
-	tooltip,
-	value,
-}) {
+export default function UseActivityAnswerRow({className}) {
 	return (
-		<div
-			className={`c-py-2 c-px-3 rounded stretched-link-layer ${className}`}
-			data-tooltip-align="top"
-			title={tooltip}
-		>
-			{symbol && <ClayIcon className={`${iconInvert}`} symbol={symbol} />}
-
-			<span className="c-ml-2 font-weight-bold small">{value || 0}</span>
+		<div className={`rectangle-comment-reply ${className}`}>
+			<h5 className="c-ml-2 small text-secondary">TEXT</h5>
 		</div>
 	);
 }
