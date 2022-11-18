@@ -41,12 +41,6 @@ public class JaxRsApplicationDescriptor {
 		return _path;
 	}
 
-	public String getRESTContextPath() {
-		return StringBundler.concat(
-			_applicationPath, StringPool.SLASH, _version, StringPool.SLASH,
-			_path);
-	}
-
 	public String getVersion() {
 		return _version;
 	}
