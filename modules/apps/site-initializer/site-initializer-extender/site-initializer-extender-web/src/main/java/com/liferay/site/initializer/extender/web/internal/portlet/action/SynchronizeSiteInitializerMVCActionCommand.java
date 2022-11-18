@@ -116,10 +116,15 @@ public class SynchronizeSiteInitializerMVCActionCommand
 
 		tempFile.delete();
 
-		SiteInitializer siteInitializer = _siteInitializerFactory.create(
-			new File(tempFolder, "site-initializer"), siteInitializerKey);
+		try {
+			SiteInitializer siteInitializer = _siteInitializerFactory.create(
+				new File(tempFolder, "site-initializer"), siteInitializerKey);
 
-		siteInitializer.initialize(groupId);
+			siteInitializer.initialize(groupId);
+		}
+		finally {
+			tempFolder.delete();
+		}
 	}
 
 	@Reference
