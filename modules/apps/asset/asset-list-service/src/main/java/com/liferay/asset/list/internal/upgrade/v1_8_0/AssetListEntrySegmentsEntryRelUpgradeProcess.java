@@ -30,8 +30,8 @@ public class AssetListEntrySegmentsEntryRelUpgradeProcess
 	protected void doUpgrade() throws Exception {
 		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
 			"select assetListEntrySegmentsEntryRelId, assetListEntryId from " +
-			"AssetListEntrySegmentsEntryRel order by assetListEntryId asc, " +
-			"priority desc, createDate desc");
+			"AssetListEntrySegmentsEntryRel order by assetListEntryId ASC, " +
+			"priority DESC, createDate DESC");
 
 			 PreparedStatement preparedStatement2 =
 				 AutoBatchPreparedStatementUtil.concurrentAutoBatch(
