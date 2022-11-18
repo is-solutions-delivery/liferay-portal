@@ -32,6 +32,7 @@ const generalSchema = object({
 	}).test('is-empty', 'Required', (value) => !isObjectEmpty(value)),
 	primaryProspect: object({
 		businessUnit: string()
+			.trim()
 			.max(255, 'reached max characters')
 			.required('Required'),
 		department: object({
@@ -43,6 +44,7 @@ const generalSchema = object({
 			.email('must be a valid email')
 			.required('Required'),
 		firstName: string()
+			.trim()
 			.max(255, 'reached max characters')
 			.required('Required'),
 		jobRole: object({
@@ -50,22 +52,29 @@ const generalSchema = object({
 			name: string(),
 		}).test('is-empty', 'Required', (value) => !isObjectEmpty(value)),
 		lastName: string()
+			.trim()
 			.max(255, 'reached max characters')
 			.required('Required'),
 		phone: string().max(20, 'reached max characters').required('Required'),
 	}),
 	projectNeed: array().min(1, 'Required'),
 	projectTimeline: string()
+		.trim()
 		.max(255, 'reached max characters')
 		.required('Required'),
 	prospect: object({
 		accountName: string()
+			.trim()
 			.max(255, 'reached max characters')
 			.required('Required'),
 		address: string()
+			.trim()
 			.max(255, 'reached max characters')
 			.required('Required'),
-		city: string().max(255, 'reached max characters').required('Required'),
+		city: string()
+			.trim()
+			.max(255, 'reached max characters')
+			.required('Required'),
 		country: object({
 			key: string(),
 			name: string(),
@@ -75,6 +84,7 @@ const generalSchema = object({
 			name: string(),
 		}).test('is-empty', 'Required', (value) => !isObjectEmpty(value)),
 		postalCode: string()
+			.trim()
 			.max(255, 'reached max characters')
 			.required('Required'),
 		state: object({

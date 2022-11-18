@@ -25,6 +25,7 @@ const activitiesSchema = object({
 					) => typeActivity.value === TypeActivityKey.EVENT,
 					then: (schema) =>
 						schema
+							.trim()
 							.max(255, 'You have exceeded the character limit')
 							.required('Required'),
 				}),
@@ -59,11 +60,13 @@ const activitiesSchema = object({
 					) => typeActivity.value === TypeActivityKey.EVENT,
 					then: (schema) =>
 						schema
+							.trim()
 							.max(255, 'You have exceeded the character limit')
 							.required('Required'),
 				}),
 				detailsLeadFollowUp: string()
 					.max(255, 'You have exceeded the character limit')
+					.trim()
 					.required('Required'),
 				endDate: date()
 					.test(
@@ -168,6 +171,7 @@ const activitiesSchema = object({
 					) => typeActivity.value === TypeActivityKey.EVENT,
 					then: (schema) =>
 						schema
+							.trim()
 							.max(255, 'You have exceeded the character limit')
 							.required('Required'),
 				}),
@@ -181,6 +185,7 @@ const activitiesSchema = object({
 						) => typeActivity.value === TypeActivityKey.EVENT,
 						then: (schema) =>
 							schema
+								.trim()
 								.max(
 									255,
 									'You have exceeded the character limit'
@@ -194,6 +199,7 @@ const activitiesSchema = object({
 					) => typeActivity.value === TypeActivityKey.EVENT,
 					then: (schema) =>
 						schema
+							.trim()
 							.max(255, 'You have exceeded the character limit')
 							.required('Required'),
 				}),
@@ -215,6 +221,7 @@ const activitiesSchema = object({
 						}
 					),
 				name: string()
+					.trim()
 					.max(255, 'You have exceeded the character limit')
 					.required('Required'),
 				overallMessageContentCTA: string().when('typeActivity', {
@@ -245,6 +252,7 @@ const activitiesSchema = object({
 					) => typeActivity.value === TypeActivityKey.EVENT,
 					then: (schema) =>
 						schema
+							.trim()
 							.max(255, 'You have exceeded the character limit')
 							.required('Required'),
 				}),
@@ -297,6 +305,7 @@ const activitiesSchema = object({
 					(value) => !isObjectEmpty(value)
 				),
 				targetOfLeads: string()
+					.trim()
 					.max(255, 'You have exceeded the character limit')
 					.required('Required'),
 				typeActivity: object({
@@ -314,6 +323,7 @@ const activitiesSchema = object({
 					) => typeActivity.value === TypeActivityKey.EVENT,
 					then: (schema) =>
 						schema
+							.trim()
 							.max(255, 'You have exceeded the character limit')
 							.required('Required'),
 				}),
