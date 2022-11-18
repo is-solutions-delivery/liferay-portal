@@ -17,7 +17,6 @@ package com.liferay.portal.vulcan.internal.resource;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.petra.function.transform.TransformUtil;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -940,16 +939,12 @@ public class OpenAPIResourceImpl implements OpenAPIResource {
 
 				String ref = schema.get$ref();
 
-				if ((ref == null) ||
-					!ref.endsWith(StringPool.SLASH + entry.getKey())) {
-
+				if ((ref == null) || !ref.contains(entry.getKey())) {
 					return;
 				}
 
 				schema.set$ref(
-					StringUtil.replace(
-						ref, StringPool.SLASH + entry.getKey(),
-						StringPool.SLASH + entry.getValue()));
+					StringUtil.replace(ref, entry.getKey(), entry.getValue()));
 			}
 
 		};
