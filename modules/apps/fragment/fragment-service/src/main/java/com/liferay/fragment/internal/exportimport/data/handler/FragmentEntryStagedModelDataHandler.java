@@ -108,7 +108,10 @@ public class FragmentEntryStagedModelDataHandler
 			}
 			catch (PortalException portalException) {
 				if (_log.isWarnEnabled()) {
-					_log.warn("Unable to export file entry", portalException);
+					_log.warn(
+						"Unable to export file entry " +
+							fragmentEntry.getPreviewFileEntryId(),
+						portalException);
 				}
 			}
 		}
