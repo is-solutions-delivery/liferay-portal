@@ -44,7 +44,6 @@ import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectRelationshipService;
-import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.object.system.SystemObjectDefinitionMetadataRegistry;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -208,7 +207,7 @@ public class DefaultObjectEntryManagerImpl
 			primaryKey2, new ServiceContext());
 
 		SystemObjectDefinitionMetadata systemObjectDefinitionMetadata =
-			_systemObjectDefinitionMetadataRegistry.
+			_systemObjectDefinitionMetadataTracker.
 				getSystemObjectDefinitionMetadata(objectDefinition.getName());
 
 		PersistedModelLocalService persistedModelLocalService =
@@ -218,8 +217,7 @@ public class DefaultObjectEntryManagerImpl
 		return _toDTO(
 			(BaseModel<?>)persistedModelLocalService.getPersistedModel(
 				primaryKey2),
-			_objectEntryService.getObjectEntry(primaryKey1),
-			systemObjectDefinitionMetadata);
+			_objectEntryService.getObjectEntry(primaryKey1));
 	}
 
 	@Override
@@ -619,11 +617,7 @@ public class DefaultObjectEntryManagerImpl
 						objectEntry.getPrimaryKey(),
 						pagination.getStartPosition(),
 						pagination.getEndPosition()),
-				baseModel -> _toDTO(
-					baseModel, objectEntry,
-					_systemObjectDefinitionMetadataRegistry.
-						getSystemObjectDefinitionMetadata(
-							relatedObjectDefinition.getName()))));
+				baseModel -> _toDTO(baseModel, objectEntry)));
 	}
 
 	@Override
@@ -874,19 +868,13 @@ public class DefaultObjectEntryManagerImpl
 
 	private Object _toDTO(
 			BaseModel<?> baseModel,
-			com.liferay.object.model.ObjectEntry objectEntry,
-			SystemObjectDefinitionMetadata systemObjectDefinitionMetadata)
+			com.liferay.object.model.ObjectEntry objectEntry)
 		throws Exception {
-
-		JaxRsApplicationDescriptor jaxRsApplicationDescriptor =
-			systemObjectDefinitionMetadata.getJaxRsApplicationDescriptor();
 
 		DTOConverter<BaseModel<?>, ?> dtoConverter =
 			(DTOConverter<BaseModel<?>, ?>)
 				_dtoConverterRegistry.getDTOConverter(
-					jaxRsApplicationDescriptor.getApplicationName(),
-					baseModel.getModelClassName(),
-					jaxRsApplicationDescriptor.getVersion());
+					baseModel.getModelClassName());
 
 		if (dtoConverter == null) {
 			throw new InternalServerErrorException(

@@ -107,8 +107,7 @@ public class SystemObjectDefinitionMetadataServiceTrackerCustomizer
 						systemObjectDefinitionMetadata.getModelClass(),
 						_objectActionEngine, _objectDefinitionLocalService,
 						_objectEntryLocalService,
-						_objectValidationRuleLocalService,
-						systemObjectDefinitionMetadata, _userLocalService),
+						_objectValidationRuleLocalService, _userLocalService),
 					null)));
 	}
 
