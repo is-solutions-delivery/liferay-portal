@@ -16,13 +16,9 @@ package com.liferay.object.service.test.system;
 
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.system.BaseSystemObjectDefinitionMetadata;
-import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.Table;
-import com.liferay.petra.string.CharPool;
-import com.liferay.petra.string.StringPool;
-import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.BaseModel;
 
@@ -70,16 +66,8 @@ public class TestSystemObjectDefinitionMetadata
 	}
 
 	@Override
-	public JaxRsApplicationDescriptor getJaxRsApplicationDescriptor() {
-		List<String> restContextPaths = StringUtil.split(
-			_restContextPath, CharPool.SLASH);
-
-		return new JaxRsApplicationDescriptor(
-			"", restContextPaths.get(0),
-			StringUtil.merge(
-				restContextPaths.subList(2, restContextPaths.size()),
-				StringPool.SLASH),
-			restContextPaths.get(1));
+	public String getJaxRsApplicationName() {
+		return "";
 	}
 
 	@Override
@@ -110,6 +98,11 @@ public class TestSystemObjectDefinitionMetadata
 	@Override
 	public Column<?, Long> getPrimaryKeyColumn() {
 		return null;
+	}
+
+	@Override
+	public String getRESTContextPath() {
+		return _restContextPath;
 	}
 
 	@Override

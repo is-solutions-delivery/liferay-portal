@@ -17,7 +17,6 @@ package com.liferay.object.internal.system;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.system.BaseSystemObjectDefinitionMetadata;
-import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.Table;
@@ -68,10 +67,8 @@ public class AddressSystemObjectDefinitionMetadata
 	}
 
 	@Override
-	public JaxRsApplicationDescriptor getJaxRsApplicationDescriptor() {
-		return new JaxRsApplicationDescriptor(
-			"Liferay.Headless.Admin.User", "headless-admin-user",
-			"accounts/{accountId}/postal-addresses", "v1.0");
+	public String getJaxRsApplicationName() {
+		return "Liferay.Headless.Admin.User";
 	}
 
 	@Override
@@ -101,6 +98,11 @@ public class AddressSystemObjectDefinitionMetadata
 	@Override
 	public Column<?, Long> getPrimaryKeyColumn() {
 		return AddressTable.INSTANCE.addressId;
+	}
+
+	@Override
+	public String getRESTContextPath() {
+		return "headless-admin-user/v1.0/accounts/{accountId}/postal-addresses";
 	}
 
 	@Override

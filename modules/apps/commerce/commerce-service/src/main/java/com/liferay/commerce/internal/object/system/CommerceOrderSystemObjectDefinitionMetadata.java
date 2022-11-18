@@ -20,7 +20,6 @@ import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.system.BaseSystemObjectDefinitionMetadata;
-import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.Table;
@@ -72,10 +71,8 @@ public class CommerceOrderSystemObjectDefinitionMetadata
 	}
 
 	@Override
-	public JaxRsApplicationDescriptor getJaxRsApplicationDescriptor() {
-		return new JaxRsApplicationDescriptor(
-			"Liferay.Headless.Commerce.Admin.Order",
-			"headless-commerce-admin-order", "orders", "v1.0");
+	public String getJaxRsApplicationName() {
+		return "Liferay.Headless.Commerce.Admin.Order";
 	}
 
 	@Override
@@ -107,6 +104,11 @@ public class CommerceOrderSystemObjectDefinitionMetadata
 	@Override
 	public Column<?, Long> getPrimaryKeyColumn() {
 		return CommerceOrderTable.INSTANCE.commerceOrderId;
+	}
+
+	@Override
+	public String getRESTContextPath() {
+		return "headless-commerce-admin-order/v1.0/orders";
 	}
 
 	@Override

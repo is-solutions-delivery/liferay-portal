@@ -489,11 +489,6 @@ public class ObjectDefinitionLocalServiceTest {
 					}
 
 					@Override
-					public String getRESTContextPathVersion() {
-						return null;
-					}
-
-					@Override
 					public String getScope() {
 						return ObjectDefinitionConstants.SCOPE_COMPANY;
 					}
@@ -613,11 +608,6 @@ public class ObjectDefinitionLocalServiceTest {
 					@Override
 					public String getRESTContextPath() {
 						return "/";
-					}
-
-					@Override
-					public String getRESTContextPathVersion() {
-						return null;
 					}
 
 					@Override
