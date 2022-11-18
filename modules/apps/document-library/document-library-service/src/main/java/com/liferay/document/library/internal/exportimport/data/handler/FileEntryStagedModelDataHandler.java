@@ -620,7 +620,8 @@ public class FileEntryStagedModelDataHandler
 									DLFileEntryConstants.
 										PRIVATE_WORKING_COPY_VERSION)) {
 
-								_dlAppService.deleteFileVersion(
+								_dlFileEntryLocalService.deleteFileVersion(
+									userId,
 									latestExistingFileVersion.getFileEntryId(),
 									latestExistingFileVersion.getVersion());
 							}
