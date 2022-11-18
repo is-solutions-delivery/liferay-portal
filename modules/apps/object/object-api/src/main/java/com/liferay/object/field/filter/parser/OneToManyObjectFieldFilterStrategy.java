@@ -26,9 +26,9 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
-import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.object.system.SystemObjectDefinitionMetadataRegistry;
+import com.liferay.object.util.JaxRsApplicationDescriptorUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
@@ -109,11 +109,12 @@ public class OneToManyObjectFieldFilterStrategy
 					getSystemObjectDefinitionMetadata(
 						objectDefinition1.getName());
 
-			JaxRsApplicationDescriptor jaxRsApplicationDescriptor =
-				systemObjectDefinitionMetadata.getJaxRsApplicationDescriptor();
+			String contextPath =
+				JaxRsApplicationDescriptorUtil.getRESTContextPath(
+					systemObjectDefinitionMetadata.
+						getJaxRsApplicationDescriptor());
 
-			restContextPath =
-				"/o/" + jaxRsApplicationDescriptor.getRESTContextPath();
+			restContextPath = "/o/" + contextPath;
 		}
 		else {
 			restContextPath = "/o" + objectDefinition1.getRESTContextPath();
