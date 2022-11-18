@@ -14,6 +14,7 @@
 
 package com.liferay.object.rest.internal.resource.v1_0;
 
+import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.model.User;
@@ -83,7 +84,7 @@ public abstract class BaseObjectEntryRelatedObjectsResourceImpl {
 	@Produces({"application/json", "application/xml"})
 	@PUT
 	@Tags(@Tag(name = "ObjectEntry"))
-	public abstract Object putCurrentObjectEntry(
+	public abstract ObjectEntry putCurrentObjectEntry(
 			@NotNull @Parameter(hidden = true)
 			@PathParam("currentObjectEntryId")
 			Long currentObjectEntryId,
