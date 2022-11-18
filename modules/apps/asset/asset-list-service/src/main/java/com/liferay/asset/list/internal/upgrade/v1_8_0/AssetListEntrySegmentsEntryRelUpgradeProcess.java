@@ -29,7 +29,7 @@ public class AssetListEntrySegmentsEntryRelUpgradeProcess
 	@Override
 	protected void doUpgrade() throws Exception {
 		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
-			"select assetListEntrySegmentsEntryRelId, assetListEntryId from " +
+			"select alEntrySegmentsEntryRelId, assetListEntryId from " +
 			"AssetListEntrySegmentsEntryRel order by assetListEntryId ASC, " +
 			"priority DESC, createDate DESC");
 
@@ -37,14 +37,17 @@ public class AssetListEntrySegmentsEntryRelUpgradeProcess
 				 AutoBatchPreparedStatementUtil.concurrentAutoBatch(
 					 connection,
 					 "update AssetListEntrySegmentsEntryRel set priority = ? " +
-					 "where assetListEntrySegmentsEntryRelId = ?");
+					 "where alEntrySegmentsEntryRelId = ?");
 
 			ResultSet resultSet = preparedStatement1.executeQuery()) {
 
-			long priority = 0;
 			long previousAssetListEntryId = -1;
+			long priority = 0;
 
 			while (resultSet.next()) {
+				long alEntrySegmentsEntryRelId = resultSet.getLong(
+					"alEntrySegmentsEntryRelId");
+
 				long assetListEntryId = resultSet.getLong("assetListEntryId");
 
 				if (assetListEntryId != previousAssetListEntryId) {
@@ -52,8 +55,7 @@ public class AssetListEntrySegmentsEntryRelUpgradeProcess
 				}
 
 				preparedStatement2.setLong(1, priority);
-				preparedStatement2.setLong(
-					2, resultSet.getLong("assetListEntrySegmentsEntryRelId"));
+				preparedStatement2.setLong(2, alEntrySegmentsEntryRelId);
 
 				preparedStatement2.addBatch();
 
