@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.object.rest.internal.internal.openapi.v1_0;
+package com.liferay.object.rest.internal.helper;
 
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.system.JaxRsApplicationDescriptor;
@@ -29,7 +29,8 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Carlos Correa
  */
-public abstract class BaseOpenAPIContributor implements OpenAPIContributor {
+@Component(service = ObjectHelper.class)
+public class ObjectHelper {
 
 	public String getExternalDTOClassName(
 		ObjectDefinition systemObjectDefinition) {
@@ -59,11 +60,10 @@ public abstract class BaseOpenAPIContributor implements OpenAPIContributor {
 		return objectDefinition.getShortName();
 	}
 
-	protected void init(DTOConverterRegistry dtoConverterRegistry, SystemObjectDefinitionMetadataRegistry systemObjectDefinitionMetadataRegistry) {
-	}
-
+	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
 
+	@Reference
 	private SystemObjectDefinitionMetadataRegistry
 		_systemObjectDefinitionMetadataRegistry;
 

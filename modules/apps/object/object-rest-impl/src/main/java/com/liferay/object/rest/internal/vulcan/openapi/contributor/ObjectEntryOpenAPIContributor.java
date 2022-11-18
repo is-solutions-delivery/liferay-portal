@@ -53,23 +53,23 @@ import org.osgi.framework.BundleContext;
 /**
  * @author Alejandro Tardín
  */
-public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
+public class ObjectEntryOpenAPIContributor implements OpenAPIContributor {
 
 	public ObjectEntryOpenAPIContributor(
-		BundleContext bundleContext, DTOConverterRegistry dtoConverterRegistry, ObjectDefinition objectDefinition,
+		BundleContext bundleContext, ObjectDefinition objectDefinition,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryOpenAPIResource objectEntryOpenAPIResource,
+		ObjectHelper objectHelper,
 		ObjectRelationshipLocalService objectRelationshipLocalService,
-		OpenAPIResource openAPIResource, SystemObjectDefinitionMetadataRegistry systemObjectDefinitionMetadataRegistry) {
+		OpenAPIResource openAPIResource) {
 
 		_bundleContext = bundleContext;
 		_objectDefinition = objectDefinition;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryOpenAPIResource = objectEntryOpenAPIResource;
+		_objectHelper = objectHelper;
 		_objectRelationshipLocalService = objectRelationshipLocalService;
 		_openAPIResource = openAPIResource;
-
-		init(dtoConverterRegistry, systemObjectDefinitionMetadataRegistry);
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 					GetterUtil.getBoolean(
 						PropsUtil.get("feature.flag.LPS-162966"))) {
 
-					String relatedSchemaName = getSchemaName(
+					String relatedSchemaName = _objectHelper.getSchemaName(
 						relatedObjectDefinition);
 
 					if (uriInfo != null) {
@@ -169,7 +169,7 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 		if (objectDefinition.isSystem()) {
 			sourceOpenAPI = OpenAPIContributorUtil.getSystemObjectOpenAPI(
 				_bundleContext,
-				getExternalDTOClassName(objectDefinition),
+				_objectHelper.getExternalDTOClassName(objectDefinition),
 				_openAPIResource);
 		}
 		else {
@@ -368,6 +368,7 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 	private final ObjectDefinition _objectDefinition;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryOpenAPIResource _objectEntryOpenAPIResource;
+	private final ObjectHelper _objectHelper;
 	private final ObjectRelationshipLocalService
 		_objectRelationshipLocalService;
 	private final OpenAPIResource _openAPIResource;
