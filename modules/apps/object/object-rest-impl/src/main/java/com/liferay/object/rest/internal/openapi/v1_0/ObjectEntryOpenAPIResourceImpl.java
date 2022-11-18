@@ -22,6 +22,7 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.rest.dto.v1_0.FileEntry;
 import com.liferay.object.rest.dto.v1_0.ListEntry;
+import com.liferay.object.rest.internal.helper.ObjectHelper;
 import com.liferay.object.rest.internal.resource.v1_0.ObjectEntryRelatedObjectsResourceImpl;
 import com.liferay.object.rest.internal.resource.v1_0.ObjectEntryResourceImpl;
 import com.liferay.object.rest.internal.resource.v1_0.OpenAPIResourceImpl;
@@ -30,10 +31,8 @@ import com.liferay.object.rest.openapi.v1_0.ObjectEntryOpenAPIResource;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
-import com.liferay.object.system.SystemObjectDefinitionMetadataRegistry;
 import com.liferay.portal.kernel.util.TreeMapBuilder;
 import com.liferay.portal.vulcan.batch.engine.Field;
-import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.openapi.DTOProperty;
 import com.liferay.portal.vulcan.openapi.OpenAPISchemaFilter;
 import com.liferay.portal.vulcan.resource.OpenAPIResource;
@@ -141,10 +140,9 @@ public class ObjectEntryOpenAPIResourceImpl
 
 		return _openAPIResource.getOpenAPI(
 			new ObjectEntryOpenAPIContributor(
-				_bundleContext, _dtoConverterRegistry, _objectDefinition,
-				_objectDefinitionLocalService, this,
-				_objectRelationshipLocalService, _openAPIResource,
-				_systemObjectDefinitionMetadataRegistry),
+				_bundleContext, _objectDefinition,
+				_objectDefinitionLocalService, this, _objectHelper,
+				_objectRelationshipLocalService, _openAPIResource),
 			_getOpenAPISchemaFilter(_objectDefinition.getRESTContextPath()),
 			new HashSet<Class<?>>() {
 				{
@@ -293,10 +291,6 @@ public class ObjectEntryOpenAPIResourceImpl
 	}
 
 	private BundleContext _bundleContext;
-
-	@Reference
-	private DTOConverterRegistry _dtoConverterRegistry;
-
 	private ObjectDefinition _objectDefinition;
 
 	@Reference
@@ -306,13 +300,12 @@ public class ObjectEntryOpenAPIResourceImpl
 	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
+	private ObjectHelper _objectHelper;
+
+	@Reference
 	private ObjectRelationshipLocalService _objectRelationshipLocalService;
 
 	@Reference
 	private OpenAPIResource _openAPIResource;
-
-	@Reference
-	private SystemObjectDefinitionMetadataRegistry
-		_systemObjectDefinitionMetadataRegistry;
 
 }
