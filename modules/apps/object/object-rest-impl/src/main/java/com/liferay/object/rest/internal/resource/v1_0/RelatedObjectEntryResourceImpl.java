@@ -304,7 +304,7 @@ public class RelatedObjectEntryResourceImpl
 						systemObjectDefinition.getName());
 
 			if (StringUtil.equals(
-					JaxRsApplicationDescriptorUtil.getRESTContextPath(
+					JaxRsApplicationDescriptorUtil.getRestContextPath(
 						systemObjectDefinitionMetadata.
 							getJaxRsApplicationDescriptor()),
 					restContextPath)) {

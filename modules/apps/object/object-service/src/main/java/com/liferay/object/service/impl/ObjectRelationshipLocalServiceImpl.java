@@ -866,7 +866,7 @@ public class ObjectRelationshipLocalServiceImpl
 
 			if (systemObjectDefinitionMetadata != null) {
 				restContextPath =
-					JaxRsApplicationDescriptorUtil.getRESTContextPath(
+					JaxRsApplicationDescriptorUtil.getRestContextPath(
 						systemObjectDefinitionMetadata.
 							getJaxRsApplicationDescriptor());
 			}

@@ -258,7 +258,7 @@ public class SystemObjectDefinitionMetadataPortalInstanceLifecycleListener
 				null);
 
 			String restContextPath =
-				JaxRsApplicationDescriptorUtil.getRESTContextPath(
+				JaxRsApplicationDescriptorUtil.getRestContextPath(
 					systemObjectDefinitionMetadata.
 						getJaxRsApplicationDescriptor());
 

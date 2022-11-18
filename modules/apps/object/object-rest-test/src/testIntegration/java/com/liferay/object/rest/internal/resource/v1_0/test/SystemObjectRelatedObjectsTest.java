@@ -259,7 +259,7 @@ public class SystemObjectRelatedObjectsTest {
 	}
 
 	private String _getLocation() {
-		return JaxRsApplicationDescriptorUtil.getRESTContextPath(
+		return JaxRsApplicationDescriptorUtil.getRestContextPath(
 			_userSystemObjectDefinitionMetadata.
 				getJaxRsApplicationDescriptor());
 	}

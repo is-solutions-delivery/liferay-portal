@@ -570,7 +570,7 @@ public class ObjectDefinitionResourceImpl
 
 			if (systemObjectDefinitionMetadata != null) {
 				String contextPath =
-					JaxRsApplicationDescriptorUtil.getRESTContextPath(
+					JaxRsApplicationDescriptorUtil.getRestContextPath(
 						systemObjectDefinitionMetadata.
 							getJaxRsApplicationDescriptor());
 
