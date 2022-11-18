@@ -85,7 +85,6 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectEntry;
-import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
@@ -1050,6 +1049,56 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_addSiteNavigationMenus(serviceContext, siteNavigationMenuItemSettings);
 	}
 
+	private void _addObjectAccountEntryRestricted(
+			ObjectDefinitionResource objectDefinitionResource,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/object-definitions");
+
+		if (resourcePaths == null) {
+			return;
+		}
+
+		for (String resourcePath : resourcePaths) {
+			if (resourcePath.endsWith(".object-actions.json")) {
+				continue;
+			}
+
+			String json = SiteInitializerUtil.read(
+				resourcePath, _servletContext);
+
+			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
+
+			com.liferay.object.model.ObjectDefinition objectDefinitionPublish =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(),
+					"C_" + jsonObject.getString("name"));
+
+			if (!objectDefinitionPublish.isApproved()) {
+				ObjectDefinition objectDefinition = ObjectDefinition.toDTO(
+					json);
+
+				if (objectDefinition == null) {
+					_log.error(
+						"Unable to transform object definition from JSON: " +
+							json);
+
+					continue;
+				}
+
+				objectDefinition =
+					objectDefinitionResource.patchObjectDefinition(
+						objectDefinitionPublish.getObjectDefinitionId(),
+						objectDefinition);
+
+				objectDefinitionResource.postObjectDefinitionPublish(
+					objectDefinition.getId());
+			}
+		}
+	}
+
 	private Map<String, String> _addObjectDefinitions(
 			Map<String, String> documentsStringUtilReplaceValues,
 			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues,
@@ -1128,13 +1177,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 					objectDefinitionResource.postObjectDefinition(
 						objectDefinition);
 
-				if (!json.contains("accountEntryRestrictedObjectFieldName")){
+				if (!json.contains("accountEntryRestrictedObjectFieldName")) {
 					objectDefinitionResource.postObjectDefinitionPublish(
 						objectDefinition.getId());
 				}
 			}
 			else {
-
 				objectDefinition =
 					objectDefinitionResource.patchObjectDefinition(
 						existingObjectDefinition.getId(), objectDefinition);
@@ -1189,7 +1237,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		_invoke(
 			() -> _addObjectAccountEntryRestricted(
-				objectDefinitionResource,serviceContext));
+				objectDefinitionResource, serviceContext));
 
 		objectDefinitionIdsStringUtilReplaceValues.put(
 			"OBJECT_DEFINITION_ID:" + objectDefinition.getName(),
@@ -1206,58 +1254,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			objectEntryIdsStringUtilReplaceValues
 		).build();
 	}
-
-	public void _addObjectAccountEntryRestricted (
-		ObjectDefinitionResource objectDefinitionResource,
-		ServiceContext serviceContext) throws Exception {
-
-		Set<String> resourcePaths = _servletContext.getResourcePaths(
-			"/site-initializer/object-definitions");
-
-		if (resourcePaths == null) {
-			return;
-		}
-
-		for (String resourcePath : resourcePaths) {
-			if (resourcePath.endsWith(".object-actions.json")) {
-				continue;
-			}
-
-			String json = SiteInitializerUtil.read(
-				resourcePath, _servletContext);
-
-			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
-
-			com.liferay.object.model.ObjectDefinition objectDefinitionPublish =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(),
-					"C_" + jsonObject.getString("name"));
-
-			List<ObjectField> objectField = _objectFieldLocalService.
-				getObjectFields(objectDefinitionPublish.getObjectDefinitionId());
-
-			if (!objectDefinitionPublish.isApproved()) {
-
-				ObjectDefinition objectDefinition = ObjectDefinition.toDTO(json);
-
-				if (objectDefinition == null) {
-					_log.error(
-						"Unable to transform object definition from JSON: " + json);
-
-					continue;
-				}
-				objectDefinition =
-					objectDefinitionResource.patchObjectDefinition(
-						objectDefinitionPublish.getObjectDefinitionId(),
-						objectDefinition);
-
-				objectDefinitionResource.postObjectDefinitionPublish(
-					objectDefinition.getId());
-			}
-		}
-	}
-
-
 
 	private void _addOrganizationUser(
 			JSONArray jsonArray, ServiceContext serviceContext, long userId)

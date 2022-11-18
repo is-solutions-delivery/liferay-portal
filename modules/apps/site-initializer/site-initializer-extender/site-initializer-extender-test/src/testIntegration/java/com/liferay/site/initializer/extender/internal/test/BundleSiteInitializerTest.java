@@ -174,7 +174,6 @@ import java.math.BigDecimal;
 
 import java.util.Dictionary;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -975,8 +974,9 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			objectDefinition1.getStatus(), WorkflowConstants.STATUS_APPROVED);
 		Assert.assertEquals(objectDefinition1.isAccountEntryRestricted(), true);
-		Assert.assertNotEquals( "accountEntryRestrictedObjectFieldName",
-			0, objectDefinition1.getAccountEntryRestrictedObjectFieldId());
+		Assert.assertNotEquals(
+			"accountEntryRestrictedObjectFieldName", 0,
+			objectDefinition1.getAccountEntryRestrictedObjectFieldId());
 
 		_assertObjectActions(3, objectDefinition1);
 		_assertObjectEntries(group.getGroupId(), objectDefinition1, 0);
