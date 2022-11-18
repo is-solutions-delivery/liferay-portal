@@ -88,10 +88,10 @@ public class OpenAPIContributorUtil {
 			throw new IllegalStateException();
 		}
 
-		Object object = bundleContext.getService(serviceReferences[0]);
+		Object resource = bundleContext.getService(serviceReferences[0]);
 
 		Response response = openAPIResource.getOpenAPI(
-			null, SetUtil.fromArray(object.getClass()), "json", null);
+			null, SetUtil.fromArray(resource.getClass()), "json", null);
 
 		return (OpenAPI)response.getEntity();
 	}
