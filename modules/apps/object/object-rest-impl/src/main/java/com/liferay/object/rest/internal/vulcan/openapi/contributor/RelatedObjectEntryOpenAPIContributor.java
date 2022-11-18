@@ -125,14 +125,13 @@ public class RelatedObjectEntryOpenAPIContributor
 			ObjectRelationship systemObjectRelationship, UriInfo uriInfo)
 		throws Exception {
 
-		Paths paths = openAPI.getPaths();
-
 		ObjectDefinition relatedObjectDefinition = _getRelatedObjectDefinition(
 			systemObjectDefinition, systemObjectRelationship);
 
-		String relatedSchemaName = getSchemaName(relatedObjectDefinition);
 		OpenAPI relatedOpenAPI = OpenAPIContributorUtil.getObjectEntryOpenAPI(
 			relatedObjectDefinition, _objectEntryOpenAPIResource);
+
+		String relatedSchemaName = getSchemaName(relatedObjectDefinition);
 
 		OpenAPIContributorUtil.copySchemas(
 			relatedSchemaName, relatedOpenAPI,
@@ -145,6 +144,8 @@ public class RelatedObjectEntryOpenAPIContributor
 			_getSystemObjectBasePath(systemObjectDefinitionMetadata),
 			StringPool.SLASH, _getIdParameterTemplate(schemaName),
 			StringPool.SLASH, systemObjectRelationship.getName());
+
+		Paths paths = openAPI.getPaths();
 
 		paths.addPathItem(
 			name,
