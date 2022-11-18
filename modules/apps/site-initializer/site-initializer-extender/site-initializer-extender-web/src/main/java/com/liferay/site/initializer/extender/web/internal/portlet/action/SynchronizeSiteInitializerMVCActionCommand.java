@@ -19,7 +19,10 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.upload.UploadPortletRequest;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -30,6 +33,7 @@ import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.site.initializer.extender.web.internal.constants.SiteInitializerExtenderPortletKeys;
 
 import java.io.File;
+import java.io.InputStream;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -74,20 +78,45 @@ public class SynchronizeSiteInitializerMVCActionCommand
 			return;
 		}
 
-		SiteInitializer siteInitializer =
-			_siteInitializerRegistry.getSiteInitializer(siteInitializerKey);
+		UploadPortletRequest uploadPortletRequest =
+			_portal.getUploadPortletRequest(actionRequest);
+
+		SiteInitializer siteInitializer = null;
+
+		try (InputStream inputStream = uploadPortletRequest.getFileAsStream(
+				"siteInitializerFile")) {
+
+			if (inputStream != null) {
+
+				// TODO BundleSiteInitializerTest#testInitializeFromFile
+
+				File tempFile = FileUtil.createTempFile();
+
+				FileUtil.write(tempFile, inputStream);
+
+				File tempFolder = FileUtil.createTempFolder();
+
+				FileUtil.unzip(tempFile, tempFolder);
+
+				tempFile.delete();
+
+				siteInitializer = _siteInitializerFactory.create(
+					new File(tempFolder, "site-initializer"),
+					siteInitializerKey);
+
+				if (siteInitializer != null) {
+					siteInitializer.initialize(themeDisplay.getScopeGroupId());
+				}
+
+				return;
+			}
+		}
+
+		siteInitializer = _siteInitializerRegistry.getSiteInitializer(
+			siteInitializerKey);
 
 		if (siteInitializer == null) {
 			return;
-		}
-
-		if (false) {
-
-			// TODO BundleSiteInitializerTest#testInitializeFromFile
-
-			File file = new File("");
-
-			siteInitializer = _siteInitializerFactory.create(file);
 		}
 
 		siteInitializer.initialize(themeDisplay.getScopeGroupId());
@@ -95,6 +124,9 @@ public class SynchronizeSiteInitializerMVCActionCommand
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private SiteInitializerFactory _siteInitializerFactory;
