@@ -278,22 +278,6 @@ public class PredicateExpressionVisitorImpl
 				StringPool.PERCENT);
 	}
 
-	private String _convertDateFormat(String string) {
-		try {
-			DateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss");
-
-			Date date = dateFormat.parse(string);
-
-			dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
-
-			return dateFormat.format(date);
-		}
-		catch (ParseException parseException) {
-			throw new RuntimeException(parseException);
-		}
-	}
-
 	private Column<?, Object> _getColumn(Object fieldName) {
 		EntityField entityField = _getEntityField(fieldName);
 
@@ -379,7 +363,19 @@ public class PredicateExpressionVisitorImpl
 
 			String dateTimeString = right.toString();
 
-			right = _convertDateFormat(dateTimeString);
+			try {
+				DateFormat dateFormat = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss");
+
+				Date date = dateFormat.parse(dateTimeString);
+
+				dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
+
+				right = dateFormat.format(date);
+			}
+			catch (ParseException parseException) {
+				throw new RuntimeException(parseException);
+			}
 		}
 
 		if (Objects.equals(entityFieldFilterableName, entityFieldName)) {
