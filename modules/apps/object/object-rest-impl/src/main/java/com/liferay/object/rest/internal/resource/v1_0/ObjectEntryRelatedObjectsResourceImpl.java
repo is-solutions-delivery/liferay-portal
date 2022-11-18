@@ -47,7 +47,7 @@ public class ObjectEntryRelatedObjectsResourceImpl
 	}
 
 	@Override
-	public Page<Object> getCurrentObjectEntriesObjectRelationshipNamePage(
+	public Page<ObjectEntry> getCurrentObjectEntriesObjectRelationshipNamePage(
 			Long currentObjectEntryId, String objectRelationshipName,
 			Pagination pagination)
 		throws Exception {
@@ -56,33 +56,27 @@ public class ObjectEntryRelatedObjectsResourceImpl
 			_objectEntryManagerRegistry.getObjectEntryManager(
 				_objectDefinition.getStorageType());
 
-		ObjectRelationship objectRelationship =
-			_objectRelationshipService.getObjectRelationship(
-				_objectDefinition.getObjectDefinitionId(),
-				objectRelationshipName);
-
-		ObjectDefinition relatedObjectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				objectRelationship.getObjectDefinitionId2());
-
-		if (relatedObjectDefinition.isSystem()) {
-			return objectEntryManager.getRelatedSystemObjectEntries(
-				_objectDefinition, currentObjectEntryId, objectRelationshipName,
-				pagination);
-		}
-
 		Page<ObjectEntry> page =
 			objectEntryManager.getObjectEntryRelatedObjectEntries(
 				_getDTOConverterContext(currentObjectEntryId),
 				_objectDefinition, currentObjectEntryId, objectRelationshipName,
 				pagination);
 
+		ObjectRelationship objectRelationship =
+			_objectRelationshipService.getObjectRelationship(
+				_objectDefinition.getObjectDefinitionId(),
+				objectRelationshipName);
+
+		ObjectDefinition objectDefinition2 =
+			_objectDefinitionLocalService.getObjectDefinition(
+				objectRelationship.getObjectDefinitionId2());
+
 		return Page.of(
 			page.getActions(),
 			transform(
 				page.getItems(),
 				objectEntry -> _getRelatedObjectEntry(
-					relatedObjectDefinition, objectEntry)));
+					objectDefinition2, objectEntry)));
 	}
 
 	@Override
