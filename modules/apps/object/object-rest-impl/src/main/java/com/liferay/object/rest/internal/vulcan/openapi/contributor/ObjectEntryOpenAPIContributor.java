@@ -21,8 +21,6 @@ import com.liferay.object.rest.internal.vulcan.openapi.contributor.util.OpenAPIC
 import com.liferay.object.rest.openapi.v1_0.ObjectEntryOpenAPIResource;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.vulcan.openapi.contributor.OpenAPIContributor;
@@ -91,22 +89,15 @@ public class ObjectEntryOpenAPIContributor implements OpenAPIContributor {
 
 				ObjectDefinition relatedObjectDefinition = entry.getValue();
 
-				if (!relatedObjectDefinition.isSystem() ||
-					GetterUtil.getBoolean(
-						PropsUtil.get("feature.flag.LPS-162966"))) {
+				String relatedSchemaName = _objectHelper.getSchemaName(
+					relatedObjectDefinition);
 
-					String relatedSchemaName = _objectHelper.getSchemaName(
-						relatedObjectDefinition);
-
-					if (uriInfo != null) {
-						_addSchema(
-							relatedObjectDefinition, openAPI,
-							relatedSchemaName);
-					}
-
-					_addPathItem(
-						key, objectRelationship, paths, relatedSchemaName);
+				if (uriInfo != null) {
+					_addSchema(
+						relatedObjectDefinition, openAPI, relatedSchemaName);
 				}
+
+				_addPathItem(key, objectRelationship, paths, relatedSchemaName);
 
 				openAPI.getComponents(
 				).getSchemas(
