@@ -352,8 +352,6 @@ public class PredicateExpressionVisitorImpl
 	private Object _getValue(Object left, Object right) {
 		EntityField entityField = _getEntityField(left);
 
-		String entityFieldFilterableName = entityField.getFilterableName(null);
-		String entityFieldName = entityField.getName();
 		EntityField.Type entityType = entityField.getType();
 
 		DB db = DBManagerUtil.getDB();
@@ -361,13 +359,11 @@ public class PredicateExpressionVisitorImpl
 		if (entityType.equals(EntityField.Type.DATE_TIME) &&
 			(db.getDBType() == DBType.HYPERSONIC)) {
 
-			String dateTimeString = right.toString();
-
 			try {
 				DateFormat dateFormat = new SimpleDateFormat(
 					"yyyy-MM-dd'T'HH:mm:ss");
 
-				Date date = dateFormat.parse(dateTimeString);
+				Date date = dateFormat.parse(right.toString());
 
 				dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
 
@@ -377,6 +373,9 @@ public class PredicateExpressionVisitorImpl
 				throw new RuntimeException(parseException);
 			}
 		}
+
+		String entityFieldFilterableName = entityField.getFilterableName(null);
+		String entityFieldName = entityField.getName();
 
 		if (Objects.equals(entityFieldFilterableName, entityFieldName)) {
 			return right;
