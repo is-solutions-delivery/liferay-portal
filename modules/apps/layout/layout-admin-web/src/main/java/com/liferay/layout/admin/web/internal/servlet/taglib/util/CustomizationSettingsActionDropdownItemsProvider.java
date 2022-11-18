@@ -42,7 +42,7 @@ public class CustomizationSettingsActionDropdownItemsProvider {
 		_httpServletRequest = httpServletRequest;
 
 		ThemeDisplay themeDisplay =
-			(ThemeDisplay)_httpServletRequest.getAttribute(
+			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
 		_layoutTypePortlet = themeDisplay.getLayoutTypePortlet();
