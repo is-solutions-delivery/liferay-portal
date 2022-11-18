@@ -1,4 +1,4 @@
 Bundle-Name: Liferay Commerce Order Rule Web
 Bundle-SymbolicName: com.liferay.commerce.order.rule.web
-Bundle-Version: 1.0.26
+Bundle-Version: 1.0.27
 Web-ContextPath: /commerce-order-rule-web
