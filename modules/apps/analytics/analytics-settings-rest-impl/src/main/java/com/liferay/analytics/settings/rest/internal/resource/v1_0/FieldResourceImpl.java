@@ -110,11 +110,11 @@ public class FieldResourceImpl extends BaseFieldResourceImpl {
 	private List<Field> _getFieldsPeople(String keyword, Sort[] sorts)
 		throws Exception {
 
+		List<Field> fields = new ArrayList<>();
+
 		AnalyticsConfiguration analyticsConfiguration =
 			_analyticsSettingsManager.getAnalyticsConfiguration(
 				contextCompany.getCompanyId());
-
-		List<Field> fields = new ArrayList<>();
 
 		for (int i = 0; i < FieldPeopleConstants.FIELD_CONTACT_NAMES.length;
 			 i++) {
