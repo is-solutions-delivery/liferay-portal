@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
@@ -52,8 +53,8 @@ import com.liferay.portal.odata.filter.expression.PrimitivePropertyExpression;
 import com.liferay.portal.odata.filter.expression.UnaryExpression;
 
 import java.text.DateFormat;
+import java.text.Format;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import java.util.Collections;
 import java.util.Date;
@@ -360,14 +361,16 @@ public class PredicateExpressionVisitorImpl
 			(db.getDBType() == DBType.HYPERSONIC)) {
 
 			try {
-				DateFormat dateFormat = new SimpleDateFormat(
-					"yyyy-MM-dd'T'HH:mm:ss");
+				DateFormat dateFormat =
+					DateFormatFactoryUtil.getSimpleDateFormat(
+						"yyyy-MM-dd'T'HH:mm:ss");
 
 				Date date = dateFormat.parse(right.toString());
 
-				dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
+				Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(
+					"dd-MMM-yyyy HH:mm:ss.SSS");
 
-				right = dateFormat.format(date);
+				right = format.format(date);
 			}
 			catch (ParseException parseException) {
 				throw new RuntimeException(parseException);
