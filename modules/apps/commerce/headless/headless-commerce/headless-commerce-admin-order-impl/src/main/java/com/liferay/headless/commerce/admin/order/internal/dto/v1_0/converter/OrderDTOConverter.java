@@ -51,7 +51,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"application.name=Liferay.Headless.Commerce.Admin.Order",
+		"applicationName=Liferay.Headless.Commerce.Admin.Order",
 		"dto.class.name=com.liferay.commerce.model.CommerceOrder",
 		"version=v1.0"
 	},
