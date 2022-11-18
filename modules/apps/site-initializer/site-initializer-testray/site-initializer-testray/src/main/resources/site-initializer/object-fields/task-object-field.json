@@ -1,0 +1,46 @@
+{
+	"DBType": "String",
+	"businessType": "Aggregation",
+	"defaultValue": "",
+	"externalReferenceCode": "FIELD001",
+	"indexed": true,
+	"indexedAsKeyword": false,
+	"label": {
+		"en_US": "fieldTest"
+	},
+	"listTypeDefinitionExternalReferenceCode": "",
+	"listTypeDefinitionId": 0,
+	"name": "aggregationTestField",
+	"objectDefinitionId": "[$OBJECT_DEFINITION_ID:Task$]",
+	"objectFieldSettings": [
+		{
+			"name": "objectRelationshipName",
+			"value": "taskToSubtasks"
+		},
+		{
+			"name": "filters",
+			"value": [
+				{
+					"filterBy": "dueStatus",
+					"filterType": "includes",
+					"json": {
+						"in": [
+							"INPROGRESS"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "objectFieldName",
+			"value": "score"
+		},
+		{
+			"name": "function",
+			"value": "SUM"
+		}
+	],
+	"required": false,
+	"state": false,
+	"system": false
+}
