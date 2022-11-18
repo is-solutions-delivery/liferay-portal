@@ -29,7 +29,7 @@ import com.liferay.portal.vulcan.openapi.contributor.OpenAPIContributor;
  */
 public abstract class BaseOpenAPIContributor implements OpenAPIContributor {
 
-	protected String getExternalDTOClassName(
+	public String getExternalDTOClassName(
 		ObjectDefinition systemObjectDefinition) {
 
 		SystemObjectDefinitionMetadata systemObjectDefinitionMetadata =
@@ -48,7 +48,7 @@ public abstract class BaseOpenAPIContributor implements OpenAPIContributor {
 		return dtoConverter.getExternalDTOClassName();
 	}
 
-	protected String getSchemaName(ObjectDefinition objectDefinition) {
+	public String getSchemaName(ObjectDefinition objectDefinition) {
 		if (objectDefinition.isSystem()) {
 			return StringUtil.extractLast(
 				getExternalDTOClassName(objectDefinition), StringPool.PERIOD);
