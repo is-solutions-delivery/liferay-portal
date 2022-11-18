@@ -803,6 +803,10 @@ public class LayoutStagedModelDataHandler
 						groupId, privateLayout, parentLayoutFriendlyURL);
 			}
 
+			if (importedParentLayout == null) {
+				importedParentLayout = layouts.get(parentLayoutId);
+			}
+
 			parentPlid = importedParentLayout.getPlid();
 			parentLayoutId = importedParentLayout.getLayoutId();
 		}
