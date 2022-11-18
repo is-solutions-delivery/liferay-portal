@@ -697,8 +697,9 @@ AUI.add(
 							attributeName === 'multiple' &&
 							changed.value.newVal === 'false'
 						) {
-							editingField.set('predefinedValue', ['']);
 							editingField.set('multiple', changed.value.newVal);
+							editingField.set('predefinedValue', ['']);
+
 							instance.editField(editingField);
 						}
 					}
