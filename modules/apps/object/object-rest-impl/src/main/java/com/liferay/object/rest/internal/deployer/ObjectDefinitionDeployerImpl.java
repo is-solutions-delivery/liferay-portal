@@ -37,10 +37,8 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectRelationshipService;
-import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.object.system.SystemObjectDefinitionMetadataRegistry;
-import com.liferay.object.util.JaxRsApplicationDescriptorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.filter.Filter;
@@ -471,12 +469,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			return;
 		}
 
-		JaxRsApplicationDescriptor jaxRsApplicationDescriptor =
-			systemObjectDefinitionMetadata.getJaxRsApplicationDescriptor();
-
 		_componentInstancesMap.computeIfAbsent(
-			JaxRsApplicationDescriptorUtil.getRestContextPath(
-				jaxRsApplicationDescriptor),
+			systemObjectDefinitionMetadata.getRESTContextPath(),
 			key -> Arrays.asList(
 				_relatedObjectEntryResourceImplComponentFactory.newInstance(
 					HashMapDictionaryBuilder.<String, Object>put(
@@ -484,10 +478,12 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					).put(
 						"osgi.jaxrs.application.select",
 						() -> {
-							String applicationName =
-								jaxRsApplicationDescriptor.getApplicationName();
+							String jaxRsApplicationName =
+								systemObjectDefinitionMetadata.
+									getJaxRsApplicationName();
 
-							return "(osgi.jaxrs.name=" + applicationName + ")";
+							return "(osgi.jaxrs.name=" + jaxRsApplicationName +
+								")";
 						}
 					).put(
 						"osgi.jaxrs.resource", "true"

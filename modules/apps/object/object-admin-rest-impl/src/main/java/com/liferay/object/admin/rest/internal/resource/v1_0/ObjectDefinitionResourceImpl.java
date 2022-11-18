@@ -52,7 +52,6 @@ import com.liferay.object.service.ObjectViewLocalService;
 import com.liferay.object.service.ObjectViewService;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.object.system.SystemObjectDefinitionMetadataRegistry;
-import com.liferay.object.util.JaxRsApplicationDescriptorUtil;
 import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -569,12 +568,8 @@ public class ObjectDefinitionResourceImpl
 						objectDefinition.getName());
 
 			if (systemObjectDefinitionMetadata != null) {
-				String contextPath =
-					JaxRsApplicationDescriptorUtil.getRestContextPath(
-						systemObjectDefinitionMetadata.
-							getJaxRsApplicationDescriptor());
-
-				restContextPath = "/o/" + contextPath;
+				restContextPath =
+					"/o/" + systemObjectDefinitionMetadata.getRESTContextPath();
 			}
 		}
 		else {

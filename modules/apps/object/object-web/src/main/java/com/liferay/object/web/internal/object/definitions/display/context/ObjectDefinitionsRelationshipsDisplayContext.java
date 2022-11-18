@@ -22,7 +22,6 @@ import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.object.system.SystemObjectDefinitionMetadataRegistry;
-import com.liferay.object.util.JaxRsApplicationDescriptorUtil;
 import com.liferay.object.web.internal.configuration.activator.FFOneToOneRelationshipConfigurationActivator;
 import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
 import com.liferay.petra.function.UnsafeConsumer;
@@ -172,8 +171,7 @@ public class ObjectDefinitionsRelationshipsDisplayContext
 			return StringPool.BLANK;
 		}
 
-		return JaxRsApplicationDescriptorUtil.getRestContextPath(
-			systemObjectDefinitionMetadata.getJaxRsApplicationDescriptor());
+		return systemObjectDefinitionMetadata.getRESTContextPath();
 	}
 
 	public boolean isFFOneToOneRelationshipConfigurationEnabled() {
