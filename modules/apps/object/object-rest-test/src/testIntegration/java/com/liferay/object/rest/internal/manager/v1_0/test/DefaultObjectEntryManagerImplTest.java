@@ -844,26 +844,7 @@ public class DefaultObjectEntryManagerImplTest {
 			},
 			ObjectDefinitionConstants.SCOPE_COMPANY);
 
-		Page<ObjectEntry> objectEntryPage =
-			_objectEntryManager.getObjectEntries(
-				_companyId, _objectDefinition1, null, null,
-				new DefaultDTOConverterContext(
-					false, Collections.emptyMap(), _dtoConverterRegistry, null,
-					LocaleUtil.getDefault(), null, _user),
-				null,
-				_filterPredicateFactory.create(
-					null, _objectDefinition2.getObjectDefinitionId()),
-				null, null);
-
-		Collection<ObjectEntry> objectEntries = objectEntryPage.getItems();
-
-		Assert.assertEquals(objectEntries.toString(), 0, objectEntries.size());
-
-		Role role = _roleLocalService.getRole(_companyId, "Administrator");
-
-		_userLocalService.addRoleUser(role.getRoleId(), _user);
-
-		objectEntryPage = _objectEntryManager.getObjectEntries(
+		Page<ObjectEntry> page = _objectEntryManager.getObjectEntries(
 			_companyId, _objectDefinition1, null, null,
 			new DefaultDTOConverterContext(
 				false, Collections.emptyMap(), _dtoConverterRegistry, null,
@@ -873,7 +854,25 @@ public class DefaultObjectEntryManagerImplTest {
 				null, _objectDefinition2.getObjectDefinitionId()),
 			null, null);
 
-		objectEntries = objectEntryPage.getItems();
+		Collection<ObjectEntry> objectEntries = page.getItems();
+
+		Assert.assertEquals(objectEntries.toString(), 0, objectEntries.size());
+
+		Role role = _roleLocalService.getRole(_companyId, "Administrator");
+
+		_userLocalService.addRoleUser(role.getRoleId(), _user);
+
+		page = _objectEntryManager.getObjectEntries(
+			_companyId, _objectDefinition1, null, null,
+			new DefaultDTOConverterContext(
+				false, Collections.emptyMap(), _dtoConverterRegistry, null,
+				LocaleUtil.getDefault(), null, _user),
+			null,
+			_filterPredicateFactory.create(
+				null, _objectDefinition2.getObjectDefinitionId()),
+			null, null);
+
+		objectEntries = page.getItems();
 
 		Assert.assertEquals(objectEntries.toString(), 1, objectEntries.size());
 	}
@@ -1243,18 +1242,17 @@ public class DefaultObjectEntryManagerImplTest {
 			};
 		}
 
-		Page<ObjectEntry> objectEntryPage =
-			_objectEntryManager.getObjectEntries(
-				_companyId, _objectDefinition2, null, null,
-				_dtoConverterContext, null,
-				_filterPredicateFactory.create(
-					context.get("filter"),
-					_objectDefinition2.getObjectDefinitionId()),
-				context.get("search"), sorts);
+		Page<ObjectEntry> page = _objectEntryManager.getObjectEntries(
+			_companyId, _objectDefinition2, null, null, _dtoConverterContext,
+			null,
+			_filterPredicateFactory.create(
+				context.get("filter"),
+				_objectDefinition2.getObjectDefinitionId()),
+			context.get("search"), sorts);
 
 		_assertEquals(
 			ListUtil.fromArray(expectedObjectEntries),
-			(List<ObjectEntry>)objectEntryPage.getItems());
+			(List<ObjectEntry>)page.getItems());
 	}
 
 	private static User _adminUser;
