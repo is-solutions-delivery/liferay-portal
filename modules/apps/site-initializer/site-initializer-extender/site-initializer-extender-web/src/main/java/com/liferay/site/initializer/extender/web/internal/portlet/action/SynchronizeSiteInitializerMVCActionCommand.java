@@ -81,45 +81,45 @@ public class SynchronizeSiteInitializerMVCActionCommand
 		UploadPortletRequest uploadPortletRequest =
 			_portal.getUploadPortletRequest(actionRequest);
 
-		SiteInitializer siteInitializer = null;
-
 		try (InputStream inputStream = uploadPortletRequest.getFileAsStream(
 				"siteInitializerFile")) {
 
 			if (inputStream != null) {
-
-				// TODO BundleSiteInitializerTest#testInitializeFromFile
-
-				File tempFile = FileUtil.createTempFile();
-
-				FileUtil.write(tempFile, inputStream);
-
-				File tempFolder = FileUtil.createTempFolder();
-
-				FileUtil.unzip(tempFile, tempFolder);
-
-				tempFile.delete();
-
-				siteInitializer = _siteInitializerFactory.create(
-					new File(tempFolder, "site-initializer"),
-					siteInitializerKey);
-
-				if (siteInitializer != null) {
-					siteInitializer.initialize(themeDisplay.getScopeGroupId());
-				}
+				_initialize(
+					group.getGroupId(), inputStream, siteInitializerKey);
 
 				return;
 			}
 		}
 
-		siteInitializer = _siteInitializerRegistry.getSiteInitializer(
-			siteInitializerKey);
+		SiteInitializer siteInitializer =
+			_siteInitializerRegistry.getSiteInitializer(siteInitializerKey);
 
 		if (siteInitializer == null) {
 			return;
 		}
 
-		siteInitializer.initialize(themeDisplay.getScopeGroupId());
+		siteInitializer.initialize(group.getGroupId());
+	}
+
+	private void _initialize(
+			long groupId, InputStream inputStream, String siteInitializerKey)
+		throws Exception {
+
+		File tempFile = FileUtil.createTempFile();
+
+		FileUtil.write(tempFile, inputStream);
+
+		File tempFolder = FileUtil.createTempFolder();
+
+		FileUtil.unzip(tempFile, tempFolder);
+
+		tempFile.delete();
+
+		SiteInitializer siteInitializer = _siteInitializerFactory.create(
+			new File(tempFolder, "site-initializer"), siteInitializerKey);
+
+		siteInitializer.initialize(groupId);
 	}
 
 	@Reference
