@@ -57,10 +57,10 @@ public class RESTClientHttpRequest extends HttpServletRequestWrapper {
 
 	@Override
 	public Enumeration<String> getHeaders(String name) {
-		String headerValue = _headers.get(name);
+		String value = _headers.get(name);
 
-		if (Validator.isNotNull(headerValue)) {
-			return Collections.enumeration(Arrays.asList(headerValue));
+		if (Validator.isNotNull(value)) {
+			return Collections.enumeration(Arrays.asList(value));
 		}
 
 		return Collections.emptyEnumeration();
