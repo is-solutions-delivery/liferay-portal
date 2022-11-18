@@ -361,14 +361,14 @@ public class PredicateExpressionVisitorImpl
 			(db.getDBType() == DBType.HYPERSONIC)) {
 
 			try {
+				Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(
+					"dd-MMM-yyyy HH:mm:ss.SSS");
+
 				DateFormat dateFormat =
 					DateFormatFactoryUtil.getSimpleDateFormat(
 						"yyyy-MM-dd'T'HH:mm:ss");
 
 				Date date = dateFormat.parse(right.toString());
-
-				Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(
-					"dd-MMM-yyyy HH:mm:ss.SSS");
 
 				right = format.format(date);
 			}
