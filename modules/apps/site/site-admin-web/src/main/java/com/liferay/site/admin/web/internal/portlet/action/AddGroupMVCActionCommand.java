@@ -53,6 +53,7 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.liveusers.LiveUsers;
+import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.ratings.kernel.RatingsType;
 import com.liferay.site.admin.web.internal.constants.SiteAdminConstants;
 import com.liferay.site.admin.web.internal.constants.SiteAdminPortletKeys;
@@ -536,7 +537,15 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 
 		@Override
 		public Group call() throws Exception {
-			return _updateGroup(_actionRequest);
+			try {
+				return _updateGroup(_actionRequest);
+			}
+			catch (Exception exception) {
+				PermissionCacheUtil.clearCache(
+					_portal.getUserId(_actionRequest));
+
+				throw exception;
+			}
 		}
 
 		private GroupCallable(ActionRequest actionRequest) {
