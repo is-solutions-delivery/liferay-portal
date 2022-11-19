@@ -34,6 +34,8 @@ public class ProductEntityModel implements EntityModel {
 			new CollectionEntityField(
 				new StringEntityField(
 					"categoryIds", locale -> "assetCategoryIds")),
+			new CollectionEntityField(
+				new StringEntityField("tags", locale -> "assetTagNames")),
 			new IntegerEntityField("catalogId", locale -> "commerceCatalogId"),
 			new DateTimeEntityField(
 				"createDate",
@@ -46,9 +48,7 @@ public class ProductEntityModel implements EntityModel {
 			new StringEntityField(
 				"name", locale -> Field.getSortableFieldName("name")),
 			new StringEntityField("productType", locale -> "productTypeName"),
-			new IntegerEntityField("statusCode", locale -> Field.STATUS),
-			new CollectionEntityField(
-				new StringEntityField("tags", locale -> "assetTagNames")));
+			new IntegerEntityField("statusCode", locale -> Field.STATUS));
 	}
 
 	@Override

@@ -49,6 +49,8 @@ public class ProductEntityModel implements EntityModel {
 					object -> _getCommerceChannelGroupId(object))),
 			new CollectionEntityField(
 				new IntegerEntityField("statusCode", locale -> Field.STATUS)),
+			new CollectionEntityField(
+				new StringEntityField("tags", locale -> "assetTagNames")),
 			new ComplexEntityField("customFields", entityFields),
 			new DateTimeEntityField(
 				"createDate",
@@ -61,9 +63,7 @@ public class ProductEntityModel implements EntityModel {
 			new IntegerEntityField("catalogId", locale -> "commerceCatalogId"),
 			new StringEntityField(
 				"name", locale -> Field.getSortableFieldName("name")),
-			new StringEntityField("productType", locale -> "productTypeName"),
-			new CollectionEntityField(
-				new StringEntityField("tags", locale -> "assetTagNames")));
+			new StringEntityField("productType", locale -> "productTypeName"));
 	}
 
 	@Override
