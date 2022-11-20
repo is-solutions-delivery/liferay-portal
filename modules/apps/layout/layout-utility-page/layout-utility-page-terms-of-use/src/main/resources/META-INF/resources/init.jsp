@@ -23,8 +23,6 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.layout.utility.page.constants.LayoutUtilityPageEntryConstants" %><%@
-page import="com.liferay.layout.utility.page.model.LayoutUtilityPageEntry" %><%@
-page import="com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil" %><%@
 page import="com.liferay.portal.kernel.security.auth.AuthTokenUtil" %><%@
