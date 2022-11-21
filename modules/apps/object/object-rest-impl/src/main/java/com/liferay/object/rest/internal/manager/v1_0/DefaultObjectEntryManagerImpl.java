@@ -145,8 +145,7 @@ public class DefaultObjectEntryManagerImpl
 				groupId, objectDefinition.getObjectDefinitionId(),
 				_toObjectValues(
 					groupId, dtoConverterContext.getUserId(), objectDefinition,
-					0L, objectEntry.getProperties(),
-					dtoConverterContext.getLocale()),
+					objectEntry, 0L, dtoConverterContext.getLocale()),
 				_createServiceContext(
 					objectEntry.getProperties(),
 					dtoConverterContext.getUserId())));
@@ -191,8 +190,7 @@ public class DefaultObjectEntryManagerImpl
 				objectDefinition.getObjectDefinitionId(),
 				_toObjectValues(
 					groupId, dtoConverterContext.getUserId(), objectDefinition,
-					0L, objectEntry.getProperties(),
-					dtoConverterContext.getLocale()),
+					objectEntry, 0L, dtoConverterContext.getLocale()),
 				serviceContext));
 	}
 
@@ -646,8 +644,7 @@ public class DefaultObjectEntryManagerImpl
 				_toObjectValues(
 					serviceBuilderObjectEntry.getGroupId(),
 					dtoConverterContext.getUserId(), objectDefinition,
-					serviceBuilderObjectEntry.getObjectEntryId(),
-					objectEntry.getProperties(),
+					objectEntry, serviceBuilderObjectEntry.getObjectEntryId(),
 					dtoConverterContext.getLocale()),
 				_createServiceContext(
 					objectEntry.getProperties(),
@@ -1011,7 +1008,7 @@ public class DefaultObjectEntryManagerImpl
 
 	private Map<String, Serializable> _toObjectValues(
 			long groupId, long userId, ObjectDefinition objectDefinition,
-			long objectEntryId, Map<String, Object> properties, Locale locale)
+			ObjectEntry objectEntry, long objectEntryId, Locale locale)
 		throws Exception {
 
 		Map<String, Serializable> values = new HashMap<>();
@@ -1023,7 +1020,19 @@ public class DefaultObjectEntryManagerImpl
 			Object value = ObjectEntryValuesUtil.getValue(
 				_objectDefinitionLocalService, _objectEntryLocalService,
 				objectField, _objectFieldBusinessTypeRegistry, userId,
-				properties);
+				objectEntry.getProperties());
+
+			if (Objects.equals(
+					objectField.getName(), "externalReferenceCode") &&
+				Validator.isNull(value) &&
+				Validator.isNotNull(objectEntry.getExternalReferenceCode())) {
+
+				values.put(
+					objectField.getName(),
+					(Serializable)objectEntry.getExternalReferenceCode());
+
+				continue;
+			}
 
 			if ((value == null) && !objectField.isRequired()) {
 				continue;
