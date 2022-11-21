@@ -35,6 +35,21 @@ import java.util.Map;
  */
 public class BaseGraphQLServlet {
 
+	public class TestDTO {
+
+		public long getId() {
+			return id;
+		}
+
+		public void setId(long id) {
+			this.id = id;
+		}
+
+		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
+		protected long id;
+
+	}
+
 	public class TestQuery {
 
 		public void setField(String field) {
@@ -46,27 +61,12 @@ public class BaseGraphQLServlet {
 		}
 
 		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
-		public BaseGraphQLServlet.TestQuery.TestDTO testDTO() throws Exception {
+		public BaseGraphQLServlet.TestDTO testDTO() throws Exception {
 			return new TestDTO() {
 				{
 					id = _id;
 				}
 			};
-		}
-
-		public class TestDTO {
-
-			public long getId() {
-				return id;
-			}
-
-			public void setId(long id) {
-				this.id = id;
-			}
-
-			@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
-			protected long id;
-
 		}
 
 		@GraphQLTypeExtension(TestDTO.class)
