@@ -135,6 +135,10 @@ if (iteratorURL != null) {
 				%>
 
 					<th
+						<c:if test="<%= (orderKey != null) && orderCurrentHeader %>">
+							aria-live="assertive" aria-sort="<%= LanguageUtil.get(resourceBundle, sortedActionMessageKey) %>"
+						</c:if>
+
 						class="<%= cssClass %>"
 						id="<%= namespace + id %>_col-<%= normalizedHeaderName %>"
 
@@ -147,10 +151,6 @@ if (iteratorURL != null) {
 
 						<c:if test="<%= (rowChecker != null) && (i == 0) %>">
 							width="1%"
-						</c:if>
-
-						<c:if test="<%= (orderKey != null) && orderCurrentHeader %>">
-							aria-live="assertive" aria-sort="<%= LanguageUtil.get(resourceBundle, sortedActionMessageKey) %>"
 						</c:if>
 					>
 						<c:if test="<%= orderKey != null %>">
