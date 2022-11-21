@@ -114,9 +114,7 @@ public class BaseGraphQLServlet {
 
 	}
 
-	protected JSONObject invoke(GraphQLField graphQLField)
-		throws Exception {
-
+	protected JSONObject invoke(GraphQLField graphQLField) throws Exception {
 		Http.Options options = new Http.Options();
 
 		options.addHeader(

@@ -54,15 +54,14 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 
 		ServiceRegistration<ServletData> serviceRegistration =
 			bundleContext.registerService(
-				ServletData.class,
-				new TestServletData(randomString, randomId), null);
+				ServletData.class, new TestServletData(randomString, randomId),
+				null);
 
 		GraphQLField graphQLField = new GraphQLField(
 			"testDTO", new GraphQLField("id"), new GraphQLField("field"));
 
 		JSONObject testJSONObject = JSONUtil.getValueAsJSONObject(
-			invoke(graphQLField), "JSONObject/data",
-			"JSONObject/testDTO");
+			invoke(graphQLField), "JSONObject/data", "JSONObject/testDTO");
 
 		Assert.assertEquals(testJSONObject.get("id"), randomId);
 
