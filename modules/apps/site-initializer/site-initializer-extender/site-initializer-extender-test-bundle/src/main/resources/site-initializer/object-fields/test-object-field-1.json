@@ -1,7 +1,7 @@
 {
 	"DBType": "String",
 	"businessType": "Aggregation",
-	"externalReferenceCode": "TESTFIELD001",
+	"externalReferenceCode": "TESTOBJECTFIELD1",
 	"indexed": true,
 	"indexedAsKeyword": false,
 	"indexedLanguageId": "en_US",

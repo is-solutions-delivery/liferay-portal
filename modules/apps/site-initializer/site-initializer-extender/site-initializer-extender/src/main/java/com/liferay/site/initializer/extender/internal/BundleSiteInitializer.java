@@ -2617,7 +2617,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 
-			long objectDefinitionId = Long.valueOf(
+			long objectDefinitionId = GetterUtil.getLong(
 				(String)jsonObject.remove("objectDefinitionId"));
 
 			ObjectField objectField = ObjectField.toDTO(
