@@ -76,12 +76,12 @@ public class PanelAppUtil {
 	public static boolean isActive(
 		HttpServletRequest httpServletRequest, PanelApp panelApp) {
 
+		HttpServletRequest originalHttpServletRequest =
+			PortalUtil.getOriginalServletRequest(httpServletRequest);
+
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
-
-		HttpServletRequest originalHttpServletRequest =
-			PortalUtil.getOriginalServletRequest(httpServletRequest);
 
 		String parameterName =
 			PortalUtil.getPortletNamespace(themeDisplay.getPpid()) +
