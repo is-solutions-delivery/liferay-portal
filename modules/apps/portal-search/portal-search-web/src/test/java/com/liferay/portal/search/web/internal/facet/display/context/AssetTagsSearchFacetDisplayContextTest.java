@@ -185,7 +185,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 
 	@Test
 	public void testOrderByTermFrequencyAscending() throws Exception {
-		List<TermCollector> termCollectors1 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors1 = _getTermCollectors(
 			new String[] {"alpha", "delta", "bravo", "charlie"},
 			new int[] {3, 4, 5, 6});
 
@@ -204,7 +204,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			bucketDisplayContexts1.toString(),
 			"alpha:3|delta:4|bravo:5|charlie:6", nameFrequencyString1);
 
-		List<TermCollector> termCollectors2 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors2 = _getTermCollectors(
 			new String[] {"alpha", "delta", "bravo", "charlie"},
 			new int[] {4, 5, 5, 6});
 
@@ -226,7 +226,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 
 	@Test
 	public void testOrderByTermFrequencyDescending() throws Exception {
-		List<TermCollector> termCollectors1 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors1 = _getTermCollectors(
 			new String[] {"alpha", "charlie", "bravo", "delta"},
 			new int[] {3, 4, 5, 6});
 
@@ -245,7 +245,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			bucketDisplayContexts1.toString(),
 			"delta:6|bravo:5|charlie:4|alpha:3", nameFrequencyString1);
 
-		List<TermCollector> termCollectors2 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors2 = _getTermCollectors(
 			new String[] {"alpha", "delta", "bravo", "charlie"},
 			new int[] {4, 5, 5, 6});
 
@@ -267,7 +267,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 
 	@Test
 	public void testOrderByTermValueAscending() throws Exception {
-		List<TermCollector> termCollectors1 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors1 = _getTermCollectors(
 			"bravo", "delta", "alpha", "charlie");
 
 		_setUpMultipleTermCollectors(termCollectors1);
@@ -285,7 +285,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			bucketDisplayContexts1.toString(),
 			"alpha:3|bravo:1|charlie:4|delta:2", nameFrequencyString1);
 
-		List<TermCollector> termCollectors2 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors2 = _getTermCollectors(
 			"bravo", "alpha", "bravo", "charlie");
 
 		_setUpMultipleTermCollectors(termCollectors2);
@@ -306,7 +306,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 
 	@Test
 	public void testOrderByTermValueDescending() throws Exception {
-		List<TermCollector> termCollectors1 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors1 = _getTermCollectors(
 			"bravo", "delta", "alpha", "charlie");
 
 		_setUpMultipleTermCollectors(termCollectors1);
@@ -324,7 +324,7 @@ public class AssetTagsSearchFacetDisplayContextTest {
 			bucketDisplayContexts1.toString(),
 			"delta:2|charlie:4|bravo:1|alpha:3", nameFrequencyString1);
 
-		List<TermCollector> termCollectors2 = _addTagsAndCreateTermCollectors(
+		List<TermCollector> termCollectors2 = _getTermCollectors(
 			"bravo", "alpha", "bravo", "charlie");
 
 		_setUpMultipleTermCollectors(termCollectors2);
@@ -439,36 +439,6 @@ public class AssetTagsSearchFacetDisplayContextTest {
 		).getTermCollectors();
 	}
 
-	private List<TermCollector> _addTagsAndCreateTermCollectors(String... terms)
-		throws Exception {
-
-		List<TermCollector> termCollectors = new ArrayList<>();
-
-		int frequency = 1;
-
-		for (String term : terms) {
-			termCollectors.add(createTermCollector(term, frequency));
-
-			frequency++;
-		}
-
-		return termCollectors;
-	}
-
-	private List<TermCollector> _addTagsAndCreateTermCollectors(
-			String[] terms, int[] frequencies)
-		throws Exception {
-
-		List<TermCollector> termCollectors = new ArrayList<>();
-
-		for (int i = 1; i <= terms.length; i++) {
-			termCollectors.add(
-				createTermCollector(terms[i - 1], frequencies[i - 1]));
-		}
-
-		return termCollectors;
-	}
-
 	private String _buildNameFrequencyString(
 			List<BucketDisplayContext> bucketDisplayContexts)
 		throws Exception {
@@ -487,6 +457,36 @@ public class AssetTagsSearchFacetDisplayContextTest {
 		sb.setIndex(sb.index() - 1);
 
 		return sb.toString();
+	}
+
+	private List<TermCollector> _getTermCollectors(String... terms)
+		throws Exception {
+
+		List<TermCollector> termCollectors = new ArrayList<>();
+
+		int frequency = 1;
+
+		for (String term : terms) {
+			termCollectors.add(createTermCollector(term, frequency));
+
+			frequency++;
+		}
+
+		return termCollectors;
+	}
+
+	private List<TermCollector> _getTermCollectors(
+			String[] terms, int[] frequencies)
+		throws Exception {
+
+		List<TermCollector> termCollectors = new ArrayList<>();
+
+		for (int i = 1; i <= terms.length; i++) {
+			termCollectors.add(
+				createTermCollector(terms[i - 1], frequencies[i - 1]));
+		}
+
+		return termCollectors;
 	}
 
 	private void _setUpMultipleTermCollectors(
