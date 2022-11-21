@@ -2485,7 +2485,7 @@ public class ObjectEntryLocalServiceImpl
 			ObjectFieldFormulaEvaluatorUtil.evaluate(
 				_ddmExpressionFactory,
 				_objectFieldLocalService.getObjectFields(objectDefinitionId),
-				_objectFieldSettingLocalService, values, _userLocalService);
+				_objectFieldSettingLocalService, _userLocalService, values);
 		}
 
 		return values;

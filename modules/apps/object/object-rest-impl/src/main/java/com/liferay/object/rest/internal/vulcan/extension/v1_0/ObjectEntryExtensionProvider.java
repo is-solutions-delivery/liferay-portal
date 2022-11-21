@@ -76,9 +76,8 @@ public class ObjectEntryExtensionProvider extends BaseObjectExtensionProvider {
 					_ddmExpressionFactory,
 					_objectFieldLocalService.getObjectFields(
 						objectDefinition.getObjectDefinitionId()),
-					_objectFieldSettingLocalService,
-					new HashMap<>(JSONUtil.toStringMap(jsonObject)),
-					_userLocalService);
+					_objectFieldSettingLocalService, _userLocalService,
+					new HashMap<>(JSONUtil.toStringMap(jsonObject)));
 
 			for (ObjectField objectField :
 					_objectFieldLocalService.getObjectFields(

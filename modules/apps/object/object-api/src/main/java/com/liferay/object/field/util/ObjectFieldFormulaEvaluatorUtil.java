@@ -50,7 +50,7 @@ public class ObjectFieldFormulaEvaluatorUtil {
 			DDMExpressionFactory ddmExpressionFactory,
 			List<ObjectField> objectFields,
 			ObjectFieldSettingLocalService objectFieldSettingLocalService,
-			Map<String, Serializable> values, UserLocalService userLocalService)
+			UserLocalService userLocalService, Map<String, Serializable> values)
 		throws PortalException {
 
 		for (ObjectField objectField : objectFields) {
@@ -92,7 +92,7 @@ public class ObjectFieldFormulaEvaluatorUtil {
 					objectField.getName(),
 					_getOutputValue(
 						String.valueOf(objectFieldSettingMap.get("output")),
-						ddmExpression.evaluate(), userLocalService));
+						userLocalService, ddmExpression.evaluate()));
 			}
 			catch (PortalException portalException) {
 				_log.error(portalException);
@@ -103,7 +103,7 @@ public class ObjectFieldFormulaEvaluatorUtil {
 	}
 
 	private static Serializable _getOutputValue(
-		String outputType, Object value, UserLocalService userLocalService) {
+		String outputType, UserLocalService userLocalService, Object value) {
 
 		if (StringUtil.equals(
 				outputType, ObjectFieldConstants.BUSINESS_TYPE_BOOLEAN)) {
