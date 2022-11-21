@@ -57,7 +57,7 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 				ServletData.class, new TestServletData(field, id), null);
 
 		GraphQLField graphQLField = new GraphQLField(
-			"testDTO", new GraphQLField("id"), new GraphQLField("field"));
+			"testDTO", new GraphQLField("field"), new GraphQLField("id"));
 
 		JSONObject jsonObject = JSONUtil.getValueAsJSONObject(
 			invoke(graphQLField), "JSONObject/data", "JSONObject/testDTO");
