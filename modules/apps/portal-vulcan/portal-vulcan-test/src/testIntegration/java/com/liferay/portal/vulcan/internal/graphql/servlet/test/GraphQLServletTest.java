@@ -44,7 +44,7 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testGetDataFromGraphQLTypeExtension() throws Exception {
+	public void test() throws Exception {
 		Bundle bundle = FrameworkUtil.getBundle(GraphQLServletTest.class);
 
 		BundleContext bundleContext = bundle.getBundleContext();
