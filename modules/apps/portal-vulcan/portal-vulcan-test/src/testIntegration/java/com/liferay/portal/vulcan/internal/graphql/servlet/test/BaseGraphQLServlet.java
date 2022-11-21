@@ -82,8 +82,8 @@ public class BaseGraphQLServlet {
 
 		}
 
-		private String _field;
-		private long _id;
+		private final String _field;
+		private final long _id;
 
 	}
 
