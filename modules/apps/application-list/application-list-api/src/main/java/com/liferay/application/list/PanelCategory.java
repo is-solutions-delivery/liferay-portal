@@ -35,10 +35,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface PanelCategory extends PanelEntry {
 
-	public default boolean allowScopeLayouts() {
-		return false;
-	}
-
 	/**
 	 * Returns the number of notifications for the user in this application
 	 * category.
@@ -102,6 +98,10 @@ public interface PanelCategory extends PanelEntry {
 	public boolean isActive(
 		HttpServletRequest httpServletRequest,
 		PanelCategoryHelper panelCategoryHelper, Group group);
+
+	public default boolean isAllowScopeLayouts() {
+		return false;
+	}
 
 	/**
 	 * Returns <code>true</code> if the state of the category is persisted.

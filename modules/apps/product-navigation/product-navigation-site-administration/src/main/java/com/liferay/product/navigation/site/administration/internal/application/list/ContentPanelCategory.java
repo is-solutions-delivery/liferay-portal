@@ -38,11 +38,6 @@ import org.osgi.service.component.annotations.Reference;
 public class ContentPanelCategory extends BasePanelCategory {
 
 	@Override
-	public boolean allowScopeLayouts() {
-		return true;
-	}
-
-	@Override
 	public String getKey() {
 		return PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT;
 	}
@@ -50,6 +45,11 @@ public class ContentPanelCategory extends BasePanelCategory {
 	@Override
 	public String getLabel(Locale locale) {
 		return _language.get(locale, "category.site_administration.content");
+	}
+
+	@Override
+	public boolean isAllowScopeLayouts() {
+		return true;
 	}
 
 	@Reference
