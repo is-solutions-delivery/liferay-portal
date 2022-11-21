@@ -35,14 +35,14 @@ import java.util.Map;
  */
 public class BaseGraphQLServlet {
 
-	public static class TestQuery {
+	public class TestQuery {
 
-		public static void setField(String field) {
-			TestQuery._field = field;
+		public void setField(String field) {
+			_field = field;
 		}
 
-		public static void setId(long id) {
-			TestQuery._id = id;
+		public void setId(long id) {
+			_id = id;
 		}
 
 		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
@@ -54,7 +54,7 @@ public class BaseGraphQLServlet {
 			};
 		}
 
-		public static class TestDTO {
+		public class TestDTO {
 
 			public long getId() {
 				return id;
@@ -85,16 +85,16 @@ public class BaseGraphQLServlet {
 
 		}
 
-		private static String _field;
-		private static long _id;
+		private String _field;
+		private long _id;
 
 	}
 
-	public static class TestServletData implements ServletData {
+	public class TestServletData implements ServletData {
 
 		public TestServletData(String field, long id) {
-			TestQuery.setField(field);
-			TestQuery.setId(id);
+			_testQuery.setField(field);
+			_testQuery.setId(id);
 		}
 
 		@Override
@@ -109,8 +109,10 @@ public class BaseGraphQLServlet {
 
 		@Override
 		public Object getQuery() {
-			return new TestQuery();
+			return _testQuery;
 		}
+
+		private final TestQuery _testQuery = new TestQuery();
 
 	}
 
@@ -139,7 +141,7 @@ public class BaseGraphQLServlet {
 		return JSONFactoryUtil.createJSONObject(HttpUtil.URLtoString(options));
 	}
 
-	protected static class GraphQLField {
+	protected class GraphQLField {
 
 		public GraphQLField(String key, GraphQLField... graphQLFields) {
 			this(key, new HashMap<>(), graphQLFields);
