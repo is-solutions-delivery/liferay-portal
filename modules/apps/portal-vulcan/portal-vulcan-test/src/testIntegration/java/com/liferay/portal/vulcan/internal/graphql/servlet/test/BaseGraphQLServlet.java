@@ -114,7 +114,7 @@ public class BaseGraphQLServlet {
 
 	}
 
-	protected JSONObject invokeGraphQLQuery(GraphQLField graphQLField)
+	protected JSONObject invoke(GraphQLField graphQLField)
 		throws Exception {
 
 		GraphQLField queryGraphQLField = new GraphQLField(

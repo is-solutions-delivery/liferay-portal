@@ -61,7 +61,7 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 			"testDTO", new GraphQLField("id"), new GraphQLField("field"));
 
 		JSONObject testJSONObject = JSONUtil.getValueAsJSONObject(
-			invokeGraphQLQuery(graphQLField), "JSONObject/data",
+			invoke(graphQLField), "JSONObject/data",
 			"JSONObject/testDTO");
 
 		Assert.assertEquals(testJSONObject.get("id"), randomId);
