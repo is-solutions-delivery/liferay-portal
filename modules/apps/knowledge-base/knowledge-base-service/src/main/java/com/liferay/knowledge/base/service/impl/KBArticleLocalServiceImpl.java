@@ -344,7 +344,7 @@ public class KBArticleLocalServiceImpl extends KBArticleLocalServiceBaseImpl {
 
 	@Override
 	public void checkKBArticles() throws PortalException {
-		_checkKBArticlesByExpirationDate(new Date());
+		_checkKBArticles(new Date());
 	}
 
 	@Override
@@ -1546,7 +1546,7 @@ public class KBArticleLocalServiceImpl extends KBArticleLocalServiceBaseImpl {
 		return dynamicQuery.add(junction);
 	}
 
-	private void _checkKBArticlesByExpirationDate(Date expirationDate)
+	private void _checkKBArticles(Date expirationDate)
 		throws PortalException {
 
 		if (_log.isDebugEnabled()) {
