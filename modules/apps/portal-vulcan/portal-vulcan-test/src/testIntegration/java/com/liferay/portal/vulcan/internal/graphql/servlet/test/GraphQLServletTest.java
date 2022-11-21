@@ -54,8 +54,7 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 
 		ServiceRegistration<ServletData> serviceRegistration =
 			bundleContext.registerService(
-				ServletData.class, new TestServletData(field, id),
-				null);
+				ServletData.class, new TestServletData(field, id), null);
 
 		GraphQLField graphQLField = new GraphQLField(
 			"testDTO", new GraphQLField("id"), new GraphQLField("field"));
