@@ -78,12 +78,19 @@ export default function QuestionRow({
 					<li>
 						<QuestionBadge
 							symbol={
-								normalizeRating(question.aggregateRating) < 0
+								normalizeRating(
+									question.aggregateRating ??
+										question.messageBoardThread
+											.aggregateRating
+								) < 0
 									? 'caret-bottom'
 									: 'caret-top'
 							}
 							tooltip={Liferay.Language.get('votes')}
-							value={normalizeRating(question.aggregateRating)}
+							value={normalizeRating(
+								question.aggregateRating ??
+									question.messageBoardThread.aggregateRating
+							)}
 						/>
 					</li>
 
@@ -91,7 +98,10 @@ export default function QuestionRow({
 						<QuestionBadge
 							symbol="view"
 							tooltip={Liferay.Language.get('view-count')}
-							value={question.viewCount}
+							value={
+								question.viewCount ??
+								question.messageBoardThread.viewCount
+							}
 						/>
 					</li>
 
