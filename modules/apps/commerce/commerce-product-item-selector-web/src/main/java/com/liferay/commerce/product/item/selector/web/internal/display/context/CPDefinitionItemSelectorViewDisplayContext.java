@@ -90,13 +90,11 @@ public class CPDefinitionItemSelectorViewDisplayContext
 			CPField.COMMERCE_CHANNEL_GROUP_ID,
 			String.valueOf(commerceChannelGroupId));
 
-		boolean ignoreCommerceAccountGroup = ParamUtil.getBoolean(
-			httpServletRequest, "ignoreCommerceAccountGroup");
-
 		portletURL.setParameter(
 			"ignoreCommerceAccountGroup",
-			Boolean.toString(ignoreCommerceAccountGroup));
-
+			Boolean.toString(
+				ParamUtil.getBoolean(
+					httpServletRequest, "ignoreCommerceAccountGroup")));
 		portletURL.setParameter(
 			"singleSelection", Boolean.toString(isSingleSelection()));
 
@@ -126,11 +124,11 @@ public class CPDefinitionItemSelectorViewDisplayContext
 
 		BaseModelSearchResult<CPDefinition> cpDefinitionBaseModelSearchResult;
 
-		boolean ignoreCommerceAccountGroup = ParamUtil.getBoolean(
-			httpServletRequest, "ignoreCommerceAccountGroup");
-
 		long commerceChannelGroupId = ParamUtil.getLong(
 			httpServletRequest, CPField.COMMERCE_CHANNEL_GROUP_ID);
+
+		boolean ignoreCommerceAccountGroup = ParamUtil.getBoolean(
+			httpServletRequest, "ignoreCommerceAccountGroup");
 
 		if (commerceChannelGroupId != 0) {
 			cpDefinitionBaseModelSearchResult =
