@@ -52,11 +52,8 @@ public class BaseGraphQLServlet {
 
 	public class TestQuery {
 
-		public void setField(String field) {
+		public TestQuery(String field, long id) {
 			_field = field;
-		}
-
-		public void setId(long id) {
 			_id = id;
 		}
 
@@ -93,8 +90,7 @@ public class BaseGraphQLServlet {
 	public class TestServletData implements ServletData {
 
 		public TestServletData(String field, long id) {
-			_testQuery.setField(field);
-			_testQuery.setId(id);
+			_testQuery = new TestQuery(field, id);
 		}
 
 		@Override
@@ -112,7 +108,7 @@ public class BaseGraphQLServlet {
 			return _testQuery;
 		}
 
-		private final TestQuery _testQuery = new TestQuery();
+		private final TestQuery _testQuery;
 
 	}
 
