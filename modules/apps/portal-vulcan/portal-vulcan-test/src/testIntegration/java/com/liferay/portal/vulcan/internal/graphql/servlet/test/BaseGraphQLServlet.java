@@ -37,16 +37,16 @@ public class BaseGraphQLServlet {
 
 	public class TestDTO {
 
-		public long getId() {
-			return id;
+		public TestDTO(long id) {
+			_id = id;
 		}
 
-		public void setId(long id) {
-			this.id = id;
+		public long getId() {
+			return _id;
 		}
 
 		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
-		protected long id;
+		private long _id;
 
 	}
 
@@ -59,11 +59,7 @@ public class BaseGraphQLServlet {
 
 		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
 		public BaseGraphQLServlet.TestDTO testDTO() throws Exception {
-			return new TestDTO() {
-				{
-					id = _id;
-				}
-			};
+			return new TestDTO(_id);
 		}
 
 		@GraphQLTypeExtension(TestDTO.class)
