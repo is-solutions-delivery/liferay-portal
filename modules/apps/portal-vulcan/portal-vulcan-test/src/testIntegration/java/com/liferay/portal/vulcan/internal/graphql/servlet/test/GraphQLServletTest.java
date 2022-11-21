@@ -45,8 +45,8 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 
 	@Test
 	public void testGetDataFromGraphQLTypeExtension() throws Exception {
-		long randomId = RandomTestUtil.randomLong();
-		String randomString = RandomTestUtil.randomString();
+		long id = RandomTestUtil.randomLong();
+		String field = RandomTestUtil.randomString();
 
 		Bundle bundle = FrameworkUtil.getBundle(GraphQLServletTest.class);
 
@@ -54,7 +54,7 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 
 		ServiceRegistration<ServletData> serviceRegistration =
 			bundleContext.registerService(
-				ServletData.class, new TestServletData(randomString, randomId),
+				ServletData.class, new TestServletData(field, id),
 				null);
 
 		GraphQLField graphQLField = new GraphQLField(
@@ -63,9 +63,9 @@ public class GraphQLServletTest extends BaseGraphQLServlet {
 		JSONObject testJSONObject = JSONUtil.getValueAsJSONObject(
 			invoke(graphQLField), "JSONObject/data", "JSONObject/testDTO");
 
-		Assert.assertEquals(testJSONObject.get("id"), randomId);
+		Assert.assertEquals(testJSONObject.get("id"), id);
 
-		Assert.assertEquals(testJSONObject.get("field"), randomString);
+		Assert.assertEquals(testJSONObject.get("field"), field);
 
 		serviceRegistration.unregister();
 	}
