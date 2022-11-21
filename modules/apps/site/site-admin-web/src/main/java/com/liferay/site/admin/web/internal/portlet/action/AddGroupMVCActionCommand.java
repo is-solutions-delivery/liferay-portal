@@ -541,6 +541,9 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 				return _updateGroup(_actionRequest);
 			}
 			catch (Exception exception) {
+
+				// LPS-169057
+
 				PermissionCacheUtil.clearCache(
 					_portal.getUserId(_actionRequest));
 
