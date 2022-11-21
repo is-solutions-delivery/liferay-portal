@@ -120,7 +120,7 @@ public class BaseGraphQLServlet {
 		GraphQLField queryGraphQLField = new GraphQLField(
 			"query", graphQLField);
 
-		return _invoke(queryGraphQLField.toString(), Http.Method.POST);
+		return _invoke(Http.Method.POST, queryGraphQLField.toString());
 	}
 
 	protected static class GraphQLField {
@@ -181,7 +181,7 @@ public class BaseGraphQLServlet {
 
 	}
 
-	private JSONObject _invoke(String query, Http.Method httpMethod)
+	private JSONObject _invoke(Http.Method httpMethod, String query)
 		throws Exception {
 
 		Http.Options options = new Http.Options();
