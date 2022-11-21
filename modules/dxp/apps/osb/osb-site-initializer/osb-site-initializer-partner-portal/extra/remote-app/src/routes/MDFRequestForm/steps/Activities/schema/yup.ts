@@ -37,8 +37,13 @@ const activitiesSchema = object({
 					.of(
 						object({
 							cost: number()
+								.max(
+									999999999,
+									'The value cannot be greater than 9,999,999.99'
+								)
 								.moreThan(0, 'Required')
 								.required('Required'),
+
 							expense: object({
 								key: string(),
 								name: string(),
