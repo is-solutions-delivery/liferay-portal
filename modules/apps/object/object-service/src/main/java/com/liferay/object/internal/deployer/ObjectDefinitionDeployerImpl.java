@@ -230,6 +230,12 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					"model.class.name", objectDefinition.getClassName()
 				).build()),
 			_bundleContext.registerService(
+				NotificationHandler.class,
+				new ObjectDefinitionNotificationHandler(objectDefinition),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"class.name", objectDefinition.getClassName()
+				).build()),
+			_bundleContext.registerService(
 				NotificationTermEvaluator.class,
 				new ObjectDefinitionNotificationTermEvaluator(
 					objectDefinition, _objectFieldLocalService,
@@ -239,12 +245,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					NotificationTermEvaluatorConstants.BODY_AND_SUBJECT
 				).put(
 					"notification.type.key", objectDefinition.getClassName()
-				).build()),
-			_bundleContext.registerService(
-				NotificationHandler.class,
-				new ObjectDefinitionNotificationHandler(objectDefinition),
-				HashMapDictionaryBuilder.<String, Object>put(
-					"class.name", objectDefinition.getClassName()
 				).build()),
 			_bundleContext.registerService(
 				ObjectRelatedModelsProvider.class,
