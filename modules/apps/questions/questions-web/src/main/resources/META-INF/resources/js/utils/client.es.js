@@ -819,6 +819,8 @@ export const getUserActivityQuery = `
 						id
 						title
 					}
+					aggregateRating
+					viewCount
 				}
 				numberOfMessageBoardMessages
 			}
