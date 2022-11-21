@@ -131,14 +131,12 @@ public class NotificationTemplateResourceImpl
 
 		notificationContext.setNotificationRecipient(
 			NotificationUtil.toNotificationRecipient(contextUser, 0L));
-
 		notificationContext.setNotificationRecipientSettings(
 			NotificationUtil.toNotificationRecipientSetting(
 				0L,
 				_notificationTypeServiceTracker.getNotificationType(
 					notificationTemplate.getType()),
 				notificationTemplate.getRecipients(), contextUser));
-
 		notificationContext.setNotificationTemplate(
 			NotificationUtil.toNotificationTemplate(
 				0L, notificationTemplate, contextUser));

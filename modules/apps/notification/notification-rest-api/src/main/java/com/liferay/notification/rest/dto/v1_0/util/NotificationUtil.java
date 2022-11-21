@@ -69,7 +69,6 @@ public class NotificationUtil {
 		notificationRecipient.setCompanyId(user.getCompanyId());
 		notificationRecipient.setUserId(user.getUserId());
 		notificationRecipient.setUserName(user.getFullName());
-
 		notificationRecipient.setClassPK(classPK);
 
 		return notificationRecipient;
