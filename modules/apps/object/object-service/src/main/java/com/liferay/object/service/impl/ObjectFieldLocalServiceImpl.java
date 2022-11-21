@@ -159,11 +159,14 @@ public class ObjectFieldLocalServiceImpl
 
 		ObjectField existingObjectField = null;
 
-		if (Validator.isNull(externalReferenceCode)) {
+		if (objectFieldId > 0) {
 			existingObjectField = objectFieldPersistence.fetchByPrimaryKey(
 				objectFieldId);
 		}
-		else {
+
+		if ((existingObjectField == null) &&
+			Validator.isNotNull(externalReferenceCode)) {
+
 			ObjectDefinition objectDefinition =
 				_objectDefinitionPersistence.findByPrimaryKey(
 					objectDefinitionId);
