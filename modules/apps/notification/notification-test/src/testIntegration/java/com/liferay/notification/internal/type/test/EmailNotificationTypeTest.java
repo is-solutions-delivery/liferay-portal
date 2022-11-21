@@ -119,21 +119,8 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 	private NotificationContext _createNotificationContext() {
 		NotificationContext notificationContext = new NotificationContext();
 
-		NotificationTemplate notificationTemplate =
-			notificationTemplateLocalService.createNotificationTemplate(0L);
-
-		notificationTemplate.setBody("Body [%term%]");
-		notificationTemplate.setName(RandomTestUtil.randomString());
-		notificationTemplate.setRecipientType(
-			NotificationRecipientConstants.TYPE_EMAIL);
-		notificationTemplate.setSubject("Subject [%term%]");
-		notificationTemplate.setType(NotificationConstants.TYPE_EMAIL);
-
-		notificationContext.setNotificationTemplate(notificationTemplate);
-
 		notificationContext.setNotificationRecipient(
 			notificationRecipientLocalService.createNotificationRecipient(0L));
-
 		notificationContext.setNotificationRecipientSettings(
 			Arrays.asList(
 				createNotificationRecipientSetting(
@@ -147,6 +134,19 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 				createNotificationRecipientSetting(
 					"to",
 					Collections.singletonMap(LocaleUtil.US, "[%emailTerm%]"))));
+
+		NotificationTemplate notificationTemplate =
+			notificationTemplateLocalService.createNotificationTemplate(0L);
+
+		notificationTemplate.setBody("Body [%term%]");
+		notificationTemplate.setName(RandomTestUtil.randomString());
+		notificationTemplate.setRecipientType(
+			NotificationRecipientConstants.TYPE_EMAIL);
+		notificationTemplate.setSubject("Subject [%term%]");
+		notificationTemplate.setType(NotificationConstants.TYPE_EMAIL);
+
+		notificationContext.setNotificationTemplate(notificationTemplate);
+
 		notificationContext.setType(NotificationConstants.TYPE_EMAIL);
 
 		return notificationContext;
