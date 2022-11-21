@@ -92,9 +92,9 @@ public class BaseGraphQLServlet {
 
 	public static class TestServletDataImpl implements ServletData {
 
-		public TestServletDataImpl(long testId, String testString) {
-			TestQuery.setId(testId);
-			TestQuery.setField(testString);
+		public TestServletDataImpl(long id, String field) {
+			TestQuery.setId(id);
+			TestQuery.setField(field);
 		}
 
 		@Override
