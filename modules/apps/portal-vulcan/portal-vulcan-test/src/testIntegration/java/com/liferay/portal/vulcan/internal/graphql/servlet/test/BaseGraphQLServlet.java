@@ -117,10 +117,28 @@ public class BaseGraphQLServlet {
 	protected JSONObject invoke(GraphQLField graphQLField)
 		throws Exception {
 
+		Http.Options options = new Http.Options();
+
+		options.addHeader(
+			HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON);
+		options.addHeader(
+			"Authorization",
+			"Basic " + Base64.encode("test@liferay.com:test".getBytes()));
+
 		GraphQLField queryGraphQLField = new GraphQLField(
 			"query", graphQLField);
 
-		return _invoke(Http.Method.POST, queryGraphQLField.toString());
+		options.setBody(
+			new Http.Body(
+				JSONUtil.put(
+					"query", queryGraphQLField.toString()
+				).toString(),
+				ContentTypes.APPLICATION_JSON, "UTF-8"));
+
+		options.setLocation("http://localhost:8080/o/graphql");
+		options.setMethod(Http.Method.POST);
+
+		return JSONFactoryUtil.createJSONObject(HttpUtil.URLtoString(options));
 	}
 
 	protected static class GraphQLField {
@@ -179,28 +197,6 @@ public class BaseGraphQLServlet {
 		private final String _key;
 		private final Map<String, Object> _parameterMap;
 
-	}
-
-	private JSONObject _invoke(Http.Method httpMethod, String query)
-		throws Exception {
-
-		Http.Options options = new Http.Options();
-
-		options.addHeader(
-			HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON);
-		options.addHeader(
-			"Authorization",
-			"Basic " + Base64.encode("test@liferay.com:test".getBytes()));
-		options.setBody(
-			new Http.Body(
-				JSONUtil.put(
-					"query", query
-				).toString(),
-				ContentTypes.APPLICATION_JSON, "UTF-8"));
-		options.setLocation("http://localhost:8080/o/graphql");
-		options.setMethod(httpMethod);
-
-		return JSONFactoryUtil.createJSONObject(HttpUtil.URLtoString(options));
 	}
 
 }
