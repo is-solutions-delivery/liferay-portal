@@ -105,7 +105,6 @@ public class UserNotificationTypeTest extends BaseNotificationTypeTest {
 
 		notificationContext.setNotificationRecipient(
 			notificationRecipientLocalService.createNotificationRecipient(0L));
-
 		notificationContext.setNotificationRecipientSettings(
 			notificationRecipientSettings);
 		notificationContext.setType(
