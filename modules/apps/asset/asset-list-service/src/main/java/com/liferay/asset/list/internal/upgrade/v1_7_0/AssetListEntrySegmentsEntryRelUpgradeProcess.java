@@ -26,7 +26,7 @@ public class AssetListEntrySegmentsEntryRelUpgradeProcess
 	protected void doUpgrade() throws Exception {
 		runSQL(
 			"update AssetListEntrySegmentsEntryRel set priority = -1 where " +
-				"priority is NULL");
+				"priority is null");
 	}
 
 }
