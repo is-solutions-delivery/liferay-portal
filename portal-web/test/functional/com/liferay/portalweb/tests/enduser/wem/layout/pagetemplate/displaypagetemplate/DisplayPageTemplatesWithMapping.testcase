@@ -1333,7 +1333,6 @@ definition {
 	@description = "This is a test for LPS-118060. The contributed content types and their subtypes are available when creating a display page template."
 	@priority = "5"
 	test ViewTypesDuringCreation {
-		property osgi.modules.includes = "document-library-google-docs";
 		property portal.acceptance = "true";
 
 		task ("Add a custom Web Content structure") {
