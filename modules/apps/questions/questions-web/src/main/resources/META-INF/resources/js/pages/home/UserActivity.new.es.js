@@ -13,14 +13,13 @@
  */
 
 import ClayEmptyState from '@clayui/empty-state';
-import classNames from 'classnames';
 import {useManualQuery} from 'graphql-hooks';
 import React, {useContext, useEffect, useState} from 'react';
 import {withRouter} from 'react-router-dom';
 
 import {AppContext} from '../../AppContext.es';
+import ActivityQuestionRow from '../../components/ActivityQuestionRow.es';
 import PaginatedList from '../../components/PaginatedList.es';
-import QuestionRow from '../../components/QuestionRow.es';
 import useQueryParams from '../../hooks/useQueryParams.es';
 import {getUserActivityQuery} from '../../utils/client.es';
 import {historyPushWithSlug} from '../../utils/utils.es';
@@ -35,14 +34,14 @@ export default withRouter(
 			url,
 		},
 	}) => {
-		const [currentQuestion, setCurrentQuestion] = useState(null);
+		const context = useContext(AppContext);
+		const queryParams = useQueryParams(location);
+		const siteKey = context.siteKey;
 		const [loading, setLoading] = useState(true);
 		const [page, setPage] = useState(null);
 		const [pageSize, setPageSize] = useState(null);
 		const [totalCount, setTotalCount] = useState(0);
-		const context = useContext(AppContext);
-		const queryParams = useQueryParams(location);
-		const siteKey = context.siteKey;
+		const [currentQuestion, setCurrentQuestion] = useState({});
 
 		useEffect(() => {
 			const pageNumber = queryParams.get('page') || 1;
@@ -92,14 +91,6 @@ export default withRouter(
 			historyPushParser(buildUrl(page, pageSize));
 		}
 
-		const addSectionToQuestion = (question) => {
-			return {
-				...question,
-				messageBoardSection:
-					question?.messageBoardThread?.messageBoardSection,
-			};
-		};
-
 		useEffect(() => {
 			if (data) {
 				setCurrentQuestion(data?.messageBoardMessages?.items[0]);
@@ -107,7 +98,7 @@ export default withRouter(
 		}, [data]);
 
 		const sectionTitleQuestion =
-			data?.messageBoardMessages?.items[0]?.messageBoardThread
+			data?.messageBoardMessages?.items[0].messageBoardThread
 				.messageBoardSection.title;
 
 		return (
@@ -119,21 +110,8 @@ export default withRouter(
 						</div>
 					</div>
 
-					<div
-						className={classNames(
-							'border-top container d-flex flex-row',
-							{
-								'justify-content-between': currentQuestion,
-								'justify-content-center': !currentQuestion,
-							}
-						)}
-					>
-						<div
-							className={classNames('panel-from-activity', {
-								'col-xl-7': currentQuestion,
-								'col-xl-12': !currentQuestion,
-							})}
-						>
+					<div className="border-top container d-flex flex-row justify-content-between">
+						<div className="activity-panel c-mb-2 c-mr-2 c-px-0 col-xl-7">
 							<PaginatedList
 								activeDelta={pageSize}
 								activePage={page}
@@ -147,13 +125,15 @@ export default withRouter(
 								emptyState={
 									<ClayEmptyState
 										description={Liferay.Language.get(
-											'there-is-are-no-new-activities'
+											'sorry,-no-results-were-found'
 										)}
 										imgSrc={
 											context.includeContextPath +
-											'/assets/empty_questions_activity.png'
+											'/assets/empty_questions_list.png'
 										}
-										title={null}
+										title={Liferay.Language.get(
+											'there-are-no-results'
+										)}
 									/>
 								}
 								hidden
@@ -161,7 +141,7 @@ export default withRouter(
 								totalCount={totalCount}
 							>
 								{(question) => (
-									<QuestionRow
+									<ActivityQuestionRow
 										context={context}
 										currentSection={
 											context.useTopicNamesInURL
@@ -184,11 +164,14 @@ export default withRouter(
 												setCurrentQuestion(question);
 											},
 										}}
-										question={addSectionToQuestion(
-											question
-										)}
+										question={{
+											...question,
+											messageBoardSection:
+												question?.messageBoardThread
+													?.messageBoardSection,
+										}}
 										rowSelected={
-											currentQuestion?.friendlyUrlPath
+											currentQuestion.friendlyUrlPath
 										}
 										showSectionLabel={true}
 									/>
@@ -196,25 +179,23 @@ export default withRouter(
 							</PaginatedList>
 						</div>
 
-						{currentQuestion && (
-							<div className="border-left c-p-4 col-xl-5 modal-body panel-from-activity">
-								<Question
-									display={{
-										actions: false,
-										addAnswer: false,
-										breadcrumb: false,
-										kebab: true,
-										rating: false,
-										styled: true,
-										tabs: true,
-									}}
-									history={history}
-									questionId={currentQuestion.friendlyUrlPath}
-									sectionTitle={sectionTitleQuestion}
-									url={url}
-								/>
-							</div>
-						)}
+						<div className="activity-panel border-left c-p-4 col-xl-5 modal-body">
+							<Question
+								display={{
+									actions: false,
+									addAnswer: false,
+									breadcrumb: false,
+									kebab: true,
+									rating: false,
+									styled: true,
+									tabs: true,
+								}}
+								history={history}
+								questionId={currentQuestion.friendlyUrlPath}
+								sectionTitle={sectionTitleQuestion}
+								url={url}
+							/>
+						</div>
 					</div>
 				</div>
 			</section>
