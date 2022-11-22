@@ -4,7 +4,7 @@ definition {
 	property custom.properties = "feature.flag.LPS-163118=true";
 	property osgi.modules.includes = "site-initializer-testray";
 	property portal.release = "false";
-	property portal.upstream = "true";
+	property portal.upstream = "test";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Site Initializer Testray";
 
@@ -113,8 +113,6 @@ definition {
 
 		task ("Go to Testray 2 and change the pagination") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
-
-			TestrayTestflow.goToTestflow();
 		}
 	}
 
@@ -122,6 +120,8 @@ definition {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
 		Testray.tearDownCP();
+
+		ObjectAdmin.deleteAllCustomObjectsViaAPI();
 
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
@@ -131,7 +131,7 @@ definition {
 	@description = "This is a test for LPS-160724 - Verify if as an Administrator I should be able to add a task with user groups"
 	@priority = "5"
 	test AdminCanAddTaskWithUserGroups {
-		task ("Given Given the user add a user and UserGroups") {
+		task ("Given the user add a user and UserGroups") {
 			JSONUser.addUser(
 				userEmailAddress = "userea@liferay.com",
 				userFirstName = "userfn",
@@ -147,7 +147,7 @@ definition {
 			UserGroup.assignAllMembersCP(userGroupName = "UG UserGroup Name");
 		}
 
-		task ("Given the user add a Task with user groups") {
+		task ("When the user add a Task with user groups") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
 			TestrayTestflow.goToTestflow();
@@ -180,7 +180,7 @@ definition {
 			Testray.checkSuccessAlertAppearsAndDisappears();
 		}
 
-		task ("When the users appears in the list") {
+		task ("Then can see a created task with details") {
 			TestrayTestflow.assertAssignTask(
 				email = "test@liferay.com",
 				nameUser = "Test Test");
@@ -188,9 +188,7 @@ definition {
 			TestrayTestflow.assertAssignTask(
 				email = "userea@liferay.com",
 				nameUser = "userfn userln");
-		}
 
-		task ("Then can see a task created with task details") {
 			Button.click(button = "Save");
 
 			TestrayTestflow.assertTaskDetails(
@@ -206,6 +204,8 @@ definition {
 	@priority = "5"
 	test AdminCanNotAddDuplicateTestflow {
 		task ("Given the user try to add a duplicate Task") {
+			TestrayTestflow.goToTestflow();
+
 			TestrayTestflow.addTask(
 				checkCaseType = "Compile",
 				selectBuild = "Builds_1 Project",
@@ -240,6 +240,8 @@ definition {
 	@priority = "4"
 	test AdminCanViewRequiredAssignUsers {
 		task ("Given the user try to add a Task without User") {
+			TestrayTestflow.goToTestflow();
+
 			TestrayTestflow.addTask(
 				checkCaseType = "Compile",
 				selectBuild = "Builds_1 Project",
@@ -257,6 +259,8 @@ definition {
 	@priority = "4"
 	test AdminCanViewRequiredCaseType {
 		task ("Given the user try to add a Task without case type") {
+			TestrayTestflow.goToTestflow();
+
 			TestrayTestflow.addTask(
 				selectBuild = "Builds_1 Project",
 				selectProject = "Projects_1 Project",
@@ -270,16 +274,19 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-163863 - Verify that As an administrator can remove users from the context menu"
+	@description = "This is a test for LPS-169349 - Verify if as an Administrator I should be able view task in analysis"
 	@priority = "4"
-	test CanRemoveUser {
-		task ("Given the user add a Task") {
-			Click(locator1 = "Button#PLUS");
+	test AdminCanViewTaskInAnalysis {
+		task ("Given the user add a Task in a different flow") {
+			Testray.changePagination(
+				numberItems = "20",
+				valuePagination = "150");
 
-			TestrayTestflow.editBreadcrumb(
-				build = "Builds_1 Project",
-				project = "Projects_1 Project",
-				routine = "Routines_1 Routine");
+			Testray.goToProjectPage(projectName = "Projects_1 Project");
+
+			TestrayRoutines.goToRoutine(routineName = "Routines_1 Routine");
+
+			TestrayBuild.goToBuild(buildName = "Builds_1 Project");
 
 			Button.click(button = "Analyze");
 
@@ -301,18 +308,61 @@ definition {
 
 			Testray.checkSuccessAlertAppearsAndDisappears();
 
+			Button.click(button = "Save");
+
+			Button.click(button = "View Task");
+		}
+
+		task ("Then can see the status of the task In Analysis") {
+			TestrayResults.assertStatus(status = "In Analysis");
+		}
+	}
+
+	@description = "This is a test for LPS-163863 - Verify that As an administrator can remove users from the context menu"
+	@priority = "4"
+	test CanRemoveUser {
+		task ("Given the user add a Task") {
+			TestrayTestflow.goToTestflow();
+
+			Click(locator1 = "Button#PLUS");
+
+			TestrayTestflow.editBreadcrumb(
+				build = "Builds_1 Project",
+				project = "Projects_1 Project",
+				routine = "Routines_1 Routine");
+
+			Button.click(button = "Analyze");
+
+			Type(
+				locator1 = "TestrayManage#NEW_OPTION_NAME",
+				value1 = "Task_1");
+
+			Click(
+				key_checkboxOption = "Compile",
+				locator1 = "Checkbox#ENABLE_CHECKBOX_VIA_SPAN");
+		}
+
+		task ("When assign a user") {
+			Button.click(button = "Assign Users");
+
+			Click.clickAtNotVisible(
+				key_checkboxOption = "Test Test",
+				locator1 = "Checkbox#SPECIFIC_CHECKBOX_IN_TABLE");
+
+			Button.click(button = "Select Users");
+
+			Testray.checkSuccessAlertAppearsAndDisappears();
+
 			TestrayTestflow.assertAssignTask(
 				email = "test@liferay.com",
 				nameUser = "Test Test");
 		}
 
-		task ("When remove a user") {
+		task ("Then can remove a user") {
 			TestrayContextMenu.clickContextMenuProjects(name = "Test Test");
 
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Remove");
-		}
 
-		task ("Then state that it has been removed") {
 			Testray.assertItemNotPresent(key_name = "Test Test");
 		}
 	}
@@ -321,6 +371,8 @@ definition {
 	@priority = "3"
 	test CanViewFieldNameRequired {
 		task ("Given the user try to add a Task without name") {
+			TestrayTestflow.goToTestflow();
+
 			TestrayTestflow.addTask(
 				selectBuild = "Builds_1 Project",
 				selectProject = "Projects_1 Project",

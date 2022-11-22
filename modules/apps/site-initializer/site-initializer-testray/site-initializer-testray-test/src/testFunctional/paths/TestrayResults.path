@@ -22,7 +22,7 @@
 </tr>
 <tr>
 	<td>INPUT_ISSUES</td>
-	<td>//input[@id='issues']</td>
+	<td>//input[contains(@name,'issue')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -4,7 +4,7 @@ definition {
 	property custom.properties = "feature.flag.LPS-163118=true";
 	property osgi.modules.includes = "site-initializer-testray";
 	property portal.release = "false";
-	property portal.upstream = "true";
+	property portal.upstream = "test";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Site Initializer Testray";
 
@@ -22,6 +22,8 @@ definition {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
 		Testray.tearDownCP();
+
+		ObjectAdmin.deleteAllCustomObjectsViaAPI();
 
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();

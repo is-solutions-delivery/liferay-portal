@@ -88,6 +88,12 @@ definition {
 		}
 	}
 
+	macro goToTask {
+		Click(
+			key_projectName = "${taskName}",
+			locator1 = "Testray#ITEM_NAME");
+	}
+
 	macro goToTestflow {
 		Click(locator1 = "TestrayTestflow#TESTFLOW_SIDEBAR");
 	}

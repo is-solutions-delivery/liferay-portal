@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>TestraySubTasks</title>
+</head>
+
+<body>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr><td rowspan="1" colspan="3">TestraySubTasks</td></tr>
+</thead>
+
+<tbody>
+<tr>
+	<td>STATUS_SUB_TASK</td>
+	<td>//h5[contains(text(),'Subtask')]//following::span[normalize-space()='${key_status}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VERIFY_SUBTASK_MERGED</td>
+	<td>//th[normalize-space()='Merged With']//following::td[contains(text(),'${key_subtaskMerged}')]</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

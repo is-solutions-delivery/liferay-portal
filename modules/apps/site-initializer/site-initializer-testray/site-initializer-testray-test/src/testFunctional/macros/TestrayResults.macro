@@ -39,9 +39,11 @@ definition {
 			locator1 = "TestrayResults#SELECT_STATUS_CASE_RESULTS",
 			value1 = "${typeStatus}");
 
-		Type(
-			locator1 = "TestrayResults#INPUT_ISSUES",
-			value1 = "${issues}");
+		if (isSet(issues)) {
+			Type(
+				locator1 = "TestrayResults#INPUT_ISSUES",
+				value1 = "${issues}");
+		}
 
 		if (isSet(comment)) {
 			Type(

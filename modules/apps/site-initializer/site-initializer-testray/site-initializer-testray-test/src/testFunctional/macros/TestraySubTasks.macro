@@ -1,0 +1,49 @@
+definition {
+
+	macro assertMergedSubtasks {
+		for (var subtaskMerged : list "${listSubtaskMerged}") {
+			AssertElementPresent(
+				key_subtaskMerged = "${subtaskMerged}",
+				locator1 = "TestraySubTasks#VERIFY_SUBTASK_MERGED");
+		}
+	}
+
+	macro assertStatusSubTask {
+		AssertElementPresent(
+			key_status = "${status}",
+			locator1 = "TestraySubTasks#STATUS_SUB_TASK");
+	}
+
+	macro assignUsersInSubTask {
+		TestrayContextMenu.clickContextMenuProjects(name = "${subTaskName}");
+
+		TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign");
+
+		SelectFrame(locator1 = "Testray#MODAL_BODY");
+
+		Testray.goToProjectPage(projectName = "${userName}");
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro goToSubTask {
+		Click(
+			key_projectName = "${subTaskName}",
+			locator1 = "Testray#ITEM_NAME");
+	}
+
+	macro mergeSubtasks {
+		for (var subtaskName : list "${wcsubtaskName}") {
+			Click.clickAtNotVisible(
+				key_checkboxOption = "${subtaskName}",
+				locator1 = "Checkbox#SPECIFIC_CHECKBOX_IN_TABLE");
+		}
+
+		if (isSet(cancel)) {
+			Button.click(button = "${cancel}");
+		}
+
+		Button.click(button = "Merge Subtasks");
+	}
+
+}
