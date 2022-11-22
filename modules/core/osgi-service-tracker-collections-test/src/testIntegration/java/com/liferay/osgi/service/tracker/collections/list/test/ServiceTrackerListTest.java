@@ -275,17 +275,18 @@ public class ServiceTrackerListTest {
 			Collection<ServiceRegistration<TrackedOne>> serviceRegistrations =
 				registerServices(TrackedOne.class, trackedOnes);
 
-			List<TrackedOne> trackedOneList = serviceTrackerList.toList();
+			List<TrackedOne> toListTrackedOnes = serviceTrackerList.toList();
 
 			Assert.assertArrayEquals(
-				trackedOneList.toString(), trackedOnes,
-				trackedOneList.toArray(new TrackedOne[0]));
+				toListTrackedOnes.toString(), trackedOnes,
+				toListTrackedOnes.toArray(new TrackedOne[0]));
 
-			TrackedOne[] trackedOneArray = serviceTrackerList.toArray(
+			TrackedOne[] toArrayTrackedOnes = serviceTrackerList.toArray(
 				new TrackedOne[0]);
 
 			Assert.assertArrayEquals(
-				Arrays.toString(trackedOneArray), trackedOnes, trackedOneArray);
+				Arrays.toString(toArrayTrackedOnes), trackedOnes,
+				toArrayTrackedOnes);
 
 			unregister(serviceRegistrations);
 		}
