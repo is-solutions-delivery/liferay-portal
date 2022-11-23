@@ -120,8 +120,25 @@ definition {
     @description = "Automation ID: LPS-169248 | Test Summary: Assert that the user will have the option to remove additional Admins from the project before submitting the form"
     @priority = "3"
     test AssertThatTheAdditionalFieldsHaveBeenRemoved {
-        
-		// TODO LPS-169248 AssertThatTheAdditionalFieldsHaveBeenRemoved pending implementation
+        task ("And I enter Setup AC") {
+			CustomerPortal.clickOnFinishActivationButton();
+		}
+
+		task ("Then I add three extra fields") {
+			CustomerPortal.clickAtButton(text = "Add Another Admin");
+
+			CP2LXCSetup.assertThatTheExtraFieldsAreVisible(
+				fieldsList = "fullName,email,github",
+				position = "2");
+		}
+
+		task ("And I assert that when I click the 'Remove Project Admin' button, no extra fields are shown in the form") {
+			CustomerPortal.clickAtButton(text = "Remove Project Admin");
+
+			CP2LXCSetup.assertThatTheExtraFieldsIsNotVisible(
+				fieldsList = "fullName,email,github",
+				position = "2");
+		}
 
     }
 
