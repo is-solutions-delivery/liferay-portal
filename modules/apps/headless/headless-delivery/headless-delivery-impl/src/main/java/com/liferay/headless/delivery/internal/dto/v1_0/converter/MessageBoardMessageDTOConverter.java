@@ -29,12 +29,16 @@ import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.MBMessageLocalService;
 import com.liferay.message.boards.service.MBMessageService;
 import com.liferay.message.boards.service.MBStatsUserLocalService;
+import com.liferay.message.boards.settings.MBGroupServiceSettings;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
@@ -92,6 +96,7 @@ public class MessageBoardMessageDTOConverter
 				externalReferenceCode = mbMessage.getExternalReferenceCode();
 				friendlyUrlPath = mbMessage.getUrlSubject();
 				hasCompanyMx = company.hasCompanyMx(user.getEmailAddress());
+				hasModified = _hasModified(mbMessage);
 				headline = mbMessage.getSubject();
 				id = mbMessage.getMessageId();
 				keywords = ListUtil.toArray(
@@ -156,7 +161,14 @@ public class MessageBoardMessageDTOConverter
 					});
 			}
 		};
+
+
 	}
+	private boolean _hasModified(MBMessage mbMessage) {
+		return mbMessage.getMvccVersion() > 0;
+	}
+
+
 
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
