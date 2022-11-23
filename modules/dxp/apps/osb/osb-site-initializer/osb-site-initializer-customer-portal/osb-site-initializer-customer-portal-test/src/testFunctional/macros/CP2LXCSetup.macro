@@ -9,6 +9,16 @@ definition {
 		}
 	}
 
+	macro assertThatTheExtraFieldsIsNotVisible {
+		for (var field : list "${fieldsList}") {
+
+		AssertElementNotPresent(
+			label = "${field}",
+			locator1 = "CustomerPortalSite#SETUP_FIELDS",
+			key_index = "${position}");
+		}
+	}
+
     macro typeAllSetupLXCInfoFields {
 		CP2Utils.typeSetupInfoFields(
 			label = "projectId",
