@@ -9,7 +9,8 @@ definition {
 
 	var testSiteName = "Customer Portal Site";
 	var testSiteURL = "customer-portal-site";
-	var testAccount = "Liferay Experience Cloud";
+	var testAccount = "2022 FIFA World Cup Qatar - FAN ID";
+	var testUserFirstName = "Test";
 
 	setUp {
 		task ("Set up instance and sign in") {
@@ -26,6 +27,38 @@ definition {
 			CustomerPortal.assignUserToOrganization();
 
 			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = "${testAccount}");
+		}
+
+		task ("Change the user role in the project") {
+			Accounts.openAccountsAdmin();
+
+			CustomerPortal.accountTableProject(title = "${testAccount}");
+
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Administrator",
+				accountUserName = "Test Test");
+		}
+
+		task ("Go to Customer Portal Site") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.waitCP20PageToLoad(userFirstName = "${testUserFirstName}");
+		}
+
+		task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
+
+			CustomerPortal.enterOnProject(title = "${testAccount}");
+		}
+
+		task ("And I go through onboarding") {
+			CustomerPortal.clickOnStartProjectSetup();
+
+			CustomerPortal.clickOnSkipForNowButton();
+		}
+
+		task ("Then I click on the Liferay Experience Cloud option on side menu") {
+			CustomerPortal.clickAtButton(text = "Liferay Experience Cloud");
 		}
 	}
 
