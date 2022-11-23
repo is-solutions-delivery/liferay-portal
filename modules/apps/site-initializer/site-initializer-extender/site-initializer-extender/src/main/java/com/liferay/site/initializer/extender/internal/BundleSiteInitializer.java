@@ -85,6 +85,7 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
@@ -1130,7 +1131,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				String.valueOf(objectDefinition.getObjectDefinitionId()));
 		}
 
-<<<<<<< HEAD
 		ObjectDefinitionResource.Builder objectDefinitionResourceBuilder =
 			_objectDefinitionResourceFactory.create();
 
@@ -1138,9 +1138,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			objectDefinitionResourceBuilder.user(
 				serviceContext.fetchUser()
 			).build();
-=======
+
 		ObjectDefinition objectDefinition = null;
->>>>>>> dafc144 (LPS-167118 - Fix ObjectDefinition)
 
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-actions.json")) {
@@ -1177,7 +1176,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 					objectDefinitionResource.postObjectDefinition(
 						objectDefinition);
 
-				if (!json.contains("accountEntryRestrictedObjectFieldName")) {
+				if (!json.contains("enableComments") &
+				!json.contains("accountEntryRestrictedObjectFieldName")) {
+
 					objectDefinitionResource.postObjectDefinitionPublish(
 						objectDefinition.getId());
 				}
