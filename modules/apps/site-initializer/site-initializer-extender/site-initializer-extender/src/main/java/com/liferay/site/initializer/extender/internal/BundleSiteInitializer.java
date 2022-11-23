@@ -1246,10 +1246,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			() -> _addObjectAccountEntryRestricted(
 				objectDefinitionResource, serviceContext));
 
-		objectDefinitionIdsStringUtilReplaceValues.put(
-			"OBJECT_DEFINITION_ID:" + objectDefinition.getName(),
-			String.valueOf(objectDefinition.getId()));
-
 		_invoke(
 			() -> _addOrUpdateObjectFields(
 				listTypeDefinitionIdsStringUtilReplaceValues,
