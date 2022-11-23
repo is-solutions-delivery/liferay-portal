@@ -133,7 +133,7 @@ const Question = ({
 		setError,
 		setShowDeleteModalPanel,
 	});
-		
+
 	const fetchMessages = useCallback(() => {
 		const sortBy = tabs[activeIndex].sortBy;
 
@@ -497,7 +497,7 @@ const Question = ({
 										</h1>
 
 										{display.kebab && (
-											<div className='d-flex mt-2'>
+											<div className="d-flex mt-2">
 												<ClayUpperToolbar.Item>
 													<ClayDropDownWithItems
 														items={kebabOptions}
@@ -514,7 +514,6 @@ const Question = ({
 										)}
 									</div>
 
-									
 									<p className="align-items-start d-flex justify-content-start small text-secondary">
 										<EditedTimestamp
 											dateCreated={question.dateCreated}
@@ -531,8 +530,6 @@ const Question = ({
 											[question.viewCount]
 										)}`}
 									</p>
-									
-									
 								</div>
 
 								{!display.kebab && !question.locked && (
@@ -683,8 +680,8 @@ const Question = ({
 							<ClayTabs.Content activeIndex={activeIndex} fade>
 								<div
 									className={classNames({
-										'c-mt-3 font-weight-normal': display.styled,
-										
+										'c-mt-3 font-weight-normal':
+											display.styled,
 									})}
 								>
 									<PaginatedList
@@ -709,7 +706,7 @@ const Question = ({
 												key={answer.id}
 												onSubscription={onSubscription}
 												question={question}
-												showAnswer={display.showAnswer}												
+												showAnswer={display.showAnswer}
 												styledItems={display.styled}
 											/>
 										)}

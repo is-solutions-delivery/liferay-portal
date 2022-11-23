@@ -23,28 +23,36 @@ import {Link, withRouter} from 'react-router-dom';
 import {AppContext} from '../AppContext.es';
 import FlagsContainer from '../pages/questions/components/FlagsContainer';
 import {deleteMessageQuery} from '../utils/client.es';
-import { fromNow } from '../utils/time.es';
+import {fromNow} from '../utils/time.es';
 import ArticleBodyRenderer from './ArticleBodyRenderer.es';
 import EditedTimestamp from './EditedTimestamp.es';
 import Modal from './Modal.es';
 
 export default withRouter(
-	({comment, commentChange, editable = true, match: {url}, styledItems = false}) => {
+	({
+		comment,
+		commentChange,
+		editable = true,
+		match: {url},
+		styledItems = false,
+	}) => {
 		const context = useContext(AppContext);
 		const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(
 			false
 		);
 
-		const [deleteMessage] = useMutation(deleteMessageQuery);		
+		const [deleteMessage] = useMutation(deleteMessageQuery);
 
 		const elapsedTime = fromNow(comment.dateCreated);
 
 		return (
 			<div className="c-my-3 pl-3 questions-reply row">
-				<div className={classnames({
-						"align-items-md-center col-2 col-md-1 d-flex justify-content-end justify-content-md-center": !styledItems,
-						"pt-1 d-flex justify-content-end justify-content-md-center": styledItems,
-				})}>
+				<div
+					className={classnames({
+						'align-items-md-center col-2 col-md-1 d-flex justify-content-end justify-content-md-center': !styledItems,
+						'pt-1 d-flex justify-content-end justify-content-md-center': styledItems,
+					})}
+				>
 					<ClayIcon
 						className="c-mt-3 c-mt-md-0 questions-reply-icon text-secondary"
 						symbol="reply"
@@ -52,35 +60,39 @@ export default withRouter(
 				</div>
 
 				<div className="col-10 col-lg-11">
-						<div className={classnames({
-							"d-flex flex-column": styledItems
-						})}>
-							<span className={classnames("text-secondary",{
-								"d-flex": styledItems
-							})}>
-								<EditedTimestamp
-									dateCreated={comment.dateCreated}
-									dateModified={comment.dateModified}
-									nameUser={comment.creator.name}
-									operationText={Liferay.Language.get('replied')}
-									styledTimeStamp = {false}						
-								/>
-							</span>
-
-							{comment.status && comment.status !== 'approved' && (
-								<span className="c-ml-2 text-secondary">
-									<ClayLabel displayType="info">
-										{comment.status}
-									</ClayLabel>
-								</span>
-							)}
-
-							<ArticleBodyRenderer
-								{...comment}
-								companyName={context.companyName}
-								elapsedTime={elapsedTime}
-								signature={comment.creator && comment.creator.name}
+					<div
+						className={classnames({
+							'd-flex flex-column': styledItems,
+						})}
+					>
+						<span
+							className={classnames('text-secondary', {
+								'd-flex': styledItems,
+							})}
+						>
+							<EditedTimestamp
+								dateCreated={comment.dateCreated}
+								dateModified={comment.dateModified}
+								nameUser={comment.creator.name}
+								operationText={Liferay.Language.get('replied')}
+								styledTimeStamp={false}
 							/>
+						</span>
+
+						{comment.status && comment.status !== 'approved' && (
+							<span className="c-ml-2 text-secondary">
+								<ClayLabel displayType="info">
+									{comment.status}
+								</ClayLabel>
+							</span>
+						)}
+
+						<ArticleBodyRenderer
+							{...comment}
+							companyName={context.companyName}
+							elapsedTime={elapsedTime}
+							signature={comment.creator && comment.creator.name}
+						/>
 					</div>
 
 					{editable && comment.actions.delete && (

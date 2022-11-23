@@ -24,7 +24,7 @@ export default function ArticleBodyRenderer({
 	encodingFormat,
 	hasCompanyMx,
 	id,
-	signature
+	signature,
 }) {
 	const [
 		articleBodyContainsParagraph,
