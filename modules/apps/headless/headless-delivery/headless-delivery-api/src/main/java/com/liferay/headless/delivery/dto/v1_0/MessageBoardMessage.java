@@ -464,6 +464,34 @@ public class MessageBoardMessage implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean hasCompanyMx;
 
+	@Schema
+	public Boolean getHasModified() {
+		return hasModified;
+	}
+
+	public void setHasModified(Boolean hasModified) {
+		this.hasModified = hasModified;
+	}
+
+	@JsonIgnore
+	public void setHasModified(
+		UnsafeSupplier<Boolean, Exception> hasModifiedUnsafeSupplier) {
+
+		try {
+			hasModified = hasModifiedUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean hasModified;
+
 	@Schema(description = "The message's main title.")
 	public String getHeadline() {
 		return headline;
@@ -1092,6 +1120,16 @@ public class MessageBoardMessage implements Serializable {
 			sb.append("\"hasCompanyMx\": ");
 
 			sb.append(hasCompanyMx);
+		}
+
+		if (hasModified != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"hasModified\": ");
+
+			sb.append(hasModified);
 		}
 
 		if (headline != null) {
