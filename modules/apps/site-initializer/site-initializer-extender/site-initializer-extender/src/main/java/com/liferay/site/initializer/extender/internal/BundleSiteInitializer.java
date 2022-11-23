@@ -1182,7 +1182,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 						objectDefinition);
 
 				if (!json.contains("enableComments") &
-				!json.contains("accountEntryRestrictedObjectFieldName")) {
+					!json.contains("accountEntryRestrictedObjectFieldName")) {
 
 					objectDefinitionResource.postObjectDefinitionPublish(
 						objectDefinition.getId());
