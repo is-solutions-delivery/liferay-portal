@@ -2666,6 +2666,8 @@ components:
                     type: string
                 hasCompanyMx:
                     type: boolean
+                hasModified:
+                    type: boolean
                 headline:
                     description:
                         The message's main title.
