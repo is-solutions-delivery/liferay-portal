@@ -130,13 +130,13 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			_listTypeEntryResourceFactory, _notificationTemplateResourceFactory,
 			_objectActionLocalService, _objectDefinitionLocalService,
 			_objectDefinitionResourceFactory, _objectFieldLocalService,
-			_objectRelationshipLocalService,
-			_objectRelationshipResourceFactory, _objectEntryLocalService,
-			_organizationLocalService, _organizationResourceFactory, _portal,
-			_resourceActionLocalService, _resourcePermissionLocalService,
-			_roleLocalService, _sapEntryLocalService,
-			_segmentsEntryLocalService, _segmentsExperienceLocalService,
-			_settingsFactory, _siteNavigationMenuItemLocalService,
+			_objectRelationshipLocalService, _objectRelationshipResourceFactory,
+			_objectEntryLocalService, _organizationLocalService,
+			_organizationResourceFactory, _portal, _resourceActionLocalService,
+			_resourcePermissionLocalService, _roleLocalService,
+			_sapEntryLocalService, _segmentsEntryLocalService,
+			_segmentsExperienceLocalService, _settingsFactory,
+			_siteNavigationMenuItemLocalService,
 			_siteNavigationMenuItemTypeRegistry,
 			_siteNavigationMenuLocalService,
 			_structuredContentFolderResourceFactory,
@@ -277,10 +277,10 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 	private ObjectDefinitionResource.Factory _objectDefinitionResourceFactory;
 
 	@Reference
-	private ObjectFieldLocalService _objectFieldLocalService;
+	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Reference
-	private ObjectEntryLocalService _objectEntryLocalService;
+	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
 	private ObjectRelationshipLocalService _objectRelationshipLocalService;

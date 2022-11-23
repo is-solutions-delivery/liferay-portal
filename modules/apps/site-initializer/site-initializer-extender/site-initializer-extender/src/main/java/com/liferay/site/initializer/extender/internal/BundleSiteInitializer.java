@@ -85,7 +85,6 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectEntry;
-import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
@@ -1177,7 +1176,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 						objectDefinition);
 
 				if (!json.contains("enableComments") &
-				!json.contains("accountEntryRestrictedObjectFieldName")) {
+					!json.contains("accountEntryRestrictedObjectFieldName")) {
 
 					objectDefinitionResource.postObjectDefinitionPublish(
 						objectDefinition.getId());
