@@ -78,8 +78,26 @@ definition {
     @description = "Automation ID: LPS-169246 | Test Summary: Assert that the user can only submit the form after filling out all required fields (Project ID - Primary Region - Project Admin - First Name - Last Name - Email Address - GitHub Username - Incident Management Contact)"
     @priority = "4"
     test AssertThatTheUserCanOnlySubmitTheFormAfterFillingOutAllRequiredFields {
+		task ("And I enter Setup AC") {
+			CustomerPortal.clickOnFinishActivationButton();
+		}
 		
-		// TODO LPS-169246 AssertThatTheUserCanOnlySubmitTheFormAfterFillingOutAllRequiredFields pending implementation
+		task ("Given I fill in all the required fields") {
+			CP2LXCSetup.typeAllSetupLXCInfoFields(
+				projectId = "3809080",
+				region = "South America",
+				fullName = "Test Test",
+				email = "test@liferay.com",
+				github = "testUser",
+				incidentManagementFullName = "Test User",
+				incidentManagementEmail = "test@liferay.com");
+		}
+
+		task ("Then I assert that all fields are required") {
+			CP2LXCSetup.clearInfoSetupLXCFields();
+			
+			CP2LXCSetup.viewMessageErrorList(fieldsList = "projectId,fullName,email,github,incidentManagementFullName,incidentManagementEmail");
+		}
 
     }
 
