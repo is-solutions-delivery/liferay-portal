@@ -44,6 +44,8 @@ export default withRouter(
 		match: {url},
 		onSubscription,
 		question,
+		showAnswer,
+		styledItems = false,
 	}) => {
 		const context = useContext(AppContext);
 		const [comments, setComments] = useState(
@@ -67,17 +69,19 @@ export default withRouter(
 
 		useEffect(() => {
 			setShowAsAnswer(answer.showAsAnswer);
-		}, [answer.showAsAnswer]);
-
+		}, [answer.showAsAnswer]);		
+		
 		return (
 			<>
 				<div
-					className={classnames('questions-answer c-p-3', {
+					className={classnames('questions-answer c-p-3' ,{
+						'questions-answer': styledItems,						
 						'questions-answer-success': showAsAnswer,
 					})}
 					data-testid="mark-as-answer-style"
 				>
 					<div className="d-flex row">
+						{showAnswer && (
 						<div className="c-ml-auto c-ml-md-1 c-ml-sm-auto order-1 order-md-0 text-md-center text-right">
 							<Rating
 								aggregateRating={answer.aggregateRating}
@@ -89,31 +93,38 @@ export default withRouter(
 								}
 								type="Message"
 							/>
-						</div>
+						</div>)}
 
 						<div className="c-mb-4 c-mb-md-0 c-ml-3 col-lg-11 col-md-10 col-sm-12 col-xl-11">
-							{showAsAnswer && (
-								<p
-									className="c-mb-0 font-weight-bold text-success"
-									data-testid="mark-as-answer-check"
-								>
-									<ClayIcon symbol="check-circle-full" />
 
-									<span className="c-ml-3">
-										{Liferay.Language.get('chosen-answer')}
-									</span>
-								</p>
-							)}
+							<div className='d-flex justify-content-between'>
+								{showAsAnswer && (
+									<div className='d-flex justify-content-end'>
+										<p
+											className="c-mb-0 font-weight-bold text-success"
+											data-testid="mark-as-answer-check"
+										>
+											<span className="c-mr-2">
+												{Liferay.Language.get('chosen-answer')}
+											</span>
 
-							<span className="text-secondary">
-								<EditedTimestamp
-									dateCreated={answer.dateCreated}
-									dateModified={answer.dateModified}
-									operationText={Liferay.Language.get(
-										'answered'
-									)}
-								/>
-							</span>
+											<ClayIcon symbol="check-circle-full" />										
+										</p>
+									</div>
+								)}
+							
+								<span className="text-secondary">
+									<EditedTimestamp
+										dateCreated={answer.dateCreated}
+										dateModified={answer.dateModified}									
+										nameUser={answer.creator.name}
+										operationText={Liferay.Language.get(
+												'answered'
+											)}
+										styledTimeStamp={styledItems}
+									/>
+								</span>	
+							</div>							
 
 							{answer.status && answer.status !== 'approved' && (
 								<span className="c-ml-2 text-secondary">
@@ -123,21 +134,26 @@ export default withRouter(
 								</span>
 							)}
 
-							<div className="c-mt-2">
-								<ArticleBodyRenderer {...answer} />
+							<div>
+								<ArticleBodyRenderer {...answer}/>
 							</div>
 
-							<div className="d-flex justify-content-between">
+							<div>
 								<div>
 									{editable && (
-										<div className="font-weight-bold text-secondary">
+										<div className={classnames("font-weight-bold text-secondary",{											
+												"font-weight-bold text-secondary d-flex  ":styledItems
+											})}>
+
 											{answer.actions[
 												'reply-to-message'
 											] &&
 												answer.status !== 'pending' &&
-												!comments.length && (
+												!comments.length && (									
 													<ClayButton
-														className="btn-sm c-mr-2 c-px-2 c-py-1"
+														className={classnames("btn-sm c-mr-2 c-px-2 c-py-1" ,{
+															"text-2": styledItems,
+														})}
 														onClick={() =>
 															setShowNewComment(
 																true
@@ -153,7 +169,9 @@ export default withRouter(
 											{answer.actions.delete && (
 												<>
 													<ClayButton
-														className="btn-sm c-mr-2 c-px-2 c-py-1"
+														className={classnames("btn-sm c-mr-2 c-px-2 c-py-1" ,{
+															"text-2": styledItems,
+														})}
 														displayType="secondary"
 														onClick={() => {
 															setShowDeleteAnswerModal(
@@ -228,7 +246,9 @@ export default withRouter(
 
 											{canMarkAsAnswer && (
 												<ClayButton
-													className="btn-sm c-mr-2 c-px-2 c-py-1"
+													className={classnames("btn-sm c-mr-2 c-px-2 c-py-1" ,{
+														"text-2": styledItems,
+													})}
 													data-testid="mark-as-answer-button"
 													displayType="secondary"
 													onClick={() => {
@@ -277,7 +297,7 @@ export default withRouter(
 											{/* this is an extra double check, remove it without creating 2 clay-group-item */}
 
 											{editable &&
-												answer.actions.replace && (
+												answer.actions.replace && showAnswer &&(
 													<ClayButton
 														className="btn-sm c-mr-2 c-px-2 c-py-1"
 														displayType="secondary"
@@ -296,14 +316,15 @@ export default withRouter(
 									)}
 								</div>
 
-								<div className="c-ml-md-auto c-ml-sm-2 c-mr-lg-2 c-mr-md-4 c-mr-xl-2">
+								{showAnswer && (
+								<div className="c-ml-md-auto c-ml-sm-2 c-mr-lg-2 c-mr-md-4 c-mr-xl-2 d-flex justify-content-end">
 									<UserRow
 										companyName={context.companyName}
 										creator={answer.creator}
 										hasCompanyMx={answer.hasCompanyMx}
 										statistics={answer.creatorStatistics}
 									/>
-								</div>
+								</div>)}
 							</div>
 						</div>
 					</div>
@@ -323,6 +344,7 @@ export default withRouter(
 							showNewCommentChange={(value) =>
 								setShowNewComment(value)
 							}
+							styledItems
 						/>
 					</div>
 				</div>

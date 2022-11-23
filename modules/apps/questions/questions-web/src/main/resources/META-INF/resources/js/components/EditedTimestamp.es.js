@@ -13,8 +13,10 @@
  */
 
 import {ClayTooltipProvider} from '@clayui/tooltip';
+import classnames from 'classnames';
 import React from 'react';
 
+import { fromNow } from '../utils/time.es';
 import {dateToInternationalHuman} from '../utils/utils.es';
 
 const BCP47LanguageId = Liferay.ThemeDisplay.getBCP47LanguageId();
@@ -25,7 +27,13 @@ const getTextDelimeted = (text, date) => {
 	return `${text} ${delimeter} ${date}`;
 };
 
-const EditedTimestamp = ({dateCreated, dateModified, operationText}) => {
+const EditedTimestamp = ({
+	dateCreated, 
+	dateModified, 
+	nameUser, 
+	operationText, 
+	styledTimeStamp = false}) => {
+
 	if (!dateCreated || !dateModified) {
 		return null;
 	}
@@ -34,11 +42,33 @@ const EditedTimestamp = ({dateCreated, dateModified, operationText}) => {
 		operationText,
 		dateToInternationalHuman(dateCreated, BCP47LanguageId)
 	);
+	
+	const elapsedTime = fromNow(dateCreated);
 
 	return (
-		<ClayTooltipProvider>
-			<span className="c-ml-1 small">{selectedText}</span>
-		</ClayTooltipProvider>
+		<div className={classnames('mr-2 pl-2 row text-weight-bolder',{
+			"d-none": !styledTimeStamp
+		})}>			
+			
+			{styledTimeStamp ? (
+				<div className='d-flex flex-row mb-0'>
+					<span className='text-3 text-weight-bolder'>{ nameUser }</span>
+				
+					<span className='align-items-center d-flex ml-2 text-3 text-weight-lighter'>{ elapsedTime }</span> 
+				</div>
+			) : null}
+
+			{!styledTimeStamp &&(
+				<div>					
+						<ClayTooltipProvider>
+							<span className="c-ml-1 small">{selectedText}</span>
+						</ClayTooltipProvider>
+				</div>			
+			)}
+		</div>
+		
+		
+		
 	);
 };
 export default EditedTimestamp;

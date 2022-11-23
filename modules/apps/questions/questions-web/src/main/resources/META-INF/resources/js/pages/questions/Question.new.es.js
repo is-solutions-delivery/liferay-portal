@@ -18,7 +18,6 @@ import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayEmptyState from '@clayui/empty-state';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
-import ClayManagementToolbar from '@clayui/management-toolbar';
 import ClayTabs from '@clayui/tabs';
 import ClayUpperToolbar from '@clayui/upper-toolbar';
 import classNames from 'classnames';
@@ -87,6 +86,7 @@ const Question = ({
 		breadcrumb: true,
 		kebab: false,
 		rating: true,
+		showAnswer: true,
 		styled: false,
 		tabs: true,
 	},
@@ -133,7 +133,7 @@ const Question = ({
 		setError,
 		setShowDeleteModalPanel,
 	});
-
+		
 	const fetchMessages = useCallback(() => {
 		const sortBy = tabs[activeIndex].sortBy;
 
@@ -407,7 +407,7 @@ const Question = ({
 
 			<div
 				className={classNames('', {
-					'c-mt-2': display.styled,
+					' c-mt-2 px-3': display.styled,
 					'c-mt-5': !display.styled,
 				})}
 			>
@@ -470,9 +470,7 @@ const Question = ({
 									<div className="d-flex flex-row justify-content-between">
 										<h1
 											className={classNames(
-												'c-mt-2',
-												'question-headline',
-
+												'c-mt-2 text-6 question-headline text-weight-bold',
 												{
 													'question-seen':
 														question.seen,
@@ -499,7 +497,7 @@ const Question = ({
 										</h1>
 
 										{display.kebab && (
-											<ClayManagementToolbar.ItemList>
+											<div className='d-flex mt-2'>
 												<ClayUpperToolbar.Item>
 													<ClayDropDownWithItems
 														items={kebabOptions}
@@ -512,11 +510,12 @@ const Question = ({
 														}
 													/>
 												</ClayUpperToolbar.Item>
-											</ClayManagementToolbar.ItemList>
+											</div>
 										)}
 									</div>
 
-									<p className="small text-secondary">
+									
+									<p className="align-items-start d-flex justify-content-start small text-secondary">
 										<EditedTimestamp
 											dateCreated={question.dateCreated}
 											dateModified={question.dateModified}
@@ -532,6 +531,8 @@ const Question = ({
 											[question.viewCount]
 										)}`}
 									</p>
+									
+									
 								</div>
 
 								{!display.kebab && !question.locked && (
@@ -682,8 +683,8 @@ const Question = ({
 							<ClayTabs.Content activeIndex={activeIndex} fade>
 								<div
 									className={classNames({
-										'c-mt-3': !display.styled,
-										'd-none': display.styled,
+										'c-mt-3 font-weight-normal': display.styled,
+										
 									})}
 								>
 									<PaginatedList
@@ -708,6 +709,8 @@ const Question = ({
 												key={answer.id}
 												onSubscription={onSubscription}
 												question={question}
+												showAnswer={display.showAnswer}												
+												styledItems={display.styled}
 											/>
 										)}
 									</PaginatedList>
