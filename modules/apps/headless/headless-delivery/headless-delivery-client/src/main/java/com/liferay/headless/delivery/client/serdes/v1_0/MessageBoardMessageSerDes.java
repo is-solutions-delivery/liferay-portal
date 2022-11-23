@@ -236,6 +236,16 @@ public class MessageBoardMessageSerDes {
 			sb.append(messageBoardMessage.getHasCompanyMx());
 		}
 
+		if (messageBoardMessage.getHasModified() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"hasModified\": ");
+
+			sb.append(messageBoardMessage.getHasModified());
+		}
+
 		if (messageBoardMessage.getHeadline() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -557,6 +567,15 @@ public class MessageBoardMessageSerDes {
 				String.valueOf(messageBoardMessage.getHasCompanyMx()));
 		}
 
+		if (messageBoardMessage.getHasModified() == null) {
+			map.put("hasModified", null);
+		}
+		else {
+			map.put(
+				"hasModified",
+				String.valueOf(messageBoardMessage.getHasModified()));
+		}
+
 		if (messageBoardMessage.getHeadline() == null) {
 			map.put("headline", null);
 		}
@@ -785,6 +804,12 @@ public class MessageBoardMessageSerDes {
 			else if (Objects.equals(jsonParserFieldName, "hasCompanyMx")) {
 				if (jsonParserFieldValue != null) {
 					messageBoardMessage.setHasCompanyMx(
+						(Boolean)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "hasModified")) {
+				if (jsonParserFieldValue != null) {
+					messageBoardMessage.setHasModified(
 						(Boolean)jsonParserFieldValue);
 				}
 			}

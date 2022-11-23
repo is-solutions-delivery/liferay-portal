@@ -312,6 +312,27 @@ public class MessageBoardMessage implements Cloneable, Serializable {
 
 	protected Boolean hasCompanyMx;
 
+	public Boolean getHasModified() {
+		return hasModified;
+	}
+
+	public void setHasModified(Boolean hasModified) {
+		this.hasModified = hasModified;
+	}
+
+	public void setHasModified(
+		UnsafeSupplier<Boolean, Exception> hasModifiedUnsafeSupplier) {
+
+		try {
+			hasModified = hasModifiedUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Boolean hasModified;
+
 	public String getHeadline() {
 		return headline;
 	}
