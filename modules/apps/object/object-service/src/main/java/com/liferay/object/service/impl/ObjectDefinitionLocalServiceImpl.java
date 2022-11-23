@@ -1153,8 +1153,7 @@ public class ObjectDefinitionLocalServiceImpl
 		boolean originalActive = objectDefinition.isActive();
 
 		_validateAccountEntryRestrictedObjectFieldId(
-			accountEntryRestrictedObjectFieldId, accountEntryRestricted,
-			objectDefinition);
+			accountEntryRestrictedObjectFieldId, accountEntryRestricted);
 		_validateObjectFieldId(objectDefinition, descriptionObjectFieldId);
 		_validateObjectFieldId(objectDefinition, titleObjectFieldId);
 		_validateActive(objectDefinition, active);
@@ -1296,22 +1295,13 @@ public class ObjectDefinitionLocalServiceImpl
 
 	private void _validateAccountEntryRestrictedObjectFieldId(
 			long accountEntryRestrictedObjectFieldId,
-			boolean accountEntryRestricted, ObjectDefinition objectDefinition)
-		throws ObjectDefinitionAccountEntryRestrictedException,
-			   ObjectDefinitionAccountEntryRestrictedObjectFieldIdException {
+			boolean accountEntryRestricted)
+		throws ObjectDefinitionAccountEntryRestrictedObjectFieldIdException {
 
 		if (accountEntryRestricted &&
 			(accountEntryRestrictedObjectFieldId == 0)) {
 
 			throw new ObjectDefinitionAccountEntryRestrictedObjectFieldIdException();
-		}
-
-		if (objectDefinition.isApproved() &&
-			objectDefinition.isAccountEntryRestricted()) {
-
-			throw new ObjectDefinitionAccountEntryRestrictedException(
-				"Account entry restriction cannot be disabled when the " +
-					"object definition is published");
 		}
 	}
 
