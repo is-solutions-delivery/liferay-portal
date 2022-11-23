@@ -104,9 +104,17 @@ definition {
     @description = "Automation ID: LPS-169247 | Test Summary: Assert that the user can add additional project administrators using the 'Add project administrator' button"
     @priority = "4"
     test CanViewTheAdditionalFields {
-		
-		// TODO LPS-169247 CanViewTheAdditionalFields pending implementation
+		task ("And I enter Setup AC") {
+			CustomerPortal.clickOnFinishActivationButton();
+		}
 
+		task ("And I assert that by clicking the 'Add Another Admin' button three more fields are shown in the form") {
+			CustomerPortal.clickAtButton(text = "Add Another Admin");
+
+			CP2LXCSetup.assertThatTheExtraFieldsAreVisible(
+				fieldsList = "fullName,email,github",
+				position = "2");
+		}
     }
 
     @description = "Automation ID: LPS-169248 | Test Summary: Assert that the user will have the option to remove additional Admins from the project before submitting the form"
