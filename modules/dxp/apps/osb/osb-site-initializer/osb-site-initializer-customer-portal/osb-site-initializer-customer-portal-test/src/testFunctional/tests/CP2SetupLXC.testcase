@@ -75,52 +75,14 @@ definition {
 		}
 	}
 
-    @description = "Automation ID: LPS-169246 | Test Summary: Assert that the user can only submit the form after filling out all required fields (Project ID - Primary Region - Project Admin - First Name - Last Name - Email Address - GitHub Username - Incident Management Contact)"
-    @priority = "4"
-    test AssertThatTheUserCanOnlySubmitTheFormAfterFillingOutAllRequiredFields {
+	@description = "Automation ID: LPS-169248 | Test Summary: Assert that the user will have the option to remove additional Admins from the project before submitting the form"
+	@ignore = "true"
+	@priority = "3"
+	test AssertThatTheAdditionalFieldsHaveBeenRemoved {
+
+		// Needs refactor since it depends on example FIFA account
+
 		task ("And I enter Setup AC") {
-			CustomerPortal.clickOnFinishActivationButton();
-		}
-		
-		task ("Given I fill in all the required fields") {
-			CP2LXCSetup.typeAllSetupLXCInfoFields(
-				projectId = "3809080",
-				region = "South America",
-				fullName = "Test Test",
-				email = "test@liferay.com",
-				github = "testUser",
-				incidentManagementFullName = "Test User",
-				incidentManagementEmail = "test@liferay.com");
-		}
-
-		task ("Then I assert that all fields are required") {
-			CP2LXCSetup.clearInfoSetupLXCFields();
-			
-			CP2LXCSetup.viewMessageErrorList(fieldsList = "projectId,fullName,email,github,incidentManagementFullName,incidentManagementEmail");
-		}
-
-    }
-
-    @description = "Automation ID: LPS-169247 | Test Summary: Assert that the user can add additional project administrators using the 'Add project administrator' button"
-    @priority = "4"
-    test CanViewTheAdditionalFields {
-		task ("And I enter Setup AC") {
-			CustomerPortal.clickOnFinishActivationButton();
-		}
-
-		task ("And I assert that by clicking the 'Add Another Admin' button three more fields are shown in the form") {
-			CustomerPortal.clickAtButton(text = "Add Another Admin");
-
-			CP2LXCSetup.assertThatTheExtraFieldsAreVisible(
-				fieldsList = "fullName,email,github",
-				position = "2");
-		}
-    }
-
-    @description = "Automation ID: LPS-169248 | Test Summary: Assert that the user will have the option to remove additional Admins from the project before submitting the form"
-    @priority = "3"
-    test AssertThatTheAdditionalFieldsHaveBeenRemoved {
-        task ("And I enter Setup AC") {
 			CustomerPortal.clickOnFinishActivationButton();
 		}
 
@@ -139,13 +101,45 @@ definition {
 				fieldsList = "fullName,email,github",
 				position = "2");
 		}
+	}
 
-    }
+	@description = "Automation ID: LPS-169246 | Test Summary: Assert that the user can only submit the form after filling out all required fields (Project ID - Primary Region - Project Admin - First Name - Last Name - Email Address - GitHub Username - Incident Management Contact)"
+	@ignore = "true"
+	@priority = "4"
+	test AssertThatTheUserCanOnlySubmitTheFormAfterFillingOutAllRequiredFields {
 
-    @description = "Automation ID: LPS-169249 | Test Summary: Assert that the user is not allowed to continue if they have entered an invalid business email address for the owner and incident management contacts"
-    @priority = "3"
-    test AssertTheErrorMessageIfTheUserEntersAnInvalidBusinessEmailAddress {
-        task ("And I enter Setup AC") {
+		// Needs refactor since it depends on example FIFA account
+
+		task ("And I enter Setup AC") {
+			CustomerPortal.clickOnFinishActivationButton();
+		}
+
+		task ("Given I fill in all the required fields") {
+			CP2LXCSetup.typeAllSetupLXCInfoFields(
+				email = "test@liferay.com",
+				fullName = "Test Test",
+				github = "testUser",
+				incidentManagementEmail = "test@liferay.com",
+				incidentManagementFullName = "Test User",
+				projectId = "3809080",
+				region = "South America");
+		}
+
+		task ("Then I assert that all fields are required") {
+			CP2LXCSetup.clearInfoSetupLXCFields();
+
+			CP2LXCSetup.viewMessageErrorList(fieldsList = "projectId,fullName,email,github,incidentManagementFullName,incidentManagementEmail");
+		}
+	}
+
+	@description = "Automation ID: LPS-169249 | Test Summary: Assert that the user is not allowed to continue if they have entered an invalid business email address for the owner and incident management contacts"
+	@ignore = "true"
+	@priority = "3"
+	test AssertTheErrorMessageIfTheUserEntersAnInvalidBusinessEmailAddress {
+
+		// Needs refactor since it depends on example FIFA account
+
+		task ("And I enter Setup AC") {
 			CustomerPortal.clickOnFinishActivationButton();
 		}
 
@@ -158,25 +152,28 @@ definition {
 
 			CustomerPortal.assertErrorMessageIsVisible(errorMessage = "Please insert a valid email.");
 		}
-
-    }
+	}
 
 	@description = "Automation ID: LPS-169250 | Test Summary: Assert the success message: Thank you for submitting this request! Your Liferay Experience Cloud project will be provisioned within 3 business days. An email will be sent once your project is ready."
-    @priority = "3"
-    test AssertTheSuccessMessage {
-        task ("And I enter Setup AC") {
+	@ignore = "true"
+	@priority = "3"
+	test AssertTheSuccessMessage {
+
+		// Needs refactor since it depends on example FIFA account
+
+		task ("And I enter Setup AC") {
 			CustomerPortal.clickOnFinishActivationButton();
 		}
 
 		task ("Given I fill in all the required fields") {
 			CP2LXCSetup.typeAllSetupLXCInfoFields(
-				projectId = "3809080",
-				region = "South America",
-				fullName = "Test Test",
 				email = "test@liferay.com",
+				fullName = "Test Test",
 				github = "testUser",
+				incidentManagementEmail = "test@liferay.com",
 				incidentManagementFullName = "Test User",
-				incidentManagementEmail = "test@liferay.com");
+				projectId = "3809080",
+				region = "South America");
 
 			Button.click(button = "Submit");
 		}
@@ -198,5 +195,26 @@ definition {
 				position = "30",
 				status = "In Progress");
 		}
-    }
+	}
+
+	@description = "Automation ID: LPS-169247 | Test Summary: Assert that the user can add additional project administrators using the 'Add project administrator' button"
+	@ignore = "true"
+	@priority = "4"
+	test CanViewTheAdditionalFields {
+
+		// Needs refactor since it depends on example FIFA account
+
+		task ("And I enter Setup AC") {
+			CustomerPortal.clickOnFinishActivationButton();
+		}
+
+		task ("And I assert that by clicking the 'Add Another Admin' button three more fields are shown in the form") {
+			CustomerPortal.clickAtButton(text = "Add Another Admin");
+
+			CP2LXCSetup.assertThatTheExtraFieldsAreVisible(
+				fieldsList = "fullName,email,github",
+				position = "2");
+		}
+	}
+
 }
