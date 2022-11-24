@@ -102,7 +102,7 @@ const Question = ({
 		sectionRef.current.scrollIntoView({
 			behavior: 'smooth',
 			block: 'start',
-		});		
+		});
 
 	const [activeIndex, setActiveIndex] = useState(0);
 
@@ -134,7 +134,7 @@ const Question = ({
 		setError,
 		setShowDeleteModalPanel,
 	});
-		
+
 	const fetchMessages = useCallback(() => {
 		const sortBy = tabs[activeIndex].sortBy;
 
@@ -466,7 +466,7 @@ const Question = ({
 													}
 												/>
 											</Link>
-									)}
+										)}
 
 									<div className="d-flex flex-row justify-content-between">
 										<h1
@@ -498,7 +498,7 @@ const Question = ({
 										</h1>
 
 										{display.kebab && (
-											<div className='d-flex mt-2'>
+											<div className="d-flex mt-2">
 												<ClayUpperToolbar.Item>
 													<ClayDropDownWithItems
 														items={kebabOptions}
@@ -514,14 +514,14 @@ const Question = ({
 											</div>
 										)}
 									</div>
-									
+
 									<p className="align-items-start d-flex justify-content-start small text-secondary">
 										<EditedTimestamp
 											dateCreated={question.dateCreated}
 											dateModified={question.dateModified}
 											operationText={Liferay.Language.get(
 												'asked'
-											)}											
+											)}
 										/>
 
 										{`/ ${lang.sub(
@@ -530,8 +530,7 @@ const Question = ({
 											),
 											[question.viewCount]
 										)}`}
-									</p>									
-									
+									</p>
 								</div>
 
 								{!display.kebab && !question.locked && (
@@ -632,7 +631,7 @@ const Question = ({
 
 							<div className="c-mt-4">
 								<div>
-									<ArticleBodyRenderer {...question}/>
+									<ArticleBodyRenderer {...question} />
 								</div>
 							</div>
 
@@ -682,7 +681,8 @@ const Question = ({
 							<ClayTabs.Content activeIndex={activeIndex} fade>
 								<div
 									className={classNames({
-										'c-mt-3 font-weight-normal': display.styled,										
+										'c-mt-3 font-weight-normal':
+											display.styled,
 									})}
 								>
 									<PaginatedList
@@ -707,8 +707,10 @@ const Question = ({
 												key={answer.id}
 												onSubscription={onSubscription}
 												question={question}
-												showAnswer={display.showAnswer}												
-												showElapsedTime={display.showElapsedTime}
+												showElapsedTime={
+													display.showElapsedTime
+												}
+												showItems={display.showAnswer}
 												styledItems={display.styled}
 											/>
 										)}

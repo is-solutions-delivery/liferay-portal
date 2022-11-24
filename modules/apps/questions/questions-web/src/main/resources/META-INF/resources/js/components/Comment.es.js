@@ -34,7 +34,7 @@ export default withRouter(
 		commentChange,
 		editable = true,
 		match: {url},
-		showElapsedTime= false,
+		showElapsedTime = false,
 		styledItems = false,
 	}) => {
 		const context = useContext(AppContext);
@@ -44,7 +44,7 @@ export default withRouter(
 
 		const [deleteMessage] = useMutation(deleteMessageQuery);
 
-		const elapsedTime = fromNow(comment.dateCreated);	
+		const elapsedTime = fromNow(comment.dateCreated);
 
 		return (
 			<div className="c-my-3 pl-3 questions-reply row">

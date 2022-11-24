@@ -203,7 +203,7 @@ export default withRouter(
 						}}
 						history={history}
 						questionId={currentQuestion?.friendlyUrlPath}
-						sectionTitle={sectionTitleQuestion}						
+						sectionTitle={sectionTitleQuestion}
 						url={url}
 					/>
 				</div>

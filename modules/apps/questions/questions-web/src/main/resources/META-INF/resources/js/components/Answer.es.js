@@ -44,8 +44,8 @@ export default withRouter(
 		match: {url},
 		onSubscription,
 		question,
-		showAnswer,
 		showElapsedTime,
+		showItems = true,
 		styledItems = false,
 	}) => {
 		const context = useContext(AppContext);
@@ -70,7 +70,7 @@ export default withRouter(
 
 		useEffect(() => {
 			setShowAsAnswer(answer.showAsAnswer);
-		}, [answer.showAsAnswer]);
+		}, [answer.showAsAnswer]);	
 
 		return (
 			<>
@@ -82,7 +82,7 @@ export default withRouter(
 					data-testid="mark-as-answer-style"
 				>
 					<div className="d-flex row">
-						{showAnswer && (
+						{showItems && (
 							<div className="c-ml-auto c-ml-md-1 c-ml-sm-auto order-1 order-md-0 text-md-center text-right">
 								<Rating
 									aggregateRating={answer.aggregateRating}
@@ -119,7 +119,7 @@ export default withRouter(
 								<span className="text-secondary">
 									<EditedTimestamp
 										dateCreated={answer.dateCreated}
-										dateModified={answer.dateModified}										
+										dateModified={answer.dateModified}
 										nameUser={answer.creator.name}
 										operationText={Liferay.Language.get(
 											'answered'
@@ -143,7 +143,7 @@ export default withRouter(
 
 							<div>
 								<div>
-									{editable && (
+									{editable &&(
 										<div
 											className={classnames(
 												'font-weight-bold text-secondary',
@@ -314,7 +314,7 @@ export default withRouter(
 
 											{editable &&
 												answer.actions.replace &&
-												showAnswer && (
+												showItems && (
 													<ClayButton
 														className="btn-sm c-mr-2 c-px-2 c-py-1"
 														displayType="secondary"
@@ -333,7 +333,7 @@ export default withRouter(
 									)}
 								</div>
 
-								{showAnswer && (
+								{showItems && (
 									<div className="c-ml-md-auto c-ml-sm-2 c-mr-lg-2 c-mr-md-4 c-mr-xl-2 d-flex justify-content-end">
 										<UserRow
 											companyName={context.companyName}
@@ -359,7 +359,7 @@ export default withRouter(
 							entityId={answer.id}
 							hasCompanyMx={comments.hasCompanyMx}
 							onSubscription={onSubscription}
-							question={question}								
+							question={question}
 							showElapsedTime={showElapsedTime}
 							showNewComment={showNewComment}
 							showNewCommentChange={(value) =>
