@@ -100,4 +100,20 @@ definition {
 		Navigator.openSpecificURL(url = "${openURL}");
 	}
 
+	macro typeDate {
+		var key_field = "${field}";
+		var index = "${index}";
+		var index1 = "${index1}";
+
+		Click(locator1 = "CP2NavigationMenu#DATA_FIELD");
+
+		Type(
+			locator1 = "CP2NavigationMenu#DATA_FIELD",
+			value1 = "${data}");
+
+		Click.clickAt(
+			index = "${index}",
+			locator1 = "CP2NavigationMenu#FILTER_APPLY");
+	}
+
 }
