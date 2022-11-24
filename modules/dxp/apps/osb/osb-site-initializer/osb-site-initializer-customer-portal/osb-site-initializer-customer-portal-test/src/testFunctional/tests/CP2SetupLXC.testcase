@@ -145,8 +145,19 @@ definition {
     @description = "Automation ID: LPS-169249 | Test Summary: Assert that the user is not allowed to continue if they have entered an invalid business email address for the owner and incident management contacts"
     @priority = "3"
     test AssertTheErrorMessageIfTheUserEntersAnInvalidBusinessEmailAddress {
-        
-		// TODO LPS-169249 AssertTheErrorMessageIfTheUserEntersAnInvalidBusinessEmailAddress pending implementation
+        task ("And I enter Setup AC") {
+			CustomerPortal.clickOnFinishActivationButton();
+		}
+
+		task ("Then I assert that a valid email address is required in the 'Incident Management Contact's Email Address' field") {
+			CP2Utils.typeSetupInfoFields(
+				label = "incidentManagementEmail",
+				value = "test.com");
+
+			CustomerPortal.clickOnModal(text = "Set Up Liferay Experience Cloud");
+
+			CustomerPortal.assertErrorMessageIsVisible(errorMessage = "Please insert a valid email.");
+		}
 
     }
 
