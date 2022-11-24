@@ -37,8 +37,10 @@ export default withRouter(
 		},
 		onSubscription,
 		question,
+		showElapsedTime,
 		showNewComment,
 		showNewCommentChange,
+		styledItems = false
 	}) => {
 		const context = useContext(AppContext);
 
@@ -102,6 +104,8 @@ export default withRouter(
 						editable={editable}
 						hasCompanyMx={comment.hasCompanyMx}
 						key={comment.id}
+						showElapsedTime={showElapsedTime}
+						styledItems={styledItems}
 					/>
 				))}
 
