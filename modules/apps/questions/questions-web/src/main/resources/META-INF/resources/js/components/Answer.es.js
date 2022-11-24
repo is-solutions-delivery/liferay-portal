@@ -119,7 +119,7 @@ export default withRouter(
 								<span className="text-secondary">
 									<EditedTimestamp
 										dateCreated={answer.dateCreated}
-										dateModified={answer.dateModified}										
+										dateModified={answer.dateModified}
 										nameUser={answer.creator.name}
 										operationText={Liferay.Language.get(
 											'answered'
@@ -359,7 +359,7 @@ export default withRouter(
 							entityId={answer.id}
 							hasCompanyMx={comments.hasCompanyMx}
 							onSubscription={onSubscription}
-							question={question}								
+							question={question}
 							showElapsedTime={showElapsedTime}
 							showNewComment={showNewComment}
 							showNewCommentChange={(value) =>

@@ -24,7 +24,7 @@ export default function ArticleBodyRenderer({
 	encodingFormat,
 	hasCompanyMx,
 	id,
-	showElapsedTime = false,	
+	showElapsedTime = false,
 	signature,
 }) {
 	const [
@@ -32,7 +32,7 @@ export default function ArticleBodyRenderer({
 		setArticleBodyContainsParagraph,
 	] = useState(true);
 
-	useEffect(() => {	
+	useEffect(() => {
 		setArticleBodyContainsParagraph(articleBody.includes('<p>'));
 	}, [articleBody]);
 

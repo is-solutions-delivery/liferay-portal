@@ -40,7 +40,7 @@ export default withRouter(
 		showElapsedTime,
 		showNewComment,
 		showNewCommentChange,
-		styledItems = false
+		styledItems = false,
 	}) => {
 		const context = useContext(AppContext);
 
