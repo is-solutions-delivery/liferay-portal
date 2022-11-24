@@ -20,9 +20,11 @@ export default function ArticleBodyRenderer({
 	articleBody,
 	compactMode = false,
 	companyName,
+	elapsedTime,
 	encodingFormat,
 	hasCompanyMx,
 	id,
+	showElapsedTime = false,	
 	signature,
 }) {
 	const [
@@ -30,7 +32,7 @@ export default function ArticleBodyRenderer({
 		setArticleBodyContainsParagraph,
 	] = useState(true);
 
-	useEffect(() => {
+	useEffect(() => {	
 		setArticleBodyContainsParagraph(articleBody.includes('<p>'));
 	}, [articleBody]);
 
@@ -50,15 +52,15 @@ export default function ArticleBodyRenderer({
 				</div>
 			)}
 
-			{signature && (
+			{signature && showElapsedTime ? (
 				<style
 					dangerouslySetInnerHTML={{
 						__html: `.questions-article-body-${id} ${
 							articleBodyContainsParagraph ? 'p' : 'div'
-						}:last-child:after {content: " - ${signature} ${_companyName}"; font-weight: bold;}`,
+						}:last-child:after {content: " - ${signature} ${_companyName} - ${elapsedTime}"; font-weight: bold;}`,
 					}}
 				/>
-			)}
+			) : null}
 		</>
 	);
 }
