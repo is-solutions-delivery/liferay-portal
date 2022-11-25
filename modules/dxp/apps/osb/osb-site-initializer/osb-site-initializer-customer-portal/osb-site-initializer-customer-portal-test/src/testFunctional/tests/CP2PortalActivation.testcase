@@ -302,5 +302,59 @@ definition {
 		}
 	}
 
+	@description = "Automation ID: LPS-151350 | Test Summary: Verify if after the user click on the Apply button, the list of activation keys matches the selected criteria."
+	@ignore = "true"
+	test VerifyPortalActivationApplyButton {
+
+		// Needs refactor since it depends on real projects Portals account
+
+		task ("Signs in OKTA to update and go to Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Select a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.search(searchItem = "NASA ICE");
+
+			CustomerPortal.enterOnProject(title = "NASA ICE");
+		}
+
+		task ("Go to Product Activation and Product page") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "Portal");
+		}
+
+		task ("Click on Filter and Select a Filter type") {
+			CustomerPortal.clickAtButton(text = "Filter");
+
+			CustomerPortal.clickAtButton(text = "Key Type");
+
+			Click.clickAt(
+				filter = "On-Premise",
+				index = "1",
+				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+		}
+
+		task ("Assert if the list reflect the filter") {
+			CustomerPortal.clickAtButton(text = "Apply");
+
+			AssertElementPresent(
+				locator1 = "CP2NavigationMenu#FILTER_RESULT",
+				result = "On-Premise");
+
+			Click(
+				key_text = "Redacted",
+				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
+
+			CP2ActivationKeys.assertKeyDetailsServerElements(keyType = "On-Premise");
+		}
+	}
+
 
 }
