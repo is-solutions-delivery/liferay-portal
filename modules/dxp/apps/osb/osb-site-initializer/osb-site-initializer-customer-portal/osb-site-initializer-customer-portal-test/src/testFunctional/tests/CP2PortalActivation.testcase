@@ -195,8 +195,62 @@ definition {
 		}
 	}
 
+	@description = "Automation ID: LPS-151351 | Test Summary: Verify that the Environment Type has the options according to the project keys."
+	@ignore = "true"
 	@priority = "2"
-	test IfClearFiltersButtonWorks{
+	test VerifyFilterEnvironmentTypeOptionsArePresent {
+
+		// Needs refactor since it depends on real projects Portals account
+
+		task ("Signs in OKTA to update and go to Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Select a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.search(searchItem = "NASA ICE");
+
+			CustomerPortal.enterOnProject(title = "NASA ICE");
+		}
+
+		task ("Go to Product Activation and Product page") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "Portal");
+		}
+
+		task ("Click on Filter and Select a Filter type") {
+			CustomerPortal.clickAtButton(text = "Filter");
+
+			CustomerPortal.clickAtButton(text = "Environment Type");
+
+			Click.clickAt(
+				filter = "Production",
+				index = "1",
+				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+		}
+
+		task ("Then Click on Apply and Assert if the filter is enable") {
+			Click.clickAt(
+				index = "3",
+				locator1 = "CP2NavigationMenu#FILTER_APPLY");
+
+			Click(
+				key_text = "Redacted",
+				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
+
+			CP2ActivationKeys.assertKeyDetailsEnvironmentElements(environmentType = "Production");
+
+			AssertElementPresent(
+				locator1 = "CP2NavigationMenu#FILTER_RESULT",
+				result = "Production");
+		}
+	}
 
         // TODO LPS-151343 archive pending implementation
 	}
