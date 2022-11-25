@@ -91,110 +91,6 @@ definition {
 		}
 	}
 
-	@description = "Automation ID: LPS-151353 | Test Summary: Verify if the user can type a date in 'On or after' field on Expiration Date."
-	@ignore = "true"
-	@priority = "4"
-	test VerifyFilterOnExpirationDateWorks {
-
-		// Needs refactor since it depends on real projects Portals account
-
-		task ("Signs in OKTA to update and go to Customer Portal") {
-			CustomerPortal.loginOktaToUpdateCP();
-
-			Navigator.openURL();
-
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-		}
-
-		task ("Select a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
-			CustomerPortal.search(searchItem = "NASA ICE");
-
-			CustomerPortal.enterOnProject(title = "NASA ICE");
-		}
-
-		task ("Go to Product Activation and Product page") {
-			CP2NavigationMenu.goToProductActivation();
-
-			CP2NavigationMenu.clickOnProductButton(product = "Portal");
-		}
-
-		task ("Click on Filter and Select a Filter type") {
-			CustomerPortal.clickAtButton(text = "Filter");
-
-			CustomerPortal.clickAtButton(text = "Expiration Date");
-		}
-
-		task ("Click Start Date and fill in the field and assert the results of the label") {
-			CP2NavigationMenu.typeDate(
-				data = "jun 29 2023",
-				field = "On or After",
-				index = "5",
-				index1 = "2");
-
-			Click(
-				key_text = "Redacted",
-				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
-
-			CP2ActivationKeys.assertKeyDetailsStatusElements(expirationDate = "Jun 29, 2023");
-		}
-	}
-
-	@description = "Automation ID: LPS-151352 | Test Summary: Verify if the user can type a date in 'On or after' field on Start Date."
-	@ignore = "true"
-	@priority = "4"
-	test VerifyFilterOnStartDateWorks {
-
-		// Needs refactor since it depends on real projects Portals account
-
-		task ("Signs in OKTA to update and go to Customer Portal") {
-			CustomerPortal.loginOktaToUpdateCP();
-
-			Navigator.openURL();
-
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-		}
-
-		task ("Select a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
-			CustomerPortal.search(searchItem = "NASA ICE");
-
-			CustomerPortal.enterOnProject(title = "NASA ICE");
-		}
-
-		task ("Go to Product Activation and Product page") {
-			CP2NavigationMenu.goToProductActivation();
-
-			CP2NavigationMenu.clickOnProductButton(product = "Portal");
-		}
-
-		task ("Click on Filter and Select a Filter type") {
-			CustomerPortal.clickAtButton(text = "Filter");
-
-			WaitForVisible(
-				key_text = "Start Date",
-				locator1 = "CustomerPortalSite#ANY_BUTTON");
-
-			CustomerPortal.clickAtButton(text = "Start Date");
-		}
-
-		task ("Click Start Date and fill in the field and assert the results of the label") {
-			CP2NavigationMenu.typeDate(
-				data = "Jun 7 2022",
-				field = "On or After",
-				index = "4",
-				index1 = "1");
-
-			Click(
-				key_text = "Redacted",
-				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
-
-			CP2ActivationKeys.assertKeyDetailsStatusElements(startDate = "Jun 7, 2022");
-		}
-	}
-
 	@description = "Automation ID: LPS-151351 | Test Summary: Verify that the Environment Type has the options according to the project keys."
 	@ignore = "true"
 	@priority = "2"
@@ -299,6 +195,110 @@ definition {
 			CP2ActivationKeys.assertKeyDetailsEnvironmentElements(instanceSize = "2");
 
 			CustomerPortal.clickAtButton(text = "Close");
+		}
+	}
+
+	@description = "Automation ID: LPS-151353 | Test Summary: Verify if the user can type a date in 'On or after' field on Expiration Date."
+	@ignore = "true"
+	@priority = "4"
+	test VerifyFilterOnExpirationDateWorks {
+
+		// Needs refactor since it depends on real projects Portals account
+
+		task ("Signs in OKTA to update and go to Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Select a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.search(searchItem = "NASA ICE");
+
+			CustomerPortal.enterOnProject(title = "NASA ICE");
+		}
+
+		task ("Go to Product Activation and Product page") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "Portal");
+		}
+
+		task ("Click on Filter and Select a Filter type") {
+			CustomerPortal.clickAtButton(text = "Filter");
+
+			CustomerPortal.clickAtButton(text = "Expiration Date");
+		}
+
+		task ("Click Start Date and fill in the field and assert the results of the label") {
+			CP2NavigationMenu.typeDate(
+				data = "jun 29 2023",
+				field = "On or After",
+				index = "5",
+				index1 = "2");
+
+			Click(
+				key_text = "Redacted",
+				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
+
+			CP2ActivationKeys.assertKeyDetailsStatusElements(expirationDate = "Jun 29, 2023");
+		}
+	}
+
+	@description = "Automation ID: LPS-151352 | Test Summary: Verify if the user can type a date in 'On or after' field on Start Date."
+	@ignore = "true"
+	@priority = "4"
+	test VerifyFilterOnStartDateWorks {
+
+		// Needs refactor since it depends on real projects Portals account
+
+		task ("Signs in OKTA to update and go to Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Select a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.search(searchItem = "NASA ICE");
+
+			CustomerPortal.enterOnProject(title = "NASA ICE");
+		}
+
+		task ("Go to Product Activation and Product page") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "Portal");
+		}
+
+		task ("Click on Filter and Select a Filter type") {
+			CustomerPortal.clickAtButton(text = "Filter");
+
+			WaitForVisible(
+				key_text = "Start Date",
+				locator1 = "CustomerPortalSite#ANY_BUTTON");
+
+			CustomerPortal.clickAtButton(text = "Start Date");
+		}
+
+		task ("Click Start Date and fill in the field and assert the results of the label") {
+			CP2NavigationMenu.typeDate(
+				data = "Jun 7 2022",
+				field = "On or After",
+				index = "4",
+				index1 = "1");
+
+			Click(
+				key_text = "Redacted",
+				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
+
+			CP2ActivationKeys.assertKeyDetailsStatusElements(startDate = "Jun 7, 2022");
 		}
 	}
 
