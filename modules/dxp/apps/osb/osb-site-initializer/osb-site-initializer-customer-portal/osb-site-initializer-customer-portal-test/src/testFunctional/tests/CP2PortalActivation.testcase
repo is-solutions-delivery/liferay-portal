@@ -356,5 +356,48 @@ definition {
 		}
 	}
 
+	@description = "Automation ID: LPS-151348 | Test Summary: Verify if the user can search a IP Addresses."
+	@ignore = "true"
+	@priority = "3"
+	test VerifyUserCanSearchIPAddresses {
+
+		// Needs refactor since it depends on real projects Portals account
+
+		task ("Signs in OKTA to update and go to Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Select a project and go to activation page") {
+			CustomerPortal.enterOnProject(title = "NASA ICE");
+
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "Portal");
+		}
+
+		task ("Search for a IP Addresses and assert the search") {
+			Click(locator1 = "CP2NavigationMenu#SEARCH_FILTER");
+
+			Type(
+				locator1 = "CP2NavigationMenu#SEARCH_FILTER",
+				value1 = "192.168.0.111");
+
+			KeyPress(
+				locator1 = "CP2NavigationMenu#SEARCH_FILTER",
+				value1 = "\ENTER");
+
+			AssertElementPresent(locator1 = "CP2NavigationMenu#SEARCH_RESULT");
+
+			Click(
+				key_text = "teste",
+				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
+
+			CP2ActivationKeys.assertKeyDetailsServerElements(ipAddress = "192.168.0.111");
+		}
+	}
 
 }
