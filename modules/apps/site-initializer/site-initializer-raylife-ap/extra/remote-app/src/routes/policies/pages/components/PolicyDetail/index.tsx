@@ -49,9 +49,9 @@ const PolicyDetail = ({
 }: ApplicationPolicyDetailsType) => {
 	enum navBarLabels {
 		Vehicles = 'Vehicles',
-		Drives = 'Drives',
+		Drivers = 'Drivers',
 	}
-	const navbarLabel = [navBarLabels.Vehicles, navBarLabels.Drives];
+	const navbarLabel = [navBarLabels.Vehicles, navBarLabels.Drivers];
 	const [active, setActive] = useState(navbarLabel[0]);
 	const [applicationData, setApplicationData] = useState<any>();
 
@@ -174,7 +174,7 @@ const PolicyDetail = ({
 					)
 				)}
 
-			{active === navBarLabels.Drives &&
+			{active === navBarLabels.Drivers &&
 				applicationData?.driverInfo?.form.map(
 					(curentDriver: PolicyDetailsType, indexDriver: number) => (
 						<div
