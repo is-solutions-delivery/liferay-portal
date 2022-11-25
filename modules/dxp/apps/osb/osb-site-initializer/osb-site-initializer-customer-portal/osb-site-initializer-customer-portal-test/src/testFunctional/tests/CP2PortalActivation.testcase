@@ -41,7 +41,56 @@ definition {
 			JSONGroup.deleteGroupByName(groupName = "${testSiteName}");
 		}
 	}
-    @description = "Automation ID: LPS-151346 | Test Summary: Verify if the filter Instance Size option displays a list 1 or more, depends on project"
+
+	@description = "Automation ID: LPS-151354 | Test Summary: Verify if Clear Filters button works."
+	@ignore = "true"
+	@priority = "2"
+	test VerifyClearFiltersButtonWorks {
+
+		// Needs refactor since it depends on real projects Portals account
+
+		task ("Select a project") {
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+
+			CustomerPortal.search(searchItem = "NASA ICE");
+
+			CustomerPortal.enterOnProject(title = "NASA ICE");
+		}
+
+		task ("Go to Product Activation and Product page") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "Portal");
+		}
+
+		task ("Click on Filter and Select a Filter type") {
+			CustomerPortal.clickAtButton(text = "Filter");
+
+			CustomerPortal.clickAtButton(text = "Key Type");
+
+			Click.clickAt(
+				filter = "On-Premise",
+				index = "1",
+				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+		}
+
+		task ("Then Click on Apply and Assert if the filter is enable") {
+			CustomerPortal.clickAtButton(text = "Apply");
+
+			AssertElementPresent(
+				locator1 = "CP2NavigationMenu#FILTER_RESULT",
+				result = "On-Premise");
+		}
+
+		task ("Then Click on Clear All Filters and Assert if the filter is disabled") {
+			CustomerPortal.clickAtButton(text = "Clear All Filters");
+
+			AssertElementNotPresent(
+				locator1 = "CP2NavigationMenu#FILTER_RESULT",
+				result = "On-Premise");
+		}
+	}
+
 	@priority = "3"
 	test IfListOnInstanceSizeIsPresent{
 		
