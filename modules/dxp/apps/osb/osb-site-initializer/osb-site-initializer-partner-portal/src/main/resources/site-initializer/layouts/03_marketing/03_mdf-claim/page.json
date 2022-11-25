@@ -8,27 +8,42 @@
 	},
 	"permissions": [
 		{
-			"actionIds": [
-			],
+			"actionIds": [],
 			"roleName": "Guest",
 			"scope": 4
 		},
 		{
-			"actionIds": [
-				"VIEW"
-			],
+			"actionIds": [],
 			"roleName": "User",
 			"scope": 4
 		},
 		{
-			"actionIds": [
-				"VIEW"
-			],
+			"actionIds": [],
 			"roleName": "Site Member",
 			"scope": 4
+		},
+		{
+			"actionIds": ["VIEW"],
+			"roleName": "Channel General Manager",
+			"scope": 1
+		},
+		{
+			"actionIds": ["VIEW"],
+			"roleName": "Channel Account Manager",
+			"scope": 1
+		},
+		{
+			"actionIds": ["VIEW"],
+			"roleName": "Channel Finance Manager",
+			"scope": 1
+		},
+		{
+			"actionIds": ["VIEW"],
+			"roleName": "Channel Global Marketing Manager",
+			"scope": 1
 		}
 	],
-	"private": false,
+	"private": true,
 	"system": false,
 	"type": "content"
 }
