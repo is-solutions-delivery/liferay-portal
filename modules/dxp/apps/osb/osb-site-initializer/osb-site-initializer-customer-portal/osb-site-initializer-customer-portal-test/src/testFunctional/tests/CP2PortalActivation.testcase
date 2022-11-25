@@ -252,7 +252,55 @@ definition {
 		}
 	}
 
-        // TODO LPS-151343 archive pending implementation
+	@description = "Automation ID: LPS-151346 | Test Summary: Verify if the filter Instance Size option displays a list 1 or more, depends on project"
+	@ignore = "true"
+	@priority = "3"
+	test VerifyFilterListOnInstanceSizeIsPresent {
+
+		// Needs refactor since it depends on real projects Portals account
+
+		task ("Signs in OKTA to update and go to Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Select a project and go to activation page") {
+			CustomerPortal.enterOnProject(title = "NASA ICE");
+
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = "Portal");
+		}
+
+		task ("Then a user click and select a filter option ") {
+			CustomerPortal.clickAtButton(text = "Filter");
+
+			CustomerPortal.clickAtButton(text = "Instance Size");
+
+			Click.clickAt(
+				filter = "1",
+				index = "3",
+				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+		}
+
+		task ("Assert if the list reflect the filter") {
+			AssertElementPresent(
+				filter = "1",
+				index = "3",
+				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+
+			Click(
+				key_text = "Redacted",
+				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
+
+			CP2ActivationKeys.assertKeyDetailsEnvironmentElements(instanceSize = "2");
+
+			CustomerPortal.clickAtButton(text = "Close");
+		}
 	}
+
 
 }
