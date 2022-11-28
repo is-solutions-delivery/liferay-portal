@@ -1143,8 +1143,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.fetchUser()
 			).build();
 
-		ObjectDefinition objectDefinition = null;
-
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-actions.json")) {
 				continue;
@@ -1155,7 +1153,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			json = _replace(json, listTypeDefinitionIdsStringUtilReplaceValues);
 
-			objectDefinition = ObjectDefinition.toDTO(json);
+			ObjectDefinition objectDefinition = ObjectDefinition.toDTO(json);
 
 			if (objectDefinition == null) {
 				_log.error(
@@ -2729,7 +2727,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			json = _replace(json, objectDefinitionIdsStringUtilReplaceValues);
 
-			ObjectRelationship objectRelationship = ObjectRelationship.toDTO(
+				ObjectRelationship objectRelationship = ObjectRelationship.toDTO(
 				json);
 
 			if (objectRelationship == null) {
