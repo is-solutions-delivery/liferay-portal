@@ -1056,9 +1056,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addObjectAccountEntryRestricted(
-		Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues,
-		ObjectDefinitionResource objectDefinitionResource,
-		ServiceContext serviceContext)
+			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues,
+			ObjectDefinitionResource objectDefinitionResource,
+			ServiceContext serviceContext)
 		throws Exception {
 
 		Set<String> resourcePaths = _servletContext.getResourcePaths(
@@ -1087,15 +1087,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
-			com.liferay.object.model.ObjectDefinition objectDefinitionPublish =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(),
-					"C_" + objectDefinition.getName());
+			com.liferay.object.model.ObjectDefinition
+				serviceBuilderObjectDefinition =
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						serviceContext.getCompanyId(),
+						"C_" + objectDefinition.getName());
 
-			if (!objectDefinitionPublish.isApproved()) {
+			if (!serviceBuilderObjectDefinition.isApproved()) {
 				objectDefinition =
 					objectDefinitionResource.patchObjectDefinition(
-						objectDefinitionPublish.getObjectDefinitionId(),
+						serviceBuilderObjectDefinition.getObjectDefinitionId(),
 						objectDefinition);
 
 				objectDefinitionResource.postObjectDefinitionPublish(
