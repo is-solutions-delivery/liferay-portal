@@ -18,7 +18,10 @@ import com.liferay.dispatch.exception.DispatchTriggerEndDateException;
 import com.liferay.dispatch.exception.DispatchTriggerNameException;
 import com.liferay.dispatch.exception.DispatchTriggerStartDateException;
 import com.liferay.dispatch.exception.DuplicateDispatchTriggerException;
+import com.liferay.dispatch.exception.NoSuchDispatchTaskExecutorType;
 import com.liferay.dispatch.executor.DispatchTaskClusterMode;
+import com.liferay.dispatch.executor.DispatchTaskExecutor;
+import com.liferay.dispatch.executor.DispatchTaskExecutorRegistry;
 import com.liferay.dispatch.internal.helper.DispatchTriggerHelper;
 import com.liferay.dispatch.model.DispatchTrigger;
 import com.liferay.dispatch.service.base.DispatchTriggerLocalServiceBaseImpl;
@@ -70,7 +73,7 @@ public class DispatchTriggerLocalServiceImpl
 
 		User user = _userLocalService.getUser(userId);
 
-		_validate(0, user.getCompanyId(), name);
+		_validate(0, user.getCompanyId(), dispatchTaskExecutorType, name);
 
 		DispatchTrigger dispatchTrigger = dispatchTriggerPersistence.create(
 			counterLocalService.increment());
@@ -323,7 +326,9 @@ public class DispatchTriggerLocalServiceImpl
 		DispatchTrigger dispatchTrigger =
 			dispatchTriggerPersistence.findByPrimaryKey(dispatchTriggerId);
 
-		_validate(dispatchTriggerId, dispatchTrigger.getCompanyId(), name);
+		_validate(
+			dispatchTriggerId, dispatchTrigger.getCompanyId(),
+			dispatchTrigger.getDispatchTaskExecutorType(), name);
 
 		dispatchTrigger.setName(name);
 		dispatchTrigger.setDispatchTaskSettingsUnicodeProperties(
@@ -338,12 +343,25 @@ public class DispatchTriggerLocalServiceImpl
 		return new Date(date.getTime() - timeZone.getOffset(date.getTime()));
 	}
 
-	private void _validate(long dispatchTriggerId, long companyId, String name)
+	private void _validate(
+			long dispatchTriggerId, long companyId,
+			String dispatchTaskExecutorType, String name)
 		throws PortalException {
 
 		if (Validator.isNull(name)) {
 			throw new DispatchTriggerNameException(
 				"Dispatch trigger name is null for company " + companyId);
+		}
+
+		DispatchTaskExecutor dispatchTaskExecutor =
+			_dispatchTaskExecutorRegistry.fetchDispatchTaskExecutor(
+				dispatchTaskExecutorType);
+
+		if (dispatchTaskExecutor == null) {
+			throw new NoSuchDispatchTaskExecutorType(
+				StringBundler.concat(
+					"Unable to get dispatch task executor type for \"",
+					dispatchTaskExecutorType, "\""));
 		}
 
 		DispatchTrigger dispatchTrigger = dispatchTriggerPersistence.fetchByC_N(
@@ -367,6 +385,9 @@ public class DispatchTriggerLocalServiceImpl
 
 	@Reference
 	private DispatchLogPersistence _dispatchLogPersistence;
+
+	@Reference
+	private DispatchTaskExecutorRegistry _dispatchTaskExecutorRegistry;
 
 	@Reference
 	private DispatchTriggerHelper _dispatchTriggerHelper;
