@@ -21,6 +21,7 @@ import ClayLabel from '@clayui/label';
 import ClayManagementToolbar from '@clayui/management-toolbar';
 import ClayTabs from '@clayui/tabs';
 import ClayUpperToolbar from '@clayui/upper-toolbar';
+import {FlagsModal} from '@liferay/flags-taglib';
 import classNames from 'classnames';
 import {useMutation} from 'graphql-hooks';
 import React, {
@@ -70,6 +71,7 @@ import {
 } from '../../utils/utils.es';
 import FlagsContainer from './components/FlagsContainer';
 import useActiviyQuestionKebabOptions from './hooks/useActivityQuestionKebabOptions.es';
+import useFlagsContainer from './hooks/useFlagsContainer.es';
 
 const tabs = [
 	{label: Liferay.Language.get('newest'), sortBy: 'dateCreated:desc'},
@@ -125,13 +127,19 @@ const Question = ({
 	const editorRef = useRef('');
 	const historyPushParser = historyPushWithSlug(history.push);
 
+	const flagsContainerProps = useFlagsContainer({
+		content: question,
+		context,
+		showIcon: false,
+	});
+
 	const {kebabOptions, setIsSubscribe} = useActiviyQuestionKebabOptions({
 		context,
+		onClickReport: () => flagsContainerProps.flagsModal.handleClickShow(),
 		question,
 		questionId,
 		sectionTitle,
 		setError,
-		setShowDeleteModalPanel,
 	});
 
 	const fetchMessages = useCallback(() => {
@@ -168,8 +176,7 @@ const Question = ({
 					setError(errorObject);
 
 					setLoading(false);
-				}
-				else {
+				} else {
 					setQuestion(messageBoardThreadByFriendlyUrlPath);
 					setLoading(false);
 				}
@@ -278,8 +285,7 @@ const Question = ({
 				siteKey: context.siteKey,
 			});
 			setIsVisibleEditor(false);
-		}
-		catch (error) {}
+		} catch (error) {}
 	};
 
 	const deleteAnswer = useCallback(
@@ -784,6 +790,16 @@ const Question = ({
 
 				<Alert info={error} />
 			</div>
+
+			{flagsContainerProps.flagsModal.reportDialogOpen && (
+				<FlagsModal
+					handleClose={flagsContainerProps.flagsModal.onClose}
+					handleSubmit={
+						flagsContainerProps.flagsModal.handleSubmitReport
+					}
+					{...flagsContainerProps.flagsModal}
+				/>
+			)}
 
 			{question && (
 				<Helmet>
