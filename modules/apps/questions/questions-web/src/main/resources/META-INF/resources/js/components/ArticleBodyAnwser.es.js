@@ -13,6 +13,7 @@
  */
 
 import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import React, {useEffect, useState} from 'react';
 
 import Highlight from './Highlight.es';
@@ -24,6 +25,7 @@ export default function ArticleBodyAnwser({
 	encodingFormat,
 	hasCompanyMx,
 	id,
+	isBestAnswer = false,
 	signature,
 }) {
 	const [
@@ -38,7 +40,12 @@ export default function ArticleBodyAnwser({
 	const _companyName = hasCompanyMx && companyName ? `(${companyName})` : '';
 
 	return (
-		<div className="h-100 p-3 position-relative rectangle-comment w-100">
+		<div
+			className={classNames(
+				'h-100 p-3 position-relative rectangle-comment w-100',
+				{'questions-answer questions-answer-success': isBestAnswer}
+			)}
+		>
 			<div className="icon-quote-left position-absolute">
 				<ClayIcon symbol="quote-left" />
 			</div>

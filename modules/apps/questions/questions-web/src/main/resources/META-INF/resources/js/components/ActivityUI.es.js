@@ -48,7 +48,7 @@ const getQuestionCreatedInDays = (dateCreated) => {
 };
 
 const ActivityHeaderBadge = ({
-	messageType: {label, symbol, type},
+	messageType: {isBestAnswer, label, symbol, type},
 	question,
 }) => {
 	const DAYS_SINCE_CREATED = getQuestionCreatedInDays(question.dateCreated);
@@ -57,7 +57,8 @@ const ActivityHeaderBadge = ({
 		<div className="align-items-center d-flex flex-wrap justify-content-between">
 			<ul className="align-items-center c-mb-2 d-flex flex-nowrap list-badges list-unstyled stretched-link-layer">
 				{DAYS_SINCE_CREATED <= DAYS_UNTIL_SHOW_LABEL &&
-					type !== MESSAGE_TYPES.reply.type && (
+					type !== MESSAGE_TYPES.reply.type &&
+					!isBestAnswer && (
 						<li>
 							<span className="new-question-badge text-uppercase">
 								{Liferay.Language.get('new')}
@@ -71,6 +72,7 @@ const ActivityHeaderBadge = ({
 							'bg-light label-secondary text-uppercase',
 							{
 								'questions-reply': symbol === 'reply',
+								'text-success border border-success': isBestAnswer,
 							}
 						)}
 						isActivityBadge
@@ -133,7 +135,10 @@ const ActivityHeader = ({
 	</h5>
 );
 
-const ActivityBody = ({messageType: {symbol, type}, question}) => {
+const ActivityBody = ({
+	messageType: {isBestAnswer, symbol, type},
+	question,
+}) => {
 	if (type === MESSAGE_TYPES.answer.type) {
 		return (
 			<ArticleBodyRenderer
@@ -153,13 +158,15 @@ const ActivityBody = ({messageType: {symbol, type}, question}) => {
 					compactMode
 				/>
 
-				<QuestionBadge
-					className="questions-reply"
-					isActivityBadge
-					symbol={symbol}
-					symbolClassName="questions-comment-reply-icon"
-					value={stripHTML(question.articleBody)}
-				/>
+				{!isBestAnswer && (
+					<QuestionBadge
+						className="questions-reply"
+						isActivityBadge
+						symbol={symbol}
+						symbolClassName="questions-comment-reply-icon"
+						value={stripHTML(question.articleBody)}
+					/>
+				)}
 			</>
 		);
 	}
