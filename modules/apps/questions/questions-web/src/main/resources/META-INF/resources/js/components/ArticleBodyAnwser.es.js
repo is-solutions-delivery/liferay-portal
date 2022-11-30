@@ -16,6 +16,7 @@ import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import React, {useEffect, useState} from 'react';
 
+import {MESSAGE_TYPES} from './ActivityUI.es';
 import Highlight from './Highlight.es';
 
 export default function ArticleBodyAnwser({
@@ -25,8 +26,8 @@ export default function ArticleBodyAnwser({
 	encodingFormat,
 	hasCompanyMx,
 	id,
-	isBestAnswer = false,
 	signature,
+	type,
 }) {
 	const [
 		articleBodyContainsParagraph,
@@ -43,7 +44,10 @@ export default function ArticleBodyAnwser({
 		<div
 			className={classNames(
 				'h-100 p-3 position-relative rectangle-comment w-100',
-				{'questions-answer questions-answer-success': isBestAnswer}
+				{
+					'questions-answer questions-answer-success':
+						type === MESSAGE_TYPES.bestAnswer.type,
+				}
 			)}
 		>
 			<div className="icon-quote-left position-absolute">

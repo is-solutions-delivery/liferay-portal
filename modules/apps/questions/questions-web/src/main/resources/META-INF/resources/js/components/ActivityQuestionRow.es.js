@@ -60,14 +60,13 @@ export default function ActivityQuestionRow({
 	const messageType = useMemo(() => {
 		if (question.showAsAnswer === true) {
 			return {
-				isBestAnswer: true,
 				label: Liferay.Language.get('best answer'),
 				symbol: 'check-circle-full',
 				text: stripHTML(question.articleBody).replace(
 					MESSAGE_TYPES.answer.prefix,
 					''
 				),
-				type: MESSAGE_TYPES.reply.type,
+				type: MESSAGE_TYPES.bestAnswer.type,
 			};
 		}
 
@@ -126,13 +125,13 @@ export default function ActivityQuestionRow({
 			<div
 				className={classNames('c-mb-1 c-mt-2 stretched-link-layer', {
 					'questions-answer questions-answer-success':
-						messageType.isBestAnswer,
+						messageType.type === MESSAGE_TYPES.bestAnswer.type,
 				})}
 			>
 				<ActivityBody messageType={messageType} question={question} />
 			</div>
 
-			{!messageType.isBestAnswer && (
+			{messageType.type !== MESSAGE_TYPES.bestAnswer.type && (
 				<ActivityFooter
 					creatorId={creatorId}
 					creatorInformation={creatorInformation}

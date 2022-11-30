@@ -34,6 +34,7 @@ const MESSAGE_TYPES = {
 		prefix: 'RE:',
 		type: 1,
 	},
+	bestAnswer: {type: 4},
 	question: {type: 2},
 	reply: {prefix: 'RE: RE:', type: 3},
 };
@@ -48,7 +49,7 @@ const getQuestionCreatedInDays = (dateCreated) => {
 };
 
 const ActivityHeaderBadge = ({
-	messageType: {isBestAnswer, label, symbol, type},
+	messageType: {label, symbol, type},
 	question,
 }) => {
 	const DAYS_SINCE_CREATED = getQuestionCreatedInDays(question.dateCreated);
@@ -58,7 +59,7 @@ const ActivityHeaderBadge = ({
 			<ul className="align-items-center c-mb-2 d-flex flex-nowrap list-badges list-unstyled stretched-link-layer">
 				{DAYS_SINCE_CREATED <= DAYS_UNTIL_SHOW_LABEL &&
 					type !== MESSAGE_TYPES.reply.type &&
-					!isBestAnswer && (
+					type !== MESSAGE_TYPES.bestAnswer.type && (
 						<li>
 							<span className="new-question-badge text-uppercase">
 								{Liferay.Language.get('new')}
@@ -71,8 +72,10 @@ const ActivityHeaderBadge = ({
 						className={classNames(
 							'bg-light label-secondary text-uppercase',
 							{
-								'questions-reply': symbol === 'reply',
-								'text-success border border-success': isBestAnswer,
+								'questions-reply':
+									type === MESSAGE_TYPES.reply.type,
+								'text-success border border-success':
+									type === MESSAGE_TYPES.bestAnswer.type,
 							}
 						)}
 						isActivityBadge
@@ -98,8 +101,8 @@ const ActivityHeaderBadge = ({
 
 const ActivityHeader = ({
 	context,
-	messageType: {text},
-	question: {id, locked, seen, status},
+	messageType: {text, type},
+	question: {id, locked, parentMessageBoardMessage, seen, status},
 }) => (
 	<h5
 		className={classNames(
@@ -113,7 +116,9 @@ const ActivityHeader = ({
 			}
 		)}
 	>
-		{text}
+		{type === MESSAGE_TYPES.bestAnswer.type
+			? parentMessageBoardMessage.headline
+			: text}
 
 		{status && status !== 'approved' && (
 			<span className="c-ml-2">
@@ -135,16 +140,14 @@ const ActivityHeader = ({
 	</h5>
 );
 
-const ActivityBody = ({
-	messageType: {isBestAnswer, symbol, type},
-	question,
-}) => {
-	if (type === MESSAGE_TYPES.answer.type) {
+const ActivityBody = ({messageType: {symbol, type}, question}) => {
+	if (type === MESSAGE_TYPES.bestAnswer.type) {
 		return (
-			<ArticleBodyRenderer
+			<ArticleBodyAnwser
 				{...question}
 				articleBody={stripHTML(question.articleBody)}
 				compactMode
+				type={type}
 			/>
 		);
 	}
@@ -154,11 +157,13 @@ const ActivityBody = ({
 			<>
 				<ArticleBodyAnwser
 					{...question}
-					articleBody={stripHTML(question.articleBody)}
+					articleBody={stripHTML(
+						question.parentMessageBoardMessage.articleBody
+					)}
 					compactMode
 				/>
 
-				{!isBestAnswer && (
+				{type !== MESSAGE_TYPES.bestAnswer.type && (
 					<QuestionBadge
 						className="questions-reply"
 						isActivityBadge
@@ -168,6 +173,16 @@ const ActivityBody = ({
 					/>
 				)}
 			</>
+		);
+	}
+
+	if (type === MESSAGE_TYPES.answer.type) {
+		return (
+			<ArticleBodyRenderer
+				{...question}
+				articleBody={stripHTML(question.articleBody)}
+				compactMode
+			/>
 		);
 	}
 
