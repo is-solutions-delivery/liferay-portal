@@ -119,6 +119,8 @@ definition {
 	@description = "This is a test for LPS-156438 - Verify if as an Administrator can Add a Build"
 	@priority = "5"
 	test AdminCanAddBuild {
+		property test.name.skip.portal.instance = "TestrayBuildAdministrator#AdminCanAddBuild";
+
 		task ("Given that the user add a new build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -143,6 +145,8 @@ definition {
 	@description = "This is a test for LPS-163712 - Verify if as an administrator can add a build with multiple options(Suite, Case, Option and Select Stacks)"
 	@priority = "5"
 	test AdminCanAddBuildWithMultipleOptions {
+		property test.name.skip.portal.instance = "TestrayBuildAdministrator#AdminCanAddBuildWithMultipleOptions";
+
 		task ("Given that the user add a new build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -204,6 +208,8 @@ definition {
 	@description = "This is a test for LPS-156513 - Verify if as an Administrator I can delete Builds"
 	@priority = "5"
 	test AdminCanDeleteBuild {
+		property test.name.skip.portal.instance = "TestrayBuildAdministrator#AdminCanDeleteBuildContainsRuns";
+
 		task ("Given that the user add a new build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -232,6 +238,8 @@ definition {
 	@description = "This is a test for LPS-156575 - Verify if as an Administrator I should be able to delete a build that contains runs"
 	@priority = "4"
 	test AdminCanDeleteBuildContainsRuns {
+		property test.name.skip.portal.instance = "TestrayBuildAdministrator#AdminCanDeleteBuildContainsRuns";
+
 		task ("Given that the user add a new build with Environments Factors") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -278,6 +286,8 @@ definition {
 	@description = "This is a test for LPS-156543 - Verify if as an Administrator I am able to edit Builds"
 	@priority = "5"
 	test AdminCanEditBuild {
+		property test.name.skip.portal.instance = "TestrayBuildAdministrator#AdminCanEditBuild";
+
 		task ("Given that the user add a new build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -315,6 +325,8 @@ definition {
 	@description = "This is a test for LPS-156546 - Verify if as an Administrator I should not be able to add a duplicate build"
 	@priority = "5"
 	test AdminCanNotAddDuplicateBuild {
+		property test.name.skip.portal.instance = "TestrayBuildAdministrator#AdminCanNotAddDuplicateBuild";
+
 		task ("Given that the user add a new build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -369,6 +381,8 @@ definition {
 	@description = "This is a test for LPS-156583 - Verify if as an Administrator I should be able to promote a build"
 	@priority = "5"
 	test AdminCanPromoteBuild {
+		property test.name.skip.portal.instance = "TestrayBuildAdministrator#AdminCanPromoteBuild";
+
 		task ("Given that the user add a new build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 

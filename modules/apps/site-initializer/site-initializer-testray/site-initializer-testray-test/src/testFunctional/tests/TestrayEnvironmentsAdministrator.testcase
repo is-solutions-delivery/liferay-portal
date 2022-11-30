@@ -43,6 +43,8 @@ definition {
 	@description = "This is a test for LPS-157327 - Verify if As an Administrator I should be able to add and delete a Factor Option"
 	@priority = "5"
 	test AdminCanAddAndDeleteFactorOption {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanAddAndDeleteFactorOption";
+
 		task ("Go to Categories and Add Factor Category") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -81,6 +83,8 @@ definition {
 	@description = "This is a test for LPS-157231 - Verify if as an Administrator I am able to add Factor Categories"
 	@priority = "5"
 	test AdminCanAddCategory {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanAddCategory";
+
 		task ("Go to Categories, add a category and check if the category was created") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -93,6 +97,8 @@ definition {
 	@description = "This is a test for LPS-157309 - Verify if as an Administrator I am able to add Options"
 	@priority = "5"
 	test AdminCanAddOptions {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanAddOptions";
+
 		task ("Go to Categories and Add Category") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -123,6 +129,8 @@ definition {
 	@description = "This is a test for LPS-157321 - Verify if as an Administrator I am able to configure Default Environment Factors for a Routine"
 	@priority = "5"
 	test AdminCanConfigureDefaultEnvironmentFactorsForRoutine {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanConfigureDefaultEnvironmentFactorsForRoutine";
+
 		task ("Go to Categories and Add two Category") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -194,6 +202,8 @@ definition {
 	@description = "This is a test for LPS-157237 - Verify if as an Administrator I am able to delete Factor Categories"
 	@priority = "5"
 	test AdminCanDeleteCategory {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanDeleteCategory";
+
 		task ("Go to Categories, add a category, Delete it, and check if the category has been deleted") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -214,6 +224,8 @@ definition {
 	@description = "This is a test for LPS-157307 - Verify if as an Administrator I am able to edit Factor Categories"
 	@priority = "5"
 	test AdminCanEditFactorCategories {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanEditFactorCategories";
+
 		task ("Go to Categories, create the new category and then edit and state if the name has changed") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -232,6 +244,8 @@ definition {
 	@description = "This is a test for LPS-157326 - Verify if as an Administrator I am able to edit the Option by changing the Category"
 	@priority = "5"
 	test AdminCanEditOptionChangingCategory {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanEditOptionChangingCategory";
+
 		task ("Go to Categories and Add two Category") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -276,6 +290,8 @@ definition {
 	@description = "This is a test for LPS-157323 - Verify if as an Administrator I am able to edit the Option Name"
 	@priority = "5"
 	test AdminCanEditOptionName {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanEditOptionName";
+
 		task ("Go to Categories and Add Category") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -312,6 +328,8 @@ definition {
 	@description = "This is a test for LPS-157328 - Verify if As an Administrator I should not be able to add a duplicate Factor Category"
 	@priority = "5"
 	test AdminCanNotAddDuplicateFactorCategory {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanNotAddDuplicateFactorCategory";
+
 		task ("Go to Categories and Add Category duplicate") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -328,6 +346,8 @@ definition {
 	@description = "This is a test for LPS-166557 - Verify if As an Administrator I should not be able to add a duplicate Factor Options"
 	@priority = "5"
 	test AdminCanNotAddDuplicateFactorOptions {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanNotAddDuplicateFactorOptions";
+
 		task ("Go to Categories and Add Category") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
@@ -358,6 +378,8 @@ definition {
 	@description = "This is a test for LPS-164136 - Verify that the user can not create a options if all the required fields are not filled in"
 	@priority = "3"
 	test AdminCanViewRequiredField {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanViewRequiredField";
+
 		task ("Go to Categories and Add Category without name") {
 			TestrayManage.selectOptionsManage(itemValue = "Options");
 
@@ -380,6 +402,8 @@ definition {
 	@description = "This is a test for LPS-162506 - Verify if as an Administrator I can see the warning message 'This field is required' when trying to save without a name in Category"
 	@priority = "3"
 	test AdminCanViewWarningMessage {
+		property test.name.skip.portal.instance = "TestrayEnvironmentsAdministrator#AdminCanViewWarningMessage";
+
 		task ("Go to Categories and Add Category") {
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 

@@ -46,6 +46,8 @@ definition {
 	@description = "This is a test for LPS-162986 - Verify if as an User can edit account information"
 	@priority = "4"
 	test CanEditAccountInformation {
+		property test.name.skip.portal.instance = "TestrayManageUsers#CanEditAccountInformation";
+
 		task ("Given that the user change the account informations") {
 			TestrayLayout.manageAccountSidebar(valueName = "Manage Account");
 
@@ -86,6 +88,8 @@ definition {
 	@description = "This is a test for LPS-165997 - Verify if as an administrator can not save roles without options selected"
 	@priority = "4"
 	test CanNotSaveRolesWithoutOptions {
+		property test.name.skip.portal.instance = "TestrayManageUsers#CanNotSaveRolesWithoutOptions";
+
 		task ("Given that the user tries to save roles without options selected") {
 			TestrayLayout.manageAccountSidebar(valueName = "Manage Account");
 
@@ -106,6 +110,8 @@ definition {
 	@description = "This is a test for LPS-168192 - Verify that the user can not edit informations of user if all the required fields are not filled in"
 	@priority = "3"
 	test CanViewFieldRequired {
+		property test.name.skip.portal.instance = "TestrayManageUsers#CanViewFieldRequired";
+
 		task ("Given that the user tries to created account without informations") {
 			TestrayLayout.manageAccountSidebar(valueName = "Manage Account");
 

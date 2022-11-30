@@ -35,6 +35,8 @@ definition {
 	@description = "This is a test for LPS-160539. Verify if as an Administrator I am able to add a Project"
 	@priority = "5"
 	test AdminCanAddProject {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#AdminCanAddProject";
+
 		task ("Go to Testray and Create Project") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -55,6 +57,8 @@ definition {
 	@description = "This is a test for LPS-160536. Verify that as an Administrator I am able to add a Project from the dropdown"
 	@priority = "4"
 	test AdminCanAddProjectFromDropdown {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#AdminCanAddProjectFromDropdown";
+
 		task ("Go to Testray and Create Project") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -75,6 +79,8 @@ definition {
 	@description = "This is a test for LPS-160538. Verify if as an Administrator I am able to delete a Project"
 	@priority = "5"
 	test AdminCanDeleteProject {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#AdminCanDeleteProject";
+
 		task ("Go to Testray and Create Project") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -93,6 +99,8 @@ definition {
 	@description = "This is a test for LPS-160537. Verify if as an Administrator I am able to edit a Project name and description"
 	@priority = "5"
 	test AdminCanEditProject {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#AdminCanEditProject";
+
 		task ("Go to Testray, Create Project and change pagination") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -131,6 +139,8 @@ definition {
 	@description = "This is a test for LPS-160541. Verify if as an Administrator I should not be able to add a duplicate Project"
 	@priority = "5"
 	test AdminCanNotAddDuplicateProject {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#AdminCanNotAddDuplicateProject";
+
 		task ("Go to Testray, Create Project duplicate") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -151,6 +161,8 @@ definition {
 	@description = "This is a test for LPS-164076 Verify that the user can not create a project if all the required fields are not filled in"
 	@priority = "3"
 	test AdminCanViewWarningMessage {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#AdminCanViewWarningMessage";
+
 		task ("Go to Testray, Create Project and create product version") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -169,6 +181,8 @@ definition {
 	@description = "This is a test for LPS-160898. Verify if as an Administrator I should be able to delete a project that contains routines without associated builds"
 	@priority = "5"
 	test CanDeleteProjectsThatContainRoutinesWithoutAssociatedBuilds {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#CanDeleteProjectsThatContainRoutinesWithoutAssociatedBuilds";
+
 		task ("Create project, change pagination and create Routine") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -195,6 +209,8 @@ definition {
 	@description = "This is a test for LPS-160897. Verify if as an Administrator I should not be able to delete a project that contains routines with associated builds"
 	@priority = "5"
 	test CannotDeleteProjectsThatContainRoutinesWithAssociatedBuilds {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#CannotDeleteProjectsThatContainRoutinesWithAssociatedBuilds";
+
 		task ("Go to Testray and create a Project") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 

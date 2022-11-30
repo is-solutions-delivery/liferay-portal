@@ -165,6 +165,8 @@ definition {
 	@description = "This is a test for LPS-160590 - Verify if as an Administrator I should be able to add and delete a Run"
 	@priority = "5"
 	test AdminCanAddAndDeleteRun {
+		property test.name.skip.portal.instance = "TestrayRunsAdministrator#AdminCanAddAndDeleteRun";
+
 		task ("Given that the user goes into build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -197,6 +199,8 @@ definition {
 	@description = "This is a test for LPS-163959 - Verify if as an Administrator I should be able to edit a Run"
 	@priority = "5"
 	test AdminCanEditRun {
+		property test.name.skip.portal.instance = "TestrayRunsAdministrator#AdminCanEditRun";
+
 		task ("Given that the user goes into build") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 

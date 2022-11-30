@@ -47,6 +47,8 @@ definition {
 	@description = "This is a test for LPS-156676 - Verify if the Administrator can Add Case Types"
 	@priority = "5"
 	test AdminCanAddCaseTypes {
+		property test.name.skip.portal.instance = "TestrayCaseTypesAdministrator#AdminCanAddCaseTypes";
+
 		task ("Create a new Case Type and assert it was created") {
 			TestrayManage.createNewCaseTypes(caseName = "Case_Type");
 
@@ -59,6 +61,8 @@ definition {
 	@description = "This is a test for LPS-156679 - Verify that as an Administrator I can delete Case Types"
 	@priority = "5"
 	test AdminCanDeleteCaseTypes {
+		property test.name.skip.portal.instance = "TestrayCaseTypesAdministrator#AdminCanDeleteCaseTypes";
+
 		task ("Create a new Case Type, Delete it and asserts that it has been deleted") {
 			TestrayManage.createNewCaseTypes(caseName = "Case_Type");
 
@@ -73,6 +77,8 @@ definition {
 	@description = "This is a test for LPS-156681 - Verify if the Administrator can Edit Case Types"
 	@priority = "5"
 	test AdminCanEditCaseTypes {
+		property test.name.skip.portal.instance = "TestrayCaseTypesAdministrator#AdminCanEditCaseTypes";
+
 		task ("Create a new Case Type, Edit Case Type and asserts that it has been edited") {
 			TestrayManage.createNewCaseTypes(caseName = "Case_Type");
 
@@ -89,6 +95,8 @@ definition {
 	@description = "This is a test for LPS-166555 - Verify if as an Administrator I should not be able to add a duplicate cases types"
 	@priority = "5"
 	test AdminCanNotAddDuplicateCasesTypes {
+		property test.name.skip.portal.instance = "TestrayCaseTypesAdministrator#AdminCanNotAddDuplicateCasesTypes";
+
 		task ("Create Case Type duplicate and assert the error message should appear") {
 			TestrayManage.createNewCaseTypes(caseName = "Case_Type");
 
@@ -101,6 +109,8 @@ definition {
 	@description = "This is a test for LPS-164131 - Verify that the user can not create a case type if all the required fields are not filled in"
 	@priority = "3"
 	test AdminCanViewRequiredField {
+		property test.name.skip.portal.instance = "TestrayCaseTypesAdministrator#AdminCanViewRequiredField";
+
 		task ("Create a new Case Type and assert message of required field") {
 			TestrayManage.createNewCaseTypes(caseName = "");
 

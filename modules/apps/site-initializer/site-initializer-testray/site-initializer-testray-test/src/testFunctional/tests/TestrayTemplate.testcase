@@ -59,6 +59,8 @@ definition {
 	@description = "This is a test for LPS-168472 - Verify if as an Administrator I should not be able to add a duplicate template"
 	@priority = "5"
 	test AdminCanNotAddDuplicateTemplate {
+		property test.name.skip.portal.instance = "TestrayTemplate#AdminCanNotAddDuplicateTemplate";
+
 		task ("Given that the user adds a Template") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -100,6 +102,8 @@ definition {
 	@description = "This is a test for LPS-163909 - Verify if that can Activate Disabled Template"
 	@priority = "5"
 	test CanActivateDisabledTemplate {
+		property test.name.skip.portal.instance = "TestrayTemplate#CanActivateDisabledTemplate";
+
 		task ("Given that the user adds a Template with status active") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -156,6 +160,8 @@ definition {
 	@description = "This is a test for LPS-163905 - Verify that when creating a build with template, it comes with 'Active' status by default"
 	@priority = "4"
 	test CanCreateTemplateWithActiveDefault {
+		property test.name.skip.portal.instance = "TestrayTemplate#CanCreateTemplateWithActiveDefault";
+
 		task ("Given that the user adds a Template") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -192,6 +198,8 @@ definition {
 	@description = "This is a test for LPS-163908 - Verify if can delete an deactived template"
 	@priority = "4"
 	test CanDeleteDeactiveTemplate {
+		property test.name.skip.portal.instance = "TestrayTemplate#CanDeleteDeactiveTemplate";
+
 		task ("Given that the user adds a Template with status deactive") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -255,6 +263,8 @@ definition {
 	@description = "This is a test for LPS-166570 - Verify that as an administrator cannot add a new template without enviroments"
 	@priority = "5"
 	test CanNotAddTemplateWithoutEnviroments {
+		property test.name.skip.portal.instance = "TestrayTemplate#CanNotAddTemplateWithoutEnviroments";
+
 		task ("Given that the user tries to add a model without enviroments") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -273,6 +283,8 @@ definition {
 	@description = "This is a test for LPS-166569 - Verify if As an administrator can search for the new template created"
 	@priority = "3"
 	test CanSeachTemplate {
+		property test.name.skip.portal.instance = "TestrayTemplate#CanSeachTemplate";
+
 		task ("Given the user adds a template") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -305,6 +317,8 @@ definition {
 	@description = "This is a test for LPS-166567 - Verify if As an administrator can use a new template in a build"
 	@priority = "3"
 	test CanUseTemplateInBuild {
+		property test.name.skip.portal.instance = "TestrayTemplate#CanUseTemplateInBuild";
+
 		task ("Given that the user add a new component, enviroments and cases") {
 			TestrayContextMenu.clickContextMenuProjects(name = "Projects_1 Project");
 
@@ -384,6 +398,8 @@ definition {
 	@description = "This is a test for LPS-166571 - Verify if, as an Administrator, can see the required field message"
 	@priority = "3"
 	test CanViewRequiredField {
+		property test.name.skip.portal.instance = "TestrayTemplate#CanViewRequiredField";
+
 		task ("Given the user tries to add a new template without filling out the required fields") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 

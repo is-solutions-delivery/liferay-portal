@@ -27,6 +27,8 @@ definition {
 	@description = "This is a test for LPS-152637. Verify if Testray can be created"
 	@priority = "5"
 	test CanBeCreated {
+		property test.name.skip.portal.instance = "TestraySite#CanBeCreated";
+
 		task ("Create Testray") {
 			ApplicationsMenu.gotoPortlet(
 				category = "Sites",
@@ -58,6 +60,8 @@ definition {
 	@description = "This is a test for LPS-152873. Verify if when Testray is created, Remote Apps will be created for it as well"
 	@priority = "5"
 	test RemoteAppsAreCreatedForTestray {
+		property test.name.skip.portal.instance = "TestraySite#RemoteAppsAreCreatedForTestray";
+
 		task ("Create Testray") {
 			Testray.addTestraySite();
 
@@ -78,6 +82,8 @@ definition {
 	@description = "This is a test for LPS-152970. Verify if when Testray is created, Style Books will be created for it as well"
 	@priority = "5"
 	test StyleBooksAreCreatedForTestray {
+		property test.name.skip.portal.instance = "TestraySite#StyleBooksAreCreatedForTestray";
+
 		task ("Create and Go to Testray") {
 			Testray.addTestraySite();
 

@@ -98,6 +98,8 @@ definition {
 	@description = "This is a test for LPS-160546 - Verify if as an Administrator, I should be able to delete Requirements"
 	@priority = "5"
 	test AdminCanDeleteRequirements {
+		property test.name.skip.portal.instance = "TestrayRequirementsAdministrator#AdminCanDeleteRequirements";
+
 		task ("Given that the user goes to project page") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 		}
@@ -120,6 +122,8 @@ definition {
 	@description = "This is a test for LPS-160545 - Verify if as an Administrator, I should be able to edit Requirements"
 	@priority = "5"
 	test AdminCanEditRequirements {
+		property test.name.skip.portal.instance = "TestrayRequirementsAdministrator#AdminCanEditRequirements";
+
 		task ("Given that the user goes to project page") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 		}
@@ -151,6 +155,8 @@ definition {
 	@description = "This is a test for LPS-160544 - Verify if as an Administrator, I should be able to link and unlink a Case to a Requirement"
 	@priority = "5"
 	test AdminCanLinkAndUnlinkCaseToRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementsAdministrator#AdminCanLinkAndUnlinkCaseToRequirement";
+
 		task ("Given that the user goes to project page") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 		}
@@ -201,6 +207,8 @@ definition {
 	@description = "This is a test for LPS-166833 - Verify that As an administrator I cannot create requirements with a invalid URL link"
 	@priority = "4"
 	test AdminCanNotAddRequirementsWithInvalidUrl {
+		property test.name.skip.portal.instance = "TestrayRequirementsAdministrator#AdminCanNotAddRequirementsWithInvalidUrl";
+
 		task ("Given the user tries to create a requirement with an invalid URL") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -219,6 +227,8 @@ definition {
 	@description = "This is a test for LPS-164143 - Verify that the user can not create a requirement if all the required fields are not filled in"
 	@priority = "3"
 	test AdminCanViewRequiredField {
+		property test.name.skip.portal.instance = "TestrayRequirementsAdministrator#AdminCanViewRequiredField";
+
 		task ("Given the user tries to create a requirements without filling out the required fields") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 

@@ -139,6 +139,8 @@ definition {
 	@description = "This is a test for LPS-160701 - Verify if as an Administrator I am able to Assign Tests directly to me through the context menu"
 	@priority = "4"
 	test AdminCanAssignTestsDirectlyThroughTheContextMenu {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanAssignTestsDirectlyThroughTheContextMenu";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -162,6 +164,8 @@ definition {
 	@ignore = "true"
 	@priority = "5"
 	test AdminCanDeleteResultByKebab {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanDeleteResultByKebab";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -186,6 +190,8 @@ definition {
 	@description = "This is a test for LPS-160690 - Verify if as an Administrator I am able to Delete Results"
 	@priority = "5"
 	test AdminCanDeleteResults {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanDeleteResults";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -210,6 +216,8 @@ definition {
 	@description = "This is a test for LPS-160689 - Verify if as an Administrator I am able to execute Tests and mark them as Failed"
 	@priority = "5"
 	test AdminCanExecuteTestsAndMarkThemAsFailed {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanExecuteTestsAndMarkThemAsFailed";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -244,6 +252,8 @@ definition {
 	@description = "This is a test for LPS-160687 - Verify if as an Administrator I am able to Quick Edit Tests"
 	@priority = "4"
 	test AdminCanQuickEditTests {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanQuickEditTests";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -275,6 +285,8 @@ definition {
 	@description = "This is a test for LPS-160686 - Verify if as an Administrator I am able to Reopen Tests"
 	@priority = "4"
 	test AdminCanReopenTests {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanReopenTests";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -316,6 +328,8 @@ definition {
 	@description = "This is a test for LPS-167470 - Verify if as an Administrator I am able to reset Test"
 	@priority = "4"
 	test AdminCanResetTests {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanResetTests";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -344,6 +358,8 @@ definition {
 	@description = "This is a test for LPS-160685 - Verify if as an Administrator I am able to Unassign Tests"
 	@priority = "4"
 	test AdminCanUnassignTests {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanUnassignTests";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -370,6 +386,8 @@ definition {
 	@description = "This is a test for LPS-160684 - Verify if as an Administrator I am able to Unassign Tests through the context menu"
 	@priority = "3"
 	test AdminCanUnassignTestsThroughTheContextMenu {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanUnassignTestsThroughTheContextMenu";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -398,6 +416,8 @@ definition {
 	@description = "This is a test for LPS-160691 - Verify if as an Administrator I am able to verify the accuracy of the Case Result Metrics Card"
 	@priority = "5"
 	test AdminCanVerifyTheAccuracyOfTheCaseResultMetricsCard {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanVerifyTheAccuracyOfTheCaseResultMetricsCard";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -414,6 +434,8 @@ definition {
 	@description = "This is a test for LPS-160683 - Verify if as an Administrator I am able to view Results grouped by Component"
 	@priority = "3"
 	test AdminCanViewResultsGroupedByComponent {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanViewResultsGroupedByComponent";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
@@ -438,6 +460,8 @@ definition {
 	@description = "This is a test for LPS-160682 - Verify if as an Administrator I am able to view Results grouped by Team"
 	@priority = "3"
 	test AdminCanViewResultsGroupedByTeam {
+		property test.name.skip.portal.instance = "TestrayResultsAdministrator#AdminCanViewResultsGroupedByTeam";
+
 		task ("Given that the user add a new case results") {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");
 
