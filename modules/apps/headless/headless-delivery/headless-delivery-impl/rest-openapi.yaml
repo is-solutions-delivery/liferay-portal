@@ -2676,6 +2676,8 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
+                isModified:
+                    type: boolean
                 keywords:
                     description:
                         A list of keywords describing the message.
