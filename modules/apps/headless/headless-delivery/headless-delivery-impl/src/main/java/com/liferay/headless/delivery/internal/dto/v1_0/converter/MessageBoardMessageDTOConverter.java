@@ -158,8 +158,13 @@ public class MessageBoardMessageDTOConverter
 			}
 		};
 	}
+
 	private boolean _isModified(MBMessage mbMessage) {
-		return mbMessage.getMvccVersion() > 1;
+		if (mbMessage.getMvccVersion() > 1) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Reference
