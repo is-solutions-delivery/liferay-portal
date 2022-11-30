@@ -1056,51 +1056,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addObjectAccountEntryRestricted(
-			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues,
-			ObjectDefinitionResource objectDefinitionResource,
-			ServiceContext serviceContext)
+			Map<String, ObjectDefinition> objectDefinitionMap,
+			ObjectDefinitionResource objectDefinitionResource)
 		throws Exception {
 
-		Set<String> resourcePaths = _servletContext.getResourcePaths(
-			"/site-initializer/object-definitions");
+		for (Map.Entry<String, ObjectDefinition> entry :
+				objectDefinitionMap.entrySet()) {
 
-		if (resourcePaths == null) {
-			return;
-		}
-
-		for (String resourcePath : resourcePaths) {
-			if (resourcePath.endsWith(".object-actions.json")) {
-				continue;
-			}
-
-			String json = SiteInitializerUtil.read(
-				resourcePath, _servletContext);
-
-			json = _replace(json, listTypeDefinitionIdsStringUtilReplaceValues);
-
-			ObjectDefinition objectDefinition = ObjectDefinition.toDTO(json);
-
-			if (objectDefinition == null) {
-				_log.error(
-					"Unable to transform object definition from JSON: " + json);
-
-				continue;
-			}
-
-			com.liferay.object.model.ObjectDefinition
-				serviceBuilderObjectDefinition =
-					_objectDefinitionLocalService.fetchObjectDefinition(
-						serviceContext.getCompanyId(),
-						"C_" + objectDefinition.getName());
-
-			if ((objectDefinition.getAccountEntryRestrictedObjectFieldName() !=
-					null) &&
-				!serviceBuilderObjectDefinition.isAccountEntryRestricted()) {
-
-				objectDefinitionResource.patchObjectDefinition(
-					serviceBuilderObjectDefinition.getObjectDefinitionId(),
-					objectDefinition);
-			}
+			objectDefinitionResource.putObjectDefinitionByExternalReferenceCode(
+				entry.getKey(), entry.getValue());
 		}
 	}
 
@@ -1143,6 +1107,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.fetchUser()
 			).build();
 
+		Map<String, ObjectDefinition> objectDefinitionMap = new HashMap<>();
+
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-actions.json")) {
 				continue;
@@ -1160,6 +1126,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 					"Unable to transform object definition from JSON: " + json);
 
 				continue;
+			}
+
+			if (objectDefinition.getAccountEntryRestricted()) {
+				objectDefinitionMap.put(
+					objectDefinition.getExternalReferenceCode(),
+					objectDefinition);
 			}
 
 			Page<ObjectDefinition> objectDefinitionsPage =
@@ -1239,8 +1211,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		_invoke(
 			() -> _addObjectAccountEntryRestricted(
-				listTypeDefinitionIdsStringUtilReplaceValues,
-				objectDefinitionResource, serviceContext));
+				objectDefinitionMap, objectDefinitionResource));
 
 		_invoke(
 			() -> _addOrUpdateObjectFields(
