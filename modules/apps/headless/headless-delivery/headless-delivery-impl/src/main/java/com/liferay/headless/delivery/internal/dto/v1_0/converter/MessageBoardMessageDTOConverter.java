@@ -94,6 +94,7 @@ public class MessageBoardMessageDTOConverter
 				hasCompanyMx = company.hasCompanyMx(user.getEmailAddress());
 				headline = mbMessage.getSubject();
 				id = mbMessage.getMessageId();
+				isModified = _isModified(mbMessage);
 				keywords = ListUtil.toArray(
 					_assetTagLocalService.getTags(
 						MBMessage.class.getName(), mbMessage.getMessageId()),
@@ -156,6 +157,9 @@ public class MessageBoardMessageDTOConverter
 					});
 			}
 		};
+	}
+	private boolean _isModified(MBMessage mbMessage) {
+		return mbMessage.getMvccVersion() > 1;
 	}
 
 	@Reference
