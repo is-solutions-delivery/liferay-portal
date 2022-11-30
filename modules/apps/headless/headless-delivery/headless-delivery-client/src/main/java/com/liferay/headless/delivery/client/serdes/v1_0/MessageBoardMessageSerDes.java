@@ -260,6 +260,16 @@ public class MessageBoardMessageSerDes {
 			sb.append(messageBoardMessage.getId());
 		}
 
+		if (messageBoardMessage.getIsModified() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"isModified\": ");
+
+			sb.append(messageBoardMessage.getIsModified());
+		}
+
 		if (messageBoardMessage.getKeywords() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -572,6 +582,15 @@ public class MessageBoardMessageSerDes {
 			map.put("id", String.valueOf(messageBoardMessage.getId()));
 		}
 
+		if (messageBoardMessage.getIsModified() == null) {
+			map.put("isModified", null);
+		}
+		else {
+			map.put(
+				"isModified",
+				String.valueOf(messageBoardMessage.getIsModified()));
+		}
+
 		if (messageBoardMessage.getKeywords() == null) {
 			map.put("keywords", null);
 		}
@@ -798,6 +817,12 @@ public class MessageBoardMessageSerDes {
 				if (jsonParserFieldValue != null) {
 					messageBoardMessage.setId(
 						Long.valueOf((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "isModified")) {
+				if (jsonParserFieldValue != null) {
+					messageBoardMessage.setIsModified(
+						(Boolean)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "keywords")) {

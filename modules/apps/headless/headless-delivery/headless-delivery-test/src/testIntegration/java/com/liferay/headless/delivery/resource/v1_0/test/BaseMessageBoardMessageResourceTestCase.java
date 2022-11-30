@@ -2517,6 +2517,14 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("isModified", additionalAssertFieldName)) {
+				if (messageBoardMessage.getIsModified() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("keywords", additionalAssertFieldName)) {
 				if (messageBoardMessage.getKeywords() == null) {
 					valid = false;
@@ -2959,6 +2967,17 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 				if (!Objects.deepEquals(
 						messageBoardMessage1.getId(),
 						messageBoardMessage2.getId())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("isModified", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						messageBoardMessage1.getIsModified(),
+						messageBoardMessage2.getIsModified())) {
 
 					return false;
 				}
@@ -3444,6 +3463,11 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("isModified")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("keywords")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -3572,6 +3596,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 				headline = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
+				isModified = RandomTestUtil.randomBoolean();
 				messageBoardSectionId = RandomTestUtil.randomLong();
 				messageBoardThreadId = RandomTestUtil.randomLong();
 				numberOfMessageBoardAttachments = RandomTestUtil.randomInt();

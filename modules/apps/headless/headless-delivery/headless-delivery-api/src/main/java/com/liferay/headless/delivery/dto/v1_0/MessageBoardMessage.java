@@ -518,6 +518,34 @@ public class MessageBoardMessage implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long id;
 
+	@Schema
+	public Boolean getIsModified() {
+		return isModified;
+	}
+
+	public void setIsModified(Boolean isModified) {
+		this.isModified = isModified;
+	}
+
+	@JsonIgnore
+	public void setIsModified(
+		UnsafeSupplier<Boolean, Exception> isModifiedUnsafeSupplier) {
+
+		try {
+			isModified = isModifiedUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean isModified;
+
 	@Schema(description = "A list of keywords describing the message.")
 	public String[] getKeywords() {
 		return keywords;
@@ -1116,6 +1144,16 @@ public class MessageBoardMessage implements Serializable {
 			sb.append("\"id\": ");
 
 			sb.append(id);
+		}
+
+		if (isModified != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"isModified\": ");
+
+			sb.append(isModified);
 		}
 
 		if (keywords != null) {

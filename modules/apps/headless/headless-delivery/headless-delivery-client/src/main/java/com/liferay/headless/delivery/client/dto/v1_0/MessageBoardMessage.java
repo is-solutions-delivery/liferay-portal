@@ -352,6 +352,27 @@ public class MessageBoardMessage implements Cloneable, Serializable {
 
 	protected Long id;
 
+	public Boolean getIsModified() {
+		return isModified;
+	}
+
+	public void setIsModified(Boolean isModified) {
+		this.isModified = isModified;
+	}
+
+	public void setIsModified(
+		UnsafeSupplier<Boolean, Exception> isModifiedUnsafeSupplier) {
+
+		try {
+			isModified = isModifiedUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Boolean isModified;
+
 	public String[] getKeywords() {
 		return keywords;
 	}
