@@ -1117,8 +1117,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			if (objectDefinition.getAccountEntryRestricted()) {
 				objectDefinitionMap.put(
-					objectDefinition.getName(),
-					objectDefinition);
+					objectDefinition.getName(), objectDefinition);
 			}
 
 			Page<ObjectDefinition> objectDefinitionsPage =
@@ -4515,10 +4514,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			com.liferay.object.model.ObjectDefinition
 				serviceBuilderObjectDefinition =
-					_objectDefinitionLocalService.
-						fetchObjectDefinition(
-							serviceContext.getCompanyId(),
-							"C_" + entry.getKey());
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						serviceContext.getCompanyId(), "C_" + entry.getKey());
 
 			objectDefinitionResource.patchObjectDefinition(
 				serviceBuilderObjectDefinition.getObjectDefinitionId(),
