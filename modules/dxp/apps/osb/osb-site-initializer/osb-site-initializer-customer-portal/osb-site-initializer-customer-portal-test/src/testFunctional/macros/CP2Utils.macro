@@ -118,4 +118,18 @@ definition {
 		}
 	}
 
+	macro searchCP {
+		WaitForElementPresent(locator1 = "CustomerPortalSite#SEARCH");
+
+		AssertElementPresent(locator1 = "Icon#BASIC_SEARCH");
+
+		Type(
+			locator1 = "CustomerPortalSite#SEARCH",
+			value1 = "${searchTerm}");
+
+		KeyPress(
+			locator1 = "CustomerPortalSite#SEARCH",
+			value1 = "\RETURN");
+	}
+
 }
