@@ -1806,6 +1806,11 @@ public class ServletDataImpl implements ServletData {
 							MessageBoardMessageResourceImpl.class,
 							"getSiteMessageBoardMessagesPage"));
 					put(
+						"query#messageBoardMessagesMyActivity",
+						new ObjectValuePair<>(
+							MessageBoardMessageResourceImpl.class,
+							"getSiteMessageBoardMessagesMyActivityPage"));
+					put(
 						"query#messageBoardMessageByExternalReferenceCode",
 						new ObjectValuePair<>(
 							MessageBoardMessageResourceImpl.class,

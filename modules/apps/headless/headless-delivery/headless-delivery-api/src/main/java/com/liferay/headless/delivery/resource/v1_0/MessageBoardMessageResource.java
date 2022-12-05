@@ -145,6 +145,12 @@ public interface MessageBoardMessageResource {
 			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception;
 
+	public Page<MessageBoardMessage> getSiteMessageBoardMessagesMyActivityPage(
+			Long siteId, Boolean flatten, String search,
+			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception;
+
 	public void deleteSiteMessageBoardMessageByExternalReferenceCode(
 			Long siteId, String externalReferenceCode)
 		throws Exception;
