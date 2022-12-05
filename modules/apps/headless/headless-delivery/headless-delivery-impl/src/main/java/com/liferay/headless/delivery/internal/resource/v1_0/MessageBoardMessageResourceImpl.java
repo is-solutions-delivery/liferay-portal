@@ -43,6 +43,8 @@ import com.liferay.message.boards.util.comparator.MessageCreateDateComparator;
 import com.liferay.message.boards.util.comparator.MessageModifiedDateComparator;
 import com.liferay.message.boards.util.comparator.MessageSubjectComparator;
 import com.liferay.message.boards.util.comparator.MessageURLSubjectComparator;
+import com.liferay.petra.sql.dsl.Column;
+import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
@@ -80,16 +82,20 @@ import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.io.Serializable;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
+import com.sun.xml.internal.fastinfoset.tools.XML_SAX_StAX_FI;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -343,7 +349,7 @@ public class MessageBoardMessageResourceImpl
 		).where(
 			MBMessageTable.INSTANCE.modifiedDate.in(
 				DSLQueryFactoryUtil.select(
-					MBMessageTable.INSTANCE.modifiedDate
+					DSLFunctionFactoryUtil.max(MBMessageTable.INSTANCE.modifiedDate)
 				).from(
 					MBMessageTable.INSTANCE
 				).where(
