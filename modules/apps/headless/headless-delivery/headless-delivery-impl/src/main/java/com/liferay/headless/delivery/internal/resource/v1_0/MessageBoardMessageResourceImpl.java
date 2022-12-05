@@ -80,8 +80,8 @@ import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.io.Serializable;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -330,6 +330,51 @@ public class MessageBoardMessageResourceImpl
 		return _toMessageBoardMessage(mbMessage);
 	}
 
+	public Page<MessageBoardMessage> getSiteMessageBoardMessagesMyActivityPage(
+			Long siteId, Boolean flatten, String search,
+			Aggregation aggregation, Filter filter, Pagination pagination,
+			Sort[] sorts)
+		throws Exception {
+
+		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
+			MBMessageTable.INSTANCE
+		).from(
+			MBMessageTable.INSTANCE
+		).where(
+			MBMessageTable.INSTANCE.modifiedDate.in(
+				DSLQueryFactoryUtil.select(
+					MBMessageTable.INSTANCE.modifiedDate
+				).from(
+					MBMessageTable.INSTANCE
+				).where(
+					MBMessageTable.INSTANCE.rootMessageId.eq(
+						MBMessageTable.INSTANCE.parentMessageId)
+				)
+			).or(
+				MBMessageTable.INSTANCE.parentMessageId.eq(
+					0L
+				).and(
+					MBMessageTable.INSTANCE.rootMessageId.notIn(
+						DSLQueryFactoryUtil.select(
+							MBMessageTable.INSTANCE.parentMessageId
+						).from(
+							MBMessageTable.INSTANCE
+						).where(
+							MBMessageTable.INSTANCE.rootMessageId.eq(
+								MBMessageTable.INSTANCE.parentMessageId)
+						))
+				)
+			)
+		);
+
+		List<MBMessage> mbMessages = _mbMessageLocalService.dslQuery(dslQuery);
+
+		return Page.of(
+			transform(mbMessages, this::_toMessageBoardMessage),
+			Pagination.of(pagination.getPage(), pagination.getPageSize()),
+			mbMessages.size());
+	}
+
 	@Override
 	public Page<MessageBoardMessage> getSiteMessageBoardMessagesPage(
 			Long siteId, Boolean flatten, String search,
@@ -356,41 +401,6 @@ public class MessageBoardMessageResourceImpl
 			).build(),
 			null, siteId, flatten, search, aggregation, filter, pagination,
 			sorts);
-	}
-
-	public Page<MessageBoardMessage> getSiteMessageBoardMessagesMyActivityPage(
-		Long siteId, Boolean flatten, String search,
-		Aggregation aggregation, Filter filter, Pagination pagination,
-		Sort[] sorts)
-		throws Exception {
-
-		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
-			MBMessageTable.INSTANCE
-		).from(
-			MBMessageTable.INSTANCE
-		).where(
-			MBMessageTable.INSTANCE.modifiedDate
-				.in(DSLQueryFactoryUtil.select(
-					MBMessageTable.INSTANCE.modifiedDate
-				).from(
-					MBMessageTable.INSTANCE
-				).where(
-					MBMessageTable.INSTANCE.rootMessageId.eq(MBMessageTable.INSTANCE.parentMessageId)
-				)).or(
-					MBMessageTable.INSTANCE.parentMessageId
-						.eq(0L).and(MBMessageTable.INSTANCE.rootMessageId
-							.notIn(DSLQueryFactoryUtil
-								.select(MBMessageTable.INSTANCE.parentMessageId)
-								.from(MBMessageTable.INSTANCE)
-								.where(MBMessageTable.INSTANCE.rootMessageId.eq(MBMessageTable.INSTANCE.parentMessageId)
-								))
-						)));
-
-		List<MBMessage> mbMessages = _mbMessageLocalService.dslQuery(dslQuery);
-		return Page.of(transform(mbMessages,this::_toMessageBoardMessage),
-			Pagination.of(pagination.getPage(), pagination.getPageSize()),
-			mbMessages.size());
-
 	}
 
 	@Override
