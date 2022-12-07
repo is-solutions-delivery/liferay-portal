@@ -140,7 +140,7 @@ public class MessageBoardMessageResourceTest
 		return new String[] {
 			"childMessagesCount", "creatorId", "dateCreated", "dateModified",
 			"lastPostDate", "messageBoardSectionId", "messageBoardThreadId",
-			"parentMessageBoardMessageId", "ratingsStatTotalScore",
+			"modified", "parentMessageBoardMessageId", "ratingsStatTotalScore",
 			"ratingValue", "viewCount"
 		};
 	}
