@@ -35,6 +35,7 @@ import {DefinitionOfTerms} from './DefinitionOfTerms';
 import {FreeMarkerTemplateEditor} from './FreeMarkerTemplateEditor';
 
 import './EditNotificationTemplate.scss';
+import {BasicInfoContainer} from './BasicInfoContainer';
 
 const HEADERS = new Headers({
 	'Accept': 'application/json',
@@ -45,8 +46,6 @@ interface LabelValueObject {
 	label: string;
 	value: string;
 }
-
-type editorTypeOptions = 'freemarker' | 'richText';
 
 interface EditorType extends LabelValueObject {
 	value: editorTypeOptions;
@@ -75,35 +74,6 @@ interface User {
 	alternateName: string;
 	givenName: string;
 }
-
-type TEmailRecipients = {
-	bcc: string;
-	cc: string;
-	from: string;
-	fromName: LocalizedValue<string>;
-	to: LocalizedValue<string>;
-};
-
-type TUserNotificationRecipients = {
-	[key in 'term' | 'userScreenName' | 'roleName']?: string;
-};
-
-export type TNotificationTemplate = {
-	attachmentObjectFieldIds: string[] | number[];
-	body: LocalizedValue<string>;
-	description: string;
-	editorType: editorTypeOptions;
-	name: string;
-	objectDefinitionExternalReferenceCode: string;
-	objectDefinitionId: number | null;
-	recipientType: string;
-	recipients:
-		| Partial<TEmailRecipients>[]
-		| Partial<TUserNotificationRecipients>[]
-		| [];
-	subject: LocalizedValue<string>;
-	type: string;
-};
 
 const EDITOR_TYPES = [
 	{
@@ -199,7 +169,7 @@ export default function EditNotificationTemplate({
 		return errors;
 	};
 
-	const onSubmit = async (notification: TNotificationTemplate) => {
+	const onSubmit = async (notification: NotificationTemplate) => {
 		if (isSubmitted) {
 			return;
 		}
@@ -258,14 +228,14 @@ export default function EditNotificationTemplate({
 				to: {
 					[defaultLanguageId]: '',
 				},
-			} as TEmailRecipients,
+			} as EmailRecipients,
 		];
 	}
 	else {
 		recipientInitialValue = [];
 	}
 
-	const initialValues: TNotificationTemplate = {
+	const initialValues: NotificationTemplate = {
 		...(Liferay.FeatureFlags['LPS-162133'] && {
 			recipientType:
 				notificationTemplateType === 'userNotification'
@@ -343,7 +313,7 @@ export default function EditNotificationTemplate({
 	const handleMultiSelectItemsChange = (items: Item[]) => {
 		const key =
 			values.recipientType === 'role' ? 'roleName' : 'userScreenName';
-		const newRecipients = [] as TUserNotificationRecipients[];
+		const newRecipients = [] as UserNotificationRecipients[];
 		items.forEach((item) => {
 			newRecipients.push({[key]: item.value});
 		});
@@ -396,7 +366,7 @@ export default function EditNotificationTemplate({
 
 				if (recipientType === 'term') {
 					setToTerms(
-						(recipients as TUserNotificationRecipients[])
+						(recipients as UserNotificationRecipients[])
 							.map(({term}) => term)
 							.join()
 					);
@@ -428,7 +398,7 @@ export default function EditNotificationTemplate({
 			values.recipientType === 'role' ||
 			values.recipientType === 'user'
 		) {
-			const recipientList = values.recipients as TUserNotificationRecipients[];
+			const recipientList = values.recipients as UserNotificationRecipients[];
 			let multiSelectItems = [];
 
 			if (values.recipientType === 'user') {
@@ -511,44 +481,11 @@ export default function EditNotificationTemplate({
 				<div className="lfr__notification-template-cards">
 					<div className="row">
 						<div className="col-lg-6 lfr__notification-template-card">
-							<Card title={Liferay.Language.get('basic-info')}>
-								<Input
-									error={errors.name}
-									label={Liferay.Language.get('name')}
-									name="name"
-									onChange={({target}) =>
-										setValues({
-											...values,
-											name: target.value,
-										})
-									}
-									required
-									value={values.name}
-								/>
-
-								<Input
-									component="textarea"
-									label={Liferay.Language.get('description')}
-									name="description"
-									onChange={({target}) =>
-										setValues({
-											...values,
-											description: target.value,
-										})
-									}
-									type="text"
-									value={values.description}
-								/>
-
-								{!Liferay.FeatureFlags['LPS-162133'] && (
-									<SingleSelect
-										disabled
-										label={Liferay.Language.get('type')}
-										options={[]}
-										value={Liferay.Language.get('email')}
-									/>
-								)}
-							</Card>
+							<BasicInfoContainer
+								errors={errors}
+								setValues={setValues}
+								values={values}
+							/>
 						</div>
 
 						<div className="col-lg-6 lfr__notification-template-card">
@@ -695,7 +632,7 @@ export default function EditNotificationTemplate({
 											selectedLocale={selectedLocale}
 											translations={
 												(values
-													.recipients[0] as TEmailRecipients)
+													.recipients[0] as EmailRecipients)
 													.to
 											}
 										/>
@@ -723,7 +660,7 @@ export default function EditNotificationTemplate({
 													}
 													value={
 														(values
-															.recipients[0] as TEmailRecipients)
+															.recipients[0] as EmailRecipients)
 															.cc
 													}
 												/>
@@ -751,7 +688,7 @@ export default function EditNotificationTemplate({
 													}
 													value={
 														(values
-															.recipients[0] as TEmailRecipients)
+															.recipients[0] as EmailRecipients)
 															.bcc
 													}
 												/>
@@ -782,7 +719,7 @@ export default function EditNotificationTemplate({
 													required
 													value={
 														(values
-															.recipients[0] as TEmailRecipients)
+															.recipients[0] as EmailRecipients)
 															.from
 													}
 												/>
@@ -815,7 +752,7 @@ export default function EditNotificationTemplate({
 													}
 													translations={
 														(values
-															.recipients[0] as TEmailRecipients)
+															.recipients[0] as EmailRecipients)
 															.fromName
 													}
 												/>
