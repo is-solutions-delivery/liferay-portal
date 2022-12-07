@@ -51,6 +51,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Scanner;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -91,7 +93,32 @@ public class CompanyLogServlet extends HttpServlet {
 				_list(httpServletRequest, httpServletResponse);
 			}
 			else if (pathArray.length == 2) {
-				_download(httpServletRequest, httpServletResponse, pathArray);
+				long companyId = GetterUtil.getLongStrict(pathArray[0]);
+
+				_companyLocalService.getCompanyById(companyId);
+
+				PermissionChecker permissionChecker = _getPermissionChecker(
+					httpServletRequest);
+
+				if (!permissionChecker.isCompanyAdmin(companyId)) {
+					throw new PrincipalException.MustBeCompanyAdmin(
+						permissionChecker.getUserId());
+				}
+
+				String fileName = pathArray[1];
+
+				String action = ParamUtil.getString(
+					httpServletRequest, "action");
+
+				File file = _getFile(companyId, fileName);
+
+				if (Validator.isNotNull(action) && action.equals("read")) {
+					_read(httpServletResponse, file);
+
+					return;
+				}
+
+				_download(httpServletRequest, httpServletResponse, file);
 			}
 		}
 		catch (FileNotFoundException fileNotFoundException) {
@@ -115,41 +142,10 @@ public class CompanyLogServlet extends HttpServlet {
 
 	private void _download(
 			HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, String[] pathArray)
+			HttpServletResponse httpServletResponse, File file)
 		throws Exception {
 
-		long companyId = GetterUtil.getLongStrict(pathArray[0]);
-
-		_companyLocalService.getCompanyById(companyId);
-
-		PermissionChecker permissionChecker = _getPermissionChecker(
-			httpServletRequest);
-
-		if (!permissionChecker.isCompanyAdmin(companyId)) {
-			throw new PrincipalException.MustBeCompanyAdmin(
-				permissionChecker.getUserId());
-		}
-
-		File companyLogDirectory = Log4JUtil.getCompanyLogDirectory(companyId);
-
-		String fileName = pathArray[1];
-
-		Path path = Paths.get(companyLogDirectory.getPath(), fileName);
-
-		path = path.normalize();
-
-		if (!path.startsWith(companyLogDirectory.getPath())) {
-			throw new PrincipalException("Invalid path " + path);
-		}
-
-		File file = path.toFile();
-
-		if (!file.exists()) {
-			throw new FileNotFoundException(
-				StringBundler.concat(
-					"Unable to get file ", fileName, " for company ",
-					companyId));
-		}
+		String fileName = file.getName();
 
 		String startString = ParamUtil.getString(httpServletRequest, "start");
 		String endString = ParamUtil.getString(httpServletRequest, "end");
@@ -198,6 +194,29 @@ public class CompanyLogServlet extends HttpServlet {
 		}
 	}
 
+	private File _getFile(long companyId, String fileName) throws Exception {
+		File companyLogDirectory = Log4JUtil.getCompanyLogDirectory(companyId);
+
+		Path path = Paths.get(companyLogDirectory.getPath(), fileName);
+
+		path = path.normalize();
+
+		if (!path.startsWith(companyLogDirectory.getPath())) {
+			throw new PrincipalException("Invalid path " + path);
+		}
+
+		File file = path.toFile();
+
+		if (!file.exists()) {
+			throw new FileNotFoundException(
+				StringBundler.concat(
+					"Unable to get file ", fileName, " for company ",
+					companyId));
+		}
+
+		return file;
+	}
+
 	private PermissionChecker _getPermissionChecker(
 			HttpServletRequest httpServletRequest)
 		throws Exception {
@@ -227,7 +246,7 @@ public class CompanyLogServlet extends HttpServlet {
 
 					File[] files = companyLogDirectory.listFiles();
 
-					Arrays.sort(files);
+					Arrays.sort(files, Collections.reverseOrder());
 
 					return JSONUtil.toJSONArray(
 						files,
@@ -274,6 +293,21 @@ public class CompanyLogServlet extends HttpServlet {
 		}
 
 		ServletResponseUtil.write(httpServletResponse, jsonArray.toString());
+	}
+
+	private void _read(HttpServletResponse httpServletResponse, File file)
+		throws IOException {
+
+		Scanner scanner = new Scanner(file);
+		StringBuilder sb = new StringBuilder();
+
+		while (scanner.hasNextLine()) {
+			sb.append(scanner.nextLine() + "\n");
+		}
+
+		scanner.close();
+
+		ServletResponseUtil.write(httpServletResponse, sb.toString());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
