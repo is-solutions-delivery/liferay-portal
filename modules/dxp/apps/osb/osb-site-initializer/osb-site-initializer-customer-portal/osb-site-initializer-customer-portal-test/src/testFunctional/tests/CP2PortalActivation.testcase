@@ -355,6 +355,8 @@ definition {
 		}
 
 		task ("Select a project and go to activation page") {
+			CustomerPortal.search(searchItem = "NASA ICE");
+
 			CustomerPortal.enterOnProject(title = "NASA ICE");
 
 			CP2NavigationMenu.goToProductActivation();
@@ -363,22 +365,10 @@ definition {
 		}
 
 		task ("Search for a IP Addresses and assert the search") {
-			Click(locator1 = "CP2NavigationMenu#SEARCH_FILTER");
-
-			Type(
-				locator1 = "CP2NavigationMenu#SEARCH_FILTER",
-				value1 = "192.168.0.111");
-
-			KeyPress(
-				locator1 = "CP2NavigationMenu#SEARCH_FILTER",
-				value1 = "\ENTER");
-
-			AssertElementPresent(locator1 = "CP2NavigationMenu#SEARCH_RESULT");
-
-			Click(
-				key_text = "teste",
-				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
-
+			CP2NavigationMenu.typeIp(
+				ip = "192.168.0.111",
+				keyName = "teste");
+				
 			CP2ActivationKeys.assertKeyDetailsServerElements(ipAddress = "192.168.0.111");
 		}
 	}
