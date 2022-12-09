@@ -331,49 +331,6 @@ public class MessageBoardMessageResourceImpl
 		return _toMessageBoardMessage(mbMessage);
 	}
 
-	public Page<MessageBoardMessage> getSiteUserMessageBoardMessagesActivityPage(
-		Long siteId, Long userId, Pagination pagination)
-		throws Exception {
-
-		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
-			MBMessageTable.INSTANCE
-		).from(
-			MBMessageTable.INSTANCE
-		).where(MBMessageTable.INSTANCE.userId.eq(userId).and(
-			MBMessageTable.INSTANCE.modifiedDate.in(
-				DSLQueryFactoryUtil.select(
-					DSLFunctionFactoryUtil.max(MBMessageTable.INSTANCE.modifiedDate)
-				).from(
-					MBMessageTable.INSTANCE
-				).where(
-					MBMessageTable.INSTANCE.rootMessageId.eq(
-						MBMessageTable.INSTANCE.parentMessageId)
-				)
-			)).or(
-				MBMessageTable.INSTANCE.parentMessageId.eq(
-					0L
-				).and(
-					MBMessageTable.INSTANCE.rootMessageId.notIn(
-						DSLQueryFactoryUtil.select(
-							MBMessageTable.INSTANCE.parentMessageId
-						).from(
-							MBMessageTable.INSTANCE
-						).where(
-							MBMessageTable.INSTANCE.rootMessageId.eq(
-								MBMessageTable.INSTANCE.parentMessageId)
-						))
-				)
-			)
-		).orderBy(MBMessageTable.INSTANCE.modifiedDate.descending());
-
-		List<MBMessage> mbMessages = _mbMessageLocalService.dslQuery(dslQuery);
-
-		return Page.of(
-			transform(mbMessages, this::_toMessageBoardMessage),
-			Pagination.of(pagination.getPage(), pagination.getPageSize()),
-			mbMessages.size());
-	}
-
 	@Override
 	public Page<MessageBoardMessage> getSiteMessageBoardMessagesPage(
 			Long siteId, Boolean flatten, String search,
@@ -400,6 +357,56 @@ public class MessageBoardMessageResourceImpl
 			).build(),
 			null, siteId, flatten, search, aggregation, filter, pagination,
 			sorts);
+	}
+
+	public Page<MessageBoardMessage>
+			getSiteUserMessageBoardMessagesActivityPage(
+				Long siteId, Long userId, Pagination pagination)
+		throws Exception {
+
+		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
+			MBMessageTable.INSTANCE
+		).from(
+			MBMessageTable.INSTANCE
+		).where(
+			MBMessageTable.INSTANCE.userId.eq(
+				userId
+			).and(
+				MBMessageTable.INSTANCE.modifiedDate.in(
+					DSLQueryFactoryUtil.select(
+						DSLFunctionFactoryUtil.max(
+							MBMessageTable.INSTANCE.modifiedDate)
+					).from(
+						MBMessageTable.INSTANCE
+					).where(
+						MBMessageTable.INSTANCE.rootMessageId.eq(
+							MBMessageTable.INSTANCE.parentMessageId)
+					))
+			).or(
+				MBMessageTable.INSTANCE.parentMessageId.eq(
+					0L
+				).and(
+					MBMessageTable.INSTANCE.rootMessageId.notIn(
+						DSLQueryFactoryUtil.select(
+							MBMessageTable.INSTANCE.parentMessageId
+						).from(
+							MBMessageTable.INSTANCE
+						).where(
+							MBMessageTable.INSTANCE.rootMessageId.eq(
+								MBMessageTable.INSTANCE.parentMessageId)
+						))
+				)
+			)
+		).orderBy(
+			MBMessageTable.INSTANCE.modifiedDate.descending()
+		);
+
+		List<MBMessage> mbMessages = _mbMessageLocalService.dslQuery(dslQuery);
+
+		return Page.of(
+			transform(mbMessages, this::_toMessageBoardMessage),
+			Pagination.of(pagination.getPage(), pagination.getPageSize()),
+			mbMessages.size());
 	}
 
 	@Override
