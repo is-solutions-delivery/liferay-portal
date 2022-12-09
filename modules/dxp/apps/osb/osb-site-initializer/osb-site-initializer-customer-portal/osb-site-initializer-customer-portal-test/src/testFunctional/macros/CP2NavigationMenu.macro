@@ -54,6 +54,26 @@ definition {
 		Click(locator1 = "CP2NavigationMenu#INVITE_MEMBERS_CANCEL_BUTTON");
 	}
 
+	macro clickOnFilter {
+		var key_text = "${click}";
+		var key_checkbox = "${checkbox}";
+		var key_menu = "${menu}";
+		var key_label = "${label}";
+
+		CustomerPortal.clickAtButton(text = "Filter");
+
+		Click.pauseClickAt(
+			key_text = "${click}",
+			locator1 = "CustomerPortalSite#ANY_BUTTON");
+
+		Click.clickNoWaitForVisible(
+			key_checkbox = "${checkbox}",
+			key_menu = "${menu}",
+			locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+
+		Click.clickAt(locator1 = "CP2NavigationMenu#FILTER_APPLY");
+	}
+
 	macro clickOnHideButton {
 		Click(locator1 = "CP2NavigationMenu#HIDE_BUTTON");
 	}
@@ -116,39 +136,19 @@ definition {
 	macro typeIp {
 		Click(locator1 = "CP2NavigationMenu#SEARCH_FILTER");
 
-			Type(
-				locator1 = "CP2NavigationMenu#SEARCH_FILTER",
-				value1 = "${ip}");
+		Type(
+			locator1 = "CP2NavigationMenu#SEARCH_FILTER",
+			value1 = "${ip}");
 
-			KeyPress(
-				locator1 = "CP2NavigationMenu#SEARCH_FILTER",
-				value1 = "\ENTER");
+		KeyPress(
+			locator1 = "CP2NavigationMenu#SEARCH_FILTER",
+			value1 = "\ENTER");
 
-			AssertElementPresent(locator1 = "CP2NavigationMenu#SEARCH_RESULT");
+		AssertElementPresent(locator1 = "CP2NavigationMenu#SEARCH_RESULT");
 
-			Click(
-				key_text = "${keyName}",
-				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
-	}
-
-	macro clickOnFilter{
-		var key_text = "${click}";
-		var key_checkbox = "${checkbox}";
-		var key_menu = "${menu}";
-		var key_label = "${label}";
-
-		CustomerPortal.clickAtButton(text = "Filter");
-
-			Click.pauseClickAt(
-				locator1 = "CustomerPortalSite#ANY_BUTTON",
-				key_text= "${click}");
-
-			Click.clickNoWaitForVisible(
-				key_checkbox = "${checkbox}",
-				key_menu = "${menu}",
-				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
-
-			Click.clickAt(locator1 = "CP2NavigationMenu#FILTER_APPLY");
+		Click(
+			key_text = "${keyName}",
+			locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
 	}
 
 }
