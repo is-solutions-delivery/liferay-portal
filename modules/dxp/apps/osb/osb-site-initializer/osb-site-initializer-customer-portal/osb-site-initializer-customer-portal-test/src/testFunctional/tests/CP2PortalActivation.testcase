@@ -308,8 +308,6 @@ definition {
 		}
 
 		task ("Select a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
 			CustomerPortal.search(searchItem = "NASA ICE");
 
 			CustomerPortal.enterOnProject(title = "NASA ICE");
@@ -322,22 +320,16 @@ definition {
 		}
 
 		task ("Click on Filter and Select a Filter type") {
-			CustomerPortal.clickAtButton(text = "Filter");
-
-			CustomerPortal.clickAtButton(text = "Key Type");
-
-			Click.clickAt(
-				filter = "On-Premise",
-				index = "1",
-				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+			CP2NavigationMenu.clickOnFilter(
+				text = "Filter",
+				click = "Key Type",
+				checkbox = "On-Premise",
+				menu = "Key Type",
+				label = "");
 		}
 
 		task ("Assert if the list reflect the filter") {
 			CustomerPortal.clickAtButton(text = "Apply");
-
-			AssertElementPresent(
-				locator1 = "CP2NavigationMenu#FILTER_RESULT",
-				result = "On-Premise");
 
 			Click(
 				key_text = "Redacted",
