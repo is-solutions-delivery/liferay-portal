@@ -161,6 +161,8 @@ definition {
 		}
 
 		task ("Select a project and go to activation page") {
+			CustomerPortal.search(searchItem = "NASA ICE");
+
 			CustomerPortal.enterOnProject(title = "NASA ICE");
 
 			CP2NavigationMenu.goToProductActivation();
@@ -169,22 +171,15 @@ definition {
 		}
 
 		task ("Then a user click and select a filter option ") {
-			CustomerPortal.clickAtButton(text = "Filter");
-
-			CustomerPortal.clickAtButton(text = "Instance Size");
-
-			Click.clickAt(
-				filter = "1",
-				index = "3",
-				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+			CP2NavigationMenu.clickOnFilter(
+				text = "Filter",
+				click = "Instance Size",
+				checkbox = "2",
+				menu = "Instance Size",
+				label = "");
 		}
 
 		task ("Assert if the list reflect the filter") {
-			AssertElementPresent(
-				filter = "1",
-				index = "3",
-				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
-
 			Click(
 				key_text = "Redacted",
 				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
