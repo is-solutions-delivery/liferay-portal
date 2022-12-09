@@ -121,13 +121,12 @@ definition {
 		}
 
 		task ("Click on Filter and Select a Filter type") {
-
 			CP2NavigationMenu.clickOnFilter(
-				text = "Filter",
-				click = "Environment Type",
 				checkbox = "Production",
+				click = "Environment Type",
+				label = "",
 				menu = "Environment Type",
-				label = "");
+				text = "Filter");
 		}
 
 		task ("Then Assert if the filter is enable") {
@@ -172,11 +171,11 @@ definition {
 
 		task ("Then a user click and select a filter option ") {
 			CP2NavigationMenu.clickOnFilter(
-				text = "Filter",
-				click = "Instance Size",
 				checkbox = "2",
+				click = "Instance Size",
+				label = "",
 				menu = "Instance Size",
-				label = "");
+				text = "Filter");
 		}
 
 		task ("Assert if the list reflect the filter") {
@@ -238,7 +237,6 @@ definition {
 				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
 
 			CP2ActivationKeys.assertKeyDetailsStatusElements(startDate = "Jun 29, 2023");
-
 		}
 	}
 
@@ -295,6 +293,7 @@ definition {
 
 	@description = "Automation ID: LPS-151350 | Test Summary: Verify if after the user click on the Apply button, the list of activation keys matches the selected criteria."
 	@ignore = "true"
+	@priority = "3"
 	test VerifyPortalActivationApplyButton {
 
 		// Needs refactor since it depends on real projects Portals account
@@ -321,11 +320,11 @@ definition {
 
 		task ("Click on Filter and Select a Filter type") {
 			CP2NavigationMenu.clickOnFilter(
-				text = "Filter",
-				click = "Key Type",
 				checkbox = "On-Premise",
+				click = "Key Type",
+				label = "",
 				menu = "Key Type",
-				label = "");
+				text = "Filter");
 		}
 
 		task ("Assert if the list reflect the filter") {
@@ -368,7 +367,7 @@ definition {
 			CP2NavigationMenu.typeIp(
 				ip = "192.168.0.111",
 				keyName = "teste");
-				
+
 			CP2ActivationKeys.assertKeyDetailsServerElements(ipAddress = "192.168.0.111");
 		}
 	}
