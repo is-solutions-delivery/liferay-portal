@@ -258,8 +258,6 @@ definition {
 		}
 
 		task ("Select a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
 			CustomerPortal.search(searchItem = "NASA ICE");
 
 			CustomerPortal.enterOnProject(title = "NASA ICE");
@@ -284,9 +282,8 @@ definition {
 		task ("Click Start Date and fill in the field and assert the results of the label") {
 			CP2NavigationMenu.typeDate(
 				data = "Jun 7 2022",
-				field = "On or After",
-				index = "4",
-				index1 = "1");
+				label = "On or After",
+				menu = "Start Date");
 
 			Click(
 				key_text = "Redacted",
