@@ -68,9 +68,9 @@ definition {
 
 			CustomerPortal.clickAtButton(text = "Key Type");
 
-			Click.clickAt(
-				filter = "On-Premise",
-				index = "1",
+			Click.clickNoWaitForVisible(
+				key_checkbox = "On-Premise",
+				key_menu = "Key Type",
 				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
 		}
 
