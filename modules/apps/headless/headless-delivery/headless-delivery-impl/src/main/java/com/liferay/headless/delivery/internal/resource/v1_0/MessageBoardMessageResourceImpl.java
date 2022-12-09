@@ -331,7 +331,7 @@ public class MessageBoardMessageResourceImpl
 		return _toMessageBoardMessage(mbMessage);
 	}
 
-	public Page<MessageBoardMessage> getSiteMessageBoardMessagesUserActivityPage(
+	public Page<MessageBoardMessage> getSiteUserMessageBoardMessagesActivityPage(
 		Long siteId, Long userId, Pagination pagination)
 		throws Exception {
 
