@@ -121,26 +121,23 @@ definition {
 		}
 
 		task ("Click on Filter and Select a Filter type") {
-			CustomerPortal.clickAtButton(text = "Filter");
 
-			CustomerPortal.clickAtButton(text = "Environment Type");
-
-			Click.clickAt(
-				filter = "Production",
-				index = "1",
-				locator1 = "CP2NavigationMenu#FILTER_CHECKBOX");
+			CP2NavigationMenu.clickOnFilter(
+				text = "Filter",
+				click = "Environment Type",
+				checkbox = "Production",
+				menu = "Environment Type",
+				label = "");
 		}
 
-		task ("Then Click on Apply and Assert if the filter is enable") {
-			Click.clickAt(
-				index = "3",
-				locator1 = "CP2NavigationMenu#FILTER_APPLY");
-
+		task ("Then Assert if the filter is enable") {
 			Click(
 				key_text = "Redacted",
 				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
 
 			CP2ActivationKeys.assertKeyDetailsEnvironmentElements(environmentType = "Production");
+
+			CustomerPortal.clickAtButton(text = "Close");
 
 			AssertElementPresent(
 				locator1 = "CP2NavigationMenu#FILTER_RESULT",
