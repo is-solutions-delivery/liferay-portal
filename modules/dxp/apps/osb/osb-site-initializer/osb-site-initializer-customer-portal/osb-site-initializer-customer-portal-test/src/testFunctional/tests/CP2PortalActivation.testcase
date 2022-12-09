@@ -206,8 +206,6 @@ definition {
 		}
 
 		task ("Select a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
 			CustomerPortal.search(searchItem = "NASA ICE");
 
 			CustomerPortal.enterOnProject(title = "NASA ICE");
@@ -222,21 +220,25 @@ definition {
 		task ("Click on Filter and Select a Filter type") {
 			CustomerPortal.clickAtButton(text = "Filter");
 
+			WaitForVisible(
+				key_text = "Expiration Date",
+				locator1 = "CustomerPortalSite#ANY_BUTTON");
+
 			CustomerPortal.clickAtButton(text = "Expiration Date");
 		}
 
 		task ("Click Start Date and fill in the field and assert the results of the label") {
 			CP2NavigationMenu.typeDate(
 				data = "jun 29 2023",
-				field = "On or After",
-				index = "5",
-				index1 = "2");
+				label = "On or After",
+				menu = "Expiration Date");
 
 			Click(
 				key_text = "Redacted",
 				locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
 
-			CP2ActivationKeys.assertKeyDetailsStatusElements(expirationDate = "Jun 29, 2023");
+			CP2ActivationKeys.assertKeyDetailsStatusElements(startDate = "Jun 29, 2023");
+
 		}
 	}
 
