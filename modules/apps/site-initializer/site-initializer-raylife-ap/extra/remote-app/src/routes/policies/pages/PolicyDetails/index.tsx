@@ -101,7 +101,7 @@ const PolicyDetails = () => {
 				)}
 			</div>
 
-			<PolicyActiveClaims />
+			<PolicyActiveClaims policy={policy?.data} />
 		</div>
 	);
 };

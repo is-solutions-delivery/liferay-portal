@@ -14,9 +14,13 @@
 
 import './index.scss';
 
-import {ClayButtonWithIcon} from '@clayui/button';
-import ClayIcon from '@clayui/icon';
 import ClayTable from '@clayui/table';
+import {useEffect, useState} from 'react';
+
+import Alert from '../../../../../common/components/alert';
+import {getClaimsByPolicyId} from '../../../../../common/services';
+import formatDate from '../../../../../common/utils/dateFormatter';
+
 const HEADERS = [
 	{
 		key: 'claim',
@@ -39,122 +43,117 @@ const HEADERS = [
 		value: 'Status',
 	},
 ];
-const activeClaimsData: {[keys: string]: string}[] = [
-	{
-		claim: '816644',
-		date: '11/20/2022',
-		fullName: 'Maria Santos',
-		property: '2019 Ford Edge Se',
-		status: 'Repair',
-	},
-	{
-		claim: '322751',
-		date: '04/30/2022',
-		fullName: 'Maria Santos',
-		property: '2019 Ford Edge Se',
-		status: 'Pending Settlement',
-	},
-	{
-		claim: '322751',
-		date: '04/30/2022',
-		fullName: 'Maria Santos',
-		property: '2019 Ford Edge Se',
-		status: 'Pending Settlement',
-	},
-];
-const PolicyActiveClaims = () => {
+
+export type Parameters = {
+	[key: string]: string | string[];
+};
+
+const PolicyActiveClaims = (policy: any) => {
+	const [claimsTable, setClaimsTable]: any = useState([]);
+	const [isLoading, setIsLoading]: any = useState(false);
+	const policyData = policy && policy?.policy;
+
+	const policyDataJSONValue = policy && policy?.policy?.dataJSON;
+
+	const policyDataJSON =
+		policyDataJSONValue && JSON.parse(policyDataJSONValue);
+
+	const policyId = policyData && policyData?.id;
+
+	const policyYear = policyDataJSON?.vehicleInfo?.form?.[0]?.year;
+
+	const policyMake = policyDataJSON?.vehicleInfo?.form?.[0]?.make;
+
+	const policyModel = policyDataJSON?.vehicleInfo?.form?.[0]?.model;
+
+	useEffect(() => {
+		getClaimsByPolicyId(policyId).then((result: any) => {
+			const claimsList: any[] = [];
+			if (result?.data?.items.length) {
+				setIsLoading(true);
+
+				result?.data?.items.forEach(
+					({
+						creator: {familyName, givenName},
+						dateCreated,
+						id,
+						status: {label},
+					}: any) => {
+						const fullName = givenName + ' ' + familyName;
+						claimsList.push({
+							claim: id,
+							date: formatDate(new Date(dateCreated), true),
+							fullName,
+							key: id,
+							property: `${policyYear} ${policyMake} ${policyModel}`,
+							status: label,
+						});
+					}
+				);
+				setClaimsTable(claimsList);
+			}
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [policyId]);
+
 	return (
-		<div className="bg-neutral policy-active-claims-container rounded">
-			<div className="bg-neutral-0 policy-active-claims-title pt-3 px-5 rounded-top">
-				<h5 className="m-0">Active Claims</h5>
-			</div>
+		<div>
+			{isLoading && (
+				<div className="bg-neutral policy-active-claims-container rounded">
+					<div className="bg-neutral-0 policy-active-claims-title pt-3 px-5 rounded-top">
+						<h5 className="m-0">Active Claims</h5>
+					</div>
 
-			<hr className="my-0" />
+					<hr className="my-0" />
 
-			<ClayTable
-				borderedColumns={false}
-				borderless
-				className="tableeee w-100"
-				hover={false}
-			>
-				<ClayTable.Head>
-					<ClayTable.Row>
-						{HEADERS.map((header, index) => (
-							<ClayTable.Cell
-								className="border-bottom py-0 text-paragraph-sm"
-								headingCell
-								key={index}
-							>
-								{header.value}
-							</ClayTable.Cell>
-						))}
-					</ClayTable.Row>
-				</ClayTable.Head>
-
-				<ClayTable.Body>
-					{activeClaimsData.map((rowContent, rowIndex) => (
-						<>
-							<ClayTable.Row key={rowIndex}>
-								{HEADERS.map((item, index) => (
+					<ClayTable
+						borderedColumns={false}
+						borderless
+						className="table w-100"
+						hover={false}
+					>
+						<ClayTable.Head>
+							<ClayTable.Row>
+								{HEADERS.map((header, index) => (
 									<ClayTable.Cell
-										className="border-0"
+										className="border-bottom py-0 text-paragraph-sm"
+										headingCell
 										key={index}
 									>
-										<span>{rowContent[item.key]}</span>
+										{header.value}
 									</ClayTable.Cell>
 								))}
 							</ClayTable.Row>
-							<ClayTable.Row className="info-row">
-								<ClayTable.Cell
-									className="border-0"
-									colSpan={5}
-								>
-									<div
-										className="bg-success-lighten-2 label-borderless-success rounded-xs w-100"
-										role="alert"
-									>
-										<div className="d-flex justify-content-between p-1">
-											<div className="align-items-center borderless col-5 d-flex pr-0">
-												<span className="alert-indicator"></span>
+						</ClayTable.Head>
 
-												<strong className="m-0 p-1">
-													<ClayIcon
-														className="clay-icon-next p-0"
-														symbol="info-circle"
-													/>
-
-													<span className="font-weight-semi-bold p-1">
-														Next Step:
-													</span>
-												</strong>
-
-												<span className="m-0 p-1">
-													Review estimation for 816644
-												</span>
-											</div>
-
-											<div className="align-items-center border-0 col-2 d-flex justify-content-end px-0">
-												<a
-													className="m-0 p-1 view-detail-link"
-													href="#"
+						<ClayTable.Body>
+							{claimsTable.map(
+								(rowContent: any, rowIndex: any) => (
+									<>
+										<ClayTable.Row key={rowIndex}>
+											{HEADERS.map((item, index) => (
+												<ClayTable.Cell
+													className="border-0"
+													key={index}
 												>
-													View Detail
-												</a>
+													<span>
+														{rowContent[item.key]}
+													</span>
+												</ClayTable.Cell>
+											))}
+										</ClayTable.Row>
 
-												<ClayButtonWithIcon
-													aria-label="Delete"
-													displayType={null}
-													symbol="times"
-												></ClayButtonWithIcon>
-											</div>
-										</div>
-									</div>
-								</ClayTable.Cell>
-							</ClayTable.Row>
-						</>
-					))}
-				</ClayTable.Body>
-			</ClayTable>
+										<Alert
+											claimNumber={rowContent.claim}
+											index={rowIndex}
+										/>
+									</>
+								)
+							)}
+						</ClayTable.Body>
+					</ClayTable>
+				</div>
+			)}
 		</div>
 	);
 };

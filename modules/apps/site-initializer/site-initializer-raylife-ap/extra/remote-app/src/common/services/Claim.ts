@@ -31,6 +31,12 @@ export function getClaims(parameters: Parameters = {}) {
 	return axios.get(`${DeliveryAPI}/`);
 }
 
+export function getClaimsByPolicyId(policyId: any) {
+	return axios.get(
+		`${DeliveryAPI}/?filter=r_policyToClaims_c_raylifePolicyId eq '${policyId}'`
+	);
+}
+
 export function deleteClaimByExternalReferenceCode(
 	externalReferenceCode: string
 ) {
