@@ -82,7 +82,6 @@ import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.io.Serializable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -417,8 +416,8 @@ public class MessageBoardMessageResourceImpl
 
 		return Page.of(
 			ListUtil.subList(
-				transform(mbMessages, this::_toMessageBoardMessage), pagination.getStartPosition(),
-				pagination.getEndPosition()),
+				transform(mbMessages, this::_toMessageBoardMessage),
+				pagination.getStartPosition(), pagination.getEndPosition()),
 			pagination, mbMessages.size());
 	}
 
