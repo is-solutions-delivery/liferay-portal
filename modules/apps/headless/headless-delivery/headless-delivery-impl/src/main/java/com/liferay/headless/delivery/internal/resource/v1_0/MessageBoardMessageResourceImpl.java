@@ -60,6 +60,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -81,6 +82,7 @@ import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.io.Serializable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -369,19 +371,23 @@ public class MessageBoardMessageResourceImpl
 		).from(
 			MBMessageTable.INSTANCE
 		).where(
-			MBMessageTable.INSTANCE.userId.eq(
-				userId
-			).and(
-				MBMessageTable.INSTANCE.modifiedDate.in(
-					DSLQueryFactoryUtil.select(
-						DSLFunctionFactoryUtil.max(
-							MBMessageTable.INSTANCE.modifiedDate)
-					).from(
-						MBMessageTable.INSTANCE
-					).where(
-						MBMessageTable.INSTANCE.rootMessageId.eq(
-							MBMessageTable.INSTANCE.parentMessageId)
-					))
+			MBMessageTable.INSTANCE.modifiedDate.in(
+				DSLQueryFactoryUtil.select(
+					DSLFunctionFactoryUtil.max(
+						MBMessageTable.INSTANCE.modifiedDate)
+				).from(
+					MBMessageTable.INSTANCE
+				).where(
+					MBMessageTable.INSTANCE.rootMessageId.eq(
+						MBMessageTable.INSTANCE.parentMessageId
+					).and(
+						MBMessageTable.INSTANCE.groupId.eq(
+							siteId
+						).and(
+							MBMessageTable.INSTANCE.userId.eq(userId)
+						)
+					)
+				)
 			).or(
 				MBMessageTable.INSTANCE.parentMessageId.eq(
 					0L
@@ -395,6 +401,12 @@ public class MessageBoardMessageResourceImpl
 							MBMessageTable.INSTANCE.rootMessageId.eq(
 								MBMessageTable.INSTANCE.parentMessageId)
 						))
+				).and(
+					MBMessageTable.INSTANCE.groupId.eq(
+						siteId
+					).and(
+						MBMessageTable.INSTANCE.userId.eq(userId)
+					)
 				)
 			)
 		).orderBy(
@@ -404,9 +416,10 @@ public class MessageBoardMessageResourceImpl
 		List<MBMessage> mbMessages = _mbMessageLocalService.dslQuery(dslQuery);
 
 		return Page.of(
-			transform(mbMessages, this::_toMessageBoardMessage),
-			Pagination.of(pagination.getPage(), pagination.getPageSize()),
-			mbMessages.size());
+			ListUtil.subList(
+				transform(mbMessages, this::_toMessageBoardMessage), pagination.getStartPosition(),
+				pagination.getEndPosition()),
+			pagination, mbMessages.size());
 	}
 
 	@Override
