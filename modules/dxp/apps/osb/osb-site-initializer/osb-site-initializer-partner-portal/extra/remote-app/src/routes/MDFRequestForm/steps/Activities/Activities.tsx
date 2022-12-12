@@ -52,6 +52,11 @@ const Activities = ({
 		setIsForm(true);
 	};
 
+	const onEdit = () => {
+		setCurrentActivityIndex(currentActivityIndex);
+		setIsForm(true);
+	};
+
 	const onPreviousForm = () => {
 		arrayHelpers.remove(currentActivityIndex);
 
@@ -79,6 +84,7 @@ const Activities = ({
 					{...arrayHelpers}
 					activities={values.activities}
 					onAdd={onAdd}
+					onEdit={onEdit}
 					overallCampaignName={values.overallCampaignName}
 				/>
 			)}
