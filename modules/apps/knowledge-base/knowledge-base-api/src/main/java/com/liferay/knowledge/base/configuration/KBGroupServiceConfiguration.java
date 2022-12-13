@@ -179,7 +179,7 @@ public interface KBGroupServiceConfiguration {
 	public String emailKBArticleSuggestionResolvedBody();
 
 	@Meta.AD(deflt = "true", name = "enable-rss", required = false)
-	public boolean enableRSS();
+	public boolean enableRss();
 
 	@Meta.AD(
 		deflt = "${server-property://com.liferay.portal/search.container.page.default.delta}",

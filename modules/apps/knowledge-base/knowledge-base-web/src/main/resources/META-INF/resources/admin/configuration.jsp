@@ -225,7 +225,7 @@ kbGroupServiceConfiguration = ParameterMapUtil.setParameterMap(KBGroupServiceCon
 						<liferay-rss:rss-settings
 							delta="<%= GetterUtil.getInteger(kbGroupServiceConfiguration.rssDelta()) %>"
 							displayStyle="<%= kbGroupServiceConfiguration.rssDisplayStyle() %>"
-							enabled="<%= kbGroupServiceConfiguration.enableRSS() %>"
+							enabled="<%= kbGroupServiceConfiguration.enableRss() %>"
 							feedType="<%= kbGroupServiceConfiguration.rssFeedType() %>"
 						/>
 					</liferay-frontend:fieldset>

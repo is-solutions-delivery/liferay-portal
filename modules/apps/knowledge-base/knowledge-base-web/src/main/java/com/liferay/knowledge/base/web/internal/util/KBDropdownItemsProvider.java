@@ -1205,7 +1205,7 @@ public class KBDropdownItemsProvider {
 		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
 
 		if ((_kbGroupServiceConfiguration != null) &&
-			_kbGroupServiceConfiguration.enableRSS() &&
+			_kbGroupServiceConfiguration.enableRss() &&
 			(kbArticle.isApproved() || !kbArticle.isFirstVersion()) &&
 			!Objects.equals(
 				portletDisplay.getRootPortletId(),
