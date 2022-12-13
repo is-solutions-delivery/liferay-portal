@@ -9,7 +9,9 @@ definition {
 
 	var testSiteName = "Customer Portal Site";
 	var testSiteURL = "customer-portal-site";
-	var testAccount = "Test Account Analytics Cloud";
+	var testAccount = "Test Account LXC - SM";
+	var testProduct = "LXC - SM";
+	var testUserFirstName = "Test";
 
 	setUp {
 		task ("Set up instance and sign in") {
@@ -42,9 +44,17 @@ definition {
 		}
 	}
 
-    @description = "Automation ID: LPS-149144 | Test Summary: Verify if after a user submits the DXP Cloud activation form and then tries to resend it (or another user) in another browser window a helpful message is shown"
-    @priority = "4"
-    test CanViewAUsefulMessage {
+	@description = "Automation ID: LPS-149145 | Test Summary: Verify if when a Liferay Staff fills out the activation form before the first client admin, it will not go through the form in the integration flow"
+	@priority = "3"
+	test CannotSeeTheFormInTheIntegrationFlow {
+
+		// TODO LPS-149145 CannotSeeTheFormInTheIntegrationFlow pending implementation
+
+	}
+
+	@description = "Automation ID: LPS-149144 | Test Summary: Verify if after a user submits the DXP Cloud activation form and then tries to resend it (or another user) in another browser window a helpful message is shown"
+	@priority = "4"
+	test CanViewAUsefulMessage {
 		task ("Change the user role in the project") {
 			Account.openAccountsAdmin();
 
@@ -124,14 +134,6 @@ definition {
 				email = "test@liferay.com",
 				portlet = "Admins DXP Cloud");
 		}
-    }
-
-    @description = "Automation ID: LPS-149145 | Test Summary: Verify if when a Liferay Staff fills out the activation form before the first client admin, it will not go through the form in the integration flow"
-    @priority = "3"
-    test CannotSeeTheFormInTheIntegrationFlow {
-        
-        // TODO LPS-149145 CannotSeeTheFormInTheIntegrationFlow pending implementation
-
-    }
+	}
 
 }
