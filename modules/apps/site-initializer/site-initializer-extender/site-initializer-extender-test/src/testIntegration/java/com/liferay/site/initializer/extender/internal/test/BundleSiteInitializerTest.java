@@ -1242,6 +1242,19 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertTrue(hasSiteMemberUpdateLayoutContentPermission);
 
+		Role testRole4Role = _roleLocalService.getRole(
+			publicLayout.getCompanyId(), "Test Role 4");
+
+		boolean hasTestRole4ViewPermission =
+			_resourcePermissionLocalService.hasResourcePermission(
+				publicPermissionsLayout.getCompanyId(),
+				publicPermissionsLayout.getModelClassName(),
+				ResourceConstants.SCOPE_GROUP_TEMPLATE,
+				String.valueOf(publicPermissionsLayout.getPlid()),
+				testRole4Role.getRoleId(), ActionKeys.VIEW);
+
+		Assert.assertTrue(hasTestRole4ViewPermission);
+
 		List<Layout> publicChildLayouts = publicLayout.getAllChildren();
 
 		Assert.assertEquals(
