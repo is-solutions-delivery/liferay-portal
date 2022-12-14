@@ -66,10 +66,7 @@ const Subtasks = () => {
 
 	return (
 		<>
-			<SubtaskHeaderActions
-				mutateSubtask={mutateSubtask}
-				subtask={testraySubtask}
-			/>
+			<SubtaskHeaderActions />
 
 			<Container
 				className="pb-6"

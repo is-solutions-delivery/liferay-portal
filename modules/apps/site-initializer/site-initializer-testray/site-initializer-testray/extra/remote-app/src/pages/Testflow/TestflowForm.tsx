@@ -30,8 +30,10 @@ import i18n from '../../i18n';
 import yupSchema, {yupResolver} from '../../schema/yup';
 import {Liferay} from '../../services/liferay';
 import {
+	APIResponse,
 	TestrayCaseType,
 	TestrayTask,
+	TestrayTaskCaseTypes,
 	TestrayTaskUser,
 	testrayTaskImpl,
 } from '../../services/rest';
@@ -44,11 +46,18 @@ import TestflowAssignUserModal from './modal';
 type TestflowFormType = typeof yupSchema.task.__outputType;
 
 type OutletContext = {
-	mutateTask: KeyedMutator<TestrayTask>;
-	mutateTaskUsers: KeyedMutator<TestrayTaskUser>;
-	taskCaseTypes: number[];
-	taskUser: number[];
-	testrayTask: TestrayTask;
+	data: {
+		testrayTask: TestrayTask;
+		testrayTaskCaseTypes: TestrayTaskCaseTypes[];
+		testrayTaskUser: TestrayTaskUser[];
+	};
+	mutate: {
+		mutateTask: KeyedMutator<TestrayTask>;
+		mutateTaskUser: KeyedMutator<APIResponse<TestrayTaskUser>>;
+	};
+	revalidate: {
+		revalidateTaskUser: () => void;
+	};
 };
 
 const TestflowForm = () => {
@@ -62,15 +71,20 @@ const TestflowForm = () => {
 	});
 	const {buildId, taskId} = useParams();
 	const {actions} = useTestFlowAssign({setUsers});
+
+	const outletContext = useOutletContext<OutletContext>();
+
 	const {
-		mutateTask,
-		mutateTaskUsers,
-		taskCaseTypes,
-		taskUser,
-		testrayTask,
-	} = useOutletContext<OutletContext>();
+		data: {testrayTaskCaseTypes = [], testrayTaskUser, testrayTask},
+		mutate: {mutateTask},
+		revalidate: {revalidateTaskUser},
+	} = outletContext ?? {data: {}, mutate: {}, revalidate: {}};
 
 	const {data} = useFetch('/casetypes?pageSize=100&fields=id,name');
+
+	const taskCaseTypeIds = testrayTaskCaseTypes.map(
+		({caseType}) => caseType?.id
+	);
 
 	const {
 		formState: {errors},
@@ -81,7 +95,7 @@ const TestflowForm = () => {
 	} = useForm<TestflowFormType>({
 		defaultValues: {
 			buildId: Number(testrayTask?.build?.id ?? buildId),
-			caseTypes: taskCaseTypes ?? [],
+			caseTypes: taskCaseTypeIds,
 			dueStatus: TaskStatuses.IN_ANALYSIS,
 			id: Number(taskId ?? 0),
 			name: testrayTask?.name,
@@ -143,8 +157,13 @@ const TestflowForm = () => {
 			create: (data) => testrayTaskImpl.create(data),
 			update: (id, data) => testrayTaskImpl.update(id, data),
 		})
-			.then(mutateTask)
-			.then(mutateTaskUsers)
+			.then((response) => {
+				if (form.id) {
+					mutateTask(response);
+
+					revalidateTaskUser();
+				}
+			})
 			.then(onSave)
 			.catch(onError);
 	};
@@ -167,8 +186,10 @@ const TestflowForm = () => {
 	};
 
 	useEffect(() => {
-		setUsers(taskUser);
-	}, [setUsers, taskUser]);
+		if (testrayTaskUser) {
+			setUsers(testrayTaskUser.map(({user}) => user?.id as number));
+		}
+	}, [setUsers, testrayTaskUser]);
 
 	useEffect(() => {
 		setValue('userIds', users);
