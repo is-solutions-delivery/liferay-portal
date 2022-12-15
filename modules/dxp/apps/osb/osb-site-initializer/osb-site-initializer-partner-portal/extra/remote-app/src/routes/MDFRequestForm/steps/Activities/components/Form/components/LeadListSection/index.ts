@@ -8,16 +8,4 @@
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
  */
-
-import MDFRequestActivity from '../../../../../../../../../common/interfaces/mdfRequestActivity';
-
-export default function getMiscellaneousMarketing(
-	mdfRequestActivity: MDFRequestActivity
-) {
-	return [
-		{
-			title: 'Marketing activity',
-			value: mdfRequestActivity.activityDescription?.marketingActivity,
-		},
-	];
-}
+export {default} from './LeadListSection';
