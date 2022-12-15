@@ -1197,7 +1197,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		_invoke(
 			() -> _updateObjectDefinitionAccountEntryRestricted(
-				objectDefinitionMap, objectDefinitionResource, serviceContext));
+				objectDefinitionMap, serviceContext));
 		_invoke(
 			() -> _addOrUpdateObjectFields(
 				listTypeDefinitionIdsStringUtilReplaceValues,
@@ -4505,7 +4505,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private void _updateObjectDefinitionAccountEntryRestricted(
 			Map<String, ObjectDefinition> objectDefinitionMap,
-			ObjectDefinitionResource objectDefinitionResource,
 			ServiceContext serviceContext)
 		throws Exception {
 
@@ -4517,9 +4516,33 @@ public class BundleSiteInitializer implements SiteInitializer {
 					_objectDefinitionLocalService.fetchObjectDefinition(
 						serviceContext.getCompanyId(), "C_" + entry.getKey());
 
-			objectDefinitionResource.patchObjectDefinition(
+			long accountEntryRestrictedObjectFieldId = 0;
+
+			com.liferay.object.model.ObjectField
+				accountEntryRestrictedServiceBuilderObjectField =
+				_objectFieldLocalService.fetchObjectField(
+					serviceBuilderObjectDefinition.getObjectDefinitionId(),
+					entry.getValue().getAccountEntryRestrictedObjectFieldName());
+
+			if (accountEntryRestrictedServiceBuilderObjectField != null) {
+				accountEntryRestrictedObjectFieldId =
+					accountEntryRestrictedServiceBuilderObjectField.
+						getObjectFieldId();
+			}
+
+			_objectDefinitionLocalService.updateCustomObjectDefinition(
+				serviceBuilderObjectDefinition.getExternalReferenceCode(),
 				serviceBuilderObjectDefinition.getObjectDefinitionId(),
-				entry.getValue());
+				accountEntryRestrictedObjectFieldId,
+				serviceBuilderObjectDefinition.getDescriptionObjectFieldId(),
+				serviceBuilderObjectDefinition.getTitleObjectFieldId(),
+				entry.getValue().getAccountEntryRestricted(),
+				true, true, false,
+				serviceBuilderObjectDefinition.getEnableObjectEntryHistory(),
+				serviceBuilderObjectDefinition.getLabelMap(), serviceBuilderObjectDefinition.getName(),
+				serviceBuilderObjectDefinition.getPanelAppOrder(),
+				serviceBuilderObjectDefinition.getPanelCategoryKey(), serviceBuilderObjectDefinition.getPortlet(),
+				serviceBuilderObjectDefinition.getPluralLabelMap(), serviceBuilderObjectDefinition.getScope());
 		}
 	}
 
