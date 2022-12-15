@@ -10,40 +10,53 @@
  */
 /* eslint-disable no-undef */
 
-const currentPath = Liferay.currentURL.split('/');
-const mdfRequestId = +currentPath.at(-1);
-
-const getContactInfo = async () => {
-	// eslint-disable-next-line @liferay/portal/no-global-fetch
-	const response = await fetch(
-		`/o/c/mdfrequests/${mdfRequestId}?nestedFields=user`,
-		{
-			headers: {
-				'accept': 'application/json',
-				'x-csrf-token': Liferay.authToken,
-			},
-		}
-	);
-	if (response.ok) {
-		const data = await response.json();
-		const firstName = data?.r_userToMDFRequests_user?.givenName;
-		const infoEmail = data?.r_userToMDFRequests_user?.emailAddress;
-
-		fragmentElement.querySelector(
-			'#firstName'
-		).innerHTML = `${Liferay.Util.escape(firstName)}`;
-
-		fragmentElement.querySelector(
-			'#infoEmail'
-		).innerHTML = `${Liferay.Util.escape(infoEmail)}`;
-
-		return;
+const findRequestIdUrl = (paramsUrl) => {
+	if(!isNaN(paramsUrl)){
+		result = paramsUrl;
+	} else {
+		const splitParamsUrl = paramsUrl.split('?');
+		result = splitParamsUrl[0];
 	}
 
-	Liferay.Util.openToast({
-		message: 'An unexpected error occured.',
-		type: 'danger',
-	});
+	return result
+}
+
+const currentPath  = Liferay.currentURL.split('/');
+const mdfRequestId = findRequestIdUrl(currentPath.at(-1));
+
+const getContactInfo = async () => {
+	if(!isNaN(mdfRequestId)){
+		// eslint-disable-next-line @liferay/portal/no-global-fetch
+		const response = await fetch(
+			`/o/c/mdfrequests/${mdfRequestId}?nestedFields=user`,
+			{
+				headers: {
+					'accept': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+				},
+			}
+		);
+		if (response.ok) {
+			const data = await response.json();
+			const firstName = data?.r_userToMDFRequests_user?.givenName;
+			const infoEmail = data?.r_userToMDFRequests_user?.emailAddress;
+
+			fragmentElement.querySelector(
+				'#firstName'
+			).innerHTML = `${Liferay.Util.escape(firstName)}`;
+
+			fragmentElement.querySelector(
+				'#infoEmail'
+			).innerHTML = `${Liferay.Util.escape(infoEmail)}`;
+
+			return;
+		}
+
+		Liferay.Util.openToast({
+			message: 'An unexpected error occured.',
+			type: 'danger',
+		});
+	}
 };
 
 getContactInfo();

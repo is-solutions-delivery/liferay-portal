@@ -9,9 +9,19 @@
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
  */
+const findRequestIdUrl = (paramsUrl) => {
+	if(!isNaN(paramsUrl)){
+		result = paramsUrl;
+	} else {
+		const splitParamsUrl = paramsUrl.split('?');
+		result = splitParamsUrl[0];
+	}
+
+	return result
+}
 
 const currentPath = Liferay.currentURL.split('/');
-const mdfRequestId = +currentPath.at(-1);
+const mdfRequestId = findRequestIdUrl(currentPath.at(-1));
 
 const updateMDFDetailsSummary = async () => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch
