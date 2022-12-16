@@ -349,6 +349,10 @@ public class EmailNotificationType extends BaseNotificationType {
 			throw new NotificationRecipientSettingValueException(
 				"From name is null");
 		}
+
+		if (Validator.isNull(notificationRecipientSettingsMap.get("to"))) {
+			throw new NotificationRecipientSettingValueException("To is null");
+		}
 	}
 
 	private void _addFileAttachments(
