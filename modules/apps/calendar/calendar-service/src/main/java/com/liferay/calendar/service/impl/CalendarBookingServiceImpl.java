@@ -59,10 +59,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -355,24 +352,26 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			return childCalendarBookings;
 		}
 
-		Stream<CalendarBooking> stream = childCalendarBookings.stream();
+		List<CalendarBooking> filteredCalendarBookings = new ArrayList<>();
 
-		stream = stream.filter(
-			calendarBooking -> {
-				try {
-					return !_calendarLocalService.isStagingCalendar(
-						calendarBooking.getCalendar());
+		for (CalendarBooking calendarBooking : childCalendarBookings) {
+			try {
+				if (!_calendarLocalService.isStagingCalendar(
+						calendarBooking.getCalendar())) {
+
+					filteredCalendarBookings.add(calendarBooking);
 				}
-				catch (PortalException portalException) {
-					if (_log.isWarnEnabled()) {
-						_log.warn(portalException);
-					}
-
-					return true;
+			}
+			catch (PortalException portalException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(portalException);
 				}
-			});
 
-		return stream.collect(Collectors.toList());
+				filteredCalendarBookings.add(calendarBooking);
+			}
+		}
+
+		return filteredCalendarBookings;
 	}
 
 	@Override
@@ -883,26 +882,21 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 	private List<CalendarBooking> _filterCalendarBookings(
 		List<CalendarBooking> calendarBookings) {
 
-		Stream<CalendarBooking> stream = calendarBookings.stream();
+		List<CalendarBooking> filteredCalendarBookings = new ArrayList<>();
 
-		return stream.map(
-			calendarBooking -> {
-				try {
-					return _filterCalendarBooking(calendarBooking);
-				}
-				catch (PortalException portalException) {
-					if (_log.isWarnEnabled()) {
-						_log.warn(portalException);
-					}
-
-					return null;
+		for (CalendarBooking calendarBooking : calendarBookings) {
+			try {
+				filteredCalendarBookings.add(
+					_filterCalendarBooking(calendarBooking));
+			}
+			catch (PortalException portalException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(portalException);
 				}
 			}
-		).filter(
-			Objects::nonNull
-		).collect(
-			Collectors.toList()
-		);
+		}
+
+		return filteredCalendarBookings;
 	}
 
 	private List<CalendarBooking> _filterCalendarBookings(
