@@ -39,6 +39,15 @@
 	max-width: none;
 }
 
+.compose-table.table-autofit td,
+.compose-table.table-autofit th {
+	width: auto;
+}
+
+.compose-table.table thead tr td {
+	width: 40px;
+}
+
 .empty-state-border {
 	border: 1px solid #e7e7ed;
 	margin: 20px 0;
@@ -63,13 +72,4 @@
 	position: absolute;
 	right: 0;
 	top: 0;
-}
-
-.compose-table.table-autofit td,
-.compose-table.table-autofit th {
-	width: auto;
-}
-
-.compose-table.table thead tr td {
-	width: 40px;
 }
