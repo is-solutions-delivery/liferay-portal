@@ -76,7 +76,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		_setUpMultipleTermCollectors(classNames);
 
 		AssetEntriesSearchFacetDisplayContext
-			assetEntriesSearchFacetDisplayContext = createDisplayContext(
+			assetEntriesSearchFacetDisplayContext = _createDisplayContext(
 				classNames, "count:asc");
 
 		List<BucketDisplayContext> bucketDisplayContexts =
@@ -104,7 +104,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		_setUpMultipleTermCollectors(classNames);
 
 		AssetEntriesSearchFacetDisplayContext
-			assetEntriesSearchFacetDisplayContext = createDisplayContext(
+			assetEntriesSearchFacetDisplayContext = _createDisplayContext(
 				classNames, "count:desc");
 
 		List<BucketDisplayContext> bucketDisplayContexts =
@@ -128,7 +128,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		_setUpMultipleTermCollectors(classNames);
 
 		AssetEntriesSearchFacetDisplayContext
-			assetEntriesSearchFacetDisplayContext = createDisplayContext(
+			assetEntriesSearchFacetDisplayContext = _createDisplayContext(
 				classNames, "key:asc");
 
 		List<BucketDisplayContext> bucketDisplayContexts =
@@ -151,7 +151,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		_setUpMultipleTermCollectors(classNames);
 
 		AssetEntriesSearchFacetDisplayContext
-			assetEntriesSearchFacetDisplayContext1 = createDisplayContext(
+			assetEntriesSearchFacetDisplayContext1 = _createDisplayContext(
 				classNames, "key:desc");
 
 		List<BucketDisplayContext> bucketDisplayContexts =
@@ -165,14 +165,14 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 			"delta:2|charlie:4|bravo:1|alpha:3", nameFrequencyString);
 	}
 
-	protected AssetEntriesSearchFacetDisplayContext createDisplayContext(
+	private AssetEntriesSearchFacetDisplayContext _createDisplayContext(
 			String[] classNames, String order)
 		throws ConfigurationException {
 
 		AssetEntriesSearchFacetDisplayContextBuilder
 			assetEntriesSearchFacetDisplayContextBuilder =
 				new AssetEntriesSearchFacetDisplayContextBuilder(
-					getRenderRequest());
+					_getRenderRequest());
 
 		assetEntriesSearchFacetDisplayContextBuilder.setClassNames(classNames);
 		assetEntriesSearchFacetDisplayContextBuilder.setFacet(_facet);
@@ -189,7 +189,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		return assetEntriesSearchFacetDisplayContextBuilder.build();
 	}
 
-	protected TermCollector createTermCollector(String term, int frequency) {
+	private TermCollector _createTermCollector(String term, int frequency) {
 		TermCollector termCollector = Mockito.mock(TermCollector.class);
 
 		Mockito.doReturn(
@@ -207,7 +207,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		return termCollector;
 	}
 
-	protected PortletDisplay getPortletDisplay() throws ConfigurationException {
+	private PortletDisplay _getPortletDisplay() throws ConfigurationException {
 		PortletDisplay portletDisplay = Mockito.mock(PortletDisplay.class);
 
 		Mockito.doReturn(
@@ -221,11 +221,11 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		return portletDisplay;
 	}
 
-	protected RenderRequest getRenderRequest() throws ConfigurationException {
+	private RenderRequest _getRenderRequest() throws ConfigurationException {
 		RenderRequest renderRequest = Mockito.mock(RenderRequest.class);
 
 		Mockito.doReturn(
-			getThemeDisplay()
+			_getThemeDisplay()
 		).when(
 			renderRequest
 		).getAttribute(
@@ -235,11 +235,11 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		return renderRequest;
 	}
 
-	protected ThemeDisplay getThemeDisplay() throws ConfigurationException {
+	private ThemeDisplay _getThemeDisplay() throws ConfigurationException {
 		ThemeDisplay themeDisplay = Mockito.mock(ThemeDisplay.class);
 
 		Mockito.doReturn(
-			getPortletDisplay()
+			_getPortletDisplay()
 		).when(
 			themeDisplay
 		).getPortletDisplay();
@@ -289,7 +289,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 
 		for (String term : terms) {
 			Mockito.doReturn(
-				createTermCollector(term, frequency)
+				_createTermCollector(term, frequency)
 			).when(
 				_facetCollector
 			).getTermCollector(
