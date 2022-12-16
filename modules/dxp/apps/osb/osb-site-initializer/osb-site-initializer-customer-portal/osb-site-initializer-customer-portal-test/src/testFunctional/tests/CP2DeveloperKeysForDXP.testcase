@@ -365,87 +365,67 @@ definition {
 	@priority = "4"
 	test UserPartnerMemberAndRequesterRoleCanSeeAndPerformActionsForDXP {
 
-		// Needs refactor since it depends on example Avangrid Portals account
-
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
-
-			CustomerPortal.enterOnProject(title = "${testAccount}");
-		}
-
-		task ("Go to the product activation page") {
-			CP2NavigationMenu.goToProductActivation();
-
-			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
-		}
-
-		task ("Click in the Action button and assert the user with the right role can see the option") {
-			CustomerPortal.clickAtButton(text = "Actions");
-
-			AssertVisible(
-				key_action = "Export All Key Details (csv)",
-				locator1 = "CP2ActivationKeys#ACTIONS_DROPDOWN");
-		}
-
-		task ("Given a user signs in on OKTA to update the Customer Portal") {
-			CustomerPortal.loginOktaToUpdateCP();
-
-			Navigator.openURL();
-
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-		}
+		// Needs refactor since it depends on example NASA ICE account
 
 		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = "NASA ICE");
-
-			Account.addAssigneeToRoleViaUsersTab(
+			CP2Utils.assigneeToRoleViaUsersTab(
+				testAccount = "${testAccount}",
 				accountRoleTitle = "Partner Member",
-				accountUserName = "Test Test");
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Requester",
 				accountUserName = "Test Test");
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
-
-			Refresh();
+			CP2Utils.goToCustomerPortalSiteWithRefresh();
 
 			CustomerPortal.enterOnProject(title = "${testAccount}");
 		}
 
-		task ("Go to the product activation page") {
-			CP2NavigationMenu.goToProductActivation();
-
-			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
+		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
+			CP2Utils.goToDXPProductAndAssertAction(
+				text = "Actions",
+				product = "${testProduct}");
 		}
 
-		task ("Click in the Action button and assert if the user with the right role can see the options") {
-			CustomerPortal.clickAtButton(text = "Actions");
-
-			AssertVisible(
-				key_action = "Export All Key Details (csv)",
-				locator1 = "CP2ActivationKeys#ACTIONS_DROPDOWN");
-
+		task("Click in button actions and download the file") {
 			CustomerPortal.clickAtButton(text = "Actions");
 
 			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
 		}
 
 		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = "NASA ICE");
-
-			Account.unassignUserRole(
-				accountRoleTitle = "Requester",
+			CP2Utils.unassignUserRole(
+				testAccount = "${testAccount}",
+				accountRoleTitle = "Partner Member",
 				accountUserName = "Test Test");
 
-			Account.unassignUserRole(
-				accountRoleTitle = "Partner Member",
+			CP2Utils.assigneeToRoleViaUsersTab(
+				testAccount = "${testAccount}",
+				accountRoleTitle = "Requester",
+				accountUserName = "Test Test");
+		}
+
+		task ("Go to CP2.0 and join a project") {
+			CP2Utils.goToCustomerPortalSiteWithRefresh();
+
+			CustomerPortal.enterOnProject(title = "${testAccount}");
+		}
+
+		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
+			CP2Utils.goToDXPProductAndAssertAction(
+				text = "Actions",
+				product = "${testProduct}");
+		}
+
+		task("Click in button actions and download the file") {
+			CustomerPortal.clickAtButton(text = "Actions");
+
+			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
+		}
+
+		task ("Change the user role in the project") {
+			CP2Utils.unassignUserRole(
+				testAccount = "${testAccount}",
+				accountRoleTitle = "Requester",
 				accountUserName = "Test Test");
 		}
 	}
