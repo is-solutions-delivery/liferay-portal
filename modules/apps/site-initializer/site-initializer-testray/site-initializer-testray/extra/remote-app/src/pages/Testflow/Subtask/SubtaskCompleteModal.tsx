@@ -59,9 +59,7 @@ const SubtaskCompleteModal: React.FC<SubTaskCompleteModalProps> = ({
 	);
 
 	const {data: mbMessage} = useFetch(
-		subtask?.mbMessageId
-			? liferayMessageBoardImpl.getMessagesIdURL(subtask?.mbMessageId)
-			: null
+		liferayMessageBoardImpl.getMessagesIdURL(subtask.mbMessageId)
 	);
 
 	const subtaskIssues = subTaskIssuesResponse?.items || [];
@@ -90,8 +88,8 @@ const SubtaskCompleteModal: React.FC<SubTaskCompleteModalProps> = ({
 
 		const commentSubtask = {
 			comment,
-			mbMessageId: subtask?.mbMessageId,
-			mbThreadId: subtask?.mbThreadId,
+			mbMessageId: subtask.mbMessageId,
+			mbThreadId: subtask.mbThreadId,
 			userId: Number(Liferay.ThemeDisplay.getUserId()),
 		};
 
