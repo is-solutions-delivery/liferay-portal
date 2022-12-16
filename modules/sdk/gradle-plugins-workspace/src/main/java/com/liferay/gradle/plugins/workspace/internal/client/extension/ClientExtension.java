@@ -47,8 +47,10 @@ public class ClientExtension {
 		String pid = clientExtensionProperties.getProperty(type);
 
 		if (pid == null) {
-			throw new Exception("Unable to find pid for type: " + type);
+			throw new Exception("Unable to find PID for type: " + type);
 		}
+
+		Map<String, Object> jsonMap = new HashMap<>();
 
 		Map<String, Object> configMap = new HashMap<>();
 
@@ -81,8 +83,6 @@ public class ClientExtension {
 		}
 
 		configMap.put("typeSettings", _encode(_typeSettings));
-
-		Map<String, Object> jsonMap = new HashMap<>();
 
 		jsonMap.put(pid + "~" + id, configMap);
 
