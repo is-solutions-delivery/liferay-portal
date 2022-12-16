@@ -165,6 +165,25 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 			"delta:2|charlie:4|bravo:1|alpha:3", nameFrequencyString);
 	}
 
+	private String _buildNameFrequencyString(
+		List<BucketDisplayContext> bucketDisplayContexts) {
+
+		StringBundler sb = new StringBundler(bucketDisplayContexts.size() * 4);
+
+		for (BucketDisplayContext bucketDisplayContext :
+				bucketDisplayContexts) {
+
+			sb.append(bucketDisplayContext.getBucketText());
+			sb.append(StringPool.COLON);
+			sb.append(bucketDisplayContext.getFrequency());
+			sb.append(StringPool.PIPE);
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		return sb.toString();
+	}
+
 	private AssetEntriesSearchFacetDisplayContext _createDisplayContext(
 			String[] classNames, String order)
 		throws ConfigurationException {
@@ -245,25 +264,6 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		).getPortletDisplay();
 
 		return themeDisplay;
-	}
-
-	private String _buildNameFrequencyString(
-		List<BucketDisplayContext> bucketDisplayContexts) {
-
-		StringBundler sb = new StringBundler(bucketDisplayContexts.size() * 4);
-
-		for (BucketDisplayContext bucketDisplayContext :
-				bucketDisplayContexts) {
-
-			sb.append(bucketDisplayContext.getBucketText());
-			sb.append(StringPool.COLON);
-			sb.append(bucketDisplayContext.getFrequency());
-			sb.append(StringPool.PIPE);
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		return sb.toString();
 	}
 
 	private void _mockResourceActions(String[] classNames) {
