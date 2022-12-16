@@ -250,38 +250,17 @@ definition {
 	@priority = "4"
 	test UserAdminAndPartnerManagerRoleCanSeeAndPerformAllActionsForDXP {
 
-		// Needs refactor since it depends on example Avangrid Portals account
+		// Needs refactor since it depends on example NASA ICE account
 
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
-		}
-
-		task ("Given a user signs in on OKTA to update the Customer Portal") {
-			CustomerPortal.loginOktaToUpdateCP();
-
-			Navigator.openURL();
-
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-		}
-
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = "NASA ICE");
-
-			Account.addAssigneeToRoleViaUsersTab(
+		task ("Change the user role in the project") {		
+			CP2Utils.assigneeToRoleViaUsersTab(
+				testAccount = "${testAccount}",
 				accountRoleTitle = "Account Administrator",
 				accountUserName = "Test Test");
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Partner Manager",
-				accountUserName = "Test Test");
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
-
-			Refresh();
+			CP2Utils.goToCustomerPortalSiteWithRefresh();
 
 			CustomerPortal.enterOnProject(title = "${testAccount}");
 		}
@@ -292,84 +271,154 @@ definition {
 			CustomerPortal.clickOnSkipForNowButton();
 		}
 
-		task ("Go to the product activation page") {
-			CP2NavigationMenu.goToProductActivation();
-
-			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
+		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
+			CP2Utils.goToDXPProductAndAssertAction(
+				text = "Actions",
+				product = "${testProduct}");
 		}
 
-		task ("Click in the Action button and assert if the user with the right role can see the options") {
-			CustomerPortal.clickAtButton(text = "Actions");
-
-			AssertVisible(
-				key_action = "Export All Key Details (csv)",
-				locator1 = "CP2ActivationKeys#ACTIONS_DROPDOWN");
-
+		task("Click in button actions and download the file") {
 			CustomerPortal.clickAtButton(text = "Actions");
 
 			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
 		}
 
+		task ("Then the Generate New Key option is selected in the drop-down of the Action button") {
+			CustomerPortal.clickAtButton(text = "Actions");
+
+			CP2ActivationKeys.generateNewKey();
+		}
+
+		task ("Then the fields of the modal is filled") {
+			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
+				field = "Version",
+				option = "7.3");
+			
+			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
+				field = "Key Type",
+				option = "Production");
+
+			CP2ActivationKeys.selectFistActiveSubscriptionInput();
+
+			CustomerPortal.clickAtButton(text = "Next");
+
+			CP2ActivationKeys.environmentDetails(
+				environmentDetails = "name",
+				value = "Liferay Test");
+
+				CP2ActivationKeys.environmentDetails(
+				environmentDetails = "Name",
+				value = "Liferay");
+
+			CustomerPortal.clickAtButton(text = "Generate 1 Key");
+		}
+
+		task ("When the user select a keys to deactivate") {
+			CP2Utils.searchKeys(searchinput = "Liferay Test");
+
+			CP2ActivationKeys.selectKeyCheckboxByEnvironmentName(environmentName = "Liferay Test");
+
+			Button.click(button = "Deactivate");
+		}
+		
+		task ("Then an informative modal is shown") {
+			CustomerPortal.clickAtButton(text = "Confirm Deactivate Keys");
+
+			CP2Utils.assertTextVisible(text = "A request was just sent to deactivate the selected activation keys. From now on they will be hidden and no longer be visible.");
+
+			CustomerPortal.clickAtButton(text = "Continue");
+		}
+
+
+		task ("Change the user role in the project") {
+			CP2Utils.unassignUserRole(
+				testAccount = "${testAccount}",
+				accountRoleTitle = "Account Administrator",
+				accountUserName = "Test Test");
+
+			CP2Utils.assigneeToRoleViaUsersTab(
+				testAccount = "${testAccount}",
+				accountRoleTitle = "Partner Manager",
+				accountUserName = "Test Test");
+		}
+		
+		task ("Go to CP2.0 and join a project") {
+			CP2Utils.goToCustomerPortalSiteWithRefresh();
+
+			CustomerPortal.enterOnProject(title = "${testAccount}");
+		}
+
+		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
+			CP2Utils.goToDXPProductAndAssertAction(
+				text = "Actions",
+				product = "${testProduct}");
+		}
+
+		task("Click in button actions and download the file") {
+			CustomerPortal.clickAtButton(text = "Actions");
+
+			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
+		}
+
+		task ("Then the Generate New key option is selected in the drop-down of the Action button") {
+			CustomerPortal.clickAtButton(text = "Actions");
+
+			CP2ActivationKeys.generateNewKey();
+		}
+
+		task ("Then the fields of the modal is filled") {
+			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
+				field = "Version",
+				option = "7.3");
+			
+			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
+				field = "Key Type",
+				option = "Production");
+
+			CP2ActivationKeys.selectFistActiveSubscriptionInput();
+
+			CustomerPortal.clickAtButton(text = "Next");
+
+			CP2ActivationKeys.environmentDetails(
+				environmentDetails = "name",
+				value = "Liferay Test");
+
+			CP2ActivationKeys.environmentDetails(
+				environmentDetails = "Name",
+				value = "Liferay");
+
+			CustomerPortal.clickAtButton(text = "Generate 1 Key");
+		}
+
+		task ("When the user select a keys to deactivate") {
+			CP2Utils.searchKeys(searchinput = "Liferay Test");
+
+			CP2ActivationKeys.selectKeyCheckboxByEnvironmentName(environmentName = "Liferay Test");
+
+			Button.click(button = "Deactivate");
+		}
+
+		task ("Then an informative modal is shown") {
+			CustomerPortal.clickAtButton(text = "Confirm Deactivate Keys");
+
+			CP2Utils.assertTextVisible(text = "A request was just sent to deactivate the selected activation keys. From now on they will be hidden and no longer be visible.");
+
+			CustomerPortal.clickAtButton(text = "Continue");
+		}
+
 		task ("Change the user role in the project") {
 			Account.openAccountsAdmin();
 
-			CustomerPortal.accountTableProject(title = "NASA ICE");
-
-			Account.unassignUserRole(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
+			CustomerPortal.accountTableProject(title = "${testAccount}");
 
 			Account.unassignUserRole(
 				accountRoleTitle = "Partner Manager",
 				accountUserName = "Test Test");
 		}
+
 	}
 
 	@description = "Automation ID: LPS-166937 | Test Summary: Assert that users with the roles Partner Members, Requesters and Users cannot see the actions (Generate New - Deactivate - Actions Menu - Deactivate button)"
-	@ignore = "true"
-	@priority = "4"
-	test UserPartnerMemberAndRequesterRoleCannotSeeSomeActionsForDXP {
-
-		// Needs refactor since it depends on example Avangrid Portals account
-
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
-
-			CustomerPortal.enterOnProject(title = "${testAccount}");
-		}
-
-		task ("Go to the product activation page") {
-			CP2NavigationMenu.goToProductActivation();
-
-			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
-		}
-
-		task ("Click in the Action button and assert the user with the right role can see the option") {
-			CustomerPortal.clickAtButton(text = "Actions");
-
-			AssertVisible(
-				key_action = "Export All Key Details (csv)",
-				locator1 = "CP2ActivationKeys#ACTIONS_DROPDOWN");
-		}
-
-		task ("Given a user signs in on OKTA to update the Customer Portal") {
-			CustomerPortal.loginOktaToUpdateCP();
-
-			Navigator.openURL();
-
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-		}
-
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = "NASA ICE");
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Partner Member",
-				accountUserName = "Test Test");
-
-			Account.addAssigneeToRoleViaUsersTab(
 				accountRoleTitle = "Requester",
 				accountUserName = "Test Test");
 		}
