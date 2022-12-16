@@ -65,7 +65,7 @@ definition {
 			accountRoleTitle = "${accountRoleTitle}",
 			accountUserName = "${accountUserName}");
 	}
-
+	
 	macro changeCardStatus {
 		var key_text = "${text}";
 
@@ -320,7 +320,7 @@ definition {
 				value1 = "\ENTER");
 	}
 
-	macro unassignUserRole {
+	macro unassignUserRole{
 		Account.openAccountsAdmin();
 
 		CustomerPortal.accountTableProject(title = "${testAccount}");
