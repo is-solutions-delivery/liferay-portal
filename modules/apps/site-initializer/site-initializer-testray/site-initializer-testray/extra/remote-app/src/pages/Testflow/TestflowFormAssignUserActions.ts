@@ -18,14 +18,14 @@ import i18n from '../../i18n';
 import {Action} from '../../types';
 
 type UseTestflowAssign = {
-	setUsers: React.Dispatch<React.SetStateAction<number[]>>;
+	setUsersId: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
-const useTestFlowAssign = ({setUsers}: UseTestflowAssign) => {
+const useTestFlowAssign = ({setUsersId}: UseTestflowAssign) => {
 	const actions: Action[] = [
 		{
 			action: ({id}: {id: number}) => {
-				setUsers((users: number[]) =>
+				setUsersId((users: number[]) =>
 					users.filter((item) => item !== id)
 				);
 			},

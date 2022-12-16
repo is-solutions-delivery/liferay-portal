@@ -53,7 +53,7 @@ const TaskHeaderActions = () => {
 	const subTaskAllCompleted = testraySubtasks?.totalCount === 0;
 
 	const [modalType, setModalType] = useState('assign-users');
-	const [users, setUsers] = useState<number[]>([]);
+	const [users, setUsersId] = useState<number[]>([]);
 	const {modal} = useFormModal({
 		onSave: (userIds: number[]) =>
 			testrayTaskImpl.assignTo(testrayTask, userIds).then((response) => {
@@ -73,9 +73,9 @@ const TaskHeaderActions = () => {
 
 	useEffect(() => {
 		if (testrayTaskUser) {
-			setUsers(testrayTaskUser.map(({user}) => user?.id as number));
+			setUsersId(testrayTaskUser.map(({user}) => user?.id as number));
 		}
-	}, [setUsers, testrayTaskUser]);
+	}, [setUsersId, testrayTaskUser]);
 
 	return (
 		<>

@@ -65,12 +65,12 @@ const TestflowForm = () => {
 		form: {onClose, onError, onSave, onSubmit},
 	} = useFormActions();
 	const [modalType, setModalType] = useState('assign-users');
-	const [users, setUsers] = useState<number[]>([]);
+	const [users, setUsersId] = useState<number[]>([]);
 	const {modal} = useFormModal({
-		onSave: setUsers,
+		onSave: setUsersId,
 	});
 	const {buildId, taskId} = useParams();
-	const {actions} = useTestFlowAssign({setUsers});
+	const {actions} = useTestFlowAssign({setUsersId});
 
 	const outletContext = useOutletContext<OutletContext>();
 
@@ -187,9 +187,9 @@ const TestflowForm = () => {
 
 	useEffect(() => {
 		if (testrayTaskUser) {
-			setUsers(testrayTaskUser.map(({user}) => user?.id as number));
+			setUsersId(testrayTaskUser.map(({user}) => user?.id as number));
 		}
-	}, [setUsers, testrayTaskUser]);
+	}, [setUsersId, testrayTaskUser]);
 
 	useEffect(() => {
 		setValue('userIds', users);
