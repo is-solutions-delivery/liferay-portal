@@ -343,7 +343,28 @@ public class FriendlyURLServlet extends HttpServlet {
 			Layout redirectLayout = null;
 
 			if (layoutFriendlyURL == null) {
-				redirectLayout = defaultLayout;
+				if (exception instanceof LayoutPermissionException) {
+					List<Layout> layouts = layoutLocalService.getLayouts(
+						group.getGroupId(), _private,
+						LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+
+					PermissionChecker permissionChecker =
+						PermissionCheckerFactoryUtil.create(
+							_getUser(httpServletRequest));
+
+					for (Layout layout : layouts) {
+						if (LayoutPermissionUtil.contains(
+								permissionChecker, layout, ActionKeys.VIEW)) {
+
+							redirectLayout = layout;
+
+							break;
+						}
+					}
+				}
+				else {
+					redirectLayout = defaultLayout;
+				}
 			}
 			else {
 				List<Layout> layouts = layoutLocalService.getLayouts(
