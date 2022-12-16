@@ -28,6 +28,13 @@ definition {
 
 			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = "${testAccount}");
 		}
+		task ("Given a user signs in on OKTA to update the Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
 	}
 
 	tearDown {
