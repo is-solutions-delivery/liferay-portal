@@ -16,7 +16,6 @@ package com.liferay.portal.search.web.internal.facet.display.context;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
@@ -186,7 +185,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 
 	private AssetEntriesSearchFacetDisplayContext _createDisplayContext(
 			String[] classNames, String order)
-		throws ConfigurationException {
+		throws Exception {
 
 		AssetEntriesSearchFacetDisplayContextBuilder
 			assetEntriesSearchFacetDisplayContextBuilder =
@@ -226,7 +225,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		return termCollector;
 	}
 
-	private PortletDisplay _getPortletDisplay() throws ConfigurationException {
+	private PortletDisplay _getPortletDisplay() throws Exception {
 		PortletDisplay portletDisplay = Mockito.mock(PortletDisplay.class);
 
 		Mockito.doReturn(
@@ -240,7 +239,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		return portletDisplay;
 	}
 
-	private RenderRequest _getRenderRequest() throws ConfigurationException {
+	private RenderRequest _getRenderRequest() throws Exception {
 		RenderRequest renderRequest = Mockito.mock(RenderRequest.class);
 
 		Mockito.doReturn(
@@ -254,7 +253,7 @@ public class AssetEntriesSearchFacetDisplayContextTest {
 		return renderRequest;
 	}
 
-	private ThemeDisplay _getThemeDisplay() throws ConfigurationException {
+	private ThemeDisplay _getThemeDisplay() throws Exception {
 		ThemeDisplay themeDisplay = Mockito.mock(ThemeDisplay.class);
 
 		Mockito.doReturn(
