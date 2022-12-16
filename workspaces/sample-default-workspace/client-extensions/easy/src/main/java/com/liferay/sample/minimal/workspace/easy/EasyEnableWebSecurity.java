@@ -204,11 +204,11 @@ public class EasyEnableWebSecurity {
 				return OAuth2TokenValidatorResult.success();
 			}
 
-			return OAuth2TokenValidatorResult.failure(_noClientIdMatch);
+			return OAuth2TokenValidatorResult.failure(_oAuth2Error);
 		}
 
 		private final String _clientId;
-		private final OAuth2Error _noClientIdMatch = new OAuth2Error(
+		private final OAuth2Error _oAuth2Error = new OAuth2Error(
 			"invalid_token", "The client_id does not match", null);
 
 	}

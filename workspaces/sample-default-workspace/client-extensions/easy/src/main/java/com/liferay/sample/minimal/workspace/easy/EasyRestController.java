@@ -38,20 +38,20 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RestController
 public class EasyRestController {
 
-	@GetMapping("/dadjoke")
+	@GetMapping("/dad-joke")
 	public ResponseEntity<String> getDadJoke(@AuthenticationPrincipal Jwt jwt) {
-		String joke = WebClient.create(
-		).get(
-		).uri(
-			"https://icanhazdadjoke.com"
-		).accept(
-			MediaType.TEXT_PLAIN
-		).retrieve(
-		).bodyToMono(
-			String.class
-		).block();
-
-		return new ResponseEntity<>(joke, HttpStatus.OK);
+		return new ResponseEntity<>(
+			WebClient.create(
+			).get(
+			).uri(
+				"https://icanhazdadjoke.com"
+			).accept(
+				MediaType.TEXT_PLAIN
+			).retrieve(
+			).bodyToMono(
+				String.class
+			).block(),
+			HttpStatus.OK);
 	}
 
 	@PostMapping("/easy-object/action/1")
