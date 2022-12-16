@@ -28,6 +28,13 @@ definition {
 
 			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = "${testAccount}");
 		}
+		task ("Given a user signs in on OKTA to update the Customer Portal") {
+			CustomerPortal.loginOktaToUpdateCP();
+
+			Navigator.openURL();
+
+			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
 	}
 
 	tearDown {
@@ -92,13 +99,9 @@ definition {
 
 		// Needs refactor since it depends on example Avangrid Portals account
 
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
+		task ("Join a project and Go to the product activation page") {
 			CustomerPortal.enterOnProject(title = "${testAccount}");
-		}
 
-		task ("Go to the product activation page") {
 			CP2NavigationMenu.goToProductActivation();
 
 			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
@@ -138,13 +141,9 @@ definition {
 
 		// Needs refactor since it depends on example Avangrid Portals account
 
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
+		task ("Join a project and Go to the product activation page") {
 			CustomerPortal.enterOnProject(title = "${testAccount}");
-		}
 
-		task ("Go to the product activation page") {
 			CP2NavigationMenu.goToProductActivation();
 
 			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
@@ -181,13 +180,9 @@ definition {
 
 		// Needs refactor since it depends on example Avangrid Portals account
 
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
+		task ("Join a project and Go to the product activation page") {
 			CustomerPortal.enterOnProject(title = "${testAccount}");
-		}
 
-		task ("Go to the product activation page") {
 			CP2NavigationMenu.goToProductActivation();
 
 			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
@@ -217,13 +212,9 @@ definition {
 
 		// Needs refactor since it depends on example Avangrid Portals account
 
-		task ("Go to CP2.0 and join a project") {
-			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
-
+		task ("Join a project and Go to the product activation page") {
 			CustomerPortal.enterOnProject(title = "${testAccount}");
-		}
 
-		task ("Go to the product activation page") {
 			CP2NavigationMenu.goToProductActivation();
 
 			CP2NavigationMenu.clickOnProductButton(product = "${testProduct}");
