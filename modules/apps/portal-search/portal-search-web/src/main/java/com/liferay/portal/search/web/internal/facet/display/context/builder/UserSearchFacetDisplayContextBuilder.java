@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.internal.facet.display.context.BucketDisplayContext;
 import com.liferay.portal.search.web.internal.facet.display.context.UserSearchFacetDisplayContext;
 import com.liferay.portal.search.web.internal.user.facet.configuration.UserFacetPortletInstanceConfiguration;
+import com.liferay.portal.search.web.internal.util.comparator.BucketDisplayContextComparatorFactoryUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,6 +101,10 @@ public class UserSearchFacetDisplayContextBuilder {
 		_maxTerms = maxTerms;
 	}
 
+	public void setOrder(String order) {
+		_order = order;
+	}
+
 	public void setPaginationStartParameterName(
 		String paginationStartParameterName) {
 
@@ -161,6 +166,12 @@ public class UserSearchFacetDisplayContextBuilder {
 			}
 
 			bucketDisplayContexts.add(buildBucketDisplayContext(termCollector));
+		}
+
+		if (_order != null) {
+			bucketDisplayContexts.sort(
+				BucketDisplayContextComparatorFactoryUtil.
+					getBucketDisplayContextComparator(_order));
 		}
 
 		return bucketDisplayContexts;
@@ -234,6 +245,7 @@ public class UserSearchFacetDisplayContextBuilder {
 	private boolean _frequenciesVisible;
 	private int _frequencyThreshold;
 	private int _maxTerms;
+	private String _order;
 	private String _paginationStartParameterName;
 	private String _paramName;
 	private List<String> _paramValues = Collections.emptyList();
