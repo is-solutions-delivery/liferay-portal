@@ -472,9 +472,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 					documentsStringUtilReplaceValues, serviceContext,
 					siteNavigationMenuItemSettingsBuilder));
 
-			Map<String, Layout> layouts = _invoke(
-				() -> _addOrUpdateLayouts(serviceContext));
-
 			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
 				_invoke(() -> _addOrUpdateListTypeDefinitions(serviceContext));
 
@@ -487,11 +484,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 							serviceContext,
 							siteNavigationMenuItemSettingsBuilder));
 
-			_invoke(
-				() -> _addCPDefinitions(
-					documentsStringUtilReplaceValues,
-					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
-					serviceContext));
 			_invoke(
 				() -> _addLayoutPageTemplates(
 					assetListEntryIdsStringUtilReplaceValues,
@@ -506,6 +498,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext));
 			_invoke(
 				() -> _addPermissions(
+					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
+					serviceContext));
+
+			Map<String, Layout> layouts = _invoke(
+				() -> _addOrUpdateLayouts(serviceContext));
+
+			_invoke(
+				() -> _addCPDefinitions(
+					documentsStringUtilReplaceValues,
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 					serviceContext));
 

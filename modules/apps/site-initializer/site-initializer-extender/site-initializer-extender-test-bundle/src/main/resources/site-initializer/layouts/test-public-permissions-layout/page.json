@@ -18,6 +18,11 @@
 			],
 			"roleName": "Site Member",
 			"scope": 4
+		},
+		{
+			"actionIds": ["VIEW"],
+			"roleName": "Test Role 4",
+			"scope": 1
 		}
 	],
 	"priority": 0,
