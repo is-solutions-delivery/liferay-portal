@@ -729,11 +729,11 @@ public class CommerceShipmentLocalServiceImpl
 
 		TransactionCommitCallbackUtil.registerCallback(
 			() -> {
+				Message message = new Message();
+
 				DTOConverter<?, ?> dtoConverter =
 					_dtoConverterRegistry.getDTOConverter(
 						CommerceShipment.class.getName());
-
-				Message message = new Message();
 
 				message.setPayload(
 					JSONUtil.put(

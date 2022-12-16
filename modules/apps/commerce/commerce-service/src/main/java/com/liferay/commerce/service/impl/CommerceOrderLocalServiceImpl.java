@@ -1865,11 +1865,11 @@ public class CommerceOrderLocalServiceImpl
 
 		TransactionCommitCallbackUtil.registerCallback(
 			() -> {
+				Message message = new Message();
+
 				DTOConverter<?, ?> dtoConverter =
 					_dtoConverterRegistry.getDTOConverter(
 						CommerceOrder.class.getName());
-
-				Message message = new Message();
 
 				message.setPayload(
 					JSONUtil.put(

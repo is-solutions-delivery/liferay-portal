@@ -540,11 +540,11 @@ public class CommerceOrderEngineImpl implements CommerceOrderEngine {
 					CommerceOrderConstants.getNotificationKey(orderStatus),
 					commerceOrder);
 
+				Message message = new Message();
+
 				DTOConverter<?, ?> commerceOrderDTOConverter =
 					_dtoConverterRegistry.getDTOConverter(
 						CommerceOrder.class.getName());
-
-				Message message = new Message();
 
 				message.setPayload(
 					JSONUtil.put(
