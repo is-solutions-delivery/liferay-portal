@@ -340,6 +340,8 @@ public class JournalArticleItemSelectorViewDisplayContext {
 
 		if (_infoItemItemSelectorCriterion.isMultiSelection()) {
 			JournalRowChecker journalRowChecker = new JournalRowChecker(
+				JournalArticleLocalServiceUtil.fetchJournalArticle(
+					_infoItemItemSelectorCriterion.getRefererClassPK()),
 				_portletResponse);
 
 			journalRowChecker.setRememberCheckBoxStateURLRegex(
