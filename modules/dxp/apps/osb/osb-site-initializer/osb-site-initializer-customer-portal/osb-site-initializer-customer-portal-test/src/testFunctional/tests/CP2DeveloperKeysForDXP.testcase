@@ -28,6 +28,7 @@ definition {
 
 			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = "${testAccount}");
 		}
+
 		task ("Given a user signs in on OKTA to update the Customer Portal") {
 			CustomerPortal.loginOktaToUpdateCP();
 
@@ -252,11 +253,11 @@ definition {
 
 		// Needs refactor since it depends on example NASA ICE account
 
-		task ("Change the user role in the project") {		
+		task ("Change the user role in the project") {
 			CP2Utils.assigneeToRoleViaUsersTab(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
 
 		task ("Go to CP2.0 and join a project") {
@@ -273,11 +274,11 @@ definition {
 
 		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
 			CP2Utils.goToDXPProductAndAssertAction(
-				text = "Actions",
-				product = "${testProduct}");
+				product = "${testProduct}",
+				text = "Actions");
 		}
 
-		task("Click in button actions and download the file") {
+		task ("Click in button actions and download the file") {
 			CustomerPortal.clickAtButton(text = "Actions");
 
 			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
@@ -293,7 +294,7 @@ definition {
 			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
 				field = "Version",
 				option = "7.3");
-			
+
 			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
 				field = "Key Type",
 				option = "Production");
@@ -306,7 +307,7 @@ definition {
 				environmentDetails = "name",
 				value = "Liferay Test");
 
-				CP2ActivationKeys.environmentDetails(
+			CP2ActivationKeys.environmentDetails(
 				environmentDetails = "Name",
 				value = "Liferay");
 
@@ -320,7 +321,7 @@ definition {
 
 			Button.click(button = "Deactivate");
 		}
-		
+
 		task ("Then an informative modal is shown") {
 			CustomerPortal.clickAtButton(text = "Confirm Deactivate Keys");
 
@@ -329,19 +330,18 @@ definition {
 			CustomerPortal.clickAtButton(text = "Continue");
 		}
 
-
 		task ("Change the user role in the project") {
 			CP2Utils.unassignUserRole(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 
 			CP2Utils.assigneeToRoleViaUsersTab(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Partner Manager",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
-		
+
 		task ("Go to CP2.0 and join a project") {
 			CP2Utils.goToCustomerPortalSiteWithRefresh();
 
@@ -350,11 +350,11 @@ definition {
 
 		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
 			CP2Utils.goToDXPProductAndAssertAction(
-				text = "Actions",
-				product = "${testProduct}");
+				product = "${testProduct}",
+				text = "Actions");
 		}
 
-		task("Click in button actions and download the file") {
+		task ("Click in button actions and download the file") {
 			CustomerPortal.clickAtButton(text = "Actions");
 
 			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
@@ -370,7 +370,7 @@ definition {
 			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
 				field = "Version",
 				option = "7.3");
-			
+
 			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
 				field = "Key Type",
 				option = "Production");
@@ -415,7 +415,6 @@ definition {
 				accountRoleTitle = "Partner Manager",
 				accountUserName = "Test Test");
 		}
-
 	}
 
 	@description = "Automation ID: LPS-166937 | Test Summary: Assert that users with the roles Partner Members, Requesters and Users cannot see the actions (Generate New - Deactivate - Actions Menu - Deactivate button)"
@@ -424,12 +423,12 @@ definition {
 	test UserPartnerMemberAndRequesterRoleCannotSeeSomeActionsForDXP {
 
 		// Needs refactor since it depends on example NASA ICE account
-		
+
 		task ("Change the user role in the project") {
 			CP2Utils.assigneeToRoleViaUsersTab(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Requester",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
 
 		task ("Go to CP2.0 and join a project") {
@@ -440,21 +439,20 @@ definition {
 
 		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
 			CP2Utils.goToDXPProductAndAssertAction(
-				text = "Actions",
-				product = "${testProduct}");
+				product = "${testProduct}",
+				text = "Actions");
 		}
 
 		task ("Change the user role in the project") {
 			CP2Utils.unassignUserRole(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Requester",
-				accountUserName = "Test Test");
-		
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 
 			CP2Utils.assigneeToRoleViaUsersTab(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Partner Member",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
 
 		task ("Go to CP2.0 and join a project") {
@@ -465,15 +463,15 @@ definition {
 
 		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
 			CP2Utils.goToDXPProductAndAssertAction(
-				text = "Actions",
-				product = "${testProduct}");
+				product = "${testProduct}",
+				text = "Actions");
 		}
-		
+
 		task ("Change the user role in the project") {
 			CP2Utils.unassignUserRole(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Partner Member",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
 	}
 
@@ -486,9 +484,9 @@ definition {
 
 		task ("Change the user role in the project") {
 			CP2Utils.assigneeToRoleViaUsersTab(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Partner Member",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
 
 		task ("Go to CP2.0 and join a project") {
@@ -499,11 +497,11 @@ definition {
 
 		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
 			CP2Utils.goToDXPProductAndAssertAction(
-				text = "Actions",
-				product = "${testProduct}");
+				product = "${testProduct}",
+				text = "Actions");
 		}
 
-		task("Click in button actions and download the file") {
+		task ("Click in button actions and download the file") {
 			CustomerPortal.clickAtButton(text = "Actions");
 
 			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
@@ -511,14 +509,14 @@ definition {
 
 		task ("Change the user role in the project") {
 			CP2Utils.unassignUserRole(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Partner Member",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 
 			CP2Utils.assigneeToRoleViaUsersTab(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Requester",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
 
 		task ("Go to CP2.0 and join a project") {
@@ -529,11 +527,11 @@ definition {
 
 		task ("Go to the product activation page and assert if the user with the role can see the options 'Export All keys'") {
 			CP2Utils.goToDXPProductAndAssertAction(
-				text = "Actions",
-				product = "${testProduct}");
+				product = "${testProduct}",
+				text = "Actions");
 		}
 
-		task("Click in button actions and download the file") {
+		task ("Click in button actions and download the file") {
 			CustomerPortal.clickAtButton(text = "Actions");
 
 			CP2ActivationKeys.exportAllKeyDetails(fileName = "activation-keys.csv");
@@ -541,9 +539,9 @@ definition {
 
 		task ("Change the user role in the project") {
 			CP2Utils.unassignUserRole(
-				testAccount = "${testAccount}",
 				accountRoleTitle = "Requester",
-				accountUserName = "Test Test");
+				accountUserName = "Test Test",
+				testAccount = "${testAccount}");
 		}
 	}
 
