@@ -95,6 +95,11 @@
 	<td>//a[contains(@class, 'font-weight-bold')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>SEARCH_FILTER</td>
+	<td>//div[contains(@class,'bg-neutral-1')]//div[@class="input-group-item"]//input[@placeholder="Search"]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
