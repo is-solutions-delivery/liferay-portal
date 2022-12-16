@@ -46,6 +46,12 @@ public class UserFacetPortletPreferencesImpl
 	}
 
 	@Override
+	public String getOrder() {
+		return _portletPreferencesHelper.getString(
+			UserFacetPortletPreferences.PREFERENCE_KEY_ORDER, "count:desc");
+	}
+
+	@Override
 	public String getParameterName() {
 		return _portletPreferencesHelper.getString(
 			UserFacetPortletPreferences.PREFERENCE_KEY_PARAMETER_NAME, "user");
