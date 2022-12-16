@@ -285,7 +285,7 @@ const TestrayRoute = () => (
 					</Route>
 
 					<Route element={<OutletBridge />} path="testflow">
-						<Route element={<TestflowNavigationOutlet />} path="">
+						<Route element={<TestflowNavigationOutlet />}>
 							<Route element={<Testflow />} index />
 
 							<Route

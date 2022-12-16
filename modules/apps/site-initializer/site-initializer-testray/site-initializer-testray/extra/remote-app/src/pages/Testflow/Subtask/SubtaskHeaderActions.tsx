@@ -26,15 +26,23 @@ import {SubTaskStatuses} from '../../../util/statuses';
 import SubtaskCompleteModal from './SubtaskCompleteModal';
 
 type OutletContext = {
-	mutateSubtask: KeyedMutator<TestraySubTask>;
-	revalidateSubtask: () => void;
-	testraySubtask: TestraySubTask;
+	data: {
+		testraySubtask: TestraySubTask;
+	};
+	mutate: {
+		mutateSubtask: KeyedMutator<TestraySubTask>;
+	};
+	revalidate: {
+		revalidateTaskUser: () => void;
+	};
 };
 
 const SubtaskHeaderActions = () => {
-	const {mutateSubtask, revalidateSubtask, testraySubtask} = useOutletContext<
-		OutletContext
-	>();
+	const {
+		data: {testraySubtask},
+		mutate: {mutateSubtask},
+		revalidate: {revalidateTaskUser},
+	} = useOutletContext<OutletContext>();
 	const {modal: assignUserModal} = useFormModal({
 		onSave: (user: UserAccount) =>
 			testraySubTaskImpl
@@ -50,7 +58,7 @@ const SubtaskHeaderActions = () => {
 
 			<SubtaskCompleteModal
 				modal={completeModal}
-				revalidateSubtask={revalidateSubtask}
+				revalidateSubtask={revalidateTaskUser}
 				subtask={testraySubtask}
 			/>
 

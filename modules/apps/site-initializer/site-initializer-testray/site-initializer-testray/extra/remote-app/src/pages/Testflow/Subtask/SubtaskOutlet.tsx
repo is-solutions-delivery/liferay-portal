@@ -118,15 +118,21 @@ const SubtaskOutlet = () => {
 	return (
 		<Outlet
 			context={{
-				mbMessage,
-				mergedSubtaskNames,
-				mutateSubtask,
-				mutateSubtaskIssues,
-				revalidateSubtask,
-				splitSubtaskNames,
-				subtaskIssues,
-				testraySubtask,
-				testrayTask,
+				data: {
+					mbMessage,
+					mergedSubtaskNames,
+					splitSubtaskNames,
+					subtaskIssues,
+					testraySubtask,
+					testrayTask,
+				},
+				mutate: {
+					mutateSubtask,
+					mutateSubtaskIssues,
+				},
+				revalidate: {
+					revalidateSubtask,
+				},
 			}}
 		/>
 	);

@@ -90,7 +90,7 @@ const SubtaskCompleteModal: React.FC<SubTaskCompleteModalProps> = ({
 
 		const commentSubtask = {
 			comment,
-			mbMessageId: subtask?.mbThreadId,
+			mbMessageId: subtask?.mbMessageId,
 			mbThreadId: subtask?.mbThreadId,
 			userId: Number(Liferay.ThemeDisplay.getUserId()),
 		};
