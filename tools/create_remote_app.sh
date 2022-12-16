@@ -89,7 +89,7 @@ function create_react_app {
 
 	echo "SKIP_PREFLIGHT_CHECK=true" > ".env"
 
-	sed -i -e "s|<div id=\"root\"></div>|<$CUSTOM_ELEMENT_NAME route=\"hello-world\"></$CUSTOM_ELEMENT_NAME>|g" public/index.html
+	sed -i -e "s|<div id=\"root\"></div>|<${CUSTOM_ELEMENT_NAME} route=\"hello-world\"></${CUSTOM_ELEMENT_NAME}>|g" public/index.html
 
 	rm -f public/favicon.ico public/logo* public/manifest.json public/robots.txt
 
@@ -171,27 +171,22 @@ function random_letter {
 }
 
 function write_client_extension {
-	cat <<EOF > client-extension.yaml
-assemble:
-    - from: build/
-      include: "static/**/*"
-      into: static/
-fox-remote-app:
-    cssURLs:
-        - static/css/main.*.css
-    friendlyURLMapping: fox-remote-app
-    htmlElementName: fox-remote-app
-    instanceable: false
-    name: Fox Remote App
-    portletCategoryName: category.remote-apps
-    type: customElement
-    urls:
-        - static/js/main.*.js
-        # To enable dev mode uncomment following url
-        # Run gradle deploy && yarn start
-        #- http://localhost:3000/static/js/bundle.js
-    useESM: false
-EOF
+	echo "assemble:" > client-extension.yaml
+	echo "    - from: build/" >> client-extension.yaml
+	echo "      include: \"static/**/*\"" >> client-extension.yaml
+	echo "      into: static/" >> client-extension.yaml
+	echo "${CUSTOM_ELEMENT_NAME}:" >> client-extension.yaml
+	echo "    cssURLs:" >> client-extension.yaml
+	echo "        - static/css/main.*.css" >> client-extension.yaml
+	echo "    friendlyURLMapping: ${CUSTOM_ELEMENT_NAME}" >> client-extension.yaml
+	echo "    htmlElementName: ${CUSTOM_ELEMENT_NAME}" >> client-extension.yaml
+	echo "    instanceable: false" >> client-extension.yaml
+	echo "    name: ${CUSTOM_ELEMENT_NAME}" >> client-extension.yaml
+	echo "    portletCategoryName: category.remote-apps" >> client-extension.yaml
+	echo "    type: customElement" >> client-extension.yaml
+	echo "    urls:" >> client-extension.yaml
+	echo "        - static/js/main.*.js" >> client-extension.yaml
+	echo "    useESM: false" >> client-extension.yaml
 }
 
 function write_gitignore {
@@ -228,7 +223,7 @@ EOF
 
 	cat <<EOF > common/services/liferay/liferay.js
 export const Liferay = window.Liferay || {
-  OAuth2: {
+	OAuth2: {
 		getAuthorizeURL: () => "",
 		getBuiltInRedirectURL: () => "",
 		getIntrospectURL: () => "",
@@ -290,9 +285,9 @@ EOF
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import DadJoke from './common/components/DadJoke';
 import HelloBar from './routes/hello-bar/pages/HelloBar';
 import HelloFoo from './routes/hello-foo/pages/HelloFoo';
-import Joke from './common/components/Joke';
 import HelloWorld from './routes/hello-world/pages/HelloWorld';
 import './common/styles/index.scss';
 import api from './common/services/liferay/api';
@@ -310,13 +305,14 @@ const App = ({ oAuth2Client, route }) => {
 	return (
 		<div>
 			<HelloWorld />
+
 			{Liferay.ThemeDisplay.isSignedIn() &&
 				<div>
-					<Joke oAuth2Client={oAuth2Client} />
+					<DadJoke oAuth2Client={oAuth2Client} />
 				</div>
 			}
 		</div>
-  );
+	);
 };
 
 class WebComponent extends HTMLElement {
@@ -331,16 +327,18 @@ class WebComponent extends HTMLElement {
 			<App oAuth2Client={this.oAuth2Client} route={this.getAttribute("route")} />,
 			this
 		);
+
 		if (Liferay.ThemeDisplay.isSignedIn()) {
 			api(
 				'o/headless-admin-user/v1.0/my-user-account'
 			).then(
-				res => res.json()
-			).then(res => {
-				let nameEls = document.getElementsByClassName('hello-world-name');
-				if (nameEls.length > 0){
-					if (res.givenName) {
-						nameEls[0].innerHTML = res.givenName;
+				response => response.json()
+			).then(response => {
+				let nameElements = document.getElementsByClassName('hello-world-name');
+
+				if (nameElements.length > 0){
+					if (response.givenName) {
+						nameElements[0].innerHTML = response.givenName;
 					}
 				}
 			});
@@ -348,7 +346,7 @@ class WebComponent extends HTMLElement {
 	}
 }
 
-const ELEMENT_ID = 'fox-remote-app';
+const ELEMENT_ID = '${CUSTOM_ELEMENT_NAME}';
 
 if (!customElements.get(ELEMENT_ID)) {
 	customElements.define(ELEMENT_ID, WebComponent);

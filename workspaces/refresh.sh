@@ -67,12 +67,12 @@ function refresh_sample_default_workspace {
 
 	${BLADE_PATH} init --liferay-version dxp-7.4-u54
 
-	echo -e "\n**/dist\n**/node_modules_cache\n.DS_Store" >> .gitignore
+	echo -en "\n**/dist\n**/node_modules_cache\n.DS_Store" >> .gitignore
 
-	echo -e "\n\nfeature.flag.LPS-153457=true" >> configs/local/portal-ext.properties
+	echo -en "\n\nfeature.flag.LPS-153457=true" >> configs/local/portal-ext.properties
 
-	#echo -e "\nliferay.workspace.docker.image.liferay=liferay/dxp:7.4.13-u54-d5.0.5-20221208173455" >> gradle.properties
-	echo -e "\nliferay.workspace.node.package.manager=yarn" >> gradle.properties
+	#echo -en "\nliferay.workspace.docker.image.liferay=liferay/dxp:7.4.13-u54-d5.0.5-20221208173455" >> gradle.properties
+	echo -en "\nliferay.workspace.node.package.manager=yarn" >> gradle.properties
 
 	#
 	# https://stackoverflow.com/questions/1654021/how-can-i-delete-a-newline-if-it-is-the-last-character-in-a-file
@@ -114,45 +114,41 @@ function refresh_sample_minimal_workspace {
 
 	../tools/create_remote_app.sh fox-remote-app react
 
-	#
-	# fox-remote-app/src/common/components/Joke.js
-	#
-
 	mkdir -p fox-remote-app/src/common/components
 
-	cat <<EOF > fox-remote-app/src/common/components/Joke.js
+	cat <<EOF > fox-remote-app/src/common/components/DadJoke.js
 import React from 'react';
 
-class Joke extends React.Component {
+class DadJoke extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.oAuth2Client = props.oAuth2Client;
-		this.state = {
-			joke: ""
-		};
+		this.state = "";
 	}
 
 	componentDidMount() {
-		this._jokeRequest = this.oAuth2Client.fetch(
-			'/dadjoke'
-		).then(res => res.text()
+		this._request = this.oAuth2Client.fetch(
+			'/dad-joke'
+		).then(response => response.text()
 		).then(text => {
-			this._jokeRequest = null;
-			this.setState({joke: text});
+			this._request = null;
+			this.setState(text);
 		});
 	}
 
 	componentWillUnmount() {
-		if (this._jokeRequest) {
-			this._jokeRequest.cancel();
+		if (this._request) {
+			this._request.cancel();
 		}
 	}
 
 	render() {
-		if (this.state.joke === null) {
+		if (this.state === null) {
 			return <div>Loading...</div>
-		} else {
-			return <div>{this.state.joke}</div>
+		}
+		else {
+			return <div>{this.state}</div>
 		}
 	}
 }
