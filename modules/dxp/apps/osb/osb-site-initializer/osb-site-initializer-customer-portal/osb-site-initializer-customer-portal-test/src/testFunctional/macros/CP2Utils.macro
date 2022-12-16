@@ -267,11 +267,11 @@ definition {
 	macro unassignUserRole{
 		Account.openAccountsAdmin();
 
-			CustomerPortal.accountTableProject(title = "${testAccount}");
+		CustomerPortal.accountTableProject(title = "${testAccount}");
 
-			Account.unassignUserRole(
-				accountRoleTitle = "${accountRoleTitle}",
-				accountUserName = "${accountUserName}");
+		Account.unassignUserRole(
+			accountRoleTitle = "${accountRoleTitle}",
+			accountUserName = "${accountUserName}");
 	}
 
 	macro onlySeeExportAllKeys{
