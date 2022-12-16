@@ -91,11 +91,9 @@ const TestflowOutlet = () => {
 		(response) => testrayTaskCaseTypesImpl.transformDataFromList(response)
 	);
 
-	const {
-		data: testrayTaskUser,
-		mutate: mutateSubtask,
-		revalidate: revalidateTaskUser,
-	} = useFetch<APIResponse<TestrayTaskUser>>(
+	const {data: testrayTaskUser, revalidate: revalidateTaskUser} = useFetch<
+		APIResponse<TestrayTaskUser>
+	>(
 		`${testrayTaskImpl.getNestedObject(
 			'taskToTasksUsers',
 			Number(taskId)
@@ -135,7 +133,6 @@ const TestflowOutlet = () => {
 					testrayTaskUser: testrayTaskUser?.items ?? [],
 				},
 				mutate: {
-					mutateSubtask,
 					mutateTask,
 				},
 				revalidate: {

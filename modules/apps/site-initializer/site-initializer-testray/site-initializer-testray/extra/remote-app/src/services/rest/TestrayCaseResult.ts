@@ -105,13 +105,13 @@ class TestrayCaseResultRest extends Rest<CaseResultForm, TestrayCaseResult> {
 	}
 
 	public assignTo(caseResult: TestrayCaseResult, userId: number) {
-		const dueStatusValidation =
+		const dueStatus =
 			userId === Number(Liferay.ThemeDisplay.getUserId())
 				? CaseResultStatuses.IN_PROGRESS
 				: caseResult.dueStatus.key;
 
 		return this.update(caseResult.id, {
-			dueStatus: dueStatusValidation,
+			dueStatus,
 			startDate: caseResult.startDate,
 			userId,
 		});

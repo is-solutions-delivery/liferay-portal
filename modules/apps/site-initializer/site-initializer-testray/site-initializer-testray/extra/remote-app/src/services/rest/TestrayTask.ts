@@ -116,15 +116,15 @@ class TestrayTaskImpl extends Rest<TaskForm, TestrayTask, NestedObjectOptions> {
 		return response;
 	}
 
-	public async abandon(task: TestrayTask) {
-		return await this.update(task.id, {
+	public abandon(task: TestrayTask) {
+		return this.update(task.id, {
 			dueStatus: TaskStatuses.ABANDONED,
 			name: task.name,
 		});
 	}
 
-	public async complete(task: TestrayTask) {
-		return await this.update(task.id, {
+	public complete(task: TestrayTask) {
+		return this.update(task.id, {
 			dueStatus: TaskStatuses.COMPLETE,
 			name: task.name,
 		});
