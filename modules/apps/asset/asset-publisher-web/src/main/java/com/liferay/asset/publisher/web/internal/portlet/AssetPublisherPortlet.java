@@ -53,6 +53,7 @@ import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
@@ -381,6 +382,18 @@ public class AssetPublisherPortlet extends MVCPortlet {
 			String rootPortletId = PortletIdCodec.decodePortletName(
 				portal.getPortletId(renderRequest));
 
+			PortletPreferences portletPreferences =
+				renderRequest.getPreferences();
+
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+			if (portletDisplay != null) {
+				portletPreferences = portletDisplay.getPortletSetup();
+			}
+
 			AssetPublisherDisplayContext assetPublisherDisplayContext =
 				new AssetPublisherDisplayContext(
 					assetEntryActionRegistry, assetHelper,
@@ -390,8 +403,8 @@ public class AssetPublisherPortlet extends MVCPortlet {
 						getAssetPublisherCustomizer(rootPortletId),
 					assetPublisherHelper, assetPublisherWebConfiguration,
 					assetPublisherWebHelper, infoItemServiceRegistry,
-					itemSelector, renderRequest, portal, renderResponse,
-					renderRequest.getPreferences(), requestContextMapper,
+					itemSelector, renderRequest, renderResponse,
+					portletPreferences, requestContextMapper,
 					segmentsEntryRetriever);
 
 			renderRequest.setAttribute(
