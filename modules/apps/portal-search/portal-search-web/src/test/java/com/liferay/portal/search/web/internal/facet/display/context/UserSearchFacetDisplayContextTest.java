@@ -16,7 +16,6 @@ package com.liferay.portal.search.web.internal.facet.display.context;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
@@ -66,7 +65,7 @@ public class UserSearchFacetDisplayContextTest {
 		String paramValue = "";
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(paramValue);
+			_createDisplayContext(paramValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
 			userSearchFacetDisplayContext.getBucketDisplayContexts();
@@ -87,7 +86,7 @@ public class UserSearchFacetDisplayContextTest {
 		String paramValue = userName;
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(paramValue);
+			_createDisplayContext(paramValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
 			userSearchFacetDisplayContext.getBucketDisplayContexts();
@@ -115,12 +114,12 @@ public class UserSearchFacetDisplayContextTest {
 
 		int count = RandomTestUtil.randomInt();
 
-		setUpOneTermCollector(userName, count);
+		_setUpOneTermCollector(userName, count);
 
 		String paramValue = "";
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(paramValue);
+			_createDisplayContext(paramValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
 			userSearchFacetDisplayContext.getBucketDisplayContexts();
@@ -148,12 +147,12 @@ public class UserSearchFacetDisplayContextTest {
 
 		int count = RandomTestUtil.randomInt();
 
-		setUpOneTermCollector(userName, count);
+		_setUpOneTermCollector(userName, count);
 
 		String paramValue = userName;
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(paramValue);
+			_createDisplayContext(paramValue);
 
 		List<BucketDisplayContext> bucketDisplayContexts =
 			userSearchFacetDisplayContext.getBucketDisplayContexts();
@@ -183,7 +182,7 @@ public class UserSearchFacetDisplayContextTest {
 			_getTermCollectors(userNames, new int[] {6, 5, 4, 3}));
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(StringPool.BLANK, "count:asc");
+			_createDisplayContext(StringPool.BLANK, "count:asc");
 
 		String nameFrequencyString = _buildNameFrequencyString(
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
@@ -200,7 +199,7 @@ public class UserSearchFacetDisplayContextTest {
 			_getTermCollectors(userNames, new int[] {3, 4, 5, 6}));
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(StringPool.BLANK, "count:desc");
+			_createDisplayContext(StringPool.BLANK, "count:desc");
 
 		String nameFrequencyString = _buildNameFrequencyString(
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
@@ -216,7 +215,7 @@ public class UserSearchFacetDisplayContextTest {
 		_setUpMultipleTermCollectors(_getTermCollectors(userNames));
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(StringPool.BLANK, "key:asc");
+			_createDisplayContext(StringPool.BLANK, "key:asc");
 
 		String nameFrequencyString = _buildNameFrequencyString(
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
@@ -232,104 +231,13 @@ public class UserSearchFacetDisplayContextTest {
 		_setUpMultipleTermCollectors(_getTermCollectors(userNames));
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
-			createDisplayContext(StringPool.BLANK, "key:desc");
+			_createDisplayContext(StringPool.BLANK, "key:desc");
 
 		String nameFrequencyString = _buildNameFrequencyString(
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
 
 		Assert.assertEquals(
 			"delta:2|charlie:4|bravo:1|alpha:3", nameFrequencyString);
-	}
-
-	protected UserSearchFacetDisplayContext createDisplayContext(
-			String paramValue)
-		throws ConfigurationException {
-
-		return createDisplayContext(paramValue, "count:desc");
-	}
-
-	protected UserSearchFacetDisplayContext createDisplayContext(
-			String paramValue, String order)
-		throws ConfigurationException {
-
-		UserSearchFacetDisplayContextBuilder
-			userSearchFacetDisplayContextBuilder =
-				new UserSearchFacetDisplayContextBuilder(getRenderRequest());
-
-		userSearchFacetDisplayContextBuilder.setFacet(_facet);
-		userSearchFacetDisplayContextBuilder.setFrequenciesVisible(true);
-		userSearchFacetDisplayContextBuilder.setFrequencyThreshold(0);
-		userSearchFacetDisplayContextBuilder.setMaxTerms(0);
-		userSearchFacetDisplayContextBuilder.setOrder(order);
-		userSearchFacetDisplayContextBuilder.setParamValue(paramValue);
-
-		return userSearchFacetDisplayContextBuilder.build();
-	}
-
-	protected TermCollector createTermCollector(String userName, int count) {
-		TermCollector termCollector = Mockito.mock(TermCollector.class);
-
-		Mockito.doReturn(
-			count
-		).when(
-			termCollector
-		).getFrequency();
-
-		Mockito.doReturn(
-			userName
-		).when(
-			termCollector
-		).getTerm();
-
-		return termCollector;
-	}
-
-	protected PortletDisplay getPortletDisplay() throws ConfigurationException {
-		PortletDisplay portletDisplay = Mockito.mock(PortletDisplay.class);
-
-		Mockito.doReturn(
-			Mockito.mock(UserFacetPortletInstanceConfiguration.class)
-		).when(
-			portletDisplay
-		).getPortletInstanceConfiguration(
-			Mockito.any()
-		);
-
-		return portletDisplay;
-	}
-
-	protected RenderRequest getRenderRequest() throws ConfigurationException {
-		RenderRequest renderRequest = Mockito.mock(RenderRequest.class);
-
-		Mockito.doReturn(
-			getThemeDisplay()
-		).when(
-			renderRequest
-		).getAttribute(
-			WebKeys.THEME_DISPLAY
-		);
-
-		return renderRequest;
-	}
-
-	protected ThemeDisplay getThemeDisplay() throws ConfigurationException {
-		ThemeDisplay themeDisplay = Mockito.mock(ThemeDisplay.class);
-
-		Mockito.doReturn(
-			getPortletDisplay()
-		).when(
-			themeDisplay
-		).getPortletDisplay();
-
-		return themeDisplay;
-	}
-
-	protected void setUpOneTermCollector(String userName, int count) {
-		Mockito.doReturn(
-			Collections.singletonList(createTermCollector(userName, count))
-		).when(
-			_facetCollector
-		).getTermCollectors();
 	}
 
 	private String _buildNameFrequencyString(
@@ -352,6 +260,77 @@ public class UserSearchFacetDisplayContextTest {
 		return sb.toString();
 	}
 
+	private UserSearchFacetDisplayContext _createDisplayContext(
+			String paramValue)
+		throws Exception {
+
+		return _createDisplayContext(paramValue, "count:desc");
+	}
+
+	private UserSearchFacetDisplayContext _createDisplayContext(
+			String paramValue, String order)
+		throws Exception {
+
+		UserSearchFacetDisplayContextBuilder
+			userSearchFacetDisplayContextBuilder =
+				new UserSearchFacetDisplayContextBuilder(_getRenderRequest());
+
+		userSearchFacetDisplayContextBuilder.setFacet(_facet);
+		userSearchFacetDisplayContextBuilder.setFrequenciesVisible(true);
+		userSearchFacetDisplayContextBuilder.setFrequencyThreshold(0);
+		userSearchFacetDisplayContextBuilder.setMaxTerms(0);
+		userSearchFacetDisplayContextBuilder.setOrder(order);
+		userSearchFacetDisplayContextBuilder.setParamValue(paramValue);
+
+		return userSearchFacetDisplayContextBuilder.build();
+	}
+
+	private TermCollector _createTermCollector(String userName, int count) {
+		TermCollector termCollector = Mockito.mock(TermCollector.class);
+
+		Mockito.doReturn(
+			count
+		).when(
+			termCollector
+		).getFrequency();
+
+		Mockito.doReturn(
+			userName
+		).when(
+			termCollector
+		).getTerm();
+
+		return termCollector;
+	}
+
+	private PortletDisplay _getPortletDisplay() throws Exception {
+		PortletDisplay portletDisplay = Mockito.mock(PortletDisplay.class);
+
+		Mockito.doReturn(
+			Mockito.mock(UserFacetPortletInstanceConfiguration.class)
+		).when(
+			portletDisplay
+		).getPortletInstanceConfiguration(
+			Mockito.any()
+		);
+
+		return portletDisplay;
+	}
+
+	private RenderRequest _getRenderRequest() throws Exception {
+		RenderRequest renderRequest = Mockito.mock(RenderRequest.class);
+
+		Mockito.doReturn(
+			_getThemeDisplay()
+		).when(
+			renderRequest
+		).getAttribute(
+			WebKeys.THEME_DISPLAY
+		);
+
+		return renderRequest;
+	}
+
 	private List<TermCollector> _getTermCollectors(String... userNames) {
 		int[] frequencies = new int[userNames.length];
 
@@ -369,10 +348,22 @@ public class UserSearchFacetDisplayContextTest {
 
 		for (int i = 0; i < userNames.length; i++) {
 			termCollectors.add(
-				createTermCollector(userNames[i], frequencies[i]));
+				_createTermCollector(userNames[i], frequencies[i]));
 		}
 
 		return termCollectors;
+	}
+
+	private ThemeDisplay _getThemeDisplay() throws Exception {
+		ThemeDisplay themeDisplay = Mockito.mock(ThemeDisplay.class);
+
+		Mockito.doReturn(
+			_getPortletDisplay()
+		).when(
+			themeDisplay
+		).getPortletDisplay();
+
+		return themeDisplay;
 	}
 
 	private void _setUpMultipleTermCollectors(
@@ -380,6 +371,14 @@ public class UserSearchFacetDisplayContextTest {
 
 		Mockito.doReturn(
 			termCollectors
+		).when(
+			_facetCollector
+		).getTermCollectors();
+	}
+
+	private void _setUpOneTermCollector(String userName, int count) {
+		Mockito.doReturn(
+			Collections.singletonList(_createTermCollector(userName, count))
 		).when(
 			_facetCollector
 		).getTermCollectors();
