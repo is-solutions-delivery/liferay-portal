@@ -399,7 +399,7 @@ public class PredicateExpressionVisitorImpl
 		Object value) {
 
 		if (Objects.equals(BinaryExpression.Operation.EQ, operation)) {
-			return column.eq(value);
+			return column.eq(_replaceToSingleQuote((String)value));
 		}
 		else if (Objects.equals(BinaryExpression.Operation.GE, operation)) {
 			return column.gte(value);
@@ -577,6 +577,10 @@ public class PredicateExpressionVisitorImpl
 
 			return right;
 		}
+	}
+
+	private String _replaceToSingleQuote(String string) {
+		return StringUtil.replace(string, "''", "'");
 	}
 
 	private Predicate _startsWith(Object fieldName, Object fieldValue) {
