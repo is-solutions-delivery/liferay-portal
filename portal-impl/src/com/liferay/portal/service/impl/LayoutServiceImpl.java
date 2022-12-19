@@ -1505,6 +1505,15 @@ public class LayoutServiceImpl extends LayoutServiceBaseImpl {
 		return filteredLayouts;
 	}
 
+	protected List<Layout> filterLayouts(
+			List<Layout> layouts, int start, int end)
+		throws PortalException {
+
+		List<Layout> filteredLayouts = filterLayouts(layouts);
+
+		return filteredLayouts.subList(start, end);
+	}
+
 	protected List<String> getPortletIds(Layout layout, String typeSettings) {
 		if (Validator.isBlank(typeSettings)) {
 			return Collections.emptyList();
