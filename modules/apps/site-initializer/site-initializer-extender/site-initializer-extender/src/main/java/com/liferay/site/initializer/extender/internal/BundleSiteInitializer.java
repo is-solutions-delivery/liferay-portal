@@ -4516,8 +4516,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 					_objectDefinitionLocalService.fetchObjectDefinition(
 						serviceContext.getCompanyId(), "C_" + entry.getKey());
 
-			long accountEntryRestrictedObjectFieldId = 0;
-
 			ObjectDefinition accountEntryRestrictedObjectField =
 				entry.getValue();
 
@@ -4528,11 +4526,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 						accountEntryRestrictedObjectField.
 							getAccountEntryRestrictedObjectFieldName());
 
-			if (accountEntryRestrictedServiceBuilderObjectField != null) {
-				accountEntryRestrictedObjectFieldId =
-					accountEntryRestrictedServiceBuilderObjectField.
-						getObjectFieldId();
+			if (accountEntryRestrictedServiceBuilderObjectField == null) {
+				return;
 			}
+
+			Long accountEntryRestrictedObjectFieldId =
+				accountEntryRestrictedServiceBuilderObjectField.
+					getObjectFieldId();
 
 			_objectDefinitionLocalService.updateCustomObjectDefinition(
 				serviceBuilderObjectDefinition.getExternalReferenceCode(),
