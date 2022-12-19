@@ -99,6 +99,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.taglib.servlet.PipingServletResponseFactory;
@@ -361,7 +362,8 @@ public class ObjectEntryDisplayContext {
 				ObjectDefinitionConstants.SCOPE_COMPANY) &&
 			  StringUtil.equals(
 				  objectDefinition2.getScope(),
-				  ObjectDefinitionConstants.SCOPE_SITE))) {
+				  ObjectDefinitionConstants.SCOPE_SITE)) &&
+			GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-165850"))) {
 
 			ServiceContext serviceContext =
 				ServiceContextThreadLocal.getServiceContext();
