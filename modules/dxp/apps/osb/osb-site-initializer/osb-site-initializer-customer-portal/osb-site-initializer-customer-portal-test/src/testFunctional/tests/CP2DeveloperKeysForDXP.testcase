@@ -198,7 +198,7 @@ definition {
 		}
 
 		task ("When the user select a keys to deactivate") {
-			CP2Utils.searchKeys(searchinput = "Liferay Test");
+			CP2Utils.searchKeys(searchInput = "Liferay Test");
 
 			CP2ActivationKeys.selectKeyCheckboxByEnvironmentName(environmentName = "Liferay Test");
 
@@ -274,7 +274,7 @@ definition {
 		}
 
 		task ("When the user select a keys to deactivate") {
-			CP2Utils.searchKeys(searchinput = "Liferay Test");
+			CP2Utils.searchKeys(searchInput = "Liferay Test");
 
 			CP2ActivationKeys.selectKeyCheckboxByEnvironmentName(environmentName = "Liferay Test");
 
