@@ -381,13 +381,10 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 
 		defaultFragmentEntryProcessorContext.setContextInfoItemReference(
 			fragmentRendererContext.getContextInfoItemReference());
-
 		defaultFragmentEntryProcessorContext.setFragmentElementId(
 			fragmentRendererContext.getFragmentElementId());
-
 		defaultFragmentEntryProcessorContext.setInfoForm(
 			fragmentRendererContext.getInfoForm());
-
 		defaultFragmentEntryProcessorContext.setPreviewClassNameId(
 			fragmentRendererContext.getPreviewClassNameId());
 		defaultFragmentEntryProcessorContext.setPreviewClassPK(
