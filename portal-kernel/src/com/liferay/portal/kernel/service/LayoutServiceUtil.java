@@ -481,6 +481,15 @@ public class LayoutServiceUtil {
 	}
 
 	public static List<Layout> getLayouts(
+			long groupId, boolean privateLayout, long parentLayoutId, int start,
+			int end)
+		throws PortalException {
+
+		return getService().getLayouts(
+			groupId, privateLayout, parentLayoutId, start, end);
+	}
+
+	public static List<Layout> getLayouts(
 			long groupId, boolean privateLayout, String type)
 		throws PortalException {
 

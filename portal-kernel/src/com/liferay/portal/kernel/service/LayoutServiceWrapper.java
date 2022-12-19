@@ -498,6 +498,16 @@ public class LayoutServiceWrapper
 
 	@Override
 	public java.util.List<Layout> getLayouts(
+			long groupId, boolean privateLayout, long parentLayoutId, int start,
+			int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _layoutService.getLayouts(
+			groupId, privateLayout, parentLayoutId, start, end);
+	}
+
+	@Override
+	public java.util.List<Layout> getLayouts(
 			long groupId, boolean privateLayout, String type)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
