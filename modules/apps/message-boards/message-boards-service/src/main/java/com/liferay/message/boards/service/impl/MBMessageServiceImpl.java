@@ -709,7 +709,6 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 			long userId, long groupId, int start, int end)
 		throws PortalException {
 
-
 		_userPermission.check(getPermissionChecker(), userId, ActionKeys.VIEW);
 
 		return mbMessageLocalService.getSiteUserMessageBoardMessagesActivity(
@@ -1092,6 +1091,7 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 
 	@Reference
 	private SyndModelFactory _syndModelFactory;
+
 	@Reference
 	private UserPermission _userPermission;
 
