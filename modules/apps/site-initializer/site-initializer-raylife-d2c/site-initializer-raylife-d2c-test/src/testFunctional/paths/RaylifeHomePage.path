@@ -12,7 +12,7 @@
 <tbody>
 <tr>
 	<td>HOME_PAGE_ZIP_CODE</td>
-	<td>//input[@id='zip']</td>
+	<td>//*[@id='zip']</td>
 	<td></td>
 </tr>
 <tr>
