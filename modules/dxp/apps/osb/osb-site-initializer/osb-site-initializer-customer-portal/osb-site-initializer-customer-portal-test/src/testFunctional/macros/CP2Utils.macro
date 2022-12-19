@@ -219,7 +219,7 @@ definition {
 
 		Type(
 			locator1 = "CP2NavigationMenu#SEARCH_FILTER",
-			value1 = "${searchinput}");
+			value1 = "${searchInput}");
 
 		KeyPress(
 			locator1 = "CP2NavigationMenu#SEARCH_FILTER",
