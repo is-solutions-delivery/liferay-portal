@@ -449,13 +449,12 @@ public class DispatchTriggerLocalServiceTest {
 		Set<String> dispatchTaskExecutorTypes =
 			_dispatchTaskExecutorRegistry.getDispatchTaskExecutorTypes();
 
-		int idx = 0;
-
-		int randomTypeIdx = RandomTestUtil.randomInt(
+		int index = 0;
+		int randomIndex = RandomTestUtil.randomInt(
 			0, dispatchTaskExecutorTypes.size());
 
 		for (String dispatchTaskExecutorType : dispatchTaskExecutorTypes) {
-			if (idx++ == randomTypeIdx) {
+			if (index++ == randomIndex) {
 				return dispatchTaskExecutorType;
 			}
 		}
