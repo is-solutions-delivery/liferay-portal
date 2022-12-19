@@ -118,29 +118,28 @@ public class TaxonomyVocabularyResourceImpl
 			Long siteId, DocumentBulkSelection documentBulkSelection)
 		throws Exception {
 
-		List<AssetVocabulary> assetVocabularies = _getAssetVocabularies(siteId);
-
-		Set<AssetCategory> assetCategories1 = _getAssetCategories(
-			documentBulkSelection,
-			PermissionCheckerFactoryUtil.create(contextUser));
-
-		Map<Long, List<AssetCategory>> idAssetCategoriesMap = new HashMap<>();
-
-		for (AssetCategory assetCategory : assetCategories1) {
-			List<AssetCategory> assetCategories2 =
-				idAssetCategoriesMap.computeIfAbsent(
-					assetCategory.getVocabularyId(), key -> new ArrayList<>());
-
-			assetCategories2.add(assetCategory);
-		}
-
 		Map<AssetVocabulary, List<AssetCategory>> assetCategoriesMap =
 			new HashMap<>();
 
-		for (AssetVocabulary assetVocabulary : assetVocabularies) {
+		Map<Long, List<AssetCategory>> assetVocabularyIdAssetCategoriesMap =
+			new HashMap<>();
+
+		for (AssetCategory assetCategory :
+				_getAssetCategories(
+					documentBulkSelection,
+					PermissionCheckerFactoryUtil.create(contextUser))) {
+
+			List<AssetCategory> assetCategories =
+				assetVocabularyIdAssetCategoriesMap.computeIfAbsent(
+					assetCategory.getVocabularyId(), key -> new ArrayList<>());
+
+			assetCategories.add(assetCategory);
+		}
+
+		for (AssetVocabulary assetVocabulary : _getAssetVocabularies(siteId)) {
 			assetCategoriesMap.put(
 				assetVocabulary,
-				idAssetCategoriesMap.computeIfAbsent(
+				assetVocabularyIdAssetCategoriesMap.computeIfAbsent(
 					assetVocabulary.getVocabularyId(),
 					key -> new ArrayList<>()));
 		}
@@ -151,25 +150,25 @@ public class TaxonomyVocabularyResourceImpl
 	private List<AssetVocabulary> _getAssetVocabularies(Long siteId)
 		throws Exception {
 
-		List<AssetVocabulary> assetVocabularies =
-			_assetVocabularyLocalService.getGroupVocabularies(
-				_portal.getCurrentAndAncestorSiteGroupIds(siteId));
+		List<AssetVocabulary> assetVocabularies = new ArrayList<>();
 
-		List<AssetVocabulary> filteredAssetVocabularies = new ArrayList<>();
+		for (AssetVocabulary assetVocabulary :
+				_assetVocabularyLocalService.getGroupVocabularies(
+					_portal.getCurrentAndAncestorSiteGroupIds(siteId))) {
 
-		for (AssetVocabulary assetVocabulary : assetVocabularies) {
-			if (assetVocabulary.isAssociatedToClassNameId(_getClassNameId())) {
-				int count =
-					_assetCategoryLocalService.getVocabularyCategoriesCount(
-						assetVocabulary.getVocabularyId());
+			if (!assetVocabulary.isAssociatedToClassNameId(_getClassNameId())) {
+				continue;
+			}
 
-				if (count > 0) {
-					filteredAssetVocabularies.add(assetVocabulary);
-				}
+			int count = _assetCategoryLocalService.getVocabularyCategoriesCount(
+				assetVocabulary.getVocabularyId());
+
+			if (count > 0) {
+				assetVocabularies.add(assetVocabulary);
 			}
 		}
 
-		return filteredAssetVocabularies;
+		return assetVocabularies;
 	}
 
 	private long _getClassNameId() {
