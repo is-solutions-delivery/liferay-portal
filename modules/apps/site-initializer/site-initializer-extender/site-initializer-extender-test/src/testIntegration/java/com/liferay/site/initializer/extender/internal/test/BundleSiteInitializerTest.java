@@ -1831,6 +1831,7 @@ public class BundleSiteInitializerTest {
 				_objectDefinitionLocalService.deleteObjectDefinition(
 					objectDefinition3.getObjectDefinitionId());
 			}
+
 			//FileUtil.deltree(unzipFolder);
 		}
 	}
