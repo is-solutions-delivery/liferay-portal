@@ -116,8 +116,8 @@ public class CustomUserAttributesAssetEntryQueryProcessor
 						assetCategory.getVocabularyId());
 
 				if (Objects.equals(
-						customUserAttributeName,
-						assetVocabulary.getTitleCurrentValue())) {
+						StringUtil.toLowerCase(customUserAttributeName),
+						StringUtil.toLowerCase(assetVocabulary.getName()))) {
 
 					allCategoryIdsList.add(assetCategory.getCategoryId());
 				}
