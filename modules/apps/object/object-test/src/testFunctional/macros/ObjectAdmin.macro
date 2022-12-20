@@ -1164,6 +1164,12 @@ definition {
 		Click(locator1 = "ObjectAdmin#OBJECT_STATE_MANAGER_TAB");
 	}
 
+	macro gotoTab {
+		Click(
+			key_tabName = "${tabName}",
+			locator1 = "ObjectAdmin#OBJECT_ANY_TAB");
+	}
+
 	macro goToValidationsTab {
 		Click(locator1 = "ObjectAdmin#OBJECT_VALIDATIONS_TAB");
 	}
