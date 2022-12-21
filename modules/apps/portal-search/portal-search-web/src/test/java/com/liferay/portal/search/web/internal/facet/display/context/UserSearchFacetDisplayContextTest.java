@@ -176,10 +176,10 @@ public class UserSearchFacetDisplayContextTest {
 
 	@Test
 	public void testOrderByTermFrequencyAscending() throws Exception {
-		String[] userNames = {"alpha", "bravo", "delta", "charlie"};
+		String[] userNames = {"charlie", "delta", "bravo", "alpha"};
 
 		_setUpMultipleTermCollectors(
-			_getTermCollectors(userNames, new int[] {6, 5, 4, 3}));
+			_getTermCollectors(userNames, new int[] {6, 5, 5, 4}));
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			_createDisplayContext(StringPool.BLANK, "count:asc");
@@ -188,15 +188,15 @@ public class UserSearchFacetDisplayContextTest {
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
 
 		Assert.assertEquals(
-			"charlie:3|delta:4|bravo:5|alpha:6", nameFrequencyString);
+			"alpha:4|bravo:5|delta:5|charlie:6", nameFrequencyString);
 	}
 
 	@Test
 	public void testOrderByTermFrequencyDescending() throws Exception {
-		String[] userNames = {"alpha", "charlie", "bravo", "delta"};
+		String[] userNames = {"alpha", "delta", "bravo", "charlie"};
 
 		_setUpMultipleTermCollectors(
-			_getTermCollectors(userNames, new int[] {3, 4, 5, 6}));
+			_getTermCollectors(userNames, new int[] {4, 5, 5, 6}));
 
 		UserSearchFacetDisplayContext userSearchFacetDisplayContext =
 			_createDisplayContext(StringPool.BLANK, "count:desc");
@@ -205,12 +205,12 @@ public class UserSearchFacetDisplayContextTest {
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
 
 		Assert.assertEquals(
-			"delta:6|bravo:5|charlie:4|alpha:3", nameFrequencyString);
+			"charlie:6|bravo:5|delta:5|alpha:4", nameFrequencyString);
 	}
 
 	@Test
 	public void testOrderByTermValueAscending() throws Exception {
-		String[] userNames = {"bravo", "delta", "alpha", "charlie"};
+		String[] userNames = {"bravo", "alpha", "bravo", "charlie"};
 
 		_setUpMultipleTermCollectors(_getTermCollectors(userNames));
 
@@ -221,12 +221,12 @@ public class UserSearchFacetDisplayContextTest {
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
 
 		Assert.assertEquals(
-			"alpha:3|bravo:1|charlie:4|delta:2", nameFrequencyString);
+			"alpha:2|bravo:3|bravo:1|charlie:4", nameFrequencyString);
 	}
 
 	@Test
 	public void testOrderByTermValueDescending() throws Exception {
-		String[] userNames = {"bravo", "delta", "alpha", "charlie"};
+		String[] userNames = {"bravo", "alpha", "bravo", "charlie"};
 
 		_setUpMultipleTermCollectors(_getTermCollectors(userNames));
 
@@ -237,7 +237,7 @@ public class UserSearchFacetDisplayContextTest {
 			userSearchFacetDisplayContext.getBucketDisplayContexts());
 
 		Assert.assertEquals(
-			"delta:2|charlie:4|bravo:1|alpha:3", nameFrequencyString);
+			"charlie:4|bravo:3|bravo:1|alpha:2", nameFrequencyString);
 	}
 
 	private String _buildNameFrequencyString(
