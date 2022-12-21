@@ -18,7 +18,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import reactor.core.publisher.Mono;
 
 /**
  * @author Raymond Augé
@@ -109,9 +114,48 @@ public class EasyRestController {
 		}
 
 		try {
-			_easyWorkflowHelper.transitionTheTask(
-				json, jwt.getTokenValue(),
-				(workflowDetails, transitionNames) -> "approve");
+			WebClient.Builder builder = WebClient.builder();
+
+			WebClient webClient = builder.baseUrl(
+				_liferayPortalURL
+			).defaultHeader(
+				HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE
+			).defaultHeader(
+				HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE
+			).build();
+
+			JSONObject jsonObject = new JSONObject(json);
+
+			webClient.post(
+			).uri(
+				jsonObject.getString("transitionURL")
+			).bodyValue(
+				"{transitionName: \"approve\"}"
+			).header(
+				HttpHeaders.AUTHORIZATION, "Bearer " + jwt.getTokenValue()
+			).exchangeToMono(
+				clientResponse -> {
+					HttpStatus httpStatus = clientResponse.statusCode();
+
+					if (httpStatus.is2xxSuccessful()) {
+						return clientResponse.bodyToMono(String.class);
+					}
+					else if (httpStatus.is4xxClientError()) {
+						return Mono.just(httpStatus.getReasonPhrase());
+					}
+
+					Mono<WebClientResponseException> mono =
+						clientResponse.createException();
+
+					return mono.flatMap(Mono::error);
+				}
+			).doOnNext(
+				output -> {
+					if (_log.isInfoEnabled()) {
+						_log.info("Output: " + output);
+					}
+				}
+			).subscribe();
 		}
 		catch (Exception exception) {
 			_log.error("JSON: " + json, exception);
@@ -124,7 +168,7 @@ public class EasyRestController {
 
 	private static final Log _log = LogFactory.getLog(EasyRestController.class);
 
-	@Autowired
-	private EasyWorkflowHelper _easyWorkflowHelper;
+	@Value("${liferay.portal.url}")
+	private String _liferayPortalURL;
 
 }
