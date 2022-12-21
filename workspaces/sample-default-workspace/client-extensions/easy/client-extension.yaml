@@ -1,9 +1,9 @@
 easy-oauth-application-user-agent:
     homePageURL: http://localhost:58081
     name: Easy OAuth Application User Agent
-    type: oAuthApplicationUserAgent
     scopes:
     - Liferay.Headless.Admin.Workflow.everything
+    type: oAuthApplicationUserAgent
 easy-object-action-1:
     name: Easy Object Action 1
     oAuth2ApplicationExternalReferenceCode: easy-oauth-application-user-agent
