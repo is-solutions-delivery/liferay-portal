@@ -138,9 +138,9 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 		).infoFieldSetEntry(
 			_getItemTypesInfoField()
 		).infoFieldSetEntry(
-			_getAssetCategoryRuleInfoField()
+			_getAssetCategoryRuleInfoFieldSetEntry()
 		).infoFieldSetEntry(
-			_getSpecificAssetCategoryIdInfoField()
+			_getSpecificAssetCategoryIdInfoFieldSetEntry()
 		).build();
 	}
 
@@ -154,7 +154,7 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 		return AssetCategory.class;
 	}
 
-	private InfoFieldSetEntry _getAssetCategoryRuleInfoField() {
+	private InfoFieldSetEntry _getAssetCategoryRuleInfoFieldSetEntry() {
 		return InfoField.builder(
 		).infoFieldType(
 			SelectInfoFieldType.INSTANCE
@@ -335,7 +335,7 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 			serviceContext.getScopeGroupId(), null, serviceContext.getUserId());
 	}
 
-	private InfoFieldSetEntry _getSpecificAssetCategoryIdInfoField() {
+	private InfoFieldSetEntry _getSpecificAssetCategoryIdInfoFieldSetEntry() {
 		return InfoField.builder(
 		).infoFieldType(
 			TextInfoFieldType.INSTANCE
