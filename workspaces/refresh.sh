@@ -34,15 +34,11 @@ function check_blade {
 	#jpm install -f https://repository-cdn.liferay.com/nexus/service/local/repositories/liferay-public-releases/content/com/liferay/blade/com.liferay.blade.cli/4.1.1/com.liferay.blade.cli-4.1.1.jar
 }
 
-function cleanup {
-	find . -name '*.bak' -exec rm {} +
-}
-
 function copy_template {
 	cp -R ../modules/apps/client-extension/client-extension-type-api/src/main/resources/com/liferay/client/extension/type/dependencies/templates/${1} "${2}"
 
-	find "${2}" -not -path '*/*\.ico' -type f -exec sed -i'.bak' "s/\${id}/$(basename ${2})/g" {} +
-	find "${2}" -not -path '*/*\.ico' -type f -exec sed -i'.bak' "s/\${name}/${3}/g" {} +
+	find "${2}" -not -path '*/*\.ico' -type f -exec sed -i "s/\${id}/$(basename ${2})/g" {} +
+	find "${2}" -not -path '*/*\.ico' -type f -exec sed -i "s/\${name}/${3}/g" {} +
 }
 
 function init_workspace {
@@ -87,7 +83,7 @@ function refresh_sample_default_workspace {
 
 	mv gradle.properties.tmp gradle.properties
 
-	sed -i'.bak' 's/name: "com.liferay.gradle.plugins.workspace", version: ".*"/name: "com.liferay.gradle.plugins.workspace", version: "4.1.2"/' settings.gradle
+	sed -i 's/name: "com.liferay.gradle.plugins.workspace", version: ".*"/name: "com.liferay.gradle.plugins.workspace", version: "4.1.2"/' settings.gradle
 
 	touch modules/.touch
 	touch themes/.touch
@@ -162,7 +158,7 @@ class DadJoke extends React.Component {
 export default DadJoke;
 EOF
 
-	sed -i'.bak' 's/react-scripts test/react-scripts test --passWithNoTests --watchAll=false/' fox-remote-app/package.json
+	sed -i 's/react-scripts test/react-scripts test --passWithNoTests --watchAll=false/' fox-remote-app/package.json
 
 	mv fox-remote-app sample-minimal-workspace/client-extensions
 
@@ -183,8 +179,6 @@ function main {
 	refresh_sample_minimal_workspace
 
 	refresh_liferay_learn_workspace
-
-	cleanup
 }
 
 main "${@}"
