@@ -403,7 +403,7 @@ public class AnalyticsSettingsManagerImpl implements AnalyticsSettingsManager {
 		AnalyticsSettingsManagerImpl.class);
 
 	private static final Map<String, String[]> _defaults = HashMapBuilder.put(
-		"syncedAccountFieldNames", FieldAccountConstants.FILED_ACCOUNT_DEFAULTS
+		"syncedAccountFieldNames", FieldAccountConstants.FIELD_ACCOUNT_DEFAULTS
 	).put(
 		"syncedCategoryFieldNames", FieldProductConstants.FIELD_CATEGORY_NAMES
 	).put(
