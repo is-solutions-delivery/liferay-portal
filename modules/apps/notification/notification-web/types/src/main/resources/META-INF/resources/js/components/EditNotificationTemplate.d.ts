@@ -15,18 +15,6 @@
 /// <reference types="react" />
 
 import './EditNotificationTemplate.scss';
-export declare type NotificationTemplateError = {
-	bcc?: string;
-	body?: string;
-	cc?: string;
-	description?: string;
-	from?: string;
-	fromName?: string;
-	name?: string;
-	subject?: string;
-	to?: string;
-	type?: string;
-};
 interface IProps {
 	backURL: string;
 	baseResourceURL: string;
