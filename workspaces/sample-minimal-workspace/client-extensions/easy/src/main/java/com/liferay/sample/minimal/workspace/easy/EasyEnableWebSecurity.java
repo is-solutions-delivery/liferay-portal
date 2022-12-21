@@ -93,26 +93,20 @@ public class EasyEnableWebSecurity {
 	}
 
 	@Bean
-	public JwtDecoder jwtDecoder(
-			@Value("${liferay.oauth.application.external.reference.code}")
-				String oAuthApplicationExternalReferenceCode,
-			@Value("${liferay.portal.url}") String portalURL)
-		throws Exception {
-
+	public JwtDecoder jwtDecoder() throws Exception {
 		DefaultJWTProcessor<SecurityContext> defaultJWTProcessor =
 			new DefaultJWTProcessor<>();
 
 		defaultJWTProcessor.setJWSKeySelector(
 			JWSAlgorithmFamilyJWSKeySelector.fromJWKSetURL(
-				new URL(portalURL + "/o/oauth2/jwks")));
+				new URL(_liferayPortalURL + "/o/oauth2/jwks")));
 		defaultJWTProcessor.setJWSTypeVerifier(
 			new DefaultJOSEObjectTypeVerifier<>(new JOSEObjectType("at+jwt")));
 
 		NimbusJwtDecoder nimbusJwtDecoder = new NimbusJwtDecoder(
 			defaultJWTProcessor);
 
-		String clientId = _getClientId(
-			oAuthApplicationExternalReferenceCode, portalURL);
+		String clientId = _getClientId();
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Using client ID " + clientId);
@@ -148,19 +142,16 @@ public class EasyEnableWebSecurity {
 		).build();
 	}
 
-	private String _getClientId(
-			String oAuthApplicationExternalReferenceCode, String portalURL)
-		throws Exception {
-
+	private String _getClientId() throws Exception {
 		while (true) {
 			try {
 				return WebClient.create(
-					portalURL + "/o/oauth2/application"
+					_liferayPortalURL + "/o/oauth2/application"
 				).get(
 				).uri(
 					uriBuilder -> uriBuilder.queryParam(
 						"externalReferenceCode",
-						oAuthApplicationExternalReferenceCode
+						_liferayOAuthApplicationExternalReferenceCode
 					).build()
 				).retrieve(
 				).bodyToMono(
@@ -184,6 +175,12 @@ public class EasyEnableWebSecurity {
 
 	@Value("${dxp.domains}")
 	private String _dxpDomains;
+
+	@Value("${liferay.oauth.application.external.reference.code}")
+	private String _liferayOAuthApplicationExternalReferenceCode;
+
+	@Value("${liferay.portal.url}")
+	private String _liferayPortalURL;
 
 	private static class ApplicationInfo {
 
