@@ -15,6 +15,7 @@
 /// <reference types="react" />
 
 import './EditNotificationTemplate.scss';
+declare type editorTypeOptions = 'freemarker' | 'richText';
 interface IProps {
 	backURL: string;
 	baseResourceURL: string;
@@ -24,6 +25,32 @@ interface IProps {
 	notificationTemplateType: string;
 	portletNamespace: string;
 }
+declare type TEmailRecipients = {
+	bcc: string;
+	cc: string;
+	from: string;
+	fromName: LocalizedValue<string>;
+	to: LocalizedValue<string>;
+};
+declare type TUserNotificationRecipients = {
+	[key in 'term' | 'userScreenName' | 'roleName']?: string;
+};
+export declare type TNotificationTemplate = {
+	attachmentObjectFieldIds: string[] | number[];
+	body: LocalizedValue<string>;
+	description: string;
+	editorType: editorTypeOptions;
+	name: string;
+	objectDefinitionExternalReferenceCode: string;
+	objectDefinitionId: number | null;
+	recipientType: string;
+	recipients:
+		| Partial<TEmailRecipients>[]
+		| Partial<TUserNotificationRecipients>[]
+		| [];
+	subject: LocalizedValue<string>;
+	type: string;
+};
 export default function EditNotificationTemplate({
 	backURL,
 	baseResourceURL,

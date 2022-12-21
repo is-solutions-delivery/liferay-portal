@@ -15,9 +15,10 @@
 /// <reference types="react" />
 
 import './Attachments.scss';
+import {TNotificationTemplate} from './EditNotificationTemplate';
 export declare function Attachments({setValues, values}: IProps): JSX.Element;
 interface IProps {
-	setValues: (values: Partial<NotificationTemplate>) => void;
-	values: Partial<NotificationTemplate>;
+	setValues: (values: Partial<TNotificationTemplate>) => void;
+	values: Partial<TNotificationTemplate>;
 }
 export {};

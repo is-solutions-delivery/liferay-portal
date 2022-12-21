@@ -22,14 +22,15 @@ import {createResourceURL, fetch} from 'frontend-js-web';
 import React, {useMemo, useState} from 'react';
 
 import {defaultLanguageId} from '../util/constants';
+import {TNotificationTemplate} from './EditNotificationTemplate';
 
 interface FreeMarkerTemplateEditorProps {
 	baseResourceURL: string;
 	objectDefinitions: ObjectDefinition[];
 	selectedLocale: Liferay.Language.Locale;
 	setSelectedLocale: (value: Liferay.Language.Locale) => void;
-	setValues: (values: Partial<NotificationTemplate>) => void;
-	values: NotificationTemplate;
+	setValues: (values: Partial<TNotificationTemplate>) => void;
+	values: TNotificationTemplate;
 }
 
 export function FreeMarkerTemplateEditor({

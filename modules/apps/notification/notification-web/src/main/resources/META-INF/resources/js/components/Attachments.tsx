@@ -25,6 +25,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {defaultLanguageId} from '../util/constants';
 
 import './Attachments.scss';
+import {TNotificationTemplate} from './EditNotificationTemplate';
 
 export function Attachments({setValues, values}: IProps) {
 	const [objectDefinitions, setObjectDefinitions] = useState<
@@ -209,6 +210,6 @@ export function Attachments({setValues, values}: IProps) {
 }
 
 interface IProps {
-	setValues: (values: Partial<NotificationTemplate>) => void;
-	values: Partial<NotificationTemplate>;
+	setValues: (values: Partial<TNotificationTemplate>) => void;
+	values: Partial<TNotificationTemplate>;
 }
