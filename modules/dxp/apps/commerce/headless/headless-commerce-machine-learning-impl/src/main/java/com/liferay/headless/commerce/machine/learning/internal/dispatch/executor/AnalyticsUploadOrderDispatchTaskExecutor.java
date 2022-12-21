@@ -51,20 +51,19 @@ public class AnalyticsUploadOrderDispatchTaskExecutor
 			DispatchTaskExecutorOutput dispatchTaskExecutorOutput)
 		throws Exception {
 
+		DispatchLog dispatchLog =
+			dispatchLogLocalService.fetchLatestDispatchLog(
+				dispatchTrigger.getDispatchTriggerId(),
+				DispatchTaskStatus.IN_PROGRESS);
 		String filterString = getCommerceChannelFilterString(
 			dispatchTrigger.getCompanyId(),
 			commerceChannelId ->
 				"commerceChannelId eq '" + commerceChannelId + "'");
 
-		DispatchLog dispatchLog =
-			dispatchLogLocalService.fetchLatestDispatchLog(
-				dispatchTrigger.getDispatchTriggerId(),
-				DispatchTaskStatus.IN_PROGRESS);
-
 		if (Objects.equals(StringPool.BLANK, filterString)) {
 			updateDispatchLog(
 				dispatchLog.getDispatchLogId(), dispatchTaskExecutorOutput,
-				"No Commerce Channels enabled for synchronisation");
+				"No commerce channels enabled for synchronisation");
 
 			return;
 		}

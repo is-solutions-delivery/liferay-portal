@@ -46,10 +46,10 @@ public abstract class BaseDispatchTaskExecutor
 			long companyId, Function<Long, String> filterFunction)
 		throws Exception {
 
+		List<String> filterStrings = new ArrayList<>();
+
 		AnalyticsConfiguration analyticsConfiguration =
 			analyticsSettingsManager.getAnalyticsConfiguration(companyId);
-
-		List<String> filterStrings = new ArrayList<>();
 
 		for (String analyticsChannelId :
 				analyticsConfiguration.
