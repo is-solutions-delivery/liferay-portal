@@ -9,53 +9,134 @@
  * distribution rights of the Software.
  */
 
+import ClayButton from '@clayui/button';
 import ClayChart from '@clayui/charts';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import Container from '../../common/components/container';
-
 const colors = {
-	aproved: '#000239',
+	aproved: '#8FB5FF',
+	closedwon: '#002C62',
 	rejected: '#FF6060',
-	submited: '#83B6FE',
+	submited: '#E7EFFF',
 };
-
-const chart = {
-	bar: {
-		radius: {
-			ratio: 0.2,
-		},
-		width: {
-			ratio: 0.3,
-		},
-	},
-	data: {
-		colors,
-		columns: [
-			['submited', 110, 80, 200, 190],
-			['aproved', 200, 100, 140, 190],
-			['rejected', 295, 250, 298, 320],
-		],
-		groups: [['submited', 'aproved']],
-		order: 'desc',
-		type: 'bar',
-		types: {
-			aproved: 'bar',
-			rejected: 'spline',
-			submited: 'bar',
-		},
-	},
-	grid: {
-		y: {
-			lines: [{value: 100}, {value: 200}, {value: 300}, {value: 400}],
-		},
-	},
-};
-
 export default function () {
+	const [opportunities, setOpportunities] = useState();
+	const [leads, setLeads] = useState();
+	useEffect(() => {
+		const getOpportunities = async () => {
+			// eslint-disable-next-line @liferay/portal/no-global-fetch
+			await fetch('/o/c/opportunitysfs', {
+				headers: {
+					'accept': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+				},
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					setOpportunities(data?.items);
+				})
+				.catch(() => {
+					Liferay.Util.openToast({
+						message: 'An unexpected error occured.',
+						type: 'danger',
+					});
+				});
+		};
+		const getLeads = async () => {
+			// eslint-disable-next-line @liferay/portal/no-global-fetch
+			await fetch('/o/c/leadsfs', {
+				headers: {
+					'accept': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+				},
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					setLeads(data?.items);
+				})
+				.catch(() => {
+					Liferay.Util.openToast({
+						message: 'An unexpected error occured.',
+						type: 'danger',
+					});
+				});
+		};
+		getOpportunities();
+		getLeads();
+	}, []);
+	const approvedDeals = opportunities?.filter(
+		(item) => item.stage === 'Open'
+	);
+	const closedWonDeals = opportunities?.filter(
+		(item) => item.stage === 'Closed Won'
+	);
+	const rejectedDeals =
+		leads?.filter((item) => item.leadStatus === 'CAM rejected') ||
+		opportunities?.filter((item) => item.stage === 'Rejected');
+	const submitedDeals = leads?.filter(
+		(item) =>
+			item.leadType === 'Partner Prospect Lead (PPL)' &&
+			(item.leadStatus !== 'Sales Qualified Opportunity' ||
+				item.leadStatus !== 'CAM rejected')
+	);
+	const chart = {
+		bar: {
+			radius: {
+				ratio: 0.2,
+			},
+			width: {
+				ratio: 0.3,
+			},
+		},
+		data: {
+			colors,
+			columns: [
+				['submited', 110, 80, 200, 200],
+				['aproved', 200, 100, 140, 140],
+				['rejected', 295, 250, 298, 298],
+				['closedwon', 50, 50, 50, 50],
+			],
+			groups: [['submited', 'aproved', 'closedwon']],
+			order: 'desc',
+			type: 'bar',
+			types: {
+				aproved: 'bar',
+				closedwon: 'bar',
+				rejected: 'spline',
+				submited: 'bar',
+			},
+		},
+		filteredData: [
+			approvedDeals,
+			closedWonDeals,
+			rejectedDeals,
+			submitedDeals,
+		],
+		grid: {
+			y: {
+				lines: [{value: 100}, {value: 200}, {value: 300}, {value: 400}],
+			},
+		},
+	};
+
 	return (
 		<Container className="deals-chart-card-height" title="Deals">
 			<ClayChart bar={chart.bar} data={chart.data} grid={chart.grid} />
+
+			<div>
+				<hr className="mb-3 mt-1" />
+
+				<div className="d-flex">
+					<ClayButton className="btn btn-primary mr-4 mt-2">
+						View All
+					</ClayButton>
+
+					<ClayButton className="btn btn-primary mr-4 mt-2">
+						New Deal
+					</ClayButton>
+				</div>
+			</div>
 		</Container>
 	);
 }
