@@ -21,6 +21,7 @@ import {
 	Input,
 	InputLocalized,
 	ManagementToolbar,
+	RichTextLocalized,
 	SingleSelect,
 	openToast,
 	useForm,
@@ -29,15 +30,26 @@ import {fetch} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
 import {defaultLanguageId} from '../util/constants';
+import {Attachments} from './Attachments';
+import {DefinitionOfTerms} from './DefinitionOfTerms';
+import {FreeMarkerTemplateEditor} from './FreeMarkerTemplateEditor';
 
 import './EditNotificationTemplate.scss';
 import {BasicInfoContainer} from './BasicInfoContainer';
-import ContentContainer from './ContentContainer';
 
 const HEADERS = new Headers({
 	'Accept': 'application/json',
 	'Content-Type': 'application/json',
 });
+
+interface LabelValueObject {
+	label: string;
+	value: string;
+}
+
+interface EditorType extends LabelValueObject {
+	value: editorTypeOptions;
+}
 
 interface Item extends Partial<LabelValueObject> {}
 
@@ -62,6 +74,17 @@ interface User {
 	alternateName: string;
 	givenName: string;
 }
+
+const EDITOR_TYPES = [
+	{
+		label: Liferay.Language.get('freemarker-template'),
+		value: 'freeMarker',
+	},
+	{
+		label: Liferay.Language.get('rich-text'),
+		value: 'richText',
+	},
+];
 
 const RECIPIENT_OPTIONS = [
 	{
@@ -91,7 +114,7 @@ export default function EditNotificationTemplate({
 
 	const [isSubmitted, setIsSubmitted] = useState(false);
 
-	const [selectedLocale, setSelectedLocale] = useState<Locale>(
+	const [selectedLocale, setSelectedLocale] = useState(
 		Liferay.ThemeDisplay.getDefaultLanguageId
 	);
 
@@ -106,6 +129,10 @@ export default function EditNotificationTemplate({
 	const [searchTerm, setSearchTerm] = useState('');
 
 	const [toTerms, setToTerms] = useState<string>('');
+
+	const [objectDefinitions, setObjectDefinitions] = useState<
+		ObjectDefinition[]
+	>([]);
 
 	const validate = (values: any) => {
 		const errors: {
@@ -299,6 +326,10 @@ export default function EditNotificationTemplate({
 
 	useEffect(() => {
 		const makeFetch = async () => {
+			const objectDefinitionsItems = await API.getObjectDefinitions();
+
+			setObjectDefinitions(objectDefinitionsItems);
+
 			if (notificationTemplateId !== 0) {
 				const {
 					attachmentObjectFieldIds,
@@ -733,14 +764,108 @@ export default function EditNotificationTemplate({
 						</div>
 					</div>
 
-					<ContentContainer
-						baseResourceURL={baseResourceURL}
-						editorConfig={editorConfig}
-						selectedLocale={selectedLocale}
-						setSelectedLocale={setSelectedLocale}
-						setValues={setValues}
-						values={values}
-					/>
+					<Card title={Liferay.Language.get('content')}>
+						<Text as="span" color="secondary">
+							{Liferay.Language.get(
+								'use-terms-to-populate-fields-dynamically-with-the-exception-of-the-freemarker-template-editor'
+							)}
+						</Text>
+
+						<InputLocalized
+							{...(values.type === 'userNotification' && {
+								component: 'textarea',
+							})}
+							label={Liferay.Language.get('subject')}
+							name="subject"
+							onChange={(translation) => {
+								setValues({
+									...values,
+									subject: translation,
+								});
+							}}
+							placeholder=""
+							selectedLocale={selectedLocale}
+							translations={values.subject}
+						/>
+
+						{values.type === 'email' && (
+							<>
+								<SingleSelect<EditorType>
+									label={Liferay.Language.get('editor-type')}
+									onChange={({value}: EditorType) => {
+										setValues({
+											...values,
+											editorType: value,
+										});
+									}}
+									options={EDITOR_TYPES as EditorType[]}
+									required
+									value={
+										EDITOR_TYPES.find(
+											({value}) =>
+												value === values.editorType
+										)?.label
+									}
+								/>
+
+								{values.editorType === 'richText' ? (
+									<RichTextLocalized
+										editorConfig={editorConfig}
+										label={Liferay.Language.get('template')}
+										name="template"
+										onSelectedLocaleChange={({label}) =>
+											setSelectedLocale(label)
+										}
+										onTranslationsChange={(translation) => {
+											setValues({
+												...values,
+												body: translation,
+											});
+										}}
+										selectedLocale={selectedLocale}
+										translations={values.body}
+									/>
+								) : (
+									<>
+										<FreeMarkerTemplateEditor
+											baseResourceURL={baseResourceURL}
+											objectDefinitions={
+												objectDefinitions
+											}
+											selectedLocale={selectedLocale}
+											setSelectedLocale={
+												setSelectedLocale
+											}
+											setValues={setValues}
+											values={values}
+										/>
+
+										<Text
+											as="span"
+											color="secondary"
+											size={3}
+										>
+											{Liferay.Language.get(
+												'object-terms-cannot-be-used-in-freemarker-templates'
+											)}
+										</Text>
+									</>
+								)}
+							</>
+						)}
+
+						<DefinitionOfTerms
+							baseResourceURL={baseResourceURL}
+							objectDefinitions={objectDefinitions}
+						/>
+
+						{values.type === 'email' && (
+							<Attachments
+								setValues={setValues}
+								values={values}
+							/>
+						)}
+					</Card>
 				</div>
 			</div>
 		</ClayForm>
