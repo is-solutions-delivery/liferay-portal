@@ -89,7 +89,6 @@ public class NodeBuildConfigurer implements ClientExtensionConfigurer {
 			createClientExtensionConfigTask -> {
 				createClientExtensionConfigTask.dependsOn(
 					NodePlugin.PACKAGE_RUN_BUILD_TASK_NAME);
-
 				createClientExtensionConfigTask.doLast(
 					task -> _processAssembleIntructions(project));
 			});
