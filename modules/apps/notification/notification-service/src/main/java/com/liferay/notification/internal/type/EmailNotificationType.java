@@ -349,7 +349,7 @@ public class EmailNotificationType extends BaseNotificationType {
 				notificationRecipientSettingsMap.get("fromName"))) {
 
 			throw new NotificationRecipientSettingValueException(
-				"From Name is null");
+				"From name is null");
 		}
 	}
 

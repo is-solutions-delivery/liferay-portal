@@ -140,7 +140,7 @@ public abstract class BaseNotificationType implements NotificationType {
 
 		if (Validator.isNull(notificationTemplate.getEditorType())) {
 			throw new NotificationTemplateEditorTypeException(
-				"Editor Type is null");
+				"Editor type is null");
 		}
 
 		if (Validator.isNull(notificationTemplate.getName())) {
