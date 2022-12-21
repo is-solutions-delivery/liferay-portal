@@ -34,11 +34,11 @@ public class FormNavigatorEntryConfigurationRetriever {
 	public List<String> getFormNavigatorEntryKeys(
 		String formNavigatorId, String categoryKey, String context) {
 
+		List<String> formNavigatorEntryKeys = null;
+
 		List<FormNavigatorEntryConfigurationParser>
 			formNavigatorEntryConfigurationParsers = ListUtil.fromCollection(
 				_serviceTrackerMap.getService(formNavigatorId));
-
-		List<String> formNavigatorEntryKeys = null;
 
 		for (FormNavigatorEntryConfigurationParser
 				formNavigatorEntryConfigurationParser :
