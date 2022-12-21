@@ -15,17 +15,18 @@
 /// <reference types="react" />
 
 import {FormError} from '@liferay/object-js-components-web';
-import {NotificationTemplateError} from '../EditNotificationTemplate';
-interface SettingsContainerProps {
+import './EditNotificationTemplate.scss';
+import {NotificationTemplateError} from './EditNotificationTemplate';
+interface EmailNotificationSettingsProps {
 	errors: FormError<NotificationTemplate & NotificationTemplateError>;
 	selectedLocale: Locale;
 	setValues: (values: Partial<NotificationTemplate>) => void;
 	values: NotificationTemplate;
 }
-export declare function SettingsContainer({
+export declare function EmailNotificationSettings({
 	errors,
 	selectedLocale,
 	setValues,
 	values,
-}: SettingsContainerProps): JSX.Element;
+}: EmailNotificationSettingsProps): JSX.Element;
 export {};

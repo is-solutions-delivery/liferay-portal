@@ -25,9 +25,9 @@ import React, {useEffect, useState} from 'react';
 import {defaultLanguageId} from '../util/constants';
 
 import './EditNotificationTemplate.scss';
-import {BasicInfoContainer} from './BasicInfoContainer/BasicInfoContainer';
-import ContentContainer from './ContentContainer/ContentContainer';
-import {SettingsContainer} from './SettingsContainer/SettingsContainer';
+import {BasicInfoContainer} from './BasicInfoContainer';
+import ContentContainer from './ContentContainer';
+import {SettingsContainer} from './SettingsContainer';
 
 const HEADERS = new Headers({
 	'Accept': 'application/json',
@@ -47,7 +47,7 @@ export type NotificationTemplateError = {
 	type?: string;
 };
 
-interface EditNotificationTemplateProps {
+interface IProps {
 	backURL: string;
 	baseResourceURL: string;
 	editorConfig: object;
@@ -65,7 +65,7 @@ export default function EditNotificationTemplate({
 	notificationTemplateId = 0,
 	notificationTemplateType,
 	portletNamespace,
-}: EditNotificationTemplateProps) {
+}: IProps) {
 	notificationTemplateId = Number(notificationTemplateId);
 
 	const [isSubmitted, setIsSubmitted] = useState(false);
