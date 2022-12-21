@@ -1,4 +1,4 @@
 ${id}:
     name: ${name}
     type: themeSpritemap
-    url: spritemap-cet.svg
+    url: spritemap.svg
