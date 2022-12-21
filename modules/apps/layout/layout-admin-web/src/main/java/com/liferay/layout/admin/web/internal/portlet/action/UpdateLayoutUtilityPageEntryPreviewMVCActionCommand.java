@@ -85,11 +85,11 @@ public class UpdateLayoutUtilityPageEntryPreviewMVCActionCommand
 				LayoutAdminPortletKeys.GROUP_PAGES, serviceContext);
 		}
 
+		long folderId = 0;
+
 		LayoutUtilityPageEntry layoutUtilityPageEntry =
 			_layoutUtilityPageEntryService.fetchLayoutUtilityPageEntry(
 				layoutUtilityPageEntryId);
-
-		long folderId = 0;
 
 		if (layoutUtilityPageEntry.getPreviewFileEntryId() > 0) {
 			DLFileEntry oldDLFileEntry =
