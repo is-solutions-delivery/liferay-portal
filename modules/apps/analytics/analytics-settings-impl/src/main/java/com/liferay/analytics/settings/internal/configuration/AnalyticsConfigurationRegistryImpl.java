@@ -417,7 +417,7 @@ public class AnalyticsConfigurationRegistryImpl
 			companyId, AnalyticsSecurityConstants.SCREEN_NAME_ANALYTICS_ADMIN);
 
 		if (user == null) {
-			return 0L;
+			return 0;
 		}
 
 		return user.getUserId();
