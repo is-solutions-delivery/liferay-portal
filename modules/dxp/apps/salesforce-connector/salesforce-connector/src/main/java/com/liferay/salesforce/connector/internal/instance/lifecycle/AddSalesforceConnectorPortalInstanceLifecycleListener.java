@@ -83,7 +83,7 @@ public class AddSalesforceConnectorPortalInstanceLifecycleListener
 				company.getCompanyId());
 
 			dispatchTrigger = _dispatchTriggerLocalService.addDispatchTrigger(
-				null, userId, "talend", _dispatchTaskExecutor,
+				null, userId, _dispatchTaskExecutor, "talend",
 				unicodeProperties, name, true);
 
 			_dispatchFileRepository.addFileEntry(

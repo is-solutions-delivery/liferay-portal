@@ -66,8 +66,8 @@ public class DispatchTriggerLocalServiceImpl
 	@Override
 	public DispatchTrigger addDispatchTrigger(
 			String externalReferenceCode, long userId,
-			String dispatchTaskExecutorType,
 			DispatchTaskExecutor dispatchTaskExecutor,
+			String dispatchTaskExecutorType,
 			UnicodeProperties dispatchTaskSettingsUnicodeProperties,
 			String name, boolean system)
 		throws PortalException {
@@ -75,8 +75,8 @@ public class DispatchTriggerLocalServiceImpl
 		User user = _userLocalService.getUser(userId);
 
 		_validate(
-			0, user.getCompanyId(), dispatchTaskExecutorType,
-			dispatchTaskExecutor, name);
+			0, user.getCompanyId(), dispatchTaskExecutor,
+			dispatchTaskExecutorType, name);
 
 		DispatchTrigger dispatchTrigger = dispatchTriggerPersistence.create(
 			counterLocalService.increment());
@@ -110,7 +110,7 @@ public class DispatchTriggerLocalServiceImpl
 		throws PortalException {
 
 		return addDispatchTrigger(
-			externalReferenceCode, userId, dispatchTaskExecutorType, null,
+			externalReferenceCode, userId, null, dispatchTaskExecutorType,
 			dispatchTaskSettingsUnicodeProperties, name, system);
 	}
 
@@ -351,8 +351,8 @@ public class DispatchTriggerLocalServiceImpl
 			dispatchTriggerPersistence.findByPrimaryKey(dispatchTriggerId);
 
 		_validate(
-			dispatchTriggerId, dispatchTrigger.getCompanyId(),
-			dispatchTrigger.getDispatchTaskExecutorType(), null, name);
+			dispatchTriggerId, dispatchTrigger.getCompanyId(), null,
+			dispatchTrigger.getDispatchTaskExecutorType(), name);
 
 		dispatchTrigger.setName(name);
 		dispatchTrigger.setDispatchTaskSettingsUnicodeProperties(
@@ -368,9 +368,9 @@ public class DispatchTriggerLocalServiceImpl
 	}
 
 	private void _validate(
-			long dispatchTriggerId, long companyId,
-			String dispatchTaskExecutorType,
-			DispatchTaskExecutor dispatchTaskExecutor, String name)
+			long dispatchTriggerId, long companyId,			
+			DispatchTaskExecutor dispatchTaskExecutor,
+			String dispatchTaskExecutorType, String name)
 		throws PortalException {
 
 		if (Validator.isNull(name)) {
