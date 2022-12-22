@@ -67,13 +67,16 @@ public class DispatchTriggerLocalServiceImpl
 	public DispatchTrigger addDispatchTrigger(
 			String externalReferenceCode, long userId,
 			String dispatchTaskExecutorType,
+			DispatchTaskExecutor dispatchTaskExecutor,
 			UnicodeProperties dispatchTaskSettingsUnicodeProperties,
 			String name, boolean system)
 		throws PortalException {
 
 		User user = _userLocalService.getUser(userId);
 
-		_validate(0, user.getCompanyId(), dispatchTaskExecutorType, name);
+		_validate(
+			0, user.getCompanyId(), dispatchTaskExecutorType,
+			dispatchTaskExecutor, name);
 
 		DispatchTrigger dispatchTrigger = dispatchTriggerPersistence.create(
 			counterLocalService.increment());
@@ -96,6 +99,19 @@ public class DispatchTriggerLocalServiceImpl
 			dispatchTrigger.getDispatchTriggerId(), false, true, true);
 
 		return dispatchTrigger;
+	}
+
+	@Override
+	public DispatchTrigger addDispatchTrigger(
+			String externalReferenceCode, long userId,
+			String dispatchTaskExecutorType,
+			UnicodeProperties dispatchTaskSettingsUnicodeProperties,
+			String name, boolean system)
+		throws PortalException {
+
+		return addDispatchTrigger(
+			externalReferenceCode, userId, dispatchTaskExecutorType, null,
+			dispatchTaskSettingsUnicodeProperties, name, system);
 	}
 
 	@Override
@@ -336,7 +352,7 @@ public class DispatchTriggerLocalServiceImpl
 
 		_validate(
 			dispatchTriggerId, dispatchTrigger.getCompanyId(),
-			dispatchTrigger.getDispatchTaskExecutorType(), name);
+			dispatchTrigger.getDispatchTaskExecutorType(), null, name);
 
 		dispatchTrigger.setName(name);
 		dispatchTrigger.setDispatchTaskSettingsUnicodeProperties(
@@ -353,7 +369,8 @@ public class DispatchTriggerLocalServiceImpl
 
 	private void _validate(
 			long dispatchTriggerId, long companyId,
-			String dispatchTaskExecutorType, String name)
+			String dispatchTaskExecutorType,
+			DispatchTaskExecutor dispatchTaskExecutor, String name)
 		throws PortalException {
 
 		if (Validator.isNull(name)) {
@@ -373,9 +390,11 @@ public class DispatchTriggerLocalServiceImpl
 					"\" already exists for company ", companyId));
 		}
 
-		DispatchTaskExecutor dispatchTaskExecutor =
-			_dispatchTaskExecutorRegistry.fetchDispatchTaskExecutor(
-				dispatchTaskExecutorType);
+		if (dispatchTaskExecutor == null) {
+			dispatchTaskExecutor =
+				_dispatchTaskExecutorRegistry.fetchDispatchTaskExecutor(
+					dispatchTaskExecutorType);
+		}
 
 		if (dispatchTaskExecutor == null) {
 			throw new DispatchTriggerDispatchTaskExecutorTypeException(
