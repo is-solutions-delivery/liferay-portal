@@ -1,5 +1,6 @@
 {
 	"description": "This is the description for Test Commerce Notification Template.",
+	"editorType": "richText",
 	"enabled": true,
 	"from": "test-integration@liferay.com",
 	"fromName": {

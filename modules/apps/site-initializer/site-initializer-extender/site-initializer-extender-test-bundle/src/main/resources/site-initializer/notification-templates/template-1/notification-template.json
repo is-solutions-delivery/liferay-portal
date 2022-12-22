@@ -1,5 +1,6 @@
 {
 	"description": "This is the description for Test Notification Template.",
+	"editorType": "richText",
 	"name": "Test Notification Template",
 	"recipientType": "email",
 	"recipients": [

@@ -1,5 +1,6 @@
 {
 	"description": "",
+	"editorType": "richText",
 	"name": "Team Members Invitation Notification Template",
 	"recipientType": "email",
 	"recipients": [

@@ -1,5 +1,6 @@
 {
 	"description": "",
+	"editorType": "richText",
 	"name": "Quote Retrieve Notification Template",
 	"recipientType": "email",
 	"recipients": [

@@ -1,5 +1,6 @@
 {
 	"description": "",
+	"editorType": "richText",
 	"name": "Setup Analytics Cloud Environment Notification Template",
 	"recipientType": "email",
 	"recipients": [
