@@ -63,6 +63,22 @@ public class DispatchTriggerLocalServiceUtil {
 
 	public static DispatchTrigger addDispatchTrigger(
 			String externalReferenceCode, long userId,
+			com.liferay.dispatch.executor.DispatchTaskExecutor
+				dispatchTaskExecutor,
+			String dispatchTaskExecutorType,
+			com.liferay.portal.kernel.util.UnicodeProperties
+				dispatchTaskSettingsUnicodeProperties,
+			String name, boolean system)
+		throws PortalException {
+
+		return getService().addDispatchTrigger(
+			externalReferenceCode, userId, dispatchTaskExecutor,
+			dispatchTaskExecutorType, dispatchTaskSettingsUnicodeProperties,
+			name, system);
+	}
+
+	public static DispatchTrigger addDispatchTrigger(
+			String externalReferenceCode, long userId,
 			String dispatchTaskExecutorType,
 			com.liferay.portal.kernel.util.UnicodeProperties
 				dispatchTaskSettingsUnicodeProperties,

@@ -15,6 +15,7 @@
 package com.liferay.dispatch.service;
 
 import com.liferay.dispatch.executor.DispatchTaskClusterMode;
+import com.liferay.dispatch.executor.DispatchTaskExecutor;
 import com.liferay.dispatch.model.DispatchTrigger;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
@@ -81,6 +82,14 @@ public interface DispatchTriggerLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public DispatchTrigger addDispatchTrigger(DispatchTrigger dispatchTrigger);
+
+	public DispatchTrigger addDispatchTrigger(
+			String externalReferenceCode, long userId,
+			DispatchTaskExecutor dispatchTaskExecutor,
+			String dispatchTaskExecutorType,
+			UnicodeProperties dispatchTaskSettingsUnicodeProperties,
+			String name, boolean system)
+		throws PortalException;
 
 	public DispatchTrigger addDispatchTrigger(
 			String externalReferenceCode, long userId,
