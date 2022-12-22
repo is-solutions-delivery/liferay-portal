@@ -11,7 +11,7 @@
 
 import ClayButton from '@clayui/button';
 import ClayChart from '@clayui/charts';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import Container from '../../common/components/container';
 const colors = {
@@ -65,21 +65,27 @@ export default function () {
 		getOpportunities();
 		getLeads();
 	}, []);
-	const approvedDeals = opportunities?.filter(
-		(item) => item.stage === 'Open'
-	);
-	const closedWonDeals = opportunities?.filter(
-		(item) => item.stage === 'Closed Won'
-	);
-	const rejectedDeals =
-		leads?.filter((item) => item.leadStatus === 'CAM rejected') ||
-		opportunities?.filter((item) => item.stage === 'Rejected');
-	const submitedDeals = leads?.filter(
-		(item) =>
-			item.leadType === 'Partner Prospect Lead (PPL)' &&
-			(item.leadStatus !== 'Sales Qualified Opportunity' ||
-				item.leadStatus !== 'CAM rejected')
-	);
+
+	const filteredDeals = useMemo(() => {
+		return {
+			approvedDeals: opportunities?.filter(
+				(item) => item.stage === 'Open'
+			),
+			closedWonDeals: opportunities?.filter(
+				(item) => item.stage === 'Closed Won'
+			),
+			rejectedDeals:
+				leads?.filter((item) => item.leadStatus === 'CAM rejected') ||
+				opportunities?.filter((item) => item.stage === 'Rejected'),
+			submitedDeals: leads?.filter(
+				(item) =>
+					item.leadType === 'Partner Prospect Lead (PPL)' &&
+					(item.leadStatus !== 'Sales Qualified Opportunity' ||
+						item.leadStatus !== 'CAM rejected')
+			),
+		};
+	}, [leads, opportunities]);
+
 	const chart = {
 		bar: {
 			radius: {
@@ -108,10 +114,10 @@ export default function () {
 			},
 		},
 		filteredData: [
-			approvedDeals,
-			closedWonDeals,
-			rejectedDeals,
-			submitedDeals,
+			filteredDeals?.approvedDeals,
+			filteredDeals?.closedWonDeals,
+			filteredDeals?.rejectedDeals,
+			filteredDeals?.submitedDeals,
 		],
 		grid: {
 			y: {
