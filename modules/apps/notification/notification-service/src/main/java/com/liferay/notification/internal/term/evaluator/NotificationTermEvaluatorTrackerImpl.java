@@ -12,9 +12,8 @@
  * details.
  */
 
-package com.liferay.notification.internal.term;
+package com.liferay.notification.internal.term.evaluator;
 
-import com.liferay.notification.internal.term.evaluator.DefaultNotificationTermEvaluator;
 import com.liferay.notification.term.evaluator.NotificationTermEvaluator;
 import com.liferay.notification.term.evaluator.NotificationTermEvaluatorTracker;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerCustomizerFactory;
