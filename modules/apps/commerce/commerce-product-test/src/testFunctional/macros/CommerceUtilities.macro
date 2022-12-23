@@ -20,6 +20,36 @@ definition {
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
 	}
 
+	@description = "Compare two dates, if the first is greater than the second it returns the string"
+	macro compareDates {
+		var javaScript = '''
+			CompareDates = {
+				compareDates: function (dateString1, dateString2) {
+					date1 = new Date(dateString1);
+					date2 = new Date(dateString2);
+
+					if (date1.getTime() > date2.getTime()) {
+						return "True";
+					}
+					else if (date1.getTime() < date2.getTime()) {
+						return "False";
+					}
+					else {
+						return "Equal";
+					}
+				}
+			};
+
+			compare = CompareDates.compareDates(arguments[0], arguments[1]);
+
+			return compare;
+		''';
+
+		var compareDatesResult = selenium.getJavaScriptResult("${javaScript}", "${date1}", "${date2}");
+
+		return "${compareDatesResult}";
+	}
+
 	macro convertStringToKey {
 		var string = StringUtil.lowerCase("${string}");
 
