@@ -4213,8 +4213,16 @@ public class JenkinsResultsParserUtil {
 
 					Properties buildProperties = getBuildProperties();
 
+					String jenkinsAdminUserToken = buildProperties.getProperty(
+						"jenkins.admin.user.token");
+
+					if (url.contains("test-1-0")) {
+						jenkinsAdminUserToken = buildProperties.getProperty(
+							"jenkins.admin.user.token[test-1-0]");
+					}
+
 					httpAuthorizationHeader = new BasicHTTPAuthorization(
-						buildProperties.getProperty("jenkins.admin.user.token"),
+						jenkinsAdminUserToken,
 						buildProperties.getProperty("jenkins.admin.user.name"));
 				}
 
