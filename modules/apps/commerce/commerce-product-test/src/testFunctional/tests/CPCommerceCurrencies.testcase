@@ -81,25 +81,45 @@ definition {
 	test SortCurrenciesByPriority {
 		property portal.acceptance = "false";
 
-		// TODO Review
-
-		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
-
 		CommerceNavigator.gotoPortlet(
 			category = "Store Management",
 			portlet = "Currencies");
 
-		ClickNoError(
+		AssertTextEquals(
 			key_entryName = "US Dollar",
+			key_rowNumber = "1",
+			locator1 = "CommerceEntry#ANY_CURRENCY_PRIORITY_ELEMENT",
+			value1 = "1.0");
+
+		ClickNoError(
+			key_entryName = "Euro",
 			locator1 = "CommerceNavigation#ENTRY_NAME");
 
 		Type(
 			locator1 = "CommerceEntry#PRIORITY_FIELD",
-			value1 = "1");
+			value1 = "0.9");
 
 		Button.clickSave();
 
-		AssertElementPresent(locator1 = "CommerceEntry#FIRST_CURRENCY_ELEMENT");
+		CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
+
+		AssertTextEquals(
+			key_entryName = "Euro",
+			key_rowNumber = "1",
+			locator1 = "CommerceEntry#ANY_CURRENCY_PRIORITY_ELEMENT",
+			value1 = "0.9");
+
+		AssertTextEquals(
+			key_entryName = "US Dollar",
+			key_rowNumber = "2",
+			locator1 = "CommerceEntry#ANY_CURRENCY_PRIORITY_ELEMENT",
+			value1 = "1.0");
+
+		AssertTextEquals(
+			key_entryName = "Canadian Dollar",
+			key_rowNumber = "5",
+			locator1 = "CommerceEntry#ANY_CURRENCY_PRIORITY_ELEMENT",
+			value1 = "4.0");
 
 		ClickNoError(
 			key_entryName = "US Dollar",
@@ -109,13 +129,18 @@ definition {
 			locator1 = "CommerceEntry#PRIORITY_FIELD",
 			value1 = "12");
 
-		Button.clickSave();
+		Button.click(button = "Save");
 
-		WaitForPageLoad();
+		CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 
 		AssertElementPresent(
+			key_menuTab = "Currencies",
+			locator1 = "CommerceEntry#MENU_TAB");
+
+		AssertTextEquals(
 			key_entryName = "US Dollar",
-			locator1 = "CommerceEntry#LAST_CURRENCY_ELEMENT");
+			locator1 = "CommerceEntry#LAST_CURRENCY_PRIORITY_ELEMENT",
+			value1 = "12.0");
 	}
 
 	test ViewInstanceCurrenciesAvailable {

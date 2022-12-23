@@ -1152,13 +1152,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>FIRST_CURRENCY_ELEMENT</td>
-	<td>//tr[contains(@data-qa-id,'row')]//a[contains(text(),'${key_entryName}')] | //a[@id='_com_liferay_commerce_currency_web_internal_portlet_CommerceCurrencyPortlet_commerceCurrencies_1_menu']</td>
+	<td>ANY_CURRENCY_PRIORITY_ELEMENT</td>
+	<td>xpath=(//tr[contains(@data-qa-id,'row') and not(contains(@class, 'd-none'))])[${key_rowNumber}]//td//a[text()='${key_entryName}']//..//..//td[contains(@class,"lfr-priority-column")]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>LAST_CURRENCY_ELEMENT</td>
-	<td>//tr[contains(@data-qa-id,'row')]//td//a[contains(text(),'${key_entryName}')]//..//..//a[contains(@id,'_commerceCurrencies_10')]</td>
+	<td>LAST_CURRENCY_PRIORITY_ELEMENT</td>
+	<td>xpath=(//tr[contains(@data-qa-id,'row') and not(contains(@class, 'd-none'))])[last()]//td//a[text()='${key_entryName}']//..//..//td[contains(@class,"lfr-priority-column")]</td>
 	<td></td>
 </tr>
 <tr>
