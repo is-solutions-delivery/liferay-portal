@@ -1019,6 +1019,8 @@ definition {
 		var displayDateDay = DateUtil.getCurrentDate();
 		var displayDateYear = DateUtil.getCurrentYear();
 		var displayDateMonth = DateUtil.getCurrentMonth();
+
+		var displayDateMonth = ${displayDateMonth} - 1;
 		var expirationDateMinute = DateUtil.getFormattedCurrentDate("m");
 		var expirationDateHour = DateUtil.getFormattedCurrentDate("H");
 		var expirationDateDay = DateUtil.getCurrentDate();
