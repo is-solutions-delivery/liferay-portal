@@ -208,12 +208,11 @@ public class BatchEngineBrokerImpl implements BatchEngineBroker {
 		CreateStrategy createStrategy =
 			CreateStrategy.getDefaultCreateStrategy();
 
-		String createStrategyBatchPlannerPolicy = _getValue(
+		String value = _getValue(
 			batchPlannerPlan.fetchBatchPlannerPolicy("createStrategy"));
 
-		if (createStrategyBatchPlannerPolicy != null) {
-			createStrategy = CreateStrategy.valueOf(
-				createStrategyBatchPlannerPolicy);
+		if (value != null) {
+			createStrategy = CreateStrategy.valueOf(value);
 		}
 
 		try {

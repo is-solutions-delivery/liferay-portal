@@ -48,10 +48,11 @@ public class EditBatchPlannerPlanDisplayContext {
 	public EditBatchPlannerPlanDisplayContext(
 			List<BatchPlannerPlan> batchPlannerPlans,
 			Map<String, String> internalClassNameCategories,
-			BatchPlannerPlan selectedBatchPlannerPlan,
-			RenderRequest renderRequest)
+			RenderRequest renderRequest,
+			BatchPlannerPlan selectedBatchPlannerPlan)
 		throws PortalException {
 
+		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
 		_internalClassNameSelectOptions = _getInternalClassNameSelectOptions(
 			internalClassNameCategories);
 
@@ -72,8 +73,6 @@ public class EditBatchPlannerPlanDisplayContext {
 			_selectedInternalClassName =
 				selectedBatchPlannerPlan.getInternalClassName();
 		}
-
-		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
 
 		_templateSelectOptions = _getTemplateSelectOptions(batchPlannerPlans);
 	}
