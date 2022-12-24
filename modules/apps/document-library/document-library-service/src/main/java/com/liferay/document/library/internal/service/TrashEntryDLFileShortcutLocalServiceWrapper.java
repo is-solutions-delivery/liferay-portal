@@ -42,8 +42,6 @@ public class TrashEntryDLFileShortcutLocalServiceWrapper
 
 		super.deleteFileShortcut(fileShortcut);
 
-		// Trash
-
 		if (_trashHelper.isInTrashExplicitly(fileShortcut)) {
 			_trashEntryLocalService.deleteEntry(
 				DLFileShortcutConstants.getClassName(),

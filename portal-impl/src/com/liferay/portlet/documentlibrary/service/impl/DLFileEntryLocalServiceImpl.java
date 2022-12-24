@@ -1081,13 +1081,6 @@ public class DLFileEntryLocalServiceImpl
 	}
 
 	@Override
-	public List<DLFileEntry> getDLFileEntries(
-		long classNameId, String treePath) {
-
-		return dlFileEntryFinder.findByC_T(classNameId, treePath);
-	}
-
-	@Override
 	public List<DLFileEntry> getExtraSettingsFileEntries(int start, int end) {
 		return dlFileEntryFinder.findByExtraSettings(start, end);
 	}
@@ -1188,6 +1181,13 @@ public class DLFileEntryLocalServiceImpl
 	@Override
 	public List<DLFileEntry> getFileEntries(long folderId, String name) {
 		return dlFileEntryPersistence.findByF_N(folderId, name);
+	}
+
+	@Override
+	public List<DLFileEntry> getFileEntriesByClassNameIdAndTreePath(
+		long classNameId, String treePath) {
+
+		return dlFileEntryFinder.findByC_T(classNameId, treePath);
 	}
 
 	@Override

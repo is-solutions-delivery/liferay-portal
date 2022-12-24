@@ -914,7 +914,7 @@ public class TrashEntryDLAppHelperLocalServiceWrapper
 			DLFileEntry.class);
 
 		List<DLFileEntry> dlFileEntries =
-			_dlFileEntryLocalService.getDLFileEntries(
+			_dlFileEntryLocalService.getFileEntriesByClassNameIdAndTreePath(
 				dlFileEntryClassNameId, dlFolder.getTreePath());
 
 		for (DLFileEntry dlFileEntry : dlFileEntries) {
@@ -1076,7 +1076,7 @@ public class TrashEntryDLAppHelperLocalServiceWrapper
 		}
 
 		List<DLFileShortcut> dlFileShortcuts =
-			_dlFileShortcutLocalService.getDLFileShortcuts(
+			_dlFileShortcutLocalService.getFileShortcuts(
 				childDLFolder.getGroupId(), childDLFolder.getFolderId());
 
 		for (DLFileShortcut dlFileShortcut : dlFileShortcuts) {
