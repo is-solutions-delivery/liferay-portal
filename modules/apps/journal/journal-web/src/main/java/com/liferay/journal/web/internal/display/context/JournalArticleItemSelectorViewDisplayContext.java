@@ -606,28 +606,6 @@ public class JournalArticleItemSelectorViewDisplayContext {
 		searchContext.setGroupIds(_getGroupIds());
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		String keywords = getKeywords();
-
-		if (Validator.isNotNull(keywords)) {
-			searchContext.setAttribute(Field.ARTICLE_ID, keywords);
-			searchContext.setAttribute(Field.CONTENT, keywords);
-			searchContext.setAttribute(Field.DESCRIPTION, keywords);
-			searchContext.setAttribute(Field.TITLE, keywords);
-			searchContext.setAttribute(
-				"params",
-				LinkedHashMapBuilder.<String, Object>put(
-					"expandoAttributes", keywords
-				).put(
-					"keywords", keywords
-				).build());
-			searchContext.setKeywords(keywords);
-		}
-		else {
-			searchContext.setAttribute(
-				SearchContextAttributes.ATTRIBUTE_KEY_EMPTY_SEARCH,
-				Boolean.TRUE);
-		}
-
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
 		queryConfig.setHighlightEnabled(false);
@@ -664,6 +642,28 @@ public class JournalArticleItemSelectorViewDisplayContext {
 		}
 
 		searchContext.setStart(start);
+
+		String keywords = getKeywords();
+
+		if (Validator.isNotNull(keywords)) {
+			searchContext.setAttribute(Field.ARTICLE_ID, keywords);
+			searchContext.setAttribute(Field.CONTENT, keywords);
+			searchContext.setAttribute(Field.DESCRIPTION, keywords);
+			searchContext.setAttribute(Field.TITLE, keywords);
+			searchContext.setAttribute(
+				"params",
+				LinkedHashMapBuilder.<String, Object>put(
+					"expandoAttributes", keywords
+				).put(
+					"keywords", keywords
+				).build());
+			searchContext.setKeywords(keywords);
+		}
+		else {
+			searchContext.setAttribute(
+				SearchContextAttributes.ATTRIBUTE_KEY_EMPTY_SEARCH,
+				Boolean.TRUE);
+		}
 	}
 
 	private SearchContainer<?> _articleSearchContainer;
