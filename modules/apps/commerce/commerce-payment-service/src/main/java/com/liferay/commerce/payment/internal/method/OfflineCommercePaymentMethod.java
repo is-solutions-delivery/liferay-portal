@@ -155,10 +155,10 @@ public class OfflineCommercePaymentMethod implements CommercePaymentMethod {
 				getCommercePaymentMethodGroupRels(
 					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-		String key = (String)properties.get("key");
-
 		for (CommercePaymentMethodGroupRel commercePaymentMethodGroupRel :
 				commercePaymentMethodGroupRels) {
+
+			String key = (String)properties.get("key");
 
 			if (key.equals(commercePaymentMethodGroupRel.getEngineKey())) {
 				_commercePaymentMethodGroupRelLocalService.
