@@ -808,7 +808,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 	}
 
 	private long _getPreviewFileEntryId(
-			String className, long groupId, long classPK, ZipEntry zipEntry,
+			long groupId, String className, long classPK, ZipEntry zipEntry,
 			ZipFile zipFile)
 		throws Exception {
 
@@ -1092,7 +1092,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 					warningMessages);
 
 				long previewFileEntryId = _getPreviewFileEntryId(
-					LayoutPageTemplateEntry.class.getName(), groupId,
+					groupId, LayoutPageTemplateEntry.class.getName(),
 					layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
 					thumbnailZipEntry, zipFile);
 
@@ -1227,7 +1227,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 					warningMessages);
 
 				long previewFileEntryId = _getPreviewFileEntryId(
-					LayoutUtilityPageEntry.class.getName(), groupId,
+					groupId, LayoutUtilityPageEntry.class.getName()
 					layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
 					thumbnailZipEntry, zipFile);
 
