@@ -1227,7 +1227,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 					warningMessages);
 
 				long previewFileEntryId = _getPreviewFileEntryId(
-					groupId, LayoutUtilityPageEntry.class.getName()
+					groupId, LayoutUtilityPageEntry.class.getName(),
 					layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
 					thumbnailZipEntry, zipFile);
 
