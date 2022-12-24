@@ -408,14 +408,6 @@ public class DLFileShortcutLocalServiceWrapper
 		return _dlFileShortcutLocalService.getDLFileShortcuts(start, end);
 	}
 
-	@Override
-	public java.util.List<DLFileShortcut> getDLFileShortcuts(
-		long groupId, long folderId) {
-
-		return _dlFileShortcutLocalService.getDLFileShortcuts(
-			groupId, folderId);
-	}
-
 	/**
 	 * Returns all the document library file shortcuts matching the UUID and company.
 	 *
@@ -481,6 +473,13 @@ public class DLFileShortcutLocalServiceWrapper
 	@Override
 	public java.util.List<DLFileShortcut> getFileShortcuts(long toFileEntryId) {
 		return _dlFileShortcutLocalService.getFileShortcuts(toFileEntryId);
+	}
+
+	@Override
+	public java.util.List<DLFileShortcut> getFileShortcuts(
+		long groupId, long folderId) {
+
+		return _dlFileShortcutLocalService.getFileShortcuts(groupId, folderId);
 	}
 
 	@Override

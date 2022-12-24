@@ -535,13 +535,6 @@ public class DLFileEntryLocalServiceWrapper
 		return _dlFileEntryLocalService.getDLFileEntries(start, end);
 	}
 
-	@Override
-	public java.util.List<DLFileEntry> getDLFileEntries(
-		long classNameId, String treePath) {
-
-		return _dlFileEntryLocalService.getDLFileEntries(classNameId, treePath);
-	}
-
 	/**
 	 * Returns all the document library file entries matching the UUID and company.
 	 *
@@ -734,6 +727,14 @@ public class DLFileEntryLocalServiceWrapper
 		long folderId, String name) {
 
 		return _dlFileEntryLocalService.getFileEntries(folderId, name);
+	}
+
+	@Override
+	public java.util.List<DLFileEntry> getFileEntriesByClassNameIdAndTreePath(
+		long classNameId, String treePath) {
+
+		return _dlFileEntryLocalService.getFileEntriesByClassNameIdAndTreePath(
+			classNameId, treePath);
 	}
 
 	@Override

@@ -479,12 +479,6 @@ public class DLFileEntryLocalServiceUtil {
 		return getService().getDLFileEntries(start, end);
 	}
 
-	public static List<DLFileEntry> getDLFileEntries(
-		long classNameId, String treePath) {
-
-		return getService().getDLFileEntries(classNameId, treePath);
-	}
-
 	/**
 	 * Returns all the document library file entries matching the UUID and company.
 	 *
@@ -650,6 +644,13 @@ public class DLFileEntryLocalServiceUtil {
 
 	public static List<DLFileEntry> getFileEntries(long folderId, String name) {
 		return getService().getFileEntries(folderId, name);
+	}
+
+	public static List<DLFileEntry> getFileEntriesByClassNameIdAndTreePath(
+		long classNameId, String treePath) {
+
+		return getService().getFileEntriesByClassNameIdAndTreePath(
+			classNameId, treePath);
 	}
 
 	public static int getFileEntriesCount() {
