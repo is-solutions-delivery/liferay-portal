@@ -59,6 +59,23 @@ public class AccountChannelShippingOptionDTOConverter
 
 		return new AccountChannelShippingOption() {
 			{
+				accountId =
+					commerceShippingOptionAccountEntryRel.getAccountEntryId();
+				actions = dtoConverterContext.getActions();
+				channelId =
+					commerceShippingOptionAccountEntryRel.
+						getCommerceChannelId();
+				id =
+					commerceShippingOptionAccountEntryRel.
+						getCommerceShippingOptionAccountEntryRelId();
+
+				shippingMethodKey =
+					commerceShippingOptionAccountEntryRel.
+						getCommerceShippingMethodKey();
+				shippingOptionKey =
+					commerceShippingOptionAccountEntryRel.
+						getCommerceShippingOptionKey();
+
 				setAccountExternalReferenceCode(
 					() -> {
 						AccountEntry accountEntry =
@@ -75,16 +92,6 @@ public class AccountChannelShippingOptionDTOConverter
 
 						return null;
 					});
-				accountId =
-					commerceShippingOptionAccountEntryRel.getAccountEntryId();
-				actions = dtoConverterContext.getActions();
-				channelId =
-					commerceShippingOptionAccountEntryRel.
-						getCommerceChannelId();
-				id =
-					commerceShippingOptionAccountEntryRel.
-						getCommerceShippingOptionAccountEntryRelId();
-
 				setShippingMethodId(
 					() -> {
 						CommerceChannel commerceChannel =
@@ -106,10 +113,6 @@ public class AccountChannelShippingOptionDTOConverter
 						return commerceShippingMethod.
 							getCommerceShippingMethodId();
 					});
-				shippingMethodKey =
-					commerceShippingOptionAccountEntryRel.
-						getCommerceShippingMethodKey();
-
 				setShippingOptionId(
 					() -> {
 						CommerceShippingFixedOption
@@ -128,9 +131,6 @@ public class AccountChannelShippingOptionDTOConverter
 						return commerceShippingFixedOption.
 							getCommerceShippingFixedOptionId();
 					});
-				shippingOptionKey =
-					commerceShippingOptionAccountEntryRel.
-						getCommerceShippingOptionKey();
 			}
 		};
 	}
