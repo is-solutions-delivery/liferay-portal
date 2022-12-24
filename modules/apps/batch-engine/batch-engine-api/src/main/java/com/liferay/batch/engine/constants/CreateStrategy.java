@@ -30,8 +30,7 @@ public enum CreateStrategy {
 			}
 		}
 
-		throw new IllegalStateException(
-			"Unable to find default import strategy");
+		throw new IllegalStateException();
 	}
 
 	public String getLabel() {
