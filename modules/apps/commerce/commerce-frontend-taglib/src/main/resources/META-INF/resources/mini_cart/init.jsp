@@ -27,21 +27,21 @@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 
 <%
 Map<String, String> cartViews = (Map<String, String>)request.getAttribute("liferay-commerce:cart:cartViews");
-int itemsQuantity = (int)request.getAttribute("liferay-commerce:cart:itemsQuantity");
-Map<String, String> labels = (Map<String, String>)request.getAttribute("liferay-commerce:cart:labels");
+String checkoutURL = (String)request.getAttribute("liferay-commerce:cart:checkoutURL");
 long commerceChannelGroupId = (Long)request.getAttribute("liferay-commerce:cart:commerceChannelGroupId");
 long commerceChannelId = (Long)request.getAttribute("liferay-commerce:cart:commerceChannelId");
 String commerceCurrencyCode = (String)request.getAttribute("liferay-commerce:cart:commerceCurrencyCode");
-String checkoutURL = (String)request.getAttribute("liferay-commerce:cart:checkoutURL");
 boolean displayDiscountLevels = (boolean)request.getAttribute("liferay-commerce:cart:displayDiscountLevels");
 boolean displayTotalItemsQuantity = (boolean)request.getAttribute("liferay-commerce:cart:displayTotalItemsQuantity");
+int itemsQuantity = (int)request.getAttribute("liferay-commerce:cart:itemsQuantity");
+Map<String, String> labels = (Map<String, String>)request.getAttribute("liferay-commerce:cart:labels");
 String orderDetailURL = (String)request.getAttribute("liferay-commerce:cart:orderDetailURL");
 long orderId = (long)request.getAttribute("liferay-commerce:cart:orderId");
 String productURLSeparator = (String)request.getAttribute("liferay-commerce:cart:productURLSeparator");
 String siteDefaultURL = (String)request.getAttribute("liferay-commerce:cart:siteDefaultURL");
+boolean toggleable = (boolean)request.getAttribute("liferay-commerce:cart:toggleable");
 
 String randomNamespace = PortalUtil.generateRandomKey(request, "taglib") + StringPool.UNDERLINE;
-boolean toggleable = (boolean)request.getAttribute("liferay-commerce:cart:toggleable");
 
 String miniCartId = randomNamespace + "cart";
 %>

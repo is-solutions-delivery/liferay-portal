@@ -65,26 +65,29 @@ public class MiniCartTag extends IncludeTag {
 			(CommerceContext)httpServletRequest.getAttribute(
 				CommerceWebKeys.COMMERCE_CONTEXT);
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		CPFriendlyURL cpFriendlyURL = ServletContextUtil.getCPFriendlyURL();
-
-		_productURLSeparator = cpFriendlyURL.getProductURLSeparator(
-			themeDisplay.getCompanyId());
-
-		_siteDefaultURL = _getSiteDefaultURL(themeDisplay);
-
 		try {
-			CommerceCurrency commerceCurrency =
-				commerceContext.getCommerceCurrency();
+			_checkoutURL = StringPool.BLANK;
 
-			_commerceCurrencyCode = commerceCurrency.getCode();
+			PortletURL portletURL = PortletProviderUtil.getPortletURL(
+				httpServletRequest, CommercePortletKeys.COMMERCE_CHECKOUT,
+				PortletProvider.Action.VIEW);
+
+			if (portletURL != null) {
+				_checkoutURL = PortletURLBuilder.create(
+					portletURL
+				).setMVCRenderCommandName(
+					"/commerce_checkout/checkout_redirect"
+				).buildString();
+			}
 
 			_commerceChannelGroupId =
 				commerceContext.getCommerceChannelGroupId();
 			_commerceChannelId = commerceContext.getCommerceChannelId();
+
+			CommerceCurrency commerceCurrency =
+				commerceContext.getCommerceCurrency();
+
+			_commerceCurrencyCode = commerceCurrency.getCode();
 
 			CommerceOrder commerceOrder = commerceContext.getCommerceOrder();
 
@@ -115,20 +118,6 @@ public class MiniCartTag extends IncludeTag {
 
 				_orderId = 0;
 			}
-
-			_checkoutURL = StringPool.BLANK;
-
-			PortletURL portletURL = PortletProviderUtil.getPortletURL(
-				httpServletRequest, CommercePortletKeys.COMMERCE_CHECKOUT,
-				PortletProvider.Action.VIEW);
-
-			if (portletURL != null) {
-				_checkoutURL = PortletURLBuilder.create(
-					portletURL
-				).setMVCRenderCommandName(
-					"/commerce_checkout/checkout_redirect"
-				).buildString();
-			}
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException);
@@ -138,6 +127,16 @@ public class MiniCartTag extends IncludeTag {
 			_orderDetailURL = StringPool.BLANK;
 			_orderId = 0;
 		}
+
+		CPFriendlyURL cpFriendlyURL = ServletContextUtil.getCPFriendlyURL();
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		_productURLSeparator = cpFriendlyURL.getProductURLSeparator(
+			themeDisplay.getCompanyId());
+		_siteDefaultURL = _getSiteDefaultURL(themeDisplay);
 
 		return super.doStartTag();
 	}
