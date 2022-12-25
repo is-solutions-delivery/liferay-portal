@@ -1596,13 +1596,13 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			_log.debug("Setting up required service");
 		}
 
+		bundleContext.registerService(
+			ProcessExecutor.class, new LocalProcessExecutor(), null);
+
 		Props props = PropsUtil.getProps();
 
 		bundleContext.registerService(
 			Props.class, props, _getProperties(props, Props.class.getName()));
-
-		bundleContext.registerService(
-			ProcessExecutor.class, new LocalProcessExecutor(), null);
 	}
 
 	private void _startConfigurationBundles(Collection<Bundle> bundles)
