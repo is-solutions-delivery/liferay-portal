@@ -199,15 +199,15 @@ public class PortletCategoryManagerImpl implements PortletCategoryManager {
 		Map<String, JSONObject> portletCategoryJSONObjectsMap =
 			new LinkedHashMap<>();
 
+		Set<String> layoutDecodedPortletNames = _getLayoutDecodedPortletNames(
+			themeDisplay);
+
 		List<PortletCategory> portletCategories = ListUtil.fromCollection(
 			portletCategory.getCategories());
 
 		portletCategories = ListUtil.sort(
 			portletCategories,
 			new PortletCategoryComparator(themeDisplay.getLocale()));
-
-		Set<String> layoutDecodedPortletNames = _getLayoutDecodedPortletNames(
-			themeDisplay);
 
 		for (PortletCategory currentPortletCategory : portletCategories) {
 			if (currentPortletCategory.isHidden()) {
@@ -229,7 +229,7 @@ public class PortletCategoryManagerImpl implements PortletCategoryManager {
 
 			JSONArray portletsJSONArray = _getPortletsJSONArray(
 				highlightedPortletIds, httpServletRequest,
-				currentPortletCategory, layoutDecodedPortletNames,
+				layoutDecodedPortletNames, currentPortletCategory,
 				themeDisplay);
 
 			if ((childPortletCategoriesJSONArray.length() > 0) ||
@@ -371,8 +371,8 @@ public class PortletCategoryManagerImpl implements PortletCategoryManager {
 	private JSONArray _getPortletsJSONArray(
 			Set<String> highlightedPortletIds,
 			HttpServletRequest httpServletRequest,
-			PortletCategory portletCategory,
-			Set<String> layoutDecodedPortletNames, ThemeDisplay themeDisplay)
+			Set<String> layoutDecodedPortletNames,
+			PortletCategory portletCategory, ThemeDisplay themeDisplay)
 		throws Exception {
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray();
@@ -410,21 +410,21 @@ public class PortletCategoryManagerImpl implements PortletCategoryManager {
 					() -> {
 						Layout layout = themeDisplay.getLayout();
 
-						if (layout.isTypePortlet()) {
-							if (portlet.isInstanceable()) {
-								return false;
-							}
+						if (!layout.isTypePortlet() ||
+							portlet.isInstanceable()) {
 
-							LayoutTypePortlet layoutTypePortlet =
-								themeDisplay.getLayoutTypePortlet();
+							return false;
+						}
 
-							if (layoutDecodedPortletNames.contains(
-									portlet.getPortletId()) ||
-								layoutTypePortlet.hasPortletId(
-									portlet.getPortletId())) {
+						LayoutTypePortlet layoutTypePortlet =
+							themeDisplay.getLayoutTypePortlet();
 
-								return true;
-							}
+						if (layoutDecodedPortletNames.contains(
+								portlet.getPortletId()) ||
+							layoutTypePortlet.hasPortletId(
+								portlet.getPortletId())) {
+
+							return true;
 						}
 
 						return false;
