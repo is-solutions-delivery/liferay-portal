@@ -520,6 +520,23 @@ public class ObjectEntryDisplayContext {
 		).build();
 	}
 
+	public Map<String, Object> getRelationshipValues() {
+		HttpServletRequest httpServletRequest =
+			_objectRequestHelper.getRequest();
+
+		String value = httpServletRequest.getParameter(
+			ObjectFieldSettingConstants.
+				NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME);
+
+		if (Validator.isNotNull(value)) {
+			return HashMapBuilder.<String, Object>put(
+				value, httpServletRequest.getParameter("parentObjectEntryERC")
+			).build();
+		}
+
+		return Collections.emptyMap();
+	}
+
 	public boolean isDefaultUser() {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();

@@ -171,19 +171,19 @@ portletDisplay.setURLBack(backURL);
 								);
 							}
 
-							let relationshipValueMap =
-								'<%= objectEntryDisplayContext.getRelationshipValueMap() %>';
+							let relationshipValues =
+								'<%= objectEntryDisplayContext.getRelationshipValues() %>';
 
-							relationshipValueMap = relationshipValueMap.substring(
+							relationshipValues = relationshipValues.substring(
 								1,
-								relationshipValueMap.length - 1
+								relationshipValues.length - 1
 							);
 
-							if (relationshipValueMap.length > 0) {
+							if (relationshipValues.length > 0) {
 								const [
 									relationshipField,
 									relationshipFieldValue,
-								] = relationshipValueMap.split('=');
+								] = relationshipValues.split('=');
 
 								values = Object.assign(values, {
 									[relationshipField]: relationshipFieldValue,
