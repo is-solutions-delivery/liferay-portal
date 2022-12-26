@@ -520,26 +520,6 @@ public class ObjectEntryDisplayContext {
 		).build();
 	}
 
-	private Map<String, Object> _getRelationshipValueMap() {
-		HttpServletRequest httpServletRequest =
-			_objectRequestHelper.getRequest();
-
-		if (Validator.isNotNull(
-				httpServletRequest.getParameter(
-					ObjectFieldSettingConstants.
-						NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME))) {
-
-			return HashMapBuilder.<String, Object>put(
-				httpServletRequest.getParameter(
-					ObjectFieldSettingConstants.
-						NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME),
-				httpServletRequest.getParameter("parentObjectEntryERC")
-			).build();
-		}
-
-		return Collections.emptyMap();
-	}
-
 	public boolean isDefaultUser() {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -1146,10 +1126,22 @@ public class ObjectEntryDisplayContext {
 			return true;
 		}
 
-		Map<String, Object> relationshipValueMap =
-			_getRelationshipValueMap();
+		HttpServletRequest httpServletRequest =
+			_objectRequestHelper.getRequest();
 
-		if (!relationshipValueMap.isEmpty()) {
+		if (Validator.isNotNull(
+				httpServletRequest.getParameter(
+					ObjectFieldSettingConstants.
+						NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME))) {
+
+			Map<String, Object> relationshipValueMap =
+				HashMapBuilder.<String, Object>put(
+					httpServletRequest.getParameter(
+						ObjectFieldSettingConstants.
+							NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME),
+					httpServletRequest.getParameter("parentObjectEntryERC")
+				).build();
+
 			String objectRelationshipERCObjectFieldName =
 				ObjectFieldSettingUtil.getValue(
 					ObjectFieldSettingConstants.
