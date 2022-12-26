@@ -89,9 +89,9 @@
 							}
 
 							if (curLanguageId.equals(defaultLanguageId)) {
+								linkCssClass += " active";
 								translationStatusCssClass = "info";
 								translationStatusMessage = LanguageUtil.get(request, "default");
-								linkCssClass += " active";
 							}
 						%>
 
@@ -241,8 +241,8 @@
 					}
 				);
 
-				triggerMenu.setHTML(triggerContent);
 				triggerMenu.setData('menuListContainer', listContainer);
+				triggerMenu.setHTML(triggerContent);
 			};
 
 			Liferay.on('inputLocalized:localeChanged', onLocaleChange);
