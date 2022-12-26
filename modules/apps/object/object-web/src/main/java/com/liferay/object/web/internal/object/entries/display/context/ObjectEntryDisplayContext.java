@@ -1134,20 +1134,12 @@ public class ObjectEntryDisplayContext {
 				NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME);
 
 		if (Validator.isNotNull(value)) {
-			Map<String, Object> relationshipValueMap =
-				HashMapBuilder.<String, Object>put(
+			if (Objects.equals(
 					value,
-					httpServletRequest.getParameter("parentObjectEntryERC")
-				).build();
-
-			String objectRelationshipERCObjectFieldName =
 				ObjectFieldSettingUtil.getValue(
 					ObjectFieldSettingConstants.
 						NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME,
-					objectField);
-
-			if (relationshipValueMap.containsKey(
-					objectRelationshipERCObjectFieldName)) {
+					objectField))) {
 
 				return false;
 			}
