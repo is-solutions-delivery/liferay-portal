@@ -1129,16 +1129,14 @@ public class ObjectEntryDisplayContext {
 		HttpServletRequest httpServletRequest =
 			_objectRequestHelper.getRequest();
 
-		if (Validator.isNotNull(
-				httpServletRequest.getParameter(
-					ObjectFieldSettingConstants.
-						NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME))) {
+		String value = httpServletRequest.getParameter(
+			ObjectFieldSettingConstants.
+				NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME);
 
+		if (Validator.isNotNull(value)) {
 			Map<String, Object> relationshipValueMap =
 				HashMapBuilder.<String, Object>put(
-					httpServletRequest.getParameter(
-						ObjectFieldSettingConstants.
-							NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME),
+					value,
 					httpServletRequest.getParameter("parentObjectEntryERC")
 				).build();
 
