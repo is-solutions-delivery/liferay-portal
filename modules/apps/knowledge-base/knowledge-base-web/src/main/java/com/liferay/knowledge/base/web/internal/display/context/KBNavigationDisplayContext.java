@@ -55,7 +55,7 @@ public class KBNavigationDisplayContext {
 		_kbArticle = kbArticle;
 	}
 
-	public String getAlertMessageLabel() {
+	public String getLabel() {
 		if (KBFolderConstants.DEFAULT_PARENT_FOLDER_ID !=
 				getResourcePrimKey()) {
 

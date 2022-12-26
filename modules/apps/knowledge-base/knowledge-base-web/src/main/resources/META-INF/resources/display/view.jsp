@@ -49,7 +49,7 @@ request.setAttribute(KBWebKeys.KNOWLEDGE_BASE_KB_NAVIGATION_DISPLAY_CONTEXT, kbN
 		%>
 
 		<div class="alert alert-info portlet-configuration">
-			<aui:a href="<%= portletDisplay.getURLConfiguration() %>" label="<%= kbNavigationDisplayContext.getAlertMessageLabel() %>" onClick="<%= portletDisplay.getURLConfigurationJS() %>" />
+			<aui:a href="<%= portletDisplay.getURLConfiguration() %>" label="<%= kbNavigationDisplayContext.getLabel() %>" onClick="<%= portletDisplay.getURLConfigurationJS() %>" />
 		</div>
 	</c:otherwise>
 </c:choose>
