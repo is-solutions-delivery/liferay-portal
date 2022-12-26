@@ -88,17 +88,14 @@ public class EditSegmentsEntryMVCRenderCommandTest {
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 			_getMockLiferayPortletRenderRequests();
 
+		mockLiferayPortletRenderRequest.setAttribute(
+			WebKeys.USER, TestPropsValues.getUser());
 		mockLiferayPortletRenderRequest.setParameter(
 			"groupId", String.valueOf(_group.getGroupId()));
 
-		MockLiferayPortletRenderResponse mockLiferayPortletRenderResponse =
-			new MockLiferayPortletRenderResponse();
-
-		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.USER, TestPropsValues.getUser());
-
 		_mvcRenderCommand.render(
-			mockLiferayPortletRenderRequest, mockLiferayPortletRenderResponse);
+			mockLiferayPortletRenderRequest,
+			new MockLiferayPortletRenderResponse());
 
 		Map<String, Object> data = ReflectionTestUtil.invoke(
 			mockLiferayPortletRenderRequest.getAttribute(
@@ -149,9 +146,6 @@ public class EditSegmentsEntryMVCRenderCommandTest {
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 			_getMockLiferayPortletRenderRequests();
 
-		MockLiferayPortletRenderResponse mockLiferayPortletRenderResponse =
-			new MockLiferayPortletRenderResponse();
-
 		User user = TestPropsValues.getUser();
 
 		mockLiferayPortletRenderRequest.setAttribute(WebKeys.USER, user);
@@ -164,7 +158,8 @@ public class EditSegmentsEntryMVCRenderCommandTest {
 			String.valueOf(segmentsEntry.getSegmentsEntryId()));
 
 		_mvcRenderCommand.render(
-			mockLiferayPortletRenderRequest, mockLiferayPortletRenderResponse);
+			mockLiferayPortletRenderRequest,
+			new MockLiferayPortletRenderResponse());
 
 		Map<String, Object> data = ReflectionTestUtil.invoke(
 			mockLiferayPortletRenderRequest.getAttribute(
@@ -210,7 +205,6 @@ public class EditSegmentsEntryMVCRenderCommandTest {
 		Assert.assertEquals(
 			LocalizationUtil.getDefaultLanguageId(segmentsEntry.getName()),
 			props.get("defaultLanguageId"));
-
 		Assert.assertEquals(1, (int)props.get("initialMembersCount"));
 		Assert.assertTrue((boolean)props.get("initialSegmentActive"));
 
