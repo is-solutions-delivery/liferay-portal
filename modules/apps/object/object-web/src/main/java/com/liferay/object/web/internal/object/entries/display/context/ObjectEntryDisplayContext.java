@@ -520,7 +520,7 @@ public class ObjectEntryDisplayContext {
 		).build();
 	}
 
-	public Map<String, Object> getRelationshipValueMap() {
+	private Map<String, Object> _getRelationshipValueMap() {
 		HttpServletRequest httpServletRequest =
 			_objectRequestHelper.getRequest();
 
@@ -1144,7 +1144,7 @@ public class ObjectEntryDisplayContext {
 	private boolean _isActive(ObjectField objectField) throws PortalException {
 		if (Validator.isNotNull(objectField.getRelationshipType())) {
 			Map<String, Object> relationshipValueMap =
-				getRelationshipValueMap();
+				_getRelationshipValueMap();
 
 			if (!relationshipValueMap.isEmpty()) {
 				String objectRelationshipERCObjectFieldName =
