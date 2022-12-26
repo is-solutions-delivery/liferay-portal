@@ -12,32 +12,37 @@
  * details.
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
+import Button, {ClayButtonWithIcon} from '@clayui/button';
 import ClayTable from '@clayui/table';
 import classnames from 'classnames';
 
 import SettingsButton, {ActionObject} from '../settings-button';
 
 const {Body, Cell, Head, Row} = ClayTable;
-
 type TableProps = {
 	actions: ActionObject[];
 	data: {[keys: string]: string}[];
 	headers: TableHeaders[];
 	onClickRules?: (item: any, rowContent: any) => void;
-	setSortByDate?: () => void;
+	onSaveCurrent?: (item: any) => void;
+	setSortByDate?: (item: any) => void;
+	setSortState?: (item: any) => void;
+	sort?: any;
 	sortByDate?: string;
+	valuer?: string;
 };
 
 type TableHeaders = {
 	bold?: boolean;
 	centered?: boolean;
+	click?: boolean;
 	clickable?: boolean;
 	greyColor?: boolean;
 	hasSort?: boolean;
 	icon?: boolean;
 	key: string;
 	redColor?: boolean;
+	req: string;
 	type?: string;
 	value: string;
 };
@@ -46,32 +51,79 @@ const Table: React.FC<TableProps> = ({
 	data,
 	headers,
 	actions,
-	sortByDate,
 	setSortByDate,
+	setSortState,
+	sort,
+	sortByDate,
 	onClickRules = () => null,
+	onSaveCurrent,
 }) => {
+	const setCurrentHeaderPlus = (item: string) => {
+		if (onSaveCurrent) {
+			onSaveCurrent(item);
+		}
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const updateSort = (colunn: string) => {
+		const newSort: any = {};
+
+		headers.forEach((item) => {
+			if (item.req === colunn) {
+				newSort[item.key] = true;
+
+				return;
+			}
+
+			newSort[item.key] = false;
+		});
+
+		if (setSortState) {
+			setSortState(newSort);
+		}
+	};
+
 	return (
 		<table className="border-0 ray-table show-quick-actions-on-hover table table-autofit table-list table-responsive">
 			<Head>
 				<Row className="ray-table-head">
-					{headers.map((header, index) => (
+					{headers.map((header, index: any) => (
 						<Cell
 							className="py-0 text-paragraph-sm"
 							headingCell
 							key={index}
 						>
-							{header.value}
+							{headers[index].click && (
+								<Button
+									displayType="unstyled"
+									onClick={() => {
+										updateSort(headers[index].req);
+										setCurrentHeaderPlus(
+											headers[index].req
+										);
 
-							{header.hasSort && (
+										setSortByDate;
+									}}
+								>
+									{header.value}
+								</Button>
+							)}
+
+							{!headers[index].click && (
+								<Button displayType="unstyled">
+									{header.value}
+								</Button>
+							)}
+
+							{sort[header.key] && (
 								<ClayButtonWithIcon
 									className="bg-neutral-0 btn-sm text-brand-primary-darken-1"
-									onClick={setSortByDate}
 									symbol={
 										sortByDate === 'asc'
 											? 'order-arrow-up'
 											: 'order-arrow-down'
 									}
-								/>
+								></ClayButtonWithIcon>
 							)}
 						</Cell>
 					))}

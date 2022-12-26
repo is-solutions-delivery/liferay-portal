@@ -335,8 +335,7 @@ const PoliciesTable = () => {
 					);
 				})
 			);
-		}
-		else {
+		} else {
 			setFilterProductCheck(
 				filterProductCheck.filter((productName: string) => {
 					return productName !== `'${currentFilterName}'`;
@@ -379,50 +378,77 @@ const PoliciesTable = () => {
 		setCheckedStateStatus(updatedCheckedStateStatus);
 	};
 
+	const [sortState, setSortState] = useState({
+		commission: false,
+		externalReferenceCode: false,
+		monthlyPremium: false,
+		policyOwnerName: false,
+		policyPeriod: true,
+		policyStatus: false,
+		productName: false,
+		renewalDue: true,
+	});
+
 	const HEADERS = [
 		{
 			bold: false,
 			centered: true,
+			click: true,
 			hasSort: true,
 			key: 'renewalDue',
 			redColor: hasRedLine,
+			req: 'renewalDue',
 			value: 'Renewal Due',
 		},
 		{
+			click: false,
 			key: 'productName',
+			req: 'productName',
 			value: 'Product',
 		},
 		{
 			bold: true,
+			click: false,
 			clickable: true,
 			key: 'externalReferenceCode',
+			req: 'externalReferenceCode',
 			type: 'link',
 			value: 'Policy Number',
 		},
 		{
+			click: false,
 			greyColor: true,
 			key: 'policyOwnerName',
+			req: 'policyOwnerName',
 			value: 'Name',
 		},
 		{
+			click: false,
 			greyColor: true,
 			key: 'monthlyPremium',
+			req: 'monthlyPremium',
 			value: 'Monthly Premium',
 		},
 		{
+			click: true,
 			greyColor: true,
 			hasSort: true,
 			key: 'policyPeriod',
+			req: 'renewalDue',
 			value: 'Policy Period',
 		},
 		{
+			click: false,
 			greyColor: true,
 			key: 'commission',
+			req: 'commission',
 			value: 'Commission',
 		},
 		{
+			click: false,
 			greyColor: true,
 			key: 'policyStatus',
+			req: 'policyStatus',
 			value: 'Status',
 		},
 	];
@@ -517,8 +543,7 @@ const PoliciesTable = () => {
 						}
 						if (renewalDue === 0) {
 							return 'Due Today';
-						}
-						else {
+						} else {
 							return renewalDue;
 						}
 					};
@@ -615,6 +640,10 @@ const PoliciesTable = () => {
 				'policy-details'
 			);
 		}
+	};
+
+	const setHeader = () => {
+		setSortRule();
 	};
 
 	return (
@@ -821,7 +850,10 @@ const PoliciesTable = () => {
 				data={policies}
 				headers={HEADERS}
 				onClickRules={onClickRules}
+				onSaveCurrent={setHeader}
 				setSortByDate={setSortRule}
+				setSortState={setSortState}
+				sort={sortState}
 				sortByDate={sortPolicyByEndDate}
 			/>
 

@@ -35,23 +35,27 @@ const HEADERS = [
 		clickable: true,
 		greyColor: true,
 		key: 'applicationCreateDate',
+		req: 'applicationCreateDate',
 		type: 'link',
 		value: 'Date',
 	},
 	{
 		key: 'productName',
+		req: 'productName',
 		value: 'Product',
 	},
 	{
 		bold: true,
 		clickable: true,
 		key: 'externalReferenceCode',
+		req: 'externalReferenceCode',
 		type: 'link',
 		value: 'Application Number',
 	},
 	{
 		greyColor: true,
 		key: 'name',
+		req: 'name',
 		type: 'hasBubble',
 		value: 'Status',
 	},
@@ -96,6 +100,17 @@ type TableItemType = {
 type TableRowContentType = {[keys: string]: string};
 
 const RecentApplications = () => {
+	const [sortState, setSortState] = useState({
+		commission: false,
+		externalReferenceCode: false,
+		monthlyPremium: false,
+		policyOwnerName: false,
+		policyPeriod: true,
+		policyStatus: false,
+		productName: false,
+		renewalDue: true,
+	});
+
 	const [applications, setApplications] = useState<TableContent[]>([]);
 	const [visible, setVisible] = useState(false);
 	const [contentModal, setContentModal] = useState(ModalType.insurance);
@@ -316,6 +331,8 @@ const RecentApplications = () => {
 				data={applications.slice(0, 6)}
 				headers={HEADERS}
 				onClickRules={onClickRules}
+				setSortState={setSortState}
+				sort={sortState}
 			/>
 
 			<div className="align-items-center bottom-container d-flex justify-content-end mt-4 pb-3 px-3">

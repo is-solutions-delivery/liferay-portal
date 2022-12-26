@@ -40,37 +40,49 @@ import './index.scss';
 
 const HEADERS = [
 	{
+		click: false,
 		clickable: true,
 		greyColor: true,
 		key: 'applicationCreateDate',
+		req: 'applicationCreateDate',
 		type: 'link',
 		value: 'Date Filed',
 	},
 	{
+		click: false,
 		key: 'productName',
+		req: 'productName',
 		value: 'Product',
 	},
 	{
 		bold: true,
+		click: false,
 		clickable: true,
 		key: 'externalReferenceCode',
+		req: 'externalReferenceCode',
 		type: 'link',
 		value: 'Application Number',
 	},
 	{
+		click: false,
 		key: 'fullName',
+		req: 'fullName',
 		value: 'Name',
 	},
 	{
+		click: false,
 		clickable: true,
 		greyColor: true,
 		key: 'email',
+		req: 'email',
 		type: 'link',
 		value: 'Email Address',
 	},
 	{
+		click: false,
 		greyColor: true,
 		key: 'name',
+		req: 'name',
 		type: 'hasBubble',
 		value: 'Status',
 	},
@@ -127,6 +139,17 @@ type itemsPicklists = {
 };
 
 const ApplicationsTable = () => {
+	const [sortState, setSortState] = useState({
+		commission: false,
+		externalReferenceCode: false,
+		monthlyPremium: false,
+		policyOwnerName: false,
+		policyPeriod: true,
+		policyStatus: false,
+		productName: false,
+		renewalDue: true,
+	});
+
 	const [applications, setApplications] = useState<TableContent[]>([]);
 	const [totalCount, setTotalCount] = useState<number>(0);
 	const [pageSize, setPageSize] = useState<number>(5);
@@ -538,8 +561,7 @@ const ApplicationsTable = () => {
 					);
 				})
 			);
-		}
-		else {
+		} else {
 			setFilterProductCheck(
 				filterProductCheck.filter((productName: string) => {
 					return productName !== `'${currentFilterName}'`;
@@ -788,6 +810,8 @@ const ApplicationsTable = () => {
 				data={applications}
 				headers={HEADERS}
 				onClickRules={onClickRules}
+				setSortState={setSortState}
+				sort={sortState}
 			/>
 
 			<div className="d-flex justify-content-between mt-3">

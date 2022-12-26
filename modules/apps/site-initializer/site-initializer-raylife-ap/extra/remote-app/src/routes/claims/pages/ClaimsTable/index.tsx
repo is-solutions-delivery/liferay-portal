@@ -90,6 +90,7 @@ const ClaimsTable = () => {
 	const [checkedStateStatus, setCheckedStateStatus] = useState<boolean[]>([]);
 	const [policyERCByPON, setPolicyERCByPON] = useState<string>();
 	const [policyERCByProduct, setPolicyERCByProduct] = useState<string[]>([]);
+	const [currentSort, setCurrentSort] = useState<string>('claimCreateDate');
 
 	const filterSearch = `contains(id, '${searchInput}') or contains(r_policyToClaims_c_raylifePolicyERC, '${searchInput}') or contains(r_policyToClaims_c_raylifePolicyERC, '${policyERCByPON}')`;
 
@@ -120,13 +121,13 @@ const ClaimsTable = () => {
 				? {
 						page: pageAndPageSize?.page,
 						pageSize: pageAndPageSize?.pageSize,
-						sort: `claimCreateDate:${sortByDate}`,
+						sort: `${currentSort}:${sortByDate}`,
 				  }
 				: {
 						filter: filtered,
 						page: pageAndPageSize?.page,
 						pageSize: pageAndPageSize?.pageSize,
-						sort: `claimCreateDate:${sortByDate}`,
+						sort: `${currentSort}:${sortByDate}`,
 				  };
 
 		return parameters;
@@ -199,37 +200,63 @@ const ClaimsTable = () => {
 		setPolicyERCByProduct(newPolicyERCs);
 	};
 
+	const [sortState, setSortState] = useState({
+		claimCreateDate: true,
+		claimStatus: false,
+		id: false,
+		policyNumber: false,
+		policyOwnerName: false,
+		productName: false,
+	});
+
 	const HEADERS = [
 		{
+			click: true,
 			greyColor: true,
 			hasSort: true,
 			key: 'claimCreateDate',
+			req: 'claimCreateDate',
 			value: 'Date Field',
 		},
 		{
+			click: false,
 			greyColor: true,
+			hasSort: false,
 			key: 'productName',
+			req: 'productName',
 			value: 'Product',
 		},
 		{
 			bold: true,
+			click: true,
+			hasSort: false,
 			key: 'id',
+			req: 'id',
 			type: 'link',
 			value: 'Claim Number',
 		},
 		{
+			click: true,
 			greyColor: true,
+			hasSort: false,
 			key: 'policyNumber',
+			req: 'r_policyToClaims_c_raylifePolicyERC',
 			value: 'Policy Number',
 		},
 		{
+			click: false,
 			greyColor: true,
+			hasSort: false,
 			key: 'claimName',
+			req: 'policyOwnerName',
 			value: 'Name',
 		},
 		{
+			click: true,
 			greyColor: true,
+			hasSort: false,
 			key: 'claimStatus',
+			req: 'claimStatus',
 			type: 'hasBubble',
 			value: 'Status',
 		},
@@ -324,7 +351,7 @@ const ClaimsTable = () => {
 				key: externalReferenceCode,
 				policyNumber:
 					r_policyToClaims_c_raylifePolicy?.externalReferenceCode,
-				productName: r_policyToClaims_c_raylifePolicy?.productName,
+				productName: r_policyToClaims_c_raylifePolicy.productName,
 			});
 		}
 
@@ -345,6 +372,7 @@ const ClaimsTable = () => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
+		dataClaims,
 		page,
 		pageSize,
 		sortByDate,
@@ -485,8 +513,7 @@ const ClaimsTable = () => {
 					);
 				})
 			);
-		}
-		else {
+		} else {
 			setFilterProductCheck(
 				filterProductCheck.filter((productName: string) => {
 					return productName !== `'${currentFilterName}'`;
@@ -531,6 +558,11 @@ const ClaimsTable = () => {
 
 	const setSortRule = () => {
 		sortByDate === 'desc' ? setSortByDate('asc') : setSortByDate('desc');
+	};
+
+	const setHeader = (user: any) => {
+		setCurrentSort(user);
+		setSortRule();
 	};
 
 	const title = `Claims (${totalCount})`;
@@ -785,7 +817,9 @@ const ClaimsTable = () => {
 				]}
 				data={dataClaims}
 				headers={HEADERS}
-				setSortByDate={setSortRule}
+				onSaveCurrent={setHeader}
+				setSortState={setSortState}
+				sort={sortState}
 				sortByDate={sortByDate}
 			/>
 
