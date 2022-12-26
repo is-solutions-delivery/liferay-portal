@@ -349,10 +349,6 @@ public class ObjectEntryDisplayContext {
 
 		ObjectDefinition objectDefinition1 = getObjectDefinition();
 
-		ObjectScopeProvider objectScopeProvider =
-			_objectScopeProviderRegistry.getObjectScopeProvider(
-				objectDefinition2.getScope());
-
 		Map<String, String> relationshipContextParams =
 			getRelationshipContextParams();
 
@@ -362,6 +358,10 @@ public class ObjectEntryDisplayContext {
 		ObjectRelationship objectRelationship =
 			_objectRelationshipLocalService.getObjectRelationship(
 				objectRelationshipId);
+
+		ObjectScopeProvider objectScopeProvider =
+			_objectScopeProviderRegistry.getObjectScopeProvider(
+				objectDefinition2.getScope());
 
 		if (!objectDefinition1.isSystem() && !objectDefinition2.isSystem() &&
 			ObjectEntryServiceUtil.hasPortletResourcePermission(
