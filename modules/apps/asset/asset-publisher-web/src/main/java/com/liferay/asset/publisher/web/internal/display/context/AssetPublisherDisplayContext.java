@@ -174,8 +174,8 @@ public class AssetPublisherDisplayContext {
 			AssetPublisherWebConfiguration assetPublisherWebConfiguration,
 			AssetPublisherWebHelper assetPublisherWebHelper,
 			InfoItemServiceRegistry infoItemServiceRegistry,
-			ItemSelector itemSelector, PortletRequest portletRequest,
-			Portal portal, PortletResponse portletResponse,
+			ItemSelector itemSelector, Portal portal,
+			PortletRequest portletRequest, PortletResponse portletResponse,
 			PortletPreferences portletPreferences,
 			RequestContextMapper requestContextMapper,
 			SegmentsEntryRetriever segmentsEntryRetriever)
@@ -192,8 +192,8 @@ public class AssetPublisherDisplayContext {
 		_assetPublisherWebHelper = assetPublisherWebHelper;
 		_infoItemServiceRegistry = infoItemServiceRegistry;
 		_itemSelector = itemSelector;
-		_portletRequest = portletRequest;
 		_portal = portal;
+		_portletRequest = portletRequest;
 		_portletResponse = portletResponse;
 		_portletPreferences = portletPreferences;
 		_requestContextMapper = requestContextMapper;
