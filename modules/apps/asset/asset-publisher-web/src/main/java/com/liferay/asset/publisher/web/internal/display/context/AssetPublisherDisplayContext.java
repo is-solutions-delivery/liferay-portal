@@ -2258,8 +2258,8 @@ public class AssetPublisherDisplayContext {
 		long subtypeSelectionId) {
 
 		PortletURL portletURL = assetRendererFactory.getItemSelectorURL(
-			PortalUtil.getLiferayPortletRequest(_portletRequest),
-			PortalUtil.getLiferayPortletResponse(_portletResponse),
+			_portal.getLiferayPortletRequest(_portletRequest),
+			_portal.getLiferayPortletResponse(_portletResponse),
 			subtypeSelectionId, _portletResponse.getNamespace() + "selectAsset",
 			scopeGroup, true, 0);
 

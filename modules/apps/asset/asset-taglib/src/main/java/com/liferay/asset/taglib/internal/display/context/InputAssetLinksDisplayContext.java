@@ -351,7 +351,6 @@ public class InputAssetLinksDisplayContext {
 		PortletRequest portletRequest =
 			(PortletRequest)_httpServletRequest.getAttribute(
 				JavaConstants.JAVAX_PORTLET_REQUEST);
-
 		PortletResponse portletResponse =
 			(PortletResponse)_httpServletRequest.getAttribute(
 				JavaConstants.JAVAX_PORTLET_RESPONSE);
@@ -362,33 +361,35 @@ public class InputAssetLinksDisplayContext {
 			subtypeSelectionId, portletResponse.getNamespace() + "selectAsset",
 			_themeDisplay.getScopeGroup(), true, _assetEntryId);
 
-		if (portletURL == null) {
-			AssetEntryItemSelectorCriterion assetEntryItemSelectorCriterion =
-				new AssetEntryItemSelectorCriterion();
+		if (portletURL != null) {
+			return portletURL;
+		}
 
-			assetEntryItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
-				new AssetEntryItemSelectorReturnType());
-			assetEntryItemSelectorCriterion.setGroupId(
-				_themeDisplay.getScopeGroupId());
-			assetEntryItemSelectorCriterion.setSelectedGroupIds(
-				new long[] {_themeDisplay.getScopeGroupId()});
-			assetEntryItemSelectorCriterion.setShowNonindexable(true);
-			assetEntryItemSelectorCriterion.setShowScheduled(true);
-			assetEntryItemSelectorCriterion.setSubtypeSelectionId(
-				subtypeSelectionId);
-			assetEntryItemSelectorCriterion.setTypeSelection(
-				assetRendererFactory.getClassName());
+		AssetEntryItemSelectorCriterion assetEntryItemSelectorCriterion =
+			new AssetEntryItemSelectorCriterion();
 
-			ItemSelector itemSelector = ItemSelectorUtil.getItemSelector();
+		assetEntryItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new AssetEntryItemSelectorReturnType());
+		assetEntryItemSelectorCriterion.setGroupId(
+			_themeDisplay.getScopeGroupId());
+		assetEntryItemSelectorCriterion.setSelectedGroupIds(
+			new long[] {_themeDisplay.getScopeGroupId()});
+		assetEntryItemSelectorCriterion.setShowNonindexable(true);
+		assetEntryItemSelectorCriterion.setShowScheduled(true);
+		assetEntryItemSelectorCriterion.setSubtypeSelectionId(
+			subtypeSelectionId);
+		assetEntryItemSelectorCriterion.setTypeSelection(
+			assetRendererFactory.getClassName());
 
-			portletURL = itemSelector.getItemSelectorURL(
-				RequestBackedPortletURLFactoryUtil.create(_portletRequest),
-				getEventName(), assetEntryItemSelectorCriterion);
+		ItemSelector itemSelector = ItemSelectorUtil.getItemSelector();
 
-			if (_assetEntryId > 0) {
-				portletURL.setParameter(
-					"refererAssetEntryId", String.valueOf(_assetEntryId));
-			}
+		portletURL = itemSelector.getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(_portletRequest),
+			getEventName(), assetEntryItemSelectorCriterion);
+
+		if (_assetEntryId > 0) {
+			portletURL.setParameter(
+				"refererAssetEntryId", String.valueOf(_assetEntryId));
 		}
 
 		return portletURL;
