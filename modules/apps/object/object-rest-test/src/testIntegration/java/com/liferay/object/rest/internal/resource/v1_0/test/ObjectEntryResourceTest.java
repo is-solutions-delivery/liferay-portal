@@ -108,7 +108,7 @@ public class ObjectEntryResourceTest {
 			_objectEntry2.getPrimaryKey(),
 			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
 
-		_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObject(
+		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
 			com.liferay.petra.string.StringBundler.concat(
 				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
 				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
@@ -124,7 +124,7 @@ public class ObjectEntryResourceTest {
 			_objectEntry2.getPrimaryKey(),
 			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
 
-		_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObject(
+		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
 			com.liferay.petra.string.StringBundler.concat(
 				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
 				_objectEntry2.getPrimaryKey(), StringPool.SLASH,
@@ -140,7 +140,7 @@ public class ObjectEntryResourceTest {
 			_objectEntry2.getPrimaryKey(),
 			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
 
-		_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObjectNotFound(
+		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
 			com.liferay.petra.string.StringBundler.concat(
 				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
 				irrelevantCurrentObjectId, StringPool.SLASH,
@@ -161,7 +161,7 @@ public class ObjectEntryResourceTest {
 			_objectEntry2.getPrimaryKey(),
 			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
 
-		_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObjectNotFound(
+		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
 			com.liferay.petra.string.StringBundler.concat(
 				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
 				irrelevantCurrentObjectId, StringPool.SLASH,
@@ -182,7 +182,7 @@ public class ObjectEntryResourceTest {
 			_objectEntry2.getPrimaryKey(),
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
-		_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObject(
+		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
 			com.liferay.petra.string.StringBundler.concat(
 				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
 				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
@@ -198,7 +198,7 @@ public class ObjectEntryResourceTest {
 			_objectEntry2.getPrimaryKey(),
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
-		_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObjectNotFound(
+		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
 			com.liferay.petra.string.StringBundler.concat(
 				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
 				irrelevantCurrentObjectId, StringPool.SLASH,
@@ -219,7 +219,7 @@ public class ObjectEntryResourceTest {
 			_objectEntry2.getPrimaryKey(),
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
-		_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObjectNotFound(
+		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
 			com.liferay.petra.string.StringBundler.concat(
 				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
 				irrelevantCurrentObjectId, StringPool.SLASH,
@@ -393,7 +393,7 @@ public class ObjectEntryResourceTest {
 		return objectRelationship;
 	}
 
-	private void _testDeleteOneToManyAndManyToManyCustomObjectWithCustomObject(
+	private void _testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
 			String deleteEndpoint, String getEndpoint)
 		throws Exception {
 
@@ -414,7 +414,7 @@ public class ObjectEntryResourceTest {
 	}
 
 	private void
-			_testDeleteOneToManyAndManyToManyCustomObjectWithCustomObjectNotFound(
+			_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
 				String deleteEndpoint1, String deleteEndpoint2,
 				String getEndpoint)
 		throws Exception {
