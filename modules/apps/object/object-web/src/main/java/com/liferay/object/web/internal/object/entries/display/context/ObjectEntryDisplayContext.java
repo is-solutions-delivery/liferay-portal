@@ -1142,37 +1142,37 @@ public class ObjectEntryDisplayContext {
 	}
 
 	private boolean _isActive(ObjectField objectField) throws PortalException {
-		if (Validator.isNotNull(objectField.getRelationshipType())) {
-			Map<String, Object> relationshipValueMap =
-				_getRelationshipValueMap();
-
-			if (!relationshipValueMap.isEmpty()) {
-				String objectRelationshipERCObjectFieldName =
-					ObjectFieldSettingUtil.getValue(
-						ObjectFieldSettingConstants.
-							NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME,
-						objectField);
-
-				if (relationshipValueMap.containsKey(
-						objectRelationshipERCObjectFieldName)) {
-
-					return false;
-				}
-			}
-
-			ObjectRelationship objectRelationship =
-				_objectRelationshipLocalService.
-					fetchObjectRelationshipByObjectFieldId2(
-						objectField.getObjectFieldId());
-
-			ObjectDefinition relatedObjectDefinition =
-				_objectDefinitionLocalService.getObjectDefinition(
-					objectRelationship.getObjectDefinitionId1());
-
-			return relatedObjectDefinition.isActive();
+		if (Validator.isNull(objectField.getRelationshipType())) {
+			return true;
 		}
 
-		return true;
+		Map<String, Object> relationshipValueMap =
+			_getRelationshipValueMap();
+
+		if (!relationshipValueMap.isEmpty()) {
+			String objectRelationshipERCObjectFieldName =
+				ObjectFieldSettingUtil.getValue(
+					ObjectFieldSettingConstants.
+						NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME,
+					objectField);
+
+			if (relationshipValueMap.containsKey(
+					objectRelationshipERCObjectFieldName)) {
+
+				return false;
+			}
+		}
+
+		ObjectRelationship objectRelationship =
+			_objectRelationshipLocalService.
+				fetchObjectRelationshipByObjectFieldId2(
+					objectField.getObjectFieldId());
+
+		ObjectDefinition relatedObjectDefinition =
+			_objectDefinitionLocalService.getObjectDefinition(
+				objectRelationship.getObjectDefinitionId1());
+
+		return relatedObjectDefinition.isActive();
 	}
 
 	private void _removeTimeFromDateString(
