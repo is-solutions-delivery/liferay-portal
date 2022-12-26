@@ -33,7 +33,6 @@ import com.liferay.commerce.exception.CommerceOrderShippingAddressException;
 import com.liferay.commerce.exception.CommerceOrderShippingMethodException;
 import com.liferay.commerce.exception.CommerceOrderStatusException;
 import com.liferay.commerce.exception.CommerceOrderValidatorException;
-import com.liferay.commerce.helper.CommerceBaseModelDTOHelper;
 import com.liferay.commerce.internal.order.status.CompletedCommerceOrderStatusImpl;
 import com.liferay.commerce.internal.order.status.ShippedCommerceOrderStatusImpl;
 import com.liferay.commerce.inventory.model.CommerceInventoryBookedQuantity;
@@ -43,6 +42,7 @@ import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.model.CommerceShippingMethod;
+import com.liferay.commerce.model.attributes.provider.CommerceModelAttributesProvider;
 import com.liferay.commerce.notification.util.CommerceNotificationHelper;
 import com.liferay.commerce.order.CommerceOrderValidatorRegistry;
 import com.liferay.commerce.order.engine.CommerceOrderEngine;
@@ -559,9 +559,9 @@ public class CommerceOrderEngineImpl implements CommerceOrderEngine {
 						commerceOrder.getModelAttributes()
 					).put(
 						"modelDTO" + commerceOrderDTOConverter.getContentType(),
-						_commerceBaseModelDTOHelper.getBaseModelDTO(
-							commerceOrder.getUserId(), commerceOrder,
-							commerceOrderDTOConverter)
+						_commerceModelAttributesProvider.getModelAttributes(
+							commerceOrder, commerceOrderDTOConverter,
+							commerceOrder.getUserId())
 					).put(
 						"orderStatus", commerceOrder.getOrderStatus()
 					));
@@ -693,9 +693,6 @@ public class CommerceOrderEngineImpl implements CommerceOrderEngine {
 	private CommerceAddressLocalService _commerceAddressLocalService;
 
 	@Reference
-	private CommerceBaseModelDTOHelper _commerceBaseModelDTOHelper;
-
-	@Reference
 	private CommerceContextFactory _commerceContextFactory;
 
 	@Reference
@@ -708,6 +705,9 @@ public class CommerceOrderEngineImpl implements CommerceOrderEngine {
 	@Reference
 	private CommerceInventoryBookedQuantityLocalService
 		_commerceInventoryBookedQuantityLocalService;
+
+	@Reference
+	private CommerceModelAttributesProvider _commerceModelAttributesProvider;
 
 	@Reference
 	private CommerceNotificationHelper _commerceNotificationHelper;

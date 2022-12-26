@@ -12,9 +12,9 @@
  * details.
  */
 
-package com.liferay.commerce.internal.helper;
+package com.liferay.commerce.internal.model.attributes.provider;
 
-import com.liferay.commerce.helper.CommerceBaseModelDTOHelper;
+import com.liferay.commerce.model.attributes.provider.CommerceModelAttributesProvider;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -35,13 +35,13 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Riccardo Alberti
  */
-@Component(service = CommerceBaseModelDTOHelper.class)
-public class CommerceBaseModelDTOHelperImpl
-	implements CommerceBaseModelDTOHelper {
+@Component(service = CommerceModelAttributesProvider.class)
+public class CommerceModelAttributesProviderImpl
+	implements CommerceModelAttributesProvider {
 
 	@Override
-	public Map<String, Object> getBaseModelDTO(
-		long userId, BaseModel<?> baseModel, DTOConverter<?, ?> dtoConverter) {
+	public Map<String, Object> getModelAttributes(
+		BaseModel<?> baseModel, DTOConverter<?, ?> dtoConverter, long userId) {
 
 		Map<String, Object> modelAttributes = baseModel.getModelAttributes();
 
@@ -66,13 +66,12 @@ public class CommerceBaseModelDTOHelperImpl
 			return modelAttributes;
 		}
 
-		DefaultDTOConverterContext defaultDTOConverterContext =
-			new DefaultDTOConverterContext(
-				false, Collections.emptyMap(), _dtoConverterRegistry,
-				baseModel.getPrimaryKeyObj(), user.getLocale(), null, user);
-
 		try {
-			Object object = dtoConverter.toDTO(defaultDTOConverterContext);
+			Object object = dtoConverter.toDTO(
+				new DefaultDTOConverterContext(
+					false, Collections.emptyMap(), _dtoConverterRegistry,
+					baseModel.getPrimaryKeyObj(), user.getLocale(), null,
+					user));
 
 			if (object == null) {
 				return modelAttributes;
@@ -99,11 +98,11 @@ public class CommerceBaseModelDTOHelperImpl
 			}
 		}
 
-		return baseModel.getModelAttributes();
+		return modelAttributes;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceBaseModelDTOHelperImpl.class);
+		CommerceModelAttributesProviderImpl.class);
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;

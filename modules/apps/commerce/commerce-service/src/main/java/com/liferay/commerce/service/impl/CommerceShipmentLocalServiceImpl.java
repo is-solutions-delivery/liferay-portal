@@ -21,13 +21,13 @@ import com.liferay.commerce.exception.CommerceShipmentItemQuantityException;
 import com.liferay.commerce.exception.CommerceShipmentShippingDateException;
 import com.liferay.commerce.exception.CommerceShipmentStatusException;
 import com.liferay.commerce.exception.DuplicateCommerceShipmentException;
-import com.liferay.commerce.helper.CommerceBaseModelDTOHelper;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.model.CommerceShipment;
 import com.liferay.commerce.model.CommerceShipmentItem;
 import com.liferay.commerce.model.CommerceShippingMethod;
+import com.liferay.commerce.model.attributes.provider.CommerceModelAttributesProvider;
 import com.liferay.commerce.service.CommerceAddressLocalService;
 import com.liferay.commerce.service.CommerceOrderItemLocalService;
 import com.liferay.commerce.service.CommerceOrderLocalService;
@@ -758,9 +758,9 @@ public class CommerceShipmentLocalServiceImpl
 					).put(
 						"modelDTO" +
 							commerceShipmentDTOConverter.getContentType(),
-						_commerceBaseModelDTOHelper.getBaseModelDTO(
-							commerceShipment.getUserId(), commerceShipment,
-							commerceShipmentDTOConverter)
+						_commerceModelAttributesProvider.getModelAttributes(
+							commerceShipment, commerceShipmentDTOConverter,
+							commerceShipment.getUserId())
 					));
 
 				MessageBusUtil.sendMessage(
@@ -927,7 +927,7 @@ public class CommerceShipmentLocalServiceImpl
 	private CommerceAddressLocalService _commerceAddressLocalService;
 
 	@Reference
-	private CommerceBaseModelDTOHelper _commerceBaseModelDTOHelper;
+	private CommerceModelAttributesProvider _commerceModelAttributesProvider;
 
 	@Reference
 	private CommerceOrderItemLocalService _commerceOrderItemLocalService;

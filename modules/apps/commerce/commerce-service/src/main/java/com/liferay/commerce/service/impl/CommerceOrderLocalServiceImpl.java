@@ -35,7 +35,6 @@ import com.liferay.commerce.exception.CommerceOrderDateException;
 import com.liferay.commerce.exception.CommerceOrderPurchaseOrderNumberException;
 import com.liferay.commerce.exception.CommerceOrderRequestedDeliveryDateException;
 import com.liferay.commerce.exception.GuestCartMaxAllowedException;
-import com.liferay.commerce.helper.CommerceBaseModelDTOHelper;
 import com.liferay.commerce.internal.order.comparator.CommerceOrderModifiedDateComparator;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceOrder;
@@ -44,6 +43,7 @@ import com.liferay.commerce.model.CommerceOrderType;
 import com.liferay.commerce.model.CommerceShippingEngine;
 import com.liferay.commerce.model.CommerceShippingMethod;
 import com.liferay.commerce.model.CommerceShippingOption;
+import com.liferay.commerce.model.attributes.provider.CommerceModelAttributesProvider;
 import com.liferay.commerce.price.CommerceOrderPrice;
 import com.liferay.commerce.price.CommerceOrderPriceCalculation;
 import com.liferay.commerce.product.model.CommerceChannel;
@@ -1892,9 +1892,9 @@ public class CommerceOrderLocalServiceImpl
 						commerceOrder.getModelAttributes()
 					).put(
 						"modelDTO" + commerceOrderDTOConverter.getContentType(),
-						_commerceBaseModelDTOHelper.getBaseModelDTO(
-							commerceOrder.getUserId(), commerceOrder,
-							commerceOrderDTOConverter)
+						_commerceModelAttributesProvider.getModelAttributes(
+							commerceOrder, commerceOrderDTOConverter,
+							commerceOrder.getUserId())
 					).put(
 						"paymentStatus", commerceOrder.getPaymentStatus()
 					).put(
@@ -2253,9 +2253,6 @@ public class CommerceOrderLocalServiceImpl
 	private CommerceAddressLocalService _commerceAddressLocalService;
 
 	@Reference
-	private CommerceBaseModelDTOHelper _commerceBaseModelDTOHelper;
-
-	@Reference
 	private CommerceChannelLocalService _commerceChannelLocalService;
 
 	@Reference
@@ -2270,6 +2267,9 @@ public class CommerceOrderLocalServiceImpl
 
 	@Reference
 	private CommerceDiscountValidatorHelper _commerceDiscountValidatorHelper;
+
+	@Reference
+	private CommerceModelAttributesProvider _commerceModelAttributesProvider;
 
 	@Reference
 	private CommerceOrderConfiguration _commerceOrderConfiguration;

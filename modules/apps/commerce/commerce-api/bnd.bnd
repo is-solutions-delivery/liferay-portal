@@ -14,6 +14,7 @@ Export-Package:\
 	com.liferay.commerce.helper,\
 	com.liferay.commerce.inventory,\
 	com.liferay.commerce.model,\
+	com.liferay.commerce.model.attributes.provider,\
 	com.liferay.commerce.order,\
 	com.liferay.commerce.order.engine,\
 	com.liferay.commerce.order.importer.item,\

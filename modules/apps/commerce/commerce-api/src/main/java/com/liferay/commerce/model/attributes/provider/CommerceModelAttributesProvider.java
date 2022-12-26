@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.commerce.helper;
+package com.liferay.commerce.model.attributes.provider;
 
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -22,9 +22,9 @@ import java.util.Map;
 /**
  * @author Riccardo Alberti
  */
-public interface CommerceBaseModelDTOHelper {
+public interface CommerceModelAttributesProvider {
 
-	public Map<String, Object> getBaseModelDTO(
-		long userId, BaseModel<?> baseModel, DTOConverter<?, ?> dtoConverter);
+	public Map<String, Object> getModelAttributes(
+		BaseModel<?> baseModel, DTOConverter<?, ?> dtoConverter, long userId);
 
 }
