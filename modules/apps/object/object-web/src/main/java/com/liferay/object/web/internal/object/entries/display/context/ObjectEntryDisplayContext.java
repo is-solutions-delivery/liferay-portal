@@ -1133,16 +1133,15 @@ public class ObjectEntryDisplayContext {
 			ObjectFieldSettingConstants.
 				NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME);
 
-		if (Validator.isNotNull(value)) {
-			if (Objects.equals(
-					value,
+		if (Validator.isNotNull(value) &&
+			Objects.equals(
+				value,
 				ObjectFieldSettingUtil.getValue(
 					ObjectFieldSettingConstants.
 						NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME,
 					objectField))) {
 
-				return false;
-			}
+			return false;
 		}
 
 		ObjectRelationship objectRelationship =
