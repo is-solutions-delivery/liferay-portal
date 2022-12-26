@@ -47,7 +47,6 @@ public class ViewKBArticleDisplayContext {
 		_currentURL = String.valueOf(
 			PortletURLUtil.getCurrent(
 				liferayPortletRequest, liferayPortletResponse));
-
 		_themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
