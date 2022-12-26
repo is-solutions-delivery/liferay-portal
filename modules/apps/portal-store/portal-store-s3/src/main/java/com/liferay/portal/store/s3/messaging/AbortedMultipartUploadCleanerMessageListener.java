@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.store.s3;
+package com.liferay.portal.store.s3.messaging;
 
 import com.amazonaws.services.s3.transfer.TransferManager;
 
@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.SchedulerEntryImpl;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerFactory;
+import com.liferay.portal.store.s3.S3Store;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

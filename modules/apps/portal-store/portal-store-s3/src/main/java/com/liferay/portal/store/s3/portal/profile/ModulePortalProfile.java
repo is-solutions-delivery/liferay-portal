@@ -16,8 +16,8 @@ package com.liferay.portal.store.s3.portal.profile;
 
 import com.liferay.portal.profile.BaseDSModulePortalProfile;
 import com.liferay.portal.profile.PortalProfile;
-import com.liferay.portal.store.s3.AbortedMultipartUploadCleanerMessageListener;
 import com.liferay.portal.store.s3.S3Store;
+import com.liferay.portal.store.s3.messaging.AbortedMultipartUploadCleanerMessageListener;
 import com.liferay.portal.util.PropsValues;
 
 import java.util.ArrayList;
