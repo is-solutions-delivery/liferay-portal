@@ -23,6 +23,7 @@ import com.liferay.calendar.service.CalendarService;
 import com.liferay.calendar.service.base.CalendarBookingServiceBaseImpl;
 import com.liferay.calendar.util.JCalendarUtil;
 import com.liferay.calendar.workflow.constants.CalendarBookingWorkflowConstants;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -352,20 +353,11 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 			return childCalendarBookings;
 		}
 
-		List<CalendarBooking> filteredCalendarBookings = new ArrayList<>();
-
-		for (CalendarBooking calendarBooking : childCalendarBookings) {
-			if (_calendarLocalService.isStagingCalendar(
-					_calendarLocalService.fetchCalendar(
-						calendarBooking.getCalendarId()))) {
-
-				continue;
-			}
-
-			filteredCalendarBookings.add(calendarBooking);
-		}
-
-		return filteredCalendarBookings;
+		return ListUtil.filter(
+			childCalendarBookings,
+			childCalendarBooking -> !_calendarLocalService.isStagingCalendar(
+				_calendarLocalService.fetchCalendar(
+					childCalendarBooking.getCalendarId())));
 	}
 
 	@Override
@@ -876,21 +868,20 @@ public class CalendarBookingServiceImpl extends CalendarBookingServiceBaseImpl {
 	private List<CalendarBooking> _filterCalendarBookings(
 		List<CalendarBooking> calendarBookings) {
 
-		List<CalendarBooking> filteredCalendarBookings = new ArrayList<>();
-
-		for (CalendarBooking calendarBooking : calendarBookings) {
-			try {
-				filteredCalendarBookings.add(
-					_filterCalendarBooking(calendarBooking));
-			}
-			catch (PortalException portalException) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(portalException);
+		return TransformUtil.transform(
+			calendarBookings,
+			calendarBooking -> {
+				try {
+					return _filterCalendarBooking(calendarBooking);
 				}
-			}
-		}
+				catch (PortalException portalException) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(portalException);
+					}
 
-		return filteredCalendarBookings;
+					return null;
+				}
+			});
 	}
 
 	private List<CalendarBooking> _filterCalendarBookings(
