@@ -107,8 +107,6 @@ public class AccountChannelEntryResourceTest
 			_country.getCountryId(), 2, false, false,
 			RandomTestUtil.randomString(), serviceContext);
 
-		_commerceChannels = new ArrayList<>();
-
 		_commerceCurrency =
 			CommerceCurrencyLocalServiceUtil.addCommerceCurrency(
 				_user.getUserId(), RandomTestUtil.randomString(),
@@ -116,7 +114,6 @@ public class AccountChannelEntryResourceTest
 					LocaleUtil.getSiteDefault(), RandomTestUtil.randomString()),
 				RandomTestUtil.randomString(), BigDecimal.ONE, new HashMap<>(),
 				2, 2, "HALF_EVEN", false, 0, true);
-
 		_commerceDeliveryTerm =
 			CommerceTermEntryLocalServiceUtil.addCommerceTermEntry(
 				RandomTestUtil.randomString(), _user.getUserId(), true,
@@ -128,7 +125,6 @@ public class AccountChannelEntryResourceTest
 				RandomTestUtil.randomString(), 1000,
 				CommerceTermEntryConstants.TYPE_DELIVERY_TERMS, null,
 				serviceContext);
-
 		_commerceDiscount =
 			CommerceDiscountLocalServiceUtil.addCommerceDiscount(
 				RandomTestUtil.randomString(), _user.getUserId(),
@@ -138,7 +134,6 @@ public class AccountChannelEntryResourceTest
 				BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 				CommerceDiscountConstants.LIMITATION_TYPE_UNLIMITED, 0, true,
 				true, 1, 1, 2022, 12, 0, 0, 0, 0, 0, 0, true, serviceContext);
-
 		_commercePaymentTerm =
 			CommerceTermEntryLocalServiceUtil.addCommerceTermEntry(
 				RandomTestUtil.randomString(), _user.getUserId(), true,
@@ -150,7 +145,6 @@ public class AccountChannelEntryResourceTest
 				RandomTestUtil.randomString(), 1000,
 				CommerceTermEntryConstants.TYPE_PAYMENT_TERMS, null,
 				serviceContext);
-
 		_commercePriceList =
 			CommercePriceListLocalServiceUtil.addCommercePriceList(
 				RandomTestUtil.randomString(), testGroup.getGroupId(),
@@ -158,7 +152,6 @@ public class AccountChannelEntryResourceTest
 				true, CommercePriceListConstants.TYPE_PRICE_LIST, 0, true,
 				RandomTestUtil.randomString(), 1000, 1, 1, 2022, 12, 0, 0, 0, 0,
 				0, 0, true, serviceContext);
-
 		_commerceUser = UserLocalServiceUtil.addUser(
 			_user.getUserId(), testCompany.getCompanyId(), true,
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(), true,
@@ -1114,7 +1107,7 @@ public class AccountChannelEntryResourceTest
 	private Address _address;
 
 	@DeleteAfterTestRun
-	private List<CommerceChannel> _commerceChannels;
+	private List<CommerceChannel> _commerceChannels = new ArrayList<>();
 
 	@DeleteAfterTestRun
 	private CommerceCurrency _commerceCurrency;
