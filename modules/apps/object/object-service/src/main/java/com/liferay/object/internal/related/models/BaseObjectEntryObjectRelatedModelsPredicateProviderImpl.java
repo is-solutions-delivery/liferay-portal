@@ -40,8 +40,20 @@ public abstract class BaseObjectEntryObjectRelatedModelsPredicateProviderImpl
 		return objectDefinition.getClassName();
 	}
 
-	protected DynamicObjectDefinitionTable getExtensionTable(
+	protected DynamicObjectDefinitionTable getDynamicObjectDefinitionTable(
 		ObjectDefinition objectDefinition) {
+
+		return new DynamicObjectDefinitionTable(
+			objectDefinition,
+			objectFieldLocalService.getObjectFields(
+				objectDefinition.getObjectDefinitionId(),
+				objectDefinition.getDBTableName()),
+			objectDefinition.getDBTableName());
+	}
+
+	protected DynamicObjectDefinitionTable
+		getExtensionDynamicObjectDefinitionTable(
+			ObjectDefinition objectDefinition) {
 
 		return new DynamicObjectDefinitionTable(
 			objectDefinition,
@@ -51,24 +63,11 @@ public abstract class BaseObjectEntryObjectRelatedModelsPredicateProviderImpl
 			objectDefinition.getExtensionDBTableName());
 	}
 
-	protected <T extends BaseTable<T>> Column<?, ?>
-		getPKObjectDefinitionTableColumn(
-			BaseTable<T> dynamicObjectDefinitionTable,
-			ObjectDefinition objectDefinition) {
+	protected <T extends BaseTable<T>> Column<?, ?> getPKObjectFieldColumn(
+		BaseTable<T> baseTable, ObjectDefinition objectDefinition) {
 
-		return dynamicObjectDefinitionTable.getColumn(
+		return baseTable.getColumn(
 			objectDefinition.getPKObjectFieldDBColumnName());
-	}
-
-	protected DynamicObjectDefinitionTable getTable(
-		ObjectDefinition objectDefinition) {
-
-		return new DynamicObjectDefinitionTable(
-			objectDefinition,
-			objectFieldLocalService.getObjectFields(
-				objectDefinition.getObjectDefinitionId(),
-				objectDefinition.getDBTableName()),
-			objectDefinition.getDBTableName());
 	}
 
 	protected final ObjectDefinition objectDefinition;

@@ -52,18 +52,16 @@ public class ObjectEntryMtoMObjectRelatedModelsPredicateProviderImpl
 			ObjectRelationship objectRelationship, Predicate predicate)
 		throws PortalException {
 
+		Column<?, ?> dynamicObjectDefinitionTableColumn =
+			getPKObjectFieldColumn(
+				getDynamicObjectDefinitionTable(objectDefinition),
+				objectDefinition);
+
 		ObjectDefinition relatedObjectDefinition =
 			ObjectDefinitionLocalServiceUtil.getObjectDefinition(
 				_getRelatedObjectDefinitionId(
 					objectDefinition.getObjectDefinitionId(),
 					objectRelationship));
-
-		DynamicObjectDefinitionTable relatedObjectTable = getTable(
-			relatedObjectDefinition);
-
-		Column<?, ?> relatedObjectDefinitionTableColumn =
-			getPKObjectDefinitionTableColumn(
-				relatedObjectTable, relatedObjectDefinition);
 
 		Map<String, String> pkObjectFieldDBColumnNames =
 			ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
@@ -79,39 +77,35 @@ public class ObjectEntryMtoMObjectRelatedModelsPredicateProviderImpl
 						"pkObjectFieldDBColumnName2"),
 					objectRelationship.getDBTableName());
 
-		DynamicObjectDefinitionTable objectTable = getTable(objectDefinition);
+		Column<DynamicObjectRelationshipMappingTable, ?>
+			dynamicObjectRelationshipMappingTableColumn =
+				(Column<DynamicObjectRelationshipMappingTable, ?>)
+					getPKObjectFieldColumn(
+						dynamicObjectRelationshipMappingTable,
+						relatedObjectDefinition);
 
-		Column<?, ?> objectTableColumn = getPKObjectDefinitionTableColumn(
-			objectTable, objectDefinition);
-
-		Column<DynamicObjectRelationshipMappingTable, ?> relatedObjectColumn =
-			(Column<DynamicObjectRelationshipMappingTable, ?>)
-				getPKObjectDefinitionTableColumn(
-					dynamicObjectRelationshipMappingTable,
-					relatedObjectDefinition);
-
-		Column<DynamicObjectRelationshipMappingTable, ?> objectColumn =
-			(Column<DynamicObjectRelationshipMappingTable, ?>)
-				getPKObjectDefinitionTableColumn(
-					dynamicObjectRelationshipMappingTable, objectDefinition);
-
+		DynamicObjectDefinitionTable relatedDynamicObjectDefinitionTable =
+			getDynamicObjectDefinitionTable(relatedObjectDefinition);
 		DynamicObjectDefinitionTable relatedObjectDefinitionExtensionTable =
-			getExtensionTable(relatedObjectDefinition);
+			getExtensionDynamicObjectDefinitionTable(relatedObjectDefinition);
 
-		return objectTableColumn.in(
+		return dynamicObjectDefinitionTableColumn.in(
 			DSLQueryFactoryUtil.select(
-				objectColumn
+				getPKObjectFieldColumn(
+					dynamicObjectRelationshipMappingTable, objectDefinition)
 			).from(
 				dynamicObjectRelationshipMappingTable
 			).where(
-				relatedObjectColumn.in(
+				dynamicObjectRelationshipMappingTableColumn.in(
 					DSLQueryFactoryUtil.select(
-						relatedObjectDefinitionTableColumn
+						getPKObjectFieldColumn(
+							relatedDynamicObjectDefinitionTable,
+							relatedObjectDefinition)
 					).from(
-						relatedObjectTable
+						relatedDynamicObjectDefinitionTable
 					).innerJoinON(
 						relatedObjectDefinitionExtensionTable,
-						relatedObjectTable.getPrimaryKeyColumn(
+						relatedDynamicObjectDefinitionTable.getPrimaryKeyColumn(
 						).eq(
 							relatedObjectDefinitionExtensionTable.
 								getPrimaryKeyColumn()

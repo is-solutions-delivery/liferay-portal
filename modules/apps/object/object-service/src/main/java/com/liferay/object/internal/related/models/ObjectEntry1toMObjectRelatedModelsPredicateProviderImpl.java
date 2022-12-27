@@ -52,87 +52,95 @@ public class ObjectEntry1toMObjectRelatedModelsPredicateProviderImpl
 		ObjectDefinition objectDefinition1 = _getObjectDefinition1(
 			objectRelationship);
 
+		DynamicObjectDefinitionTable
+			objectDefinition1DynamicObjectDefinitionTable =
+				getDynamicObjectDefinitionTable(objectDefinition1);
+
+		Column<?, ?> objectDefinition1PKObjectFieldColumn =
+			getPKObjectFieldColumn(
+				objectDefinition1DynamicObjectDefinitionTable,
+				objectDefinition1);
+
 		ObjectDefinition objectDefinition2 = _getObjectDefinition2(
 			objectRelationship);
 
-		DynamicObjectDefinitionTable objectDefinition2Table = getTable(
-			objectDefinition2);
+		DynamicObjectDefinitionTable
+			objectDefinition2DynamicObjectDefinitionTable =
+				getDynamicObjectDefinitionTable(objectDefinition2);
+		DynamicObjectDefinitionTable
+			objectDefinition2ExtensionDynamicObjectDefinitionTable =
+				getExtensionDynamicObjectDefinitionTable(objectDefinition2);
 
-		Column<DynamicObjectDefinitionTable, ?>
-			objectDefinition2RelationshipFieldTableColumn =
-				objectDefinition2Table.getColumn(
-					StringBundler.concat(
-						"r_", objectRelationship.getName(), "_",
-						objectDefinition1.getPKObjectFieldName()));
+		Column<DynamicObjectDefinitionTable, ?> objectRelationshipColumn =
+			objectDefinition2DynamicObjectDefinitionTable.getColumn(
+				StringBundler.concat(
+					"r_", objectRelationship.getName(), "_",
+					objectDefinition1.getPKObjectFieldName()));
 
-		DynamicObjectDefinitionTable objectDefinition2ExtensionTable =
-			getExtensionTable(objectDefinition2);
-
-		if (objectDefinition2RelationshipFieldTableColumn == null) {
-			objectDefinition2RelationshipFieldTableColumn =
-				objectDefinition2ExtensionTable.getColumn(
-					StringBundler.concat(
-						"r_", objectRelationship.getName(), "_",
-						objectDefinition1.getPKObjectFieldName()));
+		if (objectRelationshipColumn == null) {
+			objectRelationshipColumn =
+				objectDefinition2ExtensionDynamicObjectDefinitionTable.
+					getColumn(
+						StringBundler.concat(
+							"r_", objectRelationship.getName(), "_",
+							objectDefinition1.getPKObjectFieldName()));
 		}
-
-		DynamicObjectDefinitionTable objectDefinition1Table = getTable(
-			objectDefinition1);
-
-		Column<?, ?> objectDefinition1PKObjectFieldTableColumn =
-			getPKObjectDefinitionTableColumn(
-				objectDefinition1Table, objectDefinition1);
 
 		if (objectDefinition.getObjectDefinitionId() ==
 				objectRelationship.getObjectDefinitionId1()) {
 
-			return objectDefinition1PKObjectFieldTableColumn.in(
+			return objectDefinition1PKObjectFieldColumn.in(
 				DSLQueryFactoryUtil.select(
-					objectDefinition2RelationshipFieldTableColumn
+					objectRelationshipColumn
 				).from(
-					objectDefinition2Table
+					objectDefinition2DynamicObjectDefinitionTable
 				).innerJoinON(
-					objectDefinition2ExtensionTable,
-					objectDefinition2Table.getPrimaryKeyColumn(
-					).eq(
-						objectDefinition2ExtensionTable.getPrimaryKeyColumn()
-					)
+					objectDefinition2ExtensionDynamicObjectDefinitionTable,
+					objectDefinition2DynamicObjectDefinitionTable.
+						getPrimaryKeyColumn(
+						).eq(
+							objectDefinition2ExtensionDynamicObjectDefinitionTable.
+								getPrimaryKeyColumn()
+						)
 				).where(
 					predicate
 				));
 		}
 
-		Column<?, ?> objectDefinition2PKObjectFieldTableColumn =
-			getPKObjectDefinitionTableColumn(
-				objectDefinition2Table, objectDefinition2);
-
+		Column<?, ?> objectDefinition2PKObjectFieldColumn =
+			getPKObjectFieldColumn(
+				objectDefinition2DynamicObjectDefinitionTable,
+				objectDefinition2);
 		DynamicObjectDefinitionTable objectDefinition1ExtensionTable =
-			getExtensionTable(objectDefinition1);
+			getExtensionDynamicObjectDefinitionTable(objectDefinition1);
 
-		return objectDefinition2PKObjectFieldTableColumn.in(
+		return objectDefinition2PKObjectFieldColumn.in(
 			DSLQueryFactoryUtil.select(
-				objectDefinition2PKObjectFieldTableColumn
+				objectDefinition2PKObjectFieldColumn
 			).from(
-				objectDefinition2Table
+				objectDefinition2DynamicObjectDefinitionTable
 			).innerJoinON(
-				objectDefinition2ExtensionTable,
-				objectDefinition2Table.getPrimaryKeyColumn(
-				).eq(
-					objectDefinition2ExtensionTable.getPrimaryKeyColumn()
-				)
+				objectDefinition2ExtensionDynamicObjectDefinitionTable,
+				objectDefinition2DynamicObjectDefinitionTable.
+					getPrimaryKeyColumn(
+					).eq(
+						objectDefinition2ExtensionDynamicObjectDefinitionTable.
+							getPrimaryKeyColumn()
+					)
 			).where(
-				objectDefinition2RelationshipFieldTableColumn.in(
+				objectRelationshipColumn.in(
 					DSLQueryFactoryUtil.select(
-						objectDefinition1PKObjectFieldTableColumn
+						objectDefinition1PKObjectFieldColumn
 					).from(
-						objectDefinition1Table
+						objectDefinition1DynamicObjectDefinitionTable
 					).innerJoinON(
 						objectDefinition1ExtensionTable,
-						objectDefinition1Table.getPrimaryKeyColumn(
-						).eq(
-							objectDefinition1ExtensionTable.
-								getPrimaryKeyColumn()
-						)
+						objectDefinition1DynamicObjectDefinitionTable.
+							getPrimaryKeyColumn(
+							).eq(
+								objectDefinition1ExtensionTable.
+									getPrimaryKeyColumn()
+							)
 					).where(
 						predicate
 					))
