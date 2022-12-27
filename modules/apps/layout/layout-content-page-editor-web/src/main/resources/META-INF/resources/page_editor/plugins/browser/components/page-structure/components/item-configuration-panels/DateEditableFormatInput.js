@@ -160,7 +160,7 @@ export default function DateEditableFormatInput({
 						href="https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html"
 					>
 						{Liferay.Language.get(
-							'go-to-documentation-to-learn-more-about-date-formats'
+							'learn-more-about-date-formats'
 						)}
 					</ClayLink>
 				</>
