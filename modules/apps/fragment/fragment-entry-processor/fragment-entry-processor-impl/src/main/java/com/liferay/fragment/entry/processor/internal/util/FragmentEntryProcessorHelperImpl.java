@@ -378,16 +378,17 @@ public class FragmentEntryProcessorHelperImpl
 	}
 
 	private String _getDefaultPattern(Locale locale) {
-		if (_defaultPatternMap.containsKey(locale)) {
-			return _defaultPatternMap.get(locale);
+		if (_defaultPatterns.containsKey(locale)) {
+			return _defaultPatterns.get(locale);
 		}
 
-		String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
-			FormatStyle.SHORT, null, IsoChronology.INSTANCE, locale);
+		String defaultPattern =
+			DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+				FormatStyle.SHORT, null, IsoChronology.INSTANCE, locale);
 
-		_defaultPatternMap.put(locale, pattern);
+		_defaultPatterns.put(locale, defaultPattern);
 
-		return pattern;
+		return defaultPattern;
 	}
 
 	private long _getFileEntryId(
@@ -625,17 +626,18 @@ public class FragmentEntryProcessorHelperImpl
 	}
 
 	private String _getShortTimeStylePattern(Locale locale) {
-		if (_shortTimeStylePatternMap.containsKey(locale)) {
-			return _shortTimeStylePatternMap.get(locale);
+		if (_shortTimeStylePatterns.containsKey(locale)) {
+			return _shortTimeStylePatterns.get(locale);
 		}
 
-		String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
-			FormatStyle.SHORT, FormatStyle.SHORT, IsoChronology.INSTANCE,
-			locale);
+		String sortTimeStylePattern =
+			DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+				FormatStyle.SHORT, FormatStyle.SHORT, IsoChronology.INSTANCE,
+				locale);
 
-		_shortTimeStylePatternMap.put(locale, pattern);
+		_shortTimeStylePatterns.put(locale, sortTimeStylePattern);
 
-		return pattern;
+		return sortTimeStylePattern;
 	}
 
 	private static final InfoCollectionTextFormatter<Object>
@@ -645,9 +647,8 @@ public class FragmentEntryProcessorHelperImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		FragmentEntryProcessorHelperImpl.class);
 
-	private static final Map<Locale, String> _defaultPatternMap =
-		new HashMap<>();
-	private static final Map<Locale, String> _shortTimeStylePatternMap =
+	private static final Map<Locale, String> _defaultPatterns = new HashMap<>();
+	private static final Map<Locale, String> _shortTimeStylePatterns =
 		new HashMap<>();
 
 	@Reference
