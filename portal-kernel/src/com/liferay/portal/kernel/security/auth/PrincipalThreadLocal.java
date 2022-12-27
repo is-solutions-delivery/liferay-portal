@@ -52,7 +52,7 @@ public class PrincipalThreadLocal {
 	public static void setName(String name) {
 		if (Objects.equals(_name.get(), name)) {
 			if (_log.isDebugEnabled()) {
-				_log.debug("skip setName " + name);
+				_log.debug("Skip setName " + name);
 			}
 
 			return;
