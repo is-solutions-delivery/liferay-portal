@@ -233,7 +233,7 @@ public class AccountChannelEntryResourceTest
 			testDeleteAccountChannelCurrencyId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryCurrency();
+		return _postAccountIdAccountChannelCurrency();
 	}
 
 	@Override
@@ -241,7 +241,7 @@ public class AccountChannelEntryResourceTest
 			testDeleteAccountChannelDeliveryTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDeliveryTerm();
+		return _postAccountIdAccountChannelDeliveryTerm();
 	}
 
 	@Override
@@ -249,7 +249,7 @@ public class AccountChannelEntryResourceTest
 			testDeleteAccountChannelDiscountId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDiscount();
+		return _postAccountIdAccountChannelDiscount();
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class AccountChannelEntryResourceTest
 			testDeleteAccountChannelPaymentTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPaymentTerm();
+		return _postAccountIdAccountChannelPaymentTerm();
 	}
 
 	@Override
@@ -265,7 +265,7 @@ public class AccountChannelEntryResourceTest
 			testDeleteAccountChannelPriceListId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPriceList();
+		return _postAccountIdAccountChannelPriceList();
 	}
 
 	@Override
@@ -273,7 +273,7 @@ public class AccountChannelEntryResourceTest
 			testDeleteAccountChannelShippingAddressId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryShippingAddress();
+		return _postAccountIdAccountChannelShippingAddress();
 	}
 
 	@Override
@@ -281,7 +281,7 @@ public class AccountChannelEntryResourceTest
 			testDeleteAccountChannelUserId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryUser();
+		return _postAccountIdAccountChannelUser();
 	}
 
 	@Override
@@ -473,7 +473,7 @@ public class AccountChannelEntryResourceTest
 			testGetAccountChannelCurrencyId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryCurrency();
+		return _postAccountIdAccountChannelCurrency();
 	}
 
 	@Override
@@ -481,7 +481,7 @@ public class AccountChannelEntryResourceTest
 			testGetAccountChannelDeliveryTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDeliveryTerm();
+		return _postAccountIdAccountChannelDeliveryTerm();
 	}
 
 	@Override
@@ -489,7 +489,7 @@ public class AccountChannelEntryResourceTest
 			testGetAccountChannelDiscountId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDiscount();
+		return _postAccountIdAccountChannelDiscount();
 	}
 
 	@Override
@@ -497,7 +497,7 @@ public class AccountChannelEntryResourceTest
 			testGetAccountChannelPaymentTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPaymentTerm();
+		return _postAccountIdAccountChannelPaymentTerm();
 	}
 
 	@Override
@@ -505,7 +505,7 @@ public class AccountChannelEntryResourceTest
 			testGetAccountChannelPriceListId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPriceList();
+		return _postAccountIdAccountChannelPriceList();
 	}
 
 	@Override
@@ -513,7 +513,7 @@ public class AccountChannelEntryResourceTest
 			testGetAccountChannelShippingAddressId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryShippingAddress();
+		return _postAccountIdAccountChannelShippingAddress();
 	}
 
 	@Override
@@ -521,7 +521,7 @@ public class AccountChannelEntryResourceTest
 			testGetAccountChannelUserId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryUser();
+		return _postAccountIdAccountChannelUser();
 	}
 
 	@Override
@@ -689,7 +689,7 @@ public class AccountChannelEntryResourceTest
 			testGraphQLGetAccountChannelCurrencyId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryCurrency();
+		return _postAccountIdAccountChannelCurrency();
 	}
 
 	@Override
@@ -697,7 +697,7 @@ public class AccountChannelEntryResourceTest
 			testGraphQLGetAccountChannelDeliveryTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDeliveryTerm();
+		return _postAccountIdAccountChannelDeliveryTerm();
 	}
 
 	@Override
@@ -705,7 +705,7 @@ public class AccountChannelEntryResourceTest
 			testGraphQLGetAccountChannelDiscountId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDiscount();
+		return _postAccountIdAccountChannelDiscount();
 	}
 
 	@Override
@@ -713,7 +713,7 @@ public class AccountChannelEntryResourceTest
 			testGraphQLGetAccountChannelPaymentTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPaymentTerm();
+		return _postAccountIdAccountChannelPaymentTerm();
 	}
 
 	@Override
@@ -721,7 +721,7 @@ public class AccountChannelEntryResourceTest
 			testGraphQLGetAccountChannelPriceListId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPriceList();
+		return _postAccountIdAccountChannelPriceList();
 	}
 
 	@Override
@@ -729,7 +729,7 @@ public class AccountChannelEntryResourceTest
 			testGraphQLGetAccountChannelShippingAddressId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryShippingAddress();
+		return _postAccountIdAccountChannelShippingAddress();
 	}
 
 	@Override
@@ -737,7 +737,7 @@ public class AccountChannelEntryResourceTest
 			testGraphQLGetAccountChannelUserId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryUser();
+		return _postAccountIdAccountChannelUser();
 	}
 
 	@Override
@@ -753,7 +753,7 @@ public class AccountChannelEntryResourceTest
 			testPatchAccountChannelCurrencyId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryCurrency();
+		return _postAccountIdAccountChannelCurrency();
 	}
 
 	@Override
@@ -761,7 +761,7 @@ public class AccountChannelEntryResourceTest
 			testPatchAccountChannelDeliveryTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDeliveryTerm();
+		return _postAccountIdAccountChannelDeliveryTerm();
 	}
 
 	@Override
@@ -769,7 +769,7 @@ public class AccountChannelEntryResourceTest
 			testPatchAccountChannelDiscountId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryDiscount();
+		return _postAccountIdAccountChannelDiscount();
 	}
 
 	@Override
@@ -777,7 +777,7 @@ public class AccountChannelEntryResourceTest
 			testPatchAccountChannelPaymentTermId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPaymentTerm();
+		return _postAccountIdAccountChannelPaymentTerm();
 	}
 
 	@Override
@@ -785,7 +785,7 @@ public class AccountChannelEntryResourceTest
 			testPatchAccountChannelPriceListId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryPriceList();
+		return _postAccountIdAccountChannelPriceList();
 	}
 
 	@Override
@@ -793,7 +793,7 @@ public class AccountChannelEntryResourceTest
 			testPatchAccountChannelShippingAddressId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryShippingAddress();
+		return _postAccountIdAccountChannelShippingAddress();
 	}
 
 	@Override
@@ -801,7 +801,7 @@ public class AccountChannelEntryResourceTest
 			testPatchAccountChannelUserId_addAccountChannelEntry()
 		throws Exception {
 
-		return _postAccountChannelEntryUser();
+		return _postAccountIdAccountChannelUser();
 	}
 
 	@Override
@@ -1020,7 +1020,7 @@ public class AccountChannelEntryResourceTest
 				_accountEntry.getAccountEntryId(), accountChannelEntry);
 	}
 
-	private AccountChannelEntry _postAccountChannelEntryCurrency()
+	private AccountChannelEntry _postAccountIdAccountChannelCurrency()
 		throws Exception {
 
 		AccountChannelEntry accountChannelEntry = randomAccountChannelEntry();
@@ -1031,7 +1031,7 @@ public class AccountChannelEntryResourceTest
 			_accountEntry.getAccountEntryId(), accountChannelEntry);
 	}
 
-	private AccountChannelEntry _postAccountChannelEntryDeliveryTerm()
+	private AccountChannelEntry _postAccountIdAccountChannelDeliveryTerm()
 		throws Exception {
 
 		AccountChannelEntry accountChannelEntry = randomAccountChannelEntry();
@@ -1043,7 +1043,7 @@ public class AccountChannelEntryResourceTest
 				_accountEntry.getAccountEntryId(), accountChannelEntry);
 	}
 
-	private AccountChannelEntry _postAccountChannelEntryDiscount()
+	private AccountChannelEntry _postAccountIdAccountChannelDiscount()
 		throws Exception {
 
 		AccountChannelEntry accountChannelEntry = randomAccountChannelEntry();
@@ -1054,7 +1054,7 @@ public class AccountChannelEntryResourceTest
 			_accountEntry.getAccountEntryId(), accountChannelEntry);
 	}
 
-	private AccountChannelEntry _postAccountChannelEntryPaymentTerm()
+	private AccountChannelEntry _postAccountIdAccountChannelPaymentTerm()
 		throws Exception {
 
 		AccountChannelEntry accountChannelEntry = randomAccountChannelEntry();
@@ -1066,7 +1066,7 @@ public class AccountChannelEntryResourceTest
 				_accountEntry.getAccountEntryId(), accountChannelEntry);
 	}
 
-	private AccountChannelEntry _postAccountChannelEntryPriceList()
+	private AccountChannelEntry _postAccountIdAccountChannelPriceList()
 		throws Exception {
 
 		AccountChannelEntry accountChannelEntry = randomAccountChannelEntry();
@@ -1077,7 +1077,7 @@ public class AccountChannelEntryResourceTest
 			_accountEntry.getAccountEntryId(), accountChannelEntry);
 	}
 
-	private AccountChannelEntry _postAccountChannelEntryShippingAddress()
+	private AccountChannelEntry _postAccountIdAccountChannelShippingAddress()
 		throws Exception {
 
 		AccountChannelEntry accountChannelEntry = randomAccountChannelEntry();
@@ -1089,7 +1089,7 @@ public class AccountChannelEntryResourceTest
 				_accountEntry.getAccountEntryId(), accountChannelEntry);
 	}
 
-	private AccountChannelEntry _postAccountChannelEntryUser()
+	private AccountChannelEntry _postAccountIdAccountChannelUser()
 		throws Exception {
 
 		AccountChannelEntry accountChannelEntry = randomAccountChannelEntry();
