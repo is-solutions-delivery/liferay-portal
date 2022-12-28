@@ -80,7 +80,7 @@ export default function () {
 			footer={
 				<>
 					<ClayButton
-						className="mr-4 mt-2"
+						className="mr-4"
 						displayType="primary"
 						onClick={() =>
 							Liferay.Util.navigate(
@@ -91,7 +91,7 @@ export default function () {
 						New MDF Request
 					</ClayButton>
 					<ClayButton
-						className="border-brand-primary-darken-1 mt-2 text-brand-primary-darken-1"
+						className="border-brand-primary-darken-1 text-brand-primary-darken-1"
 						displayType="secondary"
 						onClick={() =>
 							Liferay.Util.navigate(
@@ -103,6 +103,7 @@ export default function () {
 					</ClayButton>
 				</>
 			}
+			positionButton
 			title="Market Development Funds"
 		>
 			{loading && <ClayLoadingIndicator className="mt-10" size="md" />}

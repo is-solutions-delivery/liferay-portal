@@ -10,7 +10,7 @@
  */
 
 import ClayChart from '@clayui/charts';
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 
 import {currencyFormat} from '../../utils';
 
@@ -25,16 +25,9 @@ const DonutChart = ({
 	width = 300,
 }) => {
 	const chartRef = useRef();
-
-	useEffect(() => {
-		if (titleChart) {
-			const titleElement = chartRef?.current?.element?.querySelector(
-				'.bb-chart-arcs-title'
-			);
-			titleElement.innerHTML = titleChart;
-			titleElement.style.fontSize = '16px';
-		}
-	}, [titleChart]);
+	const title = titleChart.split(' ');
+	const valueChart = title[0];
+	const chartTitle = title[1] + ' ' + title[2];
 
 	const legendTransformData = useCallback((newItems, colors) => {
 		return newItems.map((item, index) => ({
@@ -50,15 +43,19 @@ const DonutChart = ({
 	);
 
 	return (
-		<div className="align-items-stretch d-flex">
-			<div className="d-flex px-4">
+		<div className="align-items-stretch d-flex flex-column">
+			<span className="text-nowrap">
+				{chartTitle} <b>{valueChart}</b>
+			</span>
+
+			<div className="d-flex">
 				<div className="d-flex justify-content-start">
 					<ClayChart
 						className="dashboard-donut-chart"
 						data={chartData}
 						donut={{
 							label: {show: showLabel},
-							title: '0',
+							title: ' ',
 							width: 35,
 						}}
 						legend={{show: showLegend}}
@@ -69,7 +66,7 @@ const DonutChart = ({
 								const title = data[0].id;
 								const value = data[0].value;
 
-								return `<div class="bg-neutral-0 d-flex font-weight-bold p-2 rounded-sm text-capitalize"><span class="d-flex mr-2 w-100 text-capitalize">${title}</span> $${currencyFormat(
+								return `<div class="bg-neutral-0 d-flex font-weight-bold rounded-sm text-capitalize"><span class="d-flex mr-2 w-100 text-capitalize">${title}</span> $${currencyFormat(
 									value
 								)}</div>`;
 							},
