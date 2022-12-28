@@ -159,7 +159,6 @@ public class ExportImportLayoutUtilityPageTest {
 		}
 
 		Assert.assertNotNull(layoutsImporterResultEntries);
-
 		Assert.assertEquals(
 			layoutsImporterResultEntries.toString(), 1,
 			layoutsImporterResultEntries.size());
@@ -177,14 +176,12 @@ public class ExportImportLayoutUtilityPageTest {
 					externalReferenceCode, otherGroup.getGroupId());
 
 		Assert.assertNotNull(layoutUtilityPageEntry2);
-
 		Assert.assertEquals(
 			layoutUtilityPageEntry1.getName(),
 			layoutUtilityPageEntry2.getName());
 		Assert.assertEquals(
 			layoutUtilityPageEntry1.getType(),
 			layoutUtilityPageEntry2.getType());
-
 		Assert.assertNotEquals(
 			0, layoutUtilityPageEntry2.getPreviewFileEntryId());
 
@@ -243,7 +240,6 @@ public class ExportImportLayoutUtilityPageTest {
 				false);
 
 		Assert.assertNotNull(layoutsImporterResultEntries);
-
 		Assert.assertEquals(
 			layoutsImporterResultEntries.toString(), 1,
 			layoutsImporterResultEntries.size());
@@ -259,7 +255,6 @@ public class ExportImportLayoutUtilityPageTest {
 			TestPropsValues.getUserId(), _group.getGroupId(), 0, file, true);
 
 		Assert.assertNotNull(layoutsImporterResultEntries);
-
 		Assert.assertEquals(
 			layoutsImporterResultEntries.toString(), 1,
 			layoutsImporterResultEntries.size());
@@ -276,7 +271,6 @@ public class ExportImportLayoutUtilityPageTest {
 					externalReferenceCode, _group.getGroupId());
 
 		Assert.assertNotNull(layoutUtilityPageEntry2);
-
 		Assert.assertEquals(
 			layoutUtilityPageEntry1.getLayoutUtilityPageEntryId(),
 			layoutUtilityPageEntry2.getLayoutUtilityPageEntryId());
