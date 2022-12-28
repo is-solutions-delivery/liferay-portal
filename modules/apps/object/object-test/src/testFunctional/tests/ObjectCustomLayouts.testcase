@@ -159,7 +159,7 @@ definition {
 
 		ObjectAdmin.addCategorizationOnLayoutTab();
 
-		Button.clickSave();
+		PortletEntry.save();
 
 		Navigator.openURL();
 
@@ -213,7 +213,7 @@ definition {
 
 			ObjectAdmin.addCategorizationOnLayoutTab();
 
-			Button.clickSave();
+			PortletEntry.save();
 
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject200");
 		}
@@ -231,7 +231,7 @@ definition {
 
 			ObjectAdmin.deleteCategorizationViaUI();
 
-			Button.clickSave();
+			PortletEntry.save();
 		}
 
 		task ("Then: The object layout is updated successfully") {
@@ -285,7 +285,7 @@ definition {
 
 		ObjectAdmin.addCategorizationOnLayoutTab();
 
-		Button.clickSave();
+		PortletEntry.save();
 
 		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject200");
 
@@ -313,9 +313,7 @@ definition {
 			categoryNameList = "Category 2",
 			vocabularyName = "Stage");
 
-		Button.clickSave();
-
-		Alert.viewSuccessMessage();
+		PortletEntry.save();
 
 		AssetCategorization.removeCategories(categoryNameList = "Category 1,Category 2");
 	}
@@ -362,11 +360,9 @@ definition {
 			fieldLabelName = "Custom Field",
 			tabName = "Field Tab");
 
-		Button.clickSave();
+		PortletEntry.save();
 
 		Refresh();
-
-		WaitForSPARefresh();
 
 		ObjectAdmin.selectSpecificKebabMenuOption(
 			kebabOption = "View",
