@@ -405,6 +405,7 @@ definition {
 	@priority = "4"
 	@refactorneeded
 	test EditDocumentFile {
+		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "SharepointREST#EditDocumentFile";
 
 		DMRepository.cleanRepository(dmDocumentTitle = "Document_3.doc");
@@ -750,6 +751,7 @@ definition {
 	@priority = "4"
 	@refactorneeded
 	test ViewRepository {
+		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "SharepointREST#ViewRepository";
 
 		Navigator.openSpecificURL(url = "https://localhost:8443/group/guest/~/control_panel/manage?p_p_id=com_liferay_document_library_web_portlet_DLAdminPortlet");
