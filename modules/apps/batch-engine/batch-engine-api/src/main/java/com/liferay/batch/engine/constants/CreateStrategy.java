@@ -19,9 +19,9 @@ package com.liferay.batch.engine.constants;
  */
 public enum CreateStrategy {
 
-	CREATE_ONLY("INSERT", "only-add-new-records", false),
-	CREATE_OR_UPDATE("UPSERT", "add-or-update-records", true),
-	UPDATE_ONLY("UPDATE", "only-update-records", false);
+	INSERT("INSERT", "only-add-new-records", false),
+	UPSERT("UPSERT", "add-or-update-records", true),
+	UPDATE("UPDATE", "only-update-records", false);
 
 	public static CreateStrategy getDefaultCreateStrategy() {
 		for (CreateStrategy createStrategy : values()) {

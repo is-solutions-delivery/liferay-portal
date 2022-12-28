@@ -216,8 +216,8 @@ public class BatchEngineBrokerImpl implements BatchEngineBroker {
 		}
 
 		try {
-			if ((createStrategy == CreateStrategy.CREATE_ONLY) ||
-				(createStrategy == CreateStrategy.CREATE_OR_UPDATE)) {
+			if ((createStrategy == CreateStrategy.INSERT) ||
+				(createStrategy == CreateStrategy.UPSERT)) {
 
 				_importTaskResource.postImportTask(
 					batchPlannerPlan.getInternalClassName(), null,
