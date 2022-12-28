@@ -33,7 +33,7 @@ public enum CreateStrategy {
 		throw new IllegalStateException();
 	}
 
-	public String getDbOperation() {
+	public String getDBOperation() {
 		return _dbOperation;
 	}
 

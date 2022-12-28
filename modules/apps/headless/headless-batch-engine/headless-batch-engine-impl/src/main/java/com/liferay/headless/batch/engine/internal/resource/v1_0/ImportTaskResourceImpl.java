@@ -459,7 +459,7 @@ public class ImportTaskResourceImpl extends BaseImportTaskResourceImpl {
 				createStrategy);
 
 			parameters.put(
-				"createStrategy", createStrategyEnum.getDbOperation());
+				"createStrategy", createStrategyEnum.getDBOperation());
 		}
 
 		if (updateStrategy != null) {
