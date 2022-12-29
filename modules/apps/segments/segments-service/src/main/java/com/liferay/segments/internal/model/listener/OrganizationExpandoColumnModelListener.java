@@ -80,7 +80,7 @@ public class OrganizationExpandoColumnModelListener
 				expandoColumn);
 
 			if (organizationEntityField != null) {
-				_organizationEntityFields.put(
+				_entityFieldsMap.put(
 					expandoColumn.getColumnId(), organizationEntityField);
 
 				_serviceRegistration.unregister();
@@ -101,10 +101,10 @@ public class OrganizationExpandoColumnModelListener
 			return;
 		}
 
-		if (_organizationEntityFields.containsKey(
+		if (_entityFieldsMap.containsKey(
 				expandoColumn.getColumnId())) {
 
-			_organizationEntityFields.remove(expandoColumn.getColumnId());
+			_entityFieldsMap.remove(expandoColumn.getColumnId());
 
 			_serviceRegistration.unregister();
 
@@ -121,7 +121,7 @@ public class OrganizationExpandoColumnModelListener
 			return;
 		}
 
-		_organizationEntityFields.remove(expandoColumn.getColumnId());
+		_entityFieldsMap.remove(expandoColumn.getColumnId());
 
 		onAfterCreate(expandoColumn);
 	}
@@ -131,7 +131,7 @@ public class OrganizationExpandoColumnModelListener
 		try {
 			_bundleContext = bundleContext;
 
-			_organizationEntityFields = _getOrganizationEntityFields();
+			_entityFieldsMap = _getEntityFieldsMap();
 
 			_serviceRegistration = _register();
 		}
@@ -221,15 +221,15 @@ public class OrganizationExpandoColumnModelListener
 		return entityField;
 	}
 
-	private Map<Long, EntityField> _getOrganizationEntityFields()
+	private Map<Long, EntityField> _getEntityFieldsMap()
 		throws PortalException {
 
-		Map<Long, EntityField> organizationEntityFieldsMap = new HashMap<>();
+		Map<Long, EntityField> entityFieldsMap = new HashMap<>();
 
 		long organizationClassNameId = _classNameLocalService.getClassNameId(
 			Organization.class.getName());
 
-		List<ExpandoColumn> expandoColumnList =
+		List<ExpandoColumn> expandoColumns =
 			_expandoColumnLocalService.dslQuery(
 				DSLQueryFactoryUtil.select(
 					ExpandoColumnTable.INSTANCE
@@ -251,17 +251,17 @@ public class OrganizationExpandoColumnModelListener
 						))
 				));
 
-		for (ExpandoColumn expandoColumn : expandoColumnList) {
+		for (ExpandoColumn expandoColumn : expandoColumns) {
 			EntityField organizationEntityField = _getOrganizationEntityField(
 				expandoColumn);
 
 			if (organizationEntityField != null) {
-				organizationEntityFieldsMap.put(
+				entityFieldsMap.put(
 					expandoColumn.getColumnId(), organizationEntityField);
 			}
 		}
 
-		return organizationEntityFieldsMap;
+		return entityFieldsMap;
 	}
 
 	private boolean _isOrganizationCustomField(ExpandoColumn expandoColumn)
@@ -287,7 +287,7 @@ public class OrganizationExpandoColumnModelListener
 		return _bundleContext.registerService(
 			EntityModel.class,
 			new OrganizationEntityModel(
-				new ArrayList<>(_organizationEntityFields.values())),
+				new ArrayList<>(_entityFieldsMap.values())),
 			HashMapDictionaryBuilder.<String, Object>put(
 				"entity.model.name", OrganizationEntityModel.NAME
 			).build());
@@ -310,7 +310,7 @@ public class OrganizationExpandoColumnModelListener
 	@Reference
 	private ExpandoTableLocalService _expandoTableLocalService;
 
-	private Map<Long, EntityField> _organizationEntityFields = new HashMap<>();
+	private Map<Long, EntityField> _entityFieldsMap = new HashMap<>();
 	private ServiceRegistration<EntityModel> _serviceRegistration;
 
 }
