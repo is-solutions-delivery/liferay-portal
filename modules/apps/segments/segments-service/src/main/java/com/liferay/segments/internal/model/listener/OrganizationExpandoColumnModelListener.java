@@ -83,9 +83,7 @@ public class OrganizationExpandoColumnModelListener
 				_organizationEntityFields.put(
 					expandoColumn.getColumnId(), organizationEntityField);
 
-				_serviceRegistration = _updateRegistry(
-					_bundleContext, _serviceRegistration,
-					_organizationEntityFields);
+				_serviceRegistration = _updateRegistry();
 			}
 		}
 		catch (PortalException portalException) {
@@ -106,9 +104,7 @@ public class OrganizationExpandoColumnModelListener
 
 			_organizationEntityFields.remove(expandoColumn.getColumnId());
 
-			_serviceRegistration = _updateRegistry(
-				_bundleContext, _serviceRegistration,
-				_organizationEntityFields);
+			_serviceRegistration = _updateRegistry();
 		}
 	}
 
@@ -133,8 +129,7 @@ public class OrganizationExpandoColumnModelListener
 
 			_organizationEntityFields = _getOrganizationEntityFields();
 
-			_serviceRegistration = _register(
-				_bundleContext, _organizationEntityFields);
+			_serviceRegistration = _register();
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException);
@@ -143,7 +138,7 @@ public class OrganizationExpandoColumnModelListener
 
 	@Deactivate
 	protected void deactivate() {
-		_unregister(_serviceRegistration);
+		_unregister();
 	}
 
 	private String _encodeName(ExpandoColumn expandoColumn) {
@@ -284,33 +279,24 @@ public class OrganizationExpandoColumnModelListener
 		return true;
 	}
 
-	private ServiceRegistration<EntityModel> _register(
-		BundleContext bundleContext,
-		Map<Long, EntityField> organizationEntityFieldsMap) {
-
-		return bundleContext.registerService(
+	private ServiceRegistration<EntityModel> _register() {
+		return _bundleContext.registerService(
 			EntityModel.class,
 			new OrganizationEntityModel(
-				new ArrayList<>(organizationEntityFieldsMap.values())),
+				new ArrayList<>(_organizationEntityFields.values())),
 			HashMapDictionaryBuilder.<String, Object>put(
 				"entity.model.name", OrganizationEntityModel.NAME
 			).build());
 	}
 
-	private void _unregister(
-		ServiceRegistration<EntityModel> serviceRegistration) {
-
-		serviceRegistration.unregister();
+	private void _unregister() {
+		_serviceRegistration.unregister();
 	}
 
-	private ServiceRegistration<EntityModel> _updateRegistry(
-		BundleContext bundleContext,
-		ServiceRegistration<EntityModel> serviceRegistration,
-		Map<Long, EntityField> entityFieldsMap) {
+	private ServiceRegistration<EntityModel> _updateRegistry() {
+		_unregister();
 
-		_unregister(serviceRegistration);
-
-		return _register(bundleContext, entityFieldsMap);
+		return _register();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
