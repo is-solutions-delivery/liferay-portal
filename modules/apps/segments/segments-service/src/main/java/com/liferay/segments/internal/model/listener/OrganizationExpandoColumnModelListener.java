@@ -72,7 +72,16 @@ public class OrganizationExpandoColumnModelListener
 		throws ModelListenerException {
 
 		try {
-			if (!_isOrganizationCustomField(expandoColumn)) {
+			ExpandoTable expandoTable = _expandoTableLocalService.getTable(
+				expandoColumn.getTableId());
+			long organizationClassNameId =
+				_classNameLocalService.getClassNameId(
+					Organization.class.getName());
+
+			if ((expandoTable.getClassNameId() != organizationClassNameId) ||
+				!ExpandoTableConstants.DEFAULT_TABLE_NAME.equals(
+					expandoTable.getName())) {
+
 				return;
 			}
 
@@ -260,25 +269,6 @@ public class OrganizationExpandoColumnModelListener
 		}
 
 		return entityField;
-	}
-
-	private boolean _isOrganizationCustomField(ExpandoColumn expandoColumn)
-		throws PortalException {
-
-		long organizationClassNameId = _classNameLocalService.getClassNameId(
-			Organization.class.getName());
-
-		ExpandoTable expandoTable = _expandoTableLocalService.getTable(
-			expandoColumn.getTableId());
-
-		if ((expandoTable.getClassNameId() != organizationClassNameId) ||
-			!ExpandoTableConstants.DEFAULT_TABLE_NAME.equals(
-				expandoTable.getName())) {
-
-			return false;
-		}
-
-		return true;
 	}
 
 	private ServiceRegistration<EntityModel> _register() {
