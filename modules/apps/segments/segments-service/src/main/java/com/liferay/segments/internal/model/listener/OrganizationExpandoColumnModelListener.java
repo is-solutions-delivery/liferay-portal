@@ -85,12 +85,12 @@ public class OrganizationExpandoColumnModelListener
 				return;
 			}
 
-			EntityField organizationEntityField = _getOrganizationEntityField(
+			EntityField entityField = _getEntityField(
 				expandoColumn);
 
-			if (organizationEntityField != null) {
+			if (entityField != null) {
 				_entityFieldsMap.put(
-					expandoColumn.getColumnId(), organizationEntityField);
+					expandoColumn.getColumnId(), entityField);
 
 				_serviceRegistration.unregister();
 
@@ -190,19 +190,19 @@ public class OrganizationExpandoColumnModelListener
 				));
 
 		for (ExpandoColumn expandoColumn : expandoColumns) {
-			EntityField organizationEntityField = _getOrganizationEntityField(
+			EntityField entityField = _getEntityField(
 				expandoColumn);
 
-			if (organizationEntityField != null) {
+			if (entityField != null) {
 				entityFieldsMap.put(
-					expandoColumn.getColumnId(), organizationEntityField);
+					expandoColumn.getColumnId(), entityField);
 			}
 		}
 
 		return entityFieldsMap;
 	}
 
-	private EntityField _getOrganizationEntityField(
+	private EntityField _getEntityField(
 		ExpandoColumn expandoColumn) {
 
 		UnicodeProperties unicodeProperties =
