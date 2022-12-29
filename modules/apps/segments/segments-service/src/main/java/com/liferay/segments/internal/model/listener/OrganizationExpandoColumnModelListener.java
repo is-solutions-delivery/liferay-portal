@@ -101,9 +101,7 @@ public class OrganizationExpandoColumnModelListener
 			return;
 		}
 
-		if (_entityFieldsMap.containsKey(
-				expandoColumn.getColumnId())) {
-
+		if (_entityFieldsMap.containsKey(expandoColumn.getColumnId())) {
 			_entityFieldsMap.remove(expandoColumn.getColumnId());
 
 			_serviceRegistration.unregister();
@@ -150,6 +148,49 @@ public class OrganizationExpandoColumnModelListener
 			StringPool.UNDERLINE, expandoColumn.getColumnId(),
 			StringPool.UNDERLINE,
 			Normalizer.normalizeIdentifier(expandoColumn.getName()));
+	}
+
+	private Map<Long, EntityField> _getEntityFieldsMap()
+		throws PortalException {
+
+		Map<Long, EntityField> entityFieldsMap = new HashMap<>();
+
+		long organizationClassNameId = _classNameLocalService.getClassNameId(
+			Organization.class.getName());
+
+		List<ExpandoColumn> expandoColumns =
+			_expandoColumnLocalService.dslQuery(
+				DSLQueryFactoryUtil.select(
+					ExpandoColumnTable.INSTANCE
+				).from(
+					ExpandoColumnTable.INSTANCE
+				).where(
+					ExpandoColumnTable.INSTANCE.tableId.in(
+						DSLQueryFactoryUtil.select(
+							ExpandoTableTable.INSTANCE.tableId
+						).from(
+							ExpandoTableTable.INSTANCE
+						).where(
+							ExpandoTableTable.INSTANCE.classNameId.eq(
+								organizationClassNameId
+							).and(
+								ExpandoTableTable.INSTANCE.name.eq(
+									ExpandoTableConstants.DEFAULT_TABLE_NAME)
+							)
+						))
+				));
+
+		for (ExpandoColumn expandoColumn : expandoColumns) {
+			EntityField organizationEntityField = _getOrganizationEntityField(
+				expandoColumn);
+
+			if (organizationEntityField != null) {
+				entityFieldsMap.put(
+					expandoColumn.getColumnId(), organizationEntityField);
+			}
+		}
+
+		return entityFieldsMap;
 	}
 
 	private EntityField _getOrganizationEntityField(
@@ -221,49 +262,6 @@ public class OrganizationExpandoColumnModelListener
 		return entityField;
 	}
 
-	private Map<Long, EntityField> _getEntityFieldsMap()
-		throws PortalException {
-
-		Map<Long, EntityField> entityFieldsMap = new HashMap<>();
-
-		long organizationClassNameId = _classNameLocalService.getClassNameId(
-			Organization.class.getName());
-
-		List<ExpandoColumn> expandoColumns =
-			_expandoColumnLocalService.dslQuery(
-				DSLQueryFactoryUtil.select(
-					ExpandoColumnTable.INSTANCE
-				).from(
-					ExpandoColumnTable.INSTANCE
-				).where(
-					ExpandoColumnTable.INSTANCE.tableId.in(
-						DSLQueryFactoryUtil.select(
-							ExpandoTableTable.INSTANCE.tableId
-						).from(
-							ExpandoTableTable.INSTANCE
-						).where(
-							ExpandoTableTable.INSTANCE.classNameId.eq(
-								organizationClassNameId
-							).and(
-								ExpandoTableTable.INSTANCE.name.eq(
-									ExpandoTableConstants.DEFAULT_TABLE_NAME)
-							)
-						))
-				));
-
-		for (ExpandoColumn expandoColumn : expandoColumns) {
-			EntityField organizationEntityField = _getOrganizationEntityField(
-				expandoColumn);
-
-			if (organizationEntityField != null) {
-				entityFieldsMap.put(
-					expandoColumn.getColumnId(), organizationEntityField);
-			}
-		}
-
-		return entityFieldsMap;
-	}
-
 	private boolean _isOrganizationCustomField(ExpandoColumn expandoColumn)
 		throws PortalException {
 
@@ -301,6 +299,8 @@ public class OrganizationExpandoColumnModelListener
 	@Reference
 	private ClassNameLocalService _classNameLocalService;
 
+	private Map<Long, EntityField> _entityFieldsMap = new HashMap<>();
+
 	@Reference
 	private ExpandoBridgeIndexer _expandoBridgeIndexer;
 
@@ -310,7 +310,6 @@ public class OrganizationExpandoColumnModelListener
 	@Reference
 	private ExpandoTableLocalService _expandoTableLocalService;
 
-	private Map<Long, EntityField> _entityFieldsMap = new HashMap<>();
 	private ServiceRegistration<EntityModel> _serviceRegistration;
 
 }
