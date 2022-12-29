@@ -83,7 +83,9 @@ public class OrganizationExpandoColumnModelListener
 				_organizationEntityFields.put(
 					expandoColumn.getColumnId(), organizationEntityField);
 
-				_serviceRegistration = _updateRegistry();
+				_serviceRegistration.unregister();
+
+				_serviceRegistration = _register();
 			}
 		}
 		catch (PortalException portalException) {
@@ -104,7 +106,9 @@ public class OrganizationExpandoColumnModelListener
 
 			_organizationEntityFields.remove(expandoColumn.getColumnId());
 
-			_serviceRegistration = _updateRegistry();
+			_serviceRegistration.unregister();
+
+			_serviceRegistration = _register();
 		}
 	}
 
@@ -138,7 +142,7 @@ public class OrganizationExpandoColumnModelListener
 
 	@Deactivate
 	protected void deactivate() {
-		_unregister();
+		_serviceRegistration.unregister();
 	}
 
 	private String _encodeName(ExpandoColumn expandoColumn) {
@@ -287,16 +291,6 @@ public class OrganizationExpandoColumnModelListener
 			HashMapDictionaryBuilder.<String, Object>put(
 				"entity.model.name", OrganizationEntityModel.NAME
 			).build());
-	}
-
-	private void _unregister() {
-		_serviceRegistration.unregister();
-	}
-
-	private ServiceRegistration<EntityModel> _updateRegistry() {
-		_unregister();
-
-		return _register();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
