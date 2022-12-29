@@ -135,7 +135,6 @@ public class OrganizationExpandoColumnModelListener
 	protected void activate(BundleContext bundleContext) {
 		try {
 			_bundleContext = bundleContext;
-
 			_entityFieldsMap = _getEntityFieldsMap();
 
 			_serviceRegistration = _register();
