@@ -192,6 +192,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 		MessageBoardSection messageBoardSection = randomMessageBoardSection();
 
 		messageBoardSection.setDescription(regex);
+		messageBoardSection.setFriendlyUrlPath(regex);
 		messageBoardSection.setTitle(regex);
 
 		String json = MessageBoardSectionSerDes.toJSON(messageBoardSection);
@@ -201,6 +202,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 		messageBoardSection = MessageBoardSectionSerDes.toDTO(json);
 
 		Assert.assertEquals(regex, messageBoardSection.getDescription());
+		Assert.assertEquals(regex, messageBoardSection.getFriendlyUrlPath());
 		Assert.assertEquals(regex, messageBoardSection.getTitle());
 	}
 
@@ -984,6 +986,101 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 			postMessageBoardSectionMessageBoardSection(
 				testGetMessageBoardSectionMessageBoardSectionsPage_getParentMessageBoardSectionId(),
 				messageBoardSection);
+	}
+
+	@Test
+	public void testGetSiteMessageBoardSectionByFriendlyUrlPath()
+		throws Exception {
+
+		MessageBoardSection postMessageBoardSection =
+			testGetSiteMessageBoardSectionByFriendlyUrlPath_addMessageBoardSection();
+
+		MessageBoardSection getMessageBoardSection =
+			messageBoardSectionResource.
+				getSiteMessageBoardSectionByFriendlyUrlPath(
+					postMessageBoardSection.getSiteId(),
+					postMessageBoardSection.getFriendlyUrlPath());
+
+		assertEquals(postMessageBoardSection, getMessageBoardSection);
+		assertValid(getMessageBoardSection);
+	}
+
+	protected MessageBoardSection
+			testGetSiteMessageBoardSectionByFriendlyUrlPath_addMessageBoardSection()
+		throws Exception {
+
+		return messageBoardSectionResource.postSiteMessageBoardSection(
+			testGroup.getGroupId(), randomMessageBoardSection());
+	}
+
+	@Test
+	public void testGraphQLGetSiteMessageBoardSectionByFriendlyUrlPath()
+		throws Exception {
+
+		MessageBoardSection messageBoardSection =
+			testGraphQLGetSiteMessageBoardSectionByFriendlyUrlPath_addMessageBoardSection();
+
+		Assert.assertTrue(
+			equals(
+				messageBoardSection,
+				MessageBoardSectionSerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"messageBoardSectionByFriendlyUrlPath",
+								new HashMap<String, Object>() {
+									{
+										put(
+											"siteKey",
+											"\"" +
+												messageBoardSection.
+													getSiteId() + "\"");
+										put(
+											"friendlyUrlPath",
+											"\"" +
+												messageBoardSection.
+													getFriendlyUrlPath() +
+														"\"");
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data",
+						"Object/messageBoardSectionByFriendlyUrlPath"))));
+	}
+
+	@Test
+	public void testGraphQLGetSiteMessageBoardSectionByFriendlyUrlPathNotFound()
+		throws Exception {
+
+		String irrelevantFriendlyUrlPath =
+			"\"" + RandomTestUtil.randomString() + "\"";
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"messageBoardSectionByFriendlyUrlPath",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"siteKey",
+									"\"" + irrelevantGroup.getGroupId() + "\"");
+								put(
+									"friendlyUrlPath",
+									irrelevantFriendlyUrlPath);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
+	protected MessageBoardSection
+			testGraphQLGetSiteMessageBoardSectionByFriendlyUrlPath_addMessageBoardSection()
+		throws Exception {
+
+		return testGraphQLMessageBoardSection_addMessageBoardSection();
 	}
 
 	@Test
@@ -1787,6 +1884,14 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("friendlyUrlPath", additionalAssertFieldName)) {
+				if (messageBoardSection.getFriendlyUrlPath() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals(
 					"numberOfMessageBoardSections",
 					additionalAssertFieldName)) {
@@ -2032,6 +2137,17 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 				if (!Objects.deepEquals(
 						messageBoardSection1.getDescription(),
 						messageBoardSection2.getDescription())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("friendlyUrlPath", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						messageBoardSection1.getFriendlyUrlPath(),
+						messageBoardSection2.getFriendlyUrlPath())) {
 
 					return false;
 				}
@@ -2321,6 +2437,14 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("friendlyUrlPath")) {
+			sb.append("'");
+			sb.append(String.valueOf(messageBoardSection.getFriendlyUrlPath()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("id")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -2417,6 +2541,8 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 				dateCreated = RandomTestUtil.nextDate();
 				dateModified = RandomTestUtil.nextDate();
 				description = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				friendlyUrlPath = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
 				numberOfMessageBoardSections = RandomTestUtil.randomInt();
