@@ -55,7 +55,7 @@ public abstract class BaseMBCategoryUADExporter
 
 	@Override
 	protected String toXmlString(MBCategory mbCategory) {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(28);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.message.boards.model.MBCategory");
@@ -84,6 +84,10 @@ public abstract class BaseMBCategoryUADExporter
 		sb.append(
 			"<column><column-name>name</column-name><column-value><![CDATA[");
 		sb.append(mbCategory.getName());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>urlCategory</column-name><column-value><![CDATA[");
+		sb.append(mbCategory.getUrlCategory());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>description</column-name><column-value><![CDATA[");

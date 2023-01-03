@@ -80,10 +80,10 @@ public class MBCategoryModelImpl
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"parentCategoryId", Types.BIGINT}, {"name", Types.VARCHAR},
-		{"description", Types.VARCHAR}, {"displayStyle", Types.VARCHAR},
-		{"lastPublishDate", Types.TIMESTAMP}, {"status", Types.INTEGER},
-		{"statusByUserId", Types.BIGINT}, {"statusByUserName", Types.VARCHAR},
-		{"statusDate", Types.TIMESTAMP}
+		{"urlCategory", Types.VARCHAR}, {"description", Types.VARCHAR},
+		{"displayStyle", Types.VARCHAR}, {"lastPublishDate", Types.TIMESTAMP},
+		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
+		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -102,6 +102,7 @@ public class MBCategoryModelImpl
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("parentCategoryId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("urlCategory", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("displayStyle", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
@@ -112,7 +113,7 @@ public class MBCategoryModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table MBCategory (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,uuid_ VARCHAR(75) null,categoryId LONG not null,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentCategoryId LONG,name VARCHAR(75) null,description STRING null,displayStyle VARCHAR(75) null,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,primary key (categoryId, ctCollectionId))";
+		"create table MBCategory (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,uuid_ VARCHAR(75) null,categoryId LONG not null,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentCategoryId LONG,name VARCHAR(75) null,urlCategory VARCHAR(75) null,description STRING null,displayStyle VARCHAR(75) null,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,primary key (categoryId, ctCollectionId))";
 
 	public static final String TABLE_SQL_DROP = "drop table MBCategory";
 
@@ -162,14 +163,20 @@ public class MBCategoryModelImpl
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long URLCATEGORY_COLUMN_BITMASK = 32L;
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
+	 */
+	@Deprecated
+	public static final long UUID_COLUMN_BITMASK = 64L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
 	 *		#getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long NAME_COLUMN_BITMASK = 64L;
+	public static final long NAME_COLUMN_BITMASK = 128L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
@@ -327,6 +334,10 @@ public class MBCategoryModelImpl
 		attributeGetterFunctions.put("name", MBCategory::getName);
 		attributeSetterBiConsumers.put(
 			"name", (BiConsumer<MBCategory, String>)MBCategory::setName);
+		attributeGetterFunctions.put("urlCategory", MBCategory::getUrlCategory);
+		attributeSetterBiConsumers.put(
+			"urlCategory",
+			(BiConsumer<MBCategory, String>)MBCategory::setUrlCategory);
 		attributeGetterFunctions.put("description", MBCategory::getDescription);
 		attributeSetterBiConsumers.put(
 			"description",
@@ -628,6 +639,35 @@ public class MBCategoryModelImpl
 		}
 
 		_name = name;
+	}
+
+	@JSON
+	@Override
+	public String getUrlCategory() {
+		if (_urlCategory == null) {
+			return "";
+		}
+		else {
+			return _urlCategory;
+		}
+	}
+
+	@Override
+	public void setUrlCategory(String urlCategory) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_urlCategory = urlCategory;
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #getColumnOriginalValue(String)}
+	 */
+	@Deprecated
+	public String getOriginalUrlCategory() {
+		return getColumnOriginalValue("urlCategory");
 	}
 
 	@JSON
@@ -970,6 +1010,7 @@ public class MBCategoryModelImpl
 		mbCategoryImpl.setModifiedDate(getModifiedDate());
 		mbCategoryImpl.setParentCategoryId(getParentCategoryId());
 		mbCategoryImpl.setName(getName());
+		mbCategoryImpl.setUrlCategory(getUrlCategory());
 		mbCategoryImpl.setDescription(getDescription());
 		mbCategoryImpl.setDisplayStyle(getDisplayStyle());
 		mbCategoryImpl.setLastPublishDate(getLastPublishDate());
@@ -1007,6 +1048,8 @@ public class MBCategoryModelImpl
 		mbCategoryImpl.setParentCategoryId(
 			this.<Long>getColumnOriginalValue("parentCategoryId"));
 		mbCategoryImpl.setName(this.<String>getColumnOriginalValue("name"));
+		mbCategoryImpl.setUrlCategory(
+			this.<String>getColumnOriginalValue("urlCategory"));
 		mbCategoryImpl.setDescription(
 			this.<String>getColumnOriginalValue("description"));
 		mbCategoryImpl.setDisplayStyle(
@@ -1166,6 +1209,14 @@ public class MBCategoryModelImpl
 			mbCategoryCacheModel.name = null;
 		}
 
+		mbCategoryCacheModel.urlCategory = getUrlCategory();
+
+		String urlCategory = mbCategoryCacheModel.urlCategory;
+
+		if ((urlCategory != null) && (urlCategory.length() == 0)) {
+			mbCategoryCacheModel.urlCategory = null;
+		}
+
 		mbCategoryCacheModel.description = getDescription();
 
 		String description = mbCategoryCacheModel.description;
@@ -1286,6 +1337,7 @@ public class MBCategoryModelImpl
 	private boolean _setModifiedDate;
 	private long _parentCategoryId;
 	private String _name;
+	private String _urlCategory;
 	private String _description;
 	private String _displayStyle;
 	private Date _lastPublishDate;
@@ -1335,6 +1387,7 @@ public class MBCategoryModelImpl
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
 		_columnOriginalValues.put("parentCategoryId", _parentCategoryId);
 		_columnOriginalValues.put("name", _name);
+		_columnOriginalValues.put("urlCategory", _urlCategory);
 		_columnOriginalValues.put("description", _description);
 		_columnOriginalValues.put("displayStyle", _displayStyle);
 		_columnOriginalValues.put("lastPublishDate", _lastPublishDate);
@@ -1389,19 +1442,21 @@ public class MBCategoryModelImpl
 
 		columnBitmasks.put("name", 2048L);
 
-		columnBitmasks.put("description", 4096L);
+		columnBitmasks.put("urlCategory", 4096L);
 
-		columnBitmasks.put("displayStyle", 8192L);
+		columnBitmasks.put("description", 8192L);
 
-		columnBitmasks.put("lastPublishDate", 16384L);
+		columnBitmasks.put("displayStyle", 16384L);
 
-		columnBitmasks.put("status", 32768L);
+		columnBitmasks.put("lastPublishDate", 32768L);
 
-		columnBitmasks.put("statusByUserId", 65536L);
+		columnBitmasks.put("status", 65536L);
 
-		columnBitmasks.put("statusByUserName", 131072L);
+		columnBitmasks.put("statusByUserId", 131072L);
 
-		columnBitmasks.put("statusDate", 262144L);
+		columnBitmasks.put("statusByUserName", 262144L);
+
+		columnBitmasks.put("statusDate", 524288L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}
