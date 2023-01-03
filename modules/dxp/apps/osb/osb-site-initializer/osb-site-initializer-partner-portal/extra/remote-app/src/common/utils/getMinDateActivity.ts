@@ -11,10 +11,11 @@
 
 export default function getMinDateActivity(dates: string[]) {
 	if (dates.length) {
+		console.log("getMixDateActivity:"+ dates);
 		const endDate = dates.reduce((dateAccumulator, endDate) =>
-			dateAccumulator > endDate ? dateAccumulator : endDate
+			dateAccumulator < endDate ? dateAccumulator : endDate
 		);
-
+		console.log("endDate: "+endDate);
 		return endDate;
 	}
 }

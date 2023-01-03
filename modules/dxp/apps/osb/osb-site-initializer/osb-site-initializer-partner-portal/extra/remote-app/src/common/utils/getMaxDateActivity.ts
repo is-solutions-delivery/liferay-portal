@@ -10,11 +10,13 @@
  */
 
 export default function getMaxDateActivity(dates: string[]) {
+	console.log("getMaxDateActivity dates:"+ dates);
 	if (dates.length) {
 		const startDate = dates.reduce((dateAccumulator, startDate) =>
-			dateAccumulator < startDate ? dateAccumulator : startDate
+			dateAccumulator > startDate ? dateAccumulator : startDate
 		);
-
+		console.log("startDate:"+ startDate);
+		console.log("test1")
 		return startDate;
 	}
 }
