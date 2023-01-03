@@ -70,6 +70,7 @@ export default async function submitForm(
 				await createMDFClaimDocuments(
 					values.reimbursementInvoice,
 					claimDocument.contentUrl,
+					claimDocument?.id,
 					dtoMDFClaim?.id
 				);
 			}

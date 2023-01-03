@@ -11,12 +11,14 @@
 
 import AccountEntry from '../accountEntry';
 import MDFClaim from '../mdfClaim';
+import MDFClaimActivity from '../mdfClaimActivity';
 
 export default interface MDFClaimDTO
 	extends Omit<MDFClaim, 'activities' | 'reimbursementInvoice'> {
 	amountClaimed?: number;
 	companyName?: string;
 	externalReferenceCodeSF?: string;
+	mdfClaimToMdfClaimActivities?: MDFClaimActivity[];
 	mdfRequestExternalReferenceCodeSF?: string;
 	mdfRequestTotalCostOfExpense?: number;
 	mdfRequestedAmount?: number;

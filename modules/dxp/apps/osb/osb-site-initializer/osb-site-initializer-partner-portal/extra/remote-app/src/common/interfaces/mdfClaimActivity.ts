@@ -11,11 +11,10 @@
 
 import LiferayObject from './liferayObject';
 import MDFClaimBudget from './mdfClaimBudget';
-
 export default interface MDFClaimActivity extends Partial<LiferayObject> {
-	budgets?: MDFClaimBudget[];
 	documents?: File[];
 	listQualifiedLeads?: File;
+	mdfClaimActivityToMdfClaimBudgets: MDFClaimBudget;
 	metrics: string;
 	name: string;
 	selected: boolean;

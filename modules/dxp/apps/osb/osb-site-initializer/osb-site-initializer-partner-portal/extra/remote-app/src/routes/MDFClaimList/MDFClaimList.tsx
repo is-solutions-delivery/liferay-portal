@@ -26,11 +26,13 @@ import DateFilter from '../../common/components/TableHeader/Filter/components/fi
 import Search from '../../common/components/TableHeader/Search';
 import {LiferayPicklistName} from '../../common/enums/liferayPicklistName';
 import {MDFClaimColumnKey} from '../../common/enums/mdfClaimColumnKey';
+import {PRMPageRoute} from '../../common/enums/prmPageRoute';
 import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import usePagination from '../../common/hooks/usePagination';
 import {MDFClaimListItem} from '../../common/interfaces/mdfClaimListItem';
 import TableColumn from '../../common/interfaces/tableColumn';
 import {Liferay} from '../../common/services/liferay';
+import {Status} from '../../common/utils/constants/status';
 import getDropDownFilterMenus from '../../common/utils/getDropDownFilterMenus';
 import useDynamicFieldEntries from './hooks/useDynamicFieldEntries';
 import useFilters from './hooks/useFilters';
@@ -52,8 +54,56 @@ const MDFClaimList = () => {
 		pagination.activeDelta,
 		filtersTerm
 	);
-
 	const siteURL = useLiferayNavigate();
+
+	const getDropdownItems = (row: MDFClaimListItem) => {
+		if (row[MDFClaimColumnKey.STATUS] !== Status.DRAFT.name) {
+			return (
+				<Dropdown
+					options={[
+						{
+							icon: 'view',
+							key: 'approve',
+							label: ' View',
+							onClick: () =>
+								Liferay.Util.navigate(
+									`${siteURL}/l/${
+										row[MDFClaimColumnKey.REQUEST_ID]
+									}`
+								),
+						},
+					]}
+				></Dropdown>
+			);
+		}
+
+		const options = [
+			{
+				icon: 'view',
+				key: 'approve',
+				label: ' View',
+				onClick: () =>
+					Liferay.Util.navigate(
+						`${siteURL}/l/${row[MDFClaimColumnKey.REQUEST_ID]}`
+					),
+			},
+			{
+				icon: 'pencil',
+				key: 'edit',
+				label: ' Edit',
+				onClick: () =>
+					Liferay.Util.navigate(
+						`${siteURL}/${
+							PRMPageRoute.CREATE_MDF_CLAIM
+						}/#/mdfrequest/${
+							row[MDFClaimColumnKey.MDF_REQUEST_ID]
+						}/mdfclaim/${row[MDFClaimColumnKey.REQUEST_ID]}`
+					),
+			},
+		];
+
+		return <Dropdown options={options}></Dropdown>;
+	};
 
 	const columns = [
 		{
@@ -98,28 +148,8 @@ const MDFClaimList = () => {
 		{
 			columnKey: MDFClaimColumnKey.ACTION,
 			label: '',
-			render: (_: string | undefined, row: MDFClaimListItem) => (
-				<Dropdown
-					onClick={() =>
-						Liferay.Util.navigate(
-							`${siteURL}/l/${row[MDFClaimColumnKey.REQUEST_ID]}`
-						)
-					}
-					options={[
-						{
-							icon: 'view',
-							key: 'approve',
-							label: ' View',
-							onClick: () =>
-								Liferay.Util.navigate(
-									`${siteURL}/l/${
-										row[MDFClaimColumnKey.REQUEST_ID]
-									}`
-								),
-						},
-					]}
-				></Dropdown>
-			),
+			render: (_: string | undefined, row: MDFClaimListItem) =>
+				getDropdownItems(row),
 		},
 	];
 

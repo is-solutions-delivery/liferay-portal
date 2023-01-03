@@ -10,7 +10,6 @@
  */
 
 import MDFClaimActivity from '../mdfClaimActivity';
-
 export default interface MDFClaimActivityDTO extends MDFClaimActivity {
 	r_activityToMDFClaimActivities_c_activityId?: number;
 	r_mdfClaimToMdfClaimActivities_c_mdfClaimId?: number;

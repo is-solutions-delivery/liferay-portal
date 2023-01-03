@@ -23,6 +23,7 @@ export function getDTOFromMDFClaim(
 		companyName: mdfRequest.r_accountToMDFRequests_accountEntry?.name,
 		externalReferenceCodeSF,
 		mdfClaimStatus: mdfClaim.mdfClaimStatus,
+		mdfClaimToMdfClaimActivities: mdfClaim?.activities,
 		mdfRequestExternalReferenceCodeSF: mdfRequest?.externalReferenceCodeSF,
 		mdfRequestTotalCostOfExpense: mdfRequest.totalCostOfExpense,
 		mdfRequestedAmount: mdfClaim.totalrequestedAmount,

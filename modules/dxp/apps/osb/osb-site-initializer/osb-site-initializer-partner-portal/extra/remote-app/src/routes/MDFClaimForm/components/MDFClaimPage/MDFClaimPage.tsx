@@ -62,7 +62,7 @@ const MDFClaimPage = ({
 			];
 
 			return !ignoreStatus.includes(
-				mdfRequestToMdfClaim.mdfClaimStatus.key as string
+				mdfRequestToMdfClaim.mdfClaimStatus?.key as string
 			);
 		}
 	).length;

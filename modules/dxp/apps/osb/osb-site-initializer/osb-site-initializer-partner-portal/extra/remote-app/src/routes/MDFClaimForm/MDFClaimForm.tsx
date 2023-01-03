@@ -18,8 +18,10 @@ import MDFRequestActivityDTO from '../../common/interfaces/dto/mdfRequestActivit
 import MDFClaim from '../../common/interfaces/mdfClaim';
 import {Liferay} from '../../common/services/liferay';
 import useGetDocumentFolder from '../../common/services/liferay/headless-delivery/useGetDocumentFolders';
+import useGetMDFClaimById from '../../common/services/liferay/object/mdf-claim/useGetMDFClaimById';
 import useGetMDFRequestById from '../../common/services/liferay/object/mdf-requests/useGetMDFRequestById';
 import {Status} from '../../common/utils/constants/status';
+import {getMDFClaimFromDTO} from '../../common/utils/dto/mdf-claim/getMDFClaimFromDTO';
 import MDFClaimPage from './components/MDFClaimPage';
 import claimSchema from './components/MDFClaimPage/schema/yup';
 import useGetMDFRequestIdByHash from './hooks/useGetMDFRequestIdByHash';
@@ -60,6 +62,12 @@ const MDFClaimForm = () => {
 
 	const mdfRequestId = useGetMDFRequestIdByHash();
 
+	const hashLocation = window.location.hash;
+
+	const mdfClaimId = hashLocation.split('/')[4];
+
+	const {data: mdfClaimData} = useGetMDFClaimById(Number(mdfClaimId));
+
 	const {
 		data: mdfRequest,
 		isValidating: isValidatingMDFRequestById,
@@ -81,11 +89,19 @@ const MDFClaimForm = () => {
 
 	return (
 		<PRMFormik
-			initialValues={getInitialFormValues(
-				Number(mdfRequestId),
-				mdfRequest.mdfRequestToActivities,
-				mdfRequest.totalMDFRequestAmount
-			)}
+			initialValues={
+				mdfClaimId
+					? getMDFClaimFromDTO(
+							mdfClaimData,
+							Status.PENDING,
+							Number(mdfRequestId)
+					  )
+					: getInitialFormValues(
+							Number(mdfRequestId),
+							mdfRequest.mdfRequestToActivities,
+							mdfRequest.totalMDFRequestAmount
+					  )
+			}
 			onSubmit={(values, formikHelpers) =>
 				submitForm(
 					values,
