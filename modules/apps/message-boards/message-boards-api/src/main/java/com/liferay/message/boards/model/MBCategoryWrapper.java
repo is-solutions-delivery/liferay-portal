@@ -57,6 +57,7 @@ public class MBCategoryWrapper
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("parentCategoryId", getParentCategoryId());
 		attributes.put("name", getName());
+		attributes.put("urlCategory", getUrlCategory());
 		attributes.put("description", getDescription());
 		attributes.put("displayStyle", getDisplayStyle());
 		attributes.put("lastPublishDate", getLastPublishDate());
@@ -140,6 +141,12 @@ public class MBCategoryWrapper
 
 		if (name != null) {
 			setName(name);
+		}
+
+		String urlCategory = (String)attributes.get("urlCategory");
+
+		if (urlCategory != null) {
+			setUrlCategory(urlCategory);
 		}
 
 		String description = (String)attributes.get("description");
@@ -439,6 +446,16 @@ public class MBCategoryWrapper
 	@Override
 	public long getTrashEntryClassPK() {
 		return model.getTrashEntryClassPK();
+	}
+
+	/**
+	 * Returns the url category of this message boards category.
+	 *
+	 * @return the url category of this message boards category
+	 */
+	@Override
+	public String getUrlCategory() {
+		return model.getUrlCategory();
 	}
 
 	/**
@@ -779,6 +796,16 @@ public class MBCategoryWrapper
 	@Override
 	public void setStatusDate(Date statusDate) {
 		model.setStatusDate(statusDate);
+	}
+
+	/**
+	 * Sets the url category of this message boards category.
+	 *
+	 * @param urlCategory the url category of this message boards category
+	 */
+	@Override
+	public void setUrlCategory(String urlCategory) {
+		model.setUrlCategory(urlCategory);
 	}
 
 	/**

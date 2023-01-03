@@ -50,7 +50,7 @@ public abstract class BaseMBCategoryUADDisplay
 
 	@Override
 	public String[] getDisplayFieldNames() {
-		return new String[] {"name", "description"};
+		return new String[] {"name", "urlCategory", "description"};
 	}
 
 	@Override
