@@ -1,0 +1,43 @@
+@component-name = "portal-solutions"
+	definition {
+
+	property custom.properties = "feature.flag.LPS-165493=true";
+	property osgi.modules.includes = "site-initializer-raylife-ap";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Site Initializer Raylife AP";
+
+	var testSiteName = "Raylife AP";
+	var testSiteURL = "raylife-ap";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Raylife AP Site") {
+			Site.openSitesAdmin();
+
+			RaylifeAP.addRaylifeAPSite(
+				siteName = "${testSiteName}",
+				siteTemplateName = "Raylife AP");
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		RaylifeAP.tearDownCP();
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			User.logoutPG();
+		}
+	}
+
+}
