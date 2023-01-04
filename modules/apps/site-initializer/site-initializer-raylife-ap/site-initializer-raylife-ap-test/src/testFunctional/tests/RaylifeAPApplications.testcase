@@ -40,4 +40,9 @@
 		}
 	}
 
+   	@description = "Automtion ID: LPS-154587 | Test Summary: Verify that the number in the center of the graph is equal to the total amount of registered products"
+	@priority = "4"
+	test NumberCenterGraphEqualNumberOfProducts {
+
+	}
 }
