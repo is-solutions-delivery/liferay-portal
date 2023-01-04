@@ -52,8 +52,21 @@ const Activities = ({
 		number
 	>();
 
+	const [isDraft, setIsDraft] = useState(false);
+
 	const activityErrors =
 		currentActivityIndex && errors.activities?.[currentActivityIndex];
+
+	const updateEditableActivity = () => {
+		if (
+			currentActivityIndexEdit !== undefined &&
+			currentActivityIndex !== undefined
+		) {
+			arrayHelpers.swap(currentActivityIndex, currentActivityIndexEdit);
+
+			arrayHelpers.remove(currentActivityIndex);
+		}
+	};
 
 	const onAdd = () => setCurrentActivityIndex(values.activities.length);
 
@@ -81,15 +94,19 @@ const Activities = ({
 			return;
 		}
 
-		if (currentActivityIndexEdit !== undefined) {
-			arrayHelpers.swap(currentActivityIndex, currentActivityIndexEdit);
-
-			arrayHelpers.remove(currentActivityIndex);
-		}
-
+		updateEditableActivity();
 		setCurrentActivityIndexEdit(undefined);
 		setCurrentActivityIndex(undefined);
 	};
+
+	const onSaveAsDraftForm = () => {
+		updateEditableActivity();
+		setIsDraft(true);
+	};
+
+	if (isDraft) {
+		onSaveAsDraft?.(values, formikHelpers);
+	}
 
 	return (
 		<PRMForm
@@ -134,7 +151,7 @@ const Activities = ({
 						className="inline-item inline-item-after"
 						disabled={isSubmitting}
 						displayType={null}
-						onClick={() => onSaveAsDraft?.(values, formikHelpers)}
+						onClick={onSaveAsDraftForm}
 					>
 						Save as Draft
 						{isSubmitting &&
