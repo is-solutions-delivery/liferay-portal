@@ -1,0 +1,38 @@
+definition {
+    macro getApplicationLegendValue {
+		var key_legendItem = "${legendItem}";
+		var getItem = selenium.getText("RaylifeAPApplicationsPage#STATUS_LEGEND");
+
+		return "${getItem}";
+	}
+
+	macro verifyApplicationsValue {
+		var home = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Home");
+		var life = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Life");
+		var auto = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Auto");
+		
+		var total1 = ${home} + ${life};
+
+		var total = ${total1} + ${auto};
+
+		AssertTextEquals(
+			locator1 = "RaylifeAPAplicationsPage#TOTAL_PRODUCT",
+			value1 = "${total}");
+	}
+
+	macro verifyApplicationsStatus {
+		var quoted = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Quoted");
+		var incomplete = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Incomplete");
+		var reviewed = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Reviewed");
+		var open = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Open");
+		var total1 = ${quoted} + ${incomplete};
+		var total2 = ${reviewed} + ${open};
+
+		var total = ${total1} + ${total2};
+
+		AssertTextEquals(
+			locator1 = "RaylifeAPApplications#TOTAL_STATUS",
+			value1 = "${total}");
+	}
+
+}
