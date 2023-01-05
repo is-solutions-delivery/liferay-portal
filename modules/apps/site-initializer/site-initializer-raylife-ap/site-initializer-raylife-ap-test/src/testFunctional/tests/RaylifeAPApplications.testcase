@@ -25,6 +25,7 @@
 				siteName = "${testSiteName}",
 				siteTemplateName = "Raylife AP");
 		}
+
 		task ("Create a new Raylife D2C Site") {
 			Raylife.createRaylifeSite(siteName = "Raylife D2C");
 		}
@@ -47,5 +48,16 @@
 	@priority = "4"
 	test NumberCenterGraphEqualNumberOfProducts {
 
+		task("Go to Site RaylifeAP") {
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+		}
+
+		task("When a click in the Side bar and go to Applications") {
+			RaylifeAPNavigator.gotoSidebarItem(itemName = "Applications");
+		}
+
+		task("Then Make a validation of the graph") {
+			RaylifeApApplicationsPage.verifyApplicationsValue();
+		}
 	}
 }
