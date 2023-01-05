@@ -1,5 +1,5 @@
 @component-name = "portal-solutions"
-	definition {
+definition {
 
 	property custom.properties = "feature.flag.LPS-165493=true";
 	property osgi.modules.includes = "site-initializer-raylife-ap";
@@ -40,6 +40,22 @@
 		}
 		else {
 			User.logoutPG();
+		}
+	}
+
+	@description = "Automtion ID: LPS-154587 | Test Summary: Verify that the number in the center of the graph is equal to the total amount of registered products"
+	@priority = "4"
+	test NumberCenterGraphEqualNumberOfProducts {
+		task ("Go to Site RaylifeAP") {
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+		}
+
+		task ("When a click in the Side bar and go to Applications") {
+			RaylifeAPNavigator.gotoSidebarItem(itemName = "Applications");
+		}
+
+		task ("Then Make a validation of the graph") {
+			RaylifeApApplicationsPage.verifyApplicationsValue();
 		}
 	}
 
