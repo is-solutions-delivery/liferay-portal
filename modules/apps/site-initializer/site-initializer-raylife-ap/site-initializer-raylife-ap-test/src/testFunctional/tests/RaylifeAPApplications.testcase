@@ -25,6 +25,9 @@
 				siteName = "${testSiteName}",
 				siteTemplateName = "Raylife AP");
 		}
+		task ("Create a new Raylife D2C Site") {
+			Raylife.createRaylifeSite(siteName = "Raylife D2C");
+		}
 	}
 
 	tearDown {
