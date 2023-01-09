@@ -20,6 +20,10 @@ definition {
 			locator1 = "RaylifeAP#MENU_SIDEBAR");
 	}
 
+	macro clickOnAllAplications{
+		Click(locator1 = "RaylifeAP#ALL_APPLICATIONS_BUTTON");
+	}
+
 	macro clickOnSubsectionTasks {
 		Click(
 			key_subsection = "${key_subsection}",
