@@ -43,6 +43,22 @@ definition {
 		}
 	}
 
+	@description = "Automtion ID: LPS-157720 | Test Summary: Check that the 'All Applications' button redirects to the 'Applications' page"
+	@priority = "4"
+	test AllApplicationsRedirectedToApplicationsPage {
+		task ("Given I go to Site RaylifeAP") {
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+		}
+
+		task ("When I click in the All Applications I go to Applications Page") {
+			RaylifeAP.clickOnAllAplications();
+		}
+
+		task("Then I assert that I was redirected to the application page") {
+			RaylifeAP.assertPageHeader(key_header = "Applications");
+		}
+
+	}
 	@description = "Automtion ID: LPS-154587 | Test Summary: Verify that the number in the center of the graph is equal to the total amount of registered products"
 	@priority = "4"
 	test NumberCenterGraphEqualNumberOfProducts {
