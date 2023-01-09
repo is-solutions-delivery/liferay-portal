@@ -25,6 +25,7 @@ definition {
 				siteName = "${testSiteName}",
 				siteTemplateName = "Raylife AP");
 		}
+
 		task ("Create a new Raylife D2C Site") {
 			Raylife.createRaylifeSite(siteName = "Raylife D2C");
 		}
@@ -54,11 +55,11 @@ definition {
 			RaylifeAP.clickOnAllAplications();
 		}
 
-		task("Then I assert that I was redirected to the application page") {
+		task ("Then I assert that I was redirected to the application page") {
 			RaylifeAP.assertPageHeader(key_header = "Applications");
 		}
-
 	}
+
 	@description = "Automtion ID: LPS-154587 | Test Summary: Verify that the number in the center of the graph is equal to the total amount of registered products"
 	@priority = "4"
 	test NumberCenterGraphEqualNumberOfProducts {

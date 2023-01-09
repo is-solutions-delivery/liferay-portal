@@ -20,7 +20,6 @@
 	<td>//div[contains(@class,'legend-container')]//span[@class='legend-title' and contains(.,'${key_legendItem}')]//parent::div/../span</td>
 	<td></td>
 </tr>
-
 <tr>
 	<td>TOTAL_PRODUCT</td>
 	<td>//div[contains(@class,'products-title')]/..//*[contains(@class,'arcs-title')]</td>

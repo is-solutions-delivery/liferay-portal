@@ -20,7 +20,7 @@ definition {
 			locator1 = "RaylifeAP#MENU_SIDEBAR");
 	}
 
-	macro clickOnAllAplications{
+	macro clickOnAllAplications {
 		Click(locator1 = "RaylifeAP#ALL_APPLICATIONS_BUTTON");
 	}
 
