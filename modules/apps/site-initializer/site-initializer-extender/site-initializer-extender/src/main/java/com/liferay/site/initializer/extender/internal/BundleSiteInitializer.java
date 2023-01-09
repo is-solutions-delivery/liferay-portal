@@ -1211,7 +1211,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.fetchUser()
 			).build();
 
-		Map<String, ObjectDefinition> objectDefinitionMap = new HashMap<>();
+		Map<String, ObjectDefinition>
+			accountEntryRestrictedObjectDefinitionMap = new HashMap<>();
 
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-actions.json")) {
@@ -1233,7 +1234,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 
 			if (objectDefinition.getAccountEntryRestricted()) {
-				objectDefinitionMap.put(
+				accountEntryRestrictedObjectDefinitionMap.put(
 					objectDefinition.getName(), objectDefinition);
 			}
 
@@ -1315,7 +1316,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		_invoke(
 			() -> _updateObjectDefinitionAccountEntryRestricted(
-				objectDefinitionMap, serviceContext));
+				accountEntryRestrictedObjectDefinitionMap, serviceContext));
 		_invoke(
 			() -> _addOrUpdateObjectFields(
 				listTypeDefinitionIdsStringUtilReplaceValues,
