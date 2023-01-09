@@ -69,6 +69,19 @@
 	<td>//div[contains(@class,'ray-sidebar')]//span[contains(text(),'${key_optionName}')]</td>
 	<td></td>
 </tr>
+
+<!--APPLICATIONS_PAGE-->
+
+<tr>
+	<td>SAVE_EXIT_BUTTON</td>
+	<td>//div//button[contains(.,'Save')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ALL_APPLICATIONS_BUTTON</td>
+	<td>//div//button[text()="All Applications"]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
