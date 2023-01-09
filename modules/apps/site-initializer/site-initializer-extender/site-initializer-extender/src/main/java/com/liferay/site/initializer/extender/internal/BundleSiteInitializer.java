@@ -1314,9 +1314,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 			() -> _addOrUpdateObjectRelationships(
 				objectDefinitionIdsStringUtilReplaceValues, serviceContext));
 
-		_invoke(
-			() -> _updateObjectDefinitionAccountEntryRestricted(
-				accountEntryRestrictedObjectDefinitionMap, serviceContext));
+		for (Map.Entry<String, ObjectDefinition> entry :
+				accountEntryRestrictedObjectDefinitionMap.entrySet()) {
+
+			com.liferay.object.model.ObjectDefinition
+				serviceBuilderObjectDefinition =
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						serviceContext.getCompanyId(), "C_" + entry.getKey());
+
+			_objectDefinitionLocalService.
+				restrictObjectDefinitionByAccountEntry(
+					serviceBuilderObjectDefinition, serviceContext.getUserId());
+		}
+
 		_invoke(
 			() -> _addOrUpdateObjectFields(
 				listTypeDefinitionIdsStringUtilReplaceValues,
@@ -4619,25 +4629,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			documentsStringUtilReplaceValues, false, serviceContext);
 		_updateLayoutSet(
 			documentsStringUtilReplaceValues, true, serviceContext);
-	}
-
-	private void _updateObjectDefinitionAccountEntryRestricted(
-			Map<String, ObjectDefinition> objectDefinitionMap,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		for (Map.Entry<String, ObjectDefinition> entry :
-				objectDefinitionMap.entrySet()) {
-
-			com.liferay.object.model.ObjectDefinition
-				serviceBuilderObjectDefinition =
-					_objectDefinitionLocalService.fetchObjectDefinition(
-						serviceContext.getCompanyId(), "C_" + entry.getKey());
-
-			_objectDefinitionLocalService.
-				restrictObjectDefinitionByAccountEntry(
-					serviceBuilderObjectDefinition, serviceContext.getUserId());
-		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
