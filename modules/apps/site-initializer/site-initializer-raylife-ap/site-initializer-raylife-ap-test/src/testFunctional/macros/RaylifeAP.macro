@@ -33,6 +33,14 @@ definition {
 	macro clickInApplicationKebab {
 		Click(locator1 = "RaylifeAP#APPLICATIONS_TABLE_KEBAB");
 	}
+
+	macro clickInApplicationKebabOption {
+		Click(
+			locator1 = "RaylifeAP#KEBAB_OPTION",
+			key_option = "${option}",
+			key_index = "${index}");
+	}
+
 	macro expandedSidebar {
 		MouseOver(
 			key_menuSidebar = "${key_menuSidebar}",
