@@ -60,6 +60,30 @@ definition {
 		}
 	}
 
+	@description = "Automtion ID: LPS-157722 | Test Summary: Check if I can delete a recent application on the Kebab button"
+	@priority = "4"
+	test CanDeleteRecentApplicatios {
+		task ("Given I go to Site RaylifeAP") {
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+		}
+		
+		task("When I Click in kebab button") {
+			ScrollWebElementIntoView(
+				locator1 = "RaylifeAP#APPLICATIONS_TABLE_KEBAB");
+
+			RaylifeAP.clickInApplicationKebab();
+
+		}
+
+		task ("Then I click on the delete option and state that the entry has been deleted") {
+			RaylifeAP.clickInApplicationKebabOption(
+				option = "Delete",
+				index = "1");
+
+			RaylifeAP.getApplicationNumberAndAssert();
+		}
+	}
+
 	@description = "Automtion ID: LPS-154587 | Test Summary: Verify that the number in the center of the graph is equal to the total amount of registered products"
 	@priority = "4"
 	test NumberCenterGraphEqualNumberOfProducts {
