@@ -30,6 +30,9 @@ definition {
 			locator1 = "RaylifeAP#TASKS_SECTION");
 	}
 
+	macro clickInApplicationKebab {
+		Click(locator1 = "RaylifeAP#APPLICATIONS_TABLE_KEBAB");
+	}
 	macro expandedSidebar {
 		MouseOver(
 			key_menuSidebar = "${key_menuSidebar}",
