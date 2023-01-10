@@ -58,6 +58,14 @@ definition {
 		MouseOver(locator1 = "RaylifeAP#MENU_SIDEBAR");
 	}
 
+	// Workaround for LPS-172183
+
+	macro goToRaylifeAPSiteWithRefresh {
+		ApplicationsMenu.gotoSite(site = "Raylife AP");
+
+		Refresh();
+	}
+
 	macro signIn {
 		if (isSet(emailAddress)) {
 			Type(
