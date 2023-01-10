@@ -47,6 +47,11 @@ definition {
 			locator1 = "RaylifeAP#MENU_SIDEBAR");
 	}
 
+	macro getApplicationNumberAndAssert {
+		var applicationvalue  = selenium.getText("RaylifeAP#APPLICATIONS_NUMBER");
+		AssertElementNotPresent(locator1 = "${applicationvalue}");
+	}
+
 	macro mouseOverSidebar {
 		var key_menu = "${menu}";
 
