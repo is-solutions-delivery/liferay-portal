@@ -1,6 +1,6 @@
 .policy-details-container {
 	min-width: 270px;
-	overflow-x: hidden;
+	overflow: visible;
 }
 
 .policy-summary-container,
@@ -9,7 +9,7 @@
 }
 
 .policy-details-container .policy-detail-content {
-	padding: 30px 200px !important;
+	padding: 30px 50px !important;
 }
 
 @media screen and (max-width: 1500px) {
@@ -23,5 +23,12 @@
 @media screen and (max-width: 576px) {
 	.policy-details-container .policy-detail-content {
 		padding: 30px 20px !important;
+	}
+}
+
+@media screen and (max-width: 1500px) {
+	.policy-detail-container {
+		background: none;
+		padding-top: 15px !important;
 	}
 }

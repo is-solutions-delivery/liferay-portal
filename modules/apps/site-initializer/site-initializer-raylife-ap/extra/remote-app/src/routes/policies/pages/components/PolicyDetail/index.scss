@@ -1,4 +1,6 @@
 .policy-detail-container {
+	background-color: white;
+
 	.policy-detail-title::after {
 		background-color: var(--primary);
 		content: '';
@@ -57,5 +59,122 @@
 		left: 0;
 		position: absolute;
 		right: 0;
+	}
+
+	.layout-show-details {
+		background: #f2f6ff;
+		justify-content: space-between;
+		padding-bottom: 15px;
+		padding-top: 15px;
+	}
+	.layout-panel {
+		align-items: center !important;
+
+		justify-content: space-between;
+	}
+
+	.data-panel-hide {
+		align-items: center;
+		justify-content: center;
+		margin-top: 13px;
+	}
+
+	.history-detail-border {
+		border-bottom-left-radius: 8px;
+		border-bottom-right-radius: 8px;
+		height: 100%;
+		position: relative;
+	}
+
+	.gsdc-panel::after {
+		background-image: linear-gradient(
+			to right,
+			#aaa 0%,
+			#aaa 20%,
+			transparent 20%
+		);
+		background-position: 0 0;
+		background-repeat: repeat-x;
+		background-size: 6px 1px;
+		bottom: 0;
+		box-sizing: border-box;
+		content: '';
+		height: 1px;
+		left: 0;
+		position: absolute;
+		right: 0;
+	}
+
+	.box {
+		max-height: 0;
+		opacity: 0;
+		padding-bottom: 5px;
+		transition: all 0.5s;
+	}
+
+	.box.show-box {
+		max-height: 300px;
+		opacity: 1;
+		transition: all 0.5s;
+	}
+
+	.button-panel:focus {
+		align-items: flex-start;
+		color: #4c84ff;
+	}
+
+	.button-panel {
+		padding: 0;
+	}
+
+	@media screen and (max-width: 700px) {
+		.layout-show-details {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			float: none !important;
+			width: auto !important;
+		}
+	}
+	@media screen and (max-width: 700px) {
+		.history-detail-border {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			float: none !important;
+			width: auto !important;
+		}
+	}
+	@media screen and (max-width: 700px) {
+		.layout-panel {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			float: none !important;
+			width: auto !important;
+		}
+	}
+	@media screen and (max-width: 700px) {
+		.data-panel-hide {
+			flex-wrap: wrap !important;
+			float: none !important;
+			padding-bottom: 10px;
+			width: auto !important;
+		}
+	}
+
+	@media screen and (max-width: 700px) {
+		.container-button-panel {
+			align-items: center !important;
+			display: flex;
+			float: right !important;
+			justify-content: center !important;
+			text-align: center !important;
+			width: 100%;
+		}
+	}
+}
+
+@media screen and (max-width: 700px) {
+	.policy-detail-container {
+		background: none;
+		padding-top: 15px !important;
 	}
 }
