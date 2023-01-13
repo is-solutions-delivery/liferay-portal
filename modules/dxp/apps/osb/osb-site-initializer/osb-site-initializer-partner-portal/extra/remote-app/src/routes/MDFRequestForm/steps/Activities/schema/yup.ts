@@ -159,7 +159,7 @@ const activitiesSchema = object({
 					),
 				name: string()
 					.trim()
-					.max(255, 'You have exceeded the character limit')
+					.max(40, 'You have exceeded the character limit')
 					.required('Required'),
 				startDate: date()
 					.test(
