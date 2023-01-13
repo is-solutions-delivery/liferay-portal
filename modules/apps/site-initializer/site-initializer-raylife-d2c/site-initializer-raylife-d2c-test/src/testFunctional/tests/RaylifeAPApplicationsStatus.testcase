@@ -5,8 +5,9 @@ definition {
 	property portal.release = "false";
 	property portal.upstream = "true";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#";
 	property testray.main.component.name = "Site Initializer Raylife D2C";
-    property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#";
+
 	var testSiteName = "Raylife AP";
 	var testSiteURL = "raylife-ap";
 
