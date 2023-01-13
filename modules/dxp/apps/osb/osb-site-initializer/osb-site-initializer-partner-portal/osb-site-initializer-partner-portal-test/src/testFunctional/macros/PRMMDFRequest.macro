@@ -1,5 +1,12 @@
 definition {
 
+	@summary = "add a new activity"
+	macro addNewActivity {
+		Click(
+			key_buttonText = "Add Activity",
+			locator1 = "PRMMDFRequest#ADD_BUTTON");
+	}
+
 	@summary = "Add a new MDF Request filling the goals and activity pages"
 	macro createNewRequest {
 		PRMMDFRequest.fillGoalsPage(
@@ -37,6 +44,36 @@ definition {
 		Button.click(button = "Submit");
 
 		WaitForPageLoad();
+	}
+
+	@summary = "Fill expense fields"
+	macro editexpenseFields {
+		var budgetIndex = "0";
+
+		for (var bugdetValues : list "${budgetList}") {
+			var expenseOption = StringUtil.extractFirst("${bugdetValues}", "-");
+			var bugdetValue = StringUtil.extractLast("${bugdetValues}", "-");
+
+			if (!(isSet(activityIndex))) {
+				var activityIndex = "0";
+			}
+
+			Click(
+				key_buttonText = "Add Expense",
+				locator1 = "PRMMDFRequest#ADD_BUTTON");
+
+			Select(
+				key_fieldName = "activities[${activityIndex}].budgets[${budgetIndex}].expense",
+				locator1 = "PRMMDFRequest#SELECT",
+				value1 = "${expenseOption}");
+
+			Type(
+				key_fieldName = "activities[${activityIndex}].budgets[${budgetIndex}].cost",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "${bugdetValue}");
+
+			var budgetIndex = ${budgetIndex} + 1;
+		}
 	}
 
 	@summary = "Fill the goals page form"
