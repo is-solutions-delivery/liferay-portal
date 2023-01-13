@@ -35,6 +35,11 @@
 	<td>//*[contains(@class,'lexicon-icon-plus')]//ancestor::button[contains(text(),'${key_buttonText}')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>REQUEST_AMOUT_FIELD</td>
+	<td>//input[@name='activities[0].mdfRequestAmount']</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
