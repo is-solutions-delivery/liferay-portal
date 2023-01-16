@@ -67,13 +67,9 @@ definition {
 			RaylifeAP.goToRaylifeAPSiteWithRefresh();
 		}
 
-		task ("When I Click in kebab button") {
+		task ("Then I click on kebab menu and in the delete option and state that the entry has been deleted") {
 			ScrollWebElementIntoView(locator1 = "RaylifeAP#APPLICATIONS_TABLE_KEBAB");
 
-			RaylifeAP.clickInApplicationKebab();
-		}
-
-		task ("Then I click on the delete option and state that the entry has been deleted") {
 			RaylifeAP.clickInApplicationKebabOption(
 				index = "1",
 				option = "Delete");
