@@ -20,11 +20,9 @@ definition {
 			locator1 = "RaylifeAP#MENU_SIDEBAR");
 	}
 
-	macro clickInApplicationKebab {
-		Click(locator1 = "RaylifeAP#APPLICATIONS_TABLE_KEBAB");
-	}
-
 	macro clickInApplicationKebabOption {
+		Click(locator1 = "RaylifeAP#APPLICATIONS_TABLE_KEBAB");
+
 		Click(
 			key_index = "${index}",
 			key_option = "${option}",
