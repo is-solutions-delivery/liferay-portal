@@ -1,0 +1,269 @@
+{
+	"accountEntryRestricted": false,
+	"accountEntryRestrictedObjectFieldName": "",
+	"actions": {
+		"delete": {},
+		"get": {},
+		"permissions": {},
+		"update": {}
+	},
+	"active": true,
+	"defaultLanguageId": "en_US",
+	"enableCategorization": true,
+	"enableComments": false,
+	"enableObjectEntryHistory": false,
+	"externalReferenceCode": "5e7f07b0-7f74-d6d2-8e0b-bb693eea4cd9",
+	"label": {
+		"en_US": "EVP Data"
+	},
+	"name": "EVPData",
+	"objectActions": [],
+	"objectFields": [
+		{
+			"DBType": "Date",
+			"businessType": "Date",
+			"defaultValue": "",
+			"externalReferenceCode": "be6c01b3-fadd-b220-eed2-1820e137ca67",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Create Date"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "createDate",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": true,
+			"type": "Date"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"defaultValue": "",
+			"externalReferenceCode": "f9620956-3b2c-f41c-807a-e5c10d84066a",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Author"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "creator",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": true,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"defaultValue": "",
+			"externalReferenceCode": "6e643c6d-d997-d935-ce5c-c1e6c5fae7b6",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Currency"
+			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Currency$]",
+			"name": "currency",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "String"
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"defaultValue": "",
+			"externalReferenceCode": "3285a28a-283d-1d3a-cfff-da6c805ada7f",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Employees Participated EVP"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "employeesParticipatedEVP",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "Integer"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"defaultValue": "",
+			"externalReferenceCode": "ebd363b0-ffde-0c14-dd9e-54ce30ac05ec",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "External Reference Code"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "externalReferenceCode",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": true,
+			"type": "String"
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"defaultValue": "",
+			"externalReferenceCode": "efc30a0b-b427-5c40-24f8-b4593897b9c8",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Grant Money Distributed"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "grantMoneyDistributed",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "Integer"
+		},
+		{
+			"DBType": "Long",
+			"businessType": "LongInteger",
+			"defaultValue": "",
+			"externalReferenceCode": "2dab5384-b125-85cf-329e-b9981e1ea8e0",
+			"indexed": true,
+			"indexedAsKeyword": true,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "ID"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "id",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": true,
+			"type": "Long"
+		},
+		{
+			"DBType": "Date",
+			"businessType": "Date",
+			"defaultValue": "",
+			"externalReferenceCode": "57ceb5be-d418-d016-654e-e331dfc90211",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Modified Date"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "modifiedDate",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": true,
+			"type": "Date"
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"defaultValue": "",
+			"externalReferenceCode": "2c160680-f0ea-f923-164e-0d8e6853e761",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Number Of Nonprofits Served"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "numberOfNonprofitsServed",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "Integer"
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"defaultValue": "",
+			"externalReferenceCode": "64eec9b1-493d-7315-93a6-bbdc79b273d9",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Service Hours Completed"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "serviceHoursCompleted",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "Integer"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"defaultValue": "",
+			"externalReferenceCode": "f1029dfb-ab42-bff7-bdd5-7e45e69786ce",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Status"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "status",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": true,
+			"type": "String"
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"defaultValue": "",
+			"externalReferenceCode": "2a699188-62f1-9a37-06e2-62b3abeaed3b",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "Years EVP"
+			},
+			"listTypeDefinitionExternalReferenceCode": "",
+			"name": "yearsEVP",
+			"objectFieldSettings": [],
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "Integer"
+		}
+	],
+	"objectLayouts": [],
+	"objectRelationships": [],
+	"objectViews": [],
+	"panelCategoryKey": "control_panel.object",
+	"parameterRequired": false,
+	"pluralLabel": {
+		"en_US": "EVP Data"
+	},
+	"portlet": false,
+	"restContextPath": "/o/c/evpdatas",
+	"scope": "company",
+	"status": {
+		"code": 0,
+		"label": "approved",
+		"label_i18n": "Approved"
+	},
+	"system": false,
+	"titleObjectFieldName": "id"
+}
