@@ -29,16 +29,7 @@ const CaseResultHistory: React.FC<CaseResultHistoryProps> = ({
 	listViewProps,
 	tableProps,
 }) => (
-	<ListView
-		initialContext={{
-			columns: {
-				caseType: false,
-				dateCreated: false,
-				dateModified: false,
-				issues: false,
-				team: false,
-			},
-		}}
+	<ListView		
 		managementToolbarProps={{
 			title: i18n.translate('test-history'),
 			visible: true,
