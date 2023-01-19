@@ -35,10 +35,9 @@ export type DealRegistrationItem = {
 	[key in DealRegistrationColumnKey]?: any;
 };
 interface IProps {
-	getFilteredItems: (items: DealRegistrationItem[]) => DealRegistrationItem[];
 	sort: string;
 }
-const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
+const DealRegistrationList = ({sort}: IProps) => {
 	const {filters, filtersTerm, onFilter} = useFilters();
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
 	const [modalContent, setModalContent] = useState<DealRegistrationItem>({});
@@ -52,7 +51,6 @@ const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
 		filtersTerm,
 		sort
 	);
-	const filteredData = data.items && getFilteredItems(data.items);
 	const siteURL = useLiferayNavigate();
 	const columns = [
 		{
@@ -91,6 +89,8 @@ const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
 			</Modal>
 		);
 	};
+	const {items: totalItemsPage, totalCount: totalPagination} = data;
+
 	const getTable = (totalCount: number, items?: DealRegistrationItem[]) => {
 		if (items) {
 			if (!totalCount) {
@@ -106,14 +106,13 @@ const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
 					</div>
 				);
 			}
-			const {totalCount: totalPagination} = data;
 
 			return (
 				<div className="mt-3">
 					<Table<DealRegistrationListItem>
 						columns={columns}
 						customClickOnRow={handleCustomClickOnRow}
-						rows={items}
+						rows={totalItemsPage as []}
 					/>
 
 					<ClayPaginationBarWithBasicItems
@@ -142,13 +141,13 @@ const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
 
 						<div className="bd-highlight flex-shrink-2 mt-1">
 							{!!filters.searchTerm &&
-								!!filteredData?.length &&
+								!!totalItemsPage?.length &&
 								!isValidating && (
 									<div>
 										<p className="font-weight-semi-bold m-0 ml-1 mt-3 text-paragraph-sm">
-											{filteredData?.length > 1
-												? `${filteredData?.length} results for ${filters.searchTerm}`
-												: `${filteredData?.length} result for ${filters.searchTerm}`}
+											{totalItemsPage?.length > 1
+												? `${totalItemsPage?.length} results for ${filters.searchTerm}`
+												: `${totalItemsPage?.length} result for ${filters.searchTerm}`}
 										</p>
 									</div>
 								)}
@@ -157,10 +156,10 @@ const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
 				</div>
 
 				<div>
-					{!!filteredData?.length && (
+					{!!totalItemsPage?.length && (
 						<CSVLink
 							className="btn btn-secondary mb-2 mb-lg-0 mr-2"
-							data={filteredData}
+							data={totalItemsPage}
 							filename="Partner Deal Registration.csv"
 						>
 							Export Deal Registrations
@@ -184,7 +183,8 @@ const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
 
 			{isValidating && <ClayLoadingIndicator />}
 
-			{!isValidating && getTable(filteredData?.length || 0, filteredData)}
+			{!isValidating &&
+				getTable(totalItemsPage?.length || 0, totalItemsPage)}
 		</div>
 	);
 };

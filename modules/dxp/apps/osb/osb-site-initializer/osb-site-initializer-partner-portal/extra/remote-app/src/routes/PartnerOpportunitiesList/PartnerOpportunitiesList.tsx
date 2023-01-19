@@ -39,9 +39,7 @@ interface IProps {
 	getDates: (
 		items: DealRegistrationDTO
 	) => PartnerOpportunitiesItem | undefined;
-	getFilteredItems: (
-		items: PartnerOpportunitiesItem[]
-	) => PartnerOpportunitiesItem[];
+
 	name: string;
 	sort: string;
 }
@@ -49,7 +47,6 @@ interface IProps {
 const PartnerOpportunitiesList = ({
 	columnsDates,
 	getDates,
-	getFilteredItems,
 	name,
 	sort,
 }: IProps) => {
@@ -70,8 +67,7 @@ const PartnerOpportunitiesList = ({
 		filtersTerm,
 		sort
 	);
-
-	const filteredData = data.items && getFilteredItems(data.items);
+	const {items: totalItemsPage, totalCount: totalPagination} = data;
 
 	const siteURL = useLiferayNavigate();
 	const columns = [
@@ -120,6 +116,7 @@ const PartnerOpportunitiesList = ({
 		items?: PartnerOpportunitiesItem[]
 	) => {
 		if (items) {
+			data;
 			if (!totalCount) {
 				return (
 					<div className="d-flex justify-content-center mt-4">
@@ -139,12 +136,12 @@ const PartnerOpportunitiesList = ({
 					<Table<PartnerOpportunitiesItem>
 						columns={columns}
 						customClickOnRow={handleCustomClickOnRow}
-						rows={items}
+						rows={totalItemsPage as []}
 					/>
 
 					<ClayPaginationBarWithBasicItems
 						{...pagination}
-						totalItems={totalCount}
+						totalItems={totalPagination as number}
 					/>
 				</div>
 			);
@@ -168,13 +165,13 @@ const PartnerOpportunitiesList = ({
 
 						<div className="bd-highlight flex-shrink-2 mt-1">
 							{!!filters.searchTerm &&
-								!!filteredData?.length &&
+								!!totalItemsPage?.length &&
 								!isValidating && (
 									<div>
 										<p className="font-weight-semi-bold m-0 ml-1 mt-3 text-paragraph-sm">
-											{filteredData?.length > 1
-												? `${filteredData?.length} results for ${filters.searchTerm}`
-												: `${filteredData?.length} result for ${filters.searchTerm}`}
+											{totalItemsPage?.length > 1
+												? `${totalItemsPage?.length} results for ${filters.searchTerm}`
+												: `${totalItemsPage?.length} result for ${filters.searchTerm}`}
 										</p>
 									</div>
 								)}
@@ -183,10 +180,10 @@ const PartnerOpportunitiesList = ({
 				</div>
 
 				<div>
-					{!!filteredData?.length && (
+					{!!totalItemsPage?.length && (
 						<CSVLink
 							className="btn btn-secondary mb-2 mb-lg-0 mr-2"
-							data={filteredData}
+							data={totalItemsPage as []}
 							filename={`${name}.csv`}
 						>
 							Export {name}
@@ -210,7 +207,8 @@ const PartnerOpportunitiesList = ({
 
 			{isValidating && <ClayLoadingIndicator />}
 
-			{!isValidating && getTable(filteredData?.length || 0, filteredData)}
+			{!isValidating &&
+				getTable(totalItemsPage?.length || 0, totalItemsPage)}
 		</div>
 	);
 };
