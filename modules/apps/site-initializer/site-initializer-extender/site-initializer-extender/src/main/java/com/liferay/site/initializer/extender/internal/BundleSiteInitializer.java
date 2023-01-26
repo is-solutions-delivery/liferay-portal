@@ -2960,6 +2960,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 				jsonObject.put(
 					"primKey",
 					String.valueOf(serviceContext.getScopeGroupId()));
+			}else {
+				_resourcePermissionLocalService.setResourcePermissions(
+					serviceContext.getCompanyId(), jsonObject.getString("resourceName"), scope,
+					jsonObject.getString("primKey"), role.getRoleId(),
+					new String[]{jsonObject.getString("actionId")});
+				continue;
 			}
 
 			_resourcePermissionLocalService.addResourcePermission(

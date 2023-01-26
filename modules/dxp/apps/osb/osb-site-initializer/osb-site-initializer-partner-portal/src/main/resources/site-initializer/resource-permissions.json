@@ -25,6 +25,20 @@
 	},
 	{
 		"actionId": "VIEW",
+		"primKey": "[$OBJECT_DEFINITION_ID:MDFRequest$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition",
+		"roleName": "User",
+		"scope": "4"
+	},
+	{
+		"actionId": "VIEW",
+		"primKey": "[$OBJECT_DEFINITION_ID:MDFClaim$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition",
+		"roleName": "User",
+		"scope": "4"
+	},
+	{
+		"actionId": "VIEW",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:MDFRequest$]",
 		"roleName": "User",
 		"scope": "1"
