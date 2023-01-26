@@ -38,8 +38,8 @@ public class CurrentUserObjectFilterParser implements ObjectFilterParser {
 			Map.class, objectFilter.getJSON());
 
 		return StringBundler.concat(
-			"(", objectFilter.getFilterBy(), " eq ",
-			String.valueOf(map.get("currentUserId")), ")");
+			"(", objectFilter.getFilterBy(), " eq '",
+			String.valueOf(map.get("currentUserId")), "')");
 	}
 
 }

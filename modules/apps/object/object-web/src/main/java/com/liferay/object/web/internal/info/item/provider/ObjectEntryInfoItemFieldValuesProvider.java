@@ -32,10 +32,12 @@ import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.web.internal.info.item.ObjectEntryInfoItemFields;
 import com.liferay.object.web.internal.util.ObjectFieldDBTypeUtil;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -83,6 +85,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 		ObjectEntryLocalService objectEntryLocalService,
 		ObjectEntryManagerRegistry objectEntryManagerRegistry,
 		ObjectFieldLocalService objectFieldLocalService,
+		ObjectRelationshipLocalService objectRelationshipLocalService,
 		TemplateInfoItemFieldSetProvider templateInfoItemFieldSetProvider,
 		UserLocalService userLocalService) {
 
@@ -97,6 +100,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 		_objectEntryLocalService = objectEntryLocalService;
 		_objectEntryManagerRegistry = objectEntryManagerRegistry;
 		_objectFieldLocalService = objectFieldLocalService;
+		_objectRelationshipLocalService = objectRelationshipLocalService;
 		_templateInfoItemFieldSetProvider = templateInfoItemFieldSetProvider;
 		_userLocalService = userLocalService;
 	}
@@ -338,12 +342,14 @@ public class ObjectEntryInfoItemFieldValuesProvider
 		else if (Validator.isNotNull(objectField.getRelationshipType()) &&
 				 (GetterUtil.getLong(value) > 0)) {
 
-			ObjectEntry objectEntry = _objectEntryLocalService.fetchObjectEntry(
-				(Long)values.get(objectField.getName()));
+			ObjectRelationship objectRelationship =
+				_objectRelationshipLocalService.
+					fetchObjectRelationshipByObjectFieldId2(
+						objectField.getObjectFieldId());
 
-			if (objectEntry != null) {
-				return objectEntry.getTitleValue();
-			}
+			return _objectEntryLocalService.getTitleValue(
+				objectRelationship.getObjectDefinitionId1(),
+				(Long)values.get(objectField.getName()));
 		}
 		else if (Objects.equals(
 					objectField.getBusinessType(),
@@ -414,6 +420,8 @@ public class ObjectEntryInfoItemFieldValuesProvider
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectEntryManagerRegistry _objectEntryManagerRegistry;
 	private final ObjectFieldLocalService _objectFieldLocalService;
+	private final ObjectRelationshipLocalService
+		_objectRelationshipLocalService;
 	private final TemplateInfoItemFieldSetProvider
 		_templateInfoItemFieldSetProvider;
 	private final UserLocalService _userLocalService;

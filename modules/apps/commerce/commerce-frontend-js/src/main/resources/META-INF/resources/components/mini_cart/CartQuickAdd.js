@@ -56,7 +56,7 @@ export default function CartQuickAdd() {
 	const [productsQuery, setProductsQuery] = useState('');
 	const [quickAddToCartError, setQuickAddToCartError] = useState(false);
 	const [selectedProducts, setSelectedProducts] = useState([]);
-	const [products, setProducts] = useState();
+	const [productsWithOptions, setProductsWithOptions] = useState([]);
 
 	const {cartItems = [], channel} = cartState;
 	const accountId = cartState.accountId;
@@ -71,35 +71,64 @@ export default function CartQuickAdd() {
 		fetch(productsApiURL.toString())
 			.then((response) => response.json())
 			.then((availableProducts) => {
-				setFormattedProducts(
-					availableProducts.items.map((product) => {
-						const {name, skus} = product;
+				const formattedProducts = [];
 
-						return {
+				availableProducts.items.forEach((product) => {
+					const {name, skus} = product;
+
+					if (product.skus.length > 1) {
+						product.skus.forEach((sku) =>
+							formattedProducts.push({
+								...sku,
+								chipLabel: sku.sku,
+								label: name,
+								value: sku.sku,
+							})
+						);
+					}
+					else {
+						formattedProducts.push({
 							...product,
+							chipLabel: skus[0].sku,
 							label: name,
 							value: skus[0].sku,
-						};
-					})
-				);
+						});
+					}
+				});
 
-				setProducts(availableProducts.items);
+				setFormattedProducts(formattedProducts);
+
+				setProductsWithOptions(
+					availableProducts.items.filter(
+						(product) => product.skus.length > 1
+					)
+				);
 			});
 	}, [accountId, channelId]);
 
 	const handleAddToCartClick = () => {
-		const itemSKUs = selectedProducts.map((item) => item.value);
-		const readyProducts = [];
+		const readyProducts = selectedProducts.map((product) => {
+			if (product.sku) {
+				const parentProduct = productsWithOptions.find((item) =>
+					item.skus.find((childSku) => childSku.sku === product.sku)
+				);
 
-		products.forEach((product) => {
-			if (
-				product.skus.length &&
-				product.skus[0] &&
-				itemSKUs.includes(product.skus[0].sku)
-			) {
+				return {
+					...product,
+					name: parentProduct.name,
+					price: product.price,
+					productURLs: parentProduct.urls,
+					quantity:
+						parentProduct.productConfiguration.minOrderQuantity,
+					settings: parentProduct.productConfiguration,
+					sku: product.sku,
+					skuId: product.id,
+				};
+			}
+			else {
 				const {productConfiguration, skus, urls} = product;
 
-				readyProducts.push({
+				return {
 					...product,
 					price: skus[0].price,
 					productURLs: urls,
@@ -107,7 +136,7 @@ export default function CartQuickAdd() {
 					settings: productConfiguration,
 					sku: skus[0].sku,
 					skuId: skus[0].id,
-				});
+				};
 			}
 		});
 
@@ -136,6 +165,10 @@ export default function CartQuickAdd() {
 						className="p3"
 						inputName="searchProducts"
 						items={selectedProducts}
+						locator={{
+							label: 'chipLabel',
+							value: 'value',
+						}}
 						menuRenderer={ProductAutocompleteList}
 						onChange={setProductsQuery}
 						onItemsChange={(newItems) => {
@@ -157,11 +190,21 @@ export default function CartQuickAdd() {
 						sourceItems={formattedProducts.filter((product) => {
 							const {label, value} = product;
 							const lowerCaseValue = productsQuery.toLowerCase();
+							const purchasableProduct = product.sku
+								? product.purchasable
+								: product.skus[0].purchasable;
 
-							return (
-								label.toLowerCase().match(lowerCaseValue) ||
-								value.toLowerCase().match(lowerCaseValue)
-							);
+							if (
+								!selectedProducts.includes(product) &&
+								purchasableProduct
+							) {
+								return (
+									label
+										.toLowerCase()
+										.includes(lowerCaseValue) ||
+									value.toLowerCase().includes(lowerCaseValue)
+								);
+							}
 						})}
 						value={productsQuery}
 					/>

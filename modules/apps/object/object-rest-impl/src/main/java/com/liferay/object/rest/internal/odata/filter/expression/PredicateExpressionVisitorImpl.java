@@ -554,10 +554,6 @@ public class PredicateExpressionVisitorImpl
 		String entityFieldFilterableName = entityField.getFilterableName(null);
 		String entityFieldName = entityField.getName();
 
-		if (Objects.equals(entityFieldFilterableName, entityFieldName)) {
-			return right;
-		}
-
 		try {
 			ObjectField objectField = _objectFieldLocalService.getObjectField(
 				_objectDefinitionId, entityFieldFilterableName);
@@ -571,6 +567,13 @@ public class PredicateExpressionVisitorImpl
 
 			if (value == null) {
 				return right;
+			}
+
+			if (Objects.equals(
+					objectFieldBusinessType.getDBType(),
+					ObjectFieldConstants.DB_TYPE_LONG)) {
+
+				return GetterUtil.getLong(value);
 			}
 
 			return value;

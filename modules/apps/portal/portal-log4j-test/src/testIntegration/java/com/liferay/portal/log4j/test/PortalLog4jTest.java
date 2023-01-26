@@ -18,20 +18,13 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogContext;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.log.LogWrapper;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
-import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.log.Log4jLogContextUpgradeLogWrapper;
-import com.liferay.portal.log.Log4jLogFactoryImpl;
-import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -41,9 +34,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,8 +56,6 @@ import org.apache.logging.log4j.core.util.CloseShieldOutputStream;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -79,11 +70,6 @@ import org.osgi.framework.ServiceRegistration;
 @RunWith(Arquillian.class)
 public class PortalLog4jTest {
 
-	@ClassRule
-	@Rule
-	public static final AggregateTestRule aggregateTestRule =
-		new LiferayIntegrationTestRule();
-
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		_tempLogFileDirPath = Files.createTempDirectory(
@@ -91,19 +77,8 @@ public class PortalLog4jTest {
 
 		Logger logger = (Logger)LogManager.getLogger(PortalLog4jTest.class);
 
-		Logger upgradeLogger = (Logger)LogManager.getLogger(
-			TestUpgradeProcess.class.getName());
-
-		// Calling the setAdditive method on a logger causes the parent loggers
-		// to reset their log level
-
 		logger.setAdditive(false);
-
-		upgradeLogger.setAdditive(false);
-
 		logger.setLevel(Level.TRACE);
-
-		upgradeLogger.setLevel(Level.TRACE);
 
 		Logger rootLogger = (Logger)LogManager.getRootLogger();
 
@@ -121,7 +96,7 @@ public class PortalLog4jTest {
 					consoleAppender.getManager();
 
 				_testOutputStream = new TestOutputStream(
-					(OutputStream)ReflectionTestUtil.getFieldValue(
+					ReflectionTestUtil.getFieldValue(
 						outputStreamManager, "outputStream"));
 
 				ReflectionTestUtil.getAndSetFieldValue(
@@ -156,17 +131,6 @@ public class PortalLog4jTest {
 			appender.stop();
 		}
 
-		Logger upgradeLogger = (Logger)LogManager.getLogger(
-			TestUpgradeProcess.class.getName());
-
-		Map<String, Appender> upgradeAppenders = upgradeLogger.getAppenders();
-
-		for (Appender appender : upgradeAppenders.values()) {
-			upgradeLogger.removeAppender(appender);
-
-			appender.stop();
-		}
-
 		Files.deleteIfExists(_textLogFilePath);
 		Files.deleteIfExists(_xmlLogFilePath);
 
@@ -192,218 +156,54 @@ public class PortalLog4jTest {
 	}
 
 	@Test
-	public void testLogOutputWithLogContext() throws Exception {
-		Bundle bundle = FrameworkUtil.getBundle(PortalLog4jTest.class);
-
-		BundleContext bundleContext = bundle.getBundleContext();
-
-		String logContextName = "TestLogContext";
-
+	public void testLogOutputWithLogContext() {
 		String key1 = "test.key.1";
 		String key2 = "test.key.2";
 		String value1 = "test.value.1";
 		String value2 = "test.value.2";
 
-		ServiceRegistration<LogContext> serviceRegistration =
-			bundleContext.registerService(
-				LogContext.class,
-				new LogContext() {
-
-					@Override
-					public Map<String, String> getContext() {
-						return HashMapBuilder.put(
-							key1, value1
-						).put(
-							key2, value2
-						).build();
-					}
-
-					@Override
-					public String getName() {
-						return logContextName;
-					}
-
-				},
-				new HashMapDictionary());
-
-		PatternLayout.Builder builder = PatternLayout.newBuilder();
-
-		builder.withPattern("%level - %m%n %X");
-
-		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
-
-		Appender logContextWriterAppender = WriterAppender.createAppender(
-			builder.build(), null, unsyncStringWriter,
-			"logContextWriterAppender", false, false);
-
-		logContextWriterAppender.start();
-
-		Logger logger = (Logger)LogManager.getLogger(PortalLog4jTest.class);
-
-		logger.addAppender(logContextWriterAppender);
-
-		String logContextMessage = StringBundler.concat(
-			StringPool.OPEN_CURLY_BRACE, logContextName, StringPool.PERIOD,
-			key1, StringPool.EQUAL, value1, ", ", logContextName,
-			StringPool.PERIOD, key2, StringPool.EQUAL, value2,
-			StringPool.CLOSE_CURLY_BRACE);
+		String logContextName = "TestLogContext";
 
 		_testLogOutputWithLogContext(
-			"DEBUG", unsyncStringWriter, logContextMessage);
-		_testLogOutputWithLogContext(
-			"ERROR", unsyncStringWriter, logContextMessage);
-		_testLogOutputWithLogContext(
-			"FATAL", unsyncStringWriter, logContextMessage);
-		_testLogOutputWithLogContext(
-			"INFO", unsyncStringWriter, logContextMessage);
-		_testLogOutputWithLogContext(
-			"TRACE", unsyncStringWriter, logContextMessage);
-		_testLogOutputWithLogContext(
-			"WARN", unsyncStringWriter, logContextMessage);
-
-		serviceRegistration.unregister();
-
-		logger.removeAppender(logContextWriterAppender);
+			HashMapBuilder.put(
+				key1, value1
+			).put(
+				key2, value2
+			).build(),
+			StringBundler.concat(
+				StringPool.OPEN_CURLY_BRACE, logContextName, StringPool.PERIOD,
+				key1, StringPool.EQUAL, value1, ", ", logContextName,
+				StringPool.PERIOD, key2, StringPool.EQUAL, value2,
+				StringPool.CLOSE_CURLY_BRACE),
+			logContextName);
 	}
 
 	@Test
-	public void testLogOutputWithLogContextUpgradeEnabledClassWhenNotUpgrading()
-		throws Exception {
+	public void testLogOutputWithLogContextWithEmptyContextName() {
+		String key1 = "test.key.1";
+		String key2 = "test.key.2";
+		String value1 = "test.value.1";
+		String value2 = "test.value.2";
 
-		String logContextMessage =
-			StringPool.OPEN_CURLY_BRACE + StringPool.CLOSE_CURLY_BRACE;
-
-		_testOutputForUpgrades(logContextMessage, true, false);
+		_testLogOutputWithLogContext(
+			HashMapBuilder.put(
+				key1, value1
+			).put(
+				key2, value2
+			).build(),
+			StringBundler.concat(
+				StringPool.OPEN_CURLY_BRACE, key1, StringPool.EQUAL, value1,
+				", ", key2, StringPool.EQUAL, value2,
+				StringPool.CLOSE_CURLY_BRACE),
+			StringPool.BLANK);
 	}
 
 	@Test
-	public void testLogOutputWithLogContextUpgradeEnabledClassWhenUpgrading()
-		throws Exception {
-
-		String contextValue = ReflectionTestUtil.getFieldValue(
-			Log4jLogContextUpgradeLogWrapper.class,
-			"_UPGRADE_LOG_CONTEXT_NAME");
-
-		String logContextMessage = StringBundler.concat(
-			StringPool.OPEN_CURLY_BRACE, contextValue, StringPool.EQUAL,
-			contextValue, StringPool.CLOSE_CURLY_BRACE);
-
-		_testOutputForUpgrades(logContextMessage, true, true);
-	}
-
-	@Test
-	public void testLogOutputWithLogContextUpgradeNotEnabledClassWhenNotUpgrading()
-		throws Exception {
-
-		String logContextMessage =
-			StringPool.OPEN_CURLY_BRACE + StringPool.CLOSE_CURLY_BRACE;
-
-		_testOutputForUpgrades(logContextMessage, false, false);
-	}
-
-	@Test
-	public void testLogOutputWithLogContextUpgradeNotEnabledClassWhenUpgrading()
-		throws Exception {
-
-		String logContextMessage =
-			StringPool.OPEN_CURLY_BRACE + StringPool.CLOSE_CURLY_BRACE;
-
-		_testOutputForUpgrades(logContextMessage, false, true);
-	}
-
-	@Test
-	public void testLogWrappersForClassesByName() {
-		ConcurrentMap<String, LogWrapper> logWrappers =
-			ReflectionTestUtil.getFieldValue(
-				LogFactoryUtil.class, "_logWrappers");
-
-		String[] classNames = ReflectionTestUtil.getFieldValue(
-			Log4jLogFactoryImpl.class, "_CLASS_NAMES_UPGRADE");
-
-		for (String className : classNames) {
-			boolean found = false;
-
-			for (String key : logWrappers.keySet()) {
-				if (key.endsWith(className)) {
-					found = true;
-
-					break;
-				}
-			}
-
-			Assert.assertTrue(found);
-		}
-	}
-
-	protected void outputLog(
-		String level, Log log, String message, Throwable throwable) {
-
-		if (level.equals("DEBUG")) {
-			if ((message == null) && (throwable != null)) {
-				log.debug(throwable);
-			}
-			else if ((message != null) && (throwable == null)) {
-				log.debug(message);
-			}
-			else {
-				log.debug(message, throwable);
-			}
-		}
-		else if (level.equals("ERROR")) {
-			if ((message == null) && (throwable != null)) {
-				log.error(throwable);
-			}
-			else if ((message != null) && (throwable == null)) {
-				log.error(message);
-			}
-			else {
-				log.error(message, throwable);
-			}
-		}
-		else if (level.equals("FATAL")) {
-			if ((message == null) && (throwable != null)) {
-				log.fatal(throwable);
-			}
-			else if ((message != null) && (throwable == null)) {
-				log.fatal(message);
-			}
-			else {
-				log.fatal(message, throwable);
-			}
-		}
-		else if (level.equals("INFO")) {
-			if ((message == null) && (throwable != null)) {
-				log.info(throwable);
-			}
-			else if ((message != null) && (throwable == null)) {
-				log.info(message);
-			}
-			else {
-				log.info(message, throwable);
-			}
-		}
-		else if (level.equals("TRACE")) {
-			if ((message == null) && (throwable != null)) {
-				log.trace(throwable);
-			}
-			else if ((message != null) && (throwable == null)) {
-				log.trace(message);
-			}
-			else {
-				log.trace(message, throwable);
-			}
-		}
-		else if (level.equals("WARN")) {
-			if ((message == null) && (throwable != null)) {
-				log.warn(throwable);
-			}
-			else if ((message != null) && (throwable == null)) {
-				log.warn(message);
-			}
-			else {
-				log.warn(message, throwable);
-			}
-		}
+	public void testLogOutputWithLogContextWithEmptyLogContext() {
+		_testLogOutputWithLogContext(
+			Collections.emptyMap(),
+			StringPool.OPEN_CURLY_BRACE + StringPool.CLOSE_CURLY_BRACE,
+			"TestLogContext");
 	}
 
 	private static Path _initFileAppender(
@@ -651,6 +451,75 @@ public class PortalLog4jTest {
 				0, expectedLog4JLocationInfoFile.length()));
 	}
 
+	private void _outputLog(String level, String message, Throwable throwable) {
+		if (level.equals("DEBUG")) {
+			if ((message == null) && (throwable != null)) {
+				_log.debug(throwable);
+			}
+			else if ((message != null) && (throwable == null)) {
+				_log.debug(message);
+			}
+			else {
+				_log.debug(message, throwable);
+			}
+		}
+		else if (level.equals("ERROR")) {
+			if ((message == null) && (throwable != null)) {
+				_log.error(throwable);
+			}
+			else if ((message != null) && (throwable == null)) {
+				_log.error(message);
+			}
+			else {
+				_log.error(message, throwable);
+			}
+		}
+		else if (level.equals("FATAL")) {
+			if ((message == null) && (throwable != null)) {
+				_log.fatal(throwable);
+			}
+			else if ((message != null) && (throwable == null)) {
+				_log.fatal(message);
+			}
+			else {
+				_log.fatal(message, throwable);
+			}
+		}
+		else if (level.equals("INFO")) {
+			if ((message == null) && (throwable != null)) {
+				_log.info(throwable);
+			}
+			else if ((message != null) && (throwable == null)) {
+				_log.info(message);
+			}
+			else {
+				_log.info(message, throwable);
+			}
+		}
+		else if (level.equals("TRACE")) {
+			if ((message == null) && (throwable != null)) {
+				_log.trace(throwable);
+			}
+			else if ((message != null) && (throwable == null)) {
+				_log.trace(message);
+			}
+			else {
+				_log.trace(message, throwable);
+			}
+		}
+		else if (level.equals("WARN")) {
+			if ((message == null) && (throwable != null)) {
+				_log.warn(throwable);
+			}
+			else if ((message != null) && (throwable == null)) {
+				_log.warn(message);
+			}
+			else {
+				_log.warn(message, throwable);
+			}
+		}
+	}
+
 	private void _testLogOutput(String level) throws Exception {
 		String testMessage = level + " message";
 
@@ -667,7 +536,7 @@ public class PortalLog4jTest {
 			String level, String message, Throwable throwable)
 		throws Exception {
 
-		outputLog(level, _log, message, throwable);
+		_outputLog(level, message, throwable);
 
 		try {
 			_assertTextLog(
@@ -693,37 +562,71 @@ public class PortalLog4jTest {
 		}
 	}
 
-	private void _testLogOutputUpgradeProcess(
-			String level, UnsyncStringWriter unsyncStringWriter,
-			String logContextMessage)
-		throws Exception {
+	private void _testLogOutputWithLogContext(
+		Map<String, String> contexts, String logContextMessage,
+		String logContextName) {
 
-		TestUpgradeProcess upgradeProcess = new TestUpgradeProcess(
-			level, level + " message", null);
+		Bundle bundle = FrameworkUtil.getBundle(PortalLog4jTest.class);
 
-		upgradeProcess.executeUpgrade();
+		BundleContext bundleContext = bundle.getBundleContext();
 
-		String[] outputLines = StringUtil.splitLines(
-			unsyncStringWriter.toString());
+		ServiceRegistration<LogContext> serviceRegistration =
+			bundleContext.registerService(
+				LogContext.class,
+				new LogContext() {
 
-		Assert.assertTrue(
-			"The log output should have at least 1 line",
-			outputLines.length > 0);
+					@Override
+					public Map<String, String> getContext(String logName) {
+						return contexts;
+					}
 
-		Assert.assertEquals(
-			StringBundler.concat(level, " - ", level, " message"),
-			outputLines[0]);
+					@Override
+					public String getName() {
+						return logContextName;
+					}
 
-		Assert.assertEquals(logContextMessage, outputLines[1].trim());
+				},
+				new HashMapDictionary());
 
-		unsyncStringWriter.reset();
+		PatternLayout.Builder builder = PatternLayout.newBuilder();
+
+		builder.withPattern("%level - %m%n %X");
+
+		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
+
+		Appender logContextWriterAppender = WriterAppender.createAppender(
+			builder.build(), null, unsyncStringWriter,
+			"logContextWriterAppender", false, false);
+
+		logContextWriterAppender.start();
+
+		Logger logger = (Logger)LogManager.getLogger(PortalLog4jTest.class);
+
+		logger.addAppender(logContextWriterAppender);
+
+		_testLogOutputWithLogContext(
+			"DEBUG", logContextMessage, unsyncStringWriter);
+		_testLogOutputWithLogContext(
+			"ERROR", logContextMessage, unsyncStringWriter);
+		_testLogOutputWithLogContext(
+			"FATAL", logContextMessage, unsyncStringWriter);
+		_testLogOutputWithLogContext(
+			"INFO", logContextMessage, unsyncStringWriter);
+		_testLogOutputWithLogContext(
+			"TRACE", logContextMessage, unsyncStringWriter);
+		_testLogOutputWithLogContext(
+			"WARN", logContextMessage, unsyncStringWriter);
+
+		serviceRegistration.unregister();
+
+		logger.removeAppender(logContextWriterAppender);
 	}
 
 	private void _testLogOutputWithLogContext(
-		String level, UnsyncStringWriter unsyncStringWriter,
-		String logContextMessage) {
+		String level, String logContextMessage,
+		UnsyncStringWriter unsyncStringWriter) {
 
-		outputLog(level, _log, level + " message", null);
+		_outputLog(level, level + " message", null);
 
 		String[] outputLines = StringUtil.splitLines(
 			unsyncStringWriter.toString());
@@ -739,68 +642,6 @@ public class PortalLog4jTest {
 		Assert.assertEquals(logContextMessage, outputLines[1].trim());
 
 		unsyncStringWriter.reset();
-	}
-
-	private void _testOutputForUpgrades(
-			String logContextMessage, boolean upgradeLogEnabled,
-			boolean upgrading)
-		throws Exception {
-
-		boolean currentUpgradeLogEnabled =
-			ReflectionTestUtil.getAndSetFieldValue(
-				Log4jLogFactoryImpl.class, "_upgradeLogContextEnabled",
-				upgradeLogEnabled);
-
-		boolean currentUpgrading = StartupHelperUtil.isUpgrading();
-
-		StartupHelperUtil.setUpgrading(upgrading);
-
-		ConcurrentMap<String, LogWrapper> logWrappers =
-			ReflectionTestUtil.getFieldValue(
-				LogFactoryUtil.class, "_logWrappers");
-
-		logWrappers.remove(TestUpgradeProcess.class.getName());
-
-		try {
-			PatternLayout.Builder builder = PatternLayout.newBuilder();
-
-			builder.withPattern("%level - %m%n %X");
-
-			UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
-
-			Appender logContextWriterAppender = WriterAppender.createAppender(
-				builder.build(), null, unsyncStringWriter,
-				"logUpgradeContextWriterAppender", false, false);
-
-			logContextWriterAppender.start();
-
-			Logger logger = (Logger)LogManager.getLogger(
-				TestUpgradeProcess.class.getName());
-
-			logger.addAppender(logContextWriterAppender);
-
-			_testLogOutputUpgradeProcess(
-				"DEBUG", unsyncStringWriter, logContextMessage);
-			_testLogOutputUpgradeProcess(
-				"ERROR", unsyncStringWriter, logContextMessage);
-			_testLogOutputUpgradeProcess(
-				"FATAL", unsyncStringWriter, logContextMessage);
-			_testLogOutputUpgradeProcess(
-				"INFO", unsyncStringWriter, logContextMessage);
-			_testLogOutputUpgradeProcess(
-				"TRACE", unsyncStringWriter, logContextMessage);
-			_testLogOutputUpgradeProcess(
-				"WARN", unsyncStringWriter, logContextMessage);
-
-			logger.removeAppender(logContextWriterAppender);
-		}
-		finally {
-			StartupHelperUtil.setUpgrading(currentUpgrading);
-
-			ReflectionTestUtil.setFieldValue(
-				Log4jLogFactoryImpl.class, "_upgradeLogContextEnabled",
-				currentUpgradeLogEnabled);
-		}
 	}
 
 	private static final int _BUFFER_SIZE = 8192;
@@ -845,33 +686,6 @@ public class PortalLog4jTest {
 	}
 
 	private class TestException extends Exception {
-	}
-
-	private class TestUpgradeProcess extends UpgradeProcess {
-
-		public TestUpgradeProcess(
-			String level, String message, Throwable throwable) {
-
-			_level = level;
-			_message = message;
-			_throwable = throwable;
-		}
-
-		public void executeUpgrade() throws Exception {
-			doUpgrade();
-		}
-
-		@Override
-		protected void doUpgrade() throws Exception {
-			outputLog(_level, _log, _message, _throwable);
-		}
-
-		private final String _level;
-		private final Log _log = LogFactoryUtil.getLog(
-			TestUpgradeProcess.class);
-		private final String _message;
-		private final Throwable _throwable;
-
 	}
 
 }
