@@ -79,13 +79,12 @@ const PolicyDetail = ({
 		try {
 			const newDataJSON = JSON.parse(dataJSON);
 			setApplicationData(newDataJSON);
-		}
-		catch (error) {
+		} catch (error) {
 			console.warn(error);
 		}
 	}, [dataJSON]);
 
-	const ContentDescription = (description: string) => (
+	const ContentDescription = ({description}: {description: string}) => (
 		<div className="d-flex justify-content-between">
 			<div>{description}</div>
 		</div>
@@ -320,51 +319,60 @@ const PolicyDetail = ({
 											<div className="align-items-center d-flex data-panel-hide float-left justify-content-between w-25">
 												{item.date}
 											</div>
-											<Panel
-												Description={() =>
-													ContentDescription(
-														item.description
-													)
-												}
-												key={index}
-												setShowPanel={() =>
-													displayHistoryPanel(index)
-												}
-												showPanel={showPanel[index]}
-											>
-												<div className="justify-content-between layout-show-details ml-auto mt-4 pb-3 pl-3 pr-3 pt-3 w-75">
-													<div className="d-flex flex-row justify-content-between">
-														<div className="align-self-start mt-2">
-															<p className="mb-1 text-neutral-7 w-25">
-																Amount
-															</p>
-															<div>
-																{
-																	item.detail_Amount
-																}
-															</div>
-														</div>
-														<div className="align-self-start mt-2 w-50">
-															<p className="mb-1 text-neutral-7">
-																Injuries Or
-																Fatalities
-															</p>
-															<div>
-																{
-																	item.detail_Injuries
-																}
-															</div>
-														</div>
-													</div>
-													<div className="align-self-start mt-3">
-														<div>
-															{
-																item.detail_details
+											<div className="w-100">
+												<Panel
+													Description={
+														<ContentDescription
+															description={
+																item.description
 															}
+														/>
+													}
+													hasExpandedButton={true}
+													isPanelExpanded={
+														showPanel[index]
+													}
+													key={index}
+													setIsPanelExpanded={() =>
+														displayHistoryPanel(
+															index
+														)
+													}
+												>
+													<div className="justify-content-between layout-show-details ml-auto mt-4 p-3 w-75">
+														<div className="d-flex flex-row justify-content-between">
+															<div className="align-self-start mt-2">
+																<p className="mb-1 text-neutral-7 w-25">
+																	Amount
+																</p>
+																<div>
+																	{
+																		item.detail_Amount
+																	}
+																</div>
+															</div>
+															<div className="align-self-start mt-2 w-50">
+																<p className="mb-1 text-neutral-7">
+																	Injuries Or
+																	Fatalities
+																</p>
+																<div>
+																	{
+																		item.detail_Injuries
+																	}
+																</div>
+															</div>
+														</div>
+														<div className="align-self-start mt-3">
+															<div>
+																{
+																	item.detail_details
+																}
+															</div>
 														</div>
 													</div>
-												</div>
-											</Panel>
+												</Panel>
+											</div>
 										</div>
 									</div>
 								</>
