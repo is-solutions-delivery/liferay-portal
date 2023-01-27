@@ -116,7 +116,7 @@ const TableList: React.FC<Props> = ({headers, rows}) => {
 					</table>
 				</div>
 
-				<div className="bg-neutral-0 box-info col d-flex ml-1 rounded">
+				<div className="bg-neutral-0 box-info d-flex ml-1 rounded w-50">
 					<li className="bg-neutral-0 box-info d-flex flex-column float-right rounded w-100">
 						<div>
 							<p className="font-table ml-0 pt-4">

@@ -13,8 +13,18 @@
  */
 
 import './index.scss';
+<<<<<<< HEAD
 import dataActivities from './DataActivities';
 import TableList, {TableHeaders} from './TableList';
+=======
+
+import {useEffect, useState} from 'react';
+
+import useWindowDimensions from '../../../../../hooks/useWindowDimensions';
+import dataActivities from './DataActivities';
+import TableList, {TableHeaders} from './TableList';
+import TableListMobile from './TableListMobile';
+>>>>>>> b108ac8 (LPS-173464 Create Component Mobile)
 
 const HEADERS: TableHeaders[] = [
 	{
@@ -32,6 +42,7 @@ const HEADERS: TableHeaders[] = [
 	},
 ];
 
+<<<<<<< HEAD
 const Activities = () => {
 	return (
 		<div className="d-flex p-6 policy-detail-content rounded-top">
@@ -39,6 +50,52 @@ const Activities = () => {
 				<TableList headers={HEADERS} rows={dataActivities}></TableList>
 			</div>
 		</div>
+=======
+const HEADERSMOBILE: TableHeaders[] = [
+	{
+		key: 'date',
+		value: 'Date',
+	},
+	{
+		bold: true,
+		key: 'activity',
+		value: 'Activity',
+	},
+];
+
+const Activities = () => {
+	const [hasMobile, setHasMobile] = useState(false);
+	const {width} = useWindowDimensions();
+
+	const desktopBreakPoint = 1000;
+
+	useEffect(() => {
+		width > desktopBreakPoint ? setHasMobile(false) : setHasMobile(true);
+	}, [width, hasMobile]);
+
+	return (
+		<>
+			{!hasMobile && (
+				<div className="d-flex p-6 policy-detail-content rounded-top">
+					<div className="bg-neutral-0 w-100">
+						<TableList
+							headers={HEADERS}
+							rows={dataActivities}
+						></TableList>
+					</div>
+				</div>
+			)}
+
+			{hasMobile && (
+				<div className="d-flex p-6 policy-detail-content rounded-top w-100">
+					<TableListMobile
+						headers={HEADERSMOBILE}
+						rows={dataActivities}
+					></TableListMobile>
+				</div>
+			)}
+		</>
+>>>>>>> b108ac8 (LPS-173464 Create Component Mobile)
 	);
 };
 
