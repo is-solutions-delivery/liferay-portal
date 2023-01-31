@@ -40,6 +40,11 @@
 	<td>//div[contains(@class, 'error')]//div[(text()='${key_errorMessage}')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>CAN_SUBMIT_CLAIMS</td>
+	<td>//div[contains(@class,'lfr-tooltip')]//h6[contains(text(), 'You can submit')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
