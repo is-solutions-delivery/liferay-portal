@@ -292,7 +292,6 @@ definition {
 			PRMHomePage.gotoQuickLinksOption(
 				buttonLink = "mdf-requests",
 				buttonText = "MDF");
-
 		}
 
 		task ("And I approve the MDF Request") {
