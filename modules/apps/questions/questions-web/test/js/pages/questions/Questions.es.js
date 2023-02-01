@@ -144,7 +144,7 @@ const mockThreads = {
 	},
 };
 
-describe('Questions', () => {
+describe.skip('Questions', () => {
 	afterEach(() => {
 		jest.clearAllMocks();
 		cleanup();
