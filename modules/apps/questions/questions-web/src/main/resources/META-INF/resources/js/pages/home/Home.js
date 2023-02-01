@@ -170,7 +170,7 @@ export default withRouter(({history, isHomePath}) => {
 										className="questions-card text-decoration-none text-secondary"
 										to={`/questions/${
 											context.useTopicNamesInURL
-												? section.title
+												? section.friendlyUrlPath
 												: section.id
 										}`}
 									>
