@@ -31,8 +31,8 @@ import ResultsMessage from '../../components/ResultsMessage.es';
 import SubscriptionButton from '../../components/SubscriptionButton.es';
 import useQueryParams from '../../hooks/useQueryParams.es';
 import {
+	getMessageBoardSectionByFriendlyUrlPathQuery,
 	getRankedThreadsQuery,
-	getSectionBySectionTitleQuery,
 	getSectionThreadsQuery,
 	getSectionsQuery,
 	getSubscriptionsQuery,
@@ -126,13 +126,11 @@ export default withRouter(
 		const [getSections] = useManualQuery(getSectionsQuery, {
 			variables: {siteKey: context.siteKey},
 		});
-		const [getSectionBySectionTitle] = useManualQuery(
-			getSectionBySectionTitleQuery,
+		const [getMessageBoardSectionByFriendlyUrlPath] = useManualQuery(
+			getMessageBoardSectionByFriendlyUrlPathQuery,
 			{
 				variables: {
-					filter: `title eq '${slugToText(
-						sectionTitle
-					)}' or id eq '${slugToText(sectionTitle)}'`,
+					friendlyUrlPath: sectionTitle,
 					siteKey: context.siteKey,
 				},
 			}
@@ -176,8 +174,9 @@ export default withRouter(
 				const fn =
 					!context.rootTopicId || context.rootTopicId === '0'
 						? getSections()
-						: getSectionBySectionTitle().then(
-								({data}) => data.messageBoardSections.items[0]
+						: getMessageBoardSectionByFriendlyUrlPath().then(
+								({data}) =>
+									data.messageBoardSectionByFriendlyUrlPath
 						  );
 
 				fn.then((result) => ({
@@ -201,7 +200,7 @@ export default withRouter(
 			context.rootTopicId,
 			context.siteKey,
 			location.pathname,
-			getSectionBySectionTitle,
+			getMessageBoardSectionByFriendlyUrlPath,
 			getSections,
 		]);
 
@@ -284,8 +283,7 @@ export default withRouter(
 					filter += `${
 						(section && section.id && ' and ') || ''
 					}keywords/any(x:x eq '${keywords}')`;
-				}
-				else if (creatorId) {
+				} else if (creatorId) {
 					const operand = filter ? 'and' : '';
 
 					filter += `${operand} creator/id eq ${creatorId}`;
@@ -336,23 +334,19 @@ export default withRouter(
 					siteKey,
 					'dateModified:desc'
 				);
-			}
-			else if (filter === 'week') {
+			} else if (filter === 'week') {
 				const date = new Date();
 				date.setDate(date.getDate() - 7);
 
 				fn = getRankedThreadsCallback(date, page, pageSize, section);
-			}
-			else if (filter === 'month') {
+			} else if (filter === 'month') {
 				const date = new Date();
 				date.setDate(date.getDate() - 31);
 
 				fn = getRankedThreadsCallback(date, page, pageSize, section);
-			}
-			else if (filter === 'most-voted') {
+			} else if (filter === 'most-voted') {
 				fn = getRankedThreadsCallback(null, page, pageSize, section);
-			}
-			else {
+			} else {
 				fn = getThreadsCallback(
 					creatorId,
 					currentTag,
@@ -405,8 +399,7 @@ export default withRouter(
 			}
 			if (search) {
 				url += `?search=${search}&`;
-			}
-			else {
+			} else {
 				url += '?';
 			}
 
@@ -427,27 +420,25 @@ export default withRouter(
 		useEffect(() => {
 			if (sectionTitle && sectionTitle !== ALL_SECTIONS_ID) {
 				const variables = {
-					filter: `title eq '${slugToText(
-						sectionTitle
-					)}' or id eq '${slugToText(sectionTitle)}'`,
+					friendlyUrlPath: sectionTitle,
 					siteKey: context.siteKey,
 				};
-				getSectionBySectionTitle({
+				getMessageBoardSectionByFriendlyUrlPath({
 					variables,
 				}).then(({data}) => {
-					if (data.messageBoardSections.items[0]) {
-						setSection(data.messageBoardSections.items[0]);
-						setSectionQuery(getSectionBySectionTitleQuery);
+					if (data.messageBoardSectionByFriendlyUrlPath) {
+						setSection(data.messageBoardSectionByFriendlyUrlPath);
+						setSectionQuery(
+							getMessageBoardSectionByFriendlyUrlPathQuery
+						);
 						setSectionQueryVariables(variables);
-					}
-					else {
+					} else {
 						setSection(null);
 						setError({message: 'Loading Topics', title: 'Error'});
 						setLoading(false);
 					}
 				});
-			}
-			else if (sectionTitle === ALL_SECTIONS_ID) {
+			} else if (sectionTitle === ALL_SECTIONS_ID) {
 				const variables = {siteKey: context.siteKey};
 				getSections({
 					variables,
@@ -471,7 +462,7 @@ export default withRouter(
 			sectionTitle,
 			context.siteKey,
 			getSections,
-			getSectionBySectionTitle,
+			getMessageBoardSectionByFriendlyUrlPath,
 		]);
 
 		const filterOptions = getFilterOptions();
@@ -495,8 +486,7 @@ export default withRouter(
 							: '#'
 					}/questions/${sectionTitle}/new`
 				);
-			}
-			else {
+			} else {
 				historyPushParser(`/questions/${sectionTitle}/new`);
 			}
 

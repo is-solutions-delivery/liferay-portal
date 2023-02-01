@@ -23,6 +23,7 @@ import ArticleBodyRenderer from './ArticleBodyRenderer.es';
 import EditedTimestamp from './EditedTimestamp.es';
 import Link from './Link.es';
 import QuestionBadge from './QuestionsBadge.es';
+import {getSectionTitle} from './SectionLabel.es';
 import TagList from './TagList.es';
 import UserIcon from './UserIcon.es';
 
@@ -67,7 +68,7 @@ const ActivityHeaderBadge = ({
 				<QuestionBadge
 					className="badge-activity bg-light label-secondary text-uppercase"
 					isActivityBadge
-					value={question.messageBoardSection.title}
+					value={getSectionTitle(question.messageBoardSection)}
 				/>
 			</li>
 		</ul>
