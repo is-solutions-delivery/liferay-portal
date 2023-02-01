@@ -2283,12 +2283,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 			UnicodeProperties unicodeProperties = new UnicodeProperties(true);
 
 			for (int i = 0; i < typeSettingsJSONArray.length(); i++) {
-				JSONObject propertiesJSONObject =
+				JSONObject typeSettingsJSONObject =
 					typeSettingsJSONArray.getJSONObject(i);
 
 				unicodeProperties.put(
-					propertiesJSONObject.getString("key"),
-					propertiesJSONObject.getString("value"));
+					typeSettingsJSONObject.getString("key"),
+					typeSettingsJSONObject.getString("value"));
 			}
 
 			layout = _layoutLocalService.updateLayout(

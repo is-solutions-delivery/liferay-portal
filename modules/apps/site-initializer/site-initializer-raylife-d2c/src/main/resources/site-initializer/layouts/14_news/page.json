@@ -11,6 +11,15 @@
 		{
 			"key": "collectionType",
 			"value": "com.liferay.item.selector.criteria.InfoListItemSelectorReturnType"
+		},
+		{
+			"key": "collectionType",
+			"value": "com.liferay.item.selector.criteria.InfoListItemSelectorReturnType"
+		},
+		{
+			"key": "collectionType",
+			"value": "com.liferay.item.selector.criteria.InfoListItemSelectorReturnType"
 		}
+
 	]
 }
