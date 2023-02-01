@@ -157,8 +157,7 @@ export default withRouter(({history, location, match: {params}}) => {
 							? MAX_NUMBER_OF_QUESTIONS
 							: messageBoardThreads.totalCount,
 				});
-			}
-			catch (error) {
+			} catch (error) {
 				if (process.env.NODE_ENV === 'development') {
 					console.error(error);
 				}
