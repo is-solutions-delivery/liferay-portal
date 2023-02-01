@@ -26,7 +26,7 @@ import TagSelector from '../../components/TagSelector.es';
 import {
 	createQuestionInASectionQuery,
 	createQuestionInRootQuery,
-	getSectionBySectionTitleQuery,
+	getMessageBoardSectionByFriendlyUrlPathQuery,
 } from '../../utils/client.es';
 import {
 	deleteCache,
@@ -62,13 +62,11 @@ export default withRouter(
 		);
 
 		const [createQuestionInRoot] = useMutation(createQuestionInRootQuery);
-		const [getSectionBySectionTitle] = useManualQuery(
-			getSectionBySectionTitleQuery,
+		const [getMessageBoardSectionByFriendlyUrlPath] = useManualQuery(
+			getMessageBoardSectionByFriendlyUrlPathQuery,
 			{
 				variables: {
-					filter: `title eq '${slugToText(
-						sectionTitle
-					)}' or id eq '${slugToText(sectionTitle)}'`,
+					friendlyUrlPath: sectionTitle,
 					siteKey: context.siteKey,
 				},
 			}
@@ -81,8 +79,8 @@ export default withRouter(
 		}, [hasEnoughContent, headline, tagsLoaded]);
 
 		useEffect(() => {
-			getSectionBySectionTitle().then(({data}) => {
-				const section = data.messageBoardSections.items[0];
+			getMessageBoardSectionByFriendlyUrlPath().then(({data}) => {
+				const section = data.messageBoardSectionByFriendlyUrlPath;
 				setSectionId((section && section.id) || +context.rootTopicId);
 				if (section.parentMessageBoardSection) {
 					setSections([
@@ -94,8 +92,7 @@ export default withRouter(
 							.messageBoardSections.items,
 						...section.messageBoardSections.items,
 					]);
-				}
-				else {
+				} else {
 					setSections([
 						{
 							id: section.id,
@@ -109,7 +106,7 @@ export default withRouter(
 			context.rootTopicId,
 			context.siteKey,
 			sectionTitle,
-			getSectionBySectionTitle,
+			getMessageBoardSectionByFriendlyUrlPath,
 		]);
 
 		const createQuestion = async () => {
@@ -140,12 +137,10 @@ export default withRouter(
 
 				if (error) {
 					processGraphQLError(error);
-				}
-				else {
+				} else {
 					historyPushParser(`/questions/${sectionTitle}/`);
 				}
-			}
-			catch (error) {
+			} catch (error) {
 				processGraphQLError(error);
 			}
 
