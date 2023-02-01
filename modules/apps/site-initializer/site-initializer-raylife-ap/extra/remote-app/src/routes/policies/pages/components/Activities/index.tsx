@@ -53,7 +53,7 @@ const Activities = () => {
 	const [isMobileSize, setIsMobileSize] = useState(false);
 	const {width} = useWindowDimensions();
 
-	const desktopBreakPoint = 1000;
+	const desktopBreakPoint = 1030;
 
 	useEffect(() => {
 		width > desktopBreakPoint
@@ -62,15 +62,8 @@ const Activities = () => {
 	}, [width, isMobileSize]);
 
 	return (
-		<>
-			{isMobileSize ? (
-				<div className="d-flex p-6 policy-detail-content rounded-top w-100">
-					<TableListMobile
-						headers={HEADERSMOBILE}
-						rows={dataActivities}
-					></TableListMobile>
-				</div>
-			) : (
+		<div>
+			{!isMobileSize ? (
 				<div className="d-flex p-6 policy-detail-content rounded-top">
 					<div className="bg-neutral-0 w-100">
 						<TableList
@@ -79,8 +72,15 @@ const Activities = () => {
 						></TableList>
 					</div>
 				</div>
+			) : (
+				<div className="d-flex p-6 policy-detail-content rounded-top w-100">
+					<TableListMobile
+						headers={HEADERSMOBILE}
+						rows={dataActivities}
+					></TableListMobile>
+				</div>
 			)}
-		</>
+		</div>
 	);
 };
 

@@ -79,7 +79,8 @@ const PolicyDetail = ({
 		try {
 			const newDataJSON = JSON.parse(dataJSON);
 			setApplicationData(newDataJSON);
-		} catch (error) {
+		}
+		catch (error) {
 			console.warn(error);
 		}
 	}, [dataJSON]);
@@ -110,7 +111,7 @@ const PolicyDetail = ({
 	}, []);
 
 	return (
-		<div className="bg-neutral-0 h-100 pb-6 policy-detail-container rounded">
+		<div className="bg-neutral-0 h-100 policy-detail-container rounded">
 			<div className="bg-neutral-0 policy-detail-title pt-3 px-5 rounded-top">
 				<h5 className="m-0">Policy Detail</h5>
 			</div>
