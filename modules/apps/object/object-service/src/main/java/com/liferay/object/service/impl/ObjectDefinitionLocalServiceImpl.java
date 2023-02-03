@@ -592,6 +592,27 @@ public class ObjectDefinitionLocalServiceImpl
 	}
 
 	@Override
+	public ObjectDefinition restrictObjectDefinitionByAccountEntry(
+			long objectDefinitionId, ObjectField objectField)
+		throws PortalException {
+
+		ObjectDefinition objectDefinition = fetchObjectDefinition(
+			objectDefinitionId);
+
+		if ((objectDefinition != null) &&
+			!objectDefinition.isAccountEntryRestricted() &&
+			(objectField != null)) {
+
+			objectDefinition.setAccountEntryRestrictedObjectFieldId(
+				objectField.getObjectFieldId());
+
+			objectDefinition.setAccountEntryRestricted(true);
+		}
+
+		return objectDefinitionPersistence.update(objectDefinition);
+	}
+
+	@Override
 	public void setAopProxy(Object aopProxy) {
 		super.setAopProxy(aopProxy);
 
