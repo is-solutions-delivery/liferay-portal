@@ -461,11 +461,11 @@ public class ObjectDefinitionLocalServiceUtil {
 
 	public static ObjectDefinition restrictObjectDefinitionByAccountEntry(
 			long objectDefinitionId,
-			com.liferay.object.model.ObjectField objectField)
+			com.liferay.object.model.ObjectRelationship objectRelationship)
 		throws PortalException {
 
 		return getService().restrictObjectDefinitionByAccountEntry(
-			objectDefinitionId, objectField);
+			objectDefinitionId, objectRelationship);
 	}
 
 	public static void undeployObjectDefinition(
