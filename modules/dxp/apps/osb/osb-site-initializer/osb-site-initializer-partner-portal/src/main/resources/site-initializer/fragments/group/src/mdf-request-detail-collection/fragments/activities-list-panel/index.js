@@ -151,6 +151,16 @@ const TypeActivityKey = {
 	MISCELLANEOUS_MARKETING: 'prmtact004',
 };
 
+const ActivityStatus = {
+	ACTIVE: 'active',
+	EXPIRED: 'expired',
+};
+
+const activityStatusClassName = {
+	[ActivityStatus.ACTIVE]: 'label label-tonal-success ml-2',
+	[ActivityStatus.EXPIRED]: 'label label-tonal-danger ml-2',
+};
+
 const CampaignActivityTable = ({mdfRequestActivity}) => {
 	const fieldsByTypeActivity = {
 		[TypeActivityKey.DIGITAL_MARKETING]: getDigitalMarketFields(
@@ -271,6 +281,19 @@ const Panel = ({children, mdfRequestActivity}) => (
 				<h4 className="mb-1">
 					{mdfRequestActivity.name} ({mdfRequestActivity.id})
 				</h4>
+
+				<h5 className="align-items-center d-flex mb-1">
+					Activity Status:
+					<div
+						className={
+							activityStatusClassName[
+								mdfRequestActivity.activityStatus.key
+							]
+						}
+					>
+						{mdfRequestActivity.activityStatus.name}
+					</div>
+				</h5>
 			</ClayPanel.Title>
 		}
 		showCollapseIcon
