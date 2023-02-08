@@ -38,9 +38,9 @@ definition {
 				userEmailAddress = "partner@liferay.com");
 		}
 
-		//task ("Create a new Partner Portal Site") {
-		//	PRMUtils.addPRMSite();
-		//}
+		task ("Create a new Partner Portal Site") {
+			PRMUtils.addPRMSite();
+		}
 
 		task ("Go to Partner Portal and login with the created user") {
 			User.logoutAndLoginPG(
@@ -55,15 +55,15 @@ definition {
 		}
 	}
 
-	//tearDown {
-	//	var testPortalInstance = PropsUtil.get("test.portal.instance");
-	//	if ("${testPortalInstance}" == "true") {
-	//		PortalInstances.tearDownCP();
-	//}
-	//	else {
-	//		JSONGroup.deleteGroupByName(groupName = "Partner Portal");
-	//}
-	//}
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "Partner Portal");
+		}
+	}
 
 	@description = "This is a test for LPS-172917. Verify that If there are multiple activities, the review page will display them as dropdown items that can be expandable"
 	@priority = "5"
@@ -219,61 +219,6 @@ definition {
 		Click(
 			key_dropdownOption = "Partner",
 			locator1 = "AppBuilder#PRODUCT_MENU_SITE_DROPDOWN_OPTION");
-
-		Pause(locator1 = "5000");
-
-		//}
-		//task ("") {
-		//	PRMMDFRequest.newActivity(
-		//		activityDescription = "Activity Description",
-		//		activityName = "Activity Name 1",
-		//		budgetList = "Sponsorship Fee-2000,Room Rental-3000",
-		//		followUpStrategy = "test",
-		//		leadFollowUpList = "Other",
-		//		leadList = "No",
-		//		tactic = "Other",
-		//		targetOfLeads = "test",
-		//		typeOfActivity = "Miscellaneous Marketing");
-		//	Button.click(button = "Continue");
-		//}
-		//task ("When I submit the MDF") {
-		//	Button.click(button = "Continue");
-		//	Button.click(button = "Submit");
-		//}
-		//PRMHomePage.gotoQuickLinksOption(
-		//			buttonLink = "home",
-		//			buttonText = "Home");
-		//PRMNavigator.goToNavItem(navItem = "Marketing");
-		//PRMMarketing.gotoAddNewMDF();
-		//	for (var accountName : list "Company Name 2") {
-		//		PRMMDFRequest.fillGoalsPage(
-		//			accountName = "Company Name 2",
-		//			additionalOptions = "6.x to DXP Migration/Upgrade,Migration from competitor platform",
-		//			campaignDescription = "Campaign Description",
-		//			campaignName = "Campaign Name",
-		//			countryName = "Global",
-		//			goalsOptions = "Lead generation",
-		//			targetMarketOptions = "Education,Energy",
-		//			targetRolesOptions = "Administrator");
-		//		Button.click(button = "Continue");
-		//}
-		//	task ("") {
-		//		PRMMDFRequest.newActivity(
-		//			activityDescription = "Activity Description",
-		//			activityName = "Activity Name 2",
-		//			budgetList = "Sponsorship Fee-2000,Room Rental-3000",
-		//			followUpStrategy = "test",
-		//			leadFollowUpList = "Other",
-		//			leadList = "No",
-		//			tactic = "Other",
-		//			targetOfLeads = "test",
-		//			typeOfActivity = "Miscellaneous Marketing");
-		//		Button.click(button = "Continue");
-		//}
-		//	task ("When I submit the MDF") {
-		//		Button.click(button = "Continue");
-		//		Button.click(button = "Submit");
-		//}
 
 	}
 
