@@ -235,7 +235,7 @@ public class BundleSiteInitializerTest {
 		bundle.start();
 
 		try {
-			_test(
+			_test1(
 				_siteInitializerRegistry.getSiteInitializer(
 					bundle.getSymbolicName()));
 		}
@@ -260,7 +260,7 @@ public class BundleSiteInitializerTest {
 		tempFile.delete();
 
 		try {
-			_test(
+			_test1(
 				_siteInitializerFactory.create(
 					new File(tempFolder, "site-initializer"), null));
 		}
@@ -269,7 +269,7 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
-	private void _assertAccounts(ServiceContext serviceContext)
+	private void _assertAccounts1(ServiceContext serviceContext)
 		throws Exception {
 
 		AccountResource.Builder accountResourceBuilder =
@@ -356,7 +356,7 @@ public class BundleSiteInitializerTest {
 			"TESTCAT0004", testAssetCategory4.getExternalReferenceCode());
 	}
 
-	private void _assertAssetListEntries(Group group) {
+	private void _assertAssetListEntries1(Group group) {
 		List<AssetListEntry> assetListEntries =
 			_assetListEntryLocalService.getAssetListEntries(group.getGroupId());
 
@@ -380,7 +380,7 @@ public class BundleSiteInitializerTest {
 			assetListEntry2.getAssetEntryType());
 	}
 
-	private void _assertAssetVocabularies(Group group) throws Exception {
+	private void _assertAssetVocabularies1(Group group) throws Exception {
 		Group companyGroup = _groupLocalService.getCompanyGroup(
 			group.getCompanyId());
 
@@ -403,7 +403,7 @@ public class BundleSiteInitializerTest {
 		_assertAssetCategories(group);
 	}
 
-	private void _assertClientExtension(Group group) throws Exception {
+	private void _assertClientExtension1(Group group) throws Exception {
 		ClientExtensionEntry clientExtensionEntry =
 			_clientExtensionEntryLocalService.
 				fetchClientExtensionEntryByExternalReferenceCode(
@@ -421,7 +421,7 @@ public class BundleSiteInitializerTest {
 			customElementCET.getPortletCategoryName());
 	}
 
-	private void _assertCommerceCatalogs(Group group) throws Exception {
+	private void _assertCommerceCatalogs1(Group group) throws Exception {
 		CommerceCatalog commerceCatalog1 =
 			_commerceCatalogLocalService.
 				fetchCommerceCatalogByExternalReferenceCode(
@@ -440,11 +440,11 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			"Test Commerce Catalog 2", commerceCatalog2.getName());
 
-		_assertCPDefinition(group);
+		_assertCPDefinition1(group);
 		_assertCPOption(group);
 	}
 
-	private void _assertCommerceChannel(Group group) throws Exception {
+	private void _assertCommerceChannel1(Group group) throws Exception {
 		CommerceChannel commerceChannel =
 			_commerceChannelLocalService.fetchCommerceChannelBySiteGroupId(
 				group.getGroupId());
@@ -459,7 +459,7 @@ public class BundleSiteInitializerTest {
 		_assertDefaultCPDisplayLayout(commerceChannel, group);
 	}
 
-	private void _assertCommerceInventoryWarehouse(Group group) {
+	private void _assertCommerceInventoryWarehouse1(Group group) {
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
 			_commerceInventoryWarehouseLocalService.
 				fetchCommerceInventoryWarehouseByExternalReferenceCode(
@@ -498,7 +498,7 @@ public class BundleSiteInitializerTest {
 			commerceNotificationTemplate.getName());
 	}
 
-	private void _assertCommerceSpecificationProducts(
+	private void _assertCommerceSpecificationProducts1(
 			ServiceContext serviceContext)
 		throws Exception {
 
@@ -537,7 +537,7 @@ public class BundleSiteInitializerTest {
 			productSpecification.getSpecificationKey());
 	}
 
-	private void _assertCPDefinition(Group group) throws Exception {
+	private void _assertCPDefinition1(Group group) throws Exception {
 		CPDefinition cpDefinition =
 			_cpDefinitionLocalService.
 				fetchCPDefinitionByCProductExternalReferenceCode(
@@ -558,7 +558,7 @@ public class BundleSiteInitializerTest {
 			"test_commerce_product.png", fileEntry.getFileName());
 	}
 
-	private void _assertCPInstanceProperties(Group group) throws Exception {
+	private void _assertCPInstanceProperties1(Group group) throws Exception {
 		CPDefinition cpDefinition =
 			_cpDefinitionLocalService.
 				fetchCPDefinitionByCProductExternalReferenceCode(
@@ -614,7 +614,7 @@ public class BundleSiteInitializerTest {
 			cpDefinitionOptionRels.size());
 	}
 
-	private void _assertDDMStructure(Group group) {
+	private void _assertDDMStructure1(Group group) {
 		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
 			group.getGroupId(),
 			_portal.getClassNameId(JournalArticle.class.getName()),
@@ -624,7 +624,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(ddmStructure.hasField("aField"));
 	}
 
-	private void _assertDDMTemplate(Group group) {
+	private void _assertDDMTemplate1(Group group) {
 		DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			group.getGroupId(),
 			_portal.getClassNameId(DDMStructure.class.getName()),
@@ -657,7 +657,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(productLayoutUuid, publicLayout.getUuid());
 	}
 
-	private void _assertDLFileEntry(Group group) throws Exception {
+	private void _assertDLFileEntry1(Group group) throws Exception {
 		DLFileEntry dlFileEntry = _dlFileEntryLocalService.getFileEntry(
 			group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			"Table of Contents.markdown");
@@ -673,7 +673,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(string.contains("1. Revelation"));
 	}
 
-	private void _assertExpandoColumns(ServiceContext serviceContext) {
+	private void _assertExpandoColumns1(ServiceContext serviceContext) {
 		ExpandoBridge expandoBridge = ExpandoBridgeFactoryUtil.getExpandoBridge(
 			serviceContext.getCompanyId(),
 			"com.liferay.commerce.product.model.CPDefinition");
@@ -687,7 +687,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNull(expandoBridge.getAttribute("Test Expando Column 3"));
 	}
 
-	private void _assertFragmentEntries(
+	private void _assertFragmentEntries1(
 			Group group, ServiceContext serviceContext)
 		throws Exception {
 
@@ -711,7 +711,7 @@ public class BundleSiteInitializerTest {
 			"Test Fragment Entry 2", testFragmentEntry2.getName());
 	}
 
-	private void _assertJournalArticles(Group group) throws Exception {
+	private void _assertJournalArticles1(Group group) throws Exception {
 		JournalArticle journalArticle1 =
 			_journalArticleLocalService.fetchArticle(
 				group.getGroupId(), "test-journal-article-1");
@@ -751,7 +751,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("Test Journal Folder 2", journalFolder2.getName());
 	}
 
-	private void _assertKBArticles(Group group) throws Exception {
+	private void _assertKBArticles1(Group group) throws Exception {
 		KBFolder kbFolder = _kbFolderLocalService.getKBFolderByUrlTitle(
 			group.getGroupId(), KBFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			"test-kb-folder-name");
@@ -803,7 +803,7 @@ public class BundleSiteInitializerTest {
 			"This is the body for Test KB Article 3.", kbArticle3.getContent());
 	}
 
-	private void _assertLayoutPageTemplateEntries(Group group)
+	private void _assertLayoutPageTemplateEntries1(Group group)
 		throws JSONException {
 
 		// Test Display Page Template
@@ -867,14 +867,14 @@ public class BundleSiteInitializerTest {
 			"Test Master Page", layoutPageTemplateEntry.getName());
 	}
 
-	private void _assertLayouts(Group group, ServiceContext serviceContext)
+	private void _assertLayouts1(Group group, ServiceContext serviceContext)
 		throws Exception {
 
 		_assertPrivateLayouts(group);
 		_assertPublicLayouts(group, serviceContext);
 	}
 
-	private void _assertLayoutSets(Group group) throws Exception {
+	private void _assertLayoutSets1(Group group) throws Exception {
 		LayoutSet privateLayoutSet = _layoutSetLocalService.fetchLayoutSet(
 			group.getGroupId(), true);
 
@@ -933,7 +933,7 @@ public class BundleSiteInitializerTest {
 			layoutStructureItems.size());
 	}
 
-	private void _assertLayoutUtilityPageEntries(Group group) {
+	private void _assertLayoutUtilityPageEntries1(Group group) {
 		LayoutUtilityPageEntry layoutUtilityPageEntry =
 			_layoutUtilityPageEntryLocalService.
 				fetchLayoutUtilityPageEntryByExternalReferenceCode(
@@ -944,7 +944,7 @@ public class BundleSiteInitializerTest {
 			"Test Layout Utility Page Entry", layoutUtilityPageEntry.getName());
 	}
 
-	private void _assertListTypeDefinitions(ServiceContext serviceContext)
+	private void _assertListTypeDefinitions1(ServiceContext serviceContext)
 		throws Exception {
 
 		ListTypeDefinitionResource.Builder listTypeDefinitionResourceBuilder =
@@ -981,7 +981,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("testlisttypeentry2", listTypeEntry2.getKey());
 	}
 
-	private void _assertNotificationTemplate(ServiceContext serviceContext)
+	private void _assertNotificationTemplate1(ServiceContext serviceContext)
 		throws Exception {
 
 		NotificationTemplateResource.Builder
@@ -1056,7 +1056,7 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
-	private void _assertObjectDefinitions(
+	private void _assertObjectDefinitions1(
 			Group group, ServiceContext serviceContext)
 		throws Exception {
 
@@ -1174,7 +1174,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("manyToMany", objectRelationshipType2.toString());
 	}
 
-	private void _assertOrganizations(ServiceContext serviceContext)
+	private void _assertOrganizations1(ServiceContext serviceContext)
 		throws Exception {
 
 		OrganizationResource.Builder organizationResourceBuilder =
@@ -1231,13 +1231,13 @@ public class BundleSiteInitializerTest {
 		_assertUserOrganizations(organization3.getId(), 0, userAccountResource);
 	}
 
-	private void _assertPermissions(Group group) throws Exception {
+	private void _assertPermissions1(Group group) throws Exception {
 		_assertRoles(group);
 
 		_assertResourcePermission(group);
 	}
 
-	private void _assertPortletSettings(Group group) {
+	private void _assertPortletSettings1(Group group) {
 		DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			group.getGroupId(),
 			_portal.getClassNameId("com.liferay.portal.kernel.theme.NavItem"),
@@ -1516,7 +1516,7 @@ public class BundleSiteInitializerTest {
 			groups.toString(), roleAssignmentsCount, groups.size());
 	}
 
-	private void _assertSAPEntries(Group group) {
+	private void _assertSAPEntries1(Group group) {
 		SAPEntry sapEntry1 = _sapEntryLocalService.fetchSAPEntry(
 			group.getCompanyId(), "TEST_SAP_ENTRY_1");
 
@@ -1546,7 +1546,7 @@ public class BundleSiteInitializerTest {
 			allowedServiceSignatures2.size());
 	}
 
-	private void _assertSegmentsEntries(Long groupId) {
+	private void _assertSegmentsEntries1(Long groupId) {
 		Assert.assertEquals(
 			2,
 			_segmentsEntryLocalService.getSegmentsEntriesCount(groupId, true));
@@ -1611,7 +1611,7 @@ public class BundleSiteInitializerTest {
 			segmentsExperience2.getSegmentsExperienceId());
 	}
 
-	private void _assertSiteConfiguration(Long groupId) {
+	private void _assertSiteConfiguration1(Long groupId) {
 		Group group = _groupLocalService.fetchGroup(groupId);
 
 		Assert.assertEquals(
@@ -1621,7 +1621,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(group.isManualMembership());
 	}
 
-	private void _assertSiteNavigationMenu(Group group) {
+	private void _assertSiteNavigationMenu1(Group group) {
 		SiteNavigationMenu siteNavigationMenu =
 			_siteNavigationMenuLocalService.fetchSiteNavigationMenuByName(
 				group.getGroupId(), "Test Site Navigation Menu");
@@ -1686,7 +1686,7 @@ public class BundleSiteInitializerTest {
 			type.startsWith("com.liferay.object.model.ObjectDefinition#"));
 	}
 
-	private void _assertSiteSettings(Long groupId) throws Exception {
+	private void _assertSiteSettings1(Long groupId) throws Exception {
 		Configuration configuration = _getFactoryConfiguration(
 			"test.pid.scoped", ExtendedObjectClassDefinition.Scope.GROUP,
 			groupId);
@@ -1700,7 +1700,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("value2", properties.get("key2"));
 	}
 
-	private void _assertStyleBookEntry(Group group) {
+	private void _assertStyleBookEntry1(Group group) {
 		StyleBookEntry styleBookEntry =
 			_styleBookEntryLocalService.fetchStyleBookEntry(
 				group.getGroupId(), "test-style-book");
@@ -1725,7 +1725,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(totalCount, page.getTotalCount());
 	}
 
-	private void _assertUserGroups(Group group) {
+	private void _assertUserGroups1(Group group) {
 		List<UserGroup> userGroups = _userGroupLocalService.getGroupUserGroups(
 			group.getGroupId());
 
@@ -1759,7 +1759,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(totalCount, page.getTotalCount());
 	}
 
-	private void _assertUserRoles(Group group) throws Exception {
+	private void _assertUserRoles1(Group group) throws Exception {
 		User user = _userLocalService.fetchUserByEmailAddress(
 			group.getCompanyId(), "test.user1@liferay.com");
 
@@ -1795,7 +1795,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("Test Role 3", role.getName());
 	}
 
-	private void _assertWorkflowDefinitions(
+	private void _assertWorkflowDefinitions1(
 			Group group, ServiceContext serviceContext)
 		throws Exception {
 
@@ -1890,7 +1890,7 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
-	private void _test(SiteInitializer siteInitializer) throws Exception {
+	private void _test1(SiteInitializer siteInitializer) throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
 		ServiceContext serviceContext =
@@ -1912,42 +1912,42 @@ public class BundleSiteInitializerTest {
 		try {
 			siteInitializer.initialize(group.getGroupId());
 
-			_assertAccounts(serviceContext);
-			_assertAssetListEntries(group);
-			_assertAssetVocabularies(group);
-			_assertCommerceCatalogs(group);
-			_assertCommerceChannel(group);
-			_assertCommerceInventoryWarehouse(group);
-			_assertCommerceSpecificationProducts(serviceContext);
-			_assertCPDefinition(group);
-			_assertCPInstanceProperties(group);
-			_assertDDMStructure(group);
-			_assertDDMTemplate(group);
-			_assertDLFileEntry(group);
-			_assertExpandoColumns(serviceContext);
-			_assertFragmentEntries(group, serviceContext);
-			_assertJournalArticles(group);
-			_assertKBArticles(group);
-			_assertLayoutPageTemplateEntries(group);
-			_assertLayoutSets(group);
-			_assertLayouts(group, serviceContext);
-			_assertLayoutUtilityPageEntries(group);
-			_assertListTypeDefinitions(serviceContext);
-			_assertNotificationTemplate(serviceContext);
-			_assertObjectDefinitions(group, serviceContext);
-			_assertOrganizations(serviceContext);
-			_assertPermissions(group);
-			_assertPortletSettings(group);
-			_assertClientExtension(group);
-			_assertSAPEntries(group);
-			_assertSegmentsEntries(group.getGroupId());
-			_assertSiteConfiguration(group.getGroupId());
-			_assertSiteSettings(group.getGroupId());
-			_assertSiteNavigationMenu(group);
-			_assertStyleBookEntry(group);
-			_assertUserGroups(group);
-			_assertUserRoles(group);
-			_assertWorkflowDefinitions(group, serviceContext);
+			_assertAccounts1(serviceContext);
+			_assertAssetListEntries1(group);
+			_assertAssetVocabularies1(group);
+			_assertCommerceCatalogs1(group);
+			_assertCommerceChannel1(group);
+			_assertCommerceInventoryWarehouse1(group);
+			_assertCommerceSpecificationProducts1(serviceContext);
+			_assertCPDefinition1(group);
+			_assertCPInstanceProperties1(group);
+			_assertDDMStructure1(group);
+			_assertDDMTemplate1(group);
+			_assertDLFileEntry1(group);
+			_assertExpandoColumns1(serviceContext);
+			_assertFragmentEntries1(group, serviceContext);
+			_assertJournalArticles1(group);
+			_assertKBArticles1(group);
+			_assertLayoutPageTemplateEntries1(group);
+			_assertLayoutSets1(group);
+			_assertLayouts1(group, serviceContext);
+			_assertLayoutUtilityPageEntries1(group);
+			_assertListTypeDefinitions1(serviceContext);
+			_assertNotificationTemplate1(serviceContext);
+			_assertObjectDefinitions1(group, serviceContext);
+			_assertOrganizations1(serviceContext);
+			_assertPermissions1(group);
+			_assertPortletSettings1(group);
+			_assertClientExtension1(group);
+			_assertSAPEntries1(group);
+			_assertSegmentsEntries1(group.getGroupId());
+			_assertSiteConfiguration1(group.getGroupId());
+			_assertSiteSettings1(group.getGroupId());
+			_assertSiteNavigationMenu1(group);
+			_assertStyleBookEntry1(group);
+			_assertUserGroups1(group);
+			_assertUserRoles1(group);
+			_assertWorkflowDefinitions1(group, serviceContext);
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
