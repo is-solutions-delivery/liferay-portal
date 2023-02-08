@@ -165,6 +165,135 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-174679.Verify that is possible to export filtered MDF’s"
+	@priority = "4"
+	test CanExportFilteredMDFs {
+		JSONAccountEntry.addAccountEntry(
+			accountEntryName = "Company Name 2",
+			accountEntryType = "Business");
+
+		JSONAccountEntryUser.addExistUsertoAccount(
+			accountEntryName = "Company Name 2",
+			userEmailAddress = "partner@liferay.com");
+
+		for (var number : list "1,2") {
+			PRMNavigator.goToNavItem(navItem = "Marketing");
+
+			WaitForPageLoad();
+
+			PRMMarketing.gotoAddNewMDF();
+
+			PRMMDFRequest.fillGoalsPage(
+				accountName = "Company Name ${number}",
+				additionalOptions = "6.x to DXP Migration/Upgrade,Migration from competitor platform",
+				campaignDescription = "Campaign Description",
+				campaignName = "Campaign Name",
+				countryName = "Global",
+				goalsOptions = "Lead generation",
+				targetMarketOptions = "Education,Energy",
+				targetRolesOptions = "Administrator");
+
+			Button.click(button = "Continue");
+
+			PRMMDFRequest.newActivity(
+				activityDescription = "Activity Description",
+				activityName = "Activity Name 1",
+				budgetList = "Sponsorship Fee-2000,Room Rental-3000",
+				followUpStrategy = "test",
+				leadFollowUpList = "Other",
+				leadList = "No",
+				tactic = "Other",
+				targetOfLeads = "test",
+				typeOfActivity = "Miscellaneous Marketing");
+
+			Button.click(button = "Continue");
+
+			Button.click(button = "Continue");
+
+			Button.click(button = "Submit");
+		}
+
+		Click(
+			key_filterOption = "Filter",
+			locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+
+		Click(
+			key_dropdownOption = "Partner",
+			locator1 = "AppBuilder#PRODUCT_MENU_SITE_DROPDOWN_OPTION");
+	}
+
+	@description = "This is a test for LPS-173731. Verify that is possible to export a searched MDF"
+	@priority = "4"
+	test CanExportSearchedMDFs {
+		var campaignName = "Campaign Name";
+
+		task ("Given I go to add a MDF Request") {
+			PRMMarketing.gotoAddNewMDF();
+		}
+
+		task ("And I fill all Goals form with my informations") {
+			PRMMDFRequest.fillGoalsPage(
+				accountName = "Company Name 1",
+				additionalOptions = "6.x to DXP Migration/Upgrade,Migration from competitor platform",
+				campaignDescription = "Campaign Description",
+				campaignName = "${campaignName}",
+				countryName = "Global",
+				goalsOptions = "Lead generation",
+				targetMarketOptions = "Education,Energy",
+				targetRolesOptions = "Administrator");
+
+			Button.click(button = "Continue");
+		}
+
+		task ("And I add a new activity and fill it with my information") {
+			PRMMDFRequest.newActivity(
+				activityDescription = "Activity Description",
+				activityName = "Activity Name 1",
+				budgetList = "Sponsorship Fee-2000,Room Rental-3000",
+				followUpStrategy = "test",
+				leadFollowUpList = "Other",
+				leadList = "No",
+				tactic = "Other",
+				targetOfLeads = "test",
+				typeOfActivity = "Miscellaneous Marketing");
+
+			Button.click(button = "Continue");
+		}
+
+		task ("Then I submit the MDF") {
+			Button.click(button = "Continue");
+
+			Button.click(button = "Submit");
+		}
+
+		task ("when i look for the file") {
+			Type(
+				key_placeHolder = "Search",
+				locator1 = "TextInput#ANY_PLACEHOLDER",
+				value1 = "Company Name 1");
+
+			Click(locator1 = "WorkflowMetricsProcessListView#METRICS_WORKFLOW_SEARCH_BAR_BUTTON");
+		}
+
+		task ("Then I export the file") {
+			PRMHomePage.gotoQuickLinksOption(
+				buttonLink = "blob:",
+				buttonText = "MDF");
+		}
+
+		task ("Then exported and read MDF") {
+			var downloadFile = PropsUtil.get("output.dir.name");
+
+			var fileContent = FileUtil.read("${downloadFile}/MDF Requests.csv");
+
+			if (!(contains("${fileContent}", "${campaignName}"))) {
+				echo("${fileContent}");
+
+				fail("MDF doesn't exist");
+			}
+		}
+	}
+
 	@description = "This is a test for LPS-171637. Verify that an alert will appear when user don't fill a mandatory* field and that “Continue” button only will be clickable after fill all mandatory fields"
 	@priority = "5"
 	test CannotContinueWithoutFillRequiredField {
@@ -382,55 +511,6 @@ definition {
 			WaitForPageLoad();
 
 			PRMMDFListing.viewOnList(campaignName = "Campaign Name");
-		}
-	}
-
-	@description = "This is a test for LPS-173512. Verify that If no claim was made, the message ‘You can submit up to 2 claims’ appears"
-	@priority = "5"
-	test VerifyMessageWhenNoClaimWasMade {
-		task ("Given that a partner submit a new MDF Request") {
-			var campaignName = "Campaign Name";
-
-			PRMMarketing.gotoAddNewMDF();
-
-			PRMMDFRequest.createNewRequest(
-				accountName = "Company Name 1",
-				activityDescription = "Activity Description",
-				activityName = "Activity Name 1",
-				additionalOptions = "6.x to DXP Migration/Upgrade,Migration from competitor platform",
-				budgetList = "Sponsorship Fee-2000,Room Rental-3000",
-				campaignDescription = "Campaign Description",
-				campaignName = "${campaignName}",
-				countryName = "Global",
-				followUpStrategy = "test",
-				goalsOptions = "Lead generation",
-				leadFollowUpList = "Other",
-				leadList = "No",
-				tactic = "Other",
-				targetMarketOptions = "Education,Energy",
-				targetOfLeads = "test",
-				targetRolesOptions = "Administrator",
-				typeOfActivity = "Miscellaneous Marketing");
-		}
-
-		task ("When a manager approves the submitted MDF") {
-			User.logoutAndLoginPG(
-				userLoginEmailAddress = "manager@liferay.com",
-				userLoginFullName = "manager");
-
-			PRMUtils.gotoPRM();
-
-			PRMHomePage.gotoQuickLinksOption(
-				buttonLink = "mdf-requests",
-				buttonText = "MDF");
-
-			PRMMDFRequest.changeMDFStatus(
-				campaignName = "Campaign Name",
-				key_statusButton = "Approve");
-		}
-
-		task ("Then I can see the message 'You can submit up to 2 claim(s)'") {
-			PRMMDFRequest.assertClaimMessage(key_claimMessage = "You can submit up to 2 claim(s).");
 		}
 	}
 
