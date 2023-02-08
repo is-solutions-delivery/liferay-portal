@@ -57,6 +57,7 @@ definition {
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
 		}
@@ -219,7 +220,6 @@ definition {
 		Click(
 			key_dropdownOption = "Partner",
 			locator1 = "AppBuilder#PRODUCT_MENU_SITE_DROPDOWN_OPTION");
-
 	}
 
 	@description = "This is a test for LPS-173731. Verify that is possible to export a searched MDF"
