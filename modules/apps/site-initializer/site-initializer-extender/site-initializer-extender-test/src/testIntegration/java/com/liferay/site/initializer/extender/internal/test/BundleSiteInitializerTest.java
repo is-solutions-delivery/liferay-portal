@@ -230,46 +230,37 @@ public class BundleSiteInitializerTest {
 	public void testInitializeFromBundle() throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
+		Bundle testBundle1 = FrameworkUtil.getBundle(
+			BundleSiteInitializerTest.class);
+
+		Bundle bundle1 = _installBundle(
+			testBundle1.getBundleContext(),
+			"/com.liferay.site.initializer.extender.test.bundle.1.jar");
+
+		bundle1.start();
+
+		Bundle testBundle2 = FrameworkUtil.getBundle(
+			BundleSiteInitializerTest.class);
+
+		Bundle bundle2 = _installBundle(
+			testBundle2.getBundleContext(),
+			"/com.liferay.site.initializer.extender.test.bundle.2.jar");
+
+		bundle2.start();
+
 		try {
-			Bundle testBundle1 = FrameworkUtil.getBundle(
-				BundleSiteInitializerTest.class);
-
-			Bundle bundle1 = _installBundle(
-				testBundle1.getBundleContext(),
-				"/com.liferay.site.initializer.extender.test.bundle.1.jar");
-
-			bundle1.start();
-
-			try {
-				_test1(
-					group, _getServiceContext(group),
-					_siteInitializerRegistry.getSiteInitializer(
-						bundle1.getSymbolicName()));
-			}
-			finally {
-				bundle1.uninstall();
-			}
-
-			Bundle testBundle2 = FrameworkUtil.getBundle(
-				BundleSiteInitializerTest.class);
-
-			Bundle bundle2 = _installBundle(
-				testBundle2.getBundleContext(),
-				"/com.liferay.site.initializer.extender.test.bundle.2.jar");
-
-			bundle2.start();
-
-			try {
-				_test2(
-					group, _getServiceContext(group),
-					_siteInitializerRegistry.getSiteInitializer(
-						bundle2.getSymbolicName()));
-			}
-			finally {
-				bundle2.uninstall();
-			}
+			_test1(
+				group, _getServiceContext(group),
+				_siteInitializerRegistry.getSiteInitializer(
+					bundle1.getSymbolicName()));
+			_test2(
+				group, _getServiceContext(group),
+				_siteInitializerRegistry.getSiteInitializer(
+					bundle2.getSymbolicName()));
 		}
 		finally {
+			bundle1.uninstall();
+			bundle2.uninstall();
 			GroupLocalServiceUtil.deleteGroup(group);
 		}
 	}
@@ -291,16 +282,6 @@ public class BundleSiteInitializerTest {
 
 		tempFile1.delete();
 
-		try {
-			_test1(
-				group, _getServiceContext(group),
-				_siteInitializerFactory.create(
-					new File(tempFolder1, "site-initializer"), null));
-		}
-		finally {
-			FileUtil.deltree(tempFolder1);
-		}
-
 		File tempFile2 = FileUtil.createTempFile();
 
 		FileUtil.write(
@@ -315,16 +296,20 @@ public class BundleSiteInitializerTest {
 		tempFile2.delete();
 
 		try {
+			_test1(
+				group, _getServiceContext(group),
+				_siteInitializerFactory.create(
+					new File(tempFolder1, "site-initializer"), null));
 			_test2(
 				group, _getServiceContext(group),
 				_siteInitializerFactory.create(
 					new File(tempFolder2, "site-initializer"), null));
 		}
 		finally {
+			FileUtil.deltree(tempFolder1);
 			FileUtil.deltree(tempFolder2);
+			GroupLocalServiceUtil.deleteGroup(group);
 		}
-
-		GroupLocalServiceUtil.deleteGroup(group);
 	}
 
 	private void _assertAccounts1(ServiceContext serviceContext)
