@@ -1,5 +1,6 @@
 [
 	{
+		"externalReferenceCode": "Aerospace & Defense",
 		"key": "aerospaceDefense",
 		"name": "Aerospace & Defense",
 		"name_i18n": {
@@ -8,6 +9,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Agriculture",
 		"key": "agriculture",
 		"name": "Agriculture",
 		"name_i18n": {
@@ -16,6 +18,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Consulting/Market Research",
 		"key": "consultingMarketResearch",
 		"name": "Consulting/Market Research",
 		"name_i18n": {
@@ -24,6 +27,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Education",
 		"key": "education",
 		"name": "Education",
 		"name_i18n": {
@@ -32,6 +36,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Energy",
 		"key": "energy",
 		"name": "Energy",
 		"name_i18n": {
@@ -40,6 +45,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Engineering",
 		"key": "engineering",
 		"name": "Engineering",
 		"name_i18n": {
@@ -48,6 +54,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Financial Services",
 		"key": "financialServices",
 		"name": "Financial Services",
 		"name_i18n": {
@@ -56,6 +63,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Government (Federal)",
 		"key": "governmentFederal",
 		"name": "Government (Federal)",
 		"name_i18n": {
@@ -64,6 +72,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Government (State/Local)",
 		"key": "governmentStateLocal",
 		"name": "Government (State/Local)",
 		"name_i18n": {
@@ -72,6 +81,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Healthcare",
 		"key": "healthcare",
 		"name": "Healthcare",
 		"name_i18n": {
@@ -80,6 +90,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Hospitality/Leisure",
 		"key": "hospitalityLeisure",
 		"name": "Hospitality/Leisure",
 		"name_i18n": {
@@ -88,6 +99,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Insurance",
 		"key": "insurance",
 		"name": "Insurance",
 		"name_i18n": {
@@ -96,6 +108,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Media/Entertainment",
 		"key": "mediaEntertainment",
 		"name": "Media/Entertainment",
 		"name_i18n": {
@@ -104,6 +117,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Manufacturing",
 		"key": "manufacturing",
 		"name": "Manufacturing",
 		"name_i18n": {
@@ -112,6 +126,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Not For Profit/NGO",
 		"key": "notForProfitNGO",
 		"name": "Not For Profit/NGO",
 		"name_i18n": {
@@ -120,6 +135,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Other",
 		"key": "other",
 		"name": "Other",
 		"name_i18n": {
@@ -128,6 +144,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Pharmaceuticals",
 		"key": "pharmaceuticals",
 		"name": "Pharmaceuticals",
 		"name_i18n": {
@@ -136,6 +153,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Professional Services (Agency/Business)",
 		"key": "professionalServicesAgencyBusiness",
 		"name": "Professional Services (Agency/Business)",
 		"name_i18n": {
@@ -144,6 +162,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Professional Services (Technical/Web/IT)",
 		"key": "professionalServicesTechnicalWebIT",
 		"name": "Professional Services (Technical/Web/IT)",
 		"name_i18n": {
@@ -152,6 +171,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Retail/Consumer Products",
 		"key": "retailConsumerProducts",
 		"name": "Retail/Consumer Products",
 		"name_i18n": {
@@ -160,6 +180,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Technology",
 		"key": "technology",
 		"name": "Technology",
 		"name_i18n": {
@@ -168,6 +189,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Telecommunications",
 		"key": "telecommunications",
 		"name": "Telecommunications",
 		"name_i18n": {
@@ -176,6 +198,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Transportation",
 		"key": "transportation",
 		"name": "Transportation",
 		"name_i18n": {
@@ -184,6 +207,7 @@
 		"type": "string"
 	},
 	{
+		"externalReferenceCode": "Utilities",
 		"key": "utilities",
 		"name": "Utilities",
 		"name_i18n": {

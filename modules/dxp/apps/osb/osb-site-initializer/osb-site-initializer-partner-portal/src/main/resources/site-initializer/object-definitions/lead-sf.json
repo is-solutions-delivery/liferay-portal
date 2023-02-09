@@ -215,13 +215,14 @@
 		},
 		{
 			"DBType": "String",
-			"businessType": "Text",
+			"businessType": "Picklist",
 			"externalReferenceCode": "Industry",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
 				"en_US": "Prospect Industry"
 			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Industries$]",
 			"name": "prospectIndustry",
 			"required": false,
 			"type": "String"

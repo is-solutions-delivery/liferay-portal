@@ -60,7 +60,7 @@ export default interface DealRegistrationDTO
 	prospectCity?: string;
 	prospectCountry?: LiferayPicklist;
 	prospectCountryCode?: string;
-	prospectIndustry?: string;
+	prospectIndustry?: LiferayPicklist;
 	prospectPostalCode?: string;
 	prospectState?: LiferayPicklist;
 	prospectStateCode?: string;

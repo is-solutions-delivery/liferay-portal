@@ -51,7 +51,7 @@ export function getDTOFromDealRegistration(
 		prospectCity: dealRegistration.prospect.city,
 		prospectCountry: dealRegistration.prospect.country,
 		prospectCountryCode: dealRegistration.prospect.country.key,
-		prospectIndustry: dealRegistration.prospect.industry.name,
+		prospectIndustry: dealRegistration.prospect.industry,
 		prospectPostalCode: dealRegistration.prospect.postalCode,
 		prospectState: dealRegistration.prospect.state,
 		prospectStateCode: dealRegistration.prospect.state.key,
