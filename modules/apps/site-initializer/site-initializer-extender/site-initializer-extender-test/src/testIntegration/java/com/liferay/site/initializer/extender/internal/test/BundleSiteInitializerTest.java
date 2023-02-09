@@ -238,13 +238,15 @@ public class BundleSiteInitializerTest {
 
 		bundle2.start();
 
+		ServiceContext serviceContext = _getServiceContext(group);
+
 		try {
 			_test1(
-				group, _getServiceContext(group),
+				group, serviceContext,
 				_siteInitializerRegistry.getSiteInitializer(
 					bundle1.getSymbolicName()));
 			_test2(
-				group, _getServiceContext(group),
+				group, serviceContext,
 				_siteInitializerRegistry.getSiteInitializer(
 					bundle2.getSymbolicName()));
 		}
@@ -252,18 +254,17 @@ public class BundleSiteInitializerTest {
 			bundle1.uninstall();
 			bundle2.uninstall();
 			GroupLocalServiceUtil.deleteGroup(group);
+			ServiceContextThreadLocal.popServiceContext();
 		}
 	}
 
 	private Bundle _getTestBundle(String path) throws Exception{
-		Bundle testBundle1 = FrameworkUtil.getBundle(
+		Bundle testBundle = FrameworkUtil.getBundle(
 			BundleSiteInitializerTest.class);
 
-		Bundle bundle1 = _installBundle(
-			testBundle1.getBundleContext(),
+		return  _installBundle(
+			testBundle.getBundleContext(),
 			path);
-
-		return bundle1;
 	}
 
 	private File _getTestFile(String path) throws Exception{
@@ -2025,7 +2026,7 @@ public class BundleSiteInitializerTest {
 			SiteInitializer siteInitializer)
 		throws Exception {
 
-		try {
+
 			siteInitializer.initialize(group.getGroupId());
 
 			_assertAccounts1(serviceContext);
@@ -2064,10 +2065,8 @@ public class BundleSiteInitializerTest {
 			_assertUserGroups(group);
 			_assertUserRoles(group);
 			_assertWorkflowDefinitions(group, serviceContext);
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
-		}
+
+
 	}
 
 	private void _test2(
