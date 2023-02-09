@@ -230,21 +230,11 @@ public class BundleSiteInitializerTest {
 	public void testInitializeFromBundle() throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
-		Bundle testBundle1 = FrameworkUtil.getBundle(
-			BundleSiteInitializerTest.class);
-
-		Bundle bundle1 = _installBundle(
-			testBundle1.getBundleContext(),
-			"/com.liferay.site.initializer.extender.test.bundle.1.jar");
+		Bundle bundle1 = _getTestBundle("/com.liferay.site.initializer.extender.test.bundle.1.jar");
 
 		bundle1.start();
 
-		Bundle testBundle2 = FrameworkUtil.getBundle(
-			BundleSiteInitializerTest.class);
-
-		Bundle bundle2 = _installBundle(
-			testBundle2.getBundleContext(),
-			"/com.liferay.site.initializer.extender.test.bundle.2.jar");
+		Bundle bundle2 = _getTestBundle("/com.liferay.site.initializer.extender.test.bundle.2.jar");
 
 		bundle2.start();
 
@@ -265,35 +255,38 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
-	@Test
-	public void testInitializeFromFile() throws Exception {
-		Group group = GroupTestUtil.addGroup();
+	private Bundle _getTestBundle(String path) throws Exception{
+		Bundle testBundle1 = FrameworkUtil.getBundle(
+			BundleSiteInitializerTest.class);
 
-		File tempFile1 = FileUtil.createTempFile();
+		Bundle bundle1 = _installBundle(
+			testBundle1.getBundleContext(),
+			path);
+
+		return bundle1;
+	}
+
+	private File _getTestFile(String path) throws Exception{
+		File tempFile = FileUtil.createTempFile();
 
 		FileUtil.write(
-			tempFile1,
-			BundleSiteInitializerTest.class.getResourceAsStream(
-				"/com.liferay.site.initializer.extender.test.bundle.1.jar"));
+			tempFile,
+			BundleSiteInitializerTest.class.getResourceAsStream(path));
 
 		File tempFolder1 = FileUtil.createTempFolder();
 
-		FileUtil.unzip(tempFile1, tempFolder1);
+		FileUtil.unzip(tempFile, tempFolder1);
 
-		tempFile1.delete();
+		tempFile.delete();
 
-		File tempFile2 = FileUtil.createTempFile();
+		return tempFolder1;
+	}
 
-		FileUtil.write(
-			tempFile2,
-			BundleSiteInitializerTest.class.getResourceAsStream(
-				"/com.liferay.site.initializer.extender.test.bundle.2.jar"));
-
-		File tempFolder2 = FileUtil.createTempFolder();
-
-		FileUtil.unzip(tempFile2, tempFolder2);
-
-		tempFile2.delete();
+	@Test
+	public void testInitializeFromFile() throws Exception {
+		Group group = GroupTestUtil.addGroup();
+		File tempFolder1 = _getTestFile("/com.liferay.site.initializer.extender.test.bundle.1.jar");
+		File tempFolder2 = _getTestFile("/com.liferay.site.initializer.extender.test.bundle.2.jar");
 
 		try {
 			_test1(
