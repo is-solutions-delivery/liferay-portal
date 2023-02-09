@@ -255,6 +255,41 @@ public class BundleSiteInitializerTest {
 			bundle2.uninstall();
 			GroupLocalServiceUtil.deleteGroup(group);
 			ServiceContextThreadLocal.popServiceContext();
+
+			// TODO We should not need to delete the object definition manually
+			// because of DataGuardTestRule. However,
+			// ObjectDefinitionLocalServiceImpl#deleteObjectDefinition checks
+			// for PortalRunMode#isTestMode which is not returning true when the
+			// DataGuardTestRule runs.
+
+			ObjectDefinition objectDefinition1 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition1");
+
+			if (objectDefinition1 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition1.getObjectDefinitionId());
+			}
+
+			ObjectDefinition objectDefinition2 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition2");
+
+			if (objectDefinition2 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition2.getObjectDefinitionId());
+			}
+
+			ObjectDefinition objectDefinition3 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition3");
+
+			if (objectDefinition3 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition3.getObjectDefinitionId());
+			}
+
+			//FileUtil.deltree(unzipFolder);
 		}
 	}
 
@@ -288,6 +323,8 @@ public class BundleSiteInitializerTest {
 		Group group = GroupTestUtil.addGroup();
 		File tempFolder1 = _getTestFile("/com.liferay.site.initializer.extender.test.bundle.1.jar");
 		File tempFolder2 = _getTestFile("/com.liferay.site.initializer.extender.test.bundle.2.jar");
+		
+		ServiceContext serviceContext = _getServiceContext(group);
 
 		try {
 			_test1(
@@ -303,6 +340,41 @@ public class BundleSiteInitializerTest {
 			FileUtil.deltree(tempFolder1);
 			FileUtil.deltree(tempFolder2);
 			GroupLocalServiceUtil.deleteGroup(group);
+
+			// TODO We should not need to delete the object definition manually
+			// because of DataGuardTestRule. However,
+			// ObjectDefinitionLocalServiceImpl#deleteObjectDefinition checks
+			// for PortalRunMode#isTestMode which is not returning true when the
+			// DataGuardTestRule runs.
+
+			ObjectDefinition objectDefinition1 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition1");
+
+			if (objectDefinition1 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition1.getObjectDefinitionId());
+			}
+
+			ObjectDefinition objectDefinition2 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition2");
+
+			if (objectDefinition2 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition2.getObjectDefinitionId());
+			}
+
+			ObjectDefinition objectDefinition3 =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_TestObjectDefinition3");
+
+			if (objectDefinition3 != null) {
+				_objectDefinitionLocalService.deleteObjectDefinition(
+					objectDefinition3.getObjectDefinitionId());
+			}
+
+			//FileUtil.deltree(unzipFolder);
 		}
 	}
 
@@ -896,7 +968,7 @@ public class BundleSiteInitializerTest {
 	}
 
 	private void _assertLayoutPageTemplateEntries(Group group)
-		throws JSONException {
+		throws Exception {
 
 		// Test Display Page Template
 
@@ -2074,49 +2146,9 @@ public class BundleSiteInitializerTest {
 			SiteInitializer siteInitializer)
 		throws Exception {
 
-		try {
 			siteInitializer.initialize(group.getGroupId());
 
 			_assertAccounts2(serviceContext);
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
-
-			// TODO We should not need to delete the object definition manually
-			// because of DataGuardTestRule. However,
-			// ObjectDefinitionLocalServiceImpl#deleteObjectDefinition checks
-			// for PortalRunMode#isTestMode which is not returning true when the
-			// DataGuardTestRule runs.
-
-			ObjectDefinition objectDefinition1 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition1");
-
-			if (objectDefinition1 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition1.getObjectDefinitionId());
-			}
-
-			ObjectDefinition objectDefinition2 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition2");
-
-			if (objectDefinition2 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition2.getObjectDefinitionId());
-			}
-
-			ObjectDefinition objectDefinition3 =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(), "C_TestObjectDefinition3");
-
-			if (objectDefinition3 != null) {
-				_objectDefinitionLocalService.deleteObjectDefinition(
-					objectDefinition3.getObjectDefinitionId());
-			}
-
-			//FileUtil.deltree(unzipFolder);
-		}
 	}
 
 	@Inject
