@@ -44,6 +44,8 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
+import com.liferay.list.type.service.ListTypeDefinitionLocalService;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.notification.rest.resource.v1_0.NotificationTemplateResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectFieldResource;
@@ -130,19 +132,20 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			_layoutLocalService, _layoutPageTemplateEntryLocalService,
 			_layoutsImporter, _layoutPageTemplateStructureLocalService,
 			_layoutPageTemplateStructureRelLocalService, _layoutSetLocalService,
-			_layoutUtilityPageEntryLocalService, _listTypeDefinitionResource,
-			_listTypeDefinitionResourceFactory, _listTypeEntryResource,
-			_listTypeEntryResourceFactory, _notificationTemplateResourceFactory,
-			_objectActionLocalService, _objectDefinitionLocalService,
-			_objectDefinitionResourceFactory, _objectEntryLocalService,
-			_objectEntryManager, _objectFieldLocalService,
-			_objectFieldResourceFactory, _objectRelationshipLocalService,
-			_objectRelationshipResourceFactory, _organizationLocalService,
-			_organizationResourceFactory, _portal, _resourceActionLocalService,
-			_resourcePermissionLocalService, _roleLocalService,
-			_sapEntryLocalService, _segmentsEntryLocalService,
-			_segmentsExperienceLocalService, _settingsFactory,
-			_siteNavigationMenuItemLocalService,
+			_layoutUtilityPageEntryLocalService,
+			_listTypeDefinitionLocalService, _listTypeDefinitionResource,
+			_listTypeDefinitionResourceFactory, _listTypeEntryLocalService,
+			_listTypeEntryResource, _listTypeEntryResourceFactory,
+			_notificationTemplateResourceFactory, _objectActionLocalService,
+			_objectDefinitionLocalService, _objectDefinitionResourceFactory,
+			_objectEntryLocalService, _objectEntryManager,
+			_objectFieldLocalService, _objectFieldResourceFactory,
+			_objectRelationshipLocalService, _objectRelationshipResourceFactory,
+			_organizationLocalService, _organizationResourceFactory, _portal,
+			_resourceActionLocalService, _resourcePermissionLocalService,
+			_roleLocalService, _sapEntryLocalService,
+			_segmentsEntryLocalService, _segmentsExperienceLocalService,
+			_settingsFactory, _siteNavigationMenuItemLocalService,
 			_siteNavigationMenuItemTypeRegistry,
 			_siteNavigationMenuLocalService,
 			_structuredContentFolderResourceFactory,
@@ -265,11 +268,17 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 		_layoutUtilityPageEntryLocalService;
 
 	@Reference
+	private ListTypeDefinitionLocalService _listTypeDefinitionLocalService;
+
+	@Reference
 	private ListTypeDefinitionResource _listTypeDefinitionResource;
 
 	@Reference
 	private ListTypeDefinitionResource.Factory
 		_listTypeDefinitionResourceFactory;
+
+	@Reference
+	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
 	@Reference
 	private ListTypeEntryResource _listTypeEntryResource;

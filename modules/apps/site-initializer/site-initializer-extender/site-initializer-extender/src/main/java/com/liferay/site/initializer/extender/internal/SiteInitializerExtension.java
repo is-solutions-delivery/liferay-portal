@@ -44,6 +44,8 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
+import com.liferay.list.type.service.ListTypeDefinitionLocalService;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.notification.rest.resource.v1_0.NotificationTemplateResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectFieldResource;
@@ -123,8 +125,10 @@ public class SiteInitializerExtension {
 		LayoutSetLocalService layoutSetLocalService,
 		LayoutsImporter layoutsImporter,
 		LayoutUtilityPageEntryLocalService layoutUtilityPageEntryLocalService,
+		ListTypeDefinitionLocalService listTypeDefinitionLocalService,
 		ListTypeDefinitionResource listTypeDefinitionResource,
 		ListTypeDefinitionResource.Factory listTypeDefinitionResourceFactory,
+		ListTypeEntryLocalService listTypeEntryLocalService,
 		ListTypeEntryResource listTypeEntryResource,
 		ListTypeEntryResource.Factory listTypeEntryResourceFactory,
 		NotificationTemplateResource.Factory
@@ -180,8 +184,9 @@ public class SiteInitializerExtension {
 			layoutLocalService, layoutPageTemplateEntryLocalService,
 			layoutsImporter, layoutPageTemplateStructureLocalService,
 			layoutPageTemplateStructureRelLocalService, layoutSetLocalService,
-			layoutUtilityPageEntryLocalService, listTypeDefinitionResource,
-			listTypeDefinitionResourceFactory, listTypeEntryResource,
+			layoutUtilityPageEntryLocalService, listTypeDefinitionLocalService,
+			listTypeDefinitionResource, listTypeDefinitionResourceFactory,
+			listTypeEntryLocalService, listTypeEntryResource,
 			listTypeEntryResourceFactory, notificationTemplateResourceFactory,
 			objectActionLocalService, objectDefinitionLocalService,
 			objectDefinitionResourceFactory, objectEntryLocalService,
