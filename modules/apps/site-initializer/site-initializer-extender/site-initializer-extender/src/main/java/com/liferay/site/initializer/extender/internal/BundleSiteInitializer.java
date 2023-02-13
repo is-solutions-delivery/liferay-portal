@@ -2449,16 +2449,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
-			Page<ListTypeDefinition> listTypeDefinitionsPage =
-				listTypeDefinitionResource.getListTypeDefinitionsPage(
-					null, null,
-					listTypeDefinitionResource.toFilter(
-						StringBundler.concat(
-							"name eq '", listTypeDefinition.getName(), "'")),
-					null, null);
-
-			ListTypeDefinition existingListTypeDefinition =
-				listTypeDefinitionsPage.fetchFirstItem();
+			com.liferay.list.type.model.ListTypeDefinition
+				existingListTypeDefinition =
+					_listTypeDefinitionLocalService.
+						fetchListTypeDefinitionByExternalReferenceCode(
+							listTypeDefinition.getExternalReferenceCode(),
+							serviceContext.getCompanyId());
 
 			if (existingListTypeDefinition == null) {
 				listTypeDefinition =
@@ -2467,8 +2463,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 			else {
 				listTypeDefinition =
-					listTypeDefinitionResource.putListTypeDefinition(
-						existingListTypeDefinition.getId(), listTypeDefinition);
+					listTypeDefinitionResource.patchListTypeDefinition(
+						existingListTypeDefinition.getListTypeDefinitionId(),
+						listTypeDefinition);
 			}
 
 			listTypeDefinitionIdsStringUtilReplaceValues.put(
@@ -2498,17 +2495,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 				ListTypeEntry listTypeEntry = ListTypeEntry.toDTO(
 					String.valueOf(jsonArray.getJSONObject(i)));
 
-				Page<ListTypeEntry> listTypeEntriesPage =
-					listTypeEntryResource.
-						getListTypeDefinitionListTypeEntriesPage(
-							listTypeDefinition.getId(), null, null,
-							listTypeEntryResource.toFilter(
-								StringBundler.concat(
-									"key eq '", listTypeEntry.getKey(), "'")),
-							null, null);
-
-				ListTypeEntry existingListTypeEntry =
-					listTypeEntriesPage.fetchFirstItem();
+				com.liferay.list.type.model.ListTypeEntry
+					existingListTypeEntry =
+						_listTypeEntryLocalService.fetchListTypeEntry(
+							listTypeDefinition.getId(), listTypeEntry.getKey());
 
 				if (existingListTypeEntry == null) {
 					listTypeEntryResource.postListTypeDefinitionListTypeEntry(
@@ -2516,7 +2506,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				}
 				else {
 					listTypeEntryResource.putListTypeEntry(
-						existingListTypeEntry.getId(), listTypeEntry);
+						existingListTypeEntry.getListTypeEntryId(),
+						listTypeEntry);
 				}
 			}
 		}
