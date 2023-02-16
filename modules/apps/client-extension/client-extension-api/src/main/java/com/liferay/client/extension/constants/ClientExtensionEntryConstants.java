@@ -28,6 +28,7 @@ public class ClientExtensionEntryConstants {
 	public static final String TYPE_GLOBAL_JS = "globalJS";
 
 	public static final String TYPE_IFRAME = "iframe";
+	public static final String TYPE_SITE_INITIALIZER = "siteInitializer";
 
 	public static final String TYPE_STATIC_CONTENT = "staticContent";
 
