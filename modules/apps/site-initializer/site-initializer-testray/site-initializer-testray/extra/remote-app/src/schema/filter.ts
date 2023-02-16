@@ -83,7 +83,7 @@ const baseFilters: Filter = {
 				transformData<UserAccount>(item),
 				(userAccount) => ({
 					label: `${userAccount.givenName} ${userAccount.additionalName}`,
-					value: userAccount.givenName,
+					value: userAccount.id,
 				})
 			);
 		},
@@ -182,9 +182,12 @@ const baseFilters: Filter = {
 	run: {
 		label: i18n.translate('run'),
 		name: 'run',
-		resource: '/runs?fields=id,name',
+		resource: '/runs?fields=number',
 		transformData(item) {
-			return dataToOptions(transformData<TestrayRun>(item));
+			return dataToOptions(transformData<TestrayRun>(item), (run) => ({
+				label: run?.number?.toString().padStart(2, '0'),
+				value: run.number,
+			}));
 		},
 		type: 'select',
 	},
@@ -254,7 +257,11 @@ const filterSchema = {
 				operator: 'contains',
 				type: 'text',
 			},
-			overrides(baseFilters.run, {name: 'runToCaseResult/id'}),
+			overrides(baseFilters.run, {
+				name: 'runToCaseResult/number',
+				removeQuoteMark: true,
+				type: 'select',
+			}),
 			{
 				label: i18n.translate('case-name'),
 				name: 'caseToCaseResult/name',
@@ -454,7 +461,7 @@ const filterSchema = {
 			}),
 			baseFilters.description,
 			baseFilters.steps,
-			baseFilters.issues,
+			overrides(baseFilters.issues, {disabled: true}),
 			baseFilters.hasRequirements,
 		] as RendererFields[],
 	},
