@@ -1062,7 +1062,7 @@ public class BundleSiteInitializerTest {
 			layoutUtilityPageEntry.isDefaultLayoutUtilityPageEntry());
 	}
 
-	private void _assertListTypeDefinitions() throws Exception {
+	private void _assertListTypeDefinitions1() throws Exception {
 		ListTypeDefinitionResource.Builder listTypeDefinitionResourceBuilder =
 			_listTypeDefinitionResourceFactory.create();
 
@@ -1071,30 +1071,178 @@ public class BundleSiteInitializerTest {
 				_serviceContext.fetchUser()
 			).build();
 
-		Page<ListTypeDefinition> listTypeDefinitionsPage =
-			listTypeDefinitionResource.getListTypeDefinitionsPage(
-				null, null,
-				listTypeDefinitionResource.toFilter(
-					"name eq 'Test List Type Definition'"),
-				null, null);
+		ListTypeDefinition listTypeDefinition1 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"listtypedefinition1");
 
-		ListTypeDefinition listTypeDefinition =
-			listTypeDefinitionsPage.fetchFirstItem();
+		Assert.assertEquals(
+			"Test List Type Definition 1", listTypeDefinition1.getName());
 
-		Assert.assertNotNull(listTypeDefinition);
+		Assert.assertNotNull(listTypeDefinition1);
 
-		ListTypeEntry[] listTypeEntries =
-			listTypeDefinition.getListTypeEntries();
+		ListTypeEntry[] listTypeEntries1 =
+			listTypeDefinition1.getListTypeEntries();
 
-		ListTypeEntry listTypeEntry1 = listTypeEntries[0];
+		ListTypeEntry testListTypeDefinition1Entry1 = listTypeEntries1[0];
 
-		Assert.assertNotNull(listTypeEntry1);
-		Assert.assertEquals("testlisttypeentry1", listTypeEntry1.getKey());
+		Assert.assertNotNull(testListTypeDefinition1Entry1);
+		Assert.assertEquals(
+			"testlisttypedefinition1entry1",
+			testListTypeDefinition1Entry1.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 1 Entry 1",
+			testListTypeDefinition1Entry1.getName());
 
-		ListTypeEntry listTypeEntry2 = listTypeEntries[1];
+		ListTypeEntry testListTypeDefinition1Entry2 = listTypeEntries1[1];
 
-		Assert.assertNotNull(listTypeEntry2);
-		Assert.assertEquals("testlisttypeentry2", listTypeEntry2.getKey());
+		Assert.assertNotNull(testListTypeDefinition1Entry2);
+		Assert.assertEquals(
+			"testlisttypedefinition1entry2",
+			testListTypeDefinition1Entry2.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 1 Entry 2",
+			testListTypeDefinition1Entry2.getName());
+
+		ListTypeDefinition listTypeDefinition2 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"listtypedefinition2");
+
+		Assert.assertNotNull(listTypeDefinition2);
+
+		Assert.assertEquals(
+			"Test List Type Definition 2", listTypeDefinition2.getName());
+
+		ListTypeEntry[] listTypeEntries2 =
+			listTypeDefinition2.getListTypeEntries();
+
+		ListTypeEntry testListTypeDefinition2Entry1 = listTypeEntries2[0];
+
+		Assert.assertNotNull(testListTypeDefinition2Entry1);
+		Assert.assertEquals(
+			"testlisttypedefinition2entry1",
+			testListTypeDefinition2Entry1.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 2 Entry 1",
+			testListTypeDefinition2Entry1.getName());
+
+		ListTypeEntry testListTypeDefinition2Entry2 = listTypeEntries2[1];
+
+		Assert.assertNotNull(testListTypeDefinition2Entry2);
+		Assert.assertEquals(
+			"testlisttypedefinition2entry2",
+			testListTypeDefinition2Entry2.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 2 Entry 2",
+			testListTypeDefinition2Entry2.getName());
+	}
+
+	private void _assertListTypeDefinitions2() throws Exception {
+		ListTypeDefinitionResource.Builder listTypeDefinitionResourceBuilder =
+			_listTypeDefinitionResourceFactory.create();
+
+		ListTypeDefinitionResource listTypeDefinitionResource =
+			listTypeDefinitionResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		ListTypeDefinition listTypeDefinition1 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"listtypedefinition1");
+
+		Assert.assertNotNull(listTypeDefinition1);
+		Assert.assertEquals(
+			"Test List Type Definition 1 Update",
+			listTypeDefinition1.getName());
+
+		ListTypeEntry[] listTypeEntries1 =
+			listTypeDefinition1.getListTypeEntries();
+
+		ListTypeEntry testListTypeDefinition1Entry1 = listTypeEntries1[0];
+
+		Assert.assertNotNull(testListTypeDefinition1Entry1);
+		Assert.assertEquals(
+			"testlisttypedefinition1entry1",
+			testListTypeDefinition1Entry1.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 1 Entry 1 Update",
+			testListTypeDefinition1Entry1.getName());
+
+		ListTypeEntry testListTypeDefinition1Entry2 = listTypeEntries1[1];
+
+		Assert.assertNotNull(testListTypeDefinition1Entry2);
+		Assert.assertEquals(
+			"testlisttypedefinition1entry2",
+			testListTypeDefinition1Entry2.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 1 Entry 2 Update",
+			testListTypeDefinition1Entry2.getName());
+
+		ListTypeDefinition listTypeDefinition2 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"listtypedefinition2");
+
+		Assert.assertNotNull(listTypeDefinition2);
+		Assert.assertEquals(
+			"Test List Type Definition 2", listTypeDefinition2.getName());
+
+		ListTypeEntry[] listTypeEntries2 =
+			listTypeDefinition2.getListTypeEntries();
+
+		ListTypeEntry testListTypeDefinition2Entry1 = listTypeEntries2[0];
+
+		Assert.assertNotNull(testListTypeDefinition2Entry1);
+		Assert.assertEquals(
+			"testlisttypedefinition2entry1",
+			testListTypeDefinition2Entry1.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 2 Entry 1",
+			testListTypeDefinition2Entry1.getName());
+
+		ListTypeEntry testListTypeDefinition2Entry2 = listTypeEntries2[1];
+
+		Assert.assertNotNull(testListTypeDefinition2Entry2);
+		Assert.assertEquals(
+			"testlisttypedefinition2entry2",
+			testListTypeDefinition2Entry2.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 2 Entry 2",
+			testListTypeDefinition2Entry2.getName());
+
+		ListTypeDefinition testListTypeDefinition3 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"listtypedefinition3");
+
+		Assert.assertNotNull(testListTypeDefinition3);
+		Assert.assertEquals(
+			"Test List Type Definition 3", testListTypeDefinition3.getName());
+
+		ListTypeEntry[] listTypeEntries3 =
+			testListTypeDefinition3.getListTypeEntries();
+
+		ListTypeEntry testListTypeDefinition3Entry1 = listTypeEntries3[0];
+
+		Assert.assertNotNull(testListTypeDefinition3Entry1);
+		Assert.assertEquals(
+			"testlisttypedefinition3entry1",
+			testListTypeDefinition3Entry1.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 3 Entry 1",
+			testListTypeDefinition3Entry1.getName());
+
+		ListTypeEntry testListTypeDefinition3Entry2 = listTypeEntries3[1];
+
+		Assert.assertNotNull(testListTypeDefinition3Entry2);
+		Assert.assertEquals(
+			"testlisttypedefinition3entry2",
+			testListTypeDefinition3Entry2.getKey());
+		Assert.assertEquals(
+			"Test List Type Definition 3 Entry 2",
+			testListTypeDefinition3Entry2.getName());
 	}
 
 	private void _assertNotificationTemplate() throws Exception {
@@ -2058,7 +2206,7 @@ public class BundleSiteInitializerTest {
 		_assertLayoutSets();
 		_assertLayouts();
 		_assertLayoutUtilityPageEntries();
-		_assertListTypeDefinitions();
+		_assertListTypeDefinitions1();
 		_assertNotificationTemplate();
 		_assertObjectDefinitions();
 		_assertOrganizations();
@@ -2079,6 +2227,7 @@ public class BundleSiteInitializerTest {
 		siteInitializer.initialize(_group.getGroupId());
 
 		_assertAccounts2();
+		_assertListTypeDefinitions2();
 	}
 
 	@Inject

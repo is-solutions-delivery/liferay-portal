@@ -1,0 +1,18 @@
+[
+	{
+		"key": "testlisttypedefinition1entry1",
+		"name": "Test List Type Definition 1 Entry 1",
+		"name_i18n": {
+			"en-US": "Test List Type Definition 1 Entry 1"
+		},
+		"type": "string"
+	},
+	{
+		"key": "testlisttypedefinition1entry2",
+		"name": "Test List Type Definition 1 Entry 2",
+		"name_i18n": {
+			"en-US": "Test List Type Definition 1 Entry 2"
+		},
+		"type": "string"
+	}
+]
