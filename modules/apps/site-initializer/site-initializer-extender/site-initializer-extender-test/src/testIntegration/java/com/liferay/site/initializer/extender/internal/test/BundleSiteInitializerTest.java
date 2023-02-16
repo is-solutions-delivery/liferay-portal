@@ -1067,7 +1067,7 @@ public class BundleSiteInitializerTest {
 			layoutUtilityPageEntry.isDefaultLayoutUtilityPageEntry());
 	}
 
-	private void _assertListTypeDefinitions() throws Exception {
+	private void _assertListTypeDefinitions1() throws Exception {
 		ListTypeDefinitionResource.Builder listTypeDefinitionResourceBuilder =
 			_listTypeDefinitionResourceFactory.create();
 
@@ -1076,30 +1076,131 @@ public class BundleSiteInitializerTest {
 				_serviceContext.fetchUser()
 			).build();
 
-		Page<ListTypeDefinition> listTypeDefinitionsPage =
-			listTypeDefinitionResource.getListTypeDefinitionsPage(
-				null, null,
-				listTypeDefinitionResource.toFilter(
-					"name eq 'Test List Type Definition'"),
-				null, null);
+		ListTypeDefinition listTypeDefinition1 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"LISTTYPEDEFINITION1");
 
-		ListTypeDefinition listTypeDefinition =
-			listTypeDefinitionsPage.fetchFirstItem();
+		Assert.assertEquals(
+			"Test List Type Definition 1", listTypeDefinition1.getName());
 
-		Assert.assertNotNull(listTypeDefinition);
+		ListTypeEntry[] listTypeEntries1 =
+			listTypeDefinition1.getListTypeEntries();
 
-		ListTypeEntry[] listTypeEntries =
-			listTypeDefinition.getListTypeEntries();
+		ListTypeEntry testListTypeEntry1 = listTypeEntries1[0];
 
-		ListTypeEntry listTypeEntry1 = listTypeEntries[0];
+		Assert.assertEquals("testlisttypeentry1", testListTypeEntry1.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 1", testListTypeEntry1.getName());
 
-		Assert.assertNotNull(listTypeEntry1);
-		Assert.assertEquals("testlisttypeentry1", listTypeEntry1.getKey());
+		ListTypeEntry testListTypeEntry2 = listTypeEntries1[1];
 
-		ListTypeEntry listTypeEntry2 = listTypeEntries[1];
+		Assert.assertEquals("testlisttypeentry2", testListTypeEntry2.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 2", testListTypeEntry2.getName());
 
-		Assert.assertNotNull(listTypeEntry2);
-		Assert.assertEquals("testlisttypeentry2", listTypeEntry2.getKey());
+		ListTypeDefinition listTypeDefinition2 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"LISTTYPEDEFINITION2");
+
+		Assert.assertEquals(
+			"Test List Type Definition 2", listTypeDefinition2.getName());
+
+		ListTypeEntry[] listTypeEntries2 =
+			listTypeDefinition2.getListTypeEntries();
+
+		ListTypeEntry testListTypeEntry3 = listTypeEntries2[0];
+
+		Assert.assertEquals("testlisttypeentry3", testListTypeEntry3.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 3", testListTypeEntry3.getName());
+
+		ListTypeEntry testListTypeEntry4 = listTypeEntries2[1];
+
+		Assert.assertEquals("testlisttypeentry4", testListTypeEntry4.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 4", testListTypeEntry4.getName());
+	}
+
+	private void _assertListTypeDefinitions2() throws Exception {
+		ListTypeDefinitionResource.Builder listTypeDefinitionResourceBuilder =
+			_listTypeDefinitionResourceFactory.create();
+
+		ListTypeDefinitionResource listTypeDefinitionResource =
+			listTypeDefinitionResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		ListTypeDefinition listTypeDefinition1 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"LISTTYPEDEFINITION1");
+
+		Assert.assertEquals(
+			"Test List Type Definition 1 Update",
+			listTypeDefinition1.getName());
+
+		ListTypeEntry[] listTypeEntries1 =
+			listTypeDefinition1.getListTypeEntries();
+
+		ListTypeEntry testListTypeEntry1 = listTypeEntries1[0];
+
+		Assert.assertEquals("testlisttypeentry1", testListTypeEntry1.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 1 Update", testListTypeEntry1.getName());
+
+		ListTypeEntry testListTypeEntry2 = listTypeEntries1[1];
+
+		Assert.assertEquals("testlisttypeentry2", testListTypeEntry2.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 2 Update", testListTypeEntry2.getName());
+
+		ListTypeDefinition listTypeDefinition2 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"LISTTYPEDEFINITION2");
+
+		Assert.assertEquals(
+			"Test List Type Definition 2", listTypeDefinition2.getName());
+
+		ListTypeEntry[] listTypeEntries2 =
+			listTypeDefinition2.getListTypeEntries();
+
+		ListTypeEntry testListTypeEntry3 = listTypeEntries2[0];
+
+		Assert.assertEquals("testlisttypeentry3", testListTypeEntry3.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 3", testListTypeEntry3.getName());
+
+		ListTypeEntry testListTypeEntry4 = listTypeEntries2[1];
+
+		Assert.assertEquals("testlisttypeentry4", testListTypeEntry4.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 4", testListTypeEntry4.getName());
+
+		ListTypeDefinition testListTypeDefinition3 =
+			listTypeDefinitionResource.
+				getListTypeDefinitionByExternalReferenceCode(
+					"LISTTYPEDEFINITION3");
+
+		Assert.assertEquals(
+			"Test List Type Definition 3", testListTypeDefinition3.getName());
+
+		ListTypeEntry[] listTypeEntries3 =
+			testListTypeDefinition3.getListTypeEntries();
+
+		ListTypeEntry testListTypeEntry5 = listTypeEntries3[0];
+
+		Assert.assertEquals("testlisttypeentry5", testListTypeEntry5.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 5", testListTypeEntry5.getName());
+
+		ListTypeEntry testListTypeEntry6 = listTypeEntries3[1];
+
+		Assert.assertEquals("testlisttypeentry6", testListTypeEntry6.getKey());
+		Assert.assertEquals(
+			"Test List Type Entry 6", testListTypeEntry6.getName());
 	}
 
 	private void _assertNotificationTemplate() throws Exception {
@@ -2063,7 +2164,7 @@ public class BundleSiteInitializerTest {
 		_assertLayoutSets();
 		_assertLayouts();
 		_assertLayoutUtilityPageEntries();
-		_assertListTypeDefinitions();
+		_assertListTypeDefinitions1();
 		_assertNotificationTemplate();
 		_assertObjectDefinitions();
 		_assertOrganizations();
@@ -2084,6 +2185,7 @@ public class BundleSiteInitializerTest {
 		siteInitializer.initialize(_group.getGroupId());
 
 		_assertAccounts2();
+		_assertListTypeDefinitions2();
 	}
 
 	@Inject
