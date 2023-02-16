@@ -185,6 +185,34 @@
 		]
 	},
 	{
+		"description": "This is a description",
+		"name": "siteInitializer",
+		"properties": [
+			{
+				"name": "description",
+				"type": "CETProperty.Type.String"
+			},
+			{
+				"name": "name",
+				"type": "CETProperty.Type.String"
+			},
+			{
+				"default": "https://www.liferay.com",
+				"name": "sourceCodeURL",
+				"type": "CETProperty.Type.String"
+			},
+			{
+				"name": "type",
+				"type": "CETProperty.Type.String"
+			},
+			{
+				"default": "",
+				"name": "groupName",
+				"type": "CETProperty.Type.String"
+			}
+		]
+	},
+	{
 		"description": "This is a description.",
 		"name": "staticContent",
 		"properties": [
