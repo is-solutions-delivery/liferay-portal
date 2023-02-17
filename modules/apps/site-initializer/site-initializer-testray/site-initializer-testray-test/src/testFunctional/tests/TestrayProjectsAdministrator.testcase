@@ -4,30 +4,39 @@ definition {
 	property custom.properties = "feature.flag.LPS-163118=true";
 	property osgi.modules.includes = "site-initializer-testray";
 	property portal.release = "false";
-	property portal.upstream = "true";
+	property portal.upstream = "test";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Site Initializer Testray";
 
+	var testSiteName = "Testray 2";
+	var projectName = "Projects_1 Project";
+
 	setUp {
-		TestCase.setUpPortalInstance();
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
 
-		User.firstLoginPG();
+			User.firstLoginPG();
+		}
 
-		Testray.addTestraySite();
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
 
-		Refresh();
+			Refresh();
+		}
 	}
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-		TestrayRoutines.deleteRoutineSetup();
-
-		Testray.deleteAllProjects();
+		JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
 		Testray.tearDownCP();
 
 		ObjectAdmin.deleteAllCustomObjectsViaAPI();
+
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/control_panel/manage?p_p_id=com_liferay_client_extension_web_internal_portlet_ClientExtensionAdminPortlet");
+
+		ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
 
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
@@ -77,6 +86,8 @@ definition {
 	@description = "This is a test for LPS-160538. Verify if as an Administrator I am able to delete a Project"
 	@priority = 5
 	test AdminCanDeleteProject {
+		property test.name.skip.portal.instance = "TestrayProjectsAdministrator#AdminCanDeleteProject";
+
 		task ("Go to Testray and Create Project") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 
@@ -100,7 +111,7 @@ definition {
 
 			Testray.createProjectTestray(
 				description = "Projects_1 Description",
-				key_name = "Projects_1 Project");
+				key_name = "Projects one");
 
 			Testray.changePagination(
 				numberItems = 20,
@@ -108,13 +119,13 @@ definition {
 		}
 
 		task ("Edit Project name and description and change pagination") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Projects_1 Project");
+			TestrayContextMenu.clickContextMenuProjects(name = "Projects one");
 
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Edit");
 
 			Testray.editProjectTestray(
 				description = "Projects_1 Project Description Edited",
-				name = "Projects_1 Project Edited");
+				name = "Projects_1 Project");
 
 			Testray.changePagination(
 				numberItems = 20,
@@ -124,7 +135,7 @@ definition {
 		task ("Go to Home Page and Assert it the name and description has been edited") {
 			TestrayLayout.clickResultsOnSidebar();
 
-			Testray.assertItemName(key_name = "Projects_1 Project Edited");
+			Testray.assertItemName(key_name = "Projects_1 Project");
 
 			Testray.assertProjectDescription(value = "Projects_1 Project Description Edited");
 		}

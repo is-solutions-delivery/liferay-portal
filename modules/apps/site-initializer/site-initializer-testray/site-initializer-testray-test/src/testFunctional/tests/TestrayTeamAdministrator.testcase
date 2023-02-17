@@ -4,28 +4,39 @@ definition {
 	property custom.properties = "feature.flag.LPS-163118=true";
 	property osgi.modules.includes = "site-initializer-testray";
 	property portal.release = "false";
-	property portal.upstream = "true";
+	property portal.upstream = "test";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Site Initializer Testray";
 
+	var testSiteName = "Testray 2";
+	var projectName = "Projects_1 Project";
+
 	setUp {
-		TestCase.setUpPortalInstance();
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
 
-		User.firstLoginPG();
+			User.firstLoginPG();
+		}
 
-		Testray.addTestraySite();
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
 
-		Refresh();
+			Refresh();
+		}
 	}
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-		Testray.deleteAllProjects();
+		JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
 		Testray.tearDownCP();
 
 		ObjectAdmin.deleteAllCustomObjectsViaAPI();
+
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/control_panel/manage?p_p_id=com_liferay_client_extension_web_internal_portlet_ClientExtensionAdminPortlet");
+
+		ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
 
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
@@ -175,6 +186,8 @@ definition {
 	@description = "This is a test for LPS-162501 - Verify if as an Administrator I should not be able to add a duplicate Teams"
 	@priority = 5
 	test AdminCanNotAddDuplicateTeams {
+		property test.name.skip.portal.instance = "TestrayTeamAdministrator#AdminCanNotAddDuplicateTeams";
+
 		task ("Go to Testray and Create Project") {
 			ApplicationsMenu.gotoSite(site = "Testray 2");
 

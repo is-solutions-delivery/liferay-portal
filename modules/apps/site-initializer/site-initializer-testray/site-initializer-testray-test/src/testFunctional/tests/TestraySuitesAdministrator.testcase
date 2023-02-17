@@ -4,42 +4,39 @@ definition {
 	property custom.properties = "feature.flag.LPS-163118=true";
 	property osgi.modules.includes = "site-initializer-testray";
 	property portal.release = "false";
-	property portal.upstream = "true";
+	property portal.upstream = "test";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Site Initializer Testray";
 
+	var testSiteName = "Testray 2";
+	var projectName = "Projects_1 Project";
+
 	setUp {
-		task ("Login and create a Testray Site") {
+		task ("Set up instance and sign in") {
 			TestCase.setUpPortalInstance();
 
 			User.firstLoginPG();
-
-			Testray.addTestraySite();
-
-			Refresh();
 		}
 
-		task ("Go to Testray, Create Project and change pagination") {
-			ApplicationsMenu.gotoSite(site = "Testray 2");
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
 
-			Testray.createProjectTestray(
-				description = "Projects_1 Project Description",
-				key_name = "Projects_1 Project");
-
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Refresh();
 		}
 	}
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-		Testray.deleteAllProjects();
+		JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
 		Testray.tearDownCP();
 
 		ObjectAdmin.deleteAllCustomObjectsViaAPI();
+
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/control_panel/manage?p_p_id=com_liferay_client_extension_web_internal_portlet_ClientExtensionAdminPortlet");
+
+		ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
 
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
@@ -49,6 +46,8 @@ definition {
 	@description = "This is a test for LPS-162816 - Verify that as an Administrator I can delete a smart suite"
 	@priority = 4
 	test AdminCanDeleteSmartSuite {
+		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanDeleteSmartSuite";
+
 		task ("Given that the user goes to add a new component") {
 			TestrayContextMenu.clickContextMenuProjects(name = "Projects_1 Project");
 
@@ -118,6 +117,8 @@ definition {
 	@description = "This is a test for LPS-160574 - Verify if as an Administrator I am able to design Suites"
 	@priority = 4
 	test AdminCanDesignSuite {
+		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanDesignSuite";
+
 		task ("Given that the user goes to add a new component") {
 			TestrayContextMenu.clickContextMenuProjects(name = "Projects_1 Project");
 
@@ -162,6 +163,8 @@ definition {
 	@description = "This is a test for LPS-162815 - Verify that as an Administrator I can edit and update a smart suite"
 	@priority = 4
 	test AdminCanEditSmartSuite {
+		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanEditSmartSuite";
+
 		task ("Given that the user goes to add a new component") {
 			TestrayContextMenu.clickContextMenuProjects(name = "Projects_1 Project");
 
