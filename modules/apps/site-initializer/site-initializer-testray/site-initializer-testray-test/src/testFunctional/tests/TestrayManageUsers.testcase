@@ -8,13 +8,17 @@ definition {
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Site Initializer Testray";
 
+	var testSiteName = "Testray 2";
+
 	setUp {
-		task ("Login and create a Testray Site") {
+		task ("Set up instance and sign in") {
 			TestCase.setUpPortalInstance();
 
 			User.firstLoginPG();
+		}
 
-			Testray.addTestraySite();
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
 
 			Refresh();
 		}
@@ -29,7 +33,7 @@ definition {
 
 		Testray.tearDownCP();
 
-		ObjectAdmin.deleteAllCustomObjectsViaAPI();
+		Testray.testrayApisTearDown();
 
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();

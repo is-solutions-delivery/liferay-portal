@@ -9,9 +9,11 @@ definition {
 	property testray.main.component.name = "Site Initializer Testray";
 
 	setUp {
-		TestCase.setUpPortalInstance();
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
 
-		User.firstLoginPG();
+			User.firstLoginPG();
+		}
 	}
 
 	tearDown {
@@ -19,7 +21,7 @@ definition {
 
 		Testray.tearDownCP();
 
-		ObjectAdmin.deleteAllCustomObjectsViaAPI();
+		Testray.testrayApisTearDown();
 
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
