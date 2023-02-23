@@ -410,6 +410,8 @@ public class MessageBoardThreadResourceImpl
 		MBThread mbThread = _mbThreadLocalService.getThread(
 			messageBoardThreadId);
 
+		postMessageBoardThreadMyRating(messageBoardThreadId , rating);
+
 		return spiRatingResource.addOrUpdateRating(
 			rating.getRatingValue(), mbThread.getRootMessageId());
 	}
