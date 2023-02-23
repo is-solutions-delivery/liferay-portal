@@ -482,7 +482,7 @@ public class MessageBoardThreadResourceImpl
 		MBThread mbThread = _mbThreadLocalService.getThread(
 			messageBoardThreadId);
 
-		_mbMessageService.unsubscribeMessage(mbThread.getRootMessageId());
+
 	}
 
 	@Override
