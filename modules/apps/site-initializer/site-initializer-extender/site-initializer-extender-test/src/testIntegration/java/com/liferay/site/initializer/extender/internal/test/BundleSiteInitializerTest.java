@@ -285,6 +285,15 @@ public class BundleSiteInitializerTest {
 			_objectDefinitionLocalService.deleteObjectDefinition(
 				objectDefinition3.getObjectDefinitionId());
 		}
+
+		ObjectDefinition objectDefinition4 =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				_serviceContext.getCompanyId(), "C_TestObjectDefinition4");
+
+		if (objectDefinition4 != null) {
+			_objectDefinitionLocalService.deleteObjectDefinition(
+				objectDefinition4.getObjectDefinitionId());
+		}
 	}
 
 	@Test
@@ -1268,7 +1277,8 @@ public class BundleSiteInitializerTest {
 			_objectDefinitionLocalService.fetchObjectDefinition(
 				_group.getCompanyId(), "C_TestObjectDefinition1");
 
-		Assert.assertEquals(objectDefinition1.isSystem(), false);
+		Assert.assertFalse(objectDefinition1.isAccountEntryRestricted());
+		Assert.assertFalse(objectDefinition1.isSystem());
 		Assert.assertEquals(
 			objectDefinition1.getStatus(), WorkflowConstants.STATUS_APPROVED);
 
@@ -1281,7 +1291,8 @@ public class BundleSiteInitializerTest {
 			_objectDefinitionLocalService.fetchObjectDefinition(
 				_group.getCompanyId(), "C_TestObjectDefinition2");
 
-		Assert.assertEquals(objectDefinition2.isSystem(), false);
+		Assert.assertFalse(objectDefinition2.isAccountEntryRestricted());
+		Assert.assertFalse(objectDefinition2.isSystem());
 		Assert.assertEquals(
 			objectDefinition2.getStatus(), WorkflowConstants.STATUS_APPROVED);
 
@@ -1293,16 +1304,28 @@ public class BundleSiteInitializerTest {
 			_objectDefinitionLocalService.fetchObjectDefinition(
 				_group.getCompanyId(), "C_TestObjectDefinition3");
 
-		Assert.assertEquals(objectDefinition3.isSystem(), false);
+		Assert.assertFalse(objectDefinition3.isAccountEntryRestricted());
 		Assert.assertEquals(
 			objectDefinition3.getScope(),
 			ObjectDefinitionConstants.SCOPE_COMPANY);
+		Assert.assertFalse(objectDefinition3.isSystem());
 		Assert.assertEquals(
 			objectDefinition3.getStatus(), WorkflowConstants.STATUS_APPROVED);
 
 		_assertObjectActions(0, objectDefinition3);
 		_assertObjectEntries(0, objectDefinition3, 5);
 		_assertObjectFields(objectDefinition3, 7);
+
+		ObjectDefinition objectDefinition4 =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				_group.getCompanyId(), "C_TestObjectDefinition4");
+
+		Assert.assertTrue(objectDefinition4.isAccountEntryRestricted());
+		Assert.assertTrue(
+			objectDefinition4.getAccountEntryRestrictedObjectFieldId() != 0);
+		Assert.assertFalse(objectDefinition4.isSystem());
+		Assert.assertEquals(
+			objectDefinition4.getStatus(), WorkflowConstants.STATUS_APPROVED);
 	}
 
 	private void _assertObjectEntries(
@@ -1393,6 +1416,31 @@ public class BundleSiteInitializerTest {
 			existingObjectRelationship2.getType();
 
 		Assert.assertEquals("manyToMany", objectRelationshipType2.toString());
+
+		objectDefinition =
+			_objectDefinitionLocalService.fetchSystemObjectDefinition(
+				"AccountEntry");
+
+		Page<ObjectRelationship> page3 =
+			objectRelationshipResource.
+				getObjectDefinitionObjectRelationshipsPage(
+					objectDefinition.getObjectDefinitionId(), null,
+					objectRelationshipResource.toFilter(
+						"name eq 'accountEntryToTestObjectDefinition4'"),
+					null);
+
+		Assert.assertNotNull(page3);
+
+		ObjectRelationship existingObjectRelationship3 = page3.fetchFirstItem();
+
+		Assert.assertEquals(
+			"TestObjectDefinition4",
+			existingObjectRelationship3.getObjectDefinitionName2());
+
+		ObjectRelationship.Type objectRelationshipType3 =
+			existingObjectRelationship3.getType();
+
+		Assert.assertEquals("oneToMany", objectRelationshipType3.toString());
 	}
 
 	private void _assertOrganizations() throws Exception {
