@@ -108,7 +108,7 @@ public class MessageBoardMessageResourceImpl
 	public void deleteMessageBoardMessage(Long messageBoardMessageId)
 		throws Exception {
 
-		_mbMessageService.deleteMessage(messageBoardMessageId);
+		_mbMessageService.deleteMessage(0);
 	}
 
 	@Override
