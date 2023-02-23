@@ -1194,6 +1194,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.fetchUser()
 			).build();
 
+		Map<String, ObjectDefinition> accountEntryRestrictedObjectDefinitions =
+			new HashMap<>();
+
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith(".object-actions.json")) {
 				continue;
@@ -1225,6 +1228,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 				objectDefinitionsPage.fetchFirstItem();
 
 			if (existingObjectDefinition == null) {
+				if (GetterUtil.getBoolean(
+					objectDefinition.getAccountEntryRestricted())) {
+
+					accountEntryRestrictedObjectDefinitions.put(
+						objectDefinition.getName(), objectDefinition);
+				}
+
 				objectDefinition =
 					objectDefinitionResource.postObjectDefinition(
 						objectDefinition);
@@ -1288,6 +1298,26 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_invoke(
 			() -> _addOrUpdateObjectRelationships(
 				objectDefinitionIdsStringUtilReplaceValues, serviceContext));
+
+		for (Map.Entry<String, ObjectDefinition> entry :
+			accountEntryRestrictedObjectDefinitions.entrySet()) {
+
+			com.liferay.object.model.ObjectDefinition
+				localServiceObjectDefinition =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(), "C_" + entry.getKey());
+
+			com.liferay.object.model.ObjectRelationship objectRelationship =
+				_objectRelationshipLocalService.
+					getObjectRelationshipByObjectDefinitionId(
+						localServiceObjectDefinition.getObjectDefinitionId(),
+						"accountEntryTo" +
+						localServiceObjectDefinition.getShortName());
+
+			_objectDefinitionLocalService.enableAccountEntryRestricted(
+				localServiceObjectDefinition.getObjectDefinitionId(),
+				objectRelationship);
+		}
 
 		_invoke(
 			() -> _addOrUpdateObjectFields(
