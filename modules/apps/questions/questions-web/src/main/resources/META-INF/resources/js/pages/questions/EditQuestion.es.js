@@ -132,30 +132,7 @@ export default withRouter(
 
 						<div className="c-mt-4 d-flex flex-column-reverse flex-sm-row">
 							<ClayButton
-								className="c-mt-4 c-mt-sm-0"
-								disabled={
-									hasEnoughContent || !headline || !tagsLoaded
-								}
-								displayType="primary"
-								onClick={() => {
-									updateThread(
-										{
-											variables: {
-												articleBody: editorRef.current.getContent(),
-												headline,
-												keywords: tags.map(
-													(tag) => tag.value
-												),
-												messageBoardThreadId: id,
-											},
-										},
-										{
-											fetchOptionsOverrides: getContextLink(
-												`${sectionTitle}/${questionId}`
-											),
-										}
-									).then(() => history.goBack());
-								}}
+								
 							>
 								{context.trustedUser
 									? Liferay.Language.get(
