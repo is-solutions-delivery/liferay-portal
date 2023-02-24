@@ -1461,8 +1461,6 @@ public class BundleSiteInitializerTest {
 					objectRelationshipResource.toFilter("name eq 'testOR1'"),
 					null);
 
-		Assert.assertNotNull(page1);
-
 		ObjectRelationship existingObjectRelationship1 = page1.fetchFirstItem();
 
 		Assert.assertEquals(
@@ -1480,8 +1478,6 @@ public class BundleSiteInitializerTest {
 					objectDefinition.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter("name eq 'testOR2'"),
 					null);
-
-		Assert.assertNotNull(page2);
 
 		ObjectRelationship existingObjectRelationship2 = page2.fetchFirstItem();
 
@@ -1505,8 +1501,6 @@ public class BundleSiteInitializerTest {
 					objectRelationshipResource.toFilter(
 						"name eq 'accountEntryToTestObjectDefinition4'"),
 					null);
-
-		Assert.assertNotNull(page3);
 
 		ObjectRelationship existingObjectRelationship3 = page3.fetchFirstItem();
 
@@ -1542,8 +1536,6 @@ public class BundleSiteInitializerTest {
 					objectRelationshipResource.toFilter("name eq 'testOR1'"),
 					null);
 
-		Assert.assertNotNull(page1);
-
 		ObjectRelationship existingObjectRelationship1 = page1.fetchFirstItem();
 
 		Assert.assertEquals(
@@ -1561,8 +1553,6 @@ public class BundleSiteInitializerTest {
 					objectDefinition.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter("name eq 'testOR2'"),
 					null);
-
-		Assert.assertNotNull(page2);
 
 		ObjectRelationship existingObjectRelationship2 = page2.fetchFirstItem();
 
@@ -1587,8 +1577,6 @@ public class BundleSiteInitializerTest {
 						"name eq 'accountEntryToTestObjectDefinition4'"),
 					null);
 
-		Assert.assertNotNull(page3);
-
 		ObjectRelationship existingObjectRelationship3 = page3.fetchFirstItem();
 
 		Assert.assertEquals(
@@ -1607,8 +1595,6 @@ public class BundleSiteInitializerTest {
 					objectRelationshipResource.toFilter(
 						"name eq 'accountEntryToTestObjectDefinition5'"),
 					null);
-
-		Assert.assertNotNull(page4);
 
 		ObjectRelationship existingObjectRelationship4 = page4.fetchFirstItem();
 
