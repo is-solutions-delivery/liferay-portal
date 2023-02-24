@@ -126,6 +126,7 @@ import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -1039,9 +1040,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 						FileUtil.getPath(urlPath) + "/css.css",
 						_servletContext),
 					documentsStringUtilReplaceValues);
-
+				JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 				if (Validator.isNotNull(css)) {
-					JSONObject jsonObject = _jsonFactory.createJSONObject(json);
+
 
 					JSONObject settingsJSONObject = jsonObject.getJSONObject(
 						"settings");
@@ -1057,6 +1058,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 					_removeFirst(
 						urlPath, "/site-initializer/layout-page-templates"),
 					json);
+
+				_setResourcePermissions(serviceContext.getCompanyId(),
+					jsonObject.getString("resourceName"),
+					jsonObject.getJSONArray("actionIds"),
+					String.valueOf(serviceContext.getScopeGroupId())
+					);
 			}
 			else {
 				zipWriter.addEntry(
