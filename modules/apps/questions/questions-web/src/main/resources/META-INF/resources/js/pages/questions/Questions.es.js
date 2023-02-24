@@ -701,7 +701,7 @@ export default withRouter(
 										id="questionsFilter"
 										onChange={(event) => {
 											setLoading(true);
-											setFilter(event.target.value);
+											
 										}}
 										value={filter}
 									>
