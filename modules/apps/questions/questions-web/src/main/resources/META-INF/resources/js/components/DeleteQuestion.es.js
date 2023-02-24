@@ -29,42 +29,7 @@ export default withRouter(
 		const [deleteThread] = useMutation(deleteMessageBoardThreadQuery);
 
 		return (
-			<>
-				{question.actions && question.actions.delete && (
-					<Modal
-						body={Liferay.Language.get(
-							'do-you-want-to-delete–this-question'
-						)}
-						callback={() => {
-							deleteThread({
-								variables: {
-									messageBoardThreadId: question.id,
-								},
-							}).then(() => {
-								deleteCache();
-								historyPushParser(
-									`/questions/${
-										question.messageBoardSection
-											? context.useTopicNamesInURL
-												? question.messageBoardSection
-														.title
-												: question.messageBoardSection
-														.id
-											: context.rootTopicId
-									}`
-								);
-							});
-						}}
-						onClose={() => {
-							setDeleteModalVisibility(false);
-						}}
-						status="warning"
-						textPrimaryButton={Liferay.Language.get('delete')}
-						title={Liferay.Language.get('delete-question')}
-						visible={deleteModalVisibility}
-					/>
-				)}
-			</>
+		null	
 		);
 	}
 );
