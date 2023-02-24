@@ -1200,7 +1200,7 @@ public class BundleSiteInitializerTest {
 
 		_assertObjectActions(3, objectDefinition1);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition1, 0);
-		_assertObjectFields(objectDefinition1,  10);
+		_assertObjectFields(objectDefinition1, 10);
 		_assertObjectRelationships1(objectDefinition1, _serviceContext);
 
 		ObjectDefinition objectDefinition2 =
@@ -1307,6 +1307,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(
 			objectDefinition5.getAccountEntryRestrictedObjectFieldId() != 0);
 		Assert.assertFalse(objectDefinition5.isSystem());
+
 		Assert.assertEquals(
 			objectDefinition4.getStatus(), WorkflowConstants.STATUS_APPROVED);
 	}
@@ -1427,7 +1428,7 @@ public class BundleSiteInitializerTest {
 	}
 
 	private void _assertObjectRelationships2(
-		ObjectDefinition objectDefinition, ServiceContext serviceContext)
+			ObjectDefinition objectDefinition, ServiceContext serviceContext)
 		throws Exception {
 
 		ObjectRelationshipResource.Builder objectRelationshipResourceBuilder =
