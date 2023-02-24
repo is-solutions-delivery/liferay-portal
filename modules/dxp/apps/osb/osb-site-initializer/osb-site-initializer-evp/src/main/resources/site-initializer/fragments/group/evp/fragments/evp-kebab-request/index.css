@@ -1,0 +1,18 @@
+#evp-kebab-request svg {
+        fill: #0B5FFF !important;
+   }
+   
+   #evp-kebab-request svg:hover {
+        fill-opacity: 0.25;
+   }
+   .yui3-widget-bd{
+        height:20px;
+   }
+   .dropdown-item.focus{
+        box-shadow: none;
+   }
+   
+   .dropdown-menu{
+        min-width: 80px;
+        text-align: center;
+   }

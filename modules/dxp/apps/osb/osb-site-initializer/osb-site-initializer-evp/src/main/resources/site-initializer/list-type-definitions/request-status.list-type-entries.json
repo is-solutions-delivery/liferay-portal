@@ -16,10 +16,10 @@
 		"type": "string"
 	},
 	{
-		"key": "pendingFinanceApproval",
-		"name": "Pending Finance Approval",
+		"key": "awaitingFinanceApproval",
+		"name": "awaitingFinanceApproval",
 		"name_i18n": {
-			"en-US": "Pending Finance Approval"
+			"en-US": "Awaiting Finance Approval"
 		},
 		"type": "string"
 	},
@@ -32,10 +32,10 @@
 		"type": "string"
 	},
 	{
-		"key": "pendingEVPApproval",
-		"name": "Pending EVP Approval",
+		"key": "awaitingApprovalOnEvp",
+		"name": "Awaiting Approval On Evp",
 		"name_i18n": {
-			"en-US": "Pending EVP Approval"
+			"en-US": "Awaiting Approval On Evp"
 		},
 		"type": "string"
 	},

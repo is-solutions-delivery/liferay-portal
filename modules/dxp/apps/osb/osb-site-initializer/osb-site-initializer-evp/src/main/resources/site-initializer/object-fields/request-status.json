@@ -3,7 +3,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
-			"defaultValue": "pendingEVPApproval",
+			"defaultValue": "awaitingFinanceApproval",
 			"externalReferenceCode": "EVP-REQUEST-STATUS-DEFAULT",
 			"indexed": true,
 			"indexedAsKeyword": false,
@@ -25,13 +25,13 @@
 										"key": "closed"
 									},
 									{
-										"key": "pendingFinanceApproval"
+										"key": "awaitingFinanceApproval"
 									},
 									{
 										"key": "needMoreInfo"
 									},
 									{
-										"key": "pendingEVPApproval"
+										"key": "awaitingApprovalOnEvp"
 									},
 									{
 										"key": "pendingCompanyApproval"
@@ -45,13 +45,13 @@
 										"key": "rejected"
 									},
 									{
-										"key": "pendingFinanceApproval"
+										"key": "awaitingFinanceApproval"
 									},
 									{
 										"key": "needMoreInfo"
 									},
 									{
-										"key": "pendingEVPApproval"
+										"key": "awaitingApprovalOnEvp"
 									},
 									{
 										"key": "pendingCompanyApproval"
@@ -59,7 +59,7 @@
 								]
 							},
 							{
-								"key": "pendingFinanceApproval",
+								"key": "awaitingFinanceApproval",
 								"objectStateTransitions": [
 									{
 										"key": "rejected"
@@ -71,7 +71,7 @@
 										"key": "needMoreInfo"
 									},
 									{
-										"key": "pendingEVPApproval"
+										"key": "awaitingApprovalOnEvp"
 									},
 									{
 										"key": "pendingCompanyApproval"
@@ -88,10 +88,10 @@
 										"key": "closed"
 									},
 									{
-										"key": "pendingFinanceApproval"
+										"key": "awaitingFinanceApproval"
 									},
 									{
-										"key": "pendingEVPApproval"
+										"key": "awaitingApprovalOnEvp"
 									},
 									{
 										"key": "pendingCompanyApproval"
@@ -99,7 +99,7 @@
 								]
 							},
 							{
-								"key": "pendingEVPApproval",
+								"key": "awaitingApprovalOnEvp",
 								"objectStateTransitions": [
 									{
 										"key": "rejected"
@@ -108,7 +108,7 @@
 										"key": "closed"
 									},
 									{
-										"key": "pendingFinanceApproval"
+										"key": "awaitingFinanceApproval"
 									},
 									{
 										"key": "needMoreInfo"
@@ -128,13 +128,13 @@
 										"key": "closed"
 									},
 									{
-										"key": "pendingFinanceApproval"
+										"key": "awaitingFinanceApproval"
 									},
 									{
 										"key": "needMoreInfo"
 									},
 									{
-										"key": "pendingEVPApproval"
+										"key": "awaitingApprovalOnEvp"
 									}
 								]
 							}
