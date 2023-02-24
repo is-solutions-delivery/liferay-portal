@@ -32,7 +32,7 @@ export default withRouter(
 					userId={String(creator.id)}
 				/>
 
-				<div className="align align-items-start c-ml-3 d-flex flex-column">
+				<div className="align align-items-start c-ml-20 d-flex flex-column">
 					<p className="c-mb-0 small">
 						{Liferay.Language.get('answered-by')}
 					</p>

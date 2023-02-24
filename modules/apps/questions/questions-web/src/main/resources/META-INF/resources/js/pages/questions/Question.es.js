@@ -395,7 +395,7 @@ export default withRouter(
 								/>
 							</div>
 
-							<div className="col-md-10">
+							<div className="col-md-12">
 								<div className="align-items-top flex-column-reverse flex-md-row row">
 									<div className="c-mt-4 c-mt-md-0 col-md-7">
 										{!!question.messageBoardSection &&
