@@ -150,7 +150,7 @@ export default function NewTopicModal({
 							<ClayButton.Group spaced>
 								<ClayButton
 									displayType="secondary"
-									onClick={close}
+									
 								>
 									{Liferay.Language.get('cancel')}
 								</ClayButton>
