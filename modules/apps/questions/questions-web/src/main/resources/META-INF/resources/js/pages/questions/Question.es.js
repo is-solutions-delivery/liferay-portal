@@ -545,11 +545,7 @@ export default withRouter(
 
 												{question.actions.replace && (
 													<Link to={`${url}/edit`}>
-														<ClayButton displayType="secondary">
-															{Liferay.Language.get(
-																'edit'
-															)}
-														</ClayButton>
+														<button/>
 													</Link>
 												)}
 
