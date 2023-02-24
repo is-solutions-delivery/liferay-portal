@@ -141,10 +141,9 @@ const Build = () => {
 										<Avatar
 											className="text-capitalize"
 											displayName
-											name={`${caseResult.user.emailAddress
-												.split('@')[0]
-												.replace('.', ' ')}`}
+											name={caseResult.user.name}
 											size="sm"
+											url={caseResult.user.image}
 										/>
 									);
 								}
@@ -170,7 +169,9 @@ const Build = () => {
 									/>
 								);
 							},
+							truncate: false,
 							value: i18n.translate('assignee'),
+							width: '200',
 						},
 						{
 							key: 'dueStatus',
