@@ -115,6 +115,24 @@
 										"pageElements": [
 											{
 												"definition": {
+													"cssClasses": [
+														"request-id"
+													],
+													"fragment": {
+														"key": "INPUTS-select-from-list"
+													},
+													"fragmentConfig": {
+														"inputFieldId": "ObjectField_r_requestId_c_evpRequestId",
+														"inputRequired": false
+													},
+													"fragmentFields": [
+													],
+													"indexed": true
+												},
+												"type": "Fragment"
+											},
+											{
+												"definition": {
 													"fragment": {
 														"key": "INPUTS-date-input"
 													},

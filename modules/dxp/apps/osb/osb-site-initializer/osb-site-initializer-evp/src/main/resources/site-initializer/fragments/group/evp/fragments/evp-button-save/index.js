@@ -16,6 +16,18 @@ const urlParams = queryString.split('=');
 const requestId = urlParams[1];
 const liferayUrl = window.location.origin;
 
+const requestIdInput = document.querySelector('.request-id div input');
+
+requestIdInput.disabled = true;
+
+requestIdInput.style.borderRadius = '8px';
+
+requestIdInput.value = requestId;
+
+document.getElementsByName('r_requestId_c_evpRequestId')[0].value = requestId;
+
+document.querySelector('.btn-secondary').remove();
+
 const statusResponse = async () => {
 	const payload = {
 		requestStatus: {
