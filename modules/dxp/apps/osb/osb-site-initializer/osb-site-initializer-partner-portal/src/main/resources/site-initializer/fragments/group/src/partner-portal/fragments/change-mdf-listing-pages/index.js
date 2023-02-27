@@ -19,17 +19,17 @@ const buttonMDFRequest = fragmentElement.querySelector('#mdf-request');
 const buttonMDFClaim = fragmentElement.querySelector('#mdf-claim');
 
 const queryParams = new URLSearchParams(window.location.search);
-const newSuccess = queryParams.get('new-success');
-const editSuccess = queryParams.get('edit-success');
+const hasNewSuccess = Boolean(queryParams.get('new-success'));
+const hasEditSuccess = Boolean(queryParams.get('edit-success'));
 
-if (newSuccess) {
+if (hasNewSuccess) {
 	Liferay.Util.openToast({
 		message: 'Your MDF Request was successfully submited.',
 		type: 'success',
 	});
 }
 
-if (editSuccess) {
+if (hasEditSuccess) {
 	Liferay.Util.openToast({
 		message: 'Your MDF Request was successfully edited.',
 		type: 'success',
