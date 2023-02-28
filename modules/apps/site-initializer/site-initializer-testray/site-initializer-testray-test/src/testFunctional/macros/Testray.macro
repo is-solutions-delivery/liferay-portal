@@ -18,6 +18,14 @@ definition {
 
 		Button.clickSave();
 	}
+	
+	macro addTR2Site {
+		Site.openSitesAdmin();
+
+		Site.addSiteTemplateCP(
+			siteName = ${siteName},
+			siteTemplateName = "Liferay Site Initializer Testray");
+	}
 
 	macro addTestraySite {
 		Site.openSitesAdmin();
