@@ -71,3 +71,9 @@ definition {
             factorCategoryId = ${factorCategoryId},
             factorOptionsId = ${factorOptionsId});
     }
+
+    macro addFactorCategory {
+        Variables.assertDefined(parameterList = "${categoryName}");
+
+        var factorCategoryId = JSONTestrayAPI.createFactorCategoriesAPI(categoryName = ${categoryName});
+    }
