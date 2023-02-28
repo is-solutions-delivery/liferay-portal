@@ -101,3 +101,12 @@ definition {
             productVersion = ${productVersion},
             projectId = ${projectId});
     }
+    
+    macro addProject {
+        Variables.assertDefined(parameterList = "${projectName},${projectDescription}");
+
+        var projectId = JSONTestrayAPI.createProjectAPI(
+            projectName = ${projectName}, 
+            projectDescription = ${projectDescription});
+    }
+
