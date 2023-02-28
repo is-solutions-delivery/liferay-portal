@@ -990,6 +990,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, String> taxonomyCategoryIdsStringUtilReplaceValues)
 		throws Exception {
 
+		Map<String, String> layoutEntrymap = new HashMap<>();
+
 		Enumeration<URL> enumeration = _bundle.findEntries(
 			"/site-initializer/layout-page-templates", StringPool.STAR, true);
 
@@ -1040,9 +1042,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 						FileUtil.getPath(urlPath) + "/css.css",
 						_servletContext),
 					documentsStringUtilReplaceValues);
-				JSONObject jsonObject = _jsonFactory.createJSONObject(json);
-				if (Validator.isNotNull(css)) {
 
+				JSONObject jsonObject = _jsonFactory.createJSONObject(json);
+
+				if(jsonObject.has("permissions")){
+					layoutEntrymap.put(jsonObject.getString("name"),
+						json);
+				}
+
+				if (Validator.isNotNull(css)) {
 
 					JSONObject settingsJSONObject = jsonObject.getJSONObject(
 						"settings");
@@ -1059,11 +1067,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 						urlPath, "/site-initializer/layout-page-templates"),
 					json);
 
-				_setResourcePermissions(serviceContext.getCompanyId(),
-					jsonObject.getString("resourceName"),
-					jsonObject.getJSONArray("actionIds"),
-					String.valueOf(serviceContext.getScopeGroupId())
-					);
 			}
 			else {
 				zipWriter.addEntry(
@@ -1076,6 +1079,27 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_layoutsImporter.importFile(
 			serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 			zipWriter.getFile(), true);
+
+		for (Map.Entry<String, String> layoutPageTemplateMap :
+			layoutEntrymap.entrySet()){
+
+			LayoutPageTemplateEntry layoutPageTemplateEntry =
+				_layoutPageTemplateEntryLocalService.getLayoutPageTemplateEntry(
+					serviceContext.getScopeGroupId(),
+					layoutPageTemplateMap.getKey()
+					);
+
+			String json = layoutPageTemplateMap.getValue();
+
+			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
+
+			_setResourcePermissions(
+				serviceContext.getCompanyId(),
+				jsonObject.getString("resourceName"),
+				jsonObject.getJSONArray("permissions"),
+				layoutPageTemplateEntry.getLayoutPageTemplateEntryKey()
+			);
+		}
 	}
 
 	private void _addLayoutsContent(

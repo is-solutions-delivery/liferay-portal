@@ -4,11 +4,15 @@
 	},
 	"defaultTemplate": true,
 	"name": "MDF Claim Detail",
-
-	"actionIds": [
-	"DELETE"
-	],
 	"resourceName": "com.liferay.layout.page.template.model.LayoutPageTemplateEntry",
-	"roleName": "Guest",
-	"scope": "4"
+	"permissions": [
+		{
+			"actionIds": [
+				"DELETE"
+			],
+			"resourceName": "com.liferay.layout.page.template.model.LayoutPageTemplateEntry",
+			"roleName": "Guest",
+			"scope": "4"
+		}
+	]
 }
