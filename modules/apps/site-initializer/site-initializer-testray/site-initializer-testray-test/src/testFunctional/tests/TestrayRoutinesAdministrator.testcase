@@ -9,6 +9,8 @@ definition {
 	property testray.main.component.name = "Site Initializer Testray";
 
 	var testSiteName = "Testray 2";
+	var projectName = "Project 1";
+	var routineName = "Routine 1";
 
 	setUp {
 		task ("Login and create a Testray Site") {
@@ -16,15 +18,15 @@ definition {
 
 			User.firstLoginPG();
 
-			Testray.addTR2Site(siteName = "${testSiteName}");
+			Testray.addTestraySite(siteName = ${testSiteName});
 		}
 
 		task ("Go to Testray, Create Project and change pagination") {
 			JSONTestray.addProject(
-				projectName = "Project 1",
-				projectDescription = "Project Description 1");
+				projectDescription = "Project Description 1",
+				projectName = ${projectName});
 
-			ApplicationsMenu.gotoSite(site = "Testray 2");
+			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(
 				numberItems = 20,
@@ -35,7 +37,7 @@ definition {
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-		JSONTestrayAPI.deleteProject(projectName = "Project 1");
+		JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
 		Testray.testrayApisTearDown();
 
@@ -52,28 +54,38 @@ definition {
 	test AdminCanAddAndDeleteRoutineWithDefaultEnvironmentFactors {
 		task ("Given that the user add a new Routine") {
 			JSONTestray.addRoutine(
-				routineName = "Routine 1",
-				projectName = "Project 1");
+				projectName = ${projectName},
+				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 		}
 
 		task ("And that the user add default environments factors") {
-			TestrayRoutines.goToRoutine(routineName = "Routine 1");
-			
+			TestrayRoutines.goToRoutine(routineName = ${routineName});
+
 			JSONTestray.addEnvironmentFactors(environmentFactorsName = "Environment Factors 1");
 
-			TR2Utils.clickBreadcrumb(text = "Project 1");
+			TR2Utils.clickBreadcrumb(text = ${projectName});
 		}
 
 		task ("Then the routine is deleted with predefined environment factors, they should not appear in the list") {
 			JSONTestrayAPI.deleteObjectViaAPI(
-            	object = "routines",
-            	objectName = "Routine 1");
+				object = "routines",
+				objectName = ${routineName});
 
 			Testray.projectTabNavigator(navTabName = "Routines");
 
-			Testray.assertItemNotPresent(itemName = "Routine 1");
+			Testray.assertItemNotPresent(itemName = ${routineName});
+		}
+
+		task ("Delete objects") {
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "factorcategories",
+				objectName = "Category 1");
+
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "factors",
+				objectName = "Environment Factors 1");
 		}
 	}
 
@@ -82,14 +94,14 @@ definition {
 	test AdminCanAddRoutine {
 		task ("Given that the user add a new Routine") {
 			JSONTestray.addRoutine(
-				routineName = "Routine 1",
-				projectName = "Project 1"); 
+				projectName = ${projectName},
+				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 		}
 
 		task ("Then the Routine should appear on the list") {
-			Testray.assertItemName(key_name = "Routine 1");
+			Testray.assertItemName(key_name = ${routineName});
 		}
 	}
 
@@ -98,22 +110,22 @@ definition {
 	test AdminCanDeleteRoutine {
 		task ("Given that the user add a new Routine") {
 			JSONTestray.addRoutine(
-				routineName = "Routine 1",
-				projectName = "Project 1"); 
+				projectName = ${projectName},
+				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 		}
 
 		task ("Then the routine should appear on the list") {
-			Testray.assertItemName(key_name = "Routine 1");
+			Testray.assertItemName(key_name = ${routineName});
 
 			TestrayLayout.clickResultsOnSidebar();
 		}
 
 		task ("And when a routine is deleted") {
 			JSONTestrayAPI.deleteObjectViaAPI(
-            	object = "routines",
-            	objectName = "Routine 1");
+				object = "routines",
+				objectName = ${routineName});
 		}
 
 		task ("Then the routine should not appear on the list") {
@@ -121,9 +133,9 @@ definition {
 				numberItems = 20,
 				valuePagination = 150);
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 
-			Testray.assertItemNotPresent(itemName = "Routine 1");
+			Testray.assertItemNotPresent(itemName = ${routineName});
 		}
 	}
 
@@ -132,17 +144,17 @@ definition {
 	test AdminCanDeleteRoutineWithBuilds {
 		task ("Given that the user add a new Routine and a new Case") {
 			JSONTestray.addTeam(
-				teamName = "Team 1",
-				projectName = "Project 1");
+				projectName = ${projectName},
+				teamName = "Team 1");
 
 			JSONTestray.addComponent(
 				componentName = "Component 1",
-				projectName = "Project 1",
+				projectName = ${projectName},
 				teamName = "Team 1");
 
 			JSONTestray.addRoutine(
-				routineName = "Routine 1",
-				projectName = "Project 1"); 
+				projectName = ${projectName},
+				routineName = ${routineName});
 
 			JSONTestray.addCaseType(caseType = "Case Type 1");
 
@@ -150,9 +162,9 @@ definition {
 				caseName = "Case 1",
 				caseType = "Case Type 1",
 				componentName = "Component 1",
-				projectName = "Project 1");
+				projectName = ${projectName});
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Routines");
 		}
@@ -162,15 +174,15 @@ definition {
 
 			JSONTestray.addProductVersion(
 				productVersion = "1.2",
-				projectName = "Project 1");
-			
+				projectName = ${projectName});
+
 			JSONTestray.addBuild(
 				buildName = "Build 1",
-				projectName = "Project 1",
-				routineName = "Routine 1",
-				productVersion = "1.2");
+				productVersion = "1.2",
+				projectName = ${projectName},
+				routineName = ${routineName});
 
-			TestrayRoutines.goToRoutine(routineName = "Routine 1");
+			TestrayRoutines.goToRoutine(routineName = ${routineName});
 
 			Testray.assertItemName(key_name = "Build 1");
 
@@ -179,8 +191,8 @@ definition {
 
 		task ("And when a routine is deleted") {
 			JSONTestrayAPI.deleteObjectViaAPI(
-            	object = "routines",
-            	objectName = "Routine 1");
+				object = "routines",
+				objectName = ${routineName});
 		}
 
 		task ("Then the routine should not appear on the list") {
@@ -188,9 +200,9 @@ definition {
 				numberItems = 20,
 				valuePagination = 150);
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 
-			Testray.assertItemNotPresent(itemName = "Routine 1");
+			Testray.assertItemNotPresent(itemName = ${routineName});
 		}
 	}
 
@@ -199,10 +211,10 @@ definition {
 	test AdminCanEditRoutine {
 		task ("Given that the user add a new Routine") {
 			JSONTestray.addRoutine(
-				routineName = "Routine 1",
-				projectName = "Project 1"); 
+				projectName = ${projectName},
+				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 		}
 
 		task ("When the user goes to edit the Routine and change the name") {
@@ -210,7 +222,7 @@ definition {
 
 			TestrayRoutines.editRoutine(
 				newNameRoutine = "Routine 1 Edited",
-				routineName = "Routine 1");
+				routineName = ${routineName});
 		}
 
 		task ("Then the Routine should be updated on the list") {
@@ -223,12 +235,12 @@ definition {
 	test AdminCanNotAddDuplicateRoutine {
 		task ("Given that the user add Routine with duplicated name") {
 			JSONTestray.addRoutine(
-				routineName = "Routine 1",
-				projectName = "Project 1"); 
+				projectName = ${projectName},
+				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 
-			TestrayRoutines.createRoutine(key_name = "Routine 1");
+			TestrayRoutines.createRoutine(key_name = ${routineName});
 		}
 
 		task ("Then the error message should appear") {
@@ -240,7 +252,7 @@ definition {
 	@priority = 3
 	test AdminCanViewRequiredField {
 		task ("Given that the user add a new Routine without name") {
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 
 			TestrayRoutines.createRoutine(key_name = "");
 		}
@@ -257,14 +269,14 @@ definition {
 	test CanGoToProjectDirectory {
 		task ("Given that the user add a new Project") {
 			JSONTestray.addProject(
-				projectName = "Project 2",
-				projectDescription = "Project Description 2");
+				projectDescription = "Project Description 2",
+				projectName = "Project 2");
 		}
 
 		task ("And the user goes to the new Project from the project directory") {
-			Testray.goToProjectPage(projectName = "Project 1");
+			Testray.goToProjectPage(projectName = ${projectName});
 
-			Testray.assertProjectTitleHeader(projectName = "Project 1");
+			Testray.assertProjectTitleHeader(projectName = ${projectName});
 
 			TestrayDropdown.selectProjectDirectory(project = "Project 2");
 		}

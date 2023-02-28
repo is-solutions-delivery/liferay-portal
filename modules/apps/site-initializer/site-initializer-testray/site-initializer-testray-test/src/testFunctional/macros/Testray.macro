@@ -18,14 +18,6 @@ definition {
 
 		Button.clickSave();
 	}
-	
-	macro addTR2Site {
-		Site.openSitesAdmin();
-
-		Site.addSiteTemplateCP(
-			siteName = ${siteName},
-			siteTemplateName = "Liferay Site Initializer Testray");
-	}
 
 	macro addTestraySite {
 		Site.openSitesAdmin();
@@ -38,17 +30,25 @@ definition {
 			key_title = "Add Site",
 			locator1 = "IFrame#MODAL_ANY");
 
-		PortletEntry.inputName(name = "Testray 2");
+		PortletEntry.inputName(name = ${siteName});
 
 		Button.click(button = "Add");
 
 		Site.openSitesAdmin();
 
-		while (IsElementNotPresent(key_siteName = "Testray 2", locator1 = "Sites#SITE_TABLE_NAME")) {
+		while (IsElementNotPresent(key_siteName = ${siteName}, locator1 = "Sites#SITE_TABLE_NAME")) {
 			Refresh();
 
 			WaitForPageLoad();
 		}
+	}
+
+	macro addTR2Site {
+		Site.openSitesAdmin();
+
+		Site.addSiteTemplateCP(
+			siteName = ${siteName},
+			siteTemplateName = "Liferay Site Initializer Testray");
 	}
 
 	macro assertItemName {

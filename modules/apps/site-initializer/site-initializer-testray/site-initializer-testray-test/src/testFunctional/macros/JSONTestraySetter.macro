@@ -1,82 +1,83 @@
 definition {
 
-    macro getBuildId {
-        var buildId = JSONTestrayAPI._getObjectId(
-            object = "builds",
-            objectName = ${buildName});
+	macro getBuildId {
+		var buildId = JSONTestrayAPI._getObjectId(
+			object = "builds",
+			objectName = ${buildName});
 
-        return ${buildId};
-    }
+		return ${buildId};
+	}
 
-    macro getCaseTypeId {
-        var caseTypeId = JSONTestrayAPI._getObjectId(
-            object = "casetypes",
-            objectName = ${caseType});
+	macro getCaseId {
+		var caseId = JSONTestrayAPI._getObjectId(
+			object = "cases",
+			objectName = ${caseName});
 
-        return ${caseTypeId};
-    }
+		return ${caseId};
+	}
 
-    macro getCaseId {
-        var caseId = JSONTestrayAPI._getObjectId(
-            object = "cases",
-            objectName = ${caseName});
+	macro getCaseTypeId {
+		var caseTypeId = JSONTestrayAPI._getObjectId(
+			object = "casetypes",
+			objectName = ${caseType});
 
-        return ${caseId};
-    }
+		return ${caseTypeId};
+	}
 
-    macro getComponentId {
-        var componentId = JSONTestrayAPI._getObjectId(
-            object = "components",
-            objectName = ${componentName});
+	macro getComponentId {
+		var componentId = JSONTestrayAPI._getObjectId(
+			object = "components",
+			objectName = ${componentName});
 
-        return ${componentId};
-    }
+		return ${componentId};
+	}
 
-    macro getFactorCategoryId {
-        var factorCategoryId = JSONTestrayAPI._getObjectId(
-            object = "factorcategories",
+	macro getFactorCategoryId {
+		var factorCategoryId = JSONTestrayAPI._getObjectId(
+			object = "factorcategories",
 			objectName = ${categoryName});
 
-        return ${factorCategoryId};
-    }
+		return ${factorCategoryId};
+	}
 
-    macro getFactorOptionsId {
-        var factorOptionsId = JSONTestrayAPI._getObjectId(
-            object = "factoroptions",
+	macro getFactorOptionsId {
+		var factorOptionsId = JSONTestrayAPI._getObjectId(
+			object = "factoroptions",
 			objectName = ${optionsName});
 
-        return ${factorOptionsId};
-    }
+		return ${factorOptionsId};
+	}
 
-    macro getProjectId {
-        Variables.assertDefined(parameterList = "${projectName}");
+	macro getProductVersionId {
+		var productVersionId = JSONTestrayAPI._getObjectId(
+			object = "productversions",
+			objectName = ${productVersion});
 
-        var projectId = JSONTestrayAPI._getProjectId(projectName = ${projectName});
+		return ${productVersionId};
+	}
 
-        return ${projectId};
-    }
+	macro getProjectId {
+		Variables.assertDefined(parameterList = ${projectName});
 
-    macro getProductVersionId {
-        var productVersionId = JSONTestrayAPI._getObjectId(
-            object = "productversions",
-            objectName = ${productVersion});
+		var projectId = JSONTestrayAPI._getProjectId(projectName = ${projectName});
 
-        return ${productVersionId};
-    }
+		return ${projectId};
+	}
 
-    macro getRoutineId {
-        var routineId = JSONTestrayAPI._getObjectId(
-            object = "routines",
-            objectName = ${routineName});
+	macro getRoutineId {
+		var routineId = JSONTestrayAPI._getObjectId(
+			object = "routines",
+			objectName = ${routineName});
 
-        return ${routineId};
-    }
+		return ${routineId};
+	}
 
-    macro getTeamId {
-        var teamId = JSONTestrayAPI._getObjectId(
-            object = "teams",
-            objectName = ${teamName});
+	macro getTeamId {
+		var teamId = JSONTestrayAPI._getObjectId(
+			object = "teams",
+			objectName = ${teamName});
 
-        return ${teamId};
-    }
+		return ${teamId};
+	}
+
 }
