@@ -77,3 +77,15 @@ definition {
 
         var factorCategoryId = JSONTestrayAPI.createFactorCategoriesAPI(categoryName = ${categoryName});
     }
+
+    macro addFactorOptions {
+        Variables.assertDefined(parameterList = "${optionsName},${category},${categoryName},${factorCategoryId}");
+
+        var factorCategoryId = JSONTestraySetter.getFactorCategoryId(
+            object = ${category},
+            objectName = ${categoryName});
+        var factorOptionsId = JSONTestrayAPI.createFactorOptionsAPI(
+            optionsName = ${optionsName},
+            factorCategoryId = ${factorCategoryId});
+    }
+
