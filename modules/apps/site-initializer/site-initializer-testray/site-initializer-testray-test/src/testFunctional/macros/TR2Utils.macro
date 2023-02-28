@@ -1,6 +1,6 @@
 definition {
 
-    macro clickBreadcrumb {
+	macro clickBreadcrumb {
 		var key_text = ${text};
 
 		Click(locator1 = "Testray#SELECT_BREADCRUMB");

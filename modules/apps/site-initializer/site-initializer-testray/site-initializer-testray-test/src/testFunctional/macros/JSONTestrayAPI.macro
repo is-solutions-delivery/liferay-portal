@@ -1,5 +1,37 @@
 definition {
 
+	@summary = "This calls the JSON WS API to get object id"
+	macro _getObjectId {
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/${object} \
+				-u test@liferay.com:test
+		''';
+
+		var objectId = JSONCurlUtil.get(${curl}, "$.items[?(@.name=='${objectName}')].id");
+
+		echo(${objectId});
+
+		return ${objectId};
+	}
+
+	macro _getProjectId {
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/projects/?pageSize=150 \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+		''';
+
+		var projectId = JSONCurlUtil.get(${curl}, "$.items[?(@.name=='${projectName}')].id");
+
+		echo(${projectId});
+
+		return ${projectId};
+	}
+
 	@summary = "create a build via API"
 	macro createBuildAPI {
 		Variables.assertDefined(parameterList = "${buildName},${projectId},${routineId},${productVersionId}");
@@ -515,42 +547,10 @@ definition {
 		return ${response};
 	}
 
-	@summary = "This calls the JSON WS API to get object id"
-	macro _getObjectId {
-		var portalURL = JSONCompany.getPortalURL();
-
-		var curl = '''
-			${portalURL}/o/c/${object} \
-				-u test@liferay.com:test
-		''';
-
-		var objectId = JSONCurlUtil.get("${curl}", "$.items[?(@.name=='${objectName}')].id");
-
-		echo(${objectId});
-
-		return "${objectId}";
-	}
-
-	macro _getProjectId {
-		var portalURL = JSONCompany.getPortalURL();
-
-		var curl = '''
-			${portalURL}/o/c/projects/?pageSize=150 \
-				-u test@liferay.com:test \
-				-H 'accept: application/json' \
-		''';
-
-		var projectId = JSONCurlUtil.get(${curl}, "$.items[?(@.name=='${projectName}')].id");
-
-		echo(${projectId});
-
-		return ${projectId};
-	}
-
 	@summary = "This calls the JSON WS API to delete an object"
 	macro deleteObjectViaAPI {
 		var portalURL = JSONCompany.getPortalURL();
-		var objectId = JSONTestrayAPI.getObjectId(
+		var objectId = JSONTestrayAPI._getObjectId(
 			object = ${object},
 			objectName = ${objectName});
 
@@ -576,20 +576,6 @@ definition {
 		''';
 
 		JSONCurlUtil.delete(${curl});
-	}
-
-	@summary = "This calls the JSON WS API to get object id"
-	macro getObjectId {
-		var portalURL = JSONCompany.getPortalURL();
-
-		var curl = '''
-			${portalURL}/o/c/${object} \
-				-u test@liferay.com:test
-		''';
-
-		var objectId = JSONCurlUtil.get(${curl}, "$.items[?(@.name=='${objectName}')].id");
-
-		return ${objectId};
 	}
 
 	macro getProject {
