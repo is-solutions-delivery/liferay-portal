@@ -1,33 +1,9 @@
 [
 	{
-		"key": "rejected",
-		"name": "Rejected",
+		"key": "awaitCompanyVerification",
+		"name": "awaitCompanyVerification",
 		"name_i18n": {
-			"en-US": "Rejected"
-		},
-		"type": "string"
-	},
-	{
-		"key": "closed",
-		"name": "Closed",
-		"name_i18n": {
-			"en-US": "Closed"
-		},
-		"type": "string"
-	},
-	{
-		"key": "awaitingFinanceApproval",
-		"name": "awaitingFinanceApproval",
-		"name_i18n": {
-			"en-US": "Awaiting Finance Approval"
-		},
-		"type": "string"
-	},
-	{
-		"key": "needMoreInfo",
-		"name": "Need More Info",
-		"name_i18n": {
-			"en-US": "Need More Info"
+			"en-US": "Await Company Verification"
 		},
 		"type": "string"
 	},
@@ -40,10 +16,34 @@
 		"type": "string"
 	},
 	{
-		"key": "pendingCompanyApproval",
-		"name": "Pending Company Approval",
+		"key": "rejected",
+		"name": "Rejected",
 		"name_i18n": {
-			"en-US": "Pending Company Approval"
+			"en-US": "Rejected"
+		},
+		"type": "string"
+	},
+	{
+		"key": "awaitingFinanceReview",
+		"name": "awaitingFinanceReview",
+		"name_i18n": {
+			"en-US": "Awaiting Finance Review"
+		},
+		"type": "string"
+	},
+	{
+		"key": "awaitingPaymentConfirmation",
+		"name": "awaitingPaymentConfirmation",
+		"name_i18n": {
+			"en-US": "Awaiting Payment Confirmation"
+		},
+		"type": "string"
+	},
+	{
+		"key": "closed",
+		"name": "Closed",
+		"name_i18n": {
+			"en-US": "Closed"
 		},
 		"type": "string"
 	}

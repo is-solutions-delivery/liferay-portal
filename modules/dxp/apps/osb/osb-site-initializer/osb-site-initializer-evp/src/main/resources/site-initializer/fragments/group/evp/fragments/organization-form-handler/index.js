@@ -11,4 +11,4 @@
 
 const requestStatus = document.querySelector('[name="organizationStatus"]');
 
-requestStatus.value = 'awaitingEVPApproval';
+requestStatus.value = 'awaitingApprovalOnEVP';

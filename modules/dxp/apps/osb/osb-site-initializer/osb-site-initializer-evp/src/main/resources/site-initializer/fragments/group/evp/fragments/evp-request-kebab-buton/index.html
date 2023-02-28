@@ -21,7 +21,7 @@
 	[#list userRoles as role]
 		[#if approvedRoles?seqContains(role.name)]
 
-			[#if requestStatus != "closed"]
+		[#if requestStatus == "awaitingPaymentConfirmation"]
 				[@liferay_ui["icon"]
 					message="Pay"
 					url=URL + "/payment-confirmation?id=" + requestId

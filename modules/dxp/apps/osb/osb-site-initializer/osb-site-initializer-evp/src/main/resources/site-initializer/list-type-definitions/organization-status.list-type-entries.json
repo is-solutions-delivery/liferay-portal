@@ -24,10 +24,10 @@
 		"type": "string"
 	},
 	{
-		"key": "awaitingEVPApproval",
-		"name": "Awaiting EVP Approval",
+		"key": "awaitingApprovalOnEVP",
+		"name": "Awaiting Approval on EVP",
 		"name_i18n": {
-			"en-US": "Awaiting EVP Approval"
+			"en-US": "Awaiting Approval on EVP"
 		},
 		"type": "string"
 	}
