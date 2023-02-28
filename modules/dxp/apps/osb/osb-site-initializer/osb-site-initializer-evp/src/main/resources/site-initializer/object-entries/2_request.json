@@ -41,11 +41,11 @@
 			"liferayBranch": "liferayLatam",
 			"managerEmailAddress": "manager@liferay.com",
 			"phoneNumber": "888888888",
-			"r_organization_c_evpOrganizationId": "[$EVPOrganization#EVPORG-02$]",
+			"r_organization_c_evpOrganizationId": "[$EVPOrganization#EVPORG-03$]",
 			"requestBehalf": "globalLocalPoor",
 			"requestDescription": "Grant Request Description",
 			"requestPurposes": "basicHealth",
-			"requestStatus": "closed",
+			"requestStatus": "pendingEVPApproval",
 			"requestType": "grant",
 			"totalHoursRequested": 0
 		}
