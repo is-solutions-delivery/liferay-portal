@@ -14,3 +14,16 @@ definition {
             productVersionId = ${productVersionId});
     }
 
+    macro addCases {
+        Variables.assertDefined(parameterList = "${caseName},${caseType},${componentName},${projectName}");
+
+        var caseType = JSONTestraySetter.getCaseTypeId(caseType = ${caseType});
+        var componentName = JSONTestraySetter.getComponentId(componentName = ${componentName});
+        var projectId = JSONTestraySetter.getProjectId(projectName = ${projectName});
+        var caseId = JSONTestraySetter.getCaseId(
+            caseName = ${caseName},
+            caseTypeId = ${caseTypeId},
+            componentId = ${componentId},
+            projectId = ${projectId});
+    }
+
