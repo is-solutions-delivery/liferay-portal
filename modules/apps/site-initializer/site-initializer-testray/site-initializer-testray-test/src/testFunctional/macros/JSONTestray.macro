@@ -27,3 +27,7 @@ definition {
             projectId = ${projectId});
     }
 
+    macro addCaseType {
+        var caseTypeId = JSONTestraySetter.getCaseTypeId(caseType = ${caseType});
+    }
+
