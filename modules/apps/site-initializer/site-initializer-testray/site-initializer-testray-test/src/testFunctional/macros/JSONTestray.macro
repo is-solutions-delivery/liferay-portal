@@ -46,3 +46,28 @@ definition {
             teamId = ${teamId});
     }
 
+    macro addEnvironmentFactors {
+        if (!(isSet(categoryName))) {
+			var categoryName = "Category 1";
+		}
+
+        if (!(isSet(optionsName))) {
+			var optionsName = "Option 1";
+		}
+
+        JSONTestray.addFactorCategory(categoryName = ${categoryName});
+
+        var factorCategoryId = JSONTestraySetter.getFactorCategoryId(categoryName = ${categoryName});
+
+        JSONTestray.addFactorOptions(
+			optionsName = ${optionsName},
+            category = "factoroptions",
+            categoryName = ${categoryName},
+			factorCategoryId = ${factorCategoryId});
+
+        var factorOptionsId = JSONTestraySetter.getFactorOptionsId(optionsName = ${optionsName});
+        var environmentFactorsId = JSONTestrayAPI.createEnvironmentFactorsAPI(
+            environmentFactorsName = ${environmentFactorsName},
+            factorCategoryId = ${factorCategoryId},
+            factorOptionsId = ${factorOptionsId});
+    }
