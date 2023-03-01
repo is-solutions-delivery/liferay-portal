@@ -45,7 +45,7 @@
 			"requestBehalf": "globalLocalPoor",
 			"requestDescription": "Grant Request Description",
 			"requestPurposes": "basicHealth",
-			"requestStatus": "closed",
+			"requestStatus": "awaitingPaymentConfirmation",
 			"requestType": "grant",
 			"totalHoursRequested": 0
 		}
