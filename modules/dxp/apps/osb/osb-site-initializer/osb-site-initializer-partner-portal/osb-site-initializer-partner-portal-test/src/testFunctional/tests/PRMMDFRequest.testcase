@@ -66,6 +66,7 @@ definition {
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
@@ -506,11 +507,10 @@ definition {
 		}
 
 		task ("And When I add a new expense") {
-			PRMMDFRequest.fillRequestAmountField(
-				budgetList = "Direct Mail-100000,Room Rental-3000");
+			PRMMDFRequest.fillRequestAmountField(budgetList = "Direct Mail-100000,Room Rental-3000");
 		}
 
-		task ("Then the requested amount is equal to 50% of the MDF value"){
+		task ("Then the requested amount is equal to 50% of the MDF value") {
 			PRMMDFRequest.verifyRequestedAmount(discountedValue = "51,500.00");
 		}
 	}

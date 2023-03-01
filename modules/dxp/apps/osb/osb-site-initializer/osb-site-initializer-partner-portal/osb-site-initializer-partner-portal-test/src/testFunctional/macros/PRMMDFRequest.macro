@@ -177,19 +177,6 @@ definition {
 
 			var budgetIndex = ${budgetIndex} + 1;
 		}
-
-	}
-
-	@summary = "verify if the requested amount is equal to the mdf values"
-	macro verifyRequestedAmount {
-		if (!(isSet(activityIndex))) {
-			var activityIndex = 0;
-		}
-
-		AssertTextEquals(
-			key_fieldName = "activities[${activityIndex}].mdfRequestAmount",
-			locator1 = "PRMMDFRequest#TEXT_FIELD",
-			value1 = ${discountedValue});
 	}
 
 	@summary = "Format the date that will be inputed on start and end date"
@@ -331,6 +318,18 @@ definition {
 
 			var budgetIndex = ${budgetIndex} + 1;
 		}
+	}
+
+	@summary = "verify if the requested amount is equal to the mdf values"
+	macro verifyRequestedAmount {
+		if (!(isSet(activityIndex))) {
+			var activityIndex = 0;
+		}
+
+		AssertTextEquals(
+			key_fieldName = "activities[${activityIndex}].mdfRequestAmount",
+			locator1 = "PRMMDFRequest#TEXT_FIELD",
+			value1 = ${discountedValue});
 	}
 
 	@summary = "Assert button is not clickable"
