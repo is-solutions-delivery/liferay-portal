@@ -578,6 +578,22 @@ definition {
 		JSONCurlUtil.delete(${curl});
 	}
 
+	macro deleteOptions {
+		var portalURL = JSONCompany.getPortalURL();
+		var factorOptionsId = StringUtil.replace(${projectId}, " ", "%20");
+		var factorOptionsId = JSONTestrayAPI._getOptionsId(optionsName = ${optionsName});
+
+		echo(${projectId});
+
+		var curl = '''
+			${portalURL}/o/c/factoroptions/${factorOptionsId} \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+		''';
+
+		JSONCurlUtil.delete(${curl});
+	}
+
 	macro deleteProject {
 		var portalURL = JSONCompany.getPortalURL();
 		var projectId = StringUtil.replace(${projectId}, " ", "%20");

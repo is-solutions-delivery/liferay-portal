@@ -308,11 +308,11 @@ definition {
 	}
 
 	macro testrayApisTearDown {
-		ObjectAdmin.deleteAllCustomObjectsViaAPI();
-
-		Navigator.openWithAppendToBaseURL(urlAppend = "group/control_panel/manage?p_p_id=com_liferay_client_extension_web_internal_portlet_ClientExtensionAdminPortlet");
+		ClientExtensionGeneral.goToRemoteAppsPortlet();
 
 		ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
+
+		ObjectAdmin.deleteAllCustomObjectsViaAPI();
 	}
 
 	macro typeProjectsField {
