@@ -20,7 +20,7 @@ definition {
 				userEmailAddress = "partner@liferay.com",
 				userFirstName = "partner",
 				userLastName = "partner",
-				userScreenName = "partner");
+				userScreenName = "partner partner");
 
 			JSONUser.setFirstPassword(
 				agreeToTermsAndAnswerReminderQuery = "true",
@@ -34,12 +34,7 @@ definition {
 				userEmailAddress = "manager@liferay.com",
 				userFirstName = "manager",
 				userLastName = "manager",
-				userScreenName = "manager manager");
-
-			JSONUser.setFirstPassword(
-				agreeToTermsAndAnswerReminderQuery = "true",
-				requireReset = "false",
-				userEmailAddress = "manager@liferay.com");
+				userScreenName = "manager");
 		}
 
 		task ("Add a new account and assign the created user to the account") {
@@ -71,7 +66,6 @@ definition {
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
-
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
@@ -485,6 +479,39 @@ definition {
 
 		task ("Then a feedback message will appear") {
 			PRMMDFRequest.viewErrorMessage(errorMessage = "End date must be less than six month after start date");
+		}
+	}
+
+	@description = "Verify that the value of Total MDF Requested Amount* will be according to the Total cost and Claim percent"
+	@priority = 5
+	test RequestedValueIsEqualsTo50PercentOfTotalCost {
+		task ("Given a new MDF request") {
+			PRMMarketing.gotoAddNewMDF();
+
+			PRMMDFRequest.fillGoalsPage(
+				accountName = "Company Name 1",
+				additionalOptions = "6.x to DXP Migration/Upgrade,Migration from competitor platform",
+				campaignDescription = "Campaign Description",
+				campaignName = "Campaing Name",
+				countryName = "Mexico",
+				goalsOptions = "Lead generation",
+				targetMarketOptions = "Education,Energy",
+				targetRolesOptions = "Administrator");
+
+			Button.click(button = "Continue");
+		}
+
+		task ("When I create a new activity") {
+			PRMMDFRequest.addNewActivity();
+		}
+
+		task ("And When I add a new expense") {
+			PRMMDFRequest.fillRequestAmountField(
+				budgetList = "Direct Mail-100000,Room Rental-3000");
+		}
+
+		task ("Then the requested amount is equal to 50% of the MDF value"){
+			PRMMDFRequest.verifyRequestedAmount(discountedValue = "51,500.00");
 		}
 	}
 
