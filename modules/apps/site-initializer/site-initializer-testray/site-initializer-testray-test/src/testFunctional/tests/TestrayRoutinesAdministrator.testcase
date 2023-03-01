@@ -39,13 +39,14 @@ definition {
 
 		JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
+		JSONTestrayAPI.deleteOptions(optionsName = "Option 1");
+
 		Testray.testrayApisTearDown();
+
+		Testray.tearDownCP();
 
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = ${testSiteName});
 		}
 	}
 
@@ -204,6 +205,16 @@ definition {
 
 			Testray.assertItemNotPresent(itemName = ${routineName});
 		}
+
+		task ("Delete objects") {
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "factorcategories",
+				objectName = "Category 1");
+
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "factors",
+				objectName = "Environment Factors 1");
+		}
 	}
 
 	@description = "This is a test for LPS-160580 - Verify if as an Administrator I am able to edit a Routine"
@@ -283,6 +294,10 @@ definition {
 
 		task ("Then the user goes to another project") {
 			Testray.assertProjectTitleHeader(projectName = "Project 2");
+		}
+
+		task ("Delete project") {
+			JSONTestrayAPI.deleteProject(projectName = "Project 2");
 		}
 	}
 
