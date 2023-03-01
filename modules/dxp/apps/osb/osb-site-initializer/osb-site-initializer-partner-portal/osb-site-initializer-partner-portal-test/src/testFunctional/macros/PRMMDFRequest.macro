@@ -147,6 +147,51 @@ definition {
 		}
 	}
 
+	@summary = "Fill budget field"
+	macro fillRequestAmountField {
+		if (!(isSet(activityIndex))) {
+			var activityIndex = 0;
+		}
+
+		if (!(isSet(budgetIndex))) {
+			var budgetIndex = 0;
+		}
+
+		for (var bugdetValues : list ${budgetList}) {
+			var expenseOption = StringUtil.extractFirst(${bugdetValues}, "-");
+			var bugdetValue = StringUtil.extractLast(${bugdetValues}, "-");
+
+			Click(
+				key_buttonText = "Add Expense",
+				locator1 = "PRMMDFRequest#ADD_BUTTON");
+
+			Select(
+				key_fieldName = "activities[${activityIndex}].budgets[${budgetIndex}].expense",
+				locator1 = "PRMMDFRequest#SELECT",
+				value1 = ${expenseOption});
+
+			Type(
+				key_fieldName = "activities[${activityIndex}].budgets[${budgetIndex}].cost",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = ${bugdetValue});
+
+			var budgetIndex = ${budgetIndex} + 1;
+		}
+
+	}
+
+	@summary = "verify if the requested amount is equal to the mdf values"
+	macro verifyRequestedAmount {
+		if (!(isSet(activityIndex))) {
+			var activityIndex = 0;
+		}
+
+		AssertTextEquals(
+			key_fieldName = "activities[${activityIndex}].mdfRequestAmount",
+			locator1 = "PRMMDFRequest#TEXT_FIELD",
+			value1 = ${discountedValue});
+	}
+
 	@summary = "Format the date that will be inputed on start and end date"
 	macro formatDate {
 		var nextDayDate = DateUtil.getFormattedDate("+1", "MMddyyyy");
