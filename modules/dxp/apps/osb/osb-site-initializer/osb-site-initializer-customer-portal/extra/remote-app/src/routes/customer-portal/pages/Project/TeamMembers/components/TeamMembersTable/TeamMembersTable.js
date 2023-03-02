@@ -12,6 +12,7 @@
 import {useModal} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
 import {useCallback, useEffect, useState} from 'react';
+import i18n from '../../../../../../../common/I18n';
 import StatusTag from '../../../../../../../common/components/StatusTag';
 import Table from '../../../../../../../common/components/Table';
 import {useAppPropertiesContext} from '../../../../../../../common/contexts/AppPropertiesContext';
@@ -165,7 +166,7 @@ const TeamMembersTable = ({
 			<div className="cp-team-members-table-wrapper overflow-auto">
 				{!totalUserAccounts && !(loading || searching) && (
 					<div className="d-flex justify-content-center pt-4">
-						No team members were found.
+						{i18n.translate("no-team-members-were-found")}
 					</div>
 				)}
 
