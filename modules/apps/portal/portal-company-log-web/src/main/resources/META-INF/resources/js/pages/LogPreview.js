@@ -13,8 +13,13 @@
  */
 
 import {ClayButtonWithIcon} from '@clayui/button';
-import {fetch} from 'frontend-js-web';
-import React, {useCallback, useEffect, useState} from 'react';
+import React from 'react';
+
+import Log from '../components/Log';
+import Header from '../components/layout/Header';
+import Page from '../components/layout/Page';
+import useCompany from '../hooks/useCompany';
+import useCompanyLog from '../hooks/useCompanyLog';
 
 const LogPreview = ({
 	history,
@@ -22,40 +27,28 @@ const LogPreview = ({
 		params: {companyId, fileName},
 	},
 }) => {
-	const [{loading, logs}, setState] = useState({
-		loading: true,
-		logs: '',
-	});
-
-	const getCompanyLog = useCallback(async () => {
-		const response = await fetch(
-			`/o/company-log/${companyId}/${fileName}?action=read`
-		);
-
-		const data = await response.text();
-
-		setState({loading: false, logs: data});
-	}, [companyId, fileName]);
-
-	useEffect(() => {
-		getCompanyLog();
-	}, [getCompanyLog]);
+	const {loading, logs} = useCompanyLog({companyId, fileName});
+	const {error, webId} = useCompany({companyId});
 
 	return (
 		<section>
-			<div className="d-flex justify-content-between mb-2">
-				<h1>
-					<ClayButtonWithIcon
-						aria-label={Liferay.Language.get('back')}
-						displayType="unstyled"
-						onClick={() => history.push('/')}
-						size="sm"
-						symbol="angle-left"
-						title={Liferay.Language.get('back')}
-					/>
-
-					{fileName}
-				</h1>
+			<div className="d-flex flex-row justify-content-between mb-2">
+				<Header
+					breadcrumbItems={[
+						{label: Liferay.Language.get('home'), path: '/'},
+						{label: webId, path: `/${companyId}`},
+						{label: fileName},
+					]}
+					history={history}
+					title="Console Output"
+				>
+					<a
+						href={`/o/company-log/${companyId}/${fileName}?action=read&format=full`}
+						target="_blank"
+					>
+						{Liferay.Language.get('see-full-log')}
+					</a>
+				</Header>
 
 				<ClayButtonWithIcon
 					aria-label={Liferay.Language.get('download')}
@@ -71,16 +64,9 @@ const LogPreview = ({
 				/>
 			</div>
 
-			{loading ? (
-				<span
-					aria-hidden="true"
-					className="loading-animation loading-animation-secondary loading-animation-sm"
-				/>
-			) : (
-				<div className="bg-dark">
-					<pre className="logs-container px-4 text-white">{logs}</pre>
-				</div>
-			)}
+			<Page error={error} loading={loading}>
+				<Log>{logs}</Log>
+			</Page>
 		</section>
 	);
 };
