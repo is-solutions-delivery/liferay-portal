@@ -1,7 +1,11 @@
 .portal-company-log-web {
+	.cursor-pointer {
+		cursor: pointer;
+	}
+
 	.logs-container {
 		border: 2px;
-		color: white;
+		color: #fff;
 		max-height: 800px;
 	}
 }

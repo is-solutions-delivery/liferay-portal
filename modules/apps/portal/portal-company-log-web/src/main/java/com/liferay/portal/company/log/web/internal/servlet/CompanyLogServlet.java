@@ -18,6 +18,7 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -30,7 +31,6 @@ import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
-import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.MimeTypes;
@@ -39,6 +39,8 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.log4j.Log4JUtil;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,13 +54,15 @@ import java.nio.file.Paths;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Scanner;
+import java.util.Locale;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -91,40 +95,42 @@ public class CompanyLogServlet extends HttpServlet {
 
 			if (pathArray.length == 0) {
 				_list(httpServletRequest, httpServletResponse);
+
+				return;
 			}
-			else if (pathArray.length == 2) {
-				long companyId = GetterUtil.getLongStrict(pathArray[0]);
 
-				Company company = _companyLocalService.fetchCompanyById(
-					companyId);
+			long companyId = GetterUtil.getLongStrict(pathArray[0]);
 
-				if (company == null) {
-					return;
-				}
+			Company company = _companyLocalService.getCompany(companyId);
 
-				PermissionChecker permissionChecker = _getPermissionChecker(
-					httpServletRequest);
+			PermissionChecker permissionChecker = _getPermissionChecker(
+				httpServletRequest);
 
-				if (!permissionChecker.isCompanyAdmin(companyId)) {
-					throw new PrincipalException.MustBeCompanyAdmin(
-						permissionChecker.getUserId());
-				}
-
-				String fileName = pathArray[1];
-
-				File file = _getFile(companyId, fileName);
-
-				String action = ParamUtil.getString(
-					httpServletRequest, "action");
-
-				if (Validator.isNotNull(action) && action.equals("read")) {
-					_read(httpServletResponse, file);
-
-					return;
-				}
-
-				_download(httpServletRequest, httpServletResponse, file);
+			if (!permissionChecker.isCompanyAdmin(companyId)) {
+				throw new PrincipalException.MustBeCompanyAdmin(
+					permissionChecker.getUserId());
 			}
+
+			if (pathArray.length == 1) {
+				_listCompanyLogs(
+					company, httpServletRequest, httpServletResponse);
+
+				return;
+			}
+
+			String action = ParamUtil.getString(httpServletRequest, "action");
+
+			String fileName = pathArray[1];
+
+			File file = _getFile(companyId, fileName);
+
+			if (Validator.isNotNull(action) && action.equals("read")) {
+				_read(httpServletRequest, httpServletResponse, file);
+
+				return;
+			}
+
+			_download(httpServletRequest, httpServletResponse, file);
 		}
 		catch (FileNotFoundException fileNotFoundException) {
 			if (_log.isWarnEnabled()) {
@@ -141,7 +147,8 @@ public class CompanyLogServlet extends HttpServlet {
 			}
 
 			_portal.sendError(
-				exception, httpServletRequest, httpServletResponse);
+				HttpServletResponse.SC_NOT_FOUND, exception, httpServletRequest,
+				httpServletResponse);
 		}
 	}
 
@@ -199,6 +206,25 @@ public class CompanyLogServlet extends HttpServlet {
 		}
 	}
 
+	private JSONArray _getCompanyLogsJSONArray(Company company, Locale locale)
+		throws Exception {
+
+		File companyLogDirectory = Log4JUtil.getCompanyLogDirectory(
+			company.getCompanyId());
+
+		File[] files = companyLogDirectory.listFiles();
+
+		Arrays.sort(files, Collections.reverseOrder());
+
+		return JSONUtil.toJSONArray(
+			files,
+			file -> JSONUtil.put(
+				"fileName", file.getName()
+			).put(
+				"fileSize", _language.formatStorageSize(file.length(), locale)
+			));
+	}
+
 	private File _getFile(long companyId, String fileName) throws Exception {
 		File companyLogDirectory = Log4JUtil.getCompanyLogDirectory(companyId);
 
@@ -236,82 +262,156 @@ public class CompanyLogServlet extends HttpServlet {
 	}
 
 	private void _list(
-			Company company, JSONArray jsonArray,
-			HttpServletRequest httpServletRequest)
-		throws Exception {
-
-		jsonArray.put(
-			JSONUtil.put(
-				"companyId", company.getCompanyId()
-			).put(
-				"companyLogs",
-				() -> {
-					File companyLogDirectory = Log4JUtil.getCompanyLogDirectory(
-						company.getCompanyId());
-
-					File[] files = companyLogDirectory.listFiles();
-
-					Arrays.sort(files, Collections.reverseOrder());
-
-					return JSONUtil.toJSONArray(
-						files,
-						file -> JSONUtil.put(
-							"fileName", file.getName()
-						).put(
-							"fileSize",
-							_language.formatStorageSize(
-								file.length(), httpServletRequest.getLocale())
-						));
-				}
-			).put(
-				"webId", company.getWebId()
-			));
-	}
-
-	private void _list(
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse)
 		throws Exception {
 
-		httpServletResponse.setContentType(ContentTypes.APPLICATION_JSON);
-		httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-
-		JSONArray jsonArray = _jsonFactory.createJSONArray();
-
 		PermissionChecker permissionChecker = _getPermissionChecker(
 			httpServletRequest);
 
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		int page = 1;
+		int pageSize = 10;
+		int totalCount = 1;
+
 		if (permissionChecker.isOmniadmin()) {
-			_companyLocalService.forEachCompany(
-				company -> _list(company, jsonArray, httpServletRequest));
+			pageSize = ParamUtil.getInteger(httpServletRequest, "pageSize", 10);
+			page = ParamUtil.getInteger(httpServletRequest, "page", 1);
+
+			Pagination pagination = Pagination.of(page, pageSize);
+
+			Page<Company> companyPage = Page.of(
+				_companyLocalService.getCompanies(
+					pagination.getStartPosition(), pagination.getEndPosition()),
+				pagination, _companyLocalService.getCompaniesCount());
+
+			for (Company company : companyPage.getItems()) {
+				jsonArray.put(
+					JSONUtil.put(
+						"id", company.getCompanyId()
+					).put(
+						"name", company.getName()
+					).put(
+						"webId", company.getWebId()
+					));
+			}
+
+			totalCount = _companyLocalService.getCompaniesCount();
 		}
 		else if (permissionChecker.isCompanyAdmin()) {
 			User user = permissionChecker.getUser();
 
-			_list(
-				_companyLocalService.getCompany(user.getCompanyId()), jsonArray,
-				httpServletRequest);
+			Company company = _companyLocalService.getCompany(
+				user.getCompanyId());
+
+			jsonArray.put(
+				JSONUtil.put(
+					"id", company.getCompanyId()
+				).put(
+					"name", company.getName()
+				).put(
+					"webId", company.getWebId()
+				));
 		}
 		else {
 			throw new PrincipalException.MustBeCompanyAdmin(
 				permissionChecker.getUserId());
 		}
 
-		ServletResponseUtil.write(httpServletResponse, jsonArray.toString());
+		ServletResponseUtil.write(
+			httpServletResponse,
+			jsonObject.put(
+				"items", jsonArray
+			).put(
+				"page", page
+			).put(
+				"pageSize", pageSize
+			).put(
+				"totalCount", totalCount
+			).toString());
 	}
 
-	private void _read(HttpServletResponse httpServletResponse, File file)
+	private void _listCompanyLogs(
+			Company company, HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse)
+		throws Exception {
+
+		JSONArray jsonArray = _getCompanyLogsJSONArray(
+			company, httpServletRequest.getLocale());
+
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
+		ServletResponseUtil.write(
+			httpServletResponse,
+			jsonObject.put(
+				"id", company.getCompanyId()
+			).put(
+				"logs", jsonArray
+			).put(
+				"name", company.getName()
+			).put(
+				"webId", company.getWebId()
+			).toString());
+	}
+
+	private void _read(
+			HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse, File file)
 		throws IOException {
 
-		try (Scanner scanner = new Scanner(file)) {
-			StringBuilder sb = new StringBuilder();
+		String format = ParamUtil.getString(
+			httpServletRequest, "format", "compact");
 
-			while (scanner.hasNextLine()) {
-				sb.append(scanner.nextLine() + "\n");
+		boolean compactFormat = format.equals("compact");
+
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+		StringBuilder sb = new StringBuilder();
+
+		String line = "";
+		String output = "";
+		int totalLineCount = 0;
+		long maxLinesToRead = 300;
+
+		try (ReversedLinesFileReader reversedLinesFileReader =
+				new ReversedLinesFileReader(file)) {
+
+			line = reversedLinesFileReader.readLine();
+
+			while (line != null) {
+				line += "\n";
+
+				if (compactFormat && (totalLineCount < maxLinesToRead)) {
+					sb.append(line);
+				}
+				else if (!compactFormat) {
+					sb.append(line);
+				}
+
+				line = reversedLinesFileReader.readLine();
+
+				totalLineCount++;
 			}
-
-			ServletResponseUtil.write(httpServletResponse, sb.toString());
 		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(exception);
+			}
+		}
+
+		if (compactFormat) {
+			output = jsonObject.put(
+				"log", sb.toString()
+			).put(
+				"totalLineCount", totalLineCount
+			).toString();
+		}
+		else {
+			output = sb.toString();
+		}
+
+		ServletResponseUtil.write(httpServletResponse, output);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
