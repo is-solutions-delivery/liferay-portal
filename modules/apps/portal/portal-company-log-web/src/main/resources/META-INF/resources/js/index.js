@@ -15,22 +15,28 @@
 import React from 'react';
 import {HashRouter, Route, Switch} from 'react-router-dom';
 
-import CompanyLogs from './pages/CompanyLogs';
+import ErrorBoundary from './ErrorBoundary';
+import Companies from './pages/Companies';
+import Company from './pages/Company';
 import LogPreview from './pages/LogPreview';
 
 const App = () => (
 	<div className="bg-white container mt-4 p-4">
-		<HashRouter>
-			<Switch>
-				<Route component={CompanyLogs} exact path="/" />
+		<ErrorBoundary>
+			<HashRouter>
+				<Switch>
+					<Route component={Companies} exact path="/" />
 
-				<Route
-					component={LogPreview}
-					exact
-					path="/:companyId/:fileName"
-				/>
-			</Switch>
-		</HashRouter>
+					<Route component={Company} exact path="/:companyId" />
+
+					<Route
+						component={LogPreview}
+						exact
+						path="/:companyId/:fileName"
+					/>
+				</Switch>
+			</HashRouter>
+		</ErrorBoundary>
 	</div>
 );
 
