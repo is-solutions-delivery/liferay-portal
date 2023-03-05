@@ -14,6 +14,29 @@
 
 import React from 'react';
 
-const Loading = () => <div>Loading...</div>;
+import BackButton from '../interface/BackButton';
+import Breadcrumb from './Breadcrumb';
 
-export default Loading;
+const Header = ({
+	children,
+	history,
+	navigateBackTo,
+	title,
+	breadcrumbItems = [],
+}) => (
+	<div className="d-flex flex-column">
+		<h1>
+			{navigateBackTo && (
+				<BackButton history={history} navigateBackTo={navigateBackTo} />
+			)}
+
+			<Breadcrumb history={history} items={breadcrumbItems} />
+
+			<span>{title}</span>
+		</h1>
+
+		{children}
+	</div>
+);
+
+export default Header;
