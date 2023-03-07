@@ -9,7 +9,7 @@ definition {
 	property testray.main.component.name = "Site Initializer Testray";
 
 	var caseType = "Case Type 1";
-	var testSiteName = "TR2";
+	var testSiteName = "Testray 2";
 
 	setUp {
 		task ("Login and create a Testray Site") {
