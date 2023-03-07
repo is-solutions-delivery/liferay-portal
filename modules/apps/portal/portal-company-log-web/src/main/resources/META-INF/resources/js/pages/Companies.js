@@ -23,16 +23,16 @@ import useCompanies from '../hooks/useCompanies';
 
 const deltas = [
 	{
-		label: 4,
+		label: '4',
 	},
 	{
-		label: 8,
+		label: '8',
 	},
 	{
-		label: 16,
+		label: '16',
 	},
 	{
-		label: 32,
+		label: '32',
 	},
 ];
 
@@ -117,7 +117,7 @@ const CompanyLogs = ({
 );
 
 const Companies = ({history}) => {
-	const [pagination, setPagination] = useState({page: 1, pageSize: 5});
+	const [pagination, setPagination] = useState({page: 1, pageSize: 4});
 	const {items, loading, totalCount} = useCompanies(pagination);
 
 	return (

@@ -14,7 +14,7 @@
 
 import React from 'react';
 
-import Loading from '../interface/Loading';
+import Loading from '../Loading';
 
 const Page = ({children, error, loading}) => {
 	if (loading) {

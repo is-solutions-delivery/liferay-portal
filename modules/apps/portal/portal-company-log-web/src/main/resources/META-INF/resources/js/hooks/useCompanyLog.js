@@ -17,12 +17,17 @@ import {useCallback, useState} from 'react';
 
 import useInterval from './useInterval';
 
+const POOLING_TIMEOUT = 3000;
+
 const useCompanyLog = ({companyId, fileName}) => {
 	const [state, setState] = useState({
 		loading: true,
 		logs: '',
+		pooling: true,
 		totalLineCount: 0,
 	});
+
+	const {pooling} = state;
 
 	const getCompanyLog = useCallback(async () => {
 		const response = await fetch(
@@ -54,10 +59,12 @@ const useCompanyLog = ({companyId, fileName}) => {
 	}, [companyId, fileName]);
 
 	useInterval(async () => {
-		await getCompanyLog();
-	}, 15000);
+		if (pooling) {
+			await getCompanyLog();
+		}
+	}, POOLING_TIMEOUT);
 
-	return state;
+	return {...state, setState};
 };
 
 export default useCompanyLog;

@@ -12,7 +12,9 @@
  * details.
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import {ClayToggle} from '@clayui/form';
+import ClayLink from '@clayui/link';
 import React from 'react';
 
 import Log from '../components/Log';
@@ -27,7 +29,10 @@ const LogPreview = ({
 		params: {companyId, fileName},
 	},
 }) => {
-	const {loading, logs} = useCompanyLog({companyId, fileName});
+	const {loading, logs, pooling, setState} = useCompanyLog({
+		companyId,
+		fileName,
+	});
 	const {error, webId} = useCompany({companyId});
 
 	return (
@@ -40,14 +45,53 @@ const LogPreview = ({
 						{label: fileName},
 					]}
 					history={history}
-					title="Console Output"
+					title={
+						<div className="d-flex justify-content-between">
+							<span>
+								{Liferay.Language.get('console-output')}
+							</span>
+
+							<ClayToggle
+								label={Liferay.Language.get('real-time')}
+								onToggle={() =>
+									setState((prevState) => ({
+										...prevState,
+										pooling: !prevState.pooling,
+									}))
+								}
+								symbol={{
+									off: 'times',
+									on: 'check',
+								}}
+								toggled={pooling}
+							/>
+						</div>
+					}
 				>
-					<a
-						href={`/o/company-log/${companyId}/${fileName}?action=read&format=full`}
-						target="_blank"
-					>
-						{Liferay.Language.get('see-full-log')}
-					</a>
+					<div className="align-items-baseline d-flex">
+						<ClayButton
+							displayType="secondary"
+							onClick={() =>
+								setState((prevState) => ({
+									...prevState,
+									logs: '',
+								}))
+							}
+							size="sm"
+						>
+							{Liferay.Language.get('clear')}
+						</ClayButton>
+
+						<ClayLink
+							className="ml-1"
+							displayType="primary"
+							href={`/o/company-log/${companyId}/${fileName}?action=read&format=full`}
+							outline
+							target="_blank"
+						>
+							{Liferay.Language.get('see-full-log')}
+						</ClayLink>
+					</div>
 				</Header>
 
 				<ClayButtonWithIcon

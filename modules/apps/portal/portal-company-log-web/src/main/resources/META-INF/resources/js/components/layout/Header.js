@@ -14,26 +14,15 @@
 
 import React from 'react';
 
-import BackButton from '../interface/BackButton';
 import Breadcrumb from './Breadcrumb';
 
-const Header = ({
-	children,
-	history,
-	navigateBackTo,
-	title,
-	breadcrumbItems = [],
-}) => (
-	<div className="d-flex flex-column">
-		<h1>
-			{navigateBackTo && (
-				<BackButton history={history} navigateBackTo={navigateBackTo} />
-			)}
-
+const Header = ({children, history, title, breadcrumbItems = []}) => (
+	<div className="d-flex flex-column w-100">
+		<div>
 			<Breadcrumb history={history} items={breadcrumbItems} />
 
-			<span>{title}</span>
-		</h1>
+			<h1>{title}</h1>
+		</div>
 
 		{children}
 	</div>
