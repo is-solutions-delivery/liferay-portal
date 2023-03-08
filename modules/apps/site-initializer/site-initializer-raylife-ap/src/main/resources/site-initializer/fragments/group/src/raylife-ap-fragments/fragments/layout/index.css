@@ -192,25 +192,25 @@
 }
 
 .layout-container .notification-open-side-bar {
-	width: 450px !important;
 	opacity: 1 !important;
+	width: 450px !important;
 }
 
 .layout-container .notification-panel {
 	background: #fff;
 	display: flex;
 	flex-direction: column;
+	opacity: 0;
 	overflow: hidden;
 	top: 0;
-	opacity: 0;
 	transition: all 0.15s ease-in;
 	width: 0;
 }
 
 .layout-container .notification-sidebar {
 	height: 100%;
-	overflow-y: auto;
-	overflow-x: none;
 	opacity: 0;
+	overflow-x: none;
+	overflow-y: auto;
 	width: 0px;
 }

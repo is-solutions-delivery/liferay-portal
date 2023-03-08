@@ -68,7 +68,8 @@ const NotificationSidebar: React.FC = () => {
 	const redirectUrl = (post: PostType): void => {
 		if (post.message?.includes('Test')) {
 			setLinkUrl(loremUrl);
-		} else {
+		}
+		else {
 			setLinkUrl(loremUrl2);
 		}
 	};

@@ -16,12 +16,12 @@
 
 .post-container {
 	align-items: center;
-	padding-left: 20px;
 	height: 100%;
+	padding-left: 20px;
 
 	a {
-		padding-left: 20px;
 		cursor: pointer;
+		padding-left: 20px;
 	}
 
 	a:hover {
@@ -30,12 +30,12 @@
 
 	a p {
 		color: rgba(39, 40, 51, 0.7);
-		text-decoration: none;
 		display: flex;
-		margin-bottom: 7px;
-		margin-top: 0px;
 		font-size: 0.75rem;
 		font-weight: normal;
+		margin-bottom: 7px;
+		margin-top: 0;
+		text-decoration: none;
 		font-family: 'Barlow', system-ui, -apple-system, blinkmacsystemfont,
 			'Segoe UI', roboto, oxygen-sans, ubuntu, cantarell, 'Helvetica Neue',
 			arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -55,8 +55,8 @@
 		font-size: 0.625rem;
 		font-style: italic;
 		font-weight: 500;
-		padding-bottom: 25px;
 		margin-bottom: 0 !important;
+		padding-bottom: 25px;
 	}
 }
 
