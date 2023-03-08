@@ -245,9 +245,7 @@ definition {
 
 		Click(locator1 = "ObjectAdmin#ENTRY_CHOOSE_OPTION");
 
-		Click(
-			key_picklistOption = ${picklistOption},
-			locator1 = "ObjectAdmin#ENTRY_PICKLIST_OPTION");
+		MenuItem.clickNoError(menuItem = ${picklistOption});
 
 		if (IsElementPresent(key_text = ${saveName}, locator1 = "Button#ANY")) {
 			Click(
@@ -749,9 +747,25 @@ definition {
 	}
 
 	macro deleteAllCustomObjectsViaAPI {
+		ObjectAdmin.deleteAllRelationships();
+
 		JSONObject.deleteAllCustomObjects(
 			userEmailAddress = ${userEmailAddress},
 			userPassword = ${userPassword});
+	}
+
+	macro deleteAllRelationships {
+		var objectDefinitionIdList = JSONObject.getAllObjectDefinitionsId();
+
+		for (var objectDefinitionId : list ${objectDefinitionIdList}) {
+			var relationshipIdList = JSONObject.getObjectRelationships(objectDefinitionId = ${objectDefinitionId});
+
+			if (${relationshipIdList} != "") {
+				for (var relationshipId : list ${relationshipIdList}) {
+					JSONObject.deleteRelationship(objectRelationshipId = ${relationshipId});
+				}
+			}
+		}
 	}
 
 	macro deleteCategorizationViaUI {

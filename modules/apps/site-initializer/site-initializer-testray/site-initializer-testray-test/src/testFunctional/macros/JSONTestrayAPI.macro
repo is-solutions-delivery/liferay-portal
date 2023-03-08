@@ -48,6 +48,22 @@ definition {
 		return ${projectId};
 	}
 
+	macro _getTeamId {
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/teams/?search=${teamName} \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+		''';
+
+		var teamId = JSONCurlUtil.get(${curl}, "$.items[?(@.name=='${teamName}')].id");
+
+		echo(${teamId});
+
+		return ${teamId};
+	}
+
 	@summary = "create a build via API"
 	macro createBuildAPI {
 		Variables.assertDefined(parameterList = "${buildName},${projectId},${routineId},${productVersionId}");
@@ -163,7 +179,7 @@ definition {
 		}
 
 		if (!(isSet(priority))) {
-			var priority = "";
+			var priority = 3;
 		}
 
 		if (!(isSet(steps))) {

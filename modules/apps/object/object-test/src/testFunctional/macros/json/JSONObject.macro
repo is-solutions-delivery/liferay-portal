@@ -531,6 +531,27 @@ definition {
 		JSONCurlUtil.delete(${curl});
 	}
 
+	macro deleteRelationship {
+		Variables.assertDefined(parameterList = ${objectRelationshipId});
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		var curl = '''
+			${portalURL}/o/object-admin/v1.0/object-relationships/${objectRelationshipId} \
+				-u ${userEmailAddress}:${userPassword}
+		''';
+
+		JSONCurlUtil.delete(${curl});
+	}
+
 	@summary = "This calls the JSON WS API to filter an entry in an object"
 	macro filterObjectEntry {
 		var portalURL = JSONCompany.getPortalURL();
@@ -555,6 +576,28 @@ definition {
 			${portalURL}/o/c/${objectName}s/${entryId} \
 				-u ${userEmailAddress}:${userPassword}
 		''';
+	}
+
+	@summary = "Get a list of all Object Definitions"
+	macro getAllObjectDefinitionsId {
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		var curl = '''
+			${portalURL}/o/object-admin/v1.0/object-definitions \
+				-u ${userEmailAddress}:${userPassword}
+		''';
+
+		var objectDefinitionIdList = JSONCurlUtil.get(${curl}, "$.items[*].id");
+
+		return ${objectDefinitionIdList};
 	}
 
 	@summary = "Get a objectDefinitionId by name"
@@ -658,6 +701,32 @@ definition {
 		var objectId = JSONCurlUtil.get(${curl}, "$.items[?(@['name'] == '${objectName}')]['id']");
 
 		return ${objectId};
+	}
+
+	@summary = "Get the list of an Object Definition based of its ID"
+	macro getObjectRelationships {
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		if (!(isSet(objectDefinitionId))) {
+			var objectDefinitionId = ObjectDefinitionAPI.getObjectDefinitionIdByName(name = ${objectName});
+		}
+
+		var curl = '''
+			${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId}/object-relationships \
+				-u ${userEmailAddress}:${userPassword}
+		''';
+
+		var relationshipIdList = JSONCurlUtil.get(${curl}, "$.items..id");
+
+		return ${relationshipIdList};
 	}
 
 	macro getPicklistId {

@@ -95,7 +95,7 @@ const getFieldDetails = ({
 		}
 	}
 
-	return fieldDetails.join('<br>');
+	return fieldDetails.length ? fieldDetails.join('<br>') : false;
 };
 
 const HideFieldProperty = () => {
@@ -248,10 +248,13 @@ export function FieldBase({
 		type === 'image' ||
 		type === 'search_location' ||
 		type === 'select';
+	const readFieldDetails = !showFor || type === 'select';
+	const hasFieldDetails = accessible && fieldDetails && readFieldDetails;
 
 	const accessibleProps = {
-		...(accessible && fieldDetails && {'aria-labelledby': fieldDetailsId}),
-		...(showFor ? {htmlFor: id ?? name} : {tabIndex: 0}),
+		...(hasFieldDetails && {'aria-labelledby': fieldDetailsId}),
+		...(showFor && {htmlFor: id ?? name}),
+		...(readFieldDetails && {tabIndex: 0}),
 	};
 
 	const defaultRows = nestedFields?.map((field) => ({
@@ -420,13 +423,14 @@ export function FieldBase({
 			)}
 
 			<FieldFeedback
-				aria-hidden
+				aria-hidden={readFieldDetails}
 				errorMessage={hasError ? errorMessage : undefined}
 				helpMessage={typeof tip === 'string' ? tip : undefined}
+				name={id ?? name}
 				warningMessage={warningMessage}
 			/>
 
-			{accessible && fieldDetails && (
+			{hasFieldDetails && (
 				<span
 					className="sr-only"
 					dangerouslySetInnerHTML={{

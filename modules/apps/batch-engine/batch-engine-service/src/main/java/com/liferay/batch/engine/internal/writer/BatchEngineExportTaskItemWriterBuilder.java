@@ -15,7 +15,7 @@
 package com.liferay.batch.engine.internal.writer;
 
 import com.liferay.batch.engine.BatchEngineTaskContentType;
-import com.liferay.batch.engine.internal.auto.deploy.BatchEngineAutoDeployListener;
+import com.liferay.batch.engine.unit.BatchEngineUnitConfiguration;
 
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -67,9 +67,24 @@ public class BatchEngineExportTaskItemWriterBuilder {
 		}
 
 		if (_batchEngineTaskContentType == BatchEngineTaskContentType.JSONT) {
+			BatchEngineUnitConfiguration batchEngineUnitConfiguration =
+				new BatchEngineUnitConfiguration();
+
+			batchEngineUnitConfiguration.setClassName(_itemClass.getName());
+			batchEngineUnitConfiguration.setVersion("v1.0");
+
+			if (_parameters == null) {
+				_parameters = new HashMap<>();
+			}
+
+			_parameters.computeIfAbsent("createStrategy", key -> "INSERT");
+			_parameters.computeIfAbsent("updateStrategy", key -> "UPDATE");
+
+			batchEngineUnitConfiguration.setParameters(_parameters);
+
 			return new JSONTBatchEngineExportTaskItemWriterImpl(
-				fieldsMap.keySet(), _getBatchEngineImportConfiguration(),
-				_fieldNames, _outputStream);
+				fieldsMap.keySet(), batchEngineUnitConfiguration, _fieldNames,
+				_outputStream);
 		}
 
 		throw new IllegalArgumentException(
@@ -115,30 +130,6 @@ public class BatchEngineExportTaskItemWriterBuilder {
 		_parameters = parameters;
 
 		return this;
-	}
-
-	private BatchEngineAutoDeployListener.BatchEngineImportConfiguration
-		_getBatchEngineImportConfiguration() {
-
-		BatchEngineAutoDeployListener.BatchEngineImportConfiguration
-			batchEngineImportConfiguration =
-				new BatchEngineAutoDeployListener.
-					BatchEngineImportConfiguration();
-
-		batchEngineImportConfiguration.setClassName(_itemClass.getName());
-
-		if (_parameters == null) {
-			_parameters = new HashMap<>();
-		}
-
-		_parameters.computeIfAbsent("createStrategy", key -> "INSERT");
-		_parameters.computeIfAbsent("updateStrategy", key -> "UPDATE");
-
-		batchEngineImportConfiguration.setParameters(_parameters);
-
-		batchEngineImportConfiguration.setVersion("v1.0");
-
-		return batchEngineImportConfiguration;
 	}
 
 	private BatchEngineTaskContentType _batchEngineTaskContentType;

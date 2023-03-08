@@ -107,6 +107,8 @@ public class CommercePaymentEngineTest {
 		_commerceChannel = CommerceTestUtil.addCommerceChannel(
 			_group.getGroupId(), _commerceCurrency.getCode());
 
+		_originalCommerceGroup = CommerceGroupThreadLocal.get();
+
 		CommerceGroupThreadLocal.set(
 			_groupLocalService.fetchGroup(_commerceChannel.getGroupId()));
 
@@ -124,6 +126,8 @@ public class CommercePaymentEngineTest {
 
 	@After
 	public void tearDown() throws Exception {
+		CommerceGroupThreadLocal.set(_originalCommerceGroup);
+
 		for (CommerceOrder commerceOrder : _commerceOrders) {
 			_commerceOrderLocalService.deleteCommerceOrder(commerceOrder);
 		}
@@ -338,6 +342,7 @@ public class CommercePaymentEngineTest {
 	private GroupLocalService _groupLocalService;
 
 	private HttpServletRequest _httpServletRequest;
+	private Group _originalCommerceGroup;
 	private ServiceContext _serviceContext;
 
 }

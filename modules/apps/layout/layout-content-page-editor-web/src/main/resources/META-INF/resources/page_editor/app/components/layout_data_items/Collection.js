@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayLayout from '@clayui/layout';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import classNames from 'classnames';
@@ -428,6 +429,59 @@ const Collection = React.memo(
 			collectionConfig.listStyle === CONTENT_DISPLAY_OPTIONS.flexColumn ||
 			collectionConfig.listStyle === CONTENT_DISPLAY_OPTIONS.flexRow;
 
+		let CollectionContent = null;
+
+		if (Liferay.FeatureFlags['LPS-169923'] && collection.isRestricted) {
+			CollectionContent = (
+				<ClayAlert displayType="secondary" role={null}>
+					{Liferay.Language.get(
+						'this-content-cannot-be-displayed-due-to-permission-restrictions'
+					)}
+				</ClayAlert>
+			);
+		}
+		else if (loading) {
+			CollectionContent = <ClayLoadingIndicator />;
+		}
+		else if (!collectionIsMapped(collectionConfig)) {
+			CollectionContent = <NotCollectionSelectedMessage />;
+		}
+		else if (showEmptyMessage) {
+			CollectionContent = <EmptyCollectionMessage />;
+		}
+		else if (collection.content) {
+			CollectionContent = <UnsafeHTML markup={collection.content} />;
+		}
+		else {
+			CollectionContent = (
+				<>
+					{collection.fakeCollection && (
+						<EmptyCollectionGridMessage />
+					)}
+					{flexEnabled ? (
+						<FlexContainer
+							child={child}
+							collection={collection}
+							collectionConfig={responsiveConfig}
+							collectionId={item.itemId}
+							collectionLength={collection.items.length}
+						/>
+					) : (
+						<Grid
+							child={child}
+							collection={collection}
+							collectionConfig={responsiveConfig}
+							collectionId={item.itemId}
+							collectionLength={collection.items.length}
+							customCollectionSelectorURL={
+								collection.customCollectionSelectorURL
+							}
+						/>
+					)}
+				</>
+			);
+		}
+
 		return (
 			<div
 				className={classNames(
@@ -437,43 +491,10 @@ const Collection = React.memo(
 				)}
 				ref={ref}
 			>
-				{loading ? (
-					<ClayLoadingIndicator />
-				) : !collectionIsMapped(collectionConfig) ? (
-					<NotCollectionSelectedMessage />
-				) : showEmptyMessage ? (
-					<EmptyCollectionMessage />
-				) : collection.content ? (
-					<UnsafeHTML markup={collection.content} />
-				) : (
-					<>
-						{collection.fakeCollection && (
-							<EmptyCollectionGridMessage />
-						)}
-						{flexEnabled ? (
-							<FlexContainer
-								child={child}
-								collection={collection}
-								collectionConfig={responsiveConfig}
-								collectionId={item.itemId}
-								collectionLength={collection.items.length}
-							/>
-						) : (
-							<Grid
-								child={child}
-								collection={collection}
-								collectionConfig={responsiveConfig}
-								collectionId={item.itemId}
-								collectionLength={collection.items.length}
-								customCollectionSelectorURL={
-									collection.customCollectionSelectorURL
-								}
-							/>
-						)}
-					</>
-				)}
+				{CollectionContent}
 
-				{collectionIsMapped(collectionConfig) &&
+				{!collection.isRestricted &&
+					collectionIsMapped(collectionConfig) &&
 					paginationIsEnabled(collectionConfig) && (
 						<CollectionPagination
 							activePage={activePage}

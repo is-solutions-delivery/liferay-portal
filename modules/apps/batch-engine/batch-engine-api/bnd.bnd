@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Batch Engine API
 Bundle-SymbolicName: com.liferay.batch.engine.api
-Bundle-Version: 19.1.1
+Bundle-Version: 19.2.0
 Export-Package:\
 	com.liferay.batch.engine,\
 	com.liferay.batch.engine.configuration,\
@@ -11,7 +11,9 @@ Export-Package:\
 	com.liferay.batch.engine.pagination,\
 	com.liferay.batch.engine.service,\
 	com.liferay.batch.engine.service.persistence,\
-	com.liferay.batch.engine.strategy
+	com.liferay.batch.engine.strategy,\
+	com.liferay.batch.engine.unit,\
+	com.liferay.batch.engine.zip
 Import-Package:\
 	org.hibernate.proxy,\
 	\

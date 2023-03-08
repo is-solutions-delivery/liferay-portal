@@ -84,6 +84,8 @@ public class DLFileVersionTable extends BaseTable<DLFileVersionTable> {
 		"size_", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<DLFileVersionTable, String> checksum = createColumn(
 		"checksum", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<DLFileVersionTable, String> storeUUID = createColumn(
+		"storeUUID", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<DLFileVersionTable, Date> expirationDate = createColumn(
 		"expirationDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<DLFileVersionTable, Date> reviewDate = createColumn(

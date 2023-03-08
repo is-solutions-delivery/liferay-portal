@@ -80,11 +80,9 @@ function DisplayPageItemContextualSidebar({
 
 	const openChooseItemModal = () =>
 		openSelectionModal({
-			onSelect: (selectedItem) => {
-				if (selectedItem) {
-					let infoItem = {
-						...selectedItem,
-					};
+			onSelect: (selectedItems) => {
+				if (selectedItems) {
+					let infoItem = Object.values(selectedItems)[0];
 
 					let value;
 

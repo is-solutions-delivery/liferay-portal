@@ -461,6 +461,21 @@ public interface DLFileVersionModel
 	public void setChecksum(String checksum);
 
 	/**
+	 * Returns the store uuid of this document library file version.
+	 *
+	 * @return the store uuid of this document library file version
+	 */
+	@AutoEscape
+	public String getStoreUUID();
+
+	/**
+	 * Sets the store uuid of this document library file version.
+	 *
+	 * @param storeUUID the store uuid of this document library file version
+	 */
+	public void setStoreUUID(String storeUUID);
+
+	/**
 	 * Returns the expiration date of this document library file version.
 	 *
 	 * @return the expiration date of this document library file version

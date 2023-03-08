@@ -90,7 +90,7 @@ function SelectAssetCategory({
 				</ClayLayout.ContainerFluid>
 			</form>
 
-			{selectedItemsCount ? (
+			{selectedItemsCount && multiSelection ? (
 				<ClayLayout.Container
 					className="align-items-center category-tree-count-feedback d-flex px-4"
 					containerElement="section"

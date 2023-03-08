@@ -243,6 +243,11 @@ public class ObjectDefinitionResourceTest
 		objectDefinition.setLabel(
 			Collections.singletonMap(
 				"en_US", "O" + objectDefinition.getName()));
+
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-167253")) {
+			objectDefinition.setModifiable((Boolean)null);
+		}
+
 		objectDefinition.setName("O" + objectDefinition.getName());
 		objectDefinition.setPluralLabel(
 			Collections.singletonMap(

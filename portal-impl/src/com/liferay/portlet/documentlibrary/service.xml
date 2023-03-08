@@ -304,6 +304,7 @@
 		<column name="version" type="String" />
 		<column name="size" type="long" />
 		<column name="checksum" type="String" />
+		<column name="storeUUID" type="String" />
 		<column name="expirationDate" type="Date" />
 		<column name="reviewDate" type="Date" />
 		<column name="lastPublishDate" type="Date" />

@@ -24,29 +24,34 @@ export function openItemSelector({
 }) {
 	openSelectionModal({
 		onClose: destroyedCallback,
-		onSelect: (selectedItem) => {
+		onSelect: (selection) => {
 			let infoItem = {
-				...selectedItem,
+				...selection,
 			};
 
 			let value;
 
-			if (typeof selectedItem.value === 'string') {
-				try {
-					value = JSON.parse(selectedItem.value);
+			if (selection.value) {
+				if (typeof selection.value === 'string') {
+					try {
+						value = JSON.parse(selection.value);
+					}
+					catch (error) {}
 				}
-				catch (error) {}
-			}
-			else if (
-				selectedItem.value &&
-				typeof selectedItem.value === 'object'
-			) {
-				value = selectedItem.value;
-			}
+				else if (
+					selection.value &&
+					typeof selection.value === 'object'
+				) {
+					value = selection.value;
+				}
 
-			if (value) {
-				delete infoItem.value;
-				infoItem = {...infoItem, ...value};
+				if (value) {
+					delete infoItem.value;
+					infoItem = {...infoItem, ...value};
+				}
+			}
+			else if (typeof selection === 'object') {
+				infoItem = Object.values(selection)[0];
 			}
 
 			infoItem = transformValueCallback(infoItem);

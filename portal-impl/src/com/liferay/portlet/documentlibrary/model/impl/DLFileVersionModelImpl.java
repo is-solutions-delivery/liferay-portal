@@ -87,10 +87,11 @@ public class DLFileVersionModelImpl
 		{"description", Types.VARCHAR}, {"changeLog", Types.VARCHAR},
 		{"extraSettings", Types.CLOB}, {"fileEntryTypeId", Types.BIGINT},
 		{"version", Types.VARCHAR}, {"size_", Types.BIGINT},
-		{"checksum", Types.VARCHAR}, {"expirationDate", Types.TIMESTAMP},
-		{"reviewDate", Types.TIMESTAMP}, {"lastPublishDate", Types.TIMESTAMP},
-		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
-		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP}
+		{"checksum", Types.VARCHAR}, {"storeUUID", Types.VARCHAR},
+		{"expirationDate", Types.TIMESTAMP}, {"reviewDate", Types.TIMESTAMP},
+		{"lastPublishDate", Types.TIMESTAMP}, {"status", Types.INTEGER},
+		{"statusByUserId", Types.BIGINT}, {"statusByUserName", Types.VARCHAR},
+		{"statusDate", Types.TIMESTAMP}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -122,6 +123,7 @@ public class DLFileVersionModelImpl
 		TABLE_COLUMNS_MAP.put("version", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("size_", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("checksum", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("storeUUID", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("expirationDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("reviewDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
@@ -132,7 +134,7 @@ public class DLFileVersionModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table DLFileVersion (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,uuid_ VARCHAR(75) null,fileVersionId LONG not null,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,repositoryId LONG,folderId LONG,fileEntryId LONG,treePath STRING null,fileName VARCHAR(255) null,extension VARCHAR(75) null,mimeType VARCHAR(75) null,title VARCHAR(255) null,description STRING null,changeLog VARCHAR(75) null,extraSettings TEXT null,fileEntryTypeId LONG,version VARCHAR(75) null,size_ LONG,checksum VARCHAR(75) null,expirationDate DATE null,reviewDate DATE null,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,primary key (fileVersionId, ctCollectionId))";
+		"create table DLFileVersion (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,uuid_ VARCHAR(75) null,fileVersionId LONG not null,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,repositoryId LONG,folderId LONG,fileEntryId LONG,treePath STRING null,fileName VARCHAR(255) null,extension VARCHAR(75) null,mimeType VARCHAR(75) null,title VARCHAR(255) null,description STRING null,changeLog VARCHAR(75) null,extraSettings TEXT null,fileEntryTypeId LONG,version VARCHAR(75) null,size_ LONG,checksum VARCHAR(75) null,storeUUID VARCHAR(75) null,expirationDate DATE null,reviewDate DATE null,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,primary key (fileVersionId, ctCollectionId))";
 
 	public static final String TABLE_SQL_DROP = "drop table DLFileVersion";
 
@@ -372,6 +374,8 @@ public class DLFileVersionModelImpl
 			attributeGetterFunctions.put(
 				"checksum", DLFileVersion::getChecksum);
 			attributeGetterFunctions.put(
+				"storeUUID", DLFileVersion::getStoreUUID);
+			attributeGetterFunctions.put(
 				"expirationDate", DLFileVersion::getExpirationDate);
 			attributeGetterFunctions.put(
 				"reviewDate", DLFileVersion::getReviewDate);
@@ -483,6 +487,9 @@ public class DLFileVersionModelImpl
 			attributeSetterBiConsumers.put(
 				"checksum",
 				(BiConsumer<DLFileVersion, String>)DLFileVersion::setChecksum);
+			attributeSetterBiConsumers.put(
+				"storeUUID",
+				(BiConsumer<DLFileVersion, String>)DLFileVersion::setStoreUUID);
 			attributeSetterBiConsumers.put(
 				"expirationDate",
 				(BiConsumer<DLFileVersion, Date>)
@@ -1049,6 +1056,26 @@ public class DLFileVersionModelImpl
 
 	@JSON
 	@Override
+	public String getStoreUUID() {
+		if (_storeUUID == null) {
+			return "";
+		}
+		else {
+			return _storeUUID;
+		}
+	}
+
+	@Override
+	public void setStoreUUID(String storeUUID) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_storeUUID = storeUUID;
+	}
+
+	@JSON
+	@Override
 	public Date getExpirationDate() {
 		return _expirationDate;
 	}
@@ -1350,6 +1377,7 @@ public class DLFileVersionModelImpl
 		dlFileVersionImpl.setVersion(getVersion());
 		dlFileVersionImpl.setSize(getSize());
 		dlFileVersionImpl.setChecksum(getChecksum());
+		dlFileVersionImpl.setStoreUUID(getStoreUUID());
 		dlFileVersionImpl.setExpirationDate(getExpirationDate());
 		dlFileVersionImpl.setReviewDate(getReviewDate());
 		dlFileVersionImpl.setLastPublishDate(getLastPublishDate());
@@ -1415,6 +1443,8 @@ public class DLFileVersionModelImpl
 		dlFileVersionImpl.setSize(this.<Long>getColumnOriginalValue("size_"));
 		dlFileVersionImpl.setChecksum(
 			this.<String>getColumnOriginalValue("checksum"));
+		dlFileVersionImpl.setStoreUUID(
+			this.<String>getColumnOriginalValue("storeUUID"));
 		dlFileVersionImpl.setExpirationDate(
 			this.<Date>getColumnOriginalValue("expirationDate"));
 		dlFileVersionImpl.setReviewDate(
@@ -1660,6 +1690,14 @@ public class DLFileVersionModelImpl
 			dlFileVersionCacheModel.checksum = null;
 		}
 
+		dlFileVersionCacheModel.storeUUID = getStoreUUID();
+
+		String storeUUID = dlFileVersionCacheModel.storeUUID;
+
+		if ((storeUUID != null) && (storeUUID.length() == 0)) {
+			dlFileVersionCacheModel.storeUUID = null;
+		}
+
 		Date expirationDate = getExpirationDate();
 
 		if (expirationDate != null) {
@@ -1795,6 +1833,7 @@ public class DLFileVersionModelImpl
 	private String _version;
 	private long _size;
 	private String _checksum;
+	private String _storeUUID;
 	private Date _expirationDate;
 	private Date _reviewDate;
 	private Date _lastPublishDate;
@@ -1858,6 +1897,7 @@ public class DLFileVersionModelImpl
 		_columnOriginalValues.put("version", _version);
 		_columnOriginalValues.put("size_", _size);
 		_columnOriginalValues.put("checksum", _checksum);
+		_columnOriginalValues.put("storeUUID", _storeUUID);
 		_columnOriginalValues.put("expirationDate", _expirationDate);
 		_columnOriginalValues.put("reviewDate", _reviewDate);
 		_columnOriginalValues.put("lastPublishDate", _lastPublishDate);
@@ -1939,19 +1979,21 @@ public class DLFileVersionModelImpl
 
 		columnBitmasks.put("checksum", 16777216L);
 
-		columnBitmasks.put("expirationDate", 33554432L);
+		columnBitmasks.put("storeUUID", 33554432L);
 
-		columnBitmasks.put("reviewDate", 67108864L);
+		columnBitmasks.put("expirationDate", 67108864L);
 
-		columnBitmasks.put("lastPublishDate", 134217728L);
+		columnBitmasks.put("reviewDate", 134217728L);
 
-		columnBitmasks.put("status", 268435456L);
+		columnBitmasks.put("lastPublishDate", 268435456L);
 
-		columnBitmasks.put("statusByUserId", 536870912L);
+		columnBitmasks.put("status", 536870912L);
 
-		columnBitmasks.put("statusByUserName", 1073741824L);
+		columnBitmasks.put("statusByUserId", 1073741824L);
 
-		columnBitmasks.put("statusDate", 2147483648L);
+		columnBitmasks.put("statusByUserName", 2147483648L);
+
+		columnBitmasks.put("statusDate", 4294967296L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

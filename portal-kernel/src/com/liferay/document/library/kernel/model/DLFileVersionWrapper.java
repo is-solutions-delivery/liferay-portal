@@ -71,6 +71,7 @@ public class DLFileVersionWrapper
 		attributes.put("version", getVersion());
 		attributes.put("size", getSize());
 		attributes.put("checksum", getChecksum());
+		attributes.put("storeUUID", getStoreUUID());
 		attributes.put("expirationDate", getExpirationDate());
 		attributes.put("reviewDate", getReviewDate());
 		attributes.put("lastPublishDate", getLastPublishDate());
@@ -232,6 +233,12 @@ public class DLFileVersionWrapper
 
 		if (checksum != null) {
 			setChecksum(checksum);
+		}
+
+		String storeUUID = (String)attributes.get("storeUUID");
+
+		if (storeUUID != null) {
+			setStoreUUID(storeUUID);
 		}
 
 		Date expirationDate = (Date)attributes.get("expirationDate");
@@ -620,6 +627,16 @@ public class DLFileVersionWrapper
 	@Override
 	public Date getStatusDate() {
 		return model.getStatusDate();
+	}
+
+	/**
+	 * Returns the store uuid of this document library file version.
+	 *
+	 * @return the store uuid of this document library file version
+	 */
+	@Override
+	public String getStoreUUID() {
+		return model.getStoreUUID();
 	}
 
 	/**
@@ -1063,6 +1080,16 @@ public class DLFileVersionWrapper
 	@Override
 	public void setStatusDate(Date statusDate) {
 		model.setStatusDate(statusDate);
+	}
+
+	/**
+	 * Sets the store uuid of this document library file version.
+	 *
+	 * @param storeUUID the store uuid of this document library file version
+	 */
+	@Override
+	public void setStoreUUID(String storeUUID) {
+		model.setStoreUUID(storeUUID);
 	}
 
 	/**

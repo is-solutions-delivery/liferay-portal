@@ -75,6 +75,9 @@ function getNamespacedInfoItems(
 			JSON.parse(item)
 		);
 	}
+	else if (typeof selectedItems === 'object') {
+		selectedItemsValue = Object.values(selectedItems);
+	}
 
 	if (!selectedItemsValue.length) {
 		return;

@@ -77,7 +77,7 @@ export function AssetCategoryTree({
 	}, [items]);
 
 	useEffect(() => {
-		const selectedItems = [];
+		const selectedItems = {};
 
 		selectedKeys.forEach((key) => {
 			const item = itemsById[key];
@@ -86,28 +86,26 @@ export function AssetCategoryTree({
 				return;
 			}
 
-			selectedItems.push({
+			selectedItems[item.id] = {
+				categoryId: item.vocabulary ? 0 : item.id,
 				className: item.className,
 				classNameId: item.classNameId,
 				classPK: item.id,
+				nodePath: item.nodePath,
 				title: item.name,
-			});
+				value: item.name,
+				vocabularyId: item.vocabulary ? item.id : 0,
+			};
 		});
 
 		if (onSelectedItemsCount) {
-			onSelectedItemsCount(selectedItems.length);
-		}
-
-		let data = selectedItems;
-
-		if (!multiSelection) {
-			data = selectedItems[0];
+			onSelectedItemsCount(selectedKeys.size);
 		}
 
 		requestAnimationFrame(() => {
-			if (data) {
+			if (Object.keys(selectedItems).length) {
 				getOpener().Liferay.fire(itemSelectedEventName, {
-					data,
+					data: selectedItems,
 				});
 			}
 		});

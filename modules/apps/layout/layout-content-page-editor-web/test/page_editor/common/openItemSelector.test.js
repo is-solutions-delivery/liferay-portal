@@ -52,18 +52,19 @@ describe('openItemSelector', () => {
 		);
 	});
 
-	it('uses selectedItem.returnType as type', () => {
+	it('uses selection.returnType as type', () => {
 		const callback = jest.fn();
 		const {onSelect} = openModal({callback});
 
-		onSelect({returnType: 'custom'});
+		onSelect({returnType: 'custom', value: 'value'});
 
 		expect(callback).toHaveBeenCalledWith({
 			returnType: 'custom',
+			value: 'value',
 		});
 	});
 
-	it('injects selectedItem.value into infoItem', () => {
+	it('injects selection.value into infoItem', () => {
 		const callback = jest.fn();
 		const {onSelect} = openModal({callback});
 
@@ -106,5 +107,14 @@ describe('openItemSelector', () => {
 			returnType: 'custom',
 			value: 'notAnObject',
 		});
+	});
+
+	it('extracts first item if selection does not have value', () => {
+		const callback = jest.fn();
+		const {onSelect} = openModal({callback});
+
+		onSelect({'item-1': {name: 'Item 1'}});
+
+		expect(callback).toHaveBeenCalledWith({name: 'Item 1'});
 	});
 });
