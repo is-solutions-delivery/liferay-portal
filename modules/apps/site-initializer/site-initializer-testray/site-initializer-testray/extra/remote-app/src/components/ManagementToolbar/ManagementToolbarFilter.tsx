@@ -135,7 +135,7 @@ const FilterBody = ({buttonRef, filterSchema, setPosition}: FilterBody) => {
 				<Form.Divider />
 			</div>
 
-			<div className="body-filters">
+			<div className="body-toolbar">
 				<div className="popover-filter-content">
 					<Form.Renderer
 						fieldOptions={fieldOptions}
@@ -182,7 +182,7 @@ const ManagementToolbarFilter: React.FC<ManagementToolbarFilterProps> = ({
 	return (
 		<ClayPopover
 			alignPosition={popoverAlignPosition}
-			className="popover-filter"
+			className="popover-management-toolbar"
 			closeOnClickOutside
 			disableScroll
 			show={position !== undefined}
