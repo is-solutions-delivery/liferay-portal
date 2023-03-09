@@ -488,6 +488,7 @@ public class ObjectDefinitionLocalServiceImpl
 
 		if (objectDefinition2.isAccountEntryRestricted() ||
 			objectDefinition2.isSystem()) {
+
 			return objectDefinition2;
 		}
 
