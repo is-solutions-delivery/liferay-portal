@@ -484,7 +484,8 @@ public class ObjectDefinitionLocalServiceImpl
 		ObjectDefinition objectDefinition2 = getObjectDefinition(
 			objectDefinitionId);
 
-		if (objectDefinition2.isAccountEntryRestricted()) {
+		if (objectDefinition2.isAccountEntryRestricted() ||
+			objectDefinition2.isSystem()) {
 			return objectDefinition2;
 		}
 
