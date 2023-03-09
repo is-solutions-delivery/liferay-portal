@@ -53,9 +53,8 @@ const Activities = ({
 	const [currentActivityIndex, setCurrentActivityIndex] = useState<
 		number | undefined
 	>();
-	const [currentActivityIndexEdit, setCurrentActivityIndexEdit] = useState<
-		number
-	>();
+	const [currentActivityIndexEdit, setCurrentActivityIndexEdit] =
+		useState<number>();
 
 	const [isDraft, setIsDraft] = useState(false);
 
@@ -113,8 +112,7 @@ const Activities = ({
 					ResourceName.ACTIVITY_DXP,
 					values.activities[index].id as number
 				);
-			}
-			catch (error: any) {
+			} catch (error: any) {
 				handleError(error.message);
 
 				return;
@@ -152,6 +150,7 @@ const Activities = ({
 		>
 			{currentActivityIndex !== undefined ? (
 				<Form
+					currency={values.currency}
 					currentActivity={values.activities[currentActivityIndex]}
 					currentActivityIndex={currentActivityIndex}
 					setFieldValue={setFieldValue}

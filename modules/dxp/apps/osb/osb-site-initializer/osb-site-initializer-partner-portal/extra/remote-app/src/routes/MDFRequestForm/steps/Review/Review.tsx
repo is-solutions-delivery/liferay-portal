@@ -35,13 +35,13 @@ const Review = ({
 	onPrevious,
 	onSaveAsDraft,
 }: PRMFormikPageProps & MDFRequestStepProps) => {
-	const {isSubmitting, values, ...formikHelpers} = useFormikContext<
-		MDFRequest
-	>();
+	const {isSubmitting, values, ...formikHelpers} =
+		useFormikContext<MDFRequest>();
 
-	const totalBudget = useMemo(() => getTotalBudget(values.activities), [
-		values.activities,
-	]);
+	const totalBudget = useMemo(
+		() => getTotalBudget(values.activities),
+		[values.activities]
+	);
 
 	const totalMDFRequest = useMemo(
 		() => getTotalMDFRequest(values.activities),

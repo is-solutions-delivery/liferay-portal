@@ -41,14 +41,9 @@ const Goals = ({
 		values,
 		...formikHelpers
 	} = useFormikContext<MDFRequest>();
-	// eslint-disable-next-line no-console
-	console.log('🚀 ~ file: Goals.tsx:44 ~ values:', values);
 
-	const {
-		companiesEntries,
-		fieldEntries,
-		userAccountRoles,
-	} = useDynamicFieldEntries();
+	const {companiesEntries, fieldEntries, userAccountRoles} =
+		useDynamicFieldEntries();
 
 	const {companyOptions, onCompanySelected} = useCompanyOptions(
 		companiesEntries,
@@ -69,21 +64,17 @@ const Goals = ({
 		values.currency
 	);
 
-	const {
-		onSelected: onCountrySelected,
-		options: countryOptions,
-	} = getPicklistOptions(
-		fieldEntries[LiferayPicklistName.REGIONS],
-		(selected) => setFieldValue('country', selected)
-	);
+	const {onSelected: onCountrySelected, options: countryOptions} =
+		getPicklistOptions(
+			fieldEntries[LiferayPicklistName.REGIONS],
+			(selected) => setFieldValue('country', selected)
+		);
 
-	const {
-		onSelected: onAdditionalOptionSelected,
-		options: additionalOptions,
-	} = getPicklistOptions(
-		fieldEntries[LiferayPicklistName.ADDITIONAL_OPTIONS],
-		(selected) => setFieldValue('additionalOption', selected)
-	);
+	const {onSelected: onAdditionalOptionSelected, options: additionalOptions} =
+		getPicklistOptions(
+			fieldEntries[LiferayPicklistName.ADDITIONAL_OPTIONS],
+			(selected) => setFieldValue('additionalOption', selected)
+		);
 
 	const goalsErrors = useMemo(() => {
 		delete errors.activities;

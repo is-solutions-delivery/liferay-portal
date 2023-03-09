@@ -59,6 +59,7 @@ export default function getNewActivity(): MDFRequestActivity {
 		},
 		activityStatus: Status.APPROVED,
 		budgets: [],
+		currency: {},
 		endDate: undefined,
 		mdfRequestAmount: 0,
 		name: '',

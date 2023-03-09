@@ -10,13 +10,14 @@
  * distribution rights of the Software.
  */
 
-import {useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 
 import PRMForm from '../../../../../../common/components/PRMForm';
 import PRMFormik from '../../../../../../common/components/PRMFormik';
 import {TypeActivityKey} from '../../../../../../common/enums/TypeActivityKey';
 import {LiferayPicklistName} from '../../../../../../common/enums/liferayPicklistName';
 import {TacticKeys} from '../../../../../../common/enums/mdfRequestTactics';
+import LiferayPicklist from '../../../../../../common/interfaces/liferayPicklist';
 import MDFRequestActivity from '../../../../../../common/interfaces/mdfRequestActivity';
 import getNewActivity from '../../utils/getNewActivity';
 import BudgetBreakdownSection from './components/BudgetBreakdownSection';
@@ -30,6 +31,7 @@ import useTacticsOptions from './hooks/useTacticsOptions';
 import useTypeActivityOptions from './hooks/useTypeActivityOptions';
 
 interface IProps {
+	currency: LiferayPicklist;
 	currentActivity: MDFRequestActivity;
 	currentActivityIndex: number;
 	setFieldValue: (
@@ -44,6 +46,7 @@ type TypeActivityComponent = {
 };
 
 const Form = ({
+	currency,
 	currentActivity,
 	currentActivityIndex,
 	setFieldValue,
@@ -67,21 +70,19 @@ const Form = ({
 		);
 	};
 
-	const {
-		onTypeActivitySelected,
-		typeActivitiesOptions,
-	} = useTypeActivityOptions(
-		fieldEntries[LiferayPicklistName.TYPE_OF_ACTIVITY],
-		(selectedTypeActivity) => {
-			setFieldValue(
-				`activities[${currentActivityIndex}].typeActivity`,
-				selectedTypeActivity
-			);
+	const {onTypeActivitySelected, typeActivitiesOptions} =
+		useTypeActivityOptions(
+			fieldEntries[LiferayPicklistName.TYPE_OF_ACTIVITY],
+			(selectedTypeActivity) => {
+				setFieldValue(
+					`activities[${currentActivityIndex}].typeActivity`,
+					selectedTypeActivity
+				);
 
-			setFieldValue(`activities[${currentActivityIndex}].tactic`, {});
-		},
-		handleClearForm
-	);
+				setFieldValue(`activities[${currentActivityIndex}].tactic`, {});
+			},
+			handleClearForm
+		);
 
 	const {onTacticSelected, tacticsOptions} = useTacticsOptions(
 		useMemo(
@@ -126,6 +127,9 @@ const Form = ({
 			/>
 		),
 	};
+	useEffect(() => {
+		setFieldValue(`activities[${currentActivityIndex}].currency`, currency);
+	}, []);
 
 	return (
 		<>
@@ -191,6 +195,7 @@ const Form = ({
 			<PRMFormik.Array
 				budgets={currentActivity.budgets}
 				component={BudgetBreakdownSection}
+				currency={currency}
 				currentActivityIndex={currentActivityIndex}
 				expenseEntries={
 					fieldEntries[LiferayPicklistName.BUDGET_EXPENSES]

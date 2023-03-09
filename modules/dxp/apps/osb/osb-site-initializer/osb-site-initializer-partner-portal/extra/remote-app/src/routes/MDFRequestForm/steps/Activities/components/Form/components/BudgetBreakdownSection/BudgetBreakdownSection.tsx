@@ -17,6 +17,7 @@ import React, {useCallback} from 'react';
 import PRMForm from '../../../../../../../../common/components/PRMForm';
 import PRMFormik from '../../../../../../../../common/components/PRMFormik';
 import ResumeCard from '../../../../../../../../common/components/ResumeCard';
+import LiferayPicklist from '../../../../../../../../common/interfaces/liferayPicklist';
 import MDFRequestBudget from '../../../../../../../../common/interfaces/mdfRequestBudget';
 import getIntlNumberFormat from '../../../../../../../../common/utils/getIntlNumberFormat';
 import getPicklistOptions from '../../../../../../../../common/utils/getPicklistOptions';
@@ -26,6 +27,7 @@ import getNewBudget from './utils/getNewBudget';
 interface IProps {
 	arrayHelpers: ArrayHelpers;
 	budgets: MDFRequestBudget[];
+	currency: LiferayPicklist;
 	currentActivityIndex: number;
 	expenseEntries: React.OptionHTMLAttributes<HTMLOptionElement>[];
 	setFieldValue: (
@@ -38,21 +40,20 @@ interface IProps {
 const BudgetBreakdownSection = ({
 	arrayHelpers,
 	budgets = [],
+	currency,
 	currentActivityIndex,
 	expenseEntries,
 	setFieldValue,
 }: IProps) => {
-	const {
-		onSelected: onExpenseSelected,
-		options: expensesOptions,
-	} = getPicklistOptions<number>(
-		expenseEntries,
-		(expenseSelected, currentBudgetIndex) =>
-			setFieldValue(
-				`activities[${currentActivityIndex}].budgets[${currentBudgetIndex}].expense`,
-				expenseSelected
-			)
-	);
+	const {onSelected: onExpenseSelected, options: expensesOptions} =
+		getPicklistOptions<number>(
+			expenseEntries,
+			(expenseSelected, currentBudgetIndex) =>
+				setFieldValue(
+					`activities[${currentActivityIndex}].budgets[${currentBudgetIndex}].expense`,
+					expenseSelected
+				)
+		);
 
 	const budgetsAmount = useBudgetsAmount(
 		budgets,
@@ -132,7 +133,9 @@ const BudgetBreakdownSection = ({
 			<div className="my-3">
 				<ResumeCard
 					leftContent="Total cost"
-					rightContent={getIntlNumberFormat().format(budgetsAmount)}
+					rightContent={getIntlNumberFormat(currency).format(
+						budgetsAmount
+					)}
 				/>
 
 				<ResumeCard
