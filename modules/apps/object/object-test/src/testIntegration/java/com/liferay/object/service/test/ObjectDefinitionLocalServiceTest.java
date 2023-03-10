@@ -1405,7 +1405,7 @@ public class ObjectDefinitionLocalServiceTest {
 			ObjectDefinition objectDefinition2)
 		throws Exception {
 
-		// Criando uma restricao entre AccountEntry e um object definition
+		// Creating a constraint between AccountEntry and an object definition
 
 		ObjectDefinition objectDefinition1 =
 			_objectDefinitionLocalService.fetchSystemObjectDefinition(
@@ -1430,7 +1430,8 @@ public class ObjectDefinitionLocalServiceTest {
 			objectDefinition2.getStorageType());
 		Assert.assertFalse(objectDefinition2.isSystem());
 
-		// Negative test - trying to create a constraint between two custom objects
+		// Negative test - trying to create a constraint between two
+		// custom objects
 
 		String externalReferenceCode = RandomTestUtil.randomString();
 		User user = TestPropsValues.getUser();
