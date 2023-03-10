@@ -21,7 +21,6 @@ import getColumns from './utils/getColumns';
 import getRows from './utils/getRows';
 
 const AccountSubscriptionModal = ({
-	accountSubscriptionsStatus,
 	externalReferenceCode,
 	isProvisioned,
 	observer,
@@ -35,7 +34,7 @@ const AccountSubscriptionModal = ({
 	] = useOrderItems(externalReferenceCode);
 
 	const totalCount = data?.orderItems.totalCount;
-
+	
 	return (
 		<ClayModal center observer={observer} size="lg">
 			<div className="pt-4 px-4">
@@ -67,7 +66,6 @@ const AccountSubscriptionModal = ({
 						totalCount,
 					}}
 					rows={getRows(
-						accountSubscriptionsStatus,
 						data?.orderItems.items
 					)}
 					tableVerticalAlignment="middle"
