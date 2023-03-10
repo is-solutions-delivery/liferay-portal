@@ -116,7 +116,6 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
-import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.Theme;
@@ -1309,7 +1308,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 							localServiceObjectDefinition.getShortName());
 
 			_objectDefinitionLocalService.enableAccountEntryRestricted(
-				localServiceObjectDefinition.getObjectDefinitionId(),
 				objectRelationship);
 		}
 
