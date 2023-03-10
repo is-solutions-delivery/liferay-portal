@@ -11,16 +11,22 @@
 
 import ClayModal from '@clayui/modal';
 import {memo} from 'react';
+
 import i18n from '../../../../../../../../../../../common/I18n';
 import {
 	Button,
+	Skeleton,
 	Table,
 } from '../../../../../../../../../../../common/components';
+import {useGetAccountSubscriptionUsage} from '../../../../../../../../../../../common/services/liferay/graphql/account-subscription-usage/queries/useGetAccountSubscriptionUsage';
+import UsageGraph from './components/UsageGraph/UsageGraph';
 import useOrderItems from './hooks/useOrderItems';
 import getColumns from './utils/getColumns';
 import getRows from './utils/getRows';
 
 const AccountSubscriptionModal = ({
+	accountKey,
+	accountSubscriptionProductKey,
 	accountSubscriptionsStatus,
 	externalReferenceCode,
 	isProvisioned,
@@ -34,7 +40,32 @@ const AccountSubscriptionModal = ({
 		{data, loading},
 	] = useOrderItems(externalReferenceCode);
 
+	const accountSubscriptionUsage = useGetAccountSubscriptionUsage(
+		accountKey,
+		accountSubscriptionProductKey
+	);
+
 	const totalCount = data?.orderItems.totalCount;
+
+	const BuildChart = () => {
+		if (
+			accountSubscriptionUsage.loading ||
+			!accountSubscriptionUsage.data.getAccountSubscriptionUsage
+		) {
+			return (
+				<Skeleton
+					align="center"
+					className="mb-5"
+					height={20}
+					width={100}
+				/>
+			);
+		}
+
+		return (
+			<UsageGraph accountSubscriptionUsage={accountSubscriptionUsage} />
+		);
+	};
 
 	return (
 		<ClayModal center observer={observer} size="lg">
@@ -55,6 +86,12 @@ const AccountSubscriptionModal = ({
 						onClick={onClose}
 					/>
 				</div>
+
+				<h5 className="mb-4">
+					{i18n.translate('active-subscriptions')}
+				</h5>
+
+				<BuildChart />
 
 				<Table
 					columns={getColumns(isProvisioned)}

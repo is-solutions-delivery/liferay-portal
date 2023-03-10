@@ -17,6 +17,7 @@ import AccountSubscriptionCard from './components/AccountSubscriptionCard/Accoun
 import AccountSubscriptionModal from './components/AccountSubscriptionModal/AccountSubscriptionModal';
 
 const AccountSubscriptionsList = ({
+	accountKey,
 	accountSubscriptions,
 	loading,
 	maxCardsLoading = 4,
@@ -58,6 +59,8 @@ const AccountSubscriptionsList = ({
 		<div className="d-flex flex-wrap">
 			{open && (
 				<AccountSubscriptionModal
+					accountKey={accountKey}
+					accountSubscriptionProductKey={currentAccountSubscription.productKey}
 					accountSubscriptionsStatus={
 						currentAccountSubscription.subscriptionStatus
 					}
