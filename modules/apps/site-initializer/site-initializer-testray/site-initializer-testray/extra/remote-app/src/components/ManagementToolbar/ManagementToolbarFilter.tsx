@@ -187,7 +187,7 @@ const ManagementToolbarFilter: React.FC<ManagementToolbarFilterProps> = ({
 			show={position !== undefined}
 			trigger={
 				<ClayButton
-					className="filter-button nav-link"
+					className="management-toolbar-buttons nav-link"
 					displayType="unstyled"
 					ref={ref}
 				>
