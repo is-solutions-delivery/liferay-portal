@@ -487,7 +487,6 @@ public class ObjectDefinitionLocalServiceImpl
 			objectRelationship.getObjectDefinitionId2());
 
 		if (objectDefinition2.isAccountEntryRestricted()) {
-
 			return objectDefinition2;
 		}
 
