@@ -1087,17 +1087,15 @@ public class BundleSiteInitializerTest {
 		ListTypeEntry[] listTypeEntries1 =
 			listTypeDefinition1.getListTypeEntries();
 
-		ListTypeEntry testListTypeEntry1 = listTypeEntries1[0];
+		ListTypeEntry listTypeEntry1 = listTypeEntries1[0];
 
-		Assert.assertEquals("testlisttypeentry1", testListTypeEntry1.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 1", testListTypeEntry1.getName());
+		Assert.assertEquals("testlisttypeentry1", listTypeEntry1.getKey());
+		Assert.assertEquals("Test List Type Entry 1", listTypeEntry1.getName());
 
-		ListTypeEntry testListTypeEntry2 = listTypeEntries1[1];
+		ListTypeEntry listTypeEntry2 = listTypeEntries1[1];
 
-		Assert.assertEquals("testlisttypeentry2", testListTypeEntry2.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 2", testListTypeEntry2.getName());
+		Assert.assertEquals("testlisttypeentry2", listTypeEntry2.getKey());
+		Assert.assertEquals("Test List Type Entry 2", listTypeEntry2.getName());
 
 		ListTypeDefinition listTypeDefinition2 =
 			listTypeDefinitionResource.
@@ -1110,17 +1108,15 @@ public class BundleSiteInitializerTest {
 		ListTypeEntry[] listTypeEntries2 =
 			listTypeDefinition2.getListTypeEntries();
 
-		ListTypeEntry testListTypeEntry3 = listTypeEntries2[0];
+		ListTypeEntry listTypeEntry3 = listTypeEntries2[0];
 
-		Assert.assertEquals("testlisttypeentry3", testListTypeEntry3.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 3", testListTypeEntry3.getName());
+		Assert.assertEquals("testlisttypeentry3", listTypeEntry3.getKey());
+		Assert.assertEquals("Test List Type Entry 3", listTypeEntry3.getName());
 
-		ListTypeEntry testListTypeEntry4 = listTypeEntries2[1];
+		ListTypeEntry listTypeEntry4 = listTypeEntries2[1];
 
-		Assert.assertEquals("testlisttypeentry4", testListTypeEntry4.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 4", testListTypeEntry4.getName());
+		Assert.assertEquals("testlisttypeentry4", listTypeEntry4.getKey());
+		Assert.assertEquals("Test List Type Entry 4", listTypeEntry4.getName());
 	}
 
 	private void _assertListTypeDefinitions2() throws Exception {
@@ -1144,17 +1140,17 @@ public class BundleSiteInitializerTest {
 		ListTypeEntry[] listTypeEntries1 =
 			listTypeDefinition1.getListTypeEntries();
 
-		ListTypeEntry testListTypeEntry1 = listTypeEntries1[0];
+		ListTypeEntry listTypeEntry1 = listTypeEntries1[0];
 
-		Assert.assertEquals("testlisttypeentry1", testListTypeEntry1.getKey());
+		Assert.assertEquals("testlisttypeentry1", listTypeEntry1.getKey());
 		Assert.assertEquals(
-			"Test List Type Entry 1 Update", testListTypeEntry1.getName());
+			"Test List Type Entry 1 Update", listTypeEntry1.getName());
 
-		ListTypeEntry testListTypeEntry2 = listTypeEntries1[1];
+		ListTypeEntry listTypeEntry2 = listTypeEntries1[1];
 
-		Assert.assertEquals("testlisttypeentry2", testListTypeEntry2.getKey());
+		Assert.assertEquals("testlisttypeentry2", listTypeEntry2.getKey());
 		Assert.assertEquals(
-			"Test List Type Entry 2 Update", testListTypeEntry2.getName());
+			"Test List Type Entry 2 Update", listTypeEntry2.getName());
 
 		ListTypeDefinition listTypeDefinition2 =
 			listTypeDefinitionResource.
@@ -1167,40 +1163,36 @@ public class BundleSiteInitializerTest {
 		ListTypeEntry[] listTypeEntries2 =
 			listTypeDefinition2.getListTypeEntries();
 
-		ListTypeEntry testListTypeEntry3 = listTypeEntries2[0];
+		ListTypeEntry listTypeEntry3 = listTypeEntries2[0];
 
-		Assert.assertEquals("testlisttypeentry3", testListTypeEntry3.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 3", testListTypeEntry3.getName());
+		Assert.assertEquals("testlisttypeentry3", listTypeEntry3.getKey());
+		Assert.assertEquals("Test List Type Entry 3", listTypeEntry3.getName());
 
-		ListTypeEntry testListTypeEntry4 = listTypeEntries2[1];
+		ListTypeEntry listTypeEntry4 = listTypeEntries2[1];
 
-		Assert.assertEquals("testlisttypeentry4", testListTypeEntry4.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 4", testListTypeEntry4.getName());
+		Assert.assertEquals("testlisttypeentry4", listTypeEntry4.getKey());
+		Assert.assertEquals("Test List Type Entry 4", listTypeEntry4.getName());
 
-		ListTypeDefinition testListTypeDefinition3 =
+		ListTypeDefinition listTypeDefinition3 =
 			listTypeDefinitionResource.
 				getListTypeDefinitionByExternalReferenceCode(
 					"LISTTYPEDEFINITION3");
 
 		Assert.assertEquals(
-			"Test List Type Definition 3", testListTypeDefinition3.getName());
+			"Test List Type Definition 3", listTypeDefinition3.getName());
 
 		ListTypeEntry[] listTypeEntries3 =
-			testListTypeDefinition3.getListTypeEntries();
+			listTypeDefinition3.getListTypeEntries();
 
-		ListTypeEntry testListTypeEntry5 = listTypeEntries3[0];
+		ListTypeEntry listTypeEntry5 = listTypeEntries3[0];
 
-		Assert.assertEquals("testlisttypeentry5", testListTypeEntry5.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 5", testListTypeEntry5.getName());
+		Assert.assertEquals("testlisttypeentry5", listTypeEntry5.getKey());
+		Assert.assertEquals("Test List Type Entry 5", listTypeEntry5.getName());
 
-		ListTypeEntry testListTypeEntry6 = listTypeEntries3[1];
+		ListTypeEntry listTypeEntry6 = listTypeEntries3[1];
 
-		Assert.assertEquals("testlisttypeentry6", testListTypeEntry6.getKey());
-		Assert.assertEquals(
-			"Test List Type Entry 6", testListTypeEntry6.getName());
+		Assert.assertEquals("testlisttypeentry6", listTypeEntry6.getKey());
+		Assert.assertEquals("Test List Type Entry 6", listTypeEntry6.getName());
 	}
 
 	private void _assertNotificationTemplate() throws Exception {
