@@ -170,7 +170,7 @@ definition {
 		}
 
 		task ("And the MDF is approved") {
-			PRMMDFRequest.goToMDF(key_MDFName = "Campaign Name 2");
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name 2");
 
 			PRMMDFRequest.changeMDFStatus(
 				campaignName = "Campaign Name 2",
