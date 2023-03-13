@@ -1079,7 +1079,7 @@ public class BundleSiteInitializerTest {
 		ListTypeDefinition listTypeDefinition1 =
 			listTypeDefinitionResource.
 				getListTypeDefinitionByExternalReferenceCode(
-					"LISTTYPEDEFINITION1");
+					"TESTLISTTYPEDEFINITION1");
 
 		Assert.assertEquals(
 			"Test List Type Definition 1", listTypeDefinition1.getName());
@@ -1100,7 +1100,7 @@ public class BundleSiteInitializerTest {
 		ListTypeDefinition listTypeDefinition2 =
 			listTypeDefinitionResource.
 				getListTypeDefinitionByExternalReferenceCode(
-					"LISTTYPEDEFINITION2");
+					"TESTLISTTYPEDEFINITION2");
 
 		Assert.assertEquals(
 			"Test List Type Definition 2", listTypeDefinition2.getName());
@@ -1155,7 +1155,7 @@ public class BundleSiteInitializerTest {
 		ListTypeDefinition listTypeDefinition2 =
 			listTypeDefinitionResource.
 				getListTypeDefinitionByExternalReferenceCode(
-					"LISTTYPEDEFINITION2");
+					"TESTLISTTYPEDEFINITION2");
 
 		Assert.assertEquals(
 			"Test List Type Definition 2", listTypeDefinition2.getName());
@@ -1176,7 +1176,7 @@ public class BundleSiteInitializerTest {
 		ListTypeDefinition listTypeDefinition3 =
 			listTypeDefinitionResource.
 				getListTypeDefinitionByExternalReferenceCode(
-					"LISTTYPEDEFINITION3");
+					"TESTLISTTYPEDEFINITION3");
 
 		Assert.assertEquals(
 			"Test List Type Definition 3", listTypeDefinition3.getName());
