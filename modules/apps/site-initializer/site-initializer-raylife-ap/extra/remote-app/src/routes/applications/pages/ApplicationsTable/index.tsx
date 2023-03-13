@@ -405,6 +405,7 @@ const ApplicationsTable = () => {
 						email,
 						externalReferenceCode,
 						fullName,
+						isClickable: 'true',
 						key: externalReferenceCode,
 						name,
 						productName,

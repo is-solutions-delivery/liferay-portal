@@ -568,6 +568,7 @@ const PoliciesTable = () => {
 					policiesList.push({
 						commission: `$${commissionValue.toFixed(2)}`,
 						externalReferenceCode,
+						isClickable: 'true',
 						isExpiring: (renewalDue < 0).toString(),
 						isRedLine: (
 							renewalDue >= 0 &&

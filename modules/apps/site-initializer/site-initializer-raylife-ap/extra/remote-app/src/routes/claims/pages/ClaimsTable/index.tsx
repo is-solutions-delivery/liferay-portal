@@ -51,6 +51,7 @@ type ClaimTableType = {
 	claimStatus: {name: string};
 	externalReferenceCode: string;
 	id: string;
+	isClickable: string;
 	r_policyToClaims_c_raylifePolicy: {
 		externalReferenceCode: string;
 		policyOwnerName: string;
@@ -382,6 +383,9 @@ const ClaimsTable = () => {
 				claimName: r_policyToClaims_c_raylifePolicy?.policyOwnerName,
 				claimStatus: claimStatus?.name,
 				id,
+				isClickable: (
+					r_policyToClaims_c_raylifePolicy.productName === 'Auto'
+				).toString(),
 				key: externalReferenceCode,
 				policyNumber:
 					r_policyToClaims_c_raylifePolicy?.externalReferenceCode,

@@ -185,6 +185,7 @@ const RecentApplications = () => {
 							new Date(applicationCreateDate)
 						),
 						externalReferenceCode,
+						isClickable: 'true',
 						key: externalReferenceCode,
 						name,
 						productName,
