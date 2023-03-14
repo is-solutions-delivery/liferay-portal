@@ -254,107 +254,6 @@ public class JournalArticleLocalServiceImpl
 	extends JournalArticleLocalServiceBaseImpl {
 
 	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #addArticle(String, long, long, long, long, long, String,
-	 *             boolean, double, Map, Map, Map, String, String, String,
-	 *             String, int, int, int, int, int, int, int, int, int, int,
-	 *             boolean, int, int, int, int, int, boolean, boolean, boolean,
-	 *             String, File, Map, String, ServiceContext)}
-	 */
-	@Deprecated
-	@Indexable(type = IndexableType.REINDEX)
-	@Override
-	public JournalArticle addArticle(
-			long userId, long groupId, long folderId, long classNameId,
-			long classPK, String articleId, boolean autoArticleId,
-			double version, Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap,
-			Map<Locale, String> friendlyURLMap, String content,
-			String ddmStructureKey, String ddmTemplateKey, String layoutUuid,
-			int displayDateMonth, int displayDateDay, int displayDateYear,
-			int displayDateHour, int displayDateMinute, int expirationDateMonth,
-			int expirationDateDay, int expirationDateYear,
-			int expirationDateHour, int expirationDateMinute,
-			boolean neverExpire, int reviewDateMonth, int reviewDateDay,
-			int reviewDateYear, int reviewDateHour, int reviewDateMinute,
-			boolean neverReview, boolean indexable, boolean smallImage,
-			String smallImageURL, File smallImageFile,
-			Map<String, byte[]> images, String articleURL,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return addArticle(
-			null, userId, groupId, folderId, classNameId, classPK, articleId,
-			autoArticleId, version, titleMap, descriptionMap, friendlyURLMap,
-			content, ddmStructureKey, ddmTemplateKey, layoutUuid,
-			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
-			displayDateMinute, expirationDateMonth, expirationDateDay,
-			expirationDateYear, expirationDateHour, expirationDateMinute,
-			neverExpire, reviewDateMonth, reviewDateDay, reviewDateYear,
-			reviewDateHour, reviewDateMinute, neverReview, indexable,
-			smallImage, smallImageURL, smallImageFile, images, articleURL,
-			serviceContext);
-	}
-
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #addArticle(String, long, long, long, long, long, String,
-	 *             boolean, double, Map, Map, Map, String, String, String,
-	 *             String, int, int, int, int, int, int, int, int, int, int,
-	 *             boolean, int, int, int, int, int, boolean, boolean, boolean,
-	 *             String, File, Map, String, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public JournalArticle addArticle(
-			long userId, long groupId, long folderId, long classNameId,
-			long classPK, String articleId, boolean autoArticleId,
-			double version, Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap, String content,
-			String ddmStructureKey, String ddmTemplateKey, String layoutUuid,
-			int displayDateMonth, int displayDateDay, int displayDateYear,
-			int displayDateHour, int displayDateMinute, int expirationDateMonth,
-			int expirationDateDay, int expirationDateYear,
-			int expirationDateHour, int expirationDateMinute,
-			boolean neverExpire, int reviewDateMonth, int reviewDateDay,
-			int reviewDateYear, int reviewDateHour, int reviewDateMinute,
-			boolean neverReview, boolean indexable, boolean smallImage,
-			String smallImageURL, File smallImageFile,
-			Map<String, byte[]> images, String articleURL,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return journalArticleLocalService.addArticle(
-			null, userId, groupId, folderId, classNameId, classPK, articleId,
-			autoArticleId, version, titleMap, descriptionMap, titleMap, content,
-			ddmStructureKey, ddmTemplateKey, layoutUuid, displayDateMonth,
-			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
-			expirationDateMonth, expirationDateDay, expirationDateYear,
-			expirationDateHour, expirationDateMinute, neverExpire,
-			reviewDateMonth, reviewDateDay, reviewDateYear, reviewDateHour,
-			reviewDateMinute, neverReview, indexable, smallImage, smallImageURL,
-			smallImageFile, images, articleURL, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #addArticle(String, long, long, long, Map, Map, String,
-	 *             String, String, ServiceContext)}
-	 */
-	@Deprecated
-	public JournalArticle addArticle(
-			long userId, long groupId, long folderId,
-			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			String content, String ddmStructureKey, String ddmTemplateKey,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return addArticle(
-			null, userId, groupId, folderId, titleMap, descriptionMap, content,
-			ddmStructureKey, ddmTemplateKey, serviceContext);
-	}
-
-	/**
 	 * Adds a web content article with additional parameters. All scheduling
 	 * parameters (display date, expiration date, and review date) use the
 	 * current user's timezone.
@@ -513,10 +412,16 @@ public class JournalArticleLocalServiceImpl
 			}
 		}
 
+		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
+			_portal.getSiteGroupId(groupId),
+			_classNameLocalService.getClassNameId(JournalArticle.class),
+			ddmStructureKey, true);
+
 		boolean validate = !ExportImportThreadLocal.isImportInProcess();
 
 		if (validate) {
-			validateDDMStructureId(groupId, folderId, ddmStructureKey);
+			validateDDMStructureId(
+				groupId, folderId, ddmStructure.getStructureId());
 		}
 
 		if (autoArticleId) {
@@ -529,14 +434,15 @@ public class JournalArticleLocalServiceImpl
 			validate(
 				externalReferenceCode, user.getCompanyId(), groupId,
 				classNameId, articleId, autoArticleId, version, titleMap,
-				content, ddmStructureKey, ddmTemplateKey, displayDate,
-				expirationDate, smallImage, smallImageURL, smallImageFile,
-				smallImageBytes, serviceContext);
+				content, ddmStructure.getStructureId(), ddmTemplateKey,
+				displayDate, expirationDate, smallImage, smallImageURL,
+				smallImageFile, smallImageBytes, serviceContext);
 
 			try {
 				validateReferences(
-					groupId, ddmStructureKey, ddmTemplateKey, layoutUuid,
-					smallImage, smallImageURL, smallImageBytes, 0, content);
+					groupId, ddmStructure.getStructureId(), ddmTemplateKey,
+					layoutUuid, smallImage, smallImageURL, smallImageBytes, 0,
+					content);
 			}
 			catch (ExportImportContentValidationException
 						exportImportContentValidationException) {
@@ -584,14 +490,7 @@ public class JournalArticleLocalServiceImpl
 		article.setArticleId(articleId);
 		article.setVersion(version);
 		article.setUrlTitle(urlTitleMap.get(LocaleUtil.toLanguageId(locale)));
-
-		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
-			_portal.getSiteGroupId(groupId),
-			_classNameLocalService.getClassNameId(JournalArticle.class),
-			ddmStructureKey, true);
-
 		article.setDDMStructureId(ddmStructure.getStructureId());
-
 		article.setDDMStructureKey(ddmStructureKey);
 		article.setDDMTemplateKey(ddmTemplateKey);
 		article.setDefaultLanguageId(LocaleUtil.toLanguageId(locale));
@@ -671,7 +570,8 @@ public class JournalArticleLocalServiceImpl
 		if (_classNameLocalService.getClassNameId(DDMStructure.class) !=
 				classNameId) {
 
-			updateDDMLinks(id, groupId, ddmStructureKey, ddmTemplateKey, true);
+			updateDDMLinks(
+				id, groupId, article.getDDMStructureId(), ddmTemplateKey, true);
 		}
 
 		// Email
@@ -814,11 +714,17 @@ public class JournalArticleLocalServiceImpl
 
 		sanitize(user.getCompanyId(), groupId, userId, classPK, descriptionMap);
 
+		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
+			_portal.getSiteGroupId(groupId),
+			_classNameLocalService.getClassNameId(JournalArticle.class),
+			ddmStructureKey, true);
+
 		validate(
 			externalReferenceCode, user.getCompanyId(), groupId, classNameId,
-			articleId, true, 0, titleMap, content, ddmStructureKey,
-			ddmTemplateKey, displayDate, expirationDate, smallImage,
-			smallImageURL, smallImageFile, smallImageBytes, serviceContext);
+			articleId, true, 0, titleMap, content,
+			ddmStructure.getStructureId(), ddmTemplateKey, displayDate,
+			expirationDate, smallImage, smallImageURL, smallImageFile,
+			smallImageBytes, serviceContext);
 
 		serviceContext.setAttribute("articleId", articleId);
 
@@ -843,14 +749,7 @@ public class JournalArticleLocalServiceImpl
 		article.setClassNameId(classNameId);
 		article.setClassPK(classPK);
 		article.setArticleId(articleId);
-
-		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
-			_portal.getSiteGroupId(groupId),
-			_classNameLocalService.getClassNameId(JournalArticle.class),
-			ddmStructureKey, true);
-
 		article.setDDMStructureId(ddmStructure.getStructureId());
-
 		article.setDDMStructureKey(ddmStructureKey);
 		article.setDDMTemplateKey(ddmTemplateKey);
 
@@ -1233,7 +1132,7 @@ public class JournalArticleLocalServiceImpl
 		updateDDMFields(newArticle, copyArticleImages(oldArticle, newArticle));
 
 		updateDDMLinks(
-			id, groupId, oldArticle.getDDMStructureKey(),
+			id, groupId, oldArticle.getDDMStructureId(),
 			oldArticle.getDDMTemplateKey(), true);
 
 		return newArticle;
@@ -1526,12 +1425,12 @@ public class JournalArticleLocalServiceImpl
 
 	@Override
 	public void deleteArticleDefaultValues(
-			long groupId, String articleId, String ddmStructureKey)
+			long groupId, String articleId, long ddmStructureId)
 		throws PortalException {
 
 		// Dynamic data mapping
 
-		_deleteDDMStructurePredefinedValues(groupId, ddmStructureKey);
+		_deleteDDMStructurePredefinedValues(ddmStructureId);
 
 		journalArticleLocalService.deleteArticle(groupId, articleId, null);
 	}
@@ -4081,7 +3980,7 @@ public class JournalArticleLocalServiceImpl
 		JournalArticle latestArticle = getLatestArticle(groupId, articleId);
 
 		validateDDMStructureId(
-			groupId, newFolderId, latestArticle.getDDMStructureKey());
+			groupId, newFolderId, latestArticle.getDDMStructureId());
 
 		List<JournalArticle> articles = journalArticlePersistence.findByG_A(
 			groupId, articleId);
@@ -5783,14 +5682,14 @@ public class JournalArticleLocalServiceImpl
 		if (validate) {
 			validate(
 				user.getCompanyId(), groupId, latestArticle.getClassNameId(),
-				titleMap, content, ddmStructureKey, ddmTemplateKey, displayDate,
-				expirationDate, smallImage, smallImageURL, smallImageFile,
-				smallImageBytes, serviceContext);
+				titleMap, content, latestArticle.getDDMStructureId(),
+				ddmTemplateKey, displayDate, expirationDate, smallImage,
+				smallImageURL, smallImageFile, smallImageBytes, serviceContext);
 
 			try {
 				validateReferences(
-					groupId, ddmStructureKey, ddmTemplateKey, layoutUuid,
-					smallImage, smallImageURL, smallImageBytes,
+					groupId, latestArticle.getDDMStructureId(), ddmTemplateKey,
+					layoutUuid, smallImage, smallImageURL, smallImageBytes,
 					latestArticle.getSmallImageId(), content);
 			}
 			catch (ExportImportContentValidationException
@@ -5921,8 +5820,8 @@ public class JournalArticleLocalServiceImpl
 				article.getClassNameId()) {
 
 			updateDDMLinks(
-				article.getId(), groupId, ddmStructureKey, ddmTemplateKey,
-				addNewVersion);
+				article.getId(), groupId, article.getDDMStructureId(),
+				ddmTemplateKey, addNewVersion);
 		}
 
 		// Small image
@@ -6370,7 +6269,7 @@ public class JournalArticleLocalServiceImpl
 
 		validate(
 			user.getCompanyId(), groupId, article.getClassNameId(), titleMap,
-			content, ddmStructureKey, ddmTemplateKey, displayDate,
+			content, article.getDDMStructureId(), ddmTemplateKey, displayDate,
 			expirationDate, smallImage, smallImageURL, smallImageFile,
 			smallImageBytes, serviceContext);
 
@@ -6586,7 +6485,7 @@ public class JournalArticleLocalServiceImpl
 
 		if (incrementVersion) {
 			updateDDMLinks(
-				article.getId(), groupId, oldArticle.getDDMStructureKey(),
+				article.getId(), groupId, oldArticle.getDDMStructureId(),
 				oldArticle.getDDMTemplateKey(), true);
 		}
 
@@ -6632,7 +6531,7 @@ public class JournalArticleLocalServiceImpl
 				userId, article.getGroupId(), article.getCreateDate(),
 				article.getModifiedDate(), JournalArticle.class.getName(),
 				article.getPrimaryKey(), article.getUuid(),
-				getClassTypeId(article), assetCategoryIds, assetTagNames,
+				article.getDDMStructureId(), assetCategoryIds, assetTagNames,
 				isListable(article), false, null, null, null,
 				article.getExpirationDate(), ContentTypes.TEXT_HTML, title,
 				description, description, null, article.getLayoutUuid(), 0, 0,
@@ -6653,7 +6552,7 @@ public class JournalArticleLocalServiceImpl
 				userId, article.getGroupId(), article.getCreateDate(),
 				article.getModifiedDate(), JournalArticle.class.getName(),
 				journalArticleResource.getResourcePrimKey(),
-				journalArticleResource.getUuid(), getClassTypeId(article),
+				journalArticleResource.getUuid(), article.getDDMStructureId(),
 				assetCategoryIds, assetTagNames, isListable(article), visible,
 				null, null, publishDate, article.getExpirationDate(),
 				ContentTypes.TEXT_HTML, title, description, description, null,
@@ -6815,7 +6714,7 @@ public class JournalArticleLocalServiceImpl
 								article.getModifiedDate(),
 								JournalArticle.class.getName(),
 								article.getResourcePrimKey(), article.getUuid(),
-								getClassTypeId(article), assetCategoryIds,
+								article.getDDMStructureId(), assetCategoryIds,
 								assetTagNames, isListable(article), false, null,
 								null, null, null, ContentTypes.TEXT_HTML, title,
 								description, description, null,
@@ -7696,15 +7595,6 @@ public class JournalArticleLocalServiceImpl
 		return articleVersionStatusOVPs;
 	}
 
-	protected long getClassTypeId(JournalArticle article) {
-		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			_portal.getSiteGroupId(article.getGroupId()),
-			_classNameLocalService.getClassNameId(JournalArticle.class),
-			article.getDDMStructureKey(), true);
-
-		return ddmStructure.getStructureId();
-	}
-
 	protected JournalArticle getFirstArticle(
 			long groupId, String articleId, int status,
 			OrderByComparator<JournalArticle> orderByComparator)
@@ -7938,9 +7828,7 @@ public class JournalArticleLocalServiceImpl
 		}
 
 		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			_portal.getSiteGroupId(article.getGroupId()),
-			_classNameLocalService.getClassNameId(JournalArticle.class),
-			article.getDDMStructureKey(), true);
+			article.getDDMStructureId());
 
 		if (ddmStructure != null) {
 			subscriptionSender.addPersistedSubscribers(
@@ -8198,9 +8086,7 @@ public class JournalArticleLocalServiceImpl
 		throws PortalException {
 
 		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
-			_portal.getSiteGroupId(article.getGroupId()),
-			_portal.getClassNameId(JournalArticle.class),
-			article.getDDMStructureKey(), true);
+			article.getDDMStructureId());
 
 		_ddmFieldLocalService.updateDDMFormValues(
 			ddmStructure.getStructureId(), article.getId(), ddmFormValues);
@@ -8226,14 +8112,12 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected void updateDDMLinks(
-			long id, long groupId, String ddmStructureKey,
-			String ddmTemplateKey, boolean incrementVersion)
+			long id, long groupId, long ddmStructureId, String ddmTemplateKey,
+			boolean incrementVersion)
 		throws PortalException {
 
 		DDMStructure ddmStructure = ddmStructureLocalService.getStructure(
-			_portal.getSiteGroupId(groupId),
-			_classNameLocalService.getClassNameId(JournalArticle.class),
-			ddmStructureKey, true);
+			ddmStructureId);
 
 		DDMTemplate ddmTemplate = ddmTemplateLocalService.fetchTemplate(
 			_portal.getSiteGroupId(groupId),
@@ -8415,15 +8299,14 @@ public class JournalArticleLocalServiceImpl
 
 	protected void validate(
 			long companyId, long groupId, long classNameId,
-			Map<Locale, String> titleMap, String content,
-			String ddmStructureKey, String ddmTemplateKey, Date displayDate,
-			Date expirationDate, boolean smallImage, String smallImageURL,
-			File smallImageFile, byte[] smallImageBytes,
-			ServiceContext serviceContext)
+			Map<Locale, String> titleMap, String content, long ddmStructureId,
+			String ddmTemplateKey, Date displayDate, Date expirationDate,
+			boolean smallImage, String smallImageURL, File smallImageFile,
+			byte[] smallImageBytes, ServiceContext serviceContext)
 		throws PortalException {
 
 		_getModelValidator().validate(
-			companyId, groupId, classNameId, titleMap, content, ddmStructureKey,
+			companyId, groupId, classNameId, titleMap, content, ddmStructureId,
 			ddmTemplateKey, displayDate, expirationDate, smallImage,
 			smallImageURL, smallImageFile, smallImageBytes, serviceContext);
 	}
@@ -8436,7 +8319,7 @@ public class JournalArticleLocalServiceImpl
 			String externalReferenceCode, long companyId, long groupId,
 			long classNameId, String articleId, boolean autoArticleId,
 			double version, Map<Locale, String> titleMap, String content,
-			String ddmStructureKey, String ddmTemplateKey, Date displayDate,
+			long ddmStructureId, String ddmTemplateKey, Date displayDate,
 			Date expirationDate, boolean smallImage, String smallImageURL,
 			File smallImageFile, byte[] smallImageBytes,
 			ServiceContext serviceContext)
@@ -8444,7 +8327,7 @@ public class JournalArticleLocalServiceImpl
 
 		_getModelValidator().validate(
 			externalReferenceCode, companyId, groupId, classNameId, articleId,
-			autoArticleId, version, titleMap, content, ddmStructureKey,
+			autoArticleId, version, titleMap, content, ddmStructureId,
 			ddmTemplateKey, displayDate, expirationDate, smallImage,
 			smallImageURL, smallImageFile, smallImageBytes, serviceContext);
 	}
@@ -8454,21 +8337,21 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected void validateDDMStructureId(
-			long groupId, long folderId, String ddmStructureKey)
+			long groupId, long folderId, long ddmStructureId)
 		throws PortalException {
 
 		_getModelValidator().validateDDMStructureId(
-			groupId, folderId, ddmStructureKey);
+			groupId, folderId, ddmStructureId);
 	}
 
 	protected void validateReferences(
-			long groupId, String ddmStructureKey, String ddmTemplateKey,
+			long groupId, long ddmStructureId, String ddmTemplateKey,
 			String layoutUuid, boolean smallImage, String smallImageURL,
 			byte[] smallImageBytes, long smallImageId, String content)
 		throws PortalException {
 
 		_getModelValidator().validateReferences(
-			groupId, ddmStructureKey, ddmTemplateKey, layoutUuid, smallImage,
+			groupId, ddmStructureId, ddmTemplateKey, layoutUuid, smallImage,
 			smallImageURL, smallImageBytes, smallImageId, content);
 	}
 
@@ -8683,14 +8566,11 @@ public class JournalArticleLocalServiceImpl
 		}
 	}
 
-	private void _deleteDDMStructurePredefinedValues(
-			long groupId, String ddmStructureKey)
+	private void _deleteDDMStructurePredefinedValues(long ddmStructureId)
 		throws PortalException {
 
 		DDMStructure ddmStructure = ddmStructureLocalService.fetchStructure(
-			groupId,
-			_classNameLocalService.getClassNameId(JournalArticle.class),
-			ddmStructureKey, true);
+			ddmStructureId);
 
 		if (ddmStructure == null) {
 			return;
