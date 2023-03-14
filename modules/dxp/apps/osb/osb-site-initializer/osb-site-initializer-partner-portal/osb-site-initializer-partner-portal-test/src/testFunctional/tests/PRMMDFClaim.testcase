@@ -312,11 +312,11 @@ definition {
 
 		task ("And I go to MDF claim listing page") {
 			PRMNavigator.goToNavItem(navItem = "MDF Claim");
-	
+
 			WaitForPageLoad();
 		}
 
-		task("Then I search twice for a single claim, export it, and check if it is visible in the file"){
+		task ("Then I search twice for a single claim, export it, and check if it is visible in the file") {
 			var firstID = PRMMDFClaim.getClaimID(claimIndex = 1);
 
 			PRMMDFClaim.searchClaimID(orderID = ${firstID});
@@ -324,9 +324,9 @@ definition {
 			Button.click(button = "Export MDF Claim");
 
 			PRMMDFRequest.viewExportedMDF(
-				fileContentList = "${firstID}",
+				fileContentList = ${firstID},
 				fileName = "MDF Claim.csv");
-		
+
 			Click(locator1 = "CP2TeamMembers#CLOSE_BUTTON");
 
 			var secondID = PRMMDFClaim.getClaimID(claimIndex = 2);
@@ -334,10 +334,11 @@ definition {
 			PRMMDFClaim.searchClaimID(orderID = ${secondID});
 
 			Button.click(button = "Export MDF Claim");
-			
+
 			PRMMDFRequest.viewExportedMDF(
-				fileContentList = "${secondID}",
+				fileContentList = ${secondID},
 				fileName = "MDF Claim (1).csv");
 		}
 	}
+
 }
