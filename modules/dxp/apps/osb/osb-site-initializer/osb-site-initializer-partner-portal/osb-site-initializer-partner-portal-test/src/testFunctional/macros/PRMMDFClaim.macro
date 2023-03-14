@@ -74,4 +74,14 @@ definition {
 		return ${orderID};
 	}
 
+	@summary = "Searched the claim ID by index"
+	macro searchClaimID {
+		Type(
+			key_placeHolder = "Search",
+			locator1 = "TextInput#ANY_PLACEHOLDER",
+			value1 = ${orderID});
+
+		Click(locator1 = "WorkflowMetricsProcessListView#METRICS_WORKFLOW_SEARCH_BAR_BUTTON");
+	}
+
 }
