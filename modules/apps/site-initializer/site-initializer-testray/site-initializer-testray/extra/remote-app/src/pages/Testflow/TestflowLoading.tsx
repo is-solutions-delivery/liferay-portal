@@ -13,6 +13,7 @@
  */
 
 import ClayButton from '@clayui/button';
+import {Container} from '@clayui/layout';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useEffect} from 'react';
 import {KeyedMutator} from 'swr';
@@ -22,18 +23,12 @@ import {TestrayTask} from '~/services/rest';
 
 const POOLING_INTERVAL = 15000;
 
-const LoadingProgressBar = () => (
-	<span className="loading-progress-task my-4">
-		<div className="loading-progress-task-bar" />
-	</span>
-);
-
-type LoadingTaskPageProps = {
+type TestflowLoadingProps = {
 	mutateTask: KeyedMutator<TestrayTask>;
 	testrayTask: TestrayTask;
 };
 
-const LoadingTaskPage: React.FC<LoadingTaskPageProps> = ({
+const TestflowLoading: React.FC<TestflowLoadingProps> = ({
 	mutateTask,
 	testrayTask,
 }) => {
@@ -59,12 +54,14 @@ const LoadingTaskPage: React.FC<LoadingTaskPageProps> = ({
 	}, [mutateTask, testrayTask]);
 
 	return (
-		<div className="align-items-center container d-flex flex-column justify-content-center mt-5">
+		<Container className="tr-testflow-loading">
 			<span className="my-3">
 				<ClayLoadingIndicator displayType="secondary" size="md" />
 			</span>
 
-			<LoadingProgressBar />
+			<span className="tr-testflow-loading__processing">
+				<div className="tr-testflow-loading__processing__bar" />
+			</span>
 
 			<ClayButton
 				className="mt-3"
@@ -74,11 +71,11 @@ const LoadingTaskPage: React.FC<LoadingTaskPageProps> = ({
 				{i18n.translate('refresh')}
 			</ClayButton>
 
-			<p className="loading-progress-task-message my-5">
+			<p className="tr-testflow-loading__message">
 				{i18n.translate('preparing-your-task')}
 			</p>
-		</div>
+		</Container>
 	);
 };
 
-export default LoadingTaskPage;
+export default TestflowLoading;
