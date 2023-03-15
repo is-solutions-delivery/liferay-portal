@@ -16,6 +16,8 @@
 
 <%@ include file="/init.jsp" %>
 
+<liferay-ui:success key="synchronizerSiteSuccess" message="Update process done successfully!" />
+
 <clay:container-fluid>
 	<clay:sheet
 		cssClass="custom-sheet"
