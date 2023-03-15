@@ -1389,7 +1389,7 @@ public class BundleSiteInitializerTest {
 				_group.getCompanyId(), "C_TestObjectDefinition4");
 
 		Assert.assertTrue(
-			objectDefinition4.getAccountEntryRestrictedObjectFieldId() >= 0);
+			objectDefinition4.getAccountEntryRestrictedObjectFieldId() > 0);
 		Assert.assertTrue(objectDefinition4.isAccountEntryRestricted());
 		Assert.assertTrue(objectDefinition4.isEnableCategorization());
 		Assert.assertTrue(objectDefinition4.isEnableComments());
@@ -1402,7 +1402,7 @@ public class BundleSiteInitializerTest {
 				_group.getCompanyId(), "C_TestObjectDefinition5");
 
 		Assert.assertTrue(
-			objectDefinition5.getAccountEntryRestrictedObjectFieldId() >= 0);
+			objectDefinition5.getAccountEntryRestrictedObjectFieldId() > 0);
 		Assert.assertTrue(objectDefinition5.isAccountEntryRestricted());
 		Assert.assertFalse(objectDefinition5.isSystem());
 
