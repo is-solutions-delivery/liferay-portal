@@ -12,28 +12,22 @@
  * details.
  */
 
-import {Outlet} from 'react-router-dom';
+import ClayIcon from '@clayui/icon';
 
-import HeaderContextProvider from '../../context/HeaderContext';
-import Sidebar from '../Sidebar';
-import Header from './Header';
+import i18n from '../../../i18n';
 
-const Layout = () => (
-	<main className="tr-main">
-		<div className="tr-main__body">
-			<Sidebar />
+type AssignToMeProps = {
+	onClick?: () => void;
+};
 
-			<div className="tr-main__body__page">
-				<HeaderContextProvider>
-					<Header />
-
-					<section className="tr-main__body__page__content">
-						<Outlet />
-					</section>
-				</HeaderContextProvider>
-			</div>
-		</div>
-	</main>
+const AssignToMe: React.FC<AssignToMeProps> = ({onClick}) => (
+	<div
+		className="tr-assign-to-me"
+		onClick={onClick}
+		title={i18n.translate('assign-to-me')}
+	>
+		<ClayIcon symbol="user-plus" />
+	</div>
 );
 
-export default Layout;
+export default AssignToMe;
