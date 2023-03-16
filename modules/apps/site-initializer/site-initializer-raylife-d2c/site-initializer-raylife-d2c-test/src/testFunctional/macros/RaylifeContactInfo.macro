@@ -10,14 +10,14 @@ definition {
 			value = "LastName");
 
 		if (isSet(email)) {
-            RaylifeContactInfo.typeBasicsInfoFields(
-            label = "basics.businessInformation.business.email",
-            value = "test2@liferay.com");
-        }
+			RaylifeContactInfo.typeBasicsInfoFields(
+				label = "basics.businessInformation.business.email",
+				value = "test2@liferay.com");
+		}
 		else {
 			RaylifeContactInfo.typeBasicsInfoFields(
-			label = "basics.businessInformation.business.email",
-			value = "test@liferay.com");
+				label = "basics.businessInformation.business.email",
+				value = "test@liferay.com");
 		}
 
 		RaylifeContactInfo.typeBasicsInfoFields(
