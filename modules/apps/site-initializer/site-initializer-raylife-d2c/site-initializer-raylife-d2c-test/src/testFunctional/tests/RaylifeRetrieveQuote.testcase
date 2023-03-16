@@ -15,21 +15,21 @@ definition {
 
 		User.firstLoginPG();
 
-		Raylife.createRaylifeSite(siteName = ${testSiteName});
+		// Raylife.createRaylifeSite(siteName = ${testSiteName});
 	}
 
-	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+	// tearDown {
+	// 	var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-		Raylife.tearDownCP();
+	// 	Raylife.tearDownCP();
 
-		if (${testPortalInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			User.logoutPG();
-		}
-	}
+	// 	if (${testPortalInstance} == "true") {
+	// 		PortalInstances.tearDownCP();
+	// 	}
+	// 	else {
+	// 		User.logoutPG();
+	// 	}
+	// }
 
 	@description = "LPS-143993 - Check if entering a valid email address, user can retrieve all his/her quote information"
 	@priority = 4
@@ -272,7 +272,7 @@ definition {
 
 		RaylifeHomePage.startFlow();
 
-		RaylifeContactInfo.typeAllBasicsInfoFields();
+		RaylifeContactInfo.typeAllBasicsInfoFields(email = "true");
 
 		Click(locator1 = "RaylifeSaveExit#SAVE_EXIT");
 
@@ -282,7 +282,7 @@ definition {
 
 		RaylifeRetrieveQuote.typeRetrieveQuoteEmailFields(
 			email = "email",
-			value = "test@liferay.com");
+			value = "test2@liferay.com");
 
 		Click(locator1 = "RaylifeRetrieveQuote#BUTTON_CONTINUE_QUOTE");
 
