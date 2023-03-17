@@ -62,7 +62,7 @@ const MDFRequestForm = () => {
 	);
 
 	const {data, isValidating} = useGetMDFRequestById(mdfRequestId);
-	const userInformation = useGetMyUserAccount();
+	const {data: myUserAccountData} = useGetMyUserAccount();
 
 	const onCancel = () =>
 		Liferay.Util.navigate(
@@ -134,7 +134,7 @@ const MDFRequestForm = () => {
 		),
 	};
 
-	if ((isValidating || !data) && mdfRequestId) {
+	if (((isValidating || !data) && mdfRequestId) || !myUserAccountData) {
 		return <ClayLoadingIndicator />;
 	}
 
@@ -151,7 +151,7 @@ const MDFRequestForm = () => {
 					formikHelpers,
 					siteURL,
 					Status.PENDING,
-					userInformation.data?.roleBriefs
+					myUserAccountData.roleBriefs
 				)
 			}
 		>
