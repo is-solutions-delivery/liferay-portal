@@ -36,8 +36,9 @@ definition {
 	}
 
 	@description = "Automtion ID: LPS-157720 | Test Summary: Check that the 'All Applications' button redirects to the 'Applications' page"
-	@priority = "4"
+	@priority = 4
 	test AllApplicationsRedirectedToApplicationsPage {
+		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#AllApplicationsRedirectedToApplicationsPage";
 		task ("Given Site RaylifeAP is open") {
 			RaylifeAP.goToRaylifeAPSiteWithRefresh();
 		}
@@ -113,6 +114,7 @@ definition {
 	@description = "Automtion ID: LPS-157722 | Test Summary: Check if I can delete a recent application on the Kebab button"
 	@priority = "4"
 	test CanDeleteRecentApplicatios {
+		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#CanDeleteRecentApplicatios";
 		task ("Given I go to Site RaylifeAP") {
 			RaylifeAP.goToRaylifeAPSiteWithRefresh();
 		}
