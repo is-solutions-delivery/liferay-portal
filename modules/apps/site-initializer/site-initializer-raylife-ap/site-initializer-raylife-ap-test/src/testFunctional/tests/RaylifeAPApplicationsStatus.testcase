@@ -32,14 +32,21 @@ definition {
 		}
 	}
 
-	@description = "LPS-154592 - Check if when making an incomplete Flow until the section Business in the Raylife d2c, the status 'Open' appears in the Applications status of Raylife ap"
-	@priority = 4
-	test IfStatusOpenAppearsInApplicationsStatus {
-		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#IfStatusOpenAppearsInApplicationStatus";
+	@description = "Automtion ID: LPS-157720 | Test Summary: Check that the 'All Applications' button redirects to the 'Applications' page"
+	@priority = "4"
+	test AllApplicationsRedirectedToApplicationsPage {
+		task ("Given Site RaylifeAP is open") {
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+		}
 
-		ApplicationsMenu.gotoSite(site = ${testSiteName});
+		task ("When the user click in the All Applications button") {
+			RaylifeAP.clickOnAllAplications();
+		}
 
-		RaylifeAPNavigator.gotoSidebarItem(itemName = "Applications");
+		task ("Then assert that he was redirected to the application page") {
+			RaylifeAP.assertPageHeader(key_header = "Applications");
+		}
+	}
 
 		var open = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Open");
 
