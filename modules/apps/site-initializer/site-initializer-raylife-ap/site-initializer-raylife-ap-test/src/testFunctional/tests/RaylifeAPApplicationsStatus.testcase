@@ -39,6 +39,7 @@ definition {
 	@priority = 4
 	test AllApplicationsRedirectedToApplicationsPage {
 		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#AllApplicationsRedirectedToApplicationsPage";
+
 		task ("Given Site RaylifeAP is open") {
 			RaylifeAP.goToRaylifeAPSiteWithRefresh();
 		}
@@ -51,6 +52,34 @@ definition {
 			RaylifeAP.assertPageHeader(key_header = "Applications");
 		}
 	}
+
+	@description = "Automtion ID: LPS-157722 | Test Summary: Check if I can delete a recent application on the Kebab button"
+	@priority = 4
+	test CanDeleteRecentApplicatios {
+		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#CanDeleteRecentApplicatios";
+
+		task ("Given I go to Site RaylifeAP") {
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+		}
+
+		task ("Then I click on kebab menu and in the delete option and state that the entry has been deleted") {
+			RaylifeAP.clickInApplicationKebabOption(
+				option = "Delete",
+				product = "",
+				status = "Incomplete");
+
+			RaylifeAP.AssertApplicationNumber();
+		}
+	}
+
+	@description = "LPS-154592 - Check if when making an incomplete Flow until the section Business in the Raylife d2c, the status 'Open' appears in the Applications status of Raylife ap"
+	@priority = 4
+	test IfStatusOpenAppearsInApplicationsStatus {
+		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#IfStatusOpenAppearsInApplicationStatus";
+
+		ApplicationsMenu.gotoSite(site = ${testSiteName});
+
+		RaylifeAPNavigator.gotoSidebarItem(itemName = "Applications");
 
 		var open = RaylifeAPApplications.getApplicationLegendValue(legendItem = "Open");
 
@@ -111,22 +140,11 @@ definition {
 	test NumberCenterGraphEqualNumberOfStatus {
 		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#NumberCenterGraphEqualNumberOfStatus";
 
-	@description = "Automtion ID: LPS-157722 | Test Summary: Check if I can delete a recent application on the Kebab button"
-	@priority = "4"
-	test CanDeleteRecentApplicatios {
-		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#CanDeleteRecentApplicatios";
-		task ("Given I go to Site RaylifeAP") {
-			RaylifeAP.goToRaylifeAPSiteWithRefresh();
-		}
+		ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-		task ("Then I click on kebab menu and in the delete option and state that the entry has been deleted") {
-			RaylifeAP.clickInApplicationKebabOption(
-				product = "",
-				status = "Incomplete",
-				option = "Delete");
+		RaylifeAPNavigator.gotoSidebarItem(itemName = "Applications");
 
-			RaylifeAP.AssertApplicationNumber();
-		}
+		RaylifeAPApplications.verifyApplicationsStatus();
 	}
 
 }
