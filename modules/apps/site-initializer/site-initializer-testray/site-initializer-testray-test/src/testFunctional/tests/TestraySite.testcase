@@ -65,9 +65,10 @@ definition {
 		property solutions.acceptance = "true";
 
 		task ("Create Testray") {
-			Testray.addTestraySite(siteName = ${testSiteName});
-
-			Refresh();
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Liferay Site Initializer Testray",
+				templateType = "Site Initializer");
 		}
 
 		task ("Go to Remote Apps Portlet") {
@@ -87,9 +88,10 @@ definition {
 		property solutions.acceptance = "true";
 
 		task ("Create and Go to Testray") {
-			Testray.addTestraySite(siteName = ${testSiteName});
-
-			Refresh();
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Liferay Site Initializer Testray",
+				templateType = "Site Initializer");
 
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 		}

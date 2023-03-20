@@ -15,7 +15,10 @@ definition {
 
 		User.firstLoginPG();
 
-		Testray.addTestraySite(siteName = ${testSiteName});
+		HeadlessSite.addSite(
+			siteName = ${testSiteName},
+			templateName = "Liferay Site Initializer Testray",
+			templateType = "Site Initializer");
 
 		Refresh();
 	}

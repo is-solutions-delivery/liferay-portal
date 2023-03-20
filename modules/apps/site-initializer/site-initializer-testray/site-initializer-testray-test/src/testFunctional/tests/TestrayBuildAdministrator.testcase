@@ -26,7 +26,10 @@ definition {
 
 			User.firstLoginPG();
 
-			Testray.addTR2Site(siteName = ${testSiteName});
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Liferay Site Initializer Testray",
+				templateType = "Site Initializer");
 		}
 
 		task ("Given that I create all the necessary objects") {

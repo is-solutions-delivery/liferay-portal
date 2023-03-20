@@ -16,9 +16,10 @@ definition {
 
 			User.firstLoginPG();
 
-			Testray.addTestraySite(siteName = ${testSiteName});
-
-			Refresh();
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Liferay Site Initializer Testray",
+				templateType = "Site Initializer");
 		}
 
 		task ("Go to Testray, Create Project and change pagination") {
