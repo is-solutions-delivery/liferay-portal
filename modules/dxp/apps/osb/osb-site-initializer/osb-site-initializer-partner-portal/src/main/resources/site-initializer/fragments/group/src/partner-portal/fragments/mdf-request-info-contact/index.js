@@ -29,14 +29,20 @@ const getContactInfo = async () => {
 				},
 			}
 		);
+
 		if (response.ok) {
 			const data = await response.json();
 			const firstName = data?.r_usrToMDFReqs_user?.givenName;
+			const lastName = data?.r_usrToMDFReqs_user?.alternateName;
 			const infoEmail = data?.r_usrToMDFReqs_user?.emailAddress;
 
 			fragmentElement.querySelector(
 				'#firstName'
 			).innerHTML = `${Liferay.Util.escape(firstName)}`;
+
+			fragmentElement.querySelector(
+				'#lastName'
+			).innerHTML = `${Liferay.Util.escape(lastName)}`;
 
 			fragmentElement.querySelector(
 				'#infoEmail'
