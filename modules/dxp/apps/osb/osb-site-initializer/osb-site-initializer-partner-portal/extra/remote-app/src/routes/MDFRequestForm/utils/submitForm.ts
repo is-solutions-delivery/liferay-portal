@@ -74,12 +74,12 @@ export default async function submitForm(
 
 	if (values?.activities?.length && dtoMDFRequest?.id) {
 		const dtoMDFRequestActivities = await Promise.all(
-			values?.activities?.map(async (activity) => {
+			values?.activities?.map((activity) => {
 				if (
 					Liferay.FeatureFlags['LPS-164528'] &&
 					values.mdfRequestStatus !== Status.DRAFT
 				) {
-					return await createMDFRequestActivitiesProxyAPI(
+					return createMDFRequestActivitiesProxyAPI(
 						activity,
 						values.company,
 						dtoMDFRequest?.id,
@@ -88,7 +88,7 @@ export default async function submitForm(
 				}
 
 				if (activity.id) {
-					return await updateMDFRequestActivities(
+					return updateMDFRequestActivities(
 						ResourceName.ACTIVITY_DXP,
 						activity,
 						values.company,
@@ -97,7 +97,7 @@ export default async function submitForm(
 					);
 				}
 
-				return await createMDFRequestActivities(
+				return createMDFRequestActivities(
 					ResourceName.ACTIVITY_DXP,
 					activity,
 					values.company,
@@ -109,19 +109,19 @@ export default async function submitForm(
 
 		if (dtoMDFRequestActivities?.length) {
 			await Promise.all(
-				values.activities.map(async (activity, index) => {
+				values.activities.map((activity, index) => {
 					const dtoActivity = dtoMDFRequestActivities[index];
 
 					if (activity.budgets?.length && dtoActivity?.id) {
-						activity.budgets?.map(async (budget) => {
+						activity.budgets?.map((budget) => {
 							if (budget?.id) {
-								return await updateMDFRequestActivityBudget(
+								return updateMDFRequestActivityBudget(
 									dtoActivity.id as number,
 									budget
 								);
 							}
 
-							return await createMDFRequestActivityBudget(
+							createMDFRequestActivityBudget(
 								dtoActivity.id as number,
 								budget
 							);
