@@ -17,7 +17,6 @@ import {HashRouter, Route, Routes} from 'react-router-dom';
 
 import Layout from './components/Layout/Layout';
 import CompareRunsOutlet from './pages/CompareRuns/CompareRunsOutlet';
-import CompareRunsRedirect from './pages/CompareRuns/CompareRunsRedirect';
 import CompareRunsComponents from './pages/CompareRuns/Components';
 import CompareRunsDetails from './pages/CompareRuns/Details';
 import CompareRunsTeams from './pages/CompareRuns/Teams';
@@ -319,9 +318,10 @@ const TestrayRoute = () => (
 						</Route>
 					</Route>
 
-					<Route element={<CompareRunsOutlet />} path="compare-runs">
-						<Route element={<CompareRunsRedirect />} index />
-
+					<Route
+						element={<CompareRunsOutlet />}
+						path="compare-runs/:runA/:runB"
+					>
 						<Route
 							element={<CompareRunsComponents />}
 							path="components"
