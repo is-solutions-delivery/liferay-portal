@@ -156,6 +156,10 @@ public class WabProcessor {
 			_writeGeneratedWab(outputFile);
 		}
 
+		File file = FileUtil.createTempFile(new FileInputStream(outputFile));
+
+		System.out.println(file.getAbsolutePath());
+
 		return outputFile;
 	}
 
@@ -285,6 +289,15 @@ public class WabProcessor {
 			batchPathString += "/";
 		}
 
+		boolean siteInitializerDetected = false;
+
+		String siteInitializerPathString = pluginPackageProperties.getProperty(
+			_LIFERAY_CLIENT_EXTENSION_BATCH, "site-initializer/");
+
+		if (!siteInitializerPathString.endsWith("/")) {
+			siteInitializerPathString += "/";
+		}
+
 		boolean staticDetected = false;
 
 		String staticPathString = pluginPackageProperties.getProperty(
@@ -300,6 +313,8 @@ public class WabProcessor {
 
 			Path metatInfBatchPath = _createPath(
 				clientExtensionBundlePath, "META-INF/batch");
+			Path siteInitializerPath = _createPath(
+				clientExtensionBundlePath, "site-initializer");
 			Path metatInfResourcesPath = _createPath(
 				clientExtensionBundlePath, "META-INF/resources");
 			Path osgiInfConfiguratorPath = _createPath(
@@ -319,6 +334,13 @@ public class WabProcessor {
 								name.replaceFirst("^" + batchPathString, "")));
 
 						batchDetected = true;
+					}
+					else if (name.startsWith(siteInitializerPathString)) {
+						Files.createDirectories(
+							siteInitializerPath.resolve(
+								name.replaceFirst("^" + siteInitializerPathString, "")));
+
+						siteInitializerDetected = true;
 					}
 					else if (name.startsWith(staticPathString)) {
 						Files.createDirectories(
@@ -344,6 +366,14 @@ public class WabProcessor {
 
 						batchDetected = true;
 					}
+					else if (name.startsWith(siteInitializerPathString)) {
+						Files.copy(
+							zipFile.getInputStream(zipEntry),
+							siteInitializerPath.resolve(
+								name.replaceFirst("^" + siteInitializerPathString, "")));
+
+						siteInitializerDetected = true;
+					}
 					else if (name.startsWith(staticPathString)) {
 						Files.copy(
 							zipFile.getInputStream(zipEntry),
@@ -361,6 +391,14 @@ public class WabProcessor {
 			}
 			else {
 				pluginPackageProperties.remove(_LIFERAY_CLIENT_EXTENSION_BATCH);
+			}
+
+			if (siteInitializerDetected) {
+				pluginPackageProperties.setProperty(
+					_LIFERAY_CLIENT_EXTENSION_SITE_INITIALIZER, "site-initializer");
+			}
+			else {
+				pluginPackageProperties.remove(_LIFERAY_CLIENT_EXTENSION_SITE_INITIALIZER);
 			}
 
 			if (staticDetected) {
@@ -1517,6 +1555,8 @@ public class WabProcessor {
 
 			_processPackageNames(analyzer);
 
+			_processProvideCapability(jar, analyzer);
+
 			_processRequiredDeploymentContexts(analyzer);
 
 			_processExcludedJSPs(analyzer);
@@ -1541,6 +1581,14 @@ public class WabProcessor {
 					"Unable to calculate the manifest", exception);
 			}
 		}
+	}
+
+	private void _processProvideCapability(Jar jar, Builder analyzer) {
+
+		if(jar.hasDirectory("/site-initializer")){
+			analyzer.setProperty(Constants.PROVIDE_CAPABILITY,  "osgi.webresource;osgi.webresource=\"@liferay/liferay-site-initializer\";version:Version=\"1.0.0\",liferay.site.initializer");
+		}
+
 	}
 
 	private void _writeAutoDeployedWar(File pluginDir) {
@@ -1618,6 +1666,9 @@ public class WabProcessor {
 
 	private static final String _LIFERAY_CLIENT_EXTENSION_BATCH =
 		"Liferay-Client-Extension-Batch";
+
+	private static final String _LIFERAY_CLIENT_EXTENSION_SITE_INITIALIZER =
+		"Liferay-Client-Extension-Site-Initializer";
 
 	private static final String _LIFERAY_CLIENT_EXTENSION_STATIC =
 		"Liferay-Client-Extension-Static";
