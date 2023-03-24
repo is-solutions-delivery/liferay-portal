@@ -97,6 +97,7 @@ const Goals = ({
 
 	const companyCurrencies =
 		currencyOptions &&
+		values.currency &&
 		currencyOptions.filter(
 			(currency) => currency.value === values.currency.key
 		);
