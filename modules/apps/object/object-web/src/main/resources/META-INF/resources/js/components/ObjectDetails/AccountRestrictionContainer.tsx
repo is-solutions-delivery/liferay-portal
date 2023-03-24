@@ -47,14 +47,21 @@ export function AccountRestrictionContainer({
 	);
 
 	useEffect(() => {
-		const relationshipFields = objectFields.filter(
-			(field) => field.businessType === 'Relationship'
-		);
+		const accountRelationshipFieldsResponse = objectFields.filter(
+			(field) => {
+				if (values.storageType !== 'default') {
+					return (
+						field.businessType === 'Text' ||
+						field.businessType === 'Integer' ||
+						field.businessType === 'LongInteger'
+					);
+				}
 
-		const accountRelationshipFieldsResponse = relationshipFields.filter(
-			(relationshipField) => {
-				return relationshipField.objectFieldSettings?.find(
-					(fieldSetting) => fieldSetting.value === 'AccountEntry'
+				return (
+					field.businessType === 'Relationship' &&
+					field.objectFieldSettings?.find(
+						(fieldSetting) => fieldSetting.value === 'AccountEntry'
+					)
 				);
 			}
 		);
