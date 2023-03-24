@@ -93,75 +93,31 @@ definition {
 	@description = "This is a test for LPS-175292. Verify that is possible to export all visible Claims"
 	@priority = 4
 	test CanExportAllVisibleClaims {
-		task ("Given I go to add a new MDF Request with two activities") {
-			PRMUtils.gotoPRM();
-
-			PRMNavigator.goToNavItem(navItem = "Marketing");
-
-			PRMMarketing.gotoAddNewMDF();
-
-			PRMMDFRequest.fillGoalsPage(
-				accountName = "Company Name 1",
-				campaignDescription = "Campaign Description",
-				campaignName = "Campaign Name 2",
-				countryName = "Global",
-				goalsOptions = "Lead generation",
-				targetMarketOptions = "Education,Energy",
-				targetRolesOptions = "Administrator");
-
-			Button.click(button = "Continue");
-
-			PRMMDFRequest.newActivity(
-				activityDescription = "Activity Description",
-				activityName = "Activity Name 1",
-				budgetList = "Sponsorship Fee-2000",
-				followUpStrategy = "test",
-				leadFollowUpList = "Other",
-				leadList = "No",
-				tactic = "Other",
-				targetOfLeads = "test",
-				typeOfActivity = "Miscellaneous Marketing");
-
-			Button.click(button = "Continue");
-
-			PRMMDFRequest.newActivity(
-				activityDescription = "Activity Description",
-				activityIndex = 1,
-				activityName = "Activity Name 2",
-				budgetList = "Sponsorship Fee-2000",
-				followUpStrategy = "test",
-				leadFollowUpList = "Other",
-				leadList = "No",
-				tactic = "Other",
-				targetOfLeads = "test",
-				typeOfActivity = "Miscellaneous Marketing");
-
-			Button.click(button = "Continue");
-
-			Button.click(button = "Continue");
-
-			Button.click(button = "Submit");
-		}
-
-		task ("And given that the manager user is logged in and goes to MDF listing page") {
+		task ("Given that the Manager user is logged in and goes to MDF listing page") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "manager@liferay.com",
 				userLoginFullName = "manager");
 
-			PRMUtils.gotoPRM();
-
-			PRMHomePage.gotoQuickLinksOption(
-				buttonLink = "mdf-requests",
-				buttonText = "MDF");
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
 		}
 
-		task ("And the MDF is approved") {
-			PRMMDFRequest.goToMDF(campaignName = "Campaign Name 2");
+		task ("And the manager approves the MDF") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
 
 			PRMMDFRequest.changeMDFStatus(statusButton = "Approve");
 		}
 
-		task ("And two claims are made") {
+		task ("And Login with the Partner user and go to Partner Portal") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "partner@liferay.com",
+				userLoginFullName = "partner");
+
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+		}
+
+		task ("And the partner user makes two claims") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
+
 			PRMMDFClaim.createNewClaim(
 				listLeads = "Document_1.xlsx",
 				reimbursementInvoice = "Document_1.png",
@@ -174,28 +130,114 @@ definition {
 				thirdInvoice = "Document_1.png");
 		}
 
-		task ("And I go back to the MDF listing page") {
-			PRMUtils.gotoPRM();
+		task ("When Login with the Manager user and go to Partner Portal") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
 
-			PRMHomePage.gotoQuickLinksOption(
-				buttonLink = "mdf-requests",
-				buttonText = "MDF");
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
 		}
 
 		task ("And I go to MDF claim listing page") {
 			PRMNavigator.goToNavItem(navItem = "MDF Claim");
 		}
 
-		task ("When I export all visible MDF's") {
+		task ("And I export all visible Claims") {
 			Button.click(button = "Export MDF Claim");
 		}
 
-		task ("Then the information about the visible MDF's will be inside the exported file") {
+		task ("Then the information about the visible Claims will be inside the exported file") {
 			var firstID = PRMMDFClaim.getClaimID(claimIndex = 1);
 			var secondID = PRMMDFClaim.getClaimID(claimIndex = 2);
 
 			PRMMDFRequest.viewExportedMDF(
 				fileContentList = "${firstID},${secondID}",
+				fileName = "MDF Claim.csv");
+		}
+	}
+
+	@description = "This is a test for LPS-178117. Verify that is possible to export all Claims searched."
+	@priority = 4
+	test CanExportSearchedClaims {
+		task ("Given that the Manager user is logged in and goes to MDF listing page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
+
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+		}
+
+		task ("And the manager approves the MDF") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
+
+			PRMMDFRequest.changeMDFStatus(statusButton = "Approve");
+		}
+
+		task ("And the partner logs in and go to Partner Portal") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "partner@liferay.com",
+				userLoginFullName = "partner");
+
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+		}
+
+		task ("And the partner user makes two claims") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
+
+			PRMMDFClaim.createNewClaim(
+				listLeads = "Document_1.xlsx",
+				reimbursementInvoice = "Document_1.png",
+				thirdInvoice = "Document_1.png");
+
+			PRMMDFClaim.createNewClaim(
+				activityIndex = 1,
+				listLeads = "Document_1.xlsx",
+				reimbursementInvoice = "Document_1.png",
+				thirdInvoice = "Document_1.png");
+		}
+
+		task ("When the manager logs in and go to Partner Portal") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
+
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+		}
+
+		task ("And go to claim listing page") {
+			PRMNavigator.goToNavItem(navItem = "MDF Claim");
+		}
+
+		task ("And get the Claim IDs") {
+			var firstID = PRMMDFClaim.getClaimID(claimIndex = 1);
+			var secondID = PRMMDFClaim.getClaimID(claimIndex = 2);
+		}
+
+		task ("When the manager search for the first ID") {
+			PRMMDFClaim.searchClaim(claimID = ${firstID});
+		}
+
+		task ("And export the results") {
+			Button.click(button = "Export MDF Claim");
+		}
+
+		task ("Then the information about the searched Claim should be inside the downloaded file") {
+			PRMMDFRequest.viewExportedMDF(
+				fileContentList = ${firstID},
+				fileName = "MDF Claim.csv");
+		}
+
+		task ("When the manager search for the second ID") {
+			PRMMDFClaim.searchClaim(claimID = ${secondID});
+		}
+
+		task ("And export the results") {
+			Button.click(button = "Export MDF Claim");
+		}
+
+		task ("Then the information about the searched Claim should be inside the downloaded file") {
+			PRMMDFRequest.viewExportedMDF(
+				fileContentList = ${secondID},
 				fileName = "MDF Claim.csv");
 		}
 	}
