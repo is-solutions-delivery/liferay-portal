@@ -21,10 +21,12 @@ import PRMFormikPageProps from '../../../../common/components/PRMFormik/interfac
 import {LiferayPicklistName} from '../../../../common/enums/liferayPicklistName';
 import useCompanyOptions from '../../../../common/hooks/useCompanyOptions';
 import MDFRequest from '../../../../common/interfaces/mdfRequest';
+import Role from '../../../../common/interfaces/role';
 import {Status} from '../../../../common/utils/constants/status';
 import getPicklistOptions from '../../../../common/utils/getPicklistOptions';
 import {isLiferayManager} from '../../../../common/utils/isLiferayManager';
 import isObjectEmpty from '../../../../common/utils/isObjectEmpty';
+import {isPartnerManager} from '../../../../common/utils/isPartnerManager';
 import {StepType} from '../../enums/stepType';
 import MDFRequestStepProps from '../../interfaces/mdfRequestStepProps';
 import useDynamicFieldEntries from './hooks/useDynamicFieldEntries';
@@ -44,6 +46,7 @@ const Goals = ({
 	} = useFormikContext<MDFRequest>();
 
 	const {
+		accountRoleEntries,
 		companiesEntries,
 		fieldEntries,
 		roleEntries,
@@ -104,6 +107,12 @@ const Goals = ({
 		return errors;
 	}, [errors]);
 
+	const isPartnerManagerRole = useMemo(() => {
+		const roles = accountRoleEntries(values.company?.id);
+
+		return isPartnerManager(roles as Role[]);
+	}, [accountRoleEntries, values.company?.id]);
+
 	const getRequestPage = () => {
 		if (!fieldEntries || !roleEntries || !companiesEntries) {
 			return <ClayLoadingIndicator />;
@@ -114,6 +123,7 @@ const Goals = ({
 		if (
 			values.id &&
 			roleEntries &&
+			!isPartnerManagerRole &&
 			!userAccountRolesCanEdit &&
 			values.mdfRequestStatus?.key !== 'draft' &&
 			values.mdfRequestStatus?.key !== 'moreInfoRequested'
