@@ -78,6 +78,19 @@ definition {
 		return ${orderID};
 	}
 
+	@summary = "Search claim by ID"
+	macro searchClaim {
+		Type(
+			key_placeHolder = "Search",
+			locator1 = "TextInput#ANY_PLACEHOLDER",
+			value1 = ${claimID});
+
+		KeyPress(
+			key_placeHolder = "Search",
+			locator1 = "TextInput#ANY_PLACEHOLDER",
+			value1 = "\RETURN");
+	}
+
 	@summary = "View claim type on MDF Request details page"
 	macro viewClaimType {
 		AssertElementPresent(
