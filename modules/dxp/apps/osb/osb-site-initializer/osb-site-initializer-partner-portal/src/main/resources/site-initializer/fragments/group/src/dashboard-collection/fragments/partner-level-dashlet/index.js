@@ -9,226 +9,185 @@
  * distribution rights of the Software.
  */
 
-import ClayIcon from '@clayui/icon';
-import classNames from 'classnames';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import React, {useEffect, useState} from 'react';
 
+import PartnershipLevel from '../../common/components/PartnershipLevel';
 import Container from '../../common/components/container';
-import AuthorizedPartnerIcon from '../../common/components/icons/AuthorizedPartnerIcon';
-import GoldPartnerIcon from '../../common/components/icons/GoldPartnerIcon';
-import PlatinumPartnerIcon from '../../common/components/icons/PlatinumPartnerIcon';
-import SilverPartnerIcon from '../../common/components/icons/SilverPartnerIcon';
-import LevelProgressBar from '../../common/components/level-progress-bar';
-import {ChartTypes} from '../../common/enums/chartTypes';
 import {PartnershipLevels} from '../../common/enums/partnershipLevels';
-import {partnerLevelData} from '../../common/mock/mock';
+import {partnerLevelProperties} from '../../common/mock/mock';
 import ClayIconProvider from '../../common/utils/ClayIconProvider';
 
-const PartnerIcon = ({level}) => {
-	if (level === PartnershipLevels.SILVER) {
-		return <SilverPartnerIcon />;
-	}
-
-	if (level === PartnershipLevels.GOLD) {
-		return <GoldPartnerIcon />;
-	}
-
-	if (level === PartnershipLevels.PLATINUM) {
-		return <PlatinumPartnerIcon />;
-	}
-
-	return <AuthorizedPartnerIcon />;
-};
-
-const CheckBoxItem = ({children, completed, text, title}) => {
-	const CheckIcon = () => {
-		if (completed) {
-			return (
-				<ClayIcon
-					className="m-0 text-brand-primary"
-					symbol="check-circle"
-				/>
-			);
-		}
-
-		return <ClayIcon className="m-0 text-danger" symbol="times-circle" />;
-	};
-
-	return (
-		<div className="d-flex mb-4">
-			<div
-				className={classNames('d-flex p-0 align-items-center', {
-					'col': !children,
-					'col-3': children,
-				})}
-			>
-				<CheckIcon />
-
-				<span
-					className={classNames(
-						'font-weight-bold text-paragraph-sm',
-						{
-							'col': !text,
-							'col-3': text,
-						}
-					)}
-				>
-					{title}
-				</span>
-
-				{text && <span className="col text-paragraph">{text}</span>}
-			</div>
-
-			{children && <div className="col">{children}</div>}
-		</div>
-	);
-};
-
-const levelProperties = {
-	Gold: {
-		arr: {
-			arr: 125000,
-			npOrNb: 2,
-		},
-		headcount: {
-			marketing: 1,
-			sales: 3,
-		},
-	},
-	Platinum: {
-		arr: {
-			arr: 250000,
-		},
-		headcount: {
-			marketing: 1,
-			sales: 5,
-		},
-	},
-	Silver: {
-		headcount: {
-			marketing: 1,
-			sales: 1,
-		},
-	},
-};
-
 export default function () {
-	const [data] = useState(partnerLevelData);
+	const [data, setData] = useState({});
+	const [headcount, setHeadcount] = useState({});
 	const [completed, setCompleted] = useState({});
-	const level = PartnershipLevels.GOLD;
+	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		const checkedItems = {};
+	const getAccountInformation = async () => {
+		setLoading(true);
 
-		if (level !== PartnershipLevels.AUTHORIZED) {
-			if (data.certification) {
-				checkedItems['certification'] = true;
+		// eslint-disable-next-line @liferay/portal/no-global-fetch
+		const accountsData = await fetch(
+			'/o/headless-admin-user/v1.0/my-user-account',
+			{
+				headers: {
+					'accept': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+				},
 			}
+		);
 
-			if (
-				data.headcount.marketing ===
-					levelProperties[level].headcount.marketing &&
-				data.headcount.sales === levelProperties[level].headcount.sales
-			) {
-				checkedItems['headcount'] = true;
-			}
+		if (accountsData.ok) {
+			const userAccount = await accountsData.json();
+			console.log('userAccount', userAccount);
 
-			if (level !== PartnershipLevels.SILVER) {
-				if (data.marketing) {
-					checkedItems['marketing'] = true;
+			// eslint-disable-next-line @liferay/portal/no-global-fetch
+			const accountInfoData = await fetch(
+				`/o/headless-admin-user/v1.0/accounts/${userAccount.accountBriefs[0].id}`,
+				{
+					headers: {
+						'accept': 'application/json',
+						'x-csrf-token': Liferay.authToken,
+					},
 				}
+			);
 
-				if (data.arr.arr === levelProperties[level].arr.arr) {
-					checkedItems['arr'] = true;
+			// eslint-disable-next-line @liferay/portal/no-global-fetch
+			const accountUsersResponse = await fetch(
+				`/o/headless-admin-user/v1.0/accounts/${userAccount.accountBriefs[0].id}/user-accounts`,
+				{
+					headers: {
+						'accept': 'application/json',
+						'x-csrf-token': Liferay.authToken,
+					},
 				}
+			);
+
+			const checkedItems = {};
+
+			if (accountInfoData.ok) {
+				const fragmentData = await accountInfoData.json();
+				console.log('fragmentData', fragmentData);
 
 				if (
-					level === PartnershipLevels.GOLD &&
-					data.arr.npOrNb === levelProperties[level].arr.npOrNb
+					fragmentData.partnerLevel !== PartnershipLevels.AUTHORIZED
 				) {
-					checkedItems['arr'] = true;
+					if (fragmentData.solutionDeliveryCertification) {
+						checkedItems['solutionDeliveryCertification'] = true;
+					}
+
+					if (
+						fragmentData.partnerLevel !== PartnershipLevels.SILVER
+					) {
+						if (fragmentData.marketingPlan) {
+							checkedItems['marketingPlan'] = true;
+						}
+
+						if (fragmentData.marketingPerformance) {
+							checkedItems['marketingPerformance'] = true;
+						}
+
+						if (
+							fragmentData.partnerLevel === PartnershipLevels.GOLD
+						) {
+							const hasMatchingARR =
+								fragmentData.aRRAmount ===
+								partnerLevelProperties[
+									fragmentData.partnerLevel
+								].growthARR;
+
+							const hastMatchingNPOrNB =
+								fragmentData.newProjectExistingBusiness ===
+								partnerLevelProperties[
+									fragmentData.partnerLevel
+								].newProjectExistingBusiness;
+
+							if (hasMatchingARR || hastMatchingNPOrNB) {
+								checkedItems['arr'] = true;
+							}
+						}
+
+						if (
+							fragmentData.partnerLevel ===
+								PartnershipLevels.PLATINUM &&
+							fragmentData.aRRAmount ===
+								fragmentData.growthARR + fragmentData.renewalARR
+						) {
+							checkedItems['arr'] = true;
+						}
+					}
 				}
+
+				if (accountUsersResponse.ok) {
+					const {
+						items: accountUsers,
+					} = await accountUsersResponse.json();
+
+					console.log('accountUsers', accountUsers);
+
+					const countHeadcount = {
+						partnerMarketingUser: 0,
+						partnerSalesUsers: 0,
+					};
+
+					accountUsers.forEach((user) => {
+						if (
+							user.accountBriefs[0].roleBriefs.find(
+								(role) => role.name === 'Partner Marketing User'
+							)
+						) {
+							countHeadcount['partnerMarketingUser'] += 1;
+						}
+
+						if (
+							user.accountBriefs[0].roleBriefs.find(
+								(role) => role.name === 'Partner Sales Users'
+							)
+						) {
+							countHeadcount['partnerSalesUsers'] += 1;
+						}
+					});
+
+					if (
+						countHeadcount.partnerMarketingUser ===
+							partnerLevelProperties[fragmentData.partnerLevel]
+								.partnerMarketingUser &&
+						countHeadcount.partnerSalesUsers ===
+							partnerLevelProperties[fragmentData.partnerLevel]
+								.partnerSalesUsers
+					) {
+						checkedItems['headcount'] = true;
+					}
+
+					setHeadcount(countHeadcount);
+				}
+
+				setData(fragmentData);
+				setCompleted(checkedItems);
 			}
 		}
 
-		setCompleted(checkedItems);
+		setLoading(false);
+	};
+
+	useEffect(() => {
+		getAccountInformation();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getHeadcount = `${data.headcount.marketing} Marketing / ${data.headcount.sales} Sales`;
+	if (loading) {
+		return <ClayLoadingIndicator className="mb-10 mt-9" size="md" />;
+	}
 
 	return (
 		<ClayIconProvider>
 			<Container title="Partnership Level">
-				<h3 className="d-flex mb-5">
-					<PartnerIcon level={level} />
-
-					<span
-						className={classNames('ml-2 mr-1', {
-							'text-brand-secondary-darken-2':
-								level === PartnershipLevels.GOLD,
-							'text-info': level === PartnershipLevels.AUTHORIZED,
-							'text-neutral-7':
-								level === PartnershipLevels.SILVER,
-							'text-neutral-10':
-								level === PartnershipLevels.PLATINUM,
-						})}
-					>
-						{level}
-					</span>
-
-					<span className="font-weight-lighter">Partner</span>
-				</h3>
-
-				{level !== PartnershipLevels.AUTHORIZED && (
-					<div>
-						{level !== PartnershipLevels.SILVER && (
-							<CheckBoxItem completed={completed.arr} title="ARR">
-								<LevelProgressBar
-									currentValue={data.arr.arr}
-									total={levelProperties[level].arr.arr}
-									type={ChartTypes.ARR}
-								/>
-
-								{level === PartnershipLevels.GOLD && (
-									<>
-										<div className="font-weight-bold text-center text-neutral-5 text-paragraph-sm">
-											or
-										</div>
-
-										<LevelProgressBar
-											currentValue={data.arr.npOrNb}
-											total={
-												levelProperties[level].arr
-													.npOrNb
-											}
-											type={ChartTypes.NP_OR_NB}
-										/>
-									</>
-								)}
-							</CheckBoxItem>
-						)}
-
-						<CheckBoxItem
-							completed={completed.headcount}
-							text={getHeadcount}
-							title="Headcount"
-						/>
-
-						{level !== PartnershipLevels.SILVER && (
-							<CheckBoxItem
-								completed={completed.marketing}
-								text={data.marketing}
-								title="Marketing"
-							/>
-						)}
-
-						<CheckBoxItem
-							completed={completed.certification}
-							title={data.certification}
-						/>
-					</div>
-				)}
+				<PartnershipLevel
+					completed={completed}
+					data={data}
+					headcount={headcount}
+				/>
 			</Container>
 		</ClayIconProvider>
 	);
