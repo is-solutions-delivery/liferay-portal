@@ -1,5 +1,25 @@
 definition {
 
+	macro tearDown {
+		if (IsElementPresent(locator1 = "LexiconTable#TABLE_ENTRY", key_tableEntry = "Partner Portal")) {
+			Site.openSitesAdmin();
+
+			PortletEntry.selectAll();
+
+			Click(locator1 = "Icon#SITES_VERTICAL_ELLIPSIS");
+
+			MenuItem.clickNoError(menuItem = "Delete");
+
+			Click(locator1 = "Button#MODAL_DELETE");
+
+			Alert.viewSuccessMessage();
+		}
+
+		if (IsElementPresent(locator1 = "LexiconTable#TABLE_ENTRY", key_tableEntry = "Campaign Name")) {
+			Account.tearDownCP();
+		}
+	}
+
 	macro addPRMSite {
 		Site.openSitesAdmin();
 
