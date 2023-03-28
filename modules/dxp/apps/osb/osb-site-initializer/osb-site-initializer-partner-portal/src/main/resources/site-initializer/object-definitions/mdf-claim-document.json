@@ -1,4 +1,5 @@
 {
+	"externalReferenceCode": "0d96aada-8f49-a285-4daf-4af3911d3c77",
 	"label": {
 		"en_US": "MDF Claim Document"
 	},
@@ -7,6 +8,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "b6dd7d07-9c2a-b6c6-726a-334cb75100d3",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -19,6 +21,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "6d02a1a8-f227-f497-6724-9677b626908c",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -31,6 +34,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "198dc489-5030-dfef-dfcc-a36789dbe67a",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

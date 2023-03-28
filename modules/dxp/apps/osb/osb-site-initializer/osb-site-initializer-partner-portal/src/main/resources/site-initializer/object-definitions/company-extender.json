@@ -1,4 +1,5 @@
 {
+	"externalReferenceCode": "61db0090-4377-0ce9-36f8-66bf2ca34c92",
 	"label": {
 		"en_US": "Company Extender"
 	},
@@ -7,6 +8,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "075824ff-6cf9-ee67-ebce-f95afe1e998a",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -19,6 +21,7 @@
 		{
 			"DBType": "BigDecimal",
 			"businessType": "PrecisionDecimal",
+			"externalReferenceCode": "09f01206-e2e8-a6aa-7dac-374bdf3c9daf",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -31,6 +34,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "622cc0c1-3ff2-4a04-0694-cf89e77429ac",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -44,6 +48,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "ba9012ef-55d0-4d96-5779-36b0e87378cf",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -57,6 +62,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "b9bf4a4d-74cb-4800-a354-48295241cfc4",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
