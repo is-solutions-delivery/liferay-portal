@@ -44,7 +44,6 @@ const Goals = ({
 		values,
 		...formikHelpers
 	} = useFormikContext<MDFRequest>();
-
 	const {
 		accountRoleEntries,
 		companiesEntries,
@@ -55,20 +54,22 @@ const Goals = ({
 	const {companyOptions, onCompanySelected} = useCompanyOptions(
 		companiesEntries,
 		useCallback(
-			(country, company, currency, accountExternalReferenceCodeSF) => {
+			(country, company, currency, accountExternalReferenceCode) => {
 				setFieldValue('company', company);
 				setFieldValue('country', country);
 				setFieldValue('currency', currency);
 				setFieldValue(
-					'accountExternalReferenceCodeSF',
-					accountExternalReferenceCodeSF
+					'accountExternalReferenceCode',
+					accountExternalReferenceCode
 				);
 			},
 			[setFieldValue]
 		),
-		!isObjectEmpty(values.company) ? values.company : undefined,
+		fieldEntries[LiferayPicklistName.CURRENCIES],
+		!isObjectEmpty(values.currency) ? values.currency : undefined,
+		fieldEntries[LiferayPicklistName.REGIONS],
 		!isObjectEmpty(values.country) ? values.country : undefined,
-		!isObjectEmpty(values.currency) ? values.currency : undefined
+		!isObjectEmpty(values.company) ? values.company : undefined
 	);
 
 	const {
