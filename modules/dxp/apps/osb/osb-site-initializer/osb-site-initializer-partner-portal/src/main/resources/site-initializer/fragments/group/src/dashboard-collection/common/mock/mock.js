@@ -10,17 +10,17 @@
  */
 
 export const partnerLevelProperties = {
-	Gold: {
+	gold: {
 		growthARR: 125000,
 		newProjectExistingBusiness: 2,
 		partnerMarketingUser: 1,
 		partnerSalesUsers: 3,
 	},
-	Platinum: {
+	platinum: {
 		partnerMarketingUser: 1,
 		partnerSalesUsers: 5,
 	},
-	Silver: {
+	silver: {
 		partnerMarketingUser: 1,
 		partnerSalesUsers: 1,
 	},

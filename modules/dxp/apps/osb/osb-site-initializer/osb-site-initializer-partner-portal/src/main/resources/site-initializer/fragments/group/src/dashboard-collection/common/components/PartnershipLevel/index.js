@@ -104,6 +104,19 @@ const PartnershipLevel = ({completed, data, headcount}) => {
 		return '';
 	};
 
+	const capitalizeTitle = (title) => {
+		switch (title) {
+			case PartnershipLevels.SILVER:
+				return 'Silver';
+			case PartnershipLevels.GOLD:
+				return 'Gold';
+			case PartnershipLevels.PLATINUM:
+				return 'Platinum';
+			default:
+				return 'Authorized';
+		}
+	};
+
 	return (
 		<div>
 			<h3 className="d-flex mb-5">
@@ -121,7 +134,7 @@ const PartnershipLevel = ({completed, data, headcount}) => {
 							data.partnerLevel === PartnershipLevels.PLATINUM,
 					})}
 				>
-					{data.partnerLevel}
+					{capitalizeTitle(data.partnerLevel)}
 				</span>
 
 				<span className="font-weight-lighter">Partner</span>
@@ -165,20 +178,16 @@ const PartnershipLevel = ({completed, data, headcount}) => {
 						title="Headcount"
 					/>
 
-					{data.partnerLevel !== PartnershipLevels.SILVER && (
-						<>
-							<CheckBoxItem
-								completed={completed.marketingPlan}
-								title="Marketing Plan"
-							/>
+					<CheckBoxItem
+						completed={completed.marketingPlan}
+						title="Marketing Plan"
+					/>
 
-							<CheckBoxItem
-								completed={completed.marketingPerformance}
-								text={`${data.marketingPerformance} Leads`}
-								title="Marketing Performance"
-							/>
-						</>
-					)}
+					<CheckBoxItem
+						completed={completed.marketingPerformance}
+						text={`${data.marketingPerformance} Leads`}
+						title="Marketing Performance"
+					/>
 
 					<CheckBoxItem
 						completed={completed.solutionDeliveryCertification}

@@ -9,6 +9,7 @@
  * distribution rights of the Software.
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import React, {useEffect, useState} from 'react';
 
@@ -28,7 +29,7 @@ export default function () {
 		setLoading(true);
 
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
-		const accountsData = await fetch(
+		const myUserAccountsRequest = await fetch(
 			'/o/headless-admin-user/v1.0/my-user-account',
 			{
 				headers: {
@@ -38,156 +39,184 @@ export default function () {
 			}
 		);
 
-		if (accountsData.ok) {
-			const userAccount = await accountsData.json();
-			console.log('userAccount', userAccount);
+		if (myUserAccountsRequest.ok) {
+			const {accountBriefs} = await myUserAccountsRequest.json();
 
-			// eslint-disable-next-line @liferay/portal/no-global-fetch
-			const accountInfoData = await fetch(
-				`/o/headless-admin-user/v1.0/accounts/${userAccount.accountBriefs[0].id}`,
-				{
-					headers: {
-						'accept': 'application/json',
-						'x-csrf-token': Liferay.authToken,
-					},
-				}
-			);
-
-			// eslint-disable-next-line @liferay/portal/no-global-fetch
-			const accountUsersResponse = await fetch(
-				`/o/headless-admin-user/v1.0/accounts/${userAccount.accountBriefs[0].id}/user-accounts`,
-				{
-					headers: {
-						'accept': 'application/json',
-						'x-csrf-token': Liferay.authToken,
-					},
-				}
-			);
-
-			const checkedItems = {};
-
-			if (accountInfoData.ok) {
-				const fragmentData = await accountInfoData.json();
-				console.log('fragmentData', fragmentData);
-
-				if (
-					fragmentData.partnerLevel !== PartnershipLevels.AUTHORIZED
-				) {
-					if (fragmentData.solutionDeliveryCertification) {
-						checkedItems['solutionDeliveryCertification'] = true;
+			if (accountBriefs.length) {
+				// eslint-disable-next-line @liferay/portal/no-global-fetch
+				const accountRequest = await fetch(
+					`/o/headless-admin-user/v1.0/accounts/${accountBriefs[0].id}`,
+					{
+						headers: {
+							'accept': 'application/json',
+							'x-csrf-token': Liferay.authToken,
+						},
 					}
+				);
+
+				// eslint-disable-next-line @liferay/portal/no-global-fetch
+				const accountUsersRequest = await fetch(
+					`/o/headless-admin-user/v1.0/accounts/${accountBriefs[0].id}/user-accounts`,
+					{
+						headers: {
+							'accept': 'application/json',
+							'x-csrf-token': Liferay.authToken,
+						},
+					}
+				);
+
+				const checkedItems = {};
+
+				if (accountRequest.ok) {
+					const accountData = await accountRequest.json();
 
 					if (
-						fragmentData.partnerLevel !== PartnershipLevels.SILVER
+						accountData.partnerLevel !==
+						PartnershipLevels.AUTHORIZED
 					) {
-						if (fragmentData.marketingPlan) {
-							checkedItems['marketingPlan'] = true;
-						}
-
-						if (fragmentData.marketingPerformance) {
-							checkedItems['marketingPerformance'] = true;
+						if (accountData.solutionDeliveryCertification) {
+							checkedItems[
+								'solutionDeliveryCertification'
+							] = true;
 						}
 
 						if (
-							fragmentData.partnerLevel === PartnershipLevels.GOLD
+							accountData.partnerLevel !==
+							PartnershipLevels.SILVER
 						) {
-							const hasMatchingARR =
-								fragmentData.aRRAmount ===
-								partnerLevelProperties[
-									fragmentData.partnerLevel
-								].growthARR;
+							if (accountData.marketingPlan) {
+								checkedItems['marketingPlan'] = true;
+							}
 
-							const hastMatchingNPOrNB =
-								fragmentData.newProjectExistingBusiness ===
-								partnerLevelProperties[
-									fragmentData.partnerLevel
-								].newProjectExistingBusiness;
+							if (accountData.marketingPerformance) {
+								checkedItems['marketingPerformance'] = true;
+							}
 
-							if (hasMatchingARR || hastMatchingNPOrNB) {
+							if (
+								accountData.partnerLevel ===
+								PartnershipLevels.GOLD
+							) {
+								const hasMatchingARR =
+									accountData.aRRAmount ===
+									partnerLevelProperties[
+										accountData.partnerLevel
+									].growthARR;
+
+								const hastMatchingNPOrNB =
+									accountData.newProjectExistingBusiness ===
+									partnerLevelProperties[
+										accountData.partnerLevel
+									].newProjectExistingBusiness;
+
+								if (hasMatchingARR || hastMatchingNPOrNB) {
+									checkedItems['arr'] = true;
+								}
+							}
+
+							if (
+								accountData.partnerLevel ===
+									PartnershipLevels.PLATINUM &&
+								accountData.growthARR + accountData.renewalARR >
+									0 &&
+								accountData.aRRAmount >=
+									accountData.growthARR +
+										accountData.renewalARR
+							) {
 								checkedItems['arr'] = true;
 							}
 						}
-
-						if (
-							fragmentData.partnerLevel ===
-								PartnershipLevels.PLATINUM &&
-							fragmentData.aRRAmount ===
-								fragmentData.growthARR + fragmentData.renewalARR
-						) {
-							checkedItems['arr'] = true;
-						}
 					}
-				}
-
-				if (accountUsersResponse.ok) {
-					const {
-						items: accountUsers,
-					} = await accountUsersResponse.json();
-
-					console.log('accountUsers', accountUsers);
-
-					const countHeadcount = {
-						partnerMarketingUser: 0,
-						partnerSalesUsers: 0,
-					};
-
-					accountUsers.forEach((user) => {
-						if (
-							user.accountBriefs[0].roleBriefs.find(
-								(role) => role.name === 'Partner Marketing User'
-							)
-						) {
-							countHeadcount['partnerMarketingUser'] += 1;
-						}
-
-						if (
-							user.accountBriefs[0].roleBriefs.find(
-								(role) => role.name === 'Partner Sales Users'
-							)
-						) {
-							countHeadcount['partnerSalesUsers'] += 1;
-						}
-					});
 
 					if (
-						countHeadcount.partnerMarketingUser ===
-							partnerLevelProperties[fragmentData.partnerLevel]
-								.partnerMarketingUser &&
-						countHeadcount.partnerSalesUsers ===
-							partnerLevelProperties[fragmentData.partnerLevel]
-								.partnerSalesUsers
+						accountUsersRequest.ok &&
+						accountData.partnerLevel !==
+							PartnershipLevels.AUTHORIZED
 					) {
-						checkedItems['headcount'] = true;
+						const {
+							items: accountUsers,
+						} = await accountUsersRequest.json();
+
+						const countHeadcount = {
+							partnerMarketingUser: 0,
+							partnerSalesUsers: 0,
+						};
+
+						accountUsers.forEach((user) => {
+							if (
+								user.accountBriefs[0].roleBriefs.find(
+									(role) =>
+										role.name === 'Partner Marketing User'
+								)
+							) {
+								countHeadcount['partnerMarketingUser'] += 1;
+							}
+
+							if (
+								user.accountBriefs[0].roleBriefs.find(
+									(role) =>
+										role.name === 'Partner Sales Users'
+								)
+							) {
+								countHeadcount['partnerSalesUsers'] += 1;
+							}
+						});
+
+						if (
+							countHeadcount.partnerMarketingUser >=
+								partnerLevelProperties[accountData.partnerLevel]
+									.partnerMarketingUser &&
+							countHeadcount.partnerSalesUsers >=
+								partnerLevelProperties[accountData.partnerLevel]
+									.partnerSalesUsers
+						) {
+							checkedItems['headcount'] = true;
+						}
+
+						setHeadcount(countHeadcount);
 					}
 
-					setHeadcount(countHeadcount);
+					setData(accountData);
+					setCompleted(checkedItems);
 				}
-
-				setData(fragmentData);
-				setCompleted(checkedItems);
 			}
 		}
-
 		setLoading(false);
 	};
 
 	useEffect(() => {
 		getAccountInformation();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if (loading) {
-		return <ClayLoadingIndicator className="mb-10 mt-9" size="md" />;
-	}
+	const BuildPartnershipLevel = () => {
+		if (loading) {
+			return <ClayLoadingIndicator className="mb-10 mt-9" size="md" />;
+		}
+
+		if (!data.partnerLevel && !loading) {
+			return (
+				<ClayAlert
+					className="mb-8 mt-8 mx-auto text-center w-50"
+					displayType="info"
+					title="Info:"
+				>
+					No Data Available
+				</ClayAlert>
+			);
+		}
+
+		return (
+			<PartnershipLevel
+				completed={completed}
+				data={data}
+				headcount={headcount}
+			/>
+		);
+	};
 
 	return (
 		<ClayIconProvider>
 			<Container title="Partnership Level">
-				<PartnershipLevel
-					completed={completed}
-					data={data}
-					headcount={headcount}
-				/>
+				<BuildPartnershipLevel />
 			</Container>
 		</ClayIconProvider>
 	);
