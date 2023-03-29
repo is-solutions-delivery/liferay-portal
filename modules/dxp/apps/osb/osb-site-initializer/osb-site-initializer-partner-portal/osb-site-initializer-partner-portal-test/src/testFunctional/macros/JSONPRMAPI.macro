@@ -252,33 +252,64 @@ definition {
 		}
 	}
 
+	macro addMDFSf {
+		Variables.assertDefined(parameterList = ${campaignName});
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(accountEntryName))) {
+			var accountEntryName = "Company Name 1";
+		}
+
+		var userId = JSONUserAPI._getUserIdByEmailAddress(userEmailAddress = ${userEmailAddress});
 		var accountId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = ${accountEntryName});
+		var accountExternalReferenceCode = JSONPRMAPI.getAccountExternalReferenceCode(accountEntryName = ${accountEntryName});
 		var portalURL = JSONCompany.getPortalURL();
 
 		var curl = '''
-			${portalURL}/o/c/companyextenders \
+			${portalURL}/o/c/mdfrequestsfs \
 				-u test@liferay.com:test \
 				-H 'accept: application/json' \
 				-H 'Content-Type: application/json' \
 				-d '{
-					"accountExternalReferenceCode":"",
 					"claimPercent":"",
+					"accountExternalReferenceCode":"${accountExternalReferenceCode}",
+					"companyName":"${accountEntryName}",
 					"country":{
-						"key":"${country}"
+						"key":"global",
+						"name":"Global"
 					},
 					"currency":{
-						"key":"${currency}"
+						"key":"BRL",
+						"name":"Brazilian Real"
 					},
-					"partnerLevel":{
-						"key":""
+					"emailAddress":"${userEmailAddress}",
+					"liferayBusinessSalesGoals":"${goalsOptions}",
+					"liferaysUserIdSF":${userId},
+					"maxDateActivity":"${endDate}",
+					"mdfRequestStatus":{
+						"key":"pendingMarketingReview",
+						"name":"PendingMarketingReview"
 					},
-					"r_accToCoExts_accountEntryId":"${accountId}"
+					"minDateActivity":"${startDate}",
+					"overallCampaignDescription":"${campaignDescription}",
+					"overallCampaignName":"${campaignName}",
+					"r_accToMDFReqs_accountEntryId":${accountId},
+					"r_usrToMDFReqs_userId":${userId},
+					"targetAudienceRoles":"${targetRolesOptions}",
+					"targetMarkets":"${targetMarketOptions}",
+					"totalCostOfExpense":${totalCostOfExpense},
+					"totalMDFRequestAmount":${totalMDFRequestAmount}
 				}'
 		''';
 
-		var response = JSONCurlUtil.post(${curl});
+		var mdfExternalReferenceCode = JSONCurlUtil.post(${curl}, "$.externalReferenceCode");
 
-		echo(${response});
+		echo(${mdfExternalReferenceCode});
+
+		return ${mdfExternalReferenceCode};
 	}
 
 	macro addMDF {
