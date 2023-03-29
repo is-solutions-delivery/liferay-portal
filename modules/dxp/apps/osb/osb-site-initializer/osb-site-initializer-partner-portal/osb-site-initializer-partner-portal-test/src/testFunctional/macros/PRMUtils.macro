@@ -21,11 +21,31 @@ definition {
 	}
 
 	macro addPRMSite {
+		var siteTemplateName = "Liferay OSB Site Initializer Partner Portal";
+		var siteName = "Partner Portal";
+
 		Site.openSitesAdmin();
 
-		TeamExtranet.addSiteTemplateCP(
-			siteName = "Partner Portal",
-			siteTemplateName = "Liferay OSB Site Initializer Partner Portal");
+		if (IsElementPresent(locator1 = "LexiconTable#TABLE_ENTRY", key_tableEntry = "Partner Portal")) {
+
+			PRMUtils.tearDown();
+
+			Site.openSitesAdmin();
+		}
+	
+		LexiconEntry.gotoAdd();
+
+		LexiconCard.clickCard(card = "${siteTemplateName}");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		PortletEntry.inputName(name = "${siteName}");
+
+		Button.clickAdd();
+
+		SelectFrameTop();
+
+		Alert.viewSuccessMessage();
 	}
 
 	macro assertPageTitle {
