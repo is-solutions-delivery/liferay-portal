@@ -103,7 +103,21 @@ definition {
 
 		var totalMDFRequestAmount = ${totalCostOfExpense} / 2;
 
+		var mdfExternalReferenceCode = JSONPRMAPI.addMDFSf(
+			accountEntryName = ${accountEntryName},
+			goalsOptions = ${goalsOptions},
+			endDate = ${endDate},
+			startDate = ${startDate},
+			campaignDescription = ${campaignDescription},
+			campaignName = ${campaignName},
+			targetRolesOptions = ${targetRolesOptions},
+			targetMarketOptions = ${targetMarketOptions},
+			totalCostOfExpense = ${totalCostOfExpense},
+			totalMDFRequestAmount = ${totalMDFRequestAmount});
+
 		var requestId = JSONPRMAPI.addMDF(
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
 			accountEntryName = ${accountEntryName},
 			campaignDescription = ${campaignDescription},
 			campaignName = ${campaignName},
@@ -116,7 +130,21 @@ definition {
 			totalMDFRequestAmount = ${totalMDFRequestAmount},
 			userEmailAddress = ${userEmailAddress});
 
+		var activityExternalReferenceCode = JSONPRMAPI.addActivitySf(
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
+			accountEntryName = ${accountEntryName},
+			activityDescription = ${activityDescription},
+			activityName = ${activityName},
+			budgetValue = ${totalCostOfExpense},
+			endDate = ${endDate},
+			expenseOption = ${expenseOption},
+			requestId = ${requestId},
+			startDate = ${startDate},
+			totalMDFRequestAmount = ${totalMDFRequestAmount});
+
 		var activityId = JSONPRMAPI.addActivity(
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
+			activityExternalReferenceCode = ${activityExternalReferenceCode},
 			accountEntryName = ${accountEntryName},
 			activityDescription = ${activityDescription},
 			activityName = ${activityName},
