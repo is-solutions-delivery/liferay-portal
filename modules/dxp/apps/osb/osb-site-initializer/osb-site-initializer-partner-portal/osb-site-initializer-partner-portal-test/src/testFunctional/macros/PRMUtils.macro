@@ -1,45 +1,24 @@
 definition {
 
-	macro tearDown {
-		if (IsElementPresent(locator1 = "LexiconTable#TABLE_ENTRY", key_tableEntry = "Partner Portal")) {
-			Site.openSitesAdmin();
-
-			PortletEntry.selectAll();
-
-			Click(locator1 = "Icon#SITES_VERTICAL_ELLIPSIS");
-
-			MenuItem.clickNoError(menuItem = "Delete");
-
-			Click(locator1 = "Button#MODAL_DELETE");
-
-			Alert.viewSuccessMessage();
-		}
-
-		if (IsElementPresent(locator1 = "LexiconTable#TABLE_ENTRY", key_tableEntry = "Campaign Name")) {
-			Account.tearDownCP();
-		}
-	}
-
 	macro addPRMSite {
 		var siteTemplateName = "Liferay OSB Site Initializer Partner Portal";
 		var siteName = "Partner Portal";
 
 		Site.openSitesAdmin();
 
-		if (IsElementPresent(locator1 = "LexiconTable#TABLE_ENTRY", key_tableEntry = "Partner Portal")) {
-
+		if (IsElementPresent(key_tableEntry = "Partner Portal", locator1 = "LexiconTable#TABLE_ENTRY")) {
 			PRMUtils.tearDown();
 
 			Site.openSitesAdmin();
 		}
-	
+
 		LexiconEntry.gotoAdd();
 
-		LexiconCard.clickCard(card = "${siteTemplateName}");
+		LexiconCard.clickCard(card = ${siteTemplateName});
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-		PortletEntry.inputName(name = "${siteName}");
+		PortletEntry.inputName(name = ${siteName});
 
 		Button.clickAdd();
 
@@ -113,6 +92,26 @@ definition {
 		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
 
 		CreateObject.saveObject();
+	}
+
+	macro tearDown {
+		if (IsElementPresent(key_tableEntry = "Partner Portal", locator1 = "LexiconTable#TABLE_ENTRY")) {
+			Site.openSitesAdmin();
+
+			PortletEntry.selectAll();
+
+			Click(locator1 = "Icon#SITES_VERTICAL_ELLIPSIS");
+
+			MenuItem.clickNoError(menuItem = "Delete");
+
+			Click(locator1 = "Button#MODAL_DELETE");
+
+			Alert.viewSuccessMessage();
+		}
+
+		if (IsElementPresent(key_tableEntry = "Campaign Name", locator1 = "LexiconTable#TABLE_ENTRY")) {
+			Account.tearDownCP();
+		}
 	}
 
 }

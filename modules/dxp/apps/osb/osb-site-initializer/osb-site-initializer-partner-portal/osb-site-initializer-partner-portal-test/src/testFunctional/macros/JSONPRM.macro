@@ -1,7 +1,7 @@
 definition {
 
 	macro addAccount {
-		if(!(isSet(accountName))) {
+		if (!(isSet(accountName))) {
 			var accountName = "Company Name 1";
 		}
 
@@ -105,24 +105,24 @@ definition {
 
 		var mdfExternalReferenceCode = JSONPRMAPI.addMDFSf(
 			accountEntryName = ${accountEntryName},
-			goalsOptions = ${goalsOptions},
-			endDate = ${endDate},
-			startDate = ${startDate},
 			campaignDescription = ${campaignDescription},
 			campaignName = ${campaignName},
-			targetRolesOptions = ${targetRolesOptions},
+			endDate = ${endDate},
+			goalsOptions = ${goalsOptions},
+			startDate = ${startDate},
 			targetMarketOptions = ${targetMarketOptions},
+			targetRolesOptions = ${targetRolesOptions},
 			totalCostOfExpense = ${totalCostOfExpense},
 			totalMDFRequestAmount = ${totalMDFRequestAmount});
 
 		var requestId = JSONPRMAPI.addMDF(
-			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
-			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
 			accountEntryName = ${accountEntryName},
 			campaignDescription = ${campaignDescription},
 			campaignName = ${campaignName},
 			endDate = ${endDate},
 			goalsOptions = ${goalsOptions},
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
 			startDate = ${startDate},
 			targetMarketOptions = ${targetMarketOptions},
 			targetRolesOptions = ${targetRolesOptions},
@@ -131,26 +131,26 @@ definition {
 			userEmailAddress = ${userEmailAddress});
 
 		var activityExternalReferenceCode = JSONPRMAPI.addActivitySf(
-			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
 			accountEntryName = ${accountEntryName},
 			activityDescription = ${activityDescription},
 			activityName = ${activityName},
 			budgetValue = ${totalCostOfExpense},
 			endDate = ${endDate},
 			expenseOption = ${expenseOption},
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
 			requestId = ${requestId},
 			startDate = ${startDate},
 			totalMDFRequestAmount = ${totalMDFRequestAmount});
 
 		var activityId = JSONPRMAPI.addActivity(
-			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
-			activityExternalReferenceCode = ${activityExternalReferenceCode},
 			accountEntryName = ${accountEntryName},
 			activityDescription = ${activityDescription},
+			activityExternalReferenceCode = ${activityExternalReferenceCode},
 			activityName = ${activityName},
 			budgetValue = ${totalCostOfExpense},
 			endDate = ${endDate},
 			expenseOption = ${expenseOption},
+			mdfExternalReferenceCode = ${mdfExternalReferenceCode},
 			requestId = ${requestId},
 			startDate = ${startDate},
 			totalMDFRequestAmount = ${totalMDFRequestAmount});

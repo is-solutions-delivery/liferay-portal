@@ -1,5 +1,45 @@
 definition {
 
+	macro addAccountEntry {
+		Variables.assertDefined(parameterList = ${accountName});
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (${accountName} == "Company Name 1") {
+			var externalReferenceCode = "0017i00001MQSGdAAP";
+		}
+
+		if (${accountName} == "Company Name 2") {
+			var externalReferenceCode = "0017i00001MQSAyAAP";
+		}
+
+		var curl = '''
+			${portalURL}/o/headless-admin-user/v1.0/accounts \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${accountName}",
+					"externalReferenceCode": "${externalReferenceCode}",
+					"country": "global",
+					"claimPercent": 0.5,
+					"currency": "BRL",
+					"partnerLevel": "gold",
+					"marketingPlan": true,
+					"solutionDeliveryCertification": true,
+					"renewalARR": 0,
+					"newProjectExistingBusiness": 1,
+					"aRRAmount": 85000,
+					"marketingPerformance": 3,
+					"growthARR": 0
+				}'
+		''';
+
+		var response = JSONCurlUtil.post(${curl});
+
+		echo(${response});
+	}
+
 	macro addActivity {
 		Variables.assertDefined(parameterList = ${requestId});
 
@@ -233,81 +273,67 @@ definition {
 		echo(${response});
 	}
 
-	macro addAccountEntry {
-		Variables.assertDefined(parameterList = ${accountName});
+	macro addMDF {
+		Variables.assertDefined(parameterList = ${campaignName});
 
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(accountEntryName))) {
+			var accountEntryName = "Company Name 1";
+		}
+
+		var userId = JSONUserAPI._getUserIdByEmailAddress(userEmailAddress = ${userEmailAddress});
+		var accountId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = ${accountEntryName});
+		var accountExternalReferenceCode = JSONPRMAPI.getAccountExternalReferenceCode(accountEntryName = ${accountEntryName});
 		var portalURL = JSONCompany.getPortalURL();
 
-		if (${accountName} == "Company Name 1") {
-			var externalReferenceCode = "0017i00001MQSGdAAP";
-		}
-		
-		if (${accountName} == "Company Name 2") {
-			var externalReferenceCode = "0017i00001MQSAyAAP";
-		}
-
 		var curl = '''
-			${portalURL}/o/headless-admin-user/v1.0/accounts \
+			${portalURL}/o/c/mdfrequests \
 				-u test@liferay.com:test \
 				-H 'accept: application/json' \
 				-H 'Content-Type: application/json' \
 				-d '{
-					"name": "${accountName}",
-					"externalReferenceCode": "${externalReferenceCode}",
-					"country": "global",
-					"claimPercent": 0.5,
-					"currency": "BRL",
-					"partnerLevel": "gold",
-					"marketingPlan": true,
-					"solutionDeliveryCertification": true,
-					"renewalARR": 0,
-					"newProjectExistingBusiness": 1,
-					"aRRAmount": 85000,
-					"marketingPerformance": 3,
-					"growthARR": 0
-					}'
+					"accountExternalReferenceCode":"${accountExternalReferenceCode}",
+					"additionalOption":{
+					},
+					"companyName":"${accountEntryName}",
+					"country":{
+						"key":"global",
+						"name":"Global"
+					},
+					"currency":{
+						"key":"BRL",
+						"name":"Brazilian Real"
+					},
+					"emailAddress":"${userEmailAddress}",
+					"externalReferenceCode":"${mdfExternalReferenceCode}",
+					"externalReferenceCodeSF":"${mdfExternalReferenceCode}",
+					"liferayBusinessSalesGoals":"${goalsOptions}",
+					"liferaysUserIdSF":${userId},
+					"maxDateActivity":"${endDate}",
+					"mdfRequestStatus":{
+						"key":"pendingMarketingReview",
+						"name":"PendingMarketingReview"
+					},
+					"minDateActivity":"${startDate}",
+					"overallCampaignDescription":"${campaignDescription}",
+					"overallCampaignName":"${campaignName}",
+					"r_accToMDFReqs_accountEntryId":${accountId},
+					"r_usrToMDFReqs_userId":${userId},
+					"targetAudienceRoles":"${targetRolesOptions}",
+					"targetMarkets":"${targetMarketOptions}",
+					"totalCostOfExpense":${totalCostOfExpense},
+					"totalMDFRequestAmount":${totalMDFRequestAmount}
+				}'
 		''';
 
-		var response = JSONCurlUtil.post(${curl});
+		var response = JSONCurlUtil.post(${curl}, "$.id");
 
 		echo(${response});
-	}
-		
-	@summary = "Get the 'externalReferenceCode' from '${accountEntryName}'"
-	macro getAccountExternalReferenceCode {
-		Variables.assertDefined(parameterList = ${accountEntryName});
 
-		if (!(isSet(creatorEmailAddress))) {
-			var creatorEmailAddress = "test@liferay.com";
-		}
-
-		if (!(isSet(creatorPassword))) {
-			var creatorPassword = "test";
-		}
-
-		var companyId = JSONCompany.getCompanyId();
-		var portalURL = JSONCompany.getPortalURL();
-		var userId = JSONUserSetter.setUserId(userEmailAddress = ${creatorEmailAddress});
-		var curl = '''
-			${portalURL}/api/jsonws/account.accountentry/get-account-entries \
-				-u ${creatorEmailAddress}:${creatorPassword} \
-				-d companyId=${companyId} \
-				-d status=0 \
-				-d <CURL_DATA[start=-1]CURL_DATA> \
-				-d <CURL_DATA[end=-1]CURL_DATA> \
-				-d -orderByComparator=
-		''';
-
-		var accountExternalReferenceCode = JSONCurlUtil.post(${curl}, "$.[?(@['name'] == '${accountEntryName}')]['externalReferenceCode']");
-
-		echo("curl: ${curl}");
-
-		if (${externalReferenceCode} == "") {
-			fail("FAIL. Cannot find account entry.");
-		}
-		else {
-			return ${accountExternalReferenceCode};
-		}
+		return ${response};
 	}
 
 	macro addMDFSf {
@@ -370,69 +396,6 @@ definition {
 		return ${mdfExternalReferenceCode};
 	}
 
-	macro addMDF {
-		Variables.assertDefined(parameterList = ${campaignName});
-
-		if (!(isSet(userEmailAddress))) {
-			var userEmailAddress = "test@liferay.com";
-		}
-
-		if (!(isSet(accountEntryName))) {
-			var accountEntryName = "Company Name 1";
-		}
-
-		var userId = JSONUserAPI._getUserIdByEmailAddress(userEmailAddress = ${userEmailAddress});
-		var accountId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = ${accountEntryName});
-		var accountExternalReferenceCode = JSONPRMAPI.getAccountExternalReferenceCode(accountEntryName = ${accountEntryName});
-		var portalURL = JSONCompany.getPortalURL();
-
-		var curl = '''
-			${portalURL}/o/c/mdfrequests \
-				-u test@liferay.com:test \
-				-H 'accept: application/json' \
-				-H 'Content-Type: application/json' \
-				-d '{
-					"accountExternalReferenceCode":"${accountExternalReferenceCode}",
-					"additionalOption":{
-   					},
-					"companyName":"${accountEntryName}",
-					"country":{
-						"key":"global",
-						"name":"Global"
-					},
-					"currency":{
-						"key":"BRL",
-						"name":"Brazilian Real"
-					},
-					"emailAddress":"${userEmailAddress}",
-					"externalReferenceCode":"${mdfExternalReferenceCode}",
-   					"externalReferenceCodeSF":"${mdfExternalReferenceCode}",
-					"liferayBusinessSalesGoals":"${goalsOptions}",
-					"liferaysUserIdSF":${userId},
-					"maxDateActivity":"${endDate}",
-					"mdfRequestStatus":{
-						"key":"pendingMarketingReview",
-						"name":"PendingMarketingReview"
-					},
-					"minDateActivity":"${startDate}",
-					"overallCampaignDescription":"${campaignDescription}",
-					"overallCampaignName":"${campaignName}",
-					"r_accToMDFReqs_accountEntryId":${accountId},
-					"r_usrToMDFReqs_userId":${userId},
-					"targetAudienceRoles":"${targetRolesOptions}",
-					"targetMarkets":"${targetMarketOptions}",
-					"totalCostOfExpense":${totalCostOfExpense},
-					"totalMDFRequestAmount":${totalMDFRequestAmount}
-				}'
-		''';
-
-		var response = JSONCurlUtil.post(${curl}, "$.id");
-
-		echo(${response});
-
-		return ${response};
-	}
-
 	macro changeMDFStatus {
 		Variables.assertDefined(parameterList = ${requestId});
 
@@ -455,6 +418,43 @@ definition {
 		var response = JSONCurlUtil.patch(${curl});
 
 		echo(${response});
+	}
+
+	@summary = "Get the 'externalReferenceCode' from '${accountEntryName}'"
+	macro getAccountExternalReferenceCode {
+		Variables.assertDefined(parameterList = ${accountEntryName});
+
+		if (!(isSet(creatorEmailAddress))) {
+			var creatorEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(creatorPassword))) {
+			var creatorPassword = "test";
+		}
+
+		var companyId = JSONCompany.getCompanyId();
+		var portalURL = JSONCompany.getPortalURL();
+		var userId = JSONUserSetter.setUserId(userEmailAddress = ${creatorEmailAddress});
+		var curl = '''
+			${portalURL}/api/jsonws/account.accountentry/get-account-entries \
+				-u ${creatorEmailAddress}:${creatorPassword} \
+				-d companyId=${companyId} \
+				-d status=0 \
+				-d <CURL_DATA[start=-1]CURL_DATA> \
+				-d <CURL_DATA[end=-1]CURL_DATA> \
+				-d -orderByComparator=
+		''';
+
+		var accountExternalReferenceCode = JSONCurlUtil.post(${curl}, "$.[?(@['name'] == '${accountEntryName}')]['externalReferenceCode']");
+
+		echo("curl: ${curl}");
+
+		if (${externalReferenceCode} == "") {
+			fail("FAIL. Cannot find account entry.");
+		}
+		else {
+			return ${accountExternalReferenceCode};
+		}
 	}
 
 }
