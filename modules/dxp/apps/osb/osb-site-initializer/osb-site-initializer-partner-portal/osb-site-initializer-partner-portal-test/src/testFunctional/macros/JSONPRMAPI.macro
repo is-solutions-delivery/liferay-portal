@@ -72,49 +72,73 @@ definition {
 						"key":"USD",
 						"name":"US Dollar"
 					},
-					"activityDescription":{
-						"activityPromotion":"",
-						"ad":"",
-						"assetsLiferayDescription":"",
-						"assetsLiferayRequired":"",
-						"audienceTarget":"",
-						"broadcastChannel":"",
-						"cta":"",
-						"description":"",
-						"detailsLeadFollowUp":"",
-						"expectedImpressions":"",
-						"gatedLandingPage":"",
-						"goalOfContent":"",
-						"guaranteedImpressions":"",
-						"hiringOutsideWriterOrAgency":"",
-						"howLiferayBrandUsed":"",
-						"keywordsForPPCCampaigns":"",
-						"landingPageCopy":"",
-						"leadFollowUpStrategies":[
-						],
-						"leadGenerated":"false",
-						"liferayBranding":"",
-						"liferayParticipationRequirements":"",
-						"location":"",
-						"manySeries":"",
-						"marketingActivity":"${activityDescription}",
-						"nurtureDripCampaign":"",
-						"overallMessageContentCTA":"",
-						"primaryThemeOrMessage":"",
-						"publication":"",
-						"quantity":"",
-						"resourcesNecessaryFromLiferay":"",
-						"sourceAndSizeOfCallList":"",
-						"sourceAndSizeOfInviteeList":"",
-						"specificSites":"",
-						"targetOfLeads":"",
-						"targetOfSends":"",
-						"typeMerchandise":"",
-						"usingCIABAssets":"",
-						"venueName":"",
-						"webinarHostPlatform":"",
-						"webinarTopic":"",
-						"weeksAiring":""
+	macro addActivitySf {
+		Variables.assertDefined(parameterList = ${requestId});
+
+		if (!(isSet(accountEntryName))) {
+			var accountEntryName = "Company Name 1";
+		}
+
+		var accoundId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = ${accountEntryName});
+		var portalURL = JSONCompany.getPortalURL();
+		var expenseKey = StringUtil.lowerCaseFirstLetter(${expenseOption});
+
+		var expenseKey = StringUtil.replace(${expenseKey}, " ", "");
+
+		var curl = '''
+			${portalURL}/o/c/activitysfs \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"activityPromotion":"",
+					"ad":"",
+					"assetsLiferayDescription":"",
+					"assetsLiferayRequired":"",
+					"audienceTarget":"",
+					"broadcastChannel":"",
+					"cta":"",
+					"description":"",
+					"detailsLeadFollowUp":"",
+					"expectedImpressions":"",
+					"gatedLandingPage":"",
+					"goalOfContent":"",
+					"guaranteedImpressions":"",
+					"hiringOutsideWriterOrAgency":"",
+					"howLiferayBrandUsed":"",
+					"keywordsForPPCCampaigns":"",
+					"landingPageCopy":"",
+					"leadFollowUpStrategies":"",
+					"leadGenerated":"false",
+					"liferayBranding":"",
+					"liferayParticipationRequirements":"",
+					"location":"",
+					"manySeries":"",
+					"marketingActivity":"${activityDescription}",
+					"nurtureDripCampaign":"",
+					"overallMessageContentCTA":"",
+					"primaryThemeOrMessage":"",
+					"publication":"",
+					"quantity":"",
+					"resourcesNecessaryFromLiferay":"",
+					"sourceAndSizeOfCallList":"",
+					"sourceAndSizeOfInviteeList":"",
+					"specificSites":"",
+					"targetOfLeads":"",
+					"targetOfSends":"",
+					"typeMerchandise":"",
+					"usingCIABAssets":"",
+					"venueName":"",
+					"webinarHostPlatform":"",
+					"webinarTopic":"",
+					"weeksAiring":"",
+					"activityStatus":{
+						"key":"submitted",
+						"name":"Submitted"
+					},
+					"currency":{
+						"key":"BRL",
+						"name":"Brazilian Real"
 					},
 					"budgets":[
 						{
@@ -138,16 +162,17 @@ definition {
 						"key":"prmtact004",
 						"name":"Miscellaneous Marketing"
 					},
-					"r_accToActs_accountEntryId":${accountName},
+					"mdfRequestExternalReferenceCode":"${mdfExternalReferenceCode}",
+					"r_accToActs_accountEntryId":${accoundId},
 					"r_mdfReqToActs_c_mdfRequestId":${requestId}
 				}'
 		''';
 
-		var response = JSONCurlUtil.post(${curl}, "$.id");
+		var activityExternalReferenceCode = JSONCurlUtil.post(${curl}, "$.externalReferenceCode");
 
-		echo(${response});
+		echo(${activityExternalReferenceCode});
 
-		return ${response};
+		return ${activityExternalReferenceCode};
 	}
 
 	macro addBudget {
