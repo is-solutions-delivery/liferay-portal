@@ -325,6 +325,7 @@ definition {
 
 		var userId = JSONUserAPI._getUserIdByEmailAddress(userEmailAddress = ${userEmailAddress});
 		var accountId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = ${accountEntryName});
+		var accountExternalReferenceCode = JSONPRMAPI.getAccountExternalReferenceCode(accountEntryName = ${accountEntryName});
 		var portalURL = JSONCompany.getPortalURL();
 
 		var curl = '''
@@ -333,33 +334,37 @@ definition {
 				-H 'accept: application/json' \
 				-H 'Content-Type: application/json' \
 				-d '{
-					"maxDateActivity":"${endDate}",
-					"minDateActivity":"${startDate}",
-					"totalCostOfExpense":${totalCostOfExpense},
-					"totalMDFRequestAmount":${totalMDFRequestAmount},
+					"accountExternalReferenceCode":"${accountExternalReferenceCode}",
 					"additionalOption":{
-					},
+   					},
 					"companyName":"${accountEntryName}",
 					"country":{
 						"key":"global",
 						"name":"Global"
 					},
 					"currency":{
-						"key":"USD",
-						"name":"US Dollar"
+						"key":"BRL",
+						"name":"Brazilian Real"
 					},
 					"emailAddress":"${userEmailAddress}",
+					"externalReferenceCode":"${mdfExternalReferenceCode}",
+   					"externalReferenceCodeSF":"${mdfExternalReferenceCode}",
 					"liferayBusinessSalesGoals":"${goalsOptions}",
+					"liferaysUserIdSF":${userId},
+					"maxDateActivity":"${endDate}",
 					"mdfRequestStatus":{
 						"key":"pendingMarketingReview",
 						"name":"PendingMarketingReview"
 					},
+					"minDateActivity":"${startDate}",
 					"overallCampaignDescription":"${campaignDescription}",
 					"overallCampaignName":"${campaignName}",
 					"r_accToMDFReqs_accountEntryId":${accountId},
 					"r_usrToMDFReqs_userId":${userId},
 					"targetAudienceRoles":"${targetRolesOptions}",
-					"targetMarkets":"${targetMarketOptions}"
+					"targetMarkets":"${targetMarketOptions}",
+					"totalCostOfExpense":${totalCostOfExpense},
+					"totalMDFRequestAmount":${totalMDFRequestAmount}
 				}'
 		''';
 
