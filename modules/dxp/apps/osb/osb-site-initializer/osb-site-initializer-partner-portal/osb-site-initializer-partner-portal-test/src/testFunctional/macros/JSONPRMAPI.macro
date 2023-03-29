@@ -7,11 +7,7 @@ definition {
 			var accountEntryName = "Company Name 1";
 		}
 
-		if (!(isSet(accountEntryName))) {
-			var accountEntryName = "Company Name 1";
-		}
-
-		var accountName = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = ${accountEntryName});
+		var accoundId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = ${accountEntryName});
 		var portalURL = JSONCompany.getPortalURL();
 		var expenseKey = StringUtil.lowerCaseFirstLetter(${expenseOption});
 
@@ -69,9 +65,46 @@ definition {
 						"name":"Submitted"
 					},
 					"currency":{
-						"key":"USD",
-						"name":"US Dollar"
+						"key":"BRL",
+						"name":"Brazilian Real"
 					},
+					"budgets":[
+						{
+							"cost":${budgetValue},
+							"expense":{
+								"key":"${expenseKey}",
+								"name":"${expenseOption}"
+							}
+						}
+					],
+					"endDate":"${endDate}",
+					"mdfRequestAmount":${totalMDFRequestAmount},
+					"name":"${activityName}",
+					"startDate":"${startDate}",
+					"tactic":{
+						"key":"prmtact002prmtct006prmtact003prmtct009prmtact004prmtct008",
+						"name":"Other"
+					},
+					"totalCostOfExpense":${budgetValue},
+					"typeActivity":{
+						"key":"prmtact004",
+						"name":"Miscellaneous Marketing"
+					},
+					"externalReferenceCode":"${activityExternalReferenceCode}",
+					"externalReferenceCodeSF":"${activityExternalReferenceCode}",
+					"mdfRequestExternalReferenceCode":"${mdfExternalReferenceCode}",
+					"r_accToActs_accountEntryId":${accoundId},
+					"r_mdfReqToActs_c_mdfRequestId":${requestId}
+				}'
+		''';
+
+		var response = JSONCurlUtil.post(${curl}, "$.id");
+
+		echo(${response});
+
+		return ${response};
+	}
+
 	macro addActivitySf {
 		Variables.assertDefined(parameterList = ${requestId});
 
