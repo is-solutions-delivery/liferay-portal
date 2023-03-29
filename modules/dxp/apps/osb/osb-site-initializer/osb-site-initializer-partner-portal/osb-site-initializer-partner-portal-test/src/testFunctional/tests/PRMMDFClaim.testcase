@@ -47,9 +47,7 @@ definition {
 		}
 
 		task ("Add a new account and assign the created users to the account") {
-			JSONAccountEntry.addAccountEntry(
-				accountEntryName = "Company Name 1",
-				accountEntryType = "Business");
+			JSONPRM.addAccount();
 
 			JSONAccountEntryUser.addExistUsertoAccount(
 				accountEntryName = "Company Name 1",
@@ -164,9 +162,7 @@ definition {
 	@priority = 4
 	test CanExportFilteredClaims {
 		task ("Given a new account is created") {
-			JSONAccountEntry.addAccountEntry(
-				accountEntryName = "Company Name 2",
-				accountEntryType = "Business");
+			JSONPRM.addAccount();
 
 			JSONAccountEntryUser.addExistUsertoAccount(
 				accountEntryName = "Company Name 2",
