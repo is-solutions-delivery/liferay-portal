@@ -32,8 +32,8 @@
 
 [#if mdfClaimId?has_content]
 	[#assign myUserAccount = restClient.get("/headless-admin-user/v1.0/my-user-account") /]
-	[#assign claim = restClient.get("/c/mdfclaims/${mdfClaimId}?nestedField=r_mdfReqToMDFClms_c_mdfRequestId") /]
-	[#assign accountEntryId = claim.r_mdfReqToMDFClms_c_mdfRequest.r_accToMDFReqs_accountEntryId /]
+	[#assign claim = restClient.get("/c/mdfclaims/${mdfClaimId}?nestedFields=mdfReqToMDFClms") /]
+	[#assign accountEntryId = (claim.mdfReqToMDFClms.r_accToMDFReqs_accountEntryId)! /]
 
 	[#assign userRoles = userRoles + (myUserAccount.accountBriefs?filter(account_brief -> account_brief.id == accountEntryId)?first.roleBriefs)! /]
 
