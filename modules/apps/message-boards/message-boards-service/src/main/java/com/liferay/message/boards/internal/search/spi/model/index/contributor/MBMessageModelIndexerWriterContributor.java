@@ -63,7 +63,8 @@ public class MBMessageModelIndexerWriterContributor
 					statusProperty.in(
 						new Integer[] {
 							WorkflowConstants.STATUS_APPROVED,
-							WorkflowConstants.STATUS_IN_TRASH
+							WorkflowConstants.STATUS_IN_TRASH,
+							WorkflowConstants.STATUS_PENDING
 						}));
 			});
 		batchIndexingActionable.setPerformActionMethod(
@@ -105,7 +106,8 @@ public class MBMessageModelIndexerWriterContributor
 			return IndexerWriterMode.SKIP;
 		}
 		else if ((status == WorkflowConstants.STATUS_APPROVED) ||
-				 (status == WorkflowConstants.STATUS_IN_TRASH)) {
+				 (status == WorkflowConstants.STATUS_IN_TRASH) ||
+				 (status == WorkflowConstants.STATUS_PENDING)) {
 
 			return IndexerWriterMode.UPDATE;
 		}
