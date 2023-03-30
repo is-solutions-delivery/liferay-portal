@@ -46,6 +46,7 @@
 						"marginLeft": 0,
 						"marginRight": 0,
 						"marginTop": 0,
+						"opacity": 100,
 						"paddingBottom": 2,
 						"paddingLeft": 0,
 						"paddingRight": 0,
@@ -57,76 +58,80 @@
 				"pageElements": [
 					{
 						"definition": {
+							"fragment": {
+								"key": "change-mdf-listing-pages"
+							},
+							"fragmentConfig": {
+								"channelAccountManager": true,
+								"channelFinanceManager": true,
+								"channelGeneralManager": true,
+								"channelGlobalMarketingManager": true,
+								"channelRegionalMarketingManager": true,
+								"user": false
+							},
+							"fragmentFields": [],
 							"fragmentStyle": {
 								"marginBottom": "3"
 							},
-							"indexed": true,
-							"layout": {
-								"borderWidth": 0,
-								"marginBottom": 1,
-								"marginLeft": 0,
-								"marginRight": 0,
-								"marginTop": 0,
-								"opacity": 100,
-								"paddingBottom": 0,
-								"paddingLeft": 0,
-								"paddingRight": 0,
-								"paddingTop": 0,
-								"widthType": "Fluid"
-							},
-							"name": "Back Container"
+							"indexed": true
 						},
 						"pageElements": [
 							{
-								"definition": {
-									"fragment": {
-										"key": "back-button"
-									},
-									"fragmentConfig": {
-										"buttonSize": "",
-										"inverted": false,
-										"style": "neutral",
-										"type": "ghost",
-										"uppercase": false
-									},
-									"fragmentFields": [
-										{
-											"id": "link",
-											"value": {
-												"fragmentLink": {
+								"definition": {},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "back-button"
+											},
+											"fragmentConfig": {
+												"buttonSize": "",
+												"inverted": false,
+												"style": "neutral",
+												"type": "ghost",
+												"uppercase": false
+											},
+											"fragmentFields": [
+												{
+													"id": "link",
 													"value": {
-														"href": {
-															"mapping": {
-																"itemReference": {
-																	"className": "com.liferay.portal.kernel.model.Layout",
-																	"fields": [
-																		{
-																			"fieldName": "friendlyURL",
-																			"fieldValue": "/marketing/mdf-claim"
-																		},
-																		{
-																			"fieldName": "privatePage",
-																			"fieldValue": "false"
-																		},
-																		{
-																			"fieldName": "siteKey",
-																			"fieldValue": "[$GROUP_KEY$]"
+														"fragmentLink": {
+															"value": {
+																"href": {
+																	"mapping": {
+																		"itemReference": {
+																			"className": "com.liferay.portal.kernel.model.Layout",
+																			"fields": [
+																				{
+																					"fieldName": "friendlyURL",
+																					"fieldValue": "/marketing/mdf-claim"
+																				},
+																				{
+																					"fieldName": "privatePage",
+																					"fieldValue": "false"
+																				},
+																				{
+																					"fieldName": "siteKey",
+																					"fieldValue": "[$GROUP_KEY$]"
+																				}
+																			]
 																		}
-																	]
+																	}
 																}
 															}
 														}
 													}
 												}
-											}
-										}
-									],
-									"indexed": true
-								},
-								"type": "Fragment"
+											],
+											"indexed": true
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "FragmentDropZone"
 							}
 						],
-						"type": "Section"
+						"type": "Fragment"
 					},
 					{
 						"definition": {
@@ -148,6 +153,7 @@
 								"marginLeft": 0,
 								"marginRight": 0,
 								"marginTop": 0,
+								"opacity": 100,
 								"paddingBottom": 2,
 								"paddingLeft": 2,
 								"paddingRight": 2,
@@ -193,14 +199,12 @@
 												"channelRegionalMarketingManager": true,
 												"user": false
 											},
-											"fragmentFields": [
-											],
+											"fragmentFields": [],
 											"indexed": true
 										},
 										"pageElements": [
 											{
-												"definition": {
-												},
+												"definition": {},
 												"pageElements": [
 													{
 														"definition": {
@@ -269,8 +273,7 @@
 																				{
 																					"id": "element-text",
 																					"value": {
-																						"fragmentLink": {
-																						},
+																						"fragmentLink": {},
 																						"text": {
 																							"value_i18n": {
 																								"ar_SA": "MDF Claim",
@@ -342,8 +345,7 @@
 																						{
 																							"id": "element-text",
 																							"value": {
-																								"fragmentLink": {
-																								},
+																								"fragmentLink": {},
 																								"text": {
 																									"value_i18n": {
 																										"ar_SA": "Date Submitted:",
@@ -388,8 +390,7 @@
 																						{
 																							"id": "element-text",
 																							"value": {
-																								"fragmentLink": {
-																								},
+																								"fragmentLink": {},
 																								"text": {
 																									"mapping": {
 																										"fieldKey": "ObjectEntry_createDate",
@@ -425,8 +426,7 @@
 																						{
 																							"id": "element-text",
 																							"value": {
-																								"fragmentLink": {
-																								},
+																								"fragmentLink": {},
 																								"text": {
 																									"value_i18n": {
 																										"ar_SA": " Last Modified:",
@@ -471,8 +471,7 @@
 																						{
 																							"id": "element-text",
 																							"value": {
-																								"fragmentLink": {
-																								},
+																								"fragmentLink": {},
 																								"text": {
 																									"mapping": {
 																										"fieldKey": "ObjectEntry_modifiedDate",
@@ -502,6 +501,9 @@
 															},
 															{
 																"definition": {
+																	"fragmentStyle": {
+																		"borderWidth": "0"
+																	},
 																	"indexed": true,
 																	"layout": {
 																		"align": "Center",
@@ -535,8 +537,26 @@
 																				"channelRegionalMarketingManager": true,
 																				"user": true
 																			},
-																			"fragmentFields": [
-																			],
+																			"fragmentFields": [],
+																			"indexed": true
+																		},
+																		"type": "Fragment"
+																	},
+																	{
+																		"definition": {
+																			"fragment": {
+																				"key": "edit-button-mdf-claim"
+																			},
+																			"fragmentConfig": {
+																				"channelAccountManager": true,
+																				"channelFinanceManager": true,
+																				"channelGeneralManager": true,
+																				"channelGlobalMarketingManager": true,
+																				"channelRegionalMarketingManager": true,
+																				"partnerManager": true,
+																				"user": false
+																			},
+																			"fragmentFields": [],
 																			"indexed": true
 																		},
 																		"type": "Fragment"
@@ -551,11 +571,13 @@
 												"type": "FragmentDropZone"
 											},
 											{
-												"definition": {
-												},
+												"definition": {},
 												"pageElements": [
 													{
 														"definition": {
+															"fragmentStyle": {
+																"borderWidth": "0"
+															},
 															"indexed": true,
 															"layout": {
 																"align": "Center",
@@ -588,8 +610,7 @@
 																		"channelRegionalMarketingManager": true,
 																		"user": false
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -607,8 +628,7 @@
 																		"channelRegionalMarketingManager": true,
 																		"user": false
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -626,8 +646,7 @@
 																		"channelRegionalMarketingManager": true,
 																		"user": false
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -645,8 +664,7 @@
 																		"channelRegionalMarketingManager": true,
 																		"user": false
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -664,8 +682,7 @@
 																		"channelRegionalMarketingManager": true,
 																		"user": false
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -683,8 +700,7 @@
 																		"channelRegionalMarketingManager": true,
 																		"user": false
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -702,8 +718,7 @@
 																		"channelRegionalMarketingManager": true,
 																		"user": false
 																	},
-																	"fragmentFields": [
-																	],
+																	"fragmentFields": [],
 																	"indexed": true
 																},
 																"type": "Fragment"
@@ -743,6 +758,7 @@
 								"marginLeft": 0,
 								"marginRight": 0,
 								"marginTop": 0,
+								"opacity": 100,
 								"paddingBottom": 2,
 								"paddingLeft": 2,
 								"paddingRight": 2,
@@ -758,14 +774,14 @@
 										"key": "DIALECT-dialect-text"
 									},
 									"fragmentConfig": {
-										"textType": "h5"
+										"textType": "h5",
+										"truncateText": false
 									},
 									"fragmentFields": [
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {
-												},
+												"fragmentLink": {},
 												"text": {
 													"value_i18n": {
 														"ar_SA": "Summary",
@@ -804,8 +820,7 @@
 										"bottomSpacing": "3",
 										"separatorColor": ""
 									},
-									"fragmentFields": [
-									],
+									"fragmentFields": [],
 									"fragmentStyle": {
 										"marginTop": "1",
 										"textAlign": ""
@@ -819,10 +834,8 @@
 									"fragment": {
 										"key": "mdf-claim-details-summary"
 									},
-									"fragmentConfig": {
-									},
-									"fragmentFields": [
-									],
+									"fragmentConfig": {},
+									"fragmentFields": [],
 									"indexed": true
 								},
 								"type": "Fragment"
@@ -843,6 +856,7 @@
 								"marginLeft": 0,
 								"marginRight": 0,
 								"marginTop": 0,
+								"opacity": 100,
 								"paddingBottom": 0,
 								"paddingLeft": 0,
 								"paddingRight": 0,
@@ -872,8 +886,7 @@
 										},
 										{
 											"id": "portraitMobile",
-											"rowViewportDefinition": {
-											}
+											"rowViewportDefinition": {}
 										},
 										{
 											"id": "tablet",
@@ -895,8 +908,7 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "portraitMobile"
 												},
 												{
@@ -930,6 +942,7 @@
 														"marginLeft": 0,
 														"marginRight": 0,
 														"marginTop": 0,
+														"opacity": 100,
 														"paddingBottom": 2,
 														"paddingLeft": 1,
 														"paddingRight": 2,
@@ -944,14 +957,14 @@
 																"key": "DIALECT-dialect-text"
 															},
 															"fragmentConfig": {
-																"textType": "h5"
+																"textType": "h5",
+																"truncateText": false
 															},
 															"fragmentFields": [
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Invoice",
@@ -991,8 +1004,7 @@
 																"bottomSpacing": "3",
 																"separatorColor": ""
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"fragmentStyle": {
 																"marginTop": "1",
 																"textAlign": ""
@@ -1006,10 +1018,8 @@
 															"fragment": {
 																"key": "claim-detail-document-list"
 															},
-															"fragmentConfig": {
-															},
-															"fragmentFields": [
-															],
+															"fragmentConfig": {},
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1019,10 +1029,8 @@
 															"fragment": {
 																"key": "claim-detail-activity-list"
 															},
-															"fragmentConfig": {
-															},
-															"fragmentFields": [
-															],
+															"fragmentConfig": {},
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1043,8 +1051,7 @@
 													"id": "landscapeMobile"
 												},
 												{
-													"columnViewportDefinition": {
-													},
+													"columnViewportDefinition": {},
 													"id": "portraitMobile"
 												},
 												{
@@ -1076,6 +1083,7 @@
 														"marginLeft": 0,
 														"marginRight": 0,
 														"marginTop": 0,
+														"opacity": 100,
 														"paddingBottom": 2,
 														"paddingLeft": 2,
 														"paddingRight": 2,
@@ -1090,14 +1098,14 @@
 																"key": "DIALECT-dialect-text"
 															},
 															"fragmentConfig": {
-																"textType": "h5"
+																"textType": "h5",
+																"truncateText": false
 															},
 															"fragmentFields": [
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {
-																		},
+																		"fragmentLink": {},
 																		"text": {
 																			"value_i18n": {
 																				"ar_SA": "Comments",
@@ -1136,8 +1144,7 @@
 																"bottomSpacing": "3",
 																"separatorColor": ""
 															},
-															"fragmentFields": [
-															],
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"type": "Fragment"
@@ -1147,20 +1154,18 @@
 															"fragment": {
 																"key": "comments-container"
 															},
-															"fragmentConfig": {
-															},
-															"fragmentFields": [
-															],
+															"fragmentConfig": {},
+															"fragmentFields": [],
 															"indexed": true
 														},
 														"pageElements": [
 															{
+																"definition": {},
 																"pageElements": [
 																	{
 																		"definition": {
 																			"widgetInstance": {
-																				"widgetConfig": {
-																				},
+																				"widgetConfig": {},
 																				"widgetName": "com_liferay_comment_page_comments_web_portlet_PageCommentsPortlet"
 																			}
 																		},

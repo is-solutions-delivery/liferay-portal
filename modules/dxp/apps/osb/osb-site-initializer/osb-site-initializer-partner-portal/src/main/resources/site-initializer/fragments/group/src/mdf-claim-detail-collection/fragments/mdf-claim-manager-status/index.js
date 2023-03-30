@@ -17,6 +17,11 @@ const findRequestIdUrl = (paramsUrl) => {
 	return splitParamsUrl[0];
 };
 
+const siteURL = Liferay.ThemeDisplay.getLayoutRelativeURL()
+	.split('/')
+	.slice(0, 3)
+	.join('/');
+
 const currentPath = Liferay.currentURL.split('/');
 const mdfClaimId = findRequestIdUrl(currentPath.at(-1));
 
@@ -43,6 +48,10 @@ const updateInDirectorReview = fragmentElement.querySelector(
 const updateClaimPaid = fragmentElement.querySelector('#status-claim-paid');
 
 const updateStatusToCanceled = fragmentElement.querySelector('#status-cancel');
+
+const editButtonManager = fragmentElement.querySelector('#edit-button-manager');
+
+const editButton = fragmentElement.querySelector('#edit-button-user');
 
 const updateStatus = async (status) => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch
@@ -165,12 +174,15 @@ if (updateStatusToCanceled) {
 
 const getMDFClaimStatus = async () => {
 	// eslint-disable-next-line @liferay/portal/no-global-fetch
-	const statusResponse = await fetch(`/o/c/mdfclaims/${mdfClaimId}`, {
-		headers: {
-			'accept': 'application/json',
-			'x-csrf-token': Liferay.authToken,
-		},
-	});
+	const statusResponse = await fetch(
+		`/o/c/mdfclaims/${mdfClaimId}?nestedFields=mdfReqToMDFClms`,
+		{
+			headers: {
+				'accept': 'application/json',
+				'x-csrf-token': Liferay.authToken,
+			},
+		}
+	);
 
 	if (statusResponse.ok) {
 		const data = await statusResponse.json();
@@ -183,7 +195,7 @@ const getMDFClaimStatus = async () => {
 
 		updateButtons(data.mdfClaimStatus.key);
 
-		return;
+		return data.mdfReqToMDFClms.id;
 	}
 
 	Liferay.Util.openToast({
@@ -284,6 +296,27 @@ const updateButtons = (mdfClaimStatusKey) => {
 		}
 	}
 };
+
+getMDFClaimStatus()
+	.then((mdfRequestId) => {
+		const mdfId = mdfRequestId;
+
+		if (editButton && mdfId && mdfClaimId) {
+			editButton.onclick = () =>
+				Liferay.Util.navigate(
+					`${siteURL}/marketing/mdf-claim/new/#/${mdfId}/mdfclaim/${mdfClaimId}`
+				);
+		}
+		if (editButton && mdfId && mdfClaimId) {
+			editButtonManager.onclick = () =>
+				Liferay.Util.navigate(
+					`${siteURL}/marketing/mdf-claim/new/#/${mdfId}/mdfclaim/${mdfClaimId}`
+				);
+		}
+	})
+	.catch((error) => {
+		console.error(error);
+	});
 
 if (layoutMode !== 'edit') {
 	getMDFClaimStatus();
