@@ -95,6 +95,82 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-179357. Verify that the value of Approved Claims is displayed on MDF Dashboard"
+	@priority = 4
+	test ClaimApprovedValueAppearInDashboard {
+		var budgetValue = 2000;
+
+		task ("Given I get the current amount of requested MDF Claim Value") {
+			var initialValue = PRMDashboards.getLegendValue(
+				chartName = "Request",
+				legendName = "Claim Approved");
+		}
+
+		task ("When I create a new MDF Request") {
+			JSONPRM.createMDFRequest(
+				accountEntryName = "Company Name 1",
+				budgetValueList = ${budgetValue},
+				campaignName = "Campaign Name 1");
+		}
+
+		task ("And I go back to MDF listing page") {
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+		}
+
+		task ("And I go approve the MDF") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name 1");
+
+			PRMMDFRequest.changeMDFStatus(statusButton = "Approve");
+		}
+
+		task ("And I create a new Claim") {
+			PRMMDFClaim.createNewClaim(
+				listLeads = "Document_1.xlsx",
+				reimbursementInvoice = "Document_1.png",
+				thirdInvoice = "Document_1.png");
+		}
+
+		task ("And I go to MDF Claim listing page") {
+			PRMNavigator.openSitePage(pageName = "MDF Claim");
+		}
+
+		task ("And I get the Claim ID") {
+			var claimID = PRMMDFClaim.getClaimID(claimIndex = 1);
+		}
+
+		task ("And I search for Claim ID") {
+			PRMMDFClaim.searchClaim(claimID = ${claimID});
+		}
+
+		task ("And I go approve the MDF Claim") {
+			PRMMDFClaim.gotoMDFClaim(goClaim = 1);
+
+			PRMMDFRequest.changeMDFStatus(statusButton = "Approve");
+		}
+
+		task ("And I go back to Dashboard page and get the new amount of approved MDF Claims approved Value") {
+			PRMNavigator.openSitePage(pageName = "Dashboard");
+
+			var newValue = PRMDashboards.getLegendValue(
+				chartName = "Request",
+				legendName = "Claim Approved");
+
+			task ("Make a quotient of the Claims Approved Cost by 50% (2), which will result in the requested value") {
+				var requestedValue = ${budgetValue} / 2;
+			}
+
+			task ("Make the sum of the initial value + requested value, to obtain the new value that must be in the dashboard") {
+				var expectedValue = ${initialValue} + ${requestedValue};
+			}
+		}
+
+		task ("Then the actual amount of requested MDF Claim value was increased") {
+			TestUtils.assertEquals(
+				actual = ${newValue},
+				expected = ${expectedValue});
+		}
+	}
+
 	@description = "This is a test for LPS-179914. Verify that the value of Approved MDFs are displayed on MDF Dashboard"
 	@priority = 4
 	test MDFApprovedValueAppearInDashboard {
