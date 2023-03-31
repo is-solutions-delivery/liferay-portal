@@ -93,6 +93,13 @@ definition {
 		return ${orderID};
 	}
 
+	@summary = "Go to MDF Claim"
+	macro gotoMDFClaim {
+		Click(
+			key_index = ${goClaim},
+			locator1 = "PRMMDFClaim#CLAIM_ID_INDEX");
+	}
+
 	@summary = "Search claim by ID"
 	macro searchClaim {
 		Type(
