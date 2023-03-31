@@ -33,6 +33,47 @@ definition {
 			locator1 = "Header#H1_TITLE");
 	}
 
+	macro connectWithSalesforce {
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "Third Party",
+			configurationName = "Salesforce Integration",
+			configurationScope = "Punch Out");
+
+		Navigator.gotoNavTab(navTab = "Salesforce Integration");
+
+		if (IsTextEqual(locator1 = "//div[@class='ddm-field'][@data-field-name='loginURL']//input/../div/textarea", value1 = "https://test.salesforce.com")) {
+			Navigator.openURL();
+		}
+		else {
+			Type(
+				locator1 = "//div[@class='ddm-field'][@data-field-name='loginURL']//input/../div/textarea",
+				value1 = "https://test.salesforce.com");
+
+			Type(
+				locator1 = "//div[@class='ddm-field'][@data-field-name='consumerKey']//input/../div/textarea",
+				value1 = "3MVG9.hNadsS7GK6GmwkauP3.KEFV0QK5e0ZrR1dnGRcAaDJgZJRUyX2wu3h96vp3B7PQFEKwN5QXusVAFUTz");
+
+			Type(
+				locator1 = "//div[@class='ddm-field'][@data-field-name='consumerSecret']//input/../div/textarea",
+				value1 = "816A8DBCF7658F484891DC492466FE40E2AEEB488DE8CA3793D1F979F3F74E96");
+
+			Type(
+				locator1 = "//div[@class='ddm-field'][@data-field-name='username']//input/../div/textarea",
+				value1 = "jair.medeiros@liferay.com.prm");
+
+			Type(
+				locator1 = "//div[@class='ddm-field'][@data-field-name='password']//input",
+				value1 = "U*V!q6hd7DX@FrR6Dfxo");
+
+			Button.clickSubmitButton();
+		}
+	}
+
 	@summary = "Define object permission to a role"
 	macro definePermission {
 		ApplicationsMenu.gotoPortlet(
