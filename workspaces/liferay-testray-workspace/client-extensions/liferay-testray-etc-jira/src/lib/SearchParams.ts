@@ -1,9 +1,9 @@
 export const getSearchParams = <T>(object: T) => {
-  const searchParams = new URLSearchParams();
+    const searchParams = new URLSearchParams();
 
-  for (const key in object) {
-    searchParams.set(key, object[key] as string);
-  }
+    for (const key in object) {
+        searchParams.set(key, object[key] as string);
+    }
 
-  return searchParams.toString();
+    return searchParams.toString();
 };
