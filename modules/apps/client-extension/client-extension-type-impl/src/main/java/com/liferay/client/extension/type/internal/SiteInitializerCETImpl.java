@@ -43,7 +43,7 @@ public class SiteInitializerCETImpl
 			UnicodePropertiesBuilder.create(
 				true
 			).put(
-				"groupName", ParamUtil.getString(portletRequest, "groupName")
+				"url", ParamUtil.getString(portletRequest, "url")
 			).build());
 	}
 
@@ -69,8 +69,8 @@ public class SiteInitializerCETImpl
 	}
 
 	@Override
-	public String getGroupName() {
-		return getString("groupName");
+	public String getURL() {
+		return getString("url");
 	}
 
 	@Override

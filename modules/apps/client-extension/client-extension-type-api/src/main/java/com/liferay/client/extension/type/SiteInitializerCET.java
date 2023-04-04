@@ -27,8 +27,8 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface SiteInitializerCET extends CET {
 
 	@CETProperty(
-		defaultValue = "", name = "groupName", type = CETProperty.Type.String
+		defaultValue = "", name = "url", type = CETProperty.Type.URL
 	)
-	public String getGroupName();
+	public String getURL();
 
 }
