@@ -102,6 +102,16 @@
 	<td>xpath=(//liferay-remote-app-raylife-ap//table/tbody//div/span[@class='cursor-pointer font-weight-bolder'])[1]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>SEARCHBAR</td>
+	<td>//div[contains(@class, 'input-group-item')]//preceding::input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TABLE_QUANTITY</td>
+	<td>//div[contains(@class, 'header-title') and text()='${key_quantity}']</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>

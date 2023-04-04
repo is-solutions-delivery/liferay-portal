@@ -25,6 +25,71 @@
 	<td>//div[contains(@class,'status-title')]/..//*[contains(@class,'arcs-title')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>BIRTH_DATE</td>
+	<td>//div//*[contains(@class, 'date-picker-dropdown-toggle btn btn-unstyled')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SELECT_STATE</td>
+	<td>//div//*[contains(@id, 'mySelectId')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHOOSE_OPTION</td>
+	<td>//input[contains(@class, 'custom-control-input')]/following-sibling::span//*[text()='${key_option}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OPEN_DROPDOWN</td>
+	<td>//div[contains(@class, '${label}')]/descendant::select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SELECT_DROPDOWN_OPTION</td>
+	<td>//button[contains(@class, 'dropdown-item') and text()='${key_text}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VEHICLE_BRAND</td>
+	<td>//div//*[contains(@class, 'form-control bg-neutral-0 font-weight-bold make pl-0')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VEHICLE_MODEL</td>
+	<td>//div//*[contains(@class, 'form-control bg-neutral-0 font-weight-bold model')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VEHICLE_PRIMARY_USAGE</td>
+	<td>//div//*[contains(@class, 'form-control bg-neutral-0 font-weight-bold pl-0 ')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VEHICLE_ANNUAL_MILEAGE</td>
+	<td>//input[contains(@id, 'annual-mileage')][@type='number']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VEHICLE_OWNERSHIP</td>
+	<td>//div//*[contains(@class, 'form-control bg-neutral-0 font-weight-bold ownership')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DRIVER_INFO_SELECT</td>
+	<td>//select[contains(@id,'${label}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>AGE_FIRST_LICENCED</td>
+	<td>//input[contains(@id, 'ageFirstLicenced')][@type='number']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ELEMENT_TABLE</td>
+	<td>//div[contains(@class, 'portlet-body')]//parent::table//tr[key_line]//td[key_column]//*[contains(text(),'${key_text}')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
