@@ -77,6 +77,25 @@ definition {
 
 		MouseOver(locator1 = "RaylifeAP#MENU_SIDEBAR");
 	}
+	
+	@summary = "Can use the search bar "
+	macro searchFor {
+        WaitForElementPresent(locator1 = "RaylifeAP#SEARCHBAR");
+
+        AssertElementPresent(locator1 = "RaylifeAP#SEARCHBAR");
+
+        Type(
+            locator1 = "RaylifeAP#SEARCHBAR",
+            value1 = ${searchTerm});
+
+        KeyPress(
+            locator1 = "RaylifeAP#SEARCHBAR",
+            value1 = "\RETURN");
+
+        if (!(isSet(modal))) {
+            WaitForLiferayEvent.initializeLiferayEventLog();
+        }
+    }
 
 	macro signIn {
 		if (isSet(emailAddress)) {

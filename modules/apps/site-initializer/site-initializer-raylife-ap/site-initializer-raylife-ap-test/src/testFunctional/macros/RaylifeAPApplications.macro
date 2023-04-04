@@ -31,4 +31,202 @@ definition {
 		return ${number};
 	}
 
+	macro typeNewApplicationInfoFields {
+		Type(
+			locator1 = "Raylife#FORMS_FIELDS",
+			value1 = ${value});
+	}
+
+	@summary = "Fulfill contact info forms"
+	macro completeContactInfoForm {
+		var nextDayDate = DateUtil.getFormattedDate("+1", "MM/dd/yyyy");
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "firstName",
+			value = "Testing");
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "lastName",
+			value = "LastName");
+		
+		RaylifeAPApplications.birthDate(nextDayDate = ${nextDayDate});
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "phone",
+			value = "1234567891");
+		
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "email",
+			value = "test@liferay.com");
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "streetAddress",
+			value = "Street");
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "city",
+			value = "City");
+
+		Select(
+			locator1 = "RaylifeAPApplications#SELECT_STATE",
+			value1 = "CA");
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "zipCode",
+			value = "12345");
+
+		DoubleClick(
+			key_option = "Own",
+			locator1 = "RaylifeAPApplications#CHOOSE_OPTION");
+
+		Button.click(button = "Next");
+	}
+
+	macro birthDate {
+		Type(locator1= "TextInput#ANY_PLACEHOLDER",
+		key_placeHolder= "__/__/____",
+		value1= ${nextDayDate});
+	}
+
+	@summary = "Fulfill vehicle info forms"
+	macro completeVehicleInfoForm {
+		Click(
+			label = "select-years",
+			locator1 = "RaylifeAPApplications#OPEN_DROPDOWN");
+
+        Click(
+            key_text = "2019",
+            locator1 = "RaylifeAPApplications#SELECT_DROPDOWN_OPTION");
+
+        RaylifeAPApplications.typeNewApplicationInfoFields(
+            label = "make",
+            value = "Volvo");
+
+        RaylifeAPApplications.typeNewApplicationInfoFields(
+            label = "model",
+            value = "v90 cross country");
+
+        RaylifeAPApplications.typeNewApplicationInfoFields(
+            label = "primary-usage",
+            value = "Business");
+
+        RaylifeAPApplications.typeNewApplicationInfoFields(
+            label = "annual-mileage",
+            value = "50000");
+
+        RaylifeAPApplications.typeNewApplicationInfoFields(
+            label = "ownership",
+            value = "Own");
+
+        Button.click(button = "Next");
+    }
+
+	@summary = "Fulfill driver info forms"
+	macro completeDriverInfoForm {
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "firstName",
+			value = "Testing");
+
+		RaylifeAPApplications.typeNewApplicationInfoFields(
+			label = "lastName",
+			value = "LastName");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "relationToContact",
+			value1 = "Self");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "gender",
+			value1 = "Female");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "maritalStatus",
+			value1 = "Married");
+
+		Type(
+			locator1 = "RaylifeAPApplications#AGE_FIRST_LICENCED",
+			value1 = 3);
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "occupation",
+			value1 = "Engineer");
+
+		Select(locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "highestEducation",
+			value1 = "College");
+
+		Click(
+			label = "select-millitary-affiliation",
+			locator1 = "RaylifeAPApplications#OPEN_DROPDOWN");
+
+		Click(
+			key_text = "US Air Force",
+			locator1 = "RaylifeAPApplications#SELECT_DROPDOWN_OPTION");
+
+		DoubleClick(
+			key_option = "No",
+			locator1 = "RaylifeAPApplications#CHOOSE_OPTION");
+
+		Button.click(button = "Next");
+
+	}
+
+	@summary = "Fulfill driver info forms"
+	macro completeCoverageInfoForm {
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "mySelectId",
+			value1 = "$15,000 / $30,000");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "propertyDamage",
+			value1 = "$25,000");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "uninsuredOrUnderinsuredMBI",
+			value1 = "$30,000 / $60,000");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "uninsuredOrUnderinsuredMPD",
+			value1 = "$25,000");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "Medical",
+			value1 = "$1,000");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "comprehensive",
+			value1 = "$250");
+
+		Select(
+			locator1 = "RaylifeAPApplications#DRIVER_INFO_SELECT",
+			label = "collision",
+			value1 = "$250");
+
+		Button.click(button = "Review quote");
+	}
+
+	@summary = "Assert review quote and generate quote"
+	macro generateQuote {
+		Button.click(button = "Generate Quote");
+	}
+
+	@summary = "Assert element present in the table"
+	macro assertTableElement {
+		AssertElementPresent(
+			key_line = ${line},
+			key_column = ${column},
+			key_text = ${text},
+			locator1 = "RaylifeAPApplications#ELEMENT_TABLE");
+	}
 }
