@@ -14,6 +14,7 @@
 
 package com.liferay.site.admin.web.internal.util;
 
+import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.site.admin.web.internal.constants.SiteAdminConstants;
@@ -25,6 +26,16 @@ import java.util.Locale;
  * @author Marco Leo
  */
 public class SiteInitializerItem {
+
+	public SiteInitializerItem(
+		ClientExtensionEntry clientExtensionEntry, Locale locale) {
+
+		_siteInitializerKey = clientExtensionEntry.getName(locale);
+		_icon = StringPool.BLANK;
+		_layoutSetPrototypeId = 0;
+		_name = clientExtensionEntry.getName(locale);
+		_type = SiteAdminConstants.CREATION_TYPE_INITIALIZER;
+	}
 
 	public SiteInitializerItem(
 		LayoutSetPrototype layoutSetPrototype, Locale locale) {

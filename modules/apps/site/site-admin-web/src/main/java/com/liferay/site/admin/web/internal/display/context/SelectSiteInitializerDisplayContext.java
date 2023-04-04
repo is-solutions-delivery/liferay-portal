@@ -14,9 +14,12 @@
 
 package com.liferay.site.admin.web.internal.display.context;
 
+import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
+import com.liferay.client.extension.service.ClientExtensionEntryLocalServiceUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemListBuilder;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -138,13 +141,31 @@ public class SelectSiteInitializerDisplayContext {
 				WebKeys.THEME_DISPLAY);
 
 		if (Objects.equals(_getTabs1(), "custom-site-templates")) {
-			return ListUtil.sort(
+			List<SiteInitializerItem> siteInitializerItems =
 				TransformUtil.transform(
 					LayoutSetPrototypeServiceUtil.search(
 						themeDisplay.getCompanyId(), Boolean.TRUE, null),
 					layoutSetPrototype -> new SiteInitializerItem(
-						layoutSetPrototype, themeDisplay.getLocale())),
-				new SiteInitializerNameComparator(true));
+						layoutSetPrototype, themeDisplay.getLocale()));
+
+			siteInitializerItems.addAll(
+				TransformUtil.transform(
+					ClientExtensionEntryLocalServiceUtil.
+						getClientExtensionEntries(
+							themeDisplay.getCompanyId(),
+							ClientExtensionEntryConstants.TYPE_SITE_INITIALIZER,
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS),
+					clientExtensionEntry -> {
+						if (clientExtensionEntry.isApproved()) {
+							return new SiteInitializerItem(
+								clientExtensionEntry, themeDisplay.getLocale());
+						}
+
+						return null;
+					}));
+
+			return ListUtil.sort(
+				siteInitializerItems, new SiteInitializerNameComparator(true));
 		}
 
 		return ListUtil.sort(
