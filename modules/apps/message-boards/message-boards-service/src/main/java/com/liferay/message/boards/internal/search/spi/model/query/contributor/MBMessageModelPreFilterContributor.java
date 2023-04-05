@@ -20,15 +20,22 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseRelatedEntryIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.RelatedEntryIndexer;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
+import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.spi.model.query.contributor.ModelPreFilterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
@@ -54,20 +61,58 @@ public class MBMessageModelPreFilterContributor
 
 	@Override
 	public void contribute(
-		BooleanFilter booleanFilter, ModelSearchSettings modelSearchSettings,
+		BooleanFilter booleanFilter1, ModelSearchSettings modelSearchSettings,
 		SearchContext searchContext) {
 
+		BooleanFilter booleanFilter2 = new BooleanFilter();
+
 		addWorkflowStatusFilter(
-			booleanFilter, modelSearchSettings, searchContext);
+			booleanFilter2, modelSearchSettings, searchContext);
+
+		BooleanFilter booleanFilter3 = new BooleanFilter();
+
+		booleanFilter3.add(booleanFilter2, BooleanClauseOccur.SHOULD);
+
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		User user = permissionChecker.getUser();
+
+		if (permissionChecker.isContentReviewer(
+				CompanyThreadLocal.getCompanyId(), user.getGroupId())) {
+
+			BooleanFilter booleanFilter4 = new BooleanFilter();
+
+			booleanFilter4.add(
+				new TermFilter(
+					"status", String.valueOf(WorkflowConstants.STATUS_PENDING)),
+				BooleanClauseOccur.MUST);
+
+			booleanFilter3.add(booleanFilter4, BooleanClauseOccur.SHOULD);
+		}
+
+		BooleanFilter booleanFilter5 = new BooleanFilter();
+
+		booleanFilter5.add(
+			new TermFilter(
+				"status", String.valueOf(WorkflowConstants.STATUS_PENDING)),
+			BooleanClauseOccur.MUST);
+		booleanFilter5.add(
+			new TermFilter("userId", String.valueOf(user.getUserId())),
+			BooleanClauseOccur.MUST);
+
+		booleanFilter3.add(booleanFilter5, BooleanClauseOccur.SHOULD);
+
+		booleanFilter1.add(booleanFilter3, BooleanClauseOccur.MUST);
 
 		boolean discussion = GetterUtil.getBoolean(
 			searchContext.getAttribute("discussion"));
 
-		booleanFilter.addRequiredTerm("discussion", discussion);
+		booleanFilter1.addRequiredTerm("discussion", discussion);
 
 		if (searchContext.isIncludeDiscussions()) {
 			try {
-				addRelatedClassNames(booleanFilter, searchContext);
+				addRelatedClassNames(booleanFilter1, searchContext);
 			}
 			catch (Exception exception) {
 				throw new SystemException(exception);
@@ -78,14 +123,14 @@ public class MBMessageModelPreFilterContributor
 			searchContext.getAttribute(Field.CLASS_NAME_ID));
 
 		if (Validator.isNotNull(classNameId)) {
-			booleanFilter.addRequiredTerm(Field.CLASS_NAME_ID, classNameId);
+			booleanFilter1.addRequiredTerm(Field.CLASS_NAME_ID, classNameId);
 		}
 
 		long threadId = GetterUtil.getLong(
 			(String)searchContext.getAttribute("threadId"));
 
 		if (threadId > 0) {
-			booleanFilter.addRequiredTerm("threadId", threadId);
+			booleanFilter1.addRequiredTerm("threadId", threadId);
 		}
 
 		long[] categoryIds = searchContext.getCategoryIds();
@@ -116,7 +161,7 @@ public class MBMessageModelPreFilterContributor
 			}
 
 			if (!categoriesTermsFilter.isEmpty()) {
-				booleanFilter.add(
+				booleanFilter1.add(
 					categoriesTermsFilter, BooleanClauseOccur.MUST);
 			}
 		}
@@ -141,5 +186,8 @@ public class MBMessageModelPreFilterContributor
 
 	private final RelatedEntryIndexer _relatedEntryIndexer =
 		new BaseRelatedEntryIndexer();
+
+	@Reference
+	private UserService _userService;
 
 }
