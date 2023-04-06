@@ -19,6 +19,9 @@ package com.liferay.site.admin.web.internal.constants;
  */
 public class SiteAdminConstants {
 
+	public static final String CREATION_TYPE_CLIENT_EXTENSION =
+		"CREATION_TYPE_CLIENT_EXTENSION";
+
 	public static final String CREATION_TYPE_INITIALIZER =
 		"CREATION_TYPE_INITIALIZER";
 
