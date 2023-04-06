@@ -34,7 +34,7 @@ public class SiteInitializerItem {
 		_icon = StringPool.BLANK;
 		_layoutSetPrototypeId = 0;
 		_name = clientExtensionEntry.getName(locale);
-		_type = SiteAdminConstants.CREATION_TYPE_INITIALIZER;
+		_type = SiteAdminConstants.CREATION_TYPE_CLIENT_EXTENSION;
 	}
 
 	public SiteInitializerItem(
