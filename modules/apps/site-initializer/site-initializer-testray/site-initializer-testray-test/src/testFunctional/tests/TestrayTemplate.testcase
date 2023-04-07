@@ -46,8 +46,6 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			JSONTestray.addCaseType(caseType = ${caseType});
-
 			JSONTestray.addCases(
 				caseName = ${caseName},
 				caseType = ${caseType},
@@ -153,17 +151,18 @@ definition {
 
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Deactivate");
 
-			Refresh();
+			Click(
+				key_indexNumber = 2,
+				key_text = "Clear",
+				locator1 = "Button#ANY_N");
 
 			TestrayTemplate.viewTemplateDetails(
 				templateName = "Build_Template",
-				templateStatus = "Deactive");
+				templateStatus = "Deactivated");
 
 			TestrayContextMenu.clickContextMenuProjects(name = "Deactivated");
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Active");
-
-			Refresh();
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Activate");
 		}
 
 		task ("Then the Activated status should appear in the list") {
@@ -212,8 +211,6 @@ definition {
 			TestrayContextMenu.clickContextMenuProjects(name = "Build_Template");
 
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Deactivate");
-
-			Refresh();
 
 			TestrayTemplate.viewTemplateDetails(
 				templateName = "Build_Template",
