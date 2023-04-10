@@ -14,46 +14,66 @@
 
 package com.liferay.client.extension.type.internal.factory;
 
+import com.liferay.client.extension.exception.ClientExtensionEntryTypeSettingsException;
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.SiteInitializerCET;
 import com.liferay.client.extension.type.factory.CETImplFactory;
 import com.liferay.client.extension.type.internal.SiteInitializerCETImpl;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Properties;
 
 import javax.portlet.PortletRequest;
-import java.util.Properties;
 
 /**
  * @author Nilton Vieira
  */
-public class SiteInitializerCETImplFactoryImpl implements CETImplFactory<SiteInitializerCET> {
+public class SiteInitializerCETImplFactoryImpl
+	implements CETImplFactory<SiteInitializerCET> {
+
 	@Override
 	public SiteInitializerCET create(ClientExtensionEntry clientExtensionEntry)
 		throws PortalException {
+
 		return new SiteInitializerCETImpl(clientExtensionEntry);
 	}
 
 	@Override
 	public SiteInitializerCET create(PortletRequest portletRequest)
 		throws PortalException {
+
 		return new SiteInitializerCETImpl(portletRequest);
 	}
 
 	@Override
 	public SiteInitializerCET create(
-		String baseURL, long companyId, String description,
-		String externalReferenceCode, String name, Properties properties,
-		String sourceCodeURL, UnicodeProperties toTypeSettingsUnicodeProperties)
+			String baseURL, long companyId, String description,
+			String externalReferenceCode, String name, Properties properties,
+			String sourceCodeURL,
+			UnicodeProperties toTypeSettingsUnicodeProperties)
 		throws PortalException {
-		return new SiteInitializerCETImpl(baseURL, companyId, description, externalReferenceCode, name, properties, sourceCodeURL, toTypeSettingsUnicodeProperties);
+
+		return new SiteInitializerCETImpl(
+			baseURL, companyId, description, externalReferenceCode, name,
+			properties, sourceCodeURL, toTypeSettingsUnicodeProperties);
 	}
 
 	@Override
 	public void validate(
-		UnicodeProperties newTypeSettingsUnicodeProperties,
-		UnicodeProperties oldTypeSettingsUnicodeProperties)
+			UnicodeProperties newTypeSettingsUnicodeProperties,
+			UnicodeProperties oldTypeSettingsUnicodeProperties)
 		throws PortalException {
 
+		SiteInitializerCET siteInitializerCET = new SiteInitializerCETImpl(
+			StringPool.NEW_LINE, newTypeSettingsUnicodeProperties);
+
+		if (!Validator.isUrl(siteInitializerCET.getURL())) {
+			throw new ClientExtensionEntryTypeSettingsException(
+				"please-enter-a-valid-url");
+		}
 	}
+
 }
