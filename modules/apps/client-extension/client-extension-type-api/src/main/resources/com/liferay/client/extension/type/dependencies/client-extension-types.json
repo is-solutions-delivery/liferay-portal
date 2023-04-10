@@ -207,8 +207,8 @@
 			},
 			{
 				"default": "",
-				"name": "groupName",
-				"type": "CETProperty.Type.String"
+				"name": "url",
+				"type": "CETProperty.Type.URL"
 			}
 		]
 	},

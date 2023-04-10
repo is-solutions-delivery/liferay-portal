@@ -17,6 +17,8 @@ package com.liferay.site.admin.web.internal.util;
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.site.admin.web.internal.constants.SiteAdminConstants;
 import com.liferay.site.initializer.SiteInitializer;
 
@@ -30,7 +32,8 @@ public class SiteInitializerItem {
 	public SiteInitializerItem(
 		ClientExtensionEntry clientExtensionEntry, Locale locale) {
 
-		_siteInitializerKey = clientExtensionEntry.getName(locale);
+		_siteInitializerKey = _getSiteInitializerKey(
+			clientExtensionEntry.getTypeSettings());
 		_icon = StringPool.BLANK;
 		_layoutSetPrototypeId = 0;
 		_name = clientExtensionEntry.getName(locale);
@@ -84,7 +87,8 @@ public class SiteInitializerItem {
 	}
 
 	public boolean isCreationTypeInitializer() {
-		if (_type.equals(SiteAdminConstants.CREATION_TYPE_INITIALIZER)) {
+		if (_type.equals(SiteAdminConstants.CREATION_TYPE_INITIALIZER) ||
+			_type.equals(SiteAdminConstants.CREATION_TYPE_CLIENT_EXTENSION)) {
 			return true;
 		}
 
@@ -93,6 +97,14 @@ public class SiteInitializerItem {
 
 	public boolean isCreationTypeSiteTemplate() {
 		return !isCreationTypeInitializer();
+	}
+
+	private String _getSiteInitializerKey(String typeSettings) {
+		UnicodeProperties unicodeProperties = UnicodePropertiesBuilder.load(
+			typeSettings
+		).build();
+
+		return unicodeProperties.getProperty("url");
 	}
 
 	private final String _icon;
