@@ -19,14 +19,14 @@ const PAGE = 1;
 export default function useGetActivationKeysData(
 	project,
 	sessionId,
-	productName
+	initialFilter
 ) {
 	const {provisioningServerAPI} = useAppPropertiesContext();
 
 	const [loading, setLoading] = useState(true);
 	const [activationKeys, setActivationKeys] = useState([]);
 	const [filterTerm, setFilterTerm] = useState(
-		`active eq true and startswith(productName,'${productName}')`
+		`active eq true and ${initialFilter}`
 	);
 
 	useEffect(() => {
