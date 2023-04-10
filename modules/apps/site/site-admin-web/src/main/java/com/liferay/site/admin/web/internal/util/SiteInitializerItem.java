@@ -89,6 +89,7 @@ public class SiteInitializerItem {
 	public boolean isCreationTypeInitializer() {
 		if (_type.equals(SiteAdminConstants.CREATION_TYPE_INITIALIZER) ||
 			_type.equals(SiteAdminConstants.CREATION_TYPE_CLIENT_EXTENSION)) {
+
 			return true;
 		}
 
