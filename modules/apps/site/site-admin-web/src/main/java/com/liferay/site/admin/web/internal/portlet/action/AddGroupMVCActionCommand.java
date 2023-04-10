@@ -68,11 +68,11 @@ import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.sites.kernel.util.Sites;
 
-import java.util.List;
 import java.io.File;
 
 import java.net.URL;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
