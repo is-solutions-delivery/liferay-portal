@@ -65,7 +65,7 @@ public class SiteInitializerCETImpl
 
 	@Override
 	public String getEditJSP() {
-		return null;
+		return "/admin/edit_site_initializer.jsp";
 	}
 
 	@Override
