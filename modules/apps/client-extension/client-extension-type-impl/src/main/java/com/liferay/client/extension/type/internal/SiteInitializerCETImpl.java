@@ -69,13 +69,13 @@ public class SiteInitializerCETImpl
 	}
 
 	@Override
-	public String getURL() {
-		return getString("url");
+	public String getType() {
+		return ClientExtensionEntryConstants.TYPE_SITE_INITIALIZER;
 	}
 
 	@Override
-	public String getType() {
-		return ClientExtensionEntryConstants.TYPE_SITE_INITIALIZER;
+	public String getURL() {
+		return getString("url");
 	}
 
 	@Override
