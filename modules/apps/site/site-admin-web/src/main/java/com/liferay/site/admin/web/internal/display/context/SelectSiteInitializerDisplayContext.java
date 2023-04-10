@@ -156,7 +156,10 @@ public class SelectSiteInitializerDisplayContext {
 							ClientExtensionEntryConstants.TYPE_SITE_INITIALIZER,
 							QueryUtil.ALL_POS, QueryUtil.ALL_POS),
 					clientExtensionEntry -> {
-						if (clientExtensionEntry.isApproved()) {
+						if (clientExtensionEntry.isApproved() &&
+							(clientExtensionEntry.getCompanyId() ==
+								themeDisplay.getCompanyId())) {
+
 							return new SiteInitializerItem(
 								clientExtensionEntry, themeDisplay.getLocale());
 						}
