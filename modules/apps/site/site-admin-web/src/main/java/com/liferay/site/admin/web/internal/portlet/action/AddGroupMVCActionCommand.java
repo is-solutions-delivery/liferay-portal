@@ -513,12 +513,12 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 
 			File file = FileUtil.createTempFile(url.openStream());
 
-			File tempDir1 = FileUtil.createTempFolder();
+			File tempDir = FileUtil.createTempFolder();
 
-			FileUtil.unzip(file, tempDir1);
+			FileUtil.unzip(file, tempDir);
 
 			SiteInitializer siteInitializer = _siteInitializerFactory.create(
-				new File(tempDir1, "site-initializer"), null);
+				new File(tempDir, "site-initializer"), null);
 
 			if (!liveGroup.isStaged() || liveGroup.isStagedRemotely()) {
 				siteInitializer.initialize(liveGroup.getGroupId());
