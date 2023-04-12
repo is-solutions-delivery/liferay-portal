@@ -2942,24 +2942,21 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addOrUpdateOrganizations(ServiceContext serviceContext)
 		throws Exception {
 
-		Set<String> resourcePaths = _servletContext.getResourcePaths(
-			"/site-initializer/organizations");
+		String jsonPath = "/site-initializer/organizations.json";
+		String json = SiteInitializerUtil.read(jsonPath, _servletContext);
 
-		if (SetUtil.isEmpty(resourcePaths)) {
+		if (json == null) {
 			return;
 		}
 
-		for (String resourcePath : resourcePaths) {
-			String json = SiteInitializerUtil.read(
-				resourcePath, _servletContext);
+		JSONArray organizationsArray = JSONFactoryUtil.createJSONArray(json);
 
-			if (json == null) {
-				return;
-			}
-
-			_addOrUpdateOrganization(json, null, serviceContext);
+		for (int i = 0; i < organizationsArray.length(); i++) {
+			JSONObject organizationObject = organizationsArray.getJSONObject(i);
+			_addOrUpdateOrganization(organizationObject.toString(), null, serviceContext);
 		}
 	}
+
 
 	private void _addOrUpdateResourcePermissions(
 			Map<String, String>
