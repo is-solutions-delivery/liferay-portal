@@ -1,14 +1,14 @@
 [
 	{
-		"name": "Test Organization 1 update"
+		"name": "Test Organization 1"
 	},
 	{
 		"childOrganizations": [
 			{
-				"name": "Test Organization 3"
+				"name": "Test Organization 3 Update"
 			}
 		],
-		"name": "Test Organization 2"
+		"name": "Test Organization 2 Update"
 	},
 	{
 		"name": "Test Organization 4"

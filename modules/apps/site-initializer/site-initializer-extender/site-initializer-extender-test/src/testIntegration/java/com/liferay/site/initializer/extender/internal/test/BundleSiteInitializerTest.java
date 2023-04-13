@@ -1741,22 +1741,23 @@ public class BundleSiteInitializerTest {
 			organizationResource.getOrganizationsPage(
 				null, null,
 				organizationResource.toFilter(
-					"name eq 'Test Organization 1 update'"),
+					"name eq 'Test Organization 1'"),
 				null, null);
 
 		Organization organization1 = organizationsPage1.fetchFirstItem();
 
-		Assert.assertEquals(
-			"Test Organization 1 update", organization1.getName());
 		Assert.assertNotNull(organization1);
 
 		Page<Organization> organizationsPage2 =
 			organizationResource.getOrganizationsPage(
 				null, null,
-				organizationResource.toFilter("name eq 'Test Organization 2'"),
+				organizationResource.toFilter("name eq 'Test Organization 2 Update'"),
 				null, null);
 
 		Organization organization2 = organizationsPage2.fetchFirstItem();
+
+		Assert.assertEquals(
+			"Test Organization 2 Update", organization2.getName());
 
 		Assert.assertNotNull(organization2);
 
@@ -1764,13 +1765,15 @@ public class BundleSiteInitializerTest {
 
 		Page<Organization> organizationsPage3 =
 			organizationResource.getOrganizationChildOrganizationsPage(
-				organization2.getId(), null, null, null, null, null);
+				organization2.getId(), null, null, organizationResource.toFilter("name eq 'Test Organization 3 Update'"),
+				null, null);
 
 		Organization organization3 = organizationsPage3.fetchFirstItem();
 
-		Assert.assertNotNull(organization3);
+		Assert.assertEquals(
+			"Test Organization 3 Update", organization3.getName());
 
-		Assert.assertEquals("Test Organization 3", organization3.getName());
+		Assert.assertNotNull(organization3);
 
 		Page<Organization> organizationsPage4 =
 			organizationResource.getOrganizationsPage(
