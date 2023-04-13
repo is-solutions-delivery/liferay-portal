@@ -1740,11 +1740,14 @@ public class BundleSiteInitializerTest {
 		Page<Organization> organizationsPage1 =
 			organizationResource.getOrganizationsPage(
 				null, null,
-				organizationResource.toFilter("name eq 'Test Organization 1 update'"),
+				organizationResource.toFilter(
+					"name eq 'Test Organization 1 update'"),
 				null, null);
 
 		Organization organization1 = organizationsPage1.fetchFirstItem();
-		Assert.assertEquals("Test Organization 1 update", organization1.getName());
+
+		Assert.assertEquals(
+			"Test Organization 1 update", organization1.getName());
 		Assert.assertNotNull(organization1);
 
 		Page<Organization> organizationsPage2 =
@@ -1756,6 +1759,7 @@ public class BundleSiteInitializerTest {
 		Organization organization2 = organizationsPage2.fetchFirstItem();
 
 		Assert.assertNotNull(organization2);
+
 		Assert.assertEquals(1, organizationsPage2.getTotalCount());
 
 		Page<Organization> organizationsPage3 =
@@ -1765,6 +1769,7 @@ public class BundleSiteInitializerTest {
 		Organization organization3 = organizationsPage3.fetchFirstItem();
 
 		Assert.assertNotNull(organization3);
+
 		Assert.assertEquals("Test Organization 3", organization3.getName());
 
 		Page<Organization> organizationsPage4 =
