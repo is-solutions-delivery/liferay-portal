@@ -29,6 +29,8 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchEngineHelper;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -141,6 +143,9 @@ public class MBMessageIndexerIndexedFieldsTest {
 
 		_user = userSearchFixture.addUser(
 			RandomTestUtil.randomString(), _group);
+
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(_user));
 
 		_users = userSearchFixture.getUsers();
 	}
