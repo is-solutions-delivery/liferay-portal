@@ -1740,8 +1740,7 @@ public class BundleSiteInitializerTest {
 		Page<Organization> organizationsPage1 =
 			organizationResource.getOrganizationsPage(
 				null, null,
-				organizationResource.toFilter(
-					"name eq 'Test Organization 1'"),
+				organizationResource.toFilter("name eq 'Test Organization 1'"),
 				null, null);
 
 		Organization organization1 = organizationsPage1.fetchFirstItem();
@@ -1751,7 +1750,8 @@ public class BundleSiteInitializerTest {
 		Page<Organization> organizationsPage2 =
 			organizationResource.getOrganizationsPage(
 				null, null,
-				organizationResource.toFilter("name eq 'Test Organization 2 Update'"),
+				organizationResource.toFilter(
+					"name eq 'Test Organization 2 Update'"),
 				null, null);
 
 		Organization organization2 = organizationsPage2.fetchFirstItem();
@@ -1765,7 +1765,9 @@ public class BundleSiteInitializerTest {
 
 		Page<Organization> organizationsPage3 =
 			organizationResource.getOrganizationChildOrganizationsPage(
-				organization2.getId(), null, null, organizationResource.toFilter("name eq 'Test Organization 3 Update'"),
+				organization2.getId(), null, null,
+				organizationResource.toFilter(
+					"name eq 'Test Organization 3 Update'"),
 				null, null);
 
 		Organization organization3 = organizationsPage3.fetchFirstItem();
