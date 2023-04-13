@@ -2875,13 +2875,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addOrUpdateOrganization(
-			String json, Organization parentOrganization,
+		JSONObject json, Organization parentOrganization,
 			ServiceContext serviceContext)
 		throws Exception {
 
-		JSONObject jsonObject = _jsonFactory.createJSONObject(json);
-
-		Organization organization = Organization.toDTO(json);
+		Organization organization = Organization.toDTO(json.toJSONString());
 
 		if (organization == null) {
 			_log.error("Unable to transform organization from JSON: " + json);
@@ -2927,7 +2925,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				existingOrganization.getId(), organization);
 		}
 
-		JSONArray jsonArray = jsonObject.getJSONArray("childOrganizations");
+		JSONArray jsonArray = json.getJSONArray("childOrganizations");
 
 		if (JSONUtil.isEmpty(jsonArray)) {
 			return;
@@ -2935,7 +2933,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			_addOrUpdateOrganization(
-				jsonArray.getString(i), organization, serviceContext);
+				jsonArray.getJSONObject(i), organization, serviceContext);
 		}
 	}
 
@@ -2958,7 +2956,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				organizationsjsonArray.getJSONObject(i);
 
 			_addOrUpdateOrganization(
-				organizationjsonObject.toString(), null, serviceContext);
+				organizationjsonObject, null, serviceContext);
 		}
 	}
 
