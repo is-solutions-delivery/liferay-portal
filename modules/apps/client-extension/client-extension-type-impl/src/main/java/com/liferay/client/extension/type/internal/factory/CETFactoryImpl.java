@@ -69,6 +69,9 @@ public class CETFactoryImpl implements CETFactory {
 			ClientExtensionEntryConstants.TYPE_IFRAME,
 			new IFrameCETImplFactoryImpl()
 		).put(
+			ClientExtensionEntryConstants.TYPE_SITE_INITIALIZER,
+			new SiteInitializerCETImplFactoryImpl()
+		).put(
 			ClientExtensionEntryConstants.TYPE_STATIC_CONTENT,
 			new StaticContentCETImplFactoryImpl()
 		).put(

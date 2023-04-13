@@ -12,20 +12,21 @@
  * details.
  */
 
-package com.liferay.site.admin.web.internal.constants;
+package com.liferay.client.extension.type;
+
+import com.liferay.client.extension.type.annotation.CETProperty;
+import com.liferay.client.extension.type.annotation.CETType;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * @author Alessio Antonio Rendina
+ * @author Nilton Vieira
  */
-public class SiteAdminConstants {
+@CETType(description = "This is a description", name = "siteInitializer")
+@ProviderType
+public interface SiteInitializerCET extends CET {
 
-	public static final String CREATION_TYPE_CLIENT_EXTENSION =
-		"CREATION_TYPE_CLIENT_EXTENSION";
-
-	public static final String CREATION_TYPE_INITIALIZER =
-		"CREATION_TYPE_INITIALIZER";
-
-	public static final String CREATION_TYPE_SITE_TEMPLATE =
-		"CREATION_TYPE_SITE_TEMPLATE";
+	@CETProperty(defaultValue = "", name = "url", type = CETProperty.Type.URL)
+	public String getURL();
 
 }
