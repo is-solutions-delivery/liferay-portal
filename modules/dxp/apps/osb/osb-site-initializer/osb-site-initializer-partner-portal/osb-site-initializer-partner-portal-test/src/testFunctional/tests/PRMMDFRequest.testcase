@@ -133,76 +133,6 @@ definition {
 			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
 		}
 	}
-	@description = "This is a test for LPS-179227. Verify that managers can edit MDF’s in any status"
-	@priority = 5
-	test ManagerCanEditMDFInAnyStatus {
-
-		task ("Given the partner user create a MDF Request") {
-			for (var n : list "1,2,3,4") {
-				PRMNavigator.goToNavItem(navItem = "Marketing");
-
-				PRMMarketing.gotoAddNewMDF();
-
-				PRMMDFRequest.createNewRequest(
-					accountName = "Company Name 1",
-					activityDescription = "Activity Description",
-					activityName = "Activity Name 1",
-					budgetList = "Sponsorship Fee-2000",
-					campaignDescription = "Campaign Description",
-					campaignName = "Campaign Name ${n}",
-					countryName = "Global",
-					followUpStrategy = "test",
-					goalsOptions = "Lead generation",
-					leadFollowUpList = "Other",
-					leadList = "No",
-					tactic = "Other",
-					targetMarketOptions = "Education,Energy",
-					targetOfLeads = "test",
-					targetRolesOptions = "Administrator",
-					typeOfActivity = "Miscellaneous Marketing");	
-			}
-		}
-
-		task ("When the manager go to see the submitted MDF") {
-			User.logoutAndLoginPG(
-				userLoginEmailAddress = "manager@liferay.com",
-				userLoginFullName = "manager");
-		}
-
-		task ("Then the manager can edit the submitted MDF and verify that some informations were edited in any status") {
-			var n =0;
-
-			for (var statusMAnager : list "Request More Info, Marketing Director Review, Reject, Approve") {
-				var n = ${n} + 1;
-				PRMNavigator.openSitePage(pageName = "MDF Requests");
-
-				PRMMDFRequest.goToMDF(campaignName = "Campaign Name ${n}");
-
-				PRMMDFRequest.changeMDFStatus(statusButton = ${statusMAnager});
-
-				task ("Then the manager user can edit the MDF Request") {
-					PRMMDFRequest.editMDFinformations(
-						campaignDescription = "Campaign Description Edited",
-						campaignName = "Campaign Name Edited");
-
-					PRMMDFRequest.editMDFActivity(
-						leadList = "No",
-						newActivityName = "Activity Name Edited");
-				}
-
-				task ("And the user can verify that some informations were edited") {
-					PRMMDFRequest.goToMDF(campaignName = "Campaign Name Edited");
-
-					PRMMDFRequest.viewMDFActivityDetails(
-						activityName = "Activity Name Edited",
-						activityNameButton = "Activity Name Edited");
-
-					PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
-				}
-			}
-		}
-		
-	}
 
 	@description = "This is a test for LPS-172917. Verify that If there are multiple activities, the review page will display them as dropdown items that can be expandable"
 	@priority = 5
@@ -751,6 +681,76 @@ definition {
 
 		task ("Then an alert message will appear") {
 			PRMMDFRequest.viewErrorMessage(errorMessage = "The activity period can not be longer than 6 months");
+		}
+	}
+
+	@description = "This is a test for LPS-179227. Verify that managers can edit MDF’s in any status"
+	@priority = 5
+	test ManagerCanEditMDFInAnyStatus {
+		task ("Given the partner user create a MDF Request") {
+			for (var n : list "1,2,3,4") {
+				PRMNavigator.goToNavItem(navItem = "Marketing");
+
+				PRMMarketing.gotoAddNewMDF();
+
+				PRMMDFRequest.createNewRequest(
+					accountName = "Company Name 1",
+					activityDescription = "Activity Description",
+					activityName = "Activity Name 1",
+					budgetList = "Sponsorship Fee-2000",
+					campaignDescription = "Campaign Description",
+					campaignName = "Campaign Name ${n}",
+					countryName = "Global",
+					followUpStrategy = "test",
+					goalsOptions = "Lead generation",
+					leadFollowUpList = "Other",
+					leadList = "No",
+					tactic = "Other",
+					targetMarketOptions = "Education,Energy",
+					targetOfLeads = "test",
+					targetRolesOptions = "Administrator",
+					typeOfActivity = "Miscellaneous Marketing");
+			}
+		}
+
+		task ("When the manager go to see the submitted MDF") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
+		}
+
+		task ("Then the manager can edit the submitted MDF and verify that some informations were edited in any status") {
+			var n = 0;
+
+			for (var statusMAnager : list "Request More Info, Marketing Director Review, Reject, Approve") {
+				var n = ${n} + 1;
+
+				PRMNavigator.openSitePage(pageName = "MDF Requests");
+
+				PRMMDFRequest.goToMDF(campaignName = "Campaign Name ${n}");
+
+				PRMMDFRequest.changeMDFStatus(statusButton = ${statusMAnager});
+
+				task ("Then the manager user can edit the MDF Request") {
+					PRMMDFRequest.editMDFinformations(
+						campaignDescription = "Campaign Description Edited",
+						campaignName = "Campaign Name Edited");
+
+					PRMMDFRequest.editMDFActivity(
+						leadList = "No",
+						newActivityName = "Activity Name Edited");
+				}
+
+				task ("And the user can verify that some informations were edited") {
+					PRMMDFRequest.goToMDF(campaignName = "Campaign Name Edited");
+
+					PRMMDFRequest.viewMDFActivityDetails(
+						activityName = "Activity Name Edited",
+						activityNameButton = "Activity Name Edited");
+
+					PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+				}
+			}
 		}
 	}
 
