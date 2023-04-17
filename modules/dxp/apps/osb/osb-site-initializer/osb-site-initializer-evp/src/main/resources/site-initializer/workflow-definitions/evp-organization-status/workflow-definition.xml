@@ -25,16 +25,16 @@
 				<description></description>
 				<script>
 					<![CDATA[import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
+import com.liferay.object.service.ObjectEntryLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowStatusManagerUtil;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.object.model.ObjectEntry;
-import com.liferay.object.service.ObjectEntryLocalServiceUtil;
-import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Map;
+import org.json.JSONObject;
 
 long classPK = GetterUtil.getLong((String) workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
 
