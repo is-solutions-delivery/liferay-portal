@@ -38,13 +38,13 @@ import java.util.Map;
 
 long classPK = GetterUtil.getLong((String) workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
 
-ObjectEntry currentObjectEntry = ObjectEntryLocalServiceUtil.getObjectEntry(classPK);
+ObjectEntry objectEntry = ObjectEntryLocalServiceUtil.getObjectEntry(classPK);
 
-Map<String, Serializable> currentObjectEntryValues = currentObjectEntry.getValues();
+Map<String, Serializable> objectEntryValues = objectEntry.getValues();
 
-currentObjectEntryValues.put("organizationStatus", "awaitingApprovalOnEvp");
+objectEntryValues.put("organizationStatus", "awaitingApprovalOnEvp");
 
-ObjectEntryLocalServiceUtil.updateObjectEntry(serviceContext.getUserId(), classPK, currentObjectEntryValues, serviceContext);]]>
+ObjectEntryLocalServiceUtil.updateObjectEntry(serviceContext.getUserId(), classPK, objectEntryValues, serviceContext);]]>
 				</script>
 				<script-language>groovy</script-language>
 				<priority>1</priority>
