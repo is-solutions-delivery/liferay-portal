@@ -36,12 +36,11 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Map;
 
-long classPK = GetterUtil.getLong((String) workflowContext.get(
-WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
+long classPK = GetterUtil.getLong((String) workflowContext.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK));
 
 ObjectEntry currentObjectEntry = ObjectEntryLocalServiceUtil.getObjectEntry(classPK);
 
-Map < String, Serializable > currentObjectEntryValues = currentObjectEntry.getValues();
+Map<String, Serializable> currentObjectEntryValues = currentObjectEntry.getValues();
 
 currentObjectEntryValues.put("organizationStatus", "awaitingApprovalOnEvp");
 
