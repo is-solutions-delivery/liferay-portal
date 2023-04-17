@@ -1,0 +1,9 @@
+{
+	"active": true,
+	"description": "Workflow to update the EVP Organization status",
+	"name": "EVP Organization Status",
+	"title": "EVP Organization Status",
+	"title_i18n": {
+		"en_US": "EVP Organization Status"
+	}
+}
