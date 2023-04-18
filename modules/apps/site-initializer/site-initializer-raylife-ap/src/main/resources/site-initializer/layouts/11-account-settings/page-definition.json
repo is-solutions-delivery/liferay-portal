@@ -57,6 +57,19 @@
 							{
 								"definition": {
 								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"properties": "route=notification-sidebar"
+												},
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_20096_RAYLIFEAGENTPORTAL001"
+											}
+										},
+										"type": "Widget"
+									}
+								],
 								"type": "FragmentDropZone"
 							},
 							{
