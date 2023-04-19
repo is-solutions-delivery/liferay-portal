@@ -1,0 +1,5 @@
+// TODO Remove this file when LPS-172471 is fixed
+
+liferay {
+	deployDir = file("/home/me/dev/bundles/master/osgi/client-extensions")
+}
