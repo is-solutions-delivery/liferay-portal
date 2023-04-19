@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -63,8 +64,13 @@ import com.liferay.site.admin.web.internal.constants.SiteAdminConstants;
 import com.liferay.site.admin.web.internal.constants.SiteAdminPortletKeys;
 import com.liferay.site.admin.web.internal.handler.GroupExceptionRequestHandler;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.sites.kernel.util.Sites;
+
+import java.io.File;
+
+import java.net.URL;
 
 import java.util.List;
 import java.util.Locale;
@@ -498,6 +504,35 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 			_updateGroupFromSiteTemplate(actionRequest, liveGroup);
 		}
 		else if (creationType.equals(
+					SiteAdminConstants.CREATION_TYPE_CLIENT_EXTENSION)) {
+
+			String siteInitializerKey = ParamUtil.getString(
+				actionRequest, "siteInitializerKey");
+
+			URL url = new URL(siteInitializerKey);
+
+			File tempFile = FileUtil.createTempFile(url.openStream());
+
+			File tempDir = FileUtil.createTempFolder();
+
+			FileUtil.unzip(tempFile, tempDir);
+
+			SiteInitializer siteInitializer = _siteInitializerFactory.create(
+				new File(tempDir, "site-initializer"), siteInitializerKey);
+
+			if (!liveGroup.isStaged() || liveGroup.isStagedRemotely()) {
+				siteInitializer.initialize(liveGroup.getGroupId());
+			}
+			else {
+				Group stagingGroup = liveGroup.getStagingGroup();
+
+				siteInitializer.initialize(stagingGroup.getGroupId());
+			}
+
+			FileUtil.deltree(tempDir);
+			FileUtil.delete(tempFile);
+		}
+		else if (creationType.equals(
 					SiteAdminConstants.CREATION_TYPE_INITIALIZER)) {
 
 			String siteInitializerKey = ParamUtil.getString(
@@ -581,6 +616,9 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SiteInitializerFactory _siteInitializerFactory;
 
 	@Reference
 	private SiteInitializerRegistry _siteInitializerRegistry;
