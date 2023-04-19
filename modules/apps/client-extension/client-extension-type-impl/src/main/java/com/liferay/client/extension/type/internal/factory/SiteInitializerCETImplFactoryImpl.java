@@ -14,15 +14,12 @@
 
 package com.liferay.client.extension.type.internal.factory;
 
-import com.liferay.client.extension.exception.ClientExtensionEntryTypeSettingsException;
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.SiteInitializerCET;
 import com.liferay.client.extension.type.factory.CETImplFactory;
 import com.liferay.client.extension.type.internal.SiteInitializerCETImpl;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Properties;
 
@@ -66,7 +63,6 @@ public class SiteInitializerCETImplFactoryImpl
 			UnicodeProperties newTypeSettingsUnicodeProperties,
 			UnicodeProperties oldTypeSettingsUnicodeProperties)
 		throws PortalException {
-
 	}
 
 }

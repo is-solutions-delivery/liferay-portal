@@ -509,6 +509,11 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 			String siteInitializerKey = ParamUtil.getString(
 				actionRequest, "siteInitializerKey");
 
+			if (siteInitializerKey.startsWith("/")) {
+				siteInitializerKey =
+					serviceContext.getPortalURL() + siteInitializerKey;
+			}
+
 			URL url = new URL(siteInitializerKey);
 
 			File tempFile = FileUtil.createTempFile(url.openStream());

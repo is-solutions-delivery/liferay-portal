@@ -1,7 +1,6 @@
 assemble:
     from: site-initializer
     into: site-initializer
-
 liferay-sample-test-app:
     name: Test App 5
     type: siteInitializer
