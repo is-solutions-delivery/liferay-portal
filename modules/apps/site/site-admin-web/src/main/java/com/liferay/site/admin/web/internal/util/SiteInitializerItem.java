@@ -14,6 +14,7 @@
 
 package com.liferay.site.admin.web.internal.util;
 
+import com.liferay.client.extension.type.SiteInitializerCET;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.site.admin.web.internal.constants.SiteAdminConstants;
@@ -42,6 +43,16 @@ public class SiteInitializerItem {
 		_layoutSetPrototypeId = 0;
 		_name = siteInitializer.getName(locale);
 		_type = SiteAdminConstants.CREATION_TYPE_INITIALIZER;
+	}
+
+	public SiteInitializerItem(
+		SiteInitializerCET siteInitializerCET, Locale locale) {
+
+		_siteInitializerKey = siteInitializerCET.getURL();
+		_icon = StringPool.BLANK;
+		_layoutSetPrototypeId = 0;
+		_name = siteInitializerCET.getName(locale);
+		_type = SiteAdminConstants.CREATION_TYPE_CLIENT_EXTENSION;
 	}
 
 	public String getIcon() {
@@ -73,7 +84,9 @@ public class SiteInitializerItem {
 	}
 
 	public boolean isCreationTypeInitializer() {
-		if (_type.equals(SiteAdminConstants.CREATION_TYPE_INITIALIZER)) {
+		if (_type.equals(SiteAdminConstants.CREATION_TYPE_INITIALIZER) ||
+			_type.equals(SiteAdminConstants.CREATION_TYPE_CLIENT_EXTENSION)) {
+
 			return true;
 		}
 

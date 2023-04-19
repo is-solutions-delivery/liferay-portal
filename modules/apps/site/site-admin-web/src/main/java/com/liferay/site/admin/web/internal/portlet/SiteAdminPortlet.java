@@ -16,6 +16,7 @@ package com.liferay.site.admin.web.internal.portlet;
 
 import com.liferay.asset.kernel.exception.AssetCategoryException;
 import com.liferay.asset.kernel.exception.AssetTagException;
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.exportimport.kernel.exception.RemoteExportException;
 import com.liferay.portal.kernel.exception.DuplicateGroupException;
 import com.liferay.portal.kernel.exception.GroupFriendlyURLException;
@@ -99,6 +100,8 @@ public class SiteAdminPortlet extends MVCPortlet {
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
+		renderRequest.setAttribute(SiteWebKeys.CET_MANAGER, cetManager);
+
 		renderRequest.setAttribute(
 			SiteWebKeys.GROUP_SEARCH_PROVIDER, groupSearchProvider);
 
@@ -152,6 +155,9 @@ public class SiteAdminPortlet extends MVCPortlet {
 
 		return false;
 	}
+
+	@Reference
+	protected CETManager cetManager;
 
 	@Reference
 	protected GroupSearchProvider groupSearchProvider;

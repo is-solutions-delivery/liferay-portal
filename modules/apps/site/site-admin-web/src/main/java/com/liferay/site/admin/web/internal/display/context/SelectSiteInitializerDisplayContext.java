@@ -14,6 +14,8 @@
 
 package com.liferay.site.admin.web.internal.display.context;
 
+import com.liferay.client.extension.type.SiteInitializerCET;
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemListBuilder;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -26,6 +28,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.site.admin.web.internal.display.context.comparator.SiteInitializerNameComparator;
 import com.liferay.site.admin.web.internal.util.SiteInitializerItem;
 import com.liferay.site.constants.SiteWebKeys;
@@ -52,6 +55,9 @@ public class SelectSiteInitializerDisplayContext {
 		_httpServletRequest = httpServletRequest;
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
+
+		_cetManager = (CETManager)httpServletRequest.getAttribute(
+			SiteWebKeys.CET_MANAGER);
 
 		_siteInitializerRegistry =
 			(SiteInitializerRegistry)httpServletRequest.getAttribute(
@@ -147,7 +153,15 @@ public class SelectSiteInitializerDisplayContext {
 				new SiteInitializerNameComparator(true));
 		}
 
-		return ListUtil.sort(
+		List<SiteInitializerItem> siteInitializerItems =
+			TransformUtil.transform(
+				_cetManager.getCETs(
+					themeDisplay.getCompanyId(), null, "siteInitializer",
+					Pagination.of(-1, -1), null),
+				cet -> new SiteInitializerItem(
+					(SiteInitializerCET)cet, themeDisplay.getLocale()));
+
+		siteInitializerItems.addAll(
 			TransformUtil.transform(
 				_siteInitializerRegistry.getSiteInitializers(
 					themeDisplay.getCompanyId(), true),
@@ -158,8 +172,10 @@ public class SelectSiteInitializerDisplayContext {
 					}
 
 					return null;
-				}),
-			new SiteInitializerNameComparator(true));
+				}));
+
+		return ListUtil.sort(
+			siteInitializerItems, new SiteInitializerNameComparator(true));
 	}
 
 	private String _getTabs1() {
@@ -174,6 +190,7 @@ public class SelectSiteInitializerDisplayContext {
 	}
 
 	private String _backURL;
+	private final CETManager _cetManager;
 	private final HttpServletRequest _httpServletRequest;
 	private Long _parentGroupId;
 	private final RenderRequest _renderRequest;
