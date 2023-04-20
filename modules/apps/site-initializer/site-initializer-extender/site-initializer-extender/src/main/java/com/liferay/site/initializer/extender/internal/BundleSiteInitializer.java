@@ -2900,31 +2900,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.getRequest()
 			).build();
 
-		Page<Organization> organizationsPage = null;
-
-		if (parentOrganization == null) {
-			organizationsPage = organizationResource.getOrganizationsPage(
-				null, null,
-				organizationResource.toFilter(
-					StringBundler.concat(
-						"name eq '", organization.getName(), "'")),
-				null, null);
-		}
-		else {
-			organizationsPage =
-				organizationResource.getOrganizationChildOrganizationsPage(
-					parentOrganization.getId(), null, null, null, null, null);
-		}
-
-		Organization existingOrganization = organizationsPage.fetchFirstItem();
-
-		if (existingOrganization == null) {
-			organization = organizationResource.postOrganization(organization);
-		}
-		else {
-			organization = organizationResource.putOrganization(
-				existingOrganization.getId(), organization);
-		}
+		organization = organizationResource.putOrganizationByExternalReferenceCode(
+			organization.getExternalReferenceCode(), organization);
 
 		JSONArray jsonArray = jsonObject.getJSONArray("childOrganizations");
 
