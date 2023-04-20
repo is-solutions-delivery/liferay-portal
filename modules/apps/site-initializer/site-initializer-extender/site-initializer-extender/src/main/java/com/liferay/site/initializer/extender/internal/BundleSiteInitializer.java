@@ -2900,8 +2900,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.getRequest()
 			).build();
 
-		organization = organizationResource.putOrganizationByExternalReferenceCode(
-			organization.getExternalReferenceCode(), organization);
+		organization =
+			organizationResource.putOrganizationByExternalReferenceCode(
+				organization.getExternalReferenceCode(), organization);
 
 		JSONArray jsonArray = jsonObject.getJSONArray("childOrganizations");
 

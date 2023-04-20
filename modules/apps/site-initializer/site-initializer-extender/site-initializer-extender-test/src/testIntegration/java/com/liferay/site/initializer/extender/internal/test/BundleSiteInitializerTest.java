@@ -1696,17 +1696,23 @@ public class BundleSiteInitializerTest {
 				_serviceContext.fetchUser()
 			).build();
 
-		Organization organization1 = organizationResource.getOrganizationByExternalReferenceCode("TEST1");
+		Organization organization1 =
+			organizationResource.getOrganizationByExternalReferenceCode(
+				"TEST1");
 
 		Assert.assertNotNull(organization1);
 		Assert.assertEquals("Test Organization 1", organization1.getName());
 
-		Organization organization2 = organizationResource.getOrganizationByExternalReferenceCode("TEST2");
+		Organization organization2 =
+			organizationResource.getOrganizationByExternalReferenceCode(
+				"TEST2");
 
 		Assert.assertNotNull(organization2);
 		Assert.assertEquals("Test Organization 2", organization2.getName());
 
-		Organization organization3 = organizationResource.getOrganizationByExternalReferenceCode("TEST3");
+		Organization organization3 =
+			organizationResource.getOrganizationByExternalReferenceCode(
+				"TEST3");
 
 		Assert.assertNotNull(organization3);
 		Assert.assertEquals("Test Organization 3", organization3.getName());
@@ -1721,22 +1727,31 @@ public class BundleSiteInitializerTest {
 				_serviceContext.fetchUser()
 			).build();
 
-		Organization organization1 = organizationResource.getOrganizationByExternalReferenceCode("TEST1");
+		Organization organization1 =
+			organizationResource.getOrganizationByExternalReferenceCode(
+				"TEST1");
 
 		Assert.assertNotNull(organization1);
 		Assert.assertEquals("Test Organization 1", organization1.getName());
 
-		Organization organization2 = organizationResource.getOrganizationByExternalReferenceCode("TEST2");
+		Organization organization2 =
+			organizationResource.getOrganizationByExternalReferenceCode(
+				"TEST2");
 
 		Assert.assertNotNull(organization2);
-		Assert.assertEquals("Test Organization 2 Update", organization2.getName());
+		Assert.assertEquals(
+			"Test Organization 2 Update", organization2.getName());
 
-		Organization organization3 = organizationResource.getOrganizationByExternalReferenceCode("TEST3");
+		Organization organization3 =
+			organizationResource.getOrganizationByExternalReferenceCode(
+				"TEST3");
 
 		Assert.assertNotNull(organization3);
 		Assert.assertEquals("Test Organization 3", organization3.getName());
 
-		Organization organization4 = organizationResource.getOrganizationByExternalReferenceCode("TEST4");
+		Organization organization4 =
+			organizationResource.getOrganizationByExternalReferenceCode(
+				"TEST4");
 
 		Assert.assertNotNull(organization4);
 		Assert.assertEquals("Test Organization 4", organization4.getName());
