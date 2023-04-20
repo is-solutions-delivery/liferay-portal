@@ -69,6 +69,7 @@ const MDFClaimPage = ({
 				Status.DRAFT.key,
 				Status.EXPIRED.key,
 				Status.REJECT.key,
+				Status.REQUEST_MORE_INFO.key,
 			];
 
 			return !ignoreStatus.includes(
@@ -77,7 +78,7 @@ const MDFClaimPage = ({
 		}
 	).length;
 
-	const isPartnerManagerRole = useMemo(() => {
+	const hasPartnerManagerRole = useMemo(() => {
 		if (companiesEntries) {
 			const roles = accountRoleEntries(
 				companiesEntries[0]?.value as number
@@ -90,17 +91,19 @@ const MDFClaimPage = ({
 	}, [accountRoleEntries, companiesEntries]);
 
 	const getClaimPage = () => {
+		const isEdit = Boolean(values.id);
+
 		if (!fieldEntries || !roleEntries || !companiesEntries) {
 			return <ClayLoadingIndicator />;
 		}
 
-		const userAccountRolesCanEdit = isLiferayManager(roleEntries);
+		const hasLiferayManagerRole = isLiferayManager(roleEntries);
 
 		if (
-			values.id &&
-			roleEntries &&
-			!isPartnerManagerRole &&
-			!userAccountRolesCanEdit &&
+			isEdit &&
+			!roleEntries &&
+			!hasPartnerManagerRole &&
+			!hasLiferayManagerRole &&
 			values.mdfClaimStatus?.key !== 'draft' &&
 			values.mdfClaimStatus?.key !== 'moreInfoRequested'
 		) {
@@ -131,9 +134,9 @@ const MDFClaimPage = ({
 			);
 		}
 
-		if (claimsFiltered && claimsFiltered >= 2) {
+		if (!isEdit && claimsFiltered && claimsFiltered > 1) {
 			return (
-				<PRMForm name="New" title="Reimbursement Claim">
+				<PRMForm name="" title="Reimbursement Claim">
 					<div className="d-flex justify-content-center mt-4">
 						<ClayAlert
 							className="m-0 w-100"
@@ -188,7 +191,10 @@ const MDFClaimPage = ({
 		}
 
 		return (
-			<PRMForm name="New" title="Reimbursement Claim">
+			<PRMForm
+				name={values.id ? 'Edit' : 'New'}
+				title="Reimbursement Claim"
+			>
 				<PRMForm.Section
 					subtitle="Check each expense you would like claim and please provide proof of performance for each of the selected expenses."
 					title={`${mdfRequest?.overallCampaignDescription} (${mdfRequest?.id})`}
