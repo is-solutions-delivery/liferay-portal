@@ -17,6 +17,7 @@ definition {
 
 		task ("Create a new Partner Portal Site and connect with Salesforce") {
 			PRMUtils.addSite();
+
 			PRMUtils.connectWithSalesforce();
 		}
 
