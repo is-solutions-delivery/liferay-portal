@@ -91,12 +91,12 @@ export default function () {
 							accountData.partnerLevel === PartnershipLevels.GOLD
 						) {
 							const hasMatchingARR =
-								accountData.aRRAmount ===
+								accountData.aRRAmount >=
 								partnerLevelProperties[accountData.partnerLevel]
 									.growthARR;
 
 							const hastMatchingNPOrNB =
-								accountData.newProjectExistingBusiness ===
+								accountData.newProjectExistingBusiness >=
 								partnerLevelProperties[accountData.partnerLevel]
 									.newProjectExistingBusiness;
 
@@ -128,7 +128,7 @@ export default function () {
 
 							accountUsers.forEach((user) => {
 								if (
-									user.accountBriefs[0].roleBriefs.find(
+									user.roleBriefs.find(
 										(role) =>
 											role.name ===
 											PartnerRoles.MARKETING_USER
@@ -138,7 +138,7 @@ export default function () {
 								}
 
 								if (
-									user.accountBriefs[0].roleBriefs.find(
+									user.roleBriefs.find(
 										(role) =>
 											role.name ===
 											PartnerRoles.SALES_USERS

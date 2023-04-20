@@ -74,7 +74,8 @@ const Legend = ({currentValue, total, type}) => {
 };
 
 const LevelProgressBar = ({currentValue, total, type}) => {
-	const barPercentage = naNToZero(currentValue / total) * 100;
+	const percentage = naNToZero(currentValue / total) * 100;
+	const barPercentage = percentage <= 100 ? percentage : 100;
 
 	return (
 		<div className="mb-3">
