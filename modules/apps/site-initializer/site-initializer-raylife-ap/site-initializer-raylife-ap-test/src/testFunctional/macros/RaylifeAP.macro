@@ -45,8 +45,8 @@ definition {
 	@summary = "Assert element present in the table"
 	macro assertTableElement {
 		AssertElementPresent(
-			key_column = ${column},
-			key_line = ${line},
+			key_colunmPosition = ${column},
+			key_linePosition = ${line},
 			key_text = ${text},
 			locator1 = "RaylifeAP#TABLE_ELEMENT_BY_POSITION");
 	}
@@ -162,6 +162,26 @@ definition {
 		Refresh();
 	}
 
+	macro goToRaylifeUserProfileMenu {
+		Click(locator1 = "UserBar#USER_AVATAR_ICON");
+
+		ScrollWebElementIntoView(
+			key_dropdownItem = "My Sites",
+			locator1 = "UserBar#USER_AVATAR_DROPDOWN_ITEM");
+
+		Click(
+			key_dropdownItem = "My Sites",
+			locator1 = "UserBar#USER_AVATAR_DROPDOWN_ITEM");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		Navigator.gotoNavItem(navItem = "My Sites");
+
+		SiteSelector.selectSite(site = ${raylifeSite});
+
+		Refresh();
+	}
+
 	macro mouseOverSidebar {
 		var key_menu = ${menu};
 
@@ -233,6 +253,15 @@ definition {
 		Click(locator1 = "Button#MODAL_DELETE");
 
 		Alert.viewSuccessMessage();
+	}
+
+	macro userLoginInRaylife {
+		var passwordRaylife = "portal4all";
+		var email = "${email}@mailinator.com";
+
+		User.loginUserPG(
+			password = ${passwordRaylife},
+			userEmailAddress = ${email});
 	}
 
 }

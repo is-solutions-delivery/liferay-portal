@@ -162,7 +162,7 @@ definition {
 
 		RaylifeApplicationModal.typeNewApplicationInfoFields(
 			label = "ageFirstLicenced",
-			value = ${ageFirstLicensed});
+			value = ${ageFirstLicenced});
 
 		RaylifeApplicationModal.selectOptionInModalByID(
 			label = "occupation",
@@ -173,8 +173,8 @@ definition {
 			value = ${highestEducation});
 
 		RaylifeApplicationModal.selectOptionInDropdownByName(
-			field = "military-affiliation",
-			text = ${militaryAffiliation});
+			field = "millitary-affiliation",
+			text = ${millitaryAffiliation});
 
 		DoubleClick(
 			key_option = "No",
