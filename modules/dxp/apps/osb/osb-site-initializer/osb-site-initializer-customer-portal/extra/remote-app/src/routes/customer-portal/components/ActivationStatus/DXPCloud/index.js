@@ -142,16 +142,23 @@ const ActivationStatusDXPCloud = ({
 	const currentActivationStatus = {
 		[STATUS_TAG_TYPE_NAMES.active]: {
 			buttonLink: (
-				<a
-					className="font-weight-semi-bold m-0 p-0 text-brand-primary text-paragraph"
-					href="https://console.liferay.cloud"
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					{i18n.translate('go-to-product-console')}
+				<>
+					<PopoverIcon
+						symbol="question-circle-full"
+						title="link-only-accessible-to-current-product-users-permissions-and-roles-are-managed-separately-within-each-product"
+					/>
 
-					<ClayIcon className="ml-1" symbol="order-arrow-right" />
-				</a>
+					<a
+						className="font-weight-semi-bold m-0 p-0 text-brand-primary text-paragraph"
+						href="https://console.liferay.cloud"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						{i18n.translate('go-to-product-console')}
+
+						<ClayIcon className="ml-1" symbol="order-arrow-right" />
+					</a>
+				</>
 			),
 			id: STATUS_TAG_TYPES.active,
 			subtitle: (
@@ -168,25 +175,32 @@ const ActivationStatusDXPCloud = ({
 		[STATUS_TAG_TYPE_NAMES.inProgress]: {
 			dropdownIcon: (userAccount.isStaff ||
 				userAccount.isProvisioning) && (
-				<ButtonDropDown
-					align={Align.BottomRight}
-					customDropDownButton={
-						<ButtonWithIcon
-							displayType="null"
-							small
-							symbol="caret-bottom"
-						/>
-					}
-					items={[
-						{
-							label: i18n.translate('set-to-active'),
-							onClick: () => setVisibleStatus(true),
-						},
-					]}
-					menuElementAttrs={{
-						className: 'p-0 cp-activation-key-icon rounded-xs',
-					}}
-				/>
+				<>
+					<PopoverIcon
+						symbol="question-circle-full"
+						title="link-only-accessible-to-current-product-users-permissions-and-roles-are-managed-separately-within-each-product"
+					/>
+
+					<ButtonDropDown
+						align={Align.BottomRight}
+						customDropDownButton={
+							<ButtonWithIcon
+								displayType="null"
+								small
+								symbol="caret-bottom"
+							/>
+						}
+						items={[
+							{
+								label: i18n.translate('set-to-active'),
+								onClick: () => setVisibleStatus(true),
+							},
+						]}
+						menuElementAttrs={{
+							className: 'p-0 cp-activation-key-icon rounded-xs',
+						}}
+					/>
+				</>
 			),
 			id: STATUS_TAG_TYPES.inProgress,
 			subtitle: (
@@ -202,14 +216,21 @@ const ActivationStatusDXPCloud = ({
 		},
 		[STATUS_TAG_TYPE_NAMES.notActivated]: {
 			buttonLink: userAccount.isAdmin && (
-				<Button
-					appendIcon="order-arrow-right"
-					className="btn btn-link font-weight-semi-bold p-0 text-brand-primary text-paragraph"
-					displayType="link"
-					onClick={() => setVisibleSetup(true)}
-				>
-					{i18n.translate('finish-activation')}
-				</Button>
+				<>
+					<PopoverIcon
+						symbol="question-circle-full"
+						title="link-only-accessible-to-current-product-users-permissions-and-roles-are-managed-separately-within-each-product"
+					/>
+
+					<Button
+						appendIcon="order-arrow-right"
+						className="btn btn-link font-weight-semi-bold p-0 text-brand-primary text-paragraph"
+						displayType="link"
+						onClick={() => setVisibleSetup(true)}
+					>
+						{i18n.translate('finish-activation')}
+					</Button>
+				</>
 			),
 			id: STATUS_TAG_TYPES.notActivated,
 			subtitle: (
