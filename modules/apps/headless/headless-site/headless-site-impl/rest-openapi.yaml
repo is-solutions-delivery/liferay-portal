@@ -29,11 +29,16 @@ components:
                 parentSiteKey:
                     type: string
                     writeOnly: true
+                siteTemplateFile:
+                    description:
+                        Base64 encoded file
+                    type: string
                 templateKey:
                     type: string
                     writeOnly: true
                 templateType:
                     enum:
+                        - client-extension
                         - site-initializer
                         - site-template
                     type: string
