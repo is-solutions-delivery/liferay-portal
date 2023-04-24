@@ -19,10 +19,18 @@ definition {
 		Raylife.createRaylifeSite(siteName = "Raylife D2C");
 
 		Raylife.createRaylifeSite(siteName = "Raylife AP");
+
+		User.logoutPG();
+
+		RaylifeAP.userLoginInRaylife(email = "scott.producer");
 	}
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		User.logoutPG();
+
+		User.firstLoginPG();
 
 		Raylife.tearDownCP();
 
@@ -42,7 +50,7 @@ definition {
 		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
 
 		task ("Given that Raylife AP site is open and the user select the application button") {
-			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+			RaylifeAP.goToRaylifeUserProfileMenu(raylifeSite = "Raylife AP");
 
 			RaylifeApplicationModal.openNewApplicationFlow(
 				insurance = "Personal",
@@ -76,7 +84,7 @@ definition {
 				highestEducation = "Masters",
 				lastName = "Model",
 				maritalStatus = "Single",
-				militaryAffiliation = "None",
+				millitaryAffiliation = "None",
 				occupation = "Engineer",
 				relationToContact = "Spouse");
 
@@ -93,12 +101,12 @@ definition {
 		}
 
 		task ("Then the user assert if the application created is listed in the Application List") {
-			RaylifeAP.search(searchTerm = "Testing Model");
+			RaylifeAP.search(searchTerm = "Testing");
 
 			RaylifeAP.assertTableElement(
 				column = 4,
 				line = 1,
-				text = "Testing Model");
+				text = "Testing");
 		}
 	}
 
@@ -110,7 +118,7 @@ definition {
 		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
 
 		task ("Given that an user created an uncompleted new application") {
-			RaylifeAP.goToRaylifeAPSiteWithRefresh();
+			RaylifeAP.goToRaylifeUserProfileMenu(raylifeSite = "Raylife AP");
 
 			RaylifeApplicationModal.openNewApplicationFlow(
 				insurance = "Personal",
