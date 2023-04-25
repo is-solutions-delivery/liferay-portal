@@ -5,23 +5,23 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:liferay.com:liferay-workflow_7.4.0 http://www.liferay.com/dtd/liferay-workflow-definition_7_4_0.xsd"
 >
-	<version>1</version>
+	<version>11</version>
 	<state>
-		<name>7cc1ce8f-188a-4b03-9610-b8fa64755e3c</name>
+		<name>b9876faf-9cdb-4a85-8408-f982f67485f7</name>
 		<description>Begin a workflow.</description>
 		<metadata>
 			<![CDATA[
 				{
 					"xy": [
-						48.00006103515625,
-						125.00000762939453
+						101.00006103515625,
+						124.00000762939453
 					]
 				}
 			]]>
 		</metadata>
 		<actions>
 			<action>
-				<name>Pay</name>
+				<name>Change status to Awaiting Approval On Evp</name>
 				<description></description>
 				<script>
 					<![CDATA[
@@ -45,15 +45,11 @@
 
 						Map < String, Serializable > currentObjectEntryValues = currentObjectEntry.getValues();
 
-						long requestId = currentObjectEntryValues.get("r_requestId_c_evpRequestId");
+						if(currentObjectEntryValues.organizationStatus == null){
+							currentObjectEntryValues.put("organizationStatus", "awaitingApprovalOnEvp");
 
-						ObjectEntry evpRequestObjectEntry = ObjectEntryLocalServiceUtil.getObjectEntry(requestId);
-
-						Map < String, Serializable > evpRequestObjectEntryValues = evpRequestObjectEntry.getValues();
-
-						evpRequestObjectEntryValues.put("requestStatus", "closed");
-
-						ObjectEntryLocalServiceUtil.updateObjectEntry(serviceContext.getUserId(), requestId, evpRequestObjectEntryValues, serviceContext);
+							ObjectEntryLocalServiceUtil.updateObjectEntry(serviceContext.getUserId(), classPK, currentObjectEntryValues, serviceContext);
+						}
 					]]>
 				</script>
 				<script-language>groovy</script-language>
@@ -71,25 +67,25 @@
 			<transition>
 				<labels>
 					<label language-id="en_US">
-						Payment Done
+						Organization Created
 					</label>
 				</labels>
-				<name>4eeb7589-9cf9-42d8-aafe-3c0e50c4d245</name>
-				<target>044313bf-0751-4201-af13-e25264b0bea5</target>
+				<name>718563e9-590e-418c-8abd-0601ad9f8e24</name>
+				<target>1b5b12bc-d1d5-40ab-a25d-ee6afe6f463e</target>
 				<default>true</default>
 			</transition>
 		</transitions>
 	</state>
 	<state>
-		<name>044313bf-0751-4201-af13-e25264b0bea5</name>
+		<name>1b5b12bc-d1d5-40ab-a25d-ee6afe6f463e</name>
 		<description>Conclude the workflow.</description>
 		<metadata>
 			<![CDATA[
 				{
 					"terminal": true,
 					"xy": [
-						654.0000610351562,
-						123.00003814697266
+						731.0001220703125,
+						126.00003814697266
 					]
 				}
 			]]>
@@ -102,25 +98,6 @@
 				<priority>1</priority>
 				<execution-type>onEntry</execution-type>
 			</action>
-			<notification>
-				<name>Payment Notification</name>
-				<description>
-					<![CDATA[]]>
-				</description>
-				<template>
-					<![CDATA[User ${userName} fex ID payment ${entryClassPK}]]>
-				</template>
-				<template-language>freemarker</template-language>
-				<notification-type>user-notification</notification-type>
-				<recipients receptionType="to">
-					<roles>
-						<role>
-							<role-id>"[#ROLE_ID:Finance User#]"</role-id>
-						</role>
-					</roles>
-				</recipients>
-				<execution-type>onEntry</execution-type>
-			</notification>
 		</actions>
 		<labels>
 			<label language-id="en_US">

@@ -1,0 +1,8 @@
+[
+	{
+		"assetName": "C_EVPOrganization",
+		"className": "com.liferay.object.model.ObjectDefinition",
+		"scope": "company",
+		"typePK": 1
+	}
+]
