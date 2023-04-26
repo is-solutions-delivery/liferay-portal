@@ -9,14 +9,18 @@
  * distribution rights of the Software.
  */
 
+import {KeyedMutator, mutate} from 'swr';
+
 import Dropdown from '../../../common/components/Dropdown';
 import StatusBadge from '../../../common/components/StatusBadge';
 import {MDFColumnKey} from '../../../common/enums/mdfColumnKey';
 import {PRMPageRoute} from '../../../common/enums/prmPageRoute';
+import MDFRequestDTO from '../../../common/interfaces/dto/mdfRequestDTO';
 import {MDFRequestListItem} from '../../../common/interfaces/mdfRequestListItem';
 import Role from '../../../common/interfaces/role';
 import TableColumn from '../../../common/interfaces/tableColumn';
 import {Liferay} from '../../../common/services/liferay';
+import LiferayItems from '../../../common/services/liferay/common/interfaces/liferayItems';
 import {ResourceName} from '../../../common/services/liferay/object/enum/resourceName';
 import deleteMDFRequest from '../../../common/services/liferay/object/mdf-requests/deleteMDFRequest';
 import {Status} from '../../../common/utils/constants/status';
@@ -26,7 +30,8 @@ export default function getMDFListColumns(
 	columns?: TableColumn<MDFRequestListItem>[],
 	siteURL?: string,
 	roleEntries?: Role[],
-	isPartnerManagerRole?: boolean
+	isPartnerManagerRole?: boolean,
+	mutated?: KeyedMutator<LiferayItems<MDFRequestDTO[]>>
 ): TableColumn<MDFRequestListItem>[] | undefined {
 	const getDropdownOptions = (row: MDFRequestListItem) => {
 		const userAccountRolesCanEdit =
@@ -82,12 +87,23 @@ export default function getMDFListColumns(
 				label: ' Delete',
 				onClick: async () => {
 					if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
-						return (
-							(await deleteMDFRequest(
-								ResourceName.MDF_REQUEST_DXP,
-								Number(row[MDFColumnKey.ID]) as number
-							)) && window.location.reload()
+						await deleteMDFRequest(
+							ResourceName.MDF_REQUEST_DXP,
+							Number(row[MDFColumnKey.ID]) as number
 						);
+
+						Liferay.Util.openToast({
+							message: 'MDF Request Deleted successfully',
+							type: 'success',
+						});
+
+						mutate(mutated);
+					} else {
+						Liferay.Util.openToast({
+							message:
+								'You cannot delete the MDF Request in this status',
+							type: 'danger',
+						});
 					}
 				},
 			},
