@@ -134,9 +134,7 @@ definition {
 	}
 
 	@summary = "Verify that is possible edit some MDF informations "
-	macro editMDFinformations {
-		Click(locator1 = "PRMMDFRequest#EDIT_MDF_BUTTON");
-
+	macro editGoals {
 		PRMMDFRequest.fillGoalsPage(
 			accountName = ${accountName},
 			additionalOptions = ${additionalOptions},
@@ -146,6 +144,7 @@ definition {
 			goalsOptions = ${goalsOptions},
 			targetMarketOptions = ${targetMarketOptions},
 			targetRolesOptions = ${targetRolesOptions});
+	}
 
 		Button.click(button = "Continue");
 	}
