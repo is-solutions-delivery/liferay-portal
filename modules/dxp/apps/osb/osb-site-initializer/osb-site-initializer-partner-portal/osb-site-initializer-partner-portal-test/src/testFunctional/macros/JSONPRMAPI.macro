@@ -331,6 +331,8 @@ definition {
 
 		var response = JSONCurlUtil.post(${curl}, "$.id");
 
+		static var staticRequestId = ${response};
+
 		echo(${response});
 
 		return ${response};
