@@ -28,6 +28,8 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -35,8 +37,11 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.sites.kernel.util.Sites;
+
+import java.io.File;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -199,6 +204,30 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 				group, GetterUtil.getLongStrict(site.getTemplateKey()), 0L,
 				true, false);
 		}
+		else if (Objects.equals(
+					Site.TemplateType.CLIENT_EXTENSION,
+					site.getTemplateType())) {
+
+			byte[] bytes = Base64.decode(site.getSiteTemplateFile());
+
+			File tempFile = FileUtil.createTempFile(bytes);
+
+			File tempDir = FileUtil.createTempFolder();
+
+			try {
+				FileUtil.unzip(tempFile, tempDir);
+
+				SiteInitializer siteInitializer =
+					_siteInitializerFactory.create(
+						new File(tempDir, "site-initializer"), site.getName());
+
+				siteInitializer.initialize(group.getGroupId());
+			}
+			finally {
+				FileUtil.deltree(tempFile);
+				FileUtil.deltree(tempDir);
+			}
+		}
 		else {
 			String siteInitializerKey = "blank-site-initializer";
 
@@ -244,6 +273,9 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 
 	@Reference
 	private LayoutSetPrototypeLocalService _layoutSetPrototypeLocalService;
+
+	@Reference
+	private SiteInitializerFactory _siteInitializerFactory;
 
 	@Reference
 	private SiteInitializerRegistry _siteInitializerRegistry;
