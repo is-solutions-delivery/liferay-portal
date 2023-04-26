@@ -146,7 +146,27 @@ definition {
 			targetRolesOptions = ${targetRolesOptions});
 	}
 
-		Button.click(button = "Continue");
+    @summary = "Verify that is possible edit MDF activity "
+	macro editActivity {
+		Click(locator1 = "PRMMDFRequest#EDIT_ACTIVITY_BUTTON");
+
+		if (!(isSet(activitiyIndex))) {
+			var activityIndex = 1;
+		}
+
+		if (!(isSet(budgetIndex))) {
+			var budgetIndex = 0;
+		}
+
+		Type(
+			key_fieldName = "activities[${activityIndex}].name",
+			locator1 = "PRMMDFRequest#TEXT_FIELD",
+			value1 = ${newActivityName});
+
+		Type(
+			key_fieldName = "activities[${activityIndex}].budgets[${budgetIndex}].cost",
+			locator1 = "PRMMDFRequest#TEXT_FIELD",
+			value1 = ${newBugdetValue});
 	}
 
 	@summary = "Edit total MDF amount field"
