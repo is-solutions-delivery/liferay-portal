@@ -90,12 +90,16 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
-	@summary = "Verify that is possible edit MDF activity "
-	macro editMDFActivity {
-		Click(locator1 = "PRMMDFRequest#EDIT_ACTIVITY_BUTTON");
+	macro editButton {
+		if(isSet(manager)) {
+			var roleName = "manager";
+		} else {
+			var roleName = "user";
+		}
 
-		if (!(isSet(activitiyIndex))) {
-			var activityIndex = 1;
+		Click(
+			locator1 = "PRMMDFRequest#EDIT_MDF_BUTTON",
+			key_roleName = ${roleName});
 		}
 
 		Type(
