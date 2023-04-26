@@ -66,12 +66,12 @@ definition {
 				userLoginFullName = "partner");
 
 			var requestId = JSONPRM.createMDFRequest(
-                campaignName = "Campaign Name",
+				campaignName = "Campaign Name",
 				userEmailAddress = "partner@liferay.com");
-        }
+		}
 
-        task ("Go to the created MDF Request") {
-            PRMNavigator.openSitePage(pageName = "MDF Requests");
+		task ("Go to the created MDF Request") {
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
 
 			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
 		}
@@ -85,74 +85,6 @@ definition {
 		}
 		else {
 			PRMUtils.tearDown();
-		}
-	}
-
-    @description = "This is a test for LPS-179227. Verify that managers can edit MDF in Marketing Director Review status"
-	@priority = 5
-	test ManagerCanEditMDFInMarketingDirectorReviewStatus  {
-		task ("Given that the manager goes to the submitted MDF") {
-			User.logoutAndLoginPG(
-				userLoginEmailAddress = "manager@liferay.com",
-				userLoginFullName = "manager");
-
-			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-		}
-
-		task ("And change the MDF status") {
-			PRMMDFRequest.changeMDFStatus(statusButton = "Marketing Director Review");
-		}
-
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
-
-			PRMMDFRequest.editMDF(
-				campaignName = "Campaign Name Edited",
-				newActivityName = "Activity Name Edited",
-				newBugdetValue = 2000);
-		}
-
-		task ("Then the informations will be updated") {		
-				PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-				
-				PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
-
-				PRMMDFRequest.viewMDFActivityDetails(
-					activityName = "Activity Name Edited",
-					expense = "Content Creation",
-					budget = "2,000");
-		}
-	}
-
-	@description = "This is a test for LPS-182806. Verify that managers can edit MDF in Pending Marketing Review status"
-	@priority = 5
-	test ManagerCanEditMDFInPendingMarketingReviewStatus {
-		task ("Given that the manager goes to the submitted MDF, which is as 'Pending Marketing Review'") {
-			User.logoutAndLoginPG(
-				userLoginEmailAddress = "manager@liferay.com",
-				userLoginFullName = "manager");
-
-			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-		}
-
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
-
-			PRMMDFRequest.editMDF(
-				campaignName = "Campaign Name Edited",
-				newActivityName = "Activity Name Edited",
-				newBugdetValue = 2000);
-		}
-
-		task ("Then the informations will be updated") {		
-				PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-				
-				PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
-
-				PRMMDFRequest.viewMDFActivityDetails(
-					activityName = "Activity Name Edited",
-					expense = "Content Creation",
-					budget = "2,000");
 		}
 	}
 
@@ -180,51 +112,15 @@ definition {
 				newBugdetValue = 2000);
 		}
 
-		task ("Then the informations will be updated") {		
-				PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-				
-				PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
-
-				PRMMDFRequest.viewMDFActivityDetails(
-					activityName = "Activity Name Edited",
-					expense = "Content Creation",
-					budget = "2,000");
-		}
-	}
-
-	@description = "This is a test for LPS-182808. Verify that managers can edit MDF in Rejected status"
-	@priority = 5
-	test ManagerCanEditMDFInRejectedStatus {
-		task ("Given that the manager goes to the submitted MDF") {
-			User.logoutAndLoginPG(
-				userLoginEmailAddress = "manager@liferay.com",
-				userLoginFullName = "manager");
-
+		task ("Then the informations will be updated") {
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-		}
 
-		task ("And change the MDF status") {
-			PRMMDFRequest.changeMDFStatus(statusButton = "Reject");
-		}
+			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
 
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
-
-			PRMMDFRequest.editMDF(
-				campaignName = "Campaign Name Edited",
-				newActivityName = "Activity Name Edited",
-				newBugdetValue = 2000);
-		}
-
-		task ("Then the informations will be updated") {		
-				PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-				
-				PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
-
-				PRMMDFRequest.viewMDFActivityDetails(
-					activityName = "Activity Name Edited",
-					expense = "Content Creation",
-					budget = "2,000");
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name Edited",
+				budget = "2,000",
+				expense = "Content Creation");
 		}
 	}
 
@@ -252,15 +148,120 @@ definition {
 				newBugdetValue = 2000);
 		}
 
-		task ("Then the informations will be updated") {		
-				PRMNavigator.gotoMDF(requestId = ${staticRequestId});
-				
-				PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+		task ("Then the informations will be updated") {
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
 
-				PRMMDFRequest.viewMDFActivityDetails(
-					activityName = "Activity Name Edited",
-					expense = "Content Creation",
-					budget = "2,000");
+			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name Edited",
+				budget = "2,000",
+				expense = "Content Creation");
 		}
 	}
+
+	@description = "This is a test for LPS-179227. Verify that managers can edit MDF in Marketing Director Review status"
+	@priority = 5
+	test ManagerCanEditMDFInMarketingDirectorReviewStatus {
+		task ("Given that the manager goes to the submitted MDF") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
+
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+		}
+
+		task ("And change the MDF status") {
+			PRMMDFRequest.changeMDFStatus(statusButton = "Marketing Director Review");
+		}
+
+		task ("When the manager edit the MDF informations and submit it") {
+			PRMMDFRequest.editButton(manager = "true");
+
+			PRMMDFRequest.editMDF(
+				campaignName = "Campaign Name Edited",
+				newActivityName = "Activity Name Edited",
+				newBugdetValue = 2000);
+		}
+
+		task ("Then the informations will be updated") {
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+
+			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name Edited",
+				budget = "2,000",
+				expense = "Content Creation");
+		}
+	}
+
+	@description = "This is a test for LPS-182806. Verify that managers can edit MDF in Pending Marketing Review status"
+	@priority = 5
+	test ManagerCanEditMDFInPendingMarketingReviewStatus {
+		task ("Given that the manager goes to the submitted MDF, which is as 'Pending Marketing Review'") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
+
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+		}
+
+		task ("When the manager edit the MDF informations and submit it") {
+			PRMMDFRequest.editButton(manager = "true");
+
+			PRMMDFRequest.editMDF(
+				campaignName = "Campaign Name Edited",
+				newActivityName = "Activity Name Edited",
+				newBugdetValue = 2000);
+		}
+
+		task ("Then the informations will be updated") {
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+
+			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name Edited",
+				budget = "2,000",
+				expense = "Content Creation");
+		}
+	}
+
+	@description = "This is a test for LPS-182808. Verify that managers can edit MDF in Rejected status"
+	@priority = 5
+	test ManagerCanEditMDFInRejectedStatus {
+		task ("Given that the manager goes to the submitted MDF") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
+
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+		}
+
+		task ("And change the MDF status") {
+			PRMMDFRequest.changeMDFStatus(statusButton = "Reject");
+		}
+
+		task ("When the manager edit the MDF informations and submit it") {
+			PRMMDFRequest.editButton(manager = "true");
+
+			PRMMDFRequest.editMDF(
+				campaignName = "Campaign Name Edited",
+				newActivityName = "Activity Name Edited",
+				newBugdetValue = 2000);
+		}
+
+		task ("Then the informations will be updated") {
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+
+			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name Edited",
+				budget = "2,000",
+				expense = "Content Creation");
+		}
+	}
+
 }

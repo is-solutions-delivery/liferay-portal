@@ -21,6 +21,7 @@ definition {
 
 	macro changeMDFStatus {
 		var statusKey = StringUtil.replace(${mdfStatus}, " ", "");
+
 		var statusKey = StringUtil.lowerCaseFirstLetter(${statusKey});
 
 		JSONPRMAPI.changeMDFStatus(
