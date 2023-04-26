@@ -754,7 +754,7 @@ definition {
 				locator1 = "PRMMDFRequest#DETAIL_FIELD");
 		}
 
-		if (isSet(ampaignName)) {
+		if (isSet(campaignName)) {
 			AssertElementPresent(
 				key_fieldName = "Name of the overall campaign",
 				key_nameValue = ${campaignName},
