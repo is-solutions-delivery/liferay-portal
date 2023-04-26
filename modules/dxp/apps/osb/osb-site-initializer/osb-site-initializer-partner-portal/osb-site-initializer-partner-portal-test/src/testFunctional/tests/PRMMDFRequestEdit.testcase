@@ -123,4 +123,37 @@ definition {
 					budget = "2,000");
 		}
 	}
+
+	@description = "This is a test for LPS-182806. Verify that managers can edit MDF in Pending Marketing Review status"
+	@priority = 5
+	test ManagerCanEditMDFInPendingMarketingReviewStatus {
+		task ("Given that the manager goes to the submitted MDF, which is as 'Pending Marketing Review'") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager");
+
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+		}
+
+		task ("When the manager edit the MDF informations and submit it") {
+			PRMMDFRequest.editButton(manager = "true");
+
+			PRMMDFRequest.editMDF(
+				campaignName = "Campaign Name Edited",
+				newActivityName = "Activity Name Edited",
+				newBugdetValue = 2000);
+		}
+
+		task ("Then the informations will be updated") {		
+				PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+				
+				PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+
+				PRMMDFRequest.viewMDFActivityDetails(
+					activityName = "Activity Name Edited",
+					expense = "Content Creation",
+					budget = "2,000");
+		}
+	}
+
 }
