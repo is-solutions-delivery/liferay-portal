@@ -82,9 +82,11 @@ export default function getMDFListColumns(
 				label: ' Delete',
 				onClick: async () => {
 					if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
-						return await deleteMDFRequest(
-							ResourceName.MDF_REQUEST_DXP,
-							Number(row[MDFColumnKey.ID]) as number
+						return (
+							(await deleteMDFRequest(
+								ResourceName.MDF_REQUEST_DXP,
+								Number(row[MDFColumnKey.ID]) as number
+							)) && window.location.reload()
 						);
 					}
 				},
