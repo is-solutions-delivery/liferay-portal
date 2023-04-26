@@ -102,21 +102,35 @@ definition {
 			key_roleName = ${roleName});
 		}
 
-		Type(
-			key_fieldName = "activities[${activityIndex}].name",
-			locator1 = "PRMMDFRequest#TEXT_FIELD",
-			value1 = ${newActivityName});
+	macro editMDF {
+		PRMMDFRequest.editGoals(
+			accountName = ${accountName},
+			additionalOptions = ${additionalOptions},
+			campaignDescription = ${campaignDescription},
+			campaignName = ${campaignName},
+			countryName = ${countryName},
+			goalsOptions = ${goalsOptions},
+			targetMarketOptions = ${targetMarketOptions},
+			targetRolesOptions = ${targetRolesOptions});
 
-		Click.clickAtNotVisible(
-			key_buttonText = ${leadList},
-			key_fieldName = "activities[${activityIndex}].activityDescription.leadGenerated",
-			locator1 = "PRMMDFRequest#INPUT_BUTTON");
+		Button.click(button = "Continue");
+
+		PRMMDFRequest.editActivity(
+			activityIndex = ${activityIndex},
+			newActivityName = ${newActivityName},
+			newBugdetValue = ${newBugdetValue});
 
 		Button.click(button = "Continue");
 
 		Button.click(button = "Continue");
+
+		ScrollWebElementIntoView(locator1 = "Button#SUBMIT");
 
 		Button.click(button = "Submit");
+
+		WaitForPageLoad();
+
+		Alert.viewSuccessMessage();
 	}
 
 	@summary = "Verify that is possible edit some MDF informations "
