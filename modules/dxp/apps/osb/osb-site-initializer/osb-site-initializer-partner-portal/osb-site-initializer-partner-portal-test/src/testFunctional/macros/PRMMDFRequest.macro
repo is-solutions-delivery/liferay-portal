@@ -33,9 +33,19 @@ definition {
 	macro changeMDFStatus {
 		var key_statusButton = ${statusButton};
 
+		if(${statusButton} == "Cancel") {
 		ClickNoError(
+				locator1 = "Button#BUTTON_ID",
+				buttonId = "status-cancel");
+		} else {
+			ScrollWebElementIntoView(
 			buttonId = ${statusButton},
 			locator1 = "PRMMDFRequest#STATUS_BUTTON");
+
+			ClickNoError(
+				buttonId = ${statusButton},
+				locator1 = "PRMMDFRequest#STATUS_BUTTON");
+		}
 
 		Confirm.acceptAlert();
 	}
