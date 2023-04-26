@@ -17,6 +17,8 @@ import {MDFRequestListItem} from '../../../common/interfaces/mdfRequestListItem'
 import Role from '../../../common/interfaces/role';
 import TableColumn from '../../../common/interfaces/tableColumn';
 import {Liferay} from '../../../common/services/liferay';
+import {ResourceName} from '../../../common/services/liferay/object/enum/resourceName';
+import deleteMDFRequest from '../../../common/services/liferay/object/mdf-requests/deleteMDFRequest';
 import {Status} from '../../../common/utils/constants/status';
 import {isLiferayManager} from '../../../common/utils/isLiferayManager';
 
@@ -73,6 +75,19 @@ export default function getMDFListColumns(
 							row[MDFColumnKey.ID]
 						}`
 					),
+			},
+			{
+				icon: 'trash',
+				key: 'delete',
+				label: ' Delete',
+				onClick: async () => {
+					if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
+						return await deleteMDFRequest(
+							ResourceName.MDF_REQUEST_DXP,
+							Number(row[MDFColumnKey.ID]) as number
+						);
+					}
+				},
 			},
 		];
 
