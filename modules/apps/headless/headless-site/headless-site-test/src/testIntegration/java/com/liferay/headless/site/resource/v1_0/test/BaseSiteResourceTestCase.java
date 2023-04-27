@@ -182,6 +182,7 @@ public abstract class BaseSiteResourceTestCase {
 		site.setKey(regex);
 		site.setName(regex);
 		site.setParentSiteKey(regex);
+		site.setSiteTemplateFile(regex);
 		site.setTemplateKey(regex);
 
 		String json = SiteSerDes.toJSON(site);
@@ -194,6 +195,7 @@ public abstract class BaseSiteResourceTestCase {
 		Assert.assertEquals(regex, site.getKey());
 		Assert.assertEquals(regex, site.getName());
 		Assert.assertEquals(regex, site.getParentSiteKey());
+		Assert.assertEquals(regex, site.getSiteTemplateFile());
 		Assert.assertEquals(regex, site.getTemplateKey());
 	}
 
@@ -319,6 +321,14 @@ public abstract class BaseSiteResourceTestCase {
 
 			if (Objects.equals("parentSiteKey", additionalAssertFieldName)) {
 				if (site.getParentSiteKey() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("siteTemplateFile", additionalAssertFieldName)) {
+				if (site.getSiteTemplateFile() == null) {
 					valid = false;
 				}
 
@@ -506,6 +516,17 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("siteTemplateFile", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getSiteTemplateFile(),
+						site2.getSiteTemplateFile())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("templateKey", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						site1.getTemplateKey(), site2.getTemplateKey())) {
@@ -671,6 +692,14 @@ public abstract class BaseSiteResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("siteTemplateFile")) {
+			sb.append("'");
+			sb.append(String.valueOf(site.getSiteTemplateFile()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("templateKey")) {
 			sb.append("'");
 			sb.append(String.valueOf(site.getTemplateKey()));
@@ -734,6 +763,8 @@ public abstract class BaseSiteResourceTestCase {
 				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				parentSiteKey = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				siteTemplateFile = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				templateKey = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());

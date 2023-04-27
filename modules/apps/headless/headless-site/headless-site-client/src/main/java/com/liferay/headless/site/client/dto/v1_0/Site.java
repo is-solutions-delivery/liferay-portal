@@ -163,6 +163,27 @@ public class Site implements Cloneable, Serializable {
 
 	protected String parentSiteKey;
 
+	public String getSiteTemplateFile() {
+		return siteTemplateFile;
+	}
+
+	public void setSiteTemplateFile(String siteTemplateFile) {
+		this.siteTemplateFile = siteTemplateFile;
+	}
+
+	public void setSiteTemplateFile(
+		UnsafeSupplier<String, Exception> siteTemplateFileUnsafeSupplier) {
+
+		try {
+			siteTemplateFile = siteTemplateFileUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String siteTemplateFile;
+
 	public String getTemplateKey() {
 		return templateKey;
 	}
@@ -279,6 +300,7 @@ public class Site implements Cloneable, Serializable {
 
 	public static enum TemplateType {
 
+		CLIENT_EXTENSION("client-extension"),
 		SITE_INITIALIZER("site-initializer"), SITE_TEMPLATE("site-template");
 
 		public static TemplateType create(String value) {

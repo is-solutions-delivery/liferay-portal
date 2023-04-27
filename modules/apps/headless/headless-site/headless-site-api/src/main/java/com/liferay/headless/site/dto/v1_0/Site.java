@@ -239,6 +239,34 @@ public class Site implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	protected String parentSiteKey;
 
+	@Schema(description = "Base64 encoded file")
+	public String getSiteTemplateFile() {
+		return siteTemplateFile;
+	}
+
+	public void setSiteTemplateFile(String siteTemplateFile) {
+		this.siteTemplateFile = siteTemplateFile;
+	}
+
+	@JsonIgnore
+	public void setSiteTemplateFile(
+		UnsafeSupplier<String, Exception> siteTemplateFileUnsafeSupplier) {
+
+		try {
+			siteTemplateFile = siteTemplateFileUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(description = "Base64 encoded file")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String siteTemplateFile;
+
 	@Schema
 	public String getTemplateKey() {
 		return templateKey;
@@ -412,6 +440,20 @@ public class Site implements Serializable {
 			sb.append("\"");
 		}
 
+		if (siteTemplateFile != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"siteTemplateFile\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(siteTemplateFile));
+
+			sb.append("\"");
+		}
+
 		if (templateKey != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -493,6 +535,7 @@ public class Site implements Serializable {
 	@GraphQLName("TemplateType")
 	public static enum TemplateType {
 
+		CLIENT_EXTENSION("client-extension"),
 		SITE_INITIALIZER("site-initializer"), SITE_TEMPLATE("site-template");
 
 		@JsonCreator
