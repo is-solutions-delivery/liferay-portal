@@ -60,7 +60,8 @@ export default function getMDFClaimListColumns(
 					]}
 				></Dropdown>
 			);
-		} else if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
+		}
+		else if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
 			const options = [
 				{
 					icon: 'view',
@@ -105,7 +106,8 @@ export default function getMDFClaimListColumns(
 							});
 
 							mutate(mutated);
-						} else {
+						}
+						else {
 							Liferay.Util.openToast({
 								message:
 									'You cannot delete the MDF Claim in this status',
