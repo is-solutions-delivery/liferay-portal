@@ -59,6 +59,59 @@ export default function getMDFListColumns(
 				></Dropdown>
 			);
 		}
+		else if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
+			const options = [
+				{
+					icon: 'view',
+					key: 'approve',
+					label: ' View',
+					onClick: () =>
+						Liferay.Util.navigate(
+							`${siteURL}/l/${row[MDFColumnKey.ID]}`
+						),
+				},
+				{
+					icon: 'pencil',
+					key: 'edit',
+					label: ' Edit',
+					onClick: () =>
+						Liferay.Util.navigate(
+							`${siteURL}/${PRMPageRoute.CREATE_MDF_REQUEST}/#/${
+								row[MDFColumnKey.ID]
+							}`
+						),
+				},
+				{
+					icon: 'trash',
+					key: 'delete',
+					label: ' Delete',
+					onClick: async () => {
+						if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
+							await deleteMDFRequest(
+								ResourceName.MDF_REQUEST_DXP,
+								Number(row[MDFColumnKey.ID]) as number
+							);
+
+							Liferay.Util.openToast({
+								message: 'MDF Request Deleted successfully',
+								type: 'success',
+							});
+
+							mutate(mutated);
+						}
+						else {
+							Liferay.Util.openToast({
+								message:
+									'You cannot delete the MDF Request in this status',
+								type: 'danger',
+							});
+						}
+					},
+				},
+			];
+
+			return <Dropdown closeOnClick={true} options={options}></Dropdown>;
+		}
 
 		const options = [
 			{
@@ -80,32 +133,6 @@ export default function getMDFListColumns(
 							row[MDFColumnKey.ID]
 						}`
 					),
-			},
-			{
-				icon: 'trash',
-				key: 'delete',
-				label: ' Delete',
-				onClick: async () => {
-					if (row[MDFColumnKey.STATUS] === Status.DRAFT.name) {
-						await deleteMDFRequest(
-							ResourceName.MDF_REQUEST_DXP,
-							Number(row[MDFColumnKey.ID]) as number
-						);
-
-						Liferay.Util.openToast({
-							message: 'MDF Request Deleted successfully',
-							type: 'success',
-						});
-
-						mutate(mutated);
-					} else {
-						Liferay.Util.openToast({
-							message:
-								'You cannot delete the MDF Request in this status',
-							type: 'danger',
-						});
-					}
-				},
 			},
 		];
 
