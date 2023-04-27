@@ -52,7 +52,7 @@ const MDFClaimList = () => {
 	const {filters, filtersTerm, onFilter, setFilters} = useFilters();
 
 	const pagination = usePagination();
-	const {data, isValidating} = useGetListItemsFromMDFClaims(
+	const {data, isValidating, mutate} = useGetListItemsFromMDFClaims(
 		pagination.activePage,
 		pagination.activeDelta,
 		filtersTerm
@@ -75,7 +75,8 @@ const MDFClaimList = () => {
 	const columns = getMDFClaimListColumns(
 		isPartnerManagerRole,
 		siteURL,
-		roleEntries
+		roleEntries,
+		mutate
 	);
 
 	const getTable = (
