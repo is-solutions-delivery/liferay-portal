@@ -23,8 +23,7 @@ import {
 const getCaseParameters = (testraySuite: TestraySuite): CaseParameter => {
 	try {
 		return JSON.parse(testraySuite.caseParameters);
-	}
-	catch (error) {
+	} catch (error) {
 		return CaseParameterInitialState;
 	}
 };
@@ -33,23 +32,36 @@ const getCaseValues = (caseParameter: BoxItem[]) =>
 	caseParameter?.map(({value}) => value);
 
 const useSuiteCaseFilter = (testraySuite: TestraySuite) => {
-	if (!testraySuite.caseParameters) {
-		return SearchBuilder.eq('suiteId', testraySuite.id);
+	if (!testraySuite?.caseParameters) {
+		return SearchBuilder.eq('suiteId', testraySuite?.id);
 	}
 
 	const caseParameters = getCaseParameters(testraySuite);
 
-	const searchBuilder = new SearchBuilder()
-		.in('caseTypeId', getCaseValues(caseParameters.testrayCaseTypes))
-		.or()
-		.in('componentId', getCaseValues(caseParameters.testrayComponents))
-		.or()
-		.in('componentId', getCaseValues(caseParameters.testrayRequirements))
-		.build();
+	const searchBuilder = new SearchBuilder();
 
-	return searchBuilder;
+	if (caseParameters?.testrayCaseTypes) {
+		searchBuilder
+			.in('caseTypeId', getCaseValues(caseParameters.testrayCaseTypes))
+			.or();
+	}
+
+	if (caseParameters?.testrayComponents) {
+		searchBuilder
+			.in('componentId', getCaseValues(caseParameters.testrayComponents))
+			.or();
+	}
+
+	if (caseParameters?.testrayRequirements) {
+		searchBuilder.in(
+			'requerimentsId',
+			getCaseValues(caseParameters.testrayRequirements)
+		);
+	}
+
+	return searchBuilder.build();
 };
 
-export {getCaseParameters};
+export {getCaseParameters, getCaseValues};
 
 export default useSuiteCaseFilter;
