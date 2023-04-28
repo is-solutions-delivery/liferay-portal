@@ -14,11 +14,18 @@
 
 import {useEffect} from 'react';
 import {Outlet, useOutletContext, useParams} from 'react-router-dom';
+import useSearchBuilder from '~/hooks/useSearchBuilder';
 
 import {useFetch} from '../../../hooks/useFetch';
 import useHeader from '../../../hooks/useHeader';
 import i18n from '../../../i18n';
-import {TestrayProject, TestraySuite} from '../../../services/rest';
+import {
+	APIResponse,
+	TestrayProject,
+	TestraySuite,
+	TestraySuiteCase,
+	testraySuiteCaseImpl,
+} from '../../../services/rest';
 import useSuiteActions from './useSuiteActions';
 
 const SuiteOutlet = () => {
@@ -30,6 +37,25 @@ const SuiteOutlet = () => {
 
 	const {data: testraySuite, mutate} = useFetch<TestraySuite>(
 		`/suites/${suiteId}`
+	);
+
+	const suiteCaseFilter = useSearchBuilder({useURIEncode: false});
+
+	const filter = suiteCaseFilter.eq('suiteId', suiteId as string).build();
+
+	const {data: testraySuiteCase} = useFetch<APIResponse<TestraySuiteCase>>(
+		testraySuiteCaseImpl.resource,
+		{
+			params: {
+				fields: 'r_caseToSuitesCases_c_caseId',
+				filter,
+				pageSize: 100,
+			},
+		}
+	);
+
+	const suiteCasesItems = testraySuiteCase?.items.map(
+		(item) => item.r_caseToSuitesCases_c_caseId
 	);
 
 	const {setHeaderActions, setHeading} = useHeader({
@@ -62,6 +88,7 @@ const SuiteOutlet = () => {
 			<Outlet
 				context={{
 					mutateTestraySuite: mutate,
+					suiteCasesItems,
 					testrayProject,
 					testraySuite,
 				}}
