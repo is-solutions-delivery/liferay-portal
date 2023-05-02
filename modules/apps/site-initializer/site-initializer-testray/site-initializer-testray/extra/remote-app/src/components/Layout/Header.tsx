@@ -17,7 +17,7 @@ import ClayIcon from '@clayui/icon';
 import ClayTabs from '@clayui/tabs';
 import classNames from 'classnames';
 import {useContext} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import Permission from '~/core/Permission';
 
 import {HeaderContext} from '../../context/HeaderContext';
@@ -42,6 +42,9 @@ const Header = () => {
 		headerActions.actions,
 		headerActions.item?.actions
 	);
+
+	const {pathname} = useLocation();
+	const isEditCase = pathname.includes('edit' || 'complete');
 
 	const BreadCrumbTrigger: React.FC<BreadCrumbTriggerProps> = ({
 		displayCarret,
@@ -143,20 +146,22 @@ const Header = () => {
 				</div>
 			</div>
 
-			<ClayTabs className="tr-header-container__tabs">
-				{tabs.map((tab, index) => (
-					<ClayTabs.Item
-						active={tab.active}
-						innerProps={{
-							'aria-controls': `tabpanel-${index}`,
-						}}
-						key={index}
-						onClick={() => navigate(tab.path)}
-					>
-						{tab.title}
-					</ClayTabs.Item>
-				))}
-			</ClayTabs>
+			{!isEditCase && (
+				<ClayTabs className="tr-header-container__tabs">
+					{tabs.map((tab, index) => (
+						<ClayTabs.Item
+							active={tab.active}
+							innerProps={{
+								'aria-controls': `tabpanel-${index}`,
+							}}
+							key={index}
+							onClick={() => navigate(tab.path)}
+						>
+							{tab.title}
+						</ClayTabs.Item>
+					))}
+				</ClayTabs>
+			)}
 		</header>
 	);
 };
