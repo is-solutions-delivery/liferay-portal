@@ -12,20 +12,33 @@
  * details.
  */
 
+import {useLocation} from 'react-router-dom';
+
 import HeaderBreadcrumb from './HeaderBreadcrumb';
 import HeaderDropDown from './HeaderDropDown';
 import HeaderTabs from './HeaderTabs';
 
-const Header = () => (
-	<header className="tr-header-container">
-		<div className="d-flex">
-			<HeaderDropDown />
+const Header = () => {
+	const {pathname} = useLocation();
 
-			<HeaderBreadcrumb />
-		</div>
+	const isUpdatePage = pathname.split('/').includes('update');
+	const isCreatePage = pathname.split('/').includes('create');
 
-		<HeaderTabs />
-	</header>
-);
+	return (
+		<>
+			{!isUpdatePage && !isCreatePage && (
+				<header className="tr-header-container">
+					<div className="d-flex">
+						<HeaderDropDown />
+
+						<HeaderBreadcrumb />
+					</div>
+
+					<HeaderTabs />
+				</header>
+			)}
+		</>
+	);
+};
 
 export default Header;
