@@ -34,6 +34,8 @@ export default function useGetListItemsFromDealRegistration(
 			swrResponse.data?.items.map((item) => ({
 				[DealRegistrationColumnKey.ACCOUNT_NAME]:
 					item.prospectAccountName,
+				[DealRegistrationColumnKey.PARTNER_ACCOUNT_NAME]:
+					item.partnerAccountName,
 				...getDealDates(item.dateCreated),
 				[DealRegistrationColumnKey.STATUS]: item.leadStatus,
 				[DealRegistrationColumnKey.PRIMARY_PROSPECT_NAME]: `${
