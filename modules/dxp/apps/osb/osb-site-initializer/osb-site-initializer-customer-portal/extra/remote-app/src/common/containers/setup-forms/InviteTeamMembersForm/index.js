@@ -28,8 +28,10 @@ import getProjectRoles from '../../../utils/getProjectRoles';
 import Layout from '../Layout';
 import TeamMemberInputs from './TeamMemberInputs';
 
-const MAXIMUM_INVITES_COUNT = 10;
 const INITIAL_INVITES_COUNT = 1;
+const MAXIMUM_REQUESTORS_DEFAULT = -1;
+const MAXIMUM_INVITES_COUNT = 10;
+const UNLIMITED_RESQUESTORS = 9999;
 
 const DEFAULT_WARNING = {
 	message: i18n.translate('one-or-more-requests-may-have-failed'),
@@ -147,7 +149,9 @@ const InviteTeamMembersPage = ({
 
 			const remainingAdmins = availableAdministratorAssets - totalAdmins;
 
-			setAvailableAdminsRoles(remainingAdmins);
+			return project.maxRequestors === MAXIMUM_REQUESTORS_DEFAULT
+				? setAvailableAdminsRoles(UNLIMITED_RESQUESTORS)
+				: setAvailableAdminsRoles(remainingAdmins);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [values, project, accountRoles, availableAdministratorAssets]);
@@ -163,7 +167,8 @@ const InviteTeamMembersPage = ({
 			const sucessfullyEmails = totalEmails - failedEmails;
 
 			if (
-				availableAdministratorAssets < 1 &&
+				availableAdministratorAssets === 0 &&
+				project.maxRequestors !== MAXIMUM_REQUESTORS_DEFAULT &&
 				isSelectdAdministratorOrRequestorRole
 			) {
 				setBaseButtonDisabled(true);
@@ -184,6 +189,7 @@ const InviteTeamMembersPage = ({
 		availableAdministratorAssets,
 		isSelectdAdministratorOrRequestorRole,
 		errors,
+		project.maxRequestors,
 	]);
 
 	const handleSubmit = async () => {
