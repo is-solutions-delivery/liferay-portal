@@ -34,6 +34,8 @@ export default function useGetListItemsFromDealRegistration(
 			swrResponse.data?.items.map((item) => ({
 				[DealRegistrationColumnKey.ACCOUNT_NAME]:
 					item.prospectAccountName,
+				[DealRegistrationColumnKey.PARTNER_ACCOUNT_NAME]:
+					item.partnerAccountName,
 				...getDealDates(item.dateCreated),
 				[DealRegistrationColumnKey.STATUS]: item.leadStatus,
 				[DealRegistrationColumnKey.PRIMARY_PROSPECT_NAME]: `${
@@ -58,6 +60,7 @@ export default function useGetListItemsFromDealRegistration(
 					item.prospectPostalCode,
 				[DealRegistrationColumnKey.STATUS_DETAIL]:
 					item.leadStatusDetail,
+				[DealRegistrationColumnKey.PARTNER_NAME]: item.partnerName,
 			})),
 		[swrResponse.data?.items]
 	);

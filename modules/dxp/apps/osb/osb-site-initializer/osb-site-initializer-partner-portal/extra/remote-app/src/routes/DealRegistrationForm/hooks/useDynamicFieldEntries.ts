@@ -9,14 +9,16 @@
  * distribution rights of the Software.
  */
 
-import {useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 
 import {LiferayPicklistName} from '../../../common/enums/liferayPicklistName';
 import useGetListTypeDefinitions from '../../../common/services/liferay/list-type-definitions/useGetListTypeDefinitions';
 import useGetMyUserAccount from '../../../common/services/liferay/user-account/useGetMyUserAccount';
 import getEntriesByListTypeDefinitions from '../../../common/utils/getEntriesByListTypeDefinitions';
 
-export default function useDynamicFieldEntries() {
+export default function useDynamicFieldEntries(
+	handleSelected: (userName?: string) => void
+) {
 	const {data: userAccount} = useGetMyUserAccount();
 	const {data: listTypeDefinitions} = useGetListTypeDefinitions([
 		LiferayPicklistName.COUNTRIES,
@@ -38,6 +40,12 @@ export default function useDynamicFieldEntries() {
 			})) as React.OptionHTMLAttributes<HTMLOptionElement>[],
 		[userAccount?.accountBriefs]
 	);
+
+	useEffect(() => {
+		if (userAccount?.name) {
+			handleSelected(userAccount?.name);
+		}
+	}, [handleSelected, userAccount?.name]);
 
 	const fieldEntries = useMemo(
 		() => getEntriesByListTypeDefinitions(listTypeDefinitions?.items),

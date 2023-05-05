@@ -32,6 +32,7 @@ interface UserAccount {
 	familyName: string;
 	givenName: string;
 	id: number;
+	name: string;
 	roleBriefs: Role[];
 	userAccountContactInformation: UserAccountContactInformation;
 }
