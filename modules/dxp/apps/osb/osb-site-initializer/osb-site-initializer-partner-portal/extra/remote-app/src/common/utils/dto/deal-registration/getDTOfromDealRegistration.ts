@@ -36,6 +36,7 @@ export function getDTOFromDealRegistration(
 			dealRegistration.mdfActivityAssociated.externalReferenceCode,
 		mdfActivityName: dealRegistration.mdfActivityAssociated.name,
 		partnerAccountName: dealRegistration.partnerAccount.name,
+		partnerName: dealRegistration.partnerName,
 		primaryProspectBusinessUnit:
 			dealRegistration.primaryProspect.businessUnit,
 		primaryProspectDepartment:
