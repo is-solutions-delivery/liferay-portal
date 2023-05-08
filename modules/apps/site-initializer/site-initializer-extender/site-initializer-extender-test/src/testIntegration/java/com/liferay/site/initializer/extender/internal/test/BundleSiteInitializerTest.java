@@ -404,7 +404,15 @@ public class BundleSiteInitializerTest {
 				"TESTACCOUNTGROUP2");
 
 		Assert.assertNotNull(accountGroup2);
-		Assert.assertEquals("Test Account Group 2 Update", accountGroup2.getName());
+		Assert.assertEquals(
+			"Test Account Group 2 Update", accountGroup2.getName());
+
+		AccountGroup accountGroup3 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP3");
+
+		Assert.assertNotNull(accountGroup3);
+		Assert.assertEquals("Test Account Group 3", accountGroup3.getName());
 
 		AccountGroup accountGroup4 =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -2731,8 +2739,8 @@ public class BundleSiteInitializerTest {
 	private void _test1(SiteInitializer siteInitializer) throws Exception {
 		siteInitializer.initialize(_group.getGroupId());
 
-		_assertAccounts1();
 		_assertAccountGroups1();
+		_assertAccounts1();
 		_assertAssetListEntries();
 		_assertAssetVocabularies();
 		_assertClientExtension();
@@ -2774,8 +2782,8 @@ public class BundleSiteInitializerTest {
 	private void _test2(SiteInitializer siteInitializer) throws Exception {
 		siteInitializer.initialize(_group.getGroupId());
 
-		_assertAccounts2();
 		_assertAccountGroups2();
+		_assertAccounts2();
 		_assertExpandoColumns2();
 		_assertListTypeDefinitions2();
 		_assertObjectDefinitions2();
