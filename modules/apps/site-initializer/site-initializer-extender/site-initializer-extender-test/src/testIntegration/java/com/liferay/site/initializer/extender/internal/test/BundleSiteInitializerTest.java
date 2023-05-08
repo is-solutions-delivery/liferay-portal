@@ -184,6 +184,22 @@ import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+
+import java.math.BigDecimal;
+
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.servlet.ServletContext;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -191,26 +207,16 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.ServletContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Brian Wing Shun Chan
@@ -346,6 +352,68 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
+	private void _assertAccountGroups1() throws Exception {
+		AccountGroupResource.Builder accountGroupResourceBuilder =
+			_accountGroupResourcefactory.create();
+
+		AccountGroupResource accountGroupResource =
+			accountGroupResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		AccountGroup accountGroup1 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"ERC-01");
+
+		Assert.assertNotNull(accountGroup1);
+		Assert.assertEquals("Test 1", accountGroup1.getName());
+
+		AccountGroup accountGroup2 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"ERC-02");
+
+		Assert.assertNotNull(accountGroup2);
+		Assert.assertEquals("Test 2", accountGroup2.getName());
+
+		AccountGroup accountGroup3 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"ERC-03");
+
+		Assert.assertNotNull(accountGroup3);
+		Assert.assertEquals("Test 3", accountGroup3.getName());
+	}
+
+	private void _assertAccountGroups2() throws Exception {
+		AccountGroupResource.Builder accountGroupResourceBuilder =
+			_accountGroupResourcefactory.create();
+
+		AccountGroupResource accountGroupResource =
+			accountGroupResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		AccountGroup accountGroup1 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"ERC-01");
+
+		Assert.assertNotNull(accountGroup1);
+		Assert.assertEquals("Test 1", accountGroup1.getName());
+
+		AccountGroup accountGroup2 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"ERC-02");
+
+		Assert.assertNotNull(accountGroup2);
+		Assert.assertEquals("Test 2 Update", accountGroup2.getName());
+
+		AccountGroup accountGroup4 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"ERC-04");
+
+		Assert.assertNotNull(accountGroup4);
+		Assert.assertEquals("Test 4", accountGroup4.getName());
+	}
+
 	private void _assertAccounts1() throws Exception {
 		AccountResource.Builder accountResourceBuilder =
 			_accountResourceFactory.create();
@@ -411,60 +479,6 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(account4);
 		Assert.assertEquals("Test Account 4", account4.getName());
 		Assert.assertEquals("person", account4.getTypeAsString());
-	}
-
-	private void _assertAccountGroups1() throws Exception{
-		AccountGroupResource.Builder accountGroupResourceBuilder =
-			_accountGroupResourcefactory.create();
-
-		AccountGroupResource accountGroupResource = accountGroupResourceBuilder.user(
-			_serviceContext.fetchUser()
-		).build();
-
-		AccountGroup accountGroup1 = accountGroupResource.getAccountGroupByExternalReferenceCode(
-			"ERC-01");
-
-		Assert.assertNotNull(accountGroup1);
-		Assert.assertEquals("Test 1", accountGroup1.getName());
-
-		AccountGroup accountGroup2 = accountGroupResource.getAccountGroupByExternalReferenceCode(
-			"ERC-02");
-
-		Assert.assertNotNull(accountGroup2);
-		Assert.assertEquals("Test 2", accountGroup2.getName());
-
-		AccountGroup accountGroup3 = accountGroupResource.getAccountGroupByExternalReferenceCode(
-			"ERC-03");
-
-		Assert.assertNotNull(accountGroup3);
-		Assert.assertEquals("Test 3", accountGroup3.getName());
-	}
-
-	private void _assertAccountGroups2() throws Exception{
-		AccountGroupResource.Builder accountGroupResourceBuilder =
-			_accountGroupResourcefactory.create();
-
-		AccountGroupResource accountGroupResource = accountGroupResourceBuilder.user(
-			_serviceContext.fetchUser()
-		).build();
-
-		AccountGroup accountGroup1 = accountGroupResource.getAccountGroupByExternalReferenceCode(
-			"ERC-01");
-
-		Assert.assertNotNull(accountGroup1);
-		Assert.assertEquals("Test 1", accountGroup1.getName());
-
-		AccountGroup accountGroup2 = accountGroupResource.getAccountGroupByExternalReferenceCode(
-			"ERC-02");
-
-		Assert.assertNotNull(accountGroup2);
-		Assert.assertEquals("Test 2 Update", accountGroup2.getName());
-
-		AccountGroup accountGroup4 = accountGroupResource.getAccountGroupByExternalReferenceCode(
-			"ERC-04");
-
-		Assert.assertNotNull(accountGroup4);
-		Assert.assertEquals("Test 4", accountGroup4.getName());
 	}
 
 	private void _assertAssetCategories() throws Exception {
@@ -2774,10 +2788,10 @@ public class BundleSiteInitializerTest {
 	private static ConfigurationAdmin _configurationAdmin;
 
 	@Inject
-	private AccountResource.Factory _accountResourceFactory;
+	private AccountGroupResource.Factory _accountGroupResourcefactory;
 
 	@Inject
-	private AccountGroupResource.Factory _accountGroupResourcefactory;
+	private AccountResource.Factory _accountResourceFactory;
 
 	@Inject
 	private AssetCategoryLocalService _assetCategoryLocalService;

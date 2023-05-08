@@ -122,8 +122,8 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 		BundleSiteInitializer bundleSiteInitializer = new BundleSiteInitializer(
 			_accountResourceFactory, _accountGroupResourceFactory,
 			_accountRoleLocalService, _accountRoleResourceFactory,
-			_assetCategoryLocalService, _assetListEntryLocalService,
-			bundle, _clientExtensionEntryLocalService, _configurationProvider,
+			_assetCategoryLocalService, _assetListEntryLocalService, bundle,
+			_clientExtensionEntryLocalService, _configurationProvider,
 			_ddmStructureLocalService, _ddmTemplateLocalService,
 			_defaultDDMStructureHelper, _dlURLHelper,
 			_documentFolderResourceFactory, _documentResourceFactory,
