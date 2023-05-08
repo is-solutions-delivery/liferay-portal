@@ -173,7 +173,7 @@ public class SiteInitializerExtension {
 		_component = _dependencyManager.createComponent();
 
 		BundleSiteInitializer bundleSiteInitializer = new BundleSiteInitializer(
-			accountResourceFactory, accountGroupResourceFactory,
+			accountGroupResourceFactory, accountResourceFactory,
 			accountRoleLocalService, accountRoleResourceFactory,
 			assetCategoryLocalService, assetListEntryLocalService, bundle,
 			clientExtensionEntryLocalService, configurationProvider,

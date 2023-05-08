@@ -1,14 +1,14 @@
 [
 	{
-		"externalReferenceCode": "ERC-01",
-		"name": "Test 1"
+		"externalReferenceCode": "TESTACCOUNTGROUP1",
+		"name": "Test Account Group 1"
 	},
 	{
-		"externalReferenceCode": "ERC-02",
-		"name": "Test 2 Update"
+		"externalReferenceCode": "TESTACCOUNTGROUP2",
+		"name": "Test Account Group 2 Update"
 	},
 	{
-		"externalReferenceCode": "ERC-04",
-		"name": "Test 4"
+		"externalReferenceCode": "TESTACCOUNTGROUP4",
+		"name": "Test Account Group 4"
 	}
 ]

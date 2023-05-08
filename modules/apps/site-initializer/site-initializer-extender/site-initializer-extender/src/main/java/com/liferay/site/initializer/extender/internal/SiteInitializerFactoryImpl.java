@@ -120,7 +120,7 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			null);
 
 		BundleSiteInitializer bundleSiteInitializer = new BundleSiteInitializer(
-			_accountResourceFactory, _accountGroupResourceFactory,
+			_accountGroupResourceFactory,_accountResourceFactory,
 			_accountRoleLocalService, _accountRoleResourceFactory,
 			_assetCategoryLocalService, _assetListEntryLocalService, bundle,
 			_clientExtensionEntryLocalService, _configurationProvider,

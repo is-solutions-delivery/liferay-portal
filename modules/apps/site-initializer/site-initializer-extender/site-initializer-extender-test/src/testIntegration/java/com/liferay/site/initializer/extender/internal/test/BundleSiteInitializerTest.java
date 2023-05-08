@@ -363,24 +363,24 @@ public class BundleSiteInitializerTest {
 
 		AccountGroup accountGroup1 =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"ERC-01");
+				"TESTACCOUNTGROUP1");
 
 		Assert.assertNotNull(accountGroup1);
-		Assert.assertEquals("Test 1", accountGroup1.getName());
+		Assert.assertEquals("Test Account Group 1", accountGroup1.getName());
 
 		AccountGroup accountGroup2 =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"ERC-02");
+				"TESTACCOUNTGROUP2");
 
 		Assert.assertNotNull(accountGroup2);
-		Assert.assertEquals("Test 2", accountGroup2.getName());
+		Assert.assertEquals("Test Account Group 2", accountGroup2.getName());
 
 		AccountGroup accountGroup3 =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"ERC-03");
+				"TESTACCOUNTGROUP3");
 
 		Assert.assertNotNull(accountGroup3);
-		Assert.assertEquals("Test 3", accountGroup3.getName());
+		Assert.assertEquals("Test Account Group 3", accountGroup3.getName());
 	}
 
 	private void _assertAccountGroups2() throws Exception {
@@ -394,24 +394,24 @@ public class BundleSiteInitializerTest {
 
 		AccountGroup accountGroup1 =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"ERC-01");
+				"TESTACCOUNTGROUP1");
 
 		Assert.assertNotNull(accountGroup1);
-		Assert.assertEquals("Test 1", accountGroup1.getName());
+		Assert.assertEquals("Test Account Group 1", accountGroup1.getName());
 
 		AccountGroup accountGroup2 =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"ERC-02");
+				"TESTACCOUNTGROUP2");
 
 		Assert.assertNotNull(accountGroup2);
-		Assert.assertEquals("Test 2 Update", accountGroup2.getName());
+		Assert.assertEquals("Test Account Group 2 Update", accountGroup2.getName());
 
 		AccountGroup accountGroup4 =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"ERC-04");
+				"TESTACCOUNTGROUP4");
 
 		Assert.assertNotNull(accountGroup4);
-		Assert.assertEquals("Test 4", accountGroup4.getName());
+		Assert.assertEquals("Test Account Group 4", accountGroup4.getName());
 	}
 
 	private void _assertAccounts1() throws Exception {
