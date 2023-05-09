@@ -17,7 +17,7 @@ import useGetMyUserAccount from '../../../common/services/liferay/user-account/u
 import getEntriesByListTypeDefinitions from '../../../common/utils/getEntriesByListTypeDefinitions';
 
 export default function useDynamicFieldEntries(
-	handleSelected: (userName?: string) => void
+	handleSelected: (firstName?: string, lastName?: string) => void
 ) {
 	const {data: userAccount} = useGetMyUserAccount();
 	const {data: listTypeDefinitions} = useGetListTypeDefinitions([
@@ -42,10 +42,10 @@ export default function useDynamicFieldEntries(
 	);
 
 	useEffect(() => {
-		if (userAccount?.name) {
-			handleSelected(userAccount?.name);
+		if (userAccount?.givenName || userAccount?.familyName) {
+			handleSelected(userAccount?.givenName, userAccount?.familyName);
 		}
-	}, [handleSelected, userAccount?.name]);
+	}, [handleSelected, userAccount?.familyName, userAccount?.givenName]);
 
 	const fieldEntries = useMemo(
 		() => getEntriesByListTypeDefinitions(listTypeDefinitions?.items),

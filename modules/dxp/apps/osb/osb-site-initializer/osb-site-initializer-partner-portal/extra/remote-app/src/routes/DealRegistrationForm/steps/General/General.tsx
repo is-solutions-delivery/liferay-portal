@@ -40,8 +40,9 @@ const General = ({
 
 	const {companiesEntries, fieldEntries} = useDynamicFieldEntries(
 		useCallback(
-			(userName) => {
-				setFieldValue('partnerName', userName);
+			(firstName, lastName) => {
+				setFieldValue('partnerFirstName', firstName);
+				setFieldValue('partnerLastName', lastName);
 			},
 			[setFieldValue]
 		)
