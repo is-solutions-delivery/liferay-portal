@@ -659,6 +659,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 			AccountGroup accountGroup = AccountGroup.toDTO(
 				String.valueOf(jsonArray.getJSONObject(i)));
 
+			if (accountGroup == null) {
+				_log.error(
+					"Unable to transform accountGroup from JSON: " + json);
+
+				continue;
+			}
+
 			accountGroupResource.postAccountGroup(accountGroup);
 		}
 	}
