@@ -1,0 +1,212 @@
+[
+	{
+		"cpDefinitionExternalReferenceCode": "MP-TYPE",
+		"description": "",
+		"facetable": false,
+		"key": "type",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Type"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-TRIAL-LENGTH",
+		"description": "Length of the trial",
+		"facetable": false,
+		"key": "trial-length",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Trial Length"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-LICENSE-TERM",
+		"description": "Length of the trial",
+		"facetable": false,
+		"key": "license-term",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "License Term"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-DEVELOPER-NAME",
+		"description": "Developer Name",
+		"facetable": false,
+		"key": "developer-name",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Developer Name"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-LICENSE-TYPE",
+		"description": "License Type",
+		"facetable": false,
+		"key": "license-type",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "License Type"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-APP-API-REFERENCE-URL",
+		"description": "URL for the API Documentation",
+		"facetable": false,
+		"key": "app-api-reference-url",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "App API Reference URL"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-LATEST-VERSION",
+		"description": "Latest version for the app or solution.",
+		"facetable": false,
+		"key": "latest-version",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Latest Version"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-APP-USAGE-TERMS-URL",
+		"description": "",
+		"facetable": false,
+		"key": "appusagetermsurl",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "App Usage Terms URL"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-SOURCE-CODE-URL",
+		"description": "URL of source code",
+		"facetable": false,
+		"key": "source-code-url",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Source Code URL"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-PUBLISHER-NAME",
+		"description": "Name of the primary app publisher",
+		"facetable": false,
+		"key": "publisher-name",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Publisher Name"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-PAST-VERSIONS-WORK-WITH",
+		"description": "Past Versions this product has worked with",
+		"facetable": false,
+		"key": "past-versions-work-with",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Past Versions Work With"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-CURRENT-REQUIREMENTS",
+		"description": "Latest Liferay Version Supported",
+		"facetable": false,
+		"key": "current-requirements",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Current Requirements"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-LIFETIME-LICENSE",
+		"description": "Lifetime license offered?",
+		"facetable": false,
+		"key": "lifetime-license",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Lifetime License"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-PRODUCT-DOWNLOADS",
+		"description": "Total number of downloads for this product",
+		"facetable": false,
+		"key": "product-downloads",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Product Downloads"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-PRICE-MODEL",
+		"description": "Whether the app is Free, Paid or Bundled",
+		"facetable": true,
+		"key": "price-model",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Price Model"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-APP-DOCUMENTATION-URL",
+		"description": "",
+		"facetable": false,
+		"key": "appdocumentationurl",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "App Documentation URL"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-APP-INSTALLATION-GUIDE-URL",
+		"description": "",
+		"facetable": false,
+		"key": "appinstallationguideurl",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "App Installation Guide URL"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-PUBLISHER-WEB-SITE-URL",
+		"description": "",
+		"facetable": false,
+		"key": "publisherwebsiteurl",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Publisher Web site URL"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-SUPPORT-URL",
+		"description": "",
+		"facetable": false,
+		"key": "supporturl",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Support URL"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-PRODUCT-NOTES",
+		"description": "General notes about the app or solution.",
+		"facetable": false,
+		"key": "product-notes",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Product Notes"
+	},
+	{
+		"cpDefinitionExternalReferenceCode": "MP-LICENCE-DURATION",
+		"description": "Perpetual or non-perpetual license",
+		"facetable": true,
+		"key": "licence-duration",
+		"productSpecificationValue": {
+			"en_US": ""
+		},
+		"title": "Licence Duration"
+	}
+]
