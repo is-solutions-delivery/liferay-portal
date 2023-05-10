@@ -690,6 +690,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Account account = Account.toDTO(
 				String.valueOf(jsonArray.getJSONObject(i)));
 
+			if (account == null) {
+				_log.error("Unable to transform account from JSON: " + json);
+
+				continue;
+			}
+
 			accountResource.putAccountByExternalReferenceCode(
 				account.getExternalReferenceCode(), account);
 		}
@@ -2204,6 +2210,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 			long parentKnowledgeBaseObjectId, ServiceContext serviceContext)
 		throws Exception {
 
+		KnowledgeBaseArticle knowledgeBaseArticle = KnowledgeBaseArticle.toDTO(
+			jsonObject.toString());
+
+		if (knowledgeBaseArticle == null) {
+			_log.error(
+				"Unable to transform knowledge base article from JSON: " +
+					jsonObject);
+
+			return null;
+		}
+
 		KnowledgeBaseArticleResource.Builder
 			knowledgeBaseArticleResourceBuilder =
 				_knowledgeBaseArticleResourceFactory.create();
@@ -2212,9 +2229,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			knowledgeBaseArticleResourceBuilder.user(
 				serviceContext.fetchUser()
 			).build();
-
-		KnowledgeBaseArticle knowledgeBaseArticle = KnowledgeBaseArticle.toDTO(
-			jsonObject.toString());
 
 		if (!folder) {
 			knowledgeBaseArticle.setParentKnowledgeBaseArticleId(
@@ -2243,6 +2257,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				folder, jsonObject, parentKnowledgeBaseObjectId,
 				serviceContext);
 
+		if (knowledgeBaseArticle == null) {
+			_log.error(
+				"Unable to transform knowledge base article from JSON: " +
+					jsonObject);
+
+			return;
+		}
+
 		_addOrKnowledgeBaseObjects(
 			false, knowledgeBaseArticle.getId(), resourcePath, serviceContext);
 	}
@@ -2261,6 +2283,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 			ServiceContext serviceContext)
 		throws Exception {
 
+		KnowledgeBaseFolder knowledgeBaseFolder = KnowledgeBaseFolder.toDTO(
+			jsonObject.toString());
+
+		if (knowledgeBaseFolder == null) {
+			_log.error(
+				"Unable to transform knowledge base folder from JSON: " +
+					jsonObject);
+
+			return null;
+		}
+
 		KnowledgeBaseFolderResource.Builder knowledgeBaseFolderResourceBuilder =
 			_knowledgeBaseFolderResourceFactory.create();
 
@@ -2270,9 +2303,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).user(
 				serviceContext.fetchUser()
 			).build();
-
-		KnowledgeBaseFolder knowledgeBaseFolder = KnowledgeBaseFolder.toDTO(
-			jsonObject.toString());
 
 		knowledgeBaseFolder.setParentKnowledgeBaseFolderId(
 			parentKnowledgeBaseObjectId);
@@ -2292,6 +2322,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 		KnowledgeBaseFolder knowledgeBaseFolder =
 			_addOrUpdateKnowledgeBaseFolder(
 				jsonObject, parentKnowledgeBaseObjectId, serviceContext);
+
+		if (knowledgeBaseFolder == null) {
+			_log.error(
+				"Unable to transform knowledge base folder from JSON: " +
+					jsonObject);
+
+			return;
+		}
 
 		_addOrKnowledgeBaseObjects(
 			true, knowledgeBaseFolder.getId(), resourcePath, serviceContext);
@@ -2542,6 +2580,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				ListTypeEntry listTypeEntry = ListTypeEntry.toDTO(
 					String.valueOf(jsonArray.getJSONObject(i)));
 
+				if (listTypeEntry == null) {
+					_log.error(
+						"Unable to transform list type entry from JSON: " +
+							listTypeEntriesJSON);
+
+					continue;
+				}
+
 				com.liferay.list.type.model.ListTypeEntry
 					serviceBuilderListTypeEntry =
 						_listTypeEntryLocalService.fetchListTypeEntry(
@@ -2759,6 +2805,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 				ObjectEntry objectEntry = ObjectEntry.toDTO(
 					JSONUtil.toString(objectEntryJSONObject));
+
+				if (objectEntry == null) {
+					_log.error(
+						"Unable to transform object entry from JSON: " +
+							objectEntryJSONObject);
+
+					continue;
+				}
 
 				objectEntry = _objectEntryManager.addOrUpdateObjectEntry(
 					serviceContext.getCompanyId(), defaultDTOConverterContext,
@@ -3299,15 +3353,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		StructuredContentFolderResource.Builder
-			structuredContentFolderResourceBuilder =
-				_structuredContentFolderResourceFactory.create();
-
-		StructuredContentFolderResource structuredContentFolderResource =
-			structuredContentFolderResourceBuilder.user(
-				serviceContext.fetchUser()
-			).build();
-
 		String json = SiteInitializerUtil.read(
 			parentResourcePath + ".metadata.json", _servletContext);
 
@@ -3319,6 +3364,23 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		StructuredContentFolder structuredContentFolder =
 			StructuredContentFolder.toDTO(json);
+
+		if (structuredContentFolder == null) {
+			_log.error(
+				"Unable to transform structured content folder from JSON: " +
+					json);
+
+			return null;
+		}
+
+		StructuredContentFolderResource.Builder
+			structuredContentFolderResourceBuilder =
+				_structuredContentFolderResourceFactory.create();
+
+		StructuredContentFolderResource structuredContentFolderResource =
+			structuredContentFolderResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
 
 		structuredContentFolder.setParentStructuredContentFolderId(
 			documentFolderId);
@@ -4102,13 +4164,21 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
+			UserAccount userAccount = UserAccount.toDTO(
+				String.valueOf(jsonObject));
+
+			if (userAccount == null) {
+				_log.error(
+					"Unable to transform user account from JSON: " +
+						jsonObject);
+
+				return;
+			}
+
 			List<Group> oldGroups = new ArrayList<>();
 
 			int j = 0;
 			long userId = 0;
-
-			UserAccount userAccount = UserAccount.toDTO(
-				String.valueOf(jsonObject));
 
 			User user = _userLocalService.fetchUserByEmailAddress(
 				serviceContext.getCompanyId(), userAccount.getEmailAddress());
@@ -4248,6 +4318,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				workflowDefinitionResource.postWorkflowDefinitionDeploy(
 					WorkflowDefinition.toDTO(
 						workflowDefinitionJSONObject.toString()));
+
+			if (workflowDefinition == null) {
+				_log.error(
+					"Unable to transform workflow definition from JSON: " +
+						workflowDefinitionJSONObject);
+
+				continue;
+			}
 
 			String propertiesJSON = SiteInitializerUtil.read(
 				resourcePath + "workflow-definition.properties.json",
