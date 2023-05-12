@@ -11,23 +11,39 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 import React from 'react';
-import { ObjectFieldErrors } from '../../ObjectFieldFormBase';
+import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface BasicInfoProps {
-    creationLanguageId: Liferay.Language.Locale;
-    errors: ObjectFieldErrors;
-    filterOperators: TFilterOperators;
-    handleChange: React.ChangeEventHandler<HTMLInputElement>;
-    isApproved: boolean;
-    isDefaultStorageType: boolean;
-    objectDefinitionExternalReferenceCode: string;
-    objectFieldTypes: ObjectFieldType[];
-    objectName: string;
-    objectRelationshipId: number;
-    readOnly: boolean;
-    setValues: (values: Partial<ObjectField>) => void;
-    values: Partial<ObjectField>;
-    workflowStatusJSONArray: LabelValueObject[];
+	creationLanguageId: Liferay.Language.Locale;
+	errors: ObjectFieldErrors;
+	filterOperators: TFilterOperators;
+	handleChange: React.ChangeEventHandler<HTMLInputElement>;
+	isApproved: boolean;
+	isDefaultStorageType: boolean;
+	objectDefinitionExternalReferenceCode: string;
+	objectFieldTypes: ObjectFieldType[];
+	objectName: string;
+	objectRelationshipId: number;
+	readOnly: boolean;
+	setValues: (values: Partial<ObjectField>) => void;
+	values: Partial<ObjectField>;
+	workflowStatusJSONArray: LabelValueObject[];
 }
-export declare function BasicInfo({ creationLanguageId, errors, filterOperators, handleChange, isApproved, isDefaultStorageType, objectDefinitionExternalReferenceCode, objectFieldTypes, objectName, objectRelationshipId, readOnly, setValues, values, workflowStatusJSONArray, }: BasicInfoProps): JSX.Element;
+export declare function BasicInfo({
+	creationLanguageId,
+	errors,
+	filterOperators,
+	handleChange,
+	isApproved,
+	isDefaultStorageType,
+	objectDefinitionExternalReferenceCode,
+	objectFieldTypes,
+	objectName,
+	objectRelationshipId,
+	readOnly,
+	setValues,
+	values,
+	workflowStatusJSONArray,
+}: BasicInfoProps): JSX.Element;
 export {};

@@ -11,17 +11,25 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-export default function EditRelationship({ deletionTypes, hasUpdateObjectDefinitionPermission, objectRelationship: initialValues, parameterEndpoint, parameterRequired, }: IProps): JSX.Element;
+
+export default function EditRelationship({
+	deletionTypes,
+	hasUpdateObjectDefinitionPermission,
+	objectRelationship: initialValues,
+	parameterEndpoint,
+	parameterRequired,
+}: IProps): JSX.Element;
 interface IProps {
-    deletionTypes: TDeletionType[];
-    hasUpdateObjectDefinitionPermission: boolean;
-    objectRelationship: ObjectRelationship;
-    parameterEndpoint: string;
-    parameterRequired: boolean;
+	deletionTypes: TDeletionType[];
+	hasUpdateObjectDefinitionPermission: boolean;
+	objectRelationship: ObjectRelationship;
+	parameterEndpoint: string;
+	parameterRequired: boolean;
 }
 declare type TDeletionType = {
-    label: string;
-    value: string;
+	label: string;
+	value: string;
 };
 export {};

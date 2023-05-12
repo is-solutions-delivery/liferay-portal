@@ -11,19 +11,29 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
+
 import './StateDefinition.scss';
-export default function StateDefinition({ currentKey, disabled, index, initialValues, setValues, stateName, values, }: IProps): JSX.Element;
+export default function StateDefinition({
+	currentKey,
+	disabled,
+	index,
+	initialValues,
+	setValues,
+	stateName,
+	values,
+}: IProps): JSX.Element;
 interface IOption extends PickListItem {
-    checked: boolean;
+	checked: boolean;
 }
 interface IProps {
-    currentKey: string;
-    disabled: boolean;
-    index: number;
-    initialValues: IOption[];
-    setValues: (values: Partial<ObjectField>) => void;
-    stateName: string;
-    values: Partial<ObjectField>;
+	currentKey: string;
+	disabled: boolean;
+	index: number;
+	initialValues: IOption[];
+	setValues: (values: Partial<ObjectField>) => void;
+	stateName: string;
+	values: Partial<ObjectField>;
 }
 export {};

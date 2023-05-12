@@ -11,7 +11,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-import { TObjectField, TObjectLayoutRow, TObjectRelationship } from '../components/Layout/types';
-export declare function findObjectLayoutRowIndex(objectLayoutRows: TObjectLayoutRow[], fieldSize: number): number;
-export declare function findObjectFieldIndexById(objectFields: TObjectField[] | TObjectRelationship[], objectFieldId: number): number;
-export declare function findObjectFieldIndexByName(objectFields: TObjectField[] | TObjectRelationship[], objectFieldName: string): number;
+
+import {
+	TObjectField,
+	TObjectLayoutRow,
+	TObjectRelationship,
+} from '../components/Layout/types';
+export declare function findObjectLayoutRowIndex(
+	objectLayoutRows: TObjectLayoutRow[],
+	fieldSize: number
+): number;
+export declare function findObjectFieldIndexById(
+	objectFields: TObjectField[] | TObjectRelationship[],
+	objectFieldId: number
+): number;
+export declare function findObjectFieldIndexByName(
+	objectFields: TObjectField[] | TObjectRelationship[],
+	objectFieldName: string
+): number;

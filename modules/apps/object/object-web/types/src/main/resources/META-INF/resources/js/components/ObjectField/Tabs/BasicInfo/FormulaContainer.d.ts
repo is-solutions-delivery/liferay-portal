@@ -11,12 +11,18 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { ObjectFieldErrors } from '../../ObjectFieldFormBase';
+
+import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface FormulaContainerProps {
-    errors: ObjectFieldErrors;
-    objectFieldSettings: ObjectFieldSetting[];
-    setValues: (values: Partial<ObjectField>) => void;
+	errors: ObjectFieldErrors;
+	objectFieldSettings: ObjectFieldSetting[];
+	setValues: (values: Partial<ObjectField>) => void;
 }
-export declare function FormulaContainer({ errors, objectFieldSettings, setValues, }: FormulaContainerProps): JSX.Element;
+export declare function FormulaContainer({
+	errors,
+	objectFieldSettings,
+	setValues,
+}: FormulaContainerProps): JSX.Element;
 export {};

@@ -11,14 +11,22 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
+
 import './ObjectFieldFormBase.scss';
 interface IAttachmentFormBaseProps {
-    disabled?: boolean;
-    error?: string;
-    objectFieldSettings: ObjectFieldSetting[];
-    objectName: string;
-    setValues: (values: Partial<ObjectField>) => void;
+	disabled?: boolean;
+	error?: string;
+	objectFieldSettings: ObjectFieldSetting[];
+	objectName: string;
+	setValues: (values: Partial<ObjectField>) => void;
 }
-export declare function AttachmentFormBase({ disabled, error, objectFieldSettings, objectName, setValues, }: IAttachmentFormBaseProps): JSX.Element;
+export declare function AttachmentFormBase({
+	disabled,
+	error,
+	objectFieldSettings,
+	objectName,
+	setValues,
+}: IAttachmentFormBaseProps): JSX.Element;
 export {};

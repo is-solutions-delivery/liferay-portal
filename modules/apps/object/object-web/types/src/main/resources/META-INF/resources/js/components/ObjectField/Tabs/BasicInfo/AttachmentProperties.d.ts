@@ -11,12 +11,18 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { ObjectFieldErrors } from '../../ObjectFieldFormBase';
+
+import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface IAttachmentPropertiesProps {
-    errors: ObjectFieldErrors;
-    objectFieldSettings: ObjectFieldSetting[];
-    onSettingsChange: (setting: ObjectFieldSetting) => void;
+	errors: ObjectFieldErrors;
+	objectFieldSettings: ObjectFieldSetting[];
+	onSettingsChange: (setting: ObjectFieldSetting) => void;
 }
-export declare function AttachmentProperties({ errors, objectFieldSettings, onSettingsChange, }: IAttachmentPropertiesProps): JSX.Element;
+export declare function AttachmentProperties({
+	errors,
+	objectFieldSettings,
+	onSettingsChange,
+}: IAttachmentPropertiesProps): JSX.Element;
 export {};

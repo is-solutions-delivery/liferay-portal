@@ -11,26 +11,38 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-import { TObjectLayout, TObjectLayoutBox, TObjectLayoutColumn, TObjectLayoutTab } from '../components/Layout/types';
+
+import {
+	TObjectLayout,
+	TObjectLayoutBox,
+	TObjectLayoutColumn,
+	TObjectLayoutTab,
+} from '../components/Layout/types';
 declare class TabsVisitor {
-    private _layout;
-    constructor(layout: TObjectLayout);
-    dispose(): void;
-    setLayout(layout: TObjectLayout): void;
-    mapFields(mapper: (field: TObjectLayoutColumn) => void): void[][][][] | undefined;
+	private _layout;
+	constructor(layout: TObjectLayout);
+	dispose(): void;
+	setLayout(layout: TObjectLayout): void;
+	mapFields(
+		mapper: (field: TObjectLayoutColumn) => void
+	): void[][][][] | undefined;
 }
 declare class BoxesVisitor {
-    private _tab;
-    constructor(tab: TObjectLayoutTab);
-    dispose(): void;
-    setTab(tab: TObjectLayoutTab): void;
-    mapFields(mapper: (field: TObjectLayoutColumn) => void): void[][][] | undefined;
+	private _tab;
+	constructor(tab: TObjectLayoutTab);
+	dispose(): void;
+	setTab(tab: TObjectLayoutTab): void;
+	mapFields(
+		mapper: (field: TObjectLayoutColumn) => void
+	): void[][][] | undefined;
 }
 declare class RowsVisitor {
-    private _box;
-    constructor(box: TObjectLayoutBox);
-    dispose(): void;
-    setBox(box: TObjectLayoutBox): void;
-    mapFields(mapper: (field: TObjectLayoutColumn) => void): void[][] | undefined;
+	private _box;
+	constructor(box: TObjectLayoutBox);
+	dispose(): void;
+	setBox(box: TObjectLayoutBox): void;
+	mapFields(
+		mapper: (field: TObjectLayoutColumn) => void
+	): void[][] | undefined;
 }
-export { BoxesVisitor, RowsVisitor, TabsVisitor };
+export {BoxesVisitor, RowsVisitor, TabsVisitor};

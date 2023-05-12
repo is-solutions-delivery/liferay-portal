@@ -11,12 +11,18 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { Observer } from '@clayui/modal/lib/types';
+
+import {Observer} from '@clayui/modal/lib/types';
 interface IProps {
-    editingObjectFieldName: string;
-    observer: Observer;
-    onClose: () => void;
+	editingObjectFieldName: string;
+	observer: Observer;
+	onClose: () => void;
 }
-export declare function ModalEditViewColumn({ editingObjectFieldName, observer, onClose, }: IProps): JSX.Element;
+export declare function ModalEditViewColumn({
+	editingObjectFieldName,
+	observer,
+	onClose,
+}: IProps): JSX.Element;
 export {};

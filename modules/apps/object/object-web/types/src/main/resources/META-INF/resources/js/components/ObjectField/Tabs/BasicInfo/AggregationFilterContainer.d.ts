@@ -11,31 +11,43 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
+
 interface AggregationFilters {
-    defaultSort?: boolean;
-    fieldLabel?: string;
-    filterBy?: string;
-    filterType?: string;
-    label: LocalizedValue<string>;
-    objectFieldBusinessType?: string;
-    objectFieldName: string;
-    priority?: number;
-    sortOrder?: string;
-    type?: string;
-    value?: string;
-    valueList?: LabelValueObject[];
+	defaultSort?: boolean;
+	fieldLabel?: string;
+	filterBy?: string;
+	filterType?: string;
+	label: LocalizedValue<string>;
+	objectFieldBusinessType?: string;
+	objectFieldName: string;
+	priority?: number;
+	sortOrder?: string;
+	type?: string;
+	value?: string;
+	valueList?: LabelValueObject[];
 }
 interface AggregationFilterProps {
-    aggregationFilters: AggregationFilters[];
-    creationLanguageId2?: Liferay.Language.Locale;
-    filterOperators: TFilterOperators;
-    objectDefinitionExternalReferenceCode2?: string;
-    setAggregationFilters: (values: AggregationFilters[]) => void;
-    setCreationLanguageId2: (values: Liferay.Language.Locale) => void;
-    setValues: (values: Partial<ObjectField>) => void;
-    values: Partial<ObjectField>;
-    workflowStatusJSONArray: LabelValueObject[];
+	aggregationFilters: AggregationFilters[];
+	creationLanguageId2?: Liferay.Language.Locale;
+	filterOperators: TFilterOperators;
+	objectDefinitionExternalReferenceCode2?: string;
+	setAggregationFilters: (values: AggregationFilters[]) => void;
+	setCreationLanguageId2: (values: Liferay.Language.Locale) => void;
+	setValues: (values: Partial<ObjectField>) => void;
+	values: Partial<ObjectField>;
+	workflowStatusJSONArray: LabelValueObject[];
 }
-export declare function AggregationFilterContainer({ aggregationFilters, creationLanguageId2, filterOperators, objectDefinitionExternalReferenceCode2, setAggregationFilters, setCreationLanguageId2, setValues, values, workflowStatusJSONArray, }: AggregationFilterProps): JSX.Element;
+export declare function AggregationFilterContainer({
+	aggregationFilters,
+	creationLanguageId2,
+	filterOperators,
+	objectDefinitionExternalReferenceCode2,
+	setAggregationFilters,
+	setCreationLanguageId2,
+	setValues,
+	values,
+	workflowStatusJSONArray,
+}: AggregationFilterProps): JSX.Element;
 export {};

@@ -11,13 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
+
 import './TranslationOptionsContainer.scss';
 interface TranslationOptionsContainerProps {
-    objectDefinition: Partial<ObjectDefinition>;
-    published: boolean;
-    setValues: (values: Partial<ObjectField>) => void;
-    values: Partial<ObjectField>;
+	objectDefinition: Partial<ObjectDefinition>;
+	published: boolean;
+	setValues: (values: Partial<ObjectField>) => void;
+	values: Partial<ObjectField>;
 }
-export declare function TranslationOptionsContainer({ objectDefinition, published, setValues, values, }: TranslationOptionsContainerProps): JSX.Element;
+export declare function TranslationOptionsContainer({
+	objectDefinition,
+	published,
+	setValues,
+	values,
+}: TranslationOptionsContainerProps): JSX.Element;
 export {};

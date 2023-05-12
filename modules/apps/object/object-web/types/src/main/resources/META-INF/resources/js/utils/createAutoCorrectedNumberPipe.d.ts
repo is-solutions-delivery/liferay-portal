@@ -11,6 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-export declare function createAutoCorrectedNumberPipe(max: number, min: number): (conformedValue: string) => false | {
-    value: string;
-};
+
+export declare function createAutoCorrectedNumberPipe(
+	max: number,
+	min: number
+): (
+	conformedValue: string
+) =>
+	| false
+	| {
+			value: string;
+	  };

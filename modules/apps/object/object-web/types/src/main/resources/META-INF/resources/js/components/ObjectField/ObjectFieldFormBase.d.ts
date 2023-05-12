@@ -11,28 +11,50 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-import { FormError } from '@liferay/object-js-components-web';
-import { ChangeEventHandler, ReactNode } from 'react';
+
+import {FormError} from '@liferay/object-js-components-web';
+import {ChangeEventHandler, ReactNode} from 'react';
 import './ObjectFieldFormBase.scss';
 interface ObjectFieldFormBaseProps {
-    children?: ReactNode;
-    creationLanguageId2?: Liferay.Language.Locale;
-    disabled?: boolean;
-    editingField?: boolean;
-    errors: ObjectFieldErrors;
-    handleChange: ChangeEventHandler<HTMLInputElement>;
-    objectDefinition?: ObjectDefinition;
-    objectDefinitionExternalReferenceCode: string;
-    objectField: Partial<ObjectField>;
-    objectFieldTypes: ObjectFieldType[];
-    objectName: string;
-    objectRelationshipId?: number;
-    onAggregationFilterChange?: (aggregationFilterArray: []) => void;
-    onRelationshipChange?: (objectDefinitionExternalReferenceCode2: string) => void;
-    setValues: (values: Partial<ObjectField>) => void;
+	children?: ReactNode;
+	creationLanguageId2?: Liferay.Language.Locale;
+	disabled?: boolean;
+	editingField?: boolean;
+	errors: ObjectFieldErrors;
+	handleChange: ChangeEventHandler<HTMLInputElement>;
+	objectDefinition?: ObjectDefinition;
+	objectDefinitionExternalReferenceCode: string;
+	objectField: Partial<ObjectField>;
+	objectFieldTypes: ObjectFieldType[];
+	objectName: string;
+	objectRelationshipId?: number;
+	onAggregationFilterChange?: (aggregationFilterArray: []) => void;
+	onRelationshipChange?: (
+		objectDefinitionExternalReferenceCode2: string
+	) => void;
+	setValues: (values: Partial<ObjectField>) => void;
 }
-export declare type ObjectFieldErrors = FormError<ObjectField & {
-    [key in ObjectFieldSettingName]: unknown;
-}>;
-export default function ObjectFieldFormBase({ children, creationLanguageId2, disabled, editingField, errors, handleChange, objectDefinition, objectDefinitionExternalReferenceCode, objectField: values, objectFieldTypes, objectName, objectRelationshipId, onAggregationFilterChange, onRelationshipChange, setValues, }: ObjectFieldFormBaseProps): JSX.Element;
+export declare type ObjectFieldErrors = FormError<
+	ObjectField &
+		{
+			[key in ObjectFieldSettingName]: unknown;
+		}
+>;
+export default function ObjectFieldFormBase({
+	children,
+	creationLanguageId2,
+	disabled,
+	editingField,
+	errors,
+	handleChange,
+	objectDefinition,
+	objectDefinitionExternalReferenceCode,
+	objectField: values,
+	objectFieldTypes,
+	objectName,
+	objectRelationshipId,
+	onAggregationFilterChange,
+	onRelationshipChange,
+	setValues,
+}: ObjectFieldFormBaseProps): JSX.Element;
 export {};

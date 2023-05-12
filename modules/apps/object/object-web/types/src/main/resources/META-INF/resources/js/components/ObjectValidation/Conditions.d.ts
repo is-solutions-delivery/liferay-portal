@@ -11,12 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
+
 import 'codemirror/mode/groovy/groovy';
-import { SidebarCategory } from '@liferay/object-js-components-web';
-import { TabProps } from './useObjectValidationForm';
+import {SidebarCategory} from '@liferay/object-js-components-web';
+import {TabProps} from './useObjectValidationForm';
 interface ConditionsProps extends TabProps {
-    objectValidationRuleElements: SidebarCategory[];
+	objectValidationRuleElements: SidebarCategory[];
 }
-export declare function Conditions({ disabled, errors, objectValidationRuleElements, setValues, values, }: ConditionsProps): JSX.Element;
+export declare function Conditions({
+	disabled,
+	errors,
+	objectValidationRuleElements,
+	setValues,
+	values,
+}: ConditionsProps): JSX.Element;
 export {};

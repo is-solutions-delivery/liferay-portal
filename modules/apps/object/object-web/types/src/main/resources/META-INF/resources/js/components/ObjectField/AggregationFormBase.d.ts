@@ -11,18 +11,32 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { ObjectFieldErrors } from './ObjectFieldFormBase';
+
+import {ObjectFieldErrors} from './ObjectFieldFormBase';
 interface IAggregationSourcePropertyProps {
-    creationLanguageId2: Liferay.Language.Locale;
-    disabled?: boolean;
-    editingField?: boolean;
-    errors: ObjectFieldErrors;
-    objectDefinitionExternalReferenceCode: string;
-    objectFieldSettings: ObjectFieldSetting[];
-    onAggregationFilterChange?: (aggregationFilterArray: []) => void;
-    onRelationshipChange?: (objectDefinitionExternalReferenceCode2: string) => void;
-    setValues: (values: Partial<ObjectField>) => void;
+	creationLanguageId2: Liferay.Language.Locale;
+	disabled?: boolean;
+	editingField?: boolean;
+	errors: ObjectFieldErrors;
+	objectDefinitionExternalReferenceCode: string;
+	objectFieldSettings: ObjectFieldSetting[];
+	onAggregationFilterChange?: (aggregationFilterArray: []) => void;
+	onRelationshipChange?: (
+		objectDefinitionExternalReferenceCode2: string
+	) => void;
+	setValues: (values: Partial<ObjectField>) => void;
 }
-export declare function AggregationFormBase({ creationLanguageId2, disabled, errors, editingField, onAggregationFilterChange, onRelationshipChange, objectDefinitionExternalReferenceCode, objectFieldSettings, setValues, }: IAggregationSourcePropertyProps): JSX.Element;
+export declare function AggregationFormBase({
+	creationLanguageId2,
+	disabled,
+	errors,
+	editingField,
+	onAggregationFilterChange,
+	onRelationshipChange,
+	objectDefinitionExternalReferenceCode,
+	objectFieldSettings,
+	setValues,
+}: IAggregationSourcePropertyProps): JSX.Element;
 export {};

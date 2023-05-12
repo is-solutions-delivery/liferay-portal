@@ -11,25 +11,29 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-import { FormError } from '@liferay/object-js-components-web';
-import { ChangeEventHandler } from 'react';
+
+import {FormError} from '@liferay/object-js-components-web';
+import {ChangeEventHandler} from 'react';
 interface IUseObjectValidationForm {
-    initialValues: Partial<ObjectValidation>;
-    onSubmit: (validation: ObjectValidation) => void;
+	initialValues: Partial<ObjectValidation>;
+	onSubmit: (validation: ObjectValidation) => void;
 }
 export declare type ObjectValidationErrors = FormError<ObjectValidation>;
 export interface TabProps {
-    disabled: boolean;
-    errors: ObjectValidationErrors;
-    handleChange: ChangeEventHandler<HTMLInputElement>;
-    setValues: (values: Partial<ObjectValidation>) => void;
-    values: Partial<ObjectValidation>;
+	disabled: boolean;
+	errors: ObjectValidationErrors;
+	handleChange: ChangeEventHandler<HTMLInputElement>;
+	setValues: (values: Partial<ObjectValidation>) => void;
+	values: Partial<ObjectValidation>;
 }
-export declare function useObjectValidationForm({ initialValues, onSubmit, }: IUseObjectValidationForm): {
-    errors: FormError<ObjectValidation>;
-    handleChange: ChangeEventHandler<HTMLInputElement>;
-    handleSubmit: import("react").FormEventHandler<HTMLFormElement>;
-    setValues: (values: Partial<ObjectValidation>) => void;
-    values: Partial<ObjectValidation>;
+export declare function useObjectValidationForm({
+	initialValues,
+	onSubmit,
+}: IUseObjectValidationForm): {
+	errors: FormError<ObjectValidation>;
+	handleChange: ChangeEventHandler<HTMLInputElement>;
+	handleSubmit: import('react').FormEventHandler<HTMLFormElement>;
+	setValues: (values: Partial<ObjectValidation>) => void;
+	values: Partial<ObjectValidation>;
 };
 export {};

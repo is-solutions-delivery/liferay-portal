@@ -11,9 +11,27 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-export declare function getDefaultValueFieldSettings(values: Partial<ObjectField>): {
-    defaultValue: ObjectFieldSettingValue | undefined;
-    defaultValueType: string | number | boolean | Partial<Liferay.Language.FullyLocalizedValue<string>> | ObjectFieldPicklistSetting | NameValueObject[] | ObjectFieldFilterSetting[] | undefined;
+
+export declare function getDefaultValueFieldSettings(
+	values: Partial<ObjectField>
+): {
+	defaultValue: ObjectFieldSettingValue | undefined;
+	defaultValueType:
+		| string
+		| number
+		| boolean
+		| Partial<Liferay.Language.FullyLocalizedValue<string>>
+		| ObjectFieldPicklistSetting
+		| NameValueObject[]
+		| ObjectFieldFilterSetting[]
+		| undefined;
 };
-export declare function getUpdatedDefaultValueFieldSettings(values: Partial<ObjectField>, newDefaultValue: ObjectFieldSettingValue, newDefaultValueType: string): ObjectFieldSetting[];
-export declare function getUpdatedDefaultValueType(values: Partial<ObjectField>, newDefaultValueType: string): ObjectFieldSetting[];
+export declare function getUpdatedDefaultValueFieldSettings(
+	values: Partial<ObjectField>,
+	newDefaultValue: ObjectFieldSettingValue,
+	newDefaultValueType: string
+): ObjectFieldSetting[];
+export declare function getUpdatedDefaultValueType(
+	values: Partial<ObjectField>,
+	newDefaultValueType: string
+): ObjectFieldSetting[];

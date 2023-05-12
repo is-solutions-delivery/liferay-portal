@@ -11,15 +11,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { ObjectFieldErrors } from '../../ObjectFieldFormBase';
+
+import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface IMaxLengthPropertiesProps {
-    disabled?: boolean;
-    errors: ObjectFieldErrors;
-    objectField: Partial<ObjectField>;
-    objectFieldSettings: ObjectFieldSetting[];
-    onSettingsChange: (setting: ObjectFieldSetting) => void;
-    setValues: (values: Partial<ObjectField>) => void;
+	disabled?: boolean;
+	errors: ObjectFieldErrors;
+	objectField: Partial<ObjectField>;
+	objectFieldSettings: ObjectFieldSetting[];
+	onSettingsChange: (setting: ObjectFieldSetting) => void;
+	setValues: (values: Partial<ObjectField>) => void;
 }
-export declare function MaxLengthProperties({ disabled, errors, objectField, objectFieldSettings, onSettingsChange, setValues, }: IMaxLengthPropertiesProps): JSX.Element;
+export declare function MaxLengthProperties({
+	disabled,
+	errors,
+	objectField,
+	objectFieldSettings,
+	onSettingsChange,
+	setValues,
+}: IMaxLengthPropertiesProps): JSX.Element;
 export {};

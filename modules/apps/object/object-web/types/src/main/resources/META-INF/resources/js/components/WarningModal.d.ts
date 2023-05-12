@@ -11,13 +11,19 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-import { Observer } from '@clayui/modal/lib/types';
+
+import {Observer} from '@clayui/modal/lib/types';
 import React from 'react';
-export default function WarningModal({ children, observer, onClose, title, }: IProps): JSX.Element;
+export default function WarningModal({
+	children,
+	observer,
+	onClose,
+	title,
+}: IProps): JSX.Element;
 interface IProps {
-    children?: React.ReactNode;
-    observer: Observer;
-    onClose: () => void;
-    title: string;
+	children?: React.ReactNode;
+	observer: Observer;
+	onClose: () => void;
+	title: string;
 }
 export {};

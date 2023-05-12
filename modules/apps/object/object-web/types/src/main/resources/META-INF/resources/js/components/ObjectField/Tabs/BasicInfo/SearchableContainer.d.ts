@@ -11,15 +11,22 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { ObjectFieldErrors } from '../../ObjectFieldFormBase';
+
+import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface ISearchableProps {
-    disabled?: boolean;
-    errors: ObjectFieldErrors;
-    isApproved: boolean;
-    objectField: Partial<ObjectField>;
-    readOnly: boolean;
-    setValues: (values: Partial<ObjectField>) => void;
+	disabled?: boolean;
+	errors: ObjectFieldErrors;
+	isApproved: boolean;
+	objectField: Partial<ObjectField>;
+	readOnly: boolean;
+	setValues: (values: Partial<ObjectField>) => void;
 }
-export declare function SearchableContainer({ isApproved, objectField, readOnly, setValues, }: ISearchableProps): JSX.Element;
+export declare function SearchableContainer({
+	isApproved,
+	objectField,
+	readOnly,
+	setValues,
+}: ISearchableProps): JSX.Element;
 export {};

@@ -11,10 +11,18 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { TabProps } from './useObjectValidationForm';
+
+import {TabProps} from './useObjectValidationForm';
 interface BasicInfoProps extends TabProps {
-    componentLabel: string;
+	componentLabel: string;
 }
-export declare function BasicInfo({ componentLabel, disabled, errors, setValues, values, }: BasicInfoProps): JSX.Element;
+export declare function BasicInfo({
+	componentLabel,
+	disabled,
+	errors,
+	setValues,
+	values,
+}: BasicInfoProps): JSX.Element;
 export {};

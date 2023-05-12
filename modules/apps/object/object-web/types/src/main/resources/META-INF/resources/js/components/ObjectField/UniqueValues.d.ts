@@ -11,12 +11,18 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
+
 import './ObjectFieldFormBase.scss';
 interface UniqueValuesProps {
-    disabled?: boolean;
-    objectField: Partial<ObjectField>;
-    setValues: (values: Partial<ObjectField>) => void;
+	disabled?: boolean;
+	objectField: Partial<ObjectField>;
+	setValues: (values: Partial<ObjectField>) => void;
 }
-export declare function UniqueValues({ disabled, objectField: values, setValues, }: UniqueValuesProps): JSX.Element;
+export declare function UniqueValues({
+	disabled,
+	objectField: values,
+	setValues,
+}: UniqueValuesProps): JSX.Element;
 export {};

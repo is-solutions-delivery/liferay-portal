@@ -11,10 +11,27 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-export declare function getCheckedWorkflowStatusItems(itemValues: LabelValueObject[], setEditingFilterType: () => number[] | string[] | null): IItem[];
-export declare function getCheckedPickListItems(itemValues: PickListItem[], setEditingFilterType: () => number[] | string[] | null): IItem[];
-export declare function getSystemFieldLabelFromEntry(titleFieldName: string, entry: ObjectEntry, itemObject: LabelValueObject): {
-    label: unknown;
-    value: string;
+
+export declare function getCheckedWorkflowStatusItems(
+	itemValues: LabelValueObject[],
+	setEditingFilterType: () => number[] | string[] | null
+): IItem[];
+export declare function getCheckedPickListItems(
+	itemValues: PickListItem[],
+	setEditingFilterType: () => number[] | string[] | null
+): IItem[];
+export declare function getSystemFieldLabelFromEntry(
+	titleFieldName: string,
+	entry: ObjectEntry,
+	itemObject: LabelValueObject
+): {
+	label: unknown;
+	value: string;
 };
-export declare function getCheckedRelationshipItems(relatedEntries: ObjectEntry[], titleFieldName: string, systemField: boolean, systemObject: boolean, setEditingFilterType: () => number[] | string[] | null): IItem[];
+export declare function getCheckedRelationshipItems(
+	relatedEntries: ObjectEntry[],
+	titleFieldName: string,
+	systemField: boolean,
+	systemObject: boolean,
+	setEditingFilterType: () => number[] | string[] | null
+): IItem[];

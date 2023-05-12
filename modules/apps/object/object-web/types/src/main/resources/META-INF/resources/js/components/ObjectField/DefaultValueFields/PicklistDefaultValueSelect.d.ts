@@ -11,7 +11,8 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 import React from 'react';
-import { InputAsValueFieldComponentProps } from '../Tabs/Advanced/DefaultValueContainer';
+import {InputAsValueFieldComponentProps} from '../Tabs/Advanced/DefaultValueContainer';
 declare const PicklistDefaultValueSelect: React.FC<InputAsValueFieldComponentProps>;
 export default PicklistDefaultValueSelect;

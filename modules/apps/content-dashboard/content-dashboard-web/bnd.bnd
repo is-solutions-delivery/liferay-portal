@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Content Dashboard Web
 Bundle-SymbolicName: com.liferay.content.dashboard.web
-Bundle-Version: 2.0.97
+Bundle-Version: 2.0.98
 Import-Package:\
 	!com.graphbuilder.*,\
 	\

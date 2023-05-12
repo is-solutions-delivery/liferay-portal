@@ -11,26 +11,44 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { SidebarCategory } from '@liferay/object-js-components-web';
+
+import {SidebarCategory} from '@liferay/object-js-components-web';
 import './EditObjectField.scss';
 interface EditObjectFieldProps {
-    creationLanguageId: Liferay.Language.Locale;
-    filterOperators: TFilterOperators;
-    forbiddenChars: string[];
-    forbiddenLastChars: string[];
-    forbiddenNames: string[];
-    isApproved: boolean;
-    isDefaultStorageType: boolean;
-    objectDefinitionExternalReferenceCode: string;
-    objectField: ObjectField;
-    objectFieldId: number;
-    objectFieldTypes: ObjectFieldType[];
-    objectName: string;
-    objectRelationshipId: number;
-    readOnly: boolean;
-    sidebarElements: SidebarCategory[];
-    workflowStatusJSONArray: LabelValueObject[];
+	creationLanguageId: Liferay.Language.Locale;
+	filterOperators: TFilterOperators;
+	forbiddenChars: string[];
+	forbiddenLastChars: string[];
+	forbiddenNames: string[];
+	isApproved: boolean;
+	isDefaultStorageType: boolean;
+	objectDefinitionExternalReferenceCode: string;
+	objectField: ObjectField;
+	objectFieldId: number;
+	objectFieldTypes: ObjectFieldType[];
+	objectName: string;
+	objectRelationshipId: number;
+	readOnly: boolean;
+	sidebarElements: SidebarCategory[];
+	workflowStatusJSONArray: LabelValueObject[];
 }
-export default function EditObjectField({ creationLanguageId, filterOperators, forbiddenChars, forbiddenLastChars, forbiddenNames, isApproved, isDefaultStorageType, objectDefinitionExternalReferenceCode, objectFieldId, objectFieldTypes, objectName, objectRelationshipId, readOnly, sidebarElements, workflowStatusJSONArray, }: EditObjectFieldProps): JSX.Element;
+export default function EditObjectField({
+	creationLanguageId,
+	filterOperators,
+	forbiddenChars,
+	forbiddenLastChars,
+	forbiddenNames,
+	isApproved,
+	isDefaultStorageType,
+	objectDefinitionExternalReferenceCode,
+	objectFieldId,
+	objectFieldTypes,
+	objectName,
+	objectRelationshipId,
+	readOnly,
+	sidebarElements,
+	workflowStatusJSONArray,
+}: EditObjectFieldProps): JSX.Element;
 export {};

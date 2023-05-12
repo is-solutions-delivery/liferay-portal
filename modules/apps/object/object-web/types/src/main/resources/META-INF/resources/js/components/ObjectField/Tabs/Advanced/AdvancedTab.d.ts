@@ -11,15 +11,23 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 /// <reference types="react" />
-import { SidebarCategory } from '@liferay/object-js-components-web';
-import { ObjectFieldErrors } from '../../ObjectFieldFormBase';
+
+import {SidebarCategory} from '@liferay/object-js-components-web';
+import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface AdvancedTabProps {
-    creationLanguageId: Liferay.Language.Locale;
-    errors: ObjectFieldErrors;
-    setValues: (value: Partial<ObjectField>) => void;
-    sidebarElements: SidebarCategory[];
-    values: Partial<ObjectField>;
+	creationLanguageId: Liferay.Language.Locale;
+	errors: ObjectFieldErrors;
+	setValues: (value: Partial<ObjectField>) => void;
+	sidebarElements: SidebarCategory[];
+	values: Partial<ObjectField>;
 }
-export declare function AdvancedTab({ creationLanguageId, errors, setValues, sidebarElements, values, }: AdvancedTabProps): JSX.Element;
+export declare function AdvancedTab({
+	creationLanguageId,
+	errors,
+	setValues,
+	sidebarElements,
+	values,
+}: AdvancedTabProps): JSX.Element;
 export {};
