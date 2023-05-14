@@ -1,0 +1,254 @@
+@component-name = "portal-solutions"
+definition {
+
+	property custom.properties = "feature.flag.LPS-163118=true";
+	property osgi.modules.includes = "site-initializer-testray";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Site Initializer Testray";
+
+	var testSiteName = "Testray 2";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
+		}
+	}
+
+	tearDown {
+		task ("Logout And Login with test user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "test test");
+		}
+
+		task ("Delete Testray Site and Client Extensions") {
+			Testray.tearDownCP();
+
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
+
+			ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
+		}
+
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "Story ID: LPS-178274 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to create/edit/delete the user but can view"
+	@priority = 4
+	test AnalystRoleCanNotCreateEditAndDeleteUser {
+		property test.name.skip.portal.instance = "TestrayUserPermissions#AnalystRoleCanNotCreateEditAndDeleteUser";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("When the user go to manage users") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+		}
+
+		task ("Then can see the users in the table") {
+			AssertElementPresent(
+				key_projectName = "Test Test",
+				locator1 = "Testray#ITEM_NAME");
+
+			AssertElementPresent(
+				key_projectName = "Analyst User",
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("And can not see the add user button") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+
+		task ("And when go to the users informations") {
+			Testray.goToProjectPage(projectName = "analyst@testray.com");
+		}
+
+		task ("Then can not see the Delete user button") {
+			AssertElementNotPresent(
+				key_text = "Delete User",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And can see the roles disabled") {
+			AssertElementPresent(
+				key_checkboxName = "Testray Administrator",
+				locator1 = "Checkbox#DISABLED_EXPORT_TRANSLATION");
+		}
+	}
+
+	@description = "Story ID: LPS-178274 | Test Summary: Verify that the User with the 'Testray Lead' role should not be able to create/edit/delete the user but can view"
+	@priority = 3
+	test LeadRoleCanNotCreateEditAndDeleteUser {
+		property test.name.skip.portal.instance = "TestrayUserPermissions#LeadRoleCanNotCreateEditAndDeleteUser";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("When the user go to manage users") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+		}
+
+		task ("Then can see the users in the table") {
+			AssertElementPresent(
+				key_projectName = "Test Test",
+				locator1 = "Testray#ITEM_NAME");
+
+			AssertElementPresent(
+				key_projectName = "Lead User",
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("And can not see the add user button") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+
+		task ("And when go to the users informations") {
+			Testray.goToProjectPage(projectName = "analyst@testray.com");
+		}
+
+		task ("Then can not see the Delete user button") {
+			AssertElementNotPresent(
+				key_text = "Delete User",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And can see the roles disabled") {
+			AssertElementPresent(
+				key_checkboxName = "Testray Administrator",
+				locator1 = "Checkbox#DISABLED_EXPORT_TRANSLATION");
+		}
+	}
+
+	@description = "Story ID: LPS-178274 | Test Summary: Verify that a new user with full admin permissions can create(with adm roles disabled)/edit and delete users"
+	@priority = 5
+	test NewUserWithAdmRoleCanCreateEditAndDeleteUser {
+		property test.name.skip.portal.instance = "TestrayUserPermissions#NewUserWithAdmRoleCanCreateEditAndDeleteUser";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "administrator@testray.com",
+				userLoginFullName = "Administrator User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("When the administrator add a user") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+
+			Click(locator1 = "Button#PLUS");
+
+			TestrayManageUser.addUser(
+				listRoles = "Testray User",
+				rePassword = "test",
+				userEmailAddressEdit = "user@liferay.com",
+				userFirstNameEdit = "firstname",
+				userLastNameEdit = "Updateln",
+				userPassword = "test",
+				userScreenNameEdit = "testscreen");
+		}
+
+		task ("Then can see the user created in the list") {
+			AssertElementPresent(
+				key_projectName = "firstname Updateln",
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("And can see the roles disabled") {
+			Testray.goToProjectPage(projectName = "user@liferay.com");
+
+			AssertElementPresent(
+				key_checkboxName = "Administrator",
+				locator1 = "Checkbox#DISABLED_EXPORT_TRANSLATION");
+		}
+
+		task ("When delete the user") {
+			Button.click(button = "Delete User");
+		}
+
+		task ("Then can not see the user in the list") {
+			Refresh();
+
+			AssertElementNotPresent(
+				key_projectName = "firstname Updateln",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178274 | Test Summary: Verify that the User with the 'Testray User' role should not be able to create/edit/delete the user but can view"
+	@priority = 4
+	test UserRoleCanNotCreateEditAndDeleteUser {
+		property test.name.skip.portal.instance = "TestrayUserPermissions#UserRoleCanNotCreateEditAndDeleteUser";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("When the user go to manage users") {
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+		}
+
+		task ("Then can see the users in the table") {
+			AssertElementPresent(
+				key_projectName = "Test Test",
+				locator1 = "Testray#ITEM_NAME");
+
+			AssertElementPresent(
+				key_projectName = "User User",
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("And can not see the add user button") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+
+		task ("And when go to the users informations") {
+			Testray.goToProjectPage(projectName = "user@testray.com");
+		}
+
+		task ("Then can not see the Delete user button") {
+			AssertElementNotPresent(
+				key_text = "Delete User",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And can see the roles disabled") {
+			AssertElementPresent(
+				key_checkboxName = "Testray Administrator",
+				locator1 = "Checkbox#DISABLED_EXPORT_TRANSLATION");
+		}
+	}
+
+}

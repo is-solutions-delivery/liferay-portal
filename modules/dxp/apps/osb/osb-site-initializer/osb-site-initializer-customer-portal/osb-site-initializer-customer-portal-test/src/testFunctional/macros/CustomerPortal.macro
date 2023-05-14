@@ -53,11 +53,16 @@ definition {
 
 		CP2ActivationKeys.clickAtDropdownItem(dropdownItem = ${dropdownItem});
 
-		Type(
-			locator1 = "CustomerPortalSite#ID_CONFIRMATION",
-			value1 = ${value});
+		if (isSet(value)) {
+			Type(
+				locator1 = "CustomerPortalSite#ID_CONFIRMATION",
+				value1 = ${value});
 
-		CustomerPortal.clickAtButton(text = "Confirm");
+			CustomerPortal.clickAtButton(text = "Confirm");
+		}
+		else {
+			CustomerPortal.clickAtButton(text = "Cancel");
+		}
 	}
 
 	macro addCPObject {
@@ -215,6 +220,14 @@ definition {
 			typeCard = ${typeCard});
 	}
 
+	macro assertTextAtObjectTable {
+		var key_text = ${text};
+
+		AssertTextEquals(
+			locator1 = "CustomerPortalSite#TABLE_ELEMENT_BY_TEXT",
+			value1 = ${text});
+	}
+
 	macro assertThatLinkIsVisible {
 		var key_text = ${text};
 
@@ -290,10 +303,6 @@ definition {
 			var status = "Active";
 		}
 
-		if (!(isSet(status))) {
-			var status = "In-Progress";
-		}
-
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
 			panel = "Control Panel",
@@ -346,6 +355,12 @@ definition {
 		var key_text = ${text};
 
 		Click(locator1 = "CustomerPortalSite#MODAL_INFO");
+	}
+
+	macro clickOnModalPage {
+		var key_text = ${text};
+
+		Click(locator1 = "CustomerPortalSite#PAGE_INFO");
 	}
 
 	macro clickOnSkipForNowButton {
@@ -755,6 +770,10 @@ definition {
 	}
 
 	macro viewActivationStatusCardChange {
+		if (!(isSet(subtitle))) {
+			var subtitle = "";
+		}
+
 		AssertElementPresent(
 			key_text = ${subtitle},
 			locator1 = "CustomerPortalSite#CARD_SUBSCRIPTION");
@@ -832,6 +851,12 @@ definition {
 		var key_text = ${modalText};
 
 		AssertVisible(locator1 = "CustomerPortalSite#MODAL_INFO");
+	}
+
+	macro viewConfirmationTextInTheModalPage {
+		var key_text = ${pageText};
+
+		AssertVisible(locator1 = "CustomerPortalSite#PAGE_INFO");
 	}
 
 	macro viewCPObjectCustomInfo {

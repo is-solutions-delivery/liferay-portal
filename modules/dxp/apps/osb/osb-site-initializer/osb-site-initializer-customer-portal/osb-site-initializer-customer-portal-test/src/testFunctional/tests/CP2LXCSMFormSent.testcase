@@ -44,6 +44,8 @@ definition {
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
+		CP2Utils.tearDownForCloudEntries(status = "In-Progress");
+
 		CustomerPortal.customerPortalTearDown();
 
 		if (${testPortalInstance} == "true") {
@@ -80,7 +82,13 @@ definition {
 
 			CustomerPortal.clickOnFinishActivationButton();
 
-			CP2DXPCloudSetup.typeAllSetupDXPCloudInfoFields();
+			CP2DXPCloudSetup.typeAllSetupDXPCloudInfoFields(
+				dataCenterRegion = "Frankfurt, Germany",
+				email = "test@liferay.com",
+				firstName = "FirstName",
+				github = "GitHub User",
+				lastName = "LastName",
+				projectId = 001);
 
 			CustomerPortal.clickAtButton(text = "Submit");
 
@@ -90,7 +98,13 @@ definition {
 		task ("And I go back to my first tab, fill in the form again and send it") {
 			CustomerPortal.clickOnFinishActivationButton();
 
-			CP2DXPCloudSetup.typeAllSetupDXPCloudInfoFields();
+			CP2DXPCloudSetup.typeAllSetupDXPCloudInfoFields(
+				dataCenterRegion = "Frankfurt, Germany",
+				email = "test@liferay.com",
+				firstName = "FirstName",
+				github = "GitHub User",
+				lastName = "LastName",
+				projectId = 001);
 
 			CustomerPortal.clickAtButton(text = "Submit");
 		}
@@ -99,18 +113,6 @@ definition {
 			CustomerPortal.viewConfirmationModal(modalText = "Another user already submitted the LXC - SM activation request.");
 
 			CustomerPortal.clickAtButton(text = "Done");
-		}
-
-		task ("Delete the entries and objects created") {
-			CustomerPortal.clearStatus(status = "In-Progress");
-
-			CP2Utils.deleteSpecificObjectEntry(
-				entry = "ERC-001",
-				portlet = "DXP Cloud Environments");
-
-			CP2Utils.deleteSpecificObjectEntry(
-				entry = "test@liferay.com",
-				portlet = "Admins DXP Cloud");
 		}
 	}
 

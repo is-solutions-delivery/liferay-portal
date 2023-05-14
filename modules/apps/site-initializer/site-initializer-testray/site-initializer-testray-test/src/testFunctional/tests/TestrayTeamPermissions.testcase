@@ -1,0 +1,217 @@
+@component-name = "portal-solutions"
+definition {
+
+	property custom.properties = "feature.flag.LPS-163118=true";
+	property osgi.modules.includes = "site-initializer-testray";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Site Initializer Testray";
+
+	var projectName = "Project 1";
+	var teamName = "Team 1";
+	var testSiteName = "Testray 2";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
+		}
+
+		task ("Create a Project and team via API") {
+			JSONTestray.addProject(
+				projectDescription = "Project Description 1",
+				projectName = ${projectName});
+
+			JSONTestray.addTeam(
+				projectName = ${projectName},
+				teamName = ${teamName});
+		}
+	}
+
+	tearDown {
+		task ("Logout And Login with test user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "test test");
+		}
+
+		task ("Delete all objects, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
+
+			Testray.tearDownCP();
+
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
+
+			ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
+		}
+
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "Story ID: LPS-178273 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to create/edit/delete the team"
+	@priority = 3
+	test AnalystRoleCanNotCreateEditAndDeleteTeam {
+		property test.name.skip.portal.instance = "TestrayTeamPermissions#AnalystRoleCanNotCreateEditAndDeleteTeam";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("When the user go to the team page") {
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+		}
+
+		task ("Then can see the team in the table") {
+			AssertElementPresent(
+				key_projectName = ${teamName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("And can not see add button") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+
+		task ("When right click in team") {
+			RightClick.rightClick(
+				key_projectName = ${teamName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then can not see the 'Edit, Delete' options in right click") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-178273 | Test Summary: Verify that the User with the 'Testray Lead' role should not be able to create/edit/delete the team"
+	@priority = 3
+	test LeadRoleCanNotCreateEditAndDeleteTeam {
+		property test.name.skip.portal.instance = "TestrayTeamPermissions#LeadRoleCanNotCreateEditAndDeleteTeam";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("When the user go to the team page") {
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+		}
+
+		task ("Then can see the team in the table") {
+			AssertElementPresent(
+				key_projectName = ${teamName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("And can not see add button") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+
+		task ("When right click in team") {
+			RightClick.rightClick(
+				key_projectName = ${teamName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then can not see the 'Edit, Delete' options in right click") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-178273 | Test Summary: Verify that the User with the 'Testray User' role should not be able to create/edit/delete the team"
+	@priority = 2
+	test UserRoleCanNotCreateEditAndDeleteTeam {
+		property test.name.skip.portal.instance = "TestrayTeamPermissions#UserRoleCanNotCreateEditAndDeleteTeam";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("When the user go to the team page") {
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+		}
+
+		task ("Then can see the team in the table") {
+			AssertElementPresent(
+				key_projectName = ${teamName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("And can not see add button") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+
+		task ("When right click in team") {
+			RightClick.rightClick(
+				key_projectName = ${teamName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then can not see the 'Edit, Delete' options in right click") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+}

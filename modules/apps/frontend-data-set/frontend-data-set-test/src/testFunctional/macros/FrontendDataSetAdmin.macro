@@ -24,6 +24,22 @@ definition {
 		}
 	}
 
+	macro assertFieldsChecked {
+		for (var key_fieldItem : list ${key_fieldList}) {
+			Check.checkNotVisible(
+				checkboxName = ${key_fieldItem},
+				locator1 = "Checkbox#ANY_CHECKBOX");
+		}
+	}
+
+	macro assertFieldsNotChecked {
+		for (var key_fieldItem : list ${key_fieldList}) {
+			AssertNotChecked.assertNotCheckedNotVisible(
+				checkboxName = ${key_fieldItem},
+				locator1 = "Checkbox#ANY_CHECKBOX");
+		}
+	}
+
 	macro changePagination {
 		Click(locator1 = "FrontendDataSetAdmin#ITEMS_PER_PAGE_SELECT");
 
@@ -89,9 +105,13 @@ definition {
 	}
 
 	macro deleteAllDatasetEntries {
-		JSONFrontendDatasetEntries._deleteFDSEntry();
-
 		FrontendDataSetAdmin.goToDatasetAdminPage();
+
+		if (IsElementPresent(key_itemName = "", locator1 = "FrontendDataSetAdmin#TABLE_CELL")) {
+			JSONFrontendDatasetEntries._deleteFDSEntry();
+
+			Refresh();
+		}
 
 		AssertElementPresent(
 			locator1 = "Message#EMPTY_STATE_INFO",
@@ -158,16 +178,28 @@ definition {
 		Navigator.openWithAppendToBaseURL(urlAppend = "group/control_panel/manage?p_p_id=com_liferay_frontend_data_set_views_web_internal_portlet_FDSViewsPortlet&p_p_lifecycle=0&_com_liferay_frontend_data_set_views_web_internal_portlet_FDSViewsPortlet_mvcPath=%2Ffds_views.jsp&_com_liferay_frontend_data_set_views_web_internal_portlet_FDSViewsPortlet_fdsEntryId=${datasetEntryId}");
 	}
 
-	macro goToFieldTabs {
+	macro goToSpecificViewPage {
+		FrontendDataSetAdmin.goToDatasetViewAdminPage(datasetName = ${datasetName});
+
 		Click(
-			key_name = ${dataSetViewName},
+			key_name = ${key_viewName},
 			locator1 = "FrontendDataSetAdmin#DATA_SET_VIEW_ENTRY_KEBAB_MENU");
 
-		Click(locator1 = "FrontendDataSetAdmin#VIEW_ENTRY_BUTTON");
+		MenuItem.click(menuItem = "View");
+	}
+
+	macro goToTab {
+		if (isSet(dataSetViewName)) {
+			Click(
+				key_name = ${dataSetViewName},
+				locator1 = "FrontendDataSetAdmin#DATA_SET_VIEW_ENTRY_KEBAB_MENU");
+
+			Click(locator1 = "FrontendDataSetAdmin#VIEW_ENTRY_BUTTON");
+		}
 
 		Click(
-			locator1 = "FrontendDataSetAdmin#VIEWS_FIELD_TABS",
-			navTab = ${navTab});
+			key_tabName = ${tabName},
+			locator1 = "FrontendDataSetAdmin#VIEW_ANY_TAB");
 	}
 
 	macro goToViews {
@@ -176,6 +208,20 @@ definition {
 			locator1 = "ObjectPortlet#ENTRY_KEBAB_MENU");
 
 		Click(locator1 = "FrontendDataSetAdmin#VIEW_ENTRY_BUTTON");
+	}
+
+	macro searchField {
+		WaitForElementPresent(locator1 = "FrontendDataSetAdmin#MODAL_SEARCH");
+
+		AssertElementPresent(locator1 = "Icon#BASIC_SEARCH");
+
+		Type(
+			locator1 = "FrontendDataSetAdmin#MODAL_SEARCH",
+			value1 = ${searchTerm});
+
+		if (!(isSet(modal))) {
+			WaitForLiferayEvent.initializeLiferayEventLog();
+		}
 	}
 
 	macro searchProvider {

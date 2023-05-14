@@ -182,7 +182,12 @@
 </tr>
 <tr>
 	<td>MODAL_INFO</td>
-	<td>//div[contains(@class, 'portlet-content')]/parent::div//*[contains(text(), '${key_text}')]</td>
+	<td>//div[contains(@class, 'modal-content')]/parent::div//*[contains(text(), '${key_text}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_INFO</td>
+	<td>//div[contains(@class, 'container')]/parent::div//*[contains(text(), '${key_text}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -423,6 +428,11 @@
 <tr>
 	<td>DEPLOY_ACTIVATION_PAGE</td>
 	<td>//*//h1[contains(text(), 'Deploying Activation Keys')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TABLE_ELEMENT_BY_TEXT</td>
+	<td>//*[contains(@class, 'table-style-fluid')]//*[contains(text(), '${key_text}')]</td>
 	<td></td>
 </tr>
 </tbody>

@@ -359,6 +359,54 @@ function Filters({fdsView, fdsViewsURL, namespace}: IProps) {
 			),
 		});
 
+	const handleDelete = async ({item}: {item: Filter}) => {
+		openModal({
+			bodyHTML: Liferay.Language.get(
+				'are-you-sure-you-want-to-delete-this-filter'
+			),
+			buttons: [
+				{
+					autoFocus: true,
+					displayType: 'secondary',
+					label: Liferay.Language.get('cancel'),
+					type: 'cancel',
+				},
+				{
+					displayType: 'warning',
+					label: Liferay.Language.get('delete'),
+					onClick: ({processClose}: {processClose: Function}) => {
+						processClose();
+
+						const url = `${
+							item.type === 'date-time'
+								? API_URL.FDS_DATE_FILTERS
+								: API_URL.FDS_DYNAMIC_FILTERS
+						}/${item.id}`;
+
+						fetch(url, {
+							method: 'DELETE',
+						})
+							.then(() => {
+								alertSuccess();
+
+								setFilters(
+									filters.filter(
+										(filter: Filter) =>
+											filter.id !== item.id
+									)
+								);
+							})
+							.catch(() => {
+								alertFailed();
+							});
+					},
+				},
+			],
+			status: 'warning',
+			title: Liferay.Language.get('delete-filter'),
+		});
+	};
+
 	useEffect(() => {
 		const getFilters = async () => {
 			const response = await fetch(
@@ -417,6 +465,13 @@ function Filters({fdsView, fdsViewsURL, namespace}: IProps) {
 	return (
 		<ClayLayout.ContainerFluid>
 			<OrderableTable
+				actions={[
+					{
+						icon: 'trash',
+						label: Liferay.Language.get('delete'),
+						onClick: handleDelete,
+					},
+				]}
 				disableSave={!newFiltersOrder.length}
 				fields={[
 					{

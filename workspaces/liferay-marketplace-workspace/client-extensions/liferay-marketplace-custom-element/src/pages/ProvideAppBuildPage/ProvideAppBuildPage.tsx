@@ -210,23 +210,25 @@ export function ProvideAppBuildPage({
 				onClickBack={() => onClickBack()}
 				onClickContinue={() => {
 					const submitAppBuildType = async () => {
-						const dataSpecification = await createSpecification({
-							body: {
-								key: 'type',
-								title: {en_US: 'Type'},
-							},
-						});
-
 						if (appType.id) {
 							updateProductSpecification({
 								body: {
-									specificationKey: dataSpecification.key,
+									specificationKey: 'type',
 									value: {en_US: appType.value},
 								},
 								id: appType.id,
 							});
 						}
 						else {
+							const dataSpecification = await createSpecification(
+								{
+									body: {
+										key: 'type',
+										title: {en_US: 'Type'},
+									},
+								}
+							);
+
 							const {id} = await createProductSpecification({
 								appId,
 								body: {
@@ -247,12 +249,12 @@ export function ProvideAppBuildPage({
 					submitAppBuildType();
 
 					buildZIPFiles.forEach((buildZIPFile) => {
-						submitBase64EncodedFile(
+						submitBase64EncodedFile({
 							appERC,
-							buildZIPFile.file,
-							createAttachment,
-							buildZIPFile.fileName
-						);
+							file: buildZIPFile.file,
+							requestFunction: createAttachment,
+							title: buildZIPFile.fileName,
+						});
 					});
 
 					onClickContinue();
