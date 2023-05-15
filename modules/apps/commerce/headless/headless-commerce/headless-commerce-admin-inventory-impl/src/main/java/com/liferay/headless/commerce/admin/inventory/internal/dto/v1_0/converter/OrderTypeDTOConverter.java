@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0;
+package com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter;
 
 import com.liferay.commerce.model.CommerceOrderType;
 import com.liferay.commerce.service.CommerceOrderTypeService;

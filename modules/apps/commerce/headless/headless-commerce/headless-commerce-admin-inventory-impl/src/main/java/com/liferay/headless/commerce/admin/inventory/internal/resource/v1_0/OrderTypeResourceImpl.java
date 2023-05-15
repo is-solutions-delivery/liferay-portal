@@ -58,7 +58,7 @@ public class OrderTypeResourceImpl
 		_commerceInventoryWarehouseRelService;
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.OrderTypeDTOConverter)"
+		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter.OrderTypeDTOConverter)"
 	)
 	private DTOConverter<CommerceOrderType, OrderType> _orderTypeDTOConverter;
 

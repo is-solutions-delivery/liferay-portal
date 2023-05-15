@@ -272,7 +272,7 @@ public class WarehouseChannelResourceImpl
 	private ServiceContextHelper _serviceContextHelper;
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.WarehouseChannelDTOConverter)"
+		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter.WarehouseChannelDTOConverter)"
 	)
 	private DTOConverter<CommerceChannelRel, WarehouseChannel>
 		_warehouseChannelDTOConverter;

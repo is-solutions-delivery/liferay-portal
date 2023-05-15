@@ -53,7 +53,7 @@ public class ChannelResourceImpl
 	}
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.ChannelDTOConverter)"
+		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter.ChannelDTOConverter)"
 	)
 	private DTOConverter<CommerceChannel, Channel> _channelDTOConverter;
 

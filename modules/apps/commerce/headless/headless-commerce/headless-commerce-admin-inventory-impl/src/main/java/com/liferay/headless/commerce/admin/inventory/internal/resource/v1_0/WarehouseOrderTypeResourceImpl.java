@@ -236,7 +236,7 @@ public class WarehouseOrderTypeResourceImpl
 	private DTOConverterRegistry _dtoConverterRegistry;
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.WarehouseOrderTypeDTOConverter)"
+		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter.WarehouseOrderTypeDTOConverter)"
 	)
 	private DTOConverter<CommerceInventoryWarehouseRel, WarehouseOrderType>
 		_warehouseOrderTypeDTOConverter;

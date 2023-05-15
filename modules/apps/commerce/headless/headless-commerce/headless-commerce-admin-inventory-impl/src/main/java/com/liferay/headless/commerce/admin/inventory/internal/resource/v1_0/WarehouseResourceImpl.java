@@ -351,7 +351,7 @@ public class WarehouseResourceImpl extends BaseWarehouseResourceImpl {
 	private ServiceContextHelper _serviceContextHelper;
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.WarehouseDTOConverter)"
+		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter.WarehouseDTOConverter)"
 	)
 	private DTOConverter<CommerceInventoryWarehouse, Warehouse>
 		_warehouseDTOConverter;

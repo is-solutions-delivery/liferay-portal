@@ -248,7 +248,7 @@ public class ReplenishmentItemResourceImpl
 	private DTOConverterRegistry _dtoConverterRegistry;
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.ReplenishmentItemDTOConverter)"
+		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter.ReplenishmentItemDTOConverter)"
 	)
 	private DTOConverter<CommerceInventoryReplenishmentItem, ReplenishmentItem>
 		_replenishmentItemDTOConverter;

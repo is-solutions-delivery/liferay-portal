@@ -414,7 +414,7 @@ public class WarehouseItemResourceImpl
 		_commerceInventoryWarehouseService;
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.WarehouseItemDTOConverter)"
+		target = "(component.name=com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.converter.WarehouseItemDTOConverter)"
 	)
 	private DTOConverter<CommerceInventoryWarehouseItem, WarehouseItem>
 		_warehouseItemDTOConverter;
