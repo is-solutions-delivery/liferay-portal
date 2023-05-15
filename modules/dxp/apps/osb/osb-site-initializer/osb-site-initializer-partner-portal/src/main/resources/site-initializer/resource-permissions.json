@@ -926,7 +926,7 @@
 		],
 		"primKey": "[$PermissionAction#MDF-REQUEST-VIEW$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
@@ -1097,7 +1097,7 @@
 		],
 		"primKey": "[$PermissionAction#MDF-REQUEST-EXPORT$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
@@ -1241,7 +1241,7 @@
 		],
 		"primKey": "[$PermissionAction#MDF-CLAIM-VIEW$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
@@ -1403,7 +1403,7 @@
 		],
 		"primKey": "[$PermissionAction#MDF-CLAIM-EXPORT$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
@@ -1601,7 +1601,7 @@
 		],
 		"primKey": "[$PermissionAction#DEAL-REGISTRATION-VIEW$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
@@ -1628,7 +1628,7 @@
 		],
 		"primKey": "[$PermissionAction#DEAL-REGISTRATION-UPDATE$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
@@ -1646,7 +1646,7 @@
 		],
 		"primKey": "[$PermissionAction#DEAL-REGISTRATION-CREATE$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
@@ -1718,7 +1718,7 @@
 		],
 		"primKey": "[$PermissionAction#DEAL-REGISTRATION-EXPORT$]",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
-		"roleName": "Partner Sales Users (PSU)",
+		"roleName": "Partner Sales User (PSU)",
 		"scope": "4"
 	},
 	{
