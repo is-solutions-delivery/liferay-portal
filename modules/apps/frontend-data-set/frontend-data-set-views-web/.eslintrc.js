@@ -12,11 +12,17 @@
  * details.
  */
 
-/// <reference types="react" />
-
-interface ISearchInterface {
-	onSearch: Function;
-	query: string;
-}
-declare const Search: ({onSearch, query}: ISearchInterface) => JSX.Element;
-export default Search;
+module.exports = {
+	parser: '@typescript-eslint/parser',
+	plugins: ['@typescript-eslint'],
+	rules: {
+		'@typescript-eslint/naming-convention': [
+			'error',
+			{
+				format: ['PascalCase'],
+				prefix: ['I'],
+				selector: 'interface',
+			},
+		],
+	},
+};
