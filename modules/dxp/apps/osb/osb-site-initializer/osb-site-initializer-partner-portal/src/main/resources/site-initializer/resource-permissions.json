@@ -856,5 +856,59 @@
 		"resourceName": "com.liferay.object.model.ObjectDefinition",
 		"roleName": "Channel Finance Manager (CFM)",
 		"scope": "4"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "[$PermissionAction#MDF-REQUEST-SEE-RESTRICTED-FIELDS$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
+		"roleName": "Channel Account Manager (CAM)",
+		"scope": "4"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "[$PermissionAction#MDF-REQUEST-SEE-RESTRICTED-FIELDS$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
+		"roleName": "Channel Enablement Manager (CEM)",
+		"scope": "4"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "[$PermissionAction#MDF-REQUEST-SEE-RESTRICTED-FIELDS$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
+		"roleName": "Channel Finance Manager (CFM)",
+		"scope": "4"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "[$PermissionAction#MDF-REQUEST-SEE-RESTRICTED-FIELDS$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
+		"roleName": "Channel Marketing Director (CMD)",
+		"scope": "4"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "[$PermissionAction#MDF-REQUEST-SEE-RESTRICTED-FIELDS$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
+		"roleName": "Channel Marketing Manager (CMM)",
+		"scope": "4"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "[$PermissionAction#MDF-REQUEST-SEE-RESTRICTED-FIELDS$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:PermissionAction$]",
+		"roleName": "Channel Operations Manager (COM)",
+		"scope": "4"
 	}
 ]
