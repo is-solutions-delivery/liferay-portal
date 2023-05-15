@@ -300,7 +300,7 @@ public class SetupWizardUtil {
 			throw new Exception(
 				StringBundler.concat(
 					driverClassName,
-					" is not a specified in the portal property \"",
+					" is not specified in the portal property \"",
 					PropsKeys.SETUP_DATABASE_DRIVER_CLASS_NAME, "\""));
 		}
 

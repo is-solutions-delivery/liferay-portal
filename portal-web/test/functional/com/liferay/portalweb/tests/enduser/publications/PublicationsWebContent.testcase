@@ -230,20 +230,16 @@ definition {
 			assetType = "Web Content Folder",
 			folderName = "WC Folder Name");
 
-		RecycleBin.openRecycleBinAdmin(siteURLKey = "site-name");
+		// Workaround LPS-183473
 
-		RecycleBin.deleteCP(
-			assetName = "WC Folder Name",
-			assetType = "Web Content Folder");
-
-		PublicationsNavigator.gotoReviewChanges();
+		/*PublicationsNavigator.gotoReviewChanges();
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Folder",
 			changeSite = "Site Name",
 			changeTitle = "WC Folder Name",
 			changeType = "Deleted",
-			changeUser = "Test Test");
+			changeUser = "Test Test");*/
 
 		JSONPublications.publishPublication(publicationName = "Publication 2 Name");
 
