@@ -37,6 +37,15 @@
 			}
 		}
 
+		.modal-content {
+			--modal-bottom-spacing: 120px;
+
+			.modal-body {
+				max-height: calc(100vh - var(--modal-bottom-spacing));
+				overflow-y: auto;
+			}
+		}
+
 		.modal-body .loading-animation {
 			left: 0;
 			margin-bottom: 0;

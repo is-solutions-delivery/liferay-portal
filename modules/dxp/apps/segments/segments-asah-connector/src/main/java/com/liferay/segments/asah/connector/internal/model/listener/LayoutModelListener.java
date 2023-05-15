@@ -51,11 +51,11 @@ import org.osgi.service.component.annotations.Reference;
 public class LayoutModelListener extends BaseModelListener<Layout> {
 
 	@Override
-	public void onBeforeUpdate(Layout originalLayout, Layout layout)
+	public void onAfterUpdate(Layout originalLayout, Layout layout)
 		throws ModelListenerException {
 
 		try {
-			if (_isSkipEvent(layout)) {
+			if (_isSkipEvent(originalLayout, layout)) {
 				return;
 			}
 
@@ -96,7 +96,9 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 		_asahSegmentsExperimentProcessor = null;
 	}
 
-	private boolean _isSkipEvent(Layout layout) throws Exception {
+	private boolean _isSkipEvent(Layout originalLayout, Layout layout)
+		throws Exception {
+
 		if (AsahUtil.isSkipAsahEvent(
 				_analyticsSettingsManager, layout.getCompanyId(),
 				layout.getGroupId())) {
@@ -104,11 +106,9 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 			return true;
 		}
 
-		Layout oldLayout = _layoutLocalService.fetchLayout(layout.getPlid());
-
 		if (!Objects.equals(
-				oldLayout.getFriendlyURL(), layout.getFriendlyURL()) ||
-			!Objects.equals(oldLayout.getTitle(), layout.getTitle())) {
+				originalLayout.getFriendlyURL(), layout.getFriendlyURL()) ||
+			!Objects.equals(originalLayout.getTitle(), layout.getTitle())) {
 
 			return false;
 		}
