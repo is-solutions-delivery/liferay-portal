@@ -510,6 +510,18 @@ public class DLAppServiceWrapper
 			fileEntryId, owner, expirationTime, serviceContext);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder copyFolder(
+			long sourceRepositoryId, long sourceFolderId,
+			long destinationRepositoryId, long destinationParentFolderId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _dlAppService.copyFolder(
+			sourceRepositoryId, sourceFolderId, destinationRepositoryId,
+			destinationParentFolderId, serviceContext);
+	}
+
 	/**
 	 * Performs a deep copy of the folder.
 	 *

@@ -507,6 +507,17 @@ public class DLAppServiceUtil {
 			fileEntryId, owner, expirationTime, serviceContext);
 	}
 
+	public static com.liferay.portal.kernel.repository.model.Folder copyFolder(
+			long sourceRepositoryId, long sourceFolderId,
+			long destinationRepositoryId, long destinationParentFolderId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws PortalException {
+
+		return getService().copyFolder(
+			sourceRepositoryId, sourceFolderId, destinationRepositoryId,
+			destinationParentFolderId, serviceContext);
+	}
+
 	/**
 	 * Performs a deep copy of the folder.
 	 *

@@ -14,7 +14,9 @@
 
 package com.liferay.portlet.documentlibrary.service.impl;
 
+import com.liferay.document.library.kernel.exception.DuplicateFolderNameException;
 import com.liferay.document.library.kernel.exception.FileEntryLockException;
+import com.liferay.document.library.kernel.exception.InvalidFolderException;
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
@@ -712,6 +714,24 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 			getUserId(), fileEntry, null, fileVersion, fileEntryId);
 
 		return fileEntry;
+	}
+
+	@Override
+	public Folder copyFolder(
+			long sourceRepositoryId, long sourceFolderId,
+			long destinationRepositoryId, long destinationParentFolderId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		if (sourceRepositoryId == destinationRepositoryId) {
+			_validateFolders(
+				sourceRepositoryId, sourceFolderId, destinationParentFolderId);
+		}
+
+		return copyFolder(
+			sourceFolderId, destinationParentFolderId,
+			getRepository(sourceRepositoryId),
+			getRepository(destinationRepositoryId), serviceContext);
 	}
 
 	/**
@@ -3372,6 +3392,35 @@ public class DLAppServiceImpl extends DLAppServiceBaseImpl {
 
 	@BeanReference(type = RepositoryProvider.class)
 	protected RepositoryProvider repositoryProvider;
+
+	private void _validateFolders(
+			long repositoryId, long sourceFolderId,
+			long destinationParentFolderId)
+		throws PortalException {
+
+		if (sourceFolderId == destinationParentFolderId) {
+			throw new InvalidFolderException(
+				InvalidFolderException.CANNOT_COPY_INTO_ITSELF,
+				destinationParentFolderId);
+		}
+
+		Repository repository = getRepository(repositoryId);
+
+		Folder folder = repository.getFolder(sourceFolderId);
+
+		if (folder.getParentFolderId() == destinationParentFolderId) {
+			throw new DuplicateFolderNameException();
+		}
+
+		List<Long> subfolderIds = repository.getSubfolderIds(
+			sourceFolderId, true);
+
+		if (subfolderIds.contains(destinationParentFolderId)) {
+			throw new InvalidFolderException(
+				InvalidFolderException.CANNOT_COPY_INTO_CHILD_FOLDER,
+				destinationParentFolderId);
+		}
+	}
 
 	private void _withDLAppHelperDisabled(
 			UnsafeRunnable<PortalException> unsafeRunnable)

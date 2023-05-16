@@ -461,6 +461,12 @@ public interface DLAppService extends BaseService {
 			ServiceContext serviceContext)
 		throws PortalException;
 
+	public Folder copyFolder(
+			long sourceRepositoryId, long sourceFolderId,
+			long destinationRepositoryId, long destinationParentFolderId,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	 * Performs a deep copy of the folder.
 	 *

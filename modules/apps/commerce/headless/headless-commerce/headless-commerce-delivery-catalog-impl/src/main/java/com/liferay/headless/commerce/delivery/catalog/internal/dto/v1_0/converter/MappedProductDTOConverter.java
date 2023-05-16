@@ -27,7 +27,6 @@ import com.liferay.commerce.price.CommerceProductPrice;
 import com.liferay.commerce.price.CommerceProductPriceCalculation;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
-import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CProduct;
 import com.liferay.commerce.product.permission.CommerceProductViewPermission;
@@ -46,8 +45,8 @@ import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.MappedProduct;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.Price;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.ProductConfiguration;
 import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.ProductOption;
-import com.liferay.headless.commerce.delivery.catalog.dto.v1_0.SkuOption;
 import com.liferay.headless.commerce.delivery.catalog.internal.dto.v1_0.converter.constants.DTOConverterConstants;
+import com.liferay.headless.commerce.delivery.catalog.internal.util.v1_0.SkuOptionUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.language.Language;
@@ -63,7 +62,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -142,7 +140,6 @@ public class MappedProductDTOConverter
 					mappedProductDTOConverterContext.getLocale(), 1);
 				quantity = csDiagramEntry.getQuantity();
 				sequence = csDiagramEntry.getSequence();
-				skuOptions = _getSkuOptions(cpInstance);
 
 				setAvailability(
 					() -> {
@@ -342,6 +339,24 @@ public class MappedProductDTOConverter
 
 						return cpInstance.getCPInstanceId();
 					});
+				setSkuOptions(
+					() -> {
+						if (cpInstance == null) {
+							return null;
+						}
+
+						JSONArray jsonArray = _jsonHelper.toJSONArray(
+							_cpDefinitionOptionRelLocalService.
+								getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
+									cpInstance.getCPInstanceId()));
+
+						return SkuOptionUtil.getSkuOptions(
+							_cpInstanceHelper.getCPDefinitionOptionValueRelsMap(
+								cpInstance.getCPDefinitionId(),
+								jsonArray.toString()),
+							_language.getLanguageId(
+								mappedProductDTOConverterContext.getLocale()));
+					});
 				setThumbnail(
 					() -> {
 						if (cpDefinition == null) {
@@ -506,52 +521,6 @@ public class MappedProductDTOConverter
 		}
 
 		return price;
-	}
-
-	private SkuOption[] _getSkuOptions(CPInstance cpInstance) throws Exception {
-		if (cpInstance == null) {
-			return null;
-		}
-
-		List<SkuOption> skuOptions = new ArrayList<>();
-
-		JSONArray keyValuesJSONArray = _jsonHelper.toJSONArray(
-			_cpDefinitionOptionRelLocalService.
-				getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
-					cpInstance.getCPInstanceId()));
-
-		Map<CPDefinitionOptionRel, List<CPDefinitionOptionValueRel>>
-			cpDefinitionOptionValueRelsMap =
-				_cpInstanceHelper.getCPDefinitionOptionValueRelsMap(
-					cpInstance.getCPDefinitionId(),
-					keyValuesJSONArray.toString());
-
-		for (Map.Entry<CPDefinitionOptionRel, List<CPDefinitionOptionValueRel>>
-				entry : cpDefinitionOptionValueRelsMap.entrySet()) {
-
-			CPDefinitionOptionRel cpDefinitionOptionRel = entry.getKey();
-
-			List<CPDefinitionOptionValueRel> cpDefinitionOptionValueRels =
-				entry.getValue();
-
-			for (CPDefinitionOptionValueRel cpDefinitionOptionValueRel :
-					cpDefinitionOptionValueRels) {
-
-				SkuOption skuOption = new SkuOption() {
-					{
-						key =
-							cpDefinitionOptionRel.getCPDefinitionOptionRelId();
-						value =
-							cpDefinitionOptionValueRel.
-								getCPDefinitionOptionValueRelId();
-					}
-				};
-
-				skuOptions.add(skuOption);
-			}
-		}
-
-		return skuOptions.toArray(new SkuOption[0]);
 	}
 
 	@Reference
