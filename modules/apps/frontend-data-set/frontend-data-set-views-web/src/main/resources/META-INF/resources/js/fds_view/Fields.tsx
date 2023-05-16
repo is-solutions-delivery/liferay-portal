@@ -565,6 +565,63 @@ const Fields = ({
 		}
 	};
 
+	const handleDelete = ({item}: {item: IFDSField}) => {
+		openModal({
+			bodyHTML: Liferay.Language.get(
+				'are-you-sure-you-want-to-delete-this-field?-fragments-using-it-will-be-affected'
+			),
+			buttons: [
+				{
+					autoFocus: true,
+					displayType: 'secondary',
+					label: Liferay.Language.get('cancel'),
+					type: 'cancel',
+				},
+				{
+					displayType: 'warning',
+					label: Liferay.Language.get('delete'),
+					onClick: async ({
+						processClose,
+					}: {
+						processClose: Function;
+					}) => {
+						processClose();
+
+						const url = `${API_URL.FDS_FIELDS}/${item.id}`;
+
+						const response = await fetch(url, {method: 'DELETE'});
+
+						if (!response.ok) {
+							openToast({
+								message: Liferay.Language.get(
+									'your-request-failed-to-complete'
+								),
+								type: 'danger',
+							});
+
+							return;
+						}
+
+						openToast({
+							message: Liferay.Language.get(
+								'your-request-completed-successfully'
+							),
+							type: 'success',
+						});
+
+						setFDSFields(
+							fdsFields?.filter(
+								(fdsField: IFDSField) => fdsField.id !== item.id
+							) || []
+						);
+					},
+				},
+			],
+			status: 'warning',
+			title: Liferay.Language.get('delete-filter'),
+		});
+	};
+
 	const updateFDSFieldsOrder = async () => {
 		const body = {
 			fdsFieldsOrder: fdsFieldsOrderRef.current,
@@ -691,6 +748,11 @@ const Fields = ({
 									),
 								});
 							},
+						},
+						{
+							icon: 'trash',
+							label: Liferay.Language.get('delete'),
+							onClick: handleDelete,
 						},
 					]}
 					fields={[

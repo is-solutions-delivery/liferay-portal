@@ -1700,6 +1700,15 @@ definition {
 
 			PageEditor.waitForAutoSave();
 		}
+
+		if (isSet(vocabularyType)) {
+			Select(
+				key_fieldLabel = "Vocabulary Type",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = ${vocabularyType});
+
+			PageEditor.waitForAutoSave();
+		}
 	}
 
 	macro configureFragmentViaKeyboard {

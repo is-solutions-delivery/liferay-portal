@@ -48,6 +48,8 @@ import com.liferay.gradle.plugins.workspace.task.VerifyProductTask;
 import com.liferay.gradle.util.OSDetector;
 import com.liferay.gradle.util.Validator;
 import com.liferay.gradle.util.copy.StripPathSegmentsAction;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 
 import de.undercouch.gradle.tasks.download.Download;
 
@@ -63,7 +65,6 @@ import java.net.URI;
 import java.net.URL;
 
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +104,7 @@ import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskOutputs;
+import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import org.gradle.api.tasks.bundling.Compression;
 import org.gradle.api.tasks.bundling.Tar;
@@ -1164,24 +1166,25 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 				@Override
 				public void execute(Task task) {
-					String tomcatVersion =
-						workspaceExtension.getAppServerTomcatVersion();
+					File homeDir = workspaceExtension.getHomeDir();
 
-					String tomcatDir = "tomcat-" + tomcatVersion;
+					WorkResult workResult = project.copy(
+						copySpec -> {
+							copySpec.from(
+								new File(
+									workspaceExtension.getConfigsDir(),
+									"common"),
+								new File(
+									workspaceExtension.getConfigsDir(),
+									workspaceExtension.getEnvironment()));
+							copySpec.into(homeDir);
 
-					File targetAppServerDir = new File(
-						workspaceExtension.getHomeDir(), tomcatDir);
+							_configureCopySpecExpandTomcatVersion(
+								copySpec, workspaceExtension);
+						});
 
-					File sourceTomcatDir = new File(
-						workspaceExtension.getConfigsDir(), "tomcat");
-
-					if (Files.exists(
-							sourceTomcatDir.toPath(),
-							LinkOption.NOFOLLOW_LINKS)) {
-
-						_copyTomcatConfiguration(
-							task.getProject(), sourceTomcatDir,
-							targetAppServerDir);
+					if (workResult.getDidWork()) {
+						project.delete(new File(homeDir, "tomcat"));
 					}
 				}
 
@@ -1734,6 +1737,24 @@ public class RootProjectConfigurator implements Plugin<Project> {
 		return verifyProductTask;
 	}
 
+	private void _configureCopySpecExpandTomcatVersion(
+		CopySpec copySpec, WorkspaceExtension workspaceExtension) {
+
+		String tomcatVersion = workspaceExtension.getAppServerTomcatVersion();
+
+		copySpec.eachFile(
+			fileCopyDetails -> {
+				String path = fileCopyDetails.getPath();
+
+				fileCopyDetails.setPath(
+					path.replaceAll(
+						"tomcat/",
+						StringBundler.concat(
+							"tomcat-", tomcatVersion,
+							StringPool.FORWARD_SLASH)));
+			});
+	}
+
 	private <T extends AbstractArchiveTask> void _configureDistBundleEnvArchive(
 		Project project, T distBundleArchiveTask, String environment,
 		boolean bundleDistIncludeMetadata, long buildTime) {
@@ -1883,22 +1904,9 @@ public class RootProjectConfigurator implements Plugin<Project> {
 							destinationDir);
 					}
 
-					WorkspaceExtension workspaceExtension =
-						GradleUtil.getExtension(
-							(ExtensionAware)project.getGradle(),
-							WorkspaceExtension.class);
-
-					String tomcatVersion =
-						workspaceExtension.getAppServerTomcatVersion();
-
-					File targetTomcatDir = new File(
-						destinationDir, "tomcat-" + tomcatVersion);
-
-					File sourceTomcatDir = new File(
-						workspaceExtension.getConfigsDir(), "tomcat");
-
-					_copyTomcatConfiguration(
-						task.getProject(), sourceTomcatDir, targetTomcatDir);
+					if (copy.getDidWork()) {
+						project.delete(new File(destinationDir, "tomcat"));
+					}
 				}
 
 			});
@@ -1945,6 +1953,11 @@ public class RootProjectConfigurator implements Plugin<Project> {
 				}
 
 			});
+
+		WorkspaceExtension workspaceExtension = GradleUtil.getExtension(
+			(ExtensionAware)project.getGradle(), WorkspaceExtension.class);
+
+		_configureCopySpecExpandTomcatVersion(copy, workspaceExtension);
 	}
 
 	private void _configureTaskCopyBundlePreserveTimestamps(Copy copy) {
@@ -2030,22 +2043,6 @@ public class RootProjectConfigurator implements Plugin<Project> {
 					"%s-liferay:%s",
 					StringUtil.getDockerSafeName(project.getName()), version));
 		}
-	}
-
-	private void _copyTomcatConfiguration(
-		Project project, File sourceDir, File destinationDir) {
-
-		project.copy(
-			new Action<CopySpec>() {
-
-				@Override
-				public void execute(CopySpec copySpec) {
-					copySpec.from(sourceDir);
-					copySpec.include("**/*");
-					copySpec.into(destinationDir);
-				}
-
-			});
 	}
 
 	private void _createTouchFile(File dir) throws IOException {

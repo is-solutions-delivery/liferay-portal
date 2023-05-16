@@ -19,9 +19,10 @@ import ClayLayout from '@clayui/layout';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClayModal from '@clayui/modal';
 import {fetch, navigate, openModal, openToast} from 'frontend-js-web';
+import fuzzy from 'fuzzy';
 import React, {useEffect, useState} from 'react';
 
-import {API_URL, OBJECT_RELATIONSHIP} from '../Constants';
+import {API_URL, FUZZY_OPTIONS, OBJECT_RELATIONSHIP} from '../Constants';
 import {FDSViewSectionInterface} from '../FDSView';
 import {FDSViewType} from '../FDSViews';
 import {getFields} from '../api';
@@ -30,6 +31,7 @@ import RequiredMark from '../components/RequiredMark';
 
 interface IContentRendererProps {
 	item: IFDSSort;
+	query: string;
 }
 
 interface IField {
@@ -82,12 +84,31 @@ function alertSuccess() {
 	});
 }
 
-const SortingDirectionContentRenderer = ({item}: IContentRendererProps) => {
+const sortingDirectionTextMatch = (item: IFDSSort) => {
+	return item.sortingDirection === SORTING_DIRECTION.ASCENDING.value
+		? SORTING_DIRECTION.ASCENDING.label
+		: SORTING_DIRECTION.DESCENDING.label;
+};
+
+const SortingDirectionComponent = ({item, query}: IContentRendererProps) => {
+	const itemFieldValue =
+		item.sortingDirection === SORTING_DIRECTION.ASCENDING.value
+			? SORTING_DIRECTION.ASCENDING.label
+			: SORTING_DIRECTION.DESCENDING.label;
+
+	const fuzzyMatch = fuzzy.match(query, itemFieldValue, FUZZY_OPTIONS);
+
 	return (
 		<span>
-			{item.sortingDirection === SORTING_DIRECTION.ASCENDING.value
-				? SORTING_DIRECTION.ASCENDING.label
-				: SORTING_DIRECTION.DESCENDING.label}
+			{fuzzyMatch ? (
+				<span
+					dangerouslySetInnerHTML={{
+						__html: fuzzyMatch.rendered,
+					}}
+				/>
+			) : (
+				<span>{itemFieldValue}</span>
+			)}
 		</span>
 	);
 };
@@ -344,7 +365,10 @@ const Sorting = ({fdsView, fdsViewsURL}: FDSViewSectionInterface) => {
 								name: 'fieldName',
 							},
 							{
-								contentRenderer: SortingDirectionContentRenderer,
+								contentRenderer: {
+									component: SortingDirectionComponent,
+									textMatch: sortingDirectionTextMatch,
+								},
 								label: Liferay.Language.get('value'),
 								name: 'sortingDirection',
 							},
