@@ -18,6 +18,8 @@ import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
+import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
+import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManagerProvider;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
 import com.liferay.object.rest.manager.v1_0.ObjectRelationshipElementsParser;
@@ -98,18 +100,22 @@ public class ObjectRelationshipExtensionProvider
 					return null;
 				}
 
-				ObjectEntryManager objectEntryManager =
-					_objectEntryManagerRegistry.getObjectEntryManager(
-						objectDefinition.getStorageType());
+				DefaultObjectEntryManager defaultObjectEntryManager =
+					DefaultObjectEntryManagerProvider.provide(
+						_objectEntryManagerRegistry.getObjectEntryManager(
+							objectDefinition.getStorageType()));
+
 				long primaryKey = getPrimaryKey(entity);
 
 				Page<ObjectEntry> relatedObjectEntriesPage =
-					objectEntryManager.getObjectEntryRelatedObjectEntries(
-						_getDefaultDTOConverterContext(
-							objectDefinition, primaryKey, null),
-						objectDefinition, primaryKey,
-						objectRelationship.getName(),
-						Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
+					defaultObjectEntryManager.
+						getObjectEntryRelatedObjectEntries(
+							_getDefaultDTOConverterContext(
+								objectDefinition, primaryKey, null),
+							objectDefinition, primaryKey,
+							objectRelationship.getName(),
+							Pagination.of(
+								QueryUtil.ALL_POS, QueryUtil.ALL_POS));
 
 				return (Serializable)relatedObjectEntriesPage.getItems();
 			});
@@ -220,7 +226,7 @@ public class ObjectRelationshipExtensionProvider
 					objectRelationship, entry.getValue());
 
 			for (ObjectEntry nestedObjectEntry : nestedObjectEntries) {
-				nestedObjectEntry = objectEntryManager.addOrUpdateObjectEntry(
+				nestedObjectEntry = objectEntryManager.updateObjectEntry(
 					objectDefinition.getCompanyId(),
 					_getDefaultDTOConverterContext(
 						objectDefinition, getPrimaryKey(entity), null),

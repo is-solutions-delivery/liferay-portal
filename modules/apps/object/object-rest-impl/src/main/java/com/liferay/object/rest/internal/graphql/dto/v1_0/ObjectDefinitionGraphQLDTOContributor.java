@@ -25,6 +25,8 @@ import com.liferay.object.rest.dto.v1_0.Status;
 import com.liferay.object.rest.internal.odata.entity.v1_0.ObjectEntryEntityModel;
 import com.liferay.object.rest.internal.resource.v1_0.ObjectEntryRelatedObjectsResourceImpl;
 import com.liferay.object.rest.internal.resource.v1_0.ObjectEntryResourceImpl;
+import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
+import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManagerProvider;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.petra.sql.dsl.expression.FilterPredicateFactory;
 import com.liferay.object.scope.ObjectScopeProvider;
@@ -160,8 +162,7 @@ public class ObjectDefinitionGraphQLDTOContributor
 
 		return new ObjectDefinitionGraphQLDTOContributor(
 			objectDefinition.getCompanyId(),
-			new ObjectEntryEntityModel(objectFields), filterPredicateFactory,
-			graphQLDTOProperties,
+			new ObjectEntryEntityModel(objectFields), graphQLDTOProperties,
 			StringUtil.removeSubstring(
 				objectDefinition.getPKObjectFieldName(), "c_"),
 			objectDefinition, objectEntryManager, objectScopeProvider,
@@ -182,7 +183,10 @@ public class ObjectDefinitionGraphQLDTOContributor
 
 	@Override
 	public boolean deleteDTO(long id) throws Exception {
-		_objectEntryManager.deleteObjectEntry(_objectDefinition, id);
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(_objectEntryManager);
+
+		defaultObjectEntryManager.deleteObjectEntry(_objectDefinition, id);
 
 		return true;
 	}
@@ -202,8 +206,11 @@ public class ObjectDefinitionGraphQLDTOContributor
 			DTOConverterContext dtoConverterContext, long id)
 		throws Exception {
 
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(_objectEntryManager);
+
 		return _toMap(
-			_objectEntryManager.getObjectEntry(
+			defaultObjectEntryManager.getObjectEntry(
 				dtoConverterContext, _objectDefinition, id));
 	}
 
@@ -217,10 +224,8 @@ public class ObjectDefinitionGraphQLDTOContributor
 			(Long)dtoConverterContext.getAttribute("companyId"),
 			_objectDefinition,
 			(String)dtoConverterContext.getAttribute("scopeKey"), aggregation,
-			dtoConverterContext, pagination,
-			_filterPredicateFactory.create(
-				(String)dtoConverterContext.getAttribute("filter"),
-				_objectDefinition.getObjectDefinitionId()),
+			dtoConverterContext,
+			(String)dtoConverterContext.getAttribute("filter"), pagination,
 			search, sorts);
 
 		return Page.of(
@@ -259,14 +264,17 @@ public class ObjectDefinitionGraphQLDTOContributor
 			return null;
 		}
 
-		ObjectEntry objectEntry = _objectEntryManager.getObjectEntry(
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(_objectEntryManager);
+
+		ObjectEntry objectEntry = defaultObjectEntryManager.getObjectEntry(
 			dtoConverterContext, _objectDefinition, id);
 
 		long relationshipId = _getRelationshipId(objectEntry.getProperties());
 
 		if (relationshipId <= 0) {
 			Page<ObjectEntry> page =
-				_objectEntryManager.getObjectEntryRelatedObjectEntries(
+				defaultObjectEntryManager.getObjectEntryRelatedObjectEntries(
 					dtoConverterContext, _objectDefinition, id,
 					relationshipName,
 					Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
@@ -276,7 +284,7 @@ public class ObjectDefinitionGraphQLDTOContributor
 		}
 
 		return (T)_toMap(
-			_objectEntryManager.fetchObjectEntry(
+			defaultObjectEntryManager.fetchObjectEntry(
 				dtoConverterContext, null, relationshipId),
 			relationshipName);
 	}
@@ -336,15 +344,17 @@ public class ObjectDefinitionGraphQLDTOContributor
 			long id)
 		throws Exception {
 
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(_objectEntryManager);
+
 		return _toMap(
-			_objectEntryManager.updateObjectEntry(
+			defaultObjectEntryManager.updateObjectEntry(
 				dtoConverterContext, _objectDefinition, id,
 				_toObjectEntry(dto)));
 	}
 
 	private ObjectDefinitionGraphQLDTOContributor(
 		long companyId, EntityModel entityModel,
-		FilterPredicateFactory filterPredicateFactory,
 		List<GraphQLDTOProperty> graphQLDTOProperties, String idName,
 		ObjectDefinition objectDefinition,
 		ObjectEntryManager objectEntryManager,
@@ -354,7 +364,6 @@ public class ObjectDefinitionGraphQLDTOContributor
 
 		_companyId = companyId;
 		_entityModel = entityModel;
-		_filterPredicateFactory = filterPredicateFactory;
 		_graphQLDTOProperties = graphQLDTOProperties;
 		_idName = idName;
 		_objectDefinition = objectDefinition;
@@ -480,7 +489,6 @@ public class ObjectDefinitionGraphQLDTOContributor
 
 	private final long _companyId;
 	private final EntityModel _entityModel;
-	private final FilterPredicateFactory _filterPredicateFactory;
 	private final List<GraphQLDTOProperty> _graphQLDTOProperties;
 	private final String _idName;
 	private final ObjectDefinition _objectDefinition;
