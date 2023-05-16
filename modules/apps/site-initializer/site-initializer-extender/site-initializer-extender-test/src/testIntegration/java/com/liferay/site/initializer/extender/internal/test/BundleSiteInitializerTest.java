@@ -75,6 +75,9 @@ import com.liferay.headless.admin.user.resource.v1_0.OrganizationResource;
 import com.liferay.headless.admin.user.resource.v1_0.UserAccountResource;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowDefinition;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowDefinitionResource;
+import com.liferay.headless.commerce.admin.account.dto.v1_0.AdminAccountGroup;
+import com.liferay.headless.commerce.admin.account.resource.v1_0.AdminAccountGroupResource;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductSpecification;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductSpecificationResource;
 import com.liferay.headless.delivery.dto.v1_0.SitePage;
 import com.liferay.headless.delivery.resource.v1_0.SitePageResource;
@@ -353,6 +356,76 @@ public class BundleSiteInitializerTest {
 			FileUtil.deltree(tempDir1);
 			FileUtil.deltree(tempDir2);
 		}
+	}
+
+	private void _assertAccountGroups1() throws Exception {
+		AdminAccountGroupResource.Builder accountGroupResourceBuilder =
+			_adminAccountGroupResourcefactory.create();
+
+		AdminAccountGroupResource accountGroupResource =
+			accountGroupResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		AdminAccountGroup accountGroup1 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP1");
+
+		Assert.assertNotNull(accountGroup1);
+		Assert.assertEquals("Test Account Group 1", accountGroup1.getName());
+
+		AdminAccountGroup accountGroup2 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP2");
+
+		Assert.assertNotNull(accountGroup2);
+		Assert.assertEquals("Test Account Group 2", accountGroup2.getName());
+
+		AdminAccountGroup accountGroup3 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP3");
+
+		Assert.assertNotNull(accountGroup3);
+		Assert.assertEquals("Test Account Group 3", accountGroup3.getName());
+	}
+
+	private void _assertAccountGroups2() throws Exception {
+		AdminAccountGroupResource.Builder accountGroupResourceBuilder =
+			_adminAccountGroupResourcefactory.create();
+
+		AdminAccountGroupResource accountGroupResource =
+			accountGroupResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		AdminAccountGroup accountGroup1 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP1");
+
+		Assert.assertNotNull(accountGroup1);
+		Assert.assertEquals("Test Account Group 1", accountGroup1.getName());
+
+		AdminAccountGroup accountGroup2 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP2");
+
+		Assert.assertNotNull(accountGroup2);
+		Assert.assertEquals(
+			"Test Account Group 2 Update", accountGroup2.getName());
+
+		AdminAccountGroup accountGroup3 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP3");
+
+		Assert.assertNotNull(accountGroup3);
+		Assert.assertEquals("Test Account Group 3", accountGroup3.getName());
+
+		AdminAccountGroup accountGroup4 =
+			accountGroupResource.getAccountGroupByExternalReferenceCode(
+				"TESTACCOUNTGROUP4");
+
+		Assert.assertNotNull(accountGroup4);
+		Assert.assertEquals("Test Account Group 4", accountGroup4.getName());
 	}
 
 	private void _assertAccounts1() throws Exception {
@@ -3120,6 +3193,7 @@ public class BundleSiteInitializerTest {
 	private void _test1(SiteInitializer siteInitializer) throws Exception {
 		siteInitializer.initialize(_group.getGroupId());
 
+		_assertAccountGroups1();
 		_assertAccounts1();
 		_assertAssetListEntries();
 		_assertAssetVocabularies();
@@ -3163,6 +3237,7 @@ public class BundleSiteInitializerTest {
 	private void _test2(SiteInitializer siteInitializer) throws Exception {
 		siteInitializer.initialize(_group.getGroupId());
 
+		_assertAccountGroups2();
 		_assertAccounts2();
 		_assertCommerceCatalogs2();
 		_assertCommerceChannel2();
@@ -3179,6 +3254,9 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private static ConfigurationAdmin _configurationAdmin;
+
+	@Inject
+	private AdminAccountGroupResource.Factory _adminAccountGroupResourcefactory;
 
 	@Inject
 	private AccountResource.Factory _accountResourceFactory;
