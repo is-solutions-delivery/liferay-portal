@@ -1275,37 +1275,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		).build();
 	}
 
-	private void _enableRestrictedAccountEntry(
-		ServiceContext serviceContext)
-		throws Exception {
-
-		String json = SiteInitializerUtil.read(
-			"/site-initializer/restrict-account-entry.json", _servletContext);
-
-		if(json == null){
-			return;
-		}
-
-		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
-
-		for (int i = 0; i < jsonArray.length(); i++){
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-		com.liferay.object.model.ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.fetchObjectDefinition(
-			serviceContext.getCompanyId(),
-				jsonObject.getString("objectDefinitionName"));
-
-		com.liferay.object.model.ObjectRelationship objectRelationship =
-			_objectRelationshipLocalService.getObjectRelationship(
-			objectDefinition.getObjectDefinitionId(),
-			jsonObject.getString("relationShipName"));
-
-			_objectDefinitionLocalService.enableAccountEntryRestricted(
-				objectRelationship);
-		}
-	}
-
 	private void _addOrganizationUser(
 			JSONArray jsonArray, ServiceContext serviceContext, long userId)
 		throws Exception {
@@ -4359,6 +4328,33 @@ public class BundleSiteInitializer implements SiteInitializer {
 				postAccountByExternalReferenceCodeAccountRoleUserAccountByEmailAddress(
 					accountBriefsJSONObject.getString("externalReferenceCode"),
 					accountRole.getId(), emailAddress);
+		}
+	}
+
+	private void _enableRestrictedAccountEntry(ServiceContext serviceContext)
+		throws Exception {
+
+		String json = SiteInitializerUtil.read(
+			"/site-initializer/restrict-account-entry.json", _servletContext);
+
+		if (json == null) {
+			return;
+		}
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+			com.liferay.object.model.ObjectDefinition objectDefinition =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					serviceContext.getCompanyId(),
+					jsonObject.getString("objectDefinitionName"));
+
+			_objectDefinitionLocalService.enableAccountEntryRestricted(
+				_objectRelationshipLocalService.getObjectRelationship(
+					objectDefinition.getObjectDefinitionId(),
+					jsonObject.getString("relationShipName")));
 		}
 	}
 
