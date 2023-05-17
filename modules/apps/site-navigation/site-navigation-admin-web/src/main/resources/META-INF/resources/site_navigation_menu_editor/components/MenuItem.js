@@ -267,17 +267,13 @@ export function MenuItem({item, onMenuItemRemoved}) {
 	return (
 		<>
 			<div
-				aria-description={
+				aria-label={
 					item.icon
-						? sub(
-								Liferay.Language.get(
-									'x-does-not-have-a-display-page-available'
-								),
-								`${title} (${type})`
-						  )
-						: null
+						? `${title} (${type}). ${Liferay.Language.get(
+								'this-item-does-not-have-a-display-page'
+						  )}`
+						: `${title} (${type})`
 				}
-				aria-label={`${title} (${type})`}
 				aria-level={itemPath.length}
 				className={classNames(
 					'focusable-menu-item site_navigation_menu_editor_MenuItem',
@@ -349,13 +345,17 @@ export function MenuItem({item, onMenuItemRemoved}) {
 								<ClayLayout.ContentCol expand>
 									<ClayCard.Description
 										displayType="title"
-										title={title}
+										title={null}
+										truncate={false}
 									>
 										{title}
 
 										{item.icon && (
 											<ClayIcon
-												className="ml-2 text-warning"
+												className="lfr-portal-tooltip ml-2 text-warning"
+												data-title={Liferay.Language.get(
+													'this-item-does-not-have-a-display-page'
+												)}
 												symbol={item.icon}
 											/>
 										)}

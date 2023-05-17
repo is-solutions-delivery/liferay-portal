@@ -238,9 +238,12 @@ function DisplayPageItemContextualSidebar({
 						/>
 
 						<p className="small text-secondary">
-							{Liferay.Language.get(
-								'items-without-display-page-do-not-have-links-and-are-hidden-from-menus'
-							)}
+							{`${Liferay.Language.get(
+								'this-item-does-not-have-a-display-page'
+							)} 
+								${Liferay.Language.get(
+									'items-without-display-page-do-not-have-links-and-are-hidden-from-menus'
+								)}`}
 						</p>
 					</>
 				)}

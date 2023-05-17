@@ -499,21 +499,17 @@ definition {
 			SelectWindow(locator1 = "title=Block List - Settings - Analytics Cloud");
 		}
 
-		task ("Go to Definitions, then go to Interests and check the empty page status message then check if the hyperlink is taking the user to the documentation") {
-			ACSettings.goToDefinitions();
+		// The Keywords Blocklist Page was hidden after this ticket: LRAC-13648
 
-			ACDefinitions.goToDefinitionType(definitionType = "Interests");
-
-			ACUtils.viewGenericText(textValueList = "No Keywords Found,Add a keyword to be blocked.,Learn more about interest topics.");
-
-			ACUtils.clickGenericHyperlink(hyperlinkText = "Learn more about interest topics.");
-
-			SelectWindow(locator1 = "title=Managing Interest Topics - Liferay Learn");
-
-			ACUtils.viewGenericText(textValueList = "Managing Interest Topics");
-
-			SelectWindow(locator1 = "title=Interest Topics - Settings - Analytics Cloud");
-		}
+		//task ("Go to Definitions, then go to Interests and check the empty page status message then check if the hyperlink is taking the user to the documentation") {
+		//	ACSettings.goToDefinitions();
+		//	ACDefinitions.goToDefinitionType(definitionType = "Interests");
+		//	ACUtils.viewGenericText(textValueList = "No Keywords Found,Add a keyword to be blocked.,Learn more about interest topics.");
+		//	ACUtils.clickGenericHyperlink(hyperlinkText = "Learn more about interest topics.");
+		//	SelectWindow(locator1 = "title=Managing Interest Topics - Liferay Learn");
+		//	ACUtils.viewGenericText(textValueList = "Managing Interest Topics");
+		//	SelectWindow(locator1 = "title=Interest Topics - Settings - Analytics Cloud");
+		//}
 
 		task ("Go to Data Control and Privacy, then go to Request Log > Manage and check the empty page status message") {
 			ACSettings.goToDataControlAndPrivacy();
@@ -525,28 +521,24 @@ definition {
 			ACUtils.viewGenericText(textValueList = "No Requests Found,Create a request to get started.,Access our documentation to learn more.");
 		}
 
-		task ("Go back to Data Control and Privacy, then go to Suppressed Users > Manage, and check the empty page status message then check the if the hyperlink is taking the user to the documentation") {
-			ACSettings.goToDataControlAndPrivacy();
+		// The Suppressed User card was hidden after this ticket: LRAC-13620
 
-			ACSettings.navigateToRequestOrSuppressedOptions(
-				optionName = "Suppressed Users",
-				optionValue = "Manage");
+		//task ("Go back to Data Control and Privacy, then go to Suppressed Users > Manage, and check the empty page status message then check the if the hyperlink is taking the user to the documentation") {
+		//	ACSettings.goToDataControlAndPrivacy();
+		//	ACSettings.navigateToRequestOrSuppressedOptions(
+		//		optionName = "Suppressed Users",
+		//		optionValue = "Manage");
+		//	ACUtils.viewGenericText(textValueList = "No Suppressed Users Found,Access our documentation to learn more.");
+		//	var textValue = "To suppress a user, go to data control & privacy under settings and create a new request on the request log.";
+		//	AssertTextEquals.assertPartialText(
+		//		key_textValue = ${textValue},
+		//		locator1 = "ACUtils#GENERIC_TEXT",
+		//		value1 = ${textValue});
+		//	ACUtils.clickGenericHyperlink(hyperlinkText = "Access our documentation to learn more.");
+		//	SelectWindow(locator1 = "title=Data Control and Privacy - Liferay Learn");
+		//	ACUtils.viewGenericText(textValueList = "Data Control and Privacy");
+		//}
 
-			ACUtils.viewGenericText(textValueList = "No Suppressed Users Found,Access our documentation to learn more.");
-
-			var textValue = "To suppress a user, go to data control & privacy under settings and create a new request on the request log.";
-
-			AssertTextEquals.assertPartialText(
-				key_textValue = ${textValue},
-				locator1 = "ACUtils#GENERIC_TEXT",
-				value1 = ${textValue});
-
-			ACUtils.clickGenericHyperlink(hyperlinkText = "Access our documentation to learn more.");
-
-			SelectWindow(locator1 = "title=Data Control and Privacy - Liferay Learn");
-
-			ACUtils.viewGenericText(textValueList = "Data Control and Privacy");
-		}
 	}
 
 	@description = "Feature ID: LRAC-10405 | Automation ID: LRAC-11119 | Test Summary: Empty state of no assets with data source and property"
