@@ -522,7 +522,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 							serviceContext,
 							siteNavigationMenuItemSettingsBuilder));
 
-			_invoke(() -> _enableRestrictedAccountEntry(serviceContext));
+			_invoke(() -> _enableRestrictedObject(serviceContext));
 
 			_invoke(
 				() -> _addOrUpdateNotificationTemplates(
@@ -4356,11 +4356,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private void _enableRestrictedAccountEntry(ServiceContext serviceContext)
+	private void _enableRestrictedObject(ServiceContext serviceContext)
 		throws Exception {
 
 		String json = SiteInitializerUtil.read(
-			"/site-initializer/restrict-account-entry.json", _servletContext);
+			"/site-initializer/restrict-account-entry.json",
+			_servletContext);
 
 		if (json == null) {
 			return;
@@ -4371,15 +4372,34 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-			com.liferay.object.model.ObjectDefinition objectDefinition =
+			com.liferay.object.model.ObjectDefinition objectDefinition2 =
 				_objectDefinitionLocalService.fetchObjectDefinition(
-					serviceContext.getCompanyId(),
+					serviceContext.getCompanyId(), "C_" +
 					jsonObject.getString("objectDefinitionName"));
 
-			_objectDefinitionLocalService.enableAccountEntryRestricted(
-				_objectRelationshipLocalService.getObjectRelationship(
-					objectDefinition.getObjectDefinitionId(),
-					jsonObject.getString("relationShipName")));
+			com.liferay.object.model.ObjectField objectField;
+
+			if(Objects.equals(objectDefinition2.getStorageType(),
+				"default")) {
+
+				com.liferay.object.model.ObjectRelationship objectRelationship =
+					_objectRelationshipLocalService.
+						fetchObjectRelationshipByObjectDefinitionId(
+							objectDefinition2.getObjectDefinitionId(),
+							jsonObject.getString("relationShipName"));
+
+				objectField = _objectFieldLocalService.getObjectField(
+					objectRelationship.getObjectFieldId2());
+			}
+			else {
+				objectField =
+					_objectFieldLocalService.fetchObjectField(
+						objectDefinition2.getObjectDefinitionId(),
+						jsonObject.getString("objectField"));
+			}
+
+				_objectDefinitionLocalService.enableAccountEntryRestricted(
+					objectDefinition2, objectField);
 		}
 	}
 
