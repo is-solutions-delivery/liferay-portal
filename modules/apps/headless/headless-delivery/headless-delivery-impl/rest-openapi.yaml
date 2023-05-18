@@ -4786,12 +4786,13 @@ components:
                         The categories associated with this page.
                     items:
                         $ref: "#/components/schemas/TaxonomyCategoryBrief"
-                    readOnly: true
                     type: array
                 taxonomyCategoryIds:
+                    deprecated: true
                     # @review
                     description:
-                        A write-only field that adds `TaxonomyCategory` instances to the page.
+                        A write-only field that adds `TaxonomyCategory` instances to the page. Deprecated as of
+                        Cavanaugh (7.4.x), replaced by `taxonomyCategoryBriefs.taxonomyCategoryReference`
                     items:
                         format: int64
                         type: integer
@@ -5195,6 +5196,25 @@ components:
                         The localized category's names.
                     readOnly: true
                     type: object
+                taxonomyCategoryReference:
+                    # @review
+                    description:
+                        A unique reference to a taxonomy category.
+                    properties:
+                        externalReferenceCode:
+                            # @review
+                            description:
+                                The taxonomy category's external reference code.
+                            type: string
+                        siteKey:
+                            # @review
+                            description:
+                                The key of the site or asset library where the taxonomy category is located. It can be
+                                left out if the taxonomy category is in the same site as the page.
+                            type: string
+                    required:
+                        - externalReferenceCode
+                    type: object
             type: object
         URLFormSubmissionResult:
             # @review
@@ -5554,7 +5574,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.delivery.client', and version '4.0.57'."
+        'com.liferay.headless.delivery.client', and version '4.0.58'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
