@@ -1070,7 +1070,7 @@ public class ObjectDefinitionLocalServiceTest {
 				ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
 		objectDefinition2 =
-			_objectDefinitionLocalService.enableAccountEntryRestricted(
+			_objectDefinitionLocalService.enableObjectRestricted(
 				objectRelationship);
 
 		Assert.assertTrue(objectDefinition2.isAccountEntryRestricted());
@@ -1093,7 +1093,7 @@ public class ObjectDefinitionLocalServiceTest {
 				ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
 		try {
-			_objectDefinitionLocalService.enableAccountEntryRestricted(
+			_objectDefinitionLocalService.enableObjectRestricted(
 				objectRelationship);
 
 			Assert.fail();
