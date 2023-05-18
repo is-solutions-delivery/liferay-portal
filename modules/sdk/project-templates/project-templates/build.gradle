@@ -91,7 +91,7 @@ dependencies {
 	projectTemplates group: "com.liferay", name: "com.liferay.project.templates.war.core.ext", version: "1.0.151"
 	projectTemplates group: "com.liferay", name: "com.liferay.project.templates.war.hook", version: "1.0.177"
 	projectTemplates group: "com.liferay", name: "com.liferay.project.templates.war.mvc.portlet", version: "1.0.177"
-	projectTemplates group: "com.liferay", name: "com.liferay.project.templates.workspace", version: "1.0.194"
+	projectTemplates group: "com.liferay", name: "com.liferay.project.templates.workspace", version: "1.0.195"
 
 	if (project.hasProperty("releaseApiJarName")) {
 		releaseApiJar group: "com.liferay.portal", name: "release.${releaseApiJarName}.api", version: "${releaseApiJarVersion}"
