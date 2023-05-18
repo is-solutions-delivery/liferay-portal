@@ -62,6 +62,7 @@ import com.liferay.portal.kernel.servlet.HttpMethods;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ConcurrentHashMapBuilder;
+import com.liferay.portal.kernel.util.FriendlyURLNormalizer;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -71,6 +72,7 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.theme.ThemeDisplayFactory;
+import com.liferay.portal.util.PropsValues;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -432,6 +434,9 @@ public class FragmentCollectionContributorRegistryImpl
 
 	@Reference
 	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
+
+	@Reference
+	private FriendlyURLNormalizer _friendlyURLNormalizer;
 
 	@Reference
 	private GroupLocalService _groupLocalService;
@@ -1099,32 +1104,55 @@ public class FragmentCollectionContributorRegistryImpl
 			Group group = _groupLocalService.getGroup(
 				company.getCompanyId(), GroupConstants.GUEST);
 
-			Layout layout = _layoutLocalService.fetchFirstLayout(
-				group.getGroupId(), false,
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, false);
+			String friendlyURL = _friendlyURLNormalizer.normalizeWithEncoding(
+				PropsValues.DEFAULT_GUEST_PUBLIC_LAYOUT_FRIENDLY_URL);
 
-			themeDisplay.setLanguageId(layout.getDefaultLanguageId());
-			themeDisplay.setLayout(layout);
+			Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
+				group.getGroupId(), false, friendlyURL);
 
-			LayoutSet layoutSet = layout.getLayoutSet();
+			if (layout == null) {
+				layout = _layoutLocalService.fetchFirstLayout(
+					group.getGroupId(), false,
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, false);
+			}
 
-			themeDisplay.setLayoutSet(layoutSet);
+			if (layout == null) {
+				layout = _layoutLocalService.fetchFirstLayout(
+					group.getGroupId(), false,
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+			}
 
-			themeDisplay.setLayoutTypePortlet(
-				(LayoutTypePortlet)layout.getLayoutType());
-			themeDisplay.setLocale(
-				LocaleUtil.fromLanguageId(layout.getDefaultLanguageId()));
-			themeDisplay.setLookAndFeel(layoutSet.getTheme(), null);
+			if (layout != null) {
+				themeDisplay.setLanguageId(layout.getDefaultLanguageId());
+				themeDisplay.setLayout(layout);
+
+				LayoutSet layoutSet = layout.getLayoutSet();
+
+				themeDisplay.setLayoutSet(layoutSet);
+
+				themeDisplay.setLayoutTypePortlet(
+					(LayoutTypePortlet)layout.getLayoutType());
+				themeDisplay.setLocale(
+					LocaleUtil.fromLanguageId(layout.getDefaultLanguageId()));
+				themeDisplay.setLookAndFeel(layoutSet.getTheme(), null);
+				themeDisplay.setPlid(layout.getPlid());
+			}
+			else {
+				Locale locale = _portal.getSiteDefaultLocale(
+					group.getGroupId());
+
+				themeDisplay.setLanguageId(LocaleUtil.toLanguageId(locale));
+				themeDisplay.setLocale(locale);
+			}
+
 			themeDisplay.setPermissionChecker(permissionChecker);
-			themeDisplay.setPlid(layout.getPlid());
 			themeDisplay.setPortalDomain(company.getVirtualHostname());
-			themeDisplay.setPortalURL(
-				company.getPortalURL(layout.getGroupId()));
+			themeDisplay.setPortalURL(company.getPortalURL(group.getGroupId()));
 			themeDisplay.setRealUser(user);
-			themeDisplay.setScopeGroupId(layout.getGroupId());
+			themeDisplay.setScopeGroupId(group.getGroupId());
 			themeDisplay.setServerPort(
 				_portal.getPortalServerPort(_isHttpsEnabled()));
-			themeDisplay.setSiteGroupId(layout.getGroupId());
+			themeDisplay.setSiteGroupId(group.getGroupId());
 			themeDisplay.setTimeZone(user.getTimeZone());
 			themeDisplay.setUser(user);
 

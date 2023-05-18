@@ -33,7 +33,7 @@ Group group = layoutsAdminDisplayContext.getGroup();
 
 Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
 
-LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
+LayoutType selLayoutType = selLayout.getLayoutType();
 %>
 
 <portlet:actionURL name="/layout_admin/edit_layout" var="editLayoutURL">
@@ -59,6 +59,20 @@ LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
 	<aui:input name="type" type="hidden" value="<%= selLayout.getType() %>" />
 	<aui:input name="<%= PortletDataHandlerKeys.SELECTED_LAYOUTS %>" type="hidden" />
 
+	<c:if test="<%= group.isLayoutPrototype() || !(selLayoutType.isURLFriendliable() && !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem()) %>">
+		<aui:input name="friendlyURL" type="hidden" value="<%= (selLayout != null) ? HttpComponentsUtil.decodeURL(selLayout.getFriendlyURL()) : StringPool.BLANK %>" />
+	</c:if>
+
+	<%
+	Locale defaultLocale = LocaleUtil.getDefault();
+
+	String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+	%>
+
+	<c:if test="<%= group.isLayoutPrototype() %>">
+		<aui:input name='<%= "nameMapAsXML_" + defaultLanguageId %>' type="hidden" value="<%= selLayout.getName(defaultLocale) %>" />
+	</c:if>
+
 	<c:if test="<%= layoutsAdminDisplayContext.isLayoutPageTemplateEntry() || ((selLayout.isTypeAssetDisplay() || selLayout.isTypeContent()) && layoutsAdminDisplayContext.isDraft()) %>">
 
 		<%
@@ -77,10 +91,6 @@ LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
 
 	<liferay-frontend:edit-form-body>
 		<liferay-ui:success key="layoutAdded" message="the-page-was-created-successfully" />
-
-		<%
-		LayoutType selLayoutType = selLayout.getLayoutType();
-		%>
 
 		<c:if test="<%= !group.isLayoutPrototype() && selLayoutType.isURLFriendliable() && !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem() %>">
 			<liferay-ui:error exception="<%= DuplicateFriendlyURLEntryException.class %>" message="the-friendly-url-is-already-in-use.-please-enter-a-unique-friendly-url" />
@@ -157,6 +167,10 @@ LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
 		<liferay-ui:error exception="<%= RequiredSegmentsExperienceException.MustNotDeleteSegmentsExperienceReferencedBySegmentsExperiments.class %>" message="this-page-cannot-be-deleted-because-it-has-ab-tests-in-progress" />
 
 		<liferay-ui:error key="resetMergeFailCountAndMerge" message="unable-to-reset-the-failure-counter-and-propagate-the-changes" />
+
+		<%
+		LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
+		%>
 
 		<c:if test="<%= layoutRevision != null %>">
 			<aui:input name="layoutSetBranchId" type="hidden" value="<%= layoutRevision.getLayoutSetBranchId() %>" />
