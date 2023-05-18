@@ -13,25 +13,20 @@
  */
 
 import {FDSCellRenderer} from '@liferay/js-api/data-set';
-import React from 'react';
-export declare function getInputRendererById(id: string): any;
-export declare type DataRendererType = 'clientExtension' | 'internal';
-export interface DataRenderer {
-	type: DataRendererType;
+import {ComponentType} from 'react';
+import {InternalCellRenderer} from '../cell_renderers/InternalCellRenderer';
+export declare function getInputRendererById(id: string): ComponentType;
+export interface Renderer {
+	type: 'clientExtension' | 'internal';
 }
-export interface InternalDataRenderer extends DataRenderer {
-	Component: React.ComponentClass<any>;
-	type: 'internal';
-}
-export interface ClientExtensionDataRenderer extends DataRenderer {
+export interface ClientExtensionCellRenderer extends Renderer {
 	renderer: FDSCellRenderer;
 	type: 'clientExtension';
 }
-export declare type AnyDataRenderer =
-	| ClientExtensionDataRenderer
-	| InternalDataRenderer;
-export declare function getDataRendererById(id: string): AnyDataRenderer;
-export declare function getDataRendererByURL(
+export declare type CellRenderer =
+	| ClientExtensionCellRenderer
+	| InternalCellRenderer;
+export declare function getCellRendererByURL(
 	url: string,
 	type: 'clientExtension' | 'internal'
-): Promise<AnyDataRenderer>;
+): Promise<CellRenderer>;

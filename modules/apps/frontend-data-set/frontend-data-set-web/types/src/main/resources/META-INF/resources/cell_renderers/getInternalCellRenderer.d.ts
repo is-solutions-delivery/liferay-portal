@@ -12,10 +12,7 @@
  * details.
  */
 
-import {DataRenderers} from '@liferay/frontend-data-set-web';
-
-const DEFAULT_TYPE = 'default';
-
-export function resolveRendererByType(type) {
-	return DataRenderers[type] || DataRenderers[DEFAULT_TYPE];
-}
+import {InternalCellRenderer} from './InternalCellRenderer';
+export declare function getInternalCellRenderer(
+	name: string
+): InternalCellRenderer;

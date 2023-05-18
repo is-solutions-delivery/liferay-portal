@@ -12,17 +12,13 @@
  * details.
  */
 
-// Frontend Data Set API
+/// <reference types="react" />
 
-export {default as FrontendDataSet} from './FrontendDataSet';
-
-// Renderers API
-
-export {INTERNAL_CELL_RENDERERS as FDS_INTERNAL_CELL_RENDERERS} from './cell_renderers/InternalCellRenderer';
-export {getInternalCellRenderer as getFDSInternalCellRenderer} from './cell_renderers/getInternalCellRenderer';
-export {default as DateTimeRenderer} from './cell_renderers/DateTimeRenderer';
-export {default as StatusRenderer} from './cell_renderers/StatusRenderer';
-
-// Data Set Events API
-
-export {default as DATA_SET_EVENT} from './utils/eventsDefinitions';
+import {Renderer} from '../utils/renderer';
+export interface InternalCellRenderer extends Renderer {
+	component: React.ComponentType<any>;
+	label?: string;
+	name?: string;
+	type: 'internal';
+}
+export declare const INTERNAL_CELL_RENDERERS: Array<InternalCellRenderer>;
