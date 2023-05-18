@@ -155,7 +155,6 @@ const UserForm = () => {
 
 		setValue('roles', rolesFiltered);
 	};
-
 	const inputProps = {
 		errors,
 		register,
@@ -164,6 +163,10 @@ const UserForm = () => {
 	const hasDeletePermission =
 		myUserAccount?.id !== Number(userAccount?.id) &&
 		userAccount?.actions['delete-user-account'];
+
+	const hasEditPermission =
+		myUserAccount?.id !== Number(userAccount?.id) &&
+		userAccount?.actions['patch-user-account'];
 
 	return (
 		<Container className="container">
@@ -324,7 +327,10 @@ const UserForm = () => {
 				<Form.Footer
 					onClose={onClose}
 					onSubmit={handleSubmit(_onSubmit)}
-					primaryButtonProps={{loading: isSubmitting}}
+					primaryButtonProps={{
+						disabled: !hasEditPermission,
+						loading: isSubmitting,
+					}}
 				/>
 			</ClayForm>
 		</Container>

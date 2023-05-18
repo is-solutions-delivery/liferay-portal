@@ -118,40 +118,31 @@ EOF
 	cat <<EOF > liferay-sample-custom-element-2/src/common/components/DadJoke.js
 import React from 'react';
 
-class DadJoke extends React.Component {
-	constructor(props) {
-		super(props);
+import {Liferay} from '../services/liferay/liferay';
 
-		this.oAuth2Client = props.oAuth2Client;
-		this.state = {"joke": ""};
-	}
+function DadJoke() {
+	const [joke, setJoke] = React.useState(null);
 
-	componentDidMount() {
-		if (this.oAuth2Client) {
-			this._request = this.oAuth2Client.fetch(
-				'/dad/joke'
-			).then(response => response.text()
-			).then(text => {
-				this._request = null;
-				this.setState({"joke": text});
+	const oAuth2Client = Liferay.OAuth2Client.FromUserAgentApplication(
+		'liferay-sample-etc-spring-boot-oauth-application-user-agent'
+	);
+
+	React.useEffect(() => {
+		const request = oAuth2Client
+			.fetch('/dad/joke')
+			.then((response) => response.text())
+			.then((joke) => {
+				setJoke(joke);
 			});
-		}
+
+		return () => request.cancel();
+	}, [oAuth2Client]);
+
+	if (!joke) {
+		return <div>Loading...</div>;
 	}
 
-	componentWillUnmount() {
-		if (this._request) {
-			this._request.cancel();
-		}
-	}
-
-	render() {
-		if (this.state === null) {
-			return <div>Loading...</div>
-		}
-		else {
-			return <div>{this.state.joke}</div>
-		}
-	}
+	return <div>{joke}</div>;
 }
 
 export default DadJoke;
@@ -170,7 +161,7 @@ import HelloWorld from './routes/hello-world/pages/HelloWorld';
 
 import './common/styles/index.scss';
 
-const App = ({oAuth2Client, route}) => {
+const App = ({route}) => {
 	if (route === 'hello-bar') {
 		return <HelloBar />;
 	}
@@ -185,7 +176,7 @@ const App = ({oAuth2Client, route}) => {
 
 			{Liferay.ThemeDisplay.isSignedIn() && (
 				<div>
-					<DadJoke oAuth2Client={oAuth2Client} />
+					<DadJoke />
 				</div>
 			)}
 		</div>
@@ -193,25 +184,9 @@ const App = ({oAuth2Client, route}) => {
 };
 
 class WebComponent extends HTMLElement {
-	constructor() {
-		super();
-
-		try {
-			this.oAuth2Client = Liferay.OAuth2Client.FromUserAgentApplication(
-				'liferay-sample-oauth-application-user-agent'
-			);
-		}
-		catch (error) {
-			console.log("Unable to get user agent application");
-		}
-	}
-
 	connectedCallback() {
 		createRoot(this).render(
-			<App
-				oAuth2Client={this.oAuth2Client}
-				route={this.getAttribute('route')}
-			/>,
+			<App route={this.getAttribute('route')} />,
 			this
 		);
 

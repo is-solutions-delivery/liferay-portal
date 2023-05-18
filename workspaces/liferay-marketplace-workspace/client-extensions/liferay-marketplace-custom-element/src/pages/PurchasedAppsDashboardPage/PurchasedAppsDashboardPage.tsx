@@ -154,6 +154,7 @@ export function PurchasedAppsDashboardPage() {
 			setAccounts(accountsList);
 			setSelectedAccount(accountsList[0]);
 		};
+
 		makeFetch();
 	}, []);
 
@@ -236,6 +237,7 @@ export function PurchasedAppsDashboardPage() {
 				};
 			});
 		};
+
 		makeFetch();
 	}, [page, purchasedAppTable.pageSize, selectedAccount]);
 
@@ -260,7 +262,7 @@ export function PurchasedAppsDashboardPage() {
 					dashboardNavigationItem.itemSelected
 			) || dashboardNavigationItems[0];
 
-		setSelectedNavigationItem(clickedNavigationItem?.itemName as string);
+		setSelectedNavigationItem(clickedNavigationItem?.itemTitle as string);
 
 		if (clickedNavigationItem.itemTitle !== 'Members') {
 			setSelectedMember(undefined);
@@ -365,7 +367,7 @@ export function PurchasedAppsDashboardPage() {
 				setMembers(filteredMembersList);
 			}
 		})();
-	}, [selectedNavigationItem, selectedAccount]);
+	}, [selectedAccount, selectedNavigationItem]);
 
 	return (
 		<div className="purchased-apps-dashboard-page-container">
@@ -379,7 +381,7 @@ export function PurchasedAppsDashboardPage() {
 				setSelectedAccount={setSelectedAccount}
 			/>
 
-			{selectedNavigationItem === 'myApps' && (
+			{selectedNavigationItem === 'My Apps' && (
 				<DashboardPage
 					buttonHref="https://marketplace.liferay.com/"
 					buttonMessage="Add Apps"
@@ -419,7 +421,7 @@ export function PurchasedAppsDashboardPage() {
 				</DashboardPage>
 			)}
 
-			{selectedNavigationItem === 'solutions' && (
+			{selectedNavigationItem === 'Solutions' && (
 				<DashboardPage
 					dashboardNavigationItems={dashboardNavigationItems}
 					messages={solutionMessages}
@@ -434,7 +436,7 @@ export function PurchasedAppsDashboardPage() {
 				</DashboardPage>
 			)}
 
-			{selectedNavigationItem === 'members' && (
+			{selectedNavigationItem === 'Members' && (
 				<DashboardPage
 					dashboardNavigationItems={dashboardNavigationItems}
 					messages={memberMessages}

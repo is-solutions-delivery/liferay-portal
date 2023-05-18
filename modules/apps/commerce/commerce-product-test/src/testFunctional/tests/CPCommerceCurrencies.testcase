@@ -14,6 +14,52 @@ definition {
 		CommerceConfiguration.commerceTearDown();
 	}
 
+	@description = "This is a test for COMMERCE-11352. As a user, I cannot edit a currency code."
+	@priority = 5
+	test CannotEditCurrencyCode {
+		property portal.acceptance = "true";
+
+		task ("Given a new currency is created") {
+			CommerceNavigator.goToCurrenciesAdmin();
+
+			Click(locator1 = "Button#PLUS");
+
+			CommerceEntry.addNewCurrenciesEntry(
+				code = "TCY",
+				entryName = "Test Currency",
+				exchangeRate = "1.5",
+				formatPattern = "$ ###,##0.00",
+				isPrimary = "false",
+				symbol = "&");
+
+			Button.clickSave();
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
+		}
+
+		task ("When the user goes to the new currency") {
+			CommerceNavigator.gotoEntry(entryName = "Test Currency");
+		}
+
+		task ("Then the currency code entry is read-only and cannot be edited") {
+			AssertVisible(
+				key_fieldName = "Code",
+				locator1 = "CommerceEntry#INPUT_FIELD_READ_ONLY");
+
+			Click(locator1 = "Icon#BACK");
+		}
+
+		task ("When the user goes to an existing currency") {
+			CommerceNavigator.gotoEntry(entryName = "US Dollar");
+		}
+
+		task ("Then the currency code entry is read-only and cannot be edited") {
+			AssertVisible(
+				key_fieldName = "Code",
+				locator1 = "CommerceEntry#INPUT_FIELD_READ_ONLY");
+		}
+	}
+
 	@description = "This is a test for COMMERCE-11393. Can update currency format for Indian Rupee"
 	@priority = 3
 	test CanUpdateCurrencyFormatForINR {
@@ -178,7 +224,7 @@ definition {
 
 		CommerceNavigator.gotoEntry(entryName = "Test Currency");
 
-		for (var current : list "Name/Test Currency Edited,Code/TCYE,Exchange Rate with US Dollar/1") {
+		for (var current : list "Name/Test Currency Edited,Exchange Rate with US Dollar/1") {
 			var fieldLabel = StringUtil.extractFirst(${current}, "/");
 			var value = StringUtil.extractLast(${current}, "/");
 
@@ -203,6 +249,10 @@ definition {
 		MenuItem.clickNoError(menuItem = "Delete");
 
 		AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
+
+		AssertElementNotPresent(
+			key_entryName = "Test Currency Edited",
+			locator1 = "CommerceNavigation#ENTRY_NAME");
 	}
 
 	@description = "This is a test for COMMERCE-5843. As a system administrator I want disabled currencies not to be available in Price Lists, Catalogs and Channels"

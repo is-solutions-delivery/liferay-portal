@@ -31,6 +31,7 @@ import com.liferay.commerce.frontend.model.HeaderActionModel;
 import com.liferay.commerce.frontend.model.StepModel;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceOrder;
+import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.model.CommerceOrderNote;
 import com.liferay.commerce.model.CommerceOrderType;
 import com.liferay.commerce.model.CommerceShipmentItem;
@@ -849,7 +850,8 @@ public class CommerceOrderContentDisplayContext {
 		}
 
 		List<CommerceOrderStatus> commerceOrderStatuses =
-			_commerceOrderStatusRegistry.getCommerceOrderStatuses();
+			_commerceOrderStatusRegistry.getCommerceOrderStatuses(
+				commerceOrder);
 
 		for (CommerceOrderStatus commerceOrderStatus : commerceOrderStatuses) {
 			if (((commerceOrderStatus.getKey() ==
@@ -1134,6 +1136,23 @@ public class CommerceOrderContentDisplayContext {
 		}
 
 		return false;
+	}
+
+	public boolean isValidCommerceOrder() throws PortalException {
+		CommerceOrder commerceOrder = getCommerceOrder();
+
+		if (commerceOrder == null) {
+			return false;
+		}
+
+		List<CommerceOrderItem> commerceOrderItems =
+			commerceOrder.getCommerceOrderItems();
+
+		if (commerceOrderItems.isEmpty()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private CommerceOrderFieldsConfiguration

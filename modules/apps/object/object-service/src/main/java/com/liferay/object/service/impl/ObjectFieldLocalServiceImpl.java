@@ -71,12 +71,14 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.util.PropsValues;
 
 import java.io.Serializable;
 
@@ -88,6 +90,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -589,6 +593,8 @@ public class ObjectFieldLocalServiceImpl
 			newObjectField.getObjectDefinitionId());
 
 		_validateListTypeDefinitionId(listTypeDefinitionId, businessType);
+		_validateBusinessTypeEncrypted(
+			newObjectField.getObjectDefinitionId(), businessType);
 		_validateIndexed(
 			businessType, dbType, indexed, indexedAsKeyword, indexedLanguageId);
 		_validateLabel(labelMap, newObjectField);
@@ -721,6 +727,7 @@ public class ObjectFieldLocalServiceImpl
 			objectDefinitionId);
 
 		_validateListTypeDefinitionId(listTypeDefinitionId, businessType);
+		_validateBusinessTypeEncrypted(objectDefinitionId, businessType);
 		_validateIndexed(
 			businessType, dbType, indexed, indexedAsKeyword, indexedLanguageId);
 		_validateLabel(labelMap, null);
@@ -1007,6 +1014,40 @@ public class ObjectFieldLocalServiceImpl
 			}
 
 			throw new ObjectFieldDBTypeException("Invalid DB type " + dbType);
+		}
+	}
+
+	private void _validateBusinessTypeEncrypted(
+			long objectDefinitionId, String businessType)
+		throws PortalException {
+
+		if (!Objects.equals(
+				businessType, ObjectFieldConstants.BUSINESS_TYPE_ENCRYPTED)) {
+
+			return;
+		}
+
+		if (!PropsValues.OBJECT_ENCRYPTION_ENABLED) {
+			throw new ObjectFieldBusinessTypeException(
+				"Business type encrypted is disabled");
+		}
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
+
+		if (!objectDefinition.isDefaultStorageType()) {
+			throw new ObjectFieldBusinessTypeException(
+				"Business type encrypted can only be used in object " +
+					"definitions with a default storage type");
+		}
+
+		try {
+			new SecretKeySpec(
+				Base64.decode(PropsValues.OBJECT_ENCRYPTION_KEY),
+				PropsValues.OBJECT_ENCRYPTION_ALGORITHM);
+		}
+		catch (Exception exception) {
+			throw new PortalException(exception);
 		}
 	}
 

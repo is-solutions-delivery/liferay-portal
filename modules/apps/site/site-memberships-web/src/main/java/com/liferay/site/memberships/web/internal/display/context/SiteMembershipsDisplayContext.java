@@ -16,6 +16,8 @@ package com.liferay.site.memberships.web.internal.display.context;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemListBuilder;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItemListBuilder;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -26,7 +28,6 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
@@ -77,16 +78,6 @@ public class SiteMembershipsDisplayContext {
 		return group.getGroupId();
 	}
 
-	public List<NavigationItem> getInfoPanelNavigationItems() {
-		return NavigationItemListBuilder.add(
-			navigationItem -> {
-				navigationItem.setActive(true);
-				navigationItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "details"));
-			}
-		).build();
-	}
-
 	public PortletURL getPortletURL() {
 		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
@@ -97,22 +88,6 @@ public class SiteMembershipsDisplayContext {
 		).setParameter(
 			"groupId", getGroupId()
 		).buildPortletURL();
-	}
-
-	public String getRedirect() {
-		if (_redirect != null) {
-			return _redirect;
-		}
-
-		_redirect = ParamUtil.getString(_httpServletRequest, "redirect");
-
-		if (Validator.isNull(_redirect)) {
-			PortletURL portletURL = _liferayPortletResponse.createRenderURL();
-
-			_redirect = portletURL.toString();
-		}
-
-		return _redirect;
 	}
 
 	public User getSelUser() throws PortalException {
@@ -135,14 +110,14 @@ public class SiteMembershipsDisplayContext {
 		return _tabs1;
 	}
 
-	public long getUserGroupId() {
-		if (_userGroupId != null) {
-			return _userGroupId;
-		}
-
-		_userGroupId = ParamUtil.getLong(_httpServletRequest, "userGroupId");
-
-		return _userGroupId;
+	public List<TabsItem> getTabsItems() {
+		return TabsItemListBuilder.add(
+			tabsItem -> {
+				tabsItem.setActive(true);
+				tabsItem.setLabel(
+					LanguageUtil.get(_httpServletRequest, "details"));
+			}
+		).build();
 	}
 
 	public long getUserId() throws PortalException {
@@ -186,9 +161,7 @@ public class SiteMembershipsDisplayContext {
 	private Group _group;
 	private final HttpServletRequest _httpServletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
-	private String _redirect;
 	private User _selUser;
 	private String _tabs1;
-	private Long _userGroupId;
 
 }

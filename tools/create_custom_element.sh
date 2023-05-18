@@ -261,15 +261,15 @@ function write_react_app_files {
 	#
 
 	cat <<EOF > common/services/liferay/api.js
-import { Liferay } from "./liferay";
+import {Liferay} from './liferay';
 
-const { REACT_APP_LIFERAY_HOST = window.location.origin } = process.env;
+const {REACT_APP_LIFERAY_HOST = window.location.origin} = process.env;
 
 const baseFetch = async (url, options = {}) => {
-	return fetch(REACT_APP_LIFERAY_HOST + "/" + url, {
+	return fetch(REACT_APP_LIFERAY_HOST + '/' + url, {
 		headers: {
-			"Content-Type": "application/json",
-			"x-csrf-token": Liferay.authToken,
+			'Content-Type': 'application/json',
+			'x-csrf-token': Liferay.authToken,
 		},
 		...options,
 	});
@@ -289,16 +289,16 @@ export const Liferay = window.Liferay || {
 		getBuiltInRedirectURL: () => '',
 		getIntrospectURL: () => '',
 		getTokenURL: () => '',
-		getUserAgentApplication: (serviceName) => {},
+		getUserAgentApplication: (_serviceName) => {},
 	},
 	OAuth2Client: {
-		FromParameters: (options) => {
+		FromParameters: (_options) => {
 			return {};
 		},
-		FromUserAgentApplication: (userAgentApplicationId) => {
+		FromUserAgentApplication: (_userAgentApplicationId) => {
 			return {};
 		},
-		fetch: (url, options = {}) => {},
+		fetch: (_url, _options = {}) => {},
 	},
 	ThemeDisplay: {
 		getCompanyGroupId: () => 0,
@@ -309,7 +309,7 @@ export const Liferay = window.Liferay || {
 		},
 	},
 	authToken: '',
-}
+};
 EOF
 
 	#
@@ -455,7 +455,9 @@ import React from 'react';
 
 const HelloWorld = () => (
 	<div className="hello-world">
-		<h1>Hello <span className="hello-world-name">World</span></h1>
+		<h1>
+			Hello <span className="hello-world-name">World</span>
+		</h1>
 	</div>
 );
 

@@ -70,8 +70,8 @@ public class AMImageScalerRegistryImpl implements AMImageScalerRegistry {
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_serviceTrackerMap = ServiceTrackerMapFactory.openMultiValueMap(
-			bundleContext, AMImageScaler.class, "(mime.type=*)",
-			new PropertyServiceReferenceMapper<>("mime.type"),
+			bundleContext, AMImageScaler.class, "(supportedMimeTypes=*)",
+			new PropertyServiceReferenceMapper<>("supportedMimeTypes"),
 			new PropertyServiceReferenceComparator<>("service.ranking"));
 	}
 

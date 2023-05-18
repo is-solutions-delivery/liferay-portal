@@ -1770,6 +1770,14 @@ public interface PropsKeys {
 	public static final String NOTIFICATIONS_MAX_EVENTS =
 		"notifications.max.events";
 
+	public static final String OBJECT_ENCRYPTION_ALGORITHM =
+		"object.encryption.algorithm";
+
+	public static final String OBJECT_ENCRYPTION_ENABLED =
+		"object.encryption.enabled";
+
+	public static final String OBJECT_ENCRYPTION_KEY = "object.encryption.key";
+
 	public static final String OBJECT_NESTED_FIELDS_MAX_QUERY_DEPTH =
 		"object.nested.fields.max.query.depth";
 

@@ -71,14 +71,15 @@ public class UpdateGlobalPublicationsConfigurationMVCActionCommand
 			_ctSettingsConfigurationHelper.getCTSettingsConfiguration(
 				companyId);
 
-		if (ctSettingsConfiguration.enabled()) {
+		boolean enablePublications = ParamUtil.getBoolean(
+			actionRequest, "enablePublications",
+			ctSettingsConfiguration.enabled());
+
+		if (ctSettingsConfiguration.enabled() || !enablePublications) {
 			redirectURL.setParameter(
 				"mvcRenderCommandName", "/change_tracking/view_settings");
 		}
 
-		boolean enablePublications = ParamUtil.getBoolean(
-			actionRequest, "enablePublications",
-			ctSettingsConfiguration.enabled());
 		boolean enableSandboxOnly = ParamUtil.getBoolean(
 			actionRequest, "enableSandboxOnly",
 			ctSettingsConfiguration.sandboxEnabled());

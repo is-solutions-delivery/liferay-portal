@@ -279,6 +279,12 @@ definition {
 		ContentDashboard.applySelectedFilter();
 	}
 
+	macro filterByToBeReviewed {
+		ContentDashboard.openFilterAndOrder();
+
+		Click(locator1 = "ContentDashboard#FILTER_BY_OPTION");
+	}
+
 	macro filterByType {
 		ContentDashboard.openFilterModal(filterOption = "Type");
 
@@ -402,6 +408,12 @@ definition {
 	}
 
 	macro orderByModificationDate {
+		ContentDashboard.openFilterAndOrder();
+
+		Click(locator1 = "ContentDashboard#FILTER_BY_OPTION");
+	}
+
+	macro orderByReviewDate {
 		ContentDashboard.openFilterAndOrder();
 
 		Click(locator1 = "ContentDashboard#FILTER_BY_OPTION");
