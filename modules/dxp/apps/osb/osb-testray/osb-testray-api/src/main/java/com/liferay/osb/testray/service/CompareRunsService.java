@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * The contents of this file are subject to the terms of the Liferay Enterprise
+ * Subscription License ("License"). You may not use this file except in
+ * compliance with the License. You can obtain a copy of the License by
+ * contacting Liferay, Inc. See the License for the specific language governing
+ * permissions and limitations under the License, including but not limited to
+ * distribution rights of the Software.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *
+ *
  */
 
 package com.liferay.osb.testray.service;
@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.service.BaseService;
 import com.liferay.portal.kernel.transaction.Isolation;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -47,6 +48,10 @@ public interface CompareRunsService extends BaseService {
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.osb.testray.service.impl.CompareRunsServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the compare runs remote service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link CompareRunsServiceUtil} if injection and service tracking are not available.
 	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getComparison(
+		long runIdA, long runIdB, String statusA, String statusB,
+		long companyId);
 
 	/**
 	 * Returns the OSGi service identifier.
