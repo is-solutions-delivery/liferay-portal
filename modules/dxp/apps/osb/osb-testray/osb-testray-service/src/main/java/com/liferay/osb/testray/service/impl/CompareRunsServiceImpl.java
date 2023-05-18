@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author José Abelenda
+ * @author Felipe Veloso
  */
 @Component(
 	property = {
@@ -22,10 +23,12 @@ import org.osgi.service.component.annotations.Component;
 )
 public class CompareRunsServiceImpl extends CompareRunsServiceBaseImpl {
 
-	public int getComparison(long runIdA, long runIdB, String statusA, String statusB, long companyId) {
+	public int getComparison(
+		long runIdA, long runIdB, String statusA, String statusB,
+		long companyId) {
 
-		return compareRunsLocalService.getComparison(runIdA, runIdB, statusA, statusB, companyId);
-
+		return compareRunsLocalService.getComparison(
+			runIdA, runIdB, statusA, statusB, companyId);
 	}
 
 }
