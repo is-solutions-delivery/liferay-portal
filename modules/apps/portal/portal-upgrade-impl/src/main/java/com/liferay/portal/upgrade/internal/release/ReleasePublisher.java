@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.model.Release;
+import com.liferay.portal.kernel.model.ReleaseConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
@@ -46,15 +47,12 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = ReleasePublisher.class)
 public class ReleasePublisher {
 
-	public ServiceRegistration<Release> publish(
-		Release release, boolean initialRelease) {
-
+	public void publish(Release release, boolean initialRelease) {
 		Dictionary<String, Object> properties = new Hashtable<>();
 
 		properties.put(
 			"release.bundle.symbolic.name", release.getBundleSymbolicName());
 		properties.put("release.initial", initialRelease);
-		properties.put("release.state", release.getState());
 
 		try {
 			if (Validator.isNotNull(release.getSchemaVersion())) {
@@ -71,17 +69,15 @@ public class ReleasePublisher {
 			}
 		}
 
-		ServiceRegistration<Release> newServiceRegistration =
-			_bundleContext.registerService(Release.class, release, properties);
+		ServiceRegistration<Release> oldServiceRegistration =
+			_serviceConfiguratorRegistrations.put(
+				release.getServletContextName(),
+				_bundleContext.registerService(
+					Release.class, release, properties));
 
-		return _serviceConfiguratorRegistrations.put(
-			release.getServletContextName(), newServiceRegistration);
-	}
-
-	public ServiceRegistration<Release> publishInProgress(Release release) {
-		release.setState(_STATE_IN_PROGRESS);
-
-		return publish(release, false);
+		if (oldServiceRegistration != null) {
+			oldServiceRegistration.unregister();
+		}
 	}
 
 	public void unpublish(Release release) {
@@ -107,6 +103,10 @@ public class ReleasePublisher {
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		for (Release release : releases) {
+			if (release.getState() != ReleaseConstants.STATE_GOOD) {
+				continue;
+			}
+
 			publish(release, false);
 		}
 
@@ -124,8 +124,6 @@ public class ReleasePublisher {
 			serviceRegistration.unregister();
 		}
 	}
-
-	private static final int _STATE_IN_PROGRESS = -1;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ReleasePublisher.class);
