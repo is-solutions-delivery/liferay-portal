@@ -1761,7 +1761,7 @@ public class BundleSiteInitializerTest {
 			_objectDefinitionLocalService.fetchObjectDefinition(
 				_group.getCompanyId(), "C_TestObjectDefinition1");
 
-		Assert.assertFalse(objectDefinition1.isAccountEntryRestricted());
+		Assert.assertTrue(objectDefinition1.isAccountEntryRestricted());
 		Assert.assertFalse(objectDefinition1.isSystem());
 		Assert.assertEquals(
 			objectDefinition1.getStatus(), WorkflowConstants.STATUS_APPROVED);
@@ -1820,7 +1820,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertFalse(objectDefinition4.isSystem());
 		Assert.assertEquals(
 			objectDefinition4.getStatus(), WorkflowConstants.STATUS_APPROVED);
-		Assert.assertEquals(objectDefinition1.getStorageType(),
+		Assert.assertEquals(objectDefinition4.getStorageType(),
 			"default");
 
 		ObjectDefinition objectDefinition5 =
@@ -1834,7 +1834,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertEquals(
 			objectDefinition4.getStatus(), WorkflowConstants.STATUS_APPROVED);
-		Assert.assertEquals(objectDefinition1.getStorageType(),
+		Assert.assertEquals(objectDefinition5.getStorageType(),
 			"default");
 	}
 
