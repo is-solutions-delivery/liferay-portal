@@ -1765,6 +1765,8 @@ public class BundleSiteInitializerTest {
 		Assert.assertFalse(objectDefinition1.isSystem());
 		Assert.assertEquals(
 			objectDefinition1.getStatus(), WorkflowConstants.STATUS_APPROVED);
+		Assert.assertEquals(objectDefinition1.getStorageType(),
+			"salesforce");
 
 		_assertObjectActions(3, objectDefinition1);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition1, 0);
@@ -1818,6 +1820,8 @@ public class BundleSiteInitializerTest {
 		Assert.assertFalse(objectDefinition4.isSystem());
 		Assert.assertEquals(
 			objectDefinition4.getStatus(), WorkflowConstants.STATUS_APPROVED);
+		Assert.assertEquals(objectDefinition1.getStorageType(),
+			"default");
 
 		ObjectDefinition objectDefinition5 =
 			_objectDefinitionLocalService.fetchObjectDefinition(
@@ -1830,6 +1834,8 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertEquals(
 			objectDefinition4.getStatus(), WorkflowConstants.STATUS_APPROVED);
+		Assert.assertEquals(objectDefinition1.getStorageType(),
+			"default");
 	}
 
 	private void _assertObjectEntries(
