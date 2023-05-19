@@ -1,3 +1,4 @@
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import {useEffect, useState} from 'react';
 
@@ -13,22 +14,26 @@ import {
 	getAccountInfoFromCommerce,
 	getAccounts,
 	getMyUserAccount,
-	getProductSpecifications,
 	getProducts,
 	getUserAccounts,
 } from '../../utils/api';
 import {showAccountImage} from '../../utils/util';
 import {AccountDetailsPage} from '../AccountDetailsPage/AccountDetailsPage';
-import {
-	DashboardListItems,
-	DashboardPage,
-} from '../DashBoardPage/DashboardPage';
+import {DashboardPage} from '../DashBoardPage/DashboardPage';
 import {
 	AccountBriefProps,
 	MemberProps,
 	UserAccountProps,
+	appTableHeaders,
 	customerRoles,
+	formatDate,
+	getAppListProductIds,
+	getAppListProductSpecifications,
+	getProductTypeFromSpecifications,
+	getRolesList,
+	initialAccountsState,
 	initialDashboardNavigationItems,
+	memberTableHeaders,
 	publisherRoles,
 } from './PublishedDashboardPageUtil';
 
@@ -36,49 +41,10 @@ import './PublishedAppsDashboardPage.scss';
 import {Liferay} from '../../liferay/liferay';
 import {getProductVersionFromSpecifications} from '../../utils/util';
 import {ProjectsPage} from '../ProjectsPage/ProjectsPage';
-
-const appTableHeaders = [
-	{
-		iconSymbol: 'order-arrow',
-		title: 'Name',
-		style: {width: '2%'},
-	},
-	{
-		title: 'Version',
-	},
-	{
-		title: 'Type',
-	},
-	{
-		title: 'Last Updated',
-	},
-	{
-		title: 'Status',
-	},
-];
-
-const memberTableHeaders = [
-	{
-		iconSymbol: 'order-arrow',
-		title: 'Name',
-	},
-	{
-		title: 'Email',
-	},
-	{
-		title: 'Role',
-	},
-];
-
-const initialAccountsState: Account[] = [
-	{
-		externalReferenceCode: '',
-		id: 0,
-		name: '',
-		description: '',
-		type: '',
-	},
-];
+import solutionsIcon from '../../assets/icons/analytics_icon.svg';
+import appsIcon from '../../assets/icons/apps_fill_icon.svg';
+import membersIcon from '../../assets/icons/person_fill_icon.svg';
+import projectsIcon from '../../assets/icons/projects_icon.svg';
 
 interface PublishedAppTable {
 	items: AppProps[];
@@ -137,83 +103,12 @@ export function PublishedAppsDashboardPage() {
 	const [selectedAccount, setSelectedAccount] = useState<Account>(
 		initialAccountsState[0]
 	);
+	const [loading, setLoading] = useState(false);
 
 	const buttonRedirectURL = Liferay.ThemeDisplay.getCanonicalURL().replaceAll(
 		'/publisher-dashboard',
 		'/create-new-app'
 	);
-
-	const formatDate = (date: string) => {
-		const locale = Liferay.ThemeDisplay.getLanguageId().replace('_', '-');
-
-		const dateOptions: Intl.DateTimeFormatOptions = {
-			day: 'numeric',
-			month: 'short',
-			year: 'numeric',
-		};
-
-		const formattedDate = new Intl.DateTimeFormat(
-			locale,
-			dateOptions
-		).format(new Date(date));
-
-		return formattedDate;
-	};
-
-	async function getAppListProductSpecifications(productIds: number[]) {
-		return await Promise.all(
-			productIds.map(async (productId) => {
-				return await getProductSpecifications({
-					appProductId: productId,
-				});
-			})
-		);
-	}
-
-	function getAppListProductIds(products: {items: Product[]}) {
-		const productIds: number[] = [];
-
-		products.items.map((product) => {
-			productIds.push(product.productId);
-		});
-
-		return productIds;
-	}
-
-	function getProductTypeFromSpecifications(
-		specifications: ProductSpecification[]
-	) {
-		let productType = 'no type';
-
-		specifications.forEach((specification: ProductSpecification) => {
-			if (specification.specificationKey === 'type') {
-				productType = specification.value.en_US;
-
-				if (productType === 'cloud') {
-					productType = 'Cloud';
-				}
-				else if (productType === 'dxp') {
-					productType = 'DXP';
-				}
-			}
-		});
-
-		return productType;
-	}
-
-	function getRolesList(accountBriefs: AccountBrief[]) {
-		const rolesList: string[] = [];
-
-		const accountBrief = accountBriefs.find(
-			(accountBrief) => accountBrief.id === selectedAccount.id
-		);
-
-		accountBrief?.roleBriefs.forEach((role) => {
-			rolesList.push(role.name);
-		});
-
-		return rolesList.join(', ');
-	}
 
 	useEffect(() => {
 		const makeFetch = async () => {
@@ -238,7 +133,9 @@ export function PublishedAppsDashboardPage() {
 	}, []);
 
 	useEffect(() => {
-		(async () => {
+		const makeFetch = async () => {
+			setLoading(true);
+
 			const accountCustomField = selectedAccount.customFields?.find(
 				(customField) => customField.name === 'CatalogId'
 			);
@@ -293,16 +190,17 @@ export function PublishedAppsDashboardPage() {
 
 					setCommerceAccount(commerceAccountResponse);
 
-					const newDashboardNavigationItems = dashboardNavigationItems.map(navigationItems => {
-						if (navigationItems.itemName === 'apps') {
-							return {
-								...navigationItems,
-								items: newAppList.slice(0,4),
-							};
-						}
+					const newDashboardNavigationItems =
+						dashboardNavigationItems.map((navigationItems) => {
+							if (navigationItems.itemName === 'apps') {
+								return {
+									...navigationItems,
+									items: newAppList.slice(0, 4),
+								};
+							}
 
-						return navigationItems;
-					})
+							return navigationItems;
+						});
 
 					setDashboardNavigationItems(newDashboardNavigationItems);
 					setAppTotalCount(newAppList.length);
@@ -315,9 +213,13 @@ export function PublishedAppsDashboardPage() {
 						pageSize: publishedAppTable.pageSize,
 						totalCount: newAppList.length,
 					});
+
+					setLoading(false);
 				}
 			}
-		})();
+		};
+
+		makeFetch();
 	}, [page, publishedAppTable.pageSize, selectedAccount]);
 
 	useEffect(() => {
@@ -335,8 +237,10 @@ export function PublishedAppsDashboardPage() {
 	}, [dashboardNavigationItems]);
 
 	useEffect(() => {
-		(async () => {
+		const makeFetch = async () => {
 			if (selectedNavigationItem === 'Members') {
+				setLoading(true);
+
 				const currentUserAccountResponse = await getMyUserAccount();
 
 				const currentUserAccount = {
@@ -388,7 +292,10 @@ export function PublishedAppsDashboardPage() {
 							isPublisherAccount: false,
 							lastLoginDate: member.lastLoginDate,
 							name: member.name,
-							role: getRolesList(member.accountBriefs),
+							role: getRolesList(
+								member.accountBriefs,
+								selectedAccount.id
+							),
 							userId: member.id,
 						} as MemberProps;
 					}
@@ -430,8 +337,11 @@ export function PublishedAppsDashboardPage() {
 				);
 
 				setMembers(filteredMembersList);
+				setLoading(false);
 			}
-		})();
+		};
+
+		makeFetch();
 	}, [selectedAccount, selectedNavigationItem]);
 
 	return (
@@ -449,7 +359,16 @@ export function PublishedAppsDashboardPage() {
 				/>
 			)}
 
-			{selectedNavigationItem === 'Apps' && (
+			{loading && (
+				<ClayLoadingIndicator
+					className="published-apps-dashboard-page-loading-indicator"
+					displayType="primary"
+					shape="circle"
+					size="md"
+				/>
+			)}
+
+			{!loading && selectedNavigationItem === 'Apps' && (
 				<DashboardPage
 					buttonHref={`${buttonRedirectURL}?catalogId=${catalogId}`}
 					buttonMessage="+ New App"
@@ -460,6 +379,7 @@ export function PublishedAppsDashboardPage() {
 				>
 					<DashboardTable<AppProps>
 						emptyStateMessage={appMessages.emptyStateMessage}
+						icon={appsIcon}
 						items={publishedAppTable.items}
 						tableHeaders={appTableHeaders}
 					>
@@ -491,7 +411,7 @@ export function PublishedAppsDashboardPage() {
 				</DashboardPage>
 			)}
 
-			{selectedNavigationItem === 'Solutions' && (
+			{!loading && selectedNavigationItem === 'Solutions' && (
 				<DashboardPage
 					dashboardNavigationItems={dashboardNavigationItems}
 					messages={solutionMessages}
@@ -500,6 +420,7 @@ export function PublishedAppsDashboardPage() {
 				>
 					<DashboardTable
 						emptyStateMessage={solutionMessages.emptyStateMessage}
+						icon={solutionsIcon}
 						items={[]}
 						tableHeaders={[]}
 					>
@@ -508,15 +429,16 @@ export function PublishedAppsDashboardPage() {
 				</DashboardPage>
 			)}
 
-			{selectedNavigationItem === 'Projects' && (
+			{!loading && selectedNavigationItem === 'Projects' && (
 				<ProjectsPage
 					dashboardNavigationItems={dashboardNavigationItems}
+					icon={projectsIcon}
 					selectedAccount={selectedAccount}
 					setShowDashboardNavigation={setShowDashboardNavigation}
 				/>
 			)}
 
-			{selectedNavigationItem === 'Members' && (
+			{!loading && selectedNavigationItem === 'Members' && (
 				<DashboardPage
 					dashboardNavigationItems={dashboardNavigationItems}
 					messages={memberMessages}
@@ -529,6 +451,7 @@ export function PublishedAppsDashboardPage() {
 					) : (
 						<DashboardTable<MemberProps>
 							emptyStateMessage={memberMessages.emptyStateMessage}
+							icon={membersIcon}
 							items={members}
 							tableHeaders={memberTableHeaders}
 						>
@@ -544,7 +467,7 @@ export function PublishedAppsDashboardPage() {
 				</DashboardPage>
 			)}
 
-			{selectedNavigationItem === 'Account' && (
+			{!loading && selectedNavigationItem === 'Account' && (
 				<AccountDetailsPage
 					commerceAccount={commerceAccount}
 					dashboardNavigationItems={dashboardNavigationItems}
