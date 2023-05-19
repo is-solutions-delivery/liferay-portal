@@ -14,9 +14,11 @@
 
 package com.liferay.document.library.web.internal.display.context;
 
+import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetCategoryServiceUtil;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetVocabularyServiceUtil;
 import com.liferay.digital.signature.configuration.DigitalSignatureConfiguration;
 import com.liferay.digital.signature.configuration.DigitalSignatureConfigurationUtil;
@@ -699,6 +701,42 @@ public class DLAdminManagementToolbarDisplayContext
 		}
 	}
 
+	private String _getAssetCategorySelectorURL() throws PortalException {
+		return PortletURLBuilder.create(
+			PortletProviderUtil.getPortletURL(
+				_liferayPortletRequest, AssetCategory.class.getName(),
+				PortletProvider.Action.BROWSE)
+		).setParameter(
+			"eventName",
+			_liferayPortletResponse.getNamespace() + "selectedAssetCategory"
+		).setParameter(
+			"selectedCategories",
+			StringUtil.merge(
+				_getSelectedAssetCategoryIds(_httpServletRequest),
+				StringPool.COMMA)
+		).setParameter(
+			"showSelectedCounter", true
+		).setParameter(
+			"singleSelect", false
+		).setParameter(
+			"vocabularyIds",
+			() -> {
+				ThemeDisplay themeDisplay =
+					(ThemeDisplay)_liferayPortletRequest.getAttribute(
+						WebKeys.THEME_DISPLAY);
+
+				return StringUtil.merge(
+					AssetVocabularyLocalServiceUtil.getCompanyVocabularies(
+						themeDisplay.getCompanyId()),
+					assetVocabulary -> String.valueOf(
+						assetVocabulary.getVocabularyId()),
+					StringPool.COMMA);
+			}
+		).setWindowState(
+			LiferayWindowState.POP_UP
+		).buildString();
+	}
+
 	private String _getAssetTagSelectorURL() throws PortalException {
 		return PortletURLBuilder.create(
 			PortletProviderUtil.getPortletURL(
@@ -824,6 +862,8 @@ public class DLAdminManagementToolbarDisplayContext
 		long fileEntryTypeId = _getFileEntryTypeId();
 		String navigation = ParamUtil.getString(
 			_httpServletRequest, "navigation", "home");
+		boolean selectedAssetCategoryIdsIsEmpty = SetUtil.isEmpty(
+			_getSelectedAssetCategoryIds(_httpServletRequest));
 		boolean selectedAssetTagIdsIsEmpty = SetUtil.isEmpty(
 			_getSelectedAssetTagIds(_httpServletRequest));
 
@@ -882,6 +922,17 @@ public class DLAdminManagementToolbarDisplayContext
 					).buildPortletURL());
 				dropdownItem.setLabel(
 					LanguageUtil.get(_httpServletRequest, "mine"));
+			}
+		).add(
+			() -> FeatureFlagManagerUtil.isEnabled("LPS-84424"),
+			dropdownItem -> {
+				dropdownItem.putData("action", "openCategoriesSelector");
+				dropdownItem.putData(
+					"categoriesFilterURL", _getAssetCategorySelectorURL());
+				dropdownItem.setActive(!selectedAssetCategoryIdsIsEmpty);
+				dropdownItem.setLabel(
+					LanguageUtil.get(_httpServletRequest, "categories") +
+						StringPool.TRIPLE_PERIOD);
 			}
 		).add(
 			dropdownItem -> {
@@ -1025,6 +1076,19 @@ public class DLAdminManagementToolbarDisplayContext
 		return _dlAdminDisplayContext.getRepositoryId();
 	}
 
+	private Set<Long> _getSelectedAssetCategoryIds(
+		HttpServletRequest httpServletRequest) {
+
+		if (_assetCategoryIds != null) {
+			return _assetCategoryIds;
+		}
+
+		_assetCategoryIds = SetUtil.fromArray(
+			ParamUtil.getLongValues(httpServletRequest, "assetCategoryId"));
+
+		return _assetCategoryIds;
+	}
+
 	private Set<String> _getSelectedAssetTagIds(
 		HttpServletRequest httpServletRequest) {
 
@@ -1112,6 +1176,7 @@ public class DLAdminManagementToolbarDisplayContext
 		return false;
 	}
 
+	private Set<Long> _assetCategoryIds;
 	private Set<String> _assetTagIds;
 	private final PortletURL _currentURLObj;
 	private final DLAdminDisplayContext _dlAdminDisplayContext;

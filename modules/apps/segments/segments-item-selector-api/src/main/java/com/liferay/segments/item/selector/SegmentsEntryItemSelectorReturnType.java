@@ -12,30 +12,13 @@
  * details.
  */
 
-package com.liferay.headless.commerce.delivery.cart.internal.dto.v1_0;
+package com.liferay.segments.item.selector;
 
-import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
-
-import java.util.HashMap;
-import java.util.Locale;
+import com.liferay.item.selector.ItemSelectorReturnType;
 
 /**
- * @author Alessio Antonio Rendina
+ * @author Lourdes Fernández Besada
  */
-public class CartItemDTOConverterContext extends DefaultDTOConverterContext {
-
-	public CartItemDTOConverterContext(
-		long accountId, Object id, Locale locale) {
-
-		super(false, new HashMap<>(), null, id, locale, null, null);
-
-		_accountId = accountId;
-	}
-
-	public long getAccountId() {
-		return _accountId;
-	}
-
-	private final long _accountId;
-
+public class SegmentsEntryItemSelectorReturnType
+	implements ItemSelectorReturnType {
 }

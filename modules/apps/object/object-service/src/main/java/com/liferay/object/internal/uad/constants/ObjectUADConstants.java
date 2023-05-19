@@ -12,15 +12,15 @@
  * details.
  */
 
-package com.liferay.headless.commerce.delivery.cart.internal.dto.v1_0.constants;
+package com.liferay.object.internal.uad.constants;
 
 /**
- * @author Renan Vasconcelos
+ * @author Carolina Barbosa
  */
-public class DTOConverterConstants {
+public class ObjectUADConstants {
 
-	public static final String CART_ITEM_DTO_CONVERTER =
-		"(component.name=com.liferay.headless.commerce.delivery.cart." +
-			"internal.dto.v1_0.CartItemDTOConverter)";
+	public static final String[] USER_ID_FIELD_NAMES_OBJECT_ENTRY = {
+		"userId", "statusByUserId"
+	};
 
 }
