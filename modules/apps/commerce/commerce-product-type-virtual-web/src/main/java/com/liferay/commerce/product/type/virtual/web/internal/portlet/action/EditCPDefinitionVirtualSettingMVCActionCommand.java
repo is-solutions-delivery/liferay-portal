@@ -147,6 +147,8 @@ public class EditCPDefinitionVirtualSettingMVCActionCommand
 		long cpDefinitionVirtualSettingId = ParamUtil.getLong(
 			actionRequest, "cpDefinitionVirtualSettingId");
 
+		String className = ParamUtil.getString(actionRequest, "className");
+		long classPK = ParamUtil.getLong(actionRequest, "classPK");
 		long fileEntryId = ParamUtil.getLong(actionRequest, "fileEntryId");
 		String url = ParamUtil.getString(actionRequest, "url");
 		int activationStatus = ParamUtil.getInteger(
@@ -164,7 +166,8 @@ public class EditCPDefinitionVirtualSettingMVCActionCommand
 				actionRequest, "termsOfUseContent");
 		long termsOfUseJournalArticleResourcePrimKey = ParamUtil.getLong(
 			actionRequest, "termsOfUseJournalArticleResourcePrimKey");
-		boolean override = ParamUtil.getBoolean(actionRequest, "override");
+		boolean override = ParamUtil.getBoolean(
+			actionRequest, "override", true);
 
 		long duration = TimeUnit.DAYS.toMillis(durationDays);
 
@@ -177,9 +180,6 @@ public class EditCPDefinitionVirtualSettingMVCActionCommand
 
 			// Add commerce product definition virtual setting
 
-			String className = ParamUtil.getString(actionRequest, "className");
-			long classPK = ParamUtil.getLong(actionRequest, "classPK");
-
 			cpDefinitionVirtualSetting =
 				_cpDefinitionVirtualSettingService.
 					addCPDefinitionVirtualSetting(
@@ -190,18 +190,25 @@ public class EditCPDefinitionVirtualSettingMVCActionCommand
 						serviceContext);
 		}
 		else {
+			if (!override) {
+				cpDefinitionVirtualSetting =
+					_cpDefinitionVirtualSettingService.
+						deleteCPDefinitionVirtualSetting(className, classPK);
+			}
+			else {
 
-			// Update commerce product definition virtual setting
+				// Update commerce product definition virtual setting
 
-			cpDefinitionVirtualSetting =
-				_cpDefinitionVirtualSettingService.
-					updateCPDefinitionVirtualSetting(
-						cpDefinitionVirtualSettingId, fileEntryId, url,
-						activationStatus, duration, maxUsages, useSample,
-						sampleFileEntryId, sampleUrl, termsOfUseRequired,
-						termsOfUseContentMap,
-						termsOfUseJournalArticleResourcePrimKey, override,
-						serviceContext);
+				cpDefinitionVirtualSetting =
+					_cpDefinitionVirtualSettingService.
+						updateCPDefinitionVirtualSetting(
+							cpDefinitionVirtualSettingId, fileEntryId, url,
+							activationStatus, duration, maxUsages, useSample,
+							sampleFileEntryId, sampleUrl, termsOfUseRequired,
+							termsOfUseContentMap,
+							termsOfUseJournalArticleResourcePrimKey, override,
+							serviceContext);
+			}
 		}
 
 		return cpDefinitionVirtualSetting;
