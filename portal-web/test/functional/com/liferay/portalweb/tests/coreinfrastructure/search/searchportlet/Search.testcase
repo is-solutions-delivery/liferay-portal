@@ -2190,6 +2190,136 @@ definition {
 		}
 	}
 
+	@description = "LPS-172131 - The Sort Widget supports sorting on custom object fields"
+	@priority = 3
+	test SortByCustomObjectFields {
+		task ("Create a site scoped object and add the following custom fields to it: 'title' as a keyword, 'siteID' as an integer, and 'date' as a date") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object",
+				objectName = "CustomObject",
+				panelCategoryKey = "site_administration.content",
+				pluralLabelName = "Custom Objects",
+				scope = "site");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Title",
+				fieldName = "title",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "CustomObject");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Date",
+				fieldLabelName = "Date",
+				fieldName = "date",
+				fieldType = "Date",
+				indexedAsKeyword = "false",
+				isRequired = "false",
+				objectName = "CustomObject");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Integer",
+				fieldLabelName = "Site ID",
+				fieldName = "siteID",
+				fieldType = "Integer",
+				indexedAsKeyword = "false",
+				isRequired = "false",
+				objectName = "CustomObject");
+
+			JSONObject.updateObject(
+				configKey = "titleObjectFieldName",
+				configValue = "title",
+				objectName = "CustomObject");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+		}
+
+		task ("Create three object entries that configure the title, siteID, and date fields") {
+			JSONObject.addObjectEntryViaJSONAPI(
+				fieldList = "title/Apple Fruit,siteID/3,date/2023-04-02",
+				objectName = "CustomObject");
+
+			JSONObject.addObjectEntryViaJSONAPI(
+				fieldList = "title/Banana Fruit,siteID/2,date/2023-04-01",
+				objectName = "CustomObject");
+
+			JSONObject.addObjectEntryViaJSONAPI(
+				fieldList = "title/Coconut Fruit,siteID/1,date/2023-04-03",
+				objectName = "CustomObject");
+		}
+
+		task ("Go to the search page and execute a search for the object entries") {
+			Search.openSearchPage(searchTerm = "fruit");
+		}
+
+		task ("Add the Sort Widget to the search page") {
+			SearchPortlets.addWidgets(searchPortletList = "Sort");
+		}
+
+		task ("Within the Sort Widget configuration, add a sort option to sort by the custom object's 'title' field in ascending order") {
+			Portlet.gotoPortletOptions(
+				portletName = "Sort",
+				portletOption = "Configuration");
+
+			SelectFrame(locator1 = "IFrame#CONFIGURATION");
+
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Title Asc",
+				indexedField = "nestedFieldArray.title.value_keyword",
+				order = "Ascending");
+		}
+
+		task ("Add another sort option to sort by the custom object's 'title' field in descending order") {
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Title Desc",
+				indexedField = "nestedFieldArray.title.value_keyword",
+				order = "Descending");
+		}
+
+		task ("Add another sort option to sort by the custom object's 'siteID' field in ascending order") {
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Site ID",
+				indexedField = "nestedFieldArray.siteID.value_integer",
+				order = "Ascending");
+		}
+
+		task ("Add another sort option to sort by the custom object's 'date' field in ascending order") {
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Date",
+				indexedField = "nestedFieldArray.date.value_date",
+				order = "Ascending");
+
+			PortletEntry.save();
+
+			Refresh();
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'title' custom object field in ascending order") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Title Asc");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Apple Fruit,Banana Fruit,Coconut Fruit");
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'title' custom object field in descending order") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Title Desc");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Coconut Fruit,Banana Fruit,Apple Fruit");
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'date' custom object field") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Date");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Banana Fruit,Apple Fruit,Coconut Fruit");
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'siteID' custom object field") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Site ID");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Coconut Fruit,Banana Fruit,Apple Fruit");
+		}
+	}
+
 	@description = "This is a use case for LPS-84035."
 	@priority = 5
 	test ViewCreatedSearchPagePermissions {
@@ -2368,7 +2498,8 @@ definition {
 		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
 
 		JSONObject.addObjectEntryViaJSONAPI(
-			fieldList = "title/apple",
+			fieldName = "title",
+			fieldValue = "apple",
 			objectName = "CustomObject");
 
 		Search.openSearchPage();

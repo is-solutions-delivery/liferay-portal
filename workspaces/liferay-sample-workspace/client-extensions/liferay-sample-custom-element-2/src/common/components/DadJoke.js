@@ -2,23 +2,21 @@ import React from 'react';
 
 import {Liferay} from '../services/liferay/liferay';
 
+const oAuth2Client = Liferay.OAuth2Client.FromUserAgentApplication(
+	'liferay-sample-etc-spring-boot-oauth-application-user-agent'
+);
+
 function DadJoke() {
 	const [joke, setJoke] = React.useState(null);
 
-	const oAuth2Client = Liferay.OAuth2Client.FromUserAgentApplication(
-		'liferay-sample-etc-spring-boot-oauth-application-user-agent'
-	);
-
 	React.useEffect(() => {
-		const request = oAuth2Client
+		oAuth2Client
 			.fetch('/dad/joke')
 			.then((response) => response.text())
 			.then((joke) => {
 				setJoke(joke);
 			});
-
-		return () => request.cancel();
-	}, [oAuth2Client]);
+	}, []);
 
 	if (!joke) {
 		return <div>Loading...</div>;
