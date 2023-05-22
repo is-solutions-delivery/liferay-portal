@@ -39,16 +39,15 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Eric Yan
  */
 @Component(
-	property = {
-		"mime.type=image/gif", "mime.type=image/heic", "mime.type=image/tiff",
-		"mime.type=image/webp"
-	},
+	configurationPid = "com.liferay.adaptive.media.image.internal.configuration.AMImageMagickConfiguration",
+	configurationPolicy = ConfigurationPolicy.REQUIRE,
 	service = AMImageScaler.class
 )
 public class AMImageMagickImageScaler implements AMImageScaler {

@@ -429,9 +429,8 @@ public class CommerceCurrencyLocalServiceUtil {
 	}
 
 	public static CommerceCurrency updateCommerceCurrency(
-			long commerceCurrencyId, String code,
-			Map<java.util.Locale, String> nameMap, String symbol,
-			java.math.BigDecimal rate,
+			long commerceCurrencyId, Map<java.util.Locale, String> nameMap,
+			String symbol, java.math.BigDecimal rate,
 			Map<java.util.Locale, String> formatPatternMap,
 			int maxFractionDigits, int minFractionDigits, String roundingMode,
 			boolean primary, double priority, boolean active,
@@ -439,7 +438,7 @@ public class CommerceCurrencyLocalServiceUtil {
 		throws PortalException {
 
 		return getService().updateCommerceCurrency(
-			commerceCurrencyId, code, nameMap, symbol, rate, formatPatternMap,
+			commerceCurrencyId, nameMap, symbol, rate, formatPatternMap,
 			maxFractionDigits, minFractionDigits, roundingMode, primary,
 			priority, active, serviceContext);
 	}
@@ -466,6 +465,10 @@ public class CommerceCurrencyLocalServiceUtil {
 
 	public static CommerceCurrencyLocalService getService() {
 		return _service;
+	}
+
+	public static void setService(CommerceCurrencyLocalService service) {
+		_service = service;
 	}
 
 	private static volatile CommerceCurrencyLocalService _service;

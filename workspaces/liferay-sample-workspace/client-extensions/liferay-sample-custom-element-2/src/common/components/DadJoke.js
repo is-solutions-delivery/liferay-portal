@@ -1,39 +1,28 @@
 import React from 'react';
 
-class DadJoke extends React.Component {
-	constructor(props) {
-		super(props);
+import {Liferay} from '../services/liferay/liferay';
 
-		this.oAuth2Client = props.oAuth2Client;
-		this.state = {"joke": ""};
-	}
+const oAuth2Client = Liferay.OAuth2Client.FromUserAgentApplication(
+	'liferay-sample-etc-spring-boot-oauth-application-user-agent'
+);
 
-	componentDidMount() {
-		if (this.oAuth2Client) {
-			this._request = this.oAuth2Client.fetch(
-				'/dad/joke'
-			).then(response => response.text()
-			).then(text => {
-				this._request = null;
-				this.setState({"joke": text});
+function DadJoke() {
+	const [joke, setJoke] = React.useState(null);
+
+	React.useEffect(() => {
+		oAuth2Client
+			.fetch('/dad/joke')
+			.then((response) => response.text())
+			.then((joke) => {
+				setJoke(joke);
 			});
-		}
+	}, []);
+
+	if (!joke) {
+		return <div>Loading...</div>;
 	}
 
-	componentWillUnmount() {
-		if (this._request) {
-			this._request.cancel();
-		}
-	}
-
-	render() {
-		if (this.state === null) {
-			return <div>Loading...</div>
-		}
-		else {
-			return <div>{this.state.joke}</div>
-		}
-	}
+	return <div>{joke}</div>;
 }
 
 export default DadJoke;

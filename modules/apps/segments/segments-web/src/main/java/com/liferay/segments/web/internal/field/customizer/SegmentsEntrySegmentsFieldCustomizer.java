@@ -14,12 +14,11 @@
 
 package com.liferay.segments.web.internal.field.customizer;
 
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ClassedModel;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
-import com.liferay.portal.kernel.portlet.PortletProvider;
-import com.liferay.portal.kernel.portlet.PortletProviderUtil;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -28,14 +27,16 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.field.Field;
 import com.liferay.segments.field.customizer.SegmentsFieldCustomizer;
+import com.liferay.segments.item.selector.SegmentsEntryItemSelectorReturnType;
+import com.liferay.segments.item.selector.criterion.SegmentsEntryItemSelectorCriterion;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -90,36 +91,38 @@ public class SegmentsEntrySegmentsFieldCustomizer
 	@Override
 	public Field.SelectEntity getSelectEntity(PortletRequest portletRequest) {
 		try {
-			PortletURL portletURL = PortletProviderUtil.getPortletURL(
-				portletRequest, SegmentsEntry.class.getName(),
-				PortletProvider.Action.BROWSE);
+			SegmentsEntryItemSelectorCriterion
+				segmentsEntryItemSelectorCriterion =
+					new SegmentsEntryItemSelectorCriterion();
 
-			if (portletURL == null) {
-				return null;
-			}
-
-			portletURL.setParameter("eventName", "selectEntity");
+			segmentsEntryItemSelectorCriterion.
+				setDesiredItemSelectorReturnTypes(
+					Collections.singletonList(
+						new SegmentsEntryItemSelectorReturnType()));
 
 			long segmentsEntryId = ParamUtil.getLong(
 				portletRequest, "segmentsEntryId");
 
-			if (segmentsEntryId > 0) {
-				portletURL.setParameter(
-					"excludedSegmentsEntryIds",
-					String.valueOf(segmentsEntryId));
-			}
+			segmentsEntryItemSelectorCriterion.setExcludedSegmentsEntryIds(
+				new long[] {segmentsEntryId});
 
-			portletURL.setParameter(
-				"excludedSources",
-				StringUtil.toLowerCase(SegmentsEntryConstants.SOURCE_REFERRED));
-			portletURL.setWindowState(LiferayWindowState.POP_UP);
+			segmentsEntryItemSelectorCriterion.setExcludedSources(
+				new String[] {
+					StringUtil.toLowerCase(
+						SegmentsEntryConstants.SOURCE_REFERRED)
+				});
 
 			return new Field.SelectEntity(
 				"selectEntity",
 				getSelectEntityTitle(
 					_portal.getLocale(portletRequest),
 					SegmentsEntry.class.getName()),
-				portletURL.toString(), false);
+				String.valueOf(
+					_itemSelector.getItemSelectorURL(
+						RequestBackedPortletURLFactoryUtil.create(
+							portletRequest),
+						"selectEntity", segmentsEntryItemSelectorCriterion)),
+				false);
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
@@ -145,6 +148,9 @@ public class SegmentsEntrySegmentsFieldCustomizer
 
 	private static final List<String> _fieldNames = ListUtil.fromArray(
 		"segmentsEntryIds");
+
+	@Reference
+	private ItemSelector _itemSelector;
 
 	@Reference
 	private Portal _portal;

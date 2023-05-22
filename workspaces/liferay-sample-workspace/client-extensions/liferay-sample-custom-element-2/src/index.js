@@ -10,7 +10,7 @@ import HelloWorld from './routes/hello-world/pages/HelloWorld';
 
 import './common/styles/index.scss';
 
-const App = ({oAuth2Client, route}) => {
+const App = ({route}) => {
 	if (route === 'hello-bar') {
 		return <HelloBar />;
 	}
@@ -25,7 +25,7 @@ const App = ({oAuth2Client, route}) => {
 
 			{Liferay.ThemeDisplay.isSignedIn() && (
 				<div>
-					<DadJoke oAuth2Client={oAuth2Client} />
+					<DadJoke />
 				</div>
 			)}
 		</div>
@@ -33,25 +33,9 @@ const App = ({oAuth2Client, route}) => {
 };
 
 class WebComponent extends HTMLElement {
-	constructor() {
-		super();
-
-		try {
-			this.oAuth2Client = Liferay.OAuth2Client.FromUserAgentApplication(
-				'liferay-sample-oauth-application-user-agent'
-			);
-		}
-		catch (error) {
-			console.log("Unable to get user agent application");
-		}
-	}
-
 	connectedCallback() {
 		createRoot(this).render(
-			<App
-				oAuth2Client={this.oAuth2Client}
-				route={this.getAttribute('route')}
-			/>,
+			<App route={this.getAttribute('route')} />,
 			this
 		);
 

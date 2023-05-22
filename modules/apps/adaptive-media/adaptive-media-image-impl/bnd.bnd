@@ -1,9 +1,13 @@
 Bundle-Name: Liferay Adaptive Media Image Implementation
 Bundle-SymbolicName: com.liferay.adaptive.media.image.impl
-Bundle-Version: 5.0.43
+Bundle-Version: 5.0.44
 Import-Package:\
 	!com.adobe.xmp.*,\
 	\
 	!com.drew.*,\
 	\
 	*
+Require-Capability:\
+	osgi.extender;\
+		filter:= "(&(osgi.extender=osgi.configurator)(version>=1.0)(!(version>=2.0)))"
+-includeresource: OSGI-INF/configurator=configurator

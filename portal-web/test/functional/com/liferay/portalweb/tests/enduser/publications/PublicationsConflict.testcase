@@ -500,9 +500,11 @@ definition {
 
 		JSONPublications.selectPublication(publicationName = "Publication 1 Name");
 
-		JSONWebcontent.deleteWebContent(
-			groupName = "Guest",
-			title = "WC WebContent Title");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "Guest");
+
+		WebContent.moveToRecycleBinCP(
+			assetType = "Web Content Article",
+			webContentTitle = "WC WebContent Title");
 
 		JSONPublications.addPublication(publicationName = "Publication 2 Name");
 
@@ -543,17 +545,15 @@ definition {
 			publicationName = "Publication 1 Name",
 			publishedPublication = "true");
 
-		// Workaround LPS-134018
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
-		/*WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
-
-		WebContent.viewNotPresentCP(webContentTitle = "WC WebContent Title");*/
+		WebContent.viewNotPresentCP(webContentTitle = "WC WebContent Title");
 
 		JSONPublications.selectPublication(publicationName = "Publication 2 Name");
 
-		/*WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
-		WebContent.viewTitle(webContentTitle = "WC WebContent Title 2 Edit");*/
+		WebContent.viewTitle(webContentTitle = "WC WebContent Title 2 Edit");
 
 		PublicationsNavigator.gotoReviewChanges(publicationName = "Publication 2 Name");
 
@@ -568,14 +568,14 @@ definition {
 
 		Publications.viewNeedsManualResolution(
 			entryTitle = "WC WebContent Title 2 Edit",
-			warningMessage = "Deletion Modification Conflict: Modification conflicts with a deletion.");
+			warningMessage = "Modification Conflict: The conflict cannot be automatically resolved.");
 
 		PublicationsNavigator.gotoViewConflictingChangeDetails(entryTitle = "WC WebContent Title 2 Edit");
 
 		PublicationsChangeDetails.viewConflictingChangeDetails(
 			columnName = "Title",
 			columnValueInPublication = "WC WebContent Title 2 Edit",
-			deletionModificationConflict = "true",
+			modificationConflict = "true",
 			publicationName = "Publication 2 Name");
 
 		IFrame.closeFrame();
@@ -601,6 +601,13 @@ definition {
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#EMPTY_INFO",
 			value1 = "No web content was found.");
+
+		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
+
+		RecycleBin.viewCP(
+			assetName = "WC WebContent Title",
+			assetType = "Web Content Article",
+			deleteUser = "Test Test");
 	}
 
 	@description = "Assert the conflict changes disply when adding the same folder Name in two Publications and resolve by editing"

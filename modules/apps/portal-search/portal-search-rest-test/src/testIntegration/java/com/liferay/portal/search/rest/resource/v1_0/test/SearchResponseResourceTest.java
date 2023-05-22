@@ -38,6 +38,8 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.SearchEngine;
+import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -85,6 +87,7 @@ public class SearchResponseResourceTest
 		super.setUp();
 
 		_locale = LocaleUtil.getSiteDefault();
+		_searchEngine = _searchEngineHelper.getSearchEngine();
 
 		_user = TestPropsValues.getUser();
 
@@ -386,9 +389,15 @@ public class SearchResponseResourceTest
 
 		Set<String> keySet = documentJSONObject.keySet();
 
-		Assert.assertTrue(keySet.size() == 3);
+		if (Objects.equals(_searchEngine.getVendor(), "Solr")) {
+			Assert.assertTrue(keySet.size() == 2);
+		}
+		else {
+			Assert.assertTrue(keySet.size() == 3);
+			Assert.assertTrue(keySet.contains("id"));
+		}
+
 		Assert.assertTrue(keySet.contains(Field.ARTICLE_ID));
-		Assert.assertTrue(keySet.contains("id"));
 		Assert.assertTrue(keySet.contains("score"));
 	}
 
@@ -431,6 +440,10 @@ public class SearchResponseResourceTest
 
 	private void _testPostSearchWithNestedFacet(DDMStructure ddmStructure)
 		throws Exception {
+
+		if (Objects.equals(_searchEngine.getVendor(), "Solr")) {
+			return;
+		}
 
 		_assertFacet(
 			HashMapBuilder.<String, Object>put(
@@ -512,6 +525,11 @@ public class SearchResponseResourceTest
 
 	@Inject
 	private Portal _portal;
+
+	private SearchEngine _searchEngine;
+
+	@Inject
+	private SearchEngineHelper _searchEngineHelper;
 
 	private ServiceContext _serviceContext;
 	private User _user;

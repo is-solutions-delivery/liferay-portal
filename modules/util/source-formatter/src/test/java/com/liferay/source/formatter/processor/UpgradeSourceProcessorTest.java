@@ -54,6 +54,11 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeJavaCheck() throws Exception {
+		test("upgrade/UpgradeJavaCheck.testjava");
+	}
+
+	@Test
 	public void testUpgradeVelocityMigrationCheck() throws Exception {
 		test(
 			SourceProcessorTestParameters.create(
@@ -65,7 +70,7 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 
 	@Test
 	public void testXMLUpgradeDTDVersionCheck() throws Exception {
-		test("upgrade/GradleUpgradeReleaseDxpCheck.testgradle");
+		test("upgrade/XMLUpgradeDTDVersionCheck.testxml");
 	}
 
 	@Override

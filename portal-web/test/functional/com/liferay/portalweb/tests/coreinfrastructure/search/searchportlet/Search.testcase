@@ -418,7 +418,11 @@ definition {
 	test CopySearchInsightsJSON {
 		Search.openSearchPage();
 
-		SearchPortlets.addWidgets(searchPortletList = "Search Insights");
+		JSONLayout.addWidgetToPublicLayout(
+			column = 1,
+			groupName = "Guest",
+			layoutName = "Search",
+			widgetName = "Search Insights");
 
 		SearchPortlets.searchEmbedded(searchTerm = "test");
 
@@ -926,23 +930,23 @@ definition {
 	test NavigateToSearchResultsViaURL {
 		property portal.acceptance = "true";
 
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntry(
+		JSONBlog.addEntry(
 			entryContent = "This is a blog about Potatoes",
 			entryTitle = "Potato Blog");
 
-		ProductMenu.gotoPortlet(
-			category = "Site Builder",
-			portlet = "Pages");
+		JSONLayout.addPublicLayout(
+			groupName = "Guest",
+			layoutName = "Search Page");
 
-		PagesAdmin.addPage(pageName = "Search Page");
+		for (var portlet : list "Type Facet,Search Results,Search Bar") {
+			JSONLayout.addWidgetToPublicLayout(
+				column = 1,
+				groupName = "Guest",
+				layoutName = "Search Page",
+				widgetName = ${portlet});
+		}
 
 		Navigator.gotoPage(pageName = "Search Page");
-
-		SearchPortlets.addWidgets(searchPortletList = "Type Facet,Search Results,Search Bar");
 
 		SearchPortlets.configureSearchBarWidget(
 			keywordsParameterName = "keywordparameter",
@@ -1006,13 +1010,7 @@ definition {
 
 	@priority = 4
 	test SearchBlogsEntry {
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntry(
+		JSONBlog.addEntry(
 			entryContent = "Blogs Entry Content",
 			entryTitle = "Blogs Entry Title");
 
@@ -1077,31 +1075,19 @@ definition {
 
 	@priority = 4
 	test SearchBlogsEntryCategory {
-		Navigator.openURL();
+		JSONCategory.addVocabulary(
+			groupName = "Guest",
+			title = "Vocabulary Name");
 
-		ProductMenu.gotoPortlet(
-			category = "Categorization",
-			portlet = "Categories");
-
-		Vocabulary.addCP(vocabularyName = "Vocabulary Name");
-
-		Category.addCP(
-			categoryName = "Category Name",
+		var categoryId = JSONCategory.addCategory(
+			groupName = "Guest",
+			title = "Category Name",
 			vocabularyName = "Vocabulary Name");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntryWithCategory(
-			categoryName = "Category Name",
+		JSONBlog.addEntry(
+			assetCategoryIds = ${categoryId},
 			entryContent = "Blogs Entry Content",
-			entryTitle = "Blogs Entry Title",
-			vocabularyName = "Vocabulary Name");
-
-		Navigator.openURL();
+			entryTitle = "Blogs Entry Title");
 
 		SearchPortlets.searchEmbedded(searchTerm = "Category Name");
 
@@ -1146,31 +1132,19 @@ definition {
 
 	@priority = 4
 	test SearchBlogsEntryCategoryQuotes {
-		Navigator.openURL();
+		JSONCategory.addVocabulary(
+			groupName = "Guest",
+			title = "Vocabulary Name");
 
-		ProductMenu.gotoPortlet(
-			category = "Categorization",
-			portlet = "Categories");
-
-		Vocabulary.addCP(vocabularyName = "Vocabulary Name");
-
-		Category.addCP(
-			categoryName = "Category Name",
+		var categoryId = JSONCategory.addCategory(
+			groupName = "Guest",
+			title = "Category Name",
 			vocabularyName = "Vocabulary Name");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntryWithCategory(
-			categoryName = "Category Name",
+		JSONBlog.addEntry(
+			assetCategoryIds = ${categoryId},
 			entryContent = "Blogs Entry Content",
-			entryTitle = "Blogs Entry Title",
-			vocabularyName = "Vocabulary Name");
-
-		Navigator.openURL();
+			entryTitle = "Blogs Entry Title");
 
 		SearchPortlets.searchEmbedded(searchTerm = "\"Category Name\"");
 
@@ -1208,17 +1182,9 @@ definition {
 
 	@priority = 4
 	test SearchBlogsEntryQuotes {
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntry(
+		JSONBlog.addEntry(
 			entryContent = "Blogs Entry Content",
 			entryTitle = "Blogs Entry Title");
-
-		Navigator.openURL();
 
 		SearchPortlets.searchEmbedded(searchTerm = "\"Blogs Entry Title\"");
 
@@ -1314,18 +1280,10 @@ definition {
 
 	@priority = 4
 	test SearchBlogsEntryTag {
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntryWithTag(
+		JSONBlog.addEntry(
+			assetTagNames = "tag name",
 			entryContent = "Blogs Entry Content",
-			entryTitle = "Blogs Entry Title",
-			tagName = "tag name");
-
-		Navigator.openURL();
+			entryTitle = "Blogs Entry Title");
 
 		SearchPortlets.searchEmbedded(searchTerm = "tag name");
 
@@ -1369,18 +1327,10 @@ definition {
 
 	@priority = 4
 	test SearchBlogsEntryTagQuotes {
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntryWithTag(
+		JSONBlog.addEntry(
+			assetTagNames = "tag name",
 			entryContent = "Blogs Entry Content",
-			entryTitle = "Blogs Entry Title",
-			tagName = "tag name");
-
-		Navigator.openURL();
+			entryTitle = "Blogs Entry Title");
 
 		SearchPortlets.searchEmbedded(searchTerm = "\"tag name\"");
 
@@ -1587,54 +1537,34 @@ definition {
 	@description = "This test will set up a search page and search on a newly added site. It will also use different scopes to assert search results for assets from multiple sites"
 	@priority = 4
 	test SearchDifferentScopesViaNewSite {
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
-
-		Site.addBlankCP(siteName = "Site Name 1");
+		JSONGroup.addGroup(groupName = "Site Name 1");
 
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
 			groupName = "Guest",
 			title = "Apple");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+		JSONGroup.addGroup(groupName = "Site Name 2");
 
-		Site.addBlankCP(siteName = "Site Name 2");
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Documents and Media");
-
-		DMDocument.addCP(
+		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
-			dmDocumentFile = "Document_1.doc",
-			dmDocumentTitle = "Apple");
+			dmDocumentTitle = "Apple",
+			groupName = "Site Name 2",
+			mimeType = "application/docx",
+			sourceFileName = "Document_1.docx");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+		JSONGroup.addGroup(groupName = "Site Name 3");
 
-		Site.addBlankCP(siteName = "Site Name 3");
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntry(
+		JSONBlog.addEntry(
 			entryContent = "Blogs Entry Content",
-			entryTitle = "Apple");
+			entryTitle = "Apple",
+			groupName = "Site Name 3");
 
-		ProductMenu.gotoPortlet(
-			category = "Site Builder",
-			portlet = "Pages");
+		JSONLayout.addPublicLayout(
+			groupName = "Site Name 3",
+			layoutName = "Site 3 Home Page");
 
-		PagesAdmin.addPage(pageName = "Site 3 Home Page");
+		PagesAdmin.openPagesAdmin(siteURLKey = "site-name-3");
 
 		PagesAdmin.addPage(
 			inheritChanges = "disable",
@@ -1756,20 +1686,13 @@ definition {
 
 	@priority = 5
 	test SearchDocumentsAndMediaDocument {
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Documents and Media");
-
-		DMDocument.addCP(
+		JSONDocument.addFileWithUploadedFile(
+			assetTagNames = "moon rocks",
 			dmDocumentDescription = "DM Document Description",
-			dmDocumentFile = "Document_1.txt",
-			dmDocumentSize = "0k",
 			dmDocumentTitle = "DM Document Title",
-			tagNameList = "moon rocks");
-
-		Navigator.openURL();
+			groupName = "Guest",
+			mimeType = "text/txt",
+			sourceFileName = "Document_1.txt");
 
 		SearchPortlets.searchEmbedded(searchTerm = "DM Document Title");
 
@@ -1843,26 +1766,18 @@ definition {
 	test SearchGlobalTemplateSmoke {
 		property portal.acceptance = "true";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+		JSONGroup.addGroup(groupName = "Site Name");
 
-		Site.addBlankCP(siteName = "Site Name");
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Blogs");
-
-		Blogs.addEntry(
+		JSONBlog.addEntry(
 			entryContent = "Blogs Entry 1 Content",
-			entryTitle = "Blogs Entry 1 Title");
+			entryTitle = "Blogs Entry 1 Title",
+			groupName = "Site Name");
 
-		ProductMenu.gotoPortlet(
-			category = "Site Builder",
-			portlet = "Pages");
+		JSONLayout.addPublicLayout(
+			groupName = "Site Name",
+			layoutName = "Home");
 
-		PagesAdmin.addPage(pageName = "Home");
+		PagesAdmin.openPagesAdmin(siteURLKey = "site-name");
 
 		PagesAdmin.addPage(
 			inheritChanges = "disable",
@@ -1935,12 +1850,7 @@ definition {
 	test SearchUser {
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.addCP(
+		JSONUser.addUser(
 			userEmailAddress = "userea@liferay.com",
 			userFirstName = "userfn",
 			userLastName = "userln",
@@ -2028,12 +1938,7 @@ definition {
 	test SearchUserWildcard {
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.addCP(
+		JSONUser.addUser(
 			userEmailAddress = "userea@liferay.com",
 			userFirstName = "userfn",
 			userLastName = "userln",
@@ -2205,15 +2110,10 @@ definition {
 
 	@priority = 4
 	test SearchXSSAsset {
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Message Boards");
-
-		MessageboardsThread.addCP(
+		JSONMBMessage.addMessage(
+			groupName = "Guest",
 			threadBody = '''<script>alert(123);</script>''',
 			threadSubject = "Thread Subject");
-
-		Navigator.openURL();
 
 		SearchPortlets.searchEmbedded(searchTerm = "Subject");
 
@@ -2287,6 +2187,136 @@ definition {
 				rowNumber = ${resultOrder});
 
 			var resultOrder = ${resultOrder} + 1;
+		}
+	}
+
+	@description = "LPS-172131 - The Sort Widget supports sorting on custom object fields"
+	@priority = 3
+	test SortByCustomObjectFields {
+		task ("Create a site scoped object and add the following custom fields to it: 'title' as a keyword, 'siteID' as an integer, and 'date' as a date") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object",
+				objectName = "CustomObject",
+				panelCategoryKey = "site_administration.content",
+				pluralLabelName = "Custom Objects",
+				scope = "site");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Title",
+				fieldName = "title",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "CustomObject");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Date",
+				fieldLabelName = "Date",
+				fieldName = "date",
+				fieldType = "Date",
+				indexedAsKeyword = "false",
+				isRequired = "false",
+				objectName = "CustomObject");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Integer",
+				fieldLabelName = "Site ID",
+				fieldName = "siteID",
+				fieldType = "Integer",
+				indexedAsKeyword = "false",
+				isRequired = "false",
+				objectName = "CustomObject");
+
+			JSONObject.updateObject(
+				configKey = "titleObjectFieldName",
+				configValue = "title",
+				objectName = "CustomObject");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
+		}
+
+		task ("Create three object entries that configure the title, siteID, and date fields") {
+			JSONObject.addObjectEntryViaJSONAPI(
+				fieldList = "title/Apple Fruit,siteID/3,date/2023-04-02",
+				objectName = "CustomObject");
+
+			JSONObject.addObjectEntryViaJSONAPI(
+				fieldList = "title/Banana Fruit,siteID/2,date/2023-04-01",
+				objectName = "CustomObject");
+
+			JSONObject.addObjectEntryViaJSONAPI(
+				fieldList = "title/Coconut Fruit,siteID/1,date/2023-04-03",
+				objectName = "CustomObject");
+		}
+
+		task ("Go to the search page and execute a search for the object entries") {
+			Search.openSearchPage(searchTerm = "fruit");
+		}
+
+		task ("Add the Sort Widget to the search page") {
+			SearchPortlets.addWidgets(searchPortletList = "Sort");
+		}
+
+		task ("Within the Sort Widget configuration, add a sort option to sort by the custom object's 'title' field in ascending order") {
+			Portlet.gotoPortletOptions(
+				portletName = "Sort",
+				portletOption = "Configuration");
+
+			SelectFrame(locator1 = "IFrame#CONFIGURATION");
+
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Title Asc",
+				indexedField = "nestedFieldArray.title.value_keyword",
+				order = "Ascending");
+		}
+
+		task ("Add another sort option to sort by the custom object's 'title' field in descending order") {
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Title Desc",
+				indexedField = "nestedFieldArray.title.value_keyword",
+				order = "Descending");
+		}
+
+		task ("Add another sort option to sort by the custom object's 'siteID' field in ascending order") {
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Site ID",
+				indexedField = "nestedFieldArray.siteID.value_integer",
+				order = "Ascending");
+		}
+
+		task ("Add another sort option to sort by the custom object's 'date' field in ascending order") {
+			SearchPortlets.addSortOption(
+				displayLabel = "Object Date",
+				indexedField = "nestedFieldArray.date.value_date",
+				order = "Ascending");
+
+			PortletEntry.save();
+
+			Refresh();
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'title' custom object field in ascending order") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Title Asc");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Apple Fruit,Banana Fruit,Coconut Fruit");
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'title' custom object field in descending order") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Title Desc");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Coconut Fruit,Banana Fruit,Apple Fruit");
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'date' custom object field") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Date");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Banana Fruit,Apple Fruit,Coconut Fruit");
+		}
+
+		task ("Assert the search results are ordered correctly when sorting by the 'siteID' custom object field") {
+			SearchPortlets.chooseSortOption(sortOption = "Object Site ID");
+
+			SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "Coconut Fruit,Banana Fruit,Apple Fruit");
 		}
 	}
 
@@ -2460,20 +2490,17 @@ definition {
 			isRequired = "false",
 			objectName = "CustomObject");
 
-		ObjectAdmin.openObjectAdmin();
-
-		ObjectPortlet.selectCustomObject(label = "Custom Object");
-
-		CreateObject.selectTitleField(fieldLabel = "title");
-
-		CreateObject.saveObject();
+		JSONObject.updateObject(
+			configKey = "titleObjectFieldName",
+			configValue = "title",
+			objectName = "CustomObject");
 
 		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject");
 
-		JSONObject.addObjectSingleFieldEntryViaJSONAPI(
+		JSONObject.addObjectEntryViaJSONAPI(
 			fieldName = "title",
-			objectName = "CustomObject",
-			value = "apple");
+			fieldValue = "apple",
+			objectName = "CustomObject");
 
 		Search.openSearchPage();
 

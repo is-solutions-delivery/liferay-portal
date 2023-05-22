@@ -320,8 +320,8 @@ public class AMImageScalerRegistryImplTest {
 
 		Dictionary<String, Object> properties = new Hashtable<>();
 
-		properties.put("mime.type", mimeType);
 		properties.put("service.ranking", serviceRanking);
+		properties.put("supportedMimeTypes", mimeType);
 
 		return bundleContext.registerService(
 			AMImageScaler.class, amImageScaler, properties);

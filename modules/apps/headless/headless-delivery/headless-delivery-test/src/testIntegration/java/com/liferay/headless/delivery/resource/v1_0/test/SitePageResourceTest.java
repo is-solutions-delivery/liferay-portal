@@ -15,6 +15,10 @@
 package com.liferay.headless.delivery.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.asset.kernel.service.AssetTagLocalService;
+import com.liferay.headless.delivery.client.dto.v1_0.PagePermission;
+import com.liferay.headless.delivery.client.dto.v1_0.ParentSitePage;
 import com.liferay.headless.delivery.client.dto.v1_0.SitePage;
 import com.liferay.headless.delivery.client.pagination.Page;
 import com.liferay.headless.delivery.client.problem.Problem;
@@ -30,21 +34,37 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.ModelHintsUtil;
+import com.liferay.portal.kernel.model.ResourceAction;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcePermission;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityField;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
@@ -58,6 +78,9 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -205,6 +228,29 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 	}
 
 	@Override
+	@Test
+	public void testPostSiteSitePage() throws Exception {
+		super.testPostSiteSitePage();
+
+		_testPostSiteSitePageFailureDuplicateFriendlyURL();
+		_testPostSiteSitePageFailureInvalidTitle();
+		_testPostSiteSitePageFailureFriendlyURLContainsDoubleSlash();
+		_testPostSiteSitePageFailureFriendlyURLContainsInvalidCharacters();
+		_testPostSiteSitePageFailureFriendlyURLEndsWithSlash();
+		_testPostSiteSitePageFailureFriendlyURLTooLong();
+		_testPostSiteSitePageFailureFriendlyURLTooShort();
+		_testPostSiteSitePageSuccessInvalidParentSitePage();
+		_testPostSiteSitePageSuccessKeywords();
+		_testPostSiteSitePageFailurePagePermissionsActionKeyNonexisting();
+		_testPostSiteSitePageSuccessPagePermissions();
+		_testPostSiteSitePageSuccessPagePermissionsActionKeysEmpty();
+		_testPostSiteSitePageSuccessPagePermissionsEmpty();
+		_testPostSiteSitePageSuccessPagePermissionsNull();
+		_testPostSiteSitePageSuccessPagePermissionsRoleNonexisting();
+		_testPostSiteSitePageSuccessPagePermissionsRoleOwnerMissing();
+	}
+
+	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {"friendlyUrlPath", "title"};
 	}
@@ -341,6 +387,525 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		return StringUtil.read(inputStream);
 	}
 
+	private void _testPostSiteSitePageFailureDuplicateFriendlyURL()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		testPostSiteSitePage_addSitePage(randomSitePage);
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(
+				"LayoutFriendlyURLsException", problem.getType());
+		}
+	}
+
+	private void _testPostSiteSitePageFailureFriendlyURLContainsDoubleSlash()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setFriendlyUrlPath(
+			RandomTestUtil.randomString() + StringPool.DOUBLE_SLASH +
+				RandomTestUtil.randomString());
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(
+				"LayoutFriendlyURLsException", problem.getType());
+		}
+	}
+
+	private void _testPostSiteSitePageFailureFriendlyURLContainsInvalidCharacters()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setFriendlyUrlPath("-%.+\\*_");
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(
+				"LayoutFriendlyURLsException", problem.getType());
+		}
+	}
+
+	private void _testPostSiteSitePageFailureFriendlyURLEndsWithSlash()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setFriendlyUrlPath(
+			RandomTestUtil.randomString() + StringPool.FORWARD_SLASH);
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(
+				"LayoutFriendlyURLsException", problem.getType());
+		}
+	}
+
+	private void _testPostSiteSitePageFailureFriendlyURLTooLong()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setFriendlyUrlPath(
+			RandomTestUtil.randomString(
+				LayoutConstants.FRIENDLY_URL_MAX_LENGTH + 1));
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(
+				"LayoutFriendlyURLsException", problem.getType());
+		}
+	}
+
+	private void _testPostSiteSitePageFailureFriendlyURLTooShort()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setFriendlyUrlPath("a");
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(
+				"LayoutFriendlyURLsException", problem.getType());
+		}
+	}
+
+	private void _testPostSiteSitePageFailureInvalidTitle() throws Exception {
+		SitePage randomSitePage = randomSitePage();
+
+		int maxLength = ModelHintsUtil.getMaxLength(
+			Layout.class.getName(), "friendlyURL");
+
+		randomSitePage.setTitle(RandomTestUtil.randomString(maxLength + 1));
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals("LayoutNameException", problem.getType());
+		}
+	}
+
+	private void _testPostSiteSitePageFailurePagePermissionsActionKeyNonexisting()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		PagePermission[] inputPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {RandomTestUtil.randomString()};
+					roleKey = RoleConstants.OWNER;
+				}
+			}
+		};
+
+		randomSitePage.setPagePermissions(inputPagePermissions);
+
+		try {
+			testPostSiteSitePage_addSitePage(randomSitePage);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("NOT_FOUND", problem.getStatus());
+		}
+	}
+
+	private void _testPostSiteSitePageSuccessInvalidParentSitePage()
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setParentSitePage(
+			new ParentSitePage() {
+				{
+					friendlyUrlPath = RandomTestUtil.randomString();
+				}
+			});
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				_CLASS_NAME_EXCEPTION_MAPPER, LoggerTestUtil.WARN)) {
+
+			SitePage postSitePage = testPostSiteSitePage_addSitePage(
+				randomSitePage);
+
+			Layout layout = _layoutLocalService.fetchLayout(
+				postSitePage.getId());
+
+			Assert.assertNotNull(layout);
+
+			Assert.assertEquals(0, layout.getParentPlid());
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 1, logEntries.size());
+
+			LogEntry logEntry = logEntries.get(0);
+
+			Assert.assertEquals(
+				"Could not find parent site page", logEntry.getMessage());
+		}
+	}
+
+	private void _testPostSiteSitePageSuccessKeywords() throws Exception {
+		SitePage randomSitePage = randomSitePage();
+
+		String[] keywords = {
+			RandomTestUtil.randomString(), RandomTestUtil.randomString()
+		};
+
+		randomSitePage.setKeywords(keywords);
+
+		SitePage postSitePage = testPostSiteSitePage_addSitePage(
+			randomSitePage);
+
+		Layout layout = _layoutLocalService.fetchLayout(postSitePage.getId());
+
+		Assert.assertNotNull(layout);
+
+		String[] tags = ListUtil.toArray(
+			_assetTagLocalService.getTags(
+				Layout.class.getName(), layout.getPlid()),
+			AssetTag.NAME_ACCESSOR);
+
+		Assert.assertEquals(tags.toString(), 2, tags.length);
+
+		for (String keyword : keywords) {
+			Assert.assertTrue(
+				ArrayUtil.contains(tags, StringUtil.toLowerCase(keyword)));
+		}
+	}
+
+	private void _testPostSiteSitePageSuccessPagePermissions()
+		throws Exception {
+
+		PagePermission[] expectedPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {
+						ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.UPDATE_LAYOUT_LIMITED
+					};
+					roleKey = RoleConstants.OWNER;
+				}
+			},
+			new PagePermission() {
+				{
+					actionKeys = new String[] {ActionKeys.VIEW};
+					roleKey = RoleConstants.SITE_MEMBER;
+				}
+			}
+		};
+
+		_testPostSiteSitePageSuccessPagePermissions(
+			expectedPagePermissions, expectedPagePermissions);
+	}
+
+	private void _testPostSiteSitePageSuccessPagePermissions(
+			PagePermission[] expectedPagePermissions,
+			PagePermission[] inputPagePermissions)
+		throws Exception {
+
+		SitePage randomSitePage = randomSitePage();
+
+		randomSitePage.setPagePermissions(inputPagePermissions);
+
+		SitePage postSitePage = testPostSiteSitePage_addSitePage(
+			randomSitePage);
+
+		Layout layout = _layoutLocalService.fetchLayout(postSitePage.getId());
+
+		Assert.assertNotNull(layout);
+
+		List<ResourcePermission> resourcePermissions =
+			_resourcePermissionLocalService.getResourcePermissions(
+				layout.getCompanyId(), Layout.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				String.valueOf(layout.getPlid()));
+
+		Assert.assertEquals(
+			resourcePermissions.toString(), expectedPagePermissions.length,
+			resourcePermissions.size());
+
+		List<ResourceAction> resourceActions =
+			_resourceActionLocalService.getResourceActions(
+				Layout.class.getName());
+
+		for (PagePermission pagePermission : expectedPagePermissions) {
+			Role role = _roleLocalService.getRole(
+				testGroup.getCompanyId(), pagePermission.getRoleKey());
+
+			ResourcePermission resourcePermission =
+				_resourcePermissionLocalService.fetchResourcePermission(
+					testGroup.getCompanyId(), Layout.class.getName(),
+					ResourceConstants.SCOPE_INDIVIDUAL,
+					String.valueOf(layout.getPlid()), role.getRoleId());
+
+			Set<String> actionIdsSet = new HashSet<>();
+
+			long actionIds = resourcePermission.getActionIds();
+
+			for (ResourceAction resourceAction : resourceActions) {
+				long bitwiseValue = resourceAction.getBitwiseValue();
+
+				if ((actionIds & bitwiseValue) == bitwiseValue) {
+					actionIdsSet.add(resourceAction.getActionId());
+				}
+			}
+
+			String[] actionKeys = pagePermission.getActionKeys();
+
+			Assert.assertEquals(
+				actionIdsSet.toString(), actionKeys.length,
+				actionIdsSet.size());
+
+			for (String actionKey : actionKeys) {
+				Assert.assertTrue(actionIdsSet.contains(actionKey));
+			}
+		}
+	}
+
+	private void _testPostSiteSitePageSuccessPagePermissionsActionKeysEmpty()
+		throws Exception {
+
+		PagePermission[] expectedPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {
+						ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.UPDATE_LAYOUT_LIMITED
+					};
+					roleKey = RoleConstants.OWNER;
+				}
+			}
+		};
+
+		PagePermission[] inputPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {
+						ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.UPDATE_LAYOUT_LIMITED
+					};
+					roleKey = RoleConstants.OWNER;
+				}
+			},
+			new PagePermission() {
+				{
+					actionKeys = new String[0];
+					roleKey = RoleConstants.SITE_MEMBER;
+				}
+			}
+		};
+
+		_testPostSiteSitePageSuccessPagePermissions(
+			expectedPagePermissions, inputPagePermissions);
+	}
+
+	private void _testPostSiteSitePageSuccessPagePermissionsEmpty()
+		throws Exception {
+
+		PagePermission[] expectedPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {
+						ActionKeys.UPDATE_DISCUSSION, ActionKeys.PERMISSIONS,
+						ActionKeys.UPDATE_LAYOUT_ADVANCED_OPTIONS,
+						ActionKeys.UPDATE_LAYOUT_CONTENT, ActionKeys.CUSTOMIZE,
+						ActionKeys.ADD_LAYOUT, ActionKeys.VIEW,
+						ActionKeys.DELETE, ActionKeys.UPDATE_LAYOUT_BASIC,
+						ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_LAYOUT_LIMITED,
+						ActionKeys.ADD_DISCUSSION
+					};
+					roleKey = RoleConstants.OWNER;
+				}
+			}
+		};
+
+		PagePermission[] inputPagePermissions = {};
+
+		_testPostSiteSitePageSuccessPagePermissions(
+			expectedPagePermissions, inputPagePermissions);
+	}
+
+	private void _testPostSiteSitePageSuccessPagePermissionsNull()
+		throws Exception {
+
+		PagePermission[] expectedPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {
+						ActionKeys.UPDATE_DISCUSSION, ActionKeys.PERMISSIONS,
+						ActionKeys.UPDATE_LAYOUT_ADVANCED_OPTIONS,
+						ActionKeys.UPDATE_LAYOUT_CONTENT, ActionKeys.CUSTOMIZE,
+						ActionKeys.ADD_LAYOUT, ActionKeys.VIEW,
+						ActionKeys.DELETE, ActionKeys.UPDATE_LAYOUT_BASIC,
+						ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_LAYOUT_LIMITED,
+						ActionKeys.ADD_DISCUSSION
+					};
+					roleKey = RoleConstants.OWNER;
+				}
+			},
+			new PagePermission() {
+				{
+					actionKeys = new String[] {
+						ActionKeys.CUSTOMIZE, ActionKeys.VIEW,
+						ActionKeys.ADD_DISCUSSION
+					};
+					roleKey = RoleConstants.SITE_MEMBER;
+				}
+			},
+			new PagePermission() {
+				{
+					actionKeys = new String[] {ActionKeys.VIEW};
+					roleKey = RoleConstants.GUEST;
+				}
+			}
+		};
+
+		_testPostSiteSitePageSuccessPagePermissions(
+			expectedPagePermissions, null);
+	}
+
+	private void _testPostSiteSitePageSuccessPagePermissionsRoleNonexisting()
+		throws Exception {
+
+		PagePermission[] expectedPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {ActionKeys.UPDATE};
+					roleKey = RoleConstants.OWNER;
+				}
+			}
+		};
+
+		PagePermission[] inputPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {ActionKeys.UPDATE};
+					roleKey = RoleConstants.OWNER;
+				}
+			},
+			new PagePermission() {
+				{
+					actionKeys = new String[] {ActionKeys.VIEW};
+					roleKey = RandomTestUtil.randomString();
+				}
+			}
+		};
+
+		_testPostSiteSitePageSuccessPagePermissions(
+			expectedPagePermissions, inputPagePermissions);
+	}
+
+	private void _testPostSiteSitePageSuccessPagePermissionsRoleOwnerMissing()
+		throws Exception {
+
+		PagePermission[] expectedPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {
+						ActionKeys.UPDATE_DISCUSSION, ActionKeys.PERMISSIONS,
+						ActionKeys.UPDATE_LAYOUT_ADVANCED_OPTIONS,
+						ActionKeys.UPDATE_LAYOUT_CONTENT, ActionKeys.CUSTOMIZE,
+						ActionKeys.ADD_LAYOUT, ActionKeys.VIEW,
+						ActionKeys.DELETE, ActionKeys.UPDATE_LAYOUT_BASIC,
+						ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_LAYOUT_LIMITED,
+						ActionKeys.ADD_DISCUSSION
+					};
+					roleKey = RoleConstants.OWNER;
+				}
+			},
+			new PagePermission() {
+				{
+					actionKeys = new String[] {ActionKeys.VIEW};
+					roleKey = RoleConstants.GUEST;
+				}
+			}
+		};
+
+		PagePermission[] inputPagePermissions = {
+			new PagePermission() {
+				{
+					actionKeys = new String[] {ActionKeys.VIEW};
+					roleKey = RoleConstants.GUEST;
+				}
+			}
+		};
+
+		_testPostSiteSitePageSuccessPagePermissions(
+			expectedPagePermissions, inputPagePermissions);
+	}
+
+	private static final String _CLASS_NAME_EXCEPTION_MAPPER =
+		"com.liferay.headless.delivery.internal.resource.v1_0." +
+			"SitePageResourceImpl";
+
+	@Inject
+	private AssetTagLocalService _assetTagLocalService;
+
 	@Inject
 	private GroupLocalService _groupLocalService;
 
@@ -357,6 +922,15 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 	@Inject
 	private LayoutsImporter _layoutsImporter;
+
+	@Inject
+	private ResourceActionLocalService _resourceActionLocalService;
+
+	@Inject
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Inject
+	private RoleLocalService _roleLocalService;
 
 	@Inject
 	private SegmentsEntryLocalService _segmentsEntryLocalService;

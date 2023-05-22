@@ -113,7 +113,7 @@
 								).value;
 
 								if (checkNumber && paymentReceived) {
-									updatePaidClaimStatus(
+									return updatePaidClaimStatus(
 										status,
 										paymentReceived,
 										checkNumber
@@ -125,6 +125,7 @@
 										'The MDF Claim Status cannot be changed without the fields being filled.',
 									type: 'danger',
 								});
+
 							},
 							type: 'submit',
 						},

@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.SessionClicks;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
@@ -200,11 +201,11 @@ public class LayoutsTreeImpl implements LayoutsTree {
 		}
 
 		for (Layout layout : layouts) {
-			int childLayoutsCount = 0;
 			JSONArray childLayoutsJSONArray = null;
 
 			if (ancestorLayouts.contains(layout) ||
-				expandedLayoutIds.contains(layout.getLayoutId())) {
+				(SetUtil.isNotEmpty(expandedLayoutIds) &&
+				 expandedLayoutIds.contains(layout.getLayoutId()))) {
 
 				if (layout instanceof VirtualLayout) {
 					VirtualLayout virtualLayout = (VirtualLayout)layout;
@@ -224,13 +225,8 @@ public class LayoutsTreeImpl implements LayoutsTree {
 						layout.getLayoutId(), layout.isPrivateLayout(),
 						themeDisplay);
 				}
-
-				childLayoutsCount = childLayoutsJSONArray.length();
 			}
 			else {
-				childLayoutsCount = _layoutService.getLayoutsCount(
-					groupId, privateLayout, layout.getLayoutId());
-
 				childLayoutsJSONArray = _jsonFactory.createJSONArray();
 			}
 
@@ -250,7 +246,9 @@ public class LayoutsTreeImpl implements LayoutsTree {
 
 			layoutsJSONArray.put(
 				_toJSONObject(
-					afterDeleteSelectedLayout, childLayoutsCount,
+					afterDeleteSelectedLayout,
+					_layoutService.getLayoutsCount(
+						groupId, privateLayout, layout.getLayoutId()),
 					childLayoutsJSONArray, httpServletRequest, includeActions,
 					layout, themeDisplay));
 

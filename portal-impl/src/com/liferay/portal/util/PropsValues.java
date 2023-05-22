@@ -1491,12 +1491,21 @@ public class PropsValues {
 	public static final String NETVIBES_SERVLET_MAPPING = PropsUtil.get(
 		PropsKeys.NETVIBES_SERVLET_MAPPING);
 
-	public static final boolean NOTIFICATION_EMAIL_TEMPLATE_RESTRICTED =
+	public static final boolean NOTIFICATION_EMAIL_TEMPLATE_ENABLED =
 		GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.NOTIFICATION_EMAIL_TEMPLATE_RESTRICTED));
+			PropsUtil.get(PropsKeys.NOTIFICATION_EMAIL_TEMPLATE_ENABLED));
 
 	public static final int NOTIFICATIONS_MAX_EVENTS = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.NOTIFICATIONS_MAX_EVENTS));
+
+	public static final String OBJECT_ENCRYPTION_ALGORITHM = PropsUtil.get(
+		PropsKeys.OBJECT_ENCRYPTION_ALGORITHM);
+
+	public static boolean OBJECT_ENCRYPTION_ENABLED = GetterUtil.getBoolean(
+		PropsUtil.get(PropsKeys.OBJECT_ENCRYPTION_ENABLED));
+
+	public static final String OBJECT_ENCRYPTION_KEY = PropsUtil.get(
+		PropsKeys.OBJECT_ENCRYPTION_KEY);
 
 	public static final int OBJECT_NESTED_FIELDS_MAX_QUERY_DEPTH =
 		GetterUtil.getInteger(

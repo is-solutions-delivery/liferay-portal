@@ -14,9 +14,10 @@
 
 /// <reference types="react" />
 
-import {FDSViewSectionInterface} from '../FDSView';
+import {IFDSViewSectionInterface} from '../FDSView';
 declare const Sorting: ({
 	fdsView,
 	fdsViewsURL,
-}: FDSViewSectionInterface) => JSX.Element;
+	namespace,
+}: IFDSViewSectionInterface) => JSX.Element;
 export default Sorting;

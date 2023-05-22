@@ -16,12 +16,12 @@ export interface DashboardListItems {
 }
 
 interface DashboardNavigationProps {
-	accountAppsNumber: string;
+	accountAppsNumber: number;
 	accountIcon: string;
 	accounts: Account[];
 	currentAccount: Account;
 	dashboardNavigationItems: DashboardListItems[];
-	onSelectAppChange?: (value: AppProps) => void;
+	onSelectAppChange?: (value: AppProps | undefined) => void;
 	setDashboardNavigationItems: (values: DashboardListItems[]) => void;
 	setSelectedAccount: Dispatch<React.SetStateAction<Account>>;
 }

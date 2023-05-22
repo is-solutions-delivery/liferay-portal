@@ -34,5 +34,5 @@ declare const FDSView: ({
 	namespace,
 	saveFDSFieldsURL,
 }: IFDSViewInterface) => JSX.Element;
-export {IFDSViewSectionInterface as FDSViewSectionInterface};
+export {IFDSViewSectionInterface};
 export default FDSView;

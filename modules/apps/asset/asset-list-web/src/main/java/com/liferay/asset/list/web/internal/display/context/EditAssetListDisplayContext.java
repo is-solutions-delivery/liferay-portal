@@ -90,6 +90,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.configuration.provider.SegmentsConfigurationProvider;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsPortletKeys;
+import com.liferay.segments.item.selector.SegmentsEntryItemSelectorReturnType;
+import com.liferay.segments.item.selector.criterion.SegmentsEntryItemSelectorCriterion;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.service.SegmentsEntryLocalServiceUtil;
 import com.liferay.segments.service.SegmentsEntryServiceUtil;
@@ -969,42 +971,38 @@ public class EditAssetListDisplayContext {
 		return _portletResponse.getNamespace() + "_selectSite";
 	}
 
-	public String getSelectSegmentsEntryURL() throws Exception {
+	public String getSelectSegmentsEntryURL() {
 		if (_selectSegmentsEntryURL != null) {
 			return _selectSegmentsEntryURL;
 		}
 
-		_selectSegmentsEntryURL = PortletURLBuilder.create(
-			PortletProviderUtil.getPortletURL(
-				_httpServletRequest, SegmentsEntry.class.getName(),
-				PortletProvider.Action.BROWSE)
-		).setParameter(
-			"eventName", _portletResponse.getNamespace() + "selectEntity"
-		).setParameter(
-			"groupId",
-			() -> {
-				StagingGroupHelper stagingGroupHelper =
-					StagingGroupHelperUtil.getStagingGroupHelper();
+		SegmentsEntryItemSelectorCriterion segmentsEntryItemSelectorCriterion =
+			new SegmentsEntryItemSelectorCriterion();
 
-				Group group = _themeDisplay.getScopeGroup();
+		segmentsEntryItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			Collections.singletonList(
+				new SegmentsEntryItemSelectorReturnType()));
 
-				if (!stagingGroupHelper.isStagedPortlet(
-						_themeDisplay.getScopeGroupId(),
-						SegmentsPortletKeys.SEGMENTS)) {
+		StagingGroupHelper stagingGroupHelper =
+			StagingGroupHelperUtil.getStagingGroupHelper();
 
-					group = stagingGroupHelper.getStagedPortletGroup(
-						_themeDisplay.getScopeGroup(),
-						SegmentsPortletKeys.SEGMENTS);
-				}
+		Group group = _themeDisplay.getScopeGroup();
 
-				return group.getGroupId();
-			}
-		).setParameter(
-			"selectedSegmentsEntryIds",
-			StringUtil.merge(getSelectedSegmentsEntryIds())
-		).setWindowState(
-			LiferayWindowState.POP_UP
-		).buildString();
+		if (!stagingGroupHelper.isStagedPortlet(
+				_themeDisplay.getScopeGroupId(),
+				SegmentsPortletKeys.SEGMENTS)) {
+
+			group = stagingGroupHelper.getStagedPortletGroup(
+				_themeDisplay.getScopeGroup(), SegmentsPortletKeys.SEGMENTS);
+		}
+
+		segmentsEntryItemSelectorCriterion.setGroupId(group.getGroupId());
+
+		_selectSegmentsEntryURL = String.valueOf(
+			_itemSelector.getItemSelectorURL(
+				RequestBackedPortletURLFactoryUtil.create(_portletRequest),
+				_portletResponse.getNamespace() + "selectEntity",
+				segmentsEntryItemSelectorCriterion));
 
 		return _selectSegmentsEntryURL;
 	}
