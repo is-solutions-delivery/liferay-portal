@@ -1,0 +1,36 @@
+buildscript {
+	dependencies {
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.defaults", version: "latest.release"
+	}
+
+	repositories {
+		mavenLocal()
+
+		maven {
+			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+		}
+	}
+}
+
+apply plugin: "application"
+apply plugin: "com.liferay.source.formatter"
+apply plugin: "java"
+
+dependencies {
+	compile group: "com.liferay", name: "com.liferay.petra.lang", version: "5.1.2"
+	compile group: "com.liferay", name: "com.liferay.petra.string", version: "5.2.0"
+	compile group: "com.liferay.commerce", name: "com.liferay.headless.commerce.admin.catalog.client", version: "4.0.36"
+	compile group: "commons-logging", name: "commons-logging", version: "1.2"
+	compile group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.13"
+	compile group: "org.json", name: "json", version: "20230227"
+}
+
+mainClassName = "com.liferay.marketplace.Main"
+
+repositories {
+	mavenLocal()
+
+	maven {
+		url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+	}
+}
