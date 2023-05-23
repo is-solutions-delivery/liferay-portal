@@ -19,7 +19,7 @@ import updateMDFRequestSF from '../../../common/services/liferay/object/mdf-requ
 export default async function createMDFRequestProxyAPI(mdfRequest: MDFRequest) {
 	let dtoMDFRequestSFResponse: MDFRequestDTO | undefined = undefined;
 
-	if (mdfRequest.externalReferenceCode) {
+	if (mdfRequest.externalReferenceCode && mdfRequest.submitted) {
 		dtoMDFRequestSFResponse = await updateMDFRequestSF(
 			ResourceName.MDF_REQUEST_SALESFORCE,
 			mdfRequest,
@@ -30,23 +30,24 @@ export default async function createMDFRequestProxyAPI(mdfRequest: MDFRequest) {
 		dtoMDFRequestSFResponse = await createMDFRequest(
 			ResourceName.MDF_REQUEST_SALESFORCE,
 			mdfRequest
-		);
-	}
-
-	let dtoMDFRequestResponse: MDFRequestDTO | undefined = undefined;
-
-	if (dtoMDFRequestSFResponse.externalReferenceCode) {
-		if (mdfRequest.id) {
-			dtoMDFRequestResponse = await updateMDFRequest(
-				ResourceName.MDF_REQUEST_DXP,
-				mdfRequest,
-				mdfRequest.id,
-				dtoMDFRequestSFResponse.externalReferenceCode,
-				dtoMDFRequestSFResponse.externalReferenceCode
 			);
 		}
-		else {
-			dtoMDFRequestResponse = await createMDFRequest(
+		
+		let dtoMDFRequestResponse: MDFRequestDTO | undefined = undefined;
+		
+		if (dtoMDFRequestSFResponse.externalReferenceCode) {
+			if (mdfRequest.id) {
+				dtoMDFRequestResponse = await updateMDFRequest(
+					ResourceName.MDF_REQUEST_DXP,
+					mdfRequest,
+					mdfRequest.id,
+					dtoMDFRequestSFResponse.externalReferenceCode,
+					dtoMDFRequestSFResponse.externalReferenceCode
+					);
+				}
+			else {
+				mdfRequest.submitted = true
+				dtoMDFRequestResponse = await createMDFRequest(
 				ResourceName.MDF_REQUEST_DXP,
 				mdfRequest,
 				dtoMDFRequestSFResponse.externalReferenceCode,
