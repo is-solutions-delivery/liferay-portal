@@ -14,6 +14,9 @@
 
 package com.liferay.site.initializer.extender.internal;
 
+import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.service.AccountGroupLocalService;
+import com.liferay.account.service.AccountGroupRelService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
@@ -86,17 +89,15 @@ import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 import com.liferay.template.service.TemplateEntryLocalService;
-
-import java.io.File;
-
-import javax.servlet.ServletContext;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.servlet.ServletContext;
+import java.io.File;
 
 /**
  * @author Shuyang Zhou
@@ -121,7 +122,8 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			null);
 
 		BundleSiteInitializer bundleSiteInitializer = new BundleSiteInitializer(
-			_adminAccountGroupResourceFactory,
+			_accountEntryLocalService, _accountGroupRelService,
+			_accountGroupLocalService, _adminAccountGroupResourceFactory,
 			_accountResourceFactory, _accountRoleLocalService,
 			_accountRoleResourceFactory, _assetCategoryLocalService,
 			_assetListEntryLocalService, bundle,
@@ -183,7 +185,13 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 	}
 
 	@Reference
-	private AdminAccountGroupResource.Factory _adminAccountGroupResourceFactory;
+	private AccountEntryLocalService _accountEntryLocalService;
+
+	@Reference
+	private AccountGroupLocalService _accountGroupLocalService;
+
+	@Reference
+	private AccountGroupRelService _accountGroupRelService;
 
 	@Reference
 	private AccountResource.Factory _accountResourceFactory;
@@ -193,6 +201,9 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 
 	@Reference
 	private AccountRoleResource.Factory _accountRoleResourceFactory;
+
+	@Reference
+	private AdminAccountGroupResource.Factory _adminAccountGroupResourceFactory;
 
 	@Reference
 	private AssetCategoryLocalService _assetCategoryLocalService;
