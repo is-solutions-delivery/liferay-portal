@@ -65,6 +65,7 @@ type ObjectFieldBusinessType =
 	| 'Aggregation'
 	| 'Attachment'
 	| 'Date'
+	| 'DateTime'
 	| 'Decimal'
 	| 'Encrypted'
 	| 'Formula'
@@ -255,6 +256,7 @@ type ObjectFieldSettingName =
 	| 'showFilesInDocumentsAndMedia'
 	| 'stateFlow'
 	| 'storageDLFolderPath'
+	| 'timeStorage'
 	| 'uniqueValues'
 	| 'uniqueValuesErrorMessage';
 
@@ -331,6 +333,7 @@ interface HTTPMethod {
 }
 
 interface PredefinedValue {
+	businessType: ObjectFieldBusinessType;
 	inputAsValue: boolean;
 	label: LocalizedValue<string>;
 	name: string;

@@ -22,12 +22,12 @@ String randomNamespace = StringUtil.randomId() + StringPool.UNDERLINE;
 %>
 
 <c:if test="<%= ((quickAccessEntries != null) && !quickAccessEntries.isEmpty()) || Validator.isNotNull(contentId) %>">
-	<nav aria-label="<liferay-ui:message key="quick-links" />" class="bg-dark cadmin d-lg-block d-none quick-access-nav text-center text-white" id="<%= randomNamespace %>quickAccessNav">
+	<nav aria-label="<liferay-ui:message key="quick-links" />" class="bg-dark cadmin quick-access-nav text-center text-white" id="<%= randomNamespace %>quickAccessNav">
 		<ul class="list-unstyled mb-0">
 			<c:if test="<%= Validator.isNotNull(contentId) %>">
 				<li>
 					<a class="<%= linkClass %>" href="<%= contentId %>">
-						<liferay-ui:message key="skip-to-content" />
+						<liferay-ui:message key="skip-to-main-content" />
 					</a>
 				</li>
 			</c:if>

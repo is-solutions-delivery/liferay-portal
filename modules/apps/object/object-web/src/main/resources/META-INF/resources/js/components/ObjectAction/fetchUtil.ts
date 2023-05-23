@@ -144,7 +144,7 @@ export async function fetchObjectDefinitionFields(
 
 	const newPredefinedValues: PredefinedValue[] = [];
 
-	validFields.forEach(({label, name, required}) => {
+	validFields.forEach(({businessType, label, name, required}) => {
 		if (predefinedValuesMap.has(name)) {
 			const field = predefinedValuesMap.get(name);
 
@@ -154,8 +154,11 @@ export async function fetchObjectDefinitionFields(
 			required &&
 			values.objectActionExecutorKey === 'add-object-entry'
 		) {
+			const inputAsValue = businessType === 'DateTime' ? true : false;
+
 			newPredefinedValues.push({
-				inputAsValue: false,
+				businessType,
+				inputAsValue,
 				label,
 				name,
 				value: '',
