@@ -54,7 +54,11 @@ class PaginationEllipsis extends React.Component {
 				className={getCN('dropdown-root', className)}
 				closeOnClick
 				trigger={
-					<ClayButton className='page-link' displayType='unstyled'>
+					<ClayButton
+						aria-label={Liferay.Language.get('see-more')}
+						className='page-link'
+						displayType='unstyled'
+					>
 						{'...'}
 					</ClayButton>
 				}
@@ -211,7 +215,7 @@ class Pagination extends React.Component {
 					onChange={onChange}
 					page={page - 1}
 				>
-					<ClayIcon className='icon-root' symbol='angle-left' />
+					<ClayIcon className='icon-root' symbol='angle-left-small' />
 				</PaginationItem>
 
 				{this.getPages().map((item, index) => (
@@ -232,7 +236,10 @@ class Pagination extends React.Component {
 					onChange={onChange}
 					page={page + 1}
 				>
-					<ClayIcon className='icon-root' symbol='angle-right' />
+					<ClayIcon
+						className='icon-root'
+						symbol='angle-right-small'
+					/>
 				</PaginationItem>
 			</ul>
 		);

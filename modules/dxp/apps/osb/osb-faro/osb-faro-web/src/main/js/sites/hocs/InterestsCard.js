@@ -79,7 +79,10 @@ const InterestsCard = () => {
 
 					<Card.Footer>
 						<ClayLink
+							borderless
+							button
 							className='button-root'
+							displayType='secondary'
 							href={setUriQueryValues(
 								rangeSelectors,
 								toRoute(Routes.SITES_INTERESTS, {
@@ -87,12 +90,13 @@ const InterestsCard = () => {
 									groupId
 								})
 							)}
+							small
 						>
 							{Liferay.Language.get('all-interests')}
 
 							<ClayIcon
 								className='icon-root ml-2'
-								symbol='angle-right'
+								symbol='angle-right-small'
 							/>
 						</ClayLink>
 					</Card.Footer>

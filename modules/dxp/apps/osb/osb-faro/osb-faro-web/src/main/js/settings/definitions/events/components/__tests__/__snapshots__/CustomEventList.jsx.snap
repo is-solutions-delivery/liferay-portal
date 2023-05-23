@@ -76,6 +76,7 @@ exports[`CustomEventList should render 1`] = `
                 class="input-group-inset-item input-group-inset-item-after"
               >
                 <button
+                  aria-label="Search"
                   class="button-root btn btn-unstyled"
                   type="button"
                 >
@@ -305,11 +306,11 @@ exports[`CustomEventList should render 1`] = `
             href="/?page=0"
           >
             <svg
-              class="lexicon-icon lexicon-icon-angle-left icon-root"
+              class="lexicon-icon lexicon-icon-angle-left-small icon-root"
               role="presentation"
             >
               <use
-                xlink:href="#angle-left"
+                xlink:href="#angle-left-small"
               />
             </svg>
           </a>
@@ -333,11 +334,11 @@ exports[`CustomEventList should render 1`] = `
             href="/?page=2"
           >
             <svg
-              class="lexicon-icon lexicon-icon-angle-right icon-root"
+              class="lexicon-icon lexicon-icon-angle-right-small icon-root"
               role="presentation"
             >
               <use
-                xlink:href="#angle-right"
+                xlink:href="#angle-right-small"
               />
             </svg>
           </a>
@@ -472,6 +473,7 @@ exports[`CustomEventList should render alert notification 1`] = `
                 class="input-group-inset-item input-group-inset-item-after"
               >
                 <button
+                  aria-label="Search"
                   class="button-root btn btn-unstyled"
                   type="button"
                 >
@@ -701,11 +703,11 @@ exports[`CustomEventList should render alert notification 1`] = `
             href="/?page=0"
           >
             <svg
-              class="lexicon-icon lexicon-icon-angle-left icon-root"
+              class="lexicon-icon lexicon-icon-angle-left-small icon-root"
               role="presentation"
             >
               <use
-                xlink:href="#angle-left"
+                xlink:href="#angle-left-small"
               />
             </svg>
           </a>
@@ -729,11 +731,11 @@ exports[`CustomEventList should render alert notification 1`] = `
             href="/?page=2"
           >
             <svg
-              class="lexicon-icon lexicon-icon-angle-right icon-root"
+              class="lexicon-icon lexicon-icon-angle-right-small icon-root"
               role="presentation"
             >
               <use
-                xlink:href="#angle-right"
+                xlink:href="#angle-right-small"
               />
             </svg>
           </a>

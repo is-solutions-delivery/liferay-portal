@@ -13,11 +13,11 @@ exports[`FilterOptions should render 1`] = `
         type="button"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-left icon-root mr-2"
+          class="lexicon-icon lexicon-icon-angle-left-small icon-root mr-2"
           role="presentation"
         >
           <use
-            xlink:href="#angle-left"
+            xlink:href="#angle-left-small"
           />
         </svg>
         Back To Attributes
@@ -30,6 +30,7 @@ exports[`FilterOptions should render 1`] = `
         >
           Filed Ticket
           <button
+            aria-label="Edit"
             class="button-root btn btn-outline-borderless btn-sm btn-outline-secondary"
             type="button"
           >
