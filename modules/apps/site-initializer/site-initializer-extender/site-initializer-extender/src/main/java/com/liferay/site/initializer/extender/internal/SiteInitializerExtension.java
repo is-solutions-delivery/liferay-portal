@@ -14,6 +14,9 @@
 
 package com.liferay.site.initializer.extender.internal;
 
+import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.service.AccountGroupLocalService;
+import com.liferay.account.service.AccountGroupRelService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
@@ -82,14 +85,12 @@ import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 import com.liferay.template.service.TemplateEntryLocalService;
-
-import javax.servlet.ServletContext;
-
 import org.apache.felix.dm.Component;
 import org.apache.felix.dm.DependencyManager;
 import org.apache.felix.dm.ServiceDependency;
-
 import org.osgi.framework.Bundle;
+
+import javax.servlet.ServletContext;
 
 /**
  * @author Preston Crary
@@ -97,6 +98,9 @@ import org.osgi.framework.Bundle;
 public class SiteInitializerExtension {
 
 	public SiteInitializerExtension(
+		AccountEntryLocalService accountEntryLocalService,
+		AccountGroupRelService accountGroupRelService,
+		AccountGroupLocalService accountGroupLocalService,
 		AdminAccountGroupResource.Factory adminAccountGroupResourceFactory,
 		AccountResource.Factory accountResourceFactory,
 		AccountRoleLocalService accountRoleLocalService,
@@ -175,7 +179,8 @@ public class SiteInitializerExtension {
 		_component = dependencyManager.createComponent();
 
 		BundleSiteInitializer bundleSiteInitializer = new BundleSiteInitializer(
-			adminAccountGroupResourceFactory,
+			accountEntryLocalService, accountGroupRelService,
+			accountGroupLocalService, adminAccountGroupResourceFactory,
 			accountResourceFactory, accountRoleLocalService,
 			accountRoleResourceFactory, assetCategoryLocalService,
 			assetListEntryLocalService, bundle,
