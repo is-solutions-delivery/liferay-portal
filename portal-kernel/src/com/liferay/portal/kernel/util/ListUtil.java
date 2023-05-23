@@ -39,9 +39,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.function.ToLongFunction;
 
 /**
@@ -159,6 +161,36 @@ public class ListUtil {
 		List<? extends T> inputList, Predicate<T> predicate) {
 
 		return filter(inputList, new ArrayList<T>(inputList.size()), predicate);
+	}
+
+	public static <T> List<T> filter(
+		List<T> list, BiFunction<Integer, Integer, List<T>> listBiFunction,
+		Supplier<Integer> countSupplier, Predicate<T> predicate, int start,
+		int end) {
+
+		list = filter(list, predicate);
+
+		int count = countSupplier.get();
+		int delta = end - start;
+
+		int pageCount = (count / delta) + (((count % delta) == 0) ? 0 : 1);
+		int pageIndex = (int)Math.ceil((double)start / delta);
+
+		int pageSize = end - start;
+
+		while ((list.size() < pageSize) && (pageIndex < pageCount)) {
+			pageIndex++;
+
+			start += delta;
+			end += delta;
+
+			list.addAll(
+				subList(
+					filter(listBiFunction.apply(start, end), predicate), 0,
+					pageSize - list.size()));
+		}
+
+		return list;
 	}
 
 	public static List<Boolean> fromArray(boolean[] array) {

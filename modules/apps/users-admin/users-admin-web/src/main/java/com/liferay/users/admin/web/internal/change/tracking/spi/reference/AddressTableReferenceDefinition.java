@@ -12,64 +12,59 @@
  * details.
  */
 
-package com.liferay.change.tracking.internal.spi.reference;
+package com.liferay.users.admin.web.internal.change.tracking.spi.reference;
 
 import com.liferay.change.tracking.spi.reference.TableReferenceDefinition;
 import com.liferay.change.tracking.spi.reference.builder.ChildTableReferenceInfoBuilder;
 import com.liferay.change.tracking.spi.reference.builder.ParentTableReferenceInfoBuilder;
+import com.liferay.portal.kernel.model.AddressTable;
 import com.liferay.portal.kernel.model.CompanyTable;
-import com.liferay.portal.kernel.model.Contact;
-import com.liferay.portal.kernel.model.ContactTable;
-import com.liferay.portal.kernel.model.ImageTable;
-import com.liferay.portal.kernel.model.UserTable;
+import com.liferay.portal.kernel.model.CountryTable;
+import com.liferay.portal.kernel.model.RegionTable;
+import com.liferay.portal.kernel.service.persistence.AddressPersistence;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
-import com.liferay.portal.kernel.service.persistence.UserPersistence;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Preston Crary
+ * @author Gislayne Vitorino
  */
 @Component(service = TableReferenceDefinition.class)
-public class UserTableReferenceDefinition
-	implements TableReferenceDefinition<UserTable> {
+public class AddressTableReferenceDefinition
+	implements TableReferenceDefinition<AddressTable> {
 
 	@Override
 	public void defineChildTableReferences(
-		ChildTableReferenceInfoBuilder<UserTable>
+		ChildTableReferenceInfoBuilder<AddressTable>
 			childTableReferenceInfoBuilder) {
-
-		childTableReferenceInfoBuilder.classNameReference(
-			UserTable.INSTANCE.userId, ContactTable.INSTANCE.classPK,
-			Contact.class
-		).singleColumnReference(
-			UserTable.INSTANCE.contactId, ContactTable.INSTANCE.contactId
-		).singleColumnReference(
-			UserTable.INSTANCE.portraitId, ImageTable.INSTANCE.imageId
-		);
 	}
 
 	@Override
 	public void defineParentTableReferences(
-		ParentTableReferenceInfoBuilder<UserTable>
+		ParentTableReferenceInfoBuilder<AddressTable>
 			parentTableReferenceInfoBuilder) {
 
 		parentTableReferenceInfoBuilder.singleColumnReference(
-			UserTable.INSTANCE.companyId, CompanyTable.INSTANCE.companyId);
+			AddressTable.INSTANCE.companyId, CompanyTable.INSTANCE.companyId
+		).singleColumnReference(
+			AddressTable.INSTANCE.countryId, CountryTable.INSTANCE.countryId
+		).singleColumnReference(
+			AddressTable.INSTANCE.regionId, RegionTable.INSTANCE.regionId
+		);
 	}
 
 	@Override
 	public BasePersistence<?> getBasePersistence() {
-		return _userPersistence;
+		return _addressPersistence;
 	}
 
 	@Override
-	public UserTable getTable() {
-		return UserTable.INSTANCE;
+	public AddressTable getTable() {
+		return AddressTable.INSTANCE;
 	}
 
 	@Reference
-	private UserPersistence _userPersistence;
+	private AddressPersistence _addressPersistence;
 
 }

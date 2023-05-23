@@ -54,6 +54,10 @@ definition {
 
 		Panel.expandPanel(panel = "Categorization");
 
+		ScrollWebElementIntoView(
+			key_panel = "Schedule",
+			locator1 = "Panel#PANEL");
+
 		AssetCategorization.viewTag(tagName = "dxp");
 
 		Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name-staging/web-content-page");
@@ -96,6 +100,10 @@ definition {
 
 		Panel.expandPanel(panel = "Categorization");
 
+		ScrollWebElementIntoView(
+			key_panel = "Schedule",
+			locator1 = "Panel#PANEL");
+
 		AssetCategorization.viewTag(tagName = "dxp");
 	}
 
@@ -116,6 +124,10 @@ definition {
 			webContentTitle = "Digital Transformation or Digital Experience");
 
 		Panel.expandPanel(panel = "Categorization");
+
+		ScrollWebElementIntoView(
+			key_panel = "Schedule",
+			locator1 = "Panel#PANEL");
 
 		AssetCategorization.viewTag(tagName = "dxp");
 
@@ -148,6 +160,10 @@ definition {
 			webContentTitle = "Digital Transformation or Digital Experience");
 
 		Panel.expandPanel(panel = "Categorization");
+
+		ScrollWebElementIntoView(
+			key_panel = "Schedule",
+			locator1 = "Panel#PANEL");
 
 		AssetCategorization.viewTag(tagName = "liferay");
 
@@ -187,6 +203,10 @@ definition {
 
 		Panel.expandPanel(panel = "Categorization");
 
+		ScrollWebElementIntoView(
+			key_panel = "Schedule",
+			locator1 = "Panel#PANEL");
+
 		AssetCategorization.viewTag(tagName = "dxp");
 	}
 
@@ -209,7 +229,11 @@ definition {
 
 		Panel.expandPanel(panel = "Categorization");
 
-		FormFields.disableCheckbox(fieldName = "Update Auto Tags");
+		Click.javaScriptClick(
+			key_fieldName = "Update Auto Tags",
+			locator1 = "FormFields#CHECKBOX_LABEL");
+
+		FormFields.viewCheckboxNotChecked(fieldName = "Update Auto Tags");
 
 		WebContent.editCP(
 			webContentContentEdit = "Alice's Adventures in Wonderland",
@@ -219,6 +243,10 @@ definition {
 		WebContentNavigator.gotoEditCP(webContentTitle = "Digital Transformation or Digital Experience Edit");
 
 		Panel.expandPanel(panel = "Categorization");
+
+		ScrollWebElementIntoView(
+			key_panel = "Schedule",
+			locator1 = "Panel#PANEL");
 
 		for (var tagName : list "dxp,herbert") {
 			AssetCategorization.viewTag(tagName = ${tagName});
@@ -256,6 +284,10 @@ definition {
 		WebContentNavigator.gotoEditCP(webContentTitle = "Digital Transformation or Digital Experience Edit");
 
 		Panel.expandPanel(panel = "Categorization");
+
+		ScrollWebElementIntoView(
+			key_panel = "Schedule",
+			locator1 = "Panel#PANEL");
 
 		for (var tagName : list "adventures,alice,dxp,herbert") {
 			AssetCategorization.viewTag(tagName = ${tagName});

@@ -40,6 +40,13 @@ definition {
 		}
 	}
 
+	macro assertFieldsOnTable {
+		AssertElementPresent(
+			key_position = ${key_position},
+			keyName = ${keyName},
+			locator1 = "FrontendDataSetAdmin#FIELDS_TABLE");
+	}
+
 	macro changePagination {
 		Click(locator1 = "FrontendDataSetAdmin#ITEMS_PER_PAGE_SELECT");
 
@@ -56,6 +63,12 @@ definition {
 		Type(
 			locator1 = "FrontendDataSetAdmin#PAGINATION_LIST_OF_ITEMS",
 			value1 = ${paginationItems});
+	}
+
+	macro checkFields {
+		Check.checkNotVisible(
+			checkboxName = ${checkboxName},
+			locator1 = "Checkbox#ANY_CHECKBOX");
 	}
 
 	macro createDataSet {

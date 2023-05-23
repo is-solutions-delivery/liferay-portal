@@ -33,6 +33,7 @@ import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.layout.admin.kernel.model.LayoutTypePortletConstants;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.search.Field;
@@ -155,6 +156,10 @@ public class CPDefinitionSitemapURLProvider implements SitemapURLProvider {
 			return;
 		}
 
+		themeDisplay = SitemapURLProviderUtil.updateThemeDisplay(
+			_language, _portal.getLocale(themeDisplay.getRequest()),
+			themeDisplay);
+
 		String currentSiteURL = _portal.getGroupFriendlyURL(
 			layout.getLayoutSet(), themeDisplay, false, false);
 		String urlSeparator = _cpFriendlyURL.getProductURLSeparator(
@@ -174,14 +179,12 @@ public class CPDefinitionSitemapURLProvider implements SitemapURLProvider {
 				_friendlyURLEntryLocalService.getFriendlyURLEntryLocalizations(
 					friendlyURLEntry.getFriendlyURLEntryId())) {
 
-			String alternateFriendlyURL = StringBundler.concat(
-				currentSiteURL, urlSeparator,
-				friendlyURLEntryLocalization.getUrlTitle());
-
 			alternateFriendlyURLs.put(
 				LocaleUtil.fromLanguageId(
 					friendlyURLEntryLocalization.getLanguageId()),
-				alternateFriendlyURL);
+				StringBundler.concat(
+					currentSiteURL, urlSeparator,
+					friendlyURLEntryLocalization.getUrlTitle()));
 		}
 
 		String productFriendlyURL = StringBundler.concat(
@@ -216,6 +219,9 @@ public class CPDefinitionSitemapURLProvider implements SitemapURLProvider {
 
 	@Reference
 	private FriendlyURLEntryLocalService _friendlyURLEntryLocalService;
+
+	@Reference
+	private Language _language;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

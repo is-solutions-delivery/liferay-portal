@@ -97,12 +97,25 @@ definition {
 	}
 
 	@description = "LPS-185226. Confirm that the user can add a field"
-	@ignore = "true"
 	@priority = 5
 	test CanAddField {
+		task ("And clicks on Add Fields button") {
+			LexiconEntry.gotoAdd();
+		}
 
-		// TODO LPS-185226 CanAddField pending implementation
+		task ("And checks id field") {
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
+		}
 
+		task ("And clicks on Save button") {
+			Button.clickSave();
+		}
+
+		task ("Then the added fields are shown on Fields tab page") {
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+		}
 	}
 
 	@description = "LPS-185230. Confirm that the user can cancel adding a field by clicking on cancel button."
@@ -124,12 +137,44 @@ definition {
 	}
 
 	@description = "LPS-185229. Confirm that the user can change the field's order on Fields tab page."
-	@ignore = "true"
 	@priority = 4
 	test CanChangeFieldOrder {
+		task ("And clicks on plus button") {
+			LexiconEntry.gotoAdd();
+		}
 
-		// TODO LPS-185229 CanChangeFieldOrder pending implementation
+		task ("And checks id and label fields") {
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
 
+			FrontendDataSetAdmin.checkFields(checkboxName = "label");
+		}
+
+		task ("And clicks on Save button") {
+			Button.clickSave();
+		}
+
+		task ("And clicks on a field drag dots icon related id field ") {
+			Click.clickAt(
+				key_nameField = "id",
+				locator1 = "FrontendDataSetAdmin#FIELDS_DRAG_DOTS_ICON");
+		}
+
+		task ("Then the user can move the id field below the label field") {
+			DragAndDrop.javaScriptDragAndDropToBottom(
+				key_nameField = "id",
+				key_position = 2,
+				keyName = "label",
+				locator1 = "FrontendDataSetAdmin#FIELDS_DRAG_DOTS_ICON",
+				locator2 = "FrontendDataSetAdmin#FIELDS_TABLE");
+
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "label");
+
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 2,
+				keyName = "id");
+		}
 	}
 
 	@description = "LPS-179282. Confirm that the user can check and uncheck all the fields"
@@ -140,9 +185,7 @@ definition {
 		}
 
 		task ("And select all the fields.") {
-			Check.checkNotVisible(
-				checkboxName = "",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "");
 		}
 
 		task ("Then Confirm all fields are checked ") {
@@ -161,12 +204,40 @@ definition {
 	}
 
 	@description = "LPS-185228. Confirm that a field is not added after checking and unchecking it."
-	@ignore = "true"
 	@priority = 5
 	test CannotAddFieldAfterUncheckingIt {
+		task ("And clicks on plus button") {
+			LexiconEntry.gotoAdd();
+		}
 
-		// TODO LPS-185228 CannotAddFieldAfterUncheckingIt pending implementation
+		task ("And checks id and label fields") {
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
 
+			FrontendDataSetAdmin.checkFields(checkboxName = "label");
+		}
+
+		task ("And unchecks id field") {
+			Uncheck.uncheckNotVisible(
+				checkboxName = "id",
+				locator1 = "Checkbox#ANY_CHECKBOX");
+		}
+
+		task ("And clicks on Save button") {
+			Button.clickSave();
+		}
+
+		task ("Then label field should appear on Fields tab page") {
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "label");
+		}
+
+		task ("And id should not appear on Fields tab page") {
+			AssertElementNotPresent(
+				key_position = 1,
+				keyName = "id",
+				locator1 = "FrontendDataSetAdmin#FIELDS_TABLE");
+		}
 	}
 
 	@description = "LPS-179282. Confirm that the search bar returns works as expected"
@@ -188,12 +259,21 @@ definition {
 	}
 
 	@description = "LPS-185227. Confirm that the user can search a specific field when adding fields."
-	@ignore = "true"
 	@priority = 4
 	test CanSearchFieldOnAddFieldsModal {
+		task ("And clicks on Add Fields button") {
+			LexiconEntry.gotoAdd();
+		}
 
-		// TODO LPS-185227 CanSearchFieldOnAddFieldsModal pending implementation
+		task ("And types 'label' on modal search bar") {
+			FrontendDataSetAdmin.searchField(searchTerm = "label");
+		}
 
+		task ("Then 'label' field should appear on Add Fields modal") {
+			AssertElementPresent(
+				key_name = "label",
+				locator1 = "FrontendDataSetAdmin#FIELDS_ITEM");
+		}
 	}
 
 	@description = "LPS-185231. Confirm that the user can search a specific field on field's search bar."
@@ -213,17 +293,11 @@ definition {
 		}
 
 		task ("And Check three options (creator,id ,name)") {
-			Check.checkNotVisible(
-				checkboxName = "creator",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "creator");
 
-			Check.checkNotVisible(
-				checkboxName = "id",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
 
-			Check.checkNotVisible(
-				checkboxName = "name",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "name");
 		}
 
 		task ("Then Confirm that the fields are checked ") {
