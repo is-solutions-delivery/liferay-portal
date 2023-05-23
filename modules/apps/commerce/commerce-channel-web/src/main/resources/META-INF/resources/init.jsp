@@ -27,8 +27,7 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.commerce.account.constants.CommerceAccountConstants" %><%@
-page import="com.liferay.commerce.channel.web.internal.constants.CommerceChannelFDSNames" %><%@
+<%@ page import="com.liferay.commerce.channel.web.internal.constants.CommerceChannelFDSNames" %><%@
 page import="com.liferay.commerce.channel.web.internal.constants.CommerceChannelScreenNavigationConstants" %><%@
 page import="com.liferay.commerce.channel.web.internal.display.context.CommerceChannelDisplayContext" %><%@
 page import="com.liferay.commerce.channel.web.internal.display.context.SiteCommerceChannelTypeDisplayContext" %><%@
@@ -36,6 +35,7 @@ page import="com.liferay.commerce.constants.CommerceOrderConstants" %><%@
 page import="com.liferay.commerce.currency.model.CommerceCurrency" %><%@
 page import="com.liferay.commerce.pricing.constants.CommercePricingConstants" %><%@
 page import="com.liferay.commerce.product.channel.CommerceChannelType" %><%@
+page import="com.liferay.commerce.product.constants.CommerceChannelConstants" %><%@
 page import="com.liferay.commerce.product.exception.NoSuchChannelException" %><%@
 page import="com.liferay.commerce.product.model.CPTaxCategory" %><%@
 page import="com.liferay.commerce.product.model.CommerceChannel" %><%@

@@ -1,0 +1,412 @@
+@component-name = "portal-solutions"
+definition {
+
+	property custom.properties = "feature.flag.LPS-163118=true";
+	property osgi.modules.includes = "site-initializer-testray";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Site Initializer Testray";
+
+	var caseName = "Case 1";
+	var caseType = "Case Type 1";
+	var componentName = "Component 1";
+	var projectName = "Project 1";
+	var requirementName = "Requirement Summary";
+	var teamName = "Team 1";
+	var testSiteName = "Testray 2";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
+		}
+
+		task ("Create project, team, component, case type, case and requirement via API") {
+			JSONTestray.addProject(
+				projectDescription = "Project Description 1",
+				projectName = ${projectName});
+
+			JSONTestray.addTeam(
+				projectName = ${projectName},
+				teamName = ${teamName});
+
+			JSONTestray.addComponent(
+				componentName = ${componentName},
+				projectName = ${projectName},
+				teamName = ${teamName});
+
+			JSONTestray.addCaseType(caseType = ${caseType});
+
+			JSONTestray.addCases(
+				caseName = ${caseName},
+				caseType = ${caseType},
+				componentName = ${componentName},
+				projectName = ${projectName});
+
+			JSONTestray.addRequirement(
+				componentName = ${componentName},
+				linkTitle = "The front page of the internet",
+				projectName = ${projectName},
+				requirementName = ${requirementName});
+		}
+	}
+
+	tearDown {
+		task ("Logout And Login with test user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "test test");
+		}
+
+		task ("Delete case type and project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "casetypes",
+				objectName = ${caseType});
+
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
+
+			Testray.testrayApisTearDown();
+		}
+
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray Analyst' role should be able to delete the requirement"
+	@priority = 3
+	test AnalystRoleCanDeleteRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AnalystRoleCanDeleteRequirement";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user delete the requirement") {
+			RightClick.rightClick(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
+
+			AssertConfirm(value1 = "Are you sure you want to delete this item?");
+		}
+
+		task ("Then the user can not see the requirement in the table") {
+			AssertElementNotPresent(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray Analyst' role should be able to edit the requirement"
+	@priority = 3
+	test AnalystRoleCanEditRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AnalystRoleCanEditRequirement";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user edited the requirement") {
+			RightClick.rightClick(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Edit");
+
+			TestrayRequirements.editRequirement(
+				componentId = ${componentName},
+				linkTitle = "The page edited",
+				linkURL = "https://reddit.com",
+				requirementName = "Requirement Edited");
+		}
+
+		task ("Then can see the requirement edited in the table") {
+			AssertElementPresent(
+				key_projectName = "Requirement Edited",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray Analyst' role should be able to create the requirement"
+	@priority = 3
+	test AssertAnalystRoleCanCreateRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AssertAnalystRoleCanCreateRequirement";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user create a requirement") {
+			TestrayRequirements.addRequirement(
+				componentId = ${componentName},
+				linkTitle = "The page edited",
+				linkURL = "https://reddit.com",
+				requirementName = "Requirement 2");
+		}
+
+		task ("Then the user can see the requirement in the table") {
+			AssertElementPresent(
+				key_projectName = "Requirement 2",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to create the requirement"
+	@priority = 3
+	test AssertLeadRoleCanCreateRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AssertLeadRoleCanCreateRequirement";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user create a requirement") {
+			TestrayRequirements.addRequirement(
+				componentId = ${componentName},
+				linkTitle = "The page edited",
+				linkURL = "https://reddit.com",
+				requirementName = "Requirement 2");
+		}
+
+		task ("Then the user can see the requirement in the table") {
+			AssertElementPresent(
+				key_projectName = "Requirement 2",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to delete the requirement"
+	@priority = 3
+	test AssertLeadRoleCanDeleteRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AssertLeadRoleCanDeleteRequirement";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user delete the requirement") {
+			RightClick.rightClick(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
+
+			AssertConfirm(value1 = "Are you sure you want to delete this item?");
+		}
+
+		task ("Then the user can not see the requirement in the table") {
+			AssertElementNotPresent(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to edit the requirement"
+	@priority = 3
+	test AssertLeadRoleCanEditRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AssertLeadRoleCanEditRequirement";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user edited the requirement") {
+			RightClick.rightClick(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Edit");
+
+			TestrayRequirements.editRequirement(
+				componentId = ${componentName},
+				linkTitle = "The page edited",
+				linkURL = "https://reddit.com",
+				requirementName = "Requirement Edited");
+		}
+
+		task ("Then can see the requirement edited in the table") {
+			AssertElementPresent(
+				key_projectName = "Requirement Edited",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray User' role should not be able to create the requirement"
+	@priority = 2
+	test AssertUserRoleCanNotCreateRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AssertUserRoleCanNotCreateRequirement";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+		}
+
+		task ("When the user go to the requirement page") {
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("Then the user can not create the requirement") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray User' role should not be able to delete the requirement"
+	@priority = 2
+	test AssertUserRoleCanNotDeleteRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AssertUserRoleCanNotDeleteRequirement";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user right click in requirement") {
+			RightClick.rightClick(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not delete the requirement") {
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-178268 | Test Summary: Verify that the User with the 'Testray User' role should not be able to edit the requirement"
+	@priority = 2
+	test AssertUserRoleCanNotEditRequirement {
+		property test.name.skip.portal.instance = "TestrayRequirementPermissions#AssertUserRoleCanNotEditRequirement";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Requirements");
+		}
+
+		task ("When the user right click in requirement") {
+			RightClick.rightClick(
+				key_projectName = ${requirementName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not edit the requirement") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+}

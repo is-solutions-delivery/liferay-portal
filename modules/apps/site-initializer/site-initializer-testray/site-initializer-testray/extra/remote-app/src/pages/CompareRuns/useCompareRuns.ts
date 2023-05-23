@@ -23,7 +23,7 @@ export type CompareRunsResponse = {
 	values: number[][];
 };
 
-const component = {
+const mockComponent = {
 	dateCreated: '',
 	dateModified: '',
 	externalReferenceCode: '',
@@ -35,7 +35,7 @@ const component = {
 	teamId: 0,
 };
 
-const team = {
+const mockTeam = {
 	dateCreated: '',
 	dateModified: '',
 	externalReferenceCode: '',
@@ -60,10 +60,9 @@ const useCompareRuns = (
 	const operator = type === 'details' ? '' : type;
 
 	const {data} = useFetch<CompareRunsResponse>(
-		`/o/c/compare-runs/${runA}/${runB}/${operator}`,
+		`/compare-runs/${runA}/${runB}/${operator}`,
 		{
 			params: {customParams: {componentId, teamId}},
-			swrConfig: {shouldFetch: false},
 		}
 	);
 
@@ -75,8 +74,8 @@ const useCompareRuns = (
 		data ?? [
 			{
 				values,
-				...(type === 'components' && {component}),
-				...(type === 'teams' && {team}),
+				...(type === 'components' && {component: mockComponent}),
+				...(type === 'teams' && {team: mockTeam}),
 			},
 		]
 	);

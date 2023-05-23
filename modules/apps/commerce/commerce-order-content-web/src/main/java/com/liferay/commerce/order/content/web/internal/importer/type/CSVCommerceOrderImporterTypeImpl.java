@@ -14,9 +14,9 @@
 
 package com.liferay.commerce.order.content.web.internal.importer.type;
 
-import com.liferay.commerce.account.configuration.CommerceAccountGroupServiceConfiguration;
-import com.liferay.commerce.account.constants.CommerceAccountConstants;
+import com.liferay.commerce.configuration.CommerceAccountGroupServiceConfiguration;
 import com.liferay.commerce.configuration.CommerceOrderImporterTypeConfiguration;
+import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.context.CommerceContextFactory;
 import com.liferay.commerce.exception.CommerceOrderImporterTypeException;
 import com.liferay.commerce.model.CommerceOrder;
@@ -26,6 +26,7 @@ import com.liferay.commerce.order.importer.item.CommerceOrderImporterItemImpl;
 import com.liferay.commerce.order.importer.type.CommerceOrderImporterType;
 import com.liferay.commerce.price.CommerceOrderPriceCalculation;
 import com.liferay.commerce.product.availability.CPAvailabilityChecker;
+import com.liferay.commerce.product.constants.CommerceChannelConstants;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CommerceChannel;
@@ -193,10 +194,10 @@ public class CSVCommerceOrderImporterTypeImpl
 					CommerceAccountGroupServiceConfiguration.class,
 					new GroupServiceSettingsLocator(
 						commerceChannel.getGroupId(),
-						CommerceAccountConstants.SERVICE_NAME));
+						CommerceConstants.SERVICE_NAME_COMMERCE_ACCOUNT));
 
 		if (commerceAccountGroupServiceConfiguration.commerceSiteType() ==
-				CommerceAccountConstants.SITE_TYPE_B2C) {
+				CommerceChannelConstants.SITE_TYPE_B2C) {
 
 			return false;
 		}

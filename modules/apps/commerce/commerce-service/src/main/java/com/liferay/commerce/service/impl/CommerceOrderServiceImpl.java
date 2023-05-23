@@ -16,14 +16,13 @@ package com.liferay.commerce.service.impl;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.commerce.account.constants.CommerceAccountActionKeys;
-import com.liferay.commerce.account.util.CommerceAccountHelper;
 import com.liferay.commerce.constants.CommerceActionKeys;
 import com.liferay.commerce.constants.CommerceOrderActionKeys;
 import com.liferay.commerce.constants.CommerceOrderConstants;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.service.base.CommerceOrderServiceBaseImpl;
+import com.liferay.commerce.util.CommerceAccountHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -1055,7 +1054,7 @@ public class CommerceOrderServiceImpl extends CommerceOrderServiceBaseImpl {
 
 		if (!portletResourcePermission.contains(
 				getPermissionChecker(), groupId,
-				CommerceAccountActionKeys.MANAGE_ALL_ACCOUNTS)) {
+				CommerceOrderActionKeys.MANAGE_ALL_ACCOUNTS)) {
 
 			return _commerceAccountHelper.getUserCommerceAccountIds(
 				getUserId(), groupId);

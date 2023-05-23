@@ -55,6 +55,11 @@ const useRequirementActions = ({
 				deleteResource(`/requirements/${id}`)
 					?.then(() => removeItemFromList(mutate, id))
 					.then(onSave)
+					.then(() => {
+						if (isHeaderActions) {
+							navigate('../');
+						}
+					})
 					.catch(onError),
 			icon: 'trash',
 			name: i18n.translate(

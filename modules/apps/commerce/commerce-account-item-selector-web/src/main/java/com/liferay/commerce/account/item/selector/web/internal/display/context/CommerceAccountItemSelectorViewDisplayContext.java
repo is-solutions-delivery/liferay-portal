@@ -17,10 +17,10 @@ package com.liferay.commerce.account.item.selector.web.internal.display.context;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.commerce.account.constants.CommerceAccountConstants;
 import com.liferay.commerce.account.item.selector.web.internal.display.context.helper.CommerceAccountItemSelectorRequestHelper;
 import com.liferay.commerce.account.item.selector.web.internal.search.CommerceAccountItemSelectorChecker;
-import com.liferay.commerce.account.util.CommerceAccountHelper;
+import com.liferay.commerce.product.constants.CommerceChannelConstants;
+import com.liferay.commerce.util.CommerceAccountHelper;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -98,13 +98,13 @@ public class CommerceAccountItemSelectorViewDisplayContext {
 				_commerceAccountItemSelectorRequestHelper.getUserId(),
 				AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT, getKeywords(),
 				_commerceAccountHelper.toAccountEntryTypes(
-					CommerceAccountConstants.SITE_TYPE_B2X),
+					CommerceChannelConstants.SITE_TYPE_B2X),
 				_searchContainer.getStart(), _searchContainer.getEnd()),
 			_accountEntryLocalService.getUserAccountEntriesCount(
 				_commerceAccountItemSelectorRequestHelper.getUserId(),
 				AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT, getKeywords(),
 				_commerceAccountHelper.toAccountEntryTypes(
-					CommerceAccountConstants.SITE_TYPE_B2X)));
+					CommerceChannelConstants.SITE_TYPE_B2X)));
 		_searchContainer.setRowChecker(
 			new CommerceAccountItemSelectorChecker(
 				_commerceAccountItemSelectorRequestHelper.getRenderResponse(),
