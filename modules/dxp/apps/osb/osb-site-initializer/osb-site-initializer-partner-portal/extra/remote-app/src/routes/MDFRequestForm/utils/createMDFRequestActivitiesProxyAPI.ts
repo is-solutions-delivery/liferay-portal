@@ -28,9 +28,9 @@ export default async function createMDFRequestActivitiesProxyAPI(
 		| undefined = undefined;
 
 	if (
-		mdfRequestActivity.externalReferenceCode ||
-		mdfRequestActivity.externalReferenceCodeSF
+		(mdfRequestActivity.externalReferenceCode || mdfRequestActivity.externalReferenceCodeSF)  && mdfRequestActivity.submitted
 	) {
+		
 		dtoMDFRequestActivitySFResponse = await updateMDFRequestActivitiesSF(
 			ResourceName.ACTIVITY_SALESFORCE,
 			mdfRequestActivity,
@@ -40,6 +40,7 @@ export default async function createMDFRequestActivitiesProxyAPI(
 		);
 	}
 	else {
+
 		dtoMDFRequestActivitySFResponse = await createMDFRequestActivities(
 			ResourceName.ACTIVITY_SALESFORCE,
 			mdfRequestActivity,
@@ -48,12 +49,14 @@ export default async function createMDFRequestActivitiesProxyAPI(
 			mdFRequestExternalReferenceCode,
 			mdfRequestActivity.externalReferenceCode
 		);
+				
 	}
 
 	let dtoMDFRequestResponse: MDFRequestActivityDTO | undefined = undefined;
 
 	if (dtoMDFRequestActivitySFResponse?.externalReferenceCode) {
 		if (mdfRequestActivity.id) {
+			mdfRequestActivity.submitted = true
 			dtoMDFRequestResponse = await updateMDFRequestActivities(
 				ResourceName.ACTIVITY_DXP,
 				mdfRequestActivity,
@@ -64,6 +67,7 @@ export default async function createMDFRequestActivitiesProxyAPI(
 			);
 		}
 		else {
+			mdfRequestActivity.submitted = true
 			dtoMDFRequestResponse = await createMDFRequestActivities(
 				ResourceName.ACTIVITY_DXP,
 				mdfRequestActivity,

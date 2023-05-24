@@ -23,10 +23,14 @@ export default function getDTOFromMDFRequestActivity(
 ): MDFRequestActivityDTO {
 	const {activityDescription, ...newMDFRequestActivity} = mdfRequestActivity;
 
+
 	delete activityDescription?.creator;
 	delete activityDescription?.externalReferenceCode;
 	delete activityDescription?.status;
 
+	console.log(mdfRequestActivity.submitted)
+	console.log(newMDFRequestActivity)
+	
 	return {
 		...activityDescription,
 		activityStatus: mdfRequestActivity.activityStatus,
@@ -40,5 +44,6 @@ export default function getDTOFromMDFRequestActivity(
 		mdfRequestExternalReferenceCode,
 		r_accToActs_accountEntryId: company?.id,
 		r_mdfReqToActs_c_mdfRequestId: mdfRequestId,
+		submitted: mdfRequestActivity?.submitted,
 	};
 }
