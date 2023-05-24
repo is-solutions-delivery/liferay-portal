@@ -1,0 +1,78 @@
+@component-name = "portal-commerce"
+definition {
+
+	property custom.properties = "jsonws.web.service.paths.excludes=${line.separator}company.security.strangers.verify=false${line.separator}feature.flag.COMMERCE-10890=true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Order Management";
+
+	setUp {
+		CommerceConfiguration.commerceSetUp(minium = "true");
+	}
+
+	tearDown {
+		CommerceConfiguration.commerceTearDown();
+	}
+
+	@description = "This is a test case for COMMERCE-11449. Supplier account type can be created and a user linked to that account can successfully log in"
+	@priority = 5
+	test CanCreateSupplierTypeAccountAndALinkedUser {
+		property portal.acceptance = "true";
+
+		task ("Given the admin navigates to Minium site -> Account Management") {
+			ApplicationsMenu.gotoSite(site = "Minium");
+
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Account Management");
+		}
+
+		task ("When the admin proceeds to create a supplier account") {
+			CommerceAccountManagement.addAccount(
+				accountName = "Supplier Account",
+				accountType = "Supplier");
+		}
+
+		task ("Then the account is successfully created") {
+			Click(locator1 = "Icon#ANGLE_LEFT_BACK");
+
+			LexiconTable.viewTableEntryInfo(
+				index = 5,
+				tableEntry = "Supplier",
+				tableEntryInfo = "Supplier");
+		}
+
+		task ("When the admin creates a user for that account") {
+			JSONAccountEntryUser.addAccountEntryUser(
+				accountEntryName = "Supplier Account",
+				userEmailAddress = "supplieruser@liferay.com",
+				userFirstName = "Supplier",
+				userLastName = "User",
+				userScreenName = "supplieruser");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "supplieruser@liferay.com");
+
+			JSONUser.addUserToSite(
+				groupName = "Minium",
+				userEmailAddress = "supplieruser@liferay.com");
+		}
+
+		task ("And the user proceeds to log in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "supplieruser@liferay.com");
+		}
+
+		task ("Then the user is successfully logged in") {
+			AssertElementPresent(
+				key_userName = "Supplier User",
+				locator1 = "CommerceAccelerators#MINIUM_SIDEBAR_USER_NAME");
+		}
+	}
+
+}

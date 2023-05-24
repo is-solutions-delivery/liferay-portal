@@ -25,6 +25,8 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidationExpression;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.constants.FieldConstants;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
@@ -38,6 +40,8 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +50,9 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
@@ -119,9 +126,8 @@ public class ConfigurationModelToDDMFormConverter {
 			pid = _configurationModel.getFactoryPid();
 		}
 
-		return ConfigurationFieldOptionsProviderUtil.
-			getConfigurationFieldOptionsProvider(
-				pid, attributeDefinition.getID());
+		return _serviceTrackerMap.getService(
+			_getKey(pid, attributeDefinition.getID()));
 	}
 
 	protected String getDDMFormFieldDataType(
@@ -187,6 +193,31 @@ public class ConfigurationModelToDDMFormConverter {
 		}
 
 		return DDMFormFieldType.TEXT;
+	}
+
+	private static String _getKey(String configurationPid, String fieldName) {
+		return StringBundler.concat(
+			configurationPid, StringPool.POUND, fieldName);
+	}
+
+	private static Collection<String> _getPropertyValues(
+		ServiceReference<?> serviceReference, String name) {
+
+		Object propertyValue = serviceReference.getProperty(name);
+
+		if (propertyValue == null) {
+			return Collections.emptyList();
+		}
+
+		if (propertyValue instanceof Collection) {
+			return (Collection<String>)propertyValue;
+		}
+
+		if (propertyValue instanceof Object[]) {
+			return Arrays.asList((String[])propertyValue);
+		}
+
+		return Arrays.asList((String)propertyValue);
 	}
 
 	private void _addDDMFormFields(
@@ -552,6 +583,35 @@ public class ConfigurationModelToDDMFormConverter {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ConfigurationModelToDDMFormConverter.class);
+
+	private static final ServiceTrackerMap
+		<String, ConfigurationFieldOptionsProvider> _serviceTrackerMap;
+
+	static {
+		Bundle bundle = FrameworkUtil.getBundle(
+			ConfigurationModelToDDMFormConverter.class);
+
+		_serviceTrackerMap =
+			(ServiceTrackerMap<String, ConfigurationFieldOptionsProvider>)
+				(ServiceTrackerMap)ServiceTrackerMapFactory.openSingleValueMap(
+					bundle.getBundleContext(),
+					ConfigurationFieldOptionsProvider.class, null,
+					(serviceReference, emitter) -> {
+						for (String configurationPid :
+								_getPropertyValues(
+									serviceReference, "configuration.pid")) {
+
+							for (String fieldName :
+									_getPropertyValues(
+										serviceReference,
+										"configuration.field.name")) {
+
+								emitter.emit(
+									_getKey(configurationPid, fieldName));
+							}
+						}
+					});
+	}
 
 	private final ConfigurationModel _configurationModel;
 	private final Locale _locale;

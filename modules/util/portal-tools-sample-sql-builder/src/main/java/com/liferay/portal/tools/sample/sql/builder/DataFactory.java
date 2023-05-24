@@ -31,7 +31,7 @@ import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.model.BlogsEntryModel;
 import com.liferay.blogs.model.impl.BlogsEntryModelImpl;
 import com.liferay.blogs.social.BlogsActivityKeys;
-import com.liferay.commerce.account.constants.CommerceAccountConstants;
+import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.constants.CommerceOrderConstants;
 import com.liferay.commerce.currency.model.CommerceCurrencyModel;
 import com.liferay.commerce.currency.model.impl.CommerceCurrencyModelImpl;
@@ -52,6 +52,7 @@ import com.liferay.commerce.price.list.model.CommercePriceList;
 import com.liferay.commerce.price.list.model.CommercePriceListModel;
 import com.liferay.commerce.price.list.model.impl.CommercePriceEntryModelImpl;
 import com.liferay.commerce.price.list.model.impl.CommercePriceListModelImpl;
+import com.liferay.commerce.product.constants.CommerceChannelConstants;
 import com.liferay.commerce.product.model.CPAttachmentFileEntryModel;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionLocalizationModel;
@@ -1234,7 +1235,7 @@ public class DataFactory {
 
 		return newPortletPreferencesModel(
 			ownerId, PortletKeys.PREFS_OWNER_TYPE_GROUP, 0,
-			CommerceAccountConstants.SERVICE_NAME);
+			CommerceConstants.SERVICE_NAME_COMMERCE_ACCOUNT);
 	}
 
 	public PortletPreferenceValueModel
@@ -1243,7 +1244,7 @@ public class DataFactory {
 
 		return newPortletPreferenceValueModel(
 			portletPreferencesModel, "commerceSiteType", 0,
-			String.valueOf(CommerceAccountConstants.SITE_TYPE_B2B));
+			String.valueOf(CommerceChannelConstants.SITE_TYPE_B2B));
 	}
 
 	public GroupModel newCommerceCatalogGroupModel(

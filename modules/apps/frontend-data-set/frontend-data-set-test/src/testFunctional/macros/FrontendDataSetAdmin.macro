@@ -40,6 +40,13 @@ definition {
 		}
 	}
 
+	macro assertFieldsOnTable {
+		AssertElementPresent(
+			key_position = ${key_position},
+			keyName = ${keyName},
+			locator1 = "FrontendDataSetAdmin#FIELDS_TABLE");
+	}
+
 	macro changePagination {
 		Click(locator1 = "FrontendDataSetAdmin#ITEMS_PER_PAGE_SELECT");
 
@@ -56,6 +63,12 @@ definition {
 		Type(
 			locator1 = "FrontendDataSetAdmin#PAGINATION_LIST_OF_ITEMS",
 			value1 = ${paginationItems});
+	}
+
+	macro checkFields {
+		Check.checkNotVisible(
+			checkboxName = ${checkboxName},
+			locator1 = "Checkbox#ANY_CHECKBOX");
 	}
 
 	macro createDataSet {
@@ -110,10 +123,12 @@ definition {
 	}
 
 	macro createFDSViewViaAPI {
-		JSONFrontendDatasetEntries._createFDSViewViaAPI(
-			datasetName = ${datasetName},
-			dataSetViewDescription = ${dataSetViewDescription},
-			dataSetViewName = ${dataSetViewName});
+		for (var key_dataSetViewName : list ${key_dataSetViewNameList}) {
+			JSONFrontendDatasetEntries._createFDSViewViaAPI(
+				datasetName = ${datasetName},
+				dataSetViewDescription = ${dataSetViewDescription},
+				dataSetViewName = ${key_dataSetViewName});
+		}
 	}
 
 	macro deleteAllDatasetEntries {
@@ -128,6 +143,17 @@ definition {
 		AssertElementPresent(
 			locator1 = "Message#EMPTY_STATE_INFO",
 			value1 = "No Results Found");
+	}
+
+	macro deleteAllDatasetViews {
+		var datasetViewsIdList = JSONFrontendDatasetEntries._getDatasetViewsIds();
+
+		if (${datasetViewsIdList} != "") {
+			JSONFrontendDatasetEntries._deleteFDSViews();
+		}
+		else {
+			echo("No Datasets Views to be deleted");
+		}
 	}
 
 	macro deleteDataSet {
@@ -156,6 +182,16 @@ definition {
 			locator1 = "FrontendDataSetAdmin#DELETE_DATA_SET_MODAL_BODY");
 
 		Button.clickDelete();
+	}
+
+	macro deleteDataSetViewViaAPI {
+		var datasetViewsIdList = JSONFrontendDatasetEntries._getDatasetViewIdByName(datasetViewsNameList = ${datasetViewsNameList});
+
+		echo(${datasetViewsIdList});
+
+		JSONFrontendDatasetEntries._deleteFDSViews(datasetViewsIdList = ${datasetViewsIdList});
+
+		Refresh();
 	}
 
 	macro editView {

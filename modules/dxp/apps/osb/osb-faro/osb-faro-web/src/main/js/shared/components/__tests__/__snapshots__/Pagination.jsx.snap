@@ -14,11 +14,11 @@ exports[`Pagination should render 1`] = `
         href="/?page=0"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-left icon-root"
+          class="lexicon-icon lexicon-icon-angle-left-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-left"
+            xlink:href="#angle-left-small"
           />
         </svg>
       </a>
@@ -42,11 +42,11 @@ exports[`Pagination should render 1`] = `
         href="/?page=2"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-right icon-root"
+          class="lexicon-icon lexicon-icon-angle-right-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-right"
+            xlink:href="#angle-right-small"
           />
         </svg>
       </a>
@@ -68,11 +68,11 @@ exports[`Pagination should render a lot of pages with a middle page active 1`] =
         href="/?page=49"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-left icon-root"
+          class="lexicon-icon lexicon-icon-angle-left-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-left"
+            xlink:href="#angle-left-small"
           />
         </svg>
       </a>
@@ -97,6 +97,7 @@ exports[`Pagination should render a lot of pages with a middle page active 1`] =
           aria-controls="clay-dropdown-menu-2"
           aria-expanded="false"
           aria-haspopup="true"
+          aria-label="See more"
           class="dropdown-toggle page-link btn btn-unstyled"
           type="button"
         >
@@ -164,6 +165,7 @@ exports[`Pagination should render a lot of pages with a middle page active 1`] =
           aria-controls="clay-dropdown-menu-3"
           aria-expanded="false"
           aria-haspopup="true"
+          aria-label="See more"
           class="dropdown-toggle page-link btn btn-unstyled"
           type="button"
         >
@@ -189,11 +191,11 @@ exports[`Pagination should render a lot of pages with a middle page active 1`] =
         href="/?page=51"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-right icon-root"
+          class="lexicon-icon lexicon-icon-angle-right-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-right"
+            xlink:href="#angle-right-small"
           />
         </svg>
       </a>
@@ -215,11 +217,11 @@ exports[`Pagination should render a lot of pages with the end page active 1`] = 
         href="/?page=99"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-left icon-root"
+          class="lexicon-icon lexicon-icon-angle-left-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-left"
+            xlink:href="#angle-left-small"
           />
         </svg>
       </a>
@@ -244,6 +246,7 @@ exports[`Pagination should render a lot of pages with the end page active 1`] = 
           aria-controls="clay-dropdown-menu-4"
           aria-expanded="false"
           aria-haspopup="true"
+          aria-label="See more"
           class="dropdown-toggle page-link btn btn-unstyled"
           type="button"
         >
@@ -290,11 +293,11 @@ exports[`Pagination should render a lot of pages with the end page active 1`] = 
         href="/?page=101"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-right icon-root"
+          class="lexicon-icon lexicon-icon-angle-right-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-right"
+            xlink:href="#angle-right-small"
           />
         </svg>
       </a>
@@ -317,11 +320,11 @@ exports[`Pagination should render with a lot of pages 1`] = `
         href="/?page=0"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-left icon-root"
+          class="lexicon-icon lexicon-icon-angle-left-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-left"
+            xlink:href="#angle-left-small"
           />
         </svg>
       </a>
@@ -366,6 +369,7 @@ exports[`Pagination should render with a lot of pages 1`] = `
           aria-controls="clay-dropdown-menu-1"
           aria-expanded="false"
           aria-haspopup="true"
+          aria-label="See more"
           class="dropdown-toggle page-link btn btn-unstyled"
           type="button"
         >
@@ -391,11 +395,11 @@ exports[`Pagination should render with a lot of pages 1`] = `
         href="/?page=2"
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-right icon-root"
+          class="lexicon-icon lexicon-icon-angle-right-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-right"
+            xlink:href="#angle-right-small"
           />
         </svg>
       </a>
@@ -418,11 +422,11 @@ exports[`Pagination should render with buttons if passed an onChange handler 1`]
         href=""
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-left icon-root"
+          class="lexicon-icon lexicon-icon-angle-left-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-left"
+            xlink:href="#angle-left-small"
           />
         </svg>
       </a>
@@ -446,11 +450,11 @@ exports[`Pagination should render with buttons if passed an onChange handler 1`]
         href=""
       >
         <svg
-          class="lexicon-icon lexicon-icon-angle-right icon-root"
+          class="lexicon-icon lexicon-icon-angle-right-small icon-root"
           role="presentation"
         >
           <use
-            xlink:href="#angle-right"
+            xlink:href="#angle-right-small"
           />
         </svg>
       </a>

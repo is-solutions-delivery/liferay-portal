@@ -27,7 +27,7 @@ definition {
 			FrontendDataSetAdmin.createFDSViewViaAPI(
 				datasetName = "Dataset Fields Test",
 				dataSetViewDescription = "FDSViewDescription",
-				dataSetViewName = "View Fields Test");
+				key_dataSetViewNameList = "View Fields Test");
 		}
 
 		task ("When go to the View page of the dataset created.") {
@@ -49,6 +49,15 @@ definition {
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
+	}
+
+	@description = "LPS-185233. Confirm that composed fields (refrencing another schema) are not available for selection."
+	@ignore = "true"
+	@priority = 4
+	test AssertComposedFieldsNotAvailableForSelection {
+
+		// TODO LPS-185233 AssertComposedFieldsNotAvailableForSelection pending implementation
+
 	}
 
 	@description = "LPS-179282. Confirm that metadata fields are not present for the user "
@@ -87,6 +96,87 @@ definition {
 		}
 	}
 
+	@description = "LPS-185226. Confirm that the user can add a field"
+	@priority = 5
+	test CanAddField {
+		task ("And clicks on Add Fields button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And checks id field") {
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
+		}
+
+		task ("And clicks on Save button") {
+			Button.clickSave();
+		}
+
+		task ("Then the added fields are shown on Fields tab page") {
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+		}
+	}
+
+	@description = "LPS-185230. Confirm that the user can cancel adding a field by clicking on cancel button."
+	@ignore = "true"
+	@priority = 4
+	test CanCancelAddingOnCancelButton {
+
+		// TODO LPS-185230 CanCancelAddingOnCancelButton pending implementation
+
+	}
+
+	@description = "LPS-185232. Confirm that the user can cancel adding a field by clicking on modal's close (X) button."
+	@ignore = "true"
+	@priority = 4
+	test CanCancelAddingOnCloseButton {
+
+		// TODO LPS-185232 CanCancelAddingOnCloseButton pending implementation
+
+	}
+
+	@description = "LPS-185229. Confirm that the user can change the field's order on Fields tab page."
+	@priority = 4
+	test CanChangeFieldOrder {
+		task ("And clicks on plus button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And checks id and label fields") {
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
+
+			FrontendDataSetAdmin.checkFields(checkboxName = "label");
+		}
+
+		task ("And clicks on Save button") {
+			Button.clickSave();
+		}
+
+		task ("And clicks on a field drag dots icon related id field ") {
+			Click.clickAt(
+				key_nameField = "id",
+				locator1 = "FrontendDataSetAdmin#FIELDS_DRAG_DOTS_ICON");
+		}
+
+		task ("Then the user can move the id field below the label field") {
+			DragAndDrop.javaScriptDragAndDropToBottom(
+				key_nameField = "id",
+				key_position = 2,
+				keyName = "label",
+				locator1 = "FrontendDataSetAdmin#FIELDS_DRAG_DOTS_ICON",
+				locator2 = "FrontendDataSetAdmin#FIELDS_TABLE");
+
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "label");
+
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 2,
+				keyName = "id");
+		}
+	}
+
 	@description = "LPS-179282. Confirm that the user can check and uncheck all the fields"
 	@priority = 4
 	test CanCheckAndUncheckAllFields {
@@ -95,9 +185,7 @@ definition {
 		}
 
 		task ("And select all the fields.") {
-			Check.checkNotVisible(
-				checkboxName = "",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "");
 		}
 
 		task ("Then Confirm all fields are checked ") {
@@ -112,6 +200,43 @@ definition {
 
 		task ("Then Confirm that all fields are unchecked ") {
 			FrontendDataSetAdmin.assertFieldsNotChecked(key_fieldList = "name,creator,externalReferenceCode,id,status,createDate,label,modifiedDate,renderer,r_fdsViewFDSFieldRelationship_c_fdsViewId,r_fdsViewFDSFieldRelationship_c_fdsViewERC,sortable,type");
+		}
+	}
+
+	@description = "LPS-185228. Confirm that a field is not added after checking and unchecking it."
+	@priority = 5
+	test CannotAddFieldAfterUncheckingIt {
+		task ("And clicks on plus button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And checks id and label fields") {
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
+
+			FrontendDataSetAdmin.checkFields(checkboxName = "label");
+		}
+
+		task ("And unchecks id field") {
+			Uncheck.uncheckNotVisible(
+				checkboxName = "id",
+				locator1 = "Checkbox#ANY_CHECKBOX");
+		}
+
+		task ("And clicks on Save button") {
+			Button.clickSave();
+		}
+
+		task ("Then label field should appear on Fields tab page") {
+			FrontendDataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "label");
+		}
+
+		task ("And id should not appear on Fields tab page") {
+			AssertElementNotPresent(
+				key_position = 1,
+				keyName = "id",
+				locator1 = "FrontendDataSetAdmin#FIELDS_TABLE");
 		}
 	}
 
@@ -133,6 +258,33 @@ definition {
 		}
 	}
 
+	@description = "LPS-185227. Confirm that the user can search a specific field when adding fields."
+	@priority = 4
+	test CanSearchFieldOnAddFieldsModal {
+		task ("And clicks on Add Fields button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And types 'label' on modal search bar") {
+			FrontendDataSetAdmin.searchField(searchTerm = "label");
+		}
+
+		task ("Then 'label' field should appear on Add Fields modal") {
+			AssertElementPresent(
+				key_name = "label",
+				locator1 = "FrontendDataSetAdmin#FIELDS_ITEM");
+		}
+	}
+
+	@description = "LPS-185231. Confirm that the user can search a specific field on field's search bar."
+	@ignore = "true"
+	@priority = 4
+	test CanSearchFieldOnFieldsSearchBar {
+
+		// TODO LPS-185231 CanSearchFieldOnFieldsSearchBar pending implementation
+
+	}
+
 	@description = "LPS-179282. Confirm that the user can check and uncheck the fields"
 	@priority = 5
 	test CheckandUncheckFields {
@@ -141,17 +293,11 @@ definition {
 		}
 
 		task ("And Check three options (creator,id ,name)") {
-			Check.checkNotVisible(
-				checkboxName = "creator",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "creator");
 
-			Check.checkNotVisible(
-				checkboxName = "id",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "id");
 
-			Check.checkNotVisible(
-				checkboxName = "name",
-				locator1 = "Checkbox#ANY_CHECKBOX");
+			FrontendDataSetAdmin.checkFields(checkboxName = "name");
 		}
 
 		task ("Then Confirm that the fields are checked ") {

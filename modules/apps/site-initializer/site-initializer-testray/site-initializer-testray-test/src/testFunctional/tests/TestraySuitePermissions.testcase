@@ -1,0 +1,348 @@
+@component-name = "portal-solutions"
+definition {
+
+	property custom.properties = "feature.flag.LPS-163118=true";
+	property osgi.modules.includes = "site-initializer-testray";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Site Initializer Testray";
+
+	var testSiteName = "Testray 2";
+	var projectName = "Project 1";
+	var suiteName = "Suite 1";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
+		}
+
+		task ("Create a Project and suite via API") {
+			JSONTestray.addProject(
+				projectDescription = "Project Description 1",
+				projectName = ${projectName});
+
+			JSONTestray.addSuite(suiteName = ${suiteName});
+		}
+	}
+
+	tearDown {
+		task ("Logout And Login with test user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "test test");
+		}
+
+		task ("Delete project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
+
+			Testray.testrayApisTearDown();
+		}
+
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to create the suite"
+	@priority = 3
+	test AssertAnalystRoleCanNotCreateSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertAnalystRoleCanNotCreateSuite";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+		}
+
+		task ("When the user go to the suite page") {
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("Then the user can not create suite") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to delete the suite"
+	@priority = 3
+	test AssertAnalystRoleCanNotDeleteSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertAnalystRoleCanNotDeleteSuite";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("When the user right click in suite") {
+			RightClick.rightClick(
+				key_projectName = ${suiteName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not delete the suite") {
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to edit the suite"
+	@priority = 3
+	test AssertAnalystRoleCanNotEditSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertAnalystRoleCanNotEditSuite";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("When the user right click in suite") {
+			RightClick.rightClick(
+				key_projectName = ${suiteName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not edit the suite") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to create the suite"
+	@priority = 4
+	test AssertLeadRoleCanCreateSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertLeadRoleCanCreateSuite";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("When the user created the suite") {
+			TestraySuites.addSuite(
+				suiteDescription = "Suite Description",
+				suiteName = "Suite 2");
+		}
+
+		task ("Then the user can see the suite created in the table") {
+			AssertElementPresent(
+				key_projectName = "Suite 2",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to delete the suite"
+	@priority = 4
+	test AssertLeadRoleCanDeleteSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertLeadRoleCanDeleteSuite";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("When the user delete the suite") {
+			TestraySuites.deleteSuite(suiteName = ${suiteName});
+		}
+
+		task ("Then the user can not see the suite in the table") {
+			AssertElementNotPresent(
+				key_projectName = ${suiteName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to edit the suite"
+	@priority = 4
+	test AssertLeadRoleCanEditSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertLeadRoleCanEditSuite";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("When the user edit the suite") {
+			TestraySuites.editSuite(
+				newDescription = "Suite Description Edited",
+				newName = "Suite Edited",
+				suiteName = ${suiteName});
+		}
+
+		task ("Then the user can see the suite edited in the table") {
+			AssertElementPresent(
+				key_projectName = "Suite Edited",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray User' role should not be able to create the suite"
+	@priority = 3
+	test AssertUserRoleCanNotCreateSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertUserRoleCanNotCreateSuite";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+		}
+
+		task ("When the user go to the suite page") {
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("Then the user can not create suite") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray User' role should not be able to delete the suite"
+	@priority = 3
+	test AssertUserRoleCanNotDeleteSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertUserRoleCanNotDeleteSuite";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("When the user right click in suite") {
+			RightClick.rightClick(
+				key_projectName = ${suiteName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not delete the suite") {
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray User' role should not be able to edit the suite"
+	@priority = 3
+	test AssertUserRoleCanNotEditSuite {
+		property test.name.skip.portal.instance = "TestraySuitePermissions#AssertUserRoleCanNotEditSuite";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			Testray.goToProjectPage(projectName = ${projectName});
+
+			Testray.projectTabNavigator(navTabName = "Suites");
+		}
+
+		task ("When the user right click in suite") {
+			RightClick.rightClick(
+				key_projectName = ${suiteName},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not edit the suite") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+}

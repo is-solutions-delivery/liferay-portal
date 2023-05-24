@@ -25,6 +25,9 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemListBuilder;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItemList;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItemListBuilder;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.constants.JournalArticleConstants;
@@ -56,6 +59,7 @@ import com.liferay.journal.web.internal.util.JournalArticleTranslation;
 import com.liferay.journal.web.internal.util.JournalArticleTranslationRowChecker;
 import com.liferay.journal.web.internal.util.JournalPortletUtil;
 import com.liferay.journal.web.internal.util.JournalSearcherUtil;
+import com.liferay.journal.web.internal.util.JournalUtil;
 import com.liferay.message.boards.model.MBMessage;
 import com.liferay.message.boards.service.MBMessageLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
@@ -414,6 +418,60 @@ public class JournalDisplayContext {
 		return Collections.singletonMap(
 			"trashEnabled",
 			_trashHelper.isTrashEnabled(_themeDisplay.getScopeGroupId()));
+	}
+
+	public List<TabsItem> getConfigurationTabsItems() {
+		TabsItemList tabsItemList = TabsItemListBuilder.add(
+			tabsItem -> {
+				tabsItem.setActive(true);
+				tabsItem.setLabel(
+					LanguageUtil.get(_httpServletRequest, "email-from"));
+			}
+		).add(
+			tabsItem -> tabsItem.setLabel(
+				LanguageUtil.get(
+					_httpServletRequest, "web-content-added-email"))
+		).add(
+			tabsItem -> tabsItem.setLabel(
+				LanguageUtil.get(
+					_httpServletRequest, "web-content-expired-email"))
+		).add(
+			tabsItem -> tabsItem.setLabel(
+				LanguageUtil.get(
+					_httpServletRequest, "web-content-moved-from-folder-email"))
+		).add(
+			tabsItem -> tabsItem.setLabel(
+				LanguageUtil.get(
+					_httpServletRequest, "web-content-moved-to-folder-email"))
+		).add(
+			tabsItem -> tabsItem.setLabel(
+				LanguageUtil.get(
+					_httpServletRequest, "web-content-review-email"))
+		).add(
+			tabsItem -> tabsItem.setLabel(
+				LanguageUtil.get(
+					_httpServletRequest, "web-content-updated-email"))
+		).build();
+
+		if (JournalUtil.hasWorkflowDefinitionsLinks(_themeDisplay)) {
+			tabsItemList.add(
+				tabsItem -> tabsItem.setLabel(
+					LanguageUtil.get(
+						_httpServletRequest,
+						"web-content-approval-denied-email")));
+			tabsItemList.add(
+				tabsItem -> tabsItem.setLabel(
+					LanguageUtil.get(
+						_httpServletRequest,
+						"web-content-approval-granted-email")));
+			tabsItemList.add(
+				tabsItem -> tabsItem.setLabel(
+					LanguageUtil.get(
+						_httpServletRequest,
+						"web-content-approval-requested-email")));
+		}
+
+		return tabsItemList;
 	}
 
 	public long getDDMStructureId() {
@@ -808,7 +866,7 @@ public class JournalDisplayContext {
 		return _parentFolderId;
 	}
 
-	public PortletURL getPortletURL() {
+	public PortletURL getPortletURL(String tab) {
 		PortletURL portletURL = _liferayPortletResponse.createRenderURL();
 
 		String navigation = ParamUtil.getString(
@@ -870,10 +928,8 @@ public class JournalDisplayContext {
 			portletURL.setParameter("orderByType", orderByType);
 		}
 
-		String tabs1 = getTabs1();
-
-		if (Validator.isNotNull(tabs1)) {
-			portletURL.setParameter("tabs1", tabs1);
+		if (Validator.isNotNull(tab)) {
+			portletURL.setParameter("tab", tab);
 		}
 
 		return portletURL;
@@ -924,6 +980,40 @@ public class JournalDisplayContext {
 		return _searchContainer;
 	}
 
+	public List<NavigationItem> getSearchNavigationItems() {
+		return NavigationItemListBuilder.add(
+			() -> hasResults(),
+			navigationItem -> {
+				navigationItem.setActive(isWebContentTabSelected());
+				navigationItem.setHref(getPortletURL("web-content"));
+				navigationItem.setLabel(
+					StringUtil.appendParentheticalSuffix(
+						LanguageUtil.get(_httpServletRequest, "web-content"),
+						getTotalItems()));
+			}
+		).add(
+			() -> hasVersionsResults(),
+			navigationItem -> {
+				navigationItem.setActive(isVersionsTabSelected());
+				navigationItem.setHref(getPortletURL("versions"));
+				navigationItem.setLabel(
+					StringUtil.appendParentheticalSuffix(
+						LanguageUtil.get(_httpServletRequest, "versions"),
+						getVersionsTotal()));
+			}
+		).add(
+			() -> hasCommentsResults(),
+			navigationItem -> {
+				navigationItem.setActive(isCommentsTabSelected());
+				navigationItem.setHref(getPortletURL("comments"));
+				navigationItem.setLabel(
+					StringUtil.appendParentheticalSuffix(
+						LanguageUtil.get(_httpServletRequest, "comments"),
+						getCommentsTotal()));
+			}
+		).build();
+	}
+
 	public String getSelectDDMStructureURL() {
 		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
 			RequestBackedPortletURLFactoryUtil.create(_liferayPortletRequest);
@@ -954,14 +1044,15 @@ public class JournalDisplayContext {
 		return _status;
 	}
 
-	public String getTabs1() {
-		if (_tabs1 != null) {
-			return _tabs1;
+	public String getTab() throws PortalException {
+		if (_tab != null) {
+			return _tab;
 		}
 
-		_tabs1 = ParamUtil.getString(_httpServletRequest, "tabs1");
+		_tab = ParamUtil.getString(
+			_httpServletRequest, "tab", _getTabDefaultValue());
 
-		return _tabs1;
+		return _tab;
 	}
 
 	public int getTotalItems() throws PortalException {
@@ -1002,9 +1093,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isCommentsTabSelected() throws PortalException {
-		if (Objects.equals(getTabs1(), "comments") ||
-			(hasCommentsResults() && Validator.isNull(getTabs1()))) {
-
+		if (Objects.equals(getTab(), "comments")) {
 			return true;
 		}
 
@@ -1060,9 +1149,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isVersionsTabSelected() throws PortalException {
-		if (Objects.equals(getTabs1(), "versions") ||
-			(hasVersionsResults() && Validator.isNull(getTabs1()))) {
-
+		if (Objects.equals(getTab(), "versions")) {
 			return true;
 		}
 
@@ -1070,9 +1157,7 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isWebContentTabSelected() throws PortalException {
-		if (Objects.equals(getTabs1(), "web-content") ||
-			(hasResults() && Validator.isNull(getTabs1()))) {
-
+		if (Objects.equals(getTab(), "web-content")) {
 			return true;
 		}
 
@@ -1115,7 +1200,8 @@ public class JournalDisplayContext {
 
 		SearchContainer<JournalArticle> articleSearchContainer =
 			new SearchContainer<>(
-				_liferayPortletRequest, getPortletURL(), null, null);
+				_liferayPortletRequest, getPortletURL("web-content"), null,
+				null);
 
 		articleSearchContainer.setOrderByCol(getOrderByCol());
 		articleSearchContainer.setOrderByComparator(
@@ -1191,7 +1277,8 @@ public class JournalDisplayContext {
 
 		SearchContainer<Object> articleAndFolderSearchContainer =
 			new SearchContainer<>(
-				_liferayPortletRequest, getPortletURL(), null, null);
+				_liferayPortletRequest, getPortletURL("web-content"), null,
+				null);
 
 		articleAndFolderSearchContainer.setOrderByCol(getOrderByCol());
 		articleAndFolderSearchContainer.setOrderByComparator(
@@ -1253,7 +1340,7 @@ public class JournalDisplayContext {
 		throws PortalException {
 
 		SearchContainer<MBMessage> searchContainer = new SearchContainer<>(
-			_liferayPortletRequest, getPortletURL(), null, null);
+			_liferayPortletRequest, getPortletURL("comments"), null, null);
 
 		SearchContext searchContext = SearchContextFactory.getInstance(
 			_liferayPortletRequest.getHttpServletRequest());
@@ -1412,6 +1499,22 @@ public class JournalDisplayContext {
 		return null;
 	}
 
+	private String _getTabDefaultValue() throws PortalException {
+		if (hasResults()) {
+			return "web-content";
+		}
+
+		if (hasVersionsResults()) {
+			return "versions";
+		}
+
+		if (hasCommentsResults()) {
+			return "comments";
+		}
+
+		return "web-content";
+	}
+
 	private SearchContainer<JournalArticle> _getVersionsSearchContainer()
 		throws PortalException {
 
@@ -1421,7 +1524,7 @@ public class JournalDisplayContext {
 
 		SearchContainer<JournalArticle> articleVersionsSearchContainer =
 			new SearchContainer<>(
-				_liferayPortletRequest, getPortletURL(), null, null);
+				_liferayPortletRequest, getPortletURL("versions"), null, null);
 
 		articleVersionsSearchContainer.setOrderByCol(getOrderByCol());
 		articleVersionsSearchContainer.setOrderByComparator(
@@ -1531,7 +1634,7 @@ public class JournalDisplayContext {
 	private Integer _restrictionType;
 	private SearchContainer<?> _searchContainer;
 	private Integer _status;
-	private String _tabs1;
+	private String _tab;
 	private final ThemeDisplay _themeDisplay;
 	private final TrashHelper _trashHelper;
 

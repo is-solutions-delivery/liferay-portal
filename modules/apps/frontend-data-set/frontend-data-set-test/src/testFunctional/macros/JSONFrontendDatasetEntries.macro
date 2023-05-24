@@ -109,6 +109,37 @@ definition {
 		}
 	}
 
+	@summary = "This calls the JSON WS API to delete all data set views"
+	macro _deleteFDSViews {
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		if (!(isSet(datasetViewsIdList))) {
+			var datasetViewsIdList = JSONFrontendDatasetEntries._getDatasetViewsIds();
+		}
+
+		if (${datasetViewsIdList} != "") {
+			for (var datasetViewsIds : list ${datasetViewsIdList}) {
+				var curl = '''
+					${portalURL}/o/c/fdsviews/${datasetViewsIds} \
+						-u ${userEmailAddress}:${userPassword}
+				''';
+
+				JSONCurlUtil.delete(${curl});
+			}
+		}
+		else {
+			echo("FAIL. No Datasets Views to be deleted");
+		}
+	}
+
 	macro _getDatasetEntryIdByName {
 		Variables.assertDefined(parameterList = ${datasetName});
 
@@ -163,6 +194,62 @@ definition {
 		else {
 			return ${datasetEntryIds};
 		}
+	}
+
+	macro _getDatasetViewIdByName {
+		Variables.assertDefined(parameterList = ${datasetViewsNameList});
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		var curl = '''
+			${portalURL}/o/c/fdsviews \
+				-u ${userEmailAddress}:${userPassword}
+		''';
+		var datasetViewsIds = "";
+
+		for (var datasetViewName : list ${datasetViewsNameList}) {
+			var datasetViewId = JSONCurlUtil.get(${curl}, "$.items[?(@.label=='${datasetViewName}')].id");
+
+			var datasetViewsIds = StringUtil.add(${datasetViewsIds}, "${datasetViewId},");
+		}
+
+		if (${datasetViewsIds} == "") {
+			fail("FAIL. No dataset views were found");
+		}
+		else {
+			return ${datasetViewsIds};
+		}
+	}
+
+	macro _getDatasetViewsIds {
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		var curl = '''
+			${portalURL}/o/c/fdsviews \
+				-u ${userEmailAddress}:${userPassword}
+		''';
+
+		var siteId = JSONCurlUtil.get(${curl}, "$..items[0].creator.id");
+
+		var datasetViewsIds = JSONCurlUtil.get(${curl}, "$.items[?(@.id!='${siteId}')].id");
+
+		return ${datasetViewsIds};
 	}
 
 }

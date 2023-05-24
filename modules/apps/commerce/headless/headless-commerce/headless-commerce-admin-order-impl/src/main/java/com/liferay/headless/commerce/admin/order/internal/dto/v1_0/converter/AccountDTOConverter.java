@@ -17,8 +17,6 @@ package com.liferay.headless.commerce.admin.order.internal.dto.v1_0.converter;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.account.service.AccountEntryService;
-import com.liferay.commerce.account.constants.CommerceAccountConstants;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.headless.commerce.admin.order.dto.v1_0.Account;
 import com.liferay.portal.kernel.model.User;
@@ -85,39 +83,36 @@ public class AccountDTOConverter
 					accountEntry.getParentAccountEntryId() ==
 						AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT;
 				taxId = accountEntry.getTaxIdNumber();
-				type = _toCommerceAccountType(accountEntry.getType());
+				type = _getCommerceAccountType(accountEntry.getType());
 			}
 		};
 	}
 
-	private Integer _toCommerceAccountType(String accountEntryType) {
+	private Integer _getCommerceAccountType(String accountEntryType) {
 		if (Objects.equals(
 				accountEntryType,
 				AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS)) {
 
-			return CommerceAccountConstants.ACCOUNT_TYPE_BUSINESS;
+			return 2;
 		}
 		else if (Objects.equals(
 					accountEntryType,
 					AccountConstants.ACCOUNT_ENTRY_TYPE_GUEST)) {
 
-			return CommerceAccountConstants.ACCOUNT_TYPE_GUEST;
+			return 0;
 		}
 		else if (Objects.equals(
 					accountEntryType,
 					AccountConstants.ACCOUNT_ENTRY_TYPE_PERSON)) {
 
-			return CommerceAccountConstants.ACCOUNT_TYPE_PERSONAL;
+			return 1;
 		}
 
-		return CommerceAccountConstants.ACCOUNT_TYPE_GUEST;
+		return 0;
 	}
 
 	@Reference
 	private AccountEntryLocalService _accountEntryLocalService;
-
-	@Reference
-	private AccountEntryService _accountEntryService;
 
 	@Reference
 	private UserLocalService _userLocalService;

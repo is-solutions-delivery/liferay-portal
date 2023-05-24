@@ -227,6 +227,7 @@ export default class DatePicker extends React.Component {
 					</div>
 
 					<ClayButton
+						aria-label={Liferay.Language.get('previous-month')}
 						className='button-root'
 						disabled={this.isPrevDisabled()}
 						displayType='secondary'
@@ -234,7 +235,10 @@ export default class DatePicker extends React.Component {
 						onClick={this.handlePrevMonth}
 						size='sm'
 					>
-						<ClayIcon className='icon-root' symbol='angle-left' />
+						<ClayIcon
+							className='icon-root'
+							symbol='angle-left-small'
+						/>
 					</ClayButton>
 
 					<ClayButton
@@ -249,6 +253,7 @@ export default class DatePicker extends React.Component {
 					</ClayButton>
 
 					<ClayButton
+						aria-label={Liferay.Language.get('next-month')}
 						className='button-root'
 						data-testid='next-month'
 						disabled={this.isNextDisabled()}
@@ -257,7 +262,10 @@ export default class DatePicker extends React.Component {
 						onClick={this.handleNextMonth}
 						size='sm'
 					>
-						<ClayIcon className='icon-root' symbol='angle-right' />
+						<ClayIcon
+							className='icon-root'
+							symbol='angle-right-small'
+						/>
 					</ClayButton>
 				</div>
 

@@ -21,10 +21,13 @@ import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.url.CPFriendlyURL;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
+import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.layout.admin.kernel.model.LayoutTypePortletConstants;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
@@ -33,13 +36,17 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.site.util.Sitemap;
 import com.liferay.site.util.SitemapURLProvider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -87,8 +94,7 @@ public class AssetCategorySitemapURLProvider implements SitemapURLProvider {
 				AssetVocabulary assetVocabulary = assetVocabularies.get(0);
 
 				List<AssetCategory> assetCategories =
-					_assetCategoryService.getVocabularyRootCategories(
-						assetVocabulary.getGroupId(),
+					_assetCategoryService.getVocabularyCategories(
 						assetVocabulary.getVocabularyId(), QueryUtil.ALL_POS,
 						QueryUtil.ALL_POS, null);
 
@@ -127,6 +133,10 @@ public class AssetCategorySitemapURLProvider implements SitemapURLProvider {
 			return;
 		}
 
+		themeDisplay = SitemapURLProviderUtil.updateThemeDisplay(
+			_language, _portal.getLocale(themeDisplay.getRequest()),
+			themeDisplay);
+
 		String currentSiteURL = _portal.getGroupFriendlyURL(
 			layout.getLayoutSet(), themeDisplay, false, false);
 
@@ -141,9 +151,26 @@ public class AssetCategorySitemapURLProvider implements SitemapURLProvider {
 			currentSiteURL + urlSeparator +
 				friendlyURLEntry.getUrlTitle(themeDisplay.getLanguageId());
 
-		_sitemap.addURLElement(
-			element, categoryFriendlyURL, typeSettingsUnicodeProperties,
-			layout.getModifiedDate(), categoryFriendlyURL, null);
+		Map<Locale, String> alternateFriendlyURLs = new HashMap<>();
+
+		for (FriendlyURLEntryLocalization friendlyURLEntryLocalization :
+				_friendlyURLEntryLocalService.getFriendlyURLEntryLocalizations(
+					friendlyURLEntry.getFriendlyURLEntryId())) {
+
+			alternateFriendlyURLs.put(
+				LocaleUtil.fromLanguageId(
+					friendlyURLEntryLocalization.getLanguageId()),
+				StringBundler.concat(
+					currentSiteURL, urlSeparator,
+					friendlyURLEntryLocalization.getUrlTitle()));
+		}
+
+		for (String alternateFriendlyURL : alternateFriendlyURLs.values()) {
+			_sitemap.addURLElement(
+				element, alternateFriendlyURL, typeSettingsUnicodeProperties,
+				layout.getModifiedDate(), categoryFriendlyURL,
+				alternateFriendlyURLs);
+		}
 	}
 
 	@Reference
@@ -160,6 +187,9 @@ public class AssetCategorySitemapURLProvider implements SitemapURLProvider {
 
 	@Reference
 	private FriendlyURLEntryLocalService _friendlyURLEntryLocalService;
+
+	@Reference
+	private Language _language;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

@@ -3038,12 +3038,6 @@ include-and-override=portal-liferay-online-limit.properties</echo>
 		</sequential>
 	</macrodef>
 
-	<macrodef name="prepare-portal-security-audit-osgi-configuration">
-		<sequential>
-			<echo file="${liferay.home}/osgi/configs/com.liferay.portal.security.audit.router.configuration.PersistentAuditMessageProcessorConfiguration.config">enabled=B"true"</echo>
-		</sequential>
-	</macrodef>
-
 	<macrodef name="prepare-portal-template-freemarker-osgi-configuration">
 		<sequential>
 			<echo file="${liferay.home}/osgi/configs/com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration.config">asyncRenderTimeout=L"7200000"${line.separator}loopCountThreshold=I"2147483647"</echo>
@@ -11166,18 +11160,6 @@ ${update.properties}</echo>
 			</then>
 		</if>
 
-		<get-testcase-property property.name="testray.main.component.name" />
-
-		<if>
-			<or>
-				<equals arg1="${testray.main.component.name}" arg2="Audit" />
-				<equals arg1="${testray.main.component.name}" arg2="Multi Factor Authentication" />
-			</or>
-			<then>
-				<prepare-portal-security-audit-osgi-configuration />
-			</then>
-		</if>
-
 		<prepare-portal-template-freemarker-osgi-configuration />
 
 		<prepare-selenium-login-config />
@@ -12027,6 +12009,8 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			app.server.temp.dir=${app.server.tomcat.temp.dir}
 			app.server.type=${app.server.type}
 			component.names=${component.names}
+			custom.super.admin.user.email=${custom.super.admin.user.email}
+			custom.super.admin.user.password=${custom.super.admin.user.password}
 			custom.default.user.password=${custom.default.user.password}
 			custom.default.user.email=${custom.default.user.email}
 			get.location.max.retries=${test.get.location.max.retries}
@@ -12606,6 +12590,12 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 						<isset property="portal.proxy.path" />
 						<then>
 							<property name="default.portal.url" value="http://localhost:88/${portal.proxy.path}" />
+						</then>
+					</elseif>
+					<elseif>
+						<isset property="default.portal.url" />
+						<then>
+							<property name="default.portal.url" value="${default.portal.url}" />
 						</then>
 					</elseif>
 					<else>

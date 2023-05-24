@@ -100,6 +100,18 @@ public abstract class BaseControlPanelEntry implements ControlPanelEntry {
 			category = StringPool.BLANK;
 		}
 
+		if (category.equals(StringPool.BLANK)) {
+			Portlet rootPortlet = portlet.getRootPortlet();
+
+			if (rootPortlet != null) {
+				category = rootPortlet.getControlPanelEntryCategory();
+
+				if (category == null) {
+					category = StringPool.BLANK;
+				}
+			}
+		}
+
 		if (category.startsWith(PortletCategoryKeys.SITE_ADMINISTRATION) &&
 			permissionChecker.isGroupAdmin(group.getGroupId()) &&
 			!group.isUser()) {

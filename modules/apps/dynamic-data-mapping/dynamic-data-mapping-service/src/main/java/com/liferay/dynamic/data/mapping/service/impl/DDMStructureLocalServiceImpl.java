@@ -70,6 +70,7 @@ import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.Language;
@@ -1530,8 +1531,9 @@ public class DDMStructureLocalServiceImpl
 	@Override
 	public DDMStructure updateStructure(
 			long userId, long structureId, long parentStructureId,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			String definition, ServiceContext serviceContext)
+			String structureKey, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, String definition,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMStructure structure = ddmStructurePersistence.findByPrimaryKey(
@@ -1541,6 +1543,18 @@ public class DDMStructureLocalServiceImpl
 
 		structure.setUserId(userId);
 		structure.setParentStructureId(parentStructureId);
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-184255") &&
+			Validator.isNotNull(structureKey)) {
+
+			structureKey = StringUtil.toUpperCase(structureKey.trim());
+
+			_validateStructureKey(
+				structureId, structure.getGroupId(), structure.getClassNameId(),
+				structureKey);
+
+			structure.setStructureKey(structureKey);
+		}
 
 		DDMStructureVersion latestStructureVersion =
 			_ddmStructureVersionLocalService.getLatestStructureVersion(
@@ -2179,6 +2193,30 @@ public class DDMStructureLocalServiceImpl
 
 			parentStructureId = parentStructure.getParentStructureId();
 		}
+	}
+
+	private void _validateStructureKey(
+			long structureId, long groupId, long classNameId,
+			String structureKey)
+		throws PortalException {
+
+		DDMStructure structure = ddmStructurePersistence.fetchByG_C_S(
+			groupId, classNameId, structureKey);
+
+		if ((structure == null) ||
+			(structure.getStructureId() == structureId)) {
+
+			return;
+		}
+
+		StructureDuplicateStructureKeyException
+			structureDuplicateStructureKeyException =
+				new StructureDuplicateStructureKeyException();
+
+		structureDuplicateStructureKeyException.setStructureKey(
+			structure.getStructureKey());
+
+		throw structureDuplicateStructureKeyException;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

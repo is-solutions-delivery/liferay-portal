@@ -54,6 +54,11 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeJavaAddFolderParameterCheck() throws Exception {
+		test("upgrade/UpgradeJavaAddFolderParameterCheck.testjava");
+	}
+
+	@Test
 	public void testUpgradeJavaCheck() throws Exception {
 		test("upgrade/UpgradeJavaCheck.testjava");
 	}
@@ -88,6 +93,7 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 			super.getSourceFormatterArgs();
 
 		sourceFormatterArgs.setCheckCategoryNames(checkCategoryNames);
+		sourceFormatterArgs.setJavaParserEnabled(false);
 		sourceFormatterArgs.setSourceFormatterProperties(
 			sourceFormatterProperties);
 

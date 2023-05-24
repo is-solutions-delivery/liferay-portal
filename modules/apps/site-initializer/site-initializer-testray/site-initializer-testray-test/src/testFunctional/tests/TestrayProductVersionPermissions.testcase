@@ -1,0 +1,361 @@
+@component-name = "portal-solutions"
+definition {
+
+	property custom.properties = "feature.flag.LPS-163118=true";
+	property osgi.modules.includes = "site-initializer-testray";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Site Initializer Testray";
+
+	var productVersion = "1.2";
+	var projectName = "Project 1";
+	var testSiteName = "Testray 2";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
+		}
+
+		task ("Create a Project and product version via API") {
+			JSONTestray.addProject(
+				projectDescription = "Project Description 1",
+				projectName = ${projectName});
+
+			JSONTestray.addProductVersion(
+				productVersion = ${productVersion},
+				projectName = ${projectName});
+		}
+	}
+
+	tearDown {
+		task ("Logout And Login with test user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "test test");
+		}
+
+		task ("Delete project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
+
+			Testray.testrayApisTearDown();
+		}
+
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to create the product version"
+	@priority = 3
+	test AssertAnalystRoleCanNotCreateProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertAnalystRoleCanNotCreateProductVersion";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+		}
+
+		task ("When the user go to the product version page") {
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("Then the user can not create product version") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to delete the product version"
+	@priority = 3
+	test AssertAnalystRoleCanNotDeleteProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertAnalystRoleCanNotDeleteProductVersion";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("When the user right click in product version") {
+			RightClick.rightClick(
+				key_projectName = ${productVersion},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not delete the product version") {
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to edit the product version"
+	@priority = 3
+	test AssertAnalystRoleCanNotEditProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertAnalystRoleCanNotEditProductVersion";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("When the user right click in product version") {
+			RightClick.rightClick(
+				key_projectName = ${productVersion},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not edit the product version") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to create the product version"
+	@priority = 3
+	test AssertLeadRoleCanCreateProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertLeadRoleCanCreateProductVersion";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+		}
+
+		task ("When the user create the product version") {
+			TestrayManage.createProductVersion(
+				manageOption = "Manage Product Versions",
+				nameOptions = ${projectName},
+				version = "7.4");
+		}
+
+		task ("Then the user can see the product version created in the table") {
+			AssertElementPresent(
+				key_projectName = "7.4",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to delete the product version"
+	@priority = 3
+	test AssertLeadRoleCanDeleteProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertLeadRoleCanDeleteProductVersion";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("When the user delete the product version") {
+			TestrayManage.deleteProductVersion(
+				itemManage = "Delete",
+				versionName = ${productVersion});
+		}
+
+		task ("Then the user can not see the product version in the table") {
+			AssertElementNotPresent(
+				key_projectName = ${productVersion},
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to edit the product version"
+	@priority = 3
+	test AssertLeadRoleCanEditProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertLeadRoleCanEditProductVersion";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("When the user edit the product version") {
+			TestrayManage.editProductVersion(
+				caseName = "3.4",
+				itemManage = "Edit",
+				valueName = ${productVersion});
+		}
+
+		task ("Then the user can see the product version edited in the table") {
+			AssertElementPresent(
+				key_projectName = "3.4",
+				locator1 = "Testray#ITEM_NAME");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray User' role should not be able to create the product version"
+	@priority = 3
+	test AssertUserRoleCanNotCreateProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertUserRoleCanNotCreateProductVersion";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+		}
+
+		task ("When the user go to the product version page") {
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("Then the user can not create product version") {
+			AssertElementNotPresent(locator1 = "Button#PLUS");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray User' role should not be able to delete the product version"
+	@priority = 3
+	test AssertUserRoleCanNotDeleteProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertUserRoleCanNotDeleteProductVersion";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("When the user right click in product version") {
+			RightClick.rightClick(
+				key_projectName = ${productVersion},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not delete the product version") {
+			AssertElementNotPresent(
+				item = "Delete",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+	@description = "Story ID: LPS-178264 | Test Summary: Verify that the User with the 'Testray User' role should not be able to edit the product version"
+	@priority = 3
+	test AssertUserRoleCanNotEditProductVersion {
+		property test.name.skip.portal.instance = "TestrayProductVersionPermissions#AssertUserRoleCanNotEditProductVersion";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			Testray.changePagination(
+				numberItems = 20,
+				valuePagination = 150);
+
+			RightClick.rightClick(
+				key_projectName = ${projectName},
+				locator1 = "Testray#ITEM_NAME");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+		}
+
+		task ("When the user right click in product version") {
+			RightClick.rightClick(
+				key_projectName = ${productVersion},
+				locator1 = "Testray#ITEM_NAME");
+		}
+
+		task ("Then the user can not edit the product version") {
+			AssertElementNotPresent(
+				item = "Edit",
+				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+		}
+	}
+
+}

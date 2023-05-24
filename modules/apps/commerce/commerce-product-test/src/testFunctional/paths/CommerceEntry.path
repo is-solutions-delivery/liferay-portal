@@ -716,6 +716,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ELIGIBILITY_RELATION_FIELD_CLEAR_BUTTON</td>
+	<td>//div[h4[contains(.,'${key_eligibilityCardTitle}')]]//input[@type='text']/..//span[contains(@class,'input-group-inset-item')]//button[contains(@class,'btn')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TABLE_ENTRY_ROW_NUMBER</td>
 	<td>//div[@class='dnd-tbody']/div[contains(@class,'dnd-tr')][${key_rowNumber}]//a</td>
 	<td></td>
@@ -1335,6 +1340,36 @@
 
 <!--SITEMAP-->
 
+<tr>
+	<td>CATEGORY_SITEMAP_URL</td>
+	<td>//*[text()='${key_basePortalURL}/web/minium/g/${key_categoryName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_SITEMAP_URL_HREF_HREFLANG</td>
+	<td>//*[text()='${key_basePortalURL}/web/minium/g/${key_categoryURLName}']/following-sibling::*[@href = '${key_basePortalURL}/web/minium/g/${key_categoryName}'][@hreflang='${key_categoryNameLang}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_LANGUAGE_SITEMAP_URL</td>
+	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/g/${key_categoryName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CATEGORY_LANGUAGE_SITEMAP_URL_HREF_HREFLANG</td>
+	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/g/${key_categoryURLName}']/following-sibling::*[@href = '${key_basePortalURL}/${key_language}/web/minium/g/${key_categoryName}'][@hreflang='${key_categoryNameLang}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_LANGUAGE_DETAIL_SITEMAP_URL</td>
+	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/p/${key_productName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_LANGUAGE_DETAIL_SITEMAP_URL_HREF_HREFLANG</td>
+	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/p/${key_productURLName}']/following-sibling::*[@href = '${key_basePortalURL}/${key_language}/web/minium/p/${key_productName}'][@hreflang='${key_productNameLang}']</td>
+	<td></td>
+</tr>
 <tr>
 	<td>PRODUCT_DETAIL_SITEMAP_URL</td>
 	<td>//*[text()='${key_basePortalURL}/web/minium/p/${key_productName}']</td>

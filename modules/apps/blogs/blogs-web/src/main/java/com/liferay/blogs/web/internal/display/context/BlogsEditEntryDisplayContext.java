@@ -16,10 +16,16 @@ package com.liferay.blogs.web.internal.display.context;
 
 import com.liferay.asset.auto.tagger.configuration.AssetAutoTaggerConfiguration;
 import com.liferay.blogs.configuration.BlogsFileUploadsConfiguration;
+import com.liferay.blogs.item.selector.criterion.BlogsItemSelectorCriterion;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.settings.BlogsGroupServiceSettings;
-import com.liferay.blogs.web.internal.helper.BlogsItemSelectorHelper;
 import com.liferay.blogs.web.internal.util.BlogsEntryUtil;
+import com.liferay.item.selector.ItemSelector;
+import com.liferay.item.selector.ItemSelectorCriterion;
+import com.liferay.item.selector.criteria.DownloadFileEntryItemSelectorReturnType;
+import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
+import com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion;
+import com.liferay.osgi.util.service.Snapshot;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -29,14 +35,12 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeFormatter;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.util.PropsValues;
 
@@ -55,7 +59,6 @@ public class BlogsEditEntryDisplayContext {
 		BlogsEntry blogsEntry,
 		BlogsFileUploadsConfiguration blogsFileUploadsConfiguration,
 		BlogsGroupServiceSettings blogsGroupServiceSettings,
-		BlogsItemSelectorHelper blogsItemSelectorHelper,
 		HttpServletRequest httpServletRequest,
 		LiferayPortletResponse liferayPortletResponse) {
 
@@ -63,7 +66,6 @@ public class BlogsEditEntryDisplayContext {
 		_blogsEntry = blogsEntry;
 		_blogsFileUploadsConfiguration = blogsFileUploadsConfiguration;
 		_blogsGroupServiceSettings = blogsGroupServiceSettings;
-		_blogsItemSelectorHelper = blogsItemSelectorHelper;
 		_httpServletRequest = httpServletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
 	}
@@ -112,15 +114,8 @@ public class BlogsEditEntryDisplayContext {
 	}
 
 	public String getCoverImageItemSelectorURL() {
-		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
-			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest);
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)_httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		return _blogsItemSelectorHelper.getItemSelectorURL(
-			requestBackedPortletURLFactory, themeDisplay,
+		return _getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
 			getCoverImageItemSelectorEventName());
 	}
 
@@ -215,15 +210,8 @@ public class BlogsEditEntryDisplayContext {
 	}
 
 	public String getSmallImageItemSelectorURL() {
-		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
-			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest);
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)_httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		return _blogsItemSelectorHelper.getItemSelectorURL(
-			requestBackedPortletURLFactory, themeDisplay,
+		return _getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(_httpServletRequest),
 			getSmallImageItemSelectorEventName());
 	}
 
@@ -423,13 +411,44 @@ public class BlogsEditEntryDisplayContext {
 		return _assetAutoTaggerConfiguration.isUpdateAutoTags();
 	}
 
+	private String _getItemSelectorURL(
+		RequestBackedPortletURLFactory requestBackedPortletURLFactory,
+		String itemSelectedEventName) {
+
+		ItemSelector itemSelector = _itemSelectorSnapshot.get();
+
+		if (itemSelector == null) {
+			return null;
+		}
+
+		ItemSelectorCriterion blogsItemSelectorCriterion =
+			new BlogsItemSelectorCriterion();
+
+		blogsItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new FileEntryItemSelectorReturnType());
+
+		ImageItemSelectorCriterion imageItemSelectorCriterion =
+			new ImageItemSelectorCriterion();
+
+		imageItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new DownloadFileEntryItemSelectorReturnType());
+
+		return String.valueOf(
+			itemSelector.getItemSelectorURL(
+				requestBackedPortletURLFactory, itemSelectedEventName,
+				blogsItemSelectorCriterion, imageItemSelectorCriterion));
+	}
+
+	private static final Snapshot<ItemSelector> _itemSelectorSnapshot =
+		new Snapshot<>(
+			BlogsEditEntryDisplayContext.class, ItemSelector.class, null, true);
+
 	private Boolean _allowPingbacks;
 	private Boolean _allowTrackbacks;
 	private final AssetAutoTaggerConfiguration _assetAutoTaggerConfiguration;
 	private final BlogsEntry _blogsEntry;
 	private final BlogsFileUploadsConfiguration _blogsFileUploadsConfiguration;
 	private final BlogsGroupServiceSettings _blogsGroupServiceSettings;
-	private final BlogsItemSelectorHelper _blogsItemSelectorHelper;
 	private String _content;
 	private String _coverImageCaption;
 	private Long _coverImageFileEntryId;

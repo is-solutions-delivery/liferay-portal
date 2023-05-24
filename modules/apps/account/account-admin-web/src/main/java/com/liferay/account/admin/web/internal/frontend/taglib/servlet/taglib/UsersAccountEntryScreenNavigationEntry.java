@@ -50,9 +50,12 @@ public class UsersAccountEntryScreenNavigationEntry
 	@Override
 	public boolean isVisible(User user, AccountEntry accountEntry) {
 		if (accountEntry.isNew() ||
-			!Objects.equals(
+			(!Objects.equals(
 				accountEntry.getType(),
-				AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS)) {
+				AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS) &&
+			 !Objects.equals(
+				 accountEntry.getType(),
+				 AccountConstants.ACCOUNT_ENTRY_TYPE_SUPPLIER))) {
 
 			return false;
 		}

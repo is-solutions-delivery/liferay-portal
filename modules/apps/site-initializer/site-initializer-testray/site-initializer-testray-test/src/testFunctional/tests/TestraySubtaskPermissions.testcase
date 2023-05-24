@@ -1,0 +1,345 @@
+@component-name = "portal-solutions"
+definition {
+
+	property custom.properties = "feature.flag.LPS-163118=true";
+	property osgi.modules.includes = "site-initializer-testray";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "Site Initializer Testray";
+
+	var buildName = "Build 1";
+	var caseName = "Case 1";
+	var caseType = "Case Type 1";
+	var componentName = "Component 1";
+	var environmentFactorsName = "Environment Factors 1";
+	var productVersion = "1.2";
+	var projectName = "Project 1";
+	var routineName = "Routine 1";
+	var teamName = "Team 1";
+	var runName = "Option 1";
+	var taskName = "Task_1";
+	var caseResultName = "case result 1";
+	var testSiteName = "Testray 2";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Testray Site") {
+			Testray.addTestraySite(siteName = ${testSiteName});
+		}
+
+		task ("Create project, team, component, routine, case typ, case, environment factor, product version, build, run, case result, task and subtask via API") {
+			JSONTestray.addProject(
+				projectDescription = "Project Description 1",
+				projectName = ${projectName});
+
+			JSONTestray.addTeam(
+				projectName = ${projectName},
+				teamName = ${teamName});
+
+			JSONTestray.addComponent(
+				componentName = ${componentName},
+				projectName = ${projectName},
+				teamName = ${teamName});
+
+			JSONTestray.addRoutine(
+				projectName = ${projectName},
+				routineName = ${routineName});
+
+			JSONTestray.addCaseType(caseType = ${caseType});
+
+			JSONTestray.addCases(
+				caseName = ${caseName},
+				caseType = ${caseType},
+				componentName = ${componentName},
+				projectName = ${projectName});
+
+			JSONTestray.addEnvironmentFactors(environmentFactorsName = ${environmentFactorsName});
+
+			JSONTestray.addProductVersion(
+				productVersion = ${productVersion},
+				projectName = ${projectName});
+
+			JSONTestray.addBuild(
+				buildName = ${buildName},
+				productVersion = ${productVersion},
+				projectName = ${projectName},
+				routineName = ${routineName});
+
+			JSONTestray.addRun(
+				buildName = ${buildName},
+				runName = ${runName});
+
+			JSONTestray.addCaseResult(
+				buildName = ${buildName},
+				caseName = ${caseName},
+				caseResultName = ${caseResultName},
+				componentName = ${componentName},
+				runName = ${runName});
+
+			JSONTestray.addTask(
+				buildName = ${buildName},
+				key = "INANALYSIS",
+				statusTask = "In Analysis",
+				taskName = ${taskName});
+
+			JSONTestray.addSubtask(
+				key = "OPEN",
+				score = 3,
+				statusSubtask = "Open",
+				subtaskName = "Subtask_1",
+				subtaskNumber = 1,
+				taskName = ${taskName});
+
+			JSONTestray.addSubtask(
+				key = "OPEN",
+				score = 3,
+				statusSubtask = "Open",
+				subtaskName = "Subtask_2",
+				subtaskNumber = 2,
+				taskName = ${taskName});
+		}
+	}
+
+	tearDown {
+		task ("Logout And Login with test user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "test test");
+		}
+
+		task ("Delete subtask, task, routine, case type, factor category and project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "subtasks",
+				objectName = "Subtask_1");
+
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "tasks",
+				objectName = ${taskName});
+
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "routines",
+				objectName = ${routineName});
+
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "casetypes",
+				objectName = ${caseType});
+
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "factorcategories",
+				objectName = "Category 1");
+
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
+
+			Testray.testrayApisTearDown();
+		}
+
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "Story ID: LPS-178271 | Test Summary: Verify that the User with the 'Testray Analyst' role should be able to edit the subtask"
+	@priority = 4
+	test AssertAnalystRoleCanEditSubtask {
+		property test.name.skip.portal.instance = "TestraySubtaskPermissions#AssertAnalystRoleCanEditSubtask";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("And the user go to the Subtask") {
+			TestrayTestflow.goToTestflow();
+
+			TestrayTestflow.goToTask(taskName = "Task_1");
+
+			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
+		}
+
+		task ("When the user edit a Subtask") {
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign to Me and Begin Analysis");
+
+			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+
+			TestrayTestflow.editStatus(selectStatus = "Passed");
+
+			WaitForPageLoad();
+		}
+
+		task ("Then the user can see the subtask edited") {
+			TestrayTestflow.assertStatus(
+				label = "Subtasks",
+				status = "Complete");
+		}
+	}
+
+	@description = "Story ID: LPS-178271 | Test Summary: Verify that the User with the 'Testray Analyst' role should be able to merge the subtask"
+	@priority = 4
+	test AssertAnalystRoleCanMergeSubtask {
+		property test.name.skip.portal.instance = "TestraySubtaskPermissions#AssertAnalystRoleCanMergeSubtask";
+
+		task ("Given that the user login with the Testray Analyst role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "analyst@testray.com",
+				userLoginFullName = "Analyst User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("And the user go to the subtask") {
+			TestrayTestflow.goToTestflow();
+
+			TestrayTestflow.goToTask(taskName = "Task_1");
+		}
+
+		task ("When the user merge a Subtask") {
+			TestraySubtask.mergeSubtasks(wcsubtaskName = "Subtask_1,Subtask_2");
+
+			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+		}
+
+		task ("Then the user can see a merged subtask") {
+			TestraySubtask.assertMergedSubtasks(listSubtaskMerged = "Subtask_2");
+		}
+	}
+
+	@description = "Story ID: LPS-178271 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to edit the subtask"
+	@priority = 4
+	test AssertLeadRoleCanEditSubtask {
+		property test.name.skip.portal.instance = "TestraySubtaskPermissions#AssertLeadRoleCanEditSubtask";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("And the user go to the Subtask") {
+			TestrayTestflow.goToTestflow();
+
+			TestrayTestflow.goToTask(taskName = "Task_1");
+
+			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
+		}
+
+		task ("When the user edit a Subtask") {
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign to Me and Begin Analysis");
+
+			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
+
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+
+			TestrayTestflow.editStatus(selectStatus = "Passed");
+
+			WaitForPageLoad();
+		}
+
+		task ("Then the user can see the subtask edited") {
+			TestrayTestflow.assertStatus(
+				label = "Subtasks",
+				status = "Complete");
+		}
+	}
+
+	@description = "Story ID: LPS-178271 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to merge the subtask"
+	@priority = 4
+	test AssertLeadRoleCanMergeSubtask {
+		property test.name.skip.portal.instance = "TestraySubtaskPermissions#AssertLeadRoleCanMergeSubtask";
+
+		task ("Given that the user login with the Testray Lead role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "lead@testray.com",
+				userLoginFullName = "Lead User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+		}
+
+		task ("And the user go to the subtask") {
+			TestrayTestflow.goToTestflow();
+
+			TestrayTestflow.goToTask(taskName = "Task_1");
+		}
+
+		task ("When the user merge a Subtask") {
+			TestraySubtask.mergeSubtasks(wcsubtaskName = "Subtask_1,Subtask_2");
+
+			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+		}
+
+		task ("Then the user can see a merged subtask") {
+			TestraySubtask.assertMergedSubtasks(listSubtaskMerged = "Subtask_2");
+		}
+	}
+
+	@description = "Story ID: LPS-178271 | Test Summary: Verify that the User with the 'Testray User' role should not be able to edit the subtask"
+	@priority = 2
+	test AssertUserRoleCanNotEditSubatsk {
+		property test.name.skip.portal.instance = "TestraySubtaskPermissions#AssertUserRoleCanNotEditSubatsk";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			TestrayTestflow.goToTestflow();
+
+			TestrayTestflow.goToTask(taskName = "Task_1");
+		}
+
+		task ("When the user go to the subtask") {
+			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+		}
+
+		task ("Then the user can not edit the subtask") {
+			AssertElementNotPresent(
+				key_text = "Assign and Begin Analysis",
+				locator1 = "Button#ANY");
+		}
+	}
+
+	@description = "Story ID: LPS-178271 | Test Summary: Verify that the User with the 'Testray User' role should not be able to merge the subtask"
+	@priority = 2
+	test AssertUserRoleCanNotMergeSubatsk {
+		property test.name.skip.portal.instance = "TestraySubtaskPermissions#AssertUserRoleCanNotMergeSubatsk";
+
+		task ("Given that the user login with the Testray User role") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "user@testray.com",
+				userLoginFullName = "User User");
+
+			Navigator.openSiteURL(siteName = "Testray 2");
+
+			TestrayTestflow.goToTestflow();
+
+			TestrayTestflow.goToTask(taskName = "Task_1");
+		}
+
+		task ("When the user tries merge a Subtask") {
+			TestraySubtask.mergeSubtasks(wcsubtaskName = "Subtask_1,Subtask_2");
+
+			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+		}
+
+		task ("Then the user can not see a merged subtask") {
+			TestraySubtask.assertNotMergedSubtasks(subtask = "Subtask_2");
+		}
+	}
+
+}

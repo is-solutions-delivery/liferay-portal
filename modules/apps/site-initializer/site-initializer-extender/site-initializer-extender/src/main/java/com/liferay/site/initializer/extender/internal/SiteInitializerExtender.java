@@ -95,6 +95,8 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.apache.felix.dm.DependencyManager;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -134,7 +136,7 @@ public class SiteInitializerExtender
 				_assetListEntryLocalService, bundle,
 				_clientExtensionEntryLocalService, _configurationProvider,
 				_ddmStructureLocalService, _ddmTemplateLocalService,
-				_defaultDDMStructureHelper, _dlURLHelper,
+				_defaultDDMStructureHelper, _dependencyManager, _dlURLHelper,
 				_documentFolderResourceFactory, _documentResourceFactory,
 				_fragmentsImporter, _groupLocalService,
 				_journalArticleLocalService, _jsonFactory,
@@ -196,6 +198,8 @@ public class SiteInitializerExtender
 	protected void activate(BundleContext bundleContext) throws Exception {
 		_bundleContext = bundleContext;
 
+		_dependencyManager = new DependencyManager(bundleContext);
+
 		_bundleTracker = new BundleTracker<>(
 			bundleContext, Bundle.ACTIVE, this);
 
@@ -249,7 +253,7 @@ public class SiteInitializerExtender
 					null),
 				_clientExtensionEntryLocalService, _configurationProvider,
 				_ddmStructureLocalService, _ddmTemplateLocalService,
-				_defaultDDMStructureHelper, _dlURLHelper,
+				_defaultDDMStructureHelper, _dependencyManager, _dlURLHelper,
 				_documentFolderResourceFactory, _documentResourceFactory,
 				_fragmentsImporter, _groupLocalService,
 				_journalArticleLocalService, _jsonFactory,
@@ -326,6 +330,8 @@ public class SiteInitializerExtender
 
 	@Reference
 	private DefaultDDMStructureHelper _defaultDDMStructureHelper;
+
+	private DependencyManager _dependencyManager;
 
 	@Reference
 	private DLURLHelper _dlURLHelper;
