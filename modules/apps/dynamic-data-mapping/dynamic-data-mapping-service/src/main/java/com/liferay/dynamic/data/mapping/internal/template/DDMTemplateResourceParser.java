@@ -12,31 +12,34 @@
  * details.
  */
 
-package com.liferay.portal.template;
+package com.liferay.dynamic.data.mapping.internal.template;
 
 import com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil;
-import com.liferay.dynamic.data.mapping.kernel.DDMTemplate;
-import com.liferay.dynamic.data.mapping.kernel.DDMTemplateManagerUtil;
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.template.DDMTemplateResource;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
-import com.liferay.portal.kernel.template.DDMTemplateResource;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateException;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.template.TemplateResourceParser;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Tina Tian
  * @author Juan Fernández
  */
-@OSGiBeanProperties(
+@Component(
 	property = {
 		"lang.type=" + TemplateConstants.LANG_TYPE_FTL,
 		"lang.type=" + TemplateConstants.LANG_TYPE_VM
@@ -79,26 +82,26 @@ public class DDMTemplateResourceParser implements TemplateResourceParser {
 						ddmTemplateKey, "}"));
 			}
 
-			DDMTemplate ddmTemplate = DDMTemplateManagerUtil.fetchTemplate(
+			DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 				groupId, classNameId, ddmTemplateKey);
 
 			if (ddmTemplate == null) {
-				Group companyGroup = GroupLocalServiceUtil.getCompanyGroup(
+				Group companyGroup = _groupLocalService.getCompanyGroup(
 					companyId);
 
-				ddmTemplate = DDMTemplateManagerUtil.fetchTemplate(
+				ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 					companyGroup.getGroupId(), classNameId, ddmTemplateKey);
 
 				if (ddmTemplate == null) {
-					classNameId = PortalUtil.getClassNameId(
+					classNameId = _portal.getClassNameId(
 						DDMStructureManagerUtil.getDDMStructureModelClass());
 
-					ddmTemplate = DDMTemplateManagerUtil.fetchTemplate(
+					ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 						groupId, classNameId, ddmTemplateKey);
 				}
 
 				if (ddmTemplate == null) {
-					ddmTemplate = DDMTemplateManagerUtil.fetchTemplate(
+					ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 						companyGroup.getGroupId(), classNameId, ddmTemplateKey);
 				}
 			}
@@ -127,5 +130,14 @@ public class DDMTemplateResourceParser implements TemplateResourceParser {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMTemplateResourceParser.class);
+
+	@Reference
+	private DDMTemplateLocalService _ddmTemplateLocalService;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private Portal _portal;
 
 }

@@ -22,7 +22,8 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
  * @author Lourdes Fernández Besada
  */
 @ExtendedObjectClassDefinition(
-	category = "ai-creator", scope = ExtendedObjectClassDefinition.Scope.GROUP
+	category = "ai-creator", generateUI = false,
+	scope = ExtendedObjectClassDefinition.Scope.GROUP
 )
 @Meta.OCD(
 	id = "com.liferay.ai.creator.openai.configuration.AICreatorOpenAIGroupConfiguration",
@@ -35,7 +36,7 @@ public interface AICreatorOpenAIGroupConfiguration {
 		deflt = "true", name = "enable-openai-to-create-content",
 		required = false
 	)
-	public boolean enableOpenAIToCreateContentInYourSites();
+	public boolean enableOpenAIToCreateContent();
 
 	@Meta.AD(deflt = "", name = "api-key", required = false)
 	public String apiKey();

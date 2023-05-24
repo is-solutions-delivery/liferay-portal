@@ -31,6 +31,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.liferay.document.library.kernel.exception.NoSuchFileException;
 import com.liferay.document.library.kernel.store.Store;
 import com.liferay.document.library.kernel.store.StoreArea;
+import com.liferay.document.library.kernel.store.StoreAreaProcessor;
 import com.liferay.document.library.kernel.util.comparator.VersionNumberComparator;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.io.StreamUtil;
@@ -38,6 +39,7 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -49,6 +51,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.channels.Channels;
+
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,9 +77,9 @@ import org.threeten.bp.Duration;
 	configurationPid = "com.liferay.portal.store.gcs.configuration.GCSStoreConfiguration",
 	configurationPolicy = ConfigurationPolicy.REQUIRE,
 	property = "store.type=com.liferay.portal.store.gcs.GCSStore",
-	service = Store.class
+	service = {Store.class, StoreAreaProcessor.class}
 )
-public class GCSStore implements Store {
+public class GCSStore implements Store, StoreAreaProcessor {
 
 	@Override
 	public void addFile(
@@ -100,6 +105,76 @@ public class GCSStore implements Store {
 		catch (IOException ioException) {
 			throw new PortalException("Unable to add file", ioException);
 		}
+	}
+
+	@Override
+	public String cleanUpDeletedStoreArea(
+		long companyId, int deletionQuota, TemporalAmount temporalAmount,
+		String startOffset) {
+
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-174816")) {
+			return StringPool.BLANK;
+		}
+
+		Bucket bucket = _gcsStore.get(_gcsStoreConfiguration.bucketName());
+		List<BlobId> deletedBlobIds = new ArrayList<>();
+		int deletedBlobQuota = Math.max(deletionQuota, 1);
+		Instant instant = Instant.now();
+		String lastVisitedBlobName = startOffset;
+
+		int pageSize = deletedBlobQuota * 2;
+		int visitedPageLimit = Math.max(deletedBlobQuota / 10, 10);
+
+		while ((deletedBlobQuota > 0) && (visitedPageLimit > 0)) {
+			boolean emptyPage = true;
+
+			Page<Blob> blobPage = bucket.list(
+				Storage.BlobListOption.fields(
+					Storage.BlobField.ID, Storage.BlobField.NAME,
+					Storage.BlobField.UPDATED),
+				Storage.BlobListOption.pageSize(pageSize),
+				Storage.BlobListOption.prefix(
+					StoreArea.DELETED.getPath(companyId)),
+				Storage.BlobListOption.startOffset(lastVisitedBlobName));
+
+			for (Blob blob : blobPage.getValues()) {
+				Instant updateTimeInstant = Instant.ofEpochMilli(
+					blob.getUpdateTime());
+
+				Instant actualDeletionInstant = updateTimeInstant.plus(
+					temporalAmount);
+
+				if (actualDeletionInstant.isBefore(instant)) {
+					deletedBlobIds.add(blob.getBlobId());
+
+					deletedBlobQuota--;
+				}
+
+				emptyPage = false;
+
+				lastVisitedBlobName = blob.getName();
+			}
+
+			if (deletedBlobIds.size() >= _DELETED_BATCH_SIZE) {
+				_gcsStore.delete(deletedBlobIds);
+
+				deletedBlobIds.clear();
+			}
+
+			if (emptyPage) {
+				lastVisitedBlobName = StringPool.BLANK;
+
+				break;
+			}
+
+			visitedPageLimit--;
+		}
+
+		if (!deletedBlobIds.isEmpty()) {
+			_gcsStore.delete(deletedBlobIds);
+		}
+
+		return lastVisitedBlobName;
 	}
 
 	@Override
@@ -421,6 +496,8 @@ public class GCSStore implements Store {
 
 		_gcsStore = storageOptions.getService();
 	}
+
+	private static final int _DELETED_BATCH_SIZE = 10;
 
 	private static final Log _log = LogFactoryUtil.getLog(GCSStore.class);
 

@@ -6,13 +6,6 @@ const headers = {
 	'X-CSRF-Token': Liferay.authToken,
 };
 
-type Categories = {
-	externalReferenceCode: string;
-	id: number;
-	name: string;
-	vocabulary: string;
-};
-
 export const baseURL =
 	window.location.origin + Liferay.ThemeDisplay.getPathContext();
 
@@ -44,11 +37,13 @@ export function createApp({
 	appDescription,
 	appName,
 	catalogId,
+	productChannels,
 }: {
 	appCategories: Categories[];
 	appDescription: string;
 	appName: string;
 	catalogId: number;
+	productChannels?: Partial<Channel>[];
 }) {
 	return fetch(`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products`, {
 		body: JSON.stringify({
@@ -60,6 +55,7 @@ export function createApp({
 			name: {en_US: appName},
 			productStatus: 2,
 			productType: 'virtual',
+			productChannels,
 		}),
 		headers,
 		method: 'POST',
@@ -296,7 +292,9 @@ export async function getCategories({vocabId}: {vocabId: number}) {
 		}
 	);
 
-	return response.json();
+	const {items} = (await response.json()) as {items: Vocabulary[]};
+
+	return items;
 }
 
 export async function getCategoriesRanked() {
@@ -308,7 +306,7 @@ export async function getCategoriesRanked() {
 		}
 	);
 
-	const {items} = (await response.json()) as {items: Category[]};
+	const {items} = (await response.json()) as {items: Vocabulary[]};
 
 	return items;
 }
@@ -469,6 +467,18 @@ export async function getProduct({
 	return (await response.json()) as Product;
 }
 
+export async function getProductIdCategories({appId}: {appId: string}) {
+	const response = await fetch(
+		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products/${appId}/categories`,
+		{
+			headers,
+			method: 'GET',
+		}
+	);
+
+	return (await response.json()) as {items: Categories[]};
+}
+
 export async function getProductImages({appProductId}: {appProductId: number}) {
 	const response = await fetch(
 		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products/${appProductId}/images`,
@@ -481,14 +491,17 @@ export async function getProductImages({appProductId}: {appProductId: number}) {
 	return await response.json();
 }
 
-export async function getProducts() {
-	const response = await fetch(
-		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products?pageSize=-1`,
-		{
-			headers,
-			method: 'GET',
-		}
-	);
+export async function getProducts(nestedFields?: string) {
+	let url = `${baseURL}/o/headless-commerce-admin-catalog/v1.0/products?pageSize=-1`;
+
+	if (nestedFields) {
+		url = url + `&nestedFields=${nestedFields}`;
+	}
+
+	const response = await fetch(url, {
+		headers,
+		method: 'GET',
+	});
 
 	return (await response.json()) as {items: Product[]};
 }
@@ -665,6 +678,23 @@ export async function patchOrderByERC(erc: string, body: any) {
 	return response;
 }
 
+export async function patchProductIdCategory({
+	body,
+	appId,
+}: {
+	body: any;
+	appId: string;
+}) {
+	const response = await fetch(
+		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products/${appId}/categories`,
+		{
+			body: JSON.stringify(body),
+			headers,
+			method: 'PATCH',
+		}
+	);
+}
+
 export async function patchSKUById(skuId: number, body: any) {
 	const response = await fetch(
 		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/skus/${skuId}`,
@@ -823,7 +853,7 @@ export async function postTrialProductOption(
 	return id;
 }
 
-export function updateApp({
+export async function updateApp({
 	appDescription,
 	appERC,
 	appName,
@@ -832,7 +862,7 @@ export function updateApp({
 	appERC: string;
 	appName: string;
 }) {
-	return fetch(
+	return await fetch(
 		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products/by-externalReferenceCode/${appERC}`,
 		{
 			body: JSON.stringify({

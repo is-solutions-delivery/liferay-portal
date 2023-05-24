@@ -19,6 +19,7 @@ import com.liferay.ai.creator.openai.configuration.AICreatorOpenAIGroupConfigura
 import com.liferay.ai.creator.openai.configuration.manager.AICreatorOpenAIConfigurationManager;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.Validator;
 
 import org.osgi.service.component.annotations.Component;
@@ -32,7 +33,7 @@ public class AICreatorOpenAIConfigurationManagerImpl
 	implements AICreatorOpenAIConfigurationManager {
 
 	@Override
-	public String getAICreatorCompanyApiKey(long companyId)
+	public String getAICreatorOpenAICompanyAPIKey(long companyId)
 		throws ConfigurationException {
 
 		AICreatorOpenAICompanyConfiguration
@@ -44,7 +45,18 @@ public class AICreatorOpenAIConfigurationManagerImpl
 	}
 
 	@Override
-	public String getAICreatorGroupApiKey(long companyId, long groupId)
+	public String getAICreatorOpenAIGroupAPIKey(long groupId)
+		throws ConfigurationException {
+
+		AICreatorOpenAIGroupConfiguration aiCreatorOpenAIGroupConfiguration =
+			_configurationProvider.getGroupConfiguration(
+				AICreatorOpenAIGroupConfiguration.class, groupId);
+
+		return aiCreatorOpenAIGroupConfiguration.apiKey();
+	}
+
+	@Override
+	public String getAICreatorOpenAIGroupAPIKey(long companyId, long groupId)
 		throws ConfigurationException {
 
 		AICreatorOpenAIGroupConfiguration aiCreatorOpenAIGroupConfiguration =
@@ -64,7 +76,7 @@ public class AICreatorOpenAIConfigurationManagerImpl
 	}
 
 	@Override
-	public boolean isAICreatorCompanyEnabled(long companyId)
+	public boolean isAICreatorOpenAICompanyEnabled(long companyId)
 		throws ConfigurationException {
 
 		AICreatorOpenAICompanyConfiguration
@@ -72,9 +84,7 @@ public class AICreatorOpenAIConfigurationManagerImpl
 				_configurationProvider.getCompanyConfiguration(
 					AICreatorOpenAICompanyConfiguration.class, companyId);
 
-		if (aiCreatorOpenAICompanyConfiguration.
-				enableOpenAIToCreateContentInYourSites()) {
-
+		if (aiCreatorOpenAICompanyConfiguration.enableOpenAIToCreateContent()) {
 			return true;
 		}
 
@@ -82,10 +92,10 @@ public class AICreatorOpenAIConfigurationManagerImpl
 	}
 
 	@Override
-	public boolean isAICreatorGroupEnabled(long companyId, long groupId)
+	public boolean isAICreatorOpenAIGroupEnabled(long companyId, long groupId)
 		throws ConfigurationException {
 
-		if (!isAICreatorCompanyEnabled(companyId)) {
+		if (!isAICreatorOpenAICompanyEnabled(companyId)) {
 			return false;
 		}
 
@@ -93,13 +103,39 @@ public class AICreatorOpenAIConfigurationManagerImpl
 			_configurationProvider.getGroupConfiguration(
 				AICreatorOpenAIGroupConfiguration.class, groupId);
 
-		if (aiCreatorOpenAIGroupConfiguration.
-				enableOpenAIToCreateContentInYourSites()) {
-
+		if (aiCreatorOpenAIGroupConfiguration.enableOpenAIToCreateContent()) {
 			return true;
 		}
 
 		return false;
+	}
+
+	@Override
+	public void saveAICreatorOpenAICompanyConfiguration(
+			long companyId, String apiKey, boolean enabled)
+		throws ConfigurationException {
+
+		_configurationProvider.saveCompanyConfiguration(
+			AICreatorOpenAICompanyConfiguration.class, companyId,
+			HashMapDictionaryBuilder.<String, Object>put(
+				"apiKey", apiKey
+			).put(
+				"enableOpenAIToCreateContent", enabled
+			).build());
+	}
+
+	@Override
+	public void saveAICreatorOpenAIGroupConfiguration(
+			long groupId, String apiKey, boolean enabled)
+		throws ConfigurationException {
+
+		_configurationProvider.saveGroupConfiguration(
+			AICreatorOpenAIGroupConfiguration.class, groupId,
+			HashMapDictionaryBuilder.<String, Object>put(
+				"apiKey", apiKey
+			).put(
+				"enableOpenAIToCreateContent", enabled
+			).build());
 	}
 
 	@Reference

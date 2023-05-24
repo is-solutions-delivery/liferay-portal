@@ -1,0 +1,17 @@
+definition {
+
+	macro assertActiveBreadcrumb {
+		AssertElementPresent(
+			locator1 = "Breadcrumb#BREADCRUMB_ENTRY_ACTIVE_ENTRY",
+			value1 = ${activeItem});
+	}
+
+	macro goToNavItem {
+		Click(
+			key_navItem = ${navItem},
+			locator1 = "EVPNavigation#NAV_LINK");
+
+		WaitForPageLoad();
+	}
+
+}

@@ -147,10 +147,12 @@ export function PublishedAppsDashboardPage() {
 
 				if (accountCatalogId && accountCatalogId !== 0) {
 					setCatalogId(accountCatalogId);
-					const appList = await getProducts();
+					const {items: productsItems} = await getProducts(
+						'productChannels'
+					);
 
 					const appListProductIds: number[] =
-						getAppListProductIds(appList);
+						getAppListProductIds(productsItems);
 
 					const appListProductSpecifications =
 						await getAppListProductSpecifications(
@@ -159,10 +161,22 @@ export function PublishedAppsDashboardPage() {
 
 					let newAppList: AppProps[] = [];
 
-					appList.items.forEach((product, index: number) => {
-						const isApp = product.categories.find((category) => category.name === 'App');
+					productsItems.forEach((product, index: number) => {
+						const marketPlaceChannel =
+							!!product.productChannels.find(
+								(channel) =>
+									channel.name === 'Marketplace Channel'
+							);
 
-						if (product.catalogId === accountCatalogId && isApp) {
+						const isApp = product.categories.find(
+							(category) => category.name === 'App'
+						);
+
+						if (
+							isApp &&
+							marketPlaceChannel &&
+							product.catalogId === accountCatalogId
+						) {
 							newAppList.push({
 								catalogId: product.catalogId,
 								externalReferenceCode:
