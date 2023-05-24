@@ -71,6 +71,20 @@ public interface AuditEventModel extends BaseModel<AuditEvent>, ShardedModel {
 	public void setAuditEventId(long auditEventId);
 
 	/**
+	 * Returns the group ID of this audit event.
+	 *
+	 * @return the group ID of this audit event
+	 */
+	public long getGroupId();
+
+	/**
+	 * Sets the group ID of this audit event.
+	 *
+	 * @param groupId the group ID of this audit event
+	 */
+	public void setGroupId(long groupId);
+
+	/**
 	 * Returns the company ID of this audit event.
 	 *
 	 * @return the company ID of this audit event

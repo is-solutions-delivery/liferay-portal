@@ -61,7 +61,7 @@ public class AuditEventServiceWrapper
 	public java.util.List
 		<com.liferay.portal.security.audit.storage.model.AuditEvent>
 				getAuditEvents(
-					long companyId, long userId, String userName,
+					long companyId, long groupId, long userId, String userName,
 					java.util.Date createDateGT, java.util.Date createDateLT,
 					String eventType, String className, String classPK,
 					String clientHost, String clientIP, String serverName,
@@ -70,16 +70,16 @@ public class AuditEventServiceWrapper
 			throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _auditEventService.getAuditEvents(
-			companyId, userId, userName, createDateGT, createDateLT, eventType,
-			className, classPK, clientHost, clientIP, serverName, serverPort,
-			sessionID, andSearch, start, end);
+			companyId, groupId, userId, userName, createDateGT, createDateLT,
+			eventType, className, classPK, clientHost, clientIP, serverName,
+			serverPort, sessionID, andSearch, start, end);
 	}
 
 	@Override
 	public java.util.List
 		<com.liferay.portal.security.audit.storage.model.AuditEvent>
 				getAuditEvents(
-					long companyId, long userId, String userName,
+					long companyId, long groupId, long userId, String userName,
 					java.util.Date createDateGT, java.util.Date createDateLT,
 					String eventType, String className, String classPK,
 					String clientHost, String clientIP, String serverName,
@@ -91,9 +91,9 @@ public class AuditEventServiceWrapper
 			throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _auditEventService.getAuditEvents(
-			companyId, userId, userName, createDateGT, createDateLT, eventType,
-			className, classPK, clientHost, clientIP, serverName, serverPort,
-			sessionID, andSearch, start, end, orderByComparator);
+			companyId, groupId, userId, userName, createDateGT, createDateLT,
+			eventType, className, classPK, clientHost, clientIP, serverName,
+			serverPort, sessionID, andSearch, start, end, orderByComparator);
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class AuditEventServiceWrapper
 
 	@Override
 	public int getAuditEventsCount(
-			long companyId, long userId, String userName,
+			long companyId, long groupId, long userId, String userName,
 			java.util.Date createDateGT, java.util.Date createDateLT,
 			String eventType, String className, String classPK,
 			String clientHost, String clientIP, String serverName,
@@ -113,9 +113,9 @@ public class AuditEventServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _auditEventService.getAuditEventsCount(
-			companyId, userId, userName, createDateGT, createDateLT, eventType,
-			className, classPK, clientHost, clientIP, serverName, serverPort,
-			sessionID, andSearch);
+			companyId, groupId, userId, userName, createDateGT, createDateLT,
+			eventType, className, classPK, clientHost, clientIP, serverName,
+			serverPort, sessionID, andSearch);
 	}
 
 	/**

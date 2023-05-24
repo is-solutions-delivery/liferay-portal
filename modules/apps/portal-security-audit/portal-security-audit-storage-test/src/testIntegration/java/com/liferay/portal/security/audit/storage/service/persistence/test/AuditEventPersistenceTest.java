@@ -123,6 +123,8 @@ public class AuditEventPersistenceTest {
 
 		AuditEvent newAuditEvent = _persistence.create(pk);
 
+		newAuditEvent.setGroupId(RandomTestUtil.nextLong());
+
 		newAuditEvent.setCompanyId(RandomTestUtil.nextLong());
 
 		newAuditEvent.setUserId(RandomTestUtil.nextLong());
@@ -159,6 +161,8 @@ public class AuditEventPersistenceTest {
 		Assert.assertEquals(
 			existingAuditEvent.getAuditEventId(),
 			newAuditEvent.getAuditEventId());
+		Assert.assertEquals(
+			existingAuditEvent.getGroupId(), newAuditEvent.getGroupId());
 		Assert.assertEquals(
 			existingAuditEvent.getCompanyId(), newAuditEvent.getCompanyId());
 		Assert.assertEquals(
@@ -223,11 +227,11 @@ public class AuditEventPersistenceTest {
 
 	protected OrderByComparator<AuditEvent> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create(
-			"Audit_AuditEvent", "auditEventId", true, "companyId", true,
-			"userId", true, "userName", true, "createDate", true, "eventType",
-			true, "className", true, "classPK", true, "message", true,
-			"clientHost", true, "clientIP", true, "serverName", true,
-			"serverPort", true, "sessionID", true);
+			"Audit_AuditEvent", "auditEventId", true, "groupId", true,
+			"companyId", true, "userId", true, "userName", true, "createDate",
+			true, "eventType", true, "className", true, "classPK", true,
+			"message", true, "clientHost", true, "clientIP", true, "serverName",
+			true, "serverPort", true, "sessionID", true);
 	}
 
 	@Test
@@ -443,6 +447,8 @@ public class AuditEventPersistenceTest {
 		long pk = RandomTestUtil.nextLong();
 
 		AuditEvent auditEvent = _persistence.create(pk);
+
+		auditEvent.setGroupId(RandomTestUtil.nextLong());
 
 		auditEvent.setCompanyId(RandomTestUtil.nextLong());
 

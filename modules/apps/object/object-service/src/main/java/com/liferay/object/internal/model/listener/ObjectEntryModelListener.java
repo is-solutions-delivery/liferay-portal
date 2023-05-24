@@ -179,8 +179,7 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 		ObjectEntry objectEntry) {
 
 		AuditMessage auditMessage = AuditMessageBuilder.buildAuditMessage(
-			eventType, objectEntry.getModelClassName(),
-			objectEntry.getObjectEntryId(), null);
+			eventType, objectEntry, null);
 
 		JSONObject additionalInfoJSONObject = auditMessage.getAdditionalInfo();
 
@@ -312,8 +311,7 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 			if (StringUtil.equals(EventTypes.UPDATE, eventType)) {
 				_auditRouter.route(
 					AuditMessageBuilder.buildAuditMessage(
-						EventTypes.UPDATE, objectEntry.getModelClassName(),
-						objectEntry.getObjectEntryId(),
+						EventTypes.UPDATE, objectEntry,
 						_getModifiedAttributes(
 							objectDefinition, originalObjectEntry.getValues(),
 							objectEntry.getValues())));

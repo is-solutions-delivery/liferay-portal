@@ -62,10 +62,12 @@ public class AuditEventCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(33);
 
 		sb.append("{auditEventId=");
 		sb.append(auditEventId);
+		sb.append(", groupId=");
+		sb.append(groupId);
 		sb.append(", companyId=");
 		sb.append(companyId);
 		sb.append(", userId=");
@@ -104,6 +106,7 @@ public class AuditEventCacheModel
 		AuditEventImpl auditEventImpl = new AuditEventImpl();
 
 		auditEventImpl.setAuditEventId(auditEventId);
+		auditEventImpl.setGroupId(groupId);
 		auditEventImpl.setCompanyId(companyId);
 		auditEventImpl.setUserId(userId);
 
@@ -197,6 +200,8 @@ public class AuditEventCacheModel
 
 		auditEventId = objectInput.readLong();
 
+		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
 
 		userId = objectInput.readLong();
@@ -218,6 +223,8 @@ public class AuditEventCacheModel
 	@Override
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(auditEventId);
+
+		objectOutput.writeLong(groupId);
 
 		objectOutput.writeLong(companyId);
 
@@ -299,6 +306,7 @@ public class AuditEventCacheModel
 	}
 
 	public long auditEventId;
+	public long groupId;
 	public long companyId;
 	public long userId;
 	public String userName;
