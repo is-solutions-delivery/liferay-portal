@@ -1,0 +1,36 @@
+definition {
+
+	macro addAccount {
+		Click(locator1 = "Button#PLUS");
+
+		PortletEntry.inputName(name = ${accountName});
+
+		AssertElementPresent(
+			key_fieldLabel = "Type",
+			key_value = ${accountType},
+			locator1 = "Select#GENERIC_SELECT_VALUE");
+
+		SelectField.select(
+			selectFieldLabel = "Type",
+			selectFieldValue = ${accountType});
+
+		if (isSet(accountDescription)) {
+			PortletEntry.inputDescription(description = ${accountDescription});
+		}
+
+		if (isSet(accountLogo)) {
+			User.changeProfileImage(imageName = ${accountLogo});
+		}
+
+		if (isSet(accountTaxId)) {
+			PortletEntry.inputText(
+				fieldLabel = "Tax ID",
+				text = ${accountTaxId});
+		}
+
+		Button.clickSave();
+
+		Alert.viewSuccessMessage();
+	}
+
+}

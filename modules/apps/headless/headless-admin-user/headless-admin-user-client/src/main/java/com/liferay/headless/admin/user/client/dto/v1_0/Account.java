@@ -345,7 +345,8 @@ public class Account implements Cloneable, Serializable {
 
 	public static enum Type {
 
-		BUSINESS("business"), GUEST("guest"), PERSON("person");
+		BUSINESS("business"), GUEST("guest"), PERSON("person"),
+		SUPPLIER("supplier");
 
 		public static Type create(String value) {
 			for (Type type : values()) {

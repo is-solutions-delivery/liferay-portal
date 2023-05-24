@@ -12,21 +12,17 @@
  * details.
  */
 
+package com.liferay.source.formatter.dependencies;
+
+import com.liferay.petra.string.StringBundler;
+
 /**
- * Compute the order of the given site navigation menu item.
+ * @author Qi Zhang
  */
-export default function getOrder({
-	items,
-	parentSiteNavigationMenuItemId,
-	siteNavigationMenuItemId,
-}) {
-	return items
-		.filter(
-			(item) =>
-				item.parentSiteNavigationMenuItemId ===
-				parentSiteNavigationMenuItemId
-		)
-		.findIndex(
-			(item) => item.siteNavigationMenuItemId === siteNavigationMenuItemId
-		);
+public class UnnecessaryTypeCastInStringBundlerConcat {
+
+	public String method(String s1, String s2, String s3) {
+		return StringBundler.concat(String.valueOf(s1), s2.toString(), s3);
+	}
+
 }

@@ -12,10 +12,17 @@
  * details.
  */
 
-export default function updateItemParent(items, itemId, newParentId) {
-	return items.map((item) =>
-		item.siteNavigationMenuItemId === itemId
-			? {...item, parentSiteNavigationMenuItemId: newParentId}
-			: item
-	);
+package com.liferay.source.formatter.dependencies;
+
+import com.liferay.petra.string.StringBundler;
+
+/**
+ * @author Qi Zhang
+ */
+public class UnnecessaryTypeCastInStringBundlerConcat {
+
+	public String method(String s1, String s2, String s3) {
+		return StringBundler.concat(s1, s2, s3);
+	}
+
 }

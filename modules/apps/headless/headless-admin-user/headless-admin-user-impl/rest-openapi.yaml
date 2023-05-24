@@ -62,7 +62,7 @@ components:
                 status:
                     type: integer
                 type:
-                    enum: [business, guest, person]
+                    enum: [business, guest, person, supplier]
             required:
                 - name
             type: object

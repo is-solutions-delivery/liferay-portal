@@ -264,6 +264,7 @@ definition {
 	@description = "This is a test case for COMMERCE-10840. The all types of accounts can be created via API"
 	@priority = 3
 	test CanCreateAllTypesOfAccountsViaAPI {
+		property custom.properties = "feature.flag.COMMERCE-10890=true";
 		property portal.acceptance = "false";
 
 		task ("When a 'Guest' type of account is post and passed via API") {
@@ -275,6 +276,10 @@ definition {
 
 		task ("Then a 'Guest' type of account is created under Accounts panel") {
 			Account.openAccountsAdmin();
+
+			while ((IsElementNotPresent(key_assetTitle = "Guest", locator1 = "AssetLists#ASSET_TYPE_ROW")) && (maxIterations = "3")) {
+				Account.openAccountsAdmin();
+			}
 
 			LexiconTable.viewTableEntryInfo(
 				index = 5,
@@ -292,6 +297,10 @@ definition {
 		task ("Then a 'Business' type of account is created under Accounts panel") {
 			Account.openAccountsAdmin();
 
+			while ((IsElementNotPresent(key_assetTitle = "Business", locator1 = "AssetLists#ASSET_TYPE_ROW")) && (maxIterations = "3")) {
+				Account.openAccountsAdmin();
+			}
+
 			LexiconTable.viewTableEntryInfo(
 				index = 5,
 				tableEntry = "Business",
@@ -308,10 +317,59 @@ definition {
 		task ("Then a 'Person' type of account is created under Accounts panel") {
 			Account.openAccountsAdmin();
 
+			while ((IsElementNotPresent(key_assetTitle = "Person", locator1 = "AssetLists#ASSET_TYPE_ROW")) && (maxIterations = "3")) {
+				Account.openAccountsAdmin();
+			}
+
 			LexiconTable.viewTableEntryInfo(
 				index = 5,
 				tableEntry = "Person",
 				tableEntryInfo = "Person");
+		}
+
+		task ("When a 'Supplier' type of account is post and passed via API") {
+			CommerceJSONAccountsAPI._addCommerceAccount(
+				accountName = "Supplier Account",
+				accountType = "Supplier",
+				externalReferenceCode = "Supplier Account ERC");
+		}
+
+		task ("Then a 'Supplier' type of account is created under Accounts panel") {
+			Account.openAccountsAdmin();
+
+			while ((IsElementNotPresent(key_assetTitle = "Supplier", locator1 = "AssetLists#ASSET_TYPE_ROW")) && (maxIterations = "3")) {
+				Account.openAccountsAdmin();
+			}
+
+			LexiconTable.viewTableEntryInfo(
+				index = 5,
+				tableEntry = "Supplier",
+				tableEntryInfo = "Supplier");
+		}
+	}
+
+	@description = "This is a test case for COMMERCE-11475. An account of type business is created via API when account type is not specified"
+	@priority = 3
+	test CanCreateBusinessAccountWhenAccountTypeIsNotSpecified {
+		property portal.acceptance = "false";
+
+		task ("When an account is created via API without specifying the type") {
+			CommerceJSONAccountsAPI._addCommerceAccount(
+				accountName = "Test Account",
+				accountType = "");
+		}
+
+		task ("Then a 'Business' type of account is created under Accounts panel") {
+			Account.openAccountsAdmin();
+
+			while ((IsElementNotPresent(key_assetTitle = "Business", locator1 = "AssetLists#ASSET_TYPE_ROW")) && (maxIterations = "3")) {
+				Account.openAccountsAdmin();
+			}
+
+			LexiconTable.viewTableEntryInfo(
+				index = 5,
+				tableEntry = "Business",
+				tableEntryInfo = "Business");
 		}
 	}
 

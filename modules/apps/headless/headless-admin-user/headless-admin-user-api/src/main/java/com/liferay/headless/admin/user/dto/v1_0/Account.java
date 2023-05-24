@@ -684,7 +684,8 @@ public class Account implements Serializable {
 	@GraphQLName("Type")
 	public static enum Type {
 
-		BUSINESS("business"), GUEST("guest"), PERSON("person");
+		BUSINESS("business"), GUEST("guest"), PERSON("person"),
+		SUPPLIER("supplier");
 
 		@JsonCreator
 		public static Type create(String value) {

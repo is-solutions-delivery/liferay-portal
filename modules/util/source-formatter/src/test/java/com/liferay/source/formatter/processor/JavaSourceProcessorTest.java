@@ -840,6 +840,13 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUnnecessaryTypeCastInStringBundlerConcat()
+		throws Exception {
+
+		test("UnnecessaryTypeCastInStringBundlerConcat.testjava");
+	}
+
+	@Test
 	public void testUnnecessaryUpgradeProcessClass() throws Exception {
 		test(
 			"UnnecessaryUpgradeProcessClass.testjava",
