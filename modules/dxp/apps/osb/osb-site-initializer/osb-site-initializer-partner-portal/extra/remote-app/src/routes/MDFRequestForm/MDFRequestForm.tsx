@@ -200,12 +200,13 @@ const MDFRequestForm = () => {
 					formikHelpers,
 					siteURL,
 					Status.PENDING,
-					mdfRequestId ? 
-					actions.every(
-						(action) =>
-							action !==
-							PermissionActionType.UPDATE_WO_CHANGE_STATUS
-					) : true
+					mdfRequestId
+						? actions.every(
+								(action) =>
+									action !==
+									PermissionActionType.UPDATE_WO_CHANGE_STATUS
+						  )
+						: true
 				)
 			}
 		>

@@ -16,7 +16,7 @@ import {Liferay} from '../../../services/liferay';
 export function getDTOFromMDFRequest(
 	mdfRequest: MDFRequest,
 	externalReferenceCode?: string,
-	externalReferenceCodeSF?: string,
+	externalReferenceCodeSF?: string
 ): MDFRequestDTO {
 	return {
 		accountExternalReferenceCode: mdfRequest.accountExternalReferenceCode,

@@ -33,7 +33,7 @@ export default interface MDFRequest extends Partial<LiferayObject> {
 	overallCampaignName: string;
 	partnerCountry: LiferayPicklist;
 	r_usrToMDFReqs_userId?: number;
-	submitted? : boolean;
+	submitted?: boolean;
 	targetAudienceRoles?: string[];
 	targetMarkets?: string[];
 	totalCostOfExpense: number;

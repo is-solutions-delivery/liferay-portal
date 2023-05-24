@@ -90,7 +90,7 @@ export default async function submitForm(
 						return null;
 					}
 					if (values.mdfRequestStatus.key !== Status.DRAFT.key) {
-						return await createMDFRequestActivitiesProxyAPI(
+						return createMDFRequestActivitiesProxyAPI(
 							activity,
 							values.company,
 							dtoMDFRequest?.id,
