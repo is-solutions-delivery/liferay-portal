@@ -752,54 +752,59 @@ public class BundleSiteInitializerTest {
 	private void _assertCommerceSpecificationProducts1() throws Exception {
 		CPSpecificationOption cpSpecificationOption =
 			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
-				_serviceContext.getCompanyId(), "test-product-specification-1");
+				_serviceContext.getCompanyId(),
+				"test-commerce-product-specification-1");
 
 		Assert.assertNotNull(cpSpecificationOption);
 		Assert.assertFalse(cpSpecificationOption.getCPOptionCategoryId() > 0);
 		Assert.assertEquals(
-			"Test Product Specification 1",
+			"Test Commerce Product Specification 1",
 			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
 
 		cpSpecificationOption =
 			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
-				_serviceContext.getCompanyId(), "test-product-specification-2");
+				_serviceContext.getCompanyId(),
+				"test-commerce-product-specification-2");
 
 		Assert.assertNotNull(cpSpecificationOption);
 		Assert.assertTrue(cpSpecificationOption.getCPOptionCategoryId() > 0);
 		Assert.assertEquals(
-			"Test Product Specification 2",
+			"Test Commerce Product Specification 2",
 			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
 	}
 
 	private void _assertCommerceSpecificationProducts2() throws Exception {
 		CPSpecificationOption cpSpecificationOption =
 			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
-				_serviceContext.getCompanyId(), "test-product-specification-1");
+				_serviceContext.getCompanyId(),
+				"test-commerce-product-specification-1");
 
 		Assert.assertNotNull(cpSpecificationOption);
 		Assert.assertFalse(cpSpecificationOption.getCPOptionCategoryId() > 0);
 		Assert.assertEquals(
-			"Test Product Specification 1",
+			"Test Commerce Product Specification 1",
 			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
 
 		cpSpecificationOption =
 			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
-				_serviceContext.getCompanyId(), "test-product-specification-2");
+				_serviceContext.getCompanyId(),
+				"test-commerce-product-specification-2");
 
 		Assert.assertNotNull(cpSpecificationOption);
 		Assert.assertFalse(cpSpecificationOption.getCPOptionCategoryId() > 0);
 		Assert.assertEquals(
-			"Test Product Specification 2 Update",
+			"Test Commerce Product Specification 2 Update",
 			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
 
 		cpSpecificationOption =
 			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
-				_serviceContext.getCompanyId(), "test-product-specification-3");
+				_serviceContext.getCompanyId(),
+				"test-commerce-product-specification-3");
 
 		Assert.assertNotNull(cpSpecificationOption);
 		Assert.assertTrue(cpSpecificationOption.getCPOptionCategoryId() > 0);
 		Assert.assertEquals(
-			"Test Product Specification 3",
+			"Test Commerce Product Specification 3",
 			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
 	}
 

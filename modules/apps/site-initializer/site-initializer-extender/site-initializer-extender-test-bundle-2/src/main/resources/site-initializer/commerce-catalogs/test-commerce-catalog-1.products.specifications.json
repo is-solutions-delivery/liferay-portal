@@ -4,32 +4,32 @@
 		"cpDefinitionExternalReferenceCode": "TESTCOMMERCEPRODUCT1",
 		"description": "",
 		"facetable": false,
-		"key": "test-product-specification-1",
+		"key": "test-commerce-product-specification-1",
 		"productSpecificationValue": {
 			"en_US": "1"
 		},
-		"title": "Test Product Specification 1"
+		"title": "Test Commerce Product Specification 1"
 	},
 	{
 		"categoryKey": "",
 		"cpDefinitionExternalReferenceCode": "TESTCOMMERCEPRODUCT1",
 		"description": "",
 		"facetable": false,
-		"key": "test-product-specification-2",
+		"key": "test-commerce-product-specification-2",
 		"productSpecificationValue": {
 			"en_US": "1"
 		},
-		"title": "Test Product Specification 2 Update"
+		"title": "Test Commerce Product Specification 2 Update"
 	},
 	{
 		"categoryKey": "test-commerce-specification-key-1",
 		"cpDefinitionExternalReferenceCode": "TESTCOMMERCEPRODUCT1",
 		"description": "",
 		"facetable": false,
-		"key": "test-product-specification-3",
+		"key": "test-commerce-product-specification-3",
 		"productSpecificationValue": {
 			"en_US": "1"
 		},
-		"title": "Test Product Specification 3"
+		"title": "Test Commerce Product Specification 3"
 	}
 ]
