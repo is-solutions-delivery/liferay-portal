@@ -756,6 +756,19 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(cpSpecificationOption);
 		Assert.assertFalse(cpSpecificationOption.getCPOptionCategoryId() > 0);
+		Assert.assertEquals(
+			"Test Product Specification 1",
+			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
+
+		cpSpecificationOption =
+			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
+				_serviceContext.getCompanyId(), "test-product-specification-2");
+
+		Assert.assertNotNull(cpSpecificationOption);
+		Assert.assertTrue(cpSpecificationOption.getCPOptionCategoryId() > 0);
+		Assert.assertEquals(
+			"Test Product Specification 2",
+			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
 	}
 
 	private void _assertCommerceSpecificationProducts2() throws Exception {
@@ -764,7 +777,30 @@ public class BundleSiteInitializerTest {
 				_serviceContext.getCompanyId(), "test-product-specification-1");
 
 		Assert.assertNotNull(cpSpecificationOption);
+		Assert.assertFalse(cpSpecificationOption.getCPOptionCategoryId() > 0);
+		Assert.assertEquals(
+			"Test Product Specification 1",
+			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
+
+		cpSpecificationOption =
+			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
+				_serviceContext.getCompanyId(), "test-product-specification-2");
+
+		Assert.assertNotNull(cpSpecificationOption);
+		Assert.assertFalse(cpSpecificationOption.getCPOptionCategoryId() > 0);
+		Assert.assertEquals(
+			"Test Product Specification 2 Update",
+			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
+
+		cpSpecificationOption =
+			_cpSpecificationOptionLocalService.fetchCPSpecificationOption(
+				_serviceContext.getCompanyId(), "test-product-specification-3");
+
+		Assert.assertNotNull(cpSpecificationOption);
 		Assert.assertTrue(cpSpecificationOption.getCPOptionCategoryId() > 0);
+		Assert.assertEquals(
+			"Test Product Specification 3",
+			cpSpecificationOption.getTitle(LocaleUtil.getSiteDefault()));
 	}
 
 	private void _assertCPDefinition() throws Exception {
@@ -776,7 +812,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(cpDefinition);
 		Assert.assertEquals("Test Commerce Product", cpDefinition.getName());
 
-		_assertCPDSpecificationOptionValue(cpDefinition, 1);
+		_assertCPDSpecificationOptionValue(cpDefinition, 2);
 
 		ExpandoBridge expandoBridge = cpDefinition.getExpandoBridge();
 
