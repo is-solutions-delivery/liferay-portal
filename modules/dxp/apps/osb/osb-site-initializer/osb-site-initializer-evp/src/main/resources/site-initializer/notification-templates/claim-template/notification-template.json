@@ -1,0 +1,23 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"name": "Employee Volunteering Program",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "[%CURRENT_USER_EMAIL_ADDRESS%]",
+			"fromName": {
+				"en-US": "EVP"
+			},
+			"to": {
+				"en-US": "[%EVPORGANIZATION_AUTHOR_EMAIL_ADDRESS%]"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "EVP Organization Update"
+	},
+	"type": "email"
+}

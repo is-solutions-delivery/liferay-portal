@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+		}
+
+		.container {
+			width: 100%;
+			max-width: 600px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		.header {
+			border-bottom: 1px solid #000;
+			margin-bottom: 20px;
+			padding: 10px 0;
+		}
+
+		.footer {
+			border-top: 1px solid #000;
+			margin-top: 20px;
+			padding-top: 10px;
+			text-align: center;
+		}
+
+		h2 {
+			font-size: 20px;
+			margin-bottom: 20px;
+		}
+
+		p {
+			font-size: 16px;
+			line-height: 1.5;
+			margin-bottom: 10px;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="header"></div>
+
+		<h2>Dear <span class="bold">[%EVPORGANIZATION_AUTHOR_FIRST_NAME%]</span>,</h2>
+
+		<p><span class="bold">[%CURRENT_USER_FIRST_NAME%]</span> just <span class="bold">[%EVPORGANIZATION_STATUS%]</span>
+			the non-profit you requested to be a part of EVP. Below is the comment that complements that action.</p>
+		<p>Please read it through, as it might need further action from you.</p>
+		<p>Thanks for being a part of EVP!</p>
+		<p><span class="bold">[%EVPORGANIZATION_SMALLDESCRIPTION%]</span></p>
+
+		<div class="footer"></div>
+	</div>
+</body>
+
+</html>
