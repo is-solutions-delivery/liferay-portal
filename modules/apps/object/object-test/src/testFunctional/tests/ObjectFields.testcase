@@ -2225,6 +2225,8 @@ definition {
 	@description = "LPS-176828 - Verify that the Formula Builder has same structure as Expression Builder and contains only the principal math operations"
 	@priority = 5
 	test CanSeeAllOperations {
+		property custom.properties = "feature.flag.LPS-164948=true";
+
 		task ("Given a custom object with a formula field") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 176828",
@@ -2252,28 +2254,30 @@ definition {
 		}
 
 		task ("Then the Formula Builder contains the principal math operations") {
+			SelectFrame(locator1 = "Modal#BODY");
+
 			AssertElementPresent(
-				key_tab = "Divided By",
+				key_tabName = "Divided By",
 				locator1 = "ObjectAdmin#FORMULA_BUILDER_OPERATORS");
 
 			AssertElementPresent(
-				key_tab = "Minus",
+				key_tabName = "Minus",
 				locator1 = "ObjectAdmin#FORMULA_BUILDER_OPERATORS");
 
 			AssertElementPresent(
-				key_tab = "Plus",
+				key_tabName = "Plus",
 				locator1 = "ObjectAdmin#FORMULA_BUILDER_OPERATORS");
 
 			AssertElementPresent(
-				key_tab = "Times",
+				key_tabName = "Times",
 				locator1 = "ObjectAdmin#FORMULA_BUILDER_OPERATORS");
 
 			AssertElementNotPresent(
-				key_userName = "And",
+				key_tabName = "And",
 				locator1 = "ObjectAdmin#FORMULA_BUILDER_OPERATORS");
 
 			AssertElementNotPresent(
-				key_userName = "Or",
+				key_tabName = "Or",
 				locator1 = "ObjectAdmin#FORMULA_BUILDER_OPERATORS");
 		}
 	}
@@ -4278,7 +4282,7 @@ definition {
 			ObjectAdmin.goToFieldsDetails(label = "Custom Aggregation");
 
 			ObjectCustomViews.addNewAggregationFilterViaUI(
-				dateValueList = "2000-01-01, 2001-01-01",
+				dateValueList = "01-01-2000, 01-01-2001",
 				filterBy = "Custom Date",
 				filterType = "Range");
 		}

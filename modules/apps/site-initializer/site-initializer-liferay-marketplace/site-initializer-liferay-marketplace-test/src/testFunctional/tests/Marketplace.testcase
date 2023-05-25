@@ -11,29 +11,11 @@ definition {
 	var testSiteURL = "marketplace-site";
 
 	setUp {
-		task ("Set up instance and sign in") {
-			TestCase.setUpPortalInstance();
-
-			User.firstLoginPG();
-		}
-
-		task ("Create a new Marketplace Site") {
-			HeadlessSite.addSite(
-				siteName = ${testSiteName},
-				templateName = "Liferay Marketplace",
-				templateType = "Site Initializer");
-		}
+		MP2Configuration.marketplaceSetUp();
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
-
-		if (${testPortalInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = ${testSiteName});
-		}
+		MP2Configuration.marketplaceInitializersTearDown(doLogout = "true");
 	}
 
 	@description = "Story ID: LPS-183566 | Test Summary: Verify that when the Marketplace is created, Accounts Users will be created for it as well"
@@ -101,6 +83,73 @@ definition {
 				channelSiteName = "Marketplace Site",
 				channelType = "Site",
 				commerceSiteType = "B2X");
+		}
+	}
+
+	@description = "Story ID: LPS-183566 | Test Summary: Verify that when the Marketplace is created, Products Options will also be created for it as well"
+	@ignore = "true"
+	@priority = 3
+	test ProductsOptionsAreCreatedForMP20 {
+		task ("Given that I go to the Product Options page") {
+			CommerceNavigator.gotoPortlet(
+				category = "Product Management",
+				portlet = "Options");
+		}
+
+		task ("Then I should be able to assert that all Product Options were created for the Marketplace Site") {
+			CommerceNavigator.gotoEntry(entryName = "Trial");
+
+			CommerceEntry.viewOptionsEntry(
+				optionDescription = "Specifies if a trial exists for a given app or solution submission.",
+				optionName = "Trial");
+
+			Navigator.gotoBack();
+
+			CommerceNavigator.gotoEntry(entryName = "DXP License Usage Type");
+
+			CommerceEntry.viewOptionsEntry(
+				optionDescription = "Specifies if a acquision of an app.",
+				optionName = "DXP License Usage Type");
+
+			Navigator.gotoBack();
+
+			CommerceNavigator.gotoEntry(entryName = "DXP License Support");
+
+			CommerceEntry.viewOptionsEntry(
+				optionDescription = "Adds on support for DXP Licenses.",
+				optionName = "DXP License Support");
+		}
+	}
+
+	@description = "Story ID: LPS-183796 | Test Summary: Verify that when the Marketplace is created, Specification Group is also created"
+	@priority = 3
+	test SpecificationGroupAreCreatedForMP20 {
+		task ("Given that I go to the Specifications page") {
+			CommerceNavigator.gotoPortlet(
+				category = "Product Management",
+				portlet = "Specifications");
+		}
+
+		task ("Then I should be able to assert that Specification Groups was created for the Marketplace Site") {
+			CommerceNavigator.gotoCommercePortletNavItem(navItem = "Specification Groups");
+
+			CommerceEntry.viewSpecificationGroupsEntries(specificationGroupsEntries = "Pricing and Licensing Terms,App Support and Help,Product Metadata");
+		}
+	}
+
+	@description = "Story ID: LPS-183796 | Test Summary: Verify that when the Marketplace is created, Specification Label is also created"
+	@priority = 3
+	test SpecificationLabelAreCreatedForMP20 {
+		task ("Given that I go to the Specifications page") {
+			CommerceNavigator.gotoPortlet(
+				category = "Product Management",
+				portlet = "Specifications");
+
+			Pagination.changePagination(itemsPerPage = 40);
+		}
+
+		task ("Then I should be able to assert that Specification Labels was created for the Marketplace Site") {
+			CommerceEntry.viewSpecificationLabelsEntries(specificationLabelsEntries = "Type,App API Reference URL,Latest Version,Source Code URL,License Term,Developer Name,Trial Length,License Type,App Usage Terms URL,Past Versions Work With,Current Requirements,Product Downloads,Publisher Name,Price Model,Lifetime License,App Installation Guide URL,Publisher Web site URL,App Documentation URL,Support URL,Product Notes");
 		}
 	}
 

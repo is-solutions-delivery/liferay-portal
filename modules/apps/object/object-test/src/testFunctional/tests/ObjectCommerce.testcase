@@ -212,14 +212,16 @@ definition {
 			channelName = "Test Channel",
 			channelType = "Site");
 
-		Refresh();
+		WaitForPageLoad();
 
-		ObjectCommerce.channelsTab(navigatorChannels = "Notification Templates");
+		CommerceEntry.gotoMenuTab(menuTab = "Notification Templates");
 
 		LexiconEntry.gotoAdd();
 
-		for (var optionTypeList : list "Create,Delete,Update") {
-			ObjectCommerce.viewNotPresentOptionType(optionType = ${optionTypeList});
+		for (var optionType : list "Create,Delete,Update") {
+			AssertElementNotPresent(
+				chooseOption = ${optionType},
+				locator1 = "ObjectAdmin#SELECT_CHOOSE_OPTION");
 		}
 	}
 

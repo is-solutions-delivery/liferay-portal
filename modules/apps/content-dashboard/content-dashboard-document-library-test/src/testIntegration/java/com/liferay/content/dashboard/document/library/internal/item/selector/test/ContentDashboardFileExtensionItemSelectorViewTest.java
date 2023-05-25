@@ -19,12 +19,14 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.ItemSelectorView;
+import com.liferay.item.selector.criteria.file.criterion.FileExtensionItemSelectorCriterion;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderResponse;
@@ -80,18 +82,18 @@ public class ContentDashboardFileExtensionItemSelectorViewTest {
 
 	@Test
 	public void testGetData() throws Exception {
-		_addFileEntry("java");
-		_addFileEntry("liferay");
-		_addFileEntry("mp3");
-		_addFileEntry("mp4");
-		_addFileEntry("pdf");
-		_addFileEntry("png");
-		_addFileEntry("ppt");
-		_addFileEntry("txt");
-		_addFileEntry("xls");
-		_addFileEntry("zip");
+		_addFileEntry(_group, "java");
+		_addFileEntry(_group, "liferay");
+		_addFileEntry(_group, "mp3");
+		_addFileEntry(_group, "mp4");
+		_addFileEntry(_group, "pdf");
+		_addFileEntry(_group, "png");
+		_addFileEntry(_group, "ppt");
+		_addFileEntry(_group, "txt");
+		_addFileEntry(_group, "xls");
+		_addFileEntry(_group, "zip");
 
-		Map<String, Object> data = _getData();
+		Map<String, Object> data = _getData(null);
 
 		JSONArray fileExtensionGroupsJSONArray = (JSONArray)data.get(
 			"fileExtensionGroups");
@@ -132,14 +134,46 @@ public class ContentDashboardFileExtensionItemSelectorViewTest {
 		Assert.assertNotNull(data.get("itemSelectorSaveEvent"));
 	}
 
-	private FileEntry _addFileEntry(String fileExtension) throws Exception {
+	@Test
+	public void testGetDataSelectedGroup() throws Exception {
+		_addFileEntry(_group, "java");
+		_addFileEntry(_group, "liferay");
+
+		Group group2 = GroupTestUtil.addGroup();
+
+		try {
+			Map<String, Object> data = _getData(group2);
+
+			JSONArray fileExtensionGroupsJSONArray = (JSONArray)data.get(
+				"fileExtensionGroups");
+
+			Assert.assertEquals(0, fileExtensionGroupsJSONArray.length());
+
+			_addFileEntry(group2, "xls");
+			_addFileEntry(group2, "zip");
+
+			data = _getData(group2);
+
+			fileExtensionGroupsJSONArray = (JSONArray)data.get(
+				"fileExtensionGroups");
+
+			Assert.assertEquals(2, fileExtensionGroupsJSONArray.length());
+		}
+		finally {
+			_groupLocalService.deleteGroup(group2);
+		}
+	}
+
+	private FileEntry _addFileEntry(Group group, String fileExtension)
+		throws Exception {
+
 		return DLAppLocalServiceUtil.addFileEntry(
 			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
-			_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			RandomTestUtil.randomString() + "." + fileExtension,
 			MimeTypesUtil.getExtensionContentType(fileExtension), new byte[0],
 			null, null,
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+			ServiceContextTestUtil.getServiceContext(group.getGroupId()));
 	}
 
 	private void _assertExtensionGroupJSONObject(
@@ -164,7 +198,7 @@ public class ContentDashboardFileExtensionItemSelectorViewTest {
 			fileExtensionJSONObject.getString("fileExtension"));
 	}
 
-	private Map<String, Object> _getData() throws Exception {
+	private Map<String, Object> _getData(Group group) throws Exception {
 		MockHttpServletRequest mockHttpServletRequest =
 			new MockHttpServletRequest();
 
@@ -190,9 +224,18 @@ public class ContentDashboardFileExtensionItemSelectorViewTest {
 		mockHttpServletRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, themeDisplay);
 
+		FileExtensionItemSelectorCriterion fileExtensionItemSelectorCriterion =
+			new FileExtensionItemSelectorCriterion();
+
+		if (group != null) {
+			fileExtensionItemSelectorCriterion.setSelectedGroupIds(
+				new long[] {group.getGroupId()});
+		}
+
 		_contentDashboardFileExtensionItemSelectorView.renderHTML(
-			mockHttpServletRequest, new MockHttpServletResponse(), null,
-			new MockLiferayPortletURL(), RandomTestUtil.randomString(), true);
+			mockHttpServletRequest, new MockHttpServletResponse(),
+			fileExtensionItemSelectorCriterion, new MockLiferayPortletURL(),
+			RandomTestUtil.randomString(), true);
 
 		Object contentDashboardFileExtensionItemSelectorViewDisplayContext =
 			mockHttpServletRequest.getAttribute(
@@ -228,5 +271,8 @@ public class ContentDashboardFileExtensionItemSelectorViewTest {
 
 	@DeleteAfterTestRun
 	private Group _group;
+
+	@Inject
+	private GroupLocalService _groupLocalService;
 
 }

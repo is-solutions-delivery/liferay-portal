@@ -12,7 +12,7 @@
 <tbody>
 <tr>
 	<td>PERMISSIONS_TITLE</td>
-	<td>//h3[contains(.,'Permissions')]</td>
+	<td>//div[@class='modal-title' and contains(text(), 'Permissions')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -37,7 +37,7 @@
 </tr>
 <tr>
 	<td>PERMISSIONS_SEARCH_ICON</td>
-	<td>//span[contains(@class,'input-group-inset-item input-group-inset-item-after')]//button[2][contains(@class,'btn btn-monospaced btn-unstyled')]</td>
+	<td>//span[contains(@class,'input-group-inset-item input-group-inset-item-after')]//button[contains(@class,'btn btn-monospaced btn-unstyled')]</td>
 	<td></td>
 </tr>
 <tr>

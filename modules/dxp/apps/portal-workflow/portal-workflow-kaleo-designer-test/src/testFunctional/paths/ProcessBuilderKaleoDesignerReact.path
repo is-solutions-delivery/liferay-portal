@@ -461,7 +461,7 @@
 </tr>
 <tr>
 	<td>NOTIFICATIONS_TYPE_DROPDOWN_BY_POSITION</td>
-	<td>//div[contains(@class,'panel-group panel-group-flush') and contains(@role,'tablist')][${key_sectionOption}]//input[contains(@value,'Select')]</td>
+	<td>//div[contains(@class,'panel-group') and contains(@role,'tablist')][${key_sectionOption}]//input[contains(@class,'inset')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -471,7 +471,7 @@
 </tr>
 <tr>
 	<td>NOTIFICATION_TYPE_OPTIONS_BY_POSITION</td>
-	<td>//div[@class='dropdown-menu show']//ul[@class='list-unstyled']//input[@type='checkbox' and @value ='${key_checkboxValue}']</td>
+	<td>//div[contains(@class, 'dropdown-menu show')]//ul[@class='list-unstyled']//span[contains(text(), '${key_checkboxValue}')]</td>
 	<td></td>
 </tr>
 <tr>

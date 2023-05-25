@@ -259,6 +259,16 @@ definition {
 	}
 
 	macro searchField {
+		WaitForElementPresent(locator1 = "FrontendDataSetAdmin#FIELDS_TAB_SEARCH");
+
+		AssertElementPresent(locator1 = "Icon#BASIC_SEARCH");
+
+		Type(
+			locator1 = "FrontendDataSetAdmin#FIELDS_TAB_SEARCH",
+			value1 = ${searchTerm});
+	}
+
+	macro searchFieldInModal {
 		WaitForElementPresent(locator1 = "FrontendDataSetAdmin#MODAL_SEARCH");
 
 		AssertElementPresent(locator1 = "Icon#BASIC_SEARCH");

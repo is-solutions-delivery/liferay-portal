@@ -19,16 +19,12 @@ package com.liferay.fragment.importer;
  */
 public class FragmentsImporterResultEntry {
 
-	public FragmentsImporterResultEntry(String name, Status status) {
-		_name = name;
-		_status = status;
-	}
-
 	public FragmentsImporterResultEntry(
-		String name, Status status, String errorMessage) {
+		String name, Status status, Type type, String errorMessage) {
 
 		_name = name;
 		_status = status;
+		_type = type;
 		_errorMessage = errorMessage;
 	}
 
@@ -42,6 +38,10 @@ public class FragmentsImporterResultEntry {
 
 	public Status getStatus() {
 		return _status;
+	}
+
+	public Type getType() {
+		return _type;
 	}
 
 	public enum Status {
@@ -61,8 +61,25 @@ public class FragmentsImporterResultEntry {
 
 	}
 
-	private String _errorMessage;
+	public enum Type {
+
+		COMPOSITION("composition"), FRAGMENT("fragment");
+
+		public String getLabel() {
+			return _label;
+		}
+
+		private Type(String label) {
+			_label = label;
+		}
+
+		private final String _label;
+
+	}
+
+	private final String _errorMessage;
 	private final String _name;
 	private final Status _status;
+	private final Type _type;
 
 }

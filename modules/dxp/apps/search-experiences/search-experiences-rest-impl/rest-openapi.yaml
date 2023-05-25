@@ -565,7 +565,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.search.experiences.rest.client', and version '3.0.15'."
+        'com.liferay.search.experiences.rest.client', and version '3.0.16'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -1006,6 +1006,27 @@ paths:
             tags: ["SXPElement"]
         post:
             operationId: postSXPElement
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/SXPElement"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/SXPElement"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SXPElement"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/SXPElement"
+            tags: ["SXPElement"]
+    /sxp-elements/preview:
+        post:
+            operationId: postSXPElementPreview
             requestBody:
                 content:
                     application/json:
