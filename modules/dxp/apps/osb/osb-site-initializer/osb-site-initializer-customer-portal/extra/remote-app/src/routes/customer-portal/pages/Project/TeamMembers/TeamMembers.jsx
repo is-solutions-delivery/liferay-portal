@@ -14,6 +14,7 @@ import {useOutletContext} from 'react-router-dom';
 import i18n from '../../../../../common/I18n';
 import useCurrentKoroneikiAccount from '../../../../../common/hooks/useCurrentKoroneikiAccount';
 import ManageProductUsers from './components/ManageProductUsers/ManageProductUsers';
+import TeamMemberFooter from './components/TeamMemberFooter/TeamMembersFooter';
 import TeamMembersTable from './components/TeamMembersTable/TeamMembersTable';
 
 const TeamMembers = () => {
@@ -43,6 +44,11 @@ const TeamMembers = () => {
 				/>
 
 				<ManageProductUsers
+					koroneikiAccount={koroneikiAccount}
+					loading={loading}
+				/>
+
+				<TeamMemberFooter
 					koroneikiAccount={koroneikiAccount}
 					loading={loading}
 				/>

@@ -1,0 +1,68 @@
+.customer-portal-card-footer {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 24px;
+	background: #e7efff;
+	border-radius: 8px;
+	flex: none;
+	order: 1;
+	flex-grow: 0;
+	margin-top: 24px;
+	margin-right: 390px;
+}
+
+.customer-portal-card-footer p,
+.customer-portal-card-footer h3,
+.customer-portal-card-footer h1,
+.customer-portal-card-footer h4,
+.customer-portal-card-footer h5 {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	display: flex;
+	align-items: center;
+}
+
+.customer-portal-card-footer h1 {
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 28px;
+	color: #272833;
+}
+
+.customer-portal-card-footer p,
+.customer-portal-card-footer h5 {
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 16px;
+}
+
+.customer-portal-card-footer p {
+	color: #6c6c76;
+}
+
+.customer-portal-card-footer h3 {
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 20px;
+	color: #272833;
+}
+
+.customer-portal-card-footer h4 {
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 16px;
+	color: #4e515a;
+}
+
+.customer-portal-card-footer h5 {
+	color: #91959b;
+}
+
+.customer-portal-card-title {
+	display: flex;
+}
+
+.customer-portal-card-description {
+	margin-right: 55px;
+}
