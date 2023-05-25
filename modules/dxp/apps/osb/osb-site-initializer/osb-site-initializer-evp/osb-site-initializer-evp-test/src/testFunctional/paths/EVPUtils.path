@@ -15,6 +15,31 @@
 	<td>//div//a[contains(@class,'btn-solid') and contains(.,'Sign In')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>REQUEST_COLUMNS</td>
+	<td>//div[contains(@class,'lfr-layout-structure')]//h5[contains(@class,'component-text')][contains(text(),'${key_columns}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>KEBAB_OPTION</td>
+	<td>//div[contains(@class,'menu-open')]//span[contains(text(),'${key_option}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DETAILS_PAGE</td>
+	<td>//div[contains(@class,'layout-content')]//h3[contains(text(),'${key_details}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VIEW_ENTRY_NAME_ON_PAGE</td>
+	<td>//span[(@class='text-truncate') and contains(text(),'${key_entryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>KEBAB_MENU_FIELD</td>
+	<td>//input[contains(@class,'requestID')][contains(@value,'${key_number}')]//following-sibling::div[@id="evp-request-kebab-button"]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
