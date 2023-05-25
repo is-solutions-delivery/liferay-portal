@@ -136,7 +136,22 @@ const MDFRequestForm = () => {
 						FormikHelpers<MDFRequest>,
 						'setFieldValue'
 					>
-				) => submitForm(values, formikHelpers, siteURL, Status.DRAFT)}
+				) =>
+					actions &&
+					submitForm(
+						values,
+						formikHelpers,
+						siteURL,
+						Status.DRAFT,
+						mdfRequestId
+							? actions.every(
+									(action) =>
+										action !==
+										PermissionActionType.UPDATE_WO_CHANGE_STATUS
+							  )
+							: true
+					)
+				}
 				validationSchema={goalsSchema}
 			/>
 		),
@@ -153,7 +168,22 @@ const MDFRequestForm = () => {
 						FormikHelpers<MDFRequest>,
 						'setFieldValue'
 					>
-				) => submitForm(values, formikHelpers, siteURL, Status.DRAFT)}
+				) =>
+					actions &&
+					submitForm(
+						values,
+						formikHelpers,
+						siteURL,
+						Status.DRAFT,
+						mdfRequestId
+							? actions.every(
+									(action) =>
+										action !==
+										PermissionActionType.UPDATE_WO_CHANGE_STATUS
+							  )
+							: true
+					)
+				}
 				validationSchema={activitiesSchema}
 			/>
 		),
@@ -167,7 +197,22 @@ const MDFRequestForm = () => {
 						FormikHelpers<MDFRequest>,
 						'setFieldValue'
 					>
-				) => submitForm(values, formikHelpers, siteURL, Status.DRAFT)}
+				) =>
+					actions &&
+					submitForm(
+						values,
+						formikHelpers,
+						siteURL,
+						Status.DRAFT,
+						mdfRequestId
+							? actions.every(
+									(action) =>
+										action !==
+										PermissionActionType.UPDATE_WO_CHANGE_STATUS
+							  )
+							: true
+					)
+				}
 			/>
 		),
 	};
