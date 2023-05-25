@@ -17,7 +17,7 @@ interface IProps {
 }
 
 interface Item {
-	[key: string]: string | undefined;
+	[key: string]: string | undefined | string[];
 }
 const GoalsEntries = ({mdfRequest}: IProps) => (
 	<div>
@@ -55,6 +55,9 @@ const GoalsEntries = ({mdfRequest}: IProps) => (
 				{
 					columnKey: 'value',
 					label: '',
+					render: (data: string | string[] | undefined) => (
+						<p className="text-wrap">{data}</p>
+					),
 				},
 			]}
 			rows={[
@@ -70,12 +73,9 @@ const GoalsEntries = ({mdfRequest}: IProps) => (
 				{
 					title: 'Liferay business/sales goals',
 					value:
-						mdfRequest.liferayBusinessSalesGoals !== undefined &&
-						mdfRequest.liferayBusinessSalesGoals.includes(
-							'Other - Please describe'
-						)
-							? mdfRequest.liferayBusinessSalesGoalsOther
-							: mdfRequest.liferayBusinessSalesGoals?.join('; '),
+						mdfRequest.liferayBusinessSalesGoals?.join('; ') +
+						'; ' +
+						mdfRequest.liferayBusinessSalesGoalsOther,
 				},
 			]}
 		/>
