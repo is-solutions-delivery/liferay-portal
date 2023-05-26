@@ -98,6 +98,8 @@ definition {
 
 		task ("Then I'm redirected to the 'MDF Request Listing' page") {
 			PRMPages.assertPageTitle(pageTitle = "MDF Requests");
+
+			
 		}
 	}
 
