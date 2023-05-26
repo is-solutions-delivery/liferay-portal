@@ -48,6 +48,8 @@ export default withRouter(
 							'anonymous-user-configuration-name'
 						)}
 				</p>
+
+				{creator.userGroupInfos && creator.userGroupInfos[0]?.name}
 			</div>
 
 			<UserPopover creator={creator} statistics={creatorStatistics} />
