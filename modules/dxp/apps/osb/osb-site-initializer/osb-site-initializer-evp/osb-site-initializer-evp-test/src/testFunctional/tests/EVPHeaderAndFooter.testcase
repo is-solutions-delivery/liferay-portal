@@ -49,6 +49,7 @@ definition {
 				var pageName = StringUtil.lowerCase(${pageName});
 
 				AssertLocation.assertPartialLocation(value1 = ${pageName});
+				
 			}
 		}
 	}
