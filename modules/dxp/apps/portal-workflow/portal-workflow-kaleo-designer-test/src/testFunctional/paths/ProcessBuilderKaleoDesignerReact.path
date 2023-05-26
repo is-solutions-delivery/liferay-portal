@@ -415,11 +415,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>TIMERS_BUTTON_CHOOSE_SCRIPT_LANGUAGE</td>
-	<td>//div[@class='form-group']//select[@id='type']//option[contains(text(),'${key_selectType}')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>DEFAULT_TOGGLE_SWITCH_STATUS</td>
 	<td>//span[@class='toggle-switch-label' and contains(., '${key_defaultStatus}')]</td>
 	<td></td>
@@ -622,6 +617,11 @@
 <tr>
 	<td>PROPERTIES_TYPE_TEXTAREA</td>
 	<td>//label[@for='type']/..//select[@id='type']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PROPERTIES_SCRIPT_TYPE_INDEX</td>
+	<td>xpath=(//label[@for='type']/..//select[@id='type'])[${key_index}]</td>
 	<td></td>
 </tr>
 </tbody>
