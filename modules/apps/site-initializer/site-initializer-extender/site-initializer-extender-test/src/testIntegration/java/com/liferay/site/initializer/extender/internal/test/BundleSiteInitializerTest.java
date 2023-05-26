@@ -358,7 +358,7 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
-	private void _assertAccountGroupAssign(
+	private void _assertAccountGroupAssignments(
 		AdminAccountGroup adminAccountGroup, int accountGroupsCount) {
 
 		Assert.assertEquals(
@@ -384,7 +384,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 1", accountGroup.getName());
 
-		_assertAccountGroupAssign(accountGroup, 1);
+		_assertAccountGroupAssignments(accountGroup, 1);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -393,7 +393,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 2", accountGroup.getName());
 
-		_assertAccountGroupAssign(accountGroup, 1);
+		_assertAccountGroupAssignments(accountGroup, 1);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -401,7 +401,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 3", accountGroup.getName());
-		_assertAccountGroupAssign(accountGroup, 0);
+		_assertAccountGroupAssignments(accountGroup, 0);
 	}
 
 	private void _assertAccountGroups2() throws Exception {
@@ -419,7 +419,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 1", accountGroup.getName());
-		_assertAccountGroupAssign(accountGroup, 1);
+		_assertAccountGroupAssignments(accountGroup, 1);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -428,7 +428,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals(
 			"Test Account Group 2 Update", accountGroup.getName());
-		_assertAccountGroupAssign(accountGroup, 1);
+		_assertAccountGroupAssignments(accountGroup, 1);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -436,7 +436,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 3", accountGroup.getName());
-		_assertAccountGroupAssign(accountGroup, 2);
+		_assertAccountGroupAssignments(accountGroup, 2);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -444,7 +444,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 4", accountGroup.getName());
-		_assertAccountGroupAssign(accountGroup, 0);
+		_assertAccountGroupAssignments(accountGroup, 0);
 	}
 
 	private void _assertAccounts1() throws Exception {

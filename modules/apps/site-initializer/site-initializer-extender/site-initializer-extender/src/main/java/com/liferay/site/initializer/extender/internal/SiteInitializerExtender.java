@@ -135,8 +135,8 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
-				_accountEntryLocalService, _accountGroupRelService,
-				_accountGroupLocalService, _adminAccountGroupResourcefactory,
+				_accountEntryLocalService, _accountGroupLocalService,
+				_adminAccountGroupResourcefactory, _accountGroupRelService,
 				_accountResourceFactory, _accountRoleLocalService,
 				_accountRoleResourceFactory, _assetCategoryLocalService,
 				_assetListEntryLocalService, bundle,
@@ -249,8 +249,8 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
-				_accountEntryLocalService, _accountGroupRelService,
-				_accountGroupLocalService, _adminAccountGroupResourcefactory,
+				_accountEntryLocalService, _accountGroupLocalService,
+				_adminAccountGroupResourcefactory, _accountGroupRelService,
 				_accountResourceFactory, _accountRoleLocalService,
 				_accountRoleResourceFactory, _assetCategoryLocalService,
 				_assetListEntryLocalService,

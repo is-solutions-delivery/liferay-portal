@@ -235,9 +235,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	public BundleSiteInitializer(
 		AccountEntryLocalService accountEntryLocalService,
-		AccountGroupRelService accountGroupRelService,
 		AccountGroupLocalService accountGroupLocalService,
 		AdminAccountGroupResource.Factory adminAccountGroupResourceFactory,
+		AccountGroupRelService accountGroupRelService,
 		AccountResource.Factory accountResourceFactory,
 		AccountRoleLocalService accountRoleLocalService,
 		AccountRoleResource.Factory accountRoleResourceFactory,
@@ -311,9 +311,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 		WorkflowDefinitionResource.Factory workflowDefinitionResourceFactory) {
 
 		_accountEntryLocalService = accountEntryLocalService;
-		_accountGroupRelService = accountGroupRelService;
 		_accountGroupLocalService = accountGroupLocalService;
 		_adminAccountGroupResourceFactory = adminAccountGroupResourceFactory;
+		_accountGroupRelService = accountGroupRelService;
 		_accountResourceFactory = accountResourceFactory;
 		_accountRoleLocalService = accountRoleLocalService;
 		_accountRoleResourceFactory = accountRoleResourceFactory;
@@ -701,6 +701,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 						jsonObject.getString(
 							"accountGroupExternalReferenceCode"),
 						serviceContext.getCompanyId());
+
+			if (accountGroup == null) {
+				continue;
+			}
 
 			_accountGroupRelService.addAccountGroupRels(
 				accountGroup.getAccountGroupId(), AccountEntry.class.getName(),
