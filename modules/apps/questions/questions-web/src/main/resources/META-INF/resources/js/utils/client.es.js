@@ -313,6 +313,10 @@ export const getThreadQuery = `
 				id
 				image
 				name
+				userGroupInfos{
+					id
+					name
+				}
 			}
 			creatorStatistics {
 				joinDate
@@ -493,6 +497,10 @@ export const getSectionThreadsQuery = `
 					id
 					image
 					name
+					userGroupInfos{
+						id
+						name
+					}
 				}
 				dateCreated
 				dateModified
@@ -548,6 +556,10 @@ export const getThreadsQuery = `
 					id
 					image
 					name
+					userGroupInfos {
+						id
+						name
+					}
 				}
 				dateCreated
 				dateModified
@@ -600,6 +612,10 @@ export const getRankedThreadsQuery = `
 					id
 					image
 					name
+					userGroupInfos {
+						id
+						name
+					}
 				}
 				dateModified
 				friendlyUrlPath
@@ -710,6 +726,10 @@ export const getRelatedThreadsQuery = `
 					id
 					image
 					name
+					userGroupInfos {
+						id
+						name
+					}
 				}
 				dateModified
 				friendlyUrlPath
@@ -806,6 +826,10 @@ export const getUserActivityQuery = `
 					id
 					image
 					name
+					userGroupInfos {
+						id
+						name
+					}
 				}
 				creatorStatistics {
 					postsNumber
@@ -965,6 +989,10 @@ export const getSubscriptionsQuery = `
 							id
 							image
 							name
+							userGroupInfos {
+								id
+								name
+							}
 						}
 						creatorStatistics {
 							joinDate
