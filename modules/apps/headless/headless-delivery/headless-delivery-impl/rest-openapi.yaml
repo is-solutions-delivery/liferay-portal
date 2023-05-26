@@ -1025,6 +1025,28 @@ components:
                     format: uri
                     readOnly: true
                     type: string
+                userGroupInfos:
+                    description:
+                        A list of userGroups role information.
+                    items:
+                        $ref: "#/components/schemas/UserGroupInfo"
+                    type: array
+            type: object
+        UserGroupInfo:
+            description:
+                The author's user groups information.
+            properties:
+                name:
+                    description:
+                        The author's role name.
+                    readOnly: true
+                    type: string
+                id:
+                    description:
+                        The author's role ID.
+                    format: int64
+                    readOnly: true
+                    type: integer
             type: object
         CreatorStatistics:
             # @review

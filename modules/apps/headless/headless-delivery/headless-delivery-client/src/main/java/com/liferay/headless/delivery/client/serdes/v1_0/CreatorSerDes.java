@@ -15,6 +15,7 @@
 package com.liferay.headless.delivery.client.serdes.v1_0;
 
 import com.liferay.headless.delivery.client.dto.v1_0.Creator;
+import com.liferay.headless.delivery.client.dto.v1_0.UserGroupInfo;
 import com.liferay.headless.delivery.client.json.BaseJSONParser;
 
 import java.util.Iterator;
@@ -161,6 +162,26 @@ public class CreatorSerDes {
 			sb.append("\"");
 		}
 
+		if (creator.getUserGroupInfos() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"userGroupInfos\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < creator.getUserGroupInfos().length; i++) {
+				sb.append(String.valueOf(creator.getUserGroupInfos()[i]));
+
+				if ((i + 1) < creator.getUserGroupInfos().length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -236,6 +257,14 @@ public class CreatorSerDes {
 			map.put("profileURL", String.valueOf(creator.getProfileURL()));
 		}
 
+		if (creator.getUserGroupInfos() == null) {
+			map.put("userGroupInfos", null);
+		}
+		else {
+			map.put(
+				"userGroupInfos", String.valueOf(creator.getUserGroupInfos()));
+		}
+
 		return map;
 	}
 
@@ -294,6 +323,22 @@ public class CreatorSerDes {
 			else if (Objects.equals(jsonParserFieldName, "profileURL")) {
 				if (jsonParserFieldValue != null) {
 					creator.setProfileURL((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "userGroupInfos")) {
+				if (jsonParserFieldValue != null) {
+					Object[] jsonParserFieldValues =
+						(Object[])jsonParserFieldValue;
+
+					UserGroupInfo[] userGroupInfosArray =
+						new UserGroupInfo[jsonParserFieldValues.length];
+
+					for (int i = 0; i < userGroupInfosArray.length; i++) {
+						userGroupInfosArray[i] = UserGroupInfoSerDes.toDTO(
+							(String)jsonParserFieldValues[i]);
+					}
+
+					creator.setUserGroupInfos(userGroupInfosArray);
 				}
 			}
 		}
