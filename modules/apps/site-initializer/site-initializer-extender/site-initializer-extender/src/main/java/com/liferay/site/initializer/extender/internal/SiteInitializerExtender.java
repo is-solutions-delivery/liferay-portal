@@ -135,10 +135,10 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
-				_accountEntryLocalService, _accountGroupRelService,
-				_accountGroupLocalService, _adminAccountGroupResourcefactory,
-				_accountResourceFactory, _accountRoleLocalService,
-				_accountRoleResourceFactory, _assetCategoryLocalService,
+				_accountEntryLocalService, _accountGroupLocalService,
+				_accountGroupRelService, _accountResourceFactory,
+				_accountRoleLocalService, _accountRoleResourceFactory,
+				_adminAccountGroupResourcefactory, _assetCategoryLocalService,
 				_assetListEntryLocalService, bundle,
 				_clientExtensionEntryLocalService, _configurationProvider,
 				_ddmStructureLocalService, _ddmTemplateLocalService,
@@ -249,10 +249,10 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
-				_accountEntryLocalService, _accountGroupRelService,
-				_accountGroupLocalService, _adminAccountGroupResourcefactory,
-				_accountResourceFactory, _accountRoleLocalService,
-				_accountRoleResourceFactory, _assetCategoryLocalService,
+				_accountEntryLocalService, _accountGroupLocalService,
+				_accountGroupRelService, _accountResourceFactory,
+				_accountRoleLocalService, _accountRoleResourceFactory,
+				_adminAccountGroupResourcefactory, _assetCategoryLocalService,
 				_assetListEntryLocalService,
 				ProxyUtil.newDelegateProxyInstance(
 					Bundle.class.getClassLoader(), Bundle.class,
