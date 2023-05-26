@@ -2875,7 +2875,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 		}
 	}
-
+asdfasdf
 	private void _addOrUpdateObjectRelationships(
 			Map<String, String> objectDefinitionIdsStringUtilReplaceValues,
 			ServiceContext serviceContext)
