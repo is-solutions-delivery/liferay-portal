@@ -14,10 +14,7 @@
 
 package com.liferay.site.initializer.extender.internal.test;
 
-import com.liferay.account.model.AccountEntry;
-import com.liferay.account.model.AccountGroupRel;
-import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.account.service.AccountGroupRelService;
+import com.liferay.account.service.AccountGroupRelLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetEntry;
@@ -81,7 +78,6 @@ import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowDefinition;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowDefinitionResource;
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AdminAccountGroup;
 import com.liferay.headless.commerce.admin.account.resource.v1_0.AdminAccountGroupResource;
-import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductSpecification;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductSpecificationResource;
 import com.liferay.headless.delivery.dto.v1_0.SitePage;
 import com.liferay.headless.delivery.resource.v1_0.SitePageResource;
@@ -362,6 +358,16 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
+	private void _assertAccountGroupAssign(
+		AdminAccountGroup adminAccountGroup, int accountGroupsCount) {
+
+		Assert.assertEquals(
+			accountGroupsCount,
+			_accountGroupRelLocalService.
+				getAccountGroupRelsCountByAccountGroupId(
+					adminAccountGroup.getId()));
+	}
+
 	private void _assertAccountGroups1() throws Exception {
 		AdminAccountGroupResource.Builder accountGroupResourceBuilder =
 			_adminAccountGroupResourcefactory.create();
@@ -378,6 +384,8 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 1", accountGroup.getName());
 
+		_assertAccountGroupAssign(accountGroup, 1);
+
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
 				"TESTACCOUNTGROUP2");
@@ -385,12 +393,15 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 2", accountGroup.getName());
 
+		_assertAccountGroupAssign(accountGroup, 1);
+
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
 				"TESTACCOUNTGROUP3");
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 3", accountGroup.getName());
+		_assertAccountGroupAssign(accountGroup, 0);
 	}
 
 	private void _assertAccountGroups2() throws Exception {
@@ -408,6 +419,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 1", accountGroup.getName());
+		_assertAccountGroupAssign(accountGroup, 1);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -416,6 +428,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals(
 			"Test Account Group 2 Update", accountGroup.getName());
+		_assertAccountGroupAssign(accountGroup, 1);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -423,6 +436,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 3", accountGroup.getName());
+		_assertAccountGroupAssign(accountGroup, 2);
 
 		accountGroup =
 			accountGroupResource.getAccountGroupByExternalReferenceCode(
@@ -430,86 +444,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertNotNull(accountGroup);
 		Assert.assertEquals("Test Account Group 4", accountGroup.getName());
-	}
-
-	private void _assertAccountGroupsAssignment1() throws Exception {
-		AccountEntry account =
-			_accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
-				"TESTACCOUNT1", _group.getCompanyId());
-
-		AdminAccountGroupResource.Builder accountGroupResourceBuilder =
-			_adminAccountGroupResourcefactory.create();
-
-		AdminAccountGroupResource accountGroupResource =
-			accountGroupResourceBuilder.user(
-				_serviceContext.fetchUser()
-			).build();
-
-		AdminAccountGroup accountGroup =
-			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"TESTACCOUNTGROUP1");
-
-		AccountGroupRel accountGroupRel =
-			_accountGroupRelService.fetchAccountGroupRel(
-				accountGroup.getId(), AccountEntry.class.getName(),
-				account.getAccountEntryId());
-
-		Assert.assertNotNull(accountGroupRel);
-
-		account =
-			_accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
-				"TESTACCOUNT2", _group.getCompanyId());
-
-		accountGroup =
-			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"TESTACCOUNTGROUP2");
-
-		accountGroupRel = _accountGroupRelService.fetchAccountGroupRel(
-			accountGroup.getId(), AccountEntry.class.getName(),
-			account.getAccountEntryId());
-
-		Assert.assertNotNull(accountGroupRel);
-	}
-
-	private void _assertAccountGroupsAssignment2() throws Exception {
-		AccountEntry account =
-			_accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
-				"TESTACCOUNT2", _group.getCompanyId());
-
-		AdminAccountGroupResource.Builder accountGroupResourceBuilder =
-			_adminAccountGroupResourcefactory.create();
-
-		AdminAccountGroupResource accountGroupResource =
-			accountGroupResourceBuilder.user(
-				_serviceContext.fetchUser()
-			).build();
-
-		AdminAccountGroup accountGroup =
-			accountGroupResource.getAccountGroupByExternalReferenceCode(
-				"TESTACCOUNTGROUP3");
-
-		Assert.assertNotNull(account);
-
-		Assert.assertNotNull(accountGroup);
-
-		AccountGroupRel accountGroupRel =
-			_accountGroupRelService.fetchAccountGroupRel(
-				accountGroup.getId(), AccountEntry.class.getName(),
-				account.getAccountEntryId());
-
-		Assert.assertNotNull(accountGroupRel);
-
-		account =
-			_accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(
-				"TESTACCOUNT3", _group.getCompanyId());
-
-		Assert.assertNotNull(account);
-
-		accountGroupRel = _accountGroupRelService.fetchAccountGroupRel(
-			accountGroup.getId(), AccountEntry.class.getName(),
-			account.getAccountEntryId());
-
-		Assert.assertNotNull(accountGroupRel);
+		_assertAccountGroupAssign(accountGroup, 0);
 	}
 
 	private void _assertAccounts1() throws Exception {
@@ -3279,7 +3214,6 @@ public class BundleSiteInitializerTest {
 
 		_assertAccountGroups1();
 		_assertAccounts1();
-		_assertAccountGroupsAssignment1();
 		_assertAssetListEntries();
 		_assertAssetVocabularies();
 		_assertClientExtension();
@@ -3323,7 +3257,6 @@ public class BundleSiteInitializerTest {
 		siteInitializer.initialize(_group.getGroupId());
 
 		_assertAccountGroups2();
-		_assertAccountGroupsAssignment2();
 		_assertAccounts2();
 		_assertCommerceCatalogs2();
 		_assertCommerceChannel2();
@@ -3342,10 +3275,7 @@ public class BundleSiteInitializerTest {
 	private static ConfigurationAdmin _configurationAdmin;
 
 	@Inject
-	private AccountEntryLocalService _accountEntryLocalService;
-
-	@Inject
-	private AccountGroupRelService _accountGroupRelService;
+	private AccountGroupRelLocalService _accountGroupRelLocalService;
 
 	@Inject
 	private AccountResource.Factory _accountResourceFactory;
