@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>EVPOrganization</title>
+</head>
+
+<body>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr><td rowspan="1" colspan="3">EVPOrganization</td></tr>
+</thead>
+
+<tbody>
+<tr>
+	<td>NEW_ORGANIZATION</td>
+	<td>//div[contains(@class,'layout-structure-item-container d-flex flex-row justify-content-end')]//div[(@class="component-button text-break")]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORGANIZATION_FORM</td>
+	<td>//div[contains(@id,"form-group")]//input[contains(@name,'${key_newName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>KEBAB_MENU_OPTION_ORGANIZATION</td>
+	<td>//span[contains(@class,'organizationName')][contains(text(),'${key_name}')]//following-sibling::div[@id="evp-organization-kebab-button"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REVIEW_ORGANIZATION</td>
+	<td>//div[@class="cadmin"]//div[contains(@class,'liferay-modal-body')]//textarea[contains(@id,'messageDescribed')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REVIEW_OPTION</td>
+	<td>//div[@class="cadmin"]//div[contains(@class,'modal-footer')]//div[contains(@class,'last')]//button[contains(text(),'${key_button}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ASSERT_STATUS</td>
+	<td>xpath=(//div[contains(@class,'items-start')]//*[contains(text(),'${key_organizationName}')][not(contains(@class,'organizationName'))]/ancestor::div[contains(@class,'evp-table-border')]/div)[${key_index}]//*[contains(text(),'${key_status}')]</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
