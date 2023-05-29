@@ -18,6 +18,7 @@ import com.liferay.headless.delivery.dto.v1_0.Creator;
 import com.liferay.headless.delivery.dto.v1_0.UserGroupInfo;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -46,15 +47,17 @@ public class CreatorUtil {
 				id = user.getUserId();
 				name = user.getFullName();
 
-				userGroupInfos = TransformUtil.transformToArray(
-					user.getUserGroups(),
-					userGroup -> new UserGroupInfo() {
-						{
-							id = userGroup.getUserGroupId();
-							name = userGroup.getName();
-						}
-					},
-					UserGroupInfo.class);
+				if (FeatureFlagManagerUtil.isEnabled("LPS-185892")) {
+					userGroupInfos = TransformUtil.transformToArray(
+						user.getUserGroups(),
+						userGroup -> new UserGroupInfo() {
+							{
+								id = userGroup.getUserGroupId();
+								name = userGroup.getName();
+							}
+						},
+						UserGroupInfo.class);
+				}
 
 				setImage(
 					() -> {

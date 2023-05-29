@@ -49,7 +49,9 @@ export default function QuestionRow({
 				link: `/questions/all/creator/${question.creator.id}`,
 				name: question.creator.name,
 				portraitURL: question.creator.image,
-				userGroups: question.creator?.userGroupInfos[0]?.name,
+				userGroups:
+					Liferay.FeatureFlags['LPS-185892'] &&
+					question.creator?.userGroupInfos[0]?.name,
 				userId: String(question.creator.id),
 		  }
 		: {
