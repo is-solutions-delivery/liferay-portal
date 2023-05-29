@@ -16,8 +16,7 @@ package com.liferay.marketplace;
 
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.pagination.Page;
-import com.liferay.headless.commerce.admin.catalog.client.pagination.Pagination;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.ProductResource;
+import com.liferay.headless.commerce.admin.catalog.client.serdes.v1_0.ProductSerDes;
 
 import java.io.InputStream;
 
@@ -42,6 +41,9 @@ import org.apache.http.util.EntityUtils;
 
 import org.json.JSONObject;
 
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+
 /**
  * @author Thiago Oliveira
  */
@@ -50,7 +52,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		try {
 			InputStream inputStream = Main.class.getResourceAsStream(
-				"dependencies/application.properties");
+				"/application.properties");
 			Properties appProps = new Properties();
 
 			appProps.load(inputStream);
@@ -102,20 +104,6 @@ public class Main {
 		}
 	}
 
-	private static void _initResourceBuilders(String authorization)
-		throws Exception {
-
-		ProductResource.Builder productResourceBuilder =
-			ProductResource.builder();
-
-		_productResource = productResourceBuilder.bearerToken(
-			authorization
-		).endpoint(
-			_liferayURL.getHost(), _liferayURL.getPort(),
-			_liferayURL.getProtocol()
-		).build();
-	}
-
 	private static void _process(
 			String liferayMarketplaceOAuthClientId,
 			String liferayMarketplaceOAuthClientSecret, URL liferayURL)
@@ -130,12 +118,26 @@ public class Main {
 			_log.info("Liferay URL: " + _liferayURL);
 		}
 
-		_initResourceBuilders(_getOAuthAuthorization());
+		String response = WebClient.create(
+		).get(
+		).uri(
+			_liferayURL + "/o/headless-commerce-admin-catalog/v1.0/products"
+		).accept(
+			MediaType.APPLICATION_JSON
+		).header(
+			"Authorization", "Bearer " + _getOAuthAuthorization()
+		).retrieve(
+		).bodyToMono(
+			String.class
+		).block();
 
-		Page<Product> productsPage = _productResource.getProductsPage(
-			null, null, Pagination.of(1, 10), null);
+		if (response == null) {
+			throw new RuntimeException("No response");
+		}
 
-		_productsPage = productsPage;
+		Page<Product> productPage = Page.of(response, ProductSerDes::toDTO);
+
+		_productsPage = productPage;
 	}
 
 	private static final Log _log = LogFactory.getLog(Main.class);
@@ -143,7 +145,6 @@ public class Main {
 	private static String _liferayOAuthClientId;
 	private static String _liferayOAuthClientSecret;
 	private static URL _liferayURL;
-	private static ProductResource _productResource;
 	private static Page<Product> _productsPage;
 
 }
