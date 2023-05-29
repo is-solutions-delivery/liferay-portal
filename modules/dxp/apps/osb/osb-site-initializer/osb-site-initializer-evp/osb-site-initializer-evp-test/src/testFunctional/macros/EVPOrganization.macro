@@ -1,0 +1,116 @@
+definition {
+
+	macro addUser {
+		JSONUser.addUser(
+			userEmailAddress = ${userEmail},
+			userFirstName = ${userFrist},
+			userLastName = ${userLest},
+			userScreenName = ${userScreen});
+
+		JSONRole.assignRoleToUser(
+			roleTitle = ${roleTitle1},
+			userEmailAddress = ${userEmail});
+
+		JSONRole.assignRoleToUser(
+			roleTitle = ${roleTitle2},
+			userEmailAddress = ${userEmail});
+	}
+
+	macro assertStatusOrganization {
+		AssertElementPresent(
+			key_index = 6,
+			key_organizationName = ${keyOrganizationName},
+			key_status = ${keyStatus},
+			locator1 = "EVPOrganization#ASSERT_STATUS");
+	}
+
+	macro kebabMenuOption {
+		Click(
+			key_name = ${keyName},
+			locator1 = "EVPOrganization#KEBAB_MENU_OPTION_ORGANIZATION");
+
+		Click(
+			key_option = ${keyOption},
+			locator1 = "EVPUtils#KEBAB_OPTION");
+	}
+
+	macro NewOrganization {
+		Click(locator1 = "EVPOrganization#NEW_ORGANIZATION");
+
+		Type(
+			key_newName = "organizationName",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName1});
+
+		Type(
+			key_newName = "organizationSiteSocialMediaLink",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName2});
+
+		Type(
+			key_newName = "smallDescription",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName3});
+
+		Type(
+			key_newName = "street",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName4});
+
+		Type(
+			key_newName = "city",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName5});
+
+		Type(
+			key_newName = "state",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName6});
+
+		Type(
+			key_newName = "country",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName7});
+
+		Type(
+			key_newName = "zip",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName8});
+
+		Type(
+			key_newName = "taxId",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName9});
+
+		Type(
+			key_newName = "contactName",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName10});
+
+		Type(
+			key_newName = "contactEmail",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName11});
+
+		Type(
+			key_newName = "contactPhone",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName12});
+
+		Type(
+			key_newName = "bankingInfo",
+			locator1 = "EVPOrganization#ORGANIZATION_FORM",
+			value1 = ${newName13});
+	}
+
+	macro reviewOrganization {
+		Type(
+			locator1 = "EVPOrganization#REVIEW_ORGANIZATION",
+			value1 = ${describeHere});
+
+		Click(
+			key_button = ${keybutton},
+			locator1 = "EVPOrganization#REVIEW_OPTION");
+	}
+
+}
