@@ -23,6 +23,7 @@ import com.liferay.commerce.initializer.util.CommerceInventoryWarehousesImporter
 import com.liferay.commerce.initializer.util.PortletSettingsImporter;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.model.CommerceOrder;
+import com.liferay.commerce.model.CommerceOrderType;
 import com.liferay.commerce.notification.service.CommerceNotificationTemplateLocalService;
 import com.liferay.commerce.price.list.constants.CommercePriceListConstants;
 import com.liferay.commerce.price.list.model.CommercePriceEntry;
@@ -41,6 +42,7 @@ import com.liferay.commerce.product.service.CPOptionLocalService;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.service.CommerceChannelService;
+import com.liferay.commerce.service.CommerceOrderTypeLocalService;
 import com.liferay.commerce.util.CommerceAccountRoleHelper;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductOption;
@@ -50,6 +52,8 @@ import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductOptionRe
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductSpecificationResource;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.Channel;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.ChannelResource;
+import com.liferay.headless.commerce.admin.order.dto.v1_0.OrderType;
+import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderTypeResource;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -125,6 +129,9 @@ public class CommerceSiteInitializer {
 			bundle, channel.getId(), documentsStringUtilReplaceValues,
 			objectDefinitionIdsStringUtilReplaceValues, serviceContext,
 			servletContext);
+
+		_addOrUpdateCommerceOrderTypes(serviceContext, servletContext);
+		_addOrUpdateCPOptionCategories(serviceContext, servletContext);
 	}
 
 	public void addPortletSettings(
@@ -731,6 +738,55 @@ public class CommerceSiteInitializer {
 		return channel;
 	}
 
+	private void _addOrUpdateCommerceOrderTypes(
+			ServiceContext serviceContext, ServletContext servletContext)
+		throws Exception {
+
+		String resourcePath = "/site-initializer/commerce-order-types.json";
+
+		String json = SiteInitializerUtil.read(resourcePath, servletContext);
+
+		if (json == null) {
+			return;
+		}
+
+		OrderTypeResource.Builder builder = _orderTypeResourceFactory.create();
+
+		OrderTypeResource orderTypeResource = builder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			OrderType orderType = OrderType.toDTO(
+				String.valueOf(jsonArray.getJSONObject(i)));
+
+			if (orderType == null) {
+				_log.error(
+					"Unable to transform commerce order type from JSON: " +
+						json);
+
+				continue;
+			}
+
+			CommerceOrderType serviceBuilderCommerceOrderType =
+				_commerceOrderTypeLocalService.
+					fetchCommerceOrderTypeByExternalReferenceCode(
+						orderType.getExternalReferenceCode(),
+						serviceContext.getCompanyId());
+
+			if (serviceBuilderCommerceOrderType == null) {
+				orderTypeResource.postOrderType(orderType);
+			}
+			else {
+				orderTypeResource.patchOrderTypeByExternalReferenceCode(
+					serviceBuilderCommerceOrderType.getExternalReferenceCode(),
+					orderType);
+			}
+		}
+	}
+
 	private void _addOrUpdateCommercePriceEntries(
 			CPDefinition cpDefinition, CPInstance cpInstance,
 			ServiceContext serviceContext)
@@ -896,6 +952,9 @@ public class CommerceSiteInitializer {
 		_commerceNotificationTemplateLocalService;
 
 	@Reference
+	private CommerceOrderTypeLocalService _commerceOrderTypeLocalService;
+
+	@Reference
 	private CommercePriceEntryLocalService _commercePriceEntryLocalService;
 
 	@Reference
@@ -933,6 +992,9 @@ public class CommerceSiteInitializer {
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private OrderTypeResource.Factory _orderTypeResourceFactory;
 
 	@Reference
 	private PortletSettingsImporter _portletSettingsImporter;

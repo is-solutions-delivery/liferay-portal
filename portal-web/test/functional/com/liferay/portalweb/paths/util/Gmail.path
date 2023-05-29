@@ -29,6 +29,11 @@
 <!--LOGIN-->
 
 <tr>
+	<td>INBOX</td>
+	<td>//body[contains(.,'Inbox')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>LOGIN_EMAIL_FIELD</td>
 	<td>//input[contains(@type,'email')]</td>
 	<td></td>
@@ -247,17 +252,17 @@
 </tr>
 <tr>
 	<td>GMAIL_HTML_MODE_MESSAGE_TITLE</td>
-	<td>//tr[contains(.,'${key_gmailAssetType}')]//h2/font/b</td>
+	<td>//tr//h2/font/b</td>
 	<td></td>
 </tr>
 <tr>
 	<td>GMAIL_HTML_MODE_MESSAGE_BODY_GREETING</td>
-	<td>//tr[contains(.,'${key_gmailAssetType}')]//td//div[@class='msg']</td>
+	<td>//tr//td//div[@class='msg']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>GMAIL_HTML_MODE_MESSAGE_BODY</td>
-	<td>//tr[contains(.,'${key_gmailAssetType}')]//td//div[@class='msg']</td>
+	<td>//tr//td//div[@class='msg']</td>
 	<td></td>
 </tr>
 <tr>
@@ -312,7 +317,7 @@
 </tr>
 <tr>
 	<td>GMAIL_HTML_MODE_MESSAGE_BODY_CLOSING</td>
-	<td>//tr[contains(.,'${key_gmailAssetType}')]//td//div[@class='msg']</td>
+	<td>//tr//td//div[@class='msg']</td>
 	<td></td>
 </tr>
 <tr>

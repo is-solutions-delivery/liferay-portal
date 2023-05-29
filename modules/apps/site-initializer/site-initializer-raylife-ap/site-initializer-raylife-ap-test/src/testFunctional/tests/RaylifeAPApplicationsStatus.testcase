@@ -19,8 +19,6 @@ definition {
 		}
 
 		task ("Create a new Raylife AP Site") {
-			Site.openSitesAdmin();
-
 			Raylife.createRaylifeSite(siteName = "Raylife D2C");
 
 			Raylife.createRaylifeSite(siteName = "Raylife AP");
@@ -36,6 +34,8 @@ definition {
 	}
 
 	tearDown {
+		User.firstLoginPG();
+
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
 		Raylife.tearDownCP();
@@ -48,7 +48,7 @@ definition {
 		}
 	}
 
-	@description = "LPS-154587 - Verify that the number in the center of the graph is equal to the total amount of registered status"
+	@description = "Story ID:LPS-154587 | Test Summary:  Verify that the number in the center of the graph is equal to the total amount of registered status"
 	@priority = 4
 	test AssertNumberInCenterGraphIsEqualNumberOfStatus {
 		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#AssertNumberInCenterGraphIsEqualNumberOfStatus";
@@ -66,7 +66,7 @@ definition {
 		}
 	}
 
-	@description = "LPS-154592 - Check if when making an incomplete Flow until the section Business in the Raylife d2c, the status 'Open' appears in the Applications status of Raylife ap"
+	@description = "Story ID: LPS-154592 | Test Summary: Check if when making an incomplete Flow until the section Business in the Raylife d2c, the status 'Open' appears in the Applications status of Raylife ap"
 	@priority = 4
 	test AssertStatusOpenAppearsInApplicationsStatus {
 		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#AssertStatusOpenAppearsInApplicationsStatus";
@@ -105,7 +105,7 @@ definition {
 		}
 	}
 
-	@description = "LPS-154593 - Check if when making an incomplete flow until the page Quote Comparison in Raylife d2c, the status 'Quoted' appears in the Applications status of Raylife ap"
+	@description = "Story ID: LPS-154593 | Test Summary:  Check if when making an incomplete flow until the page Quote Comparison in Raylife d2c, the status 'Quoted' appears in the Applications status of Raylife ap"
 	@priority = 4
 	test AssertStatusQuotedAppearsInApplicationsStatus {
 		property solutions.acceptance = "true";
@@ -140,6 +140,102 @@ definition {
 				key_legendItem = "Quoted",
 				locator1 = "RaylifeAPApplications#STATUS_LEGEND",
 				value1 = ${newValue});
+		}
+	}
+
+	@description = "Story ID: LPS-159688 | Test Summary: Verify if the details of the Summary on the Bound application view appears"
+	@priority = 4
+	test AssertThatTheUserCanOpenAppDetailsInBoundApplications {
+		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#AssertThatTheUserCanOpenAppDetailsInBoundApplications";
+
+		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
+
+		task ("Given the Applications page is open") {
+			RaylifeAPNavigator.gotoSidebarItem(itemName = "Applications");
+		}
+
+		if (IsElementPresent(key_product = "Auto", key_status = "Bound", locator1 = "RaylifeAP#APPLICATIONS_NUMBER_WITH_STATUS")) {
+			task ("And the search term is present") {
+				RaylifeAP.search(searchTerm = "AP");
+
+				RaylifeAP.clickInApplicationNumber(
+					product = "Auto",
+					status = "Bound");
+			}
+
+			task ("And assert the Detail view page and go back to 'Test Test' User") {
+				AssertElementPresent(
+					key_tabTitle = "App Details",
+					locator1 = "RaylifeAP#TAB_TITLE");
+
+				Navigator.openSpecificURL(url = "http://localhost:8080/home");
+
+				User.logoutPG();
+			}
+		}
+		else {
+			task ("And the new Application flow is open") {
+				RaylifeApplicationModal.openNewApplicationFlow(
+					button = "Next",
+					insurance = "Personal");
+			}
+
+			task ("And the user fulfill all the creation forms and generate a quote") {
+				RaylifeApplicationModal.typeAllNewApplicationContactInfoFields(
+					apt = 0000,
+					city = "New York",
+					emailAddress = "test@liferay.com",
+					firstName = "Testing",
+					lastName = "Model",
+					phoneNumber = 0123456789,
+					state = "NY",
+					streetAddress = "Address",
+					zipCode = 12345);
+
+				RaylifeApplicationModal.typeAllNewApplicationVehicleInfoFields(
+					annualMileage = 50000,
+					make = "Volvo",
+					model = "v90 cross country",
+					ownership = "Own",
+					primaryUse = "Business",
+					year = 2019);
+
+				RaylifeApplicationModal.typeAllNewApplicationDriverInfoFields(
+					ageFirstLicenced = 18,
+					firstName = "Testing",
+					gender = "Female",
+					highestEducation = "Masters",
+					lastName = "Model",
+					maritalStatus = "Single",
+					millitaryAffiliation = "None",
+					occupation = "Engineer",
+					relationToContact = "Spouse");
+
+				RaylifeApplicationModal.typeAllNewApplicationCoverageInfoFields(
+					bodilyInjury = "$30,000 / $60,000",
+					collisionAmount = "$2,000",
+					comprehensiveAmount = "$750",
+					medicalAmount = "$1,000",
+					propertyDamage = "$25,000",
+					uninsuredOrUnderinsuredMBI = "$30,000 / $60,000",
+					uninsuredOrUnderinsuredMPD = "$150,000");
+
+				Button.click(button = "Generate Quote");
+			}
+
+			task ("When search for the new application") {
+				RaylifeAP.search(searchTerm = "Testing");
+
+				RaylifeAP.clickInApplicationNumber(
+					product = "Auto",
+					status = "Bound");
+			}
+
+			task ("Then assert the Detail view page") {
+				AssertElementPresent(
+					key_tabTitle = "App Details",
+					locator1 = "RaylifeAP#TAB_TITLE");
+			}
 		}
 	}
 

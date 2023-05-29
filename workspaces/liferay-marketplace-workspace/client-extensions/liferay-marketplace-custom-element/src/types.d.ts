@@ -86,6 +86,15 @@ type AccountGroup = {
 	name: string;
 };
 
+type AccountRole = {
+	accountId: number,
+	description: string,
+	displayName: string,
+	id: number,
+	name: string,
+	roleId: number
+}
+
 type BillingAddress = {
 	city?: string;
 	country?: string;
@@ -365,6 +374,13 @@ type ProductSpecification = {
 
 type UserAccount = {
 	accountBriefs: AccountBrief[];
+	alternateName: string,
+	emailAddress: string,
+	familyName: string,
+	givenName : string,
+	id: number,
+	password: string,
+	currentPassword: string,
 	isCustomerAccount: boolean;
 	isPublisherAccount: boolean;
 };

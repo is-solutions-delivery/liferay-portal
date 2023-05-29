@@ -177,15 +177,6 @@ public class CTCollectionLocalServiceUtil {
 		return getService().deletePersistedModel(persistedModel);
 	}
 
-	public static void discardCTEntries(
-			long ctCollectionId, long modelClassNameId, long modelClassPK,
-			boolean force)
-		throws PortalException {
-
-		getService().discardCTEntries(
-			ctCollectionId, modelClassNameId, modelClassPK, force);
-	}
-
 	public static void discardCTEntry(
 			long ctCollectionId, long modelClassNameId, long modelClassPK,
 			boolean force)
@@ -341,9 +332,10 @@ public class CTCollectionLocalServiceUtil {
 		return getService().getCTMappingTableInfos(ctCollectionId);
 	}
 
-	public static List<com.liferay.change.tracking.model.CTEntry>
-		getDiscardCTEntries(
-			long ctCollectionId, long modelClassNameId, long modelClassPK) {
+	public static Map<Long, List<com.liferay.change.tracking.model.CTEntry>>
+			getDiscardCTEntries(
+				long ctCollectionId, long modelClassNameId, long modelClassPK)
+		throws PortalException {
 
 		return getService().getDiscardCTEntries(
 			ctCollectionId, modelClassNameId, modelClassPK);

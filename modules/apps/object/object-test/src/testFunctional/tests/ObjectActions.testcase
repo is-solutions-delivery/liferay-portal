@@ -106,6 +106,175 @@ definition {
 		}
 	}
 
+	@description = "LPS-173537 - Verify creating a custom object entry triggers an action to add an Account entry"
+	@priority = 5
+	test CanAddAccountEntryAfterCreatingCustomObjectEntry {
+		property portal.acceptance = "true";
+
+		task ("Given a custom object with a custom field") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 180082",
+				objectName = "CustomObject180082",
+				pluralLabelName = "Custom Objects 180082");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Custom Field",
+				fieldName = "customObjectField",
+				fieldType = "String",
+				isRequired = "true",
+				objectName = "CustomObject180082");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject180082");
+		}
+
+		task ("And given an action to add an Account entry after creating a custom object entry") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object 180082");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Custom Action",
+				active = "true",
+				inputMethod = "true",
+				inputValue = "Account Name,Guest",
+				objectLabel = "Account",
+				thenAction = "Add an Object Entry",
+				whenAction = "On After Add");
+		}
+
+		task ("When the user creates a custom object entry") {
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customObjectField",
+				objectName = "CustomObject180082",
+				value = "Entry Test");
+		}
+
+		task ("Then the action is triggered and an Account entry is added") {
+			Account.openAccountsAdmin();
+
+			LexiconEntry.viewEntryName(rowEntry = "Account Name");
+		}
+	}
+
+	@description = "LPS-173537 - Verify deleting a custom object entry triggers an action to add an Account entry"
+	@priority = 5
+	test CanAddAccountEntryAfterDeletingCustomObjectEntry {
+		property portal.acceptance = "true";
+
+		task ("Given a custom object and an object entry") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 180087",
+				objectName = "CustomObject180087",
+				pluralLabelName = "Custom Object 180087");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Custom Field",
+				fieldName = "customObjectField",
+				fieldType = "String",
+				isRequired = "true",
+				objectName = "CustomObject180087");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject180087");
+
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customObjectField",
+				objectName = "CustomObject180087",
+				value = "Entry Test");
+		}
+
+		task ("And given an action to add an Account entry after deleting a custom object entry") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object 180087");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Custom Action",
+				active = "true",
+				inputMethod = "true",
+				inputValue = "Account Name,Guest",
+				objectLabel = "Account",
+				thenAction = "Add an Object Entry",
+				whenAction = "On After Delete");
+		}
+
+		task ("When the user deletes a custom object entry") {
+			ObjectAdmin.goToCustomObject(objectName = "CustomObject180087");
+
+			ObjectPortlet.deleteEntry(entry = "Entry Test");
+		}
+
+		task ("Then the action is triggered and an Account entry is added") {
+			Account.openAccountsAdmin();
+
+			LexiconEntry.viewEntryName(rowEntry = "Account Name");
+		}
+	}
+
+	@description = "LPS-173537 - Verify updating a custom object entry triggers an action to add an Account entry"
+	@priority = 5
+	test CanAddAccountEntryAfterUpdatingCustomObjectEntry {
+		property portal.acceptance = "true";
+
+		task ("Given a custom object and an object entry") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 180083",
+				objectName = "CustomObject180083",
+				pluralLabelName = "Custom Objects 180083");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Custom Field",
+				fieldName = "customObjectField",
+				fieldType = "String",
+				isRequired = "true",
+				objectName = "CustomObject180083");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject180083");
+
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customObjectField",
+				objectName = "CustomObject180083",
+				value = "Entry Test");
+		}
+
+		task ("And given an action to add an Account entry after updating a custom object entry") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object 180083");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Custom Action",
+				active = "true",
+				inputMethod = "true",
+				inputValue = "Account Name, Guest",
+				objectLabel = "Account",
+				thenAction = "Add an Object Entry",
+				whenAction = "On After Update");
+		}
+
+		task ("When the user updates a custom object entry") {
+			ObjectAdmin.goToCustomObject(objectName = "CustomObject180083");
+
+			ObjectPortlet.updateEntry(
+				entry = "Entry Test",
+				updateEntry = "Entry Test Edited");
+		}
+
+		task ("Then the action is triggered and an Account entry is added") {
+			Account.openAccountsAdmin();
+
+			LexiconEntry.viewEntryName(rowEntry = "Account Name");
+		}
+	}
+
 	@description = "LPS-180070 - Verify creating a Commerce Product entry triggers an action to add a user"
 	@priority = 5
 	test CanAddUserAfterCreatingCommerceProductEntry {
@@ -252,7 +421,7 @@ definition {
 	test CanCreateActionAddAnObjectEntryUsingOldValueWithOnAfterDeleteTrigger {
 		property test.name.skip.portal.instance = "ObjectActions#CanCreateActionAddAnObjectEntryUsingOldValueWithOnAfterDeleteTrigger";
 
-		task ("Given: Two custom objects with a text field") {
+		task ("Given two custom objects with a text field") {
 			for (var letters : list "A,B") {
 				ObjectAdmin.addObjectViaAPI(
 					labelName = "Custom Object ${letters} 178405",
@@ -273,7 +442,7 @@ definition {
 			}
 		}
 
-		task ("And Given: The custom objects has a On Afer Delete Trigger action") {
+		task ("And given the custom objects has a On Afer Delete Trigger action") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object A 178405");
@@ -331,7 +500,7 @@ definition {
 	test CanCreateActionAddAnObjectEntryUsingOldValueWithOnAfterUpdateTrigger {
 		property portal.acceptance = "true";
 
-		task ("Given: A Picklist is added via API") {
+		task ("Given a picklist is added via API") {
 			Picklist.addPicklistViaAPI(picklistName = "Status");
 
 			Picklist.addPicklistItemViaAPI(
@@ -345,7 +514,7 @@ definition {
 				picklistName = "Status");
 		}
 
-		task ("And given: A Object is created") {
+		task ("And given a object is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175200",
 				objectName = "CustomObject175200",
@@ -373,7 +542,7 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject175200");
 		}
 
-		task ("And given: An action with oldValue function is created") {
+		task ("And given an action with oldValue function is created") {
 			ObjectAdmin.goToActionsTab();
 
 			ObjectAdmin.addObjectActionViaUI(
@@ -388,7 +557,7 @@ definition {
 				whenAction = "On After Update");
 		}
 
-		task ("When: The entry is added with picklist value Open") {
+		task ("When the entry is added with picklist value Open") {
 			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 				fieldName = "customTextField",
 				objectName = "CustomObject175200",
@@ -405,7 +574,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("And when: The picklist value is edited") {
+		task ("And when the picklist value is edited") {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject175200");
 
 			ObjectPortlet.viewEntryDetails(entry = "Open");
@@ -417,7 +586,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("Then: The action runs with oldValue function") {
+		task ("Then the action runs with oldValue function") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject175200");
@@ -604,14 +773,13 @@ definition {
 	@priority = 5
 	test CanCreateActionNotificationUsingOldValueWithOnAfterAddTrigger {
 		property portal.acceptance = "true";
+		property test.smtp.server.enabled = "true";
 
-		task ("Given: A notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+		task ("Given a notification template is created") {
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "Email Body",
 				entryTo = "test@liferay.com",
 				fromAddress = "test@liferay.com",
 				fromName = "Test Test",
@@ -622,7 +790,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("And given: An object with a field is created") {
+		task ("And given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175197",
 				objectName = "CustomObject175197",
@@ -639,7 +807,7 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject175197");
 		}
 
-		task ("And given: A Notification action with the trigger (On After Add) is created and the oldValue function is used in the condition tab") {
+		task ("And given a notification action with the trigger (On After Add) is created and the oldValue function is used in the condition tab") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175197");
@@ -656,32 +824,19 @@ definition {
 				whenAction = "On After Add");
 		}
 
-		task ("When: An entry is added") {
+		task ("When an entry is added") {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject175197");
 
 			ObjectPortlet.addSingleFieldEntryViaUI(entry = "Entry Test");
 		}
 
-		task ("Then: The action is triggered and the notification is sent") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
-
-			AssertElementPresent(
-				key_objectName = "CustomObject175197",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
-
-			ObjectAdmin.openObjectAdmin();
-
-			ObjectPortlet.selectCustomObject(label = "Custom Object 175197");
-
-			ObjectAdmin.goToActionsTab();
-
-			ObjectAdmin.assertObjectActions(
-				actionActive = "Yes",
-				actionLabel = "Notification action when entry is added",
-				status = "Success");
+		task ("Then the action is triggered and the notification is sent") {
+			MockMock.viewMail(
+				asset = "Subject Test",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject Test");
 		}
 	}
 
@@ -689,14 +844,13 @@ definition {
 	@priority = 5
 	test CanCreateActionNotificationUsingOldValueWithOnAfterDeleteTrigger {
 		property portal.acceptance = "true";
+		property test.smtp.server.enabled = "true";
 
-		task ("Given: A notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+		task ("Given a notification template is created") {
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "Email Body",
 				entryTo = "test@liferay.com",
 				fromAddress = "test@liferay.com",
 				fromName = "Test Test",
@@ -707,7 +861,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("And given: An object with a field is created") {
+		task ("And given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175192",
 				objectName = "CustomObject175192",
@@ -724,7 +878,7 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject175192");
 		}
 
-		task ("And given: A Notification action with the trigger (On After Delete) is created and the oldValue function is used in the condition tab") {
+		task ("And given a notification action with the trigger (On After Delete) is created and the oldValue function is used in the condition tab") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175192");
@@ -741,7 +895,7 @@ definition {
 				whenAction = "On After Delete");
 		}
 
-		task ("When: An entry is added and then deleted") {
+		task ("When an entry is added and then deleted") {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject175192");
 
 			ObjectPortlet.addSingleFieldEntryViaUI(entry = "Entry Test");
@@ -751,26 +905,13 @@ definition {
 			ObjectPortlet.deleteEntry(entry = "Entry Test");
 		}
 
-		task ("Then: The action is triggered and the notification is sent") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
-
-			AssertElementPresent(
-				key_objectName = "CustomObject175192",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
-
-			ObjectAdmin.openObjectAdmin();
-
-			ObjectPortlet.selectCustomObject(label = "Custom Object 175192");
-
-			ObjectAdmin.goToActionsTab();
-
-			ObjectAdmin.assertObjectActions(
-				actionActive = "Yes",
-				actionLabel = "Notification action when entry is deleted",
-				status = "Success");
+		task ("Then the action is triggered and the notification is sent") {
+			MockMock.viewMail(
+				asset = "Subject Test",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject Test");
 		}
 	}
 
@@ -778,25 +919,24 @@ definition {
 	@priority = 5
 	test CanCreateActionNotificationUsingOldValueWithOnAfterUpdateTrigger {
 		property portal.acceptance = "true";
+		property test.smtp.server.enabled = "true";
 
-		task ("Given: A notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+		task ("Given a notification template is created") {
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "Email Body",
 				entryTo = "test@liferay.com",
 				fromAddress = "test@liferay.com",
-				fromName = "Test test",
+				fromName = "Test Test",
 				name = "Email Template",
 				notificationType = "Email",
-				subject = "Subject");
+				subject = "Subject Test");
 
 			PortletEntry.save();
 		}
 
-		task ("And given: An object with a field is created") {
+		task ("And given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175191",
 				objectName = "CustomObject175191",
@@ -813,7 +953,7 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject175191");
 		}
 
-		task ("And given: An action with the trigger (On After Update) are created and the oldValue function is used in the condition tab") {
+		task ("And given an action with the trigger (On After Update) are created and the oldValue function is used in the condition tab") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175191");
@@ -830,7 +970,7 @@ definition {
 				whenAction = "On After Update");
 		}
 
-		task ("When: An entry is added and updated") {
+		task ("When an entry is added and updated") {
 			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 				fieldName = "customField",
 				objectName = "CustomObject175191",
@@ -843,39 +983,26 @@ definition {
 			ObjectAdmin.editEntryName(newEntryValue = "Entry Test Edited");
 		}
 
-		task ("Then: The action is triggered and the notification is sent") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
-
-			AssertElementPresent(
-				key_objectName = "CustomObject175191",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
-
-			ObjectAdmin.openObjectAdmin();
-
-			ObjectPortlet.selectCustomObject(label = "Custom Object 175191");
-
-			ObjectAdmin.goToActionsTab();
-
-			ObjectAdmin.assertObjectActions(
-				actionActive = "Yes",
-				actionLabel = "Notification action when entry is updated",
-				status = "Success");
+		task ("Then the action is triggered and the notification is sent") {
+			MockMock.viewMail(
+				asset = "Subject Test",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject Test");
 		}
 	}
 
 	@description = "LPS-178410 - Verify if actions works with oldValue function when trigger is On After Update (Notification) in Account System"
 	@priority = 4
 	test CanCreateActionNotificationUsingOldValueWithOnAfterUpdateTriggerOnAccountObject {
-		task ("Given: A notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+		property test.smtp.server.enabled = "true";
+
+		task ("Given a notification template is created") {
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "Email Body",
 				entryTo = "test@liferay.com",
 				fromAddress = "test@liferay.com",
 				fromName = "Test Test",
@@ -886,7 +1013,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("And given: A Notification action with the trigger (On After Update) is created and the oldValue function is used for the Account Name") {
+		task ("And given a notification action with the trigger (On After Update) is created and the oldValue function is used for the Account Name") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Account");
@@ -907,7 +1034,7 @@ definition {
 				locator1 = "ObjectAdmin#VIEW_ACTIONS_LABEL");
 		}
 
-		task ("When: An account is added and then edited") {
+		task ("When an account is added and then edited") {
 			JSONAccountEntry.addAccountEntry(
 				accountEntryName = "Accounts Name Test",
 				accountEntryType = "Person");
@@ -919,39 +1046,26 @@ definition {
 				accountNameEdit = "Accounts Name Test Edited");
 		}
 
-		task ("Then: The action is triggered and the notification is sent") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
-
-			AssertElementPresent(
-				key_objectName = "AccountEntry",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
-
-			ObjectAdmin.openObjectAdmin();
-
-			ObjectPortlet.selectCustomObject(label = "Account");
-
-			ObjectAdmin.goToActionsTab();
-
-			ObjectAdmin.assertObjectActions(
-				actionActive = "Yes",
-				actionLabel = "Notification action when account is updated",
-				status = "Success");
+		task ("Then the action is triggered and the notification is sent") {
+			MockMock.viewMail(
+				asset = "Subject Test",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject Test");
 		}
 	}
 
 	@description = "LPS-178415 - Verify if actions works with oldValue function when trigger is On After Update (Notification) in User System Object"
 	@priority = 4
 	test CanCreateActionNotificationUsingOldValueWithOnAfterUpdateTriggerOnUserObject {
+		property test.smtp.server.enabled = "true";
+
 		task ("Given: A notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "Email Body",
 				entryTo = "test@liferay.com",
 				fromAddress = "test@liferay.com",
 				fromName = "Test Test",
@@ -962,7 +1076,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("And given: A Notification action with trigger (On After Update) and oldValue function is used in the condition tab for first name") {
+		task ("And given a notification action with trigger (On After Update) and oldValue function is used in the condition tab for first name") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "User");
@@ -979,7 +1093,7 @@ definition {
 				whenAction = "On After Update");
 		}
 
-		task ("When: A user is added and then the first name is edited") {
+		task ("When a user is added and then the first name is edited") {
 			JSONUser.addUser(
 				userEmailAddress = "userea1@liferay.com",
 				userFirstName = "userfn",
@@ -993,26 +1107,13 @@ definition {
 			User.editUserInformation(userFirstNameEdit = "edituserfn");
 		}
 
-		task ("Then: The action is triggered and the notification is sent") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
-
-			AssertElementPresent(
-				key_objectName = "User",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
-
-			ObjectAdmin.openObjectAdmin();
-
-			ObjectPortlet.selectCustomObject(label = "User");
-
-			ObjectAdmin.goToActionsTab();
-
-			ObjectAdmin.assertObjectActions(
-				actionActive = "Yes",
-				actionLabel = "Notification action when first name is edited",
-				status = "Success");
+		task ("Then the action is triggered and the notification is sent") {
+			MockMock.viewMail(
+				asset = "Subject Test",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject Test");
 		}
 	}
 
@@ -1020,25 +1121,24 @@ definition {
 	@priority = 5
 	test CanCreateActionNotificationUsingOldValueWithOnOrderStatusUpdateInSystemObject {
 		property portal.acceptance = "true";
+		property test.smtp.server.enabled = "true";
 
-		task ("Given: A notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+		task ("Given a notification template is created") {
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "Email Body",
 				entryTo = "test@liferay.com",
 				fromAddress = "test@liferay.com",
 				fromName = "Test Test",
 				name = "Email Template",
 				notificationType = "Email",
-				subject = "Subject");
+				subject = "Subject Test");
 
 			PortletEntry.save();
 		}
 
-		task ("And given: An Action is created") {
+		task ("And given an Action is created") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Commerce Order");
@@ -1054,7 +1154,7 @@ definition {
 				whenAction = "On Order Status Update");
 		}
 
-		task ("And given: An account, minium site and an order is created") {
+		task ("And given an account, minium site and an order is created") {
 			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
 			ApplicationsMenu.gotoSite(site = "Minium");
@@ -1083,7 +1183,7 @@ definition {
 				shippingMethod = "Standard");
 		}
 
-		task ("When: The user changes the order status.") {
+		task ("When the user changes the order status.") {
 			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
@@ -1093,26 +1193,13 @@ definition {
 				locator1 = "Link#ANY");
 		}
 
-		task ("Then: The action is triggered and the notification is sent") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
-
-			AssertElementPresent(
-				key_objectName = "CommerceOrder",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
-
-			ObjectAdmin.openObjectAdmin();
-
-			ObjectPortlet.selectCustomObject(label = "Commerce Order");
-
-			ObjectAdmin.goToActionsTab();
-
-			ObjectAdmin.assertObjectActions(
-				actionActive = "Yes",
-				actionLabel = "Notification action when the order is updated",
-				status = "Success");
+		task ("Then the action is triggered and the notification is sent") {
+			MockMock.viewMail(
+				asset = "Subject Test",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject Test");
 		}
 	}
 
@@ -1120,26 +1207,24 @@ definition {
 	@priority = 5
 	test CanCreateActionNotificationWithOnOrderStatusUpdate {
 		property portal.acceptance = "true";
+		property test.smtp.server.enabled = "true";
 
-		task ("Given: A notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+		task ("Given a notification template is created") {
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
 				entryTo = "test@liferay.com",
 				fromAddress = "test@liferay.com",
-				fromName = "Test test",
-				name = "Notification Template",
+				fromName = "Test Test",
+				name = "Email Template",
 				notificationType = "Email",
-				subject = "Subject");
+				subject = "Subject Test");
 
 			PortletEntry.save();
 		}
 
-		task ("And given: A notification action with the trigger On Order Status Update is created") {
+		task ("And given a notification action with the trigger On Order Status Update is created") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Commerce Order");
@@ -1150,12 +1235,12 @@ definition {
 				actionLabel = "Notification action when order status update",
 				active = "true",
 				inputExpression = "orderStatus == 0",
-				notificationName = "Notification Template",
+				notificationName = "Email Template",
 				thenAction = "Notification",
 				whenAction = "On Order Status Update");
 		}
 
-		task ("And when: an account, minium site and an order is created") {
+		task ("And when an account, minium site and an order is created") {
 			JSONAccountEntry.addAccountEntry(
 				accountEntryName = "Accounts Name",
 				accountEntryType = "Business");
@@ -1184,7 +1269,7 @@ definition {
 				shippingMethod = "Standard");
 		}
 
-		task ("And when: The order status is updated") {
+		task ("And when the order status is updated") {
 			CommerceNavigator.gotoPortlet(
 				category = "Order Management",
 				portlet = "Orders");
@@ -1203,15 +1288,13 @@ definition {
 				warehouseName = "Italy");
 		}
 
-		task ("Then: The action is triggered and the notification is sent") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
-
-			AssertElementPresent(
-				key_objectName = "CommerceOrder",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
+		task ("Then the action is triggered and the notification is sent") {
+			MockMock.viewMail(
+				asset = "Subject Test",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject Test");
 		}
 	}
 
@@ -1221,10 +1304,7 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Given a Notification Template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				entryTo = "test@liferay.com",
@@ -1305,10 +1385,7 @@ definition {
 				actionLabel = "Custom Action",
 				status = "Success");
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
+			Notifications.goToNotificationQueueAdmin();
 
 			AssertElementPresent(
 				key_objectName = "CommerceOrder",
@@ -1321,7 +1398,7 @@ definition {
 	test CanCreateActionUpdateAnObjectEntryUsingOldValueWithOnAfterUpdateTrigger {
 		property portal.acceptance = "true";
 
-		task ("Given: An object with a field is created") {
+		task ("Given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175182",
 				objectName = "CustomObject175182",
@@ -1338,7 +1415,7 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject175182");
 		}
 
-		task ("When: An action is created and the oldValue function is used in the condition tab") {
+		task ("When an action is created and the oldValue function is used in the condition tab") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175182");
@@ -1358,7 +1435,7 @@ definition {
 				whenAction = "On After Update");
 		}
 
-		task ("Then: The object entry is updated when the condition is met") {
+		task ("Then the object entry is updated when the condition is met") {
 			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 				fieldName = "customField",
 				objectName = "CustomObject175182",
@@ -1392,7 +1469,7 @@ definition {
 	test CanCreateActionUpdateAnObjectEntryWithOnOrderStatusUpdate {
 		property custom.properties = "feature.flag.LPS-173537=true";
 
-		task ("Given: An action in the Commerce Order object") {
+		task ("Given an action in the Commerce Order object") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Commerce Order");
@@ -1400,7 +1477,7 @@ definition {
 			ObjectAdmin.goToActionsTab();
 		}
 
-		task ("And given: The user selects the trigger OnOrderStatusUpdate using the action Update an Object Entry") {
+		task ("And given the user selects the trigger OnOrderStatusUpdate using the action Update an Object Entry") {
 			ObjectAdmin.addObjectActionViaUI(
 				actionLabel = "Custom Action",
 				active = "true",
@@ -1411,7 +1488,7 @@ definition {
 				whenAction = "On Order Status Update");
 		}
 
-		task ("And given: An account, minium site and an order is created") {
+		task ("And given an account, minium site and an order is created") {
 			JSONAccountEntry.addAccountEntry(
 				accountEntryName = "Accounts Name Test",
 				accountEntryType = "Business");
@@ -1438,7 +1515,7 @@ definition {
 				shippingMethod = "Standard");
 		}
 
-		task ("When: The user changes the order status and the action puts order on hold") {
+		task ("When the user changes the order status and the action puts order on hold") {
 			CommerceNavigator.gotoPortlet(
 				category = "Order Management",
 				portlet = "Orders");
@@ -1456,7 +1533,7 @@ definition {
 				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
 		}
 
-		task ("Then: The action is triggered") {
+		task ("Then the action is triggered") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Commerce Order");
@@ -1550,7 +1627,7 @@ definition {
 	@description = "LPS-172234 - Verify it's possible to create a groovy script action with the trigger On Order Status Update"
 	@priority = 3
 	test CanCreateActionUsingGroovyScripWithOnOrderStatusUpdate {
-		task ("Given: An action in the Commerce Order object") {
+		task ("Given an action in the Commerce Order object") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Commerce Order");
@@ -1558,7 +1635,7 @@ definition {
 			ObjectAdmin.goToActionsTab();
 		}
 
-		task ("And: The user selects the trigger OnOrderStatusUpdate using the action Groovy Script") {
+		task ("And the user selects the trigger OnOrderStatusUpdate using the action Groovy Script") {
 			ObjectAdmin.addObjectActionViaUI(
 				actionLabel = "Action Label",
 				actionName = "ActionName",
@@ -1568,7 +1645,7 @@ definition {
 				whenAction = "On Order Status Update");
 		}
 
-		task ("And: given an account, minium site and an order is created") {
+		task ("And given an account, minium site and an order is created") {
 			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
 			JSONAccountEntry.addAccountEntry(
@@ -1595,7 +1672,7 @@ definition {
 				shippingMethod = "Standard");
 		}
 
-		task ("When: The user changes the order status") {
+		task ("When the user changes the order status") {
 			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
@@ -1611,7 +1688,7 @@ definition {
 				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
 		}
 
-		task ("Then: The action is triggered") {
+		task ("Then the action is triggered") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Commerce Order");
@@ -1630,7 +1707,7 @@ definition {
 	test CanCreateActionUsingOldValueWithOnAfterAddTrigger {
 		property portal.acceptance = "true";
 
-		task ("Given: A picklist with two items is created (via API)") {
+		task ("Given a picklist with two items is created (via API)") {
 			Picklist.addPicklistViaAPI(picklistName = "Status");
 
 			Picklist.addPicklistItemViaAPI(
@@ -1644,7 +1721,7 @@ definition {
 				picklistName = "Status");
 		}
 
-		task ("And given: An object with two fields is created") {
+		task ("And given an object with two fields is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175185",
 				objectName = "CustomObject175185",
@@ -1670,7 +1747,7 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject175185");
 		}
 
-		task ("When: An action is created and The oldValue function is used on the condition tab") {
+		task ("When an action is created and The oldValue function is used on the condition tab") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175185");
@@ -1690,7 +1767,7 @@ definition {
 				whenAction = "On After Add");
 		}
 
-		task ("Then: The object entry is added when the condition is met") {
+		task ("Then the object entry is added when the condition is met") {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject175185");
 
 			ObjectPortlet.addSingleFieldEntryViaUI(entry = "Entry Test");
@@ -1910,7 +1987,7 @@ definition {
 		property ci.retries.disabled = "true";
 		property portal.acceptance = "true";
 
-		task ("Given: an account is created with a custom validation using the oldValue function") {
+		task ("Given an account is created with a custom validation using the oldValue function") {
 			JSONAccountEntry.addAccountEntry(
 				accountEntryName = "Accounts Name",
 				accountEntryType = "Business");
@@ -1957,7 +2034,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("When: the address from created account is edited") {
+		task ("When the address from created account is edited") {
 			Account.openAccountsAdmin();
 
 			LexiconEntry.gotoEntry(rowEntry = "Accounts Name");
@@ -1978,7 +2055,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("Then: the error message appears on the log") {
+		task ("Then the error message appears on the log") {
 			AssertConsoleTextPresent(value1 = "Invalid Value");
 		}
 	}
@@ -1988,7 +2065,7 @@ definition {
 	test CanCreateValidationUsingOldValueFunctionWithPicklistField {
 		property portal.acceptance = "true";
 
-		task ("Given: A picklist with two items is created (via API)") {
+		task ("Given a picklist with two items is created (via API)") {
 			Picklist.addPicklistViaAPI(picklistName = "Status");
 
 			Picklist.addPicklistItemViaAPI(
@@ -2002,7 +2079,7 @@ definition {
 				picklistName = "Status");
 		}
 
-		task ("And given: An object with a field is created") {
+		task ("And given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175196",
 				objectName = "CustomObject175196",
@@ -2018,7 +2095,7 @@ definition {
 				picklistName = "Status");
 		}
 
-		task ("And given: A custom validation with expression builder is created and the object is published") {
+		task ("And given a custom validation with expression builder is created and the object is published") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175196");
@@ -2042,13 +2119,13 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject175196");
 		}
 
-		task ("When: An entry is created") {
+		task ("When an entry is created") {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject175196");
 
 			ObjectAdmin.addObjectPicklistFieldEntryViaUI(picklistOption = "Open");
 		}
 
-		task ("And when: the validation toggle is active") {
+		task ("And when the validation toggle is active") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175196");
@@ -2062,7 +2139,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("Then: The validation condition is met and the entry can be updated") {
+		task ("Then the validation condition is met and the entry can be updated") {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject175196");
 
 			ObjectPortlet.viewEntryDetails(entry = "Open");
@@ -2398,7 +2475,7 @@ definition {
 	test CanFormulaFieldBeUsedWithUserNotification {
 		property custom.properties = "feature.flag.LPS-164948=true";
 
-		task ("Given: a new user and Notification Template") {
+		task ("Given a new user and Notification Template") {
 			JSONUser.addUser(
 				userEmailAddress = "userea@liferay.com",
 				userFirstName = "userfn",
@@ -2418,7 +2495,7 @@ definition {
 				userScreenName = "usersn");
 		}
 
-		task ("And given: a Custom Object with a Notification action and the Formula Field") {
+		task ("And given a Custom Object with a Notification action and the Formula Field") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 176850",
 				objectName = "CustomObject176850",
@@ -2459,14 +2536,14 @@ definition {
 				whenAction = "On After Add");
 		}
 
-		task ("When: an entry is added") {
+		task ("When an entry is added") {
 			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 				fieldName = "customInteger",
 				objectName = "CustomObject176850",
 				value = 1111);
 		}
 
-		task ("Then: the action is triggered and the notification is sent to the user") {
+		task ("Then the action is triggered and the notification is sent to the user") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "userea@liferay.com",
 				userLoginFullName = "userfn userln");
@@ -2712,7 +2789,7 @@ definition {
 	@description = "Verify if an error message appears when trying to save an Update an object Entry action with a Standalone trigger when using the invalid expression"
 	@priority = 4
 	test CannotSaveUpdateAnObjectEntryActions {
-		task ("Given: A custom object is created") {
+		task ("Given a custom object is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175620",
 				objectName = "CustomObject175620",
@@ -2727,7 +2804,7 @@ definition {
 				objectName = "CustomObject175620");
 		}
 
-		task ("When: The user adds an invalid expression to the Update an Object Entry action") {
+		task ("When the user adds an invalid expression to the Update an Object Entry action") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175620");
@@ -2749,13 +2826,13 @@ definition {
 				whenAction = "Standalone");
 		}
 
-		task ("Then: An invalid error message appears") {
+		task ("Then an invalid error message appears") {
 			Button.clickSave();
 
 			AssertElementPresent(locator1 = "Message#ALERT_DISMISSIBLE");
 		}
 
-		task ("Then: The action is not created") {
+		task ("Then the action is not created") {
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object 175620");
@@ -2955,10 +3032,7 @@ definition {
 		property test.smtp.server.enabled = "true";
 
 		task ("Given an email notification template") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -3383,7 +3457,7 @@ definition {
 	test CanTriggerStandaloneActionWithPermission {
 		property portal.acceptance = "true";
 
-		task ("Given: an object with a standalone action") {
+		task ("Given an object with a standalone action") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 185",
 				objectName = "CustomObject185",
@@ -3422,7 +3496,7 @@ definition {
 				value = "Entry Test");
 		}
 
-		task ("And: given a new user is added") {
+		task ("And given a new user is added") {
 			JSONUser.addUser(
 				userEmailAddress = "userea@liferay.com",
 				userFirstName = "userfn",
@@ -3430,7 +3504,7 @@ definition {
 				userScreenName = "usersn");
 		}
 
-		task ("When: the user is given permission to trigger a standalone action") {
+		task ("When the user is given permission to trigger a standalone action") {
 			JSONRole.addRegularRole(roleTitle = "Regular Role");
 
 			Role.openRolesAdmin();
@@ -3478,7 +3552,7 @@ definition {
 				userEmailAddress = "userea@liferay.com");
 		}
 
-		task ("Then: the user can manually trigger the standalone action in the drop-down list") {
+		task ("Then the user can manually trigger the standalone action in the drop-down list") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "userea@liferay.com",
 				userLoginFullName = "userfn userln");
@@ -3856,7 +3930,7 @@ definition {
 	@description = "LPS-173774 - Verify that an unpublished object with a standalone action does NOT show up in permissions."
 	@priority = 4
 	test CheckStandaloneActionPermissionOfUnpublishedObject {
-		task ("Given: Add an object entry and publish it") {
+		task ("Given add an object entry and publish it") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 173774",
 				objectName = "CustomObject173774",
@@ -3873,7 +3947,7 @@ definition {
 			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject173774");
 		}
 
-		task ("And: Add another object entry with a standalone action and unpublish it") {
+		task ("And add another object entry with a standalone action and unpublish it") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 173774Test",
 				objectName = "CustomObject173774Test",
@@ -3897,7 +3971,7 @@ definition {
 				whenAction = "Standalone");
 		}
 
-		task ("When: Check the object entries in define permissions tab of a regular role") {
+		task ("When check the object entries in define permissions tab of a regular role") {
 			ApplicationsMenu.gotoPortlet(
 				category = "Users",
 				panel = "Control Panel",
@@ -3910,7 +3984,7 @@ definition {
 				value1 = "Object");
 		}
 
-		task ("Then: Assert the unpublished object entry with a standalone action is not present") {
+		task ("Then assert the unpublished object entry with a standalone action is not present") {
 			AssertElementPresent(
 				key_permissionNavHeader = "Object",
 				key_permissionNavItem = "Custom Objects 173774",

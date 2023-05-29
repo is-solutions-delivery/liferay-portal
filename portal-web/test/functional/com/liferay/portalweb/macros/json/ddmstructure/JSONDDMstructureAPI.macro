@@ -1,0 +1,94 @@
+definition {
+
+	@summary = "Delete a ddmStructure"
+	macro _deleteStructure {
+		Variables.assertDefined(parameterList = ${structureId});
+
+		var portalURL = JSONCompany.getPortalURL();
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+
+		var curl = '''
+			${portalURL}/api/jsonws/ddm.ddmstructure/delete-structure \
+				-u ${userLoginInfo} \
+				-d structureId=${structureId} \
+		''';
+
+		JSONCurlUtil.post(${curl});
+	}
+
+	@summary = "Get structureId of ddmStructures created by any user"
+	macro _getCustomStructureIds {
+		var companyId = JSONCompany.getCompanyId();
+		var classNameId = JSONClassname._getClassNameId(value = "com.liferay.dynamic.data.lists.model.DDLRecordSet");
+		var portalURL = JSONCompany.getPortalURL();
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+
+		var curl = '''
+			${portalURL}/api/jsonws/ddm.ddmstructure/get-structures \
+				-u ${userLoginInfo} \
+				-d companyId=${companyId} \
+				-d groupIds= \
+				-d classNameId=${classNameId} \
+				-d "start=-1" \
+				-d "end=-1" \
+				-d -orderByComparator=
+		''';
+
+		var dDLRecordSetList = JSONCurlUtil.post(${curl}, "$[?(@['userName'] != '')]['structureId']");
+
+		return ${dDLRecordSetList};
+	}
+
+	@summary = "Get a structureId from ddmStructure"
+	macro _getStructureId {
+		Variables.assertDefined(parameterList = "${classNameId},${groupId},${structureName}");
+
+		var portalURL = JSONCompany.getPortalURL();
+		var companyId = JSONCompany.getCompanyId();
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+
+		var curl = '''
+			${portalURL}/api/jsonws/ddm.ddmstructure/get-structures \
+				-u ${userLoginInfo} \
+				-d companyId=${companyId} \
+				-d groupIds=[${groupId}] \
+				-d classNameId=${classNameId} \
+				-d "start=-1" \
+				-d "end=-1" \
+				-d -orderByComparator=
+		''';
+
+		var structureId = JSONCurlUtil.post(${curl}, "$.[?(@['nameCurrentValue'] == '${structureName}')]['structureId']");
+
+		if (${structureId} == "") {
+			fail("FAIL. Cannot find structureId.");
+		}
+
+		return ${structureId};
+	}
+
+	@summary = "Get structureId of ddmStructures in specific group."
+	macro _getStructureIds {
+		Variables.assertDefined(parameterList = "${classNameId},${groupId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+		var companyId = JSONCompany.getCompanyId();
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+
+		var curl = '''
+			${portalURL}/api/jsonws/ddm.ddmstructure/get-structures \
+				-u ${userLoginInfo} \
+				-d companyId=${companyId} \
+				-d groupIds=[${groupId}] \
+				-d classNameId=${classNameId} \
+				-d "start=-1" \
+				-d "end=-1" \
+				-d -orderByComparator=
+		''';
+
+		var structureIds = JSONCurlUtil.post(${curl}, "$..structureId");
+
+		return ${structureIds};
+	}
+
+}

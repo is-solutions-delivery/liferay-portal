@@ -14,15 +14,20 @@
 
 package com.liferay.frontend.data.set.views.web.internal.display.context;
 
+import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.frontend.data.set.views.web.internal.constants.FDSViewsPortletKeys;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.vulcan.pagination.Pagination;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,11 +41,28 @@ import javax.portlet.ResourceURL;
 public class FDSViewsDisplayContext {
 
 	public FDSViewsDisplayContext(
-		PortletRequest portletRequest,
+		CETManager cetManager, PortletRequest portletRequest,
 		ServiceTrackerList<String> serviceTrackerList) {
 
+		_cetManager = cetManager;
 		_portletRequest = portletRequest;
 		_serviceTrackerList = serviceTrackerList;
+	}
+
+	public JSONArray getFDSCellRendererCETsJSONArray() throws Exception {
+		ThemeDisplay themeDisplay = (ThemeDisplay)_portletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		return JSONUtil.toJSONArray(
+			_cetManager.getCETs(
+				themeDisplay.getCompanyId(), null,
+				ClientExtensionEntryConstants.TYPE_FDS_CELL_RENDERER,
+				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null),
+			fdsCellRendererCET -> JSONUtil.put(
+				"erc", fdsCellRendererCET.getExternalReferenceCode()
+			).put(
+				"name", fdsCellRendererCET.getName(themeDisplay.getLocale())
+			));
 	}
 
 	public String getFDSEntriesURL() {
@@ -116,6 +138,7 @@ public class FDSViewsDisplayContext {
 		return resourceURL.toString();
 	}
 
+	private final CETManager _cetManager;
 	private final PortletRequest _portletRequest;
 	private final ServiceTrackerList<String> _serviceTrackerList;
 

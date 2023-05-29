@@ -2939,6 +2939,17 @@ include-and-override=portal-liferay-online-limit.properties</echo>
 		</sequential>
 	</macrodef>
 
+	<macrodef name="prepare-ms-exchange-configuration">
+		<sequential>
+			<echo file="${liferay.home}/osgi/configs/com.liferay.mail.outlook.auth.connector.provider.internal.configuration.MailOutlookAuthConnectorCompanyConfiguration.config">
+clientId=&quot;${ms.exchange.client.id}&quot;
+clientSecret=&quot;${ms.exchange.client.secret}&quot;
+pop3ConnectionEnabled=B"true"
+smtpConnectionEnabled=B"true"
+tenantId=&quot;${ms.exchange.tenant.id}&quot;</echo>
+		</sequential>
+	</macrodef>
+
 	<macrodef name="prepare-patching-tool">
 		<attribute default="${app.server.parent.dir}/patching-tool" name="patching.tool.dir" />
 
@@ -7013,12 +7024,12 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 				${browser.docker.run.options} \
 				${docker.add.host.hostname.arg} \
 				${docker.add.host.node.name.arg} \
-				--add-host www.able.com:${ip.address} \
-				--add-host www.baker.com:${ip.address} \
-				--add-host www.charlie.com:${ip.address} \
-				--add-host www.dog.com:${ip.address} \
-				--add-host www.easy.com:${ip.address} \
-				--add-host www.fox.com:${ip.address} \
+				--add-host www.able.com:127.0.0.1 \
+				--add-host www.baker.com:127.0.0.1 \
+				--add-host www.charlie.com:127.0.0.1 \
+				--add-host www.dog.com:127.0.0.1 \
+				--add-host www.easy.com:127.0.0.1 \
+				--add-host www.fox.com:127.0.0.1 \
 				--mount type=bind,source=${host.git.dir}/${portal.dir.name},target=${portal.dir} \
 			</start-docker-container>
 
@@ -11130,6 +11141,10 @@ ${update.properties}</echo>
 </Configuration>]]></echo>
 	</target>
 
+	<target name="prepare-ms-exchange-configuration">
+		<prepare-ms-exchange-configuration />
+	</target>
+
 	<target name="prepare-osgi-module-configurations">
 		<get-testcase-property property.name="custom.element.client.extension.created" />
 
@@ -11434,6 +11449,38 @@ company.default.web.id=www.able.com</echo>
 			</or>
 			<then>
 				<get-testcase-property property.name="ibm.store.enabled" />
+			</then>
+		</if>
+
+		<if>
+			<or>
+				<equals arg1="ms.exchange.enabled" arg2="" />
+				<not>
+					<isset property="ms.exchange.enabled" />
+				</not>
+			</or>
+			<then>
+				<get-testcase-property property.name="ms.exchange.enabled" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${ms.exchange.enabled}" arg2="true" />
+
+			<then>
+				<echo append="true" file="portal-impl/src/portal-ext.properties">
+mail.session.mail=true
+mail.session.mail.pop3.host=outlook.office365.com
+mail.session.mail.pop3.port=995
+mail.session.mail.pop3.user=qa-exchange-pop-test@liferay.onmicrosoft.com
+mail.session.mail.smtp.host=smtp.office365.com
+mail.session.mail.smtp.port=587
+mail.session.mail.smtp.user=qa-exchange-pop-test@liferay.onmicrosoft.com
+mail.session.mail.store.protocol=pop3s
+
+pop.server.subdomain=
+pop.server.notifications.enabled=true
+				</echo>
 			</then>
 		</if>
 
@@ -12460,6 +12507,17 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					test.run.environment=${test.run.environment}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${test.run.type}" arg2="parallel" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					test.run.type=${test.run.type}
+					test.run.thread.pool.size=3
+					thread.portal.url=http://www.able.com:8080,http://www.baker.com:8080,http://www.charlie.com:8080
 				</echo>
 			</then>
 		</if>
@@ -15215,6 +15273,15 @@ mail.send.blacklist=</echo>
 				<ant antfile="build-test-openam.xml" target="delete-openam-config" />
 
 				<ant antfile="build-test-openam.xml" target="setup-openam" />
+			</then>
+		</if>
+
+		<get-testcase-property property.name="ms.exchange.enabled" />
+
+		<if>
+			<equals arg1="${ms.exchange.enabled}" arg2="true" />
+			<then>
+				<prepare-ms-exchange-configuration />
 			</then>
 		</if>
 

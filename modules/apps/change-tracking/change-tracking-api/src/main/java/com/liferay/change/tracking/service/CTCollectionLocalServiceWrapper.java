@@ -194,16 +194,6 @@ public class CTCollectionLocalServiceWrapper
 	}
 
 	@Override
-	public void discardCTEntries(
-			long ctCollectionId, long modelClassNameId, long modelClassPK,
-			boolean force)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		_ctCollectionLocalService.discardCTEntries(
-			ctCollectionId, modelClassNameId, modelClassPK, force);
-	}
-
-	@Override
 	public void discardCTEntry(
 			long ctCollectionId, long modelClassNameId, long modelClassPK,
 			boolean force)
@@ -393,9 +383,12 @@ public class CTCollectionLocalServiceWrapper
 	}
 
 	@Override
-	public java.util.List<com.liferay.change.tracking.model.CTEntry>
-		getDiscardCTEntries(
-			long ctCollectionId, long modelClassNameId, long modelClassPK) {
+	public java.util.Map
+		<Long, java.util.List<com.liferay.change.tracking.model.CTEntry>>
+				getDiscardCTEntries(
+					long ctCollectionId, long modelClassNameId,
+					long modelClassPK)
+			throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _ctCollectionLocalService.getDiscardCTEntries(
 			ctCollectionId, modelClassNameId, modelClassPK);

@@ -76,6 +76,8 @@ import com.liferay.headless.admin.user.resource.v1_0.UserAccountResource;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowDefinition;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowDefinitionResource;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductSpecificationResource;
+import com.liferay.headless.commerce.admin.order.dto.v1_0.OrderType;
+import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderTypeResource;
 import com.liferay.headless.delivery.dto.v1_0.SitePage;
 import com.liferay.headless.delivery.resource.v1_0.SitePageResource;
 import com.liferay.journal.model.JournalArticle;
@@ -747,6 +749,84 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			"Test Commerce Notification Template",
 			commerceNotificationTemplate.getName());
+	}
+
+	private void _assertCommerceOrderType1() throws Exception {
+		OrderTypeResource.Builder builder = _orderTypeResourceFactory.create();
+
+		OrderTypeResource orderTypeResource = builder.user(
+			_serviceContext.fetchUser()
+		).build();
+
+		OrderType orderType =
+			orderTypeResource.getOrderTypeByExternalReferenceCode(
+				"TESTCOMMERCEORDERTYPE1");
+
+		Assert.assertNotNull(orderType);
+
+		Map<String, String> orderTypeName = orderType.getName();
+
+		Assert.assertEquals(
+			"Test Commerce Order Type 1", orderTypeName.get("en_US"));
+
+		Assert.assertFalse(orderType.getActive());
+
+		orderType = orderTypeResource.getOrderTypeByExternalReferenceCode(
+			"TESTCOMMERCEORDERTYPE2");
+
+		Assert.assertNotNull(orderType);
+
+		orderTypeName = orderType.getName();
+
+		Assert.assertEquals(
+			"Test Commerce Order Type 2", orderTypeName.get("en_US"));
+
+		Assert.assertTrue(orderType.getActive());
+	}
+
+	private void _assertCommerceOrderType2() throws Exception {
+		OrderTypeResource.Builder builder = _orderTypeResourceFactory.create();
+
+		OrderTypeResource orderTypeResource = builder.user(
+			_serviceContext.fetchUser()
+		).build();
+
+		OrderType orderType =
+			orderTypeResource.getOrderTypeByExternalReferenceCode(
+				"TESTCOMMERCEORDERTYPE1");
+
+		Assert.assertNotNull(orderType);
+
+		Map<String, String> orderTypeName = orderType.getName();
+
+		Assert.assertEquals(
+			"Test Commerce Order Type 1", orderTypeName.get("en_US"));
+
+		Assert.assertFalse(orderType.getActive());
+
+		orderType = orderTypeResource.getOrderTypeByExternalReferenceCode(
+			"TESTCOMMERCEORDERTYPE2");
+
+		Assert.assertNotNull(orderType);
+
+		orderTypeName = orderType.getName();
+
+		Assert.assertEquals(
+			"Test Commerce Order Type 2 Update", orderTypeName.get("en_US"));
+
+		Assert.assertTrue(orderType.getActive());
+
+		orderType = orderTypeResource.getOrderTypeByExternalReferenceCode(
+			"TESTCOMMERCEORDERTYPE3");
+
+		Assert.assertNotNull(orderType);
+
+		orderTypeName = orderType.getName();
+
+		Assert.assertEquals(
+			"Test Commerce Order Type 3", orderTypeName.get("en_US"));
+
+		Assert.assertFalse(orderType.getActive());
 	}
 
 	private void _assertCommerceSpecificationProducts1() throws Exception {
@@ -3127,6 +3207,7 @@ public class BundleSiteInitializerTest {
 		_assertCommerceCatalogs1();
 		_assertCommerceChannel1();
 		_assertCommerceInventoryWarehouse();
+		_assertCommerceOrderType1();
 		_assertCommerceSpecificationProducts1();
 		_assertCPDefinition();
 		_assertCPInstanceProperties();
@@ -3166,6 +3247,7 @@ public class BundleSiteInitializerTest {
 		_assertAccounts2();
 		_assertCommerceCatalogs2();
 		_assertCommerceChannel2();
+		_assertCommerceOrderType2();
 		_assertCommerceSpecificationProducts2();
 		_assertDDMTemplate2();
 		_assertExpandoColumns2();
@@ -3305,6 +3387,9 @@ public class BundleSiteInitializerTest {
 	@Inject
 	private ObjectRelationshipResource.Factory
 		_objectRelationshipResourceFactory;
+
+	@Inject
+	private OrderTypeResource.Factory _orderTypeResourceFactory;
 
 	@Inject
 	private OrganizationResource.Factory _organizationResourceFactory;

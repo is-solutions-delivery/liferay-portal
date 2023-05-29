@@ -41,10 +41,7 @@ definition {
 		}
 
 		task ("And given a notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				fromAddress = "test@liferay",
@@ -134,10 +131,7 @@ definition {
 		}
 
 		task ("And given a notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				fromAddress = "test@liferay",
@@ -171,10 +165,7 @@ definition {
 	@priority = 3
 	test CanDeleteEmailTemplate {
 		task ("Go to Templates and add a new Notification Template") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -205,10 +196,7 @@ definition {
 	@priority = 4
 	test CanDeleteNotification {
 		task ("Given a notification template is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -268,10 +256,7 @@ definition {
 		}
 
 		task ("When the notification is generated and then deleted") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
+			Notifications.goToNotificationQueueAdmin();
 
 			ObjectNotifications.deleteQueue(
 				status = "Unsent",
@@ -289,10 +274,7 @@ definition {
 	@priority = 3
 	test CanEditEmailTemplate {
 		task ("Given a user creates an email notification template") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -336,10 +318,7 @@ definition {
 	@priority = 3
 	test CanSearchForNotifications {
 		task ("Go to Templates and add Notification Templates") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			for (var templateName : list "Test,Liferay,Site") {
 				ObjectNotifications.addNewNotificationTemplate(
@@ -388,10 +367,7 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Go to Templates and add a new Notification Template") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -467,10 +443,7 @@ definition {
 		property test.name.skip.portal.instance = "ObjectNotifications#CanSendEmailViaActionDelete";
 
 		task ("Given an Email Notification Template") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -548,10 +521,7 @@ definition {
 		}
 
 		task ("Then the Action is triggered and a sent email is seen in the Notification Queue") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
+			Notifications.goToNotificationQueueAdmin();
 
 			AssertElementPresent(
 				key_entryLabel = "CustomObject178781",
@@ -655,10 +625,7 @@ definition {
 		property test.smtp.server.enabled = "true";
 
 		task ("Given an Email Notification Template") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -742,10 +709,7 @@ definition {
 		property test.name.skip.portal.instance = "ObjectNotifications#CanSendEmailViaActionUpdate";
 
 		task ("Given an Email Notification Template") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -825,15 +789,327 @@ definition {
 		}
 
 		task ("Then the Action is triggered and a sent email is seen in the Notification Queue") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
+			Notifications.goToNotificationQueueAdmin();
 
 			AssertElementPresent(
 				key_entryLabel = "CustomObject178782",
 				key_entryStatus = "Sent",
 				locator1 = "ObjectNotifications#VIEW_NOTIFICATION_ENTRIES");
+		}
+	}
+
+	@description = "LPS-165849 - Verify terms from 1:M related custom objects are replaced with the correct values in an email notification"
+	@priority = 5
+	test CanSendEmailWithTermsFromRelatedCustomObjects {
+		property custom.properties = "feature.flag.LPS-165849=true";
+		property portal.acceptance = "true";
+		property test.smtp.server.enabled = "true";
+
+		task ("Given Custom Object A and Custom Object B with text fields") {
+			for (var letters : list "A,B") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = "Custom Object ${letters} ",
+					objectName = "CustomObject${letters}",
+					pluralLabelName = "Custom Objects ${letters}");
+
+				ObjectAdmin.addObjectFieldViaAPI(
+					fieldBusinessType = "Text",
+					fieldLabelName = "Text Field ${letters}",
+					fieldName = "customField",
+					fieldType = "String",
+					isRequired = "false",
+					objectName = "CustomObject${letters}");
+
+				ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject${letters}");
+			}
+		}
+
+		task ("And given a 1:M relationship between Custom Object A and Custom Object B") {
+			ObjectAdmin.addObjectRelationshipViaAPI(
+				objectName_1 = "CustomObjectA",
+				objectName_2 = "CustomObjectB",
+				relationshipLabel = "Relationship",
+				relationshipName = "relationship",
+				relationshipType = "oneToMany");
+		}
+
+		task ("And given an email notification template using terms from both object definitions") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Notifications",
+				panel = "Control Panel",
+				portlet = "Templates");
+
+			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "[%RELATIONSHIP_CUSTOMOBJECTA_CUSTOMFIELD%] | [%CUSTOMOBJECTB_CUSTOMFIELD%]",
+				entryTo = "[%CUSTOMOBJECTB_AUTHOR_EMAIL_ADDRESS%]",
+				fromAddress = "[%RELATIONSHIP_CUSTOMOBJECTA_AUTHOR_EMAIL_ADDRESS%]",
+				fromName = "[%CUSTOMOBJECTB_AUTHOR_FIRST_NAME%]",
+				name = "Notification Template",
+				notificationType = "Email",
+				subject = "[%RELATIONSHIP_CUSTOMOBJECTA_AUTHOR_EMAIL_ADDRESS%] | [%RELATIONSHIP_CUSTOMOBJECTA_AUTHOR_FIRST_NAME%] [%RELATIONSHIP_CUSTOMOBJECTA_AUTHOR_LAST_NAME%]");
+
+			PortletEntry.save();
+		}
+
+		task ("And given the title field of Custom Object A is set to the text field") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object A");
+
+			CreateObject.selectTitleField(fieldLabel = "Text Field A");
+
+			CreateObject.saveObject();
+		}
+
+		task ("And given an action in Custom Object B to send an email notification after an entry is updated") {
+			Navigator.gotoBack();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object B");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Send email after updating entry",
+				active = "true",
+				notificationName = "Notification Template",
+				objectLabel = "Custom Object B",
+				thenAction = "Notification",
+				whenAction = "On After Update");
+		}
+
+		task ("And given an object entry for both object definitions") {
+			for (var letters : list "A,B") {
+				ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+					fieldName = "customField",
+					objectName = "CustomObject${letters}",
+					value = "Entry Test ${letters}");
+			}
+		}
+
+		task ("When an entry in Custom Object B is updated") {
+			ObjectAdmin.goToCustomObject(objectName = "CustomObjectB");
+
+			ObjectPortlet.viewEntryDetails(entry = "Entry Test B");
+
+			ObjectPortlet.searchEntryRelationshipField(entryValue = "Entry Test A");
+
+			PortletEntry.save();
+		}
+
+		task ("Then the action is triggered and an email is received with the terms replaced with the correct values") {
+			MockMock.viewMail(
+				asset = "test@liferay.com | Test Test",
+				content = "Entry Test A | Entry Test B",
+				recipient = "test@liferay",
+				sender = "Test",
+				subject = "test@liferay.com | Test Test");
+		}
+	}
+
+	@description = "LPS-165849 - Verify terms from a 1:M related system object (parent) are replaced with the correct values in an email notification"
+	@priority = 5
+	test CanSendEmailWithTermsFromRelatedSystemObject {
+		property custom.properties = "feature.flag.LPS-165849=true";
+		property portal.acceptance = "true";
+		property test.smtp.server.enabled = "true";
+
+		task ("Given a custom object with a text field") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 182606",
+				objectName = "CustomObject182606",
+				pluralLabelName = "Custom Objects 182606");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Text Field",
+				fieldName = "customField",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "CustomObject182606");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject182606");
+		}
+
+		task ("And given a 1:M relationship between User and the custom object") {
+			ObjectAdmin.addObjectRelationshipViaAPI(
+				objectName_1 = "User",
+				objectName_2 = "CustomObject182606",
+				relationshipLabel = "Relationship",
+				relationshipName = "relationship",
+				relationshipType = "oneToMany");
+		}
+
+		task ("And given an email notification template using terms from both object definitions") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Notifications",
+				panel = "Control Panel",
+				portlet = "Templates");
+
+			ObjectNotifications.addNewNotificationTemplate(
+				emailBody = "[%CUSTOMOBJECT182606_CUSTOMFIELD%]",
+				entryTo = "[%CUSTOMOBJECT182606_AUTHOR_EMAIL_ADDRESS%]",
+				fromAddress = "[%CUSTOMOBJECT182606_AUTHOR_EMAIL_ADDRESS%]",
+				fromName = "[%RELATIONSHIP_USER_AUTHOR_FIRST_NAME%]",
+				name = "Notification Template",
+				notificationType = "Email",
+				subject = "[%RELATIONSHIP_USER_AUTHOR_FIRST_NAME%] [%RELATIONSHIP_USER_AUTHOR_LAST_NAME%]");
+
+			PortletEntry.save();
+		}
+
+		task ("And given an action in the custom object to send an email notification after an entry is created") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object 182606");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Send email after entry is created",
+				active = "true",
+				notificationName = "Notification Template",
+				objectLabel = "Custom Object 182606",
+				thenAction = "Notification",
+				whenAction = "On After Add");
+		}
+
+		task ("When an entry is created") {
+			ObjectAdmin.goToCustomObject(objectName = "CustomObject182606");
+
+			LexiconEntry.gotoAdd();
+
+			ObjectPortlet.typeCustomField(
+				customField = "Text Field",
+				entry = "Entry Test");
+
+			ObjectPortlet.selectRelationshipFieldEntry(
+				entry = "",
+				newEntry = "Test");
+		}
+
+		task ("Then the action is triggered and an email is sent with the terms replaced with the correct values") {
+			MockMock.viewMail(
+				asset = "Test Test",
+				content = "Entry Test",
+				recipient = "test@liferay",
+				sender = "Test",
+				subject = "Test Test");
+		}
+	}
+
+	@description = "LPS-165849 - Verify terms from a 1:M related custom object (child) are replaced with the correct values in a user notification"
+	@priority = 5
+	test CanSendUserNotificationWithTermsFromRelatedCustomObject {
+		property custom.properties = "feature.flag.LPS-165849=true";
+		property portal.acceptance = "true";
+
+		task ("Given Custom Object A and Custom Object B with text fields") {
+			for (var letters : list "A,B") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = "Custom Object ${letters}",
+					objectName = "CustomObject${letters}",
+					pluralLabelName = "Custom Objects ${letters} ");
+
+				ObjectAdmin.addObjectFieldViaAPI(
+					fieldBusinessType = "Text",
+					fieldLabelName = "Text Field ${letters}",
+					fieldName = "customField",
+					fieldType = "String",
+					isRequired = "false",
+					objectName = "CustomObject${letters}");
+
+				ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject${letters}");
+			}
+		}
+
+		task ("And given a 1:M relationship between Custom Object A and Custom Object B") {
+			ObjectAdmin.addObjectRelationshipViaAPI(
+				objectName_1 = "CustomObjectA",
+				objectName_2 = "CustomObjectB",
+				relationshipLabel = "Relationship",
+				relationshipName = "relationship",
+				relationshipType = "oneToMany");
+		}
+
+		task ("And given a user with an admin role") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONRole.assignRoleToUser(
+				roleTitle = "Administrator",
+				userEmailAddress = "userea@liferay.com");
+		}
+
+		task ("And given a user notification template using terms from both object definitions") {
+			UserNotificationAPI.postNotificationTemplate(
+				en_US = "[%RELATIONSHIP_CUSTOMOBJECTA_CUSTOMFIELD%] | [%CUSTOMOBJECTB_CUSTOMFIELD%]",
+				externalReferenceCode = "ercTest",
+				name = "User Notification Template",
+				recipientType = "user",
+				type = "userNotification",
+				userScreenName = "usersn");
+		}
+
+		task ("And given the title field of Custom Object A is set to the text field") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object A");
+
+			CreateObject.selectTitleField(fieldLabel = "Text Field A");
+
+			CreateObject.saveObject();
+		}
+
+		task ("And given an action in Custom Object B to send an email notification after an entry is created") {
+			Navigator.gotoBack();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object B");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Send email after entry is created",
+				active = "true",
+				notificationName = "User Notification Template",
+				objectLabel = "Custom Object B",
+				thenAction = "Notification",
+				whenAction = "On After Add");
+		}
+
+		task ("When the created admin user creates an entry in Custom Object B") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea@liferay.com",
+				userLoginFullName = "userfn userln");
+
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customField",
+				objectName = "CustomObjectA",
+				value = "Entry Test A");
+
+			ObjectAdmin.goToCustomObject(objectName = "CustomObjectB");
+
+			LexiconEntry.gotoAdd();
+
+			Type(
+				key_fieldLabel = "Text Field B",
+				locator1 = "TextInput#GENERIC_TEXT_INPUT",
+				value1 = "Entry Test B");
+
+			ObjectPortlet.searchEntryRelationshipField(entryValue = "Entry Test A");
+
+			PortletEntry.save();
+		}
+
+		task ("Then a user notification is received with the terms replaced with the correct values") {
+			Navigator.gotoNotifications();
+
+			AssertTextEquals(
+				key_notificationsTitle = "Entry Test A | Entry Test B",
+				locator1 = "Notifications#NOTIFICATIONS_TITLE_TEXT",
+				value1 = ${key_notificationsTitle});
 		}
 	}
 
@@ -865,10 +1141,7 @@ definition {
 		}
 
 		task ("And given an email notification template with the applicable fields filled with the Author and Current User terms") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -926,10 +1199,7 @@ definition {
 		}
 
 		task ("Then the email is received with the terms replaced with the correct values") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
+			Notifications.goToNotificationQueueAdmin();
 
 			AssertTextPresent(value1 = "userfn");
 
@@ -945,10 +1215,7 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Given an email notification template with the applicable fields filled with the Author and Current User terms") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Templates");
+			Notifications.goToNotificationTemplateAdmin();
 
 			ObjectNotifications.addNewNotificationTemplate(
 				emailBody = "Email Body",
@@ -1003,10 +1270,7 @@ definition {
 		}
 
 		task ("Then the email is received with the terms replaced with the correct values") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
+			Notifications.goToNotificationQueueAdmin();
 
 			AssertTextPresent(value1 = "edituserln");
 
@@ -1092,10 +1356,7 @@ definition {
 		}
 
 		task ("Then a user notification is sent with the terms replaced with the correct values") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Notifications",
-				panel = "Control Panel",
-				portlet = "Queue");
+			Notifications.goToNotificationQueueAdmin();
 
 			AssertTextPresent(value1 = "userea@liferay.com userfn userln Entry Test Edited");
 		}

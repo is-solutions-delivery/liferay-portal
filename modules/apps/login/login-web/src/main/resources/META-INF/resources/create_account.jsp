@@ -180,11 +180,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "create-account"));
 							</aui:input>
 						</c:if>
 
-						<aui:input model="<%= User.class %>" name="emailAddress">
-							<c:if test="<%= PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.USERS_EMAIL_ADDRESS_REQUIRED) %>">
-								<aui:validator name="required" />
-							</c:if>
-						</aui:input>
+						<aui:input model="<%= User.class %>" name="emailAddress" required="<%= PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.USERS_EMAIL_ADDRESS_REQUIRED) %>" />
 					</clay:col>
 				</clay:row>
 			</div>
@@ -231,16 +227,12 @@ renderResponse.setTitle(LanguageUtil.get(request, "create-account"));
 						<clay:col
 							md="6"
 						>
-							<aui:input label="password" name="password1" size="30" type="password" value="">
-								<aui:validator name="required" />
-							</aui:input>
+							<aui:input label="password" name="password1" required="<%= true %>" size="30" type="password" value="" />
 
-							<aui:input label="enter-again" name="password2" size="30" type="password" value="">
+							<aui:input label="enter-again" name="password2" required="<%= true %>" size="30" type="password" value="">
 								<aui:validator name="equalTo">
 									'#<portlet:namespace />password1'
 								</aui:validator>
-
-								<aui:validator name="required" />
 							</aui:input>
 						</clay:col>
 					</clay:row>
