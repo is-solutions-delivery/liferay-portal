@@ -1,0 +1,144 @@
+@component-name = "OSB Site Initializer EVP"
+definition {
+
+	var baseURL = PropsUtil.get("portal.url");
+
+	property custom.properties = "feature.flag.LPS-169981=true";
+	property osgi.modules.includes = "osb-site-initializer-evp";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer EVP";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new EVP Site") {
+			EVPUtils.addEVPSite();
+		}
+
+		task ("Navigate to EVP Site and Sign In") {
+			EVPUtils.gotoEVP();
+		}
+
+		task ("Create New users") {
+			EVPOrganization.addUser(
+				roleTitle1 = "Administrator",
+				roleTitle2 = "EVP Manager",
+				userEmail = "Manager@liferay.com",
+				userFrist = "Manager",
+				userLest = "Manager",
+				userScreen = "Manager");
+
+			EVPOrganization.addUser(
+				roleTitle1 = "Administrator",
+				roleTitle2 = "Finance User",
+				userEmail = "Finance@liferay.com",
+				userFrist = "Finance",
+				userLest = "Finance",
+				userScreen = "Finance");
+
+			EVPOrganization.addUser(
+				roleTitle1 = "Administrator",
+				roleTitle2 = "Employee",
+				userEmail = "Employee@liferay.com",
+				userFrist = "Employee",
+				userLest = "Employee",
+				userScreen = "Employee");
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "EVP Portal");
+		}
+	}
+
+	@description = "LPS-184946 - Verify that the EVP Staff can approve a new organization"
+	@priority = 4
+	test ManagerCanApproveOrganization {
+		task ("Go to Organization page") {
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("Create an New Organization") {
+			EVPOrganization.NewOrganization(
+				newName1 = "Organization Name",
+				newName2 = "Site",
+				newName3 = "Smal",
+				newName4 = "Street",
+				newName5 = "City",
+				newName6 = "State",
+				newName7 = "Country",
+				newName8 = "Zip",
+				newName9 = "TaxId",
+				newName10 = "Name",
+				newName11 = "Email",
+				newName12 = "Phone",
+				newName13 = "Info");
+
+			AssertClick(
+				locator1 = "Button#SUBMIT",
+				value1 = "Submit");
+		}
+
+		task ("Logg como EVP Manager") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "Manager@liferay.com",
+				userLoginFullName = "Manager Manager");
+		}
+
+		task ("Go to Organization page") {
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("Click in Review option on the kebab menu") {
+			EVPOrganization.kebabMenuOption(
+				keyName = "Organization Name",
+				keyOption = "Review");
+		}
+
+		task ("Click onReject button in the modal") {
+			EVPOrganization.reviewOrganization(
+				describeHere = "Your organization has been approved!",
+				keybutton = "Approve");
+		}
+
+		task ("Assert that the status will change to 'Awaiting Finance Approval'") {
+			EVPOrganization.assertStatusOrganization(
+				keyOrganizationName = "Organization Name",
+				keyStatus = "Awaiting Finance Approval");
+		}
+
+		task ("Logg como Finance user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "Finance@liferay.com",
+				userLoginFullName = "Finance Finance");
+		}
+
+		task ("Go to Organization page") {
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("Click in Review option on the kebab menu") {
+			Click(
+				key_organizationName = "Organization Name",
+				key_status = "Awaiting Finance Approval",
+				locator1 = "EVPOrganization#ASSERT_STATUS");
+		}
+	}
+
+}
