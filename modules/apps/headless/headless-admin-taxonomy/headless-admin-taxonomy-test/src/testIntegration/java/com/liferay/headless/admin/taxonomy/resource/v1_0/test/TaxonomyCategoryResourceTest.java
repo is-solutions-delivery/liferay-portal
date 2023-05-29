@@ -18,8 +18,11 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalServiceUtil;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.model.AssetVocabularyConstants;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
 import com.liferay.asset.test.util.AssetTestUtil;
+import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.service.DepotEntryLocalServiceUtil;
 import com.liferay.headless.admin.taxonomy.client.dto.v1_0.AssetType;
 import com.liferay.headless.admin.taxonomy.client.dto.v1_0.ParentTaxonomyCategory;
 import com.liferay.headless.admin.taxonomy.client.dto.v1_0.TaxonomyCategory;
@@ -29,12 +32,16 @@ import com.liferay.headless.admin.taxonomy.client.pagination.Pagination;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
@@ -58,6 +65,36 @@ public class TaxonomyCategoryResourceTest
 			UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
 			testGroup.getGroupId(), RandomTestUtil.randomString(),
 			new ServiceContext());
+
+		_testDepotEntry = DepotEntryLocalServiceUtil.addDepotEntry(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()),
+			null,
+			new ServiceContext() {
+				{
+					setCompanyId(testGroup.getCompanyId());
+					setUserId(TestPropsValues.getUserId());
+				}
+			});
+
+		_depotAssetVocabulary = AssetVocabularyLocalServiceUtil.addVocabulary(
+			UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
+			_testDepotEntry.getGroupId(), RandomTestUtil.randomString(),
+			new ServiceContext());
+
+		_globalAssetVocabulary = AssetVocabularyLocalServiceUtil.addVocabulary(
+			UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
+			testCompany.getGroupId(), RandomTestUtil.randomString(),
+			new ServiceContext());
+		_internalAssetVocabulary =
+			AssetVocabularyLocalServiceUtil.addVocabulary(
+				UserLocalServiceUtil.getGuestUserId(testGroup.getCompanyId()),
+				testGroup.getGroupId(), null,
+				HashMapBuilder.put(
+					LocaleUtil.US, RandomTestUtil.randomString()
+				).build(),
+				null, null, AssetVocabularyConstants.VISIBILITY_TYPE_INTERNAL,
+				new ServiceContext());
 	}
 
 	@Override
@@ -67,7 +104,14 @@ public class TaxonomyCategoryResourceTest
 
 		super.testGetTaxonomyVocabularyTaxonomyCategoriesPage();
 
-		_testGetTaxonomyVocabularyTaxonomyCategoriesPageFlatten();
+		_testGetTaxonomyVocabularyTaxonomyCategoriesPageFlatten(
+			_assetVocabulary);
+		_testGetTaxonomyVocabularyTaxonomyCategoriesPageFlatten(
+			_depotAssetVocabulary);
+		_testGetTaxonomyVocabularyTaxonomyCategoriesPageFlatten(
+			_globalAssetVocabulary);
+		_testGetTaxonomyVocabularyTaxonomyCategoriesPageFlatten(
+			_internalAssetVocabulary);
 	}
 
 	@Override
@@ -284,13 +328,14 @@ public class TaxonomyCategoryResourceTest
 		};
 	}
 
-	private void _testGetTaxonomyVocabularyTaxonomyCategoriesPageFlatten()
+	private void _testGetTaxonomyVocabularyTaxonomyCategoriesPageFlatten(
+			AssetVocabulary assetVocabulary)
 		throws Exception {
 
 		AssetVocabulary irrelevantAssetVocabulary = _addAssetVocabulary();
 
 		TaxonomyCategory taxonomyCategory1 =
-			_addTaxonomyCategoryWithParentAssetVocabulary(_assetVocabulary);
+			_addTaxonomyCategoryWithParentAssetVocabulary(assetVocabulary);
 
 		TaxonomyCategory taxonomyCategory2 =
 			_addTaxonomyCategoryWithParentTaxonomyCategory(
@@ -305,7 +350,7 @@ public class TaxonomyCategoryResourceTest
 		Page<TaxonomyCategory> page =
 			taxonomyCategoryResource.
 				getTaxonomyVocabularyTaxonomyCategoriesPage(
-					_assetVocabulary.getVocabularyId(), flatten, null, null,
+					assetVocabulary.getVocabularyId(), flatten, null, null,
 					null, Pagination.of(1, 10), null);
 
 		Assert.assertEquals(1, page.getTotalCount());
@@ -320,7 +365,7 @@ public class TaxonomyCategoryResourceTest
 		page =
 			taxonomyCategoryResource.
 				getTaxonomyVocabularyTaxonomyCategoriesPage(
-					_assetVocabulary.getVocabularyId(), flatten, null, null,
+					assetVocabulary.getVocabularyId(), flatten, null, null,
 					null, Pagination.of(1, 10), null);
 
 		Assert.assertEquals(2, page.getTotalCount());
@@ -490,5 +535,9 @@ public class TaxonomyCategoryResourceTest
 	}
 
 	private AssetVocabulary _assetVocabulary;
+	private AssetVocabulary _depotAssetVocabulary;
+	private AssetVocabulary _globalAssetVocabulary;
+	private AssetVocabulary _internalAssetVocabulary;
+	private DepotEntry _testDepotEntry;
 
 }

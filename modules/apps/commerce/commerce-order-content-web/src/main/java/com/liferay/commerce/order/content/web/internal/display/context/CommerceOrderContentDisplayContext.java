@@ -750,6 +750,8 @@ public class CommerceOrderContentDisplayContext {
 				continue;
 			}
 
+			String buttonCssClass = null;
+			String id = null;
 			String label;
 			String transitionName;
 
@@ -771,6 +773,19 @@ public class CommerceOrderContentDisplayContext {
 					transitionName = "submit";
 				}
 			}
+			else if ((commerceOrderStatus.getKey() ==
+						CommerceOrderConstants.ORDER_STATUS_QUOTE_REQUESTED) &&
+					 isRequestQuoteEnabled()) {
+
+				if (!isValidCommerceOrder()) {
+					continue;
+				}
+
+				buttonCssClass = "btn-primary request-quote";
+				id = "requestQuote";
+				label = "request-a-quote";
+				transitionName = String.valueOf(commerceOrderStatus.getKey());
+			}
 			else if (commerceOrderStatus.getKey() ==
 						CommerceOrderConstants.ORDER_STATUS_PROCESSING) {
 
@@ -783,11 +798,19 @@ public class CommerceOrderContentDisplayContext {
 				label = "accept-order";
 				transitionName = String.valueOf(commerceOrderStatus.getKey());
 			}
+			else if (commerceOrderStatus.getKey() ==
+						CommerceOrderConstants.ORDER_STATUS_QUOTE_PROCESSED) {
+
+				label = "process-quote";
+				transitionName = String.valueOf(commerceOrderStatus.getKey());
+			}
 			else {
 				continue;
 			}
 
-			String buttonCssClass = "btn-primary";
+			if (Validator.isNull(buttonCssClass)) {
+				buttonCssClass = "btn-primary";
+			}
 
 			if (commerceOrderStatus.getPriority() ==
 					CommerceOrderConstants.ORDER_STATUS_ANY) {
@@ -801,9 +824,15 @@ public class CommerceOrderContentDisplayContext {
 				"transitionName", transitionName
 			).buildString();
 
+			if (commerceOrderStatus.getKey() ==
+					CommerceOrderConstants.ORDER_STATUS_QUOTE_REQUESTED) {
+
+				transitionOrderPortletURLString = null;
+			}
+
 			headerActionModels.add(
 				new HeaderActionModel(
-					buttonCssClass, null, transitionOrderPortletURLString, null,
+					buttonCssClass, null, transitionOrderPortletURLString, id,
 					label));
 		}
 
@@ -877,7 +906,9 @@ public class CommerceOrderContentDisplayContext {
 
 			if (commerceOrderStatus.equals(currentCommerceOrderStatus) &&
 				(commerceOrderStatus.getKey() !=
-					CommerceOrderConstants.ORDER_STATUS_COMPLETED)) {
+					CommerceOrderConstants.ORDER_STATUS_COMPLETED) &&
+				(commerceOrderStatus.getKey() !=
+					CommerceOrderConstants.ORDER_STATUS_QUOTE_PROCESSED)) {
 
 				step.setState("active");
 			}
@@ -1023,6 +1054,14 @@ public class CommerceOrderContentDisplayContext {
 			CommerceOrderActionKeys.MANAGE_COMMERCE_ORDER_PAYMENT_TERMS);
 	}
 
+	public boolean hasManageQuotePermission() {
+		ThemeDisplay themeDisplay = _cpRequestHelper.getThemeDisplay();
+
+		return _portletResourcePermission.contains(
+			themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(),
+			CommerceOrderActionKeys.MANAGE_QUOTES);
+	}
+
 	public boolean hasModelPermission(
 			CommerceOrder commerceOrder, String actionId)
 		throws PortalException {
@@ -1111,6 +1150,18 @@ public class CommerceOrderContentDisplayContext {
 
 		return commerceOrderContentPortletInstanceConfiguration.
 			showCommerceOrderCreateTime();
+	}
+
+	public boolean isShowProcessQuote() throws PortalException {
+		CommerceOrder commerceOrder = getCommerceOrder();
+
+		if (hasManageQuotePermission() &&
+			_hasOrderStatusQuoteRequested(commerceOrder.getOrderStatus())) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean isShowPurchaseOrderNumber() throws PortalException {
@@ -1226,6 +1277,16 @@ public class CommerceOrderContentDisplayContext {
 
 	private boolean _hasOrderStatusInProgress(int orderStatus) {
 		if (CommerceOrderConstants.ORDER_STATUS_IN_PROGRESS == orderStatus) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _hasOrderStatusQuoteRequested(int orderStatus) {
+		if (CommerceOrderConstants.ORDER_STATUS_QUOTE_REQUESTED ==
+				orderStatus) {
+
 			return true;
 		}
 

@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.object.rest.internal.resource.v1_0.test.util;
+package com.liferay.portal.kernel.test.util;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * @author Luis Miguel Barcos
+ * @author Alberto Javier Moreno Lage
  */
 public class HTTPTestUtil {
 
