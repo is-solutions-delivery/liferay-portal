@@ -29,6 +29,7 @@ import com.liferay.headless.admin.content.client.dto.v1_0.ContentField;
 import com.liferay.headless.admin.content.client.dto.v1_0.ContentFieldValue;
 import com.liferay.headless.admin.content.client.dto.v1_0.StructuredContent;
 import com.liferay.headless.admin.content.client.pagination.Page;
+import com.liferay.headless.admin.content.client.pagination.Pagination;
 import com.liferay.headless.admin.content.client.serdes.v1_0.StructuredContentSerDes;
 import com.liferay.headless.delivery.client.resource.v1_0.StructuredContentResource;
 import com.liferay.journal.model.JournalArticle;
@@ -45,6 +46,8 @@ import com.liferay.portal.test.rule.Inject;
 
 import java.io.InputStream;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -83,6 +86,93 @@ public class StructuredContentResourceTest
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
+	}
+
+	@Override
+	@Test
+	public void testGetSiteStructuredContentsPage() throws Exception {
+		super.testGetSiteStructuredContentsPage();
+
+		Locale locale = LocaleUtil.getDefault();
+
+		StructuredContent irrelevantStructuredContent =
+			_randomStructuredContent(locale);
+
+		com.liferay.headless.admin.content.client.resource.v1_0.
+			StructuredContentResource irrelevantStructuredContentResource =
+				_buildStructureContentResource(locale);
+
+		irrelevantStructuredContentResource.postSiteStructuredContentDraft(
+			testGetSiteStructuredContentsPage_getSiteId(),
+			irrelevantStructuredContent);
+
+		StructuredContent structuredContent = _randomStructuredContent(locale);
+
+		structuredContent.setPriority(Double.valueOf(1));
+
+		com.liferay.headless.admin.content.client.resource.v1_0.
+			StructuredContentResource structuredContentResource =
+				_buildStructureContentResource(locale);
+
+		StructuredContent postStructuredContent =
+			structuredContentResource.postSiteStructuredContentDraft(
+				testGetSiteStructuredContentsPage_getSiteId(),
+				structuredContent);
+
+		com.liferay.headless.delivery.client.dto.v1_0.StructuredContent
+			patchStructuredContent =
+				_structuredContentResource.patchStructuredContent(
+					postStructuredContent.getId(),
+					new com.liferay.headless.delivery.client.dto.v1_0.
+						StructuredContent() {
+
+						{
+							priority = Double.valueOf(3);
+						}
+					});
+
+		Page<StructuredContent> page =
+			structuredContentResource.getSiteStructuredContentsPage(
+				testGroup.getGroupId(), true, null, null, "priority eq 3.0",
+				Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+
+		assertEqualsIgnoringOrder(
+			Arrays.asList(_toStructuredContent(patchStructuredContent)),
+			(List<StructuredContent>)page.getItems());
+
+		assertValid(page);
+	}
+
+	@Override
+	@Test
+	public void testGetStructuredContentByVersion() throws Exception {
+		super.testGetStructuredContentByVersion();
+
+		Locale locale = LocaleUtil.getDefault();
+
+		StructuredContent randomStructuredContent = _randomStructuredContent(
+			locale);
+
+		randomStructuredContent.setPriority(Double.valueOf(1));
+
+		com.liferay.headless.admin.content.client.resource.v1_0.
+			StructuredContentResource structuredContentResource =
+				_buildStructureContentResource(locale);
+
+		StructuredContent postStructuredContent =
+			structuredContentResource.postSiteStructuredContentDraft(
+				testGetSiteStructuredContentsPage_getSiteId(),
+				randomStructuredContent);
+
+		StructuredContent getStructuredContent =
+			structuredContentResource.getStructuredContentByVersion(
+				postStructuredContent.getId(), 1.0);
+
+		assertEquals(postStructuredContent, getStructuredContent);
+		Assert.assertEquals(
+			Double.valueOf(1.0), getStructuredContent.getPriority());
 	}
 
 	@Override
@@ -165,46 +255,31 @@ public class StructuredContentResourceTest
 
 		// Localized structured content with the default language
 
-		Locale locale = LocaleUtil.getDefault();
-
-		StructuredContent randomLocalizedStructuredContent1 =
-			_randomStructuredContent(locale);
-
-		com.liferay.headless.admin.content.client.resource.v1_0.
-			StructuredContentResource englishStructuredContentResource =
-				_buildStructureContentResource(locale);
-
-		StructuredContent postStructuredContent1 =
-			englishStructuredContentResource.postSiteStructuredContentDraft(
-				testGetSiteStructuredContentsPage_getSiteId(),
-				randomLocalizedStructuredContent1);
-
-		_assertLocalizedValues(
-			postStructuredContent1, LocaleUtil.toW3cLanguageId(locale));
-		assertEquals(randomLocalizedStructuredContent1, postStructuredContent1);
-		assertValid(postStructuredContent1);
+		_testPostSiteStructuredContentDraft(
+			LocaleUtil.getDefault(), RandomTestUtil.randomDouble());
 
 		// Localized structured content with a different language from the
 		// default language
 
-		locale = LocaleUtil.fromLanguageId("es-ES");
+		_testPostSiteStructuredContentDraft(
+			LocaleUtil.fromLanguageId("es-ES"), RandomTestUtil.randomDouble());
 
-		StructuredContent randomLocalizedStructuredContent2 =
-			_randomStructuredContent(locale);
+		// Structured content with a priority
 
-		com.liferay.headless.admin.content.client.resource.v1_0.
-			StructuredContentResource spanishStructuredContentResource =
-				_buildStructureContentResource(locale);
+		StructuredContent structuredContent1 =
+			_testPostSiteStructuredContentDraft(
+				LocaleUtil.getDefault(), Double.valueOf(1));
 
-		StructuredContent postStructuredContent2 =
-			spanishStructuredContentResource.postSiteStructuredContentDraft(
-				testGetSiteStructuredContentsPage_getSiteId(),
-				randomLocalizedStructuredContent2);
+		Assert.assertEquals(
+			Double.valueOf(1.0), structuredContent1.getPriority());
 
-		_assertLocalizedValues(
-			postStructuredContent2, LocaleUtil.toW3cLanguageId(locale));
-		assertEquals(randomLocalizedStructuredContent2, postStructuredContent2);
-		assertValid(postStructuredContent2);
+		// Structured content with the default priority
+
+		StructuredContent structuredContent2 =
+			_testPostSiteStructuredContentDraft(LocaleUtil.getDefault(), null);
+
+		Assert.assertEquals(
+			Double.valueOf(0.0), structuredContent2.getPriority());
 	}
 
 	@Override
@@ -493,6 +568,36 @@ public class StructuredContentResourceTest
 			"dependencies/" + fileName);
 
 		return StringUtil.read(inputStream);
+	}
+
+	private StructuredContent _testPostSiteStructuredContentDraft(
+			Locale locale, Double priority)
+		throws Exception {
+
+		StructuredContent randomStructuredContent = _randomStructuredContent(
+			locale);
+
+		randomStructuredContent.setPriority(priority);
+
+		com.liferay.headless.admin.content.client.resource.v1_0.
+			StructuredContentResource structuredContentResource =
+				_buildStructureContentResource(locale);
+
+		StructuredContent postStructuredContent =
+			structuredContentResource.postSiteStructuredContentDraft(
+				testGetSiteStructuredContentsPage_getSiteId(),
+				randomStructuredContent);
+
+		_assertLocalizedValues(
+			postStructuredContent, LocaleUtil.toW3cLanguageId(locale));
+
+		if (priority != null) {
+			assertEquals(randomStructuredContent, postStructuredContent);
+		}
+
+		assertValid(postStructuredContent);
+
+		return postStructuredContent;
 	}
 
 	private com.liferay.headless.delivery.client.dto.v1_0.StructuredContent
