@@ -18,7 +18,7 @@ definition {
 		}
 
 		task ("Create a new EVP Site") {
-			EVPUtils.addEVPSite();
+			EVPUtils.addEVPSite();  
 		}
 
 		task ("Navigate to EVP Site and Sign In") {
