@@ -57,15 +57,15 @@ public class CompareRunsLocalServiceImpl
 					true, _getObjectDefinitionByTableName(companyId, "_Case"));
 
 		DynamicObjectDefinitionTable
-			testrayCaseResultExtensionDynamicObjectDefinitionTable =
-				_getDynamicObjectDefinitionTable(
-					true,
-					_getObjectDefinitionByTableName(companyId, "_CaseResult"));
-
-		DynamicObjectDefinitionTable
 			testrayCaseResultDynamicObjectDefinitionTable =
 				_getDynamicObjectDefinitionTable(
 					false,
+					_getObjectDefinitionByTableName(companyId, "_CaseResult"));
+
+		DynamicObjectDefinitionTable
+			testrayCaseResultExtensionDynamicObjectDefinitionTable =
+				_getDynamicObjectDefinitionTable(
+					true,
 					_getObjectDefinitionByTableName(companyId, "_CaseResult"));
 
 		Column<DynamicObjectDefinitionTable, Long>
