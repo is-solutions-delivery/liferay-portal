@@ -25,6 +25,7 @@ export default withRouter(
 		match: {
 			params: {sectionTitle},
 		},
+		contentReviewerUser,
 		question: {creator = {}, creatorStatistics, dateCreated},
 	}) => (
 		<Link
@@ -48,6 +49,10 @@ export default withRouter(
 							'anonymous-user-configuration-name'
 						)}
 				</p>
+
+				{contentReviewerUser &&
+					creator.userGroupInfos &&
+					creator.userGroupInfos[0]?.name}
 			</div>
 
 			<UserPopover creator={creator} statistics={creatorStatistics} />
