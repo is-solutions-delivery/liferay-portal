@@ -49,16 +49,20 @@ export default function QuestionRow({
 				link: `/questions/all/creator/${question.creator.id}`,
 				name: question.creator.name,
 				portraitURL: question.creator.image,
+				userGroups: question.creator?.userGroupInfos[0]?.name,
 				userId: String(question.creator.id),
 		  }
 		: {
 				link: `/questions/${sectionTitle}`,
 				name: '',
 				portraitURL: '',
+				userGroups: '',
 				userId: '0',
 		  };
 
 	const isRowSelected = question.friendlyUrlPath === rowSelected;
+
+	const isContentReviewerUser = context.contentReviewerUser;
 
 	return (
 		<div
@@ -196,12 +200,27 @@ export default function QuestionRow({
 							userId={creatorInformation.userId}
 						/>
 
-						<strong className="c-ml-2 text-dark">
+						<strong className="c-m-2 text-dark">
 							{creatorInformation.name ||
 								Liferay.Language.get(
 									'anonymous-user-configuration-name'
 								)}
 						</strong>
+
+						{!!creatorInformation.userGroups &&
+							!!isContentReviewerUser && (
+								<ClayLabel
+									className="mb-2"
+									displayType={
+										creatorInformation.userGroups ===
+										'Partner'
+											? 'info'
+											: 'warning'
+									}
+								>
+									{creatorInformation.userGroups}
+								</ClayLabel>
+							)}
 					</Link>
 
 					<EditedTimestamp
