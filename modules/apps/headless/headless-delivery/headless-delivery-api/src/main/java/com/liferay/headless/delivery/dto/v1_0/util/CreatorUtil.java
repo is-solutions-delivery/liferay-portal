@@ -40,9 +40,19 @@ public class CreatorUtil {
 				contentType = "UserAccount";
 				familyName = user.getLastName();
 				givenName = user.getFirstName();
-				
+
 				id = user.getUserId();
 				name = user.getFullName();
+
+				userGroupInfos = TransformUtil.transformToArray(
+					user.getUserGroups(),
+					userGroup -> new UserGroupInfo() {
+						{
+							id = userGroup.getUserGroupId();
+							name = userGroup.getName();
+						}
+					},
+					UserGroupInfo.class);
 
 				setImage(
 					() -> {
