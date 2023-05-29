@@ -22,11 +22,16 @@ import {
 
 import './index.scss';
 import {getPaymentConfirmation} from '../../../common/services/paymentConfirmation';
+import {extractStringFromURL} from '../../../util/replace';
 
 export type generatePaymentReport = typeof yupSchema.payment.__outputType;
 
 const GenerateFinancialReport = () => {
-	const redirect = `${Liferay.ThemeDisplay.getPortalURL()}/web/evp/reports`;
+	const pathCurrentSite = Liferay.ThemeDisplay.getSiteAdminURL();
+
+	const redirect = `${Liferay.ThemeDisplay.getPortalURL()}/web/${extractStringFromURL(
+		pathCurrentSite
+	)}/reports`;
 
 	const {
 		clearErrors,
