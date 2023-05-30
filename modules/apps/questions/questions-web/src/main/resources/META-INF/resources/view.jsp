@@ -52,6 +52,8 @@
 			).put(
 				"showCardsForTopicNavigation", questionsConfiguration.showCardsForTopicNavigation()
 			).put(
+				"showFeatureRequestCard", questionsConfiguration.showFeatureRequestCard()
+			).put(
 				"siteKey", String.valueOf(themeDisplay.getScopeGroupId())
 			).put(
 				"tagSelectorURL", renderRequest.getAttribute(QuestionsWebKeys.TAG_SELECTOR_URL)

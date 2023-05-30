@@ -51,6 +51,11 @@ public interface QuestionsConfiguration {
 	public boolean showCardsForTopicNavigation();
 
 	@Meta.AD(
+		deflt = "false", name = "show-feature-request-card", required = false
+	)
+	public boolean showFeatureRequestCard();
+
+	@Meta.AD(
 		deflt = "", name = "set-base-path-for-history-router", required = false
 	)
 	public String historyRouterBasePath();
