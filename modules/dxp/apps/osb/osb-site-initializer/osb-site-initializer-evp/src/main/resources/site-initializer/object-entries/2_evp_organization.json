@@ -33,7 +33,7 @@
 			"messageEVPManager": "Organization is approved",
 			"organizationName": "Organization 2",
 			"organizationSiteSocialMediaLink": "www.organization2.org",
-			"organizationStatus": "awaitingFinanceApproval",
+			"organizationStatus": "awaitingFinanceReview",
 			"smallDescription": "Small Description",
 			"state": "Pernambuco",
 			"street": "Street, 2",

@@ -1,0 +1,14 @@
+[
+	{
+		"active": true,
+		"conditionExpression": "requestStatus == \"awaitingMoreInfoFromEmployee\"",
+		"externalReferenceCode": "EVP-REQUEST-NOTIFICATION-02",
+		"label": {
+			"en_US": "EVP More Information Request Template"
+		},
+		"name": "EVPMoreInformationRequestTemplate",
+		"objectActionExecutorKey": "notification",
+		"objectActionTriggerKey": "onAfterUpdate",
+		"objectDefinitionId": "[$OBJECT_DEFINITION_ID:EVPRequest$]"
+	}
+]

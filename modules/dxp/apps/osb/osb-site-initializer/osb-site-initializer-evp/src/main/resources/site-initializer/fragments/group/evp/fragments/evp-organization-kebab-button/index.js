@@ -91,8 +91,8 @@ const openModal = () => {
 					const status =
 						userRoles === ROLE.EVP_MANAGER
 							? {
-									key: 'awaitingFinanceApproval',
-									value: 'Awaiting Finance Approval',
+									key: 'awaitingFinanceReview',
+									value: 'Awaiting Finance Review',
 							  }
 							: {
 									key: 'verified',

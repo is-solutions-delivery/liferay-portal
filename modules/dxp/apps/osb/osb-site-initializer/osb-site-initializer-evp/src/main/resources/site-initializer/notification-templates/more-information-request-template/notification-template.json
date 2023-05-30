@@ -1,7 +1,7 @@
 {
 	"description": "",
 	"editorType": "richText",
-	"name": "Employee Volunteering Program (Organization)",
+	"name": "EVP More Information Request Template",
 	"recipientType": "email",
 	"recipients": [
 		{
@@ -17,7 +17,7 @@
 		}
 	],
 	"subject": {
-		"en_US": "EVP Organization Update"
+		"en_US": "EVP Request Update"
 	},
 	"type": "email"
 }
