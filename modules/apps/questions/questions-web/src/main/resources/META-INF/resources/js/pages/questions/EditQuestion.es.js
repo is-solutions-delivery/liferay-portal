@@ -51,6 +51,17 @@ export default withRouter(
 			},
 		});
 
+		const BuildTitleButton = () => {
+			if (context.trustedUser && !context.showFeatureRequestCard) {
+				return Liferay.Language.get('update-your-question');
+			}
+			else if (context.showFeatureRequestCard) {
+				return Liferay.Language.get('update-your-request');
+			}
+
+			return Liferay.Language.get('submit-for-workflow');
+		};
+
 		useEffect(() => {
 			if (data.messageBoardThreadByFriendlyUrlPath) {
 				editorRef.current.setContent(
@@ -157,13 +168,7 @@ export default withRouter(
 									).then(() => history.goBack());
 								}}
 							>
-								{context.trustedUser
-									? Liferay.Language.get(
-											'update-your-question'
-									  )
-									: Liferay.Language.get(
-											'submit-for-workflow'
-									  )}
+								<BuildTitleButton />
 							</ClayButton>
 
 							<Link
