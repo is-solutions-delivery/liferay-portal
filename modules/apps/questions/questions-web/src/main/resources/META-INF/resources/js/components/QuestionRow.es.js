@@ -49,15 +49,19 @@ export default function QuestionRow({
 				link: `/questions/all/creator/${question.creator.id}`,
 				name: question.creator.name,
 				portraitURL: question.creator.image,
-				userGroups: question.creator?.userGroupInfos[0]?.name,
 				userId: String(question.creator.id),
+				...(Liferay.FeatureFlags['LPS-185892'] && {
+					userGroups: question.creator?.userGroupInfos[0]?.name,
+				}),
 		  }
 		: {
 				link: `/questions/${sectionTitle}`,
 				name: '',
 				portraitURL: '',
-				userGroups: '',
 				userId: '0',
+				...(Liferay.FeatureFlags['LPS-185892'] && {
+					userGroups: '',
+				}),
 		  };
 
 	const isRowSelected = question.friendlyUrlPath === rowSelected;

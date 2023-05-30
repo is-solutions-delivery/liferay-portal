@@ -49,7 +49,9 @@ export default withRouter(
 						)}
 				</p>
 
-				{creator.userGroupInfos && creator.userGroupInfos[0]?.name}
+				{Liferay.FeatureFlags['LPS-185892'] &&
+					creator.userGroupInfos &&
+					creator.userGroupInfos[0]?.name}
 			</div>
 
 			<UserPopover creator={creator} statistics={creatorStatistics} />
