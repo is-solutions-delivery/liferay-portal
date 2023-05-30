@@ -25,6 +25,7 @@ export default withRouter(
 		match: {
 			params: {sectionTitle},
 		},
+		contentReviewerUser,
 		question: {creator = {}, creatorStatistics, dateCreated},
 	}) => (
 		<Link
