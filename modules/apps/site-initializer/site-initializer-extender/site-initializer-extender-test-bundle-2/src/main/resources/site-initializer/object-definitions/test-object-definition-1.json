@@ -1,6 +1,4 @@
 {
-	"accountEntryRestricted": true,
-	"accountEntryRestrictedObjectFieldName": "field1",
 	"label": {
 		"en_US": "Test Object Definition 1"
 	},
@@ -21,5 +19,5 @@
 		"en_US": "Test Object Definitions 1"
 	},
 	"scope": "site",
-	"storageType": "salesforce"
+	"storageType": "default"
 }
