@@ -1,0 +1,145 @@
+@component-name = "OSB Site Initializer EVP"
+definition {
+
+	var baseURL = PropsUtil.get("portal.url");
+
+	property custom.properties = "feature.flag.LPS-169981=true";
+	property osgi.modules.includes = "osb-site-initializer-evp";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer EVP";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new EVP Site") {
+			EVPUtils.addEVPSite();
+		}
+
+		task ("Navigate to EVP Site and Sign In") {
+			EVPUtils.gotoEVP();
+		}
+
+		task ("Create New users") {
+			EVPOrganization.addUser(
+				roleTitle1 = "Administrator",
+				roleTitle2 = "EVP Manager",
+				userEmail = "Manager@liferay.com",
+				userFrist = "Manager",
+				userLest = "Manager",
+				userScreen = "Manager");
+
+			EVPOrganization.addUser(
+				roleTitle1 = "Administrator",
+				roleTitle2 = "Finance User",
+				userEmail = "Finance@liferay.com",
+				userFrist = "Finance",
+				userLest = "Finance",
+				userScreen = "Finance");
+
+			EVPOrganization.addUser(
+				roleTitle1 = "Administrator",
+				roleTitle2 = "Employee",
+				userEmail = "Employee@liferay.com",
+				userFrist = "Employee",
+				userLest = "Employee",
+				userScreen = "Employee");
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+	}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "EVP Portal");
+	}
+	}
+
+	@description = "LPS-185959 - Verify that Only the Manager user can see 'Review button' when organization are in 'Awaiting Approval On EVP' status"
+	@priority = 5
+	test ManagerCanSeeReviewInAwaitingEVPStatus {
+		task ("Go to EVP site") {
+			EVPUtils.gotoEVP();
+		}
+
+		task ("Log as Manager user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "Manager@liferay.com",
+				userLoginFullName = "Manager Manager");
+		}
+
+		task ("Go to Organization page") {
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task (" Click on Ellipsis button from an Organization with 'Awaiting Approval On EVP' status") {
+			Click(
+				key_name = "Organization 1",
+				locator1 = "EVPOrganization#KEBAB_MENU_OPTION_ORGANIZATION");
+		}
+
+		task ("Verify that the Review button are being showed") {
+			AssertElementPresent(
+				key_option = "Review",
+				locator1 = "EVPUtils#KEBAB_OPTION");
+		}
+
+		task ("Log as Finance user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "Finance@liferay.com",
+				userLoginFullName = "Finance Finance");
+		}
+
+		task ("Go to Organization page") {
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task (" Click on Ellipsis button from an Organization with 'Awaiting Approval On EVP' status") {
+			Click(
+				key_name = "Organization 1",
+				locator1 = "EVPOrganization#KEBAB_MENU_OPTION_ORGANIZATION");
+		}
+
+		task ("Verify that the Review button are not being showed") {
+			AssertElementNotPresent(
+				key_option = "Review",
+				locator1 = "EVPUtils#KEBAB_OPTION");
+		}
+
+		task ("Log as Employee user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "Employee@liferay.com",
+				userLoginFullName = "Employee Employee");
+		}
+
+		task ("Go to Organization page") {
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("Click on Ellipsis button from a Organization with 'Awaiting Approval On EVP' status") {
+			Click(
+				key_name = "Organization 1",
+				locator1 = "EVPOrganization#KEBAB_MENU_OPTION_ORGANIZATION");
+		}
+
+		task ("Verify that the Review button are not being showed") {
+			AssertElementNotPresent(
+				key_option = "Review",
+				locator1 = "EVPUtils#KEBAB_OPTION");
+		}
+	}
+
+}
