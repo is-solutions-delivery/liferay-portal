@@ -65,6 +65,7 @@ export default function QuestionRow({
 		  };
 
 	const isRowSelected = question.friendlyUrlPath === rowSelected;
+	const isContentReviewerUser = context.contentReviewerUser;
 
 	return (
 		<div
@@ -209,18 +210,21 @@ export default function QuestionRow({
 								)}
 						</strong>
 
-						{!!creatorInformation.userGroups && (
-							<ClayLabel
-								className="mb-2"
-								displayType={
-									creatorInformation.userGroups === 'Partner'
-										? 'info'
-										: 'warning'
-								}
-							>
-								{creatorInformation.userGroups}
-							</ClayLabel>
-						)}
+						{Liferay.FeatureFlags['LPS-185892'] &&
+							!!isContentReviewerUser &&
+							!!creatorInformation.userGroups && (
+								<ClayLabel
+									className="mb-2"
+									displayType={
+										creatorInformation.userGroups ===
+										'Partner'
+											? 'info'
+											: 'warning'
+									}
+								>
+									{creatorInformation.userGroups}
+								</ClayLabel>
+							)}
 					</Link>
 
 					<EditedTimestamp

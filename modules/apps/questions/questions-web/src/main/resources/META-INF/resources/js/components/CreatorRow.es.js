@@ -25,6 +25,7 @@ export default withRouter(
 		match: {
 			params: {sectionTitle},
 		},
+		contentReviewerUser,
 		question: {creator = {}, creatorStatistics, dateCreated},
 	}) => (
 		<Link
@@ -50,6 +51,7 @@ export default withRouter(
 				</p>
 
 				{Liferay.FeatureFlags['LPS-185892'] &&
+					contentReviewerUser &&
 					creator.userGroupInfos &&
 					creator.userGroupInfos[0]?.name}
 			</div>
