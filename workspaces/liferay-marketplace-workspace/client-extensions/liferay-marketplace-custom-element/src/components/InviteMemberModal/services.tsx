@@ -54,13 +54,13 @@ export async function getAccountRolesOnAPI(accountId: number) {
 export async function createNewUser(requestBody: requestBody) {
   try {
     const response = await fetch(`/o/headless-admin-user/v1.0/user-accounts`, {
+      body: JSON.stringify(requestBody),
       headers: {
-        "accept": 'application/json',
         'Content-Type': 'application/json',
+        "accept": 'application/json',
         'x-csrf-token': Liferay.authToken,
       },
       method: "POST",
-      body: JSON.stringify(requestBody),
     });
   } catch (error) {
     <ClayAlert.ToastContainer>
@@ -137,8 +137,8 @@ export async function callRolesApi(
     `/o/headless-admin-user/v1.0/accounts/${accountId}/account-roles/${roleId}/user-accounts/${userId}`,
     {
       headers: {
-        "accept": 'application/json',
         'Content-Type': 'application/json',
+        "accept": 'application/json',
         'x-csrf-token': Liferay.authToken,
       },
       method: "POST",
@@ -163,24 +163,24 @@ export async function addAdditionalInfo(
 ) {
   const additionalInfoBody = {
     acceptInviteStatus,
-    r_userToUserAddInfo_userId,
-    inviteURL,
-    publisherName,
-    r_accountToUserAdditionalInfos_accountEntryId: publisherId,
     emailOfMember,
-    mothersName,
-    userFirstName,
+    inviteURL,
     inviterName,
+    mothersName,
+    publisherName,
+    r_accountEntryToUserAdditionalInfo_accountEntryId: publisherId,
+    r_userToUserAddInfo_userId,
     roles,
+    userFirstName,
   };
 
   const response = await fetch(`/o/c/useradditionalinfos/`, {
+    body: JSON.stringify(additionalInfoBody),
     headers: {
-      "accept": 'application/json',
       'Content-Type': 'application/json',
+      "accept": 'application/json',
       'x-csrf-token': Liferay.authToken,
     },
     method: "POST",
-    body: JSON.stringify(additionalInfoBody),
   });
 }
