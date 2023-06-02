@@ -173,8 +173,7 @@ const Question = ({
 					setError(errorObject);
 
 					setLoading(false);
-				}
-				else {
+				} else {
 					setQuestion(messageBoardThreadByFriendlyUrlPath);
 					setLoading(false);
 				}
@@ -292,8 +291,7 @@ const Question = ({
 			});
 
 			setIsVisibleEditor(false);
-		}
-		catch (error) {
+		} catch (error) {
 			processGraphQLError(error);
 		}
 
@@ -576,6 +574,9 @@ const Question = ({
 							<div className="c-mt-4 position-relative questions-creator text-center text-md-right">
 								<CreatorRow
 									answers={answers}
+									contentReviewerUser={
+										context.contentReviewerUser
+									}
 									question={question}
 								/>
 							</div>
