@@ -13,9 +13,9 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
-import ClayModal, {useModal} from '@clayui/modal';
-import {useEffect, useState} from 'react';
+import ClayForm, { ClayCheckbox, ClayInput } from '@clayui/form';
+import ClayModal, { useModal } from '@clayui/modal';
+import { useEffect, useState } from 'react';
 
 import './inviteMemberModal.scss';
 import {
@@ -25,42 +25,45 @@ import {
   createNewUser,
   getAccountRolesOnAPI,
   getSiteURL,
-	getUserByEmail,
+  getUserByEmail,
 } from './services';
 import { getMyUserAccount } from '../../utils/api';
 import { createPassword } from '../../utils/createPassword';
 import { Liferay } from '../../liferay/liferay';
+import ClayIcon from '@clayui/icon';
 
 interface InviteMemberModalProps {
-	handleClose: () => void;
-	selectedAccount: Account;
+  handleClose: () => void;
+  listOfRoles: string[];
+  rolesPermissionDescription: PermissionDescription[];
+  selectedAccount: Account;
 }
 
 interface CheckboxRole {
-	isChecked: boolean;
-	roleName: string;
+  isChecked: boolean;
+  roleName: string;
 }
 
 export function InviteMemberModal({
-	handleClose,
-	selectedAccount,
+  handleClose,
+  listOfRoles,
+  rolesPermissionDescription,
+  selectedAccount,
 }: InviteMemberModalProps) {
-	const {observer, onClose} = useModal({
-		onClose: () => handleClose(),
-	});
+  const { observer, onClose } = useModal({
+    onClose: () => handleClose(),
+  });
 
-	const [formFields, setFormFields] = useState({
-		email: '',
-		firstName: '',
-		lastName: '',
-	});
-	const [checkboxRoles, setCheckboxRoles] = useState<CheckboxRole[]>([]);
-	const [formValid, setFormValid] = useState<boolean>(false);
+  const [formFields, setFormFields] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+  });
+  const [checkboxRoles, setCheckboxRoles] = useState<CheckboxRole[]>([]);
+  const [formValid, setFormValid] = useState<boolean>(false);
 
   const [accountRoles, setAccountRoles] = useState<AccountRole[]>();
   const [userPassword, setUserPassword] = useState<string>('');
-
-	const listOfRoles = ['Account Administrator', 'App Editor'];
 
   useEffect(() => {
     const mapRoles = listOfRoles.map((role) => {
@@ -138,112 +141,103 @@ export function InviteMemberModal({
           getSiteURL(),
         getCheckedRoles()
       );
-      onClose()
+      onClose();
     }
   };
 
-	const validateForm = (checkboxValues: CheckboxRole[]) => {
-		const isValid = checkboxValues.some(
-			(checkbox: CheckboxRole) => checkbox.isChecked
-		);
+  const validateForm = (checkboxValues: CheckboxRole[]) => {
+    const isValid = checkboxValues.some(
+      (checkbox: CheckboxRole) => checkbox.isChecked
+    );
 
-		setFormValid(isValid);
-	};
+    setFormValid(isValid);
+  };
 
-	const handleCheck = (selectedRoleName: String) => {
-		const rolesChecked = checkboxRoles.map((role) => {
-			if (selectedRoleName === role.roleName) {
-				role.isChecked = !role.isChecked;
+  const handleCheck = (selectedRoleName: String) => {
+    const rolesChecked = checkboxRoles.map((role) => {
+      if (selectedRoleName === role.roleName) {
+        role.isChecked = !role.isChecked;
 
-				return role;
-			}
+        return role;
+      }
 
-			return role;
-		}, []);
+      return role;
+    }, []);
     setCheckboxRoles(rolesChecked);
-		validateForm(rolesChecked);
-	};
+    validateForm(rolesChecked);
+  };
 
-	return (
-		<ClayModal observer={observer} size="lg">
-			<ClayModal.Header>Invite New Member</ClayModal.Header>
+  return (
+    <ClayModal observer={observer} size="lg">
+      <ClayModal.Header>Invite New Member</ClayModal.Header>
 
-			<ClayModal.Body>
-				<ClayForm onSubmit={handleSubmit}>
-					<ClayForm.Group>
-						<div>
-							<ClayModal.TitleSection>
-								<ClayModal.Title>Invite</ClayModal.Title>
-							</ClayModal.TitleSection>
+      <ClayModal.Body>
+        <ClayForm onSubmit={handleSubmit}>
+          <ClayForm.Group>
+            <div>
+              <ClayModal.TitleSection>
+                <ClayModal.Title>Invite</ClayModal.Title>
+              </ClayModal.TitleSection>
 
-							<hr className="solid"></hr>
-						</div>
+              <hr className="solid"></hr>
+            </div>
 
-						<div className="d-flex justify-content-between pb-5">
-							<div className="form-group pr-3 w-50">
-								<label
-									className="control-label pb-1"
-									htmlFor="firstName"
-								>
-									First Name
-								</label>
+            <div className="d-flex justify-content-between pb-5">
+              <div className="form-group pr-3 w-50">
+                <label className="control-label pb-1" htmlFor="firstName">
+                  First Name
+                </label>
 
-								<ClayInput
-									id="firstName"
-									onChange={(event) => {
-										setFormFields({
-											...formFields,
-											firstName: event.target.value,
-										});
-									}}
-									required={true}
-									type="text"
-								/>
-							</div>
+                <ClayInput
+                  id="firstName"
+                  onChange={(event) => {
+                    setFormFields({
+                      ...formFields,
+                      firstName: event.target.value,
+                    });
+                  }}
+                  required={true}
+                  type="text"
+                />
+              </div>
 
-							<div className="form-group pl-3 w-50">
-								<label
-									className="control-label pb-1"
-									htmlFor="lastName"
-								>
-									Last Name
-								</label>
+              <div className="form-group pl-3 w-50">
+                <label className="control-label pb-1" htmlFor="lastName">
+                  Last Name
+                </label>
 
-								<ClayInput
-									id="lastName"
-									onChange={(event) => {
-										setFormFields({
-											...formFields,
-											lastName: event.target.value,
-										});
-									}}
-									required={true}
-									type="text"
-								/>
-							</div>
-						</div>
+                <ClayInput
+                  id="lastName"
+                  onChange={(event) => {
+                    setFormFields({
+                      ...formFields,
+                      lastName: event.target.value,
+                    });
+                  }}
+                  required={true}
+                  type="text"
+                />
+              </div>
+            </div>
 
-						<div className="form-group">
-							<label
-								className="control-label pb-1"
-								htmlFor="emailAddress"
-							>
-								Email
-							</label>
+            <div className="form-group">
+              <label className="control-label pb-1" htmlFor="emailAddress">
+                Email
+              </label>
 
-							<ClayInput
-								id="emailAddress"
-								onChange={(event) => {
-									setFormFields({
-										...formFields,
-										email: event.target.value,
-									});
-								}}
-								required={true}
-								type="text"
-							/>
-						</div>
-					</ClayForm.Group>
+              <ClayInput
+                id="emailAddress"
+                onChange={(event) => {
+                  setFormFields({
+                    ...formFields,
+                    email: event.target.value,
+                  });
+                }}
+                required={true}
+                type="text"
+              />
+            </div>
+          </ClayForm.Group>
 
           <ClayForm.Group>
             <div className="pt-4">
@@ -268,6 +262,37 @@ export function InviteMemberModal({
               })}
             </div>
           </ClayForm.Group>
+
+          <ClayForm.Group>
+            <ClayModal.TitleSection>
+              <ClayModal.Title className="control-label">
+                App & Solution Permissions
+              </ClayModal.Title>
+            </ClayModal.TitleSection>
+            <hr className="solid"></hr>
+            {rolesPermissionDescription.map((rolePermission) => {
+              let showCheckIcon = false;
+              checkboxRoles.map((checkedRole) => {
+                if (
+                  checkedRole.isChecked &&
+                  rolePermission.permitedRoles.includes(checkedRole.roleName)
+                ) {
+                  showCheckIcon = true;
+                }
+              });
+              return (
+                <div className="p-2 text-muted">
+                  <ClayIcon
+                    symbol={showCheckIcon ? 'check' : 'block'}
+                    className={showCheckIcon ? 'text-success mr-2' : 'mr-2'}
+                  ></ClayIcon>
+                  {rolePermission.permissionName}
+                </div>
+              );
+            })}
+          </ClayForm.Group>
+          
+
           <ClayButton.Group
             className="d-flex justify-content-between justify-content-lg-end modal-footer"
             spaced

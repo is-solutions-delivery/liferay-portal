@@ -31,6 +31,7 @@ import {
 	AccountBriefProps,
 	MemberProps,
 	UserAccountProps,
+	adminRoles,
 	customerRoles,
 	publisherRoles,
 } from '../PublishedAppsDashboardPage/PublishedDashboardPageUtil';
@@ -38,8 +39,10 @@ import {
 interface MembersPageProps {
 	dashboardNavigationItems: DashboardListItems[];
 	icon: string;
+	listOfRoles: string[];
+	rolesPermissionDescription: PermissionDescription[];
 	selectedAccount: Account;
-	setShowDashboardNavigation: (value: boolean) => void;
+	setShowDashboardNavigation?: (value: boolean) => void;
 }
 
 const memberTableHeaders: TableHeaders = [
@@ -58,6 +61,8 @@ const memberTableHeaders: TableHeaders = [
 export function MembersPage({
 	dashboardNavigationItems,
 	icon,
+	listOfRoles,
+	rolesPermissionDescription,
 	selectedAccount,
 }: MembersPageProps) {
 	const [visible, setVisible] = useState<boolean>(false);
@@ -98,6 +103,7 @@ export function MembersPage({
 				accountBriefs: currentUserAccountResponse.accountBriefs,
 				isCustomerAccount: false,
 				isPublisherAccount: false,
+				isAdminAccount: false,
 			};
 
 			const currentUserAccountBriefs =
@@ -127,8 +133,21 @@ export function MembersPage({
 						currentUserAccount.isPublisherAccount = true;
 					}
 				});
+
+
+				adminRoles.forEach((adminRole) => {
+					if (
+						currentUserAccountBriefs.roleBriefs.find(
+							(role: {name: string}) =>
+								role.name === adminRole
+						)
+					) {
+						currentUserAccount.isAdminAccount = true;
+					}
+				});
 			}
 
+			console.log(currentUserAccount)
 			const accountsListResponse = await getUserAccounts();
 
 			const membersList = accountsListResponse?.items.map(
@@ -138,6 +157,7 @@ export function MembersPage({
 						dateCreated: member.dateCreated,
 						email: member.emailAddress,
 						image: member.image,
+						isInvitedMember: false,
 						isCustomerAccount: false,
 						isPublisherAccount: false,
 						lastLoginDate: member.lastLoginDate,
@@ -162,6 +182,10 @@ export function MembersPage({
 						member.isPublisherAccount = true;
 					}
 				});
+
+				if(rolesList.find((role) => role === "Invited Member")){
+					member.isInvitedMember = true;
+				}
 			});
 
 			let filteredMembersList: MemberProps[] = [];
@@ -173,7 +197,7 @@ export function MembersPage({
               accountBrief.externalReferenceCode ===
               selectedAccount.externalReferenceCode
           ) &&
-          member.isPublisherAccount
+          (member.isPublisherAccount || member.isCustomerAccount || member.isInvitedMember)
         ) {
           return true;
         }
@@ -234,6 +258,8 @@ export function MembersPage({
 			{visible && (
 				<InviteMemberModal
 					handleClose={() => setVisible(false)}
+					listOfRoles={listOfRoles}
+					rolesPermissionDescription={rolesPermissionDescription}
 					selectedAccount={selectedAccount}
 				></InviteMemberModal>
 			)}
