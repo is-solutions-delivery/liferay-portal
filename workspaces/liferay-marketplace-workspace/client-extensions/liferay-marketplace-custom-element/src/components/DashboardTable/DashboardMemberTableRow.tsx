@@ -48,8 +48,14 @@ export function DashboardMemberTableRow({
             initialImage={image}
             userName={name}
           />
-
-          <span className="dashboard-table-row-name-text">{name}</span>
+          <div className='d-flex'>
+            <span className="dashboard-table-row-name-text mr-3">{name}</span>
+            {isInvitedMember && (
+              <span className="label label-inverse-light rounded-lg">
+              <span className="label-item label-item-expand">Invited</span>
+            </span>
+            )}
+          </div>
         </div>
       </ClayTable.Cell>
 

@@ -69,6 +69,7 @@ export function MembersPage({
 	const [loading] = useState<boolean>(false);
 	const [members, setMembers] = useState<MemberProps[]>(Array<MemberProps>());
 	const [selectedMember, setSelectedMember] = useState<MemberProps>();
+	const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState<boolean>(false)
 
 	const memberMessages = {
 		description:
@@ -143,6 +144,7 @@ export function MembersPage({
 						)
 					) {
 						currentUserAccount.isAdminAccount = true;
+						setIsCurrentUserAdmin(true)
 					}
 				});
 			}
@@ -213,7 +215,7 @@ export function MembersPage({
 		<>
 			{!loading ? (
 				<DashboardPage
-					buttonMessage="+ New Member"
+					buttonMessage={isCurrentUserAdmin ? "+ New Member" : ""}
 					dashboardNavigationItems={dashboardNavigationItems}
 					messages={memberMessages}
 					onButtonClick={() => setVisible(true)}

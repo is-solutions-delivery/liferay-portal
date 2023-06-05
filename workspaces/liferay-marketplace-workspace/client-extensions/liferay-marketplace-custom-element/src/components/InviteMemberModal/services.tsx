@@ -153,7 +153,7 @@ export async function callRolesApi(
 export async function addAdditionalInfo(
   acceptInviteStatus: boolean,
   r_userToUserAddInfo_userId: number,
-  publisherName: string,
+  accountName: string,
   publisherId: number,
   emailOfMember: string,
   mothersName: string,
