@@ -27,6 +27,10 @@ import java.util.List;
  */
 public interface NotificationType {
 
+	public NotificationQueueEntry createNotificationQueueEntry(
+		User user, String body, NotificationContext notificationContext,
+		String subject);
+
 	public List<NotificationRecipientSetting>
 		createNotificationRecipientSettings(
 			long notificationRecipientId, Object[] recipients, User user);
@@ -61,6 +65,10 @@ public interface NotificationType {
 
 	public Object[] toRecipients(
 		List<NotificationRecipientSetting> notificationRecipientSettings);
+
+	public void validateNotificationQueueEntry(
+			NotificationContext notificationContext)
+		throws PortalException;
 
 	public void validateNotificationTemplate(
 			NotificationContext notificationContext)

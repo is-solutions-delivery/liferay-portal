@@ -1,7 +1,7 @@
 @component-name = "portal-solutions"
 definition {
 
-	property custom.properties = "feature.flag.LPS-163118=true";
+	property custom.properties = "feature.flag.LPS-163118=true${line.separator}feature.flag.LPS-154672=true";
 	property osgi.modules.includes = "site-initializer-testray";
 	property portal.release = "false";
 	property portal.upstream = "true";
@@ -18,7 +18,10 @@ definition {
 		}
 
 		task ("Create a new Testray Site") {
-			Testray.addTestraySite(siteName = ${testSiteName});
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
 		}
 	}
 
@@ -30,11 +33,7 @@ definition {
 		}
 
 		task ("Delete Testray Site and Client Extensions") {
-			Testray.tearDownCP();
-
-			ClientExtensionGeneral.goToRemoteAppsPortlet();
-
-			ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
+			Testray.testrayApisTearDown();
 		}
 
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
@@ -128,7 +127,7 @@ definition {
 		}
 
 		task ("And when go to the users informations") {
-			Testray.goToProjectPage(projectName = "analyst@testray.com");
+			Testray.goToProjectPage(projectName = "lead@testray.com");
 		}
 
 		task ("Then can not see the Delete user button") {
@@ -189,7 +188,7 @@ definition {
 		}
 
 		task ("When delete the user") {
-			Button.click(button = "Delete User");
+			Button.clickNoError(button = "Delete User");
 
 			AssertConfirm(value1 = "Are you sure you want to delete this item?");
 		}

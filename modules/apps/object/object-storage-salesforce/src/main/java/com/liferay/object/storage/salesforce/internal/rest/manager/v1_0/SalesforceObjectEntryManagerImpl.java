@@ -38,14 +38,9 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
-import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionRegistryUtil;
-import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -68,6 +63,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -91,9 +87,9 @@ public class SalesforceObjectEntryManagerImpl
 			String scopeKey)
 		throws Exception {
 
-		_checkPortletResourcePermission(
-			objectDefinition, scopeKey, dtoConverterContext.getUser(),
-			ObjectActionKeys.ADD_OBJECT_ENTRY);
+		checkPortletResourcePermission(
+			ObjectActionKeys.ADD_OBJECT_ENTRY, objectDefinition, scopeKey,
+			dtoConverterContext.getUser());
 
 		JSONObject responseJSONObject = _salesforceHttp.post(
 			objectDefinition.getCompanyId(),
@@ -113,9 +109,9 @@ public class SalesforceObjectEntryManagerImpl
 			String scopeKey)
 		throws Exception {
 
-		_checkPortletResourcePermission(
-			objectDefinition, scopeKey, dtoConverterContext.getUser(),
-			ActionKeys.DELETE);
+		checkPortletResourcePermission(
+			ActionKeys.DELETE, objectDefinition, scopeKey,
+			dtoConverterContext.getUser());
 
 		_salesforceHttp.delete(
 			companyId, getGroupId(objectDefinition, scopeKey),
@@ -132,9 +128,9 @@ public class SalesforceObjectEntryManagerImpl
 			Sort[] sorts)
 		throws Exception {
 
-		_checkPortletResourcePermission(
-			objectDefinition, scopeKey, dtoConverterContext.getUser(),
-			ActionKeys.VIEW);
+		checkPortletResourcePermission(
+			ActionKeys.VIEW, objectDefinition, scopeKey,
+			dtoConverterContext.getUser());
 
 		return _getObjectEntries(
 			companyId, objectDefinition, scopeKey, dtoConverterContext,
@@ -148,9 +144,9 @@ public class SalesforceObjectEntryManagerImpl
 			String scopeKey)
 		throws Exception {
 
-		_checkPortletResourcePermission(
-			objectDefinition, scopeKey, dtoConverterContext.getUser(),
-			ActionKeys.VIEW);
+		checkPortletResourcePermission(
+			ActionKeys.VIEW, objectDefinition, scopeKey,
+			dtoConverterContext.getUser());
 
 		if (Validator.isNull(externalReferenceCode)) {
 			return null;
@@ -167,15 +163,26 @@ public class SalesforceObjectEntryManagerImpl
 	}
 
 	@Override
+	public String getStorageLabel(Locale locale) {
+		return language.get(
+			locale, ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE);
+	}
+
+	@Override
+	public String getStorageType() {
+		return ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE;
+	}
+
+	@Override
 	public ObjectEntry updateObjectEntry(
 			long companyId, DTOConverterContext dtoConverterContext,
 			String externalReferenceCode, ObjectDefinition objectDefinition,
 			ObjectEntry objectEntry, String scopeKey)
 		throws Exception {
 
-		_checkPortletResourcePermission(
-			objectDefinition, scopeKey, dtoConverterContext.getUser(),
-			ActionKeys.UPDATE);
+		checkPortletResourcePermission(
+			ActionKeys.UPDATE, objectDefinition, scopeKey,
+			dtoConverterContext.getUser());
 
 		_salesforceHttp.patch(
 			companyId, getGroupId(objectDefinition, scopeKey),
@@ -187,19 +194,6 @@ public class SalesforceObjectEntryManagerImpl
 		return getObjectEntry(
 			companyId, dtoConverterContext, externalReferenceCode,
 			objectDefinition, scopeKey);
-	}
-
-	private void _checkPortletResourcePermission(
-			ObjectDefinition objectDefinition, String scopeKey, User user,
-			String actionId)
-		throws Exception {
-
-		PortletResourcePermission portletResourcePermission =
-			_getPortletResourcePermission(objectDefinition);
-
-		portletResourcePermission.check(
-			_permissionCheckerFactory.create(user),
-			getGroupId(objectDefinition, scopeKey), actionId);
 	}
 
 	private String _getAccountRestrictionPredicateString(
@@ -324,17 +318,6 @@ public class SalesforceObjectEntryManagerImpl
 		return null;
 	}
 
-	private PortletResourcePermission _getPortletResourcePermission(
-		ObjectDefinition objectDefinition) {
-
-		ModelResourcePermission<com.liferay.object.model.ObjectEntry>
-			modelResourcePermission =
-				ModelResourcePermissionRegistryUtil.getModelResourcePermission(
-					objectDefinition.getClassName());
-
-		return modelResourcePermission.getPortletResourcePermission();
-	}
-
 	private String _getSalesforcePagination(Pagination pagination) {
 		return StringBundler.concat(
 			" LIMIT ", pagination.getPageSize(), " OFFSET ",
@@ -431,19 +414,6 @@ public class SalesforceObjectEntryManagerImpl
 		);
 	}
 
-	private boolean _hasPortletResourcePermission(
-			ObjectDefinition objectDefinition, String scopeKey, User user,
-			String actionId)
-		throws Exception {
-
-		PortletResourcePermission portletResourcePermission =
-			_getPortletResourcePermission(objectDefinition);
-
-		return portletResourcePermission.contains(
-			_permissionCheckerFactory.create(user),
-			getGroupId(objectDefinition, scopeKey), actionId);
-	}
-
 	private JSONObject _toJSONObject(
 			ObjectDefinition objectDefinition, ObjectEntry objectEntry)
 		throws Exception {
@@ -522,17 +492,9 @@ public class SalesforceObjectEntryManagerImpl
 			{
 				actions = HashMapBuilder.put(
 					"delete",
-					() -> {
-						if (!_hasPortletResourcePermission(
-								objectDefinition, scopeKey,
-								dtoConverterContext.getUser(),
-								ActionKeys.DELETE)) {
-
-							return null;
-						}
-
-						return Collections.<String, String>emptyMap();
-					}
+					addDeleteAction(
+						objectDefinition, scopeKey,
+						dtoConverterContext.getUser())
 				).build();
 				creator = CreatorUtil.toCreator(
 					_portal, null,
@@ -655,9 +617,6 @@ public class SalesforceObjectEntryManagerImpl
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;
-
-	@Reference
-	private PermissionCheckerFactory _permissionCheckerFactory;
 
 	@Reference
 	private Portal _portal;

@@ -21,7 +21,6 @@ import com.liferay.object.admin.rest.client.dto.v1_0.Status;
 import com.liferay.object.admin.rest.client.pagination.Page;
 import com.liferay.object.admin.rest.client.problem.Problem;
 import com.liferay.object.admin.rest.client.serdes.v1_0.ObjectDefinitionSerDes;
-import com.liferay.object.admin.rest.resource.v1_0.test.BaseObjectDefinitionResourceTestCase.GraphQLField;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.exception.NoSuchObjectDefinitionException;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -55,7 +54,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Javier Gamarra
  */
-@FeatureFlags({"LPS-146755", "LPS-167253"})
+@FeatureFlags({"LPS-146755", "LPS-167253", "LPS-170122"})
 @RunWith(Arquillian.class)
 public class ObjectDefinitionResourceTest
 	extends BaseObjectDefinitionResourceTestCase {
@@ -304,6 +303,7 @@ public class ObjectDefinitionResourceTest
 						label = Collections.singletonMap("en_US", "Column");
 						localized = !objectDefinition.getSystem();
 						name = StringUtil.randomId();
+						readOnly = ReadOnly.FALSE;
 						required = false;
 						system = false;
 					}

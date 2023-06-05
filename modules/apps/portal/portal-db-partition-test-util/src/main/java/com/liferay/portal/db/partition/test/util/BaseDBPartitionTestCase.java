@@ -41,6 +41,7 @@ import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.PortalInstances;
+import com.liferay.portal.util.PropsUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -184,7 +185,7 @@ public abstract class BaseDBPartitionTestCase {
 			DBPartitionUtil.class, "_DATABASE_PARTITION_ENABLED", true);
 		ReflectionTestUtil.setFieldValue(
 			DBPartitionUtil.class, "_DATABASE_PARTITION_SCHEMA_NAME_PREFIX",
-			_DB_PARTITION_SCHEMA_NAME_PREFIX);
+			_DATABASE_PARTITION_SCHEMA_NAME_PREFIX);
 		ReflectionTestUtil.setFieldValue(
 			DBPartitionUtil.class, "_DATABASE_PARTITION_THREAD_POOL_ENABLED",
 			true);
@@ -230,7 +231,7 @@ public abstract class BaseDBPartitionTestCase {
 				"_DATABASE_PARTITION_SCHEMA_NAME_PREFIX") + companyId;
 		}
 
-		return _DB_PARTITION_SCHEMA_NAME_PREFIX + companyId;
+		return _DATABASE_PARTITION_SCHEMA_NAME_PREFIX + companyId;
 	}
 
 	protected static void insertPartitionRequiredData() throws Exception {
@@ -265,6 +266,12 @@ public abstract class BaseDBPartitionTestCase {
 	}
 
 	protected static void removeDBPartitions(boolean migrate) throws Exception {
+		removeDBPartitions(COMPANY_IDS, migrate);
+	}
+
+	protected static void removeDBPartitions(long[] companyIds, boolean migrate)
+		throws Exception {
+
 		CurrentConnection defaultCurrentConnection =
 			CurrentConnectionUtil.getCurrentConnection();
 
@@ -272,13 +279,14 @@ public abstract class BaseDBPartitionTestCase {
 			CurrentConnection currentConnection = dataSource -> connection;
 
 			ReflectionTestUtil.setFieldValue(
-				DBPartitionUtil.class, "_DATABASE_PARTITION_MIGRATE_ENABLED",
-				migrate);
-			ReflectionTestUtil.setFieldValue(
 				CurrentConnectionUtil.class, "_currentConnection",
 				currentConnection);
 
-			for (long companyId : COMPANY_IDS) {
+			ReflectionTestUtil.setFieldValue(
+				DBPartitionUtil.class, "_DATABASE_PARTITION_MIGRATE_ENABLED",
+				migrate);
+
+			for (long companyId : companyIds) {
 				DBPartitionUtil.removeDBPartition(companyId);
 			}
 		}
@@ -286,6 +294,10 @@ public abstract class BaseDBPartitionTestCase {
 			ReflectionTestUtil.setFieldValue(
 				CurrentConnectionUtil.class, "_currentConnection",
 				defaultCurrentConnection);
+
+			ReflectionTestUtil.setFieldValue(
+				DBPartitionUtil.class, "_DATABASE_PARTITION_MIGRATE_ENABLED",
+				_DATABASE_PARTITION_MIGRATE_ENABLED);
 		}
 	}
 
@@ -365,7 +377,11 @@ public abstract class BaseDBPartitionTestCase {
 		};
 	}
 
-	private static final String _DB_PARTITION_SCHEMA_NAME_PREFIX =
+	private static final boolean _DATABASE_PARTITION_MIGRATE_ENABLED =
+		GetterUtil.getBoolean(
+			PropsUtil.get("database.partition.migrate.enabled"));
+
+	private static final String _DATABASE_PARTITION_SCHEMA_NAME_PREFIX =
 		"lpartitiontest_";
 
 	private static final DataSource _currentDataSource =

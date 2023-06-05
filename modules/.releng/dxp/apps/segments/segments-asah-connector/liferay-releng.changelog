@@ -262,3 +262,8 @@ ab257872cf42043e36fc6da2cc854a13c3980e9d^..0ab136cba8eceab7cf1d51b73be82240ddfd7
 # Bundle Version 3.0.44
 #
 0ab136cba8eceab7cf1d51b73be82240ddfd7035^..ec00ee3b53bb9d5b1ee121417cb8dbbd7de51936=LPS-184344
+
+#
+# Bundle Version 3.0.45
+#
+ec00ee3b53bb9d5b1ee121417cb8dbbd7de51936^..721b36c7ec9125d756602169847e5ca01d05ab7e=LRAC-13685

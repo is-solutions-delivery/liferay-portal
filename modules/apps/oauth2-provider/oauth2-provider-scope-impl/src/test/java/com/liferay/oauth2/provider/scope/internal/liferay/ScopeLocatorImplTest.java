@@ -26,31 +26,37 @@ import com.liferay.oauth2.provider.scope.spi.scope.matcher.ScopeMatcherFactory;
 import com.liferay.osgi.service.tracker.collections.ServiceReferenceServiceTuple;
 import com.liferay.osgi.service.tracker.collections.map.ScopedServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
+import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.portal.util.PropsImpl;
 
-import java.lang.reflect.Field;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Dictionary;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * @author Stian Sigvartsen
@@ -65,6 +71,40 @@ public class ScopeLocatorImplTest {
 	@BeforeClass
 	public static void setUpClass() {
 		PropsUtil.setProps(new PropsImpl());
+
+		BundleContext bundleContext = SystemBundleUtil.getBundleContext();
+
+		Mockito.when(
+			FrameworkUtil.getBundle(Mockito.any())
+		).thenReturn(
+			bundleContext.getBundle()
+		);
+
+		Dictionary<String, Object> properties = new Hashtable<>();
+
+		properties.put("osgi.jaxrs.name", "Default");
+
+		_prefixHandlerFactoryServiceRegistration =
+			bundleContext.registerService(
+				PrefixHandlerFactory.class,
+				Mockito.mock(PrefixHandlerFactory.class), properties);
+
+		_scopeLocatorConfigurationProviderServiceRegistration =
+			bundleContext.registerService(
+				ScopeLocatorConfigurationProvider.class,
+				Mockito.mock(ScopeLocatorConfigurationProvider.class),
+				properties);
+
+		_scopeMapperServiceRegistration = bundleContext.registerService(
+			ScopeMapper.class, Mockito.mock(ScopeMapper.class), properties);
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		_frameworkUtilMockedStatic.close();
+		_prefixHandlerFactoryServiceRegistration.unregister();
+		_scopeLocatorConfigurationProviderServiceRegistration.unregister();
+		_scopeMapperServiceRegistration.unregister();
 	}
 
 	@Test
@@ -367,24 +407,18 @@ public class ScopeLocatorImplTest {
 		return scopes;
 	}
 
-	private void _set(Object object, String fieldName, Object value) {
-		Class<?> clazz = object.getClass();
-
-		try {
-			Field field = clazz.getDeclaredField(fieldName);
-
-			field.setAccessible(true);
-
-			field.set(object, value);
-		}
-		catch (Exception exception) {
-			throw new IllegalArgumentException(exception);
-		}
-	}
-
 	private static final String _APPLICATION_NAME = "com.liferay.test1";
 
 	private static final long _COMPANY_ID = 1;
+
+	private static final MockedStatic<FrameworkUtil>
+		_frameworkUtilMockedStatic = Mockito.mockStatic(FrameworkUtil.class);
+	private static ServiceRegistration<PrefixHandlerFactory>
+		_prefixHandlerFactoryServiceRegistration;
+	private static ServiceRegistration<ScopeLocatorConfigurationProvider>
+		_scopeLocatorConfigurationProviderServiceRegistration;
+	private static ServiceRegistration<ScopeMapper>
+		_scopeMapperServiceRegistration;
 
 	private class Builder {
 
@@ -432,17 +466,9 @@ public class ScopeLocatorImplTest {
 				CompanyAndKeyConfigurator<PrefixHandlerFactory> configurator)
 			throws IllegalAccessException {
 
-			ScopedServiceTrackerMap<PrefixHandlerFactory>
-				prefixHandlerFactoriesScopedServiceTrackerMap =
-					_prepareScopedServiceTrackerMapMock(
-						defaultPrefixHandlerFactory, configurator);
-
-			_set(
-				_scopeLocatorImpl, "_defaultPrefixHandlerFactory",
-				defaultPrefixHandlerFactory);
-
 			_scopeLocatorImpl.setPrefixHandlerFactoriesScopedServiceTrackerMap(
-				prefixHandlerFactoriesScopedServiceTrackerMap);
+				_prepareScopedServiceTrackerMapMock(
+					defaultPrefixHandlerFactory, configurator));
 
 			_prefixHandlerFactoriesInitialized = true;
 
@@ -501,18 +527,11 @@ public class ScopeLocatorImplTest {
 					configurator)
 			throws IllegalAccessException {
 
-			ScopedServiceTrackerMap<ScopeLocatorConfigurationProvider>
-				scopeLocatorConfigurationProvidersScopedServiceTrackerMap =
-					_prepareScopedServiceTrackerMapMock(
-						defaultScopeLocatorConfigurationProvider, configurator);
-
-			_set(
-				_scopeLocatorImpl, "_defaultScopeLocatorConfigurationProvider",
-				defaultScopeLocatorConfigurationProvider);
-
 			_scopeLocatorImpl.
 				setScopeLocatorConfigurationProvidersScopedServiceTrackerMap(
-					scopeLocatorConfigurationProvidersScopedServiceTrackerMap);
+					_prepareScopedServiceTrackerMapMock(
+						defaultScopeLocatorConfigurationProvider,
+						configurator));
 
 			_scopeLocatorConfigurationProvidersInitialized = true;
 
@@ -524,15 +543,9 @@ public class ScopeLocatorImplTest {
 				CompanyAndKeyConfigurator<ScopeMapper> configurator)
 			throws IllegalAccessException {
 
-			ScopedServiceTrackerMap<ScopeMapper>
-				scopeMappersScopedServiceTrackerMap =
-					_prepareScopedServiceTrackerMapMock(
-						defaultScopeMapper, configurator);
-
-			_set(_scopeLocatorImpl, "_defaultScopeMapper", defaultScopeMapper);
-
 			_scopeLocatorImpl.setScopeMappersScopedServiceTrackerMap(
-				scopeMappersScopedServiceTrackerMap);
+				_prepareScopedServiceTrackerMapMock(
+					defaultScopeMapper, configurator));
 
 			_scopeMappersInitialized = true;
 

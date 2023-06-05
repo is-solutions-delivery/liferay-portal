@@ -84,7 +84,7 @@ public class BlogsEntryIndexerReindexTest {
 
 	@Test
 	public void testReindexing() throws Exception {
-		BlogsEntry blogsEntry = _blogsEntryFixture.createBlogsEntry(
+		BlogsEntry blogsEntry = _blogsEntryFixture.addEntry(
 			RandomTestUtil.randomString());
 
 		String searchTerm = blogsEntry.getTitle();

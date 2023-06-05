@@ -2000,7 +2000,6 @@ definition {
 	@uitest
 	test AddSegmentByUserUserGroup {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#AddSegmentByUserUserGroup";
 
 		task ("Add user") {
 			JSONUser.addUser(
@@ -2025,7 +2024,7 @@ definition {
 
 			Segmentation.addProperties(propertyOption = "User Group");
 
-			Segmentation.fillProperty(chooseItem = "UG UserGroup Name");
+			Segmentation.fillProperty(selectCard = "UG UserGroup Name");
 
 			Segmentation.fillTitle(titleField = "AddSegmentByUserUserGroup Test");
 

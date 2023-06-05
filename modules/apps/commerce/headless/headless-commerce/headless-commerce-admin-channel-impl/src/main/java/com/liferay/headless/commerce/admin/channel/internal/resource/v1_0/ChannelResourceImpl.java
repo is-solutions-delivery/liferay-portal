@@ -14,6 +14,7 @@
 
 package com.liferay.headless.commerce.admin.channel.internal.resource.v1_0;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.commerce.product.exception.NoSuchChannelException;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceChannelService;
@@ -132,6 +133,10 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 
 		Channel existingChannel = getChannel(channelId);
 
+		if (channel.getAccountId() != null) {
+			existingChannel.setAccountId(channel.getAccountId());
+		}
+
 		if (channel.getCurrencyCode() != null) {
 			existingChannel.setCurrencyCode(channel.getCurrencyCode());
 		}
@@ -170,6 +175,10 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 		Channel existingChannel = getChannel(
 			commerceChannel.getCommerceChannelId());
 
+		if (channel.getAccountId() != null) {
+			existingChannel.setAccountId(channel.getAccountId());
+		}
+
 		if (channel.getCurrencyCode() != null) {
 			existingChannel.setCurrencyCode(channel.getCurrencyCode());
 		}
@@ -196,6 +205,9 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 		return _toChannel(
 			_commerceChannelService.addCommerceChannel(
 				channel.getExternalReferenceCode(),
+				GetterUtil.get(
+					channel.getAccountId(),
+					AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT),
 				GetterUtil.get(channel.getSiteGroupId(), 0), channel.getName(),
 				channel.getType(), null, channel.getCurrencyCode(),
 				_serviceContextHelper.getServiceContext(contextUser)));
@@ -214,8 +226,12 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 
 		return _toChannel(
 			_commerceChannelService.updateCommerceChannel(
-				channelId, channel.getSiteGroupId(), channel.getName(),
-				channel.getType(), null, channel.getCurrencyCode()));
+				channelId,
+				GetterUtil.get(
+					channel.getAccountId(),
+					commerceChannel.getAccountEntryId()),
+				channel.getSiteGroupId(), channel.getName(), channel.getType(),
+				null, channel.getCurrencyCode()));
 	}
 
 	@Override
@@ -225,9 +241,9 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 
 		return _toChannel(
 			_commerceChannelService.addOrUpdateCommerceChannel(
-				externalReferenceCode, channel.getSiteGroupId(),
-				channel.getName(), channel.getType(), null,
-				channel.getCurrencyCode(),
+				externalReferenceCode, channel.getAccountId(),
+				channel.getSiteGroupId(), channel.getName(), channel.getType(),
+				null, channel.getCurrencyCode(),
 				_serviceContextHelper.getServiceContext()));
 	}
 

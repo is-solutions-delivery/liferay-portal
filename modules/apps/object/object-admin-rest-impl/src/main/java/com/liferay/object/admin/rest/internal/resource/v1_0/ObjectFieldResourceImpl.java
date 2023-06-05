@@ -188,7 +188,10 @@ public class ObjectFieldResourceImpl
 				GetterUtil.getBoolean(objectField.getIndexedAsKeyword()),
 				objectField.getIndexedLanguageId(),
 				LocalizedMapUtil.getLocalizedMap(objectField.getLabel()),
-				localized, objectField.getName(), objectField.getRequired(),
+				localized, objectField.getName(),
+				objectField.getReadOnlyAsString(),
+				objectField.getReadOnlyConditionExpression(),
+				objectField.getRequired(),
 				GetterUtil.getBoolean(objectField.getState()),
 				ObjectFieldSettingUtil.toObjectFieldSettings(
 					ObjectFieldUtil.addListTypeDefinition(
@@ -255,7 +258,9 @@ public class ObjectFieldResourceImpl
 				objectField.getIndexedLanguageId(),
 				LocalizedMapUtil.getLocalizedMap(objectField.getLabel()),
 				GetterUtil.getBoolean(objectField.getLocalized()),
-				objectField.getName(), objectField.getRequired(),
+				objectField.getName(), objectField.getReadOnlyAsString(),
+				objectField.getReadOnlyConditionExpression(),
+				objectField.getRequired(),
 				GetterUtil.getBoolean(objectField.getState()),
 				ObjectFieldSettingUtil.toObjectFieldSettings(
 					objectField.getListTypeDefinitionId(), objectField,
@@ -336,24 +341,13 @@ public class ObjectFieldResourceImpl
 			com.liferay.object.model.ObjectField objectField)
 		throws Exception {
 
-		boolean updateable =
-			(!objectDefinition.isApproved() &&
-			 !objectDefinition.isUnmodifiableSystemObject()) ||
-			Objects.equals(
-				objectDefinition.getExtensionDBTableName(),
-				objectField.getDBTableName());
-
 		return _objectFieldDTOConverter.toDTO(
 			new DefaultDTOConverterContext(
 				false,
 				HashMapBuilder.put(
 					"delete",
 					() -> {
-						if (!updateable ||
-							Validator.isNotNull(
-								objectField.getRelationshipType()) ||
-							objectField.isSystem()) {
-
+						if (!objectField.isDeletionAllowed()) {
 							return null;
 						}
 
@@ -373,7 +367,12 @@ public class ObjectFieldResourceImpl
 				).put(
 					"update",
 					() -> {
-						if (!updateable) {
+						if ((objectDefinition.isApproved() ||
+							 objectDefinition.isUnmodifiableSystemObject()) &&
+							!Objects.equals(
+								objectDefinition.getExtensionDBTableName(),
+								objectField.getDBTableName())) {
+
 							return null;
 						}
 

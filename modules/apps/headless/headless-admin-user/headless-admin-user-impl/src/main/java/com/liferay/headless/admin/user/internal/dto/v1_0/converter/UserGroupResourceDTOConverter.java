@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = "dto.class.name=com.liferay.portal.kernel.model.UserGroup",
-	service = {DTOConverter.class, UserGroupResourceDTOConverter.class}
+	service = DTOConverter.class
 )
 public class UserGroupResourceDTOConverter
 	implements DTOConverter
@@ -56,12 +56,6 @@ public class UserGroupResourceDTOConverter
 		}
 
 		return userGroup;
-	}
-
-	public long getUserGroupId(String externalReferenceCode) throws Exception {
-		UserGroup userGroup = getObject(externalReferenceCode);
-
-		return userGroup.getUserGroupId();
 	}
 
 	@Override

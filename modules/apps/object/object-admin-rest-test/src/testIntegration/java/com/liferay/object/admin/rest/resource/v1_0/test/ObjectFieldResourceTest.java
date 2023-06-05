@@ -44,7 +44,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Javier Gamarra
  */
-@FeatureFlags("LPS-146755")
+@FeatureFlags({"LPS-146755", "LPS-170122"})
 @RunWith(Arquillian.class)
 public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 
@@ -338,6 +338,7 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 			Collections.singletonMap(
 				LocaleUtil.US.toString(), "a" + objectField.getName()));
 		objectField.setName("a" + objectField.getName());
+		objectField.setReadOnly(ObjectField.ReadOnly.FALSE);
 		objectField.setState(false);
 
 		return objectField;

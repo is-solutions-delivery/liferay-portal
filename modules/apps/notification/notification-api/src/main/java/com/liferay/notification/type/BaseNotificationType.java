@@ -16,6 +16,7 @@ package com.liferay.notification.type;
 
 import com.liferay.notification.constants.NotificationQueueEntryConstants;
 import com.liferay.notification.context.NotificationContext;
+import com.liferay.notification.exception.NotificationQueueEntrySubjectException;
 import com.liferay.notification.exception.NotificationTemplateAttachmentObjectFieldIdException;
 import com.liferay.notification.exception.NotificationTemplateDescriptionException;
 import com.liferay.notification.exception.NotificationTemplateEditorTypeException;
@@ -61,6 +62,40 @@ import org.osgi.service.component.annotations.Reference;
  * @author Feliphe Marinho
  */
 public abstract class BaseNotificationType implements NotificationType {
+
+	@Override
+	public NotificationQueueEntry createNotificationQueueEntry(
+		User user, String body, NotificationContext notificationContext,
+		String subject) {
+
+		NotificationQueueEntry notificationQueueEntry =
+			notificationQueueEntryLocalService.createNotificationQueueEntry(0L);
+
+		notificationQueueEntry.setUserId(user.getUserId());
+		notificationQueueEntry.setUserName(user.getFullName());
+
+		NotificationTemplate notificationTemplate =
+			notificationContext.getNotificationTemplate();
+
+		if (notificationTemplate == null) {
+			notificationQueueEntry.setNotificationTemplateId(0L);
+		}
+		else {
+			notificationQueueEntry.setNotificationTemplateId(
+				notificationTemplate.getNotificationTemplateId());
+		}
+
+		notificationQueueEntry.setBody(body);
+		notificationQueueEntry.setClassName(notificationContext.getClassName());
+		notificationQueueEntry.setClassPK(notificationContext.getClassPK());
+		notificationQueueEntry.setPriority(0);
+		notificationQueueEntry.setSubject(subject);
+		notificationQueueEntry.setType(getType());
+		notificationQueueEntry.setStatus(
+			NotificationQueueEntryConstants.STATUS_UNSENT);
+
+		return notificationQueueEntry;
+	}
 
 	@Override
 	public List<NotificationRecipientSetting>
@@ -133,6 +168,19 @@ public abstract class BaseNotificationType implements NotificationType {
 	}
 
 	@Override
+	public void validateNotificationQueueEntry(
+			NotificationContext notificationContext)
+		throws PortalException {
+
+		NotificationQueueEntry notificationQueueEntry =
+			notificationContext.getNotificationQueueEntry();
+
+		if (Validator.isNull(notificationQueueEntry.getSubject())) {
+			throw new NotificationQueueEntrySubjectException("Subject is null");
+		}
+	}
+
+	@Override
 	public void validateNotificationTemplate(
 			NotificationContext notificationContext)
 		throws PortalException {
@@ -188,34 +236,6 @@ public abstract class BaseNotificationType implements NotificationType {
 				throw new NotificationTemplateAttachmentObjectFieldIdException();
 			}
 		}
-	}
-
-	protected NotificationQueueEntry createNotificationQueueEntry(
-		User user, String body, NotificationContext notificationContext,
-		String subject) {
-
-		NotificationTemplate notificationTemplate =
-			notificationContext.getNotificationTemplate();
-
-		NotificationQueueEntry notificationQueueEntry =
-			notificationQueueEntryLocalService.createNotificationQueueEntry(0L);
-
-		notificationQueueEntry.setUserId(user.getUserId());
-		notificationQueueEntry.setUserId(user.getUserId());
-		notificationQueueEntry.setUserName(user.getFullName());
-
-		notificationQueueEntry.setNotificationTemplateId(
-			notificationTemplate.getNotificationTemplateId());
-		notificationQueueEntry.setBody(body);
-		notificationQueueEntry.setClassName(notificationContext.getClassName());
-		notificationQueueEntry.setClassPK(notificationContext.getClassPK());
-		notificationQueueEntry.setPriority(0);
-		notificationQueueEntry.setSubject(subject);
-		notificationQueueEntry.setType(getType());
-		notificationQueueEntry.setStatus(
-			NotificationQueueEntryConstants.STATUS_UNSENT);
-
-		return notificationQueueEntry;
 	}
 
 	protected NotificationRecipient createNotificationRecipient(

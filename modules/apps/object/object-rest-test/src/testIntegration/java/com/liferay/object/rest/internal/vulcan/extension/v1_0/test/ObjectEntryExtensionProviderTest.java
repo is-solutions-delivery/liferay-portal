@@ -18,6 +18,10 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.field.builder.BooleanObjectFieldBuilder;
+import com.liferay.object.field.builder.DateObjectFieldBuilder;
+import com.liferay.object.field.builder.DecimalObjectFieldBuilder;
+import com.liferay.object.field.builder.PrecisionDecimalObjectFieldBuilder;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
@@ -44,7 +48,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
@@ -72,22 +75,70 @@ public class ObjectEntryExtensionProviderTest {
 			_objectDefinitionLocalService.fetchObjectDefinitionByClassName(
 				TestPropsValues.getCompanyId(), User.class.getName());
 
-		_addCustomObjectField(
-			objectDefinition.getObjectDefinitionId(),
-			ObjectFieldConstants.BUSINESS_TYPE_BOOLEAN,
-			ObjectFieldConstants.DB_TYPE_BOOLEAN, "boolean", false);
-		_addCustomObjectField(
-			objectDefinition.getObjectDefinitionId(),
-			ObjectFieldConstants.BUSINESS_TYPE_DATE,
-			ObjectFieldConstants.DB_TYPE_DATE, "date", true);
-		_addCustomObjectField(
-			objectDefinition.getObjectDefinitionId(),
-			ObjectFieldConstants.BUSINESS_TYPE_DECIMAL,
-			ObjectFieldConstants.DB_TYPE_DOUBLE, "decimal", false);
-		_addCustomObjectField(
-			objectDefinition.getObjectDefinitionId(),
-			ObjectFieldConstants.BUSINESS_TYPE_PRECISION_DECIMAL,
-			ObjectFieldConstants.DB_TYPE_BIG_DECIMAL, "precisionDecimal", true);
+		ObjectFieldUtil.addCustomObjectField(
+			new BooleanObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).indexed(
+				RandomTestUtil.randomBoolean()
+			).indexedAsKeyword(
+				RandomTestUtil.randomBoolean()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"boolean"
+			).build());
+		ObjectFieldUtil.addCustomObjectField(
+			new DateObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).indexed(
+				RandomTestUtil.randomBoolean()
+			).indexedAsKeyword(
+				RandomTestUtil.randomBoolean()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"date"
+			).required(
+				true
+			).build());
+		ObjectFieldUtil.addCustomObjectField(
+			new DecimalObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).indexed(
+				RandomTestUtil.randomBoolean()
+			).indexedAsKeyword(
+				RandomTestUtil.randomBoolean()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"decimal"
+			).build());
+		ObjectFieldUtil.addCustomObjectField(
+			new PrecisionDecimalObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).indexed(
+				RandomTestUtil.randomBoolean()
+			).indexedAsKeyword(
+				RandomTestUtil.randomBoolean()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"precisionDecimal"
+			).required(
+				true
+			).build());
 
 		_user = UserTestUtil.addUser();
 	}
@@ -181,19 +232,6 @@ public class ObjectEntryExtensionProviderTest {
 			).put(
 				"precisionDecimal", 20.55
 			).build());
-	}
-
-	private static void _addCustomObjectField(
-			long objectDefinitionId, String businessType, String dbType,
-			String name, boolean required)
-		throws Exception {
-
-		_objectFieldLocalService.addCustomObjectField(
-			null, TestPropsValues.getUserId(), 0, objectDefinitionId,
-			businessType, dbType, RandomTestUtil.randomBoolean(),
-			RandomTestUtil.randomBoolean(), null,
-			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			false, name, required, false, Collections.emptyList());
 	}
 
 	private void _assertPropertyDefinition(

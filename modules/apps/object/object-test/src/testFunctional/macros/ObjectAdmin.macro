@@ -372,6 +372,20 @@ definition {
 			userPassword = ${userPassword});
 	}
 
+	macro addObjectWithStorageType {
+		SelectFrame(locator1 = "ObjectCustomViews#VIEW_MODAL_CONTENT");
+
+		ObjectAdmin.addNewObject(
+			fieldLabelName = ${fieldLabelName},
+			pluralLabelName = ${pluralLabelName});
+
+		Click.clickNoMouseOver(
+			key_storageOption = ${storageType},
+			locator1 = "CreateObject#STORAGE_TYPE_OPTION");
+
+		PortletEntry.save();
+	}
+
 	macro addTabFieldsOnLayout {
 		LexiconEntry.gotoAddNoSelectFrame();
 
@@ -918,9 +932,8 @@ definition {
 			value1 = ${externalReferenceCode});
 
 		Click(
-			key_indexNumber = 2,
-			key_text = "Save",
-			locator1 = "Button#ANY_N");
+			key_tab = "Save",
+			locator1 = "Button#TAB_SUBMIT_BTN");
 	}
 
 	macro editObjectAction {
@@ -1302,7 +1315,9 @@ definition {
 	}
 
 	macro openObjectAdmin {
-		Navigator.openSpecificURL(url = "/group/guest/~/control_panel/manage?p_p_id=com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet");
+		Navigator.openWithAppendToBaseURL(
+			baseURL = ${baseURL},
+			urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet");
 	}
 
 	macro openSubmissions {

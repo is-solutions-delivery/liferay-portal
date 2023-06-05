@@ -1,10 +1,9 @@
 Bundle-Name: Liferay Document Library API
 Bundle-SymbolicName: com.liferay.document.library.api
-Bundle-Version: 21.1.0
+Bundle-Version: 21.1.1
 Export-Package:\
 	com.liferay.document.library.asset,\
 	com.liferay.document.library.asset.model,\
-	com.liferay.document.library.bulk.selection,\
 	com.liferay.document.library.configuration,\
 	com.liferay.document.library.constants,\
 	com.liferay.document.library.display.context,\

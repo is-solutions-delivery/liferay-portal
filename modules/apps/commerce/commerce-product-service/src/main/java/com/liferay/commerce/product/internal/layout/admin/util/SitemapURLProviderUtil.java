@@ -14,58 +14,46 @@
 
 package com.liferay.commerce.product.internal.layout.admin.util;
 
-import com.liferay.petra.string.CharPool;
-import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
+import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.PrefsPropsUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.servlet.I18nServlet;
 
+import java.util.HashMap;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * @author Brian I. Kim
  */
 public class SitemapURLProviderUtil {
 
-	protected static ThemeDisplay updateThemeDisplay(
-		Language language, Locale locale, ThemeDisplay themeDisplay) {
+	protected static Map<Locale, String> getAlternateFriendlyURLs(
+		Map<Locale, String> alternateSiteURLs, long friendlyURLEntryId,
+		FriendlyURLEntryLocalService friendlyURLEntryLocalService,
+		String urlSeparator) {
 
-		String i18nPath = null;
+		Map<Locale, String> alternateFriendlyURLs = new HashMap<>();
 
-		Set<String> languageIds = I18nServlet.getLanguageIds();
+		for (FriendlyURLEntryLocalization friendlyURLEntryLocalization :
+				friendlyURLEntryLocalService.getFriendlyURLEntryLocalizations(
+					friendlyURLEntryId)) {
 
-		int localePrependFriendlyURLStyle = PrefsPropsUtil.getInteger(
-			themeDisplay.getCompanyId(),
-			PropsKeys.LOCALE_PREPEND_FRIENDLY_URL_STYLE);
+			String alternateSiteURL = alternateSiteURLs.get(
+				LocaleUtil.fromLanguageId(
+					friendlyURLEntryLocalization.getLanguageId()));
 
-		if ((languageIds.contains(CharPool.SLASH + locale.toString()) &&
-			 (localePrependFriendlyURLStyle == 1) &&
-			 !locale.equals(LocaleUtil.getDefault())) ||
-			(localePrependFriendlyURLStyle == 2)) {
-
-			i18nPath = _getI18nPath(language, locale);
+			if (alternateSiteURL != null) {
+				alternateFriendlyURLs.put(
+					LocaleUtil.fromLanguageId(
+						friendlyURLEntryLocalization.getLanguageId()),
+					StringBundler.concat(
+						alternateSiteURL, urlSeparator,
+						friendlyURLEntryLocalization.getUrlTitle()));
+			}
 		}
 
-		themeDisplay.setI18nLanguageId(locale.toString());
-		themeDisplay.setI18nPath(i18nPath);
-		themeDisplay.setLanguageId(LocaleUtil.toLanguageId(locale));
-		themeDisplay.setLocale(locale);
-
-		return themeDisplay;
-	}
-
-	private static String _getI18nPath(Language language, Locale locale) {
-		Locale defaultLocale = language.getLocale(locale.getLanguage());
-
-		if (LocaleUtil.equals(defaultLocale, locale)) {
-			return StringPool.SLASH + defaultLocale.getLanguage();
-		}
-
-		return StringPool.SLASH + locale.toLanguageTag();
+		return alternateFriendlyURLs;
 	}
 
 }

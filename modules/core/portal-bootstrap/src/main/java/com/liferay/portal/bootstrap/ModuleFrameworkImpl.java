@@ -89,6 +89,7 @@ import java.util.Queue;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -1200,7 +1201,12 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			_log.debug("Register application context");
 		}
 
-		List<ServiceRegistration<?>> serviceRegistrations = new ArrayList<>();
+		Collection<ServiceRegistration<?>> serviceRegistrations =
+			new ConcurrentLinkedQueue<>();
+
+		ExecutorService executorService =
+			SystemExecutorServiceUtil.getExecutorService();
+		List<Future<Void>> futures = new ArrayList<>();
 
 		ConfigurableListableBeanFactory configurableListableBeanFactory =
 			configurableApplicationContext.getBeanFactory();
@@ -1209,26 +1215,40 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			configurableListableBeanFactory.getBeanNamesIterator();
 
 		iterator.forEachRemaining(
-			beanName -> {
-				Object bean = null;
+			beanName -> futures.add(
+				executorService.submit(
+					() -> {
+						Object bean = null;
 
-				try {
-					bean = configurableApplicationContext.getBean(beanName);
-				}
-				catch (Exception exception) {
-					_log.error(exception);
-				}
+						try {
+							bean = configurableApplicationContext.getBean(
+								beanName);
+						}
+						catch (Exception exception) {
+							_log.error(exception);
+						}
 
-				if (bean != null) {
-					ServiceRegistration<?> serviceRegistration =
-						_registerService(
-							_framework.getBundleContext(), beanName, bean);
+						if (bean != null) {
+							ServiceRegistration<?> serviceRegistration =
+								_registerService(
+									_framework.getBundleContext(), beanName,
+									bean);
 
-					if (serviceRegistration != null) {
-						serviceRegistrations.add(serviceRegistration);
-					}
-				}
-			});
+							if (serviceRegistration != null) {
+								serviceRegistrations.add(serviceRegistration);
+							}
+						}
+					},
+					null)));
+
+		for (Future<Void> future : futures) {
+			try {
+				future.get();
+			}
+			catch (Exception exception) {
+				_log.error(exception);
+			}
+		}
 
 		_springContextServices.put(
 			configurableApplicationContext, serviceRegistrations);
@@ -1708,7 +1728,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	private void _unregisterApplicationContext(
 		ConfigurableApplicationContext configurableApplicationContext) {
 
-		List<ServiceRegistration<?>> serviceRegistrations =
+		Collection<ServiceRegistration<?>> serviceRegistrations =
 			_springContextServices.remove(configurableApplicationContext);
 
 		if (serviceRegistrations == null) {
@@ -1771,7 +1791,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	private Framework _framework;
 	private LogListener _logListener;
 	private final Map
-		<ConfigurableApplicationContext, List<ServiceRegistration<?>>>
+		<ConfigurableApplicationContext, Collection<ServiceRegistration<?>>>
 			_springContextServices = new ConcurrentHashMap<>();
 
 }

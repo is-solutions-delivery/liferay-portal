@@ -12,6 +12,11 @@
 <tbody>
 
 <tr>
+	<td>ANY_DRIVER_BUTTON</td>
+	<td>xpath=(//div[contains(@class, 'bg-neutral-0')]/descendant::button)[${key_index}]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CENTER_STATUS</td>
 	<td>//div[contains(@class, 'text-paragraph-sm')]//*[contains(text(), '${key_status}')]</td>
 	<td></td>
@@ -19,6 +24,11 @@
 <tr>
 	<td>CHOOSE_OPTION</td>
 	<td>//input[contains(@class, 'custom-control-input')]/following-sibling::span//*[text()='${key_option}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DETAIL_INFO</td>
+	<td>//div[contains(@class, 'text-neutral') and text()= '${key_text}']//following-sibling::div[contains(., '${key_value}')]</td>
 	<td></td>
 </tr>
 <tr>

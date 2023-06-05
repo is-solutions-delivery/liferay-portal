@@ -15,12 +15,14 @@
 package com.liferay.headless.admin.user.internal.resource.v1_0;
 
 import com.liferay.account.constants.AccountConstants;
+import com.liferay.account.model.AccountEntry;
 import com.liferay.account.role.AccountRolePermissionThreadLocal;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountRoleLocalService;
+import com.liferay.headless.admin.user.dto.v1_0.Account;
 import com.liferay.headless.admin.user.dto.v1_0.AccountRole;
-import com.liferay.headless.admin.user.internal.dto.v1_0.converter.AccountResourceDTOConverter;
-import com.liferay.headless.admin.user.internal.dto.v1_0.converter.UserResourceDTOConverter;
+import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
+import com.liferay.headless.admin.user.internal.dto.v1_0.converter.constants.DTOConverterConstants;
 import com.liferay.headless.admin.user.internal.odata.entity.v1_0.AccountRoleEntityModel;
 import com.liferay.headless.admin.user.resource.v1_0.AccountRoleResource;
 import com.liferay.petra.lang.SafeCloseable;
@@ -37,6 +39,8 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.vulcan.dto.converter.DTOConverter;
+import com.liferay.portal.vulcan.dto.converter.util.DTOConverterUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
@@ -78,8 +82,8 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 			contextCompany.getCompanyId(), emailAddress);
 
 		deleteAccountAccountRoleUserAccountAssociation(
-			_accountResourceDTOConverter.getAccountEntryId(
-				externalReferenceCode),
+			DTOConverterUtil.getModelPrimaryKey(
+				_accountResourceDTOConverter, externalReferenceCode),
 			accountRoleId, user.getUserId());
 	}
 
@@ -91,10 +95,11 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 		throws Exception {
 
 		deleteAccountAccountRoleUserAccountAssociation(
-			_accountResourceDTOConverter.getAccountEntryId(
-				accountExternalReferenceCode),
+			DTOConverterUtil.getModelPrimaryKey(
+				_accountResourceDTOConverter, accountExternalReferenceCode),
 			accountRoleId,
-			_userResourceDTOConverter.getUserId(externalReferenceCode));
+			DTOConverterUtil.getModelPrimaryKey(
+				_userResourceDTOConverter, externalReferenceCode));
 	}
 
 	@Override
@@ -104,8 +109,8 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 		throws Exception {
 
 		return getAccountAccountRolesPage(
-			_accountResourceDTOConverter.getAccountEntryId(
-				externalReferenceCode),
+			DTOConverterUtil.getModelPrimaryKey(
+				_accountResourceDTOConverter, externalReferenceCode),
 			keywords, filter, pagination, sorts);
 	}
 
@@ -171,8 +176,8 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 		return Page.of(
 			transform(
 				_accountRoleLocalService.getAccountRoles(
-					_accountResourceDTOConverter.getAccountEntryId(
-						externalReferenceCode),
+					DTOConverterUtil.getModelPrimaryKey(
+						_accountResourceDTOConverter, externalReferenceCode),
 					user.getUserId()),
 				accountRole -> _toAccountRole(accountRole)));
 	}
@@ -187,9 +192,11 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 		return Page.of(
 			transform(
 				_accountRoleLocalService.getAccountRoles(
-					_accountResourceDTOConverter.getAccountEntryId(
+					DTOConverterUtil.getModelPrimaryKey(
+						_accountResourceDTOConverter,
 						accountExternalReferenceCode),
-					_userResourceDTOConverter.getUserId(externalReferenceCode)),
+					DTOConverterUtil.getModelPrimaryKey(
+						_userResourceDTOConverter, externalReferenceCode)),
 				accountRole -> _toAccountRole(accountRole)));
 	}
 
@@ -220,8 +227,8 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 		throws Exception {
 
 		return postAccountAccountRole(
-			_accountResourceDTOConverter.getAccountEntryId(
-				externalReferenceCode),
+			DTOConverterUtil.getModelPrimaryKey(
+				_accountResourceDTOConverter, externalReferenceCode),
 			accountRole);
 	}
 
@@ -245,8 +252,8 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 			contextCompany.getCompanyId(), emailAddress);
 
 		postAccountAccountRoleUserAccountAssociation(
-			_accountResourceDTOConverter.getAccountEntryId(
-				externalReferenceCode),
+			DTOConverterUtil.getModelPrimaryKey(
+				_accountResourceDTOConverter, externalReferenceCode),
 			accountRoleId, user.getUserId());
 	}
 
@@ -258,10 +265,11 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 		throws Exception {
 
 		postAccountAccountRoleUserAccountAssociation(
-			_accountResourceDTOConverter.getAccountEntryId(
-				accountExternalReferenceCode),
+			DTOConverterUtil.getModelPrimaryKey(
+				_accountResourceDTOConverter, accountExternalReferenceCode),
 			accountRoleId,
-			_userResourceDTOConverter.getUserId(externalReferenceCode));
+			DTOConverterUtil.getModelPrimaryKey(
+				_userResourceDTOConverter, externalReferenceCode));
 	}
 
 	private AccountRole _toAccountRole(
@@ -287,8 +295,8 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 	@Reference
 	private AccountEntryLocalService _accountEntryLocalService;
 
-	@Reference
-	private AccountResourceDTOConverter _accountResourceDTOConverter;
+	@Reference(target = DTOConverterConstants.ACCOUNT_RESOURCE_DTO_CONVERTER)
+	private DTOConverter<AccountEntry, Account> _accountResourceDTOConverter;
 
 	@Reference
 	private AccountRoleLocalService _accountRoleLocalService;
@@ -298,7 +306,7 @@ public class AccountRoleResourceImpl extends BaseAccountRoleResourceImpl {
 	@Reference
 	private UserLocalService _userLocalService;
 
-	@Reference
-	private UserResourceDTOConverter _userResourceDTOConverter;
+	@Reference(target = DTOConverterConstants.USER_RESOURCE_DTO_CONVERTER)
+	private DTOConverter<User, UserAccount> _userResourceDTOConverter;
 
 }

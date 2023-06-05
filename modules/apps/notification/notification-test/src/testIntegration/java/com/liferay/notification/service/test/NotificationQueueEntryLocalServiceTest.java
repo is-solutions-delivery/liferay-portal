@@ -17,17 +17,29 @@ package com.liferay.notification.service.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.notification.constants.NotificationConstants;
 import com.liferay.notification.constants.NotificationQueueEntryConstants;
+import com.liferay.notification.exception.NotificationQueueEntryStatusException;
+import com.liferay.notification.exception.NotificationQueueEntrySubjectException;
+import com.liferay.notification.exception.NotificationRecipientSettingValueException;
 import com.liferay.notification.model.NotificationQueueEntry;
+import com.liferay.notification.model.NotificationRecipient;
+import com.liferay.notification.model.NotificationRecipientSetting;
 import com.liferay.notification.service.NotificationQueueEntryLocalService;
 import com.liferay.notification.service.test.util.NotificationTemplateUtil;
+import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,6 +57,22 @@ public class NotificationQueueEntryLocalServiceTest {
 	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
 
+	@BeforeClass
+	public static void setUpClass() {
+		_notificationRecipientSettings = Arrays.asList(
+			NotificationTemplateUtil.createNotificationRecipientSetting(
+				"bcc", "bcc@liferay.com"),
+			NotificationTemplateUtil.createNotificationRecipientSetting(
+				"cc", "cc@liferay.com"),
+			NotificationTemplateUtil.createNotificationRecipientSetting(
+				"from", "from@liferay.com"),
+			NotificationTemplateUtil.createNotificationRecipientSetting(
+				"fromName", "From Name"),
+			NotificationTemplateUtil.createNotificationRecipientSetting(
+				"to", "to@liferay.com"));
+	}
+
+	@FeatureFlags("LPS-178816")
 	@Test
 	public void testAddNotificationQueueEntry() throws Exception {
 		Assert.assertEquals(
@@ -52,13 +80,52 @@ public class NotificationQueueEntryLocalServiceTest {
 			_notificationQueueEntryLocalService.
 				getNotificationQueueEntriesCount());
 
+		_assertFailure(
+			NotificationRecipientSettingValueException.FromMustNotBeNull.class,
+			"From is null",
+			() -> _addNotificationQueueEntry(
+				Arrays.asList(
+					NotificationTemplateUtil.createNotificationRecipientSetting(
+						"fromName", "From Name"),
+					NotificationTemplateUtil.createNotificationRecipientSetting(
+						"to", "to@liferay.com"))));
+		_assertFailure(
+			NotificationRecipientSettingValueException.FromNameMustNotBeNull.
+				class,
+			"From name is null",
+			() -> _addNotificationQueueEntry(
+				Arrays.asList(
+					NotificationTemplateUtil.createNotificationRecipientSetting(
+						"from", "from@liferay.com"),
+					NotificationTemplateUtil.createNotificationRecipientSetting(
+						"to", "to@liferay.com"))));
+
 		User user = TestPropsValues.getUser();
+
+		_assertFailure(
+			NotificationQueueEntrySubjectException.class, "Subject is null",
+			() -> _notificationQueueEntryLocalService.addNotificationQueueEntry(
+				NotificationTemplateUtil.createNotificationContext(
+					user, null, null, null, NotificationConstants.TYPE_EMAIL)));
+
+		_assertFailure(
+			NotificationRecipientSettingValueException.ToMustNotBeNull.class,
+			"To is null",
+			() -> _addNotificationQueueEntry(
+				Arrays.asList(
+					NotificationTemplateUtil.createNotificationRecipientSetting(
+						"from", "from@liferay.com"),
+					NotificationTemplateUtil.createNotificationRecipientSetting(
+						"fromName", "From Name"))));
+
 		String body = StringUtil.randomString();
 		String subject = StringUtil.randomString();
 
 		NotificationQueueEntry notificationQueueEntry =
-			_addNotificationQueueEntry(
-				user, body, subject, NotificationConstants.TYPE_EMAIL);
+			_notificationQueueEntryLocalService.addNotificationQueueEntry(
+				NotificationTemplateUtil.createNotificationContext(
+					user, body, null, _notificationRecipientSettings, subject,
+					NotificationConstants.TYPE_EMAIL));
 
 		Assert.assertNotNull(notificationQueueEntry);
 		Assert.assertEquals(
@@ -75,6 +142,13 @@ public class NotificationQueueEntryLocalServiceTest {
 			NotificationQueueEntryConstants.STATUS_UNSENT,
 			notificationQueueEntry.getStatus());
 
+		NotificationRecipient notificationRecipient =
+			notificationQueueEntry.getNotificationRecipient();
+
+		Assert.assertEquals(
+			notificationRecipient.getNotificationRecipientSettings(),
+			_notificationRecipientSettings);
+
 		Assert.assertEquals(
 			1,
 			_notificationQueueEntryLocalService.
@@ -87,7 +161,7 @@ public class NotificationQueueEntryLocalServiceTest {
 	@Test
 	public void testDeleteNotificationQueueEntry() throws Exception {
 		NotificationQueueEntry notificationQueueEntry =
-			_addNotificationQueueEntry();
+			_addNotificationQueueEntry(_notificationRecipientSettings);
 
 		_notificationQueueEntryLocalService.deleteNotificationQueueEntry(
 			notificationQueueEntry.getNotificationQueueEntryId());
@@ -101,42 +175,65 @@ public class NotificationQueueEntryLocalServiceTest {
 	@Test
 	public void testResendNotificationQueueEntry() throws Exception {
 		NotificationQueueEntry notificationQueueEntry =
-			_addNotificationQueueEntry();
+			_addNotificationQueueEntry(_notificationRecipientSettings);
 
-		notificationQueueEntry =
-			_notificationQueueEntryLocalService.updateStatus(
-				notificationQueueEntry.getNotificationQueueEntryId(),
-				NotificationQueueEntryConstants.STATUS_FAILED);
+		long notificationQueueEntryId =
+			notificationQueueEntry.getNotificationQueueEntryId();
 
-		Assert.assertEquals(
-			NotificationQueueEntryConstants.STATUS_FAILED,
-			notificationQueueEntry.getStatus());
+		_notificationQueueEntryLocalService.updateStatus(
+			notificationQueueEntryId,
+			NotificationQueueEntryConstants.STATUS_SENT);
 
-		notificationQueueEntry =
-			_notificationQueueEntryLocalService.resendNotificationQueueEntry(
-				notificationQueueEntry.getNotificationQueueEntryId());
+		_assertFailure(
+			NotificationQueueEntryStatusException.class,
+			"Notification queue entry " + notificationQueueEntryId +
+				" was already sent",
+			() ->
+				_notificationQueueEntryLocalService.
+					resendNotificationQueueEntry(notificationQueueEntryId));
 
-		Assert.assertEquals(
-			NotificationQueueEntryConstants.STATUS_UNSENT,
-			notificationQueueEntry.getStatus());
-	}
+		_notificationQueueEntryLocalService.updateStatus(
+			notificationQueueEntryId,
+			NotificationQueueEntryConstants.STATUS_FAILED);
 
-	private NotificationQueueEntry _addNotificationQueueEntry()
-		throws Exception {
+		_notificationQueueEntryLocalService.resendNotificationQueueEntry(
+			notificationQueueEntryId);
 
-		return _addNotificationQueueEntry(
-			TestPropsValues.getUser(), StringUtil.randomString(),
-			StringUtil.randomString(), NotificationConstants.TYPE_EMAIL);
+		_notificationQueueEntryLocalService.updateStatus(
+			notificationQueueEntryId,
+			NotificationQueueEntryConstants.STATUS_UNSENT);
+
+		_notificationQueueEntryLocalService.resendNotificationQueueEntry(
+			notificationQueueEntryId);
 	}
 
 	private NotificationQueueEntry _addNotificationQueueEntry(
-			User user, String body, String subject, String type)
+			List<NotificationRecipientSetting> notificationRecipientSettings)
 		throws Exception {
 
 		return _notificationQueueEntryLocalService.addNotificationQueueEntry(
 			NotificationTemplateUtil.createNotificationContext(
-				user, body, null, subject, type));
+				notificationRecipientSettings,
+				NotificationConstants.TYPE_EMAIL));
 	}
+
+	private void _assertFailure(
+		Class<?> clazz, String message,
+		UnsafeSupplier<Object, Exception> unsafeSupplier) {
+
+		try {
+			unsafeSupplier.get();
+
+			Assert.fail();
+		}
+		catch (Exception exception) {
+			Assert.assertTrue(clazz.isInstance(exception));
+			Assert.assertEquals(exception.getMessage(), message);
+		}
+	}
+
+	private static List<NotificationRecipientSetting>
+		_notificationRecipientSettings = new ArrayList<>();
 
 	@Inject
 	private NotificationQueueEntryLocalService

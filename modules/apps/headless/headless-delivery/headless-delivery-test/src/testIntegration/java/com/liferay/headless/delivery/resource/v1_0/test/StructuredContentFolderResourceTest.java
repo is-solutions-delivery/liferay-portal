@@ -16,11 +16,17 @@ package com.liferay.headless.delivery.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.headless.delivery.client.dto.v1_0.StructuredContentFolder;
+import com.liferay.headless.delivery.client.pagination.Page;
+import com.liferay.headless.delivery.client.pagination.Pagination;
+import com.liferay.headless.delivery.client.resource.v1_0.StructuredContentFolderResource;
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -29,6 +35,51 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class StructuredContentFolderResourceTest
 	extends BaseStructuredContentFolderResourceTestCase {
+
+	@Override
+	@Test
+	public void testGetStructuredContentFolderStructuredContentFoldersPage()
+		throws Exception {
+
+		super.testGetStructuredContentFolderStructuredContentFoldersPage();
+
+		StructuredContentFolder postStructuredContentFolder =
+			structuredContentFolderResource.
+				postAssetLibraryStructuredContentFolder(
+					testDepotEntry.getDepotEntryId(),
+					_randomStructuredContentFolder());
+
+		StructuredContentFolderResource.Builder builder =
+			StructuredContentFolderResource.builder();
+
+		structuredContentFolderResource = builder.authentication(
+			"test@liferay.com", "test"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameters(
+			"nestedFields", "profileURL"
+		).build();
+
+		Page<StructuredContentFolder> page =
+			structuredContentFolderResource.
+				getAssetLibraryStructuredContentFoldersPage(
+					testDepotEntry.getDepotEntryId(), null, null, null, null,
+					Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+
+		Assert.assertEquals(
+			postStructuredContentFolder.getId(),
+			page.fetchFirstItem(
+			).getId());
+
+		Assert.assertNotNull(
+			page.fetchFirstItem(
+			).getCreator(
+			).getProfileURL());
+
+		assertValid(page);
+	}
 
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {

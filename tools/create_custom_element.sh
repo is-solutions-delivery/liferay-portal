@@ -83,6 +83,14 @@ function create_angular_app {
 	rm -f README.md
 	rm -fr .vscode
 
+	cat <<EOF > build.gradle
+apply plugin: "com.liferay.node"
+
+node {
+	nodeVersion = "16.15.1"
+}
+EOF
+
 	#
 	# Add support for custom elements and disable tests.
 	#
@@ -104,7 +112,7 @@ function create_angular_app {
 	sed -i \
 		-e 's/{ NgModule }/{ Injector, NgModule }/' \
 		-e '/@angular\/core/aimport { createCustomElement } from "@angular/elements";' \
-		-e '/@NgModule({/a\  entryComponents: [AppComponent],' \
+		-e '/@NgModule({/a\  bootstrap: [AppComponent],' \
 		-e '/bootstrap: /d' \
 		-e 's/class AppModule { }/class AppModule {/' \
 		-e '/class AppModule {/a\ ' \
@@ -141,7 +149,10 @@ function create_react_app {
 
 	mv README.md README.markdown
 
-	echo "SKIP_PREFLIGHT_CHECK=true" > ".env"
+	cat <<EOF > .env
+DISABLE_ESLINT_PLUGIN=true
+SKIP_PREFLIGHT_CHECK=true
+EOF
 
 	sed -i -e "s|<div id=\"root\"></div>|<${CUSTOM_ELEMENT_NAME} route=\"hello-world\"></${CUSTOM_ELEMENT_NAME}>|g" public/index.html
 
@@ -261,6 +272,20 @@ function write_react_app_files {
 	#
 
 	cat <<EOF > common/services/liferay/api.js
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import {Liferay} from './liferay';
 
 const {REACT_APP_LIFERAY_HOST = window.location.origin} = process.env;
@@ -283,6 +308,20 @@ EOF
 	#
 
 	cat <<EOF > common/services/liferay/liferay.js
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 export const Liferay = window.Liferay || {
 	OAuth2: {
 		getAuthorizeURL: () => '',
@@ -332,7 +371,8 @@ EOF
 	cat <<EOF > common/styles/index.scss
 ${CUSTOM_ELEMENT_NAME} {
 	@import 'variables';
-	@import 'hello-world.scss';
+
+	@import 'hello-world';
 }
 EOF
 
@@ -419,6 +459,20 @@ EOF
 	#
 
 	cat <<EOF > routes/hello-bar/pages/HelloBar.js
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import React from 'react';
 
 const HelloBar = () => (
@@ -435,6 +489,20 @@ EOF
 	#
 
 	cat <<EOF > routes/hello-foo/pages/HelloFoo.js
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import React from 'react';
 
 const HelloFoo = () => (
@@ -451,6 +519,20 @@ EOF
 	#
 
 	cat <<EOF > routes/hello-world/pages/HelloWorld.js
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import React from 'react';
 
 const HelloWorld = () => (

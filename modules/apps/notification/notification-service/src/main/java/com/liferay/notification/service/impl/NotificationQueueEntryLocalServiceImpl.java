@@ -28,6 +28,7 @@ import com.liferay.notification.type.NotificationType;
 import com.liferay.notification.type.NotificationTypeServiceTracker;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.search.Indexable;
@@ -61,6 +62,15 @@ public class NotificationQueueEntryLocalServiceImpl
 
 		NotificationQueueEntry notificationQueueEntry =
 			notificationContext.getNotificationQueueEntry();
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-178816")) {
+			NotificationType notificationType =
+				_notificationTypeServiceTracker.getNotificationType(
+					notificationQueueEntry.getType());
+
+			notificationType.validateNotificationQueueEntry(
+				notificationContext);
+		}
 
 		notificationQueueEntry.setNotificationQueueEntryId(
 			counterLocalService.increment());
@@ -191,7 +201,7 @@ public class NotificationQueueEntryLocalServiceImpl
 			throw new NotificationQueueEntryStatusException(
 				"Notification queue entry " +
 					notificationQueueEntry.getNotificationQueueEntryId() +
-						" has already been sent");
+						" was already sent");
 		}
 
 		NotificationType notificationType =

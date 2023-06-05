@@ -99,10 +99,9 @@ export default function ModalAddObjectLayoutField({
 		TObjectField
 	>();
 
-	const [readOnlyField, setReadOnlyField] = useState<ObjectFieldSetting>({
-		name: 'readOnly',
-		value: 'false',
-	});
+	const [readOnlyField, setReadOnlyField] = useState<ReadOnlyFieldValue>(
+		'false'
+	);
 
 	const filteredObjectFields = useMemo(() => {
 		return objectFields.filter(
@@ -173,10 +172,9 @@ export default function ModalAddObjectLayoutField({
 										: Liferay.Language.get('optional')}
 								</ClayLabel>
 
-								{Liferay.FeatureFlags['LPS-159913'] &&
-									(readOnlyField.value === 'true' ||
-										readOnlyField.value ===
-											'conditional') && (
+								{Liferay.FeatureFlags['LPS-170122'] &&
+									(readOnlyField === 'conditional' ||
+										readOnlyField === 'true') && (
 										<ClayLabel
 											className="label-inside-custom-select"
 											displayType="secondary"
@@ -197,15 +195,7 @@ export default function ModalAddObjectLayoutField({
 						label={Liferay.Language.get('field')}
 						onChangeQuery={setQuery}
 						onSelectItem={(item: ObjectField) => {
-							const readOnlySetting = item.objectFieldSettings?.find(
-								(fieldSetting) =>
-									fieldSetting.name === 'readOnly'
-							);
-
-							if (readOnlySetting) {
-								setReadOnlyField(readOnlySetting);
-							}
-
+							setReadOnlyField(item.readOnly);
 							setSelectedObjectField(item);
 							setValues({objectFieldName: item.name});
 						}}
@@ -213,7 +203,7 @@ export default function ModalAddObjectLayoutField({
 						required
 						value={selectedObjectField?.label[defaultLanguageId]}
 					>
-						{({label, objectFieldSettings, required}) => (
+						{({label, readOnly, required}) => (
 							<div className="d-flex justify-content-between">
 								<div className="lfr__object-web-layout-modal-add-field-label">
 									{label[defaultLanguageId]}
@@ -231,15 +221,9 @@ export default function ModalAddObjectLayoutField({
 											: Liferay.Language.get('optional')}
 									</ClayLabel>
 
-									{Liferay.FeatureFlags['LPS-159913'] &&
-										objectFieldSettings?.find(
-											(
-												fieldSetting: ObjectFieldSetting
-											) =>
-												fieldSetting.value === 'true' ||
-												fieldSetting.value ===
-													'conditional'
-										) && (
+									{Liferay.FeatureFlags['LPS-170122'] &&
+										(readOnly === 'conditional' ||
+											readOnly === 'true') && (
 											<ClayLabel
 												className="label-inside-custom-select"
 												displayType="secondary"

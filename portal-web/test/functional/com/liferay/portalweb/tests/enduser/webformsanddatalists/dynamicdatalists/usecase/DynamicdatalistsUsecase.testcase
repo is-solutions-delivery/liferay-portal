@@ -1995,7 +1995,7 @@ definition {
 			Click.mouseOverClick(locator1 = "DDMEditStructure#FORM_FIELD_DELETE_BUTTON_2");
 
 			AssertTextEquals(
-				locator1 = "IFrame#DIALOG_BOX",
+				locator1 = "Modal#HEADER",
 				value1 = "Boolean");
 
 			AssertTextEquals(
@@ -2391,7 +2391,12 @@ definition {
 			ddlRecordFieldData = "Test Page 10",
 			fieldName = "LinkToPage");
 
-		Button.click(button = "Publish");
+		Click(
+			key_indexNumber = 1,
+			key_text = "Publish",
+			locator1 = "Button#ANY_N");
+
+		Alert.viewSuccessMessage();
 
 		DDLRecord.viewFirstFieldCP(
 			ddlRecordFieldData = "Test Page 10",
@@ -2455,7 +2460,7 @@ definition {
 			Click.mouseOverClick(locator1 = "DDMEditStructure#FORM_FIELD_DELETE_BUTTON_2");
 
 			AssertTextEquals(
-				locator1 = "IFrame#DIALOG_BOX",
+				locator1 = "Modal#HEADER",
 				value1 = "Boolean");
 
 			AssertTextEquals(

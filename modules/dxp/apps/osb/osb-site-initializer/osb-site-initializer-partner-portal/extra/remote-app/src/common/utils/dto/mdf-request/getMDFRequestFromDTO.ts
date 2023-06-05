@@ -24,11 +24,12 @@ export function getMDFRequestFromDTO(mdfRequest: MDFRequestDTO): MDFRequest {
 					externalReferenceCode,
 					id,
 					mdfRequestAmount,
-					mdfRequestExternalReferenceCode,
 					name,
 					r_accToActs_accountEntryId,
+					r_mdfReqToActs_c_mdfRequestERC,
 					r_mdfReqToActs_c_mdfRequestId,
 					startDate,
+					submitted,
 					tactic,
 					totalCostOfExpense,
 					typeActivity,
@@ -52,12 +53,13 @@ export function getMDFRequestFromDTO(mdfRequest: MDFRequestDTO): MDFRequest {
 					externalReferenceCode,
 					id,
 					mdfRequestAmount,
-					mdfRequestExternalReferenceCode,
+					mdfRequestExternalReferenceCode: r_mdfReqToActs_c_mdfRequestERC,
 					mdfRequestId: r_mdfReqToActs_c_mdfRequestId,
 					name,
 					r_accToActs_accountEntryId,
 					r_mdfReqToActs_c_mdfRequestId,
 					startDate: startDate?.split('T')[0],
+					submitted,
 					tactic,
 					totalCostOfExpense,
 					typeActivity,
@@ -65,9 +67,17 @@ export function getMDFRequestFromDTO(mdfRequest: MDFRequestDTO): MDFRequest {
 			}) || [],
 		additionalOption: mdfRequest.additionalOption,
 		company: mdfRequest.r_accToMDFReqs_accountEntry,
-		liferayBusinessSalesGoals: mdfRequest.liferayBusinessSalesGoals
-			?.split('; ')
-			.filter((request) => request !== ''),
+		liferayBusinessSalesGoals:
+			mdfRequest.liferayBusinessSalesGoalsOther !== ''
+				? (
+						'Other - Please describe; ' +
+						mdfRequest.liferayBusinessSalesGoals
+				  )
+						?.split('; ')
+						.filter((request) => request !== '')
+				: mdfRequest.liferayBusinessSalesGoals
+						?.split('; ')
+						.filter((request) => request !== ''),
 		liferayBusinessSalesGoalsOther:
 			mdfRequest.liferayBusinessSalesGoalsOther,
 		mdfRequestStatus: mdfRequest.mdfRequestStatus,

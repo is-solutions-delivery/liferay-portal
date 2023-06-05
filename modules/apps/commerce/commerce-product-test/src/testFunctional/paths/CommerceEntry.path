@@ -815,6 +815,21 @@
 	<td>//div[@aria-label='${key_targetFragmentName}'][${key_index}]/div[contains(@class,'page-editor__topper__content')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>LABEL_TOOLTIP_ICON</td>
+	<td>//label[(contains(.,'${key_label}')) or (contains(@for,'${key_label}'))]//span[contains(@class,'lfr-portal-tooltip')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LABEL_TOOLTIP_TEXT</td>
+	<td>//label[(contains(.,'${key_label}')) or (contains(@for,'${key_label}'))]//span[(contains(@class,'lfr-portal-tooltip')) and (@data-restore-title='${key_text}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ANY_TEXT_INPUT_DISABLED</td>
+	<td>//div[label[contains(.,'${key_text}')]]//input[not(contains(@type,'checkbox'))][@disabled]</td>
+	<td></td>
+</tr>
 
 <!--CATALOGS-->
 
@@ -1362,7 +1377,7 @@
 </tr>
 <tr>
 	<td>CATEGORY_LANGUAGE_SITEMAP_URL_HREF_HREFLANG</td>
-	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/g/${key_categoryURLName}']/following-sibling::*[@href = '${key_basePortalURL}/${key_language}/web/minium/g/${key_categoryName}'][@hreflang='${key_categoryNameLang}']</td>
+	<td>//*[text()='${key_basePortalURL}${key_languageLoc}/web/minium/g/${key_categoryURLName}']/following-sibling::*[@href = '${key_basePortalURL}${key_languageHref}/web/minium/g/${key_categoryName}'][@hreflang='${key_categoryNameLang}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -1372,7 +1387,7 @@
 </tr>
 <tr>
 	<td>PRODUCT_LANGUAGE_DETAIL_SITEMAP_URL_HREF_HREFLANG</td>
-	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/p/${key_productURLName}']/following-sibling::*[@href = '${key_basePortalURL}/${key_language}/web/minium/p/${key_productName}'][@hreflang='${key_productNameLang}']</td>
+	<td>//*[text()='${key_basePortalURL}${key_languageLoc}/web/minium/p/${key_productURLName}']/following-sibling::*[@href = '${key_basePortalURL}${key_languageHref}/web/minium/p/${key_productName}'][@hreflang='${key_productNameLang}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -1385,7 +1400,11 @@
 	<td>//*[text()='${key_basePortalURL}/web/minium/p/${key_productURLName}']/following-sibling::*[@href = '${key_basePortalURL}/web/minium/p/${key_productName}'][@hreflang='${key_productNameLang}']</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>CURRENT_LANGUAGE</td>
+	<td>//label[contains(.,'Current')]/..//select/option[contains(.,'${key_language}')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>

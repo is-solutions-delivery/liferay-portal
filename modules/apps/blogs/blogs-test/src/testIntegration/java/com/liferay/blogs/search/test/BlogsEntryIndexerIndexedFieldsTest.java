@@ -102,7 +102,7 @@ public class BlogsEntryIndexerIndexedFieldsTest {
 
 		_blogsEntryFixture.updateDisplaySettings(locale);
 
-		BlogsEntry blogsEntry = _blogsEntryFixture.createBlogsEntry(title);
+		BlogsEntry blogsEntry = _blogsEntryFixture.addEntry(title);
 
 		assertFieldValues(_expectedFieldValues(blogsEntry), searchTerm, locale);
 	}

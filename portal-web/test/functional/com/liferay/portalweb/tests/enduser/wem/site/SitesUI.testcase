@@ -3,24 +3,16 @@ definition {
 
 	property portal.release = "true";
 	property portal.upstream = "true";
+	property testcase.url = "http://localhost:8080";
 	property testray.component.names = "Sites Administration";
 	property testray.main.component.name = "Sites Administration";
 
+	static var randomSiteName = StringUtil.randomString(8);
+
+	var siteURLKey = StringUtil.toLowerCase(${randomSiteName});
+
 	setUp {
-		TestCase.setUpPortalInstance();
-
 		User.firstLoginPG();
-	}
-
-	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
-
-		if (${testPortalInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			Site.tearDownCP();
-		}
 	}
 
 	@description = "This is a test for LPS-112992. The user could add a child site in Sites admin."
@@ -29,8 +21,10 @@ definition {
 		property portal.acceptance = "true";
 		property testray.component.names = "Training";
 
+		var childSiteName = StringUtil.randomString(8);
+
 		task ("Add a site via JSON") {
-			HeadlessSite.addSite(siteName = "Site Name");
+			HeadlessSite.addSite(siteName = ${randomSiteName});
 		}
 
 		task ("Add a child site") {
@@ -40,8 +34,8 @@ definition {
 				portlet = "Sites");
 
 			Site.addBlankCP(
-				parentSiteName = "Site Name",
-				siteName = "Child SiteName");
+				parentSiteName = ${randomSiteName},
+				siteName = ${childSiteName});
 		}
 
 		task ("View child site added") {
@@ -51,8 +45,8 @@ definition {
 				portlet = "Sites");
 
 			Site.viewChildCP(
-				childSiteName = "Child SiteName",
-				siteName = "Site Name");
+				childSiteName = ${childSiteName},
+				siteName = ${randomSiteName});
 		}
 	}
 
@@ -116,7 +110,7 @@ definition {
 
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-			PortletEntry.inputName(name = "Test Site Name");
+			PortletEntry.inputName(name = ${randomSiteName});
 
 			Button.clickCancel();
 		}
@@ -124,7 +118,7 @@ definition {
 		task ("View the new site is not created") {
 			Site.openSitesAdmin();
 
-			LexiconTable.viewTableEntryNotPresent(tableEntry = "Test Site Name");
+			LexiconTable.viewTableEntryNotPresent(tableEntry = ${randomSiteName});
 		}
 	}
 
@@ -155,7 +149,7 @@ definition {
 				Site.openSitesAdmin();
 			}
 
-			task ("Add a new site based on Test Site Name") {
+			task ("Add a new site based on site template") {
 				LexiconEntry.gotoAdd();
 
 				Site.selectSiteTemplateTab(siteTemplateTab = "Custom Site Templates");
@@ -164,7 +158,7 @@ definition {
 
 				SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-				PortletEntry.inputName(name = "Test Site Name");
+				PortletEntry.inputName(name = ${randomSiteName});
 
 				Check(
 					checkboxName = "Create default pages as private (available only to members). If unchecked, they will be public (available to anyone).",
@@ -179,11 +173,11 @@ definition {
 				ContentPagesNavigator.openViewContentPage(
 					pageName = "Content Page Name",
 					privateLayout = "true",
-					siteName = "Test Site Name");
+					siteName = ${randomSiteName});
 
 				User.logoutPG();
 
-				Navigator.openWithAppendToBaseURL(urlAppend = "group/test-site-name");
+				Navigator.openWithAppendToBaseURL(urlAppend = "group/${siteURLKey}");
 
 				AssertTextNotPresent(
 					locator1 = "Home#PAGE_2_GUEST_VIEW",
@@ -201,13 +195,13 @@ definition {
 		task ("Add a blank site") {
 			Site.openSitesAdmin();
 
-			Site.addBlankCP(siteName = "Site Name");
+			Site.addBlankCP(siteName = ${randomSiteName});
 		}
 
 		task ("Assert able to delete the site") {
 			Site.openSitesAdmin();
 
-			Site.deleteCP(siteName = "Site Name");
+			Site.deleteCP(siteName = ${randomSiteName});
 		}
 	}
 
@@ -228,7 +222,7 @@ definition {
 
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-			PortletEntry.inputName(name = "Test Site Name");
+			PortletEntry.inputName(name = ${randomSiteName});
 
 			Button.clickAdd();
 		}
@@ -239,18 +233,18 @@ definition {
 
 		task ("View the new site created") {
 			var groupId = JSONGroupAPI._getGroupIdByNameNoError(
-				groupName = "Test Site Name",
+				groupName = ${randomSiteName},
 				site = "true");
 
 			while (("" == "")) {
 				var groupId = JSONGroupAPI._getGroupIdByNameNoError(
-					groupName = "Test Site Name",
+					groupName = ${randomSiteName},
 					site = "true");
 			}
 
 			Site.openSitesAdmin();
 
-			LexiconTable.viewTableEntryTitle(tableEntry = "Test Site Name");
+			LexiconTable.viewTableEntryTitle(tableEntry = ${randomSiteName});
 		}
 	}
 
@@ -271,7 +265,7 @@ definition {
 
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-			PortletEntry.inputName(name = "Test Site Name");
+			PortletEntry.inputName(name = ${randomSiteName});
 
 			Button.click(button = "Add");
 		}
@@ -302,6 +296,26 @@ definition {
 			Alert.viewSuccessMessageText(successMessage = "Site was successfully added.");
 
 			ControlMenu.viewHeaderTitle(headerTitle = "Site Settings");
+		}
+	}
+
+	@description = "This is a test for LPS-176154. The site administrater should see site initializers under Provided by Liferay tab when create a new site."
+	@priority = 3
+	test ViewSiteInitializersUnderProvidedByLiferayTab {
+		task ("Given a site administrater accesses to the Sites admin") {
+			Site.openSitesAdmin();
+		}
+
+		task ("When the site administrater creates a new site") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("Then the site administrater could see site initializers under Provided by Liferay tab") {
+			Navigator.viewActivatedNavTab(navTab = "Provided by Liferay");
+
+			for (var siteInitializerName : list "Blank Site,Welcome") {
+				LexiconCard.viewCardPresent(card = ${siteInitializerName});
+			}
 		}
 	}
 

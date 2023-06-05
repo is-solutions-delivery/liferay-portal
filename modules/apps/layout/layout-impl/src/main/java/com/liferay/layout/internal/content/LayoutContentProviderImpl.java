@@ -21,6 +21,7 @@ import com.liferay.layout.crawler.LayoutCrawler;
 import com.liferay.layout.internal.search.util.LayoutPageTemplateStructureRenderUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.osgi.util.service.Snapshot;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -46,7 +47,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  * @author Eudaldo Alonso
@@ -82,7 +82,9 @@ public class LayoutContentProviderImpl implements LayoutContentProvider {
 				String content = StringPool.BLANK;
 
 				try {
-					content = _layoutCrawler.getLayoutContent(layout, locale);
+					LayoutCrawler layoutCrawler = _layoutCrawlerSnapshot.get();
+
+					content = layoutCrawler.getLayoutContent(layout, locale);
 				}
 				catch (Exception exception) {
 					if (_log.isWarnEnabled()) {
@@ -169,7 +171,9 @@ public class LayoutContentProviderImpl implements LayoutContentProvider {
 	}
 
 	private boolean _isUseLayoutCrawler(Layout layout) {
-		if ((_layoutCrawler == null) || layout.isPrivateLayout()) {
+		LayoutCrawler layoutCrawler = _layoutCrawlerSnapshot.get();
+
+		if ((layoutCrawler == null) || layout.isPrivateLayout()) {
 			return false;
 		}
 
@@ -200,14 +204,15 @@ public class LayoutContentProviderImpl implements LayoutContentProvider {
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutContentProviderImpl.class);
 
+	private static final Snapshot<LayoutCrawler> _layoutCrawlerSnapshot =
+		new Snapshot<>(
+			LayoutContentProviderImpl.class, LayoutCrawler.class, null, true);
+
 	@Reference
 	private FragmentRendererController _fragmentRendererController;
 
 	@Reference
 	private Html _html;
-
-	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
-	private LayoutCrawler _layoutCrawler;
 
 	@Reference
 	private LayoutPageTemplateStructureLocalService

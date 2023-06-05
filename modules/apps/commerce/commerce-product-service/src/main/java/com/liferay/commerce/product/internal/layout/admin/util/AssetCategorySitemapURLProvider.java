@@ -16,15 +16,14 @@ package com.liferay.commerce.product.internal.layout.admin.util;
 
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.model.AssetVocabularyConstants;
 import com.liferay.asset.kernel.service.AssetCategoryService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.url.CPFriendlyURL;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
-import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.layout.admin.kernel.model.LayoutTypePortletConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
@@ -36,14 +35,12 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.site.util.Sitemap;
 import com.liferay.site.util.SitemapURLProvider;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -86,22 +83,23 @@ public class AssetCategorySitemapURLProvider implements SitemapURLProvider {
 
 			List<AssetVocabulary> assetVocabularies =
 				_assetVocabularyService.getGroupVocabularies(
-					company.getGroupId(),
-					group.getName(themeDisplay.getLocale()), QueryUtil.ALL_POS,
-					QueryUtil.ALL_POS, null);
+					company.getGroupId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null);
 
-			if (assetVocabularies.size() == 1) {
-				AssetVocabulary assetVocabulary = assetVocabularies.get(0);
+			for (AssetVocabulary assetVocabulary : assetVocabularies) {
+				if (assetVocabulary.getVisibilityType() !=
+						AssetVocabularyConstants.VISIBILITY_TYPE_INTERNAL) {
 
-				List<AssetCategory> assetCategories =
-					_assetCategoryService.getVocabularyCategories(
-						assetVocabulary.getVocabularyId(), QueryUtil.ALL_POS,
-						QueryUtil.ALL_POS, null);
+					List<AssetCategory> assetCategories =
+						_assetCategoryService.getVocabularyCategories(
+							assetVocabulary.getVocabularyId(),
+							QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
-				for (AssetCategory assetCategory : assetCategories) {
-					visitLayout(
-						element, layout, assetCategory.getCategoryId(),
-						themeDisplay);
+					for (AssetCategory assetCategory : assetCategories) {
+						visitLayout(
+							element, layout, assetCategory.getCategoryId(),
+							themeDisplay);
+					}
 				}
 			}
 		}
@@ -133,10 +131,6 @@ public class AssetCategorySitemapURLProvider implements SitemapURLProvider {
 			return;
 		}
 
-		themeDisplay = SitemapURLProviderUtil.updateThemeDisplay(
-			_language, _portal.getLocale(themeDisplay.getRequest()),
-			themeDisplay);
-
 		String currentSiteURL = _portal.getGroupFriendlyURL(
 			layout.getLayoutSet(), themeDisplay, false, false);
 
@@ -147,23 +141,16 @@ public class AssetCategorySitemapURLProvider implements SitemapURLProvider {
 			_friendlyURLEntryLocalService.getMainFriendlyURLEntry(
 				_portal.getClassNameId(AssetCategory.class), assetCategoryId);
 
-		String categoryFriendlyURL =
-			currentSiteURL + urlSeparator +
-				friendlyURLEntry.getUrlTitle(themeDisplay.getLanguageId());
+		Map<Locale, String> alternateFriendlyURLs =
+			SitemapURLProviderUtil.getAlternateFriendlyURLs(
+				_portal.getAlternateURLs(
+					currentSiteURL, themeDisplay, layout,
+					_language.getAvailableLocales(layout.getGroupId())),
+				friendlyURLEntry.getFriendlyURLEntryId(),
+				_friendlyURLEntryLocalService, urlSeparator);
 
-		Map<Locale, String> alternateFriendlyURLs = new HashMap<>();
-
-		for (FriendlyURLEntryLocalization friendlyURLEntryLocalization :
-				_friendlyURLEntryLocalService.getFriendlyURLEntryLocalizations(
-					friendlyURLEntry.getFriendlyURLEntryId())) {
-
-			alternateFriendlyURLs.put(
-				LocaleUtil.fromLanguageId(
-					friendlyURLEntryLocalization.getLanguageId()),
-				StringBundler.concat(
-					currentSiteURL, urlSeparator,
-					friendlyURLEntryLocalization.getUrlTitle()));
-		}
+		String categoryFriendlyURL = alternateFriendlyURLs.get(
+			_portal.getLocale(themeDisplay.getRequest()));
 
 		for (String alternateFriendlyURL : alternateFriendlyURLs.values()) {
 			_sitemap.addURLElement(

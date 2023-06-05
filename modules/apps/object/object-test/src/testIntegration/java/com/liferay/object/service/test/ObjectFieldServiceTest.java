@@ -17,6 +17,8 @@ package com.liferay.object.service.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.field.builder.TextObjectFieldBuilder;
+import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -57,7 +59,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Gabriel Albuquerque
  */
-@FeatureFlags("LPS-163716")
+@FeatureFlags({"LPS-163716", "LPS-170122"})
 @RunWith(Arquillian.class)
 public class ObjectFieldServiceTest {
 
@@ -188,13 +190,19 @@ public class ObjectFieldServiceTest {
 	}
 
 	private ObjectField _addObjectField(User user) throws Exception {
-		return _objectFieldLocalService.addCustomObjectField(
-			null, user.getUserId(), 0,
-			_objectDefinition.getObjectDefinitionId(),
-			ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-			ObjectFieldConstants.DB_TYPE_STRING, false, false, null,
-			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			false, StringUtil.randomId(), true, false, Collections.emptyList());
+		return ObjectFieldUtil.addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).userId(
+				user.getUserId()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				StringUtil.randomId()
+			).objectDefinitionId(
+				_objectDefinition.getObjectDefinitionId()
+			).required(
+				true
+			).build());
 	}
 
 	private void _setUser(User user) {
@@ -217,7 +225,8 @@ public class ObjectFieldServiceTest {
 				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 				ObjectFieldConstants.DB_TYPE_STRING, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				false, StringUtil.randomId(), true, false,
+				false, StringUtil.randomId(),
+				ObjectFieldConstants.READ_ONLY_FALSE, null, true, false,
 				Collections.emptyList());
 		}
 		finally {
@@ -275,8 +284,9 @@ public class ObjectFieldServiceTest {
 				StringPool.BLANK, objectField.getObjectFieldId(), 0, "Text",
 				ObjectFieldConstants.DB_TYPE_STRING, true, false,
 				LanguageUtil.getLanguageId(LocaleUtil.getDefault()),
-				LocalizedMapUtil.getLocalizedMap("baker"), false, "baker", true,
-				false, Collections.emptyList());
+				LocalizedMapUtil.getLocalizedMap("baker"), false, "baker",
+				ObjectFieldConstants.READ_ONLY_FALSE, null, true, false,
+				Collections.emptyList());
 		}
 		finally {
 			if (objectField != null) {

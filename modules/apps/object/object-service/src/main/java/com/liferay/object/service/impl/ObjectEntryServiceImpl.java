@@ -96,7 +96,7 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 
 		if (!ObjectEntryThreadLocal.isSkipObjectEntryResourcePermission()) {
 			_checkPortletResourcePermission(
-				groupId, objectDefinitionId, ObjectActionKeys.ADD_OBJECT_ENTRY,
+				ObjectActionKeys.ADD_OBJECT_ENTRY, groupId, objectDefinitionId,
 				values);
 		}
 
@@ -118,7 +118,7 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 
 		if (objectEntry == null) {
 			_checkPortletResourcePermission(
-				groupId, objectDefinitionId, ObjectActionKeys.ADD_OBJECT_ENTRY,
+				ObjectActionKeys.ADD_OBJECT_ENTRY, groupId, objectDefinitionId,
 				values);
 		}
 		else {
@@ -412,7 +412,7 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 	}
 
 	private void _checkPortletResourcePermission(
-			long groupId, long objectDefinitionId, String actionId,
+			String actionId, long groupId, long objectDefinitionId,
 			Map<String, Serializable> values)
 		throws PortalException {
 

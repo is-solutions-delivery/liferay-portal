@@ -40,6 +40,7 @@ import com.liferay.headless.delivery.client.resource.v1_0.StructuredContentResou
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalFolder;
+import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -63,6 +64,7 @@ import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -372,6 +374,8 @@ public class StructuredContentResourceTest
 			_userLocalService.deleteUser(regularUser);
 			_userLocalService.deleteUser(ownerUser);
 		}
+
+		_testGetStructuredContentAssetLibrary();
 	}
 
 	@Override
@@ -444,6 +448,42 @@ public class StructuredContentResourceTest
 
 		Assert.assertEquals(
 			Double.valueOf(1.0), patchStructuredContent.getPriority());
+	}
+
+	@Override
+	@Test
+	public void testPostAssetLibraryStructuredContent() throws Exception {
+		super.testPostAssetLibraryStructuredContent();
+
+		// Default external reference code and UUID
+
+		StructuredContent randomStructuredContent = randomStructuredContent();
+
+		randomStructuredContent.setExternalReferenceCode("");
+		randomStructuredContent.setUuid("");
+
+		StructuredContent postStructuredContent1 =
+			testPostAssetLibraryStructuredContent_addStructuredContent(
+				randomStructuredContent);
+
+		Assert.assertNotNull(postStructuredContent1.getExternalReferenceCode());
+		Assert.assertNotNull(postStructuredContent1.getUuid());
+		Assert.assertEquals(
+			postStructuredContent1.getExternalReferenceCode(),
+			postStructuredContent1.getUuid());
+		assertValid(postStructuredContent1);
+
+		// External reference code
+
+		_testPostAssetLibraryStructuredContent(
+			StringUtil.toLowerCase(RandomTestUtil.randomString()));
+
+		StructuredContent postStructuredContent2 =
+			testPostAssetLibraryStructuredContent_addStructuredContent(
+				randomStructuredContent());
+
+		_testPostAssetLibraryStructuredContent(
+			String.valueOf(postStructuredContent2.getId()));
 	}
 
 	@Override
@@ -556,6 +596,38 @@ public class StructuredContentResourceTest
 		_useDepotDDMStructureStructureId = true;
 
 		super.testPutAssetLibraryStructuredContentByExternalReferenceCode();
+
+		// Different external reference code in payload
+
+		StructuredContent randomStructuredContent1 = randomStructuredContent();
+
+		StructuredContent putStructuredContent1 =
+			structuredContentResource.
+				putAssetLibraryStructuredContentByExternalReferenceCode(
+					testPutAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					randomStructuredContent1.getExternalReferenceCode(),
+					randomStructuredContent1);
+
+		StructuredContent randomStructuredContent2 =
+			testPutAssetLibraryStructuredContentByExternalReferenceCode_createStructuredContent();
+
+		String externalReferenceCode = StringUtil.toLowerCase(
+			RandomTestUtil.randomString());
+
+		randomStructuredContent2.setTitle(putStructuredContent1.getTitle());
+
+		StructuredContent putStructuredContent2 =
+			structuredContentResource.
+				putAssetLibraryStructuredContentByExternalReferenceCode(
+					testPutAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					externalReferenceCode, randomStructuredContent2);
+
+		Assert.assertNotEquals(putStructuredContent1, putStructuredContent2);
+		Assert.assertEquals(
+			putStructuredContent1.getTitle(), putStructuredContent2.getTitle());
+		Assert.assertEquals(
+			externalReferenceCode,
+			putStructuredContent2.getExternalReferenceCode());
 	}
 
 	@Override
@@ -1308,6 +1380,93 @@ public class StructuredContentResourceTest
 			postStructuredContent3.getId());
 	}
 
+	private void _testGetStructuredContentAssetLibrary() throws Exception {
+
+		// Get structured content inside folder in asset library
+
+		JournalFolder journalFolder1 = JournalTestUtil.addFolder(
+			testDepotEntry.getGroupId(), RandomTestUtil.randomString());
+
+		StructuredContent structuredContent = randomStructuredContent();
+
+		structuredContent.setContentStructureId(
+			_depotDDMStructure.getStructureId());
+
+		StructuredContent postStructuredContent =
+			structuredContentResource.
+				postStructuredContentFolderStructuredContent(
+					journalFolder1.getFolderId(), structuredContent);
+
+		StructuredContent getStructuredContent1 =
+			structuredContentResource.getStructuredContent(
+				postStructuredContent.getId());
+
+		Assert.assertEquals(
+			journalFolder1.getFolderId(),
+			GetterUtil.getLong(
+				getStructuredContent1.getStructuredContentFolderId()));
+
+		// Get structured content inside current folder in asset library
+
+		JournalFolder journalFolder2 = JournalTestUtil.addFolder(
+			testDepotEntry.getGroupId(), RandomTestUtil.randomString());
+
+		_journalArticleLocalService.moveArticle(
+			testDepotEntry.getGroupId(), postStructuredContent.getKey(),
+			journalFolder2.getFolderId(),
+			ServiceContextTestUtil.getServiceContext(
+				testDepotEntry.getGroupId()));
+
+		StructuredContent getStructuredContent2 =
+			structuredContentResource.getStructuredContent(
+				postStructuredContent.getId());
+
+		Assert.assertEquals(
+			journalFolder2.getFolderId(),
+			GetterUtil.getLong(
+				getStructuredContent2.getStructuredContentFolderId()));
+
+		// Get structured content inside current subfolder in asset library
+
+		JournalFolder journalFolder3 = JournalTestUtil.addFolder(
+			testDepotEntry.getGroupId(), journalFolder2.getFolderId(),
+			RandomTestUtil.randomString());
+
+		_journalArticleLocalService.moveArticle(
+			testDepotEntry.getGroupId(), postStructuredContent.getKey(),
+			journalFolder3.getFolderId(),
+			ServiceContextTestUtil.getServiceContext(
+				testDepotEntry.getGroupId()));
+
+		StructuredContent getStructuredContent3 =
+			structuredContentResource.getStructuredContent(
+				postStructuredContent.getId());
+
+		Assert.assertEquals(
+			journalFolder3.getFolderId(),
+			GetterUtil.getLong(
+				getStructuredContent3.getStructuredContentFolderId()));
+	}
+
+	private void _testPostAssetLibraryStructuredContent(
+			String externalReferenceCode)
+		throws Exception {
+
+		StructuredContent randomStructuredContent = randomStructuredContent();
+
+		randomStructuredContent.setExternalReferenceCode(externalReferenceCode);
+
+		StructuredContent postStructuredContent =
+			testPostAssetLibraryStructuredContent_addStructuredContent(
+				randomStructuredContent);
+
+		Assert.assertNotNull(postStructuredContent.getExternalReferenceCode());
+		Assert.assertEquals(
+			externalReferenceCode,
+			postStructuredContent.getExternalReferenceCode());
+		assertValid(postStructuredContent);
+	}
+
 	private static final String[] _COMPLETE_STRUCTURED_CONTENT_OPTIONS = {
 		"Option1", "Option2", "Option3"
 	};
@@ -1322,6 +1481,10 @@ public class StructuredContentResourceTest
 	private DLFileEntry _dlFileEntry;
 	private DDMStructure _irrelevantDDMStructure;
 	private JournalFolder _irrelevantJournalFolder;
+
+	@Inject
+	private JournalArticleLocalService _journalArticleLocalService;
+
 	private JournalFolder _journalFolder;
 	private Layout _layout;
 

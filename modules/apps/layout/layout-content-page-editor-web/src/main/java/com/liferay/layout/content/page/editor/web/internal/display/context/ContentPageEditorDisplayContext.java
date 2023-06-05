@@ -351,13 +351,6 @@ public class ContentPageEditorDisplayContext {
 			).put(
 				"discardDraftURL", _getDiscardDraftURL()
 			).put(
-				"draft",
-				() -> {
-					Layout layout = themeDisplay.getLayout();
-
-					return layout.isDraft();
-				}
-			).put(
 				"duplicateItemURL",
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/duplicate_item")
@@ -731,6 +724,13 @@ public class ContentPageEditorDisplayContext {
 				_fragmentCollectionManager.getFragmentCollectionMapsList(
 					getGroupId(), httpServletRequest, true, false,
 					_getMasterDropZoneLayoutStructureItem(), themeDisplay)
+			).put(
+				"draft",
+				() -> {
+					Layout layout = themeDisplay.getLayout();
+
+					return layout.isDraft();
+				}
 			).put(
 				"fragmentEntryLinks", _getFragmentEntryLinks()
 			).put(

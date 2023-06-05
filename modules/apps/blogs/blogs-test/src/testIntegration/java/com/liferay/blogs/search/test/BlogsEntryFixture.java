@@ -49,9 +49,20 @@ public class BlogsEntryFixture {
 		_group = group;
 	}
 
-	public BlogsEntry createBlogsEntry(String title) throws Exception {
+	public BlogsEntry addEntry(String title) throws Exception {
 		BlogsEntry blogsEntry = addEntryWithWorkflow(
 			getUserId(), title, true,
+			ServiceContextTestUtil.getServiceContext(
+				_group.getGroupId(), getUserId()));
+
+		_blogsEntries.add(blogsEntry);
+
+		return blogsEntry;
+	}
+
+	public BlogsEntry addEntry(String title, String content) throws Exception {
+		BlogsEntry blogsEntry = addEntryWithWorkflow(
+			getUserId(), title, content, true,
 			ServiceContextTestUtil.getServiceContext(
 				_group.getGroupId(), getUserId()));
 
@@ -76,6 +87,16 @@ public class BlogsEntryFixture {
 			ServiceContext serviceContext)
 		throws Exception {
 
+		return addEntryWithWorkflow(
+			userId, title, RandomTestUtil.randomString(), approved,
+			serviceContext);
+	}
+
+	protected BlogsEntry addEntryWithWorkflow(
+			long userId, String title, String content, boolean approved,
+			ServiceContext serviceContext)
+		throws Exception {
+
 		boolean workflowEnabled = WorkflowThreadLocal.isEnabled();
 
 		try {
@@ -89,7 +110,7 @@ public class BlogsEntryFixture {
 
 			BlogsEntry entry = _blogsEntryLocalService.addEntry(
 				userId, title, RandomTestUtil.randomString(),
-				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+				RandomTestUtil.randomString(), content,
 				displayCalendar.getTime(), true, true, new String[0],
 				StringPool.BLANK, null, null, serviceContext);
 

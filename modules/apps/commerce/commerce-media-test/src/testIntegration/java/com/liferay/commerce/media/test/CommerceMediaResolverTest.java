@@ -133,7 +133,8 @@ public class CommerceMediaResolverTest {
 			_commerceCurrency.getCode());
 
 		_commerceChannel = _commerceChannelLocalService.addCommerceChannel(
-			RandomTestUtil.randomString(), _group.getGroupId(),
+			RandomTestUtil.randomString(),
+			AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT, _group.getGroupId(),
 			RandomTestUtil.randomString(),
 			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
 			_commerceCurrency.getCode(), _serviceContext);
@@ -182,8 +183,8 @@ public class CommerceMediaResolverTest {
 					cpDefinition.getCPDefinitionId(),
 					fileEntry.getFileEntryId(), null,
 					CommerceOrderConstants.ORDER_STATUS_PENDING, 0,
-					RandomTestUtil.randomInt(), true, 0, "sampleUrl", false,
-					null, 0, _serviceContext);
+					RandomTestUtil.randomInt(), true, 0, "https://liferay.com",
+					false, null, 0, _serviceContext);
 
 		CommerceTestUtil.updateBackOrderCPDefinitionInventory(cpDefinition);
 

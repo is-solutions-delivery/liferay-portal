@@ -1,0 +1,127 @@
+@component-name = "portal-questions"
+definition {
+
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Questions";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		JSONLayout.addPublicLayout(
+			groupName = "Guest",
+			layoutName = "Questions Page");
+
+		JSONLayout.addWidgetToPublicLayout(
+			column = 2,
+			groupName = "Guest",
+			layoutName = "Questions Page",
+			widgetName = "Questions");
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Message Boards");
+
+			if (IsElementPresent(locator1 = "Questions#QUESTIONS_LIST")) {
+				Questions.tearDown();
+			}
+
+			PagesAdmin.tearDownCP();
+		}
+	}
+
+	@description = "Story ID: LPS-153187 | Test Summary: Verify if the user can access all questions by dropdown."
+	@priority = 5
+	test CanAccessAllQuestionsOnDropdown {
+		task ("Given that add two categories and questions") {
+			JSONMBMessage.addCategory(
+				categoryDescription = "Description",
+				categoryName = "Questions Test Topic",
+				userEmailAddress = "test@liferay.com");
+
+			JSONMBMessage.addCategory(
+				categoryDescription = "Description",
+				categoryName = "Questions Category",
+				userEmailAddress = "test@liferay.com");
+
+			JSONQuestions.addQuestion(
+				bodyField = "Content AddQuestion",
+				categoryName = "Questions Test Topic",
+				groupName = "Guest",
+				titleField = "Question1");
+
+			JSONQuestions.addQuestion(
+				bodyField = "AddQuestion2",
+				categoryName = "Questions Category",
+				groupName = "Guest",
+				titleField = "Question2");
+		}
+
+		task ("And go to Questions Test Topic") {
+			Navigator.gotoPage(pageName = "Questions Page");
+
+			LexiconCard.clickCard(card = "Questions Test Topic");
+		}
+
+		task ("When select all questions on dropdown") {
+			Click(
+				key_topicName = "Questions Test Topic",
+				locator1 = "Questions#QUESTIONS_BREADCRUMB_PARENT_TOPIC_BUTTON");
+
+			Click(
+				key_topicName = "All Questions",
+				locator1 = "Questions#QUESTIONS_BREADCRUMB_TOPIC_DROPDOWN_OPTION");
+		}
+
+		task ("Then can see all questions") {
+			for (var questionsList : list "Question1,Question2") {
+				AssertElementPresent(
+					key_questionTitle = ${questionsList},
+					locator1 = "Questions#QUESTIONS_TITLE");
+			}
+		}
+	}
+
+	@description = "Story ID: LPS-153187 | Test Summary: Verify if the user can create a new Topic."
+	@priority = 5
+	test CanCreateATopic {
+		task ("Given that go to Questions Page") {
+			Navigator.openURL();
+
+			ProductMenu.gotoPortlet(
+				category = "Site Builder",
+				portlet = "Pages");
+
+			PagesAdmin.gotoPageEllipsisMenuItem(
+				menuItem = "View",
+				pageName = "Questions Page");
+		}
+
+		task ("When add a new topic") {
+			ScrollWebElementIntoView(
+				key_text = "New Topic",
+				locator1 = "Button#ANY");
+
+			Button.click(button = "New Topic");
+
+			Questions.addRootTopic(
+				rootTopicDescription = "Topic Description",
+				rootTopicName = "Topic Name");
+		}
+
+		task ("Then can see the topic card created") {
+			LexiconCard.viewCardPresent(card = "Topic Name");
+		}
+	}
+
+}

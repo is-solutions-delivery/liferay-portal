@@ -28,5 +28,18 @@ export default function ObjectFieldsFDSPropsTransformer({
 	customDataRenderers: {
 		objectFieldSourceDataRenderer: typeof ObjectFieldSourceDataRenderer;
 	};
+	onActionDropdownItemClick({
+		action,
+		itemData,
+	}: {
+		action: {
+			data: {
+				id: string;
+			};
+		};
+		itemData: {
+			id: string;
+		};
+	}): void;
 };
 export {};

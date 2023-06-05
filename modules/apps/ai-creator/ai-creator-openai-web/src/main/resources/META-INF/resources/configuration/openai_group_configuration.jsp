@@ -69,3 +69,5 @@ AICreatorOpenAIGroupConfigurationDisplayContext aiCreatorOpenAIGroupConfiguratio
 		/>
 	</clay:content-col>
 </clay:content-row>
+
+<%@ include file="/configuration/error_ai_creator_openai_client_exception.jspf" %>

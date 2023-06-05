@@ -358,7 +358,7 @@ public class CommerceProductServiceUpgradeStepRegistrator
 		registry.register(
 			"5.0.0", "5.1.0",
 			UpgradeProcessFactory.addColumns(
-				"CommerceCatalog", "AccountEntryId LONG"));
+				"CommerceCatalog", "accountEntryId LONG"));
 
 		registry.register(
 			"5.1.0", "5.2.0",
@@ -367,6 +367,11 @@ public class CommerceProductServiceUpgradeStepRegistrator
 				"expirationDate DATE null", "lastPublishDate DATE null",
 				"status INTEGER", "statusByUserId LONG",
 				"statusByUserName VARCHAR(75) null", "statusDate DATE null"));
+
+		registry.register(
+			"5.2.0", "5.3.0",
+			UpgradeProcessFactory.addColumns(
+				"CommerceChannel", "accountEntryId LONG"));
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Commerce product upgrade step registrator finished");
