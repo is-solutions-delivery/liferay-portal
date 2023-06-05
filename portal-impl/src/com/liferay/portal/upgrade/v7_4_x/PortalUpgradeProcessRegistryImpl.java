@@ -303,6 +303,16 @@ public class PortalUpgradeProcessRegistryImpl
 		upgradeVersionTreeMap.put(
 			new Version(26, 2, 0),
 			new CTModelUpgradeProcess("Address", "Phone"));
+
+		upgradeVersionTreeMap.put(
+			new Version(26, 3, 0),
+			new BaseExternalReferenceCodeUpgradeProcess() {
+				@Override
+				protected String[][] getTableAndPrimaryKeyColumnNames() {
+					return new String[][] {{"Group_", "groupId"}};
+				}
+			}
+		);
 	}
 
 }
