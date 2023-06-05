@@ -192,6 +192,22 @@ import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.template.model.TemplateEntry;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+
+import java.math.BigDecimal;
+
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.servlet.ServletContext;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -199,26 +215,16 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.ServletContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Brian Wing Shun Chan
@@ -2108,7 +2114,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(organization);
 		Assert.assertEquals("Test Organization 1", organization.getName());
 
-		_assertOrganizationAssignments(organization,1);
+		_assertOrganizationAssignments(organization, 1);
 
 		organization =
 			organizationResource.getOrganizationByExternalReferenceCode(
