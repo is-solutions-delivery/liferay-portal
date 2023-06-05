@@ -41,7 +41,7 @@ export default function useAccountSubscriptions(
 						accountSubcriptionGroup.externalReferenceCode
 					}'${getSubscriptionStatusFilter(
 						lastSubscriptionStatus
-					)} and instanceSize ne '0'`,
+					)} and instanceSize ne '0' and instanceSize ne ''`,
 				},
 			});
 		}
