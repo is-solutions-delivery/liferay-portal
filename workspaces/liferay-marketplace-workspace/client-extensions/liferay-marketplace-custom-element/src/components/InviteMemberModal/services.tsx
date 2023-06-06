@@ -163,16 +163,16 @@ export async function addAdditionalInfo(
   roles: string
 ) {
   const additionalInfoBody = {
-    acceptInviteStatus: acceptInviteStatus,
-    r_userToUserAddInfo_userId: r_userToUserAddInfo_userId,
-    inviteURL: inviteURL,
-    publisherName: publisherName,
+    acceptInviteStatus,
+    r_userToUserAddInfo_userId,
+    inviteURL,
+    accountName,
     r_accountToUserAdditionalInfos_accountEntryId: publisherId,
-    emailOfMember: emailOfMember,
-    mothersName: mothersName,
-    userFirstName: userFirstName,
-    inviterName: inviterName,
-    roles: roles,
+    emailOfMember,
+    mothersName,
+    userFirstName,
+    inviterName,
+    roles,
   };
 
   const response = await fetch(`/o/c/useradditionalinfos/`, {

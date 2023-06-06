@@ -31,12 +31,14 @@ import { getMyUserAccount } from '../../utils/api';
 import { createPassword } from '../../utils/createPassword';
 import { Liferay } from '../../liferay/liferay';
 import ClayIcon from '@clayui/icon';
+import { DisplayType } from '@clayui/alert';
 
 interface InviteMemberModalProps {
   handleClose: () => void;
   listOfRoles: string[];
   rolesPermissionDescription: PermissionDescription[];
   selectedAccount: Account;
+  renderToast: (message: string, title: string, type: DisplayType) => void;
 }
 
 interface CheckboxRole {
@@ -49,6 +51,7 @@ export function InviteMemberModal({
   listOfRoles,
   rolesPermissionDescription,
   selectedAccount,
+  renderToast,
 }: InviteMemberModalProps) {
   const { observer, onClose } = useModal({
     onClose: () => handleClose(),
@@ -97,6 +100,18 @@ export function InviteMemberModal({
     setAccountRoles(roles);
   };
 
+  const checkIfUserIsInvited = (user: UserAccount, accountId: number) => {
+    const userAccountBrief = user.accountBriefs.find(
+      (accountBrief) => accountBrief.id === accountId
+    );
+
+    if (userAccountBrief) {
+      console.log(userAccountBrief);
+      return true;
+    } else {
+      return false;
+    }
+  };
   const addAccountRolesToUser = async (user: UserAccount) => {
     for (const checkboxRole of checkboxRoles) {
       if (checkboxRole.isChecked) {
@@ -116,12 +131,23 @@ export function InviteMemberModal({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    let form = event.target as HTMLFormElement;
-    let user: UserAccount;
+    const form = event.target as HTMLFormElement;
     if (formValid) {
+      let user: UserAccount;
       user = await getUserByEmail(formFields.email);
       if (!user) {
         await createNewUser(jsonBody);
+      } else {
+        let userExist = checkIfUserIsInvited(user, selectedAccount.id);
+        if (userExist) {
+          renderToast(
+            "There's already a user with this email invited to this account",
+            '',
+            'danger'
+          );
+          onClose();
+          return;
+        }
       }
       user = await getUserByEmail(formFields.email);
       await addExistentUserIntoAccount(selectedAccount.id, formFields.email);
@@ -140,6 +166,11 @@ export function InviteMemberModal({
           '/c/login?redirect=' +
           getSiteURL(),
         getCheckedRoles()
+      );
+      renderToast(
+        'invited succesfully',
+        user.givenName + ' ' + user.familyName,
+        'success'
       );
       onClose();
     }
@@ -291,7 +322,6 @@ export function InviteMemberModal({
               );
             })}
           </ClayForm.Group>
-          
 
           <ClayButton.Group
             className="d-flex justify-content-between justify-content-lg-end modal-footer"
