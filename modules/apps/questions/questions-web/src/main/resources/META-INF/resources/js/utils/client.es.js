@@ -313,7 +313,7 @@ export const getThreadQuery = `
 				id
 				image
 				name
-				userGroupsInformation {
+				userGroupInformations {
 					id
 					name
 				}
@@ -497,7 +497,7 @@ export const getSectionThreadsQuery = `
 					id
 					image
 					name
-					userGroupsInformation {
+					userGroupInformations {
 						id
 						name
 					}
@@ -556,7 +556,7 @@ export const getThreadsQuery = `
 					id
 					image
 					name
-					userGroupsInformation {
+					userGroupInformations {
 						id
 						name
 					}
@@ -612,7 +612,7 @@ export const getRankedThreadsQuery = `
 					id
 					image
 					name
-					userGroupsInformation {
+					userGroupInformations {
 						id
 						name
 					}
@@ -726,7 +726,7 @@ export const getRelatedThreadsQuery = `
 					id
 					image
 					name
-					userGroupsInformation {
+					userGroupInformations {
 						id
 						name
 					}
@@ -826,7 +826,7 @@ export const getUserActivityQuery = `
 					id
 					image
 					name
-					userGroupsInformation {
+					userGroupInformations {
 						id
 						name
 					}
@@ -989,7 +989,7 @@ export const getSubscriptionsQuery = `
 							id
 							image
 							name
-							userGroupsInformation {
+							userGroupInformations {
 								id
 								name
 							}
