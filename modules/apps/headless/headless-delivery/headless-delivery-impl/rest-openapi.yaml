@@ -1025,11 +1025,11 @@ components:
                     format: uri
                     readOnly: true
                     type: string
-                userGroupInfos:
+                userGroupsInformation:
                     description:
-                        A list of userGroups role information.
+                        A list of userGroups information.
                     items:
-                        $ref: "#/components/schemas/UserGroupInfo"
+                        $ref: "#/components/schemas/UserGroupInformation"
                     type: array
             type: object
         CreatorStatistics:
@@ -5234,19 +5234,19 @@ components:
                     description:
                         The localized submission of URL type.
             type: object
-        UserGroupInfo:
+        UserGroupInformation:
             description:
                 The author's user groups information.
             properties:
                 id:
                     description:
-                        The author's role ID.
+                        The ID of the user group.
                     format: int64
                     readOnly: true
                     type: integer
                 name:
                     description:
-                        The author's role name.
+                        The name of the user group.
                     readOnly: true
                     type: string
             type: object
