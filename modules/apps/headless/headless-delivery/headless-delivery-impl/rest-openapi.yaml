@@ -1025,7 +1025,7 @@ components:
                     format: uri
                     readOnly: true
                     type: string
-                userGroupsInformation:
+                userGroupInformations:
                     description:
                         A list of userGroups information.
                     items:
