@@ -486,7 +486,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addOrUpdateExpandoColumns(serviceContext));
 			_invoke(() -> _addOrUpdateKnowledgeBaseArticles(serviceContext));
 			_invoke(() -> _addOrUpdateOrganizations(serviceContext));
-			_invoke(() -> _addOrganizationsOnAccounts(serviceContext));
+
+			_invoke(() -> _addAccountsOrganizations(serviceContext));
 
 			Map<String, String> roleIdsStringUtilReplaceValues = _invoke(
 				() -> _addOrUpdateRoles(serviceContext));
@@ -676,6 +677,61 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			accountResource.putAccountByExternalReferenceCode(
 				account.getExternalReferenceCode(), account);
+		}
+	}
+
+	private void _addAccountsOrganizations(ServiceContext serviceContext)
+		throws Exception {
+
+		String json = SiteInitializerUtil.read(
+			"/site-initializer/accounts-organizations.json", _servletContext);
+
+		if (json == null) {
+			return;
+		}
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+			JSONArray organizationJSONArray = jsonObject.getJSONArray(
+				"organizations");
+
+			if (JSONUtil.isEmpty(organizationJSONArray)) {
+				continue;
+			}
+
+			List<com.liferay.portal.kernel.model.Organization> organizations =
+				new ArrayList<>();
+
+			for (int j = 0; j < organizationJSONArray.length(); j++) {
+				organizations.add(
+					_organizationLocalService.
+						getOrganizationByExternalReferenceCode(
+							organizationJSONArray.getString(j),
+							serviceContext.getCompanyId()));
+			}
+
+			if (ListUtil.isEmpty(organizations)) {
+				continue;
+			}
+
+			AccountEntry accountEntry =
+				_accountEntryLocalService.
+					getAccountEntryByExternalReferenceCode(
+						jsonObject.getString("accountExternalReferenceCode"),
+						serviceContext.getCompanyId());
+
+			if (accountEntry == null) {
+				continue;
+			}
+
+			_accountEntryOrganizationRelLocalService.
+				addAccountEntryOrganizationRels(
+					accountEntry.getAccountEntryId(),
+					ListUtil.toLongArray(
+						organizations, OrganizationModel::getOrganizationId));
 		}
 	}
 
@@ -1313,62 +1369,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		).putAll(
 			objectEntryIdsStringUtilReplaceValues
 		).build();
-	}
-
-	private void _addOrganizationsOnAccounts(ServiceContext serviceContext)
-		throws Exception {
-
-		String json = SiteInitializerUtil.read(
-			"/site-initializer/organizations-assignments.json",
-			_servletContext);
-
-		if (json == null) {
-			return;
-		}
-
-		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
-
-		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-			JSONArray organizationJSONArray = jsonObject.getJSONArray(
-				"organizationExternalReferenceCode");
-
-			if (JSONUtil.isEmpty(organizationJSONArray)) {
-				continue;
-			}
-
-			List<com.liferay.portal.kernel.model.Organization> organizations =
-				new ArrayList<>();
-
-			for (int j = 0; j < organizationJSONArray.length(); j++) {
-				organizations.add(
-					_organizationLocalService.
-						getOrganizationByExternalReferenceCode(
-							organizationJSONArray.getString(j),
-							serviceContext.getCompanyId()));
-			}
-
-			if (ListUtil.isEmpty(organizations)) {
-				continue;
-			}
-
-			AccountEntry accountEntry =
-				_accountEntryLocalService.
-					getAccountEntryByExternalReferenceCode(
-						jsonObject.getString("accountExternalReferenceCode"),
-						serviceContext.getCompanyId());
-
-			if (accountEntry == null) {
-				continue;
-			}
-
-			_accountEntryOrganizationRelLocalService.
-				addAccountEntryOrganizationRels(
-					accountEntry.getAccountEntryId(),
-					ListUtil.toLongArray(
-						organizations, OrganizationModel::getOrganizationId));
-		}
 	}
 
 	private void _addOrganizationUser(

@@ -360,6 +360,17 @@ public class BundleSiteInitializerTest {
 		}
 	}
 
+	private void _assertAccountOrganizationRelsCount(
+			Organization organization, int organizationAssignmentsCount)
+		throws Exception {
+
+		Assert.assertEquals(
+			organizationAssignmentsCount,
+			_accountEntryOrganizationRelLocalService.
+				getAccountEntryOrganizationRelsByOrganizationIdCount(
+					GetterUtil.getLong(organization.getId())));
+	}
+
 	private void _assertAccounts1() throws Exception {
 		AccountResource.Builder accountResourceBuilder =
 			_accountResourceFactory.create();
@@ -2050,17 +2061,6 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("oneToMany", objectRelationshipType4.toString());
 	}
 
-	private void _assertOrganizationAssignments(
-			Organization organization, int organizationAssignmentsCount)
-		throws Exception {
-
-		Assert.assertEquals(
-			organizationAssignmentsCount,
-			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
-					GetterUtil.getLong(organization.getId())));
-	}
-
 	private void _assertOrganizations1() throws Exception {
 		OrganizationResource.Builder organizationResourceBuilder =
 			_organizationResourceFactory.create();
@@ -2077,7 +2077,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(organization);
 		Assert.assertEquals("Test Organization 1", organization.getName());
 
-		_assertOrganizationAssignments(organization, 1);
+		_assertAccountOrganizationRelsCount(organization, 1);
 
 		organization =
 			organizationResource.getOrganizationByExternalReferenceCode(
@@ -2086,7 +2086,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(organization);
 		Assert.assertEquals("Test Organization 2", organization.getName());
 
-		_assertOrganizationAssignments(organization, 1);
+		_assertAccountOrganizationRelsCount(organization, 1);
 
 		organization =
 			organizationResource.getOrganizationByExternalReferenceCode(
@@ -2095,7 +2095,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(organization);
 		Assert.assertEquals("Test Organization 3", organization.getName());
 
-		_assertOrganizationAssignments(organization, 0);
+		_assertAccountOrganizationRelsCount(organization, 0);
 	}
 
 	private void _assertOrganizations2() throws Exception {
@@ -2114,7 +2114,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(organization);
 		Assert.assertEquals("Test Organization 1", organization.getName());
 
-		_assertOrganizationAssignments(organization, 1);
+		_assertAccountOrganizationRelsCount(organization, 1);
 
 		organization =
 			organizationResource.getOrganizationByExternalReferenceCode(
@@ -2124,7 +2124,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			"Test Organization 2 Update", organization.getName());
 
-		_assertOrganizationAssignments(organization, 2);
+		_assertAccountOrganizationRelsCount(organization, 2);
 
 		organization =
 			organizationResource.getOrganizationByExternalReferenceCode(
@@ -2133,7 +2133,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(organization);
 		Assert.assertEquals("Test Organization 3", organization.getName());
 
-		_assertOrganizationAssignments(organization, 1);
+		_assertAccountOrganizationRelsCount(organization, 1);
 
 		organization =
 			organizationResource.getOrganizationByExternalReferenceCode(
@@ -2142,7 +2142,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(organization);
 		Assert.assertEquals("Test Organization 4", organization.getName());
 
-		_assertOrganizationAssignments(organization, 0);
+		_assertAccountOrganizationRelsCount(organization, 0);
 	}
 
 	private void _assertPermissions() throws Exception {

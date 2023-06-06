@@ -1,13 +1,13 @@
 [
 	{
 		"accountExternalReferenceCode": "TESTACCOUNT1",
-		"organizationExternalReferenceCode": [
+		"organizations": [
 			"TESTORGANIZATION1"
 		]
 	},
 	{
 		"accountExternalReferenceCode": "TESTACCOUNT2",
-		"organizationExternalReferenceCode": [
+		"organizations": [
 			"TESTORGANIZATION2"
 		]
 	}
