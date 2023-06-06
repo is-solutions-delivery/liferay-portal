@@ -52,7 +52,7 @@ export default withRouter(
 
 				{Liferay.FeatureFlags['LPS-185892'] &&
 					contentReviewerUser &&
-					creator.userGroupsInformation
+					creator.userGroupInformations
 						?.map(
 							(userGroupInformation) => userGroupInformation.name
 						)
