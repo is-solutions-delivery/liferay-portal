@@ -566,6 +566,7 @@ create table Group_ (
 	mvccVersion LONG default 0 not null,
 	ctCollectionId LONG default 0 not null,
 	uuid_ VARCHAR(75) null,
+	externalReferenceCode VARCHAR(75) null,
 	groupId LONG not null,
 	companyId LONG,
 	creatorUserId LONG,
