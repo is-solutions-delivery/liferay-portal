@@ -36,7 +36,7 @@ definition {
 		task ("Create a new MDF Request") {
 			JSONPRM.createMDFRequest(
 				accountEntryName = "Company Name 1",
-				budgetValueList = "3000,2000",
+				budgetValueList = "2000,2000",
 				campaignName = "Campaign Name 1");
 		}
 	}
@@ -49,6 +49,106 @@ definition {
 		}
 		else {
 			PRMUtils.tearDown();
+		}
+	}
+
+	@description = "This is a test for LPS-179357. Verify that the value of Approved Claims is displayed on MDF Dashboard"
+	@priority = 4
+	test ClaimApprovedValueAppearInDashboard {
+		var budgetValue = 2000;
+
+		task ("Given the Channel Marketing Manager get the current amount of approved Claim MDF Value") {
+			PRMNavigator.openSitePage(pageName = "Home");
+
+			PRMDashboards.scrollViewDashboard(viewDashboard = "Market Development Funds");
+
+			var initialValue = PRMDashboards.getLegendValue(
+				chartName = "Request",
+				legendName = "Claim Approved");
+		}
+
+		task ("And a new MDF Request created and approved it") {
+			var requestId = JSONPRM.createMDFRequest(
+				accountEntryName = "Company Name 1",
+				budgetValueList = ${budgetValue},
+				campaignName = "Campaign Name 1");
+
+			JSONPRM.changeMDFStatus(
+				mdfStatus = "Approved",
+				requestId = ${requestId});
+		}
+
+		task ("When the Partner Marketing User is logged in Partner Portal") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "pmu@partner.com",
+				userLoginFullName = "Partner Marketing User");
+
+			PRMUtils.gotoPRM();
+		}
+
+		task ("And go to the approved the MDF Resquest") {
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name 1");
+		}
+
+		task ("And the User create a new MDF Claim") {
+			PRMMDFClaim.createNewClaim(
+				listLeads = "Document_1.xlsx",
+				reimbursementInvoice = "Document_1.png",
+				thirdInvoice = "Document_1.png");
+
+			task ("Get the ID of created claim") {
+				var request_numID = PRMMDFClaim.getClaimRequestID();
+			}
+		}
+
+		task ("When the Channel Marketing Manager is logged in Partner Portal") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "cmm@liferaytest.com",
+				userLoginFullName = "Channel Marketing Manager");
+
+			PRMUtils.gotoPRM();
+		}
+
+		task ("And goes the MDF Claim listing page") {
+			PRMNavigator.openSitePage(pageName = "MDF Claims");
+		}
+
+		task ("And search for the Claim ID") {
+			PRMMDFClaim.searchClaim(claimID = ${request_numID});
+		}
+
+		task ("And goes to approve the MDF Claim") {
+			PRMMDFClaim.gotoMDFClaim();
+
+			PRMMDFRequest.changeMDFStatus(
+				statusButton = "Approve",
+				typeMDF = "dropdownMDFClaimStatus");
+		}
+
+		task ("And User goes back to the Home page and gets the new amount of approved MDF Claims") {
+			PRMNavigator.openSitePage(pageName = "Home");
+
+			PRMDashboards.scrollViewDashboard(viewDashboard = "Market Development Funds");
+
+			var newValue = PRMDashboards.getLegendValue(
+				chartName = "Request",
+				legendName = "Claim Approved");
+
+			task ("Make a quotient of the Approved Claims Cost by 50% (2), which will result in the claim value") {
+				var requestedValue = ${budgetValue} / 2;
+			}
+
+			task ("Make the sum of the initial value + approved value, to obtain the new value that must be in the dashboard") {
+				var expectedValue = ${initialValue} + ${requestedValue};
+			}
+		}
+
+		task ("Then the actual amount of approved MDF Claim value was increased") {
+			TestUtils.assertEquals(
+				actual = ${newValue},
+				expected = ${expectedValue});
 		}
 	}
 
