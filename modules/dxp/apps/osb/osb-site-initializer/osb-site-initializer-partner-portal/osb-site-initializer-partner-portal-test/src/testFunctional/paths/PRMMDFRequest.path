@@ -62,12 +62,12 @@
 </tr>
 <tr>
 	<td>STATUS_DROPDOWN</td>
-	<td>//button[@id='dropdownMDFRequestStatus']</td>
+	<td>//button[@id='${nameDropdown}']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>STATUS_OPTION_DROPDOWN</td>
-	<td>//button[@id='dropdownMDFRequestStatus']//following-sibling::ul/li[contains(text(),'${key_statusButton}')]</td>
+	<td>//button[@id='${key_optionDropdown}']//following-sibling::ul/li[contains(text(),'${key_statusButton}')]</td>
 	<td></td>
 </tr>
 <tr>
