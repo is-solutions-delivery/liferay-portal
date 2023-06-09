@@ -85,6 +85,11 @@
 	<td>//button[@id='dropdownMDFClaimStatus'][@aria-expanded='${key_activeStatus}']</td>
 	<td></td>
 </tr>
+<tr>
+	<td>GO_CLAIM</td>
+	<td>//div//tbody//a[contains(text(),'Claim-')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
