@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
@@ -46,18 +47,6 @@ public class CreatorUtil {
 
 				id = user.getUserId();
 				name = user.getFullName();
-
-				if (FeatureFlagManagerUtil.isEnabled("LPS-185892")) {
-					userGroupInformations = TransformUtil.transformToArray(
-						user.getUserGroups(),
-						userGroup -> new UserGroupInformation() {
-							{
-								id = userGroup.getUserGroupId();
-								name = userGroup.getName();
-							}
-						},
-						UserGroupInformation.class);
-				}
 
 				setImage(
 					() -> {
@@ -92,6 +81,29 @@ public class CreatorUtil {
 						};
 
 						return group.getDisplayURL(themeDisplay);
+					});
+				setUserGroupInformations(
+					() -> {
+						if (!FeatureFlagManagerUtil.isEnabled("LPS-185892") ||
+							(dtoConverterContext == null) ||
+							!(GetterUtil.getBoolean(
+								dtoConverterContext.getAttribute(
+									"userGroupInformations")) ||
+							  dtoConverterContext.containsNestedFieldsValue(
+								  "userGroupInformations"))) {
+
+							return null;
+						}
+
+						return TransformUtil.transformToArray(
+							user.getUserGroups(),
+							userGroup -> new UserGroupInformation() {
+								{
+									id = userGroup.getUserGroupId();
+									name = userGroup.getName();
+								}
+							},
+							UserGroupInformation.class);
 					});
 			}
 		};
