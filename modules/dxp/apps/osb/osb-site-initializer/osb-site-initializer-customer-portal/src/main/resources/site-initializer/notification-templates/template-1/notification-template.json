@@ -1,6 +1,7 @@
 {
 	"description": "",
 	"editorType": "richText",
+	"externalReferenceCode": "CUSTOMERPORTALNOTIFICATION-001",
 	"name": "Setup DXP Cloud Environment Notification Template",
 	"recipientType": "email",
 	"recipients": [

@@ -1,6 +1,7 @@
 {
 	"description": "",
 	"editorType": "richText",
+	"externalReferenceCode": "CUSTOMERPORTALNOTIFICATION-003",
 	"name": "Setup Analytics Cloud Environment Notification Template",
 	"recipientType": "email",
 	"recipients": [
