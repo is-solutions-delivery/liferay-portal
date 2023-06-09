@@ -230,6 +230,11 @@ definition {
 		}
 	}
 
+	@summary = "Go to MDF Claim by ID"
+	macro gotoMDFClaim {
+		Click(locator1 = "PRMMDFClaim#GO_CLAIM");
+	}
+
 	@summary = "Search claim by ID"
 	macro searchClaim {
 		Type(
