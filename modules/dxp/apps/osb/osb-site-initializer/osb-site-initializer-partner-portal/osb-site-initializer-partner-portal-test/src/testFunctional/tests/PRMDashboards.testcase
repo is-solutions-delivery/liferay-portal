@@ -99,6 +99,78 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-180526. Verify that the value of Claimed MDFs are displayed on MDF Dashboard"
+	@priority = 4
+	test MDFClaimedValueAppearInDashboard {
+		var budgetValue = 2000;
+
+		task ("Given the Channel Marketing Manager get the current amount of Claim MDF Value") {
+			PRMNavigator.openSitePage(pageName = "Home");
+
+			PRMDashboards.scrollViewDashboard(viewDashboard = "Market Development Funds");
+
+			var initialValue = PRMDashboards.getLegendValue(
+				chartName = "Request",
+				legendName = "Claimed");
+		}
+
+		task ("And a new MDF Request created and approved it") {
+			var requestId = JSONPRM.createMDFRequest(
+				accountEntryName = "Company Name 1",
+				budgetValueList = ${budgetValue},
+				campaignName = "Campaign Name 1");
+
+			JSONPRM.changeMDFStatus(
+				mdfStatus = "Approved",
+				requestId = ${requestId});
+		}
+
+		task ("When the Partner Marketing User is logged in Partner Portal") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "pmu@partner.com",
+				userLoginFullName = "Partner Marketing User");
+
+			PRMUtils.gotoPRM();
+		}
+
+		task ("And go to the approved the MDF Resquest") {
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name 1");
+		}
+
+		task ("And the User create a new MDF Claim") {
+			PRMMDFClaim.createNewClaim(
+				listLeads = "Document_1.xlsx",
+				reimbursementInvoice = "Document_1.png",
+				thirdInvoice = "Document_1.png");
+		}
+
+		task ("And User goes back to Home page and get the new amount of Claim MDF Value") {
+			PRMNavigator.openSitePage(pageName = "Home");
+
+			PRMDashboards.scrollViewDashboard(viewDashboard = "Market Development Funds");
+
+			var newValue = PRMDashboards.getLegendValue(
+				chartName = "Request",
+				legendName = "Claimed");
+
+			task ("Make a quotient of the Total Activity Cost by 50% (2), which will result in the claim value") {
+				var requestedValue = ${budgetValue} / 2;
+			}
+
+			task ("Make the sum of the initial value + claim value, to obtain the new value that must be in the dashboard") {
+				var expectedValue = ${initialValue} + ${requestedValue};
+			}
+		}
+
+		task ("Then the actual amount of Claim MDF value was increased") {
+			TestUtils.assertEquals(
+				actual = ${newValue},
+				expected = ${expectedValue});
+		}
+	}
+
 	@description = "This is a test for LPS-177308. Verify that the value of Requested MDFs are displayed on MDF Dashboard"
 	@priority = 4
 	test MDFRequestedValueAppearInDashboard {
