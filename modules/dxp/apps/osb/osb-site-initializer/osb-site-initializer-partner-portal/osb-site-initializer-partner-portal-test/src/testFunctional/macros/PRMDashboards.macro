@@ -12,11 +12,18 @@ definition {
 
 		var legendValue = StringUtil.extractDigits(${legendValue});
 
-		var legendValue = ${legendValue} * 100;
+		var legendValue = ${legendValue} * 1000;
 
 		echo("Legend value: ${legendValue}");
 
 		return ${legendValue};
+	}
+
+	@summary = "Get the value of the legend in Dashboards"
+	macro scrollViewDashboard {
+		ScrollWebElementIntoView(
+			key_dashboardmdf = ${viewDashboard},
+			locator1 = "PRMDashboards#SCROLL_VIEW_DASHBOARD");
 	}
 
 }
