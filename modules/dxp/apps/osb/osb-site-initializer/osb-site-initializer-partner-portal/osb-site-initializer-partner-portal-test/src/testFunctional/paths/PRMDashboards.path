@@ -15,6 +15,11 @@
 	<td>//div[contains(@class,'${key_chartName}-chart')]//span[contains(@class,'status-legend')]//following-sibling::div/div[text()='${key_legendName}']/following-sibling::div</td>
 	<td></td>
 </tr>
+<tr>
+	<td>SCROLL_VIEW_DASHBOARD</td>
+	<td>//div[contains(text(),'${key_dashboardmdf}')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
