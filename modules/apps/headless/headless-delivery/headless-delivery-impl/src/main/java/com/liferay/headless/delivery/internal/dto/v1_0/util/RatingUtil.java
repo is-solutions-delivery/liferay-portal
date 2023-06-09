@@ -35,7 +35,7 @@ public class RatingUtil {
 			{
 				bestRating = 1D;
 				creator = CreatorUtil.toCreator(
-					portal, null,
+					null, portal,
 					userLocalService.fetchUser(ratingsEntry.getUserId()));
 				dateCreated = ratingsEntry.getCreateDate();
 				dateModified = ratingsEntry.getModifiedDate();
