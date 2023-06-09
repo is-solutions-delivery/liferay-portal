@@ -230,6 +230,17 @@ definition {
 		}
 	}
 
+	@summary = "Get the claim ID by Request ID"
+	macro getClaimRequestID {
+		var claimId = selenium.getText("PRMMDFClaim#CLAIM_REQUEST_ID");
+
+		var claimId = StringUtil.extractDigits(${claimId});
+
+		return ${claimId};
+
+		echo("Claim: ${claimId}");
+	}
+
 	@summary = "Go to MDF Claim by ID"
 	macro gotoMDFClaim {
 		Click(locator1 = "PRMMDFClaim#GO_CLAIM");
