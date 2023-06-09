@@ -61,6 +61,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CLAIM_REQUEST_ID</td>
+	<td>//div[contains(@class,'text-paragraph-sm') and contains (text(),'Claim')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>STATUS_DROPDOWN</td>
 	<td>//button[@id='dropdownMDFClaimStatus']</td>
 	<td></td>
