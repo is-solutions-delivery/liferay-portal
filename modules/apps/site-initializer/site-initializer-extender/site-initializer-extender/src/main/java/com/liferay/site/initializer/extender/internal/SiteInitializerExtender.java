@@ -152,8 +152,8 @@ public class SiteInitializerExtender
 				_listTypeDefinitionLocalService, _listTypeDefinitionResource,
 				_listTypeDefinitionResourceFactory, _listTypeEntryLocalService,
 				_listTypeEntryResource, _listTypeEntryResourceFactory,
-				_notificationTemplateResourceFactory, _notificationTemplateLocalService,
-				_objectActionLocalService,
+				_notificationTemplateResourceFactory,
+				_notificationTemplateLocalService, _objectActionLocalService,
 				_objectDefinitionLocalService, _objectDefinitionResourceFactory,
 				_objectEntryLocalService, _objectEntryManager,
 				_objectFieldLocalService, _objectFieldResourceFactory,
@@ -270,8 +270,8 @@ public class SiteInitializerExtender
 				_listTypeDefinitionLocalService, _listTypeDefinitionResource,
 				_listTypeDefinitionResourceFactory, _listTypeEntryLocalService,
 				_listTypeEntryResource, _listTypeEntryResourceFactory,
-				_notificationTemplateResourceFactory, _notificationTemplateLocalService,
-				_objectActionLocalService,
+				_notificationTemplateResourceFactory,
+				_notificationTemplateLocalService, _objectActionLocalService,
 				_objectDefinitionLocalService, _objectDefinitionResourceFactory,
 				_objectEntryLocalService, _objectEntryManager,
 				_objectFieldLocalService, _objectFieldResourceFactory,
@@ -418,11 +418,11 @@ public class SiteInitializerExtender
 	private ListTypeEntryResource.Factory _listTypeEntryResourceFactory;
 
 	@Reference
-	private NotificationTemplateResource.Factory
-		_notificationTemplateResourceFactory;
+	private NotificationTemplateLocalService _notificationTemplateLocalService;
 
 	@Reference
-	private NotificationTemplateLocalService _notificationTemplateLocalService;
+	private NotificationTemplateResource.Factory
+		_notificationTemplateResourceFactory;
 
 	@Reference
 	private ObjectActionLocalService _objectActionLocalService;
