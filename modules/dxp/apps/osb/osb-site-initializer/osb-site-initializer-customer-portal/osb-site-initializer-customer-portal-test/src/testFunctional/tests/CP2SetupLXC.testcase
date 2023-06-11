@@ -146,7 +146,7 @@ definition {
 		}
 	}
 
-	@description = "Automation ID: LPS-169250 | Test Summary: Assert the success message: Thank you for submitting this request! Your Liferay Experience Cloud project will be provisioned within 3 business days. An email will be sent once your project is ready."
+	@description = "Story ID: LPS-153481| Test Summary: Assert the success message: Thank you for submitting this request!."
 	@ignore = "true"
 	@priority = 3
 	test AssertTheSuccessMessage {
@@ -166,13 +166,13 @@ definition {
 			Button.click(button = "Submit");
 		}
 
-		task ("I assert that the form has been submitted") {
+		task ("Then assert that the form has been submitted") {
 			CustomerPortal.viewConfirmationModal(text = "Thank you for submitting this request!");
 
 			Button.click(button = "Done");
 		}
 
-		task ("Delete the entries and objects created") {
+		task ("And delete the entries and objects created") {
 			CustomerPortal.showCPObject(title = "Liferay Experience Cloud Environment");
 
 			CP2Utils.deleteSpecificObjectEntry(
