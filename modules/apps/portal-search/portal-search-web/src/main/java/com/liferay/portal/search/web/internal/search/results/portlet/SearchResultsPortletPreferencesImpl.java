@@ -91,6 +91,21 @@ public class SearchResultsPortletPreferencesImpl
 	}
 
 	@Override
+	public boolean isShowEmptyResultMessage() {
+		return getBoolean(
+			SearchResultsPortletPreferences.
+				PREFERENCE_KEY_SHOW_EMPTY_RESULT_MESSAGE,
+			true);
+	}
+
+	@Override
+	public boolean isShowPagination() {
+		return getBoolean(
+			SearchResultsPortletPreferences.PREFERENCE_KEY_SHOW_PAGINATION,
+			true);
+	}
+
+	@Override
 	public boolean isViewInContext() {
 		return getBoolean(
 			SearchResultsPortletPreferences.PREFERENCE_KEY_VIEW_IN_CONTEXT,

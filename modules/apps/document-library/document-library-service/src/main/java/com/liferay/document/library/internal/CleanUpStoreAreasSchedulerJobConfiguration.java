@@ -15,6 +15,7 @@
 package com.liferay.document.library.internal;
 
 import com.liferay.document.library.internal.configuration.StoreAreaConfiguration;
+import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
 import com.liferay.document.library.kernel.store.StoreAreaProcessor;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeRunnable;
@@ -44,20 +45,20 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 	configurationPid = "com.liferay.document.library.internal.configuration.StoreAreaConfiguration",
 	service = SchedulerJobConfiguration.class
 )
-public class CleanUpDeletedStoreAreaSchedulerJobConfiguration
+public class CleanUpStoreAreasSchedulerJobConfiguration
 	implements SchedulerJobConfiguration {
 
 	@Override
 	public UnsafeConsumer<Long, Exception>
 		getCompanyJobExecutorUnsafeConsumer() {
 
-		return this::_cleanUpDeletedStoreArea;
+		return this::_cleanUpStorageAreas;
 	}
 
 	@Override
 	public UnsafeRunnable<Exception> getJobExecutorUnsafeRunnable() {
 		return () -> _companyLocalService.forEachCompanyId(
-			this::_cleanUpDeletedStoreArea);
+			this::_cleanUpStorageAreas);
 	}
 
 	@Override
@@ -74,17 +75,53 @@ public class CleanUpDeletedStoreAreaSchedulerJobConfiguration
 			StoreAreaConfiguration.class, properties);
 	}
 
-	private void _cleanUpDeletedStoreArea(Long companyId) {
+	private void _cleanUpDeletedStoreArea(long companyId) {
 		_startOffsets.put(
 			companyId,
 			_storeAreaProcessor.cleanUpDeletedStoreArea(
-				companyId, _storeAreaConfiguration.deletionQuota(),
-				Duration.ofDays(_storeAreaConfiguration.evictionAge()),
-				_startOffsets.getOrDefault(companyId, StringPool.BLANK)));
+				companyId, _storeAreaConfiguration.evictionQuota(),
+				name -> !_isDLFileVersionReferenced(companyId, name),
+				_startOffsets.getOrDefault(companyId, StringPool.BLANK),
+				Duration.ofDays(_storeAreaConfiguration.evictionAge())));
+	}
+
+	private void _cleanUpNewStoreArea(long companyId) {
+		_startOffsets.put(
+			companyId,
+			_storeAreaProcessor.cleanUpNewStoreArea(
+				companyId, _storeAreaConfiguration.evictionQuota(),
+				name -> !_isDLFileVersionReferenced(companyId, name),
+				_startOffsets.getOrDefault(companyId, StringPool.BLANK),
+				Duration.ofDays(_storeAreaConfiguration.evictionAge())));
+	}
+
+	private void _cleanUpStorageAreas(long companyId) {
+		_cleanUpDeletedStoreArea(companyId);
+		_cleanUpNewStoreArea(companyId);
+	}
+
+	private boolean _isDLFileVersionReferenced(Long companyId, String name) {
+		int pos = name.lastIndexOf(StringPool.TILDE);
+
+		if (pos == -1) {
+			return true;
+		}
+
+		int fileVersionsCount = _dlFileVersionLocalService.getFileVersionsCount(
+			companyId, name.substring(pos + 1));
+
+		if (fileVersionsCount > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Reference
 	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private DLFileVersionLocalService _dlFileVersionLocalService;
 
 	private Map<Long, String> _startOffsets;
 	private StoreAreaConfiguration _storeAreaConfiguration;

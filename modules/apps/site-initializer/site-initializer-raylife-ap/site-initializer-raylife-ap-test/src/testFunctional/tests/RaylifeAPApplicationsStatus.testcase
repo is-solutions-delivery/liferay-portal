@@ -193,7 +193,9 @@ definition {
 		}
 
 		task ("And navigate for Raylife Ap") {
-			Navigator.openSpecificURL(url = "http://localhost:8080/group/raylife-ap");
+			var portalURL = PropsUtil.get("portal.url");
+
+			Navigator.openSpecificURL(url = "${portalURL}/group/raylife-ap");
 
 			Refresh();
 		}
@@ -254,7 +256,6 @@ definition {
 	@description = "Story ID: LPS-159688 | Test Summary: Verify if the details of the Summary on the Bound application view appears"
 	@priority = 4
 	test AssertThatTheUserCanOpenAppDetailsInBoundApplications {
-		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#AssertThatTheUserCanOpenAppDetailsInBoundApplications";
 		property test.name.skip.portal.instance = "RaylifeAPApplicationsStatus#AssertThatTheUserCanOpenAppDetailsInBoundApplications";
 
 		// Skip portal instance due to LRQA-79129. Unskip after it is resolved

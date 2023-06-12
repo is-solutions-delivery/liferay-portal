@@ -16,14 +16,20 @@ package com.liferay.document.library.kernel.store;
 
 import java.time.temporal.TemporalAmount;
 
+import java.util.function.Predicate;
+
 /**
  * @author Adolfo Pérez
  */
 public interface StoreAreaProcessor {
 
 	public String cleanUpDeletedStoreArea(
-		long companyId, int deletionQuota, TemporalAmount temporalAmount,
-		String startOffset);
+		long companyId, int deletionQuota, Predicate<String> predicate,
+		String startOffset, TemporalAmount temporalAmount);
+
+	public String cleanUpNewStoreArea(
+		long companyId, int evictionQuota, Predicate<String> predicate,
+		String startOffset, TemporalAmount temporalAmount);
 
 	public boolean copy(String sourceFileName, String destinationFileName);
 
