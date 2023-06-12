@@ -194,7 +194,7 @@ definition {
 
 		task ("And navigate for Raylife Ap") {
 			var portalURL = PropsUtil.get("portal.url");
-			
+
 			Navigator.openSpecificURL(url = "${portalURL}/group/raylife-ap");
 
 			Refresh();
