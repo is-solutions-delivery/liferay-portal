@@ -64,6 +64,21 @@ definition {
 		}
 	}
 
+	@description = "Automtion ID: LPS-157724 | Test Summary: Check that the information from the recent applications table appears in the table"
+	@priority = 3
+	test AssertallInformationInRecentApplications {
+		property test.name.skip.portal.instance = "RaylifeAPRecentApplications#AssertallInformationInRecentApplications";
+
+		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
+		task("Given the User go to Raylife Ap"){
+			RaylifeAP.goToRaylifeUserProfileMenu(raylifeSite = "Raylife AP");
+		}
+
+		task("Then assert that the recent application table appears") {
+			AssertElementPresent(locator1 = "RaylifeAP#RECENT_APPLICATIONS_TABLE");
+		}
+	}
+
 	@description = "Story ID: LPS-157719| Test Summary: Check if I can delete a recent application on the Kebab button"
 	@priority = 4
 	test AssertCanDeleteRecentApplications {
