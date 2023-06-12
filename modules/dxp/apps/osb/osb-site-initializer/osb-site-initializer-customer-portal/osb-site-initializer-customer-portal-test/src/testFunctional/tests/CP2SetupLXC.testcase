@@ -164,7 +164,7 @@ definition {
 				region = "South America");
 		}
 
-		task("When Click on Submit button") {
+		task ("When Click on Submit button") {
 			Button.click(button = "Submit");
 		}
 
