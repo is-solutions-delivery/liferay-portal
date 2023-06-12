@@ -216,10 +216,10 @@ definition {
 		}
 	}
 
-	@description = "Automation ID: LPS-151788 | Test Summary: Verify if when user fill the mandatory field and at least one detail from Activation Key Server Details, button 'Generate 1 Key' is already enable"
+	@description = "Story ID: LPS-148052 | Test Summary: Verify if when user fill the mandatory field and at least one detail from Activation Key Server Details, button 'Generate 1 Key' is already enable"
 	@ignore = "true"
 	@priority = 4
-	test IfGenerate1KeyIsEnable {
+	test AssertThatGenerate1KeyIsEnableWhenFulfillTheForm {
 
 		// Needs refactor since it depends on example NASA ICE account
 
@@ -231,23 +231,23 @@ definition {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 		}
 
-		task ("Given I go to the test account") {
-			CustomerPortal.search(searchItem = ${testAccount});
+		task ("And go to test account") {
+			CustomerPortal.search(searchItem = "NASA ICE");
 
-			CustomerPortal.enterOnProject(title = ${testAccount});
+			CustomerPortal.enterOnProject(title = "NASA ICE");
 		}
 
-		task ("And I click on Portal product") {
+		task ("And click on Portal product") {
 			CP2NavigationMenu.goToProductActivation();
 
 			CP2NavigationMenu.clickOnProductButton(product = ${testProduct});
 		}
 
-		task ("And I go to generate a new key") {
+		task ("And generate a new key") {
 			CP2ActivationKeys.generateNewKey();
 		}
 
-		task ("Given I fulfill first phase form for Generate New License") {
+		task ("When fulfill first phase form for Generate New License") {
 			CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
 				field = "Product",
 				option = "Portal");
@@ -265,7 +265,7 @@ definition {
 			CustomerPortal.clickAtButton(text = "Next");
 		}
 
-		task ("Then The Generate button should be deactivated") {
+		task ("And the generate button should be deactivated") {
 			CustomerPortal.assertButtonIsDisabled(text = "Generate 1 Key");
 		}
 
