@@ -193,6 +193,11 @@
 	<td>//head//title[contains(.,'${key_tabTitle}')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>RECENT_APPLICATIONS_TABLE</td>
+	<td>//div[contains(@class,'recent-applications')]//table[contains(@class,'table-responsive')]//tbody//tr</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>
