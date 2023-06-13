@@ -36,6 +36,12 @@ definition {
 	}
 
 	tearDown {
+		task ("Logout account user and login with 'Test Test'") {
+			User.logoutPG();
+
+			User.firstLoginPG();
+		}
+
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
 		Raylife.tearDownCP();
@@ -70,8 +76,8 @@ definition {
 		property test.name.skip.portal.instance = "RaylifeAPRecentApplications#AssertallInformationInRecentApplications";
 
 		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
-		task("Given the User go to Raylife Ap"){
-			RaylifeAP.goToRaylifeUserProfileMenu(raylifeSite = "Raylife AP");
+		task("Given the user See 'Recent Applications' Table"){
+			WaitForVisible(locator1 = "RaylifeAP#RECENT_APPLICATIONS_TABLE");
 		}
 
 		task("Then assert that the recent application table appears") {
