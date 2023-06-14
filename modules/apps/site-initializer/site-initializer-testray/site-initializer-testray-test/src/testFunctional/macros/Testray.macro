@@ -122,23 +122,32 @@ definition {
 	}
 
 	macro changePagination {
-		Click(
-			key_numberItems = ${numberItems},
-			locator1 = "Testray#ITEMS_PER_PAGE_BUTTON");
+		if (IsElementPresent(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT")) {
+			Click(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT");
 
-		Click(
-			key_value = ${valuePagination},
-			locator1 = "Testray#ITEMS_PER_PAGE_SELECT");
+			AssertVisible(
+				key_quantity = ${quantity},
+				locator1 = "Testray#PAGINATION_ITEMS");
+
+			Click(
+				key_quantity = ${quantity},
+				locator1 = "Testray#PAGINATION_ITEMS");
+		}
 	}
 
-	macro changePaginationInModal {
-		Click(
-			key_numberItems = ${numberItems},
-			locator1 = "Testray#ITEMS_PER_PAGE_BUTTON_MODAL");
+	@summary = "This macro change the pagination in modal."
+	macro changePaginationModal {
+		if (IsElementPresent(locator1 = "Testray#ITEMS_PER_PAGE_SELECT_MODAL")) {
+			Click(locator1 = "Testray#ITEMS_PER_PAGE_SELECT_MODAL");
 
-		Click(
-			key_value = ${valuePagination},
-			locator1 = "Testray#ITEMS_PER_PAGE_SELECT");
+			AssertVisible(
+				key_quantity = ${quantity},
+				locator1 = "Testray#PAGINATION_ITEMS_MODAL");
+
+			Click(
+				key_quantity = ${quantity},
+				locator1 = "Testray#PAGINATION_ITEMS_MODAL");
+		}
 	}
 
 	macro changeTeamToComponent {
@@ -217,9 +226,7 @@ definition {
 
 		Refresh();
 
-		Testray.changePagination(
-			numberItems = 20,
-			valuePagination = 150);
+		Testray.changePaginationModal(quantity = 150);
 
 		while (IsElementPresent(key_projectName = "Projects_", locator1 = "Testray#ITEM_NAME")) {
 			TestrayContextMenu.clickContextMenuProjects(name = "Projects_");
@@ -247,9 +254,7 @@ definition {
 	macro deleteProject {
 		TestrayLayout.clickResultsOnSidebar();
 
-		Testray.changePagination(
-			numberItems = 20,
-			valuePagination = 150);
+		Testray.changePaginationModal(quantity = 150);
 
 		TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 

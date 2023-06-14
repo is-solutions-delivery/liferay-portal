@@ -31,9 +31,7 @@ definition {
 
 		Refresh();
 
-		Testray.changePagination(
-			numberItems = 20,
-			valuePagination = 150);
+		Testray.changePaginationModal(quantity = 150);
 
 		if (IsElementPresent(key_projectName = "Projects_", locator1 = "Testray#ITEM_NAME")) {
 			Testray.goToProjectPage(projectName = "Projects_1 Project");

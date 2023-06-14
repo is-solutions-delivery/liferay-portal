@@ -183,9 +183,7 @@ definition {
 	macro deleteBuild {
 		TestrayLayout.clickResultsOnSidebar();
 
-		Testray.changePagination(
-			numberItems = 20,
-			valuePagination = 150);
+		Testray.changePaginationModal(quantity = 150);
 
 		Testray.goToProjectPage(projectName = "Projects_1 Project");
 
