@@ -83,7 +83,7 @@ definition {
 
 			Testray.changePaginationModal(quantity = 150);
 
-			Testray.clickOnPageNumberModal(pageNumber = 2);
+			Testray.pageNumberNavigationModal(pageNumber = 2);
 		}
 
 		task ("Then can see the option in the table") {
@@ -139,7 +139,7 @@ definition {
 		task ("Then can see the option in the table") {
 			Testray.changePaginationModal(quantity = 150);
 
-			Testray.clickOnPageNumberModal(pageNumber = 2);
+			Testray.pageNumberNavigationModal(pageNumber = 2);
 
 			AssertElementPresent(
 				key_projectName = "Option 2",
@@ -155,7 +155,7 @@ definition {
 
 			Testray.changePaginationModal(quantity = 150);
 
-			Testray.clickOnPageNumberModal(pageNumber = 2);
+			Testray.pageNumberNavigationModal(pageNumber = 2);
 
 			TestrayManage.editOptionTitle(
 				category = ${categoryName},
@@ -202,7 +202,7 @@ definition {
 
 			Testray.changePaginationModal(quantity = 150);
 
-			Testray.clickOnPageNumberModal(pageNumber = 2);
+			Testray.pageNumberNavigationModal(pageNumber = 2);
 		}
 
 		task ("Then can see the option in the table") {

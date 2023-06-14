@@ -68,7 +68,7 @@ definition {
 
 			Testray.changePaginationModal(quantity = 150);
 
-			Testray.clickOnPageNumberModal(pageNumber = 2);
+			Testray.pageNumberNavigationModal(pageNumber = 2);
 
 			Testray.assertItemName(text = ${optionsName});
 		}
@@ -128,7 +128,7 @@ definition {
 		task ("Then I should be able to see the created Option") {
 			Testray.changePaginationModal(quantity = 150);
 
-			Testray.clickOnPageNumberModal(pageNumber = 2);
+			Testray.pageNumberNavigationModal(pageNumber = 2);
 
 			Testray.assertItemName(text = ${optionsName});
 		}
@@ -263,7 +263,7 @@ definition {
 		task ("And then I edit it") {
 			Testray.changePaginationModal(quantity = 150);
 
-			Testray.clickOnPageNumberModal(pageNumber = 2);
+			Testray.pageNumberNavigationModal(pageNumber = 2);
 
 			TestrayManage.editOptionTitle(
 				category = "Category 2",
