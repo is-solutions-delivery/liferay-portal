@@ -82,7 +82,7 @@ definition {
 	macro assertPageNumber {
 		AssertElementPresent(
 			key_pageNumber = ${pageNumber},
-			locator1 = "Testray#NUMBER_PAGE_BUTTON");
+			locator1 = "Pagination#ANY_PAGE");
 	}
 
 	macro assertProjectDescription {
@@ -171,18 +171,7 @@ definition {
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
 	}
 
-	macro clickOnPageNumber {
-		Click(
-			key_pageNumber = ${pageNumber},
-			locator1 = "Testray#NUMBER_PAGE_BUTTON");
-	}
-
-	macro clickOnPageNumberModal {
-		Click(
-			key_pageDirection = ${pageNumber},
-			locator1 = "Testray#NUMBER_PAGE_BUTTON_MODAL");
-	}
-
+	@summary = "This macro confirm the section in breadcrumb."
 	macro confirmBreadcrumb {
 		KeyPress.keyPressNoError(
 			locator1 = "TestrayTestflow#BREADCRUMB_EDIT",
@@ -418,6 +407,21 @@ definition {
 		Testray.confirmBreadcrumb();
 	}
 
+	@summary = "This macro click in the page number."
+	macro pageNumberNavigation {
+		Click(
+			key_pageNumber = ${pageNumber},
+			locator1 = "Pagination#ANY_PAGE");
+	}
+
+	@summary = "This macro click in the page number in modal."
+	macro pageNumberNavigationModal {
+		Click(
+			key_pageNumber = ${pageNumber},
+			locator1 = "Testray#PAGE_NUMBER_MODAL");
+	}
+
+	@summary = "This macro tab navigator."
 	macro projectTabNavigator {
 		Click(
 			key_navTabName = ${navTabName},
