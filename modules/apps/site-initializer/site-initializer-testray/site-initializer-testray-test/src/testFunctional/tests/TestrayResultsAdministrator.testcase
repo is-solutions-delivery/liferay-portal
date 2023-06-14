@@ -88,9 +88,7 @@ definition {
 		task ("Go to Testray 2 and change the pagination") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 	}
 
@@ -502,9 +500,7 @@ definition {
 				key_projectName = ${componentName},
 				locator1 = "Testray#ITEM_NAME");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.assertItemName(text = ${componentName});
 		}
@@ -526,9 +522,7 @@ definition {
 		task ("Then the user view results by team") {
 			Testray.projectTabNavigator(navTabName = "Teams");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.assertItemName(text = ${teamName});
 		}

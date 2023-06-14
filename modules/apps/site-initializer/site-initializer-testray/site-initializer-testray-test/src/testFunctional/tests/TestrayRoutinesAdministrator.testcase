@@ -36,9 +36,7 @@ definition {
 
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 	}
 
@@ -189,9 +187,7 @@ definition {
 		}
 
 		task ("Then the routine should not appear on the list") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 

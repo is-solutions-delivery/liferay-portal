@@ -81,9 +81,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Options");
 
-			Testray.changePaginationInModal(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePaginationModal(quantity = 150);
 
 			Testray.clickOnPageNumberModal(pageNumber = 2);
 		}
@@ -139,9 +137,7 @@ definition {
 		}
 
 		task ("Then can see the option in the table") {
-			Testray.changePaginationInModal(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePaginationModal(quantity = 150);
 
 			Testray.clickOnPageNumberModal(pageNumber = 2);
 
@@ -157,9 +153,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Options");
 
-			Testray.changePaginationInModal(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePaginationModal(quantity = 150);
 
 			Testray.clickOnPageNumberModal(pageNumber = 2);
 
@@ -206,9 +200,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Options");
 
-			Testray.changePaginationInModal(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePaginationModal(quantity = 150);
 
 			Testray.clickOnPageNumberModal(pageNumber = 2);
 		}

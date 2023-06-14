@@ -229,9 +229,7 @@ definition {
 		task ("And go to task through build") {
 			TestrayLayout.clickResultsOnSidebar();
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -288,9 +286,7 @@ definition {
 
 			TestrayLayout.clickResultsOnSidebar();
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -478,9 +474,7 @@ definition {
 		task ("And go to the analyzed task") {
 			TestrayLayout.clickResultsOnSidebar();
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -591,9 +585,7 @@ definition {
 		task ("Given the user add a Task in a different flow") {
 			TestrayLayout.clickResultsOnSidebar();
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 

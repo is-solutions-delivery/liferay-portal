@@ -82,9 +82,7 @@ definition {
 		task ("And I go to the Requirements page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -129,9 +127,7 @@ definition {
 		task ("And I go to the Requirements page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -181,9 +177,7 @@ definition {
 		task ("And I go to the newly created requirement") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -224,9 +218,7 @@ definition {
 		task ("Given that I go to the requirement page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 

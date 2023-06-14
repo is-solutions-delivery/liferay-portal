@@ -70,9 +70,7 @@ definition {
 		task ("Then I go to TR2 and change the paging") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 	}
 
@@ -232,9 +230,7 @@ definition {
 
 			TestrayLayout.clickResultsOnSidebar();
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 

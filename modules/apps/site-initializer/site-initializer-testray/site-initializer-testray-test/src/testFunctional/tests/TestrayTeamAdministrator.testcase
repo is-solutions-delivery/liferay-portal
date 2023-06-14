@@ -55,9 +55,7 @@ definition {
 		task ("When the team are created") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -85,9 +83,7 @@ definition {
 		task ("And I go to the manage teams") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -119,9 +115,7 @@ definition {
 		task ("And I go to the manage teams") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -153,9 +147,7 @@ definition {
 		task ("And I go to the manage teams") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -185,9 +177,7 @@ definition {
 		task ("And go to the manage teams") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -227,9 +217,7 @@ definition {
 		task ("And go to the manage teams") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -275,9 +263,7 @@ definition {
 		task ("Given I go to the manage teams") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 

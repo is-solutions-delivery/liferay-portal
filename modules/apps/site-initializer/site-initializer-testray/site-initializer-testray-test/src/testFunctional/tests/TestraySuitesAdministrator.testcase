@@ -59,9 +59,7 @@ definition {
 		task ("Given that I add a new Testray component and requirement") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -116,9 +114,7 @@ definition {
 		task ("And I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -161,9 +157,7 @@ definition {
 		task ("And I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -198,9 +192,7 @@ definition {
 		task ("Given that I add a new Testray component and requirement") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -276,9 +268,7 @@ definition {
 		task ("Given that I add a new suite") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -316,9 +306,7 @@ definition {
 		task ("And I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -348,9 +336,7 @@ definition {
 		task ("And go to the suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -386,9 +372,7 @@ definition {
 		task ("And go to the tab suite") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -434,9 +418,7 @@ definition {
 		task ("Given I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 

@@ -100,9 +100,7 @@ definition {
 		task ("Go to Testray 2 and change the pagination") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 	}
 
@@ -252,9 +250,7 @@ definition {
 
 			TestrayLayout.assertTabPageTitle(pageTabTitle = "Projects");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("Then can not see the project in the table") {

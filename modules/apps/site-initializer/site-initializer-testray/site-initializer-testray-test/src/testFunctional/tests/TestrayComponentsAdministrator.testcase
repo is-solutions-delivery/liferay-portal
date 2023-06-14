@@ -67,9 +67,7 @@ definition {
 		task ("When I go to Manage Component") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -89,9 +87,7 @@ definition {
 		task ("Given I go to Manage Component") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -123,9 +119,7 @@ definition {
 		task ("When I add a new Component without a Team") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -167,9 +161,7 @@ definition {
 		task ("And I go to the Manage Components") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -195,9 +187,7 @@ definition {
 		task ("Given I go to Manage Component") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -236,9 +226,7 @@ definition {
 		task ("When I go to Manage Component") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -277,9 +265,7 @@ definition {
 		task ("And I go to the created Project") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 		}
@@ -318,9 +304,7 @@ definition {
 		task ("When I go to Manage Component and try to add a component with a duplicate name") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -356,9 +340,7 @@ definition {
 		task ("And go to the manage components") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -417,9 +399,7 @@ definition {
 		task ("And go to the manage components") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -449,9 +429,7 @@ definition {
 		task ("Given I go to the Manage Component page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 

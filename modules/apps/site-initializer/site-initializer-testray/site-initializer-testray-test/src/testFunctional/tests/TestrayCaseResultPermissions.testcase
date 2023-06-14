@@ -128,9 +128,7 @@ definition {
 		}
 
 		task ("And the user go to case result page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -168,9 +166,7 @@ definition {
 		}
 
 		task ("And the user go to case result page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -215,9 +211,7 @@ definition {
 		}
 
 		task ("And the user go to case result page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -255,9 +249,7 @@ definition {
 		}
 
 		task ("And the user go to case result page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -306,9 +298,7 @@ definition {
 		}
 
 		task ("And the user go to case result page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 
@@ -344,9 +334,7 @@ definition {
 		}
 
 		task ("And the user go to case result page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			Testray.goToProjectPage(projectName = ${projectName});
 

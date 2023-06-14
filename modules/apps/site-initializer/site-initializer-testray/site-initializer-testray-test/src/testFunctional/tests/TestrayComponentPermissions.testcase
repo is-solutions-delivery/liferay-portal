@@ -77,9 +77,7 @@ definition {
 		}
 
 		task ("When the user go to the component page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			RightClick.rightClick(
 				key_projectName = ${projectName},
@@ -129,9 +127,7 @@ definition {
 		}
 
 		task ("When the user go to the component page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			RightClick.rightClick(
 				key_projectName = ${projectName},
@@ -181,9 +177,7 @@ definition {
 		}
 
 		task ("When the user go to the component page") {
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			RightClick.rightClick(
 				key_projectName = ${projectName},

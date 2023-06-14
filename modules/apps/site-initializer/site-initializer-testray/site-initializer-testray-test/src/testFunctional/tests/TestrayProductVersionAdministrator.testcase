@@ -61,9 +61,7 @@ definition {
 		task ("When I go to Manage Product Version") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -89,9 +87,7 @@ definition {
 		task ("When I go to Manage Product Version and delete the created version") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -121,9 +117,7 @@ definition {
 		task ("When I go to Manage Product Version") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -154,9 +148,7 @@ definition {
 		task ("When I go to Manage Product Version and I try to duplicate a version") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayManage.createProductVersion(
 				manageOption = "Manage Product Versions",
@@ -177,9 +169,7 @@ definition {
 		task ("Given I go to the Manage Product Versions page and try to create a version without filling in the 'Name' field") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayManage.createProductVersion(
 				manageOption = "Manage Product Versions",

@@ -68,9 +68,7 @@ definition {
 		task ("Go to Testray Site") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("Go to routine page") {

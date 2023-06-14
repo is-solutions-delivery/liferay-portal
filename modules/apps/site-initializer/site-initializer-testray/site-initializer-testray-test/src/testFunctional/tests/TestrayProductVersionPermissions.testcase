@@ -69,9 +69,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user go to the product version page") {
@@ -99,9 +97,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			RightClick.rightClick(
 				key_projectName = ${projectName},
@@ -135,9 +131,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			RightClick.rightClick(
 				key_projectName = ${projectName},
@@ -171,9 +165,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user create the product version") {
@@ -202,9 +194,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -236,9 +226,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
@@ -271,9 +259,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user go to the product version page") {
@@ -301,9 +287,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			RightClick.rightClick(
 				key_projectName = ${projectName},
@@ -337,9 +321,7 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
 			RightClick.rightClick(
 				key_projectName = ${projectName},
