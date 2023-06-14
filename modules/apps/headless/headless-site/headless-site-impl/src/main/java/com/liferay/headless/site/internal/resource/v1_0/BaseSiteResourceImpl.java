@@ -73,7 +73,7 @@ public abstract class BaseSiteResourceImpl implements SiteResource {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/headless-site/v1.0/sites/{externalReferenceCode}'  -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-site/v1.0/sites/by-externalReferenceCode/{externalReferenceCode}'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
 		description = "Adds or update a new site"
@@ -90,11 +90,11 @@ public abstract class BaseSiteResourceImpl implements SiteResource {
 		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Site")}
 	)
 	@javax.ws.rs.Consumes("multipart/form-data")
-	@javax.ws.rs.Path("/sites/{externalReferenceCode}")
+	@javax.ws.rs.Path("/sites/by-externalReferenceCode/{externalReferenceCode}")
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@javax.ws.rs.PUT
 	@Override
-	public Site putSite(
+	public Site putSiteByExternalReferenceCode(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.validation.constraints.NotNull
 			@javax.ws.rs.PathParam("externalReferenceCode")
