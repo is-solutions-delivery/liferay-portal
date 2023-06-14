@@ -56,13 +56,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>NUMBER_PAGE_BUTTON</td>
+	<td>PAGE_NUMBER</td>
 	<td>//button[contains(@class, 'page-link') and contains(text(), "${key_pageNumber}")]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>NUMBER_PAGE_BUTTON_MODAL</td>
-	<td>//div[contains(@class, 'modal-content')]//li[contains(@class, 'page-item') and contains(., '${key_pageDirection}')]</td>
+	<td>PAGE_NUMBER_MODAL</td>
+	<td>//div[contains(@class, 'modal-content')]//*[contains(@class,'page-link')][normalize-space(text())='${key_pageNumber}']</td>
 	<td></td>
 </tr>
 <tr>
