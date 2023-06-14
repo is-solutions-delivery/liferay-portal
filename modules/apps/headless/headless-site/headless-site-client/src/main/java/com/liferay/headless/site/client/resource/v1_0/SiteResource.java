@@ -46,12 +46,12 @@ public interface SiteResource {
 	public HttpInvoker.HttpResponse postSiteHttpResponse(Site site)
 		throws Exception;
 
-	public Site putSite(
+	public Site putSiteByExternalReferenceCode(
 			String externalReferenceCode, Site site,
 			Map<String, File> multipartFiles)
 		throws Exception;
 
-	public HttpInvoker.HttpResponse putSiteHttpResponse(
+	public HttpInvoker.HttpResponse putSiteByExternalReferenceCodeHttpResponse(
 			String externalReferenceCode, Site site,
 			Map<String, File> multipartFiles)
 		throws Exception;
@@ -259,13 +259,14 @@ public interface SiteResource {
 			return httpInvoker.invoke();
 		}
 
-		public Site putSite(
+		public Site putSiteByExternalReferenceCode(
 				String externalReferenceCode, Site site,
 				Map<String, File> multipartFiles)
 			throws Exception {
 
-			HttpInvoker.HttpResponse httpResponse = putSiteHttpResponse(
-				externalReferenceCode, site, multipartFiles);
+			HttpInvoker.HttpResponse httpResponse =
+				putSiteByExternalReferenceCodeHttpResponse(
+					externalReferenceCode, site, multipartFiles);
 
 			String content = httpResponse.getContent();
 
@@ -326,9 +327,10 @@ public interface SiteResource {
 			}
 		}
 
-		public HttpInvoker.HttpResponse putSiteHttpResponse(
-				String externalReferenceCode, Site site,
-				Map<String, File> multipartFiles)
+		public HttpInvoker.HttpResponse
+				putSiteByExternalReferenceCodeHttpResponse(
+					String externalReferenceCode, Site site,
+					Map<String, File> multipartFiles)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -363,7 +365,7 @@ public interface SiteResource {
 			httpInvoker.path(
 				_builder._scheme + "://" + _builder._host + ":" +
 					_builder._port + _builder._contextPath +
-						"/o/headless-site/v1.0/sites/{externalReferenceCode}");
+						"/o/headless-site/v1.0/sites/by-externalReferenceCode/{externalReferenceCode}");
 
 			httpInvoker.path("externalReferenceCode", externalReferenceCode);
 

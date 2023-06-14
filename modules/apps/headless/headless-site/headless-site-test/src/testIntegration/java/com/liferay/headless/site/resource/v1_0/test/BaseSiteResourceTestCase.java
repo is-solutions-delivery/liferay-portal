@@ -217,33 +217,61 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	@Test
-	public void testPutSite() throws Exception {
-		Site postSite = testPutSite_addSite();
+	public void testPutSiteByExternalReferenceCode() throws Exception {
+		Site postSite = testPutSiteByExternalReferenceCode_addSite();
 
 		Site randomSite = randomSite();
 
 		Map<String, File> multipartFiles = getMultipartFiles();
 
-		Site putSite = siteResource.putSite(
+		Site putSite = siteResource.putSiteByExternalReferenceCode(
 			postSite.getExternalReferenceCode(), randomSite, multipartFiles);
 
 		assertEquals(randomSite, putSite);
 		assertValid(putSite);
 
-		Site getSite = testPutSite_getSite(putSite.getExternalReferenceCode());
+		Site getSite = testPutSiteByExternalReferenceCode_getSite(
+			putSite.getExternalReferenceCode());
 
 		assertEquals(randomSite, getSite);
 		assertValid(getSite);
 
 		assertValid(getSite, multipartFiles);
+
+		Site newSite = testPutSiteByExternalReferenceCode_createSite();
+
+		putSite = siteResource.putSiteByExternalReferenceCode(
+			newSite.getExternalReferenceCode(), newSite, getMultipartFiles());
+
+		assertEquals(newSite, putSite);
+		assertValid(putSite);
+
+		getSite = testPutSiteByExternalReferenceCode_getSite(
+			putSite.getExternalReferenceCode());
+
+		assertEquals(newSite, getSite);
+
+		Assert.assertEquals(
+			newSite.getExternalReferenceCode(),
+			putSite.getExternalReferenceCode());
 	}
 
-	protected Site testPutSite_getSite(String externalReferenceCode) {
+	protected Site testPutSiteByExternalReferenceCode_getSite(
+		String externalReferenceCode) {
+
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Site testPutSite_addSite() throws Exception {
+	protected Site testPutSiteByExternalReferenceCode_createSite()
+		throws Exception {
+
+		return randomSite();
+	}
+
+	protected Site testPutSiteByExternalReferenceCode_addSite()
+		throws Exception {
+
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
