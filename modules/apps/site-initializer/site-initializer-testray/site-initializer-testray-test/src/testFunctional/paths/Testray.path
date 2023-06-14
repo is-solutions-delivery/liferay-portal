@@ -21,8 +21,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ITEMS_PER_PAGE_BUTTON_MODAL</td>
-	<td>//div[contains(@class, 'modal-title') and contains(., '')]//ancestor::div//div[contains(@class, 'pagination')]//button[contains(@class, 'dropdown') and contains(.,'${key_numberItems}')]</td>
+	<td>ITEMS_PER_PAGE_SELECT_MODAL</td>
+	<td>//div[contains(@class, 'modal-title')]//following::div[contains(@class,'pagination-items-per-page')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -36,8 +36,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ITEMS_PER_PAGE_SELECT</td>
-	<td>//div[contains(@class, 'dropdown-menu show')]//button[contains(text(), "${key_value} Items")]</td>
+	<td>PAGINATION_ITEMS</td>
+	<td>//*[contains(@class, 'dropdown-item') and text()='${key_quantity} Items']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGINATION_ITEMS_MODAL</td>
+	<td>//div[contains(@class, 'modal-title')]//following::*[contains(@class, 'dropdown-item') and text()='${key_quantity} Items']</td>
 	<td></td>
 </tr>
 <tr>
