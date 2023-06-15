@@ -14,7 +14,9 @@
 
 import {useRef} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {KeyedMutator} from 'swr';
 import useFormModal from '~/hooks/useFormModal';
+import {JiraClientExtensionRestImpl} from '~/services/rest/JiraClientExtension';
 
 import useMutate from '../../../hooks/useMutate';
 import i18n from '../../../i18n';
@@ -30,8 +32,31 @@ const useRequirementActions = ({
 	const {
 		modal: {onError, onSave},
 	} = useFormModal();
-	const {removeItemFromList} = useMutate();
+	const {removeItemFromList, updateItemFromList} = useMutate();
 	const navigate = useNavigate();
+
+	const resyncWithJira = async (
+		{id, linkTitle}: TestrayRequirement,
+		mutate: KeyedMutator<any>
+	) => {
+		const {
+			description,
+			labels,
+			summary,
+		} = await JiraClientExtensionRestImpl.resyncWithJira(linkTitle);
+
+		await testrayRequirementsImpl
+			.update(id, {
+				components: labels.join(', '),
+				description,
+				summary,
+			})
+			.then(() => {
+				updateItemFromList(mutate, 0, {}, {revalidate: true});
+			})
+			.then(onSave)
+			.catch(onError);
+	};
 
 	const actionsRef = useRef([
 		{
@@ -42,7 +67,9 @@ const useRequirementActions = ({
 			permission: 'UPDATE',
 		},
 		{
-			action: ({id}) => alert(id),
+			action: (requirement, mutate) => {
+				resyncWithJira(requirement, mutate);
+			},
 			icon: 'reload',
 			name: i18n.translate('resync-with-jira'),
 			permission: 'UPDATE',
