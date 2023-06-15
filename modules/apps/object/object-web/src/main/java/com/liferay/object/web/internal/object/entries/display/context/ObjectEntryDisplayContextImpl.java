@@ -76,8 +76,10 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -97,6 +99,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -726,6 +729,8 @@ public class ObjectEntryDisplayContextImpl
 
 		ddmFormField.setLabel(ddmFormFieldLabelLocalizedValue);
 
+		ddmFormField.setLocalizable(objectField.isLocalized());
+
 		properties.forEach(
 			(key, value) -> ddmFormField.setProperty(key, value));
 
@@ -782,6 +787,13 @@ public class ObjectEntryDisplayContextImpl
 		}
 
 		ddmFormField.setRequired(objectField.isRequired());
+
+		if (objectField.isLocalized() &&
+			StringUtil.equals(
+				ddmFormField.getType(), DDMFormFieldTypeConstants.TEXT)) {
+
+			ddmFormField.setType(DDMFormFieldTypeConstants.LOCALIZABLE_TEXT);
+		}
 
 		return ddmFormField;
 	}
@@ -1145,8 +1157,19 @@ public class ObjectEntryDisplayContextImpl
 		Object value = _getValue(ddmFormField, values);
 
 		if (value == null) {
-			ddmFormFieldValue.setValue(
-				new UnlocalizedValue(GetterUtil.DEFAULT_STRING));
+			LocalizedValue ddmFormFieldPredefinedValue =
+				ddmFormField.getPredefinedValue();
+
+			if (MapUtil.isEmpty(ddmFormFieldPredefinedValue.getValues())) {
+				ddmFormFieldValue.setValue(
+					new UnlocalizedValue(StringPool.BLANK));
+			}
+			else {
+				ddmFormFieldValue.setValue(
+					new UnlocalizedValue(
+						ddmFormFieldPredefinedValue.getString(
+							_objectRequestHelper.getLocale())));
+			}
 		}
 		else if (value instanceof ArrayList) {
 			ddmFormFieldValue.setValue(
@@ -1170,6 +1193,15 @@ public class ObjectEntryDisplayContextImpl
 
 			ddmFormFieldValue.setValue(
 				new UnlocalizedValue(listEntry.getKey()));
+		}
+		else if (FeatureFlagManagerUtil.isEnabled("LPS-172017") &&
+				 (value instanceof Map)) {
+
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				(Map<String, String>)value);
+
+			ddmFormFieldValue.setValue(
+				new UnlocalizedValue(jsonObject.toString()));
 		}
 		else {
 			if (value instanceof Double) {

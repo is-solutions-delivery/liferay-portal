@@ -23,11 +23,11 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.model.ReleaseConstants;
+import com.liferay.portal.kernel.module.util.BundleUtil;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeStep;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.version.Version;
-import com.liferay.portal.module.util.BundleUtil;
 import com.liferay.portal.upgrade.internal.graph.ReleaseGraphManager;
 import com.liferay.portal.upgrade.internal.registry.UpgradeInfo;
 import com.liferay.portal.upgrade.internal.registry.UpgradeStepRegistratorTracker;
@@ -228,6 +228,12 @@ public class UpgradeExecutor {
 
 		Bundle bundle = BundleUtil.getBundle(
 			_bundleContext, bundleSymbolicName);
+
+		if (bundle == null) {
+			throw new IllegalArgumentException(
+				"Module with symbolic name " + bundleSymbolicName +
+					" does not exist");
+		}
 
 		if (_requiresUpdateIndexes(bundle, upgradeInfos)) {
 			try {

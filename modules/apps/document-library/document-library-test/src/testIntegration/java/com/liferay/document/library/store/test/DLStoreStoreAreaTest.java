@@ -35,6 +35,7 @@ import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -103,6 +104,11 @@ public class DLStoreStoreAreaTest {
 			).build());
 	}
 
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		ConfigurationTestUtil.deleteConfiguration(_configuration);
+	}
+
 	@Test
 	public void testAddFile() throws Exception {
 		String fileName = StringUtil.randomString();
@@ -115,7 +121,7 @@ public class DLStoreStoreAreaTest {
 				fileName, Store.VERSION_DEFAULT));
 
 		StoreArea.withStoreArea(
-			StoreArea.LIVE,
+			StoreArea.NEW,
 			() -> _assertHasStoreFile(fileName, Store.VERSION_DEFAULT));
 	}
 
@@ -238,6 +244,8 @@ public class DLStoreStoreAreaTest {
 		StoreArea.withStoreArea(
 			StoreArea.DELETED,
 			() -> _assertHasStoreFile(fileName, Store.VERSION_DEFAULT));
+		StoreArea.withStoreArea(
+			StoreArea.NEW, () -> _assertHasStoreFile(fileName, "2.0"));
 	}
 
 	private void _addFile(String fileName, String version) throws Exception {

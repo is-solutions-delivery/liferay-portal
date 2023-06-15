@@ -4,8 +4,8 @@ jobs:
         steps:
             - name: set up git for checkout
               run: git config --global core.longpaths 260
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@v2
+            - uses: actions/checkout@v3.5.2
+            - uses: actions/setup-node@v3.6.0
               with:
                   node-version: 14.x
             - env:
@@ -20,7 +20,7 @@ jobs:
             - name: build package
               run: npx vsce package --target ${{env.target}}
               working-directory: ./modules/test/poshi/poshi-vscode
-            - uses: actions/upload-artifact@v2
+            - uses: actions/upload-artifact@v3.1.2
               with:
                   name: ${{env.target}}
                   path: "./modules/test/poshi/poshi-vscode/*.vsix"
@@ -63,8 +63,23 @@ jobs:
                       npm_config_arch: arm64
                       os: macos-latest
                       platform: darwin
+    release:
+        if: ${{github.event.inputs.release-to-marketplace == 'true'}}
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/download-artifact@v3.0.2
+            - env:
+                  VSCE_PAT: ${{secrets.VSCE_PAT}}
+              name: publish to marketplace
+              run: npx @vscode/vsce publish --skip-duplicate --packagePath $(find . -iname *.vsix)
 name: Build Poshi VSCode Extension
 on:
     workflow_dispatch:
+        inputs:
+            release-to-marketplace:
+                description:
+                    Release to Marketplace
+                type: boolean
 permissions:
     contents: read

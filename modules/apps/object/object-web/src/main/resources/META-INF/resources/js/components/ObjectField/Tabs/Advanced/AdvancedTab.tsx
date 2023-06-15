@@ -22,6 +22,7 @@ import {ReadOnlyContainer} from './ReadOnlyContainer';
 interface AdvancedTabProps {
 	creationLanguageId: Liferay.Language.Locale;
 	errors: ObjectFieldErrors;
+	readOnlySidebarElements: SidebarCategory[];
 	setValues: (value: Partial<ObjectField>) => void;
 	sidebarElements: SidebarCategory[];
 	values: Partial<ObjectField>;
@@ -30,24 +31,24 @@ interface AdvancedTabProps {
 export function AdvancedTab({
 	creationLanguageId,
 	errors,
+	readOnlySidebarElements,
 	setValues,
 	sidebarElements,
 	values,
 }: AdvancedTabProps) {
 	return (
 		<>
-			{Liferay.FeatureFlags['LPS-159913'] && (
+			{Liferay.FeatureFlags['LPS-170122'] && (
 				<ReadOnlyContainer
 					disabled={
 						values.system ||
 						values.businessType === 'Aggregation' ||
 						values.businessType === 'Formula'
 					}
-					objectFieldSettings={
-						values.objectFieldSettings as ObjectFieldSetting[]
-					}
+					readOnlySidebarElements={readOnlySidebarElements}
 					requiredField={values.required as boolean}
 					setValues={setValues}
+					values={values}
 				/>
 			)}
 

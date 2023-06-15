@@ -1936,7 +1936,7 @@ definition {
 
 			Segmentation.addProperties(propertyOption = "Team");
 
-			Segmentation.fillProperty(selectLink = "Site Team Name");
+			Segmentation.fillProperty(selectEntry = "Site Team Name");
 
 			Segmentation.fillTitle(titleField = "AddSegmentByUserTeam Test");
 
@@ -2000,7 +2000,6 @@ definition {
 	@uitest
 	test AddSegmentByUserUserGroup {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#AddSegmentByUserUserGroup";
 
 		task ("Add user") {
 			JSONUser.addUser(
@@ -2025,7 +2024,7 @@ definition {
 
 			Segmentation.addProperties(propertyOption = "User Group");
 
-			Segmentation.fillProperty(chooseItem = "UG UserGroup Name");
+			Segmentation.fillProperty(selectCard = "UG UserGroup Name");
 
 			Segmentation.fillTitle(titleField = "AddSegmentByUserUserGroup Test");
 
@@ -3213,7 +3212,7 @@ definition {
 
 			Segmentation.addProperties(propertyOption = "Team");
 
-			Segmentation.fillProperty(selectLink = "Test Site Name");
+			Segmentation.fillProperty(selectEntry = "Test Site Name");
 
 			Segmentation.fillTitle(titleField = "Validade Team Segment");
 

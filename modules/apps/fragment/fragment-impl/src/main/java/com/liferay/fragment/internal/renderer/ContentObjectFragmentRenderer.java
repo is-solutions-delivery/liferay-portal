@@ -136,13 +136,14 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 			return true;
 		}
 
+		if (Validator.isNull(className) && (infoItemReference != null)) {
+			className = infoItemReference.getClassName();
+		}
+
 		Tuple tuple = _getTuple(
 			className, displayObject.getClass(), fragmentRendererContext);
 
-		InfoItemRenderer<Object> infoItemRenderer =
-			(InfoItemRenderer<Object>)tuple.getObject(0);
-
-		if ((infoItemRenderer == null) ||
+		if ((tuple == null) || (tuple.getObject(0) == null) ||
 			_hasPermission(httpServletRequest, className, displayObject)) {
 
 			return true;
@@ -199,13 +200,14 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 			return;
 		}
 
+		if (Validator.isNull(className) && (infoItemReference != null)) {
+			className = infoItemReference.getClassName();
+		}
+
 		Tuple tuple = _getTuple(
 			className, displayObject.getClass(), fragmentRendererContext);
 
-		InfoItemRenderer<Object> infoItemRenderer =
-			(InfoItemRenderer<Object>)tuple.getObject(0);
-
-		if (infoItemRenderer == null) {
+		if ((tuple == null) || (tuple.getObject(0) == null)) {
 			if (FragmentRendererUtil.isEditMode(httpServletRequest)) {
 				FragmentRendererUtil.printPortletMessageInfo(
 					httpServletRequest, httpServletResponse,
@@ -233,6 +235,9 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 
 			return;
 		}
+
+		InfoItemRenderer<Object> infoItemRenderer =
+			(InfoItemRenderer<Object>)tuple.getObject(0);
 
 		if (infoItemRenderer instanceof InfoItemTemplatedRenderer) {
 			InfoItemTemplatedRenderer<Object> infoItemTemplatedRenderer =

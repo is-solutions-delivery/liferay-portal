@@ -19,11 +19,6 @@ exports[`SegmentOverview should render 1`] = `
           >
             Segment Membership
           </h5>
-          <div
-            class="subtitle-segment"
-          >
-            Segment membership processes daily and does not include today's activities.
-          </div>
         </div>
         <div
           class="card-body"
@@ -96,7 +91,7 @@ exports[`SegmentOverview should render 1`] = `
           class="card-footer"
         >
           <a
-            class="button-root link-unstyled"
+            class="button-root c-link link-secondary text-decoration-none"
             href="/workspace/23/contacts/segments/test/interests"
           >
             View All Interests
@@ -162,7 +157,7 @@ exports[`SegmentOverview should render 1`] = `
               type="button"
             >
               <svg
-                class="lexicon-icon lexicon-icon-plus icon-root icon-size-sm"
+                class="lexicon-icon lexicon-icon-plus"
                 role="presentation"
               >
                 <use

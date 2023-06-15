@@ -1,6 +1,8 @@
 assemble:
     - from: src
 liferay-marketplace-etc-node-oauth-application-user-agent:
+    .serviceAddress: localhost:3001
+    .serviceScheme: http
     name: Liferay Marketplace Etc Node OAuth Application User Agent
     scopes:
         - C_Test.everything

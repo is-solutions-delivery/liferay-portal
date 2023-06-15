@@ -49,6 +49,20 @@ const List = ({items, schema}) => {
 	);
 };
 
+const Title = ({item, title, titleRenderer}) => {
+	const TitleRendererComponent = titleRenderer?.component;
+
+	if (TitleRendererComponent) {
+		return <TitleRendererComponent itemData={item} />;
+	}
+
+	if (title) {
+		return <ClayList.ItemTitle>{item[title]}</ClayList.ItemTitle>;
+	}
+
+	return null;
+};
+
 const ListItem = ({item, schema}) => {
 	const {
 		itemsActions,
@@ -61,7 +75,7 @@ const ListItem = ({item, schema}) => {
 
 	const [menuActive, setMenuActive] = useState(false);
 
-	const {description, image, sticker, symbol, title} = schema;
+	const {description, image, sticker, symbol, title, titleRenderer} = schema;
 
 	return (
 		<ClayList.Item
@@ -109,9 +123,11 @@ const ListItem = ({item, schema}) => {
 			)}
 
 			<ClayList.ItemField className="justify-content-center" expand>
-				{title && (
-					<ClayList.ItemTitle>{item[title]}</ClayList.ItemTitle>
-				)}
+				<Title
+					item={item}
+					title={title}
+					titleRenderer={titleRenderer}
+				/>
 
 				{description && (
 					<ClayList.ItemText>{item[description]}</ClayList.ItemText>

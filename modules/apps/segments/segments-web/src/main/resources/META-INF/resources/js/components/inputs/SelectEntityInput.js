@@ -41,14 +41,30 @@ function SelectEntityInput({
 			openSelectionModal({
 				buttonAddLabel: Liferay.Language.get('select'),
 				multiple: true,
-				onSelect: (selectedItems) => {
-					if (selectedItems) {
-						const selectedValues = selectedItems.map((item) => ({
-							displayValue: item.name,
-							value: item.id,
-						}));
+				onSelect: (event) => {
+					if (event) {
+						if (Array.isArray(event)) {
+							const selectedValues = event.map((item) => ({
+								displayValue: item.name,
+								value: item.id,
+							}));
 
-						onChange(selectedValues);
+							onChange(selectedValues);
+						}
+						else {
+							const selectedItems = event.value;
+
+							const selectedValues = selectedItems.map((item) => {
+								const selectedValue = JSON.parse(item);
+
+								return {
+									displayValue: selectedValue.name,
+									value: selectedValue.organizationId,
+								};
+							});
+
+							onChange(selectedValues);
+						}
 					}
 				},
 				selectEventName: id,
@@ -63,15 +79,33 @@ function SelectEntityInput({
 						const valueJSON = JSON.parse(event.value);
 
 						onChange({
-							displayValue: valueJSON.segmentsEntryName,
-							value: valueJSON.segmentsEntryId,
+							displayValue:
+								valueJSON.name || valueJSON.segmentsEntryName,
+							value:
+								valueJSON.segmentsEntryId ||
+								valueJSON.teamId ||
+								valueJSON.userGroupId,
 						});
 					}
 					catch {
-						onChange({
-							displayValue: event.entityname,
-							value: event.entityid,
-						});
+						if (event.entityname && event.entityid) {
+							onChange({
+								displayValue: event.entityname,
+								value: event.entityid,
+							});
+						}
+						else {
+							const category = event
+								? event[Object.keys(event)[0]]
+								: null;
+
+							if (category) {
+								onChange({
+									displayValue: category.title,
+									value: category.categoryId,
+								});
+							}
+						}
 					}
 				},
 				selectEventName: id,

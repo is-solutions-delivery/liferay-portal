@@ -325,7 +325,7 @@ public class CPDefinitionLocalServiceImpl
 		cProduct.setUserName(user.getFullName());
 		cProduct.setLatestVersion(1);
 
-		_cProductLocalService.updateCProduct(cProduct);
+		cProduct = _cProductLocalService.updateCProduct(cProduct);
 
 		// Commerce product definition localization
 
@@ -2689,7 +2689,8 @@ public class CPDefinitionLocalServiceImpl
 		_commercePriceEntryLocalService.addCommercePriceEntry(
 			null, cpDefinition.getCProductId(), cpInstance.getCPInstanceUuid(),
 			commercePriceList.getCommercePriceListId(),
-			commercePriceEntry.getPrice(), null, serviceContext);
+			commercePriceEntry.getPrice(),
+			commercePriceEntry.isPriceOnApplication(), null, serviceContext);
 	}
 
 	private List<CPDefinitionLocalization> _addCPDefinitionLocalizedFields(

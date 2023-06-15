@@ -12,15 +12,16 @@ definition {
 	}
 
 	tearDown {
-		ObjectAdmin.deleteAllCustomObjectsViaAPI();
-
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
 		if (${testPortalInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
+		else {
+			ObjectAdmin.deleteAllCustomObjectsViaAPI();
 
-		ObjectAdmin.deleteAllCommerceOrdersAndSitesViaAPI();
+			ObjectAdmin.deleteAllCommerceOrdersAndSitesViaAPI();
+		}
 	}
 
 	@description = "LPS-145665 - Verify that it's possible to activate and deactivate an Action"
@@ -103,6 +104,44 @@ definition {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject");
 
 			ObjectPortlet.assertEntryNotPresent(entry = "Action shot on add");
+		}
+	}
+
+	@description = "LPS-173537 - Verify creating an Account entry triggers an action to add a second Account entry"
+	@priority = 5
+	test CanAddAccountEntryAfterCreatingAccountEntry {
+		property portal.acceptance = "true";
+
+		task ("Given an Account object") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectSystemObject(label = "Account");
+		}
+
+		task ("And given an action to add a new Account entry after creating an Account entry") {
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Custom Action",
+				actionName = "CustomAction",
+				active = "true",
+				inputMethod = "true",
+				inputValue = "Account Name,Person",
+				objectLabel = "Account",
+				thenAction = "Add an Object Entry",
+				whenAction = "On After Add");
+		}
+
+		task ("When the user creates an Account entry") {
+			JSONAccountEntry.addAccountEntry(
+				accountEntryName = "Business Account",
+				accountEntryType = "Business");
+		}
+
+		task ("Then the action is triggered and a second Account entry is added") {
+			Account.openAccountsAdmin();
+
+			LexiconEntry.viewEntryName(rowEntry = "Account Name");
 		}
 	}
 
@@ -1437,8 +1476,9 @@ definition {
 			Notifications.goToNotificationQueueAdmin();
 
 			AssertElementPresent(
-				key_objectName = "CommerceOrder",
-				locator1 = "ObjectNotifications#OBJECT_QUEUE_NAME");
+				key_entryLabel = "CommerceOrder",
+				key_entryStatus = "Sent",
+				locator1 = "ObjectNotifications#VIEW_NOTIFICATION_ENTRIES");
 		}
 	}
 

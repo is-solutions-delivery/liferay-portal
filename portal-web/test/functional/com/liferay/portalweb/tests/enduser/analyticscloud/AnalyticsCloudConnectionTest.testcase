@@ -39,6 +39,9 @@ definition {
 	@priority = 3
 	test AddDataSourceForOneSite {
 		property portal.release = "true";
+		property portal.upstream = "quarantine";
+
+		// AC Quarantine Reason: Test improvements needed see LRAC-14017
 
 		task ("Add site and page") {
 			ACUtils.addSiteAndPage();

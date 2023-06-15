@@ -40,7 +40,7 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portlet.usersadmin.search.GroupSearch;
+import com.liferay.site.search.GroupSearch;
 import com.liferay.site.util.GroupSearchProvider;
 
 import java.util.List;
@@ -91,7 +91,7 @@ public class GroupSearchProviderTest {
 
 		childGroup1.setType(GroupConstants.TYPE_SITE_PRIVATE);
 
-		_groupLocalService.updateGroup(childGroup1);
+		childGroup1 = _groupLocalService.updateGroup(childGroup1);
 
 		Group childGroup2 = GroupTestUtil.addGroup(parentGroup.getGroupId());
 

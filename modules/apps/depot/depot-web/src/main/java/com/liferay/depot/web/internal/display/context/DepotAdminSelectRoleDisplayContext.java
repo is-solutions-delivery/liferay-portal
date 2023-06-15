@@ -51,9 +51,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portlet.rolesadmin.search.RoleSearch;
 import com.liferay.portlet.rolesadmin.search.RoleSearchTerms;
-import com.liferay.portlet.usersadmin.search.GroupSearch;
-import com.liferay.portlet.usersadmin.search.GroupSearchTerms;
-import com.liferay.roles.admin.kernel.util.RolesAdminUtil;
+import com.liferay.site.search.GroupSearch;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -177,9 +175,7 @@ public class DepotAdminSelectRoleDisplayContext {
 				_getPortletURL(_renderRequest, _renderResponse, _user));
 
 			groupSearch.setEmptyResultsMessage("no-asset-libraries-were-found");
-			groupSearch.setResultsAndTotal(
-				_getDepotGroups(
-					(GroupSearchTerms)groupSearch.getSearchTerms()));
+			groupSearch.setResultsAndTotal(_getDepotGroups());
 
 			_groupSearch = groupSearch;
 
@@ -200,12 +196,14 @@ public class DepotAdminSelectRoleDisplayContext {
 			return TYPE;
 		}
 
-		private List<Group> _getDepotGroups(GroupSearchTerms groupSearchTerms) {
+		private List<Group> _getDepotGroups() {
 			if (_user == null) {
 				return Collections.emptyList();
 			}
 
-			if (!groupSearchTerms.hasSearchTerms()) {
+			String keywords = ParamUtil.getString(_renderRequest, "keywords");
+
+			if (Validator.isNull(keywords)) {
 				return ListUtil.filter(_user.getGroups(), Group::isDepot);
 			}
 
@@ -214,8 +212,7 @@ public class DepotAdminSelectRoleDisplayContext {
 				new long[] {
 					ClassNameLocalServiceUtil.getClassNameId(DepotEntry.class)
 				},
-				GroupConstants.ANY_PARENT_GROUP_ID,
-				groupSearchTerms.getKeywords(),
+				GroupConstants.ANY_PARENT_GROUP_ID, keywords,
 				LinkedHashMapBuilder.<String, Object>put(
 					"inherit", Boolean.FALSE
 				).put(
@@ -284,7 +281,7 @@ public class DepotAdminSelectRoleDisplayContext {
 				"groupdescriptivename",
 				_group.getDescriptiveName(_themeDisplay.getLocale())
 			).put(
-				"iconcssclass", RolesAdminUtil.getIconCssClass(role)
+				"iconcssclass", role.getIconCssClass()
 			).put(
 				"rolename", role.getTitle(_themeDisplay.getLocale())
 			).build();

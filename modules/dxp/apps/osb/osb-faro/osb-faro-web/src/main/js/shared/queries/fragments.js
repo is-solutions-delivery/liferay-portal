@@ -1,22 +1,5 @@
 import {gql} from 'apollo-boost';
 
-export const AUDIENCE_REPORT_FRAGMENT = gql`
-	fragment audienceReportFragment on Metric {
-		anonymousUsersCount
-		knownUsersCount
-		nonsegmentedKnownUsersCount
-		segment {
-			metrics {
-				value
-				valueKey
-			}
-			total
-		}
-		segmentedAnonymousUsersCount
-		segmentedKnownUsersCount
-	}
-`;
-
 export const BROWSER_FRAGMENT = gql`
 	fragment browserFragment on Metric {
 		browser {

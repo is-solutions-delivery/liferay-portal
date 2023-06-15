@@ -30,16 +30,12 @@ import sxpElementSchema from '../../schemas/sxp-query-element.schema.json';
 import useDebounceCallback from '../hooks/useDebounceCallback';
 import useShouldConfirmBeforeNavigate from '../hooks/useShouldConfirmBeforeNavigate';
 import CodeMirrorEditor from '../shared/CodeMirrorEditor';
-import ErrorBoundary from '../shared/ErrorBoundary';
-import JSONSXPElement from '../shared/JSONSXPElement';
 import LearnMessage from '../shared/LearnMessage';
 import PageToolbar from '../shared/PageToolbar';
-import PreviewModal from '../shared/PreviewModal';
 import SearchInput from '../shared/SearchInput';
 import Sidebar from '../shared/Sidebar';
 import SubmitWarningModal from '../shared/SubmitWarningModal';
 import ThemeContext from '../shared/ThemeContext';
-import SXPElement from '../shared/sxp_element/index';
 import {CONFIG_PREFIX} from '../utils/constants';
 import {DEFAULT_ERROR} from '../utils/errorMessages';
 import {DEFAULT_HEADERS} from '../utils/fetch/fetch_data';
@@ -48,10 +44,27 @@ import formatLocaleWithDashes from '../utils/language/format_locale_with_dashes'
 import formatLocaleWithUnderscores from '../utils/language/format_locale_with_underscores';
 import renameKeys from '../utils/language/rename_keys';
 import sub from '../utils/language/sub';
-import getUIConfigurationValues from '../utils/sxp_element/get_ui_configuration_values';
-import isCustomJSONSXPElement from '../utils/sxp_element/is_custom_json_sxp_element';
 import {openErrorToast, setInitialSuccessToast} from '../utils/toasts';
+import PreviewSXPElementModal from './PreviewSXPElementModal';
 import SidebarPanel from './SidebarPanel';
+
+/**
+ * Checks whether any of the properties inside sxpElementJSONObject had changed,
+ * by comparing between the old and new sxpElementJSONObjects.
+ * @param {Object} sxpElementJSONObjectNew
+ * @param {Object} sxpElementJSONObjectOld
+ * @param {Object} properties
+ */
+const didPropertiesChange = (
+	sxpElementJSONObjectNew,
+	sxpElementJSONObjectOld,
+	properties
+) =>
+	properties.some(
+		(property) =>
+			JSON.stringify(sxpElementJSONObjectNew[property]) !==
+			JSON.stringify(sxpElementJSONObjectOld[property])
+	);
 
 /**
  * Checks that property of object is a valid non-Array object. Prevents errors
@@ -185,10 +198,16 @@ function EditSXPElementForm({
 
 	const [errors, setErrors] = useState([]);
 	const [expandAllVariables, setExpandAllVariables] = useState(false);
+	const [description, setDescription] = useState(initialDescription);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showInfoSidebar, setShowInfoSidebar] = useState(false);
 	const [showSubmitWarningModal, setShowSubmitWarningModal] = useState(false);
 	const [showVariablesSidebar, setShowVariablesSidebar] = useState(false);
+	const [title, setTitle] = useState(initialTitle);
+	const [
+		isTitleAndDescriptionEdited,
+		setIsTitleAndDescriptionEdited,
+	] = useState(false);
 	const [elementJSONEditorValue, setElementJSONEditorValue] = useState(
 		initialElementJSONEditorValueString
 	);
@@ -259,6 +278,7 @@ function EditSXPElementForm({
 		const updatedState = {
 			isInvalid: false,
 			sxpElementJSONObjectNew: sxpElementJSONObject,
+			sxpElementJSONObjectOld: sxpElementJSONObject,
 		};
 
 		try {
@@ -291,12 +311,26 @@ function EditSXPElementForm({
 	 * Parses CodeMirror text after user types into it or submits changes
 	 * on title and description modal. Validates `title_i18n` and
 	 * `description_i18n` and updates `sxpElementJSONObject` if parsing
-	 * succeeds.
+	 * succeeds. Also updates `isTitleAndDescriptionEdited` if the `title_i18n`
+	 * or `description_i18n` changed.
 	 */
 	const _handleJSONEditorValueChange = (value) => {
 		setElementJSONEditorValue(value);
 
-		_validateAndUpdateSXPElementJSONObject(value);
+		const {
+			sxpElementJSONObjectNew,
+			sxpElementJSONObjectOld,
+		} = _validateAndUpdateSXPElementJSONObject(value);
+
+		if (
+			didPropertiesChange(
+				sxpElementJSONObjectNew,
+				sxpElementJSONObjectOld,
+				['title_i18n', 'description_i18n']
+			)
+		) {
+			setIsTitleAndDescriptionEdited(true);
+		}
 	};
 
 	const [handleJSONEditorValueChangeDebounced] = useDebounceCallback(
@@ -468,9 +502,13 @@ function EditSXPElementForm({
 	/**
 	 * Called after clicking 'Done' in title and description edit modal.
 	 * Updates `title_i18n`, `description_i18n` inside CodeMirror editor,
-	 * which triggers `_handleJSONEditorValueChange`.
+	 * which triggers `_handleJSONEditorValueChange`. Sets
+	 * `isTitleAndDescriptionEdited` to true.
 	 */
-	const _handleTitleAndDescriptionChange = ({description, title}) => {
+	const _handleTitleAndDescriptionChange = ({
+		description_i18n,
+		title_i18n,
+	}) => {
 		if (!isSXPElementJSONInvalid) {
 			const doc = elementJSONEditorRef.current.getDoc();
 
@@ -478,13 +516,30 @@ function EditSXPElementForm({
 				JSON.stringify(
 					reassignTitleAndDescription(
 						sxpElementJSONObject,
-						title,
-						description
+						title_i18n,
+						description_i18n
 					),
 					null,
 					'\t'
 				)
 			);
+
+			setIsTitleAndDescriptionEdited(true);
+		}
+	};
+
+	/**
+	 * Called after clicking 'Preview' in the toolbar. Updates the
+	 * `title` and `description` with the new translations, as long as the
+	 * title is not empty. Also resets the `isTitleAndDescriptionEdited`
+	 * in order for them to show on the toolbar.
+	 */
+	const _handleTitleAndDescriptionPreview = ({description, title}) => {
+		if (title) {
+			setDescription(description);
+			setTitle(title);
+
+			setIsTitleAndDescriptionEdited(false);
 		}
 	};
 
@@ -493,51 +548,6 @@ function EditSXPElementForm({
 		const cursor = doc.getCursor();
 
 		doc.replaceRange(variable, cursor);
-	};
-
-	const _renderPreviewBody = () => {
-		if (!isSXPElementJSONInvalid) {
-			const previewSXPElementJSON = {
-				elementDefinition: {}, // Define elementDefinition to prevent error
-				...sxpElementJSONObject,
-			};
-
-			const uiConfigurationValues = getUIConfigurationValues(
-				previewSXPElementJSON
-			);
-
-			return (
-				<div className="portlet-sxp-blueprint-admin">
-					<ErrorBoundary>
-						{isCustomJSONSXPElement(uiConfigurationValues) ? (
-							<JSONSXPElement
-								collapseAll={false}
-								readOnly={true}
-								sxpElement={previewSXPElementJSON}
-								uiConfigurationValues={uiConfigurationValues}
-							/>
-						) : (
-							<SXPElement
-								collapseAll={false}
-								sxpElement={previewSXPElementJSON}
-								uiConfigurationValues={uiConfigurationValues}
-							/>
-						)}
-					</ErrorBoundary>
-				</div>
-			);
-		}
-		else {
-			return (
-				<ClayEmptyState
-					description={Liferay.Language.get(
-						'json-may-be-incorrect-and-we-were-unable-to-load-a-preview-of-the-configuration'
-					)}
-					imgSrc="/o/admin-theme/images/states/empty_state.gif"
-					title={Liferay.Language.get('unable-to-load-preview')}
-				/>
-			);
-		}
 	};
 
 	return (
@@ -555,7 +565,7 @@ function EditSXPElementForm({
 				/>
 
 				<PageToolbar
-					description={initialDescription}
+					description={description}
 					descriptionI18n={renameKeys(
 						sxpElementJSONObject.description_i18n,
 						formatLocaleWithDashes
@@ -568,7 +578,8 @@ function EditSXPElementForm({
 						_handleTitleAndDescriptionChange
 					}
 					readOnly={readOnly}
-					title={initialTitle}
+					title={title}
+					titleAndDescriptionEdited={isTitleAndDescriptionEdited}
 					titleI18n={renameKeys(
 						sxpElementJSONObject.title_i18n,
 						formatLocaleWithDashes
@@ -586,21 +597,13 @@ function EditSXPElementForm({
 					)}
 
 					<ClayToolbar.Item>
-						<PreviewModal
-							body={_renderPreviewBody()}
-							size="lg"
-							title={Liferay.Language.get(
-								'preview-configuration'
-							)}
-						>
-							<ClayButton
-								borderless
-								displayType="secondary"
-								small
-							>
-								{Liferay.Language.get('preview')}
-							</ClayButton>
-						</PreviewModal>
+						<PreviewSXPElementModal
+							isSXPElementJSONInvalid={isSXPElementJSONInvalid}
+							onTitleAndDescriptionChange={
+								_handleTitleAndDescriptionPreview
+							}
+							sxpElementJSONObject={sxpElementJSONObject}
+						/>
 					</ClayToolbar.Item>
 				</PageToolbar>
 			</form>

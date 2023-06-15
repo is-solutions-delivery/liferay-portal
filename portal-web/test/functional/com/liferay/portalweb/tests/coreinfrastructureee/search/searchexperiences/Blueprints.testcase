@@ -5,7 +5,7 @@ definition {
 	property portal.suite.search.engine = "elasticsearch7";
 	property portal.upstream = "true";
 	property test.run.environment = "EE";
-	property testray.component.names = "Frontend Dataset";
+	property testray.component.names = "Frontend Data Set";
 	property testray.main.component.name = "Search Experiences";
 
 	setUp {
@@ -660,6 +660,78 @@ definition {
 		SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "apple apple apple,gala");
 	}
 
+	@description = "This is a use case for LPS-185939 - Federated search requests should inherit parent request's search context properties."
+	@priority = 3
+	test AssertFederatedSearchRequestsInheritParentRequestsSearchContextProperties {
+		task ("Add a user and assign it the Administrator role") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONRole.assignRoleToUser(
+				roleTitle = "Administrator",
+				userEmailAddress = "userea@liferay.com");
+		}
+
+		task ("Create a Web Contents Article as the new user") {
+			JSONWebcontent.addWebContent(
+				content = "Test",
+				groupName = "Guest",
+				title = "WC WebContent Title",
+				userEmailAddress = "userea@liferay.com",
+				userPassword = "test");
+		}
+
+		task ("Create Blueprint with the element Limit Search to My Contents") {
+			Blueprints.openBlueprintsAdmin();
+
+			Blueprints.createBlueprint(title = "Test Blueprint");
+
+			Blueprints.addElement(element = "Limit Search to My Contents");
+
+			PortletEntry.save();
+		}
+
+		task ("Create a Content Page with Search widgets") {
+			Search.openSearchPage();
+
+			SearchPortlets.configureEmbeddedSearchBar(
+				federatedSearchKey = "key",
+				searchScope = "Everything");
+
+			SearchResultPortlet.configureSearchResults(federatedSearchKey = "key");
+
+			SearchPortlets.configureSearchOptions(
+				allowEmptySearches = "true",
+				federatedSearchKey = "key");
+
+			Blueprints.applyBlueprintViaOptionsWidget(blueprintTitle = "Test Blueprint");
+
+			Blueprints.configureFederatedSearchKeyForOptionsWidget(federatedSearchKey = "key");
+		}
+
+		task ("As the new user, assert the Web Content Article shows up, but not the OOTB Documents") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea@liferay.com",
+				userLoginFullName = "userfn userln");
+
+			Search.openSearchPage();
+
+			SearchResultPortlet.viewSearchResults(
+				searchAssetTitle = "WC WebContent Title",
+				searchAssetType = "Web Content Article");
+
+			SearchResultPortlet.viewMultipleSearchResultsNotPresent(noResultsList = "astronaut.png/Document,earth.png/Document,moon.png/Document");
+		}
+	}
+
 	test AssertLocalizedFieldsAddLocaleDropdown {
 		Blueprints.openBlueprintsAdmin();
 
@@ -898,7 +970,8 @@ definition {
 		JSONObject.addObjectEntryViaJSONAPI(
 			fieldName = "title",
 			fieldValue = "reddish apple",
-			objectName = "CustomObject501");
+			objectName = "CustomObject501",
+			scope = "site");
 
 		JSONWebcontent.addWebContent(
 			content = "",
@@ -2784,15 +2857,18 @@ definition {
 		task ("Create three object entries that configure the title, siteID, and date fields") {
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Apple Fruit,siteID/3,date/2023-04-02",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Banana Fruit,siteID/2,date/2023-04-01",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Coconut Fruit,siteID/1,date/2023-04-03",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 		}
 
 		task ("Create a blueprint") {
@@ -4318,7 +4394,7 @@ definition {
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "Modal#BODY",
-			value1 = "boost-all-keywords-match");
+			value1 = "Boost All Keywords Match");
 	}
 
 	test ViewElementsAdminTableValues {

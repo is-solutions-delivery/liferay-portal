@@ -79,6 +79,11 @@ public class CommerceChannelItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/channel_item_selector.jsp");
+
 		HttpServletRequest httpServletRequest =
 			(HttpServletRequest)servletRequest;
 
@@ -91,11 +96,6 @@ public class CommerceChannelItemSelectorView
 		httpServletRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
 			commerceChannelItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/channel_item_selector.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

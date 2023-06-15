@@ -100,8 +100,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8973 | Test Summary: Assert the Property Menu after editing a Property"
+	@ignore = "true"
 	@priority = 3
 	test AssertPropertyMenuAfterEditProperty {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		task ("Switch to new property in AC") {
 			ACUtils.launchAC();
 
@@ -134,6 +139,11 @@ definition {
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8158 | Test Summary: Switch the property which was selected by default"
 	@priority = 5
 	test CanSwitchPropertyWhichWasSelectedByDefault {
+		property portal.upstream = "quarantine";
+
+		// AC Quarantine Reason: Test fix sites created twice
+		// AC Quarantine Ticket: LRAC-13677
+
 		ACUtils.launchAC();
 
 		AssertTextNotEquals(

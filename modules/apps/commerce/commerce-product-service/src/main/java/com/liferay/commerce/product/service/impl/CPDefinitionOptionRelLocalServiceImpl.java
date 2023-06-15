@@ -32,7 +32,7 @@ import com.liferay.commerce.product.service.CPOptionLocalService;
 import com.liferay.commerce.product.service.base.CPDefinitionOptionRelLocalServiceBaseImpl;
 import com.liferay.commerce.product.service.persistence.CPDefinitionOptionValueRelPersistence;
 import com.liferay.commerce.product.service.persistence.CPInstanceOptionValueRelPersistence;
-import com.liferay.commerce.product.util.JsonHelper;
+import com.liferay.commerce.product.util.CPJSONUtil;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -399,7 +399,7 @@ public class CPDefinitionOptionRelLocalServiceImpl
 				long cpDefinitionId, boolean skuContributorsOnly, String json)
 		throws PortalException {
 
-		if (_jsonHelper.isEmpty(json)) {
+		if (CPJSONUtil.isEmpty(json)) {
 			return Collections.emptyMap();
 		}
 
@@ -409,7 +409,7 @@ public class CPDefinitionOptionRelLocalServiceImpl
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
-		if (_jsonHelper.isArray(json)) {
+		if (JSONUtil.isJSONArray(json)) {
 			jsonArray = _jsonFactory.createJSONArray(json);
 		}
 		else {
@@ -431,8 +431,8 @@ public class CPDefinitionOptionRelLocalServiceImpl
 				continue;
 			}
 
-			JSONArray valueJSONArray = _jsonHelper.getValueAsJSONArray(
-				"value", jsonObject);
+			JSONArray valueJSONArray = CPJSONUtil.getJSONArray(
+				jsonObject, "value");
 
 			for (int j = 0; j < valueJSONArray.length(); j++) {
 				CPDefinitionOptionValueRel cpDefinitionOptionValueRel =
@@ -1060,9 +1060,6 @@ public class CPDefinitionOptionRelLocalServiceImpl
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private JsonHelper _jsonHelper;
 
 	@Reference
 	private UserLocalService _userLocalService;

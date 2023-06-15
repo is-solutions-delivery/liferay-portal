@@ -87,6 +87,8 @@ import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -378,6 +380,30 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 					return StringPool.BLANK;
 				}
 
+				long ddmFormInstanceRecordId = GetterUtil.getLong(
+					ddmFormFieldRenderingContext.getProperty(
+						"ddmFormInstanceRecordId"));
+
+				if ((ddmFormInstanceRecordId == 0) &&
+					ddmFormField.hasProperty("fileEntryURL")) {
+
+					String fileEntryURL = GetterUtil.getString(
+						ddmFormField.getProperty("fileEntryURL"));
+
+					if (Validator.isNotNull(fileEntryURL)) {
+						String portletNamespace = _portal.getPortletNamespace(
+							DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM);
+
+						return UriBuilder.fromUri(
+							fileEntryURL
+						).replaceQueryParam(
+							portletNamespace + "fileEntryId",
+							fileEntry.getFileEntryId()
+						).build(
+						).toString();
+					}
+				}
+
 				RequestBackedPortletURLFactory requestBackedPortletURLFactory =
 					RequestBackedPortletURLFactoryUtil.create(
 						ddmFormFieldRenderingContext.getHttpServletRequest());
@@ -389,9 +415,7 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 				).setParameter(
 					"ddmFormFieldName", ddmFormField.getName()
 				).setParameter(
-					"ddmFormInstanceRecordId",
-					ddmFormFieldRenderingContext.getProperty(
-						"ddmFormInstanceRecordId")
+					"ddmFormInstanceRecordId", ddmFormInstanceRecordId
 				).setParameter(
 					"fileEntryId", fileEntry.getFileEntryId()
 				).setResourceID(

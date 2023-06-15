@@ -14,11 +14,16 @@
 
 package com.liferay.notification.rest.internal.resource.v1_0;
 
+import com.liferay.notification.constants.NotificationActionKeys;
 import com.liferay.notification.constants.NotificationConstants;
 import com.liferay.notification.constants.NotificationQueueEntryConstants;
+import com.liferay.notification.context.NotificationContext;
+import com.liferay.notification.exception.NotificationQueueEntryTypeException;
 import com.liferay.notification.handler.NotificationHandler;
 import com.liferay.notification.handler.NotificationHandlerTracker;
+import com.liferay.notification.model.NotificationRecipient;
 import com.liferay.notification.rest.dto.v1_0.NotificationQueueEntry;
+import com.liferay.notification.rest.dto.v1_0.util.NotificationUtil;
 import com.liferay.notification.rest.resource.v1_0.NotificationQueueEntryResource;
 import com.liferay.notification.service.NotificationQueueEntryService;
 import com.liferay.notification.type.NotificationType;
@@ -32,6 +37,7 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
@@ -68,10 +74,17 @@ public class NotificationQueueEntryResourceImpl
 
 		return SearchUtil.search(
 			HashMapBuilder.put(
+				"create",
+				addAction(
+					NotificationActionKeys.ADD_NOTIFICATION_QUEUE_ENTRY,
+					"postNotificationQueueEntry",
+					NotificationConstants.RESOURCE_NAME_NOTIFICATION_QUEUE,
+					contextCompany.getCompanyId())
+			).put(
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getNotificationQueueEntriesPage",
-					NotificationConstants.RESOURCE_NAME,
+					NotificationConstants.RESOURCE_NAME_NOTIFICATION_QUEUE,
 					contextCompany.getCompanyId())
 			).build(),
 			booleanQuery -> {
@@ -101,6 +114,43 @@ public class NotificationQueueEntryResourceImpl
 	}
 
 	@Override
+	public NotificationQueueEntry postNotificationQueueEntry(
+			NotificationQueueEntry notificationQueueEntry)
+		throws Exception {
+
+		if (!StringUtil.equals(
+				notificationQueueEntry.getType(),
+				NotificationConstants.TYPE_EMAIL)) {
+
+			throw new NotificationQueueEntryTypeException(
+				"Type can only be email");
+		}
+
+		NotificationContext notificationContext = new NotificationContext();
+
+		NotificationType notificationType =
+			_notificationTypeServiceTracker.getNotificationType(
+				NotificationConstants.TYPE_EMAIL);
+
+		notificationContext.setNotificationQueueEntry(
+			notificationType.createNotificationQueueEntry(
+				contextUser, notificationQueueEntry.getBody(),
+				notificationContext, notificationQueueEntry.getSubject()));
+
+		notificationContext.setNotificationRecipient(
+			NotificationUtil.toNotificationRecipient(contextUser, 0L));
+		notificationContext.setNotificationRecipientSettings(
+			NotificationUtil.toNotificationRecipientSetting(
+				0L, notificationType, notificationQueueEntry.getRecipients(),
+				contextUser));
+		notificationContext.setType(NotificationConstants.TYPE_EMAIL);
+
+		return _toNotificationQueueEntry(
+			_notificationQueueEntryService.addNotificationQueueEntry(
+				notificationContext));
+	}
+
+	@Override
 	public void putNotificationQueueEntryResend(Long notificationQueueEntryId)
 		throws Exception {
 
@@ -121,10 +171,8 @@ public class NotificationQueueEntryResourceImpl
 				serviceBuilderNotificationQueueEntry)
 		throws PortalException {
 
-		NotificationHandler notificationHandler =
-			_notificationHandlerTracker.getNotificationHandler(
-				_portal.getClassName(
-					serviceBuilderNotificationQueueEntry.getClassNameId()));
+		NotificationRecipient notificationRecipient =
+			serviceBuilderNotificationQueueEntry.getNotificationRecipient();
 		NotificationType notificationType =
 			_notificationTypeServiceTracker.getNotificationType(
 				serviceBuilderNotificationQueueEntry.getType());
@@ -171,7 +219,8 @@ public class NotificationQueueEntryResourceImpl
 				id =
 					serviceBuilderNotificationQueueEntry.
 						getNotificationQueueEntryId();
-				priority = serviceBuilderNotificationQueueEntry.getPriority();
+				recipients = notificationType.toRecipients(
+					notificationRecipient.getNotificationRecipientSettings());
 				recipientsSummary = notificationType.getRecipientSummary(
 					serviceBuilderNotificationQueueEntry);
 				sentDate = serviceBuilderNotificationQueueEntry.getSentDate();
@@ -183,6 +232,20 @@ public class NotificationQueueEntryResourceImpl
 
 				setTriggerBy(
 					() -> {
+						long classNameId =
+							serviceBuilderNotificationQueueEntry.
+								getClassNameId();
+
+						if (classNameId == 0) {
+							return _language.get(
+								contextAcceptLanguage.getPreferredLocale(),
+								"added-via-api");
+						}
+
+						NotificationHandler notificationHandler =
+							_notificationHandlerTracker.getNotificationHandler(
+								_portal.getClassName(classNameId));
+
 						if (notificationHandler != null) {
 							return notificationHandler.getTriggerBy(
 								contextAcceptLanguage.getPreferredLocale());

@@ -242,6 +242,78 @@ definition {
 		}
 	}
 
+	macro copy {
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Copy To",
+			rowEntry = ${dmFolderName});
+
+		Alert.viewWarningSpecific(warningMessage = "The copying process may take some time. Note that categories, ratings, tags, and custom document types will not be copied.");
+
+		AssertElementPresent(
+			key_fieldLabel = "Copy From",
+			locator1 = "FormFields#FIELD_DISABLED");
+
+		AssertElementPresent(
+			key_fieldLabel = "Copy To",
+			locator1 = "FormFields#FIELD_DISABLED");
+
+		AssertVisible(
+			key_text = "Copy",
+			locator1 = "Button#ANY_DISABLED");
+
+		Button.clickSelect();
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		WaitForVisible(
+			key_breadcrumbName = "Sites and Libraries",
+			locator1 = "Breadcrumb#BREADCRUMB_ENTRY");
+
+		if (isSet(siteName) || isSet(depotName)) {
+			AssertClick(
+				key_breadcrumbName = "Sites and Libraries",
+				locator1 = "Breadcrumb#BREADCRUMB_ENTRY",
+				value1 = "Sites and Libraries");
+		}
+
+		if (isSet(siteName)) {
+			LexiconCard.clickCard(card = ${siteName});
+		}
+
+		if (isSet(depotName)) {
+			AssertClick(
+				key_groupTab = "Asset Library",
+				locator1 = "ItemSelector#NAVIGATION_GROUP_TAB",
+				value1 = "Asset Library");
+
+			LexiconCard.clickCard(card = ${depotName});
+		}
+
+		if (isSet(homeFolder)) {
+			AssertClick(
+				key_text = "Select This Folder",
+				locator1 = "Button#ANY",
+				value1 = "Select This Folder");
+		}
+		else {
+			AssertClick(
+				key_dmFolderName = ${targetFolderName},
+				locator1 = "DocumentsAndMedia#SELECT_FOLDER_BUTTON",
+				value1 = "Select");
+		}
+
+		SelectFrame(locator1 = "relative=top");
+
+		Button.click(button = "Copy");
+
+		if (isSet(copyDuplicatedDocument)) {
+			Alert.viewErrorMessage(errorMessage = "A folder already exists with name ${dmFolderName}");
+		}
+		else {
+			Alert.viewSuccessMessage();
+		}
+	}
+
 	macro deleteCP {
 		var key_dmFolderName = ${dmFolderName};
 
@@ -477,7 +549,7 @@ definition {
 	}
 
 	macro subscribePG {
-		Click(locator1 = "Icon#INFO");
+		Click(locator1 = "Icon#INFO_DM");
 
 		Click(locator1 = "Icon#SUBSCRIBE_BELL");
 

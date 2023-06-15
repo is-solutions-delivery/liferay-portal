@@ -772,6 +772,24 @@ definition {
 		}
 	}
 
+	macro assertScreenNameDisabled {
+		AssertClick(
+			key_assetTitle = "Information",
+			locator1 = "NavBar#ASSET_TITLE",
+			value1 = "Information");
+
+		AssertElementPresent(locator1 = "UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD_DISABLED");
+	}
+
+	macro assertSection {
+		for (var sectionName : list ${sectionName}) {
+			AssertClick(
+				key_assetTitle = ${sectionName},
+				locator1 = "NavBar#ASSET_TITLE",
+				value1 = ${sectionName});
+		}
+	}
+
 	macro assignAccountCP {
 		User.openUsersAdmin();
 
@@ -933,10 +951,9 @@ definition {
 			locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME",
 			value1 = ${userGroupName});
 
-		AssertClick(
-			key_dmDocumentTypeName = ${userGroupName},
-			locator1 = "DocumentsAndMediaSelectDocument#DOCUMENTS_TABLE_CHOOSE",
-			value1 = "Choose");
+		Click(
+			key_card = ${userGroupName},
+			locator1 = "Card#CARD");
 
 		SelectFrame(value1 = "relative=top");
 
@@ -1303,10 +1320,10 @@ definition {
 	}
 
 	macro deleteProfileImage {
-		var key_text = "Delete";
-
-		if (!(IsElementPresent(locator1 = "CustomerPortalSite#ANY_DISABLED_BUTTON"))) {
-			Button.click(button = "Delete");
+		if (!(IsElementPresent(key_title = "Clear Image", locator1 = "Button#ANY_TITLE_DISABLED"))) {
+			Click(
+				ariaLabel = "Clear Image",
+				locator1 = "Button#ANY_WITH_ARIA_LABEL");
 		}
 
 		AssertVisible(
@@ -2192,6 +2209,8 @@ definition {
 			specificURL = ${specificURL},
 			userEmailAddress = ${userEmailAddress},
 			userPassword = ${userPassword});
+
+		OpenIDConnect.acceptConditions();
 
 		OpenIDConnect.acceptConditions();
 

@@ -6,7 +6,7 @@ definition {
 	}
 
 	@prose = "I want to print rows-hash table: ${table}"
-	macro echoRowsHashTable {
+	macro echoRowsHashTable{
 		var RowsHashTable rowsHashTable = new RowsHashTable("${table}");
 
 		for  (var row : table "${rowsHashTable}")

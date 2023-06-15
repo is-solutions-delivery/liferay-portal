@@ -684,7 +684,7 @@ definition {
 	macro deleteCP {
 		var key_siteName = ${siteName};
 
-		Search.searchCP(searchTerm = "Name");
+		Search.searchCP(searchTerm = ${siteName});
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "Sites#SITE_TABLE_NAME",
@@ -707,8 +707,6 @@ definition {
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#EMPTY_INFO",
 			value1 = "No sites were found.");
-
-		AssertTextNotPresent(value1 = ${siteName});
 	}
 
 	macro disableRecycleBinCP {
@@ -1115,9 +1113,9 @@ definition {
 	}
 
 	macro searchCP {
-		Search.searchCP(searchTerm = "Site Name");
+		Search.searchCP(searchTerm = ${siteName});
 
-		Site.viewSearchResultsCP(siteName = "Site Name");
+		Site.viewSearchResultsCP(siteName = ${siteName});
 	}
 
 	macro searchMemberCP {
@@ -1317,15 +1315,17 @@ definition {
 	}
 
 	macro viewCP {
-		var key_siteName = ${siteName};
-
-		AssertElementPresent(locator1 = "Sites#SITE_TABLE_CHECKBOX");
+		AssertElementPresent(
+			key_siteName = ${siteName},
+			locator1 = "Sites#SITE_TABLE_CHECKBOX");
 
 		AssertTextEquals.assertPartialText(
+			key_siteName = ${siteName},
 			locator1 = "Sites#SITE_TABLE_NAME",
 			value1 = ${siteName});
 
 		AssertTextEquals(
+			key_siteName = ${siteName},
 			locator1 = "Sites#SITE_TABLE_TYPE",
 			value1 = ${siteType});
 

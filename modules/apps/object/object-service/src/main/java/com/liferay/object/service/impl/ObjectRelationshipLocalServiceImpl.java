@@ -29,7 +29,7 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.model.ObjectRelationshipTable;
-import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTable;
+import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTableUtil;
 import com.liferay.object.petra.sql.dsl.DynamicObjectRelationshipMappingTable;
 import com.liferay.object.relationship.util.ObjectRelationshipUtil;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -797,6 +797,8 @@ public class ObjectRelationshipLocalServiceImpl
 		objectField.setIndexedLanguageId(null);
 		objectField.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectField.setName(dbColumnName);
+		objectField.setReadOnly(ObjectFieldConstants.READ_ONLY_FALSE);
+		objectField.setReadOnlyConditionExpression(StringPool.BLANK);
 		objectField.setRelationshipType(type);
 		objectField.setRequired(false);
 
@@ -813,15 +815,23 @@ public class ObjectRelationshipLocalServiceImpl
 				NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME,
 			StringUtil.replaceLast(objectField.getName(), "Id", "ERC"));
 
-		if (objectDefinition2.isApproved()) {
-			runSQL(
-				DynamicObjectDefinitionTable.getAlterTableAddColumnSQL(
-					dbTableName, objectField.getDBColumnName(), "Long"));
+		if (!objectDefinition2.isApproved()) {
+			return objectField;
+		}
 
-			if (_objectDefinitionLocalService != null) {
-				_objectDefinitionLocalService.deployObjectDefinition(
-					objectDefinition2);
-			}
+		runSQL(
+			DynamicObjectDefinitionTableUtil.getAlterTableAddColumnSQL(
+				dbTableName, objectField.getDBColumnName(), "Long"));
+
+		IndexMetadata indexMetadata =
+			IndexMetadataFactoryUtil.createIndexMetadata(
+				false, dbTableName, objectField.getDBColumnName());
+
+		runSQL(indexMetadata.getCreateSQL(null));
+
+		if (_objectDefinitionLocalService != null) {
+			_objectDefinitionLocalService.deployObjectDefinition(
+				objectDefinition2);
 		}
 
 		return objectField;

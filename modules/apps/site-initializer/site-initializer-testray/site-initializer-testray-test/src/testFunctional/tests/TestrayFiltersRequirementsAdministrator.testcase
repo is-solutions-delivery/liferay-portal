@@ -14,15 +14,20 @@ definition {
 	var testSiteName = "Testray 2";
 
 	setUp {
-		task ("Login and create a Testray Site") {
+		task ("Set up instance and sign in") {
 			TestCase.setUpPortalInstance();
 
 			User.firstLoginPG();
-
-			Testray.addTestraySite(siteName = ${testSiteName});
 		}
 
-		task ("create all objects: projects, teams, components, requirements") {
+		task ("Create a new Testray Site") {
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
+		}
+
+		task ("create project, team, component and requirement via API") {
 			JSONTestray.addProject(
 				projectDescription = "Project Description 1",
 				projectName = ${projectName});
@@ -50,7 +55,7 @@ definition {
 				requirementName = "Requirement 2");
 		}
 
-		task ("Go to the Requirements page") {
+		task ("Go to the Requirements tab") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(
@@ -64,9 +69,11 @@ definition {
 	}
 
 	tearDown {
-		JSONTestrayAPI.deleteProject(projectName = ${projectName});
+		task ("Delete project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
-		Testray.testrayApisTearDown();
+			Testray.testrayApisTearDown();
+		}
 
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
@@ -77,8 +84,8 @@ definition {
 
 	@description = "Story ID: LPS-173519 | Test Summary: Verify if as an Administrator I should not see requirements that don't exist when I try filtering for them"
 	@priority = 3
-	test AdminCanFilterForNonexistantRequirements {
-		property test.name.skip.portal.instance = "TestrayFiltersRequirementsAdministrator#AdminCanFilterForNonexistantRequirements";
+	test AdminCanFilterForNonexistentRequirements {
+		property test.name.skip.portal.instance = "TestrayFiltersRequirementsAdministrator#AdminCanFilterForNonexistentRequirements";
 
 		task ("When the user filters a requirement by its non-existent name") {
 			TestrayFilter.clickFilter();

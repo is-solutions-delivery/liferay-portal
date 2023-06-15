@@ -57,11 +57,11 @@ public class MyAccountViewMVCRenderCommand implements MVCRenderCommand {
 			LiferayPortletRequest liferayPortletRequest =
 				LiferayPortletUtil.getLiferayPortletRequest(renderRequest);
 
-			DynamicServletRequest dynamicRequest =
+			DynamicServletRequest dynamicServletRequest =
 				(DynamicServletRequest)
 					liferayPortletRequest.getHttpServletRequest();
 
-			dynamicRequest.setParameter(
+			dynamicServletRequest.setParameter(
 				"p_u_i_d", String.valueOf(user.getUserId()));
 
 			return "/edit_user.jsp";

@@ -28,21 +28,29 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.site.initializer.SiteInitializer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * @author Rubén Pulido
@@ -81,6 +89,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		_testPostSiteFailureInvalidKey();
 		_testPostSiteFailureNoName();
 		_testPostSiteFailureParentSiteNotFound();
+		_testPostSiteFailureSiteInitializerInactive();
 		_testPostSiteFailureSiteInitializerNotFound();
 		_testPostSiteFailureSiteTemplateInactive();
 		_testPostSiteFailureSiteTemplateNotFound();
@@ -190,6 +199,47 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 			Assert.assertEquals(
 				"No site exists for site key " + randomSite.getParentSiteKey(),
 				problem.getTitle());
+		}
+	}
+
+	private void _testPostSiteFailureSiteInitializerInactive()
+		throws Exception {
+
+		Bundle bundle = FrameworkUtil.getBundle(SiteResourceTest.class);
+
+		BundleContext bundleContext = bundle.getBundleContext();
+
+		String siteInitializerKey = RandomTestUtil.randomString();
+
+		ServiceRegistration<SiteInitializer> serviceRegistration =
+			bundleContext.registerService(
+				SiteInitializer.class,
+				new TestSiteInitializer(siteInitializerKey),
+				HashMapDictionaryBuilder.put(
+					"site.initializer.key", siteInitializerKey
+				).build());
+
+		Site randomSite = randomSite();
+
+		randomSite.setTemplateKey(siteInitializerKey);
+		randomSite.setTemplateType(Site.TemplateType.SITE_INITIALIZER);
+
+		try {
+			testPostSite_addSite(randomSite);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("BAD_REQUEST", problem.getStatus());
+			Assert.assertEquals(
+				"Site initializer with site template key " +
+					randomSite.getTemplateKey() + " is inactive",
+				problem.getTitle());
+		}
+		finally {
+			serviceRegistration.unregister();
 		}
 	}
 
@@ -407,5 +457,44 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 	private LayoutSetPrototypeLocalService _layoutSetPrototypeLocalService;
 
 	private final List<Site> _sites = new ArrayList<>();
+
+	private class TestSiteInitializer implements SiteInitializer {
+
+		public TestSiteInitializer(String key) {
+			_key = key;
+		}
+
+		@Override
+		public String getDescription(Locale locale) {
+			return RandomTestUtil.randomString();
+		}
+
+		@Override
+		public String getKey() {
+			return _key;
+		}
+
+		@Override
+		public String getName(Locale locale) {
+			return RandomTestUtil.randomString();
+		}
+
+		@Override
+		public String getThumbnailSrc() {
+			return RandomTestUtil.randomString();
+		}
+
+		@Override
+		public void initialize(long groupId) {
+		}
+
+		@Override
+		public boolean isActive(long companyId) {
+			return false;
+		}
+
+		private final String _key;
+
+	}
 
 }

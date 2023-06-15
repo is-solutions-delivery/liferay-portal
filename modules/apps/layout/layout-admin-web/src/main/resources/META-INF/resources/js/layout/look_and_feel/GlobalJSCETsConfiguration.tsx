@@ -48,6 +48,7 @@ const DEFAULT_SCRIPT_LOCATION_OPTION: IScriptLocationOptions = 'bottom';
 export default function GlobalJSCETsConfiguration({
 	globalJSCETSelectorURL,
 	globalJSCETs: initialGlobalJSCETs,
+	isReadOnly,
 	portletNamespace,
 	selectGlobalJSCETsEventName,
 }: IProps) {
@@ -214,6 +215,7 @@ export default function GlobalJSCETsConfiguration({
 
 			<AddExtensionButton
 				addGlobalJSCET={addGlobalJSCET}
+				isReadOnly={isReadOnly}
 				portletNamespace={portletNamespace}
 			/>
 
@@ -268,7 +270,7 @@ export default function GlobalJSCETsConfiguration({
 								<React.Fragment key={scriptLocation}>
 									<ClayTable.Row>
 										<ClayTable.Cell
-											className="list-group-header-title py-2"
+											className="c-py-2 list-group-header-title"
 											colSpan={5}
 										>
 											{scriptLocation === 'bottom'
@@ -315,11 +317,13 @@ export default function GlobalJSCETsConfiguration({
 
 interface IAddExtensionButton {
 	addGlobalJSCET: (scriptLocation: IScriptLocationOptions) => unknown;
+	isReadOnly: boolean;
 	portletNamespace: string;
 }
 
 function AddExtensionButton({
 	addGlobalJSCET,
+	isReadOnly,
 	portletNamespace,
 }: IAddExtensionButton) {
 	const [active, setActive] = useState(false);
@@ -338,11 +342,12 @@ function AddExtensionButton({
 			onActiveChange={setActive}
 			trigger={
 				<ClayButton
-					className="mb-3"
+					className="c-mb-3"
+					disabled={isReadOnly}
 					displayType="secondary"
 					type="button"
 				>
-					<ClayIcon className="mr-2" symbol="plus" />
+					<ClayIcon className="c-mr-2" symbol="plus" />
 
 					{Liferay.Language.get('add-javascript-client-extensions')}
 				</ClayButton>
@@ -443,6 +448,7 @@ interface IGlobalJSCETGroup {
 interface IProps {
 	globalJSCETSelectorURL: string;
 	globalJSCETs: IGlobalJSCET[];
+	isReadOnly: boolean;
 	portletNamespace: string;
 	selectGlobalJSCETsEventName: string;
 }

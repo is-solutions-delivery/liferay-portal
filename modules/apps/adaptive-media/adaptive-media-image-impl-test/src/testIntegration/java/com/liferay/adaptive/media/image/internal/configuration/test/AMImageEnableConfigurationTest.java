@@ -217,7 +217,7 @@ public class AMImageEnableConfigurationTest
 	}
 
 	@Test
-	public void testEnableNonexistantConfigurationEntry() throws Exception {
+	public void testEnableNonexistentConfigurationEntry() throws Exception {
 		String uuid = RandomTestUtil.randomString();
 
 		_amImageConfigurationHelper.enableAMImageConfigurationEntry(

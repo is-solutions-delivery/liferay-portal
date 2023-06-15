@@ -60,22 +60,23 @@ public class SegmentsExperimentModelListener
 			long defaultSegmentsExperienceId =
 				_segmentsExperienceLocalService.
 					fetchDefaultSegmentsExperienceId(
-						segmentsExperiment.getClassPK());
+						segmentsExperiment.getPlid());
 
 			SegmentsExperienceUtil.copySegmentsExperienceData(
-				segmentsExperiment.getClassPK(), _commentManager,
-				segmentsExperiment.getGroupId(), _portletRegistry,
+				_commentManager, segmentsExperiment.getGroupId(),
+				_layoutLocalService.getLayout(segmentsExperiment.getPlid()),
+				_portletRegistry,
 				segmentsExperiment.getWinnerSegmentsExperienceId(),
 				defaultSegmentsExperienceId, className -> serviceContext,
 				segmentsExperiment.getUserId());
 
 			Layout draftLayout = _layoutLocalService.fetchDraftLayout(
-				segmentsExperiment.getClassPK());
+				segmentsExperiment.getPlid());
 
 			if (draftLayout != null) {
 				SegmentsExperienceUtil.copySegmentsExperienceData(
-					draftLayout.getPlid(), _commentManager,
-					segmentsExperiment.getGroupId(), _portletRegistry,
+					_commentManager, segmentsExperiment.getGroupId(),
+					draftLayout, _portletRegistry,
 					segmentsExperiment.getWinnerSegmentsExperienceId(),
 					defaultSegmentsExperienceId, className -> serviceContext,
 					segmentsExperiment.getUserId());

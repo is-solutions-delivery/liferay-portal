@@ -15,6 +15,7 @@
 package com.liferay.exportimport.internal.exportimport.content.processor;
 
 import com.liferay.exportimport.configuration.ExportImportServiceConfiguration;
+import com.liferay.exportimport.configuration.ExportImportServiceConfigurationWhitelistedURLPatternsHelper;
 import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
 import com.liferay.exportimport.kernel.exception.ExportImportContentProcessorException;
 import com.liferay.exportimport.kernel.exception.ExportImportContentValidationException;
@@ -571,9 +572,12 @@ public class LayoutReferencesExportImportContentProcessor
 					PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
 			}
 			catch (Exception exception) {
-				if ((exception instanceof NoSuchLayoutException) &&
-					!_exportImportServiceConfiguration.
-						validateLayoutReferences()) {
+				if (((exception instanceof NoSuchLayoutException) &&
+					 !_exportImportServiceConfiguration.
+						 validateLayoutReferences()) ||
+					_exportImportServiceConfigurationWhitelistedURLPatternsHelper.
+						isWhitelistedURL(
+							CompanyThreadLocal.getCompanyId(), url)) {
 
 					continue;
 				}
@@ -1036,7 +1040,10 @@ public class LayoutReferencesExportImportContentProcessor
 				}
 			}
 
-			if (!url.startsWith(StringPool.SLASH)) {
+			if (!url.startsWith(StringPool.SLASH) ||
+				_exportImportServiceConfigurationWhitelistedURLPatternsHelper.
+					isWhitelistedURL(companyId, url)) {
+
 				continue;
 			}
 
@@ -1341,6 +1348,10 @@ public class LayoutReferencesExportImportContentProcessor
 
 	private volatile ExportImportServiceConfiguration
 		_exportImportServiceConfiguration;
+
+	@Reference
+	private ExportImportServiceConfigurationWhitelistedURLPatternsHelper
+		_exportImportServiceConfigurationWhitelistedURLPatternsHelper;
 
 	@Reference
 	private GroupLocalService _groupLocalService;

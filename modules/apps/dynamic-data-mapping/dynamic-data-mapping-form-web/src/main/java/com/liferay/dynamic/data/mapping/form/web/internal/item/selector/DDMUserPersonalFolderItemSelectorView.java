@@ -81,6 +81,12 @@ public class DDMUserPersonalFolderItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher(
+				"/item_selector/user_personal_folder.jsp");
+
 		DDMUserPersonalFolderItemSelectorViewDisplayContext
 			ddmUserPersonalFolderItemSelectorViewDisplayContext =
 				new DDMUserPersonalFolderItemSelectorViewDisplayContext(
@@ -92,12 +98,6 @@ public class DDMUserPersonalFolderItemSelectorView
 		servletRequest.setAttribute(
 			DDMUserPersonalFolderItemSelectorViewDisplayContext.class.getName(),
 			ddmUserPersonalFolderItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher(
-				"/item_selector/user_personal_folder.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

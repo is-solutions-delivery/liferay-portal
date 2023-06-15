@@ -19,6 +19,7 @@ import ClayModal, {ClayModalProvider, useModal} from '@clayui/modal';
 import {Observer} from '@clayui/modal/lib/types';
 import {
 	API,
+	BetaButton,
 	FormError,
 	Input,
 	REQUIRED_MSG,
@@ -32,6 +33,8 @@ import {
 	firstLetterUppercase,
 	removeAllSpecialCharacters,
 } from '../utils/string';
+
+import './ModalAddObjectDefinition.scss';
 
 const normalizeName: TNormalizeName = (str) => {
 	const split = str.split(' ');
@@ -47,13 +50,30 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 	apiURL,
 	observer,
 	onClose,
-	storageTypes,
+	storages,
 }) => {
+	const storageSortedByLabel = [...storages].sort(
+		(firstStorage, secondStorage) => {
+			const firstLabel = firstStorage.label.toLowerCase();
+			const secondLabel = secondStorage.label.toLowerCase();
+
+			if (firstLabel < secondLabel) {
+				return -1;
+			}
+			else if (firstLabel > secondLabel) {
+				return 1;
+			}
+			else {
+				return 0;
+			}
+		}
+	);
+
 	const initialValues: TInitialValues = {
 		label: '',
 		name: undefined,
 		pluralLabel: '',
-		storageType: storageTypes[0],
+		storage: storageSortedByLabel[0],
 	};
 	const [error, setError] = useState<string>('');
 
@@ -61,7 +81,7 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 		label,
 		name,
 		pluralLabel,
-		storageType,
+		storage,
 	}: TInitialValues) => {
 		const objectDefinition: ObjectDefinition = {
 			label: {
@@ -76,7 +96,7 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 		};
 
 		if (Liferay.FeatureFlags['LPS-135430']) {
-			objectDefinition.storageType = storageType.toLowerCase();
+			objectDefinition.storageType = storage.type;
 		}
 		try {
 			await API.save(apiURL, objectDefinition, 'POST');
@@ -112,9 +132,11 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 	});
 
 	const selectedStorageType = (storageType: string) => {
-		return storageTypes.find(
-			(item) => item?.toLowerCase() === storageType?.toLowerCase()
+		const chooseStorage = storageSortedByLabel.find(
+			(currentStorage) => currentStorage.type === storageType
 		);
+
+		return chooseStorage?.type;
 	};
 
 	return (
@@ -160,25 +182,34 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 					/>
 
 					{Liferay.FeatureFlags['LPS-135430'] && (
-						<Select
-							label={Liferay.Language.get('storage-type')}
-							name="storageType"
-							onChange={({target: {value}}) => {
-								setValues({
-									...values,
-									storageType: storageTypes.find(
-										(storageType) => storageType === value
-									),
-								});
-							}}
-							options={storageTypes.map((storageType) => {
-								return {label: storageType};
-							})}
-							tooltip={Liferay.Language.get(
-								'object-definition-storage-type-tooltip'
-							)}
-							value={selectedStorageType(values.storageType)}
-						/>
+						<div className="lfr__object-web-modal-add-object-definition-storage-type">
+							<Select
+								label={Liferay.Language.get('storage-type')}
+								name="storageType"
+								onChange={({target: {value}}) => {
+									setValues({
+										...values,
+										storage: storageSortedByLabel.find(
+											(storage) => storage.type === value
+										),
+									});
+								}}
+								options={storageSortedByLabel.map((storage) => {
+									return {
+										key: storage.type,
+										label: storage.label,
+									};
+								})}
+								tooltip={Liferay.Language.get(
+									'object-definition-storage-type-tooltip'
+								)}
+								value={selectedStorageType(values.storage.type)}
+							/>
+
+							<div className="lfr__object-web-modal-add-object-definition-storage-type-beta">
+								<BetaButton />
+							</div>
+						</div>
 					)}
 				</ClayModal.Body>
 
@@ -203,18 +234,23 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 	);
 };
 
+type Storage = {
+	label: string;
+	type: string;
+};
+
 interface IProps extends React.HTMLAttributes<HTMLElement> {
 	apiURL: string;
 	observer: Observer;
 	onClose: () => void;
-	storageTypes: string[];
+	storages: Storage[];
 }
 
 type TInitialValues = {
 	label: string;
 	name?: string;
 	pluralLabel: string;
-	storageType: string;
+	storage: Storage;
 };
 
 type ObjectDefinition = {
@@ -228,7 +264,7 @@ type ObjectDefinition = {
 
 type TNormalizeName = (str: string) => string;
 
-const ModalWithProvider: React.FC<IProps> = ({apiURL, storageTypes}) => {
+const ModalWithProvider: React.FC<IProps> = ({apiURL, storages}) => {
 	const [visibleModal, setVisibleModal] = useState<boolean>(false);
 	const {observer, onClose} = useModal({
 		onClose: () => setVisibleModal(false),
@@ -249,7 +285,7 @@ const ModalWithProvider: React.FC<IProps> = ({apiURL, storageTypes}) => {
 					apiURL={apiURL}
 					observer={observer}
 					onClose={onClose}
-					storageTypes={storageTypes}
+					storages={storages}
 				/>
 			)}
 		</ClayModalProvider>

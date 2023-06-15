@@ -21,6 +21,7 @@ const withBaseResults = (withData, configs) => {
 		emptyTitle,
 		getColumns,
 		legacyDropdownRangeKey = true,
+		rangeKeys,
 		rowIdentifier,
 		showDropdownRangeKey = true,
 		showFilterAndOrder = false,
@@ -38,11 +39,12 @@ const withBaseResults = (withData, configs) => {
 		withToolbar({
 			disableSearch,
 			legacyDropdownRangeKey,
+			rangeKeys,
 			showDropdownRangeKey,
 			showFilterAndOrder
 		}),
 		withPaginationBar({defaultDelta}),
-		withLoading({alignCenter: true, page: false}),
+		withLoading({alignCenter: true, displayCard: true, page: false}),
 		withError({page: false}),
 		withEmpty({
 			emptyDescription,
@@ -78,6 +80,7 @@ const withBaseResults = (withData, configs) => {
 						orderIOMap={orderIOMap}
 						page={page}
 						query={query}
+						rangeKeys={rangeKeys}
 						rangeSelectors={rangeSelectors}
 						router={router}
 						rowIdentifier={rowIdentifier}

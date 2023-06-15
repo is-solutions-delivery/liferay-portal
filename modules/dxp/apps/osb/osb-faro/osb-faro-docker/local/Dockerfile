@@ -1,4 +1,4 @@
-FROM liferay/dxp:7.1.10-dxp-26-d4.1.0-20220613181358
+FROM liferay/dxp:7.4.13-u78
 
 USER root
 
@@ -42,8 +42,8 @@ COPY common/resources/log4j $LIFERAY_HOME/osgi/log4j/
 
 # WAR
 
-COPY *.war $LIFERAY_HOME/osgi/war/
+COPY *osb-faro*.war $LIFERAY_HOME/osgi/modules/
 
 # Modules
 
-COPY *.jar $LIFERAY_HOME/osgi/modules/
+COPY *osb.faro*.jar $LIFERAY_HOME/osgi/modules/

@@ -44,6 +44,8 @@ String inline = (String)request.getAttribute("liferay-commerce:add-to-cart:inlin
 String namespace = (String)request.getAttribute("liferay-commerce:add-to-cart:namespace");
 ProductSettingsModel productSettingsModel = (ProductSettingsModel)request.getAttribute("liferay-commerce:add-to-cart:productSettingsModel");
 String size = (String)request.getAttribute("liferay-commerce:add-to-cart:size");
+String showOrderTypeModal = (String)request.getAttribute("liferay-commerce:add-to-cart:showOrderTypeModal");
+String showOrderTypeModalURL = (String)request.getAttribute("liferay-commerce:add-to-cart:showOrderTypeModalURL");
 String skuOptions = (String)request.getAttribute("liferay-commerce:add-to-cart:skuOptions");
 String stockQuantity = (String)request.getAttribute("liferay-commerce:add-to-cart:stockQuantity");
 

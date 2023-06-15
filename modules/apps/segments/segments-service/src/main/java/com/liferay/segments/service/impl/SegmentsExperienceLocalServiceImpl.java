@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -249,9 +248,8 @@ public class SegmentsExperienceLocalServiceImpl
 		// Segments experiments
 
 		for (SegmentsExperiment segmentsExperiment :
-				_segmentsExperimentPersistence.findByS_C_C(
+				_segmentsExperimentPersistence.findByS_P(
 					segmentsExperience.getSegmentsExperienceId(),
-					_classNameLocalService.getClassNameId(Layout.class),
 					_getPublishedLayoutPlid(segmentsExperience.getPlid()))) {
 
 			_deleteSegmentsExperiment(segmentsExperiment);
@@ -276,9 +274,8 @@ public class SegmentsExperienceLocalServiceImpl
 
 		if (defaultSegmentsExperience != null) {
 			for (SegmentsExperiment segmentsExperiment :
-					_segmentsExperimentPersistence.findByS_C_C(
+					_segmentsExperimentPersistence.findByS_P(
 						defaultSegmentsExperience.getSegmentsExperienceId(),
-						_classNameLocalService.getClassNameId(Layout.class),
 						_getPublishedLayoutPlid(plid))) {
 
 				_deleteSegmentsExperiment(segmentsExperiment);
@@ -696,9 +693,6 @@ public class SegmentsExperienceLocalServiceImpl
 					" already exists");
 		}
 	}
-
-	@Reference
-	private ClassNameLocalService _classNameLocalService;
 
 	@Reference
 	private Language _language;

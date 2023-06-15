@@ -1,11 +1,12 @@
 import * as API from 'shared/api';
+import Alerts, {AlertTypes} from 'shared/components/Alert';
 import BasePage from 'settings/components/BasePage';
 import Card from 'shared/components/Card';
 import ClayButton from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import CopyButton from 'shared/components/CopyButton';
+import GenerateTokenCard from '../components/GenerateTokenCard';
 import moment from 'moment';
-import Promise from 'metal-promise';
 import React, {useState} from 'react';
 import Table from 'shared/components/table';
 import TokenCell from '../components/TokenCell';
@@ -17,6 +18,8 @@ import {ApisPath} from 'shared/util/url-constants';
 import {close, modalTypes, open} from 'shared/actions/modals';
 import {compose} from 'redux';
 import {connect, ConnectedProps} from 'react-redux';
+import {CUSTOM_DATE_FORMAT} from 'shared/util/date';
+import {ExpirationPeriod} from 'shared/util/constants';
 import {formatDateToTimeZone, getDateNow} from 'shared/util/date';
 import {RootState} from 'shared/store';
 import {sub} from 'shared/util/lang';
@@ -30,7 +33,12 @@ import {
 export const isExpired = (expirationDate: string) =>
 	moment.utc(expirationDate).isSameOrBefore(getDateNow());
 
-const DATE_FORMAT = 'MMM DD, YYYY';
+const getTimestamp = (date: Date) =>
+	Math.floor(new Date(date).getTime() / 1000);
+
+const isIndefinite = ({createDate, expirationDate}) =>
+	getTimestamp(expirationDate) - getTimestamp(createDate) ===
+	Number(ExpirationPeriod.Indefinite);
 
 const connector = connect(
 	(store: RootState, {groupId}: {groupId: string}) => ({
@@ -55,6 +63,9 @@ const TokenList: React.FC<
 	} & PropsFromRedux
 > = ({addAlert, close, groupId, open, refetch, timeZoneId, tokens}) => {
 	const [loading, setLoading] = useState(false);
+	const [onCloseAlert, setOnCloseAlert] = useState(false);
+
+	const tokenExpired = !!tokens.length && isExpired(tokens[0].expirationDate);
 
 	const handleError = () => {
 		setLoading(false);
@@ -67,195 +78,190 @@ const TokenList: React.FC<
 	};
 
 	const handleSuccess = message => {
+		setLoading(false);
+
 		addAlert({
 			alertType: Alert.Types.Success,
 			message
 		});
 
-		setLoading(false);
-
 		refetch();
 	};
 
 	return (
-		<Card>
-			<Card.Body>
-				<div className='d-flex justify-content-between align-items-center'>
-					<div className='text-secondary'>
-						<strong className='font-weight-bold'>
-							{Liferay.Language.get('root-endpoint')}
-						</strong>
+		<div className='col-xl-8 pl-0'>
+			{tokenExpired && !onCloseAlert && (
+				<Alerts
+					iconSymbol='warning-full'
+					onClose={() => setOnCloseAlert(true)}
+					title={Liferay.Language.get('warning')}
+					type={AlertTypes.Warning}
+				>
+					{Liferay.Language.get('expired-token-warning')}
+				</Alerts>
+			)}
 
-						<span className='ml-1'>
+			{(tokenExpired || !tokens.length) && (
+				<GenerateTokenCard
+					groupId={groupId}
+					onError={handleError}
+					onSuccess={handleSuccess}
+					token={tokens[0]?.token}
+				/>
+			)}
+
+			<Card>
+				<Card.Body>
+					<div className='align-items-start d-flex flex-column justify-content-between'>
+						<h4 className='mb-4'>
+							{Liferay.Language.get('token-information')}
+						</h4>
+
+						<h5>{Liferay.Language.get('root-endpoint')}</h5>
+
+						<span className='text-secondary'>
 							{window.location.origin + ApisPath}
 						</span>
 					</div>
+				</Card.Body>
 
-					{!tokens.length && (
-						<ClayButton
-							className='button-root'
-							data-testid='generate-token-button'
-							displayType='primary'
-							onClick={() => {
-								setLoading(true);
-
-								API.apiTokens
-									.generate({groupId})
-									.then(() => {
-										analytics.track('Created API Token');
-
-										handleSuccess(
-											Liferay.Language.get(
-												'new-token-was-generated'
-											)
+				{!!tokens.length && (
+					<Table
+						className='mb-0'
+						columns={[
+							{
+								accessor: 'token',
+								cellRenderer: TokenCell,
+								label: Liferay.Language.get('token'),
+								sortable: false
+							},
+							{
+								accessor: 'lastAccessDate',
+								dataFormatter: (val: string) =>
+									formatDateToTimeZone(
+										val,
+										CUSTOM_DATE_FORMAT,
+										timeZoneId
+									),
+								label: Liferay.Language.get('last-seen'),
+								sortable: false
+							},
+							{
+								accessor: 'createDate',
+								dataFormatter: (val: string) =>
+									formatDateToTimeZone(
+										val,
+										CUSTOM_DATE_FORMAT,
+										timeZoneId
+									),
+								label: Liferay.Language.get('date-created'),
+								sortable: false
+							},
+							{
+								accessor: 'expirationDate',
+								cellRenderer: ({data}) => {
+									if (isIndefinite(data)) {
+										return (
+											<td>
+												{Liferay.Language.get(
+													'indefinite'
+												)}
+											</td>
 										);
-									})
-									.catch(handleError);
-							}}
-						>
-							{loading && (
-								<ClayLoadingIndicator
-									className='d-inline-block mr-2'
-									displayType='secondary'
-									size='sm'
-								/>
-							)}
+									}
 
-							{Liferay.Language.get('generate-token')}
-						</ClayButton>
-					)}
-				</div>
-			</Card.Body>
+									return (
+										<td>
+											{formatDateToTimeZone(
+												data.expirationDate,
+												'll',
+												timeZoneId
+											)}
+										</td>
+									);
+								},
+								label: Liferay.Language.get('expiration'),
+								sortable: false
+							}
+						]}
+						items={tokens}
+						renderInlineRowActions={({data: {token}}) => {
+							if (tokenExpired) return null;
 
-			{!!tokens.length && (
-				<Table
-					className='mb-0'
-					columns={[
-						{
-							accessor: 'token',
-							cellRenderer: TokenCell,
-							label: Liferay.Language.get('token'),
-							sortable: false
-						},
-						{
-							accessor: 'lastAccessDate',
-							dataFormatter: (val: string) =>
-								formatDateToTimeZone(
-									val,
-									DATE_FORMAT,
-									timeZoneId
-								),
-							label: Liferay.Language.get('last-seen'),
-							sortable: false
-						},
-						{
-							accessor: 'createDate',
-							dataFormatter: (val: string) =>
-								formatDateToTimeZone(
-									val,
-									DATE_FORMAT,
-									timeZoneId
-								),
-							label: Liferay.Language.get('date-created'),
-							sortable: false
-						},
-						{
-							accessor: 'expirationDate',
-							dataFormatter: (val: string) =>
-								formatDateToTimeZone(val, 'll', timeZoneId),
-							label: Liferay.Language.get('expiration'),
-							sortable: false
-						}
-					]}
-					items={tokens}
-					renderInlineRowActions={({
-						data: {expirationDate, token}
-					}) => {
-						const expired = isExpired(expirationDate);
+							return (
+								<>
+									<CopyButton
+										displayType='secondary'
+										text={token}
+									/>
 
-						return expired ? (
-							<ClayButton
-								className='button-root'
-								onClick={() => {
-									setLoading(true);
+									<ClayButton
+										className='button-root'
+										disabled={loading}
+										displayType='secondary'
+										onClick={() => {
+											open(
+												modalTypes.CONFIRMATION_MODAL,
+												{
+													message: (
+														<div className='text-secondary'>
+															<div>
+																<strong>
+																	{Liferay.Language.get(
+																		'are-you-sure-you-want-to-revoke-this-token'
+																	)}
+																</strong>
+															</div>
 
-									API.apiTokens
-										.revoke({groupId, token})
-										.then(() =>
-											API.apiTokens.generate({groupId})
-										)
-										.then(() =>
-											handleSuccess(
-												Liferay.Language.get(
-													'new-token-was-generated'
-												)
-											)
-										)
-										.catch(handleError);
-								}}
-							>
-								{Liferay.Language.get('generate-token')}
-							</ClayButton>
-						) : (
-							<>
-								<CopyButton
-									displayType='secondary'
-									text={token}
-								/>
-
-								<ClayButton
-									className='button-root'
-									displayType='secondary'
-									onClick={() => {
-										open(modalTypes.CONFIRMATION_MODAL, {
-											message: (
-												<div className='text-secondary'>
-													<div>
-														<strong>
 															{Liferay.Language.get(
-																'are-you-sure-you-want-to-revoke-this-token'
+																'you-will-need-to-generate-a-new-token-to-continue-using-this-api'
 															)}
-														</strong>
-													</div>
+														</div>
+													),
+													modalVariant:
+														'modal-warning',
+													onClose: close,
+													onSubmit: () => {
+														setLoading(true);
 
-													{Liferay.Language.get(
-														'you-will-need-to-generate-a-new-token-to-continue-using-this-api'
-													)}
-												</div>
-											),
-											modalVariant: 'modal-warning',
-											onClose: close,
-											onSubmit: () => {
-												setLoading(true);
-
-												API.apiTokens
-													.revoke({groupId, token})
-													.then(() =>
-														handleSuccess(
-															Liferay.Language.get(
-																'token-successfully-revoked'
+														API.apiTokens
+															.revoke({
+																groupId,
+																token
+															})
+															.then(() =>
+																handleSuccess(
+																	Liferay.Language.get(
+																		'token-successfully-revoked'
+																	)
+																)
 															)
-														)
-													)
-													.catch(handleError);
-											},
-											submitButtonDisplay: 'warning',
-											title: Liferay.Language.get(
-												'revoke-token'
-											),
-											titleIcon: 'warning-full'
-										});
-									}}
-								>
-									{Liferay.Language.get('revoke')}
-								</ClayButton>
-							</>
-						);
-					}}
-					rowIdentifier='token'
-				/>
-			)}
-		</Card>
+															.catch(handleError);
+													},
+													submitButtonDisplay:
+														'warning',
+													title: Liferay.Language.get(
+														'revoke-token'
+													),
+													titleIcon: 'warning-full'
+												}
+											);
+										}}
+									>
+										{Liferay.Language.get('revoke')}
+
+										{loading && (
+											<ClayLoadingIndicator className='ml-2' />
+										)}
+									</ClayButton>
+								</>
+							);
+						}}
+						rowIdentifier='token'
+					/>
+				)}
+			</Card>
+		</div>
 	);
 };
 

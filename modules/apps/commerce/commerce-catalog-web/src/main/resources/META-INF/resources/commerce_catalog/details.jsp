@@ -111,7 +111,7 @@ boolean viewOnly = !commerceCatalogDisplayContext.hasPermission(commerceCatalog.
 						<aui:script require="commerce-frontend-js/components/autocomplete/entry as autocomplete, commerce-frontend-js/utilities/eventsDefinitions as events">
 							autocomplete.default('autocomplete', 'base-price-list-autocomplete-root', {
 								apiUrl:
-									'<%= commerceCatalogDisplayContext.getPriceListsApiUrl(CommercePriceListConstants.TYPE_PRICE_LIST) %>',
+									'<%= commerceCatalogDisplayContext.getPriceListsAPIURL(CommercePriceListConstants.TYPE_PRICE_LIST) %>',
 								initialLabel:
 									'<%= (baseCommercePriceList == null) ? StringPool.BLANK : HtmlUtil.escapeJS(baseCommercePriceList.getName()) %>',
 								initialValue:
@@ -144,7 +144,7 @@ boolean viewOnly = !commerceCatalogDisplayContext.hasPermission(commerceCatalog.
 						<aui:script require="commerce-frontend-js/components/autocomplete/entry as autocomplete, commerce-frontend-js/utilities/eventsDefinitions as events">
 							autocomplete.default('autocomplete', 'base-promotion-autocomplete-root', {
 								apiUrl:
-									'<%= commerceCatalogDisplayContext.getPriceListsApiUrl(CommercePriceListConstants.TYPE_PROMOTION) %>',
+									'<%= commerceCatalogDisplayContext.getPriceListsAPIURL(CommercePriceListConstants.TYPE_PROMOTION) %>',
 								initialLabel:
 									'<%= (basePromotionCommercePriceList == null) ? StringPool.BLANK : HtmlUtil.escapeJS(basePromotionCommercePriceList.getName()) %>',
 								initialValue:

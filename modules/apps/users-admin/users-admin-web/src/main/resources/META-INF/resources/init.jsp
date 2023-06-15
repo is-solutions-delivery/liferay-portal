@@ -24,6 +24,7 @@ taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/expando" prefix="liferay-expando" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
+taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
 taglib uri="http://liferay.com/tld/site-navigation" prefix="liferay-site-navigation" %><%@
 taglib uri="http://liferay.com/tld/staging" prefix="liferay-staging" %><%@
 taglib uri="http://liferay.com/tld/text-localizer" prefix="liferay-text-localizer" %><%@
@@ -161,7 +162,6 @@ page import="com.liferay.portal.model.impl.OrgLaborImpl" %><%@
 page import="com.liferay.portal.security.auth.ScreenNameValidatorFactory" %><%@
 page import="com.liferay.portal.util.PropsValues" %><%@
 page import="com.liferay.portlet.announcements.model.impl.AnnouncementsDeliveryImpl" %><%@
-page import="com.liferay.roles.admin.kernel.util.RolesAdminUtil" %><%@
 page import="com.liferay.site.navigation.taglib.servlet.taglib.util.BreadcrumbEntriesUtil" %><%@
 page import="com.liferay.taglib.search.ResultRow" %><%@
 page import="com.liferay.users.admin.constants.UserScreenNavigationEntryConstants" %><%@
@@ -175,7 +175,6 @@ page import="com.liferay.users.admin.web.internal.display.context.InitDisplayCon
 page import="com.liferay.users.admin.web.internal.display.context.OrgLaborDisplay" %><%@
 page import="com.liferay.users.admin.web.internal.display.context.OrgLaborFormDisplay" %><%@
 page import="com.liferay.users.admin.web.internal.display.context.OrganizationScreenNavigationDisplayContext" %><%@
-page import="com.liferay.users.admin.web.internal.display.context.SelectOrganizationManagementToolbarDisplayContext" %><%@
 page import="com.liferay.users.admin.web.internal.display.context.SelectOrganizationUsersManagementToolbarDisplayContext" %><%@
 page import="com.liferay.users.admin.web.internal.display.context.UserDisplayContext" %><%@
 page import="com.liferay.users.admin.web.internal.display.context.ViewFlatUsersDisplayContext" %><%@
@@ -194,7 +193,6 @@ page import="com.liferay.users.admin.web.internal.util.UsersAdminPortletURLUtil"
 <%@ page import="java.text.Format" %>
 
 <%@ page import="java.util.ArrayList" %><%@
-page import="java.util.Arrays" %><%@
 page import="java.util.Calendar" %><%@
 page import="java.util.Collections" %><%@
 page import="java.util.HashMap" %><%@
@@ -221,7 +219,7 @@ InitDisplayContext initDisplayContext = new InitDisplayContext(request, portletN
 
 boolean filterManageableOrganizations = initDisplayContext.isFilterManageableOrganizations();
 
-UserDisplayContext userDisplayContext = new UserDisplayContext(request, initDisplayContext);
+UserDisplayContext userDisplayContext = new UserDisplayContext(request, initDisplayContext, liferayPortletResponse);
 %>
 
 <%@ include file="/init-ext.jsp" %>

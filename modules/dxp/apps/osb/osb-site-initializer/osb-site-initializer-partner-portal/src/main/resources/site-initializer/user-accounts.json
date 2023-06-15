@@ -1,0 +1,137 @@
+[
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "pm",
+		"emailAddress": "pm@partner.com",
+		"familyName": "Manager",
+		"givenName": "Partner",
+		"name": "Partner Manager (PM)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "pmu",
+		"emailAddress": "pmu@partner.com",
+		"familyName": "User",
+		"givenName": "Partner Marketing",
+		"name": "Partner Marketing User (PMU)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "psu",
+		"emailAddress": "psu@partner.com",
+		"familyName": "User",
+		"givenName": "Partner Sales",
+		"name": "Partner Sales User (PSU)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "ptu",
+		"emailAddress": "ptu@partner.com",
+		"familyName": "User",
+		"givenName": "Partner Technical",
+		"name": "Partner Technical User (PTU)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "cam",
+		"emailAddress": "cam@liferaytest.com",
+		"familyName": "Manager",
+		"givenName": "Channel Account",
+		"name": "Channel Account Manager (CAM)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "com",
+		"emailAddress": "com@liferaytest.com",
+		"familyName": "Manager",
+		"givenName": "Channel Operations",
+		"name": "Channel Operations Manager (COM)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "cmm",
+		"emailAddress": "cmm@liferaytest.com",
+		"familyName": "Manager",
+		"givenName": "Channel Marketing",
+		"name": "Channel Marketing Manager (CMM)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "cmd",
+		"emailAddress": "cmd@liferaytest.com",
+		"familyName": "Director",
+		"givenName": "Channel Marketing",
+		"name": "Channel Marketing Director (CMD)",
+		"organizationBriefs": [
+			{
+				"name": "Global"
+			}
+		],
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "cfm",
+		"emailAddress": "cfm@liferaytest.com",
+		"familyName": "Manager",
+		"givenName": "Channel Finance",
+		"name": "Channel Finance Manager (CFM)",
+		"password": "test"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "0017i00001MQSGdAAP"
+			}
+		],
+		"alternateName": "cem",
+		"emailAddress": "cem@liferaytest.com",
+		"familyName": "Manager",
+		"givenName": "Channel Enablement",
+		"name": "Channel Enablement Manager (CEM)",
+		"password": "test"
+	}
+]

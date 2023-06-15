@@ -68,7 +68,7 @@ public class ImageEditableElementParser implements EditableElementParser {
 
 			alt = fieldValueJSONObject.getString("alt");
 
-			if (Validator.isNotNull(alt) && JSONUtil.isValid(alt)) {
+			if (Validator.isNotNull(alt) && JSONUtil.isJSONObject(alt)) {
 				JSONObject altJSONObject = fieldValueJSONObject.getJSONObject(
 					"alt");
 
@@ -170,7 +170,7 @@ public class ImageEditableElementParser implements EditableElementParser {
 
 		long fileEntryId = 0;
 
-		if (JSONUtil.isValid(value)) {
+		if (JSONUtil.isJSONObject(value)) {
 			try {
 				JSONObject jsonObject = _jsonFactory.createJSONObject(value);
 
@@ -215,7 +215,7 @@ public class ImageEditableElementParser implements EditableElementParser {
 
 		String alt = configJSONObject.getString("alt");
 
-		if (Validator.isNotNull(alt) && JSONUtil.isValid(alt)) {
+		if (Validator.isNotNull(alt) && JSONUtil.isJSONObject(alt)) {
 			JSONObject altJSONObject = configJSONObject.getJSONObject("alt");
 
 			Locale locale = LocaleThreadLocal.getThemeDisplayLocale();

@@ -77,13 +77,13 @@ export default function PageToolbar({
 	tab,
 	tabs,
 	title,
+	titleAndDescriptionEdited,
 	titleI18n,
 }) {
 	const {availableLanguages, defaultLocale, locale} = useContext(
 		ThemeContext
 	);
 
-	const [edited, setEdited] = useState(false);
 	const [modalFieldFocus, setModalFieldFocus] = useState('title');
 	const [modalVisible, setModalVisible] = useState(false);
 
@@ -104,12 +104,6 @@ export default function PageToolbar({
 		setModalVisible(true);
 	};
 
-	const _handleSubmit = (value) => {
-		setEdited(true);
-
-		onTitleAndDescriptionChange(value);
-	};
-
 	return (
 		<div className="page-toolbar-root">
 			<ClayToolbar
@@ -124,11 +118,11 @@ export default function PageToolbar({
 									disabled={disableTitleAndDescriptionModal}
 									displayLocale={displayLocale}
 									fieldFocus={modalFieldFocus}
-									initialDescription={descriptionI18n}
-									initialTitle={titleI18n}
+									initialDescriptionI18n={descriptionI18n}
+									initialTitleI18n={titleI18n}
 									observer={observer}
 									onClose={onClose}
-									onSubmit={_handleSubmit}
+									onSubmit={onTitleAndDescriptionChange}
 								/>
 							)}
 
@@ -172,7 +166,7 @@ export default function PageToolbar({
 										onClick={_handleClickEdit('title')}
 									>
 										<div className="entry-title text-truncate">
-											{(!edited
+											{(!titleAndDescriptionEdited
 												? title
 												: titleI18n[displayLocale]) || (
 												<span className="entry-title-blank">
@@ -205,14 +199,14 @@ export default function PageToolbar({
 												className="entry-description text-truncate"
 												data-tooltip-align="bottom"
 												title={
-													!edited
+													!titleAndDescriptionEdited
 														? description
 														: descriptionI18n[
 																displayLocale
 														  ]
 												}
 											>
-												{(!edited
+												{(!titleAndDescriptionEdited
 													? description
 													: descriptionI18n[
 															displayLocale
@@ -315,5 +309,6 @@ PageToolbar.propTypes = {
 	tab: PropTypes.string,
 	tabs: PropTypes.object,
 	title: PropTypes.string,
+	titleAndDescriptionEdited: PropTypes.bool,
 	titleI18n: PropTypes.object,
 };

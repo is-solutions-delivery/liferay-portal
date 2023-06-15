@@ -64,6 +64,9 @@ function filterFields(fields, fieldType, filterLinkTypes) {
 			) {
 				return field.type === EDITABLE_TYPES.image;
 			}
+			else if (fieldType === EDITABLE_TYPES.action) {
+				return field.type === EDITABLE_TYPES.action;
+			}
 			else {
 				return field.type !== EDITABLE_TYPES.image;
 			}
@@ -121,8 +124,10 @@ function loadMappingFields({dispatch, item, sourceType}) {
 }
 
 export default function MappingSelectorWrapper({
+	fieldSelectorLabel,
 	fieldType,
 	filterLinkTypes = false,
+	itemSelectorURL,
 	mappedItem,
 	onMappingSelect,
 }) {
@@ -219,6 +224,7 @@ export default function MappingSelectorWrapper({
 			<MappingFieldSelector
 				fieldType={fieldType}
 				fields={collectionFields}
+				label={fieldSelectorLabel}
 				onValueSelect={(event) => {
 					if (event.target.value === UNMAPPED_OPTION.value) {
 						onMappingSelect({collectionFieldId: ''});
@@ -234,8 +240,10 @@ export default function MappingSelectorWrapper({
 		</>
 	) : (
 		<MappingSelector
+			fieldSelectorLabel={fieldSelectorLabel}
 			fieldType={fieldType}
 			filterLinkTypes={filterLinkTypes}
+			itemSelectorURL={itemSelectorURL}
 			mappedItem={mappedItem}
 			onMappingSelect={onMappingSelect}
 		/>
@@ -243,8 +251,10 @@ export default function MappingSelectorWrapper({
 }
 
 function MappingSelector({
+	fieldSelectorLabel,
 	fieldType,
 	filterLinkTypes,
+	itemSelectorURL,
 	mappedItem,
 	onMappingSelect,
 }) {
@@ -428,6 +438,7 @@ function MappingSelector({
 			{selectedSourceType === MAPPING_SOURCE_TYPES.content && (
 				<ItemSelector
 					className="mb-2"
+					itemSelectorURL={itemSelectorURL}
 					label={Liferay.Language.get('item')}
 					onItemSelect={onInfoItemSelect}
 					selectedItem={selectedItem}
@@ -464,6 +475,7 @@ function MappingSelector({
 				<MappingFieldSelector
 					fieldType={fieldType}
 					fields={itemFields}
+					label={fieldSelectorLabel}
 					onValueSelect={onFieldSelect}
 					value={selectedItem.mappedField || selectedItem.fieldId}
 				/>

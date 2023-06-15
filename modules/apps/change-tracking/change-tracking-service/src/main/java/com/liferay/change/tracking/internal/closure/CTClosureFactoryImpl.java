@@ -49,12 +49,16 @@ import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.sql.DataSource;
@@ -71,32 +75,42 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 
 	@Override
 	public CTClosure create(long ctCollectionId) {
-		return create(ctCollectionId, 0);
+		return create(ctCollectionId, Collections.emptySet());
 	}
 
 	@Override
 	public CTClosure create(long ctCollectionId, long classNameId) {
+		return create(ctCollectionId, Collections.singleton(classNameId));
+	}
+
+	@Override
+	public CTClosure create(long ctCollectionId, Set<Long> classNameIds) {
 		Map<Long, TableReferenceInfo<?>> combinedTableReferenceInfos;
 
-		if (classNameId > 0) {
-			combinedTableReferenceInfos =
-				_tableReferenceDefinitionManager.getCombinedTableReferenceInfos(
-					classNameId);
-		}
-		else {
+		if (classNameIds.isEmpty()) {
 			combinedTableReferenceInfos =
 				_tableReferenceDefinitionManager.
 					getCombinedTableReferenceInfos();
+
+			return new CTClosureImpl(
+				ctCollectionId,
+				_buildClosureMap(
+					ctCollectionId, Collections.emptySet(),
+					combinedTableReferenceInfos));
 		}
+
+		combinedTableReferenceInfos =
+			_tableReferenceDefinitionManager.getCombinedTableReferenceInfos(
+				classNameIds);
 
 		return new CTClosureImpl(
 			ctCollectionId,
 			_buildClosureMap(
-				ctCollectionId, classNameId, combinedTableReferenceInfos));
+				ctCollectionId, classNameIds, combinedTableReferenceInfos));
 	}
 
 	private Map<Node, Collection<Node>> _buildClosureMap(
-		long ctCollectionId, long classNameId,
+		long ctCollectionId, Set<Long> classNameIds,
 		Map<Long, TableReferenceInfo<?>> combinedTableReferenceInfos) {
 
 		Map<Long, List<Long>> map = new LinkedHashMap<>();
@@ -110,7 +124,7 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 				(int)(ctEntry1.getCtEntryId() - ctEntry2.getCtEntryId()));
 
 		for (CTEntry ctEntry : ctEntries) {
-			if ((classNameId > 0) &&
+			if (!classNameIds.isEmpty() &&
 				!combinedTableReferenceInfos.containsKey(
 					ctEntry.getModelClassNameId())) {
 
@@ -178,7 +192,9 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 					_tableReferenceDefinitionManager.getClassNameId(
 						entry.getKey());
 
-				if ((classNameId > 0) && !map.containsKey(parentClassNameId)) {
+				if (!classNameIds.isEmpty() &&
+					!map.containsKey(parentClassNameId)) {
+
 					continue;
 				}
 
@@ -202,7 +218,7 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 
 					List<Long> newParentPrimaryKeys = _collectParentPrimaryKeys(
 						childClassNameId, batchChildPrimaryKeys, ctCollectionId,
-						entry, edgeMap, nodes, parentClassNameId, classNameId,
+						entry, edgeMap, nodes, parentClassNameId, classNameIds,
 						parentTableReferenceInfo);
 
 					if (newParentPrimaryKeys != null) {
@@ -216,14 +232,14 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 			}
 		}
 
-		return GraphUtil.getNodeMap(new HashSet<>(nodes), edgeMap);
+		return _getNodeMap(nodes, edgeMap);
 	}
 
 	private List<Long> _collectParentPrimaryKeys(
 		long childClassNameId, Long[] childPrimaryKeys, long ctCollectionId,
 		Map.Entry<Table<?>, List<TableJoinHolder>> entry,
 		Map<Node, Collection<Edge>> edgeMap, List<Node> nodes,
-		long parentClassNameId, long classNameId,
+		long parentClassNameId, Set<Long> classNameIds,
 		TableReferenceInfo<?> parentTableReferenceInfo) {
 
 		List<Long> newParentPrimaryKeys = null;
@@ -240,7 +256,7 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 				Node parentNode = new Node(
 					parentClassNameId, resultSet.getLong(1));
 
-				if ((classNameId > 0) && !nodes.contains(parentNode)) {
+				if (!classNameIds.isEmpty() && !nodes.contains(parentNode)) {
 					continue;
 				}
 
@@ -269,6 +285,43 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 		}
 
 		return newParentPrimaryKeys;
+	}
+
+	private void _filterCyclingEdges(
+		Edge edge, Map<Node, Collection<Edge>> edgeMap,
+		Deque<Edge> backtraceEdges, Set<Edge> cyclingEdges,
+		Set<Edge> resolvedEdges) {
+
+		if (backtraceEdges.contains(edge)) {
+			cyclingEdges.add(edge);
+
+			return;
+		}
+
+		if (resolvedEdges.contains(edge) || cyclingEdges.contains(edge)) {
+			return;
+		}
+
+		Collection<Edge> nextEdges = edgeMap.get(edge.getToNode());
+
+		if (nextEdges == null) {
+			resolvedEdges.add(edge);
+
+			return;
+		}
+
+		backtraceEdges.push(edge);
+
+		for (Edge nextEdge : nextEdges) {
+			_filterCyclingEdges(
+				nextEdge, edgeMap, backtraceEdges, cyclingEdges, resolvedEdges);
+		}
+
+		backtraceEdges.pop();
+
+		if (!cyclingEdges.contains(edge)) {
+			resolvedEdges.add(edge);
+		}
 	}
 
 	private Predicate _getChildPKColumnPredicate(
@@ -370,6 +423,38 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 		}
 
 		return dslQuery;
+	}
+
+	private Map<Node, Collection<Node>> _getNodeMap(
+		List<Node> nodes, Map<Node, Collection<Edge>> edgeMap) {
+
+		Deque<Edge> backtraceEdges = new LinkedList<>();
+		Set<Edge> cyclingEdges = new HashSet<>();
+		Set<Edge> resolvedEdges = new HashSet<>();
+
+		for (Collection<Edge> edges : edgeMap.values()) {
+			for (Edge edge : edges) {
+				_filterCyclingEdges(
+					edge, edgeMap, backtraceEdges, cyclingEdges, resolvedEdges);
+			}
+		}
+
+		Map<Node, Collection<Node>> nodeMap = new HashMap<>();
+
+		for (Edge edge : resolvedEdges) {
+			Collection<Node> children = nodeMap.computeIfAbsent(
+				edge.getFromNode(), node -> new ArrayList<>());
+
+			Node toNode = edge.getToNode();
+
+			children.add(toNode);
+
+			nodes.remove(toNode);
+		}
+
+		nodeMap.put(Node.ROOT_NODE, nodes);
+
+		return nodeMap;
 	}
 
 	private PreparedStatement _getPreparedStatement(

@@ -55,34 +55,50 @@ definition {
 		}
 	}
 
-	@description = "This is a test for COMMERCE-11511. Can view the related product's Create Date under Product Relation tab"
+	@description = "This is a test for COMMERCE-11085. Can delete a product related to another product"
 	@priority = 3
-	test CanViewRelatedProductCreateDate {
+	test CanDeleteProductWithRelations {
 		property portal.acceptance = "false";
 
-		task ("Given a Minium site is created") {
+		task ("Given a Minium Site is created") {
 			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 		}
 
-		task ("When a product relation is added to the 'ABS Sensor' product") {
+		task ("And a product is related to another product") {
 			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "ABS Sensor");
 
 			CommerceEntry.gotoMenuTab(menuTab = "Product Relations");
 
-			CommerceRelations.addAnyProductRelation(
-				key_product = "Hoses",
-				key_relation = "Related Product");
+			CommerceRelations.addProductRelation(productNameRelation = "U-Joint");
+
+			AssertElementPresent(
+				key_productName = "U-Joint",
+				key_value = "Up-Sell",
+				locator1 = "CommerceEntry#VALUE_PRODUCT_RELATIONS");
 		}
 
-		task ("Then the related product's Create Date is shown") {
-			for (var valueList : list "Related,0 Seconds Ago") {
-				AssertElementPresent(
-					key_productName = "Hoses",
-					key_value = ${valueList},
-					locator1 = "CommerceEntry#VALUE_PRODUCT_RELATIONS");
-			}
+		task ("When the admin deletes the related product") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.searchEntry(entryName = "U-Joint");
+
+			Click.clickNoMouseOverNoWaitForVisible(
+				key_productName = "U-Joint",
+				locator1 = "CommerceEntry#PRODUCT_ENTRY_CHECKBOX");
+
+			AssertElementPresent(locator1 = "Button#TRASH_ENABLED");
+		}
+
+		task ("Then the product is successfully deleted") {
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			CommerceNavigator.searchEntry(entryName = "U-Joint");
+
+			AssertElementNotPresent(
+				key_entryName = "U-Joint",
+				locator1 = "CommerceNavigation#ENTRY_NAME");
 		}
 	}
 

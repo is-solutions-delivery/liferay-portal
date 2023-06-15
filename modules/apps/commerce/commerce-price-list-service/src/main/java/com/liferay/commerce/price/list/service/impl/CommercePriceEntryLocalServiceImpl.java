@@ -102,7 +102,8 @@ public class CommercePriceEntryLocalServiceImpl
 	public CommercePriceEntry addCommercePriceEntry(
 			String externalReferenceCode, long cProductId,
 			String cpInstanceUuid, long commercePriceListId, BigDecimal price,
-			BigDecimal promoPrice, ServiceContext serviceContext)
+			boolean priceOnApplication, BigDecimal promoPrice,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		Calendar calendar = new GregorianCalendar();
@@ -112,8 +113,8 @@ public class CommercePriceEntryLocalServiceImpl
 			commercePriceListId, true, null, null, null, null,
 			calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
 			calendar.get(Calendar.YEAR), calendar.get(Calendar.HOUR),
-			calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true, price, false,
-			promoPrice, serviceContext);
+			calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true, price,
+			priceOnApplication, promoPrice, serviceContext);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -576,7 +577,8 @@ public class CommercePriceEntryLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CommercePriceEntry updateCommercePriceEntry(
-			long commercePriceEntryId, BigDecimal price, BigDecimal promoPrice,
+			long commercePriceEntryId, BigDecimal price,
+			boolean priceOnApplication, BigDecimal promoPrice,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -586,8 +588,8 @@ public class CommercePriceEntryLocalServiceImpl
 			commercePriceEntryId, true, true, null, null, null, null,
 			calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
 			calendar.get(Calendar.YEAR), calendar.get(Calendar.HOUR),
-			calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true, price, false,
-			promoPrice, serviceContext);
+			calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true, price,
+			priceOnApplication, promoPrice, serviceContext);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -641,6 +643,7 @@ public class CommercePriceEntryLocalServiceImpl
 		commercePriceEntry.setExpandoBridgeAttributes(serviceContext);
 		commercePriceEntry.setPrice(price);
 		commercePriceEntry.setPriceOnApplication(priceOnApplication);
+
 		commercePriceEntry.setPromoPrice(promoPrice);
 
 		if ((expirationDate == null) || expirationDate.after(date)) {

@@ -52,7 +52,7 @@ import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.service.CPMeasurementUnitLocalService;
-import com.liferay.commerce.product.util.JsonHelper;
+import com.liferay.commerce.product.util.CPJSONUtil;
 import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.service.base.CommerceOrderItemLocalServiceBaseImpl;
 import com.liferay.commerce.tax.CommerceTaxCalculation;
@@ -547,6 +547,14 @@ public class CommerceOrderItemLocalServiceImpl
 				commerceOrderId,
 				DSLQueryFactoryUtil.countDistinct(
 					CommerceOrderItemTable.INSTANCE.commerceOrderItemId)));
+	}
+
+	@Override
+	public List<CommerceOrderItem> getSupplierCommerceOrderItems(
+		long customerCommerceOrderItemId, int start, int end) {
+
+		return commerceOrderItemPersistence.findByCustomerCommerceOrderItemId(
+			customerCommerceOrderItemId, start, end);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -1479,7 +1487,7 @@ public class CommerceOrderItemLocalServiceImpl
 	private String _getCPInstanceOptionValueRelsJSONString(long cpInstanceId)
 		throws PortalException {
 
-		JSONArray jsonArray = _jsonHelper.toJSONArray(
+		JSONArray jsonArray = CPJSONUtil.toJSONArray(
 			_cpDefinitionOptionRelLocalService.
 				getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
 					cpInstanceId));
@@ -1965,30 +1973,55 @@ public class CommerceOrderItemLocalServiceImpl
 		CommerceOrderItem commerceOrderItem,
 		CommerceProductPrice commerceProductPrice) {
 
+		commerceOrderItem.setPriceOnApplication(
+			commerceProductPrice.isPriceOnApplication());
+
 		CommerceMoney unitPriceCommerceMoney =
 			commerceProductPrice.getUnitPrice();
-
-		commerceOrderItem.setUnitPrice(unitPriceCommerceMoney.getPrice());
-
-		BigDecimal promoPrice = BigDecimal.ZERO;
-		BigDecimal promoPriceWithTaxAmount = BigDecimal.ZERO;
-
 		CommerceMoney unitPromoPriceCommerceMoney =
 			commerceProductPrice.getUnitPromoPrice();
+
+		BigDecimal unitPrice = BigDecimal.ZERO;
+
+		if (!unitPriceCommerceMoney.isEmpty()) {
+			unitPrice = unitPriceCommerceMoney.getPrice();
+		}
+
+		commerceOrderItem.setUnitPrice(unitPrice);
+
+		BigDecimal promoPrice = BigDecimal.ZERO;
 
 		if (!unitPromoPriceCommerceMoney.isEmpty()) {
 			promoPrice = unitPromoPriceCommerceMoney.getPrice();
 		}
 
+		commerceOrderItem.setPromoPrice(promoPrice);
+
+		CommerceMoney unitPriceWithTaxAmountCommerceMoney =
+			commerceProductPrice.getUnitPriceWithTaxAmount();
 		CommerceMoney unitPromoPriceWithTaxAmountCommerceMoney =
 			commerceProductPrice.getUnitPromoPriceWithTaxAmount();
 
-		if (!unitPromoPriceWithTaxAmountCommerceMoney.isEmpty()) {
+		BigDecimal unitPriceWithTaxAmount = BigDecimal.ZERO;
+
+		if ((unitPriceWithTaxAmountCommerceMoney != null) &&
+			!unitPriceWithTaxAmountCommerceMoney.isEmpty()) {
+
+			unitPriceWithTaxAmount =
+				unitPriceWithTaxAmountCommerceMoney.getPrice();
+		}
+
+		commerceOrderItem.setUnitPriceWithTaxAmount(unitPriceWithTaxAmount);
+
+		BigDecimal promoPriceWithTaxAmount = BigDecimal.ZERO;
+
+		if ((unitPromoPriceWithTaxAmountCommerceMoney != null) &&
+			!unitPromoPriceWithTaxAmountCommerceMoney.isEmpty()) {
+
 			promoPriceWithTaxAmount =
 				unitPromoPriceWithTaxAmountCommerceMoney.getPrice();
 		}
 
-		commerceOrderItem.setPromoPrice(promoPrice);
 		commerceOrderItem.setPromoPriceWithTaxAmount(promoPriceWithTaxAmount);
 
 		CommerceMoney finalPriceCommerceMoney =
@@ -1996,20 +2029,19 @@ public class CommerceOrderItemLocalServiceImpl
 
 		commerceOrderItem.setFinalPrice(finalPriceCommerceMoney.getPrice());
 
-		CommerceMoney unitPriceWithTaxAmountCommerceMoney =
-			commerceProductPrice.getUnitPriceWithTaxAmount();
-
-		if (unitPriceWithTaxAmountCommerceMoney != null) {
-			commerceOrderItem.setUnitPriceWithTaxAmount(
-				unitPriceWithTaxAmountCommerceMoney.getPrice());
-		}
-
 		CommerceMoney finalPriceWithTaxAmountCommerceMoney =
 			commerceProductPrice.getFinalPriceWithTaxAmount();
 
 		if (finalPriceWithTaxAmountCommerceMoney != null) {
+			BigDecimal finalPriceWithTaxAmount = BigDecimal.ZERO;
+
+			if (!finalPriceWithTaxAmountCommerceMoney.isEmpty()) {
+				finalPriceWithTaxAmount =
+					finalPriceWithTaxAmountCommerceMoney.getPrice();
+			}
+
 			commerceOrderItem.setFinalPriceWithTaxAmount(
-				finalPriceWithTaxAmountCommerceMoney.getPrice());
+				finalPriceWithTaxAmount);
 		}
 
 		commerceOrderItem.setCommercePriceListId(
@@ -2451,9 +2483,6 @@ public class CommerceOrderItemLocalServiceImpl
 
 	@Reference
 	private IndexerRegistry _indexerRegistry;
-
-	@Reference
-	private JsonHelper _jsonHelper;
 
 	@Reference
 	private Portal _portal;

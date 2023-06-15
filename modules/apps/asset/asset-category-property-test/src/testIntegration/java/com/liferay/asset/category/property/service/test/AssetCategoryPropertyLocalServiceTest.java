@@ -21,26 +21,20 @@ import com.liferay.asset.category.property.model.AssetCategoryProperty;
 import com.liferay.asset.category.property.service.AssetCategoryPropertyLocalService;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
-import com.liferay.asset.kernel.service.AssetCategoryLocalService;
-import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.asset.util.AssetHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
-import java.util.Locale;
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -63,34 +57,21 @@ public class AssetCategoryPropertyLocalServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
+
+		AssetVocabulary assetVocabulary = AssetTestUtil.addVocabulary(
+			_group.getGroupId());
+
+		_assetCategory = AssetTestUtil.addCategory(
+			_group.getGroupId(), assetVocabulary.getVocabularyId());
 	}
 
 	@Test
 	public void testCanAddCategoryPropertyValueWithSpecialCharacters()
 		throws Exception {
 
-		Map<Locale, String> titleMap = HashMapBuilder.put(
-			LocaleUtil.US, RandomTestUtil.randomString()
-		).build();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
-
-		AssetVocabulary assetVocabulary =
-			_assetVocabularyLocalService.addVocabulary(
-				TestPropsValues.getUserId(), _group.getGroupId(),
-				RandomTestUtil.randomString(), titleMap, null, null,
-				serviceContext);
-
-		AssetCategory assetCategory = _assetCategoryLocalService.addCategory(
-			TestPropsValues.getUserId(), _group.getGroupId(),
-			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
-			serviceContext);
-
 		AssetCategoryProperty assetCategoryProperty =
 			_assetCategoryPropertyLocalService.addCategoryProperty(
-				TestPropsValues.getUserId(), assetCategory.getCategoryId(),
+				TestPropsValues.getUserId(), _assetCategory.getCategoryId(),
 				RandomTestUtil.randomString(),
 				String.valueOf(AssetHelper.INVALID_CHARACTERS));
 
@@ -103,30 +84,11 @@ public class AssetCategoryPropertyLocalServiceTest {
 	public void testCannotAddCategoryPropertyWithVeryLongKey()
 		throws Exception {
 
-		Map<Locale, String> titleMap = HashMapBuilder.put(
-			LocaleUtil.US, RandomTestUtil.randomString()
-		).build();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
-
-		AssetVocabulary assetVocabulary =
-			_assetVocabularyLocalService.addVocabulary(
-				TestPropsValues.getUserId(), _group.getGroupId(),
-				RandomTestUtil.randomString(), titleMap, null, null,
-				serviceContext);
-
-		AssetCategory assetCategory = _assetCategoryLocalService.addCategory(
-			TestPropsValues.getUserId(), _group.getGroupId(),
-			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
-			serviceContext);
-
 		int keyMaxLength = ModelHintsUtil.getMaxLength(
 			AssetCategoryProperty.class.getName(), "key");
 
 		_assetCategoryPropertyLocalService.addCategoryProperty(
-			TestPropsValues.getUserId(), assetCategory.getCategoryId(),
+			TestPropsValues.getUserId(), _assetCategory.getCategoryId(),
 			RandomTestUtil.randomString(keyMaxLength + 1),
 			RandomTestUtil.randomString());
 	}
@@ -135,69 +97,51 @@ public class AssetCategoryPropertyLocalServiceTest {
 	public void testCannotAddCategoryPropertyWithVeryLongValue()
 		throws Exception {
 
-		Map<Locale, String> titleMap = HashMapBuilder.put(
-			LocaleUtil.US, RandomTestUtil.randomString()
-		).build();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
-
-		AssetVocabulary assetVocabulary =
-			_assetVocabularyLocalService.addVocabulary(
-				TestPropsValues.getUserId(), _group.getGroupId(),
-				RandomTestUtil.randomString(), titleMap, null, null,
-				serviceContext);
-
-		AssetCategory assetCategory = _assetCategoryLocalService.addCategory(
-			TestPropsValues.getUserId(), _group.getGroupId(),
-			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
-			serviceContext);
-
 		int keyMaxLength = ModelHintsUtil.getMaxLength(
 			AssetCategoryProperty.class.getName(), "value");
 
 		_assetCategoryPropertyLocalService.addCategoryProperty(
-			TestPropsValues.getUserId(), assetCategory.getCategoryId(),
+			TestPropsValues.getUserId(), _assetCategory.getCategoryId(),
 			RandomTestUtil.randomString(),
 			RandomTestUtil.randomString(keyMaxLength + 1));
 	}
 
 	@Test(expected = CategoryPropertyValueException.class)
 	public void testCannotAddEmptyCategoryPropertyValue() throws Exception {
-		Map<Locale, String> titleMap = HashMapBuilder.put(
-			LocaleUtil.US, RandomTestUtil.randomString()
-		).build();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
-
-		AssetVocabulary assetVocabulary =
-			_assetVocabularyLocalService.addVocabulary(
-				TestPropsValues.getUserId(), _group.getGroupId(),
-				RandomTestUtil.randomString(), titleMap, null, null,
-				serviceContext);
-
-		AssetCategory assetCategory = _assetCategoryLocalService.addCategory(
-			TestPropsValues.getUserId(), _group.getGroupId(),
-			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
-			serviceContext);
-
 		_assetCategoryPropertyLocalService.addCategoryProperty(
-			TestPropsValues.getUserId(), assetCategory.getCategoryId(),
+			TestPropsValues.getUserId(), _assetCategory.getCategoryId(),
 			RandomTestUtil.randomString(), StringPool.BLANK);
 	}
 
-	@Inject
-	private AssetCategoryLocalService _assetCategoryLocalService;
+	@Test
+	public void testGetCategoryPropertyValues() throws Exception {
+		_assetCategoryPropertyLocalService.addCategoryProperty(
+			TestPropsValues.getUserId(), _assetCategory.getCategoryId(),
+			"keyToBeFound", "someValue");
+		_assetCategoryPropertyLocalService.addCategoryProperty(
+			TestPropsValues.getUserId(), _assetCategory.getCategoryId(),
+			"keyNotToBeFound", "anotherValue");
+
+		List<AssetCategoryProperty> categoryPropertyValues =
+			_assetCategoryPropertyLocalService.getCategoryPropertyValues(
+				_group.getGroupId(), "keyToBeFound");
+
+		Assert.assertEquals(
+			categoryPropertyValues.toString(), 1,
+			categoryPropertyValues.size());
+
+		AssetCategoryProperty assetCategoryProperty =
+			categoryPropertyValues.get(0);
+
+		Assert.assertEquals("keyToBeFound", assetCategoryProperty.getKey());
+		Assert.assertEquals("someValue", assetCategoryProperty.getValue());
+	}
+
+	private AssetCategory _assetCategory;
 
 	@Inject
 	private AssetCategoryPropertyLocalService
 		_assetCategoryPropertyLocalService;
-
-	@Inject
-	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	@DeleteAfterTestRun
 	private Group _group;

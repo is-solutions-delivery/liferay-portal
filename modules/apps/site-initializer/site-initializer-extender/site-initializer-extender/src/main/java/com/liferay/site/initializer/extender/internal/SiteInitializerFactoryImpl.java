@@ -14,6 +14,9 @@
 
 package com.liferay.site.initializer.extender.internal;
 
+import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.service.AccountGroupLocalService;
+import com.liferay.account.service.AccountGroupRelService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
@@ -73,6 +76,7 @@ import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.language.override.service.PLOEntryLocalService;
 import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
@@ -120,9 +124,10 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			null);
 
 		BundleSiteInitializer bundleSiteInitializer = new BundleSiteInitializer(
-			_accountResourceFactory, _accountRoleLocalService,
-			_accountRoleResourceFactory, _assetCategoryLocalService,
-			_assetListEntryLocalService, bundle,
+			_accountEntryLocalService, _accountGroupLocalService,
+			_accountGroupRelService, _accountResourceFactory,
+			_accountRoleLocalService, _accountRoleResourceFactory,
+			_assetCategoryLocalService, _assetListEntryLocalService, bundle,
 			_clientExtensionEntryLocalService, _configurationProvider,
 			_ddmStructureLocalService, _ddmTemplateLocalService,
 			_defaultDDMStructureHelper, _dlURLHelper,
@@ -142,11 +147,12 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			_objectEntryLocalService, _objectEntryManager,
 			_objectFieldLocalService, _objectFieldResourceFactory,
 			_objectRelationshipLocalService, _objectRelationshipResourceFactory,
-			_organizationLocalService, _organizationResourceFactory, _portal,
-			_resourceActionLocalService, _resourcePermissionLocalService,
-			_roleLocalService, _sapEntryLocalService,
-			_segmentsEntryLocalService, _segmentsExperienceLocalService,
-			_settingsFactory, _siteNavigationMenuItemLocalService,
+			_organizationLocalService, _organizationResourceFactory,
+			_ploEntryLocalService, _portal, _resourceActionLocalService,
+			_resourcePermissionLocalService, _roleLocalService,
+			_sapEntryLocalService, _segmentsEntryLocalService,
+			_segmentsExperienceLocalService, _settingsFactory,
+			_siteNavigationMenuItemLocalService,
 			_siteNavigationMenuItemTypeRegistry,
 			_siteNavigationMenuLocalService,
 			_structuredContentFolderResourceFactory,
@@ -179,6 +185,15 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 	protected void activate(BundleContext bundleContext) {
 		_bundleContext = bundleContext;
 	}
+
+	@Reference
+	private AccountEntryLocalService _accountEntryLocalService;
+
+	@Reference
+	private AccountGroupLocalService _accountGroupLocalService;
+
+	@Reference
+	private AccountGroupRelService _accountGroupRelService;
 
 	@Reference
 	private AccountResource.Factory _accountResourceFactory;
@@ -325,6 +340,9 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 
 	@Reference
 	private OrganizationResource.Factory _organizationResourceFactory;
+
+	@Reference
+	private PLOEntryLocalService _ploEntryLocalService;
 
 	@Reference
 	private Portal _portal;

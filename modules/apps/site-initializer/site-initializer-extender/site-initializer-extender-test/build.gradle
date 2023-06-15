@@ -1,5 +1,6 @@
 dependencies {
 	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
+	testIntegrationCompile project(":apps:account:account-api")
 	testIntegrationCompile project(":apps:asset:asset-list-api")
 	testIntegrationCompile project(":apps:client-extension:client-extension-api")
 	testIntegrationCompile project(":apps:client-extension:client-extension-type-api")
@@ -7,6 +8,7 @@ dependencies {
 	testIntegrationCompile project(":apps:commerce:commerce-inventory-api")
 	testIntegrationCompile project(":apps:commerce:commerce-notification-api")
 	testIntegrationCompile project(":apps:commerce:commerce-product-api")
+	testIntegrationCompile project(":apps:commerce:headless:headless-commerce:headless-commerce-admin-account-api")
 	testIntegrationCompile project(":apps:commerce:headless:headless-commerce:headless-commerce-admin-catalog-api")
 	testIntegrationCompile project(":apps:commerce:headless:headless-commerce:headless-commerce-admin-order-api")
 	testIntegrationCompile project(":apps:dynamic-data-mapping:dynamic-data-mapping-api")
@@ -23,6 +25,7 @@ dependencies {
 	testIntegrationCompile project(":apps:notification:notification-rest-api")
 	testIntegrationCompile project(":apps:object:object-admin-rest-api")
 	testIntegrationCompile project(":apps:object:object-api")
+	testIntegrationCompile project(":apps:portal-language:portal-language-override-api")
 	testIntegrationCompile project(":apps:portal-security:portal-security-service-access-policy-api")
 	testIntegrationCompile project(":apps:portal-vulcan:portal-vulcan-api")
 	testIntegrationCompile project(":apps:segments:segments-api")

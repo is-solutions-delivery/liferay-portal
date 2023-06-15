@@ -14,9 +14,11 @@
 
 package com.liferay.jethr0;
 
-import com.liferay.jethr0.project.Project;
-import com.liferay.jethr0.project.queue.ProjectQueue;
-import com.liferay.jethr0.project.repository.ProjectRepository;
+import com.liferay.jethr0.event.handler.EventHandler;
+import com.liferay.jethr0.event.handler.EventHandlerFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.json.JSONObject;
 
@@ -33,46 +35,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Jethr0RestController {
 
-	@PostMapping(
-		consumes = "application/json", produces = "application/json",
-		value = "/createProject"
-	)
-	public ResponseEntity<Project> createProject(
-		@RequestBody String requestBody) {
+	@PostMapping(consumes = "application/json", produces = "application/json")
+	public ResponseEntity<String> process(@RequestBody String body) {
+		if (_log.isDebugEnabled()) {
+			_log.debug("Processing " + body);
+		}
 
-		JSONObject requestJSONObject = new JSONObject(requestBody);
+		JSONObject bodyJSONObject = new JSONObject(body);
 
-		requestJSONObject.put("state", Project.State.OPENED.getJSONObject());
+		EventHandler eventHandler = _eventHandlerFactory.newEventHandler(
+			EventHandler.EventType.valueOf(
+				bodyJSONObject.optString("eventTrigger")));
 
-		return new ResponseEntity<>(
-			_projectRepository.add(requestJSONObject), HttpStatus.CREATED);
+		if (eventHandler == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		try {
+			return new ResponseEntity<>(
+				eventHandler.process(bodyJSONObject.toString()), HttpStatus.OK);
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(exception);
+			}
+
+			return new ResponseEntity<>(
+				exception.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 
-	@PostMapping(
-		consumes = "application/json", produces = "application/json",
-		value = "/startProject"
-	)
-	public ResponseEntity<Project> startProject(
-		@RequestBody String requestBody) {
-
-		JSONObject requestJSONObject = new JSONObject(requestBody);
-
-		Project project = _projectRepository.getById(
-			requestJSONObject.getLong("id"));
-
-		project.setState(Project.State.RUNNING);
-
-		project = _projectRepository.update(project);
-
-		_projectQueue.addProject(project);
-
-		return new ResponseEntity<>(project, HttpStatus.CREATED);
-	}
+	private static final Log _log = LogFactory.getLog(
+		Jethr0RestController.class);
 
 	@Autowired
-	private ProjectQueue _projectQueue;
-
-	@Autowired
-	private ProjectRepository _projectRepository;
+	private EventHandlerFactory _eventHandlerFactory;
 
 }

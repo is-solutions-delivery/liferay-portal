@@ -40,7 +40,7 @@ import com.liferay.commerce.product.service.CPDefinitionOptionValueRelLocalServi
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.service.CPInstanceOptionValueRelLocalService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
-import com.liferay.commerce.product.util.JsonHelper;
+import com.liferay.commerce.product.util.CPJSONUtil;
 import com.liferay.commerce.product.util.comparator.CPDefinitionOptionValueRelPriorityComparator;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -106,7 +106,7 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			return getDefaultCPInstance(cpDefinitionId);
 		}
 
-		if (_jsonHelper.isEmpty(serializedDDMFormValues)) {
+		if (CPJSONUtil.isEmpty(serializedDDMFormValues)) {
 			return null;
 		}
 
@@ -350,7 +350,7 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			return StringPool.BLANK;
 		}
 
-		JSONArray jsonArray = _jsonHelper.toJSONArray(
+		JSONArray jsonArray = CPJSONUtil.toJSONArray(
 			_cpDefinitionOptionRelLocalService.
 				getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
 					cpInstanceId));
@@ -492,7 +492,7 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			return null;
 		}
 
-		JSONArray jsonArray = _jsonHelper.toJSONArray(
+		JSONArray jsonArray = CPJSONUtil.toJSONArray(
 			_cpDefinitionOptionRelLocalService.
 				getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
 					cpInstanceId));
@@ -546,7 +546,7 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			return StringPool.BLANK;
 		}
 
-		JSONArray jsonArray = _jsonHelper.toJSONArray(
+		JSONArray jsonArray = CPJSONUtil.toJSONArray(
 			_cpDefinitionOptionRelLocalService.
 				getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
 					cpInstanceId));
@@ -628,7 +628,7 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			return values;
 		}
 
-		JSONArray jsonArray = _jsonHelper.getJSONArray(json);
+		JSONArray jsonArray = CPJSONUtil.toJSONArray(json);
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -643,8 +643,8 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 				continue;
 			}
 
-			JSONArray valueJSONArray = _jsonHelper.getValueAsJSONArray(
-				"value", jsonObject);
+			JSONArray valueJSONArray = CPJSONUtil.getJSONArray(
+				jsonObject, "value");
 
 			for (int j = 0; j < valueJSONArray.length(); j++) {
 				String value = valueJSONArray.getString(j);
@@ -940,8 +940,5 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private JsonHelper _jsonHelper;
 
 }

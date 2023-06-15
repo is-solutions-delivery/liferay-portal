@@ -42,7 +42,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.portlet.RenderRequest;
@@ -155,7 +154,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 
 	public void setParameterValues(String... parameterValues) {
 		_selectedCategoryIds = TransformUtil.transformToList(
-			Objects.requireNonNull(parameterValues),
+			parameterValues,
 			parameterValue -> {
 				long categoryId = GetterUtil.getLong(parameterValue);
 

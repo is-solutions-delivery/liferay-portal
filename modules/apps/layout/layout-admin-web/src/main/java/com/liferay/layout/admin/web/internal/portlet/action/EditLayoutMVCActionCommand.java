@@ -188,8 +188,8 @@ public class EditLayoutMVCActionCommand extends BaseMVCActionCommand {
 					formTypeSettingsUnicodeProperties.get(
 						Sites.LAYOUT_UPDATEABLE));
 
-				layout = _layoutService.updateLayout(
-					groupId, layout.isPrivateLayout(),
+				draftLayout = _layoutService.updateLayout(
+					groupId, draftLayout.isPrivateLayout(),
 					draftLayout.getLayoutId(), draftLayout.getParentLayoutId(),
 					nameMap, draftLayout.getTitleMap(),
 					draftLayout.getDescriptionMap(),
@@ -200,7 +200,7 @@ public class EditLayoutMVCActionCommand extends BaseMVCActionCommand {
 					draftLayout.getMasterLayoutPlid(), serviceContext);
 
 				_updateClientExtensions(
-					actionRequest, layout, themeDisplay.getUserId());
+					actionRequest, draftLayout, themeDisplay.getUserId());
 			}
 
 			themeDisplay.clearLayoutFriendlyURL(layout);

@@ -50,7 +50,7 @@ long commercePriceModifierId = commercePriceListDisplayContext.getCommercePriceM
 						categoryData
 					)
 						.then(() => {
-							Liferay.fire(events.UPDATE_DATASET_DISPLAY, {
+							Liferay.fire(events.FDS_UPDATE_DISPLAY, {
 								id: '<%= CommercePricingFDSNames.PRICE_MODIFIER_CATEGORIES %>',
 							});
 						})
@@ -72,7 +72,7 @@ long commercePriceModifierId = commercePriceListDisplayContext.getCommercePriceM
 						'<%= LanguageUtil.get(request, "category-selected") %>',
 					itemsKey: 'id',
 					itemCreation: false,
-					linkedDatasetsId: [
+					linkedDataSetsId: [
 						'<%= CommercePricingFDSNames.PRICE_MODIFIER_CATEGORIES %>',
 					],
 					onItemSelected: selectItem,
@@ -96,7 +96,7 @@ long commercePriceModifierId = commercePriceListDisplayContext.getCommercePriceM
 				title='<%= LanguageUtil.get(request, "categories") %>'
 			>
 				<frontend-data-set:headless-display
-					apiURL="<%= commercePriceListDisplayContext.getPriceModifierCategoriesApiUrl() %>"
+					apiURL="<%= commercePriceListDisplayContext.getPriceModifierCategoriesAPIURL() %>"
 					fdsActionDropdownItems="<%= commercePriceListDisplayContext.getPriceModifierCategoryFDSActionDropdownItems() %>"
 					formName="fm"
 					id="<%= CommercePricingFDSNames.PRICE_MODIFIER_CATEGORIES %>"

@@ -322,7 +322,7 @@ public class CommerceCatalogDisplayContext {
 		return portletURL;
 	}
 
-	public String getPriceListsApiUrl(String type) throws PortalException {
+	public String getPriceListsAPIURL(String type) throws PortalException {
 		String encodedFilter = URLCodec.encodeURL(
 			StringBundler.concat(
 				"(catalogId/any(x:(x eq ", getCommerceCatalogId(),

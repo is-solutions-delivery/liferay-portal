@@ -18,6 +18,7 @@ import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import {useIsMounted, useStateSafe} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
+import {sub} from 'frontend-js-web';
 import React, {useEffect, useRef, useState} from 'react';
 
 import useLoad from '../../hooks/useLoad.es';
@@ -48,6 +49,9 @@ export default function MultiPanelSidebar({
 	const isMounted = useIsMounted();
 	const load = useLoad();
 	const sidebarPanelsRef = useRef(sidebarPanels);
+	const tabListRef = useRef();
+
+	const [activePanel, setActivePanel] = useState('fields');
 
 	const [panelComponents, setPanelComponents] = useState([]);
 
@@ -125,44 +129,34 @@ export default function MultiPanelSidebar({
 
 		const newOpen = closeButtonPressed ? open : !open;
 
+		if (sidebarPanelId !== currentPanelId) {
+			setActivePanel(sidebarPanelId);
+		}
+
 		onChange({
 			sidebarOpen: sidebarPanelId !== currentPanelId || newOpen,
 			sidebarPanelId,
 		});
 	};
 
-	const handleKeyDown = (event) => {
-		if (event.keyCode === 38) {
-			let arrayIndex = 0;
-			const panelArr = [...panels[0]];
+	const handleTabPanelKeyDown = (event) => {
+		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+			const tabs = Array.from(
+				tabListRef.current.querySelectorAll('button')
+			);
 
-			panelArr.map((panelId, index) => {
-				if (panelId === event.target.id) {
-					arrayIndex = index - 1;
+			const activeTabIndex = tabs.indexOf(document.activeElement);
 
-					if (arrayIndex >= 0) {
-						const button = panels[0][arrayIndex];
+			const activeTab =
+				tabs[
+					event.key === 'ArrowUp'
+						? activeTabIndex - 1
+						: activeTabIndex + 1
+				];
 
-						document.querySelector('#' + button).focus();
-					}
-				}
-			});
-		}
-		else if (event.keyCode === 40) {
-			let arrayIndex = 0;
-			const panelArr = [...panels[0]];
-
-			panelArr.map((panelId, index) => {
-				if (panelId === event.target.id) {
-					arrayIndex = index + 1;
-
-					if (arrayIndex <= panels[0].length - 1) {
-						const button = panels[0][arrayIndex];
-
-						document.querySelector('#' + button).focus();
-					}
-				}
-			});
+			if (activeTab) {
+				activeTab.focus();
+			}
 		}
 	};
 
@@ -179,7 +173,8 @@ export default function MultiPanelSidebar({
 					}
 				)}
 			>
-				<nav
+				<div
+					aria-orientation="vertical"
 					className={classNames(
 						'multi-panel-sidebar-buttons',
 						'tbar',
@@ -188,91 +183,88 @@ export default function MultiPanelSidebar({
 							? `tbar-${variant}-d1`
 							: `tbar-${variant}`
 					)}
+					onKeyDown={handleTabPanelKeyDown}
+					ref={tabListRef}
+					role="tablist"
 				>
-					<ul className="tbar-nav">
-						{panels.reduce((elements, group, groupIndex) => {
-							const buttons = group.map((panelId, index) => {
-								const panel = sidebarPanels[panelId];
+					{panels.reduce((elements, group, groupIndex) => {
+						const buttons = group.map((panelId, index) => {
+							const panel = sidebarPanels[panelId];
 
-								const active =
-									open && currentPanelId === panelId;
-								const {
-									icon,
-									isLink,
-									label,
-									pluginEntryPoint,
-									url,
-								} = panel;
+							const active = open && currentPanelId === panelId;
 
-								const prefetch = () =>
-									load(
-										panel.sidebarPanelId,
-										pluginEntryPoint
-									).then(...swallow);
+							const {
+								icon,
+								isLink,
+								label,
+								pluginEntryPoint,
+								url,
+							} = panel;
 
-								const btnClasses = classNames(
-									'tbar-btn tbar-btn-monospaced',
-									{active}
-								);
+							const prefetch = () =>
+								load(
+									panel.sidebarPanelId,
+									pluginEntryPoint
+								).then(...swallow);
 
-								return (
-									<li
-										className={classNames(
-											'tbar-item',
-											`tbar-item--${panel.sidebarPanelId}`
-										)}
-										key={panel.sidebarPanelId}
-									>
-										{isLink ? (
-											<a
-												className={btnClasses}
-												href={url}
-											>
-												<ClayIcon symbol={icon} />
-											</a>
-										) : (
-											<ClayButtonWithIcon
-												aria-label={getMessage(label)}
-												aria-pressed={active}
-												className={btnClasses}
-												data-tooltip-align="left"
-												displayType="unstyled"
-												id={panel.sidebarPanelId}
-												onClick={() =>
-													handlePanelClick(panel)
-												}
-												onFocus={prefetch}
-												onKeyDown={handleKeyDown}
-												onMouseEnter={prefetch}
-												symbol={icon}
-												tabIndex={
-													index === 0 ? '0' : '-1'
-												}
-												title={label}
-											/>
-										)}
-									</li>
-								);
-							});
+							const btnClasses = classNames(
+								'tbar-btn tbar-btn-monospaced',
+								{active}
+							);
 
-							if (groupIndex === panels.length - 1) {
-								return elements.concat(buttons);
-							}
-							else {
-								return elements.concat([
-									...buttons,
-									<hr key={`separator-${groupIndex}`} />,
-								]);
-							}
-						}, [])}
-					</ul>
-				</nav>
+							return (
+								<>
+									{isLink ? (
+										<a className={btnClasses} href={url}>
+											<ClayIcon symbol={icon} />
+										</a>
+									) : (
+										<ClayButtonWithIcon
+											aria-label={getMessage(label)}
+											aria-selected={active}
+											className={btnClasses}
+											data-panel-id={label}
+											data-tooltip-align="left"
+											displayType="unstyled"
+											id={panel.sidebarPanelId}
+											onClick={() =>
+												handlePanelClick(panel)
+											}
+											onFocus={prefetch}
+											onMouseEnter={prefetch}
+											role="tab"
+											symbol={icon}
+											tabIndex={index === 0 ? '0' : '-1'}
+											title={label}
+										/>
+									)}
+								</>
+							);
+						});
+
+						if (groupIndex === panels.length - 1) {
+							return elements.concat(buttons);
+						}
+						else {
+							return elements.concat([
+								...buttons,
+								<hr key={`separator-${groupIndex}`} />,
+							]);
+						}
+					}, [])}
+				</div>
 
 				<div
-					aria-label={Liferay.Language.get('sidebar')}
+					aria-label={sub(
+						Liferay.Language.get('x-panel'),
+						sidebarPanels[activePanel].label
+					)}
 					className={classNames('multi-panel-sidebar-content', {
 						'multi-panel-sidebar-content-open': open,
 					})}
+					data-sidebar-content={activePanel}
+					role="tabpanel"
+					tabIndex="-1"
 				>
 					{hasError ? (
 						<div>

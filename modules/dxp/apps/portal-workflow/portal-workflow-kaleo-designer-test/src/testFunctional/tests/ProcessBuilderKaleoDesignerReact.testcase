@@ -462,7 +462,6 @@ definition {
 	}
 
 	@description = "Verify that the user can add translations"
-	@ignore = "true"
 	@priority = 4
 	test CanAddTranslations {
 		property test.name.skip.portal.instance = "ProcessBuilderKaleoDesignerReact#CanAddTranslations";
@@ -478,10 +477,7 @@ definition {
 
 		ProcessBuilderKaleoDesignerReact.editWorkflowTitle(title = "Titre l'epreuve");
 
-		ProcessBuilderKaleoDesignerReact.selectTranslationLanguage(
-			newTranslationOption = "pt_BR",
-			translationOptionSelected = "fr-fr",
-			translationStatus = "label-warning");
+		ProcessBuilderKaleoDesignerReact.selectTranslationLanguage(key_locale = "pt_BR");
 
 		ProcessBuilderKaleoDesignerReact.editWorkflowTitle(title = "Titulo do teste");
 
@@ -493,9 +489,12 @@ definition {
 			newTranslationOption = "fr_FR",
 			translationStatus = "success");
 
-		ProcessBuilderKaleoDesignerReact.viewTranslationLanguageStatus(
-			newTranslationOption = "pt_BR",
-			translationStatus = "success");
+		ProcessBuilderKaleoDesignerReact.openTranslationLanguageDropdown();
+
+		AssertTextEquals(
+			key_locale = "pt_BR",
+			locator1 = "Translation#TRANSLATION_LANGUAGE_STATUS_LABEL",
+			value1 = "Translated");
 	}
 
 	@description = "Verify that is possible to select Account role type for role assignments"
@@ -2110,7 +2109,7 @@ definition {
 			connectorOut = "start",
 			key_direction = "right");
 
-		ProcessBuilderKaleoDesignerReact.editConnectorTransitionField(
+		ProcessBuilderKaleoDesignerReact.editConnector(
 			connectorLabel = "START-END CONNECTOR",
 			nodeName = "New Name");
 
@@ -3949,7 +3948,7 @@ definition {
 
 		ProcessBuilderKaleoDesignerReact.editConnector(
 			connectorLabel = "STARTENDCONNECTOR",
-			newConnectorLabel = "EditedConnector");
+			connectorLabelEdit = "EditedConnector");
 
 		ProcessBuilderKaleoDesignerReact.viewConnectorPresent(connectorLabel = "EDITEDCONNECTOR");
 
@@ -4027,7 +4026,7 @@ definition {
 
 		ProcessBuilderKaleoDesignerReact.editConnector(
 			connectorLabel = "TRANSITION LABEL",
-			newConnectorLabel = "LIFERAY LATAM");
+			connectorLabelEdit = "LIFERAY LATAM");
 
 		ProcessBuilderKaleoDesignerReact.viewConnectorPresent(connectorLabel = "LIFERAY LATAM");
 
@@ -4810,9 +4809,11 @@ definition {
 
 		ProcessBuilderKaleoDesignerReact.viewTranslationDropdown(translationOptionSelected = "en-us");
 
-		ProcessBuilderKaleoDesignerReact.selectTranslationLanguage(translationOptionSelected = "en-us");
+		Click(
+			key_locale = "en_US",
+			locator1 = "Translation#DROPDOWN_MENU_ITEM");
 
-		ProcessBuilderKaleoDesignerReact.viewTranslationDropdownNotPresent();
+		AssertElementNotPresent(locator1 = "ProcessBuilderKaleoDesignerReact#TRANSLATION_DROPDOWN");
 	}
 
 	@description = "Verify that the date and time format in Details tab is following the system language (Example: Apr 07, 2022, 1:34 PM for en_US and 07 Abr, 2022, 13:34 for pt)"

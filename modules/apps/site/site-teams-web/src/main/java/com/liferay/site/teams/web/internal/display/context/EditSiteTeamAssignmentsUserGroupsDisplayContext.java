@@ -26,8 +26,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.persistence.constants.UserGroupFinderConstants;
-import com.liferay.portlet.usergroupsadmin.search.UserGroupDisplayTerms;
-import com.liferay.portlet.usergroupsadmin.search.UserGroupSearch;
 import com.liferay.site.teams.web.internal.constants.SiteTeamsPortletKeys;
 import com.liferay.users.admin.kernel.util.UsersAdminUtil;
 
@@ -133,16 +131,15 @@ public class EditSiteTeamAssignmentsUserGroupsDisplayContext
 				WebKeys.THEME_DISPLAY);
 
 		SearchContainer<UserGroup> userGroupSearchContainer =
-			new UserGroupSearch(renderRequest, getEditTeamAssignmentsURL());
+			new SearchContainer<>(
+				renderRequest, getEditTeamAssignmentsURL(), null,
+				"no-user-groups-were-found");
 
 		userGroupSearchContainer.setOrderByCol(getOrderByCol());
 		userGroupSearchContainer.setOrderByComparator(
 			UsersAdminUtil.getUserGroupOrderByComparator(
 				getOrderByCol(), getOrderByType()));
 		userGroupSearchContainer.setOrderByType(getOrderByType());
-
-		UserGroupDisplayTerms searchTerms =
-			(UserGroupDisplayTerms)userGroupSearchContainer.getSearchTerms();
 
 		LinkedHashMap<String, Object> userGroupParams =
 			LinkedHashMapBuilder.<String, Object>put(
@@ -152,13 +149,12 @@ public class EditSiteTeamAssignmentsUserGroupsDisplayContext
 
 		userGroupSearchContainer.setResultsAndTotal(
 			() -> UserGroupLocalServiceUtil.search(
-				themeDisplay.getCompanyId(), searchTerms.getKeywords(),
-				userGroupParams, userGroupSearchContainer.getStart(),
+				themeDisplay.getCompanyId(), getKeywords(), userGroupParams,
+				userGroupSearchContainer.getStart(),
 				userGroupSearchContainer.getEnd(),
 				userGroupSearchContainer.getOrderByComparator()),
 			UserGroupLocalServiceUtil.searchCount(
-				themeDisplay.getCompanyId(), searchTerms.getKeywords(),
-				userGroupParams));
+				themeDisplay.getCompanyId(), getKeywords(), userGroupParams));
 
 		userGroupSearchContainer.setRowChecker(
 			new EmptyOnClickRowChecker(renderResponse));

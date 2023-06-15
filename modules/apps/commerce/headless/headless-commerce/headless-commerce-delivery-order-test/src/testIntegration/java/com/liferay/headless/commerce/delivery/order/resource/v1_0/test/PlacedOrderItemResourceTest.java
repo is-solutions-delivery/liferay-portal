@@ -14,6 +14,7 @@
 
 package com.liferay.headless.commerce.delivery.order.resource.v1_0.test;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
@@ -108,7 +109,8 @@ public class PlacedOrderItemResourceTest
 			_user.getUserId(), _commerceCurrency.getCode());
 
 		_commerceChannel = _commerceChannelLocalService.addCommerceChannel(
-			RandomTestUtil.randomString(), testGroup.getGroupId(),
+			RandomTestUtil.randomString(),
+			AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT, testGroup.getGroupId(),
 			RandomTestUtil.randomString(),
 			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
 			_commerceCurrency.getCode(), _serviceContext);
@@ -161,7 +163,8 @@ public class PlacedOrderItemResourceTest
 	@Override
 	protected PlacedOrderItem randomPlacedOrderItem() throws Exception {
 		return _toPlacedOrderItem(
-			_addCPDefinition(0, RandomTestUtil.randomString()));
+			_addCPDefinition(
+				0, "https://liferay.com/" + RandomTestUtil.randomString()));
 	}
 
 	@Override
@@ -209,8 +212,8 @@ public class PlacedOrderItemResourceTest
 					cpDefinition.getModelClassName(),
 					cpDefinition.getCPDefinitionId(), fileEntryId, url,
 					CommerceOrderConstants.ORDER_STATUS_PENDING, 0,
-					RandomTestUtil.randomInt(), true, 0, "sampleUrl", false,
-					null, 0, _serviceContext);
+					RandomTestUtil.randomInt(), true, 0, "https://liferay.com",
+					false, null, 0, _serviceContext);
 
 		CommerceTestUtil.updateBackOrderCPDefinitionInventory(cpDefinition);
 
@@ -300,7 +303,7 @@ public class PlacedOrderItemResourceTest
 	}
 
 	private void _testGetPlacedOrderItemWithURL() throws Exception {
-		String url = "http://www.example.com/myfiles/download";
+		String url = "https://liferay.com/myfiles/download";
 
 		PlacedOrderItem postPlacedOrderItem = _addPlacedOrderItem(
 			_toPlacedOrderItem(_addCPDefinition(0, url)));

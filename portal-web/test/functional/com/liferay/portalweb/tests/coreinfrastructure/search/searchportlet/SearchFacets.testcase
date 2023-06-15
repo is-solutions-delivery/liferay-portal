@@ -68,15 +68,18 @@ definition {
 		task ("Create three object entries that configure the title, siteID, and date fields") {
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Apple Fruit,siteID/1,date/2023-04-01",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Banana Fruit,siteID/1,date/2023-04-01",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Coconut Fruit,siteID/2,date/2023-04-01",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 		}
 
 		task ("Add a Custom Facet widget to the search page") {
@@ -502,9 +505,10 @@ definition {
 
 		Search.openSearchPage();
 
-		SearchFacetPortlet.updateFacetConfiguration(
-			displayTemplate = "Search Results Test ADT",
-			portletName = "Search Results");
+		SearchResultPortlet.configureSearchResults(
+			customEmptyResultMessage = "true",
+			customPagination = "true",
+			displayTemplate = "Search Results Test ADT");
 
 		SearchPortlets.searchEmbedded(searchTerm = "test");
 
@@ -796,6 +800,8 @@ definition {
 
 	@priority = 4
 	test AssertNonAdminsCannotAddCertainWidgets {
+		property custom.properties = "feature.flag.LPS-155692=true";
+
 		JSONRole.addRegularRole(
 			roleKey = "Can Add Widgets",
 			roleTitle = "Can Add Widgets");
@@ -890,7 +896,7 @@ definition {
 		property portal.acceptance = "true";
 
 		for (var siteName : list "Community,Engineering,Product") {
-			JSONGroup.addGroup(groupName = ${siteName});
+			HeadlessSite.addSite(siteName = ${siteName});
 
 			JSONWebcontent.addWebContent(
 				content = "Web Content",
@@ -1386,7 +1392,7 @@ definition {
 	test CanOrderSiteFacetTerms {
 		task ("Add Sites") {
 			for (var siteName : list "Sales,Community,Product,Engineering") {
-				JSONGroup.addGroup(groupName = ${siteName});
+				HeadlessSite.addSite(siteName = ${siteName});
 			}
 		}
 
@@ -2592,7 +2598,7 @@ definition {
 			groupName = "Guest",
 			title = "orange");
 
-		JSONGroup.addGroup(groupName = "New Site");
+		HeadlessSite.addSite(siteName = "New Site");
 
 		JSONBlog.addEntry(
 			assetTagNames = "sweet",

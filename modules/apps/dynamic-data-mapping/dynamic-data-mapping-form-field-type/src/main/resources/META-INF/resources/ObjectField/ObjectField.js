@@ -62,6 +62,7 @@ const ObjectField = ({
 			({
 				businessType,
 				listTypeDefinitionExternalReferenceCode,
+				localized,
 				relationshipType,
 				system,
 				type,
@@ -83,6 +84,9 @@ const ObjectField = ({
 						focusedFieldType === 'text') &&
 					normalizedDataType.includes(type.toLowerCase())
 				) {
+					return false;
+				}
+				else if (localized) {
 					return false;
 				}
 				else if (
@@ -181,12 +185,14 @@ const ObjectDefinitionObjectField = ({
 	}, [objectDefinitionId, previousObjectDefinitionId, refetch]);
 
 	const options =
-		resource?.objectFields?.map(({label, name}) => {
-			return {
-				label: label[themeDisplay.getDefaultLanguageId()] ?? name,
-				value: name,
-			};
-		}) || [];
+		resource?.objectFields
+			?.filter(({localized}) => !localized)
+			.map(({label, name}) => {
+				return {
+					label: label[themeDisplay.getDefaultLanguageId()] ?? name,
+					value: name,
+				};
+			}) || [];
 
 	return (
 		<Select

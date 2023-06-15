@@ -38,7 +38,20 @@ config = {
 		...config.globals,
 		MODULE_PATH: true,
 	},
+	overrides: [
+		{
+			files: [
+				'liferay-sample-workspace/client-extensions/liferay-sample-custom-element-*/**',
+			],
+			rules: {
+				'@liferay/no-abbreviations': 'off',
+				'@liferay/no-it-should': 'off',
+				'sort-keys': 'off',
+			},
+		},
+	],
 	rules: {
+		'@liferay/import-extensions': 'off',
 		'@liferay/portal/deprecation': 'off',
 		'@liferay/portal/no-document-cookie': 'off',
 		'@liferay/portal/no-explicit-extend': 'off',

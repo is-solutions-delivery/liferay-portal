@@ -33,13 +33,18 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
+import java.text.DateFormat;
+import java.text.Format;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +71,14 @@ public class CommerceProductDefinitionLinkFDSDataProvider
 		List<ProductLink> productLinks = new ArrayList<>();
 
 		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(
+				DateFormat.MEDIUM, DateFormat.MEDIUM, themeDisplay.getLocale(),
+				themeDisplay.getTimeZone());
+
 			long cpDefinitionId = ParamUtil.getLong(
 				httpServletRequest, "cpDefinitionId");
 
@@ -85,12 +98,6 @@ public class CommerceProductDefinitionLinkFDSDataProvider
 					_language.getLanguageId(
 						_portal.getLocale(httpServletRequest)));
 
-				Date createDate = cpDefinitionLink.getCreateDate();
-
-				String createDateDescription = _language.getTimeDescription(
-					httpServletRequest,
-					System.currentTimeMillis() - createDate.getTime(), true);
-
 				String statusDisplayStyle = StringPool.BLANK;
 
 				if (cpDefinitionLink.getStatus() ==
@@ -102,9 +109,7 @@ public class CommerceProductDefinitionLinkFDSDataProvider
 				productLinks.add(
 					new ProductLink(
 						cpDefinitionLink.getCPDefinitionLinkId(),
-						_language.format(
-							httpServletRequest, "x-ago", createDateDescription,
-							false),
+						dateTimeFormat.format(cpDefinitionLink.getCreateDate()),
 						new ImageField(
 							name, "rounded", "lg",
 							cpDefinition.getDefaultImageThumbnailSrc(

@@ -38,17 +38,20 @@ public class CommerceOrderInfoItemCapabilitiesProvider
 	public List<InfoItemCapability> getInfoItemCapabilities() {
 		if (FeatureFlagManagerUtil.isEnabled("COMMERCE-9410")) {
 			return ListUtil.fromArray(
-				_displayPageInfoItemCapability,
-				_templatePageInfoItemCapability);
+				_displayPageInfoItemCapability, _templateInfoItemCapability);
 		}
 
 		return ListUtil.fromArray();
 	}
 
-	@Reference
-	private DisplayPageInfoItemCapability _displayPageInfoItemCapability;
+	@Reference(
+		target = "(info.item.capability.key=" + DisplayPageInfoItemCapability.KEY + ")"
+	)
+	private InfoItemCapability _displayPageInfoItemCapability;
 
-	@Reference
-	private TemplateInfoItemCapability _templatePageInfoItemCapability;
+	@Reference(
+		target = "(info.item.capability.key=" + TemplateInfoItemCapability.KEY + ")"
+	)
+	private InfoItemCapability _templateInfoItemCapability;
 
 }

@@ -1,0 +1,269 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.fragment.item.selector.web.internal.display.context;
+
+import com.liferay.fragment.contributor.FragmentCollectionContributor;
+import com.liferay.fragment.contributor.FragmentCollectionContributorRegistry;
+import com.liferay.fragment.item.selector.criterion.FragmentItemSelectorCriterion;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * @author Víctor Galán
+ */
+public class DefaultFragmentDisplayContext {
+
+	public DefaultFragmentDisplayContext(
+		HttpServletRequest httpServletRequest,
+		LiferayPortletRequest liferayPortletRequest,
+		LiferayPortletResponse liferayPortletResponse) {
+
+		_httpServletRequest = httpServletRequest;
+
+		_fragmentCollectionContributorRegistry =
+			(FragmentCollectionContributorRegistry)
+				httpServletRequest.getAttribute(
+					FragmentCollectionContributorRegistry.class.getName());
+
+		_fragmentItemSelectorCriterion =
+			(FragmentItemSelectorCriterion)httpServletRequest.getAttribute(
+				FragmentItemSelectorCriterion.class.getName());
+
+		_liferayPortletRequest = liferayPortletRequest;
+		_liferayPortletResponse = liferayPortletResponse;
+
+		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+	}
+
+	public List<BreadcrumbEntry> getBreadcrumbEntries() {
+		List<BreadcrumbEntry> breadcrumbEntries = new ArrayList<>();
+
+		BreadcrumbEntry defaultBreadcrumbEntry = new BreadcrumbEntry();
+
+		defaultBreadcrumbEntry.setTitle(
+			LanguageUtil.get(_httpServletRequest, "default"));
+		defaultBreadcrumbEntry.setURL(
+			PortletURLBuilder.create(
+				PortletURLUtil.getCurrent(
+					_liferayPortletRequest, _liferayPortletResponse)
+			).setParameter(
+				"fragmentCollectionKey", ""
+			).buildString());
+
+		breadcrumbEntries.add(defaultBreadcrumbEntry);
+
+		if (Validator.isNotNull(getFragmentCollectionKey())) {
+			defaultBreadcrumbEntry.setBrowsable(false);
+
+			FragmentCollectionContributor fragmentCollectionContributor =
+				_fragmentCollectionContributorRegistry.
+					getFragmentCollectionContributor(
+						getFragmentCollectionKey());
+
+			BreadcrumbEntry breadcrumbEntry = new BreadcrumbEntry();
+
+			breadcrumbEntry.setTitle(
+				fragmentCollectionContributor.getName(
+					_themeDisplay.getLocale()));
+
+			breadcrumbEntries.add(breadcrumbEntry);
+		}
+
+		return breadcrumbEntries;
+	}
+
+	public SearchContainer<FragmentCollectionContributor>
+		getFragmentCollectionContributorsSearchContainer() {
+
+		if (_fragmentCollectionSearchContainer != null) {
+			return _fragmentCollectionSearchContainer;
+		}
+
+		SearchContainer<FragmentCollectionContributor> searchContainer =
+			new SearchContainer<>(
+				_liferayPortletRequest,
+				PortletURLUtil.getCurrent(
+					_liferayPortletRequest, _liferayPortletResponse),
+				null, "no-fragment-collection-was-found");
+
+		searchContainer.setId("fragmentCollections");
+
+		List<FragmentCollectionContributor> fragmentCollectionContributors =
+			ListUtil.filter(
+				_fragmentCollectionContributorRegistry.
+					getFragmentCollectionContributors(),
+				fragmentCollectionContributor -> {
+					if (SetUtil.isEmpty(
+							_fragmentItemSelectorCriterion.getInputTypes()) ||
+						ListUtil.exists(
+							fragmentCollectionContributor.getFragmentEntries(
+								_fragmentItemSelectorCriterion.getType(),
+								_themeDisplay.getLocale()),
+							fragmentEntry -> _filterInputTypes(
+								fragmentEntry,
+								_fragmentItemSelectorCriterion.
+									getInputTypes()))) {
+
+						return true;
+					}
+
+					return false;
+				});
+
+		searchContainer.setResultsAndTotal(fragmentCollectionContributors);
+
+		_fragmentCollectionSearchContainer = searchContainer;
+
+		return _fragmentCollectionSearchContainer;
+	}
+
+	public String getFragmentCollectionKey() {
+		if (_fragmentCollectionKey != null) {
+			return _fragmentCollectionKey;
+		}
+
+		_fragmentCollectionKey = ParamUtil.getString(
+			_httpServletRequest, "fragmentCollectionKey");
+
+		return _fragmentCollectionKey;
+	}
+
+	public SearchContainer<FragmentEntry> getFragmentsSearchContainer() {
+		if (_fragmentsSearchContainer != null) {
+			return _fragmentsSearchContainer;
+		}
+
+		SearchContainer<FragmentEntry> searchContainer = new SearchContainer<>(
+			_liferayPortletRequest,
+			PortletURLUtil.getCurrent(
+				_liferayPortletRequest, _liferayPortletResponse),
+			null, "no-fragment-was-found");
+
+		searchContainer.setId("fragments");
+
+		FragmentCollectionContributor fragmentCollectionContributor =
+			_fragmentCollectionContributorRegistry.
+				getFragmentCollectionContributor(getFragmentCollectionKey());
+
+		List<FragmentEntry> fragmentEntries = ListUtil.filter(
+			fragmentCollectionContributor.getFragmentEntries(
+				_fragmentItemSelectorCriterion.getType(),
+				_themeDisplay.getLocale()),
+			fragmentEntry -> _filterInputTypes(
+				fragmentEntry, _fragmentItemSelectorCriterion.getInputTypes()));
+
+		if (isSearch()) {
+			fragmentEntries = ListUtil.filter(
+				fragmentEntries,
+				contributedEntry -> {
+					String lowerCaseName = StringUtil.toLowerCase(
+						contributedEntry.getName());
+
+					return lowerCaseName.contains(
+						StringUtil.toLowerCase(_getKeywords()));
+				});
+		}
+
+		searchContainer.setResultsAndTotal(fragmentEntries);
+
+		_fragmentsSearchContainer = searchContainer;
+
+		return _fragmentsSearchContainer;
+	}
+
+	public boolean isSearch() {
+		if (Validator.isNotNull(_getKeywords())) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _filterInputTypes(
+		FragmentEntry fragmentEntry, Set<String> inputTypes) {
+
+		try {
+			JSONObject typeOptionsJSONObject = JSONFactoryUtil.createJSONObject(
+				fragmentEntry.getTypeOptions());
+
+			Set<String> fieldTypes = JSONUtil.toStringSet(
+				typeOptionsJSONObject.getJSONArray("fieldTypes"));
+
+			if (SetUtil.isEmpty(SetUtil.intersect(fieldTypes, inputTypes))) {
+				return false;
+			}
+
+			return true;
+		}
+		catch (JSONException jsonException) {
+			_log.error(jsonException);
+
+			return false;
+		}
+	}
+
+	private String _getKeywords() {
+		if (_keywords != null) {
+			return _keywords;
+		}
+
+		_keywords = ParamUtil.getString(_httpServletRequest, "keywords");
+
+		return _keywords;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DefaultFragmentDisplayContext.class.getName());
+
+	private final FragmentCollectionContributorRegistry
+		_fragmentCollectionContributorRegistry;
+	private String _fragmentCollectionKey;
+	private SearchContainer<FragmentCollectionContributor>
+		_fragmentCollectionSearchContainer;
+	private final FragmentItemSelectorCriterion _fragmentItemSelectorCriterion;
+	private SearchContainer<FragmentEntry> _fragmentsSearchContainer;
+	private final HttpServletRequest _httpServletRequest;
+	private String _keywords;
+	private final LiferayPortletRequest _liferayPortletRequest;
+	private final LiferayPortletResponse _liferayPortletResponse;
+	private final ThemeDisplay _themeDisplay;
+
+}

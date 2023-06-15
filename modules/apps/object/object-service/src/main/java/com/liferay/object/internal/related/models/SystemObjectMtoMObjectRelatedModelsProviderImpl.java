@@ -17,6 +17,7 @@ package com.liferay.object.internal.related.models;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.exception.RequiredObjectRelationshipException;
+import com.liferay.object.internal.entry.util.ObjectEntrySearchUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTable;
@@ -79,7 +80,7 @@ public class SystemObjectMtoMObjectRelatedModelsProviderImpl
 		throws PortalException {
 
 		List<T> relatedModels = getRelatedModels(
-			groupId, objectRelationshipId, primaryKey, QueryUtil.ALL_POS,
+			groupId, objectRelationshipId, primaryKey, null, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS);
 
 		if (relatedModels.isEmpty()) {
@@ -150,8 +151,8 @@ public class SystemObjectMtoMObjectRelatedModelsProviderImpl
 
 	@Override
 	public List<T> getRelatedModels(
-			long groupId, long objectRelationshipId, long primaryKey, int start,
-			int end)
+			long groupId, long objectRelationshipId, long primaryKey,
+			String search, int start, int end)
 		throws PortalException {
 
 		PersistedModelLocalService persistedModelLocalService =
@@ -160,8 +161,8 @@ public class SystemObjectMtoMObjectRelatedModelsProviderImpl
 
 		return persistedModelLocalService.dslQuery(
 			_getGroupByStep(
-				groupId, objectRelationshipId, primaryKey,
-				DSLQueryFactoryUtil.selectDistinct(_table)
+				DSLQueryFactoryUtil.selectDistinct(_table), groupId,
+				objectRelationshipId, primaryKey, search
 			).limit(
 				start, end
 			));
@@ -169,7 +170,8 @@ public class SystemObjectMtoMObjectRelatedModelsProviderImpl
 
 	@Override
 	public int getRelatedModelsCount(
-			long groupId, long objectRelationshipId, long primaryKey)
+			long groupId, long objectRelationshipId, long primaryKey,
+			String search)
 		throws PortalException {
 
 		PersistedModelLocalService persistedModelLocalService =
@@ -178,10 +180,10 @@ public class SystemObjectMtoMObjectRelatedModelsProviderImpl
 
 		return persistedModelLocalService.dslQueryCount(
 			_getGroupByStep(
-				groupId, objectRelationshipId, primaryKey,
 				DSLQueryFactoryUtil.countDistinct(
 					_table.getColumn(
-						_objectDefinition.getPKObjectFieldDBColumnName()))));
+						_objectDefinition.getPKObjectFieldDBColumnName())),
+				groupId, objectRelationshipId, primaryKey, search));
 	}
 
 	@Override
@@ -270,8 +272,8 @@ public class SystemObjectMtoMObjectRelatedModelsProviderImpl
 	}
 
 	private GroupByStep _getGroupByStep(
-			long groupId, long objectRelationshipId, long primaryKey,
-			FromStep fromStep)
+			FromStep fromStep, long groupId, long objectRelationshipId,
+			long primaryKey, String search)
 		throws PortalException {
 
 		ObjectRelationship objectRelationship =
@@ -341,6 +343,10 @@ public class SystemObjectMtoMObjectRelatedModelsProviderImpl
 					return companyIdColumn.eq(
 						objectRelationship.getCompanyId());
 				}
+			).and(
+				ObjectEntrySearchUtil.getRelatedModelsPredicate(
+					dynamicObjectDefinitionTable, objectDefinition2,
+					_objectFieldLocalService, search)
 			)
 		);
 	}

@@ -454,6 +454,8 @@ definition {
 
 		Click(locator1 = "Button#PERMISSIONS");
 
+		SetWindowSize.maximizeWindow();
+
 		SelectFrameTop();
 
 		IFrame.selectModalFrame();
@@ -466,9 +468,7 @@ definition {
 			key_roleTitle = "site-member",
 			locator1 = "Permissions#CONTENT_PERMISSIONS_UPDATE_DISCUSSION_CHECKBOX");
 
-		ScrollWebElementIntoView(locator1 = "Button#SAVE");
-
-		Button.clickSave();
+		PortletEntry.save();
 
 		Navigator.openURL();
 

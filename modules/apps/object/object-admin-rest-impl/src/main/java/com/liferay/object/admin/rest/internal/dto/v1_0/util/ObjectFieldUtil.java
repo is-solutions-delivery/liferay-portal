@@ -148,14 +148,6 @@ public class ObjectFieldUtil {
 		ObjectFieldSettingLocalService objectFieldSettingLocalService,
 		ObjectFilterLocalService objectFilterLocalService) {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-143068") &&
-			Objects.equals(
-				objectField.getBusinessTypeAsString(),
-				ObjectFieldConstants.BUSINESS_TYPE_DATE_TIME)) {
-
-			throw new UnsupportedOperationException();
-		}
-
 		if (!FeatureFlagManagerUtil.isEnabled("LPS-164948") &&
 			Objects.equals(
 				objectField.getBusinessTypeAsString(),
@@ -212,6 +204,10 @@ public class ObjectFieldUtil {
 			ObjectFieldSettingUtil.toObjectFieldSettings(
 				listTypeDefinitionId, objectField,
 				objectFieldSettingLocalService, objectFilterLocalService));
+		serviceBuilderObjectField.setReadOnly(
+			objectField.getReadOnlyAsString());
+		serviceBuilderObjectField.setReadOnlyConditionExpression(
+			objectField.getReadOnlyConditionExpression());
 		serviceBuilderObjectField.setRequired(
 			GetterUtil.getBoolean(objectField.getRequired()));
 

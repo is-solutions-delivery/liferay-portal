@@ -15,6 +15,7 @@
 import baseReducer from './baseReducer';
 import collectionsReducer from './collectionsReducer';
 import defaultFragmentEntryLinksReducer from './defaultFragmentEntryLinksReducer';
+import draftReducer from './draftReducer';
 import fragmentEntryLinksReducer from './fragmentEntryLinksReducer';
 import fragmentsReducer from './fragmentsReducer';
 import languageIdReducer from './languageIdReducer';
@@ -34,6 +35,7 @@ import widgetsReducer from './widgetsReducer';
 const combinedReducer = (state, action) =>
 	Object.entries({
 		collections: collectionsReducer,
+		draft: draftReducer,
 		fragmentEntryLinks: fragmentEntryLinksReducer,
 		fragments: fragmentsReducer,
 		languageId: languageIdReducer,

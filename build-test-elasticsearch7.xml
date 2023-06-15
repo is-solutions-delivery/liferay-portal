@@ -18,7 +18,7 @@
 			</then>
 		</elseif>
 		<else>
-			<property name="elasticsearch.version" value="7.17.9" />
+			<property name="elasticsearch.version" value="7.17.10" />
 		</else>
 	</if>
 
@@ -44,7 +44,7 @@
 	<property name="elasticsearch.tar.url.linux" value="https://artifacts.elastic.co/downloads/elasticsearch/${elasticsearch.tar.name.linux}" />
 	<property name="elasticsearch.tar.url.mac" value="https://artifacts.elastic.co/downloads/elasticsearch/${elasticsearch.tar.name.mac}" />
 	<property name="elasticsearch.zip.url.windows" value="https://artifacts.elastic.co/downloads/elasticsearch/${elasticsearch.zip.name.windows}" />
-	<property name="elasticsearch.sidecar.version" value="7.17.9" />
+	<property name="elasticsearch.sidecar.version" value="7.17.10" />
 	<property name="elasticsearch.sidecar.analysis-icu.zip.url" value="https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-icu/analysis-icu-${elasticsearch.sidecar.version}.zip" />
 	<property name="elasticsearch.sidecar.analysis-kuromoji.zip.url" value="https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-kuromoji/analysis-kuromoji-${elasticsearch.sidecar.version}.zip" />
 	<property name="elasticsearch.sidecar.analysis-smartcn.zip.url" value="https://artifacts.elastic.co/downloads/elasticsearch-plugins/analysis-smartcn/analysis-smartcn-${elasticsearch.sidecar.version}.zip" />
@@ -97,24 +97,16 @@
 		</sequential>
 	</macrodef>
 
-	<macrodef name="configure-elasticsearch-jdk11">
-		<sequential>
-			<replace
-				file="${elasticsearch.dir}/bin/elasticsearch-env"
-			>
-				<replacetoken><![CDATA[JAVA="$JAVA_HOME/bin/java"]]></replacetoken>
-				<replacevalue><![CDATA[JAVA="/opt/java/jdk11/bin/java"]]></replacevalue>
-			</replace>
-		</sequential>
-	</macrodef>
+	<macrodef name="configure-elasticsearch-jdk">
+		<attribute name="elasticsearch.java.home" />
 
-	<macrodef name="configure-elasticsearch-jdk17">
 		<sequential>
 			<replace
 				file="${elasticsearch.dir}/bin/elasticsearch-env"
 			>
-				<replacetoken><![CDATA[JAVA="$JAVA_HOME/bin/java"]]></replacetoken>
-				<replacevalue><![CDATA[JAVA="/opt/java/openjdk17/bin/java"]]></replacevalue>
+				<replacetoken><![CDATA[#!/bin/bash]]></replacetoken>
+				<replacevalue><![CDATA[#!/bin/bash
+ES_JAVA_HOME=@{elasticsearch.java.home}]]></replacevalue>
 			</replace>
 		</sequential>
 	</macrodef>
@@ -134,27 +126,36 @@ path.repo: ${liferay.home}/data/elasticsearch7/repo</echo>
 
 	<macrodef name="configure-elasticsearch-properties">
 		<sequential>
-			<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}bootstrap.system_call_filter: false
-cluster.name: LiferayElasticsearchCluster
+			<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}cluster.name: LiferayElasticsearchCluster
 http.host: ["_local_", "_site_"]
 ingest.geoip.downloader.enabled: false
-xpack.license.self_generated.type: trial</echo>
+xpack.license.self_generated.type: trial
+xpack.security.enabled: false</echo>
+
+			<echo file="${elasticsearch.dir}/config/jvm.options.d/jvm.options">${line.separator}-Xms2g
+-Xmx2g</echo>
 		</sequential>
 	</macrodef>
 
 	<macrodef name="configure-elasticsearch-second-cluster-properties">
 		<sequential>
-			<echo file="${elasticsearch.dir}-2/config/elasticsearch.yml">${line.separator}bootstrap.system_call_filter: false
-cluster.name: LiferayElasticsearchClusterTwo
+			<echo file="${elasticsearch.dir}-2/config/elasticsearch.yml">${line.separator}cluster.name: LiferayElasticsearchClusterTwo
 http.port: 9202
 ingest.geoip.downloader.enabled: false
 transport.port: 9500-9600
-xpack.license.self_generated.type: trial</echo>
+xpack.license.self_generated.type: trial
+xpack.security.enabled: false</echo>
 		</sequential>
 	</macrodef>
 
 	<macrodef name="configure-elasticsearch-x-pack-pki-security-properties">
 		<sequential>
+			<replaceregexp
+				file="${elasticsearch.dir}/config/elasticsearch.yml"
+				match="xpack.security.enabled.*"
+				replace=""
+			/>
+
 			<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}xpack.security.enabled: true
 xpack.security.http.ssl.certificate: certs/elastic-certificates.crt
 xpack.security.http.ssl.certificate_authorities : [ "certs/ca.crt" ]
@@ -185,6 +186,12 @@ kibana_system:
 
 	<macrodef name="configure-elasticsearch-x-pack-security-properties">
 		<sequential>
+			<replaceregexp
+				file="${elasticsearch.dir}/config/elasticsearch.yml"
+				match="xpack.security.enabled.*"
+				replace=""
+			/>
+
 			<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}xpack.security.enabled: true
 xpack.security.http.ssl.enabled: true
 xpack.security.http.ssl.keystore.path: certs/elastic-certificates.p12
@@ -204,6 +211,12 @@ xpack.security.http.ssl.supported_protocols: [ "TLSv1.1", "TLSv1.2" ]</echo>
 
 	<macrodef name="configure-elasticsearch-x-pack-security-tls-cipher-suites-properties">
 		<sequential>
+			<replaceregexp
+				file="${elasticsearch.dir}/config/elasticsearch.yml"
+				match="xpack.security.enabled.*"
+				replace=""
+			/>
+
 			<echo append="true" file="${elasticsearch.dir}/config/elasticsearch.yml">${line.separator}xpack.security.enabled: true
 xpack.security.http.ssl.enabled: true
 xpack.security.http.ssl.keystore.path: certs/elastic-certificates.p12
@@ -244,7 +257,7 @@ server.ssl.certificate: ${elasticsearch.dir}/config/certs/elastic-certificates.c
 server.ssl.enabled: true
 server.ssl.key: ${elasticsearch.dir}/config/certs/elastic-certificates.key
 xpack.security.encryptionKey: "xsomethingxatxleastx32xcharactersx"
-xpack.security.sessionTimeout: 600000</echo>
+xpack.security.session.idleTimeout: 600000</echo>
 
 			<if>
 				<equals arg1="${elastic.pki.authentication.enabled}" arg2="true" />
@@ -258,8 +271,8 @@ server.ssl.certificateAuthorities: [ "${elasticsearch.dir}/config/certs/ca.crt" 
 				</then>
 				<else>
 					<echo append="true" file="${elastic.kibana.dir}/config/kibana.yml">
-elasticsearch.password: "${elastic.xpack.elastic.user.password}"
-elasticsearch.username: "elastic"</echo>
+elasticsearch.password: "${elastic.xpack.kibana.user.password}"
+elasticsearch.username: "kibana_system"</echo>
 				</else>
 			</if>
 
@@ -712,6 +725,14 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 				regexp="(PASSWORD elastic = )(\S*)"
 				select="\2"
 			/>
+
+			<propertyregex
+				input="${elastic.xpack.user.passwords}"
+				override="true"
+				property="elastic.xpack.kibana.user.password"
+				regexp="(PASSWORD kibana_system = )(\S*)"
+				select="\2"
+			/>
 		</sequential>
 	</macrodef>
 
@@ -757,7 +778,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 
 			<configure-elasticsearch-ltr-properties />
 
-			<configure-elasticsearch-jdk17 />
+			<configure-elasticsearch-jdk elasticsearch.java.home="/opt/java/openjdk17" />
 
 			<prepare-elasticsearch-ltr />
 
@@ -854,7 +875,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 
 			<get-testcase-property if:set="env.JENKINS_HOME" property.name="elasticsearch.jdk11.enabled" />
 
-			<configure-elasticsearch-jdk11 if:true="${elasticsearch.jdk11.enabled}" />
+			<configure-elasticsearch-jdk elasticsearch.java.home="/opt/java/jdk11" if:true="${elasticsearch.jdk11.enabled}" />
 
 			<antcall target="start-elasticsearch-node" />
 
@@ -1020,6 +1041,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 					</exec>
 
 					<move
+						failonerror="false"
 						file="${app.server.parent.dir}/kibana-${elasticsearch.version}-darwin-x86_64"
 						tofile="${elastic.kibana.dir}"
 					/>
@@ -1054,6 +1076,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 					/>
 
 					<move
+						failonerror="false"
 						file="${app.server.parent.dir}/kibana-${elasticsearch.version}-linux-x86_64"
 						tofile="${elastic.kibana.dir}"
 					/>
@@ -1082,6 +1105,7 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 					/>
 
 					<move
+						failonerror="false"
 						file="${app.server.parent.dir}/kibana-${elasticsearch.version}-windows-x86"
 						tofile="${elastic.kibana.dir}"
 					/>
@@ -1456,13 +1480,13 @@ ${line.separator}CATALINA_OPTS="${CATALINA_OPTS} -Djavax.net.ssl.trustStore=${el
 					<arg value="/c" />
 					<arg value="for /f %x in (pid-elasticsearch) do taskkill /f /pid %x" />
 				</exec>
-
-				<print-files dir="${elasticsearch.stop.dir}/logs/" exclude="*_*" include="LiferayElasticsearchCluster*.log" />
 			</then>
 			<else>
 				<echo>The Elasticsearch server in ${elasticsearch.stop.dir} has already been stopped</echo>
 			</else>
 		</if>
+
+		<print-files dir="${elasticsearch.stop.dir}/logs/" exclude="*_*" include="LiferayElasticsearchCluster*.log" />
 	</target>
 
 	<target name="stop-kibana">

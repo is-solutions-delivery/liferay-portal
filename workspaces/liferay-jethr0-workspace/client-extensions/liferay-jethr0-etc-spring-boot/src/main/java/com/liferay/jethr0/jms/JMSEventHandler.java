@@ -15,21 +15,16 @@
 package com.liferay.jethr0.jms;
 
 import com.liferay.jethr0.build.Build;
-import com.liferay.jethr0.build.parameter.BuildParameter;
 import com.liferay.jethr0.build.queue.BuildQueue;
-import com.liferay.jethr0.build.repository.BuildParameterRepository;
 import com.liferay.jethr0.build.repository.BuildRepository;
 import com.liferay.jethr0.build.repository.BuildRunRepository;
 import com.liferay.jethr0.build.run.BuildRun;
-import com.liferay.jethr0.gitbranch.repository.GitBranchRepository;
-import com.liferay.jethr0.jenkins.JenkinsQueue;
+import com.liferay.jethr0.event.handler.EventHandler;
+import com.liferay.jethr0.event.handler.EventHandlerFactory;
 import com.liferay.jethr0.jenkins.node.JenkinsNode;
 import com.liferay.jethr0.jenkins.repository.JenkinsNodeRepository;
 import com.liferay.jethr0.project.Project;
-import com.liferay.jethr0.project.queue.ProjectQueue;
 import com.liferay.jethr0.project.repository.ProjectRepository;
-import com.liferay.jethr0.task.repository.TaskRepository;
-import com.liferay.jethr0.testsuite.repository.TestSuiteRepository;
 import com.liferay.jethr0.util.StringUtil;
 
 import java.net.URL;
@@ -37,7 +32,6 @@ import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +49,7 @@ public class JMSEventHandler {
 	@JmsListener(destination = "${jms.jenkins.event.queue}")
 	public void process(String message) {
 		if (_log.isDebugEnabled()) {
-			_log.debug(
-				StringUtil.combine(
-					"[", _jmsJenkinsEventQueue, "] Receive ", message));
+			_log.debug("Received " + message);
 		}
 
 		JSONObject messageJSONObject = new JSONObject(message);
@@ -83,14 +75,28 @@ public class JMSEventHandler {
 				_eventTriggerComputerIdle(messageJSONObject);
 			}
 		}
-		else if (eventTrigger.equals("CREATE_BUILD")) {
-			_eventTriggerCreateBuild(messageJSONObject);
-		}
-		else if (eventTrigger.equals("CREATE_PROJECT")) {
-			_eventTriggerCreateProject(messageJSONObject);
-		}
-		else if (eventTrigger.equals("QUEUE_PROJECT")) {
-			_eventTriggerQueueProject(messageJSONObject);
+		else if (eventTrigger.equals("CREATE_BUILD") ||
+				 eventTrigger.equals("CREATE_PROJECT") ||
+				 eventTrigger.equals("QUEUE_PROJECT")) {
+
+			EventHandler eventHandler = _eventHandlerFactory.newEventHandler(
+				EventHandler.EventType.valueOf(
+					messageJSONObject.optString("eventTrigger")));
+
+			if (eventHandler == null) {
+				throw new RuntimeException();
+			}
+
+			try {
+				eventHandler.process(messageJSONObject.toString());
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(exception);
+				}
+
+				throw new RuntimeException();
+			}
 		}
 	}
 
@@ -106,6 +112,10 @@ public class JMSEventHandler {
 
 	private void _eventTriggerBuildCompleted(JSONObject messageJSONObject) {
 		BuildRun buildRun = _getBuildRun(messageJSONObject);
+
+		if (buildRun == null) {
+			return;
+		}
 
 		buildRun.setDuration(_getBuildRunDuration(messageJSONObject));
 		buildRun.setResult(_getBuildRunResult(messageJSONObject));
@@ -141,6 +151,10 @@ public class JMSEventHandler {
 
 	private void _eventTriggerBuildStarted(JSONObject messageJSONObject) {
 		BuildRun buildRun = _getBuildRun(messageJSONObject);
+
+		if (buildRun == null) {
+			return;
+		}
 
 		buildRun.setBuildURL(_getBuildURL(messageJSONObject));
 		buildRun.setState(BuildRun.State.RUNNING);
@@ -185,105 +199,19 @@ public class JMSEventHandler {
 		_buildRunRepository.update(buildRun);
 	}
 
-	private void _eventTriggerCreateBuild(JSONObject messageJSONObject) {
-		JSONObject buildJSONObject = messageJSONObject.getJSONObject("build");
-
-		Project project = _projectRepository.getById(
-			buildJSONObject.getLong("projectId"));
-
-		_buildRepository.getAll(project);
-		_gitBranchRepository.getAll(project);
-		_taskRepository.getAll(project);
-		_testSuiteRepository.getAll(project);
-
-		Build build = _buildRepository.add(
-			project, buildJSONObject.getString("buildName"),
-			buildJSONObject.getString("jobName"), Build.State.OPENED);
-
-		JSONObject parametersJSONObject = buildJSONObject.getJSONObject(
-			"parameters");
-
-		for (String key : parametersJSONObject.keySet()) {
-			BuildParameter buildParameter = _buildParameterRepository.add(
-				build, key, parametersJSONObject.getString(key));
-
-			build.addBuildParameter(buildParameter);
-
-			buildParameter.setBuild(build);
-		}
-
-		if (project.getState() == Project.State.COMPLETED) {
-			project.setState(Project.State.QUEUED);
-
-			_buildQueue.addProject(project);
-
-			_jenkinsQueue.invoke();
-
-			_projectRepository.update(project);
-		}
-	}
-
-	private void _eventTriggerCreateProject(JSONObject messageJSONObject) {
-		JSONObject projectJSONObject = messageJSONObject.getJSONObject(
-			"project");
-
-		Project project = _projectRepository.add(
-			projectJSONObject.getString("name"),
-			projectJSONObject.getInt("priority"), Project.State.OPENED,
-			Project.Type.getByKey(projectJSONObject.getString("type")));
-
-		JSONArray buildsJSONArray = projectJSONObject.getJSONArray("builds");
-
-		for (int i = 0; i < buildsJSONArray.length(); i++) {
-			JSONObject buildJSONObject = buildsJSONArray.getJSONObject(i);
-
-			Build build = _buildRepository.add(
-				project, buildJSONObject.getString("buildName"),
-				buildJSONObject.getString("jobName"), Build.State.OPENED);
-
-			JSONObject parametersJSONObject = buildJSONObject.getJSONObject(
-				"parameters");
-
-			for (String key : parametersJSONObject.keySet()) {
-				BuildParameter buildParameter = _buildParameterRepository.add(
-					build, key, parametersJSONObject.getString(key));
-
-				build.addBuildParameter(buildParameter);
-
-				buildParameter.setBuild(build);
-			}
-		}
-	}
-
-	private void _eventTriggerQueueProject(JSONObject messageJSONObject) {
-		JSONObject projectJSONObject = messageJSONObject.getJSONObject(
-			"project");
-
-		Project project = _projectRepository.getById(
-			projectJSONObject.getLong("id"));
-
-		_buildRepository.getAll(project);
-		_gitBranchRepository.getAll(project);
-		_taskRepository.getAll(project);
-		_testSuiteRepository.getAll(project);
-
-		project.setState(Project.State.QUEUED);
-
-		_projectRepository.update(project);
-
-		_buildQueue.addProject(project);
-
-		_jenkinsQueue.invoke();
-	}
-
 	private BuildRun _getBuildRun(JSONObject messageJSONObject) {
 		JSONObject buildJSONObject = messageJSONObject.getJSONObject("build");
 
 		JSONObject parmetersJSONObject = buildJSONObject.getJSONObject(
 			"parameters");
 
-		return _buildRunRepository.getById(
-			parmetersJSONObject.getLong("BUILD_RUN_ID"));
+		String buildRunID = parmetersJSONObject.optString("BUILD_RUN_ID");
+
+		if ((buildRunID == null) || !buildRunID.matches("\\d+")) {
+			return null;
+		}
+
+		return _buildRunRepository.getById(Long.valueOf(buildRunID));
 	}
 
 	private long _getBuildRunDuration(JSONObject messageJSONObject) {
@@ -344,9 +272,6 @@ public class JMSEventHandler {
 	private static final Log _log = LogFactory.getLog(JMSEventHandler.class);
 
 	@Autowired
-	private BuildParameterRepository _buildParameterRepository;
-
-	@Autowired
 	private BuildQueue _buildQueue;
 
 	@Autowired
@@ -356,13 +281,10 @@ public class JMSEventHandler {
 	private BuildRunRepository _buildRunRepository;
 
 	@Autowired
-	private GitBranchRepository _gitBranchRepository;
+	private EventHandlerFactory _eventHandlerFactory;
 
 	@Autowired
 	private JenkinsNodeRepository _jenkinsNodeRepository;
-
-	@Autowired
-	private JenkinsQueue _jenkinsQueue;
 
 	@Value("${jms.jenkins.build.queue}")
 	private String _jmsJenkinsBuildQueue;
@@ -374,15 +296,6 @@ public class JMSEventHandler {
 	private JmsTemplate _jmsTemplate;
 
 	@Autowired
-	private ProjectQueue _projectQueue;
-
-	@Autowired
 	private ProjectRepository _projectRepository;
-
-	@Autowired
-	private TaskRepository _taskRepository;
-
-	@Autowired
-	private TestSuiteRepository _testSuiteRepository;
 
 }

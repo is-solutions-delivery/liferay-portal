@@ -14,8 +14,12 @@
 
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
+import ClayLink from '@clayui/link';
 import ClayModal from '@clayui/modal';
-import {FrontendDataSet} from '@liferay/frontend-data-set-web';
+import {
+	FrontendDataSet,
+	InternalRenderer,
+} from '@liferay/frontend-data-set-web';
 import classNames from 'classnames';
 import {fetch, navigate, openModal, openToast} from 'frontend-js-web';
 import React, {useRef, useState} from 'react';
@@ -113,7 +117,7 @@ const AddFDSViewModalContent = ({
 	return (
 		<>
 			<ClayModal.Header>
-				{Liferay.Language.get('new-dataset-view')}
+				{Liferay.Language.get('new-data-set-view')}
 			</ClayModal.Header>
 
 			<ClayModal.Body>
@@ -204,7 +208,7 @@ const FDSViews = ({
 	fdsViewURL,
 	namespace,
 }: IFDSViewsInterface) => {
-	const onViewClick = ({itemData}: {itemData: FDSViewType}) => {
+	const getViewURL = (itemData: FDSViewType) => {
 		const url = new URL(fdsViewURL);
 
 		url.searchParams.set(`${namespace}fdsEntryId`, fdsEntryId);
@@ -212,7 +216,11 @@ const FDSViews = ({
 		url.searchParams.set(`${namespace}fdsViewId`, itemData.id);
 		url.searchParams.set(`${namespace}fdsViewLabel`, itemData.label);
 
-		navigate(url);
+		return url;
+	};
+
+	const onViewClick = ({itemData}: {itemData: FDSViewType}) => {
+		navigate(getViewURL(itemData));
 	};
 
 	const onDeleteClick = ({
@@ -224,7 +232,7 @@ const FDSViews = ({
 	}) => {
 		openModal({
 			bodyHTML: Liferay.Language.get(
-				'deleting-a-dataset-view-is-an-action-that-cannot-be-reversed'
+				'deleting-a-data-set-view-is-an-action-that-cannot-be-reversed'
 			),
 			buttons: [
 				{
@@ -264,14 +272,14 @@ const FDSViews = ({
 				},
 			],
 			status: 'danger',
-			title: Liferay.Language.get('delete-dataset-view'),
+			title: Liferay.Language.get('delete-data-set-view'),
 		});
 	};
 
 	const creationMenu = {
 		primaryItems: [
 			{
-				label: Liferay.Language.get('new-dataset-view'),
+				label: Liferay.Language.get('new-data-set-view'),
 				onClick: ({loadData}: {loadData: Function}) => {
 					openModal({
 						contentComponent: ({
@@ -292,6 +300,16 @@ const FDSViews = ({
 		],
 	};
 
+	const TitleRenderer = ({itemData}: {itemData: FDSViewType}) => {
+		return (
+			<div className="table-list-title">
+				<ClayLink href={getViewURL(itemData).toString()}>
+					{itemData.label}
+				</ClayLink>
+			</div>
+		);
+	};
+
 	const views = [
 		{
 			contentRenderer: 'list',
@@ -300,6 +318,12 @@ const FDSViews = ({
 				description: 'description',
 				symbol: 'symbol',
 				title: 'label',
+				titleRenderer: {
+					component: TitleRenderer,
+					label: Liferay.Language.get('title'),
+					name: 'title',
+					type: 'internal',
+				} as InternalRenderer,
 			},
 		},
 	];

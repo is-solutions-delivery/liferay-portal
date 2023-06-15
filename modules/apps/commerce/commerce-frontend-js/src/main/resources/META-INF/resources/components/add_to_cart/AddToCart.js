@@ -20,6 +20,7 @@ import ServiceProvider from '../../ServiceProvider/index';
 import {
 	CART_PRODUCT_QUANTITY_CHANGED,
 	CP_INSTANCE_CHANGED,
+	CP_QUANTITY_SELECTOR_CHANGED,
 } from '../../utilities/eventsDefinitions';
 import {useCommerceAccount, useCommerceCart} from '../../utilities/hooks';
 import {getMinQuantity} from '../../utilities/quantities';
@@ -50,6 +51,8 @@ function AddToCart({
 	cpInstance: initialCpInstance,
 	disabled: initialDisabled,
 	settings,
+	showOrderTypeModal,
+	showOrderTypeModalURL,
 }) {
 	const account = useCommerceAccount({id: initialAccountId});
 	const cart = useCommerceCart(
@@ -173,13 +176,17 @@ function AddToCart({
 				disabled={initialDisabled || !account?.id}
 				max={settings.productConfiguration?.maxOrderQuantity}
 				min={settings.productConfiguration?.minOrderQuantity}
-				onUpdate={({errors, value: quantity}) =>
+				onUpdate={({errors, value: quantity}) => {
 					setCpInstance({
 						...cpInstance,
 						quantity,
 						validQuantity: !errors.length,
-					})
-				}
+					});
+					Liferay.fire(
+						`${settings.namespace}${CP_QUANTITY_SELECTOR_CHANGED}`,
+						{errors, quantity}
+					);
+				}}
 				quantity={cpInstance.quantity}
 				ref={inputRef}
 				size={settings.size}
@@ -203,10 +210,12 @@ function AddToCart({
 						: (event) => {
 								event.preventDefault();
 
-								inputRef.current.focus();
+								inputRef.current?.focus();
 						  }
 				}
 				settings={settings}
+				showOrderTypeModal={showOrderTypeModal}
+				showOrderTypeModalURL={showOrderTypeModalURL}
 			/>
 		</div>
 	);
@@ -233,6 +242,8 @@ AddToCart.propTypes = {
 		}),
 		size: PropTypes.oneOf(['lg', 'md', 'sm']),
 	}),
+	showOrderTypeModal: PropTypes.bool,
+	showOrderTypeModalURL: PropTypes.string,
 };
 
 export default AddToCart;

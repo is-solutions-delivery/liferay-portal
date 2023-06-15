@@ -1,0 +1,32 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+
+/**
+ * @author Michael Cavalcanti
+ */
+@Component(service = CTServiceRegistry.class)
+public class UpgradeJavaServiceTrackerListCheck {
+
+    private ServiceTrackerList <CTEventListener, CTEventListener> _serviceTrackerList1;
+    private ServiceTrackerList
+        <ServiceConnectionProvider, ServiceConnectionProvider> _serviceTrackerList2;
+    private ServiceTrackerList<Indexer<?>, Indexer<?>> _serviceTrackerList3;
+    private ServiceTrackerList<? extends Indexer, ? extends Indexer> _serviceTrackerList4;
+    private ServiceTrackerList<CTEventListenerA, CTEventListenerB> _serviceTrackerList5;
+    private ServiceTrackerList <CTEventListener> _serviceTrackerList6;
+    private ServiceTrackerMap<Long, CTService<?>> _serviceTrackerMap;
+
+}

@@ -69,11 +69,107 @@ OrganizationsDisplayContext organizationsDisplayContext = new OrganizationsDispl
 
 						<%
 						String displayStyle = organizationsDisplayContext.getDisplayStyle();
-
-						boolean selectOrganizations = false;
 						%>
 
-						<%@ include file="/organization_columns.jspf" %>
+						<c:choose>
+							<c:when test='<%= displayStyle.equals("icon") %>'>
+								<liferay-ui:search-container-column-text>
+									<clay:user-card
+										propsTransformer="js/OrganizationCardPropsTransformer"
+										userCard="<%= new OrganizationsUserCard(organization, renderRequest, renderResponse, searchContainer.getRowChecker()) %>"
+									/>
+								</liferay-ui:search-container-column-text>
+							</c:when>
+							<c:when test='<%= displayStyle.equals("descriptive") %>'>
+								<liferay-ui:search-container-column-icon
+									icon="organizations"
+									toggleRowChecker="<%= true %>"
+								/>
+
+								<liferay-ui:search-container-column-text
+									colspan="<%= 2 %>"
+								>
+									<h5><%= organization.getName() %></h5>
+
+									<h6 class="text-default">
+										<span><%= HtmlUtil.escape(organization.getParentOrganizationName()) %></span>
+									</h6>
+
+									<h6 class="text-default">
+										<span><liferay-ui:message key="<%= organization.getType() %>" /></span>
+									</h6>
+
+									<h6 class="text-default">
+										<span><%= HtmlUtil.escape(organization.getAddress().getCity()) %></span>
+										<span><%= UsersAdmin.ORGANIZATION_REGION_NAME_ACCESSOR.get(organization) %></span>
+										<span><%= UsersAdmin.ORGANIZATION_COUNTRY_NAME_ACCESSOR.get(organization) %></span>
+									</h6>
+								</liferay-ui:search-container-column-text>
+
+								<%
+								OrganizationActionDropdownItemsProvider organizationActionDropdownItemsProvider = new OrganizationActionDropdownItemsProvider(organization, renderRequest, renderResponse);
+								%>
+
+								<liferay-ui:search-container-column-text>
+									<clay:dropdown-actions
+										aria-label='<%= LanguageUtil.get(request, "show-actions") %>'
+										dropdownItems="<%= organizationActionDropdownItemsProvider.getActionDropdownItems() %>"
+										propsTransformer="js/OrganizationDropdownDefaultPropsTransformer"
+									/>
+								</liferay-ui:search-container-column-text>
+							</c:when>
+							<c:otherwise>
+								<liferay-ui:search-container-column-text
+									cssClass="table-cell-expand table-cell-minw-200 table-title"
+									name="name"
+									orderable="<%= true %>"
+									value="<%= organization.getName() %>"
+								/>
+
+								<liferay-ui:search-container-column-text
+									cssClass="table-cell-expand table-cell-minw-200"
+									name="parent-organization"
+									value="<%= HtmlUtil.escape(organization.getParentOrganizationName()) %>"
+								/>
+
+								<liferay-ui:search-container-column-text
+									cssClass="table-cell-expand-smallest table-cell-minw-100"
+									name="type"
+									orderable="<%= true %>"
+									value="<%= LanguageUtil.get(request, organization.getType()) %>"
+								/>
+
+								<liferay-ui:search-container-column-text
+									cssClass="table-cell-expand-smallest table-cell-minw-150"
+									name="city"
+									value="<%= HtmlUtil.escape(organization.getAddress().getCity()) %>"
+								/>
+
+								<liferay-ui:search-container-column-text
+									cssClass="table-cell-expand-smallest table-cell-minw-150"
+									name="region"
+									value="<%= UsersAdmin.ORGANIZATION_REGION_NAME_ACCESSOR.get(organization) %>"
+								/>
+
+								<liferay-ui:search-container-column-text
+									cssClass="table-cell-expand-smallest table-cell-minw-150"
+									name="country"
+									value="<%= UsersAdmin.ORGANIZATION_COUNTRY_NAME_ACCESSOR.get(organization) %>"
+								/>
+
+								<%
+								OrganizationActionDropdownItemsProvider organizationActionDropdownItemsProvider = new OrganizationActionDropdownItemsProvider(organization, renderRequest, renderResponse);
+								%>
+
+								<liferay-ui:search-container-column-text>
+									<clay:dropdown-actions
+										aria-label='<%= LanguageUtil.get(request, "show-actions") %>'
+										dropdownItems="<%= organizationActionDropdownItemsProvider.getActionDropdownItems() %>"
+										propsTransformer="js/OrganizationDropdownDefaultPropsTransformer"
+									/>
+								</liferay-ui:search-container-column-text>
+							</c:otherwise>
+						</c:choose>
 					</liferay-ui:search-container-row>
 
 					<liferay-ui:search-iterator

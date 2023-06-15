@@ -1,0 +1,275 @@
+@component-name = "portal-frontend-infrastructure"
+definition {
+
+	property custom.properties = "feature.flag.LPS-164563=true";
+	property portal.acceptance = "true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Frontend Data Set";
+	property testray.main.component.name = "Frontend Data Set";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		task ("Given the creation of a new data set") {
+			DataSetAdmin.goToDataSetAdminPage();
+
+			JSONDataSet._createDataSetEntry(
+				dataSetName = "Data Set Fields Test",
+				restApplication = "/headless-admin-taxonomy/v1.0",
+				restEndpoint = "/v1.0/keywords/ranked",
+				restSchema = "Keyword");
+		}
+
+		task ("And adding a data set view") {
+			JSONDataSet._createFDSViewViaAPI(
+				dataSetName = "Data Set Fields Test",
+				dataSetViewDescription = "FDSViewDescription",
+				dataSetViewName = "View Fields Test");
+		}
+
+		task ("When go to the View page of the data set created.") {
+			DataSetAdmin.goToSpecificViewPage(
+				dataSetName = "Data Set Fields Test",
+				key_viewName = "View Fields Test");
+		}
+
+		task ("When the user accesses the Filters tab") {
+			DataSetAdmin.goToTab(tabName = "Filters");
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		DataSetAdmin.deleteAllDataSetEntries();
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "LPS-181281. Confirms the From and To fields are displayed when creating a new date filter."
+	@priority = 5
+	test AssertDateFieldsArePresent {
+		task ("And click on the 'Create Filter' button") {
+			Button.click(button = "Create Filter");
+		}
+
+		task ("When the user adds a name") {
+			Type(
+				locator1 = "DataSet#NEW_FILTER_NAME",
+				value1 = "Test");
+		}
+
+		task ("And adds 'dateCreated' to the filter") {
+			FrontendDataSet.chooseOptionNewFilterDropdown(key_option = "dateCreated");
+		}
+
+		task ("Then 'From' field is present") {
+			AssertVisible(
+				key_label = "From",
+				locator1 = "DataSet#LABEL");
+		}
+
+		task ("And 'To' field is also present ") {
+			AssertVisible(
+				key_label = "To",
+				locator1 = "DataSet#LABEL");
+		}
+	}
+
+	@description = "LPS-181281. Confirms the Clay datepicker can be opened when creating a new date filter."
+	@priority = 5
+	test AssertDateFieldsClayDatePicker {
+		task ("And click on the 'Create Filter' button") {
+			Button.click(button = "Create Filter");
+		}
+
+		task ("When the user adds a name") {
+			Type(
+				locator1 = "DataSet#NEW_FILTER_NAME",
+				value1 = "Test");
+		}
+
+		task ("And adds 'dateCreated' to the filter") {
+			FrontendDataSet.chooseOptionNewFilterDropdown(key_option = "dateCreated");
+		}
+
+		task ("And clicks on From field datepicker") {
+			Click(
+				key_dateField = "From",
+				locator1 = "DataSet#DATEPICKER_BUTTON");
+		}
+
+		task ("Then the Clay Date picker is open") {
+			AssertVisible(locator1 = "DataSet#DATEPICKER_MENU");
+
+			Click(
+				key_dateField = "From",
+				locator1 = "DataSet#DATEPICKER_BUTTON");
+		}
+
+		task ("When the user clicks on To field datepicker") {
+			Click(
+				key_dateField = "To",
+				locator1 = "DataSet#DATEPICKER_BUTTON");
+		}
+
+		task ("Then the Clay Date picker is open") {
+			AssertVisible(locator1 = "DataSet#DATEPICKER_MENU");
+
+			Click(
+				key_dateField = "To",
+				locator1 = "DataSet#DATEPICKER_BUTTON");
+		}
+	}
+
+	@description = "LPS-181281. Confirms the date fields values when creating a new date filter are YYYY-MM-DD."
+	@priority = 3
+	test AssertDateFieldsFormat {
+		task ("And click on the 'Create Filter' button") {
+			Button.click(button = "Create Filter");
+		}
+
+		task ("When the user adds a name") {
+			Type(
+				locator1 = "DataSet#NEW_FILTER_NAME",
+				value1 = "Test");
+		}
+
+		task ("And adds 'dateCreated' to the filter") {
+			FrontendDataSet.chooseOptionNewFilterDropdown(key_option = "dateCreated");
+		}
+
+		task ("Then the default value is 'YYYY-MM-DD' in 'From' field") {
+			AssertVisible(
+				key_dateField = "From",
+				key_placeholderText = "YYYY-MM-DD",
+				locator1 = "DataSet#DATE_FIELD_PLACEHOLDER");
+		}
+
+		task ("And the default value is 'YYYY-MM-DD' in 'To' field") {
+			AssertVisible(
+				key_dateField = "To",
+				key_placeholderText = "YYYY-MM-DD",
+				locator1 = "DataSet#DATE_FIELD_PLACEHOLDER");
+		}
+	}
+
+	@description = "LPS-181281. Confirms the user can cancel a new date filter creation."
+	@priority = 4
+	test CanCancelDateFilterCreation {
+		task ("And click on the Create Filter button") {
+			Button.click(button = "Create Filter");
+		}
+
+		task ("When the user adds a name") {
+			Type(
+				locator1 = "DataSet#NEW_FILTER_NAME",
+				value1 = "Test");
+		}
+
+		task ("And adds 'dateCreated' to the filter") {
+			FrontendDataSet.chooseOptionNewFilterDropdown(key_option = "dateCreated");
+		}
+
+		task ("And selects a date on From field") {
+			FrontendDataSet.selectFromFieldDates(key_dateNumber = 10);
+		}
+
+		task ("And selects a date on To field") {
+			FrontendDataSet.selectToFieldDates(key_dateNumber = 20);
+		}
+
+		task ("And clicks on Cancel button") {
+			Click(locator1 = "DataSet#NEW_FILTER_CANCEL_BUTTON");
+		}
+
+		task ("Then New filter modal is closed and the changes are not applied") {
+			AssertVisible(locator1 = "DataSet#CREATE_FILTER_BUTTON");
+		}
+	}
+
+	@description = "LPS-181281. Confirms the user cannot create a new date filter with invalid date range."
+	@ignore = "true"
+	@priority = 4
+	test CannotSaveAnInvalidDateRangeInDateFields {
+		task ("And click on the 'Create Filter' button") {
+			Button.click(button = "Create Filter");
+		}
+
+		task ("When the user adds a name") {
+			Type(
+				locator1 = "DataSet#NEW_FILTER_NAME",
+				value1 = "Test");
+		}
+
+		task ("And adds 'dateCreated' to the filter") {
+			FrontendDataSet.chooseOptionNewFilterDropdown(key_option = "dateCreated");
+		}
+
+		task ("And selects a date on From field") {
+			FrontendDataSet.selectFromFieldDates(key_dateNumber = 20);
+		}
+
+		task ("And selects a date on To field that is before From field date") {
+			FrontendDataSet.selectToFieldDates(key_dateNumber = 13);
+		}
+
+		task ("Then an error message appears") {
+			AssertVisible(locator1 = "DataSet#NEW_FILTER_INVALID_DATE");
+		}
+
+		task ("When the user tries to save the date filter") {
+			Click(locator1 = "DataSet#NEW_FILTER_SAVE_BUTTON");
+		}
+
+		task ("Then assert it's not possible to save a date filter with an invalid date range") {
+			Alert.viewRequestFailedToComplete();
+		}
+	}
+
+	@description = "LPS-181281. Confirms the user can save a new date filter."
+	@priority = 5
+	test CanSaveDateFilter {
+		task ("And click on the Create Filter button") {
+			Button.click(button = "Create Filter");
+		}
+
+		task ("When the user adds a name") {
+			Type(
+				locator1 = "DataSet#NEW_FILTER_NAME",
+				value1 = "Test");
+		}
+
+		task ("And adds dateCreated to the filter") {
+			FrontendDataSet.chooseOptionNewFilterDropdown(key_option = "dateCreated");
+		}
+
+		task ("And selects a date on From field") {
+			FrontendDataSet.selectFromFieldDates(key_dateNumber = 15);
+		}
+
+		task ("And selects a date on To field") {
+			FrontendDataSet.selectToFieldDates(key_dateNumber = 25);
+		}
+
+		task ("And clicks on the Save button") {
+			Click(locator1 = "DataSet#NEW_FILTER_SAVE_BUTTON");
+		}
+
+		task ("Then a successful message is displayed") {
+			Alert.viewSuccessMessage();
+		}
+
+		task ("And New filter modal is closed and the changes are applied") {
+			AssertVisible(
+				key_entryName = "Test",
+				locator1 = "DataSet#FILTERS_ENTRY");
+		}
+	}
+
+}

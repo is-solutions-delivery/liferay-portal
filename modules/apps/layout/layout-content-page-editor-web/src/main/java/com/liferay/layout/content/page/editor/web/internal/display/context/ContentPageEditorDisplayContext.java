@@ -31,6 +31,7 @@ import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderIt
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorCriterion;
+import com.liferay.item.selector.criteria.ActionableInfoItemItemSelectorReturnType;
 import com.liferay.item.selector.criteria.DownloadFileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
@@ -239,6 +240,9 @@ public class ContentPageEditorDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"config",
 			HashMapBuilder.<String, Object>put(
+				"actionableInfoItemSelectorURL",
+				_getActionableInfoItemSelectorURL()
+			).put(
 				"addFragmentCompositionURL",
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/add_fragment_composition")
@@ -350,13 +354,6 @@ public class ContentPageEditorDisplayContext {
 						"/delete_fragment_entry_link_comment")
 			).put(
 				"discardDraftURL", _getDiscardDraftURL()
-			).put(
-				"draft",
-				() -> {
-					Layout layout = themeDisplay.getLayout();
-
-					return layout.isDraft();
-				}
 			).put(
 				"duplicateItemURL",
 				getFragmentEntryActionURL(
@@ -732,6 +729,13 @@ public class ContentPageEditorDisplayContext {
 					getGroupId(), httpServletRequest, true, false,
 					_getMasterDropZoneLayoutStructureItem(), themeDisplay)
 			).put(
+				"draft",
+				() -> {
+					Layout layout = themeDisplay.getLayout();
+
+					return layout.isDraft();
+				}
+			).put(
 				"fragmentEntryLinks", _getFragmentEntryLinks()
 			).put(
 				"fragments",
@@ -1024,6 +1028,25 @@ public class ContentPageEditorDisplayContext {
 		segmentsExperienceLocalService;
 	protected final StagingGroupHelper stagingGroupHelper;
 	protected final ThemeDisplay themeDisplay;
+
+	private String _getActionableInfoItemSelectorURL() {
+		InfoItemItemSelectorCriterion itemSelectorCriterion =
+			new InfoItemItemSelectorCriterion();
+
+		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new ActionableInfoItemItemSelectorReturnType());
+
+		PortletURL infoItemSelectorURL = _itemSelector.getItemSelectorURL(
+			RequestBackedPortletURLFactoryUtil.create(httpServletRequest),
+			renderResponse.getNamespace() + "selectInfoItem",
+			itemSelectorCriterion);
+
+		if (infoItemSelectorURL == null) {
+			return StringPool.BLANK;
+		}
+
+		return infoItemSelectorURL.toString();
+	}
 
 	private String _getAssetCategoryTreeNodeItemSelectorURL() {
 		ItemSelectorCriterion itemSelectorCriterion =
@@ -1503,6 +1526,8 @@ public class ContentPageEditorDisplayContext {
 			"groupId", layout.getGroupId()
 		).setParameter(
 			"privateLayout", layout.isPrivateLayout()
+		).setParameter(
+			"screenNavigationEntryKey", "design"
 		).setParameter(
 			"selPlid", layout.getPlid()
 		).buildString();

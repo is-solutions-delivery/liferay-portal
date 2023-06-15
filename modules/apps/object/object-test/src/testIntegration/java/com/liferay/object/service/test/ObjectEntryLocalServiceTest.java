@@ -37,8 +37,8 @@ import com.liferay.object.exception.ObjectValidationRuleEngineException;
 import com.liferay.object.field.builder.AttachmentObjectFieldBuilder;
 import com.liferay.object.field.builder.DateTimeObjectFieldBuilder;
 import com.liferay.object.field.builder.DecimalObjectFieldBuilder;
+import com.liferay.object.field.builder.FormulaObjectFieldBuilder;
 import com.liferay.object.field.builder.LongIntegerObjectFieldBuilder;
-import com.liferay.object.field.builder.ObjectFieldBuilder;
 import com.liferay.object.field.builder.PicklistObjectFieldBuilder;
 import com.liferay.object.field.builder.PrecisionDecimalObjectFieldBuilder;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
@@ -61,7 +61,6 @@ import com.liferay.object.service.ObjectStateLocalService;
 import com.liferay.object.service.ObjectStateTransitionLocalService;
 import com.liferay.object.service.ObjectValidationRuleLocalService;
 import com.liferay.object.service.test.util.ObjectDefinitionTestUtil;
-import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.audit.AuditMessage;
@@ -79,6 +78,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
+import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -264,8 +264,6 @@ public class ObjectEntryLocalServiceTest {
 				"speed"
 			).objectDefinitionId(
 				_objectDefinition.getObjectDefinitionId()
-			).objectFieldSettings(
-				Collections.emptyList()
 			).build());
 		_addCustomObjectField(
 			new PicklistObjectFieldBuilder(
@@ -351,8 +349,6 @@ public class ObjectEntryLocalServiceTest {
 				"weight"
 			).objectDefinitionId(
 				_objectDefinition.getObjectDefinitionId()
-			).objectFieldSettings(
-				Collections.emptyList()
 			).build());
 	}
 
@@ -416,7 +412,19 @@ public class ObjectEntryLocalServiceTest {
 
 		_assertCount(4);
 
-		_assertFailure(
+		_addObjectEntry(
+			HashMapBuilder.<String, Serializable>put(
+				"emailAddressRequired", "john@liferay.com"
+			).put(
+				"listTypeEntryKeyRequired", "listTypeEntryKey1"
+			).put(
+				"multipleListTypeEntriesKey",
+				"multipleListTypeEntryKey1, multipleListTypeEntryKey2"
+			).build());
+
+		_assertCount(5);
+
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsIntegerSize.class,
 			"Object entry value exceeds integer field allowed size",
 			() -> _addObjectEntry(
@@ -428,7 +436,7 @@ public class ObjectEntryLocalServiceTest {
 					"numberOfBooksWritten", "2147483648"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsIntegerSize.class,
 			"Object entry value exceeds integer field allowed size",
 			() -> _addObjectEntry(
@@ -440,7 +448,7 @@ public class ObjectEntryLocalServiceTest {
 					"numberOfBooksWritten", "-2147483649"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongMaxSize.class,
 			"Object entry value exceeds maximum long field allowed size",
 			() -> _addObjectEntry(
@@ -452,7 +460,7 @@ public class ObjectEntryLocalServiceTest {
 					"listTypeEntryKeyRequired", "listTypeEntryKey1"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongMinSize.class,
 			"Object entry value falls below minimum long field allowed size",
 			() -> _addObjectEntry(
@@ -464,7 +472,7 @@ public class ObjectEntryLocalServiceTest {
 					"listTypeEntryKeyRequired", "listTypeEntryKey1"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongSize.class,
 			"Object entry value exceeds long field allowed size",
 			() -> _addObjectEntry(
@@ -476,7 +484,7 @@ public class ObjectEntryLocalServiceTest {
 					"listTypeEntryKeyRequired", "listTypeEntryKey1"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongSize.class,
 			"Object entry value exceeds long field allowed size",
 			() -> _addObjectEntry(
@@ -488,7 +496,7 @@ public class ObjectEntryLocalServiceTest {
 					"listTypeEntryKeyRequired", "listTypeEntryKey1"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsTextMaxLength.class,
 			"Object entry value exceeds the maximum length of 280 characters " +
 				"for object field \"firstName\"",
@@ -501,7 +509,7 @@ public class ObjectEntryLocalServiceTest {
 					"listTypeEntryKeyRequired", "listTypeEntryKey1"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsTextMaxLength.class,
 			"Object entry value exceeds the maximum length of 65000 " +
 				"characters for object field \"script\"",
@@ -514,7 +522,7 @@ public class ObjectEntryLocalServiceTest {
 					"script", RandomTestUtil.randomString(65001)
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.InvalidFileExtension.class,
 			"The file extension txt is invalid for object field \"upload\"",
 			() -> {
@@ -543,7 +551,7 @@ public class ObjectEntryLocalServiceTest {
 					).build());
 			});
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ListTypeEntry.class,
 			"Object field name \"listTypeEntryKeyRequired\" is not mapped to " +
 				"a valid list type entry",
@@ -554,7 +562,21 @@ public class ObjectEntryLocalServiceTest {
 					"listTypeEntryKeyRequired", RandomTestUtil.randomString()
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
+			ObjectEntryValuesException.ListTypeEntry.class,
+			"Object field name \"multipleListTypeEntriesKey\" is not mapped " +
+				"to a valid list type entry",
+			() -> _addObjectEntry(
+				HashMapBuilder.<String, Serializable>put(
+					"emailAddressRequired", "john@liferay.com"
+				).put(
+					"multipleListTypeEntriesKey",
+					(Serializable)Arrays.asList(
+						"multipleListTypeEntryKey1",
+						RandomTestUtil.randomString())
+				).build()));
+
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.Required.class,
 			"No value was provided for required object field " +
 				"\"emailAddressRequired\"",
@@ -565,7 +587,7 @@ public class ObjectEntryLocalServiceTest {
 					"listTypeEntryKeyRequired", "listTypeEntryKey1"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.Required.class,
 			"No value was provided for required object field " +
 				"\"listTypeEntryKeyRequired\"",
@@ -576,7 +598,7 @@ public class ObjectEntryLocalServiceTest {
 					"firstName", "Judas"
 				).build()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.UniqueValueConstraintViolation.class,
 			"Unique value constraint violation for " +
 				_objectDefinition.getDBTableName() +
@@ -594,11 +616,7 @@ public class ObjectEntryLocalServiceTest {
 	@Test
 	public void testAddObjectEntryWithFormulaObjectField() throws Exception {
 		ObjectField objectField = _addCustomObjectField(
-			new ObjectFieldBuilder(
-			).businessType(
-				ObjectFieldConstants.BUSINESS_TYPE_FORMULA
-			).dbType(
-				ObjectFieldConstants.DB_TYPE_STRING
+			new FormulaObjectFieldBuilder(
 			).labelMap(
 				LocalizedMapUtil.getLocalizedMap("Overweight")
 			).name(
@@ -658,7 +676,7 @@ public class ObjectEntryLocalServiceTest {
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				"isEmailAddress(emailAddress)");
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ModelListenerException.class,
 			ObjectValidationRuleEngineException.InvalidFields.class.getName() +
 				": Field must be an email address",
@@ -718,7 +736,7 @@ public class ObjectEntryLocalServiceTest {
 					"dependencies/", clazz.getSimpleName(), StringPool.PERIOD,
 					testName.getMethodName(), ".groovy")));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ModelListenerException.class,
 			ObjectValidationRuleEngineException.InvalidFields.class.getName() +
 				": Must be over 18 years old",
@@ -752,7 +770,7 @@ public class ObjectEntryLocalServiceTest {
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			"equals(lastName, middleName)");
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ModelListenerException.class,
 			ObjectValidationRuleEngineException.InvalidFields.class.getName() +
 				": Names must be equals",
@@ -1096,7 +1114,7 @@ public class ObjectEntryLocalServiceTest {
 		_objectEntryLocalService.deleteObjectEntry(
 			objectEntry1.getObjectEntryId());
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			NoSuchObjectEntryException.class,
 			"No ObjectEntry exists with the primary key " +
 				objectEntry1.getObjectEntryId(),
@@ -1105,7 +1123,7 @@ public class ObjectEntryLocalServiceTest {
 
 		_objectEntryLocalService.deleteObjectEntry(objectEntry1);
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			NoSuchObjectEntryException.class,
 			"No ObjectEntry exists with the primary key " +
 				objectEntry1.getObjectEntryId(),
@@ -1122,7 +1140,7 @@ public class ObjectEntryLocalServiceTest {
 
 		_objectEntryLocalService.deleteObjectEntry(objectEntry2);
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			NoSuchFileEntryException.class,
 			StringBundler.concat(
 				"No FileEntry exists with the key {fileEntryId=", fileEntryId,
@@ -1134,6 +1152,39 @@ public class ObjectEntryLocalServiceTest {
 		// Delete third object entry
 
 		_objectEntryLocalService.deleteObjectEntry(objectEntry3);
+
+		_assertCount(0);
+
+		// Delete object entry with an inactive definition
+
+		ObjectEntry objectEntry4 = _addObjectEntry(
+			HashMapBuilder.<String, Serializable>put(
+				"emailAddressRequired", "john@liferay.com"
+			).put(
+				"firstName", "John"
+			).put(
+				"listTypeEntryKeyRequired", "listTypeEntryKey3"
+			).build());
+
+		_objectDefinitionLocalService.updateCustomObjectDefinition(
+			_objectDefinition.getExternalReferenceCode(),
+			_objectDefinition.getObjectDefinitionId(),
+			_objectDefinition.getAccountEntryRestrictedObjectFieldId(),
+			_objectDefinition.getDescriptionObjectFieldId(),
+			_objectDefinition.getTitleObjectFieldId(),
+			_objectDefinition.isAccountEntryRestricted(), false,
+			_objectDefinition.isEnableCategorization(),
+			_objectDefinition.isEnableComments(),
+			_objectDefinition.isEnableLocalization(),
+			_objectDefinition.isEnableObjectEntryHistory(),
+			_objectDefinition.getLabelMap(), _objectDefinition.getName(),
+			_objectDefinition.getPanelAppOrder(),
+			_objectDefinition.getPanelCategoryKey(),
+			_objectDefinition.isPortlet(),
+			_objectDefinition.getPluralLabelMap(),
+			_objectDefinition.getScope());
+
+		_objectEntryLocalService.deleteObjectEntry(objectEntry4);
 
 		_assertCount(0);
 	}
@@ -1154,8 +1205,6 @@ public class ObjectEntryLocalServiceTest {
 				"longField"
 			).objectDefinitionId(
 				objectDefinition.getObjectDefinitionId()
-			).objectFieldSettings(
-				Collections.emptyList()
 			).build());
 		_addCustomObjectField(
 			new TextObjectFieldBuilder(
@@ -1165,8 +1214,6 @@ public class ObjectEntryLocalServiceTest {
 				"textField"
 			).objectDefinitionId(
 				objectDefinition.getObjectDefinitionId()
-			).objectFieldSettings(
-				Collections.emptyList()
 			).required(
 				true
 			).build());
@@ -1390,7 +1437,7 @@ public class ObjectEntryLocalServiceTest {
 			values.get(_objectDefinition.getPKObjectFieldName()));
 		Assert.assertEquals(values.toString(), 21, values.size());
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			NoSuchObjectEntryException.class,
 			"No ObjectEntry exists with the primary key 0",
 			() -> _objectEntryLocalService.getValues(0));
@@ -1854,7 +1901,7 @@ public class ObjectEntryLocalServiceTest {
 
 		long fileEntryId = fileEntry.getFileEntryId();
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			NoSuchFileEntryException.class,
 			StringBundler.concat(
 				"No FileEntry exists with the key {fileEntryId=", fileEntryId,
@@ -1905,7 +1952,7 @@ public class ObjectEntryLocalServiceTest {
 			values.get(_objectDefinition.getPKObjectFieldName()));
 		Assert.assertEquals(values.toString(), 21, values.size());
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			NoSuchFileEntryException.class,
 			StringBundler.concat(
 				"No FileEntry exists with the key {fileEntryId=", fileEntryId,
@@ -1928,7 +1975,7 @@ public class ObjectEntryLocalServiceTest {
 
 		long objectEntryId = objectEntry.getObjectEntryId();
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsIntegerSize.class,
 			"Object entry value exceeds integer field allowed size",
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -1938,7 +1985,7 @@ public class ObjectEntryLocalServiceTest {
 				).build(),
 				ServiceContextTestUtil.getServiceContext()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsIntegerSize.class,
 			"Object entry value exceeds integer field allowed size",
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -1948,7 +1995,7 @@ public class ObjectEntryLocalServiceTest {
 				).build(),
 				ServiceContextTestUtil.getServiceContext()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongMaxSize.class,
 			"Object entry value exceeds maximum long field allowed size",
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -1958,7 +2005,7 @@ public class ObjectEntryLocalServiceTest {
 				).build(),
 				ServiceContextTestUtil.getServiceContext()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongMinSize.class,
 			"Object entry value falls below minimum long field allowed size",
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -1968,7 +2015,7 @@ public class ObjectEntryLocalServiceTest {
 				).build(),
 				ServiceContextTestUtil.getServiceContext()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongSize.class,
 			"Object entry value exceeds long field allowed size",
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -1978,7 +2025,7 @@ public class ObjectEntryLocalServiceTest {
 				).build(),
 				ServiceContextTestUtil.getServiceContext()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsLongSize.class,
 			"Object entry value exceeds long field allowed size",
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -1988,7 +2035,7 @@ public class ObjectEntryLocalServiceTest {
 				).build(),
 				ServiceContextTestUtil.getServiceContext()));
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.ExceedsTextMaxLength.class,
 			"Object entry value exceeds the maximum length of 280 characters " +
 				"for object field \"firstName\"",
@@ -2008,7 +2055,7 @@ public class ObjectEntryLocalServiceTest {
 				"listTypeEntryKeyRequired", "listTypeEntryKey1"
 			).build());
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.UniqueValueConstraintViolation.class,
 			"Unique value constraint violation for " +
 				_objectDefinition.getDBTableName() +
@@ -2091,6 +2138,8 @@ public class ObjectEntryLocalServiceTest {
 			objectField.isIndexedAsKeyword(),
 			objectField.getIndexedLanguageId(), objectField.getLabelMap(),
 			objectField.isLocalized(), objectField.getName(),
+			objectField.getReadOnly(),
+			objectField.getReadOnlyConditionExpression(),
 			objectField.isRequired(), objectField.isState(),
 			objectField.getObjectFieldSettings());
 	}
@@ -2139,21 +2188,6 @@ public class ObjectEntryLocalServiceTest {
 			_objectEntryLocalService.getObjectEntriesCount(
 				0, _objectDefinition.getObjectDefinitionId()));
 		Assert.assertEquals(count, _count());
-	}
-
-	private void _assertFailure(
-		Class<?> clazz, String message,
-		UnsafeSupplier<Object, Exception> unsafeSupplier) {
-
-		try {
-			unsafeSupplier.get();
-
-			Assert.fail();
-		}
-		catch (Exception exception) {
-			Assert.assertTrue(clazz.isInstance(exception));
-			Assert.assertEquals(exception.getMessage(), message);
-		}
 	}
 
 	private void _assertKeywords(String keywords, int count) throws Exception {
@@ -2308,7 +2342,7 @@ public class ObjectEntryLocalServiceTest {
 
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService, objectFields);
+				false, _objectDefinitionLocalService, objectFields);
 
 		return _objectDefinitionLocalService.publishCustomObjectDefinition(
 			TestPropsValues.getUserId(),
@@ -2341,7 +2375,7 @@ public class ObjectEntryLocalServiceTest {
 		Assert.assertEquals(0, baseModelSearchResult.getLength());
 
 		if (!expectSuccess) {
-			_assertFailure(
+			AssertUtils.assertFailure(
 				ObjectDefinitionScopeException.class,
 				StringBundler.concat(
 					"Group ID ", groupId, " is not valid for scope \"", scope,
@@ -2415,7 +2449,7 @@ public class ObjectEntryLocalServiceTest {
 
 		long objectEntryId2 = objectEntry2.getObjectEntryId();
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.MustNotBeDuplicate.class,
 			"Duplicate value newExternalReferenceCode",
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -2443,7 +2477,7 @@ public class ObjectEntryLocalServiceTest {
 			).build(),
 			ServiceContextTestUtil.getServiceContext());
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.MustNotBeDuplicate.class,
 			"Duplicate value " + String.valueOf(objectEntryId1),
 			() -> _objectEntryLocalService.updateObjectEntry(
@@ -2513,7 +2547,7 @@ public class ObjectEntryLocalServiceTest {
 
 		long objectEntryId = objectEntry.getObjectEntryId();
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.InvalidObjectStateTransition.class,
 			StringBundler.concat(
 				"Object state ID ",
@@ -2534,7 +2568,7 @@ public class ObjectEntryLocalServiceTest {
 			).build(),
 			ServiceContextTestUtil.getServiceContext());
 
-		_assertFailure(
+		AssertUtils.assertFailure(
 			ObjectEntryValuesException.InvalidObjectStateTransition.class,
 			StringBundler.concat(
 				"Object state ID ",

@@ -21,15 +21,21 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.taglib.aui.ScriptTag;
 import com.liferay.taglib.portletext.RuntimeTag;
 import com.liferay.taglib.util.IncludeTag;
+
+import java.util.Iterator;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +46,14 @@ import javax.servlet.jsp.PageContext;
  * @author Eudaldo Alonso
  */
 public class LayoutCommonTag extends IncludeTag {
+
+	public boolean getDisplaySessionMessages() {
+		return _displaySessionMessages;
+	}
+
+	public void setDisplaySessionMessages(boolean displaySessionMessages) {
+		_displaySessionMessages = displaySessionMessages;
+	}
 
 	@Override
 	public void setPageContext(PageContext pageContext) {
@@ -52,6 +66,7 @@ public class LayoutCommonTag extends IncludeTag {
 	protected void cleanUp() {
 		super.cleanUp();
 
+		_displaySessionMessages = false;
 		_includeStaticPortlets = false;
 		_includeWebServerDisplayNode = false;
 	}
@@ -128,6 +143,14 @@ public class LayoutCommonTag extends IncludeTag {
 			jspWriter.write("</div></div>");
 		}
 
+		String scriptBodyContent = _getSessionMessagesScriptBodyContent();
+
+		if (Validator.isNotNull(scriptBodyContent)) {
+			ScriptTag.doTag(
+				null, null, "liferay-util", scriptBodyContent, bodyContent,
+				pageContext);
+		}
+
 		jspWriter.write("<form action=\"#\" aria-hidden=\"true\" ");
 		jspWriter.write("class=\"hide\" id=\"hrefFm\" method=\"post\" ");
 		jspWriter.write("name=\"hrefFm\"><span></span><button hidden ");
@@ -142,6 +165,68 @@ public class LayoutCommonTag extends IncludeTag {
 	protected void setAttributes(HttpServletRequest httpServletRequest) {
 	}
 
+	private String _getScript(String message, String type) {
+		StringBundler sb = new StringBundler(7);
+
+		sb.append("Liferay.Util.openToast({autoClose: 10000, message: '");
+		sb.append(message);
+		sb.append("', title: '");
+		sb.append(LanguageUtil.get(getRequest(), type));
+		sb.append(":', type: '");
+		sb.append(type);
+		sb.append("',});");
+
+		return sb.toString();
+	}
+
+	private String _getSessionMessagesScriptBodyContent() {
+		if (!_displaySessionMessages) {
+			return null;
+		}
+
+		HttpServletRequest httpServletRequest = getRequest();
+
+		if (SessionMessages.isEmpty(httpServletRequest)) {
+			return null;
+		}
+
+		StringBundler sb = new StringBundler();
+
+		Iterator<String> iterator = SessionMessages.iterator(
+			httpServletRequest);
+
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+
+			if (Validator.isNull(key)) {
+				continue;
+			}
+
+			String message = GetterUtil.getString(
+				SessionMessages.get(httpServletRequest, key));
+
+			if (key.endsWith("requestProcessed")) {
+				if (Validator.isNull(message) ||
+					Objects.equals(message, "request_processed") ||
+					Objects.equals(message, key)) {
+
+					message = LanguageUtil.get(
+						httpServletRequest,
+						"your-request-completed-successfully");
+				}
+
+				sb.append(_getScript(message, "success"));
+			}
+			else if (key.endsWith("_requestProcessedWarning") &&
+					 Validator.isNotNull(message)) {
+
+				sb.append(_getScript(message, "warning"));
+			}
+		}
+
+		return sb.toString();
+	}
+
 	private static final String[] _LAYOUT_STATIC_PORTLETS_ALL =
 		PropsUtil.getArray(PropsKeys.LAYOUT_STATIC_PORTLETS_ALL);
 
@@ -150,6 +235,7 @@ public class LayoutCommonTag extends IncludeTag {
 	private static final boolean _WEB_SERVER_DISPLAY_NODE =
 		GetterUtil.getBoolean(PropsUtil.get(PropsKeys.WEB_SERVER_DISPLAY_NODE));
 
+	private boolean _displaySessionMessages;
 	private boolean _includeStaticPortlets;
 	private boolean _includeWebServerDisplayNode;
 

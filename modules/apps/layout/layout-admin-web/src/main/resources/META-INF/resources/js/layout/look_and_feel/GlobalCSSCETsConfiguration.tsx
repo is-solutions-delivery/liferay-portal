@@ -25,6 +25,7 @@ import {GlobalCETOrderHelpIcon} from './GlobalCETOrderHelpIcon';
 export default function GlobalCSSCETsConfiguration({
 	globalCSSCETSelectorURL,
 	globalCSSCETs: initialGlobalCSSCETs,
+	isReadOnly,
 	portletNamespace,
 	selectGlobalCSSCETsEventName,
 }: IProps) {
@@ -69,6 +70,10 @@ export default function GlobalCSSCETsConfiguration({
 	};
 
 	const handleClick = () => {
+		if (isReadOnly) {
+			return;
+		}
+
 		openSelectionModal<{value: string[]}>({
 			multiple: true,
 			onSelect(selectedItems) {
@@ -153,12 +158,13 @@ export default function GlobalCSSCETsConfiguration({
 			</p>
 
 			<ClayButton
-				className="mb-3"
+				className="c-mb-3"
+				disabled={isReadOnly}
 				displayType="secondary"
 				onClick={handleClick}
 				type="button"
 			>
-				<ClayIcon className="mr-2" symbol="plus" />
+				<ClayIcon className="c-mr-2" symbol="plus" />
 
 				{Liferay.Language.get('add-css-client-extensions')}
 			</ClayButton>
@@ -258,6 +264,7 @@ interface IGlobalCSSCET {
 interface IProps {
 	globalCSSCETSelectorURL: string;
 	globalCSSCETs: IGlobalCSSCET[];
+	isReadOnly: boolean;
 	portletNamespace: string;
 	selectGlobalCSSCETsEventName: string;
 }

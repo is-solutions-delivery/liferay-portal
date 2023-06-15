@@ -346,13 +346,9 @@ public class ObjectEntryDTOConverter
 				List<?> relatedModels =
 					objectRelatedModelsProvider.getRelatedModels(
 						groupId, objectRelationship.getObjectRelationshipId(),
-						primaryKey, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+						primaryKey, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 				if (relatedObjectDefinition.isUnmodifiableSystemObject()) {
-					if (!FeatureFlagManagerUtil.isEnabled("LPS-165819")) {
-						return null;
-					}
-
 					SystemObjectDefinitionManager
 						systemObjectDefinitionManager =
 							_systemObjectDefinitionManagerRegistry.
@@ -613,6 +609,14 @@ public class ObjectEntryDTOConverter
 				objectDefinition.getObjectDefinitionId(), false);
 
 		for (ObjectField objectField : objectFields) {
+			if (FeatureFlagManagerUtil.isEnabled("LPS-172017") &&
+				objectField.isLocalized()) {
+
+				map.put(
+					objectField.getI18nObjectFieldName(),
+					values.get(objectField.getI18nObjectFieldName()));
+			}
+
 			String objectFieldName = objectField.getName();
 
 			Serializable serializable = values.get(objectFieldName);

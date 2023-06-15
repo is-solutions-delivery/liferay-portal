@@ -607,7 +607,7 @@ definition {
 			roleTitle = "Regular Role");
 
 		for (var letter : list "A,B") {
-			JSONGroup.addGroup(groupName = "Site ${letter}");
+			HeadlessSite.addSite(siteName = "Site ${letter}");
 		}
 
 		ObjectAdmin.gotoRolesAndSelectCustomObject(roleName = "Regular Role");
@@ -770,7 +770,7 @@ definition {
 	@priority = 5
 	test CanDeleteEntry {
 		property portal.acceptance = "true";
-		property testray.component.names = "Frontend Dataset";
+		property testray.component.names = "Frontend Data Set";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 246",

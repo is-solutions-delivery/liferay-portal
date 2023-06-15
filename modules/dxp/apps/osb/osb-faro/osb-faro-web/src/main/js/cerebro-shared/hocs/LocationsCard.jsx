@@ -1,4 +1,4 @@
-import BaseCard from 'cerebro-shared/components/base-card';
+import BaseCard from 'shared/components/base-card';
 import Card from 'shared/components/Card';
 import GeoMap from 'shared/components/geo-map/GeoMapCard';
 import React from 'react';
@@ -19,7 +19,7 @@ const withLocationsCard = (
 	const LocationsGeoMap = compose(
 		withLocations(),
 		withCountries(),
-		withLoading({alignCenter: true, page: false}),
+		withLoading({alignCenter: true, displayCard: true, page: false}),
 		withError({page: false}),
 		withEmpty({
 			description: (

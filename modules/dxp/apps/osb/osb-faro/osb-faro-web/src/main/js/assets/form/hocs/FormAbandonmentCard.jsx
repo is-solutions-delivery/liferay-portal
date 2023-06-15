@@ -1,4 +1,4 @@
-import BaseCard from 'cerebro-shared/components/base-card';
+import BaseCard from 'shared/components/base-card';
 import Card from 'shared/components/Card';
 import FormMetricsQuery from 'shared/queries/FormMetricsQuery';
 import HTMLBarChart from 'shared/components/HTMLBarChart';
@@ -18,7 +18,7 @@ const FormAbandonmentWithData = compose(
 		options: mapPropsToOptions,
 		props: mapResultToProps
 	}),
-	withLoading({alignCenter: true, page: false}),
+	withLoading({alignCenter: true, displayCard: true, page: false}),
 	withError(),
 	withEmpty({
 		emptyTitle: Liferay.Language.get('empty-message-form-abandoment')

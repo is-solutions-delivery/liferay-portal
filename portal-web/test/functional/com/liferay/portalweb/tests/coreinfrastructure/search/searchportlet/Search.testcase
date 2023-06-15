@@ -30,7 +30,7 @@ definition {
 
 		var portalURL = PropsUtil.get("portal.url");
 
-		JSONGroup.addGroup(groupName = "Test Site Name");
+		HeadlessSite.addSite(siteName = "Test Site Name");
 
 		JSONLayout.addPublicLayout(
 			groupName = "Test Site Name",
@@ -320,6 +320,7 @@ definition {
 	@priority = 4
 	test CanReindexWithConcurrentExecutionMode {
 		property custom.properties = "feature.flag.LPS-177664=true";
+		property portal.release = "false";
 		property search.environment.suite.exclude = "true";
 		property test.name.skip.portal.instance = "Search#CanReindexWithConcurrentExecutionMode";
 
@@ -548,14 +549,16 @@ definition {
 
 		task ("Create two object entries") {
 			JSONObject.addObjectEntryViaJSONAPI(
-				fieldName = "Apple Fruit",
-				fieldValue = "title",
-				objectName = "CustomObject");
+				fieldName = "title",
+				fieldValue = "Apple Fruit",
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
-				fieldName = "Banana Fruit",
-				fieldValue = "title",
-				objectName = "CustomObject");
+				fieldName = "title",
+				fieldValue = "Banana Fruit",
+				objectName = "CustomObject",
+				scope = "site");
 		}
 
 		task ("Create a Web Content article") {
@@ -1631,7 +1634,7 @@ definition {
 
 	@priority = 4
 	test SearchContentPagesSmoke {
-		JSONGroup.addGroup(groupName = "Site Name");
+		HeadlessSite.addSite(siteName = "Site Name");
 
 		PagesAdmin.openPagesAdmin(siteURLKey = "site-name");
 
@@ -1692,14 +1695,14 @@ definition {
 	@description = "This test will set up a search page and search on a newly added site. It will also use different scopes to assert search results for assets from multiple sites"
 	@priority = 4
 	test SearchDifferentScopesViaNewSite {
-		JSONGroup.addGroup(groupName = "Site Name 1");
+		HeadlessSite.addSite(siteName = "Site Name 1");
 
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
 			groupName = "Guest",
 			title = "Apple");
 
-		JSONGroup.addGroup(groupName = "Site Name 2");
+		HeadlessSite.addSite(siteName = "Site Name 2");
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
@@ -1708,7 +1711,7 @@ definition {
 			mimeType = "application/docx",
 			sourceFileName = "Document_1.docx");
 
-		JSONGroup.addGroup(groupName = "Site Name 3");
+		HeadlessSite.addSite(siteName = "Site Name 3");
 
 		JSONBlog.addEntry(
 			entryContent = "Blogs Entry Content",
@@ -1790,7 +1793,7 @@ definition {
 			mimeType = "application/msword",
 			sourceFileName = "Document_1.doc");
 
-		JSONGroup.addGroup(groupName = "Test Site");
+		HeadlessSite.addSite(siteName = "Test Site");
 
 		JSONBlog.addEntry(
 			entryContent = "This is a blog about Potatoes",
@@ -1921,7 +1924,7 @@ definition {
 	test SearchGlobalTemplateSmoke {
 		property portal.acceptance = "true";
 
-		JSONGroup.addGroup(groupName = "Site Name");
+		HeadlessSite.addSite(siteName = "Site Name");
 
 		JSONBlog.addEntry(
 			entryContent = "Blogs Entry 1 Content",
@@ -2393,15 +2396,18 @@ definition {
 		task ("Create three object entries that configure the title, siteID, and date fields") {
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Apple Fruit,siteID/3,date/2023-04-02",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Banana Fruit,siteID/2,date/2023-04-01",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Coconut Fruit,siteID/1,date/2023-04-03",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 		}
 
 		task ("Go to the search page and execute a search for the object entries") {
@@ -2663,7 +2669,8 @@ definition {
 		JSONObject.addObjectEntryViaJSONAPI(
 			fieldName = "title",
 			fieldValue = "apple",
-			objectName = "CustomObject");
+			objectName = "CustomObject",
+			scope = "site");
 
 		Search.openSearchPage();
 
@@ -2785,7 +2792,7 @@ definition {
 
 	@priority = 4
 	test ViewStagedAndLiveContentInSearchResults {
-		JSONGroup.addGroup(groupName = "Site Name");
+		HeadlessSite.addSite(siteName = "Site Name");
 
 		PagesAdmin.openPagesAdmin(siteURLKey = "Site Name");
 

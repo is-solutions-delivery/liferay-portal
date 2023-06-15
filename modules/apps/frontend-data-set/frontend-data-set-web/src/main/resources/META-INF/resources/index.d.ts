@@ -51,6 +51,26 @@ export function FrontendDataSet({
 	views,
 }: IFrontendDataSetProps): JSX.Element;
 
+export function DateTimeRenderer({
+	options,
+	value,
+}: DateTimeRendererProps): string;
+
+type DateTimeRendererProps = {
+	options?: {
+		format: {
+			day?: string;
+			hour?: string;
+			minute?: string;
+			month?: string;
+			second?: string;
+			timeZone?: string;
+			year?: string;
+		};
+	};
+	value: string;
+};
+
 type TDelta = {
 	href?: string;
 	label: number;
@@ -145,3 +165,5 @@ export {
 	INTERNAL_CELL_RENDERERS as FDS_INTERNAL_CELL_RENDERERS,
 	InternalCellRenderer as FDSInternalCellRenderer,
 } from './cell_renderers/InternalCellRenderer';
+
+export {InternalRenderer} from './utils/renderer';

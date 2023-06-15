@@ -365,6 +365,9 @@ public interface ContactsEngineClient {
 	public long getIndividualsCount(
 		FaroProject faroProject, boolean includeAnonymousUsers);
 
+	public long getIndividualsCreatedSinceCount(
+		FaroProject faroProject, Date startDate);
+
 	public Results<Distribution> getIndividualsDistribution(
 		FaroProject faroProject, String channelId, String fieldMappingFieldName,
 		String individualSegmentId, int count, int numberOfBins,
@@ -407,18 +410,15 @@ public interface ContactsEngineClient {
 		FaroProject faroProject, String query, int cur, int delta);
 
 	public Results<Interest> getInterests(
-		FaroProject faroProject, String ownerId, String ownerType, String name,
-		String query, Date startDate, Date endDate, String expand, int cur,
+		FaroProject faroProject, String channelId, String ownerId,
+		String ownerType, String name, String query, String expand, int cur,
 		int delta, List<OrderByField> orderByFields);
 
-	public Interest getLatestInterest(
-		FaroProject faroProject, String ownerId, String ownerType, String query,
-		int cur, int delta, List<OrderByField> orderByFields);
-
 	public Results<PageVisited> getPagesVisited(
-		FaroProject faroProject, String ownerId, String ownerType, String query,
-		String interestName, Date startDate, Date endDate, boolean visitedPages,
-		int cur, int delta, List<OrderByField> orderByFields);
+		FaroProject faroProject, String channelId, String ownerId,
+		String ownerType, String query, String interestName, Date startDate,
+		Date endDate, boolean visitedPages, int cur, int delta,
+		List<OrderByField> orderByFields);
 
 	public PageVisited getPageVisited(FaroProject faroProject, String id);
 

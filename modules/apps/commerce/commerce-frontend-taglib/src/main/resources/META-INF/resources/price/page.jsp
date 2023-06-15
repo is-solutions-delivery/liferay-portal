@@ -27,31 +27,33 @@ if (Validator.isNotNull(namespace) || (Validator.isNull(namespace) && !compact))
 <span class="<%= Validator.isNotNull(namespace) ? namespace + "price price" : "price" %><%= compact ? " compact" : StringPool.BLANK %>" id="<%= containerId %>">
 	<liferay-util:include page="/price/default.jsp" servletContext="<%= application %>" />
 
-	<c:choose>
-		<c:when test="<%= compact %>">
-			<c:choose>
-				<c:when test="<%= Validator.isNull(priceModel.getDiscount()) %>">
-					<c:if test="<%= Validator.isNotNull(priceModel.getPromoPrice()) %>">
-						<liferay-util:include page="/price/promo.jsp" servletContext="<%= application %>" />
-					</c:if>
-				</c:when>
-				<c:otherwise>
-					<c:if test="<%= Validator.isNotNull(priceModel.getFinalPrice()) %>">
-						<liferay-util:include page="/price/discount.jsp" servletContext="<%= application %>" />
-					</c:if>
-				</c:otherwise>
-			</c:choose>
-		</c:when>
-		<c:otherwise>
-			<c:if test="<%= Validator.isNotNull(priceModel.getPromoPrice()) %>">
-				<liferay-util:include page="/price/promo.jsp" servletContext="<%= application %>" />
-			</c:if>
+	<c:if test="<%= !priceModel.isPriceOnApplication() %>">
+		<c:choose>
+			<c:when test="<%= compact %>">
+				<c:choose>
+					<c:when test="<%= Validator.isNull(priceModel.getDiscount()) %>">
+						<c:if test="<%= Validator.isNotNull(priceModel.getPromoPrice()) %>">
+							<liferay-util:include page="/price/promo.jsp" servletContext="<%= application %>" />
+						</c:if>
+					</c:when>
+					<c:otherwise>
+						<c:if test="<%= Validator.isNotNull(priceModel.getFinalPrice()) %>">
+							<liferay-util:include page="/price/discount.jsp" servletContext="<%= application %>" />
+						</c:if>
+					</c:otherwise>
+				</c:choose>
+			</c:when>
+			<c:otherwise>
+				<c:if test="<%= Validator.isNotNull(priceModel.getPromoPrice()) %>">
+					<liferay-util:include page="/price/promo.jsp" servletContext="<%= application %>" />
+				</c:if>
 
-			<c:if test="<%= Validator.isNotNull(priceModel.getFinalPrice()) %>">
-				<liferay-util:include page="/price/discount.jsp" servletContext="<%= application %>" />
-			</c:if>
-		</c:otherwise>
-	</c:choose>
+				<c:if test="<%= Validator.isNotNull(priceModel.getFinalPrice()) %>">
+					<liferay-util:include page="/price/discount.jsp" servletContext="<%= application %>" />
+				</c:if>
+			</c:otherwise>
+		</c:choose>
+	</c:if>
 </span>
 
 <c:if test="<%= Validator.isNotNull(containerId) %>">

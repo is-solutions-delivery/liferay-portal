@@ -27,15 +27,19 @@ import com.liferay.layout.admin.web.internal.constants.LayoutAdminWebKeys;
 import com.liferay.layout.admin.web.internal.display.context.LayoutsAdminDisplayContext;
 import com.liferay.layout.admin.web.internal.display.context.MillerColumnsDisplayContext;
 import com.liferay.layout.admin.web.internal.display.context.SelectLayoutCollectionDisplayContext;
+import com.liferay.layout.admin.web.internal.helper.LayoutActionsHelper;
 import com.liferay.layout.admin.web.internal.servlet.taglib.util.LayoutActionDropdownItemsProvider;
 import com.liferay.layout.page.template.exception.DuplicateLayoutPageTemplateCollectionException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateCollectionNameException;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.layout.set.prototype.helper.LayoutSetPrototypeHelper;
 import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.util.template.LayoutConverterRegistry;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.GroupInheritContentException;
 import com.liferay.portal.kernel.exception.ImageTypeException;
@@ -62,6 +66,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -175,8 +180,15 @@ public class GroupPagesPortlet extends MVCPortlet {
 								layoutPrototype.getLayoutPrototypeId());
 
 					if (layoutPageTemplateEntry == null) {
-						_layoutPageTemplateEntryLocalService.
-							addGlobalLayoutPageTemplateEntry(layoutPrototype);
+						try (SafeCloseable safeCloseable =
+								CTCollectionThreadLocal.
+									setCTCollectionIdWithSafeCloseable(
+										group.getCtCollectionId())) {
+
+							_layoutPageTemplateEntryLocalService.
+								addGlobalLayoutPageTemplateEntry(
+									layoutPrototype);
+						}
 					}
 				}
 
@@ -198,18 +210,23 @@ public class GroupPagesPortlet extends MVCPortlet {
 				LayoutUtilityPageThumbnailConfiguration.class.getName(),
 				_layoutUtilityPageThumbnailConfiguration);
 
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+			LayoutActionsHelper layoutActionsHelper = new LayoutActionsHelper(
+				_layoutConverterRegistry, themeDisplay, _translationPermission);
+
 			LayoutsAdminDisplayContext layoutsAdminDisplayContext =
 				new LayoutsAdminDisplayContext(
-					_itemSelector, _layoutConverterRegistry, _layoutCopyHelper,
+					_itemSelector, layoutActionsHelper, _layoutCopyHelper,
 					_portal.getLiferayPortletRequest(renderRequest),
-					_portal.getLiferayPortletResponse(renderResponse),
-					_stagingGroupHelper);
+					_portal.getLiferayPortletResponse(renderResponse));
 
 			LayoutActionDropdownItemsProvider
 				layoutActionDropdownItemsProvider =
 					new LayoutActionDropdownItemsProvider(
 						_portal.getHttpServletRequest(renderRequest),
-						layoutsAdminDisplayContext, _translationPermission,
+						layoutActionsHelper, layoutsAdminDisplayContext,
 						_translationURLProvider);
 
 			renderRequest.setAttribute(
@@ -223,7 +240,7 @@ public class GroupPagesPortlet extends MVCPortlet {
 				LayoutAdminWebKeys.MILLER_COLUMNS_DISPLAY_CONTEXT,
 				new MillerColumnsDisplayContext(
 					layoutActionDropdownItemsProvider,
-					layoutsAdminDisplayContext,
+					_layoutSetPrototypeHelper, layoutsAdminDisplayContext,
 					_portal.getLiferayPortletRequest(renderRequest),
 					_portal.getLiferayPortletResponse(renderResponse)));
 			renderRequest.setAttribute(
@@ -303,6 +320,9 @@ public class GroupPagesPortlet extends MVCPortlet {
 
 	@Reference
 	private LayoutPrototypeLocalService _layoutPrototypeLocalService;
+
+	@Reference
+	private LayoutSetPrototypeHelper _layoutSetPrototypeHelper;
 
 	private volatile LayoutUtilityPageThumbnailConfiguration
 		_layoutUtilityPageThumbnailConfiguration;

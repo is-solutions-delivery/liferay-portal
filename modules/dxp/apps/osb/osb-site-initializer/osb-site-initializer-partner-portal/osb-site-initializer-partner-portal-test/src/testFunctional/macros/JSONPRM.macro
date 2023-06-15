@@ -15,7 +15,6 @@ definition {
 
 		JSONPRMAPI.changeClaimStatus(
 			claimId = ${claimId},
-			claimStatus = ${claimStatus},
 			statusKey = ${statusKey},
 			userEmailAddress = ${userEmailAddress});
 	}
@@ -26,9 +25,9 @@ definition {
 		var statusKey = StringUtil.lowerCaseFirstLetter(${statusKey});
 
 		JSONPRMAPI.changeMDFStatus(
-			mdfStatus = ${mdfStatus},
-			requestId = ${requestId},
-			statusKey = ${statusKey});
+			requestId = ${staticRequestId},
+			statusKey = ${statusKey},
+			userEmailAddress = ${userEmailAddress});
 	}
 
 	macro createMDFRequest {
@@ -124,7 +123,8 @@ definition {
 			targetMarketOptions = ${targetMarketOptions},
 			targetRolesOptions = ${targetRolesOptions},
 			totalCostOfExpense = ${totalCostOfExpense},
-			totalMDFRequestAmount = ${totalMDFRequestAmount});
+			totalMDFRequestAmount = ${totalMDFRequestAmount},
+			userEmailAddress = ${userEmailAddress});
 
 		var requestId = JSONPRMAPI.addMDF(
 			accountEntryName = ${accountEntryName},

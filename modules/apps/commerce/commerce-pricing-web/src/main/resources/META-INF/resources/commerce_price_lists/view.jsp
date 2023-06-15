@@ -27,7 +27,7 @@ CommercePriceListDisplayContext commercePriceListDisplayContext = (CommercePrice
 		<aui:input name="deletePriceLists" type="hidden" />
 
 		<frontend-data-set:headless-display
-			apiURL="<%= commercePriceListDisplayContext.getPriceListsApiUrl(portletName) %>"
+			apiURL="<%= commercePriceListDisplayContext.getPriceListsAPIURL(portletName) %>"
 			creationMenu="<%= commercePriceListDisplayContext.getPriceListCreationMenu(portletName) %>"
 			fdsActionDropdownItems="<%= commercePriceListDisplayContext.getPriceListFDSActionDropdownItems() %>"
 			formName="fm"

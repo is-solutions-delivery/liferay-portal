@@ -259,7 +259,7 @@ const ROUTES = [
 		destructured: false,
 		path: Routes.CHANNEL
 	},
-	{
+	DEVELOPER_MODE && {
 		data: CommerceDashboard,
 		destructured: false,
 		path: Routes.COMMERCE

@@ -14,7 +14,7 @@
 
 package com.liferay.layout.page.template.internal.upgrade.v4_0_0;
 
-import com.liferay.layout.helper.CollectionPaginationHelper;
+import com.liferay.layout.util.CollectionPaginationUtil;
 import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
@@ -37,12 +37,6 @@ import java.util.List;
  */
 public class LayoutPageTemplateStructureRelUpgradeProcess
 	extends UpgradeProcess {
-
-	public LayoutPageTemplateStructureRelUpgradeProcess(
-		CollectionPaginationHelper collectionPaginationHelper) {
-
-		_collectionPaginationHelper = collectionPaginationHelper;
-	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
@@ -99,7 +93,7 @@ public class LayoutPageTemplateStructureRelUpgradeProcess
 				String paginationType = _getPaginatiopnType(
 					collectionStyledLayoutStructureItem, itemsJSONObject);
 
-				if (_collectionPaginationHelper.isPaginationEnabled(
+				if (CollectionPaginationUtil.isPaginationEnabled(
 						paginationType)) {
 
 					collectionStyledLayoutStructureItem.setDisplayAllPages(
@@ -121,7 +115,7 @@ public class LayoutPageTemplateStructureRelUpgradeProcess
 				}
 				else {
 					paginationType =
-						CollectionPaginationHelper.PAGINATION_TYPE_NONE;
+						CollectionPaginationUtil.PAGINATION_TYPE_NONE;
 				}
 
 				collectionStyledLayoutStructureItem.setPaginationType(
@@ -164,7 +158,5 @@ public class LayoutPageTemplateStructureRelUpgradeProcess
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutPageTemplateStructureRelUpgradeProcess.class);
-
-	private final CollectionPaginationHelper _collectionPaginationHelper;
 
 }

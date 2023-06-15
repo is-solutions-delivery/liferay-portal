@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.ModelListener;
-import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -61,10 +60,7 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 
 			List<SegmentsExperiment> segmentsExperiments =
 				_segmentsExperimentLocalService.getSegmentsExperiments(
-					layout.getGroupId(),
-					_classNameLocalService.getClassNameId(
-						Layout.class.getName()),
-					layout.getPlid());
+					layout.getGroupId(), layout.getPlid());
 
 			for (SegmentsExperiment segmentsExperiment : segmentsExperiments) {
 				_asahSegmentsExperimentProcessor.
@@ -123,9 +119,6 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 	private AnalyticsSettingsManager _analyticsSettingsManager;
 
 	private AsahSegmentsExperimentProcessor _asahSegmentsExperimentProcessor;
-
-	@Reference
-	private ClassNameLocalService _classNameLocalService;
 
 	@Reference
 	private CompanyLocalService _companyLocalService;

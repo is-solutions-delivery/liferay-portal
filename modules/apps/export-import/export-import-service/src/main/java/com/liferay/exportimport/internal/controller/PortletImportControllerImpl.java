@@ -526,6 +526,15 @@ public class PortletImportControllerImpl implements PortletImportController {
 			long elementPlid = GetterUtil.getLong(
 				element.attributeValue("plid"));
 
+			Map<String, String[]> parameterMap =
+				portletDataContext.getParameterMap();
+
+			parameterMap.put(
+				"portletPreferencePlid",
+				new String[] {String.valueOf(elementPlid)});
+
+			portletDataContext.setParameterMap(parameterMap);
+
 			if ((ownerType == PortletKeys.PREFS_OWNER_TYPE_LAYOUT) &&
 				(ownerId != PortletKeys.PREFS_OWNER_ID_DEFAULT) &&
 				(elementPlid == PortletKeys.PREFS_PLID_SHARED)) {

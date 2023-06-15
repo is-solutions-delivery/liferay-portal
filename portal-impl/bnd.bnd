@@ -1,6 +1,6 @@
 Bundle-Name: ${manifest.bundle.name}
 Bundle-SymbolicName: ${manifest.bundle.symbolic.name}
-Bundle-Version: 79.0.0
+Bundle-Version: 80.0.0
 Export-Package:\
 	com.liferay.portal.bean,\
 	com.liferay.portal.dao.orm.hibernate,\
@@ -34,7 +34,6 @@ Export-Package:\
 	com.liferay.portlet.asset.util,\
 	com.liferay.portlet.documentlibrary,\
 	com.liferay.portlet.documentlibrary.lar,\
-	com.liferay.portlet.documentlibrary.service.permission,\
 	com.liferay.portlet.documentlibrary.store,\
 	com.liferay.portlet.documentlibrary.util,\
 	com.liferay.portlet.expando.model.impl,\

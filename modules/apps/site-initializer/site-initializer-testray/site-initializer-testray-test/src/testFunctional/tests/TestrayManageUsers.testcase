@@ -11,15 +11,20 @@ definition {
 	var testSiteName = "Testray 2";
 
 	setUp {
-		task ("Login and create a Testray Site") {
+		task ("Set up instance and sign in") {
 			TestCase.setUpPortalInstance();
 
 			User.firstLoginPG();
-
-			Testray.addTestraySite(siteName = ${testSiteName});
 		}
 
-		task ("Add a user") {
+		task ("Create a new Testray Site") {
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
+		}
+
+		task ("Add a user via API") {
 			JSONUser.addUser(
 				userEmailAddress = "user@liferay.com",
 				userFirstName = "userfn",
@@ -33,9 +38,11 @@ definition {
 	}
 
 	tearDown {
-		JSONUser.deleteUserByEmailAddress(userEmailAddress = "user@liferay.com");
+		task ("Delete user via API, Testray Site and Client Extensions") {
+			JSONUser.deleteUserByEmailAddress(userEmailAddress = "user@liferay.com");
 
-		Testray.testrayApisTearDown();
+			Testray.testrayApisTearDown();
+		}
 
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
@@ -77,7 +84,7 @@ definition {
 		task ("And delete the user") {
 			Testray.goToProjectPage(projectName = "changedfirstname Updateln");
 
-			Button.click(button = "Delete User");
+			Button.clickNoError(button = "Delete User");
 
 			AssertConfirm(value1 = "Are you sure you want to delete this item?");
 		}

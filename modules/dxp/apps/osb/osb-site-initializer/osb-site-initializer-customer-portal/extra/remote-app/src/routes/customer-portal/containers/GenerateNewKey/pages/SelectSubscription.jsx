@@ -24,6 +24,7 @@ import {FORMAT_DATE_TYPES} from '../../../../../common/utils/constants';
 import getDateCustomFormat from '../../../../../common/utils/getDateCustomFormat';
 import {useCustomerPortal} from '../../../context';
 import GenerateNewKeySkeleton from '../Skeleton';
+import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDateUtil';
 
 const SelectSubscription = ({
 	accountKey,
@@ -152,16 +153,13 @@ const SelectSubscription = ({
 		[generateFormValues?.subscriptionTerms, selectedProductKey]
 	);
 
-	const subscriptionTermEndDateByKeyType = (subscriptionTerm) =>
-		getDateCustomFormat(
-			hasNotPermanentLicence
-				? subscriptionTerm.licenseKeyEndDate
-				: subscriptionTerm.endDate,
-			FORMAT_DATE_TYPES.day2DMonthSYearN
-		);
+	const getCustomAlert = (subscriptionTerm) => {
+		const licenseKeyData = {
+			...infoSelectedKey,
+			selectedSubscription: {...subscriptionTerm},
+		};
 
-	const getCustomAlert = (subscriptionTerm) =>
-		hasNotPermanentLicence || doesNotAllowPermanentLicense ? (
+		return hasNotPermanentLicence || doesNotAllowPermanentLicense ? (
 			<ClayAlert className="px-4 py-3" displayType="info">
 				<span className="text-paragraph">
 					{i18n.sub('activation-keys-will-be-valid-x-x', [
@@ -169,7 +167,10 @@ const SelectSubscription = ({
 							subscriptionTerm.startDate,
 							FORMAT_DATE_TYPES.day2DMonthSYearN
 						),
-						subscriptionTermEndDateByKeyType(subscriptionTerm),
+						getDateCustomFormat(
+							getLicenseKeyEndDatesByLicenseType(licenseKeyData),
+							FORMAT_DATE_TYPES.day2DMonthSYearN
+						),
 					])}
 				</span>
 			</ClayAlert>
@@ -188,6 +189,7 @@ const SelectSubscription = ({
 				</span>
 			</ClayAlert>
 		);
+	};
 
 	if (!generateFormValues || !accountKey || !sessionId) {
 		return <GenerateNewKeySkeleton />;
@@ -341,8 +343,9 @@ const SelectSubscription = ({
 							const currentStartAndEndDate = `${getDateCustomFormat(
 								subscriptionTerm.startDate,
 								FORMAT_DATE_TYPES.day2DMonthSYearN
-							)} - ${subscriptionTermEndDateByKeyType(
-								subscriptionTerm
+							)} - ${getDateCustomFormat(
+								subscriptionTerm.endDate,
+								FORMAT_DATE_TYPES.day2DMonthSYearN
 							)}`;
 
 							const infoSelectedKey = {

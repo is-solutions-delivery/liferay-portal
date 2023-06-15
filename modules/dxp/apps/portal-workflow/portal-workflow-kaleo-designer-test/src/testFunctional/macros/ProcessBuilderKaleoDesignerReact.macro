@@ -458,17 +458,17 @@ definition {
 	macro editConnector {
 		ProcessBuilderKaleoDesignerReact.selectConnector(connectorLabel = ${connectorLabel});
 
-		Type(
-			locator1 = "ProcessBuilderKaleoDesignerReact#SIDEBAR_CONNECTOR_LABEL",
-			value1 = ${newConnectorLabel});
-	}
+		if (isSet(connectorLabelEdit)) {
+			Type(
+				locator1 = "ProcessBuilderKaleoDesignerReact#SIDEBAR_CONNECTOR_LABEL",
+				value1 = ${connectorLabelEdit});
+		}
 
-	macro editConnectorTransitionField {
-		ProcessBuilderKaleoDesignerReact.selectConnector(connectorLabel = ${connectorLabel});
-
-		Type(
-			locator1 = "ProcessBuilderKaleoDesignerReact#SIDEBAR_CONNECTOR_NAME",
-			value1 = ${nodeName});
+		if (isSet(nodeName)) {
+			Type(
+				locator1 = "ProcessBuilderKaleoDesignerReact#SIDEBAR_CONNECTOR_NAME",
+				value1 = ${nodeName});
+		}
 	}
 
 	macro editNodeInformationField {
@@ -718,6 +718,12 @@ definition {
 			locator1 = "ProcessBuilderKaleoDesignerReact#HIDE_ANGLE_ICON");
 	}
 
+	macro openTranslationLanguageDropdown {
+		Click.javaScriptClick(
+			key_title = "select-translation-language",
+			locator1 = "Button#ANY_TITLE");
+	}
+
 	macro restorePreviousVersion {
 		Click(
 			key_number = ${number},
@@ -749,20 +755,11 @@ definition {
 	}
 
 	macro selectTranslationLanguage {
-		var key_translationOptionSelected = ${translationOptionSelected};
-		var key_translationOption = ${newTranslationOption};
-		var key_translationStatus = ${translationStatus};
+		ProcessBuilderKaleoDesignerReact.openTranslationLanguageDropdown();
 
 		Click(
-			locator1 = "ProcessBuilderKaleoDesignerReact#ICON_COUNTRY",
-			translationOption = ${translationOptionSelected});
-
-		if (isSet(translationOption)) {
-			Click(
-				locator1 = "ProcessBuilderKaleoDesignerReact#TRANSLATION_COUNTRY_LABEL",
-				translationOption = ${newTranslationOption},
-				translationStatus = ${translationStatus});
-		}
+			key_locale = ${key_locale},
+			locator1 = "Translation#DROPDOWN_MENU_ITEM");
 	}
 
 	macro uploadDefinition {
@@ -2028,10 +2025,6 @@ definition {
 			locator1 = "ProcessBuilderKaleoDesignerReact#ICON_COUNTRY");
 
 		AssertElementPresent(locator1 = "ProcessBuilderKaleoDesignerReact#TRANSLATION_DROPDOWN");
-	}
-
-	macro viewTranslationDropdownNotPresent {
-		AssertElementNotPresent(locator1 = "ProcessBuilderKaleoDesignerReact#TRANSLATION_DROPDOWN");
 	}
 
 	macro viewTranslationLanguageOptionNotPresent {

@@ -86,6 +86,11 @@ public class JournalItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/journal_images.jsp");
+
 		JournalItemSelectorViewDisplayContext
 			journalItemSelectorViewDisplayContext =
 				new JournalItemSelectorViewDisplayContext(
@@ -97,11 +102,6 @@ public class JournalItemSelectorView
 			JournalItemSelectorWebKeys.
 				JOURNAL_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			journalItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/journal_images.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

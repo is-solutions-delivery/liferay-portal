@@ -89,6 +89,11 @@ public class RoleItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/role_item_selector.jsp");
+
 		HttpServletRequest httpServletRequest =
 			(HttpServletRequest)servletRequest;
 
@@ -115,11 +120,6 @@ public class RoleItemSelectorView
 			RoleItemSelectorViewConstants.
 				ROLE_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			roleItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/role_item_selector.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

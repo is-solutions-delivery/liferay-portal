@@ -16,5 +16,24 @@
 		"resourceName": "com.liferay.expando.kernel.model.ExpandoColumn",
 		"roleName": "User",
 		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"primKey": "0",
+		"resourceName": "com.liferay.account.model.AccountRole",
+		"roleName": "User",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"UPDATE",
+			"VIEW"
+		],
+		"primKey": "0",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:UserAdditionalInfo$]",
+		"roleName": "User",
+		"scope": "1"
 	}
 ]

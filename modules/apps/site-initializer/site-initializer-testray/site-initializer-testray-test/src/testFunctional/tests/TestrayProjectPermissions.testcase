@@ -8,8 +8,8 @@ definition {
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 	property testray.main.component.name = "Site Initializer Testray";
 
-	var testSiteName = "Testray 2";
 	var projectName = "Project 1";
+	var testSiteName = "Testray 2";
 
 	setUp {
 		task ("Set up instance and sign in") {
@@ -19,7 +19,10 @@ definition {
 		}
 
 		task ("Create a new Testray Site") {
-			Testray.addTestraySite(siteName = ${testSiteName});
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
 		}
 
 		task ("Create a Project via API") {
@@ -36,7 +39,7 @@ definition {
 				userLoginFullName = "test test");
 		}
 
-		task ("Delete all objects, Testray Site and Client Extensions") {
+		task ("Delete project, Testray Site and Client Extensions") {
 			JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
 			Testray.testrayApisTearDown();

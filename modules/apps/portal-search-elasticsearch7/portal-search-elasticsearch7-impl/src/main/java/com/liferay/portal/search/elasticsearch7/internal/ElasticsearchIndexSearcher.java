@@ -134,8 +134,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				_deepPaginationConfigurationWrapper.getEnableDeepPagination()) {
 
 				hits = _searchWithDeepPagination(
-					end, query, searchContext, searchRequest,
-					searchResponseBuilder, start);
+					query, searchContext, searchRequest, searchResponseBuilder,
+					start, end);
 			}
 			else {
 				hits = _search(
@@ -351,11 +351,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		PointInTime pointInTime = new PointInTime(
 			openPointInTimeResponse.pitId());
 
-		int pointInTimeKeepAliveSeconds =
+		pointInTime.setKeepAlive(
 			_deepPaginationConfigurationWrapper.
-				getPointInTimeKeepAliveSeconds();
-
-		pointInTime.setKeepAlive(pointInTimeKeepAliveSeconds + "s");
+				getPointInTimeKeepAliveSeconds());
 
 		return pointInTime;
 	}
@@ -369,7 +367,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		searchSearchRequest.setPointInTime(
 			_createPointInTime(searchContext, searchRequest));
 
-		if (ArrayUtil.isEmpty(searchContext.getSorts()) ||
+		if (ArrayUtil.isEmpty(searchContext.getSorts()) &&
 			ListUtil.isEmpty(searchRequest.getSorts())) {
 
 			ScoreSort scoreSort = _sorts.score();
@@ -410,53 +408,6 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchContext.getCompanyId());
 
 		return new String[] {indexName};
-	}
-
-	private SearchHit _getLastSearchHit(
-		int maxResultWindow, SearchSearchRequest searchSearchRequest,
-		int start) {
-
-		int documentsToSkip = 0;
-
-		if (start < maxResultWindow) {
-			searchSearchRequest.setStart(start - 1);
-		}
-		else {
-			searchSearchRequest.setStart(maxResultWindow - 1);
-
-			documentsToSkip = start % maxResultWindow;
-		}
-
-		searchSearchRequest.setSize(1);
-
-		SearchSearchResponse searchSearchResponse =
-			_searchEngineAdapter.execute(searchSearchRequest);
-
-		SearchHit lastSearchHit = _getLastSearchHit(searchSearchResponse);
-
-		if (lastSearchHit == null) {
-			return null;
-		}
-
-		int maxResultWindowPages = start / maxResultWindow;
-
-		for (int i = 1; i < maxResultWindowPages; i++) {
-			lastSearchHit = _getLastSearchHit(
-				lastSearchHit.getSortValues(), searchSearchRequest,
-				maxResultWindow);
-
-			if (lastSearchHit == null) {
-				return null;
-			}
-		}
-
-		if (documentsToSkip > 0) {
-			lastSearchHit = _getLastSearchHit(
-				lastSearchHit.getSortValues(), searchSearchRequest,
-				documentsToSkip);
-		}
-
-		return lastSearchHit;
 	}
 
 	private SearchHit _getLastSearchHit(
@@ -618,9 +569,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 	}
 
 	private Hits _searchWithDeepPagination(
-		int end, Query query, SearchContext searchContext,
-		SearchRequest searchRequest,
-		SearchResponseBuilder searchResponseBuilder, int start) {
+		Query query, SearchContext searchContext, SearchRequest searchRequest,
+		SearchResponseBuilder searchResponseBuilder, int start, int end) {
 
 		SearchSearchRequest searchSearchRequest =
 			_createSearchSearchRequestWithDeepPagination(
@@ -633,8 +583,8 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 
 		try {
 			if (end > maxResultWindow) {
-				SearchHit lastSearchHit = _getLastSearchHit(
-					start, searchSearchRequest, maxResultWindow);
+				SearchHit lastSearchHit = _skipToLastSearchHit(
+					maxResultWindow, searchSearchRequest, start);
 
 				if (lastSearchHit == null) {
 					return new HitsImpl();
@@ -648,7 +598,9 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 				searchSearchRequest.setStart(start);
 			}
 
-			searchSearchRequest.setSize(end - start);
+			int maxSize = Math.min(end - start, maxResultWindow);
+
+			searchSearchRequest.setSize(maxSize);
 
 			searchSearchResponse = _searchEngineAdapter.execute(
 				searchSearchRequest);
@@ -709,6 +661,50 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		for (PipelineAggregation aggregation : map.values()) {
 			baseSearchRequest.addPipelineAggregation(aggregation);
 		}
+	}
+
+	private SearchHit _skipToLastSearchHit(
+		int maxResultWindow, SearchSearchRequest searchSearchRequest,
+		int start) {
+
+		int skipToStart = 0;
+
+		if (start >= maxResultWindow) {
+			searchSearchRequest.setStart(maxResultWindow - 1);
+
+			skipToStart = start % maxResultWindow;
+		}
+
+		searchSearchRequest.setSize(1);
+
+		SearchSearchResponse searchSearchResponse =
+			_searchEngineAdapter.execute(searchSearchRequest);
+
+		SearchHit lastSearchHit = _getLastSearchHit(searchSearchResponse);
+
+		if (lastSearchHit == null) {
+			return null;
+		}
+
+		int maxResultWindowPages = start / maxResultWindow;
+
+		for (int i = 1; i < maxResultWindowPages; i++) {
+			lastSearchHit = _getLastSearchHit(
+				lastSearchHit.getSortValues(), searchSearchRequest,
+				maxResultWindow);
+
+			if (lastSearchHit == null) {
+				return null;
+			}
+		}
+
+		if (skipToStart > 0) {
+			lastSearchHit = _getLastSearchHit(
+				lastSearchHit.getSortValues(), searchSearchRequest,
+				skipToStart);
+		}
+
+		return lastSearchHit;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

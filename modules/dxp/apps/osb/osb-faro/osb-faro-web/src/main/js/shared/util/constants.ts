@@ -12,9 +12,19 @@ export const ENABLE_ACCOUNTS = false;
 
 export const ENABLE_ASSET_CARD = false;
 
+// LRAC-13649 Hide the keywords blocklist screen from Settings>Definitions
+
+export const ENABLE_BLOCKLIST_KEYWORDS = false;
+
 // LRAC-11651 Disable temporarily CSV File
 
 export const ENABLE_CSVFILE = false;
+
+// LRAC-13389 Disable temporarily Delete Property and Delete Data Source buttons
+
+export const ENABLE_DELETE_DATA_SOURCE_BUTTON = false;
+
+export const ENABLE_DELETE_PROPERTY_BUTTON = false;
 
 // LRAC-11650 Hide Form Abandonment Card
 
@@ -27,6 +37,10 @@ export const ENABLE_GLOBAL_FILTER = false;
 // LRAC-11571 Disable temporarily Salesforce
 
 export const ENABLE_SALESFORCE = false;
+
+// LRAC-13620 Hide Suppressed Users line from Data Control & Privacy screen
+
+export const ENABLE_SUPPRESSED_USERS = false;
 
 /**
  * Languages
@@ -236,6 +250,29 @@ export const TIME_RANGE_LABELS = {
 	[RangeKeyTimeRanges.LastYear]: Liferay.Language.get('last-year'),
 	[RangeKeyTimeRanges.Yesterday]: Liferay.Language.get('yesterday')
 };
+
+export enum ExpirationPeriod {
+	In30Days = '2592000',
+	In6Months = '15778800',
+	In1Year = '31557600',
+	Indefinite = '3155760000'
+}
+
+export const EXPIRATION_DATE_LABELS = {
+	[ExpirationPeriod.In30Days]: Liferay.Language.get('30-days'),
+	[ExpirationPeriod.In6Months]: Liferay.Language.get('6-months'),
+	[ExpirationPeriod.In1Year]: Liferay.Language.get('1-year'),
+	[ExpirationPeriod.Indefinite]: Liferay.Language.get('indefinite')
+};
+
+/**
+ * Conjunctions
+ */
+
+export enum ConjunctionKey {
+	And = 'and',
+	Or = 'or'
+}
 
 /**
  * Sprite

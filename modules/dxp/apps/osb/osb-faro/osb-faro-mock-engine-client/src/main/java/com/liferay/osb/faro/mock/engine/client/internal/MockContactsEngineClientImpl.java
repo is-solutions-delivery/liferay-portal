@@ -26,6 +26,7 @@ import com.liferay.osb.faro.engine.client.util.OrderByField;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.portal.kernel.util.ListUtil;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -127,6 +128,14 @@ public class MockContactsEngineClientImpl
 
 		return contactsEngineClient.getIndividualsCount(
 			faroProject, includeAnonymousUsers);
+	}
+
+	@Override
+	public long getIndividualsCreatedSinceCount(
+		FaroProject faroProject, Date startDate) {
+
+		return contactsEngineClient.getIndividualsCreatedSinceCount(
+			faroProject, startDate);
 	}
 
 	@Override

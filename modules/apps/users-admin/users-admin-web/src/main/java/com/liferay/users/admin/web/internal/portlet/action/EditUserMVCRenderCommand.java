@@ -59,11 +59,11 @@ public class EditUserMVCRenderCommand implements MVCRenderCommand {
 				LiferayRenderRequest liferayRenderRequest =
 					(LiferayRenderRequest)renderRequest;
 
-				DynamicServletRequest dynamicRequest =
+				DynamicServletRequest dynamicServletRequest =
 					(DynamicServletRequest)
 						liferayRenderRequest.getHttpServletRequest();
 
-				dynamicRequest.setParameter(
+				dynamicServletRequest.setParameter(
 					"p_u_i_d", String.valueOf(user.getUserId()));
 			}
 

@@ -876,6 +876,18 @@ public class CTCollectionLocalServiceImpl
 			throw new SystemException(exception);
 		}
 
+		List<CTEntry> newCTEntries =
+			_ctEntryLocalService.getCTCollectionCTEntries(
+				newCTCollection.getCtCollectionId());
+
+		if (newCTEntries.size() != publishedCTEntries.size()) {
+			throw new SystemException(
+				StringBundler.concat(
+					"Expected ", publishedCTEntries.size(),
+					" change tracking entries instead of ",
+					newCTEntries.size()));
+		}
+
 		_ctServiceRegistry.onAfterCopy(undoCTCollection, newCTCollection);
 
 		return newCTCollection;
@@ -1284,7 +1296,8 @@ public class CTCollectionLocalServiceImpl
 
 	private static final int[] _STATUSES = {
 		WorkflowConstants.STATUS_APPROVED, WorkflowConstants.STATUS_DRAFT,
-		WorkflowConstants.STATUS_SCHEDULED, WorkflowConstants.STATUS_IN_TRASH
+		WorkflowConstants.STATUS_EXPIRED, WorkflowConstants.STATUS_IN_TRASH,
+		WorkflowConstants.STATUS_SCHEDULED
 	};
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -163,11 +163,13 @@ public class CompanyIndexFactoryTest {
 	}
 
 	@Test
-	public void testAdditionalTypeMappingsWithRootType() throws Exception {
+	public void testAdditionalTypeMappingsWithLegacyRootType()
+		throws Exception {
+
 		Mockito.when(
 			_elasticsearchConfigurationWrapper.additionalTypeMappings()
 		).thenReturn(
-			_loadAdditionalTypeMappingsWithRootType()
+			_loadAdditionalTypeMappingsWithLegacyRootType()
 		);
 
 		_assertAdditionalTypeMappings();
@@ -261,11 +263,11 @@ public class CompanyIndexFactoryTest {
 
 	@Test
 	public void testIndexContributors() throws Exception {
-		CompanyIndexFactoryFixture companyIndexFactoryFixture =
-			new CompanyIndexFactoryFixture(_elasticsearchFixture, "other");
+		ReflectionTestUtil.setFieldValue(
+			_companyIndexFactoryFixture, "_indexName", "other");
 
 		ReflectionTestUtil.setFieldValue(
-			companyIndexFactoryFixture.getCompanyIndexFactory(),
+			_companyIndexFactoryFixture.getCompanyIndexFactory(),
 			"_indexContributorServiceTrackerList",
 			ServiceTrackerListFactory.open(
 				_bundleContext, IndexContributor.class, null,
@@ -298,23 +300,23 @@ public class CompanyIndexFactoryTest {
 
 				@Override
 				public void onAfterCreate(String indexName) {
-					companyIndexFactoryFixture.createIndices();
+					_companyIndexFactoryFixture.createIndices();
 				}
 
 				@Override
 				public void onBeforeRemove(String indexName) {
-					companyIndexFactoryFixture.deleteIndices();
+					_companyIndexFactoryFixture.deleteIndices();
 				}
 
 			});
 
 		createIndices();
 
-		_assertHasIndex(companyIndexFactoryFixture.getIndexName());
+		_assertHasIndex(_companyIndexFactoryFixture.getIndexName());
 
 		deleteIndices();
 
-		_assertNoIndex(companyIndexFactoryFixture.getIndexName());
+		_assertNoIndex(_companyIndexFactoryFixture.getIndexName());
 	}
 
 	@Test
@@ -434,6 +436,35 @@ public class CompanyIndexFactoryTest {
 
 		assertType("match_additional_mapping", "keyword");
 		assertType("match_catch_all", "text");
+	}
+
+	@Test
+	public void testOverrideLegacyTypeMappings() throws Exception {
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.additionalIndexConfigurations()
+		).thenReturn(
+			_loadAdditionalAnalyzers()
+		);
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.overrideTypeMappings()
+		).thenReturn(
+			_loadOverrideLegacyTypeMappings()
+		);
+
+		createIndices();
+
+		String field1 = "title";
+
+		_indexOneDocument(field1);
+
+		assertAnalyzer(field1, "kuromoji_liferay_custom");
+
+		String field2 = "description";
+
+		_indexOneDocument(field2);
+
+		_assertNoAnalyzer(field2);
 	}
 
 	@Test
@@ -690,16 +721,22 @@ public class CompanyIndexFactoryTest {
 			getClass(), "CompanyIndexFactoryTest-additionalAnalyzers.json");
 	}
 
-	private String _loadAdditionalTypeMappingsWithRootType() {
+	private String _loadAdditionalTypeMappingsWithLegacyRootType() {
 		try {
 			return ResourceUtil.getResourceAsString(
 				getClass(),
-				"CompanyIndexFactoryTest-additionalTypeMappings-with-root-" +
-					"type.json");
+				"CompanyIndexFactoryTest-additionalTypeMappings-with-legacy-" +
+					"root-type.json");
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
+	}
+
+	private String _loadOverrideLegacyTypeMappings() throws Exception {
+		return ResourceUtil.getResourceAsString(
+			getClass(),
+			"CompanyIndexFactoryTest-overrideLegacyTypeMappings.json");
 	}
 
 	private String _loadOverrideTypeMappings() throws Exception {

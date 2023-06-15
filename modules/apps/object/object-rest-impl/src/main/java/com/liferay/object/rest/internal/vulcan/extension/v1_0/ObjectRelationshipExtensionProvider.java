@@ -17,6 +17,7 @@ package com.liferay.object.rest.internal.vulcan.extension.v1_0;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectRelationship;
+import com.liferay.object.related.models.ObjectRelatedModelsProviderRegistry;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManagerProvider;
@@ -225,6 +226,17 @@ public class ObjectRelationshipExtensionProvider
 				objectRelationshipElementsParser.parse(
 					objectRelationship, entry.getValue());
 
+			if (!nestedObjectEntries.isEmpty()) {
+				DefaultObjectEntryManager defaultObjectEntryManager =
+					DefaultObjectEntryManagerProvider.provide(
+						_objectEntryManagerRegistry.getObjectEntryManager(
+							objectDefinition.getStorageType()));
+
+				defaultObjectEntryManager.disassociateRelatedModels(
+					objectDefinition, objectRelationship, getPrimaryKey(entity),
+					relatedObjectDefinition, userId);
+			}
+
 			for (ObjectEntry nestedObjectEntry : nestedObjectEntries) {
 				nestedObjectEntry = objectEntryManager.updateObjectEntry(
 					objectDefinition.getCompanyId(),
@@ -323,6 +335,10 @@ public class ObjectRelationshipExtensionProvider
 
 	@Reference
 	private ObjectEntryManagerRegistry _objectEntryManagerRegistry;
+
+	@Reference
+	private ObjectRelatedModelsProviderRegistry
+		_objectRelatedModelsProviderRegistry;
 
 	@Reference
 	private ObjectRelationshipElementsParserRegistry

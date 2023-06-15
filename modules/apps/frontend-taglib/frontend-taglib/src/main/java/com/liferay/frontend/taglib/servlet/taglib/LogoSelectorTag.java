@@ -62,6 +62,10 @@ public class LogoSelectorTag extends IncludeTag {
 		return _label;
 	}
 
+	public boolean isDisabled() {
+		return _disabled;
+	}
+
 	public boolean isPreserveRatio() {
 		return _preserveRatio;
 	}
@@ -80,6 +84,10 @@ public class LogoSelectorTag extends IncludeTag {
 
 	public void setDescription(String description) {
 		_description = description;
+	}
+
+	public void setDisabled(boolean disabled) {
+		_disabled = disabled;
 	}
 
 	public void setLabel(String label) {
@@ -105,6 +113,7 @@ public class LogoSelectorTag extends IncludeTag {
 		_currentLogoURL = null;
 		_defaultLogoURL = null;
 		_description = null;
+		_disabled = false;
 		_label = null;
 		_preserveRatio = false;
 	}
@@ -120,6 +129,8 @@ public class LogoSelectorTag extends IncludeTag {
 			"liferay-frontend:logo-selector:defaultLogoURL", _defaultLogoURL);
 		httpServletRequest.setAttribute(
 			"liferay-frontend:logo-selector:description", _description);
+		httpServletRequest.setAttribute(
+			"liferay-frontend:logo-selector:disabled", _disabled);
 		httpServletRequest.setAttribute(
 			"liferay-frontend:logo-selector:label",
 			getLabel(httpServletRequest));
@@ -196,6 +207,7 @@ public class LogoSelectorTag extends IncludeTag {
 	private String _currentLogoURL;
 	private String _defaultLogoURL;
 	private String _description;
+	private boolean _disabled;
 	private String _label;
 	private boolean _preserveRatio;
 

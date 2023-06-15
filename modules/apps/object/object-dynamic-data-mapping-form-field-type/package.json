@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"@liferay/frontend-data-set-web": "*",
 		"data-engine-js-components-web": "*",
 		"dynamic-data-mapping-form-field-type": "*",
 		"frontend-js-web": "*"
@@ -11,5 +12,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "1.0.36"
+	"version": "1.0.37"
 }

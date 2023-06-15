@@ -82,6 +82,12 @@ public class WikiAttachmentItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher(
+				"/item/selector/wiki_page_attachments.jsp");
+
 		WikiAttachmentItemSelectorViewDisplayContext
 			wikiAttachmentItemSelectorViewDisplayContext =
 				new WikiAttachmentItemSelectorViewDisplayContext(
@@ -93,12 +99,6 @@ public class WikiAttachmentItemSelectorView
 			WikiItemSelectorWebKeys.
 				WIKI_ATTACHMENT_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			wikiAttachmentItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher(
-				"/item/selector/wiki_page_attachments.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

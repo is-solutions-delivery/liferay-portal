@@ -12,13 +12,14 @@
  * details.
  */
 
-import ClayForm, {ClayToggle} from '@clayui/form';
+import ClayForm from '@clayui/form';
 import {
 	API,
 	AutoComplete,
 	FormError,
 	Input,
 	SingleSelect,
+	Toggle,
 	stringIncludesQuery,
 } from '@liferay/object-js-components-web';
 import React, {
@@ -256,18 +257,15 @@ export default function ObjectFieldFormBase({
 			return false;
 		}
 
-		const readOnlySetting = values.objectFieldSettings?.find(
-			(fieldSetting) => fieldSetting.name === 'readOnly'
-		);
-
-		if (
-			readOnlySetting?.value === 'true' ||
-			readOnlySetting?.value === 'conditional'
-		) {
+		if (values.readOnly === 'true' || values.readOnly === 'conditional') {
 			return true;
 		}
 
-		return disabled || values.state;
+		return (
+			disabled ||
+			values.state ||
+			(Liferay.FeatureFlags['LPS-172017'] && values.localized)
+		);
 	};
 
 	useEffect(() => {
@@ -436,14 +434,12 @@ export default function ObjectFieldFormBase({
 			{(values.businessType === 'Picklist' ||
 				values.businessType === 'MultiselectPicklist') && (
 				<AutoComplete<Partial<PickList>>
-					creationLanguageId={
-						creationLanguageId2 as Liferay.Language.Locale
-					}
 					disabled={disabled}
 					emptyStateMessage={Liferay.Language.get('option-not-found')}
 					error={errors.listTypeDefinitionId}
 					items={filteredPicklist}
 					label={Liferay.Language.get('picklist')}
+					onActive={(item) => item.name === selectedPicklist?.name}
 					onChangeQuery={setPicklistQuery}
 					onSelectItem={(item) => {
 						Liferay.FeatureFlags['LPS-163716']
@@ -478,23 +474,22 @@ export default function ObjectFieldFormBase({
 				</AutoComplete>
 			)}
 
-			{Liferay.FeatureFlags['LPS-143068'] &&
-				values.businessType === 'DateTime' && (
-					<TimeStorage
-						disabled={disabled}
-						objectFieldSettings={
-							values.objectFieldSettings as ObjectFieldSetting[]
-						}
-						setValues={setValues}
-					/>
-				)}
+			{values.businessType === 'DateTime' && (
+				<TimeStorage
+					disabled={disabled}
+					objectFieldSettings={
+						values.objectFieldSettings as ObjectFieldSetting[]
+					}
+					setValues={setValues}
+				/>
+			)}
 
 			{children}
 
 			<ClayForm.Group>
 				{values.businessType !== 'Aggregation' &&
 					values.businessType !== 'Formula' && (
-						<ClayToggle
+						<Toggle
 							disabled={getMandatoryToggleDisabledState()}
 							label={Liferay.Language.get('mandatory')}
 							name="required"
@@ -506,7 +501,7 @@ export default function ObjectFieldFormBase({
 
 			{values.businessType === 'Picklist' && validListTypeDefinitionId && (
 				<ClayForm.Group>
-					<ClayToggle
+					<Toggle
 						disabled={
 							disabled ||
 							(Liferay.FeatureFlags['LPS-167253']

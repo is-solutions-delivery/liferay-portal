@@ -1,29 +1,49 @@
-import ClayLoadingIndicator from '@clayui/loading-indicator';
-import { useEffect, useState } from 'react';
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 
-import { DashboardListItems } from '../DashBoardPage/DashboardPage';
-import { DashboardPage } from '../DashBoardPage/DashboardPage';
+import ClayAlert, { DisplayType } from '@clayui/alert';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
+import { useCallback, useEffect, useState } from 'react';
+
+import { DashboardMemberTableRow } from '../../components/DashboardTable/DashboardMemberTableRow';
 import {
   DashboardTable,
   TableHeaders,
 } from '../../components/DashboardTable/DashboardTable';
+import { InviteMemberModal } from '../../components/InviteMemberModal/InviteMemberModal';
 import { MemberProfile } from '../../components/MemberProfile/MemberProfile';
+import { getMyUserAccount, getUserAccounts } from '../../utils/api';
+import {
+  DashboardListItems,
+  DashboardPage,
+} from '../DashBoardPage/DashboardPage';
 import {
   AccountBriefProps,
-  customerRoles,
   MemberProps,
-  publisherRoles,
   UserAccountProps,
+  adminRoles,
+  customerRoles,
+  publisherRoles,
 } from '../PublishedAppsDashboardPage/PublishedDashboardPageUtil';
-import { getMyUserAccount, getUserAccounts } from '../../utils/api';
-import { DashboardMemberTableRow } from '../../components/DashboardTable/DashboardMemberTableRow';
-import { InviteMemberModal } from '../../components/InviteMemberModal/InviteMemberModal';
 
 interface MembersPageProps {
   dashboardNavigationItems: DashboardListItems[];
   icon: string;
+  listOfRoles: string[];
+  rolesPermissionDescription: PermissionDescription[];
   selectedAccount: Account;
-  setShowDashboardNavigation: (value: boolean) => void;
+  setShowDashboardNavigation?: (value: boolean) => void;
 }
 
 const memberTableHeaders: TableHeaders = [
@@ -39,41 +59,52 @@ const memberTableHeaders: TableHeaders = [
   },
 ];
 
+const memberMessages = {
+  description: 'Manage users in your development team and invite new ones',
+  emptyStateMessage: {
+    description1: 'Create new members and they will show up here.',
+    description2: 'Click on “New Member” to start.',
+    title: 'No Members Yet',
+  },
+  title: 'Members',
+};
+
 export function MembersPage({
   dashboardNavigationItems,
   icon,
+  listOfRoles,
+  rolesPermissionDescription,
   selectedAccount,
-
-  setShowDashboardNavigation,
 }: MembersPageProps) {
   const [visible, setVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading] = useState<boolean>(false);
   const [members, setMembers] = useState<MemberProps[]>(Array<MemberProps>());
   const [selectedMember, setSelectedMember] = useState<MemberProps>();
+  const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState<boolean>(false);
+  const [toastItems, setToastItems] = useState<
+    { message: string; title?: string; type: DisplayType }[]
+  >([]);
 
-  const memberMessages = {
-    description: 'Manage users in your development team and invite new ones',
-    emptyStateMessage: {
-      description1: 'Create new members and they will show up here.',
-      description2: 'Click on “New Member” to start.',
-      title: 'No Members Yet',
-    },
-    title: 'Members',
+  const renderToast = (message: string, title: string, type: DisplayType) => {
+    setToastItems([...toastItems, { message, title, type }]);
   };
 
-  function getRolesList(accountBriefs: AccountBrief[]) {
-    const rolesList: string[] = [];
+  const getRolesList = useCallback(
+    (accountBriefs: AccountBrief[]) => {
+      const rolesList: string[] = [];
 
-    const accountBrief = accountBriefs.find(
-      (accountBrief) => accountBrief.id === selectedAccount.id
-    );
+      const accountBrief = accountBriefs.find(
+        (accountBrief) => accountBrief.id === selectedAccount.id
+      );
 
-    accountBrief?.roleBriefs.forEach((role : RoleBrief) => {
-      rolesList.push(role.name);
-    });
+      accountBrief?.roleBriefs.forEach((role: RoleBrief) => {
+        rolesList.push(role.name);
+      });
 
-    return rolesList.join(', ');
-  }
+      return rolesList.join(', ');
+    },
+    [selectedAccount.id]
+  );
 
   useEffect(() => {
     (async () => {
@@ -81,6 +112,7 @@ export function MembersPage({
 
       const currentUserAccount = {
         accountBriefs: currentUserAccountResponse.accountBriefs,
+        isAdminAccount: false,
         isCustomerAccount: false,
         isPublisherAccount: false,
       };
@@ -109,6 +141,17 @@ export function MembersPage({
             currentUserAccount.isPublisherAccount = true;
           }
         });
+
+        adminRoles.forEach((adminRole) => {
+          if (
+            currentUserAccountBriefs.roleBriefs.find(
+              (role: { name: string }) => role.name === adminRole
+            )
+          ) {
+            currentUserAccount.isAdminAccount = true;
+            setIsCurrentUserAdmin(true);
+          }
+        });
       }
 
       const accountsListResponse = await getUserAccounts();
@@ -121,6 +164,7 @@ export function MembersPage({
             email: member.emailAddress,
             image: member.image,
             isCustomerAccount: false,
+            isInvitedMember: false,
             isPublisherAccount: false,
             lastLoginDate: member.lastLoginDate,
             name: member.name,
@@ -144,34 +188,43 @@ export function MembersPage({
             member.isPublisherAccount = true;
           }
         });
+
+        if (rolesList.find((role) => role === 'Invited Member')) {
+          member.isInvitedMember = true;
+        }
       });
 
       let filteredMembersList: MemberProps[] = [];
 
       filteredMembersList = membersList.filter((member: MemberProps) => {
-        if (
+        return (
           member.accountBriefs.find(
             (accountBrief: AccountBriefProps) =>
               accountBrief.externalReferenceCode ===
               selectedAccount.externalReferenceCode
           ) &&
-          member.isPublisherAccount
-        ) {
-          return true;
-        }
-
-        return false;
+          (member.isPublisherAccount ||
+            member.isCustomerAccount ||
+            member.isInvitedMember)
+        );
       });
 
       setMembers(filteredMembersList);
     })();
-  }, [selectedAccount]);
+  }, [visible, selectedAccount, getRolesList]);
 
   return (
     <>
-      {!loading ? (
+      {loading ? (
+        <ClayLoadingIndicator
+          className="members-page-loading-indicator"
+          displayType="primary"
+          shape="circle"
+          size="md"
+        />
+      ) : (
         <DashboardPage
-          buttonMessage="+ New Member"
+          buttonMessage={isCurrentUserAdmin ? '+ New Member' : ''}
           dashboardNavigationItems={dashboardNavigationItems}
           messages={memberMessages}
           onButtonClick={() => setVisible(true)}
@@ -182,39 +235,48 @@ export function MembersPage({
               setSelectedMember={setSelectedMember}
             ></MemberProfile>
           ) : (
-            <>
-              <DashboardTable<MemberProps>
-                emptyStateMessage={memberMessages.emptyStateMessage}
-                icon={icon}
-                items={members}
-                tableHeaders={memberTableHeaders}
-              >
-                {(member) => (
-                  <DashboardMemberTableRow
-                    item={member}
-                    key={member.name}
-                    onSelectedMemberChange={setSelectedMember}
-                  />
-                )}
-              </DashboardTable>
-            </>
+            <DashboardTable<MemberProps>
+              emptyStateMessage={memberMessages.emptyStateMessage}
+              icon={icon}
+              items={members}
+              tableHeaders={memberTableHeaders}
+            >
+              {(member) => (
+                <DashboardMemberTableRow
+                  item={member}
+                  key={member.name}
+                  onSelectedMemberChange={setSelectedMember}
+                />
+              )}
+            </DashboardTable>
           )}
         </DashboardPage>
-      ) : (
-        <ClayLoadingIndicator
-          className="members-page-loading-indicator"
-          displayType="primary"
-          shape="circle"
-          size="md"
-        />
       )}
 
       {visible && (
         <InviteMemberModal
           handleClose={() => setVisible(false)}
+          listOfRoles={listOfRoles}
+          renderToast={renderToast}
+          rolesPermissionDescription={rolesPermissionDescription}
           selectedAccount={selectedAccount}
         ></InviteMemberModal>
       )}
+       <ClayAlert.ToastContainer>
+        {toastItems?.map((alert, index) => (
+          <ClayAlert
+            autoClose={5000}
+            displayType={alert.type}
+            key={index}
+            onClose={() => {
+              setToastItems((prevItems) =>
+                prevItems.filter((item) => item !== alert)
+              );
+            }}
+            title={alert.title}
+          >{alert.message}</ClayAlert>
+        ))}
+      </ClayAlert.ToastContainer>
     </>
   );
 }

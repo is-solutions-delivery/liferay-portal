@@ -1,5 +1,86 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AccessTokenList should display the "Generate Token" card  above the table if the token is expired 1`] = `
+<div
+  class="table-responsive table-root flex-grow-1 mb-0"
+>
+  <table
+    class="table table-autofit table-hover table-heading-nowrap table-nowrap"
+  >
+    <thead>
+      <tr>
+        <th
+          class="table-head-title"
+        >
+          Token
+        </th>
+        <th
+          class="table-head-title"
+        >
+          Last Seen
+        </th>
+        <th
+          class="table-head-title"
+        >
+          Date Created
+        </th>
+        <th
+          class="table-head-title"
+        >
+          Expiration
+        </th>
+        <th />
+      </tr>
+    </thead>
+    <tbody
+      class="mb-0"
+    >
+      <tr
+        class=""
+      >
+        <td
+          class=""
+        >
+          <span
+            class="text-secondary mr-1"
+          >
+            Token ending in
+          </span>
+          <strong
+            class="font-weight-bold"
+          >
+            4ABC
+          </strong>
+          <div
+            class="label label-root ml-2 label-danger label-lg label-uppercase"
+          >
+            <span
+              class="label-item"
+            >
+              Expired
+            </span>
+          </div>
+        </td>
+        <td>
+          Jul 10, 2018
+        </td>
+        <td>
+          Jul 10, 2018
+        </td>
+        <td>
+          Jul 9, 2018
+        </td>
+        <td
+          class="row-inline-actions"
+        >
+          <span />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`;
+
 exports[`AccessTokenList should render 1`] = `
 <div>
   <div
@@ -48,127 +129,136 @@ exports[`AccessTokenList should render 1`] = `
     </div>
     <div>
       <div
-        class="card card-root"
+        class="col-xl-8 pl-0"
       >
         <div
-          class="card-body"
+          class="card card-root"
         >
           <div
-            class="d-flex justify-content-between align-items-center"
+            class="card-body"
           >
             <div
-              class="text-secondary"
+              class="align-items-start d-flex flex-column justify-content-between"
             >
-              <strong
-                class="font-weight-bold"
+              <h4
+                class="mb-4"
               >
+                Token Information
+              </h4>
+              <h5>
                 Root Endpoint:
-              </strong>
+              </h5>
               <span
-                class="ml-1"
+                class="text-secondary"
               >
                 http://liferay.com/api/reports
               </span>
             </div>
           </div>
-        </div>
-        <div
-          class="table-responsive table-root flex-grow-1 mb-0"
-        >
-          <table
-            class="table table-autofit table-hover table-heading-nowrap table-nowrap"
+          <div
+            class="table-responsive table-root flex-grow-1 mb-0"
           >
-            <thead>
-              <tr>
-                <th
-                  class="table-head-title"
-                >
-                  Token
-                </th>
-                <th
-                  class="table-head-title"
-                >
-                  Last Seen
-                </th>
-                <th
-                  class="table-head-title"
-                >
-                  Date Created
-                </th>
-                <th
-                  class="table-head-title"
-                >
-                  Expiration
-                </th>
-                <th />
-              </tr>
-            </thead>
-            <tbody
-              class="mb-0"
+            <table
+              class="table table-autofit table-hover table-heading-nowrap table-nowrap"
             >
-              <tr
-                class=""
+              <thead>
+                <tr>
+                  <th
+                    class="table-head-title"
+                  >
+                    Token
+                  </th>
+                  <th
+                    class="table-head-title"
+                  >
+                    Last Seen
+                  </th>
+                  <th
+                    class="table-head-title"
+                  >
+                    Date Created
+                  </th>
+                  <th
+                    class="table-head-title"
+                  >
+                    Expiration
+                  </th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody
+                class="mb-0"
               >
-                <td
+                <tr
                   class=""
                 >
-                  <span
-                    class="text-secondary mr-1"
+                  <td
+                    class=""
                   >
-                    Token ending in
-                  </span>
-                  <strong
-                    class="font-weight-bold"
-                  >
-                    4ABC
-                  </strong>
-                </td>
-                <td>
-                  Jul 10, 2018
-                </td>
-                <td>
-                  Jul 10, 2018
-                </td>
-                <td>
-                  Aug 9, 2018
-                </td>
-                <td
-                  class="row-inline-actions"
-                >
-                  <span>
-                    <button
-                      aria-label="Click to Copy"
-                      class="button-root btn btn-secondary"
-                      data-clipboard-text="1234ABC"
-                      data-tooltip-response="Copied"
-                      title="Click to Copy"
-                      type="button"
+                    <span
+                      class="text-secondary mr-1"
                     >
-                      <svg
-                        class="lexicon-icon lexicon-icon-paste icon-root"
-                        role="presentation"
+                      Token ending in
+                    </span>
+                    <strong
+                      class="font-weight-bold"
+                    >
+                      4ABC
+                    </strong>
+                  </td>
+                  <td>
+                    Jul 10, 2018
+                  </td>
+                  <td>
+                    Jul 10, 2018
+                  </td>
+                  <td>
+                    Aug 9, 2018
+                  </td>
+                  <td
+                    class="row-inline-actions"
+                  >
+                    <span>
+                      <button
+                        aria-label="Click to Copy"
+                        class="button-root btn btn-secondary"
+                        data-clipboard-text="1234ABC"
+                        data-tooltip-response="Copied"
+                        title="Click to Copy"
+                        type="button"
                       >
-                        <use
-                          xlink:href="#paste"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      class="button-root btn btn-secondary"
-                      type="button"
-                    >
-                      Revoke
-                    </button>
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                        <svg
+                          class="lexicon-icon lexicon-icon-copy icon-root"
+                          role="presentation"
+                        >
+                          <use
+                            xlink:href="#copy"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="button-root btn btn-secondary"
+                        type="button"
+                      >
+                        Revoke
+                      </button>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+`;
+
+exports[`AccessTokenList should render indefinite on expiration date column when generated token is indefinite 1`] = `
+<td>
+  Indefinite
+</td>
 `;
 
 exports[`AccessTokenList should show the generated token in a list and the "Generate Token" button should no longer be visible 1`] = `
@@ -245,11 +335,11 @@ exports[`AccessTokenList should show the generated token in a list and the "Gene
               type="button"
             >
               <svg
-                class="lexicon-icon lexicon-icon-paste icon-root"
+                class="lexicon-icon lexicon-icon-copy icon-root"
                 role="presentation"
               >
                 <use
-                  xlink:href="#paste"
+                  xlink:href="#copy"
                 />
               </svg>
             </button>

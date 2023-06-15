@@ -725,6 +725,20 @@
 							}
 						],
 						"type": "Section"
+					},
+					{
+						"definition": {
+							"fragment": {
+								"key": "notification-welcome",
+								"siteKey": "marketplace"
+							},
+							"fragmentConfig": {
+							},
+							"fragmentFields": [
+							],
+							"indexed": true
+						},
+						"type": "Fragment"
 					}
 				],
 				"type": "Section"
@@ -734,7 +748,7 @@
 	},
 	"settings": {
 		"masterPage": {
-			"key": "public"
+			"key": "marketplace-master"
 		}
 	},
 	"version": 1.1

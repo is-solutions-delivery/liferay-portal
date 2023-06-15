@@ -7,23 +7,8 @@
 html#{$cadmin-selector} {
 	.cadmin {
 		.audit-graph {
-			position: relative;
 			&-loading {
 				min-height: 304px;
-			}
-		}
-
-		.content-dashboard-management-toolbar {
-			.navbar-expand-md .container-fluid {
-				padding: 0;
-			}
-			.navbar-form {
-				padding-right: 0;
-			}
-			@media (min-width: 768px) {
-				.management-bar.navbar-expand-md .navbar-form {
-					padding-right: 0;
-				}
 			}
 		}
 
@@ -49,7 +34,6 @@ html#{$cadmin-selector} {
 		.empty-state {
 			left: 50%;
 			max-width: 350px;
-			position: absolute;
 			transform: translate(-40%, 70%);
 			z-index: 1;
 		}

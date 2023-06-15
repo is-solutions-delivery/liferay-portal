@@ -1,4 +1,4 @@
-import BaseCard from 'cerebro-shared/components/base-card';
+import BaseCard from 'shared/components/base-card';
 import Card from 'shared/components/Card';
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
@@ -116,7 +116,7 @@ const AssetCard: React.FC<IAssetCardProps> = ({
 }) => {
 	const AssetComponent = (compose(
 		graphql(itemQuery, getMapper(panel)),
-		withLoading({alignCenter: true, page: false}),
+		withLoading({alignCenter: true, displayCard: true, page: false}),
 		withError(),
 		withEmpty()
 	)(Chart) as unknown) as React.FC<IAssetComponent>;

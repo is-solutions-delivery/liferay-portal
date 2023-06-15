@@ -1,34 +1,5 @@
 definition {
 
-	@summary = "Directly calls the JSON WS API to add a group"
-	macro _addGroup {
-		Variables.assertDefined(parameterList = "${groupDescriptionMap},${groupNameMap},${manualMembership},${parentGroupId},${type}");
-
-		if (!(isSet(portalURL))) {
-			var portalURL = JSONCompany.getPortalURL();
-		}
-
-		var userLoginInfo = JSONUtil2.formatJSONUser();
-
-		var curl = '''
-			${portalURL}/api/jsonws/group/add-group \
-				-u ${userLoginInfo} \
-				-d parentGroupId=${parentGroupId} \
-				-d liveGroupId=0 \
-				-d nameMap=${groupNameMap} \
-				-d descriptionMap=${groupDescriptionMap} \
-				-d type=${type} \
-				-d manualMembership=${manualMembership} \
-				-d membershipRestriction=0 \
-				-d friendlyURL= \
-				-d site=true \
-				-d inheritContent=false \
-				-d active=true
-		''';
-
-		JSONCurlUtil.post(${curl});
-	}
-
 	@summary = "Directly calls the JSON WS API to assign a user a role"
 	macro _assignGroupRoleToUser {
 		Variables.assertDefined(parameterList = "${groupId},${roleId},${userId}");
@@ -259,17 +230,19 @@ definition {
 	macro _getGroupIdByName {
 		Variables.assertDefined(parameterList = "${groupName},${site}");
 
-		if (!(isSet(portalURL))) {
+		if (isSet(specificURL)) {
+			var portalURL = ${specificURL};
+			var portalInstanceName = JSONCompany.parsePortalInstanceURL(portalURL = ${specificURL});
+		}
+		else if (!(isSet(portalURL))) {
 			var portalURL = JSONCompany.getPortalURL();
 		}
 
 		if (isSet(noSelenium)) {
-			var companyId = JSONCompany.getCompanyIdNoSelenium(portalURL = ${portalURL});
+			var companyId = JSONCompany.getCompanyIdNoSelenium(portalInstanceName = ${portalInstanceName});
 		}
 		else {
-			var companyId = JSONCompany.getCompanyId(
-				portalInstanceName = ${portalInstanceName},
-				portalURL = ${portalURL});
+			var companyId = JSONCompany.getCompanyId(portalInstanceName = ${portalInstanceName});
 		}
 
 		var parentGroupId = JSONGroupSetter.setParentGroupId(
@@ -277,7 +250,7 @@ definition {
 			parentGroupName = ${parentGroupName},
 			portalInstanceName = ${portalInstanceName},
 			portalURL = ${portalURL});
-		var userLoginInfo = JSONUtil2.formatJSONUser();
+		var userLoginInfo = JSONUtil2.formatJSONUser(domain = ${specificURL});
 
 		var curl = '''
 			${portalURL}/api/jsonws/group/get-groups/company-id/${companyId}/parent-group-id/${parentGroupId}/site/${site} \
@@ -336,6 +309,56 @@ definition {
 		var curl = '''
 			${portalURL}/api/jsonws/group/get-groups/company-id/${companyId}/parent-group-id/${parentGroupId}/site/${site} \
 				-u ${userLoginInfo}
+		''';
+
+		var groupId = JSONCurlUtil.get(${curl}, "$.[?(@['nameCurrentValue'] == '${groupName}')]['groupId']");
+
+		if (${groupId} == "") {
+			fail("FAIL. Cannot find group.");
+		}
+
+		echo("## * GroupId: ${groupId}");
+
+		return ${groupId};
+	}
+
+	@summary = "Get the groupId from any existing site by using groupName"
+	macro _getGroupIdByNameViaOtherUser {
+		Variables.assertDefined(parameterList = "${groupName},${site}");
+
+		if (isSet(portalInstanceName)) {
+			if (!(isSet(port))) {
+				var port = 8080;
+			}
+
+			var portalURL = "http://${portalInstanceName}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
+
+		if (!(isSet(creatorEmailAddress))) {
+			var creatorEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(creatorPassword))) {
+			var creatorPassword = "test";
+		}
+
+		var companyId = JSONCompany.getCompanyId(
+			creatorEmailAddress = ${creatorEmailAddress},
+			creatorPassword = ${creatorPassword},
+			portalInstanceName = ${portalInstanceName},
+			portalURL = ${portalURL});
+		var parentGroupId = JSONGroupSetter.setParentGroupId(
+			grandParentGroupName = ${grandParentGroupName},
+			parentGroupName = ${parentGroupName},
+			portalInstanceName = ${portalInstanceName},
+			portalURL = ${portalURL});
+
+		var curl = '''
+			${portalURL}/api/jsonws/group/get-groups/company-id/${companyId}/parent-group-id/${parentGroupId}/site/${site} \
+				-u ${creatorEmailAddress}:${creatorPassword}
 		''';
 
 		var groupId = JSONCurlUtil.get(${curl}, "$.[?(@['nameCurrentValue'] == '${groupName}')]['groupId']");
@@ -469,6 +492,39 @@ definition {
 				-d companyId=${companyId} \
 				-d groupKey=${groupName}
 		''';
+
+		var groupId = JSONCurlUtil.post(${curl}, "$.[?(@['groupKey'] == '${groupName}')]['groupId']");
+
+		if (${groupId} == "") {
+			fail("FAIL. Cannot find group.");
+		}
+
+		return ${groupId};
+	}
+
+	@summary = "Get the groupId from any existing parent or child site by using groupName but not invoking selenium methods"
+	macro _getSiteIdByGroupKeyNoSelenium {
+		Variables.assertDefined(parameterList = ${groupName});
+
+		if (!(isSet(portalURL))) {
+			var portalURL = JSONCompany.getPortalURL();
+		}
+
+		var companyId = JSONCompany.getCompanyIdNoSelenium(
+			portalURL = ${portalURL},
+			token = ${token});
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+
+		var curl = '''
+			${portalURL}/api/jsonws/group/get-group \
+				-u ${userLoginInfo} \
+				-d companyId=${companyId} \
+				-d groupKey=${groupName}
+		''';
+
+		if (isSet(token)) {
+			var curl = StringUtil.add(${curl}, " -H 'Authorization: Bearer ${token}'", "");
+		}
 
 		var groupId = JSONCurlUtil.post(${curl}, "$.[?(@['groupKey'] == '${groupName}')]['groupId']");
 

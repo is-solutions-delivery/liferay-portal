@@ -45,6 +45,7 @@ export default function ProductMenuTree({portletNamespace, ...props}) {
 		administrationPortletURL,
 		configureLayoutSetURL,
 		findLayoutsURL,
+		isLayoutSetPrototype = false,
 		loadMoreItemsURL,
 		maxPageSize,
 		moveItemURL,
@@ -93,6 +94,7 @@ export default function ProductMenuTree({portletNamespace, ...props}) {
 				) : (
 					<PagesTree
 						config={{
+							isLayoutSetPrototype,
 							loadMoreItemsURL,
 							maxPageSize,
 							moveItemURL,

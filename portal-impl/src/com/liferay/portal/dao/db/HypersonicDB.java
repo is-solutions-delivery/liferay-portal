@@ -61,8 +61,7 @@ public class HypersonicDB extends BaseDB {
 		String tableName, String newTableName) {
 
 		return StringBundler.concat(
-			"create table ", newTableName, " as (select * from ", tableName,
-			") without data");
+			"create table ", newTableName, " (like ", tableName, ")");
 	}
 
 	@Override
@@ -78,6 +77,10 @@ public class HypersonicDB extends BaseDB {
 	@Override
 	protected String[] getTemplate() {
 		return _HYPERSONIC;
+	}
+
+	protected boolean isSupportsDuplicatedIndexName() {
+		return _SUPPORTS_DUPLICATED_INDEX_NAME;
 	}
 
 	@Override
@@ -151,5 +154,7 @@ public class HypersonicDB extends BaseDB {
 	private static final int[] _SQL_VARCHAR_SIZES = {
 		SQL_VARCHAR_MAX_SIZE, SQL_VARCHAR_MAX_SIZE
 	};
+
+	private static final boolean _SUPPORTS_DUPLICATED_INDEX_NAME = false;
 
 }

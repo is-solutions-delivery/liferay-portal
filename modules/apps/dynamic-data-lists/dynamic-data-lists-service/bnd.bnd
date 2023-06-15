@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Dynamic Data Lists Service
 Bundle-SymbolicName: com.liferay.dynamic.data.lists.service
-Bundle-Version: 5.0.53
+Bundle-Version: 5.0.54
 Import-Package:\
 	!com.graphbuilder.*,\
 	\

@@ -78,6 +78,12 @@ public class LayoutPageTemplateEntryItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher(
+				"/layout_page_template_entry_item_selector.jsp");
+
 		HttpServletRequest httpServletRequest =
 			(HttpServletRequest)servletRequest;
 
@@ -90,12 +96,6 @@ public class LayoutPageTemplateEntryItemSelectorView
 		httpServletRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
 			layoutPageTemplateEntryItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher(
-				"/layout_page_template_entry_item_selector.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

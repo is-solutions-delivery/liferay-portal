@@ -18,6 +18,7 @@ import com.liferay.jenkins.results.parser.AntException;
 import com.liferay.jenkins.results.parser.AntUtil;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.PortalGitWorkingDirectory;
+import com.liferay.jenkins.results.parser.PortalHotfixReleaseJob;
 import com.liferay.jenkins.results.parser.PortalTestClassJob;
 import com.liferay.jenkins.results.parser.job.property.JobProperty;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
@@ -200,6 +201,29 @@ public class FunctionalBatchTestClassGroup extends BatchTestClassGroup {
 		return jobProperty.getValue();
 	}
 
+	protected List<File> getModifiedFiles() {
+		synchronized (_poshiTestCasePattern) {
+			if (_modifiedFiles != null) {
+				return _modifiedFiles;
+			}
+
+			_modifiedFiles = new ArrayList<>();
+
+			if (portalTestClassJob instanceof PortalHotfixReleaseJob) {
+				PortalHotfixReleaseJob portalHotfixReleaseJob =
+					(PortalHotfixReleaseJob)portalTestClassJob;
+
+				_modifiedFiles = portalHotfixReleaseJob.getModifiedFiles();
+			}
+			else {
+				_modifiedFiles =
+					portalGitWorkingDirectory.getModifiedFilesList();
+			}
+
+			return _modifiedFiles;
+		}
+	}
+
 	protected List<List<TestClass>> getPoshiTestClassGroups(File testBaseDir) {
 		String query = getTestBatchRunPropertyQuery(testBaseDir);
 
@@ -212,8 +236,6 @@ public class FunctionalBatchTestClassGroup extends BatchTestClassGroup {
 
 			if ((cachedTestBaseDir == null) ||
 				!cachedTestBaseDir.equals(testBaseDir)) {
-
-				_testBaseDirAtomicReference.set(testBaseDir);
 
 				PortalGitWorkingDirectory portalGitWorkingDirectory =
 					portalTestClassJob.getPortalGitWorkingDirectory();
@@ -274,6 +296,8 @@ public class FunctionalBatchTestClassGroup extends BatchTestClassGroup {
 				catch (Exception exception) {
 					throw new RuntimeException(exception);
 				}
+
+				_testBaseDirAtomicReference.set(testBaseDir);
 			}
 
 			try {
@@ -496,16 +520,14 @@ public class FunctionalBatchTestClassGroup extends BatchTestClassGroup {
 	}
 
 	private String _getTestBatchRunPropertyQuery(File testBaseDir) {
-		if (!testRelevantChanges) {
+		if (!testRelevantChanges && !testHotfixChanges) {
 			return getDefaultTestBatchRunPropertyQuery(
 				testBaseDir, testSuiteName);
 		}
 
 		StringBuilder sb = new StringBuilder();
 
-		for (File modifiedFile :
-				portalGitWorkingDirectory.getModifiedFilesList()) {
-
+		for (File modifiedFile : getModifiedFiles()) {
 			String testBatchPQL = _concatPQL(modifiedFile, "");
 
 			if (JenkinsResultsParserUtil.isNullOrEmpty(testBatchPQL) ||
@@ -630,6 +652,7 @@ public class FunctionalBatchTestClassGroup extends BatchTestClassGroup {
 		}
 	}
 
+	private static List<File> _modifiedFiles;
 	private static final Pattern _poshiTestCasePattern = Pattern.compile(
 		"(?<namespace>[^\\.]+)\\.(?<className>[^\\#]+)\\#(?<methodName>.*)");
 	private static final AtomicReference<File> _testBaseDirAtomicReference =

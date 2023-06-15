@@ -17,6 +17,7 @@ package com.liferay.segments.manager;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.constants.SegmentsWebKeys;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
@@ -47,8 +48,13 @@ public class SegmentsExperienceManager {
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
+		if (themeDisplay != null) {
+			return _segmentsExperienceLocalService.
+				fetchDefaultSegmentsExperienceId(themeDisplay.getPlid());
+		}
+
 		return _segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
-			themeDisplay.getPlid());
+			ParamUtil.getLong(httpServletRequest, "plid"));
 	}
 
 	private final SegmentsExperienceLocalService

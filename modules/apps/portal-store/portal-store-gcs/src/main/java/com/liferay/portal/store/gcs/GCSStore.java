@@ -27,6 +27,8 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageBatch;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 import com.liferay.document.library.kernel.exception.NoSuchFileException;
@@ -61,6 +63,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -110,91 +113,65 @@ public class GCSStore implements Store, StoreAreaProcessor {
 
 	@Override
 	public String cleanUpDeletedStoreArea(
-		long companyId, int deletionQuota, TemporalAmount temporalAmount,
-		String startOffset) {
+		long companyId, int deletionQuota, Predicate<String> predicate,
+		String startOffset, TemporalAmount temporalAmount) {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-174816")) {
-			return StringPool.BLANK;
-		}
-
-		Bucket bucket = _gcsStore.get(_gcsStoreConfiguration.bucketName());
-		List<BlobId> deletedBlobIds = new ArrayList<>();
-		int deletedBlobQuota = Math.max(deletionQuota, 1);
-		Instant instant = Instant.now();
-		String lastVisitedBlobName = startOffset;
-
-		int pageSize = deletedBlobQuota * 2;
-		int visitedPageLimit = Math.max(deletedBlobQuota / 10, 10);
-
-		while ((deletedBlobQuota > 0) && (visitedPageLimit > 0)) {
-			boolean emptyPage = true;
-
-			Page<Blob> blobPage = bucket.list(
-				Storage.BlobListOption.fields(
-					Storage.BlobField.ID, Storage.BlobField.NAME,
-					Storage.BlobField.UPDATED),
-				Storage.BlobListOption.pageSize(pageSize),
-				Storage.BlobListOption.prefix(
-					StoreArea.DELETED.getPath(companyId)),
-				Storage.BlobListOption.startOffset(lastVisitedBlobName));
-
-			for (Blob blob : blobPage.getValues()) {
-				Instant updateTimeInstant = Instant.ofEpochMilli(
-					blob.getUpdateTime());
-
-				Instant actualDeletionInstant = updateTimeInstant.plus(
-					temporalAmount);
-
-				if (actualDeletionInstant.isBefore(instant)) {
-					deletedBlobIds.add(blob.getBlobId());
-
-					deletedBlobQuota--;
-				}
-
-				emptyPage = false;
-
-				lastVisitedBlobName = blob.getName();
-			}
-
-			if (deletedBlobIds.size() >= _DELETED_BATCH_SIZE) {
-				_gcsStore.delete(deletedBlobIds);
-
-				deletedBlobIds.clear();
-			}
-
-			if (emptyPage) {
-				lastVisitedBlobName = StringPool.BLANK;
-
-				break;
-			}
-
-			visitedPageLimit--;
-		}
-
-		if (!deletedBlobIds.isEmpty()) {
-			_gcsStore.delete(deletedBlobIds);
-		}
-
-		return lastVisitedBlobName;
+		return _processStoreArea(
+			companyId, deletionQuota, blob -> predicate.test(blob.getName()),
+			startOffset, StoreArea.DELETED, temporalAmount);
 	}
 
 	@Override
-	public void copy(String sourceFileName, String destinationFileName) {
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-174816")) {
-			return;
+	public String cleanUpNewStoreArea(
+		long companyId, int evictionQuota, Predicate<String> predicate,
+		String startOffset, TemporalAmount temporalAmount) {
+
+		return _processStoreArea(
+			companyId, evictionQuota,
+			blob -> {
+				if (predicate.test(blob.getName())) {
+					return copy(
+						blob.getName(),
+						StoreArea.NEW.relocate(
+							blob.getName(), StoreArea.DELETED));
+				}
+
+				return copy(
+					blob.getName(),
+					StoreArea.NEW.relocate(blob.getName(), StoreArea.LIVE));
+			},
+			startOffset, StoreArea.NEW, temporalAmount);
+	}
+
+	@Override
+	public boolean copy(String sourceFileName, String destinationFileName) {
+		try {
+			if (!FeatureFlagManagerUtil.isEnabled("LPS-174816")) {
+				return true;
+			}
+
+			CopyWriter copyWriter = _gcsStore.copy(
+				Storage.CopyRequest.newBuilder(
+				).setSource(
+					_gcsStoreConfiguration.bucketName(), sourceFileName
+				).setTarget(
+					BlobId.of(
+						_gcsStoreConfiguration.bucketName(),
+						destinationFileName)
+				).build());
+
+			while (!copyWriter.isDone()) {
+				copyWriter.copyChunk();
+			}
+
+			return true;
 		}
+		catch (StorageException storageException) {
+			if (_log.isInfoEnabled()) {
+				_log.info(storageException);
+			}
 
-		CopyWriter copyWriter = _gcsStore.copy(
-			Storage.CopyRequest.newBuilder(
-			).setSource(
-				_gcsStoreConfiguration.bucketName(), sourceFileName
-			).setTarget(
-				BlobId.of(
-					_gcsStoreConfiguration.bucketName(), destinationFileName)
-			).build());
-
-		while (!copyWriter.isDone()) {
-			copyWriter.copyChunk();
+			return false;
 		}
 	}
 
@@ -520,7 +497,80 @@ public class GCSStore implements Store, StoreAreaProcessor {
 		_gcsStore = storageOptions.getService();
 	}
 
-	private static final int _DELETED_BATCH_SIZE = 10;
+	private String _processStoreArea(
+		long companyId, int evictionQuota, Predicate<Blob> predicate,
+		String startOffset, StoreArea storeArea,
+		TemporalAmount temporalAmount) {
+
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-174816")) {
+			return StringPool.BLANK;
+		}
+
+		Bucket bucket = _gcsStore.get(_gcsStoreConfiguration.bucketName());
+		int evictedBlobQuota = Math.max(evictionQuota, 1);
+		int evictedBlobsCount = 0;
+		Instant instant = Instant.now();
+		String lastVisitedBlobName = startOffset;
+		StorageBatch storageBatch = _gcsStore.batch();
+
+		int pageSize = evictedBlobQuota * 2;
+		int visitedPageLimit = Math.max(evictedBlobQuota / 10, 10);
+
+		while ((evictedBlobQuota > 0) && (visitedPageLimit > 0)) {
+			boolean emptyPage = true;
+
+			Page<Blob> blobPage = bucket.list(
+				Storage.BlobListOption.fields(
+					Storage.BlobField.ID, Storage.BlobField.NAME,
+					Storage.BlobField.UPDATED),
+				Storage.BlobListOption.pageSize(pageSize),
+				Storage.BlobListOption.prefix(storeArea.getPath(companyId)),
+				Storage.BlobListOption.startOffset(lastVisitedBlobName));
+
+			for (Blob blob : blobPage.getValues()) {
+				Instant updateTimeInstant = Instant.ofEpochMilli(
+					blob.getUpdateTime());
+
+				Instant evictionInstant = updateTimeInstant.plus(
+					temporalAmount);
+
+				if (evictionInstant.isBefore(instant) && predicate.test(blob)) {
+					storageBatch.delete(blob.getBlobId());
+
+					evictedBlobQuota--;
+					evictedBlobsCount++;
+				}
+
+				emptyPage = false;
+
+				lastVisitedBlobName = blob.getName();
+			}
+
+			if (evictedBlobsCount >= _EVICTED_BATCH_SIZE) {
+				storageBatch.submit();
+
+				evictedBlobsCount = 0;
+
+				storageBatch = _gcsStore.batch();
+			}
+
+			if (emptyPage) {
+				lastVisitedBlobName = StringPool.BLANK;
+
+				break;
+			}
+
+			visitedPageLimit--;
+		}
+
+		if (evictedBlobsCount > 0) {
+			storageBatch.submit();
+		}
+
+		return lastVisitedBlobName;
+	}
+
+	private static final int _EVICTED_BATCH_SIZE = 10;
 
 	private static final Log _log = LogFactoryUtil.getLog(GCSStore.class);
 

@@ -10,16 +10,13 @@
  */
 
 import MDFRequestActivityDTO from '../../../interfaces/dto/mdfRequestActivityDTO';
-import LiferayAccountBrief from '../../../interfaces/liferayAccountBrief';
 import MDFRequestActivity from '../../../interfaces/mdfRequestActivity';
 
 export default function getDTOFromMDFRequestActivity(
 	mdfRequestActivity: MDFRequestActivity,
-	company?: LiferayAccountBrief,
-	mdfRequestId?: number,
-	mdfRequestExternalReferenceCode?: string,
-	externalReferenceCode?: string,
-	externalReferenceCodeSF?: string
+	externalReferenceCodeFromSF?: string,
+	accountEntryExternalReferenceCode?: string,
+	mdfRequestExternalReferenceCode?: string
 ): MDFRequestActivityDTO {
 	const {activityDescription, ...newMDFRequestActivity} = mdfRequestActivity;
 
@@ -32,13 +29,12 @@ export default function getDTOFromMDFRequestActivity(
 		activityStatus: mdfRequestActivity.activityStatus,
 		currency: mdfRequestActivity.currency,
 		...newMDFRequestActivity,
-		externalReferenceCode,
-		externalReferenceCodeSF,
+		externalReferenceCode: externalReferenceCodeFromSF,
 		leadFollowUpStrategies: activityDescription?.leadFollowUpStrategies?.join(
 			', '
 		),
 		mdfRequestExternalReferenceCode,
-		r_accToActs_accountEntryId: company?.id,
-		r_mdfReqToActs_c_mdfRequestId: mdfRequestId,
+		r_accToActs_accountEntryERC: accountEntryExternalReferenceCode,
+		r_mdfReqToActs_c_mdfRequestERC: mdfRequestExternalReferenceCode,
 	};
 }

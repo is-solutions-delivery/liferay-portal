@@ -181,8 +181,9 @@ export default function propsTransformer({
 
 	const filterByCategory = (categoriesFilterURL) => {
 		openSelectionModal({
-			buttonAddLabel: Liferay.Language.get('select'),
+			buttonAddLabel: Liferay.Language.get('apply'),
 			height: '70vh',
+			iframeBodyCssClass: '',
 			multiple: true,
 			onSelect: (selectedItems) => {
 				if (selectedItems) {
@@ -228,7 +229,7 @@ export default function propsTransformer({
 
 	const filterByExtension = (extensionsFilterURL) => {
 		openSelectionModal({
-			buttonAddLabel: Liferay.Language.get('select'),
+			buttonAddLabel: Liferay.Language.get('apply'),
 			height: '70vh',
 			multiple: true,
 			onSelect(selectedItem) {

@@ -42,6 +42,7 @@ interface EditObjectFieldProps {
 	objectName: string;
 	objectRelationshipId: number;
 	readOnly: boolean;
+	readOnlySidebarElements: SidebarCategory[];
 	sidebarElements: SidebarCategory[];
 	workflowStatusJSONArray: LabelValueObject[];
 }
@@ -60,6 +61,7 @@ const initialValues: Partial<ObjectField> = {
 	listTypeDefinitionId: 0,
 	name: '',
 	objectFieldSettings: [],
+	readOnlyConditionExpression: '',
 	relationshipType: '',
 	required: false,
 	state: false,
@@ -80,6 +82,7 @@ export default function EditObjectField({
 	objectName,
 	objectRelationshipId,
 	readOnly,
+	readOnlySidebarElements,
 	sidebarElements,
 	workflowStatusJSONArray,
 }: EditObjectFieldProps) {
@@ -126,7 +129,7 @@ export default function EditObjectField({
 	});
 
 	if (
-		(Liferay.FeatureFlags['LPS-159913'] ||
+		(Liferay.FeatureFlags['LPS-170122'] ||
 			(Liferay.FeatureFlags['LPS-163716'] &&
 				values.businessType === 'Picklist')) &&
 		TABS.length < 2
@@ -152,54 +155,80 @@ export default function EditObjectField({
 			readOnly={readOnly}
 			title={Liferay.Language.get('field')}
 		>
-			<ClayTabs className="side-panel-iframe__tabs">
-				{TABS.map((label, index) => (
-					<ClayTabs.Item
-						active={activeIndex === index}
-						key={index}
-						onClick={() => setActiveIndex(index)}
-					>
-						{label}
-					</ClayTabs.Item>
-				))}
-			</ClayTabs>
+			{Liferay.FeatureFlags['LPS-170122'] ||
+			(Liferay.FeatureFlags['LPS-163716'] &&
+				values.businessType === 'Picklist') ? (
+				<>
+					<ClayTabs className="side-panel-iframe__tabs">
+						{TABS.map((label, index) => (
+							<ClayTabs.Item
+								active={activeIndex === index}
+								key={index}
+								onClick={() => setActiveIndex(index)}
+							>
+								{label}
+							</ClayTabs.Item>
+						))}
+					</ClayTabs>
 
-			<ClayTabs.Content activeIndex={activeIndex} fade>
-				<ClayTabs.TabPane>
-					<BasicInfo
-						creationLanguageId={creationLanguageId}
-						errors={errors}
-						filterOperators={filterOperators}
-						handleChange={handleChange}
-						isApproved={isApproved}
-						isDefaultStorageType={isDefaultStorageType}
-						objectDefinitionExternalReferenceCode={
-							objectDefinitionExternalReferenceCode
-						}
-						objectFieldTypes={objectFieldTypes}
-						objectName={objectName}
-						objectRelationshipId={objectRelationshipId}
-						readOnly={readOnly}
-						setValues={setValues}
-						values={values}
-						workflowStatusJSONArray={workflowStatusJSONArray}
-					/>
-				</ClayTabs.TabPane>
+					<ClayTabs.Content activeIndex={activeIndex} fade>
+						<ClayTabs.TabPane>
+							<BasicInfo
+								creationLanguageId={creationLanguageId}
+								errors={errors}
+								filterOperators={filterOperators}
+								handleChange={handleChange}
+								isApproved={isApproved}
+								isDefaultStorageType={isDefaultStorageType}
+								objectDefinitionExternalReferenceCode={
+									objectDefinitionExternalReferenceCode
+								}
+								objectFieldTypes={objectFieldTypes}
+								objectName={objectName}
+								objectRelationshipId={objectRelationshipId}
+								readOnly={readOnly}
+								setValues={setValues}
+								values={values}
+								workflowStatusJSONArray={
+									workflowStatusJSONArray
+								}
+							/>
+						</ClayTabs.TabPane>
 
-				{(Liferay.FeatureFlags['LPS-159913'] ||
-					(Liferay.FeatureFlags['LPS-163716'] &&
-						values.businessType === 'Picklist')) && (
-					<ClayTabs.TabPane>
-						<AdvancedTab
-							creationLanguageId={creationLanguageId}
-							errors={errors}
-							setValues={setValues}
-							sidebarElements={sidebarElements}
-							values={values}
-						/>
-					</ClayTabs.TabPane>
-				)}
-			</ClayTabs.Content>
+						<ClayTabs.TabPane>
+							<AdvancedTab
+								creationLanguageId={creationLanguageId}
+								errors={errors}
+								readOnlySidebarElements={
+									readOnlySidebarElements
+								}
+								setValues={setValues}
+								sidebarElements={sidebarElements}
+								values={values}
+							/>
+						</ClayTabs.TabPane>
+					</ClayTabs.Content>
+				</>
+			) : (
+				<BasicInfo
+					creationLanguageId={creationLanguageId}
+					errors={errors}
+					filterOperators={filterOperators}
+					handleChange={handleChange}
+					isApproved={isApproved}
+					isDefaultStorageType={isDefaultStorageType}
+					objectDefinitionExternalReferenceCode={
+						objectDefinitionExternalReferenceCode
+					}
+					objectFieldTypes={objectFieldTypes}
+					objectName={objectName}
+					objectRelationshipId={objectRelationshipId}
+					readOnly={readOnly}
+					setValues={setValues}
+					values={values}
+					workflowStatusJSONArray={workflowStatusJSONArray}
+				/>
+			)}
 		</SidePanelForm>
 	);
 }

@@ -20,6 +20,7 @@ import ClayLabel from '@clayui/label';
 import ClayLayout from '@clayui/layout';
 import ClayLink from '@clayui/link';
 import classNames from 'classnames';
+import {sub} from 'frontend-js-web';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {getEmptyImage} from 'react-dnd-html5-backend';
@@ -165,6 +166,7 @@ function filterEmptyGroups(items) {
 const noop = () => {};
 
 const MillerColumnsItem = ({
+	isLayoutSetPrototype,
 	isPrivateLayoutsEnabled,
 	item: {
 		actions = [],
@@ -175,6 +177,7 @@ const MillerColumnsItem = ({
 		description,
 		draggable,
 		hasChild,
+		hasDuplicatedFriendlyURL = false,
 		id: itemId,
 		itemIndex,
 		parentId,
@@ -350,6 +353,14 @@ const MillerColumnsItem = ({
 		}
 	}, [active, dropZone, isOver, itemId, onItemStayHover]);
 
+	const warningMessage = isLayoutSetPrototype
+		? Liferay.Language.get(
+				'there-is-a-page-with-the-same-friendly-url-in-a-site-using-this-site-template'
+		  )
+		: Liferay.Language.get(
+				'there-is-a-page-with-the-same-friendly-url-in-the-site-template'
+		  );
+
 	return (
 		<ClayLayout.ContentRow
 			className={classNames('list-group-item-flex miller-columns-item', {
@@ -364,14 +375,12 @@ const MillerColumnsItem = ({
 			ref={ref}
 			verticalAlign="center"
 		>
-			<a className="miller-columns-item-mask" href={url}>
-				<span className="c-inner sr-only">{`${Liferay.Language.get(
-					'select'
-				)} ${title}`}</span>
+			<a className="miller-columns-item-mask" href={url} role="button">
+				<span className="c-inner sr-only">{title}</span>
 			</a>
 
 			{draggable && (
-				<ClayLayout.ContentCol className="miller-columns-item-drag-handler pl-0">
+				<ClayLayout.ContentCol className="c-pl-0 miller-columns-item-drag-handler">
 					<ClayIcon symbol="drag" />
 				</ClayLayout.ContentCol>
 			)}
@@ -379,6 +388,11 @@ const MillerColumnsItem = ({
 			{selectable && (
 				<ClayLayout.ContentCol>
 					<ClayCheckbox
+						aria-label={sub(
+							Liferay.Language.get('select-x'),
+							title
+						)}
+						className="c-mb-0"
 						defaultChecked={checked}
 						name={`${namespace}rowIds`}
 						value={itemId}
@@ -386,10 +400,16 @@ const MillerColumnsItem = ({
 				</ClayLayout.ContentCol>
 			)}
 
-			<ClayLayout.ContentCol className="pl-1" expand>
-				<h4 className="list-group-title text-truncate-inline">
+			<ClayLayout.ContentCol className="c-pl-1" expand>
+				<div className="list-group-title text-truncate-inline">
 					{viewUrl ? (
 						<ClayLink
+							aria-label={
+								Liferay.FeatureFlags['LPS-174417'] &&
+								hasDuplicatedFriendlyURL
+									? `${title}. ${warningMessage}`
+									: title
+							}
 							className="text-truncate"
 							href={viewUrl}
 							target={target}
@@ -399,10 +419,19 @@ const MillerColumnsItem = ({
 					) : (
 						<span className="text-truncate">{title}</span>
 					)}
-				</h4>
+
+					{Liferay.FeatureFlags['LPS-174417'] &&
+					hasDuplicatedFriendlyURL ? (
+						<ClayIcon
+							className="align-self-center c-ml-2 flex-shrink-0 icon-warning lfr-portal-tooltip text-warning"
+							data-title={warningMessage}
+							symbol="warning-full"
+						/>
+					) : null}
+				</div>
 
 				{description && (
-					<h5 className="d-flex list-group-subtitle small">
+					<div className="d-flex h5 list-group-subtitle small">
 						<span className="text-truncate">{description}</span>
 
 						{states.map((state) => (
@@ -414,7 +443,7 @@ const MillerColumnsItem = ({
 								{state.label}
 							</ClayLabel>
 						))}
-					</h5>
+					</div>
 				)}
 			</ClayLayout.ContentCol>
 

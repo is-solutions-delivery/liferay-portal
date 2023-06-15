@@ -15,6 +15,7 @@
 import ClayAutocomplete from '@clayui/autocomplete';
 import ClayDropDown from '@clayui/drop-down';
 import {useDebounce} from '@clayui/shared';
+import {DateTimeRenderer} from '@liferay/frontend-data-set-web';
 import {
 	FORM_EVENT_TYPES,
 	useForm,
@@ -40,13 +41,30 @@ async function fetchOptions<T>(url: string) {
 	return (await response.json()) as T;
 }
 
-function getLabel<T extends ObjectMap<any>>(item: T, key: keyof T) {
+function getLabel<T extends ObjectMap<any>>(
+	item: T,
+	key: keyof T,
+	objectFieldBusinessType: string
+) {
 	const value = item[key];
 
 	if (typeof value !== 'object') {
+		if (objectFieldBusinessType === 'Date') {
+			return DateTimeRenderer({
+				options: {
+					format: {
+						day: 'numeric',
+						month: 'short',
+						timeZone: 'UTC',
+						year: 'numeric',
+					},
+				},
+				value: String(value),
+			});
+		}
+
 		return value ? String(value) : '';
 	}
-
 	const label =
 		(value as LocalizedValue<string>)[defaultLanguageId] ??
 		(value as {[key: string]: string})['name'] ??
@@ -59,12 +77,14 @@ function LoadingWithDebounce({
 	labelKey,
 	list,
 	loading,
+	objectFieldBusinessType,
 	onSelect,
 	searchTerm,
 }: {
 	labelKey: string;
 	list?: Item[];
 	loading?: boolean;
+	objectFieldBusinessType: string;
 	onSelect: (item: Item) => void;
 	searchTerm?: string;
 }) {
@@ -93,7 +113,7 @@ function LoadingWithDebounce({
 					key={item.id}
 					match={searchTerm}
 					onClick={() => onSelect(item)}
-					value={getLabel(item, labelKey)}
+					value={getLabel(item, labelKey, objectFieldBusinessType)}
 				/>
 			))}
 		</>
@@ -107,6 +127,7 @@ export default function ObjectRelationship({
 	labelKey = 'label',
 	name,
 	objectEntryId,
+	objectFieldBusinessType,
 	onBlur,
 	onChange,
 	onFocus,
@@ -253,7 +274,9 @@ export default function ObjectRelationship({
 		};
 	}, [active]);
 
-	const label = (selected && getLabel(selected, labelKey)) ?? searchTerm;
+	const label =
+		(selected && getLabel(selected, labelKey, objectFieldBusinessType)) ??
+		searchTerm;
 
 	return (
 		<FieldBase
@@ -274,7 +297,12 @@ export default function ObjectRelationship({
 
 						if (value) {
 							selected = list?.find(
-								(item) => getLabel(item, labelKey) === value
+								(item) =>
+									getLabel(
+										item,
+										labelKey,
+										objectFieldBusinessType
+									) === value
 							);
 						}
 
@@ -336,6 +364,9 @@ export default function ObjectRelationship({
 								labelKey={labelKey}
 								list={list}
 								loading={loading}
+								objectFieldBusinessType={
+									objectFieldBusinessType
+								}
 								onSelect={(selected) => {
 									onChange({
 										target: {
@@ -369,6 +400,7 @@ interface IProps {
 	labelKey?: string;
 	name: string;
 	objectEntryId: string;
+	objectFieldBusinessType: string;
 	onBlur?: React.FocusEventHandler<HTMLInputElement>;
 	onChange: (event: {target: {value: unknown}}) => void;
 	onFocus?: React.FocusEventHandler<HTMLInputElement>;

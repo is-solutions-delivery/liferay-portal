@@ -19,6 +19,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.liferay.osb.faro.web.internal.context.GroupInfoContextProvider;
 import com.liferay.osb.faro.web.internal.controller.api.RecommendationController;
 import com.liferay.osb.faro.web.internal.controller.api.ReportController;
+import com.liferay.osb.faro.web.internal.exception.InvalidOAuthTokenExceptionMapper;
 import com.liferay.osb.faro.web.internal.util.JSONUtil;
 
 import java.util.HashSet;
@@ -49,6 +50,7 @@ public class ApiApplication extends Application {
 		Set<Object> singletons = new HashSet<>();
 
 		singletons.add(_groupInfoContextProvider);
+		singletons.add(new InvalidOAuthTokenExceptionMapper());
 		singletons.add(new JacksonJsonProvider(JSONUtil.getObjectMapper()));
 		singletons.add(_recommendationController);
 		singletons.add(_reportController);

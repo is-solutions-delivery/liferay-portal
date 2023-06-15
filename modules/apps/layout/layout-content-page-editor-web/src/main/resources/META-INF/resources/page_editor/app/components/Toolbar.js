@@ -72,10 +72,10 @@ function ToolbarBody({className}) {
 	useEffect(() => {
 		setEnableDiscard(
 			network.status === SERVICE_NETWORK_STATUS_TYPES.draftSaved ||
-				config.draft ||
+				store.draft ||
 				config.isConversionDraft
 		);
-	}, [network]);
+	}, [network, store.draft]);
 
 	const loadingRef = useRef(() => {
 		Promise.all(

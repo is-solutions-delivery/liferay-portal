@@ -72,7 +72,7 @@ public class DataValuesMappingExportImportContentProcessor
 			String data, boolean exportReferencedContent, boolean escapeContent)
 		throws Exception {
 
-		if (!JSONUtil.isValid(data)) {
+		if (!JSONUtil.isJSONObject(data)) {
 			return data;
 		}
 
@@ -91,7 +91,7 @@ public class DataValuesMappingExportImportContentProcessor
 			String data)
 		throws Exception {
 
-		if (!JSONUtil.isValid(data)) {
+		if (!JSONUtil.isJSONObject(data)) {
 			return data;
 		}
 

@@ -67,6 +67,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -355,9 +356,23 @@ public class RenderLayoutStructureDisplayContext {
 		DefaultFragmentRendererContext defaultFragmentRendererContext =
 			new DefaultFragmentRendererContext(fragmentEntryLink);
 
-		defaultFragmentRendererContext.setContextInfoItemReference(
+		InfoItemReference infoItemReference =
 			(InfoItemReference)_httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_ITEM_REFERENCE));
+				InfoDisplayWebKeys.INFO_ITEM_REFERENCE);
+
+		if (infoItemReference == null) {
+			InfoItemDetails infoItemDetails =
+				(InfoItemDetails)_httpServletRequest.getAttribute(
+					InfoDisplayWebKeys.INFO_ITEM_DETAILS);
+
+			if (infoItemDetails != null) {
+				infoItemReference = infoItemDetails.getInfoItemReference();
+			}
+		}
+
+		defaultFragmentRendererContext.setContextInfoItemReference(
+			infoItemReference);
+
 		defaultFragmentRendererContext.setLocale(_themeDisplay.getLocale());
 
 		Layout layout = _themeDisplay.getLayout();
@@ -491,6 +506,29 @@ public class RenderLayoutStructureDisplayContext {
 		}
 
 		return null;
+	}
+
+	public Map<String, Object> getInfoItemActionComponentContext() {
+		return HashMapBuilder.<String, Object>put(
+			"executeInfoItemActionURL",
+			() -> {
+				StringBundler sb = new StringBundler(6);
+
+				sb.append(PortalUtil.getPortalURL(_httpServletRequest));
+				sb.append(_themeDisplay.getPathMain());
+				sb.append("/portal/execute_info_item_action?p_l_mode=");
+				sb.append(getLayoutMode());
+				sb.append("&plid=");
+
+				ThemeDisplay themeDisplay =
+					(ThemeDisplay)_httpServletRequest.getAttribute(
+						WebKeys.THEME_DISPLAY);
+
+				sb.append(themeDisplay.getPlid());
+
+				return sb.toString();
+			}
+		).build();
 	}
 
 	public String getLayoutMode() {

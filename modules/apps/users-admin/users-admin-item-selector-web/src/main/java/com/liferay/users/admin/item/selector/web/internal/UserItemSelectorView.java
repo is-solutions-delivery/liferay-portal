@@ -76,6 +76,11 @@ public class UserItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/user_item_selector.jsp");
+
 		HttpServletRequest httpServletRequest =
 			(HttpServletRequest)servletRequest;
 
@@ -88,11 +93,6 @@ public class UserItemSelectorView
 			UserItemSelectorViewConstants.
 				USER_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			userItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/user_item_selector.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

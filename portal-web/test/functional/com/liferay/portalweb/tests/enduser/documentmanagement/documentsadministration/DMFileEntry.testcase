@@ -703,6 +703,109 @@ definition {
 		DMDocument.viewDocumentVersionNumberCmdPG(dmDocumentVersionNumber = "1.0");
 	}
 
+	@description = "This test ensures that a document can be copied to the global site folder."
+	@priority = 5
+	test CanCopyDocumentToGlobalSite {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description1",
+			dmDocumentTitle = "DM Document Title",
+			groupName = "Guest",
+			mimeType = "image/jpeg",
+			sourceFileName = "Document_1.jpg");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.copy(
+			dmDocumentTitle = "DM Document Title",
+			homeFolder = "true",
+			siteName = "Global");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		LexiconEntry.viewEntryName(rowEntry = "DM Document Title");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "global");
+
+		LexiconEntry.viewEntryName(rowEntry = "DM Document Title");
+	}
+
+	@description = "This test ensures that a draft document can be copied to a site folder."
+	@priority = 4
+	test CanCopyDraftDocumentToOtherSite {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description1",
+			dmDocumentTitle = "DM Document Title",
+			groupName = "Guest",
+			mimeType = "image/jpeg",
+			sourceFileName = "Document_1.jpg");
+
+		JSONDocument.checkOutFile(
+			dmDocumentTitle = "DM Document Title",
+			groupName = "Guest");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.copy(
+			dmDocumentTitle = "DM Document Title",
+			homeFolder = "true",
+			siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		LexiconEntry.viewEntryName(rowEntry = "DM Document Title");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Approved",
+			dmDocumentTitle = "DM Document Title");
+	}
+
+	@description = "This test ensures that a pending document can be copied to a site folder."
+	@priority = 4
+	test CanCopyPendingDocumentToOtherSite {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMFolder.configureWorkflowCP(
+			dmFolderName = "homeFolder",
+			homeFolder = "true",
+			workflowDefinition = "Single Approver",
+			workflowRestriction = "Default Workflow");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.addWithWorkflowCP(
+			dmDocumentFile = "Document_1.png",
+			dmDocumentTitle = "DM Document Title");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.copy(
+			dmDocumentTitle = "DM Document Title",
+			homeFolder = "true",
+			siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		LexiconEntry.viewEntryName(rowEntry = "DM Document Title");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Approved",
+			dmDocumentTitle = "DM Document Title");
+	}
+
 	@description = "This test covers LPS-90736. It makes sure that all files are deleted when user selects all."
 	@priority = 4
 	@refactordone
@@ -1095,6 +1198,151 @@ definition {
 			dmDocumentVersionNumber = "1.1");
 	}
 
+	@description = "This test ensures that users can choose one/multiple of the categories to filter documents."
+	@priority = 4
+	test CanFilterByCategories {
+		property custom.properties = "feature.flag.LPS-84424=true";
+
+		var siteName = TestCase.getSiteName(siteName = ${siteName});
+
+		JSONCategory.addVocabulary(
+			groupName = "Guest",
+			title = "DXP Site Vocabulary");
+
+		var categoryId1 = JSONCategory.addCategory(
+			groupName = "Guest",
+			title = "Category1",
+			vocabularyName = "DXP Site Vocabulary");
+		var categoryId2 = JSONCategory.addCategory(
+			groupName = "Guest",
+			title = "Category2",
+			vocabularyName = "DXP Site Vocabulary");
+
+		JSONCategory.addVocabulary(
+			groupName = "Global",
+			title = "Global Site Vocabulary");
+
+		var categoryId3 = JSONCategory.addCategory(
+			groupName = "Global",
+			title = "GlobalCategory",
+			vocabularyName = "Global Site Vocabulary");
+
+		JSONDocument.addFileWithUploadedFile(
+			assetCategoryIds = "${categoryId1},${categoryId2}",
+			dmDocumentTitle = "DM Document Title 1",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_1.doc");
+
+		JSONDocument.addFileWithUploadedFile(
+			assetCategoryIds = "${categoryId1},${categoryId3}",
+			dmDocumentTitle = "DM Document Title 2",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_2.doc");
+
+		JSONDocument.addFileWithUploadedFile(
+			assetCategoryIds = "${categoryId2},${categoryId3}",
+			dmDocumentTitle = "DM Document Title 3",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_3.doc");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		LexiconEntry.changeDisplayStyle(displayStyle = "table");
+
+		task ("Assert user can choose one of the categories to filter documents") {
+			ManagementBar.setFilterAndOrder(filterBy = "Categories...");
+
+			DMDocument.viewFilterByDetails(
+				category = "DXP Site Vocabulary (${siteName}),Global Site Vocabulary (Global)",
+				subcategory = "Category1,Category1,GlobalCategory");
+
+			DMDocument.selectFilterItems(categories = "Category1");
+
+			DMDocument.viewFilterSummaryResults(
+				filterScope = "Category: Category1",
+				searchResults = "2 Results");
+
+			AssertTextEquals.assertPartialText(
+				index = 1,
+				locator1 = "LexiconTable#TABLE_ROW",
+				value1 = "DM Document Title 2");
+
+			AssertTextEquals.assertPartialText(
+				index = 2,
+				locator1 = "LexiconTable#TABLE_ROW",
+				value1 = "DM Document Title 1");
+		}
+
+		task ("Assert user can choose multiple categories to filter documents in Home folder") {
+			ManagementBar.setFilterAndOrder(
+				active = "true",
+				filterBy = "Categories...");
+
+			DMDocument.selectFilterItems(
+				categories = "Category1,GlobalCategory",
+				clearAll = "true");
+
+			DMDocument.viewFilterSummaryResults(
+				filterScope = "Category: Category1,Category: GlobalCategory",
+				searchResults = "1 Result");
+
+			AssertTextEquals.assertPartialText(
+				index = 1,
+				locator1 = "LexiconTable#TABLE_ROW",
+				value1 = "DM Document Title 2");
+
+			AssertElementNotPresent(
+				key_dmDocumentTitle = "DM Document Title 1",
+				locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE");
+
+			AssertElementNotPresent(
+				key_dmDocumentTitle = "DM Document Title 3",
+				locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE");
+		}
+	}
+
+	@description = "This test ensures that users can filter documents by categories containing special characters."
+	@priority = 3
+	test CanFilterByCategoriesContainsSpecialCharacters {
+		property custom.properties = "feature.flag.LPS-84424=true";
+
+		JSONCategory.addVocabulary(
+			groupName = "Guest",
+			title = "DXP Site Vocabulary");
+
+		var categoryId1 = JSONCategory.addCategory(
+			groupName = "Guest",
+			title = "Category1~!@#$*",
+			vocabularyName = "DXP Site Vocabulary");
+
+		JSONDocument.addFileWithUploadedFile(
+			assetCategoryIds = ${categoryId1},
+			dmDocumentTitle = "DM Document Title 1",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_1.doc");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		LexiconEntry.changeDisplayStyle(displayStyle = "table");
+
+		ManagementBar.setFilterAndOrder(filterBy = "Categories...");
+
+		DMDocument.selectFilterItems(categories = "Category1~!@#$*");
+
+		DMDocument.viewFilterSummaryResults(
+			filterScope = "Category: Category1~!@#$*",
+			searchResults = "1 Result");
+
+		AssertTextEquals.assertPartialText(
+			index = 1,
+			locator1 = "LexiconTable#TABLE_ROW",
+			value1 = "DM Document Title 1");
+	}
+
 	@description = "This test ensures that users can choose one/multiple of the extensions to filter documents."
 	@priority = 4
 	test CanFilterByExtensions {
@@ -1138,11 +1386,11 @@ definition {
 		task ("Assert user can choose one of the extensions to filter documents") {
 			ManagementBar.setFilterAndOrder(filterBy = "Extension...");
 
-			DMDocument.viewExtensionDetails(
-				extensionCategory = "Image (1 Item),Spreadsheet (1 Item),Text (1 Item)",
-				extensionSubcategory = "xls,docx");
+			DMDocument.viewFilterByDetails(
+				category = "Image (1 Item),Spreadsheet (1 Item),Text (1 Item)",
+				subcategory = "xls,docx");
 
-			DMDocument.selectExtensions(extensionCategory = "Text (1 Item)");
+			DMDocument.selectFilterItems(categories = "Text (1 Item)");
 
 			DMDocument.viewFilterSummaryResults(
 				filterScope = "Extension: docx",
@@ -1164,13 +1412,13 @@ definition {
 				active = "true",
 				filterBy = "Extension...");
 
-			DMDocument.viewExtensionDetails(
-				extensionCategory = "Image (1 Item),Spreadsheet (1 Item),Text (1 Item)",
-				extensionSubcategory = "xls,docx");
+			DMDocument.viewFilterByDetails(
+				category = "Image (1 Item),Spreadsheet (1 Item),Text (1 Item)",
+				subcategory = "xls,docx");
 
-			DMDocument.selectExtensions(
-				clearAll = "true",
-				extensionCategory = "Spreadsheet (1 Item),Text (1 Item)");
+			DMDocument.selectFilterItems(
+				categories = "Spreadsheet (1 Item),Text (1 Item)",
+				clearAll = "true");
 
 			DMDocument.viewFilterSummaryResults(
 				filterScope = "Extension: xls,Extension: docx",
@@ -1204,11 +1452,11 @@ definition {
 
 			ManagementBar.setFilterAndOrder(filterBy = "Extension...");
 
-			DMDocument.viewExtensionDetails(
-				extensionCategory = "Image (1 Item),Spreadsheet (1 Item),Text (1 Item)",
-				extensionSubcategory = "xls,docx");
+			DMDocument.viewFilterByDetails(
+				category = "Image (1 Item),Spreadsheet (1 Item),Text (1 Item)",
+				subcategory = "xls,docx");
 
-			DMDocument.selectExtensions(extensionCategory = "Spreadsheet (1 Item),Text (1 Item)");
+			DMDocument.selectFilterItems(categories = "Spreadsheet (1 Item),Text (1 Item)");
 
 			DMDocument.viewFilterSummaryResults(
 				filterScope = "Extension: docx",
@@ -1365,11 +1613,11 @@ definition {
 		task ("Assert user can choose one subcategory to filter documents") {
 			ManagementBar.setFilterAndOrder(filterBy = "Extension...");
 
-			DMDocument.viewExtensionDetails(
-				extensionCategory = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
-				extensionSubcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
+			DMDocument.viewFilterByDetails(
+				category = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
+				subcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
 
-			DMDocument.selectExtensions(extensionCategory = "xlsx");
+			DMDocument.selectFilterItems(categories = "xlsx");
 
 			DMDocument.viewFilterSummaryResults(
 				filterScope = "Extension: xlsx",
@@ -1386,13 +1634,13 @@ definition {
 				active = "true",
 				filterBy = "Extension...");
 
-			DMDocument.viewExtensionDetails(
-				extensionCategory = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
-				extensionSubcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
+			DMDocument.viewFilterByDetails(
+				category = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
+				subcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
 
-			DMDocument.selectExtensions(
-				clearAll = "true",
-				extensionCategory = "jpg,jpeg");
+			DMDocument.selectFilterItems(
+				categories = "jpg,jpeg",
+				clearAll = "true");
 
 			DMDocument.viewFilterSummaryResults(
 				filterScope = "Extension: jpg,Extension: jpeg",
@@ -1414,13 +1662,13 @@ definition {
 				active = "true",
 				filterBy = "Extension...");
 
-			DMDocument.viewExtensionDetails(
-				extensionCategory = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
-				extensionSubcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
+			DMDocument.viewFilterByDetails(
+				category = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
+				subcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
 
-			DMDocument.selectExtensions(
-				clearAll = "true",
-				extensionCategory = "jpg,xls");
+			DMDocument.selectFilterItems(
+				categories = "jpg,xls",
+				clearAll = "true");
 
 			DMDocument.viewFilterSummaryResults(
 				filterScope = "Extension: jpg,Extension: xls",
@@ -1442,13 +1690,13 @@ definition {
 				active = "true",
 				filterBy = "Extension...");
 
-			DMDocument.viewExtensionDetails(
-				extensionCategory = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
-				extensionSubcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
+			DMDocument.viewFilterByDetails(
+				category = "Image (3 Items),Spreadsheet (2 Items),Text (2 Items),Vectorial (1 Item)",
+				subcategory = "png,jpg,jpeg,xls,xlsx,doc,docx");
 
-			DMDocument.selectExtensions(
-				clearAll = "true",
-				extensionCategory = "doc,pdf");
+			DMDocument.selectFilterItems(
+				categories = "doc,pdf",
+				clearAll = "true");
 
 			DMDocument.viewFilterSummaryResults(
 				filterScope = "Extension: doc,Extension: pdf",
@@ -1491,6 +1739,8 @@ definition {
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
 
 		LAR.importPortlet(larFileName = "DocumentsandMedia_portlet.lar");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
 		DMNavigator.gotoDocumentCP(dmDocumentTitle = "DM Document Title");
 
@@ -1744,6 +1994,36 @@ definition {
 			siteName = "Site Name");
 
 		DMPortlet.viewDefaultPG();
+	}
+
+	@description = "This test ensures that an error is displayed when copying a duplicated file."
+	@priority = 4
+	test CannotCopyDuplicatedDocument {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description1",
+			dmDocumentTitle = "DM Document Title",
+			groupName = "Guest",
+			mimeType = "image/jpeg",
+			sourceFileName = "Document_1.jpg");
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description1",
+			dmDocumentTitle = "DM Document Title",
+			groupName = "Site Name",
+			mimeType = "image/jpeg",
+			sourceFileName = "Document_1.jpg");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.copy(
+			copyDuplicatedDocument = "true",
+			dmDocumentTitle = "DM Document Title",
+			homeFolder = "true",
+			siteName = "Site Name");
 	}
 
 	@description = "This test ensures that a checked out document cannot be edited by another user."
@@ -3106,6 +3386,106 @@ definition {
 		DMDocument.viewDefault();
 	}
 
+	@description = "This test ensures that users can filter documents by categories in a folder."
+	@priority = 4
+	test FilesOutsideFolderWillNotAppearInCategoryFilterResults {
+		property custom.properties = "feature.flag.LPS-84424=true";
+
+		JSONCategory.addVocabulary(
+			groupName = "Guest",
+			title = "DXP Site Vocabulary");
+
+		var categoryId1 = JSONCategory.addCategory(
+			groupName = "Guest",
+			title = "Category1",
+			vocabularyName = "DXP Site Vocabulary");
+		var categoryId2 = JSONCategory.addCategory(
+			groupName = "Guest",
+			title = "Category2",
+			vocabularyName = "DXP Site Vocabulary");
+
+		JSONDocument.addFileWithUploadedFile(
+			assetCategoryIds = "${categoryId1},${categoryId2}",
+			dmDocumentTitle = "DM Document Title 1",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_1.doc");
+
+		JSONDocument.addFileWithUploadedFile(
+			assetCategoryIds = ${categoryId2},
+			dmDocumentTitle = "DM Document Title 2",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_2.doc");
+
+		JSONFolder.addFolder(
+			dmFolderDescription = "DM Folder Description",
+			dmFolderName = "DM Folder Name",
+			groupName = "Guest");
+
+		JSONDocument.addFileWithUploadedFile(
+			assetCategoryIds = "${categoryId1},${categoryId2}",
+			dmDocumentTitle = "DM Document Title In Folder",
+			folderName = "DM Folder Name",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_3.doc");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMNavigator.gotoFolder(dmFolderName = "DM Folder Name");
+
+		LexiconEntry.changeDisplayStyle(displayStyle = "table");
+
+		task ("Assert only documents in the folder return when a user chooses one category to filter documents in a folder") {
+			ManagementBar.setFilterAndOrder(filterBy = "Categories...");
+
+			DMDocument.selectFilterItems(categories = "Category2");
+
+			DMDocument.viewFilterSummaryResults(
+				filterScope = "Category: Category2",
+				searchResults = "1 Result");
+
+			AssertTextEquals.assertPartialText(
+				index = 1,
+				locator1 = "LexiconTable#TABLE_ROW",
+				value1 = "DM Document Title In Folder");
+
+			AssertElementNotPresent(
+				key_dmDocumentTitle = "DM Document Title 1",
+				locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE");
+
+			AssertElementNotPresent(
+				key_dmDocumentTitle = "DM Document Title 2",
+				locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE");
+		}
+
+		task ("Assert only documents in the folder return when a user chooses multiple categories to filter documents in a folder") {
+			ManagementBar.setFilterAndOrder(
+				active = "true",
+				filterBy = "Categories...");
+
+			DMDocument.selectFilterItems(categories = "Category1");
+
+			DMDocument.viewFilterSummaryResults(
+				filterScope = "Category: Category1,Category: Category2",
+				searchResults = "1 Result");
+
+			AssertTextEquals.assertPartialText(
+				index = 1,
+				locator1 = "LexiconTable#TABLE_ROW",
+				value1 = "DM Document Title In Folder");
+
+			AssertElementNotPresent(
+				key_dmDocumentTitle = "DM Document Title 1",
+				locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE");
+
+			AssertElementNotPresent(
+				key_dmDocumentTitle = "DM Document Title 2",
+				locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE");
+		}
+	}
+
 	@description = "This test ensures that files outside folder will not appear in filter results"
 	@priority = 4
 	test FilesOutsideFolderWillNotAppearInFilterResults {
@@ -3304,7 +3684,7 @@ definition {
 	@description = "This test covers LPS-144687. It validates that a temp zip is not created if NoSuchFileException occurs during a download."
 	@priority = 4
 	test NoZipFileIsCreatedIfDownloadResultsInError {
-		DMDocument.deleteTempFolder(appServer = "tomcat-9.0.73");
+		DMDocument.deleteTempFolder(appServer = "tomcat-9.0.75");
 
 		for (var num : list "1,2,3") {
 			JSONDocument.addFileWithUploadedFile(
@@ -3324,7 +3704,7 @@ definition {
 		AssertConsoleTextPresent(value1 = "com.liferay.document.library.kernel.exception.NoSuchFileException");
 
 		DMDocument.assertNoZipFileFromTempFolder(
-			appServer = "tomcat-9.0.73",
+			appServer = "tomcat-9.0.75",
 			fileNamePattern = "*.zip");
 	}
 

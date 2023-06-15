@@ -328,7 +328,7 @@ public class CommercePriceListDisplayContext
 		return fdsActionDropdownItems;
 	}
 
-	public String getPriceListsApiUrl(String portletName) {
+	public String getPriceListsAPIURL(String portletName) {
 		String encodedFilter = URLCodec.encodeURL(
 			StringBundler.concat(
 				"type eq '", getCommercePriceListType(portletName),
@@ -339,7 +339,7 @@ public class CommercePriceListDisplayContext
 			encodedFilter;
 	}
 
-	public String getPriceModifierCategoriesApiUrl() throws PortalException {
+	public String getPriceModifierCategoriesAPIURL() throws PortalException {
 		return "/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
 			getCommercePriceModifierId() +
 				"/price-modifier-categories?nestedFields=category";
@@ -355,7 +355,7 @@ public class CommercePriceListDisplayContext
 				"delete", "headless"));
 	}
 
-	public String getPriceModifierCPDefinitionApiUrl() throws PortalException {
+	public String getPriceModifierCPDefinitionAPIURL() throws PortalException {
 		return "/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +
 			getCommercePriceModifierId() +
 				"/price-modifier-products?nestedFields=product";
@@ -371,7 +371,7 @@ public class CommercePriceListDisplayContext
 				"delete", "headless"));
 	}
 
-	public String getPriceModifierPricingClassesApiUrl()
+	public String getPriceModifierPricingClassesAPIURL()
 		throws PortalException {
 
 		return "/o/headless-commerce-admin-pricing/v2.0/price-modifiers/" +

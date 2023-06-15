@@ -148,7 +148,7 @@ definition {
 			Click.mouseOverClick(locator1 = "DDMEditStructure#FORM_FIELD_DELETE_BUTTON_2");
 
 			AssertTextEquals(
-				locator1 = "IFrame#DIALOG_BOX",
+				locator1 = "Modal#HEADER",
 				value1 = "Boolean");
 
 			AssertTextEquals(
@@ -1187,7 +1187,12 @@ definition {
 			fieldName = "LinkToPage",
 			pagePrivacy = "Public");
 
-		PortletEntry.publish();
+		Click(
+			key_indexNumber = 1,
+			key_text = "Publish",
+			locator1 = "Button#ANY_N");
+
+		Alert.viewSuccessMessage();
 
 		Navigator.openURL();
 

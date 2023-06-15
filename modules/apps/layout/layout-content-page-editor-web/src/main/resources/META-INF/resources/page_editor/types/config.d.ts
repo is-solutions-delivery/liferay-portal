@@ -15,6 +15,7 @@
 import {LayoutTypes} from './LayoutTypes';
 
 export interface Config {
+	actionableInfoItemSelectorURL: string;
 	addFragmentCompositionURL: string;
 	addFragmentEntryLinkCommentURL: string;
 	addFragmentEntryLinkURL: string;
@@ -101,7 +102,6 @@ export interface Config {
 	deleteFragmentEntryLinkCommentURL: string;
 	deleteSegmentsExperienceURL: string;
 	discardDraftURL: string;
-	draft: boolean;
 	duplicateItemURL: string;
 	duplicateSegmentsExperienceURL: string;
 	editFragmentEntryLinkCommentURL: string;

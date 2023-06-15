@@ -16,11 +16,14 @@ package com.liferay.poshi.core.elements;
 
 import com.liferay.poshi.core.script.PoshiScriptParserException;
 import com.liferay.poshi.core.util.ListUtil;
+import com.liferay.poshi.core.util.Validator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,6 +78,10 @@ public class CommandPoshiElement extends PoshiElement {
 
 		List<String> simpleAnnotations = new ArrayList<>();
 
+		if (blockName.contains("macro") && !blockName.contains("@summary")) {
+			addAttribute("summary", "Default summary");
+		}
+
 		while (poshiScriptAnnotationMatcher.find()) {
 			String name = poshiScriptAnnotationMatcher.group("name");
 
@@ -116,13 +123,44 @@ public class CommandPoshiElement extends PoshiElement {
 			addAttribute("annotations", sb.toString());
 		}
 
+		String blockContent = getBlockContent(poshiScript);
+
 		Matcher blockNameMatcher = _blockNamePattern.matcher(blockName);
 
 		if (blockNameMatcher.find()) {
 			addAttribute("name", blockNameMatcher.group(3));
-		}
 
-		String blockContent = getBlockContent(poshiScript);
+			String commandType = blockNameMatcher.group(2);
+
+			if (commandType.equals("function") || commandType.equals("macro")) {
+				String argumentsValue = getParentheticalContent(
+					blockNameMatcher.group(4));
+
+				if (Validator.isNull(argumentsValue)) {
+					StringBuilder sb = new StringBuilder();
+
+					for (String argument : _getArguments(blockContent)) {
+						sb.append(argument);
+
+						if (commandType.equals("macro")) {
+							sb.append(" = null");
+						}
+
+						sb.append(",");
+					}
+
+					if (sb.length() > 0) {
+						sb.setLength(sb.length() - 1);
+					}
+
+					argumentsValue = sb.toString();
+				}
+
+				if (!argumentsValue.isEmpty()) {
+					addAttribute("arguments", argumentsValue);
+				}
+			}
+		}
 
 		for (String poshiScriptSnippet : getPoshiScriptSnippets(blockContent)) {
 			add(PoshiNodeFactory.newPoshiNode(this, poshiScriptSnippet));
@@ -145,7 +183,13 @@ public class CommandPoshiElement extends PoshiElement {
 
 			String name = poshiElementAttribute.getName();
 
-			if (name.equals("name")) {
+			if (name.equals("summary") &&
+				!poshiProperties.generateCommandSignature) {
+
+				continue;
+			}
+
+			if (name.equals("arguments") || name.equals("name")) {
 				continue;
 			}
 
@@ -237,6 +281,26 @@ public class CommandPoshiElement extends PoshiElement {
 		return getPoshiScriptKeyword() + " " + attributeValue("name");
 	}
 
+	private List<String> _getArguments(String blockContent) {
+		Set<String> arguments = new HashSet<>();
+
+		Matcher referencedVariableMatcher = _referencedVariablePattern.matcher(
+			blockContent);
+
+		while (referencedVariableMatcher.find()) {
+			arguments.add(referencedVariableMatcher.group(1));
+		}
+
+		Matcher declaredVariableMatcher = _declaredVariablePattern.matcher(
+			blockContent);
+
+		while (declaredVariableMatcher.find()) {
+			arguments.remove(declaredVariableMatcher.group(1));
+		}
+
+		return new ArrayList<>(arguments);
+	}
+
 	private boolean _isElementType(
 		PoshiElement parentPoshiElement, String poshiScript) {
 
@@ -254,7 +318,11 @@ public class CommandPoshiElement extends PoshiElement {
 
 	private static final Pattern _blockNamePattern = Pattern.compile(
 		"^" + BLOCK_NAME_ANNOTATION_REGEX + _POSHI_SCRIPT_KEYWORD_REGEX +
-			"[\\s]*([\\w]*)",
+			"[\\s]*([\\w]*)[\\s]*(\\(.*\\)|)",
 		Pattern.DOTALL);
+	private static final Pattern _declaredVariablePattern = Pattern.compile(
+		"var\\s*(\\S*)\\s*(?>=|:)");
+	private static final Pattern _referencedVariablePattern = Pattern.compile(
+		"\\$\\{(\\w*)\\}");
 
 }

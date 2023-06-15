@@ -86,6 +86,12 @@ public class WikiPageItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher(
+				"/item/selector/wiki_pages.jsp");
+
 		WikiPageItemSelectorViewDisplayContext
 			wikiPageItemSelectorViewDisplayContext =
 				new WikiPageItemSelectorViewDisplayContext(
@@ -97,12 +103,6 @@ public class WikiPageItemSelectorView
 			WikiItemSelectorWebKeys.
 				WIKI_PAGE_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			wikiPageItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher(
-				"/item/selector/wiki_pages.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

@@ -89,6 +89,10 @@
 
 				String controlClass = control.getClassName();
 
+				if (modelAdditionCounters == null) {
+					continue;
+				}
+
 				if (modelAdditionCounters.containsKey(controlClass)) {
 					LongWrapper modelAdditionCounter = modelAdditionCounters.get(controlClass);
 
@@ -97,6 +101,10 @@
 					currentAdditions.put(controlLabel, value);
 
 					totalAdditions += value;
+				}
+
+				if (modelDeletionCounters == null) {
+					continue;
 				}
 
 				if (modelDeletionCounters.containsKey(controlClass)) {

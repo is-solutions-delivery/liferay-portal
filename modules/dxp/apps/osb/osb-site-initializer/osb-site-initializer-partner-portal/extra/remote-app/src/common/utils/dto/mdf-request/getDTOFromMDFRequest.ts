@@ -15,19 +15,17 @@ import {Liferay} from '../../../services/liferay';
 
 export function getDTOFromMDFRequest(
 	mdfRequest: MDFRequest,
-	externalReferenceCode?: string,
-	externalReferenceCodeSF?: string
+	externalReferenceCodeFromSF?: string
 ): MDFRequestDTO {
 	return {
-		accountExternalReferenceCode: mdfRequest.accountExternalReferenceCode,
+		accountExternalReferenceCode: mdfRequest.company?.externalReferenceCode,
 		additionalOption: mdfRequest.additionalOption,
 		companyName: mdfRequest.company?.name,
 		currency: mdfRequest.currency,
 		emailAddress: mdfRequest.id
 			? mdfRequest.emailAddress
 			: Liferay.ThemeDisplay.getUserEmailAddress(),
-		externalReferenceCode,
-		externalReferenceCodeSF,
+		externalReferenceCode: externalReferenceCodeFromSF,
 		liferayBusinessSalesGoals: mdfRequest.liferayBusinessSalesGoals?.includes(
 			'Other - Please describe'
 		)
@@ -46,10 +44,12 @@ export function getDTOFromMDFRequest(
 		overallCampaignDescription: mdfRequest.overallCampaignDescription,
 		overallCampaignName: mdfRequest.overallCampaignName,
 		partnerCountry: mdfRequest.partnerCountry,
-		r_accToMDFReqs_accountEntryId: mdfRequest.company?.id,
+		r_accToMDFReqs_accountEntryERC:
+			mdfRequest.company?.externalReferenceCode,
 		r_usrToMDFReqs_userId: mdfRequest.id
 			? mdfRequest.r_usrToMDFReqs_userId
 			: Number(Liferay.ThemeDisplay.getUserId()),
+		submitted: mdfRequest.submitted,
 		targetAudienceRoles: mdfRequest.targetAudienceRoles?.join('; '),
 		targetMarkets: mdfRequest.targetMarkets?.join('; '),
 		totalCostOfExpense: mdfRequest.totalCostOfExpense,

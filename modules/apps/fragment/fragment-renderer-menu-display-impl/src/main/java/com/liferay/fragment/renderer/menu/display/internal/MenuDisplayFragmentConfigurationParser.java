@@ -93,7 +93,7 @@ public class MenuDisplayFragmentConfigurationParser {
 				configuration, editableValues,
 				LocaleUtil.getMostRelevantLocale(), "source"));
 
-		if (JSONUtil.isValid(source)) {
+		if (JSONUtil.isJSONObject(source)) {
 			JSONObject jsonObject = _createJSONObject(source);
 
 			if (jsonObject.has("contextualMenu")) {

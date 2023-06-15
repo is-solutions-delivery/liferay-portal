@@ -97,7 +97,7 @@ public class ObjectRelationshipLocalServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		_objectDefinition1 = ObjectDefinitionTestUtil.addObjectDefinition(
-			_objectDefinitionLocalService,
+			false, _objectDefinitionLocalService,
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -110,7 +110,7 @@ public class ObjectRelationshipLocalServiceTest {
 				_objectDefinition1.getObjectDefinitionId());
 
 		_objectDefinition2 = ObjectDefinitionTestUtil.addObjectDefinition(
-			_objectDefinitionLocalService,
+			false, _objectDefinitionLocalService,
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -547,11 +547,16 @@ public class ObjectRelationshipLocalServiceTest {
 				objectDefinition2.getExtensionDBTableName(),
 				objectFieldNamePrefix +
 					objectDefinition1.getPKObjectFieldName()));
-		Assert.assertNotNull(
-			_objectFieldLocalService.fetchObjectField(
-				objectDefinition2.getObjectDefinitionId(),
-				objectFieldNamePrefix +
-					objectDefinition1.getPKObjectFieldName()));
+
+		ObjectField objectField = _objectFieldLocalService.fetchObjectField(
+			objectDefinition2.getObjectDefinitionId(),
+			objectFieldNamePrefix + objectDefinition1.getPKObjectFieldName());
+
+		Assert.assertNotNull(objectField);
+
+		Assert.assertTrue(
+			_hasIndex(
+				objectField.getDBTableName(), objectField.getDBColumnName()));
 
 		ObjectFieldSetting objectFieldSetting =
 			_objectFieldSettingLocalService.fetchObjectFieldSetting(
@@ -585,7 +590,7 @@ public class ObjectRelationshipLocalServiceTest {
 
 		ObjectDefinition relatedObjectDefinition =
 			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,

@@ -566,7 +566,7 @@ const AddFDSEntryModalContent = ({
 	return (
 		<>
 			<ClayModal.Header>
-				{Liferay.Language.get('new-dataset')}
+				{Liferay.Language.get('new-data-set')}
 			</ClayModal.Header>
 
 			<ClayModal.Body>
@@ -711,7 +711,7 @@ const FDSEntries = ({
 	const creationMenu = {
 		primaryItems: [
 			{
-				label: Liferay.Language.get('new-dataset'),
+				label: Liferay.Language.get('new-data-set'),
 				onClick: ({loadData}: {loadData: Function}) => {
 					openModal({
 						contentComponent: ({
@@ -732,13 +732,17 @@ const FDSEntries = ({
 		],
 	};
 
-	const onViewClick = ({itemData}: {itemData: FDSEntryType}) => {
+	const getViewURL = (itemData: FDSEntryType) => {
 		const url = new URL(fdsViewsURL);
 
 		url.searchParams.set(`${namespace}fdsEntryId`, itemData.id);
 		url.searchParams.set(`${namespace}fdsEntryLabel`, itemData.label);
 
-		navigate(url);
+		return url;
+	};
+
+	const onViewClick = ({itemData}: {itemData: FDSEntryType}) => {
+		navigate(getViewURL(itemData));
 	};
 
 	const onDeleteClick = ({
@@ -750,7 +754,7 @@ const FDSEntries = ({
 	}) => {
 		openModal({
 			bodyHTML: Liferay.Language.get(
-				'deleting-a-dataset-is-an-action-that-cannot-be-reversed'
+				'deleting-a-data-set-is-an-action-that-cannot-be-reversed'
 			),
 			buttons: [
 				{
@@ -790,7 +794,7 @@ const FDSEntries = ({
 				},
 			],
 			status: 'danger',
-			title: Liferay.Language.get('delete-dataset'),
+			title: Liferay.Language.get('delete-data-set'),
 		});
 	};
 
@@ -800,18 +804,27 @@ const FDSEntries = ({
 			name: 'table',
 			schema: {
 				fields: [
-					{fieldName: 'label', label: Liferay.Language.get('name')},
+					{
+						actionId: 'view',
+						contentRenderer: 'actionLink',
+						fieldName: 'label',
+						label: Liferay.Language.get('name'),
+						sortable: true,
+					},
 					{
 						fieldName: 'restApplication',
 						label: Liferay.Language.get('rest-application'),
+						sortable: true,
 					},
 					{
 						fieldName: 'restSchema',
 						label: Liferay.Language.get('rest-schema'),
+						sortable: true,
 					},
 					{
 						fieldName: 'restEndpoint',
 						label: Liferay.Language.get('rest-endpoint'),
+						sortable: true,
 					},
 					{
 						contentRenderer: 'viewsCount',
@@ -822,6 +835,7 @@ const FDSEntries = ({
 						contentRenderer: 'dateTime',
 						fieldName: 'dateModified',
 						label: Liferay.Language.get('modified-date'),
+						sortable: true,
 					},
 				],
 			},
@@ -839,6 +853,9 @@ const FDSEntries = ({
 				id={`${namespace}FDSEntries`}
 				itemsActions={[
 					{
+						data: {
+							id: 'view',
+						},
 						icon: 'view',
 						label: Liferay.Language.get('view'),
 						onClick: onViewClick,
@@ -849,6 +866,7 @@ const FDSEntries = ({
 						onClick: onDeleteClick,
 					},
 				]}
+				sorting={[{direction: 'desc', key: 'dateCreated'}]}
 				style="fluid"
 				views={views}
 				{...PAGINATION_PROPS}

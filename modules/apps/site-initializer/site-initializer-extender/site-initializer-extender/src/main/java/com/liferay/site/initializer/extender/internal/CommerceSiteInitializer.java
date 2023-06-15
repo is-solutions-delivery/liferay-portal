@@ -44,6 +44,8 @@ import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.service.CommerceChannelService;
 import com.liferay.commerce.service.CommerceOrderTypeLocalService;
 import com.liferay.commerce.util.CommerceAccountRoleHelper;
+import com.liferay.headless.commerce.admin.account.dto.v1_0.AdminAccountGroup;
+import com.liferay.headless.commerce.admin.account.resource.v1_0.AdminAccountGroupResource;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductOption;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductSpecification;
@@ -107,6 +109,41 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CommerceSiteInitializer.class)
 public class CommerceSiteInitializer {
+
+	public void addAccountGroups(
+			ServiceContext serviceContext, ServletContext servletContext)
+		throws Exception {
+
+		String json = SiteInitializerUtil.read(
+			"/site-initializer/account-groups.json", servletContext);
+
+		if (json == null) {
+			return;
+		}
+
+		AdminAccountGroupResource.Builder builder =
+			_adminAccountGroupResourceFactory.create();
+
+		AdminAccountGroupResource adminAccountGroupResource = builder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			AdminAccountGroup accountGroup = AdminAccountGroup.toDTO(
+				String.valueOf(jsonArray.getJSONObject(i)));
+
+			if (accountGroup == null) {
+				_log.error(
+					"Unable to transform account group from JSON: " + json);
+
+				continue;
+			}
+
+			adminAccountGroupResource.postAccountGroup(accountGroup);
+		}
+	}
 
 	public void addCPDefinitions(
 			Bundle bundle, Map<String, String> documentsStringUtilReplaceValues,
@@ -827,13 +864,14 @@ public class CommerceSiteInitializer {
 			_commercePriceEntryLocalService.addCommercePriceEntry(
 				null, cpDefinition.getCProductId(),
 				cpInstance.getCPInstanceUuid(),
-				commercePriceList.getCommercePriceListId(), price,
+				commercePriceList.getCommercePriceListId(), price, false,
 				BigDecimal.ZERO, serviceContext);
 		}
 		else {
 			_commercePriceEntryLocalService.updateCommercePriceEntry(
 				commercePriceEntry.getCommercePriceEntryId(), price,
-				BigDecimal.ZERO, serviceContext);
+				commercePriceEntry.isPriceOnApplication(), BigDecimal.ZERO,
+				serviceContext);
 		}
 	}
 
@@ -910,7 +948,7 @@ public class CommerceSiteInitializer {
 				BigDecimal.valueOf(
 					cpInstancePropertiesJSONObject.getLong("skuPromoPrice")));
 
-			_cpInstanceLocalService.updateCPInstance(cpInstance);
+			cpInstance = _cpInstanceLocalService.updateCPInstance(cpInstance);
 		}
 
 		_addOrUpdateCommercePriceEntries(
@@ -919,6 +957,9 @@ public class CommerceSiteInitializer {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CommerceSiteInitializer.class);
+
+	@Reference
+	private AdminAccountGroupResource.Factory _adminAccountGroupResourceFactory;
 
 	@Reference
 	private CatalogResource.Factory _catalogResourceFactory;

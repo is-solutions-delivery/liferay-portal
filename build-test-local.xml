@@ -122,6 +122,24 @@ local.bundles.backup.file=${liferay.home.parent.dir}/bundles-master-${git.commit
 	</target>
 
 	<target name="database-reset">
+		<propertycopy from="database.${database.type}.host" name="database.host.current" />
+
+		<if>
+			<contains string="${database.host.current}" substring="localhost_" />
+			<then>
+				<antcall target="rebuild-database">
+					<param name="database.type" value="${database.type}" />
+					<param name="sql.dir" value="sql/create-bare/" />
+					<param name="sql.file" value="create-bare-${database.type}.sql" />
+				</antcall>
+			</then>
+			<else>
+				<antcall target="database-reset-container" />
+			</else>
+		</if>
+	</target>
+
+	<target name="database-reset-container">
 		<antcall inheritAll="false" target="start-docker-database-${database.type}">
 			<param name="skip.property.cleanup" value="true" />
 		</antcall>
@@ -190,6 +208,8 @@ local.bundles.backup.file=${liferay.home.parent.dir}/bundles-master-${git.commit
 				<fail message="Backup restored to ${bundles.backup.parent.dir} but app.server.parent.dir was not found. Please check that app.server.parent.dir matches the bundle location." />
 			</then>
 		</if>
+
+		<antcall target="database-reset" />
 	</target>
 
 	<target name="run-integration-test">
@@ -282,7 +302,7 @@ local.bundles.backup.file=${liferay.home.parent.dir}/bundles-master-${git.commit
 			</then>
 		</if>
 
-		<antcall target="database-reset" />
+		<antcall target="database-reset-container" />
 	</target>
 
 	<target name="setup-portal-cluster">
@@ -389,7 +409,7 @@ local.bundles.backup.file=${liferay.home.parent.dir}/bundles-master-${git.commit
 			</then>
 		</if>
 
-		<antcall target="database-reset" />
+		<antcall target="database-reset-container" />
 	</target>
 
 	<target name="start-docker-database-db2">
@@ -795,9 +815,18 @@ database.type=postgresql
 			<then>
 				<var name="database.sqlserver.docker.image" value="mcr.microsoft.com/mssql/server:2017-CU19-ubuntu-16.04" />
 			</then>
-			<else>
-				<var name="database.sqlserver.docker.image" value="mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04" />
-			</else>
+			<elseif>
+				<equals arg1="${database.version}" arg2="2019" />
+				<then>
+					<var name="database.sqlserver.docker.image" value="mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${database.version}" arg2="2022" />
+				<then>
+					<var name="database.sqlserver.docker.image" value="mcr.microsoft.com/mssql/server:2022-RTM-CU2-ubuntu-20.04" />
+				</then>
+			</elseif>
 		</if>
 
 		<touch file="test.${user.name}.properties" />

@@ -1,0 +1,80 @@
+@component-name = "portal-frontend-infrastructure"
+definition {
+
+	property custom.properties = "feature.flag.LPS-164563=true";
+	property portal.acceptance = "true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Frontend Data Set";
+	property testray.main.component.name = "Frontend Data Set";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		DataSetAdmin.deleteAllDataSetEntries();
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "LPS-175990. Confirm that the user can create a data set view via API"
+	@priority = 5
+	test CanCreateDataSetEntryViaAPI {
+		task ("Given creating a Data Set via API") {
+			DataSetAdmin.goToDataSetAdminPage();
+
+			DataSetAdmin.createDataSetEntryViaAPI(
+				dataSetName = "Data Set Test",
+				restApplication = "/c/fdsentries");
+		}
+
+		task ("and given access to the Data Sets admin page") {
+			DataSetAdmin.goToDataSetAdminPage();
+
+			WaitForElementPresent(
+				key_itemName = "Data Set Test",
+				locator1 = "DataSet#TABLE_CELL");
+		}
+
+		task ("Then the data set is shown in the list") {
+			AssertElementPresent(
+				key_itemName = "Data Set Test",
+				locator1 = "DataSet#TABLE_CELL");
+		}
+	}
+
+	@description = "LPS-181355. Confirm that views can be created through API"
+	@priority = 4
+	test CanCreateViewsThroughAPI {
+		task ("Given creating a Data Set via API") {
+			DataSetAdmin.goToDataSetAdminPage();
+
+			DataSetAdmin.createDataSetEntryViaAPI(
+				dataSetName = "Data Set Test",
+				restApplication = "/c/fdsentries");
+		}
+
+		task ("And a data set view created via api") {
+			DataSetAdmin.createFDSViewViaAPI(
+				dataSetName = "Data Set Test",
+				dataSetViewDescription = "FDSViewDescription",
+				key_dataSetViewNameList = "View Test");
+		}
+
+		task ("When access to View page of the data set created.") {
+			DataSetAdmin.goToDataSetViewAdminPage(dataSetName = "Data Set Test");
+		}
+
+		task ("Then Confirm the data set view was created.") {
+			DataSetAdmin.assertDataSetView(key_dataSetViewNameList = "View Test");
+		}
+	}
+
+}

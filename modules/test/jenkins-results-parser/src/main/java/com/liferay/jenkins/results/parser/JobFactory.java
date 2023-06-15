@@ -191,6 +191,16 @@ public class JobFactory {
 	public static Job newJob(Build build) {
 		TopLevelBuild topLevelBuild = build.getTopLevelBuild();
 
+		PortalHotfixRelease portalHotfixRelease = null;
+
+		if (build instanceof PortalHotfixReleaseBuild) {
+			PortalHotfixReleaseBuild portalHotfixReleaseBuild =
+				(PortalHotfixReleaseBuild)build;
+
+			portalHotfixRelease =
+				portalHotfixReleaseBuild.getPortalHotfixRelease();
+		}
+
 		String portalUpstreamBranchName = topLevelBuild.getParameterValue(
 			"PORTAL_UPSTREAM_BRANCH_NAME");
 
@@ -200,7 +210,8 @@ public class JobFactory {
 
 		return _newJob(
 			topLevelBuild.getBuildProfile(), topLevelBuild.getJobName(), null,
-			null, portalUpstreamBranchName, topLevelBuild.getProjectNames(),
+			null, portalHotfixRelease, portalUpstreamBranchName,
+			topLevelBuild.getProjectNames(),
 			topLevelBuild.getBaseGitRepositoryName(),
 			topLevelBuild.getTestSuiteName(), topLevelBuild.getBranchName());
 	}
@@ -222,9 +233,23 @@ public class JobFactory {
 		}
 
 		return _newJob(
-			buildProfile, buildData.getJobName(), null, null,
+			buildProfile, buildData.getJobName(), null, null, null,
 			portalUpstreamBranchName, null, repositoryName, null,
 			upstreamBranchName);
+	}
+
+	public static Job newJob(
+		Job.BuildProfile buildProfile, String jobName, JSONObject jsonObject,
+		PortalGitWorkingDirectory portalGitWorkingDirectory,
+		PortalHotfixRelease portalHotfixRelease,
+		String portalUpstreamBranchName, List<String> projectNames,
+		String repositoryName, String testSuiteName,
+		String upstreamBranchName) {
+
+		return _newJob(
+			buildProfile, jobName, jsonObject, portalGitWorkingDirectory,
+			portalHotfixRelease, portalUpstreamBranchName, projectNames,
+			repositoryName, testSuiteName, upstreamBranchName);
 	}
 
 	public static Job newJob(
@@ -235,23 +260,25 @@ public class JobFactory {
 		String upstreamBranchName) {
 
 		return _newJob(
-			buildProfile, jobName, jsonObject, portalGitWorkingDirectory,
+			buildProfile, jobName, jsonObject, portalGitWorkingDirectory, null,
 			portalUpstreamBranchName, projectNames, repositoryName,
 			testSuiteName, upstreamBranchName);
 	}
 
 	public static Job newJob(JSONObject jsonObject) {
 		return _newJob(
-			null, null, jsonObject, null, null, null, null, null, null);
+			null, null, jsonObject, null, null, null, null, null, null, null);
 	}
 
 	public static Job newJob(String jobName) {
-		return _newJob(null, jobName, null, null, null, null, null, null, null);
+		return _newJob(
+			null, jobName, null, null, null, null, null, null, null, null);
 	}
 
 	private static Job _newJob(
 		Job.BuildProfile buildProfile, String jobName, JSONObject jsonObject,
 		PortalGitWorkingDirectory portalGitWorkingDirectory,
+		PortalHotfixRelease portalHotfixRelease,
 		String portalUpstreamBranchName, List<String> projectNames,
 		String repositoryName, String testSuiteName,
 		String upstreamBranchName) {
@@ -493,7 +520,7 @@ public class JobFactory {
 			else {
 				job = new PortalHotfixReleaseJob(
 					buildProfile, jobName, portalGitWorkingDirectory,
-					testSuiteName, upstreamBranchName);
+					portalHotfixRelease, testSuiteName, upstreamBranchName);
 			}
 		}
 

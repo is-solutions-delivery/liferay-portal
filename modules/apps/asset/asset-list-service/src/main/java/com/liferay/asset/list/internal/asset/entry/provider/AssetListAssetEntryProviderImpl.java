@@ -24,7 +24,6 @@ import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.asset.list.asset.entry.provider.AssetListAssetEntryProvider;
-import com.liferay.asset.list.asset.entry.query.processor.AssetListAssetEntryQueryProcessor;
 import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
 import com.liferay.asset.list.internal.configuration.AssetListConfiguration;
 import com.liferay.asset.list.model.AssetListEntry;
@@ -78,8 +77,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -146,7 +145,8 @@ public class AssetListAssetEntryProviderImpl
 
 	@Activate
 	@Modified
-	protected void activate(Map<String, Object> properties)
+	protected void activate(
+			BundleContext bundleContext, Map<String, Object> properties)
 		throws ConfigurationException {
 
 		_assetListConfiguration = ConfigurableUtil.createConfigurable(
@@ -162,13 +162,11 @@ public class AssetListAssetEntryProviderImpl
 			assetListEntry.getTypeSettings(segmentsEntryId)
 		).build();
 
-		return _createAssetEntryQuery(
-			assetListEntry, userId, unicodeProperties);
+		return _createAssetEntryQuery(assetListEntry, unicodeProperties);
 	}
 
 	private AssetEntryQuery _createAssetEntryQuery(
-		AssetListEntry assetListEntry, String userId,
-		UnicodeProperties unicodeProperties) {
+		AssetListEntry assetListEntry, UnicodeProperties unicodeProperties) {
 
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
@@ -277,10 +275,6 @@ public class AssetListAssetEntryProviderImpl
 		assetEntryQuery.setOrderByType2(
 			GetterUtil.getString(
 				unicodeProperties.getProperty("orderByType2", "ASC")));
-
-		_processAssetEntryQuery(
-			assetListEntry.getCompanyId(), userId, unicodeProperties,
-			assetEntryQuery);
 
 		return assetEntryQuery;
 	}
@@ -939,19 +933,6 @@ public class AssetListAssetEntryProviderImpl
 		return searchContext;
 	}
 
-	private void _processAssetEntryQuery(
-		long companyId, String userId, UnicodeProperties unicodeProperties,
-		AssetEntryQuery assetEntryQuery) {
-
-		for (AssetListAssetEntryQueryProcessor
-				assetListAssetEntryQueryProcessor :
-					_assetListAssetEntryQueryProcessors) {
-
-			assetListAssetEntryQueryProcessor.processAssetEntryQuery(
-				companyId, userId, unicodeProperties, assetEntryQuery);
-		}
-	}
-
 	private void _setCategoriesAndTagsAndKeywords(
 		AssetEntryQuery assetEntryQuery, UnicodeProperties unicodeProperties,
 		long[] overrideAllAssetCategoryIds, String[] overrideAllAssetTagNames,
@@ -1119,8 +1100,6 @@ public class AssetListAssetEntryProviderImpl
 	@Reference
 	private AssetHelper _assetHelper;
 
-	private final List<AssetListAssetEntryQueryProcessor>
-		_assetListAssetEntryQueryProcessors = new CopyOnWriteArrayList<>();
 	private volatile AssetListConfiguration _assetListConfiguration;
 
 	@Reference

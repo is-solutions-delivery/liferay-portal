@@ -91,11 +91,11 @@ exports[`ConnectDXP renders 1`] = `
               type="button"
             >
               <svg
-                class="lexicon-icon lexicon-icon-paste icon-root"
+                class="lexicon-icon lexicon-icon-copy icon-root"
                 role="presentation"
               >
                 <use
-                  xlink:href="#paste"
+                  xlink:href="#copy"
                 />
               </svg>
             </button>
@@ -169,9 +169,8 @@ exports[`ConnectDXP renders 1`] = `
           class="fix-pack-button"
         >
           <a
-            class="button-root more-information-link mt-4 btn btn-secondary"
+            class="btn btn-secondary button-root more-information-link mt-4"
             href="https://customer.liferay.com/downloads/-/download/liferay-dxp-7-0-fix-pack-98"
-            rel="noreferrer noopener"
             target="_blank"
           >
             <svg
@@ -183,11 +182,6 @@ exports[`ConnectDXP renders 1`] = `
               />
             </svg>
             Download
-            <span
-              class="sr-only"
-            >
-              (Opens a new window)
-            </span>
           </a>
         </div>
       </div>
@@ -202,13 +196,12 @@ exports[`ConnectDXP renders 1`] = `
         >
           Cancel
         </button>
-        <button
+        <a
           class="button-root btn btn-primary"
-          disabled=""
-          type="button"
+          href="/workspace/123/settings/data-source"
         >
-          Next
-        </button>
+          Done
+        </a>
       </div>
     </div>
   </div>

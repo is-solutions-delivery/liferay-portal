@@ -14,6 +14,7 @@
 
 package com.liferay.headless.commerce.admin.channel.resource.v1_0.test;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.product.constants.CommerceChannelConstants;
 import com.liferay.commerce.product.model.CommerceChannel;
@@ -110,6 +111,7 @@ public class ChannelResourceTest extends BaseChannelResourceTestCase {
 	protected Channel randomChannel() throws Exception {
 		return new Channel() {
 			{
+				accountId = AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT;
 				currencyCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				externalReferenceCode = StringUtil.toLowerCase(
@@ -126,6 +128,7 @@ public class ChannelResourceTest extends BaseChannelResourceTestCase {
 	protected Channel randomPatchChannel() throws Exception {
 		return new Channel() {
 			{
+				accountId = AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT;
 				currencyCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				externalReferenceCode = StringUtil.toLowerCase(
@@ -207,9 +210,10 @@ public class ChannelResourceTest extends BaseChannelResourceTestCase {
 	private Channel _addChannel(Channel channel) throws Exception {
 		CommerceChannel commerceChannel =
 			CommerceChannelLocalServiceUtil.addCommerceChannel(
-				channel.getExternalReferenceCode(), channel.getSiteGroupId(),
-				channel.getName(), channel.getType(), null,
-				channel.getCurrencyCode(), _serviceContext);
+				channel.getExternalReferenceCode(),
+				AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT,
+				channel.getSiteGroupId(), channel.getName(), channel.getType(),
+				null, channel.getCurrencyCode(), _serviceContext);
 
 		_commerceChannels.add(commerceChannel);
 
@@ -219,6 +223,7 @@ public class ChannelResourceTest extends BaseChannelResourceTestCase {
 	private Channel _toChannel(CommerceChannel commerceChannel) {
 		return new Channel() {
 			{
+				accountId = commerceChannel.getAccountEntryId();
 				currencyCode = commerceChannel.getCommerceCurrencyCode();
 				externalReferenceCode =
 					commerceChannel.getExternalReferenceCode();

@@ -1,7 +1,8 @@
 Bundle-Name: Liferay Product Navigation Control Menu API
 Bundle-SymbolicName: com.liferay.product.navigation.control.menu.api
-Bundle-Version: 9.1.2
+Bundle-Version: 10.0.1
 Export-Package:\
 	com.liferay.product.navigation.control.menu,\
 	com.liferay.product.navigation.control.menu.constants,\
+	com.liferay.product.navigation.control.menu.manager,\
 	com.liferay.product.navigation.control.menu.util

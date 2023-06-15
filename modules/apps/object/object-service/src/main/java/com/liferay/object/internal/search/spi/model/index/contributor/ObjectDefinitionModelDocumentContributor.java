@@ -35,6 +35,8 @@ public class ObjectDefinitionModelDocumentContributor
 	public void contribute(
 		Document document, ObjectDefinition objectDefinition) {
 
+		document.addLocalizedKeyword(
+			"localized_label", objectDefinition.getLabelMap(), true, true);
 		document.addText(Field.NAME, objectDefinition.getShortName());
 		document.remove(Field.USER_NAME);
 	}

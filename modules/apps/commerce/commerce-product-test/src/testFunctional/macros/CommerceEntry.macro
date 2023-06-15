@@ -491,6 +491,34 @@ definition {
 			value1 = ${valuePosition});
 	}
 
+	macro addPriceListsFromProductSKU {
+		CommerceNavigator.gotoEntry(entryName = ${skuName});
+
+		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+		CommerceEntry.gotoMenuTab(menuTab = "Price Lists");
+
+		Click(locator1 = "Button#PLUS");
+
+		SelectFrameTop();
+
+		SelectFrame(
+			key_frameTitle = "Add ${skuName} to Price List",
+			locator1 = "CommerceEntry#ANY_IFRAME");
+
+		for (var priceListName : list ${priceListNames}) {
+			Click.javaScriptClick(
+				key_imageName = ${priceListName},
+				locator1 = "Checkbox#ADAPTIVE_MEDIA_IMAGE");
+		}
+
+		SelectFrameTop();
+
+		Click(
+			key_text = "Add",
+			locator1 = "Button#ANY");
+	}
+
 	macro addPricingEntry {
 		Type(
 			locator1 = "CommerceEntry#PRICE_FIELD",
@@ -1029,6 +1057,7 @@ definition {
 		CommerceSKUs.setSkuPricing(
 			basePrice = ${basePrice},
 			cost = ${cost},
+			priceOnApplication = ${priceOnApplication},
 			promoPrice = ${promoPrice});
 
 		if (isSet(publish)) {
@@ -1155,6 +1184,25 @@ definition {
 		AssertElementPresent(locator1 = "Message#SUCCESS");
 
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
+	}
+
+	macro removeEntryEligibility {
+		CommerceNavigator.gotoEntry(entryName = ${entryName});
+
+		Navigator.gotoNavTab(navTab = "Eligibility");
+
+		Click(
+			key_value = ${channelEligibility},
+			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+
+		MenuItem.click(menuItem = "Remove");
+
+		CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
+
+		AssertElementNotPresent(
+			key_entryName = ${channelEligibility},
+			key_table = "Channels",
+			locator1 = "CommerceEntry#TABLE_ELIGIBILITY_ENTRY");
 	}
 
 	macro saveEntry {

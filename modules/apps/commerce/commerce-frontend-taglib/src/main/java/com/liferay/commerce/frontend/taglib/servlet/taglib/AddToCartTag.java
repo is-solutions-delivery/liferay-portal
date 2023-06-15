@@ -16,6 +16,7 @@ package com.liferay.commerce.frontend.taglib.servlet.taglib;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.commerce.constants.CommerceOrderActionKeys;
+import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.currency.model.CommerceCurrency;
@@ -30,11 +31,16 @@ import com.liferay.commerce.product.catalog.CPCatalogEntry;
 import com.liferay.commerce.product.catalog.CPSku;
 import com.liferay.commerce.product.constants.CommerceChannelConstants;
 import com.liferay.commerce.product.content.util.CPContentHelper;
+import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.service.CommerceOrderItemLocalService;
+import com.liferay.commerce.service.CommerceOrderTypeLocalService;
 import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -42,6 +48,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.List;
+
+import javax.portlet.PortletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -151,6 +159,16 @@ public class AddToCartTag extends IncludeTag {
 							 commerceContext.getCommerceSiteType()));
 				}
 			}
+
+			int commerceOrderTypesCount =
+				_commerceOrderTypeLocalService.getCommerceOrderTypesCount(
+					PortalUtil.getCompanyId(httpServletRequest),
+					CommerceChannel.class.getName(), _commerceChannelId, true);
+
+			_showOrderTypeModal = commerceOrderTypesCount > 1;
+
+			_showOrderTypeModalURL = _getShowOrderTypeModalURL(
+				httpServletRequest);
 		}
 		catch (Exception exception) {
 			_log.error(exception);
@@ -223,6 +241,11 @@ public class AddToCartTag extends IncludeTag {
 		setNamespacedAttribute(
 			httpServletRequest, "productSettingsModel", _productSettingsModel);
 		setNamespacedAttribute(httpServletRequest, "size", _size);
+		setNamespacedAttribute(
+			httpServletRequest, "showOrderTypeModal", _showOrderTypeModal);
+		setNamespacedAttribute(
+			httpServletRequest, "showOrderTypeModalURL",
+			_showOrderTypeModalURL);
 		setNamespacedAttribute(httpServletRequest, "skuOptions", _skuOptions);
 		setNamespacedAttribute(
 			httpServletRequest, "stockQuantity", _stockQuantity);
@@ -262,6 +285,8 @@ public class AddToCartTag extends IncludeTag {
 			ServletContextUtil.getCommerceOrderItemLocalService();
 		_commerceOrderPortletResourcePermission =
 			ServletContextUtil.getCommerceOrderPortletResourcePermission();
+		_commerceOrderTypeLocalService =
+			ServletContextUtil.getCommerceOrderTypeLocalService();
 		_cpContentHelper = ServletContextUtil.getCPContentHelper();
 		_productHelper = ServletContextUtil.getProductHelper();
 	}
@@ -288,6 +313,7 @@ public class AddToCartTag extends IncludeTag {
 		_commerceOrderId = 0;
 		_commerceOrderItemLocalService = null;
 		_commerceOrderPortletResourcePermission = null;
+		_commerceOrderTypeLocalService = null;
 		_cpCatalogEntry = null;
 		_cpContentHelper = null;
 		_cpInstanceId = 0;
@@ -298,6 +324,8 @@ public class AddToCartTag extends IncludeTag {
 		_namespace = StringPool.BLANK;
 		_productHelper = null;
 		_productSettingsModel = null;
+		_showOrderTypeModal = false;
+		_showOrderTypeModalURL = null;
 		_size = "md";
 		_skuOptions = null;
 		_stockQuantity = 0;
@@ -306,6 +334,27 @@ public class AddToCartTag extends IncludeTag {
 	@Override
 	protected String getPage() {
 		return _PAGE;
+	}
+
+	private String _getShowOrderTypeModalURL(
+		HttpServletRequest httpServletRequest) {
+
+		if (!_showOrderTypeModal) {
+			return StringPool.BLANK;
+		}
+
+		return PortletURLBuilder.create(
+			PortletURLFactoryUtil.create(
+				httpServletRequest,
+				CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT,
+				PortletRequest.RENDER_PHASE)
+		).setMVCRenderCommandName(
+			"/commerce_order_content/view_commerce_order_order_type_modal"
+		).setParameter(
+			"addToCart", Boolean.TRUE
+		).setWindowState(
+			LiferayWindowState.POP_UP
+		).buildString();
 	}
 
 	private static final String _ATTRIBUTE_NAMESPACE =
@@ -325,6 +374,7 @@ public class AddToCartTag extends IncludeTag {
 	private long _commerceOrderId;
 	private CommerceOrderItemLocalService _commerceOrderItemLocalService;
 	private PortletResourcePermission _commerceOrderPortletResourcePermission;
+	private CommerceOrderTypeLocalService _commerceOrderTypeLocalService;
 	private CPCatalogEntry _cpCatalogEntry;
 	private CPContentHelper _cpContentHelper;
 	private long _cpInstanceId;
@@ -335,6 +385,8 @@ public class AddToCartTag extends IncludeTag {
 	private String _namespace = StringPool.BLANK;
 	private ProductHelper _productHelper;
 	private ProductSettingsModel _productSettingsModel;
+	private boolean _showOrderTypeModal;
+	private String _showOrderTypeModalURL;
 	private String _size = "md";
 	private String _skuOptions;
 	private int _stockQuantity;

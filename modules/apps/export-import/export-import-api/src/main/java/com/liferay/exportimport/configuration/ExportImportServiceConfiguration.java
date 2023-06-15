@@ -80,4 +80,10 @@ public interface ExportImportServiceConfiguration {
 	)
 	public boolean validateMissingReferences();
 
+	@Meta.AD(
+		description = "whitelisted-url-pattern-help",
+		name = "whitelisted-url-pattern", required = false
+	)
+	public String[] whitelistedURLPatterns();
+
 }

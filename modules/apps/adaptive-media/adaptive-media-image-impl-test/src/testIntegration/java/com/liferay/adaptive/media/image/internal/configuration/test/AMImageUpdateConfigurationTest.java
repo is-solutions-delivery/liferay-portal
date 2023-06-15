@@ -926,11 +926,11 @@ public class AMImageUpdateConfigurationTest
 			amImageConfigurationEntry1.getDescription(), "1-bis",
 			amImageConfigurationEntry1.getProperties());
 
-		AMImageConfigurationEntry nonexistantAMImageConfigurationEntry1 =
+		AMImageConfigurationEntry nonexistentAMImageConfigurationEntry1 =
 			_amImageConfigurationHelper.getAMImageConfigurationEntry(
 				TestPropsValues.getCompanyId(), "1");
 
-		Assert.assertNull(nonexistantAMImageConfigurationEntry1);
+		Assert.assertNull(nonexistentAMImageConfigurationEntry1);
 
 		AMImageConfigurationEntry actualAMImageConfigurationEntry1 =
 			_amImageConfigurationHelper.getAMImageConfigurationEntry(
@@ -1161,11 +1161,11 @@ public class AMImageUpdateConfigurationTest
 			amImageConfigurationEntry2.getDescription(), "2-bis",
 			amImageConfigurationEntry2.getProperties());
 
-		AMImageConfigurationEntry nonexistantAMImageConfigurationEntry2 =
+		AMImageConfigurationEntry nonexistentAMImageConfigurationEntry2 =
 			_amImageConfigurationHelper.getAMImageConfigurationEntry(
 				TestPropsValues.getCompanyId(), "2");
 
-		Assert.assertNull(nonexistantAMImageConfigurationEntry2);
+		Assert.assertNull(nonexistentAMImageConfigurationEntry2);
 
 		AMImageConfigurationEntry actualAMImageConfigurationEntry2 =
 			_amImageConfigurationHelper.getAMImageConfigurationEntry(

@@ -35,7 +35,6 @@ import com.liferay.portal.search.web.internal.util.comparator.BucketDisplayConte
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import javax.portlet.RenderRequest;
 
@@ -127,7 +126,7 @@ public class FolderSearchFacetDisplayContextBuilder {
 
 	public void setParameterValues(String... parameterValues) {
 		_selectedFolderIds = TransformUtil.transformToList(
-			Objects.requireNonNull(parameterValues),
+			parameterValues,
 			value -> {
 				long folderId = GetterUtil.getLong(value);
 

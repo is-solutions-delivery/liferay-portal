@@ -14,10 +14,11 @@
 
 package com.liferay.layout.reports.web.internal.events;
 
-import com.liferay.layout.reports.web.internal.product.navigation.control.menu.LayoutReportsProductNavigationControlMenuEntry;
+import com.liferay.layout.reports.web.internal.constants.ProductNavigationControlMenuEntryConstants;
 import com.liferay.portal.kernel.events.Action;
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.events.LifecycleAction;
+import com.liferay.product.navigation.control.menu.ProductNavigationControlMenuEntry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,11 +39,15 @@ public class LogoutPreAction extends Action {
 		throws ActionException {
 
 		_layoutReportsProductNavigationControlMenuEntry.setPanelState(
-			httpServletRequest, "closed");
+			httpServletRequest,
+			ProductNavigationControlMenuEntryConstants.SESSION_CLICKS_KEY,
+			"closed");
 	}
 
-	@Reference
-	private LayoutReportsProductNavigationControlMenuEntry
+	@Reference(
+		target = "(component.name=com.liferay.layout.reports.web.internal.product.navigation.control.menu.LayoutReportsProductNavigationControlMenuEntry)"
+	)
+	private ProductNavigationControlMenuEntry
 		_layoutReportsProductNavigationControlMenuEntry;
 
 }

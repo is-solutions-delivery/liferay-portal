@@ -286,20 +286,21 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 		Portlet portlet = _portletLocalService.getPortletById(
 			_portal.getCompanyId(httpServletRequest), portletId);
 
-		DynamicServletRequest dynamicRequest = null;
+		DynamicServletRequest dynamicServletRequest = null;
 
 		if (portlet.isPrivateRequestAttributes()) {
 			String portletNamespace = _portal.getPortletNamespace(
 				portlet.getPortletId());
 
-			dynamicRequest = new NamespaceServletRequest(
+			dynamicServletRequest = new NamespaceServletRequest(
 				httpServletRequest, portletNamespace, portletNamespace);
 		}
 		else {
-			dynamicRequest = new DynamicServletRequest(httpServletRequest);
+			dynamicServletRequest = new DynamicServletRequest(
+				httpServletRequest);
 		}
 
-		dynamicRequest.setParameter("p_p_id", portletId);
+		dynamicServletRequest.setParameter("p_p_id", portletId);
 
 		String dataType = StringUtil.toLowerCase(
 			ParamUtil.getString(httpServletRequest, "dataType"));
@@ -309,7 +310,7 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 				new BufferCacheServletResponse(httpServletResponse);
 
 			renderPortletAction.execute(
-				null, dynamicRequest, bufferCacheServletResponse);
+				null, dynamicServletRequest, bufferCacheServletResponse);
 
 			String portletHTML = bufferCacheServletResponse.getString();
 
@@ -342,7 +343,7 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 		}
 		else {
 			renderPortletAction.execute(
-				null, dynamicRequest, httpServletResponse);
+				null, dynamicServletRequest, httpServletResponse);
 		}
 	}
 

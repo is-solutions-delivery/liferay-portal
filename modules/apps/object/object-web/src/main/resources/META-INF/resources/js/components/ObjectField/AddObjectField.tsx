@@ -15,10 +15,8 @@
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayForm from '@clayui/form';
-import ClayIcon from '@clayui/icon';
 import ClayModal, {ClayModalProvider, useModal} from '@clayui/modal';
 import {Observer} from '@clayui/modal/lib/types';
-import {ClayTooltipProvider} from '@clayui/tooltip';
 import {API, Input, Toggle} from '@liferay/object-js-components-web';
 import React, {useEffect, useState} from 'react';
 
@@ -63,10 +61,25 @@ function ModalAddObjectField({
 		indexedLanguageId: null,
 		listTypeDefinitionExternalReferenceCode: '',
 		listTypeDefinitionId: 0,
+		readOnly: 'false',
+		readOnlyConditionExpression: '',
 		required: false,
 	};
 
 	const onSubmit = async (field: Partial<ObjectField>) => {
+		if (
+			field.businessType === 'Aggregation' ||
+			field.businessType === 'Formula'
+		) {
+			field.readOnly = 'true';
+			delete field.readOnlyConditionExpression;
+		}
+
+		if (!Liferay.FeatureFlags['LPS-170122']) {
+			delete field.readOnly;
+			delete field.readOnlyConditionExpression;
+		}
+
 		if (field.label) {
 			field = {
 				...field,
@@ -184,26 +197,22 @@ function ModalAddObjectField({
 										label={Liferay.Language.get(
 											'enable-entry-translations'
 										)}
-										onToggle={() =>
+										onToggle={(localized) =>
 											setValues({
-												localized: !values.localized,
+												localized,
+												required: Liferay.FeatureFlags[
+													'LPS-172017'
+												]
+													? !localized &&
+													  values.required
+													: values.required,
 											})
 										}
 										toggled={values.localized}
+										tooltip={Liferay.Language.get(
+											'users-will-be-able-to-add-translations-for-the-entries-of-this-field'
+										)}
 									/>
-
-									<ClayTooltipProvider>
-										<span
-											title={Liferay.Language.get(
-												'users-will-be-able-to-add-translations-for-the-entries-of-this-field'
-											)}
-										>
-											<ClayIcon
-												className="lfr-objects-add-object-field-enable-translations-toggle-icon"
-												symbol="question-circle-full"
-											/>
-										</span>
-									</ClayTooltipProvider>
 								</div>
 							)}
 					</ObjectFieldFormBase>

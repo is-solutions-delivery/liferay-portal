@@ -71,13 +71,12 @@ const _runExperimentMockGenerator = (segmentsExperiment) => ({status}) =>
 	});
 
 export default function renderApp({
-	classNameId = '',
-	classPK = '',
+	APIService = {},
 	initialGoals = segmentsGoals,
 	initialExperimentHistory = [],
 	initialSegmentsExperiment,
 	initialSegmentsVariants = [],
-	APIService = {},
+	plid = '',
 	selectedSegmentsExperienceId,
 	type = 'content',
 	winnerSegmentsVariantId = null,
@@ -116,8 +115,7 @@ export default function renderApp({
 				},
 				imagesPath: '',
 				page: {
-					classNameId,
-					classPK,
+					plid,
 					type,
 				},
 			}}

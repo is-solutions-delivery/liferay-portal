@@ -60,11 +60,18 @@ ContentDashboardAdminDisplayContext contentDashboardAdminDisplayContext = (Conte
 					<clay:content-col>
 						<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "configure-chart") %>">
 							<clay:button
+								additionalProps='<%=
+									HashMapBuilder.<String, Object>put(
+										"chartConfigurationURL", contentDashboardAdminDisplayContext.getPortletURL()
+									).put(
+										"portletId", contentDashboardAdminDisplayContext.getPortletDisplayId()
+									).build()
+								%>'
 								borderless="<%= true %>"
 								cssClass="component-action"
 								displayType="secondary"
 								icon="cog"
-								onClick="<%= contentDashboardAdminDisplayContext.getOnClickConfiguration() %>"
+								propsTransformer="js/ConfigurationButtonPropsTransformer"
 								small="<%= true %>"
 							/>
 						</span>
@@ -72,7 +79,7 @@ ContentDashboardAdminDisplayContext contentDashboardAdminDisplayContext = (Conte
 				</clay:content-row>
 			</h2>
 
-			<div class="audit-graph">
+			<div class="audit-graph position-relative">
 				<div class="audit-graph-loading c-my-5 c-p-5 inline-item w-100">
 					<span aria-hidden="true" class="loading-animation"></span>
 				</div>
@@ -104,7 +111,6 @@ ContentDashboardAdminDisplayContext contentDashboardAdminDisplayContext = (Conte
 			</div>
 
 			<clay:management-toolbar
-				cssClass="content-dashboard-management-toolbar"
 				managementToolbarDisplayContext="<%= (ContentDashboardAdminManagementToolbarDisplayContext)request.getAttribute(ContentDashboardAdminManagementToolbarDisplayContext.class.getName()) %>"
 				propsTransformer="js/ContentDashboardManagementToolbarPropsTransformer"
 			/>

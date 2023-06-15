@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUti
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -56,6 +57,10 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.service.impl.ThemeLocalServiceImpl;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
@@ -68,7 +73,9 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -93,19 +100,58 @@ public class FragmentCollectionContributorPropagationTest {
 	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
 
+	@Before
+	public void setUp() throws Exception {
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+
+		_bundleContext = bundle.getBundleContext();
+	}
+
+	@After
+	public void tearDown() {
+		for (ServiceRegistration<?> serviceRegistration :
+				_serviceRegistrations) {
+
+			serviceRegistration.unregister();
+		}
+
+		_serviceRegistrations.clear();
+
+		if (_company != null) {
+			try {
+				_companyLocalService.deleteCompany(_company);
+			}
+			catch (PortalException portalException) {
+			}
+		}
+	}
+
 	@Test
-	public void testPropagateContributedFragmentEntryThroughMultipleCompanies()
+	public void testPropagateContributedFragmentEntryThemeNotRegistered()
 		throws Exception {
 
-		Company company = null;
-		List<ServiceRegistration<?>> serviceRegistrations = new ArrayList<>();
+		Group defaultGroup = _groupLocalService.getGroup(
+			TestPropsValues.getCompanyId(), GroupConstants.GUEST);
 
-		try {
-			company = CompanyTestUtil.addCompany();
+		Layout layout = _layoutLocalService.fetchFirstLayout(
+			defaultGroup.getGroupId(), false,
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, false);
 
-			int companiesCount = _companyLocalService.getCompaniesCount();
+		LayoutSet layoutSet = layout.getLayoutSet();
 
-			Assert.assertTrue(companiesCount > 1);
+		String originalCSS = layoutSet.getCss();
+		String originalColorSchemeId = layoutSet.getColorSchemeId();
+		String originalThemeId = layoutSet.getThemeId();
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				ThemeLocalServiceImpl.class.getName(), LoggerTestUtil.WARN)) {
+
+			_layoutSetLocalService.updateLookAndFeel(
+				defaultGroup.getGroupId(), "not_registered_theme",
+				StringPool.BLANK, StringPool.BLANK);
+
+			String originalHTML =
+				"<div>" + RandomTestUtil.randomString() + "</div>";
 
 			String fragmentCollectionContributorKey =
 				RandomTestUtil.randomString();
@@ -114,18 +160,25 @@ public class FragmentCollectionContributorPropagationTest {
 				fragmentCollectionContributorKey, StringPool.DASH,
 				RandomTestUtil.randomString());
 
-			_addFragmentEntryLinks(fragmentEntryKey);
+			FragmentEntryLink fragmentEntryLink =
+				_fragmentEntryLinkLocalService.addFragmentEntryLink(
+					TestPropsValues.getUserId(), defaultGroup.getGroupId(), 0,
+					0,
+					_segmentsExperienceLocalService.
+						fetchDefaultSegmentsExperienceId(layout.getPlid()),
+					layout.getPlid(), StringPool.BLANK, originalHTML,
+					StringPool.BLANK, StringPool.BLANK, null, StringPool.BLANK,
+					0, fragmentEntryKey, FragmentConstants.TYPE_COMPONENT,
+					ServiceContextTestUtil.getServiceContext(
+						defaultGroup.getGroupId()));
 
-			Bundle bundle = FrameworkUtil.getBundle(
-				FragmentCollectionContributorPropagationTest.class);
-
-			BundleContext bundleContext = bundle.getBundleContext();
+			Assert.assertEquals(originalHTML, fragmentEntryLink.getHtml());
 
 			TestFragmentEntryProcessor testFragmentEntryProcessor =
 				new TestFragmentEntryProcessor(fragmentEntryKey);
 
-			serviceRegistrations.add(
-				bundleContext.registerService(
+			_serviceRegistrations.add(
+				_bundleContext.registerService(
 					FragmentEntryProcessor.class, testFragmentEntryProcessor,
 					MapUtil.singletonDictionary(
 						"fragment.entry.processor.priority", 1)));
@@ -133,63 +186,114 @@ public class FragmentCollectionContributorPropagationTest {
 			String modifiedHTML =
 				"<div>" + RandomTestUtil.randomString() + "</div>";
 
-			ServiceContext originalServiceContext =
-				ServiceContextThreadLocal.getServiceContext();
-
-			try {
-				_setUpServiceContext();
-
-				serviceRegistrations.add(
-					bundleContext.registerService(
-						FragmentCollectionContributor.class,
-						new TestFragmentCollectionContributor(
-							fragmentCollectionContributorKey,
-							HashMapBuilder.put(
-								FragmentConstants.TYPE_COMPONENT,
-								_getFragmentEntry(
-									fragmentEntryKey, modifiedHTML,
-									FragmentConstants.TYPE_COMPONENT)
-							).build()),
-						MapUtil.singletonDictionary(
-							"fragment.collection.key",
-							fragmentCollectionContributorKey)));
-
-				_assertCompanyContext(TestPropsValues.getCompanyId());
-			}
-			finally {
-				ServiceContextThreadLocal.pushServiceContext(
-					originalServiceContext);
-			}
+			_serviceRegistrations.add(
+				_bundleContext.registerService(
+					FragmentCollectionContributor.class,
+					new TestFragmentCollectionContributor(
+						fragmentCollectionContributorKey,
+						HashMapBuilder.put(
+							FragmentConstants.TYPE_COMPONENT,
+							_getFragmentEntry(
+								fragmentEntryKey, modifiedHTML,
+								FragmentConstants.TYPE_COMPONENT)
+						).build()),
+					MapUtil.singletonDictionary(
+						"fragment.collection.key",
+						fragmentCollectionContributorKey)));
 
 			Map<Long, String> companyIdsMap =
 				testFragmentEntryProcessor.getCompanyIdsMap();
 
 			Assert.assertEquals(
-				companyIdsMap.toString(), companiesCount, companyIdsMap.size());
+				companyIdsMap.get(TestPropsValues.getCompanyId()),
+				modifiedHTML);
 
-			_companyLocalService.forEachCompanyId(
-				companyId -> Assert.assertEquals(
-					companyIdsMap.get(companyId), modifiedHTML));
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertTrue(logEntries.toString(), logEntries.isEmpty());
 		}
 		finally {
-			for (ServiceRegistration<?> serviceRegistration :
-					serviceRegistrations) {
-
-				serviceRegistration.unregister();
+			try {
+				_layoutSetLocalService.updateLookAndFeel(
+					defaultGroup.getGroupId(), originalThemeId,
+					originalColorSchemeId, originalCSS);
 			}
-
-			if (company != null) {
-				try {
-					_companyLocalService.deleteCompany(company);
-				}
-				catch (PortalException portalException) {
-				}
+			catch (Exception exception) {
 			}
 		}
 	}
 
+	@Test
+	public void testPropagateContributedFragmentEntryThroughMultipleCompanies()
+		throws Exception {
+
+		_company = CompanyTestUtil.addCompany();
+
+		int companiesCount = _companyLocalService.getCompaniesCount();
+
+		Assert.assertTrue(companiesCount > 1);
+
+		String fragmentCollectionContributorKey = RandomTestUtil.randomString();
+
+		String fragmentEntryKey = StringBundler.concat(
+			fragmentCollectionContributorKey, StringPool.DASH,
+			RandomTestUtil.randomString());
+
+		_addFragmentEntryLinks(fragmentEntryKey);
+
+		TestFragmentEntryProcessor testFragmentEntryProcessor =
+			new TestFragmentEntryProcessor(fragmentEntryKey);
+
+		_serviceRegistrations.add(
+			_bundleContext.registerService(
+				FragmentEntryProcessor.class, testFragmentEntryProcessor,
+				MapUtil.singletonDictionary(
+					"fragment.entry.processor.priority", 1)));
+
+		String modifiedHTML =
+			"<div>" + RandomTestUtil.randomString() + "</div>";
+
+		ServiceContext originalServiceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		try {
+			_setUpServiceContext();
+
+			_serviceRegistrations.add(
+				_bundleContext.registerService(
+					FragmentCollectionContributor.class,
+					new TestFragmentCollectionContributor(
+						fragmentCollectionContributorKey,
+						HashMapBuilder.put(
+							FragmentConstants.TYPE_COMPONENT,
+							_getFragmentEntry(
+								fragmentEntryKey, modifiedHTML,
+								FragmentConstants.TYPE_COMPONENT)
+						).build()),
+					MapUtil.singletonDictionary(
+						"fragment.collection.key",
+						fragmentCollectionContributorKey)));
+
+			_assertCompanyContext(TestPropsValues.getCompanyId());
+		}
+		finally {
+			ServiceContextThreadLocal.pushServiceContext(
+				originalServiceContext);
+		}
+
+		Map<Long, String> companyIdsMap =
+			testFragmentEntryProcessor.getCompanyIdsMap();
+
+		Assert.assertEquals(
+			companyIdsMap.toString(), companiesCount, companyIdsMap.size());
+
+		_companyLocalService.forEachCompanyId(
+			companyId -> Assert.assertEquals(
+				companyIdsMap.get(companyId), modifiedHTML));
+	}
+
 	private void _addFragmentEntryLinks(String fragmentEntryKey)
-		throws PortalException {
+		throws Exception {
 
 		String originalHTML =
 			"<div>" + RandomTestUtil.randomString() + "</div>";
@@ -353,6 +457,9 @@ public class FragmentCollectionContributorPropagationTest {
 		_assertCompanyContext(company.getCompanyId());
 	}
 
+	private BundleContext _bundleContext;
+	private Company _company;
+
 	@Inject
 	private CompanyLocalService _companyLocalService;
 
@@ -373,10 +480,16 @@ public class FragmentCollectionContributorPropagationTest {
 	private LayoutLocalService _layoutLocalService;
 
 	@Inject
+	private LayoutSetLocalService _layoutSetLocalService;
+
+	@Inject
 	private Portal _portal;
 
 	@Inject
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
+
+	private final List<ServiceRegistration<?>> _serviceRegistrations =
+		new ArrayList<>();
 
 	@Inject
 	private UserLocalService _userLocalService;

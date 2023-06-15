@@ -121,7 +121,7 @@ export const FileItem: React.FC<IFileItemProps> = ({file, onCancel}) => {
 
 					<ClayButton
 						className='button-root'
-						displayType='unstyled'
+						displayType='link'
 						onClick={onCancel}
 						size='sm'
 					>
@@ -238,6 +238,7 @@ export class FileDropTarget extends React.Component<IFileDropTargetProps> {
 					>
 						<ClayButton
 							className='button-root'
+							displayType='secondary'
 							onClick={this.handleFileSelector}
 							size='sm'
 						>

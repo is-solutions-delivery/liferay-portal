@@ -602,6 +602,10 @@
 			<category name="Styling" />
 			<description name="Applies rules to enforce consistency in code style." />
 		</check>
+		<check name="JavaUpgradeServiceTrackerListCheck">
+			<category name="Upgrade" />
+			<description name="Replace the number of generic type arguments in ServiceTrackerList" />
+		</check>
 		<check name="MethodCallsOrderCheck">
 			<category name="Styling" />
 			<description name="Sorts method calls for certain object (for example, `put` calls in `java.util.HashMap`)." />
@@ -883,6 +887,11 @@
 
 		<!-- Module Source Checks -->
 
+		<check name="JavaLocalServiceImplErcUsageCheck">
+			<category name="Productivity" />
+			<description name="Automatically generates and ensures that `externalReferenceCode` is properly used in local `*ServiceImpl` add method." />
+			<property name="enabled" value="false" />
+		</check>
 		<check name="JavaModuleClassGetResourceCallCheck">
 			<category name="Bug Prevention" />
 			<description name="Checks that dependencies files are located in the correct directory." />
@@ -925,6 +934,11 @@
 		<check name="JavaOSGiReferenceCheck">
 			<category name="Bug Prevention" />
 			<description name="Performs several checks on classes with `@Component` annotation." />
+		</check>
+		<check name="JavaServiceImplErcUsageCheck">
+			<category name="Productivity" />
+			<description name="Automatically generates and ensures that `externalReferenceCode` is properly used in remote `*ServiceImpl` add method." />
+			<property name="enabled" value="false" />
 		</check>
 
 		<!-- Plugin Source Checks -->
@@ -1573,6 +1587,14 @@
 		<check name="UpgradeJavaCheck">
 			<category name="Upgrade" />
 			<description name="Performs upgrade checks for `java` files" />
+		</check>
+		<check name="UpgradeJavaExtractTextMethodCheck">
+			<category name="Upgrade" />
+			<description name="Replaces the references of the method `HtmlUtil.extractText(` with the method `extractText(` of `HtmlParser` class" />
+		</check>
+		<check name="UpgradeJavaServiceReferenceAnnotationCheck">
+			<category name="Upgrade" />
+			<description name="Run code migration to replace '@ServiceReference' by '@Reference'" />
 		</check>
 		<check name="UpgradeVelocityCommentMigrationCheck">
 			<category name="Upgrade" />

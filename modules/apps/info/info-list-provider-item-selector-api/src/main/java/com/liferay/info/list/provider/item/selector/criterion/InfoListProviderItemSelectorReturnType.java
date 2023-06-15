@@ -17,7 +17,7 @@ package com.liferay.info.list.provider.item.selector.criterion;
 import com.liferay.item.selector.ItemSelectorReturnType;
 
 /**
- * This return type should return the following information of a info item as a
+ * This return type should return the following information of an info item as a
  * JSON object:
  *
  * <ul>

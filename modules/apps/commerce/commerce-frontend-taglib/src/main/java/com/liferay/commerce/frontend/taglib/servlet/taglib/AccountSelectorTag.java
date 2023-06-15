@@ -23,6 +23,7 @@ import com.liferay.commerce.frontend.taglib.internal.model.CurrentCommerceOrderM
 import com.liferay.commerce.frontend.taglib.internal.model.WorkflowStatusModel;
 import com.liferay.commerce.frontend.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.commerce.model.CommerceOrder;
+import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.service.CommerceOrderTypeLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -74,22 +75,19 @@ public class AccountSelectorTag extends IncludeTag {
 				return super.doStartTag();
 			}
 
+			_accountEntry = commerceContext.getAccountEntry();
 			_accountEntryAllowedTypes =
 				commerceContext.getAccountEntryAllowedTypes();
-
-			_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-			_addCommerceOrderURL = _getAddCommerceOrderURL(
-				_themeDisplay, httpServletRequest);
-
-			_accountEntry = commerceContext.getAccountEntry();
+			_addCommerceOrderURL = _getAddCommerceOrderURL(httpServletRequest);
 			_commerceOrder = commerceContext.getCommerceOrder();
-			_editOrderURL = _getEditOrderURL(_themeDisplay);
+			_editOrderURL = _getEditOrderURL(httpServletRequest);
 			_setCurrentAccountURL =
 				PortalUtil.getPortalURL(httpServletRequest) +
 					PortalUtil.getPathContext() +
 						"/o/commerce-ui/set-current-account";
+
+			_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
 
 			if (Validator.isNull(_spritemap)) {
 				_spritemap = _themeDisplay.getPathThemeSpritemap();
@@ -120,10 +118,23 @@ public class AccountSelectorTag extends IncludeTag {
 	public void setPageContext(PageContext pageContext) {
 		super.setPageContext(pageContext);
 
-		_commerceOrderTypeLocalService =
-			ServletContextUtil.getCommerceOrderTypeLocalService();
+		try {
+			HttpServletRequest httpServletRequest = getRequest();
 
-		setServletContext(ServletContextUtil.getServletContext());
+			CommerceContext commerceContext =
+				(CommerceContext)httpServletRequest.getAttribute(
+					CommerceWebKeys.COMMERCE_CONTEXT);
+
+			_commerceChannelId = commerceContext.getCommerceChannelId();
+
+			_commerceOrderTypeLocalService =
+				ServletContextUtil.getCommerceOrderTypeLocalService();
+
+			setServletContext(ServletContextUtil.getServletContext());
+		}
+		catch (Exception exception) {
+			_log.error(exception);
+		}
 	}
 
 	public void setSpritemap(String spritemap) {
@@ -217,12 +228,13 @@ public class AccountSelectorTag extends IncludeTag {
 	}
 
 	private String _getAddCommerceOrderURL(
-			ThemeDisplay themeDisplay, HttpServletRequest httpServletRequest)
+			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
 		int commerceOrderTypesCount =
 			_commerceOrderTypeLocalService.getCommerceOrderTypesCount(
-				themeDisplay.getCompanyId(), true);
+				PortalUtil.getCompanyId(httpServletRequest),
+				CommerceChannel.class.getName(), _commerceChannelId, true);
 
 		if (commerceOrderTypesCount > 1) {
 			httpServletRequest.setAttribute(
@@ -231,7 +243,7 @@ public class AccountSelectorTag extends IncludeTag {
 
 			return PortletURLBuilder.create(
 				_getPortletURL(
-					themeDisplay.getRequest(),
+					httpServletRequest,
 					CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT)
 			).setMVCRenderCommandName(
 				"/commerce_order_content/view_commerce_order_order_type_modal"
@@ -245,13 +257,13 @@ public class AccountSelectorTag extends IncludeTag {
 			Boolean.FALSE);
 
 		long plid = PortalUtil.getPlidFromPortletId(
-			themeDisplay.getScopeGroupId(),
+			PortalUtil.getScopeGroupId(httpServletRequest),
 			CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT);
 
 		if (plid > 0) {
 			return PortletURLBuilder.create(
 				_getPortletURL(
-					themeDisplay.getRequest(),
+					httpServletRequest,
 					CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT)
 			).setActionName(
 				"/commerce_open_order_content/edit_commerce_order"
@@ -263,17 +275,17 @@ public class AccountSelectorTag extends IncludeTag {
 		return StringPool.BLANK;
 	}
 
-	private String _getEditOrderURL(ThemeDisplay themeDisplay)
+	private String _getEditOrderURL(HttpServletRequest httpServletRequest)
 		throws PortalException {
 
 		long plid = PortalUtil.getPlidFromPortletId(
-			themeDisplay.getScopeGroupId(),
+			PortalUtil.getScopeGroupId(httpServletRequest),
 			CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT);
 
 		if (plid > 0) {
 			return PortletURLBuilder.create(
 				_getPortletURL(
-					themeDisplay.getRequest(),
+					httpServletRequest,
 					CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT)
 			).setActionName(
 				"/commerce_open_order_content/edit_commerce_order"

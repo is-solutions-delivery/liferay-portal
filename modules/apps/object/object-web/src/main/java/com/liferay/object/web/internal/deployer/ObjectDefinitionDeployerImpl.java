@@ -23,6 +23,8 @@ import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.frontend.data.set.view.FDSView;
 import com.liferay.frontend.data.set.view.table.FDSTableSchemaBuilderFactory;
+import com.liferay.info.item.action.executor.InfoItemActionExecutor;
+import com.liferay.info.item.capability.InfoItemCapability;
 import com.liferay.info.item.creator.InfoItemCreator;
 import com.liferay.info.item.field.reader.InfoItemFieldReaderFieldSetProvider;
 import com.liferay.info.item.provider.InfoItemCapabilitiesProvider;
@@ -41,6 +43,7 @@ import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelect
 import com.liferay.layout.display.page.LayoutDisplayPageProvider;
 import com.liferay.layout.page.template.info.item.capability.DisplayPageInfoItemCapability;
 import com.liferay.layout.page.template.info.item.capability.EditPageInfoItemCapability;
+import com.liferay.layout.page.template.info.item.provider.DisplayPageInfoItemFieldSetProvider;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.deployer.ObjectDefinitionDeployer;
 import com.liferay.object.model.ObjectDefinition;
@@ -58,6 +61,7 @@ import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectViewLocalService;
 import com.liferay.object.web.internal.asset.model.ObjectEntryAssetRendererFactory;
+import com.liferay.object.web.internal.info.item.action.ObjectEntryInfoItemActionExecutor;
 import com.liferay.object.web.internal.info.item.creator.ObjectEntryInfoItemCreator;
 import com.liferay.object.web.internal.info.item.provider.ObjectEntryInfoItemCapabilitiesProvider;
 import com.liferay.object.web.internal.info.item.provider.ObjectEntryInfoItemDetailsProvider;
@@ -134,9 +138,11 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 		InfoItemFormProvider<ObjectEntry> infoItemFormProvider =
 			new ObjectEntryInfoItemFormProvider(
-				objectDefinition, _infoItemFieldReaderFieldSetProvider,
-				_listTypeEntryLocalService, _objectDefinitionLocalService,
-				_objectFieldLocalService, _objectFieldSettingLocalService,
+				_displayPageInfoItemFieldSetProvider, objectDefinition,
+				_infoItemFieldReaderFieldSetProvider,
+				_listTypeEntryLocalService, _objectActionLocalService,
+				_objectDefinitionLocalService, _objectFieldLocalService,
+				_objectFieldSettingLocalService,
 				_objectRelationshipLocalService, _objectScopeProviderRegistry,
 				_restContextPathResolverRegistry,
 				_templateInfoItemFieldSetProvider, _userLocalService);
@@ -172,10 +178,20 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					"frontend.data.set.name", objectDefinition.getPortletId()
 				).build()),
 			_bundleContext.registerService(
+				InfoItemActionExecutor.class,
+				new ObjectEntryInfoItemActionExecutor(
+					_objectActionLocalService, objectDefinition,
+					_objectEntryManagerRegistry),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"company.id", objectDefinition.getCompanyId()
+				).put(
+					"item.class.name", objectDefinition.getClassName()
+				).build()),
+			_bundleContext.registerService(
 				InfoItemCapabilitiesProvider.class,
 				new ObjectEntryInfoItemCapabilitiesProvider(
 					_displayPageInfoItemCapability, _editPageInfoItemCapability,
-					_templatePageInfoItemCapability),
+					_templateInfoItemCapability),
 				HashMapDictionaryBuilder.<String, Object>put(
 					"company.id", objectDefinition.getCompanyId()
 				).put(
@@ -204,13 +220,14 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			_bundleContext.registerService(
 				InfoItemFieldValuesProvider.class,
 				new ObjectEntryInfoItemFieldValuesProvider(
-					_assetDisplayPageFriendlyURLProvider, _dlAppLocalService,
+					_assetDisplayPageFriendlyURLProvider,
+					_displayPageInfoItemFieldSetProvider, _dlAppLocalService,
 					_dlFileEntryLocalService, _dlURLHelper,
 					_infoItemFieldReaderFieldSetProvider, _jsonFactory,
-					_listTypeEntryLocalService, objectDefinition,
-					_objectDefinitionLocalService, _objectEntryLocalService,
-					_objectEntryManagerRegistry, _objectFieldLocalService,
-					_objectRelationshipLocalService,
+					_listTypeEntryLocalService, _objectActionLocalService,
+					objectDefinition, _objectDefinitionLocalService,
+					_objectEntryLocalService, _objectEntryManagerRegistry,
+					_objectFieldLocalService, _objectRelationshipLocalService,
 					_templateInfoItemFieldSetProvider, _userLocalService),
 				HashMapDictionaryBuilder.<String, Object>put(
 					"company.id", objectDefinition.getCompanyId()
@@ -453,8 +470,14 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 	private BundleContext _bundleContext;
 
+	@Reference(
+		target = "(info.item.capability.key=" + DisplayPageInfoItemCapability.KEY + ")"
+	)
+	private InfoItemCapability _displayPageInfoItemCapability;
+
 	@Reference
-	private DisplayPageInfoItemCapability _displayPageInfoItemCapability;
+	private DisplayPageInfoItemFieldSetProvider
+		_displayPageInfoItemFieldSetProvider;
 
 	@Reference
 	private DLAppLocalService _dlAppLocalService;
@@ -468,8 +491,10 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	@Reference
 	private DLURLHelper _dlURLHelper;
 
-	@Reference
-	private EditPageInfoItemCapability _editPageInfoItemCapability;
+	@Reference(
+		target = "(info.item.capability.key=" + EditPageInfoItemCapability.KEY + ")"
+	)
+	private InfoItemCapability _editPageInfoItemCapability;
 
 	@Reference
 	private FDSTableSchemaBuilderFactory _fdsTableSchemaBuilderFactory;
@@ -553,11 +578,13 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	@Reference(target = "(osgi.web.symbolicname=com.liferay.object.web)")
 	private ServletContext _servletContext;
 
-	@Reference
-	private TemplateInfoItemFieldSetProvider _templateInfoItemFieldSetProvider;
+	@Reference(
+		target = "(info.item.capability.key=" + TemplateInfoItemCapability.KEY + ")"
+	)
+	private InfoItemCapability _templateInfoItemCapability;
 
 	@Reference
-	private TemplateInfoItemCapability _templatePageInfoItemCapability;
+	private TemplateInfoItemFieldSetProvider _templateInfoItemFieldSetProvider;
 
 	@Reference
 	private UploadHandler _uploadHandler;

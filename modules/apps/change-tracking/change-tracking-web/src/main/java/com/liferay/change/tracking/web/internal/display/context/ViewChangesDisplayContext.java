@@ -36,6 +36,7 @@ import com.liferay.change.tracking.web.internal.security.permission.resource.CTC
 import com.liferay.change.tracking.web.internal.security.permission.resource.CTPermission;
 import com.liferay.change.tracking.web.internal.util.PublicationsPortletURLUtil;
 import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -43,6 +44,7 @@ import com.liferay.portal.kernel.change.tracking.sql.CTSQLModeThreadLocal;
 import com.liferay.portal.kernel.dao.orm.ORMException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -159,6 +161,10 @@ public class ViewChangesDisplayContext {
 	}
 
 	public Map<String, Object> getReactData() throws Exception {
+		if (_reactData != null) {
+			return _reactData;
+		}
+
 		JSONObject contextViewJSONObject = null;
 
 		CTClosure ctClosure = null;
@@ -170,8 +176,24 @@ public class ViewChangesDisplayContext {
 			(ctEntriesCount <= _ctConfiguration.contextViewLimitCount())) {
 
 			try {
-				ctClosure = _ctClosureFactory.create(
-					_ctCollection.getCtCollectionId());
+				if (_ctConfiguration.contextViewIncludeProduction()) {
+					ctClosure = _ctClosureFactory.create(
+						_ctCollection.getCtCollectionId());
+				}
+				else {
+					ctClosure = _ctClosureFactory.create(
+						_ctCollection.getCtCollectionId(),
+						new HashSet<>(
+							_ctEntryLocalService.dslQuery(
+								DSLQueryFactoryUtil.selectDistinct(
+									CTEntryTable.INSTANCE.modelClassNameId
+								).from(
+									CTEntryTable.INSTANCE
+								).where(
+									CTEntryTable.INSTANCE.ctCollectionId.eq(
+										_ctCollection.getCtCollectionId())
+								))));
+				}
 			}
 			catch (Exception exception) {
 				contextViewJSONObject = JSONUtil.put(
@@ -268,7 +290,7 @@ public class ViewChangesDisplayContext {
 			}
 		}
 
-		return HashMapBuilder.<String, Object>put(
+		_reactData = HashMapBuilder.<String, Object>put(
 			"changes",
 			() -> {
 				JSONArray changesJSONArray = JSONFactoryUtil.createJSONArray();
@@ -544,21 +566,29 @@ public class ViewChangesDisplayContext {
 			}
 		).put(
 			"moveChangesURL",
-			PortletURLBuilder.createActionURL(
-				_renderResponse
-			).setActionName(
-				"/change_tracking/move_changes"
-			).setRedirect(
-				PortletURLBuilder.createRenderURL(
-					_renderResponse
-				).setMVCRenderCommandName(
-					"/change_tracking/view_changes"
-				).setParameter(
-					"ctCollectionId", _ctCollection.getCtCollectionId()
-				).buildString()
-			).setParameter(
-				"ctCollectionId", _ctCollection.getCtCollectionId()
-			).buildString()
+			() -> {
+				if (FeatureFlagManagerUtil.isEnabled(
+						_themeDisplay.getCompanyId(), "LPS-171364")) {
+
+					return PortletURLBuilder.createActionURL(
+						_renderResponse
+					).setActionName(
+						"/change_tracking/move_changes"
+					).setRedirect(
+						PortletURLBuilder.createRenderURL(
+							_renderResponse
+						).setMVCRenderCommandName(
+							"/change_tracking/view_changes"
+						).setParameter(
+							"ctCollectionId", _ctCollection.getCtCollectionId()
+						).buildString()
+					).setParameter(
+						"ctCollectionId", _ctCollection.getCtCollectionId()
+					).buildString();
+				}
+
+				return null;
+			}
 		).put(
 			"name", _ctCollection.getName()
 		).put(
@@ -773,6 +803,8 @@ public class ViewChangesDisplayContext {
 		).put(
 			"usersFromURL", ParamUtil.getString(_renderRequest, "users")
 		).build();
+
+		return _reactData;
 	}
 
 	private JSONObject _getContextViewJSONObject(
@@ -1297,6 +1329,7 @@ public class ViewChangesDisplayContext {
 	private final Portal _portal;
 	private final PublicationsDisplayContext _publicationsDisplayContext;
 	private final PublishScheduler _publishScheduler;
+	private Map<String, Object> _reactData;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
 	private final ThemeDisplay _themeDisplay;

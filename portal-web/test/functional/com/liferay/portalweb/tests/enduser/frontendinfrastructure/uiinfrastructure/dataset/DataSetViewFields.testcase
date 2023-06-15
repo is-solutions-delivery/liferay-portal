@@ -1,0 +1,671 @@
+@component-name = "portal-frontend-infrastructure"
+definition {
+
+	property custom.properties = "feature.flag.LPS-164563=true";
+	property portal.acceptance = "true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Frontend Data Set";
+	property testray.main.component.name = "Frontend Data Set";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		task ("Given creating a Data Set via API") {
+			DataSetAdmin.goToDataSetAdminPage();
+
+			DataSetAdmin.createDataSetEntryViaAPI(
+				dataSetName = "Data Set Fields Test",
+				restApplication = "/c/fdsfields",
+				restEndpoint = "/",
+				restSchema = "FDSField");
+		}
+
+		task ("And a data set view created via api") {
+			DataSetAdmin.createFDSViewViaAPI(
+				dataSetName = "Data Set Fields Test",
+				dataSetViewDescription = "FDSViewDescription",
+				key_dataSetViewNameList = "View Fields Test");
+		}
+
+		task ("When go to the View page of the data set created.") {
+			DataSetAdmin.goToSpecificViewPage(
+				dataSetName = "Data Set Fields Test",
+				key_viewName = "View Fields Test");
+		}
+
+		task ("When goes to Fields Tab.") {
+			DataSetAdmin.goToTab(tabName = "Fields");
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		DataSetAdmin.deleteAllDataSetEntries();
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "LPS-179282. Confirm that metadata fields are not present for the user "
+	@priority = 3
+	test AssertNotPresentMetadataFields {
+		task ("And Clicking to Add a new field") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("Then Confirm the fields are visible and present: creator,name,id") {
+			AssertElementPresent(
+				key_name = "name",
+				locator1 = "DataSet#FIELDS_ITEM");
+
+			AssertElementPresent(
+				key_name = "creator",
+				locator1 = "DataSet#FIELDS_ITEM");
+
+			AssertElementPresent(
+				key_name = "id",
+				locator1 = "DataSet#FIELDS_ITEM");
+		}
+
+		task ("And is not present metadata fields:x-class-name, x-schema-name and scopeKey") {
+			AssertElementNotPresent(
+				key_name = "x-class-name",
+				locator1 = "DataSet#FIELDS_ITEM");
+
+			AssertElementNotPresent(
+				key_name = "x-schema-name",
+				locator1 = "DataSet#FIELDS_ITEM");
+
+			AssertElementNotPresent(
+				key_name = "scopeKey",
+				locator1 = "DataSet#FIELDS_ITEM");
+		}
+	}
+
+	@description = "LPS-185226. Confirm that the user can add a field"
+	@priority = 5
+	test CanAddField {
+		task ("And clicks on Add Fields button/And checks id field/And clicks on Save button") {
+			DataSetAdmin.addFields(key_fieldList = "id");
+		}
+
+		task ("Then the added fields are shown on Fields tab page") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+		}
+	}
+
+	@description = "LPS-185498. Confirm that when trying to delete field, modal appears."
+	@priority = 4
+	test CanAssertModalWhenDeleteField {
+		task ("And adds two or more fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("When the user selects the Delete option in the 3 dots menu") {
+			Click(
+				key_fieldName = "id",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+			ClickNoError(locator1 = "ObjectPortlet#DELETE_ENTRY_BUTTON");
+		}
+
+		task ("Then confirmation message is displayed") {
+			AssertElementPresent(
+				key_modalText = "Are you sure you want to delete this field? It will be removed immediately. Fragments using it will be affected. This action cannot be undone.",
+				locator1 = "DataSet#DELETE_DATA_SET_MODAL_BODY");
+		}
+	}
+
+	@description = "LPS-185230. Confirm that the user can cancel adding a field by clicking on cancel button."
+	@priority = 4
+	test CanCancelAddingOnCancelButton {
+		task ("And clicks on Add Fields button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And checks id field") {
+			DataSetAdmin.checkFields(key_fieldList = "id");
+		}
+
+		task ("And clicks on Cancel button") {
+			Button.clickCancel();
+		}
+
+		task ("Then there's no fields on Fields tab page") {
+			AssertElementPresent(
+				key_text = "Add Fields",
+				locator1 = "Button#ANY");
+		}
+	}
+
+	@description = "LPS-185232. Confirm that the user can cancel adding a field by clicking on modal's close (X) button."
+	@priority = 4
+	test CanCancelAddingOnCloseButton {
+		task ("And clicks on plus button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And checks creator field") {
+			DataSetAdmin.checkFields(key_fieldList = "creator");
+		}
+
+		task ("And clicks on X icon of the modal") {
+			Click(
+				key_modalTitle = "Add Fields",
+				locator1 = "Button#CLOSE_MODAL");
+		}
+
+		task ("Then the modal is closed / And the changes are not saved") {
+			AssertElementPresent(
+				key_text = "Add Fields",
+				locator1 = "Button#ANY");
+		}
+	}
+
+	@description = "LPS-176051. Confirm that the user can cancel changes when clicks on Cancel button"
+	@priority = 4
+	test CanCancelChangesOnCancelButton {
+		task ("And add new fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("And clicks on Edit option") {
+			Click(
+				key_fieldName = "id",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+			MenuItem.click(menuItem = "Edit");
+		}
+
+		task ("And choose another client extension option") {
+			Click(
+				dropdownLabel = "Cell Renderer",
+				locator1 = "ObjectField#ANY_DROPDOWN_LABEL");
+		}
+
+		task ("And clicks on Cancel button") {
+			Button.click(button = "Cancel");
+		}
+
+		task ("Then the Edit field modal is closed") {
+			AssertElementNotPresent(
+				locator1 = "Portlet#MODAL_TITLE",
+				value1 = "Edit id");
+		}
+
+		task ("And the changes are not applied") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "default");
+		}
+	}
+
+	@description = "LPS-185500. Confirm that can cancel field deletion on cancel button."
+	@priority = 4
+	test CanCancelFieldDeletion {
+		task ("And adds 'id' field") {
+			DataSetAdmin.addFields(key_fieldList = "id");
+		}
+
+		task ("When the user selects the Delete option in the 3 dots menu") {
+			Click(
+				key_fieldName = "id",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+			ClickNoError(locator1 = "ObjectPortlet#DELETE_ENTRY_BUTTON");
+		}
+
+		task ("Then the confirmation message is displayed") {
+			AssertElementPresent(
+				key_modalText = "Are you sure you want to delete this field? It will be removed immediately. Fragments using it will be affected. This action cannot be undone.",
+				locator1 = "DataSet#DELETE_DATA_SET_MODAL_BODY");
+		}
+
+		task ("And the user cancels the confirmation message") {
+			Button.clickCancel();
+		}
+
+		task ("Then the field is not deleted / And assert the field still appears in the Fields tab table") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+		}
+	}
+
+	@description = "LPS-185229. Confirm that the user can change the field's order on Fields tab page."
+	@priority = 4
+	test CanChangeFieldOrder {
+		task ("And clicks on plus button/And checks id and label fields/And clicks on Save button") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("And clicks on a field drag dots icon related id field ") {
+			Click.clickAt(
+				key_nameField = "id",
+				locator1 = "DataSet#FIELDS_DRAG_DOTS_ICON");
+		}
+
+		task ("Then the user can move the id field below the label field") {
+			DragAndDrop.javaScriptDragAndDropToBottom(
+				key_nameField = "id",
+				key_position = 2,
+				keyName = "label",
+				locator1 = "DataSet#FIELDS_DRAG_DOTS_ICON",
+				locator2 = "DataSet#FIELDS_TABLE");
+
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "label");
+
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 2,
+				keyName = "id");
+		}
+	}
+
+	@description = "LPS-179282. Confirm that the user can check and uncheck all the fields"
+	@priority = 4
+	test CanCheckAndUncheckAllFields {
+		task ("And Clicking to Add a new field") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And select all the fields.") {
+			DataSetAdmin.checkFields(key_fieldList = "");
+		}
+
+		task ("Then Confirm all fields are checked ") {
+			DataSetAdmin.assertFieldsChecked(key_fieldList = "name,creator,externalReferenceCode,id,status,createDate,label,modifiedDate,renderer,r_fdsViewFDSFieldRelationship_c_fdsViewId,r_fdsViewFDSFieldRelationship_c_fdsViewERC,sortable,type");
+		}
+
+		task ("When Uncheck all the fields.") {
+			DataSetAdmin.uncheckFields(key_fieldList = "");
+		}
+
+		task ("Then Confirm that all fields are unchecked ") {
+			DataSetAdmin.assertFieldsNotChecked(key_fieldList = "name,creator,externalReferenceCode,id,status,createDate,label,modifiedDate,renderer,r_fdsViewFDSFieldRelationship_c_fdsViewId,r_fdsViewFDSFieldRelationship_c_fdsViewERC,sortable,type");
+		}
+	}
+
+	@description = "LPS-185499. Confirm that field can be deleted."
+	@priority = 4
+	test CanDeleteField {
+		task ("And adds 'id' field") {
+			DataSetAdmin.addFields(key_fieldList = "id");
+		}
+
+		task ("When the user selects the Delete option in the 3 dots menu / And the user confirms the deletion / Then the field is deleted") {
+			DataSetAdmin.deleteDataSetViewsFields(fieldName = "id");
+		}
+
+		task ("And assert the field is not present in the fields tab table") {
+			AssertElementPresent(
+				key_text = "Add Fields",
+				locator1 = "Button#ANY");
+		}
+	}
+
+	@description = "LPS-185228. Confirm that a field is not added after checking and unchecking it."
+	@priority = 5
+	test CannotAddFieldAfterUncheckingIt {
+		task ("And clicks on plus button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And checks id and label fields") {
+			DataSetAdmin.checkFields(key_fieldList = "id,label");
+		}
+
+		task ("And unchecks id field") {
+			DataSetAdmin.uncheckFields(key_fieldList = "id");
+		}
+
+		task ("And clicks on Save button") {
+			Button.clickSave();
+		}
+
+		task ("Then label field should appear on Fields tab page") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "label");
+		}
+
+		task ("And id should not appear on Fields tab page") {
+			AssertElementNotPresent(
+				key_position = 1,
+				keyName = "id",
+				locator1 = "DataSet#FIELDS_TABLE");
+		}
+	}
+
+	@description = "LPS-185501. Confirm that fields are not updated if proccess is canceled on cancel button."
+	@priority = 4
+	test CannotUpdateFieldsIfCancelOnCancelButton {
+		task ("And adds two or more fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("When the user selects the 'Plus' Button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And uncheck a selected option") {
+			DataSetAdmin.uncheckFields(key_fieldList = "id");
+		}
+
+		task ("Then the user clicks on the Cancel option") {
+			Button.clickCancel();
+		}
+
+		task ("And the Add field modal is closed") {
+			AssertElementNotPresent(
+				key_modalText = "Deleting a data set is an action that cannot be reversed. The content will be deleted and some data set fragments may not be displayed.",
+				locator1 = "DataSet#DELETE_DATA_SET_MODAL_BODY");
+		}
+
+		task ("And the changes are not applied") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 2,
+				keyName = "label");
+		}
+	}
+
+	@description = "LPS-185502. Confirm that fields are not updated if proccess is canceled on close (X) button."
+	@priority = 4
+	test CannotUpdateFieldsIfCancelOnCloseButton {
+		task ("And adds two or more fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("When the user selects the 'Plus' Button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And uncheck a selected option") {
+			DataSetAdmin.uncheckFields(key_fieldList = "id");
+		}
+
+		task ("Then the user clicks on the Close button") {
+			Click(
+				key_modalTitle = "Add Fields",
+				locator1 = "Button#CLOSE_MODAL");
+		}
+
+		task ("And the Add field modal is closed") {
+			AssertElementNotPresent(
+				key_modalText = "Deleting a data set is an action that cannot be reversed. The content will be deleted and some data set fragments may not be displayed.",
+				locator1 = "DataSet#DELETE_DATA_SET_MODAL_BODY");
+		}
+
+		task ("And the changes are not applied") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 2,
+				keyName = "label");
+		}
+	}
+
+	@description = "LPS-176051. Confirm that the user can save changes when clicks on Save button"
+	@priority = 5
+	test CanSaveChangesOnSaveButton {
+		task ("And add new fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("And clicks on Edit option") {
+			Click(
+				key_fieldName = "id",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+			MenuItem.click(menuItem = "Edit");
+		}
+
+		task ("And choose another client extension option") {
+			Click(
+				dropdownLabel = "Cell Renderer",
+				locator1 = "ObjectField#ANY_DROPDOWN_LABEL");
+
+			MenuItem.click(menuItem = "Date and Time");
+		}
+
+		task ("And clicks on Save button") {
+			Click(
+				key_text = "Save",
+				locator1 = "CP2ActivationKeys#KEY_DEACTIVATION_TERMS");
+		}
+
+		task ("Then the Edit field modal is closed") {
+			AssertElementNotPresent(
+				locator1 = "Portlet#MODAL_TITLE",
+				value1 = "Edit id");
+		}
+
+		task ("And a successful message appears") {
+			Alert.viewSuccessMessage();
+		}
+
+		task ("And the changes are applied") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "Date and Time");
+		}
+	}
+
+	@description = "LPS-179282. Confirm that the search bar returns works as expected"
+	@priority = 4
+	test CanSearchField {
+		task ("And Clicking to Add a new field") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And type Account in the search bar and click enter") {
+			DataSetAdmin.searchFieldInModal(searchTerm = "name");
+		}
+
+		task ("Then the corresponding option is the just displayed") {
+			AssertElementPresent(
+				key_name = "name",
+				locator1 = "DataSet#FIELDS_ITEM");
+		}
+	}
+
+	@description = "LPS-185227. Confirm that the user can search a specific field when adding fields."
+	@priority = 4
+	test CanSearchFieldOnAddFieldsModal {
+		task ("And clicks on Add Fields button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And types 'label' on modal search bar") {
+			DataSetAdmin.searchFieldInModal(searchTerm = "label");
+		}
+
+		task ("Then 'label' field should appear on Add Fields modal") {
+			AssertElementPresent(
+				key_name = "label",
+				locator1 = "DataSet#FIELDS_ITEM");
+		}
+	}
+
+	@description = "LPS-185231. Confirm that the user can search a specific field on field's search bar."
+	@priority = 4
+	test CanSearchFieldOnFieldsSearchBar {
+		task ("And clicks on plus button/And checks id and label fields/And clicks on Save button") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("And types id on Fields search bar") {
+			DataSetAdmin.searchField(searchTerm = "id");
+		}
+
+		task ("And clicks on search icon") {
+			Click(locator1 = "AppBuilder#SEARCH_BUTTON");
+		}
+
+		task ("Then only id field should appear on Fields page") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "id");
+		}
+	}
+
+	@description = "LPS-176051. Blocked by :LPS-186987. Confirm that Cell Renderer option can be selected on Cell Renderer Field."
+	@ignore = "true"
+	@priority = 3
+	test CanSelectCellRendererOption {
+
+		// TODO LPS-185794 CanSelectCellRendererOption pending implementation
+
+	}
+
+	@description = "LPS-176051. Confirm that the user can select options of dropdown on Edit"
+	@priority = 5
+	test CanSelectDropdownOptions {
+		task ("And add new fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("And clicks on Edit option") {
+			Click(
+				key_fieldName = "id",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+			MenuItem.click(menuItem = "Edit");
+		}
+
+		task ("When the user clicks on Cell Renderer field") {
+			Click(
+				dropdownLabel = "Cell Renderer",
+				locator1 = "ObjectField#ANY_DROPDOWN_LABEL");
+		}
+
+		task ("Then a dropdown is displayed") {
+			AssertVisible(locator1 = "ObjectCustomViews#VIEW_DROPDOWN_MENU_ON_MODAL_DEFAULT_SORT");
+		}
+
+		task ("And the options present in the dropdown can be selected") {
+			MenuItem.click(menuItem = "Date and Time");
+		}
+	}
+
+	@description = "LPS-185503. Confirm that fields are not updated when saving changes."
+	@priority = 4
+	test CanUpdateFieldsWhenSave {
+		task ("And adds two or more fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("When the user selects the 'Plus' Button") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And uncheck a selected option") {
+			DataSetAdmin.uncheckFields(key_fieldList = "id");
+		}
+
+		task ("When the user clicks on the Save button") {
+			Click(
+				key_text = "Save",
+				locator1 = "CP2ActivationKeys#KEY_DEACTIVATION_TERMS");
+		}
+
+		task ("Then the Add field modal is closed") {
+			AssertElementNotPresent(
+				key_modalText = "Deleting a data set is an action that cannot be reversed. The content will be deleted and some data set fragments may not be displayed.",
+				locator1 = "DataSet#DELETE_DATA_SET_MODAL_BODY");
+		}
+
+		task ("And the changes are applied") {
+			DataSetAdmin.assertFieldsOnTable(
+				key_position = 1,
+				keyName = "label");
+		}
+	}
+
+	@description = "LPS-176051. Confirm that the user can view Edit icon modal"
+	@priority = 5
+	test CanViewEditModal {
+		task ("And add new fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("And clicks on Edit option") {
+			Click(
+				key_fieldName = "id",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+			MenuItem.click(menuItem = "Edit");
+		}
+
+		task ("Then the Edit field modal is displayed") {
+			AssertVisible(
+				locator1 = "Portlet#MODAL_TITLE",
+				value1 = "Edit id");
+		}
+	}
+
+	@description = "LPS-176051. Confirm that the user can view Edit icon of fields"
+	@priority = 5
+	test CanViewEditOption {
+		task ("And add new fields") {
+			DataSetAdmin.addFields(key_fieldList = "id,label");
+		}
+
+		task ("When the user clicks on 3 dots icon") {
+			Click(
+				key_fieldName = "id",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+		}
+
+		task ("Then the Edit option appears") {
+			MenuItem.viewVisible(menuItem = "Edit");
+		}
+	}
+
+	@description = "LPS-179282. Confirm that the user can check and uncheck the fields"
+	@priority = 5
+	test CheckandUncheckFields {
+		task ("And Clicking to Add a new field") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And Check three options (creator,id ,name)") {
+			DataSetAdmin.checkFields(key_fieldList = "creator,id,name");
+		}
+
+		task ("Then Confirm that the fields are checked ") {
+			DataSetAdmin.assertFieldsChecked(key_fieldList = "creator,id,name");
+		}
+
+		task ("When Check three options (Phone, User Account, and WebURL)") {
+			DataSetAdmin.uncheckFields(key_fieldList = "creator,id,name");
+		}
+
+		task ("Then Confirm that the fields are unchecked ") {
+			DataSetAdmin.assertFieldsNotChecked(key_fieldList = "creator,id,name");
+		}
+	}
+
+}
