@@ -185,9 +185,9 @@ definition {
 
 		Testray.changePaginationModal(quantity = 150);
 
-		Testray.goToProjectPage(projectName = "Projects_1 Project");
+		Testray.goToTableEntry(tableName = "Projects_1 Project");
 
-		TestrayRoutines.goToRoutine(routineName = "Routines_1 Routine");
+		Testray.goToTableEntry(tableName = "Routines_1 Routine");
 
 		while (IsElementPresent(key_projectName = "Builds_", locator1 = "Testray#ITEM_NAME")) {
 			Testray.deleteComponent(itemName = ${itemName});

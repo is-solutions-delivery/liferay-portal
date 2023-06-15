@@ -51,22 +51,7 @@ definition {
 			siteTemplateName = "Liferay Site Initializer Testray");
 	}
 
-	macro assertItemName {
-		var key_name = ${text};
-
-		AssertElementPresent(
-			key_projectName = ${key_name},
-			locator1 = "Testray#ITEM_NAME");
-	}
-
-	macro assertItemNotPresent {
-		var key_name = ${text};
-
-		AssertElementNotPresent(
-			key_projectName = ${key_name},
-			locator1 = "Testray#ITEM_NAME");
-	}
-
+	@summary = "This macro assert items per page."
 	macro assertItemsPerPageValue {
 		AssertElementPresent(
 			key_value = ${itemValue},
@@ -103,6 +88,25 @@ definition {
 			locator1 = "Testray#ITEMS_PER_PAGE_DESCRIPTION");
 	}
 
+	@summary = "This macro assert that the table is present in the page."
+	macro assertTableList {
+		for (var tableEntry : list ${tablesList}) {
+			AssertElementPresent(
+				key_tableEntry = ${tableEntry},
+				locator1 = "Testray#TABLE_ENTRY");
+		}
+	}
+
+	@summary = "This macro assert that the Table is not present in the page."
+	macro assertTableListNotPresent {
+		for (var tableEntry : list ${tablesList}) {
+			AssertElementNotPresent(
+				key_tableEntry = ${tableEntry},
+				locator1 = "Testray#TABLE_ENTRY");
+		}
+	}
+
+	@summary = "This macro back section by breadcrumb."
 	macro backSectionBreadcrumb {
 		for (var n : list "1,2,3,4") {
 			KeyPress(
@@ -217,7 +221,7 @@ definition {
 
 		Testray.changePaginationModal(quantity = 150);
 
-		while (IsElementPresent(key_projectName = "Projects_", locator1 = "Testray#ITEM_NAME")) {
+		while (IsElementPresent(key_tableEntry = "Projects_", locator1 = "Testray#TABLE_ENTRY")) {
 			TestrayContextMenu.clickContextMenuProjects(name = "Projects_");
 
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
@@ -230,8 +234,8 @@ definition {
 
 	macro deleteComponent {
 		RightClick.rightClick(
-			key_projectName = ${itemName},
-			locator1 = "Testray#ITEM_NAME");
+			key_tableEntry = ${tableEntry},
+			locator1 = "Testray#TABLE_ENTRY");
 
 		TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
 
@@ -311,10 +315,13 @@ definition {
 			locator1 = "Testray#NEXT_AND_PREVIOUS_PAGE_BUTTON");
 	}
 
-	macro goToProjectPage {
+	@summary = "This macro go to table specific."
+	macro goToTableEntry {
+		WaitForPageLoad();
+		
 		Click(
-			key_projectName = ${projectName},
-			locator1 = "Testray#ITEM_NAME");
+			key_tableEntry = ${tableName},
+			locator1 = "Testray#TABLE_ENTRY");
 	}
 
 	macro goToTestflow {

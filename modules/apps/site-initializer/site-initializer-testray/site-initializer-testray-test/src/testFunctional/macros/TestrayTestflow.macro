@@ -64,7 +64,7 @@ definition {
 	macro assignUsers {
 		SelectFrame(locator1 = "Testray#MODAL_BODY");
 
-		Testray.goToProjectPage(projectName = ${userName});
+		Testray.goToTableEntry(tableName  = ${userName});
 
 		Alert.viewSuccessMessage();
 	}
