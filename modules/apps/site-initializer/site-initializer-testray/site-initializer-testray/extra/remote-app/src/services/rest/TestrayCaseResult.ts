@@ -12,6 +12,7 @@
  * details.
  */
 
+import {JiraClientExtensionRestImpl} from '.';
 import Rest from '../../core/Rest';
 import SearchBuilder from '../../core/SearchBuilder';
 import yupSchema from '../../schema/yup';
@@ -221,8 +222,7 @@ class TestrayCaseResultRest extends Rest<CaseResultForm, TestrayCaseResult> {
 			);
 
 			return {mbMessage, mbThreadId};
-		}
-		catch {
+		} catch {
 			return {};
 		}
 	}
@@ -237,6 +237,8 @@ class TestrayCaseResultRest extends Rest<CaseResultForm, TestrayCaseResult> {
 		>
 	): Promise<TestrayCaseResult> {
 		const issues = data.issues || [];
+
+		await JiraClientExtensionRestImpl.jiraIssueUpdate(issues);
 
 		if (data.issues) {
 			await this.assignCaseResultIssue(id, issues);
