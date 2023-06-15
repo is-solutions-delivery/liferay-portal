@@ -15,9 +15,11 @@
 import Rest from '~/core/Rest';
 
 import yupSchema from '../../schema/yup';
+import {JiraClientExtensionRestImpl} from './JiraClientExtension';
 import {TestrayRequirement} from './types';
 
 type Requirement = typeof yupSchema.requirement.__outputType & {
+	components: string;
 	projectId: number;
 };
 
@@ -26,6 +28,7 @@ class TestrayRequirementsImpl extends Rest<Requirement, TestrayRequirement> {
 		super({
 			adapter: ({
 				componentId: r_componentToRequirements_c_componentId,
+				components,
 				description,
 				descriptionType,
 				key,
@@ -34,6 +37,7 @@ class TestrayRequirementsImpl extends Rest<Requirement, TestrayRequirement> {
 				projectId: r_projectToRequirements_c_projectId,
 				summary,
 			}) => ({
+				components,
 				description,
 				descriptionType,
 				key,
@@ -59,6 +63,44 @@ class TestrayRequirementsImpl extends Rest<Requirement, TestrayRequirement> {
 			}),
 			uri: 'requirements',
 		});
+	}
+	public async importJiraIssue(form: any) {
+		const importedIssues = await JiraClientExtensionRestImpl.importIssues(
+			form.issues.map((issue: any) => issue.label)
+		);
+
+		const errors = [];
+		const createdIssues = [];
+
+		for (const ticket in importedIssues) {
+			if (importedIssues[ticket] !== null) {
+				if (!form.id) {
+					form.key = `R-${Math.ceil(Math.random() * 1000)}`;
+				}
+
+				const formData = {
+					components: importedIssues[ticket]?.jiraComponents.join(
+						', '
+					),
+					description: importedIssues[ticket]?.description,
+					descriptionType: 'markdown',
+					key: form?.key,
+					linkTitle: importedIssues[ticket]?.key,
+					linkURL: `${form?.jiraBaseURL}/${importedIssues[ticket]?.key}`,
+					projectId: form?.projectId,
+					summary: importedIssues[ticket]?.summary,
+				};
+
+				createdIssues.push(ticket);
+				await this.create(formData as any);
+			}
+
+			if (importedIssues[ticket] === null) {
+				errors.push(ticket);
+			}
+		}
+
+		return {createdIssues, errors};
 	}
 }
 
