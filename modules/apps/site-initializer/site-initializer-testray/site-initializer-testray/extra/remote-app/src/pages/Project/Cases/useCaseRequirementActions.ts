@@ -79,7 +79,7 @@ const useCaseRequirementActions = ({
 				testrayCaseRequirementsImpl
 					.removeResource(id)
 					?.then(() => removeItemFromList(mutate, id))
-					.then(() => modal.onSave())
+					.then(modal.onSave)
 					.catch(modal.onError),
 			icon: 'trash',
 			name: i18n.translate('delete'),

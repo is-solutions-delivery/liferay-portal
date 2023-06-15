@@ -48,7 +48,9 @@ const UserOutlet = () => {
 								update:
 									userAccount?.actions['put-user-account'],
 						  }
-						: null,
+						: {
+								replace: true,
+						  },
 					mutateUser: userId
 						? userId === Liferay.ThemeDisplay.getUserId()
 							? (response: KeyedMutator<UserAccount>) => {
