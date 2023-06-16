@@ -27,19 +27,19 @@
 			<#if entries?has_content && entries?size == 1 && !stringUtil.equals(curTitle, "App Marketplace") && !stringUtil.equals(curTitle, "Solutions Marketplace")>
 				<div style="color: var(--gray-700);">&nbsp;/&nbsp;</div>
 
-				<a style="color: var(--gray-700);" href="/">
+				<a href="/" style="color: var(--gray-700);">
 					App Marketplace
 				</a>
 
 				<div style="color: var(--gray-700);">&nbsp;/&nbsp;</div>
 
-				<a style="color: var(--gray-700);" href="${currentURL}">
+				<a href="${currentURL}" style="color: var(--gray-700);">
 					${curTitle}
 				</a>
 			<#else>
 				<div style="color: var(--gray-700);">&nbsp;/&nbsp;</div>
 
-				<a style="color: var(--gray-700);" href="${curURL}">
+				<a href="${curURL}" style="color: var(--gray-700);">
 					${curTitle}
 				</a>
 			</#if>

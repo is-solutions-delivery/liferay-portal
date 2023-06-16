@@ -20,6 +20,7 @@
 				<div class="font-weight-semi-bold specification-title" style="color: var(--black); font-size: 14.4px; line-height: 1.389; letter-spacing: 1px;">
 					${specification.specificationTitle?upper_case}
 				</div>
+
 				<div class="mt-2 specification-value">
 					${specification.value}
 				</div>

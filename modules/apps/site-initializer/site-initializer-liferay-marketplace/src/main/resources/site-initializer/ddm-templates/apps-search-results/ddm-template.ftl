@@ -1,11 +1,4 @@
 <style type="text/css">
-	.adt-apps-search-results .cards-container {
-		display: grid;
-		grid-column-gap: 1rem;
-		grid-row-gap: 1.5rem;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
 	.adt-apps-search-results .app-search-results-card:hover {
 		color: var(--black);
 	}
@@ -15,16 +8,22 @@
 		min-width: 3rem;
 	}
 
+	.adt-apps-search-results .cards-container {
+		display: grid;
+		grid-column-gap: 1rem;
+		grid-row-gap: 1.5rem;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
 	@media screen and (max-width: 599px) {
+		.adt-apps-search-results .app-search-results-card {
+			height: 281px;
+		}
 
 		.adt-apps-search-results .cards-container {
 			grid-template-columns: 288px;
 			grid-row-gap: 1rem;
 			justify-content: center;
-		}
-
-		.adt-apps-search-results .app-search-results-card {
-			height: 281px;
 		}
 	}
 
