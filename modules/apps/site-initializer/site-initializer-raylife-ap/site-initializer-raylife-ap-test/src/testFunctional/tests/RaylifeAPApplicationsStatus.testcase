@@ -234,7 +234,9 @@ definition {
 		}
 
 		task ("And navigate for Raylife Ap") {
-			Navigator.openSpecificURL(url = "http://localhost:8080/group/raylife-ap");
+			var portalURL = PropsUtil.get("portal.url");
+
+			Navigator.openSpecificURL(url = "${portalURL}/group/raylife-ap");
 
 			Refresh();
 		}
