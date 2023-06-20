@@ -26,8 +26,8 @@ import Onboarding from './routes/onboarding';
 const ELEMENT_ID = 'liferay-remote-app-customer-portal';
 
 const AppRoutes = {
-	home: <Home />,
-	onboarding: <Onboarding />,
+	home: <CustomerPortal />,
+	onboarding: <CustomerPortal />,
 	portal: <CustomerPortal />,
 };
 
