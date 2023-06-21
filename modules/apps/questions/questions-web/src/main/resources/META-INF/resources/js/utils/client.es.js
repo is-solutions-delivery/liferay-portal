@@ -612,10 +612,6 @@ export const getRankedThreadsQuery = `
 					id
 					image
 					name
-					userGroupInformations {
-						id
-						name
-					}
 				}
 				dateModified
 				friendlyUrlPath
@@ -826,10 +822,6 @@ export const getUserActivityQuery = `
 					id
 					image
 					name
-					userGroupInformations {
-						id
-						name
-					}
 				}
 				creatorStatistics {
 					postsNumber
@@ -989,10 +981,6 @@ export const getSubscriptionsQuery = `
 							id
 							image
 							name
-							userGroupInformations {
-								id
-								name
-							}
 						}
 						creatorStatistics {
 							joinDate
