@@ -2626,13 +2626,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).build();
 
 		com.liferay.notification.model.NotificationTemplate
-			existingNotificationTemplate =
+			serviceBuilderNotificationTemplate =
 				_notificationTemplateLocalService.
 					fetchNotificationTemplateByExternalReferenceCode(
 						notificationTemplate.getExternalReferenceCode(),
 						serviceContext.getCompanyId());
 
-		if (existingNotificationTemplate == null) {
+		if (serviceBuilderNotificationTemplate == null) {
 			notificationTemplate =
 				notificationTemplateResource.postNotificationTemplate(
 					notificationTemplate);
@@ -2641,7 +2641,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			notificationTemplate =
 				notificationTemplateResource.
 					putNotificationTemplateByExternalReferenceCode(
-						existingNotificationTemplate.getExternalReferenceCode(),
+						serviceBuilderNotificationTemplate.getExternalReferenceCode(),
 						notificationTemplate);
 		}
 
