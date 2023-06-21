@@ -17,7 +17,6 @@ package com.liferay.headless.site.resource.v1_0.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.headless.site.client.dto.v1_0.Site;
 import com.liferay.headless.site.client.problem.Problem;
-import com.liferay.headless.site.client.resource.v1_0.SiteResource;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
@@ -25,8 +24,10 @@ import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.test.constants.TestDataConstants;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -36,14 +37,16 @@ import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.site.initializer.SiteInitializer;
 
+import java.io.File;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,21 +61,11 @@ import org.osgi.framework.ServiceRegistration;
 @RunWith(Arquillian.class)
 public class SiteResourceTest extends BaseSiteResourceTestCase {
 
-	@Before
-	@Override
-	public void setUp() throws Exception {
-		SiteResource.Builder builder = SiteResource.builder();
-
-		siteResource = builder.authentication(
-			"test@liferay.com", "test"
-		).locale(
-			LocaleUtil.getDefault()
-		).build();
-	}
-
 	@After
 	@Override
 	public void tearDown() throws Exception {
+		super.tearDown();
+
 		Collections.reverse(_sites);
 
 		for (Site site : _sites) {
@@ -102,9 +95,24 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 	}
 
 	@Override
+	protected void assertValid(Site site, Map<String, File> multipartFiles)
+		throws Exception {
+	}
+
+	@Override
+	protected Map<String, File> getMultipartFiles() throws Exception {
+		return HashMapBuilder.<String, File>put(
+			"file",
+			() -> FileUtil.createTempFile(TestDataConstants.TEST_BYTE_ARRAY)
+		).build();
+	}
+
+	@Override
 	protected Site randomSite() throws Exception {
 		return new Site() {
 			{
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
@@ -119,8 +127,38 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		return postSite;
 	}
 
+	@Override
+	protected Site testPutSiteByExternalReferenceCode_addSite()
+		throws Exception {
+
+		return siteResource.putSiteByExternalReferenceCode(
+			RandomTestUtil.randomString(), randomSite(), getMultipartFiles());
+	}
+
+	@Override
+	protected Site testPutSiteByExternalReferenceCode_getSite(
+		String externalReferenceCode) {
+
+		Group group = _groupLocalService.fetchGroupByExternalReferenceCode(
+			externalReferenceCode, testCompany.getCompanyId());
+
+		return new Site() {
+			{
+				externalReferenceCode = group.getExternalReferenceCode();
+				friendlyUrlPath = group.getFriendlyURL();
+				id = group.getGroupId();
+				key = group.getGroupKey();
+				name = group.getName(LocaleUtil.getDefault());
+			}
+		};
+	}
+
 	private void _testPostSiteFailureDuplicateName() throws Exception {
-		Site randomSite = randomSite();
+		Site randomSite = new Site() {
+			{
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+			}
+		};
 
 		testPostSite_addSite(randomSite);
 

@@ -21,22 +21,30 @@ import com.liferay.portal.events.ThemeServicePreAction;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.GroupService;
 import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.permission.GroupPermission;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
+import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
 import com.liferay.sites.kernel.util.Sites;
+
+import java.io.File;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -59,10 +67,11 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 	@Override
 	public Site postSite(Site site) throws Exception {
 		try {
-			Group group = _addGroup(site);
+			Group group = _addGroup(site.getExternalReferenceCode(), site);
 
 			return new Site() {
 				{
+					externalReferenceCode = group.getExternalReferenceCode();
 					friendlyUrlPath = group.getFriendlyURL();
 					id = group.getGroupId();
 					key = group.getGroupKey();
@@ -75,7 +84,65 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 		}
 	}
 
-	private Group _addGroup(Site site) throws Exception {
+	@Override
+	public Site putSiteByExternalReferenceCode(
+			String externalReferenceCode, MultipartBody multipartBody)
+		throws Exception {
+
+		Group group = _groupLocalService.fetchGroupByExternalReferenceCode(
+			externalReferenceCode, contextCompany.getCompanyId());
+
+		if (group == null) {
+			group = _addGroup(
+				externalReferenceCode,
+				multipartBody.getValueAsInstance("site", Site.class));
+		}
+		else {
+			if (!group.isSite()) {
+				throw new IllegalArgumentException(
+					"No site was found for key " + externalReferenceCode);
+			}
+
+			_groupPermission.check(
+				PermissionThreadLocal.getPermissionChecker(), group,
+				ActionKeys.UPDATE);
+		}
+
+		File tempFile = FileUtil.createTempFile(
+			multipartBody.getBinaryFileAsBytes("file"));
+
+		File tempDir = FileUtil.createTempFolder();
+
+		try {
+			FileUtil.unzip(tempFile, tempDir);
+
+			SiteInitializer siteInitializer = _siteInitializerFactory.create(
+				new File(tempDir, "site-initializer"),
+				group.getName(LocaleUtil.getDefault()));
+
+			siteInitializer.initialize(group.getGroupId());
+		}
+		finally {
+			FileUtil.deltree(tempFile);
+			FileUtil.deltree(tempDir);
+		}
+
+		Group finalGroup = group;
+
+		return new Site() {
+			{
+				externalReferenceCode = finalGroup.getExternalReferenceCode();
+				friendlyUrlPath = finalGroup.getFriendlyURL();
+				id = finalGroup.getGroupId();
+				key = finalGroup.getGroupKey();
+				name = finalGroup.getName(LocaleUtil.getDefault());
+			}
+		};
+	}
+
+	private Group _addGroup(String externalReferenceCode, Site site)
+		throws Exception {
+
 		if (Validator.isNull(site.getTemplateKey()) &&
 			Validator.isNotNull(site.getTemplateType())) {
 
@@ -137,7 +204,7 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
 		try {
-			return _addGroup(site, serviceContext);
+			return _addGroup(externalReferenceCode, site, serviceContext);
 		}
 		catch (Exception exception) {
 
@@ -152,7 +219,9 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 		}
 	}
 
-	private Group _addGroup(Site site, ServiceContext serviceContext)
+	private Group _addGroup(
+			String externalReferenceCode, Site site,
+			ServiceContext serviceContext)
 		throws Exception {
 
 		long parentGroupId = GroupConstants.DEFAULT_PARENT_GROUP_ID;
@@ -183,10 +252,11 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 			}
 		}
 
-		Group group = _groupService.addGroup(
-			parentGroupId, GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, null,
-			type, true, GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, null,
-			true, false, true, serviceContext);
+		Group group = _groupService.addOrUpdateGroup(
+			externalReferenceCode, parentGroupId,
+			GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, null, type, true,
+			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, null, true, false,
+			true, serviceContext);
 
 		LiveUsers.joinGroup(
 			contextCompany.getCompanyId(), group.getGroupId(),
@@ -240,10 +310,16 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 	private GroupLocalService _groupLocalService;
 
 	@Reference
+	private GroupPermission _groupPermission;
+
+	@Reference
 	private GroupService _groupService;
 
 	@Reference
 	private LayoutSetPrototypeLocalService _layoutSetPrototypeLocalService;
+
+	@Reference
+	private SiteInitializerFactory _siteInitializerFactory;
 
 	@Reference
 	private SiteInitializerRegistry _siteInitializerRegistry;
