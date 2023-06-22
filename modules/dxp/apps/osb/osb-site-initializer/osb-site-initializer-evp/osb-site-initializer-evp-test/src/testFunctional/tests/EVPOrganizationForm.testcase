@@ -1,0 +1,82 @@
+@component-name = "OSB Site Initializer EVP"
+definition {
+
+	var baseURL = PropsUtil.get("portal.url");
+
+	property custom.properties = "feature.flag.LPS-169981=true";
+	property osgi.modules.includes = "osb-site-initializer-evp";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer EVP";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new EVP Site") {
+			EVPUtils.addEVPSite();
+		}
+
+		task ("Login with the Employee user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "Employee@liferay.com",
+				userLoginFullName = "Employee Employee");
+		}
+
+		task ("Navigate to EVP Site and Sign In") {
+			EVPUtils.gotoEVP();
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+        ObjectAdmin.deleteAllCustomObjectsViaAPI();
+
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "EVP Portal");
+		}
+	}
+
+	@description = "This is a test for LPS-162894 - Verify that after submit the form, when click on 'Done' button, will be redirected back to 'Organization' page"
+	@priority = 2
+	test CanSeeOrganizationAfterCreate {
+		task ("Given that the Employee user go to the organization menu and clicks on create an organization") {
+			EVPOrganization.goToCreateOrganization();
+		}
+
+		task ("When the user fills in all the fields of the organization and click On Done Button") {
+			EVPOrganization.fillOrganizationForm(
+				bankingInfo = "Bank Test",
+				city = "City Test",
+				contactEmail = "test@liferay.com",
+				contactName = "Contact Test",
+				contactPhone = 12345,
+				country = "Country Test",
+				organizationName = "Organization Test",
+				organizationSite = "www.test.com.br",
+				smallDescription = "Description Test",
+				state = "State Test",
+				street = "Street Test",
+				taxId = 12345,
+				zipCode = "12.345-67",
+				done = "true");
+		}
+		
+		task ("Then The user is Redirection to page Organization and view a Organization Created") {
+			EVPNavigator.assertActiveBreadcrumb(activeItem = "Organization");
+
+			EVPOrganization.viewOrganizationCreated(name = "Organization Test");
+		}
+	}
+
+}
+
+
