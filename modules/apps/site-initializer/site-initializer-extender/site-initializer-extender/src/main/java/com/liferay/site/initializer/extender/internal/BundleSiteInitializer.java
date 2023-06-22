@@ -15,7 +15,6 @@
 package com.liferay.site.initializer.extender.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountEntryModel;
@@ -202,14 +201,14 @@ import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 import com.liferay.template.model.TemplateEntry;
 import com.liferay.template.service.TemplateEntryLocalService;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.wiring.BundleWiring;
 
+import javax.servlet.ServletContext;
 import java.io.Serializable;
-
 import java.net.URL;
 import java.net.URLConnection;
-
 import java.text.DateFormat;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -223,11 +222,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.servlet.ServletContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.wiring.BundleWiring;
 
 /**
  * @author Brian Wing Shun Chan
@@ -473,6 +467,22 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteNavigationMenuItemSettingsBuilder =
 					new SiteNavigationMenuItemSettingsBuilder();
 
+			Map<String, String> documentsStringUtilReplaceValues = _invoke(
+				() -> _addOrUpdateDocuments(
+					serviceContext, siteNavigationMenuItemSettingsBuilder));
+
+			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
+				_invoke(() -> _addOrUpdateListTypeDefinitions(serviceContext));
+
+			Map<String, String>
+				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues =
+					_invoke(
+						() -> _addObjectDefinitions(
+							documentsStringUtilReplaceValues,
+							listTypeDefinitionIdsStringUtilReplaceValues,
+							serviceContext,
+							siteNavigationMenuItemSettingsBuilder));
+
 			_invoke(() -> _addAccountGroups(serviceContext));
 			_invoke(() -> _addAccounts(serviceContext));
 
@@ -485,9 +495,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_invoke(
 					() -> _addAssetListEntries(
 						_ddmStructureLocalService, serviceContext));
-			Map<String, String> documentsStringUtilReplaceValues = _invoke(
-				() -> _addOrUpdateDocuments(
-					serviceContext, siteNavigationMenuItemSettingsBuilder));
 
 			_invoke(
 				() -> _addFragmentEntries(
@@ -527,26 +534,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			_invoke(
 				() -> _addOrUpdateDDMTemplates(
-					_ddmStructureLocalService, serviceContext));
+					_ddmStructureLocalService,
+					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
+					serviceContext));
 			_invoke(
 				() -> _addOrUpdateJournalArticles(
 					_ddmStructureLocalService, _ddmTemplateLocalService,
 					documentsStringUtilReplaceValues, serviceContext,
 					siteNavigationMenuItemSettingsBuilder));
 
-			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
-				_invoke(() -> _addOrUpdateListTypeDefinitions(serviceContext));
-
 			_invoke(() -> _addUserAccounts(serviceContext));
-
-			Map<String, String>
-				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues =
-					_invoke(
-						() -> _addObjectDefinitions(
-							documentsStringUtilReplaceValues,
-							listTypeDefinitionIdsStringUtilReplaceValues,
-							serviceContext,
-							siteNavigationMenuItemSettingsBuilder));
 
 			_invoke(
 				() -> _addOrUpdateNotificationTemplates(
@@ -1750,6 +1747,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private void _addOrUpdateDDMTemplates(
 			DDMStructureLocalService ddmStructureLocalService,
+			Map<String, String>
+				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 			ServiceContext serviceContext)
 		throws Exception {
 
@@ -1764,7 +1763,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			URL url = enumeration.nextElement();
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(
-				StringUtil.read(url.openStream()));
+				_replace(
+					StringUtil.read(url.openStream()),
+					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues));
 
 			long resourceClassNameId = _portal.getClassNameId(
 				jsonObject.getString(
