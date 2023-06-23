@@ -121,7 +121,6 @@ import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
@@ -197,6 +196,22 @@ import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.template.model.TemplateEntry;
 import com.liferay.template.service.TemplateEntryLocalService;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+
+import java.math.BigDecimal;
+
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.servlet.ServletContext;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -204,26 +219,16 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.ServletContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Brian Wing Shun Chan
@@ -1074,7 +1079,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(ddmStructure.hasField("aField"));
 	}
 
-	private void _assertDDMTemplate1() throws PortalException {
+	private void _assertDDMTemplate1() throws Exception {
 		DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			_group.getGroupId(),
 			_portal.getClassNameId(DDMStructure.class.getName()),
@@ -1094,7 +1099,8 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(ddmTemplate);
 
 		TemplateEntry templateEntry =
-			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(ddmTemplate.getTemplateId());
+			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(
+				ddmTemplate.getTemplateId());
 
 		String infoClassName = templateEntry.getInfoItemClassName();
 
@@ -1119,7 +1125,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("${entries?size}", ddmTemplate.getScript());
 	}
 
-	private void _assertDDMTemplate2() throws PortalException {
+	private void _assertDDMTemplate2() throws Exception {
 		DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			_group.getGroupId(),
 			_portal.getClassNameId(DDMStructure.class.getName()),
@@ -1150,7 +1156,8 @@ public class BundleSiteInitializerTest {
 		Assert.assertNotNull(ddmTemplate);
 
 		TemplateEntry templateEntry =
-			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(ddmTemplate.getTemplateId());
+			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(
+				ddmTemplate.getTemplateId());
 
 		String infoClassName = templateEntry.getInfoItemClassName();
 
@@ -3438,9 +3445,6 @@ public class BundleSiteInitializerTest {
 	private static PLOEntryLocalService _ploEntryLocalService;
 
 	@Inject
-	private TemplateEntryLocalService _templateEntryLocalService;
-
-	@Inject
 	private AccountEntryOrganizationRelLocalService
 		_accountEntryOrganizationRelLocalService;
 
@@ -3633,6 +3637,9 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private StyleBookEntryLocalService _styleBookEntryLocalService;
+
+	@Inject
+	private TemplateEntryLocalService _templateEntryLocalService;
 
 	@Inject
 	private UserAccountResource.Factory _userAccountResourceFactory;
