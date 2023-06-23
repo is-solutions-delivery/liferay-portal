@@ -1106,10 +1106,10 @@ public class BundleSiteInitializerTest {
 			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(
 				ddmTemplate.getTemplateId());
 
-		String infoClassName = templateEntry.getInfoItemClassName();
+		String infoItemClassName = templateEntry.getInfoItemClassName();
 
 		Assert.assertFalse(
-			infoClassName.contains(
+			infoItemClassName.contains(
 				"[$OBJECT_DEFINITION_ID:TestObjectDefinition1$]"));
 
 		ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
@@ -1162,10 +1162,10 @@ public class BundleSiteInitializerTest {
 			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(
 				ddmTemplate.getTemplateId());
 
-		String infoClassName = templateEntry.getInfoItemClassName();
+		String infoItemClassName = templateEntry.getInfoItemClassName();
 
 		Assert.assertFalse(
-			infoClassName.contains(
+			infoItemClassName.contains(
 				"[$OBJECT_DEFINITION_ID:TestObjectDefinition1$]"));
 
 		ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
