@@ -473,22 +473,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteNavigationMenuItemSettingsBuilder =
 					new SiteNavigationMenuItemSettingsBuilder();
 
-			Map<String, String> documentsStringUtilReplaceValues = _invoke(
-				() -> _addOrUpdateDocuments(
-					serviceContext, siteNavigationMenuItemSettingsBuilder));
-
-			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
-				_invoke(() -> _addOrUpdateListTypeDefinitions(serviceContext));
-
-			Map<String, String>
-				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues =
-					_invoke(
-						() -> _addObjectDefinitions(
-							documentsStringUtilReplaceValues,
-							listTypeDefinitionIdsStringUtilReplaceValues,
-							serviceContext,
-							siteNavigationMenuItemSettingsBuilder));
-
 			_invoke(() -> _addAccountGroups(serviceContext));
 			_invoke(() -> _addAccounts(serviceContext));
 
@@ -501,6 +485,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_invoke(
 					() -> _addAssetListEntries(
 						_ddmStructureLocalService, serviceContext));
+			Map<String, String> documentsStringUtilReplaceValues = _invoke(
+				() -> _addOrUpdateDocuments(
+					serviceContext, siteNavigationMenuItemSettingsBuilder));
 
 			_invoke(
 				() -> _addFragmentEntries(
@@ -538,18 +525,31 @@ public class BundleSiteInitializer implements SiteInitializer {
 				() -> _updateLayoutSets(
 					documentsStringUtilReplaceValues, serviceContext));
 
+			Map<String, String> listTypeDefinitionIdsStringUtilReplaceValues =
+				_invoke(() -> _addOrUpdateListTypeDefinitions(serviceContext));
+
+			_invoke(() -> _addUserAccounts(serviceContext));
+
+			Map<String, String>
+				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues =
+					_invoke(
+						() -> _addObjectDefinitions(
+							documentsStringUtilReplaceValues,
+							listTypeDefinitionIdsStringUtilReplaceValues,
+							serviceContext,
+							siteNavigationMenuItemSettingsBuilder));
+
 			_invoke(
 				() -> _addOrUpdateDDMTemplates(
 					_ddmStructureLocalService,
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 					serviceContext));
+
 			_invoke(
 				() -> _addOrUpdateJournalArticles(
 					_ddmStructureLocalService, _ddmTemplateLocalService,
 					documentsStringUtilReplaceValues, serviceContext,
 					siteNavigationMenuItemSettingsBuilder));
-
-			_invoke(() -> _addUserAccounts(serviceContext));
 
 			_invoke(
 				() -> _addOrUpdateNotificationTemplates(
