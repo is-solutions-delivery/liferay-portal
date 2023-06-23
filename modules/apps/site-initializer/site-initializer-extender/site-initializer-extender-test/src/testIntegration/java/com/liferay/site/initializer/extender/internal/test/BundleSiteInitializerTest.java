@@ -1097,6 +1097,10 @@ public class BundleSiteInitializerTest {
 			"TEST INFORMATION DDM TEMPLATE KEY");
 
 		Assert.assertNotNull(ddmTemplate);
+		Assert.assertEquals(
+			"Test Information DDM Template Name",
+			ddmTemplate.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertEquals("${entries?size}", ddmTemplate.getScript());
 
 		TemplateEntry templateEntry =
 			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(
@@ -1106,12 +1110,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertFalse(
 			infoClassName.contains(
-				"[$TestObjectDefinition3#Test_Object_Entry_1$]"));
-
-		Assert.assertEquals(
-			"Test Information DDM Template Name",
-			ddmTemplate.getName(LocaleUtil.getSiteDefault()));
-		Assert.assertEquals("${entries?size}", ddmTemplate.getScript());
+				"[$OBJECT_DEFINITION_ID:TestObjectDefinition1$]"));
 
 		ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			_group.getGroupId(),
@@ -1154,6 +1153,10 @@ public class BundleSiteInitializerTest {
 			"TEST INFORMATION DDM TEMPLATE KEY");
 
 		Assert.assertNotNull(ddmTemplate);
+		Assert.assertEquals(
+			"Test Information DDM Template Name",
+			ddmTemplate.getName(LocaleUtil.getSiteDefault()));
+		Assert.assertEquals("${entries?size}", ddmTemplate.getScript());
 
 		TemplateEntry templateEntry =
 			_templateEntryLocalService.fetchTemplateEntryByDDMTemplateId(
@@ -1163,12 +1166,7 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertFalse(
 			infoClassName.contains(
-				"[$TestObjectDefinition3#Test_Object_Entry_2$]"));
-
-		Assert.assertEquals(
-			"Test Information DDM Template Name",
-			ddmTemplate.getName(LocaleUtil.getSiteDefault()));
-		Assert.assertEquals("${entries?size}", ddmTemplate.getScript());
+				"[$OBJECT_DEFINITION_ID:TestObjectDefinition1$]"));
 
 		ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			_group.getGroupId(),
