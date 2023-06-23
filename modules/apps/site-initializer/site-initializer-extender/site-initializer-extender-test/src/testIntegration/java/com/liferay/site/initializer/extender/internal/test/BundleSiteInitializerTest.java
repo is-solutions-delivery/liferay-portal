@@ -1079,7 +1079,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(ddmStructure.hasField("aField"));
 	}
 
-	private void _assertDDMTemplate1() throws Exception {
+	private void _assertDDMTemplate1() {
 		DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			_group.getGroupId(),
 			_portal.getClassNameId(DDMStructure.class.getName()),
@@ -1124,7 +1124,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals("${entries?size}", ddmTemplate.getScript());
 	}
 
-	private void _assertDDMTemplate2() throws Exception {
+	private void _assertDDMTemplate2() {
 		DDMTemplate ddmTemplate = _ddmTemplateLocalService.fetchTemplate(
 			_group.getGroupId(),
 			_portal.getClassNameId(DDMStructure.class.getName()),
