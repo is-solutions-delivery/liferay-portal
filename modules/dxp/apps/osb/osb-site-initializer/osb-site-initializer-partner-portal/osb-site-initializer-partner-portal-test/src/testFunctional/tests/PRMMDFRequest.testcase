@@ -428,22 +428,21 @@ definition {
 			PRMMDFRequest.viewErrorMessage(errorMessage = "It is not possible to give a bigger discount than the Claim Percent");
 		}
 	}
-	
+
 	@description = "Automation ID: LPS-188805 | Test summary: Verify that isn't possible to submit an MDF without a currency"
 	@priority = 5
 	test CannotSubmitMDFWithoutCurrency {
-		property solutions.acceptance = "true";
-		property test.name.skip.portal.instance = "PRMMDFRequest#Cantsend";
+		property test.name.skip.portal.instance = "PRMMDFRequest#CannotSubmitMDFWithoutCurrency";
 
 		// Temporarily skip portal instances to get tests running for pending release. LRQA-80052
 
 		task ("Given a new account without currency is created") {
 			JSONPRM.addAccount(
-			accountName = "Without Currency",
-			currency = "");
+				accountName = "Without Currency",
+				currency = "");
 		}
 
-		task("And Add the user to this account") {
+		task ("And Add the user to this account") {
 			JSONAccountEntryUser.addExistUsertoAccount(
 				accountEntryName = "Without Currency",
 				userEmailAddress = "pmu@partner.com");
@@ -478,11 +477,11 @@ definition {
 				targetMarketOptions = ${targetMarketOptions},
 				targetRolesOptions = ${targetRolesOptions});
 		}
-				
+
 		task ("Then Assert that the button continue is disabled, with an account without currency") {
 			AssertElementPresent(
-				locator1 = "Button#ANY_DISABLED",
-				key_text = "Continue");
+				key_text = "Continue",
+				locator1 = "Button#ANY_DISABLED");
 		}
 	}
 
@@ -852,8 +851,6 @@ definition {
 				typeOfActivity = ${typeOfActivity});
 		}
 	}
-
-	
 
 	@description = "This is test is for LPS-173510. Verify that the start date cannot be before the current date"
 	@priority = 5

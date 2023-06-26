@@ -556,14 +556,6 @@ definition {
 			var password = "test";
 		}
 
-		if(!(isSet(currency))) {
-			var currency = "BRL";
-		}
-		else{
-			var currency = "";
-
-		}
-
 		var curl = '''
 			${portalURL}/o/headless-admin-user/v1.0/accounts/${accoundId} \
 				-u test@liferay.com:${password} \
