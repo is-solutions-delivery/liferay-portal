@@ -17,6 +17,10 @@ definition {
 			var password = "test";
 		}
 
+		if (!(isSet(currency))) {
+			var currency = "BRL";
+		}
+
 		var curl = '''
 			${portalURL}/o/headless-admin-user/v1.0/accounts \
 				-u test@liferay.com:${password} \
@@ -27,7 +31,7 @@ definition {
 					"externalReferenceCode": "${externalReferenceCode}",
 					"partnerCountry": "US",
 					"claimPercent": 0.5,
-					"currency": "BRL",
+					"currency": "${currency}",
 					"partnerLevel": "gold",
 					"marketingPlan": true,
 					"solutionDeliveryCertification": true,
@@ -552,6 +556,14 @@ definition {
 			var password = "test";
 		}
 
+		if(!(isSet(currency))) {
+			var currency = "BRL";
+		}
+		else{
+			var currency = "";
+
+		}
+
 		var curl = '''
 			${portalURL}/o/headless-admin-user/v1.0/accounts/${accoundId} \
 				-u test@liferay.com:${password} \
@@ -562,7 +574,7 @@ definition {
 					"externalReferenceCode": "${externalReferenceCode}",
 					"partnerCountry": "US",
 					"claimPercent": 0.5,
-					"currency": "BRL",
+					"currency": "${currency}",
 					"partnerLevel": "gold",
 					"marketingPlan": true,
 					"solutionDeliveryCertification": true,
