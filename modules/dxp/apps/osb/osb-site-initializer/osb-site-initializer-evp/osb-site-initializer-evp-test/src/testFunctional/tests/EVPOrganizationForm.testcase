@@ -77,6 +77,62 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-162894 - Verify that after submit the form, when click on 'Create a request' button, will be redirected to request form button"
+    @priority = 4
+    test CanCreateRequestAfterCreateOrganization {
+        task ("Given that the Employee user go to the organization menu and clicks on create an organization") {
+            EVPOrganization.goToCreateOrganization();
+        }   
+        task ("When the user fills in all the fields of the organization and submits the creation form") {
+            EVPOrganization.fillOrganizationForm(
+                organizationName = "Organization Test",
+                organizationSite = "www.test.com.br",
+                smallDescription = "Description Test",
+                street ="Street Test",
+                city ="City Test",
+                state ="State Test",
+                country ="Country Test",
+                zipCode ="12.345-67",
+                taxId ="12345",
+                contactName ="Contact Test",
+                contactEmail ="test@liferay.com",
+                contactPhone ="12345",
+                bankingInfo ="Bank Test",
+                createRequest = "true");      
+        }
+        task ("and the user click On Request Button is Redirection to page Request Form to fills all the Fields of The Request Form") {
+			EVPNavigator.assertActiveBreadcrumb(activeItem ="Request Form");
+			
+            EVPRequest.fillRequestForm(
+                grantRequestType = "Proposed",
+                grantAmount = "20",
+                organization ="Organization Test",
+                phoneNumber ="12345",
+                requestType ="Grant",
+                requestPurposes ="Basic Education",
+                requestBehalf ="Global/Local Poor",
+                requestDescription ="Request Description Test");
+			
+			EVPRequest.viewSuccessMessageRequest();
+
+			EVPNavigator.goToNavItem(navItem = "Request");
+        }
+
+		task ("Then The user is Redirection to page Request and view a Request Created and also view Organization Created") {
+			EVPNavigator.assertActiveBreadcrumb(activeItem ="Request");
+
+			EVPRequest.viewRequestCreated(
+				organizationName = "Organization Test",
+				status = "Awaiting Approval On Evp",
+				index = "1");
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+			
+			EVPOrganization.viewOrganizationCreated(
+				organizationName = "Organization Test",
+				status = "Awaiting Approval On EVP");
+        }
+	}
 }
 
 
