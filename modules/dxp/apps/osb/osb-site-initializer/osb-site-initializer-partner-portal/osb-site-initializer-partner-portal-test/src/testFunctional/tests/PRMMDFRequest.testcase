@@ -428,6 +428,63 @@ definition {
 			PRMMDFRequest.viewErrorMessage(errorMessage = "It is not possible to give a bigger discount than the Claim Percent");
 		}
 	}
+	
+	@description = "Automation ID: LPS-188805 | Test summary: Verify that isn't possible to submit an MDF without a currency"
+	@priority = 5
+	test CannotSubmitMDFWithoutCurrency {
+		property solutions.acceptance = "true";
+		property test.name.skip.portal.instance = "PRMMDFRequest#Cantsend";
+
+		// Temporarily skip portal instances to get tests running for pending release. LRQA-80052
+
+		task ("Given a new account without currency is created") {
+			JSONPRM.addAccount(
+			accountName = "Without Currency",
+			currency = "");
+		}
+
+		task("And Add the user to this account") {
+			JSONAccountEntryUser.addExistUsertoAccount(
+				accountEntryName = "Without Currency",
+				userEmailAddress = "pmu@partner.com");
+		}
+
+		var accountName = "Without Currency";
+		var campaignName = "Campaign Name";
+		var goalsOptions = "Lead generation";
+		var targetMarketOptions = "Education";
+		var targetRolesOptions = "Administrator";
+		var activityDescription = "Activity Description";
+		var activityName = "Activity Name 1";
+		var budgetList = "Sponsorship Fee-2000";
+		var expense = "Sponsorship Fee";
+		var leadList = "No";
+		var tactic = "Other";
+		var typeOfActivity = "Miscellaneous Marketing";
+		var startDate = DateUtil.getFormattedDate("+2", "MMddyyyy");
+		var endDate = DateUtil.getFormattedDate("+3", "MMddyyyy");
+
+		task ("When make an new MDF Request") {
+			PRMMarketing.gotoAddNewMDF();
+		}
+
+		task ("And fill all fields from MDF Request") {
+			PRMMDFRequest.fillGoalsPage(
+				accountName = ${accountName},
+				additionalOptions = ${additionalOptions},
+				campaignDescription = "Campaign Description",
+				campaignName = ${campaignName},
+				goalsOptions = ${goalsOptions},
+				targetMarketOptions = ${targetMarketOptions},
+				targetRolesOptions = ${targetRolesOptions});
+		}
+				
+		task ("Then Assert that the button continue is disabled, with an account without currency") {
+			AssertElementPresent(
+				locator1 = "Button#ANY_DISABLED",
+				key_text = "Continue");
+		}
+	}
 
 	@description = "This is a test for LPS-171641. Verify that when click on '-' button, the budget value will be cleaned"
 	@priority = 3
@@ -795,6 +852,8 @@ definition {
 				typeOfActivity = ${typeOfActivity});
 		}
 	}
+
+	
 
 	@description = "This is test is for LPS-173510. Verify that the start date cannot be before the current date"
 	@priority = 5
