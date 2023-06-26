@@ -132,16 +132,16 @@ definition {
 			locator1 = "EVPUtils#KEBAB_MENU_OPTION_ORGANIZATION");
 	}
 
-	@summary = "Assert status in Organization EVP"
-	macro viewStatus {
+	@summary = "View the organization that was created"
+	macro viewOrganizationCreated {
 		AssertElementPresent(
 			key_organizationName = ${organizationName},
 			key_status = ${status},
 			locator1 = "EVPOrganization#ORGANIZATION_STATUS");
 	}
 
-	@summary = "View the organization that was created"
-	macro viewOrganizationCreated {
+	@summary = "Assert status in Organization EVP"
+	macro viewStatus {
 		AssertElementPresent(
 			key_organizationName = ${organizationName},
 			key_status = ${status},
@@ -156,4 +156,5 @@ definition {
 				value1 = "Thank you. Your information was successfully received.");
 		}
 	}
+
 }

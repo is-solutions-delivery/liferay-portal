@@ -24,9 +24,9 @@
 	<td></td>
 </tr>
 <tr>
-    <td>ANY_TEXT</td>
-    <td>//ul/li[contains(text(), '${key_text}')]</td>
-    <td></td>
+	<td>ANY_TEXT</td>
+	<td>//ul/li[contains(text(), '${key_text}')]</td>
+	<td></td>
 </tr>
 </tbody>
 </table>
