@@ -133,6 +133,45 @@ definition {
 				status = "Awaiting Approval On EVP");
         }
 	}
+
+	@description = "This is a test for LPS-162894 - Verify that the user can create a new organization and a 'Thank you' message will be displayed"
+    @priority = 5
+    test CanCreateOrganization {
+        task ("Given that the Employee user go to the organization menu and clicks on create an organization") {
+            EVPOrganization.goToCreateOrganization();
+        }
+
+        task ("When the user fills in all the fields of the organization and submits the creation form") {
+            EVPOrganization.fillOrganizationForm(
+                bankingInfo = "Bank Test",
+                city = "City Test",
+                contactEmail = "test@liferay.com",
+                contactName = "Contact Test",
+                contactPhone = 12345,
+                country = "Country Test",
+                organizationName = "Organization Test 1",
+                organizationSite = "www.test.com.br",
+                smallDescription = "Description Test",
+                state = "State Test",
+                street = "Street Test",
+                taxId = 12345,
+                zipCode = "12.345-67",
+                done = "true");
+        }
+
+        task ("And the message of Thank you. Your information was successfully received is displayed") {
+            EVPOrganization.viewSuccessMessageOrganization();
+
+        }
+
+        task ("Then the user returns to the organizations page and can see the name of the organization that was created") {
+            EVPNavigator.assertActiveBreadcrumb(activeItem ="Organization");
+
+            EVPOrganization.viewOrganizationCreated(
+                organizationName = "Organization Test 1",
+                status = "Awaiting Approval On EVP");
+        }
+    }
 }
 
 
