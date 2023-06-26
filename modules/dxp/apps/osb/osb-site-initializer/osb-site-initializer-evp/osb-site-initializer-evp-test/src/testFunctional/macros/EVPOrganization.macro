@@ -112,7 +112,8 @@ definition {
 		if (${createRequest} == "true") {
 			Button.click(button = "Create a Request");
 		}
-		else {
+
+		if (${done} == "true") {
 			Button.click(button = "Done");
 		}
 	}
@@ -139,4 +140,20 @@ definition {
 			locator1 = "EVPOrganization#ORGANIZATION_STATUS");
 	}
 
+	@summary = "View the organization that was created"
+	macro viewOrganizationCreated {
+		AssertElementPresent(
+			key_organizationName = ${organizationName},
+			key_status = ${status},
+			locator1 = "EVPOrganization#ORGANIZATION_STATUS");
+	}
+
+	@summary = "Assert successful message organization created"
+	macro viewSuccessMessageOrganization {
+		while (IsElementPresent(locator1 = "Message#EMPTY_INFO")) {
+			AssertTextEquals(
+				locator1 = "Message#EMPTY_INFO",
+				value1 = "Thank you. Your information was successfully received.");
+		}
+	}
 }
