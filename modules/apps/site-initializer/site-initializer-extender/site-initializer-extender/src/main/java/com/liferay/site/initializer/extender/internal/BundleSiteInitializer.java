@@ -15,6 +15,7 @@
 package com.liferay.site.initializer.extender.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountEntryModel;
@@ -202,14 +203,14 @@ import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 import com.liferay.template.model.TemplateEntry;
 import com.liferay.template.service.TemplateEntryLocalService;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.wiring.BundleWiring;
 
-import javax.servlet.ServletContext;
 import java.io.Serializable;
+
 import java.net.URL;
 import java.net.URLConnection;
+
 import java.text.DateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -223,6 +224,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.servlet.ServletContext;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.wiring.BundleWiring;
 
 /**
  * @author Brian Wing Shun Chan
@@ -473,7 +479,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			_invoke(() -> _addAccountGroupAssignments(serviceContext));
 
-			Map<String, String> ddmStructureEntryIdsStringUtilReplaceValues =
+			Map<String, String> ddmStructureIdsStringUtilReplaceValues =
 				_invoke(() -> _addOrUpdateDDMStructures(serviceContext));
 
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues =
@@ -590,7 +596,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				() -> _addLayoutsContent(
 					assetListEntryIdsStringUtilReplaceValues,
 					clientExtensionEntryIdsStringUtilReplaceValues,
-					ddmStructureEntryIdsStringUtilReplaceValues,
+					ddmStructureIdsStringUtilReplaceValues,
+					ddmTemplateIdsStringUtilReplaceValues,
 					documentsStringUtilReplaceValues, layoutsMap,
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 					serviceContext,
@@ -603,7 +610,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				() -> _addSegmentsExperiences(
 					assetListEntryIdsStringUtilReplaceValues,
 					clientExtensionEntryIdsStringUtilReplaceValues,
-					ddmStructureEntryIdsStringUtilReplaceValues,
+					ddmTemplateIdsStringUtilReplaceValues,
+					ddmStructureIdsStringUtilReplaceValues,
 					documentsStringUtilReplaceValues,
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 					segmentsEntriesIdsStringUtilReplaceValues, serviceContext,
@@ -943,7 +951,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> clientExtensionEntryIdsStringUtilReplaceValues,
-			Map<String, String> ddmStructureEntryIdsStringUtilReplaceValues,
+			Map<String, String> ddmStructureIdsStringUtilReplaceValues,
+			Map<String, String> ddmTemplateIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
 			Map<String, String>
 				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
@@ -976,7 +985,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_replace(json, serviceContext),
 			assetListEntryIdsStringUtilReplaceValues,
 			clientExtensionEntryIdsStringUtilReplaceValues,
-			ddmStructureEntryIdsStringUtilReplaceValues,
+			ddmTemplateIdsStringUtilReplaceValues,
+			ddmStructureIdsStringUtilReplaceValues,
 			documentsStringUtilReplaceValues,
 			objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 			taxonomyCategoryIdsStringUtilReplaceValues);
@@ -1162,7 +1172,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutsContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> clientExtensionEntryIdsStringUtilReplaceValues,
-			Map<String, String> ddmStructureEntryIdsStringUtilReplaceValues,
+			Map<String, String> ddmStructureIdsStringUtilReplaceValues,
+			Map<String, String> ddmTemplateIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
 			Map<String, Layout> layouts,
 			Map<String, String>
@@ -1177,7 +1188,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_addLayoutContent(
 				assetListEntryIdsStringUtilReplaceValues,
 				clientExtensionEntryIdsStringUtilReplaceValues,
-				ddmStructureEntryIdsStringUtilReplaceValues,
+				ddmStructureIdsStringUtilReplaceValues,
+				ddmTemplateIdsStringUtilReplaceValues,
 				documentsStringUtilReplaceValues,
 				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 				entry.getValue(), entry.getKey(), 0, serviceContext,
@@ -1752,15 +1764,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		Enumeration<URL> enumeration = _bundle.findEntries(
-			"/site-initializer/ddm-templates", "ddm-template.json", true);
-
 		Map<String, String> ddmTemplateIdsStringUtilReplaceValues =
 			new HashMap<>();
-
-		if (enumeration == null) {
-			return ddmTemplateIdsStringUtilReplaceValues;
-		}
 
 		List<DDMTemplate> ddmTemplates =
 			_ddmTemplateLocalService.getDDMTemplates(
@@ -1768,9 +1773,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		for (DDMTemplate ddmTemplate : ddmTemplates) {
 			ddmTemplateIdsStringUtilReplaceValues.put(
-				"DDMTEMPLATE_ID:" +
+				"DDM_TEMPLATE_ID:" +
 					ddmTemplate.getName(LocaleUtil.getSiteDefault()),
 				String.valueOf(ddmTemplate.getTemplateId()));
+		}
+
+		Enumeration<URL> enumeration = _bundle.findEntries(
+			"/site-initializer/ddm-templates", "ddm-template.json", true);
+
+		if (enumeration == null) {
+			return ddmTemplateIdsStringUtilReplaceValues;
 		}
 
 		while (enumeration.hasMoreElements()) {
@@ -1846,6 +1858,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 					SiteInitializerUtil.read(_bundle, "ddm-template.ftl", url),
 					false, false, null, null, serviceContext);
 			}
+
+			ddmTemplateIdsStringUtilReplaceValues.put(
+				"DDM_TEMPLATE_ID:" +
+					ddmTemplate.getName(LocaleUtil.getSiteDefault()),
+				String.valueOf(ddmTemplate.getTemplateId()));
 		}
 
 		return ddmTemplateIdsStringUtilReplaceValues;
@@ -3848,7 +3865,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addSegmentsExperiences(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> clientExtensionEntryIdsStringUtilReplaceValues,
-			Map<String, String> ddmStructureEntryIdsStringUtilReplaceValues,
+			Map<String, String> ddmTemplateIdsStringUtilReplaceValues,
+			Map<String, String> ddmStructureIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
 			Map<String, String>
 				objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
@@ -3932,7 +3950,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 					_addLayoutContent(
 						assetListEntryIdsStringUtilReplaceValues,
 						clientExtensionEntryIdsStringUtilReplaceValues,
-						ddmStructureEntryIdsStringUtilReplaceValues,
+						ddmStructureIdsStringUtilReplaceValues,
+						ddmTemplateIdsStringUtilReplaceValues,
 						documentsStringUtilReplaceValues,
 						objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 						layout, resourcePath,
