@@ -31,8 +31,7 @@
 							{
 								"definition": {
 									"widgetInstance": {
-										"widgetConfig": {
-										},
+										"widgetConfig": {},
 										"widgetName": "com_liferay_site_navigation_breadcrumb_web_portlet_SiteNavigationBreadcrumbPortlet"
 									}
 								},
@@ -58,10 +57,8 @@
 										"key": "evp-grant-values",
 										"siteKey": "[$GROUP_KEY$]"
 									},
-									"fragmentConfig": {
-									},
-									"fragmentFields": [
-									],
+									"fragmentConfig": {},
+									"fragmentFields": [],
 									"fragmentStyle": {
 										"textAlign": "right"
 									},
@@ -85,8 +82,7 @@
 								{
 									"id": "element-text",
 									"value": {
-										"fragmentLink": {
-										},
+										"fragmentLink": {},
 										"text": {
 											"value_i18n": {
 												"en_US": "Request Form"
@@ -117,8 +113,7 @@
 								{
 									"id": "element-text",
 									"value": {
-										"fragmentLink": {
-										},
+										"fragmentLink": {},
 										"text": {
 											"value_i18n": {
 												"en_US": "Employee Information"
@@ -153,9 +148,7 @@
 						"pageElements": [
 							{
 								"definition": {
-									"cssClasses": [
-										".evp-full-name"
-									],
+									"cssClasses": [".evp-full-name"],
 									"fragment": {
 										"key": "INPUTS-text-input"
 									},
@@ -165,8 +158,7 @@
 										"placeholder": "",
 										"showCharactersCount": false
 									},
-									"fragmentFields": [
-									],
+									"fragmentFields": [],
 									"fragmentStyle": {
 										"borderColor": "colorNeutral9",
 										"textColor": "colorNeutral9",
@@ -178,9 +170,7 @@
 							},
 							{
 								"definition": {
-									"cssClasses": [
-										".evp-email-address"
-									],
+									"cssClasses": [".evp-email-address"],
 									"fragment": {
 										"key": "INPUTS-text-input"
 									},
@@ -190,8 +180,7 @@
 										"placeholder": "",
 										"showCharactersCount": false
 									},
-									"fragmentFields": [
-									],
+									"fragmentFields": [],
 									"fragmentStyle": {
 										"marginLeft": "2",
 										"marginRight": "2",
@@ -213,8 +202,7 @@
 										"placeholder": "",
 										"showCharactersCount": false
 									},
-									"fragmentFields": [
-									],
+									"fragmentFields": [],
 									"fragmentStyle": {
 										"textColor": "colorNeutral9",
 										"width": "33%"
@@ -232,20 +220,23 @@
 								"key": "evp-organization-list",
 								"siteKey": "[$GROUP_KEY$]"
 							},
-							"fragmentConfig": {
-							},
-							"fragmentFields": [
-							],
+							"fragmentConfig": {},
+							"fragmentFields": [],
 							"indexed": true
 						},
 						"type": "Fragment"
 					},
 					{
 						"definition": {
+<<<<<<< HEAD
 							"cssClasses": [
 								"fieldOrganizationForm"
 							],
 							"customCSS": ".fieldOrganizationForm{\n display:none;\n}",
+=======
+							"cssClasses": ["fieldRequestStatus"],
+							"customCSS": ".fieldRequestStatus {\ndisplay:none\n}",
+>>>>>>> 6caf8b4 (LPS-188083 Implementing Organization and Request status handler fragment)
 							"fragment": {
 								"key": "INPUTS-select-from-list"
 							},
@@ -253,20 +244,22 @@
 								"inputFieldId": "ObjectField_r_organization_c_evpOrganizationId",
 								"inputRequired": false
 							},
+<<<<<<< HEAD
 							"fragmentFields": [
 							],
 							"fragmentStyle": {
 								"marginBottom": "3"
 							},
+=======
+							"fragmentFields": [],
+>>>>>>> 6caf8b4 (LPS-188083 Implementing Organization and Request status handler fragment)
 							"indexed": true
 						},
 						"type": "Fragment"
 					},
 					{
 						"definition": {
-							"cssClasses": [
-								".form-request-type"
-							],
+							"cssClasses": [".form-request-type"],
 							"fragment": {
 								"key": "INPUTS-select-from-list"
 							},
@@ -274,8 +267,7 @@
 								"inputFieldId": "ObjectField_requestType",
 								"inputRequired": true
 							},
-							"fragmentFields": [
-							],
+							"fragmentFields": [],
 							"fragmentStyle": {
 								"paddingBottom": "4",
 								"textColor": "colorNeutral9"
@@ -286,10 +278,7 @@
 					},
 					{
 						"definition": {
-							"cssClasses": [
-								".service-form",
-								"d-none"
-							],
+							"cssClasses": [".service-form", "d-none"],
 							"fragmentStyle": {
 								"marginBottom": "2"
 							},
@@ -328,8 +317,7 @@
 												{
 													"id": "element-text",
 													"value": {
-														"fragmentLink": {
-														},
+														"fragmentLink": {},
 														"text": {
 															"value_i18n": {
 																"en_US": "Service Request"
@@ -358,8 +346,7 @@
 												"placeholder": "",
 												"showCharactersCount": false
 											},
-											"fragmentFields": [
-											],
+											"fragmentFields": [],
 											"fragmentStyle": {
 												"marginBottom": "3",
 												"textColor": "colorNeutral9"
@@ -394,8 +381,7 @@
 														"inputRequired": false,
 														"placeholder": ""
 													},
-													"fragmentFields": [
-													],
+													"fragmentFields": [],
 													"fragmentStyle": {
 														"textColor": "colorNeutral9",
 														"width": "33%"
@@ -413,8 +399,7 @@
 														"inputFieldId": "ObjectField_startDate",
 														"inputRequired": false
 													},
-													"fragmentFields": [
-													],
+													"fragmentFields": [],
 													"fragmentStyle": {
 														"marginLeft": "2",
 														"marginRight": "2",
@@ -434,8 +419,7 @@
 														"inputFieldId": "ObjectField_endDate",
 														"inputRequired": false
 													},
-													"fragmentFields": [
-													],
+													"fragmentFields": [],
 													"fragmentStyle": {
 														"textColor": "colorNeutral9",
 														"width": "35%"
@@ -455,10 +439,7 @@
 					},
 					{
 						"definition": {
-							"cssClasses": [
-								"d-none",
-								".grant-form"
-							],
+							"cssClasses": ["d-none", ".grant-form"],
 							"fragmentStyle": {
 								"marginBottom": "4"
 							},
@@ -484,8 +465,7 @@
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {
-												},
+												"fragmentLink": {},
 												"text": {
 													"value_i18n": {
 														"en_US": "Grant Request"
@@ -522,9 +502,7 @@
 								"pageElements": [
 									{
 										"definition": {
-											"cssClasses": [
-												"grant-combobox"
-											],
+											"cssClasses": ["grant-combobox"],
 											"fragment": {
 												"key": "INPUTS-select-from-list"
 											},
@@ -532,8 +510,7 @@
 												"inputFieldId": "ObjectField_grantRequestType",
 												"inputRequired": false
 											},
-											"fragmentFields": [
-											],
+											"fragmentFields": [],
 											"fragmentStyle": {
 												"marginRight": "1",
 												"textColor": "colorNeutral9",
@@ -553,8 +530,7 @@
 												"inputRequired": false,
 												"placeholder": ""
 											},
-											"fragmentFields": [
-											],
+											"fragmentFields": [],
 											"fragmentStyle": {
 												"marginLeft": "1",
 												"textColor": "colorNeutral9",
@@ -601,8 +577,7 @@
 												"inputFieldId": "ObjectField_requestPurposes",
 												"inputRequired": true
 											},
-											"fragmentFields": [
-											],
+											"fragmentFields": [],
 											"fragmentStyle": {
 												"marginBottom": "3",
 												"marginRight": "1",
@@ -622,8 +597,7 @@
 												"inputFieldId": "ObjectField_requestBehalf",
 												"inputRequired": true
 											},
-											"fragmentFields": [
-											],
+											"fragmentFields": [],
 											"fragmentStyle": {
 												"marginBottom": "3",
 												"marginLeft": "1",
@@ -648,8 +622,7 @@
 										"placeholder": "",
 										"showCharactersCount": false
 									},
-									"fragmentFields": [
-									],
+									"fragmentFields": [],
 									"fragmentStyle": {
 										"marginBottom": "4",
 										"textColor": "colorNeutral9"
@@ -663,6 +636,31 @@
 					},
 					{
 						"definition": {
+<<<<<<< HEAD
+=======
+							"fragment": {
+								"key": "evp-request-status-handler",
+								"siteKey": "[$GROUP_KEY$]"
+							},
+							"fragmentConfig": {},
+							"fragmentFields": [],
+							"indexed": true
+						},
+						"type": "Fragment"
+					},
+					{
+						"definition": {
+							"cssClasses": ["fieldOrganizationForm"],
+							"customCSS": ".fieldOrganizationForm{\n display:none;\n}",
+							"fragment": {
+								"key": "INPUTS-select-from-list"
+							},
+							"fragmentConfig": {
+								"inputFieldId": "ObjectField_r_organization_c_evpOrganizationId",
+								"inputRequired": false
+							},
+							"fragmentFields": [],
+>>>>>>> 6caf8b4 (LPS-188083 Implementing Organization and Request status handler fragment)
 							"fragmentStyle": {
 							},
 							"indexed": true,
@@ -744,8 +742,7 @@
 										{
 											"id": "submit-button-text",
 											"value": {
-												"fragmentLink": {
-												}
+												"fragmentLink": {}
 											}
 										}
 									],
@@ -762,10 +759,8 @@
 								"key": "evp-request-form-handler",
 								"siteKey": "[$GROUP_KEY$]"
 							},
-							"fragmentConfig": {
-							},
-							"fragmentFields": [
-							],
+							"fragmentConfig": {},
+							"fragmentFields": [],
 							"indexed": true
 						},
 						"type": "Fragment"
