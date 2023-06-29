@@ -90,7 +90,6 @@ import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.utility.page.converter.LayoutUtilityPageEntryTypeConverter;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
-import com.liferay.list.type.service.ListTypeDefinitionLocalService;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.notification.rest.dto.v1_0.NotificationTemplate;
 import com.liferay.notification.rest.resource.v1_0.NotificationTemplateResource;
@@ -271,7 +270,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			layoutPageTemplateStructureRelLocalService,
 		LayoutSetLocalService layoutSetLocalService,
 		LayoutUtilityPageEntryLocalService layoutUtilityPageEntryLocalService,
-		ListTypeDefinitionLocalService listTypeDefinitionLocalService,
 		ListTypeDefinitionResource listTypeDefinitionResource,
 		ListTypeDefinitionResource.Factory listTypeDefinitionResourceFactory,
 		ListTypeEntryLocalService listTypeEntryLocalService,
@@ -353,7 +351,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_layoutSetLocalService = layoutSetLocalService;
 		_layoutUtilityPageEntryLocalService =
 			layoutUtilityPageEntryLocalService;
-		_listTypeDefinitionLocalService = listTypeDefinitionLocalService;
 		_listTypeDefinitionResource = listTypeDefinitionResource;
 		_listTypeDefinitionResourceFactory = listTypeDefinitionResourceFactory;
 		_listTypeEntryLocalService = listTypeEntryLocalService;
@@ -2654,14 +2651,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
-			com.liferay.list.type.model.ListTypeDefinition
-				serviceBuilderListTypeDefinition =
-					_listTypeDefinitionLocalService.
-						fetchListTypeDefinitionByExternalReferenceCode(
-							listTypeDefinition.getExternalReferenceCode(),
-							serviceContext.getCompanyId());
+			ListTypeDefinition existingListTypeDefinition =
+				listTypeDefinitionResource.
+					getListTypeDefinitionByExternalReferenceCode(
+						listTypeDefinition.getExternalReferenceCode());
 
-			if (serviceBuilderListTypeDefinition == null) {
+			if (existingListTypeDefinition == null) {
 				listTypeDefinition =
 					listTypeDefinitionResource.postListTypeDefinition(
 						listTypeDefinition);
@@ -2669,9 +2664,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			else {
 				listTypeDefinition =
 					listTypeDefinitionResource.patchListTypeDefinition(
-						serviceBuilderListTypeDefinition.
-							getListTypeDefinitionId(),
-						listTypeDefinition);
+						existingListTypeDefinition.getId(), listTypeDefinition);
 			}
 
 			listTypeDefinitionIdsStringUtilReplaceValues.put(
@@ -5078,8 +5071,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final LayoutsImporter _layoutsImporter;
 	private final LayoutUtilityPageEntryLocalService
 		_layoutUtilityPageEntryLocalService;
-	private final ListTypeDefinitionLocalService
-		_listTypeDefinitionLocalService;
 	private final ListTypeDefinitionResource _listTypeDefinitionResource;
 	private final ListTypeDefinitionResource.Factory
 		_listTypeDefinitionResourceFactory;
