@@ -1755,7 +1755,7 @@ public class BundleSiteInitializerTest {
 				getNotificationTemplateByExternalReferenceCode(
 					"TESTNOTIFICATIONTEMPLATE1");
 
-		Assert.assertNotNull(notificationTemplateResource);
+		Assert.assertNotNull(notificationTemplate);
 
 		Map<String, String> bodyMap = notificationTemplate.getBody();
 
@@ -1779,7 +1779,7 @@ public class BundleSiteInitializerTest {
 				getNotificationTemplateByExternalReferenceCode(
 					"TESTNOTIFICATIONTEMPLATE2");
 
-		Assert.assertNotNull(notificationTemplateResource);
+		Assert.assertNotNull(notificationTemplate);
 
 		bodyMap = notificationTemplate.getBody();
 
@@ -1814,7 +1814,7 @@ public class BundleSiteInitializerTest {
 				getNotificationTemplateByExternalReferenceCode(
 					"TESTNOTIFICATIONTEMPLATE1");
 
-		Assert.assertNotNull(notificationTemplateResource);
+		Assert.assertNotNull(notificationTemplate);
 
 		Map<String, String> bodyMap = notificationTemplate.getBody();
 
@@ -1838,17 +1838,18 @@ public class BundleSiteInitializerTest {
 				getNotificationTemplateByExternalReferenceCode(
 					"TESTNOTIFICATIONTEMPLATE2");
 
-		Assert.assertNotNull(notificationTemplateResource);
+		Assert.assertNotNull(notificationTemplate);
 
 		bodyMap = notificationTemplate.getBody();
 
 		Assert.assertEquals(
 			"<p>\n\tThis is a template email for Test Notification Template " +
-				"3.\n</p>",
+				"2 Update.\n</p>",
 			bodyMap.get("en_US"));
 
 		Assert.assertEquals(
-			"Test Notification Template 2", notificationTemplate.getName());
+			"Test Notification Template 2 Update",
+			notificationTemplate.getName());
 
 		subjectMap = notificationTemplate.getSubject();
 
@@ -1862,7 +1863,7 @@ public class BundleSiteInitializerTest {
 				getNotificationTemplateByExternalReferenceCode(
 					"TESTNOTIFICATIONTEMPLATE3");
 
-		Assert.assertNotNull(notificationTemplateResource);
+		Assert.assertNotNull(notificationTemplate);
 
 		bodyMap = notificationTemplate.getBody();
 
@@ -1930,7 +1931,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			objectDefinition1.getStatus(), WorkflowConstants.STATUS_APPROVED);
 
-		_assertObjectActions(3, objectDefinition1);
+		_assertObjectActions(4, objectDefinition1);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition1, 0);
 		_assertObjectFields(objectDefinition1, 10);
 		_assertObjectRelationships1(objectDefinition1, _serviceContext);
@@ -1983,7 +1984,7 @@ public class BundleSiteInitializerTest {
 		Assert.assertEquals(
 			objectDefinition1.getStatus(), WorkflowConstants.STATUS_APPROVED);
 
-		_assertObjectActions(3, objectDefinition1);
+		_assertObjectActions(4, objectDefinition1);
 		_assertObjectEntries(_group.getGroupId(), objectDefinition1, 0);
 		_assertObjectFields(objectDefinition1, 10);
 		_assertObjectRelationships2(objectDefinition1, _serviceContext);
