@@ -85,6 +85,56 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-176607. Assert manager can edit a verified organization."
+	@priority = 5
+	test ManagerCanEditVerifiedOrganization {
+		task ("Given the Manager user is in the Organization page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "Manager User");
+
+			EVPUtils.gotoEVP();
+		}
+
+		task ("When the manager goes to edit an organization with 'Verified' status") {
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("Then the manager is able to make changes") {
+			VPOrganization.kebabMenuOrganization(organizationName = "Organization 4");
+
+			EVPOrganization.editOrganizationForm(
+				organizationName = "Organization Name 4 Edit",
+				organizationSiteSocialMediaLink = "www.organization4Edit.org",
+				smallDescription = "Small Description Edit",
+				street = "Street, 4 Edit",
+				city = "Recife Edit",
+				state = "Pernambuco Edit",
+				country = "Brazil Edit"
+				zipCode = "55555",
+				taxId = "5555555",
+				contactName = "Contact User Edit",
+				contactEmail = "edit4@email.com",
+				contactPhone = "555555555",
+				bankingInfo = "Banking Edit");
+			
+			EVPOrganization.assertOrganizationDetails(
+				organizationName = "Organization Name 4 Edit",
+				organizationSiteSocialMediaLink = "www.organization4Edit.org",
+				smallDescription = "Small Description Edit",
+				street = "Street, 4 Edit",
+				city = "Recife Edit",
+				state = "Pernambuco Edit",
+				country = "Brazil Edit"
+				zipCode = "55555",
+				taxId = "5555555",
+				contactName = "Contact User Edit",
+				contactEmail = "edit4@email.com",
+				contactPhone = "555555555",
+				bankingInfo = "Banking Edit");
+		}
+	}
+
 	@description = "This is a test for LPS-172949. Make sure the edit button does not appear when the user's role is 'User manager'."
 	@priority = 5
 	test ManagerCannotEditOrganizationInAwatingApprovalStatus {
