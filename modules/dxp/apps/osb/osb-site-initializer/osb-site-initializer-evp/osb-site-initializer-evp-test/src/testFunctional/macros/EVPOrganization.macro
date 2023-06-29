@@ -112,12 +112,13 @@ definition {
 		if (${createRequest} == "true") {
 			Button.click(button = "Create a Request");
 		}
-		else {
+
+		if (${done} == "true") {
 			Button.click(button = "Done");
 		}
 	}
 
-	@summary = "Add a new organization"
+	@summary = "Add new organization in organization page"
 	macro goToCreateOrganization {
 		EVPNavigator.goToNavItem(navItem = "Organization");
 
