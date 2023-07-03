@@ -9,6 +9,197 @@ definition {
 		Button.click(button = ${button});
 	}
 
+<<<<<<< HEAD
+=======
+	@summary = "Edit fields on the organization form."
+	macro assertOrganizationDetails {
+		AssertClick(
+			key_menuItem = "Details",
+			locator1 = "MenuItem#ANY_MENU_ITEM");
+		
+		if (isSet(organizationName)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${organizationName});
+		}
+
+		if (isSet(organizationSite)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${organizationSite});
+		}
+
+		if (isSet(smallDescription)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${smallDescription});
+		}
+
+		if (isSet(street)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${street});
+		}
+
+		if (isSet(city)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${city});
+		}
+
+		if (isSet(state)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${state});
+		}
+
+		if (isSet(country)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${country});
+		}
+
+		if (isSet(zipCode)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${zipCode});
+		}
+
+		if (isSet(taxId)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${taxId});
+		}
+
+		if (isSet(contactName)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${contactName});
+		}
+
+		if (isSet(contactEmail)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${contactEmail});
+		}
+
+		if (isSet(contactPhone)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${contactPhone});
+		}
+
+		if (isSet(bankingInfo)) {
+			AssertElementPresent(
+				locator1 = "EVPOrganization#ORGANIZATION_DETAILS_TEXT",
+				key_text = ${bankingInfo});
+		}
+	}
+
+	@summary = "Edit fields on the organization form."
+	macro editOrganizationForm {
+		AssertClick(
+			key_menuItem = "Edit",
+			locator1 = "MenuItem#ANY_MENU_ITEM");
+
+		if (isSet(organizationName)) {
+			Type(
+				key_fieldLabel = ${organizationName},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "organizationName");
+		}
+
+		if (isSet(organizationSiteSocialMediaLink)) {
+			Type(
+				key_fieldLabel = ${organizationSiteSocialMediaLink},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "organizationSiteSocialMediaLink");
+		}
+
+		if (isSet(smallDescription)) {
+			Type(
+				key_fieldLabel = ${smallDescription},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "smallDescription");
+		}
+
+		if (isSet(street)) {
+			Type(
+				key_fieldLabel = ${street},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "street");
+		}
+
+		if (isSet(city)) {
+			Type(
+				key_fieldLabel = ${city},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "city");
+		}
+
+		if (isSet(state)) {
+			Type(
+				key_fieldLabel = ${state},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "state");
+		}
+
+		if (isSet(country)) {
+			Type(
+				key_fieldLabel = ${country},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "country");
+		}
+
+		if (isSet(zipCode)) {
+			Type(
+				key_fieldLabel = ${zipCode},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "zipCode");
+		}
+
+		if (isSet(taxId)) {
+			Type(
+				key_fieldLabel = ${taxId},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "taxId");
+		}
+
+		if (isSet(contactName)) {
+			Type(
+				key_fieldLabel = ${contactName},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "contactName");
+		}
+
+		if (isSet(contactEmail)) {
+			Type(
+				key_fieldLabel = ${contactEmail},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "contactEmail");
+		}
+
+		if (isSet(contactPhone)) {
+			Type(
+				key_fieldLabel = ${contactPhone},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "contactPhone");
+		}
+
+		if (isSet(bankingInfo)) {
+			Type(
+				key_fieldLabel = ${bankingInfo},
+				locator1 = "EVPOrganization#ORGANIZATION_FIELD_NAME",
+				key_fieldName = "bankingInfo");
+		}
+
+		ScrollWebElementIntoView(locator1 = "Button#SUBMIT");
+
+		Button.click(button = "Submit");
+	}
+
+	@summary = "Fill in all required fields on the Organization Form"
+>>>>>>> LPS-188968 Macros for ManagerCanEditVerifiedOrganization
 	macro fillOrganizationForm {
 		WaitForPageLoad();
 
