@@ -18,6 +18,7 @@ import ListFiles from './components/ListFiles';
 interface IProps {
 	acceptedFilesExtensions: string;
 	description: string;
+	inputErrors: any;
 	label: string;
 	name: string;
 	onAccept: (value: LiferayFile[]) => void;
@@ -27,6 +28,7 @@ interface IProps {
 const InputMultipleFilesListing = ({
 	acceptedFilesExtensions,
 	description,
+	inputErrors,
 	label,
 	name,
 	onAccept,
@@ -44,7 +46,12 @@ const InputMultipleFilesListing = ({
 		/>
 
 		{value && (
-			<PRMFormik.Array component={ListFiles} files={value} name={name} />
+			<PRMFormik.Array
+				component={ListFiles}
+				files={value}
+				inputErrors={inputErrors}
+				name={name}
+			/>
 		)}
 	</>
 );

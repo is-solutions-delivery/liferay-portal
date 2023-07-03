@@ -101,7 +101,7 @@ const ActivityClaimPanel = ({
 			activityTouched?.listOfQualifiedLeads &&
 			activity.listOfQualifiedLeads &&
 			!activity.listOfQualifiedLeads.documentId &&
-			!activityErrors.listOfQualifiedLeads
+			!activityErrors?.listOfQualifiedLeads
 		) {
 			const setValue = async () => {
 				const uploadedLiferayDocument = await uploadDocument(
@@ -122,7 +122,7 @@ const ActivityClaimPanel = ({
 		}
 	}, [
 		activity.listOfQualifiedLeads,
-		activityErrors.listOfQualifiedLeads,
+		activityErrors?.listOfQualifiedLeads,
 		activityIndex,
 		activityTouched,
 		claimParentFolderId,
@@ -139,6 +139,7 @@ const ActivityClaimPanel = ({
 		[TypeActivityKey.DIGITAL_MARKETING]: (
 			<DigitalMarketingPopFields
 				activity={activity}
+				activityErrors={activityErrors}
 				claimParentFolderId={claimParentFolderId}
 				currentActivityIndex={activityIndex}
 			/>
@@ -146,6 +147,7 @@ const ActivityClaimPanel = ({
 		[TypeActivityKey.CONTENT_MARKETING]: (
 			<ContentMarketingPopFields
 				activity={activity}
+				activityErrors={activityErrors}
 				claimParentFolderId={claimParentFolderId}
 				currentActivityIndex={activityIndex}
 			/>
@@ -153,6 +155,7 @@ const ActivityClaimPanel = ({
 		[TypeActivityKey.EVENT]: (
 			<EventPopFields
 				activity={activity}
+				activityErrors={activityErrors}
 				claimParentFolderId={claimParentFolderId}
 				currentActivityIndex={activityIndex}
 			/>
@@ -160,6 +163,7 @@ const ActivityClaimPanel = ({
 		[TypeActivityKey.MISCELLANEOUS_MARKETING]: (
 			<MiscellaneousMarketingPopFields
 				activity={activity}
+				activityErrors={activityErrors}
 				claimParentFolderId={claimParentFolderId}
 				currentActivityIndex={activityIndex}
 			/>

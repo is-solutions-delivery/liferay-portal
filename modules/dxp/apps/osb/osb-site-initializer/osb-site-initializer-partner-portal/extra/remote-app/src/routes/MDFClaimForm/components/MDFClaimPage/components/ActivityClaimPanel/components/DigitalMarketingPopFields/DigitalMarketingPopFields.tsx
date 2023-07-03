@@ -23,12 +23,14 @@ import uploadDocument from '../../../../../../utils/uploadDocument';
 
 interface IProps {
 	activity: MDFClaimActivity;
+	activityErrors: any;
 	claimParentFolderId: number;
 	currentActivityIndex: number;
 }
 
 const DigitalMarketingPopFields = ({
 	activity,
+	activityErrors,
 	claimParentFolderId,
 	currentActivityIndex,
 }: IProps) => {
@@ -45,8 +47,9 @@ const DigitalMarketingPopFields = ({
 			/>
 
 			<InputMultipleFilesListing
-				acceptedFilesExtensions="doc, docx, jpeg, jpg, pdf, tif, tiff"
+				acceptedFilesExtensions="doc, docx, jpg, jpeg, png, tif, tiff, pdf"
 				description="Drag and drop your files here to upload."
+				inputErrors={activityErrors.proofOfPerformance.allContents}
 				label="All Contents"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.allContents`}
 				onAccept={async (value: LiferayFile[]) => {

@@ -22,12 +22,14 @@ import uploadDocument from '../../../../../../utils/uploadDocument';
 
 interface IProps {
 	activity: MDFClaimActivity;
+	activityErrors: any;
 	claimParentFolderId: number;
 	currentActivityIndex: number;
 }
 
 const EventPopFields = ({
 	activity,
+	activityErrors,
 	claimParentFolderId,
 	currentActivityIndex,
 }: IProps) => {
@@ -37,7 +39,7 @@ const EventPopFields = ({
 		<>
 			<PRMFormik.Field
 				component={PRMForm.InputFile}
-				description="Only files with the following extensions wil beaccepted: doc, docx, jpeg, jpg, pdf, tif, tiff"
+				description="Only files with the following extensions wil be accepted: doc, docx, jpg, jpeg, png, tif, tiff, pdf"
 				displayType="secondary"
 				label="Event Program"
 				name={`activities[${currentActivityIndex}].eventProgram`}
@@ -60,8 +62,11 @@ const EventPopFields = ({
 			/>
 
 			<InputMultipleFilesListing
-				acceptedFilesExtensions="doc, docx, jpeg, jpg, pdf, tif, tiff"
+				acceptedFilesExtensions="doc, docx, jpg, jpeg, png, tif, tiff, pdf"
 				description="Drag and drop your files here to upload."
+				inputErrors={
+					activityErrors?.proofOfPerformance?.eventInvitations
+				}
 				label="Event Invitations"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`}
 				onAccept={async (value: LiferayFile[]) => {
@@ -94,8 +99,9 @@ const EventPopFields = ({
 			/>
 
 			<InputMultipleFilesListing
-				acceptedFilesExtensions="doc, docx, jpeg, jpg, pdf, tif, tiff"
+				acceptedFilesExtensions="doc, docx, jpg, jpeg, png, tif, tiff, pdf"
 				description="Drag and drop your files here to upload."
+				inputErrors={activityErrors?.proofOfPerformance?.eventPhotos}
 				label="Event Photos"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`}
 				onAccept={async (value: LiferayFile[]) => {
@@ -128,8 +134,11 @@ const EventPopFields = ({
 			/>
 
 			<InputMultipleFilesListing
-				acceptedFilesExtensions="doc, docx, jpeg, jpg, pdf, tif, tiff"
+				acceptedFilesExtensions="doc, docx, jpg, jpeg, png, tif, tiff, pdf"
 				description="Drag and drop your files here to upload."
+				inputErrors={
+					activityErrors?.proofOfPerformance?.eventCollaterals
+				}
 				label="Event Collaterals"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`}
 				onAccept={async (value: LiferayFile[]) => {

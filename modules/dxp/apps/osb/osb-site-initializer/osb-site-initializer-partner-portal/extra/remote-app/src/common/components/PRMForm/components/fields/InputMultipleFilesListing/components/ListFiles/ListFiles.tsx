@@ -10,6 +10,8 @@
  */
 
 import {ClayButtonWithIcon} from '@clayui/button';
+import ClayForm from '@clayui/form';
+import classNames from 'classnames';
 import {ArrayHelpers} from 'formik';
 
 import LiferayFile from '../../../../../../../interfaces/liferayFile';
@@ -20,49 +22,68 @@ import deleteMDFClaimActivityDocument from '../../../../../../../services/lifera
 interface IProps {
 	arrayHelpers: ArrayHelpers;
 	files: LiferayFile[];
+	inputErrors: any;
 }
 
-const ListFiles = ({arrayHelpers, files}: IProps) => {
+const ListFiles = ({arrayHelpers, files, inputErrors}: IProps) => {
 	return (
 		<div>
 			{files.map(
 				(file, index) =>
 					file.name && (
-						<div
-							className="align-items-center bg-neutral-0 border border-neutral-4 d-flex justify-content-between mt-2 px-2 rounded-xs shadow-sm"
-							key={index}
-						>
-							<div className="font-weight-bold">
-								<div className="text-neutral-8">
-									{file.name}
+						<div key={index}>
+							<div
+								className={classNames(
+									'align-items-center border bg-neutral-0 d-flex justify-content-between mt-2 px-2 rounded-xs shadow-sm',
+									{
+										'border-danger':
+											inputErrors && inputErrors[index],
+										'border-neutral-4': !(
+											inputErrors && inputErrors[index]
+										),
+									}
+								)}
+							>
+								<div className="font-weight-bold">
+									<div className="text-neutral-8">
+										{file.name}
+									</div>
 								</div>
+
+								<ClayButtonWithIcon
+									className="text-neutral-7"
+									displayType={null}
+									onClick={async () => {
+										if (file.documentId) {
+											const deletedDocument = await deleteDocument(
+												ResourceName.DOCUMENTS,
+												file.documentId
+											);
+
+											deletedDocument &&
+												arrayHelpers.remove(index);
+										} else {
+											arrayHelpers.remove(index);
+										}
+
+										if (file.id) {
+											await deleteMDFClaimActivityDocument(
+												file.id
+											);
+										}
+									}}
+									small
+									symbol="times-circle"
+								/>
 							</div>
 
-							<ClayButtonWithIcon
-								className="text-neutral-7"
-								displayType={null}
-								onClick={async () => {
-									if (file.documentId) {
-										const deletedDocument = await deleteDocument(
-											ResourceName.DOCUMENTS,
-											file.documentId
-										);
-
-										deletedDocument &&
-											arrayHelpers.remove(index);
-									} else {
-										arrayHelpers.remove(index);
-									}
-
-									if (file.id) {
-										await deleteMDFClaimActivityDocument(
-											file.id
-										);
-									}
-								}}
-								small
-								symbol="times-circle"
-							/>
+							{inputErrors && inputErrors[index] && (
+								<ClayForm.FeedbackGroup className="bg-danger-lighten-2 mt-1 p-2 rounded">
+									<ClayForm.FeedbackItem className="mt-0 text-danger">
+										{inputErrors[index]}
+									</ClayForm.FeedbackItem>
+								</ClayForm.FeedbackGroup>
+							)}
 						</div>
 					)
 			)}

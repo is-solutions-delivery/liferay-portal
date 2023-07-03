@@ -49,7 +49,6 @@ const MDFClaimPage = ({
 		values,
 		...formikHelpers
 	} = useFormikContext<MDFClaim>();
-	console.log('🚀 ~ touched:', touched);
 
 	useActivitiesAmount(
 		values.activities,
