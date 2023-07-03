@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>EVPOrganization</title>
+</head>
+
+<body>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr><td rowspan="1" colspan="3">EVPOrganization</td></tr>
+</thead>
+
+<tbody>
+<tr>
+	<td>ORGANIZATION_DETAILS_TEXT</td>
+	<td>//h4[contains(@class,'component-text') and contains(.,'${key_text}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORGANIZATION_FIELD_NAME</td>
+	<td>//input[contains(@name,'${key_fieldName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORGANIZATION_STATUS</td>
+	<td>//*[normalize-space()='${key_organizationName}']//following::p[normalize-space()='${key_status}']</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
