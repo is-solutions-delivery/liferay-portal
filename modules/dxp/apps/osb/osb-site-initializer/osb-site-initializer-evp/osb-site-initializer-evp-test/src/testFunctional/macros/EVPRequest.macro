@@ -105,7 +105,7 @@ definition {
 		Button.click(button = "Submit");
 	}
 
-    macro goToCreateRequest {
+	macro goToCreateRequest {
 		EVPNavigator.goToNavItem(navItem = "Request");
 
 		Button.click(button = "Create a Request");
@@ -134,4 +134,5 @@ definition {
 			key_fieldId = "messageDescribed",
 			locator1 = "TextArea#ANY_ID");
 	}
+
 }

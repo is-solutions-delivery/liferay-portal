@@ -1,114 +1,114 @@
 @component-name = "OSB Site Initializer EVP"
 definition {
 
-    var baseURL = PropsUtil.get("portal.url");
+	var baseURL = PropsUtil.get("portal.url");
 
-    property custom.properties = "feature.flag.LPS-169981=true";
-    property osgi.modules.includes = "osb-site-initializer-evp";
-    property portal.release = "false";
-    property portal.upstream = "true";
-    property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
-    property testray.main.component.name = "OSB Site Initializer EVP";
+	property custom.properties = "feature.flag.LPS-169981=true";
+	property osgi.modules.includes = "osb-site-initializer-evp";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer EVP";
 
-    setUp {
-        task ("Set up instance and sign in") {
-            TestCase.setUpPortalInstance();
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
 
-            User.firstLoginPG();
-        }
+			User.firstLoginPG();
+		}
 
-        task ("Create a new EVP Site") {
-            EVPUtils.addEVPSite();
-        }
+		task ("Create a new EVP Site") {
+			EVPUtils.addEVPSite();
+		}
 
-        task ("Navigate to EVP Site and Create a Organization") {
-            EVPUtils.gotoEVP();
+		task ("Navigate to EVP Site and Create a Organization") {
+			EVPUtils.gotoEVP();
 
-            EVPOrganization.goToCreateOrganization();
+			EVPOrganization.goToCreateOrganization();
 
-            EVPOrganization.fillOrganizationForm(
-                bankingInfo = "Bank Test",
-                city = "City Test",
-                contactEmail = "test@liferay.com",
-                contactName = "Contact Test",
-                contactPhone = 12345,
-                country = "Country Test",
-                createRequest = "true",
-                organizationName = "Organization Test",
-                organizationSite = "www.test.com.br",
-                smallDescription = "Description Test",
-                state = "State Test",
-                street = "Street Test",
-                taxId = 12345,
-                zipCode = "12.345-67");
-        }
-    }
+			EVPOrganization.fillOrganizationForm(
+				bankingInfo = "Bank Test",
+				city = "City Test",
+				contactEmail = "test@liferay.com",
+				contactName = "Contact Test",
+				contactPhone = 12345,
+				country = "Country Test",
+				createRequest = "true",
+				organizationName = "Organization Test",
+				organizationSite = "www.test.com.br",
+				smallDescription = "Description Test",
+				state = "State Test",
+				street = "Street Test",
+				taxId = 12345,
+				zipCode = "12.345-67");
+		}
+	}
 
-    tearDown {
-        var testPortalInstance = PropsUtil.get("test.portal.instance");
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
 
-        ObjectAdmin.deleteAllCustomObjectsViaAPI();
+		ObjectAdmin.deleteAllCustomObjectsViaAPI();
 
-        if (${testPortalInstance} == "true") {
-            PortalInstances.tearDownCP();
-        }
-        else {
-            JSONGroup.deleteGroupByName(groupName = "EVP Portal");
-        }
-    }
+		if (${testPortalInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "EVP Portal");
+		}
+	}
 
-    @description = "LPS-181769 - Verify that a request of funds has 'Awaiting Approval on EVP' status when it's created and can be reviewed by EVP Manager"
-    @priority = 5
-    test VerifyStatusAfterCreatRequest {
-        task ("Given that the Employee user go to the request menu and create a request") {
-            User.logoutAndLoginPG(
-                userLoginEmailAddress = "employee@liferay.com",
-                userLoginFullName = "Employee User");
-            
-            EVPUtils.gotoEVP();
+	@description = "LPS-181769 - Verify that a request of funds has 'Awaiting Approval on EVP' status when it's created and can be reviewed by EVP Manager"
+	@priority = 5
+	test VerifyStatusAfterCreatRequest {
+		task ("Given that the Employee user go to the request menu and create a request") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "employee@liferay.com",
+				userLoginFullName = "Employee User");
 
-            EVPRequest.goToCreateRequest();
-        }
+			EVPUtils.gotoEVP();
 
-        task ("And the user fills in all the fields of the request and submitted for approval") {
-            EVPRequest.fillRequestForm(
-                grantAmount = 10,
-                grantRequestType = "Proposed",
-                organization = "Organization Test",
-                phoneNumber = 12345,
-                requestBehalf = "Global/Local Poor",
-                requestDescription = "Request Description Test",
-                requestPurposes = "Basic Education",
-                requestType = "Grant");
+			EVPRequest.goToCreateRequest();
+		}
 
-            EVPNavigator.goToNavItem(navItem = "Request");
+		task ("And the user fills in all the fields of the request and submitted for approval") {
+			EVPRequest.fillRequestForm(
+				grantAmount = 10,
+				grantRequestType = "Proposed",
+				organization = "Organization Test",
+				phoneNumber = 12345,
+				requestBehalf = "Global/Local Poor",
+				requestDescription = "Request Description Test",
+				requestPurposes = "Basic Education",
+				requestType = "Grant");
 
-        }
+			EVPNavigator.goToNavItem(navItem = "Request");
+		}
 
-        task ("And the request status is Awaiting Approval on EVP") {
-            EVPUtils.viewStatus(
-                organizationName = "Organization Test",
-                status = "Awaiting Approval On EVP");
-        }
+		task ("And the request status is Awaiting Approval on EVP") {
+			EVPUtils.viewStatus(
+				organizationName = "Organization Test",
+				status = "Awaiting Approval On EVP");
+		}
 
-        task ("When the manager chooses the review option") {
-            User.logoutAndLoginPG(
-                userLoginEmailAddress = "manager@liferay.com",
-                userLoginFullName = "manager User");
-            
-            EVPUtils.gotoEVP();
-            
-            EVPNavigator.goToNavItem(navItem = "Request");
+		task ("When the manager chooses the review option") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "manager User");
 
-            EVPRequest.goToRequestOption(
-                organizationName = "Organization Test",
-                key_option = "Review");
-        }
+			EVPUtils.gotoEVP();
 
-        task ("Then a modal appear and there are Approve, Reject, Need More Info and a Comment Box options") {
-            EVPRequest.viewPresentCommentBox();
+			EVPNavigator.goToNavItem(navItem = "Request");
 
-            EVPRequest.viewOptionsPresentModal(option = "Approve,Reject,Request more Info");	
-        }
-    }
+			EVPRequest.goToRequestOption(
+				key_option = "Review",
+				organizationName = "Organization Test");
+		}
+
+		task ("Then a modal appear and there are Approve, Reject, Need More Info and a Comment Box options") {
+			EVPRequest.viewPresentCommentBox();
+
+			EVPRequest.viewOptionsPresentModal(option = "Approve,Reject,Request more Info");
+		}
+	}
+
 }

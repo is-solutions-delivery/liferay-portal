@@ -12,9 +12,9 @@
 <tbody>
 
 <tr>
-    <td>REQUEST_KEBAB</td>
-    <td>//div//*[contains(text(),'${organizationName}')]//ancestor::div[contains(@class,'evp-table')]//following-sibling::div/*[contains(@class,'evp-request-kebab-button')]</td>
-    <td></td>
+	<td>REQUEST_KEBAB</td>
+	<td>//div//*[contains(text(),'${organizationName}')]//ancestor::div[contains(@class,'evp-table')]//following-sibling::div/*[contains(@class,'evp-request-kebab-button')]</td>
+	<td></td>
 </tr>
 
 </tbody>
