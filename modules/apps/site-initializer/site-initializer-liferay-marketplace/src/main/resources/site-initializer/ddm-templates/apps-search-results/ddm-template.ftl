@@ -1,14 +1,31 @@
 <style type="text/css">
+.adt-apps-search-results .cards-container {
+	display: grid;
+	grid-column-gap: 1rem;
+	grid-row-gap: 1.5rem;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.adt-apps-search-results .app-search-results-card:hover {
+	color: var(--black);
+}
+
+.adt-apps-search-results .card-image-title-container .image-container {
+	height: 3rem;
+	min-width: 3rem;
+}
+
+@media screen and (max-width: 599px) {
 	.adt-apps-search-results .cards-container {
-		display: grid;
-		grid-column-gap: 1rem;
-		grid-row-gap: 1.5rem;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: 288px;
+		grid-row-gap: 1rem;
+		justify-content: center;
 	}
 
-	.adt-apps-search-results .app-search-results-card:hover {
-		color: var(--black);
+	.adt-apps-search-results .app-search-results-card {
+		height: 281px;
 	}
+}
 
 	.adt-apps-search-results .card-image-title-container .image-container {
 		height: 3rem;
@@ -32,6 +49,7 @@
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
+}
 </style>
 
 <#if serviceLocator??>
@@ -40,10 +58,17 @@
 
 <#assign
 	searchContainer = cpSearchResultsDisplayContext.getSearchContainer()
-
+  productsList = restClient.get("/headless-commerce-admin-catalog/v1.0/products").items
 	COMMERCE_PRODUCT_CLASS_NAME = "com.liferay.commerce.product.model.CPDefinition"
 	MARKETPLACE_PRICE_VOCABULARY_ID = 449511429
 />
+
+  <#list productsList as product>
+					<#list product.categories?filter(category -> category.name == "App") as category>
+						<#assign productAppsList = product />
+						<#assign appsCategoriesList = category />
+					</#list>
+	</#list>
 
 <div class="adt-apps-search-results">
 	<div class="app-count color-neutral-3 d-md-block d-none pb-4">
@@ -67,7 +92,7 @@
 					friendlyURL = cpContentHelper.getFriendlyURL(curCPCatalogEntry, themeDisplay)
 					productImageURL = "https://www.liferay.com/documents/448812852/0/icon.png/5da637ed-9593-5531-a6f0-bcd1c5ad20d8/icon.png?t=1656341514206"
 					images = cpContentHelper.getImages(cpDefinitionId, themeDisplay)
-				/>
+				/>						
 
 				<#list channels.items as channel>
 					<#if channel.name == "Marketplace Channel">
@@ -98,6 +123,8 @@
 								/>
 							</div>
 						</#if>
+						
+						${entries?size}
 
 						<div class="pl-2 title-description-text">
 							<div class="title" style="font-size: 1.375rem; line-height: 1.244;">
@@ -134,9 +161,9 @@
 					<div class="description-price-container flex flex-column font-size-paragraph-small h-100 justify-content-between" style="color: var(--black);">
 						<div class="description-price-text">
 							<div class="description font-weight-normal mb-2">
-								${productDescription}
+								${productAppsList.description.en_US}
 							</div>
-
+							
 							<div class="font-weight-semi-bold price">
 								<#if categories??>
 									<#list categories as category>
@@ -145,7 +172,7 @@
 										</#if>
 									</#list>
 								</#if>
-							</div>
+							</div>	
 						</div>
 					</div>
 				</a>
