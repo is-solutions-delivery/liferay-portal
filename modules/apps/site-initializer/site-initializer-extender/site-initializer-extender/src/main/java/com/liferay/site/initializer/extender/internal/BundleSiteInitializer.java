@@ -564,12 +564,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, Layout> layoutsMap = _invoke(
 				() -> _addOrUpdateLayouts(serviceContext));
 
-			_invoke(
-				() -> _addCPDefinitions(
-					documentsStringUtilReplaceValues,
-					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
-					serviceContext));
-
 			// LPS-172108 Layouts have to be created first so that links in
 			// layout page templates work
 
@@ -581,6 +575,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
 					serviceContext,
 					taxonomyCategoryIdsAndTaxonomyVocabularyIdsStringUtilReplaceValues));
+
+			_invoke(
+				() -> _addCPDefinitions(
+					documentsStringUtilReplaceValues,
+					objectDefinitionIdsAndObjectEntryIdsStringUtilReplaceValues,
+					serviceContext));
 
 			_invoke(
 				() -> _addLayoutUtilityPageEntries(
