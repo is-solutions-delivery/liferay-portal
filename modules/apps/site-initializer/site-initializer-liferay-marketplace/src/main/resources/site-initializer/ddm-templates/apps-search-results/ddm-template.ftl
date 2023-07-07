@@ -58,21 +58,15 @@
 
 <#assign
 	searchContainer = cpSearchResultsDisplayContext.getSearchContainer()
-  productsList = restClient.get("/headless-commerce-admin-catalog/v1.0/products").items
-	COMMERCE_PRODUCT_CLASS_NAME = "com.liferay.commerce.product.model.CPDefinition"
-	MARKETPLACE_PRICE_VOCABULARY_ID = 449511429
 />
 
-  <#list productsList as product>
-					<#list product.categories?filter(category -> category.name == "App") as category>
-						<#assign productAppsList = product />
-						<#assign appsCategoriesList = category />
-					</#list>
-	</#list>
+<#assign
+  productsList = restClient.get("/headless-commerce-admin-catalog/v1.0/products").items
+/>
 
 <div class="adt-apps-search-results">
-	<div class="app-count color-neutral-3 d-md-block d-none pb-4">
-		<#if entries?has_content>
+<div class="solutions-count color-neutral-3 d-md-block d-none pb-4">
+		<#if productsList?has_content>
 			<strong class='color-black'>${searchContainer.getTotal()}</strong> Apps Available
 		</#if>
 	</div>
@@ -117,15 +111,13 @@
 						<#if productImageURL?has_content>
 							<div class="border-radius-medium image-container">
 								<img
-									alt=${productName}
+									alt=${product.name.en_US}
 									class="h-100 image mw-100"
 									src="${productImageURL}"
 								/>
 							</div>
 						</#if>
 						
-						${entries?size}
-
 						<div class="pl-2 title-description-text">
 							<div class="title" style="font-size: 1.375rem; line-height: 1.244;">
 								${productName}
@@ -161,21 +153,13 @@
 					<div class="description-price-container flex flex-column font-size-paragraph-small h-100 justify-content-between" style="color: var(--black);">
 						<div class="description-price-text">
 							<div class="description font-weight-normal mb-2">
-								${productAppsList.description.en_US}
+								${product.description.en_US}
 							</div>
 							
-							<div class="font-weight-semi-bold price">
-								<#if categories??>
-									<#list categories as category>
-										<#if category.getVocabularyId() == MARKETPLACE_PRICE_VOCABULARY_ID>
-											${category.getName()}
-										</#if>
-									</#list>
-								</#if>
-							</div>	
 						</div>
 					</div>
 				</a>
+				</#list>
 			</#list>
 		</#if>
 	</div>
