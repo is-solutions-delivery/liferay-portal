@@ -67,7 +67,7 @@ export default function QuestionRow({
 		  };
 
 	const isRowSelected = question.friendlyUrlPath === rowSelected;
-	const isContentReviewerUser = context.contentReviewerUser;
+	const isContentReviewerUser = context?.contentReviewerUser;
 
 	return (
 		<div
