@@ -57,20 +57,6 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 	</c:if>
 </clay:content-row>
 
-<liferay-util:buffer
-	var="removeButtonOrganizations"
->
-	<clay:button
-		aria-label="TOKEN_ARIA_LABEL"
-		cssClass="lfr-portal-tooltip modify-link"
-		data-rowId="TOKEN_DATA_ROW_ID"
-		displayType="unstyled"
-		icon="times-circle"
-		small="<%= true %>"
-		title="TOKEN_TITLE"
-	/>
-</liferay-util:buffer>
-
 <aui:input name="addOrganizationIds" type="hidden" value="<%= organizationIdsString %>" />
 <aui:input name="deleteOrganizationIds" type="hidden" />
 
@@ -143,60 +129,20 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 
 <c:if test="<%= !portletName.equals(myAccountPortletId) %>">
 	<aui:script use="liferay-search-container">
-		var AArray = A.Array;
-		var Util = Liferay.Util;
-
-		var addOrganizationIds = [];
-
-		var organizationValues =
-			document.<portlet:namespace />fm.<portlet:namespace />addOrganizationIds
-				.value;
-
-		if (organizationValues) {
-			addOrganizationIds.push(organizationValues);
-		}
-
-		var deleteOrganizationIds = [];
-
 		var searchContainer = Liferay.SearchContainer.get(
 			'<portlet:namespace />organizationsSearchContainer'
 		);
 
-		var searchContainerContentBox = searchContainer.get('contentBox');
-
-		searchContainerContentBox.delegate(
+		searchContainer.get('contentBox').delegate(
 			'click',
 			(event) => {
 				var link = event.currentTarget;
 
-				var rowId = link.attr('data-rowId');
-
-				var tr = link.ancestor('tr');
-
-				var selectOrganization = Util.getWindow(
-					'<portlet:namespace />selectOrganization'
+				document.<portlet:namespace />fm.<portlet:namespace />deleteOrganizationIds.value = link.attr(
+					'data-rowId'
 				);
 
-				if (selectOrganization) {
-					var selectButton = selectOrganization.iframe.node
-						.get('contentWindow.document')
-						.one('.selector-button[data-entityid="' + rowId + '"]');
-
-					Util.toggleDisabled(selectButton, false);
-				}
-
-				searchContainer.deleteRow(tr, rowId);
-
-				AArray.removeItem(addOrganizationIds, rowId);
-
-				deleteOrganizationIds.push(rowId);
-
-				document.<portlet:namespace />fm.<portlet:namespace />addOrganizationIds.value = addOrganizationIds.join(
-					','
-				);
-				document.<portlet:namespace />fm.<portlet:namespace />deleteOrganizationIds.value = deleteOrganizationIds.join(
-					','
-				);
+				submitForm(document.<portlet:namespace />fm);
 			},
 			'.modify-link'
 		);
@@ -207,54 +153,28 @@ currentURLObj.setParameter("historyKey", liferayPortletResponse.getNamespace() +
 
 		if (selectOrganizationLink) {
 			selectOrganizationLink.on('click', (event) => {
-				Util.openSelectionModal({
-					onSelect: (selectedItem) => {
-						if (selectedItem) {
-							const entityId = selectedItem.entityid;
-							const entityName = A.Escape.html(selectedItem.entityname);
-							const label = Liferay.Util.sub(
-								'<liferay-ui:message key="remove-x" />',
-								entityName
-							);
-							const rowColumns = [];
+				Liferay.Util.openSelectionModal({
+					multiple: true,
+					onSelect(data) {
+						if (data.value && data.value.length) {
+							document.<portlet:namespace />fm.<portlet:namespace />addOrganizationIds.value = Array.from(
+								data.value
+							)
+								.map((selectedItem) => {
+									const organization = JSON.parse(selectedItem);
 
-							let removeButton =
-								'<%= UnicodeFormatter.toString(removeButtonOrganizations) %>';
+									return organization.organizationId;
+								})
+								.join(',');
 
-							removeButton = removeButton
-								.replace('TOKEN_ARIA_LABEL', label)
-								.replace('TOKEN_DATA_ROW_ID', entityId)
-								.replace('TOKEN_TITLE', label);
-
-							rowColumns.push(entityName);
-							rowColumns.push(selectedItem.type);
-							rowColumns.push('');
-							rowColumns.push(removeButton);
-
-							searchContainer.addRow(rowColumns, entityId);
-
-							searchContainer.updateDataStore();
-
-							AArray.removeItem(deleteOrganizationIds, entityId);
-
-							addOrganizationIds.push(entityId);
-
-							document.<portlet:namespace />fm.<portlet:namespace />addOrganizationIds.value = addOrganizationIds.join(
-								','
-							);
-							document.<portlet:namespace />fm.<portlet:namespace />deleteOrganizationIds.value = deleteOrganizationIds.join(
-								','
-							);
+							submitForm(document.<portlet:namespace />fm);
 						}
 					},
 					selectEventName: '<portlet:namespace />selectOrganization',
-					selectedData: <%= Arrays.toString(selUser.getOrganizationIds()) %>.map(
-						String
-					),
 					title:
 						'<liferay-ui:message arguments="organization" key="select-x" />',
 					url:
-						'<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcPath" value="/select_organization.jsp" /><portlet:param name="p_u_i_d" value='<%= (selUser == null) ? "0" : String.valueOf(selUser.getUserId()) %>' /></portlet:renderURL>',
+						'<%= userDisplayContext.getOrganizationItemSelectorURL(true) %>',
 				});
 			});
 		}

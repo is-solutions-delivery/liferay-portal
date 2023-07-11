@@ -9,6 +9,7 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.4.0"
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":apps:application-list:application-list-api")
+	compileOnly project(":apps:asset:asset-api")
 	compileOnly project(":apps:asset:asset-taglib")
 	compileOnly project(":apps:change-tracking:change-tracking-spi")
 	compileOnly project(":apps:data-engine:data-engine-api")
@@ -20,6 +21,7 @@ dependencies {
 	compileOnly project(":apps:fragment:fragment-api")
 	compileOnly project(":apps:frontend-taglib:frontend-taglib")
 	compileOnly project(":apps:frontend-taglib:frontend-taglib-clay")
+	compileOnly project(":apps:layout:layout-api")
 	compileOnly project(":apps:portal-workflow:portal-workflow-taglib")
 	compileOnly project(":apps:static:osgi:osgi-util")
 	compileOnly project(":apps:static:portal-configuration:portal-configuration-metatype-api")

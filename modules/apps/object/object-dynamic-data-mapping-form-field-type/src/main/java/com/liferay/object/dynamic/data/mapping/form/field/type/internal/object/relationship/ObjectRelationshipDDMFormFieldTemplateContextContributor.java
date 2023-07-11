@@ -78,6 +78,8 @@ public class ObjectRelationshipDDMFormFieldTemplateContextContributor
 			GetterUtil.getLong(
 				ddmFormFieldRenderingContext.getProperty("objectEntryId"))
 		).put(
+			"objectFieldBusinessType", _getObjectFieldBusinessType(ddmFormField)
+		).put(
 			"parameterObjectFieldName",
 			GetterUtil.getString(
 				ddmFormField.getProperty("parameterObjectFieldName"))
@@ -194,27 +196,20 @@ public class ObjectRelationshipDDMFormFieldTemplateContextContributor
 			return labelKey;
 		}
 
-		ObjectDefinition objectDefinition = _getObjectDefinition(ddmFormField);
+		ObjectField objectField = _getObjectField(ddmFormField);
 
-		if ((objectDefinition != null) &&
-			(objectDefinition.getTitleObjectFieldId() > 0)) {
-
-			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
-				objectDefinition.getTitleObjectFieldId());
-
-			if (objectField != null) {
-				String objectFieldName = objectField.getName();
-
-				objectFieldName = StringUtil.replace(
-					objectFieldName, "createDate", "dateCreated");
-				objectFieldName = StringUtil.replace(
-					objectFieldName, "modifiedDate", "dateModified");
-
-				return objectFieldName;
-			}
+		if (objectField == null) {
+			return "id";
 		}
 
-		return "id";
+		String objectFieldName = objectField.getName();
+
+		objectFieldName = StringUtil.replace(
+			objectFieldName, "createDate", "dateCreated");
+		objectFieldName = StringUtil.replace(
+			objectFieldName, "modifiedDate", "dateModified");
+
+		return objectFieldName;
 	}
 
 	private ObjectDefinition _getObjectDefinition(DDMFormField ddmFormField) {
@@ -223,6 +218,29 @@ public class ObjectRelationshipDDMFormFieldTemplateContextContributor
 				getValue(
 					GetterUtil.getString(
 						ddmFormField.getProperty("objectDefinitionId")))));
+	}
+
+	private ObjectField _getObjectField(DDMFormField ddmFormField) {
+		ObjectDefinition objectDefinition = _getObjectDefinition(ddmFormField);
+
+		if ((objectDefinition != null) &&
+			(objectDefinition.getTitleObjectFieldId() > 0)) {
+
+			return _objectFieldLocalService.fetchObjectField(
+				objectDefinition.getTitleObjectFieldId());
+		}
+
+		return null;
+	}
+
+	private String _getObjectFieldBusinessType(DDMFormField ddmFormField) {
+		ObjectField objectField = _getObjectField(ddmFormField);
+
+		if (objectField == null) {
+			return null;
+		}
+
+		return objectField.getBusinessType();
 	}
 
 	private String _getValueKey(DDMFormField ddmFormField) {

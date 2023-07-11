@@ -9,7 +9,8 @@ definition {
 	@priority = 3
 	test FragmentAutoDeploy {
 		property skip.start.app.server = "true";
-		property test.name.skip.portal.instance = "AutoDeploy#FragmentAutoDeploy";
+		property test.liferay.virtual.instance = "false";
+		property testcase.url = "file:///opt/dev/projects/github/liferay-portal/";
 
 		task ("Given a file is deployed before startup") {
 			var dependencyFilePath = TestCase.getDependenciesDirPath(fileName = "title.zip");
@@ -25,15 +26,16 @@ definition {
 		task ("When the portal starts up") {
 			Portlet.startServer(keepOSGiState = "true");
 
-			// Pausing 120 seconds due to POSHI-489
-
-			Pause(locator1 = 120000);
-
-			User.firstLoginPG();
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://localhost:8080",
+				userEmailAddress = "test@liferay.com");
 		}
 
 		task ("Then the file is deployed correctly") {
-			FragmentsAdminNavigator.openFragmentsAdmin(siteURLKey = "global");
+			FragmentsAdminNavigator.openFragmentsAdmin(
+				baseURL = "http://localhost:8080",
+				siteURLKey = "global");
 
 			FragmentsAdminNavigator.gotoSpecificScopeCollection(
 				collectionName = "Imported",

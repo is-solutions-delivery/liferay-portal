@@ -571,6 +571,7 @@ definition {
 	@priority = 4
 	test EditContentPageAfterResetChangesFromSiteTemplate {
 		property ci.retries.disabled = "true";
+		property test.liferay.virtual.instance = "false";
 
 		var siteName = StringUtil.randomString(8);
 
@@ -652,8 +653,6 @@ definition {
 				Click(locator1 = "PageEditor#MORE_LINK");
 
 				WaitForPageLoad();
-
-				Navigator.gotoNavTab(navTab = "Design");
 
 				Click(
 					ariaLabel = "Edit Master",
@@ -1313,7 +1312,7 @@ definition {
 	@description = "This is a test for LPS-129536. View the configuration settings of widget after execute Clean Up Orphaned Theme Portlet Preferences."
 	@priority = 4
 	test ViewConfigurationSettingsOfWidgetAfterCleanUpOrphanedThemePortletPreferences {
-		property test.name.skip.portal.instance = "ContentPages#ViewConfigurationSettingsOfWidgetAfterCleanUpOrphanedThemePortletPreferences";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a web content") {
 			JSONWebcontent.addWebContent(
@@ -1575,6 +1574,29 @@ definition {
 					key_fragmentName = ${fragmentName},
 					locator1 = "Fragment#FRAGMENT_HEADER_ELLIPSIS");
 			}
+		}
+	}
+
+	@description = "This is a test for LPS-167430. Fragment Menu difficult to Display"
+	@priority = 3
+	test ViewEllipsisIconWhenHoverOnBodyOfWidget {
+		task ("Given a content page with a Search Results widget") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addWidget(portletName = "Search Results");
+		}
+
+		task ("When the mouse passes over the fragment") {
+			MouseOver(
+				fragmentName = "Search",
+				index = 1,
+				locator1 = "Fragment#FRAGMENT_BODY");
+		}
+
+		task ("Then you should easily see the ellipsis icon") {
+			AssertVisible(locator1 = "Portlet#OPTIONS_ICON");
 		}
 	}
 

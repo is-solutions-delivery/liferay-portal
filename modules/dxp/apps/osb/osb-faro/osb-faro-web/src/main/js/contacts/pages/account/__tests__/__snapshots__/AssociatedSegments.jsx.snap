@@ -191,7 +191,7 @@ exports[`AccountAssociatedSegments should render 1`] = `
                     class="icon-container"
                   >
                     <div
-                      class="sticker sticker-root sticker-static segment-sticker-root sticker-rounded sticker-light"
+                      class="sticker sticker-root sticker-static segment-sticker-root sticker-rounded sticker-dark"
                     >
                       <svg
                         class="lexicon-icon lexicon-icon-individual-dynamic-segment icon-root"
@@ -268,7 +268,7 @@ exports[`AccountAssociatedSegments should render 1`] = `
               class="page-item disabled"
             >
               <a
-                class="button-root page-link btn btn-unstyled"
+                class="button-root btn btn-unstyled page-link"
                 disabled=""
                 href="/?page=0"
               >
@@ -286,7 +286,7 @@ exports[`AccountAssociatedSegments should render 1`] = `
               class="page-item active"
             >
               <a
-                class="button-root page-link btn btn-unstyled"
+                class="button-root btn btn-unstyled page-link"
                 href="/?page=1"
               >
                 1
@@ -296,7 +296,7 @@ exports[`AccountAssociatedSegments should render 1`] = `
               class="page-item disabled"
             >
               <a
-                class="button-root page-link btn btn-unstyled"
+                class="button-root btn btn-unstyled page-link"
                 disabled=""
                 href="/?page=2"
               >

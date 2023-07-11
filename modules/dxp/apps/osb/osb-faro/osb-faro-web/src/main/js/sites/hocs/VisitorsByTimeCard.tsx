@@ -68,7 +68,7 @@ const HeatmapChartWithData = compose<any>(
 		options: mapPropsToOptions,
 		props: mapResultToProps
 	}),
-	withLoading({alignCenter: true, page: false}),
+	withLoading(),
 	withError({page: false}),
 	withEmpty({
 		description: (

@@ -126,7 +126,7 @@ public class RoleLocalServiceTest {
 		typeSettingsUnicodeProperties.setProperty(
 			"defaultSiteRoleIds", String.valueOf(_role.getRoleId()));
 
-		_groupLocalService.updateGroup(_group);
+		_group = _groupLocalService.updateGroup(_group);
 
 		_roleLocalService.deleteRole(_role);
 

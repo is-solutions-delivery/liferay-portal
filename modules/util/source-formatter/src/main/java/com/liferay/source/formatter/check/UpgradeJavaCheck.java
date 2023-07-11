@@ -15,15 +15,18 @@
 package com.liferay.source.formatter.check;
 
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.parser.JavaClass;
 import com.liferay.source.formatter.parser.JavaClassParser;
-import com.liferay.source.formatter.util.FileUtil;
 import com.liferay.source.formatter.util.SourceFormatterUtil;
 
-import java.io.File;
+import java.io.InputStream;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,14 +53,40 @@ public class UpgradeJavaCheck extends BaseFileCheck {
 
 		Map<String, String> importsMap = _getImportsMap();
 
+		List<String> variables = new ArrayList<>();
+		List<String> newVariables = new ArrayList<>();
+
 		for (String importName : javaClass.getImportNames()) {
 			String newImportName = importsMap.get(importName);
 
-			if (newImportName != null) {
-				content = StringUtil.replace(
-					content, StringBundler.concat("import ", importName, ";"),
-					StringBundler.concat("import ", newImportName, ";"));
+			if (newImportName == null) {
+				continue;
 			}
+
+			content = StringUtil.replace(
+				content,
+				StringBundler.concat(
+					"import ", importName, StringPool.SEMICOLON),
+				StringBundler.concat(
+					"import ", newImportName, StringPool.SEMICOLON));
+
+			String className = SourceFormatterUtil.getSimpleName(importName);
+			String newClassName = SourceFormatterUtil.getSimpleName(
+				newImportName);
+
+			if (!className.equals(newClassName)) {
+				variables.add(className);
+				variables.add(StringUtil.lowerCaseFirstLetter(className));
+
+				newVariables.add(newClassName);
+				newVariables.add(StringUtil.lowerCaseFirstLetter(newClassName));
+			}
+		}
+
+		if (!newVariables.isEmpty()) {
+			content = StringUtil.replace(
+				content, ArrayUtil.toStringArray(variables),
+				ArrayUtil.toStringArray(newVariables));
 		}
 
 		return content;
@@ -65,7 +94,7 @@ public class UpgradeJavaCheck extends BaseFileCheck {
 
 	private synchronized Map<String, String> _getImportsMap() throws Exception {
 		if (_importsMap == null) {
-			_importsMap = _getMap("/imports.txt");
+			_importsMap = _getMap("imports.txt");
 		}
 
 		return _importsMap;
@@ -74,20 +103,21 @@ public class UpgradeJavaCheck extends BaseFileCheck {
 	private Map<String, String> _getMap(String fileName) throws Exception {
 		Map<String, String> map = new HashMap<>();
 
-		File importsFile = SourceFormatterUtil.getFile(
-			getBaseDirName(),
-			"modules/util/source-formatter/src/main/resources/dependencies/" +
-				fileName,
-			getMaxDirLevel());
+		Class<?> clazz = getClass();
 
-		if (importsFile == null) {
+		ClassLoader classLoader = clazz.getClassLoader();
+
+		InputStream inputStream = classLoader.getResourceAsStream(
+			"dependencies/" + fileName);
+
+		if (inputStream == null) {
 			return map;
 		}
 
-		String[] lines = StringUtil.splitLines(FileUtil.read(importsFile));
+		String[] lines = StringUtil.splitLines(StringUtil.read(inputStream));
 
 		for (String line : lines) {
-			int separatorIndex = line.indexOf("=");
+			int separatorIndex = line.indexOf(StringPool.EQUAL);
 
 			map.put(
 				line.substring(0, separatorIndex),

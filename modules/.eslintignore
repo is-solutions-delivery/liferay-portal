@@ -23,10 +23,10 @@
     apps/frontend-editor/frontend-editor-tinymce-web
     apps/frontend-js/frontend-js-jquery-web
     build/**
-    tmp/**
     classes/**
     css/clay/**
     node_modules/**
+    tmp/**
     types/**/*.d.ts
     yarn-*.js
     zippableResources/**

@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.service;
 
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.model.Image;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 
 /**
@@ -250,6 +251,14 @@ public class ImageLocalServiceWrapper
 	}
 
 	@Override
+	public java.io.InputStream getImageInputStream(
+			long companyId, long imageId, String type)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _imageLocalService.getImageInputStream(companyId, imageId, type);
+	}
+
+	@Override
 	public Image getImageOrDefault(long imageId) {
 		return _imageLocalService.getImageOrDefault(imageId);
 	}
@@ -441,6 +450,11 @@ public class ImageLocalServiceWrapper
 
 		return _imageLocalService.updateImage(
 			companyId, imageId, inputStream, cleanUpStream);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _imageLocalService.getBasePersistence();
 	}
 
 	@Override

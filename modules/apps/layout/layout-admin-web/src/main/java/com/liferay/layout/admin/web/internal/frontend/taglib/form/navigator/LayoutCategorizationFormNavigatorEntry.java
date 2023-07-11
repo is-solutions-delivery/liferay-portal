@@ -51,7 +51,7 @@ public class LayoutCategorizationFormNavigatorEntry
 
 	@Override
 	public boolean isVisible(User user, Layout layout) {
-		if (layout.isTypeAssetDisplay()) {
+		if (layout.isDraftLayout() || layout.isTypeAssetDisplay()) {
 			return false;
 		}
 

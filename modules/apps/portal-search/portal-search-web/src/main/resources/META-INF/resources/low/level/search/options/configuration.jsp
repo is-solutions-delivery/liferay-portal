@@ -35,7 +35,7 @@ page import="com.liferay.portal.search.web.internal.util.PortletPreferencesJspUt
 <%
 ConfigurationDisplayContext configurationDisplayContext = (ConfigurationDisplayContext)java.util.Objects.requireNonNull(request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT));
 
-LowLevelSearchOptionsPortletPreferences lowLevelSearchOptionsPortletPreferences = new LowLevelSearchOptionsPortletPreferencesImpl(java.util.Optional.ofNullable(portletPreferences));
+LowLevelSearchOptionsPortletPreferences lowLevelSearchOptionsPortletPreferences = new LowLevelSearchOptionsPortletPreferencesImpl(portletPreferences);
 %>
 
 <liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
@@ -94,11 +94,11 @@ LowLevelSearchOptionsPortletPreferences lowLevelSearchOptionsPortletPreferences 
 				<div class="field-form-row lfr-form-row lfr-form-row-inline">
 					<div class="autofit-row row-fields">
 						<div class="autofit-col-expand">
-							<aui:input cssClass="flex-fill key-input" label="key" name='<%= "key_" + i %>' value='<%= jsonObject.getString("key") %>' />
+							<aui:input cssClass="flex-fill key-input" label="key" name='<%= "key_" + i %>' value='<%= jsonObject.getString("key") %>' wrapperCssClass="c-mb-3 c-mr-2" />
 						</div>
 
 						<div class="autofit-col-expand">
-							<aui:input cssClass="flex-fill value-input" label="value" name='<%= "value_" + i %>' value='<%= jsonObject.getString("value") %>' />
+							<aui:input cssClass="flex-fill value-input" label="value" name='<%= "value_" + i %>' value='<%= jsonObject.getString("value") %>' wrapperCssClass="c-mb-3" />
 						</div>
 					</div>
 				</div>

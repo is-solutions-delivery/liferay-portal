@@ -24,15 +24,29 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		CustomerPortal.customerPortalTearDown();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
 			JSONGroup.deleteGroupByName(groupName = ${testSiteName});
+		}
+	}
+
+	@description = "Story ID: LPS-148368| Test Summary: Verify that clicking in the button 'Watch Tutorial Videos', the user is redirect to the correct URL"
+	@priority = 2
+	test AssertThatGuideButtonIsPresent {
+		task ("Given that I go to the Customer Portal") {
+			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
+
+			CustomerPortal.waitCP20PageToLoad(userFirstName = ${testUserFirstName});
+		}
+
+		task ("Then I click on Watch Onboarding Videos button in the banner") {
+			CP2HomePage.assertGuideVideosButton();
 		}
 	}
 

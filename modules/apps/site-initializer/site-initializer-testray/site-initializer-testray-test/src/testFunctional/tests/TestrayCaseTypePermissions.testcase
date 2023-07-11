@@ -19,7 +19,10 @@ definition {
 		}
 
 		task ("Create a new Testray Site") {
-			Testray.addTestraySite(siteName = ${testSiteName});
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
 		}
 
 		task ("Create a case type via API") {
@@ -34,21 +37,17 @@ definition {
 				userLoginFullName = "test test");
 		}
 
-		task ("Delete all objects, Testray Site and Client Extensions") {
+		task ("Delete case type via API, Testray Site and Client Extensions") {
 			JSONTestrayAPI.deleteObjectViaAPI(
 				object = "casetypes",
 				objectName = ${caseType});
 
-			Testray.tearDownCP();
-
-			ClientExtensionGeneral.goToRemoteAppsPortlet();
-
-			ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
+			Testray.testrayApisTearDown();
 		}
 
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -56,7 +55,7 @@ definition {
 	@description = "Story ID: LPS-178257 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to create/edit/delete the case type but can view"
 	@priority = 3
 	test AnalystRoleCanNotCreateEditAndDelete {
-		property test.name.skip.portal.instance = "TestrayCaseTypePermissions#AnalystRoleCanNotCreateEditAndDelete";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Analyst role") {
 			User.logoutAndLoginPG(
@@ -102,7 +101,7 @@ definition {
 	@description = "Story ID: LPS-178257 | Test Summary: Verify that the User with the 'Testray Lead' role should not be able to create/edit/delete the case type but can view"
 	@priority = 3
 	test LeadRoleCanNotCreateEditAndDelete {
-		property test.name.skip.portal.instance = "TestrayCaseTypePermissions#LeadRoleCanNotCreateEditAndDelete";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Lead role") {
 			User.logoutAndLoginPG(
@@ -148,7 +147,7 @@ definition {
 	@description = "Story ID: LPS-178257 | Test Summary: Verify that the User with the 'Testray User' role should not be able to create/edit/delete the case type but can view"
 	@priority = 3
 	test UserRoleCanNotCreateEditAndDelete {
-		property test.name.skip.portal.instance = "TestrayCaseTypePermissions#UserRoleCanNotCreateEditAndDelete";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray User role") {
 			User.logoutAndLoginPG(

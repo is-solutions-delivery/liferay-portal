@@ -30,15 +30,9 @@
 	>
 		<div class="add-instance-content">
 			<div class="px-4 py-2">
-				<liferay-ui:error exception="<%= CompanyMxException.class %>" message="please-enter-a-valid-mail-domain" />
-				<liferay-ui:error exception="<%= CompanyVirtualHostException.class %>" message="please-enter-a-valid-virtual-host" />
-				<liferay-ui:error exception="<%= CompanyWebIdException.class %>" message="please-enter-a-valid-web-id" />
-
 				<aui:model-context model="<%= Company.class %>" />
 
-				<aui:input name="webId">
-					<aui:validator name="required" />
-				</aui:input>
+				<aui:input name="webId" required="<%= true %>" />
 
 				<aui:input fieldParam="virtualHostname" label="virtual-host" model="<%= VirtualHost.class %>" name="hostname" />
 
@@ -68,6 +62,38 @@
 						%>
 
 					</aui:select>
+				</c:if>
+
+				<c:if test="<%= Validator.isNull(PropsUtil.get(PropsKeys.DEFAULT_ADMIN_PASSWORD)) %>">
+					<liferay-ui:panel
+						collapsible="<%= false %>"
+						extended="<%= true %>"
+						id="administatorUserPanel"
+						markupView="lexicon"
+						title="administrator-user"
+					>
+						<aui:input label="field.screen-name" name="defaultAdminScreenName" required="<%= true %>" type="text" />
+
+						<aui:input label="email-address" name="defaultAdminEmailAddress" required="<%= true %>" type="text" />
+
+						<aui:input label="password" name="defaultAdminPassword" required="<%= true %>" type="password" />
+
+						<%
+						FullNameDefinition fullNameDefinition = FullNameDefinitionFactory.getInstance(locale);
+						%>
+
+						<c:if test='<%= fullNameDefinition.isFieldRequired("first-name") %>'>
+							<aui:input label="first-name" name="defaultAdminFirstName" required="<%= true %>" type="text" value="<%= PropsUtil.get(PropsKeys.DEFAULT_ADMIN_FIRST_NAME) %>" />
+						</c:if>
+
+						<c:if test='<%= fullNameDefinition.isFieldRequired("middle-name") %>'>
+							<aui:input label="middle-name" name="defaultAdminMiddleName" required="<%= true %>" type="text" value="<%= PropsUtil.get(PropsKeys.DEFAULT_ADMIN_MIDDLE_NAME) %>" />
+						</c:if>
+
+						<c:if test='<%= fullNameDefinition.isFieldRequired("last-name") %>'>
+							<aui:input label="last-name" name="defaultAdminLastName" required="<%= true %>" type="text" value="<%= PropsUtil.get(PropsKeys.DEFAULT_ADMIN_LAST_NAME) %>" />
+						</c:if>
+					</liferay-ui:panel>
 				</c:if>
 			</div>
 		</div>

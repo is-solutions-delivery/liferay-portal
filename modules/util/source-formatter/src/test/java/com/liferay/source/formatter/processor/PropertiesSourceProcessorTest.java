@@ -27,6 +27,66 @@ public class PropertiesSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testLanguageKeysContext() throws Exception {
+		test(
+			SourceProcessorTestParameters.create(
+				"content/Language.testproperties"
+			).addExpectedMessage(
+				"The context '' is invalid in the key 'order[]'"
+			).addExpectedMessage(
+				"The context '...' is invalid in the key 'order[...]'"
+			).addExpectedMessage(
+				"The context '0' is invalid in the key 'order[0]'"
+			).addExpectedMessage(
+				"The context '123' is invalid in the key 'order[123]'"
+			).addExpectedMessage(
+				"The context 'abc' is invalid in the key 'order[abc]'"
+			).addExpectedMessage(
+				"The context 'x' is invalid in the key 'order[x]'"
+			).addExpectedMessage(
+				"The context 'xyz' is invalid in the key 'order[xyz]'"
+			).addExpectedMessage(
+				"The key 'a' should include a word of context at the end, " +
+					"within a [], to indicate specific meaning"
+			).addExpectedMessage(
+				"The key 'add' should include a word of context at the end, " +
+					"within a [], to indicate specific meaning"
+			).addExpectedMessage(
+				"The key 'alert' should include a word of context at the " +
+					"end, within a [], to indicate specific meaning"
+			).addExpectedMessage(
+				"The key 'average' should include a word of context at the " +
+					"end, within a [], to indicate specific meaning"
+			).addExpectedMessage(
+				"The key 'order' should include a word of context at the " +
+					"end, within a [], to indicate specific meaning"
+			).addExpectedMessage(
+				"The single-word key 'abstract' should include a word of " +
+					"context at the end, within a [], to indicate specific " +
+						"meaning"
+			).addExpectedMessage(
+				"The single-word key 'add' should include a word of context " +
+					"at the end, within a [], to indicate specific meaning"
+			).addExpectedMessage(
+				"The single-word key 'alert' should include a word of " +
+					"context at the end, within a [], to indicate specific " +
+						"meaning"
+			).addExpectedMessage(
+				"The single-word key 'alerts' should include a word of " +
+					"context at the end, within a [], to indicate specific " +
+						"meaning"
+			).addExpectedMessage(
+				"The single-word key 'average' should include a word of " +
+					"context at the end, within a [], to indicate specific " +
+						"meaning"
+			).addExpectedMessage(
+				"The single-word key 'order' should include a word of " +
+					"context at the end, within a [], to indicate specific " +
+						"meaning"
+			));
+	}
+
+	@Test
 	public void testSortDefinitionKeys() throws Exception {
 		test("FormatProperties/liferay-plugin-package.testproperties");
 		test("FormatProperties/TLiferayBatchFileProperties.testproperties");

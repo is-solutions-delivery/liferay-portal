@@ -63,6 +63,11 @@ public interface SXPElementService extends BaseService {
 	public SXPElement deleteSXPElement(long sxpElementId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SXPElement fetchSXPElementByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws PortalException;
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -72,6 +77,11 @@ public interface SXPElementService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public SXPElement getSXPElement(long sxpElementId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SXPElement getSXPElementByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws PortalException;
 
 	public SXPElement updateSXPElement(
 			long sxpElementId, Map<Locale, String> descriptionMap,

@@ -82,6 +82,11 @@ public class CommerceInventoryWarehouseItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/warehouse_item_selector.jsp");
+
 		HttpServletRequest httpServletRequest =
 			(HttpServletRequest)servletRequest;
 
@@ -95,11 +100,6 @@ public class CommerceInventoryWarehouseItemSelectorView
 		servletRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
 			commerceInventoryWarehouseItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/warehouse_item_selector.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

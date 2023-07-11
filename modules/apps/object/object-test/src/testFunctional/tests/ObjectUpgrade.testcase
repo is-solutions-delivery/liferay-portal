@@ -23,8 +23,117 @@ definition {
 		property database.types = "mariadb,mysql,postgresql,sqlserver";
 		property portal.version = "7.4.13.u33";
 
-		// TODO LPS-174664 ViewActionWithNotificationAfterUpgrade7413U33
+		task ("Given Custom Object1 and Object Actions") {
+			ObjectAdmin.openObjectAdmin();
 
+			ObjectPortlet.selectCustomObject(label = "Custom Object1");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.viewObjectAction(
+				actionLabel = "Custom Action",
+				actionName = "Custom Action",
+				active = "Yes",
+				inputExpression = "customFieldText == 'Notification Test'",
+				notificationName = "Notification Template",
+				objectLabel = "Notification",
+				status = "Success",
+				thenAction = "Notification",
+				viewEntry = "Custom Action",
+				whenAction = "On After Add");
+		}
+
+		task ("When an object entry for Custom Object1 (Notification Test) is made and assert the action is triggered") {
+			Navigator.openURL();
+
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				panel = "Site Administration",
+				portlet = "Custom Objects1");
+
+			LexiconEntry.gotoAdd();
+
+			Type(
+				key_text = "",
+				locator1 = "TextInput#ANY",
+				value1 = "Notification Test");
+
+			Button.clickSave();
+
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				panel = "Site Administration",
+				portlet = "Custom Objects1");
+
+			MockMock.viewMail(
+				asset = "Subject",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject");
+
+			MockMock.deleteMail(
+				deleteAll = "true",
+				newTab = "true");
+
+			Close.closeWindow();
+		}
+
+		task ("And when user edits Custom Action name and Expression Builder condition and asserts action ran and received notification") {
+			Navigator.openURL();
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object1");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.editObjectAction(
+				actionLabel = "Update Custom Action",
+				inputExpression = "customFieldText == 'Update Notification Test'",
+				viewEntry = "Custom Action");
+
+			Navigator.openURL();
+
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Custom Objects1");
+
+			LexiconEntry.gotoAdd();
+
+			Type(
+				key_text = "",
+				locator1 = "TextInput#ANY",
+				value1 = "Update Notification Test");
+
+			Button.clickSave();
+
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				panel = "Site Administration",
+				portlet = "Custom Objects1");
+
+			MockMock.viewMail(
+				asset = "Subject",
+				content = "Email Body",
+				recipient = "test@liferay",
+				sender = "Test Test",
+				subject = "Subject");
+		}
+
+		task ("Then the user is able to delete the action") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object1");
+
+			ObjectAdmin.goToActionsTab();
+
+			Click(
+				key_objectLabel = "Custom Action",
+				locator1 = "ObjectAdmin#OBJECT_KEBAB_MENU");
+
+			MenuItem.clickNoError(menuItem = "Delete");
+		}
 	}
 
 	@priority = 5
@@ -32,7 +141,7 @@ definition {
 		property data.archive.type = "data-archive-object";
 		property database.types = "mariadb,mysql,postgresql,sqlserver";
 		property portal.version = "7.4.13.u33";
-		property test.name.skip.portal.instance = "ObjectUpgrade#ViewObjectDefinitionDetailsAfterUpgrade7413U33";
+		property test.liferay.virtual.instance = "false";
 
 		task ("View an Object Definition Details after Upgrade") {
 			ObjectAdmin.openObjectAdmin();
@@ -102,7 +211,7 @@ definition {
 		property data.archive.type = "data-archive-object";
 		property database.types = "mariadb,mysql,postgresql,sqlserver";
 		property portal.version = "7.4.13.u33";
-		property test.name.skip.portal.instance = "ObjectUpgrade#ViewObjectEntryAfterUpgrade7413U33";
+		property test.liferay.virtual.instance = "false";
 
 		task ("View Object Entry after Upgrade") {
 			Navigator.openURL();
@@ -204,11 +313,166 @@ definition {
 	}
 
 	@priority = 5
+	test ViewObjectFieldAfterUpgrade7413U33 {
+		property data.archive.type = "data-archive-object";
+		property database.types = "mariadb,mysql,postgresql,sqlserver";
+		property portal.version = "7.4.13.u33";
+		property test.liferay.virtual.instance = "false";
+
+		var index = 0;
+		var listLabelOriginal = ListUtil.newListFromString("Custom Field Long Integer,Custom Field Date,Custom Field Integer,Custom Field Precision Decimal,Custom Field Decimal,Custom Field Rich Text,Custom Field Boolean,Custom Field Long Text,Custom Field Picklist");
+		var listLabelUpdated = ListUtil.newListFromString("Custom Field Long Integer Updated,Custom Field Date Updated,Custom Field Integer Updated,Custom Field Precision Decimal Updated,Custom Field Decimal Updated,Custom Field Rich Text Updated,Custom Field Boolean Updated,Custom Field Long Text Updated,Custom Field Picklist Updated");
+		var listFieldType = ListUtil.newListFromString("LongInteger,Date,Integer,PrecisionDecimal,Decimal,RichText,Boolean,LongText,Picklist");
+
+		task ("Given an Custom Object and all fields are present after Upgrade") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object3");
+
+			ObjectAdmin.goToFieldsTab();
+
+			for (var fieldLabel : list ${listLabelOriginal}) {
+				for (var fieldType : list ${listFieldType}) {
+					ObjectAdmin.assertObjectField(
+						fieldLabel = ${fieldLabel},
+						fieldType = ${fieldType});
+				}
+			}
+		}
+
+		task ("When edits are made to the Custom Object's fields after Upgrade") {
+			for (var label : list ${listLabelOriginal}) {
+				var content = ListUtil.get(${listLabelUpdated}, ${index});
+
+				ObjectAdmin.goToFieldsDetails(label = ${label});
+
+				ObjectField.typeLabel(content = ${content});
+
+				ObjectField.save();
+
+				var index = ${index} + 1;
+
+				var index = StringUtil.valueOf(${index});
+			}
+		}
+
+		task ("Then all labels are updated in the existing object entry when navigating to Custom Objects3 portlet") {
+			ObjectAdmin.goToCustomObject(objectName = "CustomObject3");
+
+			for (var columns : list ${listLabelUpdated}) {
+				AssertElementPresent(
+					key_column = ${columns},
+					locator1 = "ObjectPortlet#ENTRY_COLUMN");
+			}
+		}
+	}
+
+	@priority = 5
+	test ViewObjectLayoutAfterUpgrade7413U33 {
+		property data.archive.type = "data-archive-object";
+		property database.types = "mariadb,mysql,postgresql,sqlserver";
+		property portal.version = "7.4.13.u33";
+		property test.liferay.virtual.instance = "false";
+
+		task ("View Object Layout after Upgrade") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object1");
+
+			ObjectAdmin.goToLayoutsTab();
+
+			ObjectAdmin.selectSpecificKebabMenuOption(
+				kebabOption = "Edit",
+				objectLabel = "Custom Layout");
+
+			ObjectAdmin.goToLayoutTabOnLayouts();
+
+			for (var tabName : list "Field Tab,Account Tab,Custom Object2 Tab") {
+				AssertElementPresent(
+					key_fieldTabName = ${tabName},
+					locator1 = "ObjectAdmin#FIELD_TAB_NAME");
+			}
+
+			ObjectAdmin.assertBlockIsPresent(fieldBlockName = "Block 1");
+
+			for (var fieldName : list "Custom Field Text,OTM - System Object,MTM - Custom Object") {
+				AssertElementPresent(
+					key_fieldName = ${fieldName},
+					locator1 = "ObjectAdmin#LAYOUT_FIELD_NAME");
+			}
+
+			Navigator.openURL();
+
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Custom Objects1",
+				site = "Liferay DXP");
+
+			ObjectPortlet.viewEntryDetails(entry = "Notification Test");
+
+			for (var tabName : list "Field Tab,Account Tab,Custom Object2 Tab") {
+				AssertElementPresent(
+					key_tabName = ${tabName},
+					locator1 = "ObjectAdmin#OBJECT_ANY_TAB");
+			}
+		}
+
+		task ("Edit Object Layout After Upgrade") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object1");
+
+			ObjectAdmin.goToLayoutsTab();
+
+			ObjectAdmin.selectSpecificKebabMenuOption(
+				kebabOption = "Edit",
+				objectLabel = "Custom Layout");
+
+			SelectFrame(locator1 = "IFrame#IFRAME");
+
+			Type(
+				locator1 = "ObjectAdmin#LAYOUT_BASIC_INFO_NAME_FIELD",
+				value1 = "Custom Layout Edit After Upgrade");
+
+			PortletEntry.save();
+
+			AssertElementPresent(
+				key_name = "Custom Layout Edit After Upgrade",
+				locator1 = "CreateObject#SELECT_OBJECT_FIELD_IN_TABLE");
+		}
+
+		task ("Delete Object Layout After Upgrade") {
+			ObjectAdmin.selectSpecificKebabMenuOption(
+				kebabOption = "Delete",
+				objectLabel = "Custom Layout Edit After Upgrade");
+
+			AssertElementNotPresent(
+				key_name = "Custom Layout Edit After Upgrade",
+				locator1 = "CreateObject#SELECT_OBJECT_FIELD_IN_TABLE");
+
+			Navigator.openURL();
+
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Custom Objects1",
+				site = "Liferay DXP");
+
+			ObjectPortlet.viewEntryDetails(entry = "Notification Test");
+
+			for (var tabName : list "Field Tab,Account Tab,Custom Object2 Tab") {
+				AssertElementNotPresent(
+					key_tabName = ${tabName},
+					locator1 = "ObjectAdmin#OBJECT_ANY_TAB");
+			}
+		}
+	}
+
+	@priority = 5
 	test ViewObjectRelationshipAfterUpgrade7413U33 {
 		property data.archive.type = "data-archive-object";
 		property database.types = "mariadb,mysql,postgresql,sqlserver";
 		property portal.version = "7.4.13.u33";
-		property test.name.skip.portal.instance = "ObjectUpgrade#ViewObjectRelationshipAfterUpgrade7413U33";
+		property test.liferay.virtual.instance = "false";
 
 		task ("View Object Relationships after Upgrade") {
 			ObjectAdmin.openObjectAdmin();
@@ -284,7 +548,7 @@ definition {
 		property data.archive.type = "data-archive-object";
 		property database.types = "mariadb,mysql,postgresql,sqlserver";
 		property portal.version = "7.4.13.u33";
-		property test.name.skip.portal.instance = "ObjectUpgrade#ViewPicklistAfterUpgrade7413U33";
+		property test.liferay.virtual.instance = "false";
 
 		task ("View a Picklist after Upgrade") {
 			Picklist.gotoPicklists();

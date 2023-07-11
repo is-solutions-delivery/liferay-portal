@@ -15,6 +15,7 @@
 package com.liferay.object.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
 /**
  * Provides a wrapper for {@link ObjectLayoutTabLocalService}.
@@ -408,6 +409,14 @@ public class ObjectLayoutTabLocalServiceWrapper
 				objectDefinition, objectLayoutTabs);
 	}
 
+	@Override
+	public void unregisterObjectLayoutTabScreenNavigationCategory(
+		com.liferay.object.model.ObjectLayoutTab objectLayoutTab) {
+
+		_objectLayoutTabLocalService.
+			unregisterObjectLayoutTabScreenNavigationCategory(objectLayoutTab);
+	}
+
 	/**
 	 * Updates the object layout tab in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -424,6 +433,11 @@ public class ObjectLayoutTabLocalServiceWrapper
 
 		return _objectLayoutTabLocalService.updateObjectLayoutTab(
 			objectLayoutTab);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _objectLayoutTabLocalService.getBasePersistence();
 	}
 
 	@Override

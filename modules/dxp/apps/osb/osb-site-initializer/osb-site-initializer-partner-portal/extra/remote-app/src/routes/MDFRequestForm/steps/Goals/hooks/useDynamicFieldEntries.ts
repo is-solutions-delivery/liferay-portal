@@ -31,8 +31,9 @@ export default function useDynamicFieldEntries(skipCompanies?: boolean) {
 	const companiesEntries = useMemo(
 		() =>
 			userAccount?.accountBriefs.map((accountBrief) => ({
+				defaultValue: accountBrief.id,
 				label: accountBrief.name,
-				value: accountBrief.id,
+				value: accountBrief.externalReferenceCode,
 			})) as React.OptionHTMLAttributes<HTMLOptionElement>[] | undefined,
 		[userAccount?.accountBriefs]
 	);

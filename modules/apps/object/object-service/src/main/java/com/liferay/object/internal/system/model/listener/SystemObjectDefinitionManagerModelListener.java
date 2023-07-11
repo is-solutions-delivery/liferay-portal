@@ -14,11 +14,16 @@
 
 package com.liferay.object.internal.system.model.listener;
 
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.object.action.engine.ObjectActionEngine;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
+import com.liferay.object.entry.util.ObjectEntryThreadLocal;
+import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectValidationRuleLocalService;
 import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionManager;
@@ -44,6 +49,8 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.extension.EntityExtensionThreadLocal;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -54,20 +61,24 @@ public class SystemObjectDefinitionManagerModelListener<T extends BaseModel<T>>
 	extends BaseModelListener<T> {
 
 	public SystemObjectDefinitionManagerModelListener(
+		DDMExpressionFactory ddmExpressionFactory,
 		DTOConverterRegistry dtoConverterRegistry, JSONFactory jsonFactory,
 		Class<T> modelClass, ObjectActionEngine objectActionEngine,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
+		ObjectFieldLocalService objectFieldLocalService,
 		ObjectValidationRuleLocalService objectValidationRuleLocalService,
 		SystemObjectDefinitionManager systemObjectDefinitionManager,
 		UserLocalService userLocalService) {
 
+		_ddmExpressionFactory = ddmExpressionFactory;
 		_dtoConverterRegistry = dtoConverterRegistry;
 		_jsonFactory = jsonFactory;
 		_modelClass = modelClass;
 		_objectActionEngine = objectActionEngine;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
+		_objectFieldLocalService = objectFieldLocalService;
 		_objectValidationRuleLocalService = objectValidationRuleLocalService;
 		_systemObjectDefinitionManager = systemObjectDefinitionManager;
 		_userLocalService = userLocalService;
@@ -336,6 +347,45 @@ public class SystemObjectDefinitionManagerModelListener<T extends BaseModel<T>>
 		return baseModel.getModelAttributes();
 	}
 
+	private void _validateReadOnlyObjectFields(
+			T originalModel, T model, ObjectDefinition objectDefinition)
+		throws PortalException {
+
+		if (EntityExtensionThreadLocal.getExtendedProperties() == null) {
+			return;
+		}
+
+		List<ObjectField> objectFields =
+			_objectFieldLocalService.getObjectFields(
+				objectDefinition.getObjectDefinitionId());
+		Map<String, Object> extendedProperties = new HashMap<>(
+			EntityExtensionThreadLocal.getExtendedProperties());
+
+		if (originalModel == null) {
+			ObjectFieldUtil.validateReadOnlyObjectFields(
+				_ddmExpressionFactory, new HashMap<>(), objectFields,
+				extendedProperties);
+
+			ObjectEntryThreadLocal.setSkipReadOnlyObjectFieldsValidation(true);
+
+			return;
+		}
+
+		ObjectFieldUtil.validateReadOnlyObjectFields(
+			_ddmExpressionFactory,
+			HashMapBuilder.putAll(
+				originalModel.getModelAttributes()
+			).putAll(
+				_objectEntryLocalService.
+					getExtensionDynamicObjectDefinitionTableValues(
+						objectDefinition,
+						GetterUtil.getLong(model.getPrimaryKeyObj()))
+			).build(),
+			objectFields, extendedProperties);
+
+		ObjectEntryThreadLocal.setSkipReadOnlyObjectFieldsValidation(true);
+	}
+
 	private void _validateSystemObject(T originalModel, T model)
 		throws ModelListenerException {
 
@@ -354,6 +404,9 @@ public class SystemObjectDefinitionManagerModelListener<T extends BaseModel<T>>
 				userId = _getUserId(model);
 			}
 
+			_validateReadOnlyObjectFields(
+				originalModel, model, objectDefinition);
+
 			_objectValidationRuleLocalService.validate(
 				model, objectDefinition.getObjectDefinitionId(),
 				_getPayloadJSONObject(
@@ -368,12 +421,14 @@ public class SystemObjectDefinitionManagerModelListener<T extends BaseModel<T>>
 	private static final Log _log = LogFactoryUtil.getLog(
 		SystemObjectDefinitionManagerModelListener.class);
 
+	private final DDMExpressionFactory _ddmExpressionFactory;
 	private final DTOConverterRegistry _dtoConverterRegistry;
 	private final JSONFactory _jsonFactory;
 	private final Class<?> _modelClass;
 	private final ObjectActionEngine _objectActionEngine;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
+	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectValidationRuleLocalService
 		_objectValidationRuleLocalService;
 	private final SystemObjectDefinitionManager _systemObjectDefinitionManager;

@@ -148,15 +148,6 @@ public class CommerceInventoryWarehouseItemServiceUtil {
 	}
 
 	public static List<CommerceInventoryWarehouseItem>
-			getCommerceInventoryWarehouseItems(
-				long companyId, String sku, int start, int end)
-		throws PortalException {
-
-		return getService().getCommerceInventoryWarehouseItems(
-			companyId, sku, start, end);
-	}
-
-	public static List<CommerceInventoryWarehouseItem>
 			getCommerceInventoryWarehouseItemsByCompanyId(
 				long companyId, int start, int end)
 		throws PortalException {
@@ -180,6 +171,14 @@ public class CommerceInventoryWarehouseItemServiceUtil {
 
 		return getService().getCommerceInventoryWarehouseItemsCount(
 			commerceInventoryWarehouseId);
+	}
+
+	public static int getCommerceInventoryWarehouseItemsCount(
+			long companyId, long groupId, String sku)
+		throws PortalException {
+
+		return getService().getCommerceInventoryWarehouseItemsCount(
+			companyId, groupId, sku);
 	}
 
 	public static int getCommerceInventoryWarehouseItemsCount(

@@ -11,6 +11,14 @@
 		"actionIds": [
 			"ADD_OBJECT_ENTRY"
 		],
+		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:EVPUploadReceipt$]",
+		"roleName": "Employee",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"ADD_OBJECT_ENTRY"
+		],
 		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:EVPGrantRequest$]",
 		"roleName": "Employee",
 		"scope": "1"
@@ -109,6 +117,64 @@
 	},
 	{
 		"actionIds": [
+			"ADD_OBJECT_ENTRY"
+		],
+		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:EVPRequest$]",
+		"roleName": "Liferay Manager",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"ADD_OBJECT_ENTRY"
+		],
+		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:EVPOrganization$]",
+		"roleName": "Liferay Manager",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"ADD_OBJECT_ENTRY"
+		],
+		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:EVPGrantRequest$]",
+		"roleName": "Liferay Manager",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"UPDATE",
+			"VIEW"
+		],
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:EVPRequest$]",
+		"roleName": "Liferay Manager",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"UPDATE",
+			"VIEW"
+		],
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:EVPOrganization$]",
+		"roleName": "Liferay Manager",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:EVPGrantRequest$]",
+		"roleName": "Liferay Manager",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"resourceName": "com.liferay.list.type.model.ListTypeDefinition",
+		"roleName": "Liferay Manager",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
 			"UPDATE",
 			"VIEW"
 		],
@@ -180,6 +246,14 @@
 		],
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:EVPHomepageData$]",
 		"roleName": "Guest",
+		"scope": "1"
+	},
+	{
+		"actionIds": [
+			"VIEW"
+		],
+		"resourceName": "com.liferay.expando.kernel.model.ExpandoColumn",
+		"roleName": "User",
 		"scope": "1"
 	}
 ]

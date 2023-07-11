@@ -8,14 +8,14 @@ import React from 'react';
 import URLConstants from 'shared/util/url-constants';
 import {compose, withEmpty, withRequest} from 'shared/hoc';
 import {createOrderIOMap, NAME} from 'shared/util/pagination';
-import {Link} from 'react-router-dom';
 import {PropTypes} from 'prop-types';
 import {Routes, toRoute} from 'shared/util/router';
 
 const ITEMS_PER_CARD = 6;
 
-function fetchInterestData({groupId, id}) {
+function fetchInterestData({channelId, groupId, id}) {
 	return API.interests.search({
+		channelId,
 		contactsEntityId: id,
 		delta: ITEMS_PER_CARD,
 		groupId,
@@ -30,8 +30,9 @@ export const InterestsList = ({channelId, groupId, id, interests}) => (
 			<ListGroup.Item className='interest' key={name}>
 				<ListGroup.ItemTitle className='text-truncate'>
 					{name ? (
-						<Link
-							to={toRoute(
+						<ClayLink
+							decoration='none'
+							href={toRoute(
 								Routes.CONTACTS_INDIVIDUAL_INTEREST_DETAILS,
 								{
 									channelId,
@@ -42,7 +43,7 @@ export const InterestsList = ({channelId, groupId, id, interests}) => (
 							)}
 						>
 							{name}
-						</Link>
+						</ClayLink>
 					) : (
 						name
 					)}
@@ -55,7 +56,11 @@ export const InterestsList = ({channelId, groupId, id, interests}) => (
 const ListWithInterests = compose(
 	withRequest(
 		fetchInterestData,
-		data => ({interests: data.items, total: data.total}),
+		data => ({
+			channelId: data.channelId,
+			interests: data.items,
+			total: data.total
+		}),
 		{
 			page: false
 		}

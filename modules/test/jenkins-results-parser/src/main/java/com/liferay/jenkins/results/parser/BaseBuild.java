@@ -762,7 +762,7 @@ public abstract class BaseBuild implements Build {
 
 		if (_jenkinsConsoleTextLoader == null) {
 			_jenkinsConsoleTextLoader = new JenkinsConsoleTextLoader(
-				getBuildURL());
+				getBuildURL(), this instanceof TopLevelBuild);
 		}
 
 		return _jenkinsConsoleTextLoader.getConsoleText();
@@ -1915,6 +1915,12 @@ public abstract class BaseBuild implements Build {
 
 		testResults.addAll(getTestResults("FAILED"));
 		testResults.addAll(getTestResults("REGRESSION"));
+
+		List<TestResult> passedTestResults = getTestResults("PASSED");
+
+		if (passedTestResults.size() == 1) {
+			testResults.addAll(passedTestResults);
+		}
 
 		if (testResults.isEmpty()) {
 			return true;

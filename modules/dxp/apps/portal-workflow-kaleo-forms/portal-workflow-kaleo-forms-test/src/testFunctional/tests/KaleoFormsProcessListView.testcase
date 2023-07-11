@@ -1,0 +1,389 @@
+@component-name = "portal-workflow-ee"
+definition {
+
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "Kaleo Forms Admin";
+
+	var kfFieldSetName = "New Kaleo Field Set";
+	var workflowAssetType = "Process";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			KaleoFormsAdmin.tearDownProcess();
+
+			DDLTemplate.tearDownTemplateCP();
+
+			DDLTemplate.tearDownTemplateCP(ddlDataDefinitionName = "To Do");
+
+			Workflow.tearDownSpecificWorkflowDefinition(workflowDefinitionTitle = "Edited Workflow Definition");
+
+			Workflow.tearDownWorkflowDefinitions();
+
+			PagesAdmin.tearDownCP();
+		}
+	}
+
+	@description = "Verify that the user can clear the result bar after the user use  the search bar."
+	@priority = 5
+	test CanClearSearchBar {
+		for (var newProcess : list "one,two") {
+			KaleoFormsAdmin.addProcess();
+
+			KaleoFormsAdmin.createKaleoFormsProcess(
+				kfFieldSetName = "Contacts",
+				kfFormName = "Created Task Form ${newProcess}",
+				kfProcessDescription = "Kaleo Forms Process Description ${newProcess}",
+				kfProcessName = "Kaleo Forms Process ${newProcess}",
+				workflowDefinitionTitle = "Single Approver",
+				workflowTask = "created");
+		}
+
+		Search.searchCP(searchTerm = "one");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process one");
+
+		KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "Kaleo Forms Process two");
+
+		Search.clearSearchResult();
+
+		for (var viewProcess : list "one,two") {
+			KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process ${viewProcess}");
+		}
+	}
+
+	@description = "Verify that the user can delete multiple process."
+	@priority = 5
+	test CanDeleteMultipleProcesses {
+		for (var newProcess : list "1,2,3") {
+			KaleoFormsAdmin.addProcess();
+
+			KaleoFormsAdmin.createKaleoFormsProcess(
+				kfFieldSetName = "Contacts",
+				kfFormName = "Created Task Form ${newProcess}",
+				kfProcessDescription = "Kaleo Forms Process Description ${newProcess}",
+				kfProcessName = "Kaleo Forms Process ${newProcess}",
+				workflowDefinitionTitle = "Single Approver",
+				workflowTask = "created");
+		}
+
+		for (var checkboxes : list "1,2") {
+			KaleoFormsAdmin.checkboxesInProcessTable(checkProcessName = "Kaleo Forms Process ${checkboxes}");
+		}
+
+		KaleoFormsAdmin.deleteViaDeleteIcon();
+
+		for (var processes : list "1,2") {
+			KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "Kaleo Forms Process ${processes}");
+		}
+
+		KaleoFormsAdmin.viewTaskPresent(workflowTask = "Kaleo Forms Process 3");
+	}
+
+	@description = "Verify that the user can export a process."
+	@priority = 3
+	test CanExportProcess {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		KaleoFormsAdmin.viewExportRecords(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "Verify that the user is able to order by Create Date."
+	@priority = 3
+	test CanOrderByCreateDate {
+		for (var newProcess : list "1,2,3") {
+			KaleoFormsAdmin.addProcess();
+
+			KaleoFormsAdmin.createKaleoFormsProcess(
+				kfFieldSetName = "Contacts",
+				kfFormName = "Created Task Form",
+				kfProcessDescription = "Kaleo Forms Process Description ${newProcess}",
+				kfProcessName = "Kaleo Forms Process ${newProcess}",
+				workflowDefinitionTitle = "Single Approver",
+				workflowTask = "created");
+		}
+
+		for (var viewProcess : list "1,2,3") {
+			KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process ${viewProcess}");
+		}
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process 1");
+
+		KaleoFormsAdmin.editProcessDetails(
+			kfProcessDescriptionEdit = "Kaleo Forms Process Description 1 Edited",
+			kfProcessNameEdit = "Kaleo Forms Process 1 Edited");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Forms");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process 1 Edited");
+
+		ManagementBar.setFilterAndOrder(filterBy = "Create Date");
+
+		KaleoFormsAdmin.viewProcessByPosition(
+			order = 1,
+			title = "Kaleo Forms Process 1 Edited");
+	}
+
+	@description = "Verify that the user is able to order by Last Modified."
+	@priority = 3
+	test CanOrderByLastModified {
+		for (var newProcess : list "1,2,3") {
+			KaleoFormsAdmin.addProcess();
+
+			KaleoFormsAdmin.createKaleoFormsProcess(
+				kfFieldSetName = "Contacts",
+				kfFormName = "Created Task Form",
+				kfProcessDescription = "Kaleo Forms Process Description ${newProcess}",
+				kfProcessName = "Kaleo Forms Process ${newProcess}",
+				workflowDefinitionTitle = "Single Approver",
+				workflowTask = "created");
+		}
+
+		for (var viewProcess : list "1,2,3") {
+			KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process ${viewProcess}");
+		}
+
+		ManagementBar.setFilterAndOrder(filterBy = "Modified Date");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process 1");
+
+		KaleoFormsAdmin.editProcessDetails(
+			kfProcessDescriptionEdit = "Kaleo Forms Process Description 1 Edited",
+			kfProcessNameEdit = "Kaleo Forms Process 1 Edited");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Forms");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process 1 Edited");
+
+		KaleoFormsAdmin.viewProcessByPosition(
+			order = 3,
+			title = "Kaleo Forms Process 1 Edited");
+	}
+
+	@description = "Verify that the user can search a process by description."
+	@priority = 3
+	test CanSearchByDescription {
+		for (var newProcess : list "Kaleo Forms,Promotion System") {
+			KaleoFormsAdmin.addProcess();
+
+			KaleoFormsAdmin.createKaleoFormsProcess(
+				kfFieldSetName = "Contacts",
+				kfFormName = "Created Task Form",
+				kfProcessDescription = ${newProcess},
+				kfProcessName = "Process Name",
+				workflowDefinitionTitle = "Single Approver",
+				workflowTask = "created");
+		}
+
+		Search.searchCP(searchTerm = "Kaleo Forms");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms");
+
+		KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "Promotion System");
+	}
+
+	@description = "Verify that the user can search by process name."
+	@priority = 4
+	test CanSearchByProcessName {
+		for (var newProcess : list "Kaleo Forms,Promotion System") {
+			KaleoFormsAdmin.addProcess();
+
+			KaleoFormsAdmin.createKaleoFormsProcess(
+				kfFieldSetName = "Contacts",
+				kfFormName = "Created Task Form",
+				kfProcessDescription = "Process Description",
+				kfProcessName = ${newProcess},
+				workflowDefinitionTitle = "Single Approver",
+				workflowTask = "created");
+		}
+
+		Search.searchCP(searchTerm = "Kaleo Forms");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms");
+
+		KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "Promotion System");
+	}
+
+	@description = "Verify that the user can search for process name field with alphanumeric/special character."
+	@priority = 3
+	test CanSearchForFieldNameWithAlphanumericOrSpecialCharacter {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Process Description",
+			kfProcessName = "Kaleo Forms Process 123 (カレオフォームプロセス)",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		Search.searchCP(searchTerm = "カレオフォームプロセス");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process 123 (カレオフォームプロセス)");
+
+		Search.searchCP(searchTerm = 123);
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process 123 (カレオフォームプロセス)");
+	}
+
+	@description = "Verify that the user can select edit option."
+	@priority = 4
+	test CanSelectEditOption {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Edit");
+
+		KaleoFormsAdmin.viewNewProcessProgressBar(
+			kfProgressName = "Details",
+			kfProgressStep = 1);
+	}
+
+	@description = "Verify that the user can select permissions option."
+	@priority = 4
+	test CanSelectPermissionsOption {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		KaleoFormsAdmin.viewPermissionsAndAssertModal();
+	}
+
+	@description = "Verify that the user can select view option."
+	@priority = 5
+	test CanSelectViewOption {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "Verify that the user can view the process after it has been created."
+	@priority = 5
+	test CanViewProcessAfterCreated {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "Verify that the page displays columns Id, Name, Description and Modified Date."
+	@priority = 5
+	test DisplaysColumnsNameDescriptionModifiedDate {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewTableDisplaysColumns();
+	}
+
+	@description = "Verify that the page displays the pagination button."
+	@priority = 4
+	test DisplaysThePaginationButton {
+		for (var newProcess : list "1,2,3,4") {
+			KaleoFormsAdmin.addProcess();
+
+			KaleoFormsAdmin.createKaleoFormsProcess(
+				kfFieldSetName = "Contacts",
+				kfFormName = "Created Task Form ${newProcess}",
+				kfProcessDescription = "Kaleo Forms Process Description ${newProcess}",
+				kfProcessName = "Kaleo Forms Process ${newProcess}",
+				workflowDefinitionTitle = "Single Approver",
+				workflowTask = "created");
+		}
+
+		KaleoFormsAdmin.assertPaginationBarNotPresent();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form 5",
+			kfProcessDescription = "Kaleo Forms Process Description 5",
+			kfProcessName = "Kaleo Forms Process 5",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		KaleoFormsAdmin.assertPaginationBarPresent();
+	}
+
+	@description = "Verify that when there are no results for the search, it displays the message -No process were found-."
+	@priority = 3
+	test NoResultMessageInSearch {
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.createKaleoFormsProcess(
+			kfFieldSetName = "Contacts",
+			kfFormName = "Created Task Form",
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowTask = "created");
+
+		Search.searchCP(searchTerm = "daCwZ12");
+
+		KaleoFormsAdmin.noProcessesWereFound();
+	}
+
+}

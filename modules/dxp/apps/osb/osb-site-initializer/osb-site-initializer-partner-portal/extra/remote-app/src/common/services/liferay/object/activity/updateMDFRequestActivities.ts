@@ -10,7 +10,8 @@
  */
 
 import {Liferay} from '../..';
-import LiferayAccountBrief from '../../../../interfaces/liferayAccountBrief';
+import MDFRequestDTO from '../../../../interfaces/dto/mdfRequestDTO';
+import MDFRequest from '../../../../interfaces/mdfRequest';
 import MDFRequestActivity from '../../../../interfaces/mdfRequestActivity';
 import getDTOFromMDFRequestActivity from '../../../../utils/dto/mdf-request-activity/getDTOFromMDFRequestActivity';
 import {LiferayAPIs} from '../../common/enums/apis';
@@ -20,20 +21,18 @@ import {ResourceName} from '../enum/resourceName';
 export default async function updateMDFRequestActivities(
 	apiOption: ResourceName,
 	mdfRequestActivity: MDFRequestActivity,
-	company?: LiferayAccountBrief,
-	mdfRequestId?: number,
-	mdfRequestExternalReferenceCode?: string,
-	externalReferenceCode?: string
+	mdfRequest: MDFRequest,
+	mdfRequestDTO?: MDFRequestDTO,
+	externalReferenceCodeFromSF?: string
 ) {
 	return await liferayFetcher.put(
-		`/o/${LiferayAPIs.OBJECT}/${apiOption}/${mdfRequestActivity.id}`,
+		`/o/${LiferayAPIs.OBJECT}/${apiOption}/by-external-reference-code/${mdfRequestActivity.externalReferenceCode}`,
 		Liferay.authToken,
 		getDTOFromMDFRequestActivity(
 			mdfRequestActivity,
-			company,
-			mdfRequestId,
-			mdfRequestExternalReferenceCode,
-			externalReferenceCode
+			mdfRequest,
+			mdfRequestDTO,
+			externalReferenceCodeFromSF
 		)
 	);
 }

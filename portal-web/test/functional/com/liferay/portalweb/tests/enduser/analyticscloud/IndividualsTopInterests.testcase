@@ -27,7 +27,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -35,7 +35,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -122,8 +122,8 @@ definition {
 			ACNavigation.switchTab(tabName = "Overview");
 		}
 
-		task ("View Top Interests as of Today card") {
-			ACCards.viewCards(cardTitle = "Top Interests as of Today");
+		task ("View Top Interests as of Yesterday card") {
+			ACCards.viewCards(cardTitle = "Top Interests as of Yesterday");
 		}
 
 		task ("Assert individuals overview top 1 interest") {
@@ -253,8 +253,8 @@ definition {
 			ACNavigation.switchTab(tabName = "Overview");
 		}
 
-		task ("View Top Interests as of Today card") {
-			ACCards.viewCards(cardTitle = "Top Interests as of Today");
+		task ("View Top Interests as of Yesterday card") {
+			ACCards.viewCards(cardTitle = "Top Interests as of Yesterday");
 		}
 
 		task ("Assert top 5 interest topics for all individuals") {

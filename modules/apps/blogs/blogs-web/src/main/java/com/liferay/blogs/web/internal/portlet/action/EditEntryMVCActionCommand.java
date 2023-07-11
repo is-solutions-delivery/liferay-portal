@@ -30,9 +30,9 @@ import com.liferay.blogs.exception.NoSuchEntryException;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.blogs.service.BlogsEntryService;
-import com.liferay.blogs.web.internal.bulk.selection.BlogsEntryBulkSelectionFactory;
 import com.liferay.blogs.web.internal.helper.BlogsEntryImageSelectorHelper;
 import com.liferay.bulk.selection.BulkSelection;
+import com.liferay.bulk.selection.BulkSelectionFactory;
 import com.liferay.document.library.kernel.exception.FileSizeException;
 import com.liferay.friendly.url.exception.DuplicateFriendlyURLEntryException;
 import com.liferay.petra.reflect.ReflectionUtil;
@@ -553,7 +553,7 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 			if (!content.equals(updatedContent)) {
 				entry.setContent(updatedContent);
 
-				_blogsEntryLocalService.updateBlogsEntry(entry);
+				entry = _blogsEntryLocalService.updateBlogsEntry(entry);
 			}
 		}
 		else {
@@ -631,8 +631,8 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 	@Reference
 	private AttachmentContentUpdater _attachmentContentUpdater;
 
-	@Reference
-	private BlogsEntryBulkSelectionFactory _blogsEntryBulkSelectionFactory;
+	@Reference(target = "(model.class.name=com.liferay.blogs.model.BlogsEntry)")
+	private BulkSelectionFactory<BlogsEntry> _blogsEntryBulkSelectionFactory;
 
 	@Reference
 	private BlogsEntryLocalService _blogsEntryLocalService;

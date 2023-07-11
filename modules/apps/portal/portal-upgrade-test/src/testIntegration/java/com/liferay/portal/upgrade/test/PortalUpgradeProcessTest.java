@@ -340,7 +340,7 @@ public class PortalUpgradeProcessTest {
 
 		release.setBuildNumber(buildNumber);
 
-		_releaseLocalService.updateRelease(release);
+		release = _releaseLocalService.updateRelease(release);
 
 		try (Connection connection = DataAccess.getConnection()) {
 			Assert.assertFalse(PortalUpgradeProcess.supportsRetry(connection));

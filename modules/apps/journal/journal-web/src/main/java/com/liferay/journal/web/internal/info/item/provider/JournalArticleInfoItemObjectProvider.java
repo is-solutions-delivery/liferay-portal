@@ -129,21 +129,13 @@ public class JournalArticleInfoItemObjectProvider
 				"Unable to get journal article " + infoItemIdentifier);
 		}
 
-		if (article.isInTrash()) {
+		if (article.isScheduled() || article.isInTrash() ||
+			(article.isPending() && !_isSignedIn())) {
+
 			return null;
 		}
 
 		return article;
-	}
-
-	@Override
-	public JournalArticle getInfoItem(long classPK)
-		throws NoSuchInfoItemException {
-
-		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
-			classPK);
-
-		return getInfoItem(infoItemIdentifier);
 	}
 
 	private JournalArticle _getArticle(long classPK, String version)

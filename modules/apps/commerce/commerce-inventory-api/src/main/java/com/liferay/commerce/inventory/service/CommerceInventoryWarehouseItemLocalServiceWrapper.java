@@ -15,6 +15,7 @@
 package com.liferay.commerce.inventory.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
 /**
  * Provides a wrapper for {@link CommerceInventoryWarehouseItemLocalService}.
@@ -486,16 +487,6 @@ public class CommerceInventoryWarehouseItemLocalServiceWrapper
 	@Override
 	public java.util.List
 		<com.liferay.commerce.inventory.model.CommerceInventoryWarehouseItem>
-			getCommerceInventoryWarehouseItems(
-				long companyId, String sku, int start, int end) {
-
-		return _commerceInventoryWarehouseItemLocalService.
-			getCommerceInventoryWarehouseItems(companyId, sku, start, end);
-	}
-
-	@Override
-	public java.util.List
-		<com.liferay.commerce.inventory.model.CommerceInventoryWarehouseItem>
 			getCommerceInventoryWarehouseItemsByCompanyId(
 				long companyId, int start, int end) {
 
@@ -545,6 +536,14 @@ public class CommerceInventoryWarehouseItemLocalServiceWrapper
 		return _commerceInventoryWarehouseItemLocalService.
 			getCommerceInventoryWarehouseItemsCount(
 				commerceInventoryWarehouseId);
+	}
+
+	@Override
+	public int getCommerceInventoryWarehouseItemsCount(
+		long companyId, long groupId, String sku) {
+
+		return _commerceInventoryWarehouseItemLocalService.
+			getCommerceInventoryWarehouseItemsCount(companyId, groupId, sku);
 	}
 
 	@Override
@@ -702,6 +701,11 @@ public class CommerceInventoryWarehouseItemLocalServiceWrapper
 			updateCommerceInventoryWarehouseItem(
 				userId, commerceInventoryWarehouseItemId, quantity,
 				mvccVersion);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _commerceInventoryWarehouseItemLocalService.getBasePersistence();
 	}
 
 	@Override

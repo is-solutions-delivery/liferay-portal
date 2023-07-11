@@ -17,6 +17,7 @@ package com.liferay.batch.engine.internal;
 import com.liferay.batch.engine.BatchEngineImportTaskExecutor;
 import com.liferay.batch.engine.BatchEngineTaskContentType;
 import com.liferay.batch.engine.BatchEngineTaskExecuteStatus;
+import com.liferay.batch.engine.BatchEngineTaskItemDelegate;
 import com.liferay.batch.engine.BatchEngineTaskItemDelegateRegistry;
 import com.liferay.batch.engine.BatchEngineTaskOperation;
 import com.liferay.batch.engine.ItemClassRegistry;
@@ -70,6 +71,19 @@ public class BatchEngineImportTaskExecutorImpl
 
 	@Override
 	public void execute(BatchEngineImportTask batchEngineImportTask) {
+		BatchEngineTaskItemDelegate<?> batchEngineTaskItemDelegate =
+			_batchEngineTaskItemDelegateRegistry.getBatchEngineTaskItemDelegate(
+				batchEngineImportTask.getClassName(),
+				batchEngineImportTask.getTaskItemDelegateName());
+
+		execute(batchEngineImportTask, batchEngineTaskItemDelegate);
+	}
+
+	@Override
+	public void execute(
+		BatchEngineImportTask batchEngineImportTask,
+		BatchEngineTaskItemDelegate<?> batchEngineTaskItemDelegate) {
+
 		SafeCloseable safeCloseable = CompanyThreadLocal.setWithSafeCloseable(
 			batchEngineImportTask.getCompanyId());
 
@@ -92,7 +106,8 @@ public class BatchEngineImportTaskExecutorImpl
 				batchEngineImportTask);
 
 			BatchEngineTaskExecutorUtil.execute(
-				() -> _importItems(batchEngineImportTask),
+				() -> _importItems(
+					batchEngineImportTask, batchEngineTaskItemDelegate),
 				_userLocalService.getUser(batchEngineImportTask.getUserId()));
 
 			_updateBatchEngineImportTask(
@@ -236,7 +251,9 @@ public class BatchEngineImportTaskExecutorImpl
 		}
 	}
 
-	private void _importItems(BatchEngineImportTask batchEngineImportTask)
+	private void _importItems(
+			BatchEngineImportTask batchEngineImportTask,
+			BatchEngineTaskItemDelegate<?> batchEngineTaskItemDelegate)
 		throws Throwable {
 
 		Map<String, Serializable> parameters = _getParameters(
@@ -252,8 +269,7 @@ public class BatchEngineImportTaskExecutorImpl
 			BatchEngineTaskItemDelegateExecutor
 				batchEngineTaskItemDelegateExecutor =
 					_batchEngineTaskItemDelegateExecutorFactory.create(
-						batchEngineImportTask.getTaskItemDelegateName(),
-						batchEngineImportTask.getClassName(),
+						batchEngineTaskItemDelegate,
 						_companyLocalService.getCompany(
 							batchEngineImportTask.getCompanyId()),
 						parameters,
@@ -263,7 +279,7 @@ public class BatchEngineImportTaskExecutorImpl
 			List<Object> items = new ArrayList<>();
 
 			Class<?> itemClass = _itemClassRegistry.getItemClass(
-				batchEngineImportTask.getClassName());
+				batchEngineTaskItemDelegate);
 
 			int processedItemsCount = 0;
 
@@ -341,8 +357,9 @@ public class BatchEngineImportTaskExecutorImpl
 		batchEngineImportTask.setExecuteStatus(
 			batchEngineTaskExecuteStatus.toString());
 
-		_batchEngineImportTaskLocalService.updateBatchEngineImportTask(
-			batchEngineImportTask);
+		batchEngineImportTask =
+			_batchEngineImportTaskLocalService.updateBatchEngineImportTask(
+				batchEngineImportTask);
 
 		BatchEngineTaskCallbackUtil.sendCallback(
 			batchEngineImportTask.getCallbackURL(),

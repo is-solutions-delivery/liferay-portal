@@ -14,8 +14,9 @@
 
 package com.liferay.commerce.channel.web.internal.frontend.taglib.servlet.taglib;
 
+import com.liferay.account.service.AccountEntryService;
 import com.liferay.commerce.channel.web.internal.display.context.SiteCommerceChannelTypeDisplayContext;
-import com.liferay.commerce.currency.service.CommerceCurrencyService;
+import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.inventory.method.CommerceInventoryMethodRegistry;
 import com.liferay.commerce.product.channel.CommerceChannelHealthStatusRegistry;
 import com.liferay.commerce.product.channel.CommerceChannelTypeRegistry;
@@ -32,6 +33,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
+import com.liferay.portal.kernel.service.permission.GroupPermission;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowDefinitionManager;
 
@@ -80,13 +82,13 @@ public class CommerceChannelSiteScreenNavigationEntry
 		SiteCommerceChannelTypeDisplayContext
 			siteCommerceChannelTypeDisplayContext =
 				new SiteCommerceChannelTypeDisplayContext(
-					_commerceChannelHealthStatusRegistry,
+					_accountEntryService, _commerceChannelHealthStatusRegistry,
 					_commerceChannelModelResourcePermission,
 					_commerceChannelService, _commerceChannelTypeRegistry,
-					_commerceCurrencyService, _configurationProvider,
+					_commerceCurrencyLocalService, _configurationProvider,
 					_cpTaxCategoryLocalService, _dlAppLocalService,
-					_groupLocalService, httpServletRequest, _itemSelector,
-					_portal, _workflowDefinitionLinkLocalService,
+					_groupLocalService, _groupPermission, httpServletRequest,
+					_itemSelector, _portal, _workflowDefinitionLinkLocalService,
 					_workflowDefinitionManager);
 
 		httpServletRequest.setAttribute(
@@ -97,6 +99,9 @@ public class CommerceChannelSiteScreenNavigationEntry
 			httpServletRequest, httpServletResponse,
 			"/commerce_channel/site.jsp");
 	}
+
+	@Reference
+	private AccountEntryService _accountEntryService;
 
 	@Reference
 	private CommerceChannelHealthStatusRegistry
@@ -115,7 +120,7 @@ public class CommerceChannelSiteScreenNavigationEntry
 	private CommerceChannelTypeRegistry _commerceChannelTypeRegistry;
 
 	@Reference
-	private CommerceCurrencyService _commerceCurrencyService;
+	private CommerceCurrencyLocalService _commerceCurrencyLocalService;
 
 	@Reference
 	private CommerceInventoryMethodRegistry _commerceInventoryMethodRegistry;
@@ -131,6 +136,9 @@ public class CommerceChannelSiteScreenNavigationEntry
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private GroupPermission _groupPermission;
 
 	@Reference
 	private ItemSelector _itemSelector;

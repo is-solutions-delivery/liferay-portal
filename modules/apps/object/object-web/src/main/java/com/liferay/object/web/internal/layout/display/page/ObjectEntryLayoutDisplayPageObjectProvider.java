@@ -69,6 +69,15 @@ public class ObjectEntryLayoutDisplayPageObjectProvider
 	}
 
 	@Override
+	public String getExternalReferenceCode() {
+		if (!_objectDefinition.isDefaultStorageType()) {
+			return _objectEntry.getExternalReferenceCode();
+		}
+
+		return StringPool.BLANK;
+	}
+
+	@Override
 	public long getGroupId() {
 		return _objectEntry.getGroupId();
 	}
@@ -80,6 +89,10 @@ public class ObjectEntryLayoutDisplayPageObjectProvider
 
 	@Override
 	public String getTitle(Locale locale) {
+		if (!_objectDefinition.isDefaultStorageType()) {
+			return _objectEntry.getExternalReferenceCode();
+		}
+
 		try {
 			return _objectEntry.getTitleValue();
 		}
@@ -94,6 +107,10 @@ public class ObjectEntryLayoutDisplayPageObjectProvider
 
 	@Override
 	public String getURLTitle(Locale locale) {
+		if (!_objectDefinition.isDefaultStorageType()) {
+			return _objectEntry.getExternalReferenceCode();
+		}
+
 		return String.valueOf(_objectEntry.getObjectEntryId());
 	}
 

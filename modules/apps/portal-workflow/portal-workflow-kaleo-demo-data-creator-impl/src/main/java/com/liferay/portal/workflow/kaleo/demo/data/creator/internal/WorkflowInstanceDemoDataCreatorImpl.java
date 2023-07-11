@@ -82,9 +82,8 @@ public class WorkflowInstanceDemoDataCreatorImpl
 
 				kaleoInstance.setCompletionDate(completionDate);
 
-				_kaleoInstanceLocalService.updateKaleoInstance(kaleoInstance);
-
-				return kaleoInstance;
+				return _kaleoInstanceLocalService.updateKaleoInstance(
+					kaleoInstance);
 			});
 	}
 

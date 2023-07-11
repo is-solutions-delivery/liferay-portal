@@ -40,19 +40,13 @@ public class FrequentPatternCommerceMLRecommendationIndexer
 	}
 
 	@Override
-	public String getDocumentType() {
-		return "FrequentPatternCommerceMLRecommendationDocumentType";
-	}
-
-	@Override
 	public String getIndexName(long companyId) {
 		return String.format(
 			_INDEX_NAME_PATTERN, _indexNameBuilder.getIndexName(companyId));
 	}
 
 	private static final String _INDEX_MAPPING_FILE_NAME =
-		"/META-INF/search" +
-			"/frequent-pattern-commerce-ml-recommendation-document-type.json";
+		"frequent-pattern-commerce-ml-recommendation-mappings.json";
 
 	private static final String _INDEX_NAME_PATTERN =
 		"%s-frequent-pattern-commerce-ml-recommendation";

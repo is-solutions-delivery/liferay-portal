@@ -1,14 +1,12 @@
 import ErrorDisplay from 'shared/components/ErrorDisplay';
 import ErrorPage from 'shared/pages/ErrorPage';
-import LoadingPage from 'shared/pages/Loading';
+import Loading from 'shared/components/Loading';
 import NoResultsDisplay from 'shared/components/NoResultsDisplay';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import {compose} from 'redux';
 import {get, omit} from 'lodash';
 import {sub} from 'shared/util/lang';
 import {toRoute} from 'shared/util/router';
-
 /**
  * HOC for ErrorDisplay.
  * @param {Object} - Options object to pass as props to ErrorDisplay
@@ -80,34 +78,12 @@ export const withEmpty = (options = {}) => Component => ({
  * @returns {Function} Returns the Loading or WrappedComponent.
  */
 export const withLoading = (options = {}) => Component => ({
-	alignCenter = false,
-	className,
-	data,
-	fadeIn = true,
-	inline = false,
 	loading,
-	pageDisplay = true,
 	...otherProps
 }) => {
-	if (loading) {
-		return get(options, 'page', pageDisplay) ? (
-			<LoadingPage
-				className={className}
-				fadeIn={get(options, 'fadeIn', fadeIn)}
-				key='LOADING'
-			/>
-		) : (
-			<Spinner
-				alignCenter={get(options, 'alignCenter', alignCenter)}
-				className={className}
-				inline={get(options, 'inline', inline)}
-				key='SPINNER'
-				spacer={!get(options, 'inline', inline)}
-			/>
-		);
-	}
+	if (loading) return <Loading {...options} />;
 
-	return <Component className={className} data={data} {...otherProps} />;
+	return <Component {...otherProps} />;
 };
 
 export const withNull = (key, errorProps = {}) => Component => props => {
@@ -140,7 +116,7 @@ export const withNull = (key, errorProps = {}) => Component => props => {
  * HOC for displaying results.
  */
 export const SafeResults = compose(
-	withLoading(),
+	withLoading({spacer: true}),
 	withError()
 )(({children, data}) => children(data));
 

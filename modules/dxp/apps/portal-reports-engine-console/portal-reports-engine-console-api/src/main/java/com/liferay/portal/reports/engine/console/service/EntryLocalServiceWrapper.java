@@ -15,6 +15,7 @@
 package com.liferay.portal.reports.engine.console.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
 /**
  * Provides a wrapper for {@link EntryLocalService}.
@@ -296,6 +297,13 @@ public class EntryLocalServiceWrapper
 		return _entryLocalService.getActionableDynamicQuery();
 	}
 
+	@Override
+	public String[] getAttachmentsFileNames(
+		com.liferay.portal.reports.engine.console.model.Entry entry) {
+
+		return _entryLocalService.getAttachmentsFileNames(entry);
+	}
+
 	/**
 	 * Returns a range of all the entries.
 	 *
@@ -444,6 +452,11 @@ public class EntryLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_entryLocalService.updateEntryStatus(entryId, status, errorMessage);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _entryLocalService.getBasePersistence();
 	}
 
 	@Override

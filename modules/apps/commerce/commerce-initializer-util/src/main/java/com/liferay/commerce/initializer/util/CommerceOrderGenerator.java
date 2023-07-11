@@ -225,7 +225,7 @@ public class CommerceOrderGenerator {
 
 		_commerceOrderEngine.transitionCommerceOrder(
 			commerceOrder, CommerceOrderConstants.ORDER_STATUS_IN_PROGRESS,
-			serviceContext.getUserId());
+			serviceContext.getUserId(), true);
 
 		// Update payment status
 
@@ -312,7 +312,9 @@ public class CommerceOrderGenerator {
 					"status", () -> WorkflowConstants.STATUS_APPROVED
 				).put(
 					"types",
-					_commerceAccountHelper.getAccountEntryTypes(groupId)
+					_commerceAccountHelper.getAccountEntryTypes(
+						_commerceChannelLocalService.
+							getCommerceChannelGroupIdBySiteGroupId(groupId))
 				).build(),
 				QueryUtil.ALL_POS, 0, null, false);
 

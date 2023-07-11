@@ -1,0 +1,422 @@
+@component-name = "portal-workflow-ee"
+definition {
+
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "Kaleo Forms Admin";
+
+	var kfFieldSetName = "Contacts";
+	var workflowAssetType = "Process";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			KaleoFormsAdmin.tearDownProcess();
+
+			DDLTemplate.tearDownTemplateCP();
+
+			DDLTemplate.tearDownTemplateCP(ddlDataDefinitionName = "To Do");
+
+			Workflow.tearDownSpecificWorkflowDefinition(workflowDefinitionTitle = "Edited Workflow Definition");
+
+			Workflow.tearDownWorkflowDefinitions();
+
+			PagesAdmin.tearDownCP();
+		}
+	}
+
+	@description = "Verify that the user can clear the result bar after the user use  the search bar ."
+	@priority = 5
+	test CanClearSearchBar {
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Liferay");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Search.searchCP(searchTerm = "Random Company");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.clearSearchResults();
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Liferay");
+	}
+
+	@description = "Verify that the user can create a new submission without filling in the fields."
+	@priority = 4
+	test CanCreateANewSubmissionWithFieldsEmpty {
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		LexiconEntry.gotoAdd();
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		KaleoFormsAdmin.viewProcessNameByColumns(
+			kfAuthor = "Test Test",
+			kfCompanyName = " ",
+			kfEmailName = " ",
+			kfFirstName = " ",
+			kfInstantMessenger = " ",
+			kfInstantMessengerService = "Google Hangouts",
+			kfStatus = "Pending");
+	}
+
+	@description = "Verify that user can delete all submissions in the page."
+	@priority = 3
+	test CanDeleteAllSubmissions {
+		for (var contactNumber : list "1,2,3") {
+			KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+			KaleoFormsNewSubmissions.addNewContacts(
+				ddlEmail = "userfn@liferay.com",
+				ddlUserName = "testliferay ${contactNumber}");
+
+			KaleoFormsAdmin.saveProcessRecord();
+
+			Navigator.gotoBack();
+		}
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.deleteAllSubmissions();
+
+		Search.searchCP(searchTerm = "userfn@liferay.com");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "Verify that the user can filter by Create Date."
+	@priority = 3
+	test CanFilterByCreateDate {
+		for (var processName : list "A,B") {
+			KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+			KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Process ${processName}");
+
+			KaleoFormsAdmin.saveProcessRecord();
+
+			Navigator.gotoBack();
+		}
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.viewOrderTable(fieldNameList = "Process B,Process A");
+
+		ManagementBar.setFilterAndOrder(filterBy = "Create Date");
+
+		KaleoFormsNewSubmissions.viewOrderTable(fieldNameList = "Process A,Process B");
+	}
+
+	@description = "Verify that the user can filter by Modified Date ."
+	@priority = 4
+	test CanFilterByModifiedDate {
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Process A");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Alert.viewSuccessMessage();
+
+		Alert.closeMessage(messageType = "SUCCESS");
+
+		LexiconEntry.gotoAdd();
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Process B");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		ManagementBar.setFilterAndOrder(filterBy = "Modified Date");
+
+		KaleoFormsNewSubmissions.viewOrderTable(fieldNameList = "Process A,Process B");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.viewOrderTable(fieldNameList = "Process B,Process A");
+	}
+
+	@description = "Verify that the user can modify the quantity of items view per page."
+	@priority = 3
+	test CanModifyQuantityOfItemsPerPage {
+		for (var kfProcessName : list "1,2,3,4") {
+			KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+			KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Liferay");
+
+			KaleoFormsAdmin.saveProcessRecord();
+
+			Navigator.gotoBack();
+		}
+
+		AssertElementNotPresent(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Liferay");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Pagination.changePagination(itemsPerPage = 4);
+
+		Pagination.viewResults(results = "Showing 1 to 4 of 5 entries.");
+	}
+
+	@description = "Verify that user can nagivate through pages."
+	@priority = 3
+	test CanNavigateThroughPages {
+		for (var kfProcessName : list "1,2,3,4") {
+			KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+			KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Liferay");
+
+			KaleoFormsAdmin.saveProcessRecord();
+
+			Navigator.gotoBack();
+		}
+
+		AssertElementNotPresent(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Liferay");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Pagination.changePagination(itemsPerPage = 4);
+
+		KaleoFormsAdmin.viewNextFieldSetPage();
+
+		Pagination.viewResults(results = "Showing 5 to 5 of 5 entries.");
+
+		KaleoFormsNewSubmissions.viewPaginationNumber(pageNumberList = 2);
+	}
+
+	@description = "Verify that the user can reverse the order of submissions."
+	@priority = 3
+	test CanOrderSubmissions {
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Process A");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Alert.viewSuccessMessage();
+
+		Alert.closeMessage(messageType = "SUCCESS");
+
+		LexiconEntry.gotoAdd();
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Process B");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		ManagementBar.setFilterAndOrder(filterBy = "Create Date");
+
+		KaleoFormsNewSubmissions.viewOrderTable(fieldNameList = "Process A,Process B");
+
+		Refresh();
+
+		Workflow.clickRevertSortDirection();
+
+		KaleoFormsNewSubmissions.viewOrderTable(fieldNameList = "Process B,Process A");
+	}
+
+	@description = "Verify that the user can Reject a submission."
+	@priority = 5
+	test CanRejectASubmission {
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(
+			ddlCompany = "Liferay",
+			ddlEmail = "qa@liferay.com",
+			ddlFirstName = "Test",
+			ddlJobTitle = "QA",
+			ddlLastName = "Test",
+			ddlPhoneMobile = 12345678,
+			ddlPhoneOffice = 12345678);
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "Liferay",
+			kfStatus = "Pending");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.rejectTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "Liferay",
+			kfStatus = "Pending");
+	}
+
+	@description = "Verify that user can search by Column Value and view the search result."
+	@priority = 3
+	test CanSearchByColumnValue {
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(
+			ddlCompany = "Liferay",
+			ddlEmail = "hr@liferay.com");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.gotoBack();
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(
+			ddlCompany = "Gazzing",
+			ddlEmail = "people@gazzing.com");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Search.searchCP(searchTerm = "Gazzing");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Gazzing");
+
+		KaleoFormsNewSubmissions.clearSearchResults();
+
+		Search.searchCP(searchTerm = "hr@liferay.com");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Liferay");
+	}
+
+	@description = "Verify that the user is able to track the workflow through the Kebab Menu."
+	@priority = 5
+	test CanViewTrackApprovalThroughKebabMenu {
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(ddlCompany = "Liferay");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		KaleoFormsNewSubmissions.viewEllipsisMenu(menuItem = "Track Workflow");
+
+		KaleoFormsNewSubmissions.viewTrackWorkflowStructure(throughKebab = "true");
+	}
+
+	@description = "Verify that the user can view the column values on the page after submit the process."
+	@priority = 5
+	test CanViewValuesAfterSubmitAProcess {
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsNewSubmissions.addNewContacts(
+			ddlCompany = "Liferay",
+			ddlEmail = "test@liferay.com",
+			ddlFirstName = "Test",
+			ddlInstantMesseger = "Liferay",
+			ddlJobTitle = "QA",
+			ddlLastName = "Test",
+			ddlPhoneMobile = 12345678,
+			ddlPhoneOffice = 12345678);
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		KaleoFormsAdmin.viewProcessNameByColumns(
+			kfAuthor = "Test Test",
+			kfCompanyName = "Liferay",
+			kfEmailName = "test@liferay.com",
+			kfFirstName = "Test",
+			kfInstantMessenger = "Liferay",
+			kfInstantMessengerService = "Google Hangouts",
+			kfStatus = "Pending");
+	}
+
+}

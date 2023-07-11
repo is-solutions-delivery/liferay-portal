@@ -1002,7 +1002,7 @@ public abstract class BaseWikiNodeResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("siteId")) {
 				wikiNodeUnsafeConsumer = wikiNode -> postSiteWikiNode(
 					(Long)parameters.get("siteId"), wikiNode);
@@ -1013,12 +1013,17 @@ public abstract class BaseWikiNodeResourceImpl
 			}
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			wikiNodeUnsafeConsumer =
-				wikiNode -> putSiteWikiNodeByExternalReferenceCode(
-					wikiNode.getSiteId() != null ? wikiNode.getSiteId() :
-						(Long)parameters.get("siteId"),
-					wikiNode.getExternalReferenceCode(), wikiNode);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				wikiNodeUnsafeConsumer =
+					wikiNode -> putSiteWikiNodeByExternalReferenceCode(
+						wikiNode.getSiteId() != null ? wikiNode.getSiteId() :
+							(Long)parameters.get("siteId"),
+						wikiNode.getExternalReferenceCode(), wikiNode);
+			}
 		}
 
 		if (wikiNodeUnsafeConsumer == null) {
@@ -1126,7 +1131,7 @@ public abstract class BaseWikiNodeResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			wikiNodeUnsafeConsumer = wikiNode -> putWikiNode(
 				wikiNode.getId() != null ? wikiNode.getId() :
 					_parseLong((String)parameters.get("wikiNodeId")),

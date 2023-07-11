@@ -42,6 +42,7 @@ import {
 	useMovementSource,
 	useMovementTarget,
 	useSetMovementSource,
+	useSetMovementText,
 } from '../../../../../app/contexts/KeyboardMovementContext';
 import {
 	useDispatch,
@@ -130,14 +131,13 @@ export default function StructureTreeNode({node, setEditingNodeId}) {
 
 			const {
 				classNameId,
-				classPK,
 				itemSubtype,
 				itemType,
 				key: collectionKey,
 			} = item.config.collection;
 
 			const key = classNameId
-				? getMappingFieldsKey(classNameId, classPK)
+				? getMappingFieldsKey(item.config.collection)
 				: collectionKey;
 
 			if (!mappingFields[key]) {
@@ -192,6 +192,7 @@ function StructureTreeNodeContent({
 		(state) => state.selectedViewportSize
 	);
 	const selectItem = useSelectItem();
+	const setText = useSetMovementText();
 
 	const layoutDataRef = useSelectorRef((store) => store.layoutData);
 
@@ -277,6 +278,7 @@ function StructureTreeNodeContent({
 		}
 
 		setEditingNodeId(null);
+		setText(Liferay.Language.get('name-saved'));
 	};
 
 	const handleButtonsKeyDown = (event) => {
@@ -325,6 +327,15 @@ function StructureTreeNodeContent({
 			clearTimeout(timeoutId);
 		};
 	}, [isOverTarget, node]);
+
+	useEffect(() => {
+		if (
+			isActive &&
+			activationOrigin === ITEM_ACTIVATION_ORIGINS.itemActions
+		) {
+			document.querySelector(`[data-id*="${node.id}"]`).focus();
+		}
+	}, [activationOrigin, isActive, node.id, node.hidden]);
 
 	return (
 		<div
@@ -408,6 +419,12 @@ function StructureTreeNodeContent({
 					formIsUnavailable(item)
 				}
 			/>
+
+			{node.hidden ? (
+				<span className="sr-only">
+					{Liferay.Language.get('hidden-item')}
+				</span>
+			) : null}
 		</div>
 	);
 }
@@ -471,8 +488,14 @@ const NameLabel = React.forwardRef(
 							event.stopPropagation();
 						}}
 						onKeyDown={(event) => {
-							if (event.key === 'Enter') {
-								onEditName(name);
+							if (
+								event.key === 'Enter' ||
+								event.key === 'Escape' ||
+								event.key === 'Tab'
+							) {
+								inputRef.current
+									.closest('.treeview-link')
+									.focus();
 							}
 
 							if (!event.key.match(/[a-z0-9-_ ]/gi)) {
@@ -569,6 +592,7 @@ const MoveButton = ({
 			className="mr-2 sr-only sr-only-focusable"
 			disabled={node.isMasterItem || node.hiddenAncestor}
 			displayType="unstyled"
+			onBlur={(event) => event.stopPropagation()}
 			onClick={() =>
 				setMovementSource({
 					fragmentEntryType,
@@ -579,9 +603,19 @@ const MoveButton = ({
 					type: node.type,
 				})
 			}
-			onFocus={(event) => event.stopPropagation()}
+			onFocus={(event) => {
+				buttonRef.current
+					?.closest('.treeview-link')
+					?.classList.remove('focus');
+				event.stopPropagation();
+			}}
 			onKeyDown={onKeyDown}
 			ref={buttonRef}
+			tabIndex={
+				document.activeElement.dataset.id?.includes(node.id)
+					? '0'
+					: '-1'
+			}
 			title={sub(Liferay.Language.get('move-x'), [node.name])}
 		>
 			<ClayIcon symbol="drag" />

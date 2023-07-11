@@ -14,9 +14,8 @@
 
 package com.liferay.portal.reports.engine.console.model.impl;
 
-import com.liferay.document.library.kernel.store.DLStoreUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.CompanyConstants;
+import com.liferay.portal.reports.engine.console.service.DefinitionLocalServiceUtil;
 
 /**
  * @author Brian Wing Shun Chan
@@ -29,9 +28,8 @@ public class DefinitionImpl extends DefinitionBaseImpl {
 	}
 
 	@Override
-	public String[] getAttachmentsFiles() throws PortalException {
-		return DLStoreUtil.getFileNames(
-			getCompanyId(), CompanyConstants.SYSTEM, getAttachmentsDir());
+	public String[] getAttachmentsFileNames() throws PortalException {
+		return DefinitionLocalServiceUtil.getAttachmentsFileNames(this);
 	}
 
 }

@@ -129,17 +129,17 @@ dependencies {
 	compile group: "com.github.docker-java", name: "docker-java", version: "3.2.8"
 	compile group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
 	compile group: "com.liferay", name: "com.liferay.ant.bnd", version: "3.2.9"
-	compile(group: "com.liferay", name: "com.liferay.gradle.plugins", version: "14.0.132") {
+	compile(group: "com.liferay", name: "com.liferay.gradle.plugins", version: "14.0.152") {
 		exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
 	}
 	compile(group: "com.liferay", name: "com.liferay.gradle.plugins.css.builder", version: "5.0.7") {
 		exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
 	}
-	compile(group: "com.liferay", name: "com.liferay.gradle.plugins.poshi.runner", version: "3.0.68") {
+	compile(group: "com.liferay", name: "com.liferay.gradle.plugins.poshi.runner", version: "3.0.73") {
 		exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
 	}
-	compile group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "5.2.25"
-	compile group: "com.liferay", name: "com.liferay.gradle.plugins.target.platform", version: "3.0.10"
+	compile group: "com.liferay", name: "com.liferay.gradle.plugins.source.formatter", version: "5.2.38"
+	compile group: "com.liferay", name: "com.liferay.gradle.plugins.target.platform", version: "3.0.11"
 	compile(group: "com.liferay", name: "com.liferay.gradle.plugins.theme.builder", version: "2.0.23") {
 		exclude group: "biz.aQute.bnd", module: "biz.aQute.bnd"
 	}
@@ -209,7 +209,6 @@ gradleTest {
 	deprecationMessagesAreFailures = false
 
 	gradleArguments "--project-prop", "app.server.parent.dir=" + FileUtil.getAbsolutePath(copyBundle.destinationDir)
-	gradleArguments "--project-prop", "liferay.workspace.bundle.url=${bundleUrl}"
 	gradleArguments "--project-prop", "pluginClasspathDir=${uri(gradleTestDependenciesDir)}"
 
 	versions "5.6.4", gradleVersion

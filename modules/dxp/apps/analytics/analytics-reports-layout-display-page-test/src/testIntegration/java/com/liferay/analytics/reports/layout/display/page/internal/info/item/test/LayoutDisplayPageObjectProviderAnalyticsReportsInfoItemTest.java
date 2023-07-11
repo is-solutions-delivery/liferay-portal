@@ -14,7 +14,7 @@
 
 package com.liferay.analytics.reports.layout.display.page.internal.info.item.test;
 
-import com.liferay.analytics.reports.layout.display.page.info.item.LayoutDisplayPageObjectProviderAnalyticsReportsInfoItem;
+import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
 import com.liferay.analytics.reports.layout.display.page.internal.test.MockObject;
 import com.liferay.analytics.reports.layout.display.page.internal.test.layout.display.page.MockObjectLayoutDisplayPageObjectProvider;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
@@ -237,6 +237,7 @@ public class LayoutDisplayPageObjectProviderAnalyticsReportsInfoItemTest {
 			themeDisplay.setLayoutSet(layout.getLayoutSet());
 
 			themeDisplay.setRequest(mockHttpServletRequest);
+			themeDisplay.setScopeGroupId(_group.getGroupId());
 			themeDisplay.setSiteGroupId(_group.getGroupId());
 
 			mockHttpServletRequest.setAttribute(
@@ -418,8 +419,10 @@ public class LayoutDisplayPageObjectProviderAnalyticsReportsInfoItemTest {
 	@DeleteAfterTestRun
 	private Group _group;
 
-	@Inject
-	private LayoutDisplayPageObjectProviderAnalyticsReportsInfoItem
+	@Inject(
+		filter = "model.class.name=com.liferay.layout.display.page.LayoutDisplayPageObjectProvider"
+	)
+	private AnalyticsReportsInfoItem<LayoutDisplayPageObjectProvider>
 		_layoutDisplayPageObjectProviderAnalyticsReportsInfoItem;
 
 	@Inject

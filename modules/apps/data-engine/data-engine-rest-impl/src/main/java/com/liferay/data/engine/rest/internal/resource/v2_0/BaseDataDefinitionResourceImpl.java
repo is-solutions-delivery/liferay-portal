@@ -884,7 +884,7 @@ public abstract class BaseDataDefinitionResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			dataDefinitionUnsafeConsumer =
 				dataDefinition -> patchDataDefinition(
 					dataDefinition.getId() != null ? dataDefinition.getId() :
@@ -892,7 +892,7 @@ public abstract class BaseDataDefinitionResourceImpl
 					dataDefinition);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			dataDefinitionUnsafeConsumer = dataDefinition -> putDataDefinition(
 				dataDefinition.getId() != null ? dataDefinition.getId() :
 					_parseLong((String)parameters.get("dataDefinitionId")),

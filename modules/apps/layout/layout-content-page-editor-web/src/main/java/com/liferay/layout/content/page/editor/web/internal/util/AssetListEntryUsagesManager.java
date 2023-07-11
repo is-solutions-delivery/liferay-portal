@@ -40,7 +40,6 @@ import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderIt
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
-import com.liferay.layout.security.permission.resource.LayoutContentModelResourcePermission;
 import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
@@ -68,6 +67,7 @@ import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.ResourceActions;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -96,13 +96,13 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 import javax.portlet.WindowState;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -149,6 +149,15 @@ public class AssetListEntryUsagesManager {
 		}
 
 		return mappedContentsJSONArray;
+	}
+
+	@Activate
+	protected void activate() {
+		_collectionStyledLayoutStructureItemClassNameId =
+			_portal.getClassNameId(
+				CollectionStyledLayoutStructureItem.class.getName());
+		_fragmentEntryLinkClassNameId = _portal.getClassNameId(
+			FragmentEntryLink.class.getName());
 	}
 
 	private LiferayRenderRequest _createRenderRequest(
@@ -217,46 +226,44 @@ public class AssetListEntryUsagesManager {
 		AssetListEntry assetListEntry, HttpServletRequest httpServletRequest,
 		HttpServletResponse httpServletResponse, String redirect) {
 
-		JSONObject jsonObject = _jsonFactory.createJSONObject();
+		return JSONUtil.put(
+			"addItems",
+			() -> {
+				try {
+					JSONArray addItemsJSONArray =
+						_getAssetListEntryAddItemsJSONArray(
+							assetListEntry, httpServletRequest,
+							httpServletResponse);
 
-		String editURL = _getAssetListEntryEditURL(
-			assetListEntry, httpServletRequest, redirect);
+					if ((addItemsJSONArray != null) &&
+						(addItemsJSONArray.length() > 0)) {
 
-		if (Validator.isNotNull(editURL)) {
-			jsonObject.put("editURL", editURL);
-		}
+						return addItemsJSONArray;
+					}
+				}
+				catch (Exception exception) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(exception);
+					}
+				}
 
-		String permissionsURL = _getAssetListEntryPermissionsURL(
-			assetListEntry, httpServletRequest);
-
-		if (Validator.isNotNull(permissionsURL)) {
-			jsonObject.put("permissionsURL", permissionsURL);
-		}
-
-		String viewItemsURL = _getAssetListEntryViewItemsURL(
-			assetListEntry, httpServletRequest, redirect);
-
-		if (Validator.isNotNull(viewItemsURL)) {
-			jsonObject.put("viewItemsURL", viewItemsURL);
-		}
-
-		try {
-			JSONArray addItemsJSONArray = _getAssetListEntryAddItemsJSONArray(
-				assetListEntry, httpServletRequest, httpServletResponse);
-
-			if ((addItemsJSONArray != null) &&
-				(addItemsJSONArray.length() > 0)) {
-
-				jsonObject.put("addItems", addItemsJSONArray);
+				return null;
 			}
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception);
-			}
-		}
-
-		return jsonObject;
+		).put(
+			"editURL",
+			() -> _getAssetListEntryEditURL(
+				assetListEntry, httpServletRequest, redirect)
+		).put(
+			"permissionsURL",
+			() -> _getAssetListEntryPermissionsURL(
+				assetListEntry, httpServletRequest)
+		).put(
+			"viewItemsURL",
+			() -> _getViewItemsURL(
+				String.valueOf(assetListEntry.getAssetListEntryId()),
+				InfoListItemSelectorReturnType.class.getName(),
+				httpServletRequest, redirect)
+		);
 	}
 
 	private JSONArray _getAssetListEntryAddItemsJSONArray(
@@ -286,12 +293,18 @@ public class AssetListEntryUsagesManager {
 		AssetListEntry assetListEntry, HttpServletRequest httpServletRequest,
 		String redirect) {
 
-		PortletURL portletURL = null;
-
 		try {
-			portletURL = PortletProviderUtil.getPortletURL(
-				httpServletRequest, AssetListEntry.class.getName(),
-				PortletProvider.Action.EDIT);
+			return PortletURLBuilder.create(
+				PortletProviderUtil.getPortletURL(
+					httpServletRequest, AssetListEntry.class.getName(),
+					PortletProvider.Action.EDIT)
+			).setRedirect(
+				redirect
+			).setBackURL(
+				redirect
+			).setParameter(
+				"assetListEntryId", assetListEntry.getAssetListEntryId()
+			).buildString();
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -299,78 +312,28 @@ public class AssetListEntryUsagesManager {
 			}
 		}
 
-		if (portletURL == null) {
-			return StringPool.BLANK;
-		}
-
-		portletURL.setParameter("redirect", redirect);
-		portletURL.setParameter("backURL", redirect);
-
-		portletURL.setParameter(
-			"assetListEntryId",
-			String.valueOf(assetListEntry.getAssetListEntryId()));
-
-		return portletURL.toString();
+		return null;
 	}
 
 	private String _getAssetListEntryPermissionsURL(
 		AssetListEntry assetListEntry, HttpServletRequest httpServletRequest) {
 
-		String permissionsURL = null;
-
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		if (_layoutContentModelResourcePermission.contains(
-				themeDisplay.getPermissionChecker(),
-				AssetListEntry.class.getName(),
-				assetListEntry.getAssetListEntryId(), ActionKeys.PERMISSIONS)) {
+		try {
+			if (_assetListEntryModelResourcePermission.contains(
+					themeDisplay.getPermissionChecker(), assetListEntry,
+					ActionKeys.PERMISSIONS)) {
 
-			try {
-				permissionsURL = PermissionsURLTag.doTag(
+				return PermissionsURLTag.doTag(
 					StringPool.BLANK, AssetListEntry.class.getName(),
 					HtmlUtil.escape(assetListEntry.getTitle()), null,
 					String.valueOf(assetListEntry.getAssetListEntryId()),
 					LiferayWindowState.POP_UP.toString(), null,
 					httpServletRequest);
 			}
-			catch (Exception exception) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(exception);
-				}
-			}
-		}
-
-		return permissionsURL;
-	}
-
-	private String _getAssetListEntryViewItemsURL(
-		AssetListEntry assetListEntry, HttpServletRequest httpServletRequest,
-		String redirect) {
-
-		PortletURL portletURL = null;
-
-		try {
-			portletURL = PortletProviderUtil.getPortletURL(
-				httpServletRequest, AssetListEntry.class.getName(),
-				PortletProvider.Action.BROWSE);
-
-			if (portletURL == null) {
-				return StringPool.BLANK;
-			}
-
-			portletURL.setParameter("redirect", redirect);
-
-			portletURL.setParameter(
-				"collectionPK",
-				String.valueOf(assetListEntry.getAssetListEntryId()));
-			portletURL.setParameter(
-				"collectionType",
-				InfoListItemSelectorReturnType.class.getName());
-			portletURL.setParameter(
-				"showActions", String.valueOf(Boolean.TRUE));
-			portletURL.setWindowState(LiferayWindowState.POP_UP);
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
@@ -378,7 +341,7 @@ public class AssetListEntryUsagesManager {
 			}
 		}
 
-		return portletURL.toString();
+		return null;
 	}
 
 	private List<AssetPublisherAddItemHolder> _getAssetPublisherAddItemHolders(
@@ -432,51 +395,6 @@ public class AssetListEntryUsagesManager {
 				themeDisplay));
 	}
 
-	private AssetRendererFactory<?> _getAssetRendererFactory(String className) {
-		return AssetRendererFactoryRegistryUtil.
-			getAssetRendererFactoryByClassName(
-				_infoSearchClassMapperRegistry.getSearchClassName(className));
-	}
-
-	private long _getCollectionStyledLayoutStructureItemClassNameId() {
-		if (_collectionStyledLayoutStructureItemClassNameId != null) {
-			return _collectionStyledLayoutStructureItemClassNameId;
-		}
-
-		_collectionStyledLayoutStructureItemClassNameId =
-			_portal.getClassNameId(
-				CollectionStyledLayoutStructureItem.class.getName());
-
-		return _collectionStyledLayoutStructureItemClassNameId;
-	}
-
-	private long _getFragmentEntryLinkClassNameId() {
-		if (_fragmentEntryLinkClassNameId != null) {
-			return _fragmentEntryLinkClassNameId;
-		}
-
-		_fragmentEntryLinkClassNameId = _portal.getClassNameId(
-			FragmentEntryLink.class.getName());
-
-		return _fragmentEntryLinkClassNameId;
-	}
-
-	private JSONObject _getInfoCollectionProviderActionsJSONObject(
-		InfoCollectionProvider<?> infoCollectionProvider,
-		HttpServletRequest httpServletRequest, String redirect) {
-
-		JSONObject jsonObject = _jsonFactory.createJSONObject();
-
-		String viewItemsURL = _getInfoCollectionProviderViewItemsURL(
-			infoCollectionProvider, httpServletRequest, redirect);
-
-		if (Validator.isNotNull(viewItemsURL)) {
-			jsonObject.put("viewItemsURL", viewItemsURL);
-		}
-
-		return jsonObject;
-	}
-
 	private String _getInfoCollectionProviderSubtypeLabel(
 		long groupId, InfoCollectionProvider<?> infoCollectionProvider,
 		Locale locale) {
@@ -520,43 +438,6 @@ public class AssetListEntryUsagesManager {
 			infoItemFormVariation.getLabel(locale);
 	}
 
-	private String _getInfoCollectionProviderViewItemsURL(
-		InfoCollectionProvider<?> infoCollectionProvider,
-		HttpServletRequest httpServletRequest, String redirect) {
-
-		PortletURL portletURL = null;
-
-		try {
-			portletURL = PortletProviderUtil.getPortletURL(
-				httpServletRequest, AssetListEntry.class.getName(),
-				PortletProvider.Action.BROWSE);
-
-			if (portletURL == null) {
-				return StringPool.BLANK;
-			}
-
-			portletURL.setParameter("redirect", redirect);
-
-			portletURL.setParameter(
-				"collectionPK",
-				String.valueOf(infoCollectionProvider.getKey()));
-			portletURL.setParameter(
-				"collectionType",
-				InfoListProviderItemSelectorReturnType.class.getName());
-			portletURL.setParameter(
-				"showActions", String.valueOf(Boolean.TRUE));
-
-			portletURL.setWindowState(LiferayWindowState.POP_UP);
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception);
-			}
-		}
-
-		return portletURL.toString();
-	}
-
 	private JSONObject _getPageContentJSONObject(
 		AssetListEntryUsage assetListEntryUsage,
 		HttpServletRequest httpServletRequest,
@@ -579,7 +460,7 @@ public class AssetListEntryUsagesManager {
 			"isRestricted",
 			() -> {
 				if ((assetListEntryUsage.getContainerType() ==
-						_getCollectionStyledLayoutStructureItemClassNameId()) &&
+						_collectionStyledLayoutStructureItemClassNameId) &&
 					restrictedItemIds.contains(
 						assetListEntryUsage.getContainerKey())) {
 
@@ -616,45 +497,55 @@ public class AssetListEntryUsagesManager {
 			}
 		}
 
-		if (Objects.equals(
+		if (!Objects.equals(
 				assetListEntryUsage.getClassName(),
 				InfoCollectionProvider.class.getName())) {
 
-			InfoCollectionProvider<?> infoCollectionProvider =
-				_infoItemServiceRegistry.getInfoItemService(
-					InfoCollectionProvider.class, assetListEntryUsage.getKey());
-
-			if (infoCollectionProvider == null) {
-				infoCollectionProvider =
-					_infoItemServiceRegistry.getInfoItemService(
-						RelatedInfoItemCollectionProvider.class,
-						assetListEntryUsage.getKey());
-			}
-
-			if (infoCollectionProvider != null) {
-				if (!(infoCollectionProvider instanceof
-						RelatedInfoItemCollectionProvider)) {
-
-					mappedContentJSONObject.put(
-						"actions",
-						_getInfoCollectionProviderActionsJSONObject(
-							infoCollectionProvider, httpServletRequest,
-							redirect));
-				}
-
-				mappedContentJSONObject.put(
-					"subtype",
-					_getInfoCollectionProviderSubtypeLabel(
-						themeDisplay.getScopeGroupId(), infoCollectionProvider,
-						themeDisplay.getLocale())
-				).put(
-					"title",
-					infoCollectionProvider.getLabel(themeDisplay.getLocale())
-				);
-			}
+			return mappedContentJSONObject;
 		}
 
-		return mappedContentJSONObject;
+		InfoCollectionProvider<?> infoCollectionProvider =
+			_infoItemServiceRegistry.getInfoItemService(
+				InfoCollectionProvider.class, assetListEntryUsage.getKey());
+
+		if (infoCollectionProvider == null) {
+			infoCollectionProvider =
+				_infoItemServiceRegistry.getInfoItemService(
+					RelatedInfoItemCollectionProvider.class,
+					assetListEntryUsage.getKey());
+		}
+
+		if (infoCollectionProvider == null) {
+			return mappedContentJSONObject;
+		}
+
+		InfoCollectionProvider<?> finalInfoCollectionProvider =
+			infoCollectionProvider;
+
+		return mappedContentJSONObject.put(
+			"actions",
+			() -> {
+				if (finalInfoCollectionProvider instanceof
+						RelatedInfoItemCollectionProvider) {
+
+					return null;
+				}
+
+				return JSONUtil.put(
+					"viewItemsURL",
+					() -> _getViewItemsURL(
+						finalInfoCollectionProvider.getKey(),
+						InfoListProviderItemSelectorReturnType.class.getName(),
+						httpServletRequest, redirect));
+			}
+		).put(
+			"subtype",
+			_getInfoCollectionProviderSubtypeLabel(
+				themeDisplay.getScopeGroupId(), infoCollectionProvider,
+				themeDisplay.getLocale())
+		).put(
+			"title", infoCollectionProvider.getLabel(themeDisplay.getLocale())
+		);
 	}
 
 	private String _getRedirect(HttpServletRequest httpServletRequest) {
@@ -717,8 +608,10 @@ public class AssetListEntryUsagesManager {
 			return StringPool.BLANK;
 		}
 
-		AssetRendererFactory<?> assetRendererFactory = _getAssetRendererFactory(
-			assetListEntry.getAssetEntryType());
+		AssetRendererFactory<?> assetRendererFactory =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
+				_infoSearchClassMapperRegistry.getSearchClassName(
+					assetListEntry.getAssetEntryType()));
 
 		if ((assetRendererFactory == null) ||
 			!assetRendererFactory.isSupportsClassTypes()) {
@@ -744,12 +637,42 @@ public class AssetListEntryUsagesManager {
 		}
 	}
 
+	private String _getViewItemsURL(
+		String collectionPK, String collectionType,
+		HttpServletRequest httpServletRequest, String redirect) {
+
+		try {
+			return PortletURLBuilder.create(
+				PortletProviderUtil.getPortletURL(
+					httpServletRequest, AssetListEntry.class.getName(),
+					PortletProvider.Action.VIEW)
+			).setRedirect(
+				redirect
+			).setParameter(
+				"collectionPK", collectionPK
+			).setParameter(
+				"collectionType", collectionType
+			).setParameter(
+				"showActions", true
+			).setWindowState(
+				LiferayWindowState.POP_UP
+			).buildString();
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+		}
+
+		return null;
+	}
+
 	private boolean _isCollectionStyledLayoutStructureItemDeletedOrHidden(
 		AssetListEntryUsage assetListEntryUsage, List<String> hiddenItemIds,
 		LayoutStructure layoutStructure) {
 
 		if (assetListEntryUsage.getContainerType() !=
-				_getCollectionStyledLayoutStructureItemClassNameId()) {
+				_collectionStyledLayoutStructureItemClassNameId) {
 
 			return false;
 		}
@@ -780,7 +703,7 @@ public class AssetListEntryUsagesManager {
 		LayoutStructure layoutStructure) {
 
 		if (assetListEntryUsage.getContainerType() !=
-				_getFragmentEntryLinkClassNameId()) {
+				_fragmentEntryLinkClassNameId) {
 
 			return false;
 		}
@@ -827,14 +750,20 @@ public class AssetListEntryUsagesManager {
 	@Reference
 	private AssetListEntryLocalService _assetListEntryLocalService;
 
+	@Reference(
+		target = "(model.class.name=com.liferay.asset.list.model.AssetListEntry)"
+	)
+	private ModelResourcePermission<AssetListEntry>
+		_assetListEntryModelResourcePermission;
+
 	@Reference
 	private AssetListEntryUsageLocalService _assetListEntryUsageLocalService;
 
 	@Reference
 	private AssetTagLocalService _assetTagLocalService;
 
-	private Long _collectionStyledLayoutStructureItemClassNameId;
-	private Long _fragmentEntryLinkClassNameId;
+	private long _collectionStyledLayoutStructureItemClassNameId;
+	private long _fragmentEntryLinkClassNameId;
 
 	@Reference
 	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
@@ -850,10 +779,6 @@ public class AssetListEntryUsagesManager {
 
 	@Reference
 	private Language _language;
-
-	@Reference
-	private LayoutContentModelResourcePermission
-		_layoutContentModelResourcePermission;
 
 	@Reference
 	private Portal _portal;

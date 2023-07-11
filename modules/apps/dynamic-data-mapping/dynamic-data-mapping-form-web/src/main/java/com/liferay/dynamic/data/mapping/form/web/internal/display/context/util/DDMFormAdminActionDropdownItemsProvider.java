@@ -175,7 +175,7 @@ public class DDMFormAdminActionDropdownItemsProvider {
 				).buildString());
 			dropdownItem.setIcon("copy");
 			dropdownItem.setLabel(
-				LanguageUtil.get(_httpServletRequest, "duplicate"));
+				LanguageUtil.get(_httpServletRequest, "duplicate-form"));
 		};
 	}
 
@@ -212,7 +212,7 @@ public class DDMFormAdminActionDropdownItemsProvider {
 				).build());
 			dropdownItem.setDisabled(_invalidDDMFormInstance);
 			dropdownItem.setLabel(
-				LanguageUtil.get(_httpServletRequest, "export"));
+				LanguageUtil.get(_httpServletRequest, "export-entries"));
 		};
 	}
 

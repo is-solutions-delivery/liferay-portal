@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+/* eslint-disable react/no-unescaped-entities */
+
 import {filesize} from 'filesize';
 import {uniqueId} from 'lodash';
 import {useEffect, useState} from 'react';
@@ -13,19 +29,26 @@ import {UploadLogo} from '../../components/UploadLogo/UploadLogo';
 import {useAppContext} from '../../manage-app-state/AppManageState';
 import {TYPES} from '../../manage-app-state/actionTypes';
 import {
+	addExpandoValue,
 	createApp,
-	createImage,
+	createAttachment,
 	getCategories,
+	getChannels,
 	getVocabularies,
 	updateApp,
 } from '../../utils/api';
 import {submitBase64EncodedFile} from '../../utils/util';
 
 import './DefineAppProfilePage.scss';
+import {getCompanyId} from '../../liferay/constants';
 
 interface DefineAppProfilePageProps {
 	onClickBack: () => void;
 	onClickContinue: () => void;
+}
+
+interface VocabDropdownItem extends Categories {
+	checked: boolean;
 }
 
 export function DefineAppProfilePage({
@@ -44,6 +67,9 @@ export function DefineAppProfilePage({
 		},
 		dispatch,
 	] = useAppContext();
+	const [categories, setCategories] = useState<VocabDropdownItem[]>([]);
+	const [productType, setProductType] = useState<Categories>();
+	const [tags, setTags] = useState<VocabDropdownItem[]>([]);
 
 	const handleLogoUpload = (files: FileList) => {
 		const file = files[0];
@@ -76,14 +102,91 @@ export function DefineAppProfilePage({
 		});
 	};
 
-	const [categories, setCategories] = useState([]);
-	const [tags, setTags] = useState([]);
+	const onContinue = async () => {
+		let product;
+		let response;
+
+		const channels = await getChannels();
+
+		const marketplaceChannel = channels.find(
+			(channel) => channel.name === 'Marketplace Channel'
+		);
+
+		if (appERC) {
+			response = await updateApp({
+				appDescription,
+				appERC,
+				appName,
+			});
+		}
+		else {
+			response = await createApp({
+				appCategories: [
+					...appCategories,
+					...appTags,
+					productType as Categories,
+				],
+				appDescription,
+				appName,
+				catalogId,
+				productChannels: [
+					{
+						channelId: marketplaceChannel?.id as number,
+						currencyCode:
+							marketplaceChannel?.currencyCode as string,
+						externalReferenceCode:
+							marketplaceChannel?.externalReferenceCode as string,
+						id: marketplaceChannel?.id as number,
+						name: marketplaceChannel?.name as string,
+						type: marketplaceChannel?.type as string,
+					},
+				],
+			});
+
+			product = await response.json();
+
+			dispatch({
+				payload: {
+					value: {
+						appERC: product.externalReferenceCode,
+						appId: product.id,
+						appProductId: product.productId,
+						appWorkflowStatusInfo: product.workflowStatusInfo,
+					},
+				},
+				type: TYPES.SUBMIT_APP_PROFILE,
+			});
+		}
+
+		if (appLogo) {
+			const attachmentId = await submitBase64EncodedFile({
+				appERC: appERC ?? product.externalReferenceCode,
+				file: appLogo.file,
+				requestFunction: createAttachment,
+				title: appLogo.fileName,
+			});
+
+			addExpandoValue({
+				attributeValues: {
+					'App Icon': 'Yes',
+				},
+				className:
+					'com.liferay.commerce.product.model.CPAttachmentFileEntry',
+				classPK: attachmentId as number,
+				companyId: Number(getCompanyId()),
+				tableName: 'CUSTOM_FIELDS',
+			});
+		}
+
+		onClickContinue();
+	};
 
 	useEffect(() => {
 		const getData = async () => {
 			const vocabulariesResponse = await getVocabularies();
 
 			let categoryVocabId = 0;
+			let productTypeVocabId = 0;
 			let tagVocabId = 0;
 
 			vocabulariesResponse.items.forEach(
@@ -95,49 +198,63 @@ export function DefineAppProfilePage({
 					if (vocab.name === 'Marketplace App Tags') {
 						tagVocabId = vocab.id;
 					}
+
+					if (vocab.name === 'Marketplace Product Type') {
+						productTypeVocabId = vocab.id;
+					}
 				}
 			);
 
-			let categoriesList = await getCategories({
+			const categoriesList = await getCategories({
 				vocabId: categoryVocabId,
 			});
-			let tagsList = await getCategories({vocabId: tagVocabId});
+			const tagsList = await getCategories({vocabId: tagVocabId});
 
-			categoriesList = categoriesList.items.map(
-				(category: {
-					externalReferenceCode: string;
-					id: number;
-					name: string;
-				}) => {
-					return {
-						checked: false,
-						externalReferenceCode: category.externalReferenceCode,
-						id: category.id,
-						label: category.name,
-						value: category.name,
-					};
-				}
+			const productTypeList = await getCategories({
+				vocabId: productTypeVocabId,
+			});
+
+			const appProductType = productTypeList.find(
+				(productType) => productType.name === 'App'
 			);
 
-			tagsList = tagsList.items.map(
-				(tag: {
-					externalReferenceCode: string;
-					id: number;
-					name: string;
-				}) => {
-					return {
-						checked: false,
-						externalReferenceCode: tag.externalReferenceCode,
-						id: tag.id,
-						label: tag.name,
-						value: tag.name,
-					};
-				}
-			);
+			if (appProductType) {
+				setProductType({
+					externalReferenceCode: appProductType.externalReferenceCode,
+					id: appProductType.id,
+					name: appProductType.name,
+					vocabulary: 'Marketplace Product Type',
+				});
+			}
 
-			setCategories(categoriesList);
-			setTags(tagsList);
+			const categoriesDropdownItems = categoriesList.map((category) => {
+				return {
+					checked: false,
+					externalReferenceCode: category.externalReferenceCode,
+					id: category.id,
+					label: category.name,
+					name: category.name,
+					value: category.name,
+					vocabulary: 'Marketplace App Category',
+				};
+			});
+
+			const tagsDropdownItems = tagsList.map((tag) => {
+				return {
+					checked: false,
+					externalReferenceCode: tag.externalReferenceCode,
+					id: tag.id,
+					label: tag.name,
+					name: tag.name,
+					value: tag.name,
+					vocabulary: 'Marketplace App Tags',
+				};
+			});
+
+			setCategories(categoriesDropdownItems);
+			setTags(tagsDropdownItems);
 		};
+
 		getData();
 	}, []);
 
@@ -236,7 +353,7 @@ export function DefineAppProfilePage({
 							value={appDescription}
 						/>
 
-						<MultiSelect
+						<MultiSelect<VocabDropdownItem>
 							items={categories}
 							label="Categories"
 							onChange={(value) =>
@@ -252,7 +369,7 @@ export function DefineAppProfilePage({
 							tooltip="Choose the Marketplace category that most accurately describes what your app does. Users looking for specific types of apps will often browse categories by searching on a specific category name in the main Marketplace home page. Having your app listed under the appropriate category will help them find your app."
 						/>
 
-						<MultiSelect
+						<MultiSelect<VocabDropdownItem>
 							items={tags}
 							label="Tags"
 							onChange={(value) =>
@@ -276,54 +393,7 @@ export function DefineAppProfilePage({
 					!appCategories || !appDescription || !appName || !appTags
 				}
 				onClickBack={() => onClickBack()}
-				onClickContinue={async () => {
-					let product;
-					let response;
-
-					if (appERC) {
-						response = await updateApp({
-							appDescription,
-							appERC,
-							appName,
-						});
-					}
-					else {
-						response = await createApp({
-							appCategories: [...appCategories, ...appTags],
-							appDescription,
-							appName,
-							catalogId,
-						});
-					}
-
-					if (!appERC) {
-						product = await response.json();
-
-						dispatch({
-							payload: {
-								value: {
-									appERC: product.externalReferenceCode,
-									appId: product.id,
-									appProductId: product.productId,
-									appWorkflowStatusInfo:
-										product.workflowStatusInfo,
-								},
-							},
-							type: TYPES.SUBMIT_APP_PROFILE,
-						});
-					}
-
-					if (appLogo) {
-						submitBase64EncodedFile({
-							appERC: product.externalReferenceCode,
-							file: appLogo.file,
-							requestFunction: createImage,
-							title: appLogo.fileName,
-						});
-					}
-
-					onClickContinue();
-				}}
+				onClickContinue={async () => await onContinue()}
 				showBackButton
 			/>
 		</div>

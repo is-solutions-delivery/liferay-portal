@@ -1,9 +1,11 @@
-import AudienceReportCard from 'assets/web-content/hocs/AudienceReportCard';
+import AudienceReportCard from 'shared/components/audience-report/AudienceReportBaseCard';
 import DevicesCard from 'assets/web-content/hocs/DevicesCard';
 import LocationsCard from 'assets/web-content/hocs/LocationsCard';
 import React from 'react';
 import TouchpointsListCard from 'assets/hocs/TouchpointsListCard';
 import WebContentMetricCard from 'assets/web-content/components/WebContentMetricCard';
+import {MetricName} from 'shared/types/MetricName';
+import {Name} from 'shared/components/audience-report/types';
 
 const Overview = () => (
 	<>
@@ -21,9 +23,10 @@ const Overview = () => (
 					knownIndividualsTitle={Liferay.Language.get(
 						'segmented-views'
 					)}
-					label={Liferay.Language.get('audience')}
-					legacyDropdownRangeKey={false}
-					metricAction={Liferay.Language.get('view').toLowerCase()}
+					query={{
+						metricName: MetricName.Views,
+						name: Name.Journal
+					}}
 					uniqueVisitorsTitle={Liferay.Language.get('views')}
 				/>
 			</div>

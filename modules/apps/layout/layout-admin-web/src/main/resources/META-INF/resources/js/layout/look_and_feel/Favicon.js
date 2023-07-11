@@ -23,12 +23,17 @@ export default function Favicon({
 	defaultTitle,
 	faviconFileEntryId: initialFaviconFileEntryId,
 	imgURL: initialImgURL,
+	isReadOnly,
 	portletNamespace,
 	themeFaviconCETExternalReferenceCode: initialThemeFaviconCETExternalReferenceCode,
 	title: initialTitle,
 	url,
 }) {
 	const onChangeFaviconButtonClick = () => {
+		if (isReadOnly) {
+			return;
+		}
+
 		openSelectionModal({
 			iframeBodyCssClass: '',
 			onSelect(selectedItem) {
@@ -68,6 +73,10 @@ export default function Favicon({
 		});
 	};
 	const onClearFaviconButtonClick = () => {
+		if (isReadOnly) {
+			return;
+		}
+
 		setValues({
 			clearButtonEnabled: false,
 			faviconFileEntryId: 0,
@@ -101,7 +110,7 @@ export default function Favicon({
 			{values.imgURL && (
 				<img
 					alt={values.title}
-					className="mb-2"
+					className="c-mb-2"
 					height="16"
 					src={values.imgURL}
 					width="16"
@@ -115,7 +124,7 @@ export default function Favicon({
 
 				<div className="d-flex">
 					<ClayInput
-						className="mr-2"
+						className="c-mr-2"
 						id={`${portletNamespace}basicInputText`}
 						onClick={onChangeFaviconButtonClick}
 						readOnly={true}
@@ -124,7 +133,8 @@ export default function Favicon({
 
 					<ClayButtonWithIcon
 						aria-label={Liferay.Language.get('select-favicon')}
-						className="flex-shrink-0 mr-2"
+						className="c-mr-2 flex-shrink-0"
+						disabled={isReadOnly}
 						displayType="secondary"
 						onClick={onChangeFaviconButtonClick}
 						symbol="change"
@@ -134,7 +144,7 @@ export default function Favicon({
 					<ClayButtonWithIcon
 						aria-label={Liferay.Language.get('clear-favicon')}
 						className="flex-shrink-0"
-						disabled={!values.clearButtonEnabled}
+						disabled={!values.clearButtonEnabled || isReadOnly}
 						displayType="secondary"
 						onClick={onClearFaviconButtonClick}
 						symbol="times-circle"

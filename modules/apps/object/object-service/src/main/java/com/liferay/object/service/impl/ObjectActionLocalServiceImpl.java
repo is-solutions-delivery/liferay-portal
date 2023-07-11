@@ -128,7 +128,6 @@ public class ObjectActionLocalServiceImpl
 		}
 
 		objectAction.setExternalReferenceCode(externalReferenceCode);
-
 		objectAction.setCompanyId(user.getCompanyId());
 		objectAction.setUserId(user.getUserId());
 		objectAction.setUserName(user.getFullName());
@@ -580,8 +579,12 @@ public class ObjectActionLocalServiceImpl
 				}
 			}
 
-			if ((objectDefinition == null) || !objectDefinition.isActive() ||
-				!objectDefinition.isApproved()) {
+			if ((objectDefinition == null) ||
+				(Objects.equals(
+					objectActionExecutorKey,
+					ObjectActionExecutorConstants.KEY_ADD_OBJECT_ENTRY) &&
+				 (!objectDefinition.isActive() ||
+				  !objectDefinition.isApproved()))) {
 
 				errorMessageKeys.put("objectDefinitionId", "invalid");
 			}
@@ -682,6 +685,13 @@ public class ObjectActionLocalServiceImpl
 				predefinedValuesErrorMessageKeys.put(name, "invalid");
 
 				continue;
+			}
+
+			if (objectField.isLocalized()) {
+				predefinedValuesErrorMessageKeys.put(
+					objectField.getName(),
+					"localized-object-fields-must-not-be-used-in-object-" +
+						"actions");
 			}
 
 			String value = predefinedValueJSONObject.getString("value");

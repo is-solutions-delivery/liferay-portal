@@ -133,8 +133,15 @@ create table CPDefinitionLink (
 	modifiedDate DATE null,
 	CPDefinitionId LONG,
 	CProductId LONG,
+	displayDate DATE null,
+	expirationDate DATE null,
 	priority DOUBLE,
 	type_ VARCHAR(75) null,
+	lastPublishDate DATE null,
+	status INTEGER,
+	statusByUserId LONG,
+	statusByUserName VARCHAR(75) null,
+	statusDate DATE null,
 	primary key (CPDefinitionLinkId, ctCollectionId)
 );
 
@@ -433,6 +440,7 @@ create table CommerceCatalog (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
+	accountEntryId LONG,
 	name VARCHAR(75) null,
 	commerceCurrencyCode VARCHAR(75) null,
 	catalogDefaultLanguageId VARCHAR(75) null,
@@ -451,6 +459,7 @@ create table CommerceChannel (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
+	accountEntryId LONG,
 	siteGroupId LONG,
 	name VARCHAR(75) null,
 	type_ VARCHAR(75) null,

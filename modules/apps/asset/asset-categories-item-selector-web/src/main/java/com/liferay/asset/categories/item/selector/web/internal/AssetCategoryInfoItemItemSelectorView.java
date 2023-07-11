@@ -90,6 +90,10 @@ public class AssetCategoryInfoItemItemSelectorView
 
 		ServletContext servletContext = getServletContext();
 
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher(
+				"/select_asset_category_info_item.jsp");
+
 		servletRequest.setAttribute(
 			AssetCategoryItemSelectorWebKeys.
 				SELECT_ASSET_CATEGORY_INFO_ITEM_ITEM_SELECTOR_DISPLAY_CONTEXT,
@@ -98,10 +102,6 @@ public class AssetCategoryInfoItemItemSelectorView
 				infoItemItemSelectorCriterion, itemSelectedEventName,
 				(RenderResponse)servletRequest.getAttribute(
 					JavaConstants.JAVAX_PORTLET_RESPONSE)));
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher(
-				"/select_asset_category_info_item.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

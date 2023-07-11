@@ -5,7 +5,7 @@ definition {
 	property portal.suite.search.engine = "elasticsearch7";
 	property portal.upstream = "true";
 	property test.run.environment = "EE";
-	property testray.component.names = "Frontend Dataset";
+	property testray.component.names = "Frontend Data Set";
 	property testray.main.component.name = "Search Experiences";
 
 	setUp {
@@ -15,9 +15,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -29,7 +29,7 @@ definition {
 		property search.environment.suite.exclude = "true";
 		property skip.clean-app-server-deploy-dir = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "Blueprints#AddBlueprintInNonRootContext";
+		property test.liferay.virtual.instance = "false";
 
 		Blueprints.openBlueprintsAdmin();
 
@@ -100,7 +100,7 @@ definition {
 	}
 
 	test ApplyBlueprintIDToSearchViaLLSO {
-		property test.name.skip.portal.instance = "Blueprints#ApplyBlueprintToSearchViaLLSO";
+		property test.liferay.virtual.instance = "false";
 
 		Blueprints.openBlueprintsAdmin();
 
@@ -123,13 +123,13 @@ definition {
 			groupName = "Guest",
 			title = "apple");
 
+		SearchPortlets.addWidgets(searchPortletList = "Low Level Search Options");
+
 		SearchPortlets.searchEmbedded(searchTerm = "apple");
 
 		SearchResultPortlet.viewSearchResults(
 			searchAssetTitle = "apple",
 			searchAssetType = "Web Content Article");
-
-		SearchPortlets.addWidgets(searchPortletList = "Low Level Search Options");
 
 		var blueprintId = Blueprints.getBlueprintID(title = "Test Blueprint");
 
@@ -145,11 +145,11 @@ definition {
 	}
 
 	test ApplyBlueprintJSONToSearchViaLLSO {
-		property test.name.skip.portal.instance = "Blueprints#ApplyBlueprintJSONToSearchViaLLSO";
-
-		Search.openSearchPage();
+		property test.liferay.virtual.instance = "false";
 
 		SearchPortlets.addWidgets(searchPortletList = "Search Insights,Low Level Search Options");
+
+		Search.openSearchPage();
 
 		var blueprintJson = '''{"configuration":{"generalConfiguration":{"includeResponseString":false}}}''';
 
@@ -226,7 +226,7 @@ definition {
 	}
 
 	test ApplyBlueprintToContentPageViaLLSO {
-		property test.name.skip.portal.instance = "Blueprints#ApplyBlueprintToContentPageViaLLSO";
+		property test.liferay.virtual.instance = "false";
 
 		JSONBlog.addEntry(
 			entryContent = "",
@@ -299,7 +299,7 @@ definition {
 		property search.environment.suite.exclude = "true";
 		property skip.clean-app-server-deploy-dir = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "Blueprints#ApplyBlueprintViaBlueprintsOptionsInNonRootContext";
+		property test.liferay.virtual.instance = "false";
 
 		JSONBlog.addEntry(
 			entryContent = "",
@@ -529,7 +529,7 @@ definition {
 	}
 
 	test AssertBlueprintStillAppliedAfterRename {
-		property test.name.skip.portal.instance = "Blueprints#AssertBlueprintStillAppliedAfterRename";
+		property test.liferay.virtual.instance = "false";
 
 		JSONWebcontent.addWebContent(
 			content = "apple apple apple",
@@ -648,6 +648,80 @@ definition {
 		SearchPortlets.searchEmbedded(searchTerm = "apple");
 
 		SearchResultPortlet.viewSearchResultsSpecificOrder(resultsList = "apple apple apple,gala");
+	}
+
+	@description = "This is a use case for LPS-185939 - Federated search requests should inherit parent request's search context properties."
+	@priority = 3
+	test AssertFederatedSearchRequestsInheritParentRequestsSearchContextProperties {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
+		task ("Add a user and assign it the Administrator role") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONRole.assignRoleToUser(
+				roleTitle = "Administrator",
+				userEmailAddress = "userea@liferay.com");
+		}
+
+		task ("Create a Web Contents Article as the new user") {
+			JSONWebcontent.addWebContent(
+				content = "Test",
+				groupName = "Guest",
+				title = "WC WebContent Title",
+				userEmailAddress = "userea@liferay.com",
+				userPassword = "test");
+		}
+
+		task ("Create Blueprint with the element Limit Search to My Contents") {
+			Blueprints.openBlueprintsAdmin();
+
+			Blueprints.createBlueprint(title = "Test Blueprint");
+
+			Blueprints.addElement(element = "Limit Search to My Contents");
+
+			PortletEntry.save();
+		}
+
+		task ("Create a Content Page with Search widgets") {
+			Search.openSearchPage();
+
+			SearchPortlets.configureEmbeddedSearchBar(
+				federatedSearchKey = "key",
+				searchScope = "Everything");
+
+			SearchResultPortlet.configureSearchResults(federatedSearchKey = "key");
+
+			SearchPortlets.configureSearchOptions(
+				allowEmptySearches = "true",
+				federatedSearchKey = "key");
+
+			Blueprints.applyBlueprintViaOptionsWidget(blueprintTitle = "Test Blueprint");
+
+			Blueprints.configureFederatedSearchKeyForOptionsWidget(federatedSearchKey = "key");
+		}
+
+		task ("As the new user, assert the Web Content Article shows up, but not the OOTB Documents") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea@liferay.com",
+				userLoginFullName = "userfn userln");
+
+			Search.openSearchPage();
+
+			SearchResultPortlet.viewSearchResults(
+				searchAssetTitle = "WC WebContent Title",
+				searchAssetType = "Web Content Article");
+
+			SearchResultPortlet.viewMultipleSearchResultsNotPresent(noResultsList = "astronaut.png/Document,earth.png/Document,moon.png/Document");
+		}
 	}
 
 	test AssertLocalizedFieldsAddLocaleDropdown {
@@ -878,27 +952,18 @@ definition {
 			isRequired = "false",
 			objectName = "CustomObject501");
 
-		ObjectAdmin.openObjectAdmin();
+		JSONObject.updateObject(
+			configKey = "titleObjectFieldName",
+			configValue = "title",
+			objectName = "CustomObject501");
 
-		ObjectPortlet.selectCustomObject(label = "Custom Object 501");
+		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject501");
 
-		CreateObject.selectTitleField(fieldLabel = "title");
-
-		ObjectAdmin.publishObjectViaUI();
-
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Custom Objects 501");
-
-		LexiconEntry.gotoAdd();
-
-		Type(
-			locator1 = "TextInput#TEXT",
-			value1 = "reddish apple");
-
-		PortletEntry.save();
+		JSONObject.addObjectEntryViaJSONAPI(
+			fieldName = "title",
+			fieldValue = "reddish apple",
+			objectName = "CustomObject501",
+			scope = "site");
 
 		JSONWebcontent.addWebContent(
 			content = "",
@@ -1090,6 +1155,128 @@ definition {
 		Blueprints.gotoBlueprint(title = "Test Blueprint");
 
 		AssertElementPresent(locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENTS_EMPTY");
+	}
+
+	@description = "This is a use case for LPS-185340 - Configure Collection Display that returns Blueprint assets."
+	@priority = 3
+	test ConfigureCollectionDisplayThatReturnsBlueprintAssets {
+		property custom.properties = "feature.flag.LPS-129412=true";
+
+		task ("Create the Pages Blueprint with the Page query setting type") {
+			Blueprints.openBlueprintsAdmin();
+
+			Blueprints.createBlueprint(title = "Pages");
+
+			Navigator.gotoNavNested(navNested = "Query Settings");
+
+			Check.checkNotVisible(
+				locator1 = "Radio#ANY",
+				radioLabel = "Selected Types");
+
+			Button.click(button = "Select Asset Types");
+
+			Check.checkNotVisible(
+				key_assetType = "Page",
+				locator1 = "Blueprints#BLUEPRINTS_SEARCHABLE_ASSET_TYPE_CHECKBOX");
+
+			Button.clickDone();
+
+			PortletEntry.save();
+		}
+
+		task ("Create the Web Content Articles Blueprint with the Web Content Article query setting type and create a few web contents") {
+			Blueprints.openBlueprintsAdmin();
+
+			Blueprints.createBlueprint(title = "Web Content Articles");
+
+			Navigator.gotoNavNested(navNested = "Query Settings");
+
+			Check.checkNotVisible(
+				locator1 = "Radio#ANY",
+				radioLabel = "Selected Types");
+
+			Button.click(button = "Select Asset Types");
+
+			Check.checkNotVisible(
+				key_assetType = "Web Content Article",
+				locator1 = "Blueprints#BLUEPRINTS_SEARCHABLE_ASSET_TYPE_CHECKBOX");
+
+			Button.clickDone();
+
+			PortletEntry.save();
+
+			JSONWebcontent.addWebContent(
+				content = "WC WebContent Content",
+				groupName = "Guest",
+				title = "WC WebContent Title");
+		}
+
+		task ("Create two Pages and configure with Page and Web Content Article collection displays") {
+			for (var pageName : list "Page Collection Display Page,Web Content Collection Display Page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Guest",
+					layoutName = ${pageName},
+					type = "content");
+
+				JSONLayout.publishLayout(
+					groupName = "Guest",
+					layoutName = ${pageName});
+			}
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Page Collection Display Page",
+				siteName = "Guest");
+
+			PageEditor.addFragment(
+				collectionName = "Content Display",
+				fragmentName = "Collection Display");
+
+			PageEditor.editCollectionDisplay(
+				fragmentName = "Collection Display",
+				infoListProviderName = "Pages",
+				styleDisplay = "Bulleted List");
+
+			PageEditor.publish();
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Web Content Collection Display Page",
+				siteName = "Guest");
+
+			PageEditor.addFragment(
+				collectionName = "Content Display",
+				fragmentName = "Collection Display");
+
+			PageEditor.editCollectionDisplay(
+				fragmentName = "Collection Display",
+				infoListProviderName = "Web Content Articles",
+				styleDisplay = "Bulleted List");
+
+			PageEditor.publish();
+		}
+
+		task ("Assert the Title of collection items are shown in Bulleted List at view mode") {
+			Navigator.gotoPage(pageName = "Page Collection Display Page");
+
+			var position = 1;
+
+			for (var title : list "Search,Home,Page Collection Display Page,Web Content Collection Display Page") {
+				AssertVisible(
+					key_entryContent = "[normalize-space(text())='${title}']",
+					key_fragmentName = "Collection Display",
+					key_position = ${position},
+					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_BULLETED_LIST_AT_VIEW_MODE");
+
+				var position = ${position} + 1;
+			}
+
+			Navigator.gotoPage(pageName = "Web Content Collection Display Page");
+
+			AssertVisible(
+				key_entryContent = "[normalize-space(text())='WC WebContent Title']",
+				key_fragmentName = "Collection Display",
+				key_position = 1,
+				locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_BULLETED_LIST_AT_VIEW_MODE");
+		}
 	}
 
 	test CopyCustomElement {
@@ -2784,15 +2971,18 @@ definition {
 		task ("Create three object entries that configure the title, siteID, and date fields") {
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Apple Fruit,siteID/3,date/2023-04-02",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Banana Fruit,siteID/2,date/2023-04-01",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 
 			JSONObject.addObjectEntryViaJSONAPI(
 				fieldList = "title/Coconut Fruit,siteID/1,date/2023-04-03",
-				objectName = "CustomObject");
+				objectName = "CustomObject",
+				scope = "site");
 		}
 
 		task ("Create a blueprint") {
@@ -3063,8 +3253,6 @@ definition {
 		Button.clickDone();
 
 		PortletEntry.save();
-
-		Search.openSearchPage();
 
 		SearchPortlets.addWidgets(searchPortletList = "Blueprints Options");
 
@@ -4316,7 +4504,7 @@ definition {
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "Modal#BODY",
-			value1 = "boost-all-keywords-match");
+			value1 = "Boost All Keywords Match");
 	}
 
 	test ViewElementsAdminTableValues {
@@ -4520,9 +4708,9 @@ definition {
 
 		Close.closeAndSelectWindow(locator1 = "View Element - ${siteName}");
 
-		Search.openSearchPage();
-
 		SearchPortlets.addWidgets(searchPortletList = "Blueprints Options");
+
+		Search.openSearchPage();
 
 		Portlet.gotoPortletOptions(
 			portletName = "Blueprints Options",

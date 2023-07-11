@@ -66,6 +66,7 @@ import com.liferay.osb.faro.engine.client.util.FilterBuilder;
 import com.liferay.osb.faro.engine.client.util.FilterUtil;
 import com.liferay.osb.faro.engine.client.util.OrderByField;
 import com.liferay.osb.faro.model.FaroProject;
+import com.liferay.osb.faro.util.FaroPropsValues;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
@@ -389,7 +390,10 @@ public class ContactsEngineClientImpl
 				String.valueOf(UUID.randomUUID()), CharPool.DASH,
 				StringPool.BLANK);
 
-			projectId = GetterUtil.get(_FARO_PROJECT_ID_PREFIX, "asah") + uuid;
+			String osbFaroProjectIdPrefix = GetterUtil.get(
+				FaroPropsValues.FARO_PROJECT_ID_PREFIX, "asah");
+
+			projectId = osbFaroProjectIdPrefix + uuid;
 		}
 
 		faroProject.setWeDeployKey(projectId);
@@ -1194,9 +1198,17 @@ public class ContactsEngineClientImpl
 
 		FilterBuilder filterBuilder = new FilterBuilder();
 
-		filterBuilder.addFilter(
-			"channelId", FilterConstants.COMPARISON_OPERATOR_EQUALS,
-			channelIds);
+		if (ListUtil.isNotNull(channelIds)) {
+			FilterBuilder channelIdsFilterBuilder = new FilterBuilder();
+
+			for (String channelId : channelIds) {
+				channelIdsFilterBuilder.addFilter(
+					"channelId", FilterConstants.COMPARISON_OPERATOR_EQUALS,
+					channelId, false);
+			}
+
+			filterBuilder.addFilter(channelIdsFilterBuilder, true);
+		}
 
 		uriVariables.put("filter", filterBuilder.build());
 
@@ -1797,6 +1809,10 @@ public class ContactsEngineClientImpl
 			uriVariables.put("segmentId", individualSegmentId);
 		}
 
+		if (Validator.isNotNull(interestName)) {
+			uriVariables.put("interestName", interestName);
+		}
+
 		if (Validator.isNotNull(notIndividualSegmentId)) {
 			uriVariables.put("notSegmentId", notIndividualSegmentId);
 		}
@@ -1893,6 +1909,27 @@ public class ContactsEngineClientImpl
 			getTemplatedURL(faroProject, Rels.INDIVIDUALS_COUNT),
 			HttpMethod.GET, HttpEntity.EMPTY, Long.class, uriVariables);
 
+		if (Validator.isNotNull(responseEntity.getBody())) {
+			return responseEntity.getBody();
+		}
+
+		return 0L;
+	}
+
+	@Override
+	public long getIndividualsCreatedSinceCount(
+		FaroProject faroProject, Date startDate) {
+
+		Map<String, Object> uriVariables = getUriVariables(faroProject);
+
+		uriVariables.put("startDate", startDate);
+
+		RestTemplate restTemplate = getRestTemplate(faroProject);
+
+		ResponseEntity<Long> responseEntity = restTemplate.exchange(
+			getTemplatedURL(faroProject, Rels.INDIVIDUALS_CREATED_SINCE_COUNT),
+			HttpMethod.GET, HttpEntity.EMPTY, Long.class, uriVariables);
+
 		if (responseEntity.getBody() == null) {
 			return 0L;
 		}
@@ -1969,16 +2006,6 @@ public class ContactsEngineClientImpl
 
 		uriVariables.put("apply", getGroupBy("dateChanged", interval));
 		uriVariables.put("id", individualSegmentId);
-
-		IndividualSegment individualSegment = getIndividualSegment(
-			faroProject, individualSegmentId, false);
-
-		if (StringUtil.equals(
-				individualSegment.getSegmentType(),
-				IndividualSegment.Type.DYNAMIC.name())) {
-
-			uriVariables.put("includeToday", false);
-		}
 
 		PagedModel<?, IndividualSegmentMembershipChangeAggregation> pagedModel =
 			get(
@@ -2081,8 +2108,7 @@ public class ContactsEngineClientImpl
 		}
 
 		filterBuilder.addFilter(
-			"segmentType", FilterConstants.COMPARISON_OPERATOR_EQUALS,
-			segmentType);
+			"type", FilterConstants.COMPARISON_OPERATOR_EQUALS, segmentType);
 		filterBuilder.addFilter(
 			"state", FilterConstants.COMPARISON_OPERATOR_EQUALS, state);
 		filterBuilder.addFilter(
@@ -2175,35 +2201,21 @@ public class ContactsEngineClientImpl
 
 	@Override
 	public Results<Interest> getInterests(
-		FaroProject faroProject, String ownerId, String ownerType, String name,
-		String query, Date startDate, Date endDate, String expand, int cur,
+		FaroProject faroProject, String channelId, String ownerId,
+		String ownerType, String name, String query, String expand, int cur,
 		int delta, List<OrderByField> orderByFields) {
 
 		Map<String, Object> uriVariables = getUriVariables(
 			faroProject, cur, delta, orderByFields);
 
+		if (Validator.isNotNull(channelId)) {
+			uriVariables.put("channelId", Long.valueOf(channelId));
+		}
+
 		uriVariables.put("expand", expand);
-
-		FilterBuilder filterBuilder = new FilterBuilder();
-
-		filterBuilder.addFilter(
-			"dateRecorded",
-			FilterConstants.COMPARISON_OPERATOR_GREATER_THAN_OR_EQUAL,
-			getDate(startDate, false));
-		filterBuilder.addFilter(
-			"dateRecorded",
-			FilterConstants.COMPARISON_OPERATOR_LESS_THAN_OR_EQUAL,
-			getDate(endDate, true));
-		filterBuilder.addFilter(
-			"name", FilterConstants.COMPARISON_OPERATOR_EQUALS, name);
-		filterBuilder.addFilter(
-			"name", FilterConstants.STRING_FUNCTION_CONTAINS, query);
-		filterBuilder.addFilter(
-			"ownerId", FilterConstants.COMPARISON_OPERATOR_EQUALS, ownerId);
-		filterBuilder.addFilter(
-			"ownerType", FilterConstants.COMPARISON_OPERATOR_EQUALS, ownerType);
-
-		uriVariables.put("filter", filterBuilder.build());
+		uriVariables.put("name", name);
+		uriVariables.put("ownerId", ownerId);
+		uriVariables.put("query", query);
 
 		PagedModel<?, Interest> pagedModel = get(
 			faroProject, Rels.INTERESTS,
@@ -2215,41 +2227,19 @@ public class ContactsEngineClientImpl
 	}
 
 	@Override
-	public Interest getLatestInterest(
-		FaroProject faroProject, String ownerId, String ownerType, String query,
-		int cur, int delta, List<OrderByField> orderByFields) {
-
-		Results<Interest> results = getInterests(
-			faroProject, ownerId, ownerType, null, null, null, null, null, 1, 1,
-			Collections.singletonList(
-				new OrderByField("dateRecorded", "desc", true)));
-
-		List<Interest> interests = results.getItems();
-
-		if (interests.isEmpty()) {
-			return null;
-		}
-
-		return interests.get(0);
-	}
-
-	@Override
 	public Results<PageVisited> getPagesVisited(
-		FaroProject faroProject, String ownerId, String ownerType, String query,
-		String interestName, Date startDate, Date endDate, boolean visitedPages,
-		int cur, int delta, List<OrderByField> orderByFields) {
+		FaroProject faroProject, String channelId, String ownerId,
+		String ownerType, String query, String interestName, Date startDate,
+		Date endDate, boolean visitedPages, int cur, int delta,
+		List<OrderByField> orderByFields) {
 
 		Map<String, Object> uriVariables = getUriVariables(
 			faroProject, cur, delta, orderByFields);
 
+		uriVariables.put("channelId", channelId);
+
 		FilterBuilder filterBuilder = new FilterBuilder();
 
-		filterBuilder.addFilter(
-			"day", FilterConstants.COMPARISON_OPERATOR_GREATER_THAN_OR_EQUAL,
-			getDate(startDate, false));
-		filterBuilder.addFilter(
-			"day", FilterConstants.COMPARISON_OPERATOR_LESS_THAN_OR_EQUAL,
-			getDate(endDate, true));
 		filterBuilder.addFilter(
 			"interestName", FilterConstants.COMPARISON_OPERATOR_EQUALS,
 			interestName);
@@ -2717,15 +2707,10 @@ public class ContactsEngineClientImpl
 	}
 
 	protected String getWorkspaceURL(long groupId) {
-		return _FARO_URL + "/workspace/" + groupId;
+		return FaroPropsValues.FARO_URL + "/workspace/" + groupId;
 	}
 
-	private static final String _FARO_PROJECT_ID_PREFIX = System.getenv(
-		"FARO_PROJECT_ID_PREFIX");
-
 	private static final String _FARO_TEMP_FIELD = "faro_temp_field";
-
-	private static final String _FARO_URL = System.getenv("FARO_URL");
 
 	private static final int _PAYLOAD_MAX_BYTE_SIZE = 200000;
 

@@ -17,15 +17,19 @@ package com.liferay.object.web.internal.object.definitions.display.context;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.application.list.constants.PanelCategoryKeys;
+import com.liferay.change.tracking.configuration.CTSettingsConfiguration;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectWebKeys;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
 import com.liferay.object.scope.ObjectScopeProvider;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
-import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -48,20 +52,22 @@ public class ObjectDefinitionsDetailsDisplayContext
 	extends BaseObjectDefinitionsDisplayContext {
 
 	public ObjectDefinitionsDetailsDisplayContext(
+		ConfigurationProvider configurationProvider,
 		HttpServletRequest httpServletRequest,
-		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ModelResourcePermission<ObjectDefinition>
 			objectDefinitionModelResourcePermission,
-		ObjectRelationshipLocalService objectRelationshipLocalService,
+		ObjectEntryManagerRegistry objectEntryManagerRegistry,
 		ObjectScopeProviderRegistry objectScopeProviderRegistry,
 		PanelCategoryRegistry panelCategoryRegistry) {
 
 		super(httpServletRequest, objectDefinitionModelResourcePermission);
 
-		_objectDefinitionLocalService = objectDefinitionLocalService;
-		_objectRelationshipLocalService = objectRelationshipLocalService;
+		_configurationProvider = configurationProvider;
+		_objectEntryManagerRegistry = objectEntryManagerRegistry;
 		_objectScopeProviderRegistry = objectScopeProviderRegistry;
 		_panelCategoryRegistry = panelCategoryRegistry;
+
+		_objectRequestHelper = new ObjectRequestHelper(httpServletRequest);
 	}
 
 	public List<Map<String, Object>> getNonrelationshipObjectFieldsInfo() {
@@ -145,6 +151,19 @@ public class ObjectDefinitionsDetailsDisplayContext
 		return keyValuePairs;
 	}
 
+	public JSONArray getStoragesJSONArray() throws Exception {
+		return JSONUtil.toJSONArray(
+			_objectEntryManagerRegistry.getObjectEntryManagers(
+				_objectRequestHelper.getCompanyId()),
+			objectEntryManager -> JSONUtil.put(
+				"label",
+				objectEntryManager.getStorageLabel(
+					_objectRequestHelper.getLocale())
+			).put(
+				"value", objectEntryManager.getStorageType()
+			));
+	}
+
 	public boolean hasPublishObjectPermission() {
 		PortletResourcePermission portletResourcePermission =
 			objectDefinitionModelResourcePermission.
@@ -155,9 +174,18 @@ public class ObjectDefinitionsDetailsDisplayContext
 			ObjectActionKeys.PUBLISH_OBJECT_DEFINITION);
 	}
 
-	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
-	private final ObjectRelationshipLocalService
-		_objectRelationshipLocalService;
+	public boolean isChangeTrackingEnabled() throws Exception {
+		CTSettingsConfiguration ctSettingsConfiguration =
+			_configurationProvider.getCompanyConfiguration(
+				CTSettingsConfiguration.class,
+				_objectRequestHelper.getCompanyId());
+
+		return ctSettingsConfiguration.enabled();
+	}
+
+	private final ConfigurationProvider _configurationProvider;
+	private final ObjectEntryManagerRegistry _objectEntryManagerRegistry;
+	private final ObjectRequestHelper _objectRequestHelper;
 	private final ObjectScopeProviderRegistry _objectScopeProviderRegistry;
 	private final PanelCategoryRegistry _panelCategoryRegistry;
 

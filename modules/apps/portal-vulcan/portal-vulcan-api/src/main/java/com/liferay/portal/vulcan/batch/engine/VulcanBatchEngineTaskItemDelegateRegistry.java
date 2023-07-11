@@ -21,13 +21,16 @@ import java.util.Set;
  */
 public interface VulcanBatchEngineTaskItemDelegateRegistry {
 
-	public Set<String> getEntityClassNames();
+	public Set<String> getEntityClassNames(long companyId);
 
 	public VulcanBatchEngineTaskItemDelegate
-		getVulcanBatchEngineTaskItemDelegate(String entityClassName);
+		getVulcanBatchEngineTaskItemDelegate(
+			long companyId, String entityClassName);
 
-	public boolean isBatchPlannerExportEnabled(String entityClassName);
+	public boolean isBatchPlannerExportEnabled(
+		long companyId, String entityClassName);
 
-	public boolean isBatchPlannerImportEnabled(String entityClassName);
+	public boolean isBatchPlannerImportEnabled(
+		long companyId, String entityClassName);
 
 }

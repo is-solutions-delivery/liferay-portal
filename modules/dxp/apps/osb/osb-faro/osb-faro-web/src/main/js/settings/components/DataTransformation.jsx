@@ -6,11 +6,11 @@ import ClayIcon from '@clayui/icon';
 import DataTransformationList from './data-transformation-list';
 import FormNavigation from './FormNavigation';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import NavigationWarning from 'shared/components/NavigationWarning';
 import NoResultsDisplay from 'shared/components/NoResultsDisplay';
 import React, {Fragment} from 'react';
 import Sheet from 'shared/components/Sheet';
-import Spinner from 'shared/components/Spinner';
 import {addAlert} from 'shared/actions/alerts';
 import {Alert} from 'shared/types';
 import {autoCancel, hasRequest} from 'shared/util/request-decorator';
@@ -384,7 +384,7 @@ export class DataTransformation extends React.Component {
 		const mappedFields = fieldsIListCount - unmappedFields;
 
 		if (loading) {
-			return <Spinner spacer />;
+			return <Loading />;
 		} else if (error) {
 			return (
 				<NoResultsDisplay

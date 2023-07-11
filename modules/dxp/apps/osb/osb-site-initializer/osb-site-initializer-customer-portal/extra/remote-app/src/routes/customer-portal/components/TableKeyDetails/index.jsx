@@ -13,6 +13,8 @@ import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 
+import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
+import PopoverIconButton from '~/routes/customer-portal/components/PopoverIconButton';
 import i18n from '../../../../common/I18n';
 import {DXPIcon} from '../../../../common/icons/navigation-menu';
 import {FORMAT_DATE_TYPES} from '../../../../common/utils/constants';
@@ -34,6 +36,8 @@ const NO_EXPIRATION_DATE = 100;
 const TableKeyDetails = ({activationKeys, setValueToCopyToClipboard}) => {
 	const [actionToCopy, setActionToCopy] = useState('');
 	const instanceSizeFormated = activationKeys.sizing?.slice(7, 8);
+
+	const {articleWhatIsMyInstanceSizingValueURL} = useAppPropertiesContext();
 
 	const now = new Date();
 
@@ -219,7 +223,16 @@ const TableKeyDetails = ({activationKeys, setValueToCopyToClipboard}) => {
 				>
 					<div className="col-5">
 						<p className="text-neutral-8 text-paragraph-sm">
-							Instance Size
+							{i18n.translate('instance-size')}
+
+							<PopoverIconButton
+								popoverLink={{
+									textLink: i18n.translate(
+										'learn-more-about-instance-sizing'
+									),
+									url: articleWhatIsMyInstanceSizingValueURL,
+								}}
+							/>
 						</p>
 					</div>
 

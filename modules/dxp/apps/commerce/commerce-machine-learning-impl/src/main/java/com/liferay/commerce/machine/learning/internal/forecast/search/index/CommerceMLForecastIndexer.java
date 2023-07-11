@@ -39,18 +39,13 @@ public class CommerceMLForecastIndexer implements CommerceMLIndexer {
 	}
 
 	@Override
-	public String getDocumentType() {
-		return "CommerceMLForecastDocumentType";
-	}
-
-	@Override
 	public String getIndexName(long companyId) {
 		return String.format(
 			_INDEX_NAME_PATTERN, _indexNameBuilder.getIndexName(companyId));
 	}
 
 	private static final String _INDEX_MAPPING_FILE_NAME =
-		"/META-INF/search/commerce-ml-forecast-document-type.json";
+		"commerce-ml-forecast-mappings.json";
 
 	private static final String _INDEX_NAME_PATTERN = "%s-commerce-ml-forecast";
 

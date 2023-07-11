@@ -29,7 +29,6 @@ import com.liferay.notification.constants.NotificationQueueEntryConstants;
 import com.liferay.notification.constants.NotificationTemplateConstants;
 import com.liferay.notification.context.NotificationContext;
 import com.liferay.notification.exception.NotificationRecipientSettingValueException;
-import com.liferay.notification.exception.NotificationTemplateFromException;
 import com.liferay.notification.model.NotificationQueueEntry;
 import com.liferay.notification.model.NotificationQueueEntryAttachment;
 import com.liferay.notification.model.NotificationRecipient;
@@ -309,30 +308,27 @@ public class EmailNotificationType extends BaseNotificationType {
 	}
 
 	@Override
+	public void validateNotificationQueueEntry(
+			NotificationContext notificationContext)
+		throws PortalException {
+
+		super.validateNotificationQueueEntry(notificationContext);
+
+		_validateNotificationRecipientSettings(
+			NotificationRecipientSettingUtil.toMap(
+				notificationContext.getNotificationRecipientSettings()));
+	}
+
+	@Override
 	public void validateNotificationTemplate(
 			NotificationContext notificationContext)
 		throws PortalException {
 
 		super.validateNotificationTemplate(notificationContext);
 
-		Map<String, Object> notificationRecipientSettingsMap =
+		_validateNotificationRecipientSettings(
 			NotificationRecipientSettingUtil.toMap(
-				notificationContext.getNotificationRecipientSettings());
-
-		if (Validator.isNull(notificationRecipientSettingsMap.get("from"))) {
-			throw new NotificationTemplateFromException("From is null");
-		}
-
-		if (Validator.isNull(
-				notificationRecipientSettingsMap.get("fromName"))) {
-
-			throw new NotificationRecipientSettingValueException(
-				"From name is null");
-		}
-
-		if (Validator.isNull(notificationRecipientSettingsMap.get("to"))) {
-			throw new NotificationRecipientSettingValueException("To is null");
-		}
+				notificationContext.getNotificationRecipientSettings()));
 	}
 
 	private void _addFileAttachments(
@@ -598,6 +594,28 @@ public class EmailNotificationType extends BaseNotificationType {
 		}
 
 		return internetAddresses.toArray(new InternetAddress[0]);
+	}
+
+	private void _validateNotificationRecipientSettings(
+			Map<String, Object> notificationRecipientSettingsMap)
+		throws PortalException {
+
+		if (Validator.isNull(notificationRecipientSettingsMap.get("from"))) {
+			throw new NotificationRecipientSettingValueException.
+				FromMustNotBeNull();
+		}
+
+		if (Validator.isNull(
+				notificationRecipientSettingsMap.get("fromName"))) {
+
+			throw new NotificationRecipientSettingValueException.
+				FromNameMustNotBeNull();
+		}
+
+		if (Validator.isNull(notificationRecipientSettingsMap.get("to"))) {
+			throw new NotificationRecipientSettingValueException.
+				ToMustNotBeNull();
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

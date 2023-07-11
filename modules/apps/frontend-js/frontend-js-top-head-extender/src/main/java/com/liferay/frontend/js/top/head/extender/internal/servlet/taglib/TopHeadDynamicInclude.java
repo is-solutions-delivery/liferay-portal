@@ -15,10 +15,12 @@
 package com.liferay.frontend.js.top.head.extender.internal.servlet.taglib;
 
 import com.liferay.frontend.js.top.head.extender.TopHeadResources;
+import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.servlet.PortalWebResourceConstants;
 import com.liferay.portal.kernel.servlet.PortalWebResources;
+import com.liferay.portal.kernel.servlet.PortalWebResourcesUtil;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
@@ -34,6 +36,7 @@ import java.io.PrintWriter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -44,9 +47,10 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * @author Iván Zaera Avellón
@@ -64,23 +68,28 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
+		ResourceURLsHolder resourceURLsHolder = _getResourceURLsHolder();
+
 		if (themeDisplay.isThemeJsFastLoad()) {
 			if (themeDisplay.isThemeJsBarebone()) {
 				_renderBundleComboURLs(
-					httpServletRequest, httpServletResponse, _jsResourceURLs);
+					httpServletRequest, httpServletResponse,
+					resourceURLsHolder._jsResourceURLs);
 			}
 			else {
 				_renderBundleComboURLs(
 					httpServletRequest, httpServletResponse,
-					_allJsResourceURLs);
+					resourceURLsHolder._allJsResourceURLs);
 			}
 		}
 		else {
 			if (themeDisplay.isThemeJsBarebone()) {
-				_renderBundleURLs(httpServletResponse, _jsResourceURLs);
+				_renderBundleURLs(
+					httpServletResponse, resourceURLsHolder._jsResourceURLs);
 			}
 			else {
-				_renderBundleURLs(httpServletResponse, _allJsResourceURLs);
+				_renderBundleURLs(
+					httpServletResponse, resourceURLsHolder._allJsResourceURLs);
 			}
 		}
 	}
@@ -95,128 +104,125 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 	protected void activate(BundleContext bundleContext) {
 		_bundleContext = bundleContext;
 
-		_rebuild();
-	}
+		_topHeadResourcesServiceTracker = ServiceTrackerFactory.open(
+			bundleContext, TopHeadResources.class,
+			new ServiceTrackerCustomizer<TopHeadResources, TopHeadResources>() {
 
-	@Reference(
-		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC
-	)
-	protected void addPortalWebResources(
-		PortalWebResources portalWebResources) {
+				@Override
+				public TopHeadResources addingService(
+					ServiceReference<TopHeadResources> serviceReference) {
 
-		String resourceType = portalWebResources.getResourceType();
+					synchronized (_topHeadResourcesServiceReferences) {
+						_topHeadResourcesServiceReferences.add(
+							serviceReference);
 
-		if (resourceType.equals(PortalWebResourceConstants.RESOURCE_TYPE_JS)) {
-			_portalWebResources = portalWebResources;
-
-			_rebuild();
-		}
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC
-	)
-	protected void addTopHeadResources(
-		ServiceReference<TopHeadResources> topHeadResourcesServiceReference) {
-
-		synchronized (_topHeadResourcesServiceReferences) {
-			_topHeadResourcesServiceReferences.add(
-				topHeadResourcesServiceReference);
-		}
-
-		_rebuild();
-	}
-
-	protected void removePortalWebResources(
-		PortalWebResources portalWebResources) {
-
-		String resourceType = portalWebResources.getResourceType();
-
-		if (resourceType.equals(PortalWebResourceConstants.RESOURCE_TYPE_JS)) {
-			_portalWebResources = null;
-
-			_rebuild();
-		}
-	}
-
-	protected void removeTopHeadResources(
-		ServiceReference<TopHeadResources> topHeadResourcesServiceReference) {
-
-		synchronized (_topHeadResourcesServiceReferences) {
-			_topHeadResourcesServiceReferences.remove(
-				topHeadResourcesServiceReference);
-		}
-
-		_rebuild();
-	}
-
-	private void _addPortalBundles(List<String> urls, String propsKey) {
-		String[] fileNames = JavaScriptBundleUtil.getFileNames(propsKey);
-
-		for (String fileName : fileNames) {
-			urls.add(fileName);
-		}
-	}
-
-	private synchronized void _rebuild() {
-		if ((_bundleContext == null) || (_portal == null) ||
-			(_portalWebResources == null)) {
-
-			return;
-		}
-
-		_allJsResourceURLs.clear();
-
-		_addPortalBundles(
-			_allJsResourceURLs, PropsKeys.JAVASCRIPT_EVERYTHING_FILES);
-
-		_jsResourceURLs.clear();
-
-		_addPortalBundles(_jsResourceURLs, PropsKeys.JAVASCRIPT_BAREBONE_FILES);
-
-		synchronized (_topHeadResourcesServiceReferences) {
-			for (ServiceReference<TopHeadResources>
-					topHeadResourcesServiceReference :
-						_topHeadResourcesServiceReferences) {
-
-				TopHeadResources topHeadResources = _bundleContext.getService(
-					topHeadResourcesServiceReference);
-
-				try {
-					String bundleContextPath = _portal.getPathContext(
-						topHeadResources.getServletContextPath());
-
-					String proxyPath = _portal.getPathProxy();
-
-					String unproxiedBundleContextPath =
-						bundleContextPath.substring(proxyPath.length());
-
-					String urlPrefix = proxyPath + unproxiedBundleContextPath;
-
-					for (String jsResourcePath :
-							topHeadResources.getJsResourcePaths()) {
-
-						String url = urlPrefix + jsResourcePath;
-
-						_allJsResourceURLs.add(url);
-						_jsResourceURLs.add(url);
+						_resourceURLsHolder = null;
 					}
 
-					for (String jsResourcePath :
-							topHeadResources.
-								getAuthenticatedJsResourcePaths()) {
-
-						_allJsResourceURLs.add(urlPrefix + jsResourcePath);
-					}
+					return bundleContext.getService(serviceReference);
 				}
-				finally {
-					_bundleContext.ungetService(
-						topHeadResourcesServiceReference);
+
+				@Override
+				public void modifiedService(
+					ServiceReference<TopHeadResources> serviceReference,
+					TopHeadResources topHeadResources) {
+				}
+
+				@Override
+				public void removedService(
+					ServiceReference<TopHeadResources> serviceReference,
+					TopHeadResources topHeadResources) {
+
+					synchronized (_topHeadResourcesServiceReferences) {
+						_topHeadResourcesServiceReferences.remove(
+							serviceReference);
+
+						_resourceURLsHolder = null;
+					}
+
+					bundleContext.ungetService(serviceReference);
+				}
+
+			});
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_topHeadResourcesServiceTracker.close();
+	}
+
+	private ResourceURLsHolder _getResourceURLsHolder() {
+		ResourceURLsHolder resourceURLsHolder = _resourceURLsHolder;
+
+		if (resourceURLsHolder != null) {
+			return resourceURLsHolder;
+		}
+
+		synchronized (_topHeadResourcesServiceReferences) {
+			if (_resourceURLsHolder != null) {
+				return _resourceURLsHolder;
+			}
+
+			_resourceURLsHolder = _rebuild();
+
+			return _resourceURLsHolder;
+		}
+	}
+
+	private ResourceURLsHolder _rebuild() {
+		PortalWebResources portalWebResources =
+			PortalWebResourcesUtil.getPortalWebResources(
+				PortalWebResourceConstants.RESOURCE_TYPE_JS);
+
+		if (portalWebResources == null) {
+			return null;
+		}
+
+		List<String> allJsResourceURLs = new ArrayList<>();
+		List<String> jsResourceURLs = new ArrayList<>();
+
+		Collections.addAll(
+			allJsResourceURLs,
+			JavaScriptBundleUtil.getFileNames(
+				PropsKeys.JAVASCRIPT_EVERYTHING_FILES));
+
+		Collections.addAll(
+			jsResourceURLs,
+			JavaScriptBundleUtil.getFileNames(
+				PropsKeys.JAVASCRIPT_BAREBONE_FILES));
+
+		for (ServiceReference<TopHeadResources>
+				topHeadResourcesServiceReference :
+					_topHeadResourcesServiceReferences) {
+
+			TopHeadResources topHeadResources = _bundleContext.getService(
+				topHeadResourcesServiceReference);
+
+			try {
+				String bundleContextPath = _portal.getPathContext(
+					topHeadResources.getServletContextPath());
+
+				for (String jsResourcePath :
+						topHeadResources.getJsResourcePaths()) {
+
+					String url = bundleContextPath + jsResourcePath;
+
+					allJsResourceURLs.add(url);
+					jsResourceURLs.add(url);
+				}
+
+				for (String jsResourcePath :
+						topHeadResources.getAuthenticatedJsResourcePaths()) {
+
+					allJsResourceURLs.add(bundleContextPath + jsResourcePath);
 				}
 			}
+			finally {
+				_bundleContext.ungetService(topHeadResourcesServiceReference);
+			}
 		}
+
+		return new ResourceURLsHolder(allJsResourceURLs, jsResourceURLs);
 	}
 
 	private void _renderBundleComboURLs(
@@ -232,13 +238,9 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 			comboRequestAbsolutePortalURLBuilder =
 				absolutePortalURLBuilder.forComboRequest();
 
-		long timestamp = -1;
-
-		if (_portalWebResources != null) {
-			timestamp = _portalWebResources.getLastModified();
-		}
-
-		comboRequestAbsolutePortalURLBuilder.setTimestamp(timestamp);
+		comboRequestAbsolutePortalURLBuilder.setTimestamp(
+			PortalWebResourcesUtil.getLastModified(
+				PortalWebResourceConstants.RESOURCE_TYPE_JS));
 
 		String comboURL = comboRequestAbsolutePortalURLBuilder.build();
 
@@ -286,15 +288,29 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 	@Reference
 	private AbsolutePortalURLBuilderFactory _absolutePortalURLBuilderFactory;
 
-	private volatile List<String> _allJsResourceURLs = new ArrayList<>();
 	private BundleContext _bundleContext;
-	private volatile List<String> _jsResourceURLs = new ArrayList<>();
 
 	@Reference
 	private Portal _portal;
 
-	private PortalWebResources _portalWebResources;
+	private volatile ResourceURLsHolder _resourceURLsHolder;
 	private final Collection<ServiceReference<TopHeadResources>>
 		_topHeadResourcesServiceReferences = new TreeSet<>();
+	private ServiceTracker<TopHeadResources, TopHeadResources>
+		_topHeadResourcesServiceTracker;
+
+	private static class ResourceURLsHolder {
+
+		private ResourceURLsHolder(
+			List<String> allJsResourceURLs, List<String> jsResourceURLs) {
+
+			_allJsResourceURLs = allJsResourceURLs;
+			_jsResourceURLs = jsResourceURLs;
+		}
+
+		private final List<String> _allJsResourceURLs;
+		private final List<String> _jsResourceURLs;
+
+	}
 
 }

@@ -19,9 +19,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -211,7 +211,7 @@ definition {
 	@description = "A child site can use structures and templates inherited from its parent."
 	@priority = 4
 	test AddWebContentBasedOnStructureAndTemplateFromParentSite {
-		property test.name.skip.portal.instance = "WebContentWithCustomStructures#AddWebContentBasedOnStructureAndTemplateFromParentSite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Enable ancestor scopes by default in System Settings") {
 			SystemSettings.openSystemSettingsAdmin();
@@ -296,7 +296,7 @@ definition {
 	@description = "This is a test for LPS-150307. The user can create a web content based on structure with ampersand in its structure key."
 	@priority = 4
 	test AddWebContentBasedOnStructureKeyWithAmpersand {
-		property test.name.skip.portal.instance = "WebContentWithCustomStructures#AddWebContentBasedOnStructureKeyWithAmpersand";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given a web content creator has a structure with ampersand in its structure key") {
 			task ("Disable Autogenerate Structure Key in System Settings") {
@@ -1031,7 +1031,7 @@ definition {
 	@description = "This is a test for LPS-147960. Display Page panel of structure default values should not be available to non global scope."
 	@priority = 4
 	test CannotAssociateDisplayPageToGlobalStructureInNormalSite {
-		property test.name.skip.portal.instance = "WebContentWithCustomStructures#CannotAssociateDisplayPageToGlobalStructureInNormalSite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given a web content creator enables ancestor scopes by default in System Settings") {
 			SystemSettings.openSystemSettingsAdmin();
@@ -1342,22 +1342,13 @@ definition {
 		property testray.component.names = "Training,Web Content Administration";
 
 		task ("Add a web content structure with custom fields") {
-			WebContentNavigator.openWebContentStructuresAdmin(siteURLKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
-			WebContentStructures.addCP(structureName = "WC Structure Name");
+			NavItem.gotoStructures();
 
-			DataEngine.addFieldsWithDefaultReference(fieldNameList = "Date,Upload,Image,Link to Page,Numeric,Single Selection,Multiple Selection,Grid,Select from List,Text,Rich Text");
-
-			WebContentStructures.saveCP();
-		}
-
-		task ("Add a web content template associated with new structure") {
-			WebContentNavigator.gotoManageTemplatesViaStructures(structureName = "WC Structure Name");
-
-			WebContentTemplates.addCP(
-				templateDescription = "WC Template Description",
-				templateFieldNames = "Date,Upload,Image,Link to Page,Numeric,Single Selection,Multiple Selection,Grid,Select from List,Text,Rich Text",
-				templateName = "WC Template Name");
+			WebContentStructures.importStructure(
+				structureName = "WC Structure Name",
+				uploadFileName = "Structure_All_Fields.json");
 		}
 
 		task ("Add a web content based on new structure") {
@@ -1365,10 +1356,7 @@ definition {
 
 			WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Name");
 
-			WebContent.addWithStructureCP(
-				structureName = "WC Structure Name",
-				templateName = "WC Template Name",
-				webContentTitle = "Web Content Title");
+			WebContent.addWithStructureCP(webContentTitle = "Web Content Title");
 
 			PortletEntry.publish();
 		}
@@ -1416,19 +1404,9 @@ definition {
 
 			NavItem.gotoStructures();
 
-			WebContentStructures.addCP(structureName = "WC Structure Name");
-
-			DataEngine.addFields(fieldNameList = "Text,Select from List,Single Selection,Multiple Selection,Grid,Date,Numeric,Image,Rich Text,Upload,Color,Web Content,Link to Page");
-
-			WebContentStructures.saveCP();
-		}
-
-		task ("Add a template for new structure") {
-			WebContentNavigator.gotoManageTemplatesViaStructures(structureName = "WC Structure Name");
-
-			WebContentTemplates.addCP(
-				templateFieldNames = "Text,Select from List,Single Selection,Multiple Selection,Grid,Date,Numeric,Image,Rich Text,Upload,Color,Web Content,Link to Page",
-				templateName = "WC Template Name");
+			WebContentStructures.importStructure(
+				structureName = "WC Structure Name",
+				uploadFileName = "Structure_All_Fields.json");
 		}
 
 		task ("Edit the default values of new structure") {
@@ -1469,8 +1447,7 @@ definition {
 		task ("Cancel reset the default values") {
 			WebContentStructures.resetStructureDefaultValuesCP(
 				assetTitle = "Blogs Entry Title",
-				cancel = "true",
-				templateName = "WC Template Name");
+				cancel = "true");
 
 			WebContent.viewWithStructureCP(
 				column = 1,
@@ -1492,9 +1469,7 @@ definition {
 		}
 
 		task ("Reset the default values") {
-			WebContentStructures.resetStructureDefaultValuesCP(
-				assetTitle = "Blogs Entry Title",
-				templateName = "WC Template Name");
+			WebContentStructures.resetStructureDefaultValuesCP(assetTitle = "Blogs Entry Title");
 
 			WebContent.viewWithStructureCP(
 				column = 1,
@@ -1531,7 +1506,7 @@ definition {
 	@description = "This is a test for LPS-130506. Aseert Web Content Structure defaults not showing in Search Results."
 	@priority = 3
 	test SearchStructureWithDefaultValue {
-		property test.name.skip.portal.instance = "WebContentWithCustomStructures#SearchStructureWithDefaultValue";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a web content structure with text field") {
 			WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
@@ -1652,23 +1627,9 @@ definition {
 
 			NavItem.gotoStructures();
 
-			WebContentStructures.addCP(
-				structureDescription = "WC Structure Description",
-				structureName = "WC Structure Name");
-
-			DataEngine.addFields(fieldNameList = "Text,Select from List,Single Selection,Multiple Selection,Grid,Date,Numeric,Image,Rich Text,Upload,Color,Web Content,Geolocation,Link to Page,Separator");
-
-			WebContentStructures.saveCP(structureName = "WC Structure Name");
-		}
-
-		task ("Add a web content template with all fields") {
-			WebContentNavigator.gotoManageTemplatesViaStructures(structureName = "WC Structure Name");
-
-			WebContentTemplates.addCP(
+			WebContentStructures.importStructure(
 				structureName = "WC Structure Name",
-				templateDescription = "WC Template Description",
-				templateFieldNames = "Text,Select from List,Single Selection,Multiple Selection,Grid,Date,Numeric,Image,Rich Text,Upload,Color,Web Content,Geolocation,Link to Page",
-				templateName = "WC Template Name");
+				uploadFileName = "Structure_All_Fields.json");
 		}
 
 		task ("Add a web content based on new structure and template") {
@@ -1681,8 +1642,6 @@ definition {
 				dmNavTab = "User Personal Folder",
 				navTab = "Web Content Images",
 				row = 1,
-				structureName = "WC Structure Name",
-				templateName = "WC Template Name",
 				webContentColor = "FF0D0D",
 				webContentDate = "10/10/2020",
 				webContentGrid = "true",
@@ -1733,7 +1692,7 @@ definition {
 				row = 2,
 				webContentColor = "5F5F5F",
 				webContentDate = "11/11/2019",
-				webContentGrid = "true			WebContentNavigator.openWebContentAdmin(siteURLKey = \"test-site-name\");",
+				webContentGrid = "true",
 				webContentLinkToPage = "Test Page Name 2",
 				webContentMultipleSelection = "Option 2",
 				webContentNumeric = 8,
@@ -1792,66 +1751,9 @@ definition {
 
 			NavItem.gotoStructures();
 
-			WebContentStructures.addCP(structureName = "WC Structure Name");
-		}
-
-		task ("Add the following fields") {
-			DataEngine.addFields(fieldNameList = "Multiple Selection,Color,Date,Upload,Numeric,Rich Text,Single Selection,Select from List,Text,Web Content");
-
-			DataEngine.addField(
-				fieldFieldLabel = "Text Box",
-				fieldLocation = 11,
-				fieldName = "Text",
-				fieldType = "Multiple Lines");
-
-			DataEngine.addField(
-				fieldFieldLabel = "Decimal",
-				fieldLocation = 12,
-				fieldName = "Numeric",
-				numericType = "Decimal");
-
-			var index = 1;
-
-			for (var optionValue : list "Option 1,Option 2,Option 3") {
-				DataEngine.addFieldOption(
-					fieldFieldLabel = "Select from List",
-					index = ${index},
-					optionValue = ${optionValue});
-
-				DataEngine.editFieldReferenceOfFieldOption(
-					fieldFieldLabel = "Select from List",
-					fieldReferenceOfFieldOption = "Value${index}",
-					index = ${index});
-
-				var index = ${index} + 1;
-			}
-
-			var index = 1;
-
-			for (var optionValue : list "Option 1,Option 2,Option 3") {
-				DataEngine.addFieldOption(
-					fieldFieldLabel = "Single Selection",
-					index = ${index},
-					optionFieldLabel = "Options",
-					optionValue = ${optionValue});
-
-				DataEngine.editFieldReferenceOfFieldOption(
-					fieldFieldLabel = "Single Selection",
-					fieldReferenceOfFieldOption = "Value${index}",
-					index = ${index});
-
-				var index = ${index} + 1;
-			}
-
-			DataEngine.addFieldOption(
-				fieldFieldLabel = "Multiple Selection",
-				index = 1,
-				optionFieldLabel = "Options",
-				optionValue = "Boolean");
-		}
-
-		task ("Save the new structure") {
-			WebContentStructures.saveCP(structureName = "WC Structure Name");
+			WebContentStructures.importStructure(
+				structureName = "WC Structure Name",
+				uploadFileName = "Structure_All_Fields.json");
 		}
 
 		task ("Edit Structure Default Values") {
@@ -1861,11 +1763,11 @@ definition {
 				dmNavTab = "User Personal Folder",
 				webContentColor = "FF0D0D",
 				webContentDate = "10/10/2020",
-				webContentMultipleSelection = "Boolean",
+				webContentMultipleSelection = "Option 1",
 				webContentNumeric = 9,
 				webContentRichText = "This is a Rich Text field",
 				webContentSelectFromList = "Option 2",
-				webContentSingleSelection = "Option 1",
+				webContentSingleSelection = "Option 3",
 				webContentText = "This is a Text field",
 				webContentUpload = "Document_1.jpg",
 				webContentWebContent = "Web Content Title");
@@ -1896,11 +1798,11 @@ definition {
 				predefinedValue = "true",
 				webContentColor = "FF0D0D",
 				webContentDate = "10/10/2020",
-				webContentMultipleSelection = "Boolean",
+				webContentMultipleSelection = "Option 1",
 				webContentNumeric = 9,
 				webContentRichText = "This is a Rich Text field",
 				webContentSelectFromList = "Option 2",
-				webContentSingleSelection = "Option 1",
+				webContentSingleSelection = "Option 3",
 				webContentText = "This is a Text field",
 				webContentUpload = "Document_1.jpg",
 				webContentWebContent = "Web Content Title");

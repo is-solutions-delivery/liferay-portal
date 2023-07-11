@@ -29,7 +29,6 @@ import com.liferay.portal.kernel.exception.LayoutPermissionException;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.NoSuchUserException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.image.ImageToolUtil;
 import com.liferay.portal.kernel.interval.IntervalActionProcessor;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -81,6 +80,8 @@ import com.liferay.portal.kernel.servlet.PortalWebResourcesUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ColorSchemeFactoryUtil;
+import com.liferay.portal.kernel.util.Digester;
+import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -179,6 +180,8 @@ public class ServicePreAction extends Action {
 		if (themeDisplay == null) {
 			return;
 		}
+
+		_trackThemeDisplay(httpServletResponse, themeDisplay);
 
 		httpServletRequest.setAttribute(WebKeys.THEME_DISPLAY, themeDisplay);
 
@@ -1002,7 +1005,10 @@ public class ServicePreAction extends Action {
 			Group layoutGroup = layout.getGroup();
 
 			if (layoutGroup.isUser()) {
-				if (!FeatureFlagManagerUtil.isEnabled("LPS-155692")) {
+				if (!GetterUtil.getBoolean(
+						PropsUtil.get(
+							PropsKeys.LAYOUT_USER_ACCESS_VIA_PLID_ENABLED))) {
+
 					long originalPlid = ParamUtil.getLong(
 						PortalUtil.getOriginalServletRequest(
 							httpServletRequest),
@@ -1978,6 +1984,30 @@ public class ServicePreAction extends Action {
 		}
 	}
 
+	private void _trackThemeDisplay(
+		HttpServletResponse httpServletResponse, ThemeDisplay themeDisplay) {
+
+		if (!_TRACK_THEME_DISPLAY) {
+			return;
+		}
+
+		httpServletResponse.setHeader(
+			"X-Liferay-Request-Company",
+			String.valueOf(themeDisplay.getCompanyId()));
+		httpServletResponse.setHeader(
+			"X-Liferay-Request-Group",
+			String.valueOf(themeDisplay.getScopeGroupId()));
+
+		User user = themeDisplay.getUser();
+
+		httpServletResponse.setHeader(
+			"X-Liferay-Request-Guest-User", String.valueOf(user.isGuestUser()));
+		httpServletResponse.setHeader(
+			"X-Liferay-Request-User",
+			DigesterUtil.digestHex(
+				Digester.MD5, String.valueOf(user.getUserId())));
+	}
+
 	private void _updateUserLayouts(User user) throws Exception {
 		Boolean hasPowerUserRole = null;
 
@@ -2119,6 +2149,9 @@ public class ServicePreAction extends Action {
 	private static final String _PATH_PORTAL_LOGOUT = "/portal/logout";
 
 	private static final String _PATH_PROXY;
+
+	private static final boolean _TRACK_THEME_DISPLAY = GetterUtil.getBoolean(
+		PropsUtil.get("service.pre.action.track.theme.display"));
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ServicePreAction.class);

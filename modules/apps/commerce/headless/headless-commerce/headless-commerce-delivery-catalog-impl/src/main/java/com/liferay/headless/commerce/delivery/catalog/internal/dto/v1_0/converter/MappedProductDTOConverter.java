@@ -35,7 +35,7 @@ import com.liferay.commerce.product.service.CPDefinitionOptionRelLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.service.CProductLocalService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
-import com.liferay.commerce.product.util.JsonHelper;
+import com.liferay.commerce.product.util.CPJSONUtil;
 import com.liferay.commerce.shop.by.diagram.model.CSDiagramEntry;
 import com.liferay.commerce.shop.by.diagram.service.CSDiagramEntryLocalService;
 import com.liferay.commerce.util.CommerceUtil;
@@ -345,7 +345,7 @@ public class MappedProductDTOConverter
 							return null;
 						}
 
-						JSONArray jsonArray = _jsonHelper.toJSONArray(
+						JSONArray jsonArray = CPJSONUtil.toJSONArray(
 							_cpDefinitionOptionRelLocalService.
 								getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
 									cpInstance.getCPInstanceId()));
@@ -559,9 +559,6 @@ public class MappedProductDTOConverter
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
-
-	@Reference
-	private JsonHelper _jsonHelper;
 
 	@Reference
 	private Language _language;

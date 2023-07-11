@@ -185,7 +185,7 @@ renderResponse.setTitle(definition.getName(locale));
 				headerNames.add("file");
 				headerNames.add("download");
 
-				List<String> attachmentsFiles = Arrays.asList(entry.getAttachmentsFiles());
+				List<String> attachmentsFileNames = Arrays.asList(entry.getAttachmentsFileNames());
 
 				request.setAttribute("entry", entry);
 
@@ -204,11 +204,11 @@ renderResponse.setTitle(definition.getName(locale));
 					delta="<%= 2 %>"
 					iteratorURL="<%= portletURL %>"
 					searchContainer="<%= new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, portletURL, headerNames, null) %>"
-					total="<%= attachmentsFiles.size() %>"
+					total="<%= attachmentsFileNames.size() %>"
 				>
 					<liferay-ui:search-container-results
 						calculateStartAndEnd="<%= true %>"
-						results="<%= attachmentsFiles %>"
+						results="<%= attachmentsFileNames %>"
 					/>
 
 					<liferay-ui:search-container-row

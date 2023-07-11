@@ -138,7 +138,7 @@ public class EditClientExtensionEntryMVCActionCommand
 
 		return _clientExtensionEntryService.
 			fetchClientExtensionEntryByExternalReferenceCode(
-				_portal.getCompanyId(actionRequest), externalReferenceCode);
+				externalReferenceCode, _portal.getCompanyId(actionRequest));
 	}
 
 	private void _update(ActionRequest actionRequest) throws PortalException {

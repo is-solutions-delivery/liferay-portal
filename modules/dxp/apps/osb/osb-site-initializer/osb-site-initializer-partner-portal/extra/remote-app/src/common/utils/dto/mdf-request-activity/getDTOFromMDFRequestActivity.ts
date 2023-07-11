@@ -10,16 +10,15 @@
  */
 
 import MDFRequestActivityDTO from '../../../interfaces/dto/mdfRequestActivityDTO';
-import LiferayAccountBrief from '../../../interfaces/liferayAccountBrief';
+import MDFRequestDTO from '../../../interfaces/dto/mdfRequestDTO';
+import MDFRequest from '../../../interfaces/mdfRequest';
 import MDFRequestActivity from '../../../interfaces/mdfRequestActivity';
 
 export default function getDTOFromMDFRequestActivity(
 	mdfRequestActivity: MDFRequestActivity,
-	company?: LiferayAccountBrief,
-	mdfRequestId?: number,
-	mdfRequestExternalReferenceCode?: string,
-	externalReferenceCode?: string,
-	externalReferenceCodeSF?: string
+	mdfRequest: MDFRequest,
+	mdfRequestDTO?: MDFRequestDTO,
+	externalReferenceCodeFromSF?: string
 ): MDFRequestActivityDTO {
 	const {activityDescription, ...newMDFRequestActivity} = mdfRequestActivity;
 
@@ -32,13 +31,14 @@ export default function getDTOFromMDFRequestActivity(
 		activityStatus: mdfRequestActivity.activityStatus,
 		currency: mdfRequestActivity.currency,
 		...newMDFRequestActivity,
-		externalReferenceCode,
-		externalReferenceCodeSF,
+		externalReferenceCode: externalReferenceCodeFromSF,
 		leadFollowUpStrategies: activityDescription?.leadFollowUpStrategies?.join(
 			', '
 		),
-		mdfRequestExternalReferenceCode,
-		r_accToActs_accountEntryId: company?.id,
-		r_mdfReqToActs_c_mdfRequestId: mdfRequestId,
+		mdfRequestExternalReferenceCode: mdfRequestDTO?.externalReferenceCode,
+		r_accToActs_accountEntryERC: mdfRequest.company?.externalReferenceCode,
+		r_accToActs_accountEntryId: mdfRequest.company?.id,
+		r_mdfReqToActs_c_mdfRequestERC: mdfRequestDTO?.externalReferenceCode,
+		r_mdfReqToActs_c_mdfRequestId: mdfRequestDTO?.id,
 	};
 }

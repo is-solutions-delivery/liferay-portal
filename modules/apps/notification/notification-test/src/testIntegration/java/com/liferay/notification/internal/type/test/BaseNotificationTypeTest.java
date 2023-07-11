@@ -24,21 +24,27 @@ import com.liferay.notification.service.NotificationQueueEntryLocalService;
 import com.liferay.notification.service.NotificationRecipientLocalService;
 import com.liferay.notification.service.NotificationRecipientSettingLocalService;
 import com.liferay.notification.service.NotificationTemplateLocalService;
-import com.liferay.notification.type.NotificationTypeServiceTracker;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.definition.notification.term.util.ObjectDefinitionNotificationTermUtil;
 import com.liferay.object.field.builder.BooleanObjectFieldBuilder;
 import com.liferay.object.field.builder.DateObjectFieldBuilder;
 import com.liferay.object.field.builder.IntegerObjectFieldBuilder;
 import com.liferay.object.field.builder.PicklistObjectFieldBuilder;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectRelationship;
+import com.liferay.object.relationship.util.ObjectRelationshipUtil;
 import com.liferay.object.rest.dto.v1_0.ListEntry;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.petra.string.StringBundler;
+import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.ListType;
 import com.liferay.portal.kernel.model.ListTypeConstants;
@@ -102,7 +108,7 @@ public class BaseNotificationTypeTest {
 					LocaleUtil.US, RandomTestUtil.randomString()),
 				Collections.singletonList(listTypeEntry));
 
-		randomObjectEntryValues = LinkedHashMapBuilder.<String, Object>put(
+		childObjectEntryValues = LinkedHashMapBuilder.<String, Object>put(
 			"booleanObjectField", RandomTestUtil.randomBoolean()
 		).put(
 			"dateObjectField",
@@ -123,6 +129,10 @@ public class BaseNotificationTypeTest {
 				}
 			}
 		).put(
+			"textObjectField", RandomTestUtil.randomString()
+		).build();
+
+		parentObjectEntryValues = LinkedHashMapBuilder.<String, Object>put(
 			"textObjectField", RandomTestUtil.randomString()
 		).build();
 
@@ -152,13 +162,13 @@ public class BaseNotificationTypeTest {
 
 	@Before
 	public void setUp() throws Exception {
-		objectDefinition =
+		childObjectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				user1.getUserId(), false, false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				"A" + RandomTestUtil.randomString(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
+				true, ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				Arrays.asList(
 					new BooleanObjectFieldBuilder(
@@ -167,8 +177,6 @@ public class BaseNotificationTypeTest {
 							RandomTestUtil.randomString())
 					).name(
 						"booleanObjectField"
-					).objectFieldSettings(
-						Collections.emptyList()
 					).build(),
 					new DateObjectFieldBuilder(
 					).labelMap(
@@ -176,8 +184,6 @@ public class BaseNotificationTypeTest {
 							RandomTestUtil.randomString())
 					).name(
 						"dateObjectField"
-					).objectFieldSettings(
-						Collections.emptyList()
 					).build(),
 					new IntegerObjectFieldBuilder(
 					).labelMap(
@@ -185,8 +191,6 @@ public class BaseNotificationTypeTest {
 							RandomTestUtil.randomString())
 					).name(
 						"integerObjectField"
-					).objectFieldSettings(
-						Collections.emptyList()
 					).build(),
 					new PicklistObjectFieldBuilder(
 					).labelMap(
@@ -196,9 +200,29 @@ public class BaseNotificationTypeTest {
 						"picklistObjectField"
 					).listTypeDefinitionId(
 						_listTypeDefinition.getListTypeDefinitionId()
-					).objectFieldSettings(
-						Collections.emptyList()
 					).build(),
+					new TextObjectFieldBuilder(
+					).labelMap(
+						LocalizedMapUtil.getLocalizedMap(
+							RandomTestUtil.randomString())
+					).name(
+						"textObjectField"
+					).build()));
+
+		childObjectDefinition =
+			_objectDefinitionLocalService.publishCustomObjectDefinition(
+				user1.getUserId(),
+				childObjectDefinition.getObjectDefinitionId());
+
+		parentObjectDefinition =
+			_objectDefinitionLocalService.addCustomObjectDefinition(
+				user1.getUserId(), false, false,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				"A" + RandomTestUtil.randomString(), null, null,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				false, ObjectDefinitionConstants.SCOPE_COMPANY,
+				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
 						LocalizedMapUtil.getLocalizedMap(
@@ -209,11 +233,22 @@ public class BaseNotificationTypeTest {
 						Collections.emptyList()
 					).build()));
 
-		objectDefinition =
+		parentObjectDefinition =
 			_objectDefinitionLocalService.publishCustomObjectDefinition(
-				user1.getUserId(), objectDefinition.getObjectDefinitionId());
+				user1.getUserId(),
+				parentObjectDefinition.getObjectDefinitionId());
 
-		_authorTermValues = HashMapBuilder.<String, Object>put(
+		objectRelationship =
+			_objectRelationshipLocalService.addObjectRelationship(
+				TestPropsValues.getUserId(),
+				parentObjectDefinition.getObjectDefinitionId(),
+				childObjectDefinition.getObjectDefinitionId(), 0,
+				ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				StringUtil.randomId(),
+				ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
+
+		_childAuthorTermValues = HashMapBuilder.<String, Object>put(
 			getTermName("AUTHOR_EMAIL_ADDRESS"), user2.getEmailAddress()
 		).put(
 			getTermName("AUTHOR_FIRST_NAME"), user2.getFirstName()
@@ -243,9 +278,32 @@ public class BaseNotificationTypeTest {
 		).put(
 			"[%CURRENT_USER_SUFFIX%]", _getListType("SUFFIX", user2)
 		).build();
+		_parentAuthorTermValues = HashMapBuilder.<String, Object>put(
+			getTermName(true, "AUTHOR_EMAIL_ADDRESS"), user2.getEmailAddress()
+		).put(
+			getTermName(true, "AUTHOR_FIRST_NAME"), user2.getFirstName()
+		).put(
+			getTermName(true, "AUTHOR_ID"), user2.getUserId()
+		).put(
+			getTermName(true, "AUTHOR_LAST_NAME"), user2.getLastName()
+		).put(
+			getTermName(true, "AUTHOR_MIDDLE_NAME"), user2.getMiddleName()
+		).put(
+			getTermName(true, "AUTHOR_PREFIX"), _getListType("PREFIX", user2)
+		).put(
+			getTermName(true, "AUTHOR_SUFFIX"), _getListType("SUFFIX", user2)
+		).build();
 
 		_resourcePermissionLocalService.addResourcePermission(
-			TestPropsValues.getCompanyId(), objectDefinition.getResourceName(),
+			TestPropsValues.getCompanyId(),
+			childObjectDefinition.getResourceName(),
+			ResourceConstants.SCOPE_COMPANY,
+			String.valueOf(TestPropsValues.getCompanyId()), role.getRoleId(),
+			ObjectActionKeys.ADD_OBJECT_ENTRY);
+
+		_resourcePermissionLocalService.addResourcePermission(
+			TestPropsValues.getCompanyId(),
+			parentObjectDefinition.getResourceName(),
 			ResourceConstants.SCOPE_COMPANY,
 			String.valueOf(TestPropsValues.getCompanyId()), role.getRoleId(),
 			ObjectActionKeys.ADD_OBJECT_ENTRY);
@@ -294,31 +352,59 @@ public class BaseNotificationTypeTest {
 		return notificationRecipientSetting;
 	}
 
-	protected String getTermName(String objectFieldName) {
-		return StringBundler.concat(
-			"[%", StringUtil.upperCase(objectDefinition.getShortName()), "_",
-			StringUtil.upperCase(objectFieldName), "%]");
+	protected String getObjectRelationshipObjectField2Name()
+		throws PortalException {
+
+		ObjectField objectField = _objectFieldLocalService.getObjectField(
+			objectRelationship.getObjectFieldId2());
+
+		return objectField.getName();
+	}
+
+	protected String getTermName(boolean parent, String termNameSuffix) {
+		String termNamePrefix = childObjectDefinition.getShortName();
+
+		if (parent) {
+			termNamePrefix =
+				ObjectRelationshipUtil.getNotificationTermNamePrefix(
+					parentObjectDefinition, objectRelationship);
+		}
+
+		return ObjectDefinitionNotificationTermUtil.getObjectFieldTermName(
+			termNamePrefix, termNameSuffix);
+	}
+
+	protected String getTermName(String termNameSuffix) {
+		return getTermName(false, termNameSuffix);
 	}
 
 	protected List<String> getTermNames() {
 		return ListUtil.concat(
-			ListUtil.fromMapKeys(_authorTermValues),
+			ListUtil.fromMapKeys(_childAuthorTermValues),
 			ListUtil.fromMapKeys(_currentUserTermValues),
+			ListUtil.fromMapKeys(_parentAuthorTermValues),
 			Arrays.asList(
 				getTermName("booleanObjectField"),
 				getTermName("dateObjectField"),
 				getTermName("integerObjectField"),
 				getTermName("picklistObjectField"),
-				getTermName("textObjectField")));
+				getTermName("textObjectField"),
+				getTermName(true, "textObjectField")));
 	}
 
 	protected List<Object> getTermValues() {
 		return ListUtil.concat(
-			ListUtil.fromMapValues(_authorTermValues),
+			ListUtil.fromMapValues(_childAuthorTermValues),
 			ListUtil.fromMapValues(_currentUserTermValues),
-			ListUtil.fromMapValues(randomObjectEntryValues));
+			ListUtil.fromMapValues(_parentAuthorTermValues),
+			ListUtil.fromMapValues(childObjectEntryValues),
+			ListUtil.fromMapValues(parentObjectEntryValues));
 	}
 
+	@DeleteAfterTestRun
+	protected static ObjectDefinition childObjectDefinition;
+
+	protected static LinkedHashMap<String, Object> childObjectEntryValues;
 	protected static DTOConverterContext dtoConverterContext =
 		new DefaultDTOConverterContext(
 			false, Collections.emptyMap(),
@@ -326,9 +412,12 @@ public class BaseNotificationTypeTest {
 			LocaleUtil.getDefault(), null, BaseNotificationTypeTest.user1);
 
 	@DeleteAfterTestRun
-	protected static ObjectDefinition objectDefinition;
+	protected static ObjectRelationship objectRelationship;
 
-	protected static LinkedHashMap<String, Object> randomObjectEntryValues;
+	@DeleteAfterTestRun
+	protected static ObjectDefinition parentObjectDefinition;
+
+	protected static LinkedHashMap<String, Object> parentObjectEntryValues;
 	protected static Role role;
 	protected static User user1;
 	protected static User user2;
@@ -393,17 +482,23 @@ public class BaseNotificationTypeTest {
 	private static ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Inject
+	private static ObjectFieldLocalService _objectFieldLocalService;
+
+	@Inject
+	private static ObjectRelationshipLocalService
+		_objectRelationshipLocalService;
+
+	@Inject
 	private static UserLocalService _userLocalService;
 
-	private Map<String, Object> _authorTermValues;
+	private Map<String, Object> _childAuthorTermValues;
 	private Map<String, Object> _currentUserTermValues;
 
 	@Inject
 	private NotificationRecipientSettingLocalService
 		_notificationRecipientSettingLocalService;
 
-	@Inject
-	private NotificationTypeServiceTracker _notificationTypeServiceTracker;
+	private Map<String, Object> _parentAuthorTermValues;
 
 	@Inject
 	private ResourcePermissionLocalService _resourcePermissionLocalService;

@@ -14,6 +14,7 @@
 
 package com.liferay.search.experiences.service.impl;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -73,10 +74,30 @@ public class SXPElementServiceImpl extends SXPElementServiceBaseImpl {
 			sxpElementId);
 
 		if (sxpElement.isReadOnly()) {
-			throw new SXPElementReadOnlyException();
+			throw new SXPElementReadOnlyException(
+				StringBundler.concat(
+					"Search experiences element ", sxpElementId,
+					" is read-only"));
 		}
 
 		return sxpElementLocalService.deleteSXPElement(sxpElement);
+	}
+
+	@Override
+	public SXPElement fetchSXPElementByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws PortalException {
+
+		SXPElement sxpElement =
+			sxpElementLocalService.fetchSXPElementByExternalReferenceCode(
+				externalReferenceCode, companyId);
+
+		if (sxpElement != null) {
+			_sxpElementModelResourcePermission.check(
+				getPermissionChecker(), sxpElement, ActionKeys.VIEW);
+		}
+
+		return sxpElement;
 	}
 
 	@Override
@@ -91,11 +112,36 @@ public class SXPElementServiceImpl extends SXPElementServiceBaseImpl {
 	}
 
 	@Override
+	public SXPElement getSXPElementByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws PortalException {
+
+		SXPElement sxpElement =
+			sxpElementLocalService.getSXPElementByExternalReferenceCode(
+				externalReferenceCode, companyId);
+
+		_sxpElementModelResourcePermission.check(
+			getPermissionChecker(), sxpElement, ActionKeys.VIEW);
+
+		return sxpElement;
+	}
+
+	@Override
 	public SXPElement updateSXPElement(
 			long sxpElementId, Map<Locale, String> descriptionMap,
 			String elementDefinitionJSON, String schemaVersion, boolean hidden,
 			Map<Locale, String> titleMap, ServiceContext serviceContext)
 		throws PortalException {
+
+		SXPElement sxpElement = sxpElementPersistence.findByPrimaryKey(
+			sxpElementId);
+
+		if (sxpElement.isReadOnly()) {
+			throw new SXPElementReadOnlyException(
+				StringBundler.concat(
+					"Search experiences element ", sxpElementId,
+					" is read-only"));
+		}
 
 		_sxpElementModelResourcePermission.check(
 			getPermissionChecker(), sxpElementId, ActionKeys.UPDATE);

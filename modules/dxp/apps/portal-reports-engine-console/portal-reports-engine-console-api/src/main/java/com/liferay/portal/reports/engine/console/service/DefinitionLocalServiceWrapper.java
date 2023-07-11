@@ -15,6 +15,7 @@
 package com.liferay.portal.reports.engine.console.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
 /**
  * Provides a wrapper for {@link DefinitionLocalService}.
@@ -293,6 +294,13 @@ public class DefinitionLocalServiceWrapper
 		return _definitionLocalService.getActionableDynamicQuery();
 	}
 
+	@Override
+	public String[] getAttachmentsFileNames(
+		com.liferay.portal.reports.engine.console.model.Definition definition) {
+
+		return _definitionLocalService.getAttachmentsFileNames(definition);
+	}
+
 	/**
 	 * Returns the definition with the primary key.
 	 *
@@ -501,6 +509,11 @@ public class DefinitionLocalServiceWrapper
 
 		_definitionLocalService.updateDefinitionResources(
 			definition, communityPermissions, guestPermissions);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _definitionLocalService.getBasePersistence();
 	}
 
 	@Override

@@ -1,5 +1,4 @@
 @component-name = "portal-document-library-store"
-@ignore = "true"
 definition {
 
 	property aws.store.enabled = "true";
@@ -18,9 +17,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -33,7 +32,7 @@ definition {
 	@description = "This is a use case for LPS-129271."
 	@priority = 4
 	test AssertNoErrorMessageAfterExportAndImportSiteLAR {
-		property test.name.skip.portal.instance = "AWSStore#AssertNoErrorMessageAfterExportAndImportSiteLAR";
+		property test.liferay.virtual.instance = "false";
 
 		var bucketID = PropsUtil.get("s3.bucket.id");
 		var companyId = JSONCompany.getCompanyId();
@@ -41,9 +40,13 @@ definition {
 			groupName = "Test Site Name",
 			site = "true");
 
-		AntCommand(
-			locator1 = "build-test-s3-store.xml",
-			value1 = "assert-no-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketID}");
+		for (var layoutUtilityPageName : list "404 Error,500 Error") {
+			JSONLayoututilitypage.deleteLayoutUtilityPage(
+				groupName = "Test Site Name",
+				layoutUtilityPageName = ${layoutUtilityPageName});
+		}
+
+		AntCommands.runCommand("build-test-s3-store.xml", "assert-no-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketID}");
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
@@ -52,9 +55,7 @@ definition {
 			mimeType = "image/jpeg",
 			sourceFileName = "Document_1.jpg");
 
-		AntCommand(
-			locator1 = "build-test-s3-store.xml",
-			value1 = "assert-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketID}");
+		AntCommands.runCommand("build-test-s3-store.xml", "assert-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketID}");
 
 		LAR.exportSiteCP(siteScopeName = "Test Site Name");
 
@@ -75,7 +76,7 @@ definition {
 	@priority = 3
 	test AWSS3StoreDataMigration {
 		property store.migration.test = "true";
-		property test.name.skip.portal.instance = "AWSStore#AWSS3StoreDataMigration";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given a document is added to the default store") {
 			var bucketId = PropsUtil.get("s3.bucket.id");
@@ -91,7 +92,7 @@ definition {
 				mimeType = "text/plain",
 				sourceFileName = "Document_1.txt");
 
-			AntCommands.runCommand("build-test-s3-store.xml", "assert-no-document-in-bucket -Ds3.bucket.id=${bucketId} -DcompanyId=${companyId} -DgroupId=${groupId}");
+			AntCommands.runCommand("build-test-s3-store.xml", "assert-no-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
 		}
 
 		task ("And given the user cannot migrate data to AWS S3 store without setting up a connection configuration") {
@@ -108,9 +109,11 @@ definition {
 		task ("When the user adds the configuration") {
 			AntCommands.runCommand("build-test.xml", "prepare-aws-s3-configuration -Ds3.bucket.id=${bucketId}");
 
-			OSGiConfig.waitForOSGiConfig();
+			while ((IsElementNotPresent(locator1 = "Select#SELECT_VALUE_ID", option = "com.liferay.portal.store.s3.S3Store", selectFieldId = "dl-store-impl")) && (maxIterations = "2")) {
+				OSGiConfig.waitForOSGiConfig();
 
-			Refresh();
+				Refresh();
+			}
 		}
 
 		task ("Then the user can now migrate data over to the AWS S3 bucket") {
@@ -132,7 +135,7 @@ definition {
 		}
 
 		task ("Then the document is migrated over from the default store to the AWS S3 store") {
-			AntCommands.runCommand("build-test-s3-store.xml", "assert-document-in-bucket -Ds3.bucket.id=${bucketId} -DcompanyId=${companyId} -DgroupId=${groupId}");
+			AntCommands.runCommand("build-test-s3-store.xml", "assert-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
 		}
 
 		task ("And the user can configure the portal to use AWS S3 store without issue") {
@@ -152,7 +155,7 @@ definition {
 
 	@priority = 5
 	test AWSS3StoreSmoke {
-		property test.name.skip.portal.instance = "AWSStore#AWSS3StoreSmoke";
+		property test.liferay.virtual.instance = "false";
 
 		var bucketId = PropsUtil.get("s3.bucket.id");
 		var companyId = JSONCompany.getCompanyId();
@@ -160,20 +163,16 @@ definition {
 			groupName = "Test Site Name",
 			site = "true");
 
-		AntCommand(
-			locator1 = "build-test-s3-store.xml",
-			value1 = "assert-no-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
+		AntCommands.runCommand("build-test-s3-store.xml", "assert-no-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
 
-		JSONDocument.addFileWithUploadedFile(
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
+
+		DMDocument.addCP(
 			dmDocumentDescription = "DM Document Description",
-			dmDocumentTitle = "DM Document Title",
-			groupName = "Test Site Name",
-			mimeType = "text/plain",
-			sourceFileName = "Document_1.txt");
+			dmDocumentFile = "Document_1.txt",
+			dmDocumentTitle = "DM Document Title");
 
-		AntCommand(
-			locator1 = "build-test-s3-store.xml",
-			value1 = "assert-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
+		AntCommands.runCommand("build-test-s3-store.xml", "assert-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
 
@@ -181,65 +180,15 @@ definition {
 
 		RecycleBin.openRecycleBinAdmin(siteURLKey = "test-site-name");
 
-		ProductMenu.gotoPortlet(
-			category = "Recycle Bin",
-			portlet = "Recycle Bin");
-
 		RecycleBin.emptyCP();
 
-		AntCommand(
-			locator1 = "build-test-s3-store.xml",
-			value1 = "assert-no-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
-	}
-
-	@description = "This is a use case for LPS-122233."
-	@priority = 3
-	test ReIndexingDoesNotAddNewS3StoreCacheFiles {
-		property test.name.skip.portal.instance = "AWSStore#ReIndexingDoesNotAddNewS3StoreCacheFiles";
-
-		for (var fileNum : list "1,2") {
-			JSONDocument.addFileWithUploadedFile(
-				dmDocumentDescription = "DM Document Description",
-				dmDocumentTitle = "DM Document Title ${fileNum}",
-				groupName = "Test Site Name",
-				mimeType = "image/jpeg",
-				sourceFileName = "Document_${fileNum}.jpg");
-		}
-
-		var tempDir = PropsUtil.get("app.server.temp.dir");
-		var displayDateHour = DateUtil.getFormattedCurrentDate("HH", "UTC");
-		var displayDateDay = DateUtil.getFormattedCurrentDate("dd", "UTC");
-		var displayDateMonth = DateUtil.getFormattedCurrentDate("MM", "UTC");
-		var displayDateYear = DateUtil.getFormattedCurrentDate("yyyy", "UTC");
-
-		var s3TempDir = "${tempDir}/liferay/s3/${displayDateYear}/${displayDateMonth}/${displayDateDay}/${displayDateHour}";
-
-		var filesBeforeReIndex = FileUtil.listFiles(${s3TempDir});
-
-		echo("S3 temp directory files before reindex: ${filesBeforeReIndex}.");
-
-		if (${filesBeforeReIndex} == "") {
-			fail("The S3 directory is empty at ${s3TempDir}.");
-		}
-
-		SearchAdministration.executeReindex();
-
-		var filesAfterReIndex = FileUtil.listFiles(${s3TempDir});
-
-		echo("S3 temp directory files after reindex: ${filesAfterReIndex}.");
-
-		if (${filesBeforeReIndex} == ${filesAfterReIndex}) {
-			echo("The S3 temp directory remains unchanged after re-indexing.");
-		}
-		else {
-			fail("The S3 temp directory modified after re-indexing.");
-		}
+		AntCommands.runCommand("build-test-s3-store.xml", "assert-no-document-in-bucket -DcompanyId=${companyId} -DgroupId=${groupId} -Ds3.bucket.id=${bucketId}");
 	}
 
 	@description = "This is a use case for LPS-127589."
 	@priority = 3
 	test S3ConnectionDoesNotLeakWhenServingFileAsStream {
-		property test.name.skip.portal.instance = "AWSStore#S3ConnectionDoesNotLeakWhenServingFileAsStream";
+		property test.liferay.virtual.instance = "false";
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
@@ -253,16 +202,22 @@ definition {
 		var script = '''
 			import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 			import com.liferay.document.library.kernel.store.DLStoreUtil;
+			import com.liferay.petra.string.StringPool;
  
 			List fileEntries = DLFileEntryLocalServiceUtil.getFileEntries(0,1);
  
 			fileEntries.each { fileEntry ->
 				(1..60).each {
+					InputStream is = null;
+
 					try {
-						InputStream is = DLStoreUtil.getFileAsStream(fileEntry.getCompanyId(), fileEntry.getRepositoryId(), fileEntry.getName())
+						is = DLStoreUtil.getFileAsStream(fileEntry.getCompanyId(), fileEntry.getRepositoryId(), fileEntry.getName(), StringPool.BLANK)
 					} 
 					catch (Exception e) {
 						e.printStackTrace();
+					}
+					finally {
+						is.close();
 					}
 				}
 			}

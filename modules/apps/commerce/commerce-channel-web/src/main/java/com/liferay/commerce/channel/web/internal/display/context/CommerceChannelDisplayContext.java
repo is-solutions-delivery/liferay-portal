@@ -14,6 +14,9 @@
 
 package com.liferay.commerce.channel.web.internal.display.context;
 
+import com.liferay.account.constants.AccountConstants;
+import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryService;
 import com.liferay.commerce.channel.web.internal.display.context.helper.CommerceChannelRequestHelper;
 import com.liferay.commerce.configuration.CommerceAccountGroupServiceConfiguration;
 import com.liferay.commerce.configuration.CommerceOrderCheckoutConfiguration;
@@ -21,7 +24,7 @@ import com.liferay.commerce.configuration.CommerceOrderFieldsConfiguration;
 import com.liferay.commerce.configuration.CommerceOrderImporterDateFormatConfiguration;
 import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.currency.model.CommerceCurrency;
-import com.liferay.commerce.currency.service.CommerceCurrencyService;
+import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.frontend.model.HeaderActionModel;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel;
@@ -59,15 +62,21 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
+import com.liferay.portal.kernel.service.permission.GroupPermission;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 import com.liferay.portal.kernel.workflow.WorkflowDefinitionManager;
 
@@ -89,15 +98,16 @@ public class CommerceChannelDisplayContext
 	extends BaseCommerceChannelDisplayContext {
 
 	public CommerceChannelDisplayContext(
+		AccountEntryService accountEntryService,
 		CommerceChannelHealthStatusRegistry commerceChannelHealthStatusRegistry,
 		ModelResourcePermission<CommerceChannel>
 			commerceChannelModelResourcePermission,
 		CommerceChannelService commerceChannelService,
 		CommerceChannelTypeRegistry commerceChannelTypeRegistry,
-		CommerceCurrencyService commerceCurrencyService,
+		CommerceCurrencyLocalService commerceCurrencyLocalService,
 		ConfigurationProvider configurationProvider,
 		CPTaxCategoryLocalService cpTaxCategoryLocalService,
-		DLAppLocalService dlAppLocalService,
+		DLAppLocalService dlAppLocalService, GroupPermission groupPermission,
 		HttpServletRequest httpServletRequest, ItemSelector itemSelector,
 		Portal portal,
 		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService,
@@ -105,16 +115,18 @@ public class CommerceChannelDisplayContext
 
 		super(httpServletRequest);
 
+		_accountEntryService = accountEntryService;
 		_commerceChannelHealthStatusRegistry =
 			commerceChannelHealthStatusRegistry;
 		_commerceChannelModelResourcePermission =
 			commerceChannelModelResourcePermission;
 		_commerceChannelService = commerceChannelService;
 		_commerceChannelTypeRegistry = commerceChannelTypeRegistry;
-		_commerceCurrencyService = commerceCurrencyService;
+		_commerceCurrencyLocalService = commerceCurrencyLocalService;
 		_configurationProvider = configurationProvider;
 		_cpTaxCategoryLocalService = cpTaxCategoryLocalService;
 		_dlAppLocalService = dlAppLocalService;
+		_groupPermission = groupPermission;
 		_itemSelector = itemSelector;
 		_portal = portal;
 		_workflowDefinitionLinkLocalService =
@@ -248,7 +260,7 @@ public class CommerceChannelDisplayContext
 	public List<CommerceCurrency> getCommerceCurrencies()
 		throws PortalException {
 
-		return _commerceCurrencyService.getCommerceCurrencies(
+		return _commerceCurrencyLocalService.getCommerceCurrencies(
 			cpRequestHelper.getCompanyId(), true, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
 	}
@@ -368,6 +380,23 @@ public class CommerceChannelDisplayContext
 		return portletURL;
 	}
 
+	public List<AccountEntry> getSupplierAccountEntries()
+		throws PortalException {
+
+		BaseModelSearchResult<AccountEntry> baseModelSearchResult =
+			_accountEntryService.searchAccountEntries(
+				null,
+				LinkedHashMapBuilder.<String, Object>put(
+					"status", WorkflowConstants.STATUS_APPROVED
+				).put(
+					"types",
+					new String[] {AccountConstants.ACCOUNT_ENTRY_TYPE_SUPPLIER}
+				).build(),
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, "name", false);
+
+		return baseModelSearchResult.getBaseModels();
+	}
+
 	public List<CPTaxCategory> getTaxCategories() {
 		return _cpTaxCategoryLocalService.getCPTaxCategories(
 			_commerceChannelRequestHelper.getCompanyId(), QueryUtil.ALL_POS,
@@ -411,6 +440,28 @@ public class CommerceChannelDisplayContext
 		return portletResourcePermission.contains(
 			themeDisplay.getPermissionChecker(), null,
 			CPActionKeys.ADD_COMMERCE_CHANNEL);
+	}
+
+	public boolean hasAddLayoutPermission() throws PortalException {
+		CommerceChannel commerceChannel = getCommerceChannel();
+
+		return _groupPermission.contains(
+			PermissionThreadLocal.getPermissionChecker(),
+			commerceChannel.getSiteGroupId(), ActionKeys.ADD_LAYOUT);
+	}
+
+	public boolean hasManageLinkSupplierPermission() {
+		PortletResourcePermission portletResourcePermission =
+			_commerceChannelModelResourcePermission.
+				getPortletResourcePermission();
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		return portletResourcePermission.contains(
+			themeDisplay.getPermissionChecker(), null,
+			CPActionKeys.VIEW_COMMERCE_CHANNELS);
 	}
 
 	public boolean hasPermission(long commerceChannelId, String actionId)
@@ -548,6 +599,7 @@ public class CommerceChannelDisplayContext
 	private static final Log _log = LogFactoryUtil.getLog(
 		CommerceChannelDisplayContext.class);
 
+	private final AccountEntryService _accountEntryService;
 	private CommerceAccountGroupServiceConfiguration
 		_commerceAccountGroupServiceConfiguration;
 	private final CommerceChannelHealthStatusRegistry
@@ -557,11 +609,12 @@ public class CommerceChannelDisplayContext
 	private final CommerceChannelRequestHelper _commerceChannelRequestHelper;
 	private final CommerceChannelService _commerceChannelService;
 	private final CommerceChannelTypeRegistry _commerceChannelTypeRegistry;
-	private final CommerceCurrencyService _commerceCurrencyService;
+	private final CommerceCurrencyLocalService _commerceCurrencyLocalService;
 	private CommerceOrderFieldsConfiguration _commerceOrderFieldsConfiguration;
 	private final ConfigurationProvider _configurationProvider;
 	private final CPTaxCategoryLocalService _cpTaxCategoryLocalService;
 	private final DLAppLocalService _dlAppLocalService;
+	private final GroupPermission _groupPermission;
 	private final ItemSelector _itemSelector;
 	private final Portal _portal;
 	private final WorkflowDefinitionLinkLocalService

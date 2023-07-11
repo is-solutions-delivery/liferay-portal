@@ -90,6 +90,25 @@ public class SXPBlueprintResourceImpl extends BaseSXPBlueprintResourceImpl {
 	}
 
 	@Override
+	public SXPBlueprint getSXPBlueprintByExternalReferenceCode(
+			String externalReferenceCode)
+		throws Exception {
+
+		com.liferay.search.experiences.model.SXPBlueprint sxpBlueprint =
+			_sxpBlueprintService.getSXPBlueprintByExternalReferenceCode(
+				contextCompany.getCompanyId(), externalReferenceCode);
+
+		return _sxpBlueprintDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				contextAcceptLanguage.isAcceptAllLanguages(), new HashMap<>(),
+				_dtoConverterRegistry, contextHttpServletRequest,
+				sxpBlueprint.getSXPBlueprintId(),
+				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
+				contextUser),
+			sxpBlueprint);
+	}
+
+	@Override
 	public Response getSXPBlueprintExport(Long sxpBlueprintId)
 		throws Exception {
 
@@ -286,6 +305,26 @@ public class SXPBlueprintResourceImpl extends BaseSXPBlueprintResourceImpl {
 	@Override
 	public SXPBlueprint postSXPBlueprintValidate(String json) throws Exception {
 		return SXPBlueprintUtil.toSXPBlueprint(json);
+	}
+
+	@Override
+	public SXPBlueprint putSXPBlueprintByExternalReferenceCode(
+			String externalReferenceCode, SXPBlueprint sxpBlueprint)
+		throws Exception {
+
+		com.liferay.search.experiences.model.SXPBlueprint
+			serviceBuilderSxpBlueprint =
+				_sxpBlueprintService.fetchSXPBlueprintByExternalReferenceCode(
+					externalReferenceCode, contextCompany.getCompanyId());
+
+		sxpBlueprint.setExternalReferenceCode(externalReferenceCode);
+
+		if (serviceBuilderSxpBlueprint != null) {
+			return patchSXPBlueprint(
+				serviceBuilderSxpBlueprint.getSXPBlueprintId(), sxpBlueprint);
+		}
+
+		return postSXPBlueprint(sxpBlueprint);
 	}
 
 	private String _getConfigurationJSON(SXPBlueprint sxpBlueprint) {

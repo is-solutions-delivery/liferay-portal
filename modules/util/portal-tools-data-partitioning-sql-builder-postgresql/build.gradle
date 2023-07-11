@@ -1,5 +1,0 @@
-dependencies {
-	compileInclude group: "com.liferay", name: "com.liferay.petra.string", version: "5.0.0"
-
-	compileOnly project(":util:portal-tools-data-partitioning-sql-builder")
-}

@@ -1,6 +1,5 @@
 definition {
 
-	@summary = "This macro add a run via UI."
 	macro addRun {
 		LexiconEntry.gotoAdd();
 
@@ -19,14 +18,12 @@ definition {
 		Button.click(button = "Save");
 	}
 
-	@summary = "This macro assert the run in the table."
 	macro assertValueRun {
 		AssertElementPresent(
 			key_title = ${valueRun},
 			locator1 = "TestrayRun#VERIFY_VALUES_RUN");
 	}
 
-	@summary = "This macro delete a run."
 	macro deleteRun {
 		RightClick.rightClick(
 			key_projectName = ${runName},
@@ -34,10 +31,11 @@ definition {
 
 		TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
 
+		AssertConfirm(value1 = "Are you sure you want to delete this item?");
+
 		Alert.viewSuccessMessage();
 	}
 
-	@summary = "This macro edit a run."
 	macro editRun {
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS_DISMISSIBLE");
 

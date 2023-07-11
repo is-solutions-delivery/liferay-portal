@@ -32,7 +32,11 @@ import org.osgi.service.component.annotations.Reference;
  * @author Jorge Ferrer
  */
 @Component(
-	property = "service.ranking:Integer=100",
+	property = {
+		"info.item.identifier=com.liferay.info.item.ClassPKInfoItemIdentifier",
+		"info.item.identifier=com.liferay.info.item.GroupUrlTitleInfoItemIdentifier",
+		"service.ranking:Integer=100"
+	},
 	service = InfoItemObjectProvider.class
 )
 public class FileEntryInfoItemObjectProvider
@@ -89,14 +93,6 @@ public class FileEntryInfoItemObjectProvider
 					infoItemIdentifier,
 				portalException);
 		}
-	}
-
-	@Override
-	public FileEntry getInfoItem(long classPK) throws NoSuchInfoItemException {
-		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
-			classPK);
-
-		return getInfoItem(infoItemIdentifier);
 	}
 
 	@Reference

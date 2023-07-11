@@ -164,12 +164,20 @@ definition {
 			locator1 = "TextInput#VIDEO_URL",
 			value1 = ${videoSourceURL});
 
+		if (!(isSet(invalidURL))) {
+			WaitForElementPresent(
+				key_src = "https://",
+				locator1 = "IFrame#IFRAME_SRC");
+		}
+
 		if (!(isSet(unpublish))) {
 			WaitForVisible(
 				key_text = "Add",
 				locator1 = "Button#ANY_ENABLED");
 
-			Button.clickAdd();
+			ClickNoError(
+				key_text = "Add",
+				locator1 = "Button#ANY_ENABLED");
 		}
 
 		SelectFrameTop(value1 = "relative=top");
@@ -561,9 +569,7 @@ definition {
 				value1 = ${navTab});
 		}
 
-		UploadCommonFile.uploadCommonFileHiddenNoMouseOver(
-			locator1 = "TextInput#FILE",
-			value1 = ${uploadFileName});
+		UploadDependencyFile.uploadFile(fileName = ${uploadFileName});
 
 		if (isSet(invalidFileValidation)) {
 			AssertTextEquals(

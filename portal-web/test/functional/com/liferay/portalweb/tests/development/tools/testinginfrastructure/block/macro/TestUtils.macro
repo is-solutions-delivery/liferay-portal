@@ -1,21 +1,5 @@
 definition {
 
-	macro assertElementFocused {
-		var javascript = '''
-var e = document.evaluate("${element}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
-var aE = document.activeElement;
-
-return	aE.isEqualNode(e).toString();
-		''';
-
-		var focused = selenium.getEval(${javascript});
-
-		if (${focused} != "true") {
-			TestUtils.fail(message = "FAILED: Element is not focused");
-		}
-	}
-
 	macro assertElementNotFocused {
 		var javascript = '''
 var e = document.evaluate("${element}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -42,6 +26,19 @@ return	aE.isEqualNode(e).toString();
 		}
 		else {
 			TestUtils.fail(message = "FAILED: expected '${expected}', actual was '${actual}'");
+		}
+	}
+
+	macro assertNotContain {
+		echo(${expected});
+
+		echo(${actual});
+
+		if (!(contains(${actual}, ${expected}))) {
+			echo("PASSED");
+		}
+		else {
+			TestUtils.fail(message = "FAILED: '${actual}' contain expected text '${expected}'");
 		}
 	}
 

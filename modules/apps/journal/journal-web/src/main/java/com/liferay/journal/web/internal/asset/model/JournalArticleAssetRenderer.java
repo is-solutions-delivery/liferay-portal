@@ -20,6 +20,8 @@ import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.asset.kernel.model.DDMFormValuesReader;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalPortletKeys;
@@ -402,7 +404,10 @@ public class JournalArticleAssetRenderer
 		if (_assetDisplayPageFriendlyURLProvider != null) {
 			String friendlyURL =
 				_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-					getClassName(), _article.getResourcePrimKey(),
+					new InfoItemReference(
+						getClassName(),
+						new ClassPKInfoItemIdentifier(
+							_article.getResourcePrimKey())),
 					themeDisplay);
 
 			if (Validator.isNotNull(friendlyURL)) {
@@ -461,7 +466,6 @@ public class JournalArticleAssetRenderer
 		throws Exception {
 
 		httpServletRequest.setAttribute(WebKeys.JOURNAL_ARTICLE, _article);
-
 		httpServletRequest.setAttribute(
 			WebKeys.JOURNAL_ARTICLE_DISPLAY,
 			_getArticleDisplay(httpServletRequest));

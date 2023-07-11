@@ -13,11 +13,6 @@ exports[`Membership should render 1`] = `
       >
         Segment Membership
       </h5>
-      <div
-        class="subtitle-segment"
-      >
-        Segment membership processes daily and does not include today's activities.
-      </div>
     </div>
     <div
       class="card-body segment-growth-root no-padding"
@@ -162,11 +157,6 @@ exports[`Membership should render 1`] = `
                 <th
                   class="table-head-title"
                 >
-                  Account Names
-                </th>
-                <th
-                  class="table-head-title"
-                >
                   <button
                     class="inline-item text-truncate-inline btn btn-unstyled"
                     type="button"
@@ -203,15 +193,6 @@ exports[`Membership should render 1`] = `
                 </td>
                 <td>
                   -
-                </td>
-                <td
-                  class="name-cell-root"
-                >
-                  <div
-                    class="text-truncate"
-                  >
-                    -
-                  </div>
                 </td>
                 <td>
                   Jul 8, 2018
@@ -258,10 +239,11 @@ exports[`Membership should render 1`] = `
               <li
                 class="page-item disabled"
               >
-                <a
-                  class="button-root page-link btn btn-unstyled"
+                <button
+                  class="button-root btn btn-unstyled page-link btn btn-primary"
                   disabled=""
                   href=""
+                  type="button"
                 >
                   <svg
                     class="lexicon-icon lexicon-icon-angle-left-small icon-root"
@@ -271,25 +253,27 @@ exports[`Membership should render 1`] = `
                       xlink:href="#angle-left-small"
                     />
                   </svg>
-                </a>
+                </button>
               </li>
               <li
                 class="page-item active"
               >
-                <a
-                  class="button-root page-link btn btn-unstyled"
+                <button
+                  class="button-root btn btn-unstyled page-link btn btn-primary"
                   href=""
+                  type="button"
                 >
                   1
-                </a>
+                </button>
               </li>
               <li
                 class="page-item disabled"
               >
-                <a
-                  class="button-root page-link btn btn-unstyled"
+                <button
+                  class="button-root btn btn-unstyled page-link btn btn-primary"
                   disabled=""
                   href=""
+                  type="button"
                 >
                   <svg
                     class="lexicon-icon lexicon-icon-angle-right-small icon-root"
@@ -299,7 +283,7 @@ exports[`Membership should render 1`] = `
                       xlink:href="#angle-right-small"
                     />
                   </svg>
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -455,11 +439,6 @@ exports[`MembershipChart should render 1`] = `
               <th
                 class="table-head-title"
               >
-                Account Names
-              </th>
-              <th
-                class="table-head-title"
-              >
                 <button
                   class="inline-item text-truncate-inline btn btn-unstyled"
                   type="button"
@@ -496,15 +475,6 @@ exports[`MembershipChart should render 1`] = `
               </td>
               <td>
                 -
-              </td>
-              <td
-                class="name-cell-root"
-              >
-                <div
-                  class="text-truncate"
-                >
-                  -
-                </div>
               </td>
               <td>
                 Jul 8, 2018
@@ -551,10 +521,11 @@ exports[`MembershipChart should render 1`] = `
             <li
               class="page-item disabled"
             >
-              <a
-                class="button-root page-link btn btn-unstyled"
+              <button
+                class="button-root btn btn-unstyled page-link btn btn-primary"
                 disabled=""
                 href=""
+                type="button"
               >
                 <svg
                   class="lexicon-icon lexicon-icon-angle-left-small icon-root"
@@ -564,25 +535,27 @@ exports[`MembershipChart should render 1`] = `
                     xlink:href="#angle-left-small"
                   />
                 </svg>
-              </a>
+              </button>
             </li>
             <li
               class="page-item active"
             >
-              <a
-                class="button-root page-link btn btn-unstyled"
+              <button
+                class="button-root btn btn-unstyled page-link btn btn-primary"
                 href=""
+                type="button"
               >
                 1
-              </a>
+              </button>
             </li>
             <li
               class="page-item disabled"
             >
-              <a
-                class="button-root page-link btn btn-unstyled"
+              <button
+                class="button-root btn btn-unstyled page-link btn btn-primary"
                 disabled=""
                 href=""
+                type="button"
               >
                 <svg
                   class="lexicon-icon lexicon-icon-angle-right-small icon-root"
@@ -592,7 +565,7 @@ exports[`MembershipChart should render 1`] = `
                     xlink:href="#angle-right-small"
                   />
                 </svg>
-              </a>
+              </button>
             </li>
           </ul>
         </div>

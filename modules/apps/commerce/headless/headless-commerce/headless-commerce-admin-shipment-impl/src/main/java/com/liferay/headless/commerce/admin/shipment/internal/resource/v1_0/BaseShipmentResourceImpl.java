@@ -20,6 +20,7 @@ import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.search.Sort;
@@ -31,6 +32,7 @@ import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.filter.ExpressionConvert;
@@ -776,14 +778,32 @@ public abstract class BaseShipmentResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			shipmentUnsafeConsumer = shipment -> postShipment(shipment);
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			shipmentUnsafeConsumer =
-				shipment -> putShipmentByExternalReferenceCode(
-					shipment.getExternalReferenceCode(), shipment);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
+				shipmentUnsafeConsumer = shipment -> {
+					try {
+						Shipment getShipment =
+							getShipmentByExternalReferenceCode(
+								shipment.getExternalReferenceCode());
+
+						patchShipment(
+							getShipment.getId() != null ? getShipment.getId() :
+								_parseLong(
+									(String)parameters.get("shipmentId")),
+							shipment);
+					}
+					catch (NoSuchModelException noSuchModelException) {
+						postShipment(shipment);
+					}
+				};
+			}
 		}
 
 		if (shipmentUnsafeConsumer == null) {
@@ -883,7 +903,7 @@ public abstract class BaseShipmentResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			shipmentUnsafeConsumer = shipment -> patchShipment(
 				shipment.getId() != null ? shipment.getId() :
 					_parseLong((String)parameters.get("shipmentId")),

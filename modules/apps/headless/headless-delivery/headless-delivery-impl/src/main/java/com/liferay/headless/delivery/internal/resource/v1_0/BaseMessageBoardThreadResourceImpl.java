@@ -1571,7 +1571,7 @@ public abstract class BaseMessageBoardThreadResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("messageBoardSectionId")) {
 				messageBoardThreadUnsafeConsumer =
 					messageBoardThread ->
@@ -1704,7 +1704,7 @@ public abstract class BaseMessageBoardThreadResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			messageBoardThreadUnsafeConsumer =
 				messageBoardThread -> patchMessageBoardThread(
 					messageBoardThread.getId() != null ?
@@ -1714,7 +1714,7 @@ public abstract class BaseMessageBoardThreadResourceImpl
 					messageBoardThread);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			messageBoardThreadUnsafeConsumer =
 				messageBoardThread -> putMessageBoardThread(
 					messageBoardThread.getId() != null ?

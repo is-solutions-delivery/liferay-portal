@@ -8,10 +8,11 @@ import {
 	cleanup,
 	fireEvent,
 	render,
-	waitForElement,
-	waitForElementToBeRemoved
+	waitForElement
 } from '@testing-library/react';
 import {DISPLAY_NAME} from 'shared/util/pagination';
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 import {MemoryRouter, Route} from 'react-router-dom';
 import {MockedProvider} from '@apollo/react-testing';
 import {mockEventDefinitionsReq, mockTimeRangeReq} from 'test/graphql-data';
@@ -19,6 +20,7 @@ import {OrderByDirections} from 'shared/util/constants';
 import {Provider} from 'react-redux';
 import {range} from 'lodash';
 import {Routes} from 'shared/util/router';
+import {waitForLoadingToBeRemoved} from 'test/helpers';
 
 jest.unmock('react-dom');
 
@@ -61,7 +63,9 @@ const WrappedComponent = () => (
 					]}
 				>
 					<Route path={Routes.EVENT_ANALYSIS_CREATE}>
-						<EventAnalysisCreate />
+						<DndProvider backend={HTML5Backend}>
+							<EventAnalysisCreate />
+						</DndProvider>
 					</Route>
 				</MemoryRouter>
 			</MockedProvider>
@@ -75,9 +79,7 @@ describe('Event Analysis Create', () => {
 	it('should render', async () => {
 		const {container} = render(<WrappedComponent />);
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('.spinner-root')
-		);
+		await waitForLoadingToBeRemoved(container);
 
 		expect(container).toMatchSnapshot();
 	});
@@ -87,9 +89,7 @@ describe('Event Analysis Create', () => {
 			<WrappedComponent />
 		);
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('.spinner-root')
-		);
+		await waitForLoadingToBeRemoved(container);
 
 		expect(getByPlaceholderText('Unnamed Analysis')).toBeTruthy();
 		expect(getByText('Add an event to analyze.')).toBeTruthy();
@@ -117,9 +117,7 @@ describe('Event Analysis Create', () => {
 	it('should render disabled button to save event analysis', async () => {
 		const {container, getByText} = render(<WrappedComponent />);
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('.spinner-root')
-		);
+		await waitForLoadingToBeRemoved(container);
 
 		expect(getByText('Save Analysis')).toBeDisabled();
 	});
@@ -127,9 +125,7 @@ describe('Event Analysis Create', () => {
 	it('should enable the save button when there is at least one name and one event added', async () => {
 		const {container, getByText} = render(<WrappedComponent />);
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('.spinner-root')
-		);
+		await waitForLoadingToBeRemoved(container);
 
 		const inputName = container.querySelector('input.title-input');
 

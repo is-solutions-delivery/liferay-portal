@@ -36,6 +36,8 @@ import com.liferay.object.exception.ObjectActionErrorMessageException;
 import com.liferay.object.exception.ObjectActionLabelException;
 import com.liferay.object.exception.ObjectActionNameException;
 import com.liferay.object.exception.ObjectActionParametersException;
+import com.liferay.object.field.builder.TextObjectFieldBuilder;
+import com.liferay.object.field.setting.builder.ObjectFieldSettingBuilder;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
@@ -136,8 +138,20 @@ public class ObjectActionLocalServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		_objectDefinition = ObjectDefinitionTestUtil.addObjectDefinition(
-			_objectDefinitionLocalService,
+			false, _objectDefinitionLocalService,
 			Arrays.asList(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_DATE_TIME,
+					ObjectFieldConstants.DB_TYPE_DATE_TIME, true, true, null,
+					"Time", "time",
+					Collections.singletonList(
+						new ObjectFieldSettingBuilder(
+						).name(
+							"timeStorage"
+						).value(
+							"useInputAsEntered"
+						).build()),
+					false),
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
@@ -316,6 +330,13 @@ public class ObjectActionLocalServiceTest {
 					"name", "firstName"
 				).put(
 					"value", "Peter"
+				),
+				JSONUtil.put(
+					"inputAsValue", true
+				).put(
+					"name", "time"
+				).put(
+					"value", "2023-06-01 06:42:08.0"
 				)
 			).toString()
 		).build();
@@ -323,7 +344,7 @@ public class ObjectActionLocalServiceTest {
 		try {
 			_addObjectAction(
 				RandomTestUtil.randomString(),
-				ObjectActionExecutorConstants.KEY_UPDATE_OBJECT_ENTRY,
+				ObjectActionExecutorConstants.KEY_ADD_OBJECT_ENTRY,
 				ObjectActionTriggerConstants.KEY_STANDALONE, unicodeProperties);
 
 			Assert.fail();
@@ -338,12 +359,12 @@ public class ObjectActionLocalServiceTest {
 					"objectDefinitionId"));
 		}
 
-		_publishCustomObjectDefinition();
-
 		ObjectAction objectAction5 = _addObjectAction(
 			RandomTestUtil.randomString(),
 			ObjectActionExecutorConstants.KEY_UPDATE_OBJECT_ENTRY,
 			ObjectActionTriggerConstants.KEY_STANDALONE, unicodeProperties);
+
+		_publishCustomObjectDefinition();
 
 		String originalName = PrincipalThreadLocal.getName();
 		PermissionChecker originalPermissionChecker =
@@ -446,12 +467,14 @@ public class ObjectActionLocalServiceTest {
 					objectEntry.getExternalReferenceCode(),
 					objectAction5.getName());
 
+			Map<String, Serializable> values =
+				_objectEntryLocalService.getValues(
+					objectEntry.getObjectEntryId());
+
 			Assert.assertEquals(
-				"Peter",
-				MapUtil.getString(
-					_objectEntryLocalService.getValues(
-						objectEntry.getObjectEntryId()),
-					"firstName"));
+				"Peter", MapUtil.getString(values, "firstName"));
+			Assert.assertEquals(
+				"2023-06-01 06:42:08.0", MapUtil.getString(values, "time"));
 
 			// Delete object entry
 
@@ -876,24 +899,36 @@ public class ObjectActionLocalServiceTest {
 			_objectDefinitionLocalService.fetchObjectDefinitionByClassName(
 				TestPropsValues.getCompanyId(), User.class.getName());
 
-		ObjectField objectField1 =
-			_objectFieldLocalService.addCustomObjectField(
-				null, TestPropsValues.getUserId(), 0,
-				userObjectDefinition.getObjectDefinitionId(),
-				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-				ObjectFieldConstants.DB_TYPE_STRING, true, true, "",
-				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				false, StringUtil.randomId(), false, false,
-				Collections.emptyList());
-		ObjectField objectField2 =
-			_objectFieldLocalService.addCustomObjectField(
-				null, TestPropsValues.getUserId(), 0,
-				userObjectDefinition.getObjectDefinitionId(),
-				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-				ObjectFieldConstants.DB_TYPE_STRING, true, true, "",
-				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				false, StringUtil.randomId(), false, false,
-				Collections.emptyList());
+		ObjectField objectField1 = ObjectFieldUtil.addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).indexed(
+				true
+			).indexedAsKeyword(
+				true
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				StringUtil.randomId()
+			).objectDefinitionId(
+				userObjectDefinition.getObjectDefinitionId()
+			).build());
+		ObjectField objectField2 = ObjectFieldUtil.addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).indexed(
+				true
+			).indexedAsKeyword(
+				true
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				StringUtil.randomId()
+			).objectDefinitionId(
+				userObjectDefinition.getObjectDefinitionId()
+			).build());
 
 		// Add object action to create user after adding an object entry
 

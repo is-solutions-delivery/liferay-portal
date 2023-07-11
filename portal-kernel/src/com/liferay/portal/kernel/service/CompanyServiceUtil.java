@@ -49,7 +49,6 @@ public class CompanyServiceUtil {
 	 * @param webId the company's web domain
 	 * @param virtualHost the company's virtual host name
 	 * @param mx the company's mail domain
-	 * @param system whether the company is the very first company (i.e., the
 	 * @param maxUsers the max number of company users (optionally
 	 <code>0</code>)
 	 * @param active whether the company is active
@@ -70,7 +69,6 @@ public class CompanyServiceUtil {
 	 * @param webId the company's web domain
 	 * @param virtualHost the company's virtual host name
 	 * @param mx the company's mail domain
-	 * @param system whether the company is the very first company (i.e., the
 	 * @param maxUsers the max number of company users (optionally
 	 <code>0</code>)
 	 * @param active whether the company is active
@@ -78,11 +76,17 @@ public class CompanyServiceUtil {
 	 */
 	public static Company addCompany(
 			String webId, String virtualHost, String mx, int maxUsers,
-			boolean active)
+			boolean active, String defaultAdminPassword,
+			String defaultAdminScreenName, String defaultAdminEmailAddress,
+			String defaultAdminFirstName, String defaultAdminMiddleName,
+			String defaultAdminLastName)
 		throws PortalException {
 
 		return getService().addCompany(
-			webId, virtualHost, mx, maxUsers, active);
+			webId, virtualHost, mx, maxUsers, active, defaultAdminPassword,
+			defaultAdminScreenName, defaultAdminEmailAddress,
+			defaultAdminFirstName, defaultAdminMiddleName,
+			defaultAdminLastName);
 	}
 
 	public static Company deleteCompany(long companyId) throws PortalException {

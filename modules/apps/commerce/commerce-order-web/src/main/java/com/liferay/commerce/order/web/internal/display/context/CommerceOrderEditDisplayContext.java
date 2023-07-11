@@ -618,8 +618,15 @@ public class CommerceOrderEditDisplayContext {
 				buttonCssClass = "btn-secondary";
 			}
 
-			portletURL.setParameter(
-				"transitionName", String.valueOf(commerceOrderStatus.getKey()));
+			int key = commerceOrderStatus.getKey();
+
+			if (currentCommerceOrderStatus.getKey() ==
+					CommerceOrderConstants.ORDER_STATUS_ON_HOLD) {
+
+				key = CommerceOrderConstants.ORDER_STATUS_PROCESSING;
+			}
+
+			portletURL.setParameter("transitionName", String.valueOf(key));
 
 			headerActionModels.add(
 				new HeaderActionModel(
@@ -683,7 +690,9 @@ public class CommerceOrderEditDisplayContext {
 
 			if (commerceOrderStatus.equals(currentCommerceOrderStatus) &&
 				(commerceOrderStatus.getKey() !=
-					CommerceOrderConstants.ORDER_STATUS_COMPLETED)) {
+					CommerceOrderConstants.ORDER_STATUS_COMPLETED) &&
+				(commerceOrderStatus.getKey() !=
+					CommerceOrderConstants.ORDER_STATUS_QUOTE_PROCESSED)) {
 
 				step.setState("active");
 			}

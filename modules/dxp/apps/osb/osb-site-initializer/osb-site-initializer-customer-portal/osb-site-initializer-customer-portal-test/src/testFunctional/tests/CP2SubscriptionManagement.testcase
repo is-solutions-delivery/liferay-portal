@@ -31,11 +31,11 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		CustomerPortal.customerPortalTearDown();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -57,7 +57,6 @@ definition {
 				cardName = "Non-Production",
 				date = "04/01/2021 - 03/31/2022",
 				instanceSize = 1,
-				logo = "dxp_icon",
 				position = 2,
 				status = "Active");
 		}

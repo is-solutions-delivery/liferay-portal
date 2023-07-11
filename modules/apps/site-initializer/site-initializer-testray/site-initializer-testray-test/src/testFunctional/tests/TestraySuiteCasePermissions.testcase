@@ -24,7 +24,10 @@ definition {
 		}
 
 		task ("Create a new Testray Site") {
-			Testray.addTestraySite(siteName = ${testSiteName});
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
 		}
 
 		task ("Create project, team, component, case type and case via API") {
@@ -85,9 +88,9 @@ definition {
 			Testray.testrayApisTearDown();
 		}
 
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -95,7 +98,7 @@ definition {
 	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to delete the suite case"
 	@priority = 3
 	test AssertAnalystRoleCanNotDeleteSuiteCase {
-		property test.name.skip.portal.instance = "TestraySuiteCasePermissions#AssertAnalystRoleCanNotDeleteSuiteCase";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Analyst role") {
 			User.logoutAndLoginPG(
@@ -131,7 +134,7 @@ definition {
 	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to edit the suite case"
 	@priority = 3
 	test AssertAnalystRoleCanNotEditSuiteCase {
-		property test.name.skip.portal.instance = "TestraySuiteCasePermissions#AssertAnalystRoleCanNotEditSuiteCase";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Analyst role") {
 			User.logoutAndLoginPG(
@@ -167,7 +170,7 @@ definition {
 	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to delete the suite case"
 	@priority = 4
 	test AssertLeadRoleCanDeleteSuiteCase {
-		property test.name.skip.portal.instance = "TestraySuiteCasePermissions#AssertLeadRoleCanDeleteSuiteCase";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Lead role") {
 			User.logoutAndLoginPG(
@@ -209,7 +212,7 @@ definition {
 	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to edit the suite case"
 	@priority = 4
 	test AssertLeadRoleCanEditSuiteCase {
-		property test.name.skip.portal.instance = "TestraySuiteCasePermissions#AssertLeadRoleCanEditSuiteCase";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Lead role") {
 			User.logoutAndLoginPG(
@@ -258,7 +261,7 @@ definition {
 	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray User' role should not be able to delete the suite case"
 	@priority = 3
 	test AssertUserRoleCanNotDeleteSuiteCase {
-		property test.name.skip.portal.instance = "TestraySuiteCasePermissions#AssertUserRoleCanNotDeleteSuiteCase";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray User role") {
 			User.logoutAndLoginPG(
@@ -296,7 +299,7 @@ definition {
 	@description = "Story ID: LPS-182630 | Test Summary: Verify that the User with the 'Testray User' role should not be able to edit the suite case"
 	@priority = 3
 	test AssertUserRoleCanNotEditSuiteCase {
-		property test.name.skip.portal.instance = "TestraySuiteCasePermissions#AssertUserRoleCanNotEditSuiteCase";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray User role") {
 			User.logoutAndLoginPG(

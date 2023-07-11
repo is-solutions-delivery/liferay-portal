@@ -10,7 +10,7 @@ definition {
 
 		User.firstLoginPG();
 
-		JSONGroup.addGroup(groupName = "Test Site Name");
+		HeadlessSite.addSite(siteName = "Test Site Name");
 
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
@@ -20,9 +20,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -791,6 +791,8 @@ definition {
 	@description = "This is a test for LPS-98077. Set a FieldGroup as repeatable and perform this action in a WebContent"
 	@priority = 4
 	test SetFieldGroupAsRepeatableAndExecuteOnAWebContent {
+		property ci.retries.disabled = "true";
+
 		DataEngine.addField(
 			fieldFieldLabel = "Text",
 			fieldName = "Text");

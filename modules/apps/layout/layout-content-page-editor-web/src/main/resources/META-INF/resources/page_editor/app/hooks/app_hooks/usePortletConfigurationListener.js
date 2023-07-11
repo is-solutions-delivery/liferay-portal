@@ -14,6 +14,7 @@
 
 import {useEffect} from 'react';
 
+import updateDraft from '../../actions/updateDraft';
 import updatePageContents from '../../actions/updatePageContents';
 import {useDispatch, useSelector} from '../../contexts/StoreContext';
 import selectSegmentsExperienceId from '../../selectors/selectSegmentsExperienceId';
@@ -43,6 +44,8 @@ export default function usePortletConfigurationListener() {
 					);
 				});
 			}
+
+			dispatch(updateDraft({draft: true}));
 		};
 
 		Liferay.on('editConfiguration', onEditConfiguration);

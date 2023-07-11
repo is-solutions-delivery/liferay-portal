@@ -896,6 +896,16 @@ public class CommerceOrderWrapper
 		return model.getCreateDate();
 	}
 
+	@Override
+	public java.util.List<Long> getCustomerCommerceOrderIds() {
+		return model.getCustomerCommerceOrderIds();
+	}
+
+	@Override
+	public int getCustomerCommerceOrderIdsCount() {
+		return model.getCustomerCommerceOrderIdsCount();
+	}
+
 	/**
 	 * Returns the delivery commerce term entry description of this commerce order.
 	 *
@@ -1440,6 +1450,16 @@ public class CommerceOrderWrapper
 		return model.getSubtotalWithTaxAmountMoney();
 	}
 
+	@Override
+	public java.util.List<Long> getSupplierCommerceOrderIds() {
+		return model.getSupplierCommerceOrderIds();
+	}
+
+	@Override
+	public int getSupplierCommerceOrderIdsCount() {
+		return model.getSupplierCommerceOrderIdsCount();
+	}
+
 	/**
 	 * Returns the tax amount of this commerce order.
 	 *
@@ -1737,6 +1757,11 @@ public class CommerceOrderWrapper
 	@Override
 	public boolean isPending() {
 		return model.isPending();
+	}
+
+	@Override
+	public boolean isQuote() {
+		return model.isQuote();
 	}
 
 	/**

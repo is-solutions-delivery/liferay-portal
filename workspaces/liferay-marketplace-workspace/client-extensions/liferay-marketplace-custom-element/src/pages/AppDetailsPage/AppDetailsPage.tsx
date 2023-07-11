@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayNavigationBar from '@clayui/navigation-bar';
@@ -15,7 +29,11 @@ import {ReviewAndSubmitAppPage} from '../ReviewAndSubmitAppPage/ReviewAndSubmitA
 
 import './AppDetailsPage.scss';
 import {getProductSpecifications} from '../../utils/api';
-import {getProductVersionFromSpecifications} from '../../utils/util';
+import {
+	getProductVersionFromSpecifications,
+	getThumbnailByProductAttachment,
+	showAppImage,
+} from '../../utils/util';
 
 interface AppDetailsPageProps {
 	dashboardNavigationItems: DashboardListItems[];
@@ -33,6 +51,7 @@ export function AppDetailsPage({
 		useState('App Details');
 
 	const [_, dispatch] = useAppContext();
+	const thumbnail = getThumbnailByProductAttachment(selectedApp.attachments);
 
 	useEffect(() => {
 		dispatch({
@@ -111,7 +130,7 @@ export function AppDetailsPage({
 						<img
 							alt="App Logo"
 							className="app-details-page-app-info-logo"
-							src={selectedApp.thumbnail}
+							src={showAppImage(thumbnail)}
 						/>
 					</div>
 

@@ -20,6 +20,8 @@ export interface Renderer {
 	type: 'clientExtension' | 'internal';
 }
 export interface ClientExtensionCellRenderer extends Renderer {
+	label?: string;
+	name?: string;
 	renderer: FDSCellRenderer;
 	type: 'clientExtension';
 }
@@ -30,3 +32,9 @@ export declare function getCellRendererByURL(
 	url: string,
 	type: 'clientExtension' | 'internal'
 ): Promise<CellRenderer>;
+export interface InternalRenderer extends Renderer {
+	component: React.ComponentType<any>;
+	label: string;
+	name: string;
+	type: 'internal';
+}

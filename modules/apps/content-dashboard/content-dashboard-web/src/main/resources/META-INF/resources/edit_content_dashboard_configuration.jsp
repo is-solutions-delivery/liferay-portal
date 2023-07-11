@@ -20,19 +20,12 @@
 ContentDashboardAdminConfigurationDisplayContext contentDashboardAdminConfigurationDisplayContext = (ContentDashboardAdminConfigurationDisplayContext)request.getAttribute(ContentDashboardAdminConfigurationDisplayContext.class.getName());
 %>
 
-<liferay-util:html-top>
-	<link href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathProxy() + application.getContextPath() + "/css/vocabularies_selection.css") %>" rel="stylesheet" type="text/css" />
-</liferay-util:html-top>
-
 <liferay-frontend:edit-form
 	action="<%= contentDashboardAdminConfigurationDisplayContext.getActionURL() %>"
 	method="post"
 	name="fm"
-	onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "saveConfiguration();" %>'
 >
 	<aui:input name="redirect" type="hidden" value="<%= contentDashboardAdminConfigurationDisplayContext.getRedirect() %>" />
-
-	<aui:input name="assetVocabularyIds" type="hidden" />
 
 	<liferay-frontend:edit-form-body>
 		<c:if test='<%= GetterUtil.getBoolean(SessionMessages.get(renderRequest, "emptyAssetVocabularyIds")) %>'>
@@ -80,16 +73,3 @@ ContentDashboardAdminConfigurationDisplayContext contentDashboardAdminConfigurat
 		<liferay-frontend:edit-form-buttons />
 	</liferay-frontend:edit-form-footer>
 </liferay-frontend:edit-form>
-
-<aui:script>
-	function <portlet:namespace />saveConfiguration() {
-		var form = document.<portlet:namespace />fm;
-		Liferay.Util.postForm(form, {
-			data: {
-				assetVocabularyIds: Liferay.Util.getSelectedOptionValues(
-					Liferay.Util.getFormElement(form, 'currentAssetVocabularyIds')
-				),
-			},
-		});
-	}
-</aui:script>

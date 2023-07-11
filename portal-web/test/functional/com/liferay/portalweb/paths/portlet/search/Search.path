@@ -41,6 +41,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CUSTOM_FILTER_WIDGET_VALUE_INPUT</td>
+	<td>//div[contains(@class,'input-text-wrapper')]//input[contains(@name,'${key_name}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>FACET_CLOUD_LAYOUT_ITEM</td>
 	<td>//section[./header[contains(@class,'portlet-topper') and contains(.,'${facetName}')]]//ul[contains(@class,'tag-cloud')]//button[contains(.,'${facetValue}')]</td>
 	<td></td>
@@ -138,6 +143,11 @@
 <tr>
 	<td>MODIFIED_FACET_SPECIFIC_ORDER</td>
 	<td>//div[contains(@id,'ModifiedFacet')]//li[${resultOrder}]/a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REINDEX_IN_PROGRESS_INDICATOR</td>
+	<td>//div[contains(.,'The portal is currently reindexing.')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -247,7 +257,7 @@
 </tr>
 <tr>
 	<td>SORT_WIDGET_CONFIGURATION_OPTION_DRAG_HANDLE</td>
-	<td>//div[contains(@class,'form-group')][.//input[@value='${key_displayLabel}']]//button[contains(@class,'drag-handle')]</td>
+	<td>//div[contains(@class,'form-group')][.//input[@value='${key_displayLabel}']]//button[contains(@aria-label,'Move')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -262,7 +272,7 @@
 </tr>
 <tr>
 	<td>SORT_WIDGET_CONFIGURATION_RELEVANCE_TOGGLE</td>
-	<td>//div[contains(@class,'relevance')]//input[contains(@class,'toggle-switch-check')]</td>
+	<td>//div[contains(@class,'input-group')][.//*[@id='relevance']]//input[contains(@class,'toggle-switch-check')]</td>
 	<td></td>
 </tr>
 <tr>

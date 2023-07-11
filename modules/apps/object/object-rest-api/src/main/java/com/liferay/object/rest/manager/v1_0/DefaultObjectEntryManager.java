@@ -48,6 +48,12 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 			ObjectDefinition objectDefinition, long objectEntryId)
 		throws Exception;
 
+	public void disassociateRelatedModels(
+			ObjectDefinition objectDefinition,
+			ObjectRelationship objectRelationship, long primaryKey,
+			ObjectDefinition relatedObjectDefinition, long userId)
+		throws Exception;
+
 	public void executeObjectAction(
 			DTOConverterContext dtoConverterContext, String objectActionName,
 			ObjectDefinition objectDefinition, long objectEntryId)
@@ -62,6 +68,12 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 	public ObjectEntry fetchObjectEntry(
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition, long objectEntryId)
+		throws Exception;
+
+	public ObjectEntry fetchRelatedManyToOneObjectEntry(
+			DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, Long objectEntryId,
+			String objectRelationshipName)
 		throws Exception;
 
 	public Page<ObjectEntry> getObjectEntries(
@@ -84,6 +96,11 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 	public Page<Object> getRelatedSystemObjectEntries(
 			ObjectDefinition objectDefinition, Long objectEntryId,
 			String objectRelationshipName, Pagination pagination)
+		throws Exception;
+
+	public Object getSystemObjectEntry(
+			DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, long primaryKey)
 		throws Exception;
 
 	public ObjectEntry updateObjectEntry(

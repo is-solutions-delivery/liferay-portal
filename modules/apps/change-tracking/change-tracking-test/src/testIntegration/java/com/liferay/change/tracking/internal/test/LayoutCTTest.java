@@ -25,19 +25,28 @@ import com.liferay.change.tracking.model.CTEntry;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.change.tracking.service.CTEntryLocalService;
 import com.liferay.change.tracking.service.CTProcessLocalService;
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -600,7 +609,7 @@ public class LayoutCTTest {
 
 			layout.setFriendlyURL(ctFriendlyURL);
 
-			_layoutLocalService.updateLayout(layout);
+			layout = _layoutLocalService.updateLayout(layout);
 		}
 
 		layout.setFriendlyURL(newCTFriendlyURL);
@@ -1004,6 +1013,64 @@ public class LayoutCTTest {
 
 				Assert.assertFalse(resultSet.next());
 			}
+		}
+	}
+
+	@Test
+	public void testUpdateLayoutWithMultiplyExpandoBridgeAttributes()
+		throws Exception {
+
+		boolean active = CacheRegistryUtil.isActive();
+
+		try {
+			CacheRegistryUtil.setActive(false);
+
+			_classNameLocalService.checkClassNames();
+
+			PermissionThreadLocal.setPermissionChecker(
+				PermissionCheckerFactoryUtil.create(
+					UserLocalServiceUtil.getUser(TestPropsValues.getUserId())));
+
+			ExpandoBridge expandoBridge =
+				ExpandoBridgeFactoryUtil.getExpandoBridge(
+					_group.getCompanyId(), Layout.class.getName());
+
+			expandoBridge.addAttribute(
+				RandomTestUtil.randomString(), ExpandoColumnConstants.BOOLEAN);
+
+			// Ensure that this second call to addAttribute works. See
+			// LPS-183421 in LayoutLocalServiceImpl.
+
+			expandoBridge.addAttribute(
+				RandomTestUtil.randomString(), ExpandoColumnConstants.BOOLEAN);
+
+			Layout layout = LayoutTestUtil.addTypePortletLayout(_group);
+
+			try (SafeCloseable safeCloseable1 =
+					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+						_ctCollection.getCtCollectionId())) {
+
+				ServiceContext serviceContext =
+					ServiceContextTestUtil.getServiceContext(
+						_group.getGroupId(), TestPropsValues.getUserId());
+
+				serviceContext.setExpandoBridgeAttributes(
+					expandoBridge.getAttributes());
+
+				_layoutLocalService.updateLayout(
+					layout.getGroupId(), layout.isPrivateLayout(),
+					layout.getLayoutId(), layout.getParentLayoutId(),
+					layout.getNameMap(), layout.getTitleMap(),
+					layout.getDescriptionMap(), layout.getKeywordsMap(),
+					layout.getRobotsMap(), layout.getType(), layout.isHidden(),
+					layout.getFriendlyURLMap(), false, null,
+					layout.getStyleBookEntryId(),
+					layout.getFaviconFileEntryId(),
+					layout.getMasterLayoutPlid(), serviceContext);
+			}
+		}
+		finally {
+			CacheRegistryUtil.setActive(active);
 		}
 	}
 

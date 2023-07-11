@@ -854,33 +854,25 @@ public abstract class BaseMockContactsEngineClientImpl
 
 	@Override
 	public Results<Interest> getInterests(
-		FaroProject faroProject, String ownerId, String ownerType, String name,
-		String query, Date startDate, Date endDate, String expand, int cur,
+		FaroProject faroProject, String channelId, String ownerId,
+		String ownerType, String name, String query, String expand, int cur,
 		int delta, List<OrderByField> orderByFields) {
 
 		return contactsEngineClient.getInterests(
-			faroProject, ownerId, ownerType, name, query, startDate, endDate,
-			expand, cur, delta, orderByFields);
-	}
-
-	@Override
-	public Interest getLatestInterest(
-		FaroProject faroProject, String ownerId, String ownerType, String query,
-		int cur, int delta, List<OrderByField> orderByFields) {
-
-		return contactsEngineClient.getLatestInterest(
-			faroProject, ownerId, ownerType, query, cur, delta, orderByFields);
+			faroProject, channelId, ownerId, ownerType, name, query, expand,
+			cur, delta, orderByFields);
 	}
 
 	@Override
 	public Results<PageVisited> getPagesVisited(
-		FaroProject faroProject, String ownerId, String ownerType, String query,
-		String interestName, Date startDate, Date endDate, boolean visitedPages,
-		int cur, int delta, List<OrderByField> orderByFields) {
+		FaroProject faroProject, String channelId, String ownerId,
+		String ownerType, String query, String interestName, Date startDate,
+		Date endDate, boolean visitedPages, int cur, int delta,
+		List<OrderByField> orderByFields) {
 
 		return contactsEngineClient.getPagesVisited(
-			faroProject, ownerId, ownerType, query, interestName, startDate,
-			endDate, visitedPages, cur, delta, orderByFields);
+			faroProject, channelId, ownerId, ownerType, query, interestName,
+			startDate, endDate, visitedPages, cur, delta, orderByFields);
 	}
 
 	@Override

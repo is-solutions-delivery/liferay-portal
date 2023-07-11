@@ -1,8 +1,8 @@
 import ClayIcon from '@clayui/icon';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import Modal from 'shared/components/modal';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 
 interface ILoadingModalProps extends React.HTMLAttributes<HTMLDivElement> {
 	icon?: string;
@@ -23,7 +23,7 @@ const LoadingModal: React.FC<ILoadingModalProps> = ({
 			{icon ? (
 				<ClayIcon className='icon-root icon-size-xl' symbol={icon} />
 			) : (
-				<Spinner />
+				<Loading />
 			)}
 		</div>
 

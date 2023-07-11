@@ -10,7 +10,6 @@
  */
 
 import ClayForm from '@clayui/form';
-import dayjs from 'dayjs';
 import {SubmitHandler, useForm} from 'react-hook-form';
 
 import Form from '../../../common/components/Form';
@@ -23,11 +22,16 @@ import {
 
 import './index.scss';
 import {getPaymentConfirmation} from '../../../common/services/paymentConfirmation';
+import {extractStringFromURL} from '../../../util/replace';
 
 export type generatePaymentReport = typeof yupSchema.payment.__outputType;
 
 const GenerateFinancialReport = () => {
-	const redirect = `${Liferay.ThemeDisplay.getPortalURL()}/web/evp/reports`;
+	const pathCurrentSite = Liferay.ThemeDisplay.getSiteAdminURL();
+
+	const redirect = `${Liferay.ThemeDisplay.getPortalURL()}/web/${extractStringFromURL(
+		pathCurrentSite
+	)}/reports`;
 
 	const {
 		clearErrors,
@@ -83,13 +87,22 @@ const GenerateFinancialReport = () => {
 		return true;
 	};
 
+	function formatDate(date: string) {
+		const parts = date.split('T')[0].split('-');
+		const year = parts[0];
+		const month = parts[1];
+		const day = parts[2];
+
+		return month + '-' + day + '-' + year;
+	}
+
 	const constructionFieldsCsv = async (
 		fields: PaymentConfirmationFilterType[]
 	) => {
 		let fieldsCsv = '';
 
 		const headers = [
-			'Moviment Date',
+			'Movement Date',
 			'Short Description',
 			'Account Type DB',
 			'Account Number DB',
@@ -105,7 +118,7 @@ const GenerateFinancialReport = () => {
 
 		for (const field of fields) {
 			const body = [
-				dayjs(field?.paymentDate).format('MM-DD-YYYY'),
+				formatDate(field?.paymentDate),
 				`EVP Request ${field?.r_requestId_c_evpRequestId} - Employee: ${field?.r_requestId_c_evpRequest?.creator?.name}`,
 				field?.r_financial_c_evpFinancial?.accountNumberDB,
 				field?.r_financial_c_evpFinancial?.accountNumberDB,

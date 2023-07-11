@@ -81,10 +81,19 @@ public class BlankSiteInitializerTest {
 
 		siteInitializer.initialize(_group.getGroupId());
 
-		LayoutUtilityPageEntry layoutUtilityPageEntry =
+		_assertLayoutUtilityPageEntry(
 			_layoutUtilityPageEntryService.getDefaultLayoutUtilityPageEntry(
 				_group.getGroupId(),
-				LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND);
+				LayoutUtilityPageEntryConstants.TYPE_SC_INTERNAL_SERVER_ERROR));
+		_assertLayoutUtilityPageEntry(
+			_layoutUtilityPageEntryService.getDefaultLayoutUtilityPageEntry(
+				_group.getGroupId(),
+				LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND));
+	}
+
+	private void _assertLayoutUtilityPageEntry(
+			LayoutUtilityPageEntry layoutUtilityPageEntry)
+		throws PortalException {
 
 		Layout layout = _layoutLocalService.fetchLayout(
 			layoutUtilityPageEntry.getPlid());

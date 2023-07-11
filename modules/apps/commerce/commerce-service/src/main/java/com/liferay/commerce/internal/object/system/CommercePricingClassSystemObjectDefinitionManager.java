@@ -20,6 +20,8 @@ import com.liferay.commerce.pricing.service.CommercePricingClassLocalService;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductGroup;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductGroupResource;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.field.builder.IntegerObjectFieldBuilder;
+import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.system.BaseSystemObjectDefinitionManager;
 import com.liferay.object.system.JaxRsApplicationDescriptor;
@@ -90,7 +92,7 @@ public class CommercePricingClassSystemObjectDefinitionManager
 	}
 
 	@Override
-	public String getExternalReferenceCode(long primaryKey)
+	public String getBaseModelExternalReferenceCode(long primaryKey)
 		throws PortalException {
 
 		CommercePricingClass commercePricingClass =
@@ -98,6 +100,11 @@ public class CommercePricingClassSystemObjectDefinitionManager
 				primaryKey);
 
 		return commercePricingClass.getExternalReferenceCode();
+	}
+
+	@Override
+	public String getExternalReferenceCode() {
+		return "L_COMMERCE_PRODUCT_GROUP";
 	}
 
 	@Override
@@ -120,12 +127,32 @@ public class CommercePricingClassSystemObjectDefinitionManager
 	@Override
 	public List<ObjectField> getObjectFields() {
 		return Arrays.asList(
-			createObjectField(
-				"Text", "String", "description", "description", false, true),
-			createObjectField(
-				"Integer", "Integer", "number-of-products", "productsCount",
-				false, true),
-			createObjectField("Text", "String", "title", "title", true, true));
+			new TextObjectFieldBuilder(
+			).labelMap(
+				createLabelMap("description")
+			).name(
+				"description"
+			).system(
+				true
+			).build(),
+			new IntegerObjectFieldBuilder(
+			).labelMap(
+				createLabelMap("number-of-products")
+			).name(
+				"productsCount"
+			).system(
+				true
+			).build(),
+			new TextObjectFieldBuilder(
+			).labelMap(
+				createLabelMap("title")
+			).name(
+				"title"
+			).required(
+				true
+			).system(
+				true
+			).build());
 	}
 
 	@Override

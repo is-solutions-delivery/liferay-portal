@@ -17,6 +17,7 @@ package com.liferay.translation.web.internal.portlet.action;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
@@ -92,7 +93,8 @@ public class UpdateTranslationMVCActionCommand extends BaseMVCActionCommand {
 			InfoItemObjectProvider<Object> infoItemObjectProvider =
 				_infoItemServiceRegistry.getFirstInfoItemService(
 					InfoItemObjectProvider.class,
-					infoItemReference.getClassName());
+					infoItemReference.getClassName(),
+					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
 			InfoItemFieldValues infoItemFieldValues =
 				InfoItemFieldValues.builder(
@@ -101,7 +103,8 @@ public class UpdateTranslationMVCActionCommand extends BaseMVCActionCommand {
 				).infoFieldValues(
 					_getInfoFieldValues(
 						actionRequest, className,
-						infoItemObjectProvider.getInfoItem(classPK))
+						infoItemObjectProvider.getInfoItem(
+							new ClassPKInfoItemIdentifier(classPK)))
 				).build();
 
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(

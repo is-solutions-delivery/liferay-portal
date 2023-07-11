@@ -94,11 +94,12 @@ exports[`BehaviorInput should render 1`] = `
           aria-activedescendant="ge"
           aria-expanded="true"
           aria-haspopup="listbox"
-          aria-owns="clay-id-1"
+          aria-owns="clay-id-2"
           class="form-control form-control-select form-control-select-secondary operator-input show"
           role="combobox"
           style=""
           tabindex="0"
+          type="button"
         >
           at least
         </button>
@@ -132,12 +133,13 @@ exports[`BehaviorInput should render 1`] = `
           aria-activedescendant="ever"
           aria-expanded="true"
           aria-haspopup="listbox"
-          aria-owns="clay-id-2"
+          aria-owns="clay-id-4"
           class="form-control form-control-select form-control-select-secondary conjunction-input show"
           data-testid="conjunction-input"
           role="combobox"
           style=""
           tabindex="0"
+          type="button"
         >
           ever
         </button>
@@ -232,6 +234,7 @@ exports[`BehaviorInput should render w/ data 1`] = `
           class="form-control form-control-select form-control-select-secondary operator-input"
           role="combobox"
           tabindex="0"
+          type="button"
         >
           at least
         </button>
@@ -263,6 +266,7 @@ exports[`BehaviorInput should render w/ data 1`] = `
           data-testid="conjunction-input"
           role="combobox"
           tabindex="0"
+          type="button"
         >
           ever
         </button>

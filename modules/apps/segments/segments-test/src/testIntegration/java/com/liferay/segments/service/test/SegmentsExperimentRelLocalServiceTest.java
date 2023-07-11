@@ -126,8 +126,9 @@ public class SegmentsExperimentRelLocalServiceTest {
 
 		segmentsExperience.setActive(false);
 
-		_segmentsExperienceLocalService.updateSegmentsExperience(
-			segmentsExperience);
+		segmentsExperience =
+			_segmentsExperienceLocalService.updateSegmentsExperience(
+				segmentsExperience);
 
 		SegmentsExperimentRel segmentsExperimentRel =
 			_segmentsExperimentRelLocalService.addSegmentsExperimentRel(
@@ -315,7 +316,6 @@ public class SegmentsExperimentRelLocalServiceTest {
 
 		return SegmentsTestUtil.addSegmentsExperiment(
 			_group.getGroupId(), segmentsExperience.getSegmentsExperienceId(),
-			_classNameLocalService.getClassNameId(Layout.class.getName()),
 			segmentsExperience.getPlid());
 	}
 

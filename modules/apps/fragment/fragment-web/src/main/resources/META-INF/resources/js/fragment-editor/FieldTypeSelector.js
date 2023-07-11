@@ -14,6 +14,7 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayForm, {ClayCheckbox} from '@clayui/form';
+import ClayLink from '@clayui/link';
 import classNames from 'classnames';
 import React from 'react';
 
@@ -21,9 +22,11 @@ export function FieldTypeSelector({
 	availableFieldTypes,
 	description,
 	fieldTypes,
+	fragmentConfigurationURL,
 	onChangeFieldTypes,
 	portletNamespace,
 	readOnly,
+	showFragmentConfigurationLink,
 	small,
 	title,
 }) {
@@ -93,6 +96,19 @@ export function FieldTypeSelector({
 							/>
 						))}
 					</>
+				)}
+
+				{showFragmentConfigurationLink && (
+					<div className="mt-4">
+						<ClayLink
+							href={fragmentConfigurationURL}
+							target="_blank"
+						>
+							{Liferay.Language.get(
+								'define-the-default-form-fragments-for-this-site'
+							)}
+						</ClayLink>
+					</div>
 				)}
 			</div>
 		</ClayForm.Group>

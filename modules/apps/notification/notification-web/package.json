@@ -1,10 +1,10 @@
 {
 	"dependencies": {
 		"@clayui/button": "3.92.0",
-		"@clayui/form": "3.95.2",
+		"@clayui/form": "3.99.0",
 		"@clayui/label": "3.88.0",
 		"@clayui/management-toolbar": "3.93.0",
-		"@clayui/panel": "3.95.2",
+		"@clayui/panel": "3.96.0",
 		"@liferay/frontend-data-set-web": "*",
 		"@liferay/object-js-components-web": "*",
 		"frontend-js-web": "*"
@@ -16,5 +16,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "1.0.50"
+	"version": "1.0.56"
 }

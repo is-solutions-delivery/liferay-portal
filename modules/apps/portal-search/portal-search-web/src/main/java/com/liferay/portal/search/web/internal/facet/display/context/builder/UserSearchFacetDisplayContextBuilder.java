@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.internal.facet.display.context.BucketDisplayContext;
@@ -125,8 +126,8 @@ public class UserSearchFacetDisplayContextBuilder {
 		_paramValues = Collections.singletonList(paramValue);
 	}
 
-	public void setParamValues(List<String> paramValues) {
-		_paramValues = paramValues;
+	public void setParamValues(String... paramValues) {
+		_paramValues = ListUtil.fromArray(paramValues);
 	}
 
 	protected BucketDisplayContext buildBucketDisplayContext(

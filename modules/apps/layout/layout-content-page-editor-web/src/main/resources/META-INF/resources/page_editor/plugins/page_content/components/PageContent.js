@@ -40,6 +40,7 @@ import {
 } from '../../../app/contexts/StoreContext';
 import selectCanUpdateEditables from '../../../app/selectors/selectCanUpdateEditables';
 import {selectPageContentDropdownItems} from '../../../app/selectors/selectPageContentDropdownItems';
+import getEditableId from '../../../app/utils/getEditableId';
 import getFirstControlsId from '../../../app/utils/getFirstControlsId';
 import getFragmentItem from '../../../app/utils/getFragmentItem';
 import ImageEditorModal from './ImageEditorModal';
@@ -48,6 +49,7 @@ export default function PageContent({
 	classNameId,
 	classPK,
 	editableId,
+	externalReferenceCode,
 	icon,
 	isRestricted = false,
 	subtype,
@@ -76,9 +78,11 @@ export default function PageContent({
 
 	const dropdownItems = useSelectorCallback(
 		(state) => {
-			const pageContentDropdownItems = selectPageContentDropdownItems(
-				classPK
-			)(state);
+			const pageContentDropdownItems = selectPageContentDropdownItems({
+				classNameId,
+				classPK,
+				externalReferenceCode,
+			})(state);
 
 			return pageContentDropdownItems?.map((item) => {
 				if (item.label === Liferay.Language.get('edit-image')) {
@@ -104,7 +108,7 @@ export default function PageContent({
 				return item;
 			});
 		},
-		[classPK]
+		[classNameId, classPK, externalReferenceCode]
 	);
 
 	useEffect(() => {
@@ -143,7 +147,11 @@ export default function PageContent({
 					const editable = editableValue[editableId.join('-')];
 
 					if (editable) {
-						setIsHovered(editable.classPK === classPK);
+						setIsHovered(
+							editable.classPK === classPK ||
+								editable.externalReferenceCode ===
+									externalReferenceCode
+						);
 					}
 				}
 			}
@@ -151,7 +159,13 @@ export default function PageContent({
 		else {
 			setIsHovered(false);
 		}
-	}, [fragmentEntryLinks, hoveredItemId, classPK, editableId]);
+	}, [
+		fragmentEntryLinks,
+		hoveredItemId,
+		classPK,
+		editableId,
+		externalReferenceCode,
+	]);
 
 	const handleMouseOver = () => {
 		setIsHovered(true);
@@ -163,11 +177,14 @@ export default function PageContent({
 			});
 		}
 
-		if (classNameId && classPK) {
-			hoverItem(`${classNameId}-${classPK}`, {
-				itemType: ITEM_TYPES.mappedContent,
-				origin: ITEM_ACTIVATION_ORIGINS.contents,
-			});
+		if (classNameId && (classPK || externalReferenceCode)) {
+			hoverItem(
+				getEditableId({classNameId, classPK, externalReferenceCode}),
+				{
+					itemType: ITEM_TYPES.mappedContent,
+					origin: ITEM_ACTIVATION_ORIGINS.contents,
+				}
+			);
 		}
 	};
 

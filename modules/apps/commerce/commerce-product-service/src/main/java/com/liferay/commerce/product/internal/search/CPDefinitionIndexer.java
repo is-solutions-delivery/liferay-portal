@@ -618,8 +618,10 @@ public class CPDefinitionIndexer extends BaseIndexer<CPDefinition> {
 
 		CommerceCatalog commerceCatalog = cpDefinition.getCommerceCatalog();
 
-		document.addKeyword(
-			"commerceCatalogId", commerceCatalog.getCommerceCatalogId());
+		if (commerceCatalog != null) {
+			document.addKeyword(
+				"commerceCatalogId", commerceCatalog.getCommerceCatalogId());
+		}
 
 		document.addText("defaultLanguageId", cpDefinitionDefaultLanguageId);
 
@@ -861,7 +863,9 @@ public class CPDefinitionIndexer extends BaseIndexer<CPDefinition> {
 						cpInstance.getCPInstanceUuid(),
 						CommercePriceListConstants.TYPE_PRICE_LIST);
 
-			if (commercePriceEntry == null) {
+			if ((commercePriceEntry == null) ||
+				commercePriceEntry.isPriceOnApplication()) {
+
 				continue;
 			}
 
@@ -942,7 +946,7 @@ public class CPDefinitionIndexer extends BaseIndexer<CPDefinition> {
 	private String[] _getReverseCPDefinitionIds(long cProductId, String type) {
 		List<CPDefinitionLink> cpDefinitionLinks =
 			_cpDefinitionLinkLocalService.getReverseCPDefinitionLinks(
-				cProductId, type);
+				cProductId, type, WorkflowConstants.STATUS_APPROVED);
 
 		String[] reverseCPDefinitionIdsArray =
 			new String[cpDefinitionLinks.size()];

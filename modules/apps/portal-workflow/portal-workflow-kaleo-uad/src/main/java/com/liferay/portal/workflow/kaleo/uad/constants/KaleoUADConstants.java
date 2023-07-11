@@ -20,9 +20,16 @@ package com.liferay.portal.workflow.kaleo.uad.constants;
  */
 public class KaleoUADConstants {
 
+	public static final String[] USER_ID_FIELD_NAMES_KALEO_INSTANCE_TOKEN = {
+		"userId"
+	};
+
 	public static final String[] USER_ID_FIELD_NAMES_KALEO_LOG = {"userId"};
 
 	public static final String[]
 		USER_ID_FIELD_NAMES_KALEO_TASK_ASSIGNMENT_INSTANCE = {"userId"};
+
+	public static final String[] USER_ID_FIELD_NAMES_KALEO_TASK_INSTANCE_TOKEN =
+		{"userId", "completionUserId"};
 
 }

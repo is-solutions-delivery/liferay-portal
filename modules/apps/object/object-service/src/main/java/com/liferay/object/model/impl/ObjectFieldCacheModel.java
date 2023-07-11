@@ -77,7 +77,7 @@ public class ObjectFieldCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(51);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -121,6 +121,10 @@ public class ObjectFieldCacheModel
 		sb.append(localized);
 		sb.append(", name=");
 		sb.append(name);
+		sb.append(", readOnly=");
+		sb.append(readOnly);
+		sb.append(", readOnlyConditionExpression=");
+		sb.append(readOnlyConditionExpression);
 		sb.append(", relationshipType=");
 		sb.append(relationshipType);
 		sb.append(", required=");
@@ -236,6 +240,21 @@ public class ObjectFieldCacheModel
 			objectFieldImpl.setName(name);
 		}
 
+		if (readOnly == null) {
+			objectFieldImpl.setReadOnly("");
+		}
+		else {
+			objectFieldImpl.setReadOnly(readOnly);
+		}
+
+		if (readOnlyConditionExpression == null) {
+			objectFieldImpl.setReadOnlyConditionExpression("");
+		}
+		else {
+			objectFieldImpl.setReadOnlyConditionExpression(
+				readOnlyConditionExpression);
+		}
+
 		if (relationshipType == null) {
 			objectFieldImpl.setRelationshipType("");
 		}
@@ -253,7 +272,9 @@ public class ObjectFieldCacheModel
 	}
 
 	@Override
-	public void readExternal(ObjectInput objectInput) throws IOException {
+	public void readExternal(ObjectInput objectInput)
+		throws ClassNotFoundException, IOException {
+
 		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		externalReferenceCode = objectInput.readUTF();
@@ -283,6 +304,8 @@ public class ObjectFieldCacheModel
 
 		localized = objectInput.readBoolean();
 		name = objectInput.readUTF();
+		readOnly = objectInput.readUTF();
+		readOnlyConditionExpression = (String)objectInput.readObject();
 		relationshipType = objectInput.readUTF();
 
 		required = objectInput.readBoolean();
@@ -385,6 +408,20 @@ public class ObjectFieldCacheModel
 			objectOutput.writeUTF(name);
 		}
 
+		if (readOnly == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(readOnly);
+		}
+
+		if (readOnlyConditionExpression == null) {
+			objectOutput.writeObject("");
+		}
+		else {
+			objectOutput.writeObject(readOnlyConditionExpression);
+		}
+
 		if (relationshipType == null) {
 			objectOutput.writeUTF("");
 		}
@@ -420,6 +457,8 @@ public class ObjectFieldCacheModel
 	public String label;
 	public boolean localized;
 	public String name;
+	public String readOnly;
+	public String readOnlyConditionExpression;
 	public String relationshipType;
 	public boolean required;
 	public boolean state;

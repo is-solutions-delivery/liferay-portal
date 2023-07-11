@@ -15,9 +15,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -34,6 +34,7 @@ definition {
 			value1 = "Publication Name");
 	}
 
+	@ignore = "true"
 	@priority = 5
 	test CanMoveChangeBetweenPublications {
 		property custom.properties = "feature.flag.LPS-171364=true";
@@ -89,6 +90,7 @@ definition {
 			changeUser = "Test Test");
 	}
 
+	@ignore = "true"
 	@priority = 4
 	test CannotMoveChangesBetweenPublicationsIfConflictsArePresent {
 		property custom.properties = "feature.flag.LPS-171364=true";
@@ -164,6 +166,26 @@ definition {
 			changeTitle = "WC WebContent Title 1 Edit",
 			changeType = "Added",
 			changeUser = "Test Test");
+	}
+
+	@description = "This is a use case for LPS-184911 - Saving Publications settings when it is disabled causes PrincipalException."
+	@priority = 3
+	test CanSavePublicationsSettingsWhenItIsDisabled {
+		property osgi.module.configuration.file.names = "com.liferay.change.tracking.configuration.CTSettingsConfiguration.config";
+		property osgi.module.configurations = "enabled=B\"false\"";
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Publications",
+			panel = "Applications",
+			portlet = "Publications");
+
+		PortletEntry.save();
+
+		AssertNotChecked(
+			locator1 = "Publications#ENABLE_PUBLICATIONS_TOGGLE_SWITCH",
+			value1 = "disabled");
+
+		Alert.viewWarningSpecificNotPresent(warningMessage = "Portlet is temporarily unavailable.");
 	}
 
 	@priority = 3

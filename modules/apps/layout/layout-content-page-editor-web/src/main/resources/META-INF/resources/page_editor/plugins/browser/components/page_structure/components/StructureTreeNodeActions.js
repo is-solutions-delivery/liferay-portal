@@ -24,8 +24,10 @@ import {flushSync} from 'react-dom';
 import SaveFragmentCompositionModal from '../../../../../app/components/SaveFragmentCompositionModal';
 import hasDropZoneChild from '../../../../../app/components/layout_data_items/hasDropZoneChild';
 import {FRAGMENT_ENTRY_TYPES} from '../../../../../app/config/constants/fragmentEntryTypes';
+import {ITEM_ACTIVATION_ORIGINS} from '../../../../../app/config/constants/itemActivationOrigins';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../../../app/config/constants/layoutDataItemTypes';
 import {useSelectItem} from '../../../../../app/contexts/ControlsContext';
+import {useSetMovementText} from '../../../../../app/contexts/KeyboardMovementContext';
 import {
 	useDispatch,
 	useSelector,
@@ -87,6 +89,11 @@ export default function StructureTreeNodeActions({
 				}}
 				ref={alignElementRef}
 				size="sm"
+				tabIndex={
+					document.activeElement.dataset.id?.includes(item.id)
+						? '0'
+						: '-1'
+				}
 				title={Liferay.Language.get('options')}
 			>
 				<ClayIcon symbol="ellipsis-v" />
@@ -125,6 +132,7 @@ const ActionList = ({item, setActive, setEditingNodeId, setOpenSaveModal}) => {
 	const dispatch = useDispatch();
 	const hasRequiredChild = useHasRequiredChild(item.id);
 	const selectItem = useSelectItem();
+	const setText = useSetMovementText();
 	const widgets = useSelector((state) => state.widgets);
 
 	const {fragmentEntryLinks, layoutData, selectedViewportSize} = useSelector(
@@ -166,6 +174,16 @@ const ActionList = ({item, setActive, setEditingNodeId, setOpenSaveModal}) => {
 							type: 'warning',
 						});
 					}
+
+					selectItem(item.id, {
+						origin: ITEM_ACTIVATION_ORIGINS.itemActions,
+					});
+
+					setText(
+						isHidden
+							? Liferay.Language.get('item-shown')
+							: Liferay.Language.get('hidden-item')
+					);
 				},
 				icon: isHidden ? 'view' : 'hidden',
 				label: isHidden
@@ -190,13 +208,16 @@ const ActionList = ({item, setActive, setEditingNodeId, setOpenSaveModal}) => {
 
 		if (canBeDuplicated(fragmentEntryLinks, item, layoutData, widgets)) {
 			items.push({
-				action: () =>
+				action: () => {
 					dispatch(
 						duplicateItem({
 							itemId: item.id,
 							selectItem,
 						})
-					),
+					);
+
+					setText(Liferay.Language.get('item-duplicated'));
+				},
 				icon: 'copy',
 				label: Liferay.Language.get('duplicate'),
 			});
@@ -217,13 +238,16 @@ const ActionList = ({item, setActive, setEditingNodeId, setOpenSaveModal}) => {
 
 		if (canBeRemoved(item, layoutData)) {
 			items.push({
-				action: () =>
+				action: () => {
 					dispatch(
 						deleteItem({
 							itemId: item.id,
 							selectItem,
 						})
-					),
+					);
+
+					setText(Liferay.Language.get('item-removed'));
+				},
 				icon: 'trash',
 				label: Liferay.Language.get('delete'),
 			});
@@ -241,6 +265,7 @@ const ActionList = ({item, setActive, setEditingNodeId, setOpenSaveModal}) => {
 		selectItem,
 		widgets,
 		setOpenSaveModal,
+		setText,
 		isHidden,
 		setEditingNodeId,
 	]);

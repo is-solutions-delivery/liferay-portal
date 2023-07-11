@@ -22,10 +22,10 @@ import com.liferay.object.action.executor.ObjectActionExecutor;
 import com.liferay.object.action.executor.ObjectActionExecutorRegistry;
 import com.liferay.object.constants.ObjectActionConstants;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
+import com.liferay.object.dynamic.data.mapping.expression.ObjectEntryDDMExpressionFieldAccessor;
 import com.liferay.object.entry.util.ObjectEntryThreadLocal;
 import com.liferay.object.internal.action.util.ObjectActionThreadLocal;
 import com.liferay.object.internal.action.util.ObjectEntryVariablesUtil;
-import com.liferay.object.internal.dynamic.data.mapping.expression.ObjectEntryDDMExpressionFieldAccessor;
 import com.liferay.object.internal.dynamic.data.mapping.expression.ObjectEntryDDMExpressionParameterAccessor;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
@@ -117,9 +117,12 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 		String name = PrincipalThreadLocal.getName();
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
+		boolean skipReadOnlyObjectFieldsValidation =
+			ObjectEntryThreadLocal.isSkipReadOnlyObjectFieldsValidation();
 
 		try {
 			ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(true);
+			ObjectEntryThreadLocal.setSkipReadOnlyObjectFieldsValidation(true);
 			PrincipalThreadLocal.setName(userId);
 			PermissionThreadLocal.setPermissionChecker(
 				_permissionCheckerFactory.create(user));
@@ -148,7 +151,11 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 		}
 		finally {
 			ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(false);
+			ObjectEntryThreadLocal.setSkipReadOnlyObjectFieldsValidation(
+				skipReadOnlyObjectFieldsValidation);
+
 			PrincipalThreadLocal.setName(name);
+
 			PermissionThreadLocal.setPermissionChecker(permissionChecker);
 		}
 	}

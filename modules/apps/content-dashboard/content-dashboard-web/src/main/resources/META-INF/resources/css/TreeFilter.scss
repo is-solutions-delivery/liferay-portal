@@ -1,0 +1,27 @@
+@import 'cadmin-variables';
+
+.tree-filter {
+	&-clear {
+		cursor: pointer;
+	}
+
+	&-count-feedback {
+		background: $cadmin-primary-l2;
+		min-height: 40px;
+	}
+
+	&-search {
+		.container-fluid {
+			height: 40px;
+		}
+	}
+
+	&-clear-selected {
+		color: $cadmin-gray-900;
+	}
+
+	&-loader {
+		top: 50%;
+		transform: translateY(-50%);
+	}
+}

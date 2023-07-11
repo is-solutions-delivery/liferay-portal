@@ -251,14 +251,13 @@ public class JournalArticleStagedModelDataHandler
 			ExportImportRuntimeException exportImportRuntimeException =
 				new ExportImportRuntimeException(StringPool.BLANK, exception);
 
+			exportImportRuntimeException.setClassName(
+				JournalArticleStagedModelDataHandler.class.getName());
+			exportImportRuntimeException.setData(
+				String.valueOf(article.getArticleId()));
 			exportImportRuntimeException.setMessageKey(
 				"unable-to-find-article-resource-x-while-gathering-reference-" +
 					"attributes");
-			exportImportRuntimeException.setData(
-				String.valueOf(article.getArticleId()));
-
-			exportImportRuntimeException.setClassName(
-				JournalArticleStagedModelDataHandler.class.getName());
 
 			throw exportImportRuntimeException;
 		}
@@ -955,8 +954,9 @@ public class JournalArticleStagedModelDataHandler
 					if (!articleUuid.equals(importedArticleUuid)) {
 						importedArticle.setUuid(articleUuid);
 
-						_journalArticleLocalService.updateJournalArticle(
-							importedArticle);
+						importedArticle =
+							_journalArticleLocalService.updateJournalArticle(
+								importedArticle);
 					}
 				}
 			}
@@ -1568,7 +1568,6 @@ public class JournalArticleStagedModelDataHandler
 					);
 
 					userNotificationEvent.setPayload(jsonObject.toString());
-
 					userNotificationEvent.setTimestamp(
 						System.currentTimeMillis());
 
@@ -1626,7 +1625,6 @@ public class JournalArticleStagedModelDataHandler
 
 					subscriptionSender.setLocalizedSubjectMap(
 						localizedSubjectMap);
-
 					subscriptionSender.setMailId(
 						"journal_article", article.getId());
 					subscriptionSender.setNotificationType(

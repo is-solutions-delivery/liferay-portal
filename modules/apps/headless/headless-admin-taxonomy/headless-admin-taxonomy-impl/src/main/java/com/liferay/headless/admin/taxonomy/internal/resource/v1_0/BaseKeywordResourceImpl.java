@@ -1136,7 +1136,7 @@ public abstract class BaseKeywordResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("assetLibraryId")) {
 				keywordUnsafeConsumer = keyword -> postAssetLibraryKeyword(
 					(Long)parameters.get("assetLibraryId"), keyword);
@@ -1258,7 +1258,7 @@ public abstract class BaseKeywordResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			keywordUnsafeConsumer = keyword -> putKeyword(
 				keyword.getId() != null ? keyword.getId() :
 					_parseLong((String)parameters.get("keywordId")),

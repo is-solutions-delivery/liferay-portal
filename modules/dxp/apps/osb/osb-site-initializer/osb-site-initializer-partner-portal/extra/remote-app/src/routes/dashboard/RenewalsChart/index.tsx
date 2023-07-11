@@ -15,6 +15,7 @@ import ClayLoadingIndicator from '@clayui/loading-indicator';
 import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 
+import './index.css';
 import Container from '../../../common/components/dashboard/components/Container';
 import {status} from '../../../common/components/dashboard/utils/constants/statusColumns';
 import getFilteredRenewals from '../../../common/components/dashboard/utils/getFilteredRenewalsData';
@@ -56,7 +57,7 @@ export default function () {
 		getRenewalsData();
 	}, []);
 
-	const renewalsData = getFilteredRenewals(data);
+	const renewalsData = getFilteredRenewals(data).reverse();
 
 	const getCurrentStatusColor = (item: any) => {
 		if (item?.expirationDays <= 5) {
@@ -135,9 +136,7 @@ export default function () {
 					className="border-brand-primary-darken-1 mt-2 text-brand-primary-darken-1"
 					displayType="secondary"
 					onClick={() =>
-						Liferay.Util.navigate(
-							`${siteURL}/sales/renewal-opportunities`
-						)
+						Liferay.Util.navigate(`${siteURL}/sales/renewals`)
 					}
 					type="button"
 				>

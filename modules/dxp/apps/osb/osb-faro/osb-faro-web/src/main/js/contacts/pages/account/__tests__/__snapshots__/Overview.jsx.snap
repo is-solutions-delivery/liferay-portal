@@ -134,10 +134,11 @@ exports[`AccountOverview should render 1`] = `
             </thead>
           </table>
           <div
-            class="spinner-root spinner-overlay"
+            class="loading-root overlay"
           >
             <span
-              class="loading-animation loading-animation-dotted"
+              aria-hidden="true"
+              class="loading-root center loading-animation"
             />
           </div>
         </div>
@@ -221,7 +222,7 @@ exports[`AccountOverview should render 1`] = `
                   class="autofit-col"
                 >
                   <div
-                    class="sticker sticker-root sticker-static sticker-rounded sticker-light"
+                    class="sticker sticker-root sticker-static sticker-rounded sticker-primary"
                   >
                     <svg
                       class="lexicon-icon lexicon-icon-individual-dynamic-segment icon-root"

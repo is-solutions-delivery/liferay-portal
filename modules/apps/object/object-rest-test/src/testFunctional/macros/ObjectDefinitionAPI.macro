@@ -60,7 +60,7 @@ definition {
 	}
 
 	macro _createObjectDefinition {
-		Variables.assertDefined(parameterList = "${en_US_label},${name},${requiredStringFieldName},${en_US_plural_label}");
+		Variables.assertDefined(parameterList = "${name},${en_US_plural_label}");
 
 		if (isSet(virtualHost)) {
 			if (!(isSet(port))) {
@@ -75,6 +75,14 @@ definition {
 
 		if (!(isSet(scope))) {
 			var scope = "company";
+		}
+
+		if (!(isSet(en_US_label))) {
+			var en_US_label = ${name};
+		}
+
+		if (!(isSet(requiredStringFieldName))) {
+			var requiredStringFieldName = "name";
 		}
 
 		var curl = '''
@@ -631,6 +639,7 @@ definition {
 			en_US_plural_label = ${en_US_plural_label},
 			name = ${name},
 			requiredStringFieldName = ${requiredStringFieldName},
+			scope = ${scope},
 			token = ${token},
 			virtualHost = ${virtualHost});
 
@@ -765,10 +774,14 @@ definition {
 	}
 
 	macro createRelationshipWithObjectDefinitionNames {
-		Variables.assertDefined(parameterList = "${childObjectName},${deletionType},${name},${parentObjectName},${type}");
+		Variables.assertDefined(parameterList = "${childObjectName},${name},${parentObjectName},${type}");
 
 		if (!(isSet(en_US_label))) {
 			var en_US_label = ${name};
+		}
+
+		if (!(isSet(deletionType))) {
+			var deletionType = "cascade";
 		}
 
 		var childObjectId = ObjectDefinitionAPI.getObjectDefinitionIdByName(name = ${childObjectName});
@@ -808,6 +821,25 @@ definition {
 		}
 
 		ObjectDefinitionAPI._deleteRelationship(relationshipId = ${relationshipId});
+	}
+
+	macro enableAccountRestrictedAndShowWidget {
+		Variables.assertDefined(parameterList = "${objectDefinitionId},${accountRestrictedField}");
+
+		ObjectDefinitionAPI.updateObjectDefinitionById(
+			objectDefinitionId = ${objectDefinitionId},
+			parameter = "accountEntryRestrictedObjectFieldName",
+			parameterValue = ${accountRestrictedField});
+
+		ObjectDefinitionAPI.updateObjectDefinitionById(
+			objectDefinitionId = ${objectDefinitionId},
+			parameter = "accountEntryRestricted",
+			parameterValue = "true");
+
+		ObjectDefinitionAPI.updateObjectDefinitionById(
+			objectDefinitionId = ${objectDefinitionId},
+			parameter = "portlet",
+			parameterValue = "true");
 	}
 
 	macro getIdOfObjectDefinitionExportBatch {

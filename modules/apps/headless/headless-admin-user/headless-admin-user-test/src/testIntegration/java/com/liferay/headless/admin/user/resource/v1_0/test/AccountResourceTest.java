@@ -76,7 +76,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			3,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization.getOrganizationId()));
 
 		Long[] accountEntryIds = ListUtil.toArray(
@@ -89,7 +89,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			1,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization.getOrganizationId()));
 
 		AccountEntry accountEntry = accountEntries.get(0);
@@ -121,7 +121,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			3,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization.getOrganizationId()));
 
 		String[] externalReferenceCodes = TransformUtil.transformToArray(
@@ -134,7 +134,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			1,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization.getOrganizationId()));
 
 		AccountEntry accountEntry = accountEntries.get(0);
@@ -188,7 +188,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			3,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization1.getOrganizationId()));
 
 		Organization organization2 = OrganizationTestUtil.addOrganization();
@@ -196,7 +196,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			0,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization2.getOrganizationId()));
 
 		accountResource.patchOrganizationMoveAccounts(
@@ -208,13 +208,13 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			0,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization1.getOrganizationId()));
 
 		Assert.assertEquals(
 			3,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization2.getOrganizationId()));
 	}
 
@@ -238,7 +238,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			3,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization1.getOrganizationId()));
 
 		Organization organization2 = OrganizationTestUtil.addOrganization();
@@ -246,7 +246,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			0,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization2.getOrganizationId()));
 
 		String[] externalReferenceCodes = TransformUtil.transformToArray(
@@ -260,13 +260,13 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			0,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization1.getOrganizationId()));
 
 		Assert.assertEquals(
 			3,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization2.getOrganizationId()));
 	}
 
@@ -311,7 +311,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			0,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization.getOrganizationId()));
 
 		List<AccountEntry> accountEntries = Arrays.asList(
@@ -341,7 +341,7 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 		Assert.assertEquals(
 			0,
 			_accountEntryOrganizationRelLocalService.
-				getAccountEntryOrganizationRelsByOrganizationIdCount(
+				getAccountEntryOrganizationRelsCountByOrganizationId(
 					organization.getOrganizationId()));
 
 		List<AccountEntry> accountEntries = Arrays.asList(
@@ -366,6 +366,11 @@ public class AccountResourceTest extends BaseAccountResourceTestCase {
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {"name", "type"};
+	}
+
+	@Override
+	protected String[] getIgnoredEntityFieldNames() {
+		return new String[] {"type"};
 	}
 
 	@Override

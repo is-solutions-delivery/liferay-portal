@@ -13,9 +13,11 @@ definition {
 
 		HeadlessSite.addSite(siteName = "Site Name");
 
-		JSONLayoututilitypage.deleteLayoutUtilityPage(
-			groupName = "Site Name",
-			layoutUtilityPageName = "404 Error");
+		for (var layoutUtilityPageName : list "404 Error,500 Error") {
+			JSONLayoututilitypage.deleteLayoutUtilityPage(
+				groupName = "Site Name",
+				layoutUtilityPageName = ${layoutUtilityPageName});
+		}
 
 		JSONLayout.addPublicLayout(
 			groupName = "Site Name",
@@ -25,9 +27,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -37,7 +39,7 @@ definition {
 
 	@priority = 5
 	test ActivateStagingForSiteWithTheme {
-		property test.name.skip.portal.instance = "StagingUsecase#ActivateStagingForSiteWithTheme";
+		property test.liferay.virtual.instance = "false";
 
 		task ("When: User install test theme on the portal") {
 			FileInstall.deployFileOnServer(jarFile = "test-theme.war");
@@ -74,7 +76,7 @@ definition {
 	@description = "This is a use case for LPS-98170"
 	@priority = 4
 	test AssertAssetPriorityNotBeResetAfterPublication {
-		property test.name.skip.portal.instance = "StagingUsecase#AssertAssetPriorityNotBeResetAfterPublication";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a page and an AP portlet to the default page") {
 			JSONLayout.addPublicLayout(
@@ -128,6 +130,18 @@ definition {
 				assetPriority = "1.1",
 				webContentContent = "Web Content Content",
 				webContentTitle = "Web Content Title");
+
+			Navigator.gotoStagedSitePage(
+				pageName = "Staging Test Page",
+				siteName = "Site Name");
+
+			AssetPublisherPortlet.configureDynamicAssetSelectionPG(portletName = "Asset Publisher");
+
+			Navigator.gotoStagedSitePage(
+				pageName = "Second Test Page",
+				siteName = "Site Name");
+
+			AssetPublisherPortlet.configureDynamicAssetSelectionPG(portletName = "Asset Publisher");
 
 			Navigator.gotoStagedSitePage(
 				pageName = "Staging Test Page",
@@ -252,7 +266,7 @@ definition {
 	@description = "This is a use case for LPS-128736."
 	@priority = 4
 	test AssertContentNotBePublishedByDefault {
-		property test.name.skip.portal.instance = "StagingUsecase#AssertContentNotBePublishedByDefault";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User verify that the dynamic export function is disabled by default") {
 			APNavigator.openToConfigInSystemSettings(portlet = "Asset Publisher");
@@ -297,7 +311,7 @@ definition {
 	@description = "This is a use case for LPS-71786"
 	@priority = 3
 	test AssertDeletedAssetLinkRemovedFromLiveSite {
-		property test.name.skip.portal.instance = "StagingUsecase#AssertDeletedAssetLinkRemovedFromLiveSite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a Blog portlet to the Staging site and 2 documents") {
 			JSONLayout.addWidgetToPublicLayout(
@@ -635,7 +649,7 @@ definition {
 
 	@priority = 4
 	test EditPublishTemplate {
-		property test.name.skip.portal.instance = "StagingUsecase#EditPublishTemplate";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a new page to the staging site and a widget to it") {
 			JSONLayout.addPublicLayout(
@@ -783,7 +797,7 @@ definition {
 	@priority = 5
 	test ImportLARsOnStagedSite {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "StagingUsecase#ImportLARsOnStagedSite";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Page Administration,Training,Web Content Administration";
 
 		task ("Given: User import home page from LAR file on staging site") {
@@ -893,7 +907,7 @@ definition {
 	@description = "This is a use case for LPS-167777 TC-2: Verify that the modified referred content(DM content) will present in the LAR when 'Include if modified' is enabled for Web Content."
 	@priority = 4
 	test ModifiedReferredContentCanPublishToLiveWhenEnableIncludeIfModifiedOption {
-		property test.name.skip.portal.instance = "StagingUsecase#ModifiedReferredContentCanPublishToLiveWhenEnableIncludeIfModifiedOption";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: Create basic web content with a new image and publish to live") {
 			JSONWebcontent.addWebContent(
@@ -1020,7 +1034,7 @@ definition {
 	@description = "This is a use case for LPS-167777 TC-1: Verify that the non-modified referred content(DM content) will not present in the LAR when 'Include if modified' is enabled for Web Content."
 	@priority = 4
 	test NonModifiedReferredContentCannotPublishToLiveWhenEnableIncludeIfModifiedOption {
-		property test.name.skip.portal.instance = "StagingUsecase#NonModifiedReferredContentCannotPublishToLiveWhenEnableIncludeIfModifiedOption";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: Create basic web content with a new image and publish to live") {
 			JSONWebcontent.addWebContent(
@@ -1216,7 +1230,7 @@ definition {
 
 	@priority = 5
 	test PublishThemeFromStagedToLive {
-		property test.name.skip.portal.instance = "StagingUsecase#PublishThemeFromStagedToLive";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User deploy test theme on the portal and enables local staging") {
 			FileInstall.deployFileOnServer(jarFile = "test-theme.war");
@@ -1295,7 +1309,7 @@ definition {
 
 	@priority = 3
 	test PublishWebContentFriendlyURLEncoding {
-		property test.name.skip.portal.instance = "StagingUsecase#PublishWebContentFriendlyURLEncoding";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add 2 WC with friendly URL") {
 			WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name-staging");
@@ -1337,7 +1351,7 @@ definition {
 	@description = "This is a use case for LPS-149374. TC-3: Verify the state of portlets and contents in Live when publishing with Publish Displayed Content by Default and Replicate Individual Deletions."
 	@priority = 5
 	test PublishWithDefaultTrueAndReplicateIndividualDeletions {
-		property test.name.skip.portal.instance = "StagingUsecase#PublishWithDefaultTrueAndReplicateIndividualDeletions";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: Enable the publish displayed content by default function") {
 			SystemSettings.openSystemSettingsAdmin();
@@ -1988,7 +2002,7 @@ definition {
 	@description = "This is a use case for LPS-91017, LPS-89646."
 	@priority = 4
 	test StagingPublishWCWithWebContentFieldViaAP {
-		property test.name.skip.portal.instance = "StagingUsecase#StagingPublishWCWithWebContentFieldViaAP";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a new AP widget and a WC to the staging site") {
 			JSONLayout.addWidgetToPublicLayout(
@@ -2206,11 +2220,11 @@ definition {
 		}
 	}
 
-	@description = "This is a use case for LPS-123156"
+	@description = "This is a use case for LPS-123156 and LPS-185203 TC-1: The summary of the failed publishing processes can be viewed."
 	@priority = 5
 	test TrashEntryReferencePublishing {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "StagingUsecase#TrashEntryReferencePublishing";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Training";
 
 		task ("Given: User add a new file to the staging site") {
@@ -2290,10 +2304,31 @@ definition {
 				uncheckSubContent = "Referenced Content");
 		}
 
-		task ("Then: The publish process will fail due to validation error") {
+		task ("Then: The publish process will fail due to validation error and its summary can be viewed.") {
 			Staging.publishToLive(
 				failureExpected = "true",
+				publicationName = "Publication Name",
 				validateErrorMessage = "The publish process did not start due to validation errors.");
+
+			Navigator.openStagingSiteURL(siteName = "Site Name");
+
+			ProductMenu.gotoPortlet(
+				category = "Publishing",
+				portlet = "Staging");
+
+			LexiconEntry.gotoEntryMenuItem(
+				menuItem = "Summary",
+				rowEntry = "Publication Name");
+
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			WaitForElementPresent(
+				key_text = "Pages",
+				locator1 = "Sidebar#SUBTITLE");
+
+			AssertElementPresent(
+				key_text = "Content",
+				locator1 = "Sidebar#SUBTITLE");
 		}
 
 		task ("And: publish only Document and Media from staging") {
@@ -2536,7 +2571,7 @@ definition {
 	@description = "This is a use case for LPS-178085. TC-1: Verify that a confirmation pop-up shows up after checking Delete Application Data Before Importing checkbox when publishing staging site."
 	@priority = 5
 	test ViewDeletingApplicationDataPopUpInPublishProgress {
-		property name.skip.portal.instance = "StagingUsecase#ViewDeletingApplicationDataPopUpInPublishProgress";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: Go to Advanced Publication Process screen") {
 			Navigator.gotoStagedSitePage(
@@ -2570,7 +2605,7 @@ definition {
 	@description = "This is a use case for LPS-178085. TC-4: Verify that a confirmation pop-up shows up after checking Delete Application Data Before Importing checkbox when set schedule for publish progress."
 	@priority = 5
 	test ViewDeletingApplicationDataPopUpWhenSetPublishSchedule {
-		property name.skip.portal.instance = "StagingUsecase#ViewDeletingApplicationDataPopUpWhenSetPublishSchedule";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: Go to Advanced Publication Process screen") {
 			Navigator.gotoStagedSitePage(
@@ -2605,7 +2640,7 @@ definition {
 
 	@priority = 4
 	test ViewPublishDMWithModifiedTitle {
-		property test.name.skip.portal.instance = "StagingUsecase#ViewPublishDMWithModifiedTitle";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a new AP widget to the staging site") {
 			JSONLayout.addWidgetToPublicLayout(
@@ -2662,7 +2697,7 @@ definition {
 	@description = "This is a use case for LPS-96721."
 	@priority = 4
 	test ViewPublishedContentWithSpecialCharsInDocumentTitle {
-		property test.name.skip.portal.instance = "StagingUsecase#ViewPublishedContentWithSpecialCharsInDocumentTitle";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a new file") {
 			JSONDocument.addFileWithUploadedFile(
@@ -2781,7 +2816,7 @@ definition {
 	@description = "This is a use case for LPS-87280."
 	@priority = 4
 	test ViewPublishedWCWithApostropheInImageField {
-		property name.skip.portal.instance = "StagingUsecase#ViewPublishedWCWithApostropheInImageField";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a new structure with an extra mandatory field on the staging site") {
 			WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name-staging");
@@ -2872,7 +2907,7 @@ definition {
 	@description = "This is a use case for LPS-96664."
 	@priority = 3
 	test ViewPublishTemplateDateRange {
-		property name.skip.portal.instance = "StagingUsecase#ViewPublishTemplateDateRange";
+		property test.liferay.virtual.instance = "false";
 
 		task ("When: User add a new publish template with a content date range") {
 			Staging.openStagingAdmin(siteURLKey = "site-name-staging");
@@ -2912,7 +2947,7 @@ definition {
 	@description = "This is a use case for LPS-76633."
 	@priority = 5
 	test ViewSingleAssetPublication {
-		property test.name.skip.portal.instance = "Staging#ViewSingleAssetPublication";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User add a new WC to the staging site") {
 			JSONWebcontent.addWebContent(

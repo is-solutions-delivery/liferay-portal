@@ -14,6 +14,7 @@
 
 package com.liferay.segments.internal.messaging;
 
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -29,11 +30,13 @@ import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.segments.internal.constants.SegmentsDestinationNames;
 import com.liferay.segments.model.SegmentsEntry;
+import com.liferay.segments.model.SegmentsEntryRelTable;
 import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsEntryRelLocalService;
@@ -70,16 +73,14 @@ public class SegmentsEntryReindexMessageListener extends BaseMessageListener {
 			return;
 		}
 
-		long companyId = message.getLong("companyId");
-
 		try {
-			Set<Long> classPKs = SetUtil.symmetricDifference(
-				_getOldClassPKs(companyId, segmentsEntryId, indexer),
-				_getNewClassPKs(segmentsEntryId));
+			Set<Long> newClassPKs = _getNewClassPKs(segmentsEntryId);
 
-			for (long classPK : classPKs) {
-				indexer.reindex(type, classPK);
-			}
+			_updateDatabase(segmentsEntryId, newClassPKs);
+
+			_updateIndex(
+				message.getLong("companyId"), segmentsEntryId, type,
+				newClassPKs, indexer);
 		}
 		catch (PortalException portalException) {
 			if (_log.isWarnEnabled()) {
@@ -95,30 +96,24 @@ public class SegmentsEntryReindexMessageListener extends BaseMessageListener {
 			_segmentsEntryProviderRegistry.getSegmentsEntryClassPKs(
 				segmentsEntryId, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-		SegmentsEntry segmentsEntry =
-			_segmentsEntryLocalService.fetchSegmentsEntry(segmentsEntryId);
-
-		if ((segmentsEntry != null) &&
-			(segmentsEntry.getCriteriaObj() != null)) {
-
-			_segmentsEntryRelLocalService.deleteSegmentsEntryRels(
-				segmentsEntryId);
-
-			ServiceContext serviceContext = new ServiceContext();
-
-			serviceContext.setScopeGroupId(segmentsEntry.getGroupId());
-			serviceContext.setUserId(segmentsEntry.getUserId());
-
-			_segmentsEntryRelLocalService.addSegmentsEntryRels(
-				segmentsEntryId,
-				_portal.getClassNameId(segmentsEntry.getType()), classPKs,
-				serviceContext);
-		}
-
 		return SetUtil.fromArray(classPKs);
 	}
 
-	private Set<Long> _getOldClassPKs(
+	private Set<Long> _getOldDatabaseClassPKs(long segmentsEntryId) {
+		Iterable<Long> iterable = _segmentsEntryLocalService.dslQuery(
+			DSLQueryFactoryUtil.select(
+				SegmentsEntryRelTable.INSTANCE.classPK
+			).from(
+				SegmentsEntryRelTable.INSTANCE
+			).where(
+				SegmentsEntryRelTable.INSTANCE.segmentsEntryId.eq(
+					segmentsEntryId)
+			));
+
+		return SetUtil.fromIterator(iterable.iterator());
+	}
+
+	private Set<Long> _getOldIndexClassPKs(
 			long companyId, long segmentsEntryId, Indexer<Object> indexer)
 		throws SearchException {
 
@@ -138,6 +133,59 @@ public class SegmentsEntryReindexMessageListener extends BaseMessageListener {
 		}
 
 		return classPKsSet;
+	}
+
+	private void _updateDatabase(long segmentsEntryId, Set<Long> newClassPKs)
+		throws PortalException {
+
+		SegmentsEntry segmentsEntry =
+			_segmentsEntryLocalService.fetchSegmentsEntry(segmentsEntryId);
+
+		if ((segmentsEntry == null) ||
+			(segmentsEntry.getCriteriaObj() == null)) {
+
+			return;
+		}
+
+		Set<Long> oldClassPKs = _getOldDatabaseClassPKs(segmentsEntryId);
+
+		Set<Long> addClassPKs = new HashSet<>(newClassPKs);
+		Set<Long> deleteClassPKs = new HashSet<>();
+
+		for (Long oldClassPK : oldClassPKs) {
+			if (!addClassPKs.remove(oldClassPK)) {
+				deleteClassPKs.add(oldClassPK);
+			}
+		}
+
+		long classNameId = _portal.getClassNameId(segmentsEntry.getType());
+
+		_segmentsEntryRelLocalService.deleteSegmentsEntryRels(
+			segmentsEntryId, classNameId,
+			ArrayUtil.toLongArray(deleteClassPKs));
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setScopeGroupId(segmentsEntry.getGroupId());
+		serviceContext.setUserId(segmentsEntry.getUserId());
+
+		_segmentsEntryRelLocalService.addSegmentsEntryRels(
+			segmentsEntryId, classNameId, ArrayUtil.toLongArray(addClassPKs),
+			serviceContext);
+	}
+
+	private void _updateIndex(
+			long companyId, long segmentsEntryId, String type,
+			Set<Long> newClassPKs, Indexer<Object> indexer)
+		throws PortalException {
+
+		Set<Long> classPKs = SetUtil.symmetricDifference(
+			_getOldIndexClassPKs(companyId, segmentsEntryId, indexer),
+			newClassPKs);
+
+		for (long classPK : classPKs) {
+			indexer.reindex(type, classPK);
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -58,6 +58,7 @@ const isValidTarget = (sources, parent) =>
 const MillerColumnsColumn = ({
 	columnItems = [],
 	columnsContainer,
+	isLayoutSetPrototype,
 	isPrivateLayoutsEnabled,
 	items,
 	namespace,
@@ -111,6 +112,7 @@ const MillerColumnsColumn = ({
 		>
 			{columnItems.map((item, index) => (
 				<MillerColumnsItem
+					isLayoutSetPrototype={isLayoutSetPrototype}
 					isPrivateLayoutsEnabled={isPrivateLayoutsEnabled}
 					item={{...item, itemIndex: index}}
 					items={items}

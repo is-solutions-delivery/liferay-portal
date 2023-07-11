@@ -21,4 +21,24 @@ import com.liferay.item.selector.BaseItemSelectorCriterion;
  */
 public class OrganizationItemSelectorCriterion
 	extends BaseItemSelectorCriterion {
+
+	public long[] getSelectedOrganizationIds() {
+		return _selectedOrganizationIds;
+	}
+
+	public boolean isMultiSelection() {
+		return _multiSelection;
+	}
+
+	public void setMultiSelection(boolean multiSelection) {
+		_multiSelection = multiSelection;
+	}
+
+	public void setSelectedOrganizationIds(long[] selectedOrganizationIds) {
+		_selectedOrganizationIds = selectedOrganizationIds;
+	}
+
+	private boolean _multiSelection;
+	private long[] _selectedOrganizationIds;
+
 }

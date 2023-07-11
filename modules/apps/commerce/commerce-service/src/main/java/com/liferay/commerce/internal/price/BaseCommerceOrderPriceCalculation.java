@@ -419,10 +419,26 @@ public abstract class BaseCommerceOrderPriceCalculation
 				commerceOrderItem.getFinalPriceWithTaxAmountMoney();
 		}
 
-		BigDecimal unitPrice = unitPriceCommerceMoney.getPrice();
-		BigDecimal promoPrice = promoPriceCommerceMoney.getPrice();
-		BigDecimal finalPrice = finalPriceCommerceMoney.getPrice();
-		BigDecimal discountAmount = discountAmountCommerceMoney.getPrice();
+		BigDecimal unitPrice = BigDecimal.ZERO;
+		BigDecimal promoPrice = BigDecimal.ZERO;
+		BigDecimal finalPrice = BigDecimal.ZERO;
+		BigDecimal discountAmount = BigDecimal.ZERO;
+
+		if (!unitPriceCommerceMoney.isEmpty()) {
+			unitPrice = unitPriceCommerceMoney.getPrice();
+		}
+
+		if (!promoPriceCommerceMoney.isEmpty()) {
+			promoPrice = promoPriceCommerceMoney.getPrice();
+		}
+
+		if (!finalPriceCommerceMoney.isEmpty()) {
+			finalPrice = finalPriceCommerceMoney.getPrice();
+		}
+
+		if (!discountAmountCommerceMoney.isEmpty()) {
+			discountAmount = discountAmountCommerceMoney.getPrice();
+		}
 
 		List<CommerceOrderItem> childCommerceOrderItems =
 			commerceOrderItem.getChildCommerceOrderItems();
@@ -485,6 +501,9 @@ public abstract class BaseCommerceOrderPriceCalculation
 		CommerceOrderItemPrice commerceOrderItemPrice =
 			new CommerceOrderItemPrice(
 				commerceMoneyFactory.create(commerceCurrency, unitPrice));
+
+		commerceOrderItemPrice.setPriceOnApplication(
+			commerceOrderItem.isPriceOnApplication());
 
 		_updatePromoPrice(commerceCurrency, commerceOrderItemPrice, promoPrice);
 
@@ -599,7 +618,7 @@ public abstract class BaseCommerceOrderPriceCalculation
 			commerceOrderItemPrice.getUnitPrice();
 
 		if (!_greaterThanZero(promoPrice) ||
-			CommerceBigDecimalUtil.gt(
+			CommerceBigDecimalUtil.gte(
 				promoPrice, unitPriceCommerceMoney.getPrice())) {
 
 			return;

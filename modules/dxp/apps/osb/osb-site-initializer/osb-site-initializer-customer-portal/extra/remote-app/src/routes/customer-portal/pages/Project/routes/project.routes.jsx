@@ -12,6 +12,7 @@
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useEffect} from 'react';
 import {HashRouter, Route, Routes} from 'react-router-dom';
+import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
 import getKebabCase from '../../../../../common/utils/getKebabCase';
 import DeactivateKeysTable from '../../../containers/DeactivateKeysTable';
 import GenerateNewKey from '../../../containers/GenerateNewKey';
@@ -34,6 +35,7 @@ import ProductOutlet from './Outlets/ProductOutlet';
 
 const ProjectRoutes = () => {
 	const [{project, subscriptionGroups}, dispatch] = useCustomerPortal();
+	const {featureFlags} = useAppPropertiesContext();
 
 	useEffect(() => {
 		if (project && subscriptionGroups) {
@@ -56,7 +58,7 @@ const ProjectRoutes = () => {
 				<Route element={<Layout />} path="/:accountKey">
 					<Route element={<Overview />} index />
 
-					{Liferay.FeatureFlags['LPS-153478'] && (
+					{featureFlags.includes('LPS-153478') && (
 						<Route
 							element={
 								<ProductOutlet
@@ -103,6 +105,18 @@ const ProjectRoutes = () => {
 								}
 								path="new"
 							/>
+
+							{featureFlags.includes('LPS-186175') && (
+								<Route
+									element={
+										<DeactivateKeysTable
+											initialFilter="startswith(productName,'Portal')"
+											productName={PRODUCT_TYPES.portal}
+										/>
+									}
+									path="deactivate"
+								/>
+							)}
 						</Route>
 
 						<Route

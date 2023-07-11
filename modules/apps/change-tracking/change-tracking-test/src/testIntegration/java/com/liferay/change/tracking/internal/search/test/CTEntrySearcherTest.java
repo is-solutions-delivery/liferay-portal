@@ -29,6 +29,7 @@ import com.liferay.journal.test.util.JournalFolderFixture;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -41,16 +42,17 @@ import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.model.uid.UIDFactory;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.search.sort.Sort;
-import com.liferay.portal.search.sort.SortFieldBuilder;
 import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.search.test.util.DocumentsAssert;
@@ -271,12 +273,18 @@ public class CTEntrySearcherTest {
 
 		_assertHits(
 			_getUIDs(_getCTEntries(journalFolder1, journalFolder2)),
-			_getSort(Field.TITLE, SortOrder.ASC),
+			_getSort(
+				Field.getSortableFieldName(
+					Field.getLocalizedName(LocaleUtil.US, Field.TITLE)),
+				SortOrder.ASC),
 			_byAttribute(
 				"modelClassNameId", new long[] {_journalFolderClassNameId}));
 		_assertHits(
 			_getUIDs(_getCTEntries(journalFolder2, journalFolder1)),
-			_getSort(Field.TITLE, SortOrder.DESC),
+			_getSort(
+				Field.getSortableFieldName(
+					Field.getLocalizedName(LocaleUtil.US, Field.TITLE)),
+				SortOrder.DESC),
 			_byAttribute(
 				"modelClassNameId", new long[] {_journalFolderClassNameId}));
 	}
@@ -309,7 +317,10 @@ public class CTEntrySearcherTest {
 
 		_assertHits(
 			_getUIDs(journalArticleCTEntry, journalFolderCTEntry),
-			_getSort("typeName", SortOrder.ASC),
+			_getSort(
+				Field.getSortableFieldName(
+					Field.getLocalizedName(LocaleUtil.US, "typeName")),
+				SortOrder.ASC),
 			_byAttribute(
 				"modelClassNameId",
 				new long[] {
@@ -317,7 +328,10 @@ public class CTEntrySearcherTest {
 				}));
 		_assertHits(
 			_getUIDs(journalFolderCTEntry, journalArticleCTEntry),
-			_getSort("typeName", SortOrder.DESC),
+			_getSort(
+				Field.getSortableFieldName(
+					Field.getLocalizedName(LocaleUtil.US, "typeName")),
+				SortOrder.DESC),
 			_byAttribute(
 				"modelClassNameId",
 				new long[] {
@@ -328,31 +342,38 @@ public class CTEntrySearcherTest {
 	@Test
 	public void testSortByUserName() throws Exception {
 		JournalFolder journalFolder1 = null;
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					_ctCollection.getCtCollectionId())) {
-
-			journalFolder1 = _journalFolderFixture.addFolder(
-				_group.getGroupId(), RandomTestUtil.randomString());
-		}
-
-		User user = UserTestUtil.addUser(
-			"ZZ", LocaleUtil.getDefault(), "ZZ", "ZZ", null);
-
 		JournalFolder journalFolder2 = null;
-
 		String originalName = PrincipalThreadLocal.getName();
+		User user1 = UserTestUtil.addUser(
+			"AA", LocaleUtil.getDefault(), "AA", "AA", null);
+		User user2 = UserTestUtil.addUser(
+			"BB", LocaleUtil.getDefault(), "BB", "BB", null);
 
 		try {
-			PrincipalThreadLocal.setName(user.getUserId());
+			PrincipalThreadLocal.setName(user1.getUserId());
+
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+						_ctCollection.getCtCollectionId())) {
+
+				journalFolder1 = _journalFolderFixture.addFolder(
+					JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+					RandomTestUtil.randomString(),
+					ServiceContextTestUtil.getServiceContext(
+						_group.getGroupId(), user1.getUserId()));
+			}
+
+			PrincipalThreadLocal.setName(user2.getUserId());
 
 			try (SafeCloseable safeCloseable =
 					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
 						_ctCollection.getCtCollectionId())) {
 
 				journalFolder2 = _journalFolderFixture.addFolder(
-					_group.getGroupId(), RandomTestUtil.randomString());
+					JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+					RandomTestUtil.randomString(),
+					ServiceContextTestUtil.getServiceContext(
+						_group.getGroupId(), user2.getUserId()));
 			}
 		}
 		finally {
@@ -408,9 +429,11 @@ public class CTEntrySearcherTest {
 		SearchResponse searchResponse = _searcher.search(
 			searchRequestBuilder.build());
 
-		DocumentsAssert.assertValuesIgnoreRelevance(
+		DocumentsAssert.assertValues(
 			searchResponse.getResponseString(), searchResponse.getDocuments(),
-			Field.UID, expectedValues);
+			Field.UID,
+			StringBundler.concat(
+				"[", StringUtil.merge(expectedValues, ", "), "]"));
 	}
 
 	private Consumer<SearchRequestBuilder> _byAttribute(
@@ -434,10 +457,8 @@ public class CTEntrySearcherTest {
 			CTEntry.class);
 	}
 
-	private Sort _getSort(String orderByCol, SortOrder sortOrder) {
-		return _sorts.field(
-			_sortFieldBuilder.getSortField(CTEntry.class, orderByCol),
-			sortOrder);
+	private Sort _getSort(String field, SortOrder sortOrder) {
+		return _sorts.field(field, sortOrder);
 	}
 
 	private List<String> _getUIDs(BaseModel<?>... baseModels) {
@@ -476,9 +497,6 @@ public class CTEntrySearcherTest {
 
 	@Inject
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
-
-	@Inject
-	private SortFieldBuilder _sortFieldBuilder;
 
 	@Inject
 	private Sorts _sorts;

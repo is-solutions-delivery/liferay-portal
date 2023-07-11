@@ -32,11 +32,14 @@ import getItemPath from './getItemPath';
 const DragDropContext = React.createContext({});
 
 export function DragDropProvider({children}) {
+	const [nestingLevel, setNestingLevel] = useState(0);
 	const [order, setOrder] = useState(null);
 	const [targetItemId, setTargetItemId] = useState(null);
 
 	const dragDropValues = {
+		nestingLevel,
 		order,
+		setNestingLevel,
 		setOrder,
 		setTargetItemId,
 		targetItemId,
@@ -106,12 +109,17 @@ export function useDropTarget(item) {
 	const {siteNavigationMenuItemId} = item;
 
 	const cardWidthRef = useRef();
-	const [nestingLevel, setNestingLevel] = useState(0);
 	const nextItemNestingRef = useRef(null);
 	const items = useItems();
 	const itemPath = getItemPath(siteNavigationMenuItemId, items);
 	const {languageId} = useConstants();
-	const {setTargetItemId, targetItemId} = useContext(DragDropContext);
+	const {
+		nestingLevel,
+		setNestingLevel,
+		setTargetItemId,
+		targetItemId,
+	} = useContext(DragDropContext);
+	const previousItemPathRef = useRef(null);
 	const targetRef = useRef();
 	const targetRectRef = useRef(null);
 
@@ -134,23 +142,19 @@ export function useDropTarget(item) {
 				};
 			}
 
-			const lastNestingLevel = nestingLevel;
+			const targetItemPath = getItemPath(targetItemId, items);
 
-			cardWidthRef.current = null;
-			nextItemNestingRef.current = null;
-			targetRectRef.current = null;
-
-			if (itemPath.length < lastNestingLevel) {
+			if (targetItemPath.length < nestingLevel) {
 				return {
 					order: 0,
-					parentId: itemPath[itemPath.length - 1],
+					parentId: targetItemId,
 				};
 			}
 
-			const childPath = itemPath.slice(0, nestingLevel);
+			const childPath = targetItemPath.slice(0, nestingLevel);
 
 			const childId = childPath[childPath.length - 1];
-			const parentId = itemPath[childPath.length - 2] || '0';
+			const parentId = targetItemPath[childPath.length - 2] || '0';
 
 			const children = items.filter(
 				(item) => item.parentSiteNavigationMenuItemId === parentId
@@ -167,7 +171,7 @@ export function useDropTarget(item) {
 		},
 		hover(source, monitor) {
 			if (monitor.canDrop(source, monitor)) {
-				if (!targetRef.current || itemPath.includes(source.id)) {
+				if (!targetRef.current) {
 					setTargetItemId(null);
 
 					return;
@@ -211,7 +215,6 @@ export function useDropTarget(item) {
 					})();
 
 				const itemPosition = monitor.getSourceClientOffset();
-				const nextItemNesting = nextItemNestingRef.current;
 				const targetRect = targetRectRef.current;
 
 				if (
@@ -222,8 +225,6 @@ export function useDropTarget(item) {
 
 					return;
 				}
-
-				setTargetItemId(siteNavigationMenuItemId);
 
 				let nesting = 1;
 
@@ -242,12 +243,61 @@ export function useDropTarget(item) {
 						) + 1;
 				}
 
-				setNestingLevel(
-					Math.max(
-						nextItemNesting,
-						Math.min(itemPath.length + 1, nesting)
-					)
-				);
+				if (source.id === siteNavigationMenuItemId) {
+					previousItemPathRef.current =
+						previousItemPathRef.current ||
+						(() => {
+							const flatItems = getFlatItems(items);
+
+							const itemIndex = flatItems.findIndex(
+								(otherItem) =>
+									otherItem.siteNavigationMenuItemId ===
+									siteNavigationMenuItemId
+							);
+
+							const previousItemId =
+								flatItems[itemIndex - 1]
+									?.siteNavigationMenuItemId || null;
+
+							if (previousItemId) {
+								return getItemPath(previousItemId, items);
+							}
+
+							return null;
+						})();
+
+					if (previousItemPathRef.current) {
+						setNestingLevel(
+							Math.max(
+								nextItemNestingRef.current,
+								Math.min(
+									previousItemPathRef.current.length + 1,
+									nesting
+								)
+							)
+						);
+
+						setTargetItemId(
+							previousItemPathRef.current[
+								previousItemPathRef.current.length - 1
+							]
+						);
+					}
+				}
+				else if (itemPath.includes(source.id)) {
+					setNestingLevel(0);
+					setTargetItemId(null);
+				}
+				else {
+					setNestingLevel(
+						Math.max(
+							nextItemNestingRef.current,
+							Math.min(itemPath.length + 1, nesting)
+						)
+					);
+
+					setTargetItemId(siteNavigationMenuItemId);
+				}
 			}
 		},
 	});
@@ -259,6 +309,13 @@ export function useDropTarget(item) {
 		},
 		[dndTargetRef]
 	);
+
+	useEffect(() => {
+		cardWidthRef.current = null;
+		nextItemNestingRef.current = null;
+		previousItemPathRef.current = null;
+		targetRectRef.current = null;
+	}, [targetItemId]);
 
 	return {
 		isOver: targetItemId === siteNavigationMenuItemId,

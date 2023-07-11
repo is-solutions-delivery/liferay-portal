@@ -27,7 +27,7 @@ import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelLocalService;
 import com.liferay.commerce.product.service.CPInstanceService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
-import com.liferay.commerce.product.util.JsonHelper;
+import com.liferay.commerce.product.util.CPJSONUtil;
 import com.liferay.frontend.data.set.provider.FDSDataProvider;
 import com.liferay.frontend.data.set.provider.search.FDSKeywords;
 import com.liferay.frontend.data.set.provider.search.FDSPagination;
@@ -99,7 +99,7 @@ public class CommerceProductInstanceFDSDataProvider
 
 			String cpDefinitionName = cpDefinition.getName(languageId);
 
-			JSONArray jsonArray = _jsonHelper.toJSONArray(
+			JSONArray jsonArray = CPJSONUtil.toJSONArray(
 				cpDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys);
 
 			int stockQuantity = _commerceInventoryEngine.getStockQuantity(
@@ -247,9 +247,6 @@ public class CommerceProductInstanceFDSDataProvider
 
 	@Reference
 	private CPInstanceService _cpInstanceService;
-
-	@Reference
-	private JsonHelper _jsonHelper;
 
 	@Reference
 	private Language _language;

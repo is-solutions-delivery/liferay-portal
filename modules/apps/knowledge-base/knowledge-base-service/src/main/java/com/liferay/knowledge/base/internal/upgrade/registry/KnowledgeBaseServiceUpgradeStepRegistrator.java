@@ -62,7 +62,7 @@ public class KnowledgeBaseServiceUpgradeStepRegistrator
 			new com.liferay.knowledge.base.internal.upgrade.v1_1_0.
 				ExpandoTableUpgradeProcess(),
 			new com.liferay.knowledge.base.internal.upgrade.v1_1_0.
-				KBArticleUpgradeProcess(),
+				KBArticleUpgradeProcess(_store),
 			new com.liferay.knowledge.base.internal.upgrade.v1_1_0.
 				KBCommentUpgradeProcess(),
 			new com.liferay.knowledge.base.internal.upgrade.v1_1_0.

@@ -602,6 +602,14 @@
 			<category name="Styling" />
 			<description name="Applies rules to enforce consistency in code style." />
 		</check>
+		<check name="JavaUpgradeModelPermissionsCheck">
+			<category name="Upgrade" />
+			<description name="Replace setGroupPermissions and setGuestPermissions by new implementation" />
+		</check>
+		<check name="JavaUpgradeServiceTrackerListCheck">
+			<category name="Upgrade" />
+			<description name="Replace the number of generic type arguments in ServiceTrackerList" />
+		</check>
 		<check name="MethodCallsOrderCheck">
 			<category name="Styling" />
 			<description name="Sorts method calls for certain object (for example, `put` calls in `java.util.HashMap`)." />
@@ -660,6 +668,7 @@
 			<description name="Performs several checks on classes with `@Component` annotation." />
 			<property name="checkConfigurationPidAttribute" value="true" />
 			<property name="checkConfigurationPolicyAttribute" value="false" />
+			<property name="checkHasMultipleConfigurationPids" value="false" />
 			<property name="checkHasMultipleServiceTypes" value="false" />
 			<property name="checkMismatchedServiceAttribute" value="false" />
 			<property name="checkSelfRegistration" value="false" />
@@ -883,6 +892,11 @@
 
 		<!-- Module Source Checks -->
 
+		<check name="JavaLocalServiceImplErcUsageCheck">
+			<category name="Productivity" />
+			<description name="Automatically generates and ensures that `externalReferenceCode` is properly used in local `*ServiceImpl` add method." />
+			<property name="enabled" value="false" />
+		</check>
 		<check name="JavaModuleClassGetResourceCallCheck">
 			<category name="Bug Prevention" />
 			<description name="Checks that dependencies files are located in the correct directory." />
@@ -925,6 +939,11 @@
 		<check name="JavaOSGiReferenceCheck">
 			<category name="Bug Prevention" />
 			<description name="Performs several checks on classes with `@Component` annotation." />
+		</check>
+		<check name="JavaServiceImplErcUsageCheck">
+			<category name="Productivity" />
+			<description name="Automatically generates and ensures that `externalReferenceCode` is properly used in remote `*ServiceImpl` add method." />
+			<property name="enabled" value="false" />
 		</check>
 
 		<!-- Plugin Source Checks -->
@@ -1374,6 +1393,11 @@
 			<category name="Bug Prevention" />
 			<description name="Checks that there is no HTML markup in language keys." />
 		</check>
+		<check name="PropertiesLanguageKeysContextCheck">
+			<category name="Bug Prevention" />
+			<description name="Checks if the language keys include a word of context to indicate specific meaning." />
+			<property name="enabled" value="false" />
+		</check>
 		<check name="PropertiesLanguageKeysOrderCheck">
 			<category name="Styling" />
 			<description name="Sort language keys in `Language.properties` file." />
@@ -1561,6 +1585,14 @@
 			<description name="Checks if the property value `-includeresource` or `Include-Resource` exists and removes it" />
 			<weight>1</weight>
 		</check>
+		<check name="UpgradeGetImagePreviewURLMethodCheck">
+			<category name="Upgrade" />
+			<description name="Replaces the references of the method 'DLUtil.getImagePreviewURL' with the method 'getImagePreviewURL' of 'DLURLHelper' class" />
+		</check>
+		<check name="UpgradeGetPortletGroupIdMethodCheck">
+			<category name="Upgrade" />
+			<description name="Run code migration of the method 'getPortletGroupId' to 'getScopeGroupId'" />
+		</check>
 		<check name="UpgradeGradleIncludeResourceCheck">
 			<category name="Upgrade" />
 			<description name="Replaces with `compileInclude` the configuration attribute for dependencies in `build.gradle` that are listed at `Include-Resource` property at `bnd.bnd` associated file." />
@@ -1570,9 +1602,40 @@
 			<category name="Upgrade" />
 			<description name="Fill the new parameter of the method `addFolder` of `JournalFolderService`, `JournalFolderLocalService`, and `JournalFolderLocalServiceUtil` classes" />
 		</check>
+		<check name="UpgradeJavaAssetEntryAssetCategoriesCheck">
+			<category name="Upgrade" />
+			<description name="Replaces methods referring to class `AssetEntryAssetCategory` in class `AssetCategoryLocalService` with equivalent methods in class `AssetEntryAssetCategoryRelLocalService`." />
+		</check>
 		<check name="UpgradeJavaCheck">
 			<category name="Upgrade" />
 			<description name="Performs upgrade checks for `java` files" />
+			<weight>2</weight>
+		</check>
+		<check name="UpgradeJavaExtractTextMethodCheck">
+			<category name="Upgrade" />
+			<description name="Replaces the references of the method `HtmlUtil.extractText(` with the method `extractText(` of `HtmlParser` class" />
+		</check>
+		<check name="UpgradeJavaFDSActionProviderCheck">
+			<category name="Upgrade" />
+			<description name="Reorder parameters in the getDropdownItems method of the FDSDataProvider interface" />
+			<weight>1</weight>
+		</check>
+		<check name="UpgradeJavaFDSDataProviderCheck">
+			<category name="Upgrade" />
+			<description name="Reorder parameters in the getItems and getItemsCount methods of the FDSDataProvider interface" />
+			<weight>1</weight>
+		</check>
+		<check name="UpgradeJavaMultiVMPoolUtilCheck">
+			<category name="Upgrade" />
+			<description name="Replaces the references of the MultiVMPoolUtil class and also its methods usages." />
+		</check>
+		<check name="UpgradeJavaServiceReferenceAnnotationCheck">
+			<category name="Upgrade" />
+			<description name="Run code migration to replace '@ServiceReference' by '@Reference'" />
+		</check>
+		<check name="UpgradeSetResultsSetTotalMethodCheck">
+			<category name="Upgrade" />
+			<description name="Run code migration of method searchContainer.setResults to the searchContainer.setResultsAndTotal and delete searchContainer.setTotal" />
 		</check>
 		<check name="UpgradeVelocityCommentMigrationCheck">
 			<category name="Upgrade" />

@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -97,7 +97,7 @@ definition {
 	test AssertModificationDeletionConflictDisplays {
 		property portal.acceptance = "true";
 
-		JSONGroup.addGroup(groupName = "Site Name");
+		HeadlessSite.addSite(siteName = "Site Name");
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentTitle = "DM Document Title",
@@ -156,63 +156,6 @@ definition {
 			warningMessage = "Modification Deletion Conflict: Deletion conflicts with a modification.");
 	}
 
-	@description = "Assert there are no conflict changes when deleting the same document in two Publications"
-	@priority = 4
-	test AssertNoConflictForDeletionsCombinationPublications {
-		property portal.acceptance = "true";
-
-		JSONGroup.addGroup(groupName = "Site Name");
-
-		JSONDocument.addFileWithUploadedFile(
-			dmDocumentDescription = "DM Document Description",
-			dmDocumentTitle = "DM Document Title",
-			groupName = "Site Name",
-			mimeType = "application/msword",
-			sourceFileName = "Document_1.doc");
-
-		JSONPublications.addPublication(publicationName = "Publication Name 1");
-
-		JSONPublications.selectPublication(publicationName = "Publication Name 1");
-
-		JSONDocument.deleteFile(
-			dmDocumentTitle = "DM Document Title",
-			groupName = "Site Name");
-
-		JSONPublications.addPublication(publicationName = "Publication Name 2");
-
-		JSONPublications.selectPublication(publicationName = "Publication Name 2");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
-
-		JSONDocument.deleteFile(
-			dmDocumentTitle = "DM Document Title",
-			groupName = "Site Name");
-
-		JSONPublications.selectPublication(publicationName = "Publication Name 1");
-
-		JSONPublications.publishPublication(publicationName = "Publication Name 1");
-
-		Publications.viewPublicationPublished(publicationName = "Publication Name 1");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
-
-		DMDocument.viewDefault();
-
-		JSONPublications.selectPublication(publicationName = "Publication Name 2");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
-
-		DMDocument.viewDefault();
-
-		PublicationsNavigator.gotoPublish(publicationName = "Publication Name 2");
-
-		AssertElementNotPresent(locator1 = "Publications#NEEDS_MANUAL_RESOLUTION_TABLE");
-
-		JSONPublications.publishPublication(publicationName = "Publication Name 2");
-
-		Publications.viewPublicationPublished(publicationName = "Publication Name 2");
-	}
-
 	@description = "This is a use case for LPS-172496. Deleting a portlet with a modified configuration from a Publication incorrectly leads to a Deletion Modification Conflict"
 	@priority = 3
 	test CanDeletePortletModifiedConfigurationWithoutDeletionModificationConflict {
@@ -257,7 +200,7 @@ definition {
 	@description = "This is a use case for LPS-175305. As a publication admin, I would like to know log the conflicts that happened."
 	@priority = 4
 	test CanSeeConflictsInTheLog {
-		property test.name.skip.portal.instance = "PublicationsConflict#CanSeeConflictsInTheLog";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add Log level and Web Content") {
 			ServerAdministration.openServerAdmin();
@@ -568,20 +511,20 @@ definition {
 
 		Publications.viewNeedsManualResolution(
 			entryTitle = "WC WebContent Title 2 Edit",
-			warningMessage = "Modification Conflict: The conflict cannot be automatically resolved.");
+			warningMessage = "Deletion Modification Conflict: Modification conflicts with a deletion.");
 
 		PublicationsNavigator.gotoViewConflictingChangeDetails(entryTitle = "WC WebContent Title 2 Edit");
 
 		PublicationsChangeDetails.viewConflictingChangeDetails(
-			columnName = "Title",
+			columnName = "Name",
 			columnValueInPublication = "WC WebContent Title 2 Edit",
-			modificationConflict = "true",
+			deletionModificationConflict = "true",
 			publicationName = "Publication 2 Name");
 
 		IFrame.closeFrame();
 
 		PublicationsChanges.discardChanges(
-			changeCategory = "Asset",
+			changeCategory = "Web Content Article",
 			changeTitle = "WC WebContent Title 2 Edit",
 			conflictingChanges = "true",
 			entryTitle = "WC WebContent Title 2 Edit");

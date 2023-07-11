@@ -16,6 +16,7 @@ package com.liferay.portal.search.elasticsearch7.internal.index;
 
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
@@ -36,18 +37,24 @@ import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.io.IOException;
 
+import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.elasticsearch.action.ingest.PutPipelineRequest;
 import org.elasticsearch.client.IndicesClient;
+import org.elasticsearch.client.IngestClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.MappingMetadata;
+import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.xcontent.XContentType;
 
 import org.hamcrest.CoreMatchers;
 
@@ -83,6 +90,8 @@ public class CompanyIndexFactoryTest {
 			CompanyIndexFactoryTest.class.getSimpleName());
 
 		_elasticsearchFixture.setUp();
+
+		_putTimestampPipeline(_elasticsearchFixture.getRestHighLevelClient());
 	}
 
 	@AfterClass
@@ -98,8 +107,18 @@ public class CompanyIndexFactoryTest {
 		_companyIndexFactory =
 			_companyIndexFactoryFixture.getCompanyIndexFactory();
 
+		CompanyIndexFactoryHelper companyIndexFactoryHelper =
+			_companyIndexFactoryFixture.getCompanyIndexFactoryHelper();
+
 		Mockito.reset(_elasticsearchConfigurationWrapper);
 
+		ReflectionTestUtil.setFieldValue(
+			companyIndexFactoryHelper, "_elasticsearchConfigurationWrapper",
+			_elasticsearchConfigurationWrapper);
+
+		ReflectionTestUtil.setFieldValue(
+			_companyIndexFactory, "_companyIndexFactoryHelper",
+			companyIndexFactoryHelper);
 		ReflectionTestUtil.setFieldValue(
 			_companyIndexFactory, "_elasticsearchConfigurationWrapper",
 			_elasticsearchConfigurationWrapper);
@@ -163,11 +182,13 @@ public class CompanyIndexFactoryTest {
 	}
 
 	@Test
-	public void testAdditionalTypeMappingsWithRootType() throws Exception {
+	public void testAdditionalTypeMappingsWithLegacyRootType()
+		throws Exception {
+
 		Mockito.when(
 			_elasticsearchConfigurationWrapper.additionalTypeMappings()
 		).thenReturn(
-			_loadAdditionalTypeMappingsWithRootType()
+			_loadAdditionalTypeMappingsWithLegacyRootType()
 		);
 
 		_assertAdditionalTypeMappings();
@@ -261,11 +282,11 @@ public class CompanyIndexFactoryTest {
 
 	@Test
 	public void testIndexContributors() throws Exception {
-		CompanyIndexFactoryFixture companyIndexFactoryFixture =
-			new CompanyIndexFactoryFixture(_elasticsearchFixture, "other");
+		ReflectionTestUtil.setFieldValue(
+			_companyIndexFactoryFixture, "_indexName", "other");
 
 		ReflectionTestUtil.setFieldValue(
-			companyIndexFactoryFixture.getCompanyIndexFactory(),
+			_companyIndexFactoryFixture.getCompanyIndexFactoryHelper(),
 			"_indexContributorServiceTrackerList",
 			ServiceTrackerListFactory.open(
 				_bundleContext, IndexContributor.class, null,
@@ -298,23 +319,23 @@ public class CompanyIndexFactoryTest {
 
 				@Override
 				public void onAfterCreate(String indexName) {
-					companyIndexFactoryFixture.createIndices();
+					_companyIndexFactoryFixture.createIndices();
 				}
 
 				@Override
 				public void onBeforeRemove(String indexName) {
-					companyIndexFactoryFixture.deleteIndices();
+					_companyIndexFactoryFixture.deleteIndices();
 				}
 
 			});
 
 		createIndices();
 
-		_assertHasIndex(companyIndexFactoryFixture.getIndexName());
+		_assertHasIndex(_companyIndexFactoryFixture.getIndexName());
 
 		deleteIndices();
 
-		_assertNoIndex(companyIndexFactoryFixture.getIndexName());
+		_assertNoIndex(_companyIndexFactoryFixture.getIndexName());
 	}
 
 	@Test
@@ -434,6 +455,35 @@ public class CompanyIndexFactoryTest {
 
 		assertType("match_additional_mapping", "keyword");
 		assertType("match_catch_all", "text");
+	}
+
+	@Test
+	public void testOverrideLegacyTypeMappings() throws Exception {
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.additionalIndexConfigurations()
+		).thenReturn(
+			_loadAdditionalAnalyzers()
+		);
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.overrideTypeMappings()
+		).thenReturn(
+			_loadOverrideLegacyTypeMappings()
+		);
+
+		createIndices();
+
+		String field1 = "title";
+
+		_indexOneDocument(field1);
+
+		assertAnalyzer(field1, "kuromoji_liferay_custom");
+
+		String field2 = "description";
+
+		_indexOneDocument(field2);
+
+		_assertNoAnalyzer(field2);
 	}
 
 	@Test
@@ -587,6 +637,34 @@ public class CompanyIndexFactoryTest {
 
 	}
 
+	private static void _putTimestampPipeline(
+			RestHighLevelClient restHighLevelClient)
+		throws Exception {
+
+		IngestClient ingestClient = restHighLevelClient.ingest();
+
+		String source = JSONUtil.put(
+			"description", "Adds timestamp to documents"
+		).put(
+			"processors",
+			JSONUtil.put(
+				JSONUtil.put(
+					"set",
+					JSONUtil.put(
+						"field", "_source.timestamp"
+					).put(
+						"value", "{{{_ingest.timestamp}}}"
+					)))
+		).toString();
+
+		PutPipelineRequest putPipelineRequest = new PutPipelineRequest(
+			"timestamp",
+			new BytesArray(source.getBytes(StandardCharsets.UTF_8)),
+			XContentType.JSON);
+
+		ingestClient.putPipeline(putPipelineRequest, RequestOptions.DEFAULT);
+	}
+
 	private void _assertAdditionalTypeMappings() throws Exception {
 		Mockito.when(
 			_elasticsearchConfigurationWrapper.additionalIndexConfigurations()
@@ -690,16 +768,22 @@ public class CompanyIndexFactoryTest {
 			getClass(), "CompanyIndexFactoryTest-additionalAnalyzers.json");
 	}
 
-	private String _loadAdditionalTypeMappingsWithRootType() {
+	private String _loadAdditionalTypeMappingsWithLegacyRootType() {
 		try {
 			return ResourceUtil.getResourceAsString(
 				getClass(),
-				"CompanyIndexFactoryTest-additionalTypeMappings-with-root-" +
-					"type.json");
+				"CompanyIndexFactoryTest-additionalTypeMappings-with-legacy-" +
+					"root-type.json");
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
+	}
+
+	private String _loadOverrideLegacyTypeMappings() throws Exception {
+		return ResourceUtil.getResourceAsString(
+			getClass(),
+			"CompanyIndexFactoryTest-overrideLegacyTypeMappings.json");
 	}
 
 	private String _loadOverrideTypeMappings() throws Exception {

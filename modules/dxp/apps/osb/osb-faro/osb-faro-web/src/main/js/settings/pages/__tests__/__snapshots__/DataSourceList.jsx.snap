@@ -152,7 +152,7 @@ exports[`DataSourceList should render 1`] = `
                   role="presentation"
                 >
                   <a
-                    class="button-root nav-btn btn btn-primary"
+                    class="button-root btn btn-sm btn-primary"
                     href="/workspace/23/settings/data-source/add"
                   >
                     Add Data Source
@@ -330,7 +330,7 @@ exports[`DataSourceList should render 1`] = `
                 class="page-item disabled"
               >
                 <a
-                  class="button-root page-link btn btn-unstyled"
+                  class="button-root btn btn-unstyled page-link"
                   disabled=""
                   href="/?page=0"
                 >
@@ -348,7 +348,7 @@ exports[`DataSourceList should render 1`] = `
                 class="page-item active"
               >
                 <a
-                  class="button-root page-link btn btn-unstyled"
+                  class="button-root btn btn-unstyled page-link"
                   href="/?page=1"
                 >
                   1
@@ -358,7 +358,7 @@ exports[`DataSourceList should render 1`] = `
                 class="page-item disabled"
               >
                 <a
-                  class="button-root page-link btn btn-unstyled"
+                  class="button-root btn btn-unstyled page-link"
                   disabled=""
                   href="/?page=2"
                 >

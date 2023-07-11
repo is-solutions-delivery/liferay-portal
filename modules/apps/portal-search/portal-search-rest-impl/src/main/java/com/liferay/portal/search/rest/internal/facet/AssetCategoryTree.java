@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.rest.internal.facet;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.petra.string.StringPool;
@@ -68,6 +70,11 @@ public class AssetCategoryTree {
 		}
 	}
 
+	@JsonProperty("children")
+	public List<AssetCategoryNode> getChildrenAssetCategoryNodes() {
+		return _rootAssetCategoryNode.getChildrenAssetCategoryNodes();
+	}
+
 	public String getDisplayName() {
 		return _displayName;
 	}
@@ -120,6 +127,11 @@ public class AssetCategoryTree {
 
 		public void addToFrequency(int frequency) {
 			_frequency += frequency;
+		}
+
+		@JsonProperty("children")
+		public List<AssetCategoryNode> getChildrenAssetCategoryNodes() {
+			return _childrenAssetCategoryNodes;
 		}
 
 		public String getDisplayName() {

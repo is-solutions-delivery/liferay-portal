@@ -52,7 +52,7 @@ import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.service.CPMeasurementUnitLocalService;
-import com.liferay.commerce.product.util.JsonHelper;
+import com.liferay.commerce.product.util.CPJSONUtil;
 import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.service.base.CommerceOrderItemLocalServiceBaseImpl;
 import com.liferay.commerce.tax.CommerceTaxCalculation;
@@ -61,6 +61,8 @@ import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.expression.Predicate;
+import com.liferay.petra.sql.dsl.query.FromStep;
+import com.liferay.petra.sql.dsl.query.GroupByStep;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -505,10 +507,54 @@ public class CommerceOrderItemLocalServiceImpl
 	}
 
 	@Override
+	public List<Long> getCustomerCommerceOrderIds(long commerceOrderId) {
+		return dslQuery(
+			_getCustomerCommerceOrdersGroupByStep(
+				commerceOrderId,
+				DSLQueryFactoryUtil.selectDistinct(
+					CommerceOrderItemTable.INSTANCE.commerceOrderId)));
+	}
+
+	@Override
+	public int getCustomerCommerceOrderIdsCount(long commerceOrderId) {
+		return dslQueryCount(
+			_getCustomerCommerceOrdersGroupByStep(
+				commerceOrderId,
+				DSLQueryFactoryUtil.countDistinct(
+					CommerceOrderItemTable.INSTANCE.commerceOrderItemId)));
+	}
+
+	@Override
 	public List<CommerceOrderItem> getSubscriptionCommerceOrderItems(
 		long commerceOrderId) {
 
 		return commerceOrderItemPersistence.findByC_S(commerceOrderId, true);
+	}
+
+	@Override
+	public List<Long> getSupplierCommerceOrderIds(long commerceOrderId) {
+		return dslQuery(
+			_getSupplierCommerceOrdersGroupByStep(
+				commerceOrderId,
+				DSLQueryFactoryUtil.selectDistinct(
+					CommerceOrderItemTable.INSTANCE.commerceOrderId)));
+	}
+
+	@Override
+	public int getSupplierCommerceOrderIdsCount(long commerceOrderId) {
+		return dslQueryCount(
+			_getSupplierCommerceOrdersGroupByStep(
+				commerceOrderId,
+				DSLQueryFactoryUtil.countDistinct(
+					CommerceOrderItemTable.INSTANCE.commerceOrderItemId)));
+	}
+
+	@Override
+	public List<CommerceOrderItem> getSupplierCommerceOrderItems(
+		long customerCommerceOrderItemId, int start, int end) {
+
+		return commerceOrderItemPersistence.findByCustomerCommerceOrderItemId(
+			customerCommerceOrderItemId, start, end);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -1441,12 +1487,30 @@ public class CommerceOrderItemLocalServiceImpl
 	private String _getCPInstanceOptionValueRelsJSONString(long cpInstanceId)
 		throws PortalException {
 
-		JSONArray jsonArray = _jsonHelper.toJSONArray(
+		JSONArray jsonArray = CPJSONUtil.toJSONArray(
 			_cpDefinitionOptionRelLocalService.
 				getCPDefinitionOptionRelKeysCPDefinitionOptionValueRelKeys(
 					cpInstanceId));
 
 		return jsonArray.toString();
+	}
+
+	private GroupByStep _getCustomerCommerceOrdersGroupByStep(
+		long commerceOrderId, FromStep fromStep) {
+
+		return fromStep.from(
+			CommerceOrderItemTable.INSTANCE
+		).where(
+			CommerceOrderItemTable.INSTANCE.commerceOrderItemId.in(
+				DSLQueryFactoryUtil.selectDistinct(
+					CommerceOrderItemTable.INSTANCE.customerCommerceOrderItemId
+				).from(
+					CommerceOrderItemTable.INSTANCE
+				).where(
+					CommerceOrderItemTable.INSTANCE.commerceOrderId.eq(
+						commerceOrderId)
+				))
+		);
 	}
 
 	private Predicate _getPredicate(
@@ -1541,6 +1605,24 @@ public class CommerceOrderItemLocalServiceImpl
 			commerceOptionValue ->
 				_isStaticPriceType(commerceOptionValue.getPriceType()) &&
 				(commerceOptionValue.getCPInstanceId() == 0));
+	}
+
+	private GroupByStep _getSupplierCommerceOrdersGroupByStep(
+		long commerceOrderId, FromStep fromStep) {
+
+		return fromStep.from(
+			CommerceOrderItemTable.INSTANCE
+		).where(
+			CommerceOrderItemTable.INSTANCE.customerCommerceOrderItemId.in(
+				DSLQueryFactoryUtil.selectDistinct(
+					CommerceOrderItemTable.INSTANCE.commerceOrderItemId
+				).from(
+					CommerceOrderItemTable.INSTANCE
+				).where(
+					CommerceOrderItemTable.INSTANCE.commerceOrderId.eq(
+						commerceOrderId)
+				))
+		);
 	}
 
 	private boolean _isDiscountChanged(
@@ -1891,30 +1973,55 @@ public class CommerceOrderItemLocalServiceImpl
 		CommerceOrderItem commerceOrderItem,
 		CommerceProductPrice commerceProductPrice) {
 
+		commerceOrderItem.setPriceOnApplication(
+			commerceProductPrice.isPriceOnApplication());
+
 		CommerceMoney unitPriceCommerceMoney =
 			commerceProductPrice.getUnitPrice();
-
-		commerceOrderItem.setUnitPrice(unitPriceCommerceMoney.getPrice());
-
-		BigDecimal promoPrice = BigDecimal.ZERO;
-		BigDecimal promoPriceWithTaxAmount = BigDecimal.ZERO;
-
 		CommerceMoney unitPromoPriceCommerceMoney =
 			commerceProductPrice.getUnitPromoPrice();
+
+		BigDecimal unitPrice = BigDecimal.ZERO;
+
+		if (!unitPriceCommerceMoney.isEmpty()) {
+			unitPrice = unitPriceCommerceMoney.getPrice();
+		}
+
+		commerceOrderItem.setUnitPrice(unitPrice);
+
+		BigDecimal promoPrice = BigDecimal.ZERO;
 
 		if (!unitPromoPriceCommerceMoney.isEmpty()) {
 			promoPrice = unitPromoPriceCommerceMoney.getPrice();
 		}
 
+		commerceOrderItem.setPromoPrice(promoPrice);
+
+		CommerceMoney unitPriceWithTaxAmountCommerceMoney =
+			commerceProductPrice.getUnitPriceWithTaxAmount();
 		CommerceMoney unitPromoPriceWithTaxAmountCommerceMoney =
 			commerceProductPrice.getUnitPromoPriceWithTaxAmount();
 
-		if (!unitPromoPriceWithTaxAmountCommerceMoney.isEmpty()) {
+		BigDecimal unitPriceWithTaxAmount = BigDecimal.ZERO;
+
+		if ((unitPriceWithTaxAmountCommerceMoney != null) &&
+			!unitPriceWithTaxAmountCommerceMoney.isEmpty()) {
+
+			unitPriceWithTaxAmount =
+				unitPriceWithTaxAmountCommerceMoney.getPrice();
+		}
+
+		commerceOrderItem.setUnitPriceWithTaxAmount(unitPriceWithTaxAmount);
+
+		BigDecimal promoPriceWithTaxAmount = BigDecimal.ZERO;
+
+		if ((unitPromoPriceWithTaxAmountCommerceMoney != null) &&
+			!unitPromoPriceWithTaxAmountCommerceMoney.isEmpty()) {
+
 			promoPriceWithTaxAmount =
 				unitPromoPriceWithTaxAmountCommerceMoney.getPrice();
 		}
 
-		commerceOrderItem.setPromoPrice(promoPrice);
 		commerceOrderItem.setPromoPriceWithTaxAmount(promoPriceWithTaxAmount);
 
 		CommerceMoney finalPriceCommerceMoney =
@@ -1922,20 +2029,19 @@ public class CommerceOrderItemLocalServiceImpl
 
 		commerceOrderItem.setFinalPrice(finalPriceCommerceMoney.getPrice());
 
-		CommerceMoney unitPriceWithTaxAmountCommerceMoney =
-			commerceProductPrice.getUnitPriceWithTaxAmount();
-
-		if (unitPriceWithTaxAmountCommerceMoney != null) {
-			commerceOrderItem.setUnitPriceWithTaxAmount(
-				unitPriceWithTaxAmountCommerceMoney.getPrice());
-		}
-
 		CommerceMoney finalPriceWithTaxAmountCommerceMoney =
 			commerceProductPrice.getFinalPriceWithTaxAmount();
 
 		if (finalPriceWithTaxAmountCommerceMoney != null) {
+			BigDecimal finalPriceWithTaxAmount = BigDecimal.ZERO;
+
+			if (!finalPriceWithTaxAmountCommerceMoney.isEmpty()) {
+				finalPriceWithTaxAmount =
+					finalPriceWithTaxAmountCommerceMoney.getPrice();
+			}
+
 			commerceOrderItem.setFinalPriceWithTaxAmount(
-				finalPriceWithTaxAmountCommerceMoney.getPrice());
+				finalPriceWithTaxAmount);
 		}
 
 		commerceOrderItem.setCommercePriceListId(
@@ -2377,9 +2483,6 @@ public class CommerceOrderItemLocalServiceImpl
 
 	@Reference
 	private IndexerRegistry _indexerRegistry;
-
-	@Reference
-	private JsonHelper _jsonHelper;
 
 	@Reference
 	private Portal _portal;

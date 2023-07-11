@@ -22,6 +22,8 @@ import {ReadOnlyContainer} from './ReadOnlyContainer';
 interface AdvancedTabProps {
 	creationLanguageId: Liferay.Language.Locale;
 	errors: ObjectFieldErrors;
+	isDefaultStorageType: boolean;
+	readOnlySidebarElements: SidebarCategory[];
 	setValues: (value: Partial<ObjectField>) => void;
 	sidebarElements: SidebarCategory[];
 	values: Partial<ObjectField>;
@@ -30,43 +32,43 @@ interface AdvancedTabProps {
 export function AdvancedTab({
 	creationLanguageId,
 	errors,
+	isDefaultStorageType,
+	readOnlySidebarElements,
 	setValues,
 	sidebarElements,
 	values,
 }: AdvancedTabProps) {
 	return (
 		<>
-			{Liferay.FeatureFlags['LPS-159913'] && (
+			{Liferay.FeatureFlags['LPS-170122'] && isDefaultStorageType && (
 				<ReadOnlyContainer
 					disabled={
 						values.system ||
 						values.businessType === 'Aggregation' ||
 						values.businessType === 'Formula'
 					}
-					objectFieldSettings={
-						values.objectFieldSettings as ObjectFieldSetting[]
-					}
+					readOnlySidebarElements={readOnlySidebarElements}
 					requiredField={values.required as boolean}
 					setValues={setValues}
+					values={values}
 				/>
 			)}
 
-			{Liferay.FeatureFlags['LPS-163716'] &&
-				values.businessType === 'Picklist' && (
-					<DefaultValueContainer
-						creationLanguageId={creationLanguageId}
-						errors={errors}
-						objectFieldBusinessType={
-							values.businessType as ObjectFieldBusinessType
-						}
-						objectFieldSettings={
-							values.objectFieldSettings as ObjectFieldSetting[]
-						}
-						setValues={setValues}
-						sidebarElements={sidebarElements}
-						values={values}
-					/>
-				)}
+			{values.businessType === 'Picklist' && (
+				<DefaultValueContainer
+					creationLanguageId={creationLanguageId}
+					errors={errors}
+					objectFieldBusinessType={
+						values.businessType as ObjectFieldBusinessType
+					}
+					objectFieldSettings={
+						values.objectFieldSettings as ObjectFieldSetting[]
+					}
+					setValues={setValues}
+					sidebarElements={sidebarElements}
+					values={values}
+				/>
+			)}
 		</>
 	);
 }

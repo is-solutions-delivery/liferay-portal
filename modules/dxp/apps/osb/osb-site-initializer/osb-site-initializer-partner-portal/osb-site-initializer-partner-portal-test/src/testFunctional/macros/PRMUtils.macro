@@ -1,38 +1,12 @@
 definition {
 
 	macro addSite {
-		var siteTemplateName = "Liferay OSB Site Initializer Partner Portal";
 		var siteName = "Partner Portal";
 
-		Site.openSitesAdmin();
-
-		if (IsElementPresent(key_tableEntry = "Partner Portal", locator1 = "LexiconTable#TABLE_ENTRY")) {
-			PRMUtils.tearDown();
-
-			Site.openSitesAdmin();
-		}
-
-		LexiconEntry.gotoAdd();
-
-		LexiconCard.clickCard(card = ${siteTemplateName});
-
-		SelectFrame(locator1 = "IFrame#MODAL_BODY");
-
-		PortletEntry.inputName(name = ${siteName});
-
-		Button.clickAdd();
-
-		SelectFrameTop();
-
-		Alert.viewSuccessMessage();
-
-		WaitForElementPresent(
-			key_itemName = "Site Configuration",
-			locator1 = "ListGroupItem#ITEM_TEXT");
-
-		Click(
-			key_itemName = "Site Configuration",
-			locator1 = "ListGroupItem#ITEM_TEXT");
+		HeadlessSite.addSite(
+			siteName = ${siteName},
+			templateName = ${siteName},
+			templateType = "Site Initializer");
 	}
 
 	macro assertPageTitle {
@@ -62,7 +36,7 @@ definition {
 		SystemSettings.gotoConfiguration(
 			configurationCategory = "Third Party",
 			configurationName = "Salesforce Integration",
-			configurationScope = "Punch Out");
+			configurationScope = "");
 
 		Navigator.gotoNavTab(navTab = "Salesforce Integration");
 
@@ -104,7 +78,6 @@ definition {
 		}
 	}
 
-	@summary = "Define object permission to a role"
 	macro definePermission {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -135,7 +108,6 @@ definition {
 		com.liferay.poshi.runner.util.JSONCurlUtil.get(${curl});
 	}
 
-	@summary = "Go to Folder"
 	macro gotoFolder {
 		var key_dmFolderName = ${folderName};
 
@@ -160,7 +132,6 @@ definition {
 		WaitForPageLoad();
 	}
 
-	@summary = "Publish an object"
 	macro publishObject {
 		ObjectAdmin.openObjectAdmin();
 

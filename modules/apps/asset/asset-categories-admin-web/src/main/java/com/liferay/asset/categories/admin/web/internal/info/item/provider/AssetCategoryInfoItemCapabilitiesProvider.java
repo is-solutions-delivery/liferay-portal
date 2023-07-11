@@ -36,13 +36,17 @@ public class AssetCategoryInfoItemCapabilitiesProvider
 	@Override
 	public List<InfoItemCapability> getInfoItemCapabilities() {
 		return ListUtil.fromArray(
-			_displayPageInfoItemCapability, _templatePageInfoItemCapability);
+			_displayPageInfoItemCapability, _templateInfoItemCapability);
 	}
 
-	@Reference
-	private DisplayPageInfoItemCapability _displayPageInfoItemCapability;
+	@Reference(
+		target = "(info.item.capability.key=" + DisplayPageInfoItemCapability.KEY + ")"
+	)
+	private InfoItemCapability _displayPageInfoItemCapability;
 
-	@Reference
-	private TemplateInfoItemCapability _templatePageInfoItemCapability;
+	@Reference(
+		target = "(info.item.capability.key=" + TemplateInfoItemCapability.KEY + ")"
+	)
+	private InfoItemCapability _templateInfoItemCapability;
 
 }

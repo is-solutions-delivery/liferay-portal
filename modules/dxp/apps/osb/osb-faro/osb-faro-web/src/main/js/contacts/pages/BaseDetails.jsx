@@ -2,9 +2,9 @@ import autobind from 'autobind-decorator';
 import Card from 'shared/components/Card';
 import EntityDetailsList from 'contacts/components/EntityDetailsList';
 import ErrorDisplay from 'shared/components/ErrorDisplay';
+import Loading from 'shared/components/Loading';
 import omitDefinedProps from 'shared/util/omitDefinedProps';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import {autoCancel, hasRequest} from 'shared/util/request-decorator';
 import {connect} from 'react-redux';
 import {fromJS, Map} from 'immutable';
@@ -60,7 +60,7 @@ export class BaseDetails extends React.Component {
 		if (loading) {
 			return (
 				<Card key='LOADING_DISPLAY' pageDisplay>
-					<Spinner className='flex-grow-1' spacer />
+					<Loading />
 				</Card>
 			);
 		} else if (error) {

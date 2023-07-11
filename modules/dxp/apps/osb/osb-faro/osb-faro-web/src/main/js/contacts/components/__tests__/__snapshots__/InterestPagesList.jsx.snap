@@ -159,10 +159,11 @@ exports[`InterestPagesList should render 1`] = `
         </thead>
       </table>
       <div
-        class="spinner-root spinner-overlay"
+        class="loading-root overlay"
       >
         <span
-          class="loading-animation loading-animation-dotted"
+          aria-hidden="true"
+          class="loading-root center loading-animation"
         />
       </div>
     </div>

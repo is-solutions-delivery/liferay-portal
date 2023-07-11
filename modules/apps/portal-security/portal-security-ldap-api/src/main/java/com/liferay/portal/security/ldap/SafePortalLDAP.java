@@ -95,7 +95,8 @@ public interface SafePortalLDAP {
 
 	public Binding getUser(
 			long ldapServerId, long companyId, String screenName,
-			String emailAddress, boolean checkOriginalEmail)
+			String emailAddress, boolean checkOriginalEmailAddress,
+			boolean useUserSearchSafeLdapFilter)
 		throws Exception;
 
 	public Attributes getUserAttributes(

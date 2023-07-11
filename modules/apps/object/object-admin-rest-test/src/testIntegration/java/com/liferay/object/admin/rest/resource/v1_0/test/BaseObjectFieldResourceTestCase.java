@@ -189,6 +189,7 @@ public abstract class BaseObjectFieldResourceTestCase {
 		objectField.setIndexedLanguageId(regex);
 		objectField.setListTypeDefinitionExternalReferenceCode(regex);
 		objectField.setName(regex);
+		objectField.setReadOnlyConditionExpression(regex);
 
 		String json = ObjectFieldSerDes.toJSON(objectField);
 
@@ -202,6 +203,8 @@ public abstract class BaseObjectFieldResourceTestCase {
 		Assert.assertEquals(
 			regex, objectField.getListTypeDefinitionExternalReferenceCode());
 		Assert.assertEquals(regex, objectField.getName());
+		Assert.assertEquals(
+			regex, objectField.getReadOnlyConditionExpression());
 	}
 
 	@Test
@@ -1450,6 +1453,24 @@ public abstract class BaseObjectFieldResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("readOnly", additionalAssertFieldName)) {
+				if (objectField.getReadOnly() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"readOnlyConditionExpression", additionalAssertFieldName)) {
+
+				if (objectField.getReadOnlyConditionExpression() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("relationshipType", additionalAssertFieldName)) {
 				if (objectField.getRelationshipType() == null) {
 					valid = false;
@@ -1521,14 +1542,19 @@ public abstract class BaseObjectFieldResourceTestCase {
 
 		Assert.assertTrue(valid);
 
-		Map<String, Map<String, String>> actions = page.getActions();
+		assertValid(page.getActions(), expectedActions);
+	}
 
-		for (String key : expectedActions.keySet()) {
-			Map action = actions.get(key);
+	protected void assertValid(
+		Map<String, Map<String, String>> actions1,
+		Map<String, Map<String, String>> actions2) {
+
+		for (String key : actions2.keySet()) {
+			Map action = actions1.get(key);
 
 			Assert.assertNotNull(key + " does not contain an action", action);
 
-			Map expectedAction = expectedActions.get(key);
+			Map<String, String> expectedAction = actions2.get(key);
 
 			Assert.assertEquals(
 				expectedAction.get("method"), action.get("method"));
@@ -1770,6 +1796,30 @@ public abstract class BaseObjectFieldResourceTestCase {
 				if (!Objects.deepEquals(
 						objectField1.getObjectFieldSettings(),
 						objectField2.getObjectFieldSettings())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("readOnly", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						objectField1.getReadOnly(),
+						objectField2.getReadOnly())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"readOnlyConditionExpression", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						objectField1.getReadOnlyConditionExpression(),
+						objectField2.getReadOnlyConditionExpression())) {
 
 					return false;
 				}
@@ -2024,6 +2074,20 @@ public abstract class BaseObjectFieldResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("readOnly")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("readOnlyConditionExpression")) {
+			sb.append("'");
+			sb.append(
+				String.valueOf(objectField.getReadOnlyConditionExpression()));
+			sb.append("'");
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("relationshipType")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -2107,6 +2171,8 @@ public abstract class BaseObjectFieldResourceTestCase {
 				listTypeDefinitionId = RandomTestUtil.randomLong();
 				localized = RandomTestUtil.randomBoolean();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				readOnlyConditionExpression = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
 				required = RandomTestUtil.randomBoolean();
 				state = RandomTestUtil.randomBoolean();
 				system = RandomTestUtil.randomBoolean();

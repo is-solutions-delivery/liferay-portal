@@ -14,6 +14,7 @@
 
 package com.liferay.object.web.internal.info.item.provider;
 
+import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemClassDetails;
 import com.liferay.info.item.InfoItemDetails;
 import com.liferay.info.item.InfoItemReference;
@@ -50,6 +51,15 @@ public class ObjectEntryInfoItemDetailsProvider
 
 	@Override
 	public InfoItemDetails getInfoItemDetails(ObjectEntry objectEntry) {
+		if (!_objectDefinition.isDefaultStorageType()) {
+			return new InfoItemDetails(
+				getInfoItemClassDetails(),
+				new InfoItemReference(
+					_objectDefinition.getClassName(),
+					new ERCInfoItemIdentifier(
+						objectEntry.getExternalReferenceCode())));
+		}
+
 		return new InfoItemDetails(
 			getInfoItemClassDetails(),
 			new InfoItemReference(

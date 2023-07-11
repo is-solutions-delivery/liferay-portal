@@ -1,12 +1,12 @@
 import Card from 'shared/components/Card';
 import ClayButton from '@clayui/button';
-import ClayLoadingIndicator from '@clayui/loading-indicator';
 import Form, {
 	toPromise,
 	validateMaxLength,
 	validateRequired
 } from 'shared/components/form';
 import FormSelectFieldInput from 'contacts/components/form/SelectFieldInput';
+import Loading, {Align} from 'shared/components/Loading';
 import React, {useRef, useState} from 'react';
 import {DistributionTab} from 'shared/util/records';
 import {FieldContexts, FieldTypes} from 'shared/util/constants';
@@ -153,7 +153,7 @@ const AddPropertyForm = ({
 												context={defaultContext}
 												groupId={groupId}
 												label={Liferay.Language.get(
-													'attribute'
+													'attribute[noun]'
 												)}
 												name='property'
 												onSelect={({rawType}) =>
@@ -215,11 +215,7 @@ const AddPropertyForm = ({
 										type='submit'
 									>
 										{isSubmitting && (
-											<ClayLoadingIndicator
-												className='d-inline-block mr-2'
-												displayType='secondary'
-												size='sm'
-											/>
+											<Loading align={Align.Left} />
 										)}
 
 										{Liferay.Language.get('save')}

@@ -76,6 +76,8 @@ if (alignment.equals("full-width")) {
 			namespace: '<%= namespace %>',
 			size: '<%= size %>',
 		},
+		showOrderTypeModal: <%= showOrderTypeModal %>,
+		showOrderTypeModalURL: '<%= showOrderTypeModalURL %>',
 	};
 
 	<c:if test="<%= productSettingsModel != null %>">

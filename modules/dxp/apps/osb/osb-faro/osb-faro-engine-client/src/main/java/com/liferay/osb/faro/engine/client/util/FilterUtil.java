@@ -47,13 +47,23 @@ public class FilterUtil {
 	}
 
 	public static String getFilter(
-		String fieldName, String operator, Object value) {
+		String fieldName, String operator, boolean useDoubleApostrophe,
+		Object value) {
 
 		if (value == null) {
 			return null;
 		}
 
-		if (value instanceof Date) {
+		if (!(value instanceof Boolean) && !(value instanceof Long)) {
+			String valueString = String.valueOf(value);
+
+			if (Validator.isBlank(valueString)) {
+				return null;
+			}
+
+			value = StringUtil.quote(valueString, StringPool.APOSTROPHE);
+		}
+		else if (value instanceof Date) {
 			Date date = (Date)value;
 
 			value = String.valueOf(date.toInstant());
@@ -65,15 +75,6 @@ public class FilterUtil {
 					TransformUtil.transform((List<?>)value, String::valueOf),
 					StringPool.COMMA),
 				StringPool.CLOSE_BRACKET);
-		}
-		else {
-			String valueString = String.valueOf(value);
-
-			if (Validator.isBlank(valueString)) {
-				return null;
-			}
-
-			value = StringUtil.quote(valueString, StringPool.APOSTROPHE);
 		}
 
 		if (FilterConstants.isStringFunction(operator)) {
@@ -99,6 +100,12 @@ public class FilterUtil {
 	}
 
 	public static String getFilter(
+		String fieldName, String operator, Object value) {
+
+		return getFilter(fieldName, operator, false, value);
+	}
+
+	public static String getFilter(
 		String fieldName, String fieldNameContext, String operator,
 		String value) {
 
@@ -120,9 +127,11 @@ public class FilterUtil {
 		FilterBuilder filterBuilder = new FilterBuilder();
 
 		filterBuilder.addFilter(
-			"name", FilterConstants.COMPARISON_OPERATOR_EQUALS, interestName);
+			"name", FilterConstants.COMPARISON_OPERATOR_EQUALS, interestName,
+			false, true, true);
 		filterBuilder.addFilter(
-			"score", FilterConstants.COMPARISON_OPERATOR_EQUALS, interested);
+			"score", FilterConstants.COMPARISON_OPERATOR_EQUALS, interested,
+			false, true, true);
 
 		sb.append(filterBuilder.build());
 
@@ -132,7 +141,7 @@ public class FilterUtil {
 	}
 
 	public static String getNullFilter(String fieldName, String operator) {
-		return operator + StringPool.NULL;
+		return fieldName + operator + StringPool.NULL;
 	}
 
 	public static String negate(String filterString) {

@@ -151,7 +151,7 @@ components:
         ObjectField:
             properties:
                 DBType:
-                    enum: [BigDecimal, Boolean, Clob, Date, Double, Integer, Long, String]
+                    enum: [BigDecimal, Boolean, Clob, Date, DateTime, Double, Integer, Long, String]
                     type: string
                 actions:
                     additionalProperties:
@@ -161,7 +161,7 @@ components:
                     readOnly: true
                     type: object
                 businessType:
-                    enum: [Aggregation, Attachment, Boolean, Date, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
+                    enum: [Aggregation, Attachment, Boolean, Date, DateTime, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
                     type: string
                 defaultValue:
                     deprecated: true
@@ -195,6 +195,11 @@ components:
                     items:
                         $ref: "#/components/schemas/ObjectFieldSetting"
                     type: array
+                readOnly:
+                    enum: [conditional, false, true]
+                    type: string
+                readOnlyConditionExpression:
+                    type: string
                 relationshipType:
                     enum: [oneToMany, oneToOne]
                     readOnly: true
@@ -207,7 +212,7 @@ components:
                     type: boolean
                 type:
                     deprecated: true
-                    enum: [BigDecimal, Boolean, Clob, Date, Double, Integer, Long, String]
+                    enum: [BigDecimal, Boolean, Clob, Date, DateTime, Double, Integer, Long, String]
                     type: string
         ObjectFieldSetting:
             properties:
@@ -359,8 +364,12 @@ components:
                 objectDefinitionId2:
                     format: int64
                     type: integer
+                objectDefinitionModifiable2:
+                    type: boolean
                 objectDefinitionName2:
                     type: string
+                objectDefinitionSystem2:
+                    type: boolean
                 parameterObjectFieldId:
                     format: int64
                     type: integer
@@ -543,7 +552,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.object.admin.rest.client', and version '1.0.52'."
+        'com.liferay.object.admin.rest.client', and version '1.0.54'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"

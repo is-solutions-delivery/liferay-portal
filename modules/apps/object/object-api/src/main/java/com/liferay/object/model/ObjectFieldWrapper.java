@@ -64,6 +64,9 @@ public class ObjectFieldWrapper
 		attributes.put("label", getLabel());
 		attributes.put("localized", isLocalized());
 		attributes.put("name", getName());
+		attributes.put("readOnly", getReadOnly());
+		attributes.put(
+			"readOnlyConditionExpression", getReadOnlyConditionExpression());
 		attributes.put("relationshipType", getRelationshipType());
 		attributes.put("required", isRequired());
 		attributes.put("state", isState());
@@ -202,6 +205,19 @@ public class ObjectFieldWrapper
 			setName(name);
 		}
 
+		String readOnly = (String)attributes.get("readOnly");
+
+		if (readOnly != null) {
+			setReadOnly(readOnly);
+		}
+
+		String readOnlyConditionExpression = (String)attributes.get(
+			"readOnlyConditionExpression");
+
+		if (readOnlyConditionExpression != null) {
+			setReadOnlyConditionExpression(readOnlyConditionExpression);
+		}
+
 		String relationshipType = (String)attributes.get("relationshipType");
 
 		if (relationshipType != null) {
@@ -315,6 +331,11 @@ public class ObjectFieldWrapper
 	@Override
 	public String getExternalReferenceCode() {
 		return model.getExternalReferenceCode();
+	}
+
+	@Override
+	public String getI18nObjectFieldName() {
+		return model.getI18nObjectFieldName();
 	}
 
 	/**
@@ -516,6 +537,26 @@ public class ObjectFieldWrapper
 	}
 
 	/**
+	 * Returns the read only of this object field.
+	 *
+	 * @return the read only of this object field
+	 */
+	@Override
+	public String getReadOnly() {
+		return model.getReadOnly();
+	}
+
+	/**
+	 * Returns the read only condition expression of this object field.
+	 *
+	 * @return the read only condition expression of this object field
+	 */
+	@Override
+	public String getReadOnlyConditionExpression() {
+		return model.getReadOnlyConditionExpression();
+	}
+
+	/**
 	 * Returns the relationship type of this object field.
 	 *
 	 * @return the relationship type of this object field
@@ -593,6 +634,13 @@ public class ObjectFieldWrapper
 	@Override
 	public String getUuid() {
 		return model.getUuid();
+	}
+
+	@Override
+	public boolean isDeletionAllowed()
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return model.isDeletionAllowed();
 	}
 
 	/**
@@ -924,6 +972,28 @@ public class ObjectFieldWrapper
 	@Override
 	public void setPrimaryKey(long primaryKey) {
 		model.setPrimaryKey(primaryKey);
+	}
+
+	/**
+	 * Sets the read only of this object field.
+	 *
+	 * @param readOnly the read only of this object field
+	 */
+	@Override
+	public void setReadOnly(String readOnly) {
+		model.setReadOnly(readOnly);
+	}
+
+	/**
+	 * Sets the read only condition expression of this object field.
+	 *
+	 * @param readOnlyConditionExpression the read only condition expression of this object field
+	 */
+	@Override
+	public void setReadOnlyConditionExpression(
+		String readOnlyConditionExpression) {
+
+		model.setReadOnlyConditionExpression(readOnlyConditionExpression);
 	}
 
 	/**

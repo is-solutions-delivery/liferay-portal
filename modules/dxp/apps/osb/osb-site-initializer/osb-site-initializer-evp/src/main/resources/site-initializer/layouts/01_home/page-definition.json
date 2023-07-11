@@ -424,12 +424,8 @@
 																	}
 																},
 																"text": {
-																	"mapping": {
-																		"fieldKey": "FileEntry_previewImage",
-																		"itemReference": {
-																			"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																			"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/gallery/evp_photo1.jpg$]"
-																		}
+																	"value_i18n": {
+																		"en_US": "{\"title\":\"evp_photo1.jpg\", \"url\":\"/documents/d/[$GROUP_KEY$]/evp_photo1-jpg?download=true\"}"
 																	}
 																}
 															}
@@ -438,14 +434,17 @@
 															"id": "02-image",
 															"value": {
 																"fragmentLink": {
+																	"value": {
+																		"href": {
+																			"value_i18n": {
+																				"en_US": ""
+																			}
+																		}
+																	}
 																},
 																"text": {
-																	"mapping": {
-																		"fieldKey": "FileEntry_previewImage",
-																		"itemReference": {
-																			"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																			"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/gallery/evp_photo2.jpg$]"
-																		}
+																	"value_i18n": {
+																		"en_US": "{\"title\":\"evp_photo2.jpg\", \"url\":\"/documents/d/[$GROUP_KEY$]/evp_photo2-jpg?download=true\"}"
 																	}
 																}
 															}
@@ -454,14 +453,17 @@
 															"id": "03-image",
 															"value": {
 																"fragmentLink": {
+																	"value": {
+																		"href": {
+																			"value_i18n": {
+																				"en_US": ""
+																			}
+																		}
+																	}
 																},
 																"text": {
-																	"mapping": {
-																		"fieldKey": "FileEntry_previewImage",
-																		"itemReference": {
-																			"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																			"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/gallery/evp_photo3.jpg$]"
-																		}
+																	"value_i18n": {
+																		"en_US": "{\"title\":\"evp_photo3.jpg\", \"url\":\"/documents/d/[$GROUP_KEY$]/evp_photo3-jpg?download=true\"}"
 																	}
 																}
 															}
@@ -529,7 +531,7 @@
 								"definition": {
 									"collectionConfig": {
 										"collectionReference": {
-											"className": "com.liferay.object.internal.info.collection.provider.ObjectEntrySingleFormVariationInfoCollectionProvider_[$COMPANY_ID$]_C_EVPHomepageData"
+											"className": "com.liferay.object.web.internal.info.collection.provider.ObjectEntrySingleFormVariationInfoCollectionProvider_[$COMPANY_ID$]_C_EVPHomepageData"
 										},
 										"collectionType": "CollectionProvider"
 									},
@@ -654,7 +656,7 @@
 																					},
 																					"url": {
 																						"value_i18n": {
-																							"en_US": "/documents/d/evp/calendar_icon-svg?download=true"
+																							"en_US": "/documents/d/[$GROUP_KEY$]/calendar_icon-svg?download=true"
 																						}
 																					}
 																				},
@@ -809,7 +811,7 @@
 																					},
 																					"url": {
 																						"value_i18n": {
-																							"en_US": "/documents/d/evp/watch_icon-svg?download=true"
+																							"en_US": "/documents/d/[$GROUP_KEY$]/watch_icon-svg?download=true"
 																						}
 																					}
 																				},
@@ -956,7 +958,7 @@
 																					},
 																					"url": {
 																						"value_i18n": {
-																							"en_US": "/documents/d/evp/money_icon-svg?download=true"
+																							"en_US": "/documents/d/[$GROUP_KEY$]/money_icon-svg?download=true"
 																						}
 																					}
 																				},
@@ -1160,7 +1162,7 @@
 																					},
 																					"url": {
 																						"value_i18n": {
-																							"en_US": "/documents/d/evp/heart_icon-svg?download=true"
+																							"en_US": "/documents/d/[$GROUP_KEY$]/heart_icon-svg?download=true"
 																						}
 																					}
 																				},
@@ -1307,7 +1309,7 @@
 																					},
 																					"url": {
 																						"value_i18n": {
-																							"en_US": "/documents/d/evp/community_icon-svg?download=true"
+																							"en_US": "/documents/d/[$GROUP_KEY$]/community_icon-svg?download=true"
 																						}
 																					}
 																				},
@@ -1519,7 +1521,7 @@
 																				"fragmentImage": {
 																					"url": {
 																						"value_i18n": {
-																							"en_US": "/documents/d/evp/evp_process_icon-svg?download=true"
+																							"en_US": "/documents/d/[$GROUP_KEY$]/evp_process_icon-svg?download=true"
 																						}
 																					}
 																				},
@@ -1825,12 +1827,8 @@
 																		"fragmentLink": {
 																		},
 																		"text": {
-																			"mapping": {
-																				"fieldKey": "FileEntry_previewImage",
-																				"itemReference": {
-																					"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																					"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/icons/steps/step_4.svg$]"
-																				}
+																			"value_i18n": {
+																				"en_US": "{\"title\":\"step_4.svg\", \"url\":\"/documents/d/[$GROUP_KEY$]/step_4-svg?download=true\"}"
 																			}
 																		}
 																	}
@@ -1901,12 +1899,8 @@
 																		"fragmentLink": {
 																		},
 																		"text": {
-																			"mapping": {
-																				"fieldKey": "FileEntry_previewImage",
-																				"itemReference": {
-																					"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																					"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/icons/steps/step_5.svg$]"
-																				}
+																			"value_i18n": {
+																				"en_US": "{\"title\":\"step_5.svg\", \"url\":\"/documents/d/[$GROUP_KEY$]/step_5-svg?download=true\"}"
 																			}
 																		}
 																	}
@@ -1929,12 +1923,8 @@
 																		"fragmentLink": {
 																		},
 																		"text": {
-																			"mapping": {
-																				"fieldKey": "FileEntry_previewImage",
-																				"itemReference": {
-																					"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																					"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/icons/steps/step_2.svg$]"
-																				}
+																			"value_i18n": {
+																				"en_US": "{\"title\":\"step_2.svg\", \"url\":\"/documents/d/[$GROUP_KEY$]/step_2-svg?download=true\"}"
 																			}
 																		}
 																	}
@@ -1981,12 +1971,8 @@
 																		"fragmentLink": {
 																		},
 																		"text": {
-																			"mapping": {
-																				"fieldKey": "FileEntry_previewImage",
-																				"itemReference": {
-																					"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																					"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/icons/steps/step_1.svg$]"
-																				}
+																			"value_i18n": {
+																				"en_US": "{\"title\":\"step_1.svg\", \"url\":\"/documents/d/[$GROUP_KEY$]/step_1-svg?download=true\"}"
 																			}
 																		}
 																	}
@@ -2057,12 +2043,8 @@
 																		"fragmentLink": {
 																		},
 																		"text": {
-																			"mapping": {
-																				"fieldKey": "FileEntry_previewImage",
-																				"itemReference": {
-																					"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																					"classPK": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/icons/steps/step_3.svg$]"
-																				}
+																			"value_i18n": {
+																				"en_US": "{\"title\":\"step_3.svg\", \"url\":\"/documents/d/[$GROUP_KEY$]/step_3-svg?download=true\"}"
 																			}
 																		}
 																	}

@@ -1,0 +1,3254 @@
+@component-name = "portal-commerce"
+definition {
+
+	property custom.properties = "feature.flag.COMMERCE-10890=true${line.separator}feature.flag.COMMERCE-11026=true${line.separator}jsonws.web.service.paths.excludes=${line.separator}company.security.strangers.verify=false";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Order Management";
+
+	setUp {
+		CommerceConfiguration.commerceSetUp();
+	}
+
+	tearDown {
+		CommerceConfiguration.commerceTearDown();
+
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = "Commerce Order");
+
+		ObjectAdmin.goToActionsTab();
+
+		while (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
+			Click(
+				key_value = "",
+				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Delete");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11801. When the admin changes the price of an order line item from a splitted supplier order, the changes are reflected to the order line item of the customer order"
+	@priority = 5
+	test CanAssertCustomerOrderReflectsSupplierOrderItemPriceChanges {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a business account and a buyer user inside of it") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the admin navigates into a supplier order") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 25.00");
+		}
+
+		task ("And changes the price and the total of the order item inside the supplier order") {
+			CommerceOrders.editOrderItemDetails(
+				orderItemPrice = "100.00",
+				orderItemSku = "TESTSKU",
+				orderItemTotal = "100.00");
+		}
+
+		task ("When the admin navigates into the customer order") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 64.00");
+		}
+
+		task ("Then the changes are reflected for that order item") {
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "100.00",
+				productName = "Simple Product",
+				productQuantity = 1,
+				productSku = "TESTSKU",
+				productTotalPrice = "100.00");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11805. Customer order status doesn't change after an order item in the supplier order is added for a shipment"
+	@priority = 4
+	test CanAssertCustomerOrderStatusUnchangedAfterSupplierOrderItemIsAddedToShipment {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a business account and a buyer user inside of it") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+
+			CommerceOrders.openOrdersAdmin();
+
+			var supplierOrderId = selenium.getText("//div[(@class='dnd-td') and contains(string(), '$ 25.00')]//..//div[(@class='dnd-td')][1]");
+		}
+
+		task ("And the admin navigates into a supplier order") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 25.00");
+		}
+
+		task ("And adds the order item to the shipment") {
+			Click(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			Click(locator1 = "Button#PLUS");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+			Check.checkToggleSwitch(
+				key_orderId = ${supplierOrderId},
+				key_productSku = "TESTSKU",
+				locator1 = "Checkbox#ADD_SHIPMENT_ITEMS_CHECKBOX_WITH_ORDER_ID");
+
+			Button.clickSubmitButton();
+		}
+
+		task ("When the admin navigates to the orders page") {
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the status of the customer order is still 'Processing'") {
+			AssertElementPresent(
+				key_parameter = "$ 64.00",
+				key_status = "Processing",
+				locator1 = "CommerceOrders#ORDER_STATUS_BY_SECOND_PARAMETER");
+		}
+	}
+
+	@description = "Test for COMMERCE-11444. As a buyer user, I want to be able to see information from the split supplier order also in the customer order"
+	@priority = 5
+	test CanAssertStoreFrontSplitOrderShipmentStatuses {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			var customerOrderId = CommerceJSONOrdersAPI._getCommerceOrderIds(orderCount = 1);
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the customer order is splitted") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+
+			var orderItemsJSON = CommerceJSONOrdersAPI._getCommerceOrderItems();
+		}
+
+		task ("And the buyer logs in again") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("And a shipment is created for one of the split orders") {
+			for (var sku : list "TESTSKU,MIN55861") {
+				var orderId = CommerceJSONOrdersAPI.getCommerceOrderItemFieldByJSONPath(
+					jsonPath = "$..items[?(@['orderId'] != ${customerOrderId} && @['sku'] == '${sku}')].orderId",
+					responseBody = ${orderItemsJSON});
+				var orderItemId = CommerceJSONOrdersAPI.getCommerceOrderItemFieldByJSONPath(
+					jsonPath = "$..items[?(@['orderId'] != ${customerOrderId} && @['sku'] == '${sku}')].id",
+					responseBody = ${orderItemsJSON});
+
+				var shipmentItemsList = "${orderItemId}:1:Italy";
+
+				var shipmentId = CommerceJSONShipmentsAPI._addCommerceShipment(
+					orderId = ${orderId},
+					shipmentItemsList = ${shipmentItemsList});
+
+				task ("When the shipment's status is updated") {
+					for (var status : list "Processing,Finish Processing,Shipped,Delivered") {
+						var shipmentStatus = CommerceUtilities.convertStringToKey(string = ${status});
+
+						if (${status} != "Processing") {
+							CommerceJSONShipmentsAPI._updateCommerceShipmentStatus(
+								shipmentId = ${shipmentId},
+								shipmentStatus = ${shipmentStatus});
+						}
+
+						task ("Then the information from the shipment are displayed on both customer and supplier order in the store-front") {
+							for (var order : list "${orderId},${customerOrderId}") {
+								CommerceNavigator.goToPlacedOrderDetailPageViaURL(orderId = ${order});
+
+								CommerceShipments.assertOrderItemShipmentInPlacedOrders(
+									entryName = ${sku},
+									quantity = 1,
+									shipmentId = ${shipmentId},
+									status = ${status});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11754. The admin can see split orders prices taken from customer order"
+	@priority = 5
+	test CanAssertSupplierOrderPriceIsTakenFromCustomerOrder {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a business account and a buyer user inside of it") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin changes the price of a SKU inside the order") {
+			CommerceJSONProductsAPI._patchCommerceSku(
+				price = "100.00",
+				productSku = "TESTSKU");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("When the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the admin can see that the price of the orders is not changed") {
+			for (var orderPrice : list "$ 64.00,$ 24.00,$ 25.00") {
+				AssertElementPresent(
+					key_cellName1 = ${orderPrice},
+					key_cellName2 = "",
+					key_columnNumber = 5,
+					locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE");
+			}
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11750. The admin can see that the split supplier orders are linked to the right channel when both catalog and channel are linked to the supplier account"
+	@priority = 5
+	test CanAssertSupplierOrdersAreLinkedToCorrectChannelsWhenCatalogAndChannelAreLinkedToSupplierAccount {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a business account and a buyer user inside of it") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the admin navigates to Minium site -> Account Management") {
+			ApplicationsMenu.gotoSite(site = "Minium");
+
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Account Management");
+		}
+
+		task ("And the admin proceeds to create a supplier account") {
+			CommerceAccountManagement.addAccount(
+				accountName = "Supplier Account",
+				accountType = "Supplier");
+
+			var supplierAccountId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = "Supplier Account");
+		}
+
+		task ("And a channel linked to the supplier account is created") {
+			CommerceJSONChannelsAPI._addChannel(
+				accountId = ${supplierAccountId},
+				channelName = "Supplier Channel",
+				channelType = "site",
+				currencyCode = "USD");
+		}
+
+		task ("And a catalog linked to the supplier account is created") {
+			CommerceJSONCatalogsAPI._addCatalog(
+				accountEntryId = ${supplierAccountId},
+				catalogName = "Supplier Catalog");
+		}
+
+		task ("And a product inside the created catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Supplier Catalog",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("When the admin navigates to the Commerce -> Orders page") {
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the channel related to the supplier order containing the product inside the Supplier catalog is 'Supplier Channel'") {
+			AssertTextEquals(
+				key_cellName1 = "$ 25.00",
+				key_cellName2 = "",
+				key_columnNumber = 4,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "Supplier Channel");
+		}
+
+		task ("And the channel related to the supplier order containing the product inside the Minium catalog is 'Minium Portal'") {
+			AssertTextEquals(
+				key_cellName1 = "$ 24.00",
+				key_cellName2 = "",
+				key_columnNumber = 4,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "Minium Portal");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11751. The admin can see that the split supplier orders are linked to the right channel when only the catalog is linked to the supplier account"
+	@priority = 4
+	test CanAssertSupplierOrdersAreLinkedToCorrectChannelsWhenCatalogIsLinkedToSupplierAccount {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a business account and a buyer user inside of it") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the admin navigates to Minium site -> Account Management") {
+			ApplicationsMenu.gotoSite(site = "Minium");
+
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Account Management");
+		}
+
+		task ("And the admin proceeds to create a supplier account") {
+			CommerceAccountManagement.addAccount(
+				accountName = "Supplier Account",
+				accountType = "Supplier");
+
+			var supplierAccountId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = "Supplier Account");
+		}
+
+		task ("And a channel not linked to the supplier account is created") {
+			CommerceJSONChannelsAPI._addChannel(
+				channelName = "Supplier Channel",
+				channelType = "site",
+				currencyCode = "USD");
+		}
+
+		task ("And a catalog linked to the supplier account is created") {
+			CommerceJSONCatalogsAPI._addCatalog(
+				accountEntryId = ${supplierAccountId},
+				catalogName = "Supplier Catalog");
+		}
+
+		task ("And a product inside the created catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Supplier Catalog",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("When the admin navigates to the Commerce -> Orders page") {
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the channel related to the supplier order containing the product inside the Supplier catalog is 'Minium Portal'") {
+			AssertTextEquals(
+				key_cellName1 = "$ 25.00",
+				key_cellName2 = "",
+				key_columnNumber = 4,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "Minium Portal");
+		}
+
+		task ("And the channel related to the supplier order containing the product inside the Minium catalog is 'Minium Portal'") {
+			AssertTextEquals(
+				key_cellName1 = "$ 24.00",
+				key_cellName2 = "",
+				key_columnNumber = 4,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "Minium Portal");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11753. The admin can see that the split supplier orders are linked to the right channel when only the channel is linked to the supplier account"
+	@priority = 4
+	test CanAssertSupplierOrdersAreLinkedToCorrectChannelsWhenChannelIsLinkedToSupplierAccount {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a business account and a buyer user inside of it") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the admin navigates to Minium site -> Account Management") {
+			ApplicationsMenu.gotoSite(site = "Minium");
+
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Account Management");
+		}
+
+		task ("And the admin proceeds to create a supplier account") {
+			CommerceAccountManagement.addAccount(
+				accountName = "Supplier Account",
+				accountType = "Supplier");
+
+			var supplierAccountId = JSONAccountEntryAPI._getAccountEntryId(accountEntryName = "Supplier Account");
+		}
+
+		task ("And a channel not linked to the supplier account is created") {
+			CommerceJSONChannelsAPI._addChannel(
+				accountId = ${supplierAccountId},
+				channelName = "Supplier Channel",
+				channelType = "site",
+				currencyCode = "USD");
+		}
+
+		task ("And a catalog linked to the supplier account is created") {
+			CommerceJSONCatalogsAPI._addCatalog(catalogName = "Supplier Catalog");
+		}
+
+		task ("And a product inside the created catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Supplier Catalog",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("When the admin navigates to the Commerce -> Orders page") {
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the channel related to the supplier order containing the product inside the Supplier catalog is 'Minium Portal'") {
+			AssertTextEquals(
+				key_cellName1 = "$ 25.00",
+				key_cellName2 = "",
+				key_columnNumber = 4,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "Minium Portal");
+		}
+
+		task ("And the channel related to the supplier order containing the product inside the Minium catalog is 'Minium Portal'") {
+			AssertTextEquals(
+				key_cellName1 = "$ 24.00",
+				key_cellName2 = "",
+				key_columnNumber = 4,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "Minium Portal");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11438. CanChangesOnlyPropagateFromTheSupplierOrder"
+	@priority = 4
+	test CanChangesOnlyPropagateFromTheSupplierOrder {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page and accepts the order") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("When the admin reaches the Orders Admin page again and opens a supplier order using Simple Product") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 5.00");
+		}
+
+		task ("Then the product's quantity is editable") {
+			CommerceOrders.editOrderItemDetails(
+				orderItemQuantity = 3,
+				orderItemSku = "TESTSKU");
+		}
+
+		task ("But the total price is not updated") {
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = "3.00",
+				productSku = "TESTSKU",
+				productTotalPrice = "5.00");
+		}
+
+		task ("When the admin opens the customer order") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 44.00");
+		}
+
+		task ("Then the quantity is changed") {
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "24.00",
+				productName = "U-Joint",
+				productQuantity = 1,
+				productSku = "MIN55861",
+				productTotalPrice = "24.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = 3,
+				productSku = "TESTSKU",
+				productTotalPrice = "5.00");
+		}
+
+		task ("But if the admin changes the quantity inside the customer order") {
+			CommerceOrders.editOrderItemDetails(
+				orderItemQuantity = 6,
+				orderItemSku = "TESTSKU");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "24.00",
+				productName = "U-Joint",
+				productQuantity = 1,
+				productSku = "MIN55861",
+				productTotalPrice = "24.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = "6.00",
+				productSku = "TESTSKU",
+				productTotalPrice = "5.00");
+		}
+
+		task ("Then the changes are not updated inside the supplier order") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 5.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = "3.00",
+				productSku = "TESTSKU",
+				productTotalPrice = "5.00");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11437. CanCreateOrderUsingProductBundleCorrectly"
+	@priority = 4
+	test CanCreateOrderUsingProductBundleCorrectly {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And a product bundle using two options of products from different catalogs linked to an SKU is created") {
+			for (var num : list "1,2") {
+				CommerceProducts.openProductsAdmin();
+
+				CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
+
+				CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+				CommerceProductOptions.createProductOption(key_optionName = "Option${num}");
+
+				CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+				CommerceProductOptions.editProductOption(
+					key_option = "Option${num}",
+					key_priceType = "Dynamic",
+					productOptionPriceType = "true",
+					productOptionRequired = "true",
+					productOptionSkuContributor = "true");
+
+				CommerceProductOptions.createProductOptionValue(key_name = "Value${num}");
+
+				SelectFrame.selectFrameTop();
+
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+				if (${num} == 1) {
+					CommerceEntry.clickTableEntryEditButton(entryName = "Value${num}");
+
+					SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+					Type(
+						key_fieldLabel = "SKU",
+						locator1 = "TextInput#GENERIC_TEXT_INPUT",
+						value1 = "MIN55861");
+				}
+				else if (${num} == 2) {
+					CommerceEntry.clickTableEntryEditButton(entryName = "Value${num}");
+
+					SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+					Type(
+						key_fieldLabel = "SKU",
+						locator1 = "TextInput#GENERIC_TEXT_INPUT",
+						value1 = "TESTSKU");
+				}
+
+				CommerceEntry.saveEntry();
+			}
+
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
+
+			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
+
+			CommerceSKUs.generateAllSkuCombinations();
+
+			CommerceNavigator.gotoEntry(entryName = "VALUE1VALUE2");
+
+			CommerceEntry.editSkuPricingAndInventory(
+				basePrice = "20.00",
+				italyQuantity = 20,
+				publish = "true");
+		}
+
+		task ("When the buyer checkout an order with the product bundle on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			Click(
+				key_productName = "ABS Sensor",
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_VIEW_ALL_VARIANTS");
+
+			FrontStore.addToCartFromProductDetails(
+				productName = "ABS Sensor",
+				productSku = "VALUE1VALUE2");
+
+			CommerceNavigator.gotoMiniCart();
+
+			CommerceNavigator.editMiniCartItemQuantity(
+				cartItemSku = "VALUE1VALUE2",
+				productQuantity = 3);
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.setAddress(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code");
+
+			Click(locator1 = "Button#CONTINUE");
+
+			Click(
+				key_radioOption = "Standard",
+				locator1 = "CommerceEntry#RADIO_BUTTON");
+
+			Click(locator1 = "Button#CONTINUE");
+
+			for (var productName : list "ABS Sensor,U-Joint,Simple Product") {
+				AssertElementPresent(
+					key_productName = ${productName},
+					locator1 = "CommerceAccelerators#CHECKOUT_SUMMARY_PRODUCT_TABLE_PRODUCT");
+			}
+
+			Click(locator1 = "Button#CONTINUE");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("When the admin changes the order status to 'Processing'") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the order is split based on the option selected for the product bundle during the checkout") {
+			CommerceOrders.openOrdersAdmin();
+
+			for (var productTotalPrice : list "$ 162.00,$ 132.00,$ 15.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 162.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "49.00",
+				productName = "ABS Sensor",
+				productQuantity = 3,
+				productSku = "VALUE1VALUE2",
+				productTotalPrice = "147.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "24.00",
+				productName = "U-Joint",
+				productQuantity = 3,
+				productSku = "MIN55861",
+				productTotalPrice = "72.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = 3,
+				productSku = "TESTSKU",
+				productTotalPrice = "15.00");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 15.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = 3,
+				productSku = "TESTSKU",
+				productTotalPrice = "15.00");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 132.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "20.00",
+				productName = "ABS Sensor",
+				productQuantity = 3,
+				productSku = "VALUE1VALUE2",
+				productTotalPrice = "60.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "24.00",
+				productName = "U-Joint",
+				productQuantity = 3,
+				productSku = "MIN55861",
+				productTotalPrice = "72.00");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11415. CanCreateTheActionUsingTheHealthCheck"
+	@priority = 4
+	test CanCreateTheActionUsingTheHealthCheck {
+		property portal.acceptance = "false";
+
+		task ("When the health check page is reached") {
+			CommerceNavigator.goToHealthCheckAdmin();
+		}
+
+		task ("Then a new health check 'Order Split by Catalog Action' is present") {
+			AssertElementPresent(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+		}
+
+		task ("And if the new health check is checked") {
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+		}
+
+		task ("Then a new Commerce Order action rule with default settings is created") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Commerce Order");
+
+			ObjectAdmin.goToActionsTab();
+
+			AssertElementPresent(
+				key_firstRowValue = "Active",
+				key_secondRowValue = "No",
+				locator1 = "CommerceEntry#GENERIC_TABLE_ROW_VALUE");
+
+			ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+
+			SelectFrame(locator1 = "IFrame#IFRAME");
+
+			Click(
+				key_tabName = "Action Builder",
+				locator1 = "ObjectAction#TAB_GENERIC");
+
+			AssertElementPresent(locator1 = "ObjectAction#ENABLE_DISABLE_CONDITION");
+
+			AssertTextEquals(
+				locator1 = "ObjectAction#INPUT_EXPRESSION",
+				value1 = "orderStatus = 10");
+
+			AssertTextEquals(
+				locator1 = "ObjectAction#SELECT_ACTION_TYPE",
+				value1 = "Split Order by Catalog");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11461. CanDiscountsAreAppliedToSpecificProduct"
+	@priority = 4
+	test CanDiscountsAreAppliedToSpecificProduct {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("Given a 50% discount is applied on the new created product") {
+			CommerceJSONDiscountsAPI._addDiscount(
+				active = "true",
+				level = "L1",
+				percentageLevel1 = 50,
+				productSKUs = "TESTSKU",
+				target = "skus",
+				title = "Discount 1",
+				usePercentage = "true");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("When the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,Shock Absorber") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the admin will see two supplier orders, one with 75$ and 0$ discount, and the second with 25$ and 12.50$ discount") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 12.50");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			AssertTextEquals(
+				key_productName = "Simple Product",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME",
+				value1 = "Simple Product");
+
+			AssertTextEquals(
+				key_productDiscount = "$ 12.50",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_DISCOUNT",
+				value1 = "$ 12.50");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 75.00");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			AssertTextEquals(
+				key_productName = "Shock Absorber",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME",
+				value1 = "Shock Absorber");
+
+			AssertTextEquals(
+				key_productDiscount = "$ 0.00",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_DISCOUNT",
+				value1 = "$ 0.00");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11441. CanDiscountsAreSplitFairlyBetweenSuppliers"
+	@priority = 4
+	test CanDiscountsAreSplitFairlyBetweenSuppliers {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("Given a 10% discount is applied on the total of the order") {
+			CommerceJSONDiscountsAPI._addDiscount(
+				active = "true",
+				level = "L1",
+				percentageLevel1 = 10,
+				target = "total",
+				title = "Discount 1",
+				usePercentage = "true");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("WHen the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,Shock Absorber") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("When the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the admin will see two supplier orders, one with 75$, which has 7.50$ as a discount, and the second with 25$, which has 2.50$ as a discount") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 22.50");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			Click(locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_BUTTON");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+			AssertElementPresent(
+				key_label = "Total Discount",
+				key_value = "2.50",
+				locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_FIELDS");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 67.50");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			Click(locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_BUTTON");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+			AssertElementPresent(
+				key_label = "Total Discount",
+				key_value = "7.50",
+				locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_FIELDS");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11416. CanEditObjectCommerceOrderAction"
+	@priority = 4
+	test CanEditObjectCommerceOrderAction {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And an action with expression 'Order Status = 1' is created within Commerce Order object") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectSystemObject(label = "Commerce Order");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Custom Action",
+				actionName = "customAction",
+				active = "true",
+				inputExpression = "orderStatus = 1",
+				thenAction = "Split Order by Catalog",
+				whenAction = "On Order Status Update");
+		}
+
+		task ("When the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the order is split into 3 items") {
+			for (var productTotalPrice : list "$ 44.00,$ 5.00,$ 24.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11460. CanFixedAmountDiscountsAreSplitFairlyBetweenSuppliers"
+	@priority = 4
+	test CanFixedAmountDiscountsAreSplitFairlyBetweenSuppliers {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("Given a 10$ discount is applied on the subtotal of the order") {
+			CommerceJSONDiscountsAPI._addDiscount(
+				active = "true",
+				level = "L1",
+				percentageLevel1 = 10,
+				target = "subtotal",
+				title = "Discount 1",
+				usePercentage = "false");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("When the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,Shock Absorber") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("When the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the admin will see two supplier orders, one with 75$, which has 7.50$ as a discount, and the second with 25$, which has 2.50$ as a discount") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 22.50");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			Click(locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_BUTTON");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+			AssertElementPresent(
+				key_label = "Subtotal Discount",
+				key_value = "2.50",
+				locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_FIELDS");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 67.50");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			Click(locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_BUTTON");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+			AssertElementPresent(
+				key_label = "Subtotal Discount",
+				key_value = "7.50",
+				locator1 = "CommerceOrders#ORDER_EDIT_SUMMARY_FIELDS");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11280. The admin can see updates to the supplier shipped quantity are reflected to the customer order"
+	@priority = 5
+	test CanSeeUpdatedSupplierShippedQuantityOnTheCustomerOrder {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("When the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("And the admin goes inside a supplier order (e.g. the one containing the product from the Master catalog)") {
+			CommerceOrders.openOrdersAdmin();
+
+			var supplierOrderId = selenium.getText("//div[(@class='dnd-td') and contains(string(), '$ 25.00')]//..//div[(@class='dnd-td')][1]");
+			var customerOrderId = selenium.getText("//div[(@class='dnd-td') and contains(string(), '$ 64.00')]//..//div[(@class='dnd-td')][1]");
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 25.00");
+		}
+
+		task ("And updates the order item quantity to 2") {
+			CommerceOrders.editOrderItemDetails(
+				orderItemQuantity = 2,
+				orderItemSku = "TESTSKU");
+		}
+
+		task ("And completes the order checkout delivering 1 quantity of the product") {
+			CommerceOrders.checkoutFullWorkflow(
+				orderId = ${supplierOrderId},
+				sku = "TESTSKU",
+				warehouse = "Italy");
+		}
+
+		task ("When the admin goes into that order entry again") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 25.00");
+		}
+
+		task ("Then, following the workflow of the shipment, the outstanding quantity of that product from the customer order is correctly decreased by 1 and equals to 1") {
+			CommerceOrders.checkoutFullWorkflow(
+				orderIds = ${customerOrderId},
+				outstandingQuantities = 1,
+				outstandingQuantity = "true",
+				productSkus = "TESTSKU",
+				warehouse = "Italy");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11439. CanTheCustomerOrderStatusIsUpdatedOnlyIfAllSupplierOrdersAreCompleted"
+	@priority = 4
+	test CanTheCustomerOrderStatusIsUpdatedOnlyIfAllSupplierOrdersAreCompleted {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("When the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("And only one supplier order is completed") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 5.00");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			var orderId = selenium.getText("//h3[contains(@class,'commerce-header')]");
+
+			echo("orderId: ${orderId}");
+
+			CommerceOrders.checkoutFullWorkflow(
+				orderId = ${orderId},
+				sku = "TESTSKU",
+				warehouse = "Italy");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the status for the customer order is still not completed") {
+			for (var orderStatusWithAmount : list "Processing:24.00,Partially Shipped:44.00,Completed:5.00") {
+				var orderStatus = StringUtil.extractFirst(${orderStatusWithAmount}, ":");
+				var amount = StringUtil.extractLast(${orderStatusWithAmount}, ":");
+
+				AssertElementPresent(
+					key_parameter = ${amount},
+					key_status = ${orderStatus},
+					locator1 = "CommerceOrders#ORDER_STATUS_BY_SECOND_PARAMETER");
+			}
+		}
+
+		task ("But if the admin complete all the supplier orders") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 24.00");
+
+			WaitForElementPresent(
+				key_index = "Create Shipment",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			var orderId = selenium.getText("//h3[contains(@class,'commerce-header')]");
+
+			echo("orderId: ${orderId}");
+
+			CommerceOrders.checkoutFullWorkflow(
+				orderId = ${orderId},
+				sku = "MIN55861",
+				warehouse = "Italy");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the status for the customer order is completed") {
+			for (var orderStatusWithAmount : list "Completed:24.00,Completed:44.00,Completed:5.00") {
+				var orderStatus = StringUtil.extractFirst(${orderStatusWithAmount}, ":");
+				var amount = StringUtil.extractLast(${orderStatusWithAmount}, ":");
+
+				AssertElementPresent(
+					key_parameter = ${amount},
+					key_status = ${orderStatus},
+					locator1 = "CommerceOrders#ORDER_STATUS_BY_SECOND_PARAMETER");
+			}
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11417. CanTheHealthCheckVerifyIfSplitOrderByCatalogActionIsAlreadyPresent"
+	@priority = 4
+	test CanTheHealthCheckVerifyIfSplitOrderByCatalogActionIsAlreadyPresent {
+		property portal.acceptance = "false";
+
+		task ("Given an action with expression 'Test' is created within Commerce Order object") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectSystemObject(label = "Commerce Order");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Custom Action",
+				actionName = "customAction",
+				active = "true",
+				inputExpression = "Test",
+				thenAction = "Split Order by Catalog",
+				whenAction = "On Order Status Update");
+		}
+
+		task ("When the health check page is reached") {
+			CommerceNavigator.goToHealthCheckAdmin();
+		}
+
+		task ("Then the 'Order Split by Catalog Action' health check is checked and non clickable") {
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+		}
+
+		task ("But if the admin goes back to change the Commerce Order object's Action from "Split Order by Catalog" to other one") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectSystemObject(label = "Commerce Order");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.goToActionDetails(viewEntry = "Custom Action");
+
+			ObjectAdmin.viewDetails();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "ObjectAction#IFRAME_SIDE_PANEL");
+
+			Click(
+				key_tabName = "Action Builder",
+				locator1 = "ObjectAction#TAB_GENERIC");
+
+			Click(locator1 = "ObjectAction#SELECT_ACTION_TYPE");
+
+			Click(
+				key_type = "Update an Object Entry",
+				locator1 = "ObjectAdmin#SELECT_RELATIONSHIPS_TYPE_OPTION");
+
+			PortletEntry.save();
+
+			Refresh();
+		}
+
+		task ("Then the health check is clickable again") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			AssertElementNotPresent(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "disabled",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11418. CanTheOrderBeSplitOnlyOnce"
+	@priority = 5
+	test CanTheOrderBeSplitOnlyOnce {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And 2 actions 'Split Order by Catalog' with the default settings are created within Commerce Order object") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectSystemObject(label = "Commerce Order");
+
+			ObjectAdmin.goToActionsTab();
+
+			for (var num : list "1,2") {
+				ObjectAdmin.addObjectActionViaUI(
+					actionLabel = "Custom Action ${num}",
+					actionName = "customAction${num}",
+					active = "true",
+					inputExpression = "orderStatus = 10",
+					thenAction = "Split Order by Catalog",
+					whenAction = "On Order Status Update");
+			}
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("When the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the admin changes the order status to 'Processing'") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the order is split only once") {
+			CommerceOrders.openOrdersAdmin();
+
+			for (var productTotalPrice : list "$ 44.00,$ 5.00,$ 24.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11421. CanTheOrderBeSplitOnlyOnceUsingTheCheckoutWorkflow"
+	@priority = 5
+	test CanTheOrderBeSplitOnlyOnceUsingTheCheckoutWorkflow {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("When the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the admin changes the order status to 'Processing'") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the order is split into 3 items") {
+			CommerceOrders.openOrdersAdmin();
+
+			for (var productTotalPrice : list "$ 44.00,$ 5.00,$ 24.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+		}
+
+		task ("But if the admin changes the customer order status to 'On Hold'") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 44.00");
+
+			Click(
+				key_text = "Hold",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("And if the admin changes the customer order status to 'Release Hold'") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "On Hold");
+
+			Click(
+				key_text = "Release Hold",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the order is not split again") {
+			CommerceOrders.openOrdersAdmin();
+
+			for (var productTotalPrice : list "$ 44.00,$ 5.00,$ 24.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11419. CanTheOrderBeSplitOnlyOnceWithDifferentOrderStatusRulesTriggers"
+	@priority = 5
+	test CanTheOrderBeSplitOnlyOnceWithDifferentOrderStatusRulesTriggers {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And 2 actions 'Split Order by Catalog' that one using health check, the other using expression 'orderStatus = 1' are created under Commerce Order object") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectSystemObject(label = "Commerce Order");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Custom Action 2",
+				actionName = "customAction2",
+				active = "true",
+				inputExpression = "orderStatus = 1",
+				thenAction = "Split Order by Catalog",
+				whenAction = "On Order Status Update");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("When the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("Then the order is split into 3 items") {
+			for (var productTotalPrice : list "$ 44.00,$ 5.00,$ 24.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+		}
+
+		task ("When the admin changes the order status to 'Processing'") {
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 44.00");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the order is split only once") {
+			CommerceOrders.openOrdersAdmin();
+
+			for (var productTotalPrice : list "$ 44.00,$ 5.00,$ 24.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11420. CanTheOrderSplitIsAppliedCorrectly"
+	@priority = 5
+	test CanTheOrderSplitIsAppliedCorrectly {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("When the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the admin changes the order status to 'Processing'") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the order is split into 2 supplier orders, and all entries have the correct information") {
+			CommerceOrders.openOrdersAdmin();
+
+			for (var productTotalPrice : list "$ 44.00,$ 5.00,$ 24.00") {
+				AssertTextEquals(
+					key_productTotalPrice = ${productTotalPrice},
+					locator1 = "CommerceOrders#ORDER_DETAILS_TOTAL_PRICE",
+					value1 = ${productTotalPrice});
+			}
+
+			Pagination.viewResults(results = "Showing 1 to 3 of 3 entries.");
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 44.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "24.00",
+				productName = "U-Joint",
+				productQuantity = 1,
+				productSku = "MIN55861",
+				productTotalPrice = "24.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = 1,
+				productSku = "TESTSKU",
+				productTotalPrice = "5.00");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 5.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "5.00",
+				productName = "Simple Product",
+				productQuantity = 1,
+				productSku = "TESTSKU",
+				productTotalPrice = "5.00");
+
+			CommerceOrders.openOrdersAdmin();
+
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "$ 24.00");
+
+			CommerceOrders.viewOrdersEntry(
+				productListPrice = "24.00",
+				productName = "U-Joint",
+				productQuantity = 1,
+				productSku = "MIN55861",
+				productTotalPrice = "24.00");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11428. CanTheSupplierOrderUseSameChannelAsTheCustomerOrder"
+	@priority = 4
+	test CanTheSupplierOrderUseSameChannelAsTheCustomerOrder {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, a price and an inventory is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 5,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouse(
+				latitude = 10,
+				longitude = 0,
+				warehouseName = "Test Warehouse");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Test Warehouse");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("When the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the admin changes the order status to 'Processing'") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the supplier orders use the same channel as the customer order") {
+			CommerceOrders.openOrdersAdmin();
+
+			for (var rowIndex : list "1,2,3") {
+				AssertTextEquals(
+					key_columnIndex = 4,
+					key_rowIndex = ${rowIndex},
+					locator1 = "CommerceEntry#TABLE_ENTRY_ROW_FIELD_GENERIC",
+					value1 = "Minium Portal");
+			}
+		}
+	}
+
+	@description = "This is a test for COMMERCE-11639. The admin can see booked quantity stored against the supplier order line item"
+	@priority = 5
+	test CanViewBookedQuantityStoredAgainstSupplierOrderLineItem {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a business account and a buyer user inside of it") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a product with 'Master' catalog, with price and inventory created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Master",
+				price = 25,
+				productName = "Simple Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONWarehousesAndInventoriesAPI._addWarehouseItem(
+				warehouseItemQuantity = 100,
+				warehouseItemSku = "TESTSKU",
+				warehouseName = "Italy");
+		}
+
+		task ("And the 'Order Split by Catalog Action' health check is checked") {
+			CommerceNavigator.goToHealthCheckAdmin();
+
+			Click(
+				key_buttonRowName = "Order Split by Catalog Action",
+				key_buttonStatus = "",
+				locator1 = "CommerceEntry#FIX_ISSUE_BUTTON_NAME");
+
+			WaitForElementPresent(
+				key_value = "Order Split by Catalog Action",
+				locator1 = "CommerceEntry#HEALTH_CHECK_ICON_CHECK_NAME");
+
+			CommerceJSONOrdersAPI._patchCommerceOrderObjectAction(
+				active = "true",
+				objectActionName = "SplitOrderByCatalog",
+				objectDefinitionName = "CommerceOrder");
+		}
+
+		task ("And the buyer checkout an order with both Minium and Master catalogs products on Minium site") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			for (var productName : list "Simple Product,U-Joint") {
+				FrontStore.addInitializerProductToCart(
+					productName = ${productName},
+					productQuantity = 1);
+			}
+
+			CommerceCheckout.gotoCheckout();
+
+			CommerceCheckout.checkout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				shippingMethod = "Standard");
+		}
+
+		task ("And the admin reaches the Orders Admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+		}
+
+		task ("And the customer order is splitted") {
+			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
+
+			Click(
+				key_text = "Accept Order",
+				locator1 = "Link#ANY");
+
+			Alert.viewSuccessMessage();
+
+			CommerceOrders.openOrdersAdmin();
+
+			var customerOrderId = selenium.getText("//div[(@class='dnd-td') and contains(string(), '$ 64.00')]//..//div[(@class='dnd-td')][1]");
+			var supplierOrderId1 = selenium.getText("//div[(@class='dnd-td') and contains(string(), '$ 24.00')]//..//div[(@class='dnd-td')][1]");
+			var supplierOrderId2 = selenium.getText("//div[(@class='dnd-td') and contains(string(), '$ 25.00')]//..//div[(@class='dnd-td')][1]");
+		}
+
+		task ("When the admin navigates to Commerce -> Inventory -> SKU (e.g. the one relating to the product from the Minium catalog) -> On Order tab") {
+			CommerceNavigator.gotoPortlet(
+				category = "Inventory Management",
+				portlet = "Inventory");
+
+			AppBuilderAdmin.searchByItem(itemName = "MIN55861");
+
+			CommerceNavigator.gotoEntry(entryName = "MIN55861");
+
+			CommerceEntry.gotoMenuTab(menuTab = "On Order");
+		}
+
+		task ("Then the Order Id is the one related to the supplier order which contains that SKU, different from the customer Order Id") {
+			AssertElementPresent(
+				key_cellName1 = ${supplierOrderId1},
+				key_cellName2 = "Commerce Account",
+				key_columnNumber = 2,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE");
+
+			AssertElementNotPresent(
+				key_cellName1 = ${customerOrderId},
+				key_cellName2 = "Commerce Account",
+				key_columnNumber = 2,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE");
+		}
+
+		task ("When the admin navigates to Commerce -> Inventory -> SKU (the other one) -> On Order tab") {
+			CommerceNavigator.gotoPortlet(
+				category = "Inventory Management",
+				portlet = "Inventory");
+
+			AppBuilderAdmin.searchByItem(itemName = "TESTSKU");
+
+			CommerceNavigator.gotoEntry(entryName = "TESTSKU");
+
+			CommerceEntry.gotoMenuTab(menuTab = "On Order");
+		}
+
+		task ("Then the Order Id is the one related to the supplier order which contains that SKU, not the customer Order Id") {
+			AssertElementPresent(
+				key_cellName1 = ${supplierOrderId2},
+				key_cellName2 = "Commerce Account",
+				key_columnNumber = 2,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE");
+
+			AssertElementNotPresent(
+				key_cellName1 = ${customerOrderId},
+				key_cellName2 = "Commerce Account",
+				key_columnNumber = 2,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE");
+		}
+
+		task ("When the admin checks the bookedQuantityId of the customer order's order items") {
+			var response = CommerceJSONOrdersAPI._getOrderItemById(orderId = ${customerOrderId});
+
+			var bookedQuantityIds = JSONUtil.getWithJSONPath(${response}, "$.items..bookedQuantityId");
+		}
+
+		task ("Then the bookedQuantityId equals 0 for every order item in the customer order") {
+			TestUtils.assertEquals(
+				actual = ${bookedQuantityIds},
+				expected = "0,0");
+		}
+	}
+
+}

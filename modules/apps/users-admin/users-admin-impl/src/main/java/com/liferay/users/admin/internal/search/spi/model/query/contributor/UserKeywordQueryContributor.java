@@ -55,6 +55,8 @@ public class UserKeywordQueryContributor implements KeywordQueryContributor {
 		queryHelper.addSearchTerm(
 			booleanQuery, searchContext, "country", false);
 		queryHelper.addSearchTerm(
+			booleanQuery, searchContext, "emailAddress", false);
+		queryHelper.addSearchTerm(
 			booleanQuery, searchContext, "firstName", false);
 		queryHelper.addSearchTerm(
 			booleanQuery, searchContext, "fullName", false);

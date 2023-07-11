@@ -36,6 +36,7 @@ import com.liferay.source.formatter.processor.SourceProcessor;
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -388,14 +389,22 @@ public class JavaComponentAnnotationsCheck extends JavaAnnotationsCheck {
 			configurationPid = configurationPid.substring(
 				1, configurationPid.length() - 1);
 
-			for (String configurationClass :
-					StringUtil.split(configurationPid, ", ")) {
-
-				configurationClasses.add(configurationClass);
-			}
+			Collections.addAll(
+				configurationClasses, StringUtil.split(configurationPid, ", "));
 		}
 		else {
 			configurationClasses.add(configurationPid);
+		}
+
+		if (isAttributeValue(
+				_CHECK_HAS_MULTIPLE_CONFIGURATION_PIDS_KEY, absolutePath) &&
+			(configurationClasses.size() > 1)) {
+
+			addMessage(
+				fileName,
+				"Component classes cannot have multiple configuration PIDs");
+
+			return annotation;
 		}
 
 		List<String> importNames = javaClass.getImportNames();
@@ -660,6 +669,9 @@ public class JavaComponentAnnotationsCheck extends JavaAnnotationsCheck {
 
 	private static final String _CHECK_CONFIGURATION_POLICY_ATTRIBUTE_KEY =
 		"checkConfigurationPolicyAttribute";
+
+	private static final String _CHECK_HAS_MULTIPLE_CONFIGURATION_PIDS_KEY =
+		"checkHasMultipleConfigurationPids";
 
 	private static final String _CHECK_HAS_MULTIPLE_SERVICE_TYPES_KEY =
 		"checkHasMultipleServiceTypes";

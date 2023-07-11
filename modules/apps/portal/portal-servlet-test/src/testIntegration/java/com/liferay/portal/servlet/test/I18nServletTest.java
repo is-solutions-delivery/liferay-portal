@@ -119,7 +119,7 @@ public class I18nServletTest extends I18nServlet {
 
 		_group.setTypeSettingsProperties(typeSettingsUnicodeProperties);
 
-		_groupLocalService.updateGroup(_group);
+		_group = _groupLocalService.updateGroup(_group);
 	}
 
 	@After
@@ -493,7 +493,6 @@ public class I18nServletTest extends I18nServlet {
 		if (group != null) {
 			mockHttpServletRequest.setAttribute(
 				WebKeys.COMPANY_ID, group.getCompanyId());
-
 			mockHttpServletRequest.setPathInfo(
 				PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING +
 					group.getFriendlyURL());

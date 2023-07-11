@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import {filesize} from 'filesize';
 import {uniqueId} from 'lodash';
 import ReactDOMServer from 'react-dom/server';
@@ -16,14 +30,20 @@ import {Section} from '../../components/Section/Section';
 import {useAppContext} from '../../manage-app-state/AppManageState';
 import {TYPES} from '../../manage-app-state/actionTypes';
 import {
+	addExpandoValue,
 	createAttachment,
 	createProductSpecification,
 	createSpecification,
+	getCategories,
+	getProductIdCategories,
+	getVocabularies,
+	patchProductIdCategory,
 	updateProductSpecification,
 } from '../../utils/api';
 import {submitBase64EncodedFile} from '../../utils/util';
 
 import './ProvideAppBuildPage.scss';
+import {getCompanyId} from '../../liferay/constants';
 
 interface ProvideAppBuildPageProps {
 	onClickBack: () => void;
@@ -81,6 +101,116 @@ export function ProvideAppBuildPage({
 				files,
 			},
 			type: TYPES.UPLOAD_BUILD_ZIP_FILES,
+		});
+	};
+
+	const updateCloudCompatibility = async () => {
+		const vocabulariesResponse = await getVocabularies();
+
+		const categories = await getProductIdCategories({
+			appId: appProductId.toString(),
+		});
+
+		let newCategories: Categories[] = [];
+
+		if (appType.value === 'cloud') {
+			let marketplaceLiferayPlatformOfferingId = 0;
+			let marketplaceLiferayVersionId = 0;
+			let marketplaceEditionId = 0;
+
+			vocabulariesResponse.items.forEach(
+				(vocab: {id: number; name: string}) => {
+					if (
+						vocab.name === 'Marketplace Liferay Platform Offering'
+					) {
+						marketplaceLiferayPlatformOfferingId = vocab.id;
+					}
+
+					if (vocab.name === 'Marketplace Liferay Version') {
+						marketplaceLiferayVersionId = vocab.id;
+					}
+
+					if (vocab.name === 'Marketplace Edition') {
+						marketplaceEditionId = vocab.id;
+					}
+				}
+			);
+
+			const platformOfferingList = await getCategories({
+				vocabId: marketplaceLiferayPlatformOfferingId,
+			});
+
+			const fullyManagedOption = platformOfferingList.find(
+				(item) => item.name === 'Fully-Managed'
+			);
+
+			if (fullyManagedOption) {
+				newCategories.push({
+					externalReferenceCode:
+						fullyManagedOption?.externalReferenceCode,
+					id: fullyManagedOption.id,
+					name: fullyManagedOption.name,
+					vocabulary: 'Marketplace Liferay Platform Offering',
+				});
+			}
+
+			const liferayVersionList = await getCategories({
+				vocabId: marketplaceLiferayVersionId,
+			});
+
+			const liferayVersionOption = liferayVersionList.find(
+				(item) => item.name === '7.4'
+			);
+
+			if (liferayVersionOption) {
+				newCategories.push({
+					externalReferenceCode:
+						liferayVersionOption?.externalReferenceCode,
+					id: liferayVersionOption.id,
+					name: liferayVersionOption.name,
+					vocabulary: 'Marketplace Liferay Version',
+				});
+			}
+
+			const marketplaceEditionList = await getCategories({
+				vocabId: marketplaceEditionId,
+			});
+
+			const marketplaceEditionOption = marketplaceEditionList.find(
+				(item) => item.name === 'EE'
+			);
+
+			if (marketplaceEditionOption) {
+				newCategories.push({
+					externalReferenceCode:
+						marketplaceEditionOption?.externalReferenceCode,
+					id: marketplaceEditionOption.id,
+					name: marketplaceEditionOption.name,
+					vocabulary: 'Marketplace Edition',
+				});
+			}
+
+			newCategories = [...categories.items, ...newCategories];
+		}
+		else {
+			newCategories = categories.items.filter((category) => {
+				if (
+					category.vocabulary !== 'marketplace edition' &&
+					category.vocabulary !== 'marketplace liferay version' &&
+					category.vocabulary !== 'liferay platform offering'
+				) {
+					return category;
+				}
+			});
+		}
+
+		const body = newCategories.map((item) => {
+			return item;
+		});
+
+		await patchProductIdCategory({
+			appId: appProductId.toString(),
+			body,
 		});
 	};
 
@@ -275,14 +405,27 @@ export function ProvideAppBuildPage({
 						}
 					};
 
+					updateCloudCompatibility();
+
 					submitAppBuildType();
 
-					buildZIPFiles.forEach((buildZIPFile) => {
-						submitBase64EncodedFile({
+					buildZIPFiles.forEach(async (buildZIPFile) => {
+						const buildZIPFileId = await submitBase64EncodedFile({
 							appERC,
 							file: buildZIPFile.file,
 							requestFunction: createAttachment,
 							title: buildZIPFile.fileName,
+						});
+
+						addExpandoValue({
+							attributeValues: {
+								'App Icon': 'No',
+							},
+							className:
+								'com.liferay.commerce.product.model.CPAttachmentFileEntry',
+							classPK: buildZIPFileId as number,
+							companyId: Number(getCompanyId()),
+							tableName: 'CUSTOM_FIELDS',
 						});
 					});
 

@@ -15,6 +15,7 @@
 package com.liferay.translation.web.internal.servlet;
 
 import com.liferay.info.exception.NoSuchInfoItemException;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
@@ -196,9 +197,11 @@ public class ExportTranslationServlet extends HttpServlet {
 
 		InfoItemObjectProvider<Object> infoItemObjectProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
-				InfoItemObjectProvider.class, className);
+				InfoItemObjectProvider.class, className,
+				ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
-		Object object = infoItemObjectProvider.getInfoItem(classPK);
+		Object object = infoItemObjectProvider.getInfoItem(
+			new ClassPKInfoItemIdentifier(classPK));
 
 		for (String targetLanguageId : targetLanguageIds) {
 			zipWriter.addEntry(

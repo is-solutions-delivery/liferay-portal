@@ -26,27 +26,35 @@ public interface DLSizeLimitConfigurationProvider {
 
 	public long getCompanyFileMaxSize(long companyId);
 
+	public long getCompanyMaxSizeToCopy(long companyId);
+
 	public Map<String, Long> getCompanyMimeTypeSizeLimit(long companyId);
 
 	public long getGroupFileMaxSize(long groupId);
+
+	public long getGroupMaxSizeToCopy(long groupId);
 
 	public Map<String, Long> getGroupMimeTypeSizeLimit(long groupId);
 
 	public long getSystemFileMaxSize();
 
+	public long getSystemMaxSizeToCopy();
+
 	public Map<String, Long> getSystemMimeTypeSizeLimit();
 
 	public void updateCompanySizeLimit(
-			long companyId, long fileMaxSize,
+			long companyId, long fileMaxSize, long maxSizeToCopy,
 			Map<String, Long> mimeTypeSizeLimit)
 		throws Exception;
 
 	public void updateGroupSizeLimit(
-			long groupId, long fileMaxSize, Map<String, Long> mimeTypeSizeLimit)
+			long groupId, long fileMaxSize, long maxSizeToCopy,
+			Map<String, Long> mimeTypeSizeLimit)
 		throws Exception;
 
 	public void updateSystemSizeLimit(
-			long fileMaxSize, Map<String, Long> mimeTypeSizeLimit)
+			long fileMaxSize, long maxSizeToCopy,
+			Map<String, Long> mimeTypeSizeLimit)
 		throws Exception;
 
 }

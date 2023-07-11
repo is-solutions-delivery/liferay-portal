@@ -176,6 +176,10 @@ definition {
 			var baseURL = PropsUtil.get("portal.url");
 		}
 
+		if (!(isSet(priority))) {
+			var priority = 0;
+		}
+
 		var userLoginInfo = JSONUtil2.formatJSONUser();
 
 		var curl = '''
@@ -191,7 +195,7 @@ definition {
 					"name": "${promotionName}",
 					"netPrice": true,
 					"neverExpire": true,
-					"priority": 0,
+					"priority": ${priority},
 					"type": "promotion"
 				}'
 		''';
@@ -253,6 +257,27 @@ definition {
 		else {
 			echo("No Commerce Price Lists And Promotions to be deleted");
 		}
+	}
+
+	macro _deleteCommercePriceList {
+		Variables.assertDefined(parameterList = ${priceListName});
+
+		var baseURL = ${baseURL};
+
+		if (!(isSet(baseURL))) {
+			var baseURL = PropsUtil.get("portal.url");
+		}
+
+		var priceListId = CommerceJSONPriceListsAndPromotionsAPI._getCommercePriceListsAndPromotionsIdByName(priceListAndPromotionName = ${priceListName});
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+
+		var curl = '''
+			${baseURL}/o/headless-commerce-admin-pricing/v2.0/price-lists/${priceListId} \
+				-u ${userLoginInfo} \
+				-H 'accept: application/json' \
+		''';
+
+		JSONCurlUtil.delete(${curl});
 	}
 
 	macro _getCommerceNoMasterPriceListsAndPromotions {

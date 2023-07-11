@@ -25,9 +25,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -41,6 +41,86 @@ definition {
 			parentOrganizationName = "Parent Organization Name");
 
 		JSONOrganization.deleteOrganizationByName(organizationName = "Parent Organization Name");
+	}
+
+	@description = "This is a test for LPS-187282. The segment designer could add a segment based on organization category criteria."
+	@priority = 5
+	test AddSegmentByOrganizationCategory {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given a segment designer has an organization with a global category") {
+			GogoShell.openGogoShellAdmin();
+
+			GogoShell.executeCommand(commandName = "scr:enable com.liferay.segments.web.internal.field.customizer.AssetCategorySegmentsFieldCustomizer");
+
+			GogoShell.viewOutput(outputContent = "true");
+
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONOrganization.addOrganization(organizationName = "Organization Name");
+
+			JSONOrganization.assignUserToOrganization(
+				organizationName = "Organization Name",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONCategory.addVocabulary(
+				groupName = "Global",
+				title = "Vocabulary Name");
+
+			var categoryId = JSONCategory.addCategory(
+				groupName = "Global",
+				title = "Category Name",
+				vocabularyName = "Vocabulary Name");
+
+			Organization.openOrganizationsAdmin();
+
+			Organization.gotoEdit(orgName = "Organization Name");
+
+			AssetCategorization.addCategory(
+				categoryName = "Category Name",
+				vocabularyName = "Vocabulary Name");
+
+			PortletEntry.save();
+		}
+
+		task ("When the segment designer adds a segment in a site") {
+			Segmentation.openSegmentsAdmin(siteURLKey = "test-site-name");
+
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("Then the segment designer could add an organization category criteria") {
+			Segmentation.gotoSidebar(fieldType = "Organization");
+
+			Segmentation.addProperties(propertyOption = "Category");
+
+			Segmentation.fillProperty(selectCategory = "Category Name");
+
+			Segmentation.fillTitle(titleField = "New Segment");
+
+			Segmentation.viewMembers(memberName = "userfn userln");
+
+			PortletEntry.save();
+		}
+
+		task ("When the segment designer edits the segment one more time") {
+			Segmentation.editSegment(entry = "New Segment");
+		}
+
+		task ("Then the segment designer should see the organization category criteria") {
+			AssertValue(
+				locator1 = "Segmentation#CRITERION_INPUT_ANY",
+				value1 = "Category Name");
+		}
 	}
 
 	@description = "Test Automation for LPS-130281: Validate if it's posible to create a segment based on Organization > Country criteria"
@@ -393,7 +473,7 @@ definition {
 	@uitest
 	test AddSegmentByOrganizationRegion {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#AddSegmentByOrganizationRegion";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add user") {
 			JSONUser.addUser(
@@ -1807,7 +1887,7 @@ definition {
 	@uitest
 	test AddSegmentByUserSiteOrganizationRole {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#AddSegmentByUserSiteOrganizationRole";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add user") {
 			JSONUser.addUser(
@@ -1936,7 +2016,7 @@ definition {
 
 			Segmentation.addProperties(propertyOption = "Team");
 
-			Segmentation.fillProperty(selectLink = "Site Team Name");
+			Segmentation.fillProperty(selectEntry = "Site Team Name");
 
 			Segmentation.fillTitle(titleField = "AddSegmentByUserTeam Test");
 
@@ -2000,7 +2080,6 @@ definition {
 	@uitest
 	test AddSegmentByUserUserGroup {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#AddSegmentByUserUserGroup";
 
 		task ("Add user") {
 			JSONUser.addUser(
@@ -2025,7 +2104,7 @@ definition {
 
 			Segmentation.addProperties(propertyOption = "User Group");
 
-			Segmentation.fillProperty(chooseItem = "UG UserGroup Name");
+			Segmentation.fillProperty(selectCard = "UG UserGroup Name");
 
 			Segmentation.fillTitle(titleField = "AddSegmentByUserUserGroup Test");
 
@@ -2049,7 +2128,7 @@ definition {
 	@priority = 4
 	test AddSegmentUsingCustomFields {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#AddSegmentUsingCustomFields";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add custom field in User") {
 			ApplicationsMenu.gotoPortlet(
@@ -2543,7 +2622,7 @@ definition {
 	@description = "LPS-130919 Given the Session Property Vocabularies in Instance Settings When the user is adding a vocabulary to a session property Then the breadcrumb to go to Segments, or Instance Settings is available"
 	@priority = 3
 	test InstanceSettingsSessionPropertyVocabulariesBreadcrumb {
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#InstanceSettingsSessionPropertyVocabulariesBreadcrumb";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Go to Instance Settings > Segments > Session Property Vocabulary") {
 			PortalSettings.openInstanceSettingsAdmin();
@@ -2574,7 +2653,7 @@ definition {
 	@description = "LPS-130919 Given the adding a vocabulary to a session property view When the user clicks on Cancel button Then the user is lead to the main tab Session Property Vocabularies"
 	@priority = 3
 	test InstanceSettingsSessionPropertyVocabulariesCancelButton {
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#InstanceSettingsSessionPropertyVocabulariesCancelButton";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Go to Instance Settings > Segments > Session Property Vocabulary") {
 			PortalSettings.openInstanceSettingsAdmin();
@@ -2604,7 +2683,7 @@ definition {
 	@priority = 5
 	test InstanceSettingsSessionPropertyVocabularyInSegmentsEditor {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#InstanceSettingsSessionPropertyVocabularyInSegmentsEditor";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set Session Property Vocabulary") {
 			Segmentation.setVocabularySessionProperty(
@@ -2669,7 +2748,7 @@ definition {
 	@priority = 4
 	test KeepInfomationOfDeleteVocabularyInSegment {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#KeepInfomationOfDeleteVocabularyInSegment";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set Session Property Vocabulary") {
 			Segmentation.setVocabularySessionProperty(
@@ -3015,7 +3094,7 @@ definition {
 		task ("Click on USER field type and asser if its properties are displayed.") {
 			LexiconEntry.gotoAdd();
 
-			AssertElementPresent(
+			AssertVisible(
 				key_propertyOption = "Date of Birth",
 				locator1 = "Segmentation#ADD_FIELD_TYPE");
 		}
@@ -3023,7 +3102,7 @@ definition {
 		task ("Click on ORGANIZATION field type and asser if its properties are displayed.") {
 			Segmentation.gotoSidebar(fieldType = "Organization");
 
-			AssertElementPresent(
+			AssertVisible(
 				key_propertyOption = "Country",
 				locator1 = "Segmentation#ADD_FIELD_TYPE");
 		}
@@ -3031,7 +3110,7 @@ definition {
 		task ("Click on SESSION field type and asser if its properties are displayed.") {
 			Segmentation.gotoSidebar(fieldType = "Session");
 
-			AssertElementPresent(
+			AssertVisible(
 				key_propertyOption = "Browser",
 				locator1 = "Segmentation#ADD_FIELD_TYPE");
 		}
@@ -3039,7 +3118,7 @@ definition {
 		task ("Click on SEGMENTS field type and asser if its properties are displayed.") {
 			Segmentation.gotoSidebar(fieldType = "Segments");
 
-			AssertElementPresent(
+			AssertVisible(
 				key_propertyOption = "Segment",
 				locator1 = "Segmentation#ADD_FIELD_TYPE");
 		}
@@ -3066,7 +3145,7 @@ definition {
 
 			DragAndDrop.javaScriptDragAndDropToObject(
 				key_propertyOption = "Country",
-				locator1 = "Segmentation#ADD_FIELD_TYPE",
+				locator1 = "Segmentation#ADD_FIELD_TYPE_VISIBLE",
 				locator2 = "Segmentation#ADD_FIELD_POSITION_EDIT",
 				value1 = "Country");
 		}
@@ -3084,7 +3163,7 @@ definition {
 
 			DragAndDrop.javaScriptDragAndDropToObject(
 				key_propertyOption = "Country",
-				locator1 = "Segmentation#ADD_FIELD_TYPE",
+				locator1 = "Segmentation#ADD_FIELD_TYPE_VISIBLE",
 				locator2 = "Segmentation#ADD_FIELD_POSITION_EMPTY",
 				value1 = "Country");
 
@@ -3100,8 +3179,8 @@ definition {
 		task ("Click on USER field type and assert if other properties are not displayed") {
 			LexiconEntry.gotoAdd();
 
-			for (var option : list "Country, Browser, Segment") {
-				AssertElementNotPresent(
+			for (var option : list "Country,Browser,Segment") {
+				AssertNotVisible(
 					key_propertyOption = ${option},
 					locator1 = "Segmentation#ADD_FIELD_TYPE");
 			}
@@ -3110,8 +3189,8 @@ definition {
 		task ("Click on ORGANIZATION field type and assert if other properties are not displayed") {
 			Segmentation.gotoSidebar(fieldType = "Organization");
 
-			for (var option : list "Date of Birth, Browser, Segment") {
-				AssertElementNotPresent(
+			for (var option : list "Date of Birth,Browser,Segment") {
+				AssertNotVisible(
 					key_propertyOption = ${option},
 					locator1 = "Segmentation#ADD_FIELD_TYPE");
 			}
@@ -3120,8 +3199,8 @@ definition {
 		task ("Click on SESSION field type and assert if other properties are not displayed") {
 			Segmentation.gotoSidebar(fieldType = "Session");
 
-			for (var option : list "Date of Birth, Country, Segment") {
-				AssertElementNotPresent(
+			for (var option : list "Date of Birth,Country,Segment") {
+				AssertNotVisible(
 					key_propertyOption = ${option},
 					locator1 = "Segmentation#ADD_FIELD_TYPE");
 			}
@@ -3130,8 +3209,8 @@ definition {
 		task ("Click on SEGMENTS field type and assert if other properties are not displayed") {
 			Segmentation.gotoSidebar(fieldType = "Segments");
 
-			for (var option : list "Date of Birth, Country, Browser") {
-				AssertElementNotPresent(
+			for (var option : list "Date of Birth,Country,Browser") {
+				AssertNotVisible(
 					key_propertyOption = ${option},
 					locator1 = "Segmentation#ADD_FIELD_TYPE");
 			}
@@ -3213,7 +3292,7 @@ definition {
 
 			Segmentation.addProperties(propertyOption = "Team");
 
-			Segmentation.fillProperty(selectLink = "Test Site Name");
+			Segmentation.fillProperty(selectEntry = "Test Site Name");
 
 			Segmentation.fillTitle(titleField = "Validade Team Segment");
 
@@ -3301,9 +3380,9 @@ definition {
 			LexiconEntry.gotoAdd();
 
 			for (var fieldType : list "User,Organization,Session") {
-				AssertElementPresent(
-					key_typeName = ${fieldType},
-					locator1 = "Segmentation#SEGMENT_FIELDS_TYPE");
+				AssertVisible(
+					key_panel = ${fieldType},
+					locator1 = "Panel#PANEL");
 			}
 		}
 	}
@@ -3312,7 +3391,7 @@ definition {
 	@priority = 4
 	test VocabulariesListedInSystemSettingsSegments {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SegmentationCreateSegment#VocabulariesListedInSystemSettingsSegments";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add two vocabularies to global site") {
 			for (var n : list "1,2") {

@@ -14,6 +14,8 @@
 
 package com.liferay.poshi.core.selenium;
 
+import java.util.Map;
+
 /**
  * @author Brian Wing Shun Chan
  */
@@ -61,6 +63,8 @@ public interface LiferaySelenium {
 	public void assertEditable(String locator) throws Exception;
 
 	public void assertElementAccessible(String locator) throws Exception;
+
+	public void assertElementFocused(String locator) throws Exception;
 
 	public void assertElementNotPresent(String locator) throws Exception;
 
@@ -190,6 +194,9 @@ public interface LiferaySelenium {
 
 	public void echo(String message);
 
+	public void executeCDPCommand(
+		String commandName, Map<String, Object> commandParameters);
+
 	public void executeJavaScript(
 		String javaScript, String argument1, String argument2);
 
@@ -271,6 +278,8 @@ public interface LiferaySelenium {
 	public boolean isConsoleTextPresent(String text) throws Exception;
 
 	public boolean isEditable(String locator) throws Exception;
+
+	public boolean isElementFocused(String locator) throws Exception;
 
 	public boolean isElementNotPresent(String locator) throws Exception;
 

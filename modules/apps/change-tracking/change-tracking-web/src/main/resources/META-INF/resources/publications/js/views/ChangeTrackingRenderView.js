@@ -1039,14 +1039,29 @@ export default function ChangeTrackingRenderView({
 	const renderDividers = () => {
 		if (state.view === VIEW_SPLIT) {
 			return (
-				<tr className="publications-render-view-divider table-divider">
-					<td
-						className="publications-render-view-divider"
-						colSpan={2}
-					>
-						{renderViewDropdown()}
-					</td>
-				</tr>
+				<>
+					<tr className="publications-render-view-divider table-divider">
+						<td
+							className="publications-render-view-divider"
+							colSpan={2}
+						>
+							{renderViewDropdown()}
+						</td>
+					</tr>
+					<tr className="publications-render-view-divider table-divider">
+						{
+							<td className="publications-render-view-divider">
+								{Liferay.Language.get('production')}
+							</td>
+						}
+
+						{
+							<td className="publications-render-view-divider">
+								{Liferay.Language.get('publication')}
+							</td>
+						}
+					</tr>
+				</>
 			);
 		}
 
@@ -1103,7 +1118,7 @@ export default function ChangeTrackingRenderView({
 						'there-are-no-changes-to-display-in-this-view'
 					)}
 					imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
-					title={null}
+					title={Liferay.Language.get('no-results-found')}
 				/>
 			);
 		}

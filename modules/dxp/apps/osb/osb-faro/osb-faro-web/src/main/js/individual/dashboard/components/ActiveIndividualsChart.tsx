@@ -1,8 +1,8 @@
 // @ts-nocheck - Fix it at this LRAC-13388
 
 import ComposedChartWithEmptyState from 'shared/components/ComposedChartWithEmptyState';
+import Loading from 'shared/components/Loading';
 import React, {useState} from 'react';
-import Spinner from 'shared/components/Spinner';
 import URLConstants from 'shared/util/url-constants';
 import {
 	ANIMATION_DURATION,
@@ -109,7 +109,7 @@ const ActiveIndividualsChart: React.FC<IActiveIndividualsChartProps> = ({
 	);
 
 	if (loading) {
-		return <Spinner alignCenter key='LOADING' />;
+		return <Loading key='LOADING' />;
 	}
 
 	return (

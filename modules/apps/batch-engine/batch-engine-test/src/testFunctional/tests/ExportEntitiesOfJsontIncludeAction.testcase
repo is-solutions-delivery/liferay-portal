@@ -32,13 +32,13 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		ObjectAdmin.deleteAllCustomObjectsViaAPI();
 
 		BatchPlanner.batchPlannerTearDown();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -78,6 +78,17 @@ definition {
 				expectedValue = "/o/headless-batch-engine/v1.0/import-task/com.liferay.object.rest.dto.v1_0.ObjectEntry",
 				fileName = "export.batch-engine-data.json",
 				jsonObject = "$.actions.updateBatch.href");
+		}
+	}
+
+	@priority = 3
+	test CanSelectItemActionsAsFieldToExportWithJSONT {
+		task ("Then actions field is visible to select on the list of fields to include in the export file") {
+			ImportExport.unzipDownloadedExportFile();
+
+			AssertElementPresent(
+				key_contentName = "Fields",
+				locator1 = "ImportExport#PREVIEW_ENTRY_CONTENT_FIELDS");
 		}
 	}
 

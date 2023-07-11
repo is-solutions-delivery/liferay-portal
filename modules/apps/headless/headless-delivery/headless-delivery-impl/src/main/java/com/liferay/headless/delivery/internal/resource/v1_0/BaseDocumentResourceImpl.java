@@ -23,6 +23,7 @@ import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.Resource;
@@ -2055,7 +2056,7 @@ public abstract class BaseDocumentResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("documentFolderId")) {
 				documentUnsafeConsumer = document -> postDocumentFolderDocument(
 					_parseLong((String)parameters.get("documentFolderId")),
@@ -2077,12 +2078,58 @@ public abstract class BaseDocumentResourceImpl
 			}
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			documentUnsafeConsumer =
-				document -> putSiteDocumentByExternalReferenceCode(
-					document.getSiteId() != null ? document.getSiteId() :
-						(Long)parameters.get("siteId"),
-					document.getExternalReferenceCode(), null);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				documentUnsafeConsumer =
+					document -> putSiteDocumentByExternalReferenceCode(
+						document.getSiteId() != null ? document.getSiteId() :
+							(Long)parameters.get("siteId"),
+						document.getExternalReferenceCode(), null);
+			}
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
+				documentUnsafeConsumer = document -> {
+					try {
+						Document getDocument =
+							getSiteDocumentByExternalReferenceCode(
+								document.getSiteId() != null ?
+									document.getSiteId() :
+										(Long)parameters.get("siteId"),
+								document.getExternalReferenceCode());
+
+						patchDocument(
+							getDocument.getId() != null ? getDocument.getId() :
+								_parseLong(
+									(String)parameters.get("documentId")),
+							null);
+					}
+					catch (NoSuchModelException noSuchModelException) {
+						if (parameters.containsKey("documentFolderId")) {
+							postDocumentFolderDocument(
+								_parseLong(
+									(String)parameters.get("documentFolderId")),
+								(MultipartBody)parameters.get("multipartBody"));
+						}
+						else if (parameters.containsKey("assetLibraryId")) {
+							postAssetLibraryDocument(
+								(Long)parameters.get("assetLibraryId"),
+								(MultipartBody)parameters.get("multipartBody"));
+						}
+						else if (parameters.containsKey("siteId")) {
+							postSiteDocument(
+								(Long)parameters.get("siteId"),
+								(MultipartBody)parameters.get("multipartBody"));
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [documentFolderId, assetLibraryId, siteId, documentFolderId, assetLibraryId]");
+						}
+					}
+				};
+			}
 		}
 
 		if (documentUnsafeConsumer == null) {
@@ -2203,14 +2250,14 @@ public abstract class BaseDocumentResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			documentUnsafeConsumer = document -> patchDocument(
 				document.getId() != null ? document.getId() :
 					_parseLong((String)parameters.get("documentId")),
 				null);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			documentUnsafeConsumer = document -> putDocument(
 				document.getId() != null ? document.getId() :
 					_parseLong((String)parameters.get("documentId")),

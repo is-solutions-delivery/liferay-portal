@@ -1,6 +1,7 @@
 @component-name = "portal-wcm"
 definition {
 
+	property ci.retries.disabled = "true";
 	property custom.properties = "jsonws.web.service.paths.excludes=";
 	property portal.release = "true";
 	property portal.upstream = "true";
@@ -55,6 +56,121 @@ definition {
 			JSONRole.addSiteRole(
 				roleKey = ${randomRoleKey},
 				roleTitle = ${randomRoleKey});
+		}
+	}
+
+	@description = "This is a test for LPS-181272. The page marketer with Update-Limited or Update-Basic permission could access to the options on the control menu at view mode."
+	@priority = 4
+	test AccessToOptionsOnControlMenuAtViewModeAsUserWithUpdateLimitedOrUpdateBasicPermission {
+		task ("Given a page marketer with update-limited permission has a content page") {
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "UPDATE_LAYOUT_LIMITED",
+				resourceName = "com.liferay.portal.kernel.model.Layout",
+				roleTitle = ${randomRoleKey},
+				roleType = "site");
+
+			JSONRole.assignSiteRoleToUser(
+				groupName = ${randomSiteName},
+				roleTitle = ${randomRoleKey},
+				userEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditor.publish();
+
+			User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+		}
+
+		task ("When the page marketer accesses to the content page at view mode") {
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Test Content Page Name",
+				siteName = ${randomSiteName});
+		}
+
+		task ("Then the page marketer could accesses to the options on the control menu") {
+			ContentPages.gotoPageEditor();
+
+			AssertVisible(locator1 = "Sidebar#PANEL_OPEN");
+
+			Navigator.gotoBack();
+
+			Click(locator1 = "ControlMenu#EDIT_COG");
+
+			AssertVisible(
+				key_title = "General",
+				locator1 = "Header#H2_TITLE");
+
+			AssertVisible(
+				key_sectionTitle = "Categorization",
+				locator1 = "PagesAdmin#SECTION_TITLE");
+
+			Navigator.gotoBack();
+
+			ContentPerformance.openContentPerformance();
+
+			ABTest.openABTestPanel();
+
+			PageAudit.openPageAuditSidebar();
+
+			AssertTextPresent(value1 = "Check issues that impact on your page's accessibility and SEO.");
+		}
+
+		task ("Given a page marketer with update-basic permission has a content page") {
+			User.logoutAndLoginPG(userLoginEmailAddress = "test@liferay.com");
+
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "UPDATE_LAYOUT_BASIC",
+				resourceName = "com.liferay.portal.kernel.model.Layout",
+				roleTitle = ${randomRoleKey},
+				roleType = "site");
+
+			Permissions.removePermissionViaAPI(
+				resourceAction = "UPDATE_LAYOUT_LIMITED",
+				resourceName = "com.liferay.portal.kernel.model.Layout",
+				roleTitle = ${randomRoleKey},
+				roleType = "site");
+
+			User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+		}
+
+		task ("When the page marketer accesses to the content page at view mode") {
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Test Content Page Name",
+				siteName = ${randomSiteName});
+		}
+
+		task ("Then the page marketer could accesses to the options on the control menu") {
+			ContentPages.gotoPageEditor();
+
+			AssertVisible(locator1 = "Sidebar#PANEL_OPEN");
+
+			Navigator.gotoBack();
+
+			Click(locator1 = "ControlMenu#EDIT_COG");
+
+			AssertVisible(
+				key_title = "General",
+				locator1 = "Header#H2_TITLE");
+
+			AssertVisible(
+				key_sectionTitle = "Categorization",
+				locator1 = "PagesAdmin#SECTION_TITLE");
+
+			Navigator.gotoBack();
+
+			ContentPerformance.openContentPerformance();
+
+			ABTest.openABTestPanel();
+
+			PageAudit.openPageAuditSidebar();
+
+			AssertTextPresent(value1 = "Check issues that impact on your page's accessibility and SEO.");
 		}
 	}
 
@@ -392,6 +508,969 @@ definition {
 				locator1 = "PagesFinder#PAGE_ELLIPSIS_ICON");
 
 			MenuItem.viewNotPresent(menuItem = "Preview Draft");
+		}
+	}
+
+	@description = "This is a test for LPS-173440. The user with Add Object Entry but without View permission for object cannot see mapped Collection Display or Content Display at view and preview mode."
+	@priority = 4
+	test CannotViewMappedCollectionDisplayOrContentDisplayWithAddObjectEntryButWithoutViewPermissionForObjectOnViewAndPreviewMode {
+		property custom.properties = "feature.flag.LPS-169923=true${line.separator}jsonws.web.service.paths.excludes=";
+
+		var labelName = StringUtil.randomString(8);
+
+		var objectName = "A${labelName}";
+		var randomRoleKey = StringUtil.randomString(8);
+
+		var randomRoleKey = StringUtil.toLowerCase(${randomRoleKey});
+
+		task ("Given a site object with 2 object entries") {
+			task ("Add a site object with a Text field") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = ${labelName},
+					objectName = ${objectName},
+					panelCategoryKey = "site_administration.content",
+					pluralLabelName = "${labelName}s",
+					scope = "site");
+
+				ObjectAdmin.addObjectFieldViaAPI(
+					fieldBusinessType = "Text",
+					fieldLabelName = "Name",
+					fieldName = "name",
+					fieldType = "String",
+					isRequired = "false",
+					objectName = ${objectName});
+
+				ObjectAdmin.publishObjectViaAPI(objectName = ${objectName});
+			}
+
+			task ("Create two object entries") {
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Apple",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Banana",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+			}
+		}
+
+		task ("When not define view object permission but define Add Object Entry permission") {
+			task ("Add a new regular role") {
+				JSONRole.addRegularRole(
+					roleKey = ${randomRoleKey},
+					roleTitle = ${randomRoleKey});
+			}
+
+			task ("Define the permissions of regular role") {
+				var objectDefinitionId = JSONObject.getObjectId(objectName = ${objectName});
+
+				Permissions.definePermissionsViaJSONAPI(
+					resourceNameActionList = "com.liferay.portal.kernel.model.Layout,UPDATE,VIEW:com.liferay.object#${objectDefinitionId},ADD_OBJECT_ENTRY",
+					roleTitle = ${randomRoleKey},
+					roleType = "regular");
+			}
+
+			task ("Assign the regular role to new user") {
+				JSONRole.assignRoleToUser(
+					roleTitle = ${randomRoleKey},
+					userEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Add a dynamic collection for site object") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+				AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = ${labelName});
+			}
+
+			task ("Remove the View permission for Guest and Site Member") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				LexiconEntry.gotoEntryMenuItem(
+					menuItem = "Permissions",
+					rowEntry = "Dynamic Collection");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Guest");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Site Member");
+			}
+		}
+
+		task ("Then user cannot see mapped Collection Display or Content Display at view and preview mode") {
+			task ("Add a second content page") {
+				JSONLayout.addPublicLayout(
+					groupName = ${randomSiteName},
+					layoutName = "Test Content Page Name 2",
+					type = "content");
+			}
+
+			task ("Add a Collection Display to the first content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Select the dynamic collection in Collection Display") {
+				PageEditor.editCollectionDisplay(
+					assetListName = "Dynamic Collection",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Add a Heading fragment to the first cell") {
+				PageEditor.addFragmentToCollectionDisplay(
+					collectionName = "Basic Components",
+					entryTitle = "",
+					fragmentName = "Heading");
+			}
+
+			task ("Map the Text field to Heading fragment") {
+				PageEditorMapping.mapEditableFieldToCollectionItems(
+					field = "Name",
+					fragmentName = "Heading",
+					id = "element-text");
+
+				PageEditor.publish();
+			}
+
+			task ("Assert the Name of object entries are respectively shown in each cell") {
+				var n = 1;
+
+				for (var title : list "Banana,Apple") {
+					PageEditor.viewFragmentEditableText(
+						editableText = ${title},
+						fragmentName = "Heading",
+						id = "element-text",
+						position = ${n});
+
+					var n = ${n} + 1;
+				}
+			}
+
+			task ("Add a Content Display to the second content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Content Display");
+			}
+
+			task ("Select one object entry in Content Display") {
+				PageEditor.editContentDisplay(
+					entryContent = "Apple",
+					fragmentName = "Content Display",
+					index = 1,
+					objecEntrytName = "${labelName}s",
+					object = "true");
+
+				PageEditor.publish();
+			}
+
+			task ("Sign in as new user") {
+				User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Navigate to the first content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user cannot see the Collection Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Collection Display");
+			}
+
+			task ("When the user navigates to the content page at preview mode") {
+				ContentPages.gotoPageEditor();
+
+				PageEditor.previewInANewTab();
+			}
+
+			task ("View the user cannot see the Collection Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Collection Display");
+			}
+
+			task ("Navigate to the second content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user cannot see the Content Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Content Display");
+			}
+
+			task ("When the user navigates to the content page at preview mode") {
+				ContentPages.gotoPageEditor();
+
+				PageEditor.previewInANewTab();
+			}
+
+			task ("View the user cannot see the Content Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Content Display");
+			}
+		}
+	}
+
+	@description = "This is a test for LPS-173440. The user without View permission for object cannot see mapped Collection Display or Content Display at view and preview mode."
+	@priority = 4
+	test CannotViewMappedCollectionDisplayOrContentDisplayWithoutViewPermissionForObjectOnViewAndPreviewMode {
+		property custom.properties = "feature.flag.LPS-169923=true${line.separator}jsonws.web.service.paths.excludes=";
+
+		var labelName = StringUtil.randomString(8);
+
+		var objectName = "A${labelName}";
+		var randomRoleKey = StringUtil.randomString(8);
+
+		var randomRoleKey = StringUtil.toLowerCase(${randomRoleKey});
+
+		task ("Given a site object with 2 object entries") {
+			task ("Add a site object with a Text field") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = ${labelName},
+					objectName = ${objectName},
+					panelCategoryKey = "site_administration.content",
+					pluralLabelName = "${labelName}s",
+					scope = "site");
+
+				ObjectAdmin.addObjectFieldViaAPI(
+					fieldBusinessType = "Text",
+					fieldLabelName = "Name",
+					fieldName = "name",
+					fieldType = "String",
+					isRequired = "false",
+					objectName = ${objectName});
+
+				ObjectAdmin.publishObjectViaAPI(objectName = ${objectName});
+			}
+
+			task ("Create two object entries") {
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Apple",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Banana",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+			}
+		}
+
+		task ("When not define view permission for object") {
+			task ("Add a new regular role") {
+				JSONRole.addRegularRole(
+					roleKey = ${randomRoleKey},
+					roleTitle = ${randomRoleKey});
+			}
+
+			task ("Define the permissions of regular role") {
+				Permissions.definePermissionsViaJSONAPI(
+					resourceNameActionList = "com.liferay.portal.kernel.model.Layout,UPDATE,VIEW",
+					roleTitle = ${randomRoleKey},
+					roleType = "regular");
+			}
+
+			task ("Assign the regular role to new user") {
+				JSONRole.assignRoleToUser(
+					roleTitle = ${randomRoleKey},
+					userEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Add a dynamic collection for site object") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+				AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = ${labelName});
+			}
+
+			task ("Remove the View permission for Guest and Site Member") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				LexiconEntry.gotoEntryMenuItem(
+					menuItem = "Permissions",
+					rowEntry = "Dynamic Collection");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Guest");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Site Member");
+			}
+		}
+
+		task ("Then user cannot see mapped Collection Display or Content Display at view and preview mode") {
+			task ("Add a second content page") {
+				JSONLayout.addPublicLayout(
+					groupName = ${randomSiteName},
+					layoutName = "Test Content Page Name 2",
+					type = "content");
+			}
+
+			task ("Add a Collection Display to the first content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Select the dynamic collection in Collection Display") {
+				PageEditor.editCollectionDisplay(
+					assetListName = "Dynamic Collection",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Add a Heading fragment to the first cell") {
+				PageEditor.addFragmentToCollectionDisplay(
+					collectionName = "Basic Components",
+					entryTitle = "",
+					fragmentName = "Heading");
+			}
+
+			task ("Map the Text field to Heading fragment") {
+				PageEditorMapping.mapEditableFieldToCollectionItems(
+					field = "Name",
+					fragmentName = "Heading",
+					id = "element-text");
+
+				PageEditor.publish();
+			}
+
+			task ("Assert the Name of object entries are respectively shown in each cell") {
+				var n = 1;
+
+				for (var title : list "Banana,Apple") {
+					PageEditor.viewFragmentEditableText(
+						editableText = ${title},
+						fragmentName = "Heading",
+						id = "element-text",
+						position = ${n});
+
+					var n = ${n} + 1;
+				}
+			}
+
+			task ("Add a Content Display to the second content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Content Display");
+			}
+
+			task ("Select one object entry in Content Display") {
+				PageEditor.editContentDisplay(
+					entryContent = "Apple",
+					fragmentName = "Content Display",
+					index = 1,
+					objecEntrytName = "${labelName}s",
+					object = "true");
+
+				PageEditor.publish();
+			}
+
+			task ("Sign in as new user") {
+				User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Navigate to the first content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user cannot see the Collection Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Collection Display");
+			}
+
+			task ("When the user navigates to the content page at preview mode") {
+				ContentPages.gotoPageEditor();
+
+				PageEditor.previewInANewTab();
+			}
+
+			task ("View the user cannot see the Collection Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Collection Display");
+			}
+
+			task ("Navigate to the second content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user cannot see the Content Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Content Display");
+			}
+
+			task ("When the user navigates to the content page at preview mode") {
+				ContentPages.gotoPageEditor();
+
+				PageEditor.previewInANewTab();
+			}
+
+			task ("View the user cannot see the Content Display") {
+				PageEditor.viewFragmentNotPresent(fragmentName = "Content Display");
+			}
+		}
+	}
+
+	@description = "This is a test for LPS-173440. The user without View permission for object cannot see that object in Collection Display or Content Display selector."
+	@priority = 4
+	test CannotViewObjectInCollectionDisplayOrContentDisplayWithoutViewPermissionForObject {
+		property custom.properties = "feature.flag.LPS-169923=true${line.separator}jsonws.web.service.paths.excludes=";
+
+		var labelName = StringUtil.randomString(8);
+
+		var objectName = "A${labelName}";
+		var randomRoleKey = StringUtil.randomString(8);
+
+		var randomRoleKey = StringUtil.toLowerCase(${randomRoleKey});
+
+		task ("Given a site object with 2 object entries") {
+			task ("Add a site object with a Text field") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = ${labelName},
+					objectName = ${objectName},
+					panelCategoryKey = "site_administration.content",
+					pluralLabelName = "${labelName}s",
+					scope = "site");
+
+				ObjectAdmin.addObjectFieldViaAPI(
+					fieldBusinessType = "Text",
+					fieldLabelName = "Name",
+					fieldName = "name",
+					fieldType = "String",
+					isRequired = "false",
+					objectName = ${objectName});
+
+				ObjectAdmin.publishObjectViaAPI(objectName = ${objectName});
+			}
+
+			task ("Create two object entries") {
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Apple",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Banana",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+			}
+		}
+
+		task ("When not define view permission for object") {
+			task ("Add a new regular role") {
+				JSONRole.addRegularRole(
+					roleKey = ${randomRoleKey},
+					roleTitle = ${randomRoleKey});
+			}
+
+			task ("Define the permissions of regular role") {
+				Permissions.definePermissionsViaJSONAPI(
+					resourceNameActionList = "com.liferay.portal.kernel.model.Layout,UPDATE,VIEW",
+					roleTitle = ${randomRoleKey},
+					roleType = "regular");
+			}
+
+			task ("Assign the regular role to new user") {
+				JSONRole.assignRoleToUser(
+					roleTitle = ${randomRoleKey},
+					userEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Add a dynamic collection for site object") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+				AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = ${labelName});
+			}
+
+			task ("Remove the View permission for Guest and Site Member") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				LexiconEntry.gotoEntryMenuItem(
+					menuItem = "Permissions",
+					rowEntry = "Dynamic Collection");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Guest");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Site Member");
+			}
+		}
+
+		task ("Then user cannot see object in Collection Display or Content Display") {
+			task ("Add a second content page") {
+				JSONLayout.addPublicLayout(
+					groupName = ${randomSiteName},
+					layoutName = "Test Content Page Name 2",
+					type = "content");
+			}
+
+			task ("Add a Collection Display to the first content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Collection Display");
+
+				PageEditor.publish();
+			}
+
+			task ("Add a Content Display to the second content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Content Display");
+			}
+
+			task ("Select one object entry in Content Display") {
+				PageEditor.editContentDisplay(
+					entryContent = "Apple",
+					fragmentName = "Content Display",
+					index = 1,
+					objecEntrytName = "${labelName}s",
+					object = "true");
+
+				PageEditor.publish();
+			}
+
+			task ("Sign in as new user") {
+				User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Navigate to the first content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user cannot see the dynamic collection in Collection Display") {
+				AssertElementNotPresent(
+					key_infoMessage = "The collection is empty. To display your items, add them to the collection or choose a different collection.",
+					locator1 = "Message#INFO_SPECIFIC");
+			}
+
+			task ("Navigate to the second content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user cannot see the object in Content Display") {
+				AssertTextNotPresent(
+					assetType = "contentobject",
+					index = 1,
+					locator1 = "Fragment#CONTENT_DISPLAY_TEXT",
+					value1 = "Apple");
+			}
+		}
+	}
+
+	@description = "This is a test for LPS-173440. The user with View and Add Object Entry permissions for object can see the mapped Collection Display or Content Display."
+	@priority = 4
+	test CanViewMappedCollectionDisplayAndContentDisplayWithAddObjectDefinitionAndViewPermissionForObject {
+		property custom.properties = "feature.flag.LPS-169923=true${line.separator}jsonws.web.service.paths.excludes=";
+
+		var labelName = StringUtil.randomString(8);
+
+		var objectName = "A${labelName}";
+		var randomRoleKey = StringUtil.randomString(8);
+
+		var randomRoleKey = StringUtil.toLowerCase(${randomRoleKey});
+
+		task ("Given a site object with 2 object entries") {
+			task ("Add a site object with a Text field") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = ${labelName},
+					objectName = ${objectName},
+					panelCategoryKey = "site_administration.content",
+					pluralLabelName = "${labelName}s",
+					scope = "site");
+
+				ObjectAdmin.addObjectFieldViaAPI(
+					fieldBusinessType = "Text",
+					fieldLabelName = "Name",
+					fieldName = "name",
+					fieldType = "String",
+					isRequired = "false",
+					objectName = ${objectName});
+
+				ObjectAdmin.publishObjectViaAPI(objectName = ${objectName});
+			}
+
+			task ("Create two object entries") {
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Apple",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Banana",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+			}
+		}
+
+		task ("When define view object permission and add object definition permission") {
+			task ("Add a new regular role") {
+				JSONRole.addRegularRole(
+					roleKey = ${randomRoleKey},
+					roleTitle = ${randomRoleKey});
+			}
+
+			task ("Define the permissions of regular role") {
+				var objectDefinitionId = JSONObject.getObjectId(objectName = ${objectName});
+
+				Permissions.definePermissionsViaJSONAPI(
+					resourceNameActionList = "com.liferay.portal.kernel.model.Layout,UPDATE,VIEW:com.liferay.object#${objectDefinitionId},ADD_OBJECT_ENTRY:com.liferay.object.model.ObjectDefinition#${objectDefinitionId},VIEW",
+					roleTitle = ${randomRoleKey},
+					roleType = "regular");
+			}
+
+			task ("Assign the regular role to new user") {
+				JSONRole.assignRoleToUser(
+					roleTitle = ${randomRoleKey},
+					userEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Add a dynamic collection for site object") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+				AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = ${labelName});
+			}
+		}
+
+		task ("Then user can see mapped Collection Display and Content Display") {
+			task ("Add a second content page") {
+				JSONLayout.addPublicLayout(
+					groupName = ${randomSiteName},
+					layoutName = "Test Content Page Name 2",
+					type = "content");
+			}
+
+			task ("Add a Collection Display to the first content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Select the dynamic collection in Collection Display") {
+				PageEditor.editCollectionDisplay(
+					assetListName = "Dynamic Collection",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Add a Heading fragment to the first cell") {
+				PageEditor.addFragmentToCollectionDisplay(
+					collectionName = "Basic Components",
+					entryTitle = "",
+					fragmentName = "Heading");
+			}
+
+			task ("Map the Text field to Heading fragment") {
+				PageEditorMapping.mapEditableFieldToCollectionItems(
+					field = "Name",
+					fragmentName = "Heading",
+					id = "element-text");
+
+				PageEditor.publish();
+			}
+
+			task ("Assert the Name of object entries are respectively shown in each cell") {
+				var n = 1;
+
+				for (var title : list "Banana,Apple") {
+					PageEditor.viewFragmentEditableText(
+						editableText = ${title},
+						fragmentName = "Heading",
+						id = "element-text",
+						position = ${n});
+
+					var n = ${n} + 1;
+				}
+			}
+
+			task ("Add a Content Display to the second content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Content Display");
+			}
+
+			task ("Select one object entry in Content Display") {
+				PageEditor.editContentDisplay(
+					entryContent = "Apple",
+					fragmentName = "Content Display",
+					index = 1,
+					objecEntrytName = "${labelName}s",
+					object = "true");
+
+				PageEditor.publish();
+			}
+
+			task ("Sign in as new user") {
+				User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Navigate to the first content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user can see the mapped content on Collection Display") {
+				var n = 1;
+
+				for (var content : list "Banana,Apple") {
+					ContentPages.viewFragmentText(
+						fragmentName = "heading",
+						id = "element-text",
+						position = ${n},
+						text = ${content});
+
+					var n = ${n} + 1;
+				}
+			}
+
+			task ("Navigate to the first content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user can see the Collection Display") {
+				PageEditor.viewFragment(fragmentName = "Collection Display");
+			}
+
+			task ("When the user navigates to the content page at preview mode") {
+				PageEditor.previewInANewTab();
+			}
+
+			task ("View the user can see the mapped content on Collection Display") {
+				var n = 1;
+
+				for (var content : list "Banana,Apple") {
+					ContentPages.viewFragmentText(
+						fragmentName = "heading",
+						id = "element-text",
+						position = ${n},
+						text = ${content});
+
+					var n = ${n} + 1;
+				}
+
+				Close.closeWindow();
+			}
+
+			task ("Navigate to the second content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user can see the object entry on Content Display") {
+				AssertTextEquals(
+					assetType = "contentobject",
+					index = 1,
+					locator1 = "Fragment#CONTENT_DISPLAY_TEXT",
+					value1 = "Apple");
+			}
+
+			task ("Navigate to the second content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the user can see the Content Display") {
+				PageEditor.viewFragment(fragmentName = "Content Display");
+			}
+
+			task ("When the user navigates to the content page at preview mode") {
+				PageEditor.previewInANewTab();
+			}
+
+			task ("View the user can see the object entry on Content Display") {
+				AssertTextEquals(
+					assetType = "contentobject",
+					index = 1,
+					locator1 = "Fragment#CONTENT_DISPLAY_TEXT",
+					value1 = "Apple");
+
+				Close.closeWindow();
+			}
+		}
+	}
+
+	@description = "This is a test for LPS-181272. The page marketer with Update-Limited or Update-Basic permission could access to the options on the options menu in page editor."
+	@priority = 4
+	test ConfigureAndPreviewInPageEditorAsUserWithUpdateLimitedOrUpdateBasicPermission {
+		task ("Given a page marketer with update-limited permission has a content page") {
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "UPDATE_LAYOUT_LIMITED",
+				resourceName = "com.liferay.portal.kernel.model.Layout",
+				roleTitle = ${randomRoleKey},
+				roleType = "site");
+
+			JSONRole.assignSiteRoleToUser(
+				groupName = ${randomSiteName},
+				roleTitle = ${randomRoleKey},
+				userEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditor.publish();
+
+			User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+		}
+
+		task ("When the page marketer accesses to the page editor") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Content Page Name",
+				siteName = ${randomSiteName});
+		}
+
+		task ("Then the page marketer could configue the page via options menu") {
+			LexiconEntry.gotoHeaderMenuItem(menuItem = "Configure");
+
+			SelectWindow.selectPopUp(locator1 = "null");
+
+			AssertVisible(
+				key_title = "General",
+				locator1 = "Header#H2_TITLE");
+
+			AssertVisible(
+				key_sectionTitle = "Categorization",
+				locator1 = "PagesAdmin#SECTION_TITLE");
+		}
+
+		task ("When the page marketer goes back to the page editor") {
+			Close.closeWindow();
+		}
+
+		task ("Then the page marketer could preview changes in a new tab via options menu") {
+			PageEditor.previewInANewTab();
+
+			ContentPages.viewFragmentText(
+				fragmentName = "heading",
+				id = "element-text",
+				text = "Heading Example");
+
+			Close.closeWindow();
+		}
+
+		task ("Given a page marketer with update-basic permission has a content page") {
+			User.logoutAndLoginPG(userLoginEmailAddress = "test@liferay.com");
+
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "UPDATE_LAYOUT_BASIC",
+				resourceName = "com.liferay.portal.kernel.model.Layout",
+				roleTitle = ${randomRoleKey},
+				roleType = "site");
+
+			Permissions.removePermissionViaAPI(
+				resourceAction = "UPDATE_LAYOUT_LIMITED",
+				resourceName = "com.liferay.portal.kernel.model.Layout",
+				roleTitle = ${randomRoleKey},
+				roleType = "site");
+
+			User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+		}
+
+		task ("When the page marketer accesses to the page editor") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Content Page Name",
+				siteName = ${randomSiteName});
+		}
+
+		task ("Then the page marketer could configue the page via options menu") {
+			LexiconEntry.gotoHeaderMenuItem(menuItem = "Configure");
+
+			SelectWindow.selectPopUp(locator1 = "null");
+
+			AssertVisible(
+				key_title = "General",
+				locator1 = "Header#H2_TITLE");
+
+			AssertVisible(
+				key_sectionTitle = "Categorization",
+				locator1 = "PagesAdmin#SECTION_TITLE");
+		}
+
+		task ("When the page marketer goes back to the page editor") {
+			Close.closeWindow();
+		}
+
+		task ("Then the page marketer could preview changes in a new tab via options menu") {
+			PageEditor.previewInANewTab();
+
+			ContentPages.viewFragmentText(
+				fragmentName = "heading",
+				id = "element-text",
+				text = "Heading Example");
 		}
 	}
 
@@ -1039,7 +2118,7 @@ definition {
 	@description = "This is a test for LPS-126159. The user can publish a content page without permissions for custom fields."
 	@priority = 4
 	test PublishContentPageWithoutCustomFieldsPermission {
-		property test.name.skip.portal.instance = "ContentPagesWithPermissions#PublishContentPageWithoutCustomFieldsPermission";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a custom field for Page") {
 			ApplicationsMenu.gotoPortlet(
@@ -1126,6 +2205,335 @@ definition {
 				fragmentName = "heading",
 				id = "element-text",
 				text = 404);
+		}
+	}
+
+	@description = "This is a test for LPS-173440. The user without View permission for object should see alert message on mapped Collection Display or Content Display at edit mode."
+	@priority = 4
+	test ViewAlertOnMappedCollectionDisplayOrContentDisplayWithoutViewPermissionForObjectAtEditMode {
+		property custom.properties = "feature.flag.LPS-169923=true${line.separator}jsonws.web.service.paths.excludes=";
+
+		var labelName = StringUtil.randomString(8);
+
+		var objectName = "A${labelName}";
+		var randomRoleKey = StringUtil.randomString(8);
+
+		var randomRoleKey = StringUtil.toLowerCase(${randomRoleKey});
+
+		task ("Given a site object with 2 object entries") {
+			task ("Add a site object with a Text field") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = ${labelName},
+					objectName = ${objectName},
+					panelCategoryKey = "site_administration.content",
+					pluralLabelName = "${labelName}s",
+					scope = "site");
+
+				ObjectAdmin.addObjectFieldViaAPI(
+					fieldBusinessType = "Text",
+					fieldLabelName = "Name",
+					fieldName = "name",
+					fieldType = "String",
+					isRequired = "false",
+					objectName = ${objectName});
+
+				ObjectAdmin.publishObjectViaAPI(objectName = ${objectName});
+			}
+
+			task ("Create two object entries") {
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Apple",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+
+				JSONObject.addObjectEntryViaJSONAPI(
+					fieldName = "name",
+					fieldValue = "Banana",
+					groupName = ${randomSiteName},
+					objectName = ${objectName},
+					scope = "site");
+			}
+		}
+
+		task ("When not define view permission for object") {
+			task ("Add a new regular role") {
+				JSONRole.addRegularRole(
+					roleKey = ${randomRoleKey},
+					roleTitle = ${randomRoleKey});
+			}
+
+			task ("Define the permissions of regular role") {
+				Permissions.definePermissionsViaJSONAPI(
+					resourceNameActionList = "com.liferay.portal.kernel.model.Layout,UPDATE,VIEW",
+					roleTitle = ${randomRoleKey},
+					roleType = "regular");
+			}
+
+			task ("Assign the regular role to new user") {
+				JSONRole.assignRoleToUser(
+					roleTitle = ${randomRoleKey},
+					userEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Add a dynamic collection for site object") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+				AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = ${labelName});
+			}
+
+			task ("Remove the View permission for Guest and Site Member") {
+				AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${randomSiteName});
+
+				LexiconEntry.gotoEntryMenuItem(
+					menuItem = "Permissions",
+					rowEntry = "Dynamic Collection");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Guest");
+
+				Role.removePermissionPG(
+					permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "Site Member");
+			}
+		}
+
+		task ("Then user can see alert message on mapped Collection Display or Content Display at edit mode") {
+			task ("Add a second content page") {
+				JSONLayout.addPublicLayout(
+					groupName = ${randomSiteName},
+					layoutName = "Test Content Page Name 2",
+					type = "content");
+			}
+
+			task ("Add a third content page") {
+				JSONLayout.addPublicLayout(
+					groupName = ${randomSiteName},
+					layoutName = "Test Content Page Name 3",
+					type = "content");
+			}
+
+			task ("Add a Collection Display to the first content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Select the dynamic collection in Collection Display") {
+				PageEditor.editCollectionDisplay(
+					assetListName = "Dynamic Collection",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Add a Heading fragment to the first cell") {
+				PageEditor.addFragmentToCollectionDisplay(
+					collectionName = "Basic Components",
+					entryTitle = "",
+					fragmentName = "Heading");
+
+				PageEditor.publish();
+			}
+
+			task ("Map the Text field to Heading fragment") {
+				PageEditorMapping.mapEditableFieldToCollectionItems(
+					field = "Name",
+					fragmentName = "Heading",
+					id = "element-text");
+
+				PageEditor.publish();
+			}
+
+			task ("Add a Content Display to the second content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Content Display");
+			}
+
+			task ("Select one object entry in Content Display") {
+				PageEditor.editContentDisplay(
+					entryContent = "Apple",
+					fragmentName = "Content Display",
+					index = 1,
+					objecEntrytName = "${labelName}s",
+					object = "true");
+
+				PageEditor.publish();
+			}
+
+			task ("Add a Collection Display to the third content page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 3",
+					siteName = ${randomSiteName});
+
+				PageEditor.addFragment(
+					collectionName = "Content Display",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Select the dynamic collection in Collection Display") {
+				PageEditor.editCollectionDisplay(
+					assetListName = "Dynamic Collection",
+					fragmentName = "Collection Display");
+			}
+
+			task ("Add a Heading fragment to the first cell") {
+				PageEditor.addFragmentToCollectionDisplay(
+					collectionName = "Basic Components",
+					entryTitle = "",
+					fragmentName = "Heading");
+
+				PageEditor.publish();
+			}
+
+			task ("Sign in as new user") {
+				User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${randomUserEmailAddress}@liferay.com"));
+			}
+
+			task ("Navigate to the first content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the alert message shown on Collection Display") {
+				AssertVisible(
+					key_alertInfo = "This content cannot be displayed due to permission restrictions.",
+					key_fragmentName = "Collection Display",
+					locator1 = "Fragment#ALERT_INFO");
+			}
+
+			task ("View the password-policies icon shown before the text") {
+				AssertVisible(
+					key_text = "password-policies",
+					locator1 = "Icon#ANY");
+			}
+
+			task ("View the alert message shown on General panel") {
+				PageEditor.gotoConfiguration(fragmentName = "Collection Display");
+
+				AssertTextEquals.assertPartialText(
+					locator1 = "PageEditor#ITEM_CONFIGURATION_SIDEBAR",
+					value1 = "This content cannot be displayed due to permission restrictions.");
+			}
+
+			task ("View the collapsed node of Collection Display is not shown on Browser panel") {
+				takeScreenshot();
+
+				AssertElementNotPresent(
+					key_text = "hr",
+					locator1 = "Icon#ANY");
+			}
+
+			task ("View the password-policies icon shown on Collection Display node") {
+				AssertVisible(
+					key_indexNumber = 2,
+					key_text = "password-policies",
+					locator1 = "Icon#ANY_N");
+			}
+
+			task ("View Restricted Content is shown on Page Content panel") {
+				PageEditor.gotoTab(tabName = "Page Content");
+
+				AssertVisible(
+					key_itemName = "Restricted Content",
+					locator1 = "PageEditor#PAGE_CONTENTS_ITEM");
+			}
+
+			task ("View the password-policies icon shown before the Restricted Content") {
+				AssertVisible(
+					key_indexNumber = 2,
+					key_text = "password-policies",
+					locator1 = "Icon#ANY_N");
+			}
+
+			task ("View the user can delete the Collection Display") {
+				PageEditor.removeFragment(fragmentName = "Collection Display");
+			}
+
+			task ("View the success message shown when click the publish button") {
+				PageEditor.publish();
+			}
+
+			task ("Navigate to the second content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 2",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the alert message shown on Content Display") {
+				AssertVisible(
+					key_alertInfo = "This content cannot be displayed due to permission restrictions.",
+					key_fragmentName = "Content Display",
+					locator1 = "Fragment#ALERT_INFO");
+			}
+
+			task ("View the password-policies icon shown before the text") {
+				AssertVisible(
+					key_text = "password-policies",
+					locator1 = "Icon#ANY");
+			}
+
+			task ("View the alert message shown on General panel") {
+				PageEditor.gotoConfiguration(fragmentName = "Content Display");
+
+				AssertTextEquals.assertPartialText(
+					locator1 = "PageEditor#ITEM_CONFIGURATION_SIDEBAR",
+					value1 = "This content cannot be displayed due to permission restrictions.");
+			}
+
+			task ("View the password-policies icon shown on Content Display node on Browser panel") {
+				AssertVisible(
+					key_indexNumber = 2,
+					key_text = "password-policies",
+					locator1 = "Icon#ANY_N");
+			}
+
+			task ("View Restricted Content is shown on Page Content panel") {
+				PageEditor.gotoTab(tabName = "Page Content");
+
+				AssertVisible(
+					key_itemName = "Restricted Content",
+					locator1 = "PageEditor#PAGE_CONTENTS_ITEM");
+			}
+
+			task ("View the user can delete the Content Display") {
+				PageEditor.removeFragment(fragmentName = "Content Display");
+			}
+
+			task ("View the success message shown when click the publish button") {
+				PageEditor.publish();
+			}
+
+			task ("Navigate to the third content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Content Page Name 3",
+					siteName = ${randomSiteName});
+			}
+
+			task ("View the alert message shown on Collection Display") {
+				AssertVisible(
+					key_alertInfo = "This content cannot be displayed due to permission restrictions.",
+					key_fragmentName = "Collection Display",
+					locator1 = "Fragment#ALERT_INFO");
+			}
+
+			task ("View the Inline Text section is not shown in Page Content panel") {
+				AssertElementNotPresent(
+					key_panel = "Inline Text",
+					locator1 = "Panel#PANEL");
+			}
 		}
 	}
 

@@ -94,29 +94,10 @@ public interface CompanyLocalService
 	 */
 	public Company addCompany(
 			Long companyId, String webId, String virtualHostname, String mx,
-			int maxUsers, boolean active)
-		throws PortalException;
-
-	/**
-	 * Adds a company.
-	 *
-	 * @param webId the the company's web domain
-	 * @param virtualHostname the company's virtual host name
-	 * @param mx the company's mail domain
-	 * @param system whether the company is the very first company (i.e.,
-	 the super company)
-	 * @param maxUsers the max number of company users (optionally
-	 <code>0</code>)
-	 * @param active whether the company is active
-	 * @return the company
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 #addCompany(Long, String, String, String, boolean, int,
-	 boolean)}
-	 */
-	@Deprecated
-	public Company addCompany(
-			String webId, String virtualHostname, String mx, int maxUsers,
-			boolean active)
+			int maxUsers, boolean active, String defaultAdminPassword,
+			String defaultAdminScreenName, String defaultAdminEmailAddress,
+			String defaultAdminFirstName, String defaultAdminMiddleName,
+			String defaultAdminLastName)
 		throws PortalException;
 
 	/**

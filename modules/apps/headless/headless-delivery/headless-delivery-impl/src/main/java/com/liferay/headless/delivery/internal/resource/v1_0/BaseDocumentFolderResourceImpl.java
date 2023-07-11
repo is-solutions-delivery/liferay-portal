@@ -1873,7 +1873,7 @@ public abstract class BaseDocumentFolderResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("assetLibraryId")) {
 				documentFolderUnsafeConsumer =
 					documentFolder -> postAssetLibraryDocumentFolder(
@@ -2003,7 +2003,7 @@ public abstract class BaseDocumentFolderResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			documentFolderUnsafeConsumer =
 				documentFolder -> patchDocumentFolder(
 					documentFolder.getId() != null ? documentFolder.getId() :
@@ -2011,7 +2011,7 @@ public abstract class BaseDocumentFolderResourceImpl
 					documentFolder);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			documentFolderUnsafeConsumer = documentFolder -> putDocumentFolder(
 				documentFolder.getId() != null ? documentFolder.getId() :
 					_parseLong((String)parameters.get("documentFolderId")),

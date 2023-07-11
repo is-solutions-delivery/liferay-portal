@@ -23,7 +23,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -31,7 +31,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -145,8 +145,6 @@ definition {
 	@description = "Bug: LRAC-8988 | Automation ID: LRAC-11059 | Test Summary: Create the page name with special characters makes the correct name appear in the path part of AC pages"
 	@priority = 3
 	test CreatePageNameWithSpecialCharactersMakeCorrectNameAppearInPath {
-		property analytics.cloud.upstream = "false";
-
 		task ("Create a site and a blog and add to a page") {
 			ACUtils.addSiteAndPage();
 

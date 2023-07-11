@@ -16,12 +16,12 @@ package com.liferay.user.groups.admin.item.selector.web.internal;
 
 import com.liferay.item.selector.ItemSelectorReturnType;
 import com.liferay.item.selector.ItemSelectorView;
+import com.liferay.item.selector.ItemSelectorViewDescriptorRenderer;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.user.groups.admin.item.selector.UserGroupItemSelectorCriterion;
-import com.liferay.user.groups.admin.item.selector.web.internal.constants.UserGroupItemSelectorWebKeys;
 import com.liferay.user.groups.admin.item.selector.web.internal.display.context.UserGroupItemSelectorViewDisplayContext;
 import com.liferay.users.admin.kernel.util.UsersAdmin;
 
@@ -33,8 +33,6 @@ import java.util.Locale;
 
 import javax.portlet.PortletURL;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -57,10 +55,6 @@ public class UserGroupItemSelectorView
 		return UserGroupItemSelectorCriterion.class;
 	}
 
-	public ServletContext getServletContext() {
-		return _servletContext;
-	}
-
 	@Override
 	public List<ItemSelectorReturnType> getSupportedItemSelectorReturnTypes() {
 		return _supportedItemSelectorReturnTypes;
@@ -78,27 +72,18 @@ public class UserGroupItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
-		HttpServletRequest httpServletRequest =
-			(HttpServletRequest)servletRequest;
-
 		UserGroupItemSelectorViewDisplayContext
 			userGroupItemSelectorViewDisplayContext =
 				new UserGroupItemSelectorViewDisplayContext(
-					_userGroupLocalService, _usersAdmin, httpServletRequest,
-					portletURL, itemSelectedEventName);
+					_userGroupLocalService, userGroupItemSelectorCriterion,
+					_usersAdmin, (HttpServletRequest)servletRequest,
+					portletURL);
 
-		servletRequest.setAttribute(
-			UserGroupItemSelectorWebKeys.
-				USER_GROUP_ITEM_SELECTOR_DISPLAY_CONTEXT,
-			userGroupItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher(
-				"/user_group_item_selector.jsp");
-
-		requestDispatcher.include(servletRequest, servletResponse);
+		_itemSelectorViewDescriptorRenderer.renderHTML(
+			servletRequest, servletResponse, userGroupItemSelectorCriterion,
+			portletURL, itemSelectedEventName, search,
+			new UserGroupSelectorViewDescriptor(
+				userGroupItemSelectorViewDisplayContext));
 	}
 
 	private static final List<ItemSelectorReturnType>
@@ -106,15 +91,14 @@ public class UserGroupItemSelectorView
 			new UUIDItemSelectorReturnType());
 
 	@Reference
+	private ItemSelectorViewDescriptorRenderer<UserGroupItemSelectorCriterion>
+		_itemSelectorViewDescriptorRenderer;
+
+	@Reference
 	private Language _language;
 
 	@Reference
 	private Portal _portal;
-
-	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.user.groups.admin.item.selector.web)"
-	)
-	private ServletContext _servletContext;
 
 	@Reference
 	private UserGroupLocalService _userGroupLocalService;

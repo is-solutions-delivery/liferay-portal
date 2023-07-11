@@ -40,19 +40,13 @@ public class ProductContentCommerceMLRecommendationIndexer
 	}
 
 	@Override
-	public String getDocumentType() {
-		return "ProductCommerceMLRecommendationDocumentType";
-	}
-
-	@Override
 	public String getIndexName(long companyId) {
 		return String.format(
 			_INDEX_NAME_PATTERN, _indexNameBuilder.getIndexName(companyId));
 	}
 
 	private static final String _INDEX_MAPPING_FILE_NAME =
-		"/META-INF/search" +
-			"/product-commerce-ml-recommendation-document-type.json";
+		"product-commerce-ml-recommendation-mappings.json";
 
 	private static final String _INDEX_NAME_PATTERN =
 		"%s-product-content-commerce-ml-recommendation";

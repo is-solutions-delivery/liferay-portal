@@ -483,7 +483,7 @@ definition {
 		MenuItem.clickNoError(menuItem = "Delete");
 
 		AssertTextEquals(
-			locator1 = "IFrame#DIALOG_BOX",
+			locator1 = "Modal#HEADER",
 			value1 = "Delete workflow?");
 
 		AssertTextEquals(
@@ -494,7 +494,7 @@ definition {
 
 		Alert.viewSuccessMessage();
 
-		AssertElementNotPresent(locator1 = "WorkflowDefinition#DEFINITION_TABLE_TITLE");
+		WaitForElementNotPresent(locator1 = "WorkflowDefinition#DEFINITION_TABLE_TITLE");
 	}
 
 	macro deleteWorkflowDefinitionExtra {
@@ -503,7 +503,7 @@ definition {
 		MenuItem.clickNoError(menuItem = "Delete");
 
 		AssertTextEquals(
-			locator1 = "IFrame#DIALOG_BOX",
+			locator1 = "Modal#HEADER",
 			value1 = "Delete workflow?");
 
 		AssertTextEquals(
@@ -959,7 +959,9 @@ definition {
 			locator1 = "MyWorkflowTasks#DIALOG_BOX_DUE_DATE",
 			value1 = "4/11/${futureYear}");
 
-		Type(
+		var startDateTime = StringUtil.removeSpaces(${workflowDueDateTime});
+
+		Type.sendKeys(
 			locator1 = "MyWorkflowTasks#DIALOG_BOX_DUE_DATE_TIME",
 			value1 = ${workflowDueDateTime});
 
@@ -1016,7 +1018,9 @@ definition {
 			locator1 = "MyWorkflowTasks#DIALOG_BOX_DUE_DATE",
 			value1 = "4/11/${futureYear}");
 
-		Type(
+		var startDateTime = StringUtil.removeSpaces(${workflowDueDateTime});
+
+		Type.sendKeys(
 			locator1 = "MyWorkflowTasks#DIALOG_BOX_DUE_DATE_TIME",
 			value1 = ${workflowDueDateTime});
 
@@ -1290,7 +1294,7 @@ definition {
 	macro viewDefinitionPublished {
 		var key_workflowDefinitionTitle = ${workflowDefinitionTitle};
 
-		AssertTextEquals(
+		AssertVisible(
 			locator1 = "WorkflowDefinition#DEFINITION_TABLE_TITLE_PUBLISHED",
 			value1 = ${workflowDefinitionTitle});
 	}

@@ -1,7 +1,7 @@
 import BaseEventAnalysisPage from '../components/BaseEventAnalysisPage';
 import ErrorPage from 'shared/pages/ErrorPage';
+import Loading from 'shared/components/Loading';
 import React, {useMemo} from 'react';
-import Spinner from 'shared/components/Spinner';
 import {Attribute, Breakdown, Filter} from 'event-analysis/utils/types';
 import {AttributesProvider} from '../components/event-analysis-editor/context/attributes';
 import {AttributesState} from '../components/event-analysis-editor/context/attributes';
@@ -96,7 +96,7 @@ const Edit: React.FC<React.HTMLAttributes<HTMLElement>> = () => {
 	]);
 
 	if (loading) {
-		return <Spinner alignCenter key='LOADING_DISPLAY' />;
+		return <Loading key='LOADING' />;
 	}
 
 	if (error) {

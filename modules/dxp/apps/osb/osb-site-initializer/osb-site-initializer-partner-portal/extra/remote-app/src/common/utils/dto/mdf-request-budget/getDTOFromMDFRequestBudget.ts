@@ -9,14 +9,15 @@
  * distribution rights of the Software.
  */
 
+import MDFRequestActivityDTO from '../../../interfaces/dto/mdfRequestActivityDTO';
 import MDFRequestBudgetDTO from '../../../interfaces/dto/mdfRequestBudgetDTO';
-import LiferayAccountBrief from '../../../interfaces/liferayAccountBrief';
+import MDFRequest from '../../../interfaces/mdfRequest';
 import MDFRequestBudget from '../../../interfaces/mdfRequestBudget';
 
 export default function getDTOFromMDFRequestBudget(
 	budget: MDFRequestBudget,
-	activityId: number,
-	company?: LiferayAccountBrief
+	activityDTO: MDFRequestActivityDTO,
+	mdfRequest: MDFRequest
 ): MDFRequestBudgetDTO {
 	const mdfRequestBudget = {...budget};
 
@@ -26,7 +27,9 @@ export default function getDTOFromMDFRequestBudget(
 
 	return {
 		...mdfRequestBudget,
-		r_accToBgts_accountEntryId: company?.id,
-		r_actToBgts_c_activityId: activityId,
+		r_accToBgts_accountEntryERC: mdfRequest.company?.externalReferenceCode,
+		r_accToBgts_accountEntryId: mdfRequest.company?.id,
+		r_actToBgts_c_activityERC: activityDTO.externalReferenceCode,
+		r_actToBgts_c_activityId: activityDTO.id,
 	};
 }

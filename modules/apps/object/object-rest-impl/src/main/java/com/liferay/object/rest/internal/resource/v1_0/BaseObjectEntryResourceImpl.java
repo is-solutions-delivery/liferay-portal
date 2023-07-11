@@ -1221,15 +1221,20 @@ public abstract class BaseObjectEntryResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			objectEntryUnsafeConsumer = objectEntry -> postObjectEntry(
 				objectEntry);
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			objectEntryUnsafeConsumer =
-				objectEntry -> putByExternalReferenceCode(
-					objectEntry.getExternalReferenceCode(), objectEntry);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				objectEntryUnsafeConsumer =
+					objectEntry -> putByExternalReferenceCode(
+						objectEntry.getExternalReferenceCode(), objectEntry);
+			}
 		}
 
 		if (objectEntryUnsafeConsumer == null) {
@@ -1331,14 +1336,14 @@ public abstract class BaseObjectEntryResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			objectEntryUnsafeConsumer = objectEntry -> patchObjectEntry(
 				objectEntry.getId() != null ? objectEntry.getId() :
 					_parseLong((String)parameters.get("objectEntryId")),
 				objectEntry);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			objectEntryUnsafeConsumer = objectEntry -> putObjectEntry(
 				objectEntry.getId() != null ? objectEntry.getId() :
 					_parseLong((String)parameters.get("objectEntryId")),

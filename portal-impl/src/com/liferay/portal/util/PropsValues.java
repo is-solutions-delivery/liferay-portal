@@ -329,11 +329,6 @@ public class PropsValues {
 	public static final String CDN_HOST_HTTPS = PropsUtil.get(
 		PropsKeys.CDN_HOST_HTTPS);
 
-	public static int CHANGE_TRACKING_SQL_TRANSFORMER_CACHE_SIZE =
-		GetterUtil.getInteger(
-			PropsUtil.get(
-				PropsKeys.CHANGE_TRACKING_SQL_TRANSFORMER_CACHE_SIZE));
-
 	public static final boolean CLUSTER_LINK_ENABLED = GetterUtil.getBoolean(
 		PropsUtil.get(PropsKeys.CLUSTER_LINK_ENABLED));
 
@@ -885,6 +880,10 @@ public class PropsValues {
 	public static final int GZIP_COMPRESSION_LEVEL = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.GZIP_COMPRESSION_LEVEL));
 
+	public static final boolean HEALTH_CHECK_DATA_SOURCE_ENABLED =
+		GetterUtil.getBoolean(
+			PropsUtil.get(PropsKeys.HEALTH_CHECK_DATA_SOURCE_ENABLED));
+
 	public static final String HIBERNATE_DIALECT = PropsUtil.get(
 		PropsKeys.HIBERNATE_DIALECT);
 
@@ -1134,6 +1133,10 @@ public class PropsValues {
 
 	public static boolean LAYOUT_TEMPLATE_CACHE_ENABLED = GetterUtil.getBoolean(
 		PropsUtil.get(PropsKeys.LAYOUT_TEMPLATE_CACHE_ENABLED));
+
+	public static boolean LAYOUT_USER_ACCESS_VIA_PLID_ENABLED =
+		GetterUtil.getBoolean(
+			PropsUtil.get(PropsKeys.LAYOUT_USER_ACCESS_VIA_PLID_ENABLED));
 
 	public static boolean LAYOUT_USER_PRIVATE_LAYOUTS_AUTO_CREATE =
 		GetterUtil.getBoolean(

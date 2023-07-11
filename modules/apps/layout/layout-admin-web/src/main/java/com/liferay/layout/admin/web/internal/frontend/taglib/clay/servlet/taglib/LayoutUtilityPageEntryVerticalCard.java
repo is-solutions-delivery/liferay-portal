@@ -146,6 +146,11 @@ public class LayoutUtilityPageEntryVerticalCard extends BaseVerticalCard {
 	}
 
 	@Override
+	public String getStickerImageSrc() {
+		return null;
+	}
+
+	@Override
 	public String getStickerShape() {
 		return null;
 	}
@@ -161,6 +166,12 @@ public class LayoutUtilityPageEntryVerticalCard extends BaseVerticalCard {
 			LayoutUtilityPageEntryViewRendererRegistryUtil.
 				getLayoutUtilityPageEntryViewRenderer(
 					_layoutUtilityPageEntry.getType());
+
+		if (layoutUtilityPageEntryViewRenderer == null) {
+			_log.error("Invalid type" + _layoutUtilityPageEntry.getType());
+
+			return null;
+		}
 
 		return layoutUtilityPageEntryViewRenderer.getLabel(
 			themeDisplay.getLocale());

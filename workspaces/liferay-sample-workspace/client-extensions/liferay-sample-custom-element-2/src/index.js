@@ -1,6 +1,21 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 
+import Comic from './common/components/Comic';
 import DadJoke from './common/components/DadJoke';
 import api from './common/services/liferay/api';
 import {Liferay} from './common/services/liferay/liferay';
@@ -25,6 +40,10 @@ const App = ({route}) => {
 
 			{Liferay.ThemeDisplay.isSignedIn() && (
 				<div>
+					<Comic />
+
+					<hr />
+
 					<DadJoke />
 				</div>
 			)}
@@ -44,14 +63,17 @@ class WebComponent extends HTMLElement {
 				.then((response) => response.json())
 				.then((response) => {
 					if (response.givenName) {
-						const nameElements = document.getElementsByClassName(
-							'hello-world-name'
-						);
+						const nameElements =
+							document.getElementsByClassName('hello-world-name');
 
 						if (nameElements.length) {
 							nameElements[0].innerHTML = response.givenName;
 						}
 					}
+				})
+				.catch((error) => {
+					// eslint-disable-next-line no-console
+					console.log(error);
 				});
 		}
 	}

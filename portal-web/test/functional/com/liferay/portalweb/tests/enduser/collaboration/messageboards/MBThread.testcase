@@ -23,9 +23,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -381,6 +381,8 @@ definition {
 			larFileName = "message-boards-thread.lar",
 			uploadFrom = "dependencies");
 
+		MessageBoardsAdmin.openMessageBoardsAdmin(siteURLKey = "guest");
+
 		MessageboardsThread.viewCP(
 			replyCount = 0,
 			threadBody = "MB Thread Message Body",
@@ -390,7 +392,7 @@ definition {
 	@priority = 4
 	@refactordone
 	test CanLimitThreadAttachmentSize {
-		property test.name.skip.portal.instance = "MBThread#CanLimitThreadAttachmentSize";
+		property test.liferay.virtual.instance = "false";
 
 		SystemSettings.openSystemSettingsAdmin();
 

@@ -71,6 +71,11 @@ public abstract class BaseLayoutsItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/layouts.jsp");
+
 		LayoutItemSelectorViewDisplayContext
 			layoutItemSelectorViewDisplayContext =
 				new LayoutItemSelectorViewDisplayContext(
@@ -82,11 +87,6 @@ public abstract class BaseLayoutsItemSelectorView
 			LayoutsItemSelectorWebKeys.
 				LAYOUT_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			layoutItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/layouts.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

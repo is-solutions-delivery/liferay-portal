@@ -10,7 +10,7 @@ definition {
 
 	@priority = 4
 	test DecrementCoreSchemaMajorVersion {
-		property test.name.skip.portal.instance = "UpgradeEnhancement#DecrementCoreSchemaMajorVersion";
+		property test.liferay.virtual.instance = "false";
 
 		var script = '''
 			import com.liferay.portal.kernel.model.*;
@@ -41,14 +41,14 @@ definition {
 
 		Portlet.shutdownServer();
 
-		Portlet.startServer(deleteLiferayHome = "false");
+		AntCommands.runCommand("build-test.xml", "start-app-server-tomcat-simple");
 
 		AssertConsoleTextPresent(value1 = "You must first upgrade the portal to the required schema version");
 	}
 
 	@priority = 4
 	test DecrementCoreSchemaMicroVersion {
-		property test.name.skip.portal.instance = "UpgradeEnhancement#DecrementCoreSchemaMicroVersion";
+		property test.liferay.virtual.instance = "false";
 
 		var script = '''
 			import com.liferay.portal.kernel.model.*;
@@ -97,7 +97,7 @@ definition {
 
 	@priority = 3
 	test DecrementCoreSchemaMinorVersion {
-		property test.name.skip.portal.instance = "UpgradeEnhancement#DecrementCoreSchemaMinorVersion";
+		property test.liferay.virtual.instance = "false";
 
 		var script = '''
 			import com.liferay.portal.kernel.model.*;
@@ -135,7 +135,7 @@ definition {
 		if (${output} != "Cannot decrement minor version, it is already at the minimum value") {
 			Portlet.shutdownServer();
 
-			Portlet.startServer(deleteLiferayHome = "false");
+			AntCommands.runCommand("build-test.xml", "start-app-server-tomcat-simple");
 
 			AssertConsoleTextPresent(value1 = "You must first upgrade the portal to the required schema version");
 		}
@@ -148,7 +148,6 @@ definition {
 	test DirectUpgradeFromArchive6012 {
 		property ci.retries.disabled = "false";
 		property data.archive.type = "data-archive-portal";
-		property portal.upgrades = "false";
 		property portal.version = "6.0.12";
 		property skip.start.app.server = "true";
 		property test.assert.warning.exceptions = "true";
@@ -169,7 +168,6 @@ definition {
 	test DirectUpgradeFromArchive6130 {
 		property ci.retries.disabled = "false";
 		property data.archive.type = "data-archive-portal";
-		property portal.upgrades = "false";
 		property portal.version = "6.1.30";
 		property skip.start.app.server = "true";
 		property test.assert.warning.exceptions = "true";
@@ -189,6 +187,7 @@ definition {
 	@priority = 4
 	test RemoveModulesWithSchemaVersionChange {
 		property osgi.modules.includes = "revert-schema-version-api,revert-schema-version-service";
+		property test.liferay.virtual.instance = "false";
 
 		User.firstLoginPG();
 
@@ -200,9 +199,7 @@ definition {
 
 		// Change schema version from 2.1.1 to 2.1.0.
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "redeploy-osgi-module -Dmodule.base.dir=modules/test/upgrade/revert-schema-version-service -Dupdate.properties=2.1.0 -Dupdate.properties.original=2.1.1");
+		AntCommands.runCommand("build-test.xml", "redeploy-osgi-module -Dmodule.base.dir=modules/test/upgrade/revert-schema-version-service -Dupdate.properties=2.1.0 -Dupdate.properties.original=2.1.1");
 
 		Pause(locator1 = 15000);
 
@@ -214,9 +211,7 @@ definition {
 
 		// Change schema version from 2.1.0 to 2.0.0.
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "redeploy-osgi-module -Dmodule.base.dir=modules/test/upgrade/revert-schema-version-service -Dupdate.properties=2.0.0 -Dupdate.properties.original=2.1.0");
+		AntCommands.runCommand("build-test.xml", "redeploy-osgi-module -Dmodule.base.dir=modules/test/upgrade/revert-schema-version-service -Dupdate.properties=2.0.0 -Dupdate.properties.original=2.1.0");
 
 		Pause(locator1 = 15000);
 
@@ -228,9 +223,7 @@ definition {
 
 		// Change schema version from 2.0.0 to 1.0.0.
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "redeploy-osgi-module -Dmodule.base.dir=modules/test/upgrade/revert-schema-version-service -Dupdate.properties=1.0.0 -Dupdate.properties.original=2.0.0");
+		AntCommands.runCommand("build-test.xml", "redeploy-osgi-module -Dmodule.base.dir=modules/test/upgrade/revert-schema-version-service -Dupdate.properties=1.0.0 -Dupdate.properties.original=2.0.0");
 
 		Pause(locator1 = 15000);
 
@@ -238,7 +231,9 @@ definition {
 
 		GogoShell.executeCommand(commandName = "dm wtf");
 
-		GogoShell.viewOutput(outputContent = "com.liferay.portal.kernel.model.Release (&(release.bundle.symbolic.name=com.liferay.revert.schema.version.service)(&(release.schema.version>=1.0.0)(!(release.schema.version>=2.0.0)))) for bundle com.liferay.revert.schema.version.service");
+		GogoShell.viewOutput(outputContent = "1 unregistered components found");
+
+		GogoShell.viewOutput(outputContent = "com.liferay.revert.schema");
 	}
 
 }

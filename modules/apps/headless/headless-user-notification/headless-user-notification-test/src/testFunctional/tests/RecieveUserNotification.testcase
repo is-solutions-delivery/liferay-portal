@@ -10,7 +10,7 @@ definition {
 
 		User.firstLoginPG();
 
-		JSONGroup.addGroup(groupName = "Site Name");
+		HeadlessSite.addSite(siteName = "Site Name");
 
 		task ("Given user test2@liferay.com with Administrator role created") {
 			UserAccountAPI.setUpGlobalUserAccountId(
@@ -58,12 +58,10 @@ definition {
 			ObjectActionAPI.createObjectAction(
 				label = "Object Entry Notification",
 				name = "objectEntryNotification",
-				notificationTemplateErc = "test",
 				notificationTemplateId = ${staticNotificationTemplateId},
 				objectActionExecutorKey = "notification",
 				objectActionTriggerKey = "onAfterAdd",
-				objectDefinitionId = ${customObjectDefinitionId},
-				type = "userNotification");
+				objectDefinitionId = ${customObjectDefinitionId});
 		}
 
 		task ("Given student entry created") {
@@ -74,7 +72,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		JSONUser.tearDownNonAdminUsersNoSelenium();
 
@@ -88,7 +86,7 @@ definition {
 
 		ObjectAdmin.deleteObjectViaAPI(objectName = "Student");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCPNoSelenium();
 		}
 	}

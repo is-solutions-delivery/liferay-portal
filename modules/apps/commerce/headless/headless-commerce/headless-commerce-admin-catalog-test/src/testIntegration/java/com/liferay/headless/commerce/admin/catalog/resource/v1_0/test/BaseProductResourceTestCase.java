@@ -1158,14 +1158,6 @@ public abstract class BaseProductResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("configuration", additionalAssertFieldName)) {
-				if (product.getConfiguration() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
 			if (Objects.equals("createDate", additionalAssertFieldName)) {
 				if (product.getCreateDate() == null) {
 					valid = false;
@@ -1560,14 +1552,19 @@ public abstract class BaseProductResourceTestCase {
 
 		Assert.assertTrue(valid);
 
-		Map<String, Map<String, String>> actions = page.getActions();
+		assertValid(page.getActions(), expectedActions);
+	}
 
-		for (String key : expectedActions.keySet()) {
-			Map action = actions.get(key);
+	protected void assertValid(
+		Map<String, Map<String, String>> actions1,
+		Map<String, Map<String, String>> actions2) {
+
+		for (String key : actions2.keySet()) {
+			Map action = actions1.get(key);
 
 			Assert.assertNotNull(key + " does not contain an action", action);
 
-			Map expectedAction = expectedActions.get(key);
+			Map<String, String> expectedAction = actions2.get(key);
 
 			Assert.assertEquals(
 				expectedAction.get("method"), action.get("method"));
@@ -1695,17 +1692,6 @@ public abstract class BaseProductResourceTestCase {
 			if (Objects.equals("categories", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						product1.getCategories(), product2.getCategories())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("configuration", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						product1.getConfiguration(),
-						product2.getConfiguration())) {
 
 					return false;
 				}
@@ -2324,11 +2310,6 @@ public abstract class BaseProductResourceTestCase {
 		}
 
 		if (entityFieldName.equals("categories")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("configuration")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}

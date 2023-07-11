@@ -176,17 +176,17 @@ public class AccountEntryOrganizationRelLocalServiceImpl
 	}
 
 	@Override
-	public int getAccountEntryOrganizationRelsByOrganizationIdCount(
+	public int getAccountEntryOrganizationRelsCount(long accountEntryId) {
+		return accountEntryOrganizationRelPersistence.countByAccountEntryId(
+			accountEntryId);
+	}
+
+	@Override
+	public int getAccountEntryOrganizationRelsCountByOrganizationId(
 		long organizationId) {
 
 		return accountEntryOrganizationRelPersistence.countByOrganizationId(
 			organizationId);
-	}
-
-	@Override
-	public int getAccountEntryOrganizationRelsCount(long accountEntryId) {
-		return accountEntryOrganizationRelPersistence.countByAccountEntryId(
-			accountEntryId);
 	}
 
 	@Override

@@ -43,10 +43,13 @@ public class GroupModelListener extends BaseModelListener<Group> {
 			if (commerceChannel != null) {
 				_commerceChannelLocalService.updateCommerceChannel(
 					commerceChannel.getCommerceChannelId(),
+					commerceChannel.getAccountEntryId(),
 					GroupConstants.DEFAULT_PARENT_GROUP_ID,
 					commerceChannel.getName(), commerceChannel.getType(),
 					commerceChannel.getTypeSettingsUnicodeProperties(),
-					commerceChannel.getCommerceCurrencyCode());
+					commerceChannel.getCommerceCurrencyCode(),
+					commerceChannel.getPriceDisplayType(),
+					commerceChannel.isDiscountsTargetNetPrice());
 			}
 		}
 		catch (PortalException portalException) {

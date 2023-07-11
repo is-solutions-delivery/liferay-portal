@@ -2,7 +2,7 @@ import * as breadcrumbs from 'shared/util/breadcrumbs';
 import BasePage from 'shared/components/base-page';
 import BundleRouter from 'route-middleware/BundleRouter';
 import ClayLink from '@clayui/link';
-import Loading from 'shared/pages/Loading';
+import Loading from 'shared/components/Loading';
 import React, {lazy, Suspense} from 'react';
 import RouteNotFound from 'shared/components/RouteNotFound';
 import StatesRenderer from 'shared/components/states-renderer/StatesRenderer';
@@ -136,6 +136,7 @@ const Assets: React.FC<IAssetsProps> = ({className, currentUser, router}) => {
 											<ClayLink
 												button
 												className='button-root'
+												displayType='primary'
 												href={toRoute(
 													Routes.SETTINGS_ADD_DATA_SOURCE,
 													{

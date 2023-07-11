@@ -105,6 +105,9 @@ public class AvailabilityLabelInfoItemRenderer
 			httpServletRequest.setAttribute(
 				"liferay-commerce:availability-label:namespace", namespace);
 
+			String availabilityLabel = StringPool.BLANK;
+			String labelType = "default";
+
 			long groupId = _portal.getScopeGroupId(httpServletRequest);
 
 			CPCatalogEntry cpCatalogEntry =
@@ -130,19 +133,22 @@ public class AvailabilityLabelInfoItemRenderer
 							getAvailabilityContentContributorValueJSONObject(
 								cpCatalogEntry, httpServletRequest);
 
-					httpServletRequest.setAttribute(
-						"liferay-commerce:availability-label:label",
+					availabilityLabel =
 						availabilityContentContributorValueJSONObject.getString(
 							CPContentContributorConstants.AVAILABILITY_NAME,
-							StringPool.BLANK));
-					httpServletRequest.setAttribute(
-						"liferay-commerce:availability-label:labelType",
+							availabilityLabel);
+					labelType =
 						availabilityContentContributorValueJSONObject.getString(
 							CPContentContributorConstants.
 								AVAILABILITY_DISPLAY_TYPE,
-							"default"));
+							labelType);
 				}
 			}
+
+			httpServletRequest.setAttribute(
+				"liferay-commerce:availability-label:label", availabilityLabel);
+			httpServletRequest.setAttribute(
+				"liferay-commerce:availability-label:labelType", labelType);
 
 			requestDispatcher.include(httpServletRequest, httpServletResponse);
 		}

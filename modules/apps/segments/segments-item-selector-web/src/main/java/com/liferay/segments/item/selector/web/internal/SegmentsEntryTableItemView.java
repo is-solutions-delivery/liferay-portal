@@ -58,8 +58,6 @@ public class SegmentsEntryTableItemView implements TableItemView {
 
 		TextSearchEntry nameTextSearchEntry = new TextSearchEntry();
 
-		nameTextSearchEntry.setName(
-			HtmlUtil.escape(_segmentsEntry.getName(_themeDisplay.getLocale())));
 		nameTextSearchEntry.setCssClass(
 			"entry entry-selector table-cell-expand table-cell-minw-200");
 		nameTextSearchEntry.setData(
@@ -68,25 +66,27 @@ public class SegmentsEntryTableItemView implements TableItemView {
 			).put(
 				"entityname", _segmentsEntry.getName(_themeDisplay.getLocale())
 			).build());
+		nameTextSearchEntry.setName(
+			HtmlUtil.escape(_segmentsEntry.getName(_themeDisplay.getLocale())));
 
 		searchEntries.add(nameTextSearchEntry);
 
 		TextSearchEntry scopeTextSearchEntry = new TextSearchEntry();
 
+		scopeTextSearchEntry.setCssClass(
+			"table-cell-expand-smaller table-cell-minw-150");
 		scopeTextSearchEntry.setName(
 			LanguageUtil.get(
 				locale, HtmlUtil.escape(_getGroupDescriptiveName())));
-		scopeTextSearchEntry.setCssClass(
-			"table-cell-expand-smaller table-cell-minw-150");
 
 		searchEntries.add(scopeTextSearchEntry);
 
 		DateSearchEntry modifiedDateTextDateSearchEntry = new DateSearchEntry();
 
-		modifiedDateTextDateSearchEntry.setDate(
-			_segmentsEntry.getModifiedDate());
 		modifiedDateTextDateSearchEntry.setCssClass(
 			"table-cell-expand-smallest table-cell-ws-nowrap");
+		modifiedDateTextDateSearchEntry.setDate(
+			_segmentsEntry.getModifiedDate());
 
 		searchEntries.add(modifiedDateTextDateSearchEntry);
 

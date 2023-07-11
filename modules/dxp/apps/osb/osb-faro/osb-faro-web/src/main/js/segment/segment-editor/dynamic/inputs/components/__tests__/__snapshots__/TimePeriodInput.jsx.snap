@@ -6,12 +6,13 @@ exports[`TimePeriodInput should render 1`] = `
     aria-activedescendant="last7Days"
     aria-expanded="true"
     aria-haspopup="listbox"
-    aria-owns="clay-id-1"
+    aria-owns="clay-id-2"
     class="form-control form-control-select form-control-select-secondary operator-input show"
     data-testid="clay-select"
     role="combobox"
     style=""
     tabindex="0"
+    type="button"
   >
     Last 7 days
   </button>

@@ -608,17 +608,15 @@ public class CommonSearchSourceBuilderAssemblerImplTest {
 			commonSearchSourceBuilderAssembler, "_facetTranslator",
 			new DefaultFacetTranslator());
 		ReflectionTestUtil.setFieldValue(
-			commonSearchSourceBuilderAssembler,
-			"_filterToQueryBuilderTranslator",
+			commonSearchSourceBuilderAssembler, "_filterTranslator",
 			elasticsearchFilterTranslatorFixture.
 				getElasticsearchFilterTranslator());
 		ReflectionTestUtil.setFieldValue(
-			commonSearchSourceBuilderAssembler,
-			"_legacyQueryToQueryBuilderTranslator",
+			commonSearchSourceBuilderAssembler, "_legacyQueryTranslator",
 			legacyElasticsearchQueryTranslator);
 		ReflectionTestUtil.setFieldValue(
-			commonSearchSourceBuilderAssembler,
-			"_queryToQueryBuilderTranslator", elasticsearchQueryTranslator);
+			commonSearchSourceBuilderAssembler, "_queryTranslator",
+			elasticsearchQueryTranslator);
 
 		return commonSearchSourceBuilderAssembler;
 	}

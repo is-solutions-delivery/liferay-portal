@@ -213,13 +213,10 @@ exports[`Edit should render 1`] = `
                           <div
                             class="total-members-count"
                           >
-                            <div
-                              class="spinner-root"
-                            >
-                              <span
-                                class="loading-animation loading-animation-dotted loading-animation-sm"
-                              />
-                            </div>
+                            <span
+                              aria-hidden="true"
+                              class="loading-root center loading-animation"
+                            />
                           </div>
                         </div>
                       </div>

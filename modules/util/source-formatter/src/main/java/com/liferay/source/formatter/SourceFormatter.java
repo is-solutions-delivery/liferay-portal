@@ -1147,7 +1147,8 @@ public class SourceFormatter {
 				(line.contains("feature.flag") ||
 				 line.contains("FeatureFlagManagerUtil.isEnabled(") ||
 				 line.contains("Liferay-Site-Initializer-Feature-Flag:") ||
-				 line.contains("Liferay.FeatureFlags['"))) {
+				 line.contains("Liferay.FeatureFlags['") ||
+				 line.contains("\"featureFlag\": \""))) {
 
 				return true;
 			}
@@ -1302,7 +1303,6 @@ public class SourceFormatter {
 
 		JIRAUtil.validateJIRAProjectNames(
 			commitMessages, _getPropertyValues("jira.project.keys"));
-		JIRAUtil.validateJIRATicketIds(commitMessages, 20);
 
 		for (String commitMessage : commitMessages) {
 			for (String keyword :

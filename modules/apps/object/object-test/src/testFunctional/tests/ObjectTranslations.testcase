@@ -1,0 +1,159 @@
+@component-name = "portal-object"
+definition {
+
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Object";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+	}
+
+	tearDown {
+		ObjectAdmin.deleteAllCustomObjectsViaAPI();
+
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "LPS-146755 - Verify a translation cannot be added to a custom object entry if the field isn't translatable"
+	@priority = 3
+	test CannotAddTranslationToNonTranslatableField {
+		task ("Given a custom object with translations enabled") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 186674",
+				objectName = "CustomObject186674",
+				pluralLabelName = "Custom Objects 186674");
+
+			JSONObject.updateObject(
+				configKey = "enableLocalization",
+				configValue = "true",
+				objectName = "CustomObject186674");
+		}
+
+		task ("And given a long text field that isn't translatable") {
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "LongText",
+				fieldLabelName = "Custom Field",
+				fieldName = "customField",
+				fieldType = "Clob",
+				isRequired = "false",
+				objectName = "CustomObject186674");
+
+			JSONObject.updateObjectField(
+				configKey = "localized",
+				configValue = "false",
+				fieldName = "customField",
+				objectName = "CustomObject186674");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject186674");
+		}
+
+		task ("When the user adds a custom object entry") {
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customField",
+				objectName = "CustomObject186674",
+				value = "By building a vibrant business, making technology useful, and investing in communities, we make it possible for people to reach their full potential to serve others.");
+		}
+
+		task ("Then there is no option to add a translation for the entry") {
+			ObjectAdmin.goToCustomObject(objectName = "CustomObject186674");
+
+			ObjectPortlet.viewEntryDetails(entry = "By building a vibrant business, making technology useful, and investing in communities, we make it possible for people to reach their full potential to serve others.");
+
+			AssertElementNotPresent(
+				key_locale = "en-us",
+				locator1 = "Calendar#VIEW_SELECTED_NAME_LANGUAGE");
+		}
+	}
+
+	@description = "LPS-183797 - Verify after changing the default language, the object definition cannot be saved without filling out the required fields"
+	@priority = 4
+	test CannotSaveObjectWithoutTranslation {
+		task ("Given portal with the default language set to Portuguese") {
+			PortalSettings.openToConfigInInstanceSettings(portletKey = "language");
+
+			PortalSettings.configureCurrentLanguagesCP(defaultPortalLanguage = "Portuguese (Brazil)");
+		}
+
+		task ("And given a custom object with a text field") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectAdmin.addNewObject(
+				fieldLabelName = "Custom Object 183797",
+				pluralLabelName = "Custom Objects 183797");
+
+			CreateObject.saveObject();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object 183797");
+
+			ObjectAdmin.goToFieldsTab();
+
+			ObjectAdmin.addObjectFieldViaUI(
+				fieldLabel = "Custom Field",
+				fieldType = "Text");
+		}
+
+		task ("When the user changes the default language to English") {
+			PortalSettings.openToConfigInInstanceSettings(portletKey = "language");
+
+			PortalSettings.configureCurrentLanguagesCP(defaultPortalLanguage = "English (United States)");
+
+			ObjectAdmin.openObjectAdmin();
+		}
+
+		task ("Then the custom object cannot be saved without filling the required fields") {
+			Click(locator1 = "ObjectAdmin#VIEW_ICON_OBJECT_ADMIN");
+
+			CreateObject.editLabel(labelName = "Objeto Personalizado 183797");
+
+			Button.clickSave();
+
+			AssertElementPresent(
+				locator1 = "CreateObject#OBJECT_LABEL",
+				value1 = "Objeto Personalizado 183797");
+
+			AssertElementPresent(
+				key_fieldLabel = "Plural Label",
+				locator1 = "FieldBase#ERROR_MESSAGE_REQUIRED_FIELD");
+		}
+	}
+
+	@description = "LPS-146755 - Verify fields cannot be set as translatable if the object definition doesn't have translations enabled"
+	@priority = 3
+	test CannotSetFieldAsTranslatableIfTranslationsIsDisabled {
+		task ("Given a custom object with translation not enabled") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 186673",
+				objectName = "CustomObject186673",
+				pluralLabelName = "Custom Objects 186673");
+		}
+
+		task ("When the user adds a rich text field") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectSystemObject(label = "Custom Object 186673");
+
+			ObjectAdmin.goToFieldsTab();
+
+			ObjectAdmin.addObjectFieldViaUI(
+				fieldLabel = "Custom Field",
+				fieldName = "customField",
+				fieldType = "Text");
+		}
+
+		task ("Then the field cannot be set as translatable") {
+			ObjectAdmin.goToFieldsDetails(label = "Custom Field");
+
+			AssertElementPresent(
+				key_fieldLabel = "Enable Entry Translation",
+				locator1 = "FormFields#FIELD_DISABLED_TEXT");
+		}
+	}
+
+}

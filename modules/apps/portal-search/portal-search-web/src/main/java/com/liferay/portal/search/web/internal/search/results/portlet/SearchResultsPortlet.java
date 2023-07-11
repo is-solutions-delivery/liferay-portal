@@ -241,7 +241,6 @@ public class SearchResultsPortlet extends MVCPortlet {
 
 		searchResultsPortletDisplayContext.setKeywords(
 			GetterUtil.getString(searchRequest.getQueryString()));
-
 		searchResultsPortletDisplayContext.setRenderNothing(
 			isRenderNothing(renderRequest, searchRequest));
 
@@ -255,13 +254,16 @@ public class SearchResultsPortlet extends MVCPortlet {
 				searchResultsPortletPreferences.
 					getPaginationDeltaParameterName(),
 				renderRequest));
-
 		searchResultsPortletDisplayContext.setSearchResultsSummariesHolder(
 			searchResultsSummariesHolder);
 		searchResultsPortletDisplayContext.
 			setSearchResultSummaryDisplayContexts(
 				searchResultsPortletDisplayContext.
 					translateSearchResultSummaryDisplayContexts(documents));
+		searchResultsPortletDisplayContext.setShowEmptyResultMessage(
+			searchResultsPortletPreferences.isShowEmptyResultMessage());
+		searchResultsPortletDisplayContext.setShowPagination(
+			searchResultsPortletPreferences.isShowPagination());
 		searchResultsPortletDisplayContext.setTotalHits(
 			searchResponse.getTotalHits());
 

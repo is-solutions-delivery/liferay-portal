@@ -36,13 +36,13 @@ Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
 LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
 %>
 
-<portlet:actionURL name="/layout_admin/edit_layout" var="editLayoutURL">
-	<portlet:param name="mvcRenderCommandName" value="/layout_admin/edit_layout" />
+<portlet:actionURL name="/layout_admin/edit_layout_design" var="editLayoutURL">
+	<portlet:param name="mvcRenderCommandName" value="/layout_admin/edit_layout_design" />
 </portlet:actionURL>
 
 <liferay-frontend:edit-form
-	action='<%= HttpComponentsUtil.addParameter(editLayoutURL, "refererPlid", plid) %>'
-	cssClass="pt-0"
+	action="<%= editLayoutURL %>"
+	cssClass="c-pt-0"
 	enctype="multipart/form-data"
 	method="post"
 	name="editLayoutFm"
@@ -56,105 +56,29 @@ LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
 	<aui:input name="stagingGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getStagingGroupId() %>" />
 	<aui:input name="selPlid" type="hidden" value="<%= layoutsAdminDisplayContext.getSelPlid() %>" />
 	<aui:input name="type" type="hidden" value="<%= selLayout.getType() %>" />
-	<aui:input name="<%= PortletDataHandlerKeys.SELECTED_LAYOUTS %>" type="hidden" />
 
-	<c:if test="<%= layoutsAdminDisplayContext.isLayoutPageTemplateEntry() || ((selLayout.isTypeAssetDisplay() || selLayout.isTypeContent()) && layoutsAdminDisplayContext.isDraft()) || !(selLayout.isTypeAssetDisplay() && selLayout.isTypeContent()) %>">
-
-		<%
-		for (Locale availableLocale : LanguageUtil.getAvailableLocales(group.getGroupId())) {
-		%>
-
-			<aui:input name='<%= "nameMapAsXML_" + LocaleUtil.toLanguageId(availableLocale) %>' type="hidden" value="<%= selLayout.getName(availableLocale) %>" />
-
-		<%
-		}
-		%>
-
-	</c:if>
-
-	<h2 class="mb-4 text-7"><liferay-ui:message key="design" /></h2>
+	<h2 class="c-mb-4 text-7"><liferay-ui:message key="design" /></h2>
 
 	<liferay-frontend:edit-form-body>
-		<liferay-ui:success key="layoutAdded" message="the-page-was-created-successfully" />
+		<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPS-153951") && layoutsAdminDisplayContext.isShowPublishedConfigurationMessage() %>'>
+			<clay:alert
+				displayType="info"
+			>
+				<liferay-ui:message key="these-design-configurations-are-now-saved-in-a-draft-.to-fully-apply-them,-the-page-needs-to-be-published" />
 
-		<liferay-ui:error exception="<%= LayoutTypeException.class %>">
-
-			<%
-			LayoutTypeException lte = (LayoutTypeException)errorException;
-
-			String type = BeanParamUtil.getString(selLayout, request, "type");
-			%>
-
-			<c:if test="<%= lte.getType() == LayoutTypeException.FIRST_LAYOUT %>">
-				<liferay-ui:message arguments='<%= Validator.isNull(lte.getLayoutType()) ? type : "layout.types." + lte.getLayoutType() %>' key="the-first-page-cannot-be-of-type-x" />
-			</c:if>
-
-			<c:if test="<%= lte.getType() == LayoutTypeException.FIRST_LAYOUT_PERMISSION %>">
-				<liferay-ui:message key="you-cannot-delete-this-page-because-the-next-page-is-not-viewable-by-unauthenticated-users-and-so-cannot-be-the-first-page" />
-			</c:if>
-
-			<c:if test="<%= lte.getType() == LayoutTypeException.NOT_INSTANCEABLE %>">
-				<liferay-ui:message arguments="<%= type %>" key="pages-of-type-x-cannot-be-selected" />
-			</c:if>
-
-			<c:if test="<%= lte.getType() == LayoutTypeException.NOT_PARENTABLE %>">
-				<liferay-ui:message arguments="<%= type %>" key="pages-of-type-x-cannot-have-child-pages" />
-			</c:if>
-		</liferay-ui:error>
-
-		<liferay-ui:error exception="<%= LayoutNameException.class %>" message="please-enter-a-valid-name" />
-
-		<liferay-ui:error exception="<%= RequiredLayoutException.class %>">
-
-			<%
-			RequiredLayoutException rle = (RequiredLayoutException)errorException;
-			%>
-
-			<c:if test="<%= rle.getType() == RequiredLayoutException.AT_LEAST_ONE %>">
-				<liferay-ui:message key="you-must-have-at-least-one-page" />
-			</c:if>
-		</liferay-ui:error>
-
-		<liferay-ui:error exception="<%= RequiredSegmentsExperienceException.MustNotDeleteSegmentsExperienceReferencedBySegmentsExperiments.class %>" message="this-page-cannot-be-deleted-because-it-has-ab-tests-in-progress" />
+				<clay:link
+					href="<%= layoutsAdminDisplayContext.getPreviewCurrentDesignURL() %>"
+					label='<%= LanguageUtil.get(request, "see-current-published-configuration-here") %>'
+				/>
+			</clay:alert>
+		</c:if>
 
 		<c:if test="<%= layoutRevision != null %>">
 			<aui:input name="layoutSetBranchId" type="hidden" value="<%= layoutRevision.getLayoutSetBranchId() %>" />
 		</c:if>
 
 		<c:if test="<%= !group.isLayoutPrototype() %>">
-			<c:if test="<%= selGroup.hasLocalOrRemoteStagingGroup() && !selGroup.isStagingGroup() %>">
-				<div class="alert alert-warning">
-					<liferay-ui:message key="changes-are-immediately-available-to-end-users" />
-				</div>
-			</c:if>
-
-			<%
-			Group selLayoutGroup = selLayout.getGroup();
-			%>
-
-			<c:choose>
-				<c:when test="<%= !SitesUtil.isLayoutUpdateable(selLayout) %>">
-					<div class="alert alert-warning">
-						<liferay-ui:message key="this-page-cannot-be-modified-because-it-is-associated-with-a-site-template-does-not-allow-modifications-to-it" />
-					</div>
-				</c:when>
-				<c:when test="<%= !SitesUtil.isLayoutDeleteable(selLayout) %>">
-					<div class="alert alert-warning">
-						<liferay-ui:message key="this-page-cannot-be-deleted-and-cannot-have-child-pages-because-it-is-associated-with-a-site-template" />
-					</div>
-				</c:when>
-			</c:choose>
-
-			<c:if test="<%= (selLayout.getGroupId() != layoutsAdminDisplayContext.getGroupId()) && selLayoutGroup.isUserGroup() %>">
-
-				<%
-				UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(selLayoutGroup.getClassPK());
-				%>
-
-				<div class="alert alert-warning">
-					<liferay-ui:message arguments="<%= HtmlUtil.escape(userGroup.getName()) %>" key="this-page-cannot-be-modified-because-it-belongs-to-the-user-group-x" translateArguments="<%= false %>" />
-				</div>
-			</c:if>
+			<%@ include file="/error_layout_prototype_exception.jspf" %>
 		</c:if>
 
 		<liferay-frontend:form-navigator

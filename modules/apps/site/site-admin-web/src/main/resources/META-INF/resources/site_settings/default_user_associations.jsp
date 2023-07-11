@@ -17,25 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-long liveGroupId = (long)request.getAttribute("site.liveGroupId");
-
-UnicodeProperties groupTypeSettingsUnicodeProperties = (UnicodeProperties)request.getAttribute("site.groupTypeSettings");
-
-List<Role> defaultSiteRoles = new ArrayList<>();
-
-long[] defaultSiteRoleIds = StringUtil.split(groupTypeSettingsUnicodeProperties.getProperty("defaultSiteRoleIds"), 0L);
-
-for (long defaultSiteRoleId : defaultSiteRoleIds) {
-	defaultSiteRoles.add(RoleLocalServiceUtil.getRole(defaultSiteRoleId));
-}
-
-List<Team> defaultTeams = new ArrayList<>();
-
-long[] defaultTeamIds = StringUtil.split(groupTypeSettingsUnicodeProperties.getProperty("defaultTeamIds"), 0L);
-
-for (long defaultTeamId : defaultTeamIds) {
-	defaultTeams.add(TeamLocalServiceUtil.getTeam(defaultTeamId));
-}
+DefaultUserAssociationsDisplayContext defaultUserAssociationsDisplayContext = (DefaultUserAssociationsDisplayContext)request.getAttribute(DefaultUserAssociationsDisplayContext.class.getName());
 %>
 
 <liferay-util:buffer
@@ -78,12 +60,8 @@ for (long defaultTeamId : defaultTeamIds) {
 	emptyResultsMessage="none"
 	headerNames="title,null"
 	id="siteRolesSearchContainer"
-	total="<%= defaultSiteRoles.size() %>"
+	searchContainer="<%= defaultUserAssociationsDisplayContext.getSiteRolesSearchContainer() %>"
 >
-	<liferay-ui:search-container-results
-		results="<%= defaultSiteRoles %>"
-	/>
-
 	<liferay-ui:search-container-row
 		className="com.liferay.portal.kernel.model.Role"
 		keyProperty="roleId"
@@ -144,12 +122,8 @@ for (long defaultTeamId : defaultTeamIds) {
 	emptyResultsMessage="none"
 	headerNames="title,null"
 	id="teamsSearchContainer"
-	total="<%= defaultTeams.size() %>"
+	searchContainer="<%= defaultUserAssociationsDisplayContext.getTeamsSearchContainer() %>"
 >
-	<liferay-ui:search-container-results
-		results="<%= defaultTeams %>"
-	/>
-
 	<liferay-ui:search-container-row
 		className="com.liferay.portal.kernel.model.Team"
 		keyProperty="teamId"
@@ -183,132 +157,136 @@ for (long defaultTeamId : defaultTeamIds) {
 </liferay-ui:search-container>
 
 <aui:script use="liferay-search-container">
-	const bindModifyLink = function (config) {
-		const searchContainer = config.searchContainer;
+	const siteRolesSearchContainer = Liferay.SearchContainer.get(
+		'<portlet:namespace />siteRolesSearchContainer'
+	);
 
-		searchContainer.get('contentBox').delegate(
-			'click',
-			(event) => {
-				const link = event.currentTarget;
+	siteRolesSearchContainer.get('contentBox').delegate(
+		'click',
+		(event) => {
+			const link = event.currentTarget;
 
-				searchContainer.deleteRow(
-					link.ancestor('tr'),
-					link.getAttribute('data-rowId')
-				);
-			},
-			'.modify-link'
+			siteRolesSearchContainer.deleteRow(
+				link.ancestor('tr'),
+				link.getAttribute('data-rowId')
+			);
+		},
+		'.modify-link'
+	);
+
+	const selectSiteRoleLink = document.getElementById(
+		'<portlet:namespace />selectSiteRoleLink'
+	);
+
+	selectSiteRoleLink.addEventListener('click', (event) => {
+		let searchContainerData = siteRolesSearchContainer.getData();
+
+		if (!searchContainerData.length) {
+			searchContainerData = [];
+		}
+		else {
+			searchContainerData = searchContainerData.split(',');
+		}
+
+		const ids = document.getElementById(
+			'<portlet:namespace />siteRolesSearchContainerPrimaryKeys'
+		).value;
+
+		const uri = new URL(
+			'<%= defaultUserAssociationsDisplayContext.getSelectSiteRoleURL() %>'
 		);
-	};
 
-	const bindSelectLink = function (config) {
-		const searchContainer = config.searchContainer;
+		uri.searchParams.set(
+			'<%= defaultUserAssociationsDisplayContext.getSelectSiteRolePortletNamespace() %>roleIds',
+			ids
+		);
 
-		const selectLink = document.getElementById(config.linkId);
+		Liferay.Util.openSelectionModal({
+			onSelect: function (event) {
+				const entityId = event.entityid;
 
-		selectLink.addEventListener('click', (event) => {
-			let searchContainerData = searchContainer.getData();
+				const rowColumns = [
+					Liferay.Util.escape(event.entityname),
+					'<button aria-label="<%= LanguageUtil.get(request, "remove") %>" class="btn btn-monospaced btn-outline-borderless btn-outline-secondary float-right lfr-portal-tooltip modify-link" data-rowId="' +
+						entityId +
+						'" title="<%= LanguageUtil.get(request, "remove") %>" type="button"><%= UnicodeFormatter.toString(removeRoleIcon) %></button>',
+				];
 
-			if (!searchContainerData.length) {
-				searchContainerData = [];
-			}
-			else {
-				searchContainerData = searchContainerData.split(',');
-			}
+				siteRolesSearchContainer.addRow(rowColumns, entityId);
 
-			const ids = document.getElementById(config.inputId).value;
-
-			const uri = new URL(config.uri);
-
-			uri.searchParams.set(config.urlParam, ids);
-
-			Liferay.Util.openSelectionModal({
-				onSelect: function (event) {
-					const entityId = event.entityid;
-
-					const rowColumns = [
-						Liferay.Util.escape(event.entityname),
-						'<button aria-label="<%= LanguageUtil.get(request, "remove") %>" class="btn btn-monospaced btn-outline-borderless btn-outline-secondary float-right lfr-portal-tooltip modify-link" data-rowId="' +
-							entityId +
-							'" title="<%= LanguageUtil.get(request, "remove") %>" type="button"><%= UnicodeFormatter.toString(removeRoleIcon) %></button>',
-					];
-
-					searchContainer.addRow(rowColumns, entityId);
-
-					searchContainer.updateDataStore();
-				},
-				selectEventName: config.id,
-				selectedData: searchContainerData,
-				title: config.title,
-				url: uri.toString(),
-			});
+				siteRolesSearchContainer.updateDataStore();
+			},
+			selectEventName: '<portlet:namespace />selectSiteRole',
+			selectedData: searchContainerData,
+			title: '<liferay-ui:message arguments="site-role" key="select-x" />',
+			url: uri.toString(),
 		});
-	};
+	});
 
-	<%
-	PortletURL selectSiteRoleURL = PortletURLBuilder.create(
-		PortletProviderUtil.getPortletURL(request, Role.class.getName(), PortletProvider.Action.BROWSE)
-	).setParameter(
-		"eventName", liferayPortletResponse.getNamespace() + "selectSiteRole"
-	).setParameter(
-		"groupId", liveGroupId
-	).setParameter(
-		"roleType", RoleConstants.TYPE_SITE
-	).setParameter(
-		"step", "2"
-	).setWindowState(
-		LiferayWindowState.POP_UP
-	).buildPortletURL();
+	const teamsSearchContainer = Liferay.SearchContainer.get(
+		'<portlet:namespace />teamsSearchContainer'
+	);
 
-	String selectSiteRolePortletId = PortletProviderUtil.getPortletId(Role.class.getName(), PortletProvider.Action.BROWSE);
-	%>
+	teamsSearchContainer.get('contentBox').delegate(
+		'click',
+		(event) => {
+			const link = event.currentTarget;
 
-	const siteRolesConfig = {
-		id: '<portlet:namespace />selectSiteRole',
-		idAttr: 'roleid',
-		inputId: '<portlet:namespace />siteRolesSearchContainerPrimaryKeys',
-		linkId: '<portlet:namespace />selectSiteRoleLink',
-		searchContainer: Liferay.SearchContainer.get(
-			'<portlet:namespace />siteRolesSearchContainer'
-		),
-		title: '<liferay-ui:message arguments="site-role" key="select-x" />',
-		titleAttr: 'roletitle',
-		uri: '<%= selectSiteRoleURL.toString() %>',
-		urlParam:
-			'<%= PortalUtil.getPortletNamespace(selectSiteRolePortletId) %>roleIds',
-	};
+			teamsSearchContainer.deleteRow(
+				link.ancestor('tr'),
+				link.getAttribute('data-rowId')
+			);
+		},
+		'.modify-link'
+	);
 
-	bindModifyLink(siteRolesConfig);
-	bindSelectLink(siteRolesConfig);
+	const selectTeamLink = document.getElementById(
+		'<portlet:namespace />selectTeamLink'
+	);
 
-	<%
-	PortletURL selectTeamURL = PortletURLBuilder.create(
-		PortletProviderUtil.getPortletURL(request, Team.class.getName(), PortletProvider.Action.BROWSE)
-	).setParameter(
-		"eventName", liferayPortletResponse.getNamespace() + "selectTeam"
-	).setParameter(
-		"groupId", liveGroupId
-	).setWindowState(
-		LiferayWindowState.POP_UP
-	).buildPortletURL();
+	selectTeamLink.addEventListener('click', (event) => {
+		let searchContainerData = teamsSearchContainer.getData();
 
-	String selectTeamPortletId = PortletProviderUtil.getPortletId(Team.class.getName(), PortletProvider.Action.BROWSE);
-	%>
+		if (!searchContainerData.length) {
+			searchContainerData = [];
+		}
+		else {
+			searchContainerData = searchContainerData.split(',');
+		}
 
-	const teamsConfig = {
-		id: '<portlet:namespace />selectTeam',
-		idAttr: 'teamid',
-		inputId: '<portlet:namespace />teamsSearchContainerPrimaryKeys',
-		linkId: '<portlet:namespace />selectTeamLink',
-		searchContainer: Liferay.SearchContainer.get(
-			'<portlet:namespace />teamsSearchContainer'
-		),
-		title: '<liferay-ui:message arguments="team" key="select-x" />',
-		titleAttr: 'teamname',
-		uri: '<%= selectTeamURL.toString() %>',
-		urlParam:
-			'<%= PortalUtil.getPortletNamespace(selectTeamPortletId) %>teamIds',
-	};
+		const ids = document.getElementById(
+			'<portlet:namespace />teamsSearchContainerPrimaryKeys'
+		).value;
 
-	bindModifyLink(teamsConfig);
-	bindSelectLink(teamsConfig);
+		const uri = new URL(
+			'<%= defaultUserAssociationsDisplayContext.getSelectTeamURL() %>'
+		);
+
+		uri.searchParams.set(
+			'<%= defaultUserAssociationsDisplayContext.getSelectTeamPortletNamespace() %>teamIds',
+			ids
+		);
+
+		Liferay.Util.openSelectionModal({
+			id: '<portlet:namespace />selectTeam',
+			onSelect: function (event) {
+				const valueJSON = JSON.parse(event.value);
+
+				const rowColumns = [
+					Liferay.Util.escape(valueJSON.name),
+					'<button aria-label="<%= LanguageUtil.get(request, "remove") %>" class="btn btn-monospaced btn-outline-borderless btn-outline-secondary float-right lfr-portal-tooltip modify-link" data-rowId="' +
+						valueJSON.teamId +
+						'" title="<%= LanguageUtil.get(request, "remove") %>" type="button"><%= UnicodeFormatter.toString(removeRoleIcon) %></button>',
+				];
+
+				teamsSearchContainer.addRow(rowColumns, valueJSON.teamId);
+
+				teamsSearchContainer.updateDataStore();
+			},
+			selectEventName: '<portlet:namespace />selectTeam',
+			selectedData: searchContainerData,
+			title: '<liferay-ui:message arguments="team" key="select-x" />',
+			url: uri.toString(),
+		});
+	});
 </aui:script>

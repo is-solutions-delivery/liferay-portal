@@ -77,7 +77,7 @@
 </tr>
 <tr>
 	<td>SUMMARY_FIELD</td>
-	<td>//th//span[@class='text-truncate'][text()='${key_fieldName}']//ancestor::tr//th//span[@class='text-truncate'][contains(text(),'${key_fieldValue}')]</td>
+	<td>//th//span[@class='text-truncate'][text()='${key_fieldName}']//ancestor::tr//th//*[@class='text-truncate'][contains(text(),'${key_fieldValue}')] | //th//span[@class='text-truncate'][text()='${key_fieldName}']//ancestor::tr//th//*[@class='text-wrap'][contains(text(),'${key_fieldValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -102,7 +102,7 @@
 </tr>
 <tr>
 	<td>STATUS_INFO</td>
-	<td>//div[contains(@class,'mdf-request-manager-status')]//p[contains(text(), '${key_value}')]</td>
+	<td>//div[contains(@class,'mdf-request-manager-status')]//*[contains(text(), '${key_value}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -117,7 +117,7 @@
 </tr>
 <tr>
 	<td>EDIT_MDF_BUTTON</td>
-	<td>//div[contains(@class,'edit-button-mdf-claim')]//a[contains(.,'Edit')]</td>
+	<td>//div[contains(@class,'edit-button-mdf-request')]//a[contains(.,'Edit')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,6 +128,16 @@
 <tr>
 	<td>REMOVE_ICON_INDEX</td>
 	<td>xpath=(//*[*[name()='svg'][contains(@class,'lexicon-icon-hr')]]/*)[${key_index}]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ACTIVITY_STATUS</td>
+	<td>//button[contains(@*,'mdfRequestActivitiesPanel')]/div/*[contains(text(),'${key_activityName} (')]//following::*[contains(text(),'${key_statusType} Status: ')]/span[contains(text(),'${key_statusValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ACTIVITY_PANEL</td>
+	<td>//button[contains(@*,'mdfRequestActivitiesPanel')][@aria-expanded='false']</td>
 	<td></td>
 </tr>
 </tbody>

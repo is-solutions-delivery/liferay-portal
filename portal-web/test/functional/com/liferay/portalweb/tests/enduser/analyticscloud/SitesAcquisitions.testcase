@@ -31,7 +31,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -39,7 +39,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -211,6 +211,10 @@ definition {
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8346 | Test Summary: Assert Sites Acquisition card Channels highest session"
 	@priority = 3
 	test AssertSitesAcquisitionCardChannelsHighestSession {
+
+		// AC Refactor: Data doesn't appear on time
+		// AC Refactor ticket: LRAC-13994
+
 		task ("View the site page") {
 			ACUtils.navigateToSitePage(
 				pageName = "AC Page",
@@ -267,6 +271,10 @@ definition {
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8347 | Test Summary: Assert Sites Acquisition card Referrers highest session"
 	@priority = 3
 	test AssertSitesAcquisitionCardReferrersHighestSession {
+
+		// AC Refactor: Data doesn't appear on time
+		// AC Refactor ticket: LRAC-13994
+
 		task ("Get the portal URL") {
 			var portalURL = PropsUtil.get("portal.url");
 
@@ -341,8 +349,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8348 | Test Summary: Assert Sites Acquisition card Source|Medium highest session"
+	@ignore = "true"
 	@priority = 3
 	test AssertSitesAcquisitionCardSourceAndMediumHighestSession {
+
+		// AC Refactor: Data doesn't appear on time
+		// AC Refactor ticket: LRAC-13994
+
 		task ("Get the portal URL") {
 			var portalURL = PropsUtil.get("portal.url");
 

@@ -124,7 +124,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = "model.class.name=com.liferay.portal.kernel.model.Layout",
-	service = {ExportImportController.class, LayoutImportController.class}
+	service = ExportImportController.class
 )
 public class LayoutImportController implements ImportController {
 
@@ -1087,7 +1087,6 @@ public class LayoutImportController implements ImportController {
 			}
 
 			portletDataContext.setPlid(plid);
-
 			portletDataContext.setPortletId(portletId);
 
 			if (BackgroundTaskThreadLocal.hasBackgroundTask()) {

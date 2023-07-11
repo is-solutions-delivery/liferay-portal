@@ -1,8 +1,22 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import ClayTable from '@clayui/table';
 import classNames from 'classnames';
 
 import circleFill from '../../assets/icons/circle_fill_icon.svg';
-import {showAppImage} from '../../utils/util';
+import {getThumbnailByProductAttachment, showAppImage} from '../../utils/util';
 import {AppProps} from './DashboardTable';
 
 import './PublishedAppsDashboardTableRow.scss';
@@ -14,8 +28,17 @@ interface PublishedAppsDashboardTableRowProps {
 export function PublishedAppsDashboardTableRow({
 	item,
 }: PublishedAppsDashboardTableRowProps) {
-	const {lastUpdatedBy, name, status, thumbnail, type, updatedDate, version} =
-		item;
+	const {
+		attachments,
+		lastUpdatedBy,
+		name,
+		status,
+		type,
+		updatedDate,
+		version,
+	} = item;
+
+	const appThumbnail = getThumbnailByProductAttachment(attachments);
 
 	return (
 		<ClayTable.Row>
@@ -24,7 +47,7 @@ export function PublishedAppsDashboardTableRow({
 					<img
 						alt="App Image"
 						className="dashboard-table-row-name-logo"
-						src={showAppImage(thumbnail)}
+						src={showAppImage(appThumbnail)}
 					/>
 
 					<span className="dashboard-table-row-name-text">

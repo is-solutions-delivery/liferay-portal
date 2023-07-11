@@ -84,6 +84,8 @@ DLViewDisplayContext dlViewDisplayContext = new DLViewDisplayContext(dlAdminDisp
 				).put(
 					"openViewMoreFileEntryTypesURL", dlViewDisplayContext.getViewMoreFileEntryTypesURL()
 				).put(
+					"selectAssetCategoriesURL", dlViewDisplayContext.getSelectAssetCategoriesURL()
+				).put(
 					"selectAssetTagsURL", dlViewDisplayContext.getSelectAssetTagsURL()
 				).put(
 					"selectExtensionURL", dlViewDisplayContext.getSelectExtensionURL()
@@ -138,6 +140,13 @@ DLViewDisplayContext dlViewDisplayContext = new DLViewDisplayContext(dlAdminDisp
 				</liferay-frontend:sidebar-panel>
 
 				<div class="sidenav-content <%= portletTitleBasedNavigation ? "container-fluid container-fluid-max-xl container-view" : StringPool.BLANK %>">
+					<c:if test='<%= dlAdminDisplayContext.hasFilterParameters() && ListUtil.isNotEmpty(dlAdminDisplayContext.getMountFolders()) && FeatureFlagManagerUtil.isEnabled("LPS-84424") %>'>
+						<clay:alert
+							displayType="info"
+							message="filters-only-apply-to-documents-in-local-repositories"
+						/>
+					</c:if>
+
 					<div class="document-library-breadcrumb" id="<portlet:namespace />breadcrumbContainer">
 						<c:if test="<%= !dlViewDisplayContext.isSearch() %>">
 

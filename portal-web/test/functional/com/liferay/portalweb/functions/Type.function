@@ -194,6 +194,14 @@ definition {
 		selenium.assertLiferayErrors();
 	}
 
+	function typeKeys {
+		selenium.typeKeys();
+
+		selenium.assertJavaScriptErrors();
+
+		selenium.assertLiferayErrors();
+	}
+
 	function typeNoMouseOver {
 		WaitForSPARefresh();
 
@@ -218,6 +226,16 @@ definition {
 		selenium.assertJavaScriptErrors();
 
 		selenium.assertLiferayErrors();
+	}
+
+	function typeNotVisibleNoMouseOverNoError {
+		WaitForSPARefresh();
+
+		selenium.waitForEditable();
+
+		selenium.click();
+
+		selenium.type();
 	}
 
 	function typePause {

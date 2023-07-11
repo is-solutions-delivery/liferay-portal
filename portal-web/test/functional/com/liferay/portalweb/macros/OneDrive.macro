@@ -47,6 +47,10 @@ definition {
 
 		WaitForElementPresent(locator1 = "OneDrive#DOCUMENTS_SAVE_STATUS");
 
+		Click(locator1 = "OneDrive#DOCUMENTS_SAVE_STATUS");
+
+		VerifyElementPresent(locator1 = "OneDrive#DOCUMENTS_SAVE_STATUS_DETAILS");
+
 		Navigator.closeWindow();
 
 		SelectFrameTop();
@@ -99,6 +103,10 @@ definition {
 				Click(locator1 = "OneDrive#DELETE_CONFIRMATION");
 
 				VerifyElementPresent(locator1 = "OneDrive#DELETE_MESSAGE");
+
+				Navigator.openSpecificURL(url = "https://liferaycolab-my.sharepoint.com/personal/sharepoint_liferaycolab_onmicrosoft_com/_layouts/15/onedrive.aspx?view=0");
+
+				WaitForPageLoad();
 			}
 
 			var key_documentTitle = "Yesterday";
@@ -120,6 +128,10 @@ definition {
 				Click(locator1 = "OneDrive#DELETE_CONFIRMATION");
 
 				VerifyElementPresent(locator1 = "OneDrive#DELETE_MESSAGE");
+
+				Navigator.openSpecificURL(url = "https://liferaycolab-my.sharepoint.com/personal/sharepoint_liferaycolab_onmicrosoft_com/_layouts/15/onedrive.aspx?view=0");
+
+				WaitForPageLoad();
 			}
 		}
 	}

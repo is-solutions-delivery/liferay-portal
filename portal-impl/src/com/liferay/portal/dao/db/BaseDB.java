@@ -200,24 +200,43 @@ public abstract class BaseDB implements DB {
 	@Override
 	public void copyTableRows(
 			Connection connection, String sourceTableName,
-			String targetTableName)
+			String targetTableName, Map<String, String> columnNamesMap)
 		throws Exception {
 
-		String[] primaryKeyColumnNames = getPrimaryKeyColumnNames(
-			connection, sourceTableName);
-
-		StringBundler sb = new StringBundler(
-			14 + (((primaryKeyColumnNames.length - 1) * 8) + 7));
+		StringBundler sb = new StringBundler();
 
 		sb.append("insert into ");
 		sb.append(targetTableName);
-		sb.append(" select ");
-		sb.append(sourceTableName);
-		sb.append(".* from ");
+		sb.append(" (");
+
+		String[] sourceColumnNames = ArrayUtil.toStringArray(
+			columnNamesMap.keySet());
+
+		String[] targetColumnNames = TransformUtil.transform(
+			sourceColumnNames, columnNamesMap::get, String.class);
+
+		sb.append(StringUtil.merge(targetColumnNames, ", "));
+
+		sb.append(") select ");
+
+		for (int i = 0; i < sourceColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+
+			sb.append(sourceTableName);
+			sb.append(".");
+			sb.append(sourceColumnNames[i]);
+		}
+
+		sb.append(" from ");
 		sb.append(sourceTableName);
 		sb.append(" left join ");
 		sb.append(targetTableName);
 		sb.append(" on ");
+
+		String[] primaryKeyColumnNames = getPrimaryKeyColumnNames(
+			connection, sourceTableName);
 
 		for (int i = 0; i < primaryKeyColumnNames.length; i++) {
 			String primaryKeyColumnName = primaryKeyColumnNames[i];
@@ -294,6 +313,17 @@ public abstract class BaseDB implements DB {
 	@Override
 	public DBType getDBType() {
 		return _dbType;
+	}
+
+	@Override
+	public String getDefaultValue(String columnDef) {
+		Matcher matcher = _defaultValuePattern.matcher(columnDef);
+
+		if (matcher.find()) {
+			return matcher.group(2);
+		}
+
+		return columnDef;
 	}
 
 	@Override
@@ -649,6 +679,54 @@ public abstract class BaseDB implements DB {
 	}
 
 	@Override
+	public AutoCloseable syncTables(
+			Connection connection, String sourceTableName,
+			String targetTableName, Map<String, String> columnNamesMap)
+		throws Exception {
+
+		DBInspector dbInspector = new DBInspector(connection);
+
+		String deleteTriggerName = dbInspector.normalizeName(
+			"delete_" + sourceTableName);
+
+		String[] sourcePrimaryKeyColumnNames = getPrimaryKeyColumnNames(
+			connection, sourceTableName);
+
+		String[] targetPrimaryKeyColumnNames = TransformUtil.transform(
+			sourcePrimaryKeyColumnNames, columnNamesMap::get, String.class);
+
+		createSyncDeleteTrigger(
+			connection, sourceTableName, targetTableName, deleteTriggerName,
+			sourcePrimaryKeyColumnNames, targetPrimaryKeyColumnNames);
+
+		String insertTriggerName = dbInspector.normalizeName(
+			"insert_" + sourceTableName);
+		String[] sourceColumnNames = TransformUtil.transformToArray(
+			columnNamesMap.entrySet(), Map.Entry::getKey, String.class);
+		String[] targetColumnNames = TransformUtil.transformToArray(
+			columnNamesMap.entrySet(), Map.Entry::getValue, String.class);
+
+		createSyncInsertTrigger(
+			connection, sourceTableName, targetTableName, insertTriggerName,
+			sourceColumnNames, targetColumnNames, sourcePrimaryKeyColumnNames,
+			targetPrimaryKeyColumnNames);
+
+		String updateTriggerName = dbInspector.normalizeName(
+			"update_" + sourceTableName);
+
+		createSyncUpdateTrigger(
+			connection, sourceTableName, targetTableName, updateTriggerName,
+			sourceColumnNames, targetColumnNames, sourcePrimaryKeyColumnNames,
+			targetPrimaryKeyColumnNames);
+
+		return () -> {
+			dropTrigger(connection, sourceTableName, deleteTriggerName);
+			dropTrigger(connection, sourceTableName, insertTriggerName);
+			dropTrigger(connection, sourceTableName, updateTriggerName);
+		};
+	}
+
+	@Override
 	public void updateIndexes(
 			Connection connection, String tablesSQL, String indexesSQL,
 			boolean dropIndexes)
@@ -767,6 +845,113 @@ public abstract class BaseDB implements DB {
 		return new String[] {words[1], words[2]};
 	}
 
+	protected void createSyncDeleteTrigger(
+			Connection connection, String sourceTableName,
+			String targetTableName, String triggerName,
+			String[] sourcePrimaryKeyColumnNames,
+			String[] targetPrimaryKeyColumnNames)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		sb.append("create trigger ");
+		sb.append(triggerName);
+		sb.append(" after delete on ");
+		sb.append(sourceTableName);
+		sb.append(" for each row delete from ");
+		sb.append(targetTableName);
+		sb.append(" where ");
+
+		for (int i = 0; i < sourcePrimaryKeyColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(" and ");
+			}
+
+			sb.append(targetPrimaryKeyColumnNames[i]);
+			sb.append(" = old.");
+			sb.append(sourcePrimaryKeyColumnNames[i]);
+		}
+
+		runSQL(connection, sb.toString());
+	}
+
+	protected void createSyncInsertTrigger(
+			Connection connection, String sourceTableName,
+			String targetTableName, String triggerName,
+			String[] sourceColumnNames, String[] targetColumnNames,
+			String[] sourcePrimaryKeyColumnNames,
+			String[] targetPrimaryKeyColumnNames)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		sb.append("create trigger ");
+		sb.append(triggerName);
+		sb.append(" after insert on ");
+		sb.append(sourceTableName);
+		sb.append(" for each row insert into ");
+		sb.append(targetTableName);
+		sb.append(" (");
+		sb.append(StringUtil.merge(targetColumnNames, ", "));
+		sb.append(") values (");
+
+		for (int i = 0; i < sourceColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+
+			sb.append("new.");
+			sb.append(sourceColumnNames[i]);
+		}
+
+		sb.append(")");
+
+		runSQL(connection, sb.toString());
+	}
+
+	protected void createSyncUpdateTrigger(
+			Connection connection, String sourceTableName,
+			String targetTableName, String triggerName,
+			String[] sourceColumnNames, String[] targetColumnNames,
+			String[] sourcePrimaryKeyColumnNames,
+			String[] targetPrimaryKeyColumnNames)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		sb.append("create trigger ");
+		sb.append(triggerName);
+		sb.append(" after update on ");
+		sb.append(sourceTableName);
+		sb.append(" for each row update ");
+		sb.append(targetTableName);
+		sb.append(" set ");
+
+		for (int i = 0; i < sourceColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+
+			sb.append(targetColumnNames[i]);
+			sb.append(" = new.");
+			sb.append(sourceColumnNames[i]);
+		}
+
+		sb.append(" where ");
+
+		for (int i = 0; i < sourcePrimaryKeyColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(" and ");
+			}
+
+			sb.append(targetPrimaryKeyColumnNames[i]);
+			sb.append(" = old.");
+			sb.append(sourcePrimaryKeyColumnNames[i]);
+		}
+
+		runSQL(connection, sb.toString());
+	}
+
 	protected Set<String> dropIndexes(
 			Connection connection, String tablesSQL, String indexesSQL,
 			List<Index> indexes)
@@ -850,6 +1035,13 @@ public abstract class BaseDB implements DB {
 		}
 
 		return validIndexNames;
+	}
+
+	protected void dropTrigger(
+			Connection connection, String tableName, String triggerName)
+		throws Exception {
+
+		runSQL(connection, "drop trigger " + triggerName);
 	}
 
 	protected String getCopyTableStructureSQL(
@@ -1183,6 +1375,8 @@ public abstract class BaseDB implements DB {
 
 	private static final Pattern _columnLengthPattern = Pattern.compile(
 		"([^,(\\s]+)\\[\\$COLUMN_LENGTH:(\\d+)\\$\\]");
+	private static final Pattern _defaultValuePattern = Pattern.compile(
+		"^('?)(\\d+|.*)\\1(::.*| )?", Pattern.CASE_INSENSITIVE);
 	private static final Pattern _templatePattern;
 
 	static {

@@ -68,8 +68,12 @@ import org.osgi.service.component.annotations.Reference;
  * @author Javier Gamarra
  */
 @Component(
-	property = "dto.class.name=com.liferay.portal.kernel.model.Organization",
-	service = {DTOConverter.class, OrganizationResourceDTOConverter.class}
+	property = {
+		"application.name=Liferay.Headless.Admin.User",
+		"dto.class.name=com.liferay.portal.kernel.model.Organization",
+		"version=v1.0"
+	},
+	service = DTOConverter.class
 )
 public class OrganizationResourceDTOConverter
 	implements DTOConverter
@@ -185,7 +189,7 @@ public class OrganizationResourceDTOConverter
 				name = organization.getName();
 				numberOfAccounts =
 					_accountEntryOrganizationRelLocalService.
-						getAccountEntryOrganizationRelsByOrganizationIdCount(
+						getAccountEntryOrganizationRelsCountByOrganizationId(
 							organization.getOrganizationId());
 				numberOfOrganizations =
 					_organizationService.getOrganizationsCount(

@@ -69,13 +69,11 @@ definition {
 
 		Click(locator1 = "PageEditor#MORE_LINK");
 
-		Navigator.gotoNavTab(navTab = "Design");
-
 		Theme.configureLookAndFeelSpecificLook();
 
 		Click(
 			key_text = "Change Current Theme",
-			locator1 = "Button#ANY");
+			locator1 = "Button#ANY_ENABLED");
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
@@ -369,7 +367,7 @@ definition {
 
 		AssertTextEquals(
 			locator1 = "Panel#PANEL_PAGE_DEFAULT_INFORMATION",
-			value1 = "Please select a tool from the left menu.");
+			value1 = "Info:Please select a tool from the left menu.");
 
 		for (var portletName : list ${portletNameList}) {
 			var key_portletName = ${portletName};

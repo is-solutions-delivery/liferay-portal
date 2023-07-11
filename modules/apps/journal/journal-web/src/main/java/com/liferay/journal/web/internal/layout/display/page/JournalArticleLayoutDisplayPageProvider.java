@@ -23,6 +23,8 @@ import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -52,7 +54,7 @@ public class JournalArticleLayoutDisplayPageProvider
 		JournalArticle article = journalArticleLocalService.fetchLatestArticle(
 			infoItemReference.getClassPK());
 
-		if ((article == null) || article.isInTrash()) {
+		if (!_isShow(article)) {
 			return null;
 		}
 
@@ -72,7 +74,7 @@ public class JournalArticleLayoutDisplayPageProvider
 		try {
 			JournalArticle article = _getArticle(groupId, urlTitle, null);
 
-			if ((article == null) || article.isInTrash()) {
+			if (!_isShow(article)) {
 				return null;
 			}
 
@@ -92,9 +94,7 @@ public class JournalArticleLayoutDisplayPageProvider
 		try {
 			JournalArticle article = _getArticle(groupId, urlTitle, version);
 
-			if ((article == null) || article.isExpired() ||
-				article.isInTrash()) {
-
+			if (!_isShow(article)) {
 				return null;
 			}
 
@@ -145,6 +145,21 @@ public class JournalArticleLayoutDisplayPageProvider
 		}
 
 		return null;
+	}
+
+	private boolean _isShow(JournalArticle article) {
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		if ((article == null) || article.isExpired() || article.isInTrash() ||
+			(article.isPending() && (permissionChecker != null) &&
+			 !permissionChecker.isSignedIn()) ||
+			article.isScheduled()) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 }

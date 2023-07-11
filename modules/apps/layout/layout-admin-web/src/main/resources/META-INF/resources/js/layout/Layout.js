@@ -23,6 +23,7 @@ const Layout = ({
 	initialBreadcrumbEntries,
 	initialLayoutColumns,
 	isPrivateLayoutsEnabled,
+	isSiteTemplate,
 	languageId,
 	moveItemURL,
 	namespace,
@@ -174,6 +175,7 @@ const Layout = ({
 			<MillerColumns
 				initialColumns={layoutColumns}
 				isPrivateLayoutsEnabled={isPrivateLayoutsEnabled}
+				isSiteTemplate={isSiteTemplate}
 				namespace={namespace}
 				onColumnsChange={updateBreadcrumbs}
 				onItemMove={saveData}
@@ -190,6 +192,7 @@ export default function ({
 	props: {
 		breadcrumbEntries,
 		getItemChildrenURL,
+		isLayoutSetPrototype = false,
 		isPrivateLayoutsEnabled,
 		languageId,
 		layoutColumns,
@@ -202,6 +205,7 @@ export default function ({
 			getItemChildrenURL={getItemChildrenURL}
 			initialBreadcrumbEntries={breadcrumbEntries}
 			initialLayoutColumns={layoutColumns}
+			isLayoutSetPrototype={isLayoutSetPrototype}
 			isPrivateLayoutsEnabled={isPrivateLayoutsEnabled}
 			languageId={languageId}
 			moveItemURL={moveItemURL}

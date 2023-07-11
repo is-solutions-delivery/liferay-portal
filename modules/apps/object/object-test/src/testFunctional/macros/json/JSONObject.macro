@@ -49,7 +49,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to add an object"
 	macro addObject {
 		var portalURL = JSONCompany.getPortalURL();
 
@@ -90,8 +89,9 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to create an Objects entry with any number of fields"
 	macro addObjectEntryViaJSONAPI {
+		Variables.assertDefined(parameterList = ${objectName});
+
 		var portalURL = JSONCompany.getPortalURL();
 
 		if (!(isSet(userEmailAddress))) {
@@ -102,13 +102,19 @@ definition {
 			var userPassword = "test";
 		}
 
-		if (!(isSet(groupName))) {
-			var groupName = "Guest";
+		if (${scope} == "site") {
+			if (!(isSet(groupName))) {
+				var groupName = "Guest";
+			}
+
+			var groupId = JSONGroupAPI._getGroupIdByName(
+				groupName = ${groupName},
+				site = "true");
+		}
+		else {
+			var groupId = 0;
 		}
 
-		var groupId = JSONGroupAPI._getGroupIdByName(
-			groupName = ${groupName},
-			site = "true");
 		var objectId = JSONObject.getObjectId(
 			objectName = ${objectName},
 			userEmailAddress = ${userEmailAddress},
@@ -134,7 +140,6 @@ definition {
 
 				ListUtil.remove(${fieldList}, ${fieldNameValue});
 
-				var size = ListUtil.size(${fieldList});
 				var listEmpty = ListUtil.isEmpty(${fieldList});
 
 				if (${listEmpty} == "false") {
@@ -154,7 +159,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to add a field in an object"
 	macro addObjectField {
 		var portalURL = JSONCompany.getPortalURL();
 		var objectId = JSONObject.getObjectId(
@@ -365,6 +369,33 @@ definition {
 					}'
 			''';
 		}
+		else if (${fieldBusinessType} == "DateTime") {
+			var curl = '''
+				${portalURL}/o/object-admin/v1.0/object-definitions/${objectId}/object-fields \
+					-H 'Content-Type: application/json' \
+					-u ${userEmailAddress}:${userPassword} \
+					-d '{
+						"type": "${fieldType}",
+						"businessType": "${fieldBusinessType}",
+						"indexed": ${indexed},
+						"indexedAsKeyword": ${indexedAsKeyword},
+						"label": {
+							"en_US": "${fieldLabelName}"
+						},
+						"listTypeDefinitionId": 0,
+						"name": "${fieldName}",
+						"objectFieldSettings": [
+							
+							{
+								"name": "timeStorage",
+								"value": "${timeStorageOption}"
+							}
+							
+						],
+						"required": ${isRequired}
+					}'
+			''';
+		}
 		else {
 			var curl = '''
 				${portalURL}/o/object-admin/v1.0/object-definitions/${objectId}/object-fields \
@@ -388,7 +419,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to add a layout in an object"
 	macro addObjectLayout {
 		var portalURL = JSONCompany.getPortalURL();
 		var objectId = JSONObject.getObjectId(
@@ -420,7 +450,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to add a relationship in an object"
 	macro addObjectRelationship {
 		var portalURL = JSONCompany.getPortalURL();
 		var objectID_1 = JSONObject.getObjectId(
@@ -464,7 +493,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the Headless API to add a single field entry in an object"
 	macro addObjectSingleFieldEntry {
 		var portalURL = JSONCompany.getPortalURL();
 
@@ -493,7 +521,6 @@ definition {
 		return ${objectEntryId};
 	}
 
-	@summary = "This calls the JSON WS API to add a picklist"
 	macro addPicklist {
 		Variables.assertDefined(parameterList = ${picklistName});
 
@@ -527,7 +554,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to add a picklist item"
 	macro addPicklistItem {
 		var portalURL = JSONCompany.getPortalURL();
 		var picklistId = JSONObject.getPicklistId(
@@ -559,7 +585,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to delete all custom objects"
 	macro deleteAllCustomObjects {
 		var portalURL = JSONCompany.getPortalURL();
 
@@ -590,7 +615,6 @@ definition {
 		}
 	}
 
-	@summary = "This calls the JSON WS API to delete all picklists"
 	macro deleteAllPicklists {
 		var portalURL = JSONCompany.getPortalURL();
 
@@ -621,7 +645,6 @@ definition {
 		}
 	}
 
-	@summary = "This calls the JSON WS API to delete an object"
 	macro deleteObject {
 		if (isSet(virtualHost)) {
 			if (!(isSet(port))) {
@@ -661,7 +684,6 @@ definition {
 		JSONCurlUtil.delete(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to delete an entry in an object"
 	macro deleteObjectEntry {
 		var portalURL = JSONCompany.getPortalURL();
 		var entryId = JSONObject.getObjectEntryId(
@@ -689,7 +711,6 @@ definition {
 		JSONCurlUtil.delete(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to delete a picklist"
 	macro deletePicklist {
 		var portalURL = JSONCompany.getPortalURL();
 		var picklistId = JSONObject.getPicklistId(
@@ -734,7 +755,6 @@ definition {
 		JSONCurlUtil.delete(${curl});
 	}
 
-	@summary = "This calls the JSON WS API to filter an entry in an object"
 	macro filterObjectEntry {
 		var portalURL = JSONCompany.getPortalURL();
 		var entryId = JSONObject.getObjectEntryId(
@@ -760,7 +780,6 @@ definition {
 		''';
 	}
 
-	@summary = "Get a list of all Object Definitions"
 	macro getAllObjectDefinitionsId {
 		var portalURL = JSONCompany.getPortalURL();
 
@@ -782,7 +801,6 @@ definition {
 		return ${objectDefinitionIdList};
 	}
 
-	@summary = "This macro calls the Headless API to return an object definition"
 	macro getObjectDefinition {
 		Variables.assertDefined(parameterList = ${objectName});
 
@@ -799,7 +817,6 @@ definition {
 		return ${objectDefinition};
 	}
 
-	@summary = "Get a objectDefinitionId by name"
 	macro getObjectDefinitionId {
 		Variables.assertDefined(parameterList = ${name});
 
@@ -881,6 +898,40 @@ definition {
 		return ${entryId};
 	}
 
+	macro getObjectFieldId {
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = 8080;
+			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		var curl = '''
+			${portalURL}/o/object-admin/v1.0/object-definitions/${objectId}/object-fields \
+				-u ${userEmailAddress}:${userPassword}
+		''';
+
+		if (isSet(token)) {
+			var curl = StringUtil.add(${curl}, " -H 'Authorization: Bearer ${token}'", "");
+		}
+
+		var objectFieldId = JSONCurlUtil.get(${curl}, "$.items[?(@['name'] == '${fieldName}')]['id']");
+
+		return ${objectFieldId};
+	}
+
 	macro getObjectId {
 		if (isSet(virtualHost)) {
 			if (!(isSet(port))) {
@@ -915,7 +966,6 @@ definition {
 		return ${objectId};
 	}
 
-	@summary = "Get the list of an Object Definition based of its ID"
 	macro getObjectRelationships {
 		var portalURL = JSONCompany.getPortalURL();
 
@@ -1008,7 +1058,6 @@ definition {
 		return ${picklistId};
 	}
 
-	@summary = "This calls the JSON WS API to publish an object"
 	macro publishObject {
 		var portalURL = JSONCompany.getPortalURL();
 		var objectId = JSONObject.getObjectId(
@@ -1033,7 +1082,6 @@ definition {
 		JSONCurlUtil.post(${curl});
 	}
 
-	@summary = "This macro calls the Headless API to set the account restriction property to an object definition"
 	macro setAccountRestriction {
 		Variables.assertDefined(parameterList = ${objectName});
 
@@ -1060,7 +1108,6 @@ definition {
 		JSONCurlUtil.patch(${curl});
 	}
 
-	@summary = "This calls the patchObjectDefinition Headless API endpoint to update a configuration within an object definition"
 	macro updateObject {
 		var portalURL = JSONCompany.getPortalURL();
 		var objectId = JSONObject.getObjectId(objectName = ${objectName});
@@ -1075,6 +1122,35 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions/${objectId} \
+				-H 'Content-Type: application/json' \
+				-u ${userEmailAddress}:${userPassword} \
+				-d '{
+					"${configKey}": "${configValue}"
+				}'
+		''';
+
+		JSONCurlUtil.patch(${curl});
+	}
+
+	@summary = "This calls the patchObjectField Headless API endpoint to update a configuration within an object field"
+	macro updateObjectField {
+		var portalURL = JSONCompany.getPortalURL();
+		var objectId = JSONObject.getObjectId(objectName = ${objectName});
+
+		var objectFieldId = JSONObject.getObjectFieldId(
+			fieldName = ${fieldName},
+			objectId = ${objectId});
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		var curl = '''
+			${portalURL}/o/object-admin/v1.0/object-fields/${objectFieldId} \
 				-H 'Content-Type: application/json' \
 				-u ${userEmailAddress}:${userPassword} \
 				-d '{

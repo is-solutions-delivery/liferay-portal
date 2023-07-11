@@ -57,6 +57,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * @author Raymond Augé
  * @author Gregory Amerson
  * @author Brian Wing Shun Chan
+ * @author Allen Ziegenfus
  */
 @Configuration
 @EnableWebSecurity
@@ -167,7 +168,7 @@ public class LiferayOAuth2ResourceServerEnableWebSecurity {
 		).and(
 		).authorizeHttpRequests(
 			customizer -> customizer.antMatchers(
-				"/ready"
+				_liferayOauthURLsExcludes
 			).permitAll(
 			).anyRequest(
 			).authenticated()
@@ -192,6 +193,9 @@ public class LiferayOAuth2ResourceServerEnableWebSecurity {
 
 	@Autowired
 	private Environment _environment;
+
+	@Value("${liferay.oauth.urls.excludes:}")
+	private String[] _liferayOauthURLsExcludes;
 
 	@Value("${com.liferay.lxc.dxp.domains}")
 	private String _lxcDXPDomains;

@@ -60,7 +60,7 @@ public interface Entry extends EntryModel, PersistedModel {
 
 	public String getAttachmentsDir();
 
-	public String[] getAttachmentsFiles()
+	public String[] getAttachmentsFileNames()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public String getJobName();

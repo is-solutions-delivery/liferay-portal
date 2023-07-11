@@ -24,6 +24,7 @@ import com.liferay.osb.faro.service.FaroPreferencesLocalService;
 import com.liferay.osb.faro.service.base.FaroUserLocalServiceBaseImpl;
 import com.liferay.osb.faro.service.persistence.FaroProjectPersistence;
 import com.liferay.osb.faro.util.EmailUtil;
+import com.liferay.osb.faro.util.FaroPropsValues;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
@@ -196,6 +197,17 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 		return faroUserPersistence.findByG_L(groupId, liveUserId);
 	}
 
+	public List<FaroUser> getFaroUsers(
+			long groupId, boolean available, String query,
+			List<Integer> statuses, long workspaceGroupId, int start, int end,
+			OrderByComparator<FaroUser> orderByComparator)
+		throws PortalException {
+
+		return faroUserFinder.findByChannelKeywords(
+			groupId, available, query, statuses, workspaceGroupId, start, end,
+			orderByComparator);
+	}
+
 	public List<FaroUser> getFaroUsersByLiveUserId(
 		long liveUserId, int status) {
 
@@ -208,6 +220,15 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 
 	public List<FaroUser> getFaroUsersByStatus(long groupId, int status) {
 		return faroUserPersistence.findByG_S(groupId, status);
+	}
+
+	public int getFaroUsersCount(
+			long groupId, boolean available, String query,
+			List<Integer> statuses, long workspaceGroupId)
+		throws PortalException {
+
+		return faroUserFinder.countByChannelKeywords(
+			groupId, available, query, statuses, workspaceGroupId);
 	}
 
 	public FaroUser getOwnerFaroUser(long groupId) throws PortalException {
@@ -334,7 +355,8 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 				_language.format(
 					resourceBundle, "email-sign-in-or-create-an-account",
 					new String[] {
-						"<a class=\"body-link\" href=\"" + _FARO_URL + "\">",
+						"<a class=\"body-link\" href=\"" +
+							FaroPropsValues.FARO_URL + "\">",
 						"</a>",
 						"<b class=\"link-override\">" +
 							faroUser.getEmailAddress() + "</strong>"
@@ -420,8 +442,6 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 					to.getAddress());
 		}
 	}
-
-	private static final String _FARO_URL = System.getenv("FARO_URL");
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FaroUserLocalServiceImpl.class);

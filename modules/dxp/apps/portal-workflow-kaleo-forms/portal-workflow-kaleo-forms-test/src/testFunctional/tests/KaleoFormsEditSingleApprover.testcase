@@ -1,0 +1,501 @@
+@component-name = "portal-workflow-ee"
+definition {
+
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "Kaleo Forms Admin";
+
+	var kfFieldSetName = "New Kaleo Field Set";
+	var workflowAssetType = "Process";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			User.firstLoginPG();
+
+			KaleoFormsAdmin.tearDownProcess();
+
+			DDLTemplate.tearDownTemplateCP();
+
+			DDLTemplate.tearDownTemplateCP(ddlDataDefinitionName = "To Do");
+
+			DDLTemplate.tearDownTemplateCP(ddlDataDefinitionName = "Inventory");
+
+			JSONDDMstructure.tearDown();
+
+			DMDocument.tearDownCP();
+
+			PagesAdmin.tearDownCP();
+
+			Workflow.tearDownSpecificWorkflowDefinition(workflowDefinitionTitle = "Edited Workflow Definition");
+
+			Workflow.tearDownWorkflowDefinitions();
+
+			JSONUser.tearDownNonAdminUsers();
+
+			Role.tearDownCP();
+		}
+	}
+
+	@priority = 4
+	test CompleteProcessAndViewEmailNotifications {
+		property portal.upstream = "quarantine";
+		property test.assert.javascript.errors = "false";
+		property test.liferay.virtual.instance = "false";
+		property test.smtp.server.enabled = "true";
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles");
+
+		Role.add(roleTitle = "Reviewer Name");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles");
+
+		Role.add(roleTitle = "Updater Name");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations");
+
+		User.addCP(
+			userEmailAddress = "user1@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "Creator",
+			userScreenName = "creator");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations");
+
+		User.editPasswordCP(
+			userEmailAddress = "user1@liferay.com",
+			userScreenName = "creator");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles");
+
+		Role.addAssignee(
+			assigneeName = "creator",
+			assigneeType = "Users",
+			roleTitle = "Administrator");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations");
+
+		User.addCP(
+			userEmailAddress = "user2@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "Reviewer",
+			userScreenName = "reviewer");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations");
+
+		User.editPasswordCP(
+			userEmailAddress = "user2@liferay.com",
+			userScreenName = "reviewer");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles");
+
+		Role.addAssignee(
+			assigneeName = "reviewer",
+			assigneeType = "Users",
+			roleTitle = "Administrator");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles");
+
+		Role.addAssignee(
+			assigneeName = "reviewer",
+			assigneeType = "Users",
+			roleTitle = "Reviewer Name");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations");
+
+		User.addCP(
+			userEmailAddress = "user3@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "Updater",
+			userScreenName = "updater");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Users and Organizations");
+
+		User.editPasswordCP(
+			userEmailAddress = "user3@liferay.com",
+			userScreenName = "updater");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles");
+
+		Role.addAssignee(
+			assigneeName = "updater",
+			assigneeType = "Users",
+			roleTitle = "Administrator");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Users",
+			panel = "Control Panel",
+			portlet = "Roles");
+
+		Role.addAssignee(
+			assigneeName = "updater",
+			assigneeType = "Users",
+			roleTitle = "Updater Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Workflow");
+
+		KaleoFormsAdmin.editWorkflow(
+			workflowDefinitionTitle = "Single Approver",
+			workflowDefinitionTitleEdit = "Edited Workflow Definition");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "review");
+
+		KaleoDesigner.editNodeAssignments(
+			nodeAssignmentType = "Role",
+			roleTitle = "Reviewer Name");
+
+		KaleoDesigner.editNodeNotifications(
+			nodeNotificationsDescription = "Review Notification Description",
+			nodeNotificationsName = "Review Notification",
+			nodeNotificationsRecipientType = "Role",
+			nodeNotificationsType = "Email",
+			roleTitle = "Reviewer Name");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "update");
+
+		KaleoDesigner.editNodeAssignments(
+			nodeAssignmentType = "Role",
+			roleTitle = "Updater Name");
+
+		KaleoDesigner.editNodeNotifications(
+			nodeNotificationsDescription = "Updater Modification Notification Description",
+			nodeNotificationsName = "Updater Modification Notification",
+			nodeNotificationsRecipientType = "Role",
+			nodeNotificationsType = "Email",
+			roleTitle = "Updater Name");
+
+		KaleoFormsAdmin.updateWorkflow();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			edit = "true",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Edited Workflow Definition");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "user1@liferay.com",
+			userLoginFullName = "userfn Creator");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Test Test");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		MockMock.viewMail(
+			asset = "Review Notification Description",
+			content = "userfn Creator sent you a Process for review in the workflow.",
+			recipient = "userfn Reviewer",
+			sender = "Joe Bloggs",
+			subject = "Review Notification Description");
+
+		Navigator.openURL();
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "user2@liferay.com",
+			userLoginFullName = "userfn Reviewer");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		Workflow.rejectTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Navigator.gotoNavTab(navTab = "Assigned to Me");
+
+		Workflow.viewCompletedTask(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		MockMock.viewMail(
+			asset = "Updater Modification Notification Description",
+			content = "Your submission was rejected by userfn Reviewer, please modify and resubmit.",
+			recipient = "userfn Updater",
+			sender = "Joe Bloggs",
+			subject = "Updater Modification Notification Description");
+
+		Navigator.openURL();
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "user3@liferay.com",
+			userLoginFullName = "userfn Updater");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Update");
+
+		Workflow.resubmitTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Update");
+
+		MockMock.viewMail(
+			asset = "Review Notification Description",
+			content = "userfn Updater sent you a Process for review in the workflow.",
+			recipient = "userfn Reviewer",
+			sender = "Joe Bloggs",
+			subject = "Review Notification Description");
+
+		Navigator.openURL();
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "user2@liferay.com",
+			userLoginFullName = "userfn Reviewer");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewCompletedTask(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		Workflow.gotoCompletedTaskAssignedToMePreview(workflowAssetTitle = "Kaleo Forms Process");
+
+		WorkflowAsset.previewViewContent(
+			fieldLabel = "Text",
+			fieldValue = "Test Test");
+	}
+
+	@priority = 3
+	test ViewApprovedProcessNotificationWithComments {
+		property ci.retries.disabled = "true";
+		property test.liferay.virtual.instance = "false";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Workflow");
+
+		KaleoFormsAdmin.editWorkflow(
+			workflowDefinitionTitle = "Single Approver",
+			workflowDefinitionTitleEdit = "Edited Workflow Definition");
+
+		KaleoDesigner.selectNodeInKaleoForms(nodeNodeLabel = "review");
+
+		KaleoDesigner.editNodeNotifications(
+			nodeNotificationsDescription = "Review Notification Description",
+			nodeNotificationsExecutionType = "On Exit",
+			nodeNotificationsName = "Review Completed With Comments User Notification",
+			nodeNotificationsRecipientType = "Asset Creator",
+			nodeNotificationsTemplate = '''Submission reviewed. The reviewer left the following: $taskComments.''',
+			nodeNotificationsTemplateLanguage = "Velocity",
+			nodeNotificationsType = "User Notification");
+
+		KaleoFormsAdmin.updateWorkflow();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			edit = "true",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Edited Workflow Definition");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Test 1");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowActivityComment = "Process is approved",
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = ${workflowAssetType},
+			workflowTask = "Review");
+
+		Navigator.openURL();
+
+		Navigator.gotoNotifications();
+
+		WorkflowAsset.viewNotification(contentBody = "Submission reviewed. The reviewer left the following: Process is approved.");
+	}
+
+}

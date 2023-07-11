@@ -772,6 +772,24 @@ definition {
 		}
 	}
 
+	macro assertScreenNameDisabled {
+		AssertClick(
+			key_assetTitle = "Information",
+			locator1 = "NavBar#ASSET_TITLE",
+			value1 = "Information");
+
+		AssertElementPresent(locator1 = "UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD_DISABLED");
+	}
+
+	macro assertSection {
+		for (var sectionName : list ${sectionName}) {
+			AssertClick(
+				key_assetTitle = ${sectionName},
+				locator1 = "NavBar#ASSET_TITLE",
+				value1 = ${sectionName});
+		}
+	}
+
 	macro assignAccountCP {
 		User.openUsersAdmin();
 
@@ -933,10 +951,9 @@ definition {
 			locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME",
 			value1 = ${userGroupName});
 
-		AssertClick(
-			key_dmDocumentTypeName = ${userGroupName},
-			locator1 = "DocumentsAndMediaSelectDocument#DOCUMENTS_TABLE_CHOOSE",
-			value1 = "Choose");
+		Click(
+			key_card = ${userGroupName},
+			locator1 = "Card#CARD");
 
 		SelectFrame(value1 = "relative=top");
 
@@ -1129,7 +1146,7 @@ definition {
 				value1 = "test1");
 
 			Type(
-				locator1 = "TextInput#ENTER_AGAIN",
+				locator1 = "TextInput#REENTER_PASSWORD",
 				value1 = "test1");
 
 			Button.clickSave();
@@ -1162,7 +1179,7 @@ definition {
 				value1 = "test1");
 
 			Type(
-				locator1 = "TextInput#ENTER_AGAIN",
+				locator1 = "TextInput#REENTER_PASSWORD",
 				value1 = "test1");
 
 			PortletEntry.save();
@@ -1255,7 +1272,7 @@ definition {
 			value1 = ${newPassword});
 
 		Type(
-			locator1 = "TextInput#ENTER_AGAIN",
+			locator1 = "TextInput#REENTER_PASSWORD",
 			value1 = ${newPassword});
 
 		Button.clickSave();
@@ -1303,10 +1320,10 @@ definition {
 	}
 
 	macro deleteProfileImage {
-		var key_text = "Delete";
-
-		if (!(IsElementPresent(locator1 = "CustomerPortalSite#ANY_DISABLED_BUTTON"))) {
-			Button.click(button = "Delete");
+		if (!(IsElementPresent(key_title = "Clear Image", locator1 = "Button#ANY_TITLE_DISABLED"))) {
+			Click(
+				ariaLabel = "Clear Image",
+				locator1 = "Button#ANY_WITH_ARIA_LABEL");
 		}
 
 		AssertVisible(
@@ -1440,7 +1457,7 @@ definition {
 			value1 = ${newPassword});
 
 		Type(
-			locator1 = "TextInput#ENTER_AGAIN",
+			locator1 = "TextInput#REENTER_PASSWORD",
 			value1 = ${newPassword});
 
 		if (IsElementPresent(checkboxName = "Require Password Reset", locator1 = "Checkbox#ANY_CHECKBOX")) {
@@ -1792,7 +1809,6 @@ definition {
 			locator1 = "ExportPersonalData#HEADER");
 	}
 
-	@summary = "Log into Liferay via '${userScreenName}' using URL navigation"
 	macro firstLoginByScreenNamePG {
 		if (isSet(virtualHostsURL)) {
 			Navigator.openSpecificURL(url = ${virtualHostsURL});
@@ -1827,7 +1843,6 @@ definition {
 		WaitForLiferayEvent.initializeLiferayEventLog();
 	}
 
-	@summary = "Log into Liferay using URL navigation"
 	macro firstLoginPG {
 		var appServerType = PropsUtil.get("app.server.type");
 
@@ -1886,7 +1901,6 @@ definition {
 		}
 	}
 
-	@summary = "Log into Liferay using the UI"
 	macro firstLoginUI {
 		if (isSet(specificURL)) {
 			Navigator.openSpecificURL(
@@ -1995,7 +2009,6 @@ definition {
 		UserBar.gotoDropdown();
 	}
 
-	@summary = "Log into Liferay Portal as '${userScreenName}' using the password '${password}'"
 	macro loginByScreenNamePG {
 		JSONUser.agreeToTermsAndAnswerReminderQueryByScreenName(
 			creatorPassword = ${password},
@@ -2022,7 +2035,6 @@ definition {
 		WaitForLiferayEvent.initializeLiferayEventLog();
 	}
 
-	@summary = "Log into Liferay Portal as '${userEmailAddress}' using the password '${password}'"
 	macro loginPG {
 		JSONUser.agreeToTermsAndAnswerReminderQuery(
 			portalURL = ${virtualHostsURL},
@@ -2195,6 +2207,8 @@ definition {
 
 		OpenIDConnect.acceptConditions();
 
+		OpenIDConnect.acceptConditions();
+
 		AssertElementPresent(locator1 = "UserBar#USER_AVATAR_IMAGE");
 	}
 
@@ -2318,7 +2332,7 @@ definition {
 			else {
 				Button.clickSubmitButton();
 
-				AssertElementNotPresent(locator1 = "TextInput#ENTER_AGAIN");
+				AssertElementNotPresent(locator1 = "TextInput#REENTER_PASSWORD");
 			}
 		}
 	}

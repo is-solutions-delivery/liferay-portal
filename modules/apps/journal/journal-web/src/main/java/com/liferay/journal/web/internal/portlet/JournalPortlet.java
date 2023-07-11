@@ -94,6 +94,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.PersistenceException;
+
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -156,7 +158,6 @@ public class JournalPortlet extends MVCPortlet {
 		renderRequest.setAttribute(
 			AssetDisplayPageFriendlyURLProvider.class.getName(),
 			_assetDisplayPageFriendlyURLProvider);
-
 		renderRequest.setAttribute(TrashWebKeys.TRASH_HELPER, _trashHelper);
 
 		if (Objects.equals(
@@ -329,6 +330,7 @@ public class JournalPortlet extends MVCPortlet {
 			throwable instanceof LiferayFileItemException ||
 			throwable instanceof LocaleException ||
 			throwable instanceof MaxAddMenuFavItemsException ||
+			throwable instanceof PersistenceException ||
 			throwable instanceof StorageFieldRequiredException ||
 			throwable instanceof SystemException ||
 			super.isSessionErrorException(throwable)) {

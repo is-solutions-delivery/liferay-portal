@@ -25,6 +25,7 @@ const EXECUTE_BUTTON_QUERY_SELECTOR = '.save-server-button';
 const EXECUTION_MODES = {
 	CONCURRENT: 'concurrent',
 	REGULAR: 'regular',
+	SYNC: 'sync',
 };
 
 const SCOPES = {
@@ -84,31 +85,57 @@ function ExecutionOptions({
 		setScope(value);
 	};
 
+	const _renderExecutionModeRadioGroup = () => {
+		const radioGroup = [
+			<ClayRadio
+				key={EXECUTION_MODES.REGULAR}
+				label={Liferay.Language.get('regular')}
+				value={EXECUTION_MODES.REGULAR}
+			/>,
+		];
+
+		if (Liferay.FeatureFlags['LPS-177664']) {
+			radioGroup.push(
+				<ClayRadio
+					key={EXECUTION_MODES.CONCURRENT}
+					label={Liferay.Language.get('concurrent')}
+					value={EXECUTION_MODES.CONCURRENT}
+				/>
+			);
+		}
+
+		if (Liferay.FeatureFlags['LPS-177668']) {
+			radioGroup.push(
+				<ClayRadio
+					key={EXECUTION_MODES.SYNC}
+					label={Liferay.Language.get('sync')}
+					value={EXECUTION_MODES.SYNC}
+				/>
+			);
+		}
+
+		return radioGroup;
+	};
+
 	return (
 		<div className="execution-scope-sheet sheet sheet-lg">
-			{Liferay.FeatureFlags['LPS-177664'] && isConcurrentModeSupported && (
-				<div className="sheet-section">
-					<h2 className="sheet-title">
-						{Liferay.Language.get('execution-mode')}
-					</h2>
+			{(Liferay.FeatureFlags['LPS-177664'] ||
+				Liferay.FeatureFlags['LPS-177668']) &&
+				isConcurrentModeSupported && (
+					<div className="sheet-section">
+						<h2 className="sheet-title">
+							{Liferay.Language.get('execution-mode')}
+						</h2>
 
-					<ClayRadioGroup
-						name={`${portletNamespace}executionMode`}
-						onChange={_handleExecutionModeChange}
-						value={executionMode}
-					>
-						<ClayRadio
-							label={Liferay.Language.get('regular')}
-							value={EXECUTION_MODES.REGULAR}
-						/>
-
-						<ClayRadio
-							label={Liferay.Language.get('concurrent')}
-							value={EXECUTION_MODES.CONCURRENT}
-						/>
-					</ClayRadioGroup>
-				</div>
-			)}
+						<ClayRadioGroup
+							name={`${portletNamespace}executionMode`}
+							onChange={_handleExecutionModeChange}
+							value={executionMode}
+						>
+							{_renderExecutionModeRadioGroup()}
+						</ClayRadioGroup>
+					</div>
+				)}
 
 			<div className="sheet-section">
 				<h2 className="sheet-title">

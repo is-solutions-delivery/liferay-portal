@@ -1,10 +1,10 @@
 Bundle-Name: Liferay Portal Security Audit Storage Service
 Bundle-SymbolicName: com.liferay.portal.security.audit.storage.service
-Bundle-Version: 6.0.37
+Bundle-Version: 6.0.38
 Import-Package:\
 	com.liferay.portal.security.audit.storage.comparator,\
 	\
 	*
-Liferay-Require-SchemaVersion: 2.0.1
+Liferay-Require-SchemaVersion: 2.1.0
 Liferay-Service: true
 -dsannotations-options: inherit

@@ -19,6 +19,7 @@ import React, {useState} from 'react';
 
 export default function StyleBookConfiguration({
 	changeStyleBookURL,
+	isReadOnly,
 	portletNamespace,
 	styleBookEntryId: initialStyleBookEntryId,
 	styleBookEntryName: initialStyleBookEntryName,
@@ -29,6 +30,10 @@ export default function StyleBookConfiguration({
 	});
 
 	const handleChangeStyleBookClick = () => {
+		if (isReadOnly) {
+			return;
+		}
+
 		openSelectionModal({
 			iframeBodyCssClass: '',
 			onSelect(selectedItem) {
@@ -60,7 +65,7 @@ export default function StyleBookConfiguration({
 			</label>
 
 			<div className="d-flex">
-				<ClayForm.Group className="flex-grow-1 mb-0">
+				<ClayForm.Group className="c-mb-0 flex-grow-1">
 					<ClayInput
 						id={`${portletNamespace}styleBookEntry`}
 						onClick={handleChangeStyleBookClick}
@@ -71,7 +76,8 @@ export default function StyleBookConfiguration({
 
 				<ClayButtonWithIcon
 					aria-label={Liferay.Language.get('change-style-book')}
-					className="ml-2"
+					className="c-ml-2"
+					disabled={isReadOnly}
 					displayType="secondary"
 					onClick={handleChangeStyleBookClick}
 					symbol="plus"

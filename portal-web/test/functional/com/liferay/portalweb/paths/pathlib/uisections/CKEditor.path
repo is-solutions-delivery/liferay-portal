@@ -26,6 +26,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BODY_FIELD_2</td>
+	<td>//div[contains(@class,'cke_2')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>BODY_FIELD_SOURCE_ON</td>
 	<td>//div[contains(@class,'cke_contents')]/div[contains(@class,'CodeMirror cm-s-default')]</td>
 	<td></td>
@@ -56,6 +61,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BODY_1</td>
+	<td>xpath=(//body[contains(@class,'cke_editable')])[1]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>BODY_SOURCE_VALUE</td>
 	<td>//input[contains(@id,'AdminPortlet_content')]</td>
 	<td></td>
@@ -71,8 +81,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BODY_TEXT_1</td>
+	<td>xpath=(//body[contains(@class,'cke_editable') and contains(.,'${key_text}')])[1]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>BODY_TEXT_HREF</td>
 	<td>//body//a[normalize-space(text()) = '${key_text}' and contains(@href, '${key_href}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>BODY_TEXT_HREF_1</td>
+	<td>xpath=(//body//a[normalize-space(text()) = '${key_text}' and contains(@href, '${key_href}')])[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -217,6 +237,11 @@
 <tr>
 	<td>REMOVE_TABLE_BUTTON</td>
 	<td>//span[contains(@class, 'cke_button__trash_icon')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TOOLBAR_AI_CREATOR_BUTTON</td>
+	<td>//a[contains(@class,'cke_button') and contains(@class,'aicreator')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -20,6 +20,7 @@ import com.liferay.jenkins.results.parser.failure.message.generator.FailureMessa
 import com.liferay.jenkins.results.parser.failure.message.generator.GenericFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.GradleTaskFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.IntegrationTestTimeoutFailureMessageGenerator;
+import com.liferay.jenkins.results.parser.failure.message.generator.JSUnitTestFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.LocalGitMirrorFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.ModulesCompilationFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.PMDFailureMessageGenerator;
@@ -323,7 +324,19 @@ public class DownstreamBuild extends BaseBuild {
 	public List<TestResult> getUniqueFailureTestResults() {
 		List<TestResult> uniqueFailureTestResults = new ArrayList<>();
 
-		for (TestResult testResult : getTestResults(null)) {
+		List<TestResult> testResults = new ArrayList<>();
+
+		testResults.addAll(getTestResults(null));
+
+		List<TestResult> passedTestResults = getTestResults("PASSED");
+
+		if (isFailing() && (passedTestResults.size() == 1) &&
+			testResults.isEmpty()) {
+
+			testResults.addAll(passedTestResults);
+		}
+
+		for (TestResult testResult : testResults) {
 			if (!testResult.isFailing()) {
 				continue;
 			}
@@ -425,7 +438,19 @@ public class DownstreamBuild extends BaseBuild {
 	public List<TestResult> getUpstreamJobFailureTestResults() {
 		List<TestResult> upstreamFailureTestResults = new ArrayList<>();
 
-		for (TestResult testResult : getTestResults(null)) {
+		List<TestResult> testResults = new ArrayList<>();
+
+		testResults.addAll(getTestResults(null));
+
+		List<TestResult> passedTestResults = getTestResults("PASSED");
+
+		if (isFailing() && (passedTestResults.size() == 1) &&
+			testResults.isEmpty()) {
+
+			testResults.addAll(passedTestResults);
+		}
+
+		for (TestResult testResult : testResults) {
 			if (!testResult.isFailing()) {
 				continue;
 			}
@@ -933,6 +958,7 @@ public class DownstreamBuild extends BaseBuild {
 		//
 		new CompileFailureMessageGenerator(),
 		new IntegrationTestTimeoutFailureMessageGenerator(),
+		new JSUnitTestFailureMessageGenerator(),
 		new LocalGitMirrorFailureMessageGenerator(),
 		new PMDFailureMessageGenerator(),
 		new PluginFailureMessageGenerator(),

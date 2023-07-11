@@ -29,6 +29,7 @@ import com.liferay.info.collection.provider.ConfigurableInfoCollectionProvider;
 import com.liferay.info.collection.provider.RelatedInfoItemCollectionProvider;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.type.CategoriesInfoFieldType;
+import com.liferay.info.field.type.MultiselectInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.form.InfoForm;
 import com.liferay.info.pagination.InfoPage;
@@ -197,16 +198,15 @@ public class
 
 		CollectionQuery collectionQuery = new CollectionQuery();
 
-		collectionQuery.setRelatedItemObject(
-			_getAssetEntry(
-				JournalArticle.class.getName(),
-				relatedJournalArticle.getResourcePrimKey()));
-
 		collectionQuery.setConfiguration(
 			HashMapBuilder.put(
 				"assetCategoryRule",
 				new String[] {"anyAssetCategoryOfTheSameAssetVocabulary"}
 			).build());
+		collectionQuery.setRelatedItemObject(
+			_getAssetEntry(
+				JournalArticle.class.getName(),
+				relatedJournalArticle.getResourcePrimKey()));
 
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
@@ -322,16 +322,15 @@ public class
 
 		CollectionQuery collectionQuery = new CollectionQuery();
 
-		collectionQuery.setRelatedItemObject(
-			_getAssetEntry(
-				JournalArticle.class.getName(),
-				relatedJournalArticle.getResourcePrimKey()));
-
 		collectionQuery.setConfiguration(
 			HashMapBuilder.put(
 				"assetCategoryRule",
 				new String[] {"anyAssetCategoryOfTheSameAssetVocabulary"}
 			).build());
+		collectionQuery.setRelatedItemObject(
+			_getAssetEntry(
+				JournalArticle.class.getName(),
+				relatedJournalArticle.getResourcePrimKey()));
 
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
@@ -474,11 +473,6 @@ public class
 
 		CollectionQuery collectionQuery = new CollectionQuery();
 
-		collectionQuery.setRelatedItemObject(
-			_getAssetEntry(
-				JournalArticle.class.getName(),
-				relatedJournalArticle.getResourcePrimKey()));
-
 		collectionQuery.setConfiguration(
 			HashMapBuilder.put(
 				"assetCategoryRule", new String[] {"specificAssetCategory"}
@@ -490,6 +484,10 @@ public class
 					).toString()
 				}
 			).build());
+		collectionQuery.setRelatedItemObject(
+			_getAssetEntry(
+				JournalArticle.class.getName(),
+				relatedJournalArticle.getResourcePrimKey()));
 
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
@@ -596,7 +594,7 @@ public class
 			Assert.assertEquals(infoFields.toString(), 3, infoFields.size());
 
 			_assertInfoField(
-				infoFields.get(0), SelectInfoFieldType.class,
+				infoFields.get(0), MultiselectInfoFieldType.class,
 				_language.get(LocaleUtil.US, "item-type"), "item_types");
 			_assertInfoField(
 				infoFields.get(1), SelectInfoFieldType.class,

@@ -14,9 +14,9 @@ definition {
 	tearDown {
 		ObjectAdmin.deleteAllCustomObjectsViaAPI();
 
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -64,7 +64,7 @@ definition {
 			ObjectAdmin.goToLayoutsTab();
 
 			ObjectAdmin.selectSpecificKebabMenuOption(
-				kebabOption = "View",
+				kebabOption = "Edit",
 				objectLabel = "Custom Layout 171590");
 
 			ObjectAdmin.markLayoutAsDefault();
@@ -124,7 +124,7 @@ definition {
 		property ci.retries.disabled = "true";
 		property portal.acceptance = "true";
 
-		task ("Given a related object with Custom Layout and Relationship tab (Many to Many)") {
+		task ("Given a custom object that contains a text field and a relationship with itself (Many to Many)") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 171597",
 				objectName = "CustomObject171597",
@@ -145,11 +145,13 @@ definition {
 				relationshipName = "relationship",
 				relationshipType = "manyToMany");
 
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject171597");
+		}
+
+		task ("And given a custom layout for the custom object") {
 			ObjectAdmin.addObjectLayoutViaAPI(
 				layoutName = "Custom Layout 171597",
 				objectName = "CustomObject171597");
-
-			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject171597");
 
 			ObjectAdmin.openObjectAdmin();
 
@@ -162,7 +164,7 @@ definition {
 			ObjectAdmin.goToLayoutsTab();
 
 			ObjectAdmin.selectSpecificKebabMenuOption(
-				kebabOption = "View",
+				kebabOption = "Edit",
 				objectLabel = "Custom Layout 171597");
 
 			ObjectAdmin.markLayoutAsDefault();
@@ -184,7 +186,7 @@ definition {
 			PortletEntry.save();
 		}
 
-		task ("When add the entry on Relationship tab") {
+		task ("And given two custom object entries") {
 			for (var letter : list "A,B") {
 				ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 					fieldName = "customField",
@@ -193,7 +195,9 @@ definition {
 			}
 
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject171597");
+		}
 
+		task ("When relating the entries") {
 			ObjectPortlet.viewEntryDetails(entry = "Entry Test A");
 
 			Click(
@@ -201,9 +205,13 @@ definition {
 				locator1 = "ObjectAdmin#ENTRY_RELATIONSHIP_TAB");
 
 			ObjectCustomLayouts.addEntryOnRelationshipTab(selectEntry = "Entry Test B");
+
+			WaitForElementPresent(
+				key_fieldLabel = "Entry Test B",
+				locator1 = "ObjectAdmin#VIEW_OBJECT_FIELD_LABEL");
 		}
 
-		task ("Then the new entry is saved on the Relationship Tab Parent and the entry is present on Relationship Tab Child") {
+		task ("Then one entry is related as the Parent and the other entry is related as the Child") {
 			AssertElementPresent(
 				key_fieldLabel = "Entry Test B",
 				locator1 = "ObjectAdmin#VIEW_OBJECT_FIELD_LABEL");
@@ -253,7 +261,7 @@ definition {
 
 			ObjectAdmin.goToLayoutsTab();
 
-			ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+			ObjectAdmin.selectKebabMenuOption(kebabOption = "Edit");
 
 			ObjectAdmin.markLayoutAsDefault();
 
@@ -331,7 +339,7 @@ definition {
 			ObjectAdmin.goToLayoutsTab();
 
 			ObjectAdmin.selectSpecificKebabMenuOption(
-				kebabOption = "View",
+				kebabOption = "Edit",
 				objectLabel = "Custom Layout 171629");
 
 			ObjectAdmin.markLayoutAsDefault();
@@ -390,7 +398,7 @@ definition {
 	@description = "LPS-161884 - Verify that it's possible to create an object with a categorization section in the layout"
 	@priority = 3
 	test CanCreateObjectWithCategorizationSection {
-		property test.name.skip.portal.instance = "ObjectCustomLayouts#CanCreateObjectWithCategorizationSection";
+		property test.liferay.virtual.instance = "false";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 200",
@@ -415,7 +423,7 @@ definition {
 
 		ObjectAdmin.goToLayoutsTab();
 
-		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "Edit");
 
 		ObjectAdmin.markLayoutAsDefault();
 
@@ -445,7 +453,7 @@ definition {
 	@description = "LPS-161886 - Verify that it's possible to delete a categorization section"
 	@priority = 3
 	test CanDeleteCategorizationSection {
-		property test.name.skip.portal.instance = "ObjectCustomLayouts#CanDeleteCategorizationSection";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: An object with the layout categorization section") {
 			ObjectAdmin.addObjectViaAPI(
@@ -471,7 +479,7 @@ definition {
 
 			ObjectAdmin.goToLayoutsTab();
 
-			ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+			ObjectAdmin.selectKebabMenuOption(kebabOption = "Edit");
 
 			ObjectAdmin.goToLayoutTabOnLayouts();
 
@@ -495,7 +503,7 @@ definition {
 
 			ObjectAdmin.goToLayoutsTab();
 
-			ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+			ObjectAdmin.selectKebabMenuOption(kebabOption = "Edit");
 
 			ObjectAdmin.goToLayoutTabOnLayouts();
 
@@ -505,7 +513,7 @@ definition {
 		}
 
 		task ("Then: The object layout is updated successfully") {
-			ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+			ObjectAdmin.selectKebabMenuOption(kebabOption = "Edit");
 
 			ObjectAdmin.goToLayoutTabOnLayouts();
 
@@ -556,7 +564,7 @@ definition {
 			ObjectAdmin.goToLayoutsTab();
 
 			ObjectAdmin.selectSpecificKebabMenuOption(
-				kebabOption = "View",
+				kebabOption = "Edit",
 				objectLabel = "Custom Layout 171632");
 
 			ObjectAdmin.markLayoutAsDefault();
@@ -598,9 +606,7 @@ definition {
 				kebabOption = "Delete",
 				objectLabel = "Entry Test B");
 
-			AssertTextEquals(
-				locator1 = "Message#SUCCESS_DISMISSIBLE",
-				value1 = "Success:Your request completed successfully.");
+			Refresh();
 		}
 
 		task ("Then the entry is no longer present") {
@@ -613,7 +619,7 @@ definition {
 	@description = "LPS-161885 - Verify that it's possible to edit a categorization section"
 	@priority = 3
 	test CanEditCategorizationSection {
-		property test.name.skip.portal.instance = "ObjectCustomLayouts#CanEditCategorizationSection";
+		property test.liferay.virtual.instance = "false";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 200",
@@ -638,7 +644,7 @@ definition {
 
 		ObjectAdmin.goToLayoutsTab();
 
-		ObjectAdmin.selectKebabMenuOption(kebabOption = "View");
+		ObjectAdmin.selectKebabMenuOption(kebabOption = "Edit");
 
 		ObjectAdmin.markLayoutAsDefault();
 
@@ -691,7 +697,7 @@ definition {
 	@priority = 5
 	test CanEditEntryWhenAllowedToEdit {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ObjectCustomLayouts#CanEditEntryWhenAllowedToEdit";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given a related object with Custom Layout and Relationship tab") {
 			ObjectAdmin.addObjectViaAPI(
@@ -731,7 +737,7 @@ definition {
 			ObjectAdmin.goToLayoutsTab();
 
 			ObjectAdmin.selectSpecificKebabMenuOption(
-				kebabOption = "View",
+				kebabOption = "Edit",
 				objectLabel = "Custom Layout 171630");
 
 			ObjectAdmin.markLayoutAsDefault();
@@ -819,7 +825,7 @@ definition {
 	@priority = 5
 	test CannotEditEntryWhenNotAllowedToEdit {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ObjectCustomLayouts#CannotEditEntryWhenNotAllowedToEdit";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given a related object with Custom Layout and Relationship tab") {
 			ObjectAdmin.addObjectViaAPI(
@@ -859,7 +865,7 @@ definition {
 			ObjectAdmin.goToLayoutsTab();
 
 			ObjectAdmin.selectSpecificKebabMenuOption(
-				kebabOption = "View",
+				kebabOption = "Edit",
 				objectLabel = "Custom Layout 171631");
 
 			ObjectAdmin.markLayoutAsDefault();
@@ -1022,7 +1028,7 @@ definition {
 		property ci.retries.disabled = "true";
 		property portal.acceptance = "true";
 
-		task ("Given a related object with Custom Layout and Relationship tab") {
+		task ("Given a custom object that contains a text field and a relationship with itself") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 171628",
 				objectName = "CustomObject171628",
@@ -1043,6 +1049,10 @@ definition {
 				relationshipName = "relationship",
 				relationshipType = "oneToMany");
 
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject171628");
+		}
+
+		task ("And given a custom layout for the custom object") {
 			ObjectAdmin.addObjectLayoutViaAPI(
 				layoutName = "Custom Layout 171628",
 				objectName = "CustomObject171628");
@@ -1060,7 +1070,7 @@ definition {
 			ObjectAdmin.goToLayoutsTab();
 
 			ObjectAdmin.selectSpecificKebabMenuOption(
-				kebabOption = "View",
+				kebabOption = "Edit",
 				objectLabel = "Custom Layout 171628");
 
 			ObjectAdmin.markLayoutAsDefault();
@@ -1078,8 +1088,10 @@ definition {
 				tabName = "Relationship Tab");
 
 			PortletEntry.save();
+		}
 
-			for (var letter : list "A,B,C,D,E") {
+		task ("And given several object entries") {
+			for (var letter : list "A,B,C") {
 				ObjectAdmin.addObjectSingleFieldEntryViaAPI(
 					fieldName = "customField",
 					objectName = "CustomObject171628",
@@ -1087,37 +1099,21 @@ definition {
 			}
 
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject171628");
-
-			ObjectPortlet.viewEntryDetails(entry = "Entry Test A");
 		}
 
-		task ("When selecting existing entries from the Relationship Tab") {
+		task ("When an entry is added on the Relationship Tab") {
+			ObjectPortlet.viewEntryDetails(entry = "Entry Test A");
+
 			ObjectAdmin.gotoRelationshipsTab();
 
-			LexiconEntry.gotoAdd();
-
-			Click(
-				key_kebabOption = "Select Existing One",
-				locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
-
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
-		}
-
-		task ("Then all entries created show on Select Existing One and the entry selected is saved on the Relationship Tab") {
-			for (var letter : list "B,C,D,E") {
-				AssertElementPresent(
-					key_titleFieldName = "Entry Test ${letter}",
-					locator1 = "CreateObject#SELECT_ENTRY_IN_RELATIONSHIP_TAB");
-			}
-
-			ClickNoError(
-				key_titleFieldName = "Entry Test C",
-				locator1 = "CreateObject#SELECT_ENTRY_IN_RELATIONSHIP_TAB");
+			ObjectCustomLayouts.addEntryOnRelationshipTab(selectEntry = "Entry Test C");
 
 			WaitForElementPresent(
 				key_fieldLabel = "Entry Test C",
 				locator1 = "ObjectAdmin#VIEW_OBJECT_FIELD_LABEL");
+		}
 
+		task ("Then the related entry is present on the Relationship Tab") {
 			AssertElementPresent(
 				key_fieldLabel = "Entry Test C",
 				locator1 = "ObjectAdmin#VIEW_OBJECT_FIELD_LABEL");

@@ -26,8 +26,17 @@ portletDisplay.setShowBackIcon(true);
 %>
 
 <div class="publications-view-changes-wrapper">
-	<react:component
-		module="publications/js/views/ChangeTrackingChangesView"
-		props="<%= viewChangesDisplayContext.getReactData() %>"
-	/>
+	<div>
+		<react:component
+			module="publications/js/views/ChangeTrackingChangesToolbar"
+			props="<%= viewChangesDisplayContext.getReactData() %>"
+		/>
+	</div>
+
+	<div class="sidenav-content">
+		<react:component
+			module="publications/js/views/ChangeTrackingChangesView"
+			props="<%= viewChangesDisplayContext.getReactData() %>"
+		/>
+	</div>
 </div>

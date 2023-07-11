@@ -14,13 +14,24 @@
 
 package com.liferay.commerce.product.internal.permission;
 
+import com.liferay.account.constants.AccountConstants;
+import com.liferay.account.constants.AccountRoleConstants;
+import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.permission.CommerceCatalogPermission;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -115,21 +126,67 @@ public class CommerceCatalogPermissionImpl
 			CommerceCatalog commerceCatalog, String actionId)
 		throws PortalException {
 
-		if (permissionChecker.isCompanyAdmin(commerceCatalog.getCompanyId()) ||
-			permissionChecker.hasOwnerPermission(
+		if (permissionChecker.hasOwnerPermission(
 				commerceCatalog.getCompanyId(), CommerceCatalog.class.getName(),
 				commerceCatalog.getCommerceCatalogId(),
-				commerceCatalog.getUserId(), actionId)) {
+				commerceCatalog.getUserId(), actionId) ||
+			permissionChecker.hasPermission(
+				commerceCatalog.getGroupId(), CommerceCatalog.class.getName(),
+				commerceCatalog.getCommerceCatalogId(), actionId) ||
+			permissionChecker.isCompanyAdmin(commerceCatalog.getCompanyId()) ||
+			permissionChecker.isOmniadmin()) {
 
 			return true;
 		}
 
-		return permissionChecker.hasPermission(
-			commerceCatalog.getGroupId(), CommerceCatalog.class.getName(),
-			commerceCatalog.getCommerceCatalogId(), actionId);
+		if ((actionId.equals(ActionKeys.UPDATE) ||
+			 actionId.equals(ActionKeys.VIEW)) &&
+			_hasRoleAccountSupplier(permissionChecker, commerceCatalog)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _hasRoleAccountSupplier(
+			PermissionChecker permissionChecker,
+			CommerceCatalog commerceCatalog)
+		throws PortalException {
+
+		if (commerceCatalog.getAccountEntryId() == 0) {
+			return false;
+		}
+
+		List<AccountEntry> accountEntries =
+			_accountEntryLocalService.getUserAccountEntries(
+				permissionChecker.getUserId(), 0L, StringPool.BLANK,
+				new String[] {AccountConstants.ACCOUNT_ENTRY_TYPE_SUPPLIER},
+				WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS);
+
+		for (AccountEntry accountEntry : accountEntries) {
+			if ((commerceCatalog.getAccountEntryId() ==
+					accountEntry.getAccountEntryId()) &&
+				_userGroupRoleLocalService.hasUserGroupRole(
+					permissionChecker.getUserId(),
+					accountEntry.getAccountEntryGroupId(),
+					AccountRoleConstants.ROLE_NAME_ACCOUNT_SUPPLIER)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Reference
+	private AccountEntryLocalService _accountEntryLocalService;
+
+	@Reference
 	private CommerceCatalogLocalService _commerceCatalogLocalService;
+
+	@Reference
+	private UserGroupRoleLocalService _userGroupRoleLocalService;
 
 }

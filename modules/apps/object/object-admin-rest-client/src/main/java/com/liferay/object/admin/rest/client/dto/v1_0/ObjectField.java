@@ -371,6 +371,60 @@ public class ObjectField implements Cloneable, Serializable {
 
 	protected ObjectFieldSetting[] objectFieldSettings;
 
+	public ReadOnly getReadOnly() {
+		return readOnly;
+	}
+
+	public String getReadOnlyAsString() {
+		if (readOnly == null) {
+			return null;
+		}
+
+		return readOnly.toString();
+	}
+
+	public void setReadOnly(ReadOnly readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	public void setReadOnly(
+		UnsafeSupplier<ReadOnly, Exception> readOnlyUnsafeSupplier) {
+
+		try {
+			readOnly = readOnlyUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected ReadOnly readOnly;
+
+	public String getReadOnlyConditionExpression() {
+		return readOnlyConditionExpression;
+	}
+
+	public void setReadOnlyConditionExpression(
+		String readOnlyConditionExpression) {
+
+		this.readOnlyConditionExpression = readOnlyConditionExpression;
+	}
+
+	public void setReadOnlyConditionExpression(
+		UnsafeSupplier<String, Exception>
+			readOnlyConditionExpressionUnsafeSupplier) {
+
+		try {
+			readOnlyConditionExpression =
+				readOnlyConditionExpressionUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String readOnlyConditionExpression;
+
 	public RelationshipType getRelationshipType() {
 		return relationshipType;
 	}
@@ -525,9 +579,9 @@ public class ObjectField implements Cloneable, Serializable {
 	public static enum BusinessType {
 
 		AGGREGATION("Aggregation"), ATTACHMENT("Attachment"),
-		BOOLEAN("Boolean"), DATE("Date"), DECIMAL("Decimal"),
-		ENCRYPTED("Encrypted"), FORMULA("Formula"), INTEGER("Integer"),
-		LONG_INTEGER("LongInteger"), LONG_TEXT("LongText"),
+		BOOLEAN("Boolean"), DATE("Date"), DATE_TIME("DateTime"),
+		DECIMAL("Decimal"), ENCRYPTED("Encrypted"), FORMULA("Formula"),
+		INTEGER("Integer"), LONG_INTEGER("LongInteger"), LONG_TEXT("LongText"),
 		MULTISELECT_PICKLIST("MultiselectPicklist"), PICKLIST("Picklist"),
 		PRECISION_DECIMAL("PrecisionDecimal"), RELATIONSHIP("Relationship"),
 		RICH_TEXT("RichText"), TEXT("Text");
@@ -564,8 +618,8 @@ public class ObjectField implements Cloneable, Serializable {
 	public static enum DBType {
 
 		BIG_DECIMAL("BigDecimal"), BOOLEAN("Boolean"), CLOB("Clob"),
-		DATE("Date"), DOUBLE("Double"), INTEGER("Integer"), LONG("Long"),
-		STRING("String");
+		DATE("Date"), DATE_TIME("DateTime"), DOUBLE("Double"),
+		INTEGER("Integer"), LONG("Long"), STRING("String");
 
 		public static DBType create(String value) {
 			for (DBType dbType : values()) {
@@ -589,6 +643,39 @@ public class ObjectField implements Cloneable, Serializable {
 		}
 
 		private DBType(String value) {
+			_value = value;
+		}
+
+		private final String _value;
+
+	}
+
+	public static enum ReadOnly {
+
+		CONDITIONAL("conditional"), FALSE("false"), TRUE("true");
+
+		public static ReadOnly create(String value) {
+			for (ReadOnly readOnly : values()) {
+				if (Objects.equals(readOnly.getValue(), value) ||
+					Objects.equals(readOnly.name(), value)) {
+
+					return readOnly;
+				}
+			}
+
+			return null;
+		}
+
+		public String getValue() {
+			return _value;
+		}
+
+		@Override
+		public String toString() {
+			return _value;
+		}
+
+		private ReadOnly(String value) {
 			_value = value;
 		}
 
@@ -632,8 +719,8 @@ public class ObjectField implements Cloneable, Serializable {
 	public static enum Type {
 
 		BIG_DECIMAL("BigDecimal"), BOOLEAN("Boolean"), CLOB("Clob"),
-		DATE("Date"), DOUBLE("Double"), INTEGER("Integer"), LONG("Long"),
-		STRING("String");
+		DATE("Date"), DATE_TIME("DateTime"), DOUBLE("Double"),
+		INTEGER("Integer"), LONG("Long"), STRING("String");
 
 		public static Type create(String value) {
 			for (Type type : values()) {

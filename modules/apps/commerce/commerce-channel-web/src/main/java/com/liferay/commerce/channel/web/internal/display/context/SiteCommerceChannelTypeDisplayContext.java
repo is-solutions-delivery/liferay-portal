@@ -14,7 +14,8 @@
 
 package com.liferay.commerce.channel.web.internal.display.context;
 
-import com.liferay.commerce.currency.service.CommerceCurrencyService;
+import com.liferay.account.service.AccountEntryService;
+import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.item.selector.criterion.SimpleSiteItemSelectorCriterion;
 import com.liferay.commerce.product.channel.CommerceChannelHealthStatusRegistry;
 import com.liferay.commerce.product.channel.CommerceChannelTypeRegistry;
@@ -33,6 +34,7 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
+import com.liferay.portal.kernel.service.permission.GroupPermission;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowDefinitionManager;
 
@@ -47,27 +49,28 @@ public class SiteCommerceChannelTypeDisplayContext
 	extends CommerceChannelDisplayContext {
 
 	public SiteCommerceChannelTypeDisplayContext(
+		AccountEntryService accountEntryService,
 		CommerceChannelHealthStatusRegistry commerceChannelHealthStatusRegistry,
 		ModelResourcePermission<CommerceChannel>
 			commerceChannelModelResourcePermission,
 		CommerceChannelService commerceChannelService,
 		CommerceChannelTypeRegistry commerceChannelTypeRegistry,
-		CommerceCurrencyService commerceCurrencyService,
+		CommerceCurrencyLocalService commerceCurrencyLocalService,
 		ConfigurationProvider configurationProvider,
 		CPTaxCategoryLocalService cpTaxCategoryLocalService,
 		DLAppLocalService dlAppLocalService,
-		GroupLocalService groupLocalService,
+		GroupLocalService groupLocalService, GroupPermission groupPermission,
 		HttpServletRequest httpServletRequest, ItemSelector itemSelector,
 		Portal portal,
 		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService,
 		WorkflowDefinitionManager workflowDefinitionManager) {
 
 		super(
-			commerceChannelHealthStatusRegistry,
+			accountEntryService, commerceChannelHealthStatusRegistry,
 			commerceChannelModelResourcePermission, commerceChannelService,
-			commerceChannelTypeRegistry, commerceCurrencyService,
+			commerceChannelTypeRegistry, commerceCurrencyLocalService,
 			configurationProvider, cpTaxCategoryLocalService, dlAppLocalService,
-			httpServletRequest, itemSelector, portal,
+			groupPermission, httpServletRequest, itemSelector, portal,
 			workflowDefinitionLinkLocalService, workflowDefinitionManager);
 
 		_dlAppLocalService = dlAppLocalService;

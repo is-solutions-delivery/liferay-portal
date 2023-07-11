@@ -14,6 +14,7 @@
 
 package com.liferay.osb.faro.web.internal.controller.api;
 
+import com.liferay.oauth2.provider.scope.RequiresNoScope;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.util.FaroThreadLocal;
 import com.liferay.osb.faro.web.internal.context.GroupInfo;
@@ -31,6 +32,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -56,6 +58,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = ReportController.class)
 @Path("/reports")
 @Produces(MediaType.APPLICATION_JSON)
+@RequiresNoScope
 public class ReportController extends BaseFaroController {
 
 	@GET
@@ -82,6 +85,13 @@ public class ReportController extends BaseFaroController {
 			@QueryParam("toDate") String toDateString,
 			@PathParam("type") String type)
 		throws Exception {
+
+		if (!_exportTypes.contains(type)) {
+			return _reportControllerResponseFactory.create(
+				"The \"type\" query parameter must be either \"event\", " +
+					"\"individual\", \"page\", or \"segment\".",
+				Response.Status.BAD_REQUEST);
+		}
 
 		if (Validator.isBlank(fromDateString) ||
 			Validator.isBlank(toDateString)) {
@@ -201,6 +211,14 @@ public class ReportController extends BaseFaroController {
 
 	private static final DateTimeFormatter _dateTimeFormatter =
 		DateTimeFormatter.ofPattern(_ISO_8601_FORMAT);
+	private static final List<String> _exportTypes = new ArrayList<String>() {
+		{
+			add("event");
+			add("individual");
+			add("page");
+			add("segment");
+		}
+	};
 	private static final ReportControllerResponseFactory
 		_reportControllerResponseFactory =
 			new ReportControllerResponseFactory();

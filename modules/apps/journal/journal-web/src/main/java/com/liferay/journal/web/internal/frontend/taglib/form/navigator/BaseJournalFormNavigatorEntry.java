@@ -19,7 +19,7 @@ import com.liferay.frontend.taglib.form.navigator.constants.FormNavigatorConstan
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.bean.BeanParamUtil;
+import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -27,6 +27,9 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Locale;
 
@@ -55,6 +58,46 @@ public abstract class BaseJournalFormNavigatorEntry
 		return LanguageUtil.get(locale, getKey());
 	}
 
+	protected boolean isClassNameIdDefault(JournalArticle journalArticle) {
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		HttpServletRequest httpServletRequest = serviceContext.getRequest();
+
+		PortletRequest portletRequest =
+			(PortletRequest)httpServletRequest.getAttribute(
+				JavaConstants.JAVAX_PORTLET_REQUEST);
+
+		long classNameId = BeanPropertiesUtil.getLong(
+			journalArticle, "classNameId",
+			JournalArticleConstants.CLASS_NAME_ID_DEFAULT);
+
+		if (portletRequest != null) {
+			if (ParamUtil.getLong(portletRequest, "classNameId", classNameId) <=
+					JournalArticleConstants.CLASS_NAME_ID_DEFAULT) {
+
+				return true;
+			}
+
+			return false;
+		}
+
+		String portletId = ParamUtil.getString(httpServletRequest, "p_p_id");
+
+		if (Validator.isNotNull(portletId)) {
+			classNameId = ParamUtil.getLong(
+				httpServletRequest,
+				PortalUtil.getPortletNamespace(portletId) + "classNameId",
+				classNameId);
+		}
+
+		if (classNameId <= JournalArticleConstants.CLASS_NAME_ID_DEFAULT) {
+			return true;
+		}
+
+		return false;
+	}
+
 	protected boolean isDepotOrGlobalScopeArticle(JournalArticle article) {
 		Group group = null;
 
@@ -78,19 +121,7 @@ public abstract class BaseJournalFormNavigatorEntry
 	}
 
 	protected boolean isEditDefaultValues(JournalArticle article) {
-		ServiceContext serviceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
-		HttpServletRequest httpServletRequest = serviceContext.getRequest();
-
-		PortletRequest portletRequest =
-			(PortletRequest)httpServletRequest.getAttribute(
-				JavaConstants.JAVAX_PORTLET_REQUEST);
-
-		long classNameId = BeanParamUtil.getLong(
-			article, portletRequest, "classNameId");
-
-		if (classNameId > JournalArticleConstants.CLASS_NAME_ID_DEFAULT) {
+		if (!isClassNameIdDefault(article)) {
 			return true;
 		}
 

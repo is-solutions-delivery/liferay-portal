@@ -27,6 +27,7 @@ function Pagination({
 	fdsView,
 	fdsViewsURL,
 	namespace,
+	onFDSViewUpdate,
 }: IFDSViewSectionInterface) {
 	const [listOfItemsPerPage, setListOfItemsPerPage] = useState(
 		fdsView.listOfItemsPerPage
@@ -131,7 +132,8 @@ function Pagination({
 				),
 				type: 'success',
 			});
-			setListOfItemsPerPage(itemsPerPage);
+
+			onFDSViewUpdate(responseJSON);
 		}
 		else {
 			openToast({
@@ -161,7 +163,7 @@ function Pagination({
 
 				<div className="sheet-text">
 					{Liferay.Language.get(
-						'dataset-view-pagination-description'
+						'data-set-view-pagination-description'
 					)}
 				</div>
 			</ClayLayout.SheetHeader>

@@ -14,19 +14,19 @@
 
 package com.liferay.object.field.business.type;
 
-import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
-import com.liferay.object.exception.ObjectFieldDefaultValueException;
 import com.liferay.object.exception.ObjectFieldSettingNameException;
 import com.liferay.object.exception.ObjectFieldSettingValueException;
 import com.liferay.object.field.render.ObjectFieldRenderingContext;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFieldSetting;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.extension.PropertyDefinition;
@@ -52,8 +52,23 @@ public interface ObjectFieldBusinessType {
 
 	public String getDDMFormFieldTypeName();
 
+	public default String getDDMFormFieldTypeName(boolean localized) {
+		return getDDMFormFieldTypeName();
+	}
+
 	public default String getDescription(Locale locale) {
 		return StringPool.BLANK;
+	}
+
+	public default Object getDisplayContextValue(
+			ObjectField objectField, long userId, Map<String, Object> values)
+		throws PortalException {
+
+		if (objectField.isLocalized()) {
+			return values.get(objectField.getI18nObjectFieldName());
+		}
+
+		return getValue(objectField, userId, values);
 	}
 
 	public String getLabel(Locale locale);
@@ -76,15 +91,45 @@ public interface ObjectFieldBusinessType {
 		return Collections.emptySet();
 	}
 
-	public default Set<String> getUnmodifiablObjectFieldSettingsNames() {
+	public default Set<String> getUnmodifiableObjectFieldSettingsNames() {
 		return Collections.emptySet();
 	}
 
 	public default Object getValue(
-			ObjectField objectField, Map<String, Object> values)
+			ObjectField objectField, long userId, Map<String, Object> values)
 		throws PortalException {
 
-		return values.get(objectField.getName());
+		if (!objectField.isLocalized()) {
+			return values.get(objectField.getName());
+		}
+
+		Map<String, String> localizedValues = (Map<String, String>)values.get(
+			objectField.getI18nObjectFieldName());
+
+		if (localizedValues == null) {
+			return values.get(objectField.getName());
+		}
+
+		Locale locale = LocaleThreadLocal.getThemeDisplayLocale();
+
+		if (locale == null) {
+			locale = LocaleThreadLocal.getSiteDefaultLocale();
+		}
+
+		if (locale == null) {
+			User user = GuestOrUserUtil.getGuestOrUser();
+
+			locale = user.getLocale();
+		}
+
+		String localizedValue = localizedValues.get(
+			LocaleUtil.toLanguageId(locale));
+
+		if (localizedValue != null) {
+			return localizedValue;
+		}
+
+		return StringPool.BLANK;
 	}
 
 	public default boolean isVisible(ObjectDefinition objectDefinition) {
@@ -137,17 +182,6 @@ public interface ObjectFieldBusinessType {
 			getRequiredObjectFieldSettingsNames(objectField));
 
 		if (!notAllowedObjectFieldSettingsNames.isEmpty()) {
-			if (!FeatureFlagManagerUtil.isEnabled("LPS-163716") &&
-				notAllowedObjectFieldSettingsNames.contains(
-					ObjectFieldSettingConstants.NAME_DEFAULT_VALUE)) {
-
-				throw new ObjectFieldDefaultValueException(
-					StringBundler.concat(
-						"Object field can only have a default type when the ",
-						"business type is \"",
-						ObjectFieldConstants.BUSINESS_TYPE_PICKLIST, "\""));
-			}
-
 			throw new ObjectFieldSettingNameException.NotAllowedNames(
 				objectField.getName(), notAllowedObjectFieldSettingsNames);
 		}

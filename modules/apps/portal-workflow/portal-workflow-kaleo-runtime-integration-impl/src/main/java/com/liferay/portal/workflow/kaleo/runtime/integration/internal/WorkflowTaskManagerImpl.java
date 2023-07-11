@@ -122,16 +122,12 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			Map<String, Serializable> workflowContext)
 		throws PortalException {
 
+		// TODO Temporary workaround for LPS-188796
+
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
-		List<User> assignableUsers = getAssignableUsers(workflowTaskId);
-
-		User assigneeUser = _userLocalService.getUser(assigneeUserId);
-
-		if (!assignableUsers.contains(assigneeUser) ||
-			(permissionChecker.getUserId() != userId)) {
-
+		if (permissionChecker.getUserId() != userId) {
 			throw new PrincipalException.MustHavePermission(
 				userId, WorkflowTask.class.getName(), workflowTaskId,
 				ActionKeys.VIEW);
@@ -922,6 +918,25 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 
 			for (KaleoTaskAssignment kaleoTaskAssignment :
 					kaleoTaskAssignments) {
+
+				_populateAllowedUsers(
+					actionType, allowedUsers, assignedUserId,
+					kaleoTaskAssignment, kaleoTaskInstanceToken);
+			}
+
+			// TODO Temporary workaround for LPS-188796
+
+			for (KaleoTaskAssignmentInstance kaleoTaskAssignmentInstance :
+					kaleoTaskInstanceToken.getKaleoTaskAssignmentInstances()) {
+
+				KaleoTaskAssignment kaleoTaskAssignment =
+					_kaleoTaskAssignmentLocalService.createKaleoTaskAssignment(
+						0L);
+
+				kaleoTaskAssignment.setAssigneeClassName(
+					kaleoTaskAssignmentInstance.getAssigneeClassName());
+				kaleoTaskAssignment.setAssigneeClassPK(
+					kaleoTaskAssignmentInstance.getAssigneeClassPK());
 
 				_populateAllowedUsers(
 					actionType, allowedUsers, assignedUserId,

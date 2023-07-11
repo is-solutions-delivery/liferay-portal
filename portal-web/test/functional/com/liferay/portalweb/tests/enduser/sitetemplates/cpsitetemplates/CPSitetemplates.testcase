@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -78,7 +78,6 @@ definition {
 		task ("When: User add a widget to the Site template") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			ContentPages.gotoPageEditor();
@@ -150,7 +149,7 @@ definition {
 	@priority = 4
 	test AdminCanControlWhenPropagateSiteTemplateChanges {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "CPSitetemplates#AdminCanControlWhenPropagateSiteTemplateChanges";
+		property test.liferay.virtual.instance = "false";
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
@@ -170,7 +169,6 @@ definition {
 
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			ContentPages.gotoPageEditor();
@@ -209,7 +207,6 @@ definition {
 
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			ContentPages.gotoPageEditor();
@@ -236,7 +233,7 @@ definition {
 	@priority = 5
 	test AssertAutomaticSiteTemplatePropagation {
 		property database.types = "mysql";
-		property test.name.skip.portal.instance = "CPSitetemplates#AssertAutomaticSiteTemplatePropagation";
+		property test.liferay.virtual.instance = "false";
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 		var sQLStatement = "SELECT * FROM Layout WHERE friendlyURL = '/test';";
@@ -277,7 +274,6 @@ definition {
 
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 		}
 
@@ -354,7 +350,7 @@ definition {
 	@priority = 4
 	test AssertPartialSiteTemplatePropagation {
 		property database.types = "mysql";
-		property test.name.skip.portal.instance = "CPSitetemplates#AssertPartialSiteTemplatePropagation";
+		property test.liferay.virtual.instance = "false";
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
@@ -367,12 +363,9 @@ definition {
 
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Widget Page Name",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			Portlet.addPG(portletName = "Asset Publisher");
-
-			Close.closeAndSelectWindow(locator1 = "Site Templates - ${siteName}");
 		}
 
 		task ("And: Adds a new site based on the template") {
@@ -395,7 +388,6 @@ definition {
 		task ("And: Adds a portlet on the widget page of the site template") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Widget Page Name",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			Portlet.addPG(portletName = "Web Content Display");
@@ -435,7 +427,6 @@ definition {
 		task ("When: User adds a portlet to the home page of the template") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			ContentPages.gotoPageEditor();
@@ -559,8 +550,6 @@ definition {
 				pageName = "Page B",
 				siteTemplateName = "Site Template Name");
 
-			SiteTemplatesNavigator.openSiteTemplatesAdmin();
-
 			SiteTemplates.addChildPageViaSiteTemplateCP(
 				childPageName = "Child Page A",
 				parentPageName = "Page A",
@@ -569,8 +558,6 @@ definition {
 
 			PageEditor.publish();
 
-			SiteTemplatesNavigator.openSiteTemplatesAdmin();
-
 			SiteTemplates.addChildPageViaSiteTemplateCP(
 				childPageName = "Child Page B",
 				parentPageName = "Page B",
@@ -578,7 +565,9 @@ definition {
 		}
 
 		task ("And: Navigate to the site to trigger the propagation") {
-			Navigator.openSiteURL(siteName = "Site Name");
+			Navigator.gotoSitePage(
+				pageName = "Home",
+				siteName = "Site Name");
 
 			Refresh();
 		}
@@ -596,7 +585,7 @@ definition {
 	@priority = 4
 	test AssertSiteTemplatePropagationOnPrivatePage {
 		property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
-		property test.name.skip.portal.instance = "CPSitetemplates#AssertSiteTemplatePropagationOnPrivatePage";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: Add new site template and a new private site based on this site template") {
 			SiteTemplates.addCP(siteTemplateName = "Site Template Name");
@@ -660,7 +649,7 @@ definition {
 	@priority = 5
 	test AssertSiteTemplatePropagationWhenOpeningSite {
 		property database.types = "mysql";
-		property test.name.skip.portal.instance = "CPSitetemplates#AssertSiteTemplatePropagationWhenOpeningSite";
+		property test.liferay.virtual.instance = "false";
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 		var sQLStatement = "SELECT * FROM Layout WHERE friendlyURL = '/test';";
@@ -685,7 +674,6 @@ definition {
 		task ("When: User visits the Site Template and verifies that the page is not present on the Site via looking up the database") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${sQLStatement});
@@ -788,10 +776,11 @@ definition {
 
 			PageEditor.publish();
 
-			ContentPages.addChildPage(
+			SiteTemplates.addChildPageViaSiteTemplateCP(
 				childPageName = "Child Content Page",
 				parentPageName = "Parent Content Page",
-				sitePageType = "Blank");
+				sitePageType = "Content Page",
+				siteTemplateName = "Site Template Name");
 
 			SelectFrameTop();
 
@@ -958,7 +947,7 @@ definition {
 	@description = "This is a use case for LPS-98548. User can import site templates to virtual instances and delete them."
 	@priority = 4
 	test DeleteSiteTemplateImportedToVirtualInstance {
-		property test.name.skip.portal.instance = "CPSitetemplates#DeleteSiteTemplateImportedToVirtualInstance";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User adds new site template and a new site based on this site template") {
 			SiteTemplates.addCP(
@@ -1101,7 +1090,7 @@ definition {
 	@description = "Information on site template admin page should be localized corresponding to the chosen language."
 	@priority = 4
 	test LocalizeSiteTemplatesAdmin {
-		property test.name.skip.portal.instance = "CPSitetemplates#LocalizeSiteTemplatesAdmin";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: User adds new site ") {
 			SiteTemplates.addCP(siteTemplateName = "Site Template Name");
@@ -1226,7 +1215,7 @@ definition {
 	@priority = 5
 	test ResetPageChanges {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "CPSitetemplates#ResetPageChanges";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Training";
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
@@ -1242,22 +1231,18 @@ definition {
 		task ("And: Adds a portlet to the page then place it on the second column") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Site Page Name",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			Portlet.addPG(portletName = "Asset Publisher");
 
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Site Page Name",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			Portlet.dragAndDropPortletToColumnPG(
 				columnNumberFrom = 1,
 				columnNumberTo = 2,
 				portletName = "Asset Publisher");
-
-			Close.closeAndSelectWindow(locator1 = "Site Templates - ${siteName}");
 		}
 
 		task ("And: Adds a site based on the site template") {
@@ -1319,7 +1304,7 @@ definition {
 	@description = "This is a use case for LPS-166286. TC-5: Verify that the LAR from the Site Template export is cached, so different Sites can reuse it for content page."
 	@priority = 4
 	test SiteCanReuseCachedSiteTemplateLarFileForContentPage {
-		property test.name.skip.portal.instance = "CPSitetemplates#SiteCanReuseCachedSiteTemplateLarFileForContentPage";
+		property test.liferay.virtual.instance = "false";
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
@@ -1354,7 +1339,6 @@ definition {
 		task ("When: Add an AP widget to home page in Site template and navigate to Site Name A for triggering the propagation") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			ContentPages.gotoPageEditor();
@@ -1363,15 +1347,13 @@ definition {
 
 			PageEditor.publish();
 
-			Close.closeAndSelectWindow(locator1 = "Site Templates - ${siteName}");
-
 			Navigator.openSiteURL(siteName = "Site Name A");
 
 			Refresh();
 		}
 
 		task ("And: Navigate to the Site Name B to trigger the propagation") {
-			Navigator.openSitePage(
+			Navigator.gotoSitePage(
 				pageName = "Home",
 				siteName = "Site Name B");
 
@@ -1388,7 +1370,7 @@ definition {
 	@description = "This is a use case for LPS-166286. TC-4: Verify that the LAR from the Site Template export is cached, so different Sites can reuse it for widget page."
 	@priority = 4
 	test SiteCanReuseCachedSiteTemplateLarFileForWidgetPage {
-		property test.name.skip.portal.instance = "CPSitetemplates#SiteCanReuseCachedSiteTemplateLarFileForWidgetPage";
+		property test.liferay.virtual.instance = "false";
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
@@ -1427,12 +1409,9 @@ definition {
 		task ("When: Add a WCD portlet to widget page in Site template and navigate to Site Name A for triggering the propagation") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Page A",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			Portlet.addPG(portletName = "Web Content Display");
-
-			Close.closeAndSelectWindow(locator1 = "Site Templates - ${siteName}");
 
 			Navigator.openSitePage(
 				pageName = "Page A",
@@ -1520,7 +1499,6 @@ definition {
 		task ("And: Disables propagation of the template") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			SiteTemplates.disablePropagationPG();
@@ -1532,8 +1510,6 @@ definition {
 			PageEditor.addWidget(portletName = "Asset Publisher");
 
 			PageEditor.publish();
-
-			Close.closeAndSelectWindow(locator1 = "Site Templates - ${siteName}");
 		}
 
 		task ("Then: The portlet won't appear on the new site") {
@@ -1547,7 +1523,6 @@ definition {
 		task ("When: User enables propagation of the template") {
 			SiteTemplatesNavigator.gotoSiteTemplatesPage(
 				pageName = "Home",
-				siteName = ${siteName},
 				siteTemplateName = "Site Template Name");
 
 			SiteTemplates.enablePropagationPG();
@@ -1669,7 +1644,7 @@ definition {
 	@priority = 4
 	test ViewCanNotAccesseSiteLinkInURLCollisionWithoutUserAccessSite {
 		property custom.properties = "feature.flag.LPS-174431=true";
-		property test.name.skip.portal.instance = "CPSitetemplates#ViewCanNotAccesseSiteLinkInURLCollisionWithoutUserAccessSite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given User adds pages with friendly URL collision in new site and site template") {
 			SiteTemplates.addCP(siteTemplateName = "Site Template Name");
@@ -1740,7 +1715,7 @@ definition {
 	@priority = 4
 	test ViewCanNotAccesseSiteLinkInURLCollisionWithoutUserAccessSiteInSitePage {
 		property custom.properties = "feature.flag.LPS-174434=true";
-		property test.name.skip.portal.instance = "CPSitetemplates#ViewCanNotAccesseSiteLinkInURLCollisionWithoutUserAccessSite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given User adds pages with friendly URL collision in new site and site template") {
 			SiteTemplates.addCP(
@@ -1976,7 +1951,8 @@ definition {
 		}
 
 		task ("When User adds page with Friendly URL conflicts in site template") {
-			SiteTemplates.addSitePageWithConfirmViaSiteTemplateCP(
+			SiteTemplates.addSitePageViaSiteTemplateCP(
+				conflictPage = "true",
 				pageName = "Page1",
 				siteTemplateName = "Site Template Name");
 		}
@@ -1998,7 +1974,7 @@ definition {
 		task ("When: User adds javascript code to the site") {
 			SiteTemplates.gotoSettingsCP(siteTemplateName = "Site Template Name");
 
-			SiteTemplates.AddSiteTemplateJavaScript(
+			SiteTemplates.addSiteTemplateJavaScript(
 				javaScript = ${javascript},
 				pageSet = "true");
 		}
@@ -2179,7 +2155,8 @@ definition {
 		}
 
 		task ("When User adds page with same Friendly URL conflicts in site template") {
-			SiteTemplates.addSitePageWithConfirmViaSiteTemplateCP(
+			SiteTemplates.addSitePageViaSiteTemplateCP(
+				conflictPage = "true",
 				pageName = "Page1",
 				siteTemplateName = "Site Template Name");
 
@@ -2295,7 +2272,8 @@ definition {
 		}
 
 		task ("When User adds child page with Friendly URL conflicts in site template") {
-			SiteTemplates.addSitePageWithConfirmViaSiteTemplateCP(
+			SiteTemplates.addSitePageViaSiteTemplateCP(
+				conflictPage = "true",
 				pageName = "Page1",
 				siteTemplateName = "Site Template Name");
 

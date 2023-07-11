@@ -4,10 +4,10 @@ import Card from 'shared/components/Card';
 import ClayButton from '@clayui/button';
 import ClayLink from '@clayui/link';
 import CrossPageSelect from 'shared/hoc/CrossPageSelect';
+import Loading from 'shared/components/Loading';
 import Nav from 'shared/components/Nav';
 import NoResultsDisplay from 'shared/components/NoResultsDisplay';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import StatesRenderer from 'shared/components/states-renderer/StatesRenderer';
 import URLConstants from 'shared/util/url-constants';
 import {
@@ -192,7 +192,7 @@ const KnownIndividuals: React.FC<IKnownIndividualsProps> = ({
 		if (dataSourceLoading || isNil(dataSourceData?.total)) {
 			return (
 				<NoResultsDisplay>
-					<Spinner key='DATA_SOURCE_SPINNER' overlay />
+					<Loading key='LOADING' />
 				</NoResultsDisplay>
 			);
 		} else if (dataSourceData?.total === 0) {

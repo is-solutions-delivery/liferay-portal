@@ -7,8 +7,8 @@ import ClayIcon from '@clayui/icon';
 import ClayLink from '@clayui/link';
 import ErrorDisplay from 'shared/components/ErrorDisplay';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import {Account} from 'shared/util/records';
 import {autoCancel, hasRequest} from 'shared/util/request-decorator';
 import {buildLegendItems} from 'shared/util/activitiesDeprecated';
@@ -104,7 +104,7 @@ export default class ActivitiesCard extends React.Component {
 		} = this;
 
 		if (loading) {
-			return <Spinner key='LOADING' spacer />;
+			return <Loading key='LOADING' />;
 		} else if (error) {
 			return (
 				<ErrorDisplay

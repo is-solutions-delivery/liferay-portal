@@ -26,10 +26,9 @@ import com.liferay.osb.faro.engine.client.util.OrderByField;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.portal.kernel.util.ListUtil;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -67,18 +66,13 @@ public class MockContactsEngineClientImpl
 			faroProject, field.getName(), field.getValue(), query, fields, cur,
 			delta, orderByFields);
 
-		List<Individual> individuals = results.getItems();
-
-		Stream<Individual> stream = individuals.stream();
-
-		stream = stream.filter(
+		List<Individual> individuals = ListUtil.filter(
+			results.getItems(),
 			curIndividual -> {
 				String id = curIndividual.getId();
 
 				return !id.equals(individual.getId());
 			});
-
-		individuals = stream.collect(Collectors.toList());
 
 		return new Results<>(individuals, individuals.size());
 	}
@@ -130,6 +124,14 @@ public class MockContactsEngineClientImpl
 	}
 
 	@Override
+	public long getIndividualsCreatedSinceCount(
+		FaroProject faroProject, Date startDate) {
+
+		return contactsEngineClient.getIndividualsCreatedSinceCount(
+			faroProject, startDate);
+	}
+
+	@Override
 	public Results<Individual> getSimilarIndividuals(
 		FaroProject faroProject, String individualId, String query,
 		List<String> fields, int cur, int delta,
@@ -153,18 +155,13 @@ public class MockContactsEngineClientImpl
 			faroProject, field.getName(), field.getValue(), query, fields, cur,
 			delta, orderByFields);
 
-		List<Individual> individuals = results.getItems();
-
-		Stream<Individual> stream = individuals.stream();
-
-		stream = stream.filter(
+		List<Individual> individuals = ListUtil.filter(
+			results.getItems(),
 			curIndividual -> {
 				String id = curIndividual.getId();
 
 				return !id.equals(individual.getId());
 			});
-
-		individuals = stream.collect(Collectors.toList());
 
 		return new Results<>(individuals, individuals.size());
 	}

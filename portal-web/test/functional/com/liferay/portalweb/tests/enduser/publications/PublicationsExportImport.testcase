@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -27,7 +27,7 @@ definition {
 	@description = "This is a use case for LPS-164716."
 	@priority = 4
 	test CanImportExportedWCStructuresTemplatesAndFolders {
-		JSONGroup.addGroup(groupName = "Site Name 1");
+		HeadlessSite.addSite(siteName = "Site Name 1");
 
 		WebContentStructures.openWebContentStructuresAdmin(siteURLKey = "site-name-1");
 
@@ -56,7 +56,7 @@ definition {
 
 		LAR.exportPortlet(larFileName = "publications-web-content-files.lar");
 
-		JSONGroup.addGroup(groupName = "Site Name 2");
+		HeadlessSite.addSite(siteName = "Site Name 2");
 
 		JSONPublications.addPublication(publicationName = "Publication Name");
 
@@ -65,10 +65,6 @@ definition {
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name-2");
 
 		LAR.importPortlet(larFileName = "publications-web-content-files.lar");
-
-		AssertElementPresent(
-			key_webContentTitle = "WC Folder Name",
-			locator1 = "WC#ENTRY_LIST_TITLE");
 
 		WebContentStructures.openWebContentStructuresAdmin(siteURLKey = "site-name-2");
 

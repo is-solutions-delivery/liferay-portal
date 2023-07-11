@@ -331,6 +331,7 @@
 		<column name="CPInstanceId" type="long" />
 		<column name="CPMeasurementUnitId" type="long" />
 		<column name="CProductId" type="long" />
+		<column name="customerCommerceOrderItemId" type="long" />
 		<column name="parentCommerceOrderItemId" type="long" />
 		<column name="shippingAddressId" type="long" />
 		<column name="decimalQuantity" type="BigDecimal" />
@@ -360,6 +361,7 @@
 		<column name="maxSubscriptionCycles" type="long" />
 		<column localized="true" name="name" type="String" />
 		<column name="priceManuallyAdjusted" type="boolean" />
+		<column name="priceOnApplication" type="boolean" />
 		<column name="printedNote" type="String" />
 		<column name="promoPrice" type="BigDecimal" />
 		<column name="promoPriceWithTaxAmount" type="BigDecimal" />
@@ -400,6 +402,9 @@
 		</finder>
 		<finder name="CProductId" return-type="Collection">
 			<finder-column name="CProductId" />
+		</finder>
+		<finder name="CustomerCommerceOrderItemId" return-type="Collection">
+			<finder-column name="customerCommerceOrderItemId" />
 		</finder>
 		<finder name="ParentCommerceOrderItemId" return-type="Collection">
 			<finder-column name="parentCommerceOrderItemId" />

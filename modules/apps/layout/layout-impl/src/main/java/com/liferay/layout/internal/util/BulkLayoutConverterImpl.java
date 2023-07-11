@@ -196,7 +196,6 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 
 					dynamicQuery.add(property.eq(false));
 				});
-
 			actionableDynamicQuery.setPerformActionMethod(
 				(Layout layout) -> {
 					UnicodeProperties typeSettingsUnicodeProperties =
@@ -278,7 +277,7 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 
 			draftLayout.setStatus(WorkflowConstants.STATUS_APPROVED);
 
-			_layoutLocalService.updateLayout(draftLayout);
+			draftLayout = _layoutLocalService.updateLayout(draftLayout);
 
 			layout = _layoutLocalService.getLayout(layout.getPlid());
 

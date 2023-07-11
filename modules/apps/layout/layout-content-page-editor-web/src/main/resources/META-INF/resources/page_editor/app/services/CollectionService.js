@@ -65,6 +65,7 @@ export default {
 		collection,
 		displayAllItems,
 		displayAllPages,
+		externalReferenceCode,
 		languageId,
 		listItemStyle,
 		listStyle,
@@ -77,27 +78,36 @@ export default {
 		showAllItems,
 		templateKey,
 	}) {
+		const body = {
+			activePage,
+			classNameId,
+			displayAllItems,
+			displayAllPages,
+			languageId,
+			layoutObjectReference: JSON.stringify(collection),
+			listItemStyle,
+			listStyle,
+			numberOfItems,
+			numberOfItemsPerPage,
+			numberOfPages,
+			paginationType,
+			segmentsExperienceId,
+			showAllItems,
+			templateKey,
+		};
+
+		if (classPK) {
+			body.classPK = classPK;
+		}
+
+		if (externalReferenceCode) {
+			body.externalReferenceCode = externalReferenceCode;
+		}
+
 		return serviceFetch(
 			config.getCollectionFieldURL,
 			{
-				body: {
-					activePage,
-					classNameId,
-					classPK,
-					displayAllItems,
-					displayAllPages,
-					languageId,
-					layoutObjectReference: JSON.stringify(collection),
-					listItemStyle,
-					listStyle,
-					numberOfItems,
-					numberOfItemsPerPage,
-					numberOfPages,
-					paginationType,
-					segmentsExperienceId,
-					showAllItems,
-					templateKey,
-				},
+				body,
 			},
 			onNetworkStatus
 		);

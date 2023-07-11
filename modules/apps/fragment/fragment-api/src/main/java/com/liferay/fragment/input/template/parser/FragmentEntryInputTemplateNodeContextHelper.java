@@ -21,19 +21,28 @@ import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.info.exception.InfoFormValidationException;
 import com.liferay.info.field.InfoField;
+import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.InfoFieldType;
 import com.liferay.info.field.type.LongTextInfoFieldType;
 import com.liferay.info.field.type.MultiselectInfoFieldType;
 import com.liferay.info.field.type.NumberInfoFieldType;
+import com.liferay.info.field.type.OptionInfoFieldType;
 import com.liferay.info.field.type.RelationshipInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.InfoItemFieldValues;
+import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.localized.InfoLocalizedValue;
+import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.file.criterion.FileItemSelectorCriterion;
+import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
+import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -71,11 +80,15 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 	public FragmentEntryInputTemplateNodeContextHelper(
 		String defaultInputLabel, DLAppLocalService dlAppLocalService,
 		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
+		InfoItemServiceRegistry infoItemServiceRegistry,
+		InfoSearchClassMapperRegistry infoSearchClassMapperRegistry,
 		ItemSelector itemSelector) {
 
 		_defaultInputLabel = defaultInputLabel;
 		_dlAppLocalService = dlAppLocalService;
 		_fragmentEntryConfigurationParser = fragmentEntryConfigurationParser;
+		_infoItemServiceRegistry = infoItemServiceRegistry;
+		_infoSearchClassMapperRegistry = infoSearchClassMapperRegistry;
 		_itemSelector = itemSelector;
 	}
 
@@ -176,19 +189,41 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		String label = StringPool.BLANK;
 		String value = StringPool.BLANK;
 
-		if (infoFieldType instanceof SelectInfoFieldType) {
-			List<SelectInfoFieldType.Option> options =
-				(List<SelectInfoFieldType.Option>)infoField.getAttribute(
-					SelectInfoFieldType.OPTIONS);
+		if (infoFieldType instanceof MultiselectInfoFieldType) {
+			List<OptionInfoFieldType> optionInfoFieldTypes =
+				(List<OptionInfoFieldType>)infoField.getAttribute(
+					MultiselectInfoFieldType.OPTIONS);
 
-			if (options == null) {
-				options = Collections.emptyList();
+			if (optionInfoFieldTypes == null) {
+				optionInfoFieldTypes = Collections.emptyList();
 			}
 
-			for (SelectInfoFieldType.Option option : options) {
-				if (option.isActive()) {
-					label = option.getLabel(locale);
-					value = option.getValue();
+			for (OptionInfoFieldType optionInfoFieldType :
+					optionInfoFieldTypes) {
+
+				if (optionInfoFieldType.isActive()) {
+					label = optionInfoFieldType.getLabel(locale);
+					value = optionInfoFieldType.getValue();
+
+					break;
+				}
+			}
+		}
+		else if (infoFieldType instanceof SelectInfoFieldType) {
+			List<OptionInfoFieldType> optionInfoFieldTypes =
+				(List<OptionInfoFieldType>)infoField.getAttribute(
+					SelectInfoFieldType.OPTIONS);
+
+			if (optionInfoFieldTypes == null) {
+				optionInfoFieldTypes = Collections.emptyList();
+			}
+
+			for (OptionInfoFieldType optionInfoFieldType :
+					optionInfoFieldTypes) {
+
+				if (optionInfoFieldType.isActive()) {
+					label = optionInfoFieldType.getLabel(locale);
+					value = optionInfoFieldType.getValue();
 
 					break;
 				}
@@ -202,6 +237,11 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		if (infoFormParameterMap != null) {
 			label = infoFormParameterMap.get(infoField.getName() + "-label");
 			value = infoFormParameterMap.get(infoField.getName());
+		}
+		else {
+			value = GetterUtil.getString(
+				_getValue(httpServletRequest, infoField.getName(), locale),
+				value);
 		}
 
 		InputTemplateNode inputTemplateNode = new InputTemplateNode(
@@ -306,29 +346,23 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			}
 		}
 		else if (infoField.getInfoFieldType() instanceof
+					LongTextInfoFieldType) {
+
+			inputTemplateNode.addAttribute(
+				"maxLength",
+				infoField.getAttribute(LongTextInfoFieldType.MAX_LENGTH));
+		}
+		else if (infoField.getInfoFieldType() instanceof
 					MultiselectInfoFieldType) {
 
-			List<InputTemplateNode.Option> options = new ArrayList<>();
-
-			List<MultiselectInfoFieldType.Option>
-				multiselectInfoFieldTypeOptions =
-					(List<MultiselectInfoFieldType.Option>)
-						infoField.getAttribute(
-							MultiselectInfoFieldType.OPTIONS);
-
-			if (multiselectInfoFieldTypeOptions == null) {
-				multiselectInfoFieldTypeOptions = Collections.emptyList();
-			}
-
-			for (MultiselectInfoFieldType.Option option :
-					multiselectInfoFieldTypeOptions) {
-
-				options.add(
-					new InputTemplateNode.Option(
-						option.getLabel(locale), option.getValue()));
-			}
-
-			inputTemplateNode.addAttribute("options", options);
+			inputTemplateNode.addAttribute(
+				"options",
+				TransformUtil.transform(
+					(List<OptionInfoFieldType>)infoField.getAttribute(
+						MultiselectInfoFieldType.OPTIONS),
+					optionInfoFieldType -> new InputTemplateNode.Option(
+						optionInfoFieldType.getLabel(locale),
+						optionInfoFieldType.getValue())));
 		}
 		else if (infoField.getInfoFieldType() instanceof NumberInfoFieldType) {
 			String dataType = "integer";
@@ -387,33 +421,34 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		else if (infoField.getInfoFieldType() instanceof SelectInfoFieldType) {
 			List<InputTemplateNode.Option> options = new ArrayList<>();
 
-			List<SelectInfoFieldType.Option> selectInfoFieldTypeOptions =
-				(List<SelectInfoFieldType.Option>)infoField.getAttribute(
+			List<OptionInfoFieldType> optionInfoFieldTypes =
+				(List<OptionInfoFieldType>)infoField.getAttribute(
 					SelectInfoFieldType.OPTIONS);
 
-			if (selectInfoFieldTypeOptions == null) {
-				selectInfoFieldTypeOptions = Collections.emptyList();
+			if (optionInfoFieldTypes == null) {
+				optionInfoFieldTypes = Collections.emptyList();
 			}
 
-			for (SelectInfoFieldType.Option option :
-					selectInfoFieldTypeOptions) {
+			for (OptionInfoFieldType optionInfoFieldType :
+					optionInfoFieldTypes) {
 
 				options.add(
 					new InputTemplateNode.Option(
-						option.getLabel(locale), option.getValue()));
+						optionInfoFieldType.getLabel(locale),
+						optionInfoFieldType.getValue()));
 
-				if ((value != null) && value.equals(option.getValue())) {
+				if ((value != null) &&
+					value.equals(optionInfoFieldType.getValue())) {
+
 					inputTemplateNode.addAttribute(
-						"selectedOptionLabel", option.getLabel(locale));
+						"selectedOptionLabel",
+						optionInfoFieldType.getLabel(locale));
 				}
 			}
 
 			inputTemplateNode.addAttribute("options", options);
 		}
-		else if (infoField.getInfoFieldType() instanceof
-					LongTextInfoFieldType ||
-				 infoField.getInfoFieldType() instanceof TextInfoFieldType) {
-
+		else if (infoField.getInfoFieldType() instanceof TextInfoFieldType) {
 			inputTemplateNode.addAttribute(
 				"maxLength",
 				infoField.getAttribute(TextInfoFieldType.MAX_LENGTH));
@@ -497,6 +532,48 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			"1");
 	}
 
+	private String _getValue(
+		HttpServletRequest httpServletRequest, String infoFieldName,
+		Locale locale) {
+
+		if (httpServletRequest == null) {
+			return null;
+		}
+
+		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
+			(LayoutDisplayPageObjectProvider<?>)httpServletRequest.getAttribute(
+				LayoutDisplayPageWebKeys.LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
+
+		if (layoutDisplayPageObjectProvider == null) {
+			return null;
+		}
+
+		InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
+			_infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFieldValuesProvider.class,
+				_infoSearchClassMapperRegistry.getClassName(
+					layoutDisplayPageObjectProvider.getClassName()));
+
+		if (infoItemFieldValuesProvider == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to get info item form provider for class " +
+						layoutDisplayPageObjectProvider.getClassName());
+			}
+
+			return null;
+		}
+
+		InfoItemFieldValues infoItemFieldValues =
+			infoItemFieldValuesProvider.getInfoItemFieldValues(
+				layoutDisplayPageObjectProvider.getDisplayObject());
+
+		InfoFieldValue<?> infoFieldValue =
+			infoItemFieldValues.getInfoFieldValue(infoFieldName);
+
+		return (String)infoFieldValue.getValue(locale);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		FragmentEntryInputTemplateNodeContextHelper.class);
 
@@ -504,6 +581,8 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 	private final DLAppLocalService _dlAppLocalService;
 	private final FragmentEntryConfigurationParser
 		_fragmentEntryConfigurationParser;
+	private final InfoItemServiceRegistry _infoItemServiceRegistry;
+	private final InfoSearchClassMapperRegistry _infoSearchClassMapperRegistry;
 	private final ItemSelector _itemSelector;
 
 }

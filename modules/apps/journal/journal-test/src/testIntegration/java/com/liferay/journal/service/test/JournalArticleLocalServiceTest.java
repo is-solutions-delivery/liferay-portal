@@ -559,7 +559,7 @@ public class JournalArticleLocalServiceTest {
 
 		article.setDDMTemplateKey(ddmTemplate.getTemplateKey());
 
-		_journalArticleLocalService.updateJournalArticle(article);
+		article = _journalArticleLocalService.updateJournalArticle(article);
 
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
@@ -615,7 +615,7 @@ public class JournalArticleLocalServiceTest {
 
 		article.setDDMTemplateKey(ddmTemplate.getTemplateKey());
 
-		_journalArticleLocalService.updateJournalArticle(article);
+		article = _journalArticleLocalService.updateJournalArticle(article);
 
 		JournalArticleDisplay articleDisplay =
 			_journalArticleLocalService.getArticleDisplay(
@@ -1047,14 +1047,13 @@ public class JournalArticleLocalServiceTest {
 
 		Locale locale = _portal.getSiteDefaultLocale(group.getGroupId());
 
-		String friendlyURL = _friendlyURLNormalizer.normalizeWithPeriods(
+		String friendlyURL = _friendlyURLNormalizer.normalize(
 			StringBundler.concat(
 				RandomTestUtil.randomString(5), StringPool.PERIOD,
 				RandomTestUtil.randomString(5), StringPool.SLASH,
 				RandomTestUtil.randomString(5)));
 
-		Assert.assertTrue(friendlyURL.contains(StringPool.DASH));
-		Assert.assertFalse(friendlyURL.contains(StringPool.PERIOD));
+		Assert.assertTrue(friendlyURL.contains(StringPool.PERIOD));
 		Assert.assertTrue(friendlyURL.contains(StringPool.SLASH));
 
 		Map<Locale, String> friendlyURLMap = journalArticle.getFriendlyURLMap();

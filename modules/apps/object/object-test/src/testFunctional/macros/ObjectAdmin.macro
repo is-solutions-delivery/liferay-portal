@@ -119,6 +119,7 @@ definition {
 			outputOption = ${outputOption},
 			picklistName = ${picklistName},
 			showFilesInDocumentsAndMedia = ${showFilesInDocumentsAndMedia},
+			timeStorageOption = ${timeStorageOption},
 			userEmailAddress = ${userEmailAddress},
 			userPassword = ${userPassword});
 	}
@@ -138,6 +139,16 @@ definition {
 
 		if (isSet(fieldType)) {
 			ObjectField.selectType(fieldType = ${fieldType});
+
+			if (${fieldType} == "Date and Time") {
+				Click(
+					key_sorting = ${sorting},
+					locator1 = "ObjectCustomViews#EDIT_SORTING");
+
+				Click(
+					key_fieldType = ${fieldTimeStorage},
+					locator1 = "ObjectField#TYPE_OPTION");
+			}
 
 			if (${fieldType} == "Attachment") {
 				Click(locator1 = "ObjectField#REQUEST_FILES_INPUT");
@@ -372,6 +383,20 @@ definition {
 			userPassword = ${userPassword});
 	}
 
+	macro addObjectWithStorageType {
+		SelectFrame(locator1 = "ObjectCustomViews#VIEW_MODAL_CONTENT");
+
+		ObjectAdmin.addNewObject(
+			fieldLabelName = ${fieldLabelName},
+			pluralLabelName = ${pluralLabelName});
+
+		Click.clickNoMouseOver(
+			key_storageOption = ${storageType},
+			locator1 = "CreateObject#STORAGE_TYPE_OPTION");
+
+		PortletEntry.save();
+	}
+
 	macro addTabFieldsOnLayout {
 		LexiconEntry.gotoAddNoSelectFrame();
 
@@ -399,7 +424,7 @@ definition {
 				locator1 = "Button#TAB_SUBMIT_BTN");
 
 			if (${isCollapsible} == "Yes") {
-				Check.checkToggleSwitch(locator1 = "CreateObject#TOGGLE_COLLAPSIBLE");
+				Check.checkToggleSwitch(locator1 = "ObjectCustomValidation#ACTIVE_VALIDATION_TOGGLE");
 			}
 
 			if (isSet(fieldList)) {
@@ -840,7 +865,9 @@ definition {
 			key_objectLabel = ${relationshipLabel},
 			locator1 = "ObjectAdmin#OBJECT_KEBAB_MENU");
 
-		MenuItem.clickNoError(menuItem = "Delete");
+		ClickNoError(
+			key_kebabOption = "Delete",
+			locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
 
 		SelectFrame(locator1 = "ObjectCustomViews#VIEW_MODAL_CONTENT");
 
@@ -918,9 +945,8 @@ definition {
 			value1 = ${externalReferenceCode});
 
 		Click(
-			key_indexNumber = 2,
-			key_text = "Save",
-			locator1 = "Button#ANY_N");
+			key_tab = "Save",
+			locator1 = "Button#TAB_SUBMIT_BTN");
 	}
 
 	macro editObjectAction {
@@ -1161,7 +1187,9 @@ definition {
 			key_objectLabel = ${viewEntry},
 			locator1 = "ObjectAdmin#OBJECT_KEBAB_MENU");
 
-		MenuItem.clickNoError(menuItem = "View");
+		ClickNoError(
+			key_kebabOption = "Edit",
+			locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
 	}
 
 	macro goToActionsTab {
@@ -1302,7 +1330,9 @@ definition {
 	}
 
 	macro openObjectAdmin {
-		Navigator.openSpecificURL(url = "/group/guest/~/control_panel/manage?p_p_id=com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet");
+		Navigator.openWithAppendToBaseURL(
+			baseURL = ${baseURL},
+			urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet");
 	}
 
 	macro openSubmissions {
@@ -1389,7 +1419,9 @@ definition {
 
 		Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 
-		MenuItem.click(menuItem = ${kebabOption});
+		ClickNoError(
+			key_kebabOption = ${kebabOption},
+			locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
 	}
 
 	macro selectMySite {
@@ -1421,7 +1453,9 @@ definition {
 			key_objectLabel = ${objectLabel},
 			locator1 = "ObjectAdmin#OBJECT_KEBAB_MENU");
 
-		MenuItem.click(menuItem = ${kebabOption});
+		ClickNoError(
+			key_kebabOption = ${kebabOption},
+			locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
 	}
 
 	macro setAccountRestrictionViaAPI {
@@ -1486,6 +1520,71 @@ definition {
 
 			AssertElementPresent(locator1 = "ObjectAdmin#SIDE_PANEL_TITLE");
 		}
+	}
+
+	macro viewObjectAction {
+		ObjectAdmin.goToActionDetails(viewEntry = ${viewEntry});
+
+		ObjectAdmin.viewDetails();
+
+		SelectFrame.selectFrameNoLoading(locator1 = "ObjectAction#IFRAME_SIDE_PANEL");
+
+		if (isSet(actionLabel)) {
+			AssertElementPresent(
+				locator1 = "ObjectAdmin#ACTION_LABEL_FIELD",
+				value1 = ${actionLabel});
+		}
+
+		if (isSet(actionName)) {
+			AssertElementPresent(
+				locator1 = "ObjectAdmin#ACTION_NAME_FIELD",
+				value1 = ${actionName});
+		}
+
+		if (isSet(actionDescription)) {
+			AssertElementPresent(
+				locator1 = "ObjectAdmin#ACTION_DESCRIPTION_FIELD",
+				value1 = ${actionDescription});
+		}
+
+		if (isSet(active)) {
+			if (${active} == "true") {
+				CreateObject.checkToggleActive();
+			}
+			else if (${active} == "false") {
+				CreateObject.checkToggleInactive();
+			}
+		}
+
+		Click(
+			key_tabName = "Action Builder",
+			locator1 = "ObjectAction#TAB_GENERIC");
+
+		if (isSet(whenAction)) {
+			WaitForElementPresent(
+				locator1 = "ObjectAction#SELECT_TRIGGER_VALUE",
+				value1 = ${whenAction});
+		}
+
+		if (isSet(inputExpression)) {
+			WaitForElementPresent(
+				locator1 = "ObjectAction#INPUT_EXPRESSION_VALUE",
+				value1 = ${inputExpression});
+		}
+
+		if (isSet(thenAction)) {
+			WaitForElementPresent(
+				locator1 = "ObjectAction#SELECT_ACTION_TYPE_VALUE",
+				value1 = ${thenAction});
+		}
+
+		if (${thenAction} == "Notification") {
+			WaitForElementPresent(
+				locator1 = "ObjectAction#SELECT_OPTION_TYPE_VALUE",
+				value1 = ${notificationName});
+		}
+
+		Button.clickSave();
 	}
 
 	macro viewObjectPresentOnSite {

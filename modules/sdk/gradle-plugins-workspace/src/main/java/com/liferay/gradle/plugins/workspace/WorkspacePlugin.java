@@ -44,6 +44,7 @@ import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
+import org.gradle.api.plugins.PluginAware;
 
 /**
  * @author David Truong
@@ -61,7 +62,7 @@ public class WorkspacePlugin implements Plugin<Settings> {
 		Gradle gradle = settings.getGradle();
 		File rootDir = settings.getRootDir();
 
-		_applyPlugins(settings);
+		_applyPlugins(settings, settings);
 
 		final WorkspaceExtension workspaceExtension = _addWorkspaceExtension(
 			settings);
@@ -84,6 +85,8 @@ public class WorkspacePlugin implements Plugin<Settings> {
 					Plugin<Project> plugin = null;
 
 					if (project.getParent() == null) {
+						_applyPlugins(project, settings);
+
 						for (ProjectConfigurator projectConfigurator :
 								workspaceExtension.getProjectConfigurators()) {
 
@@ -185,14 +188,14 @@ public class WorkspacePlugin implements Plugin<Settings> {
 			EXTENSION_NAME, WorkspaceExtension.class, settings);
 	}
 
-	private void _applyPlugins(Settings settings) {
+	private void _applyPlugins(PluginAware pluginAware, Settings settings) {
 		if (GradleUtil.getProperty(
 				settings,
 				WorkspacePlugin.PROPERTY_PREFIX +
 					"feature.net.saliman.properties.plugin.enabled",
 				true)) {
 
-			settings.apply(
+			pluginAware.apply(
 				Collections.singletonMap("plugin", PropertiesPlugin.class));
 		}
 	}

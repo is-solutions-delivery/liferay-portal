@@ -11,57 +11,51 @@ definition {
 	var testSiteName = "Testray 2";
 
 	setUp {
-		TestCase.setUpPortalInstance();
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
 
-		User.firstLoginPG();
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Testray Site") {
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
+		}
 	}
 
 	tearDown {
-		Testray.tearDownCP();
+		task ("Delete Testray Site and Client Extensions") {
+			Testray.testrayApisTearDown();
+		}
 
-		ClientExtensionGeneral.goToRemoteAppsPortlet();
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
-
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
-
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
 
 	@description = "This is a test for LPS-152637. Verify if Testray can be created"
 	@priority = 5
-	test CanBeCreated {
-		property test.name.skip.portal.instance = "TestraySite#CanBeCreated";
+	test AddTestraySite {
+		property test.liferay.virtual.instance = "false";
 
-		task ("Create Testray") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Sites",
-				panel = "Control Panel",
-				portlet = "Sites");
-
-			LexiconEntry.gotoAdd();
-
-			LexiconCard.clickCard(card = "Liferay Site Initializer Testray");
-
-			SelectFrame(
-				key_title = "Add Site",
-				locator1 = "IFrame#MODAL_ANY");
-
-			PortletEntry.inputName(name = ${testSiteName});
-
-			Button.click(button = "Add");
-
-			Alert.viewSuccessMessage();
+		task ("Go to Testray Site") {
+			ApplicationsMenu.gotoSite(site = ${testSiteName});
 		}
 
-		task ("Go to Testray") {
-			Refresh();
+		task ("Assert the Testray Page is present") {
+			AssertElementPresent(
+				key_title = "Testray",
+				locator1 = "Header#H1_TITLE");
+		}
 
-			ApplicationsMenu.gotoSite(site = ${testSiteName});
-
-			TestrayLayout.assertTabPageTitle(pageTabTitle = "Projects");
+		task ("Assert the project is present") {
+			AssertElementPresent(
+				key_tableEntry = "Application Server",
+				locator1 = "LexiconTable#TABLE_ENTRY");
 		}
 	}
 
@@ -69,10 +63,10 @@ definition {
 	@priority = 5
 	test RemoteAppsAreCreatedForTestray {
 		property solutions.acceptance = "true";
-		property test.name.skip.portal.instance = "TestraySite#RemoteAppsAreCreatedForTestray";
+		property test.liferay.virtual.instance = "false";
 
-		task ("Create Testray") {
-			Testray.addTestraySite(siteName = ${testSiteName});
+		task ("Go to Testray Site") {
+			ApplicationsMenu.gotoSite(site = ${testSiteName});
 		}
 
 		task ("Go to Remote Apps Portlet") {
@@ -90,21 +84,19 @@ definition {
 	@priority = 5
 	test StyleBooksAreCreatedForTestray {
 		property solutions.acceptance = "true";
-		property test.name.skip.portal.instance = "TestraySite#StyleBooksAreCreatedForTestray";
+		property test.liferay.virtual.instance = "false";
 
-		task ("Create and Go to Testray") {
-			Testray.addTestraySite(siteName = ${testSiteName});
-
-			Refresh();
-
+		task ("Go to Testray Site") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 		}
 
-		task ("Assert if style books were created") {
+		task ("Go to Style Books") {
 			ProductMenu.gotoPortlet(
 				category = "Design",
 				portlet = "Style Books");
+		}
 
+		task ("Assert if style books were created") {
 			StyleBooksAdmin.viewStyleBooksPresent(styleBookName = "Testray");
 		}
 	}

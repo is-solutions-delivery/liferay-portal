@@ -147,7 +147,7 @@ else {
 
 	<aui:input autocomplete="new-password" label="new-password" name="password1" required="<%= true %>" size="30" type="password" />
 
-	<aui:input autocomplete="new-password" label="enter-again" name="password2" required="<%= true %>" size="30" type="password">
+	<aui:input autocomplete="new-password" label="reenter-password" name="password2" required="<%= true %>" size="30" type="password">
 		<aui:validator name="equalTo">
 			'#<portlet:namespace />password1'
 		</aui:validator>
@@ -182,7 +182,7 @@ else {
 		}
 		%>
 
-		<aui:input autocomplete='<%= PropsValues.COMPANY_SECURITY_PASSWORD_REMINDER_QUERY_FORM_AUTOCOMPLETE ? "on" : "off" %>' label="answer" maxlength="<%= ModelHintsConstants.TEXT_MAX_LENGTH %>" name="reminderQueryAnswer" size="50" type='<%= PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.USERS_REMINDER_QUERIES_DISPLAY_IN_PLAIN_TEXT, PropsValues.USERS_REMINDER_QUERIES_DISPLAY_IN_PLAIN_TEXT) ? "text" : "password" %>' value="<%= answer %>" />
+		<aui:input autocomplete='<%= PropsValues.COMPANY_SECURITY_PASSWORD_REMINDER_QUERY_FORM_AUTOCOMPLETE ? "on" : "off" %>' label="answer[noun]" maxlength="<%= ModelHintsConstants.TEXT_MAX_LENGTH %>" name="reminderQueryAnswer" size="50" type='<%= PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.USERS_REMINDER_QUERIES_DISPLAY_IN_PLAIN_TEXT, PropsValues.USERS_REMINDER_QUERIES_DISPLAY_IN_PLAIN_TEXT) ? "text" : "password" %>' value="<%= answer %>" />
 	</clay:sheet-section>
 
 	<aui:script sandbox="<%= true %>">

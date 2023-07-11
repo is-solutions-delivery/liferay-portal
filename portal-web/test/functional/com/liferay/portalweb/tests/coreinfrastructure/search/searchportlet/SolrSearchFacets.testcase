@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -110,24 +110,19 @@ definition {
 
 		Navigator.openSpecificURL(url = "${portalURL}/web/guest/search-page");
 
-		for (var portlet : list "Category Facet,Custom Facet,Custom Filter,Folder Facet,Low Level Search Options,Modified Facet,Search Insights,Search Options,Search Results,Site Facet,Suggestions,Tag Facet,Type Facet,User Facet,Search Bar") {
-			JSONLayout.addWidgetToPublicLayout(
-				column = 1,
-				groupName = "Guest",
-				layoutName = "Search Page",
-				widgetName = ${portlet});
-		}
+		SearchPortlets.addWidgets(
+			layoutName = "Search Page",
+			searchPortletList = "Category Facet,Custom Facet,Custom Filter,Folder Facet,Low Level Search Options,Modified Facet,Search Insights,Search Options,Search Results,Site Facet,Suggestions,Tag Facet,Type Facet,User Facet,Search Bar");
 
-		SearchPortlets.addWidgets(searchPortletList = "Sort");
+		SearchPortlets.addWidgetsViaUI(searchPortletList = "Sort");
 
 		var testRunEnvironment = PropsUtil.get("test.run.environment");
 
 		if (${testRunEnvironment} == "EE") {
-			JSONLayout.addWidgetToPublicLayout(
+			SearchPortlets.addWidgets(
 				column = 2,
-				groupName = "Guest",
 				layoutName = "Search Page",
-				widgetName = "Similar Results");
+				searchPortletList = "Similar Results");
 
 			Refresh();
 
@@ -199,9 +194,9 @@ definition {
 			version = "1.0",
 			webContentTitle = "WebContent Title 1");
 
-		Search.openSearchPage();
-
 		SearchPortlets.addWidgets(searchPortletList = "Custom Facet");
+
+		Search.openSearchPage();
 
 		SearchFacetPortlet.configureCustomFacet(aggregationField = "version");
 
@@ -377,7 +372,7 @@ definition {
 	@description = "This is a use case for LPS-74299."
 	@priority = 3
 	test ViewFacetPersistence {
-		property test.name.skip.portal.instance = "SolrSearch#ViewFacetPersistence";
+		property test.liferay.virtual.instance = "false";
 
 		// Workaround for LPS-89026
 
@@ -392,13 +387,9 @@ definition {
 			groupName = "Guest",
 			layoutName = "Search Page");
 
-		for (var portlet : list "Site Facet,Search Results,Search Bar") {
-			JSONLayout.addWidgetToPublicLayout(
-				column = 1,
-				groupName = "Guest",
-				layoutName = "Search Page",
-				widgetName = ${portlet});
-		}
+		SearchPortlets.addWidgets(
+			layoutName = "Search Page",
+			searchPortletList = "Site Facet,Search Results,Search Bar");
 
 		Navigator.gotoPage(pageName = "Search Page");
 
@@ -463,7 +454,7 @@ definition {
 			groupName = "Guest",
 			title = "orange");
 
-		JSONGroup.addGroup(groupName = "New Site");
+		HeadlessSite.addSite(siteName = "New Site");
 
 		JSONBlog.addEntry(
 			assetTagNames = "sweet",
@@ -499,31 +490,14 @@ definition {
 			groupName = "Guest",
 			layoutName = "Search Page");
 
-		for (var portlet : list "Category,Folder,Site,Tag,Type,User") {
-			JSONLayout.addWidgetToPublicLayout(
-				column = 1,
-				groupName = "Guest",
-				layoutName = "Search Page",
-				widgetName = "${portlet} Facet");
-		}
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = 2,
-			groupName = "Guest",
+		SearchPortlets.addWidgets(
 			layoutName = "Search Page",
-			widgetName = "Search Bar");
+			searchPortletList = "Category Facet,Folder Facet,Site Facet,Tag Facet,Type Facet,User Facet");
 
-		JSONLayout.addWidgetToPublicLayout(
+		SearchPortlets.addWidgets(
 			column = 2,
-			groupName = "Guest",
 			layoutName = "Search Page",
-			widgetName = "Search Options");
-
-		JSONLayout.addWidgetToPublicLayout(
-			column = 2,
-			groupName = "Guest",
-			layoutName = "Search Page",
-			widgetName = "Search Results");
+			searchPortletList = "Search Bar,Search Options,Search Results");
 
 		Navigator.gotoPage(pageName = "Search Page");
 

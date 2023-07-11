@@ -88,7 +88,7 @@ public interface S3StoreConfiguration {
 	public int connectionTimeout();
 
 	@Meta.AD(
-		deflt = "50", description = "http-client-max-connections-help",
+		deflt = "5000", description = "http-client-max-connections-help",
 		name = "http-client-max-connections", required = false
 	)
 	public int httpClientMaxConnections();
@@ -110,18 +110,6 @@ public interface S3StoreConfiguration {
 		name = "max-pool-size", required = false
 	)
 	public int maxPoolSize();
-
-	@Meta.AD(
-		deflt = "7", description = "cache-dir-clean-up-expunge-help",
-		name = "cache-dir-clean-up-expunge", required = false
-	)
-	public int cacheDirCleanUpExpunge();
-
-	@Meta.AD(
-		deflt = "100", description = "cache-dir-clean-up-frequency-help",
-		name = "cache-dir-clean-up-frequency", required = false
-	)
-	public int cacheDirCleanUpFrequency();
 
 	@Meta.AD(
 		deflt = "5242880", description = "minimum-uploads-part-size-help",

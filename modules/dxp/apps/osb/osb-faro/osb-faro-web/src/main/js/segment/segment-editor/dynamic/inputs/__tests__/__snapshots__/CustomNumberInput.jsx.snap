@@ -25,11 +25,12 @@ exports[`CustomNumberInput should render 1`] = `
           aria-activedescendant="eq"
           aria-expanded="true"
           aria-haspopup="listbox"
-          aria-owns="clay-id-1"
+          aria-owns="clay-id-2"
           class="form-control form-control-select form-control-select-secondary show"
           role="combobox"
           style=""
           tabindex="0"
+          type="button"
         >
           is equal to
         </button>
@@ -78,11 +79,12 @@ exports[`CustomNumberInput should render with data 1`] = `
           aria-activedescendant="eq"
           aria-expanded="true"
           aria-haspopup="listbox"
-          aria-owns="clay-id-2"
+          aria-owns="clay-id-4"
           class="form-control form-control-select form-control-select-secondary show"
           role="combobox"
           style=""
           tabindex="0"
+          type="button"
         >
           is equal to
         </button>

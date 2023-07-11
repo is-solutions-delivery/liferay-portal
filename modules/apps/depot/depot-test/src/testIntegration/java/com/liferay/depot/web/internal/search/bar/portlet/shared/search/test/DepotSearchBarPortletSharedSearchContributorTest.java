@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
@@ -304,8 +303,8 @@ public class DepotSearchBarPortletSharedSearchContributorTest {
 			}
 
 			@Override
-			public Optional<String> getParameterOptional(String name) {
-				return Optional.empty();
+			public String getParameter(String name) {
+				return null;
 			}
 
 			@Override
@@ -319,10 +318,8 @@ public class DepotSearchBarPortletSharedSearchContributorTest {
 			}
 
 			@Override
-			public Optional<PortletPreferences>
-				getPortletPreferencesOptional() {
-
-				return Optional.empty();
+			public PortletPreferences getPortletPreferences() {
+				return null;
 			}
 
 			@Override

@@ -7,9 +7,9 @@ import ClayLink from '@clayui/link';
 import DataTransformationList from 'settings/components/data-transformation-list';
 import DefinitionItem from 'shared/components/DefinitionItem';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import React from 'react';
 import Sheet from 'shared/components/Sheet';
-import Spinner from 'shared/components/Spinner';
 import {autoCancel, hasRequest} from 'shared/util/request-decorator';
 import {close, modalTypes, open} from 'shared/actions/modals';
 import {compose} from 'redux';
@@ -287,7 +287,7 @@ export class CSV extends React.Component {
 					</Sheet.Body>
 
 					{loading ? (
-						<Spinner spacer />
+						<Loading />
 					) : (
 						<DataTransformationList
 							fieldsIList={fieldsIList}

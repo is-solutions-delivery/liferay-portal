@@ -76,6 +76,7 @@ export default function Rating({
 	return (
 		<div className="align-items-center d-inline-flex flex-md-column justify-content-center text-secondary">
 			<ClayButton
+				aria-label={Liferay.Language.get('upvote')}
 				className={userRating === 1 ? ' text-primary' : 'text-reset'}
 				disabled={disabled || !Liferay.ThemeDisplay.isSignedIn()}
 				displayType="unstyled"
@@ -88,6 +89,7 @@ export default function Rating({
 			<span className="c-px-2">{rating || 0}</span>
 
 			<ClayButton
+				aria-label={Liferay.Language.get('downvote')}
 				className={userRating === -1 ? ' text-primary' : 'text-reset'}
 				disabled={disabled || !Liferay.ThemeDisplay.isSignedIn()}
 				displayType="unstyled"

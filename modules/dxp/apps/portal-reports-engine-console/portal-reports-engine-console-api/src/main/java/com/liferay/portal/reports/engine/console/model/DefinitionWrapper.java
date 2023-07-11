@@ -159,10 +159,10 @@ public class DefinitionWrapper
 	}
 
 	@Override
-	public String[] getAttachmentsFiles()
+	public String[] getAttachmentsFileNames()
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return model.getAttachmentsFiles();
+		return model.getAttachmentsFileNames();
 	}
 
 	@Override

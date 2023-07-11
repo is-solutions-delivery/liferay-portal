@@ -24,8 +24,8 @@ definition {
 			locator1 = "OktaLogin#LOGIN_PASSWORD_FIELD",
 			value1 = ${userPassword});
 
-		if (IsElementPresent(locator1 = "OktaLogin#VERIFY_BUTTON")) {
-			Click(locator1 = "OktaLogin#VERIFY_BUTTON");
+		if (IsElementPresent(locator1 = "OktaLogin#SIGN_IN_BUTTON")) {
+			Click(locator1 = "OktaLogin#SIGN_IN_BUTTON");
 		}
 	}
 
@@ -255,6 +255,16 @@ definition {
 		AssertClick(
 			locator1 = "UserBar#USER_SIGN_IN",
 			value1 = "Sign In");
+	}
+
+	macro clickAtWarningEmailLink {
+		AssertClick(
+			locator1 = "UserBar#USER_SIGN_IN",
+			value1 = "Sign In");
+
+		if (IsElementPresent(locator1 = "Message#WARNING")) {
+			Click(locator1 = "Message#WARNING_SPECIFIC_LINK_1");
+		}
 	}
 
 	@description = "Configures Liferay SAML as the IdP"

@@ -511,6 +511,76 @@ public class ObjectField implements Serializable {
 
 	@Schema
 	@Valid
+	public ReadOnly getReadOnly() {
+		return readOnly;
+	}
+
+	@JsonIgnore
+	public String getReadOnlyAsString() {
+		if (readOnly == null) {
+			return null;
+		}
+
+		return readOnly.toString();
+	}
+
+	public void setReadOnly(ReadOnly readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	@JsonIgnore
+	public void setReadOnly(
+		UnsafeSupplier<ReadOnly, Exception> readOnlyUnsafeSupplier) {
+
+		try {
+			readOnly = readOnlyUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected ReadOnly readOnly;
+
+	@Schema
+	public String getReadOnlyConditionExpression() {
+		return readOnlyConditionExpression;
+	}
+
+	public void setReadOnlyConditionExpression(
+		String readOnlyConditionExpression) {
+
+		this.readOnlyConditionExpression = readOnlyConditionExpression;
+	}
+
+	@JsonIgnore
+	public void setReadOnlyConditionExpression(
+		UnsafeSupplier<String, Exception>
+			readOnlyConditionExpressionUnsafeSupplier) {
+
+		try {
+			readOnlyConditionExpression =
+				readOnlyConditionExpressionUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String readOnlyConditionExpression;
+
+	@Schema
+	@Valid
 	public RelationshipType getRelationshipType() {
 		return relationshipType;
 	}
@@ -884,6 +954,34 @@ public class ObjectField implements Serializable {
 			sb.append("]");
 		}
 
+		if (readOnly != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"readOnly\": ");
+
+			sb.append("\"");
+
+			sb.append(readOnly);
+
+			sb.append("\"");
+		}
+
+		if (readOnlyConditionExpression != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"readOnlyConditionExpression\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(readOnlyConditionExpression));
+
+			sb.append("\"");
+		}
+
 		if (relationshipType != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -958,9 +1056,9 @@ public class ObjectField implements Serializable {
 	public static enum BusinessType {
 
 		AGGREGATION("Aggregation"), ATTACHMENT("Attachment"),
-		BOOLEAN("Boolean"), DATE("Date"), DECIMAL("Decimal"),
-		ENCRYPTED("Encrypted"), FORMULA("Formula"), INTEGER("Integer"),
-		LONG_INTEGER("LongInteger"), LONG_TEXT("LongText"),
+		BOOLEAN("Boolean"), DATE("Date"), DATE_TIME("DateTime"),
+		DECIMAL("Decimal"), ENCRYPTED("Encrypted"), FORMULA("Formula"),
+		INTEGER("Integer"), LONG_INTEGER("LongInteger"), LONG_TEXT("LongText"),
 		MULTISELECT_PICKLIST("MultiselectPicklist"), PICKLIST("Picklist"),
 		PRECISION_DECIMAL("PrecisionDecimal"), RELATIONSHIP("Relationship"),
 		RICH_TEXT("RichText"), TEXT("Text");
@@ -1002,8 +1100,8 @@ public class ObjectField implements Serializable {
 	public static enum DBType {
 
 		BIG_DECIMAL("BigDecimal"), BOOLEAN("Boolean"), CLOB("Clob"),
-		DATE("Date"), DOUBLE("Double"), INTEGER("Integer"), LONG("Long"),
-		STRING("String");
+		DATE("Date"), DATE_TIME("DateTime"), DOUBLE("Double"),
+		INTEGER("Integer"), LONG("Long"), STRING("String");
 
 		@JsonCreator
 		public static DBType create(String value) {
@@ -1031,6 +1129,44 @@ public class ObjectField implements Serializable {
 		}
 
 		private DBType(String value) {
+			_value = value;
+		}
+
+		private final String _value;
+
+	}
+
+	@GraphQLName("ReadOnly")
+	public static enum ReadOnly {
+
+		CONDITIONAL("conditional"), FALSE("false"), TRUE("true");
+
+		@JsonCreator
+		public static ReadOnly create(String value) {
+			if ((value == null) || value.equals("")) {
+				return null;
+			}
+
+			for (ReadOnly readOnly : values()) {
+				if (Objects.equals(readOnly.getValue(), value)) {
+					return readOnly;
+				}
+			}
+
+			throw new IllegalArgumentException("Invalid enum value: " + value);
+		}
+
+		@JsonValue
+		public String getValue() {
+			return _value;
+		}
+
+		@Override
+		public String toString() {
+			return _value;
+		}
+
+		private ReadOnly(String value) {
 			_value = value;
 		}
 
@@ -1080,8 +1216,8 @@ public class ObjectField implements Serializable {
 	public static enum Type {
 
 		BIG_DECIMAL("BigDecimal"), BOOLEAN("Boolean"), CLOB("Clob"),
-		DATE("Date"), DOUBLE("Double"), INTEGER("Integer"), LONG("Long"),
-		STRING("String");
+		DATE("Date"), DATE_TIME("DateTime"), DOUBLE("Double"),
+		INTEGER("Integer"), LONG("Long"), STRING("String");
 
 		@JsonCreator
 		public static Type create(String value) {

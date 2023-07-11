@@ -58,6 +58,9 @@ public class LayoutClassedModelUsageWrapper
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
+		attributes.put(
+			"classedModelExternalReferenceCode",
+			getClassedModelExternalReferenceCode());
 		attributes.put("containerKey", getContainerKey());
 		attributes.put("containerType", getContainerType());
 		attributes.put("plid", getPlid());
@@ -130,6 +133,14 @@ public class LayoutClassedModelUsageWrapper
 			setClassPK(classPK);
 		}
 
+		String classedModelExternalReferenceCode = (String)attributes.get(
+			"classedModelExternalReferenceCode");
+
+		if (classedModelExternalReferenceCode != null) {
+			setClassedModelExternalReferenceCode(
+				classedModelExternalReferenceCode);
+		}
+
 		String containerKey = (String)attributes.get("containerKey");
 
 		if (containerKey != null) {
@@ -164,6 +175,16 @@ public class LayoutClassedModelUsageWrapper
 	@Override
 	public LayoutClassedModelUsage cloneWithOriginalValues() {
 		return wrap(model.cloneWithOriginalValues());
+	}
+
+	/**
+	 * Returns the classed model external reference code of this layout classed model usage.
+	 *
+	 * @return the classed model external reference code of this layout classed model usage
+	 */
+	@Override
+	public String getClassedModelExternalReferenceCode() {
+		return model.getClassedModelExternalReferenceCode();
 	}
 
 	/**
@@ -339,6 +360,19 @@ public class LayoutClassedModelUsageWrapper
 	@Override
 	public void persist() {
 		model.persist();
+	}
+
+	/**
+	 * Sets the classed model external reference code of this layout classed model usage.
+	 *
+	 * @param classedModelExternalReferenceCode the classed model external reference code of this layout classed model usage
+	 */
+	@Override
+	public void setClassedModelExternalReferenceCode(
+		String classedModelExternalReferenceCode) {
+
+		model.setClassedModelExternalReferenceCode(
+			classedModelExternalReferenceCode);
 	}
 
 	@Override

@@ -323,20 +323,20 @@ public class AssetLinksTag extends IncludeTag {
 		if (_viewInContext) {
 			String noSuchEntryRedirect = viewAssetURL.toString();
 
-			String urlViewInContext = assetRenderer.getURLViewInContext(
+			String viewInContextURL = assetRenderer.getURLViewInContext(
 				liferayPortletRequest, liferayPortletResponse,
 				noSuchEntryRedirect);
 
-			if (Validator.isNotNull(urlViewInContext) &&
-				!Objects.equals(urlViewInContext, noSuchEntryRedirect)) {
+			if (Validator.isNotNull(viewInContextURL) &&
+				!Objects.equals(viewInContextURL, noSuchEntryRedirect)) {
 
-				urlViewInContext = HttpComponentsUtil.setParameter(
-					urlViewInContext, "inheritRedirect", Boolean.TRUE);
-				urlViewInContext = HttpComponentsUtil.setParameter(
-					urlViewInContext, "redirect", themeDisplay.getURLCurrent());
+				viewInContextURL = HttpComponentsUtil.setParameter(
+					viewInContextURL, "inheritRedirect", Boolean.TRUE);
+				viewInContextURL = HttpComponentsUtil.setParameter(
+					viewInContextURL, "redirect", themeDisplay.getURLCurrent());
 			}
 
-			viewURL = urlViewInContext;
+			viewURL = viewInContextURL;
 		}
 
 		if (Validator.isNull(viewURL)) {

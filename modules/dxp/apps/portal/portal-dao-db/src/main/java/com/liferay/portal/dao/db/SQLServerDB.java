@@ -37,6 +37,8 @@ import java.sql.Types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Alexander Chow
@@ -104,6 +106,21 @@ public class SQLServerDB extends BaseDB {
 			new String[] {"\\", "''", "\"", "\n", "\r"});
 
 		return template;
+	}
+
+	@Override
+	public String getDefaultValue(String columnDef) {
+		Matcher matcher = _defaultValuePattern.matcher(columnDef);
+
+		if (matcher.find()) {
+			if (matcher.group(1) == null) {
+				return matcher.group(2);
+			}
+
+			return matcher.group(1);
+		}
+
+		return columnDef;
 	}
 
 	@Override
@@ -210,6 +227,155 @@ public class SQLServerDB extends BaseDB {
 					"Primary key with name ", primaryKeyConstraintName,
 					" does not exist"));
 		}
+	}
+
+	@Override
+	protected void createSyncDeleteTrigger(
+			Connection connection, String sourceTableName,
+			String targetTableName, String triggerName,
+			String[] sourcePrimaryKeyColumnNames,
+			String[] targetPrimaryKeyColumnNames)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		sb.append("create trigger ");
+		sb.append(triggerName);
+		sb.append(" on ");
+		sb.append(sourceTableName);
+		sb.append(" after delete as delete ");
+		sb.append(targetTableName);
+		sb.append(" from ");
+		sb.append(targetTableName);
+		sb.append(" inner join deleted on ");
+
+		for (int i = 0; i < sourcePrimaryKeyColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(" and ");
+			}
+
+			sb.append(targetTableName);
+			sb.append(StringPool.PERIOD);
+			sb.append(targetPrimaryKeyColumnNames[i]);
+			sb.append(" = deleted.");
+			sb.append(sourcePrimaryKeyColumnNames[i]);
+		}
+
+		runSQL(connection, sb.toString());
+	}
+
+	@Override
+	protected void createSyncInsertTrigger(
+			Connection connection, String sourceTableName,
+			String targetTableName, String triggerName,
+			String[] sourceColumnNames, String[] targetColumnNames,
+			String[] sourcePrimaryKeyColumnNames,
+			String[] targetPrimaryKeyColumnNames)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		sb.append("create trigger ");
+		sb.append(triggerName);
+		sb.append(" on ");
+		sb.append(sourceTableName);
+		sb.append(" after insert as insert into ");
+		sb.append(targetTableName);
+		sb.append(" (");
+		sb.append(StringUtil.merge(targetColumnNames, ", "));
+		sb.append(") select ");
+
+		for (int i = 0; i < sourceColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+
+			sb.append(sourceTableName);
+			sb.append(StringPool.PERIOD);
+			sb.append(sourceColumnNames[i]);
+		}
+
+		sb.append(" from ");
+		sb.append(sourceTableName);
+		sb.append(" inner join inserted on ");
+
+		for (int i = 0; i < sourcePrimaryKeyColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(" and ");
+			}
+
+			sb.append(sourceTableName);
+			sb.append(StringPool.PERIOD);
+			sb.append(sourcePrimaryKeyColumnNames[i]);
+			sb.append(" = inserted.");
+			sb.append(sourcePrimaryKeyColumnNames[i]);
+		}
+
+		runSQL(connection, sb.toString());
+	}
+
+	@Override
+	protected void createSyncUpdateTrigger(
+			Connection connection, String sourceTableName,
+			String targetTableName, String triggerName,
+			String[] sourceColumnNames, String[] targetColumnNames,
+			String[] sourcePrimaryKeyColumnNames,
+			String[] targetPrimaryKeyColumnNames)
+		throws Exception {
+
+		StringBundler sb = new StringBundler();
+
+		sb.append("create trigger ");
+		sb.append(triggerName);
+		sb.append(" on ");
+		sb.append(sourceTableName);
+		sb.append(" after update as update ");
+		sb.append(targetTableName);
+		sb.append(" set ");
+
+		for (int i = 0; i < sourceColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+
+			sb.append(targetTableName);
+			sb.append(StringPool.PERIOD);
+			sb.append(targetColumnNames[i]);
+			sb.append(" = res.");
+			sb.append(sourceColumnNames[i]);
+		}
+
+		sb.append(" from (select ");
+
+		for (int i = 0; i < sourceColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(", ");
+			}
+
+			sb.append(sourceTableName);
+			sb.append(StringPool.PERIOD);
+			sb.append(sourceColumnNames[i]);
+		}
+
+		sb.append(" from ");
+		sb.append(sourceTableName);
+		sb.append(" inner join inserted on ");
+
+		for (int i = 0; i < sourcePrimaryKeyColumnNames.length; i++) {
+			if (i > 0) {
+				sb.append(" and ");
+			}
+
+			sb.append(sourceTableName);
+			sb.append(StringPool.PERIOD);
+			sb.append(sourcePrimaryKeyColumnNames[i]);
+			sb.append(" = inserted.");
+			sb.append(sourcePrimaryKeyColumnNames[i]);
+		}
+
+		sb.append(") as res");
+
+		runSQL(connection, sb.toString());
 	}
 
 	protected String getCopyTableStructureSQL(
@@ -350,5 +516,8 @@ public class SQLServerDB extends BaseDB {
 	};
 
 	private static final boolean _SUPPORTS_NEW_UUID_FUNCTION = true;
+
+	private static final Pattern _defaultValuePattern = Pattern.compile(
+		"^\\('(.*)'\\)|\\(\\((\\d*)\\)\\)", Pattern.CASE_INSENSITIVE);
 
 }

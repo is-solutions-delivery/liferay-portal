@@ -9,7 +9,7 @@ exports[`FileDropTarget FileDropTarget should render 1`] = `
       class="drop-target-container"
     >
       <button
-        class="button-root btn btn-sm btn-primary"
+        class="button-root btn btn-sm btn-secondary"
         type="button"
       >
         Select File
@@ -86,13 +86,10 @@ exports[`FileDropTarget FileItem renders 1`] = `
           <div
             class="status-wrapper"
           >
-            <div
-              class="spinner-root"
-            >
-              <span
-                class="loading-animation loading-animation-dotted loading-animation-sm"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
         </div>
       </div>
@@ -100,7 +97,7 @@ exports[`FileDropTarget FileItem renders 1`] = `
         class="d-flex align-items-center"
       >
         <button
-          class="button-root btn btn-sm btn-unstyled"
+          class="button-root btn btn-sm btn-link"
           type="button"
         >
           Remove

@@ -36,11 +36,11 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		Raylife.tearDownCP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -51,19 +51,73 @@ definition {
 	@description = "Story ID: LPS-146333 | Test Summary: Verify if after user clicks on 'Save' button the center status change to All Changes Saved"
 	@ignore = "true"
 	@priority = 3
-	test IfCenterStatusChangeAfterSaveButtonClicked {
+	test AssertCenterStatusChangeAfterSaveButtonClicked {
+		property test.liferay.virtual.instance = "false";
+
+		// Skip portal instance due to LRQA-79129. Uskip after it is resolved
+
+		task ("Given that an user start a new application flow") {
+			RaylifeApplicationModal.openNewApplicationFlow(
+				insurance = "Personal",
+				product = "Auto");
+		}
+
+		task ("When the user fullfil Contact Info forms") {
+			RaylifeApplicationModal.typeAllNewApplicationContactInfoFields(
+				apt = 0000,
+				city = "New York",
+				emailAddress = "test@liferay.com",
+				firstName = "Testing",
+				lastName = "Model",
+				phoneNumber = 0123456789,
+				state = "NY",
+				streetAddress = "Address",
+				zipCode = 12345);
+		}
+
+		task ("Then assert if after user clicks on 'Save' button the center status change to All Changes Saved") {
+			AssertTextEquals(
+				key_status = "All Changes Saved",
+				locator1 = "RaylifeApplicationModal#CENTER_STATUS",
+				value1 = "All Changes Saved");
+		}
 	}
 
 	@description = "Story ID: LPS-146333 | Test Summary: Verify if the center status No Changes Made change to Unsaved Changes after any part of the form is modified"
 	@ignore = "true"
 	@priority = 3
-	test IfCenterStatusChangeToUnsavedChanges {
+	test AssertStatusChangeToUnsavedChanges {
+		property test.liferay.virtual.instance = "false";
+
+		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
+
+		task ("Given that an user start a new application flow and Contact Info") {
+			RaylifeApplicationModal.openNewApplicationFlow(
+				insurance = "Personal",
+				product = "Auto");
+		}
+
+		task ("Then assert if the center status No Changes Made change to Unsaved Changes after any part of the form is modified") {
+			AssertTextEquals(
+				key_status = "No Changes Made",
+				locator1 = "RaylifeApplicationModal#CENTER_STATUS",
+				value1 = "No Changes Made");
+
+			RaylifeApplicationModal.typeNewApplicationInfoFields(
+				label = "firstName",
+				value = "Testing");
+
+			AssertTextEquals(
+				key_status = "Unsaved Changes",
+				locator1 = "RaylifeApplicationModal#CENTER_STATUS",
+				value1 = "Unsaved Changes");
+		}
 	}
 
 	@description = "Story ID: LPS-146333 | Test Summary: Verify if Date picker works"
 	@priority = 4
 	test IfDatePickerWorks {
-		property test.name.skip.portal.instance = "RaylifeAPContactInfo#IfDatePickerWorks";
+		property test.liferay.virtual.instance = "false";
 
 		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
 
@@ -91,7 +145,7 @@ definition {
 	@description = "Story ID: LPS-146333 | Test Summary: Verify after user fill out all required fields the NEXT button permits them to go to the next step"
 	@priority = 4
 	test NextButtonWorksWhenFieldsAreFilled {
-		property test.name.skip.portal.instance = "RaylifeAPContactInfo#NextButtonWorksWhenFieldsAreFilled";
+		property test.liferay.virtual.instance = "false";
 
 		// Skip portal instance due to LRQA-79129. Unskip after it is resolved
 

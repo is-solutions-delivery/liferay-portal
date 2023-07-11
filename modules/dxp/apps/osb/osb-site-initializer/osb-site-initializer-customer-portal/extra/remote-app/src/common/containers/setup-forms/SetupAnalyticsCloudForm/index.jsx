@@ -12,6 +12,7 @@ import {useQuery} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {FieldArray, Formik} from 'formik';
 import {useEffect, useMemo, useState} from 'react';
+import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
 import {
 	addAnalyticsCloudWorkspace,
 	addIncidentReportAnalyticsCloud,
@@ -30,11 +31,13 @@ import {STATUS_TAG_TYPE_NAMES} from '../../../../routes/customer-portal/utils/co
 import i18n from '../../../I18n';
 import {Button, Input, Select} from '../../../components';
 import useBannedDomains from '../../../hooks/useBannedDomains';
+import NotificationQueueService from '../../../services/actions/notificationAction';
 import getInitialAnalyticsInvite from '../../../utils/getInitialAnalyticsInvite';
 import getKebabCase from '../../../utils/getKebabCase';
 import Layout from '../Layout';
 import IncidentReportInput from './IncidentReportInput';
 
+const BLANK_TEXT = '< none >';
 const INITIAL_SETUP_ADMIN_COUNT = 1;
 const FETCH_DELAY_AFTER_TYPING = 500;
 const MAX_LENGTH = 255;
@@ -70,6 +73,8 @@ const SetupAnalyticsCloudPage = ({
 			accountSubscriptionsFilter: `(accountKey eq '${project?.accountKey}') and (hasDisasterDataCenterRegion eq true)`,
 		},
 	});
+
+	const {featureFlags} = useAppPropertiesContext();
 
 	const analyticsDataCenterLocations = useMemo(
 		() =>
@@ -143,10 +148,14 @@ const SetupAnalyticsCloudPage = ({
 				variables: {
 					analyticsCloudWorkspace: {
 						accountKey: project.accountKey,
+						allowedEmailDomains: analyticsCloud.allowedEmailDomains,
 						dataCenterLocation: analyticsCloud.dataCenterLocation,
 						ownerEmailAddress: analyticsCloud.ownerEmailAddress,
 						r_accountEntryToAnalyticsCloudWorkspace_accountEntryId:
 							project?.id,
+						timeZone: analyticsCloud.timeZone,
+						workspaceFriendlyUrl:
+							analyticsCloud.workspaceFriendlyUrl,
 						workspaceName: analyticsCloud.workspaceName,
 					},
 				},
@@ -192,7 +201,41 @@ const SetupAnalyticsCloudPage = ({
 						});
 					})
 				);
+
+				if (featureFlags.includes('LPS-181031')) {
+					const emailIncidentReportContact = analyticsCloud?.incidentReportContact
+						?.map(({email}) => email)
+						.join(', ');
+
+					const notificationTemplateService = new NotificationQueueService(
+						client
+					);
+
+					await notificationTemplateService.send(
+						'SETUP-ANALYTICS-CLOUD-ENVIRONMENT-NOTIFICATION-TEMPLATE',
+						{
+							'[%AC_DATA_CENTER_LOCATION]':
+								analyticsCloud.dataCenterLocation,
+							'[%AC_DATA_TIME]': new Date().toUTCString(),
+							'[%AC_EMAIL_DOMAINS]':
+								analyticsCloud.allowedEmailDomains ||
+								BLANK_TEXT,
+							'[%AC_INCIDENT_REPORT_CONTACT]': emailIncidentReportContact,
+							'[%AC_OWNER_EMAIL]':
+								analyticsCloud.ownerEmailAddress,
+							'[%AC_TIME_ZONE]':
+								analyticsCloud.timeZone || BLANK_TEXT,
+							'[%AC_WORKSPACE_FRIENDLY_URL]':
+								analyticsCloud.workspaceFriendlyUrl ||
+								BLANK_TEXT,
+							'[%AC_WORKSPACE_NAME]':
+								analyticsCloud.workspaceName,
+							'[%PROJECT_ID]': project?.code,
+						}
+					);
+				}
 			}
+
 			handlePage(true);
 		}
 	};
@@ -297,7 +340,7 @@ const SetupAnalyticsCloudPage = ({
 									'please-note-that-the-friendly-url-cannot-be-changed-once-added'
 								)}
 								label={i18n.translate('workspace-friendly-url')}
-								name="activations.workspaceURL"
+								name="activations.workspaceFriendlyUrl"
 								placeholder="/myurl"
 								type="text"
 								validations={[

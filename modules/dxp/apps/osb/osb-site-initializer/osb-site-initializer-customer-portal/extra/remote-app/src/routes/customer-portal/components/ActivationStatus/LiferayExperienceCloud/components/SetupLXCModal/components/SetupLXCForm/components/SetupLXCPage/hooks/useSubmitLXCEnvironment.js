@@ -10,6 +10,8 @@
  */
 
 import {useMutation} from '@apollo/client';
+import SearchBuilder from '~/common/core/SearchBuilder';
+import NotificationQueueService from '../../../../../../../../../../../../../src/common/services/actions/notificationAction';
 import {useAppPropertiesContext} from '../../../../../../../../../../../../common/contexts/AppPropertiesContext';
 import {
 	useCreateAdminLiferayExperienceCloud,
@@ -30,6 +32,8 @@ export default function useSubmitLXCEnvironment(
 ) {
 	const {client} = useAppPropertiesContext();
 
+	const {featureFlags} = useAppPropertiesContext();
+
 	const [
 		createLiferayExperienceCloudEnvironment,
 	] = useCreateLiferayExperienceCloudEnvironments();
@@ -48,7 +52,7 @@ export default function useSubmitLXCEnvironment(
 			const {data} = await client.query({
 				query: getLiferayExperienceCloudEnvironments,
 				variables: {
-					filter: `accountKey eq '${project.accountKey}'`,
+					filter: SearchBuilder.eq('accountKey', project.accountKey),
 				},
 			});
 			if (data) {
@@ -103,21 +107,52 @@ export default function useSubmitLXCEnvironment(
 				});
 
 				await Promise.all(
-					lxcActivationFields?.admins?.map(
-						({email, fullName, github}) => {
-							return createAdminLiferayExperienceCloud({
-								variables: {
-									AdminLiferayExperienceCloud: {
-										emailAddress: email,
-										fullName,
-										githubUsername: github,
-										liferayExperienceCloudEnvironmentId,
-									},
+					lxcActivationFields?.admins?.map(({email, fullName}) => {
+						return createAdminLiferayExperienceCloud({
+							variables: {
+								AdminLiferayExperienceCloud: {
+									emailAddress: email,
+									fullName,
+									githubUsername: '...',
+									liferayExperienceCloudEnvironmentId,
 								},
-							});
-						}
-					)
+							},
+						});
+					})
 				);
+
+				if (featureFlags.includes('LPS-181033')) {
+					const adminInfo = lxcActivationFields?.admins?.map(
+						({email, fullName}) => {
+							const [firstName, ...lastNames] = fullName.split(
+								' '
+							);
+							const lastName = lastNames.join(' ');
+							const projectAdminEmailBody = `
+							<strong>First Name -</strong> ${firstName}<br>
+							<strong>Last Name - </strong>${lastName}<br>
+							<strong>Email Address - </strong>${email}
+							<br><br>`;
+
+							return projectAdminEmailBody;
+						}
+					);
+					const notificationTemplateService = new NotificationQueueService(
+						client
+					);
+
+					await notificationTemplateService.send(
+						'SETUP-LXC-ENVIRONMENT-NOTIFICATION-TEMPLATE',
+						{
+							'[%DATE_AND_TIME_SUBMITTED%]': new Date().toUTCString(),
+							'[%PROJECT_ADMIN%]': adminInfo.join(''),
+							'[%PROJECT_CODE%]': project.code,
+							'[%PROJECT_DATA_CENTER_REGION%]':
+								lxcActivationFields.primaryRegion,
+							'[%PROJECT_ID%]': lxcActivationFields.projectId,
+						}
+					);
+				}
 			}
 
 			handleChangeForm(true);

@@ -34,12 +34,15 @@ export default interface MDFRequestDTO
 	mdfReqToActs?: MDFRequestActivityDTO[];
 	mdfReqToMDFClms?: MDFClaimDTO[];
 	r_accToMDFReqs_accountEntry?: AccountEntry;
+	r_accToMDFReqs_accountEntryERC?: string;
 	r_accToMDFReqs_accountEntryId?: number;
 	r_usrToMDFReqs_user?: User;
 	r_usrToMDFReqs_userId?: number;
 	targetAudienceRoles?: string;
 	targetMarkets?: string;
+	totalClaimedRequest?: string;
 	totalCostOfExpense: number;
 	totalMDFRequestAmount: number;
+	totalPaidAmount?: string;
 	totalRequested?: number;
 }

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.index;
 
+import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.engine.adapter.document.DocumentResponse;
 import com.liferay.portal.search.engine.adapter.index.CreateIndexRequest;
@@ -43,6 +44,8 @@ public class RankingIndexCreatorImplTest extends BaseRankingsIndexTestCase {
 		_rankingIndexCreatorImpl = new RankingIndexCreatorImpl();
 
 		ReflectionTestUtil.setFieldValue(
+			_rankingIndexCreatorImpl, "_jsonFactory", new JSONFactoryImpl());
+		ReflectionTestUtil.setFieldValue(
 			_rankingIndexCreatorImpl, "_searchEngineAdapter",
 			searchEngineAdapter);
 	}
@@ -69,7 +72,7 @@ public class RankingIndexCreatorImplTest extends BaseRankingsIndexTestCase {
 		Mockito.verify(
 			searchEngineAdapter, Mockito.times(1)
 		).execute(
-			(DeleteIndexRequest)Mockito.any()
+			Mockito.any(DeleteIndexRequest.class)
 		);
 	}
 

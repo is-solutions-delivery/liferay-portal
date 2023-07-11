@@ -15,6 +15,7 @@
 package com.liferay.search.experiences.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
 /**
  * Provides a wrapper for {@link SXPBlueprintLocalService}.
@@ -387,6 +388,13 @@ public class SXPBlueprintLocalServiceWrapper
 		return _sxpBlueprintLocalService.getSXPBlueprints(start, end);
 	}
 
+	@Override
+	public java.util.List<com.liferay.search.experiences.model.SXPBlueprint>
+		getSXPBlueprints(long companyId) {
+
+		return _sxpBlueprintLocalService.getSXPBlueprints(companyId);
+	}
+
 	/**
 	 * Returns the number of sxp blueprints.
 	 *
@@ -441,6 +449,11 @@ public class SXPBlueprintLocalServiceWrapper
 		com.liferay.search.experiences.model.SXPBlueprint sxpBlueprint) {
 
 		return _sxpBlueprintLocalService.updateSXPBlueprint(sxpBlueprint);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _sxpBlueprintLocalService.getBasePersistence();
 	}
 
 	@Override

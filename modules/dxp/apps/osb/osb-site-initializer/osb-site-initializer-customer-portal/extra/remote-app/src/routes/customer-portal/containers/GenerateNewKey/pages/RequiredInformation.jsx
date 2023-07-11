@@ -29,8 +29,7 @@ import getInitialGenerateNewKey from '../../../../../common/utils/constants/getI
 import GenerateCardLayout from '../GenerateCardLayout';
 import KeyInputs from '../KeyInputs';
 import KeySelect from '../KeySelect';
-
-const DNE_YEARS = 100;
+import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDateUtil';
 
 const RequiredInformation = ({
 	accountKey,
@@ -55,7 +54,7 @@ const RequiredInformation = ({
 	const [showKeyEmptyError, setShowKeyEmptyError] = useState(false);
 	const [isLoadingGenerateKey, setIsLoadingGenerateKey] = useState(false);
 	const [availableKeys, setAvailableKeys] = useState(1);
-	const [checkedBoxSubscription, setCheckedBoxSubscription] = useState(false);
+	const [checkedBoxSubscription, setCheckedBoxSubscription] = useState(true);
 	const navigate = useNavigate();
 
 	const hasTouched = !Object.keys(touched).length;
@@ -72,15 +71,30 @@ const RequiredInformation = ({
 		return !!fieldValues.length;
 	});
 
+	const isComplementaryKey =
+		infoSelectedKey?.selectedSubscription.complimentary;
+
 	const newUsedKeys = usedKeysCount + values?.keys?.length;
 	const hasReachedMaximumKeys = newUsedKeys === avaliableKeysMaximumCount;
 
-	useEffect(() => {
-		const verificationDisabledType = infoSelectedKey.hasNotPermanentLicence
-			? !values.name || !values.maxClusterNodes
-			: !hasFilledAtLeastOneField || hasError;
+	const isOemOrEnterprise =
+		infoSelectedKey?.licenseEntryType.includes('OEM') ||
+		infoSelectedKey?.licenseEntryType.includes('Enterprise');
 
-		setBaseButtonDisabled(verificationDisabledType);
+	useEffect(() => {
+		const getVerificationDisabledType = () => {
+			if (infoSelectedKey.hasNotPermanentLicence) {
+				if (isOemOrEnterprise) {
+					return !values.name;
+				}
+
+				return !values.name || !values.maxClusterNodes;
+			}
+
+			return !hasFilledAtLeastOneField || hasError;
+		};
+
+		setBaseButtonDisabled(getVerificationDisabledType());
 
 		setAddButtonDisabled(
 			hasReachedMaximumKeys || !hasFilledAtLeastOneField
@@ -90,6 +104,7 @@ const RequiredInformation = ({
 		hasFilledAtLeastOneField,
 		hasReachedMaximumKeys,
 		infoSelectedKey.hasNotPermanentLicence,
+		isOemOrEnterprise,
 		values.maxClusterNodes,
 		values.name,
 	]);
@@ -136,34 +151,31 @@ const RequiredInformation = ({
 			infoSelectedKey?.selectedSubscription?.instanceSize || 1
 		}`;
 
-		const isVirtualClusterOrProduction = infoSelectedKey?.licenseEntryType?.includes(
-			'Virtual Cluster'
-		)
-			? 'virtual-cluster'
-			: 'production';
+		const getLicenseEntryTypeSelected = () => {
+			if (infoSelectedKey?.licenseEntryType.includes('Virtual Cluster')) {
+				return 'virtual-cluster';
+			}
 
-		const subscriptionStartDate = new Date(
-			infoSelectedKey.selectedSubscription.startDate
-		);
+			if (infoSelectedKey?.licenseEntryType.includes('OEM')) {
+				return 'oem';
+			}
 
-		const permanentLicenseKeys = new Date(
-			subscriptionStartDate.setFullYear(
-				subscriptionStartDate.getFullYear() + DNE_YEARS
-			)
-		);
+			if (infoSelectedKey?.licenseEntryType.includes('Enterprise')) {
+				return 'enterprise';
+			}
 
-		const hasExpirationDate =
-			infoSelectedKey?.doesNotAllowPermanentLicense ||
-			infoSelectedKey?.hasNotPermanentLicence;
+			return 'production';
+		};
 
 		const licenseKey = {
 			accountKey,
 			active: true,
+			complimentary: infoSelectedKey?.selectedSubscription.complimentary,
 			description: values?.description,
-			expirationDate: hasExpirationDate
-				? infoSelectedKey?.selectedSubscription.endDate
-				: permanentLicenseKeys,
-			licenseEntryType: isVirtualClusterOrProduction,
+			expirationDate:
+				getLicenseKeyEndDatesByLicenseType(infoSelectedKey) ??
+				infoSelectedKey?.selectedSubscription.endDate,
+			licenseEntryType: getLicenseEntryTypeSelected(),
 			maxClusterNodes: values?.maxClusterNodes || 0,
 			name: values?.name,
 			productKey: infoSelectedKey?.selectedSubscription.productKey,
@@ -182,12 +194,16 @@ const RequiredInformation = ({
 		if (infoSelectedKey.hasNotPermanentLicence) {
 			setIsLoadingGenerateKey(true);
 
-			await createNewGenerateKey(
+			const result = await createNewGenerateKey(
 				accountKey,
 				provisioningServerAPI,
 				sessionId,
 				licenseKey
 			);
+
+			if (checkedBoxSubscription) {
+				await saveSubscriptionKey(result?.items[0]?.id);
+			}
 
 			setIsLoadingGenerateKey(false);
 		} else {
@@ -208,35 +224,91 @@ const RequiredInformation = ({
 				})
 			);
 
-			if (checkedBoxSubscription) {
-				await saveSubscriptionKey(results[0].items[0].id);
+			if (checkedBoxSubscription && isComplementaryKey) {
+				await saveSubscriptionKey(results[0]?.items[0]?.id);
 			}
+
 			setIsLoadingGenerateKey(false);
 		}
 
-		await client.mutate({
-			context: {
-				displaySuccess: false,
-			},
-			mutation: patchOrderItemByExternalReferenceCode,
-			variables: {
-				externalReferenceCode: licenseKey.productPurchaseKey,
-				orderItem: {
-					customFields: [
-						{
-							customValue: {
-								data:
-									infoSelectedKey.selectedSubscription
-										.provisionedCount + 1,
-							},
-							name: 'provisionedCount',
-						},
-					],
+		if (!isComplementaryKey) {
+			await client.mutate({
+				context: {
+					displaySuccess: false,
 				},
-			},
-		});
+				mutation: patchOrderItemByExternalReferenceCode,
+				variables: {
+					externalReferenceCode: licenseKey.productPurchaseKey,
+					orderItem: {
+						customFields: [
+							{
+								customValue: {
+									data:
+										infoSelectedKey.selectedSubscription
+											.provisionedCount + 1,
+								},
+								name: 'provisionedCount',
+							},
+						],
+					},
+				},
+			});
+		}
 
 		navigate(urlPreviousPage, {state: {newKeyGeneratedAlert: true}});
+	};
+
+	const CheckboxSubscriptionNotification = () => {
+		if (
+			featureFlags.includes('LPS-180001') &&
+			(infoSelectedKey?.hasNotPermanentLicence || isComplementaryKey)
+		) {
+			return (
+				<>
+					<div className="d-flex mb-3 pt-2">
+						<div className="pr-2 pt-1">
+							<ClayCheckbox
+								checked={checkedBoxSubscription}
+								id="expiration-checkbox"
+								onChange={() =>
+									setCheckedBoxSubscription(
+										(checkedBoxSubcription) =>
+											!checkedBoxSubcription
+									)
+								}
+							/>
+						</div>
+
+						<label htmlFor="expiration-checkbox">
+							{i18n.sub(
+								'receive-expiration-notifications-through-email-when-this-activation-key-is-about-to-expire-x-days-before-x-days-before-and-on-the-day-of-expiration-unsubscribe-at-any-time',
+								[30, 15]
+							)}
+						</label>
+					</div>
+
+					<div className="dropdown-divider"></div>
+				</>
+			);
+		}
+	};
+
+	const ClusterNodesOption = () => {
+		if (isOemOrEnterprise) {
+			return null;
+		}
+
+		return (
+			<div className="cp-input-generate-label">
+				<KeySelect
+					avaliableKeysMaximumCount={avaliableKeysMaximumCount}
+					minAvaliableKeysCount={
+						avaliableKeysMaximumCount - usedKeysCount
+					}
+					selectedClusterNodes={values.maxClusterNodes}
+				/>
+			</div>
+		);
 	};
 
 	return (
@@ -259,7 +331,9 @@ const RequiredInformation = ({
 							<Button
 								className="btn btn-secondary mr-3"
 								displayType="secundary"
-								onClick={() => setStep(0)}
+								onClick={() =>
+									setStep(isComplementaryKey ? 1 : 0)
+								}
 							>
 								{i18n.translate('previous')}
 							</Button>
@@ -272,7 +346,9 @@ const RequiredInformation = ({
 								isLoading={isLoadingGenerateKey}
 								onClick={() => submitKey()}
 							>
-								{infoSelectedKey.hasNotPermanentLicence
+								{infoSelectedKey?.licenseEntryType.includes(
+									'Virtual Cluster'
+								)
 									? i18n.sub('generate-cluster-x-keys', [
 											values.maxClusterNodes,
 									  ])
@@ -452,52 +528,13 @@ const RequiredInformation = ({
 										</Button>
 									</ClayTooltipProvider>
 
-									{featureFlags.includes('LPS-180001') && (
-										<>
-											<div className="d-flex">
-												<div className="pr-2 pt-1">
-													<ClayCheckbox
-														checked={
-															checkedBoxSubscription
-														}
-														id="expiration-checkbox"
-														onChange={() =>
-															setCheckedBoxSubscription(
-																(
-																	checkedBoxSubcription
-																) =>
-																	!checkedBoxSubcription
-															)
-														}
-													/>
-												</div>
-
-												<label htmlFor="expiration-checkbox">
-													{i18n.sub(
-														'receive-expiration-notifications-through-email-when-this-activation-key-is-about-to-expire-x-days-before,-x-days-before,-and-on-the-day-of-expiration.-unsubscribe-at-any-time',
-														[30, 15]
-													)}
-												</label>
-											</div>
-
-											<div className="dropdown-divider"></div>
-										</>
-									)}
+									<CheckboxSubscriptionNotification />
 								</div>
 							) : (
-								<div className="cp-input-generate-label px-6">
-									<KeySelect
-										avaliableKeysMaximumCount={
-											avaliableKeysMaximumCount
-										}
-										minAvaliableKeysCount={
-											avaliableKeysMaximumCount -
-											usedKeysCount
-										}
-										selectedClusterNodes={
-											values.maxClusterNodes
-										}
-									/>
+								<div className="mx-6">
+									<ClusterNodesOption />
+
+									<CheckboxSubscriptionNotification />
 								</div>
 							)}
 						</>

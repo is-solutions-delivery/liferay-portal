@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useEffect, useState} from 'react';
 
 import {Checkbox} from '../../components/Checkbox/Checkbox';
@@ -9,13 +24,11 @@ import {
 	getProductSKU,
 	getProductSpecifications,
 } from '../../utils/api';
-import {showAppImage} from '../../utils/util';
+import {getThumbnailByProductAttachment, showAppImage} from '../../utils/util';
 import {CardSectionsBody} from './CardSectionsBody';
 import {App, supportAndHelpMap} from './ReviewAndSubmitAppPageUtil';
 
 import './ReviewAndSubmitAppPage.scss';
-
-import ClayLoadingIndicator from '@clayui/loading-indicator';
 
 interface ReviewAndSubmitAppPageProps {
 	onClickBack: () => void;
@@ -74,11 +87,11 @@ export function ReviewAndSubmitAppPage({
 
 			nonTrialSKU?.customFields?.forEach(({customValue, name}) => {
 				if (name === 'version') {
-					version = customValue.data;
+					version = customValue.data as string;
 				}
 
-				if (name === 'version description') {
-					versionDescription = customValue.data;
+				if (name === 'Version Description') {
+					versionDescription = customValue.data as string;
 				}
 			});
 
@@ -130,6 +143,10 @@ export function ReviewAndSubmitAppPage({
 					)
 			);
 
+			const thumbnail = showAppImage(
+				getThumbnailByProductAttachment(productResponse.attachments)
+			);
+
 			const newApp: App = {
 				attachmentTitle: attachment?.title['en_US'] as string,
 				categories: productCategories,
@@ -138,10 +155,10 @@ export function ReviewAndSubmitAppPage({
 				name: productResponse.name['en_US'],
 				price: nonTrialSKU?.price as number,
 				priceModel,
-				supportAndHelp: supportAndHelpCardInfos,
 				storefront: productResponse.images,
+				supportAndHelp: supportAndHelpCardInfos,
 				tags: productTags,
-				thumbnail: productResponse.thumbnail,
+				thumbnail,
 				version,
 				versionDescription,
 			};
@@ -152,6 +169,7 @@ export function ReviewAndSubmitAppPage({
 		};
 
 		getData();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [productERC, productId]);
 
@@ -238,7 +256,6 @@ export function ReviewAndSubmitAppPage({
 						regarding this app submission until Liferay completes
 						its review process and I agree with the Liferay
 						Marketplace <a href="#">terms</a> and{' '}
-
 						<a href="#">privacy</a>
 					</span>
 				</div>

@@ -368,26 +368,17 @@ const Footer: FC<IFooterProps & IConnectDXPProps> = ({
 					</ClayButton>
 				)}
 
-				{!dxpConnected || onboarding ? (
-					<ClayButton
-						className='button-root'
-						disabled={!dxpConnected}
-						displayType='primary'
-						onClick={onboarding ? () => onNext() : onClose}
-					>
-						{Liferay.Language.get('next')}
-					</ClayButton>
-				) : (
-					<ClayLink
-						button
-						className='button-root'
-						displayType='primary'
-						href={getNavHref()}
-						onClick={() => onClose()}
-					>
-						{Liferay.Language.get('done')}
-					</ClayLink>
-				)}
+				<ClayLink
+					button
+					className='button-root'
+					displayType='primary'
+					href={getNavHref()}
+					onClick={() => (onboarding ? onNext() : onClose())}
+				>
+					{onboarding
+						? Liferay.Language.get('next')
+						: Liferay.Language.get('done')}
+				</ClayLink>
 			</div>
 		</Modal.Footer>
 	);
@@ -448,10 +439,8 @@ const FixPackSelect: FC<React.HTMLAttributes<HTMLElement>> = () => {
 				</div>
 
 				<div className='fix-pack-button'>
-					<ClayLink
-						button
-						className='button-root more-information-link mt-4'
-						displayType='secondary'
+					<a
+						className='btn btn-secondary button-root more-information-link mt-4'
 						href={DXP_VERSIONS[dxpVersion].url}
 						target='_blank'
 					>
@@ -461,7 +450,7 @@ const FixPackSelect: FC<React.HTMLAttributes<HTMLElement>> = () => {
 						/>
 
 						{Liferay.Language.get('download')}
-					</ClayLink>
+					</a>
 				</div>
 			</div>
 		</>

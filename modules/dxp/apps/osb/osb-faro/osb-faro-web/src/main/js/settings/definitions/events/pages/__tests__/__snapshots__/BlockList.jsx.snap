@@ -168,17 +168,10 @@ exports[`BlockList should render 1`] = `
             </div>
           </nav>
         </div>
-        <div
-          class="loading-root"
-        >
-          <div
-            class="spinner-root spinner-fade-in"
-          >
-            <span
-              class="loading-animation loading-animation-dotted"
-            />
-          </div>
-        </div>
+        <span
+          aria-hidden="true"
+          class="loading-root spacer loading-animation"
+        />
       </div>
     </div>
   </div>

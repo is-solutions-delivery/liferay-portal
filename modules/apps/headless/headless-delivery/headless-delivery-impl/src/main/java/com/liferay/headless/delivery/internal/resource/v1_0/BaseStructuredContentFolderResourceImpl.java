@@ -21,6 +21,7 @@ import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.Resource;
@@ -1875,7 +1876,7 @@ public abstract class BaseStructuredContentFolderResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("assetLibraryId")) {
 				structuredContentFolderUnsafeConsumer =
 					structuredContentFolder ->
@@ -1895,14 +1896,62 @@ public abstract class BaseStructuredContentFolderResourceImpl
 			}
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			structuredContentFolderUnsafeConsumer = structuredContentFolder ->
-				putSiteStructuredContentFolderByExternalReferenceCode(
-					structuredContentFolder.getSiteId() != null ?
-						structuredContentFolder.getSiteId() :
-							(Long)parameters.get("siteId"),
-					structuredContentFolder.getExternalReferenceCode(),
-					structuredContentFolder);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				structuredContentFolderUnsafeConsumer =
+					structuredContentFolder ->
+						putSiteStructuredContentFolderByExternalReferenceCode(
+							structuredContentFolder.getSiteId() != null ?
+								structuredContentFolder.getSiteId() :
+									(Long)parameters.get("siteId"),
+							structuredContentFolder.getExternalReferenceCode(),
+							structuredContentFolder);
+			}
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
+				structuredContentFolderUnsafeConsumer =
+					structuredContentFolder -> {
+						try {
+							StructuredContentFolder getStructuredContentFolder =
+								getSiteStructuredContentFolderByExternalReferenceCode(
+									structuredContentFolder.getSiteId() !=
+										null ?
+											structuredContentFolder.
+												getSiteId() :
+													(Long)parameters.get(
+														"siteId"),
+									structuredContentFolder.
+										getExternalReferenceCode());
+
+							patchStructuredContentFolder(
+								getStructuredContentFolder.getId() != null ?
+									getStructuredContentFolder.getId() :
+										_parseLong(
+											(String)parameters.get(
+												"structuredContentFolderId")),
+								structuredContentFolder);
+						}
+						catch (NoSuchModelException noSuchModelException) {
+							if (parameters.containsKey("assetLibraryId")) {
+								postAssetLibraryStructuredContentFolder(
+									(Long)parameters.get("assetLibraryId"),
+									structuredContentFolder);
+							}
+							else if (parameters.containsKey("siteId")) {
+								postSiteStructuredContentFolder(
+									(Long)parameters.get("siteId"),
+									structuredContentFolder);
+							}
+							else {
+								throw new NotSupportedException(
+									"One of the following parameters must be specified: [assetLibraryId, siteId, assetLibraryId]");
+							}
+						}
+					};
+			}
 		}
 
 		if (structuredContentFolderUnsafeConsumer == null) {
@@ -2024,7 +2073,7 @@ public abstract class BaseStructuredContentFolderResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			structuredContentFolderUnsafeConsumer =
 				structuredContentFolder -> patchStructuredContentFolder(
 					structuredContentFolder.getId() != null ?
@@ -2035,7 +2084,7 @@ public abstract class BaseStructuredContentFolderResourceImpl
 					structuredContentFolder);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			structuredContentFolderUnsafeConsumer =
 				structuredContentFolder -> putStructuredContentFolder(
 					structuredContentFolder.getId() != null ?

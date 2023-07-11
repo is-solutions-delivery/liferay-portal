@@ -113,23 +113,23 @@ public class JournalArticleAssetRendererTest {
 		ThemeDisplay themeDisplay = _getThemeDisplay(
 			layoutPageTemplateEntry.getPlid());
 
-		String urlViewInContext = assetRenderer.getURLViewInContext(
+		String viewInContextURL = assetRenderer.getURLViewInContext(
 			_getLiferayPortletRequest(themeDisplay), null, null);
 
-		Assert.assertNotNull(urlViewInContext);
+		Assert.assertNotNull(viewInContextURL);
 
-		int index = urlViewInContext.indexOf(urlSeparator);
+		int index = viewInContextURL.indexOf(urlSeparator);
 
 		Assert.assertTrue(index >= 0);
 
-		String friendlyURL = urlViewInContext.substring(
+		String friendlyURL = viewInContextURL.substring(
 			index + urlSeparator.length());
 
 		Assert.assertEquals(
 			article.getUrlTitle(), HttpComponentsUtil.getPath(friendlyURL));
 
 		String version = HttpComponentsUtil.getParameter(
-			urlViewInContext, "version");
+			viewInContextURL, "version");
 
 		Assert.assertNotNull(version);
 		Assert.assertEquals(
@@ -140,23 +140,23 @@ public class JournalArticleAssetRendererTest {
 
 		assetRenderer = assetRendererFactory.getAssetRenderer(article, 0);
 
-		urlViewInContext = assetRenderer.getURLViewInContext(
+		viewInContextURL = assetRenderer.getURLViewInContext(
 			_getLiferayPortletRequest(themeDisplay), null, null);
 
-		Assert.assertNotNull(urlViewInContext);
+		Assert.assertNotNull(viewInContextURL);
 
-		index = urlViewInContext.indexOf(urlSeparator);
+		index = viewInContextURL.indexOf(urlSeparator);
 
 		Assert.assertTrue(index >= 0);
 
-		friendlyURL = urlViewInContext.substring(index + urlSeparator.length());
+		friendlyURL = viewInContextURL.substring(index + urlSeparator.length());
 
 		Assert.assertEquals(
 			article.getUrlTitle(), HttpComponentsUtil.getPath(friendlyURL));
 
 		Assert.assertEquals(
 			StringPool.BLANK,
-			HttpComponentsUtil.getParameter(urlViewInContext, "version"));
+			HttpComponentsUtil.getParameter(viewInContextURL, "version"));
 	}
 
 	private LiferayPortletRequest _getLiferayPortletRequest(

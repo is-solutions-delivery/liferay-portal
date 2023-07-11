@@ -12,24 +12,26 @@
 import ClayModal from '@clayui/modal';
 import {memo} from 'react';
 
+import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
 import i18n from '../../../../../../../../../../../common/I18n';
+
 import {
 	Button,
 	Table,
 } from '../../../../../../../../../../../common/components';
-
 import {useGetAccountSubscriptionUsage} from '../../../../../../../../../../../common/services/liferay/graphql/account-subscription-usage';
 import UsageChart from './components/UsageChart';
 import useOrderItems from './hooks/useOrderItems';
 import getColumns from './utils/getColumns';
 import getRows from './utils/getRows';
 
+const accountSubscriptionGroupNames = ['DXP', 'Portal'];
+
 const AccountSubscriptionModal = ({
 	accountKey,
 	accountSubscriptionGroup,
 	accountSubscriptionProductKey,
 	externalReferenceCode,
-	isProvisioned,
 	observer,
 	onClose,
 	title,
@@ -39,6 +41,8 @@ const AccountSubscriptionModal = ({
 		itemsPerPage,
 		{data, loading},
 	] = useOrderItems(externalReferenceCode);
+
+	const {articleWhatIsMyInstanceSizingValueURL} = useAppPropertiesContext();
 
 	const {
 		data: accountSubscriptionUsageData,
@@ -50,7 +54,12 @@ const AccountSubscriptionModal = ({
 
 	const totalCount = data?.orderItems.totalCount;
 
-	const accountSubscriptionGroupNames = ['DXP', 'Portal'];
+	const accountSubscriptionTerms = data?.orderItems?.items ?? [];
+
+	const accountSubscriptionTermsSort = [...accountSubscriptionTerms].sort(
+		(a, b) =>
+			new Date(b.options?.startDate) - new Date(a.options?.startDate)
+	);
 
 	return (
 		<ClayModal center observer={observer} size="lg">
@@ -77,7 +86,7 @@ const AccountSubscriptionModal = ({
 				</h5>
 
 				{accountSubscriptionGroupNames.includes(
-					accountSubscriptionGroup.name
+					accountSubscriptionGroup?.name
 				) && (
 					<UsageChart
 						data={
@@ -88,7 +97,10 @@ const AccountSubscriptionModal = ({
 				)}
 
 				<Table
-					columns={getColumns(isProvisioned)}
+					columns={getColumns(
+						title,
+						articleWhatIsMyInstanceSizingValueURL
+					)}
 					hasPagination
 					isLoading={loading}
 					paginationConfig={{
@@ -97,7 +109,7 @@ const AccountSubscriptionModal = ({
 						setActivePage,
 						totalCount,
 					}}
-					rows={getRows(data?.orderItems.items)}
+					rows={getRows(accountSubscriptionTermsSort)}
 					tableVerticalAlignment="middle"
 				/>
 			</div>

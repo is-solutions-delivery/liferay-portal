@@ -247,6 +247,86 @@ definition {
 		}
 	}
 
+	macro checkoutFullWorkflow {
+		Click(
+			key_index = "Create Shipment",
+			locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+		Click(locator1 = "Button#PLUS");
+
+		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+		if (isSet(outstandingQuantity)) {
+			var productSkusList = ListUtil.newListFromString(${productSkus});
+			var orderIdsList = ListUtil.newListFromString(${orderIds});
+			var outstandingQuantitiesList = ListUtil.newListFromString(${outstandingQuantities});
+			var size = ListUtil.size(${productSkusList});
+			var count = 0;
+
+			var isLessThanSize = MathUtil.isLessThan(${count}, ${size});
+
+			while ((${isLessThanSize} == "true")) {
+				var sku = ListUtil.get(${productSkusList}, ${count});
+				var orderId = ListUtil.get(${orderIdsList}, ${count});
+				var outstandingQuantity = ListUtil.get(${outstandingQuantitiesList}, ${count});
+
+				AssertTextEquals(
+					key_cellName1 = ${sku},
+					key_cellName2 = ${orderId},
+					key_columnNumber = 3,
+					locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+					value1 = ${outstandingQuantity});
+
+				var count = ${count} + 1;
+
+				var count = StringUtil.valueOf(${count});
+
+				var isLessThanSize = MathUtil.isLessThan(${count}, ${size});
+			}
+		}
+
+		if (isSet(orderId)) {
+			Check.checkToggleSwitch(
+				key_orderId = ${orderId},
+				key_productSku = ${sku},
+				locator1 = "Checkbox#ADD_SHIPMENT_ITEMS_CHECKBOX_WITH_ORDER_ID");
+		}
+		else {
+			Check.checkToggleSwitch(
+				key_productSku = ${sku},
+				locator1 = "Checkbox#ADD_SHIPMENT_ITEMS_CHECKBOX");
+		}
+
+		Button.clickSubmitButton();
+
+		CommerceNavigator.gotoEntry(entryName = ${sku});
+
+		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+		Type(
+			key_warehouseName = ${warehouse},
+			locator1 = "CommerceOrders#ORDER_QUANTITY_IN_SHIPMENT_BY_WAREHOUSE",
+			value1 = 1);
+
+		Button.clickSave();
+
+		Click(locator1 = "Icon#CLOSE");
+
+		SelectFrameTop();
+
+		Click(
+			key_index = "Finish Processing",
+			locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+		Click(
+			key_index = "Ship",
+			locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+		Click(
+			key_index = "Deliver",
+			locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+	}
+
 	macro createQuoteRequest {
 		if (isSet(requestAQuoteInMiniCart)) {
 			Button.click(button = "Request a Quote");
@@ -433,6 +513,13 @@ definition {
 
 		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
 
+		if (isSet(orderItemDiscount)) {
+			Type(
+				key_fieldLabel = "Discount",
+				locator1 = "TextInput#GENERIC_TEXT_INPUT",
+				value1 = ${orderItemDiscount});
+		}
+
 		if (isSet(orderItemQuantity)) {
 			Type(
 				key_fieldLabel = "Quantity",
@@ -445,6 +532,13 @@ definition {
 				key_fieldLabel = "Price",
 				locator1 = "TextInput#GENERIC_TEXT_INPUT",
 				value1 = ${orderItemPrice});
+		}
+
+		if (isSet(orderItemTotal)) {
+			Type(
+				key_fieldLabel = "Total",
+				locator1 = "TextInput#GENERIC_TEXT_INPUT",
+				value1 = ${orderItemTotal});
 		}
 
 		if (isSet(orderItemRequestedDeliveryDate)) {

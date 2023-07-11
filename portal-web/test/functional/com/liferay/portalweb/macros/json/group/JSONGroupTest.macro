@@ -1,17 +1,12 @@
 definition {
 
-	@summary = "Basic Smoke test for the JSON WS API macros"
 	macro runSmoke {
 
 		// Group
 
-		JSONGroup.addGroup(groupName = "group name");
+		HeadlessSite.addSite(siteName = "group name");
 
-		JSONGroup.addGroup(groupName = "group name 2");
-
-		JSONGroup.addChildGroup(
-			groupName = "child group name",
-			parentGroupName = "group name");
+		HeadlessSite.addSite(siteName = "group name 2");
 
 		// User
 

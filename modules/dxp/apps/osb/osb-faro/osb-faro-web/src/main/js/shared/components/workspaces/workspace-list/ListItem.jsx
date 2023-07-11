@@ -4,8 +4,8 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLink from '@clayui/link';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import TextTruncate from 'shared/components/TextTruncate';
 import {autoCancel, hasRequest} from 'shared/util/request-decorator';
 import {ProjectStates} from 'shared/util/constants';
@@ -305,7 +305,7 @@ export default class WorkspaceListItem extends React.Component {
 						{this.renderContent()}
 					</Button>
 				)}
-				{loading && <Spinner overlay />}
+				{loading && <Loading />}
 			</li>
 		);
 	}

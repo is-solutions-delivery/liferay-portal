@@ -24,7 +24,6 @@ import com.liferay.portal.search.web.internal.modified.facet.builder.ModifiedFac
 import com.liferay.portal.search.web.internal.modified.facet.constants.ModifiedFacetPortletKeys;
 import com.liferay.portal.search.web.internal.modified.facet.portlet.ModifiedFacetPortletPreferences;
 import com.liferay.portal.search.web.internal.modified.facet.portlet.ModifiedFacetPortletPreferencesImpl;
-import com.liferay.portal.search.web.internal.util.SearchOptionalUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 
@@ -50,7 +49,7 @@ public class ModifiedFacetPortletSharedSearchContributor
 
 		ModifiedFacetPortletPreferences modifiedFacetPortletPreferences =
 			new ModifiedFacetPortletPreferencesImpl(
-				portletSharedSearchSettings.getPortletPreferencesOptional());
+				portletSharedSearchSettings.getPortletPreferences());
 
 		portletSharedSearchSettings.addFacet(
 			_buildFacet(
@@ -81,18 +80,12 @@ public class ModifiedFacetPortletSharedSearchContributor
 		String parameterName =
 			modifiedFacetPortletPreferences.getParameterName();
 
+		modifiedFacetBuilder.setCustomRangeFrom(
+			portletSharedSearchSettings.getParameter(parameterName + "From"));
+		modifiedFacetBuilder.setCustomRangeTo(
+			portletSharedSearchSettings.getParameter(parameterName + "To"));
 		modifiedFacetBuilder.setSelectedRanges(
 			portletSharedSearchSettings.getParameterValues(parameterName));
-
-		SearchOptionalUtil.copy(
-			() -> portletSharedSearchSettings.getParameterOptional(
-				parameterName + "From"),
-			modifiedFacetBuilder::setCustomRangeFrom);
-
-		SearchOptionalUtil.copy(
-			() -> portletSharedSearchSettings.getParameterOptional(
-				parameterName + "To"),
-			modifiedFacetBuilder::setCustomRangeTo);
 
 		return modifiedFacetBuilder.build();
 	}

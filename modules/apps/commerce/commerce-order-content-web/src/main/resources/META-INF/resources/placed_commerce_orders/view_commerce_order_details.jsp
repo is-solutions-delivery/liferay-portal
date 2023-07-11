@@ -161,7 +161,7 @@ if (backURL != null) {
 			<div class="col-md-3">
 				<dl class="commerce-list">
 					<dt><liferay-ui:message key="order-status" /></dt>
-					<dd><%= commerceOrderContentDisplayContext.getCommerceOrderStatus(commerceOrder) %></dd>
+					<dd><%= commerceOrderContentDisplayContext.getCommerceOrderStatusLabel(commerceOrder) %></dd>
 				</dl>
 			</div>
 		</div>
@@ -296,6 +296,10 @@ if (backURL != null) {
 		<aui:input name="<%= Constants.CMD %>" type="hidden" />
 		<aui:input name="commerceOrderId" type="hidden" value="<%= String.valueOf(commerceOrder.getCommerceOrderId()) %>" />
 	</aui:form>
+
+	<c:if test="<%= commerceOrderContentDisplayContext.isShowProcessQuote() %>">
+		<aui:button cssClass="btn-lg" onClick='<%= liferayPortletResponse.getNamespace() + "processQuote();" %>' value="process-quote" />
+	</c:if>
 
 	<aui:button cssClass="btn-lg" onClick='<%= liferayPortletResponse.getNamespace() + "reorderCommerceOrder();" %>' value="reorder" />
 
@@ -435,6 +439,13 @@ if (backURL != null) {
 	function <portlet:namespace />reorderCommerceOrder() {
 		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value =
 			'reorder';
+
+		submitForm(document.<portlet:namespace />fm);
+	}
+
+	function <portlet:namespace />processQuote() {
+		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value =
+			'processQuote';
 
 		submitForm(document.<portlet:namespace />fm);
 	}

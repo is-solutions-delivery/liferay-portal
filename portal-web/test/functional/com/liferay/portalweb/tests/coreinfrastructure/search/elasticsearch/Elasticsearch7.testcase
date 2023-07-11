@@ -13,9 +13,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -24,7 +24,7 @@ definition {
 	test AssertIndexOnStartup {
 		property search.environment.suite.exclude = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#AssertIndexOnStartup";
+		property test.liferay.virtual.instance = "false";
 
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
@@ -48,7 +48,11 @@ definition {
 
 		Navigator.openSpecificURL(url = "${portalURL}/web/guest/asset-publisher-page");
 
-		Portlet.addPG(portletName = "Asset Publisher");
+		JSONLayout.addWidgetToPublicLayout(
+			column = 1,
+			groupName = "Guest",
+			layoutName = "Asset Publisher Page",
+			widgetName = "Asset Publisher");
 
 		var companyId = JSONCompany.getCompanyId();
 		var port = Elasticsearch.getServerPort();
@@ -60,7 +64,7 @@ definition {
 				-d '{
 					"query": {
 						"match": {
-							"_type": "LiferayDocumentType"
+							"_type": "_doc"
 						}
 					}
 				}'
@@ -72,9 +76,7 @@ definition {
 
 		var newProperty = "index.on.startup=true";
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "portal-ext-properties-update -Dadd.new.properties=true -Dupdate.properties=${newProperty}");
+		AntCommands.runCommand("build-test.xml", "portal-ext-properties-update -Dadd.new.properties=true -Dupdate.properties=${newProperty}");
 
 		Portlet.startServer(deleteLiferayHome = "false");
 
@@ -130,7 +132,7 @@ definition {
 
 	@priority = 5
 	test AssertSearchAdmin {
-		property test.name.skip.portal.instance = "Elasticsearch7#AssertSearchAdmin";
+		property test.liferay.virtual.instance = "false";
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
@@ -177,9 +179,9 @@ definition {
 			groupName = "Guest",
 			title = "apple");
 
-		Search.openSearchPage();
-
 		SearchPortlets.addWidgets(searchPortletList = "Search Insights");
+
+		Search.openSearchPage();
 
 		Portlet.gotoPortletOptions(
 			portletName = "Search Insights",
@@ -237,7 +239,7 @@ definition {
 		property portal.acceptance = "true";
 		property search.environment.suite.exclude = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#AssertSidecarAutoInstall";
+		property test.liferay.virtual.instance = "false";
 
 		AssertConsoleTextPresent(value1 = "Sidecar Elasticsearch liferay started at [\d\.]+:9201");
 
@@ -256,7 +258,7 @@ definition {
 	@priority = 3
 	test BulkExecutionFailuresAreLoggedCorrectly {
 		property search.environment.suite.exclude = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#BulkExecutionFailuresAreLoggedCorrectly";
+		property test.liferay.virtual.instance = "false";
 
 		SystemSettings.openToConfigInSystemSettings(portletId = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration");
 
@@ -283,33 +285,6 @@ definition {
 		AssertConsoleTextPresent(value1 = "Limit of total fields \[100\] has been exceeded");
 	}
 
-	@priority = 4
-	test CanReindexSelectedInstance {
-		property test.name.skip.portal.instance = "Elasticsearch7#CanReindexSelectedInstance";
-
-		var baseURL = PropsUtil.get("portal.url");
-
-		ServerAdministration.openServerAdmin();
-
-		ServerAdministration.addCategoryLogLevels(
-			categoryLevel = "DEBUG",
-			categoryName = "com.liferay.portal.search.internal.background.task");
-
-		SearchAdministration.executeReindex(executionScope = "System");
-
-		var companyId = JSONCompany.getCompanyId();
-
-		AssertConsoleTextNotPresent(value1 = "phase=portalStart, defaultLocale=en_US, companyId=${companyId}");
-
-		AssertConsoleTextPresent(value1 = "phase=portalStart, defaultLocale=en_US, companyId=0");
-
-		SearchAdministration.executeReindex(executionScope = "liferay.com");
-
-		AssertConsoleTextPresent(value1 = "phase=portalStart, defaultLocale=en_US, companyId=${companyId}");
-
-		SearchAdministration.executeReindex(executionScope = "All Instances");
-	}
-
 	@priority = 5
 	test ElasticsearchClusteringSmokeTest {
 		property elasticsearch.cluster.size = "2";
@@ -317,36 +292,31 @@ definition {
 		property portal.acceptance = "true";
 		property remote.elasticsearch.enabled = "true";
 		property search.environment.suite.exclude = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#ElasticsearchClusteringSmokeTest";
+		property test.liferay.virtual.instance = "false";
 
 		Elasticsearch.viewClusterStatusViaClusterHealthAPI(
 			nodePort = 9200,
 			numberOfNodes = 2);
 
-		Navigator.openURL();
+		SearchAdministration.openSearchAdmin();
 
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Message Boards");
+		AssertElementPresent(
+			key_panel = "Nodes (2)",
+			locator1 = "Panel#PANEL_EXPANDED");
 
-		MessageboardsThread.addCP(
+		JSONMBMessage.addMessage(
+			groupName = "Guest",
 			threadBody = "Orange",
 			threadSubject = "Apple");
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Documents and Media");
-
-		DMDocument.addCP(
+		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "Orange",
-			dmDocumentFile = "Document_1.txt",
-			dmDocumentTitle = "Apple");
+			dmDocumentTitle = "Apple",
+			groupName = "Guest",
+			mimeType = "text/plain",
+			sourceFileName = "Document_1.txt");
 
-		Navigator.openURL();
-
-		SearchPortlets.searchEmbedded(searchTerm = "Apple");
+		Search.openSearchPage(searchTerm = "Apple");
 
 		SearchResultPortlet.viewSearchResults(
 			searchAssetTitle = "Apple",
@@ -356,9 +326,7 @@ definition {
 			searchAssetTitle = "Apple",
 			searchAssetType = "Message Boards Message");
 
-		Navigator.openURL();
-
-		SearchPortlets.searchEmbedded(searchTerm = "Orange");
+		Search.openSearchPage(searchTerm = "Orange");
 
 		SearchResultPortlet.viewSearchResults(
 			searchAssetTitle = "Apple",
@@ -374,7 +342,7 @@ definition {
 		property elasticsearch.multiple.connections = "true";
 		property remote.elasticsearch.enabled = "true";
 		property search.environment.suite.exclude = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#MultipleConnectionsSmokeTest";
+		property test.liferay.virtual.instance = "false";
 
 		SearchAdministration.openSearchAdmin();
 
@@ -418,29 +386,24 @@ definition {
 			layoutName = "Multiple Connections Page",
 			layoutTemplate = "3 Columns");
 
-		JSONLayout.addWidgetToPublicLayout(
-			column = 1,
-			groupName = "Guest",
+		SearchPortlets.addWidgets(
 			layoutName = "Multiple Connections Page",
-			widgetName = "Custom Filter");
+			searchPortletList = "Custom Filter");
 
-		JSONLayout.addWidgetToPublicLayout(
+		SearchPortlets.addWidgets(
 			column = 2,
-			groupName = "Guest",
 			layoutName = "Multiple Connections Page",
-			widgetName = "Search Results");
+			searchPortletList = "Search Results");
 
-		JSONLayout.addWidgetToPublicLayout(
+		SearchPortlets.addWidgets(
 			column = 3,
-			groupName = "Guest",
 			layoutName = "Multiple Connections Page",
-			widgetName = "Search Options");
+			searchPortletList = "Search Options");
 
-		JSONLayout.addWidgetToPublicLayout(
+		SearchPortlets.addWidgets(
 			column = 3,
-			groupName = "Guest",
 			layoutName = "Multiple Connections Page",
-			widgetName = "Low Level Search Options");
+			searchPortletList = "Low Level Search Options");
 
 		Navigator.openSpecificURL(url = "${portalURL}/web/guest/multiple-connections-page");
 
@@ -478,7 +441,7 @@ definition {
 		property osgi.module.configurations = "clusterName=\"LiferayElasticsearchCluster1\"";
 		property portal.acceptance = "true";
 		property search.environment.suite.exclude = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#OSGiConfigSmokeTest";
+		property test.liferay.virtual.instance = "false";
 
 		var portalHostname = PropsUtil.get("portal.hostname");
 
@@ -487,13 +450,204 @@ definition {
 		Elasticsearch.viewClusterStatus(clusterStatus = "\"cluster_name\" : \"LiferayElasticsearchCluster1\"");
 	}
 
+	@description = "This is a use case for LPS-130753."
+	@priority = 4
+	test ReindexSpecificPortalInstances {
+		property test.liferay.virtual.instance = "false";
+
+		ServerAdministration.openServerAdmin();
+
+		ServerAdministration.addCategoryLogLevels(
+			categoryLevel = "DEBUG",
+			categoryName = "com.liferay.portal.search.internal.background.task");
+
+		SearchAdministration.executeReindex(executionScope = "System");
+
+		var companyId = JSONCompany.getCompanyId();
+
+		AssertConsoleTextNotPresent(value1 = "phase=portalStart, defaultLocale=en_US, companyId=${companyId}");
+
+		AssertConsoleTextPresent(value1 = "phase=portalStart, defaultLocale=en_US, companyId=0");
+
+		SearchAdministration.executeReindex(executionScope = "liferay.com");
+
+		AssertConsoleTextPresent(value1 = "phase=portalStart, defaultLocale=en_US, companyId=${companyId}");
+
+		SearchAdministration.executeReindex(executionScope = "All Instances");
+	}
+
+	@description = "This is a use case for LPS-177665."
+	@priority = 4
+	test ReindexWithConcurrentExecutionMode {
+		property custom.properties = "feature.flag.LPS-177664=true";
+		property portal.release = "false";
+		property search.environment.suite.exclude = "true";
+		property test.liferay.virtual.instance = "false";
+
+		task ("Assert that indexNameCurrent and indexNameNext in the lportal.Company datbase table are empty when a reindex has not been executed yet") {
+			var companyId = JSONCompany.getCompanyId();
+
+			SQL.assertTextNotInMySQLStatementResult(
+				mysqlStatement = "SELECT * FROM lportal.Company WHERE companyId LIKE '%${companyId}%'",
+				text = "liferay-${companyId}");
+		}
+
+		task ("Begin a reindex of the primary Portal instance using concurrent execution mode") {
+			SearchAdministration.openIndexActions();
+
+			Check.checkNotVisible(
+				locator1 = "Radio#ANY",
+				radioLabel = "Concurrent");
+
+			Check.checkNotVisible(
+				locator1 = "Radio#ANY",
+				radioLabel = "Selected Instances");
+
+			Check.checkNotVisible(
+				key_executionScope = "liferay.com",
+				locator1 = "SearchAdmin#SELECTED_INSTANCE_INDEX_CHECKBOX");
+
+			Click(
+				key_action = "Reindex search indexes.",
+				locator1 = "SearchAdmin#EXECUTE_REINDEX_BUTTON");
+		}
+
+		task ("Assert that indexNameNext is now populated in the lportal.Company database table") {
+			var companyId = JSONCompany.getCompanyId();
+
+			SQL.assertTextInMySQLStatementResult(
+				mysqlStatement = "SELECT * FROM lportal.Company WHERE companyId LIKE '%${companyId}%'",
+				text = "liferay-${companyId}");
+		}
+
+		task ("Assert that search results are still returned during a reindex") {
+			Search.openSearchPage(searchTerm = "test");
+
+			AssertElementPresent(locator1 = "Search#REINDEX_IN_PROGRESS_INDICATOR");
+
+			SearchResultPortlet.viewSearchResults(
+				searchAssetTitle = "Test Test",
+				searchAssetType = "User");
+		}
+
+		task ("Assert that there are 2 Portal instance indices while a concurrent reindex is running") {
+			SearchAdministration.openFieldMappings();
+
+			VerifyElementPresent(locator1 = "//a[text()='liferay-${companyId}']");
+
+			AssertElementPresent(locator1 = "//a[contains(text(),'liferay-${companyId}-2')]");
+		}
+
+		task ("Assert that there is only 1 Portal instance index after a concurrent reindex completes") {
+			WaitForConsoleTextPresent(value1 = "Finished reindexing company ${companyId}");
+
+			Refresh();
+
+			AssertElementNotPresent(locator1 = "//a[text()='liferay-${companyId}']");
+
+			AssertElementPresent(locator1 = "//a[contains(text(),'liferay-${companyId}-2')]");
+		}
+	}
+
+	@description = "This is a use case for LPS-177670."
+	@priority = 4
+	test ReindexWithSyncExecutionMode {
+		property custom.properties = "feature.flag.LPS-177668=true";
+		property search.environment.suite.exclude = "true";
+		property test.liferay.virtual.instance = "false";
+
+		task ("Grab the timestamp value for the 'Test Test' user document from the index before a Sync reindex is executed") {
+			var companyId = JSONCompany.getCompanyId();
+			var port = Elasticsearch.getServerPort();
+			var portalHostname = PropsUtil.get("portal.hostname");
+
+			var curl = '''
+				http://${portalHostname}:${port}/liferay-${companyId}/_search?pretty \
+					-H 'Content-Type: application/json' \
+					-d '{
+						"query":
+						{
+							"bool":
+							{
+								"must":
+								[
+									{
+										"match":
+										{
+											"userName": "test test"
+										}
+									},
+									{
+										"match":
+										{
+											"entryClassName": "com.liferay.portal.kernel.model.User"
+										}
+									}
+								]
+							}
+						}
+					}'
+			''';
+
+			var preSyncReindexTimestamp = JSONCurlUtil.get(${curl}, "$.hits.hits[0]._source.timestamp");
+		}
+
+		task ("Begin a reindex using sync execution mode") {
+			SearchAdministration.openIndexActions();
+
+			Check.checkNotVisible(
+				locator1 = "Radio#ANY",
+				radioLabel = "Sync");
+
+			Click(
+				key_action = "Reindex search indexes.",
+				locator1 = "SearchAdmin#EXECUTE_REINDEX_BUTTON");
+		}
+
+		task ("Assert that search results are still returned during the reindex") {
+			Search.openSearchPage(searchTerm = "test");
+
+			AssertElementPresent(locator1 = "Search#REINDEX_IN_PROGRESS_INDICATOR");
+
+			SearchResultPortlet.viewSearchResults(
+				searchAssetTitle = "Test Test",
+				searchAssetType = "User");
+		}
+
+		task ("After the reindex is complete, assert the timestamp value for the 'Test Test' user document has updated in the index") {
+			SearchAdministration.openIndexActions();
+
+			WaitForElementNotPresent(locator1 = "Search#REINDEX_IN_PROGRESS_INDICATOR");
+
+			var postSyncReindexTimestamp = JSONCurlUtil.get(${curl}, "$.hits.hits[0]._source.timestamp");
+
+			if (${preSyncReindexTimestamp} != ${postSyncReindexTimestamp}) {
+				echo("The timestamp value for the 'Test Test' user document has been updated in the index");
+			}
+			else {
+				fail("The timestamp value for the 'Test Test' user document has not been updated in the index");
+			}
+		}
+
+		task ("Assert the stale document of the 'Test Test' user has been deleted from the index by confirming the index only has one copy") {
+			var userDocumentsCount = JSONCurlUtil.get(${curl}, "$.hits.total.value");
+
+			if (${userDocumentsCount} == 1) {
+				echo("The stale document of the 'Test Test' user has been deleted from the index");
+			}
+			else {
+				fail("The stale document of the 'Test Test' user was not deleted from the index");
+			}
+		}
+	}
+
 	@description = "Assert search is functional after Elasticsearch connector is redeployed from GogoShell"
 	@priority = 3
 	test SearchAfterRedeployingElasticsearchConnector {
 		property operating.system.types = "centos";
 		property remote.elasticsearch.enabled = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#SearchAfterRedeployingElasticsearchConnector";
+		property test.liferay.virtual.instance = "false";
 
 		GogoShell.openGogoShellAdmin();
 
@@ -526,15 +680,13 @@ definition {
 	test SearchWithNonLiferayIndex {
 		property embedded.elasticsearch.only = "true";
 		property search.environment.suite.exclude = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#SearchWithNonLiferayIndex";
+		property test.liferay.virtual.instance = "false";
 
 		var portalHostname = PropsUtil.get("portal.hostname");
 
 		Navigator.openSpecificURL(url = "http://${portalHostname}:9201");
 
-		AntCommand(
-			locator1 = "build-test-elasticsearch7.xml",
-			value1 = "add-boston-dataset-index -Dbackup.index=boston311 -Delasticsearch.port=9201");
+		AntCommands.runCommand("build-test-elasticsearch7.xml", "add-boston-dataset-index -Dbackup.index=boston311 -Delasticsearch.port=9201");
 
 		Navigator.openURL();
 
@@ -544,11 +696,13 @@ definition {
 			groupName = "Guest",
 			layoutName = "Search Page");
 
+		SearchPortlets.addWidgets(
+			layoutName = "Search Page",
+			searchPortletList = "Custom Filter,Low Level Search Options,Search Results,Search Bar");
+
 		var portalURL = PropsUtil.get("portal.url");
 
 		Navigator.openSpecificURL(url = "${portalURL}/web/guest/search-page");
-
-		SearchPortlets.addWidgets(searchPortletList = "Custom Filter,Low Level Search Options,Search Results,Search Bar");
 
 		SearchPortlets.configureCustomFilter(
 			customParameterName = "q",
@@ -582,7 +736,7 @@ definition {
 	test SwitchSidecarToRemote {
 		property embedded.elasticsearch.only = "true";
 		property search.environment.suite.exclude = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#SwitchSidecarToRemote";
+		property test.liferay.virtual.instance = "false";
 
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
@@ -597,18 +751,18 @@ definition {
 			categoryLevel = "INFO",
 			categoryName = "com.liferay.portal.search.elasticsearch7.internal.connection");
 
-		AntCommand(
-			locator1 = "build-test-elasticsearch7.xml",
-			value1 = "start-elasticsearch");
+		AntCommands.runCommand("build-test-elasticsearch7.xml", "start-elasticsearch");
 
 		WaitForConsoleTextPresent(value1 = "Stopping sidecar Elasticsearch");
 
 		WaitForConsoleTextPresent(value1 = "Returning connection with ID: __REMOTE__");
 
-		// LRCI-2401
+		var javaProcesses = ExecUtil.executeCommand("jps -v");
+		var sidecarCurlResponse = ExecUtil.executeCommand("curl -X GET http://localhost:9201");
 
-		//Navigator.openSpecificURL(url = "http://localhost:9201");
-		//AssertTextNotPresent(value1 = "cluster_name");
+		if (contains(${javaProcesses}, "sidecar") || contains(${sidecarCurlResponse}, "cluster_name")) {
+			fail("Failed: Sidecar is still running.");
+		}
 
 		Navigator.openURL();
 
@@ -648,16 +802,14 @@ definition {
 			searchAssetTitle = "WC WebContent Title",
 			searchAssetType = "Web Content Article");
 
-		AntCommand(
-			locator1 = "build-test-elasticsearch7.xml",
-			value1 = "stop-elasticsearch");
+		AntCommands.runCommand("build-test-elasticsearch7.xml", "stop-elasticsearch");
 	}
 
 	@description = "This is a use case for LPS-57894."
 	@priority = 3
 	test UpdateSystemSettingsWithoutPortalRestart {
 		property embedded.elasticsearch.only = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#UpdateSystemSettingsWithoutPortalRestart";
+		property test.liferay.virtual.instance = "false";
 
 		JSONWebcontent.addWebContent(
 			content = "WC Content",
@@ -722,7 +874,7 @@ definition {
 	@priority = 4
 	test WarnTracePresentWithDataInconsistency {
 		property search.environment.suite.exclude = "true";
-		property test.name.skip.portal.instance = "Elasticsearch7#WarnTracePresentWithDataInconsistency";
+		property test.liferay.virtual.instance = "false";
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentTitle = "DM Document",

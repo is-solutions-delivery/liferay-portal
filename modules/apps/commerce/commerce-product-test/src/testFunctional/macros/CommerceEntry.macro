@@ -21,7 +21,6 @@ definition {
 		AssertElementPresent(locator1 = "CommerceEntry#PAYMENT_SUBSCRIPTION_TOGGLE_ACTIVE");
 	}
 
-	@summary = "Add a new user that is part of an account(the creation of a new account, the membership and the user's role are optional)"
 	macro addAccountEntryUser {
 		Variables.assertDefined(parameterList = "${accountName},${userEmailAddress},${userFirstName},${userLastName},${userScreenName}");
 
@@ -134,6 +133,16 @@ definition {
 			key_title = "Currency",
 			locator1 = "CommerceEntry#CATALOGS_FORM",
 			value1 = ${catalogCurrency});
+
+		if (isSet(linkCatalogSupplier)) {
+			Click(
+				key_label = "Link Catalog to a Supplier",
+				locator1 = "CommerceEntry#ANY_AUTOCOMPLETE_CONTAINS_TEXT_FIELD");
+
+			Click(
+				key_categoryName = ${supplierAccountName},
+				locator1 = "CommerceEntry#COMMERCE_CATEGORY_AUTOCOMPLETE_SPECIFIC");
+		}
 	}
 
 	macro addNewChannelsEntry {
@@ -489,6 +498,34 @@ definition {
 		Type(
 			locator1 = "CommerceEntry#PRIORITY_FIELD",
 			value1 = ${valuePosition});
+	}
+
+	macro addPriceListsFromProductSKU {
+		CommerceNavigator.gotoEntry(entryName = ${skuName});
+
+		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+		CommerceEntry.gotoMenuTab(menuTab = "Price Lists");
+
+		Click(locator1 = "Button#PLUS");
+
+		SelectFrameTop();
+
+		SelectFrame(
+			key_frameTitle = "Add ${skuName} to Price List",
+			locator1 = "CommerceEntry#ANY_IFRAME");
+
+		for (var priceListName : list ${priceListNames}) {
+			Click.javaScriptClick(
+				key_imageName = ${priceListName},
+				locator1 = "Checkbox#ADAPTIVE_MEDIA_IMAGE");
+		}
+
+		SelectFrameTop();
+
+		Click(
+			key_text = "Add",
+			locator1 = "Button#ANY");
 	}
 
 	macro addPricingEntry {
@@ -1029,6 +1066,7 @@ definition {
 		CommerceSKUs.setSkuPricing(
 			basePrice = ${basePrice},
 			cost = ${cost},
+			priceOnApplication = ${priceOnApplication},
 			promoPrice = ${promoPrice});
 
 		if (isSet(publish)) {
@@ -1155,6 +1193,25 @@ definition {
 		AssertElementPresent(locator1 = "Message#SUCCESS");
 
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
+	}
+
+	macro removeEntryEligibility {
+		CommerceNavigator.gotoEntry(entryName = ${entryName});
+
+		Navigator.gotoNavTab(navTab = "Eligibility");
+
+		Click(
+			key_value = ${channelEligibility},
+			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+
+		MenuItem.click(menuItem = "Remove");
+
+		CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
+
+		AssertElementNotPresent(
+			key_entryName = ${channelEligibility},
+			key_table = "Channels",
+			locator1 = "CommerceEntry#TABLE_ELIGIBILITY_ENTRY");
 	}
 
 	macro saveEntry {
@@ -1424,13 +1481,19 @@ definition {
 
 	macro setExpirationTime {
 		var timeString = selenium.getElementValue("TextInput#DISPLAY_DATE_TIME");
-
-		var ampm = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 3);
-		var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 1);
-		var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 2);
+		var timeAMPM = selenium.getElementValue("TextInput#DISPLAY_DATE_MERIDIAN");
+		var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*)", 1);
+		var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*)", 2);
 		var minutesToExpire = ${minutesToExpire};
 
 		var minutes = ${minutes} + ${minutesToExpire};
+
+		if (${timeAMPM} == 0) {
+			var ampm = "AM";
+		}
+		else {
+			var ampm = "PM";
+		}
 
 		var changeHour = MathUtil.isGreaterThan(${minutes}, 59);
 
@@ -1458,21 +1521,27 @@ definition {
 			checkboxName = "Never Expire",
 			locator1 = "Checkbox#ANY_CHECKBOX");
 
-		Type(
+		Type.sendKeys(
 			inputFieldId = "expirationDateTime",
 			locator1 = "TextInput#INPUT_ID",
-			value1 = "${hours}:${minutes} ${ampm}");
+			value1 = "${hours}${minutes}${ampm}");
 	}
 
 	macro setPublishTime {
 		var timeString = selenium.getElementValue("TextInput#DISPLAY_DATE_TIME");
-
-		var ampm = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 3);
-		var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 1);
-		var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 2);
+		var timeAMPM = selenium.getElementValue("TextInput#DISPLAY_DATE_MERIDIAN");
+		var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*)", 1);
+		var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*)", 2);
 		var minutesToPublish = ${minutesToPublish};
 
 		var minutes = ${minutes} + ${minutesToPublish};
+
+		if (${timeAMPM} == 0) {
+			var ampm = "AM";
+		}
+		else {
+			var ampm = "PM";
+		}
 
 		var changeHour = MathUtil.isGreaterThan(${minutes}, 59);
 
@@ -1496,10 +1565,10 @@ definition {
 			}
 		}
 
-		Type(
+		Type.sendKeys(
 			inputFieldId = "displayDateTime",
 			locator1 = "TextInput#INPUT_ID",
-			value1 = "${hours}:${minutes} ${ampm}");
+			value1 = "${hours}${minutes}${ampm}");
 	}
 
 	macro uploadCatalogEntrySingleImage {
@@ -1640,6 +1709,27 @@ definition {
 			key_title = "Currency",
 			locator1 = "CommerceEntry#CATALOGS_FORM",
 			value1 = ${catalogCurrency});
+
+		if (isSet(catalogBasePriceList)) {
+			AssertValue(
+				key_labelName = "Base Price List",
+				locator1 = "TextInput#SPECIFIC_LABEL_TEXT_INPUT",
+				value1 = ${catalogBasePriceList});
+		}
+
+		if (isSet(catalogBasePromotion)) {
+			AssertValue(
+				key_labelName = "Base Promotion",
+				locator1 = "TextInput#SPECIFIC_LABEL_TEXT_INPUT",
+				value1 = ${catalogBasePromotion});
+		}
+
+		if (isSet(linkCatalogSupplier)) {
+			AssertValue(
+				key_labelName = "Link Catalog to a Supplier",
+				locator1 = "TextInput#SPECIFIC_LABEL_TEXT_INPUT",
+				value1 = ${supplierAccountName});
+		}
 	}
 
 	macro viewChannelsEntry {
@@ -1801,22 +1891,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "CommerceEntry#PAGINATION_RESULTS",
 			value1 = ${results});
-	}
-
-	macro viewPriceListEntry {
-		AssertTextEquals(
-			locator1 = "CommerceEntry#NAME_FIELD",
-			value1 = ${priceListName});
-
-		AssertSelectedLabel(
-			key_fieldLabel = "Catalog",
-			locator1 = "Select#GENERIC_SELECT_FIELD",
-			value1 = ${priceListCatalog});
-
-		AssertSelectedLabel(
-			key_fieldLabel = "Currency",
-			locator1 = "Select#GENERIC_SELECT_FIELD",
-			value1 = ${priceListCurrency});
 	}
 
 	macro viewProductOptions {

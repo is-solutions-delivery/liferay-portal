@@ -1,0 +1,57 @@
+definition {
+
+	macro commerceTearDown {
+		JSONUser.tearDownNonAdminUsers();
+
+		CommerceJSONAccountsAPI._deleteAllCommerceAccounts();
+
+		CommerceJSONOptionsAPI._deleteAllCommerceOptions();
+
+		CommerceJSONSpecificationGroupsAPI._deleteAllCommerceSpecificationGroups();
+
+		CommerceJSONSpecificationsAPI._deleteAllCommerceSpecifications();
+
+		CommerceJSONChannelsAPI._deleteAllCommerceChannels();
+
+		CommerceJSONCatalogsAPI._deleteAllNoSystemCommerceCatalogs();
+
+		CommerceConfiguration.commerceInitializersTearDown();
+	}
+
+	macro marketplaceInitializersTearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Navigator.openURL();
+
+			if (IsElementPresent(locator1 = "UserBar#USER_AVATAR_IMAGE")) {
+				User.logoutPG();
+			}
+
+			User.firstLoginPG();
+
+			MP2Configuration.commerceTearDown();
+
+			if (isSet(doLogout)) {
+				User.logoutPG();
+			}
+		}
+	}
+
+	macro marketplaceSetUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		HeadlessSite.addSite(
+			siteName = "Marketplace Site",
+			templateName = "Liferay Marketplace",
+			templateType = "Site Initializer");
+
+		ApplicationsMenu.gotoSite(site = "Marketplace Site");
+	}
+
+}

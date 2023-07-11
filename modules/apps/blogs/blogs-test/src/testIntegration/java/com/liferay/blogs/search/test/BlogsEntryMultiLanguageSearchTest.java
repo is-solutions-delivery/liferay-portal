@@ -179,7 +179,7 @@ public class BlogsEntryMultiLanguageSearchTest {
 
 		setTestLocale(locale);
 
-		BlogsEntry blogsEntry = _blogsEntryFixture.createBlogsEntry(keywords);
+		BlogsEntry blogsEntry = _blogsEntryFixture.addEntry(keywords);
 
 		assertFieldValues(
 			Field.TITLE, locale, _getMapResult(blogsEntry), keywords);

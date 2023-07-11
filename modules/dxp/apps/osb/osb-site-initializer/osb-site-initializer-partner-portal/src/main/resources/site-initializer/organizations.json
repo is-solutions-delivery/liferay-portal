@@ -1,0 +1,92 @@
+[
+	{
+		"childOrganizations": [
+			{
+				"externalReferenceCode": "PRM-ORG-AFRICA",
+				"name": "Africa"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-ANZ",
+				"name": "ANZ"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-BENELUX",
+				"name": "BENELUX"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-CANADA",
+				"name": "Canada"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-COL-ECU-CEN-AMERICA",
+				"name": "Colombia, Ecuador, Central America"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-CEN-EAST-EUR",
+				"name": "CENTRAL AND EASTERN EUROPE"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-CH-PE-ARG-URU-PAR",
+				"name": "Chile, Peru, Argentina, Uruguay, Paraguay"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-CHINA",
+				"name": "China"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-DACH",
+				"name": "DACH"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-FRANCE",
+				"name": "France"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-INDIA",
+				"name": "India"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-ITGRCY",
+				"name": "itGrCy"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-JAPAN",
+				"name": "Japan"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-LAT-AMERICA",
+				"name": "Latim America"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-MEXICO",
+				"name": "Mexico"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-MIDDLE-EAST",
+				"name": "Middle East"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-NORDICS",
+				"name": "Nordics"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-SINGAPORE",
+				"name": "Singapore"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-SPA-POR",
+				"name": "SpainPortugal"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-UK",
+				"name": "UK"
+			},
+			{
+				"externalReferenceCode": "PRM-ORG-US",
+				"name": "US"
+			}
+		],
+		"externalReferenceCode": "PRM-ORG-GLOBAL",
+		"name": "Global"
+	}
+]

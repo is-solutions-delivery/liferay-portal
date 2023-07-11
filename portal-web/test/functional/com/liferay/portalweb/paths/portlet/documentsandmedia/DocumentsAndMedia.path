@@ -66,6 +66,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SORTED_DOWN_ICON</td>
+	<td>//*[name()='svg'][contains(@class,'lexicon-icon-order-list-down')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SORTED_UP_ICON</td>
+	<td>//*[name()='svg'][contains(@class,'lexicon-icon-order-list-up')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TAG</td>
 	<td>//span//span[contains(.,'${key_tagName}')]</td>
 	<td></td>
@@ -173,6 +183,16 @@
 <!--DESCRIPTIVE_LIST_DOCUMENT-->
 
 <tr>
+	<td>DESCRIPTIVE_LIST_DOCUMENT_AUTHOR_AND_DATE</td>
+	<td>//*[contains(@data-title,'${key_dmDocumentTitle}')]//span[contains(.,'Modified') and contains(.,'${key_authorName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DESCRIPTIVE_LIST_DOCUMENT_BREADCRUMB</td>
+	<td>//*[contains(@data-title,'${key_dmDocumentTitle}')]//span[contains(.,'${key_contextualBreadcrumb}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DESCRIPTIVE_LIST_DOCUMENT_CHECKBOX</td>
 	<td>//*[@data-title='${key_dmDocumentTitle}']//input[@type='checkbox']</td>
 	<td></td>
@@ -183,8 +203,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DESCRIPTIVE_LIST_DOCUMENT_ICON_SPECIFIC</td>
+	<td>//*[@data-title='${key_dmDocumentTitle}']//*[name()='svg']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DESCRIPTIVE_LIST_DOCUMENT_TITLE</td>
 	<td>//*[contains(@data-title,'${key_dmDocumentTitle}')]//a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DESCRIPTIVE_LIST_DOCUMENT_TITLE_SPECIFIC</td>
+	<td>//*[@data-title='${key_dmDocumentTitle}' and not(contains(@data-folder,'true'))]//a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DESCRIPTIVE_LIST_DOCUMENT_STATUS</td>
+	<td>//*[contains(@data-title,'${key_dmDocumentTitle}')]//span[contains(@class,'status') and contains(@class,'${key_workflowStatus}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -218,6 +253,16 @@
 <tr>
 	<td>DESCRIPTIVE_LIST_VERTICAL_ELLIPSIS</td>
 	<td>//dd[contains(.,'${key_dmFolderName}')]//*[*[name()='svg'][contains(@class,'icon-ellipsis')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DESCRIPTIVE_LIST_FOLDER_AUTHOR_AND_DATE</td>
+	<td>//*[contains(@data-title,'${key_dmFolderName}')]//span[contains(.,'modified') and contains(.,'${key_authorName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DESCRIPTIVE_LIST_FOLDER_BREADCRUMB</td>
+	<td>//*[contains(@data-title,'${key_dmFolderName}')]//span[contains(.,'${key_contextualBreadcrumb}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -309,7 +354,7 @@
 
 <tr>
 	<td>SEARCH_REPOSITORY_TAB</td>
-	<td>//div[contains(@class,'search-info')]/a[contains(.,'${dmRepositoryName}')]</td>
+	<td>//div[contains(@class,'search-info')]//a[contains(.,'${dmRepositoryName}')]</td>
 	<td></td>
 </tr>
 <tr>

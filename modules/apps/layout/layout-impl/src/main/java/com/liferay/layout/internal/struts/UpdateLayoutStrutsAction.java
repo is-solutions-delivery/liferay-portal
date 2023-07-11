@@ -16,6 +16,7 @@ package com.liferay.layout.internal.struts;
 
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.layout.portlet.preferences.updater.PortletPreferencesUpdater;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.string.StringBundler;
@@ -28,7 +29,6 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutRevision;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.portlet.AddPortletProvider;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.render.PortletRenderParts;
 import com.liferay.portal.kernel.portlet.render.PortletRenderUtil;
@@ -267,7 +267,7 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
-			bundleContext, AddPortletProvider.class, "model.class.name");
+			bundleContext, PortletPreferencesUpdater.class, "model.class.name");
 	}
 
 	protected void addPortlet(
@@ -286,20 +286,21 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 		Portlet portlet = _portletLocalService.getPortletById(
 			_portal.getCompanyId(httpServletRequest), portletId);
 
-		DynamicServletRequest dynamicRequest = null;
+		DynamicServletRequest dynamicServletRequest = null;
 
 		if (portlet.isPrivateRequestAttributes()) {
 			String portletNamespace = _portal.getPortletNamespace(
 				portlet.getPortletId());
 
-			dynamicRequest = new NamespaceServletRequest(
+			dynamicServletRequest = new NamespaceServletRequest(
 				httpServletRequest, portletNamespace, portletNamespace);
 		}
 		else {
-			dynamicRequest = new DynamicServletRequest(httpServletRequest);
+			dynamicServletRequest = new DynamicServletRequest(
+				httpServletRequest);
 		}
 
-		dynamicRequest.setParameter("p_p_id", portletId);
+		dynamicServletRequest.setParameter("p_p_id", portletId);
 
 		String dataType = StringUtil.toLowerCase(
 			ParamUtil.getString(httpServletRequest, "dataType"));
@@ -309,7 +310,7 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 				new BufferCacheServletResponse(httpServletResponse);
 
 			renderPortletAction.execute(
-				null, dynamicRequest, bufferCacheServletResponse);
+				null, dynamicServletRequest, bufferCacheServletResponse);
 
 			String portletHTML = bufferCacheServletResponse.getString();
 
@@ -342,7 +343,7 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 		}
 		else {
 			renderPortletAction.execute(
-				null, dynamicRequest, httpServletResponse);
+				null, dynamicServletRequest, httpServletResponse);
 		}
 	}
 
@@ -378,17 +379,17 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 			return;
 		}
 
-		AddPortletProvider addPortletProvider = _serviceTrackerMap.getService(
-			className);
+		PortletPreferencesUpdater portletPreferencesUpdater =
+			_serviceTrackerMap.getService(className);
 
-		if (addPortletProvider == null) {
-			addPortletProvider = _serviceTrackerMap.getService(
+		if (portletPreferencesUpdater == null) {
+			portletPreferencesUpdater = _serviceTrackerMap.getService(
 				AssetEntry.class.getName());
 		}
 
-		if (addPortletProvider != null) {
-			addPortletProvider.updatePortletPreferences(
-				portletSetup, portletId, className, classPK, themeDisplay);
+		if (portletPreferencesUpdater != null) {
+			portletPreferencesUpdater.updatePortletPreferences(
+				className, classPK, portletId, portletSetup, themeDisplay);
 		}
 
 		portletSetup.store();
@@ -406,7 +407,8 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 	@Reference
 	private PortletLocalService _portletLocalService;
 
-	private ServiceTrackerMap<String, AddPortletProvider> _serviceTrackerMap;
+	private ServiceTrackerMap<String, PortletPreferencesUpdater>
+		_serviceTrackerMap;
 
 	@Reference
 	private Staging _staging;

@@ -62,7 +62,7 @@ For `liferay-sample-etc-cron` and `liferay-sample-etc-spring-boot` the third typ
 
 	1. Go to `liferay-sample-workspace` and type `./gradlew startDockerContainer logsDockerContainer` to start Liferay.
 
-	1. Go to `liferay-sample-workspace` and type `./gradlew :client-extensions:liferay-sample-etc-cron:deploy`.
+	1. Go to `liferay-sample-workspace` and type `./gradlew :client-extensions:liferay-sample-etc-cron:deployDev`.
 
 	1. Login to Liferay and go to Control Panel > Configuration > OAuth 2 Administration. Select `Liferay Sample Etc Cron`.
 
@@ -78,11 +78,21 @@ For `liferay-sample-etc-cron` and `liferay-sample-etc-spring-boot` the third typ
 
 	Combine multiple frontend client extensions that use `shared-utils.js` without duplicating or rerequesting it.
 
+- *liferay-sample-etc-frontend-3*
+
+	Share code through an import map client extension.
+
 - *liferay-sample-etc-spring-boot*
 
 	Use Spring Boot and OAuth (human to server) to interact with Liferay.
 
 - *liferay-sample-fds-cell-renderer*
+
+	Build a custom cell display in a frontend data set table.
+
+- *liferay-sample-fds-filter*
+
+	Build a custom filter in a frontend data set table.
 
 - *liferay-sample-global-css*
 

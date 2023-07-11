@@ -2,11 +2,7 @@ import * as API from 'shared/api';
 import IndividualProfileCard from '../ProfileCard';
 import Promise from 'metal-promise';
 import React from 'react';
-import {
-	fireEvent,
-	render,
-	waitForElementToBeRemoved
-} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {Individual} from 'shared/util/records';
 import {MemoryRouter, Route} from 'react-router-dom';
 import {MockedProvider} from '@apollo/react-testing';
@@ -57,15 +53,11 @@ describe('IndividualProfileCard', () => {
 
 		jest.runAllTimers();
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('.spinner-root')
-		);
-
 		expect(container).toMatchSnapshot();
 	});
 
 	it('should clear search input when clear button is clicked', async () => {
-		const {container, getByPlaceholderText, getByText} = render(
+		const {getByPlaceholderText, getByText} = render(
 			<DefaultComponent>
 				<MockedProvider
 					mocks={[
@@ -98,10 +90,6 @@ describe('IndividualProfileCard', () => {
 		);
 
 		jest.runAllTimers();
-
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('.spinner-root')
-		);
 
 		const searchInput = getByPlaceholderText('Search');
 
@@ -162,10 +150,6 @@ describe('IndividualProfileCard', () => {
 
 		jest.runAllTimers();
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('.spinner-root')
-		);
-
 		const searchInput = getByPlaceholderText('Search');
 
 		fireEvent.change(searchInput, {target: {value: inputValue}});
@@ -214,6 +198,6 @@ describe('IndividualProfileCard', () => {
 
 		jest.runAllTimers();
 
-		expect(container.querySelector('.spinner-root')).toBeTruthy();
+		expect(container.querySelector('.loading-root')).toBeTruthy();
 	});
 });

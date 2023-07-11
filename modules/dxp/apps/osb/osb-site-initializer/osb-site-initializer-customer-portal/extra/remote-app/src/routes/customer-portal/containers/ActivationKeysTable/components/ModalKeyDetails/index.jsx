@@ -28,11 +28,14 @@ import {ALERT_ACTIVATION_AGGREGATED_KEYS_DOWNLOAD_TEXT} from '../../utils/consta
 import {downloadActivationLicenseKey} from '../../utils/downloadActivationLicenseKey';
 import TableKeyDetails from '../TableKeyDetails';
 
-const openToast = (title, {type = 'success'} = {}) =>
+const openToast = (title, message, {type = 'success'} = {}) =>
 	Liferay.Util.openToast({
+		message: i18n.translate(message),
 		title: i18n.translate(title),
 		type,
 	});
+
+const YEAR_FOR_PERMANENT_KEYS = 2100;
 
 const ModalKeyDetails = ({
 	currentActivationKey,
@@ -59,6 +62,10 @@ const ModalKeyDetails = ({
 		);
 	};
 
+	const keyIsPermanent =
+		new Date(currentActivationKey.expirationDate).getFullYear() >
+		YEAR_FOR_PERMANENT_KEYS;
+
 	const {featureFlags} = useAppPropertiesContext();
 
 	useEffect(() => {
@@ -74,7 +81,7 @@ const ModalKeyDetails = ({
 				setHasErrorSubscription(false);
 			})
 			.catch(() => {
-				openToast('get-subscription-failed', {type: 'danger'});
+				openToast('error', 'get-subscription-failed', {type: 'danger'});
 
 				setHasErrorSubscription(true);
 			})
@@ -93,11 +100,13 @@ const ModalKeyDetails = ({
 		try {
 			await fn(provisioningServerAPI, currentActivationKey.id, sessionId);
 
-			openToast('success');
+			openToast('success', 'your-request-completed-successfully', {
+				type: 'success',
+			});
 		} catch {
 			setTimeout(() => {
 				handleToggle();
-				openToast('subscription-failed', {type: 'danger'});
+				openToast('error', 'subscription-failed', {type: 'danger'});
 			}, 500);
 		}
 	};
@@ -134,6 +143,7 @@ const ModalKeyDetails = ({
 			</div>
 
 			{featureFlags.includes('LPS-185063') &&
+				!keyIsPermanent &&
 				(isLoading ? (
 					<ClayLoadingIndicator />
 				) : (

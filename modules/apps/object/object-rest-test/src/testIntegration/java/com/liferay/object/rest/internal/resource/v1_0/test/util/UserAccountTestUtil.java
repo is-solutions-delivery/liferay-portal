@@ -21,6 +21,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.test.util.HTTPTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -102,6 +103,25 @@ public class UserAccountTestUtil {
 			StringBundler.concat(
 				jaxRsApplicationDescriptor.getRESTContextPath(),
 				StringPool.SLASH, userAccountJSONObject.get("id")),
+			Http.Method.PUT);
+	}
+
+	public static JSONObject updateUserAccountJSONObjectByExternalReferenceCode(
+			SystemObjectDefinitionManager systemObjectDefinitionManager,
+			JSONObject userAccountJSONObject, Map<String, Serializable> values)
+		throws Exception {
+
+		UserAccount userAccount = randomUserAccount();
+
+		JaxRsApplicationDescriptor jaxRsApplicationDescriptor =
+			systemObjectDefinitionManager.getJaxRsApplicationDescriptor();
+
+		return HTTPTestUtil.invoke(
+			_toBody(userAccount, values),
+			StringBundler.concat(
+				jaxRsApplicationDescriptor.getRESTContextPath(),
+				"/by-external-reference-code/",
+				userAccountJSONObject.get("externalReferenceCode")),
 			Http.Method.PUT);
 	}
 

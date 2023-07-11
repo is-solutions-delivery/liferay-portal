@@ -18,9 +18,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -35,7 +35,7 @@ definition {
 	@description = "This is a use case for LPS-143743. Assert that can import global scoped WC that comment on another site with no error."
 	@priority = 3
 	test CanImportGlobalScopedWCThatCommentOnAnotherSite {
-		property test.name.skip.portal.instance = "SitesExportImport#CanImportGlobalScopedWCThatCommentOnAnotherSite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: Add a WC on Global site and an assert publisher widget to a page on "Test Site Name" site") {
 			JSONWebcontent.addWebContent(
@@ -194,9 +194,11 @@ definition {
 		task ("Add another site and import the site lar") {
 			HeadlessSite.addSite(siteName = "Site Name");
 
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Site Name",
-				layoutUtilityPageName = "404 Error");
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
 
 			LAR.importSiteCP(
 				larFileName = ${larFileName},
@@ -339,9 +341,11 @@ definition {
 		task ("Import the lar file to a new site") {
 			HeadlessSite.addSite(siteName = "Site Name");
 
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Site Name",
-				layoutUtilityPageName = "404 Error");
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
 
 			LAR.importSiteCP(
 				larFileName = ${larFileName},
@@ -420,9 +424,11 @@ definition {
 		task ("Add a new site based on Blank Site") {
 			HeadlessSite.addSite(siteName = "Site Name");
 
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Site Name",
-				layoutUtilityPageName = "404 Error");
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
 		}
 
 		task ("Import the lar into the new site") {
@@ -443,6 +449,117 @@ definition {
 				key_image = "Document_1.jpg",
 				key_imageDescription = "",
 				locator1 = "Fragment#CONTRIBUTED_FRAGMENT_EDITABLE_FIELD_IMAGE_PROPERTIES");
+		}
+	}
+
+	@description = "This is a test for LPS-184799. The Link to Page field is still mapped through a fragment on a Content Page even after the site being imported."
+	@priority = 4
+	test ExportImportSiteWithMappedLinkToPageField {
+		task ("Given a page designer has a fragment mapped to the Link to Page field") {
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name 1",
+				type = "content");
+
+			JSONLayout.publishLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name 1");
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "Test Site Name");
+
+			NavItem.gotoStructures();
+
+			WebContentStructures.addCP(structureName = "WC Structure Title");
+
+			DataEngine.addField(
+				fieldLabel = "Link to Page",
+				fieldName = "Link to Page");
+
+			WebContentStructures.saveCP();
+
+			NavItem.gotoWebContent();
+
+			WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Title");
+
+			WebContent.addWithStructureCP(
+				webContentLinkToPage = "Test Page Name 1",
+				webContentTitle = "support Link to Page field");
+
+			PortletEntry.publish();
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name 2",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name 2",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditorEditableLink.gotoEditableFieldLink(
+				fragmentName = "Button",
+				id = "link");
+
+			PageEditorEditableLink.mapURLToAsset(
+				entryTitle = "support Link to Page field",
+				field = "Link to Page",
+				navItem = "Web Content");
+
+			PageEditor.publish();
+
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Test Page Name 2",
+				siteName = "Test Site Name");
+
+			Click(
+				key_append = "[normalize-space(text())='Go Somewhere']",
+				key_url = "/web/test-site-name/test-page-name-1",
+				locator1 = "Fragment#FRAGMENT_LINK");
+		}
+
+		task ("When the user accesses to the Export admin") {
+			LAR.openExportAdmin(siteScopeName = "Test Site Name");
+		}
+
+		task ("Then the user could export the site") {
+			LexiconEntry.gotoAdd();
+
+			LAR._exportSite();
+
+			var larFileName = LAR.getLarFileName();
+
+			LAR.downloadLar();
+		}
+
+		task ("When the user imports the exported file to a new site") {
+			HeadlessSite.addSite(siteName = "Site Name B");
+
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name B",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
+
+			LAR.importSiteCP(
+				larFileName = ${larFileName},
+				siteName = "Site Name B");
+		}
+
+		task ("Then the mapped URL should be persisted") {
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Test Page Name 2",
+				siteName = "Site Name B");
+
+			Click(
+				key_append = "[normalize-space(text())='Go Somewhere']",
+				key_url = "web/site-name-b/test-page-name-1",
+				locator1 = "Fragment#FRAGMENT_LINK");
+
+			AssertLocation.assertPartialLocation(value1 = "web/site-name-b/test-page-name-1");
 		}
 	}
 
@@ -516,9 +633,11 @@ definition {
 		task ("Import the lar file to a new site") {
 			HeadlessSite.addSite(siteName = "Site Name");
 
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Site Name",
-				layoutUtilityPageName = "404 Error");
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
 
 			LAR.importSiteCP(
 				larFileName = ${larFileName},
@@ -567,9 +686,11 @@ definition {
 		task ("Add a new site based on Blank Site") {
 			HeadlessSite.addSite(siteName = "Site Name");
 
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Site Name",
-				layoutUtilityPageName = "404 Error");
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
 		}
 
 		task ("Import the lar into the new site") {
@@ -635,9 +756,11 @@ definition {
 		}
 
 		task ("Import the new site into the default site") {
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Guest",
-				layoutUtilityPageName = 404);
+			for (var layoutUtilityPageName : list "404,500") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Guest",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
 
 			LAR.importSiteCP(
 				larFileName = ${larFileName},

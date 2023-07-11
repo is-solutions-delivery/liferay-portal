@@ -31,6 +31,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ANY_N</td>
+	<td>xpath=(//*[*[name()='svg'][contains(@class,'lexicon-icon-${key_text}')]])[${key_indexNumber}]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ANY_ENABLED</td>
 	<td>//*[*[name()='svg'][contains(@class,'lexicon-icon-${key_text}')]][not(@disabled='')]</td>
 	<td></td>
@@ -178,6 +183,11 @@
 <tr>
 	<td>EDIT_TAGS_DISABLED</td>
 	<td>//button[*[name()='svg'][contains(@class,'icon-tag')] and @disabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>EXCLAMATION_MARK</td>
+	<td>//*[contains(.,'${key_pageName}')]/*[name()='svg'][contains(@class,'icon-warning')]</td>
 	<td></td>
 </tr>
 <tr>

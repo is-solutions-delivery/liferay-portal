@@ -1,30 +1,42 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import cancelIcon from '../../assets/icons/cancel_icon.svg';
 import pendingActionsIcon from '../../assets/icons/pending_actions_icon.svg';
 import scheduleIcon from '../../assets/icons/schedule_icon.svg';
 import taskCheckedIcon from '../../assets/icons/task_checked_icon.svg';
 import {Header} from '../../components/Header/Header';
+import {NewAppPageFooterButtons} from '../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
 import {RadioCard} from '../../components/RadioCard/RadioCard';
 import {Section} from '../../components/Section/Section';
-import {
-	createProductSpecification,
-	createSpecification,
-	updateProductSpecification,
-} from '../../utils/api';
-
-import './InformLicensingTermsPage.scss';
-import {NewAppPageFooterButtons} from '../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
 import {getCompanyId} from '../../liferay/constants';
 import {useAppContext} from '../../manage-app-state/AppManageState';
 import {TYPES} from '../../manage-app-state/actionTypes';
 import {
-	addSkuExpandoValue,
+	addExpandoValue,
 	createAppSKU,
+	createProductSpecification,
+	createSpecification,
 	deleteTrialSKU,
 	getProductSKU,
 	getSKUById,
 	patchSKUById,
+	updateProductSpecification,
 } from '../../utils/api';
 import {createSkuName} from '../../utils/util';
+
+import './InformLicensingTermsPage.scss';
 
 interface InformLicensingTermsPageProps {
 	onClickBack: () => void;
@@ -283,11 +295,16 @@ export function InformLicensingTermsPage({
 								});
 							}
 
-							addSkuExpandoValue({
+							addExpandoValue({
+								attributeValues: {
+									'Version': appVersion,
+									'Version Description': appNotes,
+								},
+								className:
+									'com.liferay.commerce.product.model.CPInstance',
+								classPK: skuTrialId,
 								companyId: Number(getCompanyId()),
-								notesValue: appNotes,
-								skuId: skuTrialId,
-								versionValue: appVersion,
+								tableName: 'CUSTOM_FIELDS',
 							});
 						}
 						else if (skuTrialId) {

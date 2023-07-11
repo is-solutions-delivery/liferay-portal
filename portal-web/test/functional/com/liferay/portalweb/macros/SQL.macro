@@ -1,6 +1,5 @@
 definition {
 
-	@summary = "Search for all databases with filter 'databaseFilter' that contain substring 'databaseSubstring' and assert they match 'expectedCount'"
 	macro assertDatabaseCount {
 		Variables.assertDefined(parameterList = "${databaseFilter},${databaseSubstring},${expectedCount}");
 
@@ -52,9 +51,7 @@ definition {
 
 		FileUtil.write("${liferayHome}/${inputFile}", ${mysqlStatement});
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "execute-mysql -Dmysql.input.file=${liferayHome}/${inputFile} -Dmysql.output.file=${liferayHome}/${outputFile}");
+		AntCommands.runCommand("build-test.xml", "execute-mysql -Dmysql.input.file=${liferayHome}/${inputFile} -Dmysql.output.file=${liferayHome}/${outputFile}");
 
 		var output = FileUtil.read("${liferayHome}/${outputFile}");
 

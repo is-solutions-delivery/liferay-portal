@@ -68,7 +68,6 @@ import com.liferay.portal.kernel.comment.Comment;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -519,7 +518,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 
 			thread.setPriority(priority);
 
-			_mbThreadLocalService.updateMBThread(thread);
+			thread = _mbThreadLocalService.updateMBThread(thread);
 
 			_updatePriorities(thread.getThreadId(), priority);
 		}
@@ -817,7 +816,7 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 					thread.setRootMessageId(childMessage.getMessageId());
 					thread.setRootMessageUserId(childMessage.getUserId());
 
-					_mbThreadLocalService.updateMBThread(thread);
+					thread = _mbThreadLocalService.updateMBThread(thread);
 				}
 			}
 			else {
@@ -2144,6 +2143,12 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 		subscriptionSender.setCompanyId(message.getCompanyId());
 		subscriptionSender.setContextAttribute(
 			"[$MESSAGE_BODY$]", messageBody, false);
+		subscriptionSender.setContextAttribute(
+			"[$MESSAGE_PARENT$]", messageParentMessageContent, false);
+		subscriptionSender.setContextAttribute(
+			"[$MESSAGE_SIBLINGS$]", messageSiblingMessagesContent, false);
+		subscriptionSender.setContextAttribute(
+			"[$ROOT_MESSAGE_BODY$]", rootMessageBody, false);
 
 		long groupId = message.getGroupId();
 
@@ -2168,16 +2173,6 @@ public class MBMessageLocalServiceImpl extends MBMessageLocalServiceBaseImpl {
 			"[$MESSAGE_SUBJECT_PREFIX$]", messageSubjectPrefix,
 			"[$MESSAGE_URL$]", messageURL, "[$MESSAGE_USER_ADDRESS$]",
 			emailAddress, "[$MESSAGE_USER_NAME$]", fullName);
-
-		if (FeatureFlagManagerUtil.isEnabled("LPS-182020")) {
-			subscriptionSender.setContextAttribute(
-				"[$MESSAGE_PARENT$]", messageParentMessageContent, false);
-			subscriptionSender.setContextAttribute(
-				"[$MESSAGE_SIBLINGS$]", messageSiblingMessagesContent, false);
-			subscriptionSender.setContextAttribute(
-				"[$ROOT_MESSAGE_BODY$]", rootMessageBody, false);
-		}
-
 		subscriptionSender.setCreatorUserId(message.getUserId());
 		subscriptionSender.setCurrentUserId(userId);
 		subscriptionSender.setEntryTitle(entryTitle);

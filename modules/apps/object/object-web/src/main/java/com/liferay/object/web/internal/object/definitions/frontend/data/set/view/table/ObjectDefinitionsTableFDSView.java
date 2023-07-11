@@ -43,8 +43,10 @@ public class ObjectDefinitionsTableFDSView extends BaseTableFDSView {
 
 		return fdsTableSchemaBuilder.add(
 			"label.LANG", "label",
-			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
-				"actionLink")
+			fdsTableSchemaField -> {
+				fdsTableSchemaField.setContentRenderer("actionLink");
+				fdsTableSchemaField.setSortable(true);
+			}
 		).add(
 			"scope", "scope"
 		).add(
@@ -53,8 +55,10 @@ public class ObjectDefinitionsTableFDSView extends BaseTableFDSView {
 				"boolean")
 		).add(
 			"dateModified", "modified-date",
-			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
-				"dateTime")
+			fdsTableSchemaField -> {
+				fdsTableSchemaField.setContentRenderer("dateTime");
+				fdsTableSchemaField.setSortable(true);
+			}
 		).add(
 			"status", "status",
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(

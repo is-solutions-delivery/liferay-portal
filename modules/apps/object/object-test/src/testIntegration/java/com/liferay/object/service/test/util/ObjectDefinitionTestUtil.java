@@ -42,36 +42,37 @@ public class ObjectDefinitionTestUtil {
 		throws Exception {
 
 		return objectDefinitionLocalService.addSystemObjectDefinition(
-			userId, null, dbTableName, false, labelMap, true, name, null, null,
-			pkObjectFieldDBColumnName, pkObjectFieldName, pluralLabelMap, scope,
-			titleObjectFieldName, version, WorkflowConstants.STATUS_DRAFT,
-			objectFields);
+			null, userId, null, dbTableName, false, labelMap, true, name, null,
+			null, pkObjectFieldDBColumnName, pkObjectFieldName, pluralLabelMap,
+			scope, titleObjectFieldName, version,
+			WorkflowConstants.STATUS_DRAFT, objectFields);
+	}
+
+	public static ObjectDefinition addObjectDefinition(
+			boolean enableLocalization,
+			ObjectDefinitionLocalService objectDefinitionLocalService,
+			List<ObjectField> objectFields)
+		throws Exception {
+
+		return objectDefinitionLocalService.addCustomObjectDefinition(
+			TestPropsValues.getUserId(), false, enableLocalization,
+			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+			"A" + RandomTestUtil.randomString(), null, null,
+			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+			true, ObjectDefinitionConstants.SCOPE_COMPANY,
+			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT, objectFields);
 	}
 
 	public static ObjectDefinition addObjectDefinition(
 			ObjectDefinitionLocalService objectDefinitionLocalService)
 		throws Exception {
 
-		return addObjectDefinition(objectDefinitionLocalService, null);
-	}
-
-	public static ObjectDefinition addObjectDefinition(
-			ObjectDefinitionLocalService objectDefinitionLocalService,
-			List<ObjectField> objectFields)
-		throws Exception {
-
-		return objectDefinitionLocalService.addCustomObjectDefinition(
-			TestPropsValues.getUserId(), false, false,
-			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			"A" + RandomTestUtil.randomString(), null, null,
-			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			ObjectDefinitionConstants.SCOPE_COMPANY,
-			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT, objectFields);
+		return addObjectDefinition(false, objectDefinitionLocalService, null);
 	}
 
 	public static ObjectDefinition addUnmodifiableSystemObjectDefinition(
-			long userId, String className, String dbTableName,
-			Map<Locale, String> labelMap, String name,
+			String externalReferenceCode, long userId, String className,
+			String dbTableName, Map<Locale, String> labelMap, String name,
 			String pkObjectFieldDBColumnName, String pkObjectFieldName,
 			Map<Locale, String> pluralLabelMap, String scope,
 			String titleObjectFieldName, int version,
@@ -80,10 +81,10 @@ public class ObjectDefinitionTestUtil {
 		throws Exception {
 
 		return objectDefinitionLocalService.addSystemObjectDefinition(
-			userId, className, dbTableName, false, labelMap, false, name, null,
-			null, pkObjectFieldDBColumnName, pkObjectFieldName, pluralLabelMap,
-			scope, titleObjectFieldName, version,
-			WorkflowConstants.STATUS_APPROVED, objectFields);
+			externalReferenceCode, userId, className, dbTableName, false,
+			labelMap, false, name, null, null, pkObjectFieldDBColumnName,
+			pkObjectFieldName, pluralLabelMap, scope, titleObjectFieldName,
+			version, WorkflowConstants.STATUS_APPROVED, objectFields);
 	}
 
 }

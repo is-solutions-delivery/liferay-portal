@@ -1,11 +1,11 @@
-@component-name = "portal-frontend-infrastructure"
+@component-name = "portal-platform-experience-and-design-system"
 definition {
 
 	property portal.accessibility = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.component.names = "Accessibility";
-	property testray.main.component.name = "User Interface";
+	property testray.component.names = "PEDS Accessibility";
+	property testray.main.component.name = "Accessibility Framework";
 
 	setUp {
 		TestCase.setUpPortalInstance();
@@ -14,15 +14,14 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
 
 	@description = "Verify poshi function AssertAccessible passes atleast one portal page based on WCAG 2.0 AA standards"
-	@ignore = "true"
 	@priority = 5
 	test CanAssertAccessible {
 		property portal.acceptance = "true";
@@ -32,16 +31,6 @@ definition {
 		SignOut.signOut();
 
 		AssertAccessible();
-	}
-
-	@description = "Verify poshi function AssertAccessible can fail a page that has a WCAG 2.0 AA violation"
-	@ignore = "Test Stub"
-	@priority = 5
-	test CanAssertNotAccessible {
-		property portal.acceptance = "false";
-
-		// TODO LPS-133020 CanAssertNotAccessible pending implementation
-
 	}
 
 }

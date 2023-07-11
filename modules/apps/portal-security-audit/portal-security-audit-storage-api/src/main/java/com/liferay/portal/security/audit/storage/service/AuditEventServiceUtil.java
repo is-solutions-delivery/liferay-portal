@@ -56,7 +56,7 @@ public class AuditEventServiceUtil {
 	}
 
 	public static List<AuditEvent> getAuditEvents(
-			long companyId, long userId, String userName,
+			long companyId, long groupId, long userId, String userName,
 			java.util.Date createDateGT, java.util.Date createDateLT,
 			String eventType, String className, String classPK,
 			String clientHost, String clientIP, String serverName,
@@ -65,13 +65,13 @@ public class AuditEventServiceUtil {
 		throws PortalException {
 
 		return getService().getAuditEvents(
-			companyId, userId, userName, createDateGT, createDateLT, eventType,
-			className, classPK, clientHost, clientIP, serverName, serverPort,
-			sessionID, andSearch, start, end);
+			companyId, groupId, userId, userName, createDateGT, createDateLT,
+			eventType, className, classPK, clientHost, clientIP, serverName,
+			serverPort, sessionID, andSearch, start, end);
 	}
 
 	public static List<AuditEvent> getAuditEvents(
-			long companyId, long userId, String userName,
+			long companyId, long groupId, long userId, String userName,
 			java.util.Date createDateGT, java.util.Date createDateLT,
 			String eventType, String className, String classPK,
 			String clientHost, String clientIP, String serverName,
@@ -80,9 +80,9 @@ public class AuditEventServiceUtil {
 		throws PortalException {
 
 		return getService().getAuditEvents(
-			companyId, userId, userName, createDateGT, createDateLT, eventType,
-			className, classPK, clientHost, clientIP, serverName, serverPort,
-			sessionID, andSearch, start, end, orderByComparator);
+			companyId, groupId, userId, userName, createDateGT, createDateLT,
+			eventType, className, classPK, clientHost, clientIP, serverName,
+			serverPort, sessionID, andSearch, start, end, orderByComparator);
 	}
 
 	public static int getAuditEventsCount(long companyId)
@@ -92,7 +92,7 @@ public class AuditEventServiceUtil {
 	}
 
 	public static int getAuditEventsCount(
-			long companyId, long userId, String userName,
+			long companyId, long groupId, long userId, String userName,
 			java.util.Date createDateGT, java.util.Date createDateLT,
 			String eventType, String className, String classPK,
 			String clientHost, String clientIP, String serverName,
@@ -100,9 +100,9 @@ public class AuditEventServiceUtil {
 		throws PortalException {
 
 		return getService().getAuditEventsCount(
-			companyId, userId, userName, createDateGT, createDateLT, eventType,
-			className, classPK, clientHost, clientIP, serverName, serverPort,
-			sessionID, andSearch);
+			companyId, groupId, userId, userName, createDateGT, createDateLT,
+			eventType, className, classPK, clientHost, clientIP, serverName,
+			serverPort, sessionID, andSearch);
 	}
 
 	/**

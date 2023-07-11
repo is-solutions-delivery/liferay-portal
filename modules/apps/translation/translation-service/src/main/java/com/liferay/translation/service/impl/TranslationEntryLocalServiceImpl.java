@@ -16,6 +16,7 @@ package com.liferay.translation.service.impl;
 
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.info.exception.NoSuchInfoItemException;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
@@ -305,13 +306,15 @@ public class TranslationEntryLocalServiceImpl
 			InfoItemObjectProvider<Object> infoItemObjectProvider =
 				_infoItemServiceRegistry.getFirstInfoItemService(
 					InfoItemObjectProvider.class,
-					translationEntry.getClassName());
+					translationEntry.getClassName(),
+					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
 			String content = translationEntry.getContent();
 
 			infoItemFieldValuesUpdater.updateFromInfoItemFieldValues(
 				infoItemObjectProvider.getInfoItem(
-					translationEntry.getClassPK()),
+					new ClassPKInfoItemIdentifier(
+						translationEntry.getClassPK())),
 				_xliffTranslationInfoItemFieldValuesImporter.
 					importInfoItemFieldValues(
 						translationEntry.getGroupId(),
@@ -338,7 +341,8 @@ public class TranslationEntryLocalServiceImpl
 				_infoItemServiceRegistry.getFirstInfoItemService(
 					InfoItemObjectProvider.class, className);
 
-			Object object = infoItemObjectProvider.getInfoItem(classPK);
+			Object object = infoItemObjectProvider.getInfoItem(
+				new ClassPKInfoItemIdentifier(classPK));
 
 			if (object == null) {
 				throw new XLIFFFileException.MustHaveValidModel(

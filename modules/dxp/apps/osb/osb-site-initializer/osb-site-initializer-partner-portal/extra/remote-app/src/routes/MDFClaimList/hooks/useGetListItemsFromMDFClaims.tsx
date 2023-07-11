@@ -15,6 +15,7 @@ import {MDFClaimColumnKey} from '../../../common/enums/mdfClaimColumnKey';
 import useGetMDFClaim from '../../../common/services/liferay/object/mdf-claim/useGetMDFClaim';
 import {customFormatDateOptions} from '../../../common/utils/constants/customFormatDateOptions';
 import getDateCustomFormat from '../../../common/utils/getDateCustomFormat';
+import getIntlNumberFormat from '../../../common/utils/getIntlNumberFormat';
 import getMDFClaimAmountClaimedInfo from '../utils/getMDFBudgetInfos';
 
 export default function useGetListItemsFromMDFClaims(
@@ -42,6 +43,9 @@ export default function useGetListItemsFromMDFClaims(
 					item.dateCreated as string,
 					customFormatDateOptions.SHORT_MONTH
 				),
+				[MDFClaimColumnKey.PAID]: !item.claimPaid
+					? '-'
+					: getIntlNumberFormat(item.currency).format(item.claimPaid),
 			})),
 		[swrResponse.data?.items]
 	);

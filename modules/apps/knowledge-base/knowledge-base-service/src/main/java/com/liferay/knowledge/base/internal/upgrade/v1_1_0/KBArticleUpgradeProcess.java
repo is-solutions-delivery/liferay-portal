@@ -14,7 +14,8 @@
 
 package com.liferay.knowledge.base.internal.upgrade.v1_1_0;
 
-import com.liferay.knowledge.base.internal.upgrade.v1_1_0.util.KBArticleAttachmentsUtil;
+import com.liferay.document.library.kernel.store.Store;
+import com.liferay.knowledge.base.internal.upgrade.v1_1_0.util.KBArticleAttachmentsHelper;
 import com.liferay.knowledge.base.internal.upgrade.v1_1_0.util.KBArticleLatestUpgradeColumnImpl;
 import com.liferay.knowledge.base.internal.upgrade.v1_1_0.util.KBArticleMainUpgradeColumnImpl;
 import com.liferay.knowledge.base.internal.upgrade.v1_1_0.util.KBArticleRootResourcePrimKeyUpgradeColumnImpl;
@@ -34,6 +35,10 @@ import com.liferay.portal.kernel.util.StringUtil;
  * @author Peter Shin
  */
 public class KBArticleUpgradeProcess extends UpgradeProcess {
+
+	public KBArticleUpgradeProcess(Store store) {
+		_store = store;
+	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
@@ -76,7 +81,10 @@ public class KBArticleUpgradeProcess extends UpgradeProcess {
 
 		updateTable(newTableName, tableColumns, tableSqlCreate);
 
-		KBArticleAttachmentsUtil.deleteAttachmentsDirectory(
+		KBArticleAttachmentsHelper kbArticleAttachmentsHelper =
+			new KBArticleAttachmentsHelper(_store);
+
+		kbArticleAttachmentsHelper.deleteAttachmentsDirectory(
 			PortalUtil.getDefaultCompanyId());
 	}
 
@@ -151,13 +159,17 @@ public class KBArticleUpgradeProcess extends UpgradeProcess {
 				new KBArticleRootResourcePrimKeyUpgradeColumnImpl(
 					resourcePrimKeyColumn);
 
+		KBArticleAttachmentsHelper kbArticleAttachmentsHelper =
+			new KBArticleAttachmentsHelper(_store);
+
 		KBArticleLatestUpgradeColumnImpl kbArticleLatestUpgradeColumnImpl =
 			new KBArticleLatestUpgradeColumnImpl(
-				kbArticleIdColumn, resourcePrimKeyColumn);
-
+				kbArticleAttachmentsHelper, kbArticleIdColumn,
+				resourcePrimKeyColumn);
 		KBArticleMainUpgradeColumnImpl kbArticleMainUpgradeColumnImpl =
 			new KBArticleMainUpgradeColumnImpl(
-				kbArticleIdColumn, resourcePrimKeyColumn);
+				kbArticleAttachmentsHelper, kbArticleIdColumn,
+				resourcePrimKeyColumn);
 
 		UpgradeTable upgradeTable = UpgradeTableFactoryUtil.getUpgradeTable(
 			newTableName, tableColumns, kbArticleIdColumn,
@@ -172,5 +184,7 @@ public class KBArticleUpgradeProcess extends UpgradeProcess {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		KBArticleUpgradeProcess.class);
+
+	private final Store _store;
 
 }

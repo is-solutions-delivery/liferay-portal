@@ -30,20 +30,14 @@ import ClayEmptyState from '@clayui/empty-state';
 
 import FrontendDataSetContext from './FrontendDataSetContext';
 import ManagementBar from './management_bar/ManagementBar';
+import CreationMenu from './management_bar/components/CreationMenu';
 import {
 	getFilterSelectedItemsLabel,
 	getOdataFilterString,
 } from './management_bar/components/filters/Filter';
 import Modal from './modal/Modal';
 import SidePanel from './side_panel/SidePanel';
-import {
-	DATASET_ACTION_PERFORMED,
-	DATASET_DISPLAY_UPDATED,
-	OPEN_MODAL,
-	OPEN_SIDE_PANEL,
-	SIDE_PANEL_CLOSED,
-	UPDATE_DATASET_DISPLAY,
-} from './utils/eventsDefinitions';
+import EVENTS from './utils/eventsDefinitions';
 import {
 	formatItemChanges,
 	getCurrentItemUpdates,
@@ -70,6 +64,7 @@ const FrontendDataSet = ({
 	customDataRenderers,
 	customViews,
 	customViewsEnabled,
+	emptyState,
 	filters: initialFilters,
 	formId,
 	formName,
@@ -83,6 +78,7 @@ const FrontendDataSet = ({
 	nestedItemsReferenceKey,
 	onActionDropdownItemClick,
 	onBulkActionItemClick,
+	onSelect,
 	overrideEmptyResultView,
 	pagination,
 	portletId,
@@ -151,19 +147,23 @@ const FrontendDataSet = ({
 			...initialActiveView,
 		};
 
-		const filters = initialFilters.map((filter) => {
-			const preloadedData = filter.preloadedData;
+		const filters = initialFilters
+			? initialFilters.map((filter) => {
+					const preloadedData = filter.preloadedData;
 
-			if (preloadedData) {
-				filter.active = true;
-				filter.selectedData = preloadedData;
+					if (preloadedData) {
+						filter.active = true;
+						filter.selectedData = preloadedData;
 
-				filter.odataFilterString = getOdataFilterString(filter);
-				filter.selectedItemsLabel = getFilterSelectedItemsLabel(filter);
-			}
+						filter.odataFilterString = getOdataFilterString(filter);
+						filter.selectedItemsLabel = getFilterSelectedItemsLabel(
+							filter
+						);
+					}
 
-			return filter;
-		});
+					return filter;
+			  })
+			: [];
 
 		const paginationDelta =
 			showPagination &&
@@ -313,7 +313,7 @@ const FrontendDataSet = ({
 
 					setDataLoading(false);
 
-					Liferay.fire(DATASET_DISPLAY_UPDATED, {id});
+					Liferay.fire(EVENTS.DISPLAY_UPDATED, {id});
 				}
 
 				return data;
@@ -435,12 +435,12 @@ const FrontendDataSet = ({
 			);
 		}
 
-		Liferay.on(SIDE_PANEL_CLOSED, handleCloseSidePanel);
-		Liferay.on(UPDATE_DATASET_DISPLAY, handleRefreshFromTheOutside);
+		Liferay.on(EVENTS.SIDE_PANEL_CLOSED, handleCloseSidePanel);
+		Liferay.on(EVENTS.UPDATE_DISPLAY, handleRefreshFromTheOutside);
 
 		return () => {
-			Liferay.detach(SIDE_PANEL_CLOSED, handleCloseSidePanel);
-			Liferay.detach(UPDATE_DATASET_DISPLAY, handleRefreshFromTheOutside);
+			Liferay.detach(EVENTS.SIDE_PANEL_CLOSED, handleCloseSidePanel);
+			Liferay.detach(EVENTS.UPDATE_DISPLAY, handleRefreshFromTheOutside);
 		};
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -490,12 +490,23 @@ const FrontendDataSet = ({
 					/>
 				) : (
 					<ClayEmptyState
-						description={Liferay.Language.get(
-							'sorry,-no-results-were-found'
+						description={
+							emptyState?.description ??
+							Liferay.Language.get('sorry,-no-results-were-found')
+						}
+						imgSrc={
+							themeDisplay.getPathThemeImages() +
+							(emptyState?.image ?? '/states/search_state.gif')
+						}
+						title={
+							emptyState?.title ??
+							Liferay.Language.get('no-results-found')
+						}
+					>
+						{creationMenu && (
+							<CreationMenu {...creationMenu} inEmptyState />
 						)}
-						imgSrc={`${themeDisplay.getPathThemeImages()}/states/search_state.gif`}
-						title={Liferay.Language.get('no-results-found')}
-					/>
+					</ClayEmptyState>
 				)}
 			</div>
 		) : (
@@ -509,6 +520,7 @@ const FrontendDataSet = ({
 					activeDelta={paginationDelta}
 					activePage={pageNumber}
 					deltas={pagination?.deltas}
+					disableEllipsis={items.length / paginationDelta - 5 > 999}
 					ellipsisBuffer={3}
 					labels={{
 						paginationResults: Liferay.Language.get(
@@ -548,7 +560,7 @@ const FrontendDataSet = ({
 		})
 			.then((response) => {
 				if (response.ok) {
-					Liferay.fire(DATASET_ACTION_PERFORMED, {
+					Liferay.fire(EVENTS.ACTION_PERFORMED, {
 						id,
 					});
 
@@ -589,7 +601,7 @@ const FrontendDataSet = ({
 	}
 
 	function openSidePanel(config) {
-		return Liferay.fire(OPEN_SIDE_PANEL, {
+		return Liferay.fire(EVENTS.OPEN_SIDE_PANEL, {
 			id: dataSetSupportSidePanelId,
 			onSubmit: refreshData,
 			...config,
@@ -597,7 +609,7 @@ const FrontendDataSet = ({
 	}
 
 	function openModal(config) {
-		return Liferay.fire(OPEN_MODAL, {
+		return Liferay.fire(EVENTS.OPEN_MODAL, {
 			id: dataSetSupportModalId,
 			onSubmit: refreshData,
 			...config,
@@ -761,6 +773,7 @@ const FrontendDataSet = ({
 				nestedItemsReferenceKey,
 				onActionDropdownItemClick,
 				onBulkActionItemClick,
+				onSelect,
 				openModal,
 				openSidePanel,
 				portletId,
@@ -836,7 +849,6 @@ const FrontendDataSet = ({
 FrontendDataSet.defaultProps = {
 	bulkActions: [],
 	customViews: '{}',
-	filters: [],
 	inlineEditingSettings: null,
 	items: null,
 	itemsActions: null,

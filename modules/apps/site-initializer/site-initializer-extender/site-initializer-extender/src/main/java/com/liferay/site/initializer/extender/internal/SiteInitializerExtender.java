@@ -14,6 +14,10 @@
 
 package com.liferay.site.initializer.extender.internal;
 
+import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
+import com.liferay.account.service.AccountGroupLocalService;
+import com.liferay.account.service.AccountGroupRelService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
@@ -74,6 +78,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.language.override.service.PLOEntryLocalService;
 import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.segments.service.SegmentsEntryLocalService;
@@ -131,6 +136,9 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
+				_accountEntryLocalService,
+				_accountEntryOrganizationRelLocalService,
+				_accountGroupLocalService, _accountGroupRelService,
 				_accountResourceFactory, _accountRoleLocalService,
 				_accountRoleResourceFactory, _assetCategoryLocalService,
 				_assetListEntryLocalService, bundle,
@@ -156,7 +164,7 @@ public class SiteInitializerExtender
 				_objectFieldLocalService, _objectFieldResourceFactory,
 				_objectRelationshipLocalService,
 				_objectRelationshipResourceFactory, _organizationLocalService,
-				_organizationResourceFactory, _portal,
+				_organizationResourceFactory, _ploEntryLocalService, _portal,
 				_resourceActionLocalService, _resourcePermissionLocalService,
 				_roleLocalService, _sapEntryLocalService,
 				_segmentsEntryLocalService, _segmentsExperienceLocalService,
@@ -243,6 +251,9 @@ public class SiteInitializerExtender
 
 		SiteInitializerExtension siteInitializerExtension =
 			new SiteInitializerExtension(
+				_accountEntryLocalService,
+				_accountEntryOrganizationRelLocalService,
+				_accountGroupLocalService, _accountGroupRelService,
 				_accountResourceFactory, _accountRoleLocalService,
 				_accountRoleResourceFactory, _assetCategoryLocalService,
 				_assetListEntryLocalService,
@@ -273,7 +284,7 @@ public class SiteInitializerExtender
 				_objectFieldLocalService, _objectFieldResourceFactory,
 				_objectRelationshipLocalService,
 				_objectRelationshipResourceFactory, _organizationLocalService,
-				_organizationResourceFactory, _portal,
+				_organizationResourceFactory, _ploEntryLocalService, _portal,
 				_resourceActionLocalService, _resourcePermissionLocalService,
 				_roleLocalService, _sapEntryLocalService,
 				_segmentsEntryLocalService, _segmentsExperienceLocalService,
@@ -297,6 +308,19 @@ public class SiteInitializerExtender
 
 		_fileSiteInitializerExtensions.add(siteInitializerExtension);
 	}
+
+	@Reference
+	private AccountEntryLocalService _accountEntryLocalService;
+
+	@Reference
+	private AccountEntryOrganizationRelLocalService
+		_accountEntryOrganizationRelLocalService;
+
+	@Reference
+	private AccountGroupLocalService _accountGroupLocalService;
+
+	@Reference
+	private AccountGroupRelService _accountGroupRelService;
 
 	@Reference
 	private AccountResource.Factory _accountResourceFactory;
@@ -450,6 +474,9 @@ public class SiteInitializerExtender
 
 	@Reference
 	private OrganizationResource.Factory _organizationResourceFactory;
+
+	@Reference
+	private PLOEntryLocalService _ploEntryLocalService;
 
 	@Reference
 	private Portal _portal;

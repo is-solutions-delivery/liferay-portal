@@ -204,8 +204,8 @@ public class RootProjectConfigurator implements Plugin<Project> {
 	public static final String VERIFY_PRODUCT_TASK_NAME = "verifyProduct";
 
 	/**
-	 * @deprecated As of 1.4.0, replaced by {@link
-	 *             #RootProjectConfigurator(Settings)}
+	 * @deprecated As of 1.4.0, replaced by
+	 *             {@link #RootProjectConfigurator(Settings)}
 	 */
 	@Deprecated
 	public RootProjectConfigurator() {
@@ -1219,21 +1219,30 @@ public class RootProjectConfigurator implements Plugin<Project> {
 				}
 
 			});
-
-		if (Validator.isNotNull(workspaceExtension.getBundleUrl())) {
-			initBundleTask.setFile(
-				new Callable<File>() {
-
-					@Override
-					public File call() throws Exception {
-						return _getDownloadFile(downloadBundleTask);
-					}
-
-				});
-		}
-
 		initBundleTask.setGroup(BUNDLE_GROUP);
 		initBundleTask.setProvidedModules(osgiModulesConfiguration);
+
+		project.afterEvaluate(
+			new Action<Project>() {
+
+				@Override
+				public void execute(Project project) {
+					if (Validator.isNotNull(
+							workspaceExtension.getBundleUrl())) {
+
+						initBundleTask.setFile(
+							new Callable<File>() {
+
+								@Override
+								public File call() throws Exception {
+									return _getDownloadFile(downloadBundleTask);
+								}
+
+							});
+					}
+				}
+
+			});
 
 		return initBundleTask;
 	}

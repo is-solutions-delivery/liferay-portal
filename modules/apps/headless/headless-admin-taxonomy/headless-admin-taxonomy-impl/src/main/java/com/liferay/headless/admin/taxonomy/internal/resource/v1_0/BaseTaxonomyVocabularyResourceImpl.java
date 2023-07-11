@@ -20,6 +20,7 @@ import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.Resource;
@@ -1574,7 +1575,7 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("assetLibraryId")) {
 				taxonomyVocabularyUnsafeConsumer =
 					taxonomyVocabulary -> postAssetLibraryTaxonomyVocabulary(
@@ -1592,14 +1593,56 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 			}
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			taxonomyVocabularyUnsafeConsumer = taxonomyVocabulary ->
-				putSiteTaxonomyVocabularyByExternalReferenceCode(
-					taxonomyVocabulary.getSiteId() != null ?
-						taxonomyVocabulary.getSiteId() :
-							(Long)parameters.get("siteId"),
-					taxonomyVocabulary.getExternalReferenceCode(),
-					taxonomyVocabulary);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				taxonomyVocabularyUnsafeConsumer = taxonomyVocabulary ->
+					putSiteTaxonomyVocabularyByExternalReferenceCode(
+						taxonomyVocabulary.getSiteId() != null ?
+							taxonomyVocabulary.getSiteId() :
+								(Long)parameters.get("siteId"),
+						taxonomyVocabulary.getExternalReferenceCode(),
+						taxonomyVocabulary);
+			}
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
+				taxonomyVocabularyUnsafeConsumer = taxonomyVocabulary -> {
+					try {
+						TaxonomyVocabulary getTaxonomyVocabulary =
+							getSiteTaxonomyVocabularyByExternalReferenceCode(
+								taxonomyVocabulary.getSiteId() != null ?
+									taxonomyVocabulary.getSiteId() :
+										(Long)parameters.get("siteId"),
+								taxonomyVocabulary.getExternalReferenceCode());
+
+						patchTaxonomyVocabulary(
+							getTaxonomyVocabulary.getId() != null ?
+								getTaxonomyVocabulary.getId() :
+									_parseLong(
+										(String)parameters.get(
+											"taxonomyVocabularyId")),
+							taxonomyVocabulary);
+					}
+					catch (NoSuchModelException noSuchModelException) {
+						if (parameters.containsKey("assetLibraryId")) {
+							postAssetLibraryTaxonomyVocabulary(
+								(Long)parameters.get("assetLibraryId"),
+								taxonomyVocabulary);
+						}
+						else if (parameters.containsKey("siteId")) {
+							postSiteTaxonomyVocabulary(
+								(Long)parameters.get("siteId"),
+								taxonomyVocabulary);
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [assetLibraryId, siteId, assetLibraryId]");
+						}
+					}
+				};
+			}
 		}
 
 		if (taxonomyVocabularyUnsafeConsumer == null) {
@@ -1713,7 +1756,7 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			taxonomyVocabularyUnsafeConsumer =
 				taxonomyVocabulary -> patchTaxonomyVocabulary(
 					taxonomyVocabulary.getId() != null ?
@@ -1723,7 +1766,7 @@ public abstract class BaseTaxonomyVocabularyResourceImpl
 					taxonomyVocabulary);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			taxonomyVocabularyUnsafeConsumer =
 				taxonomyVocabulary -> putTaxonomyVocabulary(
 					taxonomyVocabulary.getId() != null ?

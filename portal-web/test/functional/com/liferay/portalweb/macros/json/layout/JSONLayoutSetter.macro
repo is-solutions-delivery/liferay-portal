@@ -88,7 +88,6 @@ definition {
 		return ${site};
 	}
 
-	@summary = "Valid types declared in LayoutConstants.java. Search for 'TYPE_*'"
 	macro setType {
 		if (!(isSet(type))) {
 			var type = "portlet";
@@ -105,6 +104,12 @@ definition {
 			layoutName = ${layoutName},
 			privateLayout = ${privateLayout});
 
+		if (isSet(embeddedLayoutURL)) {
+			var typeSettings = JSONLayoutUtil._embeddedLayoutURL(
+				embeddedLayoutURL = ${embeddedLayoutURL},
+				typeSettings = ${typeSettings});
+		}
+
 		if (isSet(layoutTemplate)) {
 			var typeSettings = JSONLayoutUtil._updateLayoutTemplateId(
 				layoutTemplate = ${layoutTemplate},
@@ -117,10 +122,6 @@ definition {
 				remoteAppEntryId = ${remoteAppEntryId},
 				typeSettings = ${typeSettings},
 				widgetName = ${widgetName});
-		}
-
-		if (!(isSet(layoutTemplate)) && !(isSet(widgetName))) {
-			fail("typeSettings will not be updated.");
 		}
 
 		return ${typeSettings};

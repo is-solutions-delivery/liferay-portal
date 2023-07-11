@@ -39,7 +39,7 @@ public class SuggestionsPortletSharedSearchContributor
 
 		SuggestionsPortletPreferences suggestionsPortletPreferences =
 			new SuggestionsPortletPreferencesImpl(
-				portletSharedSearchSettings.getPortletPreferencesOptional());
+				portletSharedSearchSettings.getPortletPreferences());
 
 		_setUpQueryIndexing(
 			suggestionsPortletPreferences, portletSharedSearchSettings);
@@ -84,7 +84,6 @@ public class SuggestionsPortletSharedSearchContributor
 
 		queryConfig.setCollatedSpellCheckResultEnabled(
 			suggestionsPortletPreferences.isSpellCheckSuggestionEnabled());
-
 		queryConfig.setCollatedSpellCheckResultScoresThreshold(
 			suggestionsPortletPreferences.
 				getSpellCheckSuggestionDisplayThreshold());

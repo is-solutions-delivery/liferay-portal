@@ -441,7 +441,6 @@ public class DLFileEntryLocalServiceImpl
 		latestDLFileVersion.setChangeLog(changeLog);
 		latestDLFileVersion.setVersion(
 			_getNextVersion(dlFileEntry, computedDLVersionNumberIncrease));
-
 		latestDLFileVersion.setStoreUUID(String.valueOf(UUID.randomUUID()));
 
 		latestDLFileVersion = _dlFileVersionPersistence.update(
@@ -774,7 +773,7 @@ public class DLFileEntryLocalServiceImpl
 		// File
 
 		try {
-			DLStoreUtil.deleteFile(
+			DLStoreUtil.deleteDirectory(
 				dlFileEntry.getCompanyId(), dlFileEntry.getDataRepositoryId(),
 				dlFileEntry.getName());
 		}
@@ -1815,7 +1814,7 @@ public class DLFileEntryLocalServiceImpl
 
 		dlFileEntry.setFileEntryTypeId(fileEntryTypeId);
 
-		dlFileEntryLocalService.updateDLFileEntry(dlFileEntry);
+		dlFileEntry = dlFileEntryLocalService.updateDLFileEntry(dlFileEntry);
 
 		DLFileVersion dlFileVersion =
 			_dlFileVersionLocalService.getLatestFileVersion(
@@ -3397,19 +3396,24 @@ public class DLFileEntryLocalServiceImpl
 					user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
 					dlFileEntry.getName(), oldStoreFileName);
 
+				DLStoreRequest dlStoreRequest = DLStoreRequest.builder(
+					user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
+					dlFileEntry.getName()
+				).fileExtension(
+					dlFileEntry.getExtension()
+				).sourceFileName(
+					sourceFileName
+				).validateFileExtension(
+					false
+				).versionLabel(
+					updatedFileVersion.getStoreFileName()
+				).build();
+
 				if (file != null) {
-					DLStoreUtil.updateFile(
-						user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
-						dlFileEntry.getName(), dlFileEntry.getExtension(),
-						false, updatedFileVersion.getStoreFileName(),
-						sourceFileName, file);
+					DLStoreUtil.updateFile(dlStoreRequest, file);
 				}
 				else {
-					DLStoreUtil.updateFile(
-						user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
-						dlFileEntry.getName(), dlFileEntry.getExtension(),
-						false, updatedFileVersion.getStoreFileName(),
-						sourceFileName, inputStream);
+					DLStoreUtil.updateFile(dlStoreRequest, inputStream);
 				}
 			}
 

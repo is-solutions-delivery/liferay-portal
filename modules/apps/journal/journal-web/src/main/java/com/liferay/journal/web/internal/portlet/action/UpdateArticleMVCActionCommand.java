@@ -52,6 +52,7 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.LiferayFileItemException;
 import com.liferay.portal.kernel.upload.UploadException;
@@ -424,6 +425,9 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 
+		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
+			actionRequest);
+
 		Map<String, String> friendlyURLWarningMessages =
 			_getFriendlyURLWarningMessages(
 				actionRequest, article.getFriendlyURLMap(), friendlyURLMap);
@@ -431,8 +435,8 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 		for (Map.Entry<String, String> entry :
 				friendlyURLWarningMessages.entrySet()) {
 
-			MultiSessionMessages.add(
-				actionRequest, entry.getKey(), entry.getValue());
+			SessionMessages.add(
+				httpServletRequest, entry.getKey(), entry.getValue());
 		}
 
 		_sendEditArticleRedirect(actionRequest, article, oldUrlTitle);
@@ -442,6 +446,12 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 
 		if (hideDefaultSuccessMessage) {
 			hideDefaultSuccessMessage(actionRequest);
+		}
+		else {
+			SessionMessages.remove(
+				httpServletRequest,
+				_portal.getPortletId(actionRequest) +
+					SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_SUCCESS_MESSAGE);
 		}
 	}
 
@@ -523,7 +533,7 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		return HashMapBuilder.put(
-			"friendlyURLChanged",
+			"friendlyURLChanged_requestProcessedWarning",
 			() -> {
 				if (friendlyURLChangedMessages.isEmpty()) {
 					return null;
@@ -539,7 +549,7 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 				return StringUtil.merge(friendlyURLChangedMessages, "<br />");
 			}
 		).put(
-			"friendlyURLDuplicated",
+			"friendlyURLDuplicated_requestProcessedWarning",
 			() -> {
 				if (friendlyURLDuplicatedLocales.isEmpty()) {
 					return null;
@@ -744,7 +754,7 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 
 		LayoutClassedModelUsage layoutClassedModelUsage =
 			_layoutClassedModelUsageLocalService.fetchLayoutClassedModelUsage(
-				classNameId, classPK, portletResource,
+				classNameId, classPK, StringPool.BLANK, portletResource,
 				_portal.getClassNameId(Portlet.class), plid);
 
 		if (layoutClassedModelUsage != null) {
@@ -752,7 +762,7 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		_layoutClassedModelUsageLocalService.addLayoutClassedModelUsage(
-			groupId, classNameId, classPK, portletResource,
+			groupId, classNameId, classPK, StringPool.BLANK, portletResource,
 			_portal.getClassNameId(Portlet.class), plid, serviceContext);
 	}
 

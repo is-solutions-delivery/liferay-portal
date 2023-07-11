@@ -16,12 +16,12 @@ package com.liferay.segments.experiment.web.internal.processor;
 
 import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cookies.CookiesManagerUtil;
 import com.liferay.portal.kernel.cookies.constants.CookiesConstants;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -66,7 +66,7 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 		HttpServletRequest httpServletRequest,
 		HttpServletResponse httpServletResponse) {
 
-		_unsetCookie(httpServletRequest, httpServletResponse);
+		_unsetCookies(httpServletRequest, httpServletResponse);
 	}
 
 	@Override
@@ -123,8 +123,7 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 		if (segmentsExperienceId != -1) {
 			SegmentsExperiment segmentsExperiment =
 				_segmentsExperimentLocalService.fetchSegmentsExperiment(
-					segmentsExperienceId, _portal.getClassNameId(Layout.class),
-					plid,
+					segmentsExperienceId, plid,
 					SegmentsExperimentConstants.Status.getSplitStatusValues());
 
 			if (segmentsExperiment != null) {
@@ -145,7 +144,7 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 			}
 		}
 
-		_unsetCookie(httpServletRequest, httpServletResponse);
+		_unsetCookie(httpServletRequest, httpServletResponse, plid);
 
 		if (ArrayUtil.isEmpty(segmentsExperienceIds)) {
 			segmentsExperienceId =
@@ -159,8 +158,7 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 		List<SegmentsExperiment> segmentsExperiments =
 			_segmentsExperimentLocalService.
 				getSegmentsExperienceSegmentsExperiments(
-					new long[] {segmentsExperienceId},
-					_portal.getClassNameId(Layout.class), plid,
+					new long[] {segmentsExperienceId}, plid,
 					SegmentsExperimentConstants.Status.getSplitStatusValues(),
 					0, 1);
 
@@ -189,8 +187,8 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 			segmentsExperimentRels);
 
 		_setCookie(
-			httpServletRequest, httpServletResponse,
-			themeDisplay.getURLCurrent(), segmentsExperienceId);
+			httpServletRequest, httpServletResponse, plid,
+			segmentsExperienceId);
 
 		httpServletRequest.setAttribute(
 			SegmentsExperimentWebKeys.SEGMENTS_EXPERIMENT, segmentsExperiment);
@@ -218,7 +216,9 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 			segmentsExperienceIds);
 	}
 
-	private Cookie _getCookie(HttpServletRequest httpServletRequest) {
+	private Cookie _getCookie(
+		HttpServletRequest httpServletRequest, long plid) {
+
 		Cookie[] cookies = httpServletRequest.getCookies();
 
 		if (ArrayUtil.isEmpty(cookies)) {
@@ -227,7 +227,8 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 
 		for (Cookie cookie : cookies) {
 			if (Objects.equals(
-					cookie.getName(), _AB_TEST_VARIANT_ID_COOKIE_NAME)) {
+					cookie.getName(),
+					_AB_TEST_VARIANT_ID_COOKIE_PREFIX + plid)) {
 
 				return cookie;
 			}
@@ -239,7 +240,7 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 	private long _getCurrentSegmentsExperienceId(
 		long groupId, long plid, HttpServletRequest httpServletRequest) {
 
-		Cookie cookie = _getCookie(httpServletRequest);
+		Cookie cookie = _getCookie(httpServletRequest, plid);
 
 		if (cookie == null) {
 			return -1;
@@ -331,11 +332,11 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 
 	private void _setCookie(
 		HttpServletRequest httpServletRequest,
-		HttpServletResponse httpServletResponse, String path,
+		HttpServletResponse httpServletResponse, long plid,
 		long segmentsExperienceId) {
 
 		Cookie abTestVariantIdCookie = new Cookie(
-			_AB_TEST_VARIANT_ID_COOKIE_NAME,
+			_AB_TEST_VARIANT_ID_COOKIE_PREFIX + plid,
 			_getSegmentsExperienceKey(segmentsExperienceId));
 
 		String domain = CookiesManagerUtil.getDomain(httpServletRequest);
@@ -345,7 +346,7 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 		}
 
 		abTestVariantIdCookie.setMaxAge(CookiesConstants.MAX_AGE);
-		abTestVariantIdCookie.setPath(path);
+		abTestVariantIdCookie.setPath(StringPool.SLASH);
 
 		CookiesManagerUtil.addCookie(
 			CookiesConstants.CONSENT_TYPE_PERSONALIZATION,
@@ -354,9 +355,9 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 
 	private void _unsetCookie(
 		HttpServletRequest httpServletRequest,
-		HttpServletResponse httpServletResponse) {
+		HttpServletResponse httpServletResponse, long plid) {
 
-		Cookie cookie = _getCookie(httpServletRequest);
+		Cookie cookie = _getCookie(httpServletRequest, plid);
 
 		if (cookie == null) {
 			return;
@@ -367,8 +368,29 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 			httpServletRequest, httpServletResponse, cookie.getName());
 	}
 
-	private static final String _AB_TEST_VARIANT_ID_COOKIE_NAME =
-		"ab_test_variant_id";
+	private void _unsetCookies(
+		HttpServletRequest httpServletRequest,
+		HttpServletResponse httpServletResponse) {
+
+		Cookie[] cookies = httpServletRequest.getCookies();
+
+		if (ArrayUtil.isEmpty(cookies)) {
+			return;
+		}
+
+		for (Cookie cookie : cookies) {
+			if (StringUtil.startsWith(
+					cookie.getName(), _AB_TEST_VARIANT_ID_COOKIE_PREFIX)) {
+
+				CookiesManagerUtil.deleteCookies(
+					CookiesManagerUtil.getDomain(httpServletRequest),
+					httpServletRequest, httpServletResponse, cookie.getName());
+			}
+		}
+	}
+
+	private static final String _AB_TEST_VARIANT_ID_COOKIE_PREFIX =
+		"ab_test_variant_id_";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SegmentsExperimentSegmentsExperienceRequestProcessor.class);

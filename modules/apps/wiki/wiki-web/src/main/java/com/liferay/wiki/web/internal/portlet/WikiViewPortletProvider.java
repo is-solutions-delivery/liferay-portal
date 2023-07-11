@@ -18,8 +18,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.BasePortletProvider;
+import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
-import com.liferay.portal.kernel.portlet.ViewPortletProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.wiki.constants.WikiPortletKeys;
@@ -35,14 +35,10 @@ import org.osgi.service.component.annotations.Component;
  * @author Adolfo Pérez
  */
 @Component(
-	property = {
-		"model.class.name=com.liferay.wiki.model.WikiPage",
-		"service.ranking:Integer=100"
-	},
-	service = ViewPortletProvider.class
+	property = "model.class.name=com.liferay.wiki.model.WikiPage",
+	service = PortletProvider.class
 )
-public class WikiViewPortletProvider
-	extends BasePortletProvider implements ViewPortletProvider {
+public class WikiViewPortletProvider extends BasePortletProvider {
 
 	@Override
 	public String getPortletName() {
@@ -67,5 +63,12 @@ public class WikiViewPortletProvider
 		return PortletURLFactoryUtil.create(
 			httpServletRequest, getPortletName(), PortletRequest.RENDER_PHASE);
 	}
+
+	@Override
+	public Action[] getSupportedActions() {
+		return _supportedActions;
+	}
+
+	private final Action[] _supportedActions = {Action.VIEW};
 
 }

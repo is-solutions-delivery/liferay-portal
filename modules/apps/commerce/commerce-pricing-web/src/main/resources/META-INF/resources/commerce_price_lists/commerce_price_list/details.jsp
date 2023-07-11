@@ -103,7 +103,7 @@ if ((commercePriceList != null) && (commercePriceList.getExpirationDate() != nul
 				<aui:script require="commerce-frontend-js/components/autocomplete/entry as autocomplete, commerce-frontend-js/utilities/eventsDefinitions as events">
 					autocomplete.default('autocomplete', 'autocomplete-root', {
 						apiUrl:
-							'<%= commercePriceListDisplayContext.getPriceListsApiUrl(portletName) %>',
+							'<%= commercePriceListDisplayContext.getPriceListsAPIURL(portletName) %>',
 						initialLabel:
 							'<%= (parentCommercePriceList == null) ? StringPool.BLANK : HtmlUtil.escapeJS(parentCommercePriceList.getName()) %>',
 						initialValue:

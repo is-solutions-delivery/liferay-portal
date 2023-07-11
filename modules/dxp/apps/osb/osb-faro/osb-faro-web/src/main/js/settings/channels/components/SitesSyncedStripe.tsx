@@ -1,6 +1,6 @@
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import {getPluralMessage, sub} from 'shared/util/lang';
 import {isNumber} from 'lodash';
 
@@ -27,7 +27,7 @@ const SitesSyncedStripe: React.FC<ISitesSyncedStripeProps> = ({
 							sitesSyncedCount
 						)
 					) : (
-						<Spinner key='LOADING_SPINNER' light size='sm' />
+						<Loading key='LOADING' />
 					)
 				],
 				false

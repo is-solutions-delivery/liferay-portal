@@ -1,0 +1,10 @@
+@import 'cadmin-variables';
+
+html#{$cadmin-selector} .cadmin .portlet-ai-creator-openai .lfr-tooltip-scope {
+	height: 100%;
+}
+
+html#{$cadmin-selector} .cadmin .portlet-ai-creator-openai textarea {
+	min-height: 10em;
+	white-space: pre-line;
+}

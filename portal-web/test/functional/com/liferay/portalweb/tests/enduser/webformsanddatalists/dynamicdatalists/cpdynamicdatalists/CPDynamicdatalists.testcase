@@ -12,9 +12,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -148,7 +148,7 @@ definition {
 			Click.mouseOverClick(locator1 = "DDMEditStructure#FORM_FIELD_DELETE_BUTTON_2");
 
 			AssertTextEquals(
-				locator1 = "IFrame#DIALOG_BOX",
+				locator1 = "Modal#HEADER",
 				value1 = "Boolean");
 
 			AssertTextEquals(
@@ -557,9 +557,9 @@ definition {
 
 	@priority = 5
 	test AddListAndRecordWithToDoPredefinedDataDefinition {
-		property portal.acceptance = "quarantine";
-		property portal.upstream = "quarantine";
-		property test.name.skip.portal.instance = "CPDynamicdatalists#AddListAndRecordWithToDoPredefinedDataDefinition";
+		property portal.acceptance = "true";
+		property portal.upstream = "true";
+		property test.liferay.virtual.instance = "false";
 
 		DDLList.openDynamicDataListsAdmin(siteURLKey = "guest");
 
@@ -1122,7 +1122,6 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-65726"
-	@ignore = "true"
 	@priority = 5
 	test AddListRecordWithLinkToPageField {
 		ProductMenu.gotoPortlet(
@@ -1188,11 +1187,12 @@ definition {
 			fieldName = "LinkToPage",
 			pagePrivacy = "Public");
 
-		DDLRecord.viewSelectedLinkToPage(
-			ddlRecordFieldData = "Test Page",
-			fieldName = "LinkToPage");
+		Click(
+			key_indexNumber = 1,
+			key_text = "Publish",
+			locator1 = "Button#ANY_N");
 
-		PortletEntry.publish();
+		Alert.viewSuccessMessage();
 
 		Navigator.openURL();
 
@@ -3213,7 +3213,7 @@ definition {
 	@priority = 5
 	test ImportLAR {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "CPDynamicdatalists#ImportLAR";
+		property test.liferay.virtual.instance = "false";
 
 		Navigator.openURL();
 

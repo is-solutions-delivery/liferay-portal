@@ -61,18 +61,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>RELOAD_TOOLTIP</td>
-	<td>//div[contains(.,'The portal is currently reindexing.')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>SIMULATION</td>
 	<td>//*[@data-qa-id='controlMenu']//*[@data-qa-id='simulation']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>TOGGLE_CONTROLS</td>
-	<td>//*[@class='control-menu-nav']//*[@data-qa-id='showControls' and contains(.,'Toggle Controls')]//*[name()='svg'][contains(@class,'${key_status}')]</td>
+	<td>//*[@class='control-menu-nav-item']//*[@data-qa-id='showControls' and contains(@data-title,'Toggle Controls')]//*[name()='svg'][contains(@class,'${key_status}')]</td>
 	<td></td>
 </tr>
 <tr>

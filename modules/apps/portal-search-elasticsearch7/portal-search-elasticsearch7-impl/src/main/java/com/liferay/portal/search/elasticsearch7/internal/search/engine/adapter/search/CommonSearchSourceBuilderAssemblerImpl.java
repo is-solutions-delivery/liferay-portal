@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search;
 
+import com.liferay.portal.kernel.search.filter.FilterTranslator;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -22,8 +23,6 @@ import com.liferay.portal.search.aggregation.AggregationTranslator;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregation;
 import com.liferay.portal.search.aggregation.pipeline.PipelineAggregationTranslator;
 import com.liferay.portal.search.elasticsearch7.internal.facet.FacetTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.filter.FilterToQueryBuilderTranslator;
-import com.liferay.portal.search.elasticsearch7.internal.query.QueryToQueryBuilderTranslator;
 import com.liferay.portal.search.elasticsearch7.internal.stats.StatsTranslator;
 import com.liferay.portal.search.engine.adapter.search.BaseSearchRequest;
 import com.liferay.portal.search.filter.ComplexQueryBuilderFactory;
@@ -31,6 +30,7 @@ import com.liferay.portal.search.filter.ComplexQueryPart;
 import com.liferay.portal.search.pit.PointInTime;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.Query;
+import com.liferay.portal.search.query.QueryTranslator;
 import com.liferay.portal.search.rescore.Rescore;
 import com.liferay.portal.search.stats.StatsRequest;
 
@@ -148,7 +148,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 		QueryBuilder queryBuilder = null;
 
 		if (baseSearchRequest.getPostFilterQuery() != null) {
-			queryBuilder = _queryToQueryBuilderTranslator.translate(
+			queryBuilder = _queryTranslator.translate(
 				baseSearchRequest.getPostFilterQuery());
 		}
 
@@ -386,8 +386,9 @@ public class CommonSearchSourceBuilderAssemblerImpl
 			PointInTimeBuilder pointInTimeBuilder = new PointInTimeBuilder(
 				pointInTime.getPointInTimeId());
 
-			if (pointInTime.getKeepAlive() != null) {
-				pointInTimeBuilder.setKeepAlive(pointInTime.getKeepAlive());
+			if (pointInTime.getKeepAlive() != 0) {
+				pointInTimeBuilder.setKeepAlive(
+					TimeValue.timeValueSeconds(pointInTime.getKeepAlive()));
 			}
 
 			searchSourceBuilder.pointInTimeBuilder(pointInTimeBuilder);
@@ -405,7 +406,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 		}
 		else if (baseSearchRequest.getPostFilter() != null) {
 			searchSourceBuilder.postFilter(
-				_filterToQueryBuilderTranslator.translate(
+				_filterTranslator.translate(
 					baseSearchRequest.getPostFilter(), null));
 		}
 	}
@@ -436,8 +437,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 		}
 
 		searchSourceBuilder.addRescorer(
-			new QueryRescorerBuilder(
-				_queryToQueryBuilderTranslator.translate(query)));
+			new QueryRescorerBuilder(_queryTranslator.translate(query)));
 	}
 
 	private void _setRescorers(
@@ -450,8 +450,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 		for (Rescore rescore : rescores) {
 			QueryRescorerBuilder queryRescorerBuilder =
 				new QueryRescorerBuilder(
-					_queryToQueryBuilderTranslator.translate(
-						rescore.getQuery()));
+					_queryTranslator.translate(rescore.getQuery()));
 
 			if (rescore.getQueryWeight() != null) {
 				queryRescorerBuilder.setQueryWeight(rescore.getQueryWeight());
@@ -533,8 +532,8 @@ public class CommonSearchSourceBuilderAssemblerImpl
 			return null;
 		}
 
-		QueryBuilder queryBuilder =
-			_legacyQueryToQueryBuilderTranslator.translate(query, null);
+		QueryBuilder queryBuilder = _legacyQueryTranslator.translate(
+			query, null);
 
 		if ((query.getPreBooleanFilter() == null) ||
 			(query instanceof com.liferay.portal.kernel.search.BooleanQuery)) {
@@ -551,8 +550,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
 		boolQueryBuilder.filter(
-			_filterToQueryBuilderTranslator.translate(
-				query.getPreBooleanFilter(), null));
+			_filterTranslator.translate(query.getPreBooleanFilter(), null));
 		boolQueryBuilder.must(queryBuilder);
 
 		return boolQueryBuilder;
@@ -560,7 +558,7 @@ public class CommonSearchSourceBuilderAssemblerImpl
 
 	private QueryBuilder _translateQuery(Query query) {
 		if (query != null) {
-			return _queryToQueryBuilderTranslator.translate(query);
+			return _queryTranslator.translate(query);
 		}
 
 		return null;
@@ -575,19 +573,19 @@ public class CommonSearchSourceBuilderAssemblerImpl
 	@Reference
 	private FacetTranslator _facetTranslator;
 
-	@Reference
-	private FilterToQueryBuilderTranslator _filterToQueryBuilderTranslator;
+	@Reference(target = "(search.engine.impl=Elasticsearch)")
+	private FilterTranslator<QueryBuilder> _filterTranslator;
 
-	@Reference
-	private com.liferay.portal.search.elasticsearch7.internal.legacy.query.
-		QueryToQueryBuilderTranslator _legacyQueryToQueryBuilderTranslator;
+	@Reference(target = "(search.engine.impl=Elasticsearch)")
+	private com.liferay.portal.kernel.search.query.QueryTranslator<QueryBuilder>
+		_legacyQueryTranslator;
 
 	@Reference(target = "(search.engine.impl=Elasticsearch)")
 	private PipelineAggregationTranslator<PipelineAggregationBuilder>
 		_pipelineAggregationTranslator;
 
-	@Reference
-	private QueryToQueryBuilderTranslator _queryToQueryBuilderTranslator;
+	@Reference(target = "(search.engine.impl=Elasticsearch)")
+	private QueryTranslator<QueryBuilder> _queryTranslator;
 
 	@Reference
 	private StatsTranslator _statsTranslator;

@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayIcon from '@clayui/icon';
 import React, {useContext} from 'react';
 
@@ -19,7 +20,7 @@ import CartQuickAdd from './CartQuickAdd';
 import MiniCartContext from './MiniCartContext';
 import {ADD_PRODUCT} from './util/constants';
 
-export default function CartItemsList() {
+export default function CartItemsList({showPriceOnApplicationInfo = false}) {
 	const {
 		CartViews,
 		cartState,
@@ -29,13 +30,26 @@ export default function CartItemsList() {
 		summaryDataMapper,
 	} = useContext(MiniCartContext);
 
-	const {cartItems = [], id, summary = {}} = cartState;
+	const {accountId, cartItems = [], summary = {}} = cartState;
 
 	return (
 		<div className="mini-cart-items-list">
 			<CartViews.ItemsListActions />
 
-			{cartState.accountId && !!id && <CartQuickAdd />}
+			{accountId ? <CartQuickAdd /> : null}
+
+			{showPriceOnApplicationInfo && (
+				<div className="price-on-application-info-wrapper">
+					<ClayAlert
+						displayType="info"
+						title={Liferay.Language.get('info')}
+					>
+						{Liferay.Language.get(
+							'your-cart-has-products-that-require-a-quote-to-complete-the-checkout'
+						)}
+					</ClayAlert>
+				</div>
+			)}
 
 			{cartItems.length ? (
 				<>

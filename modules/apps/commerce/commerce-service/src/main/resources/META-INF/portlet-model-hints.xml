@@ -182,6 +182,7 @@
 		<field name="CPInstanceId" type="long" />
 		<field name="CPMeasurementUnitId" type="long" />
 		<field name="CProductId" type="long" />
+		<field name="customerCommerceOrderItemId" type="long" />
 		<field name="parentCommerceOrderItemId" type="long" />
 		<field name="shippingAddressId" type="long" />
 		<field name="decimalQuantity" type="BigDecimal" />
@@ -213,6 +214,7 @@
 		<field name="maxSubscriptionCycles" type="long" />
 		<field localized="true" name="name" type="String" />
 		<field name="priceManuallyAdjusted" type="boolean" />
+		<field name="priceOnApplication" type="boolean" />
 		<field name="printedNote" type="String">
 			<hint-collection name="TEXTAREA" />
 		</field>

@@ -100,7 +100,6 @@ const TestflowForm = () => {
 			pageSize: 100,
 		},
 	});
-
 	const caseTypes = useMemo(() => data?.items || [], [
 		data?.items,
 	]) as TestrayCaseType[];
@@ -259,14 +258,16 @@ const TestflowForm = () => {
 				</label>
 
 				<div className="col-4 my-3">
-					<Form.Checkbox
-						checked={isCheckedAll}
-						label={i18n.translate('select-all')}
-						onChange={() => {
-							setCheckedAll((isCheckedAll) => !isCheckedAll);
-							onSelectAll();
-						}}
-					/>
+					{!taskId && (
+						<Form.Checkbox
+							checked={isCheckedAll}
+							label={i18n.translate('select-all')}
+							onChange={() => {
+								setCheckedAll((isCheckedAll) => !isCheckedAll);
+								onSelectAll();
+							}}
+						/>
+					)}
 				</div>
 
 				<div className="d-flex flex-wrap">

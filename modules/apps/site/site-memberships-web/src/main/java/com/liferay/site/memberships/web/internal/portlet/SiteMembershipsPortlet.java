@@ -14,6 +14,7 @@
 
 package com.liferay.site.memberships.web.internal.portlet;
 
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.portal.kernel.exception.MembershipRequestCommentsException;
 import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.exception.NoSuchRoleException;
@@ -75,6 +76,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-communities",
+		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.icon=/icons/site_memberships_admin.png",
 		"com.liferay.portlet.preferences-owned-by-group=true",
 		"com.liferay.portlet.private-request-attributes=false",
@@ -339,6 +341,16 @@ public class SiteMembershipsPortlet extends MVCPortlet {
 			userIds, group.getGroupId(), roleId);
 	}
 
+	@Override
+	public void render(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		renderRequest.setAttribute(ItemSelector.class.getName(), _itemSelector);
+
+		super.render(renderRequest, renderResponse);
+	}
+
 	public void replyMembershipRequest(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
@@ -455,6 +467,9 @@ public class SiteMembershipsPortlet extends MVCPortlet {
 
 		return siteMembershipsDisplayContext.getGroup();
 	}
+
+	@Reference
+	private ItemSelector _itemSelector;
 
 	@Reference
 	private MembershipRequestService _membershipRequestService;

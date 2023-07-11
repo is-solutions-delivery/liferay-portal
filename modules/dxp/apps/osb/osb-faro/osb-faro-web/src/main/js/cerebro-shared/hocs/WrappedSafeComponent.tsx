@@ -1,6 +1,6 @@
+import Loading from 'shared/components/Loading';
 import NoResultsDisplay from 'shared/components/NoResultsDisplay';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 
 interface IWrappedSafeComponentProps extends React.HTMLAttributes<HTMLElement> {
 	children: (result: any) => React.ReactElement;
@@ -26,7 +26,7 @@ const WrappedSafeComponent: React.FC<IWrappedSafeComponentProps> = ({
 
 	try {
 		if (loading) {
-			return <Spinner alignCenter />;
+			return <Loading />;
 		}
 
 		if (error) {

@@ -31,6 +31,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ASSERT_PARAGRAPH_TEXT</td>
+	<td>//div[contains(@class,'component-paragraph') and contains(.,'${key_value}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ANY_SELECT</td>
 	<td>//div[not(contains(@class,'hide'))]//div[contains(@class,'input-select-wrapper')][label[contains(.,'${key_selectFieldLabel}')]]/select</td>
 	<td></td>
@@ -78,6 +83,11 @@
 <tr>
 	<td>LABEL_GENERIC_SELECT_POSITION</td>
 	<td>//label[contains(text(),'${key_fieldLabel}')]/..//select/option['${row}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LABEL_GENERIC_SELECT_ENTRY_POSITION</td>
+	<td>//label[contains(text(),'${key_fieldLabel}')]/..//select/option[${key_index}][normalize-space(text())='${entryName}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -466,6 +476,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SKU_STATUS_PRODUCT_ADMIN_PAGE</td>
+	<td>//*[contains(@class, 'table-list-title')]/a[text()='${key_entryTitle}']/../../../div//span[text()='${key_label}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TAGS_FIELD</td>
 	<td>//div/ul/li/span/span/input[contains(@id,'assetTagName')]</td>
 	<td></td>
@@ -548,6 +563,11 @@
 <tr>
 	<td>PRICE_FIELD</td>
 	<td>//div/input[contains(@id,'price')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRICE_LISTS_PRICE_SETTINGS_DISABLED</td>
+	<td>//fieldset[@class='price-entry-price-settings disabled'] | //fieldset[contains(@id,'price-settings') and @disabled]</td>
 	<td></td>
 </tr>
 <tr>
@@ -681,6 +701,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MODAL_DATASET_ROW_ITEM</td>
+	<td>//div[contains(@class,'modal-iframe-content')]//div[@class='dnd-tbody']//div[@class='dnd-tr' and contains(.,'${key_entry}')]/div[${key_index}]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ENTRY_NAME_BODY_VERTICAL_ELLIPSIS</td>
 	<td>//div[@class='data-set-wrapper' or @class='searchcontainer-content']//a[text()='${key_entryName}']/../../following-sibling::div//button</td>
 	<td></td>
@@ -766,6 +791,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE</td>
+	<td>//div[(@class="dnd-td") and contains(string(), '${key_cellName1}')]//..//div[(@class="dnd-td") and contains(string(), '${key_cellName2}')]//..//div[(@class="dnd-td")][${key_columnNumber}]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TABLE_ENTRY_DELETE_BUTTON</td>
 	<td>//h4[contains(.,'${key_table}')]//..//div/a[contains(.,'${key_entryName}')]//..//..//../div/*[contains(.,'Delete')] | //div[contains(.,'${key_table}')]//div[@class='dnd-tr'][contains(.,'${key_entryName}')]//*[contains(text(),'Delete')]</td>
 	<td></td>
@@ -783,6 +813,11 @@
 <tr>
 	<td>TABLE_ASSERT_TWO_COLUMNS_ELLIPSIS</td>
 	<td>//div[contains(@id,'${key_table}')]//div[1][@class='dnd-td' and contains(.,'${key_firstColumnValue}')]/following::div[@class='dnd-td' and contains (.,'${key_secondColumnValue}')]/following::div[@class='dropdown']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>GENERIC_TABLE_ROW_VALUE</td>
+	<td>//div[contains(@class,'dnd-th') and contains(string(), '${key_firstRowValue}')]/..//div[contains(@class,'dnd-td') and contains(string(), '${key_secondRowValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -813,6 +848,21 @@
 <tr>
 	<td>ANY_FRAGMENT_DROP_TARGET_N</td>
 	<td>//div[@aria-label='${key_targetFragmentName}'][${key_index}]/div[contains(@class,'page-editor__topper__content')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LABEL_TOOLTIP_ICON</td>
+	<td>//label[(contains(.,'${key_label}')) or (contains(@for,'${key_label}'))]//span[contains(@class,'lfr-portal-tooltip')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LABEL_TOOLTIP_TEXT</td>
+	<td>//label[(contains(.,'${key_label}')) or (contains(@for,'${key_label}'))]//span[(contains(@class,'lfr-portal-tooltip')) and (@data-restore-title='${key_text}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ANY_TEXT_INPUT_DISABLED</td>
+	<td>//div[label[contains(.,'${key_text}')]]//input[not(contains(@type,'checkbox'))][@disabled]</td>
 	<td></td>
 </tr>
 
@@ -1074,6 +1124,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ANY_AUTOCOMPLETE_CONTAINS_TEXT_FIELD</td>
+	<td>//label[contains(.,'${key_label}')]/following::div[contains(@id,'autocomplete-root')]//input[@type="text"]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PRODUCT_DETAIL_VIEW_OPTION</td>
 	<td>//div[contains(@class,'card d-flex')]//h4[contains(.,'Option')]/..//a</td>
 	<td></td>
@@ -1262,6 +1317,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>TABLE_SEARCH_BY_NAME_AND_COLUMN_CONTENT_RELATIONS</td>
+	<td>//div[@class='commerce-product-definition-title' and contains(.,'${key_productName}')]/../../td[${key_columnNumber}][contains(text(),'${key_value}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>TABLE_SEARCH_BY_NAME_AND_CONTENT</td>
 	<td>//div[@class='dnd-td' and contains(.,'${key_productName}')]/following-sibling::div[contains(text(),'${key_value}')]</td>
 	<td></td>
@@ -1269,6 +1329,11 @@
 <tr>
 	<td>VALUE_PRODUCT_RELATIONS</td>
 	<td>//a[contains(text(),'${key_productName}')]/../../..//div[contains(@class,'dnd-td') and (text()='${key_value}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VALUE_PRODUCT_STATUS</td>
+	<td>//a[contains(text(),'${key_productName}')]/../../..//div[contains(@class,'dnd-td') and (text()='${key_productRelation}')]/..//*[contains(text(),'${key_productStatus}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -1357,7 +1422,7 @@
 </tr>
 <tr>
 	<td>CATEGORY_LANGUAGE_SITEMAP_URL_HREF_HREFLANG</td>
-	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/g/${key_categoryURLName}']/following-sibling::*[@href = '${key_basePortalURL}/${key_language}/web/minium/g/${key_categoryName}'][@hreflang='${key_categoryNameLang}']</td>
+	<td>//*[text()='${key_basePortalURL}${key_languageLoc}/web/minium/g/${key_categoryURLName}']/following-sibling::*[@href = '${key_basePortalURL}${key_languageHref}/web/minium/g/${key_categoryName}'][@hreflang='${key_categoryNameLang}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -1367,7 +1432,7 @@
 </tr>
 <tr>
 	<td>PRODUCT_LANGUAGE_DETAIL_SITEMAP_URL_HREF_HREFLANG</td>
-	<td>//*[text()='${key_basePortalURL}/${key_language}/web/minium/p/${key_productURLName}']/following-sibling::*[@href = '${key_basePortalURL}/${key_language}/web/minium/p/${key_productName}'][@hreflang='${key_productNameLang}']</td>
+	<td>//*[text()='${key_basePortalURL}${key_languageLoc}/web/minium/p/${key_productURLName}']/following-sibling::*[@href = '${key_basePortalURL}${key_languageHref}/web/minium/p/${key_productName}'][@hreflang='${key_productNameLang}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -1380,7 +1445,16 @@
 	<td>//*[text()='${key_basePortalURL}/web/minium/p/${key_productURLName}']/following-sibling::*[@href = '${key_basePortalURL}/web/minium/p/${key_productName}'][@hreflang='${key_productNameLang}']</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>CURRENT_LANGUAGE</td>
+	<td>//label[contains(.,'Current')]/..//select/option[contains(.,'${key_language}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMMERCE_CATEGORY_AUTOCOMPLETE_SPECIFIC</td>
+	<td>//div[contains(@class,'dropdown')]//ul/li//button[.='${key_categoryName}']</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>

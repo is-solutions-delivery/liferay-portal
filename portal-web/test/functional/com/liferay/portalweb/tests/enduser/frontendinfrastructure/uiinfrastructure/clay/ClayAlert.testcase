@@ -32,9 +32,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -44,7 +44,7 @@ definition {
 		}
 	}
 
-	@description = "Verify alert contains all required attributes: icon, type text, and description"
+	@description = "LRQA-65932. Verify alert contains all required attributes: icon, type text, and description"
 	@priority = 5
 	test CanDisplayAllAttributes {
 		task ("When the alert contains all attributes") {
@@ -75,7 +75,7 @@ definition {
 		}
 	}
 
-	@description = "Verify the keyword is semi-bold when alert contains status icon and keyword"
+	@description = "LRQA-65932. Verify the keyword is semi-bold when alert contains status icon and keyword"
 	@priority = 4
 	test KeywordCanDisplayInSemibold {
 		task ("When alert contains status icon and keyword") {
@@ -103,7 +103,7 @@ definition {
 	@priority = 3
 	@refactordone
 	test ToastMessageCanBeClosedManually {
-		property test.name.skip.portal.instance = "ClayAlert#ToastMessageCanBeClosedManually";
+		property test.liferay.virtual.instance = "false";
 
 		var portalURL = PropsUtil.get("portal.url");
 
@@ -126,7 +126,7 @@ definition {
 	@priority = 4
 	@refactordone
 	test ToastMessageCanCloseAutomatically {
-		property test.name.skip.portal.instance = "ClayAlert#ToastMessageCanCloseAutomatically";
+		property test.liferay.virtual.instance = "false";
 
 		var portalURL = PropsUtil.get("portal.url");
 

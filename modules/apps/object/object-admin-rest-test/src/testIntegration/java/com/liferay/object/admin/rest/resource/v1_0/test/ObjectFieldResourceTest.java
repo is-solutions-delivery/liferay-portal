@@ -44,7 +44,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Javier Gamarra
  */
-@FeatureFlags("LPS-146755")
+@FeatureFlags({"LPS-146755", "LPS-170122", "LPS-172017"})
 @RunWith(Arquillian.class)
 public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 
@@ -59,7 +59,7 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), false, true,
 				LocalizedMapUtil.getLocalizedMap(value), value, null, null,
-				LocalizedMapUtil.getLocalizedMap(value),
+				LocalizedMapUtil.getLocalizedMap(value), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				Collections.<com.liferay.object.model.ObjectField>emptyList());
@@ -338,6 +338,9 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 			Collections.singletonMap(
 				LocaleUtil.US.toString(), "a" + objectField.getName()));
 		objectField.setName("a" + objectField.getName());
+		objectField.setReadOnly(ObjectField.ReadOnly.FALSE);
+		objectField.setRequired(
+			!objectField.getLocalized() && objectField.getRequired());
 		objectField.setState(false);
 
 		return objectField;

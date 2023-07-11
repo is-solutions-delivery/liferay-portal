@@ -56,6 +56,7 @@ public class CTEntryModelDocumentContributor
 
 	@Override
 	public void contribute(Document document, CTEntry ctEntry) {
+		document.addKeyword(Field.COMPANY_ID, ctEntry.getCompanyId());
 		document.addDate(Field.CREATE_DATE, ctEntry.getCreateDate());
 		document.addDate(Field.MODIFIED_DATE, ctEntry.getModifiedDate());
 
@@ -147,9 +148,9 @@ public class CTEntryModelDocumentContributor
 			_ctDisplayRendererRegistry.getCTDisplayRenderer(
 				ctEntry.getModelClassNameId()));
 
-		document.addLocalizedKeyword(
-			"typeName",
-			_getTypeNameMap(locales, ctEntry.getModelClassNameId()));
+		document.addLocalizedText(
+			"typeName", _getTypeNameMap(locales, ctEntry.getModelClassNameId()),
+			true);
 
 		if (model == null) {
 			return;
@@ -167,9 +168,12 @@ public class CTEntryModelDocumentContributor
 			}
 		}
 
+		document.addLocalizedKeyword(
+			Field.getSortableFieldName(Field.TITLE),
+			_getTitleMap(locales, model, ctEntry.getModelClassNameId()));
 		document.addLocalizedText(
 			Field.TITLE,
-			_getTitleMap(locales, model, ctEntry.getModelClassNameId()));
+			_getTitleMap(locales, model, ctEntry.getModelClassNameId()), true);
 
 		document.addKeyword(
 			"hideable",

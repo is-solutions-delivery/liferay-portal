@@ -15,6 +15,7 @@
 package com.liferay.portal.reports.engine.console.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
 /**
  * Provides a wrapper for {@link SourceLocalService}.
@@ -275,6 +276,13 @@ public class SourceLocalServiceWrapper
 	}
 
 	@Override
+	public String[] getAttachmentsFileNames(
+		com.liferay.portal.reports.engine.console.model.Source source) {
+
+		return _sourceLocalService.getAttachmentsFileNames(source);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext
@@ -460,6 +468,11 @@ public class SourceLocalServiceWrapper
 		com.liferay.portal.reports.engine.console.model.Source source) {
 
 		return _sourceLocalService.updateSource(source);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _sourceLocalService.getBasePersistence();
 	}
 
 	@Override

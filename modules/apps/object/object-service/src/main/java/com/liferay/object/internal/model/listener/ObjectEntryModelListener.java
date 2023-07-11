@@ -29,11 +29,15 @@ import com.liferay.object.model.ObjectFieldTable;
 import com.liferay.object.model.ObjectRelationshipTable;
 import com.liferay.object.model.ObjectViewFilterColumn;
 import com.liferay.object.model.ObjectViewFilterColumnTable;
+import com.liferay.object.model.listener.RelevantObjectEntryModelListener;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectValidationRuleLocalService;
 import com.liferay.object.service.ObjectViewFilterColumnLocalService;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
+import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -66,6 +70,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -84,6 +90,11 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 
 		_executeObjectActions(
 			ObjectActionTriggerConstants.KEY_ON_AFTER_ADD, null, objectEntry);
+
+		_runRelevantObjectEntryModelListeners(
+			objectEntry,
+			relevantObjectEntryModelListener ->
+				relevantObjectEntryModelListener.onAfterCreate(objectEntry));
 	}
 
 	@Override
@@ -102,6 +113,11 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 		_executeObjectActions(
 			ObjectActionTriggerConstants.KEY_ON_AFTER_DELETE, objectEntry,
 			objectEntry);
+
+		_runRelevantObjectEntryModelListeners(
+			objectEntry,
+			relevantObjectEntryModelListener ->
+				relevantObjectEntryModelListener.onAfterRemove(objectEntry));
 	}
 
 	@Override
@@ -129,6 +145,12 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);
 		}
+
+		_runRelevantObjectEntryModelListeners(
+			objectEntry,
+			relevantObjectEntryModelListener ->
+				relevantObjectEntryModelListener.onAfterUpdate(
+					originalObjectEntry, objectEntry));
 	}
 
 	@Override
@@ -136,6 +158,21 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 		throws ModelListenerException {
 
 		_validateObjectEntry(null, objectEntry);
+
+		_runRelevantObjectEntryModelListeners(
+			objectEntry,
+			relevantObjectEntryModelListener ->
+				relevantObjectEntryModelListener.onBeforeCreate(objectEntry));
+	}
+
+	@Override
+	public void onBeforeRemove(ObjectEntry objectEntry)
+		throws ModelListenerException {
+
+		_runRelevantObjectEntryModelListeners(
+			objectEntry,
+			relevantObjectEntryModelListener ->
+				relevantObjectEntryModelListener.onBeforeRemove(objectEntry));
 	}
 
 	@Override
@@ -144,6 +181,18 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 		throws ModelListenerException {
 
 		_validateObjectEntry(originalObjectEntry, objectEntry);
+
+		_runRelevantObjectEntryModelListeners(
+			objectEntry,
+			relevantObjectEntryModelListener ->
+				relevantObjectEntryModelListener.onBeforeUpdate(
+					originalObjectEntry, objectEntry));
+	}
+
+	@Activate
+	protected void activate(BundleContext bundleContext) {
+		_relevantObjectEntryModelListeners = ServiceTrackerListFactory.open(
+			bundleContext, RelevantObjectEntryModelListener.class);
 	}
 
 	private void _executeObjectActions(
@@ -179,8 +228,7 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 		ObjectEntry objectEntry) {
 
 		AuditMessage auditMessage = AuditMessageBuilder.buildAuditMessage(
-			eventType, objectEntry.getModelClassName(),
-			objectEntry.getObjectEntryId(), null);
+			eventType, objectEntry, null);
 
 		JSONObject additionalInfoJSONObject = auditMessage.getAdditionalInfo();
 
@@ -312,8 +360,7 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 			if (StringUtil.equals(EventTypes.UPDATE, eventType)) {
 				_auditRouter.route(
 					AuditMessageBuilder.buildAuditMessage(
-						EventTypes.UPDATE, objectEntry.getModelClassName(),
-						objectEntry.getObjectEntryId(),
+						EventTypes.UPDATE, objectEntry,
 						_getModifiedAttributes(
 							objectDefinition, originalObjectEntry.getValues(),
 							objectEntry.getValues())));
@@ -325,6 +372,28 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 		}
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);
+		}
+	}
+
+	private void _runRelevantObjectEntryModelListeners(
+		ObjectEntry objectEntry,
+		UnsafeConsumer<RelevantObjectEntryModelListener, ModelListenerException>
+			unsafeConsumer) {
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				objectEntry.getObjectDefinitionId());
+
+		for (RelevantObjectEntryModelListener relevantObjectEntryModelListener :
+				_relevantObjectEntryModelListeners) {
+
+			if (Objects.equals(
+					objectDefinition.getExternalReferenceCode(),
+					relevantObjectEntryModelListener.
+						getObjectDefinitionExternalReferenceCode())) {
+
+				unsafeConsumer.accept(relevantObjectEntryModelListener);
+			}
 		}
 	}
 
@@ -453,6 +522,9 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 	@Reference
 	private ObjectViewFilterColumnLocalService
 		_objectViewFilterColumnLocalService;
+
+	private ServiceTrackerList<RelevantObjectEntryModelListener>
+		_relevantObjectEntryModelListeners;
 
 	@Reference
 	private UserLocalService _userLocalService;

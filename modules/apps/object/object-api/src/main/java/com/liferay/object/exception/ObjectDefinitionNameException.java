@@ -21,6 +21,15 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class ObjectDefinitionNameException extends PortalException {
 
+	public static class ForbiddenModifiableSystemObjectDefinitionName
+		extends ObjectDefinitionNameException {
+
+		public ForbiddenModifiableSystemObjectDefinitionName(String name) {
+			super("Forbidden modifiable system object definition name " + name);
+		}
+
+	}
+
 	public static class MustBeginWithUpperCaseLetter
 		extends ObjectDefinitionNameException {
 

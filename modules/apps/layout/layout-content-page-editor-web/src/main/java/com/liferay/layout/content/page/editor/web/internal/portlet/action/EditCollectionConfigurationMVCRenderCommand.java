@@ -56,10 +56,10 @@ public class EditCollectionConfigurationMVCRenderCommand
 		LiferayRenderRequest liferayRenderRequest =
 			(LiferayRenderRequest)renderRequest;
 
-		DynamicServletRequest dynamicRequest =
+		DynamicServletRequest dynamicServletRequest =
 			(DynamicServletRequest)liferayRenderRequest.getHttpServletRequest();
 
-		dynamicRequest.setParameter("p_l_mode", Constants.EDIT);
+		dynamicServletRequest.setParameter("p_l_mode", Constants.EDIT);
 
 		return "/edit_collection_configuration.jsp";
 	}

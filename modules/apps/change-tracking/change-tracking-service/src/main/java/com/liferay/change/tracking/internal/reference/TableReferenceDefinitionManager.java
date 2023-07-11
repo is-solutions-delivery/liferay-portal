@@ -26,8 +26,11 @@ import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.framework.BundleContext;
@@ -88,6 +91,64 @@ public class TableReferenceDefinitionManager {
 				combinedTableReferenceInfos);
 
 			_combinedTableReferenceInfos = combinedTableReferenceInfos;
+		}
+
+		return combinedTableReferenceInfos;
+	}
+
+	public Map<Long, TableReferenceInfo<?>> getCombinedTableReferenceInfos(
+		long classNameId,
+		Map<Long, TableReferenceInfo<?>> combinedTableReferenceInfos) {
+
+		Map<Long, TableReferenceInfo<?>> allCombinedTableReferenceInfos =
+			getCombinedTableReferenceInfos();
+
+		Queue<Long> queue = new LinkedList<>();
+
+		queue.add(classNameId);
+
+		while (queue.size() > 0) {
+			classNameId = queue.poll();
+
+			TableReferenceInfo<?> tableReferenceInfo =
+				allCombinedTableReferenceInfos.get(classNameId);
+
+			combinedTableReferenceInfos.put(classNameId, tableReferenceInfo);
+
+			Map<Table<?>, List<TableJoinHolder>> parentTableJoinHoldersMap =
+				tableReferenceInfo.getParentTableJoinHoldersMap();
+
+			Map<Table<?>, List<TableJoinHolder>> childTableJoinHoldersMap =
+				tableReferenceInfo.getChildTableJoinHoldersMap();
+
+			for (Table<?> table : childTableJoinHoldersMap.keySet()) {
+				long childClassNameId = getClassNameId(table);
+
+				if (parentTableJoinHoldersMap.containsKey(table)) {
+					combinedTableReferenceInfos.put(
+						childClassNameId,
+						allCombinedTableReferenceInfos.get(childClassNameId));
+				}
+				else if (!combinedTableReferenceInfos.containsKey(
+							childClassNameId)) {
+
+					queue.add(childClassNameId);
+				}
+			}
+		}
+
+		return combinedTableReferenceInfos;
+	}
+
+	public Map<Long, TableReferenceInfo<?>> getCombinedTableReferenceInfos(
+		Set<Long> classNameIds) {
+
+		Map<Long, TableReferenceInfo<?>> combinedTableReferenceInfos =
+			new HashMap<>();
+
+		for (long classNameId : classNameIds) {
+			getCombinedTableReferenceInfos(
+				classNameId, combinedTableReferenceInfos);
 		}
 
 		return combinedTableReferenceInfos;

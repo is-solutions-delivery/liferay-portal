@@ -92,7 +92,7 @@ public class EditClientExtensionEntryMVCRenderCommand
 
 		return _clientExtensionEntryService.
 			fetchClientExtensionEntryByExternalReferenceCode(
-				_portal.getCompanyId(renderRequest), externalReferenceCode);
+				externalReferenceCode, _portal.getCompanyId(renderRequest));
 	}
 
 	@Reference

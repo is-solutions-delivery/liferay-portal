@@ -15,15 +15,19 @@
 package com.liferay.portal.vulcan.util;
 
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.lang.reflect.Field;
 
 import java.net.URI;
+
+import javax.servlet.http.HttpServletRequest;
 
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -39,6 +43,41 @@ public class UriInfoUtil {
 			getBaseUriBuilder(
 				uriInfo
 			).build());
+	}
+
+	public static UriBuilder getBaseUriBuilder(
+		HttpServletRequest httpServletRequest, UriInfo uriInfo) {
+
+		UriBuilder uriBuilder = getBaseUriBuilder(uriInfo);
+
+		uriBuilder.host(PortalUtil.getForwardedHost(httpServletRequest));
+		uriBuilder.port(PortalUtil.getForwardedPort(httpServletRequest));
+
+		if (PortalUtil.isSecure(httpServletRequest)) {
+			uriBuilder.scheme(Http.HTTPS);
+		}
+
+		return uriBuilder;
+	}
+
+	public static UriBuilder getBaseUriBuilder(
+		String applicationPath, UriInfo uriInfo) {
+
+		String basePath = getBasePath(uriInfo);
+
+		if (basePath.endsWith(StringPool.FORWARD_SLASH)) {
+			basePath = basePath.substring(0, basePath.length() - 1);
+		}
+
+		basePath = basePath.substring(0, basePath.lastIndexOf("/") + 1);
+
+		if (basePath.endsWith("/c/")) {
+			basePath = StringUtil.removeLast(basePath, "c/");
+		}
+
+		basePath = basePath + applicationPath;
+
+		return UriBuilder.fromPath(basePath);
 	}
 
 	public static UriBuilder getBaseUriBuilder(UriInfo uriInfo) {

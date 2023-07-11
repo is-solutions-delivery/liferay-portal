@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.struts.LastPath;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -103,10 +104,16 @@ public class SpSsoSamlPortalFilter extends BaseSamlPortalFilter {
 			httpServletRequest);
 
 		if (requestPath.equals("/c/portal/login")) {
+			if (_portal.getUser(httpServletRequest) != null) {
+				filterChain.doFilter(httpServletRequest, httpServletResponse);
+
+				return;
+			}
+
 			RequestDispatcher requestDispatcher =
 				_servletContext.getRequestDispatcher("/c/portal/saml/login");
 
-			httpServletResponse.setContentType("text/html");
+			httpServletResponse.setContentType(ContentTypes.TEXT_HTML_UTF8);
 
 			requestDispatcher.include(httpServletRequest, httpServletResponse);
 

@@ -18,6 +18,8 @@ import ClayNavigationBar from '@clayui/navigation-bar';
 import {fetch, openToast} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
+import {IClientExtensionCellRenderer} from './api';
+
 import '../css/FDSView.scss';
 import {API_URL, OBJECT_RELATIONSHIP} from './Constants';
 import {FDSViewType} from './FDSViews';
@@ -27,7 +29,7 @@ import Filters from './fds_view/Filters';
 import Pagination from './fds_view/Pagination';
 import Sorting from './fds_view/Sorting';
 
-const NAVIGATION_BAR_ITEMS = [
+let NAVIGATION_BAR_ITEMS = [
 	{
 		Component: Details,
 		label: Liferay.Language.get('details'),
@@ -36,14 +38,24 @@ const NAVIGATION_BAR_ITEMS = [
 		Component: Fields,
 		label: Liferay.Language.get('fields'),
 	},
-	{
-		Component: Sorting,
-		label: Liferay.Language.get('sorting'),
-	},
-	{
-		Component: Filters,
-		label: Liferay.Language.get('filters'),
-	},
+];
+
+if (Liferay.FeatureFlags['LPS-188645']) {
+	NAVIGATION_BAR_ITEMS = [
+		...NAVIGATION_BAR_ITEMS,
+		{
+			Component: Filters,
+			label: Liferay.Language.get('filters'),
+		},
+		{
+			Component: Sorting,
+			label: Liferay.Language.get('sorting'),
+		},
+	];
+}
+
+NAVIGATION_BAR_ITEMS = [
+	...NAVIGATION_BAR_ITEMS,
 	{
 		Component: Pagination,
 		label: Liferay.Language.get('pagination'),
@@ -51,13 +63,16 @@ const NAVIGATION_BAR_ITEMS = [
 ];
 
 interface IFDSViewSectionInterface {
+	fdsClientExtensionCellRenderers: IClientExtensionCellRenderer[];
 	fdsView: FDSViewType;
 	fdsViewsURL: string;
 	namespace: string;
+	onFDSViewUpdate: (data: FDSViewType) => void;
 	saveFDSFieldsURL: string;
 }
 
 interface IFDSViewInterface {
+	fdsClientExtensionCellRenderers: IClientExtensionCellRenderer[];
 	fdsViewId: string;
 	fdsViewsURL: string;
 	namespace: string;
@@ -65,6 +80,7 @@ interface IFDSViewInterface {
 }
 
 const FDSView = ({
+	fdsClientExtensionCellRenderers,
 	fdsViewId,
 	fdsViewsURL,
 	namespace,
@@ -129,9 +145,15 @@ const FDSView = ({
 			) : (
 				fdsView && (
 					<Content
+						fdsClientExtensionCellRenderers={
+							fdsClientExtensionCellRenderers
+						}
 						fdsView={fdsView}
 						fdsViewsURL={fdsViewsURL}
 						namespace={namespace}
+						onFDSViewUpdate={(updatedFdsViewData) => {
+							setFDSView({...fdsView, ...updatedFdsViewData});
+						}}
 						saveFDSFieldsURL={saveFDSFieldsURL}
 					/>
 				)

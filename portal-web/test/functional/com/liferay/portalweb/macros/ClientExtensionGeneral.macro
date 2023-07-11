@@ -280,13 +280,11 @@ definition {
 
 		ClickNoError(locator1 = "ClientExtension#REMOTE_TABLE_DELETE");
 
-		var remoteAppNameToBeRemoved = ${tableEntry};
-
-		if (isSet(remoteAppNameToBeRemoved)) {
-			AssertConfirm(value1 = "Are you sure you want to delete ${remoteAppNameToBeRemoved}? Client extension will be removed immediately. Sites using this client extension will be affected. This action cannot be undone.");
+		if (isSet(tableEntry)) {
+			AssertConfirm(value1 = "Are you sure you want to delete ${tableEntry}? Client extension will be removed immediately. Sites using this client extension will be affected. This action cannot be undone.");
 		}
 		else {
-			AssertConfirm.assertPartialConfirmation(value1 = "Client extension will be removed immediately. Sites using this client extension will be affected. This action can not be undone.");
+			AssertConfirm.assertPartialConfirmation(value1 = "Client extension will be removed immediately. Sites using this client extension will be affected. This action cannot be undone.");
 		}
 	}
 
@@ -367,6 +365,24 @@ definition {
 				category = "Custom Apps",
 				panel = "Applications",
 				portlet = "Client Extensions");
+		}
+	}
+
+	macro openOrCloseCollapseField {
+		if (${key_status} == "Open") {
+			if (IsVisible(locator1 = "ClientExtension#COLLAPSE_ICON_CLOSED", value1 = ${key_fieldName})) {
+				Click(
+					locator1 = "ClientExtension#COLLAPSE_ICON_CLOSED",
+					value1 = ${key_fieldName});
+			}
+		}
+
+		if (${key_status} == "Close") {
+			if (IsVisible(locator1 = "ClientExtension#COLLAPSE_ICON_OPEN", value1 = ${key_fieldName})) {
+				Click(
+					locator1 = "ClientExtension#COLLAPSE_ICON_OPEN",
+					value1 = ${key_fieldName});
+			}
 		}
 	}
 

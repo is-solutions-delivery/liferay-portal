@@ -13,15 +13,14 @@ import {useEffect, useState} from 'react';
 
 import LiferayAccountBrief from '../interfaces/liferayAccountBrief';
 import LiferayPicklist from '../interfaces/liferayPicklist';
-import useGetAccountById from '../services/liferay/accounts/useGetAccountById';
+import useGetAccountByERC from '../services/liferay/accounts/useGetAccountByERC';
 import isObjectEmpty from '../utils/isObjectEmpty';
 
 export default function useCompanyOptions(
 	handleSelected: (
 		partnerCountry: LiferayPicklist,
 		company: LiferayAccountBrief,
-		currency: LiferayPicklist,
-		accountExternalReferenceCode?: string
+		currency: LiferayPicklist
 	) => void,
 	companyOptions?: React.OptionHTMLAttributes<HTMLOptionElement>[],
 	currencyOptions?: React.OptionHTMLAttributes<HTMLOptionElement>[],
@@ -34,7 +33,9 @@ export default function useCompanyOptions(
 		LiferayAccountBrief | undefined
 	>(currentCompany);
 
-	const {data: account} = useGetAccountById(selectedAccountBrief?.id);
+	const {data: account} = useGetAccountByERC(
+		selectedAccountBrief?.externalReferenceCode
+	);
 
 	const currencyPicklist =
 		account &&
@@ -51,8 +52,9 @@ export default function useCompanyOptions(
 	if (!companyOptions && account) {
 		companyOptions = [
 			{
+				defaultValue: account.id,
 				label: account.name,
-				value: account.id,
+				value: account.externalReferenceCode,
 			},
 		];
 	}
@@ -74,8 +76,7 @@ export default function useCompanyOptions(
 							key: currencyPicklist.value as string,
 							name: currencyPicklist.label as string,
 					  }) ||
-							{},
-				account?.externalReferenceCode
+							{}
 			);
 		}
 	}, [
@@ -90,11 +91,12 @@ export default function useCompanyOptions(
 
 	const onCompanySelected = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const optionSelected = companyOptions?.find(
-			(options) => options.value === +event.target.value
+			(options) => options.value === event.target.value
 		);
 
 		setSelectedAccountBrief({
-			id: optionSelected?.value as number,
+			externalReferenceCode: optionSelected?.value as string,
+			id: optionSelected?.defaultValue as number,
 			name: optionSelected?.label as string,
 		});
 	};

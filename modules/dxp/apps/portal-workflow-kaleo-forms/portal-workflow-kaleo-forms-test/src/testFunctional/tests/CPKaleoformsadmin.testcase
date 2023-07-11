@@ -1,0 +1,2892 @@
+@component-name = "portal-workflow-ee"
+definition {
+
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property test.run.environment = "EE";
+	property testray.main.component.name = "Kaleo Forms Admin";
+
+	var kfFieldSetName = "New Kaleo Field Set";
+	var workflowAssetType = "Process";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			KaleoFormsAdmin.tearDownProcess();
+
+			DDLTemplate.tearDownTemplateCP();
+
+			DDLTemplate.tearDownTemplateCP(ddlDataDefinitionName = "To Do");
+
+			JSONDDMstructure.tearDown();
+
+			Workflow.tearDownSpecificWorkflowDefinition(workflowDefinitionTitle = "Edited Workflow Definition");
+
+			Workflow.tearDownWorkflowDefinitions();
+
+			PagesAdmin.tearDownCP();
+		}
+	}
+
+	@priority = 3
+	test AddFieldSetWithDocumentsAndMediaField {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Documents and Media",
+			fieldFieldLabel = "DM Test Field",
+			fieldName = "DMTestField");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 3
+	test AddProcessWithNewFieldSetAndWorkflowViaSourceTab {
+		property test.liferay.virtual.instance = "false";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Boolean",
+			fieldFieldLabel = "Boolean",
+			fieldName = "Boolean");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.addWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoDesigner.addSourceXMLBasicDefinition();
+
+		KaleoFormsAdmin.publishWorkflow(workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "TestStartNode");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 5
+	test DeactivateAndActivateWorkflowDefinition {
+		property ci.retries.disabled = "true";
+		property portal.acceptance = "quarantine";
+		property test.liferay.virtual.instance = "false";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.deactivateWorkflow(workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewNoPublishedWorkflowDefinitions();
+
+		KaleoFormsAdmin.viewUnpublishedWorkflowDefinitions();
+
+		AssertTextEquals(
+			key_workflowDefinitionTitle = "Single Approver",
+			locator1 = "KaleoFormsAdminEditProcess#WORKFLOW_TABLE_TITLE",
+			value1 = "Single Approver");
+
+		KaleoFormsAdmin.reactivateInactiveWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewPublishedWorkflowDefinitions();
+
+		AssertTextEquals(
+			key_workflowDefinitionTitle = "Single Approver",
+			locator1 = "KaleoFormsAdminEditProcess#WORKFLOW_TABLE_TITLE",
+			value1 = "Single Approver");
+
+		KaleoFormsAdmin.viewNoUnpublishedWorkflowDefinitions();
+	}
+
+	@priority = 5
+	test DeactivateAndDeleteWorkflowDefinition {
+		property ci.retries.disabled = "true";
+		property portal.acceptance = "quarantine";
+		property test.liferay.virtual.instance = "false";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.addWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoDesigner.addSourceXMLBasicDefinition();
+
+		KaleoFormsAdmin.publishWorkflow(workflowDefinitionTitle = "Workflow Definition Title");
+
+		for (var workflowDefinitionTitle : list "Single Approver,Workflow Definition Title") {
+			KaleoFormsAdmin.deactivateWorkflow(workflowDefinitionTitle = ${workflowDefinitionTitle});
+		}
+
+		KaleoFormsAdmin.viewNoPublishedWorkflowDefinitions();
+
+		KaleoFormsAdmin.viewUnpublishedWorkflowDefinitions();
+
+		for (var workflowDefinitionTitle : list "Single Approver,Workflow Definition Title") {
+			AssertTextEquals(
+				key_workflowDefinitionTitle = ${workflowDefinitionTitle},
+				locator1 = "KaleoFormsAdminEditProcess#WORKFLOW_TABLE_TITLE",
+				value1 = ${workflowDefinitionTitle});
+		}
+
+		KaleoFormsAdmin.deleteWorkflowDraft(workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoFormsAdmin.reactivateInactiveWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewPublishedWorkflowDefinitions();
+
+		AssertTextEquals(
+			key_workflowDefinitionTitle = "Single Approver",
+			locator1 = "KaleoFormsAdminEditProcess#WORKFLOW_TABLE_TITLE",
+			value1 = "Single Approver");
+
+		KaleoFormsAdmin.viewNoUnpublishedWorkflowDefinitions();
+	}
+
+	@ignore = "true"
+	@priority = 3
+	test DeleteCreateFormViaDDL {
+		var kfFieldSetName = ${kfFieldSetName};
+		var kfProcessName = "Kaleo Forms Process";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		DynamicDataMapping.addField(
+			field = "Boolean",
+			fieldFieldLabel = "Boolean",
+			fieldName = "Boolean");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = ${kfProcessName},
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = ${kfProcessName},
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = ${kfProcessName});
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = ${kfProcessName});
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.assignNewForm(
+			kfFormName = "Created Task Form",
+			kfFormNameNew = "New Assigned Form",
+			kfProcessName = ${kfProcessName},
+			workflowTask = "created");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.deleteForm(
+			kfFieldSetName = ${kfFieldSetName},
+			kfFormName = "Created Task Form");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.viewProcessDetails(
+			kfProcessDescription = "${kfProcessName} Description",
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.viewProcessFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.viewProcessWorkflow(
+			kfProcessName = ${kfProcessName},
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewProcessFormsDeleted(
+			kfFormName = "Created Task Form",
+			kfProcessName = ${kfProcessName},
+			workflowTask = "create");
+	}
+
+	@priority = 4
+	test DeleteCreateFormViaKaleoFormsAdmin {
+		var kfProcessName = "Kaleo Forms Process";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "${kfProcessName} Description",
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = ${kfProcessName},
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = ${kfProcessName},
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = ${kfProcessName});
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = ${kfProcessName});
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.assignNewForm(
+			kfFormName = "Created Task Form",
+			kfFormNameNew = "New Assigned Form",
+			kfProcessName = ${kfProcessName},
+			workflowTask = "created");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.deleteForm(
+			kfFieldSetName = ${kfFieldSetName},
+			kfFormName = "Created Task Form");
+	}
+
+	@priority = 3
+	test DeleteEditFormViaKaleoFormsAdmin {
+		var kfProcessName = "Kaleo Forms Process";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "${kfProcessName} Description",
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = ${kfProcessName},
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = ${kfProcessName},
+			workflowTask = "created");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = ${kfProcessName});
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.assignNewForm(
+			kfFormName = "Created Task Form",
+			kfFormNameNew = "New Assigned Form",
+			kfProcessName = ${kfProcessName},
+			workflowTask = "created");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.deleteForm(
+			kfFieldSetName = ${kfFieldSetName},
+			kfFormName = "Created Task Form");
+	}
+
+	@priority = 4
+	test DeleteFieldSet {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(kfFieldSetName = "New Kaleo Field Set");
+
+		DynamicDataMapping.addField(
+			field = "Boolean",
+			fieldFieldLabel = "Boolean",
+			fieldName = "Boolean");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		LexiconEntry.gotoEntryMenuItemNoError(
+			menuItem = "Delete",
+			rowEntry = "New Kaleo Field Set");
+
+		AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
+
+		Alert.viewSuccessMessage();
+
+		LexiconEntry.viewNoEntry(rowEntry = "New Kaleo Field Set");
+	}
+
+	@priority = 4
+	test DeleteForm {
+		var kfFieldSetName = ${kfFieldSetName};
+		var kfProcessDescription = "Kaleo Forms Process Description";
+		var kfProcessName = "Kaleo Forms Process";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		DynamicDataMapping.addField(
+			field = "Boolean",
+			fieldFieldLabel = "Boolean",
+			fieldName = "Boolean");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = ${kfProcessDescription},
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = ${kfProcessName},
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = ${kfProcessName},
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = ${kfProcessName});
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.assignNewForm(
+			kfFormName = "Created Task Form",
+			kfFormNameNew = "New Assigned Form",
+			kfProcessName = ${kfProcessName},
+			workflowTask = "created");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.deleteForm(
+			kfFieldSetName = ${kfFieldSetName},
+			kfFormName = "Created Task Form");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.viewProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.viewProcessFieldSet(
+			kfFieldSetName = ${kfFieldSetName},
+			kfProcessName = ${kfProcessName});
+
+		KaleoFormsAdmin.viewProcessWorkflow(
+			kfProcessName = ${kfProcessName},
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewProcessFormsDeleted(
+			kfFormName = "Created Task Form",
+			kfProcessName = ${kfProcessName},
+			workflowTask = "create");
+	}
+
+	@priority = 5
+	test DeleteProcess {
+		property portal.acceptance = "quarantine";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.deleteProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 3
+	test DeleteProcessRecords {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "One",
+			kfStatus = "Approved");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "Two",
+			kfStatus = "Pending");
+
+		Search.searchCP(searchTerm = "One");
+
+		KaleoFormsAdmin.deleteProcessRecord(kfProcessFieldData = "One");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "Two",
+			kfStatus = "Pending");
+
+		KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.deleteProcessRecord(kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 4
+	test EditCreateTaskForm {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.editForm(
+			kfFormName = "Created Task Form",
+			kfFormNameEdit = "Created Task Form Edit");
+
+		DynamicDataMapping.addFieldFormTemplateSpecific(field = "Separator");
+
+		KaleoFormsAdmin.saveFormEdit(kfFormName = "Created Task Form Edit");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewProcessForms(kfFormName = "Created Task Form Edit");
+
+		KaleoFormsAdmin.viewFormEdit(kfFormNameEdit = "Created Task Form Edit");
+
+		DynamicDataMapping.viewField(
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		DynamicDataMapping.viewFieldFormTemplateSpecific(
+			field = "Separator",
+			fieldFieldLabel = "Separator",
+			fieldName = "Separator");
+	}
+
+	@ignore = "true"
+	@priority = 3
+	test EditFieldSetViaAddProcess {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.editFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfFieldSetNameEdit = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Boolean",
+			fieldFieldLabel = "Boolean",
+			fieldName = "Boolean");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "This is a use case for LPS-49037."
+	@priority = 3
+	test EditProcessFieldSetPaginationAndViewSelectedForm {
+		property portal.upstream = "true";
+		property test.liferay.virtual.instance = "false";
+
+		for (var kfFieldSetName : list "Field1,Field2,Field3,Field4,Field5,Field6") {
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Kaleo Forms Admin");
+
+			KaleoFormsAdmin.addFieldSet(
+				kfFieldSetName = ${kfFieldSetName},
+				kfProcessName = ${kfProcessName});
+
+			DynamicDataMapping.addField(
+				field = "Text",
+				fieldFieldLabel = "Text",
+				fieldName = "Text");
+
+			KaleoFormsAdmin.saveFieldSet();
+		}
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "Field5",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.editFieldSetPagination(paginationNumber = 8);
+
+		KaleoFormsAdmin.viewNextFieldSetPage();
+
+		KaleoFormsAdmin.viewProcessFieldSet(
+			kfFieldSetName = "Field5",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewProcessForms(kfFormName = "Created Task Form");
+	}
+
+	@priority = 5
+	test EditProcessForms {
+		property portal.acceptance = "true";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Forms");
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Edited Process Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Edited Process Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.viewProcessForms(kfFormName = "Edited Process Task Form");
+	}
+
+	@priority = 3
+	test EditProcessNewDetails {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editProcessDetails(
+			kfProcessDescriptionEdit = "Kaleo Forms Process Description Edited",
+			kfProcessNameEdit = "Kaleo Forms Process Edited");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Forms");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process Edited");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process Edited");
+
+		KaleoFormsAdmin.viewProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description Edited",
+			kfProcessName = "Kaleo Forms Process Edited");
+	}
+
+	@priority = 4
+	test EditProcessNewFieldSet {
+		property ci.retries.disabled = "true";
+
+		Navigator.openURL();
+
+		for (var kfFieldSetName : list "Field1,Field2,Field3,Field4,Field5,Field6") {
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Kaleo Forms Admin");
+
+			KaleoFormsAdmin.addFieldSet(
+				kfFieldSetName = ${kfFieldSetName},
+				kfProcessName = "Kaleo Forms Process");
+
+			DynamicDataMapping.addField(
+				field = "Text",
+				fieldFieldLabel = "Text",
+				fieldName = "Text");
+
+			KaleoFormsAdmin.saveFieldSet();
+		}
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Boolean",
+			fieldFieldLabel = "Boolean",
+			fieldName = "Boolean");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Forms");
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Edited Process Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Edited Process Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessFieldSet(
+			kfFieldSetName = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 5
+	test EditProcessNewWorkflowViaSourceTab {
+		property ci.retries.disabled = "true";
+		property portal.acceptance = "quarantine";
+		property test.liferay.virtual.instance = "false";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Boolean",
+			fieldFieldLabel = "Boolean",
+			fieldName = "Boolean");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Forms");
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Edited Process Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Edited Process Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Workflow");
+
+		KaleoFormsAdmin.addWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoDesigner.addSourceXMLBasicDefinition();
+
+		KaleoFormsAdmin.publishWorkflow(workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "TestStartNode");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessFieldSet(
+			kfFieldSetName = "New Kaleo Field Set Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoFormsAdmin.viewProcessForms(kfFormName = "Created Task Form");
+	}
+
+	@priority = 5
+	test EditSingleApproverWorkflowViaSourceTabViaAddProcess {
+		property portal.acceptance = "true";
+		property test.liferay.virtual.instance = "false";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.editWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowDefinitionTitleEdit = "Edited Workflow Definition");
+
+		KaleoDesigner.addSourceXMLBasicDefinition();
+
+		KaleoFormsAdmin.updateWorkflow();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			edit = "true",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Edited Workflow Definition");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "TestStartNode");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 3
+	test EditSingleApproverWorkflowViaViewTabViaAddProcess {
+		property ci.retries.disabled = "true";
+		property test.liferay.virtual.instance = "false";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.editWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver",
+			workflowDefinitionTitleEdit = "Edited Workflow Definition");
+
+		KaleoDesigner.deleteNodeInKaleoForms(nodeNodeLabel = "update");
+
+		KaleoFormsAdmin.updateWorkflow();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			edit = "true",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Edited Workflow Definition");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.viewTaskPresent(workflowTask = "create");
+
+		KaleoFormsAdmin.viewTaskPresent(workflowTask = "review");
+
+		KaleoFormsAdmin.viewTaskNotPresent(workflowTask = "update");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 4
+	test EditUploadedWorkflowViaViewTabViaAddProcess {
+		property ci.retries.disabled = "true";
+		property test.liferay.virtual.instance = "false";
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
+
+		Workflow.addNewDefinition(workflowDefinitionTitle = "Uploaded Definition");
+
+		ProcessBuilderKaleoDesignerReact.uploadDefinition(workflowDefinitionFile = "1-workflow-definition.xml");
+
+		ProcessBuilderKaleoDesignerReact.diagramSourceSwitchView();
+
+		PortletEntry.publish();
+
+		Workflow.openWorkflowListView();
+
+		Workflow.viewDefinition(
+			workflowDefinitionName = "Uploaded Definition",
+			workflowDefinitionTitle = "Uploaded Definition",
+			workflowDefinitionVersionNumber = 1);
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.editWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Uploaded Definition",
+			workflowDefinitionTitleEdit = "New Uploaded Definition Edit");
+
+		KaleoDesigner.deleteNodeInKaleoForms(nodeNodeLabel = "update");
+
+		KaleoFormsAdmin.updateWorkflow();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			edit = "true",
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "New Uploaded Definition Edit");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.viewTaskPresent(workflowTask = "create");
+
+		KaleoFormsAdmin.viewTaskPresent(workflowTask = "review");
+
+		KaleoFormsAdmin.viewTaskNotPresent(workflowTask = "update");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "This is a use case for LPS-49107."
+	@priority = 4
+	test ExportAllProcessRecordsCSV {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.exportRecords(
+			fileExtension = "CSV",
+			kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "This is a use case for LPS-49107."
+	@priority = 4
+	test ExportAllProcessRecordsXML {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.exportRecords(
+			fileExtension = "XML",
+			kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "This is a use case for LPS-49107."
+	@priority = 4
+	test ExportApprovedProcessRecordsCSV {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.exportRecords(
+			approvedOnly = "true",
+			fileExtension = "CSV",
+			kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "This is a use case for LPS-49107."
+	@priority = 4
+	test ExportApprovedProcessRecordsXML {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.exportRecords(
+			approvedOnly = "true",
+			fileExtension = "XML",
+			kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 4
+	test SearchProcessRecords {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "One",
+			kfStatus = "Approved");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "Two",
+			kfStatus = "Pending");
+
+		Search.searchCP(searchTerm = "One");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "One",
+			kfStatus = "Approved");
+
+		KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "Two");
+
+		Search.searchCP(searchTerm = "Two");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "Two",
+			kfStatus = "Pending");
+
+		KaleoFormsAdmin.viewProcessRecordTableRecordNotPresent(kfProcessFieldData = "One");
+
+		Search.searchCP(searchTerm = "Hello");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@description = "This is a use case for LPS-50363."
+	@priority = 3
+	test ViewCanAddFieldsAfterSaveAndContinue {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveAndContinueForm();
+
+		DynamicDataMapping.viewCanAddField(field = "Paragraph");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+	}
+
+	@priority = 3
+	test ViewErrorMessageUponSavingBlankFieldSet {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		Button.clickSave();
+
+		KaleoFormsAdmin.viewInvalidDefinitionMessage();
+	}
+
+	@priority = 3
+	test ViewFieldSetCreateHeaderTitle {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.editFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfFieldSetNameEdit = "Field Set Data Definition Edit",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.saveFieldSet();
+	}
+
+	@priority = 3
+	test ViewFieldSetParentDefinitionIframeTitle {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DDLDataDefinition.viewParentStructureHeader(assetTitle = "Field Sets");
+	}
+
+	@description = "This is a use case for LPS-47352."
+	@priority = 3
+	test ViewNoUnpublishedWorkflowMessage {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.viewNoUnpublishedWorkflowDefinitions();
+	}
+
+	@priority = 3
+	test ViewProcessRecordDetails {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Single Approver");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.assignForm(
+			kfProcessName = "Kaleo Forms Process",
+			workflowTask = "create");
+
+		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveForm();
+
+		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
+
+		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.viewDefaultMyWorkflowTasksCP();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Kaleo Forms Process",
+			workflowAssetType = "Process",
+			workflowTask = "Review");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.populateFieldText(
+			fieldName = "Text",
+			kfProcessFieldData = "Two");
+
+		KaleoFormsAdmin.saveProcessRecord();
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		Search.searchCP(searchTerm = "One");
+
+		KaleoFormsAdmin.viewProcessRecordDetails(
+			kfProcessFieldData = "One",
+			kfStatus = "Approved");
+
+		KaleoFormsAdmin.viewProcessRecordDetailsField(
+			fieldName = "Text",
+			kfProcessFieldData = "One");
+
+		KaleoFormsAdmin.cancelProcessRecordDetailsView();
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "One",
+			kfStatus = "Approved");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.viewProcessRecord(kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewProcessRecordTable(
+			kfAuthor = "Test Test",
+			kfProcessFieldData = "Two",
+			kfStatus = "Pending");
+	}
+
+	@description = "This is a use case for LPS-49475."
+	@priority = 3
+	test ViewSelectedFieldSetWithPagination {
+		Navigator.openURL();
+
+		for (var kfFieldSetName : list "Field1,Field2,Field3,Field4,Field5,Field6") {
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Kaleo Forms Admin");
+
+			KaleoFormsAdmin.addFieldSet(
+				kfFieldSetName = ${kfFieldSetName},
+				kfProcessName = "Kaleo Forms Process");
+
+			DynamicDataMapping.addField(
+				field = "Text",
+				fieldFieldLabel = "Text",
+				fieldName = "Text");
+
+			KaleoFormsAdmin.saveFieldSet();
+		}
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "Field5",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.editFieldSetPagination(paginationNumber = 4);
+
+		KaleoFormsAdmin.viewNextFieldSetPage();
+
+		KaleoFormsAdmin.viewSelectedFieldSet(kfFieldSetName = "Field5");
+
+		KaleoFormsAdmin.viewPreviousFieldSetPage();
+
+		KaleoFormsAdmin.viewSelectedFieldSet(kfFieldSetName = "Field5");
+
+		Pagination.changePagination(itemsPerPage = 20);
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "Field4",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewSelectedFieldSet(kfFieldSetName = "Field4");
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "Field1",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.viewPreviousFieldSetPage();
+
+		KaleoFormsAdmin.viewSelectedFieldSet(kfFieldSetName = "Field1");
+
+		KaleoFormsAdmin.next();
+	}
+
+	@priority = 3
+	test ViewUnpublishedWorkflowDefinitionsMenulist {
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Kaleo Forms Admin");
+
+		KaleoFormsAdmin.addFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		KaleoFormsAdmin.saveFieldSet();
+
+		KaleoFormsAdmin.addProcess();
+
+		KaleoFormsAdmin.addProcessDetails(
+			kfProcessDescription = "Kaleo Forms Process Description",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.chooseFieldSet(
+			kfFieldSetName = "New Kaleo Field Set",
+			kfProcessName = "Kaleo Forms Process");
+
+		KaleoFormsAdmin.next();
+
+		KaleoFormsAdmin.viewNoUnpublishedWorkflowDefinitions();
+
+		KaleoFormsAdmin.addWorkflow(
+			kfProcessName = "Kaleo Forms Process",
+			workflowDefinitionTitle = "Workflow Definition Title");
+
+		Workflow.saveDefinition();
+
+		KaleoFormsAdmin.closeWorkflowModal();
+
+		KaleoFormsAdmin.editWorkflowDraft(workflowDefinitionTitle = "Workflow Definition Title");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		Workflow.saveDefinition();
+
+		KaleoFormsAdmin.closeWorkflowModal();
+
+		KaleoFormsAdmin.deleteWorkflowDraft(workflowDefinitionTitle = "Workflow Definition Title");
+
+		KaleoFormsAdmin.viewPublishedWorkflowDefinitions();
+
+		KaleoFormsAdmin.viewNoUnpublishedWorkflowDefinitions();
+	}
+
+}

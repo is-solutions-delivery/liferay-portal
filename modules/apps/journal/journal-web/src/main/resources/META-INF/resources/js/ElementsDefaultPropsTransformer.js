@@ -83,9 +83,12 @@ const ACTIONS = {
 								const input = document.createElement('input');
 
 								input.name = `${portletNamespace}rowIds`;
-								input.value = selectedItems.map(
-									(item) => item.value
+
+								const itemValue = JSON.parse(
+									selectedItems.map((item) => item.value)
 								);
+
+								input.value = itemValue.languageId;
 
 								form.appendChild(input);
 

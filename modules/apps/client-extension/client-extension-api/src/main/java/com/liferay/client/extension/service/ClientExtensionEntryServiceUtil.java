@@ -67,11 +67,11 @@ public class ClientExtensionEntryServiceUtil {
 
 	public static ClientExtensionEntry
 			fetchClientExtensionEntryByExternalReferenceCode(
-				long companyId, String externalReferenceCode)
+				String externalReferenceCode, long companyId)
 		throws PortalException {
 
 		return getService().fetchClientExtensionEntryByExternalReferenceCode(
-			companyId, externalReferenceCode);
+			externalReferenceCode, companyId);
 	}
 
 	public static ClientExtensionEntry getClientExtensionEntry(

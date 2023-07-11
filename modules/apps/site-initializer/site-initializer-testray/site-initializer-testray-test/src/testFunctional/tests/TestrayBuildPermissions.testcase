@@ -27,10 +27,13 @@ definition {
 		}
 
 		task ("Create a new Testray Site") {
-			Testray.addTestraySite(siteName = ${testSiteName});
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
 		}
 
-		task ("Create project, team, component, routine, case type, case, environment factors, product version and build via API") {
+		task ("Create project, team, component, routine, case type, case, environment factor, product version and build via API") {
 			JSONTestray.addProject(
 				projectDescription = "Project Description 1",
 				projectName = ${projectName});
@@ -77,7 +80,7 @@ definition {
 				userLoginFullName = "test test");
 		}
 
-		task ("Delete case type, factor categorie and project, Testray Site and Client Extensions") {
+		task ("Delete case type, factor categorie and project via API, Testray Site and Client Extensions") {
 			JSONTestrayAPI.deleteObjectViaAPI(
 				object = "casetypes",
 				objectName = ${caseType});
@@ -88,16 +91,12 @@ definition {
 
 			JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
-			Testray.tearDownCP();
-
-			ClientExtensionGeneral.goToRemoteAppsPortlet();
-
-			ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Testray");
+			Testray.testrayApisTearDown();
 		}
 
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -105,7 +104,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to create the build"
 	@priority = 3
 	test AssertAnalystRoleCanNotCreateBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertAnalystRoleCanNotCreateBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Analyst role") {
 			User.logoutAndLoginPG(
@@ -133,7 +132,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to delete the build"
 	@priority = 3
 	test AssertAnalystRoleCanNotDeleteBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertAnalystRoleCanNotDeleteBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Analyst role") {
 			User.logoutAndLoginPG(
@@ -167,7 +166,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray Analyst' role should not be able to edit the build"
 	@priority = 3
 	test AssertAnalystRoleCanNotEditBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertAnalystRoleCanNotEditBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Analyst role") {
 			User.logoutAndLoginPG(
@@ -201,7 +200,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to create the build"
 	@priority = 4
 	test AssertLeadRoleCanCreateBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertLeadRoleCanCreateBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Lead role") {
 			User.logoutAndLoginPG(
@@ -238,7 +237,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to delete the build"
 	@priority = 4
 	test AssertLeadRoleCanDeleteBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertLeadRoleCanDeleteBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Lead role") {
 			User.logoutAndLoginPG(
@@ -274,7 +273,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray Lead' role should be able to edit the build"
 	@priority = 4
 	test AssertLeadRoleCanEditBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertLeadRoleCanEditBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Lead role") {
 			User.logoutAndLoginPG(
@@ -315,7 +314,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray User' role should not be able to create the build"
 	@priority = 3
 	test AssertUserRoleCanNotCreateBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertUserRoleCanNotCreateBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray Lead role") {
 			User.logoutAndLoginPG(
@@ -343,7 +342,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray User' role should not be able to delete the build"
 	@priority = 3
 	test AssertUserRoleCanNotDeleteBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertUserRoleCanNotDeleteBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray User role") {
 			User.logoutAndLoginPG(
@@ -377,7 +376,7 @@ definition {
 	@description = "Story ID: LPS-178254 | Test Summary: Verify that the User with the 'Testray User' role should not be able to edit the build"
 	@priority = 3
 	test AssertUserRoleCanNotEditBuild {
-		property test.name.skip.portal.instance = "TestrayBuildPermissions#AssertUserRoleCanNotEditBuild";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user login with the Testray User role") {
 			User.logoutAndLoginPG(

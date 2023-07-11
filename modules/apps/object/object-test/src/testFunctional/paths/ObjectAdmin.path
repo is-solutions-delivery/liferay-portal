@@ -46,6 +46,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>LAYOUT_FIELD_NAME</td>
+		<td>//div[contains(@class,'layout-tab')]//*[contains(text(),'${key_fieldName}')]</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>ADD_FIELD_ON_BLOCK</td>
 		<td>//button[contains(@class,'btn-secondary') and contains (text(),'Add Field')]</td>
 		<td></td>
@@ -322,7 +327,7 @@
 	</tr>
 	<tr>
 		<td>OBJECT_LABEL_COLUMN</td>
-		<td>//div[contains(@class,'dnd-th') and contains(text(),'Label')]</td>
+		<td>//div[contains(@class,'dnd-th')]//button[contains(text(),'Label')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -437,7 +442,7 @@
 	</tr>
 	<tr>
 		<td>KEBAB_MENU_OPTION</td>
-		<td>//*[@class = 'dropdown-item' and contains(text(), '${key_kebabOption}')]</td>
+		<td>//*[@class='dropdown-menu show']//*[(@class='dropdown-item' and @role='menuitem') and contains(text(),'${key_kebabOption}')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -618,6 +623,11 @@
 	<tr>
 		<td>PICKLIST_INPUT_AS_VALUE_OR_EXPRESSION</td>
 		<td>//div[contains(@class,'card-body')]//button[contains(text(), '${key_optionDefaulValue}')]</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>VIEW_ICON_OBJECT_ADMIN</td>
+		<td>//div[(@class='table-list-title')]//*[(@class='lexicon-icon lexicon-icon-view')]</td>
 		<td></td>
 	</tr>
 </tbody>

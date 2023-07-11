@@ -72,14 +72,14 @@ public class AuditEventModelImpl
 	public static final String TABLE_NAME = "Audit_AuditEvent";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"auditEventId", Types.BIGINT}, {"companyId", Types.BIGINT},
-		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
-		{"createDate", Types.TIMESTAMP}, {"eventType", Types.VARCHAR},
-		{"className", Types.VARCHAR}, {"classPK", Types.VARCHAR},
-		{"message", Types.VARCHAR}, {"clientHost", Types.VARCHAR},
-		{"clientIP", Types.VARCHAR}, {"serverName", Types.VARCHAR},
-		{"serverPort", Types.INTEGER}, {"sessionID", Types.VARCHAR},
-		{"additionalInfo", Types.CLOB}
+		{"auditEventId", Types.BIGINT}, {"groupId", Types.BIGINT},
+		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
+		{"userName", Types.VARCHAR}, {"createDate", Types.TIMESTAMP},
+		{"eventType", Types.VARCHAR}, {"className", Types.VARCHAR},
+		{"classPK", Types.VARCHAR}, {"message", Types.VARCHAR},
+		{"clientHost", Types.VARCHAR}, {"clientIP", Types.VARCHAR},
+		{"serverName", Types.VARCHAR}, {"serverPort", Types.INTEGER},
+		{"sessionID", Types.VARCHAR}, {"additionalInfo", Types.CLOB}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -87,6 +87,7 @@ public class AuditEventModelImpl
 
 	static {
 		TABLE_COLUMNS_MAP.put("auditEventId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
@@ -104,7 +105,7 @@ public class AuditEventModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Audit_AuditEvent (auditEventId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(200) null,createDate DATE null,eventType VARCHAR(75) null,className VARCHAR(200) null,classPK VARCHAR(75) null,message STRING null,clientHost VARCHAR(255) null,clientIP VARCHAR(255) null,serverName VARCHAR(255) null,serverPort INTEGER,sessionID VARCHAR(255) null,additionalInfo TEXT null)";
+		"create table Audit_AuditEvent (auditEventId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(200) null,createDate DATE null,eventType VARCHAR(75) null,className VARCHAR(200) null,classPK VARCHAR(75) null,message STRING null,clientHost VARCHAR(255) null,clientIP VARCHAR(255) null,serverName VARCHAR(255) null,serverPort INTEGER,sessionID VARCHAR(255) null,additionalInfo TEXT null)";
 
 	public static final String TABLE_SQL_DROP = "drop table Audit_AuditEvent";
 
@@ -242,6 +243,7 @@ public class AuditEventModelImpl
 
 			attributeGetterFunctions.put(
 				"auditEventId", AuditEvent::getAuditEventId);
+			attributeGetterFunctions.put("groupId", AuditEvent::getGroupId);
 			attributeGetterFunctions.put("companyId", AuditEvent::getCompanyId);
 			attributeGetterFunctions.put("userId", AuditEvent::getUserId);
 			attributeGetterFunctions.put("userName", AuditEvent::getUserName);
@@ -280,6 +282,9 @@ public class AuditEventModelImpl
 			attributeSetterBiConsumers.put(
 				"auditEventId",
 				(BiConsumer<AuditEvent, Long>)AuditEvent::setAuditEventId);
+			attributeSetterBiConsumers.put(
+				"groupId",
+				(BiConsumer<AuditEvent, Long>)AuditEvent::setGroupId);
 			attributeSetterBiConsumers.put(
 				"companyId",
 				(BiConsumer<AuditEvent, Long>)AuditEvent::setCompanyId);
@@ -341,6 +346,21 @@ public class AuditEventModelImpl
 		}
 
 		_auditEventId = auditEventId;
+	}
+
+	@JSON
+	@Override
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	@Override
+	public void setGroupId(long groupId) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_groupId = groupId;
 	}
 
 	@JSON
@@ -686,6 +706,7 @@ public class AuditEventModelImpl
 		AuditEventImpl auditEventImpl = new AuditEventImpl();
 
 		auditEventImpl.setAuditEventId(getAuditEventId());
+		auditEventImpl.setGroupId(getGroupId());
 		auditEventImpl.setCompanyId(getCompanyId());
 		auditEventImpl.setUserId(getUserId());
 		auditEventImpl.setUserName(getUserName());
@@ -712,6 +733,7 @@ public class AuditEventModelImpl
 
 		auditEventImpl.setAuditEventId(
 			this.<Long>getColumnOriginalValue("auditEventId"));
+		auditEventImpl.setGroupId(this.<Long>getColumnOriginalValue("groupId"));
 		auditEventImpl.setCompanyId(
 			this.<Long>getColumnOriginalValue("companyId"));
 		auditEventImpl.setUserId(this.<Long>getColumnOriginalValue("userId"));
@@ -815,6 +837,8 @@ public class AuditEventModelImpl
 		AuditEventCacheModel auditEventCacheModel = new AuditEventCacheModel();
 
 		auditEventCacheModel.auditEventId = getAuditEventId();
+
+		auditEventCacheModel.groupId = getGroupId();
 
 		auditEventCacheModel.companyId = getCompanyId();
 
@@ -973,6 +997,7 @@ public class AuditEventModelImpl
 	}
 
 	private long _auditEventId;
+	private long _groupId;
 	private long _companyId;
 	private long _userId;
 	private String _userName;
@@ -1017,6 +1042,7 @@ public class AuditEventModelImpl
 		_columnOriginalValues = new HashMap<String, Object>();
 
 		_columnOriginalValues.put("auditEventId", _auditEventId);
+		_columnOriginalValues.put("groupId", _groupId);
 		_columnOriginalValues.put("companyId", _companyId);
 		_columnOriginalValues.put("userId", _userId);
 		_columnOriginalValues.put("userName", _userName);
@@ -1046,33 +1072,35 @@ public class AuditEventModelImpl
 
 		columnBitmasks.put("auditEventId", 1L);
 
-		columnBitmasks.put("companyId", 2L);
+		columnBitmasks.put("groupId", 2L);
 
-		columnBitmasks.put("userId", 4L);
+		columnBitmasks.put("companyId", 4L);
 
-		columnBitmasks.put("userName", 8L);
+		columnBitmasks.put("userId", 8L);
 
-		columnBitmasks.put("createDate", 16L);
+		columnBitmasks.put("userName", 16L);
 
-		columnBitmasks.put("eventType", 32L);
+		columnBitmasks.put("createDate", 32L);
 
-		columnBitmasks.put("className", 64L);
+		columnBitmasks.put("eventType", 64L);
 
-		columnBitmasks.put("classPK", 128L);
+		columnBitmasks.put("className", 128L);
 
-		columnBitmasks.put("message", 256L);
+		columnBitmasks.put("classPK", 256L);
 
-		columnBitmasks.put("clientHost", 512L);
+		columnBitmasks.put("message", 512L);
 
-		columnBitmasks.put("clientIP", 1024L);
+		columnBitmasks.put("clientHost", 1024L);
 
-		columnBitmasks.put("serverName", 2048L);
+		columnBitmasks.put("clientIP", 2048L);
 
-		columnBitmasks.put("serverPort", 4096L);
+		columnBitmasks.put("serverName", 4096L);
 
-		columnBitmasks.put("sessionID", 8192L);
+		columnBitmasks.put("serverPort", 8192L);
 
-		columnBitmasks.put("additionalInfo", 16384L);
+		columnBitmasks.put("sessionID", 16384L);
+
+		columnBitmasks.put("additionalInfo", 32768L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

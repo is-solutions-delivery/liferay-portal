@@ -42,6 +42,14 @@ public final class Field implements Comparable<Field>, Serializable {
 		String name, String label, String type, List<Option> options,
 		SelectEntity selectEntity) {
 
+		this(null, name, label, type, options, selectEntity);
+	}
+
+	public Field(
+		String icon, String name, String label, String type,
+		List<Option> options, SelectEntity selectEntity) {
+
+		_icon = icon;
 		_name = name;
 		_label = label;
 		_type = type;
@@ -55,6 +63,10 @@ public final class Field implements Comparable<Field>, Serializable {
 	@Override
 	public int compareTo(Field field) {
 		return _collator.compare(_label, field._label);
+	}
+
+	public String getIcon() {
+		return _icon;
 	}
 
 	public String getLabel() {
@@ -138,6 +150,7 @@ public final class Field implements Comparable<Field>, Serializable {
 	}
 
 	private Collator _collator;
+	private String _icon;
 	private String _label;
 	private String _name;
 	private List<Option> _options;

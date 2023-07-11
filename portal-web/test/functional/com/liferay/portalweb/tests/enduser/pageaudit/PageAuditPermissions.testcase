@@ -50,7 +50,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		TestUtils.hardRefresh();
 
@@ -60,7 +60,7 @@ definition {
 
 		JSONGroup.deleteGroupByName(groupName = "Test Site Name");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -70,10 +70,10 @@ definition {
 	@uitest
 	test CheckInvalidCanonicalURL {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckInvalidCanonicalURL";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -99,7 +99,7 @@ definition {
 	@priority = 4
 	test CheckInvalidCanonicalURLWithoutPermission {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckInvalidCanonicalURL";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add permissions to Role") {
 			Permissions.definePermissionViaJSONAPI(
@@ -109,7 +109,7 @@ definition {
 		}
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -148,10 +148,10 @@ definition {
 	@uitest
 	test CheckInvalidHreflang {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckInvalidHreflang";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -182,10 +182,10 @@ definition {
 	@uitest
 	test CheckLinksTexts {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckLinksTexts";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -220,10 +220,10 @@ definition {
 	@uitest
 	test CheckMissingMetaDescription {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckMissingMetaDescription";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -253,7 +253,7 @@ definition {
 	@priority = 4
 	test CheckMissingMetaDescriptionWithoutPermission {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckInvalidCanonicalURL";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add permissions to Role") {
 			Permissions.definePermissionViaJSONAPI(
@@ -263,7 +263,7 @@ definition {
 		}
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -302,10 +302,10 @@ definition {
 	@uitest
 	test CheckMissingTitleElement {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckMissingTitleElement";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -1195,10 +1195,10 @@ definition {
 	@uitest
 	test CheckPageBlockedFromIndexing {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckPageBlockedFromIndexing";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -1228,7 +1228,7 @@ definition {
 	@priority = 4
 	test CheckPageBlockedFromIndexingWithoutPermission {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#CheckInvalidCanonicalURL";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add permissions to Role") {
 			Permissions.definePermissionViaJSONAPI(
@@ -1238,7 +1238,7 @@ definition {
 		}
 
 		task ("Set a custom page as canonical URL to have data already loaded") {
-			PageAudit.setSEOcanonicalURL(url = "https://liferay-tango.github.io/liferay-portal/page-audit-test");
+			PageAudit.setSEOcanonicalURL(url = "https://liferay-echo.github.io/liferay-portal/page-audit-test");
 		}
 
 		task ("Set Google PageSpeed API") {
@@ -1276,7 +1276,7 @@ definition {
 	@priority = 5
 	test PageAuditContentPage {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#PageAuditContentPage";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Navigate to content page") {
 			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
@@ -1295,7 +1295,7 @@ definition {
 	@priority = 5
 	test PageAuditDisplayPage {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#PageAuditDisplayPage";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Create a default Display Page Template") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
@@ -1337,7 +1337,7 @@ definition {
 	@priority = 5
 	test PageAuditWidgetPage {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "PageAudit#PageAuditWidgetPage";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add Widget Page") {
 			JSONLayout.addPublicLayout(

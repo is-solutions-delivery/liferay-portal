@@ -140,7 +140,7 @@ definition {
 	@priority = 5
 	test ConvertMultipleWidgetPagesToContentPagesViaAPI {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ContentPageConverter#ConvertMultipleWidgetPagesToContentPagesViaAPI";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add 10 widget pages") {
 			for (var i : list "1,2,3,4,5,6,7,8,9,10") {
@@ -325,7 +325,7 @@ definition {
 	@description = "This is a test for LPS-98325. If there is a site with several widget pages(that can be converted) and some content pages and an api to convert bulk widget pages to content pages is executed, you should be able to convert the widget pages."
 	@priority = 2
 	test ConvertMultipleWidgetPagesWithContentPagesViaAPI {
-		property test.name.skip.portal.instance = "ContentPageConverter#ConvertMultipleWidgetPagesWithContentPagesViaAPI";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add 10 widget pages") {
 			for (var i : list "1,2,3,4,5,6,7,8,9,10") {
@@ -415,7 +415,7 @@ definition {
 	@priority = 5
 	test ConvertWidgetPagesWithNestedApplicationAndCustomizationSettingToContentPagesViaAPI {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ContentPageConverter#ConvertWidgetPagesWithNestedApplicationAndCustomizationSettingToContentPagesViaAPI";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add three widget pages") {
 			for (var i : list "1,2,3") {
@@ -619,7 +619,7 @@ definition {
 	@priority = 5
 	test ConvertWidgetPageWithNonStandardLayout {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ContentPageConverter#ConvertWidgetPageWithNonStandardLayout";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Upload the custom layout") {
 			ApplicationsMenu.gotoPortlet(
@@ -730,7 +730,7 @@ definition {
 	@description = "This is a test for LPS-105943. When convert a widget page with one Customizable column and a non-standard layout, there will be two warning messages shown in conversion preview"
 	@priority = 3
 	test ConvertWidgetPageWithNonStandardLayoutAndCustomizableColumns {
-		property test.name.skip.portal.instance = "ContentPageConverter#ConvertWidgetPageWithNonStandardLayoutAndCustomizableColumns";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Upload the custom layout") {
 			ApplicationsMenu.gotoPortlet(
@@ -849,7 +849,7 @@ definition {
 	@description = "This is a test for LPS-105943. When convert a widget page with one Nested Applications widget containing widgets and a non-standard layout, there will be two warning messages shown in conversion preview"
 	@priority = 3
 	test ConvertWidgetPageWithNonStandardLayoutAndNestedApplicationsContainingWidgets {
-		property test.name.skip.portal.instance = "ContentPageConverter#ConvertWidgetPageWithNonStandardLayoutAndNestedApplicationsContainingWidgets";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Upload the custom layout") {
 			ApplicationsMenu.gotoPortlet(
@@ -1098,6 +1098,12 @@ definition {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 
+		var userEmailAddress = StringUtil.randomString(8);
+		var userFirstName = StringUtil.randomString(8);
+		var userLastName = StringUtil.randomString(8);
+		var userScreenName = StringUtil.randomString(8);
+		var randomRoleKey = StringUtil.randomString(8);
+
 		task ("Add a widget page") {
 			JSONLayout.addPublicLayout(
 				groupName = ${randomSiteName},
@@ -1155,44 +1161,44 @@ definition {
 
 		task ("Add a new user") {
 			JSONUser.addUser(
-				userEmailAddress = "userea@liferay.com",
-				userFirstName = "Userfn",
-				userLastName = "Userln",
-				userScreenName = "usersn");
+				userEmailAddress = StringUtil.toLowerCase("${userEmailAddress}@liferay.com"),
+				userFirstName = ${userFirstName},
+				userLastName = ${userLastName},
+				userScreenName = StringUtil.toLowerCase(${userScreenName}));
 
 			JSONUser.setFirstPassword(
 				agreeToTermsAndAnswerReminderQuery = "true",
 				requireReset = "false",
-				userEmailAddress = "userea@liferay.com");
+				userEmailAddress = StringUtil.toLowerCase("${userEmailAddress}@liferay.com"));
 		}
 
 		task ("Add a new site role") {
-			JSONRole.addSiteRole(roleTitle = "Roles Siterole Name");
+			JSONRole.addSiteRole(roleTitle = ${randomRoleKey});
 		}
 
 		task ("Define permission of new site role") {
 			Permissions.definePermissionViaJSONAPI(
 				resourceAction = "VIEW",
 				resourceName = "com_liferay_layout_admin_web_portlet_GroupPagesPortlet",
-				roleTitle = "Roles Siterole Name",
+				roleTitle = ${randomRoleKey},
 				roleType = "site");
 		}
 
 		task ("Assign the user to site") {
 			JSONUser.addUserToSite(
 				groupName = ${randomSiteName},
-				userEmailAddress = "userea@liferay.com");
+				userEmailAddress = StringUtil.toLowerCase("${userEmailAddress}@liferay.com"));
 		}
 
 		task ("Assign the user to site role") {
 			JSONRole.assignSiteRoleToUser(
 				groupName = ${randomSiteName},
-				roleTitle = "Roles Siterole Name",
-				userEmailAddress = "userea@liferay.com");
+				roleTitle = ${randomRoleKey},
+				userEmailAddress = StringUtil.toLowerCase("${userEmailAddress}@liferay.com"));
 		}
 
 		task ("Sign in as new user") {
-			User.logoutAndLoginPG(userLoginEmailAddress = "userea@liferay.com");
+			User.logoutAndLoginPG(userLoginEmailAddress = StringUtil.toLowerCase("${userEmailAddress}@liferay.com"));
 		}
 
 		task ("View user has no permission to edit a portlet") {
@@ -1214,7 +1220,7 @@ definition {
 			Permissions.definePermissionViaJSONAPI(
 				resourceAction = "MANAGE_LAYOUTS",
 				resourceName = "com.liferay.portal.kernel.model.Group",
-				roleTitle = "Roles Siterole Name",
+				roleTitle = ${randomRoleKey},
 				roleType = "site");
 		}
 

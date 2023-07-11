@@ -66,9 +66,6 @@ const AccountSubscriptionsList = ({
 					externalReferenceCode={
 						currentAccountSubscription?.externalReferenceCode
 					}
-					isProvisioned={
-						selectedAccountSubscriptionGroup?.isProvisioned
-					}
 					observer={observer}
 					onClose={() => onOpenChange(false)}
 					title={
@@ -84,7 +81,9 @@ const AccountSubscriptionsList = ({
 					{...accountSubscription}
 					key={index}
 					logoPath={
-						LOGO_PATH_TYPES[selectedAccountSubscriptionGroup?.name]
+						LOGO_PATH_TYPES[
+							selectedAccountSubscriptionGroup?.name?.trim()
+						]
 					}
 					onClick={() =>
 						setCurrentAccountSubscription({...accountSubscription})

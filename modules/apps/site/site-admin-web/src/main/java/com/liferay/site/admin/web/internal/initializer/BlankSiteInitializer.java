@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
@@ -76,6 +77,10 @@ public class BlankSiteInitializer implements SiteInitializer {
 		_addLayoutUtilityPageEntry(
 			404, groupId, "404 Error",
 			LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND);
+
+		_addLayoutUtilityPageEntry(
+			500, groupId, "500 Error",
+			LayoutUtilityPageEntryConstants.TYPE_SC_INTERNAL_SERVER_ERROR);
 	}
 
 	@Override
@@ -87,14 +92,18 @@ public class BlankSiteInitializer implements SiteInitializer {
 		int errorCode, long groupId, String name, String type) {
 
 		try {
+			String pageElementJSON =
+				_layoutUtilityPageEntryDefaultPageElementDefinitionProvider.
+					getDefaultPageElementJSON(type);
+
+			if (Validator.isNull(pageElementJSON)) {
+				return;
+			}
+
 			LayoutUtilityPageEntry layoutUtilityPageEntry =
 				_layoutUtilityPageEntryService.addLayoutUtilityPageEntry(
 					"LFR-" + errorCode + "-ERROR", groupId, 0, 0, true, name,
 					type, 0, ServiceContextThreadLocal.getServiceContext());
-
-			String pageElementJSON =
-				_layoutUtilityPageEntryDefaultPageElementDefinitionProvider.
-					getDefaultPageElementJSON(type);
 
 			Layout layout = _layoutLocalService.getLayout(
 				layoutUtilityPageEntry.getPlid());

@@ -57,6 +57,9 @@ String taglibLabel = null;
 if (group.isLayoutPrototype()) {
 	taglibLabel = LanguageUtil.get(request, "use-the-same-look-and-feel-of-the-pages-in-which-this-template-is-used");
 }
+else if (FeatureFlagManagerUtil.isEnabled("LPS-153951")) {
+	taglibLabel = LanguageUtil.get(request, "use-the-inherited-theme");
+}
 else {
 	taglibLabel = LanguageUtil.format(request, "use-the-inherited-theme-x", rootNodeNameLink, false);
 }
@@ -65,6 +68,7 @@ else {
 <div id="<portlet:namespace />themeContainer">
 	<clay:radio
 		checked="<%= selLayout.isInheritLookAndFeel() %>"
+		disabled="<%= layoutsAdminDisplayContext.isReadOnly() %>"
 		id='<%= liferayPortletResponse.getNamespace() + "regularInheritLookAndFeel" %>'
 		label="<%= taglibLabel %>"
 		name='<%= liferayPortletResponse.getNamespace() + "regularInheritLookAndFeel" %>'
@@ -73,6 +77,7 @@ else {
 
 	<clay:radio
 		checked="<%= !selLayout.isInheritLookAndFeel() %>"
+		disabled="<%= layoutsAdminDisplayContext.isReadOnly() %>"
 		id='<%= liferayPortletResponse.getNamespace() + "regularUniqueLookAndFeel" %>'
 		label='<%= LanguageUtil.get(request, "define-a-custom-theme-for-this-page") %>'
 		name='<%= liferayPortletResponse.getNamespace() + "regularInheritLookAndFeel" %>'
@@ -96,6 +101,9 @@ else {
 
 <aui:script sandbox="<%= true %>">
 	const regularCss = document.getElementById('<portlet:namespace />regularCss');
+	const regularCssAlert = document.getElementById(
+		'<portlet:namespace />regularCssAlert'
+	);
 	const regularCssLabel = document.querySelector(
 		'[for="<portlet:namespace />regularCss"]'
 	);
@@ -136,6 +144,7 @@ else {
 				themeOptions.classList.toggle('hide');
 			}
 
+			regularCssAlert.classList.toggle('d-none', false);
 			Liferay.Util.toggleDisabled([regularCss, regularCssLabel], true);
 		});
 	}
@@ -153,6 +162,7 @@ else {
 				themeOptions.classList.toggle('hide');
 			}
 
+			regularCssAlert.classList.toggle('d-none', true);
 			Liferay.Util.toggleDisabled([regularCss, regularCssLabel], false);
 		});
 	}

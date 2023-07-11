@@ -646,3 +646,69 @@ app.artifacts-1.0.58=\
 app.change.log-1.0.58=LPS-149454 LPS-183802
 
 app.git.id-1.0.58=494bbb2ca91e99a4c8bb76cc09d3bfafd1fd6ace
+
+#
+# Liferay App Version 1.0.59
+#
+
+app.artifacts-1.0.59=\
+	
+
+app.change.log-1.0.59=LPS-149454 LPS-183802 LPS-184849
+
+app.git.id-1.0.59=483429b2a3077cc5d9da738e187fc92b25f2f2d8
+
+#
+# Liferay App Version 1.0.60
+#
+
+app.artifacts-1.0.60=\
+	
+
+app.change.log-1.0.60=LPS-149454 LPS-183802 LPS-184849
+
+app.git.id-1.0.60=9c9fedc0ea50d6c3d9aedba40ca80406b195a540
+
+#
+# Liferay App Version 1.0.61
+#
+
+app.artifacts-1.0.61=\
+	
+
+app.change.log-1.0.61=LPS-149454 LPS-183802 LPS-184849 LRQA-80725
+
+app.git.id-1.0.61=4a5af1279c6b55e2062a4b2ee22e8849294bd11e
+
+#
+# Liferay App Version 1.0.62
+#
+
+app.artifacts-1.0.62=\
+	
+
+app.change.log-1.0.62=LPS-149454 LPS-183802 LPS-184849 LRQA-80725
+
+app.git.id-1.0.62=c9d5102981081ec0d1e9e4407707ae1db4ac6577
+
+#
+# Liferay App Version 1.0.63
+#
+
+app.artifacts-1.0.63=\
+	
+
+app.change.log-1.0.63=LPS-149454 LPS-183802 LPS-184849 LRQA-80725 LRQA-80990
+
+app.git.id-1.0.63=0324d07845893495bbd8339a0443e512ef6d5353
+
+#
+# Liferay App Version 1.0.64
+#
+
+app.artifacts-1.0.64=\
+	
+
+app.change.log-1.0.64=LPS-149454 LPS-183802 LPS-184849 LRCI-970 LRQA-80725 LRQA-80990
+
+app.git.id-1.0.64=968b5c210b82aad62a64fa005aa566753e2b9746

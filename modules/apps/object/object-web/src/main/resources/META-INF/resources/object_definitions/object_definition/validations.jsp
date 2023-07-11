@@ -29,14 +29,30 @@ portletDisplay.setURLBack(backURL);
 renderResponse.setTitle(objectDefinition.getLabel(locale, true));
 %>
 
-<frontend-data-set:headless-display
-	apiURL="<%= objectDefinitionsValidationsDisplayContext.getAPIURL() %>"
-	creationMenu="<%= objectDefinitionsValidationsDisplayContext.getCreationMenu() %>"
-	fdsActionDropdownItems="<%= objectDefinitionsValidationsDisplayContext.getFDSActionDropdownItems() %>"
-	formName="fm"
-	id="<%= ObjectDefinitionsFDSNames.OBJECT_VALIDATIONS %>"
-	style="fluid"
-/>
+<div>
+	<react:component
+		module="js/components/ObjectValidation/Validations"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"apiURL", objectDefinitionsValidationsDisplayContext.getAPIURL()
+			).put(
+				"creationMenu", objectDefinitionsValidationsDisplayContext.getCreationMenu()
+			).put(
+				"formName", "fm"
+			).put(
+				"id", ObjectDefinitionsFDSNames.OBJECT_VALIDATIONS
+			).put(
+				"items", objectDefinitionsValidationsDisplayContext.getFDSActionDropdownItems()
+			).put(
+				"objectDefinitionExternalReferenceCode", objectDefinition.getExternalReferenceCode()
+			).put(
+				"style", "fluid"
+			).put(
+				"url", objectDefinitionsValidationsDisplayContext.getEditObjectValidationURL()
+			).build()
+		%>'
+	/>
+</div>
 
 <div id="<portlet:namespace />AddObjectValidation">
 	<react:component

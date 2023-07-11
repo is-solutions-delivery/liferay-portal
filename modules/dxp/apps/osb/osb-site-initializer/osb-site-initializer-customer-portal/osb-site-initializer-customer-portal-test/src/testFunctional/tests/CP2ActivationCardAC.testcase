@@ -31,11 +31,11 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		CustomerPortal.customerPortalTearDown();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -197,7 +197,7 @@ definition {
 	}
 
 	@description = "Automation ID: LPS-150163 | Test Summary: Verify if the Activation form link works"
-	@priority = 5
+	@priority = 3
 	test IfActivationFormLinkWorks {
 		task ("Change the user role in the project") {
 			Account.openAccountsAdmin();

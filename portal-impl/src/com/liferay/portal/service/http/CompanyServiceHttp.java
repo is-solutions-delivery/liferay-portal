@@ -93,7 +93,10 @@ public class CompanyServiceHttp {
 
 	public static com.liferay.portal.kernel.model.Company addCompany(
 			HttpPrincipal httpPrincipal, String webId, String virtualHost,
-			String mx, int maxUsers, boolean active)
+			String mx, int maxUsers, boolean active,
+			String defaultAdminPassword, String defaultAdminScreenName,
+			String defaultAdminEmailAddress, String defaultAdminFirstName,
+			String defaultAdminMiddleName, String defaultAdminLastName)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		try {
@@ -102,7 +105,10 @@ public class CompanyServiceHttp {
 				_addCompanyParameterTypes1);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, webId, virtualHost, mx, maxUsers, active);
+				methodKey, webId, virtualHost, mx, maxUsers, active,
+				defaultAdminPassword, defaultAdminScreenName,
+				defaultAdminEmailAddress, defaultAdminFirstName,
+				defaultAdminMiddleName, defaultAdminLastName);
 
 			Object returnObj = null;
 
@@ -850,7 +856,9 @@ public class CompanyServiceHttp {
 		boolean.class
 	};
 	private static final Class<?>[] _addCompanyParameterTypes1 = new Class[] {
-		String.class, String.class, String.class, int.class, boolean.class
+		String.class, String.class, String.class, int.class, boolean.class,
+		String.class, String.class, String.class, String.class, String.class,
+		String.class
 	};
 	private static final Class<?>[] _deleteCompanyParameterTypes2 =
 		new Class[] {long.class};

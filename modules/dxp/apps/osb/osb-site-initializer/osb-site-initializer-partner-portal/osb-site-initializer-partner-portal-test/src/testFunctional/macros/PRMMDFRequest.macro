@@ -6,14 +6,12 @@ definition {
 			locator1 = "PRMMDFRequest#TEXT_BUTTON");
 	}
 
-	@summary = "Add a new activity"
 	macro addNewActivity {
 		Click(
 			key_buttonText = "Add Activity",
 			locator1 = "PRMMDFRequest#ADD_BUTTON");
 	}
 
-	@summary = "Assert claim message"
 	macro assertClaimMessage {
 		var key_claimMessage = ${claimMessage};
 
@@ -22,21 +20,15 @@ definition {
 			value1 = ${claimMessage});
 	}
 
-	@summary = "Cannot view Manager Status Button on MDF Request detail page"
 	macro CanNotViewStateManager {
-		AssertElementNotPresent(
-			key_statusButton = "Approve",
-			locator1 = "PRMMDFRequest#STATUS_BUTTON");
+		AssertElementNotPresent(locator1 = "PRMMDFRequest#STATUS_DROPDOWN");
 	}
 
-	@summary = "Change MDF status"
 	macro changeMDFStatus {
 		var key_statusButton = ${statusButton};
 
 		if (${statusButton} == "Cancel") {
-			ClickNoError(
-				buttonId = "status-cancel",
-				locator1 = "Button#BUTTON_ID");
+			ClickNoError(locator1 = "Button#CANCEL");
 		}
 		else {
 			ScrollWebElementIntoView(locator1 = "PRMMDFRequest#STATUS_DROPDOWN");
@@ -48,7 +40,7 @@ definition {
 				locator1 = "PRMMDFRequest#STATUS_OPTION_DROPDOWN");
 		}
 
-		if ((${statusButton} == "Request More Info") || (${statusButton} == "Marketing Director Review") || (${statusButton} == "Reject")) {
+		if ((${statusButton} == "Request More Info") || (${statusButton} == "Marketing Director Review") || (${statusButton} == "Rejected")) {
 			if (!(isSet(statusChangeMotivation))) {
 				var statusChangeMotivation = "Status Change Motivation";
 			}
@@ -64,7 +56,6 @@ definition {
 		}
 	}
 
-	@summary = "Add a new MDF Request filling the goals and activity pages"
 	macro createNewRequest {
 		WaitForPageLoad();
 
@@ -73,7 +64,6 @@ definition {
 			additionalOptions = ${additionalOptions},
 			campaignDescription = ${campaignDescription},
 			campaignName = ${campaignName},
-			countryName = ${countryName},
 			goalsOptions = ${goalsOptions},
 			targetMarketOptions = ${targetMarketOptions},
 			targetRolesOptions = ${targetRolesOptions});
@@ -104,7 +94,6 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
-	@summary = "Verify that is possible edit MDF activity "
 	macro editActivity {
 		Click(locator1 = "PRMMDFRequest#EDIT_ACTIVITY_BUTTON");
 
@@ -128,26 +117,15 @@ definition {
 	}
 
 	macro editButton {
-		if (isSet(manager)) {
-			var roleName = "manager";
-		}
-		else {
-			var roleName = "user";
-		}
-
-		Click(
-			key_roleName = ${roleName},
-			locator1 = "PRMMDFRequest#EDIT_MDF_BUTTON");
+		Click(locator1 = "PRMMDFRequest#EDIT_MDF_BUTTON");
 	}
 
-	@summary = "Verify that is possible edit some MDF informations "
 	macro editGoals {
 		PRMMDFRequest.fillGoalsPage(
 			accountName = ${accountName},
 			additionalOptions = ${additionalOptions},
 			campaignDescription = ${campaignDescription},
 			campaignName = ${campaignName},
-			countryName = ${countryName},
 			goalsOptions = ${goalsOptions},
 			targetMarketOptions = ${targetMarketOptions},
 			targetRolesOptions = ${targetRolesOptions});
@@ -159,17 +137,31 @@ definition {
 			additionalOptions = ${additionalOptions},
 			campaignDescription = ${campaignDescription},
 			campaignName = ${campaignName},
-			countryName = ${countryName},
 			goalsOptions = ${goalsOptions},
 			targetMarketOptions = ${targetMarketOptions},
 			targetRolesOptions = ${targetRolesOptions});
 
 		Button.click(button = "Continue");
 
-		PRMMDFRequest.editActivity(
-			activityIndex = ${activityIndex},
-			newActivityName = ${newActivityName},
-			newBugdetValue = ${newBugdetValue});
+		if (isSet(newActivity)) {
+			PRMMDFRequest.newActivity(
+				activityDescription = ${activityDescription},
+				activityName = ${newActivity},
+				budgetList = ${budgetList},
+				followUpStrategy = ${followUpStrategy},
+				leadFollowUpList = ${leadFollowUpList},
+				leadList = ${leadList},
+				tactic = ${tactic},
+				targetOfLeads = ${targetOfLeads},
+				typeOfActivity = ${typeOfActivity});
+		}
+
+		if (isSet(newActivityName)) {
+			PRMMDFRequest.editActivity(
+				activityIndex = ${activityIndex},
+				newActivityName = ${newActivityName},
+				newBugdetValue = ${newBugdetValue});
+		}
 
 		Button.click(button = "Continue");
 
@@ -184,7 +176,6 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
-	@summary = "Edit total MDF amount field"
 	macro editTotalMDFValue {
 		if (!(isSet(activitiyIndex))) {
 			var activityIndex = 0;
@@ -201,7 +192,6 @@ definition {
 			value1 = "\TAB");
 	}
 
-	@summary = "Fill expense fields on MDF Request activity page"
 	macro fillExpenseFields {
 		var budgetIndex = 0;
 
@@ -231,7 +221,6 @@ definition {
 		}
 	}
 
-	@summary = "Fill the goals page form"
 	macro fillGoalsPage {
 		if (isSet(accountName)) {
 			Select(
@@ -291,14 +280,13 @@ definition {
 		}
 	}
 
-	@summary = "Filter the MDF Listing by the selected option"
-	macro FilterMDF {
+	macro filterMDF {
 		Click(
-			key_filterOption = ${keyFilter},
+			key_filterOption = ${filterOption},
 			locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
 
 		Click(
-			key_partnerOptions = ${filterType},
+			key_partnerOptions = "Filter",
 			locator1 = "PRMMDFRequest#FILTER_TYPE");
 
 		Click.clickAtNotVisible(
@@ -308,7 +296,6 @@ definition {
 		Click(locator1 = "PRMMDFRequest#APPLY_BUTTON");
 	}
 
-	@summary = "Format the date that will be inputed on start and end date"
 	macro formatDate {
 		var nextDayDate = DateUtil.getFormattedDate("+2", "MMddyyyy");
 
@@ -319,7 +306,6 @@ definition {
 		return ${nextDayDate};
 	}
 
-	@summary = "Get the hidden value of 'Total MDF Requested Amount' field using JS script"
 	macro getValueByFieldName {
 		Click.pauseClickAt(
 			key_fieldName = ${fieldName},
@@ -338,14 +324,12 @@ definition {
 		return ${fieldDigits};
 	}
 
-	@summary = "Go to MDF"
 	macro goToMDF {
 		Click(
 			key_campaignName = ${campaignName},
 			locator1 = "PRMMDFRequest#REQUEST_ID");
 	}
 
-	@summary = "Fill the date fields on Activity Form"
 	macro insertDate {
 		if (!(isSet(activityIndex))) {
 			var activityIndex = 0;
@@ -376,7 +360,6 @@ definition {
 		}
 	}
 
-	@summary = "Add a new activity"
 	macro newActivity {
 		if (!(isSet(activityIndex))) {
 			var activityIndex = 0;
@@ -401,10 +384,39 @@ definition {
 			locator1 = "PRMMDFRequest#SELECT",
 			value1 = ${tactic});
 
-		Type(
-			key_fieldName = "activities[${activityIndex}].activityDescription.marketingActivity",
-			locator1 = "PRMMDFRequest#TEXT_FIELD",
-			value1 = ${activityDescription});
+		if ((${typeOfActivity} == "Miscellaneous Marketing") && (${tactic} == "Other")) {
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.marketingActivity",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = ${activityDescription});
+
+			Click.clickAtNotVisible(
+				key_buttonText = ${leadList},
+				key_fieldName = "activities[${activityIndex}].activityDescription.leadGenerated",
+				locator1 = "PRMMDFRequest#INPUT_BUTTON");
+		}
+
+		if ((${typeOfActivity} == "Digital Marketing") && (${tactic} == "Digital Advertising/Banner Ad")) {
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.overallMessageContentCTA",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "Overall Message");
+
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.specificSites",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "Specific Site");
+
+			Click.clickAtNotVisible(
+				key_buttonText = "No",
+				key_fieldName = "activities[${activityIndex}].activityDescription.assetsLiferayRequired",
+				locator1 = "PRMMDFRequest#INPUT_BUTTON");
+
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.howLiferayBrandUsed",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "Liferay Brand");
+		}
 
 		Click.clickAtNotVisible(
 			key_buttonText = ${leadList},
@@ -472,14 +484,12 @@ definition {
 		}
 	}
 
-	@summary = "Click on the '-' button, inside the activities page of the MDF Request, to remove a budget value"
 	macro removeBudgetValue {
 		Click(
 			key_index = ${index},
 			locator1 = "PRMMDFRequest#REMOVE_ICON_INDEX");
 	}
 
-	@summary = "Search for an MDF Request"
 	macro searchMDF {
 		Type(
 			key_placeHolder = "Search",
@@ -492,7 +502,6 @@ definition {
 			value1 = "\RETURN");
 	}
 
-	@summary = "View the activity information on MDF Review Page"
 	macro viewActivityInReviewPage {
 		Click(
 			key_textButton = ${activityName},
@@ -581,28 +590,32 @@ definition {
 			locator1 = "PRMMDFRequest#SUMMARY_FIELD");
 	}
 
-	@summary = "Assert the Total Cost value of the budget, inside the activities page of the MDF Request"
+	macro viewActivityStatus {
+		AssertElementPresent(
+			key_activityName = ${activityName},
+			key_statusType = ${statusType},
+			key_statusValue = ${statusValue},
+			locator1 = "PRMMDFRequest#ACTIVITY_STATUS");
+	}
+
 	macro viewBudgetValue {
 		AssertTextEquals(
 			locator1 = "PRMMDFRequest#ACTIVITY_TOTAL_COST",
 			value1 = ${totalCost});
 	}
 
-	@summary = "Assert button is not clickable"
 	macro viewDisabledButton {
 		AssertElementPresent(
 			key_text = ${buttonName},
 			locator1 = "Button#ANY_DISABLED");
 	}
 
-	@summary = "Verify error messages"
 	macro viewErrorMessage {
 		var key_errorMessage = ${errorMessage};
 
 		AssertElementPresent(locator1 = "PRMMDFRequest#ERROR_MESSAGE");
 	}
 
-	@summary = "Verify that a content is present in the MDF file"
 	macro viewExportedMDF {
 		for (var fileContentItem : list ${fileContentList}) {
 			var directoryPath = PropsUtil.get("output.dir.name");
@@ -619,10 +632,24 @@ definition {
 			}
 		}
 
+		if (isSet(fileContentNotPresent)) {
+			var directoryPath = PropsUtil.get("output.dir.name");
+
+			var fileContent = FileUtil.read("${directoryPath}/${fileName}");
+
+			if (contains(${fileContent}, ${fileContentItem})) {
+				echo(${fileContent});
+
+				fail("The string '${fileContentItem}' exists on this file");
+			}
+			else {
+				echo("The string '${fileContentItem}' doesn't exists on this file");
+			}
+		}
+
 		FileUtil.delete("${directoryPath}/${fileName}");
 	}
 
-	@summary = "View the goals information on MDF Review Page"
 	macro viewGoalsInReviewPage {
 		ScrollWebElementIntoView(
 			key_fieldName = "Company Name",
@@ -635,16 +662,6 @@ definition {
 			locator1 = "PRMMDFRequest#SUMMARY_FIELD");
 
 		ScrollWebElementIntoView(
-			key_fieldName = "Region",
-			key_fieldValue = ${countryName},
-			locator1 = "PRMMDFRequest#SUMMARY_FIELD");
-
-		AssertElementPresent(
-			key_fieldName = "Region",
-			key_fieldValue = ${countryName},
-			locator1 = "PRMMDFRequest#SUMMARY_FIELD");
-
-		ScrollWebElementIntoView(
 			key_fieldName = "Provide the name of the campaign",
 			key_fieldValue = ${campaignName},
 			locator1 = "PRMMDFRequest#SUMMARY_FIELD");
@@ -695,11 +712,12 @@ definition {
 			locator1 = "PRMMDFRequest#SUMMARY_FIELD");
 	}
 
-	@summary = "Verify the fills done by the user on the Campaign Information"
 	macro viewMDFActivityDetails {
-		Click(
-			key_textButton = ${activityName},
-			locator1 = "PRMMDFRequest#TEXT_BUTTON");
+		if (IsElementPresent(locator1 = "PRMMDFRequest#ACTIVITY_PANEL")) {
+			Click(
+				key_textButton = ${activityName},
+				locator1 = "PRMMDFRequest#TEXT_BUTTON");
+		}
 
 		if (isSet(activityName)) {
 			AssertElementPresent(
@@ -758,9 +776,15 @@ definition {
 				key_nameValue = ${leadList},
 				locator1 = "PRMMDFRequest#DETAIL_FIELD");
 		}
+
+		if (isSet(specificFieldNameList)) {
+			AssertElementPresent(
+				key_fieldName = ${specificFieldName},
+				key_nameValue = ${fieldValue},
+				locator1 = "PRMMDFRequest#DETAIL_FIELD");
+		}
 	}
 
-	@summary = "Verify the activity fills made by the user after submited"
 	macro viewMDFCompanyDetails {
 		if (isSet(accountName)) {
 			AssertElementPresent(
@@ -815,18 +839,20 @@ definition {
 		}
 	}
 
-	@summary = "View MDF actual Status on MDF Request detail page "
 	macro viewMDFStatus {
 		AssertElementPresent(
-			key_value = ${key_status},
+			key_value = ${mdfStatus},
 			locator1 = "PRMMDFRequest#STATUS_INFO");
 	}
 
-	@summary = "Verify that the state manager is present on MDF Request detail page"
+	macro viewNoErrorMessage {
+		AssertElementNotPresent(
+			key_errorMessage = ${errorMessage},
+			locator1 = "PRMMDFRequest#ERROR_MESSAGE");
+	}
+
 	macro viewStateManager {
-		AssertElementPresent(
-			key_statusButton = "Approve",
-			locator1 = "PRMMDFRequest#STATUS_BUTTON");
+		AssertElementPresent(locator1 = "PRMMDFRequest#STATUS_DROPDOWN");
 	}
 
 }

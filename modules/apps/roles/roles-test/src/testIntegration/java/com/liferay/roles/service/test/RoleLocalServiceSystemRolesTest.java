@@ -103,11 +103,11 @@ public class RoleLocalServiceSystemRolesTest {
 				TestPropsValues.getCompanyId(), QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS, null);
 			_auditEventService.getAuditEvents(
-				TestPropsValues.getCompanyId(), _user.getUserId(),
+				TestPropsValues.getCompanyId(), 0, _user.getUserId(),
 				_user.getScreenName(), null, null, null, null, null, null, null,
 				null, 0, null, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 			_auditEventService.getAuditEvents(
-				TestPropsValues.getCompanyId(), _user.getUserId(),
+				TestPropsValues.getCompanyId(), 0, _user.getUserId(),
 				_user.getScreenName(), null, null, null, null, null, null, null,
 				null, 0, null, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 				null);

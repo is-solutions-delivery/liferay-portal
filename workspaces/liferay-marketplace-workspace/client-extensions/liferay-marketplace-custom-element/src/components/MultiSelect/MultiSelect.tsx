@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import Select, {StylesConfig} from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -7,20 +21,14 @@ import classNames from 'classnames';
 
 import {FieldBase} from '../FieldBase';
 
-type Item = {
-	checked: boolean;
-	label: string;
-	value: string;
-};
-
-interface MultiSelectProps {
+interface MultiSelectProps<T> {
 	className?: string;
 	helpMessage?: string;
 	hideFeedback?: boolean;
-	items: Item[];
+	items: T[];
 	label?: string;
 	localized?: boolean;
-	onChange: (values: Item[]) => void;
+	onChange: (values: T) => void;
 	placeholder?: string;
 	required?: boolean;
 	tooltip?: string;
@@ -49,7 +57,7 @@ const colourStyles: StylesConfig<any, true> = {
 	}),
 };
 
-export function MultiSelect({
+export function MultiSelect<T>({
 	className,
 	helpMessage,
 	hideFeedback,
@@ -60,7 +68,7 @@ export function MultiSelect({
 	placeholder,
 	required,
 	tooltip,
-}: MultiSelectProps) {
+}: MultiSelectProps<T>) {
 	const animatedComponents = makeAnimated();
 
 	return (
@@ -76,9 +84,7 @@ export function MultiSelect({
 			<Select
 				components={animatedComponents}
 				isMulti
-				onChange={(newValue) =>
-					newValue && onChange(newValue as Item[])
-				}
+				onChange={(newValue) => newValue && onChange(newValue as T)}
 				options={items}
 				placeholder={placeholder}
 				styles={colourStyles}

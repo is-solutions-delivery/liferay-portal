@@ -76,6 +76,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ADD_SHIPMENT_ITEMS_CHECKBOX_WITH_ORDER_ID</td>
+	<td>//div[contains(text(), '${key_productSku}')]/../div[contains(text(), '${key_orderId}')]/preceding-sibling::div[@class='dnd-td item-selector']//input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>BLOGS_ENTRY</td>
 	<td>//input[contains(@id,'BlogsEntry')]</td>
 	<td></td>
@@ -142,7 +147,7 @@
 </tr>
 <tr>
 	<td>ENABLE_CHECKBOX</td>
-	<td>//tr[contains(@data-name,'${key_checkboxName}')]//input[contains(@type,'checkbox')]</td>
+	<td>//tr[contains(@data-name,'${key_checkboxName}')]//input[contains(@type,'checkbox')] | //tr[contains(@data-value,'"name":"${key_checkboxName}"')]//input[contains(@type,'checkbox')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -433,6 +438,11 @@
 <tr>
 	<td>SHOW_ADD_CONTENT_BUTTON</td>
 	<td>//label[contains(.,'Show Add Content Button')]/input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SHOW_EMAIL_ADDRESS_CHECKBOX</td>
+	<td>//label[contains(@for,'showEmailAddress')]//input[@type='checkbox']</td>
 	<td></td>
 </tr>
 <tr>

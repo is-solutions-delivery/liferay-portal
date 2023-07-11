@@ -1,5 +1,24 @@
 components:
     schemas:
+        ActionExecutionResult:
+            # @review
+            description:
+                Represents a definition of an action execution result.
+            properties:
+                type:
+                    # @review
+                    description:
+                        The type of result.
+                    enum: [None, Notification, Page, URL]
+                    type:
+                        string
+                value:
+                    oneOf:
+                        - $ref: "#/components/schemas/NoneActionExecutionResult"
+                        - $ref: "#/components/schemas/NotificationActionExecutionResult"
+                        - $ref: "#/components/schemas/SitePageActionExecutionResult"
+                        - $ref: "#/components/schemas/URLActionExecutionResult"
+            type: object
         AggregateRating:
             description:
                 Represents the average rating. See [AggregateRating](https://www.schema.org/AggregateRating) for more
@@ -1604,6 +1623,7 @@ components:
                     type: string
                 value:
                     anyOf:
+                        - $ref: "#/components/schemas/FragmentFieldAction"
                         - $ref: "#/components/schemas/FragmentFieldBackgroundImage"
                         - $ref: "#/components/schemas/FragmentFieldHTML"
                         - $ref: "#/components/schemas/FragmentFieldImage"
@@ -1611,6 +1631,37 @@ components:
                     # @review
                     description:
                         The fragment field's value.
+            type: object
+        FragmentFieldAction:
+            # @review
+            description:
+                Represents a fragment field with an action.
+            properties:
+                action:
+                    # @review
+                    description:
+                        The fragment field's action. Must be mapped to an external value.
+                    oneOf:
+                        - $ref: "#/components/schemas/FragmentMappedValue"
+                onError:
+                    allOf:
+                        - $ref: "#/components/schemas/ActionExecutionResult"
+                    # @review
+                    description:
+                        The action execution result in case the action fails.
+                onSuccess:
+                    allOf:
+                        - $ref: "#/components/schemas/ActionExecutionResult"
+                    # @review
+                    description:
+                        The action execution result in case the action succeeds.
+                text:
+                    # @review
+                    description:
+                        The fragment field's text.
+                    oneOf:
+                        - $ref: "#/components/schemas/FragmentInlineValue"
+                        - $ref: "#/components/schemas/FragmentMappedValue"
             type: object
         FragmentFieldBackgroundImage:
             # @review
@@ -3255,6 +3306,34 @@ components:
                     type: string
                 useCustomName:
                     type: boolean
+        NoneActionExecutionResult:
+            # @review
+            description:
+                Represents a definition of an action execution result of type none.
+            properties:
+                reload:
+                    # @review
+                    description:
+                        Whether to reload the page after the action is executed.
+                    type: boolean
+            type: object
+        NotificationActionExecutionResult:
+            # @review
+            description:
+                Represents a definition of an action execution result of type notification.
+            properties:
+                reload:
+                    # @review
+                    description:
+                        Whether to reload the page after the action is executed.
+                    type: boolean
+                text:
+                    allOf:
+                        - $ref: "#/components/schemas/FragmentInlineValue"
+                    # @review
+                    description:
+                        The localized text to display when an action is executed.
+            type: object
         OpenGraphSettings:
             # @review
             description:
@@ -4826,6 +4905,18 @@ components:
             required:
                 - title
             type: object
+        SitePageActionExecutionResult:
+            # @review
+            description:
+                Represents a definition of an action execution of type page.
+            properties:
+                itemReference:
+                    allOf:
+                        - $ref: "#/components/schemas/ClassFieldsReference"
+                    # @review
+                    description:
+                        The reference to a page.
+            type: object
         SitePageFormSubmissionResult:
             # @review
             description:
@@ -5216,6 +5307,18 @@ components:
                         - externalReferenceCode
                     type: object
             type: object
+        URLActionExecutionResult:
+            # @review
+            description:
+                Represents a definition of an action execution result of type URL.
+            properties:
+                url:
+                    allOf:
+                        - $ref: "#/components/schemas/FragmentInlineValue"
+                    # @review
+                    description:
+                        The localized action execution result of type URL.
+            type: object
         URLFormSubmissionResult:
             # @review
             description:
@@ -5574,7 +5677,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.delivery.client', and version '4.0.58'."
+        'com.liferay.headless.delivery.client', and version '4.0.60'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"

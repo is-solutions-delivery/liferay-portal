@@ -30,6 +30,28 @@ definition {
 	}
 
 	macro addWidgets {
+		if (!(isSet(column))) {
+			var column = 1;
+		}
+
+		if (!(isSet(groupName))) {
+			var groupName = "Guest";
+		}
+
+		if (!(isSet(layoutName))) {
+			var layoutName = "Search";
+		}
+
+		for (var portletName : list ${searchPortletList}) {
+			JSONLayout.addWidgetToPublicLayout(
+				column = ${column},
+				groupName = ${groupName},
+				layoutName = ${layoutName},
+				widgetName = ${portletName});
+		}
+	}
+
+	macro addWidgetsViaUI {
 		if (IsNotVisible(locator1 = "ControlMenuAddPanel#CLOSE_ADD_PANEL")) {
 			Click.clickAt(locator1 = "ControlMenu#ADD");
 		}
@@ -214,6 +236,13 @@ definition {
 			Type(
 				locator1 = "SearchConfiguration#DESTINATION_PAGE",
 				value1 = ${destinationPage});
+		}
+
+		if (isSet(federatedSearchKey)) {
+			Type(
+				key_fieldLabel = "Federated Search Key",
+				locator1 = "TextInput#GENERIC_TEXT_INPUT",
+				value1 = ${federatedSearchKey});
 		}
 
 		if (isSet(searchScope)) {

@@ -17,6 +17,7 @@ package com.liferay.document.library.kernel.service;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 
 /**
@@ -405,6 +406,12 @@ public class DLFileVersionLocalServiceWrapper
 	}
 
 	@Override
+	public int getFileVersionsCount(long companyId, String storeUUID) {
+		return _dlFileVersionLocalService.getFileVersionsCount(
+			companyId, storeUUID);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery
 		getIndexableActionableDynamicQuery() {
 
@@ -476,6 +483,11 @@ public class DLFileVersionLocalServiceWrapper
 	@Override
 	public DLFileVersion updateDLFileVersion(DLFileVersion dlFileVersion) {
 		return _dlFileVersionLocalService.updateDLFileVersion(dlFileVersion);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _dlFileVersionLocalService.getBasePersistence();
 	}
 
 	@Override

@@ -17,9 +17,11 @@ package com.liferay.poshi.core.elements;
 import com.liferay.poshi.core.PoshiContext;
 import com.liferay.poshi.core.script.PoshiScriptParserException;
 import com.liferay.poshi.core.script.PoshiScriptParserUtil;
+import com.liferay.poshi.core.selenium.LiferaySeleniumMethod;
 import com.liferay.poshi.core.util.CharPool;
 import com.liferay.poshi.core.util.ListUtil;
 import com.liferay.poshi.core.util.NaturalOrderStringComparator;
+import com.liferay.poshi.core.util.PoshiProperties;
 import com.liferay.poshi.core.util.RegexUtil;
 import com.liferay.poshi.core.util.StringUtil;
 import com.liferay.poshi.core.util.Validator;
@@ -77,21 +79,50 @@ public class ExecutePoshiElement extends PoshiElement {
 		if (fileExtension.equals("function") &&
 			poshiScript.startsWith("selenium.")) {
 
-			addAttribute("selenium", getCommandName(poshiScript));
+			String commandName = getCommandName(poshiScript);
+
+			addAttribute("selenium", commandName);
+
+			LiferaySeleniumMethod liferaySeleniumMethod =
+				PoshiContext.getLiferaySeleniumMethod(commandName);
 
 			List<String> methodParameterValues =
 				PoshiScriptParserUtil.getMethodParameterValues(
 					poshiScriptParentheticalContent, this);
+			PoshiProperties poshiProperties =
+				PoshiProperties.getPoshiProperties();
 
-			for (int i = 0; i < methodParameterValues.size(); i++) {
-				String methodParameterValue = methodParameterValues.get(i);
+			if (!(liferaySeleniumMethod == null) &&
+				(liferaySeleniumMethod.getParameterCount() !=
+					methodParameterValues.size()) &&
+				poshiProperties.generateCommandSignature) {
 
-				if (isQuotedContent(methodParameterValue)) {
-					methodParameterValue = getDoubleQuotedContent(
-						methodParameterValue);
+				List<String> parameterNames =
+					liferaySeleniumMethod.getParameterNames();
+
+				for (int i = 0; i < parameterNames.size(); i++) {
+					StringBuilder sb = new StringBuilder();
+
+					sb.append("${");
+
+					sb.append(parameterNames.get(i));
+
+					sb.append("}");
+
+					addAttribute("argument" + (i + 1), sb.toString());
 				}
+			}
+			else {
+				for (int i = 0; i < methodParameterValues.size(); i++) {
+					String methodParameterValue = methodParameterValues.get(i);
 
-				addAttribute("argument" + (i + 1), methodParameterValue);
+					if (isQuotedContent(methodParameterValue)) {
+						methodParameterValue = getDoubleQuotedContent(
+							methodParameterValue);
+					}
+
+					addAttribute("argument" + (i + 1), methodParameterValue);
+				}
 			}
 
 			return;
@@ -335,9 +366,11 @@ public class ExecutePoshiElement extends PoshiElement {
 
 		String assignmentsString = ListUtil.toString(assignments);
 
-		if ((assignments.size() > 1) &&
-			assignmentsString.matches("(?s)\\w+\\s*=.+") &&
-			!isConditionValidInParent((PoshiElement)getParent())) {
+		if (((assignments.size() == 1) &&
+			 assignmentsString.startsWith("table = '''")) ||
+			((assignments.size() > 1) &&
+			 assignmentsString.matches("(?s)\\w+\\s*=.+") &&
+			 !isConditionValidInParent((PoshiElement)getParent()))) {
 
 			multilineSnippet = true;
 		}

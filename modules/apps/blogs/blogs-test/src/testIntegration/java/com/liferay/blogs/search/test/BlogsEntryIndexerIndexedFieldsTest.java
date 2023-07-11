@@ -102,7 +102,7 @@ public class BlogsEntryIndexerIndexedFieldsTest {
 
 		_blogsEntryFixture.updateDisplaySettings(locale);
 
-		BlogsEntry blogsEntry = _blogsEntryFixture.createBlogsEntry(title);
+		BlogsEntry blogsEntry = _blogsEntryFixture.addEntry(title);
 
 		assertFieldValues(_expectedFieldValues(blogsEntry), searchTerm, locale);
 	}
@@ -114,7 +114,7 @@ public class BlogsEntryIndexerIndexedFieldsTest {
 		Map<String, ?> map, String searchTerm, Locale locale) {
 
 		FieldValuesAssert.assertFieldValues(
-			map, name -> !name.equals("score"),
+			map, name -> !name.equals("score") && !name.equals("timestamp"),
 			searcher.search(
 				searchRequestBuilderFactory.builder(
 				).companyId(

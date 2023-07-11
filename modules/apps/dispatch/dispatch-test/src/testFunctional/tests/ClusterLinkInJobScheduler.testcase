@@ -5,6 +5,7 @@ definition {
 	property osgi.modules.includes = "dispatch-executor-sample";
 	property portal.release = "true";
 	property portal.upstream = "true";
+	property remote.elasticsearch.enabled = "true";
 	property testray.main.component.name = "Job Scheduler";
 
 	setUp {
@@ -14,9 +15,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {

@@ -21,10 +21,12 @@ import com.liferay.oauth2.provider.model.OAuth2Application;
 import com.liferay.oauth2.provider.model.OAuth2Authorization;
 import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
 import com.liferay.oauth2.provider.service.OAuth2AuthorizationService;
+import com.liferay.osb.faro.util.FaroPropsValues;
 import com.liferay.osb.faro.web.internal.application.ApiApplication;
 import com.liferay.osb.faro.web.internal.controller.BaseFaroController;
 import com.liferay.osb.faro.web.internal.controller.FaroController;
 import com.liferay.osb.faro.web.internal.model.display.main.TokenDisplay;
+import com.liferay.osb.faro.web.internal.util.AccessTokenExpiresInUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -58,6 +60,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -95,24 +98,38 @@ public class OAuth2Controller extends BaseFaroController {
 	@RolesAllowed(RoleConstants.SITE_ADMINISTRATOR)
 	public TokenDisplay newToken(
 			@PathParam("groupId") long groupId,
+			@QueryParam("expiresIn") Long expiresIn,
 			@Context HttpServletRequest httpServletRequest)
 		throws Exception {
 
 		OAuth2Application oAuth2Application = _getOrCreateOAuth2Application(
 			httpServletRequest);
 
-		JSONObject jsonObject = _jsonFactory.createJSONObject(
-			_invokeOAuth2Endpoint(
-				oAuth2Application.getClientId(),
-				oAuth2Application.getClientSecret()));
+		synchronized (this) {
+			try {
+				if (expiresIn == null) {
+					expiresIn = 3153600000L;
+				}
 
-		OAuth2Authorization oAuth2Authorization =
-			_fetchUserOAuth2AuthorizationByAccessToken(
-				jsonObject.getString("access_token"));
+				AccessTokenExpiresInUtil.setExpiresIn(expiresIn);
 
-		_setOAuth2AuthorizationGroupId(groupId, oAuth2Authorization);
+				JSONObject jsonObject = _jsonFactory.createJSONObject(
+					_invokeOAuth2Endpoint(
+						oAuth2Application.getClientId(),
+						oAuth2Application.getClientSecret()));
 
-		return _mapTokenDisplay(oAuth2Authorization);
+				OAuth2Authorization oAuth2Authorization =
+					_fetchUserOAuth2AuthorizationByAccessToken(
+						jsonObject.getString("access_token"));
+
+				_setOAuth2AuthorizationGroupId(groupId, oAuth2Authorization);
+
+				return _mapTokenDisplay(oAuth2Authorization);
+			}
+			finally {
+				AccessTokenExpiresInUtil.removeExpiresIn();
+			}
+		}
 	}
 
 	@Path("/tokens/{token}/revoke")
@@ -224,11 +241,11 @@ public class OAuth2Controller extends BaseFaroController {
 
 		return _oAuth2ApplicationLocalService.addOAuth2Application(
 			user.getCompanyId(), user.getUserId(), user.getFullName(),
-			Arrays.asList(GrantType.CLIENT_CREDENTIALS), StringPool.BLANK, 0,
-			user.getEmailAddress(), clientProfile.id(), _generateClientSecret(),
-			StringPool.BLANK, Collections.emptyList(), StringPool.BLANK, 0,
-			StringPool.BLANK, _generateApplicationName(), StringPool.BLANK,
-			Collections.emptyList(), false,
+			Arrays.asList(GrantType.CLIENT_CREDENTIALS), StringPool.BLANK,
+			user.getUserId(), user.getEmailAddress(), clientProfile.id(),
+			_generateClientSecret(), StringPool.BLANK, Collections.emptyList(),
+			StringPool.BLANK, 0, StringPool.BLANK, _generateApplicationName(),
+			StringPool.BLANK, Collections.emptyList(), false,
 			Arrays.asList(
 				ApiApplication.OAuth2ScopeAliases.RECOMMENDATIONS_EVERYTHING,
 				ApiApplication.OAuth2ScopeAliases.REPORTS_EVERYTHING),
@@ -259,7 +276,8 @@ public class OAuth2Controller extends BaseFaroController {
 		Client client = ClientBuilder.newClient();
 
 		WebTarget webTarget = client.target(
-			String.format(_O_AUTH2_ENDPOINT_TEMPLATE, _FARO_URL));
+			String.format(
+				_O_AUTH2_ENDPOINT_TEMPLATE, FaroPropsValues.FARO_URL));
 
 		Invocation.Builder builder = webTarget.request(
 			MediaType.APPLICATION_FORM_URLENCODED);
@@ -276,7 +294,7 @@ public class OAuth2Controller extends BaseFaroController {
 
 		Future<String> future = invocation.submit(String.class);
 
-		return future.get(3, TimeUnit.SECONDS);
+		return future.get(5, TimeUnit.SECONDS);
 	}
 
 	private TokenDisplay _mapTokenDisplay(
@@ -302,8 +320,6 @@ public class OAuth2Controller extends BaseFaroController {
 
 		expandoBridge.setAttribute("groupId", groupId, false);
 	}
-
-	private static final String _FARO_URL = System.getenv("FARO_URL");
 
 	private static final String _O_AUTH2_ENDPOINT_TEMPLATE =
 		"%s/o/oauth2/token";

@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>EVPUtils</title>
+</head>
+
+<body>
+<table border="1" cellpadding="1" cellspacing="1">
+<thead>
+<tr><td rowspan="1" colspan="3">EVPUtils</td></tr>
+</thead>
+
+<tbody>
+
+<!-- GENERAL_PATHS -->
+
+<tr>
+	<td>DROPDOWN_MENU</td>
+	<td>//div[contains(@class,'dropdown-menu') and contains(@class,'show')]//li[contains(@class,'dropdown-item') and contains(.,'${key_text}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORGANIZATION_DROPDOWN</td>
+	<td>//*[contains(@class,'options-organizations')]/li[contains(text(), '${key_text}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SIGN_IN</td>
+	<td>//div//a[contains(@class,'btn-solid') and contains(.,'Sign In')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>STATUS_LISTING</td>
+	<td>//*[normalize-space()='${key_organizationName}']//following::p[normalize-space()='${key_status}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>KEBAB_MENU_OPTION_ORGANIZATION</td>
+	<td>//span[contains(@class,'organizationName')][contains(text(),'${key_name}')]//following-sibling::div[@id="evp-organization-kebab-button"]</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

@@ -52,7 +52,8 @@ public class ObjectDefinitionServiceImpl
 			boolean enableComments, boolean enableLocalization,
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
 			String panelCategoryKey, Map<Locale, String> pluralLabelMap,
-			String scope, String storageType, List<ObjectField> objectFields)
+			boolean portlet, String scope, String storageType,
+			List<ObjectField> objectFields)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -61,12 +62,13 @@ public class ObjectDefinitionServiceImpl
 
 		return objectDefinitionLocalService.addCustomObjectDefinition(
 			getUserId(), enableComments, enableLocalization, labelMap, name,
-			panelAppOrder, panelCategoryKey, pluralLabelMap, scope, storageType,
-			objectFields);
+			panelAppOrder, panelCategoryKey, pluralLabelMap, portlet, scope,
+			storageType, objectFields);
 	}
 
 	@Override
-	public ObjectDefinition addObjectDefinition(String externalReferenceCode)
+	public ObjectDefinition addObjectDefinition(
+			String externalReferenceCode, boolean modifiable, boolean system)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -74,15 +76,15 @@ public class ObjectDefinitionServiceImpl
 			ObjectActionKeys.ADD_OBJECT_DEFINITION);
 
 		return objectDefinitionLocalService.addObjectDefinition(
-			externalReferenceCode, getUserId());
+			externalReferenceCode, getUserId(), modifiable, system);
 	}
 
 	@Override
 	public ObjectDefinition addSystemObjectDefinition(
-			long userId, boolean enableComments, Map<Locale, String> labelMap,
-			String name, String panelAppOrder, String panelCategoryKey,
-			Map<Locale, String> pluralLabelMap, String scope,
-			List<ObjectField> objectFields)
+			String externalReferenceCode, long userId, boolean enableComments,
+			Map<Locale, String> labelMap, String name, String panelAppOrder,
+			String panelCategoryKey, Map<Locale, String> pluralLabelMap,
+			String scope, List<ObjectField> objectFields)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -90,9 +92,10 @@ public class ObjectDefinitionServiceImpl
 			ObjectActionKeys.ADD_OBJECT_DEFINITION);
 
 		return objectDefinitionLocalService.addSystemObjectDefinition(
-			userId, null, null, enableComments, labelMap, true, name,
-			panelAppOrder, panelCategoryKey, null, null, pluralLabelMap, scope,
-			null, 1, WorkflowConstants.STATUS_DRAFT, objectFields);
+			externalReferenceCode, userId, null, null, enableComments, labelMap,
+			true, name, panelAppOrder, panelCategoryKey, null, null,
+			pluralLabelMap, scope, null, 1, WorkflowConstants.STATUS_DRAFT,
+			objectFields);
 	}
 
 	@Override

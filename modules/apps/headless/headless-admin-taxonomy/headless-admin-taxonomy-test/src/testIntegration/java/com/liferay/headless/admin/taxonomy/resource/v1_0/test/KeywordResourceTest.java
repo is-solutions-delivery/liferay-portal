@@ -21,11 +21,16 @@ import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.headless.admin.taxonomy.client.dto.v1_0.Keyword;
 import com.liferay.headless.admin.taxonomy.client.pagination.Page;
 import com.liferay.headless.admin.taxonomy.client.pagination.Pagination;
+import com.liferay.headless.admin.taxonomy.client.resource.v1_0.KeywordResource;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,6 +41,151 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class KeywordResourceTest extends BaseKeywordResourceTestCase {
+
+	@Override
+	@Test
+	public void testGetAssetLibraryKeywordsPage() throws Exception {
+		super.testGetAssetLibraryKeywordsPage();
+
+		Keyword keyword = testPostAssetLibraryKeyword_addKeyword(
+			randomKeyword());
+
+		keywordResource = KeywordResource.builder(
+		).authentication(
+			"test@liferay.com", "test"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameters(
+			"fields", "name"
+		).build();
+
+		Page<Keyword> page = keywordResource.getAssetLibraryKeywordsPage(
+			testDepotEntry.getDepotEntryId(), null, null, null,
+			Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+
+		assertEquals(
+			new Keyword() {
+				{
+					name = keyword.getName();
+				}
+			},
+			page.fetchFirstItem());
+
+		assertValid(page);
+
+		keywordResource = KeywordResource.builder(
+		).authentication(
+			"test@liferay.com", "test"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameters(
+			"restrictFields",
+			"actions,assetLibraryKey,creator,dateCreated,dateModified,name," +
+				"keywordUsageCount,subscribed"
+		).build();
+
+		page = keywordResource.getAssetLibraryKeywordsPage(
+			testDepotEntry.getDepotEntryId(), null, null, null,
+			Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+
+		assertEquals(
+			new Keyword() {
+				{
+					id = keyword.getId();
+				}
+			},
+			page.fetchFirstItem());
+
+		assertValid(page);
+
+		keywordResource.deleteKeyword(keyword.getId());
+	}
+
+	@Override
+	@Test
+	public void testGetKeyword() throws Exception {
+		super.testGetKeyword();
+
+		Keyword postKeyword = testGetKeyword_addKeyword();
+
+		Keyword getKeyword = keywordResource.getKeyword(postKeyword.getId());
+
+		assertValid(
+			getKeyword.getActions(),
+			HashMapBuilder.<String, Map<String, String>>put(
+				"delete",
+				HashMapBuilder.put(
+					"href",
+					"http://localhost:8080/o/headless-admin-taxonomy/v1.0" +
+						"/keywords/" + getKeyword.getId()
+				).put(
+					"method", "DELETE"
+				).build()
+			).put(
+				"get",
+				HashMapBuilder.put(
+					"href",
+					"http://localhost:8080/o/headless-admin-taxonomy/v1.0" +
+						"/keywords/" + getKeyword.getId()
+				).put(
+					"method", "GET"
+				).build()
+			).put(
+				"replace",
+				HashMapBuilder.put(
+					"href",
+					"http://localhost:8080/o/headless-admin-taxonomy/v1.0" +
+						"/keywords/" + getKeyword.getId()
+				).put(
+					"method", "PUT"
+				).build()
+			).put(
+				"subscribe",
+				HashMapBuilder.put(
+					"href",
+					StringBundler.concat(
+						"http://localhost:8080/o/headless-admin-taxonomy/v1.0",
+						"/keywords/", getKeyword.getId(), "/subscribe")
+				).put(
+					"method", "PUT"
+				).build()
+			).put(
+				"unsubscribe",
+				HashMapBuilder.put(
+					"href",
+					StringBundler.concat(
+						"http://localhost:8080/o/headless-admin-taxonomy/v1.0",
+						"/keywords/", getKeyword.getId(), "/unsubscribe")
+				).put(
+					"method", "PUT"
+				).build()
+			).build());
+
+		Keyword keyword = testGetKeyword_addKeyword();
+
+		keywordResource = KeywordResource.builder(
+		).authentication(
+			"test@liferay.com", "test"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameters(
+			"fields", "name"
+		).build();
+
+		assertEquals(
+			new Keyword() {
+				{
+					name = keyword.getName();
+				}
+			},
+			keywordResource.getKeyword(keyword.getId()));
+
+		keywordResource.deleteKeyword(keyword.getId());
+	}
 
 	@Override
 	@Test

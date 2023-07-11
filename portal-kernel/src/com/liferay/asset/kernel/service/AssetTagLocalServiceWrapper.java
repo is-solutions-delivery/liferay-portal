@@ -17,6 +17,7 @@ package com.liferay.asset.kernel.service;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 
 /**
@@ -612,6 +613,26 @@ public class AssetTagLocalServiceWrapper
 	}
 
 	/**
+	 * Returns a range of all the asset tags in the group.
+	 *
+	 * @param groupId the primary key of the group
+	 * @param start the lower bound of the range of asset tags
+	 * @param end the upper bound of the range of asset tags (not inclusive)
+	 * @param orderByComparator the comparator to order the asset tags
+	 (optionally <code>null</code>)
+	 * @return the range of matching asset tags
+	 */
+	@Override
+	public java.util.List<AssetTag> getGroupTags(
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<AssetTag>
+			orderByComparator) {
+
+		return _assetTagLocalService.getGroupTags(
+			groupId, start, end, orderByComparator);
+	}
+
+	/**
 	 * Returns the number of asset tags in the group.
 	 *
 	 * @param groupId the primary key of the group
@@ -974,6 +995,11 @@ public class AssetTagLocalServiceWrapper
 
 		return _assetTagLocalService.updateTag(
 			userId, tagId, name, serviceContext);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _assetTagLocalService.getBasePersistence();
 	}
 
 	@Override

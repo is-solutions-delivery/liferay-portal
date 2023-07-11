@@ -19,8 +19,8 @@ import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.search.elasticsearch7.internal.SearchHitDocumentTranslatorImpl;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.ElasticsearchAggregationVisitorFixture;
-import com.liferay.portal.search.elasticsearch7.internal.aggregation.pipeline.ElasticsearchPipelineAggregationVisitorFixture;
+import com.liferay.portal.search.elasticsearch7.internal.aggregation.ElasticsearchAggregationTranslatorFixture;
+import com.liferay.portal.search.elasticsearch7.internal.aggregation.pipeline.ElasticsearchPipelineAggregationTranslatorFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch7.internal.facet.DefaultFacetTranslator;
 import com.liferay.portal.search.elasticsearch7.internal.facet.FacetProcessor;
@@ -132,26 +132,26 @@ public class SearchRequestExecutorFixture {
 				legacyElasticsearchQueryTranslatorFixture.
 					getElasticsearchQueryTranslator();
 
-		ElasticsearchAggregationVisitorFixture
-			elasticsearchAggregationVisitorFixture =
-				new ElasticsearchAggregationVisitorFixture();
+		ElasticsearchAggregationTranslatorFixture
+			elasticsearchAggregationTranslatorFixture =
+				new ElasticsearchAggregationTranslatorFixture();
 
 		ElasticsearchFilterTranslatorFixture
 			elasticsearchFilterTranslatorFixture =
 				new ElasticsearchFilterTranslatorFixture(
 					legacyElasticsearchQueryTranslator);
 
-		ElasticsearchPipelineAggregationVisitorFixture
-			elasticsearchPipelineAggregationVisitorFixture =
-				new ElasticsearchPipelineAggregationVisitorFixture();
+		ElasticsearchPipelineAggregationTranslatorFixture
+			elasticsearchPipelineAggregationTranslatorFixture =
+				new ElasticsearchPipelineAggregationTranslatorFixture();
 
 		CommonSearchSourceBuilderAssembler commonSearchSourceBuilderAssembler =
 			new CommonSearchSourceBuilderAssemblerImpl();
 
 		ReflectionTestUtil.setFieldValue(
 			commonSearchSourceBuilderAssembler, "_aggregationTranslator",
-			elasticsearchAggregationVisitorFixture.
-				getElasticsearchAggregationVisitor());
+			elasticsearchAggregationTranslatorFixture.
+				getElasticsearchAggregationTranslator());
 		ReflectionTestUtil.setFieldValue(
 			commonSearchSourceBuilderAssembler, "_complexQueryBuilderFactory",
 			complexQueryBuilderFactory);
@@ -160,22 +160,20 @@ public class SearchRequestExecutorFixture {
 			_createFacetTranslator(
 				facetProcessor, legacyElasticsearchQueryTranslator));
 		ReflectionTestUtil.setFieldValue(
-			commonSearchSourceBuilderAssembler,
-			"_filterToQueryBuilderTranslator",
+			commonSearchSourceBuilderAssembler, "_filterTranslator",
 			elasticsearchFilterTranslatorFixture.
 				getElasticsearchFilterTranslator());
 		ReflectionTestUtil.setFieldValue(
-			commonSearchSourceBuilderAssembler,
-			"_legacyQueryToQueryBuilderTranslator",
+			commonSearchSourceBuilderAssembler, "_legacyQueryTranslator",
 			legacyElasticsearchQueryTranslator);
 		ReflectionTestUtil.setFieldValue(
 			commonSearchSourceBuilderAssembler,
 			"_pipelineAggregationTranslator",
-			elasticsearchPipelineAggregationVisitorFixture.
-				getElasticsearchPipelineAggregationVisitor());
+			elasticsearchPipelineAggregationTranslatorFixture.
+				getElasticsearchPipelineAggregationTranslator());
 		ReflectionTestUtil.setFieldValue(
-			commonSearchSourceBuilderAssembler,
-			"_queryToQueryBuilderTranslator", elasticsearchQueryTranslator);
+			commonSearchSourceBuilderAssembler, "_queryTranslator",
+			elasticsearchQueryTranslator);
 		ReflectionTestUtil.setFieldValue(
 			commonSearchSourceBuilderAssembler, "_statsTranslator",
 			statsTranslator);
@@ -248,6 +246,20 @@ public class SearchRequestExecutorFixture {
 				getElasticsearchFilterTranslator());
 
 		return _defaultFacetTranslator;
+	}
+
+	private ClosePointInTimeRequestExecutor
+		_createClosePointInTimeRequestExecutor(
+			ElasticsearchClientResolver elasticsearchClientResolver) {
+
+		ClosePointInTimeRequestExecutor closePointInTimeRequestExecutor =
+			new ClosePointInTimeRequestExecutorImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			closePointInTimeRequestExecutor, "_elasticsearchClientResolver",
+			elasticsearchClientResolver);
+
+		return closePointInTimeRequestExecutor;
 	}
 
 	private CountSearchRequestExecutor _createCountSearchRequestExecutor(
@@ -342,6 +354,10 @@ public class SearchRequestExecutorFixture {
 			new ElasticsearchSearchRequestExecutor();
 
 		ReflectionTestUtil.setFieldValue(
+			searchRequestExecutor, "_closePointInTimeRequestExecutor",
+			_createClosePointInTimeRequestExecutor(
+				elasticsearchClientResolver));
+		ReflectionTestUtil.setFieldValue(
 			searchRequestExecutor, "_countSearchRequestExecutor",
 			_createCountSearchRequestExecutor(
 				elasticsearchClientResolver, commonSearchSourceBuilderAssembler,
@@ -389,7 +405,7 @@ public class SearchRequestExecutorFixture {
 			searchSearchRequestAssembler, "_highlighterTranslator",
 			new DefaultHighlighterTranslator());
 		ReflectionTestUtil.setFieldValue(
-			searchSearchRequestAssembler, "_queryToQueryBuilderTranslator",
+			searchSearchRequestAssembler, "_queryTranslator",
 			elasticsearchQueryTranslator);
 		ReflectionTestUtil.setFieldValue(
 			searchSearchRequestAssembler, "_sortFieldTranslator",

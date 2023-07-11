@@ -1,9 +1,25 @@
 [
 	{
-		"key": "awaitingApprovalOnEvp",
-		"name": "Awaiting Approval On Evp",
+		"key": "awaitingApprovalOnManager",
+		"name": "Awaiting Approval On Manager",
 		"name_i18n": {
-			"en-US": "Awaiting Approval On Evp"
+			"en-US": "Awaiting Approval On Manager"
+		},
+		"type": "string"
+	},
+	{
+		"key": "awaitingApprovalOnEvp",
+		"name": "Awaiting Approval On EVP",
+		"name_i18n": {
+			"en-US": "Awaiting Approval On EVP"
+		},
+		"type": "string"
+	},
+	{
+		"key": "awaitingEmployeeProofOfExpenses",
+		"name": "Awaiting Employee Proof Of Expenses",
+		"name_i18n": {
+			"en-US": "Awaiting Employee Proof Of Expenses"
 		},
 		"type": "string"
 	},

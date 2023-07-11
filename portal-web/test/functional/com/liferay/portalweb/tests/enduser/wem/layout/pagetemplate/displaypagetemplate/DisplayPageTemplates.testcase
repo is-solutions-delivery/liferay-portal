@@ -27,9 +27,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -142,6 +142,8 @@ definition {
 
 			SelectWindow.selectPopUp(locator1 = "null");
 
+			Navigator.gotoNavTab(navTab = "SEO");
+
 			AssertElementPresent(
 				key_title = "SEO",
 				locator1 = "Header#H2_TITLE");
@@ -212,7 +214,7 @@ definition {
 	@priority = 4
 	@uitest
 	test ConfigureTheme {
-		property test.name.skip.portal.instance = "DisplayPageTemplates#ConfigureTheme";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Publish the display page template") {
 			PageEditor.publish();

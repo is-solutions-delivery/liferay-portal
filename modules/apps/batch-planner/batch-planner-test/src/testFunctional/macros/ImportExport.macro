@@ -316,9 +316,7 @@ definition {
 
 		DMDocument.assertFileNameFromTempFolder(fileName = "Export.zip");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "unzip-temp-file -DfileName=Export.zip");
+		AntCommands.runCommand("build-test.xml", "unzip-temp-file -DfileName=Export.zip");
 	}
 
 	macro gotoExport {
@@ -369,13 +367,13 @@ definition {
 
 		ImportExport.mapImport(fieldMappings = ${fieldMappings});
 
-		Button.click(button = "Next");
+		if (!(isSet(noExport))) {
+			var key_index = 1;
 
-		Button.click(button = "Start Import");
+			ImportExport.startImportAndWaitForSuccess();
 
-		WaitForElementPresent(locator1 = "ImportExport#EXECUTION_SUCCESS");
-
-		Click(locator1 = "Button#CLOSE");
+			Click(locator1 = "Button#CLOSE");
+		}
 	}
 
 	macro mapExport {
@@ -451,14 +449,20 @@ definition {
 			value1 = ${strategyType});
 	}
 
+	macro startImportAndWaitForSuccess {
+		Button.click(button = "Next");
+
+		Button.click(button = "Start Import");
+
+		WaitForElementPresent(locator1 = "ImportExport#EXECUTION_SUCCESS");
+	}
+
 	macro unzipDownloadedExportFile {
 		Button.click(button = "Download");
 
 		DownloadTempFile();
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "unzip-temp-file -DfileName=Export.zip");
+		AntCommands.runCommand("build-test.xml", "unzip-temp-file -DfileName=Export.zip");
 	}
 
 }

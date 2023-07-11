@@ -22,7 +22,6 @@ export default interface MDFRequest extends Partial<LiferayObject> {
 	currency: LiferayPicklist;
 	emailAddress?: string;
 	externalReferenceCode?: string;
-	externalReferenceCodeSF?: string;
 	liferayBusinessSalesGoals?: string[];
 	liferayBusinessSalesGoalsOther?: string;
 	liferaysUserIdSF?: number;
@@ -33,9 +32,12 @@ export default interface MDFRequest extends Partial<LiferayObject> {
 	overallCampaignName: string;
 	partnerCountry: LiferayPicklist;
 	r_usrToMDFReqs_userId?: number;
+	submitted?: boolean;
 	targetAudienceRoles?: string[];
 	targetMarkets?: string[];
+	totalClaimedRequest?: string;
 	totalCostOfExpense: number;
 	totalMDFRequestAmount: number;
+	totalPaidAmount?: string;
 	totalRequested?: number;
 }

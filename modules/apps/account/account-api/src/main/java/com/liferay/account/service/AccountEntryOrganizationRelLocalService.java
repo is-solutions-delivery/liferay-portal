@@ -280,10 +280,6 @@ public interface AccountEntryOrganizationRelLocalService
 		getAccountEntryOrganizationRelsByOrganizationId(
 			long organizationId, int start, int end);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getAccountEntryOrganizationRelsByOrganizationIdCount(
-		long organizationId);
-
 	/**
 	 * Returns the number of account entry organization rels.
 	 *
@@ -294,6 +290,10 @@ public interface AccountEntryOrganizationRelLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getAccountEntryOrganizationRelsCount(long accountEntryId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getAccountEntryOrganizationRelsCountByOrganizationId(
+		long organizationId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();

@@ -65,7 +65,12 @@
 
 <tr>
 	<td>DOCUMENTS_SAVE_STATUS</td>
-	<td>//span[@data-unique-id='DocumentTitleSaveStatus' and contains(.,'Saved')]</td>
+	<td>//div[contains(@aria-label,'aved') and not(contains(@aria-label,'Saving'))]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DOCUMENTS_SAVE_STATUS_DETAILS</td>
+	<td>//div[contains(@id,'saveStatusValue') and contains(text(), 'aved') and not(contains(text(),'Saving'))]</td>
 	<td></td>
 </tr>
 <tr>

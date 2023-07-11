@@ -1,4 +1,4 @@
-import BaseCard from 'cerebro-shared/components/base-card';
+import BaseCard from 'shared/components/base-card';
 import Card from 'shared/components/Card';
 import ErrorDisplay from 'shared/components/ErrorDisplay';
 import React, {useState} from 'react';
@@ -56,7 +56,7 @@ const CommerceCardWithStatesRenderer: React.FC<ICommerceMetricCardWithStatesRend
 	loading = false
 }) => (
 	<StatesRenderer empty={empty} error={!!error} loading={loading}>
-		<StatesRenderer.Loading displayCard />
+		<StatesRenderer.Loading />
 		<StatesRenderer.Empty
 			description={Liferay.Language.get(
 				'check-back-later-to-verify-if-data-has-been-received-from-your-data-sources'

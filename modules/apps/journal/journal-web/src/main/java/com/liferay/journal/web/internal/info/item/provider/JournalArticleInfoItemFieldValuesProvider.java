@@ -26,7 +26,8 @@ import com.liferay.info.display.request.attributes.contributor.InfoDisplayReques
 import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
-import com.liferay.info.field.type.TextInfoFieldType;
+import com.liferay.info.field.type.HTMLInfoFieldType;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
@@ -42,8 +43,10 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.util.JournalContent;
 import com.liferay.journal.util.JournalHelper;
 import com.liferay.journal.web.internal.info.item.JournalArticleInfoItemFields;
+import com.liferay.layout.page.template.info.item.provider.DisplayPageInfoItemFieldSetProvider;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
@@ -95,6 +98,13 @@ public class JournalArticleInfoItemFieldValuesProvider
 					JournalArticle.class.getName(),
 					journalArticle.getResourcePrimKey())
 			).infoFieldValues(
+				_displayPageInfoItemFieldSetProvider.getInfoFieldValues(
+					new InfoItemReference(
+						JournalArticle.class.getName(),
+						journalArticle.getResourcePrimKey()),
+					String.valueOf(journalArticle.getDDMStructureId()),
+					_getThemeDisplay())
+			).infoFieldValues(
 				_expandoInfoItemFieldSetProvider.getInfoFieldValues(
 					JournalArticle.class.getName(), journalArticle)
 			).infoFieldValues(
@@ -118,6 +128,9 @@ public class JournalArticleInfoItemFieldValuesProvider
 		catch (NoSuchInfoItemException noSuchInfoItemException) {
 			throw new RuntimeException(
 				"Caught unexpected exception", noSuchInfoItemException);
+		}
+		catch (Exception exception) {
+			throw new RuntimeException("Unexpected exception", exception);
 		}
 	}
 
@@ -155,8 +168,11 @@ public class JournalArticleInfoItemFieldValuesProvider
 
 		String friendlyURL =
 			_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-				JournalArticle.class.getName(),
-				journalArticle.getResourcePrimKey(), themeDisplay);
+				new InfoItemReference(
+					JournalArticle.class.getName(),
+					new ClassPKInfoItemIdentifier(
+						journalArticle.getResourcePrimKey())),
+				themeDisplay);
 
 		if (Validator.isNotNull(friendlyURL)) {
 			return friendlyURL;
@@ -292,7 +308,9 @@ public class JournalArticleInfoItemFieldValuesProvider
 					JournalArticleInfoItemFields.publishDateInfoField,
 					journalArticle.getDisplayDate()));
 
-			if (themeDisplay != null) {
+			if ((themeDisplay != null) &&
+				!FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
+
 				journalArticleFieldValues.add(
 					new InfoFieldValue<>(
 						JournalArticleInfoItemFields.displayPageURLInfoField,
@@ -317,13 +335,11 @@ public class JournalArticleInfoItemFieldValuesProvider
 		return new InfoFieldValue<>(
 			InfoField.builder(
 			).infoFieldType(
-				TextInfoFieldType.INSTANCE
+				HTMLInfoFieldType.INSTANCE
 			).namespace(
 				StringPool.BLANK
 			).name(
 				fieldName
-			).attribute(
-				TextInfoFieldType.HTML, true
 			).labelInfoLocalizedValue(
 				InfoLocalizedValue.localize(getClass(), fieldName)
 			).build(),
@@ -424,6 +440,10 @@ public class JournalArticleInfoItemFieldValuesProvider
 	@Reference
 	private DDMFormValuesInfoFieldValuesProvider
 		_ddmFormValuesInfoFieldValuesProvider;
+
+	@Reference
+	private DisplayPageInfoItemFieldSetProvider
+		_displayPageInfoItemFieldSetProvider;
 
 	@Reference
 	private ExpandoInfoItemFieldSetProvider _expandoInfoItemFieldSetProvider;

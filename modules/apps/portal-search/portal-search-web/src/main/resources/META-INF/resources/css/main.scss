@@ -1,10 +1,10 @@
 @import 'atlas-variables';
+@import 'cadmin-variables';
 
+@import 'components/search_auto_fields';
 @import 'components/select_vocabularies';
-@import 'shared/input_sets';
 
 @import 'search_bar';
 @import 'search_facet_display_vocabulary';
 @import 'search_insights';
 @import 'search_portlet';
-@import 'search_sort';

@@ -25,8 +25,8 @@ import ClayLayout from '@clayui/layout';
 import ClayModal from '@clayui/modal';
 import ClayMultiSelect from '@clayui/multi-select';
 import classNames from 'classnames';
-import {format, getYear, isBefore} from 'date-fns';
-import {fetch, navigate, openModal, openToast} from 'frontend-js-web';
+import {format, getYear, isBefore, isEqual} from 'date-fns';
+import {fetch, navigate, openModal, openToast, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
 import {API_URL, OBJECT_RELATIONSHIP} from '../Constants';
@@ -95,10 +95,14 @@ function AddFDSFilterModalContent({
 	onSave,
 }: IPropsAddFDSFilterModalContent) {
 	const [from, setFrom] = useState<string>(
-		(filter as IDateFilter)?.from ?? ''
+		(filter as IDateFilter)?.from ?? format(new Date(), 'yyyy-MM-dd')
 	);
-	const [include, setInclude] = useState<boolean>(
-		(filter as IDynamicFilter)?.include ?? true
+	const [includeMode, setIncludeMode] = useState<string>(
+		filter
+			? (filter as IDynamicFilter)?.include
+				? 'include'
+				: 'exclude'
+			: 'include'
 	);
 	const [isValidDateRange, setIsValidDateRange] = useState(true);
 	const [multiple, setMultiple] = useState<boolean>(
@@ -111,7 +115,9 @@ function AddFDSFilterModalContent({
 		fields.find((item) => item.name === filter?.fieldName) || null
 	);
 	const [selectedPicklist, setSelectedPicklist] = useState<IPickList>();
-	const [to, setTo] = useState<string>((filter as IDateFilter)?.to ?? '');
+	const [to, setTo] = useState<string>(
+		(filter as IDateFilter)?.to ?? format(new Date(), 'yyyy-MM-dd')
+	);
 
 	useEffect(() => {
 		getAllPicklists().then((items) => {
@@ -139,8 +145,12 @@ function AddFDSFilterModalContent({
 	useEffect(() => {
 		let isValid = true;
 
+		const dateTo = new Date(to);
+
+		const dateFrom = new Date(from);
+
 		if (to && from) {
-			isValid = isBefore(new Date(from), new Date(to));
+			isValid = isBefore(dateFrom, dateTo) || isEqual(dateFrom, dateTo);
 		}
 
 		setIsValidDateRange(isValid);
@@ -183,7 +193,7 @@ function AddFDSFilterModalContent({
 				...body,
 				[OBJECT_RELATIONSHIP.FDS_VIEW_FDS_DYNAMIC_FILTER_ID]:
 					fdsView.id,
-				include,
+				include: includeMode === 'include',
 				listTypeDefinitionId: selectedPicklist?.id,
 				multiple,
 				preselectedValues: preselectedValues.map((item) => item.id),
@@ -239,7 +249,9 @@ function AddFDSFilterModalContent({
 	return (
 		<>
 			<ClayModal.Header>
-				{Liferay.Language.get('new-filter')}
+				{filter
+					? sub(Liferay.Language.get('edit-x-filter'), [filter.name])
+					: Liferay.Language.get('new-filter')}
 			</ClayModal.Header>
 
 			<ClayModal.Body>
@@ -493,6 +505,7 @@ function AddFDSFilterModalContent({
 													value: item.id,
 												})
 											)}
+											loadingState={4}
 											onItemsChange={(items: any) => {
 												setPreselectedValues(
 													items.map((item: any) =>
@@ -558,23 +571,23 @@ function AddFDSFilterModalContent({
 
 										<ClayRadioGroup
 											name={includeModeFormElementId}
-											onChange={(newVal: any) => {
-												setInclude(newVal === 'true');
-											}}
-											value={include ? 'true' : 'false'}
+											onChange={(val: any) =>
+												setIncludeMode(val)
+											}
+											value={includeMode}
 										>
 											<ClayRadio
 												label={Liferay.Language.get(
 													'include'
 												)}
-												value="true"
+												value="include"
 											/>
 
 											<ClayRadio
 												label={Liferay.Language.get(
 													'exclude'
 												)}
-												value="false"
+												value="exclude"
 											/>
 										</ClayRadioGroup>
 									</ClayForm.Group>
@@ -591,7 +604,8 @@ function AddFDSFilterModalContent({
 						<ClayButton
 							disabled={
 								!selectedField ||
-								(!multiple && preselectedValues.length > 1)
+								(!multiple && preselectedValues.length > 1) ||
+								!isValidDateRange
 							}
 							form={formElementId}
 							type="submit"

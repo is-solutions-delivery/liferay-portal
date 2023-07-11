@@ -58,10 +58,15 @@ public interface ObjectField extends ObjectFieldModel, PersistedModel {
 
 	public boolean compareBusinessType(String businessType);
 
+	public String getI18nObjectFieldName();
+
 	public ObjectDefinition getObjectDefinition()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public java.util.List<ObjectFieldSetting> getObjectFieldSettings();
+
+	public boolean isDeletionAllowed()
+		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public void setObjectFieldSettings(
 		java.util.List<ObjectFieldSetting> objectFieldSettings);

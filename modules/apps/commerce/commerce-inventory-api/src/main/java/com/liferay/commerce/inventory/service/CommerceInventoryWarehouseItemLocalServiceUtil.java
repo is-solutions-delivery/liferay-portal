@@ -420,14 +420,6 @@ public class CommerceInventoryWarehouseItemLocalServiceUtil {
 	}
 
 	public static List<CommerceInventoryWarehouseItem>
-		getCommerceInventoryWarehouseItems(
-			long companyId, String sku, int start, int end) {
-
-		return getService().getCommerceInventoryWarehouseItems(
-			companyId, sku, start, end);
-	}
-
-	public static List<CommerceInventoryWarehouseItem>
 		getCommerceInventoryWarehouseItemsByCompanyId(
 			long companyId, int start, int end) {
 
@@ -466,6 +458,13 @@ public class CommerceInventoryWarehouseItemLocalServiceUtil {
 
 		return getService().getCommerceInventoryWarehouseItemsCount(
 			commerceInventoryWarehouseId);
+	}
+
+	public static int getCommerceInventoryWarehouseItemsCount(
+		long companyId, long groupId, String sku) {
+
+		return getService().getCommerceInventoryWarehouseItemsCount(
+			companyId, groupId, sku);
 	}
 
 	public static int getCommerceInventoryWarehouseItemsCount(

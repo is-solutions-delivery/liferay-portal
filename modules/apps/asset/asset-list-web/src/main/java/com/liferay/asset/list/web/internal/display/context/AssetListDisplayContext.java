@@ -162,7 +162,7 @@ public class AssetListDisplayContext {
 		}
 
 		SearchContainer<AssetListEntry> assetListEntriesSearchContainer =
-			new SearchContainer(
+			new SearchContainer<>(
 				_renderRequest, _renderResponse.createRenderURL(), null,
 				"there-are-no-collections");
 
@@ -310,7 +310,7 @@ public class AssetListDisplayContext {
 	}
 
 	public String getClassName(AssetRendererFactory<?> assetRendererFactory) {
-		Class<? extends AssetRendererFactory> clazz =
+		Class<? extends AssetRendererFactory<?>> clazz =
 			_assetRendererFactoryClassProvider.getClass(assetRendererFactory);
 
 		String className = clazz.getName();
@@ -377,6 +377,10 @@ public class AssetListDisplayContext {
 	public String getEditURL(AssetListEntry assetListEntry)
 		throws PortalException {
 
+		if (isLiveGroup()) {
+			return StringPool.BLANK;
+		}
+
 		if (AssetListEntryPermission.contains(
 				_themeDisplay.getPermissionChecker(), assetListEntry,
 				ActionKeys.UPDATE) ||
@@ -430,10 +434,6 @@ public class AssetListDisplayContext {
 		).build();
 	}
 
-	public String getOrderByCol() {
-		return _getOrderByCol();
-	}
-
 	public String getOrderByType() {
 		if (Validator.isNotNull(_orderByType)) {
 			return _orderByType;
@@ -478,19 +478,7 @@ public class AssetListDisplayContext {
 	}
 
 	public boolean isShowAddAssetListEntryAction() {
-		Group group = _themeDisplay.getScopeGroup();
-
-		if (group.isLayout()) {
-			group = group.getParentGroup();
-		}
-
-		StagingGroupHelper stagingGroupHelper =
-			StagingGroupHelperUtil.getStagingGroupHelper();
-
-		if (stagingGroupHelper.isLiveGroup(group) &&
-			stagingGroupHelper.isStagedPortlet(
-				group, AssetListPortletKeys.ASSET_LIST)) {
-
+		if (isLiveGroup()) {
 			return false;
 		}
 

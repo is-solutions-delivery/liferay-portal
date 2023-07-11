@@ -327,6 +327,21 @@ public interface CommerceOrderItemModel
 	public void setCProductId(long CProductId);
 
 	/**
+	 * Returns the customer commerce order item ID of this commerce order item.
+	 *
+	 * @return the customer commerce order item ID of this commerce order item
+	 */
+	public long getCustomerCommerceOrderItemId();
+
+	/**
+	 * Sets the customer commerce order item ID of this commerce order item.
+	 *
+	 * @param customerCommerceOrderItemId the customer commerce order item ID of this commerce order item
+	 */
+	public void setCustomerCommerceOrderItemId(
+		long customerCommerceOrderItemId);
+
+	/**
 	 * Returns the parent commerce order item ID of this commerce order item.
 	 *
 	 * @return the parent commerce order item ID of this commerce order item
@@ -858,6 +873,27 @@ public interface CommerceOrderItemModel
 	 * @param priceManuallyAdjusted the price manually adjusted of this commerce order item
 	 */
 	public void setPriceManuallyAdjusted(boolean priceManuallyAdjusted);
+
+	/**
+	 * Returns the price on application of this commerce order item.
+	 *
+	 * @return the price on application of this commerce order item
+	 */
+	public boolean getPriceOnApplication();
+
+	/**
+	 * Returns <code>true</code> if this commerce order item is price on application.
+	 *
+	 * @return <code>true</code> if this commerce order item is price on application; <code>false</code> otherwise
+	 */
+	public boolean isPriceOnApplication();
+
+	/**
+	 * Sets whether this commerce order item is price on application.
+	 *
+	 * @param priceOnApplication the price on application of this commerce order item
+	 */
+	public void setPriceOnApplication(boolean priceOnApplication);
 
 	/**
 	 * Returns the printed note of this commerce order item.

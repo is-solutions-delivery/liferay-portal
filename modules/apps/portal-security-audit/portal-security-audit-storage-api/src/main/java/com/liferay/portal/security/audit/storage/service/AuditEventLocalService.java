@@ -241,18 +241,19 @@ public interface AuditEventLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AuditEvent> getAuditEvents(
-		long companyId, long userId, String userName, Date createDateGT,
-		Date createDateLT, String eventType, String className, String classPK,
-		String clientHost, String clientIP, String serverName, int serverPort,
-		String sessionID, boolean andSearch, int start, int end);
+		long companyId, long groupId, long userId, String userName,
+		Date createDateGT, Date createDateLT, String eventType,
+		String className, String classPK, String clientHost, String clientIP,
+		String serverName, int serverPort, String sessionID, boolean andSearch,
+		int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<AuditEvent> getAuditEvents(
-		long companyId, long userId, String userName, Date createDateGT,
-		Date createDateLT, String eventType, String className, String classPK,
-		String clientHost, String clientIP, String serverName, int serverPort,
-		String sessionID, boolean andSearch, int start, int end,
-		OrderByComparator<AuditEvent> orderByComparator);
+		long companyId, long groupId, long userId, String userName,
+		Date createDateGT, Date createDateLT, String eventType,
+		String className, String classPK, String clientHost, String clientIP,
+		String serverName, int serverPort, String sessionID, boolean andSearch,
+		int start, int end, OrderByComparator<AuditEvent> orderByComparator);
 
 	/**
 	 * Returns the number of audit events.
@@ -267,10 +268,10 @@ public interface AuditEventLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getAuditEventsCount(
-		long companyId, long userId, String userName, Date createDateGT,
-		Date createDateLT, String eventType, String className, String classPK,
-		String clientHost, String clientIP, String serverName, int serverPort,
-		String sessionID, boolean andSearch);
+		long companyId, long groupId, long userId, String userName,
+		Date createDateGT, Date createDateLT, String eventType,
+		String className, String classPK, String clientHost, String clientIP,
+		String serverName, int serverPort, String sessionID, boolean andSearch);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();

@@ -20,6 +20,40 @@ definition {
 		Button.clickSave();
 	}
 
+	macro assertExposedActionsInSchema {
+		Variables.assertDefined(parameterList = "${schema},${property},${method},${objectHref}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		AssertTextEquals(
+			field = "actions",
+			locator1 = "OpenAPI#SCHEMA_PROPERTY",
+			property = ${property},
+			schema = ${schema},
+			value1 = "${property} { method string default: ${method} href string default: ${portalURL}/o/${objectHref} }");
+	}
+
+	macro executeAllActionInSchema {
+		Variables.assertDefined(parameterList = "${schema},${actionsList}");
+
+		Click(
+			locator1 = "OpenAPI#SCHEMA_COLLAPSED",
+			schema = ${schema});
+
+		Click(
+			field = "actions",
+			locator1 = "OpenAPI#SCHEMA_FIELD_COLLAPSED",
+			schema = ${schema});
+
+		for (var property : list ${actionsList}) {
+			Click(
+				field = "actions",
+				locator1 = "OpenAPI#SCHEMA_PROPERTY_COLLAPSED",
+				property = ${property},
+				schema = ${schema});
+		}
+	}
+
 	macro executeAPIMethodWithParameters {
 		Variables.assertDefined(parameterList = "${service},${method},${parameter}");
 
@@ -43,6 +77,14 @@ definition {
 			method = ${method},
 			parameter = ${parameter},
 			value1 = ${value});
+
+		if (isSet(parameter_two)) {
+			Type(
+				locator1 = "OpenAPI#PARAMETER_UNDER_METHOD",
+				method = ${method},
+				parameter = ${parameter_two},
+				value1 = ${value_two});
+		}
 
 		if (isSet(requestBody)) {
 			Type(
@@ -80,6 +122,25 @@ definition {
 			value = "Execute Query (Ctrl-Enter)");
 	}
 
+	macro expandPropertyInActionsSchema {
+		Variables.assertDefined(parameterList = "${schema},${property}");
+
+		Click(
+			locator1 = "OpenAPI#SCHEMA_COLLAPSED",
+			schema = ${schema});
+
+		Click(
+			field = "actions",
+			locator1 = "OpenAPI#SCHEMA_FIELD_COLLAPSED",
+			schema = ${schema});
+
+		Click(
+			field = "actions",
+			locator1 = "OpenAPI#SCHEMA_PROPERTY_COLLAPSED",
+			property = ${property},
+			schema = ${schema});
+	}
+
 	macro navigateToOpenAPI {
 		if (isSet(virtualHost)) {
 			if (!(isSet(port))) {
@@ -94,6 +155,9 @@ definition {
 
 		if (isSet(api)) {
 			Navigator.openSpecificURL(url = "${portalURL}/o/api?endpoint=${portalURL}/o/${api}/${version}/openapi.json");
+		}
+		else if (isSet(customObjectPlural)) {
+			Navigator.openSpecificURL(url = "${portalURL}/o/api?endpoint=${portalURL}/o/c/${customObjectPlural}/openapi.json");
 		}
 		else {
 			Navigator.openSpecificURL(url = "${portalURL}/o/api");

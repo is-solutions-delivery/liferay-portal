@@ -167,6 +167,7 @@ public class FunctionalBatchBuildTestrayCaseResult
 		testrayAttachments.addAll(getLiferayLogTestrayAttachments());
 		testrayAttachments.addAll(getLiferayOSGiLogTestrayAttachments());
 
+		testrayAttachments.add(_getPoshiConsoleTestrayAttachment());
 		testrayAttachments.add(_getPoshiReportTestrayAttachment());
 		testrayAttachments.add(_getPoshiSummaryTestrayAttachment());
 
@@ -184,6 +185,11 @@ public class FunctionalBatchBuildTestrayCaseResult
 
 		TestClassResult testClassResult = build.getTestClassResult(
 			"com.liferay.poshi.runner.PoshiRunner");
+
+		if (testClassResult == null) {
+			testClassResult = build.getTestClassResult(
+				"com.liferay.poshi.runner.ParallelPoshiRunner");
+		}
 
 		if (testClassResult == null) {
 			return null;
@@ -208,6 +214,22 @@ public class FunctionalBatchBuildTestrayCaseResult
 		}
 
 		return super.getLiferayOSGiLogTestrayAttachments();
+	}
+
+	private TestrayAttachment _getPoshiConsoleTestrayAttachment() {
+		if (getTestResult() == null) {
+			return null;
+		}
+
+		String name = getName();
+
+		name = name.replace("#", "_");
+
+		return getTestrayAttachment(
+			getBuild(), "Poshi Console",
+			JenkinsResultsParserUtil.combine(
+				getAxisBuildURLPath(), "/",
+				JenkinsResultsParserUtil.fixURL(name), "/console.txt.gz"));
 	}
 
 	private TestrayAttachment _getPoshiReportTestrayAttachment() {

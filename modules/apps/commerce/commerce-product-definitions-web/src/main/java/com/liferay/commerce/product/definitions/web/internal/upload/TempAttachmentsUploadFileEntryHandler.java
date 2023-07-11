@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.File;
+import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.upload.UniqueFileNameProvider;
@@ -60,11 +61,12 @@ public class TempAttachmentsUploadFileEntryHandler
 				WebKeys.THEME_DISPLAY);
 
 		String fileName = uploadPortletRequest.getFileName(_PARAMETER_NAME);
-
-		_validateFile(fileName, uploadPortletRequest.getSize(_PARAMETER_NAME));
-
 		String contentType = uploadPortletRequest.getContentType(
 			_PARAMETER_NAME);
+
+		_validateFile(
+			fileName, contentType,
+			uploadPortletRequest.getSize(_PARAMETER_NAME));
 
 		try (InputStream inputStream = uploadPortletRequest.getFileAsStream(
 				_PARAMETER_NAME)) {
@@ -117,7 +119,7 @@ public class TempAttachmentsUploadFileEntryHandler
 		}
 	}
 
-	private void _validateFile(String fileName, long size)
+	private void _validateFile(String fileName, String contentType, long size)
 		throws PortalException {
 
 		if ((_attachmentsConfiguration.imageMaxSize() > 0) &&
@@ -132,7 +134,12 @@ public class TempAttachmentsUploadFileEntryHandler
 
 		for (String imageExtension : imageExtensions) {
 			if (StringPool.STAR.equals(imageExtension) ||
-				imageExtension.equals(StringPool.PERIOD + extension)) {
+				(imageExtension.equals(StringPool.PERIOD + extension) &&
+				 MimeTypesUtil.getExtensionContentType(
+					 imageExtension
+				 ).equals(
+					 contentType
+				 ))) {
 
 				return;
 			}

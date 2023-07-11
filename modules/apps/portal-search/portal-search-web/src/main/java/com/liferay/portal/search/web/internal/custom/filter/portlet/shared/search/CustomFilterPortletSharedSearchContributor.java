@@ -25,8 +25,6 @@ import com.liferay.portal.search.web.internal.custom.filter.portlet.CustomFilter
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 
-import java.util.Optional;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -46,7 +44,7 @@ public class CustomFilterPortletSharedSearchContributor
 
 		CustomFilterPortletPreferences customFilterPortletPreferences =
 			new CustomFilterPortletPreferencesImpl(
-				portletSharedSearchSettings.getPortletPreferencesOptional());
+				portletSharedSearchSettings.getPortletPreferences());
 
 		SearchRequestBuilder searchRequestBuilder =
 			portletSharedSearchSettings.getFederatedSearchRequestBuilder(
@@ -100,13 +98,12 @@ public class CustomFilterPortletSharedSearchContributor
 			return null;
 		}
 
-		Optional<String> parameterValueOptional =
-			portletSharedSearchSettings.getParameterOptional(
-				CustomFilterPortletUtil.getParameterName(
-					customFilterPortletPreferences));
+		String parameterValue = portletSharedSearchSettings.getParameter(
+			CustomFilterPortletUtil.getParameterName(
+				customFilterPortletPreferences));
 
-		if (parameterValueOptional.isPresent()) {
-			return parameterValueOptional.get();
+		if (parameterValue != null) {
+			return parameterValue;
 		}
 
 		if (Validator.isNotNull(filterValue)) {

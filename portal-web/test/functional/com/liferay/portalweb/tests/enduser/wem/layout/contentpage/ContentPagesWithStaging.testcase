@@ -228,7 +228,7 @@ definition {
 	@description = "This is a test for LPS-109854. Cannot view the sitemap of staging site as Guest."
 	@priority = 4
 	test CannotViewSiteMapOfStagingSiteAsGuest {
-		property test.name.skip.portal.instance = "ContentPagesWithStaging#CannotViewSiteMapOfStagingSiteAsGuest";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a content page") {
 			JSONLayout.addPublicLayout(
@@ -1511,8 +1511,6 @@ definition {
 		}
 
 		task ("Define the custom CSS") {
-			Navigator.gotoNavTab(navTab = "Design");
-
 			Theme.configureLookAndFeelSpecificLook();
 
 			Theme.configureLookAndFeelCustomCSS(cssText = '''div.component-paragraph {background-color: red; color:white;}''');
@@ -1569,8 +1567,6 @@ definition {
 		}
 
 		task ("Change the custom CSS") {
-			Navigator.gotoNavTab(navTab = "Design");
-
 			Theme.configureLookAndFeelCustomCSS(cssText = '''div.component-paragraph {background-color: blue; color:black;}''');
 
 			PortletEntry.save();
@@ -1819,15 +1815,9 @@ definition {
 			task ("Create a web content structure") {
 				WebContentStructures.openWebContentStructuresAdmin(siteURLKey = "${siteURLKey}-staging");
 
-				WebContentStructures.addCP(structureName = "Contact Information");
-
-				for (var fieldFieldLabel : list "Name,Email,Phone,Personal Web") {
-					DataEngine.addField(
-						fieldFieldLabel = ${fieldFieldLabel},
-						fieldName = "Text");
-				}
-
-				WebContentStructures.saveCP();
+				WebContentStructures.importStructure(
+					structureName = "Contact Information",
+					uploadFileName = "Structure_Contact_Information_Fields.json");
 			}
 
 			task ("Create a Web Content from Contact Information") {

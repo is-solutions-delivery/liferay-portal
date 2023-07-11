@@ -86,7 +86,7 @@ public class CTServicePublisher<T extends CTModel<T>> {
 		_ctService.updateWithUnsafeFunction(this::_publish);
 	}
 
-	private int _getPreDeletedRowCount(
+	private int _getPredeletedRowCount(
 			Connection connection, String tableName, String primaryKeyName)
 		throws Exception {
 
@@ -149,16 +149,16 @@ public class CTServicePublisher<T extends CTModel<T>> {
 		}
 
 		if (_deletionCTEntries != null) {
-			int updatedRowCount = _updateCTCollectionId(
-				connection, tableName, primaryKeyName,
-				_deletionCTEntries.values(), _targetCTCollectionId,
-				_sourceCTCollectionId, true, false);
+			int predeletedRowCount = _getPredeletedRowCount(
+				connection, tableName, primaryKeyName);
 
-			if (updatedRowCount != _deletionCTEntries.size()) {
-				int preDeletedRowCount = _getPreDeletedRowCount(
-					connection, tableName, primaryKeyName);
+			if (predeletedRowCount != _deletionCTEntries.size()) {
+				int updatedRowCount = _updateCTCollectionId(
+					connection, tableName, primaryKeyName,
+					_deletionCTEntries.values(), _targetCTCollectionId,
+					_sourceCTCollectionId, true, false);
 
-				if ((updatedRowCount + preDeletedRowCount) !=
+				if ((predeletedRowCount + updatedRowCount) !=
 						_deletionCTEntries.size()) {
 
 					throw new SystemException(

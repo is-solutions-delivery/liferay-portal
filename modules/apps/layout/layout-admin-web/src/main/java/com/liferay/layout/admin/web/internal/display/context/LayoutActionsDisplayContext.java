@@ -14,10 +14,10 @@
 
 package com.liferay.layout.admin.web.internal.display.context;
 
-import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
+import com.liferay.layout.admin.web.internal.helper.LayoutActionsHelper;
 import com.liferay.layout.admin.web.internal.security.permission.resource.LayoutPageTemplatePermission;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateActionKeys;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -28,14 +28,10 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
-import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -66,9 +62,11 @@ public class LayoutActionsDisplayContext {
 
 	public LayoutActionsDisplayContext(
 		HttpServletRequest httpServletRequest,
+		LayoutActionsHelper layoutActionsHelper,
 		SegmentsExperienceLocalService segmentsExperienceLocalService) {
 
 		_httpServletRequest = httpServletRequest;
+		_layoutActionsHelper = layoutActionsHelper;
 		_segmentsExperienceLocalService = segmentsExperienceLocalService;
 
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
@@ -82,7 +80,8 @@ public class LayoutActionsDisplayContext {
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.add(
-						() -> _isShowConfigureAction(layout),
+						() -> _layoutActionsHelper.isShowConfigureAction(
+							layout),
 						dropdownItem -> {
 							dropdownItem.setHref(
 								_getConfigureLayoutURL(layout));
@@ -90,7 +89,6 @@ public class LayoutActionsDisplayContext {
 							dropdownItem.setLabel(
 								LanguageUtil.get(
 									_httpServletRequest, "configure"));
-
 							dropdownItem.setTarget("_blank");
 						}
 					).add(
@@ -117,7 +115,6 @@ public class LayoutActionsDisplayContext {
 						dropdownItem -> {
 							dropdownItem.putData(
 								"action", "convertToPageTemplate");
-
 							dropdownItem.setIcon("page-template");
 							dropdownItem.setLabel(
 								LanguageUtil.get(
@@ -127,7 +124,8 @@ public class LayoutActionsDisplayContext {
 					).add(
 						() ->
 							_isContentLayout(layout) &&
-							_isShowPermissionsAction(layout),
+							_layoutActionsHelper.isShowPermissionsAction(
+								layout, layout.getGroup()),
 						dropdownItem -> {
 							dropdownItem.putData("action", "permissionLayout");
 							dropdownItem.putData(
@@ -147,7 +145,7 @@ public class LayoutActionsDisplayContext {
 					DropdownItemListBuilder.add(
 						() ->
 							_isContentLayout(layout) &&
-							_isShowDeleteAction(layout),
+							_layoutActionsHelper.isShowDeleteAction(layout),
 						dropdownItem -> {
 							dropdownItem.putData("action", "deleteLayout");
 							dropdownItem.putData(
@@ -215,7 +213,18 @@ public class LayoutActionsDisplayContext {
 		).setParameter(
 			"privateLayout", layout.isPrivateLayout()
 		).setParameter(
-			"selPlid", layout.getPlid()
+			"selPlid",
+			() -> {
+				if (layout.isTypeAssetDisplay() && !layout.isDraftLayout()) {
+					Layout draftLayout = layout.fetchDraftLayout();
+
+					if (draftLayout != null) {
+						return draftLayout.getPlid();
+					}
+				}
+
+				return layout.getPlid();
+			}
 		).buildPortletURL(
 		).toString();
 	}
@@ -348,13 +357,6 @@ public class LayoutActionsDisplayContext {
 		return _contentLayout;
 	}
 
-	private boolean _isShowConfigureAction(Layout layout)
-		throws PortalException {
-
-		return LayoutPermissionUtil.containsLayoutUpdatePermission(
-			_themeDisplay.getPermissionChecker(), layout);
-	}
-
 	private boolean _isShowConvertToPageTemplateAction(Layout layout)
 		throws PortalException {
 
@@ -373,49 +375,9 @@ public class LayoutActionsDisplayContext {
 		return false;
 	}
 
-	private boolean _isShowDeleteAction(Layout layout) throws PortalException {
-		if (StagingUtil.isIncomplete(layout) ||
-			!LayoutPermissionUtil.contains(
-				_themeDisplay.getPermissionChecker(), layout,
-				ActionKeys.DELETE)) {
-
-			return false;
-		}
-
-		Group group = layout.getGroup();
-
-		int layoutsCount = LayoutLocalServiceUtil.getLayoutsCount(
-			group, false, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
-
-		if (group.isGuest() && !layout.isPrivateLayout() &&
-			layout.isRootLayout() && (layoutsCount == 1)) {
-
-			return false;
-		}
-
-		return true;
-	}
-
-	private boolean _isShowPermissionsAction(Layout layout)
-		throws PortalException {
-
-		if (StagingUtil.isIncomplete(layout)) {
-			return false;
-		}
-
-		Group group = layout.getGroup();
-
-		if (group.isLayoutPrototype()) {
-			return false;
-		}
-
-		return LayoutPermissionUtil.contains(
-			_themeDisplay.getPermissionChecker(), layout,
-			ActionKeys.PERMISSIONS);
-	}
-
 	private Boolean _contentLayout;
 	private final HttpServletRequest _httpServletRequest;
+	private final LayoutActionsHelper _layoutActionsHelper;
 	private final SegmentsExperienceLocalService
 		_segmentsExperienceLocalService;
 	private final ThemeDisplay _themeDisplay;

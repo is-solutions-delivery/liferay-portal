@@ -23,6 +23,7 @@ import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.Resource;
@@ -1288,7 +1289,7 @@ public abstract class BaseBlogPostingResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("siteId")) {
 				blogPostingUnsafeConsumer = blogPosting -> postSiteBlogPosting(
 					(Long)parameters.get("siteId"), blogPosting);
@@ -1299,12 +1300,49 @@ public abstract class BaseBlogPostingResourceImpl
 			}
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			blogPostingUnsafeConsumer =
-				blogPosting -> putSiteBlogPostingByExternalReferenceCode(
-					blogPosting.getSiteId() != null ? blogPosting.getSiteId() :
-						(Long)parameters.get("siteId"),
-					blogPosting.getExternalReferenceCode(), blogPosting);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				blogPostingUnsafeConsumer =
+					blogPosting -> putSiteBlogPostingByExternalReferenceCode(
+						blogPosting.getSiteId() != null ?
+							blogPosting.getSiteId() :
+								(Long)parameters.get("siteId"),
+						blogPosting.getExternalReferenceCode(), blogPosting);
+			}
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
+				blogPostingUnsafeConsumer = blogPosting -> {
+					try {
+						BlogPosting getBlogPosting =
+							getSiteBlogPostingByExternalReferenceCode(
+								blogPosting.getSiteId() != null ?
+									blogPosting.getSiteId() :
+										(Long)parameters.get("siteId"),
+								blogPosting.getExternalReferenceCode());
+
+						patchBlogPosting(
+							getBlogPosting.getId() != null ?
+								getBlogPosting.getId() :
+									_parseLong(
+										(String)parameters.get(
+											"blogPostingId")),
+							blogPosting);
+					}
+					catch (NoSuchModelException noSuchModelException) {
+						if (parameters.containsKey("siteId")) {
+							postSiteBlogPosting(
+								(Long)parameters.get("siteId"), blogPosting);
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [siteId]");
+						}
+					}
+				};
+			}
 		}
 
 		if (blogPostingUnsafeConsumer == null) {
@@ -1412,14 +1450,14 @@ public abstract class BaseBlogPostingResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			blogPostingUnsafeConsumer = blogPosting -> patchBlogPosting(
 				blogPosting.getId() != null ? blogPosting.getId() :
 					_parseLong((String)parameters.get("blogPostingId")),
 				blogPosting);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			blogPostingUnsafeConsumer = blogPosting -> putBlogPosting(
 				blogPosting.getId() != null ? blogPosting.getId() :
 					_parseLong((String)parameters.get("blogPostingId")),

@@ -1995,7 +1995,7 @@ definition {
 
 		CommerceNavigator.gotoEntry(entryName = "Test Price List");
 
-		CommerceEntry.viewPriceListEntry(
+		CommercePriceLists.viewPriceListEntry(
 			priceListCatalog = "Test Catalog",
 			priceListCurrency = "USD",
 			priceListName = "Test Price List");
@@ -2085,7 +2085,7 @@ definition {
 	@priority = 3
 	test ViewExpiredPL {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "CPCommercePriceLists#ViewExpiredPL";
+		property test.liferay.virtual.instance = "false";
 
 		// TODO Review
 
@@ -2135,6 +2135,8 @@ definition {
 
 		var timeString = selenium.getElementValue("TextInput#DATE_TIME_PRICE_LISTS");
 
+		var timeString = DateUtil.format(${timeString}, "HH:mm", "hh:mm a");
+
 		var ampm = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 3);
 		var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 1);
 		var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 2);
@@ -2181,10 +2183,10 @@ definition {
 			checkboxName = "Never Expire",
 			locator1 = "Checkbox#ANY_CHECKBOX");
 
-		Type(
+		Type.sendKeys(
 			inputFieldId = "expirationDateTime",
 			locator1 = "TextInput#INPUT_ID",
-			value1 = "${hours}:${minutes} ${ampm}");
+			value1 = "${hours}:${minutes}${ampm}");
 
 		Button.clickPublish();
 
@@ -2212,7 +2214,7 @@ definition {
 	@priority = 3
 	test ViewExpiredPriceEntry {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "CPCommercePriceLists#ViewExpiredPriceEntry";
+		property test.liferay.virtual.instance = "false";
 
 		// TODO Review
 
@@ -2281,6 +2283,8 @@ definition {
 
 		var timeString = selenium.getElementValue("TextInput#DATE_TIME_PRICE_LISTS");
 
+		var timeString = DateUtil.format(${timeString}, "HH:mm", "hh:mm a");
+
 		var ampm = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 3);
 		var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 1);
 		var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 2);
@@ -2327,10 +2331,10 @@ definition {
 			checkboxName = "Never Expire",
 			locator1 = "Checkbox#ANY_CHECKBOX");
 
-		Type(
+		Type.sendKeys(
 			inputFieldId = "expirationDateTime",
 			locator1 = "TextInput#INPUT_ID",
-			value1 = "${hours}:${minutes} ${ampm}");
+			value1 = "${hours}:${minutes}${ampm}");
 
 		Button.clickSave();
 
@@ -2443,6 +2447,8 @@ definition {
 
 		var timeString = selenium.getElementValue("TextInput#DATE_TIME_PRICE_LISTS");
 
+		var timeString = DateUtil.format(${timeString}, "HH:mm", "hh:mm a");
+
 		var ampm = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 3);
 		var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 1);
 		var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 2);
@@ -2499,10 +2505,10 @@ definition {
 			checkboxName = "Never Expire",
 			locator1 = "Checkbox#ANY_CHECKBOX");
 
-		Type(
+		Type.sendKeys(
 			inputFieldId = "expirationDateTime",
 			locator1 = "TextInput#INPUT_ID",
-			value1 = "${hours}:${minutes} ${ampm}");
+			value1 = "${hours}:${minutes}${ampm}");
 
 		Button.clickSubmitButton();
 
@@ -2555,7 +2561,7 @@ definition {
 	@priority = 3
 	test ViewPriceNotAffectedByExpiredPriceEntities {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "CPCommercePriceLists#ViewPriceNotAffectedByExpiredPriceEntities";
+		property test.liferay.virtual.instance = "false";
 
 		// TODO Review
 
@@ -2623,6 +2629,8 @@ definition {
 
 			var timeString = selenium.getElementValue("TextInput#DATE_TIME_PRICE_LISTS");
 
+			var timeString = DateUtil.format(${timeString}, "HH:mm", "hh:mm a");
+
 			var ampm = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 3);
 			var hours = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 1);
 			var minutes = RegexUtil.replace(${timeString}, "([0-9]*):([0-9]*) ([A-Z]*)", 2);
@@ -2669,10 +2677,10 @@ definition {
 				checkboxName = "Never Expire",
 				locator1 = "Checkbox#ANY_CHECKBOX");
 
-			Type(
+			Type.sendKeys(
 				inputFieldId = "expirationDateTime",
 				locator1 = "TextInput#INPUT_ID",
-				value1 = "${hours}:${minutes} ${ampm}");
+				value1 = "${hours}:${minutes}${ampm}");
 
 			Button.clickSave();
 

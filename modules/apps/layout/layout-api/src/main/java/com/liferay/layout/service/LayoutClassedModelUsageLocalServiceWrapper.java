@@ -17,6 +17,7 @@ package com.liferay.layout.service;
 import com.liferay.layout.model.LayoutClassedModelUsage;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 
 /**
@@ -42,16 +43,6 @@ public class LayoutClassedModelUsageLocalServiceWrapper
 			layoutClassedModelUsageLocalService;
 	}
 
-	@Override
-	public LayoutClassedModelUsage addDefaultLayoutClassedModelUsage(
-		long groupId, long classNameId, long classPK,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-
-		return _layoutClassedModelUsageLocalService.
-			addDefaultLayoutClassedModelUsage(
-				groupId, classNameId, classPK, serviceContext);
-	}
-
 	/**
 	 * Adds the layout classed model usage to the database. Also notifies the appropriate model listeners.
 	 *
@@ -72,13 +63,14 @@ public class LayoutClassedModelUsageLocalServiceWrapper
 
 	@Override
 	public LayoutClassedModelUsage addLayoutClassedModelUsage(
-		long groupId, long classNameId, long classPK, String containerKey,
+		long groupId, long classNameId, long classPK,
+		String classedModelExternalReferenceCode, String containerKey,
 		long containerType, long plid,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
 
 		return _layoutClassedModelUsageLocalService.addLayoutClassedModelUsage(
-			groupId, classNameId, classPK, containerKey, containerType, plid,
-			serviceContext);
+			groupId, classNameId, classPK, classedModelExternalReferenceCode,
+			containerKey, containerType, plid, serviceContext);
 	}
 
 	/**
@@ -291,12 +283,14 @@ public class LayoutClassedModelUsageLocalServiceWrapper
 
 	@Override
 	public LayoutClassedModelUsage fetchLayoutClassedModelUsage(
-		long classNameId, long classPK, String containerKey, long containerType,
-		long plid) {
+		long classNameId, long classPK,
+		String classedModelExternalReferenceCode, String containerKey,
+		long containerType, long plid) {
 
 		return _layoutClassedModelUsageLocalService.
 			fetchLayoutClassedModelUsage(
-				classNameId, classPK, containerKey, containerType, plid);
+				classNameId, classPK, classedModelExternalReferenceCode,
+				containerKey, containerType, plid);
 	}
 
 	/**
@@ -522,22 +516,6 @@ public class LayoutClassedModelUsageLocalServiceWrapper
 			primaryKeyObj);
 	}
 
-	@Override
-	public int getUniqueLayoutClassedModelUsagesCount(
-		long classNameId, long classPK) {
-
-		return _layoutClassedModelUsageLocalService.
-			getUniqueLayoutClassedModelUsagesCount(classNameId, classPK);
-	}
-
-	@Override
-	public boolean hasDefaultLayoutClassedModelUsage(
-		long classNameId, long classPK) {
-
-		return _layoutClassedModelUsageLocalService.
-			hasDefaultLayoutClassedModelUsage(classNameId, classPK);
-	}
-
 	/**
 	 * Updates the layout classed model usage in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -554,6 +532,11 @@ public class LayoutClassedModelUsageLocalServiceWrapper
 
 		return _layoutClassedModelUsageLocalService.
 			updateLayoutClassedModelUsage(layoutClassedModelUsage);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _layoutClassedModelUsageLocalService.getBasePersistence();
 	}
 
 	@Override

@@ -270,7 +270,14 @@ class List extends PureComponent {
 						{!dataLoading && (
 							<>
 								{!displayError && !resultIds.length && (
-									<ClayEmptyState />
+									<ClayEmptyState
+										description={Liferay.Language.get(
+											'sorry,-no-results-were-found'
+										)}
+										title={Liferay.Language.get(
+											'no-results-found'
+										)}
+									/>
 								)}
 
 								{displayError && (

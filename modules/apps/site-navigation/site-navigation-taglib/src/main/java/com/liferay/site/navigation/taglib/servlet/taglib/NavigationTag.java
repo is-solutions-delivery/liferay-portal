@@ -19,7 +19,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateManagerUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.theme.NavItem;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -80,15 +79,8 @@ public class NavigationTag extends IncludeTag {
 
 	@Override
 	public int processEndTag() throws Exception {
-		PortletDisplayTemplate portletDisplayTemplate =
-			PortletDisplayTemplateUtil.getPortletDisplayTemplate();
-
-		if (portletDisplayTemplate == null) {
-			return EVAL_PAGE;
-		}
-
 		DDMTemplate portletDisplayDDMTemplate =
-			portletDisplayTemplate.getPortletDisplayTemplateDDMTemplate(
+			PortletDisplayTemplateUtil.getPortletDisplayTemplateDDMTemplate(
 				getDisplayStyleGroupId(),
 				ClassNameLocalServiceUtil.getClassNameId(NavItem.class),
 				getDisplayStyle(), true);
@@ -116,9 +108,9 @@ public class NavigationTag extends IncludeTag {
 		HttpServletResponse httpServletResponse =
 			(HttpServletResponse)pageContext.getResponse();
 
-		String result = portletDisplayTemplate.renderDDMTemplate(
-			httpServletRequest, httpServletResponse, portletDisplayDDMTemplate,
-			navItems,
+		String result = PortletDisplayTemplateUtil.renderDDMTemplate(
+			httpServletRequest, httpServletResponse,
+			portletDisplayDDMTemplate.getTemplateId(), navItems,
 			HashMapBuilder.<String, Object>put(
 				"branchNavItems", branchNavItems
 			).put(
@@ -202,8 +194,10 @@ public class NavigationTag extends IncludeTag {
 
 	protected String getDisplayStyle() {
 		if (Validator.isNotNull(_ddmTemplateKey)) {
-			return PortletDisplayTemplateManagerUtil.getDisplayStyle(
-				_ddmTemplateKey);
+			PortletDisplayTemplate portletDisplayTemplate =
+				ServletContextUtil.getPortletDisplayTemplate();
+
+			return portletDisplayTemplate.getDisplayStyle(_ddmTemplateKey);
 		}
 
 		return StringPool.BLANK;

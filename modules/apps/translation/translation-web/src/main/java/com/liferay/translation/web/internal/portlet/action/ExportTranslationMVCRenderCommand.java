@@ -15,6 +15,7 @@
 package com.liferay.translation.web.internal.portlet.action;
 
 import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
@@ -98,12 +99,15 @@ public class ExportTranslationMVCRenderCommand implements MVCRenderCommand {
 
 		InfoItemObjectProvider<Object> infoItemObjectProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
-				InfoItemObjectProvider.class, className);
+				InfoItemObjectProvider.class, className,
+				ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
 		List<Object> models = new ArrayList<>(classPKs.length);
 
 		for (long classPK : classPKs) {
-			models.add(infoItemObjectProvider.getInfoItem(classPK));
+			models.add(
+				infoItemObjectProvider.getInfoItem(
+					new ClassPKInfoItemIdentifier(classPK)));
 		}
 
 		return models;

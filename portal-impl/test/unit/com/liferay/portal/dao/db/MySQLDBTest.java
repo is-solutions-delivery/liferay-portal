@@ -35,6 +35,16 @@ public class MySQLDBTest extends BaseDBTestCase {
 		LiferayUnitTestRule.INSTANCE;
 
 	@Test
+	public void testGetLongDefaultValue() {
+		Assert.assertEquals("10", db.getDefaultValue("10"));
+	}
+
+	@Test
+	public void testGetVarcharDefaultValue() {
+		Assert.assertEquals("test", db.getDefaultValue("test"));
+	}
+
+	@Test
 	public void testRewordAlterColumnType() throws Exception {
 		Assert.assertEquals(
 			"alter table DLFolder modify userName varchar(75);\n",

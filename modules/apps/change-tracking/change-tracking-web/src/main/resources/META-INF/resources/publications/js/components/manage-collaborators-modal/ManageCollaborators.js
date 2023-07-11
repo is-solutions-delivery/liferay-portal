@@ -45,7 +45,6 @@ import {
 import React, {useCallback, useRef, useState} from 'react';
 
 import CollaboratorRow from './CollaboratorRow';
-import SharingAutocomplete from './SharingAutocomplete';
 
 const ManageCollaborators = ({
 	autocompleteUserURL,
@@ -54,6 +53,7 @@ const ManageCollaborators = ({
 	inviteUsersURL,
 	isPublicationTemplate,
 	namespace,
+	onlyForm,
 	readOnly,
 	roles,
 	setCollaboratorData,
@@ -242,9 +242,16 @@ const ManageCollaborators = ({
 	);
 
 	const {observer, onClose} = useModal({
-		onClose: () => setShowModal(false),
+		onClose: () => {
+			setShowModal(false);
+
+			if (onlyForm) {
+				window.top.Liferay.fire('close-modal');
+			}
+		},
 	});
 
+	const [networkStatus, setNetworkStatus] = useState(4);
 	const {resource: autocompleteResource} = useResource({
 		fetchOptions: {
 			credentials: 'include',
@@ -255,6 +262,7 @@ const ManageCollaborators = ({
 			attempts: 0,
 		},
 		link: autocompleteUserURL,
+		onNetworkStatusChange: setNetworkStatus,
 		variables: {
 			[`${namespace}keywords`]: multiSelectValue,
 		},
@@ -611,7 +619,7 @@ const ManageCollaborators = ({
 								<ClayMultiSelect
 									inputName={`${namespace}userEmailAddress`}
 									items={[]}
-									menuRenderer={SharingAutocomplete}
+									loadingState={networkStatus}
 									onChange={handleChange}
 									onItemsChange={handleItemsChange}
 									placeholder={Liferay.Language.get(
@@ -639,7 +647,61 @@ const ManageCollaborators = ({
 									}
 									spritemap={spritemap}
 									value={multiSelectValue}
-								/>
+								>
+									{(item) => (
+										<ClayMultiSelect.Item
+											data-tooltip-align="top"
+											disabled={item.isOwner}
+											key={item.userId}
+											textValue={item.label}
+											title={
+												item.isOwner
+													? Liferay.Language.get(
+															'cannot-update-permissions-for-an-owner'
+													  )
+													: ''
+											}
+										>
+											<div className="autofit-row autofit-row-center">
+												<div className="autofit-col mr-3">
+													<ClaySticker
+														className={`sticker-user-icon ${
+															item.portraitURL
+																? ''
+																: 'user-icon-color-' +
+																  (item.userId %
+																		10)
+														}`}
+														size="lg"
+													>
+														{item.portraitURL ? (
+															<div className="sticker-overlay">
+																<img
+																	className="sticker-img"
+																	src={
+																		item.portraitURL
+																	}
+																/>
+															</div>
+														) : (
+															<ClayIcon symbol="user" />
+														)}
+													</ClaySticker>
+												</div>
+
+												<div className="autofit-col">
+													<strong>
+														{item.fullName}
+													</strong>
+
+													<span>
+														{item.emailAddress}
+													</span>
+												</div>
+											</div>
+										</ClayMultiSelect.Item>
+									)}
+								</ClayMultiSelect>
 							</ClayInput.GroupItem>
 
 							<ClayInput.GroupItem shrink>
@@ -726,6 +788,54 @@ const ManageCollaborators = ({
 		);
 	};
 
+	const renderForm = () => {
+		return (
+			<ClayForm onSubmit={handleSubmit}>
+				{renderSelect()}
+
+				{renderCollaborators()}
+
+				{readOnly || (
+					<ClayModal.Footer
+						last={
+							<ClayButton.Group spaced>
+								<ClayButton
+									displayType="secondary"
+									onClick={() => {
+										if (
+											Object.keys(selectedItems) === 0 &&
+											Object.keys(updatedRoles) === 0
+										) {
+											onClose();
+											resetForm();
+										}
+										else {
+											openConfirmModal({
+												message: Liferay.Language.get(
+													'discard-unsaved-changes'
+												),
+												onConfirm: (isConfirmed) => {
+													if (isConfirmed) {
+														onClose();
+														resetForm();
+													}
+												},
+											});
+										}
+									}}
+								>
+									{Liferay.Language.get('cancel')}
+								</ClayButton>
+
+								{renderSubmit()}
+							</ClayButton.Group>
+						}
+					/>
+				)}
+			</ClayForm>
+		);
+	};
+
 	const renderModal = () => {
 		if (!showModal) {
 			return '';
@@ -738,78 +848,31 @@ const ManageCollaborators = ({
 				size="lg"
 				spritemap={spritemap}
 			>
-				<ClayForm onSubmit={handleSubmit}>
-					<ClayModal.Header>
-						<div className="autofit-row">
-							<div className="autofit-col">
-								<ClaySticker
-									className="sticker-use-icon user-icon-color-0"
-									displayType="secondary"
-									shape="circle"
-								>
-									<ClayIcon symbol="users" />
-								</ClaySticker>
-							</div>
+				<ClayModal.Header>
+					<div className="autofit-row">
+						<div className="autofit-col">
+							<ClaySticker
+								className="sticker-use-icon user-icon-color-0"
+								displayType="secondary"
+								shape="circle"
+							>
+								<ClayIcon symbol="users" />
+							</ClaySticker>
+						</div>
 
-							<div className="autofit-col">
-								<div className="modal-title">
-									{readOnly
-										? Liferay.Language.get(
-												'view-collaborators'
-										  )
-										: Liferay.Language.get('invite-users')}
-								</div>
+						<div className="autofit-col">
+							<div className="modal-title">
+								{readOnly
+									? Liferay.Language.get('view-collaborators')
+									: Liferay.Language.get('invite-users')}
 							</div>
 						</div>
-					</ClayModal.Header>
-
-					<div className="inline-scroller modal-body publications-invite-users-modal-body">
-						{renderSelect()}
-
-						{renderCollaborators()}
 					</div>
+				</ClayModal.Header>
 
-					{readOnly || (
-						<ClayModal.Footer
-							last={
-								<ClayButton.Group spaced>
-									<ClayButton
-										displayType="secondary"
-										onClick={() => {
-											if (
-												Object.keys(selectedItems) ===
-													0 &&
-												Object.keys(updatedRoles) === 0
-											) {
-												onClose();
-												resetForm();
-											}
-											else {
-												openConfirmModal({
-													message: Liferay.Language.get(
-														'discard-unsaved-changes'
-													),
-													onConfirm: (
-														isConfirmed
-													) => {
-														if (isConfirmed) {
-															onClose();
-															resetForm();
-														}
-													},
-												});
-											}
-										}}
-									>
-										{Liferay.Language.get('cancel')}
-									</ClayButton>
-
-									{renderSubmit()}
-								</ClayButton.Group>
-							}
-						/>
-					)}
-				</ClayForm>
+				<div className="inline-scroller modal-body publications-invite-users-modal-body">
+					{renderForm()}
+				</div>
 			</ClayModal>
 		);
 	};
@@ -949,7 +1012,9 @@ const ManageCollaborators = ({
 		);
 	};
 
-	return (
+	return onlyForm ? (
+		<>{renderForm()}</>
+	) : (
 		<>
 			{renderModal()}
 			{renderTrigger()}

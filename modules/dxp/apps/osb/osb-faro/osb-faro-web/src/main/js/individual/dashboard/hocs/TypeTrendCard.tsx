@@ -18,7 +18,7 @@ const TypeTrendWithData = compose<any>(
 		options: mapPropsToOptions,
 		props: mapResultToProps
 	}),
-	withLoading({page: false}),
+	withLoading(),
 	withError({page: false})
 )(TypeTrend);
 

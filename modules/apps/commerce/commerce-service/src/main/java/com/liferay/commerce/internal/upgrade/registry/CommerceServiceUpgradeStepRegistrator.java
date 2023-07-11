@@ -45,6 +45,7 @@ import com.liferay.commerce.internal.upgrade.v8_9_1.CommerceChannelAccountEntryR
 import com.liferay.commerce.internal.upgrade.v8_9_4.CommerceOrderUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v9_3_0.ConfigurationUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v9_4_0.AccountRoleUpgradeProcess;
+import com.liferay.commerce.internal.upgrade.v9_6_1.SupplierRoleUpgradeProcess;
 import com.liferay.commerce.model.impl.CPDAvailabilityEstimateModelImpl;
 import com.liferay.commerce.model.impl.CommerceAvailabilityEstimateModelImpl;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
@@ -569,6 +570,29 @@ public class CommerceServiceUpgradeStepRegistrator
 			new AccountRoleUpgradeProcess(
 				_companyLocalService, _resourceActionLocalService,
 				_resourcePermissionLocalService, _roleLocalService));
+
+		registry.register(
+			"9.4.0", "9.5.0",
+			new com.liferay.commerce.internal.upgrade.v9_5_0.
+				CommerceOrderItemUpgradeProcess());
+
+		registry.register(
+			"9.5.0", "9.5.1",
+			new com.liferay.commerce.internal.upgrade.v9_5_1.
+				CommercePermissionUpgradeProcess(
+					_resourceActionLocalService,
+					_resourcePermissionLocalService, _roleLocalService));
+
+		registry.register(
+			"9.5.1", "9.6.0",
+			UpgradeProcessFactory.addColumns(
+				"CommerceOrderItem", "customerCommerceOrderItemId LONG"));
+
+		registry.register(
+			"9.6.0", "9.6.1",
+			new SupplierRoleUpgradeProcess(
+				_companyLocalService, _resourcePermissionLocalService,
+				_roleLocalService));
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Commerce upgrade step registrator finished");

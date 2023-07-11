@@ -16,9 +16,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -31,7 +31,7 @@ definition {
 	@description = "This is a use case for LPS-129271."
 	@priority = 4
 	test AssertNoErrorMessageAfterExportAndImportSiteLAR {
-		property test.name.skip.portal.instance = "AzureStore#AssertNoErrorMessageAfterExportAndImportSiteLAR";
+		property test.liferay.virtual.instance = "false";
 
 		var containerId = PropsUtil.get("azure.container.id");
 		var companyId = JSONCompany.getCompanyId();
@@ -56,23 +56,25 @@ definition {
 
 		LAR.downloadLar();
 
-		JSONGroup.addGroup(groupName = "Test Site Name 1");
+		HeadlessSite.addSite(siteName = "Test Site Name 1");
+
+		for (var layoutUtilityPageName : list "404 Error,500 Error") {
+			JSONLayoututilitypage.deleteLayoutUtilityPage(
+				groupName = "Test Site Name 1",
+				layoutUtilityPageName = ${layoutUtilityPageName});
+		}
 
 		var groupId1 = JSONGroupAPI._getGroupIdByName(
 			groupName = "Test Site Name 1",
 			site = "true");
 
-		AntCommand(
-			locator1 = "build-test-azure.xml",
-			value1 = "assert-no-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId1}");
+		AntCommands.runCommand("build-test-azure.xml", "assert-no-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId1}");
 
 		LAR.importSiteCP(
 			larFileName = ${larFileName},
 			siteName = "Test Site Name 1");
 
-		AntCommand(
-			locator1 = "build-test-azure.xml",
-			value1 = "assert-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId1}");
+		AntCommands.runCommand("build-test-azure.xml", "assert-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId1}");
 
 		AssertConsoleTextNotPresent(value1 = "java.io.IOException");
 	}
@@ -81,7 +83,7 @@ definition {
 	@priority = 3
 	test AzureStoreDataMigration {
 		property store.migration.test = "true";
-		property test.name.skip.portal.instance = "AzureStore#AzureStoreDataMigration";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given a document is added to the default store") {
 			var containerId = PropsUtil.get("azure.container.id");
@@ -114,7 +116,7 @@ definition {
 		task ("When the user adds the configuration") {
 			AntCommands.runCommand("build-test.xml", "prepare-azure-store-configuration -Dazure.container.id=${containerId}");
 
-			while (IsElementNotPresent(locator1 = "Select#SELECT_VALUE_ID", option = "com.liferay.portal.store.azure.AzureStore", selectFieldId = "dl-store-impl")) {
+			while ((IsElementNotPresent(locator1 = "Select#SELECT_VALUE_ID", option = "com.liferay.portal.store.azure.AzureStore", selectFieldId = "dl-store-impl")) && (maxIterations = "2")) {
 				OSGiConfig.waitForOSGiConfig();
 
 				Refresh();
@@ -160,7 +162,7 @@ definition {
 
 	@priority = 5
 	test AzureStoreSmoke {
-		property test.name.skip.portal.instance = "AzureStore#AzureStoreSmoke";
+		property test.liferay.virtual.instance = "false";
 
 		var containerId = PropsUtil.get("azure.container.id");
 		var companyId = JSONCompany.getCompanyId();
@@ -168,20 +170,16 @@ definition {
 			groupName = "Test Site Name",
 			site = "true");
 
-		AntCommand(
-			locator1 = "build-test-azure.xml",
-			value1 = "assert-no-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId}");
+		AntCommands.runCommand("build-test-azure.xml", "assert-no-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId}");
 
-		JSONDocument.addFileWithUploadedFile(
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
+
+		DMDocument.addCP(
 			dmDocumentDescription = "DM Document Description",
-			dmDocumentTitle = "DM Document Title",
-			groupName = "Test Site Name",
-			mimeType = "text/plain",
-			sourceFileName = "Document_1.txt");
+			dmDocumentFile = "Document_1.txt",
+			dmDocumentTitle = "DM Document Title");
 
-		AntCommand(
-			locator1 = "build-test-azure.xml",
-			value1 = "assert-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId}");
+		AntCommands.runCommand("build-test-azure.xml", "assert-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId}");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
 
@@ -189,15 +187,9 @@ definition {
 
 		RecycleBin.openRecycleBinAdmin(siteURLKey = "test-site-name");
 
-		ProductMenu.gotoPortlet(
-			category = "Recycle Bin",
-			portlet = "Recycle Bin");
-
 		RecycleBin.emptyCP();
 
-		AntCommand(
-			locator1 = "build-test-azure.xml",
-			value1 = "assert-no-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId}");
+		AntCommands.runCommand("build-test-azure.xml", "assert-no-document-in-container -Dazure.container.id=${containerId} -DcompanyId=${companyId} -DgroupId=${groupId}");
 	}
 
 }

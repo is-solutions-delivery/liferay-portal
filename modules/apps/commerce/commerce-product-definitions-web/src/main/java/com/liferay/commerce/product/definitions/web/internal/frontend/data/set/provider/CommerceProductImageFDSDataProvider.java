@@ -32,15 +32,19 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
+import java.text.DateFormat;
+import java.text.Format;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -65,7 +69,13 @@ public class CommerceProductImageFDSDataProvider
 
 		List<ProductMedia> productMedia = new ArrayList<>();
 
-		Locale locale = _portal.getLocale(httpServletRequest);
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(
+			DateFormat.MEDIUM, DateFormat.MEDIUM, themeDisplay.getLocale(),
+			themeDisplay.getTimeZone());
 
 		long cpDefinitionId = ParamUtil.getLong(
 			httpServletRequest, "cpDefinitionId");
@@ -85,7 +95,7 @@ public class CommerceProductImageFDSDataProvider
 				cpAttachmentFileEntry.getCPAttachmentFileEntryId();
 
 			String title = cpAttachmentFileEntry.getTitle(
-				_language.getLanguageId(locale));
+				themeDisplay.getLanguageId());
 
 			String extension = StringPool.BLANK;
 
@@ -94,12 +104,6 @@ public class CommerceProductImageFDSDataProvider
 			if (fileEntry != null) {
 				extension = HtmlUtil.escape(fileEntry.getExtension());
 			}
-
-			Date modifiedDate = cpAttachmentFileEntry.getModifiedDate();
-
-			String modifiedDateDescription = _language.getTimeDescription(
-				httpServletRequest,
-				System.currentTimeMillis() - modifiedDate.getTime(), true);
 
 			String statusDisplayStyle = StringPool.BLANK;
 
@@ -118,9 +122,8 @@ public class CommerceProductImageFDSDataProvider
 							AccountConstants.ACCOUNT_ENTRY_ID_ADMIN,
 							cpAttachmentFileEntryId)),
 					title, extension, cpAttachmentFileEntry.getPriority(),
-					_language.format(
-						httpServletRequest, "x-ago", modifiedDateDescription,
-						false),
+					dateTimeFormat.format(
+						cpAttachmentFileEntry.getModifiedDate()),
 					new LabelField(
 						statusDisplayStyle,
 						_language.get(

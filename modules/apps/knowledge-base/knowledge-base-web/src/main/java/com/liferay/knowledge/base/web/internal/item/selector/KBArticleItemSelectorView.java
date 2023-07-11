@@ -107,6 +107,12 @@ public class KBArticleItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher(
+				"/item/selector/select_kb_articles.jsp");
+
 		KBArticleItemSelectorViewDisplayContext
 			kbArticleItemSelectorViewDisplayContext =
 				new KBArticleItemSelectorViewDisplayContext(
@@ -117,12 +123,6 @@ public class KBArticleItemSelectorView
 		servletRequest.setAttribute(
 			KBArticleItemSelectorViewDisplayContext.class.getName(),
 			kbArticleItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher(
-				"/item/selector/select_kb_articles.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

@@ -16,17 +16,13 @@ package com.liferay.portal.workflow.kaleo.runtime.internal.notification.recipien
 
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.util.ClassUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.workflow.kaleo.definition.NotificationReceptionType;
-import com.liferay.portal.workflow.kaleo.definition.ScriptLanguage;
-import com.liferay.portal.workflow.kaleo.definition.exception.KaleoDefinitionValidationException;
 import com.liferay.portal.workflow.kaleo.model.KaleoNotificationRecipient;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskAssignmentInstance;
 import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
+import com.liferay.portal.workflow.kaleo.runtime.internal.util.ServiceSelectorUtil;
 import com.liferay.portal.workflow.kaleo.runtime.notification.NotificationRecipient;
 import com.liferay.portal.workflow.kaleo.runtime.notification.recipient.NotificationRecipientBuilder;
 import com.liferay.portal.workflow.kaleo.runtime.notification.recipient.script.NotificationRecipientEvaluator;
@@ -107,39 +103,9 @@ public class ScriptNotificationRecipientBuilder
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+		_serviceTrackerMap = ServiceTrackerMapFactory.openMultiValueMap(
 			bundleContext, NotificationRecipientEvaluator.class,
-			"(scripting.language=*)",
-			(serviceReference, emitter) -> {
-				Object propertyValue = serviceReference.getProperty(
-					"scripting.language");
-
-				NotificationRecipientEvaluator notificationRecipientEvaluator =
-					bundleContext.getService(serviceReference);
-
-				try {
-					for (String scriptingLanguage :
-							GetterUtil.getStringValues(
-								propertyValue,
-								new String[] {String.valueOf(propertyValue)})) {
-
-						emitter.emit(
-							_getNotificationRecipientEvaluatorKey(
-								scriptingLanguage,
-								ClassUtil.getClassName(
-									notificationRecipientEvaluator)));
-					}
-				}
-				catch (KaleoDefinitionValidationException
-							kaleoDefinitionValidationException) {
-
-					throw new RuntimeException(
-						kaleoDefinitionValidationException);
-				}
-				finally {
-					bundleContext.ungetService(serviceReference);
-				}
-			});
+			"scripting.language");
 	}
 
 	@Deactivate
@@ -152,42 +118,26 @@ public class ScriptNotificationRecipientBuilder
 			ExecutionContext executionContext)
 		throws Exception {
 
-		String notificationRecipientEvaluatorKey =
-			_getNotificationRecipientEvaluatorKey(
-				kaleoNotificationRecipient.getRecipientScriptLanguage(),
-				kaleoNotificationRecipient.getRecipientScript());
-
 		NotificationRecipientEvaluator notificationRecipientEvaluator =
-			_serviceTrackerMap.getService(notificationRecipientEvaluatorKey);
+			ServiceSelectorUtil.getServiceByScriptLanguage(
+				kaleoNotificationRecipient.getRecipientScript(),
+				kaleoNotificationRecipient.getRecipientScriptLanguage(),
+				_serviceTrackerMap);
 
 		if (notificationRecipientEvaluator == null) {
 			throw new IllegalArgumentException(
 				"No notification recipient evaluator for script language " +
-					notificationRecipientEvaluatorKey);
+					kaleoNotificationRecipient.getRecipientScriptLanguage());
 		}
 
 		return notificationRecipientEvaluator.evaluate(
 			kaleoNotificationRecipient, executionContext);
 	}
 
-	private String _getNotificationRecipientEvaluatorKey(
-			String language, String notificationRecipientEvaluatorClassName)
-		throws KaleoDefinitionValidationException {
-
-		ScriptLanguage scriptLanguage = ScriptLanguage.parse(language);
-
-		if (scriptLanguage.equals(ScriptLanguage.JAVA)) {
-			return language + StringPool.COLON +
-				notificationRecipientEvaluatorClassName;
-		}
-
-		return language;
-	}
-
 	@Reference
 	private RoleNotificationRecipientBuilder _roleNotificationRecipientBuilder;
 
-	private ServiceTrackerMap<String, NotificationRecipientEvaluator>
+	private ServiceTrackerMap<String, List<NotificationRecipientEvaluator>>
 		_serviceTrackerMap;
 
 }

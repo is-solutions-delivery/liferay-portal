@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.portlet.RenderRequest;
 
@@ -132,13 +131,12 @@ public class ScopeSearchFacetDisplayContextBuilder {
 	}
 
 	public void setParameterValue(String parameterValue) {
-		setParameterValues(
-			Collections.singletonList(Objects.requireNonNull(parameterValue)));
+		setParameterValues(parameterValue);
 	}
 
-	public void setParameterValues(List<String> parameterValues) {
-		_selectedGroupIds = TransformUtil.transform(
-			Objects.requireNonNull(parameterValues),
+	public void setParameterValues(String... parameterValues) {
+		_selectedGroupIds = TransformUtil.transformToList(
+			parameterValues,
 			value -> {
 				long groupId = GetterUtil.getLong(value);
 

@@ -55,6 +55,7 @@ public class LayoutClassedModelUsageStagedModelRepository
 			layoutClassedModelUsage.getGroupId(),
 			layoutClassedModelUsage.getClassNameId(),
 			layoutClassedModelUsage.getClassPK(),
+			layoutClassedModelUsage.getClassedModelExternalReferenceCode(),
 			layoutClassedModelUsage.getContainerKey(),
 			layoutClassedModelUsage.getContainerType(),
 			layoutClassedModelUsage.getPlid(), serviceContext);

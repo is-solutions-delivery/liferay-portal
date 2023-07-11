@@ -22,6 +22,7 @@ import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.Resource;
@@ -1850,7 +1851,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("knowledgeBaseFolderId")) {
 				knowledgeBaseArticleUnsafeConsumer = knowledgeBaseArticle ->
 					postKnowledgeBaseFolderKnowledgeBaseArticle(
@@ -1869,14 +1870,59 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			}
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			knowledgeBaseArticleUnsafeConsumer = knowledgeBaseArticle ->
-				putSiteKnowledgeBaseArticleByExternalReferenceCode(
-					knowledgeBaseArticle.getSiteId() != null ?
-						knowledgeBaseArticle.getSiteId() :
-							(Long)parameters.get("siteId"),
-					knowledgeBaseArticle.getExternalReferenceCode(),
-					knowledgeBaseArticle);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				knowledgeBaseArticleUnsafeConsumer = knowledgeBaseArticle ->
+					putSiteKnowledgeBaseArticleByExternalReferenceCode(
+						knowledgeBaseArticle.getSiteId() != null ?
+							knowledgeBaseArticle.getSiteId() :
+								(Long)parameters.get("siteId"),
+						knowledgeBaseArticle.getExternalReferenceCode(),
+						knowledgeBaseArticle);
+			}
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
+				knowledgeBaseArticleUnsafeConsumer = knowledgeBaseArticle -> {
+					try {
+						KnowledgeBaseArticle getKnowledgeBaseArticle =
+							getSiteKnowledgeBaseArticleByExternalReferenceCode(
+								knowledgeBaseArticle.getSiteId() != null ?
+									knowledgeBaseArticle.getSiteId() :
+										(Long)parameters.get("siteId"),
+								knowledgeBaseArticle.
+									getExternalReferenceCode());
+
+						patchKnowledgeBaseArticle(
+							getKnowledgeBaseArticle.getId() != null ?
+								getKnowledgeBaseArticle.getId() :
+									_parseLong(
+										(String)parameters.get(
+											"knowledgeBaseArticleId")),
+							knowledgeBaseArticle);
+					}
+					catch (NoSuchModelException noSuchModelException) {
+						if (parameters.containsKey("knowledgeBaseFolderId")) {
+							postKnowledgeBaseFolderKnowledgeBaseArticle(
+								_parseLong(
+									(String)parameters.get(
+										"knowledgeBaseFolderId")),
+								knowledgeBaseArticle);
+						}
+						else if (parameters.containsKey("siteId")) {
+							postSiteKnowledgeBaseArticle(
+								(Long)parameters.get("siteId"),
+								knowledgeBaseArticle);
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [knowledgeBaseFolderId, siteId, knowledgeBaseFolderId]");
+						}
+					}
+				};
+			}
 		}
 
 		if (knowledgeBaseArticleUnsafeConsumer == null) {
@@ -1996,7 +2042,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			knowledgeBaseArticleUnsafeConsumer =
 				knowledgeBaseArticle -> patchKnowledgeBaseArticle(
 					knowledgeBaseArticle.getId() != null ?
@@ -2007,7 +2053,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 					knowledgeBaseArticle);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			knowledgeBaseArticleUnsafeConsumer =
 				knowledgeBaseArticle -> putKnowledgeBaseArticle(
 					knowledgeBaseArticle.getId() != null ?

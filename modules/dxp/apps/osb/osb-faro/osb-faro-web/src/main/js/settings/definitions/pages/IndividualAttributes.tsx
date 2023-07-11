@@ -105,7 +105,7 @@ const IndividualAttributes: React.FC<IIndividualAttributesProps> = ({
 							accessor: 'fieldName',
 							cellRenderer: FieldNameCell,
 							className: 'table-cell-expand',
-							label: Liferay.Language.get('attribute')
+							label: Liferay.Language.get('attribute[noun]')
 						},
 						{
 							accessor: 'dataSources',
@@ -115,7 +115,7 @@ const IndividualAttributes: React.FC<IIndividualAttributesProps> = ({
 									? sub(Liferay.Language.get('x-sources'), [
 											dataSources.length
 									  ])
-									: dataSources[0].dataSourceName,
+									: dataSources[0]?.dataSourceName,
 							label: Liferay.Language.get('sources')
 						},
 						{

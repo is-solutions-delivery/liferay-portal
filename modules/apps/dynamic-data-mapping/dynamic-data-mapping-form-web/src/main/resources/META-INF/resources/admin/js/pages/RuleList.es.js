@@ -47,7 +47,7 @@ const OPERATORS = {
 
 const OPERAND_TEXT = {
 	field: Liferay.Language.get('field'),
-	list: Liferay.Language.get('list'),
+	list: Liferay.Language.get('list[noun]'),
 	user: Liferay.Language.get('user'),
 	value: Liferay.Language.get('value'),
 };
@@ -59,7 +59,7 @@ const EmptyState = () => (
 				'there-are-no-rules-yet-click-on-plus-icon-below-to-add-the-first'
 			)}
 			imgSrc={`${themeDisplay.getPathThemeImages()}/states/empty_state.gif`}
-			title={null}
+			title={Liferay.Language.get('no-results-found')}
 		/>
 	</ClayLayout.Sheet>
 );

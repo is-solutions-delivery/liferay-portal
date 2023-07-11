@@ -27,6 +27,7 @@ import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.item.provider.InfoItemPermissionProvider;
+import com.liferay.info.item.provider.filter.InfoItemServiceFilter;
 import com.liferay.info.item.renderer.InfoItemRenderer;
 import com.liferay.info.item.renderer.InfoItemRendererRegistry;
 import com.liferay.info.item.renderer.InfoItemTemplatedRenderer;
@@ -136,13 +137,14 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 			return true;
 		}
 
+		if (Validator.isNull(className) && (infoItemReference != null)) {
+			className = infoItemReference.getClassName();
+		}
+
 		Tuple tuple = _getTuple(
 			className, displayObject.getClass(), fragmentRendererContext);
 
-		InfoItemRenderer<Object> infoItemRenderer =
-			(InfoItemRenderer<Object>)tuple.getObject(0);
-
-		if ((infoItemRenderer == null) ||
+		if ((tuple == null) || (tuple.getObject(0) == null) ||
 			_hasPermission(httpServletRequest, className, displayObject)) {
 
 			return true;
@@ -199,13 +201,14 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 			return;
 		}
 
+		if (Validator.isNull(className) && (infoItemReference != null)) {
+			className = infoItemReference.getClassName();
+		}
+
 		Tuple tuple = _getTuple(
 			className, displayObject.getClass(), fragmentRendererContext);
 
-		InfoItemRenderer<Object> infoItemRenderer =
-			(InfoItemRenderer<Object>)tuple.getObject(0);
-
-		if (infoItemRenderer == null) {
+		if ((tuple == null) || (tuple.getObject(0) == null)) {
 			if (FragmentRendererUtil.isEditMode(httpServletRequest)) {
 				FragmentRendererUtil.printPortletMessageInfo(
 					httpServletRequest, httpServletResponse,
@@ -234,6 +237,9 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 			return;
 		}
 
+		InfoItemRenderer<Object> infoItemRenderer =
+			(InfoItemRenderer<Object>)tuple.getObject(0);
+
 		if (infoItemRenderer instanceof InfoItemTemplatedRenderer) {
 			InfoItemTemplatedRenderer<Object> infoItemTemplatedRenderer =
 				(InfoItemTemplatedRenderer<Object>)infoItemRenderer;
@@ -257,9 +263,20 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 	private Object _getDisplayObject(
 		String className, long classPK, InfoItemReference infoItemReference) {
 
+		InfoItemServiceFilter infoItemServiceFilter =
+			ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER;
+
+		if (infoItemReference != null) {
+			InfoItemIdentifier infoItemIdentifier =
+				infoItemReference.getInfoItemIdentifier();
+
+			infoItemServiceFilter =
+				infoItemIdentifier.getInfoItemServiceFilter();
+		}
+
 		InfoItemObjectProvider<?> infoItemObjectProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
-				InfoItemObjectProvider.class, className);
+				InfoItemObjectProvider.class, className, infoItemServiceFilter);
 
 		if (infoItemObjectProvider == null) {
 			return _getInfoItem(infoItemReference);

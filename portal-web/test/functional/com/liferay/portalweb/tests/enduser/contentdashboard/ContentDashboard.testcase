@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -1773,7 +1773,7 @@ definition {
 	@uitest
 	test ClickTitleApprovedDPTWithNoPermissions {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ContentDashboard#ClickTitleApprovedDPTWithNoPermissions";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Create a default Display Page Template") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
@@ -1861,7 +1861,7 @@ definition {
 	@uitest
 	test ClickTitleApprovedDPTWithPermissions {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ContentDashboard#ClickTitleApprovedDPTWithPermissions";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Create a default Display Page Template") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
@@ -1963,7 +1963,7 @@ definition {
 	@priority = 3
 	@uitest
 	test ClickTitleApprovedNoDPT {
-		property test.name.skip.portal.instance = "ContentDashboard#ClickTitleApprovedNoDPT";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add web content Approved") {
 			JSONWebcontent.addWebContent(
@@ -2368,7 +2368,7 @@ definition {
 	@priority = 3
 	@uitest
 	test ClickTitleDraftNoDPT {
-		property test.name.skip.portal.instance = "ContentDashboard#ClickTitleDraftNoDPT";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add web content Draft") {
 			JSONWebcontent.addWebContent(
@@ -2397,7 +2397,7 @@ definition {
 	@priority = 3
 	@uitest
 	test ClickTitlePendingNoDPT {
-		property test.name.skip.portal.instance = "ContentDashboard#ClickTitlePendingNoDPT";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Configure Web Content Article workflow to Single Approver") {
 			Workflow.openWorkflowAdmin(siteURLKey = "test-site-name");
@@ -2433,7 +2433,7 @@ definition {
 	@priority = 3
 	@uitest
 	test ClickTitleScheduledNoDPT {
-		property test.name.skip.portal.instance = "ContentDashboard#ClickTitleScheduledNoDPT";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Create a Web Content") {
 			JSONWebcontent.addWebContent(
@@ -2562,6 +2562,41 @@ definition {
 			AssertTextEquals(
 				locator1 = "WCViewHistory#VIEW_COMPARE_VERSIONS_CONTENT",
 				value1 = "Web Content Content Edit");
+		}
+	}
+
+	@description = "This is a test for LPS-138908. Type filter in Content Dashboard does work when deselecting previously selected types"
+	@priority = 4
+	test DeselectTypeFilter {
+		task ("Given a user has a Content Dashboard filtered by a type") {
+			JSONWebcontent.addWebContent(
+				content = "Webcontent Content",
+				groupName = "Test Site Name",
+				title = "WC Content");
+
+			ContentDashboard.goToContentDashboard();
+
+			ContentDashboard.filterByType(typeName = "Web Content Article");
+
+			LexiconTable.viewTableEntryTitle(tableEntry = "WC Content");
+
+			LexiconTable.viewTableEntryNotPresent(tableEntry = "tree.png");
+		}
+
+		task ("When the user deselects the type filter") {
+			ContentDashboard.openFilterModal(filterOption = "Type");
+
+			Uncheck.uncheckNotVisible(
+				key_nodeName = "Web Content Article",
+				locator1 = "Treeview#NODE_CHECKBOX_2");
+
+			ContentDashboard.applySelectedFilter();
+		}
+
+		task ("Then the user sees all assets") {
+			LexiconTable.viewTableEntryTitle(tableEntry = "WC Content");
+
+			LexiconTable.viewTableEntryTitle(tableEntry = "tree.png");
 		}
 	}
 
@@ -4199,7 +4234,7 @@ definition {
 	@priority = 4
 	test FilterByDuplicatedMimeType {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ContentDashboard#FilterByDuplicatedMimeType";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add documents with different mime types") {
 			JSONDocument.addFileWithUploadedFile(
@@ -4413,7 +4448,7 @@ definition {
 	test FilterByStatusExpiredDocument {
 		property custom.properties = "company.default.time.zone=America/Los_Angeles";
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ContentDashboard#FilterByStatusExpiredDocument";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given an expired Document asset") {
 			task ("Set update interval") {
@@ -5820,7 +5855,7 @@ definition {
 		task ("Check if the correct number of entries are being displayed") {
 			Pagination.changePagination(itemsPerPage = 8);
 
-			Pagination.viewResults(results = "Showing 1 to 8 of 16 entries.");
+			Pagination.viewResults(results = "Showing 1 to 8 of 17 entries.");
 		}
 	}
 
@@ -5845,11 +5880,11 @@ definition {
 
 			Click(locator1 = "Pagination#NEXT_LINK");
 
-			Pagination.viewResults(results = "Showing 5 to 8 of 12 entries.");
+			Pagination.viewResults(results = "Showing 5 to 8 of 13 entries.");
 
 			Click(locator1 = "Pagination#PREVIOUS_LINK");
 
-			Pagination.viewResults(results = "Showing 1 to 4 of 12 entries.");
+			Pagination.viewResults(results = "Showing 1 to 4 of 13 entries.");
 		}
 	}
 
@@ -5874,7 +5909,7 @@ definition {
 
 			ContentDashboard.moveToPage(pageNumber = 2);
 
-			Pagination.viewResults(results = "Showing 5 to 8 of 12 entries.");
+			Pagination.viewResults(results = "Showing 5 to 8 of 13 entries.");
 		}
 	}
 
@@ -6081,7 +6116,7 @@ definition {
 		task ("Check if extension is present") {
 			AssertTextEquals(
 				locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
-				value1 = "9 Results for");
+				value1 = "10 Results for");
 		}
 	}
 

@@ -28,9 +28,7 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	property = "ddm.form.field.type.name=" + DDMFormFieldTypeConstants.CHECKBOX,
-	service = {
-		CheckboxDDMFormFieldValueAccessor.class, DDMFormFieldValueAccessor.class
-	}
+	service = DDMFormFieldValueAccessor.class
 )
 public class CheckboxDDMFormFieldValueAccessor
 	implements DDMFormFieldValueAccessor<Boolean> {
@@ -45,6 +43,10 @@ public class CheckboxDDMFormFieldValueAccessor
 		DDMFormFieldValue ddmFormFieldValue, Locale locale) {
 
 		Value value = ddmFormFieldValue.getValue();
+
+		if (value == null) {
+			return false;
+		}
 
 		return Boolean.valueOf(value.getString(locale));
 	}

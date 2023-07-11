@@ -47,9 +47,13 @@ export default function CartQuickAdd() {
 	const [quickAddToCartError, setQuickAddToCartError] = useState(false);
 	const [selectedProducts, setSelectedProducts] = useState([]);
 
-	const {cartItems = [], channel} = cartState;
-	const accountId = cartState.accountId;
-	const channelId = channel.channel.id;
+	const {
+		accountId,
+		cartItems = [],
+		channel: {channel},
+		id: cartId,
+	} = cartState;
+	const channelId = channel.id;
 
 	const ProductAutocompleteList = ({onItemClick, sourceItems}) => {
 		return (
@@ -193,12 +197,7 @@ export default function CartQuickAdd() {
 				cartItems: cartItems.concat(readyProducts),
 			}));
 
-			addToCart(
-				readyProducts,
-				cartState.id,
-				channel.channel.id,
-				cartState.accountId
-			);
+			addToCart(readyProducts, cartId, channel, accountId);
 
 			setProductsWithOptions([]);
 
@@ -295,7 +294,7 @@ export default function CartQuickAdd() {
 
 	return (
 		<ClayForm.Group
-			className={classNames('p-3', {'has-error': quickAddToCartError})}
+			className={classNames('m-3', {'has-error': quickAddToCartError})}
 		>
 			<ClayInput.Group>
 				<ClayInput.GroupItem>
@@ -304,6 +303,7 @@ export default function CartQuickAdd() {
 						className="p3"
 						inputName="searchProducts"
 						items={selectedProducts}
+						loadingState={4}
 						locator={{
 							label: 'chipLabel',
 							value: 'value',

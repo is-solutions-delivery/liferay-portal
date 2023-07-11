@@ -16,6 +16,7 @@ package com.liferay.site.navigation.service;
 
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 
@@ -434,6 +435,16 @@ public class SiteNavigationMenuItemLocalServiceWrapper
 			siteNavigationMenuId, parentSiteNavigationMenuItemId);
 	}
 
+	@Override
+	public java.util.List<SiteNavigationMenuItem> getSiteNavigationMenuItems(
+		long siteNavigationMenuId,
+		com.liferay.portal.kernel.util.OrderByComparator<SiteNavigationMenuItem>
+			orderByComparator) {
+
+		return _siteNavigationMenuItemLocalService.getSiteNavigationMenuItems(
+			siteNavigationMenuId, orderByComparator);
+	}
+
 	/**
 	 * Returns all the site navigation menu items matching the UUID and company.
 	 *
@@ -537,6 +548,11 @@ public class SiteNavigationMenuItemLocalServiceWrapper
 
 		return _siteNavigationMenuItemLocalService.updateSiteNavigationMenuItem(
 			siteNavigationMenuItem);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _siteNavigationMenuItemLocalService.getBasePersistence();
 	}
 
 	@Override

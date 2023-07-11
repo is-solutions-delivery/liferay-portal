@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.service;
 
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
+
 /**
  * Provides a wrapper for {@link CompanyLocalService}.
  *
@@ -64,40 +66,18 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Company addCompany(
-			java.lang.Long companyId, java.lang.String webId,
-			java.lang.String virtualHostname, java.lang.String mx, int maxUsers,
-			boolean active)
+			Long companyId, String webId, String virtualHostname, String mx,
+			int maxUsers, boolean active, String defaultAdminPassword,
+			String defaultAdminScreenName, String defaultAdminEmailAddress,
+			String defaultAdminFirstName, String defaultAdminMiddleName,
+			String defaultAdminLastName)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.addCompany(
-			companyId, webId, virtualHostname, mx, maxUsers, active);
-	}
-
-	/**
-	 * Adds a company.
-	 *
-	 * @param webId the the company's web domain
-	 * @param virtualHostname the company's virtual host name
-	 * @param mx the company's mail domain
-	 * @param system whether the company is the very first company (i.e.,
-	 the super company)
-	 * @param maxUsers the max number of company users (optionally
-	 <code>0</code>)
-	 * @param active whether the company is active
-	 * @return the company
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 #addCompany(Long, String, String, String, boolean, int,
-	 boolean)}
-	 */
-	@Deprecated
-	@Override
-	public com.liferay.portal.kernel.model.Company addCompany(
-			java.lang.String webId, java.lang.String virtualHostname,
-			java.lang.String mx, int maxUsers, boolean active)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _companyLocalService.addCompany(
-			webId, virtualHostname, mx, maxUsers, active);
+			companyId, webId, virtualHostname, mx, maxUsers, active,
+			defaultAdminPassword, defaultAdminScreenName,
+			defaultAdminEmailAddress, defaultAdminFirstName,
+			defaultAdminMiddleName, defaultAdminLastName);
 	}
 
 	/**
@@ -110,8 +90,7 @@ public class CompanyLocalServiceWrapper
 	 * @return the company with the web domain
 	 */
 	@Override
-	public com.liferay.portal.kernel.model.Company checkCompany(
-			java.lang.String webId)
+	public com.liferay.portal.kernel.model.Company checkCompany(String webId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.checkCompany(webId);
@@ -129,7 +108,7 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Company checkCompany(
-			java.lang.String webId, java.lang.String mx)
+			String webId, String mx)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.checkCompany(webId, mx);
@@ -364,13 +343,13 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Company fetchCompanyByVirtualHost(
-		java.lang.String virtualHostname) {
+		String virtualHostname) {
 
 		return _companyLocalService.fetchCompanyByVirtualHost(virtualHostname);
 	}
 
 	@Override
-	public <E extends java.lang.Exception> void forEachCompany(
+	public <E extends Exception> void forEachCompany(
 			com.liferay.petra.function.UnsafeConsumer
 				<com.liferay.portal.kernel.model.Company, E> unsafeConsumer)
 		throws E {
@@ -379,7 +358,7 @@ public class CompanyLocalServiceWrapper
 	}
 
 	@Override
-	public <E extends java.lang.Exception> void forEachCompany(
+	public <E extends Exception> void forEachCompany(
 			com.liferay.petra.function.UnsafeConsumer
 				<com.liferay.portal.kernel.model.Company, E> unsafeConsumer,
 			java.util.List<com.liferay.portal.kernel.model.Company> companies)
@@ -389,18 +368,16 @@ public class CompanyLocalServiceWrapper
 	}
 
 	@Override
-	public <E extends java.lang.Exception> void forEachCompanyId(
-			com.liferay.petra.function.UnsafeConsumer<java.lang.Long, E>
-				unsafeConsumer)
+	public <E extends Exception> void forEachCompanyId(
+			com.liferay.petra.function.UnsafeConsumer<Long, E> unsafeConsumer)
 		throws E {
 
 		_companyLocalService.forEachCompanyId(unsafeConsumer);
 	}
 
 	@Override
-	public <E extends java.lang.Exception> void forEachCompanyId(
-			com.liferay.petra.function.UnsafeConsumer<java.lang.Long, E>
-				unsafeConsumer,
+	public <E extends Exception> void forEachCompanyId(
+			com.liferay.petra.function.UnsafeConsumer<Long, E> unsafeConsumer,
 			long[] companyIds)
 		throws E {
 
@@ -503,8 +480,7 @@ public class CompanyLocalServiceWrapper
 	 * @return the company with the mail domain
 	 */
 	@Override
-	public com.liferay.portal.kernel.model.Company getCompanyByMx(
-			java.lang.String mx)
+	public com.liferay.portal.kernel.model.Company getCompanyByMx(String mx)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.getCompanyByMx(mx);
@@ -518,7 +494,7 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Company getCompanyByVirtualHost(
-			java.lang.String virtualHostname)
+			String virtualHostname)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.getCompanyByVirtualHost(virtualHostname);
@@ -532,7 +508,7 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Company getCompanyByWebId(
-			java.lang.String webId)
+			String webId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.getCompanyByWebId(webId);
@@ -548,7 +524,7 @@ public class CompanyLocalServiceWrapper
 	 * @throws Exception if a user with the primary key could not be found
 	 */
 	@Override
-	public long getCompanyIdByUserId(long userId) throws java.lang.Exception {
+	public long getCompanyIdByUserId(long userId) throws Exception {
 		return _companyLocalService.getCompanyIdByUserId(userId);
 	}
 
@@ -565,7 +541,7 @@ public class CompanyLocalServiceWrapper
 	 * @return the OSGi service identifier
 	 */
 	@Override
-	public java.lang.String getOSGiServiceIdentifier() {
+	public String getOSGiServiceIdentifier() {
 		return _companyLocalService.getOSGiServiceIdentifier();
 	}
 
@@ -591,7 +567,7 @@ public class CompanyLocalServiceWrapper
 	 * @param keys the company's preferences keys to be remove
 	 */
 	@Override
-	public void removePreferences(long companyId, java.lang.String[] keys) {
+	public void removePreferences(long companyId, String[] keys) {
 		_companyLocalService.removePreferences(companyId, keys);
 	}
 
@@ -614,8 +590,7 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.search.Hits search(
-		long companyId, long userId, java.lang.String keywords, int start,
-		int end) {
+		long companyId, long userId, String keywords, int start, int end) {
 
 		return _companyLocalService.search(
 			companyId, userId, keywords, start, end);
@@ -641,8 +616,8 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.search.Hits search(
-		long companyId, long userId, java.lang.String portletId, long groupId,
-		java.lang.String type, java.lang.String keywords, int start, int end) {
+		long companyId, long userId, String portletId, long groupId,
+		String type, String keywords, int start, int end) {
 
 		return _companyLocalService.search(
 			companyId, userId, portletId, groupId, type, keywords, start, end);
@@ -678,8 +653,8 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Company updateCompany(
-			long companyId, java.lang.String virtualHostname,
-			java.lang.String mx, int maxUsers, boolean active)
+			long companyId, String virtualHostname, String mx, int maxUsers,
+			boolean active)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.updateCompany(
@@ -714,13 +689,10 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public com.liferay.portal.kernel.model.Company updateCompany(
-			long companyId, java.lang.String virtualHostname,
-			java.lang.String mx, java.lang.String homeURL, boolean hasLogo,
-			byte[] logoBytes, java.lang.String name, java.lang.String legalName,
-			java.lang.String legalId, java.lang.String legalType,
-			java.lang.String sicCode, java.lang.String tickerSymbol,
-			java.lang.String industry, java.lang.String type,
-			java.lang.String size)
+			long companyId, String virtualHostname, String mx, String homeURL,
+			boolean hasLogo, byte[] logoBytes, String name, String legalName,
+			String legalId, String legalType, String sicCode,
+			String tickerSymbol, String industry, String type, String size)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.updateCompany(
@@ -738,8 +710,7 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public void updateDisplay(
-			long companyId, java.lang.String languageId,
-			java.lang.String timeZoneId)
+			long companyId, String languageId, String timeZoneId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_companyLocalService.updateDisplay(companyId, languageId, timeZoneId);
@@ -754,7 +725,7 @@ public class CompanyLocalServiceWrapper
 
 	@Override
 	public com.liferay.portal.kernel.model.Company updateIndexNameNext(
-			long companyId, java.lang.String indexNameNext)
+			long companyId, String indexNameNext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.updateIndexNameNext(
@@ -763,8 +734,7 @@ public class CompanyLocalServiceWrapper
 
 	@Override
 	public com.liferay.portal.kernel.model.Company updateIndexNames(
-			long companyId, java.lang.String indexNameCurrent,
-			java.lang.String indexNameNext)
+			long companyId, String indexNameCurrent, String indexNameNext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _companyLocalService.updateIndexNames(
@@ -853,13 +823,18 @@ public class CompanyLocalServiceWrapper
 	 */
 	@Override
 	public void updateSecurity(
-		long companyId, java.lang.String authType, boolean autoLogin,
+		long companyId, String authType, boolean autoLogin,
 		boolean sendPassword, boolean strangers, boolean strangersWithMx,
 		boolean strangersVerify, boolean siteLogo) {
 
 		_companyLocalService.updateSecurity(
 			companyId, authType, autoLogin, sendPassword, strangers,
 			strangersWithMx, strangersVerify, siteLogo);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _companyLocalService.getBasePersistence();
 	}
 
 	@Override

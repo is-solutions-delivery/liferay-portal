@@ -21,9 +21,12 @@ import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.field.type.ActionInfoFieldType;
 import com.liferay.info.field.type.ImageInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.info.field.type.URLInfoFieldType;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.field.reader.InfoItemFieldReaderFieldSetProvider;
@@ -31,15 +34,19 @@ import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.info.type.KeyLocalizedLabelPair;
 import com.liferay.info.type.WebImage;
+import com.liferay.layout.page.template.info.item.provider.DisplayPageInfoItemFieldSetProvider;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
+import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
+import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -89,12 +96,14 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 	public ObjectEntryInfoItemFieldValuesProvider(
 		AssetDisplayPageFriendlyURLProvider assetDisplayPageFriendlyURLProvider,
+		DisplayPageInfoItemFieldSetProvider displayPageInfoItemFieldSetProvider,
 		DLAppLocalService dlAppLocalService,
 		DLFileEntryLocalService dlFileEntryLocalService,
 		DLURLHelper dlURLHelper,
 		InfoItemFieldReaderFieldSetProvider infoItemFieldReaderFieldSetProvider,
 		JSONFactory jsonFactory,
 		ListTypeEntryLocalService listTypeEntryLocalService,
+		ObjectActionLocalService objectActionLocalService,
 		ObjectDefinition objectDefinition,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
@@ -106,6 +115,8 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		_assetDisplayPageFriendlyURLProvider =
 			assetDisplayPageFriendlyURLProvider;
+		_displayPageInfoItemFieldSetProvider =
+			displayPageInfoItemFieldSetProvider;
 		_dlAppLocalService = dlAppLocalService;
 		_dlFileEntryLocalService = dlFileEntryLocalService;
 		_dlURLHelper = dlURLHelper;
@@ -113,6 +124,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 			infoItemFieldReaderFieldSetProvider;
 		_jsonFactory = jsonFactory;
 		_listTypeEntryLocalService = listTypeEntryLocalService;
+		_objectActionLocalService = objectActionLocalService;
 		_objectDefinition = objectDefinition;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
@@ -125,19 +137,27 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 	@Override
 	public InfoItemFieldValues getInfoItemFieldValues(ObjectEntry objectEntry) {
-		return InfoItemFieldValues.builder(
-		).infoFieldValues(
-			_getInfoFieldValues(objectEntry)
-		).infoFieldValues(
-			_infoItemFieldReaderFieldSetProvider.getInfoFieldValues(
-				objectEntry.getModelClassName(), objectEntry)
-		).infoFieldValues(
-			_templateInfoItemFieldSetProvider.getInfoFieldValues(
-				objectEntry.getModelClassName(), objectEntry)
-		).infoItemReference(
-			new InfoItemReference(
-				objectEntry.getModelClassName(), objectEntry.getObjectEntryId())
-		).build();
+		try {
+			return InfoItemFieldValues.builder(
+			).infoFieldValues(
+				_getInfoFieldValues(objectEntry)
+			).infoFieldValues(
+				_displayPageInfoItemFieldSetProvider.getInfoFieldValues(
+					_getInfoItemReference(objectEntry), StringPool.BLANK,
+					_getThemeDisplay())
+			).infoFieldValues(
+				_infoItemFieldReaderFieldSetProvider.getInfoFieldValues(
+					objectEntry.getModelClassName(), objectEntry)
+			).infoFieldValues(
+				_templateInfoItemFieldSetProvider.getInfoFieldValues(
+					objectEntry.getModelClassName(), objectEntry)
+			).infoItemReference(
+				_getInfoItemReference(objectEntry)
+			).build();
+		}
+		catch (Exception exception) {
+			throw new RuntimeException("Unexpected exception", exception);
+		}
 	}
 
 	private List<InfoFieldValue<Object>> _getAttachmentInfoFieldValues(
@@ -215,7 +235,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 				new InfoFieldValue<>(
 					InfoField.builder(
 					).infoFieldType(
-						URLInfoFieldType.INSTANCE
+						ImageInfoFieldType.INSTANCE
 					).namespace(
 						ObjectField.class.getSimpleName()
 					).name(
@@ -256,8 +276,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 		throws Exception {
 
 		return _assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-			objectEntry.getModelClassName(), objectEntry.getObjectEntryId(),
-			themeDisplay);
+			_getInfoItemReference(objectEntry), themeDisplay);
 	}
 
 	private List<InfoFieldValue<Object>> _getInfoFieldValues(
@@ -316,7 +335,9 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		ThemeDisplay themeDisplay = _getThemeDisplay();
 
-		if (themeDisplay != null) {
+		if ((themeDisplay != null) &&
+			!FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
+
 			objectEntryFieldValues.add(
 				new InfoFieldValue<>(
 					ObjectEntryInfoItemFields.displayPageURLInfoField,
@@ -329,6 +350,37 @@ public class ObjectEntryInfoItemFieldValuesProvider
 					objectEntry.getObjectDefinitionId(), false),
 				objectEntry.getValues()));
 
+		if (FeatureFlagManagerUtil.isEnabled("LPS-169992")) {
+			objectEntryFieldValues.addAll(
+				TransformUtil.transform(
+					_objectActionLocalService.getObjectActions(
+						_objectDefinition.getObjectDefinitionId(),
+						ObjectActionTriggerConstants.KEY_STANDALONE),
+					objectAction -> {
+						InfoLocalizedValue<String> actionLabelLocalizedValue =
+							InfoLocalizedValue.<String>builder(
+							).defaultLocale(
+								LocaleUtil.fromLanguageId(
+									objectAction.getDefaultLanguageId())
+							).values(
+								objectAction.getLabelMap()
+							).build();
+
+						return new InfoFieldValue<>(
+							InfoField.builder(
+							).infoFieldType(
+								ActionInfoFieldType.INSTANCE
+							).namespace(
+								ObjectAction.class.getSimpleName()
+							).name(
+								objectAction.getName()
+							).labelInfoLocalizedValue(
+								actionLabelLocalizedValue
+							).build(),
+							actionLabelLocalizedValue);
+					}));
+		}
+
 		return objectEntryFieldValues;
 	}
 
@@ -339,7 +391,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		ThemeDisplay themeDisplay = _getThemeDisplay();
 
-		if (themeDisplay != null) {
+		if (themeDisplay == null) {
 			return Collections.emptyList();
 		}
 
@@ -382,6 +434,18 @@ public class ObjectEntryInfoItemFieldValuesProvider
 				objectEntry.getProperties()));
 
 		return objectEntryFieldValues;
+	}
+
+	private InfoItemReference _getInfoItemReference(ObjectEntry objectEntry) {
+		if (_objectDefinition.isDefaultStorageType()) {
+			return new InfoItemReference(
+				objectEntry.getModelClassName(),
+				new ClassPKInfoItemIdentifier(objectEntry.getObjectEntryId()));
+		}
+
+		return new InfoItemReference(
+			_objectDefinition.getClassName(),
+			new ERCInfoItemIdentifier(objectEntry.getExternalReferenceCode()));
 	}
 
 	private List<InfoFieldValue<Object>> _getObjectFieldsInfoFieldValues(
@@ -658,6 +722,8 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 	private final AssetDisplayPageFriendlyURLProvider
 		_assetDisplayPageFriendlyURLProvider;
+	private final DisplayPageInfoItemFieldSetProvider
+		_displayPageInfoItemFieldSetProvider;
 	private final DLAppLocalService _dlAppLocalService;
 	private final DLFileEntryLocalService _dlFileEntryLocalService;
 	private final DLURLHelper _dlURLHelper;
@@ -665,6 +731,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 		_infoItemFieldReaderFieldSetProvider;
 	private final JSONFactory _jsonFactory;
 	private final ListTypeEntryLocalService _listTypeEntryLocalService;
+	private final ObjectActionLocalService _objectActionLocalService;
 	private final ObjectDefinition _objectDefinition;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;

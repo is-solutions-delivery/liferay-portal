@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
@@ -199,23 +200,42 @@ public class SegmentsExperienceSelectorDisplayContext {
 	private JSONObject _getSegmentsExperienceSelectedJSONObject()
 		throws PortalException {
 
-		JSONObject segmentsExperienceSelectedJSONObject =
-			_jsonFactory.createJSONObject();
-
 		SegmentsExperience segmentsExperience =
 			_fetchSegmentsExperienceFromRequest();
 
+		long plid = _themeDisplay.getPlid();
+
+		Layout layout = _themeDisplay.getLayout();
+
+		if (layout.isDraftLayout()) {
+			plid = layout.getClassPK();
+		}
+
+		if ((segmentsExperience == null) ||
+			(segmentsExperience.getPlid() != plid)) {
+
+			long defaultSegmentsExperienceId =
+				_segmentsExperienceLocalService.
+					fetchDefaultSegmentsExperienceId(plid);
+
+			segmentsExperience =
+				_segmentsExperienceLocalService.fetchSegmentsExperience(
+					defaultSegmentsExperienceId);
+		}
+
 		if (segmentsExperience != null) {
-			segmentsExperienceSelectedJSONObject =
+			JSONObject segmentsExperienceSelectedJSONObject =
 				_getSegmentsExperienceJSONObject(
 					segmentsExperience.getSegmentsExperienceId());
 
 			segmentsExperienceSelectedJSONObject.put(
 				"segmentsExperienceName",
 				_getSelectedSegmentsExperienceName(segmentsExperience));
+
+			return segmentsExperienceSelectedJSONObject;
 		}
 
-		return segmentsExperienceSelectedJSONObject;
+		return _jsonFactory.createJSONObject();
 	}
 
 	private JSONArray _getSegmentsExperiencesJSONArray()

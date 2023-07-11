@@ -43,6 +43,7 @@ page import="com.liferay.fragment.model.FragmentEntry" %><%@
 page import="com.liferay.fragment.renderer.FragmentRendererController" %><%@
 page import="com.liferay.fragment.service.FragmentCollectionLocalServiceUtil" %><%@
 page import="com.liferay.fragment.web.internal.constants.FragmentWebKeys" %><%@
+page import="com.liferay.fragment.web.internal.display.context.ConfigurationDisplayContext" %><%@
 page import="com.liferay.fragment.web.internal.display.context.ContributedFragmentManagementToolbarDisplayContext" %><%@
 page import="com.liferay.fragment.web.internal.display.context.EditFragmentEntryDisplayContext" %><%@
 page import="com.liferay.fragment.web.internal.display.context.FragmentCollectionResourcesDisplayContext" %><%@
@@ -59,11 +60,8 @@ page import="com.liferay.fragment.web.internal.display.context.GroupFragmentEntr
 page import="com.liferay.fragment.web.internal.display.context.GroupFragmentEntryUsageManagementToolbarDisplayContext" %><%@
 page import="com.liferay.fragment.web.internal.display.context.ImportDisplayContext" %><%@
 page import="com.liferay.fragment.web.internal.display.context.RenderFragmentEntryDisplayContext" %><%@
-page import="com.liferay.fragment.web.internal.display.context.SelectFragmentCollectionDisplayContext" %><%@
-page import="com.liferay.fragment.web.internal.display.context.SelectFragmentCollectionManagementToolbarDisplayContext" %><%@
 page import="com.liferay.fragment.web.internal.frontend.taglib.clay.servlet.taglib.ContributedFragmentCompositionVerticalCard" %><%@
 page import="com.liferay.fragment.web.internal.frontend.taglib.clay.servlet.taglib.ContributedFragmentEntryVerticalCard" %><%@
-page import="com.liferay.fragment.web.internal.frontend.taglib.clay.servlet.taglib.FragmentCollectionNavigationCard" %><%@
 page import="com.liferay.fragment.web.internal.frontend.taglib.clay.servlet.taglib.FragmentCollectionResourceVerticalCard" %><%@
 page import="com.liferay.fragment.web.internal.frontend.taglib.clay.servlet.taglib.FragmentEntryVerticalCardFactory" %><%@
 page import="com.liferay.fragment.web.internal.security.permission.resource.FragmentPermission" %><%@
@@ -93,7 +91,7 @@ page import="java.util.Objects" %>
 <portlet:defineObjects />
 
 <%
-FragmentDisplayContext fragmentDisplayContext = new FragmentDisplayContext(request, renderRequest, renderResponse);
+FragmentDisplayContext fragmentEntriesDisplayContext = new FragmentDisplayContext(request, renderRequest, renderResponse);
 %>
 
 <%@ include file="/init-ext.jsp" %>

@@ -31,13 +31,13 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		JSONGroup.deleteGroupByName(groupName = ${testSiteName});
 
 		CustomerPortal.customerPortalApisTearDown();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -51,9 +51,9 @@ definition {
 	}
 
 	@description = "Automation ID: LPS-148070 | Test Summary: Verify success message Activation Key was downloaded successfully"
+	@ignore = "true"
 	@priority = 4
 	test CanViewConfirmSuccessfulMessage {
-		property portal.upstream = "quarantine";
 
 		// Needs refactor since it depends on example FIFA account
 

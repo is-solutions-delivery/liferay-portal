@@ -57,12 +57,12 @@ export const MAX_NAME_LENGTH = {
 export const VIEWS = [
 	{
 		id: 'chart',
-		label: Liferay.Language.get('chart'),
+		label: Liferay.Language.get('chart[noun]'),
 		symbol: 'diagram',
 	},
 	{
 		id: 'list',
-		label: Liferay.Language.get('list'),
+		label: Liferay.Language.get('list[noun]'),
 		symbol: 'list',
 	},
 	{

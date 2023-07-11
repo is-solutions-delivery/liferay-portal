@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
@@ -37,6 +38,17 @@ public class FilePropagator {
 	public FilePropagator(
 		String[] fileNames, String sourceDirName, String targetDirName,
 		String primaryTargetSlave, List<String> targetSlaves) {
+
+		this(
+			fileNames, sourceDirName, targetDirName, primaryTargetSlave,
+			targetSlaves, _TIMEOUT_DEFAULT);
+	}
+
+	public FilePropagator(
+		String[] fileNames, String sourceDirName, String targetDirName,
+		String primaryTargetSlave, List<String> targetSlaves, long timeout) {
+
+		_timeout = timeout;
 
 		for (String fileName : fileNames) {
 			_filePropagatorTasks.add(
@@ -80,6 +92,7 @@ public class FilePropagator {
 			"File propagation starting with " + threadCount + " threads.");
 
 		try {
+			String previousString = null;
 			long start = JenkinsResultsParserUtil.getCurrentTimeMillis();
 
 			while (!_targetSlaves.isEmpty() || !_busySlaves.isEmpty()) {
@@ -105,27 +118,47 @@ public class FilePropagator {
 				StringBuffer sb = new StringBuffer();
 
 				sb.append("Average thread duration: ");
-				sb.append(getAverageThreadDuration());
-				sb.append("ms\nBusy slaves:");
+				sb.append(
+					JenkinsResultsParserUtil.toDurationString(
+						getAverageThreadDuration()));
+				sb.append("\nBusy slaves:");
 				sb.append(_busySlaves.size());
 				sb.append("\nMirror slaves:");
 				sb.append(_mirrorSlaves.size());
 				sb.append("\nTarget slaves:");
 				sb.append(_targetSlaves.size());
+
+				String currentString = sb.toString();
+
+				if (Objects.equals(previousString, currentString)) {
+					continue;
+				}
+
 				sb.append("\nTotal duration: ");
+
+				long currentTime =
+					JenkinsResultsParserUtil.getCurrentTimeMillis();
+
 				sb.append(
-					JenkinsResultsParserUtil.getCurrentTimeMillis() - start);
+					JenkinsResultsParserUtil.toDurationString(
+						currentTime - start));
+
 				sb.append("\n");
 
 				System.out.println(sb.toString());
 
+				previousString = currentString;
+
 				JenkinsResultsParserUtil.sleep(5000);
 			}
 
+			long duration =
+				JenkinsResultsParserUtil.getCurrentTimeMillis() - start;
+
 			System.out.println(
-				"File propagation completed in " +
-					(JenkinsResultsParserUtil.getCurrentTimeMillis() - start) +
-						"ms.");
+				JenkinsResultsParserUtil.combine(
+					"File propagation completed in ",
+					JenkinsResultsParserUtil.toDurationString(duration), "."));
 
 			if (!_errorSlaves.isEmpty()) {
 				System.out.println(
@@ -220,9 +253,11 @@ public class FilePropagator {
 	private int _executeBashCommands(List<String> commands, String targetSlave)
 		throws IOException, TimeoutException {
 
-		StringBuffer sb = new StringBuffer(
-			"ssh -o ConnectTimeout=30 -o NumberOfPasswordPrompts=0 ");
+		StringBuffer sb = new StringBuffer();
 
+		sb.append("ssh -o ConnectTimeout=");
+		sb.append(_timeout / (60 * 1000));
+		sb.append(" -o NumberOfPasswordPrompts=0 ");
 		sb.append(targetSlave);
 		sb.append(" '");
 
@@ -242,7 +277,7 @@ public class FilePropagator {
 		sb.append("'");
 
 		Process process = JenkinsResultsParserUtil.executeBashCommands(
-			sb.toString());
+			_timeout, sb.toString());
 
 		return process.exitValue();
 	}
@@ -253,6 +288,8 @@ public class FilePropagator {
 		return "mkdir -p " + dirName;
 	}
 
+	private static final long _TIMEOUT_DEFAULT = 15 * 60 * 1000;
+
 	private final List<String> _busySlaves = new ArrayList<>();
 	private String _cleanUpCommand;
 	private final List<String> _errorSlaves = new ArrayList<>();
@@ -262,6 +299,7 @@ public class FilePropagator {
 	private final List<String> _targetSlaves = new ArrayList<>();
 	private int _threadsCompletedCount;
 	private long _threadsDurationTotal;
+	private final long _timeout;
 
 	private static class FilePropagatorTask {
 

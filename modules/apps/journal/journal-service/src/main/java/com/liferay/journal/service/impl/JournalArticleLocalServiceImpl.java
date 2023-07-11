@@ -176,6 +176,7 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizer;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.GroupSubscriptionCheckSubscriptionSender;
+import com.liferay.portal.kernel.util.GroupThreadLocal;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -1186,7 +1187,8 @@ public class JournalArticleLocalServiceImpl
 		if (article.isApproved() &&
 			isLatestVersion(
 				article.getGroupId(), article.getArticleId(),
-				article.getVersion(), WorkflowConstants.STATUS_APPROVED)) {
+				article.getVersion(), WorkflowConstants.STATUS_APPROVED) &&
+			!GroupThreadLocal.isDeleteInProcess()) {
 
 			updatePreviousApprovedArticle(article);
 		}
@@ -1209,7 +1211,8 @@ public class JournalArticleLocalServiceImpl
 			!article.isApproved() &&
 			isLatestVersion(
 				article.getGroupId(), article.getArticleId(),
-				article.getVersion())) {
+				article.getVersion()) &&
+			!GroupThreadLocal.isDeleteInProcess()) {
 
 			articleURL = buildArticleURL(
 				articleURL, article.getGroupId(), article.getFolderId(),
@@ -4708,15 +4711,6 @@ public class JournalArticleLocalServiceImpl
 			article.setSmallImageId(latestArticle.getSmallImageId());
 
 			serviceContext.setAttribute("version", version);
-
-			_addArticleLocalizedFields(
-				article.getCompanyId(), article.getId(), titleMap,
-				descriptionMap);
-		}
-		else {
-			_updateArticleLocalizedFields(
-				article.getCompanyId(), article.getId(), titleMap,
-				descriptionMap);
 		}
 
 		Locale locale = getArticleDefaultLocale(content);
@@ -4734,7 +4728,11 @@ public class JournalArticleLocalServiceImpl
 				LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault()));
 
 			if (Validator.isNull(urlTitle)) {
-				throw new ArticleFriendlyURLException();
+				urlTitle = ParamUtil.getString(serviceContext, "urlTitle");
+
+				if (!imported || Validator.isNull(urlTitle)) {
+					throw new ArticleFriendlyURLException();
+				}
 			}
 		}
 
@@ -4783,6 +4781,19 @@ public class JournalArticleLocalServiceImpl
 		article.setStatusDate(serviceContext.getModifiedDate(date));
 
 		article = journalArticlePersistence.update(article);
+
+		// Article localization
+
+		if (addNewVersion) {
+			_addArticleLocalizedFields(
+				article.getCompanyId(), article.getId(), titleMap,
+				descriptionMap);
+		}
+		else {
+			_updateArticleLocalizedFields(
+				article.getCompanyId(), article.getId(), titleMap,
+				descriptionMap);
+		}
 
 		// Friendly URLs
 
@@ -5099,7 +5110,7 @@ public class JournalArticleLocalServiceImpl
 				groupId,
 				_classNameLocalService.getClassNameId(JournalArticle.class),
 				article.getResourcePrimKey(),
-				_friendlyURLNormalizer.normalizeWithPeriods(title),
+				_friendlyURLNormalizer.normalize(title),
 				_language.getLanguageId(entry.getKey()));
 
 			friendlyURLMap.put(entry.getKey(), urlTitle);
@@ -5416,7 +5427,6 @@ public class JournalArticleLocalServiceImpl
 			}
 
 			article.setSmallImageURL(oldArticle.getSmallImageURL());
-
 			article.setStatus(WorkflowConstants.STATUS_DRAFT);
 
 			User statusUser = _userLocalService.fetchUser(
@@ -5429,7 +5439,6 @@ public class JournalArticleLocalServiceImpl
 
 			article.setStatusByUserId(statusUser.getUserId());
 			article.setStatusByUserName(statusUser.getFullName());
-
 			article.setStatusDate(new Date());
 
 			ExpandoBridgeUtil.copyExpandoBridgeAttributes(
@@ -7814,8 +7823,7 @@ public class JournalArticleLocalServiceImpl
 			String urlTitle = friendlyURLEntryLocalService.getUniqueUrlTitle(
 				groupId,
 				_classNameLocalService.getClassNameId(JournalArticle.class),
-				resourcePrimKey,
-				_friendlyURLNormalizer.normalizeWithPeriods(friendlyURL),
+				resourcePrimKey, _friendlyURLNormalizer.normalize(friendlyURL),
 				languageId);
 
 			urlTitleMap.put(languageId, urlTitle);
@@ -7834,8 +7842,7 @@ public class JournalArticleLocalServiceImpl
 						_classNameLocalService.getClassNameId(
 							JournalArticle.class),
 						resourcePrimKey,
-						_friendlyURLNormalizer.normalizeWithPeriods(value),
-						languageId);
+						_friendlyURLNormalizer.normalize(value), languageId);
 
 				urlTitleMap.put(languageId, urlTitle);
 			}

@@ -83,6 +83,11 @@ public class KBAttachmentItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/kb_article_attachments.jsp");
+
 		KBAttachmentItemSelectorViewDisplayContext
 			kbAttachmentItemSelectorViewDisplayContext =
 				new KBAttachmentItemSelectorViewDisplayContext(
@@ -95,11 +100,6 @@ public class KBAttachmentItemSelectorView
 			KBItemSelectorWebKeys.
 				KB_ATTACHMENT_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			kbAttachmentItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/kb_article_attachments.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

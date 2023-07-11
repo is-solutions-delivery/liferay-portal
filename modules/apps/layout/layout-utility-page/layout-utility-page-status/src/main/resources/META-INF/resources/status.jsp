@@ -33,30 +33,11 @@
 	%>
 
 	<c:choose>
-		<c:when test="<%= status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR %>">
-			<liferay-layout:render-layout-utility-page-entry
-				type="<%= LayoutUtilityPageEntryConstants.TYPE_SC_INTERNAL_SERVER_ERROR %>"
-			>
-				<h3 class="alert alert-danger">
-					<liferay-ui:message key="internal-server-error" />
-				</h3>
-
-				<liferay-ui:message key="an-error-occurred-while-accessing-the-requested-resource" />
-
-				<br /><br />
-
-				<code class="lfr-url-error"><%= statusDisplayContext.getEscapedURL(themeDisplay) %></code>
-
-				<%
-				statusDisplayContext.logSessionErrors();
-				%>
-
-			</liferay-layout:render-layout-utility-page-entry>
-		</c:when>
 		<c:when test="<%= SessionErrors.contains(request, PrincipalException.getNestedClasses()) %>">
-			<h3 class="alert alert-danger">
-				<liferay-ui:message key="forbidden" />
-			</h3>
+			<clay:alert
+				displayType="danger"
+				message="forbidden"
+			/>
 
 			<liferay-ui:message key="you-do-not-have-permission-to-access-the-requested-resource" />
 
@@ -65,9 +46,10 @@
 			<code class="lfr-url-error"><%= statusDisplayContext.getEscapedURL(themeDisplay) %></code>
 		</c:when>
 		<c:when test="<%= SessionErrors.contains(request, PortalException.class.getName()) || SessionErrors.contains(request, SystemException.class.getName()) %>">
-			<h3 class="alert alert-danger">
-				<liferay-ui:message key="internal-server-error" />
-			</h3>
+			<clay:alert
+				displayType="danger"
+				message="internal-server-error"
+			/>
 
 			<liferay-ui:message key="an-error-occurred-while-accessing-the-requested-resource" />
 
@@ -76,9 +58,10 @@
 			<code class="lfr-url-error"><%= statusDisplayContext.getEscapedURL(themeDisplay) %></code>
 		</c:when>
 		<c:when test="<%= SessionErrors.contains(request, TransformException.class.getName()) %>">
-			<h3 class="alert alert-danger">
-				<liferay-ui:message key="internal-server-error" />
-			</h3>
+			<clay:alert
+				displayType="danger"
+				message="internal-server-error"
+			/>
 
 			<liferay-ui:message key="an-error-occurred-while-processing-the-requested-resource" />
 
@@ -101,9 +84,10 @@
 				type="<%= LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND %>"
 			>
 				<div class="container pb-3 pt-3">
-					<h3 class="alert alert-danger">
-						<liferay-ui:message key="not-found" />
-					</h3>
+					<clay:alert
+						displayType="danger"
+						message="not-found"
+					/>
 
 					<liferay-ui:message key="the-requested-resource-could-not-be-found" />
 
@@ -113,10 +97,32 @@
 				</div>
 			</liferay-layout:render-layout-utility-page-entry>
 		</c:when>
+		<c:when test="<%= status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR %>">
+			<liferay-layout:render-layout-utility-page-entry
+				type="<%= LayoutUtilityPageEntryConstants.TYPE_SC_INTERNAL_SERVER_ERROR %>"
+			>
+				<clay:alert
+					displayType="danger"
+					message="internal-server-error"
+				/>
+
+				<liferay-ui:message key="an-error-occurred-while-accessing-the-requested-resource" />
+
+				<br /><br />
+
+				<code class="lfr-url-error"><%= statusDisplayContext.getEscapedURL(themeDisplay) %></code>
+
+				<%
+				statusDisplayContext.logSessionErrors();
+				%>
+
+			</liferay-layout:render-layout-utility-page-entry>
+		</c:when>
 		<c:otherwise>
-			<h3 class="alert alert-danger">
-				<liferay-ui:message key="internal-server-error" />
-			</h3>
+			<clay:alert
+				displayType="danger"
+				message="internal-server-error"
+			/>
 
 			<liferay-ui:message key="an-error-occurred-while-accessing-the-requested-resource" />
 

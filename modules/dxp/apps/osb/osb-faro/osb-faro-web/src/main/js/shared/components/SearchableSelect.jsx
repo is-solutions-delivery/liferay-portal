@@ -3,13 +3,13 @@ import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import NoResultsDisplay, {
 	getFormattedTitle
 } from 'shared/components/NoResultsDisplay';
 import omitDefinedProps from 'shared/util/omitDefinedProps';
 import React from 'react';
 import SearchInput from './SearchInput';
-import Spinner from 'shared/components/Spinner';
 import {noop} from 'lodash';
 import {PropTypes} from 'prop-types';
 
@@ -93,7 +93,7 @@ class SearchableSelect extends React.Component {
 		const {items, loading, selectedItem} = this.props;
 
 		if (loading) {
-			return <Spinner />;
+			return <Loading />;
 		} else if (!items.length) {
 			return <NoResultsDisplay title={getFormattedTitle()} />;
 		} else {

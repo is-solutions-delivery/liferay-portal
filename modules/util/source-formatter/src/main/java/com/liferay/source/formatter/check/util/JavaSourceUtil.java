@@ -22,13 +22,17 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.tools.JavaImportsFormatter;
 import com.liferay.portal.tools.ToolsUtil;
 
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,11 +41,63 @@ import java.util.regex.Pattern;
  */
 public class JavaSourceUtil extends SourceUtil {
 
+	public static String addImports(String content, String... newImports) {
+		if (newImports.length == 0) {
+			return content;
+		}
+
+		Set<String> missingImports = new TreeSet<>();
+
+		Collections.addAll(missingImports, newImports);
+
+		for (String importName : getImportNames(content)) {
+			missingImports.remove(importName);
+		}
+
+		if (missingImports.isEmpty()) {
+			return content;
+		}
+
+		String packageName = getPackageName(content);
+
+		StringBundler sb = new StringBundler();
+
+		sb.append(packageName);
+		sb.append(StringPool.SEMICOLON);
+		sb.append(StringPool.NEW_LINE);
+		sb.append(StringPool.NEW_LINE);
+
+		for (String missingImport : missingImports) {
+			sb.append("import ");
+			sb.append(missingImport);
+			sb.append(StringPool.SEMICOLON);
+		}
+
+		return StringUtil.replace(
+			content, packageName + StringPool.SEMICOLON, sb.toString());
+	}
+
 	public static String getClassName(String fileName) {
 		int x = fileName.lastIndexOf(CharPool.SLASH);
 		int y = fileName.lastIndexOf(CharPool.PERIOD);
 
 		return fileName.substring(x + 1, y);
+	}
+
+	public static List<String> getImportNames(String content) {
+		List<String> importNames = new ArrayList<>();
+
+		String[] importLines = StringUtil.splitLines(
+			JavaImportsFormatter.getImports(content));
+
+		for (String importLine : importLines) {
+			if (Validator.isNotNull(importLine)) {
+				importNames.add(
+					importLine.substring(7, importLine.length() - 1));
+			}
+		}
+
+		return importNames;
 	}
 
 	public static File getJavaFile(

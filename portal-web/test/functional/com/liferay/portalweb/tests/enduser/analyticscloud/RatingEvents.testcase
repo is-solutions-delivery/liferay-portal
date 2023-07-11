@@ -21,7 +21,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -29,7 +29,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -38,8 +38,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8923 | Test Summary: Check vote is triggered when voting and check its properties"
+	@ignore = "true"
 	@priority = 5
 	test CheckVoteEventWhenVotingForBlogAndCheckProperties {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		property proxy.server.enabled = "true";
 
 		task ("Add a blog to the page and connect AC to DXP") {
@@ -132,8 +137,13 @@ definition {
 	}
 
 	@description = "Bug: LRAC-11450 | Automation ID: LRAC-11507 | Test Summary: Check vote is triggered when voting for DM and check its properties"
+	@ignore = "true"
 	@priority = 5
 	test CheckVoteEventWhenVotingForDMAndCheckProperties {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		property proxy.server.enabled = "true";
 
 		task ("Add a documents and media to the page and connect DXP to AC") {

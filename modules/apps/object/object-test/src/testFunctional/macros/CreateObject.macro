@@ -151,14 +151,6 @@ definition {
 		WaitForPageLoad();
 	}
 
-	macro checkToggleCollapsible {
-		Check.checkToggleSwitch(locator1 = "CreateObject#TOGGLE_COLLAPSIBLE");
-
-		WaitForSPARefresh();
-
-		WaitForPageLoad();
-	}
-
 	macro checkToggleInactive {
 		Uncheck.uncheckToggleSwitch(locator1 = "CreateObject#ACTIVE_TOGGLE");
 
@@ -265,6 +257,14 @@ definition {
 
 		Click(
 			key_menuItem = ${panelCategoryKey},
+			locator1 = "MenuItem#ANY_MENU_ITEM");
+	}
+
+	macro selectScope {
+		Click(locator1 = "CreateObject#SCOPE");
+
+		Click(
+			key_menuItem = ${fieldLabel},
 			locator1 = "MenuItem#ANY_MENU_ITEM");
 	}
 

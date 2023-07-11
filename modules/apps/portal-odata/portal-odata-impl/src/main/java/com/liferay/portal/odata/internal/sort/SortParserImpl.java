@@ -14,7 +14,6 @@
 
 package com.liferay.portal.odata.internal.sort;
 
-import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -25,6 +24,7 @@ import com.liferay.portal.odata.sort.InvalidSortException;
 import com.liferay.portal.odata.sort.SortField;
 import com.liferay.portal.odata.sort.SortParser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -74,8 +74,13 @@ public class SortParserImpl implements SortParser {
 			return Collections.emptyList();
 		}
 
-		return TransformUtil.transform(
-			StringUtil.split(sortString), string -> getSortField(string));
+		List<SortField> sortFields = new ArrayList<>();
+
+		for (String string : StringUtil.split(sortString)) {
+			sortFields.add(getSortField(string));
+		}
+
+		return sortFields;
 	}
 
 	protected EntityField getEntityField(

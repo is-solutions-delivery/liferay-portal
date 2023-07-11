@@ -61,6 +61,10 @@ public class BatchEngineUnitConfiguration {
 		return _version;
 	}
 
+	public boolean isMultiCompany() {
+		return _multiCompany;
+	}
+
 	public void setCallbackURL(String callbackURL) {
 		_callbackURL = callbackURL;
 	}
@@ -81,6 +85,10 @@ public class BatchEngineUnitConfiguration {
 		}
 
 		_fieldNameMappingMap = new HashMap<>(fieldNameMappingMap);
+	}
+
+	public void setMultiCompany(boolean multiCompany) {
+		_multiCompany = multiCompany;
 	}
 
 	public void setParameters(Map<String, Serializable> parameters) {
@@ -115,6 +123,9 @@ public class BatchEngineUnitConfiguration {
 
 	@JsonProperty("fieldNameMappingMap")
 	private Map<String, String> _fieldNameMappingMap;
+
+	@JsonProperty("multiCompany")
+	private boolean _multiCompany;
 
 	@JsonProperty("parameters")
 	private Map<String, Serializable> _parameters;

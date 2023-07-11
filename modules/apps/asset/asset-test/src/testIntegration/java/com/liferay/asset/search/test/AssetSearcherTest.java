@@ -18,12 +18,14 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.model.AssetVocabularyConstants;
+import com.liferay.asset.kernel.search.AssetSearcherFactory;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.search.BaseSearcher;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -39,7 +41,6 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portlet.asset.util.AssetSearcher;
 
 import java.util.Collections;
 
@@ -114,8 +115,6 @@ public class AssetSearcherTest {
 	public void testSearchAllAssetCategoryIdsIncludingInternalAssetCategories()
 		throws Exception {
 
-		AssetSearcher assetSearcher = new AssetSearcher();
-
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
 		assetEntryQuery.setAllCategoryIds(
@@ -125,14 +124,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 1, hits.getLength());
 	}
@@ -141,8 +141,6 @@ public class AssetSearcherTest {
 	public void testSearchAllAssetCategoryIdsOnlyPublicAssetCategories()
 		throws Exception {
 
-		AssetSearcher assetSearcher = new AssetSearcher();
-
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
 		assetEntryQuery.setAllCategoryIds(
@@ -151,14 +149,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(false);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 2, hits.getLength());
 	}
@@ -166,8 +165,6 @@ public class AssetSearcherTest {
 	@Test
 	public void testSearchAnyAssetCategoryIdsIncludingInternalAssetCategories()
 		throws Exception {
-
-		AssetSearcher assetSearcher = new AssetSearcher();
 
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
@@ -178,14 +175,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 3, hits.getLength());
 	}
@@ -193,8 +191,6 @@ public class AssetSearcherTest {
 	@Test
 	public void testSearchAnyAssetCategoryIdsOnlyPublicAssetCategories()
 		throws Exception {
-
-		AssetSearcher assetSearcher = new AssetSearcher();
 
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
@@ -204,14 +200,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(false);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 2, hits.getLength());
 	}
@@ -222,8 +219,6 @@ public class AssetSearcherTest {
 
 		setGuestUser();
 
-		AssetSearcher assetSearcher = new AssetSearcher();
-
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
 		assetEntryQuery.setAllCategoryIds(
@@ -233,14 +228,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 1, hits.getLength());
 	}
@@ -251,8 +247,6 @@ public class AssetSearcherTest {
 
 		setGuestUser();
 
-		AssetSearcher assetSearcher = new AssetSearcher();
-
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
 		assetEntryQuery.setAnyCategoryIds(
@@ -262,14 +256,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 3, hits.getLength());
 	}
@@ -278,8 +273,6 @@ public class AssetSearcherTest {
 	public void testSearchNotAllAssetCategoryIdsIncludingInternalAssetCategories()
 		throws Exception {
 
-		AssetSearcher assetSearcher = new AssetSearcher();
-
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
 		assetEntryQuery.setNotAllCategoryIds(
@@ -289,14 +282,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 2, hits.getLength());
 	}
@@ -305,8 +299,6 @@ public class AssetSearcherTest {
 	public void testSearchNotAllAssetCategoryIdsOnlyPublicAssetCategories()
 		throws Exception {
 
-		AssetSearcher assetSearcher = new AssetSearcher();
-
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
 		assetEntryQuery.setNotAllCategoryIds(
@@ -315,14 +307,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(false);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 1, hits.getLength());
 	}
@@ -330,8 +323,6 @@ public class AssetSearcherTest {
 	@Test
 	public void testSearchNotAnyAssetCategoryIdsIncludingInternalAssetCategories()
 		throws Exception {
-
-		AssetSearcher assetSearcher = new AssetSearcher();
 
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
@@ -342,14 +333,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 0, hits.getLength());
 	}
@@ -357,8 +349,6 @@ public class AssetSearcherTest {
 	@Test
 	public void testSearchNotAnyAssetCategoryIdsOnlyPublicAssetCategories()
 		throws Exception {
-
-		AssetSearcher assetSearcher = new AssetSearcher();
 
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
@@ -368,14 +358,15 @@ public class AssetSearcherTest {
 				_publicAssetCategory2.getCategoryId()
 			});
 
-		assetSearcher.setAssetEntryQuery(assetEntryQuery);
+		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
+			assetEntryQuery);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
 			_group.getGroupId());
 
 		searchContext.setIncludeInternalAssetCategories(false);
 
-		Hits hits = assetSearcher.search(searchContext);
+		Hits hits = baseSearcher.search(searchContext);
 
 		Assert.assertEquals(hits.toString(), 1, hits.getLength());
 	}
@@ -397,6 +388,9 @@ public class AssetSearcherTest {
 			1, 1, 1965, 0, 0, true, true, null, StringPool.BLANK, null, null,
 			serviceContext);
 	}
+
+	@Inject
+	private static AssetSearcherFactory _assetSearcherFactory;
 
 	@Inject
 	private static AssetVocabularyLocalService _assetVocabularyLocalService;

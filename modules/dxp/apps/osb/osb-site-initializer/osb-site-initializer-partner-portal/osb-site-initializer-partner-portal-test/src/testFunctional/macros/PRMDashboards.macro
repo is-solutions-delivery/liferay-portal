@@ -1,14 +1,20 @@
 definition {
 
-	@summary = "Get the currend legend value in MDF dashboards page"
 	macro getLegendValue {
+		Refresh();
+
 		var chartName = StringUtil.lowerCase(${chartName});
 
 		var key_chartName = ${chartName};
 		var key_legendName = ${legendName};
+
+		ScrollWebElementIntoView(locator1 = "PRMDashboards#LEGEND_VALUE");
+
 		var legendValue = selenium.getText("PRMDashboards#LEGEND_VALUE");
 
 		var legendValue = StringUtil.extractDigits(${legendValue});
+
+		var legendValue = ${legendValue} * 1000;
 
 		echo("Legend value: ${legendValue}");
 

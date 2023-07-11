@@ -81,6 +81,11 @@ public class BlogsItemSelectorView
 			PortletURL portletURL, String itemSelectedEventName, boolean search)
 		throws IOException, ServletException {
 
+		ServletContext servletContext = getServletContext();
+
+		RequestDispatcher requestDispatcher =
+			servletContext.getRequestDispatcher("/blogs_attachments.jsp");
+
 		BlogsItemSelectorViewDisplayContext
 			blogsItemSelectorViewDisplayContext =
 				new BlogsItemSelectorViewDisplayContext(
@@ -91,11 +96,6 @@ public class BlogsItemSelectorView
 		servletRequest.setAttribute(
 			BlogsItemSelectorWebKeys.BLOGS_ITEM_SELECTOR_VIEW_DISPLAY_CONTEXT,
 			blogsItemSelectorViewDisplayContext);
-
-		ServletContext servletContext = getServletContext();
-
-		RequestDispatcher requestDispatcher =
-			servletContext.getRequestDispatcher("/blogs_attachments.jsp");
 
 		requestDispatcher.include(servletRequest, servletResponse);
 	}

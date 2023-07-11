@@ -44,9 +44,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -62,7 +62,7 @@ definition {
 
 	@description = "This is a use case for LPS-51280"
 	@priority = 5
-	@refactorneeded
+	@refactordone
 	test CanReceiveEmailNotificationForNewComment {
 		property custom.properties = "jsonws.web.service.paths.excludes=${line.separator}dl.actions.visible=true";
 		property portal.acceptance = "true";
@@ -79,15 +79,12 @@ definition {
 			requireReset = "false",
 			userEmailAddress = "userea@liferay.com");
 
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMFolder.addPG(
+		JSONFolder.addFolder(
 			dmFolderDescription = "DM Folder Description",
-			dmFolderName = "DM Folder Name");
+			dmFolderName = "DM Folder Name",
+			groupName = "Guest");
 
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Documents and Media");
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
 		DMNavigator.gotoDocumentPermissionsCP(dmDocumentTitle = "DM Folder Name");
 
@@ -181,7 +178,7 @@ The DM file [$DOCUMENT_TITLE$] has been added to Home folder.
 	}
 
 	@priority = 5
-	@refactorneeded
+	@refactordone
 	test CanViewEmailNotificationForNewDocumentInFolder {
 		property custom.properties = "jsonws.web.service.paths.excludes=${line.separator}dl.actions.visible=true";
 		property portal.acceptance = "true";
@@ -200,32 +197,22 @@ The DM file [$DOCUMENT_TITLE$] has been added to Home folder.
 			requireReset = "false",
 			userEmailAddress = "userea@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		JSONGroup.assignUserToGroup(
+			groupName = "Guest",
+			userEmailAddress = "userea@liferay.com");
 
-		User.editUserSiteCP(
-			siteName = ${siteName},
-			userScreenName = "usersn");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
-
-		DMFolder.addPG(
+		JSONFolder.addFolder(
 			dmFolderDescription = "DM Folder Description",
-			dmFolderName = "DM Folder Name");
+			dmFolderName = "DM Folder Name",
+			groupName = "Guest");
 
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Documents and Media");
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
 		DMNavigator.gotoDocumentPermissionsCP(dmDocumentTitle = "DM Folder Name");
 
 		PermissionsInline.addOrRemoveAccessPermissionFromAllRoles(
 			addOrRemoveViewPermission = "Add",
 			roleList = "guest");
-
-		Navigator.gotoPage(pageName = "Documents and Media Page");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea@liferay.com",
@@ -243,7 +230,7 @@ The DM file [$DOCUMENT_TITLE$] has been added to Home folder.
 
 		DMNavigator.gotoFolder(dmFolderName = "DM Folder Name");
 
-		Click(locator1 = "Icon#INFO");
+		Click(locator1 = "Icon#INFO_DM");
 
 		AssertTextEquals(
 			locator1 = "Link#UNSUBSCRIBE",

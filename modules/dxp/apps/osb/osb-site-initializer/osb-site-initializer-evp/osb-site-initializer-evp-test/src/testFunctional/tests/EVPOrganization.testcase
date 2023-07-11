@@ -1,0 +1,188 @@
+@component-name = "OSB Site Initializer EVP"
+definition {
+
+	var baseURL = PropsUtil.get("portal.url");
+
+	property custom.properties = "feature.flag.LPS-169981=true";
+	property osgi.modules.includes = "osb-site-initializer-evp";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer EVP";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new EVP Site") {
+			EVPUtils.addEVPSite();
+		}
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		ObjectAdmin.deleteAllCustomObjectsViaAPI();
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "EVP Portal");
+		}
+	}
+
+	@description = "LPS-172949 - Finance user should edit Organizations with 'Awaiting Finance Review' status"
+	@priority = 4
+	test CanFinanceUserEditOrganization {
+		task ("Given the finance user is in the Organization page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "finance@liferay.com",
+				userLoginFullName = "Finance User");
+
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("When the finance user edit an Organization with 'Awaiting Finance Review' status") {
+			EVPOrganization.kebabMenuOrganization(organizationName = "Organization 2");
+
+			MenuItem.click(menuItem = "Edit");
+
+			EVPOrganization.fillOrganizationForm(organizationName = "Organization Test");
+		}
+
+		task ("Then the finance user can see the organization with edited name in the list") {
+			EVPUtils.viewStatus(
+				organizationName = "Organization Test",
+				status = "Verified");
+		}
+	}
+
+	@description = "This is a test for LPS-172949. Make sure the edit button does not appear when the user's role is 'User employee'."
+	@priority = 5
+	test EmployeeCannotEditOrganizationInAwatingApprovalStatus {
+		task ("Given the Employee user is in the Organization page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "employee@liferay.com",
+				userLoginFullName = "Employee User");
+
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("When the Employee user clicks on ellipsis button of an Organization with 'Awaiting Finance Approval' status") {
+			EVPOrganization.kebabMenuOrganization(organizationName = "Organization 2");
+		}
+
+		task ("Then the edit button dont appear") {
+			MenuItem.viewNotPresent(menuItem = "Edit");
+		}
+	}
+
+	@description = "This is a test for LPS-172949. Make sure the edit button does not appear when the user's role is 'User manager'."
+	@priority = 5
+	test ManagerCannotEditOrganizationInAwatingApprovalStatus {
+		task ("Given the Manager user is in the Organization page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "Manager User");
+
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("When the Manager user clicks on ellipsis button of an Organization with 'Awaiting Finance Approval' status") {
+			EVPOrganization.kebabMenuOrganization(organizationName = "Organization 2");
+		}
+
+		task ("Then the edit button dont appear") {
+			MenuItem.viewNotPresent(menuItem = "Edit");
+		}
+	}
+
+	@description = "LPS-180358 - Verify all status changes after 'need more info' request"
+	@priority = 5
+	test VerifyStatusAfterRequestMoreInfo {
+		task ("Given that a new organization was created with user employee") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "employee@liferay.com",
+				userLoginFullName = "Employee User");
+
+			EVPUtils.gotoEVP();
+
+			EVPOrganization.goToCreateOrganization(
+				button = "Create an Organization",
+				navItem = "Organization");
+
+			EVPOrganization.fillOrganizationForm(
+				bankingInfo = "Banking Info",
+				city = "City",
+				contactEmail = "Contact Email",
+				contactName = "Contact Name",
+				contactPhone = "Contact Phone",
+				country = "Country",
+				done = "true",
+				organizationName = "Organization 5",
+				organizationSite = "Social Media Link",
+				smallDescription = "Small Description",
+				state = "State",
+				street = "Street",
+				taxId = "Tax Id",
+				zipCode = "Zip");
+		}
+
+		task ("When the Manager click in 'Need more info' shows only one action.") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "manager@liferay.com",
+				userLoginFullName = "Manager User");
+
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+
+			EVPOrganization.kebabMenuOrganization(organizationName = "Organization 5");
+
+			MenuItem.click(menuItem = "Review");
+
+			EVPOrganization.changeStatus(
+				button = "Request more Info",
+				typeMessage = "Good Morning, Good Afternoon and Good Night");
+		}
+
+		task ("Then the organization status should be 'Awaiting More Info From Employee'") {
+			EVPUtils.viewStatus(
+				organizationName = "Organization 5",
+				status = "Awaiting More Info From Employee");
+		}
+
+		task ("When the Employee edit an Organization that is with 'Awaiting More Info From Employee' status") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "employee@liferay.com",
+				userLoginFullName = "Employee User");
+
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+
+			EVPOrganization.kebabMenuOrganization(organizationName = "Organization 5");
+
+			MenuItem.click(menuItem = "Edit");
+
+			EVPOrganization.fillOrganizationForm(organizationName = "Organization 7");
+		}
+
+		task ("Then the organization status should be 'Awaiting Approval on EVP'") {
+			EVPUtils.viewStatus(
+				organizationName = "Organization 7",
+				status = "Awaiting Approval On EVP");
+		}
+	}
+
+}

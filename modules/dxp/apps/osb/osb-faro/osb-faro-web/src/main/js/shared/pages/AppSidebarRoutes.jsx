@@ -1,5 +1,5 @@
 import BundleRouter from '../../route-middleware/BundleRouter';
-import Loading from 'shared/pages/Loading';
+import Loading from 'shared/components/Loading';
 import React, {lazy, Suspense} from 'react';
 import RouteNotFound from 'shared/components/RouteNotFound';
 import {ChannelContext} from 'shared/context/channel';
@@ -259,7 +259,7 @@ const ROUTES = [
 		destructured: false,
 		path: Routes.CHANNEL
 	},
-	{
+	DEVELOPER_MODE && {
 		data: CommerceDashboard,
 		destructured: false,
 		path: Routes.COMMERCE

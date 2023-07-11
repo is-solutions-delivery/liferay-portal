@@ -333,7 +333,7 @@ const PublicationsSearchContainer = ({
 		if (getListItem) {
 			viewTypeItems.push({
 				active: viewType === VIEW_TYPE_LIST,
-				label: Liferay.Language.get('list'),
+				label: Liferay.Language.get('list[noun]'),
 				onClick: () => setViewType(VIEW_TYPE_LIST),
 				symbolLeft: 'list',
 			});
@@ -615,7 +615,7 @@ const PublicationsSearchContainer = ({
 										? `${themeDisplay.getPathThemeImages()}/states/search_state.gif`
 										: `${themeDisplay.getPathThemeImages()}/states/empty_state.gif`
 								}
-								title={null}
+								title={Liferay.Language.get('no-results-found')}
 							/>
 						</div>
 					</div>

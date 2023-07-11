@@ -10,28 +10,32 @@ definition {
 
 	var buildName = "Build 1";
 	var caseName = "Case 1";
+	var caseResultName = "case result 1";
 	var caseType = "Case Type 1";
 	var componentName = "Component 1";
 	var environmentFactorsName = "Environment Factors 1";
 	var productVersion = "1.2";
 	var projectName = "Project 1";
 	var routineName = "Routine 1";
-	var suiteName = "Suite 1";
-	var teamName = "Team 1";
 	var runName = "Option 1";
-	var caseResultName = "case result 1";
+	var teamName = "Team 1";
 	var testSiteName = "Testray 2";
 
 	setUp {
-		task ("Login and create a Testray Site") {
+		task ("Set up instance and sign in") {
 			TestCase.setUpPortalInstance();
 
 			User.firstLoginPG();
-
-			Testray.addTestraySite(siteName = ${testSiteName});
 		}
 
-		task ("Setup for case results") {
+		task ("Create a new Testray Site") {
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
+		}
+
+		task ("create project, routine, team, component, case, case type, enviroment factor, product version, build, category, option, run and case result via API") {
 			JSONTestray.addProject(
 				projectDescription = "Project Description 1",
 				projectName = ${projectName});
@@ -128,29 +132,31 @@ definition {
 	}
 
 	tearDown {
-		JSONTestrayAPI.deleteObjectViaAPI(
-			object = "casetypes",
-			objectName = ${caseType});
+		task ("Delete case type, factor category, routine and project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "casetypes",
+				objectName = ${caseType});
 
-		JSONTestrayAPI.deleteObjectViaAPI(
-			object = "casetypes",
-			objectName = "Case Type 2");
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "casetypes",
+				objectName = "Case Type 2");
 
-		JSONTestrayAPI.deleteObjectViaAPI(
-			object = "factorcategories",
-			objectName = "Category 1");
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "factorcategories",
+				objectName = "Category 1");
 
-		JSONTestrayAPI.deleteObjectViaAPI(
-			object = "routines",
-			objectName = ${routineName});
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "routines",
+				objectName = ${routineName});
 
-		JSONTestrayAPI.deleteProject(projectName = ${projectName});
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
-		Testray.testrayApisTearDown();
+			Testray.testrayApisTearDown();
+		}
 
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -158,7 +164,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by assignee"
 	@priority = 3
 	test CanFilterByAssignee {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByAssignee";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Adding a user") {
 			JSONUser.addUser(
@@ -211,7 +217,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by case name"
 	@priority = 4
 	test CanFilterByCaseName {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByCaseName";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two cases different in the table") {
 			AssertElementPresent(
@@ -254,7 +260,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by case type"
 	@priority = 3
 	test CanFilterByCaseType {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByCaseType";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two cases different in the table related with the two case types") {
 			AssertElementPresent(
@@ -297,7 +303,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by component"
 	@priority = 3
 	test CanFilterByComponent {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByComponent";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two component different in the table") {
 			AssertElementPresent(
@@ -340,7 +346,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by enviroments"
 	@priority = 3
 	test CanFilterByEnviroments {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByEnviroments";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two enviroments different in the table") {
 			TestrayFilter.clickColumn();
@@ -391,7 +397,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by error"
 	@priority = 4
 	test CanFilterByError {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByError";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two case result with errors different in the table") {
 			AssertElementPresent(
@@ -434,7 +440,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by priority "
 	@priority = 3
 	test CanFilterByPriority {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByPriority";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two priority different in the table") {
 			AssertElementPresent(
@@ -477,7 +483,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by status"
 	@priority = 3
 	test CanFilterByStatus {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByStatus";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user complete a test with passed status") {
 			TestrayResults.goToCaseResults(caseResultsName = "Case 1");
@@ -534,7 +540,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results by team"
 	@priority = 3
 	test CanFilterByTeam {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterByTeam";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two team different in the table") {
 			AssertElementPresent(
@@ -577,12 +583,16 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should be able to filter case results using multiple filtering options"
 	@priority = 4
 	test CanFilterWithMultipleOptions {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanFilterWithMultipleOptions";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user complete a test with passed status") {
 			TestrayResults.goToCaseResults(caseResultsName = "Case 1");
 
 			Button.click(button = "Assign to Me");
+
+			WaitForElementPresent(
+				key_text = "Complete Test",
+				locator1 = "Button#ANY");
 
 			Button.click(button = "Complete Test");
 
@@ -662,8 +672,8 @@ definition {
 
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an Administrator I should not see case results that don't exist when I try filtering for them"
 	@priority = 3
-	test CanNotFilterForNonexistant {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanNotFilterForNonexistant";
+	test CanNotFilterForNonexistent {
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user filter a case result existent") {
 			TestrayFilter.clickFilter();
@@ -723,7 +733,7 @@ definition {
 	@description = "Story ID: LPS-173524 | Test Summary: Verify if as an User I should be able to search by a filter"
 	@priority = 2
 	test CanSearchByFilter {
-		property test.name.skip.portal.instance = "TestrayFiltersCasesResultsAdministrator#CanSearchByFilter";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two field different in the filter") {
 			AssertElementPresent(

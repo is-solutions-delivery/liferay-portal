@@ -31,9 +31,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -486,7 +486,7 @@ Welcome to Liferay Community Edition Portal 7.4.0 CE GA1''';
 	test DisplayWebContentAudio {
 		property dummy.socket.proxy.disabled = "true";
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "WebContentDisplay#ViewWebContentAudio";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Training,Web Content Administration";
 
 		task ("Enable the FFMPEG Audio Converter in System Settings") {
@@ -1005,7 +1005,7 @@ Welcome to Liferay Community Edition Portal 7.4.0 CE GA1''';
 	@uitest
 	test UndeployWebContentDisplayModuleViaGogoShell {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "WebContentDisplay#UndeployWebContentDisplayModuleViaGogoShell";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Disable Web Content Display module via GogoShell") {
 			GogoShell.openGogoShellAdmin();
@@ -1187,7 +1187,7 @@ ${runtimeInstance}
 	@description = "View all file types are shown in Web Content Display"
 	@priority = 4
 	test ViewAllFileTypesEnabled {
-		property test.name.skip.portal.instance = "WebContentDisplay#ViewAllFileTypesEnabled";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a web content") {
 			JSONWebcontent.addWebContent(
@@ -1376,7 +1376,7 @@ ${runtimeInstance}
 
 			Role.removePermissionPG(
 				permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
-				roleTitle = "guest");
+				roleTitle = "Guest");
 		}
 
 		task ("View error message is shown in Web Content Display as guest") {
@@ -1421,7 +1421,7 @@ ${runtimeInstance}
 
 			Role.removePermissionPG(
 				permissionDefinitionKey = "CONTENT_PERMISSIONS_VIEW_CHECKBOX",
-				roleTitle = "guest");
+				roleTitle = "Guest");
 		}
 
 		task ("View content is not shown as guest") {
@@ -1649,10 +1649,10 @@ ${httpUtil.URLtoString(request.getAttribute("CTX").getResource(".").toURI().crea
 	test ViewRelatedAssetsAfterChangePagination {
 		property testray.component.names = "Related Assets,Web Content Administration";
 
-		task ("Add six web conents") {
+		task ("Add six web contents") {
 			for (var i : list "1,2,3,4,5,6") {
 				JSONWebcontent.addWebContent(
-					content = "Web Contetn Content ${i}",
+					content = "Web Content Content ${i}",
 					groupName = "Test Site Name",
 					title = "Web Content Title ${i}");
 			}

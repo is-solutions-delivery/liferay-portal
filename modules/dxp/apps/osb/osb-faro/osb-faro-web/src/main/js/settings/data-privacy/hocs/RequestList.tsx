@@ -1,9 +1,9 @@
 import Card from 'shared/components/Card';
 import ClayButton from '@clayui/button';
-import ClayLink from '@clayui/link';
 import Constants, {OrderByDirections, Sizes} from 'shared/util/constants';
 import CrossPageSelect from 'shared/hoc/CrossPageSelect';
 import DataControlRequest from '../queries/DataControlRequestMutation';
+import getCN from 'classnames';
 import Label from 'shared/components/Label';
 import moment from 'moment';
 import Nav from 'shared/components/Nav';
@@ -21,6 +21,7 @@ import {
 	createOrderIOMap,
 	getGraphQLVariablesFromPagination
 } from 'shared/util/pagination';
+import {CUSTOM_DATE_FORMAT} from 'shared/util/date';
 import {FilterByType, FilterInputType} from 'shared/types';
 import {formatDateToTimeZone} from 'shared/util/date';
 import {
@@ -53,8 +54,6 @@ import {withHistory} from 'shared/hoc';
 const {
 	pagination: {cur: defaultPage}
 } = Constants;
-
-const DATE_FORMAT = 'MMM DD, YYYY';
 
 export const REQUEST_TYPE_LABEL_MAP = {
 	[GDPRRequestTypes.Access]: Liferay.Language.get('access'),
@@ -345,7 +344,11 @@ const RequestList: React.FC<IRequestListProps> = ({
 					{
 						accessor: CREATE_DATE,
 						dataFormatter: (date: string) =>
-							formatDateToTimeZone(date, DATE_FORMAT, timeZoneId),
+							formatDateToTimeZone(
+								date,
+								CUSTOM_DATE_FORMAT,
+								timeZoneId
+							),
 						label: Liferay.Language.get('requested-date')
 					},
 					{
@@ -424,25 +427,35 @@ const RequestList: React.FC<IRequestListProps> = ({
 						);
 					}
 
+					const classnames = getCN(
+						'btn btn-secondary btn-sm button-root',
+						{
+							disabled: selectedItems.size
+						}
+					);
+
 					return (
 						status === GDPRRequestStatuses.Completed && (
-							<ClayLink
-								button
-								className='button-root'
+							<a
+								className={classnames}
 								{...(!itemsSelected && {
 									href: `/o/proxy/download/data-control-tasks/${id}?projectGroupId=${groupId}`
 								})}
-								aria-disabled={itemsSelected}
-								displayType='secondary'
 								onClick={() =>
 									analytics.track(
 										'Downloaded User Data Request'
 									)
 								}
-								small
+								onKeyDown={() =>
+									analytics.track(
+										'Downloaded User Data Request'
+									)
+								}
+								role='button'
+								tabIndex={0}
 							>
 								{Liferay.Language.get('download')}
-							</ClayLink>
+							</a>
 						)
 					);
 				}}
@@ -450,10 +463,8 @@ const RequestList: React.FC<IRequestListProps> = ({
 					<Nav>
 						<Nav.Item>
 							{selectedItems.size ? (
-								<ClayLink
-									button
-									className='button-root nav-btn'
-									displayType='primary'
+								<a
+									className='btn btn-primary button-root nav-btn '
 									href={`/o/proxy/download/data-control-tasks?projectGroupId=${groupId}&filter=(id eq ${selectedItems
 										.map(({id}) => id)
 										.join(' or id eq ')})`}
@@ -464,7 +475,7 @@ const RequestList: React.FC<IRequestListProps> = ({
 									}
 								>
 									{Liferay.Language.get('download-all')}
-								</ClayLink>
+								</a>
 							) : (
 								<ClayButton
 									className='button-root nav-btn'

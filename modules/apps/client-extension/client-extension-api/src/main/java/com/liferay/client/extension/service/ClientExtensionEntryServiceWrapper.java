@@ -73,12 +73,12 @@ public class ClientExtensionEntryServiceWrapper
 	@Override
 	public ClientExtensionEntry
 			fetchClientExtensionEntryByExternalReferenceCode(
-				long companyId, String externalReferenceCode)
+				String externalReferenceCode, long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _clientExtensionEntryService.
 			fetchClientExtensionEntryByExternalReferenceCode(
-				companyId, externalReferenceCode);
+				externalReferenceCode, companyId);
 	}
 
 	@Override

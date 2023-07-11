@@ -2,8 +2,8 @@ import * as API from 'shared/api';
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import getCN from 'classnames';
+import Loading, {Align} from 'shared/components/Loading';
 import React, {useEffect, useState} from 'react';
-import Spinner from 'shared/components/Spinner';
 import {addAlert} from 'shared/actions/alerts';
 import {Alert} from 'shared/types';
 import {close, modalTypes, open} from 'shared/actions/modals';
@@ -96,7 +96,7 @@ const EmailReports: React.FC<IEmailReportsProps> = ({
 				Liferay.Language.get('email-reports-x'),
 				[
 					!report ? (
-						<Spinner className='ml-2' key='LOADING' size='sm' />
+						<Loading align={Align.Left} key='LOADING' />
 					) : report.enabled ? (
 						Liferay.Language.get('enabled')
 					) : (

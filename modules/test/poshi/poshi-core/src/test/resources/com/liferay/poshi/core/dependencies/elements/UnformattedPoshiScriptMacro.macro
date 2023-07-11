@@ -6,7 +6,7 @@ definition {
 	}
 
 	@prose = "I want to print rows-hash table: ${table}"
-	macro echoRowsHashTable {
+	macro echoRowsHashTable{
 		var RowsHashTable rowsHashTable = new RowsHashTable("${table}");
 
 		for  (var row : table "${rowsHashTable}")
@@ -27,6 +27,8 @@ definition {
 	}
 
 	@prose = "I assert the ${breadcrumbName}"
+
+	@summary = "View PG"
 	macro viewPG {
 		var key_breadcrumbName = "${breadcrumbName}";
 		static var breadcrumbNameUppercase = StringUtil.upperCase("${breadcrumbName}");

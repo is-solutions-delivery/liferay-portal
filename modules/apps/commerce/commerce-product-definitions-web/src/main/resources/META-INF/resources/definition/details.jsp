@@ -91,9 +91,7 @@ if ((cpDefinition != null) && (cpDefinition.getExpirationDate() != null)) {
 					</c:otherwise>
 				</c:choose>
 
-				<aui:input defaultLanguageId="<%= defaultLanguageId %>" label="name" localized="<%= true %>" name="nameMapAsXML" type="text">
-					<aui:validator name="required" />
-				</aui:input>
+				<aui:input defaultLanguageId="<%= defaultLanguageId %>" label="name" localized="<%= true %>" name="nameMapAsXML" required="<%= true %>" type="text" />
 
 				<aui:input defaultLanguageId="<%= defaultLanguageId %>" label="short-description" localized="<%= true %>" name="shortDescriptionMapAsXML" resizable="<%= true %>" type="textarea" />
 
@@ -228,7 +226,7 @@ if ((cpDefinition != null) && (cpDefinition.getExpirationDate() != null)) {
 								method: 'POST',
 							}
 						).then(() => {
-							Liferay.fire(events.UPDATE_DATASET_DISPLAY, {
+							Liferay.fire(events.FDS_UPDATE_DISPLAY, {
 								id:
 									'<%= CommerceProductFDSNames.PRODUCT_DEFINITION_SPECIFICATIONS %>',
 							});
@@ -282,7 +280,7 @@ if ((cpDefinition != null) && (cpDefinition.getExpirationDate() != null)) {
 						itemSelectedMessage:
 							'<%= LanguageUtil.get(request, "specification-selected") %>',
 						itemsKey: 'id',
-						linkedDatasetsId: [
+						linkedDataSetsId: [
 							'<%= CommerceProductFDSNames.PRODUCT_DEFINITION_SPECIFICATIONS %>',
 						],
 						multiSelectableEntries: true,

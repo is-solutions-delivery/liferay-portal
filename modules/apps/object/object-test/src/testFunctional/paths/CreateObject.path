@@ -51,6 +51,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>SCOPE</td>
+		<td>//label[contains(.,'Scope')]/following-sibling::div//input</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>TITLE_FIELD</td>
 		<td>//label[contains(.,'Title Field')]/following-sibling::div//input</td>
 		<td></td>
@@ -58,11 +63,6 @@
 	<tr>
 		<td>ACTIVE_TOGGLE</td>
 		<td>//input[@type='checkbox']</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>TOGGLE_COLLAPSIBLE</td>
-		<td>//input[@aria-label = 'Collapsible']</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -231,6 +231,11 @@
 	<tr>
 		<td>ACCOUNT_RESTRICTED_FIELD_DISABLED</td>
 		<td>//label[text()='Account Restricted Field']/following-sibling::div//input[@disabled='']</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>STORAGE_TYPE_OPTION</td>
+		<td>//select[contains(@class, 'form-control')]//option[contains(text(), '${key_storageOption}')]</td>
 		<td></td>
 	</tr>
 </tbody>

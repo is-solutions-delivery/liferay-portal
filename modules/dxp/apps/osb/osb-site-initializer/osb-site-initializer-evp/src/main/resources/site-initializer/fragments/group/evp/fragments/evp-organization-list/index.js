@@ -18,7 +18,9 @@ const itemSelected = document.querySelector('.item-selected');
 const yourOrganizations = document.querySelector('#your-organizations');
 const allOrganizations = document.querySelector('#all-organizations');
 
-selectBtn.addEventListener('click', () => {
+selectBtn.addEventListener('click', handleDropDown);
+
+function handleDropDown() {
 	wrapper.classList.toggle('active');
 	if (wrapper.classList.contains('active')) {
 		document.addEventListener('click', closeDropDown);
@@ -26,7 +28,7 @@ selectBtn.addEventListener('click', () => {
 	else {
 		document.removeEventListener('click', closeDropDown);
 	}
-});
+}
 
 function closeDropDown(event) {
 	const isOutsideWrapper =
@@ -91,3 +93,14 @@ const getOrganizationsLabelControl = () => {
 };
 
 getOrganizationsLabelControl();
+
+if (window.location.pathname.includes('edit-request-form')) {
+	selectBtn.removeEventListener('click', handleDropDown);
+	// eslint-disable-next-line no-undef
+	const organizationInputBtn = fragmentElement.querySelector(
+		'button.svg-caret-double'
+	);
+
+	organizationInputBtn.setAttribute('disabled', true);
+	organizationInputBtn.style.borderColor = '#2B3A4B80';
+}

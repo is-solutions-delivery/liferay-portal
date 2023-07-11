@@ -1,0 +1,16 @@
+[
+	{
+		"active": true,
+		"errorMessage": {
+			"en_US": "Error"
+		},
+		"externalReferenceCode": "CLAIM-DUE-DATE-15-DAYS-NOTIFICATION",
+		"label": {
+			"en_US": "Notification Due Date 15 Days Template Action"
+		},
+		"name": "notificationDueDate15DaysTemplateAction",
+		"objectActionExecutorKey": "notification",
+		"objectActionTriggerKey": "standalone",
+		"objectDefinitionId": "[$OBJECT_DEFINITION_ID:Activity$]"
+	}
+]

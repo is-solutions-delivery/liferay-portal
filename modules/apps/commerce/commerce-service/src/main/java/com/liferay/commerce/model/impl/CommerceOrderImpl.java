@@ -118,6 +118,18 @@ public class CommerceOrderImpl extends CommerceOrderBaseImpl {
 	}
 
 	@Override
+	public List<Long> getCustomerCommerceOrderIds() {
+		return CommerceOrderItemLocalServiceUtil.getCustomerCommerceOrderIds(
+			getCommerceOrderId());
+	}
+
+	@Override
+	public int getCustomerCommerceOrderIdsCount() {
+		return CommerceOrderItemLocalServiceUtil.
+			getCustomerCommerceOrderIdsCount(getCommerceOrderId());
+	}
+
+	@Override
 	public long getScopeGroupId() throws PortalException {
 		AccountEntry accountEntry = getAccountEntry();
 
@@ -169,6 +181,18 @@ public class CommerceOrderImpl extends CommerceOrderBaseImpl {
 	}
 
 	@Override
+	public List<Long> getSupplierCommerceOrderIds() {
+		return CommerceOrderItemLocalServiceUtil.getSupplierCommerceOrderIds(
+			getCommerceOrderId());
+	}
+
+	@Override
+	public int getSupplierCommerceOrderIdsCount() {
+		return CommerceOrderItemLocalServiceUtil.
+			getSupplierCommerceOrderIdsCount(getCommerceOrderId());
+	}
+
+	@Override
 	public CommerceMoney getTotalMoney() throws PortalException {
 		return CommerceMoneyFactoryUtil.create(
 			getCommerceCurrencyId(), getTotal());
@@ -214,6 +238,19 @@ public class CommerceOrderImpl extends CommerceOrderBaseImpl {
 	@Override
 	public boolean isOpen() {
 		if (getOrderStatus() == CommerceOrderConstants.ORDER_STATUS_OPEN) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isQuote() {
+		if ((getOrderStatus() ==
+				CommerceOrderConstants.ORDER_STATUS_QUOTE_PROCESSED) ||
+			(getOrderStatus() ==
+				CommerceOrderConstants.ORDER_STATUS_QUOTE_REQUESTED)) {
+
 			return true;
 		}
 

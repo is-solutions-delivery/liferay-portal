@@ -62,6 +62,8 @@ public class CommerceOrderItemWrapper
 		attributes.put("CPMeasurementUnitId", getCPMeasurementUnitId());
 		attributes.put("CProductId", getCProductId());
 		attributes.put(
+			"customerCommerceOrderItemId", getCustomerCommerceOrderItemId());
+		attributes.put(
 			"parentCommerceOrderItemId", getParentCommerceOrderItemId());
 		attributes.put("shippingAddressId", getShippingAddressId());
 		attributes.put("decimalQuantity", getDecimalQuantity());
@@ -110,6 +112,7 @@ public class CommerceOrderItemWrapper
 		attributes.put("maxSubscriptionCycles", getMaxSubscriptionCycles());
 		attributes.put("name", getName());
 		attributes.put("priceManuallyAdjusted", isPriceManuallyAdjusted());
+		attributes.put("priceOnApplication", isPriceOnApplication());
 		attributes.put("printedNote", getPrintedNote());
 		attributes.put("promoPrice", getPromoPrice());
 		attributes.put("promoPriceWithTaxAmount", getPromoPriceWithTaxAmount());
@@ -232,6 +235,13 @@ public class CommerceOrderItemWrapper
 
 		if (CProductId != null) {
 			setCProductId(CProductId);
+		}
+
+		Long customerCommerceOrderItemId = (Long)attributes.get(
+			"customerCommerceOrderItemId");
+
+		if (customerCommerceOrderItemId != null) {
+			setCustomerCommerceOrderItemId(customerCommerceOrderItemId);
 		}
 
 		Long parentCommerceOrderItemId = (Long)attributes.get(
@@ -431,6 +441,13 @@ public class CommerceOrderItemWrapper
 
 		if (priceManuallyAdjusted != null) {
 			setPriceManuallyAdjusted(priceManuallyAdjusted);
+		}
+
+		Boolean priceOnApplication = (Boolean)attributes.get(
+			"priceOnApplication");
+
+		if (priceOnApplication != null) {
+			setPriceOnApplication(priceOnApplication);
 		}
 
 		String printedNote = (String)attributes.get("printedNote");
@@ -722,6 +739,16 @@ public class CommerceOrderItemWrapper
 	@Override
 	public Date getCreateDate() {
 		return model.getCreateDate();
+	}
+
+	/**
+	 * Returns the customer commerce order item ID of this commerce order item.
+	 *
+	 * @return the customer commerce order item ID of this commerce order item
+	 */
+	@Override
+	public long getCustomerCommerceOrderItemId() {
+		return model.getCustomerCommerceOrderItemId();
 	}
 
 	/**
@@ -1153,6 +1180,16 @@ public class CommerceOrderItemWrapper
 	}
 
 	/**
+	 * Returns the price on application of this commerce order item.
+	 *
+	 * @return the price on application of this commerce order item
+	 */
+	@Override
+	public boolean getPriceOnApplication() {
+		return model.getPriceOnApplication();
+	}
+
+	/**
 	 * Returns the primary key of this commerce order item.
 	 *
 	 * @return the primary key of this commerce order item
@@ -1489,6 +1526,16 @@ public class CommerceOrderItemWrapper
 	}
 
 	/**
+	 * Returns <code>true</code> if this commerce order item is price on application.
+	 *
+	 * @return <code>true</code> if this commerce order item is price on application; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isPriceOnApplication() {
+		return model.isPriceOnApplication();
+	}
+
+	/**
 	 * Returns <code>true</code> if this commerce order item is shippable.
 	 *
 	 * @return <code>true</code> if this commerce order item is shippable; <code>false</code> otherwise
@@ -1626,6 +1673,18 @@ public class CommerceOrderItemWrapper
 	@Override
 	public void setCreateDate(Date createDate) {
 		model.setCreateDate(createDate);
+	}
+
+	/**
+	 * Sets the customer commerce order item ID of this commerce order item.
+	 *
+	 * @param customerCommerceOrderItemId the customer commerce order item ID of this commerce order item
+	 */
+	@Override
+	public void setCustomerCommerceOrderItemId(
+		long customerCommerceOrderItemId) {
+
+		model.setCustomerCommerceOrderItemId(customerCommerceOrderItemId);
 	}
 
 	/**
@@ -2024,6 +2083,16 @@ public class CommerceOrderItemWrapper
 	@Override
 	public void setPriceManuallyAdjusted(boolean priceManuallyAdjusted) {
 		model.setPriceManuallyAdjusted(priceManuallyAdjusted);
+	}
+
+	/**
+	 * Sets whether this commerce order item is price on application.
+	 *
+	 * @param priceOnApplication the price on application of this commerce order item
+	 */
+	@Override
+	public void setPriceOnApplication(boolean priceOnApplication) {
+		model.setPriceOnApplication(priceOnApplication);
 	}
 
 	/**

@@ -14,10 +14,11 @@ import {
 	STATUS_DISPLAY_MAP
 } from 'shared/util/subscriptions';
 import {formatDateToTimeZone} from 'shared/util/date';
-import {get, round} from 'lodash';
+import {get} from 'lodash';
 import {Plan} from 'shared/util/records';
 import {PropTypes} from 'prop-types';
 import {sub} from 'shared/util/lang';
+import {toRounded} from 'shared/util/numbers';
 
 const METRIC_DEFINITION_MAP = {
 	[INDIVIDUALS]: Liferay.Language.get(
@@ -74,7 +75,7 @@ export default class UsageMetric extends React.Component {
 
 	render() {
 		const {
-			currentPlan: {metrics, startDate},
+			currentPlan: {lastAnniversaryDate, metrics},
 			metricType,
 			timeZoneId
 		} = this.props;
@@ -92,7 +93,7 @@ export default class UsageMetric extends React.Component {
 				<h3 className='metric-name'>{getPropLabel(metricType)}</h3>
 
 				<div className='metric-breakdown'>
-					<Sticker display='light' symbol={getPropIcon(metricType)} />
+					<Sticker display='dark' symbol={getPropIcon(metricType)} />
 
 					<div className='metric-breakdown-content'>
 						<div>
@@ -121,9 +122,9 @@ export default class UsageMetric extends React.Component {
 								{sub(
 									Liferay.Language.get('x-percent-since-x'),
 									[
-										round(percent * 100),
+										toRounded(percent * 100),
 										formatDateToTimeZone(
-											startDate,
+											lastAnniversaryDate,
 											'MMMM D, YYYY',
 											timeZoneId
 										)

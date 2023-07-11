@@ -59,7 +59,7 @@ function ModalDeleteObjectRelationship({
 		>
 			<p>
 				{Liferay.Language.get(
-					'this-action-cannot-be-undone-and-will-permanently-permanently-all-related-fields-from-this-relationship'
+					'this-action-cannot-be-undone-and-will-permanently-delete-all-related-fields-from-this-relationship'
 				)}
 			</p>
 
@@ -97,8 +97,10 @@ export default function ModalWithProvider({isApproved}: {isApproved: boolean}) {
 	});
 
 	const deleteRelationship = useCallback(
-		(id: number) => {
-			API.deleteObjectRelationships(id).then(() => {
+		async (id: number) => {
+			try {
+				await API.deleteObjectRelationships(id);
+
 				Liferay.Util.openToast({
 					message: Liferay.Language.get(
 						'relationship-was-deleted-successfully'
@@ -107,7 +109,13 @@ export default function ModalWithProvider({isApproved}: {isApproved: boolean}) {
 
 				onClose();
 				setTimeout(() => window.location.reload(), 1500);
-			});
+			}
+			catch (error) {
+				Liferay.Util.openToast({
+					message: (error as Error).message,
+					type: 'danger',
+				});
+			}
 		},
 		[onClose]
 	);

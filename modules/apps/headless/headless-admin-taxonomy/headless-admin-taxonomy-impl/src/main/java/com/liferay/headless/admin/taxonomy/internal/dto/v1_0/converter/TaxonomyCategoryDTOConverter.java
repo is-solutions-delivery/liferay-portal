@@ -33,8 +33,10 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.vulcan.dto.action.DTOActionProvider;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.fields.NestedFieldsSupplier;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -103,7 +105,10 @@ public class TaxonomyCategoryDTOConverter
 
 		return new TaxonomyCategory() {
 			{
-				actions = dtoConverterContext.getActions();
+				actions = _dtoActionProvider.getActions(
+					assetCategory.getGroupId(), assetCategory.getCategoryId(),
+					dtoConverterContext.getUriInfo(),
+					dtoConverterContext.getUserId());
 				availableLanguages = LocaleUtil.toW3cLanguageIds(
 					assetCategory.getAvailableLanguageIds());
 				creator = CreatorUtil.toCreator(
@@ -168,34 +173,37 @@ public class TaxonomyCategoryDTOConverter
 						};
 					});
 				setTaxonomyCategoryUsageCount(
-					() -> {
-						UriInfo uriInfo = dtoConverterContext.getUriInfo();
+					NestedFieldsSupplier.<Integer>supply(
+						"taxonomyCategoryUsageCount",
+						fieldName -> {
+							UriInfo uriInfo = dtoConverterContext.getUriInfo();
 
-						if (uriInfo != null) {
-							MultivaluedMap<String, String> queryParameters =
-								uriInfo.getQueryParameters();
+							if (uriInfo != null) {
+								MultivaluedMap<String, String> queryParameters =
+									uriInfo.getQueryParameters();
 
-							if (StringUtil.contains(
-									queryParameters.getFirst("restrictFields"),
-									"taxonomyCategoryUsageCount")) {
+								if (StringUtil.contains(
+										queryParameters.getFirst(
+											"restrictFields"),
+										"taxonomyCategoryUsageCount")) {
 
-								return null;
+									return null;
+								}
 							}
-						}
 
-						return (int)_assetEntryLocalService.searchCount(
-							assetCategory.getCompanyId(),
-							new long[] {assetCategory.getGroupId()},
-							assetCategory.getUserId(), null, -1, null,
-							String.valueOf(assetCategory.getCategoryId()), null,
-							false, false,
-							new int[] {
-								WorkflowConstants.STATUS_APPROVED,
-								WorkflowConstants.STATUS_PENDING,
-								WorkflowConstants.STATUS_SCHEDULED
-							},
-							false);
-					});
+							return (int)_assetEntryLocalService.searchCount(
+								assetCategory.getCompanyId(),
+								new long[] {assetCategory.getGroupId()},
+								assetCategory.getUserId(), null, -1, null,
+								String.valueOf(assetCategory.getCategoryId()),
+								null, false, false,
+								new int[] {
+									WorkflowConstants.STATUS_APPROVED,
+									WorkflowConstants.STATUS_PENDING,
+									WorkflowConstants.STATUS_SCHEDULED
+								},
+								false);
+						}));
 			}
 		};
 	}
@@ -226,6 +234,11 @@ public class TaxonomyCategoryDTOConverter
 
 	@Reference
 	private AssetVocabularyService _assetVocabularyService;
+
+	@Reference(
+		target = "(dto.class.name=com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyCategory)"
+	)
+	private DTOActionProvider _dtoActionProvider;
 
 	@Reference
 	private Portal _portal;

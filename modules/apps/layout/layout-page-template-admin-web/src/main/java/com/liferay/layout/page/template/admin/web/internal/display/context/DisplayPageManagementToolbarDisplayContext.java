@@ -147,7 +147,6 @@ public class DisplayPageManagementToolbarDisplayContext
 					).setRedirect(
 						_themeDisplay.getURLCurrent()
 					).buildString());
-
 				dropdownItem.setLabel(
 					LanguageUtil.get(httpServletRequest, "add"));
 			}
@@ -175,11 +174,6 @@ public class DisplayPageManagementToolbarDisplayContext
 		}
 
 		return false;
-	}
-
-	@Override
-	protected String[] getNavigationKeys() {
-		return new String[] {"all"};
 	}
 
 	@Override

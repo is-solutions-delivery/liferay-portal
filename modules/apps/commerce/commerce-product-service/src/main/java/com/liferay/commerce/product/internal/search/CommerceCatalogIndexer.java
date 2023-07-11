@@ -119,6 +119,8 @@ public class CommerceCatalogIndexer extends BaseIndexer<CommerceCatalog> {
 			commerceCatalog.getCatalogDefaultLanguageId());
 		document.addKeyword(Field.GROUP_ID, commerceCatalog.getGroupId());
 		document.addKeyword(Field.NAME, commerceCatalog.getName());
+		document.addKeyword(
+			"accountEntryId", commerceCatalog.getAccountEntryId());
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Document " + commerceCatalog + " indexed successfully");

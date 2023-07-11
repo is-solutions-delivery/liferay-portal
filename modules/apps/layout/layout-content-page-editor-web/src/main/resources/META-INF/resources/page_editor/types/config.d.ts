@@ -15,6 +15,7 @@
 import {LayoutTypes} from './LayoutTypes';
 
 export interface Config {
+	actionableInfoItemSelectorURL: string;
 	addFragmentCompositionURL: string;
 	addFragmentEntryLinkCommentURL: string;
 	addFragmentEntryLinkURL: string;
@@ -53,7 +54,6 @@ export interface Config {
 
 	changeMasterLayoutURL: string;
 	changeStyleBookEntryURL: string;
-	contentPagePersonalizationLearnURL: string;
 	collectionSelectorURL: string;
 
 	commonStyles: Array<{
@@ -82,6 +82,7 @@ export interface Config {
 			defaultValue: string;
 		};
 	};
+	contentPagePersonalizationLearnURL: string;
 
 	createLayoutPageTemplateEntryURL: string;
 
@@ -101,7 +102,6 @@ export interface Config {
 	deleteFragmentEntryLinkCommentURL: string;
 	deleteSegmentsExperienceURL: string;
 	discardDraftURL: string;
-	draft: boolean;
 	duplicateItemURL: string;
 	duplicateSegmentsExperienceURL: string;
 	editFragmentEntryLinkCommentURL: string;
@@ -111,13 +111,15 @@ export interface Config {
 		getAvailableImageConfigurationsURL: string;
 		getAvailableListItemRenderersURL: string;
 		getAvailableListRenderersURL: string;
-		[key: string]: {
-			cssVariable: string;
-			editorType: string;
-			label: string;
-			name: string;
-			value: string;
-		} | string;
+		[key: string]:
+			| {
+					cssVariable: string;
+					editorType: string;
+					label: string;
+					name: string;
+					value: string;
+			  }
+			| string;
 	};
 	getAvailableTemplatesURL: string;
 	getCollectionConfigurationURL: string;
@@ -129,8 +131,8 @@ export interface Config {
 	getExperienceDataURL: string;
 	getIframeContentCssURL: string;
 	getIframeContentURL: string;
+	getInfoItemActionErrorMessageURL: string;
 	getInfoItemFieldValueURL: string;
-	getInfoItemMappingFieldsURL: string;
 	getLayoutFriendlyURL: string;
 	getLayoutPageTemplateCollectionsURL: string;
 	getPageContentsURL: string;
@@ -169,11 +171,11 @@ export interface Config {
 	searchContainerPageMaxDelta: number;
 
 	selectedMappingTypes?: {
-		type: {
+		subtype: {
 			id: string;
 			label: string;
 		};
-		subtype: {
+		type: {
 			id: string;
 			label: string;
 		};

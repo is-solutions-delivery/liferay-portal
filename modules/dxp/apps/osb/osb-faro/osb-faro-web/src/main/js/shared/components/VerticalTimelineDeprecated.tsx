@@ -1,8 +1,8 @@
 import ClayIcon from '@clayui/icon';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import NoResultsDisplay from './NoResultsDisplay';
 import React, {FC, useState} from 'react';
-import Spinner from './Spinner';
 import Sticker from './Sticker';
 import TextTruncate from './TextTruncate';
 import {formatDateToTimeZone} from 'shared/util/date';
@@ -200,7 +200,7 @@ const VerticalTimeline: FC<IVerticalTimelineProps> = ({
 	});
 
 	if (loading) {
-		return <Spinner alignCenter={false} className='flex-grow-1' spacer />;
+		return <Loading />;
 	} else if (!items.length && !nested) {
 		return (
 			<NoResultsDisplay

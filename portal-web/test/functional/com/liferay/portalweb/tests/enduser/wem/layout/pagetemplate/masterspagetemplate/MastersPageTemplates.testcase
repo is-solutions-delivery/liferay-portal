@@ -27,9 +27,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -65,7 +65,7 @@ definition {
 
 			PageEditor.configureFragment(
 				size = "Large",
-				type = "Link");
+				style = "Link");
 
 			PageEditor.gotoStyle(fragmentName = "Button");
 
@@ -96,7 +96,7 @@ definition {
 			PageEditor.viewFragmentStyle(
 				fragmentName = "Button",
 				size = "lg",
-				type = "link");
+				style = "link");
 
 			AssertCssValue(
 				key_fragmentName = "button",
@@ -269,8 +269,6 @@ definition {
 
 			Click(locator1 = "PageEditor#MORE_LINK");
 
-			Navigator.gotoNavTab(navTab = "Design");
-
 			AssertTextEquals(
 				locator1 = "PagesAdmin#MASTER_LAYOUT_NAME",
 				value1 = "Blank");
@@ -322,8 +320,6 @@ definition {
 			PageEditor.gotoTab(tabName = "Page Design Options");
 
 			Click(locator1 = "PageEditor#MORE_LINK");
-
-			Navigator.gotoNavTab(navTab = "Design");
 
 			AssertTextEquals(
 				locator1 = "PagesAdmin#MASTER_LAYOUT_NAME",
@@ -418,8 +414,6 @@ definition {
 
 			Click(locator1 = "PageEditor#MORE_LINK");
 
-			Navigator.gotoNavTab(navTab = "Design");
-
 			AssertTextEquals(
 				locator1 = "PagesAdmin#MASTER_LAYOUT_NAME",
 				value1 = "Blank");
@@ -481,8 +475,6 @@ definition {
 			PageEditor.gotoTab(tabName = "Page Design Options");
 
 			Click(locator1 = "PageEditor#MORE_LINK");
-
-			Navigator.gotoNavTab(navTab = "Design");
 
 			AssertTextEquals(
 				locator1 = "PagesAdmin#MASTER_LAYOUT_NAME",
@@ -566,8 +558,6 @@ definition {
 		task ("View the Custom Masters Page Template is still selected") {
 			Navigator.gotoBack();
 
-			ContentPages.gotoPageEditor();
-
 			PageEditor.gotoTab(tabName = "Page Design Options");
 
 			AssertElementPresent(
@@ -615,8 +605,6 @@ definition {
 			PageEditor.gotoTab(tabName = "Page Design Options");
 
 			Click(locator1 = "PageEditor#MORE_LINK");
-
-			Navigator.gotoNavTab(navTab = "Design");
 
 			AssertTextEquals(
 				locator1 = "PagesAdmin#MASTER_LAYOUT_NAME",
@@ -674,8 +662,6 @@ definition {
 			PageEditor.gotoTab(tabName = "Page Design Options");
 
 			Click(locator1 = "PageEditor#MORE_LINK");
-
-			Navigator.gotoNavTab(navTab = "Design");
 
 			AssertTextEquals(
 				locator1 = "PagesAdmin#MASTER_LAYOUT_NAME",
@@ -1040,8 +1026,6 @@ definition {
 
 			Click(locator1 = "PageEditor#MORE_LINK");
 
-			Navigator.gotoNavTab(navTab = "Design");
-
 			Click(
 				ariaLabel = "Change Master",
 				locator1 = "Button#ANY_WITH_ARIA_LABEL");
@@ -1315,8 +1299,6 @@ definition {
 
 			Click(locator1 = "PageEditor#MORE_LINK");
 
-			Navigator.gotoNavTab(navTab = "Design");
-
 			Click(
 				ariaLabel = "Change Master",
 				locator1 = "Button#ANY_WITH_ARIA_LABEL");
@@ -1467,8 +1449,6 @@ definition {
 
 			Click(locator1 = "PageEditor#MORE_LINK");
 
-			Navigator.gotoNavTab(navTab = "Design");
-
 			Click(
 				ariaLabel = "Edit Master",
 				locator1 = "Link#ANY_WITH_ARIA_LABEL");
@@ -1553,8 +1533,6 @@ definition {
 			PageEditor.gotoTab(tabName = "Page Design Options");
 
 			Click(locator1 = "PageEditor#MORE_LINK");
-
-			Navigator.gotoNavTab(navTab = "Design");
 
 			Click(
 				ariaLabel = "Edit Master",
@@ -1975,17 +1953,13 @@ definition {
 
 		task ("When adding a web content with email and telephone") {
 			task ("Create a web content structure") {
-				WebContentStructures.openWebContentStructuresAdmin(siteURLKey = "site-name");
+				WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
 
-				WebContentStructures.addCP(structureName = "Contact Information");
+				NavItem.gotoStructures();
 
-				for (var fieldFieldLabel : list "Name,Email,Phone,Personal Web") {
-					DataEngine.addField(
-						fieldFieldLabel = ${fieldFieldLabel},
-						fieldName = "Text");
-				}
-
-				WebContentStructures.saveCP();
+				WebContentStructures.importStructure(
+					structureName = "Contact Information",
+					uploadFileName = "Structure_Contact_Information_Fields.json");
 			}
 
 			task ("Create a Web Content from Contact Information") {

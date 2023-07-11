@@ -12,15 +12,17 @@
  * details.
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
+import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
+import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useContext, useState} from 'react';
 
 import FrontendDataSetContext from '../../FrontendDataSetContext';
 import {triggerAction} from '../../utils/actionItems/index';
 
-function CreationMenu({primaryItems}) {
+function CreationMenu({inEmptyState, primaryItems}) {
 	const frontendDataSetContext = useContext(FrontendDataSetContext);
 
 	const {loadData} = frontendDataSetContext;
@@ -29,19 +31,37 @@ function CreationMenu({primaryItems}) {
 
 	return (
 		primaryItems?.length > 0 && (
-			<ul className="navbar-nav">
+			<ul
+				className={classNames('navbar-nav', {
+					'd-inline-flex': inEmptyState,
+				})}
+			>
 				<li className="nav-item">
 					{primaryItems.length > 1 ? (
 						<ClayDropDown
 							active={active}
 							onActiveChange={setActive}
 							trigger={
-								<ClayButtonWithIcon
-									aria-label={Liferay.Language.get('new')}
-									className="nav-btn nav-btn-monospaced"
-									symbol="plus"
-									title={Liferay.Language.get('new')}
-								/>
+								<ClayButton
+									aria-label={
+										!inEmptyState &&
+										Liferay.Language.get('new')
+									}
+									className={classNames({
+										'nav-btn nav-btn-monospaced': !inEmptyState,
+									})}
+									displayType={inEmptyState && 'secondary'}
+									title={
+										!inEmptyState &&
+										Liferay.Language.get('new')
+									}
+								>
+									{inEmptyState ? (
+										Liferay.Language.get('new')
+									) : (
+										<ClayIcon symbol="plus" />
+									)}
+								</ClayButton>
 							}
 						>
 							<ClayDropDown.ItemList>
@@ -71,13 +91,13 @@ function CreationMenu({primaryItems}) {
 							</ClayDropDown.ItemList>
 						</ClayDropDown>
 					) : (
-						<ClayButtonWithIcon
-							aria-label={
-								primaryItems[0].label ??
-								Liferay.Language.get('new')
-							}
-							className="nav-btn nav-btn-monospaced"
+						<ClayButton
+							aria-label={!inEmptyState && primaryItems[0].label}
+							className={classNames({
+								'nav-btn nav-btn-monospaced': !inEmptyState,
+							})}
 							data-tooltip-align="top"
+							displayType={inEmptyState && 'secondary'}
 							onClick={() => {
 								const item = primaryItems[0];
 
@@ -89,12 +109,14 @@ function CreationMenu({primaryItems}) {
 									triggerAction(item, frontendDataSetContext);
 								}
 							}}
-							symbol="plus"
-							title={
-								primaryItems[0].label ??
-								Liferay.Language.get('new')
-							}
-						/>
+							title={!inEmptyState && primaryItems[0].label}
+						>
+							{inEmptyState ? (
+								primaryItems[0].label
+							) : (
+								<ClayIcon symbol="plus" />
+							)}
+						</ClayButton>
 					)}
 				</li>
 			</ul>

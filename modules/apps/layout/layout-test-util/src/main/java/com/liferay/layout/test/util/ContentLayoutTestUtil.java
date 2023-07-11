@@ -401,9 +401,7 @@ public class ContentLayoutTestUtil {
 
 		mockLiferayPortletActionRequest.setAttribute(
 			PortletServlet.PORTLET_SERVLET_REQUEST, mockHttpServletRequest);
-
 		mockLiferayPortletActionRequest.setAttribute(WebKeys.LAYOUT, layout);
-
 		mockLiferayPortletActionRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, themeDisplay);
 
@@ -453,7 +451,8 @@ public class ContentLayoutTestUtil {
 
 		LayoutSet layoutSet = group.getPublicLayoutSet();
 
-		themeDisplay.setLookAndFeel(layoutSet.getTheme(), null);
+		themeDisplay.setLookAndFeel(
+			layoutSet.getTheme(), layoutSet.getColorScheme());
 
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());

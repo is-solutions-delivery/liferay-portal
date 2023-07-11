@@ -1,7 +1,7 @@
 {
 	"devDependencies": {
 		"@liferay/eslint-plugin": "1.4.0",
-		"@liferay/npm-scripts": "47.18.1",
+		"@liferay/npm-scripts": "48.1.0",
 		"@types/ckeditor4": "4.16.2",
 		"@types/codemirror": "^5.60.5",
 		"@types/react-router-dom": "^5.3.3",
@@ -14,7 +14,8 @@
 		"fetch-mock": "^5.13.1",
 		"jsdoc": "3.6.3",
 		"liferay-frontend-common-css": "1.0.4",
-		"metal-jest-serializer": "2.0.0"
+		"metal-jest-serializer": "2.0.0",
+		"resize-observer-polyfill": "^1.5.1"
 	},
 	"private": true,
 	"resolutions": {

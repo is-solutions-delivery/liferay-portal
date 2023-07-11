@@ -17,6 +17,7 @@ package com.liferay.object.internal.related.models;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.exception.RequiredObjectRelationshipException;
+import com.liferay.object.internal.entry.util.ObjectEntrySearchUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
@@ -92,7 +93,7 @@ public class SystemObject1toMObjectRelatedModelsProviderImpl
 				objectRelationshipId);
 
 		List<T> relatedModels = getRelatedModels(
-			groupId, objectRelationshipId, primaryKey, QueryUtil.ALL_POS,
+			groupId, objectRelationshipId, primaryKey, null, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS);
 
 		if (relatedModels.isEmpty()) {
@@ -182,8 +183,8 @@ public class SystemObject1toMObjectRelatedModelsProviderImpl
 
 	@Override
 	public List<T> getRelatedModels(
-			long groupId, long objectRelationshipId, long primaryKey, int start,
-			int end)
+			long groupId, long objectRelationshipId, long primaryKey,
+			String search, int start, int end)
 		throws PortalException {
 
 		PersistedModelLocalService persistedModelLocalService =
@@ -191,8 +192,9 @@ public class SystemObject1toMObjectRelatedModelsProviderImpl
 				_systemObjectDefinitionManager.getModelClassName());
 
 		DSLQuery dslQuery = _getGroupByStep(
-			_getDynamicObjectDefinitionTable(), groupId, objectRelationshipId,
-			primaryKey, DSLQueryFactoryUtil.selectDistinct(_table)
+			_getDynamicObjectDefinitionTable(),
+			DSLQueryFactoryUtil.selectDistinct(_table), groupId,
+			objectRelationshipId, primaryKey, search
 		).limit(
 			start, end
 		);
@@ -202,7 +204,8 @@ public class SystemObject1toMObjectRelatedModelsProviderImpl
 
 	@Override
 	public int getRelatedModelsCount(
-			long groupId, long objectRelationshipId, long primaryKey)
+			long groupId, long objectRelationshipId, long primaryKey,
+			String search)
 		throws PortalException {
 
 		DynamicObjectDefinitionTable dynamicObjectDefinitionTable =
@@ -214,10 +217,10 @@ public class SystemObject1toMObjectRelatedModelsProviderImpl
 
 		return persistedModelLocalService.dslQueryCount(
 			_getGroupByStep(
-				dynamicObjectDefinitionTable, groupId, objectRelationshipId,
-				primaryKey,
+				dynamicObjectDefinitionTable,
 				DSLQueryFactoryUtil.countDistinct(
-					dynamicObjectDefinitionTable.getPrimaryKeyColumn())));
+					dynamicObjectDefinitionTable.getPrimaryKeyColumn()),
+				groupId, objectRelationshipId, primaryKey, search));
 	}
 
 	@Override
@@ -312,8 +315,8 @@ public class SystemObject1toMObjectRelatedModelsProviderImpl
 
 	private GroupByStep _getGroupByStep(
 			DynamicObjectDefinitionTable dynamicObjectDefinitionTable,
-			long groupId, long objectRelationshipId, long primaryKey,
-			FromStep fromStep)
+			FromStep fromStep, long groupId, long objectRelationshipId,
+			long primaryKey, String search)
 		throws PortalException {
 
 		Column<?, Long> primaryKeyColumn = null;
@@ -376,6 +379,12 @@ public class SystemObject1toMObjectRelatedModelsProviderImpl
 
 					return companyIdColumn.eq(objectField.getCompanyId());
 				}
+			).and(
+				ObjectEntrySearchUtil.getRelatedModelsPredicate(
+					dynamicObjectDefinitionTable,
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						objectRelationship.getObjectDefinitionId2()),
+					_objectFieldLocalService, search)
 			)
 		);
 	}

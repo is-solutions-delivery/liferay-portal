@@ -15,9 +15,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -26,7 +26,51 @@ definition {
 	}
 
 	@priority = 4
-	test PublishAnEditToDefinedPermissionsForARole {
+	test CanPublishDeletedRoleWithDefinedPermissions {
+		JSONRole.addRegularRole(
+			roleKey = "Regrole Name",
+			roleTitle = "Regrole Name");
+
+		for (var resourceActionIndex : list "ADD_PUBLICATION,PERMISSIONS") {
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = ${resourceActionIndex},
+				resourceName = "com.liferay.change.tracking",
+				roleTitle = "Regrole Name");
+		}
+
+		JSONPublications.addPublication(publicationName = "Publication Name");
+
+		JSONPublications.selectPublication(publicationName = "Publication Name");
+
+		JSONRole.deleteRole(roleTitle = "Regrole Name");
+
+		PublicationsNavigator.gotoReviewChanges(
+			gotoPublicationsAdmin = "true",
+			publicationName = "Publication Name");
+
+		PublicationsChanges.viewChanges(
+			changeCategory = "Role",
+			changeSite = "Global",
+			changeTitle = "Regrole Name",
+			changeType = "Deleted",
+			changeUser = "Test Test");
+
+		PublicationsChanges.viewChanges(
+			changeCategory = "Permissions",
+			changeOrder = 2,
+			changeSite = "Global",
+			changeTitle = "Regrole Name Permissions for Publications All Sites and Asset Libraries",
+			changeType = "Deleted",
+			changeUser = "Test Test",
+			showAllItems = "true");
+
+		JSONPublications.publishPublication(publicationName = "Publication Name");
+
+		Publications.viewPublicationPublished(publicationName = "Publication Name");
+	}
+
+	@priority = 4
+	test CanPublishEditedRoleWithDefinedPermissions {
 		JSONRole.addRegularRole(
 			roleKey = "Regrole Name",
 			roleTitle = "Regrole Name");
@@ -65,7 +109,7 @@ definition {
 	}
 
 	@priority = 4
-	test PublishANewRoleWithDefinedPermissions {
+	test CanPublishNewRoleWithDefinedPermissions {
 		JSONPublications.addPublication(publicationName = "Publication Name");
 
 		JSONPublications.selectPublication(publicationName = "Publication Name");

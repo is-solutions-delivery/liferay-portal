@@ -21,7 +21,6 @@ import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.web.search.request.SearchSettings;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
@@ -46,13 +45,12 @@ public interface PortletSharedSearchResponse {
 
 	public int getPaginationStart();
 
-	public Optional<String> getParameter(
+	public String getParameter(String name, RenderRequest renderRequest);
+
+	public String[] getParameterValues(
 		String name, RenderRequest renderRequest);
 
-	public Optional<String[]> getParameterValues(
-		String name, RenderRequest renderRequest);
-
-	public Optional<PortletPreferences> getPortletPreferences(
+	public PortletPreferences getPortletPreferences(
 		RenderRequest renderRequest);
 
 	public List<String> getRelatedQueriesSuggestions();

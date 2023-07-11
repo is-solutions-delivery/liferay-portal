@@ -7,9 +7,9 @@ import ErrorDisplay from 'shared/components/ErrorDisplay';
 import Form from 'shared/components/form';
 import FormSelectFieldInput from 'contacts/components/form/SelectFieldInput';
 import Label from 'shared/components/form/Label';
+import Loading from 'shared/components/Loading';
 import React from 'react';
 import SearchableEntityTable from 'shared/components/SearchableEntityTable';
-import Spinner from 'shared/components/Spinner';
 import {
 	accountsListColumns,
 	individualsListColumns
@@ -642,7 +642,7 @@ export class Distribution extends React.Component {
 								/>
 							)}
 
-							{loading && <Spinner spacer />}
+							{loading && <Loading />}
 
 							{!error && !loading && (
 								<div className='chart-container'>

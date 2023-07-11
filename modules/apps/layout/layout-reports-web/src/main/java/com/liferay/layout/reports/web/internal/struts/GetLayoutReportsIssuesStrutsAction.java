@@ -99,7 +99,7 @@ public class GetLayoutReportsIssuesStrutsAction implements StrutsAction {
 			Group group = _groupLocalService.fetchGroup(groupId);
 
 			if (group == null) {
-				_log.error("No site exists with site id " + groupId);
+				_log.error("No site exists with site ID " + groupId);
 
 				ServletResponseUtil.write(
 					httpServletResponse,

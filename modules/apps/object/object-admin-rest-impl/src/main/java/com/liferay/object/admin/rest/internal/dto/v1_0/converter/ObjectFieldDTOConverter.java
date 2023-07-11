@@ -88,6 +88,10 @@ public class ObjectFieldDTOConverter
 					objectFieldSetting -> _toObjectFieldSetting(
 						objectFieldSetting),
 					ObjectFieldSetting.class);
+				readOnly = ObjectField.ReadOnly.create(
+					objectField.getReadOnly());
+				readOnlyConditionExpression =
+					objectField.getReadOnlyConditionExpression();
 				relationshipType = ObjectField.RelationshipType.create(
 					objectField.getRelationshipType());
 				required = objectField.isRequired();
@@ -116,13 +120,7 @@ public class ObjectFieldDTOConverter
 		com.liferay.object.model.ObjectFieldSetting
 			serviceBuilderObjectFieldSetting) {
 
-		if ((serviceBuilderObjectFieldSetting == null) ||
-			(!FeatureFlagManagerUtil.isEnabled("LPS-163716") &&
-			 (serviceBuilderObjectFieldSetting.compareName(
-				 ObjectFieldSettingConstants.NAME_DEFAULT_VALUE) ||
-			  serviceBuilderObjectFieldSetting.compareName(
-				  ObjectFieldSettingConstants.NAME_DEFAULT_VALUE_TYPE)))) {
-
+		if (serviceBuilderObjectFieldSetting == null) {
 			return null;
 		}
 

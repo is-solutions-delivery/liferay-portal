@@ -23,6 +23,7 @@ import {fromControlsId} from '../../../../../app/components/layout_data_items/Co
 import getAllPortals from '../../../../../app/components/layout_data_items/getAllPortals';
 import hasDropZoneChild from '../../../../../app/components/layout_data_items/hasDropZoneChild';
 import {EDITABLE_FRAGMENT_ENTRY_PROCESSOR} from '../../../../../app/config/constants/editableFragmentEntryProcessor';
+import {EDITABLE_TYPE_LABELS} from '../../../../../app/config/constants/editableTypeLabels';
 import {EDITABLE_TYPES} from '../../../../../app/config/constants/editableTypes';
 import {FRAGMENT_ENTRY_TYPES} from '../../../../../app/config/constants/fragmentEntryTypes';
 import {FREEMARKER_FRAGMENT_ENTRY_PROCESSOR} from '../../../../../app/config/constants/freemarkerFragmentEntryProcessor';
@@ -56,6 +57,7 @@ import canActivateEditable from '../../../../../app/utils/canActivateEditable';
 import {DragAndDropContextProvider} from '../../../../../app/utils/drag_and_drop/useDragAndDrop';
 import isMapped from '../../../../../app/utils/editable_value/isMapped';
 import isMappedToCollection from '../../../../../app/utils/editable_value/isMappedToCollection';
+import findPageContent from '../../../../../app/utils/findPageContent';
 import {formIsMapped} from '../../../../../app/utils/formIsMapped';
 import {formIsRestricted} from '../../../../../app/utils/formIsRestricted';
 import getMappingFieldsKey from '../../../../../app/utils/getMappingFieldsKey';
@@ -65,16 +67,8 @@ import StructureTreeNode from './StructureTreeNode';
 import StructureTreeNodeActions from './StructureTreeNodeActions';
 import VisibilityButton from './VisibilityButton';
 
-const EDITABLE_LABEL = {
-	[EDITABLE_TYPES.backgroundImage]: Liferay.Language.get('background-image'),
-	[EDITABLE_TYPES.html]: Liferay.Language.get('html'),
-	[EDITABLE_TYPES.image]: Liferay.Language.get('image'),
-	[EDITABLE_TYPES.link]: Liferay.Language.get('link'),
-	[EDITABLE_TYPES['rich-text']]: Liferay.Language.get('rich-text'),
-	[EDITABLE_TYPES.text]: Liferay.Language.get('text'),
-};
-
 const EDITABLE_TYPE_ICONS = {
+	[EDITABLE_TYPES.action]: 'cursor',
 	[EDITABLE_TYPES.backgroundImage]: 'picture',
 	[EDITABLE_TYPES.html]: 'code',
 	[EDITABLE_TYPES.image]: 'picture',
@@ -400,10 +394,7 @@ export default function PageStructureSidebar() {
 										: 'right'
 								}
 								onMouseLeave={(event) => {
-									if (
-										item.id ===
-										fromControlsId(hoveredItemId)
-									) {
+									if (item.hovered) {
 										event.stopPropagation();
 										hoverItem(null);
 									}
@@ -413,6 +404,8 @@ export default function PageStructureSidebar() {
 									hoverItem(item.id);
 								}}
 							>
+								<span className="sr-only">{item.name}</span>
+
 								<StructureTreeNode
 									node={item}
 									setEditingNodeId={setEditingNodeId}
@@ -424,6 +417,10 @@ export default function PageStructureSidebar() {
 									<ClayTreeView.Item
 										actions={<ItemActions item={item} />}
 									>
+										<span className="sr-only">
+											{item.name}
+										</span>
+
 										<StructureTreeNode
 											node={item}
 											setEditingNodeId={setEditingNodeId}
@@ -465,26 +462,20 @@ function getDocumentFragment(content) {
 function getKey({collectionConfig, editable, infoItem, selectedMappingTypes}) {
 	if (collectionConfig) {
 		if (collectionConfig.classNameId) {
-			return getMappingFieldsKey(
-				collectionConfig.classNameId,
-				collectionConfig.classPK
-			);
+			return getMappingFieldsKey(collectionConfig);
 		}
 		else {
 			return collectionConfig.key;
 		}
 	}
 	else if (editable.mappedField) {
-		return getMappingFieldsKey(
-			selectedMappingTypes.type.id,
-			selectedMappingTypes.subtype.id || 0
-		);
+		return getMappingFieldsKey(selectedMappingTypes);
 	}
 	else if (!infoItem) {
 		return null;
 	}
 
-	return getMappingFieldsKey(infoItem.classNameId, infoItem.classTypeId);
+	return getMappingFieldsKey(infoItem);
 }
 
 function getMappedFieldLabel(
@@ -493,10 +484,7 @@ function getMappedFieldLabel(
 	pageContents,
 	mappingFields
 ) {
-	const infoItem = pageContents.find(
-		({classNameId, classPK}) =>
-			editable.classNameId === classNameId && editable.classPK === classPK
-	);
+	const infoItem = findPageContent(pageContents, editable);
 
 	const {selectedMappingTypes} = config;
 
@@ -716,7 +704,7 @@ function visit(
 					onHoverNode,
 					parentId: item.parentId,
 					removable: false,
-					tooltipTitle: EDITABLE_LABEL[type],
+					tooltipTitle: EDITABLE_TYPE_LABELS[type],
 				});
 			}
 			else {

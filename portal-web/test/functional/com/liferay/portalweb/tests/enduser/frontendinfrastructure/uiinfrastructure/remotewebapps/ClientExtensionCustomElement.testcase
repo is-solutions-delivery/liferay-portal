@@ -12,9 +12,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -24,7 +24,7 @@ definition {
 		}
 	}
 
-	@description = "LPS-170678 - Assert if 'Custom Element' can be categorized as 'Client Extension'"
+	@description = "LPS-165784. Assert if 'Custom Element' can be categorized as 'Client Extension'"
 	@priority = 3
 	test CanBeCategorizedInAddWidgetList {
 		property app.server.types = "tomcat";

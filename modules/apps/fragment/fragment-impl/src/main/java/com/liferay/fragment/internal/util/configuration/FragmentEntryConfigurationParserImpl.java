@@ -462,7 +462,7 @@ public class FragmentEntryConfigurationParserImpl
 		String parsedValue = GetterUtil.getString(value);
 
 		if (fragmentConfigurationField.isLocalizable() &&
-			JSONUtil.isValid(parsedValue)) {
+			JSONUtil.isJSONObject(parsedValue)) {
 
 			try {
 				JSONObject valueJSONObject = _jsonFactory.createJSONObject(
@@ -501,7 +501,9 @@ public class FragmentEntryConfigurationParserImpl
 			JSONObject jsonObject = (JSONObject)_getFieldValue(
 				FragmentConfigurationFieldDataType.OBJECT, parsedValue);
 
-			if (jsonObject.isNull("color") && !jsonObject.isNull("cssClass")) {
+			if ((jsonObject != null) && jsonObject.isNull("color") &&
+				!jsonObject.isNull("cssClass")) {
+
 				jsonObject.put("color", jsonObject.getString("cssClass"));
 			}
 
@@ -614,21 +616,18 @@ public class FragmentEntryConfigurationParserImpl
 		try {
 			JSONObject jsonObject = _jsonFactory.createJSONObject(value);
 
-			String className = GetterUtil.getString(
-				jsonObject.getString("className"));
-
 			InfoItemObjectProvider<?> infoItemObjectProvider =
 				_infoItemServiceRegistry.getFirstInfoItemService(
-					InfoItemObjectProvider.class, className);
+					InfoItemObjectProvider.class,
+					jsonObject.getString("className"),
+					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
 			if (infoItemObjectProvider == null) {
 				return null;
 			}
 
-			long classPK = GetterUtil.getLong(jsonObject.getString("classPK"));
-
 			return infoItemObjectProvider.getInfoItem(
-				new ClassPKInfoItemIdentifier(classPK));
+				new ClassPKInfoItemIdentifier(jsonObject.getLong("classPK")));
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {

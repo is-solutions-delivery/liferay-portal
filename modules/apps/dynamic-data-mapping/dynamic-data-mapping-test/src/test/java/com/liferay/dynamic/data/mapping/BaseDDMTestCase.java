@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping;
 
+import com.liferay.depot.group.provider.SiteConnectedGroupGroupProvider;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesRegistry;
@@ -137,11 +138,17 @@ public abstract class BaseDDMTestCase {
 
 		_ddmFormDeserializerServiceRegistration = bundleContext.registerService(
 			DDMFormDeserializer.class, _ddmFormDeserializer, properties);
+
+		_siteConnectedGroupGroupProviderServiceRegistration =
+			bundleContext.registerService(
+				SiteConnectedGroupGroupProvider.class,
+				Mockito.mock(SiteConnectedGroupGroupProvider.class), null);
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
 		_ddmFormDeserializerServiceRegistration.unregister();
+		_siteConnectedGroupGroupProviderServiceRegistration.unregister();
 
 		_frameworkUtilMockedStatic.close();
 	}
@@ -562,7 +569,6 @@ public abstract class BaseDDMTestCase {
 		ReflectionTestUtil.setFieldValue(
 			ddmFormJSONDeserializer, "_ddmFormFieldTypeServicesRegistry",
 			getMockedDDMFormFieldTypeServicesRegistry());
-
 		ReflectionTestUtil.setFieldValue(
 			ddmFormJSONDeserializer, "_jsonFactory", jsonFactory);
 	}
@@ -571,7 +577,6 @@ public abstract class BaseDDMTestCase {
 		ReflectionTestUtil.setFieldValue(
 			ddmFormJSONSerializer, "_ddmFormFieldTypeServicesRegistry",
 			getMockedDDMFormFieldTypeServicesRegistry());
-
 		ReflectionTestUtil.setFieldValue(
 			ddmFormJSONSerializer, "_jsonFactory", jsonFactory);
 	}
@@ -589,7 +594,6 @@ public abstract class BaseDDMTestCase {
 	protected void setUpDDMFormValuesJSONDeserializer() {
 		ReflectionTestUtil.setFieldValue(
 			ddmFormValuesJSONDeserializer, "_jsonFactory", jsonFactory);
-
 		ReflectionTestUtil.setFieldValue(
 			ddmFormValuesJSONDeserializer, "_serviceTrackerMap",
 			ProxyFactory.newDummyInstance(ServiceTrackerMap.class));
@@ -598,7 +602,6 @@ public abstract class BaseDDMTestCase {
 	protected void setUpDDMFormValuesJSONSerializer() {
 		ReflectionTestUtil.setFieldValue(
 			ddmFormValuesJSONSerializer, "_jsonFactory", jsonFactory);
-
 		ReflectionTestUtil.setFieldValue(
 			ddmFormValuesJSONSerializer, "_serviceTrackerMap",
 			ProxyFactory.newDummyInstance(ServiceTrackerMap.class));
@@ -890,6 +893,8 @@ public abstract class BaseDDMTestCase {
 		_ddmFormDeserializerServiceRegistration;
 	private static final MockedStatic<FrameworkUtil>
 		_frameworkUtilMockedStatic = Mockito.mockStatic(FrameworkUtil.class);
+	private static ServiceRegistration<SiteConnectedGroupGroupProvider>
+		_siteConnectedGroupGroupProviderServiceRegistration;
 
 	private final ClassLoader _classLoader = Mockito.mock(ClassLoader.class);
 	private final Configuration _configuration = Mockito.mock(

@@ -1,18 +1,23 @@
 definition {
 
-	@summary = "This macro asserts the site language"
+	macro assertGuideVideosButton {
+		AssertElementPresent(locator1 = "CP2HomePage#GUIDE_VIDEOS_BUTTON");
+	}
+
 	macro assertLanguageChange {
 		var key_title = ${siteTitle};
 
 		AssertVisible(locator1 = "CP2HomePage#WELCOME_PAGE");
 	}
 
-	@summary = "This macro opens the Cookie Policy link on the home page of the site"
+	macro assertModalNotPresent {
+		AssertElementNotPresent(locator1 = "CP2HomePage#ONBOARDING_MODAL");
+	}
+
 	macro clickAtCookiePoliceLink {
 		Click(locator1 = "CP2HomePage#COOKIE_LINK");
 	}
 
-	@summary = "This macro selects a language for the site"
 	macro clickAtLanguageButton {
 		var key_option = ${language};
 

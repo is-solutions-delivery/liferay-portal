@@ -24,16 +24,15 @@ import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.field.reader.InfoItemFieldReaderFieldSetProvider;
 import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.info.localized.InfoLocalizedValue;
+import com.liferay.info.localized.bundle.ModelResourceLocalizedValue;
+import com.liferay.layout.page.template.info.item.provider.DisplayPageInfoItemFieldSetProvider;
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.template.info.item.provider.TemplateInfoItemFieldSetProvider;
-
-import java.util.Locale;
-import java.util.Set;
 
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -55,7 +54,9 @@ public class CPDefinitionInfoItemFormProvider
 	public InfoForm getInfoForm() {
 		return _getInfoForm(
 			_assetEntryInfoItemFieldSetProvider.getInfoFieldSet(
-				CPDefinition.class.getName()));
+				CPDefinition.class.getName()),
+			_displayPageInfoItemFieldSetProvider.getInfoFieldSet(
+				CPDefinition.class.getName(), StringPool.BLANK, 0));
 	}
 
 	@Override
@@ -65,7 +66,9 @@ public class CPDefinitionInfoItemFormProvider
 				_assetEntryInfoItemFieldSetProvider.getInfoFieldSet(
 					_assetEntryLocalService.getEntry(
 						CPDefinition.class.getName(),
-						cpDefinition.getCPDefinitionId())));
+						cpDefinition.getCPDefinitionId())),
+				_displayPageInfoItemFieldSetProvider.getInfoFieldSet(
+					CPDefinition.class.getName(), StringPool.BLANK, 0));
 		}
 		catch (PortalException portalException) {
 			_log.error(
@@ -80,7 +83,9 @@ public class CPDefinitionInfoItemFormProvider
 	public InfoForm getInfoForm(String formVariationKey, long groupId) {
 		return _getInfoForm(
 			_assetEntryInfoItemFieldSetProvider.getInfoFieldSet(
-				CPDefinition.class.getName(), 0, groupId));
+				CPDefinition.class.getName(), 0, groupId),
+			_displayPageInfoItemFieldSetProvider.getInfoFieldSet(
+				CPDefinition.class.getName(), StringPool.BLANK, groupId));
 	}
 
 	private InfoFieldSet _getBasicInformationInfoFieldSet() {
@@ -239,18 +244,9 @@ public class CPDefinitionInfoItemFormProvider
 		).build();
 	}
 
-	private InfoForm _getInfoForm(InfoFieldSet assetEntryInfoFieldSet) {
-		Set<Locale> availableLocales = _language.getAvailableLocales();
-
-		InfoLocalizedValue.Builder<String> infoLocalizedValueBuilder =
-			InfoLocalizedValue.builder();
-
-		for (Locale locale : availableLocales) {
-			infoLocalizedValueBuilder.value(
-				locale,
-				ResourceActionsUtil.getModelResource(
-					locale, CPDefinition.class.getName()));
-		}
+	private InfoForm _getInfoForm(
+		InfoFieldSet assetEntryInfoFieldSet,
+		InfoFieldSet displayPageInfoFieldSet) {
 
 		return InfoForm.builder(
 		).infoFieldSetEntry(
@@ -271,11 +267,21 @@ public class CPDefinitionInfoItemFormProvider
 		).infoFieldSetEntry(
 			_getDetailedInformationInfoFieldSet()
 		).infoFieldSetEntry(
-			_getDisplayPageInfoFieldSet()
+			unsafeConsumer -> {
+				if (!FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
+					unsafeConsumer.accept(_getDisplayPageInfoFieldSet());
+				}
+			}
+		).infoFieldSetEntry(
+			unsafeConsumer -> {
+				if (FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
+					unsafeConsumer.accept(displayPageInfoFieldSet);
+				}
+			}
 		).infoFieldSetEntry(
 			_getScheduleInfoFieldSet()
 		).labelInfoLocalizedValue(
-			infoLocalizedValueBuilder.build()
+			new ModelResourceLocalizedValue(CPDefinition.class.getName())
 		).name(
 			CPDefinition.class.getName()
 		).build();
@@ -305,14 +311,15 @@ public class CPDefinitionInfoItemFormProvider
 	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Reference
+	private DisplayPageInfoItemFieldSetProvider
+		_displayPageInfoItemFieldSetProvider;
+
+	@Reference
 	private ExpandoInfoItemFieldSetProvider _expandoInfoItemFieldSetProvider;
 
 	@Reference
 	private InfoItemFieldReaderFieldSetProvider
 		_infoItemFieldReaderFieldSetProvider;
-
-	@Reference
-	private Language _language;
 
 	@Reference
 	private TemplateInfoItemFieldSetProvider _templateInfoItemFieldSetProvider;

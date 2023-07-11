@@ -14,11 +14,11 @@
 
 package com.liferay.commerce.shipment.web.internal.frontend.data.set.provider;
 
-import com.liferay.account.constants.AccountActionKeys;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountEntryModel;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.commerce.constants.CommerceActionKeys;
 import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.constants.CommerceShipmentConstants;
 import com.liferay.commerce.constants.CommerceShipmentFDSNames;
@@ -184,7 +184,7 @@ public class CommerceShipmentFDSDataProvider
 	private long[] _getAccountEntryIds(long userId) throws PortalException {
 		if (!_portletResourcePermission.contains(
 				PermissionThreadLocal.getPermissionChecker(), null,
-				AccountActionKeys.MANAGE_ACCOUNTS)) {
+				CommerceActionKeys.MANAGE_ALL_ACCOUNTS)) {
 
 			List<AccountEntry> accountEntries =
 				_accountEntryLocalService.getUserAccountEntries(

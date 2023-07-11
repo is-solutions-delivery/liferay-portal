@@ -233,9 +233,21 @@ public class CommercePriceListIndexer extends BaseIndexer<CommercePriceList> {
 		document.addKeyword(
 			FIELD_EXTERNAL_REFERENCE_CODE,
 			commercePriceList.getExternalReferenceCode());
+
+		long commerceCatalogId = _getCatalogId(commercePriceList);
+
+		CommerceCatalog commerceCatalog =
+			_commerceCatalogLocalService.fetchCommerceCatalog(
+				commerceCatalogId);
+
+		if (commerceCatalog != null) {
+			document.addKeyword(
+				"accountEntryId", commerceCatalog.getAccountEntryId());
+		}
+
 		document.addKeyword(
 			"catalogBasePriceList", commercePriceList.isCatalogBasePriceList());
-		document.addNumber("catalogId", _getCatalogId(commercePriceList));
+		document.addNumber("catalogId", commerceCatalogId);
 
 		long[] commerceAccountGroupIds = TransformUtil.transformToLongArray(
 			_commercePriceListCommerceAccountGroupRelLocalService.

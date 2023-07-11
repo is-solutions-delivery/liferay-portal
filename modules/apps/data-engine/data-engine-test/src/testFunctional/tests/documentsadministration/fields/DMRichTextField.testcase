@@ -10,7 +10,7 @@ definition {
 
 		User.firstLoginPG();
 
-		JSONGroup.addGroup(groupName = "Test Site Name");
+		HeadlessSite.addSite(siteName = "Test Site Name");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
 
@@ -26,9 +26,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -110,6 +110,7 @@ definition {
 	@description = "This is a test for LPS-98076. Verify that a user Can repeat the field when it was set as 'repeatable' (when uploading a Document Type)"
 	@priority = 5
 	test RepeatRichTextOnUpload {
+		property ci.retries.disabled = "true";
 		property portal.acceptance = "false";
 
 		DataEngine.toggleFieldRepeatable(fieldFieldLabel = "Rich Text");

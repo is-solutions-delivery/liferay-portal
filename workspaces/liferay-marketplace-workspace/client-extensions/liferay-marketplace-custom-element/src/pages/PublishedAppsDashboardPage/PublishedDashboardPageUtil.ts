@@ -1,11 +1,24 @@
-import {DashboardListItems} from 'liferay-marketplace-custom-element/src/components/DashboardNavigation/DashboardNavigation';
-import {AppProps} from 'liferay-marketplace-custom-element/src/components/DashboardTable/DashboardTable';
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 
 import solutionsIcon from '../../assets/icons/analytics_icon.svg';
 import appsIcon from '../../assets/icons/apps_fill_icon.svg';
 import businessIcon from '../../assets/icons/business_center_icon.svg';
 import membersIcon from '../../assets/icons/person_fill_icon.svg';
 import projectsIcon from '../../assets/icons/projects_icon.svg';
+import {DashboardListItems} from '../../components/DashboardNavigation/DashboardNavigation';
+import {AppProps} from '../../components/DashboardTable/DashboardTable';
 import {Liferay} from '../../liferay/liferay';
 import {getProductSpecifications} from '../../utils/api';
 
@@ -27,6 +40,7 @@ export type MemberProps = {
 	email: string;
 	image: string;
 	isCustomerAccount: boolean;
+	isInvitedMember: boolean;
 	isPublisherAccount: boolean;
 	lastLoginDate: string;
 	name: string;
@@ -104,8 +118,8 @@ export const initialDashboardNavigationItems: DashboardListItems[] = [
 export const appTableHeaders = [
 	{
 		iconSymbol: 'order-arrow',
-		title: 'Name',
 		style: {width: '2%'},
+		title: 'Name',
 	},
 	{
 		title: 'Version',
@@ -136,15 +150,43 @@ export const memberTableHeaders = [
 
 export const initialAccountsState: Account[] = [
 	{
+		description: '',
 		externalReferenceCode: '',
 		id: 0,
 		name: '',
-		description: '',
 		type: '',
 	},
 ];
 
 export const publisherRoles = ['Account Administrator', 'App Editor'];
+
+export const publisherPermissionDescriptions: PermissionDescription[] = [
+	{
+		permissionName: 'Create new apps',
+		permissionTooltip: 'Create and submit new apps and versions',
+		permittedRoles: ['App Editor'],
+	},
+	{
+		permissionName: 'Manage apps owned by me',
+		permissionTooltip:
+			'Manage apps and versions I own as a publisher - version, hide or delete.',
+		permittedRoles: ['App Editor'],
+	},
+	{
+		permissionName: 'Manage all apps',
+		permissionTooltip:
+			'Manage any app in the business - version, hide or delete.',
+		permittedRoles: ['App Editor'],
+	},
+	{
+		permissionName: 'Create app pricing',
+		permissionTooltip:
+			'Sell apps in the Marketplace, edit pricing structure for apps in the business.',
+		permittedRoles: ['App Editor'],
+	},
+];
+
+export const adminRoles = ['Account Administrator'];
 
 export function formatDate(date: string) {
 	const locale = Liferay.ThemeDisplay.getLanguageId().replace('_', '-');
@@ -172,10 +214,10 @@ export async function getAppListProductSpecifications(productIds: number[]) {
 	);
 }
 
-export function getAppListProductIds(products: {items: Product[]}) {
+export function getAppListProductIds(products: Product[]) {
 	const productIds: number[] = [];
 
-	products.items.map((product) => {
+	products.map((product) => {
 		productIds.push(product.productId);
 	});
 

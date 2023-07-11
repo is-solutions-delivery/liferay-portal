@@ -454,13 +454,24 @@ AUI.add(
 
 					const contentBox = instance._contentBox;
 
-					const visibleRows = contentBox.all('.lfr-form-row:visible');
+					const visibleRows = contentBox
+						.all('.lfr-form-row')
+						.getDOMNodes()
+						.filter((node) => {
+							const computedStyle = window.getComputedStyle(node);
 
-					const visibleRowsSize = visibleRows.size();
+							return (
+								computedStyle.display !== 'none' &&
+								computedStyle.visibility !== 'collapse' &&
+								computedStyle.visibility !== 'hidden'
+							);
+						});
 
-					let deleteRow = visibleRowsSize > 1;
+					const visibleRowsLength = visibleRows.length;
 
-					if (visibleRowsSize === 1) {
+					let deleteRow = visibleRowsLength > 1;
+
+					if (visibleRowsLength === 1) {
 						instance.addRow(node);
 
 						deleteRow = true;

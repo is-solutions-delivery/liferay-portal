@@ -17,6 +17,7 @@ exports[`CriteriaRow should render 1`] = `
         aria-hidden="true"
         class="drag-icon"
         data-aria-hidden="true"
+        draggable="true"
       >
         <svg
           class="lexicon-icon lexicon-icon-drag icon-root"
@@ -60,11 +61,12 @@ exports[`CriteriaRow should render 1`] = `
                   aria-activedescendant="ne"
                   aria-expanded="true"
                   aria-haspopup="listbox"
-                  aria-owns="clay-id-1"
+                  aria-owns="clay-id-2"
                   class="form-control form-control-select form-control-select-secondary show"
                   role="combobox"
                   style=""
                   tabindex="0"
+                  type="button"
                 >
                   is not
                 </button>
@@ -122,6 +124,7 @@ exports[`CriteriaRow should render 1`] = `
               data-testid="conjunction-input"
               role="combobox"
               tabindex="0"
+              type="button"
             >
               after
             </button>

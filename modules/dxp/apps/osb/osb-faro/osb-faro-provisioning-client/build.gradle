@@ -6,17 +6,5 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.4.0"
 	compileOnly project(":core:petra:petra-function")
 	compileOnly project(":core:petra:petra-string")
-}
-
-repositories {
-	mavenCentral()
-
-	maven {
-		credentials {
-			password System.properties["repository.private.password"]
-			username System.properties["repository.private.username"]
-		}
-		url "https://repository-cdn.liferay.com/nexus/service/local/repo_groups/private/content/"
-
-	}
+	compileOnly project(":dxp:apps:osb:osb-faro:osb-faro-api")
 }

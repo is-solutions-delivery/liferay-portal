@@ -86,7 +86,7 @@ public class PortalImplGroupFriendlyURLTest {
 
 			_group.setGroupKey(PropsValues.VIRTUAL_HOSTS_DEFAULT_SITE_NAME);
 
-			_groupLocalService.updateGroup(_group);
+			_group = _groupLocalService.updateGroup(_group);
 		}
 
 		LayoutTestUtil.addTypePortletLayout(_group, true);

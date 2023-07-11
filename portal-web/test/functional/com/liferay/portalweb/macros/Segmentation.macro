@@ -16,7 +16,7 @@ definition {
 		Click(locator1 = "Segmentation#PROPERTIES_SEARCH");
 
 		DragAndDrop.javaScriptDragAndDropToObject(
-			locator1 = "Segmentation#ADD_FIELD_TYPE",
+			locator1 = "Segmentation#ADD_FIELD_TYPE_VISIBLE",
 			locator2 = "Segmentation#ADD_FIELD_POSITION",
 			value1 = ${propertyOption});
 	}
@@ -28,13 +28,13 @@ definition {
 
 		if (IsElementPresent(locator1 = "Segmentation#ADD_FIELD_POSITION_EMPTY")) {
 			DragAndDrop.javaScriptDragAndDropToObject(
-				locator1 = "Segmentation#ADD_FIELD_TYPE",
+				locator1 = "Segmentation#ADD_FIELD_TYPE_VISIBLE",
 				locator2 = "Segmentation#ADD_FIELD_POSITION_EMPTY",
 				value1 = ${propertyOption});
 		}
 		else {
 			DragAndDrop.javaScriptDragAndDropToObject(
-				locator1 = "Segmentation#ADD_FIELD_TYPE",
+				locator1 = "Segmentation#ADD_FIELD_TYPE_VISIBLE",
 				locator2 = "Segmentation#ADD_FIELD_POSITION_EDIT",
 				value1 = ${propertyOption});
 		}
@@ -283,15 +283,19 @@ definition {
 
 			Click(locator1 = "Modal#SELECT_BUTTON");
 		}
-		else if (isSet(chooseItem)) {
+		else if (isSet(selectCategory)) {
+			Button.clickSelect();
+
+			AssetCategorization.selectCategory(categoryName = ${selectCategory});
+
+			SelectFrame(value1 = "relative=top");
+		}
+		else if (isSet(selectCard)) {
 			Button.clickSelect();
 
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-			AssertClick(
-				key_rowEntry = ${chooseItem},
-				locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_CHOOSE",
-				value1 = "Choose");
+			LexiconCard.clickCardTitle(card = ${selectCard});
 
 			SelectFrame(value1 = "relative=top");
 		}
@@ -421,9 +425,7 @@ definition {
 	}
 
 	macro gotoSidebar {
-		Click(
-			key_typeName = ${fieldType},
-			locator1 = "Segmentation#SEGMENT_FIELDS_TYPE");
+		Panel.expandPanel(panel = ${fieldType});
 	}
 
 	macro openSegmentOptions {
@@ -525,7 +527,7 @@ definition {
 			key_text = "View Members",
 			locator1 = "Button#ANY");
 
-		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
 		if (!(isSet(memberNameList))) {
 			var memberNameList = ${memberName};
@@ -537,11 +539,7 @@ definition {
 				locator1 = "LexiconTable#TABLE_ENTRY");
 		}
 
-		SelectFrame(value1 = "relative=top");
-
-		Click(locator1 = "Icon#CLOSE");
-
-		SelectFrame(value1 = "relative=top");
+		IFrame.closeFrame();
 	}
 
 }

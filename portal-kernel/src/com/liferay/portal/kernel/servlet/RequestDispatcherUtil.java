@@ -93,10 +93,11 @@ public class RequestDispatcherUtil {
 		return bufferCacheServletResponse;
 	}
 
-	public static ObjectValuePair<String, Long> getContentAndLastModifiedTime(
-			RequestDispatcher requestDispatcher,
-			HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse)
+	public static ObjectValuePair<String, Long>
+			getContentAndLastModifiedTimeObjectValuePair(
+				RequestDispatcher requestDispatcher,
+				HttpServletRequest httpServletRequest,
+				HttpServletResponse httpServletResponse)
 		throws Exception {
 
 		BufferCacheServletResponse bufferCacheServletResponse =

@@ -14,10 +14,13 @@
 
 package com.liferay.portal.security.auth;
 
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
+import com.liferay.portal.kernel.security.auth.AuthDNE;
 import com.liferay.portal.kernel.security.auth.AuthException;
 import com.liferay.portal.kernel.security.auth.AuthFailure;
 import com.liferay.portal.kernel.security.auth.Authenticator;
@@ -60,6 +63,31 @@ public class AuthPipeline {
 		return _authenticate(
 			key, companyId, String.valueOf(userId), password,
 			CompanyConstants.AUTH_TYPE_ID, headerMap, parameterMap);
+	}
+
+	public static void onDoesNotExist(
+			long companyId, String authType, String login,
+			Map<String, String[]> headerMap, Map<String, String[]> parameterMap)
+		throws AuthException {
+
+		List<AuthDNE> authDNEs = _authDNEs.toList();
+
+		if (authDNEs.isEmpty()) {
+			return;
+		}
+
+		for (AuthDNE authDNE : authDNEs) {
+			try {
+				authDNE.onDoesNotExist(
+					companyId, authType, login, headerMap, parameterMap);
+			}
+			catch (AuthException authException) {
+				throw authException;
+			}
+			catch (Exception exception) {
+				throw new AuthException(exception);
+			}
+		}
 	}
 
 	public static void onFailureByEmailAddress(
@@ -210,6 +238,9 @@ public class AuthPipeline {
 		}
 	}
 
+	private static final ServiceTrackerList<AuthDNE> _authDNEs =
+		ServiceTrackerListFactory.open(
+			SystemBundleUtil.getBundleContext(), AuthDNE.class);
 	private static final ServiceTrackerMap<String, List<Authenticator>>
 		_authenticators = ServiceTrackerMapFactory.openMultiValueMap(
 			SystemBundleUtil.getBundleContext(), Authenticator.class, "key");

@@ -61,7 +61,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -69,7 +69,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -181,8 +181,13 @@ definition {
 	}
 
 	@description = "Bug: LRAC-11669 | Automation ID: LRAC-11923 | Test Summary: Pagination for the result of the event analysis"
+	@ignore = "true"
 	@priority = 3
 	test CanPaginationEventAnalysisResult {
+
+		// AC Refactor: Data doesn't appear on time
+		// AC Refactor ticket: LRAC-13994
+
 		var defaultEventName = "pageViewed";
 		var attributeName = "pageTitle";
 		var layoutNameList = "Custom 1,Custom 2,Custom 3,Custom 4,Custom 5";
@@ -283,8 +288,13 @@ definition {
 	}
 
 	@description = "Bug ID: LRAC-11659 | Automation ID: LRAC-11726 | Test Summary: Check Default Events Counted as Default when event sent by console"
+	@ignore = "true"
 	@priority = 5
 	test CheckDefaultEventsCountedAsDefaultWhenEventSentByConsole {
+
+		// AC Refactor: Data doesn't appear on time
+		// AC Refactor ticket: LRAC-13994
+
 		var layoutName = "Custom Asset";
 		var disableAttributesList = "assetId,canonicalUrl,category,pageDescription,pageKeywords,pageTitle,title,referrer,url";
 		var eventName = "assetViewed";
@@ -821,7 +831,7 @@ definition {
 	@description = "Feature ID: LRAC-4266 | Automation ID: LRAC-10306 | Test Summary: Remove Attribute"
 	@priority = 5
 	test RemoveAttribute {
-		property test.name.skip.portal.instance = "CustomEventsEventAnalysis#RemoveAttribute";
+		property test.liferay.virtual.instance = "false";
 
 		var attributeName = "pageTitle";
 
@@ -883,7 +893,7 @@ definition {
 	@description = "Feature ID: LRAC-4266 | Automation ID: LRAC-10301 | Test Summary: Search Event Attribute from Event tab"
 	@priority = 3
 	test SearchEventAttributeInEventTab {
-		property test.name.skip.portal.instance = "CustomEventsEventAnalysis#SearchEventAttributeInEventTab";
+		property test.liferay.virtual.instance = "false";
 
 		var defaultAttributeName = "pageTitle";
 		var customAttributeName = "category";
@@ -938,7 +948,7 @@ definition {
 	@description = "Feature ID: LRAC-4266 | Automation ID: LRAC-10295 | Test Summary: Search for events in different tabs"
 	@priority = 3
 	test SearchEventsInDifferentTabs {
-		property test.name.skip.portal.instance = "CustomEventsEventAnalysis#SearchEventsInDifferentTabs";
+		property test.liferay.virtual.instance = "false";
 
 		var defaultEventName = "pageViewed";
 
@@ -1012,7 +1022,7 @@ definition {
 	@description = "Feature ID: LRAC-4266 | Automation ID: LRAC-10311 | Test Summary: Events are in alphabetical order and attributes are in alphabetical order"
 	@priority = 4
 	test ViewEventsAreListedInAlphabeticalOrder {
-		property test.name.skip.portal.instance = "CustomEventsEventAnalysis#ViewEventsAreListedInAlphabeticalOrder";
+		property test.liferay.virtual.instance = "false";
 
 		var attributeName = "assetId";
 		var defaultEventName = "assetClicked";

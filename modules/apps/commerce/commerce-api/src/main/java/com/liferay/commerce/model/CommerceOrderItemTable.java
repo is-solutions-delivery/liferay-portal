@@ -82,6 +82,10 @@ public class CommerceOrderItemTable extends BaseTable<CommerceOrderItemTable> {
 	public final Column<CommerceOrderItemTable, Long> CProductId = createColumn(
 		"CProductId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<CommerceOrderItemTable, Long>
+		customerCommerceOrderItemId = createColumn(
+			"customerCommerceOrderItemId", Long.class, Types.BIGINT,
+			Column.FLAG_DEFAULT);
+	public final Column<CommerceOrderItemTable, Long>
 		parentCommerceOrderItemId = createColumn(
 			"parentCommerceOrderItemId", Long.class, Types.BIGINT,
 			Column.FLAG_DEFAULT);
@@ -184,6 +188,10 @@ public class CommerceOrderItemTable extends BaseTable<CommerceOrderItemTable> {
 	public final Column<CommerceOrderItemTable, Boolean> priceManuallyAdjusted =
 		createColumn(
 			"priceManuallyAdjusted", Boolean.class, Types.BOOLEAN,
+			Column.FLAG_DEFAULT);
+	public final Column<CommerceOrderItemTable, Boolean> priceOnApplication =
+		createColumn(
+			"priceOnApplication", Boolean.class, Types.BOOLEAN,
 			Column.FLAG_DEFAULT);
 	public final Column<CommerceOrderItemTable, String> printedNote =
 		createColumn(

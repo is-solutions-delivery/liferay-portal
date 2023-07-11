@@ -101,13 +101,14 @@ exports[`AssignSegments should render 1`] = `
                     aria-activedescendant=""
                     aria-expanded="true"
                     aria-haspopup="listbox"
-                    aria-owns="clay-id-1"
+                    aria-owns="clay-id-2"
                     class="form-control form-control-select form-control-select-secondary show"
                     data-testid="select-1"
                     required=""
                     role="combobox"
                     style=""
                     tabindex="0"
+                    type="button"
                   >
                     Select an option
                   </button>
@@ -134,6 +135,7 @@ exports[`AssignSegments should render 1`] = `
                     required=""
                     role="combobox"
                     tabindex="0"
+                    type="button"
                   >
                     Select an option
                   </button>

@@ -119,10 +119,8 @@ public class WorkflowTaskDemoDataCreatorImpl
 
 				kaleoTaskInstanceToken.setCompletionDate(completionDate);
 
-				_kaleoTaskInstanceTokenLocalService.
+				return _kaleoTaskInstanceTokenLocalService.
 					updateKaleoTaskInstanceToken(kaleoTaskInstanceToken);
-
-				return kaleoTaskInstanceToken;
 			});
 	}
 

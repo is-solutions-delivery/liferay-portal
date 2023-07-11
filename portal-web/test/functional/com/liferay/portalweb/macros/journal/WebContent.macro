@@ -449,7 +449,7 @@ definition {
 
 		Panel.expandPanel(panel = "Categorization");
 
-		Type(
+		Type.typeNotVisibleNoMouseOverNoError(
 			locator1 = "TextInput#ASSET_PRIORITY",
 			value1 = ${assetPriority});
 
@@ -655,6 +655,8 @@ definition {
 				Type.typeCodeMirrorEditorNoError(
 					locator1 = "CKEditor#BODY_FIELD_SOURCE_ON",
 					value1 = ${webContentRichText});
+
+				Click(locator1 = "CKEditor#TOOLBAR_SOURCE_BUTTON");
 			}
 			else {
 				CKEditor.addContentInWebContent(
@@ -741,12 +743,14 @@ definition {
 				}
 				else {
 					ItemSelector.uploadFile(
+						invalidFileValidation = ${invalidFileValidation},
 						navTab = ${dmNavTab},
 						uploadFileName = ${webContentUpload});
 				}
 			}
 			else if (${dmNavTab} == "User Personal Folder") {
 				ItemSelector.uploadFile(
+					invalidFileValidation = ${invalidFileValidation},
 					navTab = ${dmNavTab},
 					uploadFileName = ${webContentUpload});
 			}
@@ -1153,7 +1157,9 @@ definition {
 			value1 = ${displayDate});
 
 		if (isSet(displayTime)) {
-			Type.clickAtType(
+			var displayTime = StringUtil.removeSpaces(${displayTime});
+
+			Type.sendKeys(
 				locator1 = "TextInput#DISPLAY_DATE_TIME",
 				value1 = ${displayTime});
 		}

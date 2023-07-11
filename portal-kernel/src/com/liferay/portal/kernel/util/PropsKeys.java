@@ -376,9 +376,6 @@ public interface PropsKeys {
 
 	public static final String CDN_HOST_HTTPS = "cdn.host.https";
 
-	public static final String CHANGE_TRACKING_SQL_TRANSFORMER_CACHE_SIZE =
-		"change.tracking.sql.transformer.cache.size";
-
 	public static final String CLUSTER_LINK_AUTODETECT_ADDRESS =
 		"cluster.link.autodetect.address";
 
@@ -1040,6 +1037,9 @@ public interface PropsKeys {
 	public static final String GZIP_COMPRESSION_LEVEL =
 		"gzip.compression.level";
 
+	public static final String HEALTH_CHECK_DATA_SOURCE_ENABLED =
+		"health.check.data.source.enabled";
+
 	public static final String HIBERNATE_CONFIGS = "hibernate.configs";
 
 	public static final String HIBERNATE_DIALECT = "hibernate.dialect";
@@ -1377,6 +1377,9 @@ public interface PropsKeys {
 
 	public static final String LAYOUT_URL_FRIENDLIABLE =
 		"layout.url.friendliable";
+
+	public static final String LAYOUT_USER_ACCESS_VIA_PLID_ENABLED =
+		"layout.user.access.via.plid.enabled";
 
 	public static final String LAYOUT_USER_PRIVATE_LAYOUTS_AUTO_CREATE =
 		"layout.user.private.layouts.auto.create";

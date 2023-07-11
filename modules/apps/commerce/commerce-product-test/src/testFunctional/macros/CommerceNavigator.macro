@@ -49,6 +49,10 @@ definition {
 		Navigator.openWithAppendToBaseURL(urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_commerce_currency_web_internal_portlet_CommerceCurrencyPortlet");
 	}
 
+	macro goToDiscountAdmin {
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_commerce_pricing_web_internal_portlet_CommerceDiscountPortlet");
+	}
+
 	macro gotoEntry {
 		AssertClickNoError(
 			key_entryName = ${entryName},
@@ -65,6 +69,10 @@ definition {
 		var productName = StringUtil.lowerCase(${productName});
 
 		Navigator.openWithAppendToBaseURL(urlAppend = "web/guest/p/${productName}");
+	}
+
+	macro goToHealthCheckAdmin {
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_commerce_health_status_web_internal_portlet_CommerceHealthCheckPortlet");
 	}
 
 	macro gotoMiniCart {
@@ -115,6 +123,20 @@ definition {
 			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
 
 		CommerceEntry.clickNoError(menuItem = "View");
+	}
+
+	macro goToPlacedOrderDetailPageViaURL {
+		Variables.assertDefined(parameterList = ${orderId});
+
+		if (!(isSet(site))) {
+			var site = "minium";
+		}
+
+		var siteURL = "web/${site}/placed-orders";
+
+		Navigator.openWithAppendToBaseURL(urlAppend = "${siteURL}?p_p_id=com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet&p_p_lifecycle=0&_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_itemsPerPage=10&_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_pageNumber=1&_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_tableName=com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet-placedOrders&_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_backURL=http%3A%2F%2Flocalhost%3A8080%2Fweb%2Fminium%2Fplaced-orders%3Fp_p_id%3Dcom_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet%26p_p_lifecycle%3D0%26_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_itemsPerPage%3D10%26_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_pageNumber%3D1%26_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_tableName%3Dcom_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet-placedOrders&_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_mvcRenderCommandName=%2Fcommerce_order_content%2Fview_commerce_order_details&_com_liferay_commerce_order_content_web_internal_portlet_CommerceOrderContentPortlet_commerceOrderId=${orderId}");
+
+		WaitForPageLoad();
 	}
 
 	macro gotoPortlet {
@@ -168,6 +190,14 @@ definition {
 		Click(
 			key_entryName = ${entryName},
 			locator1 = "CommerceEntry#TABLE_LIST_TITLE");
+	}
+
+	macro goToTaxCategoriesAdmin {
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_commerce_product_tax_category_web_internal_portlet_CPTaxCategoryPortlet");
+	}
+
+	macro goToWarehousesAdmin {
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_commerce_warehouse_web_internal_portlet_CommerceInventoryWarehousePortlet");
 	}
 
 	macro goToWishLists {

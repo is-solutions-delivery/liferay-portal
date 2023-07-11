@@ -1692,11 +1692,11 @@ definition {
 			PageEditor.waitForAutoSave();
 		}
 
-		if (isSet(type)) {
+		if (isSet(style)) {
 			Select(
-				key_fieldLabel = "Type",
+				key_fieldLabel = "Style",
 				locator1 = "Select#GENERIC_SELECT_FIELD",
-				value1 = ${type});
+				value1 = ${style});
 
 			PageEditor.waitForAutoSave();
 		}
@@ -2675,6 +2675,26 @@ definition {
 					locator1 = "Select#GENERIC_SELECT_FIELD",
 					value1 = ${template});
 			}
+
+			if (isSet(object)) {
+				if (IsElementPresent(locator1 = "MenuBar#MENU_BAR")) {
+					MenuBar.click(menuBar = ${objecEntrytName});
+				}
+				else {
+					Navigator.gotoNavTab(navTab = ${objecEntrytName});
+				}
+
+				Click(
+					key_position = ${index},
+					locator1 = "LexiconList#LIST_ENTRY_X");
+
+				SelectFrameTop();
+
+				ContentPages.viewFragmentText(
+					assetType = "contentobject",
+					fragmentName = "Content Display",
+					text = ${entryContent});
+			}
 		}
 
 		SelectFrameTop();
@@ -2963,6 +2983,12 @@ definition {
 					depotName = ${depotName},
 					imageFileName = ${imageFileName},
 					navTab = "Documents and Media");
+			}
+			else if (isSet(uploadFileName)) {
+				ItemSelector.uploadFile(
+					invalidFileValidation = ${invalidFileValidation},
+					navTab = ${navTab},
+					uploadFileName = ${uploadFileName});
 			}
 			else {
 				ItemSelector.selectDMImage(
@@ -4006,6 +4032,26 @@ definition {
 
 		AssertElementPresent(
 			key_collectionName = ${collectionName},
+			locator1 = "PageEditor#FRAGMENT_SIDEBAR_COLLECTION_PANEL_EXPANDED");
+	}
+
+	macro expandWidgetCategory {
+		PageEditor.gotoTab(tabName = "Fragments and Widgets");
+
+		Navigator.gotoNavTab(navTab = "Widgets");
+
+		AssertVisible(
+			key_collectionName = ${categoryName},
+			locator1 = "PageEditor#FRAGMENT_SIDEBAR_COLLECTION_PANEL");
+
+		if (IsElementPresent(key_collectionName = ${categoryName}, locator1 = "PageEditor#FRAGMENT_SIDEBAR_COLLECTION_PANEL_COLLAPSED")) {
+			Click(
+				key_collectionName = ${categoryName},
+				locator1 = "PageEditor#FRAGMENT_SIDEBAR_COLLECTION_PANEL_COLLAPSED");
+		}
+
+		AssertElementPresent(
+			key_collectionName = ${categoryName},
 			locator1 = "PageEditor#FRAGMENT_SIDEBAR_COLLECTION_PANEL_EXPANDED");
 	}
 
@@ -5586,10 +5632,10 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 				styleValue = ${textColor});
 		}
 
-		if (isSet(type)) {
+		if (isSet(style)) {
 			AssertElementPresent(
 				key_fragmentName = StringUtil.lowerCase(${fragmentName}),
-				key_type = ${type},
+				key_type = ${style},
 				locator1 = "Fragment#FRAGMENT_CONFIGURATION_TYPE");
 		}
 	}

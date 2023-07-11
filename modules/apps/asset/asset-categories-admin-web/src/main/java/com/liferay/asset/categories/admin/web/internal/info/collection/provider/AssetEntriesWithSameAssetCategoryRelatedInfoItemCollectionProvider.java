@@ -25,12 +25,14 @@ import com.liferay.info.collection.provider.CollectionQuery;
 import com.liferay.info.collection.provider.ConfigurableInfoCollectionProvider;
 import com.liferay.info.collection.provider.RelatedInfoItemCollectionProvider;
 import com.liferay.info.field.InfoField;
-import com.liferay.info.field.type.SelectInfoFieldType;
+import com.liferay.info.field.type.MultiselectInfoFieldType;
+import com.liferay.info.field.type.OptionInfoFieldType;
 import com.liferay.info.form.InfoForm;
 import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.info.localized.bundle.ModelResourceLocalizedValue;
 import com.liferay.info.pagination.InfoPage;
 import com.liferay.info.pagination.Pagination;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -142,7 +144,6 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 
 		assetEntryQuery.setAllCategoryIds(
 			new long[] {assetCategory.getCategoryId()});
-
 		assetEntryQuery.setClassNameIds(_getClassNameIds(collectionQuery));
 		assetEntryQuery.setEnablePermissions(true);
 
@@ -198,8 +199,6 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 	}
 
 	private InfoField _getItemTypesInfoField() {
-		List<SelectInfoFieldType.Option> options = new ArrayList<>();
-
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
@@ -221,32 +220,25 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 				return true;
 			});
 
-		Locale locale = serviceContext.getLocale();
-
 		assetRendererFactories.sort(
-			new AssetRendererFactoryTypeNameComparator(locale));
-
-		for (AssetRendererFactory<?> assetRendererFactory :
-				assetRendererFactories) {
-
-			options.add(
-				new SelectInfoFieldType.Option(
-					new ModelResourceLocalizedValue(
-						assetRendererFactory.getClassName()),
-					assetRendererFactory.getClassName()));
-		}
+			new AssetRendererFactoryTypeNameComparator(
+				serviceContext.getLocale()));
 
 		InfoField.FinalStep finalStep = InfoField.builder(
 		).infoFieldType(
-			SelectInfoFieldType.INSTANCE
+			MultiselectInfoFieldType.INSTANCE
 		).namespace(
 			StringPool.BLANK
 		).name(
 			"item_types"
 		).attribute(
-			SelectInfoFieldType.MULTIPLE, true
-		).attribute(
-			SelectInfoFieldType.OPTIONS, options
+			MultiselectInfoFieldType.OPTIONS,
+			TransformUtil.transform(
+				assetRendererFactories,
+				assetRendererFactory -> new OptionInfoFieldType(
+					new ModelResourceLocalizedValue(
+						assetRendererFactory.getClassName()),
+					assetRendererFactory.getClassName()))
 		).labelInfoLocalizedValue(
 			InfoLocalizedValue.localize(getClass(), "item-type")
 		).localizable(

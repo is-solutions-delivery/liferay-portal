@@ -109,6 +109,20 @@ public class SXPBlueprintResourceTest extends BaseSXPBlueprintResourceTestCase {
 	@Ignore
 	@Override
 	@Test
+	public void testGraphQLGetSXPBlueprintByExternalReferenceCode()
+		throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetSXPBlueprintByExternalReferenceCodeNotFound()
+		throws Exception {
+	}
+
+	@Ignore
+	@Override
+	@Test
 	public void testGraphQLGetSXPBlueprintNotFound() throws Exception {
 	}
 
@@ -176,6 +190,14 @@ public class SXPBlueprintResourceTest extends BaseSXPBlueprintResourceTestCase {
 	}
 
 	@Override
+	protected SXPBlueprint
+			testGetSXPBlueprintByExternalReferenceCode_addSXPBlueprint()
+		throws Exception {
+
+		return _addSXPBlueprint(randomSXPBlueprint());
+	}
+
+	@Override
 	protected SXPBlueprint testGetSXPBlueprintsPage_addSXPBlueprint(
 			SXPBlueprint sxpBlueprint)
 		throws Exception {
@@ -211,6 +233,22 @@ public class SXPBlueprintResourceTest extends BaseSXPBlueprintResourceTestCase {
 		throws Exception {
 
 		return _addSXPBlueprint(sxpBlueprint);
+	}
+
+	@Override
+	protected SXPBlueprint
+			testPutSXPBlueprintByExternalReferenceCode_addSXPBlueprint()
+		throws Exception {
+
+		return _addSXPBlueprint(randomSXPBlueprint());
+	}
+
+	@Override
+	protected SXPBlueprint
+			testPutSXPBlueprintByExternalReferenceCode_createSXPBlueprint()
+		throws Exception {
+
+		return _addSXPBlueprint(randomSXPBlueprint());
 	}
 
 	private SXPBlueprint _addSXPBlueprint(SXPBlueprint sxpBlueprint)

@@ -17,12 +17,10 @@ package com.liferay.notification.internal.type.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.notification.constants.NotificationConstants;
 import com.liferay.notification.constants.NotificationQueueEntryConstants;
-import com.liferay.notification.constants.NotificationRecipientConstants;
-import com.liferay.notification.constants.NotificationTemplateConstants;
-import com.liferay.notification.context.NotificationContext;
 import com.liferay.notification.model.NotificationQueueEntry;
 import com.liferay.notification.model.NotificationRecipient;
 import com.liferay.notification.model.NotificationTemplate;
+import com.liferay.notification.service.test.util.NotificationTemplateUtil;
 import com.liferay.notification.util.NotificationRecipientSettingUtil;
 import com.liferay.object.constants.ObjectActionExecutorConstants;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
@@ -32,6 +30,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -75,12 +74,35 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 		NotificationTemplate notificationTemplate =
 			notificationTemplateLocalService.addNotificationTemplate(
-				_createNotificationContext());
+				NotificationTemplateUtil.createNotificationContext(
+					TestPropsValues.getUser(),
+					ListUtil.toString(getTermNames(), StringPool.BLANK),
+					RandomTestUtil.randomString(),
+					Arrays.asList(
+						createNotificationRecipientSetting(
+							"bcc",
+							"[%CURRENT_USER_EMAIL_ADDRESS%],bcc@liferay.com"),
+						createNotificationRecipientSetting(
+							"cc",
+							"[%CURRENT_USER_EMAIL_ADDRESS%],cc@liferay.com"),
+						createNotificationRecipientSetting(
+							"from", "[%CURRENT_USER_EMAIL_ADDRESS%]"),
+						createNotificationRecipientSetting(
+							"fromName",
+							Collections.singletonMap(
+								LocaleUtil.US, "[%CURRENT_USER_FIRST_NAME%]")),
+						createNotificationRecipientSetting(
+							"to",
+							Collections.singletonMap(
+								LocaleUtil.US,
+								"[%CURRENT_USER_EMAIL_ADDRESS%]"))),
+					ListUtil.toString(getTermNames(), StringPool.BLANK),
+					NotificationConstants.TYPE_EMAIL));
 
 		objectActionLocalService.addObjectAction(
 			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
-			objectDefinition.getObjectDefinitionId(), true, StringPool.BLANK,
-			RandomTestUtil.randomString(),
+			childObjectDefinition.getObjectDefinitionId(), true,
+			StringPool.BLANK, RandomTestUtil.randomString(),
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			RandomTestUtil.randomString(),
@@ -91,11 +113,26 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 				notificationTemplate.getNotificationTemplateId()
 			).build());
 
-		objectEntryManager.addObjectEntry(
-			dtoConverterContext, objectDefinition,
+		ObjectEntry objectEntry = objectEntryManager.addObjectEntry(
+			dtoConverterContext, parentObjectDefinition,
 			new ObjectEntry() {
 				{
-					setProperties(randomObjectEntryValues);
+					setProperties(parentObjectEntryValues);
+				}
+			},
+			ObjectDefinitionConstants.SCOPE_COMPANY);
+
+		objectEntryManager.addObjectEntry(
+			dtoConverterContext, childObjectDefinition,
+			new ObjectEntry() {
+				{
+					setProperties(
+						HashMapBuilder.putAll(
+							childObjectEntryValues
+						).put(
+							getObjectRelationshipObjectField2Name(),
+							objectEntry.getId()
+						).build());
 				}
 			},
 			ObjectDefinitionConstants.SCOPE_COMPANY);
@@ -152,49 +189,6 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 
 		notificationQueueEntryLocalService.deleteNotificationQueueEntry(
 			notificationQueueEntry);
-	}
-
-	private NotificationContext _createNotificationContext() {
-		NotificationContext notificationContext = new NotificationContext();
-
-		notificationContext.setNotificationRecipient(
-			notificationRecipientLocalService.createNotificationRecipient(0L));
-		notificationContext.setNotificationRecipientSettings(
-			Arrays.asList(
-				createNotificationRecipientSetting(
-					"bcc", "[%CURRENT_USER_EMAIL_ADDRESS%],bcc@liferay.com"),
-				createNotificationRecipientSetting(
-					"cc", "[%CURRENT_USER_EMAIL_ADDRESS%],cc@liferay.com"),
-				createNotificationRecipientSetting(
-					"from", "[%CURRENT_USER_EMAIL_ADDRESS%]"),
-				createNotificationRecipientSetting(
-					"fromName",
-					Collections.singletonMap(
-						LocaleUtil.US, "[%CURRENT_USER_FIRST_NAME%]")),
-				createNotificationRecipientSetting(
-					"to",
-					Collections.singletonMap(
-						LocaleUtil.US, "[%CURRENT_USER_EMAIL_ADDRESS%]"))));
-
-		NotificationTemplate notificationTemplate =
-			notificationTemplateLocalService.createNotificationTemplate(0L);
-
-		notificationTemplate.setBody(
-			ListUtil.toString(getTermNames(), StringPool.BLANK));
-		notificationTemplate.setEditorType(
-			NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT);
-		notificationTemplate.setName(RandomTestUtil.randomString());
-		notificationTemplate.setRecipientType(
-			NotificationRecipientConstants.TYPE_EMAIL);
-		notificationTemplate.setSubject(
-			ListUtil.toString(getTermNames(), StringPool.BLANK));
-		notificationTemplate.setType(NotificationConstants.TYPE_EMAIL);
-
-		notificationContext.setNotificationTemplate(notificationTemplate);
-
-		notificationContext.setType(NotificationConstants.TYPE_EMAIL);
-
-		return notificationContext;
 	}
 
 }

@@ -1,0 +1,8 @@
+liferay-ticket-custom-element-ui:
+    friendlyURLMapping: liferay-ticket-custom-element
+    htmlElementName: liferay-ticket-custom-element
+    instanceable: false
+    name: Liferay Ticket Custom Element
+    portletCategoryName: category.client-extensions
+    type: customElement
+    useESM: true

@@ -20,6 +20,7 @@ import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.Resource;
@@ -1099,7 +1100,7 @@ public abstract class BaseTaxonomyCategoryResourceImpl
 		String createStrategy = (String)parameters.getOrDefault(
 			"createStrategy", "INSERT");
 
-		if ("INSERT".equalsIgnoreCase(createStrategy)) {
+		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("taxonomyVocabularyId")) {
 				taxonomyCategoryUnsafeConsumer =
 					taxonomyCategory -> postTaxonomyVocabularyTaxonomyCategory(
@@ -1113,15 +1114,58 @@ public abstract class BaseTaxonomyCategoryResourceImpl
 			}
 		}
 
-		if ("UPSERT".equalsIgnoreCase(createStrategy)) {
-			taxonomyCategoryUnsafeConsumer = taxonomyCategory ->
-				putTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode(
-					taxonomyCategory.getTaxonomyVocabularyId() != null ?
-						taxonomyCategory.getTaxonomyVocabularyId() :
-							_parseLong(
-								(String)parameters.get("taxonomyVocabularyId")),
-					taxonomyCategory.getExternalReferenceCode(),
-					taxonomyCategory);
+		if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
+			String updateStrategy = (String)parameters.getOrDefault(
+				"updateStrategy", "UPDATE");
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
+				taxonomyCategoryUnsafeConsumer = taxonomyCategory ->
+					putTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode(
+						taxonomyCategory.getTaxonomyVocabularyId() != null ?
+							taxonomyCategory.getTaxonomyVocabularyId() :
+								_parseLong(
+									(String)parameters.get(
+										"taxonomyVocabularyId")),
+						taxonomyCategory.getExternalReferenceCode(),
+						taxonomyCategory);
+			}
+
+			if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
+				taxonomyCategoryUnsafeConsumer = taxonomyCategory -> {
+					try {
+						TaxonomyCategory getTaxonomyCategory =
+							getTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode(
+								taxonomyCategory.getTaxonomyVocabularyId() !=
+									null ?
+										taxonomyCategory.
+											getTaxonomyVocabularyId() :
+												_parseLong(
+													(String)parameters.get(
+														"taxonomyVocabularyId")),
+								taxonomyCategory.getExternalReferenceCode());
+
+						patchTaxonomyCategory(
+							getTaxonomyCategory.getId() != null ?
+								getTaxonomyCategory.getId() :
+									(String)parameters.get(
+										"taxonomyCategoryId"),
+							taxonomyCategory);
+					}
+					catch (NoSuchModelException noSuchModelException) {
+						if (parameters.containsKey("taxonomyVocabularyId")) {
+							postTaxonomyVocabularyTaxonomyCategory(
+								_parseLong(
+									(String)parameters.get(
+										"taxonomyVocabularyId")),
+								taxonomyCategory);
+						}
+						else {
+							throw new NotSupportedException(
+								"One of the following parameters must be specified: [taxonomyVocabularyId, taxonomyVocabularyId]");
+						}
+					}
+				};
+			}
 		}
 
 		if (taxonomyCategoryUnsafeConsumer == null) {
@@ -1231,7 +1275,7 @@ public abstract class BaseTaxonomyCategoryResourceImpl
 		String updateStrategy = (String)parameters.getOrDefault(
 			"updateStrategy", "UPDATE");
 
-		if ("PARTIAL_UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "PARTIAL_UPDATE")) {
 			taxonomyCategoryUnsafeConsumer =
 				taxonomyCategory -> patchTaxonomyCategory(
 					taxonomyCategory.getId() != null ?
@@ -1240,7 +1284,7 @@ public abstract class BaseTaxonomyCategoryResourceImpl
 					taxonomyCategory);
 		}
 
-		if ("UPDATE".equalsIgnoreCase(updateStrategy)) {
+		if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 			taxonomyCategoryUnsafeConsumer =
 				taxonomyCategory -> putTaxonomyCategory(
 					taxonomyCategory.getId() != null ?

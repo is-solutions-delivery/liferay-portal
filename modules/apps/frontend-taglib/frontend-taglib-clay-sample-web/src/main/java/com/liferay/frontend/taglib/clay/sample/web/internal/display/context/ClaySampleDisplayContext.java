@@ -92,6 +92,11 @@ public class ClaySampleDisplayContext {
 			}
 		).add(
 			tabsItem -> {
+				tabsItem.setLabel("Panel");
+				tabsItem.setPanelId("panel");
+			}
+		).add(
+			tabsItem -> {
 				tabsItem.setLabel("Progress Bars");
 				tabsItem.setPanelId("progress_bars");
 			}
@@ -104,6 +109,11 @@ public class ClaySampleDisplayContext {
 			tabsItem -> {
 				tabsItem.setLabel("Tabs");
 				tabsItem.setPanelId("tabs");
+			}
+		).add(
+			tabsItem -> {
+				tabsItem.setLabel("Vertical Nav");
+				tabsItem.setPanelId("vertical_nav");
 			}
 		).build();
 

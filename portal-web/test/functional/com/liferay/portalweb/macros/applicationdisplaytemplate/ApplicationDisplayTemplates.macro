@@ -71,6 +71,8 @@ definition {
 				inputFieldId = "importScript",
 				locator1 = "TextInput#INPUT_ID",
 				value1 = ${filePath});
+
+			Click(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
 		}
 
 		PortletEntry.save();
@@ -190,6 +192,14 @@ definition {
 		AssertVisible(
 			key_tableEntry = "${adtType} Test ADT",
 			locator1 = "LexiconTable#TABLE_ENTRY_TITLE");
+	}
+
+	macro viewUsage {
+		AssertTextEquals(
+			key_columnName = "usages",
+			key_tableEntry = ${tableEntry},
+			locator1 = "LexiconTable#TABLE_ENTRY_INFO",
+			value1 = ${usageAmount});
 	}
 
 }

@@ -243,6 +243,10 @@ public class SourceLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	public static String[] getAttachmentsFileNames(Source source) {
+		return getService().getAttachmentsFileNames(source);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext

@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -67,7 +68,7 @@ public interface DB {
 
 	public void copyTableRows(
 			Connection connection, String sourceTableName,
-			String targetTableName)
+			String targetTableName, Map<String, String> columnNamesMap)
 		throws Exception;
 
 	public void copyTableStructure(
@@ -79,6 +80,8 @@ public interface DB {
 		throws IOException, SQLException;
 
 	public DBType getDBType();
+
+	public String getDefaultValue(String columnDef);
 
 	public List<Index> getIndexes(Connection connection) throws SQLException;
 
@@ -173,6 +176,11 @@ public interface DB {
 
 	public void setSupportsStringCaseSensitiveQuery(
 		boolean supportsStringCaseSensitiveQuery);
+
+	public AutoCloseable syncTables(
+			Connection connection, String sourceTableName,
+			String targetTableName, Map<String, String> columnNamesMap)
+		throws Exception;
 
 	public void updateIndexes(
 			Connection connection, String tablesSQL, String indexesSQL,

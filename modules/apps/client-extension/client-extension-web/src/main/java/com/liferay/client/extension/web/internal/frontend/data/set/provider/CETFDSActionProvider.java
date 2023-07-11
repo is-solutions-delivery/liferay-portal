@@ -19,11 +19,14 @@ import com.liferay.client.extension.web.internal.frontend.data.set.model.CETFDSE
 import com.liferay.frontend.data.set.provider.FDSActionProvider;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder.DropdownItemListWrapper;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -37,6 +40,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.portlet.PortletURL;
+import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -66,13 +70,22 @@ public class CETFDSActionProvider implements FDSActionProvider {
 			).build();
 		}
 
-		return DropdownItemListBuilder.add(
-			dropdownItem -> _buildEditClientExtensionEntryAction(
-				cetFDSEntry, dropdownItem, httpServletRequest)
-		).add(
-			dropdownItem -> _buildDeleteClientExtensionEntryAction(
-				cetFDSEntry, dropdownItem, httpServletRequest)
-		).build();
+		DropdownItemListWrapper dropdownItemListWrapper =
+			DropdownItemListBuilder.add(
+				dropdownItem -> _buildEditClientExtensionEntryAction(
+					cetFDSEntry, dropdownItem, httpServletRequest)
+			).add(
+				dropdownItem -> _buildDeleteClientExtensionEntryAction(
+					cetFDSEntry, dropdownItem, httpServletRequest)
+			);
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-182184")) {
+			dropdownItemListWrapper = dropdownItemListWrapper.add(
+				dropdownItem -> _buildExportClientExtensionEntryAction(
+					cetFDSEntry, dropdownItem, httpServletRequest));
+		}
+
+		return dropdownItemListWrapper.build();
 	}
 
 	private void _buildDeleteClientExtensionEntryAction(
@@ -123,6 +136,23 @@ public class CETFDSActionProvider implements FDSActionProvider {
 			).buildPortletURL());
 		dropdownItem.setIcon("pencil");
 		dropdownItem.setLabel(_getMessage(httpServletRequest, "edit"));
+	}
+
+	private void _buildExportClientExtensionEntryAction(
+		CETFDSEntry cetFDSEntry, DropdownItem dropdownItem,
+		HttpServletRequest httpServletRequest) {
+
+		dropdownItem.setHref(
+			ResourceURLBuilder.createResourceURL(
+				_getResourceURL(httpServletRequest)
+			).setParameter(
+				"externalReferenceCode", cetFDSEntry.getExternalReferenceCode()
+			).setResourceID(
+				"/client_extension_admin/export_client_extension_entry"
+			).buildString());
+		dropdownItem.setIcon("export");
+		dropdownItem.setLabel(
+			_getMessage(httpServletRequest, "export-as-json"));
 	}
 
 	private void _buildViewClientExtensionEntryAction(
@@ -182,6 +212,14 @@ public class CETFDSActionProvider implements FDSActionProvider {
 			RequestBackedPortletURLFactoryUtil.create(httpServletRequest);
 
 		return requestBackedPortletURLFactory.createRenderURL(
+			_getPortletId(httpServletRequest));
+	}
+
+	private ResourceURL _getResourceURL(HttpServletRequest httpServletRequest) {
+		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
+			RequestBackedPortletURLFactoryUtil.create(httpServletRequest);
+
+		return (ResourceURL)requestBackedPortletURLFactory.createResourceURL(
 			_getPortletId(httpServletRequest));
 	}
 

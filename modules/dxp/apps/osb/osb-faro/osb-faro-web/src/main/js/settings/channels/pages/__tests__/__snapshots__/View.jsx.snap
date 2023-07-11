@@ -123,12 +123,6 @@ exports[`View Channel should render 1`] = `
             >
               Clear Data
             </button>
-            <button
-              class="button-root btn btn-secondary"
-              type="button"
-            >
-              Delete
-            </button>
           </span>
         </div>
       </div>
@@ -142,13 +136,10 @@ exports[`View Channel should render 1`] = `
             class="title d-flex align-items-center"
           >
             Sites Synced: 
-            <div
-              class="spinner-root"
-            >
-              <span
-                class="loading-animation loading-animation-light loading-animation-dotted loading-animation-sm"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
           <div>
             Manage sites synced to this property by going to 

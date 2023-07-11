@@ -152,7 +152,7 @@ export const getFilterAndOrderLabel = ({filterByOptions, orderByOptions}) => {
 		return Liferay.Language.get('filter');
 	}
 
-	return Liferay.Language.get('order');
+	return Liferay.Language.get('order[sort]');
 };
 
 interface IFilterAndOrderProps extends React.HTMLAttributes<HTMLElement> {
@@ -259,21 +259,23 @@ class FilterAndOrder extends React.Component<IFilterAndOrderProps> {
 				)}
 
 				{hasOrderBy && (
-					<ClayDropDown.Group
-						header={Liferay.Language.get('order-by')}
-					>
-						{orderByOptions.map(({label, value}) => (
-							<Item
-								active={value === orderField}
-								key={value}
-								label={label}
-								name={this._name}
-								onChange={onOrderFieldChange}
-								type='radio'
-								value={value}
-							/>
-						))}
-					</ClayDropDown.Group>
+					<ClayDropDown.ItemList>
+						<ClayDropDown.Group
+							header={Liferay.Language.get('order-by')}
+						>
+							{orderByOptions.map(({label, value}) => (
+								<Item
+									active={value === orderField}
+									key={value}
+									label={label}
+									name={this._name}
+									onChange={onOrderFieldChange}
+									type='radio'
+									value={value}
+								/>
+							))}
+						</ClayDropDown.Group>
+					</ClayDropDown.ItemList>
 				)}
 			</ClayDropDown>
 		);

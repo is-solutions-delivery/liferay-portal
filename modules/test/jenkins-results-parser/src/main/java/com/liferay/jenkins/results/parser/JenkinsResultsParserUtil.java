@@ -697,6 +697,12 @@ public class JenkinsResultsParserUtil {
 			_MILLIS_BASH_COMMAND_TIMEOUT_DEFAULT, commands);
 	}
 
+	public static Process executeBashCommands(long timeout, String... commands)
+		throws IOException, TimeoutException {
+
+		return executeBashCommands(true, new File("."), timeout, commands);
+	}
+
 	public static Process executeBashCommands(String... commands)
 		throws IOException, TimeoutException {
 
@@ -899,7 +905,13 @@ public class JenkinsResultsParserUtil {
 	public static List<File> findFiles(File baseDir, String regex) {
 		List<File> files = new ArrayList<>();
 
-		for (File file : baseDir.listFiles()) {
+		File[] filesArray = baseDir.listFiles();
+
+		if (filesArray == null) {
+			return files;
+		}
+
+		for (File file : filesArray) {
 			String fileName = file.getName();
 
 			if (file.isDirectory()) {

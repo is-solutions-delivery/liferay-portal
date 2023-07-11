@@ -247,7 +247,7 @@ public class ViewTreeManagementToolbarDisplayContext {
 							).setBackURL(
 								currentURL.toString()
 							).setParameter(
-								"parentOrganizationSearchContainerPrimaryKeys",
+								"parentOrganizationId",
 								_organization.getOrganizationId()
 							).setParameter(
 								"type", organizationType
@@ -317,7 +317,6 @@ public class ViewTreeManagementToolbarDisplayContext {
 					).buildString());
 
 				labelItem.setCloseable(true);
-
 				labelItem.setLabel(
 					String.format(
 						"%s: %s",

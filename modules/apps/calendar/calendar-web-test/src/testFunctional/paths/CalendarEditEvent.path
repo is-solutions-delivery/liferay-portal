@@ -35,12 +35,22 @@
 </tr>
 <tr>
 	<td>START_DATE_TIME</td>
-	<td>//input[contains(@name,'_startTime') and @placeholder='h:mm am/pm']</td>
+	<td>//input[contains(@id,'_startTimeTime')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>END_DATE_TIME_INSTANT</td>
+	<td>//input[contains(@aria-labeledby,'endDateContainerLabel') and contains(@value,'${key_endDateTime}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>START_DATE_TIME_INSTANT</td>
+	<td>//input[contains(@aria-labeledby,'startDateContainerLabel') and contains(@value,'${key_startDateTime}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>START_DATE_TIME_24_HOUR</td>
-	<td>//input[contains(@name,'_startTime') and @placeholder='h:mm']</td>
+	<td>//input[contains(@id,'_startTimeTime')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -63,12 +73,12 @@
 </tr>
 <tr>
 	<td>END_DATE_TIME</td>
-	<td>//input[contains(@name,'_endTime') and @placeholder='h:mm am/pm']</td>
+	<td>//input[contains(@id,'_endTimeTime')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>END_DATE_TIME_24_HOUR</td>
-	<td>//input[contains(@name,'_endTime') and @placeholder='h:mm']</td>
+	<td>//input[contains(@id,'_endTimeTime')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -485,7 +495,7 @@
 
 <tr>
 	<td>ARE_YOU_SURE_DIALOG_BOX_HEADER</td>
-	<td>//div[contains(@class,'modal-header')]/h3[contains(.,'Are you sure?')]</td>
+	<td>//div[contains(@class,'modal-header')]/div[contains(.,'Are you sure?')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -513,7 +523,7 @@
 
 <tr>
 	<td>RECURRING_EVENT_DIALOG_BOX_HEADER</td>
-	<td>//h3[@class='modal-title' and contains(.,'Recurring Event')]</td>
+	<td>//div[@class='modal-title' and contains(.,'Recurring Event')]</td>
 	<td></td>
 </tr>
 <tr>

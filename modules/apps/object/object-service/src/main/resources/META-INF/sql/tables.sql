@@ -99,6 +99,8 @@ create table ObjectField (
 	label STRING null,
 	localized BOOLEAN,
 	name VARCHAR(75) null,
+	readOnly VARCHAR(75) null,
+	readOnlyConditionExpression TEXT null,
 	relationshipType VARCHAR(75) null,
 	required BOOLEAN,
 	state_ BOOLEAN,

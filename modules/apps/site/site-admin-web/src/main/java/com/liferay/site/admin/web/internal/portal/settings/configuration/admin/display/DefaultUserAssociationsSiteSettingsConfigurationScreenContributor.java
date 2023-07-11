@@ -14,13 +14,17 @@
 
 package com.liferay.site.admin.web.internal.portal.settings.configuration.admin.display;
 
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.site.admin.web.internal.display.context.DefaultUserAssociationsDisplayContext;
 import com.liferay.site.settings.configuration.admin.display.SiteSettingsConfigurationScreenContributor;
 
 import java.util.Locale;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -70,6 +74,23 @@ public class DefaultUserAssociationsSiteSettingsConfigurationScreenContributor
 
 		return true;
 	}
+
+	@Override
+	public void setAttributes(
+		HttpServletRequest httpServletRequest,
+		HttpServletResponse httpServletResponse) {
+
+		SiteSettingsConfigurationScreenContributor.super.setAttributes(
+			httpServletRequest, httpServletResponse);
+
+		httpServletRequest.setAttribute(
+			DefaultUserAssociationsDisplayContext.class.getName(),
+			new DefaultUserAssociationsDisplayContext(
+				httpServletRequest, _itemSelector));
+	}
+
+	@Reference
+	private ItemSelector _itemSelector;
 
 	@Reference
 	private Language _language;

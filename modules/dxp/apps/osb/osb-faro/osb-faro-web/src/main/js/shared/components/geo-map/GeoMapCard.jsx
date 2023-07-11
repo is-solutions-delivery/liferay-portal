@@ -3,9 +3,9 @@ import BasePage from 'shared/components/base-page';
 import GeoMapLangKey from './geo-map-lang-key';
 import GeomapReact from './index';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import memoize from 'memoize-one';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import {getFilters} from 'shared/util/filter';
 import {PropTypes} from 'prop-types';
 import {toThousands} from 'shared/util/numbers';
@@ -313,7 +313,7 @@ class GeoLocation extends React.Component {
 		} = this.props;
 
 		if (loading) {
-			return <Spinner alignCenter className={className} />;
+			return <Loading />;
 		}
 
 		const {paths, selected} = this.state;

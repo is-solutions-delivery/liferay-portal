@@ -102,10 +102,30 @@ export default {
 	},
 
 	/**
+	 * Get the error message of an action
+	 * @param {object} options
+	 * @param {string} options.classNameId Asset's className
+	 * @param {string} options.fieldId
+	 */
+	getInfoItemActionErrorMessage({classNameId, fieldId}) {
+		return serviceFetch(
+			config.getInfoItemActionErrorMessageURL,
+			{
+				body: {
+					classNameId,
+					fieldId,
+				},
+			},
+			() => {}
+		);
+	},
+
+	/**
 	 * Get an item's value
 	 * @param {object} options
 	 * @param {string} options.classNameId Asset's className
 	 * @param {string} options.classPK Asset's classPK
+	 * @param {string} options.externalReferenceCode Asset's externalReferenceCode
 	 * @param {string} options.fieldId
 	 * @param {string} [options.languageId]
 	 * @param {function} options.onNetworkStatus
@@ -114,20 +134,30 @@ export default {
 		classNameId,
 		classPK,
 		editableTypeOptions,
+		externalReferenceCode,
 		fieldId,
 		languageId,
 		onNetworkStatus,
 	}) {
+		const body = {
+			classNameId,
+			editableTypeOptions: JSON.stringify(editableTypeOptions),
+			fieldId,
+			languageId,
+		};
+
+		if (classPK) {
+			body.classPK = classPK;
+		}
+
+		if (externalReferenceCode) {
+			body.externalReferenceCode = externalReferenceCode;
+		}
+
 		return serviceFetch(
 			config.getInfoItemFieldValueURL,
 			{
-				body: {
-					classNameId,
-					classPK,
-					editableTypeOptions: JSON.stringify(editableTypeOptions),
-					fieldId,
-					languageId,
-				},
+				body,
 			},
 			onNetworkStatus
 		);

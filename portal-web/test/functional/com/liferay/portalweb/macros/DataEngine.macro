@@ -7,7 +7,10 @@ definition {
 
 		var key_fieldFieldLabel = ${fieldFieldLabel};
 		var key_fieldName = ${fieldName};
-		var fieldReference = StringUtil.replace(${fieldFieldLabel}, " ", "");
+
+		if (!(isSet(fieldReference))) {
+			var fieldReference = StringUtil.replace(${fieldFieldLabel}, " ", "");
+		}
 
 		if (isSet(fieldLocation)) {
 			DragAndDrop.javaScriptDragAndDropToObject(
@@ -705,6 +708,13 @@ definition {
 		}
 	}
 
+	macro assertFieldInFieldsGroupRepeated {
+		AssertElementPresent(
+			key_fieldName = ${fieldName},
+			key_index = ${index},
+			locator1 = "WCEditWebContent#REPEATED_FIELD_IN_FIELDS_GROUP");
+	}
+
 	macro assertFieldNotPresent {
 		if (isSet(fieldFieldLabel)) {
 			AssertElementNotPresent(
@@ -1227,10 +1237,17 @@ definition {
 	}
 
 	macro editFieldSearchable {
-		AssertClick.assertPartialTextClickAt(
-			key_fieldFieldLabel = ${fieldFieldLabel},
-			locator1 = "DDMEditStructure#FORM_FIELD_CONTAINER",
-			value1 = ${fieldFieldLabel});
+		if (${fieldFieldLabel} == "Boolean") {
+			Click(
+				key_fieldLabel = ${fieldFieldLabel},
+				locator1 = "Checkbox#CHECKBOX_LABEL");
+		}
+		else {
+			AssertClick.assertPartialTextClickAt(
+				key_fieldFieldLabel = ${fieldFieldLabel},
+				locator1 = "DDMEditStructure#FORM_FIELD_CONTAINER",
+				value1 = ${fieldFieldLabel});
+		}
 
 		Navigator.gotoNavTab(navTab = "Advanced");
 

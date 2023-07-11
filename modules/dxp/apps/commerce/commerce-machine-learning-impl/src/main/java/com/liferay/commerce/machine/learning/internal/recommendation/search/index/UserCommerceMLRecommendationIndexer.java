@@ -39,18 +39,13 @@ public class UserCommerceMLRecommendationIndexer implements CommerceMLIndexer {
 	}
 
 	@Override
-	public String getDocumentType() {
-		return "UserCommerceMLRecommendationDocumentType";
-	}
-
-	@Override
 	public String getIndexName(long companyId) {
 		return String.format(
 			_INDEX_NAME_PATTERN, _indexNameBuilder.getIndexName(companyId));
 	}
 
 	private static final String _INDEX_MAPPING_FILE_NAME =
-		"/META-INF/search/user-commerce-ml-recommendation-document-type.json";
+		"user-commerce-ml-recommendation-mappings.json";
 
 	private static final String _INDEX_NAME_PATTERN =
 		"%s-user-commerce-ml-recommendation";

@@ -14,17 +14,19 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type.internal.document.library;
 
-import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
-import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.dynamic.data.mapping.constants.DDMFormConstants;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.dynamic.data.mapping.form.field.type.internal.security.permission.DDMPermissionCheckerRegistry;
 import com.liferay.dynamic.data.mapping.form.item.selector.criterion.DDMUserPersonalFolderItemSelectorCriterion;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.dynamic.data.mapping.security.permission.DDMPermissionChecker;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
@@ -52,15 +54,12 @@ import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionUtil;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -86,6 +85,8 @@ import java.util.ResourceBundle;
 import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -159,17 +160,25 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 			WebKeys.THEME_DISPLAY);
 	}
 
-	private boolean _containsAddFolderPermission(
-		PermissionChecker permissionChecker, long groupId, long folderId) {
+	private boolean _containsPermission(
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext,
+		PortletDisplay portletDisplay) {
 
 		try {
-			return ModelResourcePermissionUtil.contains(
-				_dlFolderModelResourcePermission, permissionChecker, groupId,
-				folderId, ActionKeys.ADD_FOLDER);
+			DDMPermissionChecker ddmPermissionChecker =
+				_ddmPermissionCheckerRegistry.getDDMPermissionChecker(
+					portletDisplay.getRootPortletId());
+
+			if (ddmPermissionChecker == null) {
+				return true;
+			}
+
+			return ddmPermissionChecker.containsPermission(
+				ddmFormFieldRenderingContext);
 		}
-		catch (PortalException portalException) {
+		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(portalException);
+				_log.debug(exception);
 			}
 
 			return false;
@@ -254,8 +263,9 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 		HttpServletRequest httpServletRequest, User user) {
 
 		try {
-			return _dlAppService.addFolder(
-				null, repositoryId, parentFolderId, user.getScreenName(),
+			return _dlAppLocalService.addFolder(
+				null, user.getUserId(), repositoryId, parentFolderId,
+				user.getScreenName(),
 				_language.get(
 					getResourceBundle(user.getLocale()),
 					"this-folder-was-automatically-created-by-forms-to-store-" +
@@ -378,6 +388,30 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 					return StringPool.BLANK;
 				}
 
+				long ddmFormInstanceRecordId = GetterUtil.getLong(
+					ddmFormFieldRenderingContext.getProperty(
+						"ddmFormInstanceRecordId"));
+
+				if ((ddmFormInstanceRecordId == 0) &&
+					ddmFormField.hasProperty("fileEntryURL")) {
+
+					String fileEntryURL = GetterUtil.getString(
+						ddmFormField.getProperty("fileEntryURL"));
+
+					if (Validator.isNotNull(fileEntryURL)) {
+						String portletNamespace = _portal.getPortletNamespace(
+							DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM);
+
+						return UriBuilder.fromUri(
+							fileEntryURL
+						).replaceQueryParam(
+							portletNamespace + "fileEntryId",
+							fileEntry.getFileEntryId()
+						).build(
+						).toString();
+					}
+				}
+
 				RequestBackedPortletURLFactory requestBackedPortletURLFactory =
 					RequestBackedPortletURLFactoryUtil.create(
 						ddmFormFieldRenderingContext.getHttpServletRequest());
@@ -389,9 +423,7 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 				).setParameter(
 					"ddmFormFieldName", ddmFormField.getName()
 				).setParameter(
-					"ddmFormInstanceRecordId",
-					ddmFormFieldRenderingContext.getProperty(
-						"ddmFormInstanceRecordId")
+					"ddmFormInstanceRecordId", ddmFormInstanceRecordId
 				).setParameter(
 					"fileEntryId", fileEntry.getFileEntryId()
 				).setResourceID(
@@ -535,7 +567,7 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 		Folder folder = null;
 
 		try {
-			folder = _dlAppService.getFolder(
+			folder = _dlAppLocalService.getFolder(
 				repositoryId, parentFolderId, user.getScreenName());
 		}
 		catch (PortalException portalException) {
@@ -616,8 +648,25 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 			return new HashMap<>();
 		}
 
+		if (!_containsPermission(
+				ddmFormFieldRenderingContext,
+				themeDisplay.getPortletDisplay())) {
+
+			return HashMapBuilder.<String, Object>put(
+				"showUploadPermissionMessage", true
+			).build();
+		}
+
 		long groupId = GetterUtil.getLong(
 			ddmFormFieldRenderingContext.getProperty("groupId"));
+
+		DDMFormInstance ddmFormInstance =
+			_ddmFormInstanceLocalService.fetchDDMFormInstance(
+				ddmFormFieldRenderingContext.getDDMFormInstanceId());
+
+		if (ddmFormInstance != null) {
+			groupId = ddmFormInstance.getGroupId();
+		}
 
 		Repository repository = _getRepository(groupId, httpServletRequest);
 
@@ -646,15 +695,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 						ddmFormField, ddmFormFieldRenderingContext,
 						ddmFormFolderId, httpServletRequest);
 				}
-			).build();
-		}
-
-		if (!_containsAddFolderPermission(
-				themeDisplay.getPermissionChecker(), groupId,
-				ddmFormFolderId)) {
-
-			return HashMapBuilder.<String, Object>put(
-				"showUploadPermissionMessage", true
 			).build();
 		}
 
@@ -702,15 +742,13 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 	private CompanyLocalService _companyLocalService;
 
 	@Reference
-	private DLAppLocalService _dlAppLocalService;
+	private DDMFormInstanceLocalService _ddmFormInstanceLocalService;
 
 	@Reference
-	private DLAppService _dlAppService;
+	private DDMPermissionCheckerRegistry _ddmPermissionCheckerRegistry;
 
-	@Reference(
-		target = "(model.class.name=com.liferay.document.library.kernel.model.DLFolder)"
-	)
-	private ModelResourcePermission<DLFolder> _dlFolderModelResourcePermission;
+	@Reference
+	private DLAppLocalService _dlAppLocalService;
 
 	@Reference
 	private GroupLocalService _groupLocalService;

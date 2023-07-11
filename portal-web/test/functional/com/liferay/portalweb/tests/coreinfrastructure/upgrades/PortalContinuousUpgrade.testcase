@@ -5,7 +5,7 @@ definition {
 	property database.types = "db2,mariadb,mysql,oracle,postgresql,sqlserver";
 	property minimum.slave.ram = "24";
 	property portal.release = "true";
-	property portal.upgrades = "false";
+	property portal.smoke.upgrades = "false";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Database Upgrade Framework";
 
@@ -14,21 +14,17 @@ definition {
 		property database.bare.enabled = "true";
 		property skip.start.app.server = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "PortalContinuousUpgrade#AutoUpgradeFromLatest7413Update";
+		property test.liferay.virtual.instance = "false";
 		property testcase.url = "http://www.example.com";
 
 		var releaseBundleVersion = PropsUtil.get("test.released.release.bundle.version");
 		var releaseBundleZipURL = PropsUtil.get("test.released.test.portal.bundle.zip.url");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
+		AntCommands.runCommand("build-test.xml", "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
 
 		Portlet.startServer(keepOsGiState = "true");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "wait-for-license-activation");
+		AntCommands.runCommand("build-test.xml", "wait-for-license-activation");
 
 		Navigator.openSpecificURL(url = "http://localhost:8080");
 
@@ -55,13 +51,18 @@ definition {
 
 		Portlet.shutdownServer();
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "prepare-upgrade-original-bundle-test-environment");
+		AntCommands.runCommand("build-test.xml", "prepare-upgrade-original-bundle-test-environment");
 
 		Portlet.startServer(deleteLiferayHome = "false");
 
 		Navigator.openSpecificURL(url = "http://localhost:8080");
+
+		TestUtils.hardRefresh();
+
+		ContentPages.viewFragmentImage(
+			fragmentName = "image",
+			id = "image-square",
+			image = "tree.png");
 
 		User.firstLoginUI(
 			password = "test",
@@ -87,20 +88,16 @@ definition {
 		property database.types = "mysql";
 		property skip.start.app.server = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "PortalContinuousUpgrade#AutoUpgradeFromLatest7413UpdateWithDBPartitionEnabled";
+		property test.liferay.virtual.instance = "false";
 
 		var releaseBundleVersion = PropsUtil.get("test.released.release.bundle.version");
 		var releaseBundleZipURL = PropsUtil.get("test.released.test.portal.bundle.zip.url");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
+		AntCommands.runCommand("build-test.xml", "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
 
 		Portlet.startServer(keepOsGiState = "true");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "wait-for-license-activation");
+		AntCommands.runCommand("build-test.xml", "wait-for-license-activation");
 
 		Navigator.openSpecificURL(url = "http://localhost:8080");
 
@@ -135,9 +132,7 @@ definition {
 
 		Portlet.shutdownServer();
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "prepare-upgrade-original-bundle-test-environment");
+		AntCommands.runCommand("build-test.xml", "prepare-upgrade-original-bundle-test-environment");
 
 		Portlet.startServer(deleteLiferayHome = "false");
 
@@ -145,6 +140,13 @@ definition {
 			password = "test",
 			specificURL = "http://www.able.com:8080",
 			userEmailAddress = "test@www.able.com");
+
+		TestUtils.hardRefresh();
+
+		ContentPages.viewFragmentImage(
+			fragmentName = "image",
+			id = "image-square",
+			image = "tree.png");
 
 		Navigator.openSpecificURL(url = "http://www.able.com:8080");
 
@@ -170,20 +172,16 @@ definition {
 		property database.types = "mysql";
 		property skip.start.app.server = "true";
 		property test.assert.warning.exceptions = "true";
-		property test.name.skip.portal.instance = "PortalContinuousUpgrade#AutoUpgradeFromLatest7413UpdateWithDBPartitionEnabledAndHeadlessAPI";
+		property test.liferay.virtual.instance = "false";
 
 		var releaseBundleVersion = PropsUtil.get("test.released.release.bundle.version");
 		var releaseBundleZipURL = PropsUtil.get("test.released.test.portal.bundle.zip.url");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
+		AntCommands.runCommand("build-test.xml", "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
 
 		Portlet.startServer(keepOsGiState = "true");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "wait-for-license-activation");
+		AntCommands.runCommand("build-test.xml", "wait-for-license-activation");
 
 		Navigator.openSpecificURL(url = "http://localhost:8080");
 
@@ -214,9 +212,7 @@ definition {
 
 		Portlet.shutdownServer();
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "prepare-upgrade-original-bundle-test-environment");
+		AntCommands.runCommand("build-test.xml", "prepare-upgrade-original-bundle-test-environment");
 
 		Portlet.startServer(deleteLiferayHome = "false");
 
@@ -224,6 +220,13 @@ definition {
 			password = "test",
 			userEmailAddress = "test@www.able.com",
 			virtualHostsURL = "http://www.able.com:8080");
+
+		TestUtils.hardRefresh();
+
+		ContentPages.viewFragmentImage(
+			fragmentName = "image",
+			id = "image-square",
+			image = "tree.png");
 
 		ProductMenu.gotoPortlet(
 			category = "Content & Data",

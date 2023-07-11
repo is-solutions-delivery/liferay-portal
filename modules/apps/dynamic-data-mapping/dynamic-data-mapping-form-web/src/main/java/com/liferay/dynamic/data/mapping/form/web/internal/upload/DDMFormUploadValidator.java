@@ -18,43 +18,46 @@ import com.liferay.document.library.kernel.exception.FileExtensionException;
 import com.liferay.document.library.kernel.exception.FileSizeException;
 import com.liferay.document.library.kernel.exception.InvalidFileException;
 import com.liferay.dynamic.data.mapping.form.web.internal.configuration.DDMFormWebConfiguration;
-import com.liferay.dynamic.data.mapping.form.web.internal.configuration.activator.DDMFormWebConfigurationActivator;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.File;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
-
 /**
  * @author Carolina Barbosa
  */
-@Component(service = DDMFormUploadValidator.class)
 public class DDMFormUploadValidator {
 
-	public String[] getGuestUploadFileExtensions() {
+	public static String[] getGuestUploadFileExtensions()
+		throws ConfigurationException {
+
 		DDMFormWebConfiguration ddmFormWebConfiguration =
-			_ddmFormWebConfigurationActivator.getDDMFormWebConfiguration();
+			ConfigurationProviderUtil.getCompanyConfiguration(
+				DDMFormWebConfiguration.class,
+				CompanyThreadLocal.getCompanyId());
 
 		return StringUtil.split(
 			ddmFormWebConfiguration.guestUploadFileExtensions());
 	}
 
-	public long getGuestUploadMaximumFileSize() {
+	public static long getGuestUploadMaximumFileSize()
+		throws ConfigurationException {
+
 		DDMFormWebConfiguration ddmFormWebConfiguration =
-			_ddmFormWebConfigurationActivator.getDDMFormWebConfiguration();
+			ConfigurationProviderUtil.getCompanyConfiguration(
+				DDMFormWebConfiguration.class,
+				CompanyThreadLocal.getCompanyId());
 
 		return ddmFormWebConfiguration.guestUploadMaximumFileSize() *
 			_FILE_LENGTH_MB;
 	}
 
-	public void validateFileExtension(String fileName)
-		throws FileExtensionException {
+	public static void validateFileExtension(String fileName)
+		throws ConfigurationException, FileExtensionException {
 
 		String extension = null;
 
@@ -75,8 +78,8 @@ public class DDMFormUploadValidator {
 		}
 	}
 
-	public void validateFileSize(File file, String fileName)
-		throws FileSizeException, InvalidFileException {
+	public static void validateFileSize(File file, String fileName)
+		throws ConfigurationException, FileSizeException, InvalidFileException {
 
 		if (file == null) {
 			throw new InvalidFileException("File is null for " + fileName);
@@ -95,21 +98,6 @@ public class DDMFormUploadValidator {
 		}
 	}
 
-	protected void unsetDDMFormWebConfigurationActivator(
-		DDMFormWebConfigurationActivator ddmFormWebConfigurationActivator) {
-
-		_ddmFormWebConfigurationActivator = null;
-	}
-
 	private static final long _FILE_LENGTH_MB = 1024 * 1024;
-
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY,
-		unbind = "unsetDDMFormWebConfigurationActivator"
-	)
-	private volatile DDMFormWebConfigurationActivator
-		_ddmFormWebConfigurationActivator;
 
 }

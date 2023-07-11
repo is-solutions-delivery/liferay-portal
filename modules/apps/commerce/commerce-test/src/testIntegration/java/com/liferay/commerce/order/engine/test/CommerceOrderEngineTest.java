@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.order.engine.test;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.account.test.util.CommerceAccountTestUtil;
@@ -124,7 +125,8 @@ public class CommerceOrderEngineTest {
 			_group.getGroupId());
 
 		_commerceChannel = CommerceChannelLocalServiceUtil.addCommerceChannel(
-			null, _group.getGroupId(), "Test Channel",
+			null, AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT,
+			_group.getGroupId(), "Test Channel",
 			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
 			_commerceCurrency.getCode(), _serviceContext);
 
@@ -181,7 +183,7 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, CommerceOrderConstants.ORDER_STATUS_PROCESSING,
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		List<CommerceOrderItem> commerceOrderItems =
 			_commerceOrder.getCommerceOrderItems();
@@ -260,7 +262,7 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, CommerceOrderConstants.ORDER_STATUS_PROCESSING,
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		List<CommerceOrderItem> commerceOrderItems =
 			_commerceOrder.getCommerceOrderItems();
@@ -325,7 +327,7 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, CommerceOrderConstants.ORDER_STATUS_PROCESSING,
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		List<CommerceOrderItem> commerceOrderItems =
 			_commerceOrder.getCommerceOrderItems();
@@ -386,7 +388,7 @@ public class CommerceOrderEngineTest {
 
 			_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 				_commerceOrder, CommerceOrderConstants.ORDER_STATUS_CANCELLED,
-				_user.getUserId());
+				_user.getUserId(), true);
 
 			Assert.assertEquals(
 				_commerceOrder.getOrderStatus(),
@@ -394,7 +396,7 @@ public class CommerceOrderEngineTest {
 
 			_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 				_commerceOrder, CommerceOrderConstants.ORDER_STATUS_PROCESSING,
-				_user.getUserId());
+				_user.getUserId(), true);
 
 			Assert.assertNotEquals(
 				ProcessingCommerceOrderStatusImpl.KEY,
@@ -718,7 +720,7 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, CommerceOrderConstants.ORDER_STATUS_PROCESSING,
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		Assert.assertEquals(
 			_commerceOrder.getOrderStatus(),
@@ -749,7 +751,7 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, randomCommerceOrderStatus.getKey(),
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		Assert.assertEquals(
 			randomCommerceOrderStatus.getKey(),
@@ -774,7 +776,7 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, test3CommerceOrderStatus.getKey(),
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		Assert.assertEquals(
 			Test3CommerceOrderStatusImpl.KEY, _commerceOrder.getOrderStatus());
@@ -889,7 +891,7 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, CommerceOrderConstants.ORDER_STATUS_PROCESSING,
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		List<CommerceOrderItem> commerceOrderItems =
 			_commerceOrder.getCommerceOrderItems();
@@ -1060,14 +1062,14 @@ public class CommerceOrderEngineTest {
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, CommerceOrderConstants.ORDER_STATUS_ON_HOLD,
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		Assert.assertEquals(
 			_commerceOrder.getOrderStatus(), OnHoldCommerceOrderStatusImpl.KEY);
 
 		_commerceOrder = _commerceOrderEngine.transitionCommerceOrder(
 			_commerceOrder, CommerceOrderConstants.ORDER_STATUS_ON_HOLD,
-			_user.getUserId());
+			_user.getUserId(), true);
 
 		Assert.assertEquals(
 			_commerceOrder.getOrderStatus(),

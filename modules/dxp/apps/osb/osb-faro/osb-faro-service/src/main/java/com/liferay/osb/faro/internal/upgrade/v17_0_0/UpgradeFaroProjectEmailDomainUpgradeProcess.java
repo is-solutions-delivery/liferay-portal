@@ -35,8 +35,12 @@ public class UpgradeFaroProjectEmailDomainUpgradeProcess
 	protected UpgradeStep[] getPreUpgradeSteps() {
 		return new UpgradeStep[] {
 			UpgradeProcessFactory.alterColumnName(
-				"OSBFaro_FaroProjectEmailDomain",
-				"faroProjectEmailAddressDomainId", "faroProjectEmailDomainId")
+				"OSBFaro_FaroProjectEmailAddressDomain",
+				"faroProjectEmailAddressDomainId",
+				"faroProjectEmailDomainId LONG not null"),
+			UpgradeProcessFactory.alterColumnName(
+				"OSBFaro_FaroProjectEmailAddressDomain", "emailAddressDomain",
+				"emailDomain VARCHAR(75) null")
 		};
 	}
 

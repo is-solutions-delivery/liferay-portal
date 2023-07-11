@@ -49,6 +49,8 @@ import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -73,23 +75,61 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 
 	@Override
 	public CTClosure create(long ctCollectionId) {
+		return create(ctCollectionId, Collections.emptySet());
+	}
+
+	@Override
+	public CTClosure create(long ctCollectionId, long classNameId) {
+		return create(ctCollectionId, Collections.singleton(classNameId));
+	}
+
+	@Override
+	public CTClosure create(long ctCollectionId, Set<Long> classNameIds) {
+		Map<Long, TableReferenceInfo<?>> combinedTableReferenceInfos;
+
+		if (classNameIds.isEmpty()) {
+			combinedTableReferenceInfos =
+				_tableReferenceDefinitionManager.
+					getCombinedTableReferenceInfos();
+
+			return new CTClosureImpl(
+				ctCollectionId,
+				_buildClosureMap(
+					ctCollectionId, Collections.emptySet(),
+					combinedTableReferenceInfos));
+		}
+
+		combinedTableReferenceInfos =
+			_tableReferenceDefinitionManager.getCombinedTableReferenceInfos(
+				classNameIds);
+
 		return new CTClosureImpl(
 			ctCollectionId,
 			_buildClosureMap(
-				ctCollectionId,
-				_tableReferenceDefinitionManager.
-					getCombinedTableReferenceInfos()));
+				ctCollectionId, classNameIds, combinedTableReferenceInfos));
 	}
 
 	private Map<Node, Collection<Node>> _buildClosureMap(
-		long ctCollectionId,
+		long ctCollectionId, Set<Long> classNameIds,
 		Map<Long, TableReferenceInfo<?>> combinedTableReferenceInfos) {
 
-		Map<Long, List<Long>> map = new HashMap<>();
-		Set<Node> nodes = new HashSet<>();
+		Map<Long, List<Long>> map = new LinkedHashMap<>();
+		List<Node> nodes = new ArrayList<>();
 
-		for (CTEntry ctEntry :
-				_ctEntryLocalService.getCTCollectionCTEntries(ctCollectionId)) {
+		List<CTEntry> ctEntries = new ArrayList<>(
+			_ctEntryLocalService.getCTCollectionCTEntries(ctCollectionId));
+
+		ctEntries.sort(
+			(ctEntry1, ctEntry2) ->
+				(int)(ctEntry1.getCtEntryId() - ctEntry2.getCtEntryId()));
+
+		for (CTEntry ctEntry : ctEntries) {
+			if (!classNameIds.isEmpty() &&
+				!combinedTableReferenceInfos.containsKey(
+					ctEntry.getModelClassNameId())) {
+
+				continue;
+			}
 
 			List<Long> primaryKeys = map.computeIfAbsent(
 				ctEntry.getModelClassNameId(), key -> new ArrayList<>());
@@ -152,6 +192,12 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 					_tableReferenceDefinitionManager.getClassNameId(
 						entry.getKey());
 
+				if (!classNameIds.isEmpty() &&
+					!map.containsKey(parentClassNameId)) {
+
+					continue;
+				}
+
 				TableReferenceInfo<?> parentTableReferenceInfo =
 					combinedTableReferenceInfos.get(parentClassNameId);
 
@@ -172,7 +218,7 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 
 					List<Long> newParentPrimaryKeys = _collectParentPrimaryKeys(
 						childClassNameId, batchChildPrimaryKeys, ctCollectionId,
-						entry, edgeMap, nodes, parentClassNameId,
+						entry, edgeMap, nodes, parentClassNameId, classNameIds,
 						parentTableReferenceInfo);
 
 					if (newParentPrimaryKeys != null) {
@@ -186,14 +232,14 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 			}
 		}
 
-		return GraphUtil.getNodeMap(nodes, edgeMap);
+		return _getNodeMap(nodes, edgeMap);
 	}
 
 	private List<Long> _collectParentPrimaryKeys(
 		long childClassNameId, Long[] childPrimaryKeys, long ctCollectionId,
 		Map.Entry<Table<?>, List<TableJoinHolder>> entry,
-		Map<Node, Collection<Edge>> edgeMap, Set<Node> nodes,
-		long parentClassNameId,
+		Map<Node, Collection<Edge>> edgeMap, List<Node> nodes,
+		long parentClassNameId, Set<Long> classNameIds,
 		TableReferenceInfo<?> parentTableReferenceInfo) {
 
 		List<Long> newParentPrimaryKeys = null;
@@ -209,10 +255,17 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 			while (resultSet.next()) {
 				Node parentNode = new Node(
 					parentClassNameId, resultSet.getLong(1));
+
+				if (!classNameIds.isEmpty() && !nodes.contains(parentNode)) {
+					continue;
+				}
+
 				Node childNode = new Node(
 					childClassNameId, resultSet.getLong(2));
 
-				if (nodes.add(parentNode)) {
+				if (!nodes.contains(parentNode)) {
+					nodes.add(parentNode);
+
 					if (newParentPrimaryKeys == null) {
 						newParentPrimaryKeys = new ArrayList<>();
 					}
@@ -232,6 +285,43 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 		}
 
 		return newParentPrimaryKeys;
+	}
+
+	private void _filterCyclingEdges(
+		Edge edge, Map<Node, Collection<Edge>> edgeMap,
+		Deque<Edge> backtraceEdges, Set<Edge> cyclingEdges,
+		Set<Edge> resolvedEdges) {
+
+		if (backtraceEdges.contains(edge)) {
+			cyclingEdges.add(edge);
+
+			return;
+		}
+
+		if (resolvedEdges.contains(edge) || cyclingEdges.contains(edge)) {
+			return;
+		}
+
+		Collection<Edge> nextEdges = edgeMap.get(edge.getToNode());
+
+		if (nextEdges == null) {
+			resolvedEdges.add(edge);
+
+			return;
+		}
+
+		backtraceEdges.push(edge);
+
+		for (Edge nextEdge : nextEdges) {
+			_filterCyclingEdges(
+				nextEdge, edgeMap, backtraceEdges, cyclingEdges, resolvedEdges);
+		}
+
+		backtraceEdges.pop();
+
+		if (!cyclingEdges.contains(edge)) {
+			resolvedEdges.add(edge);
+		}
 	}
 
 	private Predicate _getChildPKColumnPredicate(
@@ -333,6 +423,38 @@ public class CTClosureFactoryImpl implements CTClosureFactory {
 		}
 
 		return dslQuery;
+	}
+
+	private Map<Node, Collection<Node>> _getNodeMap(
+		List<Node> nodes, Map<Node, Collection<Edge>> edgeMap) {
+
+		Deque<Edge> backtraceEdges = new LinkedList<>();
+		Set<Edge> cyclingEdges = new HashSet<>();
+		Set<Edge> resolvedEdges = new HashSet<>();
+
+		for (Collection<Edge> edges : edgeMap.values()) {
+			for (Edge edge : edges) {
+				_filterCyclingEdges(
+					edge, edgeMap, backtraceEdges, cyclingEdges, resolvedEdges);
+			}
+		}
+
+		Map<Node, Collection<Node>> nodeMap = new HashMap<>();
+
+		for (Edge edge : resolvedEdges) {
+			Collection<Node> children = nodeMap.computeIfAbsent(
+				edge.getFromNode(), node -> new ArrayList<>());
+
+			Node toNode = edge.getToNode();
+
+			children.add(toNode);
+
+			nodes.remove(toNode);
+		}
+
+		nodeMap.put(Node.ROOT_NODE, nodes);
+
+		return nodeMap;
 	}
 
 	private PreparedStatement _getPreparedStatement(

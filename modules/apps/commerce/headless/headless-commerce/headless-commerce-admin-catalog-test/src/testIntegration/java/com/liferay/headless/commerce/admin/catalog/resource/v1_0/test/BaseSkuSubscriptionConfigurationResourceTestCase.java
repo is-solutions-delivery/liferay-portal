@@ -219,19 +219,19 @@ public abstract class BaseSkuSubscriptionConfigurationResourceTestCase {
 	}
 
 	@Test
-	public void testGetIdSkuSubscriptionConfiguration() throws Exception {
+	public void testGetSkuIdSkuSubscriptionConfiguration() throws Exception {
 		Assert.assertTrue(false);
 	}
 
 	@Test
-	public void testGraphQLGetIdSkuSubscriptionConfiguration()
+	public void testGraphQLGetSkuIdSkuSubscriptionConfiguration()
 		throws Exception {
 
 		Assert.assertTrue(true);
 	}
 
 	@Test
-	public void testGraphQLGetIdSkuSubscriptionConfigurationNotFound()
+	public void testGraphQLGetSkuIdSkuSubscriptionConfigurationNotFound()
 		throws Exception {
 
 		Assert.assertTrue(true);
@@ -491,14 +491,19 @@ public abstract class BaseSkuSubscriptionConfigurationResourceTestCase {
 
 		Assert.assertTrue(valid);
 
-		Map<String, Map<String, String>> actions = page.getActions();
+		assertValid(page.getActions(), expectedActions);
+	}
 
-		for (String key : expectedActions.keySet()) {
-			Map action = actions.get(key);
+	protected void assertValid(
+		Map<String, Map<String, String>> actions1,
+		Map<String, Map<String, String>> actions2) {
+
+		for (String key : actions2.keySet()) {
+			Map action = actions1.get(key);
 
 			Assert.assertNotNull(key + " does not contain an action", action);
 
-			Map expectedAction = expectedActions.get(key);
+			Map<String, String> expectedAction = actions2.get(key);
 
 			Assert.assertEquals(
 				expectedAction.get("method"), action.get("method"));

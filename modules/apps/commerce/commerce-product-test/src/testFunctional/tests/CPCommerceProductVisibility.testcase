@@ -108,6 +108,11 @@ definition {
 				resourceAction = "VIEW_COMMERCE_CATALOGS",
 				resourceName = "com.liferay.commerce.catalog",
 				roleTitle = "User");
+
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "MANAGE_COMMERCE_PRODUCT_CHANNEL_VISIBILITY",
+				resourceName = "com.liferay.commerce.product",
+				roleTitle = "User");
 		}
 
 		task ("When the user logs in and goes to the Visibility tab of ABS Sensor product in the products admin panel") {
@@ -174,7 +179,7 @@ definition {
 	@priority = 5
 	test RemoveAChannelFilter {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "CPCommerceProductVisibility#RemoveAChannelFilter";
+		property test.liferay.virtual.instance = "false";
 
 		CommerceNavigator.gotoPortlet(
 			category = "Product Management",

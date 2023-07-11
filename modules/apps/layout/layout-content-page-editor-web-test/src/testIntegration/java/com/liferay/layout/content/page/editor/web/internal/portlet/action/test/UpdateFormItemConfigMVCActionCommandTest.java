@@ -27,10 +27,12 @@ import com.liferay.info.field.type.DateInfoFieldType;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.InfoFieldType;
 import com.liferay.info.field.type.LongTextInfoFieldType;
+import com.liferay.info.field.type.MultiselectInfoFieldType;
 import com.liferay.info.field.type.NumberInfoFieldType;
 import com.liferay.info.field.type.RelationshipInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
+import com.liferay.info.item.capability.InfoItemCapability;
 import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.info.test.util.MockInfoServiceRegistrationHolder;
 import com.liferay.info.test.util.model.MockObject;
@@ -664,6 +666,10 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 			return "INPUTS-textarea";
 		}
 
+		if (infoFieldType instanceof MultiselectInfoFieldType) {
+			return "INPUTS-multiselect-list";
+		}
+
 		if (infoFieldType instanceof NumberInfoFieldType) {
 			return "INPUTS-numeric-input";
 		}
@@ -748,8 +754,10 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 	@Inject
 	private CompanyLocalService _companyLocalService;
 
-	@Inject
-	private EditPageInfoItemCapability _editPageInfoItemCapability;
+	@Inject(
+		filter = "info.item.capability.key=" + EditPageInfoItemCapability.KEY
+	)
+	private InfoItemCapability _editPageInfoItemCapability;
 
 	@Inject
 	private FragmentCollectionContributorRegistry

@@ -12,12 +12,14 @@
 import ClayCard from '@clayui/card';
 import classNames from 'classnames';
 import {memo} from 'react';
+import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
+
+import PopoverIconButton from '~/routes/customer-portal/components/PopoverIconButton';
 import i18n from '../../../../../../../../../../../common/I18n';
 import {
 	Skeleton,
 	StatusTag,
 } from '../../../../../../../../../../../common/components';
-
 import {
 	FORMAT_DATE_TYPES,
 	SLA_STATUS_TYPES,
@@ -30,6 +32,10 @@ const AccountSubscriptionCard = ({
 	onClick,
 	...accountSubscription
 }) => {
+	const instanceSize = Number(accountSubscription.instanceSize ?? 0);
+
+	const {articleWhatIsMyInstanceSizingValueURL} = useAppPropertiesContext();
+
 	const getDatesDisplay = () =>
 		`${getDateCustomFormat(
 			accountSubscription.startDate,
@@ -53,9 +59,11 @@ const AccountSubscriptionCard = ({
 				{loading ? (
 					<Skeleton className="mb-3 py-1" height={45} width={48} />
 				) : (
-					<div className="mb-3 py-1 text-center">
-						<IconSVG height={45} width={45} />
-					</div>
+					IconSVG && (
+						<div className="mb-3 py-1 text-center">
+							<IconSVG height={45} width={45} />
+						</div>
+					)
 				)}
 
 				{loading ? (
@@ -74,11 +82,22 @@ const AccountSubscriptionCard = ({
 					{loading ? (
 						<Skeleton className="mb-1" height={13} width={80} />
 					) : (
-						<p className="mb-1 text-center text-neutral-7 text-paragraph-sm">
-							{`${i18n.translate('instance-size')}: `}
+						instanceSize > 0 && (
+							<p className="mb-1 text-center text-neutral-7 text-paragraph-sm">
+								{`${i18n.translate('instance-size')}: `}
 
-							{accountSubscription.instanceSize}
-						</p>
+								{accountSubscription.instanceSize}
+
+								<PopoverIconButton
+									popoverLink={{
+										textLink: i18n.translate(
+											'learn-more-about-instance-sizing'
+										),
+										url: articleWhatIsMyInstanceSizingValueURL,
+									}}
+								/>
+							</p>
+						)
 					)}
 
 					{loading ? (

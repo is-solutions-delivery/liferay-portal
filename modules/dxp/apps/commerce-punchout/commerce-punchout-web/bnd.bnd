@@ -1,4 +1,5 @@
 Bundle-Name: Liferay Commerce Punch Out Web
 Bundle-SymbolicName: com.liferay.commerce.punchout.web
-Bundle-Version: 4.0.17
+Bundle-Version: 4.0.18
 Web-ContextPath: /commerce-punchout-web
+-dsannotations-options: inherit

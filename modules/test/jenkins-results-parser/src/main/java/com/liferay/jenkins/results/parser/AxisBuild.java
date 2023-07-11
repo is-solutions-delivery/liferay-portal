@@ -20,6 +20,7 @@ import com.liferay.jenkins.results.parser.failure.message.generator.FailureMessa
 import com.liferay.jenkins.results.parser.failure.message.generator.GenericFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.GradleTaskFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.IntegrationTestTimeoutFailureMessageGenerator;
+import com.liferay.jenkins.results.parser.failure.message.generator.JSUnitTestFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.LocalGitMirrorFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.ModulesCompilationFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.PMDFailureMessageGenerator;
@@ -175,6 +176,13 @@ public class AxisBuild extends BaseBuild {
 			Dom4JUtil.getNewAnchorElement(
 				poshiJUnitTestResult.getPoshiSummaryURL(),
 				poshiSummaryListItemElement, "Poshi Summary");
+
+			Element poshiConsoleListItemElement = Dom4JUtil.getNewElement(
+				"li", reportLinksUnorderedListElement);
+
+			Dom4JUtil.getNewAnchorElement(
+				poshiJUnitTestResult.getPoshiConsoleURL(),
+				poshiConsoleListItemElement, "Poshi Console");
 		}
 
 		Dom4JUtil.addToElement(
@@ -604,6 +612,7 @@ public class AxisBuild extends BaseBuild {
 			//
 			new CompileFailureMessageGenerator(),
 			new IntegrationTestTimeoutFailureMessageGenerator(),
+			new JSUnitTestFailureMessageGenerator(),
 			new LocalGitMirrorFailureMessageGenerator(),
 			new PMDFailureMessageGenerator(),
 			new PluginFailureMessageGenerator(),

@@ -34,8 +34,11 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -47,6 +50,7 @@ import org.osgi.service.component.annotations.Reference;
 	property = {
 		"osgi.command.function=initializeCompanyCountries",
 		"osgi.command.function=populateCompanyCountries",
+		"osgi.command.function=repopulateCompanyCountries",
 		"osgi.command.scope=address"
 	},
 	service = PortalAddressOSGiCommands.class
@@ -62,24 +66,52 @@ public class PortalAddressOSGiCommands {
 	public void populateCompanyCountries(long companyId) throws Exception {
 		Company company = _companyLocalService.getCompany(companyId);
 
-		int count = _countryLocalService.getCompanyCountriesCount(
-			company.getCompanyId());
+		int count = _countryLocalService.getCompanyCountriesCount(companyId);
 
 		if (count > 0) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					StringBundler.concat(
 						"Skipping country initialization. Countries are ",
-						"already initialized for company ",
-						company.getCompanyId(), "."));
+						"already initialized for company ", companyId, "."));
 			}
 
 			return;
 		}
 
 		if (_log.isDebugEnabled()) {
-			_log.debug(
-				"Initializing countries for company " + company.getCompanyId());
+			_log.debug("Initializing countries for company " + companyId);
+		}
+
+		JSONArray countriesJSONArray = _getJSONArray(
+			"com/liferay/address/dependencies/countries.json");
+
+		for (int i = 0; i < countriesJSONArray.length(); i++) {
+			JSONObject countryJSONObject = countriesJSONArray.getJSONObject(i);
+
+			try {
+				_addCountry(company, countryJSONObject);
+			}
+			catch (Exception exception) {
+				_log.error(exception);
+			}
+		}
+	}
+
+	public void repopulateCompanyCountries(long companyId) throws Exception {
+		if (_log.isDebugEnabled()) {
+			_log.debug("Reinitializing countries for company " + companyId);
+		}
+
+		Company company = _companyLocalService.getCompany(companyId);
+
+		Set<String> countryNames = new HashSet<>();
+
+		List<Country> countries = _countryLocalService.getCompanyCountries(
+			companyId);
+
+		for (Country country : countries) {
+			countryNames.add(country.getName());
 		}
 
 		JSONArray countriesJSONArray = _getJSONArray(
@@ -91,40 +123,66 @@ public class PortalAddressOSGiCommands {
 			try {
 				String name = countryJSONObject.getString("name");
 
-				ServiceContext serviceContext = new ServiceContext();
+				if (!countryNames.contains(name)) {
+					_addCountry(company, countryJSONObject);
 
-				serviceContext.setCompanyId(company.getCompanyId());
-
-				User guestUser = company.getGuestUser();
-
-				serviceContext.setUserId(guestUser.getUserId());
-
-				Country country = _countryLocalService.addCountry(
-					countryJSONObject.getString("a2"),
-					countryJSONObject.getString("a3"), true, true,
-					countryJSONObject.getString("idd"), name,
-					countryJSONObject.getString("number"), 0, true, false,
-					countryJSONObject.getBoolean("zipRequired"),
-					serviceContext);
-
-				Map<String, String> titleMap = new HashMap<>();
-
-				for (Locale locale :
-						_language.getCompanyAvailableLocales(companyId)) {
-
-					titleMap.put(
-						_language.getLanguageId(locale),
-						country.getName(locale));
+					continue;
 				}
 
-				_countryLocalService.updateCountryLocalizations(
-					country, titleMap);
+				Country country = _countryLocalService.getCountryByName(
+					companyId, name);
+
+				country = _countryLocalService.updateCountry(
+					country.getCountryId(), countryJSONObject.getString("a2"),
+					countryJSONObject.getString("a3"), country.isActive(),
+					country.isBillingAllowed(),
+					countryJSONObject.getString("idd"), name,
+					countryJSONObject.getString("number"),
+					country.getPosition(), country.isShippingAllowed(),
+					country.isSubjectToVAT());
 
 				_processCountryRegions(country);
 			}
 			catch (Exception exception) {
 				_log.error(exception);
 			}
+		}
+	}
+
+	private void _addCountry(Company company, JSONObject countryJSONObject) {
+		try {
+			ServiceContext serviceContext = new ServiceContext();
+
+			serviceContext.setCompanyId(company.getCompanyId());
+
+			User guestUser = company.getGuestUser();
+
+			serviceContext.setUserId(guestUser.getUserId());
+
+			Country country = _countryLocalService.addCountry(
+				countryJSONObject.getString("a2"),
+				countryJSONObject.getString("a3"), true, true,
+				countryJSONObject.getString("idd"),
+				countryJSONObject.getString("name"),
+				countryJSONObject.getString("number"), 0, true, false,
+				countryJSONObject.getBoolean("zipRequired"), serviceContext);
+
+			Map<String, String> titleMap = new HashMap<>();
+
+			for (Locale locale :
+					_language.getCompanyAvailableLocales(
+						company.getCompanyId())) {
+
+				titleMap.put(
+					_language.getLanguageId(locale), country.getName(locale));
+			}
+
+			_countryLocalService.updateCountryLocalizations(country, titleMap);
+
+			_processCountryRegions(country);
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException);
 		}
 	}
 

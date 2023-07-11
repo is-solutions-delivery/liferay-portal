@@ -27,6 +27,8 @@ public class ObjectFieldConstants {
 
 	public static final String BUSINESS_TYPE_DATE = "Date";
 
+	public static final String BUSINESS_TYPE_DATE_TIME = "DateTime";
+
 	public static final String BUSINESS_TYPE_DECIMAL = "Decimal";
 
 	public static final String BUSINESS_TYPE_ENCRYPTED = "Encrypted";
@@ -65,6 +67,8 @@ public class ObjectFieldConstants {
 
 	public static final String DB_TYPE_DATE = "Date";
 
+	public static final String DB_TYPE_DATE_TIME = "DateTime";
+
 	public static final String DB_TYPE_DOUBLE = "Double";
 
 	public static final String DB_TYPE_INTEGER = "Integer";
@@ -72,5 +76,11 @@ public class ObjectFieldConstants {
 	public static final String DB_TYPE_LONG = "Long";
 
 	public static final String DB_TYPE_STRING = "String";
+
+	public static final String READ_ONLY_CONDITIONAL = "conditional";
+
+	public static final String READ_ONLY_FALSE = "false";
+
+	public static final String READ_ONLY_TRUE = "true";
 
 }

@@ -268,6 +268,39 @@ public class LayoutTypePortletImpl
 	}
 
 	@Override
+	public List<Portlet> getAllNonembeddedPortlets() {
+		List<Portlet> staticPortlets = getStaticPortlets(
+			PropsKeys.LAYOUT_STATIC_PORTLETS_ALL);
+
+		List<Portlet> explicitlyAddedPortlets = new ArrayList<>();
+
+		Layout layout = getLayout();
+
+		if (layout.isTypeAssetDisplay() || layout.isTypeContent()) {
+			List<com.liferay.portal.kernel.model.PortletPreferences>
+				portletPreferencesList =
+					PortletPreferencesLocalServiceUtil.
+						getPortletPreferencesByPlid(layout.getPlid());
+
+			for (com.liferay.portal.kernel.model.PortletPreferences
+					portletPreferences : portletPreferencesList) {
+
+				Portlet portlet = PortletLocalServiceUtil.getPortletById(
+					layout.getCompanyId(), portletPreferences.getPortletId());
+
+				if (portlet != null) {
+					explicitlyAddedPortlets.add(portlet);
+				}
+			}
+		}
+		else {
+			explicitlyAddedPortlets = getExplicitlyAddedPortlets(false);
+		}
+
+		return addStaticPortlets(explicitlyAddedPortlets, staticPortlets, null);
+	}
+
+	@Override
 	public List<Portlet> getAllPortlets() {
 		return addStaticPortlets(
 			getExplicitlyAddedPortlets(),
@@ -2093,7 +2126,6 @@ public class LayoutTypePortletImpl
 	protected void setUserPreference(String key, String value) {
 		_portalPreferences.setValue(
 			CustomizedPages.namespacePlid(getPlid()), key, value);
-
 		_portalPreferences.setValue(
 			CustomizedPages.namespacePlid(getPlid()), _MODIFIED_DATE,
 			_dateFormat.format(new Date()));

@@ -14,6 +14,7 @@
 
 package com.liferay.frontend.data.set.views.web.internal.portlet;
 
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.frontend.data.set.views.web.internal.constants.FDSViewsPortletKeys;
 import com.liferay.frontend.data.set.views.web.internal.constants.FDSViewsWebKeys;
 import com.liferay.frontend.data.set.views.web.internal.display.context.FDSViewsDisplayContext;
@@ -22,7 +23,9 @@ import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
@@ -32,6 +35,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.io.IOException;
@@ -101,7 +105,8 @@ public class FDSViewsPortlet extends MVCPortlet {
 
 		renderRequest.setAttribute(
 			FDSViewsWebKeys.FDS_VIEWS_DISPLAY_CONTEXT,
-			new FDSViewsDisplayContext(renderRequest, _serviceTrackerList));
+			new FDSViewsDisplayContext(
+				_cetManager, renderRequest, _serviceTrackerList));
 
 		super.doDispatch(renderRequest, renderResponse);
 	}
@@ -112,19 +117,20 @@ public class FDSViewsPortlet extends MVCPortlet {
 
 		ObjectDefinition fdsEntryObjectDefinition =
 			_objectDefinitionLocalService.fetchObjectDefinition(
-				companyId, "C_FDSEntry");
+				companyId, "FDSEntry");
 
 		if (fdsEntryObjectDefinition != null) {
 			return;
 		}
 
 		fdsEntryObjectDefinition =
-			_objectDefinitionLocalService.addCustomObjectDefinition(
-				userId, false, false,
-				LocalizedMapUtil.getLocalizedMap("FDS Entry"), "FDSEntry",
-				"100", null, LocalizedMapUtil.getLocalizedMap("FDS Entries"),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
-				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+			_objectDefinitionLocalService.addSystemObjectDefinition(
+				"FDSEntry", userId, "FDSEntry", "FDSEntry", false,
+				LocalizedMapUtil.getLocalizedMap("FDS Entry"), true, "FDSEntry",
+				null, null, null, null,
+				LocalizedMapUtil.getLocalizedMap("FDS Entries"),
+				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
+				WorkflowConstants.STATUS_DRAFT,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -146,16 +152,17 @@ public class FDSViewsPortlet extends MVCPortlet {
 						_language.get(locale, "rest-schema"), "restSchema",
 						true)));
 
-		_objectDefinitionLocalService.publishCustomObjectDefinition(
+		_objectDefinitionLocalService.publishSystemObjectDefinition(
 			userId, fdsEntryObjectDefinition.getObjectDefinitionId());
 
 		ObjectDefinition fdsViewObjectDefinition =
-			_objectDefinitionLocalService.addCustomObjectDefinition(
-				userId, false, false,
-				LocalizedMapUtil.getLocalizedMap("FDS View"), "FDSView", "200",
-				null, LocalizedMapUtil.getLocalizedMap("FDS Views"),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
-				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+			_objectDefinitionLocalService.addSystemObjectDefinition(
+				"FDSView", userId, "FDSView", "FDSView", false,
+				LocalizedMapUtil.getLocalizedMap("FDS View"), true, "FDSView",
+				null, null, null, null,
+				LocalizedMapUtil.getLocalizedMap("FDS Views"),
+				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
+				WorkflowConstants.STATUS_DRAFT,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -196,7 +203,14 @@ public class FDSViewsPortlet extends MVCPortlet {
 						_language.get(locale, "sorts-order"), "fdsSortsOrder",
 						false)));
 
-		_objectDefinitionLocalService.publishCustomObjectDefinition(
+		ObjectField labelObjectField = _objectFieldLocalService.getObjectField(
+			fdsViewObjectDefinition.getObjectDefinitionId(), "label");
+
+		_objectDefinitionLocalService.updateTitleObjectFieldId(
+			fdsViewObjectDefinition.getObjectDefinitionId(),
+			labelObjectField.getObjectFieldId());
+
+		_objectDefinitionLocalService.publishSystemObjectDefinition(
 			userId, fdsViewObjectDefinition.getObjectDefinitionId());
 
 		_objectRelationshipLocalService.addObjectRelationship(
@@ -208,12 +222,13 @@ public class FDSViewsPortlet extends MVCPortlet {
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
 		ObjectDefinition fdsFieldObjectDefinition =
-			_objectDefinitionLocalService.addCustomObjectDefinition(
-				userId, false, false,
-				LocalizedMapUtil.getLocalizedMap("FDS Field"), "FDSField",
-				"300", null, LocalizedMapUtil.getLocalizedMap("FDS Fields"),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
-				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+			_objectDefinitionLocalService.addSystemObjectDefinition(
+				"FDSField", userId, "FDSField", "FDSField", false,
+				LocalizedMapUtil.getLocalizedMap("FDS Field"), true, "FDSField",
+				null, null, null, null,
+				LocalizedMapUtil.getLocalizedMap("FDS Fields"),
+				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
+				WorkflowConstants.STATUS_DRAFT,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -232,11 +247,16 @@ public class FDSViewsPortlet extends MVCPortlet {
 						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
 						_language.get(locale, "renderer"), "renderer", false),
 					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
+						_language.get(locale, "rendererType"), "rendererType",
+						false),
+					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_BOOLEAN,
 						ObjectFieldConstants.DB_TYPE_BOOLEAN, true, false, null,
 						_language.get(locale, "sortable"), "sortable", true)));
 
-		_objectDefinitionLocalService.publishCustomObjectDefinition(
+		_objectDefinitionLocalService.publishSystemObjectDefinition(
 			userId, fdsFieldObjectDefinition.getObjectDefinitionId());
 
 		_objectRelationshipLocalService.addObjectRelationship(
@@ -248,13 +268,13 @@ public class FDSViewsPortlet extends MVCPortlet {
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
 		ObjectDefinition fdsDateFilterObjectDefinition =
-			_objectDefinitionLocalService.addCustomObjectDefinition(
-				userId, false, false,
-				LocalizedMapUtil.getLocalizedMap("FDS Date Filter"),
-				"FDSDateFilter", "300", null,
+			_objectDefinitionLocalService.addSystemObjectDefinition(
+				"FDSDateFilter", userId, "FDSDateFilter", "FDSDateFilter",
+				false, LocalizedMapUtil.getLocalizedMap("FDS Date Filter"),
+				true, "FDSDateFilter", null, null, null, null,
 				LocalizedMapUtil.getLocalizedMap("FDS Date Filters"),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
-				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
+				WorkflowConstants.STATUS_DRAFT,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_DATE,
@@ -277,7 +297,7 @@ public class FDSViewsPortlet extends MVCPortlet {
 						ObjectFieldConstants.DB_TYPE_STRING, true, false, null,
 						_language.get(locale, "type"), "type", false)));
 
-		_objectDefinitionLocalService.publishCustomObjectDefinition(
+		_objectDefinitionLocalService.publishSystemObjectDefinition(
 			userId, fdsDateFilterObjectDefinition.getObjectDefinitionId());
 
 		_objectRelationshipLocalService.addObjectRelationship(
@@ -290,13 +310,14 @@ public class FDSViewsPortlet extends MVCPortlet {
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
 		ObjectDefinition fdsDynamicFilterObjectDefinition =
-			_objectDefinitionLocalService.addCustomObjectDefinition(
-				userId, false, false,
-				LocalizedMapUtil.getLocalizedMap("FDS Dynamic Filter"),
-				"FDSDynamicFilter", "300", null,
+			_objectDefinitionLocalService.addSystemObjectDefinition(
+				"FDSDynamicFilter", userId, "FDSDynamicFilter",
+				"FDSDynamicFilter", false,
+				LocalizedMapUtil.getLocalizedMap("FDS Dynamic Filter"), true,
+				"FDSDynamicFilter", null, null, null, null,
 				LocalizedMapUtil.getLocalizedMap("FDS Dynamic Filters"),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
-				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
+				WorkflowConstants.STATUS_DRAFT,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -325,7 +346,7 @@ public class FDSViewsPortlet extends MVCPortlet {
 						_language.get(locale, "preselected-values"),
 						"preselectedValues", false)));
 
-		_objectDefinitionLocalService.publishCustomObjectDefinition(
+		_objectDefinitionLocalService.publishSystemObjectDefinition(
 			userId, fdsDynamicFilterObjectDefinition.getObjectDefinitionId());
 
 		_objectRelationshipLocalService.addObjectRelationship(
@@ -338,12 +359,13 @@ public class FDSViewsPortlet extends MVCPortlet {
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
 		ObjectDefinition fdsSortObjectDefinition =
-			_objectDefinitionLocalService.addCustomObjectDefinition(
-				userId, false, false,
-				LocalizedMapUtil.getLocalizedMap("FDS Sort"), "FDSSort", "300",
-				null, LocalizedMapUtil.getLocalizedMap("FDS Sorts"),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
-				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+			_objectDefinitionLocalService.addSystemObjectDefinition(
+				"FDSSort", userId, "FDSSort", "FDSSort", false,
+				LocalizedMapUtil.getLocalizedMap("FDS Sort"), true, "FDSSort",
+				"300", null, null, null,
+				LocalizedMapUtil.getLocalizedMap("FDS Sorts"),
+				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
+				WorkflowConstants.STATUS_DRAFT,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -355,7 +377,7 @@ public class FDSViewsPortlet extends MVCPortlet {
 						_language.get(locale, "sorting"), "sortingDirection",
 						true)));
 
-		_objectDefinitionLocalService.publishCustomObjectDefinition(
+		_objectDefinitionLocalService.publishSystemObjectDefinition(
 			userId, fdsSortObjectDefinition.getObjectDefinitionId());
 
 		_objectRelationshipLocalService.addObjectRelationship(
@@ -371,10 +393,16 @@ public class FDSViewsPortlet extends MVCPortlet {
 		FDSViewsPortlet.class);
 
 	@Reference
+	private CETManager _cetManager;
+
+	@Reference
 	private Language _language;
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference
+	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
 	private ObjectRelationshipLocalService _objectRelationshipLocalService;

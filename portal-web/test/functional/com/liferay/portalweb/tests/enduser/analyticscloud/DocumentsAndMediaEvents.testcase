@@ -10,9 +10,7 @@ definition {
 	property testray.main.component.name = "Analytics Cloud";
 
 	setUp {
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "record-test-generated-properties");
+		AntCommands.runCommand("build-test.xml", "record-test-generated-properties");
 
 		task ("Copy the token from AC") {
 			ACUtils.launchAC();
@@ -42,7 +40,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -50,7 +48,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -59,8 +57,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8969 | Test Summary: Check documentDownloaded triggers when a file is downloaded in a DXP site and check its properties (see reference document in comments)"
+	@ignore = "true"
 	@priority = 5
 	test CheckDocumentDownloadedInSiteAndCheckProperties {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		property proxy.server.enabled = "true";
 
 		task ("Get the Property ID in AC") {
@@ -151,8 +154,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8944 | Test Summary: Check documentPreviewed is triggered when viewing the document on a page and has the right parameters"
+	@ignore = "true"
 	@priority = 3
 	test CheckDocumentPreviewedWhenViewOnPageAndCheckParameters {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		property proxy.server.enabled = "true";
 
 		task ("Get the Property ID in AC") {

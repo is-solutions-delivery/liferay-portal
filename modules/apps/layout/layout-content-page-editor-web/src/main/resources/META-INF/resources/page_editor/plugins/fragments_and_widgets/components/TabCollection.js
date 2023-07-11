@@ -15,7 +15,7 @@
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 
 import {FRAGMENTS_DISPLAY_STYLES} from '../../../app/config/constants/fragmentsDisplayStyles';
 import {LIST_ITEM_TYPES} from '../../../app/config/constants/listItemTypes';
@@ -61,7 +61,8 @@ export default function TabCollection({
 	return (
 		<TabCollectionCollapse
 			collapseRef={collapseRef}
-			open={open || isSearchResult}
+			isSearchResult={isSearchResult}
+			open={open}
 			setOpen={setOpen}
 			title={collection.label}
 		>
@@ -137,13 +138,21 @@ TabPortletItems.proptypes = {
 	type: PropTypes.string,
 };
 
-function TabCollectionCollapse({children, collapseRef, open, setOpen, title}) {
-	const handleOpen = (nextOpen) => {
-		setOpen(nextOpen);
-	};
+function TabCollectionCollapse({
+	children,
+	collapseRef,
+	isSearchResult,
+	open,
+	setOpen,
+	title,
+}) {
+	const [searchOpen, setSearchOpen] = useState(true);
+
+	const isOpen = isSearchResult ? searchOpen : open;
+	const setIsOpen = isSearchResult ? setSearchOpen : setOpen;
 
 	const {isTarget, setElement} = useKeyboardNavigation({
-		handleOpen,
+		handleOpen: setIsOpen,
 		type: LIST_ITEM_TYPES.header,
 	});
 
@@ -154,7 +163,7 @@ function TabCollectionCollapse({children, collapseRef, open, setOpen, title}) {
 			role="none"
 		>
 			<button
-				aria-expanded={open ? 'true' : 'false'}
+				aria-expanded={isOpen ? 'true' : 'false'}
 				aria-haspopup="menu"
 				className={classNames(
 					'btn',
@@ -162,10 +171,10 @@ function TabCollectionCollapse({children, collapseRef, open, setOpen, title}) {
 					'collapse-icon',
 					'sheet-subtitle',
 					{
-						collapsed: !open,
+						collapsed: !isOpen,
 					}
 				)}
-				onClick={() => setOpen(!open)}
+				onClick={() => setIsOpen(!isOpen)}
 				ref={setElement}
 				role="menuitem"
 				tabIndex={isTarget ? 0 : -1}
@@ -176,17 +185,17 @@ function TabCollectionCollapse({children, collapseRef, open, setOpen, title}) {
 
 					<span
 						className={`text-secondary collapse-icon-${
-							open ? 'open' : 'closed'
+							isOpen ? 'open' : 'closed'
 						}`}
 					>
 						<ClayIcon
-							symbol={open ? 'angle-down' : 'angle-right'}
+							symbol={isOpen ? 'angle-down' : 'angle-right'}
 						/>
 					</span>
 				</span>
 			</button>
 
-			{open && children}
+			{isOpen && children}
 		</li>
 	);
 }

@@ -19,6 +19,7 @@ import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorRegistry;
 import com.liferay.fragment.model.FragmentCollection;
+import com.liferay.fragment.model.FragmentComposition;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
 import com.liferay.fragment.service.FragmentEntryServiceUtil;
@@ -48,6 +49,7 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -110,6 +112,9 @@ public class FragmentDisplayContext {
 		).add(
 			dropdownItem -> {
 				dropdownItem.putData("action", "openImportView");
+				dropdownItem.putData(
+					"importURL",
+					(String)fragmentCollectionsViewContext.get("importURL"));
 				dropdownItem.putData(
 					"viewImportURL",
 					(String)fragmentCollectionsViewContext.get(
@@ -257,6 +262,18 @@ public class FragmentDisplayContext {
 		contributedEntries.sort(
 			new FragmentCompositionFragmentEntryNameComparator(true));
 
+		if (isSearch()) {
+			contributedEntries = ListUtil.filter(
+				contributedEntries,
+				contributedEntry -> {
+					String lowerCaseName = StringUtil.toLowerCase(
+						_getName(contributedEntry));
+
+					return lowerCaseName.contains(
+						StringUtil.toLowerCase(_getKeywords()));
+				});
+		}
+
 		contributedEntriesSearchContainer.setResultsAndTotal(
 			contributedEntries);
 
@@ -388,6 +405,22 @@ public class FragmentDisplayContext {
 
 				return exportFragmentCollectionsURL.toString();
 			}
+		).put(
+			"importURL",
+			() -> PortletURLBuilder.createActionURL(
+				_renderResponse
+			).setActionName(
+				"/fragment/import"
+			).setRedirect(
+				_themeDisplay.getURLCurrent()
+			).setPortletResource(
+				() -> {
+					PortletDisplay portletDisplay =
+						_themeDisplay.getPortletDisplay();
+
+					return portletDisplay.getId();
+				}
+			).buildString()
 		).put(
 			"viewDeleteFragmentCollectionsURL",
 			() -> PortletURLBuilder.createRenderURL(
@@ -730,6 +763,19 @@ public class FragmentDisplayContext {
 		_keywords = ParamUtil.getString(_httpServletRequest, "keywords");
 
 		return _keywords;
+	}
+
+	private String _getName(Object object) {
+		if (object instanceof FragmentComposition) {
+			FragmentComposition fragmentComposition =
+				(FragmentComposition)object;
+
+			return fragmentComposition.getName();
+		}
+
+		FragmentEntry fragmentEntry = (FragmentEntry)object;
+
+		return fragmentEntry.getName();
 	}
 
 	private String _getOrderByCol() {

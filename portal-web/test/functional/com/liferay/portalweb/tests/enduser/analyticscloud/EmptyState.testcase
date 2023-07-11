@@ -21,7 +21,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -29,7 +29,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -40,7 +40,12 @@ definition {
 	@description = "Feature ID: LRAC-10405 | Automation ID: LRAC-11120 | Test Summary: Empty state Assets page with assets with data source and property no data"
 	@priority = 2
 	test CheckAllAssetsMessagesWhenHasPropertyAndDataSource {
-		property test.name.skip.portal.instance = "EmptyState#CheckAllAssetsMessagesWhenHasPropertyAndDataSource";
+		property portal.upstream = "quarantine";
+
+		// AC Quarantine Reason: Test fix empty state change no tooltip pop up
+		// AC Quarantine Ticket: LRAC-14035
+
+		property test.liferay.virtual.instance = "false";
 
 		task ("Check the first screen of the onboarding modal") {
 			ACUtils.viewGenericText(textValueList = "Welcome to Analytics Cloud,Just a few more steps to set up your workspace.");
@@ -397,9 +402,14 @@ definition {
 	}
 
 	@description = "Feature ID: LRAC-9248 | Automation ID: LRAC-10727 | Test Summary: Empty state of pages with no data source and no property"
+	@ignore = "true"
 	@priority = 2
 	test CheckAllMessagesRelatedToSettings {
-		property test.name.skip.portal.instance = "EmptyState#CheckAllMessagesRelatedToSettings";
+
+		// AC Bug: Individuals Attribute empty state showing blank page
+		// AC Bug ticket: LRAC-13973
+
+		property test.liferay.virtual.instance = "false";
 
 		task ("Close the onboarding modal") {
 			ACUtils.closeModal();
@@ -546,7 +556,7 @@ definition {
 	@description = "Feature ID: LRAC-10405 | Automation ID: LRAC-11119 | Test Summary: Empty state of no assets with data source and property"
 	@priority = 2
 	test CheckAllMessagesWhenHasPropertyAndDataSourceButNoData {
-		property test.name.skip.portal.instance = "EmptyState#CheckAllMessagesWhenHasPropertyAndDataSourceButNoData";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Check the first screen of the onboarding modal") {
 			ACUtils.viewGenericText(textValueList = "Welcome to Analytics Cloud,Just a few more steps to set up your workspace.");
@@ -785,7 +795,7 @@ definition {
 	@description = "Feature ID: LRAC-10403 | Automation ID: LRAC-10740 | Test Summary: Empty state of pages without data source and with property"
 	@priority = 2
 	test CheckAllMessageWhenHasPropertyNoDataSource {
-		property test.name.skip.portal.instance = "EmptyState#CheckAllMessageWhenHasPropertyNoDataSource";
+		property test.liferay.virtual.instance = "false";
 
 		// Accounts and Salesforce tests are no longer possible to run after this one from LRAC-11571
 
@@ -919,8 +929,7 @@ definition {
 	@description = "Feature ID: LRAC-10405 | Automation ID: LRAC-11118 | Test Summary: Empty state Page cards with data source and property no data"
 	@priority = 2
 	test CheckAllPagesMessagesWhenHasPropertyAndDataSource {
-		property analytics.cloud.upstream = "false";
-		property test.name.skip.portal.instance = "EmptyState#CheckAllPagesMessagesWhenHasPropertyAndDataSource";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Check the first screen of the onboarding modal") {
 			ACUtils.viewGenericText(textValueList = "Welcome to Analytics Cloud,Just a few more steps to set up your workspace.");
@@ -1167,7 +1176,12 @@ definition {
 	@description = "Feature ID: LRAC-10405 | Automation ID: LRAC-11121 | Test Summary: Empty state Segments page no/with segment with data source and property no data"
 	@priority = 2
 	test CheckAllSegmentMessagesWhenHasPropertyAndDataSourceButNoData {
-		property test.name.skip.portal.instance = "EmptyState#CheckAllSegmentMessagesWhenHasPropertyAndDataSourceButNoData";
+		property portal.upstream = "quarantine";
+
+		// AC Quarantine Reason: Test fix investigate empty state message
+		// AC Quarantine Ticket: LRAC-14036
+
+		property test.liferay.virtual.instance = "false";
 
 		task ("Check the first screen of the onboarding modal") {
 			ACUtils.viewGenericText(textValueList = "Welcome to Analytics Cloud,Just a few more steps to set up your workspace.");
@@ -1295,7 +1309,12 @@ definition {
 	@description = "Feature ID: LRAC-10405 | Automation ID: LRAC-11117 | Test Summary: Empty state Sites page with data source and property no data"
 	@priority = 2
 	test CheckAllSitesMessagesWhenHasPropertyAndDataSourceButNoData {
-		property test.name.skip.portal.instance = "EmptyState#CheckAllSitesMessagesWhenHasPropertyAndDataSourceButNoData";
+		property portal.upstream = "quarantine";
+
+		// AC Quarantine Reason: Test fix investigate empty state
+		// AC Quarantine Ticket: LRAC-13989
+
+		property test.liferay.virtual.instance = "false";
 
 		task ("Check the first screen of the onboarding modal") {
 			ACUtils.viewGenericText(textValueList = "Welcome to Analytics Cloud,Just a few more steps to set up your workspace.");
@@ -1515,7 +1534,7 @@ definition {
 	@description = "Feature ID: LRAC-10698 | Automation ID: LRAC-10869 | Test Summary: Empty state for all workspace pages"
 	@priority = 2
 	test CheckMessageWhenNoPropertyNoDataSource {
-		property test.name.skip.portal.instance = "EmptyState#CheckMessageWhenNoPropertyNoDataSource";
+		property test.liferay.virtual.instance = "false";
 
 		var textValue = "First, complete the onboarding to get your workspace set up.";
 
@@ -1560,7 +1579,7 @@ definition {
 	@description = "Feature ID: LRAC-10405 | Automation ID: LRAC-11122 | Test Summary: Empty state page with search bar and date range options"
 	@priority = 2
 	test CheckSearchMessagesWithNoResults {
-		property test.name.skip.portal.instance = "EmptyState#CheckSearchMessagesWithNoResults";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Check the first screen of the onboarding modal") {
 			ACUtils.viewGenericText(textValueList = "Welcome to Analytics Cloud,Just a few more steps to set up your workspace.");

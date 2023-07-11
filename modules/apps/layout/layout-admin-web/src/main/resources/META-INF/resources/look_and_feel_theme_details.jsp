@@ -65,7 +65,7 @@ String styleBookWarningMessage = layoutsAdminDisplayContext.getStyleBookWarningM
 		sm="5"
 	>
 		<clay:image-card
-			cssClass="mb-0"
+			cssClass="c-mb-0"
 			imageAlt='<%= Validator.isNotNull(selTheme.getName()) ? HtmlUtil.escapeAttribute(selTheme.getName()) : "" %>'
 			imageSrc='<%= themeDisplay.getCDNBaseURL() + HtmlUtil.escapeAttribute(selTheme.getStaticResourcePath()) + HtmlUtil.escapeAttribute(selTheme.getImagesPath()) + "/thumbnail.png" %>'
 			subtitle='<%= ((selPluginPackage != null) && Validator.isNotNull(selPluginPackage.getAuthor())) ? HtmlUtil.escape(selPluginPackage.getAuthor()) : "" %>'
@@ -74,7 +74,7 @@ String styleBookWarningMessage = layoutsAdminDisplayContext.getStyleBookWarningM
 	</clay:col>
 
 	<clay:col
-		cssClass="pl-4 pt-3"
+		cssClass="c-pl-4 c-pt-3"
 		size="6"
 		sm="7"
 	>
@@ -118,7 +118,7 @@ String styleBookWarningMessage = layoutsAdminDisplayContext.getStyleBookWarningM
 
 				<c:choose>
 					<c:when test='<%= type.equals("checkbox") %>'>
-						<aui:input label="<%= HtmlUtil.escape(name) %>" labelCssClass="font-weight-normal" name="<%= propertyName %>" type="checkbox" value="<%= value %>" wrapperCssClass="mb-3" />
+						<aui:input disabled="<%= layoutsAdminDisplayContext.isReadOnly() %>" label="<%= HtmlUtil.escape(name) %>" labelCssClass="font-weight-normal" name="<%= propertyName %>" type="checkbox" value="<%= value %>" wrapperCssClass="c-mb-3" />
 					</c:when>
 					<c:when test='<%= type.equals("text") || type.equals("textarea") %>'>
 						<aui:input label="<%= HtmlUtil.escape(name) %>" name="<%= propertyName %>" type="<%= type %>" value="<%= value %>" />
@@ -153,15 +153,11 @@ String styleBookWarningMessage = layoutsAdminDisplayContext.getStyleBookWarningM
 		</c:if>
 
 		<clay:button
+			disabled="<%= layoutsAdminDisplayContext.isReadOnly() %>"
 			displayType="secondary"
 			id='<%= liferayPortletResponse.getNamespace() + "changeTheme" %>'
 			label='<%= LanguageUtil.get(request, "change-current-theme") %>'
 		/>
-
-		<portlet:renderURL var="selectThemeURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-			<portlet:param name="mvcPath" value="/select_theme.jsp" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
-		</portlet:renderURL>
 
 		<portlet:renderURL copyCurrentRenderParameters="<%= true %>" var="lookAndFeelDetailURL" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
 			<portlet:param name="mvcPath" value="/look_and_feel_theme_details.jsp" />
@@ -176,7 +172,7 @@ String styleBookWarningMessage = layoutsAdminDisplayContext.getStyleBookWarningM
 				).put(
 					"lookAndFeelDetailURL", lookAndFeelDetailURL
 				).put(
-					"selectThemeURL", selectThemeURL
+					"selectThemeURL", layoutsAdminDisplayContext.getSelectThemeURL()
 				).put(
 					"themeContainerId", liferayPortletResponse.getNamespace() + "currentThemeContainer"
 				).build()
@@ -220,7 +216,7 @@ List<ColorScheme> colorSchemes = selTheme.getColorSchemes();
 							<img alt="" class="aspect-ratio-item-flush" src="<%= themeDisplay.getCDNBaseURL() %><%= HtmlUtil.escapeAttribute(selTheme.getStaticResourcePath()) %><%= HtmlUtil.escapeAttribute(curColorScheme.getColorSchemeThumbnailPath()) %>/thumbnail.png" />
 						</div>
 
-						<div class="card-body p-2">
+						<div class="c-p-2 card-body">
 							<div class="card-row">
 								<div class="card-title text-truncate">
 									<%= HtmlUtil.escapeAttribute(curColorScheme.getName()) %>

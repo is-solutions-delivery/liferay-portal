@@ -4,8 +4,8 @@ import ClayIcon from '@clayui/icon';
 import DropTarget, {TYPES} from 'shared/components/DropTarget';
 import FileUploader, {ERROR_TYPES} from '../util/FileUploader';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import React from 'react';
-import Spinner from 'shared/components/Spinner';
 import TextTruncate from 'shared/components/TextTruncate';
 import {addAlert} from 'shared/actions/alerts';
 import {Alert} from 'shared/types';
@@ -74,7 +74,7 @@ const getFileStatusIcon = (file: File) => {
 		);
 	}
 
-	return <Spinner size='sm' />;
+	return <Loading />;
 };
 
 interface IFileItemProps {
@@ -121,7 +121,7 @@ export const FileItem: React.FC<IFileItemProps> = ({file, onCancel}) => {
 
 					<ClayButton
 						className='button-root'
-						displayType='unstyled'
+						displayType='link'
 						onClick={onCancel}
 						size='sm'
 					>
@@ -238,6 +238,7 @@ export class FileDropTarget extends React.Component<IFileDropTargetProps> {
 					>
 						<ClayButton
 							className='button-root'
+							displayType='secondary'
 							onClick={this.handleFileSelector}
 							size='sm'
 						>

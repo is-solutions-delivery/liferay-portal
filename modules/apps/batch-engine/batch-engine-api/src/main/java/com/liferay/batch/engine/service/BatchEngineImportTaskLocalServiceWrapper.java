@@ -15,6 +15,7 @@
 package com.liferay.batch.engine.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
 /**
  * Provides a wrapper for {@link BatchEngineImportTaskLocalService}.
@@ -73,6 +74,27 @@ public class BatchEngineImportTaskLocalServiceWrapper
 			externalReferenceCode, companyId, userId, batchSize, callbackURL,
 			className, content, contentType, executeStatus, fieldNameMappingMap,
 			importStrategy, operation, parameters, taskItemDelegateName);
+	}
+
+	@Override
+	public com.liferay.batch.engine.model.BatchEngineImportTask
+			addBatchEngineImportTask(
+				String externalReferenceCode, long companyId, long userId,
+				long batchSize, String callbackURL, String className,
+				byte[] content, String contentType, String executeStatus,
+				java.util.Map<String, String> fieldNameMappingMap,
+				int importStrategy, String operation,
+				java.util.Map<String, java.io.Serializable> parameters,
+				String taskItemDelegateName,
+				com.liferay.batch.engine.BatchEngineTaskItemDelegate<?>
+					batchEngineTaskItemDelegate)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _batchEngineImportTaskLocalService.addBatchEngineImportTask(
+			externalReferenceCode, companyId, userId, batchSize, callbackURL,
+			className, content, contentType, executeStatus, fieldNameMappingMap,
+			importStrategy, operation, parameters, taskItemDelegateName,
+			batchEngineTaskItemDelegate);
 	}
 
 	/**
@@ -481,6 +503,11 @@ public class BatchEngineImportTaskLocalServiceWrapper
 
 		return _batchEngineImportTaskLocalService.updateBatchEngineImportTask(
 			batchEngineImportTask);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _batchEngineImportTaskLocalService.getBasePersistence();
 	}
 
 	@Override

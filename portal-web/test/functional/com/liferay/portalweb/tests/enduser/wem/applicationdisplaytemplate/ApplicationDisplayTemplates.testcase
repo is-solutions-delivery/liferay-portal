@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -29,7 +29,7 @@ definition {
 	@uitest
 	test CannotAddTemplateButCanSaveChangesInExistingTemplateWhenDisableTemplateCreation {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "ApplicationDisplayTemplates#CannotAddTemplateButCanSaveChangesInExistingTemplateWhenDisableTemplateCreation";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a widget template for Asset Publisher") {
 			ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
@@ -91,6 +91,148 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-165823. The site administrater could invoke getSiteBlogPostingsPage inside application display template."
+	@priority = 4
+	test InvokeGetSiteBlogPostingsPageInsideApplicationDisplayTemplate {
+		property portal.acceptance = "true";
+
+		task ("Given a site administrater has an application display template invoking getSiteBlogPostingsPage") {
+			for (var i : list "1,2,3") {
+				HeadlessBlog.addBlogEntry(
+					content = "Blogs Entry Content ${i}",
+					groupName = "Test Site Name",
+					title = "Blogs Entry Title ${i}");
+			}
+
+			ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			ApplicationDisplayTemplates.addCP(
+				adtFile = "adt_blogs_sort.ftl",
+				adtType = "Blogs");
+		}
+
+		task ("When the site administrater selects the application display template in Blogs portlet") {
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name");
+
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name",
+				widgetName = "Blogs");
+
+			Navigator.gotoSitePage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			ApplicationDisplayTemplates.selectPortletADT(
+				portletName = "Blogs",
+				templateName = "Blogs Test ADT");
+		}
+
+		task ("Then the site administrater could see the application display template applied to Blogs portlet") {
+			AssertTextEquals(
+				key_portletName = "Blogs",
+				locator1 = "Portlet#BODY",
+				value1 = "Blogs Entry Title 3 Blogs Entry Title 2 Blogs Entry Title 1");
+		}
+	}
+
+	@description = "This is a test for LPS-169118. View alert message when deleting asset display templates."
+	@priority = 3
+	test ViewAlertMessageWhenDeletingAssetDisplayTemplates {
+		task ("Given add 2 widget template for Asset Publisher and Blogs") {
+			ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			ApplicationDisplayTemplates.addADTWithFieldEntryCP(
+				fieldName = "Asset Entry",
+				portletName = "Asset Publisher");
+
+			ApplicationDisplayTemplates.addADTWithFieldEntryCP(
+				fieldName = "Blog Entries",
+				portletName = "Blogs");
+		}
+
+		task ("When add widgets using the asset display templates") {
+			task ("Add a content page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "Content Page Name",
+					type = "content");
+			}
+
+			task ("Add a Asset Publisher to page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Content Page Name",
+					siteName = "Test Site Name");
+
+				PageEditor.addWidget(portletName = "Asset Publisher");
+			}
+
+			task ("Configure its display template to the created one") {
+				ApplicationDisplayTemplates.selectPortletADT(
+					portletName = "Asset Publisher",
+					templateName = "Asset Publisher Test ADT");
+			}
+
+			task ("Add a Blogs to page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Content Page Name 2",
+					siteName = "Test Site Name");
+
+				PageEditor.addWidget(
+					portletName = "Blogs",
+					targetFragmentName = "Asset Publisher");
+			}
+
+			task ("Configure its display template to the created one") {
+				ApplicationDisplayTemplates.selectPortletADT(
+					portletName = "Blogs",
+					templateName = "Blogs Test ADT");
+			}
+		}
+
+		task ("Then view alert when deleting widget template for Asset Publisher") {
+			ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			LexiconTable.checkTableCheckbox(tableEntry = "Asset Publisher Test ADT");
+
+			LexiconTable.clickEllipsisItem(
+				item = "Delete",
+				tableEntry = "Asset Publisher Test ADT");
+
+			AssertTextEquals(
+				locator1 = "Modal#BODY",
+				value1 = "This template is being used in 1 pages. Are you sure you want to delete this? It will be deleted immediately.");
+
+			Click(
+				key_text = "Cancel",
+				locator1 = "Modal#MODAL_FOOTER_BUTTON");
+
+			Click(
+				key_text = "trash",
+				locator1 = "ManagementBar#ANY_ICON");
+
+			AssertTextEquals(
+				locator1 = "Modal#BODY",
+				value1 = "Some of these templates are being used in pages. Are you sure you want to delete this? It will be deleted immediately.");
+
+			Click(
+				key_text = "Cancel",
+				locator1 = "Modal#MODAL_FOOTER_BUTTON");
+
+			LexiconTable.checkTableCheckbox(tableEntry = "Blogs Test ADT");
+
+			Click(
+				key_text = "trash",
+				locator1 = "ManagementBar#ANY_ICON");
+
+			AssertTextEquals(
+				locator1 = "Modal#BODY",
+				value1 = "Some of these templates are being used in pages. Are you sure you want to delete this? It will be deleted immediately.");
+		}
+	}
+
 	@description = "This is a use case for LPS-137903. View the new GUI in Widget Templates."
 	@priority = 4
 	@uitest
@@ -144,6 +286,112 @@ definition {
 				locator1 = "Select#SELECT_ID",
 				selectFieldId = "smallImageSource",
 				value1 = "No Image");
+		}
+	}
+
+	@description = "This is a test for LPS-169118. View usages of 2 asset display templates."
+	@priority = 4
+	test ViewUsagesOfTwoAssetDisplayTemplates {
+		task ("Given add a widget template for Asset Publisher") {
+			ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			ApplicationDisplayTemplates.addADTWithFieldEntryCP(
+				fieldName = "Asset Entry",
+				portletName = "Asset Publisher");
+		}
+
+		task ("Then view 0 displays under Usages column") {
+			ApplicationDisplayTemplates.viewUsage(
+				tableEntry = "Asset Publisher Test ADT",
+				usageAmount = 0);
+		}
+
+		task ("When go to asset publisher ADT dropdown menu") {
+			Click.waitForMenuToggleJSClick(
+				key_tableEntry = "Asset Publisher Test ADT",
+				locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
+		}
+
+		task ("Then assert 'View usages' is disabled") {
+			MenuItem.viewDisabled(menuItem = "View Usages");
+		}
+
+		task ("Given add a widget template for Blogs") {
+			ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			ApplicationDisplayTemplates.addADTWithFieldEntryCP(
+				fieldName = "Blog Entries",
+				portletName = "Blogs");
+		}
+
+		task ("When configure display template to created ones") {
+			task ("Add a content page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "Content Page Name",
+					type = "content");
+			}
+
+			task ("Add a Asset Publisher to page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Content Page Name",
+					siteName = "Test Site Name");
+
+				PageEditor.addWidget(portletName = "Asset Publisher");
+			}
+
+			task ("Configure its display template to the created one and publish") {
+				ApplicationDisplayTemplates.selectPortletADT(
+					portletName = "Asset Publisher",
+					templateName = "Asset Publisher Test ADT");
+
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Content Page Name",
+					siteName = "Test Site Name");
+
+				PageEditor.publish();
+			}
+
+			task ("Add a content page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "Content Page Name 2",
+					type = "content");
+			}
+
+			task ("Add a Blogs to page") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Content Page Name 2",
+					siteName = "Test Site Name");
+
+				PageEditor.addWidget(portletName = "Blogs");
+			}
+
+			task ("Configure its display template to the created one") {
+				ApplicationDisplayTemplates.selectPortletADT(
+					portletName = "Blogs",
+					templateName = "Blogs Test ADT");
+			}
+		}
+
+		task ("Then view Usages column of the two asset display templates") {
+			ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			ApplicationDisplayTemplates.viewUsage(
+				tableEntry = "Asset Publisher Test ADT",
+				usageAmount = 2);
+
+			ApplicationDisplayTemplates.viewUsage(
+				tableEntry = "Blogs Test ADT",
+				usageAmount = 1);
+
+			LexiconTable.clickEllipsisItem(
+				item = "View Usages",
+				tableEntry = "Asset Publisher Test ADT");
+
+			AssertVisible(
+				key_title = "All (2)",
+				locator1 = "Header#H2_TITLE");
 		}
 	}
 

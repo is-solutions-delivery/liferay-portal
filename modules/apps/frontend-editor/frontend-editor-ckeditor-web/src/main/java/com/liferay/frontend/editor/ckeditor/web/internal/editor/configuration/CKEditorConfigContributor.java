@@ -71,6 +71,10 @@ public class CKEditorConfigContributor extends BaseCKEditorConfigContributor {
 			extraPlugins += ",ajaxsave,restore";
 		}
 
+		if (_isShowAICreator(inputEditorTaglibAttributes)) {
+			extraPlugins += ",aicreator";
+		}
+
 		jsonObject.put(
 			"extraPlugins", extraPlugins
 		).put(
@@ -187,6 +191,14 @@ public class CKEditorConfigContributor extends BaseCKEditorConfigContributor {
 
 				return null;
 			}
+		).put(
+			() -> {
+				if (_isShowAICreator(inputEditorTaglibAttributes)) {
+					return toJSONArray("['AICreator']");
+				}
+
+				return null;
+			}
 		);
 	}
 
@@ -210,6 +222,14 @@ public class CKEditorConfigContributor extends BaseCKEditorConfigContributor {
 
 				return null;
 			}
+		).put(
+			() -> {
+				if (_isShowAICreator(inputEditorTaglibAttributes)) {
+					return toJSONArray("['AICreator']");
+				}
+
+				return null;
+			}
 		);
 	}
 
@@ -229,7 +249,23 @@ public class CKEditorConfigContributor extends BaseCKEditorConfigContributor {
 
 				return null;
 			}
+		).put(
+			() -> {
+				if (_isShowAICreator(inputEditorTaglibAttributes)) {
+					return toJSONArray("['AICreator']");
+				}
+
+				return null;
+			}
 		);
+	}
+
+	private boolean _isShowAICreator(
+		Map<String, Object> inputEditorTaglibAttributes) {
+
+		return GetterUtil.getBoolean(
+			inputEditorTaglibAttributes.get(
+				CKEditorConstants.ATTRIBUTE_NAMESPACE + ":showAICreator"));
 	}
 
 	@Reference

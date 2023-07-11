@@ -103,8 +103,9 @@ public class KaleoWorkflowModelConverterImpl
 
 				kaleoDefinition.setContent(content);
 
-				_kaleoDefinitionLocalService.updateKaleoDefinition(
-					kaleoDefinition);
+				kaleoDefinition =
+					_kaleoDefinitionLocalService.updateKaleoDefinition(
+						kaleoDefinition);
 			}
 			catch (Exception exception) {
 				if (_log.isWarnEnabled()) {
@@ -153,7 +154,6 @@ public class KaleoWorkflowModelConverterImpl
 			defaultWorkflowDefinition.setWorkflowNodes(
 				_getWorkflowNodes(
 					kaleoDefinitionVersion.getKaleoDefinitionVersionId()));
-
 			defaultWorkflowDefinition.setWorkflowTransitions(
 				_getWorkflowTransitions(
 					kaleoDefinitionVersion.getKaleoDefinitionVersionId()));
@@ -204,8 +204,9 @@ public class KaleoWorkflowModelConverterImpl
 
 				kaleoDefinitionVersion.setContent(content);
 
-				_kaleoDefinitionVersionLocalService.
-					updateKaleoDefinitionVersion(kaleoDefinitionVersion);
+				kaleoDefinitionVersion =
+					_kaleoDefinitionVersionLocalService.
+						updateKaleoDefinitionVersion(kaleoDefinitionVersion);
 			}
 			catch (PortalException portalException) {
 				if (_log.isWarnEnabled()) {

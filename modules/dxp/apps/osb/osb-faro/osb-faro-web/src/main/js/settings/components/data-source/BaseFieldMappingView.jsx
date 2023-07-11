@@ -3,10 +3,10 @@ import autobind from 'autobind-decorator';
 import BaseDataSourcePage from './BasePage';
 import DataTransformationList from 'settings/components/data-transformation-list';
 import ErrorDisplay from 'shared/components/ErrorDisplay';
+import Loading from 'shared/components/Loading';
 import omitDefinedProps from 'shared/util/omitDefinedProps';
 import React from 'react';
 import Sheet from 'shared/components/Sheet';
-import Spinner from 'shared/components/Spinner';
 import {autoCancel, hasRequest} from 'shared/util/request-decorator';
 import {DataSource, User} from 'shared/util/records';
 import {List, Map} from 'immutable';
@@ -117,7 +117,7 @@ export default class BaseFieldMappingView extends React.Component {
 		} = this;
 
 		if (loading) {
-			return <Spinner key='LOADING_DISPLAY' spacer />;
+			return <Loading key='LOADING' />;
 		} else if (error) {
 			return (
 				<ErrorDisplay

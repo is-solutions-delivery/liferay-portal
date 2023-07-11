@@ -288,7 +288,7 @@ exports[`Workspaces should render empty state 1`] = `
                   Do more with our Business & Enterprise Plans
                 </p>
                 <button
-                  class="btn btn-secondary"
+                  class="btn btn-primary"
                   type="button"
                 >
                   Contact Sales
@@ -313,7 +313,7 @@ exports[`Workspaces should render empty state 1`] = `
                   90 Day Full Feature Trial
                 </p>
                 <a
-                  class="c-link link-secondary text-decoration-underline"
+                  class="btn btn-secondary"
                   href="/workspace/add/trial"
                 >
                   Start Free Trial

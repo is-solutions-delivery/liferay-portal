@@ -16,6 +16,7 @@ package com.liferay.commerce.product.definitions.web.internal.frontend.data.set.
 
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.commerce.frontend.model.ImageField;
+import com.liferay.commerce.frontend.model.LabelField;
 import com.liferay.commerce.product.definitions.web.internal.constants.CommerceProductFDSNames;
 import com.liferay.commerce.product.definitions.web.internal.model.ProductLink;
 import com.liferay.commerce.product.model.CPDefinition;
@@ -26,17 +27,24 @@ import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.frontend.data.set.provider.FDSDataProvider;
 import com.liferay.frontend.data.set.provider.search.FDSKeywords;
 import com.liferay.frontend.data.set.provider.search.FDSPagination;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import java.text.DateFormat;
+import java.text.Format;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +71,14 @@ public class CommerceProductDefinitionLinkFDSDataProvider
 		List<ProductLink> productLinks = new ArrayList<>();
 
 		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(
+				DateFormat.MEDIUM, DateFormat.MEDIUM, themeDisplay.getLocale(),
+				themeDisplay.getTimeZone());
+
 			long cpDefinitionId = ParamUtil.getLong(
 				httpServletRequest, "cpDefinitionId");
 
@@ -82,26 +98,31 @@ public class CommerceProductDefinitionLinkFDSDataProvider
 					_language.getLanguageId(
 						_portal.getLocale(httpServletRequest)));
 
-				Date createDate = cpDefinitionLink.getCreateDate();
+				String statusDisplayStyle = StringPool.BLANK;
 
-				String createDateDescription = _language.getTimeDescription(
-					httpServletRequest,
-					System.currentTimeMillis() - createDate.getTime(), true);
+				if (cpDefinitionLink.getStatus() ==
+						WorkflowConstants.STATUS_APPROVED) {
+
+					statusDisplayStyle = "success";
+				}
 
 				productLinks.add(
 					new ProductLink(
 						cpDefinitionLink.getCPDefinitionLinkId(),
+						dateTimeFormat.format(cpDefinitionLink.getCreateDate()),
 						new ImageField(
 							name, "rounded", "lg",
 							cpDefinition.getDefaultImageThumbnailSrc(
 								AccountConstants.ACCOUNT_ENTRY_ID_ADMIN)),
-						HtmlUtil.escape(name),
+						HtmlUtil.escape(name), cpDefinitionLink.getPriority(),
 						_language.get(
 							httpServletRequest, cpDefinitionLink.getType()),
-						cpDefinitionLink.getPriority(),
-						_language.format(
-							httpServletRequest, "x-ago", createDateDescription,
-							false)));
+						new LabelField(
+							statusDisplayStyle,
+							_language.get(
+								httpServletRequest,
+								WorkflowConstants.getStatusLabel(
+									cpDefinitionLink.getStatus())))));
 			}
 		}
 		catch (Exception exception) {

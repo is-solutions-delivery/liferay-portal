@@ -121,13 +121,10 @@ exports[`CSV should render 1`] = `
             Current Mappings
           </h3>
         </div>
-        <div
-          class="spinner-root spinner-spacer"
-        >
-          <span
-            class="loading-animation loading-animation-dotted"
-          />
-        </div>
+        <span
+          aria-hidden="true"
+          class="loading-root center loading-animation"
+        />
       </div>
     </div>
   </div>

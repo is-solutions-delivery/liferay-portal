@@ -10,9 +10,9 @@
     #
     *.soy.js
     build/**
-    tmp/**
     classes/**
     css/clay/**
+    tmp/**
     types/**/*.d.ts
 
 ##

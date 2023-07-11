@@ -24,6 +24,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.bootstrap.log.BundleStartStopLogger;
 import com.liferay.portal.bootstrap.log.PortalSynchronousLogListener;
 import com.liferay.portal.kernel.concurrent.DefaultNoticeableFuture;
+import com.liferay.portal.kernel.concurrent.SystemExecutorServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedInputStream;
 import com.liferay.portal.kernel.log.Log;
@@ -35,7 +36,6 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.ModuleFrameworkPropsValues;
-import com.liferay.portal.kernel.util.NamedThreadFactory;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -89,9 +89,9 @@ import java.util.Queue;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
@@ -1201,7 +1201,12 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			_log.debug("Register application context");
 		}
 
-		List<ServiceRegistration<?>> serviceRegistrations = new ArrayList<>();
+		Collection<ServiceRegistration<?>> serviceRegistrations =
+			new ConcurrentLinkedQueue<>();
+
+		ExecutorService executorService =
+			SystemExecutorServiceUtil.getExecutorService();
+		List<Future<Void>> futures = new ArrayList<>();
 
 		ConfigurableListableBeanFactory configurableListableBeanFactory =
 			configurableApplicationContext.getBeanFactory();
@@ -1210,26 +1215,40 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 			configurableListableBeanFactory.getBeanNamesIterator();
 
 		iterator.forEachRemaining(
-			beanName -> {
-				Object bean = null;
+			beanName -> futures.add(
+				executorService.submit(
+					() -> {
+						Object bean = null;
 
-				try {
-					bean = configurableApplicationContext.getBean(beanName);
-				}
-				catch (Exception exception) {
-					_log.error(exception);
-				}
+						try {
+							bean = configurableApplicationContext.getBean(
+								beanName);
+						}
+						catch (Exception exception) {
+							_log.error(exception);
+						}
 
-				if (bean != null) {
-					ServiceRegistration<?> serviceRegistration =
-						_registerService(
-							_framework.getBundleContext(), beanName, bean);
+						if (bean != null) {
+							ServiceRegistration<?> serviceRegistration =
+								_registerService(
+									_framework.getBundleContext(), beanName,
+									bean);
 
-					if (serviceRegistration != null) {
-						serviceRegistrations.add(serviceRegistration);
-					}
-				}
-			});
+							if (serviceRegistration != null) {
+								serviceRegistrations.add(serviceRegistration);
+							}
+						}
+					},
+					null)));
+
+		for (Future<Void> future : futures) {
+			try {
+				future.get();
+			}
+			catch (Exception exception) {
+				_log.error(exception);
+			}
+		}
 
 		_springContextServices.put(
 			configurableApplicationContext, serviceRegistrations);
@@ -1518,15 +1537,8 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 		if (ModuleFrameworkPropsValues.
 				MODULE_FRAMEWORK_CONCURRENT_STARTUP_ENABLED) {
 
-			Runtime runtime = Runtime.getRuntime();
-
-			Thread currentThread = Thread.currentThread();
-
-			ExecutorService executorService = Executors.newFixedThreadPool(
-				runtime.availableProcessors(),
-				new NamedThreadFactory(
-					"ModuleFramework-Static-Bundles", Thread.NORM_PRIORITY,
-					currentThread.getContextClassLoader()));
+			ExecutorService executorService =
+				SystemExecutorServiceUtil.getExecutorService();
 
 			List<Future<Void>> futures = new ArrayList<>(bundles.size());
 
@@ -1543,8 +1555,6 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 							}));
 				}
 			}
-
-			executorService.shutdown();
 
 			for (Future<Void> future : futures) {
 				try {
@@ -1718,7 +1728,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	private void _unregisterApplicationContext(
 		ConfigurableApplicationContext configurableApplicationContext) {
 
-		List<ServiceRegistration<?>> serviceRegistrations =
+		Collection<ServiceRegistration<?>> serviceRegistrations =
 			_springContextServices.remove(configurableApplicationContext);
 
 		if (serviceRegistrations == null) {
@@ -1781,7 +1791,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	private Framework _framework;
 	private LogListener _logListener;
 	private final Map
-		<ConfigurableApplicationContext, List<ServiceRegistration<?>>>
+		<ConfigurableApplicationContext, Collection<ServiceRegistration<?>>>
 			_springContextServices = new ConcurrentHashMap<>();
 
 }

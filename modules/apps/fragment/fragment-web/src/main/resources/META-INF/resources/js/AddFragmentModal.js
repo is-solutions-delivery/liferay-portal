@@ -119,6 +119,7 @@ export default function AddFragmentModal({
 							fieldTypes={selectedFieldTypes}
 							onChangeFieldTypes={setSelectedFieldTypes}
 							portletNamespace={namespace}
+							showFragmentConfigurationLink={false}
 							small
 							title={Liferay.Language.get(
 								'select-supported-field-types'

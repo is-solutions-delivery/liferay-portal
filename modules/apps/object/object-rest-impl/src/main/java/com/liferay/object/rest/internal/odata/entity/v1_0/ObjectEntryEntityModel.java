@@ -25,7 +25,6 @@ import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.service.ObjectFieldLocalServiceUtil;
 import com.liferay.object.service.ObjectRelationshipLocalServiceUtil;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -64,10 +63,6 @@ public class ObjectEntryEntityModel implements EntityModel {
 
 		_entityFieldsMap = _getStringEntityFieldsMap(objectFields);
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-154672")) {
-			return;
-		}
-
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionLocalServiceUtil.getObjectDefinition(
 				objectDefinitionId);
@@ -100,7 +95,15 @@ public class ObjectEntryEntityModel implements EntityModel {
 
 		if (Objects.equals(
 				objectField.getBusinessType(),
-				ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST)) {
+				ObjectFieldConstants.BUSINESS_TYPE_DATE_TIME)) {
+
+			return new DateTimeEntityField(
+				objectField.getName(), locale -> objectField.getName(),
+				locale -> objectField.getName());
+		}
+		else if (Objects.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST)) {
 
 			return new CollectionEntityField(
 				new StringEntityField(

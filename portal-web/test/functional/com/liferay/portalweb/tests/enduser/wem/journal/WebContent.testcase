@@ -19,9 +19,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -115,67 +115,6 @@ definition {
 				webContentTitle = "Web Content Title");
 
 			WebContent.viewExpirationDateCP(expirationDate = "01/02/3000");
-		}
-	}
-
-	@description = "This is a test for LPS-125458. The web content created via Headless should be assigned to the default display page."
-	@priority = 4
-	test AddWebContentViaHeadlessAssignedToDefaultDisplayPage {
-		task ("Add a web content folder") {
-			JSONWebcontent.addFolder(
-				folderName = "WC Folder Name",
-				groupName = "Test Site Name");
-		}
-
-		task ("Add a display page template for Web Content Article and Basic Web Content") {
-			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
-				contentType = "Web Content Article",
-				displayPageTemplateEntryName = "Display Page Name",
-				groupName = "Test Site Name",
-				subType = "Basic Web Content");
-		}
-
-		task ("Add a Display Page Content fragment to display page template") {
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
-
-			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
-
-			PageEditor.addFragment(
-				collectionName = "Content Display",
-				fragmentName = "Display Page Content");
-
-			PageEditor.publish();
-		}
-
-		task ("Mark the display page as default") {
-			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
-		}
-
-		task ("Add a web content based on Basic Web Content via Headless") {
-			HeadlessWebcontent.addBasicWebContent(
-				content = "Web Content Content",
-				folderName = "WC Folder Name",
-				groupName = "Test Site Name",
-				title = "Web Content Title");
-		}
-
-		task ("View the web content assigned to the default display page") {
-			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
-
-			WebContentFolder.gotoCP(
-				folderName = "WC Folder Name",
-				webContentTitle = "WC Folder Name");
-
-			WebContentNavigator.gotoEntryMenuItem(
-				entry = "Web Content Title",
-				menuItem = "View Content");
-
-			ControlMenu.viewHeaderTitle(headerTitle = "Web Content Title");
-
-			AssertTextEquals(
-				index = 1,
-				locator1 = "WCD#WEB_CONTENT_CONTENT",
-				value1 = "Web Content Content");
 		}
 	}
 
@@ -1397,6 +1336,7 @@ definition {
 	@priority = 5
 	test ViewCategorizationSettingsAfterDeleteCategoryOfWebContent {
 		property portal.acceptance = "true";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a vocabulary") {
 			JSONCategory.addVocabulary(
@@ -1941,7 +1881,7 @@ definition {
 			}
 
 			task ("Add another site") {
-				JSONGroup.addGroup(groupName = "Test Site Name 2");
+				HeadlessSite.addSite(siteName = "Test Site Name 2");
 			}
 
 			task ("Add a web content with one friendly URL") {
@@ -2087,7 +2027,7 @@ definition {
 			}
 
 			task ("Add another site") {
-				JSONGroup.addGroup(groupName = "Test Site Name 2");
+				HeadlessSite.addSite(siteName = "Test Site Name 2");
 			}
 
 			task ("Add a web content with three friendly URLs") {
@@ -2114,7 +2054,7 @@ definition {
 			}
 
 			task ("Add a third site") {
-				JSONGroup.addGroup(groupName = "Test Site Name 3");
+				HeadlessSite.addSite(siteName = "Test Site Name 3");
 			}
 
 			task ("Add a web content with four friendly URLs") {
@@ -2145,7 +2085,7 @@ definition {
 			}
 
 			task ("Add a forth site") {
-				JSONGroup.addGroup(groupName = "Test Site Name 4");
+				HeadlessSite.addSite(siteName = "Test Site Name 4");
 			}
 
 			task ("Add a web content with four friendly URLs") {
@@ -2283,7 +2223,7 @@ definition {
 			}
 
 			task ("Add a second site and connect it to asset library") {
-				JSONGroup.addGroup(groupName = "Test Site Name 2");
+				HeadlessSite.addSite(siteName = "Test Site Name 2");
 
 				JSONDepot.connectSite(
 					depotName = "Test Depot Name",

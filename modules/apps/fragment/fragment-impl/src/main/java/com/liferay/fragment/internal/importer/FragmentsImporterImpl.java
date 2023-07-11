@@ -261,6 +261,7 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 				_fragmentsImporterResultEntries.add(
 					new FragmentsImporterResultEntry(
 						name, FragmentsImporterResultEntry.Status.INVALID,
+						FragmentsImporterResultEntry.Type.FRAGMENT,
 						portalException.getMessage()));
 
 				return null;
@@ -303,7 +304,8 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 
 			_fragmentsImporterResultEntries.add(
 				new FragmentsImporterResultEntry(
-					name, fragmentsImporterResultEntryStatus, errorMessage));
+					name, fragmentsImporterResultEntryStatus,
+					FragmentsImporterResultEntry.Type.FRAGMENT, errorMessage));
 
 			return fragmentEntry;
 		}
@@ -311,6 +313,7 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 			_fragmentsImporterResultEntries.add(
 				new FragmentsImporterResultEntry(
 					name, FragmentsImporterResultEntry.Status.INVALID,
+					FragmentsImporterResultEntry.Type.FRAGMENT,
 					portalException.getMessage()));
 		}
 
@@ -861,11 +864,17 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 							fragmentComposition.getFragmentCompositionId(),
 							entry.getValue(), thumbnailPath));
 				}
+
+				_fragmentsImporterResultEntries.add(
+					new FragmentsImporterResultEntry(
+						name, FragmentsImporterResultEntry.Status.IMPORTED,
+						FragmentsImporterResultEntry.Type.COMPOSITION, null));
 			}
 			catch (PortalException portalException) {
 				_fragmentsImporterResultEntries.add(
 					new FragmentsImporterResultEntry(
 						name, FragmentsImporterResultEntry.Status.INVALID,
+						FragmentsImporterResultEntry.Type.COMPOSITION,
 						portalException.getMessage()));
 			}
 		}

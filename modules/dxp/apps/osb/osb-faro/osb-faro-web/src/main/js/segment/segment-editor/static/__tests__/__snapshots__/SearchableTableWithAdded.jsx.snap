@@ -235,7 +235,7 @@ exports[`SearchableTableWithAdded should show the staged table if showStaged is 
               class="tbar-section text-truncate"
             >
               <button
-                class="button-root btn btn-outline-borderless btn-outline-unstyled"
+                class="button-root btn-link btn btn-outline-borderless btn-outline-unstyled"
                 type="button"
               >
                 View Current Members
@@ -418,10 +418,11 @@ exports[`SearchableTableWithAdded should show the staged table if showStaged is 
         <li
           class="page-item disabled"
         >
-          <a
-            class="button-root page-link btn btn-unstyled"
+          <button
+            class="button-root btn btn-unstyled page-link btn btn-primary"
             disabled=""
             href=""
+            type="button"
           >
             <svg
               class="lexicon-icon lexicon-icon-angle-left-small icon-root"
@@ -431,25 +432,27 @@ exports[`SearchableTableWithAdded should show the staged table if showStaged is 
                 xlink:href="#angle-left-small"
               />
             </svg>
-          </a>
+          </button>
         </li>
         <li
           class="page-item active"
         >
-          <a
-            class="button-root page-link btn btn-unstyled"
+          <button
+            class="button-root btn btn-unstyled page-link btn btn-primary"
             href=""
+            type="button"
           >
             1
-          </a>
+          </button>
         </li>
         <li
           class="page-item disabled"
         >
-          <a
-            class="button-root page-link btn btn-unstyled"
+          <button
+            class="button-root btn btn-unstyled page-link btn btn-primary"
             disabled=""
             href=""
+            type="button"
           >
             <svg
               class="lexicon-icon lexicon-icon-angle-right-small icon-root"
@@ -459,7 +462,7 @@ exports[`SearchableTableWithAdded should show the staged table if showStaged is 
                 xlink:href="#angle-right-small"
               />
             </svg>
-          </a>
+          </button>
         </li>
       </ul>
     </div>

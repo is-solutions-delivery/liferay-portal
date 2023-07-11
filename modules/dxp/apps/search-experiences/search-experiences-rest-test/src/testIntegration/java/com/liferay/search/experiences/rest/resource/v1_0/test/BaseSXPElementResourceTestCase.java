@@ -521,6 +521,163 @@ public abstract class BaseSXPElementResourceTestCase {
 	}
 
 	@Test
+	public void testGetSXPElementByExternalReferenceCode() throws Exception {
+		SXPElement postSXPElement =
+			testGetSXPElementByExternalReferenceCode_addSXPElement();
+
+		SXPElement getSXPElement =
+			sxpElementResource.getSXPElementByExternalReferenceCode(
+				postSXPElement.getExternalReferenceCode());
+
+		assertEquals(postSXPElement, getSXPElement);
+		assertValid(getSXPElement);
+	}
+
+	protected SXPElement
+			testGetSXPElementByExternalReferenceCode_addSXPElement()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLGetSXPElementByExternalReferenceCode()
+		throws Exception {
+
+		SXPElement sxpElement =
+			testGraphQLGetSXPElementByExternalReferenceCode_addSXPElement();
+
+		Assert.assertTrue(
+			equals(
+				sxpElement,
+				SXPElementSerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"sXPElementByExternalReferenceCode",
+								new HashMap<String, Object>() {
+									{
+										put(
+											"externalReferenceCode",
+											"\"" +
+												sxpElement.
+													getExternalReferenceCode() +
+														"\"");
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data",
+						"Object/sXPElementByExternalReferenceCode"))));
+	}
+
+	@Test
+	public void testGraphQLGetSXPElementByExternalReferenceCodeNotFound()
+		throws Exception {
+
+		String irrelevantExternalReferenceCode =
+			"\"" + RandomTestUtil.randomString() + "\"";
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"sXPElementByExternalReferenceCode",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"externalReferenceCode",
+									irrelevantExternalReferenceCode);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
+	protected SXPElement
+			testGraphQLGetSXPElementByExternalReferenceCode_addSXPElement()
+		throws Exception {
+
+		return testGraphQLSXPElement_addSXPElement();
+	}
+
+	@Test
+	public void testPutSXPElementByExternalReferenceCode() throws Exception {
+		SXPElement postSXPElement =
+			testPutSXPElementByExternalReferenceCode_addSXPElement();
+
+		SXPElement randomSXPElement = randomSXPElement();
+
+		SXPElement putSXPElement =
+			sxpElementResource.putSXPElementByExternalReferenceCode(
+				postSXPElement.getExternalReferenceCode(), randomSXPElement);
+
+		assertEquals(randomSXPElement, putSXPElement);
+		assertValid(putSXPElement);
+
+		SXPElement getSXPElement =
+			sxpElementResource.getSXPElementByExternalReferenceCode(
+				putSXPElement.getExternalReferenceCode());
+
+		assertEquals(randomSXPElement, getSXPElement);
+		assertValid(getSXPElement);
+
+		SXPElement newSXPElement =
+			testPutSXPElementByExternalReferenceCode_createSXPElement();
+
+		putSXPElement = sxpElementResource.putSXPElementByExternalReferenceCode(
+			newSXPElement.getExternalReferenceCode(), newSXPElement);
+
+		assertEquals(newSXPElement, putSXPElement);
+		assertValid(putSXPElement);
+
+		getSXPElement = sxpElementResource.getSXPElementByExternalReferenceCode(
+			putSXPElement.getExternalReferenceCode());
+
+		assertEquals(newSXPElement, getSXPElement);
+
+		Assert.assertEquals(
+			newSXPElement.getExternalReferenceCode(),
+			putSXPElement.getExternalReferenceCode());
+	}
+
+	protected SXPElement
+			testPutSXPElementByExternalReferenceCode_createSXPElement()
+		throws Exception {
+
+		return randomSXPElement();
+	}
+
+	protected SXPElement
+			testPutSXPElementByExternalReferenceCode_addSXPElement()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPostSXPElementPreview() throws Exception {
+		SXPElement randomSXPElement = randomSXPElement();
+
+		SXPElement postSXPElement = testPostSXPElementPreview_addSXPElement(
+			randomSXPElement);
+
+		assertEquals(randomSXPElement, postSXPElement);
+		assertValid(postSXPElement);
+	}
+
+	protected SXPElement testPostSXPElementPreview_addSXPElement(
+			SXPElement sxpElement)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostSXPElementValidate() throws Exception {
 		SXPElement randomSXPElement = randomSXPElement();
 
@@ -954,14 +1111,19 @@ public abstract class BaseSXPElementResourceTestCase {
 
 		Assert.assertTrue(valid);
 
-		Map<String, Map<String, String>> actions = page.getActions();
+		assertValid(page.getActions(), expectedActions);
+	}
 
-		for (String key : expectedActions.keySet()) {
-			Map action = actions.get(key);
+	protected void assertValid(
+		Map<String, Map<String, String>> actions1,
+		Map<String, Map<String, String>> actions2) {
+
+		for (String key : actions2.keySet()) {
+			Map action = actions1.get(key);
 
 			Assert.assertNotNull(key + " does not contain an action", action);
 
-			Map expectedAction = expectedActions.get(key);
+			Map<String, String> expectedAction = actions2.get(key);
 
 			Assert.assertEquals(
 				expectedAction.get("method"), action.get("method"));

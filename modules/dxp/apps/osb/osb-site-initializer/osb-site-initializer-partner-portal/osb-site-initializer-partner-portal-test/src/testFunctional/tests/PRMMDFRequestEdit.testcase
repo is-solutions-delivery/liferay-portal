@@ -21,54 +21,18 @@ definition {
 			PRMUtils.connectWithSalesforce();
 		}
 
-		task ("Add a Partner user") {
-			JSONUser.addUserWithRole(
-				roleTitle = "Partner Marketing User (PMU)",
-				userEmailAddress = "pmu@liferay.com",
-				userFirstName = "pmu",
-				userLastName = "pmu",
-				userScreenName = "pmu");
-
-			JSONUser.setFirstPassword(
-				agreeToTermsAndAnswerReminderQuery = "true",
-				requireReset = "false",
-				userEmailAddress = "pmu@liferay.com");
-		}
-
-		task ("Add a Manager user") {
-			JSONUser.addUserWithRole(
-				roleTitle = "Channel Marketing Manager (CMM)",
-				userEmailAddress = "cmm@liferay.com",
-				userFirstName = "cmm",
-				userLastName = "cmm",
-				userScreenName = "cmm");
-
-			JSONUser.setFirstPassword(
-				agreeToTermsAndAnswerReminderQuery = "true",
-				requireReset = "false",
-				userEmailAddress = "cmm@liferay.com");
-		}
-
-		task ("Add a new account and assign the created users to the account") {
-			JSONPRM.addAccount();
-
-			JSONAccountEntryUser.addExistUsertoAccount(
-				accountEntryName = "Company Name 1",
-				userEmailAddress = "pmu@liferay.com");
-
-			JSONAccountEntryUser.addExistUsertoAccount(
-				accountEntryName = "Company Name 1",
-				userEmailAddress = "cmm@liferay.com");
+		task ("Update the account with Salesforce fields") {
+			JSONPRM.updateAccount();
 		}
 
 		task ("Login with the Partner user and create an MDF Request") {
 			User.logoutAndLoginPG(
-				userLoginEmailAddress = "pmu@liferay.com",
+				userLoginEmailAddress = "pmu@partner.com",
 				userLoginFullName = "pmu");
 
 			var requestId = JSONPRM.createMDFRequest(
 				campaignName = "Campaign Name",
-				userEmailAddress = "pmu@liferay.com");
+				userEmailAddress = "pmu@partner.com");
 		}
 
 		task ("Go to the created MDF Request") {
@@ -79,9 +43,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -89,12 +53,14 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-182807. Verify that managers can edit MDF in Approved status"
+	@description = "This is a test for LPS-182807. Verify that the CMM can edit MDF in Approved status"
 	@priority = 5
-	test ManagerCanEditMDFInApprovedStatus {
-		task ("Given that the manager goes to the submitted MDF") {
+	test CMMCanEditMDFInApprovedStatus {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given that the CMM goes to the submitted MDF") {
 			User.logoutAndLoginPG(
-				userLoginEmailAddress = "cmm@liferay.com",
+				userLoginEmailAddress = "cmm@liferaytest.com",
 				userLoginFullName = "cmm");
 
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
@@ -104,8 +70,8 @@ definition {
 			PRMMDFRequest.changeMDFStatus(statusButton = "Approve");
 		}
 
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
+		task ("When the CMM edit the MDF information and submit it") {
+			PRMMDFRequest.editButton();
 
 			PRMMDFRequest.editMDF(
 				campaignName = "Campaign Name Edited",
@@ -113,7 +79,7 @@ definition {
 				newBugdetValue = 2000);
 		}
 
-		task ("Then the informations will be updated") {
+		task ("Then the information will be updated") {
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
 
 			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
@@ -125,12 +91,14 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-182809. Verify that managers can edit MDF in Canceled status"
+	@description = "This is a test for LPS-182809. Verify that the CMM can edit MDF in Canceled status"
 	@priority = 5
-	test ManagerCanEditMDFInCanceledStatus {
-		task ("Given that the manager goes to the submitted MDF") {
+	test CMMCanEditMDFInCanceledStatus {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given that the CMM goes to the submitted MDF") {
 			User.logoutAndLoginPG(
-				userLoginEmailAddress = "cmm@liferay.com",
+				userLoginEmailAddress = "cmm@liferaytest.com",
 				userLoginFullName = "cmm");
 
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
@@ -140,8 +108,8 @@ definition {
 			PRMMDFRequest.changeMDFStatus(statusButton = "Cancel");
 		}
 
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
+		task ("When the CMM edit the MDF information and submit it") {
+			PRMMDFRequest.editButton();
 
 			PRMMDFRequest.editMDF(
 				campaignName = "Campaign Name Edited",
@@ -149,7 +117,7 @@ definition {
 				newBugdetValue = 2000);
 		}
 
-		task ("Then the informations will be updated") {
+		task ("Then the information will be updated") {
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
 
 			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
@@ -161,12 +129,14 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-179227. Verify that managers can edit MDF in Marketing Director Review status"
+	@description = "This is a test for LPS-179227. Verify that the CMM can edit MDF in Marketing Director Review status"
 	@priority = 5
-	test ManagerCanEditMDFInMarketingDirectorReviewStatus {
-		task ("Given that the manager goes to the submitted MDF") {
+	test CMMCanEditMDFInMarketingDirectorReviewStatus {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given that the CMM goes to the submitted MDF") {
 			User.logoutAndLoginPG(
-				userLoginEmailAddress = "cmm@liferay.com",
+				userLoginEmailAddress = "cmm@liferaytest.com",
 				userLoginFullName = "cmm");
 
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
@@ -176,8 +146,8 @@ definition {
 			PRMMDFRequest.changeMDFStatus(statusButton = "Marketing Director Review");
 		}
 
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
+		task ("When the CMM edit the MDF information and submit it") {
+			PRMMDFRequest.editButton();
 
 			PRMMDFRequest.editMDF(
 				campaignName = "Campaign Name Edited",
@@ -185,7 +155,7 @@ definition {
 				newBugdetValue = 2000);
 		}
 
-		task ("Then the informations will be updated") {
+		task ("Then the information will be updated") {
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
 
 			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
@@ -197,19 +167,21 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-182806. Verify that managers can edit MDF in Pending Marketing Review status"
+	@description = "This is a test for LPS-182806. Verify that the CMM can edit MDF in Pending Marketing Review status"
 	@priority = 5
-	test ManagerCanEditMDFInPendingMarketingReviewStatus {
-		task ("Given that the manager goes to the submitted MDF, which is as 'Pending Marketing Review'") {
+	test CMMCanEditMDFInPendingMarketingReviewStatus {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given that the CMM goes to the submitted MDF, which is as 'Pending Marketing Review'") {
 			User.logoutAndLoginPG(
-				userLoginEmailAddress = "cmm@liferay.com",
+				userLoginEmailAddress = "cmm@liferaytest.com",
 				userLoginFullName = "cmm");
 
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
 		}
 
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
+		task ("When the CMM edit the MDF information and submit it") {
+			PRMMDFRequest.editButton();
 
 			PRMMDFRequest.editMDF(
 				campaignName = "Campaign Name Edited",
@@ -217,7 +189,7 @@ definition {
 				newBugdetValue = 2000);
 		}
 
-		task ("Then the informations will be updated") {
+		task ("Then the information will be updated") {
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
 
 			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
@@ -229,23 +201,25 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-182808. Verify that managers can edit MDF in Rejected status"
+	@description = "This is a test for LPS-182808. Verify that the CMM can edit MDF in Rejected status"
 	@priority = 5
-	test ManagerCanEditMDFInRejectedStatus {
-		task ("Given that the manager goes to the submitted MDF") {
+	test CMMCanEditMDFInRejectedStatus {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given that the CMM goes to the submitted MDF") {
 			User.logoutAndLoginPG(
-				userLoginEmailAddress = "cmm@liferay.com",
+				userLoginEmailAddress = "cmm@liferaytest.com",
 				userLoginFullName = "cmm");
 
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
 		}
 
 		task ("And change the MDF status") {
-			PRMMDFRequest.changeMDFStatus(statusButton = "Reject");
+			PRMMDFRequest.changeMDFStatus(statusButton = "Rejected");
 		}
 
-		task ("When the manager edit the MDF informations and submit it") {
-			PRMMDFRequest.editButton(manager = "true");
+		task ("When the CMM edit the MDF information and submit it") {
+			PRMMDFRequest.editButton();
 
 			PRMMDFRequest.editMDF(
 				campaignName = "Campaign Name Edited",
@@ -253,8 +227,95 @@ definition {
 				newBugdetValue = 2000);
 		}
 
-		task ("Then the informations will be updated") {
+		task ("Then the information will be updated") {
 			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+
+			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name Edited",
+				budget = "2,000",
+				expense = "Content Creation");
+		}
+	}
+
+	@description = "This is a test for LPS-187090. Verify that the PMU can edit an MDF in 'Draft' Status"
+	@priority = 5
+	test PMUCanEditMDFInDraftStatus {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given that a MDF Request is saved as draft") {
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+
+			Button.click(button = "New Request");
+
+			PRMMDFRequest.fillGoalsPage(
+				accountName = "Company Name 1",
+				campaignDescription = "Campaign Description",
+				campaignName = "Campaign Name Draft",
+				goalsOptions = "Lead generation",
+				targetMarketOptions = "Education,Energy",
+				targetRolesOptions = "Administrator");
+
+			Button.click(button = "Save as Draft");
+		}
+
+		task ("And the PMU goes to edit the draft MDF") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name Draft");
+
+			PRMMDFRequest.editButton();
+		}
+
+		task ("When the PMU add a new activity and change the MDF name") {
+			PRMMDFRequest.editMDF(
+				activityDescription = "Campaign Description",
+				budgetList = "Sponsorship Fee-2000",
+				campaignName = "Campaign Name Edited",
+				leadList = "No",
+				newActivity = "Activity Name Added",
+				tactic = "Other",
+				typeOfActivity = "Miscellaneous Marketing");
+		}
+
+		task ("Then the MDF information will be updated") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name Edited");
+
+			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
+
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name Added",
+				budget = "2,000",
+				expense = "Sponsorship Fee");
+		}
+	}
+
+	@description = "This is a test for LPS-187087. Verify that the Partner can edit an MDF in 'More Info Requested' Status"
+	@priority = 5
+	test PMUCanEditMDFInRequestMoreInfoStatus {
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given that the CMM changes the MDF status to 'More Info Requested'") {
+			JSONPRM.changeMDFStatus(
+				mdfStatus = "More Info Requested",
+				requestId = ${staticRequestId},
+				userEmailAddress = "cmm@liferaytest.com");
+		}
+
+		task ("And the PMU goes to edit the created MDF") {
+			PRMNavigator.gotoMDF(requestId = ${staticRequestId});
+
+			PRMMDFRequest.editButton();
+		}
+
+		task ("When the PMU edit the MDF information and submit it ") {
+			PRMMDFRequest.editMDF(
+				campaignName = "Campaign Name Edited",
+				newActivityName = "Activity Name Edited",
+				newBugdetValue = 2000);
+		}
+
+		task ("Then the information will be updated") {
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name Edited");
 
 			PRMMDFRequest.viewMDFCompanyDetails(campaignName = "Campaign Name Edited");
 

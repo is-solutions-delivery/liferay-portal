@@ -14,7 +14,7 @@
 
 package com.liferay.osb.faro.web.internal.servlet.filter;
 
-import com.liferay.osb.faro.engine.client.constants.TokenConstants;
+import com.liferay.osb.faro.engine.client.util.TokenUtil;
 import com.liferay.osb.faro.web.internal.util.ServletRequestUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -58,12 +58,13 @@ public class EmailServletFilter extends BaseFilter {
 			return true;
 		}
 
+		String originalURL = ServletRequestUtil.getOriginalURL(
+			httpServletRequest);
+
 		if (!Objects.equals(
 				faroBackendSecuritySignature,
 				DigestUtils.sha256Hex(
-					TokenConstants.OSB_ASAH_SECURITY_TOKEN.concat(
-						ServletRequestUtil.getOriginalURL(
-							httpServletRequest))))) {
+					TokenUtil.getOSBAsahSecurityToken() + originalURL))) {
 
 			_logInvalidRequest(
 				faroBackendSecuritySignature, httpServletRequest);

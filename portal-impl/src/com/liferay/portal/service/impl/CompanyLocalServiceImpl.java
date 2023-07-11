@@ -104,6 +104,7 @@ import com.liferay.portal.kernel.service.persistence.VirtualHostPersistence;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -122,6 +123,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.security.auth.EmailAddressValidatorFactory;
 import com.liferay.portal.service.base.CompanyLocalServiceBaseImpl;
+import com.liferay.portal.spring.hibernate.LastSessionRecorderUtil;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
@@ -192,10 +194,12 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 	 * @param  active whether the company is active
 	 * @return the company
 	 */
-	@Override
 	public Company addCompany(
 			Long companyId, String webId, String virtualHostname, String mx,
-			int maxUsers, boolean active)
+			int maxUsers, boolean active, String defaultAdminPassword,
+			String defaultAdminScreenName, String defaultAdminEmailAddress,
+			String defaultAdminFirstName, String defaultAdminMiddleName,
+			String defaultAdminLastName)
 		throws PortalException {
 
 		// Company
@@ -274,7 +278,10 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 			_addGuestUser(company);
 
-			company = _checkCompany(company, mx);
+			company = _checkCompany(
+				company, mx, defaultAdminPassword, defaultAdminScreenName,
+				defaultAdminEmailAddress, defaultAdminFirstName,
+				defaultAdminMiddleName, defaultAdminLastName);
 
 			TransactionCommitCallbackUtil.registerCallback(
 				() -> {
@@ -288,34 +295,12 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		catch (Exception exception) {
 			safeCloseable.close();
 
+			if (newDBPartitionAdded) {
+				DBPartitionUtil.removeDBPartition(companyId);
+			}
+
 			throw exception;
 		}
-	}
-
-	/**
-	 * Adds a company.
-	 *
-	 * @param      webId the the company's web domain
-	 * @param      virtualHostname the company's virtual host name
-	 * @param      mx the company's mail domain
-	 * @param      system whether the company is the very first company (i.e.,
-	 *             the super company)
-	 * @param      maxUsers the max number of company users (optionally
-	 *             <code>0</code>)
-	 * @param      active whether the company is active
-	 * @return     the company
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #addCompany(Long, String, String, String, boolean, int,
-	 *             boolean)}
-	 */
-	@Deprecated
-	@Override
-	public Company addCompany(
-			String webId, String virtualHostname, String mx, int maxUsers,
-			boolean active)
-		throws PortalException {
-
-		return addCompany(null, webId, virtualHostname, mx, maxUsers, active);
 	}
 
 	/**
@@ -350,7 +335,7 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 		Company company = getCompanyByWebId(webId);
 
-		return _checkCompany(company, mx);
+		return _checkCompany(company, mx, null, null, null, null, null, null);
 	}
 
 	/**
@@ -533,6 +518,10 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 					CompanyThreadLocal.setWithSafeCloseable(companyId)) {
 
 				unsafeConsumer.accept(companyId);
+
+				if (DBPartitionUtil.isPartitionEnabled()) {
+					LastSessionRecorderUtil.syncLastSessionState();
+				}
 			}
 		}
 	}
@@ -1967,7 +1956,11 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		return guestUser;
 	}
 
-	private Company _checkCompany(Company company, String mx)
+	private Company _checkCompany(
+			Company company, String mx, String defaultAdminPassword,
+			String defaultAdminScreenName, String defaultAdminEmailAddress,
+			String defaultAdminFirstName, String defaultAdminMiddleName,
+			String defaultAdminLastName)
 		throws PortalException {
 
 		Locale localeThreadLocalDefaultLocale =
@@ -2035,15 +2028,28 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			if (_userPersistence.countByCompanyId(company.getCompanyId()) ==
 					0) {
 
-				String emailAddress =
-					PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" + mx;
-
 				_userLocalService.addDefaultAdminUser(
 					company.getCompanyId(),
-					PropsValues.DEFAULT_ADMIN_SCREEN_NAME, emailAddress,
-					guestUser.getLocale(), PropsValues.DEFAULT_ADMIN_FIRST_NAME,
-					PropsValues.DEFAULT_ADMIN_MIDDLE_NAME,
-					PropsValues.DEFAULT_ADMIN_LAST_NAME);
+					GetterUtil.getString(
+						defaultAdminPassword,
+						PropsValues.DEFAULT_ADMIN_PASSWORD),
+					GetterUtil.getString(
+						defaultAdminScreenName,
+						PropsValues.DEFAULT_ADMIN_SCREEN_NAME),
+					GetterUtil.getString(
+						defaultAdminEmailAddress,
+						PropsValues.DEFAULT_ADMIN_EMAIL_ADDRESS_PREFIX + "@" +
+							mx),
+					guestUser.getLocale(),
+					GetterUtil.getString(
+						defaultAdminFirstName,
+						PropsValues.DEFAULT_ADMIN_FIRST_NAME),
+					GetterUtil.getString(
+						defaultAdminMiddleName,
+						PropsValues.DEFAULT_ADMIN_MIDDLE_NAME),
+					GetterUtil.getString(
+						defaultAdminLastName,
+						PropsValues.DEFAULT_ADMIN_LAST_NAME));
 			}
 
 			// Default service account
@@ -2068,6 +2074,11 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 					return null;
 				});
+
+			// Preferences
+
+			_portalPreferencesLocalService.getPreferences(
+				company.getCompanyId(), PortletKeys.PREFS_OWNER_TYPE_COMPANY);
 		}
 		finally {
 			LocaleThreadLocal.setDefaultLocale(localeThreadLocalDefaultLocale);

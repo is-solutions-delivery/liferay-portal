@@ -28,6 +28,7 @@ import {
 } from '../../../types/index';
 
 import './index.scss';
+import {extractStringFromURL} from '../../../util/replace';
 
 export type generateReportsType = typeof yupSchema.report.__outputType;
 
@@ -36,7 +37,11 @@ const GenerateReport = () => {
 	const [branches, setBranches] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
-	const redirect = `${Liferay.ThemeDisplay.getPortalURL()}/web/evp/reports`;
+	const pathCurrentSite = Liferay.ThemeDisplay.getSiteAdminURL();
+
+	const redirect = `${Liferay.ThemeDisplay.getPortalURL()}/web/${extractStringFromURL(
+		pathCurrentSite
+	)}/reports`;
 
 	const {
 		clearErrors,

@@ -134,17 +134,8 @@ public class SkuUtil {
 
 		DateConfig displayDateConfig = new DateConfig(displayCalendar);
 
-		Calendar expirationCalendar = CalendarFactoryUtil.getCalendar(
-			serviceContext.getTimeZone());
-
-		expirationCalendar.add(Calendar.MONTH, 1);
-
-		if (sku.getExpirationDate() != null) {
-			expirationCalendar = DateConfigUtil.convertDateToCalendar(
-				sku.getExpirationDate());
-		}
-
-		DateConfig expirationDateConfig = new DateConfig(expirationCalendar);
+		DateConfig expirationDateConfig = DateConfig.toExpirationDateConfig(
+			sku.getExpirationDate(), serviceContext.getTimeZone());
 
 		SkuSubscriptionConfiguration skuSubscriptionConfiguration =
 			sku.getSkuSubscriptionConfiguration();
@@ -352,9 +343,15 @@ public class SkuUtil {
 						}
 
 						try {
-							return _getCPDefinitionOptionRelKey(
-								GetterUtil.getLongStrict(skuOption.getKey()),
-								cpDefinitionOptionRelService);
+							String cpDefinitionOptionRelKey =
+								_getCPDefinitionOptionRelKey(
+									GetterUtil.getLongStrict(
+										skuOption.getKey()),
+									cpDefinitionOptionRelService);
+
+							if (Validator.isNotNull(cpDefinitionOptionRelKey)) {
+								return cpDefinitionOptionRelKey;
+							}
 						}
 						catch (NumberFormatException numberFormatException) {
 							if (_log.isDebugEnabled()) {
@@ -376,10 +373,17 @@ public class SkuUtil {
 							}
 
 							try {
-								return _getCPDefinitionOptionValueRelKey(
-									GetterUtil.getLongStrict(
-										skuOption.getValue()),
-									cpDefinitionOptionValueRelService);
+								String cpDefinitionOptionValueRelKey =
+									_getCPDefinitionOptionValueRelKey(
+										GetterUtil.getLongStrict(
+											skuOption.getValue()),
+										cpDefinitionOptionValueRelService);
+
+								if (Validator.isNotNull(
+										cpDefinitionOptionValueRelKey)) {
+
+									return cpDefinitionOptionValueRelKey;
+								}
 							}
 							catch (NumberFormatException
 										numberFormatException) {
@@ -421,12 +425,13 @@ public class SkuUtil {
 			commercePriceEntryLocalService.addCommercePriceEntry(
 				null, cpDefinition.getCProductId(),
 				cpInstance.getCPInstanceUuid(),
-				commercePriceList.getCommercePriceListId(), price, null,
+				commercePriceList.getCommercePriceListId(), price, false, null,
 				serviceContext);
 		}
 		else {
 			commercePriceEntryLocalService.updateCommercePriceEntry(
-				commercePriceEntry.getCommercePriceEntryId(), price, null,
+				commercePriceEntry.getCommercePriceEntryId(), price,
+				commercePriceEntry.isPriceOnApplication(), null,
 				serviceContext);
 		}
 	}

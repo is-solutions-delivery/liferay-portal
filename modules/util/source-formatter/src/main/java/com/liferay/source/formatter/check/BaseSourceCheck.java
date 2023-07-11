@@ -603,6 +603,14 @@ public abstract class BaseSourceCheck implements SourceCheck {
 		return _sourceProcessor;
 	}
 
+	protected String getVariableName(String methodCall) {
+		if (methodCall != null) {
+			return methodCall.substring(0, methodCall.indexOf(CharPool.PERIOD));
+		}
+
+		return null;
+	}
+
 	protected String getVariableTypeName(
 		String content, String fileContent, String variableName) {
 
@@ -626,6 +634,25 @@ public abstract class BaseSourceCheck implements SourceCheck {
 
 		return _getVariableTypeName(
 			fileContent, variableName, includeArrayOrCollectionTypes);
+	}
+
+	protected boolean hasClassOrVariableName(
+		String className, String content, String methodCall) {
+
+		String variable = getVariableName(methodCall);
+
+		if (variable == null) {
+			return false;
+		}
+
+		String variableTypeName = getVariableTypeName(
+			content, content, variable.trim(), true);
+
+		if (variableTypeName.startsWith(className)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected boolean isAttributeValue(

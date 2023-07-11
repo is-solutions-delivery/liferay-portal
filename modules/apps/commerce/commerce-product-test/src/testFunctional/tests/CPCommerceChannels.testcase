@@ -685,8 +685,13 @@ definition {
 		task ("And given the buyer has permission to view a channel's configuration") {
 			CommercePermissions.defineChannelPermissionsViaJSONAPI(
 				roleTitle = "User",
-				update = "true",
+				update = "false",
 				view = "true");
+
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "MANAGE_COMMERCE_PRODUCT_CHANNEL_VISIBILITY",
+				resourceName = "com.liferay.commerce.product",
+				roleTitle = "User");
 		}
 
 		task ("When the buyer logs in and goes to the Minium channel") {
@@ -699,13 +704,18 @@ definition {
 
 			CommerceChannels.openChannelsAdmin();
 
-			CommerceNavigator.gotoEntry(entryName = "Minium Portal");
+			AssertTextEquals(
+				key_columnIndex = 1,
+				key_rowIndex = 1,
+				locator1 = "CommerceEntry#TABLE_ENTRY_ROW_FIELD_GENERIC",
+				value1 = "Minium Portal");
 		}
 
 		task ("Then the buyer is unable to change the channel currency code") {
 			AssertElementNotPresent(
-				key_title = "Currency",
-				locator1 = "CommerceEntry#CATALOGS_FORM");
+				key_entryName = "Minium Portal",
+				locator1 = "CommerceNavigation#ENTRY_NAME",
+				value1 = "Minium Portal");
 		}
 	}
 
@@ -824,7 +834,7 @@ definition {
 	@priority = 3
 	test CanPaginatePaymentAndShippingRestrictions {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "CPCommerceChannels#CanPaginatePaymentAndShippingRestrictions";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given the admin navigates to 'Minium Portal' channel") {
 			CommerceChannels.openChannelsAdmin();
@@ -967,6 +977,11 @@ definition {
 			CommercePermissions.defineChannelPermissionsViaJSONAPI(
 				roleTitle = "User",
 				view = "true");
+
+			Permissions.definePermissionViaJSONAPI(
+				resourceAction = "MANAGE_COMMERCE_PRODUCT_CHANNEL_VISIBILITY",
+				resourceName = "com.liferay.commerce.product",
+				roleTitle = "User");
 
 			CommercePermissions.defineProductPermissionsViaJSONAPI(
 				roleTitle = "User",

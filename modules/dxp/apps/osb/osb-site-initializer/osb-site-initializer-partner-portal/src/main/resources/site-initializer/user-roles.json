@@ -1,0 +1,62 @@
+[
+	{
+		"emailAddress": "pm@partner.com",
+		"roles": [
+			"Partner Manager (PM)"
+		]
+	},
+	{
+		"emailAddress": "pmu@partner.com",
+		"roles": [
+			"Partner Marketing User (PMU)"
+		]
+	},
+	{
+		"emailAddress": "psu@partner.com",
+		"roles": [
+			"Partner Sales User (PSU)"
+		]
+	},
+	{
+		"emailAddress": "ptu@partner.com",
+		"roles": [
+			"Partner Technical User (PTU)"
+		]
+	},
+	{
+		"emailAddress": "cam@liferaytest.com",
+		"roles": [
+			"Channel Account Manager (CAM)"
+		]
+	},
+	{
+		"emailAddress": "com@liferaytest.com",
+		"roles": [
+			"Channel Operations Manager (COM)"
+		]
+	},
+	{
+		"emailAddress": "cmm@liferaytest.com",
+		"roles": [
+			"Channel Marketing Manager (CMM)"
+		]
+	},
+	{
+		"emailAddress": "cmd@liferaytest.com",
+		"roles": [
+			"Channel Marketing Director (CMD)"
+		]
+	},
+	{
+		"emailAddress": "cfm@liferaytest.com",
+		"roles": [
+			"Channel Finance Manager (CFM)"
+		]
+	},
+	{
+		"emailAddress": "cem@liferaytest.com",
+		"roles": [
+			"Channel Enablement Manager (CEM)"
+		]
+	}
+]

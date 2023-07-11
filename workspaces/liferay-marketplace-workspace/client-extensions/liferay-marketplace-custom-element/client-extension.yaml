@@ -15,6 +15,20 @@ liferay-marketplace-custom-element-create-app:
     urls:
         - "*.js"
     useESM: true
+liferay-marketplace-custom-element-customer-gate:
+    cssURLs:
+        - "**/*.css"
+    friendlyURLMapping: liferay-marketplace-custom-element-customer-gate
+    htmlElementName: liferay-marketplace-custom-element
+    instanceable: false
+    name: Liferay Marketplace Customer Gate
+    portletCategoryName: category.client-extensions
+    properties:
+        route: customer-gate
+    type: customElement
+    urls:
+        - "*.js"
+    useESM: true
 liferay-marketplace-custom-element-get-app:
     cssURLs:
         - "**/*.css"

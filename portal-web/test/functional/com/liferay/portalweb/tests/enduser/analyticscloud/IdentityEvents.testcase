@@ -36,7 +36,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
@@ -44,7 +44,7 @@ definition {
 
 		ACUtils.tearDownDXP();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -57,7 +57,6 @@ definition {
 	@description = "Feature ID: LRAC-10999 | Automation ID: LRAC-11308 | Test Summary: Delete browser storage changes userid and anonymous user appears"
 	@priority = 3
 	test CheckDeleteBrowserStorageChangesUserId {
-		property analytics.cloud.upstream = "false";
 		property proxy.server.enabled = "true";
 
 		task ("Add a new user") {
@@ -206,7 +205,6 @@ definition {
 	@ignore = "true"
 	@priority = 3
 	test CheckEventSentWhenUserInteractsWithSitesWithDifferentChannelId {
-		property analytics.cloud.upstream = "false";
 		property proxy.server.enabled = "true";
 
 		var sitePageName = "AC Test";
@@ -367,8 +365,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8715 | Test Summary: Check identity is triggered when logging in after a unintended session close"
+	@ignore = "true"
 	@priority = 3
 	test CheckIdentityTriggeredWhenLoginAfterASessionClose {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		property proxy.server.enabled = "true";
 
 		task ("Sign out and Close sessions") {
@@ -422,8 +425,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8714 | Test Summary: Check Identity is triggered when logging out and in again"
+	@ignore = "true"
 	@priority = 3
 	test CheckIdentityTriggeredWhenLogoutAndLoginAgain {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		property proxy.server.enabled = "true";
 
 		task ("Get the Property ID in AC") {
@@ -489,8 +497,13 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8713 | Test Summary: Check Identity triggers upon logging in and check its properties (see reference document in comments)"
+	@ignore = "true"
 	@priority = 5
 	test CheckIdentityUponLogin {
+
+		// AC Bug: Unable to search using special characters
+		// AC Bug ticket: LRAC-13715
+
 		property proxy.server.enabled = "true";
 
 		task ("Sign out") {
@@ -545,7 +558,6 @@ definition {
 	@ignore = "true"
 	@priority = 5
 	test CheckIfEventSentAgainAfterLoginAndIfUserClassifiedAsKnownIndividual {
-		property analytics.cloud.upstream = "false";
 		property proxy.server.enabled = "true";
 
 		task ("Add a new user") {
@@ -690,7 +702,6 @@ definition {
 	@ignore = "true"
 	@priority = 5
 	test CheckIfEventSentWithoutLoginAndIfUserClassifiedAsAnonymous {
-		property analytics.cloud.upstream = "false";
 		property proxy.server.enabled = "true";
 
 		task ("Start Har recording") {
@@ -759,7 +770,6 @@ definition {
 	@description = "Feature ID: LRAC-10999 | Automation ID: LRAC-11310 | Test Summary: Login as same user keeps userid"
 	@priority = 3
 	test CheckLoginSameUserKeepUserId {
-		property analytics.cloud.upstream = "false";
 		property proxy.server.enabled = "true";
 
 		task ("Add a new user") {
@@ -867,7 +877,6 @@ definition {
 	@description = "Feature ID: LRAC-10999 | Automation ID: LRAC-11307 | Test Summary: Logout continues to track user"
 	@priority = 4
 	test CheckLogoutContinuesToTrackUserWithSameUserId {
-		property analytics.cloud.upstream = "false";
 		property proxy.server.enabled = "true";
 
 		task ("Add a new user") {
@@ -984,7 +993,6 @@ definition {
 	@ignore = "true"
 	@priority = 5
 	test NewUserChangeEmailAddressHashed {
-		property analytics.cloud.upstream = "false";
 		property proxy.server.enabled = "true";
 
 		var usernameList = "user1,user2";

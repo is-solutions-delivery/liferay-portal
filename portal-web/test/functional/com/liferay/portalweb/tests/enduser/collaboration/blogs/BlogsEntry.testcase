@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -28,7 +28,7 @@ definition {
 	@priority = 3
 	@refactordone
 	test AbstractDescriptionPersistsWhenTypingInContentField {
-		property test.name.skip.portal.instance = "BlogsEntry#AbstractDescriptionPersistsWhenTypingInContentField";
+		property test.liferay.virtual.instance = "false";
 
 		BlogsNavigator.openToAddEntry(
 			layoutName = "Blogs Page",
@@ -518,6 +518,52 @@ definition {
 			entryTitle2 = "Blogs Entry2 Title");
 	}
 
+	@description = "LPS-186698 Confirm that the blog is created via API, check that the console, and the Title and Content fields are faulty."
+	@priority = 4
+	test CanAssertThatTheBlogContentViaAPI {
+		task ("Given go to http://localhost:8080/o/api and create a new blog post") {
+			var blogPostingId = BlogPostingAPI.getIdOfCreatedBlogPosting(
+				articleBody = "test",
+				headline = "test");
+		}
+
+		task ("And navigate to the DM admin and check the blog entry") {
+			ProductMenu.gotoPortlet(
+				category = "Content & Data",
+				portlet = "Blogs");
+
+			Click(
+				key_card = "test",
+				locator1 = "Card#CARD_TITLE_LINK");
+		}
+
+		task ("Blogs will display titles and content correctly") {
+			AssertElementPresent(
+				key_value = "test",
+				locator1 = "CommerceFrontStore#TEXTAREA_FIELD");
+
+			AssertElementPresent(
+				key_eventDescription = "test",
+				locator1 = "CalendarViewEventDetails#EVENT_DESCRIPTION");
+
+			Click(locator1 = "Button#PUBLISH");
+		}
+
+		task ("The blog content disappeared and the browser console reported an error") {
+			AssertConsoleTextNotPresent(value1 = "TypeError: propsTransformer is not a function");
+		}
+
+		task ("The options button for the blog should be available.") {
+			AssertElementPresent(locator1 = "WorkflowAllItems#KEBAB_DROPDOWN_DISABLED");
+		}
+
+		task ("The blog can be deleted from DM admin page.") {
+			Click(locator1 = "WorkflowAllItems#KEBAB_DROPDOWN_DISABLED");
+
+			ClickNoError(locator1 = "ObjectPortlet#DELETE_ENTRY_BUTTON");
+		}
+	}
+
 	@description = "This checks that a blog entry can be automatically saved as a draft."
 	@priority = 5
 	@refactordone
@@ -546,7 +592,8 @@ definition {
 	@priority = 4
 	@refactordone
 	test CanChangeAScheduledEntryToThePresentAndPublish {
-		property test.name.skip.portal.instance = "BlogsEntry#CanChangeAScheduledEntryToThePresentAndPublish";
+		property custom.properties = "company.default.time.zone=America/Los_Angeles";
+		property test.liferay.virtual.instance = "false";
 
 		JSONLayout.addPublicLayout(
 			groupName = "Guest",
@@ -751,7 +798,7 @@ definition {
 	@priority = 4
 	@refactorneeded
 	test CanEditCustomAbstract {
-		property test.name.skip.portal.instance = "BlogsEntry#CanEditCustomAbstract";
+		property test.liferay.virtual.instance = "false";
 
 		JSONLayout.addPublicLayout(
 			groupName = "Guest",
@@ -843,7 +890,7 @@ definition {
 	@priority = 4
 	test CanImportEntryWithImageAfterCleaningDB {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "BlogsEntry#CanImportEntryWithImageAfterCleaningDB";
+		property test.liferay.virtual.instance = "false";
 
 		var testRunEnvironment = PropsUtil.get("test.run.environment");
 		var imageId = JSONBlog.uploadBlogImage(
@@ -865,13 +912,9 @@ definition {
 
 		SQL.executeMySQLStatement(mysqlStatement = "drop database if exists lportal;");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "rebuild-database -Ddatabase.type=mysql -Dkeep.osgi.state=true -Dsql.dir=sql/create-bare/ -Dsql.file=create-bare-mysql.sql");
+		AntCommands.runCommand("build-test.xml", "rebuild-database -Ddatabase.type=mysql -Dkeep.osgi.state=true -Dsql.dir=sql/create-bare/ -Dsql.file=create-bare-mysql.sql");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "start-app-server -Ddelete.liferay.home=false -Dkeep.osgi.state=true");
+		AntCommands.runCommand("build-test.xml", "start-app-server -Ddelete.liferay.home=false -Dkeep.osgi.state=true");
 
 		if (${testRunEnvironment} == "EE") {
 			License.deployLicenseFile();
@@ -953,7 +996,7 @@ definition {
 	@priority = 4
 	test CanImportEntryWithSmallImageAfterCleaningDB {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "BlogsEntry#CanImportEntryWithSmallImageAfterCleaningDB";
+		property test.liferay.virtual.instance = "false";
 
 		var testRunEnvironment = PropsUtil.get("test.run.environment");
 
@@ -979,13 +1022,9 @@ definition {
 
 		SQL.executeMySQLStatement(mysqlStatement = "drop database if exists lportal;");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "rebuild-database -Ddatabase.type=mysql -Dkeep.osgi.state=true -Dsql.dir=sql/create-bare/ -Dsql.file=create-bare-mysql.sql");
+		AntCommands.runCommand("build-test.xml", "rebuild-database -Ddatabase.type=mysql -Dkeep.osgi.state=true -Dsql.dir=sql/create-bare/ -Dsql.file=create-bare-mysql.sql");
 
-		AntCommand(
-			locator1 = "build-test.xml",
-			value1 = "start-app-server -Ddelete.liferay.home=false -Dkeep.osgi.state=true");
+		AntCommands.runCommand("build-test.xml", "start-app-server -Ddelete.liferay.home=false -Dkeep.osgi.state=true");
 
 		if (${testRunEnvironment} == "EE") {
 			License.deployLicenseFile();
@@ -1337,7 +1376,7 @@ definition {
 	@priority = 4
 	test CannotInjectBBCodeIntoCommentUsingPingback {
 		property portal.acceptance = "false";
-		property test.name.skip.portal.instance = "BlogsEntry#CannotInjectBBCodeIntoCommentUsingPingback";
+		property test.liferay.virtual.instance = "false";
 
 		JSONLayout.addPublicLayout(
 			groupName = "Guest",
@@ -1544,7 +1583,7 @@ definition {
 	@priority = 4
 	@refactorneeded
 	test CanViewDefaultAbstract {
-		property test.name.skip.portal.instance = "BlogsEntry#CanViewDefaultAbstract";
+		property test.liferay.virtual.instance = "false";
 
 		BlogsNavigator.openBlogsAdmin(siteURLKey = "guest");
 
@@ -1696,10 +1735,11 @@ definition {
 			navTab = "URL",
 			videoService = "youtube");
 
-		BlogsNavigator.openToBlogEntry(
-			entryTitle = "Blogs Entry Title",
-			layoutName = "Blogs Page",
-			siteURLKey = "guest");
+		Navigator.gotoPage(pageName = "Blogs Page");
+
+		BlogsNavigator.gotoEntryPG(
+			entryContent = "video",
+			entryTitle = "Blogs Entry Title");
 
 		YoutubePortlet.playEmbeddedVideo(
 			progressBarInitialization = "0 Minutes 0 Seconds of 0 Minutes 0 Seconds",

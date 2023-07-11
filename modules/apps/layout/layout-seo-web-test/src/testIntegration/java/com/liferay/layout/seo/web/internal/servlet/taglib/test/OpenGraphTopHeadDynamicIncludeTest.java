@@ -276,7 +276,7 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 
 		_layout.setType(LayoutConstants.TYPE_ASSET_DISPLAY);
 
-		_layoutLocalService.updateLayout(_layout);
+		_layout = _layoutLocalService.updateLayout(_layout);
 
 		_testWithMockInfoItem(
 			_serviceContext.getRequest(),
@@ -620,7 +620,9 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		_assertCanonicalLinkTag(
 			document,
 			_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-				FileEntry.class.getName(), fileEntry.getFileEntryId(),
+				new InfoItemReference(
+					FileEntry.class.getName(),
+					new ClassPKInfoItemIdentifier(fileEntry.getFileEntryId())),
 				_getThemeDisplay()));
 	}
 
@@ -650,7 +652,9 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		_assertCanonicalLinkTag(
 			document,
 			_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-				FileEntry.class.getName(), fileEntry.getFileEntryId(),
+				new InfoItemReference(
+					FileEntry.class.getName(),
+					new ClassPKInfoItemIdentifier(fileEntry.getFileEntryId())),
 				_getThemeDisplay()));
 	}
 
@@ -682,7 +686,9 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		_assertCanonicalLinkTag(
 			document,
 			_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-				FileEntry.class.getName(), fileEntry.getFileEntryId(),
+				new InfoItemReference(
+					FileEntry.class.getName(),
+					new ClassPKInfoItemIdentifier(fileEntry.getFileEntryId())),
 				_getThemeDisplay()));
 	}
 
@@ -712,7 +718,9 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		_assertCanonicalLinkTag(
 			document,
 			_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-				FileEntry.class.getName(), fileEntry.getFileEntryId(),
+				new InfoItemReference(
+					FileEntry.class.getName(),
+					new ClassPKInfoItemIdentifier(fileEntry.getFileEntryId())),
 				_getThemeDisplay()));
 	}
 
@@ -739,7 +747,9 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		_assertCanonicalLinkTag(
 			document,
 			_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-				FileEntry.class.getName(), fileEntry.getFileEntryId(),
+				new InfoItemReference(
+					FileEntry.class.getName(),
+					new ClassPKInfoItemIdentifier(fileEntry.getFileEntryId())),
 				_getThemeDisplay()));
 		_assertAlternateLinkTagAssetDisplayPage(
 			document, fileEntry,
@@ -1077,7 +1087,7 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		typeSettingsUnicodeProperties.put(
 			"mapped-openGraphImageAlt", "mappedImageAltFieldName");
 
-		_layoutLocalService.updateLayout(_layout);
+		_layout = _layoutLocalService.updateLayout(_layout);
 
 		HttpServletRequest httpServletRequest = _getHttpServletRequest();
 
@@ -1113,7 +1123,7 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		typeSettingsUnicodeProperties.put(
 			"mapped-openGraphTitle", "mappedTitleFieldName");
 
-		_layoutLocalService.updateLayout(_layout);
+		_layout = _layoutLocalService.updateLayout(_layout);
 
 		HttpServletRequest httpServletRequest = _getHttpServletRequest();
 
@@ -1419,7 +1429,10 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 			Assert.assertEquals(
 				_portal.getAlternateURL(
 					_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-						FileEntry.class.getName(), fileEntry.getFileEntryId(),
+						new InfoItemReference(
+							FileEntry.class.getName(),
+							new ClassPKInfoItemIdentifier(
+								fileEntry.getFileEntryId())),
 						locale, themeDisplay),
 					themeDisplay, locale, _layout),
 				localeAlternateLinkElement.attr("href"));
@@ -1539,7 +1552,8 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 
 		InfoItemObjectProvider<?> infoItemObjectProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
-				InfoItemObjectProvider.class, className);
+				InfoItemObjectProvider.class, className,
+				ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
 		Object infoItem = infoItemObjectProvider.getInfoItem(
 			new ClassPKInfoItemIdentifier(classPK));

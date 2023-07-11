@@ -232,7 +232,8 @@ public class DDMFormValuesExportImportContentProcessorTest {
 
 		_dlFileEntryLocalService.deleteFileEntry(fileEntryId);
 
-		_dlFileEntryLocalService.updateDLFileEntry(newDLFileEntry);
+		newDLFileEntry = _dlFileEntryLocalService.updateDLFileEntry(
+			newDLFileEntry);
 
 		classPKs.put(fileEntryId, newDLFileEntry.getPrimaryKey());
 
@@ -285,7 +286,8 @@ public class DDMFormValuesExportImportContentProcessorTest {
 
 		newJournalArticle.setUuid(_journalArticle.getUuid());
 
-		_journalArticleLocalService.updateJournalArticle(newJournalArticle);
+		newJournalArticle = _journalArticleLocalService.updateJournalArticle(
+			newJournalArticle);
 
 		classPKs.put(resourcePrimKey, newJournalArticle.getResourcePrimKey());
 
@@ -352,14 +354,13 @@ public class DDMFormValuesExportImportContentProcessorTest {
 
 		ddmFormFields.add(webContentFormField);
 
-		long classNameId = ClassNameLocalServiceUtil.getClassNameId(
-			DLFileEntryMetadata.class);
-
 		_ddmStructure.setDDMForm(journalDDMForm);
+		_ddmStructure.setClassNameId(
+			ClassNameLocalServiceUtil.getClassNameId(
+				DLFileEntryMetadata.class));
 
-		_ddmStructure.setClassNameId(classNameId);
-
-		_ddmStructureLocalService.updateDDMStructure(_ddmStructure);
+		_ddmStructure = _ddmStructureLocalService.updateDDMStructure(
+			_ddmStructure);
 
 		_journalDDMFormValues = new DDMFormValues(journalDDMForm);
 
@@ -433,10 +434,9 @@ public class DDMFormValuesExportImportContentProcessorTest {
 			JournalArticle.class);
 
 		structure.setDDMForm(_formInstance.getDDMForm());
-
 		structure.setClassNameId(classNameId);
 
-		_ddmStructureLocalService.updateDDMStructure(structure);
+		structure = _ddmStructureLocalService.updateDDMStructure(structure);
 
 		_ddmTemplate = DDMTemplateTestUtil.addTemplate(
 			_stagingGroup.getGroupId(), structure.getStructureId(),

@@ -19,9 +19,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -1128,13 +1128,11 @@ definition {
 
 		NavItem.gotoStructures();
 
-		WebContentStructures.addCP(
-			structureDescription = "WC Structure Description",
-			structureName = "WC Structure Name");
+		WebContentStructures.addCP(structureName = "WC Structure Name");
 
 		DataEngine.addFieldsWithDefaultReference(fieldNameList = "Text,Select from List,Single Selection,Multiple Selection,Grid,Date,Numeric,Image,Rich Text,Upload,Color,Web Content,Geolocation,Link to Page,Separator");
 
-		WebContentStructures.saveCP(structureName = "WC Structure Name");
+		WebContentStructures.saveCP();
 
 		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Name");
 
@@ -1157,9 +1155,7 @@ definition {
 		}
 
 		task ("Assert the structure is renamed") {
-			WebContentStructures.viewCP(
-				structureDescription = "WC Structure Description",
-				structureName = "WC Structure Name Edit");
+			WebContentStructures.viewCP(structureName = "WC Structure Name Edit");
 		}
 
 		task ("Delete the structure") {

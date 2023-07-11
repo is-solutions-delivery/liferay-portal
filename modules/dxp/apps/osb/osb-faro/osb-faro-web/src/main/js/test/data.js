@@ -687,11 +687,12 @@ export function mockSubscription(data = {}) {
 			})
 		]),
 		endDate: getTimestamp(),
-		individualsCount: 2057,
+		individualsCountSinceLastAnniversary: 2057,
 		individualsLimit: 105000,
 		individualsStatus: SubscriptionStatuses.Ok,
+		lastAnniversaryDate: getTimestamp(-2),
 		name: 'Liferay Analytics Cloud Enterprise',
-		pageViewsCount: 100023,
+		pageViewsCountSinceLastAnniversary: 100023,
 		pageViewsLimit: 7000000,
 		pageViewsStatus: SubscriptionStatuses.Ok,
 		startDate: getTimestamp(-2),
@@ -857,6 +858,7 @@ export function mockPlan({data = {}, individuals = {}, pageViews = {}} = {}) {
 			}
 		},
 		endDate: getTimestamp(),
+		lastAnniversaryDate: getTimestamp(-2),
 		metrics: {
 			individuals: new Metric({
 				count: 2057,

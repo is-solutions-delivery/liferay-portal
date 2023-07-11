@@ -79,6 +79,10 @@ public interface CommerceOrder extends CommerceOrderModel, PersistedModel {
 	public CommerceShippingMethod getCommerceShippingMethod()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
+	public java.util.List<Long> getCustomerCommerceOrderIds();
+
+	public int getCustomerCommerceOrderIdsCount();
+
 	public long getScopeGroupId()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
@@ -99,6 +103,10 @@ public interface CommerceOrder extends CommerceOrderModel, PersistedModel {
 			getSubtotalWithTaxAmountMoney()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
+	public java.util.List<Long> getSupplierCommerceOrderIds();
+
+	public int getSupplierCommerceOrderIdsCount();
+
 	public com.liferay.commerce.currency.model.CommerceMoney getTotalMoney()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
@@ -115,6 +123,8 @@ public interface CommerceOrder extends CommerceOrderModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public boolean isOpen();
+
+	public boolean isQuote();
 
 	public boolean isSubscription();
 

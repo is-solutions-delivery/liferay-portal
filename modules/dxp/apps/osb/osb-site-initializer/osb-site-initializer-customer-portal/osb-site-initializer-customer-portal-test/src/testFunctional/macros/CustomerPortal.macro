@@ -827,9 +827,7 @@ definition {
 	}
 
 	macro viewCardValue {
-		AssertElementPresent(
-			locator1 = "CustomerPortalSite#PROJECT_LOGO",
-			logo = ${logo});
+		AssertElementPresent(locator1 = "CustomerPortalSite#PROJECT_LOGO");
 
 		AssertElementPresent(
 			cardName = ${cardName},
@@ -856,6 +854,8 @@ definition {
 		var key_text = ${pageText};
 
 		AssertVisible(locator1 = "CustomerPortalSite#PAGE_INFO");
+
+		CustomerPortal.clickAtButton(text = "Done");
 	}
 
 	macro viewCPObjectCustomInfo {
@@ -986,6 +986,8 @@ definition {
 		WaitForVisible(
 			key_userFirstName = ${userFirstName},
 			locator1 = "CustomerPortalSite#WELCOME_PAGE_USER_NAME");
+
+		WaitForPageLoad();
 	}
 
 	macro waitToLiferayPage {

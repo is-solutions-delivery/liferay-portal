@@ -129,7 +129,9 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 
-		if (FeatureFlagManagerUtil.isEnabled("LPS-177664")) {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-177664") ||
+			FeatureFlagManagerUtil.isEnabled("LPS-177668")) {
+
 			taskContextMap.put(
 				ReindexBackgroundTaskConstants.EXECUTION_MODE,
 				ParamUtil.getString(actionRequest, "executionMode"));
@@ -214,7 +216,8 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 			_indexReindexerRegistry.getIndexReindexer(className);
 
 		indexReindexer.reindex(
-			ParamUtil.getLongValues(actionRequest, "companyIds"));
+			ParamUtil.getLongValues(actionRequest, "companyIds"),
+			ParamUtil.getString(actionRequest, "executionMode"));
 	}
 
 	private void _reindexIndexReindexers(ActionRequest actionRequest)
@@ -224,7 +227,8 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 				_indexReindexerRegistry.getIndexReindexers()) {
 
 			indexReindexer.reindex(
-				ParamUtil.getLongValues(actionRequest, "companyIds"));
+				ParamUtil.getLongValues(actionRequest, "companyIds"),
+				ParamUtil.getString(actionRequest, "executionMode"));
 		}
 	}
 

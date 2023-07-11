@@ -41,15 +41,15 @@ LayoutType selLayoutType = selLayout.getLayoutType();
 </portlet:actionURL>
 
 <liferay-frontend:edit-form
-	action='<%= HttpComponentsUtil.addParameter(editLayoutURL, "refererPlid", plid) %>'
-	cssClass="pt-0"
+	action="<%= editLayoutURL %>"
+	cssClass="c-pt-0"
 	enctype="multipart/form-data"
 	method="post"
 	name="editLayoutFm"
 	onSubmit="event.preventDefault();"
 	wrappedFormContent="<%= false %>"
 >
-	<aui:input name="redirect" type="hidden" value="<%= String.valueOf(layoutsAdminDisplayContext.getLayoutScreenNavigationPortletURL()) %>" />
+	<aui:input name="redirect" type="hidden" value="<%= String.valueOf(layoutsAdminDisplayContext.getLayoutScreenNavigationPortletURL(selLayout.getPlid())) %>" />
 	<aui:input name="backURL" type="hidden" value="<%= backURL %>" />
 	<aui:input name="portletResource" type="hidden" value="<%= portletResource %>" />
 	<aui:input name="groupId" type="hidden" value="<%= layoutsAdminDisplayContext.getGroupId() %>" />
@@ -57,10 +57,9 @@ LayoutType selLayoutType = selLayout.getLayoutType();
 	<aui:input name="stagingGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getStagingGroupId() %>" />
 	<aui:input name="selPlid" type="hidden" value="<%= layoutsAdminDisplayContext.getSelPlid() %>" />
 	<aui:input name="type" type="hidden" value="<%= selLayout.getType() %>" />
-	<aui:input name="<%= PortletDataHandlerKeys.SELECTED_LAYOUTS %>" type="hidden" />
 
 	<c:if test="<%= group.isLayoutPrototype() || !(selLayoutType.isURLFriendliable() && !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem()) %>">
-		<aui:input name="friendlyURL" type="hidden" value="<%= (selLayout != null) ? HttpComponentsUtil.decodeURL(selLayout.getFriendlyURL()) : StringPool.BLANK %>" />
+		<aui:input name="friendlyURL" type="hidden" value="<%= HttpComponentsUtil.decodeURL(selLayout.getFriendlyURL()) %>" />
 	</c:if>
 
 	<%
@@ -87,7 +86,7 @@ LayoutType selLayoutType = selLayout.getLayoutType();
 
 	</c:if>
 
-	<h2 class="mb-4 text-7"><liferay-ui:message key="general" /></h2>
+	<h2 class="c-mb-4 text-7"><liferay-ui:message key="general" /></h2>
 
 	<liferay-frontend:edit-form-body>
 		<liferay-ui:success key="layoutAdded" message="the-page-was-created-successfully" />
@@ -177,39 +176,7 @@ LayoutType selLayoutType = selLayout.getLayoutType();
 		</c:if>
 
 		<c:if test="<%= !group.isLayoutPrototype() %>">
-			<c:if test="<%= selGroup.hasLocalOrRemoteStagingGroup() && !selGroup.isStagingGroup() %>">
-				<div class="alert alert-warning">
-					<liferay-ui:message key="changes-are-immediately-available-to-end-users" />
-				</div>
-			</c:if>
-
-			<%
-			Group selLayoutGroup = selLayout.getGroup();
-			%>
-
-			<c:choose>
-				<c:when test="<%= !SitesUtil.isLayoutUpdateable(selLayout) %>">
-					<div class="alert alert-warning">
-						<liferay-ui:message key="this-page-cannot-be-modified-because-it-is-associated-with-a-site-template-does-not-allow-modifications-to-it" />
-					</div>
-				</c:when>
-				<c:when test="<%= !SitesUtil.isLayoutDeleteable(selLayout) %>">
-					<div class="alert alert-warning">
-						<liferay-ui:message key="this-page-cannot-be-deleted-and-cannot-have-child-pages-because-it-is-associated-with-a-site-template" />
-					</div>
-				</c:when>
-			</c:choose>
-
-			<c:if test="<%= (selLayout.getGroupId() != layoutsAdminDisplayContext.getGroupId()) && selLayoutGroup.isUserGroup() %>">
-
-				<%
-				UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(selLayoutGroup.getClassPK());
-				%>
-
-				<div class="alert alert-warning">
-					<liferay-ui:message arguments="<%= HtmlUtil.escape(userGroup.getName()) %>" key="this-page-cannot-be-modified-because-it-belongs-to-the-user-group-x" translateArguments="<%= false %>" />
-				</div>
-			</c:if>
+			<%@ include file="/error_layout_prototype_exception.jspf" %>
 		</c:if>
 
 		<liferay-frontend:form-navigator
@@ -229,27 +196,8 @@ LayoutType selLayoutType = selLayout.getLayoutType();
 	</liferay-frontend:edit-form-footer>
 </liferay-frontend:edit-form>
 
-<aui:script>
-	var form = document.getElementById('<portlet:namespace />editLayoutFm');
-
-	form.addEventListener('submit', (event) => {
-		var applyLayoutPrototype = document.getElementById(
-			'<portlet:namespace />applyLayoutPrototype'
-		);
-
-		if (!applyLayoutPrototype || applyLayoutPrototype.value === 'false') {
-			submitForm(form);
-		}
-		else if (applyLayoutPrototype && applyLayoutPrototype.value === 'true') {
-			Liferay.Util.openConfirmModal({
-				message:
-					'<%= UnicodeLanguageUtil.get(request, "reactivating-inherited-changes-may-update-the-page-with-the-possible-changes-that-could-have-been-made-in-the-original-template") %>',
-				onConfirm: (isConfirm) => {
-					if (isConfirm) {
-						submitForm(form);
-					}
-				},
-			});
-		}
-	});
-</aui:script>
+<liferay-frontend:component
+	componentId='<%= liferayPortletResponse.getNamespace() + "editLayout" %>'
+	context="<%= layoutsAdminDisplayContext.getProps() %>"
+	module="js/EditLayout"
+/>

@@ -16,6 +16,7 @@ package com.liferay.portal.kernel.service;
 
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 
 /**
@@ -103,6 +104,24 @@ public class GroupLocalServiceWrapper
 	@Override
 	public void addOrganizationGroups(long organizationId, long[] groupIds) {
 		_groupLocalService.addOrganizationGroups(organizationId, groupIds);
+	}
+
+	@Override
+	public Group addOrUpdateGroup(
+			String externalReferenceCode, long userId, long parentGroupId,
+			String className, long classPK, long liveGroupId,
+			java.util.Map<java.util.Locale, String> nameMap,
+			java.util.Map<java.util.Locale, String> descriptionMap, int type,
+			boolean manualMembership, int membershipRestriction,
+			String friendlyURL, boolean site, boolean inheritContent,
+			boolean active, ServiceContext serviceContext)
+		throws Exception {
+
+		return _groupLocalService.addOrUpdateGroup(
+			externalReferenceCode, userId, parentGroupId, className, classPK,
+			liveGroupId, nameMap, descriptionMap, type, manualMembership,
+			membershipRestriction, friendlyURL, site, inheritContent, active,
+			serviceContext);
 	}
 
 	@Override
@@ -541,6 +560,14 @@ public class GroupLocalServiceWrapper
 		return _groupLocalService.fetchGroup(companyId, groupKey);
 	}
 
+	@Override
+	public Group fetchGroupByExternalReferenceCode(
+		String externalReferenceCode, long companyId) {
+
+		return _groupLocalService.fetchGroupByExternalReferenceCode(
+			externalReferenceCode, companyId);
+	}
+
 	/**
 	 * Returns the group with the matching UUID and company.
 	 *
@@ -794,6 +821,15 @@ public class GroupLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _groupLocalService.getGroup(companyId, groupKey);
+	}
+
+	@Override
+	public Group getGroupByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _groupLocalService.getGroupByExternalReferenceCode(
+			externalReferenceCode, companyId);
 	}
 
 	/**
@@ -2853,6 +2889,11 @@ public class GroupLocalServiceWrapper
 		_groupLocalService.validateRemote(
 			groupId, remoteAddress, remotePort, remotePathContext,
 			secureConnection, remoteGroupId);
+	}
+
+	@Override
+	public BasePersistence<?> getBasePersistence() {
+		return _groupLocalService.getBasePersistence();
 	}
 
 	@Override

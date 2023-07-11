@@ -36,16 +36,17 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
 import com.liferay.portal.kernel.repository.friendly.url.resolver.FileEntryFriendlyURLResolver;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.VirtualHostLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
@@ -753,7 +754,8 @@ public class DLReferencesExportImportContentProcessor
 
 				boolean relativePortalURL = false;
 
-				if (content.regionMatches(
+				if (((beginPos == 0) && (endPos == content.length())) ||
+					content.regionMatches(
 						true, beginPos - _OFFSET_HREF_ATTRIBUTE, "href=", 0,
 						5) ||
 					content.regionMatches(
@@ -781,28 +783,35 @@ public class DLReferencesExportImportContentProcessor
 
 					hostNames.add(portalURL);
 
-					_companyLocalService.forEachCompany(
-						company -> {
-							String virtualHostname =
-								company.getVirtualHostname();
+					Group group = _groupLocalService.getGroup(groupId);
 
-							hostNames.add(
-								Http.HTTP_WITH_SLASH + virtualHostname);
-							hostNames.add(
-								Http.HTTPS_WITH_SLASH + virtualHostname);
-							hostNames.add(virtualHostname);
-						});
+					for (VirtualHost virtualHost :
+							_virtualHostLocalService.getVirtualHosts(
+								group.getCompanyId())) {
+
+						String hostname = virtualHost.getHostname();
+
+						hostNames.add(hostname);
+						hostNames.add(Http.HTTP_WITH_SLASH + hostname);
+						hostNames.add(Http.HTTPS_WITH_SLASH + hostname);
+					}
 
 					for (String hostName : hostNames) {
 						int curBeginPos = beginPos - hostName.length();
+
+						if (curBeginPos < 0) {
+							continue;
+						}
 
 						String substring = content.substring(
 							curBeginPos, endPos);
 
 						if (substring.startsWith(hostName) &&
-							(content.regionMatches(
-								true, curBeginPos - _OFFSET_HREF_ATTRIBUTE,
-								"href=", 0, 5) ||
+							(((curBeginPos == 0) &&
+							  (endPos == content.length())) ||
+							 content.regionMatches(
+								 true, curBeginPos - _OFFSET_HREF_ATTRIBUTE,
+								 "href=", 0, 5) ||
 							 content.regionMatches(
 								 true, curBeginPos - _OFFSET_SRC_ATTRIBUTE,
 								 "src=", 0, 4))) {
@@ -871,10 +880,7 @@ public class DLReferencesExportImportContentProcessor
 
 	private static final Pattern _uuidPattern = Pattern.compile(
 		"[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-" +
-			"[a-fA-F0-9]{12}");
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
+			"[a-fA-F0-9]{12}(?=[&,?]|$)");
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;
@@ -899,5 +905,8 @@ public class DLReferencesExportImportContentProcessor
 
 	@Reference
 	private UserLocalService _userLocalService;
+
+	@Reference
+	private VirtualHostLocalService _virtualHostLocalService;
 
 }

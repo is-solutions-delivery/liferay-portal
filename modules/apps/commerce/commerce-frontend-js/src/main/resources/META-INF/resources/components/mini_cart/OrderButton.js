@@ -24,7 +24,7 @@ import {
 } from './util/constants';
 import {hasErrors} from './util/index';
 
-function OrderButton() {
+function OrderButton({disabled = false}) {
 	const {actionURLs, cartState, labels} = useContext(MiniCartContext);
 
 	const {checkoutURL, orderDetailURL} = actionURLs;
@@ -41,7 +41,7 @@ function OrderButton() {
 		<div className="mini-cart-submit">
 			<ClayButton
 				block
-				disabled={!cartItems.length}
+				disabled={disabled}
 				onClick={() => {
 					liferayNavigate(canSubmit ? checkoutURL : orderDetailURL);
 				}}

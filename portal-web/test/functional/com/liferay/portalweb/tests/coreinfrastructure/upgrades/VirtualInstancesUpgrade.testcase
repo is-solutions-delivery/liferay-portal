@@ -2,7 +2,6 @@
 definition {
 
 	property portal.release = "true";
-	property portal.upgrades = "true";
 	property portal.upstream = "true";
 	property test.assert.warning.exceptions = "true";
 	property testray.main.component.name = "Database Upgrade Framework";
@@ -18,6 +17,7 @@ definition {
 		property data.archive.type = "data-archive-virtual-instances";
 		property database.types = "db2,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property portal.version = "7.3.10";
+		property test.run.environment = "EE";
 
 		ValidateVirtualInstancesUpgrade.viewVirtualInstancesUpgrade();
 	}
@@ -28,6 +28,7 @@ definition {
 		property database.types = "db2,mariadb,mysql,oracle,postgresql,sqlserver";
 		property portal.version = "7.4.13.u33";
 		property test.assert.warning.exceptions = "false";
+		property test.run.environment = "EE";
 
 		ValidateVirtualInstancesUpgrade.viewVirtualInstancesUpgrade();
 
@@ -39,6 +40,7 @@ definition {
 		property data.archive.type = "data-archive-virtual-instances";
 		property database.types = "db2,mysql,oracle,postgresql,sqlserver,sybase";
 		property portal.version = "6.2.10.21";
+		property test.run.environment = "EE";
 
 		ValidateVirtualInstancesUpgrade.viewVirtualInstancesUpgrade();
 	}

@@ -17,12 +17,17 @@ definition {
 	var testSiteName = "Testray 2";
 
 	setUp {
-		task ("Login and create a Testray Site") {
+		task ("Set up instance and sign in") {
 			TestCase.setUpPortalInstance();
 
 			User.firstLoginPG();
+		}
 
-			Testray.addTestraySite(siteName = ${testSiteName});
+		task ("Create a new Testray Site") {
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
 		}
 
 		task ("Given that a Testray project are created via API") {
@@ -33,13 +38,15 @@ definition {
 	}
 
 	tearDown {
-		JSONTestrayAPI.deleteProject(projectName = ${projectName});
+		task ("Delete project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
-		Testray.testrayApisTearDown();
+			Testray.testrayApisTearDown();
+		}
 
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -47,7 +54,7 @@ definition {
 	@description = "Story ID: LPS-159467 | Test Summary: Verify that as an Administrator I can delete a smart suite"
 	@priority = 5
 	test AdminCanDeleteSmartSuite {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanDeleteSmartSuite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that I add a new Testray component and requirement") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
@@ -100,7 +107,7 @@ definition {
 	@description = "Story ID: LPS-159467 | Test Summary: Verify if as an Administrator I am able delete a suite"
 	@priority = 5
 	test AdminCanDeleteSuite {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanDeleteSuite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that I add a new Testray Suite via API") {
 			JSONTestray.addSuite(suiteName = ${suiteName});
@@ -130,7 +137,7 @@ definition {
 	@description = "Story ID: LPS-159467 | Test Summary: Verify if as an Administrator I am able to design Suites"
 	@priority = 4
 	test AdminCanDesignSuite {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanDesignSuite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that a Testray team, component, case type and case are created via API") {
 			JSONTestray.addTeam(
@@ -186,7 +193,7 @@ definition {
 	@description = "Story ID: LPS-159467 | Test Summary: Verify that as an Administrator I can edit and update a smart suite"
 	@priority = 5
 	test AdminCanEditSmartSuite {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanEditSmartSuite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that I add a new Testray component and requirement") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
@@ -197,9 +204,19 @@ definition {
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
 
+			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+
+			TestrayManage.createTeam(teamName = ${teamName});
+
+			TestrayManage.closeModalInOptions();
+
+			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
 
-			Testray.addNewComponent(componentName = "Component 1");
+			Testray.addNewComponent(
+				componentName = "Component 1",
+				teamName = ${teamName});
 
 			TestrayManage.closeModalInOptions();
 
@@ -226,40 +243,35 @@ definition {
 				subComponent = "Component 1",
 				suiteDescription = "Suite Description",
 				suiteName = ${suiteName},
-				teamName = "Commerce");
+				teamName = ${teamName});
 		}
 
 		task ("When the user edits the created smart suite") {
-			TestrayDropdown.selectProjectDirectory(project = ${projectName});
-
-			Testray.projectTabNavigator(navTabName = "Suites");
-
 			TestraySuites.editSmartSuite(
 				caseType = "Cucumber",
-				mainComponent = "Component 1",
 				priorityNumber = 5,
 				requirementName = "Requirement Summary",
 				smartSuite = "true",
 				suiteDescription = "Suite Description Edited",
-				suiteName = ${suiteName},
-				teamName = "Developer Tools");
+				suiteName = ${suiteName});
 		}
 
 		task ("Then the case parameters are presented with details edited") {
 			TestraySuites.goToSuiteDetails(suiteName = ${suiteName});
 
 			TestraySuites.verifyCaseParametersInSuite(
-				caseType = "Cucumber",
+				caseType = "Manual Test, Cucumber",
 				components = "Component 1",
-				priority = 5,
-				requirements = "Requirement Summary");
+				priority = "3, 5",
+				requirements = "Requirement Summary",
+				subComponents = "Component 1");
 		}
 	}
 
 	@description = "Story ID: LPS-159467 | Test Summary: Verify if as an Administrator I am able to edit suites"
 	@priority = 5
 	test AdminCanEditSuite {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanEditSuite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that I add a new suite") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
@@ -295,7 +307,7 @@ definition {
 	@description = "Story ID: LPS-159467 | Test Summary: Verify if as an Administrator I should not be able to add a duplicate Suites"
 	@priority = 3
 	test AdminCanNotAddDuplicateSuites {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanNotAddDuplicateSuites";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that I add a new Testray Suite via API") {
 			JSONTestray.addSuite(suiteName = ${suiteName});
@@ -327,7 +339,7 @@ definition {
 	@description = "Story ID: LPS-177839 | Test Summary: Verify if as an Administrator when I search for a Suite that does not exist the system should not return that suite"
 	@priority = 3
 	test AdminCanNotSearchSuiteNonExistent {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanNotSearchSuiteNonExistent";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that suite are created via API") {
 			JSONTestray.addSuite(suiteName = ${suiteName});
@@ -363,7 +375,7 @@ definition {
 	@description = "Story ID: LPS-177839 | Test Summary: Verify if as an Administrator when I search for a Suite the system should return that suite"
 	@priority = 4
 	test AdminCanSearchSuite {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanSearchSuite";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given that two suite are created via API") {
 			JSONTestray.addSuite(suiteName = ${suiteName});
@@ -417,7 +429,7 @@ definition {
 	@description = "Story ID: LPS-159467 | Test Summary: Verify that the user can not create a suite if all the required fields are not filled in"
 	@priority = 2
 	test AdminCanViewRequiredField {
-		property test.name.skip.portal.instance = "TestraySuitesAdministrator#AdminCanViewRequiredField";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});

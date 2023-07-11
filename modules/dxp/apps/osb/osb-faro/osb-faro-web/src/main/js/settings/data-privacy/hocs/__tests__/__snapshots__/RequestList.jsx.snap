@@ -455,9 +455,10 @@ exports[`RequestList should render 1`] = `
             >
               <span>
                 <a
-                  aria-disabled="false"
-                  class="button-root btn btn-sm btn-secondary"
+                  class="btn btn-secondary btn-sm button-root"
                   href="/o/proxy/download/data-control-tasks/4?projectGroupId=23"
+                  role="button"
+                  tabindex="0"
                 >
                   Download
                 </a>
@@ -627,9 +628,10 @@ exports[`RequestList should render 1`] = `
             >
               <span>
                 <a
-                  aria-disabled="false"
-                  class="button-root btn btn-sm btn-secondary"
+                  class="btn btn-secondary btn-sm button-root"
                   href="/o/proxy/download/data-control-tasks/70?projectGroupId=23"
+                  role="button"
+                  tabindex="0"
                 >
                   Download
                 </a>
@@ -678,7 +680,7 @@ exports[`RequestList should render 1`] = `
             class="page-item disabled"
           >
             <a
-              class="button-root page-link btn btn-unstyled"
+              class="button-root btn btn-unstyled page-link"
               disabled=""
               href="/?page=0"
             >
@@ -696,7 +698,7 @@ exports[`RequestList should render 1`] = `
             class="page-item active"
           >
             <a
-              class="button-root page-link btn btn-unstyled"
+              class="button-root btn btn-unstyled page-link"
               href="/?page=1"
             >
               1
@@ -706,7 +708,7 @@ exports[`RequestList should render 1`] = `
             class="page-item disabled"
           >
             <a
-              class="button-root page-link btn btn-unstyled"
+              class="button-root btn btn-unstyled page-link"
               disabled=""
               href="/?page=2"
             >

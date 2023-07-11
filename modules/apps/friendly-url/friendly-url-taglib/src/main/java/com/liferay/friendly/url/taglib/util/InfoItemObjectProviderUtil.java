@@ -14,6 +14,7 @@
 
 package com.liferay.friendly.url.taglib.util;
 
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.osgi.util.service.Snapshot;
@@ -36,9 +37,11 @@ public class InfoItemObjectProviderUtil {
 
 			InfoItemObjectProvider<Object> infoItemObjectProvider =
 				infoItemServiceRegistry.getFirstInfoItemService(
-					InfoItemObjectProvider.class, className);
+					InfoItemObjectProvider.class, className,
+					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
-			return infoItemObjectProvider.getInfoItem(classPK);
+			return infoItemObjectProvider.getInfoItem(
+				new ClassPKInfoItemIdentifier(classPK));
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {

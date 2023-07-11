@@ -51,42 +51,23 @@ exports[`Sites Dashboard Overview render 1`] = `
                   M
                 </button>
               </div>
-              <div
-                class="spinner-root spinner-inline"
-              >
-                <span
-                  class="loading-animation loading-animation-dotted"
-                />
-              </div>
+              <span
+                aria-hidden="true"
+                class="loading-root loading-animation"
+              />
             </div>
           </div>
           <div
             class="card-body analytics-metrics"
           >
-            <div
-              class="loading-root"
-              style="min-height: 140px;"
-            >
-              <div
-                class="spinner-root spinner-fade-in"
-              >
-                <span
-                  class="loading-animation loading-animation-dotted"
-                />
-              </div>
-            </div>
-            <div
-              class="loading-root"
-              style="min-height: 375px;"
-            >
-              <div
-                class="spinner-root spinner-fade-in"
-              >
-                <span
-                  class="loading-animation loading-animation-dotted"
-                />
-              </div>
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root spacer loading-animation"
+            />
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
         </div>
       </div>
@@ -110,13 +91,10 @@ exports[`Sites Dashboard Overview render 1`] = `
             >
               Top Pages
             </h5>
-            <div
-              class="spinner-root spinner-inline"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root loading-animation"
+            />
           </div>
           <div
             class="card-body w-100 d-flex flex-column flex-grow-1 no-padding"
@@ -173,17 +151,10 @@ exports[`Sites Dashboard Overview render 1`] = `
                 </button>
               </li>
             </ul>
-            <div
-              class="loading-root display-card"
-            >
-              <div
-                class="spinner-root spinner-fade-in"
-              >
-                <span
-                  class="loading-animation loading-animation-dotted"
-                />
-              </div>
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
           <div
             class="card-footer"
@@ -219,13 +190,10 @@ exports[`Sites Dashboard Overview render 1`] = `
             >
               Acquisitions
             </h5>
-            <div
-              class="spinner-root spinner-inline"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root loading-animation"
+            />
           </div>
           <div
             class="card-body w-100 d-flex flex-column flex-grow-1 no-padding"
@@ -282,17 +250,10 @@ exports[`Sites Dashboard Overview render 1`] = `
                 </button>
               </li>
             </ul>
-            <div
-              class="loading-root display-card"
-            >
-              <div
-                class="spinner-root spinner-fade-in"
-              >
-                <span
-                  class="loading-animation loading-animation-dotted"
-                />
-              </div>
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
         </div>
       </div>
@@ -316,24 +277,18 @@ exports[`Sites Dashboard Overview render 1`] = `
             >
               Visitors by Day and Time
             </h5>
-            <div
-              class="spinner-root spinner-inline"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root loading-animation"
+            />
           </div>
           <div
             class="card-body"
           >
-            <div
-              class="spinner-root spinner-center spinner-spacer"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
         </div>
       </div>
@@ -351,13 +306,10 @@ exports[`Sites Dashboard Overview render 1`] = `
             >
               Search Terms
             </h5>
-            <div
-              class="spinner-root spinner-inline"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root loading-animation"
+            />
           </div>
           <div
             class="table-responsive table-root flex-grow-1"
@@ -381,10 +333,11 @@ exports[`Sites Dashboard Overview render 1`] = `
               </thead>
             </table>
             <div
-              class="spinner-root spinner-overlay"
+              class="loading-root overlay"
             >
               <span
-                class="loading-animation loading-animation-dotted"
+                aria-hidden="true"
+                class="loading-root center loading-animation"
               />
             </div>
           </div>
@@ -404,13 +357,10 @@ exports[`Sites Dashboard Overview render 1`] = `
             >
               Interests
             </h5>
-            <div
-              class="spinner-root spinner-inline"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root loading-animation"
+            />
           </div>
           <div
             class="table-responsive table-root flex-grow-1"
@@ -434,10 +384,11 @@ exports[`Sites Dashboard Overview render 1`] = `
               </thead>
             </table>
             <div
-              class="spinner-root spinner-overlay"
+              class="loading-root overlay"
             >
               <span
-                class="loading-animation loading-animation-dotted"
+                aria-hidden="true"
+                class="loading-root center loading-animation"
               />
             </div>
           </div>
@@ -485,25 +436,19 @@ exports[`Sites Dashboard Overview render 1`] = `
             <div
               class="d-flex"
             >
-              <div
-                class="spinner-root spinner-inline"
-              >
-                <span
-                  class="loading-animation loading-animation-dotted"
-                />
-              </div>
+              <span
+                aria-hidden="true"
+                class="loading-root loading-animation"
+              />
             </div>
           </div>
           <div
             class="card-body"
           >
-            <div
-              class="spinner-root spinner-center spinner-spacer"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
         </div>
       </div>
@@ -525,25 +470,19 @@ exports[`Sites Dashboard Overview render 1`] = `
             <div
               class="d-flex"
             >
-              <div
-                class="spinner-root spinner-inline"
-              >
-                <span
-                  class="loading-animation loading-animation-dotted"
-                />
-              </div>
+              <span
+                aria-hidden="true"
+                class="loading-root loading-animation"
+              />
             </div>
           </div>
           <div
             class="card-body"
           >
-            <div
-              class="spinner-root spinner-center spinner-spacer"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            <span
+              aria-hidden="true"
+              class="loading-root center loading-animation"
+            />
           </div>
         </div>
       </div>
@@ -581,11 +520,12 @@ exports[`Sites Dashboard Overview render 1`] = `
                   aria-activedescendant="visitors"
                   aria-expanded="true"
                   aria-haspopup="listbox"
-                  aria-owns="clay-id-1"
+                  aria-owns="clay-id-2"
                   class="form-control form-control-select form-control-select-secondary visitors-type-select show"
                   role="combobox"
                   style=""
                   tabindex="0"
+                  type="button"
                 >
                   All Visitors
                 </button>
@@ -609,20 +549,17 @@ exports[`Sites Dashboard Overview render 1`] = `
                   class="form-control form-control-select form-control-select-secondary interval-select"
                   role="combobox"
                   tabindex="0"
+                  type="button"
                 >
                   Day
                 </button>
               </div>
             </div>
-            <div
+            <span
               aria-hidden="true"
-              class="spinner-root spinner-center spinner-spacer"
+              class="loading-root center loading-animation"
               data-aria-hidden="true"
-            >
-              <span
-                class="loading-animation loading-animation-dotted"
-              />
-            </div>
+            />
           </div>
         </div>
       </div>

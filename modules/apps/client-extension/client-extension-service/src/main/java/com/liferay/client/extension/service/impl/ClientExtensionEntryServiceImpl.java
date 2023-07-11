@@ -86,7 +86,7 @@ public class ClientExtensionEntryServiceImpl
 	@Override
 	public ClientExtensionEntry
 			fetchClientExtensionEntryByExternalReferenceCode(
-				long companyId, String externalReferenceCode)
+				String externalReferenceCode, long companyId)
 		throws PortalException {
 
 		ClientExtensionEntry clientExtensionEntry =

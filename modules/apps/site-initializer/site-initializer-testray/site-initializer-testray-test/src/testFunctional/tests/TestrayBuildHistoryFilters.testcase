@@ -18,15 +18,20 @@ definition {
 	var testSiteName = "Testray 2";
 
 	setUp {
-		task ("Login and create a Testray Site") {
+		task ("Set up instance and sign in") {
 			TestCase.setUpPortalInstance();
 
 			User.firstLoginPG();
-
-			Testray.addTestraySite(siteName = ${testSiteName});
 		}
 
-		task ("create all objects: projects, routine, teams, components, cases, case type, enviroment factors, product version, build, category and options") {
+		task ("Create a new Testray Site") {
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Testray",
+				templateType = "Site Initializer");
+		}
+
+		task ("create project, routine, team, component, case, case type, enviroment factor, product version, build, category and option via API") {
 			JSONTestray.addProject(
 				projectDescription = "Project Description 1",
 				projectName = ${projectName});
@@ -75,7 +80,7 @@ definition {
 				routineName = ${routineName});
 		}
 
-		task ("Go to the build page") {
+		task ("Go to the routine page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(
@@ -89,25 +94,27 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		task ("Delete routine, case type, factor categorie and project via API, Testray Site and Client Extensions") {
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "routines",
+				objectName = ${routineName});
 
-		JSONTestrayAPI.deleteObjectViaAPI(
-			object = "routines",
-			objectName = ${routineName});
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "casetypes",
+				objectName = ${caseType});
 
-		JSONTestrayAPI.deleteObjectViaAPI(
-			object = "casetypes",
-			objectName = ${caseType});
+			JSONTestrayAPI.deleteObjectViaAPI(
+				object = "factorcategories",
+				objectName = "Category 1");
 
-		JSONTestrayAPI.deleteObjectViaAPI(
-			object = "factorcategories",
-			objectName = "Category 1");
+			JSONTestrayAPI.deleteProject(projectName = ${projectName});
 
-		JSONTestrayAPI.deleteProject(projectName = ${projectName});
+			Testray.testrayApisTearDown();
+		}
 
-		Testray.testrayApisTearDown();
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -115,6 +122,8 @@ definition {
 	@description = "Story ID: LPS-173523 | Test Summary: Verify if as an Administrator I should be able to filter build history by build name"
 	@priority = 3
 	test AdminCanFilterByBuildName {
+		property test.liferay.virtual.instance = "false";
+
 		task ("Given that the user has two builds different in the table") {
 			AssertElementPresent(
 				key_projectName = "Build 1",
@@ -149,6 +158,8 @@ definition {
 	@description = "Story ID: LPS-173523 | Test Summary: Verify if as an Administrator I should be able to filter build history by product version"
 	@priority = 3
 	test AdminCanFilterByProductVersion {
+		property test.liferay.virtual.instance = "false";
+
 		task ("Given that the user has two builds with different versions in the table") {
 			AssertElementPresent(
 				key_projectName = "7.0",
@@ -186,6 +197,8 @@ definition {
 	@description = "Story ID: LPS-173523 | Test Summary: Verify if as an Administrator I should be able to filter build history using multiple filtering options"
 	@priority = 4
 	test AdminCanFilterWithMultipleOptions {
+		property test.liferay.virtual.instance = "false";
+
 		task ("When the user select multiple options in the filter") {
 			TestrayFilter.clickFilter();
 
@@ -223,6 +236,8 @@ definition {
 	@description = "Story ID: LPS-173523 | Test Summary: Verify if as an Administrator I should not see build history that don't exist when I try filtering for them"
 	@priority = 3
 	test AdminCanNotFilterForNonExistentBuildName {
+		property test.liferay.virtual.instance = "false";
+
 		task ("Given that the user has two builds that existent in the table") {
 			AssertElementPresent(
 				key_projectName = "Build 1",
@@ -251,6 +266,8 @@ definition {
 	@description = "Story ID: LPS-173523 | Test Summary: Verify that can search for a field"
 	@priority = 2
 	test AdminCanSearchForField {
+		property test.liferay.virtual.instance = "false";
+
 		task ("When the user searches for a field called product version") {
 			TestrayFilter.clickFilter();
 

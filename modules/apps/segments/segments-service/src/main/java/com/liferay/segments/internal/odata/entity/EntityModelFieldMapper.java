@@ -280,7 +280,7 @@ public class EntityModelFieldMapper {
 
 		if (segmentsFieldCustomizer != null) {
 			return new Field(
-				fieldName,
+				segmentsFieldCustomizer.getIcon(), fieldName,
 				segmentsFieldCustomizer.getLabel(
 					fieldName, resourceBundle.getLocale()),
 				fieldType,

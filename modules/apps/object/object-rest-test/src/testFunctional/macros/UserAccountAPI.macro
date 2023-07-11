@@ -23,6 +23,17 @@ definition {
 				var api = "user-accounts/${userAccountId}/${relationshipName}/${customObjectEntryId}";
 			}
 		}
+		else if (isSet(nestedFieldsDepth)) {
+			if (!(isSet(longParameterValue))) {
+				var api = "user-accounts?nestedFieldsDepth=${nestedFieldsDepth}";
+			}
+			else if (isSet(fieldsValue)) {
+				var api = "user-accounts?${longParameterValue}\&nestedFieldsDepth=${nestedFieldsDepth}\&fields=${fieldsValue}";
+			}
+			else {
+				var api = "user-accounts?${longParameterValue}\&nestedFieldsDepth=${nestedFieldsDepth}";
+			}
+		}
 		else {
 			var api = "user-accounts";
 		}
@@ -292,6 +303,17 @@ definition {
 		return ${response};
 	}
 
+	macro getSystemObjectsWithNestedFieldAndNestedFieldsDepth {
+		var curl = UserAccountAPI._curlUserAccount(
+			fieldsValue = ${fieldsValue},
+			longParameterValue = ${longParameterValue},
+			nestedFieldsDepth = ${nestedFieldsDepth});
+
+		var response = JSONCurlUtil.get(${curl});
+
+		return ${response};
+	}
+
 	macro getUpdatedFieldOfUserAccountWithPatchRequest {
 		Variables.assertDefined(parameterList = "${fieldName},${updatedFieldValue}");
 
@@ -468,6 +490,7 @@ definition {
 				nestedField = ${nestedField},
 				numberOfRelatedObjectEntries = ${numberOfRelatedObjectEntries},
 				oneToManyChild = ${oneToManyChild},
+				relatedEntryExternalReferenceCode = ${relatedEntryExternalReferenceCode},
 				relatedEntryFieldName = ${relatedEntryFieldName},
 				userAccountId = ${userAccountId});
 		}

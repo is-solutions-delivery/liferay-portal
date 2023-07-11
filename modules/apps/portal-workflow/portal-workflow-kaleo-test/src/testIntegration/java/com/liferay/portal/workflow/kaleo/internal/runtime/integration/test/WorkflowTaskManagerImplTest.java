@@ -1117,7 +1117,7 @@ public class WorkflowTaskManagerImplTest extends BaseWorkflowManagerTestCase {
 
 		_group.setActive(false);
 
-		_groupLocalService.updateGroup(_group);
+		_group = _groupLocalService.updateGroup(_group);
 
 		int total = _searchCountByUserRoles(_siteContentReviewerUser);
 

@@ -62,6 +62,12 @@ public class NotificationQueueEntryLocalServiceImpl
 		NotificationQueueEntry notificationQueueEntry =
 			notificationContext.getNotificationQueueEntry();
 
+		NotificationType notificationType =
+			_notificationTypeServiceTracker.getNotificationType(
+				notificationQueueEntry.getType());
+
+		notificationType.validateNotificationQueueEntry(notificationContext);
+
 		notificationQueueEntry.setNotificationQueueEntryId(
 			counterLocalService.increment());
 
@@ -92,8 +98,9 @@ public class NotificationQueueEntryLocalServiceImpl
 		notificationRecipient.setClassPK(
 			notificationQueueEntry.getNotificationQueueEntryId());
 
-		_notificationRecipientLocalService.updateNotificationRecipient(
-			notificationRecipient);
+		notificationRecipient =
+			_notificationRecipientLocalService.updateNotificationRecipient(
+				notificationRecipient);
 
 		for (NotificationRecipientSetting notificationRecipientSetting :
 				notificationContext.getNotificationRecipientSettings()) {
@@ -191,7 +198,7 @@ public class NotificationQueueEntryLocalServiceImpl
 			throw new NotificationQueueEntryStatusException(
 				"Notification queue entry " +
 					notificationQueueEntry.getNotificationQueueEntryId() +
-						" has already been sent");
+						" was already sent");
 		}
 
 		NotificationType notificationType =

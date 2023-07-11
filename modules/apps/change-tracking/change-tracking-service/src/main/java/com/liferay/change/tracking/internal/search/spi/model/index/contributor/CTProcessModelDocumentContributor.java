@@ -19,8 +19,10 @@ import com.liferay.change.tracking.model.CTProcess;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.portal.background.task.model.BackgroundTask;
 import com.liferay.portal.background.task.service.BackgroundTaskLocalService;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 
 import org.osgi.service.component.annotations.Component;
@@ -38,9 +40,16 @@ public class CTProcessModelDocumentContributor
 
 	@Override
 	public void contribute(Document document, CTProcess ctProcess) {
+		document.addKeyword(Field.COMPANY_ID, ctProcess.getCompanyId());
 		document.addDate(Field.CREATE_DATE, ctProcess.getCreateDate());
-		document.addKeyword(Field.TYPE, ctProcess.getType());
-		document.addKeyword(Field.USER_ID, ctProcess.getUserId());
+
+		CTCollection ctCollection = _ctCollectionLocalService.fetchCTCollection(
+			ctProcess.getCtCollectionId());
+
+		if (ctCollection != null) {
+			document.addText(Field.DESCRIPTION, ctCollection.getDescription());
+			document.addText(Field.NAME, ctCollection.getName());
+		}
 
 		BackgroundTask backgroundTask =
 			_backgroundTaskLocalService.fetchBackgroundTask(
@@ -50,12 +59,16 @@ public class CTProcessModelDocumentContributor
 			document.addKeyword(Field.STATUS, backgroundTask.getStatus());
 		}
 
-		CTCollection ctCollection = _ctCollectionLocalService.fetchCTCollection(
-			ctProcess.getCtCollectionId());
+		document.addKeyword(Field.TYPE, ctProcess.getType());
 
-		if (ctCollection != null) {
-			document.addText(Field.DESCRIPTION, ctCollection.getDescription());
-			document.addText(Field.NAME, ctCollection.getName());
+		User user = _userLocalService.fetchUser(ctProcess.getUserId());
+
+		if (user != null) {
+			document.addKeyword(Field.USER_ID, user.getUserId());
+			document.addText(Field.USER_NAME, user.getFullName());
+		}
+		else {
+			document.addKeyword(Field.USER_ID, ctProcess.getUserId());
 		}
 	}
 
@@ -64,5 +77,8 @@ public class CTProcessModelDocumentContributor
 
 	@Reference
 	private CTCollectionLocalService _ctCollectionLocalService;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

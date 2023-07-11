@@ -143,12 +143,12 @@ public class DynamicServletRequest extends HttpServletRequestWrapper {
 		}
 
 		if (_inherit && (httpServletRequest instanceof DynamicServletRequest)) {
-			DynamicServletRequest dynamicRequest =
+			DynamicServletRequest dynamicServletRequest =
 				(DynamicServletRequest)httpServletRequest;
 
-			dynamicRequest.injectInto(this);
+			dynamicServletRequest.injectInto(this);
 
-			params = dynamicRequest.getDynamicParameterMap();
+			params = dynamicServletRequest.getDynamicParameterMap();
 
 			for (Map.Entry<String, String[]> entry : params.entrySet()) {
 				String name = entry.getKey();

@@ -16,24 +16,26 @@ package com.liferay.segments.simulation.web.internal.application.list;
 
 import com.liferay.application.list.BaseJSPPanelApp;
 import com.liferay.application.list.PanelApp;
+import com.liferay.item.selector.ItemSelector;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.product.navigation.simulation.constants.ProductNavigationSimulationConstants;
 import com.liferay.segments.configuration.provider.SegmentsConfigurationProvider;
 import com.liferay.segments.constants.SegmentsActionKeys;
 import com.liferay.segments.constants.SegmentsConstants;
 import com.liferay.segments.constants.SegmentsPortletKeys;
+import com.liferay.segments.service.SegmentsEntryLocalService;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.segments.simulation.web.internal.display.context.SegmentsSimulationDisplayContext;
 
 import java.io.IOException;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -61,10 +63,11 @@ public class SegmentsSimulationPanelApp extends BaseJSPPanelApp {
 
 	@Override
 	public String getLabel(Locale locale) {
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			"content.Language", locale, getClass());
+		if (FeatureFlagManagerUtil.isEnabled("LPS-186558")) {
+			return _language.get(locale, "page-content");
+		}
 
-		return _language.get(resourceBundle, "segments");
+		return _language.get(locale, "segments");
 	}
 
 	@Override
@@ -86,7 +89,9 @@ public class SegmentsSimulationPanelApp extends BaseJSPPanelApp {
 		httpServletRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
 			new SegmentsSimulationDisplayContext(
-				httpServletRequest, _segmentsConfigurationProvider));
+				httpServletRequest, _itemSelector, _language,
+				_segmentsConfigurationProvider, _segmentsEntryLocalService,
+				_segmentsExperienceLocalService));
 
 		return super.include(httpServletRequest, httpServletResponse);
 	}
@@ -108,6 +113,9 @@ public class SegmentsSimulationPanelApp extends BaseJSPPanelApp {
 	}
 
 	@Reference
+	private ItemSelector _itemSelector;
+
+	@Reference
 	private Language _language;
 
 	@Reference(
@@ -122,6 +130,12 @@ public class SegmentsSimulationPanelApp extends BaseJSPPanelApp {
 
 	@Reference
 	private SegmentsConfigurationProvider _segmentsConfigurationProvider;
+
+	@Reference
+	private SegmentsEntryLocalService _segmentsEntryLocalService;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.segments.simulation.web)"

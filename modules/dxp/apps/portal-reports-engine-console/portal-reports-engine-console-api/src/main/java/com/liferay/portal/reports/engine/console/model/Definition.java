@@ -60,7 +60,7 @@ public interface Definition extends DefinitionModel, PersistedModel {
 
 	public String getAttachmentsDir();
 
-	public String[] getAttachmentsFiles()
+	public String[] getAttachmentsFileNames()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 }

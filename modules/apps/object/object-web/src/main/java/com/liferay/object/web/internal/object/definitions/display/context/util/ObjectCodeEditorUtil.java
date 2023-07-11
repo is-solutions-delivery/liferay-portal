@@ -42,6 +42,25 @@ public class ObjectCodeEditorUtil {
 		boolean includeGeneralVariables, Locale locale, long objectDefinitionId,
 		Predicate<ObjectField> objectFieldPredicate) {
 
+		if (includeDDMExpressionBuilderElements) {
+			return getCodeEditorElements(
+				ddmExpressionFunctionPredicate -> true,
+				ddmExpressionOperatorPredicate -> true, includeGeneralVariables,
+				locale, objectDefinitionId, objectFieldPredicate);
+		}
+
+		return getCodeEditorElements(
+			ddmExpressionFunctionPredicate -> false,
+			ddmExpressionOperatorPredicate -> false, includeGeneralVariables,
+			locale, objectDefinitionId, objectFieldPredicate);
+	}
+
+	public static List<Map<String, Object>> getCodeEditorElements(
+		Predicate<DDMExpressionFunction> ddmExpressionFunctionPredicate,
+		Predicate<DDMExpressionOperator> ddmExpressionOperatorPredicate,
+		boolean includeGeneralVariables, Locale locale, long objectDefinitionId,
+		Predicate<ObjectField> objectFieldPredicate) {
+
 		List<Map<String, Object>> codeEditorElements = new ArrayList<>();
 
 		ObjectFieldLocalService objectFieldLocalService =
@@ -77,137 +96,30 @@ public class ObjectCodeEditorUtil {
 					"general-variables", locale));
 		}
 
-		if (includeDDMExpressionBuilderElements) {
-			Collections.addAll(
-				codeEditorElements,
+		List<Map<String, String>> ddmExpressionOperators =
+			DDMExpressionOperator.getItems(
+				ddmExpressionOperatorPredicate, locale);
+
+		if (ListUtil.isNotEmpty(ddmExpressionOperators)) {
+			codeEditorElements.add(
 				_createCodeEditorElement(
-					DDMExpressionOperator.getItems(locale), "operators",
-					locale),
+					ddmExpressionOperators, "operators", locale));
+		}
+
+		List<Map<String, String>> ddmExpressionFunctions =
+			DDMExpressionFunction.getItems(
+				ddmExpressionFunctionPredicate, locale);
+
+		if (ListUtil.isNotEmpty(ddmExpressionFunctions)) {
+			codeEditorElements.add(
 				_createCodeEditorElement(
-					DDMExpressionFunction.getItems(locale), "functions",
-					locale));
+					ddmExpressionFunctions, "functions", locale));
 		}
 
 		return codeEditorElements;
 	}
 
-	public static List<Map<String, Object>> getCodeEditorElements(
-		Predicate<DDMExpressionOperator> ddmExpressionOperatorPredicate,
-		Locale locale, long objectDefinitionId,
-		Predicate<ObjectField> objectFieldPredicate) {
-
-		ObjectFieldLocalService objectFieldLocalService =
-			_objectFieldLocalServiceSnapshot.get();
-
-		return ListUtil.fromArray(
-			_createCodeEditorElement(
-				TransformUtil.transform(
-					ListUtil.filter(
-						objectFieldLocalService.getObjectFields(
-							objectDefinitionId),
-						objectFieldPredicate),
-					objectField -> HashMapBuilder.put(
-						"content", objectField.getName()
-					).put(
-						"helpText", StringPool.BLANK
-					).put(
-						"label", objectField.getLabel(locale)
-					).build()),
-				"fields", locale),
-			_createCodeEditorElement(
-				DDMExpressionOperator.getItems(
-					ddmExpressionOperatorPredicate, locale),
-				"operators", locale));
-	}
-
-	public enum DDMExpressionOperator {
-
-		AND(
-			"AND",
-			"this-is-a-type-of-coordinating-conjunction-that-is-commonly-" +
-				"used-to-indicate-a-dependent-relationship",
-			"and"),
-		DIVIDED_BY(
-			"field_name / field_name2",
-			"divide-one-numeric-field-by-another-to-create-an-expression",
-			"divided-by"),
-		MINUS(
-			"field_name - field_name2",
-			"subtract-numeric-fields-from-one-another-to-create-an-expression",
-			"minus"),
-		OR(
-			"OR",
-			"this-is-a-type-of-coordinating-conjunction-that-indicates-an-" +
-				"independent-relationship",
-			"or"),
-		PLUS(
-			"field_name + field_name2",
-			"add-numeric-fields-to-create-an-expression", "plus"),
-		TIMES(
-			"field_name * field_name2",
-			"multiply-numeric-fields-to-create-an-expression", "times");
-
-		public static List<Map<String, String>> getItems(Locale locale) {
-			return getItems(null, locale);
-		}
-
-		public static List<Map<String, String>> getItems(
-			Predicate<DDMExpressionOperator> ddmExpressionOperatorPredicate,
-			Locale locale) {
-
-			List<Map<String, String>> values = new ArrayList<>();
-
-			for (DDMExpressionOperator ddmExpressionOperator : values()) {
-				if ((ddmExpressionOperatorPredicate == null) ||
-					ddmExpressionOperatorPredicate.test(
-						ddmExpressionOperator)) {
-
-					values.add(
-						HashMapBuilder.put(
-							"content", ddmExpressionOperator._content
-						).put(
-							"helpText",
-							LanguageUtil.get(
-								locale, ddmExpressionOperator._helpTextKey)
-						).put(
-							"label",
-							LanguageUtil.get(locale, ddmExpressionOperator._key)
-						).build());
-				}
-			}
-
-			return values;
-		}
-
-		private DDMExpressionOperator(
-			String content, String helpTextKey, String key) {
-
-			_content = content;
-			_helpTextKey = helpTextKey;
-			_key = key;
-		}
-
-		private String _content;
-		private String _helpTextKey;
-		private String _key;
-
-	}
-
-	private static Map<String, Object> _createCodeEditorElement(
-		List<Map<String, String>> items, String key, Locale locale) {
-
-		return HashMapBuilder.<String, Object>put(
-			"items", items
-		).put(
-			"label", LanguageUtil.get(locale, key)
-		).build();
-	}
-
-	private static final Snapshot<ObjectFieldLocalService>
-		_objectFieldLocalServiceSnapshot = new Snapshot<>(
-			ObjectCodeEditorUtil.class, ObjectFieldLocalService.class);
-
-	private enum DDMExpressionFunction {
+	public enum DDMExpressionFunction {
 
 		COMPARE_DATES(
 			"compareDates(field_name, parameter)",
@@ -314,7 +226,10 @@ public class ObjectCodeEditorUtil {
 				"that-can-be-used-with-other-validation-functions",
 			"sum");
 
-		public static List<Map<String, String>> getItems(Locale locale) {
+		public static List<Map<String, String>> getItems(
+			Predicate<DDMExpressionFunction> ddmExpressionFunctionPredicate,
+			Locale locale) {
+
 			List<Map<String, String>> values = new ArrayList<>();
 
 			for (DDMExpressionFunction ddmExpressionFunction : values()) {
@@ -324,17 +239,22 @@ public class ObjectCodeEditorUtil {
 					continue;
 				}
 
-				values.add(
-					HashMapBuilder.put(
-						"content", ddmExpressionFunction._content
-					).put(
-						"helpText",
-						LanguageUtil.get(
-							locale, ddmExpressionFunction._helpTextKey)
-					).put(
-						"label",
-						LanguageUtil.get(locale, ddmExpressionFunction._key)
-					).build());
+				if ((ddmExpressionFunctionPredicate == null) ||
+					ddmExpressionFunctionPredicate.test(
+						ddmExpressionFunction)) {
+
+					values.add(
+						HashMapBuilder.put(
+							"content", ddmExpressionFunction._content
+						).put(
+							"helpText",
+							LanguageUtil.get(
+								locale, ddmExpressionFunction._helpTextKey)
+						).put(
+							"label",
+							LanguageUtil.get(locale, ddmExpressionFunction._key)
+						).build());
+				}
 			}
 
 			return values;
@@ -353,5 +273,88 @@ public class ObjectCodeEditorUtil {
 		private String _key;
 
 	}
+
+	public enum DDMExpressionOperator {
+
+		AND(
+			"AND",
+			"this-is-a-type-of-coordinating-conjunction-that-is-commonly-" +
+				"used-to-indicate-a-dependent-relationship",
+			"and"),
+		DIVIDED_BY(
+			"field_name1 / field_name2",
+			"divide-one-numeric-field-by-another-to-create-an-expression",
+			"divided-by"),
+		MINUS(
+			"field_name1 - field_name2",
+			"subtract-numeric-fields-from-one-another-to-create-an-expression",
+			"minus"),
+		OR(
+			"OR",
+			"this-is-a-type-of-coordinating-conjunction-that-indicates-an-" +
+				"independent-relationship",
+			"or"),
+		PLUS(
+			"field_name1 + field_name2",
+			"add-numeric-fields-to-create-an-expression", "plus"),
+		TIMES(
+			"field_name1 * field_name2",
+			"multiply-numeric-fields-to-create-an-expression", "times");
+
+		public static List<Map<String, String>> getItems(
+			Predicate<DDMExpressionOperator> ddmExpressionOperatorPredicate,
+			Locale locale) {
+
+			List<Map<String, String>> values = new ArrayList<>();
+
+			for (DDMExpressionOperator ddmExpressionOperator : values()) {
+				if ((ddmExpressionOperatorPredicate == null) ||
+					ddmExpressionOperatorPredicate.test(
+						ddmExpressionOperator)) {
+
+					values.add(
+						HashMapBuilder.put(
+							"content", ddmExpressionOperator._content
+						).put(
+							"helpText",
+							LanguageUtil.get(
+								locale, ddmExpressionOperator._helpTextKey)
+						).put(
+							"label",
+							LanguageUtil.get(locale, ddmExpressionOperator._key)
+						).build());
+				}
+			}
+
+			return values;
+		}
+
+		private DDMExpressionOperator(
+			String content, String helpTextKey, String key) {
+
+			_content = content;
+			_helpTextKey = helpTextKey;
+			_key = key;
+		}
+
+		private String _content;
+		private String _helpTextKey;
+		private String _key;
+
+	}
+
+	private static Map<String, Object> _createCodeEditorElement(
+		List<Map<String, String>> items, String key, Locale locale) {
+
+		return HashMapBuilder.<String, Object>put(
+			"items", items
+		).put(
+			"label", LanguageUtil.get(locale, key)
+		).build();
+	}
+
+	private static final Snapshot<ObjectFieldLocalService>
+		_objectFieldLocalServiceSnapshot = new Snapshot<>(
+			ObjectCodeEditorUtil.class, ObjectFieldLocalService.class);
 
 }

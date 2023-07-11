@@ -68,8 +68,9 @@ public class PushNotificationsDeviceServiceImpl
 		else if (!platform.equals("sms")) {
 			pushNotificationsDevice.setUserId(getGuestOrUserId());
 
-			pushNotificationsDeviceLocalService.updatePushNotificationsDevice(
-				pushNotificationsDevice);
+			pushNotificationsDevice =
+				pushNotificationsDeviceLocalService.
+					updatePushNotificationsDevice(pushNotificationsDevice);
 		}
 
 		return pushNotificationsDevice;

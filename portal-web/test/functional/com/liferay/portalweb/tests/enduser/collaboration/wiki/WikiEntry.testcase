@@ -24,9 +24,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -164,16 +164,6 @@ definition {
 		WikiPage.viewPG(
 			wikiPageContentTable = "true",
 			wikiPageTitle = "Wiki Page Title");
-	}
-
-	@description = "This is a test for LPS-136995. It checks that page versions can be compared."
-	@ignore = "Test Stub"
-	@priority = 3
-	test CanComparePageVersions {
-		property portal.acceptance = "false";
-
-		// TODO LPS-136995 CanComparePageVersions pending implementation
-
 	}
 
 	@description = "This is a test for LPS-136996. It checks that a minor change can be created for a page."

@@ -22,6 +22,7 @@ import com.liferay.commerce.product.content.search.web.internal.configuration.CP
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -31,8 +32,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 
 import java.math.BigDecimal;
-
-import java.util.Optional;
 
 import javax.portlet.RenderRequest;
 
@@ -132,25 +131,28 @@ public class CPPriceRangeFacetsDisplayContext {
 			String fieldName, String fieldValue)
 		throws PortalException {
 
-		Optional<String[]> parameterValuesOptional =
+		return ArrayUtil.contains(
+			_portletSharedSearchResponse.getParameterValues(
+				fieldName, _renderRequest),
+			fieldValue);
+	}
+
+	public boolean isShowClear(String fieldName) {
+		String[] parameterValues =
 			_portletSharedSearchResponse.getParameterValues(
 				fieldName, _renderRequest);
 
-		if (parameterValuesOptional.isPresent()) {
-			String[] parameterValues = parameterValuesOptional.get();
-
-			return ArrayUtil.contains(parameterValues, fieldValue);
+		if (parameterValues != null) {
+			return true;
 		}
 
 		return false;
 	}
 
-	public boolean isShowClear(String fieldName) {
-		Optional<String[]> parameterValuesOptional =
-			_portletSharedSearchResponse.getParameterValues(
-				fieldName, _renderRequest);
+	public boolean isStagingEnabled() {
+		Group group = _themeDisplay.getScopeGroup();
 
-		return parameterValuesOptional.isPresent();
+		return group.isStaged();
 	}
 
 	public boolean showInputRange() {

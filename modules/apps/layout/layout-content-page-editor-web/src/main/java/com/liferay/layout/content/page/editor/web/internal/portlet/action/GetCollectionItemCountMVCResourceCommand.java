@@ -152,18 +152,16 @@ public class GetCollectionItemCountMVCResourceCommand
 			(InfoItemObjectProvider<Object>)
 				_infoItemServiceRegistry.getFirstInfoItemService(
 					InfoItemObjectProvider.class,
-					_portal.getClassName(classNameId));
+					_portal.getClassName(classNameId),
+					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
 		if (infoItemObjectProvider == null) {
 			return null;
 		}
 
-		ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
-			new ClassPKInfoItemIdentifier(classPK);
-
 		try {
 			return infoItemObjectProvider.getInfoItem(
-				classPKInfoItemIdentifier);
+				new ClassPKInfoItemIdentifier(classPK));
 		}
 		catch (NoSuchInfoItemException noSuchInfoItemException) {
 			if (_log.isDebugEnabled()) {

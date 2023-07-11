@@ -13,12 +13,12 @@
  */
 
 const API_URL = {
-	FDS_DATE_FILTERS: '/o/c/fdsdatefilters',
-	FDS_DYNAMIC_FILTERS: '/o/c/fdsdynamicfilters',
-	FDS_ENTRIES: '/o/c/fdsentries',
-	FDS_FIELDS: '/o/c/fdsfields',
-	FDS_SORTS: '/o/c/fdssorts',
-	FDS_VIEWS: '/o/c/fdsviews',
+	FDS_DATE_FILTERS: '/o/data-set-manager/date-filters',
+	FDS_DYNAMIC_FILTERS: '/o/data-set-manager/dynamic-filters',
+	FDS_ENTRIES: '/o/data-set-manager/entries',
+	FDS_FIELDS: '/o/data-set-manager/fields',
+	FDS_SORTS: '/o/data-set-manager/sorts',
+	FDS_VIEWS: '/o/data-set-manager/views',
 };
 
 const FUZZY_OPTIONS = {
@@ -41,11 +41,20 @@ const OBJECT_RELATIONSHIP = {
 	FDS_VIEW_FDS_SORT_ID: 'r_fdsViewFDSSortRelationship_c_fdsViewId',
 } as const;
 
-const PAGINATION_PROPS = {
+const FDS_DEFAULT_PROPS = {
 	pagination: {
 		deltas: [{label: 4}, {label: 8}, {label: 20}, {label: 40}, {label: 60}],
 		initialDelta: 8,
 	},
+	style: 'fluid' as const,
 };
 
-export {API_URL, FUZZY_OPTIONS, OBJECT_RELATIONSHIP, PAGINATION_PROPS};
+const ALLOWED_ENDPOINTS_PARAMETERS = ['scopeKey', 'siteId', 'userId'];
+
+export {
+	API_URL,
+	FDS_DEFAULT_PROPS,
+	FUZZY_OPTIONS,
+	OBJECT_RELATIONSHIP,
+	ALLOWED_ENDPOINTS_PARAMETERS,
+};

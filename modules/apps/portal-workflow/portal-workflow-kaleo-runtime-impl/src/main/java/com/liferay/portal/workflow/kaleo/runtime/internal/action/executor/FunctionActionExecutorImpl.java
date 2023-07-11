@@ -14,6 +14,8 @@
 
 package com.liferay.portal.workflow.kaleo.runtime.internal.action.executor;
 
+import com.liferay.asset.kernel.model.AssetRenderer;
+import com.liferay.object.model.ObjectEntry;
 import com.liferay.osgi.util.configuration.ConfigurationFactoryUtil;
 import com.liferay.portal.catapult.PortalCatapult;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -23,8 +25,18 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Http;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.WorkflowHandler;
+import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTaskAssignee;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManager;
+import com.liferay.portal.vulcan.dto.converter.DTOConverter;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.workflow.kaleo.model.KaleoAction;
 import com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken;
 import com.liferay.portal.workflow.kaleo.runtime.ExecutionContext;
@@ -32,6 +44,8 @@ import com.liferay.portal.workflow.kaleo.runtime.action.executor.ActionExecutor;
 import com.liferay.portal.workflow.kaleo.runtime.action.executor.ActionExecutorException;
 import com.liferay.portal.workflow.kaleo.runtime.internal.configuration.FunctionActionExecutorImplConfiguration;
 import com.liferay.portal.workflow.kaleo.runtime.util.ScriptingContextBuilder;
+
+import java.io.Serializable;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +60,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.portal.workflow.kaleo.runtime.internal.configuration.FunctionActionExecutorImplConfiguration",
-	factory = "com.liferay.object.internal.action.executor.FunctionObjectActionExecutorImpl",
+	factory = "com.liferay.portal.workflow.kaleo.runtime.internal.action.executor.FunctionActionExecutorImpl",
 	service = ActionExecutor.class
 )
 public class FunctionActionExecutorImpl implements ActionExecutor {
@@ -67,13 +81,13 @@ public class FunctionActionExecutorImpl implements ActionExecutor {
 	}
 
 	@Override
-	public String[] getActionExecutorKeys() {
-		return _actionExecutorKeys;
+	public String getActionExecutorKey() {
+		return _actionExecutorKey;
 	}
 
 	@Activate
 	protected void activate(Map<String, Object> properties) throws Exception {
-		_actionExecutorKeys[0] = (String)properties.get(KEY);
+		_actionExecutorKey = (String)properties.get(KEY);
 		_companyId = ConfigurationFactoryUtil.getCompanyId(
 			_companyLocalService, properties);
 		_functionActionExecutorImplConfiguration =
@@ -179,8 +193,17 @@ public class FunctionActionExecutorImpl implements ActionExecutor {
 			return;
 		}
 
+		payloadJSONObject.put(
+			"entryDTO",
+			_getEntryDTOJSONObject(
+				(String)inputObjects.get(
+					WorkflowConstants.CONTEXT_ENTRY_CLASS_NAME),
+				GetterUtil.getLong(
+					inputObjects.get(WorkflowConstants.CONTEXT_ENTRY_CLASS_PK)),
+				executionContext));
+
 		_portalCatapult.launch(
-			_companyId,
+			_companyId, Http.Method.POST,
 			_functionActionExecutorImplConfiguration.
 				oAuth2ApplicationExternalReferenceCode(),
 			payloadJSONObject,
@@ -188,14 +211,89 @@ public class FunctionActionExecutorImpl implements ActionExecutor {
 			workflowTaskAssignee.getAssigneeClassPK());
 	}
 
+	private JSONObject _getEntryDTOJSONObject(
+			String className, long classPK, ExecutionContext executionContext)
+		throws Exception {
+
+		WorkflowHandler<?> workflowHandler =
+			WorkflowHandlerRegistryUtil.getWorkflowHandler(className);
+
+		AssetRenderer<?> assetRenderer = workflowHandler.getAssetRenderer(
+			classPK);
+
+		if (assetRenderer == null) {
+			return null;
+		}
+
+		Serializable assetObjectSerializable =
+			(Serializable)assetRenderer.getAssetObject();
+
+		if (assetObjectSerializable == null) {
+			return null;
+		}
+
+		String dtoClassName = assetRenderer.getClassName();
+
+		if (assetObjectSerializable instanceof ObjectEntry) {
+			dtoClassName = ObjectEntry.class.getName();
+		}
+
+		DTOConverter<Serializable, Serializable> dtoConverter =
+			(DTOConverter<Serializable, Serializable>)
+				_dtoConverterRegistry.getDTOConverter(dtoClassName);
+
+		if (dtoConverter == null) {
+			return null;
+		}
+
+		ServiceContext serviceContext = executionContext.getServiceContext();
+
+		DTOConverterContext dtoConverterContext =
+			new DefaultDTOConverterContext(
+				false, null, null, assetRenderer.getClassPK(),
+				serviceContext.getLocale(), null, null);
+
+		Serializable dtoSerializable = dtoConverter.toDTO(
+			dtoConverterContext, assetObjectSerializable);
+
+		if (dtoSerializable == null) {
+			dtoSerializable = dtoConverter.toDTO(dtoConverterContext);
+		}
+
+		if (dtoSerializable == null) {
+			return null;
+		}
+
+		JSONObject entryDTOJSONObject = _jsonFactory.createJSONObject(
+			dtoSerializable.toString());
+
+		if (!(assetObjectSerializable instanceof ObjectEntry)) {
+			return entryDTOJSONObject;
+		}
+
+		JSONObject propertiesJSONObject = entryDTOJSONObject.getJSONObject(
+			"properties");
+
+		for (String key : propertiesJSONObject.keySet()) {
+			entryDTOJSONObject.put(key, propertiesJSONObject.get(key));
+		}
+
+		entryDTOJSONObject.remove("properties");
+
+		return entryDTOJSONObject;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		FunctionActionExecutorImpl.class);
 
-	private final String[] _actionExecutorKeys = new String[1];
+	private String _actionExecutorKey;
 	private long _companyId;
 
 	@Reference
 	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private DTOConverterRegistry _dtoConverterRegistry;
 
 	private FunctionActionExecutorImplConfiguration
 		_functionActionExecutorImplConfiguration;

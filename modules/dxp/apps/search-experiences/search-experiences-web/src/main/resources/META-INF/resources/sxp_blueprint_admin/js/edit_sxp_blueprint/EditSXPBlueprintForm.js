@@ -102,6 +102,10 @@ function EditSXPBlueprintForm({
 	const controllerRef = useRef();
 
 	const [errors, setErrors] = useState([]);
+	const [
+		isTitleAndDescriptionEdited,
+		setIsTitleAndDescriptionEdited,
+	] = useState(false);
 	const [previewInfo, setPreviewInfo] = useState(() => ({
 		loading: false,
 		results: {},
@@ -597,9 +601,14 @@ function EditSXPBlueprintForm({
 		setTab(tab);
 	};
 
-	const _handleChangeTitleAndDescription = ({description, title}) => {
-		formik.setFieldValue('description_i18n', description);
-		formik.setFieldValue('title_i18n', title);
+	const _handleChangeTitleAndDescription = ({
+		description_i18n,
+		title_i18n,
+	}) => {
+		formik.setFieldValue('description_i18n', description_i18n);
+		formik.setFieldValue('title_i18n', title_i18n);
+
+		setIsTitleAndDescriptionEdited(true);
 	};
 
 	const _handleCloseSidebar = () => {
@@ -1032,6 +1041,7 @@ function EditSXPBlueprintForm({
 				tab={tab}
 				tabs={TABS}
 				title={initialTitle}
+				titleAndDescriptionEdited={isTitleAndDescriptionEdited}
 				titleI18n={formik.values.title_i18n}
 			>
 				<ClayToolbar.Item>

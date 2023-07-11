@@ -26,7 +26,6 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRe
 import com.liferay.portal.search.web.search.request.SearchSettings;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
@@ -84,27 +83,23 @@ public class PortletSharedSearchResponseImpl
 	}
 
 	@Override
-	public Optional<String> getParameter(
-		String name, RenderRequest renderRequest) {
-
-		return Optional.ofNullable(
-			_portletSharedRequestHelper.getParameter(name, renderRequest));
+	public String getParameter(String name, RenderRequest renderRequest) {
+		return _portletSharedRequestHelper.getParameter(name, renderRequest);
 	}
 
 	@Override
-	public Optional<String[]> getParameterValues(
+	public String[] getParameterValues(
 		String name, RenderRequest renderRequest) {
 
-		return Optional.ofNullable(
-			_portletSharedRequestHelper.getParameterValues(
-				name, renderRequest));
+		return _portletSharedRequestHelper.getParameterValues(
+			name, renderRequest);
 	}
 
 	@Override
-	public Optional<PortletPreferences> getPortletPreferences(
+	public PortletPreferences getPortletPreferences(
 		RenderRequest renderRequest) {
 
-		return Optional.ofNullable(renderRequest.getPreferences());
+		return renderRequest.getPreferences();
 	}
 
 	@Override

@@ -10,7 +10,7 @@ definition {
 
 		User.firstLoginPG();
 
-		JSONGroup.addGroup(groupName = "Test Site Name");
+		HeadlessSite.addSite(siteName = "Test Site Name");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
 
@@ -22,9 +22,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -108,6 +108,7 @@ definition {
 	@description = "Verify if geolocation field can repeat field (clicking on +) when it is set as repeatable."
 	@priority = 4
 	test RepeatableGeolocationOnRenderer {
+		property ci.retries.disabled = "true";
 		property portal.acceptance = "false";
 
 		DataEngine.toggleFieldRepeatable(fieldFieldLabel = "Geolocation");

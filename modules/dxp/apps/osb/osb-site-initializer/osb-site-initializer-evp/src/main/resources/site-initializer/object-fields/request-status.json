@@ -28,6 +28,67 @@
 										"key": "awaitingApprovalOnEvp"
 									},
 									{
+										"key": "awaitingApprovalOnManager"
+									},
+									{
+										"key": "awaitCompanyVerification"
+									},
+									{
+										"key": "awaitingFinanceReview"
+									},
+									{
+										"key": "awaitingPaymentConfirmation"
+									},
+									{
+										"key": "awaitingMoreInfoFromEmployee"
+									},
+									{
+										"key": "awaitingEmployeeProofOfExpenses"
+									}
+								]
+							},
+							{
+								"key": "closed",
+								"objectStateTransitions": [
+									{
+										"key": "rejected"
+									},
+									{
+										"key": "awaitingApprovalOnEvp"
+									},
+									{
+										"key": "awaitingApprovalOnManager"
+									},
+									{
+										"key": "awaitCompanyVerification"
+									},
+									{
+										"key": "awaitingFinanceReview"
+									},
+									{
+										"key": "awaitingPaymentConfirmation"
+									},
+									{
+										"key": "awaitingMoreInfoFromEmployee"
+									},
+									{
+										"key": "awaitingEmployeeProofOfExpenses"
+									}
+								]
+							},
+							{
+								"key": "awaitingApprovalOnEvp",
+								"objectStateTransitions": [
+									{
+										"key": "rejected"
+									},
+									{
+										"key": "closed"
+									},
+									{
+										"key": "awaitingApprovalOnManager"
+									},
+									{
 										"key": "awaitCompanyVerification"
 									},
 									{
@@ -42,10 +103,13 @@
 								]
 							},
 							{
-								"key": "closed",
+								"key": "awaitingApprovalOnManager",
 								"objectStateTransitions": [
 									{
 										"key": "rejected"
+									},
+									{
+										"key": "closed"
 									},
 									{
 										"key": "awaitingApprovalOnEvp"
@@ -61,29 +125,9 @@
 									},
 									{
 										"key": "awaitingMoreInfoFromEmployee"
-									}
-								]
-							},
-							{
-								"key": "awaitingApprovalOnEvp",
-								"objectStateTransitions": [
-									{
-										"key": "rejected"
 									},
 									{
-										"key": "closed"
-									},
-									{
-										"key": "awaitCompanyVerification"
-									},
-									{
-										"key": "awaitingFinanceReview"
-									},
-									{
-										"key": "awaitingPaymentConfirmation"
-									},
-									{
-										"key": "awaitingMoreInfoFromEmployee"
+										"key": "awaitingEmployeeProofOfExpenses"
 									}
 								]
 							},
@@ -100,6 +144,9 @@
 										"key": "awaitingApprovalOnEvp"
 									},
 									{
+										"key": "awaitingApprovalOnManager"
+									},
+									{
 										"key": "awaitingFinanceReview"
 									},
 									{
@@ -107,6 +154,9 @@
 									},
 									{
 										"key": "awaitingMoreInfoFromEmployee"
+									},
+									{
+										"key": "awaitingEmployeeProofOfExpenses"
 									}
 								]
 							},
@@ -123,6 +173,9 @@
 										"key": "awaitingApprovalOnEvp"
 									},
 									{
+										"key": "awaitingApprovalOnManager"
+									},
+									{
 										"key": "awaitCompanyVerification"
 									},
 									{
@@ -130,6 +183,9 @@
 									},
 									{
 										"key": "awaitingMoreInfoFromEmployee"
+									},
+									{
+										"key": "awaitingEmployeeProofOfExpenses"
 									}
 								]
 							},
@@ -146,6 +202,9 @@
 										"key": "awaitingApprovalOnEvp"
 									},
 									{
+										"key": "awaitingApprovalOnManager"
+									},
+									{
 										"key": "awaitCompanyVerification"
 									},
 									{
@@ -153,11 +212,43 @@
 									},
 									{
 										"key": "awaitingMoreInfoFromEmployee"
+									},
+									{
+										"key": "awaitingEmployeeProofOfExpenses"
 									}
 								]
 							},
 							{
 								"key": "awaitingMoreInfoFromEmployee",
+								"objectStateTransitions": [
+									{
+										"key": "rejected"
+									},
+									{
+										"key": "closed"
+									},
+									{
+										"key": "awaitingApprovalOnEvp"
+									},
+									{
+										"key": "awaitingApprovalOnManager"
+									},
+									{
+										"key": "awaitCompanyVerification"
+									},
+									{
+										"key": "awaitingFinanceReview"
+									},
+									{
+										"key": "awaitingPaymentConfirmation"
+									},
+									{
+										"key": "awaitingEmployeeProofOfExpenses"
+									}
+								]
+							},
+							{
+								"key": "awaitingEmployeeProofOfExpenses",
 								"objectStateTransitions": [
 									{
 										"key": "rejected"
@@ -176,6 +267,9 @@
 									},
 									{
 										"key": "awaitingPaymentConfirmation"
+									},
+									{
+										"key": "awaitingMoreInfoFromEmployee"
 									}
 								]
 							}

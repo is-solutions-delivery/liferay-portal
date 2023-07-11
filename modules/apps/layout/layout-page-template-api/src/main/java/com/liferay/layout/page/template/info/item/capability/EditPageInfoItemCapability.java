@@ -19,18 +19,22 @@ import com.liferay.info.item.creator.InfoItemCreator;
 import com.liferay.info.item.provider.InfoItemDetailsProvider;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemFormProvider;
+import com.liferay.info.item.updater.InfoItemFieldValuesUpdater;
 
 /**
  * @author Eudaldo Alonso
  */
 public interface EditPageInfoItemCapability extends InfoItemCapability {
 
-	public static final String KEY = EditPageInfoItemCapability.class.getName();
+	public static final String KEY =
+		"com.liferay.layout.page.template.info.item.capability." +
+			"EditPageInfoItemCapability";
 
 	public static final Class<?>[] REQUIRED_INFO_ITEM_SERVICE_CLASSES =
 		new Class<?>[] {
 			InfoItemCreator.class, InfoItemDetailsProvider.class,
-			InfoItemFormProvider.class, InfoItemFieldValuesProvider.class
+			InfoItemFieldValuesProvider.class, InfoItemFieldValuesUpdater.class,
+			InfoItemFormProvider.class
 		};
 
 }

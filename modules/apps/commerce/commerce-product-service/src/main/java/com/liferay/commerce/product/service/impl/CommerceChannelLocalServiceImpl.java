@@ -14,10 +14,16 @@
 
 package com.liferay.commerce.product.service.impl;
 
+import com.liferay.account.constants.AccountConstants;
+import com.liferay.account.exception.AccountEntryStatusException;
+import com.liferay.account.exception.AccountEntryTypeException;
+import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.pricing.constants.CommercePricingConstants;
 import com.liferay.commerce.product.channel.CommerceChannelTypeRegistry;
 import com.liferay.commerce.product.constants.CommerceChannelConstants;
 import com.liferay.commerce.product.exception.CommerceChannelTypeException;
+import com.liferay.commerce.product.exception.DuplicateCommerceChannelAccountEntryIdException;
 import com.liferay.commerce.product.exception.DuplicateCommerceChannelException;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.model.CommerceChannelTable;
@@ -58,8 +64,11 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,8 +93,9 @@ public class CommerceChannelLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CommerceChannel addCommerceChannel(
-			String externalReferenceCode, long siteGroupId, String name,
-			String type, UnicodeProperties typeSettingsUnicodeProperties,
+			String externalReferenceCode, long accountEntryId, long siteGroupId,
+			String name, String type,
+			UnicodeProperties typeSettingsUnicodeProperties,
 			String commerceCurrencyCode, ServiceContext serviceContext)
 		throws PortalException {
 
@@ -106,6 +116,7 @@ public class CommerceChannelLocalServiceImpl
 			}
 		}
 
+		_validateAccountEntry(0, accountEntryId);
 		_validateType(type);
 
 		long commerceChannelId = counterLocalService.increment();
@@ -116,6 +127,7 @@ public class CommerceChannelLocalServiceImpl
 		commerceChannel.setCompanyId(user.getCompanyId());
 		commerceChannel.setUserId(user.getUserId());
 		commerceChannel.setUserName(user.getFullName());
+		commerceChannel.setAccountEntryId(accountEntryId);
 		commerceChannel.setSiteGroupId(siteGroupId);
 		commerceChannel.setName(name);
 		commerceChannel.setType(type);
@@ -156,8 +168,8 @@ public class CommerceChannelLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CommerceChannel addOrUpdateCommerceChannel(
-			long userId, String externalReferenceCode, long siteGroupId,
-			String name, String type,
+			long userId, String externalReferenceCode, long accountEntryId,
+			long siteGroupId, String name, String type,
 			UnicodeProperties typeSettingsUnicodeProperties,
 			String commerceCurrencyCode, ServiceContext serviceContext)
 		throws PortalException {
@@ -179,14 +191,16 @@ public class CommerceChannelLocalServiceImpl
 
 		if (commerceChannel == null) {
 			return commerceChannelLocalService.addCommerceChannel(
-				externalReferenceCode, siteGroupId, name, type,
+				externalReferenceCode, accountEntryId, siteGroupId, name, type,
 				typeSettingsUnicodeProperties, commerceCurrencyCode,
 				serviceContext);
 		}
 
 		return commerceChannelLocalService.updateCommerceChannel(
-			commerceChannel.getCommerceChannelId(), siteGroupId, name, type,
-			typeSettingsUnicodeProperties, commerceCurrencyCode);
+			commerceChannel.getCommerceChannelId(), accountEntryId, siteGroupId,
+			name, type, typeSettingsUnicodeProperties, commerceCurrencyCode,
+			commerceChannel.getPriceDisplayType(),
+			commerceChannel.isDiscountsTargetNetPrice());
 	}
 
 	@Indexable(type = IndexableType.DELETE)
@@ -352,6 +366,13 @@ public class CommerceChannelLocalServiceImpl
 	}
 
 	@Override
+	public List<CommerceChannel> getCommerceChannelsByAccountEntryId(
+		long accountEntryId) {
+
+		return commerceChannelPersistence.findByAccountEntryId(accountEntryId);
+	}
+
+	@Override
 	public int getCommerceChannelsCount(long companyId, String keywords)
 		throws PortalException {
 
@@ -400,45 +421,14 @@ public class CommerceChannelLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CommerceChannel updateCommerceChannel(
-			long commerceChannelId, long siteGroupId, String name, String type,
-			UnicodeProperties typeSettingsUnicodeProperties,
-			String commerceCurrencyCode)
-		throws PortalException {
-
-		_validateType(type);
-
-		CommerceChannel commerceChannel =
-			commerceChannelPersistence.findByPrimaryKey(commerceChannelId);
-
-		long oldSiteGroupId = commerceChannel.getSiteGroupId();
-
-		commerceChannel.setSiteGroupId(siteGroupId);
-		commerceChannel.setName(name);
-		commerceChannel.setType(type);
-		commerceChannel.setTypeSettingsUnicodeProperties(
-			typeSettingsUnicodeProperties);
-		commerceChannel.setCommerceCurrencyCode(commerceCurrencyCode);
-
-		commerceChannel = commerceChannelPersistence.update(commerceChannel);
-
-		if (CommerceChannelConstants.CHANNEL_TYPE_SITE.equals(type) &&
-			(siteGroupId != oldSiteGroupId)) {
-
-			_updateGroupTypeSettings(commerceChannel.getGroup(), siteGroupId);
-		}
-
-		return commerceChannel;
-	}
-
-	@Indexable(type = IndexableType.REINDEX)
-	@Override
-	public CommerceChannel updateCommerceChannel(
-			long commerceChannelId, long siteGroupId, String name, String type,
+			long commerceChannelId, long accountEntryId, long siteGroupId,
+			String name, String type,
 			UnicodeProperties typeSettingsUnicodeProperties,
 			String commerceCurrencyCode, String priceDisplayType,
 			boolean discountsTargetNetPrice)
 		throws PortalException {
 
+		_validateAccountEntry(commerceChannelId, accountEntryId);
 		_validateType(type);
 
 		CommerceChannel commerceChannel =
@@ -446,6 +436,7 @@ public class CommerceChannelLocalServiceImpl
 
 		long oldSiteGroupId = commerceChannel.getSiteGroupId();
 
+		commerceChannel.setAccountEntryId(accountEntryId);
 		commerceChannel.setSiteGroupId(siteGroupId);
 		commerceChannel.setName(name);
 		commerceChannel.setType(type);
@@ -601,6 +592,54 @@ public class CommerceChannelLocalServiceImpl
 			group.getGroupId(), typeSettingsUnicodeProperties.toString());
 	}
 
+	private void _validateAccountEntry(
+			long commerceChannelId, long accountEntryId)
+		throws PortalException {
+
+		if (accountEntryId == 0) {
+			return;
+		}
+
+		AccountEntry accountEntry = _accountEntryLocalService.getAccountEntry(
+			accountEntryId);
+
+		if (!StringUtil.equals(
+				accountEntry.getType(),
+				AccountConstants.ACCOUNT_ENTRY_TYPE_SUPPLIER)) {
+
+			throw new AccountEntryTypeException(
+				"Channel can only be assigned with an account entry type:" +
+					AccountConstants.ACCOUNT_ENTRY_TYPE_SUPPLIER);
+		}
+
+		if (accountEntry.getStatus() != WorkflowConstants.STATUS_APPROVED) {
+			throw new AccountEntryStatusException(
+				"Channel can only be assigned with an approved account entry");
+		}
+
+		List<CommerceChannel> commerceChannels =
+			getCommerceChannelsByAccountEntryId(accountEntryId);
+
+		if (ListUtil.isNotEmpty(commerceChannels)) {
+			if (commerceChannelId > 0) {
+				for (CommerceChannel commerceChannel : commerceChannels) {
+					if (commerceChannel.getCommerceChannelId() !=
+							commerceChannelId) {
+
+						throw new DuplicateCommerceChannelAccountEntryIdException(
+							"There is another commerce channel with account " +
+								"entry ID " + accountEntryId);
+					}
+				}
+			}
+			else {
+				throw new DuplicateCommerceChannelAccountEntryIdException(
+					"There is another commerce channel with account entry ID " +
+						accountEntryId);
+			}
+		}
+	}
+
 	private void _validateType(String type) throws PortalException {
 		if (Validator.isNull(type) ||
 			(_commerceChannelTypeRegistry.getCommerceChannelType(type) ==
@@ -613,6 +652,9 @@ public class CommerceChannelLocalServiceImpl
 	private static final String[] _SELECTED_FIELD_NAMES = {
 		Field.ENTRY_CLASS_PK, Field.COMPANY_ID
 	};
+
+	@Reference
+	private AccountEntryLocalService _accountEntryLocalService;
 
 	@Reference
 	private ClassNameLocalService _classNameLocalService;

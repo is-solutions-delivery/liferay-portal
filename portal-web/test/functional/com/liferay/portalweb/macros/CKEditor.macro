@@ -65,12 +65,34 @@ definition {
 		SelectFrame(value1 = "relative=top");
 	}
 
+	macro addGeneratedContent {
+		Click.javaScriptClick(locator1 = "CKEditor#TOOLBAR_AI_CREATOR_BUTTON");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		InputField.editText(
+			fieldLabel = "Description",
+			text = ${description});
+
+		Button.clickCreate();
+
+		WaitForVisible(
+			key_text = "Try Again",
+			locator1 = "Button#ANY");
+
+		Button.click(button = "Add");
+
+		SelectFrameTop();
+	}
+
 	macro addSourceContent {
 		Click(locator1 = "CKEditor#TOOLBAR_SOURCE_BUTTON");
 
 		Type.typeCodeMirrorEditorNoError(
 			locator1 = "CKEditor#BODY_FIELD_SOURCE_ON",
 			value1 = ${content});
+
+		Click(locator1 = "CKEditor#TOOLBAR_SOURCE_BUTTON");
 	}
 
 	macro addTextWithLink {
@@ -148,9 +170,15 @@ definition {
 	}
 
 	macro viewEntryContent {
+		SelectFrame.selectFrameNoLoading(
+			key_fieldLabel = ${fieldLabel},
+			locator1 = "CKEditor#BODY_FIELD_IFRAME_WEB_CONTENT_ARTICLE");
+
 		AssertTextEquals(
 			locator1 = "CKEditor#BODY",
 			value1 = ${content});
+
+		SelectFrameTop();
 	}
 
 	macro viewEntryContentImage {

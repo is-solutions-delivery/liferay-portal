@@ -14,6 +14,7 @@
 
 package com.liferay.headless.commerce.admin.catalog.internal.resource.v1_0;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.commerce.product.exception.NoSuchCPDefinitionException;
 import com.liferay.commerce.product.exception.NoSuchCatalogException;
 import com.liferay.commerce.product.model.CPDefinition;
@@ -88,6 +89,9 @@ public class CatalogResourceImpl
 					externalReferenceCode);
 		}
 
+		_commerceCatalogService.deleteCommerceCatalog(
+			commerceCatalog.getCommerceCatalogId());
+
 		Response.ResponseBuilder responseBuilder = Response.ok();
 
 		return responseBuilder.build();
@@ -95,15 +99,7 @@ public class CatalogResourceImpl
 
 	@Override
 	public Catalog getCatalog(Long id) throws Exception {
-		CommerceCatalog commerceCatalog =
-			_commerceCatalogService.fetchCommerceCatalog(id);
-
-		if (commerceCatalog == null) {
-			throw new NoSuchCatalogException(
-				"Unable to find Catalog with ID: " + id);
-		}
-
-		return _toCatalog(commerceCatalog);
+		return _toCatalog(_commerceCatalogService.getCommerceCatalog(id));
 	}
 
 	@Override
@@ -188,17 +184,8 @@ public class CatalogResourceImpl
 
 	@Override
 	public Response patchCatalog(Long id, Catalog catalog) throws Exception {
-		CommerceCatalog commerceCatalog =
-			_commerceCatalogService.getCommerceCatalog(id);
-
-		_commerceCatalogService.updateCommerceCatalog(
-			commerceCatalog.getCommerceCatalogId(), catalog.getName(),
-			GetterUtil.get(
-				catalog.getCurrencyCode(),
-				commerceCatalog.getCommerceCurrencyCode()),
-			GetterUtil.get(
-				catalog.getDefaultLanguageId(),
-				commerceCatalog.getCatalogDefaultLanguageId()));
+		_updateCommerceCatalog(
+			catalog, _commerceCatalogService.getCommerceCatalog(id));
 
 		Response.ResponseBuilder responseBuilder = Response.ok();
 
@@ -220,6 +207,8 @@ public class CatalogResourceImpl
 					externalReferenceCode);
 		}
 
+		_updateCommerceCatalog(catalog, commerceCatalog);
+
 		Response.ResponseBuilder responseBuilder = Response.ok();
 
 		return responseBuilder.build();
@@ -234,13 +223,21 @@ public class CatalogResourceImpl
 
 		if (commerceCatalog == null) {
 			commerceCatalog = _commerceCatalogService.addCommerceCatalog(
-				catalog.getExternalReferenceCode(), catalog.getName(),
-				catalog.getCurrencyCode(), catalog.getDefaultLanguageId(),
+				catalog.getExternalReferenceCode(),
+				GetterUtil.get(
+					catalog.getAccountId(),
+					AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT),
+				catalog.getName(), catalog.getCurrencyCode(),
+				catalog.getDefaultLanguageId(),
 				_serviceContextHelper.getServiceContext());
 		}
 		else {
 			commerceCatalog = _commerceCatalogService.updateCommerceCatalog(
-				commerceCatalog.getCommerceCatalogId(), catalog.getName(),
+				commerceCatalog.getCommerceCatalogId(),
+				GetterUtil.get(
+					catalog.getAccountId(),
+					commerceCatalog.getAccountEntryId()),
+				GetterUtil.get(catalog.getName(), commerceCatalog.getName()),
 				GetterUtil.get(
 					catalog.getCurrencyCode(),
 					commerceCatalog.getCommerceCurrencyCode()),
@@ -289,6 +286,23 @@ public class CatalogResourceImpl
 				commerceCatalog.getCommerceCatalogId(),
 				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
 				contextUser));
+	}
+
+	private void _updateCommerceCatalog(
+			Catalog catalog, CommerceCatalog commerceCatalog)
+		throws Exception {
+
+		_commerceCatalogService.updateCommerceCatalog(
+			commerceCatalog.getCommerceCatalogId(),
+			GetterUtil.get(
+				catalog.getAccountId(), commerceCatalog.getAccountEntryId()),
+			GetterUtil.get(catalog.getName(), commerceCatalog.getName()),
+			GetterUtil.get(
+				catalog.getCurrencyCode(),
+				commerceCatalog.getCommerceCurrencyCode()),
+			GetterUtil.get(
+				catalog.getDefaultLanguageId(),
+				commerceCatalog.getCatalogDefaultLanguageId()));
 	}
 
 	private static final EntityModel _entityModel = new CatalogEntityModel();

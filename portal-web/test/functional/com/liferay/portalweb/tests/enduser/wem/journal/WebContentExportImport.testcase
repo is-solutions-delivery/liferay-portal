@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -172,7 +172,7 @@ definition {
 	@description = "This is a use case for LPS-128693. Verify can import a LAR containing WCD between instances."
 	@priority = 3
 	test CanImportWCDBetweenInstances {
-		property test.name.skip.portal.instance = "WebContentExportImport#CanImportWCDBetweenInstances";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: new site page with a web content display is exported") {
 			JSONWebcontent.addWebContent(
@@ -212,15 +212,10 @@ definition {
 		}
 
 		task ("When: The exported data is imported into a new virtual instance site") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "Virtual Instances");
-
-			PortalInstances.addCP(
-				mailDomain = "liferay.com",
-				virtualHost = "www.able.com",
-				webId = "www.able.com");
+			HeadlessPortalInstanceAPI.addPortalInstance(
+				domain = "liferay.com",
+				portalInstanceId = "www.able.com",
+				virtualHost = "www.able.com");
 
 			User.firstLoginPG(
 				password = "test",
@@ -236,11 +231,13 @@ definition {
 
 			Site.addBlankCP(siteName = "Site Name");
 
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Site Name",
-				layoutUtilityPageName = "404 Error",
-				portalInstanceName = "www.able.com",
-				portalURL = "http://www.able.com:8080");
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name",
+					layoutUtilityPageName = ${layoutUtilityPageName},
+					portalInstanceName = "www.able.com",
+					portalURL = "http://www.able.com:8080");
+			}
 
 			LAR.importSiteCP(
 				baseURL = "http://www.able.com:8080",
@@ -289,7 +286,7 @@ definition {
 	@description = "This is a test for LPS-114230. Verify that can show exported image global structures between instances."
 	@priority = 3
 	test CanShowExportedGlobalStructuresImageBetweenInstances {
-		property test.name.skip.portal.instance = "WebContentExportImport#CanShowExportedGlobalStructuresImageBetweenInstances";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given: new web content with WC structure with an image field is exported") {
 			DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "global");
@@ -1100,7 +1097,7 @@ definition {
 	@description = "This is a test for LPS-96545. Cancel reset and reset the default values when edit default values in imported web content structure."
 	@priority = 4
 	test ResetImportedStructureDefaultValues {
-		property test.name.skip.portal.instance = "WebContentExportImport#ResetImportedStructureDefaultValues";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Add a web content based on Basic Web Content") {
 			JSONWebcontent.addWebContent(
@@ -1114,19 +1111,9 @@ definition {
 
 			NavItem.gotoStructures();
 
-			WebContentStructures.addCP(structureName = "WC Structure Name");
-
-			DataEngine.addFields(fieldNameList = "Text,Select from List,Single Selection,Multiple Selection,Grid,Date,Numeric,Rich Text,Color,Web Content");
-
-			WebContentStructures.saveCP();
-		}
-
-		task ("Add a template for new structure") {
-			WebContentNavigator.gotoManageTemplatesViaStructures(structureName = "WC Structure Name");
-
-			WebContentTemplates.addCP(
-				templateFieldNames = "Text,Select from List,Single Selection,Multiple Selection,Grid,Date,Numeric,Rich Text,Color,Web Content",
-				templateName = "WC Template Name");
+			WebContentStructures.importStructure(
+				structureName = "WC Structure Name",
+				uploadFileName = "Structure_All_Fields.json");
 		}
 
 		task ("Edit the default values of new structure") {
@@ -1189,8 +1176,7 @@ definition {
 		task ("Cancel reset the default values") {
 			WebContentStructures.resetStructureDefaultValuesCP(
 				assetTitle = "Blogs Entry Title",
-				cancel = "true",
-				templateName = "WC Template Name");
+				cancel = "true");
 
 			WebContent.viewWithStructureCP(
 				column = 1,
@@ -1209,9 +1195,7 @@ definition {
 		}
 
 		task ("Reset the default values") {
-			WebContentStructures.resetStructureDefaultValuesCP(
-				assetTitle = "Blogs Entry Title",
-				templateName = "WC Template Name");
+			WebContentStructures.resetStructureDefaultValuesCP(assetTitle = "Blogs Entry Title");
 
 			WebContent.viewWithStructureCP(
 				column = 1,

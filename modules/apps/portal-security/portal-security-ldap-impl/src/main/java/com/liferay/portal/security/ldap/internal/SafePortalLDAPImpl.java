@@ -486,13 +486,14 @@ public class SafePortalLDAPImpl implements SafePortalLDAP {
 		throws Exception {
 
 		return getUser(
-			ldapServerId, companyId, screenName, emailAddress, false);
+			ldapServerId, companyId, screenName, emailAddress, false, true);
 	}
 
 	@Override
 	public Binding getUser(
 			long ldapServerId, long companyId, String screenName,
-			String emailAddress, boolean checkOriginalEmail)
+			String emailAddress, boolean checkOriginalEmailAddress,
+			boolean useUserSearchSafeLdapFilter)
 		throws Exception {
 
 		SafeLdapContext safeLdapContext = getSafeLdapContext(
@@ -546,12 +547,15 @@ public class SafePortalLDAPImpl implements SafePortalLDAP {
 			SafeLdapFilter safeLdapFilter = SafeLdapFilterConstraints.eq(
 				loginMapping, login);
 
-			SafeLdapFilter userSearchSafeLdapFilter =
-				LDAPUtil.getUserSearchSafeLdapFilter(
-					ldapServerConfiguration, _ldapFilterValidator);
+			if (useUserSearchSafeLdapFilter) {
+				SafeLdapFilter userSearchSafeLdapFilter =
+					LDAPUtil.getUserSearchSafeLdapFilter(
+						ldapServerConfiguration, _ldapFilterValidator);
 
-			if (userSearchSafeLdapFilter != null) {
-				safeLdapFilter = safeLdapFilter.and(userSearchSafeLdapFilter);
+				if (userSearchSafeLdapFilter != null) {
+					safeLdapFilter = safeLdapFilter.and(
+						userSearchSafeLdapFilter);
+				}
 			}
 
 			SearchControls searchControls = new SearchControls(
@@ -565,7 +569,7 @@ public class SafePortalLDAPImpl implements SafePortalLDAP {
 				return enumeration.nextElement();
 			}
 
-			if (checkOriginalEmail) {
+			if (checkOriginalEmailAddress) {
 				String originalEmailAddress =
 					UserImportTransactionThreadLocal.getOriginalEmailAddress();
 
@@ -574,7 +578,7 @@ public class SafePortalLDAPImpl implements SafePortalLDAP {
 
 					return getUser(
 						ldapServerId, companyId, screenName,
-						originalEmailAddress, false);
+						originalEmailAddress, false, true);
 				}
 			}
 

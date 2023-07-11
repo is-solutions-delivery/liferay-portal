@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  * @author Shinn Lok
@@ -55,7 +54,7 @@ public class BlockedCountriesServletFilter extends BaseFilter {
 			HttpServletResponse httpServletResponse, FilterChain filterChain)
 		throws Exception {
 
-		if ((_ipGeocoder != null) && _isBlockedCountry(httpServletRequest)) {
+		if (_isBlockedCountry(httpServletRequest)) {
 			httpServletResponse.sendError(
 				HttpServletResponse.SC_FORBIDDEN,
 				"This content is not available in your country");
@@ -78,7 +77,7 @@ public class BlockedCountriesServletFilter extends BaseFilter {
 	private static final List<String> _blockedCountryCodes = Arrays.asList(
 		"CU", "IR", "KP", "SY");
 
-	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
+	@Reference
 	private IPGeocoder _ipGeocoder;
 
 }

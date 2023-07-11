@@ -20,6 +20,8 @@ import com.liferay.osb.faro.constants.FaroProjectConstants;
 import com.liferay.osb.faro.engine.client.ContactsEngineClient;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.service.FaroProjectLocalService;
+import com.liferay.osb.faro.web.internal.constants.FaroMessageDestinationNames;
+import com.liferay.osb.faro.web.internal.messaging.destination.creator.DestinationCreator;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -27,8 +29,9 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
-import com.liferay.portal.kernel.messaging.DestinationNames;
+import com.liferay.portal.kernel.messaging.DestinationFactory;
 import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
@@ -49,6 +52,7 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -57,12 +61,20 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Matthew Kong
  */
-@Component(service = CheckFaroProjectsMessageListener.class)
+@Component(
+	property = "destination.name=" + FaroMessageDestinationNames.FARO_CHECK_FARO_PROJECTS_MESSAGE_PROCESSOR,
+	service = MessageListener.class
+)
 public class CheckFaroProjectsMessageListener extends BaseMessageListener {
 
 	@Activate
-	protected void activate() {
+	protected void activate(BundleContext bundleContext) {
 		try {
+			_destinationCreator.createDestination(
+				bundleContext, _destinationFactory,
+				FaroMessageDestinationNames.
+					FARO_CHECK_FARO_PROJECTS_MESSAGE_PROCESSOR);
+
 			Class<?> clazz = getClass();
 
 			_trigger = _triggerFactory.createTrigger(
@@ -71,7 +83,9 @@ public class CheckFaroProjectsMessageListener extends BaseMessageListener {
 
 			_schedulerEngineHelper.schedule(
 				_trigger, StorageType.PERSISTED, null,
-				DestinationNames.SCHEDULER_DISPATCH, null);
+				FaroMessageDestinationNames.
+					FARO_CHECK_FARO_PROJECTS_MESSAGE_PROCESSOR,
+				null);
 		}
 		catch (Exception exception) {
 			_log.error(exception);
@@ -81,11 +95,17 @@ public class CheckFaroProjectsMessageListener extends BaseMessageListener {
 	@Deactivate
 	protected void deactivate() {
 		try {
+			if (_destinationCreator != null) {
+				_destinationCreator.removeDestination();
+
+				_destinationCreator = null;
+			}
+
 			if (_trigger == null) {
 				return;
 			}
 
-			_schedulerEngineHelper.unschedule(
+			_schedulerEngineHelper.delete(
 				_trigger.getJobName(), _trigger.getGroupName(),
 				StorageType.PERSISTED);
 		}
@@ -206,6 +226,11 @@ public class CheckFaroProjectsMessageListener extends BaseMessageListener {
 
 	@Reference
 	private ContactsEngineClient _contactsEngineClient;
+
+	private DestinationCreator _destinationCreator = new DestinationCreator();
+
+	@Reference
+	private DestinationFactory _destinationFactory;
 
 	@Reference
 	private FaroProjectLocalService _faroProjectLocalService;

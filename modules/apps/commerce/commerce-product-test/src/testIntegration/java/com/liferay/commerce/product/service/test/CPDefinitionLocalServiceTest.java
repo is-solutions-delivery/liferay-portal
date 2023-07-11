@@ -367,6 +367,62 @@ public class CPDefinitionLocalServiceTest {
 	}
 
 	@Test
+	public void testClonedProductPriceChangeDoesNotAffectParent()
+		throws PortalException {
+
+		frutillaRule.scenario(
+			"Change Price of a cloned product sku"
+		).given(
+			"A product definition and its clone"
+		).when(
+			"changing the price of the cloned"
+		).then(
+			"the product price of the parent product is different from " +
+				"cloned product"
+		);
+
+		CPInstance cpInstance = CPTestUtil.addCPInstanceWithRandomSku(
+			_commerceCatalog.getGroupId(), new BigDecimal(5));
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_APPROVED, cpInstance.getStatus());
+
+		CPDefinition duplicateCPDefinition =
+			_cpDefinitionLocalService.cloneCPDefinition(
+				_user.getUserId(), cpInstance.getCPDefinitionId(),
+				cpInstance.getGroupId(), _serviceContext);
+
+		CPInstance duplicateCPInstance = _cpInstanceLocalService.getCPInstance(
+			duplicateCPDefinition.getCPDefinitionId(), cpInstance.getSku());
+
+		CommercePriceList commercePriceList =
+			_commercePriceListLocalService.fetchCatalogBaseCommercePriceList(
+				duplicateCPInstance.getGroupId());
+
+		CommercePriceEntry duplicateCommercePriceEntry =
+			_commercePriceEntryLocalService.fetchCommercePriceEntry(
+				commercePriceList.getCommercePriceListId(),
+				duplicateCPInstance.getCPInstanceUuid());
+
+		duplicateCommercePriceEntry =
+			_commercePriceEntryLocalService.updateCommercePriceEntry(
+				duplicateCommercePriceEntry.getCommercePriceEntryId(),
+				BigDecimal.TEN, false, BigDecimal.ZERO, _serviceContext);
+
+		CommercePriceEntry commercePriceEntry =
+			_commercePriceEntryLocalService.fetchCommercePriceEntry(
+				commercePriceList.getCommercePriceListId(),
+				cpInstance.getCPInstanceUuid());
+
+		Assert.assertEquals(
+			BigDecimal.TEN, duplicateCommercePriceEntry.getPrice());
+
+		Assert.assertNotEquals(
+			commercePriceEntry.getPrice(),
+			duplicateCommercePriceEntry.getPrice());
+	}
+
+	@Test
 	public void testDeleteCPDefinitionWithIgnoreSKUCombinationsAndDefaultInstance()
 		throws Exception {
 
@@ -451,7 +507,8 @@ public class CPDefinitionLocalServiceTest {
 		commercePriceEntry =
 			_commercePriceEntryLocalService.updateCommercePriceEntry(
 				commercePriceEntry.getCommercePriceEntryId(), newPrice,
-				promoPrice, _serviceContext);
+				commercePriceEntry.isPriceOnApplication(), promoPrice,
+				_serviceContext);
 
 		CommercePriceEntry parentPriceEntry =
 			_commercePriceEntryLocalService.fetchCommercePriceEntry(

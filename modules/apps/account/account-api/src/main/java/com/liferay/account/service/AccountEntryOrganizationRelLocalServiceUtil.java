@@ -345,14 +345,6 @@ public class AccountEntryOrganizationRelLocalServiceUtil {
 			organizationId, start, end);
 	}
 
-	public static int getAccountEntryOrganizationRelsByOrganizationIdCount(
-		long organizationId) {
-
-		return getService().
-			getAccountEntryOrganizationRelsByOrganizationIdCount(
-				organizationId);
-	}
-
 	/**
 	 * Returns the number of account entry organization rels.
 	 *
@@ -367,6 +359,14 @@ public class AccountEntryOrganizationRelLocalServiceUtil {
 
 		return getService().getAccountEntryOrganizationRelsCount(
 			accountEntryId);
+	}
+
+	public static int getAccountEntryOrganizationRelsCountByOrganizationId(
+		long organizationId) {
+
+		return getService().
+			getAccountEntryOrganizationRelsCountByOrganizationId(
+				organizationId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery

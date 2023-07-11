@@ -291,6 +291,12 @@ public class AnalyticsBatchExportImportManagerImpl
 				_processInvalidTokenMessage(
 					companyId, responseJSONObject.getString("message"));
 			}
+			else if (response.getResponseCode() >=
+						HttpURLConnection.HTTP_BAD_REQUEST) {
+
+				throw new RuntimeException(
+					"Server response code: " + response.getResponseCode());
+			}
 
 			if (inputStream != null) {
 				return _file.createTempFile(inputStream);

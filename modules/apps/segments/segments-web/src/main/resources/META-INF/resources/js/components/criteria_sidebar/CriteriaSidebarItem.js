@@ -36,13 +36,14 @@ function CriteriaSidebarItem({
 	className,
 	connectDragSource,
 	dragging,
+	icon,
 	label,
 	type,
 }) {
 	return connectDragSource(
 		<li
 			className={classNames(
-				'align-items-center criteria-sidebar-item-root c-py-2 c-pr-3 c-pl-3 c-my-1 c-mx-0 d-flex ',
+				'align-items-center criteria-sidebar-item-root c-py-2 c-pr-3 c-pl-3 c-my-1 c-mx-n4 d-flex ',
 				{dragging},
 				className
 			)}
@@ -54,7 +55,7 @@ function CriteriaSidebarItem({
 
 			<span className="c-mx-2 c-my-0 criteria-sidebar-item-type sticker sticker-dark">
 				<span className="inline-item">
-					<ClayIcon symbol={TYPE_ICON_MAP[type] || 'text'} />
+					<ClayIcon symbol={icon || TYPE_ICON_MAP[type] || 'text'} />
 				</span>
 			</span>
 
@@ -68,6 +69,7 @@ CriteriaSidebarItem.propTypes = {
 	connectDragSource: PropTypes.func,
 	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 	dragging: PropTypes.bool,
+	icon: PropTypes.string,
 	label: PropTypes.string,
 	name: PropTypes.string,
 	propertyKey: PropTypes.string.isRequired,

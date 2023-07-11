@@ -193,7 +193,7 @@ public class AMImageConfigurationTest extends BaseAMImageConfigurationTestCase {
 	}
 
 	@Test
-	public void testNonexistantConfigurationEntry() throws Exception {
+	public void testNonexistentConfigurationEntry() throws Exception {
 		_amImageConfigurationHelper.addAMImageConfigurationEntry(
 			TestPropsValues.getCompanyId(), "one", "desc", "1",
 			HashMapBuilder.put(

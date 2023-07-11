@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.messaging.MessageBusEventListener;
 import com.liferay.portal.kernel.messaging.MessageBusInterceptor;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
@@ -45,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedServiceFactory;
 import org.osgi.service.component.annotations.Activate;
@@ -61,28 +63,12 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * @author Michael C. Han
  * @author Brian Wing Shun Chan
  */
-@Component(
-	property = Constants.SERVICE_PID + "=com.liferay.portal.messaging.internal.configuration.DestinationWorkerConfiguration",
-	service = {ManagedServiceFactory.class, MessageBus.class}
-)
-public class DefaultMessageBus implements ManagedServiceFactory, MessageBus {
-
-	@Override
-	public void deleted(String factoryPid) {
-		String destinationName = _factoryPidsToDestinationName.remove(
-			factoryPid);
-
-		_destinationWorkerConfigurations.remove(destinationName);
-	}
+@Component(service = MessageBus.class)
+public class DefaultMessageBus implements MessageBus {
 
 	@Override
 	public Destination getDestination(String destinationName) {
 		return _destinations.get(destinationName);
-	}
-
-	@Override
-	public String getName() {
-		return "Default Message Bus";
 	}
 
 	@Override
@@ -150,27 +136,6 @@ public class DefaultMessageBus implements ManagedServiceFactory, MessageBus {
 		}
 	}
 
-	@Override
-	public void updated(String factoryPid, Dictionary<String, ?> dictionary)
-		throws ConfigurationException {
-
-		DestinationWorkerConfiguration destinationWorkerConfiguration =
-			ConfigurableUtil.createConfigurable(
-				DestinationWorkerConfiguration.class, dictionary);
-
-		_factoryPidsToDestinationName.put(
-			factoryPid, destinationWorkerConfiguration.destinationName());
-
-		_destinationWorkerConfigurations.put(
-			destinationWorkerConfiguration.destinationName(),
-			destinationWorkerConfiguration);
-
-		Destination destination = _destinations.get(
-			destinationWorkerConfiguration.destinationName());
-
-		_updateDestination(destination, destinationWorkerConfiguration);
-	}
-
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_messageListenerServiceTracker = new ServiceTracker<>(
@@ -227,6 +192,15 @@ public class DefaultMessageBus implements ManagedServiceFactory, MessageBus {
 
 		_messageListenerServiceTracker.open();
 
+		_serviceRegistration = bundleContext.registerService(
+			ManagedServiceFactory.class,
+			new DefaultMessageBusManagedServiceFactory(),
+			HashMapDictionaryBuilder.put(
+				Constants.SERVICE_PID,
+				"com.liferay.portal.messaging.internal.configuration." +
+					"DestinationWorkerConfiguration"
+			).build());
+
 		_serviceTrackerList = ServiceTrackerListFactory.open(
 			bundleContext, MessageBusInterceptor.class);
 	}
@@ -235,15 +209,17 @@ public class DefaultMessageBus implements ManagedServiceFactory, MessageBus {
 	protected void deactivate() {
 		_serviceTrackerList.close();
 
+		_serviceRegistration.unregister();
+
 		_messageListenerServiceTracker.close();
+
+		_messageBusEventListeners.clear();
 
 		shutdown(true);
 
 		for (Destination destination : _destinations.values()) {
 			destination.destroy();
 		}
-
-		_messageBusEventListeners.clear();
 
 		_destinations.clear();
 	}
@@ -482,7 +458,7 @@ public class DefaultMessageBus implements ManagedServiceFactory, MessageBus {
 		new ConcurrentHashMap<>();
 	private final Map<String, DestinationWorkerConfiguration>
 		_destinationWorkerConfigurations = new ConcurrentHashMap<>();
-	private final Map<String, String> _factoryPidsToDestinationName =
+	private final Map<String, String> _factoryPidsToDestinationNames =
 		new ConcurrentHashMap<>();
 	private final Set<MessageBusEventListener> _messageBusEventListeners =
 		Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -491,6 +467,46 @@ public class DefaultMessageBus implements ManagedServiceFactory, MessageBus {
 			_messageListenerServiceTracker;
 	private final Map<String, List<MessageListener>> _queuedMessageListeners =
 		new HashMap<>();
+	private ServiceRegistration<ManagedServiceFactory> _serviceRegistration;
 	private ServiceTrackerList<MessageBusInterceptor> _serviceTrackerList;
+
+	private class DefaultMessageBusManagedServiceFactory
+		implements ManagedServiceFactory {
+
+		@Override
+		public void deleted(String factoryPid) {
+			String destinationName = _factoryPidsToDestinationNames.remove(
+				factoryPid);
+
+			_destinationWorkerConfigurations.remove(destinationName);
+		}
+
+		@Override
+		public String getName() {
+			return "Default Message Bus";
+		}
+
+		@Override
+		public void updated(String factoryPid, Dictionary<String, ?> dictionary)
+			throws ConfigurationException {
+
+			DestinationWorkerConfiguration destinationWorkerConfiguration =
+				ConfigurableUtil.createConfigurable(
+					DestinationWorkerConfiguration.class, dictionary);
+
+			_factoryPidsToDestinationNames.put(
+				factoryPid, destinationWorkerConfiguration.destinationName());
+
+			_destinationWorkerConfigurations.put(
+				destinationWorkerConfiguration.destinationName(),
+				destinationWorkerConfiguration);
+
+			Destination destination = _destinations.get(
+				destinationWorkerConfiguration.destinationName());
+
+			_updateDestination(destination, destinationWorkerConfiguration);
+		}
+
+	}
 
 }

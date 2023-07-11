@@ -124,13 +124,18 @@ public class JournalArticleModelValidator
 				throw localeException;
 			}
 
-			if ((expirationDate != null) &&
-				(expirationDate.before(new Date()) ||
-				 ((displayDate != null) &&
-				  expirationDate.before(displayDate)))) {
-
+			if ((expirationDate != null) && expirationDate.before(new Date())) {
 				throw new ArticleExpirationDateException(
 					"Expiration date " + expirationDate + " is in the past");
+			}
+
+			if ((displayDate != null) && (expirationDate != null) &&
+				displayDate.after(expirationDate)) {
+
+				throw new ArticleExpirationDateException(
+					StringBundler.concat(
+						"Expiration date ", expirationDate,
+						" is prior to display date ", displayDate));
 			}
 		}
 
@@ -479,6 +484,11 @@ public class JournalArticleModelValidator
 		ExportImportContentProcessor<String> exportImportContentProcessor =
 			ExportImportContentProcessorRegistryUtil.
 				getExportImportContentProcessor(JournalArticle.class.getName());
+
+		if (smallImage && Validator.isNotNull(smallImageURL)) {
+			exportImportContentProcessor.validateContentReferences(
+				groupId, smallImageURL);
+		}
 
 		exportImportContentProcessor.validateContentReferences(
 			groupId, content);

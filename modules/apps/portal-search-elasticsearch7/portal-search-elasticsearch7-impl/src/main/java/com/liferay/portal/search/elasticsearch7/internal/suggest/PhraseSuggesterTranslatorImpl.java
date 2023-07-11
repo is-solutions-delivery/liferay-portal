@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.suggest;
 
+import com.liferay.osgi.util.service.Snapshot;
 import com.liferay.portal.kernel.search.query.QueryTranslator;
 import com.liferay.portal.kernel.search.suggest.PhraseSuggester;
 import com.liferay.portal.kernel.util.Validator;
@@ -27,10 +28,6 @@ import org.elasticsearch.search.suggest.phrase.DirectCandidateGeneratorBuilder;
 import org.elasticsearch.search.suggest.phrase.PhraseSuggestionBuilder;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Michael C. Han
@@ -107,6 +104,9 @@ public class PhraseSuggesterTranslatorImpl
 	protected void translate(
 		PhraseSuggester.Collate collate,
 		PhraseSuggestionBuilder phraseSuggestionBuilder) {
+
+		QueryTranslator<QueryBuilder> queryTranslator =
+			_queryTranslatorSnapshot.get();
 
 		if ((collate != null) && (queryTranslator != null)) {
 			QueryBuilder queryBuilder = queryTranslator.translate(
@@ -206,12 +206,10 @@ public class PhraseSuggesterTranslatorImpl
 		}
 	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(search.engine.impl=Elasticsearch)"
-	)
-	protected volatile QueryTranslator<QueryBuilder> queryTranslator;
+	private static final Snapshot<QueryTranslator<QueryBuilder>>
+		_queryTranslatorSnapshot = new Snapshot<>(
+			PhraseSuggesterTranslatorImpl.class,
+			Snapshot.cast(QueryTranslator.class),
+			"(search.engine.impl=Elasticsearch)", true);
 
 }

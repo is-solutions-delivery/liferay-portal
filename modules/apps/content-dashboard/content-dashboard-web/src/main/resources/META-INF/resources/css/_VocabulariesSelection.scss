@@ -1,0 +1,22 @@
+@import 'cadmin-variables';
+@import 'variables';
+
+html#{$cadmin-selector} {
+	.cadmin {
+		.vocabularies-selection {
+			&-loader {
+				top: 50%;
+				transform: translateY(-50%);
+			}
+
+			.clay-reorder {
+				min-height: 220px;
+			}
+
+			option:disabled {
+				color: $cadmin-gray-500;
+				cursor: default;
+			}
+		}
+	}
+}

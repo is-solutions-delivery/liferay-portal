@@ -78,7 +78,7 @@ public class LayoutClassedModelUsageCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(33);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -100,6 +100,8 @@ public class LayoutClassedModelUsageCacheModel
 		sb.append(classNameId);
 		sb.append(", classPK=");
 		sb.append(classPK);
+		sb.append(", classedModelExternalReferenceCode=");
+		sb.append(classedModelExternalReferenceCode);
 		sb.append(", containerKey=");
 		sb.append(containerKey);
 		sb.append(", containerType=");
@@ -152,6 +154,15 @@ public class LayoutClassedModelUsageCacheModel
 		layoutClassedModelUsageImpl.setClassNameId(classNameId);
 		layoutClassedModelUsageImpl.setClassPK(classPK);
 
+		if (classedModelExternalReferenceCode == null) {
+			layoutClassedModelUsageImpl.setClassedModelExternalReferenceCode(
+				"");
+		}
+		else {
+			layoutClassedModelUsageImpl.setClassedModelExternalReferenceCode(
+				classedModelExternalReferenceCode);
+		}
+
 		if (containerKey == null) {
 			layoutClassedModelUsageImpl.setContainerKey("");
 		}
@@ -194,6 +205,7 @@ public class LayoutClassedModelUsageCacheModel
 		classNameId = objectInput.readLong();
 
 		classPK = objectInput.readLong();
+		classedModelExternalReferenceCode = objectInput.readUTF();
 		containerKey = objectInput.readUTF();
 
 		containerType = objectInput.readLong();
@@ -229,6 +241,13 @@ public class LayoutClassedModelUsageCacheModel
 
 		objectOutput.writeLong(classPK);
 
+		if (classedModelExternalReferenceCode == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(classedModelExternalReferenceCode);
+		}
+
 		if (containerKey == null) {
 			objectOutput.writeUTF("");
 		}
@@ -254,6 +273,7 @@ public class LayoutClassedModelUsageCacheModel
 	public long modifiedDate;
 	public long classNameId;
 	public long classPK;
+	public String classedModelExternalReferenceCode;
 	public String containerKey;
 	public long containerType;
 	public long plid;

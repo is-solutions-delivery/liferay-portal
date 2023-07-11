@@ -13,13 +13,13 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
 
 		//ACUtils.tearDownAC();
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -66,8 +66,13 @@ definition {
 	}
 
 	@description = "Bug: LRAC-10507 | Automation ID: LRAC-12349 | Test Summary: The data source list has pagination"
+	@ignore = "true"
 	@priority = 3
 	test PaginateDataSourceList {
+
+		// AC Bug: Data sources are unable to be deleted
+		// AC Bug ticket: LRAC-13704
+
 		var dataSourceList = "";
 
 		TestCase.setUpPortalInstance();

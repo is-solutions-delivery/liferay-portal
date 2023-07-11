@@ -1,0 +1,158 @@
+@component-name = "portal-frontend-infrastructure"
+definition {
+
+	property custom.properties = "feature.flag.LPS-172904=true";
+	property portal.acceptance = "true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Frontend Data Set";
+	property testray.main.component.name = "Frontend Data Set";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONLayout.deletePublicLayout(
+				groupName = "Guest",
+				layoutName = "Frontend Data Set Test Page");
+		}
+	}
+
+	@description = "LPS-176807. Verify if the apple icon appears when file is deployed"
+	@priority = 4
+	test CanChangeFilterWithClientExtension {
+		property osgi.modules.includes = "frontend-data-set-sample-web";
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given Sample FDS portlet deployed") {
+			FileInstall.deployFileOnServer(jarFile = "liferay-sample-fds-cell-renderer.zip");
+
+			WaitForConsoleTextPresent(value1 = "STARTED liferay-sample-fds-cell-renderer_1.0.0");
+		}
+
+		task ("When entering on a page which uses FDS") {
+			JSONLayout.addPublicLayout(
+				groupName = "Guest",
+				layoutName = "Frontend Data Set Test Page");
+
+			JSONLayout.updateLayoutTemplateOfPublicLayout(
+				groupName = "Guest",
+				layoutName = "Frontend Data Set Test Page",
+				layoutTemplate = "1 Column");
+
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Guest",
+				layoutName = "Frontend Data Set Test Page",
+				widgetName = "Frontend Data Set Sample");
+
+			Navigator.gotoPage(pageName = "Frontend Data Set Test Page");
+		}
+
+		task ("Then an apple emoji appears instead of the word green") {
+			Click(
+				key_sampleTab = "Customized",
+				locator1 = "FrontendDataSet#FDS_DATASET");
+
+			WaitForElementPresent(
+				assetType = "apple",
+				index = 1,
+				locator1 = "Fragment#CONTENT_DISPLAY_TEXT");
+
+			AssertElementPresent(
+				assetType = "apple",
+				index = 1,
+				locator1 = "Fragment#CONTENT_DISPLAY_TEXT");
+		}
+	}
+
+	@description = "LPS-176807. Verify if is not possible to see an client extension deployed"
+	@priority = 4
+	test CannotSeeClientExtensionNotDeployed {
+		task ("When you access the Client Extension admin page") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Custom Apps",
+				panel = "Applications",
+				portlet = "Client Extensions");
+		}
+
+		task ("Then the client extension is not present") {
+			AssertElementNotPresent(
+				key_tableEntryName = "Liferay Sample Frontend Data Set Cell Renderer",
+				locator1 = "ClientExtension#TABLE_ENTRY_NAME_REMOTE_TABLE");
+
+			AssertElementNotPresent(
+				key_tableEntryType = "Frontend Data Set Cell Renderer",
+				locator1 = "ClientExtension#TABLE_ENTRY_TYPE_REMOTE_TABLE");
+		}
+	}
+
+	@description = "LPS-176807. Verify if the Client Extension are visible when deploys"
+	@priority = 4
+	test CanViewDeployedFile {
+		property osgi.modules.includes = "frontend-data-set-sample-web";
+
+		task ("When create a page") {
+			JSONLayout.addPublicLayout(
+				groupName = "Guest",
+				layoutName = "Frontend Data Set Test Page");
+		}
+
+		task ("And Go to page edit page") {
+			Navigator.gotoPage(pageName = "Frontend Data Set Test Page");
+
+			Click(locator1 = "Icon#PLUS");
+		}
+
+		task ("Then Confirm the client extension sample is located at Widgets > Samples") {
+			Click(
+				key_panel = "Sample",
+				locator1 = "Panel#PANEL");
+
+			AssertElementPresent(
+				key_remoteAppName = "Frontend Data Set Sample",
+				locator1 = "ClientExtension#APPLICATION_SEARCH_FIELD_WIDGET_SEARCH_REMOTE_APP");
+		}
+	}
+
+	@description = "LPS-176807. Verify if filters are corretly displayed"
+	@priority = 4
+	test CanViewSpecificFilters {
+		property osgi.modules.includes = "frontend-data-set-sample-web";
+
+		task ("And entering on a page which uses FDS") {
+			JSONLayout.addPublicLayout(
+				groupName = "Guest",
+				layoutName = "Frontend Data Set Test Page");
+
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Guest",
+				layoutName = "Frontend Data Set Test Page",
+				widgetName = "Frontend Data Set Sample");
+
+			Navigator.gotoPage(pageName = "Frontend Data Set Test Page");
+		}
+
+		task ("When Selecting the Customized tab") {
+			Click(
+				key_sampleTab = "Customized",
+				locator1 = "FrontendDataSet#FDS_DATASET");
+		}
+
+		task ("Then check that the user can see the word "Green" within the Color column") {
+			AssertElementPresent(
+				key_color = "Green",
+				key_field = "Color",
+				locator1 = "FrontendDataSet#SEARCH_COLUMN_AND_ROW");
+		}
+	}
+
+}

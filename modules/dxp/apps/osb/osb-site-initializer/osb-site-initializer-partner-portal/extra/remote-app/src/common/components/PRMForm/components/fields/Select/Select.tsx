@@ -40,8 +40,18 @@ const Select = ({
 
 	const getValue = () => {
 		if (typeof field.value === 'object') {
-			if (field.value.id) {
-				return String(field.value.id) || '';
+			if (
+				field.value.externalReferenceCode
+					? field.value.externalReferenceCode
+					: field.value.id
+			) {
+				return (
+					String(
+						field.value.externalReferenceCode
+							? field.value.externalReferenceCode
+							: field.value.id
+					) || ''
+				);
 			}
 
 			return field.value.key || '';

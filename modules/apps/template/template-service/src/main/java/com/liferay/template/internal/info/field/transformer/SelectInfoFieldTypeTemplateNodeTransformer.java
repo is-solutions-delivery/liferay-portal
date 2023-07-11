@@ -17,6 +17,7 @@ package com.liferay.template.internal.info.field.transformer;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.field.type.InfoFieldType;
+import com.liferay.info.field.type.OptionInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.type.KeyLocalizedLabelPair;
 import com.liferay.petra.string.StringPool;
@@ -25,7 +26,6 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.templateparser.TemplateNode;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.template.info.field.transformer.BaseTemplateNodeTransformer;
 import com.liferay.template.info.field.transformer.TemplateNodeTransformer;
@@ -55,17 +55,11 @@ public class SelectInfoFieldTypeTemplateNodeTransformer
 
 		String stringValue = StringPool.BLANK;
 
-		boolean multiple = GetterUtil.getBoolean(
-			infoField.getAttribute(SelectInfoFieldType.MULTIPLE));
-
 		JSONArray selectedOptionValuesJSONArray =
 			_getSelectedOptionValuesJSONArray(
 				infoFieldValue, themeDisplay.getLocale());
 
-		if (multiple) {
-			stringValue = JSONUtil.toString(selectedOptionValuesJSONArray);
-		}
-		else if (!JSONUtil.isEmpty(selectedOptionValuesJSONArray)) {
+		if (!JSONUtil.isEmpty(selectedOptionValuesJSONArray)) {
 			stringValue = selectedOptionValuesJSONArray.getString(0);
 		}
 
@@ -75,20 +69,21 @@ public class SelectInfoFieldTypeTemplateNodeTransformer
 			themeDisplay, infoField.getName(), stringValue,
 			infoFieldType.getName(),
 			HashMapBuilder.put(
-				"multiple", String.valueOf(multiple)
+				"multiple", Boolean.FALSE.toString()
 			).build());
 
-		List<SelectInfoFieldType.Option> options =
-			(List<SelectInfoFieldType.Option>)infoField.getAttribute(
+		List<OptionInfoFieldType> optionInfoFieldTypes =
+			(List<OptionInfoFieldType>)infoField.getAttribute(
 				SelectInfoFieldType.OPTIONS);
 
-		if (options == null) {
-			options = Collections.emptyList();
+		if (optionInfoFieldTypes == null) {
+			optionInfoFieldTypes = Collections.emptyList();
 		}
 
-		for (SelectInfoFieldType.Option option : options) {
+		for (OptionInfoFieldType optionInfoFieldType : optionInfoFieldTypes) {
 			templateNode.appendOptionMap(
-				option.getValue(), option.getLabel(themeDisplay.getLocale()));
+				optionInfoFieldType.getValue(),
+				optionInfoFieldType.getLabel(themeDisplay.getLocale()));
 		}
 
 		return templateNode;

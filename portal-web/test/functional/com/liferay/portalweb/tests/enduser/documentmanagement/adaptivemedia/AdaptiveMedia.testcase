@@ -14,7 +14,7 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 	}
 
 	@priority = 5
@@ -421,7 +421,7 @@ definition {
 
 		AdaptiveMedia.selectAdaptiveMediaImage(imageName = "Low Resolution");
 
-		AdaptiveMedia.viewNumberOfAdaptedImages(numberOfAdaptedImages = "8/9");
+		AdaptiveMedia.viewNumberOfAdaptedImages(numberOfAdaptedImages = "9/10");
 	}
 
 	@priority = 5
@@ -463,7 +463,7 @@ definition {
 
 		AdaptiveMedia.selectAdaptiveMediaImage(imageName = "High Resolution");
 
-		AdaptiveMedia.viewNumberOfAdaptedImages(numberOfAdaptedImages = "0/7");
+		AdaptiveMedia.viewNumberOfAdaptedImages(numberOfAdaptedImages = "0/8");
 
 		AdaptiveMedia.editImageResolution(
 			imageName = "High Resolution",
@@ -473,13 +473,13 @@ definition {
 
 		AdaptiveMedia.selectAdaptiveMediaImage(imageName = "High Resolution Edited");
 
-		AdaptiveMedia.viewNumberOfAdaptedImages(numberOfAdaptedImages = "0/7");
+		AdaptiveMedia.viewNumberOfAdaptedImages(numberOfAdaptedImages = "0/8");
 	}
 
 	@priority = 4
 	@refactordone
 	test ImageResolutionIsScopedToInstance {
-		property test.name.skip.portal.instance = "AdaptiveMedia#ImageResolutionIsScopedToInstance";
+		property test.liferay.virtual.instance = "false";
 
 		PortalInstances.openVirtualInstancesAdmin();
 

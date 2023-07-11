@@ -26,9 +26,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -1107,7 +1107,7 @@ definition {
 	@description = "This is a test for LPS-150919. Canonical URL should be valid for DPT."
 	@priority = 2
 	test ViewCanonicalURL {
-		property test.name.skip.portal.instance = "DisplayPageTemplatesForWebContentArticle#ViewCanonicalURL";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given I select Use Localized URL as Canonical URL") {
 			SystemSettings.openSystemSettingsAdmin();
@@ -1501,6 +1501,51 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-168698. Expired Web Content Display Pages are not accessible"
+	@priority = 4
+	test ViewNotFoundWhenAccessToAssociatedDisplayPageOfExpiredWebContent {
+		property custom.properties = "virtual.hosts.default.site.name=Guest";
+
+		task ("Given a site administrator has an associated display page for web content") {
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
+
+			PageEditor.publish();
+
+			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
+
+			JSONWebcontent.addWebContent(
+				content = "Webcontent Content",
+				groupName = "Test Site Name",
+				title = "Webcontent Title");
+		}
+
+		task ("When expire the created web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			LexiconEntry.gotoEntryMenuItem(
+				menuItem = "Expire",
+				rowEntry = "Webcontent Title");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the site administrator should see not found when access to the associated display page") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/w/webcontent-title");
+
+			ContentPages.viewFragmentText(
+				fragmentName = "heading",
+				id = "element-text",
+				text = 404);
+
+			ContentPages.viewFragmentText(
+				fragmentName = "paragraph",
+				id = "element-text",
+				text = "Page Not Found");
+		}
+	}
+
 	@description = "This is a test for LPS-146373. New prefixes for email,phone and none options can be used on Display Page Templates."
 	@priority = 3
 	test ViewPrefixesForEmailAndPhoneAndNoneOptions {
@@ -1514,17 +1559,13 @@ definition {
 
 		task ("When adding a web content with email and telephone") {
 			task ("Create a web content structure") {
-				WebContentStructures.openWebContentStructuresAdmin(siteURLKey = "site-name");
+				WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
 
-				WebContentStructures.addCP(structureName = "Contact Information");
+				NavItem.gotoStructures();
 
-				for (var fieldFieldLabel : list "Name,Email,Phone,Personal Web") {
-					DataEngine.addField(
-						fieldFieldLabel = ${fieldFieldLabel},
-						fieldName = "Text");
-				}
-
-				WebContentStructures.saveCP();
+				WebContentStructures.importStructure(
+					structureName = "Contact Information",
+					uploadFileName = "Structure_Contact_Information_Fields.json");
 			}
 
 			task ("Create a Web Content from Contact Information") {

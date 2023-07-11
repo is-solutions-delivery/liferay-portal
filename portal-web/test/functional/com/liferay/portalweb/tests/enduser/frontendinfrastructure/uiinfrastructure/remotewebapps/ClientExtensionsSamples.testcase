@@ -14,9 +14,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 	}
@@ -166,23 +166,21 @@ definition {
 
 			OAuth2.openOAuth2Admin();
 
-			while (IsElementNotPresent(key_rowEntry = "Liferay Sample Etc Cron Oauth Application Headless Server", locator1 = "Icon#ROW_VERTICAL_ELLIPSIS")) {
+			while (IsElementNotPresent(key_rowEntry = "Liferay Sample Etc Cron OAuth Application Headless Server", locator1 = "Icon#ROW_VERTICAL_ELLIPSIS")) {
 				OAuth2.openOAuth2Admin();
 			}
 
 			LexiconEntry.gotoEntryMenuItem(
 				menuItem = "Edit",
-				rowEntry = "Liferay Sample Etc Cron Oauth Application Headless Server");
+				rowEntry = "Liferay Sample Etc Cron OAuth Application Headless Server");
 
-			OAuth2.assertPortletHeader(header = "Liferay Sample Etc Cron Oauth Application Headless Server");
+			OAuth2.assertPortletHeader(header = "Liferay Sample Etc Cron OAuth Application Headless Server");
 
 			var clientSecret = selenium.getElementValue("OAuth2#ADMIN_INPUT_FORM_CLIENT_SECRET");
 		}
 
 		task ("Assert the Message Board Thread Count of 0") {
-			AntCommand(
-				locator1 = "build-test-liferay-sample-workspace.xml",
-				value1 = "start-liferay-sample-etc-cron -Doauth2.headless.server.client.secret=${clientSecret}");
+			AntCommands.runCommand("build-test-liferay-sample-workspace.xml", "start-liferay-sample-etc-cron -Doauth2.headless.server.client.secret=${clientSecret}");
 
 			var projectDir = PropsUtil.get("project.dir");
 
@@ -205,9 +203,7 @@ definition {
 		}
 
 		task ("Assert the Message Board Thread Count of 1") {
-			AntCommand(
-				locator1 = "build-test-liferay-sample-workspace.xml",
-				value1 = "start-liferay-sample-etc-cron -Doauth2.headless.server.client.secret=${clientSecret}");
+			AntCommands.runCommand("build-test-liferay-sample-workspace.xml", "start-liferay-sample-etc-cron -Doauth2.headless.server.client.secret=${clientSecret}");
 
 			var springBootLogFileContent = FileUtil.read(${springBootLogFile});
 
@@ -237,9 +233,7 @@ definition {
 		}
 
 		task ("When: The Spring-boot is started") {
-			AntCommand(
-				locator1 = "build-test-liferay-sample-workspace.xml",
-				value1 = "start-liferay-sample-etc-spring-boot");
+			AntCommands.runCommand("build-test-liferay-sample-workspace.xml", "start-liferay-sample-etc-spring-boot");
 
 			var projectDir = PropsUtil.get("project.dir");
 

@@ -12,9 +12,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -27,7 +27,7 @@ definition {
 	@priority = 5
 	test CanAddAndDeletePortalInstance {
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "VirtualInstances#CanAddAndDeletePortalInstance";
+		property test.liferay.virtual.instance = "false";
 
 		ApplicationsMenu.gotoPortlet(
 			category = "System",
@@ -47,7 +47,7 @@ definition {
 	@description = "This automates LPS-157752. It asserts that email settings can be configured in a Virtual Instance."
 	@priority = 4
 	test CanConfigureEmailSettingsInVirtualInstance {
-		property test.name.skip.portal.instance = "VirtualInstances#CanConfigureEmailSettingsInVirtualInstance";
+		property test.liferay.virtual.instance = "false";
 
 		task ("Given a new Virtual Instance is created") {
 			ApplicationsMenu.gotoPortlet(
@@ -87,9 +87,78 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-161481. Verify a non-omniadmin user can create a user in a user-limited virtual instance"
+	@priority = 3
+	test NonAdminUserCanCreateUserInUserLimitedVirtualInstance {
+		property test.assert.warning.exceptions = "true";
+		property test.liferay.virtual.instance = "false";
+
+		task ("Given a user limited virtual instance") {
+			PortalInstances.openVirtualInstancesAdmin();
+
+			PortalInstances.addCP(
+				mailDomain = "www.able.com",
+				maxUserNumber = 4,
+				maxUsers = "true",
+				virtualHost = "www.able.com",
+				webId = "www.able.com");
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "test@www.able.com");
+		}
+
+		task ("And given a user exists in that instance with permission to create other users") {
+			JSONRole.addRegularRole(
+				roleTitle = "Test Role",
+				specificURL = "http://www.able.com:8080");
+
+			Permissions.definePermissionsViaJSONAPI(
+				resourceNameActionList = "com_liferay_users_admin_web_portlet_UsersAdminPortlet,ACCESS_IN_CONTROL_PANEL,VIEW:com.liferay.portal.kernel.model.User,DELETE,UPDATE,VIEW:90,VIEW_CONTROL_PANEL,ADD_USER",
+				roleTitle = "Test Role",
+				roleType = "regular",
+				specificURL = "http://www.able.com:8080");
+
+			JSONUser.addUser(
+				creatorEmailAddress = "test@www.able.com",
+				creatorPassword = "test",
+				portalInstanceName = "www.able.com",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "userea@www.able.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			User.assignRegularRoleCP(
+				roleTitle = "Test Role",
+				userScreenName = "usersn");
+
+			User.editPassword(newPassword = "test");
+		}
+
+		task ("Then that user can create another user in the instance without error") {
+			User.logoutPG();
+
+			SignIn._signIn(
+				userEmailAddress = "userea@www.able.com",
+				virtualHostsURL = "http://www.able.com:8080");
+
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			User.addCP(
+				userEmailAddress = "newuser@liferay.com",
+				userFirstName = "new",
+				userLastName = "user",
+				userScreenName = "newuser");
+		}
+	}
+
 	@priority = 4
 	test PermissionCheckPortalInstances {
-		property test.name.skip.portal.instance = "VirtualInstances#PermissionCheckPortalInstances";
+		property test.liferay.virtual.instance = "false";
 
 		ApplicationsMenu.gotoPortlet(
 			category = "System",
@@ -146,7 +215,7 @@ definition {
 
 	@priority = 5
 	test ViewDeactivatedPortalInstance {
-		property test.name.skip.portal.instance = "VirtualInstances#ViewDeactivatedPortalInstance";
+		property test.liferay.virtual.instance = "false";
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
@@ -262,7 +331,7 @@ definition {
 	test ViewVirtualHostPrivateSitePage {
 		property custom.properties = "virtual.hosts.valid.hosts=localhost,127.0.0.1,www.able.com,www.baker.com,www.charlie.com";
 		property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
-		property test.name.skip.portal.instance = "VirtualInstances#ViewVirtualHostPrivateSitePage";
+		property test.liferay.virtual.instance = "false";
 
 		PortalSettings.gotoConfiguration(
 			configurationCategory = "Instance Configuration",
@@ -316,7 +385,7 @@ definition {
 
 	@priority = 4
 	test ViewVirtualInstanceInheritsSystemSettings {
-		property test.name.skip.portal.instance = "VirtualInstances#ViewVirtualInstanceInheritsSystemSettings";
+		property test.liferay.virtual.instance = "false";
 
 		PortalSettings.gotoConfiguration(
 			configurationCategory = "Users",

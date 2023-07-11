@@ -1,7 +1,7 @@
 import ClayIcon from '@clayui/icon';
 import getCN from 'classnames';
+import Loading from 'shared/components/Loading';
 import React, {FC, useState} from 'react';
-import Spinner from './Spinner';
 import Sticker from './Sticker';
 import TextTruncate from './TextTruncate';
 import {Colors} from 'shared/util/colors-size';
@@ -337,7 +337,7 @@ const VerticalTimeline: FC<IVerticalTimelineProps> = ({
 	timeZoneId
 }) =>
 	loading ? (
-		<Spinner alignCenter={false} className='flex-grow-1' spacer />
+		<Loading />
 	) : (
 		<div className='vertical-timeline-root'>
 			<ul

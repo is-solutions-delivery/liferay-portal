@@ -75,7 +75,7 @@ definition {
 	}
 
 	@priority = 5
-	@refactorneeded
+	@refactordone
 	test ViewDMArchive625 {
 		property data.archive.type = "data-archive-documents-and-media";
 		property database.types = "mariadb,mysql,postgresql";
@@ -89,6 +89,7 @@ definition {
 	test ViewDMArchive71105 {
 		property data.archive.type = "data-archive-documents-and-media";
 		property portal.version = "7.1.10.5";
+		property test.liferay.virtual.instance = "false";
 
 		ValidateDocumentsAndMediaUpgrade.viewDocuments();
 
@@ -109,7 +110,7 @@ definition {
 	test ViewDMArchive72104 {
 		property data.archive.type = "data-archive-documents-and-media";
 		property portal.version = "7.2.10.4";
-		property test.name.skip.portal.instance = "DocumentsandmediaUpgrade#ViewDMArchive72104";
+		property test.liferay.virtual.instance = "false";
 
 		ValidateDocumentsAndMediaUpgrade.viewDocuments();
 
@@ -130,7 +131,7 @@ definition {
 	test ViewDMArchive73101 {
 		property data.archive.type = "data-archive-documents-and-media";
 		property portal.version = "7.3.10.1";
-		property test.name.skip.portal.instance = "DocumentsandmediaUpgrade#ViewDMArchive73101";
+		property test.liferay.virtual.instance = "false";
 
 		ValidateDocumentsAndMediaUpgrade.viewDocuments();
 
@@ -146,7 +147,7 @@ definition {
 	}
 
 	@priority = 5
-	@refactorneeded
+	@refactordone
 	test ViewDMArchive621015 {
 		property data.archive.type = "data-archive-documents-and-media";
 		property database.types = "mariadb,mysql,postgresql";
@@ -156,7 +157,7 @@ definition {
 	}
 
 	@priority = 5
-	@refactorneeded
+	@refactordone
 	test ViewDMArchive621021 {
 		property data.archive.type = "data-archive-documents-and-media";
 		property database.types = "mariadb,mysql,postgresql";
@@ -171,7 +172,7 @@ definition {
 	test ViewDMArchive701015 {
 		property data.archive.type = "data-archive-documents-and-media";
 		property portal.version = "7.0.10.15";
-		property test.name.skip.portal.instance = "DocumentsandmediaUpgrade#ViewDMArchive701015";
+		property test.liferay.virtual.instance = "false";
 
 		ValidateDocumentsAndMediaUpgrade.viewDocuments();
 

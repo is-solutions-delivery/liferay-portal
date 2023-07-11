@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.product.service.test;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.product.constants.CPActionKeys;
 import com.liferay.commerce.product.constants.CPConstants;
@@ -61,6 +62,11 @@ public class CommerceCatalogServiceTest {
 			ResourceConstants.SCOPE_COMPANY,
 			String.valueOf(TestPropsValues.getCompanyId()),
 			CPActionKeys.ADD_COMMERCE_CATALOG);
+		RoleTestUtil.addResourcePermission(
+			"User", CPConstants.RESOURCE_NAME_CATALOG,
+			ResourceConstants.SCOPE_COMPANY,
+			String.valueOf(TestPropsValues.getCompanyId()),
+			CPActionKeys.VIEW_COMMERCE_CATALOGS);
 
 		User user1 = UserTestUtil.addUser();
 
@@ -68,8 +74,9 @@ public class CommerceCatalogServiceTest {
 
 		CommerceCatalog commerceCatalog1 =
 			_commerceCatalogService.addCommerceCatalog(
-				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-				"USD", "en_US",
+				RandomTestUtil.randomString(),
+				AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT,
+				RandomTestUtil.randomString(), "USD", "en_US",
 				ServiceContextTestUtil.getServiceContext(
 					TestPropsValues.getCompanyId(), user1.getGroupId(),
 					user1.getUserId()));

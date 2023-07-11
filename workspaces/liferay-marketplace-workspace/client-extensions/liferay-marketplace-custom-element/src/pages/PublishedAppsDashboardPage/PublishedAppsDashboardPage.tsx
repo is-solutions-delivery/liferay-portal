@@ -1,23 +1,38 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import {useEffect, useState} from 'react';
 
 import {DashboardNavigation} from '../../components/DashboardNavigation/DashboardNavigation';
-import {DashboardMemberTableRow} from '../../components/DashboardTable/DashboardMemberTableRow';
 import {
 	AppProps,
 	DashboardTable,
 } from '../../components/DashboardTable/DashboardTable';
 import {PublishedAppsDashboardTableRow} from '../../components/DashboardTable/PublishedAppsDashboardTableRow';
-import {MemberProfile} from '../../components/MemberProfile/MemberProfile';
 import {
 	getAccountInfoFromCommerce,
 	getAccounts,
 	getMyUserAccount,
 	getProducts,
-	getUserAccounts,
+	getUserAccountsByAccountId,
 } from '../../utils/api';
-import {showAccountImage} from '../../utils/util';
+import {
+	getProductVersionFromSpecifications,
+	showAccountImage,
+} from '../../utils/util';
 import {AccountDetailsPage} from '../AccountDetailsPage/AccountDetailsPage';
 import {DashboardPage} from '../DashBoardPage/DashboardPage';
 import {
@@ -33,18 +48,18 @@ import {
 	getRolesList,
 	initialAccountsState,
 	initialDashboardNavigationItems,
-	memberTableHeaders,
+	publisherPermissionDescriptions,
 	publisherRoles,
 } from './PublishedDashboardPageUtil';
 
 import './PublishedAppsDashboardPage.scss';
-import {Liferay} from '../../liferay/liferay';
-import {getProductVersionFromSpecifications} from '../../utils/util';
-import {ProjectsPage} from '../ProjectsPage/ProjectsPage';
 import solutionsIcon from '../../assets/icons/analytics_icon.svg';
 import appsIcon from '../../assets/icons/apps_fill_icon.svg';
 import membersIcon from '../../assets/icons/person_fill_icon.svg';
 import projectsIcon from '../../assets/icons/projects_icon.svg';
+import {Liferay} from '../../liferay/liferay';
+import {MembersPage} from '../MembersPage/MembersPage';
+import {ProjectsPage} from '../ProjectsPage/ProjectsPage';
 
 interface PublishedAppTable {
 	items: AppProps[];
@@ -60,16 +75,6 @@ const appMessages = {
 		title: 'No Apps Yet',
 	},
 	title: 'Apps',
-};
-
-const memberMessages = {
-	description: 'Manage users in your development team and invite new ones',
-	emptyStateMessage: {
-		description1: 'Create new members and they will show up here.',
-		description2: 'Click on “New Member” to start.',
-		title: 'No Members Yet',
-	},
-	title: 'Members',
 };
 
 const solutionMessages = {
@@ -99,7 +104,7 @@ export function PublishedAppsDashboardPage() {
 	const [selectedNavigationItem, setSelectedNavigationItem] =
 		useState('Apps');
 	const [members, setMembers] = useState<MemberProps[]>(Array<MemberProps>());
-	const [selectedMember, setSelectedMember] = useState<MemberProps>();
+	const [_selectedMember, setSelectedMember] = useState<MemberProps>();
 	const [selectedAccount, setSelectedAccount] = useState<Account>(
 		initialAccountsState[0]
 	);
@@ -147,23 +152,38 @@ export function PublishedAppsDashboardPage() {
 
 				if (accountCatalogId && accountCatalogId !== 0) {
 					setCatalogId(accountCatalogId);
-					const appList = await getProducts();
+					const {items: productsItems} = await getProducts(
+						'productChannels, attachments'
+					);
 
 					const appListProductIds: number[] =
-						getAppListProductIds(appList);
+						getAppListProductIds(productsItems);
 
 					const appListProductSpecifications =
 						await getAppListProductSpecifications(
 							appListProductIds
 						);
 
-					let newAppList: AppProps[] = [];
+					const newAppList: AppProps[] = [];
 
-					appList.items.forEach((product, index: number) => {
-						const isApp = product.categories.find((category) => category.name === 'App');
+					productsItems.forEach((product, index: number) => {
+						const marketPlaceChannel =
+							!!product.productChannels.find(
+								(channel) =>
+									channel.name === 'Marketplace Channel'
+							);
 
-						if (product.catalogId === accountCatalogId && isApp) {
+						const isApp = product.categories.find(
+							(category) => category.name === 'App'
+						);
+
+						if (
+							isApp &&
+							marketPlaceChannel &&
+							product.catalogId === accountCatalogId
+						) {
 							newAppList.push({
+								attachments: product.attachments,
 								catalogId: product.catalogId,
 								externalReferenceCode:
 									product.externalReferenceCode,
@@ -220,6 +240,7 @@ export function PublishedAppsDashboardPage() {
 		};
 
 		makeFetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [page, publishedAppTable.pageSize, selectedAccount]);
 
 	useEffect(() => {
@@ -279,9 +300,11 @@ export function PublishedAppsDashboardPage() {
 					});
 				}
 
-				const accountsListResponse = await getUserAccounts();
+				const accountsListResponse = await getUserAccountsByAccountId(
+					selectedAccount.id
+				);
 
-				const membersList = accountsListResponse.items.map(
+				const membersList = accountsListResponse?.items.map(
 					(member: UserAccountProps) => {
 						return {
 							accountBriefs: member.accountBriefs,
@@ -289,6 +312,7 @@ export function PublishedAppsDashboardPage() {
 							email: member.emailAddress,
 							image: member.image,
 							isCustomerAccount: false,
+							isInvitedMember: false,
 							isPublisherAccount: false,
 							lastLoginDate: member.lastLoginDate,
 							name: member.name,
@@ -424,7 +448,7 @@ export function PublishedAppsDashboardPage() {
 						items={[]}
 						tableHeaders={[]}
 					>
-						{(item) => <></>}
+						{() => <></>}
 					</DashboardTable>
 				</DashboardPage>
 			)}
@@ -439,32 +463,16 @@ export function PublishedAppsDashboardPage() {
 			)}
 
 			{!loading && selectedNavigationItem === 'Members' && (
-				<DashboardPage
+				<MembersPage
 					dashboardNavigationItems={dashboardNavigationItems}
-					messages={memberMessages}
-				>
-					{selectedMember ? (
-						<MemberProfile
-							member={selectedMember}
-							setSelectedMember={setSelectedMember}
-						></MemberProfile>
-					) : (
-						<DashboardTable<MemberProps>
-							emptyStateMessage={memberMessages.emptyStateMessage}
-							icon={membersIcon}
-							items={members}
-							tableHeaders={memberTableHeaders}
-						>
-							{(item) => (
-								<DashboardMemberTableRow
-									item={item}
-									key={item.name}
-									onSelectedMemberChange={setSelectedMember}
-								/>
-							)}
-						</DashboardTable>
-					)}
-				</DashboardPage>
+					icon={membersIcon}
+					isCustomerDashboard={false}
+					isPublisherDashboard={true}
+					listOfRoles={publisherRoles}
+					rolesPermissionDescription={publisherPermissionDescriptions}
+					selectedAccount={selectedAccount}
+					setShowDashboardNavigation={setShowDashboardNavigation}
+				/>
 			)}
 
 			{!loading && selectedNavigationItem === 'Account' && (

@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.ClassedModel;
+import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -35,7 +37,15 @@ import java.util.List;
 public class AuditMessageBuilder {
 
 	public static AuditMessage buildAuditMessage(
-		String eventType, String className, long classPK,
+		long groupId, String eventType, String className, long classPK,
+		List<Attribute> attributes) {
+
+		return buildAuditMessage(
+			groupId, eventType, className, String.valueOf(classPK), attributes);
+	}
+
+	public static AuditMessage buildAuditMessage(
+		long groupId, String eventType, String className, String classPK,
 		List<Attribute> attributes) {
 
 		long companyId = CompanyThreadLocal.getCompanyId();
@@ -71,8 +81,32 @@ public class AuditMessageBuilder {
 		}
 
 		return new AuditMessage(
-			eventType, companyId, realUserId, realUserName, className,
-			String.valueOf(classPK), null, additionalInfoJSONObject);
+			eventType, companyId, groupId, realUserId, realUserName, className,
+			classPK, null, null, additionalInfoJSONObject);
+	}
+
+	public static AuditMessage buildAuditMessage(
+		String eventType, ClassedModel classedModel,
+		List<Attribute> attributes) {
+
+		long groupId = 0;
+
+		if (classedModel instanceof GroupedModel) {
+			GroupedModel groupedModel = (GroupedModel)classedModel;
+
+			groupId = groupedModel.getGroupId();
+		}
+
+		return buildAuditMessage(
+			groupId, eventType, classedModel.getModelClassName(),
+			String.valueOf(classedModel.getPrimaryKeyObj()), attributes);
+	}
+
+	public static AuditMessage buildAuditMessage(
+		String eventType, String className, long classPK,
+		List<Attribute> attributes) {
+
+		return buildAuditMessage(0, eventType, className, classPK, attributes);
 	}
 
 	private static JSONArray _getAttributesJSONArray(

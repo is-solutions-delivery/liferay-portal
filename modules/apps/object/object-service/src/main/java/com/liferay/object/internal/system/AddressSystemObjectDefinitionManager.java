@@ -15,6 +15,7 @@
 package com.liferay.object.internal.system;
 
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.system.BaseSystemObjectDefinitionManager;
@@ -78,12 +79,17 @@ public class AddressSystemObjectDefinitionManager
 	}
 
 	@Override
-	public String getExternalReferenceCode(long primaryKey)
+	public String getBaseModelExternalReferenceCode(long primaryKey)
 		throws PortalException {
 
 		Address address = _addressLocalService.getAddress(primaryKey);
 
 		return address.getExternalReferenceCode();
+	}
+
+	@Override
+	public String getExternalReferenceCode() {
+		return "L_POSTAL_ADDRESS";
 	}
 
 	@Override
@@ -106,10 +112,28 @@ public class AddressSystemObjectDefinitionManager
 	@Override
 	public List<ObjectField> getObjectFields() {
 		return Arrays.asList(
-			createObjectField("Text", "String", "name", "name", true, true),
-			createObjectField(
-				"Text", "street1", "String", "street1", "streetAddressLine1",
-				true, true));
+			new TextObjectFieldBuilder(
+			).labelMap(
+				createLabelMap("name")
+			).name(
+				"name"
+			).required(
+				true
+			).system(
+				true
+			).build(),
+			new TextObjectFieldBuilder(
+			).dbColumnName(
+				"street1"
+			).labelMap(
+				createLabelMap("street1")
+			).name(
+				"streetAddressLine1"
+			).required(
+				true
+			).system(
+				true
+			).build());
 	}
 
 	@Override

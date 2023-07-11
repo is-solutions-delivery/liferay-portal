@@ -55,8 +55,6 @@ import com.liferay.journal.web.internal.security.permission.resource.JournalArti
 import com.liferay.journal.web.internal.security.permission.resource.JournalFolderPermission;
 import com.liferay.journal.web.internal.servlet.taglib.util.JournalArticleActionDropdownItemsProvider;
 import com.liferay.journal.web.internal.servlet.taglib.util.JournalFolderActionDropdownItems;
-import com.liferay.journal.web.internal.util.JournalArticleTranslation;
-import com.liferay.journal.web.internal.util.JournalArticleTranslationRowChecker;
 import com.liferay.journal.web.internal.util.JournalPortletUtil;
 import com.liferay.journal.web.internal.util.JournalSearcherUtil;
 import com.liferay.journal.web.internal.util.JournalUtil;
@@ -79,7 +77,6 @@ import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
-import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -100,7 +97,6 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -262,65 +258,6 @@ public class JournalDisplayContext {
 		throws Exception {
 
 		return getArticleActionDropdownItems(article);
-	}
-
-	public SearchContainer<JournalArticleTranslation>
-			getArticleTranslationsSearchContainer()
-		throws Exception {
-
-		if (_articleTranslationsSearchContainer != null) {
-			return _articleTranslationsSearchContainer;
-		}
-
-		PortletURL portletURL = PortletURLBuilder.create(
-			PortletURLUtil.clone(
-				PortletURLUtil.getCurrent(
-					_liferayPortletRequest, _liferayPortletResponse),
-				_liferayPortletResponse)
-		).setMVCPath(
-			"/select_article_translations.jsp"
-		).buildPortletURL();
-
-		SearchContainer<JournalArticleTranslation>
-			articleTranslationsSearchContainer = new SearchContainer<>(
-				_liferayPortletRequest, portletURL, null, null);
-
-		articleTranslationsSearchContainer.setId("articleTranslations");
-
-		List<JournalArticleTranslation> articleTranslations = new ArrayList<>();
-
-		JournalArticle article = getArticle();
-
-		String keywords = getKeywords();
-
-		for (String languageId : article.getAvailableLanguageIds()) {
-			JournalArticleTranslation articleTranslation =
-				new JournalArticleTranslation(
-					StringUtil.equalsIgnoreCase(
-						article.getDefaultLanguageId(), languageId),
-					LocaleUtil.fromLanguageId(languageId));
-
-			if (Validator.isNotNull(keywords) &&
-				!StringUtil.containsIgnoreCase(
-					LocaleUtil.getLongDisplayName(
-						articleTranslation.getLocale(), Collections.emptySet()),
-					keywords, StringPool.BLANK)) {
-
-				continue;
-			}
-
-			articleTranslations.add(articleTranslation);
-		}
-
-		articleTranslationsSearchContainer.setResultsAndTotal(
-			articleTranslations);
-		articleTranslationsSearchContainer.setRowChecker(
-			new JournalArticleTranslationRowChecker(_liferayPortletResponse));
-
-		_articleTranslationsSearchContainer =
-			articleTranslationsSearchContainer;
-
-		return _articleTranslationsSearchContainer;
 	}
 
 	public List<DropdownItem> getArticleVersionActionDropdownItems(
@@ -558,10 +495,6 @@ public class JournalDisplayContext {
 		return WorkflowConstants.STATUS_APPROVED;
 	}
 
-	public String getDeleteTranslationsEventName() {
-		return _liferayPortletResponse.getNamespace() + "selectTranslations";
-	}
-
 	public String getDisplayStyle() {
 		if (_displayStyle != null) {
 			return _displayStyle;
@@ -661,16 +594,6 @@ public class JournalDisplayContext {
 			).put(
 				"name", LanguageUtil.get(_themeDisplay.getLocale(), "home")
 			));
-	}
-
-	public String getFolderTitle() {
-		JournalFolder folder = getFolder();
-
-		if (folder != null) {
-			return folder.getName();
-		}
-
-		return StringPool.BLANK;
 	}
 
 	public List<NavigationItem> getInfoPanelNavigationItems() {
@@ -1210,29 +1133,21 @@ public class JournalDisplayContext {
 		articleSearchContainer.setOrderByType(getOrderByType());
 
 		if (isNavigationMine() || isNavigationRecent()) {
-			boolean includeOwner = true;
-
-			if (isNavigationMine()) {
-				includeOwner = false;
-			}
-
 			if (isNavigationRecent()) {
 				articleSearchContainer.setOrderByCol("modified-date");
 				articleSearchContainer.setOrderByType(getOrderByType());
 			}
 
-			boolean includeArticleOwner = includeOwner;
-
 			articleSearchContainer.setResultsAndTotal(
 				() -> JournalArticleServiceUtil.getGroupArticles(
 					_themeDisplay.getScopeGroupId(), _themeDisplay.getUserId(),
-					getFolderId(), getStatus(), includeArticleOwner,
+					getFolderId(), getStatus(), false,
 					articleSearchContainer.getStart(),
 					articleSearchContainer.getEnd(),
 					articleSearchContainer.getOrderByComparator()),
 				JournalArticleServiceUtil.getGroupArticlesCount(
 					_themeDisplay.getScopeGroupId(), _themeDisplay.getUserId(),
-					getFolderId(), getStatus(), includeArticleOwner));
+					getFolderId(), getStatus(), false));
 
 			articleSearchContainer.setRowChecker(_getEntriesChecker());
 
@@ -1348,9 +1263,7 @@ public class JournalDisplayContext {
 		searchContext.setAttribute(
 			Field.CLASS_NAME_ID,
 			PortalUtil.getClassNameId(JournalArticle.class));
-
 		searchContext.setAttribute("discussion", Boolean.TRUE);
-
 		searchContext.setEnd(searchContainer.getEnd());
 		searchContext.setStart(searchContainer.getStart());
 
@@ -1431,7 +1344,7 @@ public class JournalDisplayContext {
 	private JSONArray _getFoldersJSONArray(long groupId, long folderId) {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
-		List<JournalFolder> folders = JournalFolderLocalServiceUtil.getFolders(
+		List<JournalFolder> folders = JournalFolderServiceUtil.getFolders(
 			groupId, folderId);
 
 		for (JournalFolder folder : folders) {
@@ -1608,8 +1521,6 @@ public class JournalDisplayContext {
 	private JournalArticle _article;
 	private JournalArticleDisplay _articleDisplay;
 	private SearchContainer<?> _articleSearchContainer;
-	private SearchContainer<JournalArticleTranslation>
-		_articleTranslationsSearchContainer;
 	private SearchContainer<JournalArticle> _articleVersionsSearchContainer;
 	private final AssetDisplayPageFriendlyURLProvider
 		_assetDisplayPageFriendlyURLProvider;

@@ -29,6 +29,7 @@ import InfoItemService from '../../app/services/InfoItemService';
 import isMapped from '../../app/utils/editable_value/isMapped';
 import isMappedToInfoItem from '../../app/utils/editable_value/isMappedToInfoItem';
 import isMappedToStructure from '../../app/utils/editable_value/isMappedToStructure';
+import findPageContent from '../../app/utils/findPageContent';
 import getMappingFieldsKey from '../../app/utils/getMappingFieldsKey';
 import itemSelectorValueToInfoItem from '../../app/utils/item_selector_value/itemSelectorValueToInfoItem';
 import {useId} from '../hooks/useId';
@@ -55,7 +56,9 @@ function filterFields(fields, fieldType, filterLinkTypes) {
 			}
 			else if (fieldType === EDITABLE_TYPES.link && filterLinkTypes) {
 				return (
-					field.type !== EDITABLE_TYPES.image && field.type !== 'date'
+					field.type !== EDITABLE_TYPES.action &&
+					field.type !== EDITABLE_TYPES.image &&
+					field.type !== 'date'
 				);
 			}
 			else if (
@@ -63,6 +66,9 @@ function filterFields(fields, fieldType, filterLinkTypes) {
 				fieldType === EDITABLE_TYPES.backgroundImage
 			) {
 				return field.type === EDITABLE_TYPES.image;
+			}
+			else if (fieldType === EDITABLE_TYPES.action) {
+				return field.type === EDITABLE_TYPES.action;
 			}
 			else {
 				return field.type !== EDITABLE_TYPES.image;
@@ -121,8 +127,10 @@ function loadMappingFields({dispatch, item, sourceType}) {
 }
 
 export default function MappingSelectorWrapper({
+	fieldSelectorLabel,
 	fieldType,
 	filterLinkTypes = false,
+	itemSelectorURL,
 	mappedItem,
 	onMappingSelect,
 }) {
@@ -142,10 +150,8 @@ export default function MappingSelectorWrapper({
 			return;
 		}
 
-		const {classNameId, classPK} = collectionConfig.collection;
-
-		const key = classNameId
-			? getMappingFieldsKey(classNameId, classPK)
+		const key = collectionConfig.collection.classNameId
+			? getMappingFieldsKey(collectionConfig.collection)
 			: collectionConfig.collection.key;
 
 		const fields = mappingFields[key];
@@ -219,9 +225,10 @@ export default function MappingSelectorWrapper({
 			<MappingFieldSelector
 				fieldType={fieldType}
 				fields={collectionFields}
+				label={fieldSelectorLabel}
 				onValueSelect={(event) => {
 					if (event.target.value === UNMAPPED_OPTION.value) {
-						onMappingSelect({collectionFieldId: ''});
+						onMappingSelect({});
 					}
 					else {
 						onMappingSelect({
@@ -234,8 +241,10 @@ export default function MappingSelectorWrapper({
 		</>
 	) : (
 		<MappingSelector
+			fieldSelectorLabel={fieldSelectorLabel}
 			fieldType={fieldType}
 			filterLinkTypes={filterLinkTypes}
+			itemSelectorURL={itemSelectorURL}
 			mappedItem={mappedItem}
 			onMappingSelect={onMappingSelect}
 		/>
@@ -243,8 +252,10 @@ export default function MappingSelectorWrapper({
 }
 
 function MappingSelector({
+	fieldSelectorLabel,
 	fieldType,
 	filterLinkTypes,
+	itemSelectorURL,
 	mappedItem,
 	onMappingSelect,
 }) {
@@ -262,11 +273,7 @@ function MappingSelector({
 	const [subtypeLabel, setSubtypeLabel] = useState(null);
 
 	useEffect(() => {
-		const mappedContent = pageContents.find(
-			(infoItem) =>
-				infoItem.classNameId === selectedItem.classNameId &&
-				infoItem.classPK === selectedItem.classPK
-		);
+		const mappedContent = findPageContent(pageContents, selectedItem);
 
 		const type = selectedItem?.itemType || mappedContent?.type;
 		const subtype = selectedItem?.itemSubtype || mappedContent?.subtype;
@@ -318,12 +325,8 @@ function MappingSelector({
 	};
 
 	useEffect(() => {
-		if (mappedItem.classNameId && mappedItem.classPK) {
-			const pageContent = pageContents.find(
-				(pageContent) =>
-					pageContent.classNameId === mappedItem.classNameId &&
-					pageContent.classPK === mappedItem.classPK
-			);
+		if (isMappedToInfoItem(mappedItem)) {
+			const pageContent = findPageContent(pageContents, mappedItem);
 
 			setSelectedItem({
 				...pageContent,
@@ -343,22 +346,12 @@ function MappingSelector({
 		}
 
 		const infoItem =
-			pageContents.find(
-				({classNameId, classPK}) =>
-					selectedItem.classNameId === classNameId &&
-					selectedItem.classPK === classPK
-			) || selectedItem;
+			findPageContent(pageContents, selectedItem) || selectedItem;
 
 		const key =
 			selectedSourceType === MAPPING_SOURCE_TYPES.content
-				? getMappingFieldsKey(
-						infoItem.classNameId,
-						infoItem.classTypeId
-				  )
-				: getMappingFieldsKey(
-						selectedMappingTypes.type.id,
-						selectedMappingTypes.subtype.id || 0
-				  );
+				? getMappingFieldsKey(infoItem)
+				: getMappingFieldsKey(selectedMappingTypes);
 
 		const fields = mappingFields[key];
 
@@ -428,6 +421,7 @@ function MappingSelector({
 			{selectedSourceType === MAPPING_SOURCE_TYPES.content && (
 				<ItemSelector
 					className="mb-2"
+					itemSelectorURL={itemSelectorURL}
 					label={Liferay.Language.get('item')}
 					onItemSelect={onInfoItemSelect}
 					selectedItem={selectedItem}
@@ -464,6 +458,7 @@ function MappingSelector({
 				<MappingFieldSelector
 					fieldType={fieldType}
 					fields={itemFields}
+					label={fieldSelectorLabel}
 					onValueSelect={onFieldSelect}
 					value={selectedItem.mappedField || selectedItem.fieldId}
 				/>
@@ -478,6 +473,7 @@ MappingSelector.propTypes = {
 		PropTypes.shape({
 			classNameId: PropTypes.string,
 			classPK: PropTypes.string,
+			externalReferenceCode: PropTypes.string,
 			fieldId: PropTypes.string,
 			fileEntryId: PropTypes.string,
 		}),

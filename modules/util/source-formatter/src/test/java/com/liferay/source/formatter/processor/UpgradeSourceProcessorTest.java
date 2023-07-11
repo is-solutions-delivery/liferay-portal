@@ -44,6 +44,19 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeGetImagePreviewURLMethodCheck() throws Exception {
+		test("upgrade/UpgradeJavaGetImagePreviewURLMethodCheck.testjava");
+		test("upgrade/UpgradeJSPGetImagePreviewURLMethodCheck.testjsp");
+	}
+
+	@Test
+	public void testUpgradeGetPortletGroupIdMethodCheck() throws Exception {
+		test("upgrade/UpgradeFTLGetPortletGroupIdMethodCheck.testftl");
+		test("upgrade/UpgradeJavaGetPortletGroupIdMethodCheck.testjava");
+		test("upgrade/UpgradeJSPGetPortletGroupIdMethodCheck.testjsp");
+	}
+
+	@Test
 	public void testUpgradeGradleIncludeResourceCheck() throws Exception {
 		test(
 			SourceProcessorTestParameters.create(
@@ -59,8 +72,62 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeJavaAssetEntryAssetCategoriesCheck()
+		throws Exception {
+
+		test("upgrade/UpgradeJavaAssetEntryAssetCategoriesCheck.testjava");
+	}
+
+	@Test
 	public void testUpgradeJavaCheck() throws Exception {
 		test("upgrade/UpgradeJavaCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaExtractTextMethodCheck() throws Exception {
+		test("upgrade/UpgradeJavaExtractTextMethodCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaFDSActionProviderCheck() throws Exception {
+		test("upgrade/UpgradeJavaFDSActionProviderCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaFDSDataProviderCheck() throws Exception {
+		test("upgrade/UpgradeJavaFDSDataProviderCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaModelPermissionsCheck() throws Exception {
+		test("upgrade/UpgradeJavaModelPermissionsCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaMultiVMPoolUtilCheck() throws Exception {
+		test(
+			"upgrade/UpgradeJavaMultiVMPoolUtilCheck.testjava",
+			"Could not resolve types for MultiVMPool.getPortalCache(). " +
+				"Replace 'TO_BE_REPLACED' with the correct type");
+	}
+
+	@Test
+	public void testUpgradeJavaServiceReferenceAnnotationCheck()
+		throws Exception {
+
+		test("upgrade/UpgradeJavaServiceReferenceAnnotationCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaServiceTrackerListCheck() throws Exception {
+		test("upgrade/UpgradeJavaServiceTrackerListCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeSetResultsSetTotalMethodCheck() throws Exception {
+		test("upgrade/UpgradeJavaSetResultsSetTotalMethodCheck.testjava");
+		test("upgrade/UpgradeJSPSetResultsSetTotalMethodCheck.testjsp");
+		test("upgrade/UpgradeJSPFSetResultsSetTotalMethodCheck.testjspf");
 	}
 
 	@Test

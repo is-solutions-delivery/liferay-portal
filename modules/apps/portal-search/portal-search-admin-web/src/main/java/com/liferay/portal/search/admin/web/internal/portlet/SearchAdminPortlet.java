@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.admin.web.internal.portlet;
 
+import com.liferay.osgi.util.service.Snapshot;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -29,6 +31,7 @@ import com.liferay.portal.search.admin.web.internal.display.context.builder.Sear
 import com.liferay.portal.search.admin.web.internal.display.context.builder.SearchEngineDisplayContextBuilder;
 import com.liferay.portal.search.admin.web.internal.reindexer.IndexReindexerRegistry;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
+import com.liferay.portal.search.configuration.ReindexConfiguration;
 import com.liferay.portal.search.engine.SearchEngineInformation;
 import com.liferay.portal.search.index.IndexInformation;
 
@@ -36,22 +39,22 @@ import java.io.IOException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Adam Brandizzi
  */
 @Component(
+	configurationPid = "com.liferay.portal.search.configuration.ReindexConfiguration",
 	property = {
 		"com.liferay.portlet.css-class-wrapper=portlet-search-admin",
 		"com.liferay.portlet.display-category=category.hidden",
@@ -85,7 +88,8 @@ public class SearchAdminPortlet extends MVCPortlet {
 			new SearchAdminDisplayContextBuilder(
 				_language, _portal, renderRequest, renderResponse);
 
-		searchAdminDisplayContextBuilder.setIndexInformation(indexInformation);
+		searchAdminDisplayContextBuilder.setIndexInformation(
+			_indexInformationSnapshot.get());
 
 		List<String> indexReindexerClassNames = ListUtil.fromCollection(
 			_indexReindexerRegistry.getIndexReindexerClassNames());
@@ -109,7 +113,7 @@ public class SearchAdminPortlet extends MVCPortlet {
 					new SearchEngineDisplayContextBuilder();
 
 			searchEngineDisplayContextBuilder.setSearchEngineInformation(
-				searchEngineInformation);
+				_searchEngineInformationSnapshot.get());
 
 			renderRequest.setAttribute(
 				SearchAdminWebKeys.SEARCH_ENGINE_DISPLAY_CONTEXT,
@@ -125,7 +129,7 @@ public class SearchAdminPortlet extends MVCPortlet {
 			fieldMappingsDisplayContextBuilder.setCurrentURL(
 				_portal.getCurrentURL(renderRequest));
 			fieldMappingsDisplayContextBuilder.setIndexInformation(
-				indexInformation);
+				_indexInformationSnapshot.get());
 			fieldMappingsDisplayContextBuilder.setNamespace(
 				renderResponse.getNamespace());
 			fieldMappingsDisplayContextBuilder.setSelectedIndexName(
@@ -139,8 +143,8 @@ public class SearchAdminPortlet extends MVCPortlet {
 			IndexActionsDisplayContextBuilder
 				indexActionsDisplayContextBuilder =
 					new IndexActionsDisplayContextBuilder(
-						_language, _portal, renderRequest, renderResponse,
-						_searchCapabilities);
+						_language, _portal, _reindexConfiguration,
+						renderRequest, _searchCapabilities);
 
 			renderRequest.setAttribute(
 				SearchAdminWebKeys.INDEX_ACTIONS_DISPLAY_CONTEXT,
@@ -150,19 +154,19 @@ public class SearchAdminPortlet extends MVCPortlet {
 		super.render(renderRequest, renderResponse);
 	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	protected volatile IndexInformation indexInformation;
+	@Activate
+	protected void activate(Map<String, Object> properties) {
+		_reindexConfiguration = ConfigurableUtil.createConfigurable(
+			ReindexConfiguration.class, properties);
+	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	protected volatile SearchEngineInformation searchEngineInformation;
+	private static final Snapshot<IndexInformation> _indexInformationSnapshot =
+		new Snapshot<>(
+			SearchAdminPortlet.class, IndexInformation.class, null, true);
+	private static final Snapshot<SearchEngineInformation>
+		_searchEngineInformationSnapshot = new Snapshot<>(
+			SearchAdminPortlet.class, SearchEngineInformation.class, null,
+			true);
 
 	@Reference
 	private IndexReindexerRegistry _indexReindexerRegistry;
@@ -172,6 +176,8 @@ public class SearchAdminPortlet extends MVCPortlet {
 
 	@Reference
 	private Portal _portal;
+
+	private volatile ReindexConfiguration _reindexConfiguration;
 
 	@Reference
 	private SearchCapabilities _searchCapabilities;

@@ -20,6 +20,10 @@ import com.liferay.portal.instances.web.internal.constants.PortalInstancesPortle
 import com.liferay.portal.kernel.exception.CompanyMxException;
 import com.liferay.portal.kernel.exception.CompanyVirtualHostException;
 import com.liferay.portal.kernel.exception.CompanyWebIdException;
+import com.liferay.portal.kernel.exception.ContactNameException;
+import com.liferay.portal.kernel.exception.UserEmailAddressException;
+import com.liferay.portal.kernel.exception.UserPasswordException;
+import com.liferay.portal.kernel.exception.UserScreenNameException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
@@ -77,6 +81,36 @@ public class AddInstanceMVCActionCommand extends BaseMVCActionCommand {
 			else if (exception instanceof CompanyWebIdException) {
 				errorMessage = "please-enter-a-valid-web-id";
 			}
+			else if (exception instanceof
+						ContactNameException.MustHaveFirstName) {
+
+				errorMessage = "please-enter-a-valid-first-name";
+			}
+			else if (exception instanceof
+						ContactNameException.MustHaveLastName) {
+
+				errorMessage = "please-enter-a-valid-last-name";
+			}
+			else if (exception instanceof
+						ContactNameException.MustHaveMiddleName) {
+
+				errorMessage = "please-enter-a-valid-middle-name";
+			}
+			else if (exception instanceof
+						ContactNameException.MustHaveValidFullName) {
+
+				errorMessage =
+					"please-enter-a-valid-first-middle-and-last-name";
+			}
+			else if (exception instanceof UserEmailAddressException) {
+				errorMessage = "please-enter-a-valid-email-address";
+			}
+			else if (exception instanceof UserPasswordException) {
+				errorMessage = "please-enter-a-valid-password";
+			}
+			else if (exception instanceof UserScreenNameException) {
+				errorMessage = "please-enter-a-valid-screen-name";
+			}
 
 			jsonObject.put(
 				"error",
@@ -96,9 +130,24 @@ public class AddInstanceMVCActionCommand extends BaseMVCActionCommand {
 		String mx = ParamUtil.getString(actionRequest, "mx");
 		int maxUsers = ParamUtil.getInteger(actionRequest, "maxUsers");
 		boolean active = ParamUtil.getBoolean(actionRequest, "active");
+		String defaultAdminPassword = ParamUtil.getString(
+			actionRequest, "defaultAdminPassword", null);
+		String defaultAdminScreenName = ParamUtil.getString(
+			actionRequest, "defaultAdminScreenName", null);
+		String defaultAdminEmailAddress = ParamUtil.getString(
+			actionRequest, "defaultAdminEmailAddress", null);
+		String defaultAdminFirstName = ParamUtil.getString(
+			actionRequest, "defaultAdminFirstName", null);
+		String defaultAdminMiddleName = ParamUtil.getString(
+			actionRequest, "defaultAdminMiddleName", null);
+		String defaultAdminLastName = ParamUtil.getString(
+			actionRequest, "defaultAdminLastName", null);
 
 		Company company = _companyService.addCompany(
-			webId, virtualHostname, mx, maxUsers, active);
+			webId, virtualHostname, mx, maxUsers, active, defaultAdminPassword,
+			defaultAdminScreenName, defaultAdminEmailAddress,
+			defaultAdminFirstName, defaultAdminMiddleName,
+			defaultAdminLastName);
 
 		String siteInitializerKey = ParamUtil.getString(
 			actionRequest, "siteInitializerKey");

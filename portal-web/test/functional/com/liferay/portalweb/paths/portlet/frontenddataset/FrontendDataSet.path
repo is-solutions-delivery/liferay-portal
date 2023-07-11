@@ -204,6 +204,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SEARCH_COLUMN_AND_ROW</td>
+	<td>//div[contains(@class,'dnd-table')]//*[contains(string(),'${key_field}')]/../../..//div[contains(text(),'${key_color}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SORT_FIELD</td>
 	<td>//button[contains(@class, "btn-sorting") and contains(text(), "${key_field}")]</td>
 	<td></td>

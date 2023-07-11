@@ -19,31 +19,27 @@ import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.service.ListTypeDefinitionLocalServiceUtil;
 import com.liferay.list.type.service.ListTypeEntryLocalServiceUtil;
 import com.liferay.object.constants.ObjectDefinitionConstants;
-import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.field.builder.PicklistObjectFieldBuilder;
+import com.liferay.object.field.builder.TextObjectFieldBuilder;
+import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.service.ObjectEntryLocalServiceUtil;
-import com.liferay.object.service.ObjectFieldLocalServiceUtil;
 import com.liferay.object.service.ObjectRelationshipLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.HTTPTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.util.Base64;
-import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.test.log.LogCapture;
@@ -99,14 +95,23 @@ public class ObjectDefinitionGraphQLTest {
 
 		_parentObjectDefinition = _addObjectDefinition();
 
-		ObjectFieldLocalServiceUtil.addCustomObjectField(
-			null, TestPropsValues.getUserId(),
-			listTypeDefinition.getListTypeDefinitionId(),
-			_parentObjectDefinition.getObjectDefinitionId(),
-			ObjectFieldConstants.BUSINESS_TYPE_PICKLIST,
-			ObjectFieldConstants.DB_TYPE_STRING, false, true, "",
-			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			false, _listFieldName, true, false, Collections.emptyList());
+		ObjectFieldUtil.addCustomObjectField(
+			new PicklistObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).listTypeDefinitionId(
+				listTypeDefinition.getListTypeDefinitionId()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).indexedAsKeyword(
+				true
+			).name(
+				_listFieldName
+			).objectDefinitionId(
+				_parentObjectDefinition.getObjectDefinitionId()
+			).required(
+				true
+			).build());
 
 		_parentObjectDefinitionName = _parentObjectDefinition.getShortName();
 		_parentObjectDefinitionPrimaryKeyName = StringUtil.removeFirst(
@@ -476,17 +481,25 @@ public class ObjectDefinitionGraphQLTest {
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				"A" + RandomTestUtil.randomString(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				ObjectDefinitionConstants.SCOPE_COMPANY,
+				true, ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				Collections.emptyList());
 
-		ObjectFieldLocalServiceUtil.addCustomObjectField(
-			null, TestPropsValues.getUserId(), 0,
-			objectDefinition.getObjectDefinitionId(),
-			ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-			ObjectFieldConstants.DB_TYPE_STRING, true, true, "",
-			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			false, _objectFieldName, false, false, Collections.emptyList());
+		ObjectFieldUtil.addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).userId(
+				TestPropsValues.getUserId()
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).indexed(
+				true
+			).indexedAsKeyword(
+				true
+			).name(
+				_objectFieldName
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).build());
 
 		return objectDefinition;
 	}
@@ -494,22 +507,11 @@ public class ObjectDefinitionGraphQLTest {
 	private JSONObject _invoke(GraphQLField queryGraphQLField)
 		throws Exception {
 
-		Http.Options options = new Http.Options();
-
-		options.addHeader(
-			HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON);
-		options.addHeader(
-			"Authorization",
-			"Basic " + Base64.encode("test@liferay.com:test".getBytes()));
-		options.setBody(
+		return HTTPTestUtil.invoke(
 			JSONUtil.put(
 				"query", queryGraphQLField.toString()
 			).toString(),
-			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
-		options.setLocation("http://localhost:8080/o/graphql");
-		options.setPost(true);
-
-		return JSONFactoryUtil.createJSONObject(HttpUtil.URLtoString(options));
+			"graphql", Http.Method.POST);
 	}
 
 	private static final String _RELATIONSHIP_NAME = "parent";

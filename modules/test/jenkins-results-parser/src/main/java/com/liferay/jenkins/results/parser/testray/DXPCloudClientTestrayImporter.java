@@ -181,6 +181,13 @@ public class DXPCloudClientTestrayImporter {
 			"test-results/TEST-com.liferay.poshi.runner.PoshiRunner.xml");
 
 		if (!xmlFile.exists()) {
+			xmlFile = new File(
+				_projectDir,
+				"test-results" +
+					"/TEST-com.liferay.poshi.runner.ParallelPoshiRunner.xml");
+		}
+
+		if (!xmlFile.exists()) {
 			return null;
 		}
 
@@ -358,7 +365,10 @@ public class DXPCloudClientTestrayImporter {
 
 			String attachmentName;
 
-			if (fileName.equals("index.html.gz")) {
+			if (fileName.equals("console.txt.gz")) {
+				attachmentName = "Poshi Console";
+			}
+			else if (fileName.equals("index.html.gz")) {
 				attachmentName = "Poshi Report";
 			}
 			else if (fileName.equals("summary.html.gz")) {
@@ -452,6 +462,13 @@ public class DXPCloudClientTestrayImporter {
 		File xmlFile = new File(
 			_projectDir,
 			"test-results/TEST-com.liferay.poshi.runner.PoshiRunner.xml");
+
+		if (!xmlFile.exists()) {
+			xmlFile = new File(
+				_projectDir,
+				"test-results" +
+					"/TEST-com.liferay.poshi.runner.ParallelPoshiRunner.xml");
+		}
 
 		try {
 			Document document = Dom4JUtil.parse(

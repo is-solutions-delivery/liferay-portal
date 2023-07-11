@@ -33,11 +33,12 @@ exports[`SessionInput should render 1`] = `
               aria-activedescendant="eq"
               aria-expanded="true"
               aria-haspopup="listbox"
-              aria-owns="clay-id-1"
+              aria-owns="clay-id-2"
               class="form-control form-control-select form-control-select-secondary show"
               role="combobox"
               style=""
               tabindex="0"
+              type="button"
             >
               is
             </button>
@@ -91,12 +92,13 @@ exports[`SessionInput should render 1`] = `
           aria-activedescendant="eq"
           aria-expanded="true"
           aria-haspopup="listbox"
-          aria-owns="clay-id-2"
+          aria-owns="clay-id-4"
           class="form-control form-control-select form-control-select-secondary conjunction-input show"
           data-testid="conjunction-input"
           role="combobox"
           style=""
           tabindex="0"
+          type="button"
         >
           on
         </button>
@@ -181,11 +183,12 @@ exports[`SessionInput should render with "ever" 1`] = `
               aria-activedescendant="eq"
               aria-expanded="true"
               aria-haspopup="listbox"
-              aria-owns="clay-id-3"
+              aria-owns="clay-id-6"
               class="form-control form-control-select form-control-select-secondary show"
               role="combobox"
               style=""
               tabindex="0"
+              type="button"
             >
               is
             </button>
@@ -239,12 +242,13 @@ exports[`SessionInput should render with "ever" 1`] = `
           aria-activedescendant="ever"
           aria-expanded="true"
           aria-haspopup="listbox"
-          aria-owns="clay-id-4"
+          aria-owns="clay-id-8"
           class="form-control form-control-select form-control-select-secondary conjunction-input show"
           data-testid="conjunction-input"
           role="combobox"
           style=""
           tabindex="0"
+          type="button"
         >
           ever
         </button>

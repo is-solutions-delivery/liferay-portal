@@ -12,9 +12,9 @@ definition {
 	}
 
 	tearDown {
-		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		if (${testPortalInstance} == "true") {
+		if (${testLiferayVirtualInstance} == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -38,7 +38,7 @@ definition {
 		property portal.acceptance = "true";
 		property portal.upstream = "true";
 		property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
-		property test.name.skip.portal.instance = "SitesUseCase#AddChildSiteFromImportedSiteTemplate";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Training";
 
 		task ("Add an organization") {
@@ -182,7 +182,7 @@ definition {
 	test AddOrganizationSitesAndDeactivate {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
-		property test.name.skip.portal.instance = "SitesUseCase#AddOrganizationSitesAndDeactivate";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Sites Administration,Training,Users and Organizations";
 
 		task ("Enable Show Inactive Request Message in system settings") {
@@ -521,6 +521,7 @@ definition {
 	@priority = 3
 	test ReturnWrongLayoutForSignedInUserWithVirtualHostsConfigured {
 		property custom.properties = "layout.default.template.id=2_columns_iii${line.separator}layout.user.private.layouts.enabled=false${line.separator}layout.user.private.layouts.auto.create=false${line.separator}layout.user.private.layouts.power.user.required=true${line.separator}layout.user.public.layouts.enabled=false${line.separator}layout.user.public.layouts.auto.create=false${line.separator}layout.user.public.layouts.power.user.required=true";
+		property test.liferay.virtual.instance = "false";
 		property test.smtp.server.enabled = "true";
 
 		task ("Add a site and a public page in it") {
@@ -788,7 +789,7 @@ definition {
 	@priority = 3
 	test SitesDeactivated {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
-		property test.name.skip.portal.instance = "SitesUsecase#SitesDeactivated";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Sites Administration";
 
 		task ("Enable Show Inactive Request Message in system settings") {
@@ -897,7 +898,7 @@ definition {
 		property osgi.module.configurations = "promptEnabled=\"true\"";
 		property portal.release = "true";
 		property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
-		property test.name.skip.portal.instance = "SitesUsecase#SitesDemoSiteManagement";
+		property test.liferay.virtual.instance = "false";
 		property testray.component.names = "Sites Administration,Page Administration";
 
 		var portalURL = PropsUtil.get("portal.url");
@@ -1110,9 +1111,11 @@ definition {
 		task ("Add a site and import the site lar file") {
 			HeadlessSite.addSite(siteName = "Site Name");
 
-			JSONLayoututilitypage.deleteLayoutUtilityPage(
-				groupName = "Site Name",
-				layoutUtilityPageName = "404 Error");
+			for (var layoutUtilityPageName : list "404 Error,500 Error") {
+				JSONLayoututilitypage.deleteLayoutUtilityPage(
+					groupName = "Site Name",
+					layoutUtilityPageName = ${layoutUtilityPageName});
+			}
 
 			LAR.importSiteCP(
 				larFileName = ${larFileName},

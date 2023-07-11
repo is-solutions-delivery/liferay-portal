@@ -14,10 +14,10 @@
 
 package com.liferay.portal.template.react.renderer.internal;
 
-import com.liferay.petra.string.CharPool;
+import com.liferay.frontend.js.loader.modules.extender.esm.ESImportUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.servlet.taglib.aui.AMDRequire;
 import com.liferay.portal.kernel.servlet.taglib.aui.ESImport;
@@ -46,8 +46,9 @@ public class ReactRendererUtil {
 	public static void renderEcmaScript(
 			AbsolutePortalURLBuilder absolutePortalURLBuilder,
 			ComponentDescriptor componentDescriptor,
-			HttpServletRequest httpServletRequest, String placeholderId,
-			Portal portal, Map<String, Object> props, Writer writer)
+			HttpServletRequest httpServletRequest, JSONFactory jsonFactory,
+			String placeholderId, Portal portal, Map<String, Object> props,
+			Writer writer)
 		throws IOException {
 
 		List<AMDRequire> amdRequires = new ArrayList<>();
@@ -56,38 +57,35 @@ public class ReactRendererUtil {
 
 		List<ESImport> esImports = new ArrayList<>();
 
+		for (String dependency : componentDescriptor.getDependencies()) {
+			if (ESImportUtil.isESImport(dependency)) {
+				esImports.add(
+					ESImportUtil.getESImport(
+						absolutePortalURLBuilder, dependency));
+			}
+			else {
+				amdRequires.add(new AMDRequire(dependency));
+			}
+		}
+
 		esImports.add(
-			new ESImport(
-				absolutePortalURLBuilder.forESModule(
-					"portal-template-react-renderer-impl", "index.js"
-				).build(),
-				"render"));
-
-		String module = componentDescriptor.getModule();
-
-		String[] parts = module.split(" from ");
+			ESImportUtil.getESImport(
+				absolutePortalURLBuilder,
+				"{render} from portal-template-react-renderer-impl"));
 
 		esImports.add(
-			new ESImport(
-				"componentModule",
-				absolutePortalURLBuilder.forESModule(
-					parts[1], "index.js"
-				).build(),
-				_getSymbolName(parts[0])));
+			ESImportUtil.getESImport(
+				absolutePortalURLBuilder, "componentModule",
+				componentDescriptor.getModule()));
 
 		String propsTransformer = componentDescriptor.getPropsTransformer();
 
 		if (Validator.isNotNull(propsTransformer)) {
-			if (propsTransformer.contains(" from ")) {
-				parts = propsTransformer.split(" from ");
-
+			if (ESImportUtil.isESImport(propsTransformer)) {
 				esImports.add(
-					new ESImport(
-						"propsTransformer",
-						absolutePortalURLBuilder.forESModule(
-							parts[1], "index.js"
-						).build(),
-						_getSymbolName(parts[0])));
+					ESImportUtil.getESImport(
+						absolutePortalURLBuilder, "propsTransformer",
+						propsTransformer));
 			}
 			else {
 				amdRequires.add(
@@ -95,14 +93,14 @@ public class ReactRendererUtil {
 			}
 		}
 
-		JSONSerializer jsonSerializer = JSONFactoryUtil.createJSONSerializer();
+		JSONSerializer jsonSerializer = jsonFactory.createJSONSerializer();
 
 		contentSB.append("render(componentModule, ");
 
 		if (Validator.isNotNull(propsTransformer)) {
 			contentSB.append("propsTransformer");
 
-			if (!propsTransformer.contains(" from ")) {
+			if (!ESImportUtil.isESImport(propsTransformer)) {
 				contentSB.append(".default");
 			}
 
@@ -147,7 +145,7 @@ public class ReactRendererUtil {
 
 	public static void renderJavaScript(
 			ComponentDescriptor componentDescriptor, Map<String, Object> props,
-			HttpServletRequest httpServletRequest,
+			HttpServletRequest httpServletRequest, JSONFactory jsonFactory,
 			String npmResolvedPackageName, String placeholderId, Portal portal,
 			Writer writer)
 		throws IOException {
@@ -171,7 +169,7 @@ public class ReactRendererUtil {
 			dependenciesSB.append(placeholderId);
 		}
 
-		JSONSerializer jsonSerializer = JSONFactoryUtil.createJSONSerializer();
+		JSONSerializer jsonSerializer = jsonFactory.createJSONSerializer();
 
 		StringBundler javascriptSB = new StringBundler(13);
 
@@ -222,23 +220,6 @@ public class ReactRendererUtil {
 				javascriptSB.toString(), dependenciesSB.toString(),
 				ScriptData.ModulesType.ES6);
 		}
-	}
-
-	private static String _getSymbolName(String importedSymbol) {
-		importedSymbol = importedSymbol.trim();
-
-		if ((importedSymbol.charAt(0) != CharPool.OPEN_CURLY_BRACE) ||
-			(importedSymbol.charAt(importedSymbol.length() - 1) !=
-				CharPool.CLOSE_CURLY_BRACE)) {
-
-			throw new IllegalArgumentException(
-				"Invalid import syntax: " + importedSymbol);
-		}
-
-		importedSymbol = importedSymbol.substring(
-			1, importedSymbol.length() - 1);
-
-		return importedSymbol.trim();
 	}
 
 }

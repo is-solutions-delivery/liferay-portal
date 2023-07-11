@@ -1,5 +1,6 @@
 {
-	"accountEntryRestricted": false,
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "r_accountEntryToTestObjectDefinition4_accountEntryId",
 	"label": {
 		"en_US": "Test Object Definition 4"
 	},

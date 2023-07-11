@@ -34,7 +34,9 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.TreeMapBuilder;
 import com.liferay.portal.vulcan.batch.engine.Field;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -182,6 +184,26 @@ public class ObjectEntryOpenAPIResourceImpl
 
 			return dtoProperty;
 		}
+		else if (Objects.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_DATE_TIME)) {
+
+			return new DTOProperty(
+				HashMapBuilder.<String, Object>put(
+					"x-parent-map", "properties"
+				).put(
+					"x-timeStorage",
+					ObjectFieldSettingUtil.getValue(
+						ObjectFieldSettingConstants.NAME_TIME_STORAGE,
+						objectField)
+				).build(),
+				objectField.getName(), objectField.getDBType()) {
+
+				{
+					setRequired(objectField.isRequired());
+				}
+			};
+		}
 
 		if (objectField.getListTypeDefinitionId() != 0) {
 			DTOProperty dtoProperty = new DTOProperty(
@@ -215,23 +237,24 @@ public class ObjectEntryOpenAPIResourceImpl
 			boolean addRelatedSchemas, String type, UriInfo uriInfo)
 		throws Exception {
 
-		return _openAPIResource.getOpenAPI(
-			new ObjectEntryOpenAPIContributor(
-				addRelatedSchemas, _bundleContext, _dtoConverterRegistry,
-				_objectActionLocalService, _objectDefinition,
-				_objectDefinitionLocalService, this,
-				_objectEntryOpenAPIResourceProvider,
-				_objectRelationshipLocalService, _openAPIResource,
-				_systemObjectDefinitionManagerRegistry),
-			_getOpenAPISchemaFilter(_objectDefinition),
-			new HashSet<Class<?>>() {
-				{
-					add(ObjectEntryRelatedObjectsResourceImpl.class);
-					add(ObjectEntryResourceImpl.class);
-					add(OpenAPIResourceImpl.class);
-				}
-			},
-			type, uriInfo);
+		return _setReadOnly(
+			_openAPIResource.getOpenAPI(
+				new ObjectEntryOpenAPIContributor(
+					addRelatedSchemas, _bundleContext, _dtoConverterRegistry,
+					_objectActionLocalService, _objectDefinition,
+					_objectDefinitionLocalService, this,
+					_objectEntryOpenAPIResourceProvider,
+					_objectRelationshipLocalService, _openAPIResource,
+					_systemObjectDefinitionManagerRegistry),
+				_getOpenAPISchemaFilter(_objectDefinition),
+				new HashSet<Class<?>>() {
+					{
+						add(ObjectEntryRelatedObjectsResourceImpl.class);
+						add(ObjectEntryResourceImpl.class);
+						add(OpenAPIResourceImpl.class);
+					}
+				},
+				type, uriInfo));
 	}
 
 	private OpenAPISchemaFilter _getOpenAPISchemaFilter(
@@ -252,6 +275,21 @@ public class ObjectEntryOpenAPIResourceImpl
 					objectDefinition.getObjectDefinitionId())) {
 
 			dtoProperties.add(_getDTOProperty(objectField));
+
+			if (objectField.isLocalized() &&
+				FeatureFlagManagerUtil.isEnabled("LPS-146755")) {
+
+				dtoProperties.add(
+					new DTOProperty(
+						Collections.singletonMap("x-parent-map", "properties"),
+						objectField.getI18nObjectFieldName(),
+						Map.class.getSimpleName()) {
+
+						{
+							setRequired(objectField.isRequired());
+						}
+					});
+			}
 
 			if (Objects.equals(
 					objectField.getRelationshipType(),
@@ -330,6 +368,41 @@ public class ObjectEntryOpenAPIResourceImpl
 		}
 
 		return requiredPropertySchemaNames;
+	}
+
+	private Response _setReadOnly(Response response) {
+		OpenAPI openAPI = (OpenAPI)response.getEntity();
+
+		Components components = openAPI.getComponents();
+
+		Map<String, Schema> schemas = components.getSchemas();
+
+		Schema schema = schemas.get(_objectDefinition.getShortName());
+
+		Map<String, Schema> properties = schema.getProperties();
+
+		for (ObjectField objectField :
+				_objectFieldLocalService.getObjectFields(
+					_objectDefinition.getObjectDefinitionId())) {
+
+			schema = properties.get(objectField.getName());
+
+			if (Objects.equals(
+					objectField.getReadOnly(),
+					ObjectFieldConstants.READ_ONLY_CONDITIONAL) ||
+				Objects.equals(
+					objectField.getReadOnly(),
+					ObjectFieldConstants.READ_ONLY_FALSE)) {
+
+				schema.readOnly(false);
+
+				continue;
+			}
+
+			schema.readOnly(true);
+		}
+
+		return response;
 	}
 
 	private final BundleContext _bundleContext;
