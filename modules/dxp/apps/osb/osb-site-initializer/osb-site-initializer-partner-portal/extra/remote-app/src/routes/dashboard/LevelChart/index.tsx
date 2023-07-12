@@ -36,6 +36,7 @@ const LevelChart = () => {
 	const [data, setData] = useState<AccountData>();
 	const [headcount, setHeadcount] = useState<Headcount>();
 	const [completed, setCompleted] = useState<CheckedProperties>();
+	const [opportunitysfs, setOpportunitysfs] = useState<any>();
 	const [loading, setLoading] = useState(false);
 
 	const getAccountInformation = async () => {
@@ -44,6 +45,17 @@ const LevelChart = () => {
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
 		const myUserAccountsRequest = await fetch(
 			'/o/headless-admin-user/v1.0/my-user-account',
+			{
+				headers: {
+					'accept': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+				},
+			}
+		);
+
+		// eslint-disable-next-line @liferay/portal/no-global-fetch
+		const getOpportunitysfs = await fetch(
+			`/o/c/opportunitysfs/?pageSize=200 `,
 			{
 				headers: {
 					'accept': 'application/json',
@@ -82,6 +94,14 @@ const LevelChart = () => {
 
 				if (accountRequest.ok) {
 					const accountData = await accountRequest.json();
+					const opportunitsData = await getOpportunitysfs.json();
+
+					const accountERC = accountData.externalReferenceCode;
+
+					const accountByOpportunity = opportunitsData.items.find(
+						(data) => data.accountName === accountERC
+					)
+					const aRRAmount = accountByOpportunity.growthARR + accountByOpportunity.renewalArr;				
 
 					if (
 						accountData.partnerLevel !==
@@ -101,10 +121,7 @@ const LevelChart = () => {
 							accountData.partnerLevel === PartnershipLevels.GOLD
 						) {
 							const hasMatchingARR =
-								accountData.aRRAmount >=
-								partnerLevelProperties[
-									accountData?.partnerLevel
-								].growthARR;
+							accountByOpportunity.growthARR >= partnerLevelProperties[accountData.partnerLevel].goalARR;							
 
 							const hastMatchingNPOrNB =
 								accountData.newProjectExistingBusiness >=
@@ -113,16 +130,12 @@ const LevelChart = () => {
 
 							checkedProperties['arr'] =
 								hasMatchingARR || hastMatchingNPOrNB;
-						}
-
-						const growthRenewalARRTotal =
-							accountData.growthARR + accountData.renewalARR;
+						}							
 
 						if (
 							accountData.partnerLevel ===
 								PartnershipLevels.PLATINUM &&
-							growthRenewalARRTotal > 0 &&
-							accountData.aRRAmount >= growthRenewalARRTotal
+								aRRAmount > 0 							
 						) {
 							checkedProperties['arr'] = true;
 						}
@@ -177,6 +190,7 @@ const LevelChart = () => {
 					}
 
 					setData(accountData);
+					setOpportunitysfs(accountByOpportunity);
 					setCompleted(checkedProperties);
 				}
 			}
@@ -210,6 +224,7 @@ const LevelChart = () => {
 				completed={completed}
 				data={data}
 				headcount={headcount}
+				opportunity={opportunitysfs}
 			/>
 		);
 	};
