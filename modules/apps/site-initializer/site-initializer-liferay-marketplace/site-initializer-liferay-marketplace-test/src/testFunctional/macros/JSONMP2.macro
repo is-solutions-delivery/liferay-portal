@@ -1,9 +1,11 @@
 definition {
-    macro addAccount {
+
+	macro addAccount {
 		if (!(isSet(accountName))) {
 			var accountName = "QA Development";
 		}
 
 		JSONMP2API.addAccountEntry(accountName = ${accountName});
 	}
+
 }

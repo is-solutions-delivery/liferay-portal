@@ -11,137 +11,139 @@ definition {
 	var testSiteURL = "marketplace-site";
 
 	setUp {
-        task ("Set up instance and create a new Marketplace Site") {
-            MP2Configuration.marketplaceSetUp();
-        }
-        
-        task ("Create a New Account and assign a user") {
-            JSONMP2.addAccount();
+		task ("Set up instance and create a new Marketplace Site") {
+			MP2Configuration.marketplaceSetUp();
+		}
 
-            MP2Configuration.addUserAndSetAccount(
-                accountEntryName = "QA Development",
-                accountRole = "Account Administrator",
-                regularRole = "Account Administrator (Regular)",
-                roleTitle = "Site Owner",
-                userEmailAddress = "taqa@acme.com",
-                userFirstName = "Test Account",
-                userLastName = "QA",
-                userScreenName = "taqa");
+		task ("Create a New Account and assign a user") {
+			JSONMP2.addAccount();
 
-            MP2Configuration.addUserAndSetAccount(
-                accountEntryName = "QA Development",
-                accountRole = "App Editor",
-                regularRole = "Power User",
-                roleTitle = "Site Owner",
-                userEmailAddress = "testqa@editor.com",
-                userFirstName = "Test",
-                userLastName = "QA",
-                userScreenName = "testqa");
-        }
+			MP2Configuration.addUserAndSetAccount(
+				accountEntryName = "QA Development",
+				accountRole = "Account Administrator",
+				regularRole = "Account Administrator (Regular)",
+				roleTitle = "Site Owner",
+				userEmailAddress = "taqa@acme.com",
+				userFirstName = "Test Account",
+				userLastName = "QA",
+				userScreenName = "taqa");
 
-        task ("Login with the created user and go to Marketplace") {
-            User.logoutAndLoginPG(
-                userLoginEmailAddress = "taqa@acme.com",
-                userLoginFullName = "Test Account QA");
+			MP2Configuration.addUserAndSetAccount(
+				accountEntryName = "QA Development",
+				accountRole = "App Editor",
+				regularRole = "Power User",
+				roleTitle = "Site Owner",
+				userEmailAddress = "testqa@editor.com",
+				userFirstName = "Test",
+				userLastName = "QA",
+				userScreenName = "testqa");
+		}
 
-            MP2Navigator.gotoMP2();
-        }
+		task ("Login with the created user and go to Marketplace") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "taqa@acme.com",
+				userLoginFullName = "Test Account QA");
+
+			MP2Navigator.gotoMP2();
+		}
 	}
 
 	tearDown {
 		MP2Configuration.marketplaceInitializersTearDown(doLogout = "true");
 	}
 
-    @description = "Story ID: LPS-162211 | Test Summary: Verify that after invite a member, as Publisher, the admin is taken back to members section of the Dashboard"
-    @ignore = "true"
-    @priority = 5
-    test CanInviteMemberToTheMarketplaceAccount {
-        task ("Given that the user goes to the Publisher Dashboard page") {
-            MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
-        }
+	@description = "Story ID: LPS-162211 | Test Summary: Verify if the Publisher admin user is able to click on the invited user record to see its details"
+	@ignore = "true"
+	@priority = 3
+	test CanAccessInvitedUserRecordDetail {
+		task ("Given that the user goes to the Publisher Dashboard page") {
+			MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
+		}
 
-        task ("And the user clicks Members in the side menu") {
-            MP2Navigator.gotoNavItem(navItem = "Members");
-        }
+		task ("And the user clicks Members in the side menu") {
+			MP2Navigator.gotoNavItem(navItem = "Members");
+		}
 
-        task ("When the user fills out the form and sends the invitation") {
-            MP2Dashboards.inviteNewMember(
-                button = "true",
-                checkboxName = "App Editor",
-                emailAddress = "test.mp@liferay.com",
-                firstName = "Test",
-                lastName = "QA");
-        }
+		task ("When the user fills out the form and sends the invitation") {
+			MP2Dashboards.inviteNewMember(
+				button = "true",
+				checkboxName = "Account Administrator",
+				emailAddress = "test.mp@liferay.com",
+				firstName = "Test",
+				lastName = "QA");
+		}
 
-        task ("Then I should be able to assert that the user has been invited") {
-            var userInvitedInfo = "Test QA,test.mp@liferay.com,Invited Member";
+		task ("And the user opens the details of the invited member") {
+			MP2Dashboards.clickOnTheInvitedUser(text = "Invited Member");
+		}
 
-            MP2Utils.assertUserInfoAtTable(textList = ${userInvitedInfo});
-        }
-    }
+		task ("Then I should be able to assert all user details") {
+			var cardDetailsList = "Profile,Roles,Account";
 
-    @description = "Story ID: LPS-162211 | Test Summary: Verify that an alert will appear when user don't fill a mandatory field and that “Send Invite” button only will be clickable after fill all mandatory fields"
-    @ignore = "true"
-    @priority = 3
-    test CannotContinueWithoutFillRequiredFields {
-        // Blocked by POSHI
-    }
+			MP2Utils.assertDetailsUser(detailsList = ${cardDetailsList});
+		}
+	}
 
-    @description = "Story ID: LPS-162211 | Test Summary: Assert that when you have an App Editor role, you should not be able to invite new members"
-    @ignore = "true"
-    @priority = 4
-    test CannotViewTheNewMemberButton {
-        task ("Given that I log in with 'App Editor' credentials") {
-            User.logoutAndLoginPG(
-                userLoginEmailAddress = "testqa@editor.com",
-                userLoginFullName = "Test QA");
-        }
+	@description = "Story ID: LPS-162211 | Test Summary: Verify that after invite a member, as Publisher, the admin is taken back to members section of the Dashboard"
+	@ignore = "true"
+	@priority = 5
+	test CanInviteMemberToTheMarketplaceAccount {
+		task ("Given that the user goes to the Publisher Dashboard page") {
+			MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
+		}
 
-        task ("And the user goes to the Publisher Dashboard page") {
-            MP2Navigator.gotoMP2();
+		task ("And the user clicks Members in the side menu") {
+			MP2Navigator.gotoNavItem(navItem = "Members");
+		}
 
-            MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
-        }
+		task ("When the user fills out the form and sends the invitation") {
+			MP2Dashboards.inviteNewMember(
+				button = "true",
+				checkboxName = "App Editor",
+				emailAddress = "test.mp@liferay.com",
+				firstName = "Test",
+				lastName = "QA");
+		}
 
-        task ("When the user clicks on Members in the side menu") {
-            MP2Navigator.gotoNavItem(navItem = "Members");
-        }
+		task ("Then I should be able to assert that the user has been invited") {
+			var userInvitedInfo = "Test QA,test.mp@liferay.com,Invited Member";
 
-        task ("Then I should be able to assert that the '+ New Member' button is not present on the page") {
-            MP2Dashboards.viewNewMemberButtonNotPresent();
-        }
-    }
+			MP2Utils.assertUserInfoAtTable(textList = ${userInvitedInfo});
+		}
+	}
 
-    @description = "Story ID: LPS-162211 | Test Summary: Verify if the Publisher admin user is able to click on the invited user record to see its details"
-    @ignore = "true"
-    @priority = 3
-    test CanAccessInvitedUserRecordDetail {
-        task ("Given that the user goes to the Publisher Dashboard page") {
-            MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
-        }
+	@description = "Story ID: LPS-162211 | Test Summary: Verify that an alert will appear when user don't fill a mandatory field and that “Send Invite” button only will be clickable after fill all mandatory fields"
+	@ignore = "true"
+	@priority = 3
+	test CannotContinueWithoutFillRequiredFields {
 
-        task ("And the user clicks Members in the side menu") {
-            MP2Navigator.gotoNavItem(navItem = "Members");
-        }
+		// Blocked by POSHI
 
-        task ("When the user fills out the form and sends the invitation") {
-            MP2Dashboards.inviteNewMember(
-                button = "true",
-                checkboxName = "Account Administrator",
-                emailAddress = "test.mp@liferay.com",
-                firstName = "Test",
-                lastName = "QA");
-        }
+	}
 
-        task ("And the user opens the details of the invited member") {
-            MP2Dashboards.clickOnTheInvitedUser(text = "Invited Member");
-        }
+	@description = "Story ID: LPS-162211 | Test Summary: Assert that when you have an App Editor role, you should not be able to invite new members"
+	@ignore = "true"
+	@priority = 4
+	test CannotViewTheNewMemberButton {
+		task ("Given that I log in with 'App Editor' credentials") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "testqa@editor.com",
+				userLoginFullName = "Test QA");
+		}
 
-        task ("Then I should be able to assert all user details") {
-            var cardDetailsList = "Profile,Roles,Account";
+		task ("And the user goes to the Publisher Dashboard page") {
+			MP2Navigator.gotoMP2();
 
-            MP2Utils.assertDetailsUser(detailsList = ${cardDetailsList});
-        }
-    }
+			MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
+		}
+
+		task ("When the user clicks on Members in the side menu") {
+			MP2Navigator.gotoNavItem(navItem = "Members");
+		}
+
+		task ("Then I should be able to assert that the '+ New Member' button is not present on the page") {
+			MP2Dashboards.viewNewMemberButtonNotPresent();
+		}
+	}
 
 }

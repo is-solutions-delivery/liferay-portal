@@ -1,6 +1,6 @@
 definition {
 
-    macro addAccountEntry {
+	macro addAccountEntry {
 		Variables.assertDefined(parameterList = ${accountName});
 
 		var portalURL = JSONCompany.getPortalURL();
