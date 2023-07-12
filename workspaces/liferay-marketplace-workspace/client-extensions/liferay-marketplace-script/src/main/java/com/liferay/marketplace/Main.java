@@ -389,7 +389,9 @@ public class Main {
 		).get(
 		).uri(
 			_liferaySourceURL +
-				"/o/headless-commerce-admin-catalog/v1.0/products?pageSize=-1"
+				String.format(
+					"/o/headless-commerce-admin-catalog/v1.0/products?filter=categoryIds/any(x:(x eq '%d'))&pageSize=-1",
+					449736583)
 		).accept(
 			MediaType.APPLICATION_JSON
 		).header(
@@ -648,39 +650,6 @@ public class Main {
 		).block();
 
 		System.out.println(response);
-	}
-
-	private List<TaxonomyCategory> fetchCategoriesFromSource()
-		throws Exception {
-
-		String categories = WebClient.create(
-		).get(
-		).uri(
-			_liferaySourceURL +
-				String.format(
-					"/o/headless-admin-taxonomy/v1.0/sites/taxonomy-categories/%d",
-					10195)
-		).accept(
-			MediaType.APPLICATION_JSON
-		).header(
-			"Authorization",
-			"Bearer " +
-				_getOAuthAuthorization(
-					_liferaySourceOAuthClientId,
-					_liferaySourceOAuthClientSecret, _liferaySourceURL)
-		).retrieve(
-		).bodyToMono(
-			String.class
-		).block();
-
-		Page<TaxonomyCategory> taxonomyCategoryPage = Page.of(
-			categories, TaxonomyCategorySerDes::toDTO);
-
-		return taxonomyCategoryPage.getItems(
-		).stream(
-		).collect(
-			Collectors.toList()
-		);
 	}
 
 	private JSONObject handleTaxonomyVocabularyFields(
