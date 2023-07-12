@@ -8,7 +8,7 @@ definition {
 		}
 	}
 
-    macro assertUserInfoAtTable {
+	macro assertUserInfoAtTable {
 		for (var text : list ${textList}) {
 			var key_text = ${text};
 
@@ -16,7 +16,7 @@ definition {
 		}
 	}
 
-    macro selectCheckbox {
+	macro selectCheckbox {
 		if (isSet(checkboxName)) {
 			Check.checkNotVisible(
 				checkboxName = ${checkboxName},
@@ -27,7 +27,7 @@ definition {
 			for (var checkboxNameList : list ${checkboxNameList}) {
 				Check.checkNotVisible(
 					checkboxName = ${checkboxNameList},
-				    locator1 = "Checkbox#ANY_CHECKBOX");
+					locator1 = "Checkbox#ANY_CHECKBOX");
 			}
 		}
 
@@ -35,9 +35,9 @@ definition {
 			for (var uncheckboxNameList : list ${uncheckboxNameList}) {
 				Uncheck.uncheckNotVisible(
 					checkboxName = ${uncheckboxNameList},
-				    locator1 = "Checkbox#ANY_CHECKBOX");
+					locator1 = "Checkbox#ANY_CHECKBOX");
 			}
 		}
-    }
+	}
 
 }

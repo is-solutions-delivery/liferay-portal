@@ -1,8 +1,8 @@
 definition {
 
-    macro clickNewMemberButton {
-        Click(locator1 = "MP2Utils#NEW_MEMBER_BUTTON");
-    }
+	macro clickNewMemberButton {
+		Click(locator1 = "MP2Utils#NEW_MEMBER_BUTTON");
+	}
 
 	macro clickOnTheInvitedUser {
 		Click(
@@ -10,41 +10,41 @@ definition {
 			locator1 = "MP2Utils#RESPONSIVE_TABLE");
 	}
 
-    macro inviteNewMember {
-        MP2Dashboards.clickNewMemberButton();    
+	macro inviteNewMember {
+		MP2Dashboards.clickNewMemberButton();
 
-        WaitForPageLoad();
+		WaitForPageLoad();
 
-        MP2Dashboards.typeNewMemberInfoFields(
-            field = "firstName",
-            fieldInput = ${firstName});
+		MP2Dashboards.typeNewMemberInfoFields(
+			field = "firstName",
+			fieldInput = ${firstName});
 
-        MP2Dashboards.typeNewMemberInfoFields(
-            field = "lastName",
-            fieldInput = ${lastName});
+		MP2Dashboards.typeNewMemberInfoFields(
+			field = "lastName",
+			fieldInput = ${lastName});
 
-        MP2Dashboards.typeNewMemberInfoFields(
-            field = "emailAddress",
-            fieldInput = ${emailAddress});
+		MP2Dashboards.typeNewMemberInfoFields(
+			field = "emailAddress",
+			fieldInput = ${emailAddress});
 
-        MP2Utils.selectCheckbox(checkboxName = ${checkboxName});
+		MP2Utils.selectCheckbox(checkboxName = ${checkboxName});
 
-        if (isSet(button)) {
-            Button.click(button = "Send Invite");
-        }
+		if (isSet(button)) {
+			Button.click(button = "Send Invite");
+		}
 
-        Alert.viewSuccessMessage();
-    }
+		Alert.viewSuccessMessage();
+	}
 
-    macro typeNewMemberInfoFields {
-        Type(
-            key_field = ${field},
-            locator1 = "MP2Dashboards#SETUP_FIELDS",
-            value1 = ${fieldInput});
-    }
+	macro typeNewMemberInfoFields {
+		Type(
+			key_field = ${field},
+			locator1 = "MP2Dashboards#SETUP_FIELDS",
+			value1 = ${fieldInput});
+	}
 
-    macro viewNewMemberButtonNotPresent {
+	macro viewNewMemberButtonNotPresent {
 		AssertElementNotPresent(locator1 = "MP2Utils#NEW_MEMBER_BUTTON");
 	}
-          
+
 }
