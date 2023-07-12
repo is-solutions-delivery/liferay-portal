@@ -58,4 +58,43 @@ definition {
 		ApplicationsMenu.gotoSite(site = "Marketplace Site");
 	}
 
+	macro addUserAndSetAccount {
+		if (!(isSet(groupName))) {
+			var groupName = "Marketplace Site";
+		}
+
+		JSONUser.addUser(
+			userEmailAddress = ${userEmailAddress},
+			userFirstName = ${userFirstName},
+			userLastName = ${userLastName},
+			userScreenName = ${userScreenName});
+
+		JSONUser.setFirstPassword(
+			agreeToTermsAndAnswerReminderQuery = "true",
+			requireReset = "false",
+			userEmailAddress = ${userEmailAddress});
+
+		JSONRole.assignRoleToUser(
+			roleTitle = ${regularRole},
+			userEmailAddress = StringUtil.toLowerCase(${userEmailAddress}));	
+
+		JSONUser.addUserToSite(
+			groupName = ${groupName},
+			userEmailAddress = ${userEmailAddress});
+
+		JSONRole.assignSiteRoleToUser(
+			groupName = ${groupName},
+			roleTitle = ${roleTitle},
+			userEmailAddress = ${userEmailAddress});
+
+		JSONAccountEntryUser.addExistUsertoAccount(
+			accountEntryName = ${accountEntryName},
+			userEmailAddress = ${userEmailAddress});
+
+		JSONAccountRole.associateUser(
+			accountEntryName = ${accountEntryName},
+			accountRole = ${accountRole},
+			userEmailAddress = ${userEmailAddress});
+	}
+
 }
