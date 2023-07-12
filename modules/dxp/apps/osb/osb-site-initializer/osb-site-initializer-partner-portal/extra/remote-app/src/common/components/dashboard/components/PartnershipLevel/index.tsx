@@ -21,17 +21,13 @@ import GoldPartnerIcon from '../icons/GoldPartnerIcon';
 import PlatinumPartnerIcon from '../icons/PlatinumPartnerIcon';
 import SilverPartnerIcon from '../icons/SilverPartnerIcon';
 
-export interface AccountData {
-	aRRAmount: number;
-	growthARR: number;
+export interface AccountData {	
 	marketingPerformance: number;
 	marketingPlan?: boolean;
 	newProjectExistingBusiness: number;
 	partnerLevel?: string;
-	renewalARR: number;
 	solutionDeliveryCertification: boolean;
 }
-
 interface IPropsPartnerIcon {
 	level: any;
 }
@@ -47,6 +43,7 @@ interface IPropsPartnershipLevel {
 	completed: any;
 	data: AccountData;
 	headcount: any;
+	opportunity: any;
 }
 
 const PartnerIcon = ({level}: IPropsPartnerIcon) => {
@@ -72,6 +69,9 @@ const CheckBoxItem = ({
 	title,
 }: IPropsCheckBoxItem) => {
 	const CheckIcon = () => {
+
+		
+
 		if (completed) {
 			return (
 				<ClayIcon
@@ -118,15 +118,20 @@ const PartnershipLevel = ({
 	completed,
 	data,
 	headcount,
+	opportunity,
 }: IPropsPartnershipLevel) => {
+
+
 	const getTotalARR = () => {
 		if (data.partnerLevel === PartnershipLevels.GOLD) {
 			return partnerLevelProperties[data.partnerLevel].growthARR;
 		}
 
-		return data.growthARR + data.renewalARR;
+		return opportunity.growthArr + opportunity.renewalARR;
 	};
+	console.log(partnerLevelProperties[data.partnerLevel].growthARR);
 
+	console.log(data);
 	const getHeadcount = () => {
 		if (data.partnerLevel) {
 			return `${headcount.partnerMarketingUser}/${
