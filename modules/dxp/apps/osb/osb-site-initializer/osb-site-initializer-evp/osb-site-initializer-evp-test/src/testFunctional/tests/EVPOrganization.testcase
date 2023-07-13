@@ -35,6 +35,30 @@ definition {
 		}
 	}
 
+	@description = "LPS-176607 - Verify that there is a 'cancel' button being showed"
+	@priority = 2
+	test CanCancelOrganizationEdition {
+		task ("Given a user is on the Organization page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "employee@liferay.com",
+				userLoginFullName = "Employee User");
+
+			EVPUtils.gotoEVP();
+
+			EVPNavigator.goToNavItem(navItem = "Organization");
+		}
+
+		task ("When a user edits an Organization") {
+			EVPOrganization.kebabMenuOrganization(organizationName = "Organization 4");
+
+			MenuItem.click(menuItem = "Edit");
+		}
+
+		task ("Then a cancel button is present") {
+			AssertElementPresent(locater1 = "Button#CANCEL");
+		}
+	}
+
 	@description = "LPS-172949 - Finance user should edit Organizations with 'Awaiting Finance Review' status"
 	@priority = 4
 	test CanFinanceUserEditOrganization {
