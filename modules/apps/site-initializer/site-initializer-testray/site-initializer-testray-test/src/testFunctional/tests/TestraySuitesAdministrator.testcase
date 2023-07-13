@@ -69,7 +69,7 @@ definition {
 
 			TestrayManage.closeModalInOptions();
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Requirements");
 
@@ -116,7 +116,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -159,7 +159,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -172,7 +172,7 @@ definition {
 		}
 
 		task ("Then I should be able to assert that the selected case is displayed in the suite details") {
-			TestraySuites.goToSuiteDetails(suiteName = ${suiteName});
+			Testray.goToTableEntry(tableName = ${suiteName});
 
 			Testray.assertItemName(text = ${caseName});
 		}
@@ -212,7 +212,7 @@ definition {
 
 			TestrayManage.closeModalInOptions();
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Requirements");
 
@@ -249,7 +249,7 @@ definition {
 		}
 
 		task ("Then the case parameters are presented with details edited") {
-			TestraySuites.goToSuiteDetails(suiteName = ${suiteName});
+			Testray.goToTableEntry(tableName = ${suiteName});
 
 			TestraySuites.verifyCaseParametersInSuite(
 				caseType = "Manual Test, Cucumber",
@@ -270,7 +270,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 
@@ -308,7 +308,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -338,7 +338,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -374,7 +374,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -420,7 +420,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}

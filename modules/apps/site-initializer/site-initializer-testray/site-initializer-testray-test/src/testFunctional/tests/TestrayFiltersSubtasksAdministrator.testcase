@@ -124,7 +124,7 @@ definition {
 		task ("Go to Task") {
 			TestrayTestflow.goToTestflow();
 
-			TestrayTestflow.goToTask(taskName = "Task_1");
+			Testray.goToTableEntry(tableName = "Task_1");
 		}
 	}
 

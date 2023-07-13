@@ -93,7 +93,7 @@ definition {
 		task ("And the user go to the Cases page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Cases");
 		}
@@ -167,7 +167,7 @@ definition {
 		task ("And the user go to the Cases page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Cases");
 		}
@@ -241,7 +241,7 @@ definition {
 		task ("And the user go to the Cases page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Cases");
 		}
@@ -271,7 +271,7 @@ definition {
 		}
 
 		task ("When click kebab in Case") {
-			Testray.goToProjectPage(projectName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 		}

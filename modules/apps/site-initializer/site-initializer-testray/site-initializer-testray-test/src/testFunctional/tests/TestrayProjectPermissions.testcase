@@ -96,7 +96,7 @@ definition {
 		}
 
 		task ("And when click kebab in project") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 		}
@@ -156,7 +156,7 @@ definition {
 		}
 
 		task ("And when click kebab in project") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 		}
@@ -216,7 +216,7 @@ definition {
 		}
 
 		task ("And when click kebab in project") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 		}

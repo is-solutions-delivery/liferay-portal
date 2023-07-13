@@ -180,7 +180,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			TestrayRoutines.createRoutine(key_name = "Routine 1");
 		}
@@ -232,7 +232,7 @@ definition {
 		task ("And create a new Routine and a new Case") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			TestrayRoutines.createRoutine(key_name = "Routines_1 Routine");
 
@@ -262,7 +262,7 @@ definition {
 				listOption = "Tomcat 6.0",
 				listOption1 = "Chrome 57");
 
-			TestrayRoutines.goToRoutine(routineName = "Routines_1 Routine");
+			Testray.goToTableEntry(tableName = "Routines_1 Routine");
 
 			TestrayBuild.createBuild(
 				addVersion = "1.2",

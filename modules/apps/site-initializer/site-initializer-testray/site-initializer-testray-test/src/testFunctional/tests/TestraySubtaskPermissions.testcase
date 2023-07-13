@@ -165,7 +165,7 @@ definition {
 		task ("And the user go to the Subtask") {
 			TestrayTestflow.goToTestflow();
 
-			TestrayTestflow.goToTask(taskName = "Task_1");
+			Testray.goToTableEntry(tableName = "Task_1");
 
 			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
 		}
@@ -205,13 +205,13 @@ definition {
 		task ("And the user go to the subtask") {
 			TestrayTestflow.goToTestflow();
 
-			TestrayTestflow.goToTask(taskName = "Task_1");
+			Testray.goToTableEntry(tableName = "Task_1");
 		}
 
 		task ("When the user merge a Subtask") {
 			TestraySubtask.mergeSubtasks(wcsubtaskName = "Subtask_1,Subtask_2");
 
-			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+			Testray.goToTableEntry(tableName = "Subtask_1");
 		}
 
 		task ("Then the user can see a merged subtask") {
@@ -235,7 +235,7 @@ definition {
 		task ("And the user go to the Subtask") {
 			TestrayTestflow.goToTestflow();
 
-			TestrayTestflow.goToTask(taskName = "Task_1");
+			Testray.goToTableEntry(tableName = "Task_1");
 
 			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
 		}
@@ -275,13 +275,13 @@ definition {
 		task ("And the user go to the subtask") {
 			TestrayTestflow.goToTestflow();
 
-			TestrayTestflow.goToTask(taskName = "Task_1");
+			Testray.goToTableEntry(tableName = "Task_1");
 		}
 
 		task ("When the user merge a Subtask") {
 			TestraySubtask.mergeSubtasks(wcsubtaskName = "Subtask_1,Subtask_2");
 
-			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+			Testray.goToTableEntry(tableName = "Subtask_1");
 		}
 
 		task ("Then the user can see a merged subtask") {
@@ -303,11 +303,11 @@ definition {
 
 			TestrayTestflow.goToTestflow();
 
-			TestrayTestflow.goToTask(taskName = "Task_1");
+			Testray.goToTableEntry(tableName = "Task_1");
 		}
 
 		task ("When the user go to the subtask") {
-			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+			Testray.goToTableEntry(tableName = "Subtask_1");
 		}
 
 		task ("Then the user can not edit the subtask") {
@@ -331,13 +331,13 @@ definition {
 
 			TestrayTestflow.goToTestflow();
 
-			TestrayTestflow.goToTask(taskName = "Task_1");
+			Testray.goToTableEntry(tableName = "Task_1");
 		}
 
 		task ("When the user tries merge a Subtask") {
 			TestraySubtask.mergeSubtasks(wcsubtaskName = "Subtask_1,Subtask_2");
 
-			TestraySubtask.goToSubtask(subtaskName = "Subtask_1");
+			Testray.goToTableEntry(tableName = "Subtask_1");
 		}
 
 		task ("Then the user can not see a merged subtask") {

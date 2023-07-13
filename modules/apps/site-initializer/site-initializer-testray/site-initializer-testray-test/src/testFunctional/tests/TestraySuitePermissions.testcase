@@ -69,7 +69,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 		}
 
 		task ("When the user go to the suite page") {
@@ -95,7 +95,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -127,7 +127,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -159,7 +159,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -191,7 +191,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -221,7 +221,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -254,7 +254,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 		}
 
 		task ("When the user go to the suite page") {
@@ -280,7 +280,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}
@@ -312,7 +312,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Suites");
 		}

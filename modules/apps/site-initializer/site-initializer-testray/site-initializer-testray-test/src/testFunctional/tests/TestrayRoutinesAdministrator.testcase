@@ -72,7 +72,7 @@ definition {
 		task ("And that the user add default environments factors") {
 			JSONTestray.addEnvironmentFactors(environmentFactorsName = "Environment Factors 1");
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 		}
 
 		task ("Then the routine is deleted with predefined environment factors, they should not appear in the list") {
@@ -94,7 +94,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("When the user add a new Routine") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			TestrayRoutines.createRoutine(key_name = ${routineName});
 		}
@@ -114,7 +114,7 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 		}
 
 		task ("Then the routine should appear on the list") {
@@ -155,7 +155,7 @@ definition {
 				componentName = "Component 1",
 				projectName = ${projectName});
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Routines");
 		}
@@ -173,7 +173,7 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
 			Testray.assertItemName(text = "Build 1");
 
@@ -189,7 +189,7 @@ definition {
 		task ("Then the routine should not appear on the list") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.assertItemNotPresent(itemName = ${routineName});
 		}
@@ -211,7 +211,7 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 		}
 
 		task ("When the user goes to edit the Routine and change the name") {
@@ -237,7 +237,7 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			TestrayRoutines.createRoutine(key_name = ${routineName});
 		}
@@ -253,7 +253,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user add a new Routine without name") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			TestrayRoutines.createRoutine(key_name = "");
 		}
@@ -277,7 +277,7 @@ definition {
 		}
 
 		task ("And the user goes to the new Project from the project directory") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.assertProjectTitleHeader(projectName = ${projectName});
 

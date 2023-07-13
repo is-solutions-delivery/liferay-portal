@@ -68,7 +68,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
 			Testray.projectTabNavigator(navTabName = "Cases");
 		}

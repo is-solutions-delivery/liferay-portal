@@ -156,9 +156,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 		}
 
 		task ("Then I assert affirm the Enviroment Factor created") {

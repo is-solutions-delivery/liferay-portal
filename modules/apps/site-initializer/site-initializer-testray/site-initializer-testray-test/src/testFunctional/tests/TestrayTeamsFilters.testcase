@@ -117,11 +117,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 
 			Testray.projectTabNavigator(navTabName = "Teams");
 		}

@@ -120,11 +120,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to assign a case results") {
@@ -144,11 +144,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to delete a case results") {
@@ -170,11 +170,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to assign a case results and edit test with Failed") {
@@ -184,7 +184,7 @@ definition {
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 
-			TestrayResults.goToCaseResults(caseResultsName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			TestrayTestflow.userAvatarPresent(label = "Dates");
 
@@ -210,15 +210,15 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to assign a case results and edit test with Test Fix") {
-			TestrayResults.goToCaseResults(caseResultsName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			Button.click(button = "Assign to Me");
 
@@ -247,15 +247,15 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to assign a case results and go to complete test") {
-			TestrayResults.goToCaseResults(caseResultsName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			Button.click(button = "Assign");
 
@@ -294,15 +294,15 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to assign a case results with status in progress") {
-			TestrayResults.goToCaseResults(caseResultsName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			Button.click(button = "Assign to Me");
 
@@ -328,11 +328,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("And the user goes to assign a case results") {
@@ -344,7 +344,7 @@ definition {
 		}
 
 		task ("When the user edit test with Failed and add thw issue") {
-			TestrayResults.goToCaseResults(caseResultsName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			Button.click(button = "Complete Test");
 
@@ -382,7 +382,7 @@ definition {
 		}
 
 		task ("Then the issue appear in the table in case result") {
-			TestrayResults.goToCaseResults(caseResultsName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			Click(locator1 = "TestrayResults#VIEW_CASE_LINK");
 
@@ -402,15 +402,15 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to assign a case results and Unassign Myself a case results") {
-			TestrayResults.goToCaseResults(caseResultsName = ${caseName});
+			Testray.goToTableEntry(tableName = ${caseName});
 
 			Button.click(button = "Assign to Me");
 
@@ -438,11 +438,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("When the user goes to assign a case results and Unassign Myself a case results") {
@@ -468,11 +468,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("Then can view test total in metrics of case results") {
@@ -486,11 +486,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("Then the user view results by component") {
@@ -512,11 +512,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case results") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.goToTableEntry(tableName = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.goToTableEntry(tableName = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.goToTableEntry(tableName = ${buildName});
 		}
 
 		task ("Then the user view results by team") {
