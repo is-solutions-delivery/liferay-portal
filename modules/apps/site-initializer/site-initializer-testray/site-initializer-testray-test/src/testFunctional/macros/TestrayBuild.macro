@@ -218,12 +218,6 @@ definition {
 		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 	}
 
-	macro goToBuild {
-		Click(
-			key_projectName = ${buildName},
-			locator1 = "Testray#ITEM_NAME");
-	}
-
 	macro selectDefaultEnvironmentFactors {
 		WaitForElementPresent(
 			key_environmentFactors = "Application Server",

@@ -246,12 +246,6 @@ definition {
 		Button.clickSave();
 	}
 
-	macro goToSuiteDetails {
-		Click(
-			key_projectName = ${suiteName},
-			locator1 = "Testray#ITEM_NAME");
-	}
-
 	macro typeSuiteField {
 		Type(
 			locator1 = "TestrayManage#NEW_OPTION_NAME",

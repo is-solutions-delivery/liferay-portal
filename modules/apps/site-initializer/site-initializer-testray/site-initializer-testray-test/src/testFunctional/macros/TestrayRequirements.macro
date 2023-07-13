@@ -77,12 +77,6 @@ definition {
 		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 	}
 
-	macro goToRequirement {
-		Click(
-			key_projectName = ${requirementSummary},
-			locator1 = "Testray#ITEM_NAME");
-	}
-
 	macro verifyRequirement {
 		AssertElementPresent(
 			key_linkTitle = ${linkTitle},

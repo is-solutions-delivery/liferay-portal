@@ -51,12 +51,6 @@ definition {
 			valueName = ${routineName});
 	}
 
-	macro goToRoutine {
-		Click(
-			key_projectName = ${routineName},
-			locator1 = "Testray#ITEM_NAME");
-	}
-
 	macro selectDefaultEnvironmentFactors {
 		Testray.kebabMenuOption(kebabOption = "Select Default Environment Factors");
 
