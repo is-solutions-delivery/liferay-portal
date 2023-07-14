@@ -51,7 +51,6 @@ definition {
 			siteTemplateName = "Liferay Site Initializer Testray");
 	}
 
-	@summary = "This macro assert items per page."
 	macro assertItemsPerPageValue {
 		AssertElementPresent(
 			key_value = ${itemValue},
@@ -88,7 +87,6 @@ definition {
 			locator1 = "Testray#ITEMS_PER_PAGE_DESCRIPTION");
 	}
 
-	@summary = "This macro assert that the table is present in the page."
 	macro assertTableList {
 		for (var tableEntry : list ${tablesList}) {
 			AssertElementPresent(
@@ -97,7 +95,6 @@ definition {
 		}
 	}
 
-	@summary = "This macro assert that the Table is not present in the page."
 	macro assertTableListNotPresent {
 		for (var tableEntry : list ${tablesList}) {
 			AssertElementNotPresent(
@@ -106,7 +103,6 @@ definition {
 		}
 	}
 
-	@summary = "This macro back section by breadcrumb."
 	macro backSectionBreadcrumb {
 		for (var n : list "1,2,3,4") {
 			KeyPress(
@@ -139,7 +135,6 @@ definition {
 		}
 	}
 
-	@summary = "This macro change the pagination in modal."
 	macro changePaginationModal {
 		if (IsElementPresent(locator1 = "Testray#ITEMS_PER_PAGE_SELECT_MODAL")) {
 			Click(locator1 = "Testray#ITEMS_PER_PAGE_SELECT_MODAL");
@@ -175,7 +170,6 @@ definition {
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
 	}
 
-	@summary = "This macro confirm the section in breadcrumb."
 	macro confirmBreadcrumb {
 		KeyPress.keyPressNoError(
 			locator1 = "TestrayTestflow#BREADCRUMB_EDIT",
@@ -315,10 +309,9 @@ definition {
 			locator1 = "Testray#NEXT_AND_PREVIOUS_PAGE_BUTTON");
 	}
 
-	@summary = "This macro go to table specific."
 	macro goToTableEntry {
 		WaitForPageLoad();
-		
+
 		Click(
 			key_tableEntry = ${tableName},
 			locator1 = "Testray#TABLE_ENTRY");
@@ -414,21 +407,18 @@ definition {
 		Testray.confirmBreadcrumb();
 	}
 
-	@summary = "This macro click in the page number."
 	macro pageNumberNavigation {
 		Click(
 			key_pageNumber = ${pageNumber},
 			locator1 = "Pagination#ANY_PAGE");
 	}
 
-	@summary = "This macro click in the page number in modal."
 	macro pageNumberNavigationModal {
 		Click(
 			key_pageNumber = ${pageNumber},
 			locator1 = "Testray#PAGE_NUMBER_MODAL");
 	}
 
-	@summary = "This macro tab navigator."
 	macro projectTabNavigator {
 		Click(
 			key_navTabName = ${navTabName},
