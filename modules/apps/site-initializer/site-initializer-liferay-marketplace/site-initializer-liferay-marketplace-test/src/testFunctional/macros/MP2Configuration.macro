@@ -46,6 +46,14 @@ definition {
 
 		User.firstLoginPG();
 
+		var liferayHome = PropsUtil.get("liferay.home.dir.name");
+		var moduleBaseDir = "workspaces/liferay-marketplace-workspace";
+		var projectDir = PropsUtil.get("project.dir");
+
+		FileUtil.replaceStringInFile("${projectDir}/${moduleBaseDir}/gradle.properties", "liferay.workspace.home.dir=", "liferay.workspace.home.dir=/home/me/dev/bundles/master");
+
+		AntCommands.runCommand("build-test.xml", "deploy-osgi-module-to-specific-bundle -DliferayHome=${liferayHome} -Dmodule.base.dir=/workspaces/liferay-marketplace-workspace/client-extensions");
+
 		HeadlessSite.addSite(
 			siteName = "Marketplace Site",
 			templateName = "Liferay Marketplace",
