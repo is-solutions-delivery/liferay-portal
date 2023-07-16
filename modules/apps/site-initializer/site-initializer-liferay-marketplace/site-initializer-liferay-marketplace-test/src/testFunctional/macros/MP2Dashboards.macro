@@ -1,7 +1,9 @@
 definition {
 
 	macro clickNewMemberButton {
-		Click(locator1 = "MP2Utils#NEW_MEMBER_BUTTON");
+		Click(
+			key_buttonName = ${buttonName},
+			locator1 = "MP2Dashboards#ANY_DASHBOARD_BUTTON");
 	}
 
 	macro clickOnTheInvitedUser {
@@ -11,7 +13,7 @@ definition {
 	}
 
 	macro inviteNewMember {
-		MP2Dashboards.clickNewMemberButton();
+		MP2Dashboards.clickNewMemberButton(buttonName = "New Member");
 
 		WaitForPageLoad();
 
@@ -44,7 +46,7 @@ definition {
 	}
 
 	macro viewNewMemberButtonNotPresent {
-		AssertElementNotPresent(locator1 = "MP2Utils#NEW_MEMBER_BUTTON");
+		AssertElementNotPresent(locator1 = "MP2Dashboards#ANY_DASHBOARD_BUTTON");
 	}
 
 }

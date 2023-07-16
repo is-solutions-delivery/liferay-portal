@@ -11,11 +11,6 @@
 
 <tbody>
 <tr>
-	<td>NEW_MEMBER_BUTTON</td>
-	<td>//button[contains(text(),'+ New Member')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>RESPONSIVE_TABLE</td>
 	<td>//div[@class='table-responsive']//td[contains(.,'${key_text}')]</td>
 	<td></td>
