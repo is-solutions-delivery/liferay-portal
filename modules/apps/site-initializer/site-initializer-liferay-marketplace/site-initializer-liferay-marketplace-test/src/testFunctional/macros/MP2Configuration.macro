@@ -70,9 +70,29 @@ definition {
 				userLoginEmailAddress = "test@liferay.com",
 				userLoginFullName = "Test Test");
 
+			Site.openSitesAdmin();
+
+			if (IsElementPresent(key_tableEntry = "Marketplace Site", locator1 = "LexiconTable#TABLE_ENTRY")) {
+				Site.openSitesAdmin();
+
+				PortletEntry.selectAll();
+
+				Click(locator1 = "Icon#DELETE");
+
+				AssertTextEquals(
+					locator1 = "Modal#BODY",
+					value1 = "Deleting a site is an action impossible to revert. All content will be removed and it will not be possible to recover it.");
+
+				Click(
+					key_text = "Delete",
+					locator1 = "Modal#MODAL_FOOTER_BUTTON");
+
+				Alert.viewSuccessMessage();
+			}
+
 			Account.openAccountsAdmin();
 
-			if (IsElementPresent(key_tableEntry = "QA", locator1 = "LexiconTable#TABLE_ENTRY")) {
+			if (IsElementPresent(key_tableEntry = "QA Development", locator1 = "LexiconTable#TABLE_ENTRY")) {
 				Account.tearDownCP();
 			}
 
@@ -93,7 +113,11 @@ definition {
 		var moduleBaseDir = "workspaces/liferay-marketplace-workspace";
 		var projectDir = PropsUtil.get("project.dir");
 
-		FileUtil.replaceStringInFile("${projectDir}/${moduleBaseDir}/gradle.properties", "liferay.workspace.home.dir=", "liferay.workspace.home.dir=/home/me/dev/bundles/master");
+		echo("TestUm");
+
+		FileUtil.replaceStringInFile("${projectDir}/${moduleBaseDir}/gradle.properties", "liferay.workspace.home.dir=", "liferay.workspace.home.dir=${liferayHome}");
+
+		echo("TestDois");
 
 		AntCommands.runCommand("build-test.xml", "deploy-osgi-module-to-specific-bundle -DliferayHome=${liferayHome} -Dmodule.base.dir=/workspaces/liferay-marketplace-workspace/client-extensions");
 
