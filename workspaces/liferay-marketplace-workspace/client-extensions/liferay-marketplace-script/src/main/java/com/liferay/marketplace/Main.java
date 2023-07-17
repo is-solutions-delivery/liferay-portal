@@ -22,6 +22,7 @@ import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Category;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.CustomField;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.ProductSpecification;
 import com.liferay.headless.commerce.admin.catalog.client.pagination.Page;
 import com.liferay.headless.commerce.admin.catalog.client.serdes.v1_0.ProductSerDes;
 
@@ -94,6 +95,7 @@ public class Main {
 	@Bean
 	public static WebClient webClient() {
 		int size = 100000000;
+
 		ExchangeStrategies strategies = ExchangeStrategies.builder(
 		).codecs(
 			codecs -> codecs.defaultCodecs(
@@ -194,14 +196,14 @@ public class Main {
 		for (Product product : productList) {
 			product.setCatalogId(catalog.getId());
 
-			//			for(CustomField cf : product.getCustomFields()){
-			//				if(cf.getName().equals("Profile") && cf.getCustomValue().getData() != null){
-			//					Map<String, String> localizedText = new HashMap<>();
+			// for(CustomField cf : product.getCustomFields()){
+			// if(cf.getName().equals("Profile") && cf.getCustomValue().getData() != null){
+			// Map<String, String> localizedText = new HashMap<>();
 
-			//					localizedText.put("en_US", String.valueOf(cf.getCustomValue().getData()));
-			//					cf.getCustomValue().setData_i18n(localizedText);
-			//				}
-			//			}
+			// localizedText.put("en_US", String.valueOf(cf.getCustomValue().getData()));
+			// cf.getCustomValue().setData_i18n(localizedText);
+			// }
+			// }
 
 			List<Category> newCategories = new ArrayList<>();
 
@@ -236,6 +238,25 @@ public class Main {
 							).equals(
 								MARKETPLACE_PRICE_VOCABULARY
 							));
+
+						ProductSpecification productSpecification =
+							new ProductSpecification();
+
+						Map<String, String> specificationValueMap =
+							new HashMap<>();
+
+						specificationValueMap.put("en_US", "Bundled");
+
+						productSpecification.setSpecificationKey("price-model");
+
+						productSpecification.setValue(specificationValueMap);
+
+						ProductSpecification[] productSpecificationsArray = {
+							productSpecification
+						};
+
+						product.setProductSpecifications(
+							productSpecificationsArray);
 					}
 					else {
 						TaxonomyVocabulary taxonomyVocabulary =
@@ -266,19 +287,27 @@ public class Main {
 
 		insertProductBatchAtTarget(productList);
 
-		//		for(Map.Entry<Long, String> set : pricingMap.entrySet()){
-		//
-		//			Optional<Product> foundProduct = productList.stream().filter(product -> product.getId() == set.getKey()).findFirst();
-		//
-		//			if(foundProduct.isPresent()){
-		//				linkSpecificationToProduct(foundProduct.get().getId(), "price-model", set.getValue());
-		//			}
-		//
-		//		}
+		// for(Map.Entry<Long, String> set : pricingMap.entrySet()){
 
-		//		for(Product product : productList){
-		//			handleCustomFieldsMapping(product);
-		//		}
+		//
+
+		// Optional<Product> foundProduct = productList.stream().filter(product ->
+		// product.getId() == set.getKey()).findFirst();
+
+		//
+
+		// if(foundProduct.isPresent()){
+		// linkSpecificationToProduct(foundProduct.get().getId(), "price-model",
+		// set.getValue());
+		// }
+
+		//
+
+		// }
+
+		// for(Product product : productList){
+		// handleCustomFieldsMapping(product);
+		// }
 
 	}
 
@@ -390,8 +419,8 @@ public class Main {
 		).uri(
 			_liferaySourceURL +
 				String.format(
-					"/o/headless-commerce-admin-catalog/v1.0/products?filter=categoryIds/any(x:(x eq '%d'))&pageSize=-1",
-					449736583)
+					"/o/headless-commerce-admin-catalog/v1.0/products?filter=categoryIds/any(x:(x eq '%d') or (x eq '%d'))&pageSize=-1",
+					449736583, 449928372)
 		).accept(
 			MediaType.APPLICATION_JSON
 		).header(
@@ -515,9 +544,10 @@ public class Main {
 		if (vocabulary.isPresent())
 
 			return vocabulary.get();
-		//		else {
-		//			return createTaxonomyVocabulary(name);
-		//		}
+
+		// else {
+		// return createTaxonomyVocabulary(name);
+		// }
 
 		return null;
 	}
