@@ -195,7 +195,7 @@ definition {
 		}
 
 		task ("When the user filter a case result by assign") {
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			TestrayFilter.clickFilter();
 
@@ -214,7 +214,7 @@ definition {
 		}
 
 		task ("And the user can see user avatar in the table") {
-			Testray.projectTabNavigator(navTabName = "Result");
+			Navigator.gotoNavTab(navTab = "Result");
 
 			TestrayTestflow.userAvatarPresent(
 				label = "Dates",
@@ -241,7 +241,7 @@ definition {
 
 			WaitForPageLoad();
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 		}
 
 		task ("When the user filter a issue") {
@@ -270,7 +270,7 @@ definition {
 		task ("Given that the user has two product version different in the table") {
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			AssertElementPresent(
 				key_projectName = "7.0",
@@ -317,7 +317,7 @@ definition {
 		task ("Given that the user has two routine different in the table") {
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			AssertElementPresent(
 				key_projectName = "Routine 1",
@@ -370,7 +370,7 @@ definition {
 		}
 
 		task ("When the user filter a case result with passed status") {
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			TestrayFilter.clickFilter();
 
@@ -397,7 +397,7 @@ definition {
 		task ("Given that the user has two enviroments different in the table") {
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			WaitForPageLoad();
 
@@ -446,7 +446,7 @@ definition {
 		task ("Given that the user has two case result with errors different in the table") {
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			WaitForPageLoad();
 
@@ -501,7 +501,7 @@ definition {
 		task ("When the user filter a case result history by team") {
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			WaitForPageLoad();
 
@@ -538,7 +538,7 @@ definition {
 		task ("When the user searches for a field called routine") {
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			TestrayFilter.clickFilter();
 
@@ -580,7 +580,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			WaitForPageLoad();
 
@@ -642,7 +642,7 @@ definition {
 		task ("Given that the user filter a case result history existent") {
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "History");
+			Navigator.gotoNavTab(navTab = "History");
 
 			WaitForPageLoad();
 

@@ -73,7 +73,7 @@ definition {
 		}
 
 		task ("When the user go to the suite page") {
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("Then the user can not create suite") {
@@ -97,7 +97,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user right click in suite") {
@@ -129,7 +129,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user right click in suite") {
@@ -161,7 +161,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user created the suite") {
@@ -193,7 +193,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user delete the suite") {
@@ -223,7 +223,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user edit the suite") {
@@ -258,7 +258,7 @@ definition {
 		}
 
 		task ("When the user go to the suite page") {
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("Then the user can not create suite") {
@@ -282,7 +282,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user right click in suite") {
@@ -314,7 +314,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user right click in suite") {

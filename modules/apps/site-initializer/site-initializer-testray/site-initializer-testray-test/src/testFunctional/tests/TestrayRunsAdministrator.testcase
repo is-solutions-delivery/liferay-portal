@@ -120,7 +120,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("When I delete a run") {
@@ -181,7 +181,7 @@ definition {
 		}
 
 		task ("And I go to the run page ") {
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 
 			TestrayRun.assertValueRun(valueRun = "Option 1");
 		}

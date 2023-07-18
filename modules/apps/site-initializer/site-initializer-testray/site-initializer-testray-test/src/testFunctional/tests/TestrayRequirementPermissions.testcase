@@ -100,7 +100,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user delete the requirement") {
@@ -136,7 +136,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user edited the requirement") {
@@ -176,7 +176,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user create a requirement") {
@@ -210,7 +210,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user create a requirement") {
@@ -244,7 +244,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user delete the requirement") {
@@ -280,7 +280,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user edited the requirement") {
@@ -322,7 +322,7 @@ definition {
 		}
 
 		task ("When the user go to the requirement page") {
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("Then the user can not create the requirement") {
@@ -346,7 +346,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user right click in requirement") {
@@ -378,7 +378,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user right click in requirement") {

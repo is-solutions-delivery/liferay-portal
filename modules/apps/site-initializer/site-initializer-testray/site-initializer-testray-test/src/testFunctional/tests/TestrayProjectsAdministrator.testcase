@@ -236,7 +236,7 @@ definition {
 
 			TestrayRoutines.createRoutine(key_name = "Routines_1 Routine");
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 
 			TestrayCases.typeCasesField(
 				caseName = "Cases_1 Case",
@@ -247,7 +247,7 @@ definition {
 				priority = 5,
 				steps = "Auto Test Steps");
 
-			Testray.projectTabNavigator(navTabName = "Routine");
+			Navigator.gotoNavTab(navTab = "Routine");
 		}
 
 		task ("And add a new build with enviroments") {

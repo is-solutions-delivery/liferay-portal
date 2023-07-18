@@ -157,7 +157,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Routines");
+			Navigator.gotoNavTab(navTab = "Routines");
 		}
 
 		task ("When the user goes add a new build with enviroments") {

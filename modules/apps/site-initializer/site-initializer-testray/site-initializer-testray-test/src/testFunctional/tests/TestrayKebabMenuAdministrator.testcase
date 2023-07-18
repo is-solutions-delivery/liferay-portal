@@ -206,7 +206,7 @@ definition {
 		task ("Given that go to the case created") {
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 
 			Testray.goToTableEntry(tableName = ${caseName});
 		}
@@ -268,7 +268,7 @@ definition {
 		task ("Given that go to the requirement created") {
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 
 			Testray.goToTableEntry(tableName = ${requirementName});
 		}

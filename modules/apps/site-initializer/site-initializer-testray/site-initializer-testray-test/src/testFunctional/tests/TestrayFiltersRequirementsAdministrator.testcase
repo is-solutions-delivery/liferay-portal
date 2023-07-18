@@ -62,7 +62,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 	}
 

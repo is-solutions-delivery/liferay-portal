@@ -128,7 +128,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("Then the user can not create run") {
@@ -158,7 +158,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("When right click in run") {
@@ -196,7 +196,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("When right click in run") {
@@ -234,7 +234,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("When the user add a run") {
@@ -272,7 +272,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("When the user delete the run") {
@@ -308,7 +308,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("Then the user can not create run") {
@@ -338,7 +338,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("When right click in run") {
@@ -376,7 +376,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 		}
 
 		task ("When right click in run") {

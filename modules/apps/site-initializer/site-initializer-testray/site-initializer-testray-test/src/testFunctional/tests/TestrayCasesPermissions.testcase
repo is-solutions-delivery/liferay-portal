@@ -95,7 +95,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("And the user created a case") {
@@ -169,7 +169,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("And the user created a case") {
@@ -243,7 +243,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("And can see the case in the table") {

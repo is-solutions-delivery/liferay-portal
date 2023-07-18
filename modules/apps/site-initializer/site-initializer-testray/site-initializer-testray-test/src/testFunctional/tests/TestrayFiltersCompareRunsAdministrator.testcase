@@ -164,7 +164,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user select two runs for compare runs") {
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 
 			TestrayContextMenu.clickContextMenuProjects(name = "Run 1");
 
@@ -178,7 +178,7 @@ definition {
 
 			Button.click(button = "Compare Runs");
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("And that the user has two cases different in the table") {
@@ -225,7 +225,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user select two runs for compare runs") {
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 
 			TestrayContextMenu.clickContextMenuProjects(name = "Run 1");
 
@@ -241,7 +241,7 @@ definition {
 
 			Button.click(button = "Compare Runs");
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 
 			AssertElementPresent(
 				key_projectName = 3,

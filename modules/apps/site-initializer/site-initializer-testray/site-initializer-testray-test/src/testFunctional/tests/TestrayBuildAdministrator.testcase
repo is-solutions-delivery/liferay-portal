@@ -128,11 +128,11 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			Testray.assertItemName(text = "Suite 1");
 
-			Testray.projectTabNavigator(navTabName = "Routines");
+			Navigator.gotoNavTab(navTab = "Routines");
 
 			Testray.goToTableEntry(tableName = ${routineName});
 
@@ -220,7 +220,7 @@ definition {
 		task ("And deleted build with runs") {
 			Testray.goToTableEntry(tableName = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Runs");
+			Navigator.gotoNavTab(navTab = "Runs");
 
 			Testray.goToTableEntry(tableName = "Option 1");
 

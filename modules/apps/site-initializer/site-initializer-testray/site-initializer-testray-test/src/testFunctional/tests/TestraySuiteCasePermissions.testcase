@@ -60,7 +60,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			TestraySuites.addSuite(
 				caseName = ${caseName},
@@ -109,7 +109,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			Testray.goToTableEntry(tableName = ${suiteName});
 		}
@@ -143,7 +143,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			Testray.goToTableEntry(tableName = ${suiteName});
 		}
@@ -179,7 +179,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			Testray.goToTableEntry(tableName = ${suiteName});
 		}
@@ -219,7 +219,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			Testray.goToTableEntry(tableName = ${suiteName});
 		}
@@ -266,7 +266,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			Testray.goToTableEntry(tableName = ${suiteName});
 		}
@@ -302,7 +302,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			Testray.goToTableEntry(tableName = ${suiteName});
 		}

@@ -71,7 +71,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 
 			TestrayRequirements.addRequirement(
 				componentId = "Component 1",
@@ -82,7 +82,7 @@ definition {
 		}
 
 		task ("And I add a smart suit") {
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			TestraySuites.addSuite(
 				caseType = "Manual Test",
@@ -118,7 +118,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I delete the newly created suite") {
@@ -161,7 +161,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I add a Testray Suite with a Case") {
@@ -214,7 +214,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 
 			TestrayRequirements.addRequirement(
 				componentId = "Component 1",
@@ -225,7 +225,7 @@ definition {
 		}
 
 		task ("And I add a smart suit") {
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			TestraySuites.addSuite(
 				caseType = "Manual Test",
@@ -272,7 +272,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			TestraySuites.addSuite(
 				suiteDescription = "Suite Description",
@@ -310,7 +310,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I try to add an existing Suite") {
@@ -340,7 +340,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user search suite non existent") {
@@ -376,7 +376,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("And confirm that there are two suites in the table") {
@@ -422,7 +422,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I try to add an untitled Testray Suite") {

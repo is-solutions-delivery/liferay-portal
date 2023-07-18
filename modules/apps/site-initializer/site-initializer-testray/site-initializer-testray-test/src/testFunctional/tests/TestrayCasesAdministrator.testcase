@@ -77,7 +77,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("When I create a new case and select the option Add another") {
@@ -129,7 +129,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("Then the case is created with the new infos") {
@@ -160,7 +160,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("When the user delete a case") {
@@ -240,7 +240,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("And the user goes to edit a case") {
@@ -301,11 +301,11 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 
 			Testray.goToTableEntry(tableName = "Case 1");
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 
 		task ("When the user goes to cases and link a requirements") {
@@ -339,7 +339,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("When I add a new Case with the estimated duration below 0") {
@@ -380,7 +380,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("When I add a new Case duplicate") {
@@ -468,7 +468,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Cases");
+			Navigator.gotoNavTab(navTab = "Cases");
 		}
 
 		task ("When I try to add a case without filling in the required fields") {
