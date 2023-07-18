@@ -10,6 +10,7 @@ export const AppPropertiesContext = createContext({
 	articleAccountSupportURL: '',
 	articleDeployingActivationKeysURL: '',
 	articleGettingStartedWithLiferayEnterpriseSearchURL: '',
+	articleNotifiedWhenMyActivationKeyIsAboutToExpireURL: '',
 	articleWhatIsMyInstanceSizingValueURL: '',
 	client: null,
 	featureFlags: [],
