@@ -320,6 +320,8 @@ definition {
 
 			MenuItem.click(menuItem = "View");
 
+			Refresh();
+
 			CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
 				label = "activationStatus",
 				value = "");
