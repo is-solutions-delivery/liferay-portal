@@ -130,7 +130,7 @@ definition {
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.assertItemName(text = "Suite 1");
+			Testray.assertTableList(tablesList = "Suite 1");
 
 			Navigator.gotoNavTab(navTab = "Routines");
 

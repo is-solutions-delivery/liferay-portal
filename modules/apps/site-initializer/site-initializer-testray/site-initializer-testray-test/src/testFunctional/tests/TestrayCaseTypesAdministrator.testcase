@@ -54,7 +54,7 @@ definition {
 		}
 
 		task ("Then I assert that the newly created 'Case Type' is present in the list") {
-			Testray.assertItemName(text = ${caseType});
+			Testray.assertTableList(tablesList = ${caseType});
 		}
 
 		task ("Delete object") {
@@ -90,7 +90,7 @@ definition {
 		}
 
 		task ("Then I shouldn't be able to see the same in the list") {
-			Testray.assertItemNotPresent(text = ${caseType});
+			Testray.assertTableListNotPresent(tablesList = ${caseType});
 		}
 	}
 
@@ -122,7 +122,7 @@ definition {
 		}
 
 		task ("Then I assert that the name has been changed in the list") {
-			Testray.assertItemName(text = "Case Type Edited");
+			Testray.assertTableList(tablesList = "Case Type Edited");
 		}
 
 		task ("Delete object") {

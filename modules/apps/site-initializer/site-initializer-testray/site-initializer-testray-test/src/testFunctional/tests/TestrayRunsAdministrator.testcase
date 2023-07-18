@@ -128,7 +128,7 @@ definition {
 		}
 
 		task ("Then I should be assert to say that the run no longer appears in the list") {
-			Testray.assertItemNotPresent(text = 00);
+			Testray.assertTableListNotPresent(tablesList = 00);
 		}
 	}
 

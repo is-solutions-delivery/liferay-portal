@@ -75,7 +75,7 @@ definition {
 		}
 
 		task ("Then the component should appear on the list") {
-			Testray.assertItemName(text = ${componentName});
+			Testray.assertTableList(tablesList = ${componentName});
 		}
 	}
 
@@ -99,9 +99,9 @@ definition {
 		}
 
 		task ("Then I assert that the component was created without a team") {
-			Testray.assertItemName(text = ${componentName});
+			Testray.assertTableList(tablesList = ${componentName});
 
-			Testray.assertItemNotPresent(text = ${teamName});
+			Testray.assertTableListNotPresent(tablesList = ${teamName});
 		}
 	}
 
@@ -127,7 +127,7 @@ definition {
 
 			Testray.addNewComponent(componentName = ${componentName});
 
-			Testray.assertItemName(text = ${componentName});
+			Testray.assertTableList(tablesList = ${componentName});
 		}
 
 		task ("Then I should be able to edit the component and add a Team") {
@@ -136,9 +136,7 @@ definition {
 				newComponentName = "Component 1 Edited",
 				newTeamName = ${teamName});
 
-			Testray.assertItemName(text = "Component 1 Edited");
-
-			Testray.assertItemName(text = ${teamName});
+			Testray.assertTableList(tablesList = "${teamName},Component 1 Edited");
 		}
 	}
 
@@ -175,7 +173,7 @@ definition {
 		}
 
 		task ("Then I assert that the Team has been changed") {
-			Testray.assertItemName(text = "Team 2");
+			Testray.assertTableList(tablesList = "Team 2");
 		}
 	}
 
@@ -197,9 +195,9 @@ definition {
 		task ("When I add a new component without adding a team") {
 			Testray.addNewComponent(componentName = ${componentName});
 
-			Testray.assertItemName(text = ${componentName});
+			Testray.assertTableList(tablesList = ${componentName});
 
-			Testray.assertItemNotPresent(text = ${teamName});
+			Testray.assertTableListNotPresent(tablesList = ${teamName});
 		}
 
 		task ("And I should be able to delete the component") {
@@ -207,7 +205,7 @@ definition {
 		}
 
 		task ("Then I assert that the component was deleted") {
-			Testray.assertItemNotPresent(itemName = ${componentName});
+			Testray.assertTableListNotPresent(tablesList = ${componentName});
 		}
 	}
 
@@ -234,15 +232,13 @@ definition {
 		}
 
 		task ("And I assert that the component was created") {
-			Testray.assertItemName(text = ${componentName});
-
-			Testray.assertItemName(text = ${teamName});
+			Testray.assertTableList(tablesList = ${componentName});
 		}
 
 		task ("Then I delete the created component and I state that it does not appear in the list") {
 			Testray.deleteComponent(itemName = ${componentName});
 
-			Testray.assertItemNotPresent(itemName = ${componentName});
+			Testray.assertTableListNotPresent(tablesList = ${componentName});
 		}
 	}
 
@@ -273,7 +269,7 @@ definition {
 		task ("When I go to Manage Components and edit the Component") {
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
 
-			Testray.assertItemName(text = ${componentName});
+			Testray.assertTableList(tablesList = ${componentName});
 
 			SelectFrameTop();
 
@@ -285,7 +281,7 @@ definition {
 		}
 
 		task ("Then I assert that the component was edited") {
-			Testray.assertItemName(text = "Component Edited");
+			Testray.assertTableList(tablesList = "Component Edited");
 		}
 	}
 
@@ -310,7 +306,7 @@ definition {
 
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
 
-			Testray.assertItemName(text = ${componentName});
+			Testray.assertTableList(tablesList = ${componentName});
 
 			Testray.addNewComponent(componentName = ${componentName});
 		}

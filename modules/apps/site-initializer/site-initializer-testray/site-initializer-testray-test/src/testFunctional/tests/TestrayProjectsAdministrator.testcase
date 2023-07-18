@@ -58,7 +58,7 @@ definition {
 		task ("Then can see the project in the list") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.assertItemName(key_name = "Project 1");
+			Testray.assertTableList(tablesList = "Project 1");
 		}
 	}
 
@@ -76,7 +76,7 @@ definition {
 		task ("Then can see the project in the list") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.assertItemName(key_name = "Project 1");
+			Testray.assertTableList(tablesList = "Project 1");
 		}
 	}
 
@@ -96,7 +96,7 @@ definition {
 		}
 
 		task ("Then the project is not displayed anymore") {
-			Testray.assertItemNotPresent(key_name = "Project 1");
+			Testray.assertTableListNotPresent(tablesList = "Project 1");
 		}
 	}
 
@@ -126,7 +126,7 @@ definition {
 		}
 
 		task ("Then the project are presented with details edited") {
-			Testray.assertItemName(key_name = "Project 1");
+			Testray.assertTableList(tablesList = "Project 1");
 		}
 	}
 
@@ -190,7 +190,7 @@ definition {
 		}
 
 		task ("Then the project is not displayed anymore") {
-			Testray.assertItemNotPresent(key_name = "Project 1");
+			Testray.assertTableListNotPresent(tablesList = "Project 1");
 		}
 	}
 
@@ -274,7 +274,7 @@ definition {
 				productVersion = "1.2",
 				routine = "Routines_1 Routine");
 
-			Testray.assertItemName(key_name = "Builds_1 Project");
+			Testray.assertTableList(tablesList = "Builds_1 Project");
 		}
 
 		task ("When the user tries to delete a project with associated constructions") {
