@@ -419,12 +419,6 @@ definition {
 			locator1 = "Testray#PAGE_NUMBER_MODAL");
 	}
 
-	macro projectTabNavigator {
-		Click(
-			key_navTabName = ${navTabName},
-			locator1 = "Testray#PROJECT_NAVIGATOR_TAB_BUTTON");
-	}
-
 	macro selectUsers {
 		Button.click(button = "Assign Users");
 

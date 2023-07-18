@@ -91,11 +91,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>PROJECT_NAVIGATOR_TAB_BUTTON</td>
-	<td>//button[contains(@class, 'nav-link') and contains(text(), "${key_navTabName}")]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>FIELD_REQUIRED_MESSAGE</td>
 	<td>//label[contains(text(), '${key_fieldLabel}')]/..//span[contains(text(),'${key_warningMessage}')]</td>
 	<td></td>
