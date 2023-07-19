@@ -98,7 +98,7 @@ definition {
 		}
 
 		task ("Then I should be able to assert that the suite is no longer shown") {
-			Testray.assertItemNotPresent(itemName = ${suiteName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${suiteName});
 		}
 	}
 
@@ -126,7 +126,7 @@ definition {
 		}
 
 		task ("Then I should be able to assert that the Testray Suite is no longer displayed") {
-			Testray.assertItemNotPresent(itemName = ${suiteName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${suiteName});
 		}
 	}
 
@@ -174,7 +174,7 @@ definition {
 		task ("Then I should be able to assert that the selected case is displayed in the suite details") {
 			Testray.goToTableEntry(tableName = ${suiteName});
 
-			Testray.assertItemName(text = ${caseName});
+			Testray.viewTableEntryList(listEntry = ${caseName});
 		}
 
 		task ("Delete the case type") {

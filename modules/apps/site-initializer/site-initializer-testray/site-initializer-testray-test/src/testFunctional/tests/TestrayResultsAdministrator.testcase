@@ -160,7 +160,7 @@ definition {
 		}
 
 		task ("Then the Case Results should not be displayed anymore") {
-			Testray.assertItemNotPresent(itemName = ${caseName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 
@@ -502,7 +502,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.assertItemName(text = ${componentName});
+			Testray.viewTableEntryList(listEntry = ${componentName});
 		}
 	}
 
@@ -524,7 +524,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.assertItemName(text = ${teamName});
+			Testray.viewTableEntryList(listEntry = ${teamName});
 		}
 	}
 

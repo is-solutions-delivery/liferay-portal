@@ -70,7 +70,7 @@ definition {
 
 			Testray.pageNumberNavigationModal(pageNumber = 2);
 
-			Testray.assertItemName(text = ${optionsName});
+			Testray.viewTableEntryList(listEntry = ${optionsName});
 		}
 
 		task ("Then I should be able to delete the newly created option") {
@@ -80,7 +80,7 @@ definition {
 
 			Testray.checkSuccessAlertAppearsAndDisappears();
 
-			Testray.assertItemNotPresent(text = ${optionsName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${optionsName});
 		}
 	}
 
@@ -100,7 +100,7 @@ definition {
 		}
 
 		task ("Then I assert that the Category was created") {
-			Testray.assertItemName(text = ${categoryName});
+			Testray.viewTableEntryList(listEntry = ${categoryName});
 		}
 	}
 
@@ -130,7 +130,7 @@ definition {
 
 			Testray.pageNumberNavigationModal(pageNumber = 2);
 
-			Testray.assertItemName(text = ${optionsName});
+			Testray.viewTableEntryList(listEntry = ${optionsName});
 		}
 	}
 
@@ -193,7 +193,7 @@ definition {
 		}
 
 		task ("Then I assert that the Category was deleted") {
-			Testray.assertItemNotPresent(text = ${categoryName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${categoryName});
 		}
 	}
 
@@ -221,7 +221,7 @@ definition {
 		}
 
 		task ("Then I should be able to say that the category title has been edited") {
-			Testray.assertItemName(text = "Category Edited");
+			Testray.viewTableEntryList(listEntry = "Category Edited");
 		}
 
 		task ("Delete object") {
@@ -272,11 +272,9 @@ definition {
 		}
 
 		task ("Then I should be able to say that the title of the option has changed") {
-			Testray.assertItemName(text = "Category 2");
+			Testray.viewTableEntryList(listEntry = "Category 2,Option Edited");
 
-			Testray.assertItemNotPresent(text = ${categoryName});
-
-			Testray.assertItemName(text = "Option Edited");
+			Testray.viewTableEntryListNotPresent(listEntry = ${categoryName});
 		}
 
 		task ("Delete object") {

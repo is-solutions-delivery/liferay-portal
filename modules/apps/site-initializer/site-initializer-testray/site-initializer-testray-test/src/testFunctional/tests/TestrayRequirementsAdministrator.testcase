@@ -98,7 +98,7 @@ definition {
 		}
 
 		task ("Then I assert that Requirement is not shown in the list") {
-			Testray.assertItemNotPresent(itemName = ${requirementName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${requirementName});
 		}
 	}
 
@@ -206,7 +206,7 @@ definition {
 		}
 
 		task ("Then I assert that the case is not displayed on the Requirements page") {
-			Testray.assertItemNotPresent(itemName = ${caseName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 

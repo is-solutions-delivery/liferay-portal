@@ -65,7 +65,7 @@ definition {
 		}
 
 		task ("Then I should be able to assert that the Team was created") {
-			Testray.assertItemName(text = ${teamName});
+			Testray.viewTableEntryList(listEntry = ${teamName});
 		}
 	}
 
@@ -97,7 +97,7 @@ definition {
 		}
 
 		task ("Then I should be able to assert that the Team has been deleted") {
-			Testray.assertItemNotPresent(text = ${teamName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${teamName});
 		}
 	}
 
@@ -129,7 +129,7 @@ definition {
 		}
 
 		task ("Then I should be able to assert that the Team has been edited") {
-			Testray.assertItemName(text = "Team Edited");
+			Testray.viewTableEntryList(listEntry = "Team Edited");
 		}
 	}
 

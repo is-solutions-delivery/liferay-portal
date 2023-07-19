@@ -253,7 +253,7 @@ definition {
 		}
 
 		task ("Then the task is not displayed anymore") {
-			Testray.assertItemNotPresent(key_name = "Task_1");
+			Testray.viewTableEntryListNotPresent(listEntry = "Task_1");
 		}
 	}
 
@@ -662,7 +662,7 @@ definition {
 
 			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Remove");
 
-			Testray.assertItemNotPresent(text = "Test Test");
+			Testray.viewTableEntryListNotPresent(listEntry = "Test Test");
 		}
 	}
 

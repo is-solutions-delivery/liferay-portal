@@ -172,7 +172,7 @@ definition {
 		}
 
 		task ("Then the case should no longer be found") {
-			Testray.assertItemNotPresent(text = ${caseName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 
@@ -206,7 +206,7 @@ definition {
 
 			Button.click(button = "Select Cases");
 
-			Testray.assertItemName(text = ${caseName});
+			Testray.viewTableEntryList(listEntry = ${caseName});
 		}
 
 		task ("When I delete this case") {
@@ -216,7 +216,7 @@ definition {
 		}
 
 		task ("Then I assert that Case is no longer present") {
-			Testray.assertItemNotPresent(text = ${caseName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 
@@ -323,7 +323,7 @@ definition {
 		}
 
 		task ("Then the requirement should not be displayed on Case page") {
-			Testray.assertItemNotPresent(text = "Requirement Summary");
+			Testray.viewTableEntryListNotPresent(listEntry = "Requirement Summary");
 		}
 	}
 

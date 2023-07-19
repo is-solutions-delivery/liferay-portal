@@ -114,7 +114,7 @@ definition {
 		}
 
 		task ("Then the Build should appear on the list") {
-			Testray.assertTableList(tablesList = ${buildName});
+			Testray.viewTableEntryList(listEntry = ${buildName});
 		}
 	}
 
@@ -130,7 +130,7 @@ definition {
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.assertItemName(text = "Suite 1");
+			Testray.viewTableEntryList(listEntry = "Suite 1");
 
 			Navigator.gotoNavTab(navTab = "Routines");
 
@@ -145,7 +145,7 @@ definition {
 		}
 
 		task ("Then the Build should appear on the list") {
-			Testray.assertTableList(tablesList = ${buildName});
+			Testray.viewTableEntryList(listEntry = ${buildName});
 		}
 	}
 
@@ -183,7 +183,7 @@ definition {
 
 			Testray.goToTableEntry(tableName = ${routineName});
 
-			Testray.assertTableList(tablesList = ${buildName});
+			Testray.viewTableEntryList(listEntry = ${buildName});
 		}
 
 		task ("When a build is deleted") {
@@ -195,7 +195,7 @@ definition {
 		}
 
 		task ("Then the build should not appear on the list") {
-			Testray.assertTableListNotPresent(tablesList = ${buildName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${buildName});
 		}
 	}
 
@@ -238,7 +238,7 @@ definition {
 		}
 
 		task ("Then the build with runs should not appear on the list") {
-			Testray.assertTableListNotPresent(tablesList = ${buildName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${buildName});
 		}
 	}
 
@@ -274,7 +274,7 @@ definition {
 		}
 
 		task ("Then the build should appear on the list with name edited") {
-			Testray.assertTableList(tablesList = "Build 1 Edited");
+			Testray.viewTableEntryList(listEntry = "Build 1 Edited");
 		}
 	}
 

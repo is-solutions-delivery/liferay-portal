@@ -270,7 +270,7 @@ definition {
 		}
 
 		task ("Then the Activated status should appear in the list") {
-			Testray.assertItemName(text = "Activated");
+			Testray.viewTableEntryList(listEntry = "Activated");
 		}
 	}
 
@@ -334,7 +334,7 @@ definition {
 		}
 
 		task ("Then the template with Deactivated status should not appear in the list") {
-			Testray.assertItemNotPresent(text = "Deactivated");
+			Testray.viewTableEntryListNotPresent(listEntry = "Deactivated");
 		}
 	}
 
