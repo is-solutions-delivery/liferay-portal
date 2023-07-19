@@ -159,7 +159,7 @@ definition {
 		}
 
 		task ("Then the user can see the case result in the table") {
-			TestrayHeader.assertBreadcrumbTitle(key_value = ${caseName});
+			TestrayDropdown.assertBreadcrumbTitle(text = ${caseName});
 		}
 	}
 

@@ -531,7 +531,7 @@ definition {
 		}
 
 		task ("Then the user can redirect to the build associated with the task") {
-			TestrayHeader.assertBreadcrumbTitle(key_value = ${buildName});
+			TestrayDropdown.assertBreadcrumbTitle(text = ${buildName});
 		}
 	}
 

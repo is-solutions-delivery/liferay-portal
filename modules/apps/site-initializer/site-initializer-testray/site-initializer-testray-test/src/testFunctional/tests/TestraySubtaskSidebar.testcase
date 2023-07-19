@@ -272,7 +272,7 @@ definition {
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 
-			TR2Utils.clickBreadcrumb(text = ${taskName});
+			Testray.clickBreadcrumb(text = ${taskName});
 
 			Testray.clickTableEntry(tableEntry = "Subtask_2");
 

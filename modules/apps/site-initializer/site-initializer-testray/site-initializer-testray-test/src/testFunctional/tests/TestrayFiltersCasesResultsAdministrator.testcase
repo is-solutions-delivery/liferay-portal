@@ -183,7 +183,7 @@ definition {
 		}
 
 		task ("When the user filter a case result by assign") {
-			TR2Utils.clickBreadcrumb(text = ${buildName});
+			Testray.clickBreadcrumb(text = ${buildName});
 
 			TestrayFilter.clickFilter();
 
@@ -496,7 +496,7 @@ definition {
 		}
 
 		task ("And that the user has two status different in the table") {
-			TR2Utils.clickBreadcrumb(text = ${buildName});
+			Testray.clickBreadcrumb(text = ${buildName});
 
 			AssertElementPresent(
 				key_projectName = "Untested",
@@ -600,7 +600,7 @@ definition {
 		}
 
 		task ("And that the user has two case result different in the table") {
-			TR2Utils.clickBreadcrumb(text = ${buildName});
+			Testray.clickBreadcrumb(text = ${buildName});
 
 			AssertElementPresent(
 				key_projectName = "Case 1",

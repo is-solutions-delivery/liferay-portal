@@ -370,7 +370,7 @@ definition {
 		}
 
 		task ("Then the issue appear in the table in case result") {
-			TR2Utils.clickBreadcrumb(text = "Build 1");
+			Testray.clickBreadcrumb(text = "Build 1");
 
 			TestrayResults.assertIssue(
 				issue = "LPS-111222",

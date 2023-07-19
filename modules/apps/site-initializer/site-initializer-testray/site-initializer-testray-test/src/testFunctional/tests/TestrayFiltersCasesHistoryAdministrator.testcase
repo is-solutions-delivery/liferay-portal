@@ -576,7 +576,7 @@ definition {
 		}
 
 		task ("When the user filter a case result history with multiple options") {
-			TR2Utils.clickBreadcrumb(text = ${buildName});
+			Testray.clickBreadcrumb(text = ${buildName});
 
 			Testray.clickTableEntry(tableEntry = "Case 1");
 

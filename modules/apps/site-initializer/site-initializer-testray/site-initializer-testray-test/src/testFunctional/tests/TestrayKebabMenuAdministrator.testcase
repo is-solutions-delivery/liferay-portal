@@ -353,7 +353,7 @@ definition {
 		task ("Then the user is redirected to the build page and can see the edited build title") {
 			TestrayLayout.assertTabPageTitle(pageTabTitle = "Tests");
 
-			TestrayHeader.assertBreadcrumbTitle(key_value = "Build Edited");
+			TestrayDropdown.assertBreadcrumbTitle(text = "Build Edited");
 		}
 
 		task ("Delete the build edited") {
@@ -392,7 +392,7 @@ definition {
 		task ("Then the user is redirected to the case page and can see the edited case title") {
 			TestrayLayout.assertTabPageTitle(pageTabTitle = "Test History");
 
-			TestrayHeader.assertBreadcrumbTitle(key_value = "Case Edited");
+			TestrayDropdown.assertBreadcrumbTitle(text = "Case Edited");
 		}
 
 		task ("Delete the case edited") {
@@ -422,7 +422,7 @@ definition {
 		task ("Then the user is redirected to the project page and can see the edited project title") {
 			TestrayLayout.assertTabPageTitle(pageTabTitle = "Routines");
 
-			TestrayHeader.assertBreadcrumbTitle(key_value = "Project Edited");
+			TestrayDropdown.assertBreadcrumbTitle(text = "Project Edited");
 		}
 
 		task ("Delete the project edited") {
@@ -462,7 +462,7 @@ definition {
 		task ("Then the user is redirected to the requirement page and can see the edited requirement title") {
 			TestrayLayout.assertTabPageTitle(pageTabTitle = "Cases");
 
-			TestrayHeader.assertBreadcrumbTitle(key_value = "Requirement Edited");
+			TestrayDropdown.assertBreadcrumbTitle(text = "Requirement Edited");
 		}
 
 		task ("Delete the requirement edited") {
@@ -494,7 +494,7 @@ definition {
 		task ("Then the user is redirected to the routine page and can see the edited routine title") {
 			TestrayLayout.assertTabPageTitle(pageTabTitle = "Build History");
 
-			TestrayHeader.assertBreadcrumbTitle(key_value = "Routine Edited");
+			TestrayDropdown.assertBreadcrumbTitle(text = "Routine Edited");
 		}
 
 		task ("Delete the routine edited") {
@@ -528,7 +528,7 @@ definition {
 		}
 
 		task ("Then the user is redirected to the suite page and can see the edited suite title") {
-			TestrayHeader.assertBreadcrumbTitle(key_value = "Suite Edited");
+			TestrayDropdown.assertBreadcrumbTitle(text = "Suite Edited");
 		}
 
 		task ("Delete the suite edited") {
@@ -556,7 +556,7 @@ definition {
 		}
 
 		task ("Then the promoted build should appear on the list") {
-			TR2Utils.clickBreadcrumb(text = ${routineName});
+			Testray.clickBreadcrumb(text = ${routineName});
 
 			TestrayBuild.verifyPromoteBuild();
 		}
