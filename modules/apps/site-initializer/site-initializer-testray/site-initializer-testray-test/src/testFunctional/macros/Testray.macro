@@ -87,22 +87,6 @@ definition {
 			locator1 = "Testray#ITEMS_PER_PAGE_DESCRIPTION");
 	}
 
-	macro assertTableList {
-		for (var tableEntry : list ${tablesList}) {
-			AssertElementPresent(
-				key_tableEntry = ${tableEntry},
-				locator1 = "Testray#TABLE_ENTRY");
-		}
-	}
-
-	macro assertTableListNotPresent {
-		for (var tableEntry : list ${tablesList}) {
-			AssertElementNotPresent(
-				key_tableEntry = ${tableEntry},
-				locator1 = "Testray#TABLE_ENTRY");
-		}
-	}
-
 	macro backSectionBreadcrumb {
 		for (var n : list "1,2,3,4") {
 			KeyPress(
@@ -168,6 +152,14 @@ definition {
 		Alert.closeMessage(messageType = "SUCCESS");
 
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
+	}
+
+	macro clickTableEntry {
+		WaitForPageLoad();
+
+		Click(
+			key_tableEntry = ${tableEntry},
+			locator1 = "Testray#TABLE_ENTRY");
 	}
 
 	macro confirmBreadcrumb {
@@ -307,14 +299,6 @@ definition {
 		Click(
 			key_pageDirection = ${pageDirection},
 			locator1 = "Testray#NEXT_AND_PREVIOUS_PAGE_BUTTON");
-	}
-
-	macro goToTableEntry {
-		WaitForPageLoad();
-
-		Click(
-			key_tableEntry = ${tableName},
-			locator1 = "Testray#TABLE_ENTRY");
 	}
 
 	macro goToTestflow {
@@ -493,6 +477,22 @@ definition {
 		AssertElementPresent(
 			key_rowValue = ${rowValue},
 			locator1 = "Testray#OVERVIEW_LAYOUT_VALUES");
+	}
+
+	macro viewTableEntryList {
+		for (var tableEntry : list ${listEntry}) {
+			AssertElementPresent(
+				key_tableEntry = ${tableEntry},
+				locator1 = "Testray#TABLE_ENTRY");
+		}
+	}
+
+	macro viewTableEntryListNotPresent {
+		for (var tableEntry : list ${listEntry}) {
+			AssertElementNotPresent(
+				key_tableEntry = ${tableEntry},
+				locator1 = "Testray#TABLE_ENTRY");
+		}
 	}
 
 }
