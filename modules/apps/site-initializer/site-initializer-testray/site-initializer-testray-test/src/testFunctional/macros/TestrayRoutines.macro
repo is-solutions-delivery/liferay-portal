@@ -34,7 +34,7 @@ definition {
 		Testray.changePaginationModal(quantity = 150);
 
 		if (IsElementPresent(key_projectName = "Projects_", locator1 = "Testray#ITEM_NAME")) {
-			Testray.goToTableEntry(tableName = "Projects_1 Project");
+			Testray.clickTableEntry(tableEntry = "Projects_1 Project");
 		}
 
 		if (IsElementPresent(key_projectName = "Routines_1 Routine", locator1 = "Testray#ITEM_NAME")) {
