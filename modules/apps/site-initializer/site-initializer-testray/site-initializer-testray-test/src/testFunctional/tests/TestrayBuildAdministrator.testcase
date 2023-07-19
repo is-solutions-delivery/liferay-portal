@@ -108,9 +108,9 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("Then the Build should appear on the list") {
@@ -126,7 +126,7 @@ definition {
 		task ("Given that the user add a new build") {
 			JSONTestray.addSuite(suiteName = ${suiteName});
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
@@ -134,7 +134,7 @@ definition {
 
 			Navigator.gotoNavTab(navTab = "Routines");
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
 			TestrayBuild.addBuildViaUI(
 				buildFieldName = ${buildName},
@@ -179,9 +179,9 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
 			Testray.viewTableEntryList(listEntry = ${buildName});
 		}
@@ -205,9 +205,9 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user add a new build with Environments Factors") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
 			TestrayBuild.addBuildViaUI(
 				buildFieldName = ${buildName},
@@ -218,11 +218,11 @@ definition {
 		}
 
 		task ("And deleted build with runs") {
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 
-			Testray.goToTableEntry(tableName = "Option 1");
+			Testray.clickTableEntry(tableEntry = "Option 1");
 
 			JSONTestrayAPI.deleteObjectViaAPI(
 				object = "builds",
@@ -232,7 +232,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			TestrayContextMenu.clickContextMenuProjects(name = ${routineName});
 		}
@@ -248,9 +248,9 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user add a new build") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
 			TestrayBuild.addBuildViaUI(
 				buildFieldName = ${buildName},
@@ -290,9 +290,9 @@ definition {
 				projectName = ${projectName},
 				routineName = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When add a build with duplicated name") {
@@ -333,9 +333,9 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user add a new build") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
 			TestrayBuild.addBuildViaUI(
 				buildFieldName = ${buildName},

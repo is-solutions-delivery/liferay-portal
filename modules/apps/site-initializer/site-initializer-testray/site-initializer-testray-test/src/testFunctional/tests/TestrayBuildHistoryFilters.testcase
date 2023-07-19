@@ -85,9 +85,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 	}
 
@@ -123,7 +123,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two builds different in the table") {
-			Testray.assertTableList(tablesList = "Build 1,Build 2");
+			Testray.viewTableEntryList(listEntry = "Build 1,Build 2");
 		}
 
 		task ("When the user select the build 2 in the filter") {
@@ -135,11 +135,11 @@ definition {
 		}
 
 		task ("Then the user see only build 2 in the table") {
-			Testray.assertTableList(tablesList = "Build 2");
+			Testray.viewTableEntryList(listEntry = "Build 2");
 		}
 
 		task ("And do not see the build 1 in the table") {
-			Testray.assertTableListNotPresent(tablesList = "Build 1");
+			Testray.viewTableEntryListNotPresent(listEntry = "Build 1");
 		}
 	}
 
@@ -149,7 +149,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two builds with different versions in the table") {
-			Testray.assertTableList(tablesList = "7.0,1.2");
+			Testray.viewTableEntryList(listEntry = "7.0,1.2");
 		}
 
 		task ("When the user select product version 7.0 in the filter") {
@@ -164,11 +164,11 @@ definition {
 		}
 
 		task ("Then the user see only products with version 7.0 in the table") {
-			Testray.assertTableList(tablesList = "7.0");
+			Testray.viewTableEntryList(listEntry = "7.0");
 		}
 
 		task ("And do not see the products with other versions in the table") {
-			Testray.assertTableListNotPresent(tablesList = "1.2");
+			Testray.viewTableEntryListNotPresent(listEntry = "1.2");
 		}
 	}
 
@@ -191,11 +191,11 @@ definition {
 		}
 
 		task ("Then the user see only build 1 and version 7.0 in the table") {
-			Testray.assertTableList(tablesList = "Build 1,7.0");
+			Testray.viewTableEntryList(listEntry = "Build 1,7.0");
 		}
 
 		task ("And do not see the build 2 and version 1.2 in the table") {
-			Testray.assertTableListNotPresent(tablesList = "Build 2,1.2");
+			Testray.viewTableEntryListNotPresent(listEntry = "Build 2,1.2");
 		}
 	}
 
@@ -205,7 +205,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two builds that existent in the table") {
-			Testray.assertTableList(tablesList = "Build 1,Build 2");
+			Testray.viewTableEntryList(listEntry = "Build 1,Build 2");
 		}
 
 		task ("When filtering a build by his non-existent name") {
@@ -217,7 +217,7 @@ definition {
 		}
 
 		task ("Then the user is not present in the build table") {
-			Testray.assertTableListNotPresent(tablesList = "Build 3");
+			Testray.viewTableEntryListNotPresent(listEntry = "Build 3");
 		}
 	}
 

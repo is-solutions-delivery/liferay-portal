@@ -122,11 +122,11 @@ definition {
 		task ("When the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -152,11 +152,11 @@ definition {
 		task ("And the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -190,11 +190,11 @@ definition {
 		task ("And the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -228,11 +228,11 @@ definition {
 		task ("And the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -266,11 +266,11 @@ definition {
 		task ("And the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -302,11 +302,11 @@ definition {
 		task ("When the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -332,11 +332,11 @@ definition {
 		task ("And the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -370,11 +370,11 @@ definition {
 		task ("And the user go to the run page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}

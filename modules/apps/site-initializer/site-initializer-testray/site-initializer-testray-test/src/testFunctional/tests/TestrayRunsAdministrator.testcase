@@ -114,11 +114,11 @@ definition {
 		}
 
 		task ("And I go to the run manage page") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Navigator.gotoNavTab(navTab = "Runs");
 		}
@@ -158,9 +158,9 @@ definition {
 
 			TestrayManage.closeModalInOptions();
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
 			TestrayRoutines.selectDefaultEnvironmentFactors(
 				categoryField = "Category 1",
@@ -177,7 +177,7 @@ definition {
 				productVersionOption = ${productVersion},
 				routine = ${routineName});
 
-			Testray.goToTableEntry(tableName = "Build 2");
+			Testray.clickTableEntry(tableEntry = "Build 2");
 		}
 
 		task ("And I go to the run page ") {

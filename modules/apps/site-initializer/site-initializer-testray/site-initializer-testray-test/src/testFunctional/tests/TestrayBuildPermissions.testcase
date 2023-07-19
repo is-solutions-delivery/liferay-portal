@@ -115,11 +115,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user go to the build page") {
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("Then the user can not create build") {
@@ -141,9 +141,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When The user right click in build") {
@@ -173,9 +173,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When the user right click in build") {
@@ -205,9 +205,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When the user create a build") {
@@ -220,7 +220,7 @@ definition {
 		}
 
 		task ("Then the user can see the build in the list") {
-			Testray.assertTableList(tablesList = "Build 2");
+			Testray.viewTableEntryList(listEntry = "Build 2");
 		}
 	}
 
@@ -238,9 +238,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When the user delete a build") {
@@ -252,7 +252,7 @@ definition {
 		}
 
 		task ("Then the build should not appear on the list") {
-			Testray.assertTableListNotPresent(tablesList = ${buildName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${buildName});
 		}
 	}
 
@@ -270,9 +270,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When the user edit a build") {
@@ -289,7 +289,7 @@ definition {
 		}
 
 		task ("Then the user can see the build edited in the list") {
-			Testray.assertTableList(tablesList = "Build Edited");
+			Testray.viewTableEntryList(listEntry = "Build Edited");
 		}
 	}
 
@@ -307,11 +307,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user go to the build page") {
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("Then the user can not create build") {
@@ -333,9 +333,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When The user right click in build") {
@@ -365,9 +365,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When the user right click in build") {

@@ -98,7 +98,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -134,7 +134,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -174,7 +174,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -208,7 +208,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -242,7 +242,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -278,7 +278,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -318,7 +318,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user go to the requirement page") {
@@ -344,7 +344,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -376,7 +376,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}

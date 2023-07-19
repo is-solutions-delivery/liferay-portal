@@ -130,11 +130,11 @@ definition {
 		task ("And the user go to case result page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 
 		task ("When the user delete the case result") {
@@ -168,13 +168,13 @@ definition {
 		task ("And the user go to case result page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
-			Testray.goToTableEntry(tableName = ${caseName});
+			Testray.clickTableEntry(tableEntry = ${caseName});
 
 			Button.click(button = "Assign to Me");
 
@@ -213,11 +213,11 @@ definition {
 		task ("And the user go to case result page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 
 		task ("When the user delete the case result") {
@@ -251,13 +251,13 @@ definition {
 		task ("And the user go to case result page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
-			Testray.goToTableEntry(tableName = ${caseName});
+			Testray.clickTableEntry(tableEntry = ${caseName});
 
 			Button.click(button = "Assign to Me");
 
@@ -300,11 +300,11 @@ definition {
 		task ("And the user go to case result page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 
 		task ("When the user right click in case result") {
@@ -336,11 +336,11 @@ definition {
 		task ("And the user go to case result page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 
 		task ("When the user right click in case result") {

@@ -60,7 +60,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}

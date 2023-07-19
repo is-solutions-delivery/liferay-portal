@@ -73,7 +73,7 @@ definition {
 		}
 
 		task ("When the user go to the routine page") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create the routine") {
@@ -95,7 +95,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in routine") {
@@ -125,7 +125,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When The user right click in routine") {
@@ -157,7 +157,7 @@ definition {
 		}
 
 		task ("When the user go to the routine page") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create routine") {
@@ -179,7 +179,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in routine") {
@@ -209,7 +209,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When The user right click in routine") {
@@ -241,7 +241,7 @@ definition {
 		}
 
 		task ("When the user go to the routine page") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create routine") {
@@ -263,7 +263,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in routine") {
@@ -293,7 +293,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When The user right click in routine") {

@@ -72,9 +72,9 @@ definition {
 		}
 
 		task ("Go to routine page") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 	}
 

@@ -138,7 +138,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to components") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Testray.kebabMenuOption(kebabOption = "Manage Components");
 		}
@@ -160,7 +160,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to product version") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Testray.kebabMenuOption(kebabOption = "Manage Product Versions");
 		}
@@ -182,7 +182,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to teams") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Testray.kebabMenuOption(kebabOption = "Manage Teams");
 		}
@@ -204,11 +204,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that go to the case created") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Cases");
 
-			Testray.goToTableEntry(tableName = ${caseName});
+			Testray.clickTableEntry(tableEntry = ${caseName});
 		}
 
 		task ("When delete the routine through kebab") {
@@ -232,7 +232,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that go to the project created") {
-			Testray.goToTableEntry(tableName = "Project 2");
+			Testray.clickTableEntry(tableEntry = "Project 2");
 		}
 
 		task ("When delete the project through kebab") {
@@ -266,11 +266,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that go to the requirement created") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 
-			Testray.goToTableEntry(tableName = ${requirementName});
+			Testray.clickTableEntry(tableEntry = ${requirementName});
 		}
 
 		task ("When delete the requirement through kebab") {
@@ -302,9 +302,9 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that go to the routine created") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When delete the routine through kebab") {
@@ -332,11 +332,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to build") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 
 		task ("When the user edit the build through kebab") {
@@ -369,11 +369,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to case") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			PRMNavigator.goToNavItem(navItem = "Cases");
 
-			Testray.goToTableEntry(tableName = ${caseName});
+			Testray.clickTableEntry(tableEntry = ${caseName});
 		}
 
 		task ("When the user edit the case through kebab") {
@@ -408,7 +408,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to project") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user edit the project through kebab") {
@@ -442,11 +442,11 @@ definition {
 				projectName = ${projectName},
 				requirementName = "Requirement Summary");
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			PRMNavigator.goToNavItem(navItem = "Requirements");
 
-			Testray.goToTableEntry(tableName = "Requirement Summary");
+			Testray.clickTableEntry(tableEntry = "Requirement Summary");
 		}
 
 		task ("When the user edit the requirement through kebab") {
@@ -478,9 +478,9 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to routine") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("When the user edit the routine through kebab") {
@@ -512,11 +512,11 @@ definition {
 		task ("Given that the user go to suite") {
 			JSONTestray.addSuite(suiteName = ${suiteName});
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			PRMNavigator.goToNavItem(navItem = "Suites");
 
-			Testray.goToTableEntry(tableName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 		}
 
 		task ("When the user edit the suite through kebab") {
@@ -544,11 +544,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user go to build") {
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 
 		task ("When the user promoted the build through kebab") {

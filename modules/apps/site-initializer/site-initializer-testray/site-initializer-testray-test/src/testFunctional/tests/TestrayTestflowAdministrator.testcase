@@ -231,11 +231,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Button.click(button = "View Task");
 
@@ -288,11 +288,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Button.click(button = "View Task");
 		}
@@ -383,7 +383,7 @@ definition {
 				status = "In Analysis",
 				taskName = "Task_1");
 
-			Testray.goToTableEntry(tableName = "Task_1");
+			Testray.clickTableEntry(tableEntry = "Task_1");
 		}
 
 		task ("When the user abandon a task") {
@@ -432,7 +432,7 @@ definition {
 				status = "In Analysis",
 				taskName = "Task_1");
 
-			Testray.goToTableEntry(tableName = "Task_1");
+			Testray.clickTableEntry(tableEntry = "Task_1");
 		}
 
 		task ("When the user reanalyze an complete task") {
@@ -476,11 +476,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Button.click(button = "View Task");
 		}
@@ -587,11 +587,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
 			Button.click(button = "Analyze");
 

@@ -120,9 +120,9 @@ definition {
 		task ("Given that the user go to build page") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 		}
 
 		task ("And the user access the Breadcrumb") {
@@ -136,7 +136,7 @@ definition {
 		}
 
 		task ("Then the user can back to the routine page") {
-			Testray.assertTableList(tablesList = ${routineName});
+			Testray.viewTableEntryList(listEntry = ${routineName});
 		}
 	}
 
@@ -183,7 +183,7 @@ definition {
 		}
 
 		task ("Then the user can go to the routine page") {
-			Testray.assertTableList(tablesList = ${routineName});
+			Testray.viewTableEntryList(listEntry = ${routineName});
 		}
 	}
 

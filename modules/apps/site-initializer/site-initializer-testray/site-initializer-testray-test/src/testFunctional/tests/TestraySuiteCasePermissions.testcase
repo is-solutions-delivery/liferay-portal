@@ -58,7 +58,7 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
@@ -107,11 +107,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.goToTableEntry(tableName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 		}
 
 		task ("When the user right click in suite case") {
@@ -141,11 +141,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.goToTableEntry(tableName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 		}
 
 		task ("When the user right click in suite case") {
@@ -177,11 +177,11 @@ definition {
 		task ("And the user go to suite case") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.goToTableEntry(tableName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 		}
 
 		task ("When the user delete the suite case") {
@@ -217,11 +217,11 @@ definition {
 		task ("And the user go to suite case") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.goToTableEntry(tableName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 		}
 
 		task ("When the user edit the suite case") {
@@ -264,11 +264,11 @@ definition {
 		task ("And the user go to suite case") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.goToTableEntry(tableName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 		}
 
 		task ("When the user right click in suite case") {
@@ -300,11 +300,11 @@ definition {
 		task ("And the user go to suite case") {
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Suites");
 
-			Testray.goToTableEntry(tableName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 		}
 
 		task ("When the user right click in suite case") {

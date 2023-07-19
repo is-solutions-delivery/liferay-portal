@@ -121,11 +121,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 	}
 
@@ -173,7 +173,7 @@ definition {
 		}
 
 		task ("Given that the user assign to me a case result") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			TestrayTestflow.userAvatarNotPresent(
 				label = "Dates",
@@ -200,7 +200,7 @@ definition {
 		}
 
 		task ("Then the user can see user avatar in the table") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			TestrayTestflow.userAvatarPresent(
 				label = "Dates",
@@ -484,7 +484,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user complete a test with passed status") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Button.click(button = "Assign to Me");
 
@@ -584,7 +584,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user complete a test with passed status") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Button.click(button = "Assign to Me");
 

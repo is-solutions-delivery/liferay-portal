@@ -129,11 +129,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.goToTableEntry(tableName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			Testray.goToTableEntry(tableName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 		}
 	}
 
@@ -185,7 +185,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user assign to me a case result") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			TestrayTestflow.userAvatarNotPresent(
 				label = "Dates",
@@ -228,7 +228,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user add a issue in the case result") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Button.click(button = "Assign to Me");
 
@@ -268,7 +268,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two product version different in the table") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 
@@ -315,7 +315,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two routine different in the table") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 
@@ -358,7 +358,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user complete a test with passed status") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Button.click(button = "Assign to Me");
 
@@ -395,7 +395,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two enviroments different in the table") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 
@@ -444,7 +444,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two case result with errors different in the table") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 
@@ -499,7 +499,7 @@ definition {
 		}
 
 		task ("When the user filter a case result history by team") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 
@@ -536,7 +536,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("When the user searches for a field called routine") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 
@@ -564,7 +564,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user complete a test with passed status") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Button.click(button = "Assign to Me");
 
@@ -578,7 +578,7 @@ definition {
 		task ("When the user filter a case result history with multiple options") {
 			TR2Utils.clickBreadcrumb(text = ${buildName});
 
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 
@@ -640,7 +640,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user filter a case result history existent") {
-			Testray.goToTableEntry(tableName = "Case 1");
+			Testray.clickTableEntry(tableEntry = "Case 1");
 
 			Navigator.gotoNavTab(navTab = "History");
 

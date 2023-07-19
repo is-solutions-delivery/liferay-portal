@@ -82,7 +82,7 @@ definition {
 		}
 
 		task ("And delete the user") {
-			Testray.goToTableEntry(tableName = "changedfirstname Updateln");
+			Testray.clickTableEntry(tableEntry = "changedfirstname Updateln");
 
 			Button.clickNoError(button = "Delete User");
 
@@ -182,7 +182,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
 
-			Testray.goToTableEntry(tableName = "user@liferay.com");
+			Testray.clickTableEntry(tableEntry = "user@liferay.com");
 		}
 
 		task ("When the user change the account informations") {
@@ -196,7 +196,7 @@ definition {
 		}
 
 		task ("And go to user changed") {
-			Testray.goToTableEntry(tableName = "changedfirstname Updateln");
+			Testray.clickTableEntry(tableEntry = "changedfirstname Updateln");
 		}
 
 		task ("Then can see the new informations to the account") {
@@ -218,7 +218,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
 
-			Testray.goToTableEntry(tableName = "test@liferay.com");
+			Testray.clickTableEntry(tableEntry = "test@liferay.com");
 		}
 
 		task ("And the user deselects all roles") {
@@ -248,7 +248,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
 
-			Testray.goToTableEntry(tableName = "user@liferay.com");
+			Testray.clickTableEntry(tableEntry = "user@liferay.com");
 		}
 
 		task ("When the user tries to created account without informations") {

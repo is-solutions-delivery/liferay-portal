@@ -73,11 +73,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			Testray.goToTableEntry(tableName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
 			Navigator.gotoNavTab(navTab = "Cases");
 
-			Testray.goToTableEntry(tableName = ${caseName});
+			Testray.clickTableEntry(tableEntry = ${caseName});
 
 			Navigator.gotoNavTab(navTab = "Requirements");
 		}
@@ -136,7 +136,7 @@ definition {
 				requirementSummary = "Requirement 1",
 				requirementTeam = "Team 1");
 
-			Testray.assertTableListNotPresent(tablesList = "Requirement 2");
+			Testray.viewTableEntryListNotPresent(listEntry = "Requirement 2");
 		}
 	}
 
@@ -157,9 +157,9 @@ definition {
 		}
 
 		task ("Then can see the filters apply in the list by summary") {
-			Testray.assertTableList(tablesList = "Requirement 1");
+			Testray.viewTableEntryList(listEntry = "Requirement 1");
 
-			Testray.assertTableListNotPresent(tablesList = "Requirement 2");
+			Testray.viewTableEntryListNotPresent(listEntry = "Requirement 2");
 		}
 	}
 
@@ -191,7 +191,7 @@ definition {
 				requirementSummary = "Requirement 1",
 				requirementTeam = "Team 1");
 
-			Testray.assertTableListNotPresent(tablesList = "Requirement 2");
+			Testray.viewTableEntryListNotPresent(listEntry = "Requirement 2");
 		}
 	}
 

@@ -157,7 +157,7 @@ definition {
 
 			TestrayTestflow.goToTestflow();
 
-			Testray.goToTableEntry(tableName = "Task_1");
+			Testray.clickTableEntry(tableEntry = "Task_1");
 		}
 
 		task ("When the user edit a task") {
@@ -211,7 +211,7 @@ definition {
 
 			TestrayTestflow.goToTestflow();
 
-			Testray.goToTableEntry(tableName = "Task_1");
+			Testray.clickTableEntry(tableEntry = "Task_1");
 		}
 
 		task ("When the user complete a task") {
@@ -314,7 +314,7 @@ definition {
 
 			TestrayTestflow.goToTestflow();
 
-			Testray.goToTableEntry(tableName = "Task_1");
+			Testray.clickTableEntry(tableEntry = "Task_1");
 		}
 
 		task ("When the user edit a task") {
@@ -373,7 +373,7 @@ definition {
 		}
 
 		task ("When the user go to the task") {
-			Testray.goToTableEntry(tableName = "Task_1");
+			Testray.clickTableEntry(tableEntry = "Task_1");
 		}
 
 		task ("Then the user can not delete task") {
@@ -399,7 +399,7 @@ definition {
 		}
 
 		task ("When the user go to the task") {
-			Testray.goToTableEntry(tableName = "Task_1");
+			Testray.clickTableEntry(tableEntry = "Task_1");
 		}
 
 		task ("Then the user can not edit a task") {
