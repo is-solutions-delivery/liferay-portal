@@ -46,8 +46,8 @@
 
 	@media screen and (max-width: 599px) {
 		.adt-apps-search-results .cards-container {
-			grid-template-columns: 288px;
 			grid-row-gap: 1rem;
+			grid-template-columns: 288px;
 			justify-content: center;
 		}
 
