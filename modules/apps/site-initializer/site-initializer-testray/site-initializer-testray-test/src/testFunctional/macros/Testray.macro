@@ -154,6 +154,12 @@ definition {
 		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
 	}
 
+	macro clickBreadcrumb {
+		var key_text = ${text};
+
+		Click(locator1 = "Testray#BREADCRUMB_ENTRY");
+	}
+
 	macro clickTableEntry {
 		WaitForPageLoad();
 
