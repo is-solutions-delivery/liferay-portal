@@ -161,7 +161,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>SELECT_BREADCRUMB</td>
+	<td>BREADCRUMB_ENTRY</td>
 	<td>//*[contains(@class, 'tr-header')]//*[text()='${key_text}']</td>
 	<td></td>
 </tr>
