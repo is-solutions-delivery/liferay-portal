@@ -344,13 +344,7 @@ definition {
 		}
 
 		task ("And confirm that there are two components in the table") {
-			AssertElementPresent(
-				key_projectName = ${componentName},
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "${componentName},Component 2");
 		}
 
 		task ("When the user filter component 1") {
@@ -362,15 +356,11 @@ definition {
 		}
 
 		task ("Then the user see only component 1 in the table") {
-			AssertElementPresent(
-				key_projectName = ${componentName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${componentName});
 		}
 
 		task ("And do not see the component 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Component 2");
 		}
 
 		task ("Delete the component") {
@@ -411,9 +401,7 @@ definition {
 		}
 
 		task ("Then not see the component 3 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Component 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Component 3");
 		}
 	}
 

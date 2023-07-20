@@ -110,9 +110,7 @@ definition {
 		}
 
 		task ("And the user can see the case in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 2");
 		}
 
 		task ("And the user edit a case") {
@@ -131,9 +129,7 @@ definition {
 		}
 
 		task ("And the user can see the case in the table") {
-			AssertElementPresent(
-				key_projectName = "Case Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case Edited");
 		}
 
 		task ("When the user delete a case") {
@@ -145,9 +141,7 @@ definition {
 		}
 
 		task ("Then the case is no longer present in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Case Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case Edited");
 		}
 	}
 
@@ -184,9 +178,7 @@ definition {
 		}
 
 		task ("And the user can see the case in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 2");
 		}
 
 		task ("And the user edit a case") {
@@ -205,9 +197,7 @@ definition {
 		}
 
 		task ("And the user can see the case in the table") {
-			AssertElementPresent(
-				key_projectName = "Case Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case Edited");
 		}
 
 		task ("When the user delete a case") {
@@ -219,9 +209,7 @@ definition {
 		}
 
 		task ("Then the case is no longer present in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Case Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case Edited");
 		}
 	}
 
@@ -247,9 +235,7 @@ definition {
 		}
 
 		task ("And can see the case in the table") {
-			AssertElementPresent(
-				key_projectName = ${caseName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${caseName});
 		}
 
 		task ("And right click in case") {

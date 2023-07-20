@@ -182,13 +182,7 @@ definition {
 		}
 
 		task ("And that the user has two cases different in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 		}
 
 		task ("When the user filter a compare runs by case name") {
@@ -207,15 +201,11 @@ definition {
 		}
 
 		task ("Then the user see case 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1");
 		}
 
 		task ("And do not see case 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case 2");
 		}
 	}
 
@@ -243,13 +233,7 @@ definition {
 
 			Navigator.gotoNavTab(navTab = "Cases");
 
-			AssertElementPresent(
-				key_projectName = 3,
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = 5,
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "3,5");
 		}
 
 		task ("When the user filter a compare runs by priority") {
@@ -268,15 +252,11 @@ definition {
 		}
 
 		task ("Then the user see priority 3 in the table") {
-			AssertElementPresent(
-				key_projectName = 3,
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = 3);
 		}
 
 		task ("And do not see priority 5 in the table") {
-			AssertElementNotPresent(
-				key_projectName = 5,
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = 5);
 		}
 	}
 

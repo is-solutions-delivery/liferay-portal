@@ -87,9 +87,7 @@ definition {
 		}
 
 		task ("Then can see the option in the table") {
-			AssertElementPresent(
-				key_projectName = ${optionsName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${optionsName});
 		}
 
 		task ("And can not see add button") {
@@ -141,9 +139,7 @@ definition {
 
 			Testray.pageNumberNavigationModal(pageNumber = 2);
 
-			AssertElementPresent(
-				key_projectName = "Option 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Option 2");
 		}
 
 		task ("When the user edited the option") {
@@ -164,9 +160,7 @@ definition {
 		}
 
 		task ("Then can see the option edited in the table") {
-			AssertElementPresent(
-				key_projectName = "Option Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Option Edited");
 		}
 
 		task ("When the user delete the option") {
@@ -176,9 +170,7 @@ definition {
 		}
 
 		task ("Then can not see the option in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Option Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Option Edited");
 		}
 	}
 
@@ -206,9 +198,7 @@ definition {
 		}
 
 		task ("Then can see the option in the table") {
-			AssertElementPresent(
-				key_projectName = ${optionsName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${optionsName});
 		}
 
 		task ("And can not see add button") {

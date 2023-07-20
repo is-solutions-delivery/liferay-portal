@@ -176,9 +176,7 @@ definition {
 		}
 
 		task ("Then the user can see the product version created in the table") {
-			AssertElementPresent(
-				key_projectName = "7.4",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "7.4");
 		}
 	}
 
@@ -208,9 +206,7 @@ definition {
 		}
 
 		task ("Then the user can not see the product version in the table") {
-			AssertElementNotPresent(
-				key_projectName = ${productVersion},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${productVersion});
 		}
 	}
 
@@ -241,9 +237,7 @@ definition {
 		}
 
 		task ("Then the user can see the product version edited in the table") {
-			AssertElementPresent(
-				key_projectName = "3.4",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "3.4");
 		}
 	}
 

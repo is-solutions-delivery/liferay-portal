@@ -208,9 +208,7 @@ definition {
 		}
 
 		task ("Then the user sees routine 1 that has been assigned to the user") {
-			AssertElementPresent(
-				key_projectName = "Routine 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Routine 1");
 		}
 
 		task ("And the user can see user avatar in the table") {
@@ -256,9 +254,7 @@ definition {
 		}
 
 		task ("Then the user can see the issue in the table") {
-			AssertElementPresent(
-				key_projectName = "LPS-123456",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "LPS-123456");
 		}
 	}
 
@@ -272,13 +268,7 @@ definition {
 
 			Navigator.gotoNavTab(navTab = "History");
 
-			AssertElementPresent(
-				key_projectName = "7.0",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "1.2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "7.0,1.2");
 		}
 
 		task ("When the user filter a product version by name") {
@@ -297,15 +287,11 @@ definition {
 		}
 
 		task ("Then the user see only product version 7.0 in the table") {
-			AssertElementPresent(
-				key_projectName = "7.0",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "7.0");
 		}
 
 		task ("And do not see the product version 1.2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "1.2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "1.2");
 		}
 	}
 
@@ -319,13 +305,7 @@ definition {
 
 			Navigator.gotoNavTab(navTab = "History");
 
-			AssertElementPresent(
-				key_projectName = "Routine 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Routine 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Routine 1,Routine 2");
 		}
 
 		task ("When the user select a routine called routine 1 in the filter") {
@@ -340,15 +320,11 @@ definition {
 		}
 
 		task ("Then the user see only the routine 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Routine 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Routine 1");
 		}
 
 		task ("And do not see Routine 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Routine 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Routine 2");
 		}
 	}
 
@@ -383,9 +359,7 @@ definition {
 		}
 
 		task ("Then the user see passed status in the table") {
-			AssertElementPresent(
-				key_projectName = "Passed",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Passed");
 		}
 	}
 
@@ -401,13 +375,7 @@ definition {
 
 			WaitForPageLoad();
 
-			AssertElementPresent(
-				key_projectName = "Run 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Run 1,Run 2");
 		}
 
 		task ("When the user filter a case result by enviroment") {
@@ -426,15 +394,11 @@ definition {
 		}
 
 		task ("Then the user see only the run 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Run 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Run 1");
 		}
 
 		task ("And do not see run 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Run 2");
 		}
 	}
 
@@ -450,13 +414,7 @@ definition {
 
 			WaitForPageLoad();
 
-			AssertElementPresent(
-				key_projectName = "Failed to run on CI",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Aborted prior to running test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Failed to run on CI,Aborted prior to running test");
 		}
 
 		task ("When the user filter the case result by error") {
@@ -475,15 +433,11 @@ definition {
 		}
 
 		task ("Then the user see only case result 1 with error in the table") {
-			AssertElementPresent(
-				key_projectName = "Failed to run on CI",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Failed to run on CI");
 		}
 
 		task ("And do not see the case result 2 with error in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Aborted prior to running test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Aborted prior to running test");
 		}
 	}
 
@@ -493,9 +447,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has a team in the table") {
-			AssertElementPresent(
-				key_projectName = "Team 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Team 1");
 		}
 
 		task ("When the user filter a case result history by team") {
@@ -520,13 +472,7 @@ definition {
 		}
 
 		task ("Then the user see only Team 1 with two runs in the table") {
-			AssertElementPresent(
-				key_projectName = "Run 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Run 1,Run 2");
 		}
 	}
 
@@ -614,23 +560,11 @@ definition {
 		}
 
 		task ("Then the user see only the error, run and product version in the table") {
-			AssertElementPresent(
-				key_projectName = "Run 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "7.0",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Failed to run on CI",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Run 1,7.0,Failed to run on CI");
 		}
 
 		task ("And do not see Case 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Run 2");
 		}
 	}
 
@@ -659,17 +593,9 @@ definition {
 		}
 
 		task ("And can see the Run 1 and 2 in the list and not see Run 3") {
-			AssertElementPresent(
-				key_projectName = "Run 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Run 1,Run 2");
 
-			AssertElementPresent(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementNotPresent(
-				key_projectName = "Run 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Run 3");
 		}
 
 		task ("When the user filter a Run by its non-existent name") {
@@ -690,9 +616,7 @@ definition {
 		}
 
 		task ("Then can not see the run 3 in the list") {
-			AssertElementNotPresent(
-				key_projectName = "Run 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Run 3");
 		}
 
 		task ("And can see message no results found") {

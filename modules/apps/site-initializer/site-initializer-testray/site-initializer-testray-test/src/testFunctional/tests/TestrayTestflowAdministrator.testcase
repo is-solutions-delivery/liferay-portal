@@ -306,9 +306,7 @@ definition {
 		}
 
 		task ("Then the task is edited with new details") {
-			AssertElementPresent(
-				key_projectName = "Task_2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Task_2");
 		}
 	}
 

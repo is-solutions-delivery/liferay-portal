@@ -146,9 +146,7 @@ definition {
 		}
 
 		task ("Then the Case Results should not be displayed anymore") {
-			AssertElementNotPresent(
-				key_projectName = ${caseName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 
@@ -229,9 +227,7 @@ definition {
 		}
 
 		task ("Then the Case Results should not be displayed anymore") {
-			AssertElementNotPresent(
-				key_projectName = ${caseName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 

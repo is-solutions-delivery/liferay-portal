@@ -173,13 +173,7 @@ definition {
 		task ("Given that the user has two teams different in the table") {
 			Testray.changePagination(quantity = 150);
 
-			AssertElementPresent(
-				key_projectName = "Team 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Team 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Team 1,Team 2");
 		}
 
 		task ("When the user filter a team by team name") {
@@ -200,15 +194,11 @@ definition {
 		}
 
 		task ("Then the user see only team 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Team 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Team 1");
 		}
 
 		task ("And do not see the team 2 with in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Team 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Team 2");
 		}
 	}
 

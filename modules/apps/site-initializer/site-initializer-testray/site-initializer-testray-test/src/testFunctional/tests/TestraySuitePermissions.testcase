@@ -171,9 +171,7 @@ definition {
 		}
 
 		task ("Then the user can see the suite created in the table") {
-			AssertElementPresent(
-				key_projectName = "Suite 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Suite 2");
 		}
 	}
 
@@ -201,9 +199,7 @@ definition {
 		}
 
 		task ("Then the user can not see the suite in the table") {
-			AssertElementNotPresent(
-				key_projectName = ${suiteName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${suiteName});
 		}
 	}
 
@@ -234,9 +230,7 @@ definition {
 		}
 
 		task ("Then the user can see the suite edited in the table") {
-			AssertElementPresent(
-				key_projectName = "Suite Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Suite Edited");
 		}
 	}
 

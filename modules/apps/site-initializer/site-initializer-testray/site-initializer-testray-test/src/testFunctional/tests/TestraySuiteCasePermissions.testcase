@@ -195,9 +195,7 @@ definition {
 		}
 
 		task ("Then the user can not see the suite case in the table") {
-			AssertElementNotPresent(
-				key_projectName = ${caseName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 
@@ -242,9 +240,7 @@ definition {
 		}
 
 		task ("Then the user can see the suite case edited in the table") {
-			AssertElementPresent(
-				key_projectName = "Case Edited",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case Edited");
 		}
 	}
 

@@ -218,13 +218,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two cases different in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 		}
 
 		task ("When the user filter a case result by case name") {
@@ -243,15 +237,11 @@ definition {
 		}
 
 		task ("Then the user see only the Case 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1");
 		}
 
 		task ("And do not see Case 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case 2");
 		}
 	}
 
@@ -261,13 +251,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two cases different in the table related with the two case types") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 		}
 
 		task ("When the user filter a case result by case type") {
@@ -286,15 +270,11 @@ definition {
 		}
 
 		task ("Then the user see only case type 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Case Type 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case Type 1");
 		}
 
 		task ("And do not see the case type 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Case Type 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case Type 2");
 		}
 	}
 
@@ -304,13 +284,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two component different in the table") {
-			AssertElementPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 1,Component 2");
 		}
 
 		task ("When the user filter a case result by component") {
@@ -329,15 +303,11 @@ definition {
 		}
 
 		task ("Then the user see only component 2 in the table") {
-			AssertElementPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 2");
 		}
 
 		task ("And do not see the component 1 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Component 1");
 		}
 	}
 
@@ -355,13 +325,7 @@ definition {
 
 			TestrayFilter.selectColumns(listColumn = "Environment");
 
-			AssertElementPresent(
-				key_projectName = "Option 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Option 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Option 1,Option 2");
 		}
 
 		task ("When the user filter a case result by enviroment") {
@@ -380,15 +344,11 @@ definition {
 		}
 
 		task ("Then the user see only the option 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Option 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Option 1");
 		}
 
 		task ("And do not see option 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Option 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Option 2");
 		}
 	}
 
@@ -398,13 +358,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two case result with errors different in the table") {
-			AssertElementPresent(
-				key_projectName = "Failed to run on CI",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Aborted prior to running test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Failed to run on CI,Aborted prior to running test");
 		}
 
 		task ("When the user filter the case result by error") {
@@ -423,15 +377,11 @@ definition {
 		}
 
 		task ("Then the user see only case result 1 with error in the table") {
-			AssertElementPresent(
-				key_projectName = "Failed to run on CI",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Failed to run on CI");
 		}
 
 		task ("And do not see the case result 2 with error in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Aborted prior to running test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Aborted prior to running test");
 		}
 	}
 
@@ -441,13 +391,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two priority different in the table") {
-			AssertElementPresent(
-				key_projectName = 5,
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = 3,
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "5,3");
 		}
 
 		task ("When the user filter a case result by priority") {
@@ -466,15 +410,11 @@ definition {
 		}
 
 		task ("Then the user see only the priority 3 in the table") {
-			AssertElementPresent(
-				key_projectName = 3,
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = 3);
 		}
 
 		task ("And do not see priority 5 in the table") {
-			AssertElementNotPresent(
-				key_projectName = 5,
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = 5);
 		}
 	}
 
@@ -498,13 +438,7 @@ definition {
 		task ("And that the user has two status different in the table") {
 			Testray.clickBreadcrumb(text = ${buildName});
 
-			AssertElementPresent(
-				key_projectName = "Untested",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Passed",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Untested,Passed");
 		}
 
 		task ("When the user filter a case result with passed status") {
@@ -523,15 +457,11 @@ definition {
 		}
 
 		task ("Then the user see passed status in the table") {
-			AssertElementPresent(
-				key_projectName = "Passed",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Passed");
 		}
 
 		task ("And do not see status Untested in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Untested",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Untested");
 		}
 	}
 
@@ -541,13 +471,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two team different in the table") {
-			AssertElementPresent(
-				key_projectName = "Team 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Team 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Team 1,Team 2");
 		}
 
 		task ("When the user filter a case result by team") {
@@ -566,15 +490,11 @@ definition {
 		}
 
 		task ("Then the user see only Team 2 in the table") {
-			AssertElementPresent(
-				key_projectName = "Team 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Team 2");
 		}
 
 		task ("And do not see the Team 1 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Team 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Team 1");
 		}
 	}
 
@@ -602,13 +522,7 @@ definition {
 		task ("And that the user has two case result different in the table") {
 			Testray.clickBreadcrumb(text = ${buildName});
 
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 		}
 
 		task ("When the user filter a case result with multiple options") {
@@ -662,9 +576,7 @@ definition {
 		}
 
 		task ("And do not see Case 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case 2");
 		}
 	}
 
@@ -687,17 +599,9 @@ definition {
 		}
 
 		task ("And can see the case result in the list and not see case result 3") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementNotPresent(
-				key_projectName = "Case 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case 3");
 		}
 
 		task ("When the user filter a case result by its non-existent name") {
@@ -718,9 +622,7 @@ definition {
 		}
 
 		task ("Then can not see the case result in the list") {
-			AssertElementNotPresent(
-				key_projectName = "Case 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case 3");
 		}
 
 		task ("And can see message no results found") {
@@ -734,13 +636,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two field different in the filter") {
-			AssertElementPresent(
-				key_projectName = "Priority",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Run",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Priority,Run");
 		}
 
 		task ("When the user searches for a field called run") {

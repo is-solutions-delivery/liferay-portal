@@ -446,13 +446,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that can see two different cases in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 		}
 
 		task ("And that the user filter a case") {
@@ -477,15 +471,11 @@ definition {
 		}
 
 		task ("Then the user see only case 1 pinned in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1");
 		}
 
 		task ("And not see the case 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Case 2");
 		}
 	}
 
@@ -495,13 +485,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that can see two different cases in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 		}
 
 		task ("And that the user filter a case") {
@@ -524,13 +508,7 @@ definition {
 		}
 
 		task ("Then the user see the two cases unpinned in the table") {
-			AssertElementPresent(
-				key_projectName = "Case 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Case 1,Case 2");
 		}
 	}
 

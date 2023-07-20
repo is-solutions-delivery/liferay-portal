@@ -148,9 +148,7 @@ definition {
 		}
 
 		task ("Then the user can see the new component in the table") {
-			AssertElementPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 2");
 		}
 	}
 
@@ -170,9 +168,7 @@ definition {
 		}
 
 		task ("Then the user can see the new product version in the table") {
-			AssertElementPresent(
-				key_projectName = "7.4",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "7.4");
 		}
 	}
 
@@ -192,9 +188,7 @@ definition {
 		}
 
 		task ("Then the user can see the new teams in the table") {
-			AssertElementPresent(
-				key_projectName = "Team 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Team 2");
 		}
 	}
 
@@ -220,9 +214,7 @@ definition {
 		}
 
 		task ("Then can not see the case in the table") {
-			AssertElementNotPresent(
-				key_projectName = ${caseName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${caseName});
 		}
 	}
 
@@ -254,9 +246,7 @@ definition {
 		}
 
 		task ("Then can not see the project in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Project 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Project 2");
 		}
 	}
 
@@ -290,9 +280,7 @@ definition {
 		}
 
 		task ("Then can not see the requirement in the table") {
-			AssertElementNotPresent(
-				key_projectName = ${requirementName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${requirementName});
 		}
 	}
 
@@ -320,9 +308,7 @@ definition {
 		}
 
 		task ("Then can not see the routine in the table") {
-			AssertElementNotPresent(
-				key_projectName = ${routineName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${routineName});
 		}
 	}
 

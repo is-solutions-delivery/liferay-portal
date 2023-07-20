@@ -155,15 +155,11 @@ definition {
 		}
 
 		task ("Then the user see only the Build_Template 2 in the table") {
-			AssertElementPresent(
-				key_projectName = "Build_Template 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Build_Template 2");
 		}
 
 		task ("And do not see Build_Template in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Build_Template",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Build_Template");
 		}
 	}
 
@@ -224,9 +220,7 @@ definition {
 		}
 
 		task ("Then the user not see the Build_Template 3 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Build_Template 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Build_Template 3");
 		}
 	}
 
@@ -391,15 +385,11 @@ definition {
 		}
 
 		task ("Then the user see only the Activated status in the table") {
-			AssertElementPresent(
-				key_projectName = "Activated",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Activated");
 		}
 
 		task ("And do not see Deactivated status in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Deactivated",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Deactivated");
 		}
 	}
 
@@ -456,15 +446,11 @@ definition {
 		}
 
 		task ("Then the user see only the Deactivated status in the table") {
-			AssertElementPresent(
-				key_projectName = "Deactivated",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Deactivated");
 		}
 
 		task ("And do not see Activated status in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Activated",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Activated");
 		}
 	}
 

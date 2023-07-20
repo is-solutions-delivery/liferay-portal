@@ -258,15 +258,11 @@ definition {
 		}
 
 		task ("Then can see only task 1 with user userfn userln in the table") {
-			AssertElementPresent(
-				key_projectName = "Task_1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Task_1");
 		}
 
 		task ("And do not see the task 2 with user Test in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Task_2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Task_2");
 		}
 
 		task ("Delete user created") {
@@ -280,13 +276,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two build different in the table") {
-			AssertElementPresent(
-				key_projectName = "Build 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Build 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Build 1,Build 2");
 		}
 
 		task ("When the user select the build 2 in the filter by name") {
@@ -298,15 +288,11 @@ definition {
 		}
 
 		task ("Then the user see only build 2 in the table") {
-			AssertElementPresent(
-				key_projectName = "Build 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Build 2");
 		}
 
 		task ("And do not see the build 1 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Build 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Build 1");
 		}
 	}
 
@@ -316,13 +302,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two project different in the table") {
-			AssertElementPresent(
-				key_projectName = "Project 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Project 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Project 1,Project 2");
 		}
 
 		task ("When the user select the project 2 in the filter") {
@@ -337,15 +317,11 @@ definition {
 		}
 
 		task ("Then the user see only project 2 in the table") {
-			AssertElementPresent(
-				key_projectName = "Project 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Project 2");
 		}
 
 		task ("And do not see the project 1 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Project 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Project 1");
 		}
 	}
 
@@ -355,13 +331,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two routine different in the table") {
-			AssertElementPresent(
-				key_projectName = "Routine 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Routine 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Routine 1,Routine 2");
 		}
 
 		task ("When the user select the routine 2 in the filter") {
@@ -376,15 +346,11 @@ definition {
 		}
 
 		task ("Then the user see only routine 2 in the table") {
-			AssertElementPresent(
-				key_projectName = "Routine 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Routine 2");
 		}
 
 		task ("And do not see the routine 1 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Routine 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Routine 1");
 		}
 	}
 
@@ -423,9 +389,7 @@ definition {
 		}
 
 		task ("And do not see the complete status in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Complete",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Complete");
 		}
 	}
 
@@ -435,13 +399,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two tasks different in the table") {
-			AssertElementPresent(
-				key_projectName = "Task_1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Task_2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Task_1,Task_2");
 		}
 
 		task ("When the user filter task by task name") {
@@ -453,15 +411,11 @@ definition {
 		}
 
 		task ("Then can see the Task_2 in the table") {
-			AssertElementPresent(
-				key_projectName = "Task_2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Task_2");
 		}
 
 		task ("And do not see the Task_1 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Task_1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Task_1");
 		}
 	}
 
@@ -517,9 +471,7 @@ definition {
 		}
 
 		task ("Then can see only build 2 and complete status in the table") {
-			AssertElementPresent(
-				key_projectName = "Build 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Build 2");
 
 			TestrayTestflow.assertStatus(
 				label = "Tasks",
@@ -527,13 +479,7 @@ definition {
 		}
 
 		task ("And do not see the Task_1 and build 1 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Build 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementNotPresent(
-				key_projectName = "Task_1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Build 1,Task_1");
 		}
 
 		task ("Delete user created") {
@@ -547,13 +493,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two tasks that existent in the table") {
-			AssertElementPresent(
-				key_projectName = "Task_1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Task_2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Task_1,Task_2");
 		}
 
 		task ("When filtering a task by his non-existent name") {
@@ -565,9 +505,7 @@ definition {
 		}
 
 		task ("Then the user is not present in the task table") {
-			AssertElementNotPresent(
-				key_projectName = "Task_3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Task_3");
 		}
 	}
 

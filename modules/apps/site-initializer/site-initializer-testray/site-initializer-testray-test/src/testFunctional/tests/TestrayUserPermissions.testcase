@@ -63,13 +63,7 @@ definition {
 		}
 
 		task ("Then can see the users in the table") {
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Analyst User",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Test Test,Analyst User");
 		}
 
 		task ("And can not see the add user button") {
@@ -113,13 +107,7 @@ definition {
 		}
 
 		task ("Then can see the users in the table") {
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Lead User",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Test Test,Lead User");
 		}
 
 		task ("And can not see the add user button") {
@@ -174,9 +162,7 @@ definition {
 		}
 
 		task ("Then can see the user created in the list") {
-			AssertElementPresent(
-				key_projectName = "firstname Updateln",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "firstname Updateln");
 		}
 
 		task ("And can see the roles disabled") {
@@ -196,9 +182,7 @@ definition {
 		task ("Then can not see the user in the list") {
 			Refresh();
 
-			AssertElementNotPresent(
-				key_projectName = "firstname Updateln",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "firstname Updateln");
 		}
 	}
 
@@ -222,13 +206,7 @@ definition {
 		}
 
 		task ("Then can see the users in the table") {
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "User User",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Test Test,User User");
 		}
 
 		task ("And can not see the add user button") {

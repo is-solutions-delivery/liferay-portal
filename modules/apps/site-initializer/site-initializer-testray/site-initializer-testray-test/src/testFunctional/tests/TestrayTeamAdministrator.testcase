@@ -193,9 +193,7 @@ definition {
 		}
 
 		task ("Then not see the team 3 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Team 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Team 3");
 		}
 	}
 
@@ -225,13 +223,7 @@ definition {
 		}
 
 		task ("And confirm that there are two teams in the table") {
-			AssertElementPresent(
-				key_projectName = ${teamName},
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Team 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "${teamName},Team 2");
 		}
 
 		task ("When the user filter team 1") {
@@ -243,15 +235,11 @@ definition {
 		}
 
 		task ("Then the user see only team 1 in the table") {
-			AssertElementPresent(
-				key_projectName = ${teamName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${teamName});
 		}
 
 		task ("And do not see the team 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Team 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Team 2");
 		}
 	}
 

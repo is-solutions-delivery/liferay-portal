@@ -169,9 +169,7 @@ definition {
 		}
 
 		task ("Then the user can see the task edited") {
-			AssertElementPresent(
-				key_projectName = "Task_2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Task_2");
 		}
 	}
 
@@ -294,9 +292,7 @@ definition {
 		}
 
 		task ("Then the user can not see the task") {
-			AssertElementNotPresent(
-				key_projectName = "Task_1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Task_1");
 		}
 	}
 

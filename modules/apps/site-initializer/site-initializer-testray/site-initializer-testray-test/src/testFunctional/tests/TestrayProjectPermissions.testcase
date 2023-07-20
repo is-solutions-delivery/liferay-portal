@@ -70,9 +70,7 @@ definition {
 		}
 
 		task ("Then can see the project in the table") {
-			AssertElementPresent(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${projectName});
 		}
 
 		task ("And can not see add button") {
@@ -130,9 +128,7 @@ definition {
 		}
 
 		task ("Then can see the project in the table") {
-			AssertElementPresent(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${projectName});
 		}
 
 		task ("And can not see add button") {
@@ -190,9 +186,7 @@ definition {
 		}
 
 		task ("Then can see the project in the table") {
-			AssertElementPresent(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${projectName});
 		}
 
 		task ("And can not see add button") {
