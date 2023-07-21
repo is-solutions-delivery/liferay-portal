@@ -237,15 +237,15 @@ definition {
 				label = "Subtasks",
 				status = "Open");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign and Begin Analysis",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Complete",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.editStatus(
 				comment = "button does not work",
@@ -278,15 +278,15 @@ definition {
 				label = "Subtasks",
 				status = "Open");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign and Begin Analysis",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Complete",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.editStatus(
 				comment = "button does not work",
@@ -319,13 +319,13 @@ definition {
 				label = "Subtasks",
 				status = "Open");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign to Me and Begin Analysis",
+				tableEntry = "Subtask_1");
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign to Me and Begin Analysis");
-
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Complete",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.editStatus(selectStatus = "Passed");
 
@@ -382,9 +382,9 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user logged in assign a subtask") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign and Begin Analysis",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 		}
@@ -418,15 +418,15 @@ definition {
 				label = "Subtasks",
 				status = "Open");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign and Begin Analysis",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Complete",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.editStatus(selectStatus = "Passed");
 
@@ -460,15 +460,15 @@ definition {
 				label = "Subtasks",
 				status = "Open");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign and Begin Analysis",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Complete",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.editStatus(
 				comment = "button does not work",
@@ -555,17 +555,17 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user different assign a subtask") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign and Begin Analysis",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.assignUsers(userName = "userfn userln");
 		}
 
 		task ("And the user logged in assign a subtask") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_2");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign and Begin Analysis",
+				tableEntry = "Subtask_2");
 
 			TestrayTestflow.assignUsers(userName = "Test Test");
 		}

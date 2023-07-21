@@ -69,9 +69,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then the component should appear on the list") {
@@ -89,13 +89,13 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I add a new component without adding a team") {
-			Testray.addNewComponent(componentName = ${componentName});
+			TestrayManage.createComponent(componentName = ${componentName});
 		}
 
 		task ("Then I assert that the component was created without a team") {
@@ -121,20 +121,20 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
-
-			Testray.addNewComponent(componentName = ${componentName});
+			TestrayManage.createComponent(componentName = ${componentName});
 
 			Testray.viewTableEntryList(listEntry = ${componentName});
 		}
 
 		task ("Then I should be able to edit the component and add a Team") {
-			Testray.editComponent(
-				componentName = ${componentName},
+			TestrayManage.editComponent(
 				newComponentName = "Component 1 Edited",
-				newTeamName = ${teamName});
+				newTeamName = ${teamName},
+				tableEntry = ${componentName});
 
 			Testray.viewTableEntryList(listEntry = "${teamName},Component 1 Edited");
 		}
@@ -161,15 +161,15 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I change the component team") {
-			Testray.changeTeamToComponent(
-				currentTeam = ${teamName},
-				newTeamName = "Team 2");
+			TestrayManage.changeTeamToComponent(
+				newTeamName = "Team 2",
+				tableEntry = ${teamName});
 		}
 
 		task ("Then I assert that the Team has been changed") {
@@ -187,13 +187,13 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I add a new component without adding a team") {
-			Testray.addNewComponent(componentName = ${componentName});
+			TestrayManage.createComponent(componentName = ${componentName});
 
 			Testray.viewTableEntryList(listEntry = ${componentName});
 
@@ -201,7 +201,7 @@ definition {
 		}
 
 		task ("And I should be able to delete the component") {
-			Testray.deleteComponent(itemName = ${componentName});
+			Testray.deleteItem(itemName = ${componentName});
 		}
 
 		task ("Then I assert that the component was deleted") {
@@ -226,9 +226,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("And I assert that the component was created") {
@@ -236,7 +236,7 @@ definition {
 		}
 
 		task ("Then I delete the created component and I state that it does not appear in the list") {
-			Testray.deleteComponent(itemName = ${componentName});
+			Testray.deleteItem(itemName = ${componentName});
 
 			Testray.viewTableEntryListNotPresent(listEntry = ${componentName});
 		}
@@ -263,21 +263,19 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I go to Manage Components and edit the Component") {
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
-
 			Testray.viewTableEntryList(listEntry = ${componentName});
 
 			SelectFrameTop();
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${componentName});
-
-			Testray.editComponent(
-				componentName = ${componentName},
-				newComponentName = "Component Edited");
+			TestrayManage.editComponent(
+				newComponentName = "Component Edited",
+				tableEntry = ${componentName});
 		}
 
 		task ("Then I assert that the component was edited") {
@@ -302,13 +300,13 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 
 			Testray.viewTableEntryList(listEntry = ${componentName});
 
-			Testray.addNewComponent(componentName = ${componentName});
+			TestrayManage.createComponent(componentName = ${componentName});
 		}
 
 		task ("Then an error message is displayed") {
@@ -338,9 +336,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("And confirm that there are two components in the table") {
@@ -387,9 +385,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user search component non existent") {
@@ -415,13 +413,13 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I try to add a component without a name") {
-			Testray.addNewComponent(componentName = "");
+			TestrayManage.createComponent(componentName = "");
 		}
 
 		task ("Then I assert that the 'Name' field is required") {

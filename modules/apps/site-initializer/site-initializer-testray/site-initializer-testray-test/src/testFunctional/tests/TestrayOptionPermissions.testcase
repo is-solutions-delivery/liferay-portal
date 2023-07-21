@@ -96,8 +96,8 @@ definition {
 
 		task ("When right click in option") {
 			RightClick.rightClick(
-				key_projectName = ${optionsName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${optionsName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
@@ -164,7 +164,7 @@ definition {
 		}
 
 		task ("When the user delete the option") {
-			TestrayManage.deleteOption(nameOptions = "Option Edited");
+			Testray.deleteItem(itemName = "Option Edited");
 
 			Testray.checkSuccessAlertAppearsAndDisappears();
 		}
@@ -207,8 +207,8 @@ definition {
 
 		task ("When right click in option") {
 			RightClick.rightClick(
-				key_projectName = ${optionsName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${optionsName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {

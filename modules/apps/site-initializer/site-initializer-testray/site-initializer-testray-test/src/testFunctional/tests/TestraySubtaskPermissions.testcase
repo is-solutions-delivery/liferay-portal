@@ -166,16 +166,16 @@ definition {
 			TestrayTestflow.goToTestflow();
 
 			Testray.clickTableEntry(tableEntry = "Task_1");
-
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
 		}
 
 		task ("When the user edit a Subtask") {
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign to Me and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign to Me and Begin Analysis",
+				tableEntry = "Subtask_1");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Complete",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.editStatus(selectStatus = "Passed");
 
@@ -236,16 +236,16 @@ definition {
 			TestrayTestflow.goToTestflow();
 
 			Testray.clickTableEntry(tableEntry = "Task_1");
-
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
 		}
 
 		task ("When the user edit a Subtask") {
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Assign to Me and Begin Analysis");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Assign to Me and Begin Analysis",
+				tableEntry = "Subtask_1");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Subtask_1");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Complete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Complete",
+				tableEntry = "Subtask_1");
 
 			TestrayTestflow.editStatus(selectStatus = "Passed");
 

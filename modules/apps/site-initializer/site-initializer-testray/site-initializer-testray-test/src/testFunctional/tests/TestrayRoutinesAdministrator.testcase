@@ -76,7 +76,7 @@ definition {
 		}
 
 		task ("Then the routine is deleted with predefined environment factors, they should not appear in the list") {
-			TestrayRoutines.deleteRoutine(itemName = ${routineName});
+			Testray.deleteItem(itemName = ${routineName});
 
 			Testray.viewTableEntryListNotPresent(listEntry = ${routineName});
 		}
@@ -96,7 +96,7 @@ definition {
 		task ("When the user add a new Routine") {
 			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			TestrayRoutines.createRoutine(key_name = ${routineName});
+			TestrayRoutines.createRoutine(routineName = ${routineName});
 		}
 
 		task ("Then the Routine should appear on the list") {
@@ -122,7 +122,7 @@ definition {
 		}
 
 		task ("And when a routine is deleted") {
-			TestrayRoutines.deleteRoutine(itemName = ${routineName});
+			Testray.deleteItem(itemName = ${routineName});
 		}
 
 		task ("Then the routine should not appear on the list") {
@@ -218,8 +218,8 @@ definition {
 			SelectFrameTop();
 
 			TestrayRoutines.editRoutine(
-				newNameRoutine = "Routine 1 Edited",
-				routineName = ${routineName});
+				newRoutineName = "Routine 1 Edited",
+				tableEntry = ${routineName});
 		}
 
 		task ("Then the Routine should be updated on the list") {
@@ -239,7 +239,7 @@ definition {
 
 			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			TestrayRoutines.createRoutine(key_name = ${routineName});
+			TestrayRoutines.createRoutine(routineName = ${routineName});
 		}
 
 		task ("Then the error message should appear") {
@@ -255,7 +255,7 @@ definition {
 		task ("Given that the user add a new Routine without name") {
 			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			TestrayRoutines.createRoutine(key_name = "");
+			TestrayRoutines.createRoutine(routineName = "");
 		}
 
 		task ("Then a warning message is displayed") {

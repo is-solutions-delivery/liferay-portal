@@ -66,11 +66,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ITEM_NAME</td>
-	<td>//*[contains(@class, 'table-autofit')]//*[text()='${key_projectName}']</td>
-	<td></td>
-</tr>
-<tr>
 	<td>DETAILS_LAST_NAME_FIELD</td>
 	<td>//input[@id='familyName']</td>
 	<td></td>

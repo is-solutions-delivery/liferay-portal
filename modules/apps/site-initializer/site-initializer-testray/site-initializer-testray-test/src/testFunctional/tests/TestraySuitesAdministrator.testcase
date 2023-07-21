@@ -61,11 +61,11 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
-
-			Testray.addNewComponent(componentName = "Component 1");
+			TestrayManage.createComponent(componentName = "Component 1");
 
 			TestrayManage.closeModalInOptions();
 
@@ -94,7 +94,7 @@ definition {
 		}
 
 		task ("When the smart suite is deleted") {
-			TestraySuites.deleteSuite(suiteName = ${suiteName});
+			Testray.deleteItem(itemName = ${suiteName});
 		}
 
 		task ("Then I should be able to assert that the suite is no longer shown") {
@@ -122,7 +122,7 @@ definition {
 		}
 
 		task ("When I delete the newly created suite") {
-			TestraySuites.deleteSuite(suiteName = ${suiteName});
+			Testray.deleteItem(itemName = ${suiteName});
 		}
 
 		task ("Then I should be able to assert that the Testray Suite is no longer displayed") {
@@ -194,19 +194,19 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 
 			TestrayManage.createTeam(teamName = ${teamName});
 
 			TestrayManage.closeModalInOptions();
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
-
-			Testray.addNewComponent(
+			TestrayManage.createComponent(
 				componentName = "Component 1",
 				teamName = ${teamName});
 
@@ -245,7 +245,7 @@ definition {
 				requirementName = "Requirement Summary",
 				smartSuite = "true",
 				suiteDescription = "Suite Description Edited",
-				suiteName = ${suiteName});
+				tableEntry = ${suiteName});
 		}
 
 		task ("Then the case parameters are presented with details edited") {
@@ -283,7 +283,7 @@ definition {
 			TestraySuites.editSuite(
 				newDescription = "Suite Description Edited",
 				newName = "Suite Edited",
-				suiteName = ${suiteName});
+				tableEntry = ${suiteName});
 		}
 
 		task ("Then I should be able to assert the new information") {

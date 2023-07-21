@@ -163,8 +163,8 @@ definition {
 
 		task ("When right click in run") {
 			RightClick.rightClick(
-				key_projectName = ${runName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${runName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the run") {
@@ -201,8 +201,8 @@ definition {
 
 		task ("When right click in run") {
 			RightClick.rightClick(
-				key_projectName = ${runName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${runName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the run") {
@@ -274,7 +274,7 @@ definition {
 		}
 
 		task ("When the user delete the run") {
-			TestrayRun.deleteRun(runName = ${runName});
+			Testray.deleteItem(itemName = ${runName});
 		}
 
 		task ("Then the user can not see the run in the table") {
@@ -339,8 +339,8 @@ definition {
 
 		task ("When right click in run") {
 			RightClick.rightClick(
-				key_projectName = ${runName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${runName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the run") {
@@ -377,8 +377,8 @@ definition {
 
 		task ("When right click in run") {
 			RightClick.rightClick(
-				key_projectName = ${runName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${runName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the run") {

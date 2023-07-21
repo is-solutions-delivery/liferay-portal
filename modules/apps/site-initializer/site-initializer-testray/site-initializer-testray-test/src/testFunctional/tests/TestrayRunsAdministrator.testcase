@@ -124,7 +124,7 @@ definition {
 		}
 
 		task ("When I delete a run") {
-			TestrayRun.deleteRun(runName = 00);
+			Testray.deleteItem(itemName = 00);
 		}
 
 		task ("Then I should be assert to say that the run no longer appears in the list") {
@@ -190,7 +190,7 @@ definition {
 			TestrayRun.editRun(
 				label = "Category 1",
 				listOption = "Option 2",
-				runName = 01);
+				tableEntry = 01);
 		}
 
 		task ("Then I should be assert to say that the option has been edited") {

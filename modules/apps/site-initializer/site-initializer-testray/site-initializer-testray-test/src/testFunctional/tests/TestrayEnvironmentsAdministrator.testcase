@@ -76,7 +76,7 @@ definition {
 		task ("Then I should be able to delete the newly created option") {
 			Testray.checkSuccessAlertAppearsAndDisappears();
 
-			TestrayManage.deleteOption(nameOptions = ${optionsName});
+			Testray.deleteItem(itemName = ${optionsName});
 
 			Testray.checkSuccessAlertAppearsAndDisappears();
 
@@ -96,7 +96,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
-			TestrayManage.addNewCategory(category = ${categoryName});
+			TestrayManage.createNewCategory(category = ${categoryName});
 		}
 
 		task ("Then I assert that the Category was created") {
@@ -215,9 +215,9 @@ definition {
 		}
 
 		task ("And I edit the category") {
-			TestrayManage.editCategoryTitle(
+			TestrayManage.editCategory(
 				category = ${categoryName},
-				categoryNewName = "Category Edited");
+				newName = "Category Edited");
 		}
 
 		task ("Then I should be able to say that the category title has been edited") {
@@ -247,7 +247,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
-			TestrayManage.addNewCategory(category = "Category 2");
+			TestrayManage.createNewCategory(category = "Category 2");
 
 			TestrayLayout.clickManageOnSidebar();
 
@@ -265,10 +265,10 @@ definition {
 
 			Testray.pageNumberNavigationModal(pageNumber = 2);
 
-			TestrayManage.editOptionTitle(
+			TestrayManage.editOption(
 				category = "Category 2",
-				option = ${optionsName},
-				optionNewName = "Option Edited");
+				newName = "Option Edited",
+				tableEntry = ${optionsName});
 		}
 
 		task ("Then I should be able to say that the title of the option has changed") {
@@ -300,7 +300,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
-			TestrayManage.addNewCategory(category = ${categoryName});
+			TestrayManage.createNewCategory(category = ${categoryName});
 		}
 
 		task ("Then an error message is displayed") {
@@ -378,7 +378,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Categories");
 
-			TestrayManage.addNewCategory();
+			TestrayManage.createNewCategory();
 		}
 
 		task ("Then I assert that a required field message is displayed") {

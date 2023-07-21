@@ -102,8 +102,8 @@ definition {
 
 		task ("When the user right click in suite") {
 			RightClick.rightClick(
-				key_projectName = ${suiteName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${suiteName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the suite") {
@@ -134,8 +134,8 @@ definition {
 
 		task ("When the user right click in suite") {
 			RightClick.rightClick(
-				key_projectName = ${suiteName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${suiteName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the suite") {
@@ -195,7 +195,7 @@ definition {
 		}
 
 		task ("When the user delete the suite") {
-			TestraySuites.deleteSuite(suiteName = ${suiteName});
+			Testray.deleteItem(itemName = ${suiteName});
 		}
 
 		task ("Then the user can not see the suite in the table") {
@@ -281,8 +281,8 @@ definition {
 
 		task ("When the user right click in suite") {
 			RightClick.rightClick(
-				key_projectName = ${suiteName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${suiteName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the suite") {
@@ -313,8 +313,8 @@ definition {
 
 		task ("When the user right click in suite") {
 			RightClick.rightClick(
-				key_projectName = ${suiteName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${suiteName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the suite") {

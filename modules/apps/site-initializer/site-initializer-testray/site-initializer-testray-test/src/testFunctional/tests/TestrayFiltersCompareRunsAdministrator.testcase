@@ -166,13 +166,13 @@ definition {
 		task ("Given that the user select two runs for compare runs") {
 			Navigator.gotoNavTab(navTab = "Runs");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Run 1");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Select Run A",
+				tableEntry = "Run 1");
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Select Run A");
-
-			TestrayContextMenu.clickContextMenuProjects(name = "Run 2");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Select Run B");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Select Run B",
+				tableEntry = "Run 2");
 
 			TestrayManage.selectOptionsManage(itemValue = "Compare Runs");
 
@@ -217,13 +217,13 @@ definition {
 		task ("Given that the user select two runs for compare runs") {
 			Navigator.gotoNavTab(navTab = "Runs");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Run 1");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Select Run A",
+				tableEntry = "Run 1");
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Select Run A");
-
-			TestrayContextMenu.clickContextMenuProjects(name = "Run 2");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Select Run B");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Select Run B",
+				tableEntry = "Run 2");
 		}
 
 		task ("And that the user has two priority different in the table") {

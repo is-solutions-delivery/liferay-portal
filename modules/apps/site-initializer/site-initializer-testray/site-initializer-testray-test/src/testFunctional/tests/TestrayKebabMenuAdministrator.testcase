@@ -144,7 +144,7 @@ definition {
 		}
 
 		task ("When the user create the new component through kebab") {
-			Testray.addNewComponent(componentName = "Component 2");
+			TestrayManage.createComponent(componentName = "Component 2");
 		}
 
 		task ("Then the user can see the new component in the table") {
@@ -164,7 +164,7 @@ definition {
 		}
 
 		task ("When the user create the new product version through kebab") {
-			TestrayManage.createTeam(teamName = "7.4");
+			TestrayManage.createProductVersion(productVersion = "7.4");
 		}
 
 		task ("Then the user can see the new product version in the table") {
@@ -400,9 +400,9 @@ definition {
 		task ("When the user edit the project through kebab") {
 			Testray.kebabMenuOption(kebabOption = "Edit Project");
 
-			Testray.editProjectTestray(
-				description = "Project Description Edited",
-				name = "Project Edited");
+			Testray.editProject(
+				newDescription = "Project Description Edited",
+				newName = "Project Edited");
 		}
 
 		task ("Then the user is redirected to the project page and can see the edited project title") {

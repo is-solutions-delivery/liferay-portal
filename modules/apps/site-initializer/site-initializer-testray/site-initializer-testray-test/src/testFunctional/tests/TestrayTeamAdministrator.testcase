@@ -57,9 +57,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 
 			TestrayManage.createTeam(teamName = ${teamName});
 		}
@@ -84,16 +84,10 @@ definition {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(quantity = 150);
-
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
 		}
 
 		task ("When I delete the newly created Team") {
-			TestrayManage.deleteProductVersion(
-				itemManage = "Delete",
-				versionName = ${teamName});
+			Testray.deleteItem(itemName = ${teamName});
 		}
 
 		task ("Then I should be able to assert that the Team has been deleted") {
@@ -116,16 +110,12 @@ definition {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(quantity = 150);
-
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
 		}
 
 		task ("When I edit the Team") {
 			TestrayManage.editTeam(
-				currentTeamName = ${teamName},
-				newTeamName = "Team Edited");
+				newName = "Team Edited",
+				tableEntry = ${teamName});
 		}
 
 		task ("Then I should be able to assert that the Team has been edited") {
@@ -149,13 +139,15 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I try to create an existing Team") {
-			TestrayManage.createTeam(teamName = ${teamName});
+			TestrayManage.createTeam(
+				tableEntry = ${projectName},
+				teamName = ${teamName});
 		}
 
 		task ("Then I should be able to assert that an error message is shown") {
@@ -179,9 +171,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user search team non existent") {
@@ -217,9 +209,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("And confirm that there are two teams in the table") {
@@ -253,9 +245,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I try to create a Team without filling in the name") {

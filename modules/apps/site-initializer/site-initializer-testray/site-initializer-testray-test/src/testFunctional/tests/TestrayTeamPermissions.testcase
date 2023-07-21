@@ -73,11 +73,9 @@ definition {
 		task ("When the user go to the team page") {
 			Testray.changePagination(quantity = 150);
 
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then can see the team in the table") {
@@ -90,8 +88,8 @@ definition {
 
 		task ("When right click in team") {
 			RightClick.rightClick(
-				key_projectName = ${teamName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${teamName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
@@ -121,11 +119,9 @@ definition {
 		task ("When the user go to the team page") {
 			Testray.changePagination(quantity = 150);
 
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then can see the team in the table") {
@@ -138,8 +134,8 @@ definition {
 
 		task ("When right click in team") {
 			RightClick.rightClick(
-				key_projectName = ${teamName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${teamName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
@@ -169,11 +165,9 @@ definition {
 		task ("When the user go to the team page") {
 			Testray.changePagination(quantity = 150);
 
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then can see the team in the table") {
@@ -186,8 +180,8 @@ definition {
 
 		task ("When right click in team") {
 			RightClick.rightClick(
-				key_projectName = ${teamName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${teamName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {

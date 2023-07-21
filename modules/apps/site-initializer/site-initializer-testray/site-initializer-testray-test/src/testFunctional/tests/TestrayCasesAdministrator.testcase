@@ -164,11 +164,7 @@ definition {
 		}
 
 		task ("When the user delete a case") {
-			TestrayContextMenu.clickContextMenuProjects(name = ${caseName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
-
-			AssertConfirm(value1 = "Are you sure you want to delete this item?");
+			Testray.deleteItem(itemName = ${caseName});
 		}
 
 		task ("Then the case should no longer be found") {
@@ -194,9 +190,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Export Cases");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Export Cases",
+				tableEntry = ${projectName});
 
 			Button.click(button = "Add Cases");
 
@@ -210,9 +206,7 @@ definition {
 		}
 
 		task ("When I delete this case") {
-			TestrayContextMenu.clickContextMenuProjects(name = ${caseName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
+			Testray.deleteItem(itemName = ${caseName});
 		}
 
 		task ("Then I assert that Case is no longer present") {
@@ -244,9 +238,9 @@ definition {
 		}
 
 		task ("And the user goes to edit a case") {
-			TestrayContextMenu.clickContextMenuProjects(name = ${caseName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Edit");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Edit",
+				tableEntry = ${caseName});
 
 			TestrayCases.editCases(
 				caseName = "Case Edited",
@@ -417,9 +411,9 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Export Cases");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Export Cases",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then a warning message appears") {

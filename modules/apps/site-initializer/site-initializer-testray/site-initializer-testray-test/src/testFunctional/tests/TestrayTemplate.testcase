@@ -132,9 +132,9 @@ definition {
 		}
 
 		task ("And Deactivated Build_Template 2") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Build_Template 2");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Deactivate");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Deactivate",
+				tableEntry = "Build_Template 2");
 
 			TestrayTemplate.viewTemplateDetails(
 				templateName = "Build_Template 2",
@@ -245,9 +245,9 @@ definition {
 		}
 
 		task ("When the user changed the status of Deactivated for Activated") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Build_Template");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Deactivate");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Deactivate",
+				tableEntry = "Build_Template");
 
 			Click(
 				key_indexNumber = 2,
@@ -258,9 +258,9 @@ definition {
 				templateName = "Build_Template",
 				templateStatus = "Deactivated");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Deactivated");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Activate");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Activate",
+				tableEntry = "Deactivated");
 		}
 
 		task ("Then the Activated status should appear in the list") {
@@ -310,9 +310,9 @@ definition {
 				templateName = "Build_Template",
 				templateStatus = "Activated");
 
-			TestrayContextMenu.clickContextMenuProjects(name = "Build_Template");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Deactivate");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Deactivate",
+				tableEntry = "Build_Template");
 
 			TestrayTemplate.viewTemplateDetails(
 				templateName = "Build_Template",
@@ -320,11 +320,7 @@ definition {
 		}
 
 		task ("When the template with Deactivated status is deleted") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Deactivated");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
-
-			AssertConfirm(value1 = "Are you sure you want to delete this item?");
+			Testray.deleteItem(itemName = "Deactivated");
 		}
 
 		task ("Then the template with Deactivated status should not appear in the list") {
@@ -360,9 +356,9 @@ definition {
 		}
 
 		task ("And Deactivated Build_Template 2") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Build_Template 2");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Deactivate");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Deactivate",
+				tableEntry = "Build_Template 2");
 
 			TestrayTemplate.viewTemplateDetails(
 				templateName = "Build_Template 2",
@@ -421,9 +417,9 @@ definition {
 		}
 
 		task ("And Deactivated Build_Template 2") {
-			TestrayContextMenu.clickContextMenuProjects(name = "Build_Template 2");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Deactivate");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Deactivate",
+				tableEntry = "Build_Template 2");
 
 			TestrayTemplate.viewTemplateDetails(
 				templateName = "Build_Template 2",

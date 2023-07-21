@@ -81,8 +81,8 @@ definition {
 
 		task ("When right click in case type") {
 			RightClick.rightClick(
-				key_projectName = ${caseType},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${caseType},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
@@ -125,8 +125,8 @@ definition {
 
 		task ("When right click in case type") {
 			RightClick.rightClick(
-				key_projectName = ${caseType},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${caseType},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
@@ -169,8 +169,8 @@ definition {
 
 		task ("When right click in case type") {
 			RightClick.rightClick(
-				key_projectName = ${caseType},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${caseType},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {

@@ -152,7 +152,7 @@ definition {
 
 		Type(
 			locator1 = "TestrayManage#NEW_OPTION_NAME",
-			value1 = ${fieldName});
+			value1 = ${buildName});
 
 		Select(
 			locator1 = "TestrayBuild#ROUTINE_ID",
@@ -189,15 +189,17 @@ definition {
 
 		Testray.clickTableEntry(tableEntry = "Routines_1 Routine");
 
-		while (IsElementPresent(key_projectName = "Builds_", locator1 = "Testray#ITEM_NAME")) {
-			Testray.deleteComponent(itemName = ${itemName});
+		while (IsElementPresent(key_tableEntry = "Builds_", locator1 = "Testray#TABLE_ENTRY")) {
+			Testray.deleteItem(itemName = ${itemName});
+
+			Alert.viewSuccessMessage();
 		}
 	}
 
 	macro editBuild {
 		Type(
 			locator1 = "TestrayManage#NEW_OPTION_NAME",
-			value1 = ${fieldName});
+			value1 = ${newName});
 
 		Select(
 			locator1 = "TestrayBuild#ROUTINE_ID",

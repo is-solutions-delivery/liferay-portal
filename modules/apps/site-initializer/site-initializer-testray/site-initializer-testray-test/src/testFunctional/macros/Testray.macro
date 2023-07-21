@@ -1,24 +1,5 @@
 definition {
 
-	macro addNewComponent {
-		SelectFrame(locator1 = "Testray#MODAL_BODY");
-
-		Click(locator1 = "TestrayManage#ADD_PROJECT_ON_MODAL");
-
-		Type(
-			locator1 = "TestrayManage#NEW_OPTION_NAME",
-			value1 = ${componentName});
-
-		if (isSet(teamName)) {
-			Select(
-				key_fieldLabel = "Team",
-				locator1 = "Select#GENERIC_SELECT_FIELD",
-				value1 = ${teamName});
-		}
-
-		Button.clickSave();
-	}
-
 	macro addTestraySite {
 		Site.openSitesAdmin();
 
@@ -133,19 +114,6 @@ definition {
 		}
 	}
 
-	macro changeTeamToComponent {
-		TestrayContextMenu.clickContextMenuProjects(name = ${currentTeam});
-
-		TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Edit");
-
-		Select(
-			key_fieldLabel = "Team",
-			locator1 = "Select#GENERIC_SELECT_FIELD",
-			value1 = ${newTeamName});
-
-		Button.clickSave();
-	}
-
 	macro checkSuccessAlertAppearsAndDisappears {
 		WaitForElementPresent(locator1 = "Message#SUCCESS");
 
@@ -174,14 +142,14 @@ definition {
 			value1 = "\ENTER");
 	}
 
-	macro createProjectByDropdown {
-		TestrayLayout.clickManageOnSidebar();
+	macro createProject {
+		Click(locator1 = "Button#PLUS");
 
-		TestrayManage.selectOptionsManage(itemValue = "Add Project");
+		SelectFrame(locator1 = "Testray#MODAL_BODY");
 
 		Type(
 			locator1 = "TestrayManage#NEW_OPTION_NAME",
-			value1 = ${key_name});
+			value1 = ${projectName});
 
 		Type(
 			locator1 = "Testray#NEW_DESCRIPTION_PROJECT",
@@ -190,14 +158,14 @@ definition {
 		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 	}
 
-	macro createProjectTestray {
-		Click(locator1 = "Button#PLUS");
+	macro createProjectByDropdown {
+		TestrayLayout.clickManageOnSidebar();
 
-		SelectFrame(locator1 = "Testray#MODAL_BODY");
+		TestrayManage.selectOptionsManage(itemValue = "Add Project");
 
 		Type(
 			locator1 = "TestrayManage#NEW_OPTION_NAME",
-			value1 = ${key_name});
+			value1 = ${projectName});
 
 		Type(
 			locator1 = "Testray#NEW_DESCRIPTION_PROJECT",
@@ -214,9 +182,9 @@ definition {
 		Testray.changePaginationModal(quantity = 150);
 
 		while (IsElementPresent(key_tableEntry = "Projects_", locator1 = "Testray#TABLE_ENTRY")) {
-			TestrayContextMenu.clickContextMenuProjects(name = "Projects_");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Delete",
+				tableEntry = "Projects_");
 
 			AssertConfirm(value1 = "Are you sure you want to delete this item?");
 
@@ -224,12 +192,10 @@ definition {
 		}
 	}
 
-	macro deleteComponent {
-		RightClick.rightClick(
-			key_tableEntry = ${tableEntry},
-			locator1 = "Testray#TABLE_ENTRY");
-
-		TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
+	macro deleteItem {
+		TestrayManage.selectTableRowOption(
+			rowOption = "Delete",
+			tableEntry = ${itemName});
 
 		AssertConfirm(value1 = "Are you sure you want to delete this item?");
 
@@ -241,44 +207,25 @@ definition {
 
 		Testray.changePaginationModal(quantity = 150);
 
-		TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-		TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Delete");
+		TestrayManage.selectTableRowOption(
+			rowOption = "Delete",
+			tableEntry = ${projectName});
 
 		AssertConfirm(value1 = "Are you sure you want to delete this item?");
+
+		Alert.viewSuccessMessage();
 	}
 
-	macro editComponent {
-		TestrayContextMenu.clickContextMenuProjects(name = ${componentName});
-
-		TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Edit");
-
-		if (isSet(newComponentName)) {
-			Type(
-				locator1 = "TestrayManage#NEW_OPTION_NAME",
-				value1 = ${newComponentName});
-		}
-
-		if (isSet(newTeamName)) {
-			Select(
-				key_fieldLabel = "Team",
-				locator1 = "Select#GENERIC_SELECT_FIELD",
-				value1 = ${newTeamName});
-		}
-
-		Button.clickSave();
-	}
-
-	macro editProjectTestray {
+	macro editProject {
 		SelectFrame(locator1 = "Testray#MODAL_BODY");
 
 		Type(
 			locator1 = "TestrayManage#NEW_OPTION_NAME",
-			value1 = ${name});
+			value1 = ${newName});
 
 		Type(
 			locator1 = "Testray#NEW_DESCRIPTION_PROJECT",
-			value1 = ${description});
+			value1 = ${newDescription});
 
 		Click(locator1 = "TestrayManage#SAVE_BUTTON");
 	}

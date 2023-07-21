@@ -50,7 +50,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Case Types");
 
-			TestrayManage.createNewCaseTypes(caseName = ${caseType});
+			TestrayManage.createCaseTypes(caseName = ${caseType});
 		}
 
 		task ("Then I assert that the newly created 'Case Type' is present in the list") {
@@ -86,7 +86,7 @@ definition {
 		}
 
 		task ("When I delete a Case Type") {
-			TestrayManage.deleteCasesTypes(valueName = ${caseType});
+			TestrayManage.deleteCasesTypes(tableEntry = ${caseType});
 		}
 
 		task ("Then I shouldn't be able to see the same in the list") {
@@ -116,9 +116,9 @@ definition {
 		}
 
 		task ("And I edit the name of the Case Type") {
-			TestrayManage.editNewName(
-				valueName = ${caseType},
-				valueType = "Case Type Edited");
+			TestrayManage.editCaseType(
+				newName = "Case Type Edited",
+				tableEntry = ${caseType});
 		}
 
 		task ("Then I assert that the name has been changed in the list") {
@@ -154,7 +154,7 @@ definition {
 		}
 
 		task ("When I try to create a new Case Type with an existing title") {
-			TestrayManage.createNewCaseTypes(caseName = ${caseType});
+			TestrayManage.createCaseTypes(caseName = ${caseType});
 		}
 
 		task ("Then an error message is shown") {
@@ -178,7 +178,7 @@ definition {
 
 			Testray.changePaginationModal(quantity = 150);
 
-			TestrayManage.createNewCaseTypes(caseName = "");
+			TestrayManage.createCaseTypes(caseName = "");
 
 			Testray.viewErrorMessage(
 				fieldLabel = "Name",
