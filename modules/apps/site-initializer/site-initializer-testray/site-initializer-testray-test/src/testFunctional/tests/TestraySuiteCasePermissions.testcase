@@ -121,9 +121,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the suite case") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -155,9 +153,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the suite case") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 
@@ -222,11 +218,11 @@ definition {
 				tableEntry = ${caseName});
 
 			TestrayCases.editCases(
-				caseName = "Case Edited",
 				caseTypeId = "Case Type 1",
 				componentId = "Component 1",
 				description = "Case Description",
 				duration = 30,
+				newName = "Case Edited",
 				priority = 3,
 				steps = "http://test.edit.com");
 		}
@@ -266,9 +262,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the suite case") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -302,9 +296,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the suite case") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 

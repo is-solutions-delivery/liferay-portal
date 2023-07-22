@@ -101,13 +101,9 @@ definition {
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -153,10 +149,10 @@ definition {
 
 			Testray.pageNumberNavigationModal(pageNumber = 2);
 
-			TestrayManage.editOptionTitle(
+			TestrayManage.editOption(
 				category = ${categoryName},
-				option = "Option 2",
-				optionNewName = "Option Edited");
+				newName = "Option Edited",
+				tableEntry = "Option 2");
 		}
 
 		task ("Then can see the option edited in the table") {
@@ -212,13 +208,9 @@ definition {
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 

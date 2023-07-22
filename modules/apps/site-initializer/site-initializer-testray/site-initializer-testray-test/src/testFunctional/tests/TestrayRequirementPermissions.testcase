@@ -140,7 +140,7 @@ definition {
 				componentId = ${componentName},
 				linkTitle = "The page edited",
 				linkURL = "https://reddit.com",
-				requirementName = "Requirement Edited");
+				newName = "Requirement Edited");
 		}
 
 		task ("Then can see the requirement edited in the table") {
@@ -268,7 +268,7 @@ definition {
 				componentId = ${componentName},
 				linkTitle = "The page edited",
 				linkURL = "https://reddit.com",
-				requirementName = "Requirement Edited");
+				newName = "Requirement Edited");
 		}
 
 		task ("Then can see the requirement edited in the table") {
@@ -328,9 +328,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the requirement") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -360,9 +358,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the requirement") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 

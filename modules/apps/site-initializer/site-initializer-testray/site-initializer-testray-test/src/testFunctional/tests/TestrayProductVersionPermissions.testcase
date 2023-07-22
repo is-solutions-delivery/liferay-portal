@@ -109,9 +109,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the product version") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -141,9 +139,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the product version") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 
@@ -188,6 +184,10 @@ definition {
 			Navigator.openSiteURL(siteName = "Testray 2");
 
 			Testray.changePagination(quantity = 150);
+
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user delete the product version") {
@@ -212,13 +212,16 @@ definition {
 			Navigator.openSiteURL(siteName = "Testray 2");
 
 			Testray.changePagination(quantity = 150);
+
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user edit the product version") {
 			TestrayManage.editProductVersion(
-				caseName = "3.4",
-				itemManage = "Edit",
-				valueName = ${productVersion});
+				newName = "3.4",
+				tableEntry = ${productVersion});
 		}
 
 		task ("Then the user can see the product version edited in the table") {
@@ -278,9 +281,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the product version") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -310,9 +311,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the product version") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 

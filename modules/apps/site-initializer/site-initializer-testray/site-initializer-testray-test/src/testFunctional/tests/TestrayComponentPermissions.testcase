@@ -99,13 +99,9 @@ definition {
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -145,13 +141,9 @@ definition {
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -191,13 +183,9 @@ definition {
 		}
 
 		task ("Then can not see the 'Edit, Delete' options in right click") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 

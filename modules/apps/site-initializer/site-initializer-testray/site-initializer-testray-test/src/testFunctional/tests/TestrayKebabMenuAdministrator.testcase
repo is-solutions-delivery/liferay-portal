@@ -330,8 +330,8 @@ definition {
 
 			TestrayBuild.editBuild(
 				description = "Description Edited",
-				fieldName = "Build Edited",
 				gitHash = 12345,
+				newName = "Build Edited",
 				productVersion = "1.2",
 				routine = "Routine 1");
 		}
@@ -366,11 +366,11 @@ definition {
 			Testray.kebabMenuOption(kebabOption = "Edit Case");
 
 			TestrayCases.editCases(
-				caseName = "Case Edited",
 				caseTypeId = "Case Type 1",
 				componentId = "Component 1",
 				description = "Case Description",
 				duration = 30,
+				newName = "Case Edited",
 				priority = 3,
 				steps = "http://test.edit.com");
 		}

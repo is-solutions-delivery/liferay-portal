@@ -168,9 +168,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the run") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -206,9 +204,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the run") {
-			AssertElementNotPresent(
-				item = "Select Environment Factors",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Select Environment Factors");
 		}
 	}
 
@@ -344,9 +340,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the run") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -382,9 +376,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the run") {
-			AssertElementNotPresent(
-				item = "Select Environment Factors",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Select Environment Factors");
 		}
 	}
 

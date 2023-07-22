@@ -119,11 +119,11 @@ definition {
 				tableEntry = "Case 2");
 
 			TestrayCases.editCases(
-				caseName = "Case Edited",
 				caseTypeId = "Case Type 1",
 				componentId = "Component 1",
 				description = "Case Description",
 				duration = 30,
+				newName = "Case Edited",
 				priority = 3,
 				steps = "http://test.edit.com");
 		}
@@ -183,11 +183,11 @@ definition {
 				tableEntry = "Case 2");
 
 			TestrayCases.editCases(
-				caseName = "Case Edited",
 				caseTypeId = "Case Type 1",
 				componentId = "Component 1",
 				description = "Case Description",
 				duration = 30,
+				newName = "Case Edited",
 				priority = 3,
 				steps = "http://test.edit.com");
 		}
@@ -239,13 +239,9 @@ definition {
 		}
 
 		task ("And can not see the Edit and Delete options in right click") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 
 		task ("When click kebab in Case") {

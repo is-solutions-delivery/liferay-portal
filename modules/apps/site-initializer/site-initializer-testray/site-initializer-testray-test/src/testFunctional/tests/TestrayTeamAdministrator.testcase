@@ -84,6 +84,10 @@ definition {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(quantity = 150);
+
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I delete the newly created Team") {
@@ -110,6 +114,10 @@ definition {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(quantity = 150);
+
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 		}
 
 		task ("When I edit the Team") {

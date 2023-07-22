@@ -206,7 +206,9 @@ definition {
 		}
 
 		task ("When I delete this case") {
-			Testray.deleteItem(itemName = ${caseName});
+			TestrayManage.selectTableRowOption(
+				rowOption = "Delete",
+				tableEntry = ${caseName});
 		}
 
 		task ("Then I assert that Case is no longer present") {
@@ -243,11 +245,11 @@ definition {
 				tableEntry = ${caseName});
 
 			TestrayCases.editCases(
-				caseName = "Case Edited",
 				caseTypeId = "Case Type 1",
 				componentId = "Component 1",
 				description = "Case Description",
 				duration = 30,
+				newName = "Case Edited",
 				priority = 3,
 				steps = "http://test.edit.com");
 		}

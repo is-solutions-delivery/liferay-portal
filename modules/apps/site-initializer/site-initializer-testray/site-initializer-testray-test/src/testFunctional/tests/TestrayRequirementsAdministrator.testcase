@@ -139,7 +139,7 @@ definition {
 				componentId = "Component Edited",
 				linkTitle = "The page edited",
 				linkURL = "https://reddit.com",
-				requirementName = "Requirement Summary Edited");
+				newName = "Requirement Summary Edited");
 		}
 
 		task ("Then the requirement is displayed with the new infos") {

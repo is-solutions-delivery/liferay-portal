@@ -107,9 +107,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the suite") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -139,9 +137,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the suite") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 
@@ -226,7 +222,7 @@ definition {
 			TestraySuites.editSuite(
 				newDescription = "Suite Description Edited",
 				newName = "Suite Edited",
-				suiteName = ${suiteName});
+				tableEntry = ${suiteName});
 		}
 
 		task ("Then the user can see the suite edited in the table") {
@@ -286,9 +282,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the suite") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -318,9 +312,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the suite") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 

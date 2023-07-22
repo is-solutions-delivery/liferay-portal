@@ -189,8 +189,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Case 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Type(
 				key_fieldLabel = "Case Name",
@@ -240,8 +240,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Case 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Case 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Select(
 				locator1 = "Select#SELECT_FIELD_LABEL",

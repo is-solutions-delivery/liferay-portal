@@ -382,8 +382,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Run 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Type(
 				key_fieldLabel = "Environment",
@@ -421,8 +421,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Run 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Type(
 				key_text = "errors",
@@ -460,8 +460,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Run 1",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Run 1",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.multiSelect(
 				header = "Team",
@@ -533,8 +533,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Run 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Click.clickAtNotVisible(
 				key_label = "Status",
@@ -583,8 +583,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Run 1",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Run 1",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Type(
 				key_fieldLabel = "Environment",
@@ -604,8 +604,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Run 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Run 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Type(
 				key_fieldLabel = "Environment",

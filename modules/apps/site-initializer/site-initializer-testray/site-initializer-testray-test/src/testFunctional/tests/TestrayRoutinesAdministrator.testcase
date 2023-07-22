@@ -218,7 +218,7 @@ definition {
 			SelectFrameTop();
 
 			TestrayRoutines.editRoutine(
-				newRoutineName = "Routine 1 Edited",
+				newName = "Routine 1 Edited",
 				tableEntry = ${routineName});
 		}
 

@@ -302,9 +302,7 @@ definition {
 		}
 
 		task ("Then the user can not delete the case result") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -338,9 +336,7 @@ definition {
 		}
 
 		task ("Then the user can not edit the case result") {
-			AssertElementNotPresent(
-				item = "Assign to Me",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Assign to Me");
 		}
 	}
 

@@ -89,6 +89,10 @@ definition {
 
 			Testray.changePagination(quantity = 150);
 
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
+
 			Testray.deleteItem(itemName = ${productVersion});
 		}
 
@@ -112,6 +116,10 @@ definition {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
 			Testray.changePagination(quantity = 150);
+
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then I should be able to edit an already created version") {

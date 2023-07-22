@@ -191,8 +191,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Subtask_2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Subtask_2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Select(
 				locator1 = "Select#SELECT_FIELD_LABEL",
@@ -224,8 +224,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Subtask_1",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Subtask_1",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.typeFilter(
 				label = "Errors",
@@ -254,8 +254,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Subtask_2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Subtask_2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.typeFilter(
 				label = "Subtask Name",
@@ -309,8 +309,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Subtask_2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Subtask_2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Select(
 				locator1 = "Select#SELECT_FIELD_LABEL",
@@ -353,8 +353,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Subtask_2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Subtask_2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.typeFilter(
 				label = "Subtask Name",
@@ -375,8 +375,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Subtask_1",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Subtask_1",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.searchFilter(value = "Assignee");
 		}

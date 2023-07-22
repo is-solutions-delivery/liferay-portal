@@ -493,8 +493,8 @@ definition {
 			Navigator.gotoNavTab(navTab = "Components");
 
 			ScrollWebElementIntoView(
-				key_projectName = ${componentName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${componentName},
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Testray.changePagination(quantity = 150);
 

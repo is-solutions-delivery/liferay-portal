@@ -178,8 +178,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Select(
 				locator1 = "Select#SELECT_FIELD_LABEL",
@@ -211,8 +211,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.multiSelect(
 				header = "Team",
@@ -244,8 +244,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Select(
 				locator1 = "Select#SELECT_FIELD_LABEL",
@@ -278,8 +278,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.searchFilter(value = "Priority");
 		}

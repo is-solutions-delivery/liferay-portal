@@ -184,6 +184,10 @@ definition {
 			JSONTestray.addFactorCategory(categoryName = ${categoryName});
 
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
+
+			TestrayLayout.clickManageOnSidebar();
+
+			TestrayManage.selectOptionsManage(itemValue = "Categories");
 		}
 
 		task ("When I delete newly created category") {
@@ -216,8 +220,8 @@ definition {
 
 		task ("And I edit the category") {
 			TestrayManage.editCategory(
-				category = ${categoryName},
-				newName = "Category Edited");
+				newName = "Category Edited",
+				tableEntry = ${categoryName});
 		}
 
 		task ("Then I should be able to say that the category title has been edited") {
