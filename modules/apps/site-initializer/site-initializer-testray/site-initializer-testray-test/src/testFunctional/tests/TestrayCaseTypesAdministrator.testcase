@@ -82,7 +82,9 @@ definition {
 		task ("And I select the system 'Case Types' option") {
 			TestrayManage.selectOptionsManage(itemValue = "Case Types");
 
-			Testray.changePaginationModal(quantity = 150);
+			Testray.changePagination(
+				modal = "true",
+				quantity = 150);
 		}
 
 		task ("When I delete a Case Type") {
@@ -112,7 +114,9 @@ definition {
 		task ("And I select the system 'Case Types' option") {
 			TestrayManage.selectOptionsManage(itemValue = "Case Types");
 
-			Testray.changePaginationModal(quantity = 150);
+			Testray.changePagination(
+				modal = "true",
+				quantity = 150);
 		}
 
 		task ("And I edit the name of the Case Type") {
@@ -150,7 +154,9 @@ definition {
 		task ("And I select the system 'Case Types' option") {
 			TestrayManage.selectOptionsManage(itemValue = "Case Types");
 
-			Testray.changePaginationModal(quantity = 150);
+			Testray.changePagination(
+				modal = "true",
+				quantity = 150);
 		}
 
 		task ("When I try to create a new Case Type with an existing title") {
@@ -176,7 +182,9 @@ definition {
 		task ("Create a new Case Type and assert message of required field") {
 			TestrayManage.selectOptionsManage(itemValue = "Case Types");
 
-			Testray.changePaginationModal(quantity = 150);
+			Testray.changePagination(
+				modal = "true",
+				quantity = 150);
 
 			TestrayManage.createCaseTypes(caseName = "");
 

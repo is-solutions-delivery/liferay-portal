@@ -183,7 +183,7 @@ definition {
 	macro deleteBuild {
 		TestrayLayout.clickResultsOnSidebar();
 
-		Testray.changePaginationModal(quantity = 150);
+		Testray.changePagination(quantity = 150);
 
 		Testray.clickTableEntry(tableEntry = "Projects_1 Project");
 

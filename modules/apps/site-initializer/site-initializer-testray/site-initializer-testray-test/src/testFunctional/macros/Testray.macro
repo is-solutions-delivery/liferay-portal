@@ -87,30 +87,21 @@ definition {
 	}
 
 	macro changePagination {
-		if (IsElementPresent(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT")) {
-			Click(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT");
+		WaitForElementPresent(locator1 = "Pagination#RESULTS");
 
-			AssertVisible(
-				key_quantity = ${quantity},
-				locator1 = "Testray#PAGINATION_ITEMS");
-
-			Click(
-				key_quantity = ${quantity},
-				locator1 = "Testray#PAGINATION_ITEMS");
-		}
-	}
-
-	macro changePaginationModal {
-		if (IsElementPresent(locator1 = "Testray#ITEMS_PER_PAGE_SELECT_MODAL")) {
+		if (${modal} == "true") {
 			Click(locator1 = "Testray#ITEMS_PER_PAGE_SELECT_MODAL");
 
-			AssertVisible(
-				key_quantity = ${quantity},
-				locator1 = "Testray#PAGINATION_ITEMS_MODAL");
-
 			Click(
 				key_quantity = ${quantity},
 				locator1 = "Testray#PAGINATION_ITEMS_MODAL");
+		}
+		else {
+			Click(locator1 = "Pagination#ITEMS_PER_PAGE_SELECT");
+
+			Click(
+				key_quantity = ${quantity},
+				locator1 = "Testray#PAGINATION_ITEMS");
 		}
 	}
 
@@ -179,7 +170,7 @@ definition {
 
 		Refresh();
 
-		Testray.changePaginationModal(quantity = 150);
+		Testray.changePagination(quantity = 150);
 
 		while (IsElementPresent(key_tableEntry = "Projects_", locator1 = "Testray#TABLE_ENTRY")) {
 			TestrayManage.selectTableRowOption(
@@ -205,7 +196,7 @@ definition {
 	macro deleteProject {
 		TestrayLayout.clickResultsOnSidebar();
 
-		Testray.changePaginationModal(quantity = 150);
+		Testray.changePagination(quantity = 150);
 
 		TestrayManage.selectTableRowOption(
 			rowOption = "Delete",

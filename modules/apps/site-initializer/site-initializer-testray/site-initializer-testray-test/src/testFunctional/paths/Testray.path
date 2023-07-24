@@ -41,6 +41,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PAGINATION_ITEMS_2</td>
+	<td>xpath=(//*[contains(@class, 'dropdown-item') and text()='${key_quantity} Items'])[2]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PAGINATION_ITEMS_MODAL</td>
 	<td>//div[contains(@class, 'modal-title')]//following::*[contains(@class, 'dropdown-item') and text()='${key_quantity} Items']</td>
 	<td></td>
@@ -167,7 +172,7 @@
 </tr>
 <tr>
 	<td>TABLE_ENTRY</td>
-	<td>//tr/td[normalize-space()="${key_tableEntry}"]</td>
+	<td>//table[contains(@class,'table-autofit')]//tr/td[normalize-space()="${key_tableEntry}"]</td>
 	<td></td>
 </tr>
 <tr>

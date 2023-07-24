@@ -27,7 +27,7 @@ definition {
 
 		Refresh();
 
-		Testray.changePaginationModal(quantity = 150);
+		Testray.changePagination(quantity = 150);
 
 		if (IsElementPresent(key_tableEntry = "Projects_", locator1 = "Testray#TABLE_ENTRY")) {
 			Testray.clickTableEntry(tableEntry = "Projects_1 Project");
