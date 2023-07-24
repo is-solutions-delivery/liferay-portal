@@ -192,7 +192,7 @@ definition {
 
 		task ("When I delete newly created category") {
 			TestrayManage.deleteCategory(
-				nameCategory = ${categoryName},
+				categoryName = ${categoryName},
 				selectCategories = "Categories");
 		}
 

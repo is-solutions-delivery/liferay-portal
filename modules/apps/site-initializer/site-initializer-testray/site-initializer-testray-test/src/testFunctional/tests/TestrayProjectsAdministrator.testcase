@@ -182,7 +182,7 @@ definition {
 
 			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			TestrayRoutines.createRoutine(key_name = "Routine 1");
+			TestrayRoutines.createRoutine(routineName = "Routine 1");
 		}
 
 		task ("When the project is deleted") {
@@ -234,7 +234,7 @@ definition {
 
 			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			TestrayRoutines.createRoutine(key_name = "Routines_1 Routine");
+			TestrayRoutines.createRoutine(routineName = "Routines_1 Routine");
 
 			Navigator.gotoNavTab(navTab = "Cases");
 
@@ -247,7 +247,7 @@ definition {
 				priority = 5,
 				steps = "Auto Test Steps");
 
-			Navigator.gotoNavTab(navTab = "Routine");
+			Navigator.gotoNavTab(navTab = "Routines");
 		}
 
 		task ("And add a new build with enviroments") {

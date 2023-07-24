@@ -64,7 +64,7 @@ definition {
 			Testray.changePagination(quantity = 150);
 
 			TestrayManage.selectTableRowOption(
-				rowOption = "Manage Components",
+				rowOption = "Manage Product Versions",
 				tableEntry = ${projectName});
 		}
 
