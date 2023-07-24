@@ -63,13 +63,7 @@ definition {
 		}
 
 		task ("Then can see the users in the table") {
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Analyst User",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Test Test,Analyst User");
 		}
 
 		task ("And can not see the add user button") {
@@ -77,7 +71,7 @@ definition {
 		}
 
 		task ("And when go to the users informations") {
-			Testray.goToProjectPage(projectName = "analyst@testray.com");
+			Testray.clickTableEntry(tableEntry = "analyst@testray.com");
 		}
 
 		task ("Then can not see the Delete user button") {
@@ -113,13 +107,7 @@ definition {
 		}
 
 		task ("Then can see the users in the table") {
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Lead User",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Test Test,Lead User");
 		}
 
 		task ("And can not see the add user button") {
@@ -127,7 +115,7 @@ definition {
 		}
 
 		task ("And when go to the users informations") {
-			Testray.goToProjectPage(projectName = "lead@testray.com");
+			Testray.clickTableEntry(tableEntry = "lead@testray.com");
 		}
 
 		task ("Then can not see the Delete user button") {
@@ -174,13 +162,11 @@ definition {
 		}
 
 		task ("Then can see the user created in the list") {
-			AssertElementPresent(
-				key_projectName = "firstname Updateln",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "firstname Updateln");
 		}
 
 		task ("And can see the roles disabled") {
-			Testray.goToProjectPage(projectName = "user@liferay.com");
+			Testray.clickTableEntry(tableEntry = "user@liferay.com");
 
 			AssertElementPresent(
 				key_checkboxName = "Administrator",
@@ -196,9 +182,7 @@ definition {
 		task ("Then can not see the user in the list") {
 			Refresh();
 
-			AssertElementNotPresent(
-				key_projectName = "firstname Updateln",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "firstname Updateln");
 		}
 	}
 
@@ -222,13 +206,7 @@ definition {
 		}
 
 		task ("Then can see the users in the table") {
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "User User",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Test Test,User User");
 		}
 
 		task ("And can not see the add user button") {
@@ -236,7 +214,7 @@ definition {
 		}
 
 		task ("And when go to the users informations") {
-			Testray.goToProjectPage(projectName = "user@testray.com");
+			Testray.clickTableEntry(tableEntry = "user@testray.com");
 		}
 
 		task ("Then can not see the Delete user button") {

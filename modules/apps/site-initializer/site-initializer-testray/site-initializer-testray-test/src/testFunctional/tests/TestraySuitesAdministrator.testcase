@@ -59,21 +59,19 @@ definition {
 		task ("Given that I add a new Testray component and requirement") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
-
-			Testray.addNewComponent(componentName = "Component 1");
+			TestrayManage.createComponent(componentName = "Component 1");
 
 			TestrayManage.closeModalInOptions();
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 
 			TestrayRequirements.addRequirement(
 				componentId = "Component 1",
@@ -84,7 +82,7 @@ definition {
 		}
 
 		task ("And I add a smart suit") {
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			TestraySuites.addSuite(
 				caseType = "Manual Test",
@@ -96,11 +94,11 @@ definition {
 		}
 
 		task ("When the smart suite is deleted") {
-			TestraySuites.deleteSuite(suiteName = ${suiteName});
+			Testray.deleteItem(itemName = ${suiteName});
 		}
 
 		task ("Then I should be able to assert that the suite is no longer shown") {
-			Testray.assertItemNotPresent(itemName = ${suiteName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${suiteName});
 		}
 	}
 
@@ -116,21 +114,19 @@ definition {
 		task ("And I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I delete the newly created suite") {
-			TestraySuites.deleteSuite(suiteName = ${suiteName});
+			Testray.deleteItem(itemName = ${suiteName});
 		}
 
 		task ("Then I should be able to assert that the Testray Suite is no longer displayed") {
-			Testray.assertItemNotPresent(itemName = ${suiteName});
+			Testray.viewTableEntryListNotPresent(listEntry = ${suiteName});
 		}
 	}
 
@@ -161,13 +157,11 @@ definition {
 		task ("And I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I add a Testray Suite with a Case") {
@@ -178,9 +172,9 @@ definition {
 		}
 
 		task ("Then I should be able to assert that the selected case is displayed in the suite details") {
-			TestraySuites.goToSuiteDetails(suiteName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 
-			Testray.assertItemName(text = ${caseName});
+			Testray.viewTableEntryList(listEntry = ${caseName});
 		}
 
 		task ("Delete the case type") {
@@ -198,31 +192,29 @@ definition {
 		task ("Given that I add a new Testray component and requirement") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Teams");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Teams",
+				tableEntry = ${projectName});
 
 			TestrayManage.createTeam(teamName = ${teamName});
 
 			TestrayManage.closeModalInOptions();
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Components",
+				tableEntry = ${projectName});
 
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Components");
-
-			Testray.addNewComponent(
+			TestrayManage.createComponent(
 				componentName = "Component 1",
 				teamName = ${teamName});
 
 			TestrayManage.closeModalInOptions();
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 
 			TestrayRequirements.addRequirement(
 				componentId = "Component 1",
@@ -233,7 +225,7 @@ definition {
 		}
 
 		task ("And I add a smart suit") {
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			TestraySuites.addSuite(
 				caseType = "Manual Test",
@@ -253,11 +245,11 @@ definition {
 				requirementName = "Requirement Summary",
 				smartSuite = "true",
 				suiteDescription = "Suite Description Edited",
-				suiteName = ${suiteName});
+				tableEntry = ${suiteName});
 		}
 
 		task ("Then the case parameters are presented with details edited") {
-			TestraySuites.goToSuiteDetails(suiteName = ${suiteName});
+			Testray.clickTableEntry(tableEntry = ${suiteName});
 
 			TestraySuites.verifyCaseParametersInSuite(
 				caseType = "Manual Test, Cucumber",
@@ -276,13 +268,11 @@ definition {
 		task ("Given that I add a new suite") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 
 			TestraySuites.addSuite(
 				suiteDescription = "Suite Description",
@@ -293,7 +283,7 @@ definition {
 			TestraySuites.editSuite(
 				newDescription = "Suite Description Edited",
 				newName = "Suite Edited",
-				suiteName = ${suiteName});
+				tableEntry = ${suiteName});
 		}
 
 		task ("Then I should be able to assert the new information") {
@@ -316,13 +306,11 @@ definition {
 		task ("And I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I try to add an existing Suite") {
@@ -348,13 +336,11 @@ definition {
 		task ("And go to the suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When the user search suite non existent") {
@@ -366,9 +352,7 @@ definition {
 		}
 
 		task ("Then not see the suite 3 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Team 3",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Team 3");
 		}
 	}
 
@@ -386,23 +370,15 @@ definition {
 		task ("And go to the tab suite") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("And confirm that there are two suites in the table") {
-			AssertElementPresent(
-				key_projectName = ${suiteName},
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Suite 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "${suiteName},Suite 2");
 		}
 
 		task ("When the user filter suite 1") {
@@ -414,15 +390,11 @@ definition {
 		}
 
 		task ("Then the user see only suite 1 in the table") {
-			AssertElementPresent(
-				key_projectName = ${suiteName},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = ${suiteName});
 		}
 
 		task ("And do not see the suite 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Suite 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Suite 2");
 		}
 	}
 
@@ -434,13 +406,11 @@ definition {
 		task ("Given I go to the Testray Suite page") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Suites");
+			Navigator.gotoNavTab(navTab = "Suites");
 		}
 
 		task ("When I try to add an untitled Testray Suite") {

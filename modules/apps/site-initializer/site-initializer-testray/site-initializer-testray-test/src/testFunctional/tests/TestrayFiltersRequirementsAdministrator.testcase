@@ -58,13 +58,11 @@ definition {
 		task ("Go to the Requirements tab") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			Testray.projectTabNavigator(navTabName = "Requirements");
+			Navigator.gotoNavTab(navTab = "Requirements");
 		}
 	}
 
@@ -124,7 +122,7 @@ definition {
 		}
 
 		task ("Then can see the component selected in the table") {
-			Testray.assertItemName(key_name = "Component 1");
+			Testray.viewTableEntryList(listEntry = "Component 1");
 		}
 	}
 
@@ -151,7 +149,7 @@ definition {
 				requirementSummary = "Requirement 1",
 				requirementTeam = "Team 1");
 
-			Testray.assertItemNotPresent(key_name = "Requirement 2");
+			Testray.viewTableEntryListNotPresent(listEntry = "Requirement 2");
 		}
 	}
 
@@ -172,9 +170,9 @@ definition {
 		}
 
 		task ("Then can see the filters apply in the list by summary") {
-			Testray.assertItemName(key_name = "Requirement 1");
+			Testray.viewTableEntryList(listEntry = "Requirement 1");
 
-			Testray.assertItemNotPresent(key_name = "Requirement 2");
+			Testray.viewTableEntryListNotPresent(listEntry = "Requirement 2");
 		}
 	}
 
@@ -199,7 +197,7 @@ definition {
 		}
 
 		task ("Then can see the team selected in the table") {
-			Testray.assertItemName(key_name = "Team 1");
+			Testray.viewTableEntryList(listEntry = "Team 1");
 		}
 	}
 
@@ -236,7 +234,7 @@ definition {
 				requirementSummary = "Requirement 1",
 				requirementTeam = "Team 1");
 
-			Testray.assertItemNotPresent(key_name = "Requirement 2");
+			Testray.viewTableEntryListNotPresent(listEntry = "Requirement 2");
 		}
 	}
 

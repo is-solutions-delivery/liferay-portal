@@ -69,17 +69,13 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user go to the product version page") {
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create product version") {
@@ -99,27 +95,21 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in product version") {
 			RightClick.rightClick(
-				key_projectName = ${productVersion},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${productVersion},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the product version") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -135,27 +125,21 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in product version") {
 			RightClick.rightClick(
-				key_projectName = ${productVersion},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${productVersion},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the product version") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 
@@ -171,22 +155,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user create the product version") {
-			TestrayManage.createProductVersion(
-				manageOption = "Manage Product Versions",
-				nameOptions = ${projectName},
-				version = "7.4");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
+
+			TestrayManage.createProductVersion(productVersion = "7.4");
 		}
 
 		task ("Then the user can see the product version created in the table") {
-			AssertElementPresent(
-				key_projectName = "7.4",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "7.4");
 		}
 	}
 
@@ -202,25 +183,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user delete the product version") {
-			TestrayManage.deleteProductVersion(
-				itemManage = "Delete",
-				versionName = ${productVersion});
+			Testray.deleteItem(itemName = ${productVersion});
 		}
 
 		task ("Then the user can not see the product version in the table") {
-			AssertElementNotPresent(
-				key_projectName = ${productVersion},
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = ${productVersion});
 		}
 	}
 
@@ -236,26 +211,21 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			TestrayContextMenu.clickContextMenuProjects(name = ${projectName});
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user edit the product version") {
 			TestrayManage.editProductVersion(
-				caseName = "3.4",
-				itemManage = "Edit",
-				valueName = ${productVersion});
+				newName = "3.4",
+				tableEntry = ${productVersion});
 		}
 
 		task ("Then the user can see the product version edited in the table") {
-			AssertElementPresent(
-				key_projectName = "3.4",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "3.4");
 		}
 	}
 
@@ -271,17 +241,13 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user go to the product version page") {
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create product version") {
@@ -301,27 +267,21 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in product version") {
 			RightClick.rightClick(
-				key_projectName = ${productVersion},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${productVersion},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the product version") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -337,27 +297,21 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			RightClick.rightClick(
-				key_projectName = ${projectName},
-				locator1 = "Testray#ITEM_NAME");
-
-			TestrayContextMenu.selectItemFromProjectsContextMenu(item = "Manage Product Versions");
+			TestrayManage.selectTableRowOption(
+				rowOption = "Manage Product Versions",
+				tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in product version") {
 			RightClick.rightClick(
-				key_projectName = ${productVersion},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${productVersion},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the product version") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 

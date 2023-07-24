@@ -119,17 +119,15 @@ definition {
 		task ("Go to the component tab") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 
-			TestrayRoutines.goToRoutine(routineName = ${routineName});
+			Testray.clickTableEntry(tableEntry = ${routineName});
 
-			TestrayBuild.goToBuild(buildName = ${buildName});
+			Testray.clickTableEntry(tableEntry = ${buildName});
 
-			Testray.projectTabNavigator(navTabName = "Components");
+			Navigator.gotoNavTab(navTab = "Components");
 		}
 	}
 
@@ -173,21 +171,15 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two component different in the table") {
-			AssertElementPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 1,Component 2");
 		}
 
 		task ("When the user filter a component by team") {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Select(
 				locator1 = "Select#SELECT_FIELD_LABEL",
@@ -198,15 +190,11 @@ definition {
 		}
 
 		task ("Then the user see only component 1 in the table related to run 1") {
-			AssertElementPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 1");
 		}
 
 		task ("And do not see the component 2 in the table related to run 2") {
-			AssertElementNotPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Component 2");
 		}
 	}
 
@@ -216,21 +204,15 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two component different in the table") {
-			AssertElementPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 1,Component 2");
 		}
 
 		task ("When the user filter a component by team") {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.multiSelect(
 				header = "Team",
@@ -241,15 +223,11 @@ definition {
 		}
 
 		task ("Then the user see only component 1 in the table related to team 1") {
-			AssertElementPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 1");
 		}
 
 		task ("And do not see the component 2 in the table related to team 2") {
-			AssertElementNotPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Component 2");
 		}
 	}
 
@@ -259,21 +237,15 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given that the user has two component different in the table") {
-			AssertElementPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 1,Component 2");
 		}
 
 		task ("When the user filter component using multiple filtering options") {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			Select(
 				locator1 = "Select#SELECT_FIELD_LABEL",
@@ -289,15 +261,11 @@ definition {
 		}
 
 		task ("Then the user see only component 1 in the table") {
-			AssertElementPresent(
-				key_projectName = "Component 1",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Component 1");
 		}
 
 		task ("And do not see the component 2 in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Component 2");
 		}
 	}
 
@@ -310,8 +278,8 @@ definition {
 			TestrayFilter.clickFilter();
 
 			ScrollWebElementIntoView(
-				key_projectName = "Component 2",
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = "Component 2",
+				locator1 = "Testray#TABLE_ENTRY");
 
 			TestrayFilter.searchFilter(value = "Priority");
 		}

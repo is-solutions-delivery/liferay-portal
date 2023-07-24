@@ -76,13 +76,11 @@ definition {
 		}
 
 		task ("Then can see the user created in the table") {
-			AssertElementPresent(
-				key_projectName = "changedfirstname Updateln",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "changedfirstname Updateln");
 		}
 
 		task ("And delete the user") {
-			Testray.goToProjectPage(projectName = "changedfirstname Updateln");
+			Testray.clickTableEntry(tableEntry = "changedfirstname Updateln");
 
 			Button.clickNoError(button = "Delete User");
 
@@ -92,9 +90,7 @@ definition {
 		task ("Then can not see the user in the table") {
 			Refresh();
 
-			AssertElementNotPresent(
-				key_projectName = "changedfirstname Updateln",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "changedfirstname Updateln");
 		}
 	}
 
@@ -110,13 +106,7 @@ definition {
 		}
 
 		task ("And assert that have two users present in the table") {
-			AssertElementPresent(
-				key_projectName = "userfn userln",
-				locator1 = "Testray#ITEM_NAME");
-
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "userfn userln,Test Test");
 		}
 
 		task ("When the user filter a user by name") {
@@ -128,15 +118,11 @@ definition {
 		}
 
 		task ("Then can see the user named test test in the table") {
-			AssertElementPresent(
-				key_projectName = "userfn userln",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "userfn userln");
 		}
 
 		task ("And can not longer see the userfn userln in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Test Test");
 		}
 	}
 
@@ -152,9 +138,7 @@ definition {
 		}
 
 		task ("And assert that the user is present") {
-			AssertElementPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryList(listEntry = "Test Test");
 		}
 
 		task ("When filtering a user by his non-existent name") {
@@ -166,9 +150,7 @@ definition {
 		}
 
 		task ("Then the user is not present in the table") {
-			AssertElementNotPresent(
-				key_projectName = "Test Test",
-				locator1 = "Testray#ITEM_NAME");
+			Testray.viewTableEntryListNotPresent(listEntry = "Test Test");
 		}
 	}
 
@@ -182,7 +164,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
 
-			Testray.goToProjectPage(projectName = "user@liferay.com");
+			Testray.clickTableEntry(tableEntry = "user@liferay.com");
 		}
 
 		task ("When the user change the account informations") {
@@ -196,7 +178,7 @@ definition {
 		}
 
 		task ("And go to user changed") {
-			Testray.goToProjectPage(projectName = "changedfirstname Updateln");
+			Testray.clickTableEntry(tableEntry = "changedfirstname Updateln");
 		}
 
 		task ("Then can see the new informations to the account") {
@@ -218,7 +200,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
 
-			Testray.goToProjectPage(projectName = "test@liferay.com");
+			Testray.clickTableEntry(tableEntry = "test@liferay.com");
 		}
 
 		task ("And the user deselects all roles") {
@@ -248,7 +230,7 @@ definition {
 
 			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
 
-			Testray.goToProjectPage(projectName = "user@liferay.com");
+			Testray.clickTableEntry(tableEntry = "user@liferay.com");
 		}
 
 		task ("When the user tries to created account without informations") {

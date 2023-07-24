@@ -69,13 +69,11 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user go to the routine page") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create the routine") {
@@ -95,23 +93,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in routine") {
 			RightClick.rightClick(
-				key_projectName = ${routineName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${routineName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the routine") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -127,23 +121,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When The user right click in routine") {
 			RightClick.rightClick(
-				key_projectName = ${routineName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${routineName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the routine") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 
@@ -159,13 +149,11 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user go to the routine page") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create routine") {
@@ -185,23 +173,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in routine") {
 			RightClick.rightClick(
-				key_projectName = ${routineName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${routineName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the routine") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -217,23 +201,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When The user right click in routine") {
 			RightClick.rightClick(
-				key_projectName = ${routineName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${routineName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the routine") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 
@@ -249,13 +229,11 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 		}
 
 		task ("When the user go to the routine page") {
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("Then the user can not create routine") {
@@ -275,23 +253,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When the user right click in routine") {
 			RightClick.rightClick(
-				key_projectName = ${routineName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${routineName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not delete the routine") {
-			AssertElementNotPresent(
-				item = "Delete",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Delete");
 		}
 	}
 
@@ -307,23 +281,19 @@ definition {
 
 			Navigator.openSiteURL(siteName = "Testray 2");
 
-			Testray.changePagination(
-				numberItems = 20,
-				valuePagination = 150);
+			Testray.changePagination(quantity = 150);
 
-			Testray.goToProjectPage(projectName = ${projectName});
+			Testray.clickTableEntry(tableEntry = ${projectName});
 		}
 
 		task ("When The user right click in routine") {
 			RightClick.rightClick(
-				key_projectName = ${routineName},
-				locator1 = "Testray#ITEM_NAME");
+				key_tableEntry = ${routineName},
+				locator1 = "Testray#TABLE_ENTRY");
 		}
 
 		task ("Then the user can not edit the routine") {
-			AssertElementNotPresent(
-				item = "Edit",
-				locator1 = "TestrayContextMenu#CONTEXT_MENU_PROJECTS_ITEMS");
+			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
 	}
 
