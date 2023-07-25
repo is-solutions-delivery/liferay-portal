@@ -437,7 +437,7 @@ const RequiredInformation = ({
 									>
 										<span>
 											{i18n.translate(
-												'one-or-more-host-name-ip-address-or-mac-address-is-required'
+												'one-host-name-per-instance-or-ip-address-is-required'
 											)}
 										</span>
 									</ClayAlert>
@@ -450,7 +450,7 @@ const RequiredInformation = ({
 										<Badge badgeClassName="m-0">
 											<span className="pl-1">
 												{i18n.translate(
-													'one-or-more-host-name-ip-address-or-mac-address-is-required'
+													'one-host-name-per-instance-or-ip-address-is-required'
 												)}
 											</span>
 										</Badge>
