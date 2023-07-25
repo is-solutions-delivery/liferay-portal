@@ -105,7 +105,7 @@ const InputMultipleFiles = ({
 					</div>
 				</div>
 
-				{meta.error && (
+				{meta.error && required && (
 					<ClayForm.FeedbackGroup>
 						<ClayForm.FeedbackItem>
 							{meta.error}

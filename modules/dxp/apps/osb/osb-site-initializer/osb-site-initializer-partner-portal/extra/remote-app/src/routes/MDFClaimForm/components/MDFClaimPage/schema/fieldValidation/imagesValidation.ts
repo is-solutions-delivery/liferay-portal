@@ -35,7 +35,7 @@ export const imagesValidation = {
 				validateDocument.imageDocument.message,
 				(imageFile) => {
 					if (imageFile && !imageFile.documentId) {
-						return validateDocument.document.types.includes(
+						return validateDocument.imageDocument.types.includes(
 							imageFile.type
 						);
 					}
