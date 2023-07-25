@@ -57,9 +57,9 @@ definition {
 		}
 
 		task ("When the user go to manage users") {
-			TestrayLayout.clickManageOnSidebar();
-
-			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+			TestrayDropdown.selectOptionSidebar(
+				buttonOption = "Manage",
+				menuItem = "Manage Users");
 		}
 
 		task ("Then can see the users in the table") {
@@ -101,9 +101,9 @@ definition {
 		}
 
 		task ("When the user go to manage users") {
-			TestrayLayout.clickManageOnSidebar();
-
-			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+			TestrayDropdown.selectOptionSidebar(
+				buttonOption = "Manage",
+				menuItem = "Manage Users");
 		}
 
 		task ("Then can see the users in the table") {
@@ -145,9 +145,9 @@ definition {
 		}
 
 		task ("When the administrator add a user") {
-			TestrayLayout.clickManageOnSidebar();
-
-			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+			TestrayDropdown.selectOptionSidebar(
+				buttonOption = "Manage",
+				menuItem = "Manage Users");
 
 			Click(locator1 = "Button#PLUS");
 
@@ -200,9 +200,9 @@ definition {
 		}
 
 		task ("When the user go to manage users") {
-			TestrayLayout.clickManageOnSidebar();
-
-			TestrayManage.selectOptionsManage(itemValue = "Manage Users");
+			TestrayDropdown.selectOptionSidebar(
+				buttonOption = "Manage",
+				menuItem = "Manage Users");
 		}
 
 		task ("Then can see the users in the table") {

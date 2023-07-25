@@ -66,9 +66,9 @@ definition {
 		}
 
 		task ("When go to the category page") {
-			TestrayLayout.clickManageOnSidebar();
-
-			TestrayManage.selectOptionsManage(itemValue = "Categories");
+			TestrayDropdown.selectOptionSidebar(
+				buttonOption = "Manage",
+				menuItem = "Categories");
 		}
 
 		task ("Then can see the category in the table") {
@@ -106,9 +106,9 @@ definition {
 		}
 
 		task ("When go to the category page") {
-			TestrayLayout.clickManageOnSidebar();
-
-			TestrayManage.selectOptionsManage(itemValue = "Categories");
+			TestrayDropdown.selectOptionSidebar(
+				buttonOption = "Manage",
+				menuItem = "Categories");
 		}
 
 		task ("Then can see the category in the table") {
@@ -146,9 +146,9 @@ definition {
 		}
 
 		task ("When go to the category page") {
-			TestrayLayout.clickManageOnSidebar();
-
-			TestrayManage.selectOptionsManage(itemValue = "Categories");
+			TestrayDropdown.selectOptionSidebar(
+				buttonOption = "Manage",
+				menuItem = "Categories");
 		}
 
 		task ("Then can see the category in the table") {

@@ -227,7 +227,7 @@ definition {
 		}
 
 		task ("And go to task through build") {
-			TestrayLayout.clickResultsOnSidebar();
+			TestrayDropdown.goToResultSidebar();
 
 			Testray.changePagination(quantity = 150);
 
@@ -280,7 +280,7 @@ definition {
 				status = "In Analysis",
 				taskName = "Task_1");
 
-			TestrayLayout.clickResultsOnSidebar();
+			TestrayDropdown.goToResultSidebar();
 
 			Testray.changePagination(quantity = 150);
 
@@ -466,7 +466,7 @@ definition {
 		}
 
 		task ("And go to the analyzed task") {
-			TestrayLayout.clickResultsOnSidebar();
+			TestrayDropdown.goToResultSidebar();
 
 			Testray.changePagination(quantity = 150);
 
@@ -577,7 +577,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given the user add a Task in a different flow") {
-			TestrayLayout.clickResultsOnSidebar();
+			TestrayDropdown.goToResultSidebar();
 
 			Testray.changePagination(quantity = 150);
 
