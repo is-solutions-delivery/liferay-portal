@@ -283,7 +283,7 @@
 	{
 		"dataType": 15,
 		"modelResource": "com.liferay.commerce.product.model.CPInstance",
-		"name": "Version Document URL",
+		"name": "Version Documentation URL",
 		"properties": {
 			"hidden": false,
 			"indexType": 2,
