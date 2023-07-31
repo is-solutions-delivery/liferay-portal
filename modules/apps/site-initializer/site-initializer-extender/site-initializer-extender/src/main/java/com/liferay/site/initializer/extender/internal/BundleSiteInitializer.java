@@ -1925,37 +1925,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return ddmTemplateIdsAndTemplateEntryIdsStringUtilReplaceValues;
 	}
 
-	private void _addSXPBlueprint(ServiceContext serviceContext) throws Exception{
-		String json = SiteInitializerUtil.read(
-			"/site-initializer/sxp-blueprint.json", _servletContext);
-
-		if (json == null) {
-			return;
-		}
-
-		SXPBlueprintResource.Builder builder = _sxpBlueprintResourceFactory.create();
-
-		SXPBlueprintResource sxpBlueprintResource = builder.user(
-			serviceContext.fetchUser()
-		).build();
-
-		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
-
-		for (int i = 0; i < jsonArray.length(); i++) {
-			SXPBlueprint sxpBlueprint = SXPBlueprint.toDTO(
-				String.valueOf(jsonArray.getJSONObject(i)));
-
-			if (sxpBlueprint == null) {
-				_log.error("Unable to transform SXPBlueprint from JSON: " + json);
-
-				continue;
-			}
-
-			sxpBlueprintResource.putSXPBlueprintByExternalReferenceCode(
-				sxpBlueprint.getExternalReferenceCode(), sxpBlueprint);
-		}
-	}
-
 	private Long _addOrUpdateDocumentFolder(
 			Long documentFolderId, long groupId, String resourcePath,
 			ServiceContext serviceContext)
@@ -4277,6 +4246,41 @@ public class BundleSiteInitializer implements SiteInitializer {
 			zipWriter.getFile(), true);
 	}
 
+	private void _addSXPBlueprint(ServiceContext serviceContext)
+		throws Exception {
+
+		String json = SiteInitializerUtil.read(
+			"/site-initializer/sxp-blueprint.json", _servletContext);
+
+		if (json == null) {
+			return;
+		}
+
+		SXPBlueprintResource.Builder builder =
+			_sxpBlueprintResourceFactory.create();
+
+		SXPBlueprintResource sxpBlueprintResource = builder.user(
+			serviceContext.fetchUser()
+		).build();
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			SXPBlueprint sxpBlueprint = SXPBlueprint.toDTO(
+				String.valueOf(jsonArray.getJSONObject(i)));
+
+			if (sxpBlueprint == null) {
+				_log.error(
+					"Unable to transform SXPBlueprint from JSON: " + json);
+
+				continue;
+			}
+
+			sxpBlueprintResource.putSXPBlueprintByExternalReferenceCode(
+				sxpBlueprint.getExternalReferenceCode(), sxpBlueprint);
+		}
+	}
+
 	private Map<String, String> _addTaxonomyCategories(
 			String parentResourcePath, String parentTaxonomyCategoryId,
 			ServiceContext serviceContext,
@@ -5158,7 +5162,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_accountEntryOrganizationRelLocalService;
 	private final AccountGroupLocalService _accountGroupLocalService;
 	private final AccountGroupRelService _accountGroupRelService;
-	private final SXPBlueprintResource.Factory _sxpBlueprintResourceFactory;
 	private final AccountResource.Factory _accountResourceFactory;
 	private final AccountRoleLocalService _accountRoleLocalService;
 	private final AccountRoleResource.Factory _accountRoleResourceFactory;
@@ -5242,6 +5245,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final StructuredContentFolderResource.Factory
 		_structuredContentFolderResourceFactory;
 	private final StyleBookEntryZipProcessor _styleBookEntryZipProcessor;
+	private final SXPBlueprintResource.Factory _sxpBlueprintResourceFactory;
 	private final TaxonomyCategoryResource.Factory
 		_taxonomyCategoryResourceFactory;
 	private final TaxonomyVocabularyResource.Factory

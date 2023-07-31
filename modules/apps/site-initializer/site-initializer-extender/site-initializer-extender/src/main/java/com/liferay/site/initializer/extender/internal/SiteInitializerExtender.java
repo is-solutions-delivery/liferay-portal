@@ -326,9 +326,6 @@ public class SiteInitializerExtender
 	private AccountRoleLocalService _accountRoleLocalService;
 
 	@Reference
-	private SXPBlueprintResource.Factory _sxpBlueprintResourceFactory;
-
-	@Reference
 	private AccountRoleResource.Factory _accountRoleResourceFactory;
 
 	@Reference
@@ -521,6 +518,9 @@ public class SiteInitializerExtender
 
 	@Reference
 	private StyleBookEntryZipProcessor _styleBookEntryZipProcessor;
+
+	@Reference
+	private SXPBlueprintResource.Factory _sxpBlueprintResourceFactory;
 
 	@Reference
 	private TaxonomyCategoryResource.Factory _taxonomyCategoryResourceFactory;
