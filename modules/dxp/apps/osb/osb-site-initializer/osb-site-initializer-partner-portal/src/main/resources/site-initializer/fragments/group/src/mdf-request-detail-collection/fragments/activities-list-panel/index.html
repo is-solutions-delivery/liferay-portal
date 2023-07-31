@@ -23,11 +23,20 @@
 [/#function]
 
 [#function get_digital_marketing_fields activity]
-	[#return [{ "title": "Overall message, content or CTA", "value": (activity.overallMessageContentCTA)!"-"}, { "title": "Specific sites to be used", "value": (activity.specificSites)!"-" }, { "title": "Keywords for PPC campaigns", "value": (activity.keywordsForPPCCampaigns)!"-" }, { "title": "Ad (any size/type)", "value": (activity.ad)!"-" }, { "title": "Do you require any assets from Liferay?", "value": (activity.assetsLiferayRequired?string("Yes", "No")!"-") }, { "title": "How will the Liferay brand be used in the campaign?", "value": (activity.howLiferayBrandUsed)!"-" }] /]
+	[#assign digital_marketing_fields = [{ "title": "Overall message, content or CTA", "value": (activity.overallMessageContentCTA)!"-"}] /]
+
+	[#if activity.tactic.name != "Email Campaign"]
+		[#assign digital_marketing_fields = digital_marketing_fields + [ { "title": "Specific sites to be used", "value": (activity.specificSites)!"-" }, { "title": "Keywords for PPC campaigns", "value": (activity.keywordsForPPCCampaigns)!"-" }, { "title": "Ad (any size/type)", "value": (activity.ad)!"-" }, { "title": "Do you require any assets from Liferay?", "value": (activity.assetsLiferayRequired?string("Yes", "No")!"-") }, { "title": "How will the Liferay brand be used in the campaign?", "value": (activity.howLiferayBrandUsed)!"-"}] /]
+	[/#if]
+
+		[#assign digital_marketing_fields = digital_marketing_fields + [{"title": "Landing page copy", "value": (activity.landingPageCopy) } ] /]
+
+	[#return digital_marketing_fields /]
+
 [/#function]
 
 [#function get_content_marketing_fields activity]
-	[#return [{ "title": "Will this content be gated and have a landing page?", "value": (activity.gatedLandingPage?string("Yes", "No"))!"-"}, { "title": "Primary theme or message of your content", "value": (activity.primaryThemeOrMessage)!"-" }, { "title": "Goal of Content", "value": (activity.goalOfContent)!"-" }, { "title": "Are you hiring an outside writer or agency to prepare the content?", "value": (activity.hiringOutsideWriterOrAgency?string("Yes", "No"))!"-" }] /]
+	[#return [{ "title": "Will this content be gated and have a landing page?", "value": (activity.gatedLandingPage?string("Yes", "No"))!"-"}, { "title": "Primary theme or message of your content", "value": (activity.primaryThemeOrMessage)!"-" }, { "title": "Goal of Content", "value": (activity.goalOfContent)!"-" }, { "title": "Are you hiring an outside writer or agency to prepare the content?", "value": (activity.hiringOutsideWriterOrAgency?string("Yes", "No")!"-") }] /]
 [/#function]
 
 [#function get_miscellaneous_marketing_fields activity]
@@ -63,7 +72,7 @@
 [/#function]
 
 [#function get_activity_fields activity]
-	[#return [{ "title": "Activity name", "value": (activity.name)!"-" }, { "title": "Type of Activity", "value": (activity.typeActivity.name)!"-" }, { "title": "Tactic", "value": (activity.tactic.name)!"-" }] + get_fields_by_activity(activity) + [{ "title": "Start Date", "value": (activity.startDate?date?string.short)!"-" }, { "title": "End Date", "value": (activity.endDate?date?string.short)!"-" }] /]
+	[#return [{ "title": "Activity name", "value": (activity.name)!"-" }, { "title": "Type of Activity", "value": (activity.typeActivity.name)!"-" }, { "title": "Tactic", "value": (activity.tactic.name)!"-" }] + get_fields_by_activity(activity) + [{ "title": "Start Date", "value": (activity.startDate?date?string.short)!"-" }, { "title": "End Date", "value": (activity.endDate?date?string.short)!"-" }] + [{ "title": "Nurture or drip campaign?", "value": (activity.nurtureDripCampaign?boolean?string("Yes", "No")!"-" ) }, { "title": "Do you require any assets from Liferay?", "value": (activity.assetsLiferayRequired?string("Yes", "No")!"-") }] + [{"title": "Are you using any CIAB assets?", "value": (activity.usingCIABAssets), "title": "How will the Liferay brand be used in the campaign?", "value": (activity.howLiferayBrandUsed) }] /]
 [/#function]
 
 [#macro table title items]
