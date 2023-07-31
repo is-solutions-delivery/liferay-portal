@@ -1396,7 +1396,17 @@ public class Main {
 		Map<String, Object> data = snakeYamlFrontMatterVisitor.getData();
 
 		if ((data == null) || !data.containsKey("visibility")) {
-			return;
+			Permission[] permissions = {
+				new Permission() {
+					{
+						actionIds = new String[] {"ADD_DISCUSSION", "VIEW"};
+						roleName = "Guest";
+					}
+				}
+			};
+
+			_structuredContentResource.putStructuredContentPermissionsPage(
+				structuredContent.getId(), permissions);
 		}
 
 		Object roleNames = data.get("visibility");
@@ -1424,14 +1434,6 @@ public class Main {
 		if (permissions.isEmpty()) {
 			return;
 		}
-
-		permissions.add(
-			new Permission() {
-				{
-					actionIds = new String[0];
-					roleName = "Guest";
-				}
-			});
 
 		_structuredContentResource.putStructuredContentPermissionsPage(
 			structuredContent.getId(), permissions.toArray(new Permission[0]));
