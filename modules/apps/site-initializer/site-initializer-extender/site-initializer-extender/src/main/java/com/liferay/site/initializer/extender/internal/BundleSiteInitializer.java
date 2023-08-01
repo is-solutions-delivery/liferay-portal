@@ -1159,9 +1159,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 		}
 
-		_layoutsImporter.importFile(
-			serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-			zipWriter.getFile(), true);
+		try {
+			ServiceContextThreadLocal.pushServiceContext(serviceContext);
+			_layoutsImporter.importFile(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				zipWriter.getFile(), true);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
 	}
 
 	private void _addLayoutsContent(
