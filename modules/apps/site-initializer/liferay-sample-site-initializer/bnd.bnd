@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Site Initializer Sample
+Bundle-SymbolicName: com.liferay.site.initializer.liferay.sample
+Bundle-Version: 1.0.0
+Liferay-Site-Initializer-Name: Liferay Site Initializer Sample
+Provide-Capability: liferay.site.initializer
+Web-ContextPath: /site-initializer-sample
