@@ -458,6 +458,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext.setTimeZone(user.getTimeZone());
 			serviceContext.setUserId(user.getUserId());
 
+			ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
 			SiteNavigationMenuItemSettingsBuilder
 				siteNavigationMenuItemSettingsBuilder =
 					new SiteNavigationMenuItemSettingsBuilder();
@@ -627,6 +629,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_log.error(exception);
 
 			throw new InitializationException(exception);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
 		}
 
 		if (_log.isInfoEnabled()) {
