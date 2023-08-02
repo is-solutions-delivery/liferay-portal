@@ -8,6 +8,19 @@ definition {
 			siteTemplateName = "EVP");
 	}
 
+	macro addLiferayManagerUserRole {
+		for (var userScreenName : list "manager,finance") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Users and Organizations");
+
+			User.assignRegularRoleCP(
+				roleTitle = "Liferay Manager",
+				userScreenName = ${userScreenName});
+		}
+	}
+
 	macro assertCardsTitle {
 		for (var cardTitle : list ${listcardTitle}) {
 			AssertElementPresent(
