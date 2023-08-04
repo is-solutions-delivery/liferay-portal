@@ -73,7 +73,7 @@ const appRoutes: AppRouteComponent = {
 			newButtonDeal={false}
 			sort="dateCreated:desc"
 		/>
-	),
+	),			
 	[AppRouteType.RENEWALS_OPPORTUNITIES_LIST]: (
 		<PartnerOpportunitiesList
 			columnsDates={[
@@ -84,11 +84,11 @@ const appRoutes: AppRouteComponent = {
 			]}
 			getDates={(item) => getRenewalsDates(item.closeDate)}
 			getFilteredItems={(items) =>
-				items.filter((item) => item.STAGE !== 'Closed Lost')
+				items.filter((item) => item.TYPE === 'Existing Business') 
 			}
 			name="Renewal Opportunities"
 			newButtonDeal={false}
-			sort="closeDate:asc"
+			sort="closeDate:asc"			
 		/>
 	),
 	[AppRouteType.DASHBOARD_DEALS_CHART]: <DealsChart />,

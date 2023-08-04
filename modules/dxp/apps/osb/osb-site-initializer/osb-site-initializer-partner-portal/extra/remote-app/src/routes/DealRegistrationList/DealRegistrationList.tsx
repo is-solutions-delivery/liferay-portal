@@ -56,6 +56,7 @@ const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
 		sort
 	);
 
+
 	const actions = usePermissionActions(ObjectActionName.DEAL_REGISTRATION);
 
 	const filteredData = data.items && getFilteredItems(data.items);

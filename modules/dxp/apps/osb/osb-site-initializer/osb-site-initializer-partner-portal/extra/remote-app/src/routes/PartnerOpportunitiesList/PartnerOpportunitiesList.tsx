@@ -40,7 +40,7 @@ interface IProps {
 	newButtonDeal?: boolean;
 	sort: string;
 }
-
+	
 const PartnerOpportunitiesList = ({
 	columnsDates,
 	getDates,
@@ -55,9 +55,7 @@ const PartnerOpportunitiesList = ({
 		PartnerOpportunitiesItem
 	>();
 	const {observer, onClose} = useModal({
-		onClose: () => setIsVisibleModal(false),
-	});
-
+		onClose: () => setIsVisibleModal(false),	});
 	const pagination = usePagination();
 	const {data, isValidating} = useGetListItemsFromPartnerOpportunities(
 		getDates,
@@ -68,6 +66,8 @@ const PartnerOpportunitiesList = ({
 	);
 	const {totalCount: totalPagination} = data;
 	const filteredData = data.items && getFilteredItems(data.items);
+
+	console.log(data.items);	
 
 	const siteURL = useLiferayNavigate();
 	const columns = [
