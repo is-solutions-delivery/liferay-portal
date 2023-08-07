@@ -53,7 +53,8 @@ const MDFRequestList = () => {
 	);
 
 	const mdfRequestItems = data?.items;
-	const mdfRequestListItems = useGetListItemsFromMDFRequests(mdfRequestItems) || [];
+	const mdfRequestListItems =
+		useGetListItemsFromMDFRequests(mdfRequestItems) || [];
 
 	const companiesEntries:
 		| React.OptionHTMLAttributes<HTMLOptionElement>[]
