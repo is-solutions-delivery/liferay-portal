@@ -1,0 +1,2088 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentStyle": {
+						"backgroundColor": "#f4f6f9",
+						"borderWidth": "0"
+					},
+					"fragmentViewports": [
+						{
+							"fragmentViewportStyle": {
+								"paddingLeft": "4",
+								"paddingRight": "4"
+							},
+							"id": "landscapeMobile"
+						}
+					],
+					"indexed": true,
+					"layout": {
+						"borderWidth": 0,
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"opacity": 100,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
+						"widthType": "Fluid"
+					},
+					"name": "Container Open Square CRM"
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"fragment": {
+								"key": "modal",
+								"siteKey": "[$GROUP_KEY$]"
+							},
+							"fragmentConfig": {
+								"contentInitEvent": "",
+								"modalEditMode": true,
+								"modalId": "solutions-details-video",
+								"modalOverlayColor": "transparent",
+								"modalSize": "lg"
+							},
+							"fragmentFields": [
+							],
+							"indexed": true
+						},
+						"pageElements": [
+							{
+								"definition": {
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "BASIC_COMPONENT-external-video"
+											},
+											"fragmentConfig": {
+												"align": "center",
+												"video": "{\"html\":\"<iframe allow=\\\"autoplay; encrypted-media\\\" allowfullscreen height=\\\"315\\\" frameborder=\\\"0\\\" src=\\\"https://www.youtube.com/embed/bTKgXTUksoo?rel=0&start=1s\\\" width=\\\"560\\\"><\\/iframe>\",\"title\":\"Video post Open Square Spaces Inglese\",\"type\":\"com.liferay.item.selector.criteria.VideoEmbeddableHTMLItemSelectorReturnType\"}",
+												"videoHeight": "",
+												"videoWidth": ""
+											},
+											"fragmentFields": [
+											],
+											"indexed": true
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "FragmentDropZone"
+							}
+						],
+						"type": "Fragment"
+					},
+					{
+						"definition": {
+							"fragment": {
+								"key": "content-container",
+								"siteKey": "[$GROUP_KEY$]"
+							},
+							"fragmentConfig": {
+								"background": "",
+								"backgroundDarkOrLight": "light",
+								"backgroundImageUrl": "",
+								"backgroundPosition": "center",
+								"backgroundSize": "cover",
+								"blockAlignment": "",
+								"borderRadius": "border-radius-none",
+								"boxShadow": "",
+								"containerWidth": "container",
+								"lazyLoadingImage": true,
+								"moveIcon": "-75px 0 0 0",
+								"showIcon": false,
+								"showIconBoxShadow": false
+							},
+							"fragmentFields": [
+							],
+							"indexed": true
+						},
+						"pageElements": [
+							{
+								"definition": {
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "spacer",
+												"siteKey": "[$GROUP_KEY$]"
+											},
+											"fragmentConfig": {
+											},
+											"fragmentFields": [
+											],
+											"fragmentStyle": {
+												"paddingBottom": "2",
+												"paddingTop": "4"
+											},
+											"indexed": true
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "FragmentDropZone"
+							}
+						],
+						"type": "Fragment"
+					},
+					{
+						"definition": {
+							"fragmentStyle": {
+								"borderWidth": "0"
+							},
+							"indexed": true,
+							"layout": {
+								"borderWidth": 0,
+								"marginBottom": 0,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"opacity": 100,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							},
+							"name": "Body Container Open Square CRM"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"fragmentStyle": {
+										"backgroundColor": "#f4f6f9",
+										"borderWidth": "0"
+									},
+									"indexed": true,
+									"layout": {
+										"borderWidth": 0,
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"opacity": 100,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0"
+											},
+											"indexed": true,
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 0,
+												"opacity": 100,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fixed"
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"fragment": {
+														"key": "content-container",
+														"siteKey": "[$GROUP_KEY$]"
+													},
+													"fragmentConfig": {
+														"background": "",
+														"backgroundDarkOrLight": "light",
+														"backgroundImageUrl": "",
+														"backgroundPosition": "center",
+														"backgroundSize": "cover",
+														"blockAlignment": "",
+														"borderRadius": "border-radius-none",
+														"boxShadow": "",
+														"containerWidth": "",
+														"lazyLoadingImage": true,
+														"moveIcon": "-75px 0 0 0",
+														"showIcon": false,
+														"showIconBoxShadow": false
+													},
+													"fragmentFields": [
+													],
+													"fragmentViewports": [
+														{
+															"fragmentViewportStyle": {
+																"paddingLeft": "5",
+																"paddingRight": "5"
+															},
+															"id": "tablet"
+														}
+													],
+													"indexed": true
+												},
+												"pageElements": [
+													{
+														"definition": {
+														},
+														"pageElements": [
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "BASIC_COMPONENT-spacer"
+																	},
+																	"fragmentConfig": {
+																		"height": "py-1"
+																	},
+																	"fragmentFields": [
+																	],
+																	"fragmentViewports": [
+																		{
+																			"fragmentViewportStyle": {
+																				"paddingBottom": "4",
+																				"paddingTop": "4"
+																			},
+																			"id": "landscapeMobile"
+																		}
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															},
+															{
+																"definition": {
+																	"widgetInstance": {
+																		"widgetConfig": {
+																		},
+																		"widgetName": "com_liferay_site_navigation_breadcrumb_web_portlet_SiteNavigationBreadcrumbPortlet"
+																	}
+																},
+																"type": "Widget"
+															},
+															{
+																"definition": {
+																	"gutters": true,
+																	"indexed": true,
+																	"modulesPerRow": 2,
+																	"numberOfColumns": 2,
+																	"reverseOrder": false,
+																	"rowViewports": [
+																		{
+																			"id": "landscapeMobile",
+																			"rowViewportDefinition": {
+																				"modulesPerRow": 1
+																			}
+																		},
+																		{
+																			"id": "portraitMobile",
+																			"rowViewportDefinition": {
+																			}
+																		},
+																		{
+																			"id": "tablet",
+																			"rowViewportDefinition": {
+																			}
+																		}
+																	],
+																	"verticalAlignment": "top"
+																},
+																"pageElements": [
+																	{
+																		"definition": {
+																			"columnViewports": [
+																				{
+																					"columnViewportDefinition": {
+																						"size": 12
+																					},
+																					"id": "landscapeMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "portraitMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "tablet"
+																				}
+																			],
+																			"size": 9
+																		},
+																		"pageElements": [
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "flex",
+																						"siteKey": "[$GROUP_KEY$]"
+																					},
+																					"fragmentConfig": {
+																						"alignItems": "align-items-start",
+																						"flexDirection": "",
+																						"flexWrap": "",
+																						"items": 2,
+																						"justifyContent": "justify-content-start"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"pageElements": [
+																					{
+																						"definition": {
+																						},
+																						"pageElements": [
+																							{
+																								"definition": {
+																									"fragment": {
+																										"key": "icon",
+																										"siteKey": "[$GROUP_KEY$]"
+																									},
+																									"fragmentConfig": {
+																										"alignment": "",
+																										"iconType": "large",
+																										"lazyLoadingImage": true,
+																										"useHtml": false
+																									},
+																									"fragmentFields": [
+																										{
+																											"id": "iconImage",
+																											"value": {
+																												"fragmentImage": {
+																													"description": {
+																														"value_i18n": {
+																															"en_US": ""
+																														}
+																													},
+																													"url": {
+																														"value_i18n": {
+																															"en_US": "/documents/d/[$GROUP_KEY$]/01_open_square_crm-png?download=true"
+																														}
+																													}
+																												},
+																												"fragmentLink": {
+																												}
+																											}
+																										}
+																									],
+																									"fragmentStyle": {
+																										"paddingRight": "4"
+																									},
+																									"indexed": true
+																								},
+																								"type": "Fragment"
+																							}
+																						],
+																						"type": "FragmentDropZone"
+																					},
+																					{
+																						"definition": {
+																						},
+																						"pageElements": [
+																							{
+																								"definition": {
+																									"fragment": {
+																										"key": "text",
+																										"siteKey": "[$GROUP_KEY$]"
+																									},
+																									"fragmentConfig": {
+																										"fontSize": "font-size-heading-f4",
+																										"smallCaps": false,
+																										"tabletScreenCenter": false
+																									},
+																									"fragmentFields": [
+																										{
+																											"id": "text",
+																											"value": {
+																												"fragmentLink": {
+																												},
+																												"text": {
+																													"value_i18n": {
+																														"en_US": "<h4 data-lfr-editable-id=\"text\" data-lfr-editable-type=\"rich-text\">Digital Place for Communities</h4>\n"
+																													}
+																												}
+																											}
+																										}
+																									],
+																									"indexed": true
+																								},
+																								"type": "Fragment"
+																							},
+																							{
+																								"definition": {
+																									"fragment": {
+																										"key": "flex",
+																										"siteKey": "[$GROUP_KEY$]"
+																									},
+																									"fragmentConfig": {
+																										"alignItems": "align-items-start",
+																										"flexDirection": "",
+																										"flexWrap": "",
+																										"items": 2,
+																										"justifyContent": "justify-content-start"
+																									},
+																									"fragmentFields": [
+																									],
+																									"indexed": true
+																								},
+																								"pageElements": [
+																									{
+																										"definition": {
+																										},
+																										"pageElements": [
+																											{
+																												"definition": {
+																													"fragment": {
+																														"key": "icon",
+																														"siteKey": "[$GROUP_KEY$]"
+																													},
+																													"fragmentConfig": {
+																														"alignment": "",
+																														"iconType": "large",
+																														"lazyLoadingImage": true,
+																														"useHtml": false
+																													},
+																													"fragmentFields": [
+																														{
+																															"id": "iconImage",
+																															"value": {
+																																"fragmentImage": {
+																																	"description": {
+																																		"value_i18n": {
+																																			"en_US": ""
+																																		}
+																																	},
+																																	"url": {
+																																		"value_i18n": {
+																																			"en_US": "/documents/d/[$GROUP_KEY$]/01_smc_logo_new-png?download=true"
+																																		}
+																																	}
+																																},
+																																"fragmentLink": {
+																																}
+																															}
+																														}
+																													],
+																													"indexed": true
+																												},
+																												"type": "Fragment"
+																											}
+																										],
+																										"type": "FragmentDropZone"
+																									},
+																									{
+																										"definition": {
+																										},
+																										"type": "FragmentDropZone"
+																									}
+																								],
+																								"type": "Fragment"
+																							},
+																							{
+																								"definition": {
+																									"gutters": true,
+																									"indexed": true,
+																									"modulesPerRow": 1,
+																									"numberOfColumns": 1,
+																									"reverseOrder": false,
+																									"rowViewports": [
+																										{
+																											"id": "landscapeMobile",
+																											"rowViewportDefinition": {
+																												"modulesPerRow": 1
+																											}
+																										},
+																										{
+																											"id": "portraitMobile",
+																											"rowViewportDefinition": {
+																											}
+																										},
+																										{
+																											"id": "tablet",
+																											"rowViewportDefinition": {
+																											}
+																										}
+																									],
+																									"verticalAlignment": "top"
+																								},
+																								"pageElements": [
+																									{
+																										"definition": {
+																											"columnViewports": [
+																												{
+																													"columnViewportDefinition": {
+																														"size": 12
+																													},
+																													"id": "landscapeMobile"
+																												},
+																												{
+																													"columnViewportDefinition": {
+																													},
+																													"id": "portraitMobile"
+																												},
+																												{
+																													"columnViewportDefinition": {
+																													},
+																													"id": "tablet"
+																												}
+																											],
+																											"size": 12
+																										},
+																										"pageElements": [
+																											{
+																												"definition": {
+																													"fragment": {
+																														"key": "text",
+																														"siteKey": "[$GROUP_KEY$]"
+																													},
+																													"fragmentConfig": {
+																														"fontSize": "font-size-paragraph-base",
+																														"smallCaps": false,
+																														"tabletScreenCenter": false
+																													},
+																													"fragmentFields": [
+																														{
+																															"id": "text",
+																															"value": {
+																																"fragmentLink": {
+																																}
+																															}
+																														}
+																													],
+																													"indexed": true
+																												},
+																												"type": "Fragment"
+																											}
+																										],
+																										"type": "Column"
+																									}
+																								],
+																								"type": "Row"
+																							}
+																						],
+																						"type": "FragmentDropZone"
+																					}
+																				],
+																				"type": "Fragment"
+																			}
+																		],
+																		"type": "Column"
+																	},
+																	{
+																		"definition": {
+																			"columnViewports": [
+																				{
+																					"columnViewportDefinition": {
+																						"size": 12
+																					},
+																					"id": "landscapeMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "portraitMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "tablet"
+																				}
+																			],
+																			"size": 3
+																		},
+																		"pageElements": [
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-button"
+																					},
+																					"fragmentConfig": {
+																						"buttonSize": "nm",
+																						"buttonType": "primary",
+																						"type": "link"
+																					},
+																					"fragmentFields": [
+																						{
+																							"id": "link",
+																							"value": {
+																								"fragmentLink": {
+																									"value": {
+																										"href": {
+																											"value_i18n": {
+																												"en_US": "#solutions-details-form"
+																											}
+																										}
+																									}
+																								},
+																								"text": {
+																									"value_i18n": {
+																										"en_US": "Contact Partner"
+																									}
+																								}
+																							}
+																						}
+																					],
+																					"fragmentStyle": {
+																						"textAlign": "center"
+																					},
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			}
+																		],
+																		"type": "Column"
+																	}
+																],
+																"type": "Row"
+															},
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "BASIC_COMPONENT-spacer"
+																	},
+																	"fragmentConfig": {
+																		"height": "py-3"
+																	},
+																	"fragmentFields": [
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															}
+														],
+														"type": "FragmentDropZone"
+													}
+												],
+												"type": "Fragment"
+											}
+										],
+										"type": "Section"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "BASIC_COMPONENT-spacer"
+											},
+											"fragmentConfig": {
+												"height": "py-3"
+											},
+											"fragmentFields": [
+											],
+											"indexed": true
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Section"
+							},
+							{
+								"definition": {
+									"fragmentStyle": {
+										"backgroundColor": "#0b5fff",
+										"borderWidth": "0"
+									},
+									"indexed": true,
+									"layout": {
+										"borderWidth": 0,
+										"contentDisplay": "FlexRow",
+										"justify": "Center",
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"opacity": 100,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0"
+											},
+											"indexed": true,
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 0,
+												"opacity": 100,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fixed"
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"fragment": {
+														"key": "content-container",
+														"siteKey": "[$GROUP_KEY$]"
+													},
+													"fragmentConfig": {
+														"background": "",
+														"backgroundDarkOrLight": "dark",
+														"backgroundImageUrl": "",
+														"backgroundPosition": "center",
+														"backgroundSize": "cover",
+														"blockAlignment": "",
+														"borderRadius": "border-radius-none",
+														"boxShadow": "",
+														"containerWidth": "",
+														"lazyLoadingImage": true,
+														"moveIcon": "-75px 0 0 0",
+														"showIcon": false,
+														"showIconBoxShadow": false
+													},
+													"fragmentFields": [
+													],
+													"fragmentViewports": [
+														{
+															"fragmentViewportStyle": {
+																"paddingLeft": "5",
+																"paddingRight": "5"
+															},
+															"id": "tablet"
+														}
+													],
+													"indexed": true
+												},
+												"pageElements": [
+													{
+														"definition": {
+														},
+														"pageElements": [
+															{
+																"definition": {
+																	"gutters": true,
+																	"indexed": true,
+																	"modulesPerRow": 2,
+																	"numberOfColumns": 2,
+																	"reverseOrder": false,
+																	"rowViewports": [
+																		{
+																			"id": "landscapeMobile",
+																			"rowViewportDefinition": {
+																				"modulesPerRow": 1,
+																				"verticalAlignment": "middle"
+																			}
+																		},
+																		{
+																			"id": "portraitMobile",
+																			"rowViewportDefinition": {
+																			}
+																		},
+																		{
+																			"id": "tablet",
+																			"rowViewportDefinition": {
+																			}
+																		}
+																	],
+																	"verticalAlignment": "top"
+																},
+																"pageElements": [
+																	{
+																		"definition": {
+																			"columnViewports": [
+																				{
+																					"columnViewportDefinition": {
+																						"size": 12
+																					},
+																					"id": "landscapeMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "portraitMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "tablet"
+																				}
+																			],
+																			"size": 6
+																		},
+																		"pageElements": [
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-spacer"
+																					},
+																					"fragmentConfig": {
+																						"height": "py-5"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "text",
+																						"siteKey": "[$GROUP_KEY$]"
+																					},
+																					"fragmentConfig": {
+																						"fontSize": "font-size-heading-f1",
+																						"smallCaps": false,
+																						"tabletScreenCenter": false
+																					},
+																					"fragmentFields": [
+																						{
+																							"id": "text",
+																							"value": {
+																								"fragmentLink": {
+																								},
+																								"text": {
+																									"value_i18n": {
+																										"en_US": "The first step for a complete customer data platform"
+																									}
+																								}
+																							}
+																						}
+																					],
+																					"fragmentStyle": {
+																						"textColor": "whiteColor"
+																					},
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-spacer"
+																					},
+																					"fragmentConfig": {
+																						"height": "py-3"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "text",
+																						"siteKey": "[$GROUP_KEY$]"
+																					},
+																					"fragmentConfig": {
+																						"fontSize": "font-size-paragraph-large",
+																						"smallCaps": false,
+																						"tabletScreenCenter": false
+																					},
+																					"fragmentFields": [
+																						{
+																							"id": "text",
+																							"value": {
+																								"fragmentLink": {
+																								},
+																								"text": {
+																									"value_i18n": {
+																										"en_US": "Open Square CRM is built to improve customer satisfaction -- managing and nurturing lead, prospect and customer relationships."
+																									}
+																								}
+																							}
+																						}
+																					],
+																					"fragmentStyle": {
+																						"textColor": "whiteColor"
+																					},
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-spacer"
+																					},
+																					"fragmentConfig": {
+																						"height": "py-5"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			}
+																		],
+																		"type": "Column"
+																	},
+																	{
+																		"definition": {
+																			"columnViewports": [
+																				{
+																					"columnViewportDefinition": {
+																						"size": 12
+																					},
+																					"id": "landscapeMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "portraitMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "tablet"
+																				}
+																			],
+																			"size": 6
+																		},
+																		"pageElements": [
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-spacer"
+																					},
+																					"fragmentConfig": {
+																						"height": "py-4"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "image-carousel",
+																						"siteKey": "[$GROUP_KEY$]"
+																					},
+																					"fragmentConfig": {
+																						"colorScheme": "dark",
+																						"imageAspectRatio": "aspect-ratio-4-to-3",
+																						"imageCarouselMaxWidth": "517px",
+																						"lazyLoadingImage": false,
+																						"numberOfImages": "2"
+																					},
+																					"fragmentFields": [
+																						{
+																							"id": "imageCarousel0",
+																							"value": {
+																								"fragmentLink": {
+																								},
+																								"text": {
+																									"value_i18n": {
+																										"en_US": "{\"title\":\"03_open_square_crm_slider01.png\",\"url\":\"/documents/d/[$GROUP_KEY$]/03_open_square_crm_slider01-png?download=true\"}"
+																									}
+																								}
+																							}
+																						},
+																						{
+																							"id": "imageCarousel1",
+																							"value": {
+																								"fragmentLink": {
+																								},
+																								"text": {
+																									"value_i18n": {
+																										"en_US": "{\"title\":\"04_open_square_crm_slider02.png\",\"url\":\"/documents/d/[$GROUP_KEY$]/04_open_square_crm_slider02-png?download=true\"}"
+																									}
+																								}
+																							}
+																						}
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			}
+																		],
+																		"type": "Column"
+																	}
+																],
+																"type": "Row"
+															}
+														],
+														"type": "FragmentDropZone"
+													}
+												],
+												"type": "Fragment"
+											},
+											{
+												"definition": {
+													"fragment": {
+														"key": "BASIC_COMPONENT-spacer"
+													},
+													"fragmentConfig": {
+														"height": "py-3"
+													},
+													"fragmentFields": [
+													],
+													"indexed": true
+												},
+												"type": "Fragment"
+											}
+										],
+										"type": "Section"
+									}
+								],
+								"type": "Section"
+							},
+							{
+								"definition": {
+									"fragmentStyle": {
+										"borderWidth": "0"
+									},
+									"indexed": true,
+									"layout": {
+										"borderWidth": 0,
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"opacity": 100,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fixed"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0"
+											},
+											"indexed": true,
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 0,
+												"opacity": 100,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"fragment": {
+														"key": "content-container",
+														"siteKey": "[$GROUP_KEY$]"
+													},
+													"fragmentConfig": {
+														"background": "",
+														"backgroundDarkOrLight": "dark",
+														"backgroundImageUrl": "",
+														"backgroundPosition": "center",
+														"backgroundSize": "cover",
+														"blockAlignment": "",
+														"borderRadius": "border-radius-none",
+														"boxShadow": "",
+														"containerWidth": "",
+														"lazyLoadingImage": true,
+														"moveIcon": "-75px 0 0 0",
+														"showIcon": false,
+														"showIconBoxShadow": false
+													},
+													"fragmentFields": [
+													],
+													"fragmentViewports": [
+														{
+															"fragmentViewportStyle": {
+																"paddingLeft": "5",
+																"paddingRight": "5"
+															},
+															"id": "tablet"
+														}
+													],
+													"indexed": true
+												},
+												"pageElements": [
+													{
+														"definition": {
+														},
+														"pageElements": [
+															{
+																"definition": {
+																	"fragmentStyle": {
+																		"borderWidth": "0"
+																	},
+																	"indexed": true,
+																	"layout": {
+																		"borderWidth": 0,
+																		"marginBottom": 0,
+																		"marginLeft": 0,
+																		"marginRight": 0,
+																		"marginTop": 0,
+																		"opacity": 100,
+																		"paddingBottom": 0,
+																		"paddingLeft": 0,
+																		"paddingRight": 0,
+																		"paddingTop": 0,
+																		"widthType": "Fluid"
+																	}
+																},
+																"pageElements": [
+																	{
+																		"definition": {
+																			"fragment": {
+																				"key": "BASIC_COMPONENT-spacer"
+																			},
+																			"fragmentConfig": {
+																				"height": "py-4"
+																			},
+																			"fragmentFields": [
+																			],
+																			"indexed": true
+																		},
+																		"type": "Fragment"
+																	},
+																	{
+																		"definition": {
+																			"fragment": {
+																				"key": "text",
+																				"siteKey": "[$GROUP_KEY$]"
+																			},
+																			"fragmentConfig": {
+																				"fontSize": "font-size-heading-f4",
+																				"smallCaps": false,
+																				"tabletScreenCenter": false
+																			},
+																			"fragmentFields": [
+																				{
+																					"id": "text",
+																					"value": {
+																						"fragmentLink": {
+																						},
+																						"text": {
+																							"value_i18n": {
+																								"en_US": "<h4 data-lfr-editable-id=\"text\" data-lfr-editable-type=\"rich-text\">Description</h4>\n"
+																							}
+																						}
+																					}
+																				}
+																			],
+																			"fragmentStyle": {
+																				"textColor": "#332B4A"
+																			},
+																			"indexed": true
+																		},
+																		"type": "Fragment"
+																	},
+																	{
+																		"definition": {
+																			"fragment": {
+																				"key": "BASIC_COMPONENT-spacer"
+																			},
+																			"fragmentConfig": {
+																				"height": "py-2"
+																			},
+																			"fragmentFields": [
+																			],
+																			"indexed": true
+																		},
+																		"type": "Fragment"
+																	},
+																	{
+																		"definition": {
+																			"fragment": {
+																				"key": "text",
+																				"siteKey": "[$GROUP_KEY$]"
+																			},
+																			"fragmentConfig": {
+																				"fontSize": "font-size-paragraph-large",
+																				"smallCaps": false,
+																				"tabletScreenCenter": false
+																			},
+																			"fragmentFields": [
+																				{
+																					"id": "text",
+																					"value": {
+																						"fragmentLink": {
+																						},
+																						"text": {
+																							"value_i18n": {
+																								"en_US": "Open Square CRM account management provides a 360° view of customers across contracts, activities, products, and status.&nbsp;Account management enables your employees to build tighter relationships by understanding the status of each account.<br />\n<br />\nThis CRM is empowered with Sales Force Automation (SFA), Customer Service and Support, Marketing Automation, and analytics modules, and it is ready to integrate with your customer data platform.<br />\n<br />\n<a href=\"https://www.placecube.com/platforms/digital-place-for-communities/\" target=\"_blank\">Learn more</a>"
+																							}
+																						}
+																					}
+																				}
+																			],
+																			"fragmentStyle": {
+																				"textColor": "#394452"
+																			},
+																			"indexed": true
+																		},
+																		"type": "Fragment"
+																	},
+																	{
+																		"definition": {
+																			"fragment": {
+																				"key": "BASIC_COMPONENT-spacer"
+																			},
+																			"fragmentConfig": {
+																				"height": "py-4"
+																			},
+																			"fragmentFields": [
+																			],
+																			"indexed": true
+																		},
+																		"type": "Fragment"
+																	},
+																	{
+																		"definition": {
+																			"fragmentStyle": {
+																				"borderWidth": "0",
+																				"hidden": true
+																			},
+																			"indexed": true,
+																			"layout": {
+																				"borderWidth": 0,
+																				"marginBottom": 0,
+																				"marginLeft": 0,
+																				"marginRight": 0,
+																				"marginTop": 0,
+																				"opacity": 100,
+																				"paddingBottom": 0,
+																				"paddingLeft": 0,
+																				"paddingRight": 0,
+																				"paddingTop": 0,
+																				"widthType": "Fluid"
+																			}
+																		},
+																		"pageElements": [
+																			{
+																				"definition": {
+																					"gutters": true,
+																					"indexed": true,
+																					"modulesPerRow": 2,
+																					"numberOfColumns": 2,
+																					"reverseOrder": false,
+																					"rowViewports": [
+																						{
+																							"id": "landscapeMobile",
+																							"rowViewportDefinition": {
+																								"modulesPerRow": 1
+																							}
+																						},
+																						{
+																							"id": "portraitMobile",
+																							"rowViewportDefinition": {
+																							}
+																						},
+																						{
+																							"id": "tablet",
+																							"rowViewportDefinition": {
+																							}
+																						}
+																					],
+																					"verticalAlignment": "top"
+																				},
+																				"pageElements": [
+																					{
+																						"definition": {
+																							"columnViewports": [
+																								{
+																									"columnViewportDefinition": {
+																										"size": 12
+																									},
+																									"id": "landscapeMobile"
+																								},
+																								{
+																									"columnViewportDefinition": {
+																									},
+																									"id": "portraitMobile"
+																								},
+																								{
+																									"columnViewportDefinition": {
+																									},
+																									"id": "tablet"
+																								}
+																							],
+																							"size": 1
+																						},
+																						"pageElements": [
+																							{
+																								"definition": {
+																									"fragment": {
+																										"key": "icon",
+																										"siteKey": "[$GROUP_KEY$]"
+																									},
+																									"fragmentConfig": {
+																										"alignment": "",
+																										"iconType": "large",
+																										"lazyLoadingImage": true,
+																										"useHtml": false
+																									},
+																									"fragmentFields": [
+																										{
+																											"id": "iconImage",
+																											"value": {
+																												"fragmentImage": {
+																													"url": {
+																														"value_i18n": {
+																														}
+																													}
+																												},
+																												"fragmentLink": {
+																												}
+																											}
+																										}
+																									],
+																									"indexed": true
+																								},
+																								"type": "Fragment"
+																							}
+																						],
+																						"type": "Column"
+																					},
+																					{
+																						"definition": {
+																							"columnViewports": [
+																								{
+																									"columnViewportDefinition": {
+																										"size": 12
+																									},
+																									"id": "landscapeMobile"
+																								},
+																								{
+																									"columnViewportDefinition": {
+																									},
+																									"id": "portraitMobile"
+																								},
+																								{
+																									"columnViewportDefinition": {
+																									},
+																									"id": "tablet"
+																								}
+																							],
+																							"size": 11
+																						},
+																						"pageElements": [
+																							{
+																								"definition": {
+																									"fragment": {
+																										"key": "text",
+																										"siteKey": "[$GROUP_KEY$]"
+																									},
+																									"fragmentConfig": {
+																										"fontSize": "font-size-paragraph-tiny",
+																										"smallCaps": false,
+																										"tabletScreenCenter": false
+																									},
+																									"fragmentFields": [
+																										{
+																											"id": "text",
+																											"value": {
+																												"fragmentLink": {
+																												},
+																												"text": {
+																													"value_i18n": {
+																														"en_US": "<a href=\"https://www.placecube.com/communities-product-guide/\" target=\"_blank\"><b>Product Guide</b></a>"
+																													}
+																												}
+																											}
+																										}
+																									],
+																									"indexed": true
+																								},
+																								"type": "Fragment"
+																							}
+																						],
+																						"type": "Column"
+																					}
+																				],
+																				"type": "Row"
+																			}
+																		],
+																		"type": "Section"
+																	}
+																],
+																"type": "Section"
+															}
+														],
+														"type": "FragmentDropZone"
+													}
+												],
+												"type": "Fragment"
+											}
+										],
+										"type": "Section"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "BASIC_COMPONENT-spacer"
+											},
+											"fragmentConfig": {
+												"height": "py-5"
+											},
+											"fragmentFields": [
+											],
+											"indexed": true
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Section"
+							},
+							{
+								"definition": {
+									"fragmentStyle": {
+										"backgroundColor": "#ebeef2",
+										"borderWidth": "0",
+										"hidden": true
+									},
+									"fragmentViewports": [
+										{
+											"fragmentViewportStyle": {
+												"hidden": false
+											},
+											"id": "landscapeMobile"
+										}
+									],
+									"indexed": true,
+									"layout": {
+										"borderWidth": 0,
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"opacity": 100,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "content-container",
+												"siteKey": "[$GROUP_KEY$]"
+											},
+											"fragmentConfig": {
+												"background": "",
+												"backgroundDarkOrLight": "dark",
+												"backgroundImageUrl": "",
+												"backgroundPosition": "center",
+												"backgroundSize": "cover",
+												"blockAlignment": "",
+												"borderRadius": "border-radius-none",
+												"boxShadow": "",
+												"containerWidth": "",
+												"lazyLoadingImage": true,
+												"moveIcon": "-75px 0 0 0",
+												"showIcon": false,
+												"showIconBoxShadow": false
+											},
+											"fragmentFields": [
+											],
+											"fragmentViewports": [
+												{
+													"fragmentViewportStyle": {
+														"paddingLeft": "5",
+														"paddingRight": "5"
+													},
+													"id": "portraitMobile"
+												}
+											],
+											"indexed": true
+										},
+										"pageElements": [
+											{
+												"definition": {
+												},
+												"pageElements": [
+													{
+														"definition": {
+															"fragmentStyle": {
+																"borderWidth": "0"
+															},
+															"indexed": true,
+															"layout": {
+																"borderWidth": 0,
+																"marginBottom": 0,
+																"marginLeft": 0,
+																"marginRight": 0,
+																"marginTop": 0,
+																"opacity": 100,
+																"paddingBottom": 0,
+																"paddingLeft": 0,
+																"paddingRight": 0,
+																"paddingTop": 0,
+																"widthType": "Fixed"
+															}
+														},
+														"pageElements": [
+															{
+																"definition": {
+																	"gutters": true,
+																	"indexed": true,
+																	"modulesPerRow": 2,
+																	"numberOfColumns": 2,
+																	"reverseOrder": false,
+																	"rowViewports": [
+																		{
+																			"id": "landscapeMobile",
+																			"rowViewportDefinition": {
+																				"modulesPerRow": 1
+																			}
+																		},
+																		{
+																			"id": "portraitMobile",
+																			"rowViewportDefinition": {
+																			}
+																		},
+																		{
+																			"id": "tablet",
+																			"rowViewportDefinition": {
+																			}
+																		}
+																	],
+																	"verticalAlignment": "top"
+																},
+																"pageElements": [
+																	{
+																		"definition": {
+																			"columnViewports": [
+																				{
+																					"columnViewportDefinition": {
+																						"size": 12
+																					},
+																					"id": "landscapeMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "portraitMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "tablet"
+																				}
+																			],
+																			"size": 6
+																		},
+																		"pageElements": [
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-spacer"
+																					},
+																					"fragmentConfig": {
+																						"height": "py-5"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "text",
+																						"siteKey": "[$GROUP_KEY$]"
+																					},
+																					"fragmentConfig": {
+																						"fontSize": "font-size-heading-f2",
+																						"smallCaps": false,
+																						"tabletScreenCenter": false
+																					},
+																					"fragmentFields": [
+																						{
+																							"id": "text",
+																							"value": {
+																								"fragmentLink": {
+																								}
+																							}
+																						}
+																					],
+																					"fragmentStyle": {
+																						"textColor": "#2C3A4B"
+																					},
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-spacer"
+																					},
+																					"fragmentConfig": {
+																						"height": "py-3"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "text",
+																						"siteKey": "[$GROUP_KEY$]"
+																					},
+																					"fragmentConfig": {
+																						"fontSize": "font-size-paragraph-base",
+																						"smallCaps": false,
+																						"tabletScreenCenter": false
+																					},
+																					"fragmentFields": [
+																						{
+																							"id": "text",
+																							"value": {
+																								"fragmentLink": {
+																								}
+																							}
+																						}
+																					],
+																					"fragmentStyle": {
+																						"textColor": "#394452"
+																					},
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			}
+																		],
+																		"type": "Column"
+																	},
+																	{
+																		"definition": {
+																			"columnViewports": [
+																				{
+																					"columnViewportDefinition": {
+																						"size": 12
+																					},
+																					"id": "landscapeMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "portraitMobile"
+																				},
+																				{
+																					"columnViewportDefinition": {
+																					},
+																					"id": "tablet"
+																				}
+																			],
+																			"size": 6
+																		},
+																		"pageElements": [
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-spacer"
+																					},
+																					"fragmentConfig": {
+																						"height": "py-5"
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			},
+																			{
+																				"definition": {
+																					"fragment": {
+																						"key": "BASIC_COMPONENT-video"
+																					},
+																					"fragmentConfig": {
+																						"align": "flex-start",
+																						"autoPlay": false,
+																						"hideControls": false,
+																						"loop": false,
+																						"mute": true,
+																						"url": "",
+																						"videoHeight": "",
+																						"videoWidth": ""
+																					},
+																					"fragmentFields": [
+																					],
+																					"indexed": true
+																				},
+																				"type": "Fragment"
+																			}
+																		],
+																		"type": "Column"
+																	}
+																],
+																"type": "Row"
+															},
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "BASIC_COMPONENT-spacer"
+																	},
+																	"fragmentConfig": {
+																		"height": "py-4"
+																	},
+																	"fragmentFields": [
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															},
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "BASIC_COMPONENT-spacer"
+																	},
+																	"fragmentConfig": {
+																		"height": "py-3"
+																	},
+																	"fragmentFields": [
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															}
+														],
+														"type": "Section"
+													}
+												],
+												"type": "FragmentDropZone"
+											}
+										],
+										"type": "Fragment"
+									}
+								],
+								"type": "Section"
+							},
+							{
+								"definition": {
+									"fragmentStyle": {
+										"backgroundColor": "gray200Color",
+										"borderWidth": "0"
+									},
+									"indexed": true,
+									"layout": {
+										"borderWidth": 0,
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"opacity": 100,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0"
+											},
+											"indexed": true,
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 0,
+												"opacity": 100,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fixed"
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"fragment": {
+														"key": "content-container",
+														"siteKey": "[$GROUP_KEY$]"
+													},
+													"fragmentConfig": {
+														"background": "",
+														"backgroundDarkOrLight": "light",
+														"backgroundImageUrl": "",
+														"backgroundPosition": "center",
+														"backgroundSize": "cover",
+														"blockAlignment": "",
+														"borderRadius": "border-radius-none",
+														"boxShadow": "",
+														"containerWidth": "",
+														"lazyLoadingImage": true,
+														"moveIcon": "-75px 0 0 0",
+														"showIcon": false,
+														"showIconBoxShadow": false
+													},
+													"fragmentFields": [
+													],
+													"fragmentViewports": [
+														{
+															"fragmentViewportStyle": {
+																"paddingLeft": "5",
+																"paddingRight": "5"
+															},
+															"id": "tablet"
+														}
+													],
+													"indexed": true
+												},
+												"pageElements": [
+													{
+														"definition": {
+														},
+														"pageElements": [
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "BASIC_COMPONENT-spacer"
+																	},
+																	"fragmentConfig": {
+																		"height": "py-3"
+																	},
+																	"fragmentFields": [
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															},
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "text",
+																		"siteKey": "[$GROUP_KEY$]"
+																	},
+																	"fragmentConfig": {
+																		"fontSize": "font-size-paragraph-base",
+																		"smallCaps": false,
+																		"tabletScreenCenter": false
+																	},
+																	"fragmentFields": [
+																		{
+																			"id": "text",
+																			"value": {
+																				"fragmentLink": {
+																				},
+																				"text": {
+																					"value_i18n": {
+																						"en_US": "<h1 data-lfr-editable-id=\"text\" data-lfr-editable-type=\"rich-text\">Feature List:</h1>\n\n<ul>\n\t<li>Generate new leads</li>\n\t<li>Grow your leads</li>\n\t<li>Manage the GDPR consents of your contacts</li>\n\t<li>Create and manage marketing lists and campaigns</li>\n\t<li>High level of configuration</li>\n\t<li>Full control of your Accounts and Contacts</li>\n\t<li>Manage your Leads</li>\n\t<li>Make the most of your sales opportunities</li>\n\t<li>Manage your offers and orders even offline from the app thanks to Open Square Sales Mobile</li>\n\t<li>Show your sales force key customer information</li>\n\t<li>Keep relationships alive</li>\n\t<li>Improve sales performance<br />\n\t </li>\n</ul>\n\n<h2 data-lfr-editable-id=\"text\" data-lfr-editable-type=\"rich-text\">Company Profile</h2>\nSMC was established more than 40 years ago to improve our customers' performance.&nbsp;We create real solutions, not just software. We do it using always the most advanced open source developing technologies.\n\n<p><br />\nWe pay great attention to the user experience and make it easy for our solutions to be introduced and integrated into your company. We are Liferay Platinum Partner,&nbsp;the most reliable and evolved platform for creating business portals.</p>\n<br />\n<strong>Website</strong><br />\n<a href=\"https://www.smc.it/\" target=\"_blank\">https://www.smc.it/</a><br />\n<br />\n<strong>Email</strong><br />\n<a href=\"mailto:smc@smc.it\">smc@smc.it</a><br />\n<br />\n<strong>Phone</strong><br />\n+39.0422.608043"
+																					}
+																				}
+																			}
+																		}
+																	],
+																	"fragmentStyle": {
+																	},
+																	"indexed": true
+																},
+																"type": "Fragment"
+															},
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "BASIC_COMPONENT-spacer"
+																	},
+																	"fragmentConfig": {
+																		"height": "py-5"
+																	},
+																	"fragmentFields": [
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															}
+														],
+														"type": "FragmentDropZone"
+													}
+												],
+												"type": "Fragment"
+											}
+										],
+										"type": "Section"
+									}
+								],
+								"type": "Section"
+							},
+							{
+								"definition": {
+									"cssClasses": [
+										"#solutions-details-form"
+									],
+									"fragmentStyle": {
+										"borderWidth": "0"
+									},
+									"indexed": true,
+									"layout": {
+										"borderWidth": 0,
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"opacity": 100,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
+									}
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragmentStyle": {
+												"borderWidth": "0"
+											},
+											"indexed": true,
+											"layout": {
+												"borderWidth": 0,
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 0,
+												"opacity": 100,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fixed"
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"fragment": {
+														"key": "content-container",
+														"siteKey": "[$GROUP_KEY$]"
+													},
+													"fragmentConfig": {
+														"background": "",
+														"backgroundDarkOrLight": "dark",
+														"backgroundImageUrl": "",
+														"backgroundPosition": "center",
+														"backgroundSize": "cover",
+														"blockAlignment": "",
+														"borderRadius": "border-radius-none",
+														"boxShadow": "",
+														"containerWidth": "",
+														"lazyLoadingImage": true,
+														"moveIcon": "-75px 0 0 0",
+														"showIcon": false,
+														"showIconBoxShadow": false
+													},
+													"fragmentFields": [
+													],
+													"fragmentViewports": [
+														{
+															"fragmentViewportStyle": {
+																"paddingLeft": "5",
+																"paddingRight": "5"
+															},
+															"id": "tablet"
+														}
+													],
+													"indexed": true
+												},
+												"pageElements": [
+													{
+														"definition": {
+														},
+														"pageElements": [
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "BASIC_COMPONENT-spacer"
+																	},
+																	"fragmentConfig": {
+																		"height": "py-4"
+																	},
+																	"fragmentFields": [
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															},
+															{
+																"definition": {
+																	"fragment": {
+																		"key": "text",
+																		"siteKey": "[$GROUP_KEY$]"
+																	},
+																	"fragmentConfig": {
+																		"fontSize": "font-size-paragraph-base",
+																		"smallCaps": false,
+																		"tabletScreenCenter": false
+																	},
+																	"fragmentFields": [
+																		{
+																			"id": "text",
+																			"value": {
+																				"fragmentLink": {
+																				},
+																				"text": {
+																					"value_i18n": {
+																						"en_US": "<h2 data-lfr-editable-id=\"text\" data-lfr-editable-type=\"rich-text\">Contact Us</h2>\n<br />\nFind out more about Digital Place for Communities"
+																					}
+																				}
+																			}
+																		}
+																	],
+																	"indexed": true
+																},
+																"type": "Fragment"
+															}
+														],
+														"type": "FragmentDropZone"
+													}
+												],
+												"type": "Fragment"
+											}
+										],
+										"type": "Section"
+									}
+								],
+								"type": "Section"
+							}
+						],
+						"type": "Section"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "marketplace-master"
+		}
+	},
+	"version": 1.1
+}
