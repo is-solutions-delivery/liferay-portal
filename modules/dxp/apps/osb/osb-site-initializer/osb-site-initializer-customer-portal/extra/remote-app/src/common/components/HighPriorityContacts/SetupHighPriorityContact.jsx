@@ -18,6 +18,7 @@ export const HIGH_PRIORITY_CONTACT_CATEGORIES = {
 
 const SetupHighPriorityContact = ({
 	addContactList,
+	disableSubmit,
 	filter,
 	removedContactList,
 }) => {
@@ -127,8 +128,12 @@ const SetupHighPriorityContact = ({
 		removedContactList(removedContacts);
 	};
 
+	const handleMetaErrorChange = (error) => {
+		disableSubmit(error);
+	};
+
 	return (
-		<FieldArray name="activations.criticalIncedentContact">
+		<FieldArray>
 			{() => (
 				<>
 					<ClayForm.Group className="pb-1">
@@ -136,6 +141,8 @@ const SetupHighPriorityContact = ({
 							currentHighPriorityContacts={
 								currentHighPriorityContacts
 							}
+							disableSubmit={handleMetaErrorChange}
+							inputName={filter}
 							koroneikiAccount={koroneikiAccount}
 							setContactList={updateContactList}
 						/>
@@ -148,6 +155,7 @@ const SetupHighPriorityContact = ({
 
 const SetupHighPriorityContactForm = ({
 	addContactList,
+	disableSubmit,
 	removedContactList,
 	...props
 }) => {
@@ -156,6 +164,9 @@ const SetupHighPriorityContactForm = ({
 	};
 	const removeContactList = (contactList) => {
 		return removedContactList(contactList);
+	};
+	const handleMetaErrorChange = (error) => {
+		disableSubmit(error);
 	};
 
 	return (
@@ -169,6 +180,7 @@ const SetupHighPriorityContactForm = ({
 			{(formikProps) => (
 				<SetupHighPriorityContact
 					addContactList={addedContactList}
+					disableSubmit={handleMetaErrorChange}
 					removedContactList={removeContactList}
 					{...props}
 					{...formikProps}
