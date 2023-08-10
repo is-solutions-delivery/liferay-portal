@@ -229,7 +229,7 @@
 																											"fieldKey": "FileEntry_previewImage",
 																											"itemReference": {
 																												"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/app_logo.png#]"
+																												"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/app_logo.png#]"
 																											}
 																										}
 																									}
@@ -271,7 +271,7 @@
 																					{
 																						"definition": {
 																							"fragment": {
-																								"key": "dialect-dialect-text",
+																								"key": "DIALECT-dialect-text",
 																								"siteKey": "[$COMPANY_ID$]"
 																							},
 																							"fragmentConfig": {
@@ -285,7 +285,7 @@
 																										},
 																										"text": {
 																											"value_i18n": {
-																												"en_US": "Digital Place for Communities"
+																												"en_US": "Digital Place for Local Public Services"
 																											}
 																										}
 																									}
@@ -316,7 +316,7 @@
 																													"fieldKey": "FileEntry_previewImage",
 																													"itemReference": {
 																														"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																														"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/placecube_logo.png#]"
+																														"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/placecube_logo.png#]"
 																													}
 																												}
 																											}
@@ -663,7 +663,7 @@
 																			{
 																				"definition": {
 																					"fragment": {
-																						"key": "dialect-dialect-text",
+																						"key": "DIALECT-dialect-text",
 																						"siteKey": "[$COMPANY_ID$]"
 																					},
 																					"fragmentConfig": {
@@ -677,7 +677,7 @@
 																								},
 																								"text": {
 																									"value_i18n": {
-																										"en_US": "Your open knowledge platform for sharing knowledge beyond your organisation"
+																										"en_US": "Your open digital platform for making and re-using local public services"
 																									}
 																								}
 																							}
@@ -695,7 +695,7 @@
 																			{
 																				"definition": {
 																					"fragment": {
-																						"key": "dialect-dialect-text",
+																						"key": "DIALECT-dialect-text",
 																						"siteKey": "[$COMPANY_ID$]"
 																					},
 																					"fragmentConfig": {
@@ -709,7 +709,7 @@
 																								},
 																								"text": {
 																									"value_i18n": {
-																										"en_US": "Digital Place for Communities is your open knowledge platform for sharing knowledge beyond your organisation. Now it’s easy for you to collaborate and share knowledge with teams, organisations and communities everywhere. Multi-agency use comes as standard!"
+																										"en_US": "Digital Place for Local Public Services is your open digital platform for making and re-using local public services. Now it’s simple to build and re-use local services with cubes that are easy to connect together. Start by re-using over 150 ready-made cubes and create new services at your own pace. Now it’s easy to bring your services and information together in one place and give a consistent and accessible user experience."
 																									}
 																								}
 																							}
@@ -776,7 +776,7 @@
 																								"fieldKey": "FileEntry_previewImage",
 																								"itemReference": {
 																									"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																									"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/app_logo.png#]"
+																									"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/app_logo.png#]"
 																								}
 																							}
 																						}
@@ -792,7 +792,7 @@
 																								"fieldKey": "FileEntry_previewImage",
 																								"itemReference": {
 																									"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																									"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/local_services.png#]"
+																									"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/local_services.png#]"
 																								}
 																							}
 																						}
@@ -909,7 +909,7 @@
 										"definition": {
 											"fragment": {
 												"key": "DIALECT-dialect-text",
-												"siteKey": "[$GROUP_KEY$]"
+												"siteKey": "[$COMPANY_ID$]"
 											},
 											"fragmentConfig": {
 												"textType": "h1",
@@ -1048,7 +1048,7 @@
 																			"fieldKey": "FileEntry_previewImage",
 																			"itemReference": {
 																				"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																				"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/info_icon.png#]"
+																				"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/info_icon.png#]"
 																			}
 																		}
 																	}
@@ -1140,7 +1140,7 @@
 																			"fieldKey": "FileEntry_previewImage",
 																			"itemReference": {
 																				"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																				"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/info_icon.png#]"
+																				"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/info_icon.png#]"
 																			}
 																		}
 																	}
@@ -1266,7 +1266,7 @@
 									{
 										"definition": {
 											"fragment": {
-												"key": "dialect-dialect-text",
+												"key": "DIALECT-dialect-text",
 												"siteKey": "[$COMPANY_ID$]"
 											},
 											"fragmentConfig": {
@@ -1404,7 +1404,7 @@
 																							"fieldKey": "FileEntry_previewImage",
 																							"itemReference": {
 																								"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/placecube_numbers.png#]"
+																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/placecube_numbers.png#]"
 																							}
 																						}
 																					}
@@ -1523,7 +1523,7 @@
 																							"fieldKey": "FileEntry_previewImage",
 																							"itemReference": {
 																								"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/placecube_gear.png#]"
+																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/placecube_gear.png#]"
 																							}
 																						}
 																					}
@@ -1642,7 +1642,7 @@
 																							"fieldKey": "FileEntry_previewImage",
 																							"itemReference": {
 																								"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/increase_logo.png#]"
+																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/increase_logo.png#]"
 																							}
 																						}
 																					}
@@ -1761,7 +1761,7 @@
 																							"fieldKey": "FileEntry_previewImage",
 																							"itemReference": {
 																								"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-communities/customer_icon.png#]"
+																								"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/solutions-details/09-digital-place-for-local-public-services/customer_icon.png#]"
 																							}
 																						}
 																					}
