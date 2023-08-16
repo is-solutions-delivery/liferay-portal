@@ -59,9 +59,6 @@ definition {
 	test CanConnectWithOkta {
 		task ("Login in Okta") {
 
-			//var userEmailAddress = PropsUtil.get("okta.cp.email");
-			//var userPassword = PropsUtil.get("okta.cp.password");
-
 			var userEmailAddress = "garrettz@mbopartners.com.broken";
 			var userPassword = "q4F63ZEH3njnnA34S761";
 
