@@ -120,18 +120,22 @@
 														"key": "liferay-sites",
 														"siteKey": "[$GROUP_KEY$]"
 													},
-													"fragmentConfig": {},
-													"fragmentFields": [],
+													"fragmentConfig": {
+													},
+													"fragmentFields": [
+													],
 													"indexed": true
 												},
 												"pageElements": [
 													{
-														"definition": {},
+														"definition": {
+														},
 														"pageElements": [
 															{
 																"definition": {
 																	"widgetInstance": {
-																		"widgetConfig": {},
+																		"widgetConfig": {
+																		},
 																		"widgetName": "com_liferay_site_navigation_directory_web_portlet_SitesDirectoryPortlet"
 																	}
 																},
@@ -149,8 +153,10 @@
 														"key": "language-selector",
 														"siteKey": "[$GROUP_KEY$]"
 													},
-													"fragmentConfig": {},
-													"fragmentFields": [],
+													"fragmentConfig": {
+													},
+													"fragmentFields": [
+													],
 													"indexed": true
 												},
 												"type": "Fragment"
@@ -209,25 +215,29 @@
 														{
 															"id": "suggestionsPopularItem4",
 															"value": {
-																"fragmentLink": {}
+																"fragmentLink": {
+																}
 															}
 														},
 														{
 															"id": "suggestionsPopularItem3",
 															"value": {
-																"fragmentLink": {}
+																"fragmentLink": {
+																}
 															}
 														},
 														{
 															"id": "suggestionsPopularItem2",
 															"value": {
-																"fragmentLink": {}
+																"fragmentLink": {
+																}
 															}
 														},
 														{
 															"id": "suggestionsPopularItem1",
 															"value": {
-																"fragmentLink": {}
+																"fragmentLink": {
+																}
 															}
 														}
 													],
@@ -247,7 +257,8 @@
 													"fragmentConfig": {
 														"siteNavigationMenuId": 0
 													},
-													"fragmentFields": [],
+													"fragmentFields": [
+													],
 													"indexed": true
 												},
 												"type": "Fragment"
@@ -260,7 +271,9 @@
 							},
 							{
 								"definition": {
-									"cssClasses": ["nav-mobile-class"],
+									"cssClasses": [
+										"nav-mobile-class"
+									],
 									"customCSS": ".[$FRAGMENT_CLASS$] {\n \n}",
 									"fragmentStyle": {
 										"borderWidth": "0",
@@ -356,8 +369,10 @@
 														"key": "mobile-menu-buttom",
 														"siteKey": "[$GROUP_KEY$]"
 													},
-													"fragmentConfig": {},
-													"fragmentFields": [],
+													"fragmentConfig": {
+													},
+													"fragmentFields": [
+													],
 													"fragmentStyle": {
 														"hidden": true
 													},
@@ -385,7 +400,8 @@
 												},
 												"pageElements": [
 													{
-														"definition": {},
+														"definition": {
+														},
 														"type": "FragmentDropZone"
 													}
 												],
@@ -465,7 +481,8 @@
 																		}
 																	}
 																},
-																"fragmentLink": {}
+																"fragmentLink": {
+																}
 															}
 														}
 													],
@@ -508,7 +525,8 @@
 														{
 															"id": "text",
 															"value": {
-																"fragmentLink": {},
+																"fragmentLink": {
+																},
 																"text": {
 																	"value_i18n": {
 																		"en_US": "Marketplace"
@@ -579,12 +597,13 @@
 													},
 													"fragmentConfig": {
 														"displayStyle": "horizontal",
-														"selectedItemColor": "",
-														"sublevels": "-1",
 														"hoveredItemColor": "#0053F0",
-														"source": ""
+														"selectedItemColor": "",
+														"source": "",
+														"sublevels": "-1"
 													},
-													"fragmentFields": [],
+													"fragmentFields": [
+													],
 													"indexed": true
 												},
 												"type": "Fragment"
@@ -600,7 +619,10 @@
 					},
 					{
 						"definition": {
-							"cssClasses": ["nav-menu-pages", "hidden-menu"],
+							"cssClasses": [
+								"nav-menu-pages",
+								"hidden-menu"
+							],
 							"fragmentStyle": {
 								"hidden": true
 							},
@@ -644,10 +666,11 @@
 										"key": "BASIC_COMPONENT-separator"
 									},
 									"fragmentConfig": {
-										"separatorColor": "light",
-										"bottomSpacing": "3"
+										"bottomSpacing": "3",
+										"separatorColor": "light"
 									},
-									"fragmentFields": [],
+									"fragmentFields": [
+									],
 									"fragmentStyle": {
 										"hidden": true,
 										"textColor": "brandColor2"
@@ -691,12 +714,13 @@
 									},
 									"fragmentConfig": {
 										"displayStyle": "stacked",
-										"selectedItemColor": "",
-										"sublevels": "-1",
 										"hoveredItemColor": "",
-										"source": "{\"siteNavigationMenuId\":\"57205\",\"parentSiteNavigationMenuItemId\":\"0\",\"privateLayout\":\"false\",\"title\":\"Mobile Menu\",\"type\":\"class com.liferay.site.navigation.item.selector.SiteNavigationMenuItemSelectorReturnType\"}"
+										"selectedItemColor": "",
+										"source": "{\"siteNavigationMenuId\":\"57205\",\"parentSiteNavigationMenuItemId\":\"0\",\"privateLayout\":\"false\",\"title\":\"Mobile Menu\",\"type\":\"class com.liferay.site.navigation.item.selector.SiteNavigationMenuItemSelectorReturnType\"}",
+										"sublevels": "-1"
 									},
-									"fragmentFields": [],
+									"fragmentFields": [
+									],
 									"fragmentStyle": {
 										"hidden": true
 									},
@@ -738,7 +762,8 @@
 					{
 						"definition": {
 							"fragmentSettings": {
-								"unallowedFragments": []
+								"unallowedFragments": [
+								]
 							}
 						},
 						"type": "DropZone"
@@ -753,10 +778,10 @@
 		"colorSchemeName": "01",
 		"themeName": "Classic",
 		"themeSettings": {
+			"lfr-theme:regular:show-footer": "false",
 			"lfr-theme:regular:show-header": "false",
-			"lfr-theme:regular:wrap-widget-page-content": "false",
 			"lfr-theme:regular:show-header-search": "false",
-			"lfr-theme:regular:show-footer": "false"
+			"lfr-theme:regular:wrap-widget-page-content": "false"
 		}
 	},
 	"version": 1.1
